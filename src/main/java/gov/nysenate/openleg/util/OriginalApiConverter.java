@@ -21,6 +21,7 @@ import gov.nysenate.openleg.BillRenderer;
 import gov.nysenate.openleg.PMF;
 import gov.nysenate.openleg.model.*;
 import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SearchResult;
@@ -28,16 +29,16 @@ import gov.nysenate.openleg.search.SearchResultSet;
 
 public class OriginalApiConverter {
 	
-//	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 //		/*bill from db*/
 //		Bill b = PMF.getDetachedBill("S5000");		
 //		System.out.println(billXml(b));
 //		System.out.println(billJson(b));
 //		
-//		/*calendar from db*/
-//		System.out.println("\n\n-----CALENDAR-----\n\n");
-//		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00060-2009", "no descending");	
-//		System.out.println(calendarXml(c));
+		/*calendar from db*/
+		System.out.println("\n\n-----CALENDAR-----\n\n");
+		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00060-2009", "no descending");	
+		System.out.println(calendarXml(c));
 //		
 //		/*transcript from db to xstream xml*/
 //		System.out.println("\n\n\n-----TRANSCRIPT-----\n\n");
@@ -53,7 +54,7 @@ public class OriginalApiConverter {
 //		for(Meeting m:meetings) {
 //			System.out.println(meetingXml(m));
 //		}
-//	}
+	}
 	
 	public static String doJson(Object o) {
 		if(o instanceof Bill) {
@@ -63,7 +64,7 @@ public class OriginalApiConverter {
 				e.printStackTrace();
 			}
 		}
-		if(o instanceof Calendar) {
+		if(o instanceof Calendar || o instanceof Supplemental) {
 			return JsonConverter.getJson(o).toString();
 		}
 		if(o instanceof Meeting) {
@@ -80,7 +81,7 @@ public class OriginalApiConverter {
 		return null;
 	}
 	
-	public static String doXml(Object o) {
+	public static String doXml(Object o) {		
 		if(o instanceof Bill) {
 			return billXml((Bill)o);
 		}
@@ -88,6 +89,14 @@ public class OriginalApiConverter {
 			try {
 				return calendarXml((Calendar)o);
 			} catch (JAXBException e) {
+				
+			}
+		}
+		if(o instanceof Supplemental) {
+			try {
+				return supplementalXml((Supplemental)o);
+			}
+			catch(JAXBException e) {
 				
 			}
 		}
@@ -383,6 +392,18 @@ public class OriginalApiConverter {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		m.marshal(calendar, baos);
+
+		return baos.toString();
+	}
+	
+	public static String supplementalXml(Supplemental supplemental) throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(Supplemental.class);
+
+		Marshaller m = context.createMarshaller();
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		m.marshal(supplemental, baos);
 
 		return baos.toString();
 	}
