@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration debug="true" xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- STDOUT console logger -->
+	<appender name="console" class="org.apache.log4j.ConsoleAppender"> 
+		<param name="Target" value="System.out"/> 
+    	<layout class="org.apache.log4j.PatternLayout"> 
+      		<param name="ConversionPattern" value="%-5p-> [%c{2}:%M] %m%n"/> 
+    	</layout> 
+    	<!-- 
+    	 <filter class="org.apache.log4j.varia.LevelRangeFilter">
+    <param name="LevelMin" value="info" />
+    <param name="LevelMax" value="debug" />
+  </filter> -->
+  	</appender> 
+
+
+<!-- Mail Appender --> 
+<!-- 
+<appender name="SMTP" class="org.apache.log4j.net.SMTPAppender"> 
+  <param name="BufferSize" value="1" />
+  		<param name="threshold" value="info" />
+  <filter class="org.apache.log4j.varia.LevelRangeFilter">
+    <param name="LevelMin" value="info" />
+    <param name="LevelMax" value="fatal" />
+  </filter>
+<param name="To" value="freitas@senate.state.ny.us"/> 
+<param name="From" value="root@open.nysenate.gov"/> 
+<param name="Subject" value="[OpenLegAlert] ..."/> 
+<param name="SMTPHost" value="senmail.senate.state.ny.us"/> 
+<param name="BufferSize" value="10"/> 
+<layout class="org.apache.log4j.PatternLayout"> 
+<param name="ConversionPattern" value="[%d{ABSOLUTE},%c{1}] %m%n"/> 
+</layout> 
+
+</appender>
+ --> 
+
+
+	<root> 
+
+		<!-- The default output level -->
+    	<level value ="debug" /> 
+		<priority value="debug"></priority>
+
+		<!-- Default output location -->
+		<appender-ref ref="console" /> 
+    	<!-- <appender-ref ref="SMTP"/>  -->
+    	
+    	
+  </root>
+  
+</log4j:configuration>

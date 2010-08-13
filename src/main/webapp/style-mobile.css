@@ -1,0 +1,11 @@
+
+body {
+  font-family: helvetica, arial;
+  font-size: 100%;	 /* 10px */
+  line-height: 1.4em; /* 15px */
+  color: #333;
+  background-color: #fff;
+  background-image:url('img/bg.png');
+  background-repeat: repeat-x;
+  margin:6px;
+}

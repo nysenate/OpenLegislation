@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" 
+	xmlns="http://java.sun.com/xml/ns/j2ee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  <servlet>
+		<servlet-name>APIServlet</servlet-name>
+		<servlet-class>gov.nysenate.openleg.APIServlet</servlet-class>
+	</servlet>
+
+  <servlet>
+    <description>search is fun</description>
+    <display-name>OpenLeg Search Servlet</display-name>
+    <servlet-name>SearchServlet</servlet-name>
+    <servlet-class>gov.nysenate.openleg.SearchServlet</servlet-class>
+  </servlet>
+ 
+  
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/bill/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/bills/*</url-pattern>
+	</servlet-mapping>
+		<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/bills</url-pattern>
+	</servlet-mapping>
+	  <servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/sponsor/*</url-pattern>
+	</servlet-mapping>
+  <servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/committee/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/transcript/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/agenda/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/meeting/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/meetings/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/meetings</url-pattern>
+	</servlet-mapping>
+	
+	
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/calendar/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/calendars/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/calendars</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/transcripts/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/transcripts</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/actions/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/actions</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/votes/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>APIServlet</servlet-name>
+		<url-pattern>/votes</url-pattern>
+	</servlet-mapping>
+	
+	
+  <servlet-mapping>
+    <servlet-name>SearchServlet</servlet-name>
+    <url-pattern>/search/*</url-pattern>
+  </servlet-mapping>
+ 
+<error-page>
+    <error-code>404</error-code>
+    <location>/404.jsp</location>
+</error-page> 
+
+<error-page>
+    <error-code>500</error-code>
+    <location>/500.jsp</location>
+</error-page> 
+
+</web-app>
