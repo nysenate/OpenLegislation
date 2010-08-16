@@ -1,17 +1,9 @@
 package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.PMF;
-import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.BillEvent;
-import gov.nysenate.openleg.model.Person;
-import gov.nysenate.openleg.model.Transcript;
-import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.CalendarEntry;
-import gov.nysenate.openleg.model.calendar.Section;
-import gov.nysenate.openleg.model.calendar.Sequence;
-import gov.nysenate.openleg.model.calendar.Supplemental;
-import gov.nysenate.openleg.model.committee.Meeting;
+import gov.nysenate.openleg.model.*;
+import gov.nysenate.openleg.model.calendar.*;
+import gov.nysenate.openleg.model.committee.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -29,7 +21,7 @@ import com.google.gson.JsonPrimitive;
 @SuppressWarnings({"unused"})
 public class JsonConverter {
 	
-	public static void main(String[] args) throws Exception {
+//	public static void main(String[] args) throws Exception {
 //		/*bill from db*/
 //		Bill b = PMF.getDetachedBill("S5000");		
 //		System.out.println(getJson(b));
@@ -52,7 +44,7 @@ public class JsonConverter {
 //		for(Meeting m:meetings) {
 //			System.out.println(getJson(m));
 //		}
-	}
+//	}
 	
 	/**
 	 * accepts and sends applicable objects to be converted to json via converter(object,list)
@@ -61,6 +53,9 @@ public class JsonConverter {
 	public static JsonObject getJson(Object o) {
 		if(o == null) {
 			return null;
+		}
+		if(o instanceof Supplemental) {
+			o = ((Supplemental)o).getCalendar();
 		}
 		
 		JsonObject root = new JsonObject();
@@ -124,16 +119,22 @@ public class JsonConverter {
 					if(!exclude.contains(f.getName())) {
 						
 						if(type.equals("Bill")) {
-							root.add(f.getName(), converter(method.invoke(o),simple_bill_exclude()));
-						
+							Object obj;
+							if((obj = method.invoke(o)) != null) {
+								root.add(f.getName(), converter(obj,simple_bill_exclude()));
+							}
 						}
 						else if(type.equals("Date")) {
-							Date d = (Date)method.invoke(o);
-							root.addProperty(f.getName(), (d != null) ? d.toString():"");
-						
+							Date d;
+							if((d = (Date)method.invoke(o)) != null) {
+								root.addProperty(f.getName(), (d != null) ? d.toString():"");
+							}
 						}
 						else if(type.equals("int")) {
-							root.addProperty(f.getName(), (Integer)method.invoke(o));
+							Integer i;
+							if((i = (Integer)method.invoke(o)) != null){
+								root.addProperty(f.getName(), i);
+							}
 							
 						}
 						else if(type.equals("List")) {
@@ -150,16 +151,22 @@ public class JsonConverter {
 							
 						}
 						else if(type.equals("Person")) {
-							root.addProperty(f.getName(), ((Person)method.invoke(o)).getFullname());
-						
+							Person p;
+							if((p = (Person)method.invoke(o)) != null) {
+								root.addProperty(f.getName(), p.getFullname());
+							}
 						}
 						else if(type.equals("Sequence")) {
-							root.add(f.getName(),converter(method.invoke(o),sequence_exclude()));
-							
+							Object obj;
+							if((obj = method.invoke(o)) != null) {
+								root.add(f.getName(),converter(obj,sequence_exclude()));
+							}
 						}
 						else if(type.equals("String")) {
-							root.addProperty(f.getName(), (String)method.invoke(o));
-							
+							String s;
+							if((s = (String)method.invoke(o)) != null) {
+								root.addProperty(f.getName(), (String)method.invoke(o));
+							}
 						}
 						else {
 							throw (new JsonConverter()).new UnknownTypeException("UNKNOWN: " + type + "(type):" + name + " (name) IN CLASS " + o.getClass().getSimpleName());
@@ -407,7 +414,7 @@ public class JsonConverter {
 		List<String> section_exclude = new ArrayList<String>();
 		
 		section_exclude.add("calendar");
-		section_exclude.add("supplementalId");
+		section_exclude.add("supplemental");
 		
 		return section_exclude;
 	}

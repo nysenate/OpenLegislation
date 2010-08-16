@@ -601,19 +601,22 @@ public class SearchEngine implements OpenLegConstants{
         if (title != null) {
         	document.add(new Field("title",title,Field.Store.YES,Field.Index.ANALYZED));
         }
-        
         document.add(new Field("oid",oid,Field.Store.YES,Field.Index.ANALYZED));
         document.add(new Field("otype",otype,Field.Store.YES,Field.Index.ANALYZED));
         document.add(new Field("osearch",searchString,Field.Store.YES,Field.Index.ANALYZED));
         document.add(new Field("title_sortby", title.replaceAll(" ", ""),Field.Store.NO, Field.Index.NOT_ANALYZED));
 
-       
-        if(otype.matches("bill|transcript|calendar|meeting")) {
-        	document.add(new Field("oxml", OriginalApiConverter.doXml(o),Field.Store.YES,Field.Index.ANALYZED));
-        	document.add(new Field("ojson", OriginalApiConverter.doJson(o),Field.Store.YES,Field.Index.ANALYZED));
-        	document.add(new Field("oxml_new",XStreamBuilder.xml(o),Field.Store.YES,Field.Index.ANALYZED));
-            document.add(new Field("ojson_new",JsonConverter.getJson(o).toString(),Field.Store.YES,Field.Index.ANALYZED));
-        }
+       try {
+    	   if(otype.matches("bill|transcript|calendar|meeting")) {
+           	document.add(new Field("oxml", OriginalApiConverter.doXml(o),Field.Store.YES,Field.Index.ANALYZED));
+           	document.add(new Field("ojson", OriginalApiConverter.doJson(o),Field.Store.YES,Field.Index.ANALYZED));
+           	document.add(new Field("oxml_new",XStreamBuilder.xml(o),Field.Store.YES,Field.Index.ANALYZED));
+               document.add(new Field("ojson_new",JsonConverter.getJson(o).toString(),Field.Store.YES,Field.Index.ANALYZED));
+           }
+       }
+       catch(Exception e) {
+    	   e.printStackTrace();
+       }
         
         String modified = new java.util.Date().getTime() + "";
         document.add(new Field("modified",modified,Field.Store.YES,Field.Index.ANALYZED));
