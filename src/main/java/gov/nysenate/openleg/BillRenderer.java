@@ -4,7 +4,7 @@ package gov.nysenate.openleg;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.search.SearchEngine;
+import gov.nysenate.openleg.search.SearchEngine1;
 import gov.nysenate.openleg.search.SearchResult;
 import gov.nysenate.openleg.search.SearchResultSet;
 
@@ -27,12 +27,12 @@ public class BillRenderer {
 
 	private static Logger logger = Logger.getLogger(BillRenderer.class);
 	
-	public static String renderBills (Collection<Bill> bills, boolean includeFullText)
+	public static String renderBills (Collection<?> bills, boolean includeFullText)
 	{
 		
 		logger.info("rendering " + bills.size() + " bills. includeFullText=" + includeFullText);
 		
-		Iterator<Bill> it = bills.iterator();
+		Iterator<?> it = bills.iterator();
 		
 		
 		Element elemRoot = new Element("docket");
@@ -40,7 +40,7 @@ public class BillRenderer {
 		
 		while (it.hasNext())
 		{
-			Bill bill = it.next();
+			Bill bill = (Bill)it.next();
 			
 			try
 			{
@@ -75,11 +75,11 @@ public class BillRenderer {
 		
 		if (bill == null)
 		{
-			Collection<Bill> bills = PMF.queryBills("assemblyBillNo", billId.toUpperCase()).getResult();
+			Collection<?> bills = PMF.queryBills("assemblyBillNo", billId.toUpperCase()).getResult();
 			
 			if (bills.size()>0)
 			{
-				bill = bills.iterator().next();
+				bill = (Bill)bills.iterator().next();
 			}
 			
 		}
@@ -92,26 +92,21 @@ public class BillRenderer {
 	
 	public static String renderBillBySponsor (String sponsor, long start, long end)
 	{
-		Collection<Bill> bills = PMF.getBillFromSponsor(sponsor.toUpperCase(),start,end, false).getResult();
-		
+		Collection<?> bills = PMF.getBillFromSponsor(sponsor.toUpperCase(),start,end, false).getResult();
 		return renderBills(bills,false);
 	}
 	
 	public static String renderBillByCommittee (String comm)
 	{
-		Collection<Bill> bills = PMF.queryBills("currentCommittee", comm.toUpperCase()).getResult();
-		
+		Collection<?> bills = PMF.queryBills("currentCommittee", comm.toUpperCase()).getResult();
 		return renderBills(bills,false);
 	}
 	
 	public static String renderBill (Bill bill)
 	{
-		
 		ArrayList<Bill> list = new ArrayList<Bill>();
 		list.add(bill);
-		return renderBills(list,true);
-		
-		
+		return renderBills(list,true);	
 	}
 	
 	
@@ -302,7 +297,7 @@ public class BillRenderer {
 					}
 					
 					actionSearch.append(")");
-					SearchResultSet srs = SearchEngine.doSearch(actionSearch.toString(),0,1000,"when",true);
+					SearchResultSet srs = new SearchEngine1().search(actionSearch.toString(),0,1000,"when",true);
 
 					Iterator<SearchResult> itSrs = srs.getResults().iterator();
 					SearchResult sresult = null;

@@ -13,7 +13,6 @@ import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
-import gov.nysenate.openleg.util.BillCleaner;
 import gov.nysenate.openleg.util.JsonConverter;
 import gov.nysenate.openleg.util.OriginalApiConverter;
 import gov.nysenate.openleg.xstream.XStreamBuilder;
@@ -55,44 +54,48 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
-public class SearchEngine implements OpenLegConstants{
+abstract class SearchEngine implements SearchEngineInterface, OpenLegConstants{
 
-	private static Logger logger = Logger.getLogger(SearchEngine.class);
+	protected IndexSearcher indexSearcher = null;
 
-	private static IndexSearcher indexSearcher = null;
+	protected DateFormat DATE_FORMAT_MEDIUM = java.text.DateFormat.getDateInstance(DateFormat.MEDIUM);
 	
-	 //the directory that is used to store a Lucene index
-	 private final  static String indexDir = "/usr/local/openleg/lucene";
-//	private final  static String indexDir = "C:\\n2-lucene\\";
-
-	private static DateFormat DATE_FORMAT_MEDIUM = java.text.DateFormat.getDateInstance(DateFormat.MEDIUM);
+	protected String indexDir;
+	
+	protected Logger logger;
+    
+	public Directory getDirectory() throws IOException {
+		return FSDirectory.open(new File(indexDir));
+	}
 	
     /**
      * create index
      */
-    public static boolean createIndex() throws IOException{
-        if(true == ifIndexExist())
-            return true;	
-        
-        Directory fsDirectory = FSDirectory.open(new File(indexDir));
-        
-        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        IndexWriter indexWriter = new IndexWriter(fsDirectory, analyzer, true, MaxFieldLength.LIMITED);
-        
-        indexWriter.optimize();
-        indexWriter.close();
+    public boolean createIndex() throws IOException{
+        if (ifIndexExist() == false) {
+	        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
+	        IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, true, MaxFieldLength.LIMITED);
+	        
+	        indexWriter.optimize();
+	        indexWriter.close();
+        }
         return true;
+    }
+
+    /**
+     * judge if the index exists already
+     */
+    public boolean ifIndexExist(){
+    	return (0 < new File(indexDir).listFiles().length);
     }
     
     /**
      * create index
      */
-    public static boolean optimizeIndex() throws IOException{
-        
-        Directory fsDirectory = FSDirectory.open(new File(indexDir));
-        
+    public boolean optimizeIndex() throws IOException{
+
         Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        IndexWriter indexWriter = new IndexWriter(fsDirectory, analyzer, false, MaxFieldLength.LIMITED);
+        IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, false, MaxFieldLength.LIMITED);
         
         indexWriter.optimize();
         indexWriter.close();
@@ -100,7 +103,7 @@ public class SearchEngine implements OpenLegConstants{
 
     }
     
-    public static synchronized IndexSearcher openIndex() throws IOException {
+    public synchronized IndexSearcher openIndex() throws IOException {
 
     	if (indexSearcher == null)
     	{
@@ -112,25 +115,333 @@ public class SearchEngine implements OpenLegConstants{
     	return indexSearcher;
     } 
     
-    public static synchronized void closeIndex() throws IOException {
+    public synchronized void closeIndex() throws IOException {
     	if (indexSearcher != null) {
 			indexSearcher.close();
 			indexSearcher = null;
     	}
     } 
     
-    public  static  boolean indexSenateObjects (Collection<?> objects, PersistenceManager pm) throws IOException
+
+    
+    public boolean deleteSenateObject (Object obj,  PersistenceManager pm) throws Exception
+    {
+        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
+        IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, true, MaxFieldLength.UNLIMITED);
+        indexWriter.setMaxBufferedDeleteTerms(0);
+	
+    	String type = null;
+    	String id = null;
+    	 
+    	if (obj instanceof Bill) {
+    		type = "bill";
+            id = ((Bill)obj).getSenateBillNo();
+    	}
+    	else if (obj instanceof Supplemental) {
+    		type = "calendar";
+    		id = ((Supplemental)obj).getCalendar().getId();
+    	}
+    	else if (obj instanceof Agenda) {
+    		Agenda agenda = (Agenda)obj;
+    		
+    		if (agenda.getAddendums() != null) {
+	    		Iterator<Addendum> itAnd = agenda.getAddendums().iterator();
+	    		while (itAnd.hasNext()) {
+	    			Iterator<Meeting> itMeetings = itAnd.next().getMeetings().iterator();
+	    			while (itMeetings.hasNext()) {
+	    				Meeting meeting = itMeetings.next();
+	    				deleteSenateObject (meeting, pm);
+	    			}
+    			}
+    		}
+    	}
+    	else if (obj instanceof Meeting) { 
+    		type = "meeting";
+    		id = ((Meeting)obj).getId();
+		}
+    	else if (obj instanceof Transcript) {
+    		type = "transcript";
+    		id = ((Transcript)obj).getId();
+		}
+    	else if (obj instanceof Vote) {
+    		type = "vote";
+    		id = ((Vote)obj).getId();
+		}
+    	else if (obj instanceof BillEvent) {
+    		type = "action";
+    		id = ((BillEvent)obj).getBillEventId();
+    	}
+    
+    	if (type != null){
+    		deleteDocument (type, id, indexWriter);
+    	}
+    	
+    	indexWriter.close();
+    	return true;
+    }
+    
+    public boolean deleteSenateObjectById (String type, String id) throws Exception
+    {
+    	closeIndex();
+    	
+    	IndexWriter indexWriter;
+		Directory fsDirectory = FSDirectory.open(new File(indexDir));
+        
+        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
+        indexWriter = new IndexWriter(fsDirectory, analyzer, false, MaxFieldLength.UNLIMITED);
+        
+       // indexWriter.setMaxBufferedDeleteTerms(1);
+	
+    	deleteDocument (type, id, indexWriter);
+    
+    	indexWriter.close();
+    	
+    	
+    	openIndex();
+    	
+    	return true;
+    }
+    
+    private void indexBillEvent (Bill bill, BillEvent billEvent, StringBuilder searchContent, HashMap<String,String> fields)
+    {
+		fields.put("when", billEvent.getEventDate().getTime()+"");
+		fields.put("billno", billEvent.getBillId() );
+		
+		searchContent.append(billEvent.getBillId()).append(" ");
+		
+		try
+		{
+			if (bill.getSponsor()!=null) {
+    			searchContent.append(bill.getSponsor().getFullname()).append(" ");
+    			fields.put("sponsor", bill.getSponsor().getFullname());
+    		}
+    		
+            if (bill.getCoSponsors()!=null) {
+            	StringBuilder cosponsor = new StringBuilder();
+            	Iterator<Person> itCosp = bill.getCoSponsors().iterator();
+            	
+            	while (itCosp.hasNext()) {
+            		cosponsor.append((itCosp.next()).getFullname());
+            		
+            		if (itCosp.hasNext())
+            			cosponsor.append(", ");
+            	}
+            	
+            	fields.put("cosponsors", cosponsor.toString());
+            }
+		}
+		catch (Exception e)
+		{
+			logger.warn("couldn't get bill from BillEvent:" + billEvent.getBillEventId(),e);
+		}
+		
+		searchContent.append(billEvent.getEventText());
+    }
+
+    
+    /**
+     * delete one document to the Lucene index
+     */
+    public void deleteDocument(String otype, String oid, IndexWriter indexWriter) throws IOException
+    {        
+		logger.info("deleting document: " + otype + "=" + oid);
+
+        try {
+            Query query = new QueryParser(Version.LUCENE_CURRENT, "oid", indexWriter.getAnalyzer()).parse("otype:" + otype + " AND oid:" + oid);
+            indexWriter.deleteDocuments(query);
+	    }
+        catch (Exception e) {
+			logger.warn("error deleting document to index: " + otype + "=" + oid, e);
+        }
+    }
+    
+    /**
+     * Add one document to the Lucene index
+     */
+    public void deleteAllDocumentByType(String otype) throws IOException
+    {
+    	Directory fsDirectory = FSDirectory.open(new File(indexDir));
+        
+        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
+        IndexWriter indexWriter = new IndexWriter(fsDirectory, analyzer, false, MaxFieldLength.UNLIMITED);
+       
+		logger.info("deleting all document: " + otype);
+
+        try {
+            Query query = new QueryParser(Version.LUCENE_CURRENT, "otype", indexWriter.getAnalyzer()).parse("otype:" + otype);
+            indexWriter.deleteDocuments(query);
+		} 
+		catch (Exception e) {
+			logger.warn("error deleting document to index: " + otype, e);
+		}
+    	indexWriter.close();
+    }
+    
+    public SearchResultSet doPagingSearch(Searcher searcher, Query query, int start, int numberOfResults, String sortField, boolean reverseSort ) throws IOException
+    {
+    	 SearchResultSet srs = null;
+    	 
+    	try {
+	      // Collect enough docs to show 5 pages
+	      TopScoreDocCollector collector = TopScoreDocCollector.create(numberOfResults, false);
+	      searcher.search(query, collector);
+	      ScoreDoc[] hits = collector.topDocs().scoreDocs;
+	      
+	      int numTotalHits = collector.getTotalHits();
+	      
+	      logger.info(numTotalHits + " total matching documents (" + query.toString() + ")");
+	      
+	      collector = TopScoreDocCollector.create(numTotalHits, false);
+	      
+	      Sort sort = null;
+	      
+	      if (sortField != null) {
+	    	  try {
+	    		  sort = new Sort(new SortField(sortField, SortField.STRING, reverseSort));
+		    	  Filter filter = null;
+		    	  
+		    	  hits = searcher.search(query, filter, start + numberOfResults, sort).scoreDocs;
+	    	  }
+	    	  catch (Exception e) {
+	    		  e.printStackTrace();
+	    	  }
+	      }
+	      else {
+	    	  searcher.search(query, collector);
+	    	  hits = collector.topDocs().scoreDocs;
+	      }
+	    
+	
+	      srs = new SearchResultSet();
+	      
+	      srs.totalHitCount = numTotalHits;
+	      srs.results = new ArrayList<SearchResult>();
+	      	      	           
+	      for (int i = start;(i < hits.length && i < start + numberOfResults); i++) {
+	    	  
+	    	  Document doc = searcher.doc(hits[i].doc);
+	
+	    	  SearchResult sr = new SearchResult();
+	    	  sr.type = doc.get("otype");
+	    	  sr.id = doc.get("oid");
+	    	  sr.title = doc.get("title");
+	    	  sr.title_sortby = doc.get("title_sortby");
+	    	  sr.summary = doc.get("summary");
+	    	  
+	    	  sr.xml = doc.get("oxml");
+	    	  sr.json = doc.get("ojson");
+	    	  
+	    	  sr.score = hits[i].score;
+	    	  sr.fields = new HashMap<String,String>(); 
+	    	 
+	    	  if (doc.get("modified")!=null)
+	    		  sr.lastModified = new Date(Long.parseLong(doc.get("modified")));
+	    	  
+	    	  Iterator<Fieldable> itFields = doc.getFields().iterator();
+	    	  while (itFields.hasNext()) {
+	    		  Field field = (Field)itFields.next();
+	    		  sr.fields.put(field.name(), field.stringValue());
+	    	  }
+	    	  
+	    	  srs.results.add(sr);
+	      }
+	      
+    	}
+    	catch (Exception e) {
+    		logger.warn("Search Exception: " + query.toString(),e);
+    	}
+    	
+	    return srs;
+    }
+    
+	public static void run (SearchEngine engine,String[] args) throws Exception	
+	{
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		
+		String line = null;
+		System.out.print("openleg search > ");
+		while (!(line = reader.readLine()).equals("quit"))
+		{
+			if (line.startsWith("index "))
+				engine.indexSenateData(line.substring(line.indexOf(" ")+1));
+			else if (line.startsWith("optimize"))
+				engine.optimizeIndex();
+			else if (line.startsWith("delete"))
+			{
+				StringTokenizer cmd = new StringTokenizer(line.substring(line.indexOf(" ")+1)," ");
+				String type = cmd.nextToken();
+				String id = cmd.nextToken();
+				engine.deleteSenateObjectById(type, id);
+			}
+			else if (line.startsWith("create"))
+				engine.createIndex();
+			else
+				engine.search(line, 1, 10, null, false);
+			
+			System.out.print("openleg search > ");
+		}
+		System.out.println("Exiting Search Engine");
+	}
+	
+	public void indexSenateData(String type) throws Exception
+	{		
+		if (type.equals("transcripts") || type.equals("*"))	{
+			doIndex("transcript", Transcript.class, null, 25);
+		}
+		
+		if (type.equals("meetings") || type.equals("*"))	{
+			doIndex("meeting", Meeting.class, null, 10);
+		}
+		
+		if (type.equals("calendars") || type.equals("*"))	{
+			doIndex("calendar", Calendar.class, null, 25);
+		}
+		
+		if (type.equals("bills") || type.equals("*"))	{
+			doIndex("bill", Bill.class, SORTINDEX_DESCENDING, 25);
+		}
+		
+		if (type.equals("billevents") || type.equals("*"))	{
+			doIndex("billevent", BillEvent.class, null, 25);
+		}
+		
+		if (type.equals("votes") || type.equals("*"))	{
+			doIndex("vote", Vote.class, null, 25);
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void doIndex(String type, Class objClass, String sort, int pageSize) throws IOException {	
+		int start = 1;
+		int end = start+pageSize;
+		
+		PersistenceManager pm = PMF.getPersistenceManager();
+		Collection<Object> result = null;
+		
+		deleteAllDocumentByType(type);
+		
+		do {			
+			System.out.println(type + " : " + start);
+			result = PMF.getDetachedObjects(objClass, sort, start, end);
+			indexSenateObjects(result, pm);
+			start += pageSize;
+			end = start+pageSize;
+		}
+		while (result.size() == pageSize);
+		
+	}	
+	
+    public  boolean indexSenateObjects (Collection<?> objects, PersistenceManager pm) throws IOException
     {
     	createIndex ();
     	
     	boolean overwrite = false;
     	
-    	Directory fsDirectory = FSDirectory.open(new File(indexDir));
         Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        IndexWriter indexWriter = new IndexWriter(fsDirectory, analyzer, overwrite, MaxFieldLength.UNLIMITED);
+        IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, overwrite, MaxFieldLength.UNLIMITED);
        
     	Iterator<?> it = objects.iterator();
-    	
     	while (it.hasNext()) {
     		Object obj = it.next();
     		
@@ -143,7 +454,7 @@ public class SearchEngine implements OpenLegConstants{
     				supp.setCalendar(cal);
     				
     				try {
-    	    			indexSenateObject(supp, indexWriter, false, pm);
+    	    			indexSenateObject(supp, indexWriter, pm);
     	    		}
     	    		catch (Exception e) {
     	    			logger.warn("unable to index senate supp",e);
@@ -152,7 +463,7 @@ public class SearchEngine implements OpenLegConstants{
     		}
     		else {
 	    		try {
-	    			indexSenateObject(obj, indexWriter, false, pm);
+	    			indexSenateObject(obj, indexWriter, pm);
 	    		}
 	    		catch (Exception e) {
 	    			logger.warn("unable to index senate object: " + obj.getClass().getName(),e);
@@ -165,15 +476,13 @@ public class SearchEngine implements OpenLegConstants{
     	return true;
     }
     
-    public  static boolean indexSenateObject (Object obj, IndexWriter indexWriter, boolean closeIndex, PersistenceManager pm) throws Exception
+    public boolean indexSenateObject (Object obj, IndexWriter indexWriter, PersistenceManager pm) throws Exception
     {
     	if (indexWriter == null) {
 	    	createIndex ();
 	    	
-	    	Directory fsDirectory = FSDirectory.open(new File(indexDir));
-	        
 	        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-	        indexWriter = new IndexWriter(fsDirectory, analyzer, true, MaxFieldLength.UNLIMITED);
+	        indexWriter = new IndexWriter(getDirectory(), analyzer, true, MaxFieldLength.UNLIMITED);
 	        indexWriter.setMaxBufferedDeleteTerms(0);
     	}
     	
@@ -304,7 +613,7 @@ public class SearchEngine implements OpenLegConstants{
 	    		while (itAnd.hasNext()) {
 	    			Iterator<Meeting> itMeetings = itAnd.next().getMeetings().iterator();
 	    			while (itMeetings.hasNext()) {
-	    				indexSenateObject (itMeetings.next(), indexWriter, false, pm);
+	    				indexSenateObject (itMeetings.next(), indexWriter, pm);
 	    			}	
 	    		}
     		}
@@ -464,133 +773,13 @@ public class SearchEngine implements OpenLegConstants{
     		addDocument (type, id, title, searchContent.toString(), fields, indexWriter,obj);
     	}
     	
-    	if (closeIndex) {
-    		indexWriter.close();
-    	}
-    	
     	return true;
     }
-    
-    public  static boolean deleteSenateObject (Object obj,  PersistenceManager pm) throws Exception
-    {
-    	IndexWriter indexWriter;
-		Directory fsDirectory = FSDirectory.open(new File(indexDir));
-        
-        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        indexWriter = new IndexWriter(fsDirectory, analyzer, true, MaxFieldLength.UNLIMITED);
-        indexWriter.setMaxBufferedDeleteTerms(0);
 	
-    	String type = null;
-    	String id = null;
-    	 
-    	if (obj instanceof Bill) {
-    		type = "bill";
-            id = ((Bill)obj).getSenateBillNo();
-    	}
-    	else if (obj instanceof Supplemental) {
-    		type = "calendar";
-    		id = ((Supplemental)obj).getCalendar().getId();
-    	}
-    	else if (obj instanceof Agenda) {
-    		Agenda agenda = (Agenda)obj;
-    		
-    		if (agenda.getAddendums() != null) {
-	    		Iterator<Addendum> itAnd = agenda.getAddendums().iterator();
-	    		while (itAnd.hasNext()) {
-	    			Iterator<Meeting> itMeetings = itAnd.next().getMeetings().iterator();
-	    			while (itMeetings.hasNext()) {
-	    				Meeting meeting = itMeetings.next();
-	    				deleteSenateObject (meeting, pm);
-	    			}
-    			}
-    		}
-    	}
-    	else if (obj instanceof Meeting) { 
-    		type = "meeting";
-    		id = ((Meeting)obj).getId();
-		}
-    	else if (obj instanceof Transcript) {
-    		type = "transcript";
-    		id = ((Transcript)obj).getId();
-		}
-    	else if (obj instanceof Vote) {
-    		type = "vote";
-    		id = ((Vote)obj).getId();
-		}
-    	else if (obj instanceof BillEvent) {
-    		type = "action";
-    		id = ((BillEvent)obj).getBillEventId();
-    	}
-    
-    	if (type != null){
-    		deleteDocument (type, id, indexWriter);
-    	}
-    	
-    	indexWriter.close();
-    	return true;
-    }
-    
-    public  static boolean deleteSenateObjectById (String type, String id) throws Exception
-    {
-    	closeIndex();
-    	
-    	IndexWriter indexWriter;
-		Directory fsDirectory = FSDirectory.open(new File(indexDir));
-        
-        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        indexWriter = new IndexWriter(fsDirectory, analyzer, false, MaxFieldLength.UNLIMITED);
-        
-       // indexWriter.setMaxBufferedDeleteTerms(1);
-	
-    	deleteDocument (type, id, indexWriter);
-    
-    	indexWriter.close();
-    	
-    	
-    	openIndex();
-    	
-    	return true;
-    }
-    
-    private static void indexBillEvent (Bill bill, BillEvent billEvent, StringBuilder searchContent, HashMap<String,String> fields)
-    {
-		fields.put("when", billEvent.getEventDate().getTime()+"");
-		fields.put("billno", billEvent.getBillId() );
-		
-		searchContent.append(billEvent.getBillId()).append(" ");
-		
-		try
-		{
-			if (bill.getSponsor()!=null) {
-    			searchContent.append(bill.getSponsor().getFullname()).append(" ");
-    			fields.put("sponsor", bill.getSponsor().getFullname());
-    		}
-    		
-            if (bill.getCoSponsors()!=null) {
-            	StringBuilder cosponsor = new StringBuilder();
-            	Iterator<Person> itCosp = bill.getCoSponsors().iterator();
-            	
-            	while (itCosp.hasNext()) {
-            		cosponsor.append((itCosp.next()).getFullname());
-            		
-            		if (itCosp.hasNext())
-            			cosponsor.append(", ");
-            	}
-            	
-            	fields.put("cosponsors", cosponsor.toString());
-            }
-		}
-		catch (Exception e)
-		{
-			logger.warn("couldn't get bill from BillEvent:" + billEvent.getBillEventId(),e);
-		}
-		
-		searchContent.append(billEvent.getEventText());
-    }
     /**
      * Add one document to the Lucene index
      */
-    public  static void addDocument(String otype, String oid, String title, String searchString, HashMap<String,String> fields, IndexWriter indexWriter, Object o) throws IOException
+    public void addDocument(String otype, String oid, String title, String searchString, HashMap<String,String> fields, IndexWriter indexWriter, Object o) throws IOException
     {
 		Document document = new Document();
  
@@ -611,7 +800,7 @@ public class SearchEngine implements OpenLegConstants{
            	document.add(new Field("oxml", OriginalApiConverter.doXml(o),Field.Store.YES,Field.Index.ANALYZED));
            	document.add(new Field("ojson", OriginalApiConverter.doJson(o),Field.Store.YES,Field.Index.ANALYZED));
            	document.add(new Field("oxml_new",XStreamBuilder.xml(o),Field.Store.YES,Field.Index.ANALYZED));
-               document.add(new Field("ojson_new",JsonConverter.getJson(o).toString(),Field.Store.YES,Field.Index.ANALYZED));
+            document.add(new Field("ojson_new",JsonConverter.getJson(o).toString(),Field.Store.YES,Field.Index.ANALYZED));
            }
        }
        catch(Exception e) {
@@ -641,7 +830,6 @@ public class SearchEngine implements OpenLegConstants{
         
         try {
             Query query = new QueryParser(Version.LUCENE_CURRENT, "oid", indexWriter.getAnalyzer()).parse("oid:" + oid);
-
             indexWriter.deleteDocuments(query);
             indexWriter.addDocument(document);
         } catch (Exception e) {
@@ -649,382 +837,6 @@ public class SearchEngine implements OpenLegConstants{
           }
         
     }
-    
-    /**
-     * Add one document to the Lucene index
-     */
-    public  static void deleteDocument(String otype, String oid, IndexWriter indexWriter) throws IOException
-    {        
-		logger.info("deleting document: " + otype + "=" + oid);
-
-        try {
-            Query query = new QueryParser(Version.LUCENE_CURRENT, "oid", indexWriter.getAnalyzer()).parse("otype:" + otype + " AND oid:" + oid);
-            indexWriter.deleteDocuments(query);
-	    }
-        catch (Exception e) {
-			logger.warn("error deleting document to index: " + otype + "=" + oid, e);
-        }
-    }
-    
-    /**
-     * Add one document to the Lucene index
-     */
-    public static void deleteAllDocumentByType(String otype) throws IOException
-    {
-    	Directory fsDirectory = FSDirectory.open(new File(indexDir));
-        
-        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        IndexWriter indexWriter = new IndexWriter(fsDirectory, analyzer, false, MaxFieldLength.UNLIMITED);
-       
-		logger.info("deleting all document: " + otype);
-
-        try {
-            Query query = new QueryParser(Version.LUCENE_CURRENT, "otype", indexWriter.getAnalyzer()).parse("otype:" + otype);
-            indexWriter.deleteDocuments(query);
-		} 
-		catch (Exception e) {
-			logger.warn("error deleting document to index: " + otype, e);
-		}
-    	indexWriter.close();
-    }
-    
-    public static SearchResultSet doSearch (String searchText, int start, int max, String sortField, boolean sortOrder) throws IOException, ParseException
-	{
-    	if(!searchText.contains("oid") || !searchText.contains("otype")) {
-    		if(searchText.matches(BillCleaner.BILL_SEARCH_REGEXP)) {
-    			
-    			searchText = BillCleaner.billFormat(searchText);
-    			searchText = "oid:" + searchText + "~";
-    		}
-    	}
-    	
-    	IndexSearcher searcher = openIndex();
-
-        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        Query query = new QueryParser(Version.LUCENE_CURRENT, "osearch", analyzer).parse(searchText);
-        
-        return doPagingSearch (searcher, query, start, max, sortField, sortOrder);
-    }
-    
-    /**
-     * judge if the index exists already
-     */
-    public static boolean ifIndexExist(){
-        File directory = new File(indexDir);
-        if(0 < directory.listFiles().length){
-            return true;
-        } 
-        else{
-            return false;
-        }
-    }
-    
-    public static SearchResultSet doPagingSearch(Searcher searcher, Query query, int start, int numberOfResults, String sortField, boolean reverseSort ) throws IOException
-    {
-    	 SearchResultSet srs = null;
-    	 
-    	try {
-	      // Collect enough docs to show 5 pages
-	      TopScoreDocCollector collector = TopScoreDocCollector.create(numberOfResults, false);
-	      searcher.search(query, collector);
-	      ScoreDoc[] hits = collector.topDocs().scoreDocs;
-	      
-	      int numTotalHits = collector.getTotalHits();
-	      
-	      logger.info(numTotalHits + " total matching documents (" + query.toString() + ")");
-	      
-	      collector = TopScoreDocCollector.create(numTotalHits, false);
-	      
-	      Sort sort = null;
-	      
-	      if (sortField != null) {
-	    	  try {
-	    		  sort = new Sort(new SortField(sortField, SortField.STRING, reverseSort));
-		    	  Filter filter = null;
-		    	  
-		    	  hits = searcher.search(query, filter, start + numberOfResults, sort).scoreDocs;
-	    	  }
-	    	  catch (Exception e) {
-	    		  e.printStackTrace();
-	    	  }
-	      }
-	      else {
-	    	  searcher.search(query, collector);
-	    	  hits = collector.topDocs().scoreDocs;
-	      }
-	    
-	
-	      srs = new SearchResultSet();
-	      
-	      srs.totalHitCount = numTotalHits;
-	      srs.results = new ArrayList<SearchResult>();
-	      	      	           
-	      for (int i = start;(i < hits.length && i < start + numberOfResults); i++) {
-	    	  
-	    	  Document doc = searcher.doc(hits[i].doc);
-	
-	    	  SearchResult sr = new SearchResult();
-	    	  sr.type = doc.get("otype");
-	    	  sr.id = doc.get("oid");
-	    	  sr.title = doc.get("title");
-	    	  sr.title_sortby = doc.get("title_sortby");
-	    	  sr.summary = doc.get("summary");
-	    	  
-	    	  sr.xml = doc.get("oxml");
-	    	  sr.json = doc.get("ojson");
-	    	  
-	    	  sr.score = hits[i].score;
-	    	  sr.fields = new HashMap<String,String>(); 
-	    	 
-	    	  if (doc.get("modified")!=null)
-	    		  sr.lastModified = new Date(Long.parseLong(doc.get("modified")));
-	    	  
-	    	  Iterator<Fieldable> itFields = doc.getFields().iterator();
-	    	  while (itFields.hasNext()) {
-	    		  Field field = (Field)itFields.next();
-	    		  sr.fields.put(field.name(), field.stringValue());
-	    	  }
-	    	  
-	    	  srs.results.add(sr);
-	      }
-	      
-    	}
-    	catch (Exception e) {
-    		logger.warn("Search Exception: " + query.toString(),e);
-    	}
-    	
-	    return srs;
-    }
-    
-	public static void main (String[] args) throws Exception	
-	{
-		
-//		System.out.println(getApiV2Search("xml", "bill", "S66023", null, 0, 1, false).getResults());
-		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		
-		String line = null;
-		int start = 1;
-		int max = 10;
-		
-		System.out.print("openleg search > ");
-		while (!(line = reader.readLine()).equals("quit"))
-		{
-			if (line.startsWith("index "))
-				indexSenateData(line.substring(line.indexOf(" ")+1));
-			else if (line.startsWith("optimize"))
-				optimizeIndex();
-			else if (line.startsWith("delete"))
-			{
-				StringTokenizer cmd = new StringTokenizer(line.substring(line.indexOf(" ")+1)," ");
-				String type = cmd.nextToken();
-				String id = cmd.nextToken();
-				
-				deleteSenateObjectById(type, id);
-			}
-			else if (line.startsWith("create"))
-				createIndex();
-			else
-				SearchEngine.doSearch(line,start, max, null, false);
-			
-			System.out.print("openleg search > ");
-		}
-		System.out.println("Exiting Search Engine");
-		
-	}
-	
-	public static void indexSenateData(String type) throws Exception
-	{		
-		if (type.equals("transcripts") || type.equals("*"))	{
-			doIndex("transcript", Transcript.class, null, 25);
-		}
-		
-		if (type.equals("meetings") || type.equals("*"))	{
-			doIndex("meeting", Meeting.class, null, 10);
-		}
-		
-		if (type.equals("calendars") || type.equals("*"))	{
-			doIndex("calendar", Calendar.class, null, 25);
-		}
-		
-		if (type.equals("bills") || type.equals("*"))	{
-			doIndex("bill", Bill.class, SORTINDEX_DESCENDING, 25);
-		}
-		
-		if (type.equals("billevents") || type.equals("*"))	{
-			doIndex("billevent", BillEvent.class, null, 25);
-		}
-		
-		if (type.equals("votes") || type.equals("*"))	{
-			doIndex("vote", Vote.class, null, 25);
-		}
-		
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static void doIndex(String type, Class objClass, String sort, int pageSize) throws IOException {	
-		int start = 1;
-		int end = start+pageSize;
-		
-		PersistenceManager pm = PMF.getPersistenceManager();
-		Collection<Object> result = null;
-		
-		deleteAllDocumentByType(type);
-		
-		do {			
-			System.out.println(type + " : " + start);
-			result = PMF.getDetachedObjects(objClass, sort, start, end);
-			indexSenateObjects(result, pm);
-			start += pageSize;
-			end = start+pageSize;
-		}
-		while (result.size() == pageSize);
-		
-	}
-	
-	
-	public static String getApiV1Search(String codeType, String otype, String oid, String sortField, int start, int numberOfResults, boolean reverseSort) {
-    			    	
-		try {
-			
-			SearchResultSet srs = doSearch(
-					((otype != null) ? "otype:" + otype : "") +
-					((oid != null) ? (
-							(otype!=null) ? " AND oid:" : "")+ oid : ""),
-					start, numberOfResults, sortField, reverseSort);
-			
-			ArrayList<SearchResult> lst = srs.getResults();
-			
-			if(!lst.isEmpty()) {
-				return (codeType.equals("xml") ? lst.iterator().next().xml: lst.iterator().next().json);
-			}
-						
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-    	
-    }
-	
-	
-	
-	public static SenateResponse getApiV2Search(String codeType, String otype, String oid, String sortField, int start, int numberOfResults, boolean reverseSort) {
-    			
-    	SenateResponse senResp = new SenateResponse();
-    			    	
-		try {
-			
-			SearchResultSet srs = doV2Search(
-					((otype != null) ? "otype:" + otype : "") +
-					((oid != null) ? (
-							(otype!=null) ? " AND oid:" : "")+ oid : ""),
-					start, numberOfResults, sortField, reverseSort);
-			
-			ArrayList<SearchResult> lst = srs.getResults();
-			
-			for(SearchResult sr:lst) {
-				senResp.addResult((codeType.equals("xml") ? sr.xml : (codeType.equals("json") ? sr.json : "")));
-			}
-			
-			senResp.addMetadataByKey("totalresults", srs.getTotalHitCount());
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
-		return senResp;
-    	
-    }
-    
-    
-    public static SearchResultSet doV2Search(String searchText, int start, int max, String sortField, boolean reverseSort) throws ParseException, IOException {
-		
-    	IndexSearcher searcher = openIndex();
-
-        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        Query query = new QueryParser(Version.LUCENE_CURRENT, "osearch", analyzer).parse(searchText);
-    	
-    	
-    	
-        SearchResultSet srs = null;
-        
-        try
-    	{
-	      // Collect enough docs to show 5 pages
-	      TopScoreDocCollector collector = TopScoreDocCollector.create(max, false);
-	      searcher.search(query, collector);
-	      ScoreDoc[] hits = null;
-	      
-	      int numTotalHits = collector.getTotalHits();
-	      
-	      logger.info(numTotalHits + " total matching documents (" + query.toString() + ")");
-	      
-	      collector = TopScoreDocCollector.create(numTotalHits, false);
-	      
-	      Sort sort = null;
-	      
-	      if (sortField != null)
-	      {
-	    	  sort = new Sort(new SortField(sortField, SortField.STRING, reverseSort));
-	    	  Filter filter = null;
-	    	  
-	    	  hits = searcher.search(query, filter, start + max, sort).scoreDocs;
-	      }
-	      else
-	      {
-	    	  searcher.search(query, collector);
-	    	  hits = collector.topDocs().scoreDocs;
-	      }
-	    	
-	      srs = new SearchResultSet();
-	      
-	      srs.totalHitCount = numTotalHits;
-	      srs.results = new ArrayList<SearchResult>();
-	      	      	           
-	      for (int i = start;(i < hits.length && i < start + max); i++)
-	      {
-	    	  Document doc = searcher.doc(hits[i].doc);
-	
-	    	  SearchResult sr = new SearchResult();
-	    	  sr.xml = doc.get("oxml_new");
-	    	  sr.json = doc.get("ojson_new");
-	    	  sr.score = hits[i].score;
-	    	  
-	    	 
-	    	  if (doc.get("modified")!=null)
-	    		  sr.lastModified = new Date(Long.parseLong(doc.get("modified")));
-	    	  
-	    	  sr.fields = new HashMap<String,String>();
-	    	  
-	    	  Iterator<Fieldable> itFields = doc.getFields().iterator();
-	    	  Field field = null;
-	    	  
-	    	  while (itFields.hasNext())
-	    	  {
-	    		  field = (Field)itFields.next();
-	    		  sr.fields.put(field.name(), field.stringValue());
-	    	  }
-	    	  
-	    	  srs.results.add(sr);
-	      }
-	      
-    	}
-    	catch (Exception e)
-    	{
-    		logger.warn("Search Exception: " + query.toString(),e);
-    	}
-    	
-	
-	     return srs;   
-        
-	}
-	
-	
 	
 
 }

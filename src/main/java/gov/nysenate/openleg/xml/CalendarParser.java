@@ -9,7 +9,7 @@ import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.Section;
 import gov.nysenate.openleg.model.calendar.Sequence;
 import gov.nysenate.openleg.model.calendar.Supplemental;
-import gov.nysenate.openleg.search.SearchEngine;
+import gov.nysenate.openleg.search.SearchEngine1;
 import gov.nysenate.openleg.xml.calendar.XMLCalno;
 import gov.nysenate.openleg.xml.calendar.XMLSENATEDATA;
 import gov.nysenate.openleg.xml.calendar.XMLSection;
@@ -150,11 +150,11 @@ public class CalendarParser implements OpenLegConstants {
 	
 
 		Transaction currentTx = pm.currentTransaction();
-		
+		SearchEngine1 engine = new SearchEngine1();
 		try
 		{
 	        currentTx.begin();
-			SearchEngine.indexSenateObjects(objectsToUpdate,pm);
+			engine.indexSenateObjects(objectsToUpdate,pm);
 			currentTx.commit();
 		}
 		catch (Exception e)
@@ -163,7 +163,7 @@ public class CalendarParser implements OpenLegConstants {
 		}
 		
 
-        SearchEngine.optimizeIndex();
+        engine.optimizeIndex();
 	}
 	
 	
