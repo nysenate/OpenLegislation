@@ -4,7 +4,6 @@ import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.util.BillCleaner;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -288,7 +287,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			srs = null;
 			
 
-			srs = SearchEngine.doSearch(term,start,pageSize,sortField,sortOrder);
+			srs = new SearchEngine1().search(term,start,pageSize,sortField,sortOrder);
 
 			if (srs != null)
 			{

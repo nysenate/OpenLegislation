@@ -11,7 +11,7 @@ import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.committee.Attendance;
-import gov.nysenate.openleg.search.SearchEngine;
+import gov.nysenate.openleg.search.SearchEngine1;
 import gov.nysenate.openleg.xml.committee.*;
 
 import java.io.File;
@@ -172,6 +172,7 @@ public class CommitteeParser implements OpenLegConstants
 		Object next = null;
 		
 		
+		SearchEngine1 engine = new SearchEngine1();
 		
 		while (it.hasNext())
 		{
@@ -184,7 +185,7 @@ public class CommitteeParser implements OpenLegConstants
 			
 	        try
 	        {
-	        	
+        		
 	        	
 	        	if (trans.isActive())
 	        		trans.rollback();
@@ -215,7 +216,7 @@ public class CommitteeParser implements OpenLegConstants
 
 				}
 				
-				SearchEngine.indexSenateObjects(objectsToUpdate, pm);
+				engine.indexSenateObjects(objectsToUpdate, pm);
 				
 				trans.commit();
 		        
@@ -234,7 +235,7 @@ public class CommitteeParser implements OpenLegConstants
 	       
 	        pm.close();
 	      
-	        SearchEngine.optimizeIndex();
+	        engine.optimizeIndex();
 	        
 		}
 		
@@ -470,7 +471,7 @@ public class CommitteeParser implements OpenLegConstants
 			logger.info("removing agenda: " + agenda.getId());
 			
 			try {
-				SearchEngine.deleteSenateObject(agenda, pm);
+				new SearchEngine1().deleteSenateObject(agenda, pm);
 			} catch (Exception e) {
 				
 				logger.error("error deleting Agenda from search index: " + agenda.getId(),e);

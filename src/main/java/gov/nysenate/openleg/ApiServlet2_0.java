@@ -1,6 +1,6 @@
 package gov.nysenate.openleg;
 
-import gov.nysenate.openleg.search.SearchEngine;
+import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.search.SearchResultSet;
 import gov.nysenate.openleg.util.BillCleaner;
 
@@ -24,7 +24,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 	private static final String SRV_DELIM = "/";
 	
 	public static void main(String[] args) {
-		System.out.println(SearchEngine.getApiV2Search("xml","bill","s1234",null,0,1,true).getResults().iterator().next());
+		System.out.println(new SearchEngine2().get("xml","bill","s1234",null,0,1,true).getResults().iterator().next());
 	}
        
     public ApiServlet2_0() {
@@ -90,7 +90,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 				
 				req.setAttribute("term",term);
 				
-				SearchResultSet srs = SearchEngine.doSearch(term, start, pageSize, sortField, sortOrder);
+				SearchResultSet srs = new SearchEngine2().search(term, start, pageSize, sortField, sortOrder);
 				
 				if (srs != null)
 				{

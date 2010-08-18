@@ -6,7 +6,7 @@ import gov.nysenate.openleg.model.BillEvent;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.search.SearchEngine;
+import gov.nysenate.openleg.search.SearchEngine1;
 import gov.nysenate.openleg.util.BillCleaner;
 
 import java.io.BufferedReader;
@@ -145,7 +145,7 @@ public class BasicParser implements OpenLegConstants {
 				
 				parseTranscriptFile(new BufferedReader (new FileReader (dataPath)));
 				
-				SearchEngine.indexSenateObjects(objectsToUpdate, persistenceManager);
+				new SearchEngine1().indexSenateObjects(objectsToUpdate, persistenceManager);
 				objectsToUpdate.clear();
 				
 				currentTx.commit();
@@ -662,7 +662,7 @@ public class BasicParser implements OpenLegConstants {
 			try
 			{
 				objectsToUpdate.add(currentBill);
-				SearchEngine.indexSenateObjects(objectsToUpdate, persistenceManager);
+				new SearchEngine1().indexSenateObjects(objectsToUpdate, persistenceManager);
 				objectsToUpdate.clear();
 			}
 			catch (IOException ioe)
@@ -875,12 +875,11 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 				bill.setSameAs(sameAsBillNo);
 				
 				StringTokenizer st = new StringTokenizer(sameAsBillNo,",");
-				String singleSameAs = null;
 				
 				while (st.hasMoreTokens())
 				{
 				
-					singleSameAs = st.nextToken().trim().replace(" ", "");
+					//String singleSameAs = st.nextToken().trim().replace(" ", "");
 					
 					/*
 					//now check if the same as bill is set properly
@@ -1164,7 +1163,7 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 
 				PMF.deleteBillEvents(persistenceManager, currentBill);
 				
-				SearchEngine.deleteSenateObjectById("action", currentBill.getSenateBillNo() + "-*");
+				new SearchEngine1().deleteSenateObjectById("action", currentBill.getSenateBillNo() + "-*");
 				
 			} catch (Exception e) {
 				
