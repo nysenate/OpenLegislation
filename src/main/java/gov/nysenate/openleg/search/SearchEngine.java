@@ -18,7 +18,6 @@ import gov.nysenate.openleg.util.OriginalApiConverter;
 import gov.nysenate.openleg.xstream.XStreamBuilder;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
@@ -38,74 +37,46 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 abstract class SearchEngine extends Lucene implements SearchEngineInterface, OpenLegConstants {
 
 	protected DateFormat DATE_FORMAT_MEDIUM = java.text.DateFormat.getDateInstance(DateFormat.MEDIUM);
     
-    public boolean deleteSenateObject (Object obj,  PersistenceManager pm) throws Exception
+    public void deleteSenateObject (Object obj) throws Exception
     {
-    	String type = null;
-    	String id = null;
-    	 
-    	if (obj instanceof Bill) {
-    		type = "bill";
-            id = ((Bill)obj).getSenateBillNo();
+    	if (obj instanceof Agenda) {
+    		Agenda agenda = (Agenda)obj;
+    		if (agenda.getAddendums() != null)
+	    		for( Addendum addendum : agenda.getAddendums() ) 
+	    			for( Meeting meeting : addendum.getMeetings() ) {
+	    				deleteSenateObject( meeting );
+	    			}
+    	}
+    	else if (obj instanceof Bill) {
+            deleteSenateObjectById("bill",((Bill)obj).getSenateBillNo());
     	}
     	else if (obj instanceof Supplemental) {
-    		type = "calendar";
-    		id = ((Supplemental)obj).getCalendar().getId();
-    	}
-    	else if (obj instanceof Agenda) {
-    		Agenda agenda = (Agenda)obj;
-    		
-    		if (agenda.getAddendums() != null) {
-	    		Iterator<Addendum> itAnd = agenda.getAddendums().iterator();
-	    		while (itAnd.hasNext()) {
-	    			Iterator<Meeting> itMeetings = itAnd.next().getMeetings().iterator();
-	    			while (itMeetings.hasNext()) {
-	    				Meeting meeting = itMeetings.next();
-	    				deleteSenateObject (meeting, pm);
-	    			}
-    			}
-    		}
+    		deleteSenateObjectById("calendar",((Supplemental)obj).getCalendar().getId());
     	}
     	else if (obj instanceof Meeting) { 
-    		type = "meeting";
-    		id = ((Meeting)obj).getId();
+    		deleteSenateObjectById("meeting",((Meeting)obj).getId());
 		}
     	else if (obj instanceof Transcript) {
-    		type = "transcript";
-    		id = ((Transcript)obj).getId();
+    		deleteSenateObjectById("transcript",((Transcript)obj).getId());
 		}
     	else if (obj instanceof Vote) {
-    		type = "vote";
-    		id = ((Vote)obj).getId();
+    		deleteSenateObjectById("vote",((Vote)obj).getId());
 		}
     	else if (obj instanceof BillEvent) {
-    		type = "action";
-    		id = ((BillEvent)obj).getBillEventId();
+    		deleteSenateObjectById("action",((BillEvent)obj).getBillEventId());
     	}
-    
-    	if (type != null){
-    		deleteDocument (type, id);
-    	}
-    	
-    	return true;
     }
     
-    public boolean deleteSenateObjectById (String type, String id) throws Exception
-    {
+    public void deleteSenateObjectById (String type, String id) throws Exception {
     	closeIndex();
-    	
     	deleteDocument (type, id);
-    	
     	openIndex();
-    	
-    	return true;
     }
     
     private void indexBillEvent (Bill bill, BillEvent billEvent, StringBuilder searchContent, HashMap<String,String> fields)
