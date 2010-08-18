@@ -42,16 +42,12 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
-abstract class SearchEngine extends Lucene implements SearchEngineInterface, OpenLegConstants{
+abstract class SearchEngine extends Lucene implements SearchEngineInterface, OpenLegConstants {
 
 	protected DateFormat DATE_FORMAT_MEDIUM = java.text.DateFormat.getDateInstance(DateFormat.MEDIUM);
     
     public boolean deleteSenateObject (Object obj,  PersistenceManager pm) throws Exception
     {
-        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, true, MaxFieldLength.UNLIMITED);
-        indexWriter.setMaxBufferedDeleteTerms(0);
-	
     	String type = null;
     	String id = null;
     	 
@@ -95,10 +91,9 @@ abstract class SearchEngine extends Lucene implements SearchEngineInterface, Ope
     	}
     
     	if (type != null){
-    		deleteDocument (type, id, indexWriter);
+    		deleteDocument (type, id);
     	}
     	
-    	indexWriter.close();
     	return true;
     }
     
@@ -106,18 +101,7 @@ abstract class SearchEngine extends Lucene implements SearchEngineInterface, Ope
     {
     	closeIndex();
     	
-    	IndexWriter indexWriter;
-		Directory fsDirectory = FSDirectory.open(new File(indexDir));
-        
-        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        indexWriter = new IndexWriter(fsDirectory, analyzer, false, MaxFieldLength.UNLIMITED);
-        
-       // indexWriter.setMaxBufferedDeleteTerms(1);
-	
-    	deleteDocument (type, id, indexWriter);
-    
-    	indexWriter.close();
-    	
+    	deleteDocument (type, id);
     	
     	openIndex();
     	

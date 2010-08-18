@@ -162,8 +162,11 @@ public class Lucene {
 	    return srs;
     }
 
-    public void deleteDocument(String otype, String oid, IndexWriter indexWriter) throws IOException
-    {        
+    public void deleteDocument(String otype, String oid) throws IOException
+    {
+    	Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
+        IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, false, MaxFieldLength.UNLIMITED);
+    	
 		logger.info("deleting document: " + otype + "=" + oid);
 
         try {
@@ -173,6 +176,8 @@ public class Lucene {
         catch (Exception e) {
 			logger.warn("error deleting document to index: " + otype + "=" + oid, e);
         }
+        
+        indexWriter.close();
     }
     
     public void deleteAllDocumentByType(String otype) throws IOException
@@ -193,4 +198,5 @@ public class Lucene {
 		}
     	indexWriter.close();
     }
+
 }
