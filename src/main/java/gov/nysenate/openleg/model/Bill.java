@@ -22,6 +22,12 @@ import com.thoughtworks.xstream.annotations.*;
 
 import gov.nysenate.openleg.xstream.BillListConverter;
 import gov.nysenate.openleg.xstream.BillPersonConverter;
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.calendar.Supplemental;
+import gov.nysenate.openleg.model.committee.Meeting;
+import gov.nysenate.openleg.util.HideFrom;
+
+
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
@@ -31,6 +37,7 @@ public class Bill extends SenateObject implements Serializable
 {
 
 	@XStreamOmitField
+	@HideFrom(Object.class)
 	private static final long serialVersionUID = 5557623293161105544L;
 
 	@Persistent
@@ -81,6 +88,7 @@ public class Bill extends SenateObject implements Serializable
 	
 	@Persistent(defaultFetchGroup="true")
 	@XStreamConverter(BillListConverter.class)
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
 	private List<Bill> amendments;
 	
 	@Persistent
@@ -97,35 +105,42 @@ public class Bill extends SenateObject implements Serializable
 	@Element(column="bill_events_senate_bill_no_own")
 	@XStreamAlias("actions")
 	@XStreamConverter(BillListConverter.class)
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
 	private List<BillEvent> billEvents;
 	
 	@Persistent
 	@Column(name="FULLTEXT", jdbcType="LONGVARCHAR", length=250000)
 	@XStreamAlias("text")
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
 	private String fulltext;
 	
 	@Persistent
 	@Column(name="MEMO", jdbcType="LONGVARCHAR", length=250000)
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
 	private String memo;
 	
 	@Persistent
+	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
 	private String law;
 	
 	@Persistent
 	@Column(name="act_clause", jdbcType="VARCHAR", length=10000)
+	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
 	private String actClause;
 	
 	@Persistent
 	@Column(name="sort_index")
+	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
 	private int sortIndex = -1;
 	
 	@Persistent(defaultFetchGroup="true",mappedBy="bill")
 	@Join
 	@Order(column="integer_idx")
-//	@XStreamConverter(BillListConverter.class)
+	@HideFrom({Bill.class})
 	private List<Vote> votes;
 
 	@Persistent(defaultFetchGroup="true")
+	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
 	private Bill latestAmendment;
 	
 	

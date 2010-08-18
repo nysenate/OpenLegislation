@@ -1,5 +1,9 @@
 package gov.nysenate.openleg.model;
 
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.calendar.Supplemental;
+import gov.nysenate.openleg.model.committee.Meeting;
+import gov.nysenate.openleg.util.HideFrom;
 import gov.nysenate.openleg.xstream.VoteConverter;
 import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
 
@@ -33,6 +37,7 @@ public class Vote  extends SenateObject implements Serializable
 	/**
 	 * 
 	 */
+	@HideFrom(Object.class)
 	private static final long serialVersionUID = -7148919132633098797L;
 
 	
@@ -74,6 +79,7 @@ public class Vote  extends SenateObject implements Serializable
 	
 	@Persistent(defaultFetchGroup="true", dependent = "false")
 	@XmlTransient
+	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
 	private Bill bill;
 	
 

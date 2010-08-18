@@ -1,5 +1,10 @@
 package gov.nysenate.openleg.model;
 
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.calendar.Supplemental;
+import gov.nysenate.openleg.model.committee.Meeting;
+import gov.nysenate.openleg.util.HideFrom;
+
 import java.io.Serializable;
 
 import javax.jdo.annotations.Cacheable;
@@ -66,14 +71,17 @@ public class Person extends SenateObject implements Serializable
 	
 	@Persistent
 	@Column(name="branch")
+	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
 	private String branch;
 	
 	@Persistent
 	@Column(name="contact_info")
+	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
 	private String contactInfo;
 	
 	@Persistent
 	@Column(name="guid")
+	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
 	private String guid;
 	
 	/**

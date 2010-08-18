@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.model.calendar;
 
+import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.model.Supplemental;
+import gov.nysenate.openleg.util.HideFrom;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -64,9 +67,11 @@ public class Sequence  extends SenateObject implements Serializable {
 	
 	@Persistent
 	@Column(name="FULLTEXT", jdbcType="LONGVARCHAR", length=250000)
+	@HideFrom({Calendar.class, Supplemental.class})
 	private String notes;
 	
 	@Persistent(serialized = "false",dependent = "false")
+	@HideFrom({Calendar.class, Supplemental.class})
 	private Supplemental supplemental;
 
 	/**

@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model;
 
+import gov.nysenate.openleg.util.HideFrom;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -52,15 +54,15 @@ public class Transcript  extends SenateObject implements Serializable {
 	
 	@Persistent
 	@Column(name="transcriptTextProcessed", jdbcType="LONGVARCHAR", length=250000)
+	@HideFrom({Transcript.class})
 	private String transcriptTextProcessed;
 
-
-	
 	
 	@Persistent(serialized = "false",defaultFetchGroup="true")
 	@Join	
 	@Element(dependent = "false")  
 	@Order(column="integer_idx")
+	@HideFrom({Transcript.class})
 	private List<Bill> relatedBills;
 	
 	/*

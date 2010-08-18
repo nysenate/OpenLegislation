@@ -1,7 +1,10 @@
 package gov.nysenate.openleg.model.calendar;
 
 import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.model.Supplemental;
+import gov.nysenate.openleg.util.HideFrom;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -46,6 +49,7 @@ public class CalendarEntry  extends SenateObject implements Serializable {
 	
 	@Persistent
 	@Column(name="bill_high")
+	@HideFrom({Calendar.class, Supplemental.class})
 	private String billHigh;
 	
 	/**
@@ -64,17 +68,21 @@ public class CalendarEntry  extends SenateObject implements Serializable {
 	}
 
 	@Persistent(serialized = "false",dependent = "false",defaultFetchGroup="true")
+	@HideFrom({Calendar.class, Supplemental.class})
 	private Bill subBill;
 
 	@Persistent
+	@HideFrom({Calendar.class, Supplemental.class})
 	private Date motionDate;
 	
 	@Persistent(serialized = "false",dependent = "false",defaultFetchGroup="true")
 	@XmlTransient
+	@HideFrom({Calendar.class, Supplemental.class})
 	private Section section;
 	
 	@Persistent(serialized = "false",dependent = "false",defaultFetchGroup="true")
 	@XmlTransient
+	@HideFrom({Calendar.class, Supplemental.class})
 	private Sequence sequence;
 	
 	/**
