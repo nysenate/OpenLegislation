@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.model.calendar;
 
+import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.model.Supplemental;
+import gov.nysenate.openleg.util.HideFrom;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -68,6 +71,7 @@ public class Supplemental  extends SenateObject implements Serializable {
 	
 	@Persistent
 	@Column(name="supplemental_id")	
+	@HideFrom({Calendar.class, Supplemental.class})
 	private String supplementalId;
 	
 	
@@ -77,6 +81,7 @@ public class Supplemental  extends SenateObject implements Serializable {
 	@Persistent
 	@XmlTransient
 	@Element(dependent = "false")  
+	@HideFrom({Calendar.class, Supplemental.class})
 	private Calendar calendar;
 
 	

@@ -1,9 +1,12 @@
 package gov.nysenate.openleg.model.committee;
 
 import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.util.HideFrom;
 import gov.nysenate.openleg.model.Committee;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.calendar.Supplemental;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -84,6 +87,7 @@ public class Meeting  extends SenateObject implements Serializable {
 	@Element(dependent = "false")
 	@Join
 	@Order(column="integer_idx")
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
 	private List<Vote> votes;	
 	
 	@Persistent
@@ -100,6 +104,7 @@ public class Meeting  extends SenateObject implements Serializable {
 
 	@Persistent
 	@Element(dependent = "false")
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
 	private Committee committee;	
 
 	@Persistent(serialized = "false",defaultFetchGroup="true",mappedBy="meetings")
@@ -107,6 +112,7 @@ public class Meeting  extends SenateObject implements Serializable {
 	@Element(dependent = "false")
 	@Join
 	@Order(column="integer_idx")
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
 	private List<Addendum> addendums;
 	
 	
