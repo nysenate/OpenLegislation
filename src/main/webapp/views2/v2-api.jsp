@@ -15,7 +15,7 @@ String format = (String)request.getAttribute("format");
  <cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>" scope="application">
 <%
 
-out.write(XStreamBuilder.writeResponse(format,SearchEngine.getApiV2Search(format,type,term,null,0,1,true)));
+out.write(XStreamBuilder.writeResponse(format,new SearchEngine().getApiV2Search(format,type,term,null,0,1,true)));
 
 %>
 

@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.model.Supplemental;
 import gov.nysenate.openleg.util.HideFrom;
 
 import java.io.Serializable;

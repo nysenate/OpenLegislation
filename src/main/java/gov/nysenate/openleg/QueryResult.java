@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public class QueryResult {
 
-	public Collection result;
+	public Collection<?> result;
 	/**
 	 * @return the result
 	 */

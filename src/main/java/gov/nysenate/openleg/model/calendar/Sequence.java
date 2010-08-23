@@ -1,20 +1,15 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.model.Supplemental;
 import gov.nysenate.openleg.util.HideFrom;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jdo.annotations.Cacheable;
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.Element;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Join;
 import javax.jdo.annotations.Order;
