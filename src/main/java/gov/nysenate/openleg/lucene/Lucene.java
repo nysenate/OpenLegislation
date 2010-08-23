@@ -1,8 +1,10 @@
-package gov.nysenate.openleg.search;
+package gov.nysenate.openleg.lucene;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+
+import java.lang.annotation.Annotation;
 
 import org.apache.log4j.Logger;
 
@@ -19,6 +21,8 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
+
+import com.sun.accessibility.internal.resources.accessibility;
 
 public class Lucene {
 
@@ -131,29 +135,36 @@ public class Lucene {
     	indexWriter.close();
     }
 
-    public void addDocument(String otype, String oid, String searchString, Collection<Field> fields, IndexWriter indexWriter) throws IOException
+    public void addDocument(Object obj, IndexWriter indexWriter) throws InstantiationException,IllegalAccessException,IOException
     {
-        oid = oid.replace(" ","+"); //need to remove spaces from id's in order to have them properly work with Lucene
- 
-        logger.info("indexing document: " + otype + "=" + oid);
+        // This functionality should be somewhere else
+    	//oid = oid.replace(" ","+"); //need to remove spaces from id's in order to have them properly work with Lucene
+
+    	Document doc = new Document();
     	
-        try {
-        	
-        	fields.add(new Field("oid",oid,Field.Store.YES,Field.Index.ANALYZED));
-            fields.add(new Field("otype",otype,Field.Store.YES,Field.Index.ANALYZED));
-            fields.add(new Field("osearch",searchString,Field.Store.YES,Field.Index.ANALYZED));
-            fields.add(new Field("modified",new java.util.Date().getTime() + "",Field.Store.YES,Field.Index.ANALYZED));
-            
-            Document document = new Document();
-            for ( Field field : fields )
-            	document.add(field);
-            
-        	Term term = new Term("oid",oid);
-        	indexWriter.updateDocument(term, document);
-        	
-        } catch (Exception e) {
-        	logger.warn("error adding document to index: " + otype + "=" + oid, e);
-        }
-        
+    	Collection<Field> fields;
+    	LuceneConverter a = obj.getClass().getAnnotation(LuceneConverter.class);
+    	if (a!=null) {
+    		LuceneObjectConverter c = (LuceneObjectConverter) a.value().newInstance();
+    		doc.add(new Field("oid", c.lucene_oid(), Field.Store.YES,Field.Index.ANALYZED));
+    		doc.add(new Field("osearch", c.lucene_osearch(), Field.Store.NO,Field.Index.ANALYZED));
+    		doc.add(new Field("otype", c.lucene_otype(), Field.Store.YES,Field.Index.ANALYZED));
+    		fields = c.convert(obj);
+    	}
+    	else {
+    		LuceneObject lob = (LuceneObject)obj;
+    		doc.add(new Field("oid", lob.lucene_oid(), Field.Store.YES,Field.Index.ANALYZED));
+    		doc.add(new Field("osearch", lob.lucene_osearch(), Field.Store.NO,Field.Index.ANALYZED));
+    		doc.add(new Field("otype", lob.lucene_otype(), Field.Store.YES,Field.Index.ANALYZED));
+    		fields = lob.getLuceneFields();
+    	}
+    	
+    	for (Field f : fields) {
+    		doc.add(f);
+    	}
+    	
+    	logger.info("indexing document: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue());
+    	Term term = new Term("oid",doc.getField("oid").stringValue());
+    	indexWriter.updateDocument(term, doc);
     }
 }
