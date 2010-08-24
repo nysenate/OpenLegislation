@@ -8,5 +8,7 @@ public interface LuceneObject {
 	String lucene_osearch();
 	String lucene_otype();
 	
+	java.lang.reflect.Field[] lucene_fields();
+	
 	Collection<Field> getLuceneFields();
 }
