@@ -14,8 +14,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.core.TreeMarshaller;
 
-import gov.nysenate.openleg.model.*;
-
+import gov.nysenate.openleg.abstractmodel.SenateObject;
 /**
  * 
  * @author graylin
