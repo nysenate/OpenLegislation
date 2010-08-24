@@ -1,21 +1,11 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.util.HideFrom;
-
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
-import javax.jdo.annotations.Column;
-import javax.jdo.annotations.Element;
 import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.Join;
-import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -23,65 +13,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+import gov.nysenate.openleg.lucenemodel.LuceneSupplemental;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
 @XStreamAlias("supplemental")
-public class Supplemental  extends SenateObject implements Serializable {
-
-	
-	
-	
-	
-	@Persistent
-	@PrimaryKey
-	@XStreamAsAttribute
-	private String id;
-	
-	
-	
-	@Persistent
-	@Column(name="calendar_date")
-	private Date calendarDate;
-	
-	@Persistent
-	@Column(name="release_date_time")
-	private Date releaseDateTime;
-	
-	@Persistent(serialized = "false",defaultFetchGroup="true",mappedBy="supplemental")
-	@Join
-	@Element(dependent = "true") 
-	@Order(column="integer_idx")
-	private List<Section> sections;
-	
-	@Persistent(serialized = "false",dependent = "true",defaultFetchGroup="true",mappedBy="supplemental")
-	private Sequence sequence;
-	
-	
-	
-	
-	
-	
-	
-	@Persistent
-	@Column(name="supplemental_id")	
-	@HideFrom({Calendar.class, Supplemental.class})
-	private String supplementalId;
-	
-	
-	
-	private static final long serialVersionUID = 9085578668190714547L;
-	
-	@Persistent
-	@XmlTransient
-	@Element(dependent = "false")  
-	@HideFrom({Calendar.class, Supplemental.class})
-	private Calendar calendar;
-
-	
+public class Supplemental  extends LuceneSupplemental {
 	
 	/**
 	 * @return the sequence
@@ -124,8 +63,6 @@ public class Supplemental  extends SenateObject implements Serializable {
 	public void setReleaseDateTime(Date releaseDateTime) {
 		this.releaseDateTime = releaseDateTime;
 	}
-
-	
 
 	/**
 	 * @return the supplementalId

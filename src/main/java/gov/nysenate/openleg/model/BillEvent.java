@@ -1,8 +1,7 @@
 package gov.nysenate.openleg.model;
 
+import gov.nysenate.openleg.abstractmodel.SenateObject;
 
-
-import java.io.Serializable;
 import java.net.URLEncoder;
 import java.util.Date;
 
@@ -14,20 +13,13 @@ import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-
 
 @PersistenceCapable
 @XmlRootElement
 @Cacheable
 @XStreamAlias("billevent")
-public class BillEvent extends SenateObject implements Serializable
+public class BillEvent extends SenateObject
 {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6454218066307719092L;
 
 	@Persistent 
     @PrimaryKey

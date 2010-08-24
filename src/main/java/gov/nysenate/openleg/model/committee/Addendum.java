@@ -1,11 +1,7 @@
 package gov.nysenate.openleg.model.committee;
 
-import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.model.calendar.CalendarEntry;
-import gov.nysenate.openleg.model.calendar.Section;
+import gov.nysenate.openleg.abstractmodel.SenateObject;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,14 +23,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
-public class Addendum  extends SenateObject implements Serializable
+public class Addendum  extends SenateObject
 {
-
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 389622255665574925L;
 
 	@Persistent 
 	@PrimaryKey

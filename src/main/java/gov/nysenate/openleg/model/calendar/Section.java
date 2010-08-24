@@ -1,14 +1,12 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.abstractmodel.SenateObject;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.Element;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Join;
 import javax.jdo.annotations.Order;
@@ -24,12 +22,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
-public class Section  extends SenateObject implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2762718395794512282L;
+public class Section  extends SenateObject {
 
 	@Persistent
 	@PrimaryKey

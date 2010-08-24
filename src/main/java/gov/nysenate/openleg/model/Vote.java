@@ -1,13 +1,12 @@
 package gov.nysenate.openleg.model;
 
+import gov.nysenate.openleg.abstractmodel.SenateObject;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.util.HideFrom;
-import gov.nysenate.openleg.xstream.VoteConverter;
 import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,21 +24,12 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 @PersistenceCapable
 @XmlRootElement
 @Cacheable
 @XStreamAlias("vote")
-public class Vote  extends SenateObject implements Serializable 
-{
-
-	/**
-	 * 
-	 */
-	@HideFrom(Object.class)
-	private static final long serialVersionUID = -7148919132633098797L;
-
+public class Vote  extends SenateObject {
 	
 	@Persistent
 	@Column(name="vote_type")

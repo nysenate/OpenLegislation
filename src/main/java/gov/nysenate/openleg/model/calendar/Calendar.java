@@ -1,20 +1,10 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.util.HideFrom;
-
-import java.io.Serializable;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
-import javax.jdo.annotations.Column;
-import javax.jdo.annotations.Element;
 import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.Join;
-import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -22,73 +12,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+import gov.nysenate.openleg.lucenemodel.LuceneCalendar;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
 @XStreamAlias("calendar")
-public class Calendar  extends SenateObject implements Serializable {
+public class Calendar  extends LuceneCalendar {
 
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -9107882529284115806L;
-	
-	
-	@Persistent
-	@Column(name="year")
-	@XStreamAsAttribute
-	private int year;
-	
-	@Persistent
-	@Column(name="type")
-	@XStreamAsAttribute
-	private String type;
-	
-	@Persistent
-	@Column(name="session_year")
-	@XStreamAsAttribute
-	private int sessionYear;
-	
-	@Persistent
-	@Column(name="no")
-	@XStreamAsAttribute
-	private int no;
-	
-	
-	
-	
-	
-	
-	
-	@Persistent(serialized = "false",defaultFetchGroup="true",mappedBy="calendar")
-	@Join
-	@Element(dependent = "true")  
-	@Order(column="integer_idx")
-	private List<Supplemental> supplementals;
-	
-	
-	
-	
-	
-	
-	
-	
-
-	@Persistent
-	@PrimaryKey
-	@Column(name="id", jdbcType="VARCHAR", length=100)
-	@HideFrom({Calendar.class, Supplemental.class})
-	private String id;	
-	
-	public final static String TYPE_FLOOR = "floor";
-	public final static String TYPE_ACTIVE = "active";
-	
-	
-	
-	
 	/**
 	 * @return the id
 	 */
@@ -103,8 +35,6 @@ public class Calendar  extends SenateObject implements Serializable {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	
 
 	/**
 	 * @return the no
@@ -149,9 +79,7 @@ public class Calendar  extends SenateObject implements Serializable {
 	 */
 	public void setYear(int year) {
 		this.year = year;
-	}
-
-	
+	}	
 
 	/**
 	 * @return the type
@@ -168,11 +96,9 @@ public class Calendar  extends SenateObject implements Serializable {
 		this.type = type;
 	}
 	
-
 	/**
 	 * @return the supplementals
 	 */
-
 	@XmlElementWrapper(name = "supplementals")
 	@XmlElement(name = "supplemental")
 	public List<Supplemental> getSupplementals() {
@@ -200,6 +126,4 @@ public class Calendar  extends SenateObject implements Serializable {
 		
 		return false;
 	}
-
-	
 }

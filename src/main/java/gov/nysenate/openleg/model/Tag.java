@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model;
 
-import java.io.Serializable;
+import gov.nysenate.openleg.abstractmodel.SenateObject;
 
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.PersistenceCapable;
@@ -11,13 +11,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @PersistenceCapable
 @XStreamAlias("tag")
-public class Tag   extends SenateObject implements Serializable {
-
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1824821357282550555L;
+public class Tag   extends SenateObject {
 
 	@Persistent 
 	@PrimaryKey

@@ -1,11 +1,10 @@
 package gov.nysenate.openleg.model;
 
+import gov.nysenate.openleg.abstractmodel.SenateObject;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.util.HideFrom;
-
-import java.io.Serializable;
 
 import javax.jdo.annotations.Cacheable;
 import javax.jdo.annotations.Column;
@@ -23,15 +22,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 @XmlRootElement
 @Cacheable
 @XStreamAlias("cosponsor")
-public class Person extends SenateObject implements Serializable
+public class Person extends SenateObject
 {
-
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2514868513354685876L;
-
 	
 	@Persistent 
 	@Column(name="position")
@@ -43,31 +35,10 @@ public class Person extends SenateObject implements Serializable
 	@XStreamAsAttribute
 	private String fullname;
 	
-	
-	
-	
-	
-	
-	
-	
 	@Persistent
 	@PrimaryKey
 	@Column(name="id", jdbcType="VARCHAR")
 	private String id;
-	
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
 	
 	@Persistent
 	@Column(name="branch")
@@ -83,6 +54,20 @@ public class Person extends SenateObject implements Serializable
 	@Column(name="guid")
 	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
 	private String guid;
+	
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
 	
 	/**
 	 * @return the branch

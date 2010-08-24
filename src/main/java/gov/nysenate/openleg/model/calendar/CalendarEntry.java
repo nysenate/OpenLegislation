@@ -1,10 +1,9 @@
 package gov.nysenate.openleg.model.calendar;
 
+import gov.nysenate.openleg.abstractmodel.SenateObject;
 import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.util.HideFrom;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.jdo.annotations.Cacheable;
@@ -25,10 +24,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 @XmlRootElement
 @Cacheable
 @XStreamAlias("calendarEntries")
-public class CalendarEntry  extends SenateObject implements Serializable {
+public class CalendarEntry  extends SenateObject {
 
-	private static final long serialVersionUID = -5001514347176595621L;
-	
 	@Persistent
 	@PrimaryKey
 	@Column(name="id", jdbcType="VARCHAR", length=100)

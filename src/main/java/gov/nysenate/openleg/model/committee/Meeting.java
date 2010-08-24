@@ -1,26 +1,15 @@
 package gov.nysenate.openleg.model.committee;
 
 import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.util.HideFrom;
 import gov.nysenate.openleg.model.Committee;
-import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.Supplemental;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
-import javax.jdo.annotations.Column;
-import javax.jdo.annotations.Element;
 import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.Join;
-import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -28,101 +17,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+import gov.nysenate.openleg.lucenemodel.LuceneMeeting;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
 @XStreamAlias("meeting")
-public class Meeting  extends SenateObject implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1227728070971324391L;
-
-	
-	@Persistent
-	@Column(name="meeting_date_time")
-	@XStreamAsAttribute
-	private Date meetingDateTime;	
-	
-	@Persistent
-	@Column(name="meetday")
-	@XStreamAsAttribute
-	private String meetday;
-	
-	@Persistent
-	@Column(name="location")
-	@XStreamAsAttribute
-	private String location;	
-	
-	@Persistent 
-	@PrimaryKey
-	@Column(name="id", jdbcType="VARCHAR", length=100)
-	@XStreamAsAttribute
-	private String id;	
-	
-	@Persistent
-	@Column(name="committee_name")
-	@XStreamAsAttribute
-	private String committeeName;
-	
-	@Persistent
-	@Column(name="committee_chair")
-	@XStreamAsAttribute
-	private String committeeChair;
-	
-	
-	
-	
-	
-	@Persistent(serialized = "false",defaultFetchGroup="true")
-	@Join
-	@Order(column="integer_idx")
-	@Element(dependent = "false")
-	private List<Bill> bills;
-	
-	@Persistent(serialized = "false",defaultFetchGroup="true")
-	@Element(dependent = "false")
-	@Join
-	@Order(column="integer_idx")
-	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
-	private List<Vote> votes;	
-	
-	@Persistent
-	@Column(name="notes", jdbcType="LONGVARCHAR", length=250000)
-	private String notes;
-	
-	
-	
-	
-	
-	
-	
-	
-
-	@Persistent
-	@Element(dependent = "false")
-	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
-	private Committee committee;	
-
-	@Persistent(serialized = "false",defaultFetchGroup="true",mappedBy="meetings")
-	@XmlTransient
-	@Element(dependent = "false")
-	@Join
-	@Order(column="integer_idx")
-	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
-	private List<Addendum> addendums;
-	
-	
-	/*
-	@Persistent(serialized = "false",defaultFetchGroup="true",mappedBy="meeting")
-	@Join
-	@Order(column="integer_idx")
-	@Element(dependent = "false")
-	private List<Attendance> attendees;
-	*/
+public class Meeting  extends LuceneMeeting {
 	
 	/**
 	 * @return the votes
@@ -153,7 +55,6 @@ public class Meeting  extends SenateObject implements Serializable {
 		this.committeeChair = committeeChair;
 	}
 	
-
 	/**
 	 * @return the id
 	 */

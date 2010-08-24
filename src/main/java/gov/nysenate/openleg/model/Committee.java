@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.model;
 
+import gov.nysenate.openleg.abstractmodel.SenateObject;
 import gov.nysenate.openleg.model.committee.Meeting;
-import gov.nysenate.openleg.xstream.CommitteeMeetingConverter;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.jdo.annotations.Cacheable;
@@ -15,18 +13,12 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 @PersistenceCapable
 @XmlRootElement
 @Cacheable
 @XStreamAlias("committee")
-public class Committee  extends SenateObject implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5985740129296458811L;
+public class Committee  extends SenateObject {
 
 	@Persistent
 	private String name;

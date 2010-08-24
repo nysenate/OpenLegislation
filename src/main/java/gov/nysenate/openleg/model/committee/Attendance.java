@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.model.committee;
 
-import java.io.Serializable;
-
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.Element;
 import javax.jdo.annotations.PersistenceCapable;
@@ -11,21 +9,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import gov.nysenate.openleg.abstractmodel.SenateObject;
 import gov.nysenate.openleg.model.Person;
-import gov.nysenate.openleg.model.SenateObject;
 
 import com.thoughtworks.xstream.annotations.*;
 
 
 @PersistenceCapable
 @XmlRootElement
-public class Attendance  extends SenateObject implements Serializable 
-{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8153392943570944276L;
+public class Attendance  extends SenateObject {
 
 	@Persistent 
 	@PrimaryKey
