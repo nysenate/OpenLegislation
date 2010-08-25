@@ -1,6 +1,5 @@
 package gov.nysenate.openleg;
 
-import gov.nysenate.openleg.abstractmodel.SenateObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.BillEvent;
 import gov.nysenate.openleg.model.Committee;

@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.abstractmodel.SenateObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.util.HideFrom;
 
@@ -24,7 +23,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 @XmlRootElement
 @Cacheable
 @XStreamAlias("calendarEntries")
-public class CalendarEntry  extends SenateObject {
+public class CalendarEntry {
 
 	@Persistent
 	@PrimaryKey

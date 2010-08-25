@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.abstractmodel.SenateObject;
-
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;

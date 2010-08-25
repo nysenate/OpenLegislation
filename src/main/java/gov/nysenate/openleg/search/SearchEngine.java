@@ -2,6 +2,7 @@ package gov.nysenate.openleg.search;
 
 import gov.nysenate.openleg.PMF;
 import gov.nysenate.openleg.OpenLegConstants;
+import gov.nysenate.openleg.lucene.Lucene;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.BillEvent;
 import gov.nysenate.openleg.model.Person;
@@ -29,6 +30,7 @@ import java.util.StringTokenizer;
 
 import javax.jdo.PersistenceManager;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -40,7 +42,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.util.Version;
 
 abstract class SearchEngine extends Lucene implements SearchEngineInterface, OpenLegConstants {
-
+	
 	protected DateFormat DATE_FORMAT_MEDIUM = java.text.DateFormat.getDateInstance(DateFormat.MEDIUM);
     
     public void deleteSenateObject (Object obj) throws Exception

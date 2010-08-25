@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.abstractmodel.SenateObject;
-
 import java.net.URLEncoder;
 import java.util.Date;
 

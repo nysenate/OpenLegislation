@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.abstractmodel.SenateObject;
 import gov.nysenate.openleg.model.committee.Meeting;
 import java.util.ArrayList;
 
