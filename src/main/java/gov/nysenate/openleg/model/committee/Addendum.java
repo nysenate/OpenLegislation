@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.model.committee;
 
-import gov.nysenate.openleg.abstractmodel.SenateObject;
-
 import java.util.Date;
 import java.util.List;
 
@@ -23,8 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
-public class Addendum  extends SenateObject
-{
+public class Addendum {
 
 	@Persistent 
 	@PrimaryKey

@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.model.committee;
 
-import gov.nysenate.openleg.abstractmodel.SenateObject;
-
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
@@ -35,7 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
-public class Agenda  extends SenateObject {
+public class Agenda {
 
 
 	@Persistent 

@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import gov.nysenate.openleg.abstractmodel.SenateObject;
 import gov.nysenate.openleg.model.Person;
 
 import com.thoughtworks.xstream.annotations.*;
@@ -17,7 +16,7 @@ import com.thoughtworks.xstream.annotations.*;
 
 @PersistenceCapable
 @XmlRootElement
-public class Attendance  extends SenateObject {
+public class Attendance {
 
 	@Persistent 
 	@PrimaryKey

@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.abstractmodel.SenateObject;
-
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
@@ -22,7 +20,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
-public class Section  extends SenateObject {
+public class Section {
 
 	@Persistent
 	@PrimaryKey
