@@ -429,28 +429,53 @@ public class Bill extends SenateObject implements LuceneObject  {
 	
 	
 	@Override
-	public String luceneOtype() { return "bill"; }
+	public String luceneOtype() {
+		return "bill";
 	
-	@Override
-	public String luceneOid() { return senateBillNo+"-"+year; }
-	
-	@Override
-	public String luceneOsearch() { return null; }
-	
-	public String getLuceneCosponsors() {
-		StringBuilder response = new StringBuilder();
-		for( Person sponsor: coSponsors) {
-			response.append(sponsor.getId());
-		}
-		return response.toString();
 	}
 	
-	public String getLuceneAmmendments() {
+	@Override
+	public String luceneOid() {
+		return senateBillNo+"-"+year;
+		
+	}
+	
+	@Override
+	public String luceneOsearch() {
+		return senateBillNo
+			+ (sameAs != null ? " - " + sameAs:"")
+			+ (sponsor != null ? " - " + sponsor.getFullname():"")
+			+ (title != null ? " - " + title:"")
+			+ (summary != null ? " - " + summary:"");
+		
+	}
+	
+	public String getLuceneCoSponsors() {
 		StringBuilder response = new StringBuilder();
-		for(Bill amendment: amendments) {
-			response.append(amendment.getSenateBillNo()).append(" ");
+		for( Person sponsor : coSponsors) {
+			response.append(sponsor.getFullname() + ", ");
 		}
-		return response.toString();
+		return response.toString().replaceAll(", $", "");
+	}
+	
+	public String getLuceneAmendments() {
+		StringBuilder response = new StringBuilder();
+		for(Bill amendment : amendments) {
+			response.append(amendment.getSenateBillNo() + ", ");
+		}
+		return response.toString().replaceAll(", $", "");
+	}
+	
+	public String getLuceneBillEvents() {
+		StringBuilder response = new StringBuilder();
+		for(BillEvent be : billEvents) {
+			response.append(be.getEventText() + ", ");
+		}
+		return response.toString().replaceAll(", $", "");
+	}
+	
+	public String getLuceneSponsor() {
+		return sponsor.getFullname();
 	}
 	
 	

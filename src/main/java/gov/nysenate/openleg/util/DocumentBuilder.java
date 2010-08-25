@@ -46,12 +46,13 @@ public class DocumentBuilder {
 		
 		/*bill from db*/
 		Bill b = PMF.getDetachedBill("S5000");
-		HashMap<String,org.apache.lucene.document.Field> map = new DocumentBuilder().converter(b, null);
-		
-		for(String s:map.keySet()) {
-			org.apache.lucene.document.Field field = map.get(s);
-			System.out.println(s);
-		}
+		System.out.println(b.getSponsor().getFullname());
+//		HashMap<String,org.apache.lucene.document.Field> map = new DocumentBuilder().converter(b, null);
+//		
+//		for(String s:map.keySet()) {
+//			org.apache.lucene.document.Field field = map.get(s);
+//			System.out.println(s);
+//		}
 		
 //		System.out.println();
 		
@@ -136,6 +137,7 @@ public class DocumentBuilder {
 					}
 					
 					if(fieldObject != null) {
+						System.out.println(name + " : " + fieldObject.toString());
 						fields.put(name,
 							new org.apache.lucene.document.Field(
 								name,
