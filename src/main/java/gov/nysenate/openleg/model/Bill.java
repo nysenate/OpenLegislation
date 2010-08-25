@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
@@ -20,7 +18,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.*;
-import org.apache.lucene.document.Field;
 
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.lucene.LuceneObject;
@@ -40,6 +37,7 @@ public class Bill extends SenateObject implements LuceneObject  {
 	
 	@Persistent
 	@XStreamAsAttribute
+	@LuceneField
 	protected int year;
 	
 	@Persistent
@@ -52,39 +50,47 @@ public class Bill extends SenateObject implements LuceneObject  {
 	@Persistent
 	@Column(name="title", jdbcType="VARCHAR", length=1000)
 	@XStreamAsAttribute
+	@LuceneField
 	protected String title;
 	
 	@Persistent
 	@Column(name="law_section")
 	@XStreamAsAttribute
+	@LuceneField
 	protected String lawSection;
 	
 	@Persistent
 	@Column(name="same_as", jdbcType="VARCHAR", length=256)
 	@XStreamAsAttribute
+	@LuceneField
 	protected String sameAs;
 	
 	@Persistent(defaultFetchGroup="true")
+	@LuceneField
 	protected Person sponsor;
 	
 	@Persistent(defaultFetchGroup="true")
 	@Join
 	@Order(column="integer_idx")
 	@XStreamAlias("cosponsors")
+	@LuceneField
 	protected List<Person> coSponsors;
 	
 	@Persistent(defaultFetchGroup="true")
 	@XStreamConverter(BillListConverter.class)
 	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	@LuceneField
 	protected List<Bill> amendments;
 	
 	@Persistent
 	@Column(name="summary", jdbcType="VARCHAR", length=10000)
+	@LuceneField
 	protected String summary;
 	
 	@Persistent
 	@Column(name="current_committee")
 	@XStreamAlias("committee")
+	@LuceneField("committee")
 	protected String currentCommittee;
 	
 	@Persistent(defaultFetchGroup="true")
@@ -93,26 +99,31 @@ public class Bill extends SenateObject implements LuceneObject  {
 	@XStreamAlias("actions")
 	@XStreamConverter(BillListConverter.class)
 	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	@LuceneField("actions")
 	protected List<BillEvent> billEvents;
 	
 	@Persistent
 	@Column(name="FULLTEXT", jdbcType="LONGVARCHAR", length=250000)
 	@XStreamAlias("text")
 	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	@LuceneField("text")
 	protected String fulltext;
 	
 	@Persistent
 	@Column(name="MEMO", jdbcType="LONGVARCHAR", length=250000)
 	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	@LuceneField
 	protected String memo;
 	
 	@Persistent
 	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
+	@LuceneField
 	protected String law;
 	
 	@Persistent
 	@Column(name="act_clause", jdbcType="VARCHAR", length=10000)
 	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
+	@LuceneField
 	protected String actClause;
 	
 	@Persistent
@@ -128,6 +139,7 @@ public class Bill extends SenateObject implements LuceneObject  {
 
 	@Persistent(defaultFetchGroup="true")
 	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
+	@LuceneField
 	protected Bill latestAmendment;
 	
 	/**
