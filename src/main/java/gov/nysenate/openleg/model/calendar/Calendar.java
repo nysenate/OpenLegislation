@@ -3,8 +3,15 @@ package gov.nysenate.openleg.model.calendar;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
+import javax.jdo.annotations.Column;
+import javax.jdo.annotations.Element;
 import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.Join;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -12,14 +19,53 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import gov.nysenate.openleg.lucenemodel.LuceneCalendar;
+import gov.nysenate.openleg.lucene.LuceneField;
+import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.util.HideFrom;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
 @XStreamAlias("calendar")
-public class Calendar  extends LuceneCalendar {
+public class Calendar  extends SenateObject implements LuceneObject {
+
+	@Persistent
+	@Column(name="year")
+	@XStreamAsAttribute
+	protected int year;
+	
+	@Persistent
+	@Column(name="type")
+	@XStreamAsAttribute
+	protected String type;
+	
+	@Persistent
+	@Column(name="session_year")
+	@XStreamAsAttribute
+	protected int sessionYear;
+	
+	@Persistent
+	@Column(name="no")
+	@XStreamAsAttribute
+	protected int no;
+	
+	@Persistent(serialized = "false",defaultFetchGroup="true",mappedBy="calendar")
+	@Join
+	@Element(dependent = "true")  
+	@Order(column="integer_idx")
+	protected List<Supplemental> supplementals;
+	
+	@Persistent
+	@PrimaryKey
+	@Column(name="id", jdbcType="VARCHAR", length=100)
+	@HideFrom({Calendar.class, Supplemental.class})
+	protected String id;	
+	
+	public final static String TYPE_FLOOR = "floor";
+	public final static String TYPE_ACTIVE = "active";
 
 	/**
 	 * @return the id
@@ -125,5 +171,24 @@ public class Calendar  extends LuceneCalendar {
 		}
 		
 		return false;
+	}
+	
+	
+	@Override
+	public String luceneOid() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneOsearch() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneOtype() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

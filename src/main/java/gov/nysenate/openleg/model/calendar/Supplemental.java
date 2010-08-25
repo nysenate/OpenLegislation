@@ -4,8 +4,14 @@ import java.util.Date;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
+import javax.jdo.annotations.Column;
+import javax.jdo.annotations.Element;
 import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.Join;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -13,14 +19,51 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import gov.nysenate.openleg.lucenemodel.LuceneSupplemental;
+import gov.nysenate.openleg.lucene.LuceneField;
+import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.util.HideFrom;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
 @XStreamAlias("supplemental")
-public class Supplemental  extends LuceneSupplemental {
+public class Supplemental  extends SenateObject implements LuceneObject {
+	
+	@Persistent
+	@PrimaryKey
+	@XStreamAsAttribute
+	protected String id;
+	
+	@Persistent
+	@Column(name="calendar_date")
+	protected Date calendarDate;
+	
+	@Persistent
+	@Column(name="release_date_time")
+	protected Date releaseDateTime;
+	
+	@Persistent(serialized = "false",defaultFetchGroup="true",mappedBy="supplemental")
+	@Join
+	@Element(dependent = "true") 
+	@Order(column="integer_idx")
+	protected List<Section> sections;
+	
+	@Persistent(serialized = "false",dependent = "true",defaultFetchGroup="true",mappedBy="supplemental")
+	protected Sequence sequence;
+	
+	@Persistent
+	@Column(name="supplemental_id")	
+	@HideFrom({Calendar.class, Supplemental.class})
+	protected String supplementalId;
+	
+	@Persistent
+	@XmlTransient
+	@Element(dependent = "false")  
+	@HideFrom({Calendar.class, Supplemental.class})
+	protected Calendar calendar;
 	
 	/**
 	 * @return the sequence
@@ -140,6 +183,24 @@ public class Supplemental  extends LuceneSupplemental {
 		return false;
 	}
 
+	
+	@Override
+	public String luceneOid() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneOsearch() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneOtype() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
 /*
 <supplemental id="">

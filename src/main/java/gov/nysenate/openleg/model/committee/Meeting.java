@@ -1,15 +1,17 @@
 package gov.nysenate.openleg.model.committee;
 
-import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.Committee;
-import gov.nysenate.openleg.model.Vote;
-
 import java.util.Date;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
+import javax.jdo.annotations.Column;
+import javax.jdo.annotations.Element;
 import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.Join;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -17,14 +19,93 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import gov.nysenate.openleg.lucenemodel.LuceneMeeting;
+import gov.nysenate.openleg.lucene.LuceneField;
+import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Committee;
+import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.calendar.Supplemental;
+import gov.nysenate.openleg.util.HideFrom;
+
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
 @XStreamAlias("meeting")
-public class Meeting  extends LuceneMeeting {
+public class Meeting  extends SenateObject implements LuceneObject {
+
+	@Persistent
+	@Column(name="meeting_date_time")
+	@XStreamAsAttribute
+	protected Date meetingDateTime;	
+	
+	@Persistent
+	@Column(name="meetday")
+	@XStreamAsAttribute
+	protected String meetday;
+	
+	@Persistent
+	@Column(name="location")
+	@XStreamAsAttribute
+	protected String location;	
+	
+	@Persistent 
+	@PrimaryKey
+	@Column(name="id", jdbcType="VARCHAR", length=100)
+	@XStreamAsAttribute
+	protected String id;	
+	
+	@Persistent
+	@Column(name="committee_name")
+	@XStreamAsAttribute
+	protected String committeeName;
+	
+	@Persistent
+	@Column(name="committee_chair")
+	@XStreamAsAttribute
+	protected String committeeChair;
+	
+	@Persistent(serialized = "false",defaultFetchGroup="true")
+	@Join
+	@Order(column="integer_idx")
+	@Element(dependent = "false")
+	protected List<Bill> bills;
+	
+	@Persistent(serialized = "false",defaultFetchGroup="true")
+	@Element(dependent = "false")
+	@Join
+	@Order(column="integer_idx")
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	protected List<Vote> votes;	
+	
+	@Persistent
+	@Column(name="notes", jdbcType="LONGVARCHAR", length=250000)
+	protected String notes;
+
+	@Persistent
+	@Element(dependent = "false")
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	protected Committee committee;	
+
+	@Persistent(serialized = "false",defaultFetchGroup="true",mappedBy="meetings")
+	@XmlTransient
+	@Element(dependent = "false")
+	@Join
+	@Order(column="integer_idx")
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	protected List<Addendum> addendums;
+	
+	/*
+	@Persistent(serialized = "false",defaultFetchGroup="true",mappedBy="meeting")
+	@Join
+	@Order(column="integer_idx")
+	@Element(dependent = "false")
+	protected List<Attendance> attendees;
+	*/
 	
 	/**
 	 * @return the votes
@@ -223,6 +304,25 @@ public class Meeting  extends LuceneMeeting {
 		}
 		
 		return false;
+	}
+	
+	
+	@Override
+	public String luceneOid() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneOsearch() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneOtype() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

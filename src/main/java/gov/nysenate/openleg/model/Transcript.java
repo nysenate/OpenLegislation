@@ -4,17 +4,72 @@ import java.util.Date;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
+import javax.jdo.annotations.Column;
+import javax.jdo.annotations.Element;
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.Join;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import gov.nysenate.openleg.lucenemodel.LuceneTranscript;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.apache.lucene.document.Field;
+
+import gov.nysenate.openleg.lucene.LuceneField;
+import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.util.HideFrom;
 
 @PersistenceCapable
 @XmlRootElement
 @Cacheable
 @XStreamAlias("transcript")
-public class Transcript  extends LuceneTranscript {
+public class Transcript  extends SenateObject implements LuceneObject {
+
+	@Persistent(valueStrategy=IdGeneratorStrategy.INCREMENT)
+	@PrimaryKey
+	@XStreamAsAttribute
+	protected String id;
+	
+	@Persistent
+	@Column(name="time_stamp")
+	protected Date timeStamp;
+	
+	@Persistent
+	@Column(name="location")
+	protected String location;
+	
+	@Persistent
+	protected String type;
+	
+	@Persistent
+	@Column(name="transcriptText", jdbcType="LONGVARCHAR", length=250000)
+	@XStreamAlias("text")
+	protected String transcriptText;
+	
+	@Persistent
+	@Column(name="transcriptTextProcessed", jdbcType="LONGVARCHAR", length=250000)
+	@HideFrom({Transcript.class})
+	protected String transcriptTextProcessed;
+	
+	@Persistent(serialized = "false",defaultFetchGroup="true")
+	@Join	
+	@Element(dependent = "false")  
+	@Order(column="integer_idx")
+	@HideFrom({Transcript.class})
+	protected List<Bill> relatedBills;
+	
+	/*
+	@Persistent(serialized = "false",defaultFetchGroup="true")
+	@Join
+	@Order(column="integer_idx")
+	@Element(dependent = "false")  
+	protected List<Tag> tags;
+	*/
+
 	
 	/**
 	 * @return the type
@@ -114,4 +169,23 @@ public class Transcript  extends LuceneTranscript {
 	public void setTranscriptTextProcessed(String transcriptTextProcessed) {
 		this.transcriptTextProcessed = transcriptTextProcessed;
 	}
+	
+	@Override
+	public String luceneOid() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneOsearch() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneOtype() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

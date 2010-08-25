@@ -1,25 +1,134 @@
 package gov.nysenate.openleg.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
+import javax.jdo.annotations.Column;
+import javax.jdo.annotations.Element;
 import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.Join;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.*;
+import org.apache.lucene.document.Field;
 
-import gov.nysenate.openleg.lucenemodel.LuceneBill;
+import gov.nysenate.openleg.lucene.LuceneField;
+import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.calendar.Supplemental;
+import gov.nysenate.openleg.model.committee.Meeting;
+import gov.nysenate.openleg.util.HideFrom;
+import gov.nysenate.openleg.xstream.BillListConverter;
+
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
 @XStreamAlias("bill")
-public class Bill extends LuceneBill {
+public class Bill extends SenateObject implements LuceneObject  {
+	
+	@Persistent
+	@XStreamAsAttribute
+	protected int year;
+	
+	@Persistent
+	@PrimaryKey
+	@Column(name="senate_bill_no", jdbcType="VARCHAR", length=20)
+	@XStreamAlias("senateId")
+	@XStreamAsAttribute
+	protected String senateBillNo;	
+	
+	@Persistent
+	@Column(name="title", jdbcType="VARCHAR", length=1000)
+	@XStreamAsAttribute
+	protected String title;
+	
+	@Persistent
+	@Column(name="law_section")
+	@XStreamAsAttribute
+	protected String lawSection;
+	
+	@Persistent
+	@Column(name="same_as", jdbcType="VARCHAR", length=256)
+	@XStreamAsAttribute
+	protected String sameAs;
+	
+	@Persistent(defaultFetchGroup="true")
+	protected Person sponsor;
+	
+	@Persistent(defaultFetchGroup="true")
+	@Join
+	@Order(column="integer_idx")
+	@XStreamAlias("cosponsors")
+	protected List<Person> coSponsors;
+	
+	@Persistent(defaultFetchGroup="true")
+	@XStreamConverter(BillListConverter.class)
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	protected List<Bill> amendments;
+	
+	@Persistent
+	@Column(name="summary", jdbcType="VARCHAR", length=10000)
+	protected String summary;
+	
+	@Persistent
+	@Column(name="current_committee")
+	@XStreamAlias("committee")
+	protected String currentCommittee;
+	
+	@Persistent(defaultFetchGroup="true")
+	@Order(column="bill_events_integer_idx")
+	@Element(column="bill_events_senate_bill_no_own")
+	@XStreamAlias("actions")
+	@XStreamConverter(BillListConverter.class)
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	protected List<BillEvent> billEvents;
+	
+	@Persistent
+	@Column(name="FULLTEXT", jdbcType="LONGVARCHAR", length=250000)
+	@XStreamAlias("text")
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	protected String fulltext;
+	
+	@Persistent
+	@Column(name="MEMO", jdbcType="LONGVARCHAR", length=250000)
+	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	protected String memo;
+	
+	@Persistent
+	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
+	protected String law;
+	
+	@Persistent
+	@Column(name="act_clause", jdbcType="VARCHAR", length=10000)
+	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
+	protected String actClause;
+	
+	@Persistent
+	@Column(name="sort_index")
+	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
+	protected int sortIndex = -1;
+	
+	@Persistent(defaultFetchGroup="true",mappedBy="bill")
+	@Join
+	@Order(column="integer_idx")
+	@HideFrom({Bill.class})
+	protected List<Vote> votes;
+
+	@Persistent(defaultFetchGroup="true")
+	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
+	protected Bill latestAmendment;
 	
 	/**
 	 * @return the amendments
@@ -167,60 +276,7 @@ public class Bill extends LuceneBill {
 	 */
 	public void setSummary(String summary) {
 		this.summary = summary;
-	}
-
-
-	/*
-	public List<BillEvent> getBillEvents() {
-		return billEvents;
-	}
-
-	public void addEvent (Date eventDate, String eventText)
-	{
-
-		if (billEvents == null)
-			billEvents = new ArrayList<BillEvent>();
-		
-		BillEvent bEvent = PMF.getBillEvent(this, eventDate, eventText);
-		
-		//only add it if the item is null
-		 if (bEvent == null)
-	        {
-	        	bEvent = new BillEvent(this,eventDate,eventText);
-	        	bEvent = PMF.getPersistenceManager().makePersistent(bEvent);
-	        	
-	        }
-		 
-		 
-		if (!billEvents.contains(bEvent))
-			 billEvents.add(bEvent);
-		
-	}*/
-	
-	/*
-	public void addCoSponsor (Person person)
-	{
-		if (coSponsors == null)
-			coSponsors = new ArrayList<Person>();
-		
-		if (!hasCoSponsor(person))
-			coSponsors.add(person);	
-	}
-	
-	public boolean hasCoSponsor (Person person)
-	{
-		Iterator<Person> itPerson = coSponsors.iterator();
-		while(itPerson.hasNext())
-		{
-			if (itPerson.next().getFullname().equalsIgnoreCase(person.getFullname()))
-			{
-				return true;
-			}
-		}
-		
-		return false;
-	}*/
-	
+	}	
 
 	/**
 	 * @return the votes
@@ -236,19 +292,11 @@ public class Bill extends LuceneBill {
 		this.coSponsors = coSponsors;
 	}
 
-	
-
-	public void addVote (Vote vote)
-	{
-
+	public void addVote (Vote vote) {
 		if (votes == null)
 			votes = new ArrayList<Vote>();
-		
 		votes.add(vote);
 	}
-
-	
-
 
 	/**
 	 * @return the sortIndex
@@ -344,23 +392,6 @@ public class Bill extends LuceneBill {
 	public void setLatestAmendment(Bill latestAmendment) {
 		this.latestAmendment = latestAmendment;
 	}
-	
-/*
-	public String getSubstitutedBy() {
-		return substitutedBy;
-	}
-
-	public void setSubstitutedBy(String substitutedBy) {
-		this.substitutedBy = substitutedBy;
-	}
-
-	public void setSubstitutedFor(String substitutedFor) {
-		this.substitutedFor = substitutedFor;
-	}
-
-	public String getSubstitutedFor() {
-		return substitutedFor;
-	}*/
 
 	@Override
 	public boolean equals(Object obj) {
@@ -383,4 +414,99 @@ public class Bill extends LuceneBill {
 	public List<BillEvent> getBillEvents() {
 		return billEvents;
 	}
+	
+	
+	@Override
+	public String luceneOtype() { return "bill"; }
+	
+	@Override
+	public String luceneOid() { return senateBillNo+"-"+year; }
+	
+	@Override
+	public String luceneOsearch() { return "osearch here..."; }
+	
+	public String getLuceneCosponsors() {
+		StringBuilder response = new StringBuilder();
+		for( Person sponsor: coSponsors) {
+			response.append(sponsor.getId());
+		}
+		return response.toString();
+	}
+	
+	public String getLuceneAmmendments() {
+		StringBuilder response = new StringBuilder();
+		for(Bill amendment: amendments) {
+			response.append(amendment.getSenateBillNo()).append(" ");
+		}
+		return response.toString();
+	}
+	
+	
+	/*
+	public String getSubstitutedBy() {
+		return substitutedBy;
+	}
+
+	public void setSubstitutedBy(String substitutedBy) {
+		this.substitutedBy = substitutedBy;
+	}
+
+	public void setSubstitutedFor(String substitutedFor) {
+		this.substitutedFor = substitutedFor;
+	}
+
+	public String getSubstitutedFor() {
+		return substitutedFor;
+	}*/
+	
+	/*
+	public List<BillEvent> getBillEvents() {
+		return billEvents;
+	}
+
+	public void addEvent (Date eventDate, String eventText)
+	{
+
+		if (billEvents == null)
+			billEvents = new ArrayList<BillEvent>();
+		
+		BillEvent bEvent = PMF.getBillEvent(this, eventDate, eventText);
+		
+		//only add it if the item is null
+		 if (bEvent == null)
+	        {
+	        	bEvent = new BillEvent(this,eventDate,eventText);
+	        	bEvent = PMF.getPersistenceManager().makePersistent(bEvent);
+	        	
+	        }
+		 
+		 
+		if (!billEvents.contains(bEvent))
+			 billEvents.add(bEvent);
+		
+	}*/
+	
+	/*
+	public void addCoSponsor (Person person)
+	{
+		if (coSponsors == null)
+			coSponsors = new ArrayList<Person>();
+		
+		if (!hasCoSponsor(person))
+			coSponsors.add(person);	
+	}
+	
+	public boolean hasCoSponsor (Person person)
+	{
+		Iterator<Person> itPerson = coSponsors.iterator();
+		while(itPerson.hasNext())
+		{
+			if (itPerson.next().getFullname().equalsIgnoreCase(person.getFullname()))
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}*/
 }
