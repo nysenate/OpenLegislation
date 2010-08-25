@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.calendar;
 
 import java.util.List;
+import java.util.HashMap;
 
 import javax.jdo.annotations.Cacheable;
 import javax.jdo.annotations.Column;
@@ -20,6 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.apache.lucene.document.Field;
 
 import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.model.SenateObject;
@@ -188,6 +190,11 @@ public class Calendar  extends SenateObject implements LuceneObject {
 	@Override
 	public String luceneOtype() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public HashMap<String,Field> luceneFields() {
 		return null;
 	}
 }

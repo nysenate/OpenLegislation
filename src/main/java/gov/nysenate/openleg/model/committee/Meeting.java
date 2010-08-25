@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.committee;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.apache.lucene.document.Field;
 
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.lucene.LuceneObject;
@@ -42,6 +44,7 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	@Persistent
 	@Column(name="meeting_date_time")
 	@XStreamAsAttribute
+	@LuceneField("date")
 	protected Date meetingDateTime;	
 	
 	@Persistent
@@ -52,6 +55,7 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	@Persistent
 	@Column(name="location")
 	@XStreamAsAttribute
+	@LuceneField
 	protected String location;	
 	
 	@Persistent 
@@ -63,17 +67,20 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	@Persistent
 	@Column(name="committee_name")
 	@XStreamAsAttribute
+	@LuceneField("committee")
 	protected String committeeName;
 	
 	@Persistent
 	@Column(name="committee_chair")
 	@XStreamAsAttribute
+	@LuceneField("chair")
 	protected String committeeChair;
 	
 	@Persistent(serialized = "false",defaultFetchGroup="true")
 	@Join
 	@Order(column="integer_idx")
 	@Element(dependent = "false")
+	@LuceneField
 	protected List<Bill> bills;
 	
 	@Persistent(serialized = "false",defaultFetchGroup="true")
@@ -81,10 +88,12 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	@Join
 	@Order(column="integer_idx")
 	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	@LuceneField
 	protected List<Vote> votes;	
 	
 	@Persistent
 	@Column(name="notes", jdbcType="LONGVARCHAR", length=250000)
+	@LuceneField
 	protected String notes;
 
 	@Persistent
@@ -98,6 +107,7 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	@Join
 	@Order(column="integer_idx")
 	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	@LuceneField
 	protected List<Addendum> addendums;
 	
 	/*
@@ -295,8 +305,7 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	@Override
-	public boolean equals(Object obj) {
+	@Override public boolean equals(Object obj) {
 		
 		if (obj != null && obj instanceof Meeting)
 		{
@@ -308,17 +317,15 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	}
 	
 	
-	@Override
-	public String luceneOid() { return committeeName+"-"+new SimpleDateFormat("MM-DD-YYYY").format(meetingDateTime); }
+	@Override public String luceneOid() { return committeeName+"-"+new SimpleDateFormat("MM-DD-YYYY").format(meetingDateTime); }
 
-	@Override
-	public String luceneOsearch() {
-		// TODO Auto-generated method stub
-		return null;
+	@Override public String luceneOsearch() {
+		return "temp string";
 	}
 
-	@Override
-	public String luceneOtype() { return "meeting"; }	
+	@Override public String luceneOtype() { return "meeting"; }
+	
+	@Override public HashMap<String,Field> luceneFields() { return null; }
 }
 /*
 <committee>
