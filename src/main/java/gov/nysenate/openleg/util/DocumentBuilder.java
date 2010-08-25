@@ -111,9 +111,9 @@ public class DocumentBuilder {
 			for(Field f:objectFields) {
 				AnnotatedField af = null;
 				if((af = getAnnotatedField(f)) != null) {
-					String name = (af.name == null) ? f.getName().toLowerCase() : af.name;
-					org.apache.lucene.document.Field.Store store = (af.store == null) ? DEFAULT_STORE:af.store;
-					org.apache.lucene.document.Field.Index index = (af.index == null) ? DEFAULT_INDEX:af.index;
+					String name = af.name.equals("!-_-!") ? f.getName().toLowerCase() : af.name;
+					org.apache.lucene.document.Field.Store store = af.store;
+					org.apache.lucene.document.Field.Index index = af.index;
 					
 					String fieldName = fixCase(f.getName());
 					

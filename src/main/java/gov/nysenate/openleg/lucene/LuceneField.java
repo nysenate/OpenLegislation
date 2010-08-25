@@ -5,11 +5,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.lucene.document.Field;
+
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LuceneField {
-	String value();
-	org.apache.lucene.document.Field.Store store();
-	org.apache.lucene.document.Field.Index index();
+	String value() default "!-_-!";
+	Field.Store store() default Field.Store.YES;
+	Field.Index index() default Field.Index.ANALYZED;
 }
 
