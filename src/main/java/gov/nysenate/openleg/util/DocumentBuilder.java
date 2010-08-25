@@ -3,21 +3,12 @@ package gov.nysenate.openleg.util;
 import gov.nysenate.openleg.PMF;
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.Transcript;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.committee.Meeting;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.apache.lucene.document.Document;
+import java.util.HashMap;
+
 
 public class DocumentBuilder {
 	
@@ -31,6 +22,7 @@ public class DocumentBuilder {
 	public static final String LUCENE_OTYPE = "luceneOtype";
 	public static final String LUCENE_OID = "luceneOid";
 	public static final String LUCENE_OSEARCH = "luceneOsearch";
+	public static final String LUCENE_FIELDS = "luceneFields";
 	
 	public static final String OTYPE = "otype";
 	public static final String OID = "oid";
@@ -61,12 +53,12 @@ public class DocumentBuilder {
 //		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00060-2009", "no descending");	
 //		System.out.println();
 //		
-//		/*transcript from db to xstream xml*/
+//		/*transcript from db*/
 //		System.out.println("\n\n\n-----TRANSCRIPT-----\n\n");
 //		Transcript t = PMF.getDetachedTranscript("292");
 //		System.out.println();
 //		
-//		/*meeting from db to xstream xml*/
+//		/*meeting from db*/
 //		System.out.println("\n\n\n-----MEETING-----\n\n");
 //		Collection<Meeting> meetings = PMF.getDetachedObjects(Meeting.class, "committeeName", ".*" + "Aging" + ".*", "meetingDateTime descending", 0, 1);
 //		List<String> meeting_exclude = new ArrayList<String>();
@@ -146,6 +138,13 @@ public class DocumentBuilder {
 								index));
 					}
 				}
+			}
+			
+			Method otherMethod = o.getClass().getDeclaredMethod(LUCENE_FIELDS);
+			HashMap<String,org.apache.lucene.document.Field> otherMap = (HashMap<String,org.apache.lucene.document.Field>)otherMethod.invoke(o);
+		
+			if(otherMap != null) {
+				fields.putAll(otherMap);
 			}
 		}
 		catch (Exception e) {
