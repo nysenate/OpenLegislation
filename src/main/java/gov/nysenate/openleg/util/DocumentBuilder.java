@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.PMF;
+import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -20,19 +21,37 @@ import org.apache.lucene.document.Document;
 
 public class DocumentBuilder {
 	
-	public static final String JAVA_PRIMITIVES = "char|byte|short|int|long|float|double|boolean|void";
-
+	public static final String JAVA_PRIMITIVES = "char|byte|short|int|long|float|double|boolean|void|String";
+	public static final String GET = "get";
+	public static final String LUCENE = "Lucene";
+	
+	public static final org.apache.lucene.document.Field.Store DEFAULT_STORE = org.apache.lucene.document.Field.Store.YES;
+	public static final org.apache.lucene.document.Field.Index DEFAULT_INDEX = org.apache.lucene.document.Field.Index.ANALYZED;
+	
+	public static final String LUCENE_OTYPE = "luceneOtype";
+	public static final String LUCENE_OID = "luceneOid";
+	public static final String LUCENE_OSEARCH = "luceneOsearch";
+	
+	public static final String OTYPE = "otype";
+	public static final String OID = "oid";
+	public static final String OSEARCH = "osearch";
 	
 	public static void main(String[] args) throws Exception {
+						
+//		
+//		DocumentBuilder db = new DocumentBuilder();
+//		TestObject to = db.new TestObject();
+//		
+//		converter(to, null);		
 		
-		DocumentBuilder db = new DocumentBuilder();
-		TestObject to = db.new TestObject();
+		/*bill from db*/
+		Bill b = PMF.getDetachedBill("S5000");
+		HashMap<String,org.apache.lucene.document.Field> map = new DocumentBuilder().converter(b, null);
 		
-		converter(to, null);		
-		
-//		/*bill from db*/
-//		Bill b = PMF.getDetachedBill("S5000");		
-//		converter(b, null);
+		for(String s:map.keySet()) {
+			org.apache.lucene.document.Field field = map.get(s);
+			System.out.println(s);
+		}
 		
 //		System.out.println();
 		
@@ -56,89 +75,94 @@ public class DocumentBuilder {
 //		}
 	}
 	
-	private static void converter(Object o, Collection<org.apache.lucene.document.Field> fields) {		
+	private String getLuceneFields(Object o, String method) throws Exception {
+		Method m = o.getClass().getDeclaredMethod(method);
+		return (String)m.invoke(o);		
+	}
+	
+	private HashMap<String,org.apache.lucene.document.Field> converter(Object o, HashMap<String,org.apache.lucene.document.Field> fields) {		
 		if(fields == null) {
-			fields = new ArrayList<org.apache.lucene.document.Field>();
+			fields = new HashMap<String,org.apache.lucene.document.Field>();
 		}
-				
-
+		
 		try {
+			fields.put(OTYPE,
+					new org.apache.lucene.document.Field(
+						OTYPE,
+						getLuceneFields(o, LUCENE_OTYPE),
+						DEFAULT_STORE,
+						DEFAULT_INDEX));
+			fields.put(OID,
+					new org.apache.lucene.document.Field(
+							OID,
+						getLuceneFields(o, LUCENE_OID),
+						DEFAULT_STORE,
+						DEFAULT_INDEX));
+			fields.put(OSEARCH,
+					new org.apache.lucene.document.Field(
+							OSEARCH,
+						getLuceneFields(o, LUCENE_OSEARCH),
+						DEFAULT_STORE,
+						DEFAULT_INDEX));
+			
+			
 			Field[] objectFields = o.getClass().getDeclaredFields();
 
 			for(Field f:objectFields) {
-								
-				if(isHidden(f, o.getClass()) || f.getName().contains("jdo") ||
-						Modifier.isStatic(f.getModifiers()))
-					continue;
-				
-				
-				String fieldName = fixCase(f.getName());
-				
-				String fieldType = f.getType().getSimpleName();
-				
-				Method fieldMethod = null;
-				Object fieldObject = null;				
-				try {
-					fieldMethod = o.getClass().getDeclaredMethod("get" + fieldName);
-					fieldObject = fieldMethod.invoke(o);
-
-				}
-				catch (Exception e) {
-					continue;
-				}
+				AnnotatedField af = null;
+				if((af = getAnnotatedField(f)) != null) {
+					String name = (af.name == null) ? f.getName().toLowerCase() : af.name;
+					org.apache.lucene.document.Field.Store store = (af.store == null) ? DEFAULT_STORE:af.store;
+					org.apache.lucene.document.Field.Index index = (af.index == null) ? DEFAULT_INDEX:af.index;
 					
-
-				
-				if(fieldObject != null) {
-					if(fieldType.matches(JAVA_PRIMITIVES + "|String")) {
-//						System.out.println(f.getName() + " : " + fieldMethod.invoke(o).getClass());
-						System.out.println("val: " + fieldObject);
+					String fieldName = fixCase(f.getName());
+					
+					Method fieldMethod = null;
+					Object fieldObject = null;
+					try {
+						fieldMethod = o.getClass().getDeclaredMethod(GET + LUCENE + fieldName);
+						fieldObject = fieldMethod.invoke(o);
 					}
-					else {
-						String collection = whichType(fieldObject.getClass());
-						
-						if(collection != null) {
-							System.out.println(f.getName() + " : collection" + " : " + collection);
+					catch(NoSuchMethodException e1) {
+						try {
+							fieldMethod = o.getClass().getDeclaredMethod(GET + fieldName);
+							fieldObject = fieldMethod.invoke(o);
 						}
-						
-						else {
-							System.out.println(f.getName() + " : " + fieldMethod.invoke(o).getClass());
-							
+						catch (NoSuchMethodException e2) {
+							f.setAccessible(true);
+							fieldObject = f.get(o);
+							f.setAccessible(false);
 						}
 					}
-				
-				
-
+					
+					if(fieldObject != null) {
+						fields.put(name,
+							new org.apache.lucene.document.Field(
+								name,
+								fieldObject.toString(),
+								store,
+								index));
+					}
 				}
 			}
-			
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public static String getName(Field field) {
-		return null;
-	}
-	public static String getIndexingType(Field field, Class<?> clazz) {
-		return null;
-	}
-	
-	
-	public static boolean isHidden(Field field, Class<?> clazz) {
-		HideFrom hideFrom = field.getAnnotation(HideFrom.class);
 		
-		if(hideFrom != null) {
-			if(classCompare(hideFrom.value(), clazz) != null) {
-				return true;
-			}
+		return fields;
+	}
+	
+	public AnnotatedField getAnnotatedField(Field field) {
+		LuceneField lf = field.getAnnotation(LuceneField.class);
+		if(lf != null) {
+			return new AnnotatedField(lf);
 			
 		}
-		return false;
+		return null;		
 	}
 	
-	public static String classCompare(Class<?>[] list, Class<?> clazz) {
+	public String classCompare(Class<?>[] list, Class<?> clazz) {
 		for(Class<?> c:list) {
 			if(c.equals(clazz)) {
 				return clazz.getSimpleName();
@@ -148,171 +172,23 @@ public class DocumentBuilder {
 		return null;
 	}
 	
-	public static String whichType(Class<?> clazz) {
-		Class<?>[] list = {Map.class, List.class, Set.class};
-		
-		for(Class<?> c:clazz.getInterfaces()) {
-			
-			String s = classCompare(list, c);
-			if(s != null) {
-				return s;
-			}
-			
-		}
-		
-		return null;
-		
-		
-	}
-	
-	private static String fixCase(String s) {
+	private String fixCase(String s) {
 		char[] chars = s.toCharArray();
 		
 		chars[0] = Character.toUpperCase(chars[0]);
 		
 		return new String(chars);
-	}
+	}	
 	
-	public class TestObject {
-		char c = 's';
-		byte by = 0x3;
-		short s = 0x3;
-		int i = 1;
-		long l = 1;
-		float f = 1;
-		double d = 1;
-		boolean bo = true;
+	class AnnotatedField {
+		public String name;
+		public org.apache.lucene.document.Field.Store store;
+		public org.apache.lucene.document.Field.Index index;
 		
-		@HideFrom({TestObject.class})
-		Bill bill = new Bill();
-		
-		HashMap<String,String> map = new HashMap<String,String>();
-		
-		ArrayList<String> list = new ArrayList<String>();
-
-		char[] chars = {'s'};
-		
-		String str = "hi";
-
-		public char getC() {
-			return c;
-		}
-
-		public byte getBy() {
-			return by;
-		}
-
-		public short getS() {
-			return s;
-		}
-
-		public int getI() {
-			return i;
-		}
-
-		public long getL() {
-			return l;
-		}
-
-		public float getF() {
-			return f;
-		}
-
-		public double getD() {
-			return d;
-		}
-
-		public boolean getBo() {
-			return bo;
-		}
-
-		public Bill getBill() {
-			return bill;
-		}
-
-		public HashMap<String, String> getMap() {
-			return map;
-		}
-
-		public ArrayList<String> getList() {
-			return list;
-		}
-
-		public char[] getChars() {
-			return chars;
-		}
-
-		public String getStr() {
-			return str;
-		}
-
-		public void setC(char c) {
-			this.c = c;
-		}
-
-		public void setBy(byte by) {
-			this.by = by;
-		}
-
-		public void setS(short s) {
-			this.s = s;
-		}
-
-		public void setI(int i) {
-			this.i = i;
-		}
-
-		public void setL(long l) {
-			this.l = l;
-		}
-
-		public void setF(float f) {
-			this.f = f;
-		}
-
-		public void setD(double d) {
-			this.d = d;
-		}
-
-		public void setBo(boolean bo) {
-			this.bo = bo;
-		}
-
-		public void setBill(Bill bill) {
-			this.bill = bill;
-		}
-
-		public void setMap(HashMap<String, String> map) {
-			this.map = map;
-		}
-
-		public void setList(ArrayList<String> list) {
-			this.list = list;
-		}
-
-		public void setChars(char[] chars) {
-			this.chars = chars;
-		}
-
-		public void setStr(String str) {
-			this.str = str;
-		}
-		
-
-		
-		
-		
+		public AnnotatedField(LuceneField luceneField) {
+			name = luceneField.value();
+			store = luceneField.store();
+			index = luceneField.index();
+		}	
 	}
-	
-	public class UnknownTypeException extends Exception {
-		private static final long serialVersionUID = 1L;
-		
-		public UnknownTypeException(String message) {
-			super(message);
-		}
-		public UnknownTypeException(String message, Throwable t) {
-			super(message,t);
-		}
-	}
-	
 }
