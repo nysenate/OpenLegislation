@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
@@ -18,6 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.*;
+import org.apache.lucene.document.Field;
 
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.lucene.LuceneObject;
@@ -428,20 +430,13 @@ public class Bill extends SenateObject implements LuceneObject  {
 	}
 	
 	
-	@Override
-	public String luceneOtype() {
-		return "bill";
+	@Override public String luceneOtype() { return "bill"; }
 	
-	}
+	@Override public String luceneOid() { return senateBillNo+"-"+year; }
 	
-	@Override
-	public String luceneOid() {
-		return senateBillNo+"-"+year;
-		
-	}
+	@Override public HashMap<String,Field> luceneFields() { return null; }
 	
-	@Override
-	public String luceneOsearch() {
+	@Override public String luceneOsearch() {
 		return senateBillNo
 			+ (sameAs != null ? " - " + sameAs:"")
 			+ (sponsor != null ? " - " + sponsor.getFullname():"")
@@ -478,7 +473,7 @@ public class Bill extends SenateObject implements LuceneObject  {
 		return sponsor.getFullname();
 	}
 	
-	
+
 	/*
 	public String getSubstitutedBy() {
 		return substitutedBy;

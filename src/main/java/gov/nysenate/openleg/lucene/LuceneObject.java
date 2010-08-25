@@ -1,7 +1,11 @@
 package gov.nysenate.openleg.lucene;
 
+import java.util.HashMap;
+import org.apache.lucene.document.Field;
+
 public interface LuceneObject {
-	String luceneOid();
-	String luceneOsearch();
-	String luceneOtype();
+	public String luceneOid();
+	public String luceneOsearch();
+	public String luceneOtype();
+	public HashMap<String,Field> luceneFields();
 }

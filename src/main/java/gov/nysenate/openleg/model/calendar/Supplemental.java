@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.calendar;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
@@ -21,6 +22,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.apache.lucene.document.Field;
 
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.lucene.LuceneObject;
@@ -40,10 +42,12 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 	
 	@Persistent
 	@Column(name="calendar_date")
+	@LuceneField("date")
 	protected Date calendarDate;
 	
 	@Persistent
 	@Column(name="release_date_time")
+	@LuceneField("releasedate")
 	protected Date releaseDateTime;
 	
 	@Persistent(serialized = "false",defaultFetchGroup="true",mappedBy="supplemental")
@@ -185,17 +189,16 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 	}
 
 	
-	@Override
-	public String luceneOid() { return calendar.getType()+"-"+new SimpleDateFormat("MM-DD-YYYY").format(calendarDate); }
+	@Override public String luceneOid() { return calendar.getType()+"-"+new SimpleDateFormat("MM-DD-YYYY").format(calendarDate); }
 
-	@Override
-	public String luceneOsearch() {
+	@Override public String luceneOtype() { return "calendar"; }
+	
+	@Override public HashMap<String,Field> luceneFields() { return null; }
+	
+	@Override public String luceneOsearch() {
 		// TODO Auto-generated method stub
-		return null;
+		return "test string";
 	}
-
-	@Override
-	public String luceneOtype() { return "calendar"; }
 }
 /*
 <supplemental id="">
