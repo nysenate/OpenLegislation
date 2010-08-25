@@ -38,7 +38,7 @@ public class Transcript  extends SenateObject implements LuceneObject {
 	
 	@Persistent
 	@Column(name="time_stamp")
-	@LuceneField("date")
+	@LuceneField("when")
 	protected Date timeStamp;
 	
 	@Persistent
@@ -47,18 +47,17 @@ public class Transcript  extends SenateObject implements LuceneObject {
 	protected String location;
 	
 	@Persistent
-	@LuceneField
+	@LuceneField("session-type")
 	protected String type;
 	
 	@Persistent
 	@Column(name="transcriptText", jdbcType="LONGVARCHAR", length=250000)
-	@XStreamAlias("text")
+	@XStreamAlias("full")
 	protected String transcriptText;
 	
 	@Persistent
 	@Column(name="transcriptTextProcessed", jdbcType="LONGVARCHAR", length=250000)
 	@HideFrom({Transcript.class})
-	@LuceneField("text")
 	protected String transcriptTextProcessed;
 	
 	@Persistent(serialized = "false",defaultFetchGroup="true")
@@ -178,13 +177,42 @@ public class Transcript  extends SenateObject implements LuceneObject {
 		this.transcriptTextProcessed = transcriptTextProcessed;
 	}
 	
-	@Override public String luceneOid() { return type+"-"+new SimpleDateFormat("MM-DD-YYYY").format(timeStamp);}
+	@Override
+	public String luceneOid() {
+		return type+"-"+new SimpleDateFormat("MM-DD-YYYY").format(timeStamp);
+	}
+	
+	@Override
+	public String luceneOsearch() {
+		return transcriptText;
+	}
 
-	@Override public String luceneOtype() { return "transcript"; }
+	@Override
+	public String luceneOtype() {
+		return "transcript";
+	}
 	
-	@Override public HashMap<String,Field> luceneFields() { return null; }
 	
-	@Override public String luceneOsearch() {
-		return "test string";
+	@Override
+	public String luceneSummary() {
+		return location;
+	}
+	
+	@Override
+	public String luceneTitle() {
+		return type;
+	}
+
+	@Override
+	public HashMap<String,Field> luceneFields() {
+		return null;
+	}
+
+	public String getLuceneRelatedBills() {
+		StringBuilder response = new StringBuilder();
+		for(Bill bill : relatedBills) {
+			response.append(bill.getSenateBillNo() + ", ");
+		}
+		return response.toString().replaceAll(", $", "");
 	}
 }

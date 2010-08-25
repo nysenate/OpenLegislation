@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.committee;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	@Persistent
 	@Column(name="meeting_date_time")
 	@XStreamAsAttribute
-	@LuceneField("date")
+	@LuceneField("when")
 	protected Date meetingDateTime;	
 	
 	@Persistent
@@ -88,7 +89,6 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	@Join
 	@Order(column="integer_idx")
 	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
-	@LuceneField
 	protected List<Vote> votes;	
 	
 	@Persistent
@@ -107,7 +107,6 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	@Join
 	@Order(column="integer_idx")
 	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
-	@LuceneField
 	protected List<Addendum> addendums;
 	
 	/*
@@ -317,15 +316,45 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	}
 	
 	
-	@Override public String luceneOid() { return committeeName+"-"+new SimpleDateFormat("MM-DD-YYYY").format(meetingDateTime); }
-
-	@Override public String luceneOsearch() {
-		return "temp string";
+	@Override 
+	public String luceneOid() {
+		return committeeName+"-"+new SimpleDateFormat("MM-DD-YYYY").format(meetingDateTime);
 	}
 
-	@Override public String luceneOtype() { return "meeting"; }
+	@Override 
+	public String luceneOsearch() {
+		return committeeName + " - " + committeeChair + " - " + location + " - " + notes;
+	}
+
+	@Override
+	public String luceneOtype()	{
+		return "meeting";
+	}
 	
-	@Override public HashMap<String,Field> luceneFields() { return null; }
+	@Override
+	public String luceneSummary() {
+		return location;
+	}
+	
+	@Override
+	public String luceneTitle() {
+		DateFormat df = java.text.DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+		return committeeName + " - " + df.format(meetingDateTime);
+	}
+
+	@Override 
+	public HashMap<String,Field> luceneFields()	{
+		return null;
+	}
+
+	public String getLuceneBills() {
+		StringBuilder response = new StringBuilder();
+		for(Bill bill : bills) {
+			response.append(bill.getSenateBillNo() + ", ");
+		}
+		return response.toString().replaceAll(", $", "");
+	}
+	
 }
 /*
 <committee>

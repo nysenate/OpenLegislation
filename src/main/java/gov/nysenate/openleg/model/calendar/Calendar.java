@@ -197,4 +197,16 @@ public class Calendar  extends SenateObject implements LuceneObject {
 	public HashMap<String,Field> luceneFields() {
 		return null;
 	}
+
+	@Override
+	public String luceneTitle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneSummary() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

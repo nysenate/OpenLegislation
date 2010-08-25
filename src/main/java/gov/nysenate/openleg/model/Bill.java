@@ -108,7 +108,7 @@ public class Bill extends SenateObject implements LuceneObject  {
 	@Column(name="FULLTEXT", jdbcType="LONGVARCHAR", length=250000)
 	@XStreamAlias("text")
 	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
-	@LuceneField("text")
+	@LuceneField("full")
 	protected String fulltext;
 	
 	@Persistent
@@ -429,13 +429,31 @@ public class Bill extends SenateObject implements LuceneObject  {
 		return billEvents;
 	}
 	
+	@Override
+	public String luceneOtype() {
+		return "bill";
+	}
 	
-	@Override public String luceneOtype() { return "bill"; }
+	@Override
+	public String luceneOid() {
+		return senateBillNo+"-"+year;
+	}
 	
-	@Override public String luceneOid() { return senateBillNo+"-"+year; }
+	@Override
+	public HashMap<String,Field> luceneFields() {
+		return null;
+	}
 	
-	@Override public HashMap<String,Field> luceneFields() { return null; }
+	@Override
+	public String luceneSummary() {
+		return summary;
+	}
 	
+	@Override
+	public String luceneTitle() {
+		return (title == null) ? summary : title;
+	}
+
 	@Override public String luceneOsearch() {
 		return senateBillNo
 			+ (sameAs != null ? " - " + sameAs:"")
@@ -473,7 +491,6 @@ public class Bill extends SenateObject implements LuceneObject  {
 		return sponsor.getFullname();
 	}
 	
-
 	/*
 	public String getSubstitutedBy() {
 		return substitutedBy;

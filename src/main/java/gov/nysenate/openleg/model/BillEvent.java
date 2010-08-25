@@ -1,7 +1,10 @@
 package gov.nysenate.openleg.model;
 
+import gov.nysenate.openleg.lucene.LuceneObject;
+
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.jdo.annotations.Cacheable;
 import javax.jdo.annotations.Column;
@@ -9,6 +12,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.lucene.document.Field;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

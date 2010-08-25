@@ -199,6 +199,18 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 		// TODO Auto-generated method stub
 		return "test string";
 	}
+
+	@Override
+	public String luceneTitle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneSummary() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
 /*
 <supplemental id="">

@@ -129,13 +129,20 @@ public class DocumentBuilder {
 					}
 					
 					if(fieldObject != null) {
-						System.out.println(name + " : " + fieldObject.toString());
 						fields.put(name,
 							new org.apache.lucene.document.Field(
 								name,
 								fieldObject.toString(),
 								store,
 								index));
+					}
+					else {
+						fields.put(name,
+								new org.apache.lucene.document.Field(
+									name,
+									"",
+									store,
+									index));
 					}
 				}
 			}
