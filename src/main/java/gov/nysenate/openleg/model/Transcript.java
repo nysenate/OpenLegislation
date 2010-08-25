@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -171,10 +172,7 @@ public class Transcript  extends SenateObject implements LuceneObject {
 	}
 	
 	@Override
-	public String luceneOid() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public String luceneOid() { return type+"-"+new SimpleDateFormat("MM-DD-YYYY").format(timeStamp);}
 
 	@Override
 	public String luceneOsearch() {
@@ -183,9 +181,5 @@ public class Transcript  extends SenateObject implements LuceneObject {
 	}
 
 	@Override
-	public String luceneOtype() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	public String luceneOtype() { return "transcript"; }
 }

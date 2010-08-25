@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.calendar;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -185,10 +186,7 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 
 	
 	@Override
-	public String luceneOid() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public String luceneOid() { return calendar.getType()+"-"+new SimpleDateFormat("MM-DD-YYYY").format(calendarDate); }
 
 	@Override
 	public String luceneOsearch() {
@@ -197,10 +195,7 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 	}
 
 	@Override
-	public String luceneOtype() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public String luceneOtype() { return "calendar"; }
 }
 /*
 <supplemental id="">

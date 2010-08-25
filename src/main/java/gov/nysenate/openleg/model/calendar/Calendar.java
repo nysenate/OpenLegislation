@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.util.HideFrom;

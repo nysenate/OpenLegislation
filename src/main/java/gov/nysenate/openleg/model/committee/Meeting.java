@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.committee;
 
 import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
@@ -308,10 +309,7 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	
 	
 	@Override
-	public String luceneOid() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public String luceneOid() { return committeeName+"-"+new SimpleDateFormat("MM-DD-YYYY").format(meetingDateTime); }
 
 	@Override
 	public String luceneOsearch() {
@@ -320,11 +318,7 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	}
 
 	@Override
-	public String luceneOtype() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+	public String luceneOtype() { return "meeting"; }	
 }
 /*
 <committee>

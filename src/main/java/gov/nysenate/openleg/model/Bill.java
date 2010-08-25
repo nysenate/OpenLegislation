@@ -423,7 +423,7 @@ public class Bill extends SenateObject implements LuceneObject  {
 	public String luceneOid() { return senateBillNo+"-"+year; }
 	
 	@Override
-	public String luceneOsearch() { return "osearch here..."; }
+	public String luceneOsearch() { return null; }
 	
 	public String getLuceneCosponsors() {
 		StringBuilder response = new StringBuilder();
