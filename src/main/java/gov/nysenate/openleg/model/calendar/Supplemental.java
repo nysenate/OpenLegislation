@@ -1,8 +1,10 @@
 package gov.nysenate.openleg.model.calendar;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
@@ -28,6 +30,7 @@ import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.util.HideFrom;
+import gov.nysenate.openleg.util.DocumentBuilder;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
@@ -189,27 +192,99 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 	}
 
 	
-	@Override public String luceneOid() { return calendar.getType()+"-"+new SimpleDateFormat("MM-DD-YYYY").format(calendarDate); }
+	@Override
+	public String luceneOid() {
+		return "";
+	}
 
-	@Override public String luceneOtype() { return "calendar"; }
+	@Override
+	public String luceneOtype() {
+		return "calendar";
+	}
+	//
+	@Override
+	public HashMap<String,Field> luceneFields() {
+		HashMap<String,Field> fields = new HashMap<String,Field>();
+		
+		Calendar calendar = PMF.get;
+		
+		fields.put("ctype",new Field("ctype",calendar.getType(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		
+		
+		if (getCalendarDate()!=null)
+			fields.put("when", new Field("when",calendarDate.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		
+		StringBuilder searchContent = new StringBuilder();
+		String title;
+		
+		title = calendar.getNo() + " - " + calendar.getType();
+		
+		if (calendarDate!=null)
+			title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(calendarDate);
+		
+		
+		else if (releaseDateTime!=null)
+		{
+			title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(calendarDate);
+		}
+		else if (sequence!=null)
+		{
+			title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(sequence.getActCalDate());
+		}
+		
+		searchContent.append(title);
+		
+		StringBuilder sbSummary = new StringBuilder();
+		
+		if (sections != null) {
+			Iterator<Section> itSections = sections.iterator();
+			while (itSections.hasNext()) {
+				Section section = itSections.next();
+				sbSummary.append(section.getName()).append(": ");
+				sbSummary.append(section.getCalendarEntries().size()).append(" bill(s); ");
+			}
+		}
+		
+		if (sequence != null) {
+			if (sequence.getNotes()!=null)
+				sbSummary.append(sequence.getNotes());
+			
+			sbSummary.append(" ").append(sequence.getCalendarEntries().size()).append(" bill(s)");
+			
+			if (sequence.getActCalDate()!=null)
+    			fields.put("when", new Field("when",sequence.getActCalDate().getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));	
+		}
+		
+		String summary = sbSummary.toString().trim();
+		
+		fields.put("summary",new Field("",summary, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		fields.put("title",new Field("",title, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		fields.put("osearch",new Field("",searchContent.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		
+		String oid = "";
+		if(calendar.getId().startsWith("cal-floor")) {
+			oid = "floor-" + new SimpleDateFormat("MM-DD-YYYY").format(releaseDateTime);
+		}
+		else {
+			oid = "active-" + new SimpleDateFormat("MM-DD-YYYY").format(sequence.getActCalDate());
+		}
+		
+		return fields;
+	}
 	
-	@Override public HashMap<String,Field> luceneFields() { return null; }
-	
-	@Override public String luceneOsearch() {
-		// TODO Auto-generated method stub
-		return "test string";
+	@Override
+	public String luceneOsearch() {
+		return "";
 	}
 
 	@Override
 	public String luceneTitle() {
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 	@Override
 	public String luceneSummary() {
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 }
 /*

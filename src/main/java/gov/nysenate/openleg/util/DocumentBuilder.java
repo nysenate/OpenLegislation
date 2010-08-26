@@ -3,11 +3,18 @@ package gov.nysenate.openleg.util;
 import gov.nysenate.openleg.PMF;
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Transcript;
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.committee.Meeting;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class DocumentBuilder {
@@ -36,9 +43,9 @@ public class DocumentBuilder {
 //		
 //		converter(to, null);		
 		
-		/*bill from db*/
-		Bill b = PMF.getDetachedBill("S5000");
-		System.out.println(b.getSponsor().getFullname());
+//		/*bill from db*/
+//		Bill b = PMF.getDetachedBill("S5000");
+//		System.out.println(b.getSponsor().getFullname());
 //		HashMap<String,org.apache.lucene.document.Field> map = new DocumentBuilder().converter(b, null);
 //		
 //		for(String s:map.keySet()) {
@@ -46,17 +53,29 @@ public class DocumentBuilder {
 //			System.out.println(s);
 //		}
 		
-//		System.out.println();
+		for(Calendar cal:(List<Calendar>)PMF.getDetachedObjects(Calendar.class, null, 0, 100)) {
+			System.out.println(cal.getType());
+		}
 		
-//		/*calendar from db*/
-//		System.out.println("\n\n-----CALENDAR-----\n\n");
-//		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00060-2009", "no descending");	
-//		System.out.println();
+		
+		/*calendar from db*/
+		System.out.println("\n\n-----CALENDAR-----\n\n");
+		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00060-2009", "no descending");	
+		System.out.println(c.getType());
+//		HashMap<String,org.apache.lucene.document.Field> map = new DocumentBuilder().converter(c.getSupplementals().iterator().next(), null);
+//		for(String s:map.keySet()) {
+//			org.apache.lucene.document.Field field = map.get(s);
+//			System.out.println(s);
+//		}
 //		
 //		/*transcript from db*/
 //		System.out.println("\n\n\n-----TRANSCRIPT-----\n\n");
 //		Transcript t = PMF.getDetachedTranscript("292");
-//		System.out.println();
+//		map = new DocumentBuilder().converter(t, null);
+//		for(String s:map.keySet()) {
+//			org.apache.lucene.document.Field field = map.get(s);
+//			System.out.println(s);
+//		}
 //		
 //		/*meeting from db*/
 //		System.out.println("\n\n\n-----MEETING-----\n\n");
@@ -64,7 +83,11 @@ public class DocumentBuilder {
 //		List<String> meeting_exclude = new ArrayList<String>();
 //		meeting_exclude.add("votes");
 //		for(Meeting m:meetings) {
-//			System.out.println();
+//			map = new DocumentBuilder().converter(m, null);
+//			for(String s:map.keySet()) {
+//				org.apache.lucene.document.Field field = map.get(s);
+//				System.out.println(s);
+//			}
 //		}
 	}
 	

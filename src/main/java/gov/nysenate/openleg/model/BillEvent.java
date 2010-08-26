@@ -1,10 +1,14 @@
 package gov.nysenate.openleg.model;
 
+import gov.nysenate.openleg.PMF;
 import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.util.DocumentBuilder;
 
 import java.net.URLEncoder;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.jdo.annotations.Cacheable;
 import javax.jdo.annotations.Column;
@@ -21,7 +25,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XmlRootElement
 @Cacheable
 @XStreamAlias("billevent")
-public class BillEvent extends SenateObject
+public class BillEvent extends SenateObject implements LuceneObject
 {
 
 	@Persistent 
@@ -108,6 +112,86 @@ public class BillEvent extends SenateObject
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public HashMap<String, Field> luceneFields() {
+		HashMap<String,Field> fields = new HashMap<String,Field>();
+		
+		Bill bill = PMF.getDetachedBill(getBillId());
+		
+		fields.put("when", new Field("when",eventDate.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		fields.put("billno", new Field("billno",getBillId(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+				
+		try
+		{
+			if (bill.getSponsor()!=null) {
+    			fields.put("sponsor", new Field("sponsor",bill.getSponsor().getFullname(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+    		}
+    		
+            if (bill.getCoSponsors()!=null) {
+            	StringBuilder cosponsor = new StringBuilder();
+            	Iterator<Person> itCosp = bill.getCoSponsors().iterator();
+            	
+            	while (itCosp.hasNext()) {
+            		cosponsor.append((itCosp.next()).getFullname());
+            		
+            		if (itCosp.hasNext())
+            			cosponsor.append(", ");
+            	}
+            	
+            	fields.put("cosponsors", new Field("cosponsors",cosponsor.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+            }
+		}
+		catch (Exception e)
+		{
+			
+		}
+		
+		return fields;
+	}
+
+	@Override
+	public String luceneOid() {
+		return billEventId;
+	}
+
+	@Override
+	public String luceneOsearch() {
+		Bill bill = PMF.getDetachedBill(getBillId());
+		
+		StringBuilder searchContent = new StringBuilder();
+		searchContent.append(getBillId()).append(" ");
+		
+		try
+		{
+			if (bill.getSponsor()!=null) {
+    			searchContent.append(bill.getSponsor().getFullname()).append(" ");
+    		}
+		}
+		catch (Exception e)
+		{
+			
+		}
+		
+		searchContent.append(eventText);
+		
+		return eventText.toString();
+	}
+
+	@Override
+	public String luceneOtype() {
+		return "action";
+	}
+
+	@Override
+	public String luceneSummary() {
+		return java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(eventDate);
+	}
+
+	@Override
+	public String luceneTitle() {
+		return eventText;
 	}
 }
 	

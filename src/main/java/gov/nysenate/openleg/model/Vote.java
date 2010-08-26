@@ -1,13 +1,19 @@
 package gov.nysenate.openleg.model;
 
+import gov.nysenate.openleg.OpenLegConstants;
+import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
+import gov.nysenate.openleg.util.DocumentBuilder;
 import gov.nysenate.openleg.util.HideFrom;
 import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
@@ -21,6 +27,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.lucene.document.Field;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -28,7 +36,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 @XmlRootElement
 @Cacheable
 @XStreamAlias("vote")
-public class Vote  extends SenateObject {
+public class Vote  extends SenateObject implements LuceneObject {
 	
 	@Persistent
 	@Column(name="vote_type")
@@ -312,6 +320,109 @@ public class Vote  extends SenateObject {
 	
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	@Override
+	public HashMap<String, Field> luceneFields() {
+		HashMap<String,Field> map = new HashMap<String,Field>();
+		map.put("billno", new Field("billno",bill.getSenateBillNo(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		
+		switch(voteType) {
+			case Vote.VOTE_TYPE_COMMITTEE:
+				if(description !=null)
+					map.put("committee", new Field("committee",description, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+				else
+					map.put("committee", new Field("committee",bill.getCurrentCommittee(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		}
+		
+		Iterator<String> itVote = null;
+		StringBuilder sbVotes = null;
+		
+		if (abstains != null) {
+    		sbVotes = new StringBuilder();
+    		itVote = abstains.iterator();
+    		while (itVote.hasNext()) {
+    			sbVotes.append(itVote.next()).append(" ");
+    		}
+    		
+    		map.put("abstain", new Field("abstain",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		}
+		
+		if (ayes != null) {
+    		sbVotes = new StringBuilder();
+    		itVote = ayes.iterator();
+    		while (itVote.hasNext()) {
+    			sbVotes.append(itVote.next()).append(" ");
+    		}
+    		
+    		map.put("aye", new Field("aye",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		}
+		
+		if (excused != null) {
+    		
+    		sbVotes = new StringBuilder();
+    		itVote = excused.iterator();
+    		while (itVote.hasNext()) {
+    			sbVotes.append(itVote.next()).append(" ");
+    		}
+    		
+    		map.put("excused", new Field("excused",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		}
+		
+		if (nays != null) {
+    		
+    		sbVotes = new StringBuilder();
+    		itVote = nays.iterator();
+    		while (itVote.hasNext()) {
+    			sbVotes.append(itVote.next()).append(" ");
+    		}
+    		
+    		map.put("nay", new Field("nay",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		} 
+		
+		
+		return map;
+	}
+
+	@Override
+	public String luceneOid() {
+		return id;
+	}
+
+	@Override
+	public String luceneOsearch() {
+		StringBuilder oSearch = new StringBuilder("");
+		oSearch.append(bill.getSenateBillNo() + " ");
+		switch(voteType) {
+			case Vote.VOTE_TYPE_COMMITTEE:
+				oSearch.append(" Committee Vote ");
+				oSearch.append(bill.getCurrentCommittee());
+			case Vote.VOTE_TYPE_FLOOR:
+				oSearch.append(" Floor Vote ");
+		}
+		return oSearch.toString();
+	}
+
+	@Override
+	public String luceneOtype() {
+		return "vote";
+	}
+
+	@Override
+	public String luceneSummary() {	
+		return java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(voteDate);
+	}
+
+	@Override
+	public String luceneTitle() {
+		String title = bill.getSenateBillNo() + " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(voteDate);
+		switch(voteType) {
+			case Vote.VOTE_TYPE_COMMITTEE:
+				return title + " - Committee Vote";
+			case Vote.VOTE_TYPE_FLOOR:
+				return title + " - Floor Vote";
+		}
+		return title;
 	}
 
 }
