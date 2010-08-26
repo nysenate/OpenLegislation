@@ -15,6 +15,7 @@ import gov.nysenate.openleg.model.calendar.Sequence;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.OpenLegConstants;
+import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.xstream.SenateObjectConverter;
 import gov.nysenate.openleg.xstream.SenateResponseConverter;
@@ -217,13 +218,20 @@ public class XStreamBuilder implements OpenLegConstants {
 		
 		//Append all the results into a single listing
 		StringBuilder results = new StringBuilder("");
-		for(String result: response.getResults()) {
-			results.append(result);
-			
+		for(Result result: response.getResults()) {
 			//Fields in JSON are separated by commas,
 			//#TODO: Figure out if we need to remove semicolons from end of results
 			if(type.equals("json")) {
-				results.append(",");
+				results.append("\"result\": {");
+				results.append("\"type\": \""+result.otype+"\", ");
+				results.append("\"data\": "+result.data);
+				results.append(" }, ");
+			}
+			else if (type.equals("xml")) {
+				results.append("<result>");
+				results.append("<type>"+result.otype+"</type>");
+				results.append(result.data);
+				results.append("</result>");
 			}
 		}
 		
