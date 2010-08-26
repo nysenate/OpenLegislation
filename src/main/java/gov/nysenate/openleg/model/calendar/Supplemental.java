@@ -26,6 +26,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.apache.lucene.document.Field;
 
+import gov.nysenate.openleg.PMF;
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.model.SenateObject;
@@ -206,7 +207,7 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 	public HashMap<String,Field> luceneFields() {
 		HashMap<String,Field> fields = new HashMap<String,Field>();
 		
-		Calendar calendar = PMF.get;
+		Calendar calendar = (Calendar)PMF.getDetachedObject(Calendar.class, "id", id.split("-supp")[0], "no descending");
 		
 		fields.put("ctype",new Field("ctype",calendar.getType(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		
@@ -257,17 +258,19 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 		
 		String summary = sbSummary.toString().trim();
 		
-		fields.put("summary",new Field("",summary, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		fields.put("title",new Field("",title, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		fields.put("osearch",new Field("",searchContent.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		fields.put("summary",new Field("summary",summary, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		fields.put("title",new Field("title",title, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		fields.put("osearch",new Field("osearch",searchContent.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		
 		String oid = "";
 		if(calendar.getId().startsWith("cal-floor")) {
-			oid = "floor-" + new SimpleDateFormat("MM-DD-YYYY").format(releaseDateTime);
+			oid = "floor-" + new SimpleDateFormat("MM-dd-yyyy").format(releaseDateTime);
 		}
 		else {
-			oid = "active-" + new SimpleDateFormat("MM-DD-YYYY").format(sequence.getActCalDate());
+			oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequence.getActCalDate());
 		}
+		
+		fields.put("oid",new Field("oid",oid, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		
 		return fields;
 	}

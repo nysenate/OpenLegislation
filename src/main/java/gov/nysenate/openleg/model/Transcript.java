@@ -53,6 +53,7 @@ public class Transcript  extends SenateObject implements LuceneObject {
 	@Persistent
 	@Column(name="transcriptText", jdbcType="LONGVARCHAR", length=250000)
 	@XStreamAlias("full")
+	@LuceneField("full")
 	protected String transcriptText;
 	
 	@Persistent
@@ -179,7 +180,7 @@ public class Transcript  extends SenateObject implements LuceneObject {
 	
 	@Override
 	public String luceneOid() {
-		return type+"-"+new SimpleDateFormat("MM-DD-YYYY").format(timeStamp);
+		return (type.replaceAll(" ", "-").toLowerCase())+"-"+new SimpleDateFormat("MM-dd-yyyy").format(timeStamp) + "-" + id;
 	}
 	
 	@Override
