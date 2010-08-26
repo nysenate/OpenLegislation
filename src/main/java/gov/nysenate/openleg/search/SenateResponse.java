@@ -10,22 +10,22 @@ public class SenateResponse {
 	
 	HashMap<String, Object> metadata;
 	
-	ArrayList<String> results;
+	ArrayList<Result> results;
 	
 	public SenateResponse() {
 		this.metadata = new HashMap<String,Object>();
-		this.results = new ArrayList<String>();
+		this.results = new ArrayList<Result>();
 	}
 	
-	public void setResults(ArrayList<String> results) {
+	public void setResults(ArrayList<Result> results) {
 		this.results = results;
 	}
 	
-	public ArrayList<String> getResults() {
+	public ArrayList<Result> getResults() {
 		return this.results;
 	}
 	
-	public void addResult(String result) {
+	public void addResult(Result result) {
 		this.results.add(result);
 	}
 	
