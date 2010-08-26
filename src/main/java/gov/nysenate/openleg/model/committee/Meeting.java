@@ -318,7 +318,7 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	
 	@Override 
 	public String luceneOid() {
-		return committeeName+"-"+new SimpleDateFormat("MM-DD-YYYY").format(meetingDateTime);
+		return committeeName+"-"+new SimpleDateFormat("MM-dd-yyyy").format(meetingDateTime);
 	}
 
 	@Override 

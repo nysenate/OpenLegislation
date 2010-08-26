@@ -30,65 +30,57 @@ public class DocumentBuilder {
 	public static final String LUCENE_OID = "luceneOid";
 	public static final String LUCENE_OSEARCH = "luceneOsearch";
 	public static final String LUCENE_FIELDS = "luceneFields";
+	public static final String LUCENE_SUMMARY = "luceneSummary";
+	public static final String LUCENE_TITLE = "luceneTitle";
 	
 	public static final String OTYPE = "otype";
 	public static final String OID = "oid";
 	public static final String OSEARCH = "osearch";
+	public static final String SUMMARY = "summary";
+	public static final String TITLE = "title";
 	
 	public static void main(String[] args) throws Exception {
-						
-//		
-//		DocumentBuilder db = new DocumentBuilder();
-//		TestObject to = db.new TestObject();
-//		
-//		converter(to, null);		
+		HashMap<String,org.apache.lucene.document.Field> map = null;	
 		
-//		/*bill from db*/
-//		Bill b = PMF.getDetachedBill("S5000");
-//		System.out.println(b.getSponsor().getFullname());
-//		HashMap<String,org.apache.lucene.document.Field> map = new DocumentBuilder().converter(b, null);
-//		
-//		for(String s:map.keySet()) {
-//			org.apache.lucene.document.Field field = map.get(s);
-//			System.out.println(s);
-//		}
-		
-		for(Calendar cal:(List<Calendar>)PMF.getDetachedObjects(Calendar.class, null, 0, 100)) {
-			System.out.println(cal.getType());
+		/*bill from db*/
+		Bill b = PMF.getDetachedBill("S5000");
+		System.out.println(b.getSponsor().getFullname());
+		map = new DocumentBuilder().converter(b, null);
+		for(String s:map.keySet()) {
+			org.apache.lucene.document.Field field = map.get(s);
+			System.out.println(s + " : " + map.get(s));
 		}
+
 		
 		
 		/*calendar from db*/
 		System.out.println("\n\n-----CALENDAR-----\n\n");
 		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00060-2009", "no descending");	
-		System.out.println(c.getType());
-//		HashMap<String,org.apache.lucene.document.Field> map = new DocumentBuilder().converter(c.getSupplementals().iterator().next(), null);
-//		for(String s:map.keySet()) {
-//			org.apache.lucene.document.Field field = map.get(s);
-//			System.out.println(s);
-//		}
-//		
-//		/*transcript from db*/
-//		System.out.println("\n\n\n-----TRANSCRIPT-----\n\n");
-//		Transcript t = PMF.getDetachedTranscript("292");
-//		map = new DocumentBuilder().converter(t, null);
-//		for(String s:map.keySet()) {
-//			org.apache.lucene.document.Field field = map.get(s);
-//			System.out.println(s);
-//		}
-//		
-//		/*meeting from db*/
-//		System.out.println("\n\n\n-----MEETING-----\n\n");
-//		Collection<Meeting> meetings = PMF.getDetachedObjects(Meeting.class, "committeeName", ".*" + "Aging" + ".*", "meetingDateTime descending", 0, 1);
-//		List<String> meeting_exclude = new ArrayList<String>();
-//		meeting_exclude.add("votes");
-//		for(Meeting m:meetings) {
-//			map = new DocumentBuilder().converter(m, null);
-//			for(String s:map.keySet()) {
-//				org.apache.lucene.document.Field field = map.get(s);
-//				System.out.println(s);
-//			}
-//		}
+		map = new DocumentBuilder().converter(c.getSupplementals().iterator().next(), null);
+		for(String s:map.keySet()) {
+			org.apache.lucene.document.Field field = map.get(s);
+			System.out.println(s + " : " + map.get(s));
+		}
+		
+		/*transcript from db*/
+		System.out.println("\n\n\n-----TRANSCRIPT-----\n\n");
+		Transcript t = PMF.getDetachedTranscript("292");
+		map = new DocumentBuilder().converter(t, null);
+		for(String s:map.keySet()) {
+			org.apache.lucene.document.Field field = map.get(s);
+			System.out.println(s + " : " + map.get(s));
+		}
+		
+		/*meeting from db*/
+		System.out.println("\n\n\n-----MEETING-----\n\n");
+		Collection<Meeting> meetings = PMF.getDetachedObjects(Meeting.class, "committeeName", ".*" + "Aging" + ".*", "meetingDateTime descending", 0, 1);
+		for(Meeting m:meetings) {
+			map = new DocumentBuilder().converter(m, null);
+		for(String s:map.keySet()) {
+				org.apache.lucene.document.Field field = map.get(s);
+				System.out.println(s + " : " + map.get(s));
+			}
+		}
 	}
 	
 	private String getLuceneFields(Object o, String method) throws Exception {
@@ -120,7 +112,18 @@ public class DocumentBuilder {
 						getLuceneFields(o, LUCENE_OSEARCH),
 						DEFAULT_STORE,
 						DEFAULT_INDEX));
-			
+			fields.put(TITLE,
+					new org.apache.lucene.document.Field(
+							TITLE,
+						getLuceneFields(o, LUCENE_TITLE),
+						DEFAULT_STORE,
+						DEFAULT_INDEX));
+			fields.put(SUMMARY,
+					new org.apache.lucene.document.Field(
+							SUMMARY,
+						getLuceneFields(o, LUCENE_SUMMARY),
+						DEFAULT_STORE,
+						DEFAULT_INDEX));
 			
 			Field[] objectFields = o.getClass().getDeclaredFields();
 
