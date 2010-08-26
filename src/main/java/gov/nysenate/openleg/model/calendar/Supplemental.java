@@ -27,11 +27,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.apache.lucene.document.Field;
 
 import gov.nysenate.openleg.PMF;
+import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.util.HideFrom;
-import gov.nysenate.openleg.util.DocumentBuilder;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement

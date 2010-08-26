@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.lucene;
 
 public interface LuceneSerializer {
-	String toXML();
-	String toJSON();
+	String toXml(Object o);
+	String toJson(Object o);
 }

@@ -1,20 +1,10 @@
-package gov.nysenate.openleg.util;
-
-import gov.nysenate.openleg.PMF;
-import gov.nysenate.openleg.lucene.LuceneField;
-import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.Transcript;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.committee.Meeting;
+package gov.nysenate.openleg.lucene;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+
+import org.apache.lucene.document.Document;
 
 
 public class DocumentBuilder {
@@ -25,7 +15,7 @@ public class DocumentBuilder {
 	
 	public static final org.apache.lucene.document.Field.Store DEFAULT_STORE = org.apache.lucene.document.Field.Store.YES;
 	public static final org.apache.lucene.document.Field.Index DEFAULT_INDEX = org.apache.lucene.document.Field.Index.ANALYZED;
-	
+		
 	public static final String LUCENE_OTYPE = "luceneOtype";
 	public static final String LUCENE_OID = "luceneOid";
 	public static final String LUCENE_OSEARCH = "luceneOsearch";
@@ -39,59 +29,12 @@ public class DocumentBuilder {
 	public static final String SUMMARY = "summary";
 	public static final String TITLE = "title";
 	
-	public static void main(String[] args) throws Exception {
-		HashMap<String,org.apache.lucene.document.Field> map = null;	
-		
-		/*bill from db*/
-		Bill b = PMF.getDetachedBill("S5000");
-		System.out.println(b.getSponsor().getFullname());
-		map = new DocumentBuilder().converter(b, null);
-		for(String s:map.keySet()) {
-			org.apache.lucene.document.Field field = map.get(s);
-			System.out.println(s + " : " + map.get(s));
-		}
-
-		
-		
-		/*calendar from db*/
-		System.out.println("\n\n-----CALENDAR-----\n\n");
-		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00060-2009", "no descending");	
-		map = new DocumentBuilder().converter(c.getSupplementals().iterator().next(), null);
-		for(String s:map.keySet()) {
-			org.apache.lucene.document.Field field = map.get(s);
-			System.out.println(s + " : " + map.get(s));
-		}
-		
-		/*transcript from db*/
-		System.out.println("\n\n\n-----TRANSCRIPT-----\n\n");
-		Transcript t = PMF.getDetachedTranscript("292");
-		map = new DocumentBuilder().converter(t, null);
-		for(String s:map.keySet()) {
-			org.apache.lucene.document.Field field = map.get(s);
-			System.out.println(s + " : " + map.get(s));
-		}
-		
-		/*meeting from db*/
-		System.out.println("\n\n\n-----MEETING-----\n\n");
-		Collection<Meeting> meetings = PMF.getDetachedObjects(Meeting.class, "committeeName", ".*" + "Aging" + ".*", "meetingDateTime descending", 0, 1);
-		for(Meeting m:meetings) {
-			map = new DocumentBuilder().converter(m, null);
-		for(String s:map.keySet()) {
-				org.apache.lucene.document.Field field = map.get(s);
-				System.out.println(s + " : " + map.get(s));
-			}
-		}
-	}
+	private static final String XML = "oxml";
+	private static final String JSON = "ojson";
 	
-	private String getLuceneFields(Object o, String method) throws Exception {
-		Method m = o.getClass().getDeclaredMethod(method);
-		return (String)m.invoke(o);		
-	}
-	
-	private HashMap<String,org.apache.lucene.document.Field> converter(Object o, HashMap<String,org.apache.lucene.document.Field> fields) {		
-		if(fields == null) {
-			fields = new HashMap<String,org.apache.lucene.document.Field>();
-		}
+	@SuppressWarnings("unused")
+	private Document converter(Object o, LuceneSerializer serializer) {		
+		HashMap<String,org.apache.lucene.document.Field> fields = new HashMap<String,org.apache.lucene.document.Field>();
 		
 		try {
 			fields.put(OTYPE,
@@ -103,7 +46,7 @@ public class DocumentBuilder {
 			fields.put(OID,
 					new org.apache.lucene.document.Field(
 							OID,
-						getLuceneFields(o, LUCENE_OID),
+						getLuceneFields(o, LUCENE_OID).replace(" ", "+"),
 						DEFAULT_STORE,
 						DEFAULT_INDEX));
 			fields.put(OSEARCH,
@@ -179,12 +122,45 @@ public class DocumentBuilder {
 			if(otherMap != null) {
 				fields.putAll(otherMap);
 			}
+			
+			if(serializer != null) {
+				String json = serializer.toJson(o);
+				String xml = serializer.toXml(o);
+				
+				if(xml != null) {
+					fields.put(XML,
+							new org.apache.lucene.document.Field(
+								XML,
+								xml,
+								DEFAULT_STORE,
+								DEFAULT_INDEX));
+				}
+				if(json != null) {
+					fields.put(JSON,
+							new org.apache.lucene.document.Field(
+								JSON,
+								json,
+								DEFAULT_STORE,
+								DEFAULT_INDEX));
+				}
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return fields;
+		Document document = new Document();
+		
+		for(String key:fields.keySet()) {
+			document.add(fields.get(key));
+		}
+		
+		return document;
+	}
+	
+	private String getLuceneFields(Object o, String method) throws Exception {
+		Method m = o.getClass().getDeclaredMethod(method);
+		return (String)m.invoke(o);		
 	}
 	
 	public AnnotatedField getAnnotatedField(Field field) {

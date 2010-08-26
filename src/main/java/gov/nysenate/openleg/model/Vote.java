@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.model;
 
 import gov.nysenate.openleg.OpenLegConstants;
+import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
-import gov.nysenate.openleg.util.DocumentBuilder;
 import gov.nysenate.openleg.util.HideFrom;
 import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
 

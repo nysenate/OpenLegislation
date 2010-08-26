@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.model;
 
 import gov.nysenate.openleg.PMF;
+import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneObject;
-import gov.nysenate.openleg.util.DocumentBuilder;
 
 import java.net.URLEncoder;
 import java.text.DateFormat;

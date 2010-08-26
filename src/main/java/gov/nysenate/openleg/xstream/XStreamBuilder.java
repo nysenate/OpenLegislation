@@ -228,10 +228,10 @@ public class XStreamBuilder implements OpenLegConstants {
 				results.append(" }, ");
 			}
 			else if (type.equals("xml")) {
-				results.append("<result>");
-				results.append("<type>"+result.otype+"</type>");
+//				results.append("<result>");
+//				results.append("<type>"+result.otype+"</type>");
 				results.append(result.data);
-				results.append("</result>");
+//				results.append("</result>");
 			}
 		}
 		
@@ -242,7 +242,7 @@ public class XStreamBuilder implements OpenLegConstants {
 
 		int start = responseStr.indexOf(REGEX_API_KEY);
 		int end = start + REGEX_API_KEY.length();
-
+		
 		//#TODO: Figure out how to fix indentation (shift right)
 		return responseStr.replace(start, end,"\n  " + results.toString()).toString();
 	}
