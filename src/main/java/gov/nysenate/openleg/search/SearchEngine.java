@@ -30,7 +30,6 @@ import java.util.StringTokenizer;
 
 import javax.jdo.PersistenceManager;
 
-import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -139,7 +138,7 @@ abstract class SearchEngine extends Lucene implements SearchEngineInterface, Ope
 			else if (line.startsWith("create"))
 				engine.createIndex();
 			else
-				engine.search(line, 1, 10, null, false);
+				engine.search(line, "xml", 1, 10, null, false);
 			
 			System.out.print("openleg search > ");
 		}

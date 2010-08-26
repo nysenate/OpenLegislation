@@ -1,20 +1,13 @@
 package gov.nysenate.openleg.search;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -36,25 +29,17 @@ public class SearchEngine2 extends SearchEngine {
 		logger = Logger.getLogger(SearchEngine2.class);
 	}
 	
-	public SenateResponse get(String codeType, String otype, String oid, String sortField, int start, int numberOfResults, boolean reverseSort) {
+	public SenateResponse get(String format, String otype, String oid, String sortField, int start, int numberOfResults, boolean reverseSort) {
 		
-    	SenateResponse senResp = new SenateResponse();
+    	SenateResponse response = null;
     			    	
 		try {
 			
-			SearchResultSet srs = search(
+			response = search(
 					((otype != null) ? "otype:" + otype : "") +
 					((oid != null) ? (
 							(otype!=null) ? " AND oid:" : "")+ oid : ""),
-					start, numberOfResults, sortField, reverseSort);
-			
-			ArrayList<SearchResult> lst = srs.getResults();
-			
-			for(SearchResult sr:lst) {
-				senResp.addResult((codeType.equals("xml") ? sr.xml : (codeType.equals("json") ? sr.json : "")));
-			}
-			
-			senResp.addMetadataByKey("totalresults", srs.getTotalHitCount());
+					format,start, numberOfResults, sortField, reverseSort);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -62,89 +47,48 @@ public class SearchEngine2 extends SearchEngine {
 			e.printStackTrace();
 		}
 		
-		return senResp;
+		return response;
     	
     }
 	
-	public SearchResultSet search(String searchText, int start, int max, String sortField, boolean reverseSort) throws ParseException, IOException {
+	public SenateResponse search(String searchText, String format, int start, int max, String sortField, boolean reverseSort) throws ParseException, IOException {
 		
-    	IndexSearcher searcher = openIndex();
+		SenateResponse response = new SenateResponse();
 
+    	ScoreDoc[] hits = null;
+    	IndexSearcher searcher = openIndex();
         Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
         Query query = new QueryParser(Version.LUCENE_CURRENT, "osearch", analyzer).parse(searchText);
+    	TopScoreDocCollector collector = TopScoreDocCollector.create(start+max, false);
     	
-    	
-    	
-        SearchResultSet srs = null;
-        
-        try
+		try
     	{
-	      // Collect enough docs to show 5 pages
-	      TopScoreDocCollector collector = TopScoreDocCollector.create(max, false);
-	      searcher.search(query, collector);
-	      ScoreDoc[] hits = null;
+        	//Do this search no matter what so we can get the "total hits" for the response object
+			//The sorted result search can't give us this information (I don't think)
+        	searcher.search(query, collector);
+        	response.addMetadataByKey("totalresults", collector.getTotalHits());
+        	logger.info(response.getMetadataByKey("totalresults") + " total matching documents (" + query.toString() + ")");
 	      
-	      int numTotalHits = collector.getTotalHits();
-	      
-	      logger.info(numTotalHits + " total matching documents (" + query.toString() + ")");
-	      
-	      collector = TopScoreDocCollector.create(numTotalHits, false);
-	      
-	      Sort sort = null;
-	      
-	      if (sortField != null)
-	      {
-	    	  sort = new Sort(new SortField(sortField, SortField.STRING, reverseSort));
-	    	  Filter filter = null;
-	    	  
-	    	  hits = searcher.search(query, filter, start + max, sort).scoreDocs;
-	      }
-	      else
-	      {
-	    	  searcher.search(query, collector);
-	    	  hits = collector.topDocs().scoreDocs;
-	      }
-	    	
-	      srs = new SearchResultSet();
-	      
-	      srs.totalHitCount = numTotalHits;
-	      srs.results = new ArrayList<SearchResult>();
-	      	      	           
-	      for (int i = start;(i < hits.length && i < start + max); i++)
-	      {
-	    	  Document doc = searcher.doc(hits[i].doc);
-	
-	    	  SearchResult sr = new SearchResult();
-	    	  sr.xml = doc.get("oxml_new");
-	    	  sr.json = doc.get("ojson_new");
-	    	  sr.score = hits[i].score;
-	    	  
-	    	 
-	    	  if (doc.get("modified")!=null)
-	    		  sr.lastModified = new Date(Long.parseLong(doc.get("modified")));
-	    	  
-	    	  sr.fields = new HashMap<String,String>();
-	    	  
-	    	  Iterator<Fieldable> itFields = doc.getFields().iterator();
-	    	  Field field = null;
-	    	  
-	    	  while (itFields.hasNext())
-	    	  {
-	    		  field = (Field)itFields.next();
-	    		  sr.fields.put(field.name(), field.stringValue());
-	    	  }
-	    	  
-	    	  srs.results.add(sr);
-	      }
-	      
+        	if (sortField != null) {
+    			//If they want sorted results, do a new search with sorting enabled
+        		Sort sort = new Sort(new SortField(sortField, SortField.STRING, reverseSort));
+        		hits = searcher.search(query, null, start + max, sort).scoreDocs;
+        	}
+        	else {
+        		hits = collector.topDocs().scoreDocs;
+        	}
+        	
+        	//Build the response by adding results of the correct format
+        	String data = "o"+format.toLowerCase()+"_new"; 
+        	for (int i = start; (i < hits.length && i < start + max); i++) {
+        		Document doc = searcher.doc(hits[i].doc);
+        		response.addResult(new Result(doc.get("otype"),doc.get(data)));
+        	}
     	}
-    	catch (Exception e)
-    	{
+    	catch (Exception e) {
     		logger.warn("Search Exception: " + query.toString(),e);
     	}
     	
-	
-	     return srs;   
-        
+    	return response;
 	}
 }

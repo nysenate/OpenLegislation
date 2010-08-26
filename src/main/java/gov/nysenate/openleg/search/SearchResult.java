@@ -2,8 +2,6 @@ package gov.nysenate.openleg.search;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.Map.Entry;
 
 public class SearchResult {
 
