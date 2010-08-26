@@ -39,7 +39,7 @@ public class SearchEngine1 extends SearchEngine {
 		logger = Logger.getLogger(SearchEngine1.class);
 	}
 	
-	public String get(String codeType, String otype, String oid, String sortField, int start, int numberOfResults, boolean reverseSort) {
+	public String get(String format, String otype, String oid, String sortField, int start, int numberOfResults, boolean reverseSort) {
     	
 		try {
 			
@@ -47,12 +47,12 @@ public class SearchEngine1 extends SearchEngine {
 					((otype != null) ? "otype:" + otype : "") +
 					((oid != null) ? (
 							(otype!=null) ? " AND oid:" : "")+ oid : ""),
-					start, numberOfResults, sortField, reverseSort);
+					format,start, numberOfResults, sortField, reverseSort);
 			
 			ArrayList<SearchResult> lst = srs.getResults();
 			
 			if(!lst.isEmpty()) {
-				return (codeType.equals("xml") ? lst.iterator().next().xml: lst.iterator().next().json);
+				return (format.equals("xml") ? lst.iterator().next().xml: lst.iterator().next().json);
 			}
 						
 		} catch (IOException e) {
@@ -64,7 +64,7 @@ public class SearchEngine1 extends SearchEngine {
 		return null;
     }
 
-    public SearchResultSet search(String searchText, int start, int max, String sortField, boolean sortOrder) throws IOException, ParseException
+    public SearchResultSet search(String searchText, String format, int start, int max, String sortField, boolean sortOrder) throws IOException, ParseException
 	{
     	if(!searchText.contains("oid") || !searchText.contains("otype")) {
     		if(searchText.matches(BillCleaner.BILL_SEARCH_REGEXP)) {
