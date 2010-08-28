@@ -3,18 +3,10 @@ package gov.nysenate.openleg.search;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.apache.lucene.search.TopScoreDocCollector;
-import org.apache.lucene.util.Version;
+
+import gov.nysenate.openleg.lucene.LuceneResult;
 
 public class SearchEngine2 extends SearchEngine {
 
@@ -35,11 +27,18 @@ public class SearchEngine2 extends SearchEngine {
     			    	
 		try {
 			
-			response = search(
-					((otype != null) ? "otype:" + otype : "") +
-					((oid != null) ? (
-							(otype!=null) ? " AND oid:" : "")+ oid : ""),
-					format,start, numberOfResults, sortField, reverseSort);
+			String query = null;
+			if (otype != null && oid !=null)
+				query = "otype:"+otype+" AND oid:"+oid;
+			else if (otype !=null && oid == null)
+				query = "otype:"+otype;
+			else if (otype ==null && oid != null)
+				query = "oid:"+oid;
+			else
+				logger.error("Get Request had neither otype nor oid specified");
+			
+			if (query != null)
+				response = search( query, format, start, numberOfResults, sortField, reverseSort);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -53,40 +52,15 @@ public class SearchEngine2 extends SearchEngine {
 	
 	public SenateResponse search(String searchText, String format, int start, int max, String sortField, boolean reverseSort) throws ParseException, IOException {
 		
-		SenateResponse response = new SenateResponse();
-
-    	ScoreDoc[] hits = null;
-    	IndexSearcher searcher = openIndex();
-        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        Query query = new QueryParser(Version.LUCENE_CURRENT, "osearch", analyzer).parse(searchText);
-    	TopScoreDocCollector collector = TopScoreDocCollector.create(start+max, false);
+    	String data = "o"+format.toLowerCase()+"_new";
     	
-		try
-    	{
-        	//Do this search no matter what so we can get the "total hits" for the response object
-			//The sorted result search can't give us this information (I don't think)
-        	searcher.search(query, collector);
-        	response.addMetadataByKey("totalresults", collector.getTotalHits());
-        	logger.info(response.getMetadataByKey("totalresults") + " total matching documents (" + query.toString() + ")");
-	      
-        	if (sortField != null) {
-    			//If they want sorted results, do a new search with sorting enabled
-        		Sort sort = new Sort(new SortField(sortField, SortField.STRING, reverseSort));
-        		hits = searcher.search(query, null, start + max, sort).scoreDocs;
-        	}
-        	else {
-        		hits = collector.topDocs().scoreDocs;
-        	}
-        	
-        	//Build the response by adding results of the correct format
-        	String data = "o"+format.toLowerCase()+"_new"; 
-        	for (int i = start; (i < hits.length && i < start + max); i++) {
-        		Document doc = searcher.doc(hits[i].doc);
-        		response.addResult(new Result(doc.get("otype"),doc.get(data)));
-        	}
-    	}
-    	catch (Exception e) {
-    		logger.warn("Search Exception: " + query.toString(),e);
+    	LuceneResult result = search(searchText,start,max,sortField,reverseSort);
+    	
+    	SenateResponse response = new SenateResponse();
+    	response.addMetadataByKey("totalresults", result.total );
+    	
+    	for (Document doc : result.results) {
+    		response.addResult(new Result(doc.get("otype"),doc.get(data)));
     	}
     	
     	return response;
