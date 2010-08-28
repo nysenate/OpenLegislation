@@ -3,12 +3,10 @@ package gov.nysenate.openleg.util;
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
+
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -201,7 +199,7 @@ public class OriginalApiConverter {
 			}
 			
 			actionSearch.append(")");
-			SearchResultSet srs = new SearchEngine1().search(actionSearch.toString(),0,1000,"when",true);
+			SearchResultSet srs = new SearchEngine1().v1Search(actionSearch.toString(),0,1000,"when",true);
 
 			Iterator<SearchResult> itSrs = srs.getResults().iterator();
 			SearchResult sresult = null;

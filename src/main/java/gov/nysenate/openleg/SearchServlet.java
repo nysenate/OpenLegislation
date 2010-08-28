@@ -287,7 +287,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			srs = null;
 			
 
-			srs = new SearchEngine1().search(term,start,pageSize,sortField,sortOrder);
+			srs = new SearchEngine1().v1Search(term,start,pageSize,sortField,sortOrder);
 
 			if (srs != null)
 			{
