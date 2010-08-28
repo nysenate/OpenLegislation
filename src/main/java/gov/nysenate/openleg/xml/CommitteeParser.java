@@ -6,20 +6,16 @@ import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Committee;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
-import gov.nysenate.openleg.model.committee.Attendance;
 import gov.nysenate.openleg.search.SearchEngine1;
 import gov.nysenate.openleg.xml.committee.*;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -33,7 +29,6 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -107,7 +102,7 @@ public class CommitteeParser implements OpenLegConstants
 	public void printAgenda (String id) throws Exception
 	{
 		
-		Iterator<Object> it = PMF.getDetachedObjects(Agenda.class, "id", id, "number ascending",1,100).iterator();
+		Iterator<?> it = (Iterator<?>)PMF.getDetachedObjects(Agenda.class, "id", id, "number ascending",1,100).iterator();
 		
 		while (it.hasNext())
 		{
@@ -121,7 +116,7 @@ public class CommitteeParser implements OpenLegConstants
 	public void printMeetings (String commName) throws Exception
 	{
 		
-		Iterator<Object> it = PMF.getDetachedObjects(Meeting.class, "committeeName", commName, "meetingDateTime descending", 1, 100).iterator();
+		Iterator<?> it = (Iterator<?>)PMF.getDetachedObjects(Meeting.class, "committeeName", commName, "meetingDateTime descending", 1, 100).iterator();
 		
 		while (it.hasNext())
 		{
@@ -141,13 +136,13 @@ public class CommitteeParser implements OpenLegConstants
 		PersistenceManager pm = PMF.getPersistenceManager();
         
 		Query query = pm.newQuery(Agenda.class);
-		Iterator<Agenda> result = ((Collection<Agenda>) query.execute()).iterator();
+		Iterator<?> result = ((Collection<?>) query.execute()).iterator();
         
 		Agenda agenda = null;
 		
 		while (result.hasNext())
 		{
-			agenda = result.next();
+			agenda = (Agenda)result.next();
 			printXML (Agenda.class, agenda);
 			
 		}
@@ -471,7 +466,7 @@ public class CommitteeParser implements OpenLegConstants
 			logger.info("removing agenda: " + agenda.getId());
 			
 			try {
-				new SearchEngine1().deleteSenateObject(agenda, pm);
+				new SearchEngine1().deleteSenateObject(agenda);
 			} catch (Exception e) {
 				
 				logger.error("error deleting Agenda from search index: " + agenda.getId(),e);

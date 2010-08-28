@@ -88,7 +88,7 @@ String baseSenateId = bill.getSenateBillNo();
 	}
 	
 	actionSearch.append(")");
-	SearchResultSet srs = SearchEngine.doSearch(actionSearch.toString(),0,1000,"when",true);
+	SearchResultSet srs = new SearchEngine1().v1Search(actionSearch.toString(),0,1000,"when",true);
 
 	Iterator<SearchResult> itSrs = srs.getResults().iterator();
 	SearchResult sresult = null;

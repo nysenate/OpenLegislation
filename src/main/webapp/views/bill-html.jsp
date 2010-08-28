@@ -92,7 +92,7 @@ try
 	
 	actionSearch.append(")");
 	
-	SearchResultSet srs = SearchEngine.doSearch(actionSearch.toString(),0,1000,null,true);
+	SearchResultSet srs = new SearchEngine1().v1Search(actionSearch.toString(),0,1000,null,true);
 
 	Iterator<SearchResult> itSrs = srs.getResults().iterator();
 	SearchResult sresult = null;
@@ -239,7 +239,7 @@ try
 	}
 	
 	actionSearch.append(")");
-	SearchResultSet srs = SearchEngine.doSearch(actionSearch.toString(),0,1000,"when",true);
+	SearchResultSet srs = new SearchEngine1().v1Search(actionSearch.toString(),0,1000,"when",true);
 
 	Iterator<SearchResult> itSrs = srs.getResults().iterator();
 	SearchResult sresult = null;
@@ -292,7 +292,7 @@ try
  Query query = pm.newQuery(Meeting.class);
   query.declareVariables("gov.nysenate.openleg.model.Bill bill;");
   query.setFilter("this.bills.contains(bill) && bill.senateBillNo==\"" + bill.getSenateBillNo() + "\"");
-  Collection result = (Collection)query.execute();
+  Collection<?> result = (Collection<?>)query.execute();
 
 if (result.size()>0){
 %>
@@ -300,7 +300,7 @@ if (result.size()>0){
 <h3><%=bill.getSenateBillNo()%> Committee Meetings</h3>
 
 <%
-Iterator itMeetings = result.iterator();
+Iterator<?> itMeetings = result.iterator();
 while (itMeetings.hasNext()){
  Meeting meeting = (Meeting)itMeetings.next();
  %>
@@ -340,7 +340,7 @@ trans.begin();
  Query query = pm.newQuery(CalendarEntry.class);
   //query.declareVariables("gov.nysenate.openleg.model.Bill bill;");
   query.setFilter("this.bill.senateBillNo==\"" + bill.getSenateBillNo() + "\"");
-  Collection result = (Collection)query.execute();
+  Collection<?> result = (Collection<?>)query.execute();
 
 if (result.size()>0){
 %>
@@ -348,7 +348,7 @@ if (result.size()>0){
 <h3><%=bill.getSenateBillNo()%> Calendars</h3>
 
 <%
-Iterator itCals = result.iterator();
+Iterator<?> itCals = result.iterator();
 while (itCals.hasNext()){
 
  try
@@ -641,7 +641,7 @@ var disqus_url = "http://open.nysenate.gov/legislation/api/html/bill/<%=bill.get
 </cache:cache>
   
 <div id="comments">
-<b><p>*By contributing or voting you agree to the <a href = "http://nysenate.gov/legal">Terms of Participation</a> and <a href = "http://www.nysenate.gov/privacy-policy">Privacy Policy</a> and verify you are over 13.</p></b>
+<p><b>*By contributing or voting you agree to the <a href = "http://nysenate.gov/legal">Terms of Participation</a> and <a href = "http://www.nysenate.gov/privacy-policy">Privacy Policy</a> and verify you are over 13.</b></p>
  <h3> <a name="discuss">Discuss!</a></h3>
  <div id="disqus_thread"></div><script type="text/javascript" src="http://disqus.com/forums/nysenateopenleg/embed.js"></script><noscript><a href="http://nysenateopenleg.disqus.com/?url=ref">View the discussion thread.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
 </div>

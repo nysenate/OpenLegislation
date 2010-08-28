@@ -202,7 +202,7 @@ String baseSenateId = bill.getSenateBillNo();
 	}
 	
 	actionSearch.append(")");
-	SearchResultSet srs = SearchEngine.doSearch(actionSearch.toString(),0,1000,"when",true);
+	SearchResultSet srs = new SearchEngine1().v1Search(actionSearch.toString(),0,1000,"when",true);
 
 	Iterator<SearchResult> itSrs = srs.getResults().iterator();
 	SearchResult sresult = null;
@@ -247,7 +247,7 @@ try
  Query query = PMF.getPersistenceManager().newQuery(Meeting.class);
   query.declareVariables("gov.nysenate.openleg.model.Bill bill;");
   query.setFilter("this.bills.contains(bill) && bill.senateBillNo==\"" + bill.getSenateBillNo() + "\"");
-  Collection result = (Collection)query.execute();
+  Collection<?> result = (Collection<?>)query.execute();
 
 if (result.size()>0){
 %>
@@ -255,7 +255,7 @@ if (result.size()>0){
 <h3><%=bill.getSenateBillNo()%> Committee Meetings</h3>
 
 <%
-Iterator itMeetings = result.iterator();
+Iterator<?> itMeetings = result.iterator();
 while (itMeetings.hasNext()){
  Meeting meeting = (Meeting)itMeetings.next();
  %>
@@ -280,7 +280,7 @@ try
  Query query = PMF.getPersistenceManager().newQuery(CalendarEntry.class);
   //query.declareVariables("gov.nysenate.openleg.model.Bill bill;");
   query.setFilter("this.bill.senateBillNo==\"" + bill.getSenateBillNo() + "\"");
-  Collection result = (Collection)query.execute();
+  Collection<?> result = (Collection<?>)query.execute();
 
 if (result.size()>0){
 %>
@@ -288,7 +288,7 @@ if (result.size()>0){
 <h3><%=bill.getSenateBillNo()%> Calendars</h3>
 
 <%
-Iterator itCals = result.iterator();
+Iterator<?> itCals = result.iterator();
 while (itCals.hasNext()){
 
  try

@@ -18,15 +18,12 @@ import gov.nysenate.openleg.util.JsonConverter;
 import gov.nysenate.openleg.util.OriginalApiConverter;
 import gov.nysenate.openleg.xstream.XStreamBuilder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.jdo.PersistenceManager;
 
@@ -40,7 +37,7 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.Version;
 
-abstract class SearchEngine extends Lucene implements SearchEngineInterface, OpenLegConstants {
+public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 	
 	protected DateFormat DATE_FORMAT_MEDIUM = java.text.DateFormat.getDateInstance(DateFormat.MEDIUM);
     
@@ -76,7 +73,7 @@ abstract class SearchEngine extends Lucene implements SearchEngineInterface, Ope
     
     public void deleteSenateObjectById (String type, String id) throws Exception {
     	closeIndex();
-    	deleteDocument (type, id);
+    	deleteDocuments(type, id);
     	openIndex();
     }
     
@@ -115,35 +112,6 @@ abstract class SearchEngine extends Lucene implements SearchEngineInterface, Ope
 		
 		searchContent.append(billEvent.getEventText());
     }
-    
-	public static void run (SearchEngine engine,String[] args) throws Exception	
-	{
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		
-		String line = null;
-		System.out.print("openleg search > ");
-		while (!(line = reader.readLine()).equals("quit"))
-		{
-			if (line.startsWith("index "))
-				engine.indexSenateData(line.substring(line.indexOf(" ")+1));
-			else if (line.startsWith("optimize"))
-				engine.optimizeIndex();
-			else if (line.startsWith("delete"))
-			{
-				StringTokenizer cmd = new StringTokenizer(line.substring(line.indexOf(" ")+1)," ");
-				String type = cmd.nextToken();
-				String id = cmd.nextToken();
-				engine.deleteSenateObjectById(type, id);
-			}
-			else if (line.startsWith("create"))
-				engine.createIndex();
-			else
-				engine.search(line, "xml", 1, 10, null, false);
-			
-			System.out.print("openleg search > ");
-		}
-		System.out.println("Exiting Search Engine");
-	}
 	
 	public void indexSenateData(String type) throws Exception
 	{		
@@ -181,7 +149,7 @@ abstract class SearchEngine extends Lucene implements SearchEngineInterface, Ope
 		PersistenceManager pm = PMF.getPersistenceManager();
 		Collection<Object> result = null;
 		
-		deleteAllDocumentByType(type);
+		deleteDocuments(type,null);
 		
 		do {			
 			System.out.println(type + " : " + start);

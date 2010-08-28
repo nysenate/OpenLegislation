@@ -38,10 +38,10 @@ public class JsonConverter {
 		
 		/*meeting from db to xstream xml*/
 		System.out.println("\n\n\n-----MEETING-----\n\n");
-		Collection<Meeting> meetings = PMF.getDetachedObjects(Meeting.class, "committeeName", ".*" + "Aging" + ".*", "meetingDateTime descending", 0, 1);
+		Collection<?> meetings = PMF.getDetachedObjects(Meeting.class, "committeeName", ".*" + "Aging" + ".*", "meetingDateTime descending", 0, 1);
 		List<String> meeting_exclude = new ArrayList<String>();
 		meeting_exclude.add("votes");
-		for(Meeting m:meetings) {
+		for(Object m: meetings) {
 //			System.out.println(getJson(m));
 		}
 	}
@@ -111,9 +111,9 @@ public class JsonConverter {
 				HideFrom hideFrom = f.getAnnotation(HideFrom.class);
 				
 				if(hideFrom != null) {
-					Class[] clazz = hideFrom.value();
+					Class<?>[] clazz = hideFrom.value();
 					System.out.println(o.getClass().getSimpleName() + f.getName());
-					for(Class c:clazz) {
+					for(Class<?> c:clazz) {
 						System.out.println("--->" + c.getSimpleName());
 					}
 				}

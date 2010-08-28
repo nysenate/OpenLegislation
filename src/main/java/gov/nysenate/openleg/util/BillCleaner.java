@@ -102,13 +102,10 @@ public class BillCleaner implements OpenLegConstants {
 		
 		int pageSize = 50;
 		
-		
 		int start = 1;
 		int end = start+pageSize;
 		
-		PersistenceManager pm = PMF.getPersistenceManager();
-		Collection<Object> result = null;
-		
+		Collection<?> result = null;
 		
 		do {
 			result = getDetachedObjects(Bill.class, null, start, end);
@@ -118,9 +115,9 @@ public class BillCleaner implements OpenLegConstants {
 		while (result.size() == pageSize);
 	}
 	
-	public static Collection getDetachedObjects (Class someClass, String orderBy, int start, int end) 
+	public static Collection<?> getDetachedObjects (Class<?> someClass, String orderBy, int start, int end) 
     {
-		Collection<Object> results = null;
+		Collection<?> results = null;
 		
 	    PersistenceManager pm = PMF.getPersistenceManager();
         
@@ -132,7 +129,7 @@ public class BillCleaner implements OpenLegConstants {
         	
 	        // 4. mark object as persistent
 	        //pm.makePersistent(billMap);
-	        Extent<Object> e=pm.getExtent(someClass,true);
+	        Extent<?> e=pm.getExtent(someClass,true);
 	        pm.getFetchPlan().setMaxFetchDepth(MAX_FETCH_DEPTH);
 	        pm.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
 	       
@@ -143,7 +140,7 @@ public class BillCleaner implements OpenLegConstants {
 	        
 	        query.setRange(start, end);
 	        // 3. perform query
-	        results = (Collection<Object>)query.execute();
+	        results = (Collection<?>)query.execute();
 	        for(Object o:results) {
 	        	Bill temp = (Bill)o;
 	        	

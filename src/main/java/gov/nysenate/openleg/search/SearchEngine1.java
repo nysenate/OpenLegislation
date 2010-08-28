@@ -2,11 +2,14 @@ package gov.nysenate.openleg.search;
 
 import gov.nysenate.openleg.util.BillCleaner;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -28,10 +31,6 @@ import org.apache.lucene.util.Version;
 
 public class SearchEngine1 extends SearchEngine {
 	
-	public static void main(String[] args) throws Exception {
-		SearchEngine.run(new SearchEngine1(), args);
-	}
-	
 	public SearchEngine1() {
 		indexDir = "/usr/local/openleg/lucene";
 		//indexDir = "C:\\n2-lucene\\";
@@ -39,15 +38,45 @@ public class SearchEngine1 extends SearchEngine {
 		logger = Logger.getLogger(SearchEngine1.class);
 	}
 	
+	public static void main(String[] args) throws Exception {
+		SearchEngine1 engine = new SearchEngine1();
+		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		
+		String line = null;
+		System.out.print("openleg search > ");
+		while (!(line = reader.readLine()).equals("quit"))
+		{
+			if (line.startsWith("index "))
+				engine.indexSenateData(line.substring(line.indexOf(" ")+1));
+			else if (line.startsWith("optimize"))
+				engine.optimizeIndex();
+			else if (line.startsWith("delete"))
+			{
+				StringTokenizer cmd = new StringTokenizer(line.substring(line.indexOf(" ")+1)," ");
+				String type = cmd.nextToken();
+				String id = cmd.nextToken();
+				engine.deleteSenateObjectById(type, id);
+			}
+			else if (line.startsWith("create"))
+				engine.createIndex();
+			else
+				engine.v1Search(line, 1, 10, null, false);
+			
+			System.out.print("openleg search > ");
+		}
+		System.out.println("Exiting Search Engine");
+	}
+	
 	public String get(String format, String otype, String oid, String sortField, int start, int numberOfResults, boolean reverseSort) {
     	
 		try {
 			
-			SearchResultSet srs = search(
+			SearchResultSet srs = v1Search(
 					((otype != null) ? "otype:" + otype : "") +
 					((oid != null) ? (
 							(otype!=null) ? " AND oid:" : "")+ oid : ""),
-					format,start, numberOfResults, sortField, reverseSort);
+					start, numberOfResults, sortField, reverseSort);
 			
 			ArrayList<SearchResult> lst = srs.getResults();
 			
@@ -64,7 +93,7 @@ public class SearchEngine1 extends SearchEngine {
 		return null;
     }
 
-    public SearchResultSet search(String searchText, String format, int start, int max, String sortField, boolean sortOrder) throws IOException, ParseException
+    public SearchResultSet v1Search(String searchText, int start, int max, String sortField, boolean sortOrder) throws IOException, ParseException
 	{
     	if(!searchText.contains("oid") || !searchText.contains("otype")) {
     		if(searchText.matches(BillCleaner.BILL_SEARCH_REGEXP)) {

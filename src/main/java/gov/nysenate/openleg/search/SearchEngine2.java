@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.search;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -11,7 +14,33 @@ import gov.nysenate.openleg.lucene.LuceneResult;
 public class SearchEngine2 extends SearchEngine {
 
 	public static void main(String[] args) throws Exception {
-		SearchEngine.run(new SearchEngine2(), args);
+		SearchEngine2 engine = new SearchEngine2();
+		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		
+		String line = null;
+		System.out.print("openleg search > ");
+		while (!(line = reader.readLine()).equals("quit"))
+		{
+			if (line.startsWith("index "))
+				engine.indexSenateData(line.substring(line.indexOf(" ")+1));
+			else if (line.startsWith("optimize"))
+				engine.optimizeIndex();
+			else if (line.startsWith("delete"))
+			{
+				StringTokenizer cmd = new StringTokenizer(line.substring(line.indexOf(" ")+1)," ");
+				String type = cmd.nextToken();
+				String id = cmd.nextToken();
+				engine.deleteSenateObjectById(type, id);
+			}
+			else if (line.startsWith("create"))
+				engine.createIndex();
+			else
+				engine.search(line, "xml", 1, 10, null, false);
+			
+			System.out.print("openleg search > ");
+		}
+		System.out.println("Exiting Search Engine");
 	}
 	
 	public SearchEngine2() {
