@@ -19,9 +19,7 @@ import gov.nysenate.openleg.xml.calendar.XMLSequence;
 import gov.nysenate.openleg.xml.calendar.XMLSupplemental;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.InputStream;
 import java.io.Reader;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -55,11 +53,7 @@ public class CalendarParser implements OpenLegConstants {
 	
 	public static void main (String[] args) throws Exception
 	{
-		
-		String t = "args[0]";
-		
 		String f = "C:\\Documents and Settings\\Wililiams\\Desktop\\SOBI.D100621.T142028.TXT-calendar-1.xml";
-		
 		
 		CalendarParser cp = new CalendarParser();
 
@@ -93,7 +87,6 @@ public class CalendarParser implements OpenLegConstants {
 		
 		Calendar calendar = null;
 		Supplemental supplemental = null;
-		Sequence sequence = null;
 
 		ArrayList<Calendar> objectsToUpdate = new ArrayList<Calendar>();
 		

@@ -8,13 +8,13 @@ public class QueryResult {
 	/**
 	 * @return the result
 	 */
-	public Collection getResult() {
+	public Collection<?> getResult() {
 		return result;
 	}
 	/**
 	 * @param result the result to set
 	 */
-	public void setResult(Collection result) {
+	public void setResult(Collection<?> result) {
 		this.result = result;
 	}
 	/**

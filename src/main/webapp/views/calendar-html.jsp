@@ -51,13 +51,13 @@ try
 
 <%
 
-Collection<Sequence> collSeq = PMF.getDetachedObjects (Sequence.class, "id", supp.getId() + ".*", null, 0,100);
+Collection<?> collSeq = (Collection<?>)PMF.getDetachedObjects(Sequence.class, "id", supp.getId() + ".*", null, 0,100);
 
-Iterator<Sequence> it = collSeq.iterator();
+Iterator<?> it = collSeq.iterator();
 
 while (it.hasNext())
 {
-Sequence seq = it.next();
+Sequence seq = (Sequence)it.next();
 
 %>
 <%if (seq.getNo()==null || seq.getNo().length()==0){ %>

@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.model.calendar.Calendar;

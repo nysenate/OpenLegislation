@@ -2,19 +2,22 @@ package gov.nysenate.openleg.admin;
 
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Logger;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Logger;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+
+@SuppressWarnings("all")
 public class IngestServlet extends HttpServlet {
 
 	/**
@@ -89,14 +92,13 @@ public class IngestServlet extends HttpServlet {
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		String filename = null;
-		String data = null;
 		
+		String filename;
+
 		try
 		{
 			// Check that we have a file upload request
-			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+			//boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 			
 			// Create a factory for disk-based file items
 			DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -104,12 +106,12 @@ public class IngestServlet extends HttpServlet {
 			
 			// Create a new file upload handler
 			ServletFileUpload upload = new ServletFileUpload(factory);
-	
+			
 			// Parse the request
-			List /* FileItem */ items = upload.parseRequest(request);
+			List<?> items = upload.parseRequest(request);
 			
 			// Process the uploaded items
-			Iterator iter = items.iterator();
+			Iterator<?> iter = items.iterator();
 			while (iter.hasNext()) {
 			    FileItem item = (FileItem) iter.next();
 
@@ -158,7 +160,6 @@ public class IngestServlet extends HttpServlet {
 		{
 			log.warning(e.toString());
 		}
-		
 	}
 
 	/**

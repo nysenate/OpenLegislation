@@ -151,7 +151,7 @@ public class CachedContentManager implements OpenLegConstants  {
 	
 	public static Collection<Bill> getBillsBySearch (String key, int start, int end, HttpServletRequest req) throws Exception
 	{
-		Collection<Bill> bills = null;
+		Collection<?> bills = null;
 		int total = -1;
 		
 		key = URLDecoder.decode(key,ENCODING).trim();
@@ -186,14 +186,14 @@ public class CachedContentManager implements OpenLegConstants  {
 			
 		req.setAttribute("searchTotal", total+"");
 		
-		return bills;
+		return (Collection<Bill>)bills;
 	}
 	
 	public static Collection<Bill> getBillsByCommittee (String key, int start, int end, HttpServletRequest req) throws Exception
 	{
 		String comm = URLDecoder.decode(key,"utf-8");
 		
-		Collection<Bill> bills = null;
+		Collection<?> bills = null;
 		
 		req.getSession().setAttribute(KEY_TERM,comm);
 		
@@ -201,15 +201,13 @@ public class CachedContentManager implements OpenLegConstants  {
 				
 		int total = 0;
 		
-			QueryResult qr = PMF.queryBills(queryString,start,end);
-			bills = qr.getResult();
-			total = qr.getTotal();
-			
-			
-		
+		QueryResult qr = PMF.queryBills(queryString,start,end);
+		bills = qr.getResult();
+		total = qr.getTotal();
+
 		req.setAttribute("searchTotal", total+"");
 		
-		return bills;
+		return (Collection<Bill>)bills;
 	}
 	
 	public static Collection<Bill> getBillsBySponsor (String key, int start, int end, HttpServletRequest req) throws Exception
@@ -218,7 +216,7 @@ public class CachedContentManager implements OpenLegConstants  {
 		
 		req.getSession().setAttribute(KEY_TERM,sponsor);
 		boolean fuzzy = false;
-		Collection<Bill> bills = null;
+		Collection<?> bills = null;
 		int total = -1;
 	
 			
@@ -238,7 +236,7 @@ public class CachedContentManager implements OpenLegConstants  {
 		
 		req.setAttribute("searchTotal", total+"");
 		
-		return bills;
+		return (Collection<Bill>)bills;
 	}
 	
 	public static Transcript getTranscript (String key, HttpServletRequest req)
@@ -254,20 +252,19 @@ public class CachedContentManager implements OpenLegConstants  {
 	
 	public static ArrayList<Calendar> getCalendars (String key, int start, int end, HttpServletRequest req)
 	{
-		
-		String cacheKey = "comm-calendars-" + key + "-" + start + "-" + end;
+		//String cacheKey = "comm-calendars-" + key + "-" + start + "-" + end;
 		
 		ArrayList<Calendar> listCalendar = null;
 		
-		Collection<Object> calendars = null;
+		Collection<?> calendars = null;
 
-		calendars = (Collection<Object>)PMF.getDetachedObjects(Calendar.class, "type", ".*" + key, "year descending,no descending", start, end);
+		calendars = (Collection<?>)PMF.getDetachedObjects(Calendar.class, "type", ".*" + key, "year descending,no descending", start, end);
 
 		if (calendars.size() == 0)
 		{
 			try
 			{
-				calendars = (Collection<Object>)PMF.getDetachedObjects(Calendar.class, "no", Integer.parseInt(key), "year descending,no descending", start, end);
+				calendars = (Collection<?>)PMF.getDetachedObjects(Calendar.class, "no", Integer.parseInt(key), "year descending,no descending", start, end);
 			}
 			catch (Exception e3)
 			{
@@ -282,17 +279,17 @@ public class CachedContentManager implements OpenLegConstants  {
 			try
 			{
 				java.util.Date matchDate = SimpleDateFormat.getDateInstance(DateFormat.SHORT).parse(key);
-				Collection<Object> supps = (Collection<Object>)PMF.getDetachedObjects(Supplemental.class, "calendarDate", matchDate, "year descending,no descending", start, end);
+				Collection<?> supps = (Collection<?>)PMF.getDetachedObjects(Supplemental.class, "calendarDate", matchDate, "year descending,no descending", start, end);
 				
-				calendars = new ArrayList <Object>();
+				calendars = new ArrayList<Calendar>();
 				
-				Iterator it = supps.iterator();
+				Iterator<?> it = supps.iterator();
 				Supplemental supp = null;
 				while (it.hasNext())
 				{
 					supp = (Supplemental)it.next();
 					if (!calendars.contains(supp.getCalendar()))
-						calendars.add(supp.getCalendar());
+						((ArrayList<Calendar>)calendars).add(supp.getCalendar());
 				}
 			}
 			catch (Exception pe)
@@ -300,18 +297,18 @@ public class CachedContentManager implements OpenLegConstants  {
 				try
 				{
 					java.util.Date matchDate = SimpleDateFormat.getDateInstance(DateFormat.MEDIUM).parse(key);
-					Collection<Object> supps = (Collection<Object>)PMF.getDetachedObjects(Supplemental.class, "calendarDate", matchDate, "year descending,no descending", start, end);
+					Collection<?> supps = (Collection<?>)PMF.getDetachedObjects(Supplemental.class, "calendarDate", matchDate, "year descending,no descending", start, end);
 				
 				
-					calendars = new ArrayList <Object>();
+					calendars = new ArrayList<Calendar>();
 					
-					Iterator it = supps.iterator();
+					Iterator<?> it = supps.iterator();
 					Supplemental supp = null;
 					while (it.hasNext())
 					{
 						supp = (Supplemental)it.next();
 						if (!calendars.contains(supp.getCalendar()))
-							calendars.add(supp.getCalendar());
+							((ArrayList<Calendar>)calendars).add(supp.getCalendar());
 					}
 				}
 				catch (Exception pe2)
@@ -328,7 +325,7 @@ public class CachedContentManager implements OpenLegConstants  {
 
 		if (calendars != null)
 		{
-			Iterator<Object> it = calendars.iterator();
+			Iterator<?> it = calendars.iterator();
 			Calendar calendar = null;
 			
 			while (it.hasNext())
@@ -340,25 +337,24 @@ public class CachedContentManager implements OpenLegConstants  {
 
 		}
 			
-		
 		return listCalendar;
 	}
 	
 	public static Collection<Meeting> getMeetings (String key, int start, int end, HttpServletRequest req)
 	{
-		Collection<Meeting> meetings = null;
+		Collection<?> meetings = null;
 		
 					
-		meetings = (Collection<Meeting>)PMF.getDetachedObjects(Meeting.class, "committeeName", ".*" + key + ".*", "meetingDateTime descending", start, end);
+		meetings = (Collection<?>)PMF.getDetachedObjects(Meeting.class, "committeeName", ".*" + key + ".*", "meetingDateTime descending", start, end);
 		
 		if (meetings.size() == 0)
 		{
-			meetings = (Collection<Meeting>)PMF.getDetachedObjects(Meeting.class, "committeeChair", ".*" + key + ".*", "meetingDateTime descending", start, end);
+			meetings = (Collection<?>)PMF.getDetachedObjects(Meeting.class, "committeeChair", ".*" + key + ".*", "meetingDateTime descending", start, end);
 		}
 		
 		if (meetings.size() == 0)
 		{
-			meetings = (Collection<Meeting>)PMF.getDetachedObjects(Meeting.class, "location", ".*" + key + ".*", "meetingDateTime descending", start, end);
+			meetings = (Collection<?>)PMF.getDetachedObjects(Meeting.class, "location", ".*" + key + ".*", "meetingDateTime descending", start, end);
 		}
 		
 		if (meetings.size() == 0)
@@ -368,14 +364,14 @@ public class CachedContentManager implements OpenLegConstants  {
 			try
 			{
 				java.util.Date matchDate = SimpleDateFormat.getDateInstance(DateFormat.SHORT).parse(dateKey);
-				meetings = (Collection<Meeting>)PMF.getDetachedObjects(Meeting.class, "meetingDateTime", matchDate, "meetingDateTime descending", start, end);
+				meetings = (Collection<?>)PMF.getDetachedObjects(Meeting.class, "meetingDateTime", matchDate, "meetingDateTime descending", start, end);
 			}
 			catch (Exception pe)
 			{
 				try
 				{
 					java.util.Date matchDate = SimpleDateFormat.getDateInstance(DateFormat.MEDIUM).parse(dateKey);
-					meetings = (Collection<Meeting>)PMF.getDetachedObjects(Meeting.class, "meetingDateTime", matchDate, "meetingDateTime descending", start, end);
+					meetings = (Collection<?>)PMF.getDetachedObjects(Meeting.class, "meetingDateTime", matchDate, "meetingDateTime descending", start, end);
 				}
 				catch (Exception pe2)
 				{
@@ -416,7 +412,7 @@ public class CachedContentManager implements OpenLegConstants  {
 			        query.setRange(start, end);
 			        
 			        // 3. perform query
-			        meetings = (Collection<Meeting>)query.execute();
+			        meetings = (Collection<?>)query.execute();
 			 
 			        meetings = pm.detachCopyAll(meetings);
 			        
@@ -454,7 +450,7 @@ public class CachedContentManager implements OpenLegConstants  {
 					        query.setRange(start, end);
 					        
 					        // 3. perform query
-					        meetings = (Collection<Meeting>)query.execute(key);
+					        meetings = (Collection<?>)query.execute(key);
 					 
 					        meetings = pm.detachCopyAll(meetings);
 					        
@@ -475,7 +471,7 @@ public class CachedContentManager implements OpenLegConstants  {
 			}
 			
 		
-		return meetings;
+		return (Collection<Meeting>)meetings;
 	}
 	
 	public static Meeting getMeeting (String key, HttpServletRequest req)

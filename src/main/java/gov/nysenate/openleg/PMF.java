@@ -231,9 +231,9 @@ public final class PMF implements OpenLegConstants {
 		}
 	}
 
-	public static Collection getDetachedObjects (Class someClass, String orderBy, int start, int end) 
+	public static Collection<?> getDetachedObjects (Class<?> someClass, String orderBy, int start, int end) 
     {
-		Collection<Object> results = null;
+		Collection<?> results = null;
 		
 	    PersistenceManager pm = getPersistenceManager();
         
@@ -245,7 +245,7 @@ public final class PMF implements OpenLegConstants {
         	
 	        // 4. mark object as persistent
 	        //pm.makePersistent(billMap);
-	        Extent<Object> e=pm.getExtent(someClass,true);
+	        Extent<?> e=pm.getExtent(someClass,true);
 	        pm.getFetchPlan().setMaxFetchDepth(MAX_FETCH_DEPTH);
 	        pm.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
 	       
@@ -257,7 +257,7 @@ public final class PMF implements OpenLegConstants {
 	        query.setRange(start, end);
 	        
 	        // 3. perform query
-	        results = (Collection<Object>)query.execute();
+	        results = (Collection<?>)query.execute();
 	
 	        results = pm.detachCopyAll(results);
 
@@ -284,9 +284,9 @@ public final class PMF implements OpenLegConstants {
         return results;
     }
 	
-	public static Collection getDetachedObjects (Class someClass, String key, String value, String orderBy, int start, int end) 
+	public static Collection<?> getDetachedObjects (Class<?> someClass, String key, String value, String orderBy, int start, int end) 
     {
-		Collection<Object> results = null;
+		Collection<?> results = null;
 		
 	    PersistenceManager pm = getPersistenceManager();
         
@@ -298,7 +298,7 @@ public final class PMF implements OpenLegConstants {
         	
 	        // 4. mark object as persistent
 	        //pm.makePersistent(billMap);
-	        Extent<Object> e=pm.getExtent(someClass,true);
+	        Extent<?> e=pm.getExtent(someClass,true);
 	        pm.getFetchPlan().setMaxFetchDepth(MAX_FETCH_DEPTH);
 	        pm.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
 	       
@@ -311,7 +311,7 @@ public final class PMF implements OpenLegConstants {
 	        query.setRange(start, end);
 	        
 	        // 3. perform query
-	        results = (Collection<Object>)query.execute("(?i)" + value);
+	        results = (Collection<?>)query.execute("(?i)" + value);
 	
 	        results = pm.detachCopyAll(results);
 
@@ -351,9 +351,9 @@ public final class PMF implements OpenLegConstants {
     	return tx;
 	}
 	
-	public static Collection getDetachedObjects (Class someClass, String key, long idValue, String orderBy, int start, int end) 
+	public static Collection<?> getDetachedObjects (Class<?> someClass, String key, long idValue, String orderBy, int start, int end) 
     {
-		Collection<Object> results = null;
+		Collection<?> results = null;
 	    PersistenceManager pm = getPersistenceManager();
         
         Transaction tx = pm.currentTransaction();
@@ -363,7 +363,7 @@ public final class PMF implements OpenLegConstants {
         	tx.begin();
 	        // 4. mark object as persistent
 	        //pm.makePersistent(billMap);
-	        Extent<Object> e=pm.getExtent(someClass,true);
+	        Extent<?> e=pm.getExtent(someClass,true);
 	        pm.getFetchPlan().setMaxFetchDepth(MAX_FETCH_DEPTH);
 	        pm.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
 	       
@@ -374,7 +374,7 @@ public final class PMF implements OpenLegConstants {
 	        query.setOrdering(orderBy);
 	        
 	        // 3. perform query
-	        results = (Collection<Object>)query.execute();
+	        results = (Collection<?>)query.execute();
 	
 	        results = pm.detachCopyAll(results);
 	        
@@ -400,9 +400,9 @@ public final class PMF implements OpenLegConstants {
         return results;
     }
 	
-	public static Collection getDetachedObjects (Class someClass, String key, Date dateVal, String orderBy, int start, int end) 
+	public static Collection<?> getDetachedObjects (Class<?> someClass, String key, Date dateVal, String orderBy, int start, int end) 
     {
-		Collection results = null;
+		Collection<?> results = null;
 		
 	    PersistenceManager pm = getPersistenceManager();
         Transaction tx = pm.currentTransaction();
@@ -419,7 +419,7 @@ public final class PMF implements OpenLegConstants {
         	
 	        // 4. mark object as persistent
 	        //pm.makePersistent(billMap);
-	        Extent<Object> e=pm.getExtent(someClass,true);
+	        Extent<?> e=pm.getExtent(someClass,true);
 	        pm.getFetchPlan().setMaxFetchDepth(MAX_FETCH_DEPTH);
 	        pm.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
 	        
@@ -430,7 +430,7 @@ public final class PMF implements OpenLegConstants {
 	        query.setRange(start, end);
 	        
 	      //  query.setOrdering("endDate descending");
-	        results = (Collection)query.execute(startDate,endDate);
+	        results = (Collection<?>)query.execute(startDate,endDate);
 
 	        results = pm.detachCopyAll(results);
 
@@ -505,7 +505,7 @@ public final class PMF implements OpenLegConstants {
 		Transaction tx = null;
 		
 
-		Collection<Bill> results = null;
+		Collection<?> results = null;
 
 		
 		int total = 0;
@@ -752,7 +752,7 @@ public final class PMF implements OpenLegConstants {
 		       // query.declareVariables("Bill bill");
 		        query.setOrdering(SORTINDEX_DESCENDING);
 		        pm.getFetchPlan().setMaxFetchDepth(1);
-		        results = (Collection<Bill>)query.executeWithArray(paramArray);
+		        results = (Collection<?>)query.executeWithArray(paramArray);
 		        
 		        total = results.size();
 		        logger.info("queryBills: total count=" + total);
@@ -761,7 +761,7 @@ public final class PMF implements OpenLegConstants {
 		        if (start != -1)
 		        	query.setRange(start,end);
 		       
-		        results = (Collection<Bill>)query.executeWithArray(paramArray);
+		        results = (Collection<?>)query.executeWithArray(paramArray);
 	
 		        results = pm.detachCopyAll(results);
 		        
@@ -781,7 +781,7 @@ public final class PMF implements OpenLegConstants {
 		        if (start != -1)
 		        	query.setRange(start,end);
 		        
-				results = (Collection<Bill>)query.execute();
+				results = (Collection<?>)query.execute();
 				
 		        results = pm.detachCopyAll(results);
 		        query.closeAll();
@@ -806,7 +806,7 @@ public final class PMF implements OpenLegConstants {
         logger.info("queryBills: results=" + results.size());
         
         QueryResult qr = new QueryResult();
-        qr.setResult(new ArrayList<Bill>(results));
+        qr.setResult(new ArrayList<Bill>((Collection<Bill>)results));
          
         qr.setTotal(total);
         
@@ -918,7 +918,7 @@ public final class PMF implements OpenLegConstants {
 	        
 	        // 3. perform query
 	     
-	        Collection<Bill> results = (Collection<Bill>)query.execute();
+	        Collection<?> results = (Collection<?>)query.execute();
 	        
 	        results = pm.detachCopyAll(results);
 	        
@@ -926,7 +926,7 @@ public final class PMF implements OpenLegConstants {
 	        tx.commit();
 	        
 	        qr = new QueryResult();
-	        qr.setResult(new ArrayList<Bill>(results));
+	        qr.setResult(new ArrayList<Bill>((Collection<Bill>)results));
 	        
 	        int total = getResultCount("senateBillNo","gov.nysenate.openleg.model.Bill",queryString);
 	        
@@ -1009,8 +1009,6 @@ public final class PMF implements OpenLegConstants {
     	
     	tx.begin();
     	
-    	Bill bill = null;
-    
         // 4. mark object as persistent
         //pm.makePersistent(billMap);
         Query query = pm.newQuery(Bill.class);
@@ -1019,9 +1017,9 @@ public final class PMF implements OpenLegConstants {
         
         // 3. perform query
         
-        Collection<Bill> results = (Collection<Bill>)query.execute();
+        Collection<?> results = (Collection<?>)query.execute();
         results = pm.detachCopyAll(results);
-        ArrayList<Bill> allBills = new ArrayList<Bill>(results);
+        ArrayList<Bill> allBills = new ArrayList<Bill>((Collection<Bill>)results);
         query.closeAll();
         tx.commit();
         
@@ -1044,22 +1042,17 @@ public final class PMF implements OpenLegConstants {
     	Transaction trans = pm.currentTransaction();
     	trans.begin();
     		
-    	Collection<Bill> alBills = null;
+    	Collection<?> alBills = null;
     	QueryResult qr = PMF.queryBills(queryString,start,end);
     	alBills = qr.getResult();
 
-    	while (alBills.size()>0)
-    	{
+    	while (alBills.size()>0) {
     		
+    		Iterator<?> it = alBills.iterator();
     		
-    		Iterator<Bill> it = alBills.iterator();
+    		while (it.hasNext()) {
     		
-    		while (it.hasNext())
-    		{
-    		
-    		
-    			bill = it.next();
-    			
+    			bill = (Bill)it.next();
     			
 				String senateId = bill.getSenateBillNo();
 				
@@ -1072,23 +1065,17 @@ public final class PMF implements OpenLegConstants {
 				if (!Character.isDigit(senateId.charAt(amendIdx)))
 				{
 					senateId = senateId.substring(0,amendIdx);
-					
 				}
 				
 				bill.setSortIndex(Integer.parseInt(senateId));
 				
 				logger.info("setting sortIdx for bill: " + bill.getSenateBillNo() + " idx=" + bill.getSortIndex());
-    			
-    			
     		}
-    		
     		
     		start+=100;
     		end+=100;	
     		
-    		
     		alBills = PMF.queryBills(queryString,start,end).getResult();
-    		
     		
     	}
 
@@ -1098,7 +1085,7 @@ public final class PMF implements OpenLegConstants {
          		pm.close();
     }
     
-    public static boolean removePersistedObject (PersistenceManager pm, Class objClass, String objectId) {
+    public static boolean removePersistedObject (PersistenceManager pm, Class<?> objClass, String objectId) {
 		boolean removed = false;
 		
 		try {
@@ -1126,7 +1113,7 @@ public final class PMF implements OpenLegConstants {
 		return removed;
 	}
     
-    public static Object getPersistedObject (PersistenceManager pm, Class objClass, String objectId, boolean closePersistenceManager)
+    public static Object getPersistedObject (PersistenceManager pm, Class<?> objClass, String objectId, boolean closePersistenceManager)
 	{
     	Object returnObject = null;
 		if (pm == null)
@@ -1157,8 +1144,6 @@ public final class PMF implements OpenLegConstants {
     	
     	PersistenceManager pm = getPersistenceManager();
     	Transaction tx = null;
-    	
-    	ArrayList<Bill> result = null;
     	QueryResult qr = null;
     	
     	tx = pm.currentTransaction();
@@ -1179,7 +1164,7 @@ public final class PMF implements OpenLegConstants {
 	    	
 	    	qr = queryBills (query.toString(),0,25,SENATEBILLNO_DESCENDING);
 	    	
-	    	results = new ArrayList<Bill> (qr.getResult());
+	    	results = new ArrayList<Bill> ((Collection<Bill>)qr.getResult());
 	    	
 	    	tx.commit();
 			    	
@@ -1264,8 +1249,6 @@ public final class PMF implements OpenLegConstants {
     public static ArrayList<BillEvent> getBillEventsBySponsor (String sponsor, int max)
     {
     	ArrayList<BillEvent> returnResults = new ArrayList<BillEvent>();
-	    BillEvent billEvent = null;
-    	Bill bill = null;
     	
 	    PersistenceManager pm = getPersistenceManager();
 	    Transaction tx = pm.currentTransaction();
@@ -1286,7 +1269,7 @@ public final class PMF implements OpenLegConstants {
 		        try
 		        {
 		        	  
-		    		Extent e=pm.getExtent(BillEvent.class,true);
+		    		Extent<?> e=pm.getExtent(BillEvent.class,true);
 		        	Query query = pm.newQuery(e);
 		        	
 			      //  query.setClass(BillEvent.class);
@@ -1298,10 +1281,10 @@ public final class PMF implements OpenLegConstants {
 			        if (start != -1)
 			        	query.setRange(start, end);
 			        
-			        Collection<BillEvent> result = ((Collection<BillEvent>)query.execute());
+			        Collection<?> result = ((Collection<?>)query.execute());
 		        	result = pm.detachCopyAll(result);
 		        	
-		        	returnResults.addAll(result);
+		        	returnResults.addAll((Collection<BillEvent>)result);
 		        	
 		        	query.closeAll();
 			        
@@ -1414,15 +1397,15 @@ public final class PMF implements OpenLegConstants {
 		        // 3. perform query
 		        // 4. now iterate over the result to print each
 		        // product and finish tx
-		        Collection<BillEvent> result = (Collection<BillEvent>)query.execute(startDate,endDate,queryText);
+		        Collection<?> result = (Collection<?>)query.execute(startDate,endDate,queryText);
 		        result = pm.detachCopyAll(result);
-		        returnResults = new ArrayList<BillEvent>(result);
+		        returnResults = new ArrayList<BillEvent>((Collection<BillEvent>)result);
 	        
 		        query.closeAll();
         	}
         	else
         	{
-        		Extent e=pm.getExtent(BillEvent.class,true);
+        		Extent<?> e=pm.getExtent(BillEvent.class,true);
 		        Query query = pm.newQuery(e);
 		        
 		        String filterText = "eventText.matches('(?i).*" + eventText + ".*')";
@@ -1440,9 +1423,9 @@ public final class PMF implements OpenLegConstants {
 		        	query.setRange(start, end);
 		        //query.declareParameters("String event_query_text");
 		        
-		        Collection<BillEvent>  result = (Collection<BillEvent>)query.execute(eventText);
+		        Collection<?>  result = (Collection<?>)query.execute(eventText);
 		        result = pm.detachCopyAll(result);
-		        returnResults = new ArrayList<BillEvent>(result);
+		        returnResults = new ArrayList<BillEvent>((Collection<BillEvent>)result);
 		        
 		        
 		        query.closeAll();

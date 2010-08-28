@@ -18,11 +18,11 @@ import org.apache.log4j.Logger;
 
 public class APIServlet extends HttpServlet implements OpenLegConstants {
 
+	private static final long serialVersionUID = -7567155903739799800L;
+
 	private static Logger logger = Logger.getLogger(APIServlet.class);	
 
 	private static final String SRV_DELIM = "/";
-	
-	
 	
 	/* (non-Javadoc)
 	 * @see javax.servlet.GenericServlet#init()
@@ -47,12 +47,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 	}
 	
-
-	
-	
-	
-	
-	@SuppressWarnings("unchecked")
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException, ServletException
 	{
@@ -75,7 +69,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	
 		StringTokenizer st = new StringTokenizer (uri,SRV_DELIM);
 		
-		String app = st.nextToken(); //legislation
+		st.nextToken(); //remove the 'legislation'
 		String service = st.nextToken(); //api
 		String version = "";
 		

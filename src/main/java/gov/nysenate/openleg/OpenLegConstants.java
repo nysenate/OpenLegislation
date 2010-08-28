@@ -88,7 +88,4 @@ public interface OpenLegConstants {
 	
 	
 	public final static String REGEX_API_KEY = ":::::|||||";
-	
-	
-	
 }

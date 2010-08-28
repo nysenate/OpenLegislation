@@ -127,7 +127,7 @@ public class TextFormatter {
 			line = st.nextToken().trim();
 
 			line = line.replace(" S ","<br/><br/>S ");
-			line = line.replace(" ¤ ","<br/><br/>¤ ");
+			line = line.replace(" ï¿½ ","<br/><br/>ï¿½ ");
 			line = line.replace(" Section ","<br/><br/>Section ");
 			line = line.replace("AN ACT ","<br/><br/>AN ACT ");
 			line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");
@@ -156,13 +156,9 @@ public class TextFormatter {
 					line = line.substring(breakIdx+1).trim();
 				}
 				
-				int sepIdx = -1;
-				
 				if (line.endsWith(":"))
 				{
 					line = line + "<br/>";
-					
-					
 				}
 				
 			
@@ -185,21 +181,9 @@ public class TextFormatter {
 				
 				resp.append("<br/>");
 			}
-			
-		
-			
-			
-		
-			
-			
 		}
 		
-		
-		String output =  resp.toString();
-		
-
-		return output;
-		
+		return resp.toString();
 	}
 	
 	public static String formatMemo (String input)
@@ -241,8 +225,6 @@ public class TextFormatter {
 					line = line.substring(breakIdx+1).trim();
 				}
 				
-				int sepIdx = -1;
-				
 				if (line.endsWith(" "))
 					line = line.substring(0,line.length()-1).trim();
 				
@@ -261,19 +243,10 @@ public class TextFormatter {
 				resp.append(line);
 				resp.append("<br/><br/>");
 			}
-			
-			
-			
 		
-			
-			
 		}
 		
-		
-		String output =  resp.toString();
-		
-
-		return output;
+		return resp.toString();
 		
 	}
 	

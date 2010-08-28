@@ -128,7 +128,7 @@ else{ %>Most Recent<%}%>
  %>
 
  <%
-Iterator it = srs.getResults().iterator();
+Iterator<?> it = srs.getResults().iterator();
   SearchResult sresult = null;
   
   String resultType = null;

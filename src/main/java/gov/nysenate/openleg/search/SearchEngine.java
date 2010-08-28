@@ -147,7 +147,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 		int end = start+pageSize;
 		
 		PersistenceManager pm = PMF.getPersistenceManager();
-		Collection<Object> result = null;
+		Collection<?> result = null;
 		
 		deleteDocuments(type,null);
 		

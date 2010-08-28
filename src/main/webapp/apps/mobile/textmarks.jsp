@@ -15,20 +15,20 @@ if (term == null)
 }
 
 Bill bill = PMF.getBill(pm,term.toUpperCase());
-Collection<Bill> results = null;
+Collection<?> results = null;
 
 if (bill == null)
 {
     if (term.startsWith("s"))
         term = term.substring(1);
         
-        results = PMF.queryBills("senateBillNo.indexOf(\"" + term.toUpperCase() + "\")!=-1",start,end).getResult();
+        results = (Collection<?>)PMF.queryBills("senateBillNo.indexOf(\"" + term.toUpperCase() + "\")!=-1",start,end).getResult();
         
         if (results.size()>0)
         {
                 if (results.size()==1)
                 {
-                        bill = results.iterator().next();
+                        bill = (Bill)results.iterator().next();
                 }
                 else
                 {
@@ -39,17 +39,17 @@ if (bill == null)
 else
 {
         results = new ArrayList<Bill>();
-        results.add(bill);
+        ((Collection<Bill>)results).add(bill);
 }
 
 if (results.size()==0) //lookup bills by sponsor
-        results = PMF.getBillFromSponsor(term,start,end,true).getResult();
+        results = (Collection<?>)PMF.getBillFromSponsor(term,start,end,true).getResult();
 
 if (results.size()==0) //lookup bills by comm
-        results = PMF.queryBills("currentCommittee",term,start,end).getResult();
+        results = (Collection<?>)PMF.queryBills("currentCommittee",term,start,end).getResult();
         
 if (results.size()==0)//lookup bills by summary search term
-        results = PMF.queryBills("summary.indexOf(\"" + term + "\")!=-1",start,end).getResult();
+        results = (Collection<?>)PMF.queryBills("summary.indexOf(\"" + term + "\")!=-1",start,end).getResult();
  
  //now render results        
  if (results != null && results.size()>0)
@@ -63,10 +63,10 @@ if (results.size()==0)//lookup bills by summary search term
                 }
                 else {
 
-                Iterator<Bill> it = results.iterator();
+                Iterator<?> it = results.iterator();
 
                 while (it.hasNext()){
-                bill = it.next();
+                	bill = (Bill)it.next();
 %>
                 <%=bill.getSenateBillNo()%>&nbsp;
 <%
