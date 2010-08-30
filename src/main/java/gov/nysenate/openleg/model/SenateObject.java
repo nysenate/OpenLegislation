@@ -1,3 +1,3 @@
 package gov.nysenate.openleg.model;
 
-public class SenateObject { }
+public abstract class SenateObject { }
