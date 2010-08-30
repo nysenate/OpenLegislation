@@ -117,7 +117,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			SenateResponse sr = new SearchEngine2().search(term,format,start,pageSize,null,true);
 			req.setAttribute("results", sr);
 			
-			if(sr.getResults().size() == 1) {
+			if(sr.getResults().size() == 0) {
 				getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
 			}
 			else if(sr.getResults().size() == 1) {
