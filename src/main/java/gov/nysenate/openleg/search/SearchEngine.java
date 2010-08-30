@@ -149,7 +149,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     				supp.setCalendar(cal);
     				
     				try {
-    	    			addDocument(obj, ls, indexWriter);
+    	    			addDocument(supp, ls, indexWriter);
     	    		}
     	    		catch (Exception e) {
     	    			logger.warn("unable to index senate supp",e);

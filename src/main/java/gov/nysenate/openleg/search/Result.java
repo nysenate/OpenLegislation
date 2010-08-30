@@ -1,21 +1,39 @@
 package gov.nysenate.openleg.search;
 
-import gov.nysenate.openleg.xstream.XStreamBuilder;
-
 public class Result {
 	
-	public static void main(String[] args) {
-		
-		System.out.println(XStreamBuilder.writeResponse("xml", new SearchEngine2().get("xml", "bill", "s1234-2009", null, 0, 1, true)));
-		
-	}
-
 	public String otype;
 	public String data;
+	public String oid;
 	
-	public Result(String otype, String data) {
+	public Result(String otype, String data, String oid) {
 		this.otype = otype;
 		this.data = data;
+		this.oid  = oid;
+	}
+
+	public String getOtype() {
+		return otype;
+	}
+
+	public String getData() {
+		return data;
+	}
+
+	public String getOid() {
+		return oid;
+	}
+
+	public void setOtype(String otype) {
+		this.otype = otype;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
+
+	public void setOid(String oid) {
+		this.oid = oid;
 	}
 	
 }

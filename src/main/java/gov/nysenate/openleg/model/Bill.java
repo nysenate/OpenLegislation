@@ -472,6 +472,9 @@ public class Bill extends SenateObject implements LuceneObject  {
 	}
 	
 	public String getLuceneAmendments() {
+		if(amendments == null) {
+			return "";
+		}
 		StringBuilder response = new StringBuilder();
 		for(Bill amendment : amendments) {
 			response.append(amendment.getSenateBillNo() + ", ");
@@ -488,7 +491,10 @@ public class Bill extends SenateObject implements LuceneObject  {
 	}
 	
 	public String getLuceneSponsor() {
-		return sponsor.getFullname();
+		if(sponsor != null) {
+			return sponsor.getFullname();
+		}
+		return "";
 	}
 	
 	/*

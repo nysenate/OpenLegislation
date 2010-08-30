@@ -2,21 +2,22 @@
 <%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>
 <%
 
-String cacheKey = (String)request.getAttribute("path");
-int cacheTime = OpenLegConstants.DEFAULT_CACHE_TIME;
- 
+
 String appPath = request.getContextPath();
 
 String term = (String)request.getAttribute("term");
 String type = (String)request.getAttribute("type");
 String format = (String)request.getAttribute("format");
+String pageIdx = (String)request.getAttribute("pageIdx");
+String pageSize = (String)request.getAttribute("pageSize");
+
+
+out.write(XStreamBuilder.writeResponse(format,(SenateResponse)request.getAttribute("results")));
+
 
 %>
- <cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>" scope="application">
-<%
 
-out.write(XStreamBuilder.writeResponse(format,new SearchEngine2().search(term,format,0,1,null,false)));
 
-%>
 
-</cache:cache>
+
+{{"name":"senator name", "contact":"contact},{"name":

@@ -2,6 +2,7 @@ package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.search.SearchResultSet;
+import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
 
 import java.io.IOException;
@@ -23,8 +24,8 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 	
 	private static final String SRV_DELIM = "/";
 	
-	public static void main(String[] args) {
-		System.out.println(new SearchEngine2().get("xml","bill","s1234",null,0,1,true).getResults().iterator().next());
+	public static void main(String[] args) throws ParseException, IOException {
+		System.out.println(new SearchEngine2().search("otype:supplemental","xml",0,1,null,true).getResults().iterator().next().data);
 	}
        
     public ApiServlet2_0() {
@@ -37,7 +38,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
     }
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
+				
 		String encodedUri = req.getRequestURI();
 		
 		String uri = java.net.URLDecoder.decode(encodedUri,OpenLegConstants.ENCODING);
@@ -68,8 +69,10 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 		Boolean sortOrder = Boolean.parseBoolean(req.getParameter("sortOrder"));
 		String sortField = (String)req.getParameter("sort");
 		String session = (String)req.getParameter("session");
+		String format = null;
 		
 		int start = (new Integer(pageIdx) -1) * (new Integer(pageSize));
+		
 		
 		if(sortField != null) {
 			req.setAttribute("sortField",sortField);
@@ -80,75 +83,85 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 		req.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
 		req.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
 		
-		try {
-			if(command.equals("search")) {
-				if(term == null) {
-					getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
-				
+		
+		
+		if(command.equals("search")) {
+			if(term == null) {
+				getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
+			
+			}
+			format = st.nextToken();				
+			req.setAttribute("format", format);
+		}
+		else {
+			term = st.nextToken();
+			
+			format = "";
+			try {
+				format = uri.split("/")[uri.split("/").length-1].split("\\.")[1];
+				term = term.split("\\.")[0];
+			}
+			catch (Exception e) {
+				format = "html";
+			}
+			
+			term = "otype:" + command + (term != null && (!term.equals(""))? " AND oid:" + term + "*" : "");
+			
+			req.setAttribute("format", format);
+			req.setAttribute(KEY_TYPE, command);
+			
+			System.out.println(term + " : " + format);
+		}
+		
+			try {
+			SenateResponse sr = new SearchEngine2().search(term,format,start,pageSize,null,true);
+			req.setAttribute("results", sr);
+			
+			if(sr.getResults().size() == 1) {
+				getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
+			}
+			else if(sr.getResults().size() == 1) {
+				String viewPath = "/views2/v2-api.jsp";
+				if(!command.equals("search") && !term.contains(sr.getResults().iterator().next().getOid())) {
+					viewPath = "/legislation/2.0/" + command + "/" + sr.getResults().iterator().next().getOid() + "." + format;
+					resp.sendRedirect(viewPath);
 				}
-				String format = st.nextToken();
-				
-				req.setAttribute("term",term);
-				
-				SearchResultSet srs = new SearchEngine2().search(term, start, pageSize, sortField, sortOrder);
-				
-				if (srs != null)
-				{
-					req.setAttribute("results", srs);
-					String viewPath = "/views/search-" + format + DOT_JSP;
+				else {
 					getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
-					
 				}
-				else
-				{					
-					logger.error("Search Error: " + req.getRequestURI());
-					resp.sendError(500);
-					
-				}
-				
 			}
 			else {
-				String key = st.nextToken();
-				
-				String format = "";
-				try {
-					format = uri.split("/")[uri.split("/").length-1].split("\\.")[1];
-					key = key.split("\\.")[0];
+				String viewPath = "/views2/v2-api.jsp";
+				if(!command.equals("search") && !term.contains(sr.getResults().iterator().next().getOid())) {
+					viewPath = "/legislation/2.0/search/" +format +"?term=" + term;
+					resp.sendRedirect(viewPath);
 				}
-				catch (Exception e) {
-					format = "html";
+				else {
+					getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
 				}
 				
-				req.setAttribute("format", format);
-				req.setAttribute(KEY_TYPE, command);
-				req.setAttribute("term", key);
-				
-				String viewPath = (format.equals("html")? "/views/" + command + "-" + format + ".jsp" : "/views2/v2-api.jsp");
-								
-				getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
-				
 			}
-			/*else if(command.equals("bill")) {
-				
-			}
-			else if(command.equals("transcript")) {
-				
-			}
-			else if(command.equals("meeting")) {
-		
-			}
-			else if(command.equals("calendar")) {
-				
-			}
-			else if(command.equals("person")) {
-				
-			}*/
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
-		catch (ParseException e) {
-			logger.error("Search Error: " + req.getRequestURI(),e);
 		
-			resp.sendError(500);
 		
+		
+		
+		/*else if(command.equals("bill")) {
+			
 		}
+		else if(command.equals("transcript")) {
+			
+		}
+		else if(command.equals("meeting")) {
+
+		}
+		else if(command.equals("calendar")) {
+			
+		}
+		else if(command.equals("person")) {
+			
+		}*/
 	}
 }

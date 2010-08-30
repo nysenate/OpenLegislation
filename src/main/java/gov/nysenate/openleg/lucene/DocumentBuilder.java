@@ -167,7 +167,8 @@ public class DocumentBuilder {
 	
 	private String getLuceneFields(Object o, String method) throws Exception {
 		Method m = o.getClass().getDeclaredMethod(method);
-		return (String)m.invoke(o);
+		String ret = (String)m.invoke(o);
+		return (ret==null) ? "":ret;
 	}
 	
 	public AnnotatedField getAnnotatedField(Field field) {

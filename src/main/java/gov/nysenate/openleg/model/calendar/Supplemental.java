@@ -202,7 +202,7 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 	public String luceneOtype() {
 		return "calendar";
 	}
-	//
+
 	@Override
 	public HashMap<String,Field> luceneFields() {
 		HashMap<String,Field> fields = new HashMap<String,Field>();

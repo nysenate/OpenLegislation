@@ -466,7 +466,7 @@ public class CommitteeParser implements OpenLegConstants
 			logger.info("removing agenda: " + agenda.getId());
 			
 			try {
-				new SearchEngine1().deleteSenateObject(agenda);
+				SearchEngine1.deleteSenateObject(agenda, PMF.getPersistenceManager());
 			} catch (Exception e) {
 				
 				logger.error("error deleting Agenda from search index: " + agenda.getId(),e);
