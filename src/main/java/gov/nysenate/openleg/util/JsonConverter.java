@@ -4,6 +4,8 @@ import gov.nysenate.openleg.PMF;
 import gov.nysenate.openleg.model.*;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.committee.*;
+import gov.nysenate.openleg.search.SearchEngine1;
+import gov.nysenate.openleg.xstream.XStreamBuilder;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -22,28 +24,29 @@ import com.google.gson.JsonPrimitive;
 public class JsonConverter {
 	
 	public static void main(String[] args) throws Exception {
-		/*bill from db*/
-		Bill b = PMF.getDetachedBill("S5000");		
+//		/*bill from db*/
+//		Bill b = PMF.getDetachedBill("S5000");		
 //		System.out.println(getJson(b));
-		
-		/*calendar from db*/
-		System.out.println("\n\n-----CALENDAR-----\n\n");
-		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00060-2009", "no descending");	
+//		
+//		/*calendar from db*/
+//		System.out.println("\n\n-----CALENDAR-----\n\n");
+//		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00060-2009", "no descending");	
 //		System.out.println(getJson(c));
-		
-		/*transcript from db to xstream xml*/
-		System.out.println("\n\n\n-----TRANSCRIPT-----\n\n");
-		Transcript t = PMF.getDetachedTranscript("292");
+//		
+//		/*transcript from db to xstream xml*/
+//		System.out.println("\n\n\n-----TRANSCRIPT-----\n\n");
+//		Transcript t = PMF.getDetachedTranscript("292");
 //		System.out.println(getJson(t));
-		
-		/*meeting from db to xstream xml*/
-		System.out.println("\n\n\n-----MEETING-----\n\n");
-		Collection<?> meetings = PMF.getDetachedObjects(Meeting.class, "committeeName", ".*" + "Aging" + ".*", "meetingDateTime descending", 0, 1);
-		List<String> meeting_exclude = new ArrayList<String>();
-		meeting_exclude.add("votes");
-		for(Object m: meetings) {
+//		
+//		/*meeting from db to xstream xml*/
+//		System.out.println("\n\n\n-----MEETING-----\n\n");
+//		Collection<?> meetings = PMF.getDetachedObjects(Meeting.class, "committeeName", ".*" + "Aging" + ".*", "meetingDateTime descending", 0, 1);
+//		List<String> meeting_exclude = new ArrayList<String>();
+//		meeting_exclude.add("votes");
+//		for(Object m: meetings) {
 //			System.out.println(getJson(m));
-		}
+//		}
+		
 	}
 	
 	/**
@@ -107,16 +110,6 @@ public class JsonConverter {
 			exclude = new ArrayList<String>();
 		try {
 			for(Field f:fields) {
-				
-				HideFrom hideFrom = f.getAnnotation(HideFrom.class);
-				
-				if(hideFrom != null) {
-					Class<?>[] clazz = hideFrom.value();
-					System.out.println(o.getClass().getSimpleName() + f.getName());
-					for(Class<?> c:clazz) {
-						System.out.println("--->" + c.getSimpleName());
-					}
-				}
 								
 				if(!f.getName().contains("jdo") && !Modifier.isStatic(f.getModifiers())) {
 					

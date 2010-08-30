@@ -10,6 +10,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
 
 import gov.nysenate.openleg.lucene.LuceneResult;
+import gov.nysenate.openleg.util.ApiConverter2;
 
 public class SearchEngine2 extends SearchEngine {
 
@@ -23,7 +24,7 @@ public class SearchEngine2 extends SearchEngine {
 		while (!(line = reader.readLine()).equals("quit"))
 		{
 			if (line.startsWith("index "))
-				engine.indexSenateData(line.substring(line.indexOf(" ")+1));
+				engine.indexSenateData(line.substring(line.indexOf(" ")+1), new ApiConverter2());
 			else if (line.startsWith("optimize"))
 				engine.optimizeIndex();
 			else if (line.startsWith("delete"))
@@ -42,10 +43,11 @@ public class SearchEngine2 extends SearchEngine {
 		}
 		System.out.println("Exiting Search Engine");
 	}
-	
+
 	public SearchEngine2() {
-		indexDir = "/usr/local/openleg/lucene";
+//		indexDir = "/usr/local/openleg/lucene";
 		//indexDir = "C:\\n2-lucene\\";
+		indexDir = "/Users/jaredwilliams/Documents/workspace/openleg/lucene2";
 		
 		logger = Logger.getLogger(SearchEngine2.class);
 	}
@@ -81,7 +83,7 @@ public class SearchEngine2 extends SearchEngine {
 	
 	public SenateResponse search(String searchText, String format, int start, int max, String sortField, boolean reverseSort) throws ParseException, IOException {
 		
-    	String data = "o"+format.toLowerCase()+"_new";
+    	String data = "o"+format.toLowerCase()+"";
     	
     	LuceneResult result = search(searchText,start,max,sortField,reverseSort);
     	

@@ -10,6 +10,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -136,38 +137,19 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
 		
 		return null;
     }
-    
-    public void addDocument(LuceneObject obj, LuceneSerializer serializer,IndexWriter indexWriter) throws InstantiationException,IllegalAccessException,IOException
+        
+    public boolean addDocument(LuceneObject obj, LuceneSerializer serializer,IndexWriter indexWriter) throws InstantiationException,IllegalAccessException,IOException
     {
-        // This functionality should be somewhere else
-    	//oid = oid.replace(" ","+"); //need to remove spaces from id's in order to have them properly work with Lucene
-    	/*
-    	Document doc = new Document();
+    	Document doc = new DocumentBuilder().buildDocument(obj, serializer);
     	
-    	Collection<Field> fields;
-    	LuceneConverter a = obj.getClass().getAnnotation(LuceneConverter.class);
-    	if (a!=null) {
-    		LuceneObjectConverter c = (LuceneObjectConverter) a.value().newInstance();
-    		doc.add(new Field("oid", c.lucene_oid(), Field.Store.YES,Field.Index.ANALYZED));
-    		doc.add(new Field("osearch", c.lucene_osearch(), Field.Store.NO,Field.Index.ANALYZED));
-    		doc.add(new Field("otype", c.lucene_otype(), Field.Store.YES,Field.Index.ANALYZED));
-    		fields = c.convert(obj);
-    	}
-    	else {
-    		LuceneObject lob = (LuceneObject)obj;
-    		doc.add(new Field("oid", lob.lucene_oid(), Field.Store.YES,Field.Index.ANALYZED));
-    		doc.add(new Field("osearch", lob.lucene_osearch(), Field.Store.NO,Field.Index.ANALYZED));
-    		doc.add(new Field("otype", lob.lucene_otype(), Field.Store.YES,Field.Index.ANALYZED));
-    		fields = lob.getLuceneFields();
-    	}
-    	
-    	for (Field f : fields) {
-    		doc.add(f);
+    	if(doc ==  null) {
+    		return false;
     	}
     	
     	logger.info("indexing document: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue());
     	Term term = new Term("oid",doc.getField("oid").stringValue());
     	indexWriter.updateDocument(term, doc);
-    	*/
+    	
+    	return true;
     }
 }

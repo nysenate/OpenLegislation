@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.lucene;
 
+import gov.nysenate.openleg.PMF;
+import gov.nysenate.openleg.model.Transcript;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -30,10 +33,14 @@ public class DocumentBuilder {
 	public static final String TITLE = "title";
 	
 	private static final String XML = "oxml";
-	private static final String JSON = "ojson";
+	private static final String JSON = "ojson";	
 	
 	@SuppressWarnings("unused")
-	private Document converter(Object o, LuceneSerializer serializer) {		
+	public Document buildDocument(LuceneObject o, LuceneSerializer serializer) {
+		if(o == null) {
+			return null;
+		}
+		
 		HashMap<String,org.apache.lucene.document.Field> fields = new HashMap<String,org.apache.lucene.document.Field>();
 		
 		try {
@@ -160,7 +167,7 @@ public class DocumentBuilder {
 	
 	private String getLuceneFields(Object o, String method) throws Exception {
 		Method m = o.getClass().getDeclaredMethod(method);
-		return (String)m.invoke(o);		
+		return (String)m.invoke(o);
 	}
 	
 	public AnnotatedField getAnnotatedField(Field field) {

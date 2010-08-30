@@ -228,10 +228,10 @@ public class XStreamBuilder implements OpenLegConstants {
 				results.append(" }, ");
 			}
 			else if (type.equals("xml")) {
-//				results.append("<result>");
-//				results.append("<type>"+result.otype+"</type>");
+				results.append("<result>");
+				results.append("<type>"+result.otype+"</type>");
 				results.append(result.data);
-//				results.append("</result>");
+				results.append("</result>");
 			}
 		}
 		

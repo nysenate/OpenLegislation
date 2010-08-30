@@ -180,7 +180,7 @@ public class Transcript  extends SenateObject implements LuceneObject {
 	
 	@Override
 	public String luceneOid() {
-		return (type.replaceAll(" ", "-").toLowerCase())+"-"+new SimpleDateFormat("MM-dd-yyyy").format(timeStamp) + "-" + id;
+		return (type.replaceAll(" ", "-").toLowerCase())+((timeStamp != null) ? "-"+ new SimpleDateFormat("MM-dd-yyyy").format(timeStamp):"") + "-" + id;
 	}
 	
 	@Override

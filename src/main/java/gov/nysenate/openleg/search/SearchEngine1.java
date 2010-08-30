@@ -32,8 +32,9 @@ import org.apache.lucene.util.Version;
 public class SearchEngine1 extends SearchEngine {
 	
 	public SearchEngine1() {
-		indexDir = "/usr/local/openleg/lucene";
+//		indexDir = "/usr/local/openleg/lucene";
 		//indexDir = "C:\\n2-lucene\\";
+		indexDir = "/Users/jaredwilliams/Documents/workspace/openleg/lucene";
 		
 		logger = Logger.getLogger(SearchEngine1.class);
 	}
