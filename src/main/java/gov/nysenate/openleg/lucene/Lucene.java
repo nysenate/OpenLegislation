@@ -56,7 +56,7 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
 		return indexWriter;
 	}
     
-    public boolean addDocument(LuceneObject obj, LuceneSerializer serializer,IndexWriter indexWriter) throws InstantiationException,IllegalAccessException,IOException
+    public boolean addDocument(LuceneObject obj, LuceneSerializer[] serializer,IndexWriter indexWriter) throws InstantiationException,IllegalAccessException,IOException
     {
     	Document doc = new DocumentBuilder().buildDocument(obj, serializer);
     	

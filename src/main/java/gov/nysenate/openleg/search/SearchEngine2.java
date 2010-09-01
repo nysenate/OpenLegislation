@@ -27,7 +27,7 @@ public class SearchEngine2 extends SearchEngine {
 		{
 			if (line.startsWith("index "))
 				engine.indexSenateData(line.substring(line.indexOf(" ")+1),
-						new LuceneSerializer(new XmlSerializer(), new JsonSerializer()));
+						new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
 			else if (line.startsWith("optimize"))
 				engine.optimize();
 			else if (line.startsWith("delete"))

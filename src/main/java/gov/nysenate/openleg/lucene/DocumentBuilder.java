@@ -29,7 +29,7 @@ public class DocumentBuilder {
 	public static final String SUMMARY = "summary";
 	public static final String TITLE = "title";
 	
-	public Document buildDocument(LuceneObject o, LuceneSerializer serializer) {
+	public Document buildDocument(LuceneObject o, LuceneSerializer[] serializer) {
 		if(o == null) {
 			return null;
 		}
@@ -136,7 +136,7 @@ public class DocumentBuilder {
 					}
 				}
 				
-				for(LuceneSerializerType lst:serializer.getSerializers()) {
+				for(LuceneSerializer lst:serializer) {
 					fields.put(lst.getType(),
 							new org.apache.lucene.document.Field(
 								lst.getType(),

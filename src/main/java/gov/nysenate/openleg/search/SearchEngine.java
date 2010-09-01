@@ -70,7 +70,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     	openSearcher();
     }
 	
-	public void indexSenateData(String type, LuceneSerializer ls) throws Exception
+	public void indexSenateData(String type, LuceneSerializer[] ls) throws Exception
 	{		
 		if (type.equals("transcripts") || type.equals("*"))	{
 			doIndex("transcript", Transcript.class, null, 25, ls);
@@ -99,7 +99,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void doIndex(String type, Class objClass, String sort, int pageSize, LuceneSerializer ls) throws IOException {	
+	public void doIndex(String type, Class objClass, String sort, int pageSize, LuceneSerializer[] ls) throws IOException {	
 		int start = 1;
 		int end = start+pageSize;
 		
@@ -118,7 +118,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 		
 	}	
 	
-    public  boolean indexSenateObjects (Collection<LuceneObject> objects, LuceneSerializer ls) throws IOException
+    public  boolean indexSenateObjects (Collection<LuceneObject> objects, LuceneSerializer[] ls) throws IOException
     {
     	createIndex ();
         Analyzer  analyzer    = getAnalyzer();
