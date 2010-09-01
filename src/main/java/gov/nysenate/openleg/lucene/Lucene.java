@@ -32,6 +32,11 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
 	protected Logger logger;
 	protected String indexDir;
 	
+	public Lucene(String indexDir) {
+		this.indexDir = indexDir;
+		this.logger = Logger.getLogger(Lucene.class);
+	}
+	
 	/////////////////////////////////
 	// Implementing LuceneIndexer
 	//
@@ -67,9 +72,7 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
     }
     
     public void deleteDocuments(String otype, String oid) throws IOException {
-    	Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, false, MaxFieldLength.UNLIMITED);
-        
+    	openWriter();
         try {
         	String qString ="otype:"+otype + ((oid!=null) ? " AND oid:"+oid : "");
             Query query = new QueryParser(Version.LUCENE_CURRENT, "otype", indexWriter.getAnalyzer()).parse(qString);
@@ -78,8 +81,6 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
         catch (Exception e) {
 			logger.warn("error deleting document to index: " + otype + "=" + oid, e);
         }
-        
-        indexWriter.close();
     }
     
     public void optimize() throws IOException {
@@ -110,8 +111,7 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
     		ScoreDoc[] sdocs = null;
     		IndexSearcher searcher = openSearcher();
 			ArrayList<Document> results = new ArrayList<Document>();
-		    Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-		    Query query = new QueryParser(Version.LUCENE_CURRENT, "osearch", analyzer).parse(searchText);
+		    Query query = new QueryParser(Version.LUCENE_CURRENT, "osearch", getAnalyzer()).parse(searchText);
 			TopScoreDocCollector collector = TopScoreDocCollector.create(start+max, false);
 			
 			try {
