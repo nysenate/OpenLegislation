@@ -131,7 +131,20 @@ public class DocumentBuilder {
 			}
 			
 			if(serializer != null) {
-				String json = serializer.toJson(o);
+				for(Method m : serializer.getClass().getDeclaredMethods()) {
+					if (m.getName().startsWith("to") == true) {
+						String name = m.getName().substring(2).toLowerCase();
+						fields.put(name, new org.apache.lucene.document.Field(
+								name,
+								(String)m.invoke(serializer),
+								org.apache.lucene.document.Field.Store.YES,
+								org.apache.lucene.document.Field.Index.NO
+							));
+					}
+				}
+				
+				/*
+			 	String json = serializer.toJson(o);
 				String xml = serializer.toXml(o);
 				
 				if(xml != null) {
@@ -150,6 +163,7 @@ public class DocumentBuilder {
 								DEFAULT_STORE,
 								DEFAULT_INDEX));
 				}
+				*/
 			}
 		}
 		catch (Exception e) {

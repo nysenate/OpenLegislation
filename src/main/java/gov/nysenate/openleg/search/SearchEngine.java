@@ -28,6 +28,10 @@ import org.apache.lucene.util.Version;
 
 public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 	
+	public SearchEngine(String indexDir) {
+		super(indexDir);
+	}
+
 	protected DateFormat DATE_FORMAT_MEDIUM = java.text.DateFormat.getDateInstance(DateFormat.MEDIUM);
     
     public void deleteSenateObject (Object obj) throws Exception
