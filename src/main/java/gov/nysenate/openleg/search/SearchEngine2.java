@@ -3,13 +3,10 @@ package gov.nysenate.openleg.search;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.queryParser.ParseException;
 
 import gov.nysenate.openleg.lucene.LuceneResult;

@@ -7,36 +7,23 @@ import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.BillEvent;
-import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.Section;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
-import gov.nysenate.openleg.util.JsonConverter;
-import gov.nysenate.openleg.util.OriginalApiConverter;
-import gov.nysenate.openleg.xstream.XStreamBuilder;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-
-import javax.jdo.PersistenceManager;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.util.Version;
 
 public abstract class SearchEngine extends Lucene implements OpenLegConstants {
