@@ -74,9 +74,9 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     }
     
     public void deleteSenateObjectById (String type, String id) throws Exception {
-    	closeIndex();
+    	closeSearcher();
     	deleteDocuments(type, id);
-    	openIndex();
+    	openSearcher();
     }
 	
 	public void indexSenateData(String type, LuceneSerializer ls) throws Exception
@@ -130,11 +130,8 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     public  boolean indexSenateObjects (Collection<LuceneObject> objects, LuceneSerializer ls) throws IOException
     {
     	createIndex ();
-    	
-    	boolean overwrite = false;
-    	
         Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, overwrite, MaxFieldLength.UNLIMITED);
+        IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, false, MaxFieldLength.UNLIMITED);
        
     	Iterator<LuceneObject> it = objects.iterator();
     	while (it.hasNext()) {

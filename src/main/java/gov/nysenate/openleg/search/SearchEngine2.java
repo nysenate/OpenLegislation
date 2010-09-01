@@ -29,7 +29,7 @@ public class SearchEngine2 extends SearchEngine {
 			if (line.startsWith("index "))
 				engine.indexSenateData(line.substring(line.indexOf(" ")+1), new ApiConverter2());
 			else if (line.startsWith("optimize"))
-				engine.optimizeIndex();
+				engine.optimize();
 			else if (line.startsWith("delete"))
 			{
 				StringTokenizer cmd = new StringTokenizer(line.substring(line.indexOf(" ")+1)," ");

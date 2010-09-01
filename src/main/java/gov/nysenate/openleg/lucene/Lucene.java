@@ -26,60 +26,45 @@ import org.apache.lucene.util.Version;
 
 public class Lucene implements LuceneIndexer,LuceneSearcher{
 
+	protected IndexWriter indexWriter = null;
 	protected IndexSearcher indexSearcher = null;
 	
+	protected Logger logger;
 	protected String indexDir;
 	
-	protected Logger logger;
+	/////////////////////////////////
+	// Implementing LuceneIndexer
+	//
 	
-	public Directory getDirectory() throws IOException {
-		return FSDirectory.open(new File(indexDir));
-	}
-
-    public boolean ifIndexExist(){
-    	return (0 < new File(indexDir).listFiles().length);
-    }
-    
-    public boolean createIndex() throws IOException{
-        if (ifIndexExist() == false) {
-	        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-	        IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, true, MaxFieldLength.LIMITED);
-	        
+    public void createIndex() throws IOException{
+        if (0 == new File(indexDir).listFiles().length) {
+	        IndexWriter indexWriter = new IndexWriter(getDirectory(), getAnalyzer(), true, MaxFieldLength.LIMITED);
 	        indexWriter.optimize();
 	        indexWriter.close();
         }
-        return true;
     }
     
-    public boolean optimizeIndex() throws IOException{
-
-        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
-        IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, false, MaxFieldLength.LIMITED);
-        
-        indexWriter.optimize();
-        indexWriter.close();
-        return true;
-
-    }
-
-    public synchronized IndexSearcher openIndex() throws IOException {
-
-    	if (indexSearcher == null)
-    	{
-    		boolean readOnly = true;
-    		
-    		Directory fsDirectory = FSDirectory.open(new File(indexDir));
-    		indexSearcher = new IndexSearcher(fsDirectory, readOnly);
-    	}
-    	return indexSearcher;
-    }
+	public IndexWriter openWriter() throws IOException {
+		if (indexWriter == null) {
+			indexWriter = new IndexWriter(getDirectory(), getAnalyzer(), false, MaxFieldLength.UNLIMITED);
+		}
+		return indexWriter;
+	}
     
-    public synchronized void closeIndex() throws IOException {
-    	if (indexSearcher != null) {
-			indexSearcher.close();
-			indexSearcher = null;
+    public boolean addDocument(LuceneObject obj, LuceneSerializer serializer,IndexWriter indexWriter) throws InstantiationException,IllegalAccessException,IOException
+    {
+    	Document doc = new DocumentBuilder().buildDocument(obj, serializer);
+    	
+    	if(doc ==  null) {
+    		return false;
     	}
-    } 
+    	
+    	logger.info("indexing document: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue());
+    	Term term = new Term("oid",doc.getField("oid").stringValue());
+    	indexWriter.updateDocument(term, doc);
+    	
+    	return true;
+    }
     
     public void deleteDocuments(String otype, String oid) throws IOException {
     	Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
@@ -96,12 +81,34 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
         
         indexWriter.close();
     }
-
+    
+    public void optimize() throws IOException {
+    	openWriter().optimize();
+    }
+    
+    public synchronized void closeWriter() throws IOException {
+    	if (indexWriter != null) {
+    		indexWriter.close();
+			indexWriter = null;
+    	}
+    }
+    
+    /////////////////////////////////
+    // Implementing Lucene Searcher
+    //
+    
+	public IndexSearcher openSearcher() throws IOException {
+		if (indexSearcher == null) {
+			indexSearcher = new IndexSearcher(getDirectory(), true);
+		}
+		return indexSearcher;
+	}
+	
     public LuceneResult search(String searchText, int start, int max, String sortField, boolean reverseSort) throws IOException{
     	
     	try {
     		ScoreDoc[] sdocs = null;
-    		IndexSearcher searcher = openIndex();
+    		IndexSearcher searcher = openSearcher();
 			ArrayList<Document> results = new ArrayList<Document>();
 		    Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
 		    Query query = new QueryParser(Version.LUCENE_CURRENT, "osearch", analyzer).parse(searchText);
@@ -137,19 +144,23 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
 		
 		return null;
     }
-        
-    public boolean addDocument(LuceneObject obj, LuceneSerializer serializer,IndexWriter indexWriter) throws InstantiationException,IllegalAccessException,IOException
-    {
-    	Document doc = new DocumentBuilder().buildDocument(obj, serializer);
-    	
-    	if(doc ==  null) {
-    		return false;
+    
+    public synchronized void closeSearcher() throws IOException {
+    	if (indexSearcher != null) {
+			indexSearcher.close();
+			indexSearcher = null;
     	}
-    	
-    	logger.info("indexing document: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue());
-    	Term term = new Term("oid",doc.getField("oid").stringValue());
-    	indexWriter.updateDocument(term, doc);
-    	
-    	return true;
     }
+    
+	/////////////////////
+	//Utility methods
+	//
+	
+	public Directory getDirectory() throws IOException {
+		return FSDirectory.open(new File(indexDir));
+	}
+	
+	public Analyzer getAnalyzer() {
+		return new StandardAnalyzer(Version.LUCENE_CURRENT);
+	}
 }
