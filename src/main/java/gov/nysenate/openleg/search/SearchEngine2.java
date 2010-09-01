@@ -50,6 +50,7 @@ public class SearchEngine2 extends SearchEngine {
 	public SearchEngine2() {
 //		indexDir = "/usr/local/openleg/lucene";
 		super("C:\\n-lucene\\");
+//		indexDir = "C:\\n-lucene\\";
 //		indexDir = "/Users/jaredwilliams/Documents/workspace/openleg/lucene2";
 		
 		logger = Logger.getLogger(SearchEngine2.class);

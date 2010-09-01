@@ -81,6 +81,7 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
         catch (Exception e) {
 			logger.warn("error deleting document to index: " + otype + "=" + oid, e);
         }
+        closeWriter();
     }
     
     public void optimize() throws IOException {

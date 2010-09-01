@@ -46,7 +46,7 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 	
 	@Persistent
 	@Column(name="calendar_date")
-	@LuceneField("date")
+	@LuceneField("when")
 	protected Date calendarDate;
 	
 	@Persistent
@@ -271,7 +271,7 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 		}
 		
 		fields.put("oid",new Field("oid",oid, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		
+				
 		return fields;
 	}
 	

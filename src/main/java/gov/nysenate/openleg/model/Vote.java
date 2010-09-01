@@ -379,6 +379,8 @@ public class Vote  extends SenateObject implements LuceneObject {
     		map.put("nay", new Field("nay",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		} 
 		
+		map.put("when", new Field("when",voteDate.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+
 		
 		return map;
 	}

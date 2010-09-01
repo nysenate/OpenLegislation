@@ -121,7 +121,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     public  boolean indexSenateObjects (Collection<LuceneObject> objects, LuceneSerializer ls) throws IOException
     {
     	createIndex ();
-        Analyzer  analyzer    = new StandardAnalyzer(Version.LUCENE_CURRENT);
+        Analyzer  analyzer    = getAnalyzer();
         IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, false, MaxFieldLength.UNLIMITED);
        
     	Iterator<LuceneObject> it = objects.iterator();

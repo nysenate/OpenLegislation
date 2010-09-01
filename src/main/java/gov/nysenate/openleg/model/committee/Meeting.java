@@ -25,6 +25,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.apache.lucene.document.Field;
 
+import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.model.Bill;
@@ -344,7 +345,9 @@ public class Meeting  extends SenateObject implements LuceneObject {
 
 	@Override 
 	public HashMap<String,Field> luceneFields()	{
-		return null;
+		HashMap<String,Field> fields = new HashMap<String,Field>();
+		fields.put("when", new Field("when",meetingDateTime.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		return fields;
 	}
 
 	public String getLuceneBills() {
