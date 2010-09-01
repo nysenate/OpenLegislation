@@ -124,18 +124,6 @@ public class DocumentBuilder {
 			}
 			
 			if(serializer != null) {
-				for(Method m : serializer.getClass().getDeclaredMethods()) {
-					if (m.getName().startsWith("to") == true) {
-						String name = m.getName().substring(2).toLowerCase();
-						fields.put(name, new org.apache.lucene.document.Field(
-								name,
-								(String)m.invoke(serializer),
-								org.apache.lucene.document.Field.Store.YES,
-								org.apache.lucene.document.Field.Index.NO
-							));
-					}
-				}
-				
 				for(LuceneSerializer lst:serializer) {
 					fields.put(lst.getType(),
 							new org.apache.lucene.document.Field(
