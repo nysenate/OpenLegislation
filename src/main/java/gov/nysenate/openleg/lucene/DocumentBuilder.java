@@ -1,8 +1,5 @@
 package gov.nysenate.openleg.lucene;
 
-import gov.nysenate.openleg.PMF;
-import gov.nysenate.openleg.model.Transcript;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -32,10 +29,6 @@ public class DocumentBuilder {
 	public static final String SUMMARY = "summary";
 	public static final String TITLE = "title";
 	
-	private static final String XML = "oxml";
-	private static final String JSON = "ojson";	
-	
-	@SuppressWarnings("unused")
 	public Document buildDocument(LuceneObject o, LuceneSerializer serializer) {
 		if(o == null) {
 			return null;
@@ -143,27 +136,14 @@ public class DocumentBuilder {
 					}
 				}
 				
-				/*
-			 	String json = serializer.toJson(o);
-				String xml = serializer.toXml(o);
-				
-				if(xml != null) {
-					fields.put(XML,
+				for(LuceneSerializerType lst:serializer.getSerializers()) {
+					fields.put(lst.getType(),
 							new org.apache.lucene.document.Field(
-								XML,
-								xml,
+								lst.getType(),
+								lst.getData(o),
 								DEFAULT_STORE,
 								DEFAULT_INDEX));
 				}
-				if(json != null) {
-					fields.put(JSON,
-							new org.apache.lucene.document.Field(
-								JSON,
-								json,
-								DEFAULT_STORE,
-								DEFAULT_INDEX));
-				}
-				*/
 			}
 		}
 		catch (Exception e) {

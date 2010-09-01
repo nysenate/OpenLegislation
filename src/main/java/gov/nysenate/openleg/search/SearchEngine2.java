@@ -10,7 +10,9 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
 
 import gov.nysenate.openleg.lucene.LuceneResult;
-import gov.nysenate.openleg.util.ApiConverter2;
+import gov.nysenate.openleg.lucene.LuceneSerializer;
+import gov.nysenate.openleg.util.JsonSerializer;
+import gov.nysenate.openleg.util.XmlSerializer;
 
 public class SearchEngine2 extends SearchEngine {
 
@@ -24,7 +26,8 @@ public class SearchEngine2 extends SearchEngine {
 		while (!(line = reader.readLine()).equals("quit"))
 		{
 			if (line.startsWith("index "))
-				engine.indexSenateData(line.substring(line.indexOf(" ")+1), new ApiConverter2());
+				engine.indexSenateData(line.substring(line.indexOf(" ")+1),
+						new LuceneSerializer(new XmlSerializer(), new JsonSerializer()));
 			else if (line.startsWith("optimize"))
 				engine.optimize();
 			else if (line.startsWith("delete"))

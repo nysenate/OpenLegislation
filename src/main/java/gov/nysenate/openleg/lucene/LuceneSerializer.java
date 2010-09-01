@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.lucene;
 
-public interface LuceneSerializer {
+public class LuceneSerializer {
 	/*
 	 * 	The LuceneSerializer should implement 1 or more methods in the following format
 	 * 		
@@ -20,4 +20,18 @@ public interface LuceneSerializer {
 	 * 
 	 * 		doc.add(new Field("xml",serializer.toXml(o),Field.Store.YES,Field.Index.NO))
 	 */
+	
+	LuceneSerializerType[] serializers;
+	
+	public LuceneSerializer(LuceneSerializerType... serializers) {
+		this.serializers = serializers;
+	}
+	
+	public LuceneSerializerType[] getSerializers() {
+		return serializers;
+	}
+	
+	public void setSerializers(LuceneSerializerType... serializers) {
+		this.serializers = serializers;
+	}
 }
