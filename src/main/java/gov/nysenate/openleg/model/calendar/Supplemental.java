@@ -210,11 +210,7 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 		Calendar calendar = (Calendar)PMF.getDetachedObject(Calendar.class, "id", id.split("-supp")[0], "no descending");
 		
 		fields.put("ctype",new Field("ctype",calendar.getType(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		
-		
-		if (getCalendarDate()!=null)
-			fields.put("when", new Field("when",calendarDate.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		
+				
 		StringBuilder searchContent = new StringBuilder();
 		String title;
 		
@@ -252,8 +248,6 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 			
 			sbSummary.append(" ").append(sequence.getCalendarEntries().size()).append(" bill(s)");
 			
-			if (sequence.getActCalDate()!=null)
-    			fields.put("when", new Field("when",sequence.getActCalDate().getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));	
 		}
 		
 		String summary = sbSummary.toString().trim();
@@ -265,9 +259,11 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 		String oid = "";
 		if(calendar.getId().startsWith("cal-floor")) {
 			oid = "floor-" + new SimpleDateFormat("MM-dd-yyyy").format(releaseDateTime);
+			fields.put("when", new Field("when",releaseDateTime.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		}
 		else {
 			oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequence.getActCalDate());
+			fields.put("when", new Field("when",sequence.getActCalDate().getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		}
 		
 		fields.put("oid",new Field("oid",oid, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));

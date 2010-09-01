@@ -208,7 +208,7 @@ public class Transcript  extends SenateObject implements LuceneObject {
 	@Override
 	public HashMap<String,Field> luceneFields() {
 		HashMap<String,Field> fields = new HashMap<String,Field>();
-		fields.put("when", new Field("when",timeStamp.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		fields.put("when", new Field("when",(timeStamp == null) ? "" : timeStamp.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		return fields;
 	}
 

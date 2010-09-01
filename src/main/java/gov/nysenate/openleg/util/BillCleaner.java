@@ -4,6 +4,7 @@ import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.PMF;
 import gov.nysenate.openleg.model.Bill;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
@@ -58,6 +59,28 @@ public class BillCleaner implements OpenLegConstants {
 			}
 		}
 		return uri;
+	}
+	
+	public static String formatV2Bill(String term) {
+		
+		String year = null;
+		String bill = null;
+		
+		if(term.matches(BILL_BAD_REGEXP + "-\\d{4}")) {
+			year = term.substring(term.length()-5,term.length());
+			bill = term.substring(0,term.length()-5);
+			
+			if(bill.length() < 3) {
+				bill = bill + year;
+				year = "";
+			}
+		}
+		else {
+			bill = term;
+			year = "";
+		}
+		
+		return billFormat(bill) + year;
 	}
 	
 	
