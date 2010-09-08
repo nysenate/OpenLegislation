@@ -1,8 +1,18 @@
 package gov.nysenate.openleg.util;
 
+import gov.nysenate.openleg.PMF;
+import gov.nysenate.openleg.model.Bill;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.servlet.jsp.JspWriter;
 
 public class TextFormatter {
 
@@ -127,7 +137,7 @@ public class TextFormatter {
 			line = st.nextToken().trim();
 
 			line = line.replace(" S ","<br/><br/>S ");
-			line = line.replace(" ï¿½ ","<br/><br/>ï¿½ ");
+			line = line.replace(" ¤ ","<br/><br/>¤ ");
 			line = line.replace(" Section ","<br/><br/>Section ");
 			line = line.replace("AN ACT ","<br/><br/>AN ACT ");
 			line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");
@@ -156,9 +166,13 @@ public class TextFormatter {
 					line = line.substring(breakIdx+1).trim();
 				}
 				
+				int sepIdx = -1;
+				
 				if (line.endsWith(":"))
 				{
 					line = line + "<br/>";
+					
+					
 				}
 				
 			
@@ -181,9 +195,21 @@ public class TextFormatter {
 				
 				resp.append("<br/>");
 			}
+			
+		
+			
+			
+		
+			
+			
 		}
 		
-		return resp.toString();
+		
+		String output =  resp.toString();
+		
+
+		return output;
+		
 	}
 	
 	public static String formatMemo (String input)
@@ -225,6 +251,8 @@ public class TextFormatter {
 					line = line.substring(breakIdx+1).trim();
 				}
 				
+				int sepIdx = -1;
+				
 				if (line.endsWith(" "))
 					line = line.substring(0,line.length()-1).trim();
 				
@@ -243,14 +271,23 @@ public class TextFormatter {
 				resp.append(line);
 				resp.append("<br/><br/>");
 			}
+			
+			
+			
 		
+			
+			
 		}
 		
-		return resp.toString();
+		
+		String output =  resp.toString();
+		
+
+		return output;
 		
 	}
 	
-		public static String clean(String s) {
+	public static String clean(String s) {
     	s = s.replaceAll("&", "&amp;");
 		s = s.replaceAll("'", "&apos;");
 		s = s.replaceAll("<","&lt;");
@@ -259,4 +296,145 @@ public class TextFormatter {
 		
 		return s;
     }
+		
+	public void lrsPrinter(Bill bill, JspWriter out) {
+		bill = PMF.getDetachedBill("S66026");
+		
+		StringTokenizer st = new StringTokenizer(bill.getFulltext(), "\n");
+
+
+		boolean redact = false;
+		int r_start = -1;
+		int r_end = -1;
+		boolean cap = false;
+		int capCount = 0;
+		int start = -1;
+		int end = -1;
+		
+		List<TextPoint> points;
+
+		while(st.hasMoreTokens()) {
+			String line = st.nextToken();
+			
+			Pattern p = Pattern.compile("^\\s{3,4}\\d{1,2}\\s*");
+			Matcher m = p.matcher(line);
+			
+			points = new ArrayList<TextPoint>();
+
+			if(m.find()) {
+				String text = line.substring(m.end());
+				String lineNo = line.substring(m.start(), m.end());
+				
+				char[] textChar = text.toCharArray();
+				
+				for(int i = 0; i < textChar.length; i++) {
+					if(textChar[i] == '[') {
+						redact = true;
+						r_start = i+1;
+					}
+					else if(textChar[i] == ']') {
+						r_end = i;						
+						points.add(new TextPoint(r_start,r_end,false));
+						
+						r_start = -1;
+						r_end = -1;
+						redact = false;
+					}
+					
+					if(Character.isUpperCase(textChar[i])) {
+						if(!cap) {
+							cap = true;
+							if(i < 6) {
+								start = 0;
+							}
+							else {
+								start = i;
+							}
+						}
+						capCount++;
+					}
+					else if(Character.isLowerCase(textChar[i])) {
+						if(cap) {
+							if(capCount > 2) {
+								end = i - 1;
+								points.add(new TextPoint(start,end,true));
+							}
+							start = -1;
+							end = -1;
+							capCount = 0;
+							cap = false;
+						}
+					}
+				}
+				
+				if(cap) {
+					text += "</u>";
+
+					if(start != -1) {
+						text = text.substring(0,start) + "<u>" + text.substring(start);
+					}
+					else {
+						text = "<u>" + text;
+					}
+					start = -1;
+					end = -1;
+					capCount = 0;
+				}
+				if(redact) {
+					text += "</del>";
+					
+					if(r_start != -1) {
+						text = text.substring(0,r_start) + "<del>" + text.substring(r_start);
+					}
+					else {
+						text = "<del>" + text;
+					}
+					r_start = -1;
+					r_end = -1;
+				}
+				
+				Collections.reverse(points);
+				for(TextPoint tp:points) {
+					if(tp.s == -1) {
+						tp.s = 0;
+					}
+					
+					text = text.substring(0, tp.e) + (tp.uOrDel ? "</u>" : "</del>") + text.substring(tp.e);
+					text = text.substring(0,tp.s) + (tp.uOrDel ? "<u>" : "<del>") + text.substring(tp.s);
+					
+					
+				}
+
+				try {
+					out.write(lineNo + text + "\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				start = -1;
+				end = -1;
+				cap = false;
+				capCount = 0;
+			}
+			else {
+				try {
+					out.write(line + "\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	class TextPoint {
+		public int s;
+		public int e;
+		public boolean uOrDel;
+		
+		public TextPoint(int s, int e, boolean uOrDel) {
+			this.s = s;
+			this.e = e;
+			this.uOrDel = uOrDel;
+		}
+	}
 }

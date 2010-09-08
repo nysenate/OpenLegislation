@@ -92,7 +92,7 @@ try
 	
 	actionSearch.append(")");
 	
-	SearchResultSet srs = new SearchEngine1().v1Search(actionSearch.toString(),0,1000,null,true);
+	SearchResultSet srs = SearchEngine1.doSearch(actionSearch.toString(),0,1000,null,true);
 
 	Iterator<SearchResult> itSrs = srs.getResults().iterator();
 	SearchResult sresult = null;
@@ -239,7 +239,7 @@ try
 	}
 	
 	actionSearch.append(")");
-	SearchResultSet srs = new SearchEngine1().v1Search(actionSearch.toString(),0,1000,"when",true);
+	SearchResultSet srs = SearchEngine1.doSearch(actionSearch.toString(),0,1000,"when",true);
 
 	Iterator<SearchResult> itSrs = srs.getResults().iterator();
 	SearchResult sresult = null;
