@@ -297,11 +297,8 @@ public class TextFormatter {
 		return s;
     }
 		
-	public void lrsPrinter(Bill bill, JspWriter out) {
-		bill = PMF.getDetachedBill("S66026");
-		
+	public void lrsPrinter(Bill bill, JspWriter out) {		
 		StringTokenizer st = new StringTokenizer(bill.getFulltext(), "\n");
-
 
 		boolean redact = false;
 		int r_start = -1;

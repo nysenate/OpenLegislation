@@ -15,5 +15,4 @@ public class XmlSerializer implements LuceneSerializer {
 	public String getType() {
 		return "oxml";
 	}
-
 }
