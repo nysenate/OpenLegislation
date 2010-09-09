@@ -7,11 +7,6 @@ int cacheTime = 0;//OpenLegConstants.DEFAULT_CACHE_TIME;
  
 String appPath = request.getContextPath();
 
-
-%>
- <!--<cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>" scope="application">-->
-<%
-
 CachedContentManager.fillCache(request);
 Bill bill = (Bill)request.getAttribute("bill");
 			
@@ -48,7 +43,4 @@ String title = bill.getSenateBillNo() + " - NY Senate Open Legislation - " + tit
   setTimeout("window.print();",2000);
   </script>
  </body>
- </html>
- 
-  <!--</cache:cache>-->
- 
+ </html> 

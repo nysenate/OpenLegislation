@@ -296,9 +296,10 @@ public class TextFormatter {
 		
 		return s;
     }
-		
-	public void lrsPrinter(Bill bill, JspWriter out) {		
+	
+	public void lrsPrinter(Bill bill, JspWriter out) {
 		StringTokenizer st = new StringTokenizer(bill.getFulltext(), "\n");
+
 
 		boolean redact = false;
 		int r_start = -1;
@@ -313,14 +314,17 @@ public class TextFormatter {
 		while(st.hasMoreTokens()) {
 			String line = st.nextToken();
 			
-			Pattern p = Pattern.compile("^\\s{3,4}\\d{1,2}\\s*");
-			Matcher m = p.matcher(line);
+			Pattern pagePattern = Pattern.compile("^\\s+\\w\\.\\s\\d+\\w?\\s+\\d+\\s+\\w\\.\\s\\d+\\w?$");
+			Matcher pageMatcher = pagePattern.matcher(line);
+						
+			Pattern linePattern = Pattern.compile("^\\s{3,4}\\d{1,2}\\s*");
+			Matcher lineMatcher = linePattern.matcher(line);
 			
 			points = new ArrayList<TextPoint>();
 
-			if(m.find()) {
-				String text = line.substring(m.end());
-				String lineNo = line.substring(m.start(), m.end());
+			if(lineMatcher.find()) {
+				String text = line.substring(lineMatcher.end());
+				String lineNo = line.substring(lineMatcher.start(), lineMatcher.end());
 				
 				char[] textChar = text.toCharArray();
 				
@@ -415,7 +419,14 @@ public class TextFormatter {
 			}
 			else {
 				try {
-					out.write(line + "\n");
+					
+					if(pageMatcher.find()) {
+						out.write("<div style=\"page-break-after:always\"></div>"+line + "\n");
+					}
+					else {
+						out.write(line + "\n");
+					}
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
