@@ -129,6 +129,7 @@ e.printStackTrace();
     </div>
  <div style="float:right;">
  <a href="<%=appPath%>/api/1.0/html-print/bill/<%=bill.getSenateBillNo()%>" target="_new">Print Page</a>
+  <a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=bill.getSenateBillNo()%>" target="_new">Print Bill Text</a>
  / <script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
   / <a href="#discuss">Read or Leave Comments</a>
   </div>
