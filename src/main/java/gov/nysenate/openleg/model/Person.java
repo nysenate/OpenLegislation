@@ -117,6 +117,13 @@ public class Person extends SenateObject
 		
 	}
 	
+	public Person (String fullname)
+	{
+		this.fullname = fullname;
+		
+		this.id = fullname;
+	}
+	
 	public Person (String fullname, String position)
 	{
 		this.fullname = fullname;

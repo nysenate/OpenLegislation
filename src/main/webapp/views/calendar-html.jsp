@@ -1,15 +1,8 @@
-<%@ page language="java" import="java.util.Iterator,java.util.Collection,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.calendar.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/html" pageEncoding="utf-8"%><%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %><%
+<%@ page language="java" import="java.util.Iterator,java.util.Collection,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.calendar.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/html" pageEncoding="utf-8"%><%
 
 
 String appPath = request.getContextPath();
-String cacheKey = (String)request.getAttribute("path");
-int cacheTime = 0;//OpenLegConstants.DEFAULT_CACHE_TIME;
 
- %>
-<cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>" scope="application">
-<%
-
-CachedContentManager.fillCache(request);
 Calendar calendar = (Calendar)request.getAttribute("calendar");
 String title = "Calendar " + calendar.getNo() + " " + calendar.getSessionYear();
 	DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.SHORT);
@@ -51,13 +44,9 @@ try
 
 <%
 
-Collection<?> collSeq = (Collection<?>)PMF.getDetachedObjects(Sequence.class, "id", supp.getId() + ".*", null, 0,100);
 
-Iterator<?> it = collSeq.iterator();
 
-while (it.hasNext())
-{
-Sequence seq = (Sequence)it.next();
+Sequence seq = supp.getSequence();
 
 %>
 <%if (seq.getNo()==null || seq.getNo().length()==0){ %>
@@ -107,7 +96,6 @@ Iterator<CalendarEntry> itCals = seq.getCalendarEntries().iterator();
 	
 </div>
 
-<%}%>
 
 <%if (supp.getSections()!=null&&supp.getSections().size()>0){%>
 <hr/>
@@ -120,7 +108,7 @@ Section section = itSection.next();
 <div class="billSummary">
 	<ul>
 <%
-Iterator<CalendarEntry> itCals = section.getCalendarEntries().iterator();
+	 itCals = section.getCalendarEntries().iterator();
 	while (itCals.hasNext()){
 	CalendarEntry calEnt = itCals.next();
 	%>
@@ -160,4 +148,3 @@ Iterator<CalendarEntry> itCals = section.getCalendarEntries().iterator();
 
 </div> 
 <jsp:include page="/footer.jsp"/>
-</cache:cache>

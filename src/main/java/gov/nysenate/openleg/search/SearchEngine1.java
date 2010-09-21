@@ -61,8 +61,8 @@ public class SearchEngine1 implements OpenLegConstants{
 
 	private static IndexSearcher indexSearcher = null;
 	
-//	private final  static String indexDir = "/usr/local/openleg/lucene";
-	private final  static String indexDir = "C:\\o-lucene\\";
+	private final  static String indexDir = "/usr/local/openleg/lucene";
+//	private final  static String indexDir = "C:\\o-lucene\\";
 
 	private static DateFormat DATE_FORMAT_MEDIUM = java.text.DateFormat.getDateInstance(DateFormat.MEDIUM);
 	

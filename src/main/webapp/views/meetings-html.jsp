@@ -1,15 +1,10 @@
 <%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/html" pageEncoding="utf-8"%>
-<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %><%
+<%
 
 String appPath = request.getContextPath();
 String uri = request.getRequestURI();
 
-String cacheKey = (String)request.getAttribute("path");
- int cacheTime = 0;//OpenLegConstants.DEFAULT_CACHE_TIME;
 
-  %>
-   <cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>" scope="application"> 
- <%
  CachedContentManager.fillCache(request);
 //Committee committee = (Committee)request.getAttribute("meetings");
 
@@ -98,7 +93,6 @@ e2.printStackTrace();
 
 </div>
  </div>
- </cache:cache>
 <div>
 <a href="http://www.google.com/calendar/render?cid=http%3A%2F%2Fopen.nysenate.gov%2Flegislation%2Fapi%2F1.0%2Fical%2Fmeetings%2F" target="_blank"><img src="http://www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
 </div>

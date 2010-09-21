@@ -1,11 +1,24 @@
 package gov.nysenate.openleg;
 
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Transcript;
+import gov.nysenate.openleg.search.Result;
+import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.search.SearchResult;
+import gov.nysenate.openleg.search.SearchResultSet;
+import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -14,6 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.queryParser.ParseException;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import com.google.gson.Gson;
 
 
 public class APIServlet extends HttpServlet implements OpenLegConstants {
@@ -115,39 +132,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					pageSize = DEFAULT_API_PAGE_SIZE;
 				
 				handleAPIv1(format, type, key, pageIdx, pageSize, req, resp);
-			}
-			else if (version.equals("2.0"))
-			{
-				String format = st.nextToken().toLowerCase();	
-				String type = st.nextToken().toLowerCase();
-				
-				req.setAttribute(KEY_TYPE,type);
-				
-				String key = "";
-				
-				if (st.hasMoreTokens())
-					key = URLDecoder.decode(st.nextToken(),OpenLegConstants.ENCODING);
-			
-				if (st.hasMoreTokens())
-				{
-					pageIdx = Integer.parseInt(st.nextToken());
-						
-						if (st.hasMoreTokens())
-						{
-							pageSize = Integer.parseInt(st.nextToken());
-							
-						}
-						else
-						{
-							pageSize = pageIdx;
-							pageIdx = Integer.parseInt(key);
-							key = "";
-						}
-				}
-				else if (format.equals(FORMAT_XML)) //for now with XML
-					pageSize = DEFAULT_API_PAGE_SIZE;
-				
-				handleAPIv2(format, type, key, pageIdx, pageSize, req, resp);
 			}
 			else if (version.equals("html"))
 			{
@@ -274,7 +258,10 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	public void handleAPIv1 (String format, String type, String key, int pageIdx, int pageSize, HttpServletRequest req, HttpServletResponse resp) 
 		throws IOException, ServletException 
 	{
-			
+
+		String viewPath = "";
+		
+		
 		key = key.trim();
 		
 		if (pageSize > MAX_PAGE_SIZE)
@@ -283,7 +270,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		req.setAttribute(PAGE_IDX,pageIdx+"");
 		req.setAttribute(PAGE_SIZE,pageSize+"");
 		req.setAttribute("type",type);
-		req.setAttribute("term", key);
+		
 		
 		//now calculate start, end idx based on pageIdx and pageSize
 		int start = (pageIdx - 1) * pageSize;
@@ -291,9 +278,154 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 		logger.info("request: key=" + key + ";type=" + type + ";format=" + format + ";paging=" + start + "/" + end);
 		
-		String viewPath = "";
+		try
+		{
+			
+			if (type.endsWith("s"))
+			{
+				type = type.substring(0,type.length()-1);
+			}
+			
+			String command = "";
+			String term = "otype:" + type;
+			
+			if (key != null && key.length() > 0)
+				term += " AND " + " oid:" + key;
+			
+			req.setAttribute("type", type);
+			req.setAttribute("term", term);
+			req.setAttribute("format", format);
+			
+			String sFormat = "json";
+			
+			SenateResponse sr = new SearchEngine2().search(dateReplace(term),sFormat,start,pageSize,null,true);
+			
+			logger.info("got search results: " + sr.getResults().size());
+			
+			if(sr.getResults().size() == 0) {
+				term = term+"*";
+				sr = new SearchEngine2().search(dateReplace(term),sFormat,start,pageSize,null,true);
+			}
+			
+			if (sr.getResults().size()==0)
+			{
+				viewPath = "/";
+			}
+			else if (sr.getResults().size()==1)
+			{
+			
+				String jsonData = sr.getResults().get(0).getData();
+				jsonData = jsonData.substring(jsonData.indexOf(":")+1);
+				jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
+				String className = "gov.nysenate.openleg.model." + type.substring(0,1).toUpperCase() + type.substring(1);
+				
+			/*	
+				ObjectMapper mapper = new ObjectMapper();
+				
+				if (type.equals("calendar"))
+				{
+					className = "gov.nysenate.openleg.model.calendar.Calendar";
+				}
+				else if (type.equals("meeting"))
+				{
+					className = "gov.nysenate.openleg.model.committee.Meeting";
+				}
+				Object resultObj = mapper.readValue(rData, Class.forName(className));
+				*/
+
+				if (type.equals("calendar"))
+				{
+					className = "gov.nysenate.openleg.model.calendar.Calendar";
+				}
+				else if (type.equals("meeting"))
+				{
+					className = "gov.nysenate.openleg.model.committee.Meeting";
+				}
+				Object resultObj = new Gson().fromJson(jsonData,  Class.forName(className));
+
+				req.setAttribute(type, resultObj);
+				
+				viewPath = "/views/" + type + "-" + format + ".jsp";
+			}
+			else
+			{
+				viewPath = "/views/" + "search" + "-" + format + ".jsp";
+				
+				SearchResultSet srs = new SearchResultSet();
+				srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));
+				
+				ArrayList<SearchResult> srList = new ArrayList<SearchResult>();
+				
+				for (Result newResult : sr.getResults())
+				{
+					SearchResult sResult = new SearchResult();
+					sResult.setId(newResult.getOid());
+					sResult.setLastModified(new Date());
+					sResult.setScore(1.0f);
+					
+					
+					String jsonData = sr.getResults().get(0).getData();
+					jsonData = jsonData.substring(jsonData.indexOf(":")+1);
+					jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
+					
+					String className = "gov.nysenate.openleg.model." + type.substring(0,1).toUpperCase() + type.substring(1);
+					if (type.equals("calendar"))
+					{
+						className = "gov.nysenate.openleg.model.calendar.Calendar";
+					}
+					else if (type.equals("meeting"))
+					{
+						className = "gov.nysenate.openleg.model.committee.Meeting";
+					}
+					
+					Object resultObj = new Gson().fromJson(jsonData,  Class.forName(className));
+					
+					
+					String title = "";
+					String summary = "";
+					
+					HashMap<String,String> fields = new HashMap<String,String>();
+					
+					if (type.equals("bill"))
+					{
+						Bill bill = (Bill)resultObj;
+						title = bill.getTitle();
+						summary = bill.getSummary();
+						
+						if (bill.getSponsor()!=null)
+						fields.put("sponsor",bill.getSponsor().getFullname());
+					}
+					else if (type.equals("transcript"))
+					{
+						Transcript transcript = (Transcript)resultObj;
+						title = "Transcript: " + transcript.getTimeStamp().toLocaleString();
+						summary = transcript.getType() + ": " + transcript.getLocation();
+					}
+					
+					sResult.setTitle(title);
+					sResult.setSummary(summary);
+					
+					sResult.setType(newResult.getOtype());
+					
+					
+					sResult.setFields(fields);
+					
+					srList.add(sResult);
+				}
+				
+				srs.setResults(srList);
+				
+				req.setAttribute("results", srs);
+			}
+			
+		}
+		catch (Exception e)
+		{
+			logger.warn("search controller didn't work for: " + req.getRequestURI(),e);
+		}
 		
 		
+		/*
 		if (!format.equals("html") && !format.equals("mobile"))
 		{
 			String viewType = type;
@@ -347,6 +479,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				}
 			}
 		}
+		*/
 		
 		try
 		{
@@ -358,46 +491,8 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		{
 			logger.warn("search controller didn't work for: " + req.getRequestURI(),e);
 		}
+		
 	}
-	
-	
-	
-	public void handleAPIv2 (String format, String type, String key, int pageIdx, int pageSize, HttpServletRequest req, HttpServletResponse resp) 
-		throws IOException, ServletException 
-	{
-		
-		key = key.trim();
-		
-		if (pageSize > MAX_PAGE_SIZE)
-			throw new ServletException ("The maximum page size is " + MAX_PAGE_SIZE);
-		
-		req.setAttribute(PAGE_IDX,pageIdx+"");
-		req.setAttribute(PAGE_SIZE,pageSize+"");
-		req.setAttribute("type",type);
-		req.setAttribute("term", key);
-		
-		//now calculate start, end idx based on pageIdx and pageSize
-		int start = (pageIdx - 1) * pageSize;
-		int end = start + pageSize;
-		
-		logger.info("request: key=" + key + ";type=" + type + ";format=" + format + ";paging=" + start + "/" + end);
-		
-		String viewPath = "";
-		
-		viewPath = "/views/2p0" + type + "-" + format + ".jsp";
-		
-		try
-		{
-			logger.info("routing to search controller:" + viewPath);
-			
-			getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
-		}
-		catch (Exception e)
-		{
-			logger.warn("search controller didn't work for: " + req.getRequestURI(),e);
-		}
-	}
-	
 	
 	
 	/*
@@ -508,7 +603,29 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 	}
 	*/
-	
+	public String dateReplace(String term) throws ParseException {
+		Pattern  p = Pattern.compile("(\\d{1,2}[-]?){2}(\\d{2,4})T\\d{2}-\\d{2}");
+		Matcher m = p.matcher(term);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy'T'KK-mm");
+		
+		while(m.find()) {
+			String d = term.substring(m.start(),m.end());
+			
+			Date date = null;
+			try {
+				date = sdf.parse(d);
+				term = term.substring(0, m.start()) + date.getTime() + term.substring(m.end());
+			} catch (java.text.ParseException e) {
+				e.printStackTrace();
+			}
+			
+			m.reset(term);
+			
+		}
+		
+		return term;
+	}
 	
 	
 	

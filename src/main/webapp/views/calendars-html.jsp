@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.Iterator,java.util.ArrayList,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.calendar.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/html" pageEncoding="utf-8"%><%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>
+<%@ page language="java" import="java.util.Iterator,java.util.ArrayList,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.calendar.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/html" pageEncoding="utf-8"%>
 <%
 String title = "Calendars";
 String appPath = request.getContextPath();
@@ -17,16 +17,10 @@ return;
 </jsp:include>
 
  <%
-String cacheKey = (String)request.getAttribute("path");
-int cacheTime = OpenLegConstants.DEFAULT_CACHE_TIME;
  
  request.setAttribute("searchType","calendar");
  
-  %>
-   <cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>"  scope="application">
-
-
-<%
+ 
 CachedContentManager.fillCache(request);
 String term = (String)request.getAttribute("term");
 ArrayList<Calendar> calendars = (ArrayList<Calendar>)request.getAttribute("calendars");
@@ -103,7 +97,5 @@ if (itSupp.hasNext()){
  <div id="formatBox">Formats: <a href="<%=appPath%>/api/1.0/xml/calendars/">XML</a>, <a href="<%=appPath%>/api/1.0/ical/calendars/">iCal</a>, RSS</div>
  
  </div>
- </cache:cache>
- 
  
 <jsp:include page="/footer.jsp"/>

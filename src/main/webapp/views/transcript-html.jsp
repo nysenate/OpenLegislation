@@ -1,18 +1,8 @@
 <%@ page language="java" import="java.util.*,java.text.*,java.util.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
-<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>
 
 <%
 
 String appPath = request.getContextPath();
-
-
-String cacheKey = (String)request.getAttribute("path");
-int cacheTime = OpenLegConstants.DEFAULT_CACHE_TIME;
-
-%>
-  <cache:cache key="<%=cacheKey%>" time="<%=cacheTime%>" scope="application">
-<%
-CachedContentManager.fillCache(request);
 
 Transcript transcript = (Transcript)request.getAttribute("transcript");
 
@@ -97,7 +87,6 @@ while (st.hasMoreTokens())
 </div>
  <hr/>
  
-</cache:cache>
   
 <div id="comments">
  <h3> Discuss!</h3>

@@ -1,10 +1,6 @@
-<%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" contentType="application/rss+xml" pageEncoding="UTF-8"%><%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %><?xml version="1.0" encoding="utf-8"?><%
+<%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" contentType="application/rss+xml" pageEncoding="UTF-8"%><?xml version="1.0" encoding="utf-8"?><%
 
-String cacheKey = (String)request.getAttribute("path");
- int cacheTime = OpenLegConstants.DEFAULT_CACHE_TIME;
-%>
-<cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>" scope="application">
-<%
+
 
 CachedContentManager.fillCache(request);
 String term = "";
@@ -88,5 +84,3 @@ catch(Exception e) {}
         %>
     </channel>
 </rss>
-
-</cache:cache>

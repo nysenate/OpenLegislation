@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.xstream;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
@@ -218,14 +219,22 @@ public class XStreamBuilder implements OpenLegConstants {
 		
 		//Append all the results into a single listing
 		StringBuilder results = new StringBuilder("");
-		for(Result result: response.getResults()) {
-			//Fields in JSON are separated by commas,
+		
+		Iterator<Result> itResults = response.getResults().iterator();
+		Result result = null;
+		
+		while (itResults.hasNext()) //Fields in JSON are separated by commas,
+		{
+			result = itResults.next();
 			//#TODO: Figure out if we need to remove semicolons from end of results
 			if(type.equals("json")) {
-				results.append("\"result\": {");
+				results.append("{");
 				results.append("\"type\": \""+result.otype+"\", ");
 				results.append("\"data\": "+result.data);
-				results.append(" }, ");
+				results.append(" }");
+				
+				if (itResults.hasNext())
+					results.append(",\n");
 			}
 			else if (type.equals("xml")) {
 				results.append("<result>");
@@ -243,7 +252,13 @@ public class XStreamBuilder implements OpenLegConstants {
 		int start = responseStr.indexOf(REGEX_API_KEY);
 		int end = start + REGEX_API_KEY.length();
 		
+		if (type.equals("json")) //need to include the surrounding quotes for json as well
+		{
+			start--;
+			end++;
+		}
+		
 		//#TODO: Figure out how to fix indentation (shift right)
-		return responseStr.replace(start, end,"\n  " + results.toString()).toString();
+		return responseStr.replace(start, end,"\n[\n" + results.toString() + "\n]\n").toString();
 	}
 }

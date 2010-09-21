@@ -1,8 +1,4 @@
-<%@ page language="java" import="java.util.Iterator,java.util.Date,java.util.ArrayList,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.calendar.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/xml" pageEncoding="utf-8"%><%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %><%
-String cacheKey = (String)request.getAttribute("path");
-int cacheTime = OpenLegConstants.DEFAULT_CACHE_TIME;
- 
-  %><cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>"  scope="application"><?xml version="1.0" encoding="utf-8"?>
+<%@ page language="java" import="java.util.Iterator,java.util.Date,java.util.ArrayList,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.calendar.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/xml" pageEncoding="utf-8"%><?xml version="1.0" encoding="utf-8"?>
 <calendars>
 <%
 
@@ -51,4 +47,3 @@ catch (Exception e)
 }
 }%>
 </calendars>
-</cache:cache>

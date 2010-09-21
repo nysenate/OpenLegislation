@@ -137,22 +137,39 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			
 			System.out.println(term+"\n"+dateReplace(term));
 			
-			SenateResponse sr = new SearchEngine2().search(dateReplace(term),format,start,pageSize,null,true);
+			
+			String sFormat = "json";
+			
+			if (format.equals("xml"))
+				sFormat = "xml";
+			
+			SenateResponse sr = new SearchEngine2().search(dateReplace(term),sFormat,start,pageSize,null,true);
 			
 			
 			
 			if(sr.getResults().size() == 0) {
 				term = term+"*";
-				sr = new SearchEngine2().search(dateReplace(term),format,start,pageSize,null,true);
+				sr = new SearchEngine2().search(dateReplace(term),sFormat,start,pageSize,null,true);
 			}
 			
 			req.setAttribute("results", sr);
+			
+			String viewPath = null;
+			
+			if (format.equals("xml") || format.equals("json") )
+			{
+				viewPath = "/views2/v2-api.jsp";
+			}
+			else
+			{
+				viewPath = "/views2/v2-api-" + format + ".jsp";
+			}
 			
 			if(sr.getResults().size() == 0) {
 				getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
 			}			
 			else if(sr.getResults().size() == 1) {
-				String viewPath = "/views2/v2-api.jsp";
+			
 				if(!command.equals("search") && !term.contains(sr.getResults().iterator().next().getOid())) {
 					viewPath = "/legislation/2.0/" + command + "/" + sr.getResults().iterator().next().getOid() + "." + format;
 					resp.sendRedirect(viewPath);
@@ -162,7 +179,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 				}
 			}
 			else {
-				String viewPath = "/views2/v2-api.jsp";
+				
 				if(!command.equals("search") && !term.contains(sr.getResults().iterator().next().getOid())) {
 					viewPath = "/legislation/2.0/search/" +format +"?term=" + term;
 					resp.sendRedirect(viewPath);

@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*, java.text.*,java.io.*,javax.jdo.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" contentType="text/xml" pageEncoding="UTF-8"%><%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %><?xml version="1.0" encoding="utf-8"?>
+<%@ page language="java" import="java.util.*, java.text.*,java.io.*,javax.jdo.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" contentType="text/xml" pageEncoding="UTF-8"%><?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0"  xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>NY Senate Open Legislation</title>

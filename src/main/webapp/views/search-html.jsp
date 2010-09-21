@@ -1,11 +1,9 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/html" pageEncoding="utf-8" %><%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %><%
+<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/html" pageEncoding="utf-8" %><%
 
 String requestPath = request.getRequestURI();
 
 String appPath = request.getContextPath();
 
-%>
-<%
 String term = (String)request.getAttribute("term");
 String sortField = (String)request.getAttribute("sortField");
 String type = (String)request.getAttribute("type");
@@ -128,7 +126,7 @@ else{ %>Most Recent<%}%>
  %>
 
  <%
-Iterator<?> it = srs.getResults().iterator();
+Iterator it = srs.getResults().iterator();
   SearchResult sresult = null;
   
   String resultType = null;
@@ -143,7 +141,7 @@ String resultTitle = null;
                 sresult = (SearchResult) it.next();
                 resultType = sresult.getType();
 
-
+				//System.out.println("got result type: " + resultType);
                 if (resultType.indexOf(".")!=-1)
                 {
                         resultType = resultType.substring(resultType.lastIndexOf(".")+1);

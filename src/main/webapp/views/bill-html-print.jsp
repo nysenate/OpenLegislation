@@ -1,5 +1,4 @@
 <%@ page language="java" import="javax.jdo.*,java.util.*,java.text.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.model.calendar.*" contentType="text/html" pageEncoding="utf-8"%>
-<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>
 <%
 
 String cacheKey = (String)request.getAttribute("path");
@@ -247,7 +246,7 @@ try
  Query query = PMF.getPersistenceManager().newQuery(Meeting.class);
   query.declareVariables("gov.nysenate.openleg.model.Bill bill;");
   query.setFilter("this.bills.contains(bill) && bill.senateBillNo==\"" + bill.getSenateBillNo() + "\"");
-  Collection<?> result = (Collection<?>)query.execute();
+  Collection result = (Collection)query.execute();
 
 if (result.size()>0){
 %>
@@ -255,7 +254,7 @@ if (result.size()>0){
 <h3><%=bill.getSenateBillNo()%> Committee Meetings</h3>
 
 <%
-Iterator<?> itMeetings = result.iterator();
+Iterator itMeetings = result.iterator();
 while (itMeetings.hasNext()){
  Meeting meeting = (Meeting)itMeetings.next();
  %>
@@ -280,7 +279,7 @@ try
  Query query = PMF.getPersistenceManager().newQuery(CalendarEntry.class);
   //query.declareVariables("gov.nysenate.openleg.model.Bill bill;");
   query.setFilter("this.bill.senateBillNo==\"" + bill.getSenateBillNo() + "\"");
-  Collection<?> result = (Collection<?>)query.execute();
+  Collection result = (Collection)query.execute();
 
 if (result.size()>0){
 %>
@@ -288,7 +287,7 @@ if (result.size()>0){
 <h3><%=bill.getSenateBillNo()%> Calendars</h3>
 
 <%
-Iterator<?> itCals = result.iterator();
+Iterator itCals = result.iterator();
 while (itCals.hasNext()){
 
  try

@@ -1,13 +1,8 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/html" pageEncoding="utf-8"%><%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %><%
+<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/html" pageEncoding="utf-8"%><%
 
 String appPath = request.getContextPath();
 	DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.SHORT);
 
-String cacheKey = (String)request.getAttribute("path");
-int cacheTime = OpenLegConstants.DEFAULT_CACHE_TIME;
-%>
-  <cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>" scope="application">
-<%
  CachedContentManager.fillCache(request);
 Meeting meeting = (Meeting)request.getAttribute("meeting");
 
@@ -166,4 +161,3 @@ request.setAttribute("bill",bill);
 
 <jsp:include page="/footer.jsp"/>
 
- </cache:cache>

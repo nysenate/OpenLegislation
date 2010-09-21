@@ -286,8 +286,10 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			
 			srs = null;
 			
+//	public SenateResponse search(String searchText, String format, int start, int max, String sortField, boolean reverseSort) throws ParseException, IOException {
 
-			srs = SearchEngine1.doSearch(term,start,pageSize,sortField,sortOrder);
+			String searchFormat = "json";
+			new SearchEngine2().search(term,format,start,pageSize,sortField,sortOrder);
 
 			if (srs != null)
 			{

@@ -10,6 +10,8 @@ import gov.nysenate.openleg.xstream.XStreamBuilder;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -106,6 +108,9 @@ public class JsonConverter {
 		
 		JsonObject root = new JsonObject();
 				
+		//2010-09-20T01:18Z
+		DateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+		
 		if(exclude == null)
 			exclude = new ArrayList<String>();
 		try {
@@ -130,7 +135,7 @@ public class JsonConverter {
 						else if(type.equals("Date")) {
 							Date d;
 							if((d = (Date)method.invoke(o)) != null) {
-								root.addProperty(f.getName(), (d != null) ? d.toString():"");
+								root.addProperty(f.getName(), (d != null) ? dFormat.format(d):"");
 							}
 						}
 						else if(type.equals("int")) {
@@ -169,6 +174,7 @@ public class JsonConverter {
 							String s;
 							if((s = (String)method.invoke(o)) != null) {
 								root.addProperty(f.getName(), (String)method.invoke(o));
+								
 							}
 						}
 						else {

@@ -1,11 +1,8 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/plain" pageEncoding="utf-8"%><%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache"%><%
+<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/plain" pageEncoding="utf-8"%><%
 
 String appPath = request.getContextPath();
-String cacheKey = (String)request.getAttribute("path");
-int cacheTime = OpenLegConstants.DEFAULT_CACHE_TIME;
 
- %><cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>"  scope="application"><%
- 
+
 CachedContentManager.fillCache(request);
 Committee committee = (Committee)request.getAttribute("meetings");
 String title = "NY Senate Committee Meetings: " + committee.getName();
@@ -70,4 +67,4 @@ LAST-MODIFIED:<%=start%>Z
 UID:<%=meeting.getId()%>
 END:VEVENT
 <%} %>
-END:VCALENDAR</cache:cache>
+END:VCALENDAR
