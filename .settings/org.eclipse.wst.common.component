@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="OpenLegislation">
-        <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
+  <wb-module deploy-name="legislation">
+        <dependent-module deploy-path="/" handle="org.eclipse.jst.j2ee.componentcore.util.ClasspathDependencies">
+            <dependency-type>consumes</dependency-type>
+        </dependent-module>
+    <property name="context-root" value="legislation"/>
+    <wb-resource deploy-path="/" source-path="src/main/webapp"/>
+    <property name="java-output-path" value="/target/classes"/>
+    <wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/java"/>
+    <wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/resources"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
-        <property name="java-output-path" value="/OpenLegislation/target/classes"/>
-        <property name="context-root" value="legislation"/>
-    </wb-module>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+  </wb-module>
 </project-modules>
