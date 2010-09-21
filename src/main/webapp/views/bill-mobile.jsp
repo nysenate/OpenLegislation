@@ -1,17 +1,11 @@
 <%@ page language="java" import="javax.jdo.*,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.model.calendar.*" contentType="text/html" pageEncoding="utf-8"%>
-<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>
 <%
 
-String cacheKey = (String)request.getAttribute("path");
-int cacheTime = OpenLegConstants.DEFAULT_CACHE_TIME;
- 
+
 String appPath = request.getContextPath();
 
 String term = (String)request.getAttribute("term");
 
-%>
- <cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>" scope="application">
-<%
 
 CachedContentManager.fillCache(request);
 Bill bill = (Bill)request.getAttribute("bill");
@@ -290,7 +284,7 @@ try
  Query query = pm.newQuery(Meeting.class);
   query.declareVariables("gov.nysenate.openleg.model.Bill bill;");
   query.setFilter("this.bills.contains(bill) && bill.senateBillNo==\"" + bill.getSenateBillNo() + "\"");
-  Collection<?> result = (Collection<?>)query.execute();
+  Collection result = (Collection)query.execute();
 
 if (result.size()>0){
 %>
@@ -298,7 +292,7 @@ if (result.size()>0){
 <h3><%=bill.getSenateBillNo()%> Committee Meetings</h3>
 
 <%
-Iterator<?> itMeetings = result.iterator();
+Iterator itMeetings = result.iterator();
 while (itMeetings.hasNext()){
  Meeting meeting = (Meeting)itMeetings.next();
  %>
@@ -338,7 +332,7 @@ trans.begin();
  Query query = pm.newQuery(CalendarEntry.class);
   //query.declareVariables("gov.nysenate.openleg.model.Bill bill;");
   query.setFilter("this.bill.senateBillNo==\"" + bill.getSenateBillNo() + "\"");
-  Collection<?> result = (Collection<?>)query.execute();
+  Collection result = (Collection)query.execute();
 
 if (result.size()>0){
 %>
@@ -346,7 +340,7 @@ if (result.size()>0){
 <h3><%=bill.getSenateBillNo()%> Calendars</h3>
 
 <%
-Iterator<?> itCals = result.iterator();
+Iterator itCals = result.iterator();
 while (itCals.hasNext()){
 
  try
@@ -602,11 +596,9 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
   
  </div>
   
- </cache:cache>
-  
 
 <div id="comments">
-<p><b>*By contributing or voting you agree to the <a href = "http://nysenate.gov/legal">Terms of Participation</a> and <a href = "http://www.nysenate.gov/privacy-policy">Privacy Policy</a> and verify you are over 13.</b></p>
+<b><p>*By contributing or voting you agree to the <a href = "http://nysenate.gov/legal">Terms of Participation</a> and <a href = "http://www.nysenate.gov/privacy-policy">Privacy Policy</a> and verify you are over 13.</p></b>
  <h3> <a name="discuss">Discuss!</a></h3>
  <div id="disqus_thread"></div><script type="text/javascript" src="http://disqus.com/forums/nysenateopenleg/embed.js"></script><noscript><a href="http://nysenateopenleg.disqus.com/?url=ref">View the discussion thread.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
 </div>

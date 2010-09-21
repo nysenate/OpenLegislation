@@ -1,5 +1,4 @@
 <%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,org.apache.commons.lang.*" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>
 
 <%
 	String appPath = request.getContextPath();
@@ -10,7 +9,7 @@
 		
 	String term = (String)request.getAttribute("term");
 	if (term != null)
-		term = StringEscapeUtils.escapeHtml(term);
+		term = StringUtils.escape(term);
 	else
 		term = "";
 	

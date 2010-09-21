@@ -137,7 +137,7 @@ public class TextFormatter {
 			line = st.nextToken().trim();
 
 			line = line.replace(" S ","<br/><br/>S ");
-			line = line.replace(" ¤ ","<br/><br/>¤ ");
+		//	line = line.replace(" ï¿½ ","<br/><br/>ï¿½ ");
 			line = line.replace(" Section ","<br/><br/>Section ");
 			line = line.replace("AN ACT ","<br/><br/>AN ACT ");
 			line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");

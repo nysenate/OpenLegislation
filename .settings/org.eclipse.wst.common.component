@@ -11,6 +11,10 @@
     <wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-  </wb-module>
+        <property name="java-output-path" value="/OpenLegislation/target/classes"/>
+        <property name="context-root" value="legislation"/>
+    </wb-module>
 </project-modules>

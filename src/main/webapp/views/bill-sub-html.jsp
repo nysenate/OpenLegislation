@@ -1,5 +1,4 @@
 <%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*"  contentType="text/html" pageEncoding="utf-8" %>
-<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>
 
 <%
 String requestPath = (String)session.getAttribute("path");

@@ -49,7 +49,9 @@ public class SearchEngine2 extends SearchEngine {
 
 	public SearchEngine2() {
 
-		super("C:\\n-lucene\\");
+		//super("C:\\n-lucene\\");
+		super("/usr/local/openleg/lucene/2");
+		
 /*
  * 		"/usr/local/openleg/lucene";
  *		"C:\\n-lucene\\";

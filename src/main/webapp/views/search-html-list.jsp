@@ -1,4 +1,4 @@
-<%@ page language="java" import="org.json.*,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/html" pageEncoding="utf-8" %><%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %><%
+<%@ page language="java" import="org.json.*,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/html" pageEncoding="utf-8" %><%
 
 SearchResultSet srs = (SearchResultSet)request.getAttribute("results");
 int resultCount = srs.getResults().size();

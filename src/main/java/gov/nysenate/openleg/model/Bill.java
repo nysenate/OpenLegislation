@@ -20,6 +20,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.thoughtworks.xstream.annotations.*;
 import org.apache.lucene.document.Field;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.lucene.LuceneObject;
@@ -35,6 +37,7 @@ import gov.nysenate.openleg.xstream.BillListConverter;
 @XmlRootElement
 @Cacheable
 @XStreamAlias("bill")
+@JsonIgnoreProperties("votes")
 public class Bill extends SenateObject implements LuceneObject  {
 	
 	@Persistent

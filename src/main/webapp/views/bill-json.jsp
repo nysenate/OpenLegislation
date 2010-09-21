@@ -1,8 +1,9 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,org.json.*,gov.nysenate.openleg.model.*" contentType="text/plain" pageEncoding="utf-8"%><%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %><%
+<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,org.json.*,gov.nysenate.openleg.model.*" contentType="text/plain" pageEncoding="utf-8"%>
+<%
  
 String cacheKey = (String)request.getAttribute("path");
  int cacheTime = OpenLegConstants.DEFAULT_CACHE_TIME;
-%><cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>" scope="application"><%
+ 
 CachedContentManager.fillCache(request);
  	Bill bill = (Bill)request.getAttribute("bill");
 
@@ -274,4 +275,3 @@ locObj.endObject();
 mainObj.endArray();
 
 %><%=mainObj.toString()%>
-</cache:cache>

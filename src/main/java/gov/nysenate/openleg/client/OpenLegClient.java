@@ -243,7 +243,7 @@ public class OpenLegClient implements APIClientConstants
 		
 		bill.setSenateBillNo(jObj.getString("senateId"));
 		
-		bill.setSponsor(new Person(jObj.getString("sponsor"), null));
+		//bill.setSponsor(new Person(jObj.getString("sponsor"), null));
 		
 		bill.setSummary(jObj.getString("summary"));
 		

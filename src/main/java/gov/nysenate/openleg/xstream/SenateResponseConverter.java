@@ -7,6 +7,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import gov.nysenate.openleg.OpenLegConstants;
+import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SenateResponse;
 
 
@@ -44,7 +45,19 @@ public class SenateResponseConverter implements Converter, OpenLegConstants {
 		 */
 		writer.startNode("results");
 		writer.setValue(REGEX_API_KEY);
+		
+		/*
+		 //possible idea from n8fr8 re solving this escape problem
+		for (Result result: response.getResults())
+		{
+			writer.startNode("result");
+			context.convertAnother(result);
+			
+			writer.endNode();
+		}*/
+		
 		writer.endNode();
+
 	}
 
 	@Override

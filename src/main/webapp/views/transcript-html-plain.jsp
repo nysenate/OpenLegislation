@@ -1,6 +1,4 @@
 <%@ page language="java" import="java.util.*,java.text.*,java.util.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
-<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>
-
 <%
 
 CachedContentManager.fillCache(request);

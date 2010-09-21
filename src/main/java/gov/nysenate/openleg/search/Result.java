@@ -10,6 +10,7 @@ public class Result {
 		this.otype = otype;
 		this.data = data;
 		this.oid  = oid;
+		
 	}
 
 	public String getOtype() {

@@ -1,9 +1,6 @@
 <%@ page language="java" import="java.util.regex.Matcher,java.util.regex.Pattern,javax.jdo.*,java.util.*,java.text.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
-<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>
 <%
 
-String cacheKey = (String)request.getAttribute("path");
-int cacheTime = 0;//OpenLegConstants.DEFAULT_CACHE_TIME;
  
 String appPath = request.getContextPath();
 
@@ -43,4 +40,6 @@ String title = bill.getSenateBillNo() + " - NY Senate Open Legislation - " + tit
   setTimeout("window.print();",2000);
   </script>
  </body>
- </html> 
+ </html>
+ 
+ 
