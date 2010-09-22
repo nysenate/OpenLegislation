@@ -25,6 +25,10 @@ import com.google.gson.JsonPrimitive;
 @SuppressWarnings({"unused"})
 public class JsonConverter {
 	
+	//2010-09-20T01:18Z
+	private static DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG);//new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+	
+	
 	public static void main(String[] args) throws Exception {
 //		/*bill from db*/
 //		Bill b = PMF.getDetachedBill("S5000");		
@@ -108,8 +112,6 @@ public class JsonConverter {
 		
 		JsonObject root = new JsonObject();
 				
-		//2010-09-20T01:18Z
-		DateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 		
 		if(exclude == null)
 			exclude = new ArrayList<String>();
@@ -135,7 +137,8 @@ public class JsonConverter {
 						else if(type.equals("Date")) {
 							Date d;
 							if((d = (Date)method.invoke(o)) != null) {
-								root.addProperty(f.getName(), (d != null) ? dFormat.format(d):"");
+								String jsonDate = DATE_FORMAT.format(d);
+								root.addProperty(f.getName(), (d != null) ? jsonDate:"");
 							}
 						}
 						else if(type.equals("int")) {
@@ -219,7 +222,7 @@ public class JsonConverter {
 				ArrayList<BillEvent> events = (ArrayList<BillEvent>) c;
 				for(BillEvent be:events) {
 					JsonObject jo = new JsonObject();					
-					jo.addProperty("timestamp", be.getEventDate().toString());
+					jo.addProperty("timestamp", DATE_FORMAT.format(be.getEventDate()));
 					jo.addProperty("event", be.getEventText());
 					
 					jarray.add(jo);

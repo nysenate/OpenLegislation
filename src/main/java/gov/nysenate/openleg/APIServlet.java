@@ -481,6 +481,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		}
 		*/
 		
+		resp.sendError(500);
+		
+		/*
 		try
 		{
 			logger.info("routing to search controller:" + viewPath);
@@ -490,7 +493,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		catch (Exception e)
 		{
 			logger.warn("search controller didn't work for: " + req.getRequestURI(),e);
-		}
+		}*/
 		
 	}
 	
