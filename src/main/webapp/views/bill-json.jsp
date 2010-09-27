@@ -1,10 +1,7 @@
 <%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,org.json.*,gov.nysenate.openleg.model.*" contentType="text/plain" pageEncoding="utf-8"%>
 <%
  
-String cacheKey = (String)request.getAttribute("path");
- int cacheTime = OpenLegConstants.DEFAULT_CACHE_TIME;
- 
-CachedContentManager.fillCache(request);
+
  	Bill bill = (Bill)request.getAttribute("bill");
 
 DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);

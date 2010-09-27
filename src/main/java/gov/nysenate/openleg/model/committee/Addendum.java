@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.committee;
 
+import gov.nysenate.openleg.lucene.LuceneField;
+
 import java.util.Date;
 import java.util.List;
 
@@ -18,27 +20,34 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
+@XStreamAlias("addendum")
 public class Addendum {
 
 	@Persistent 
 	@PrimaryKey
 	@Column(name="id", jdbcType="VARCHAR", length=100)
+	@LuceneField
 	private String id;
 	
 
 	@Persistent 
 	@Column(name="addendum_id")
+	@LuceneField
 	private String addendumId; 
 	
 	@Persistent 
 	@Column(name="week_of")
+	@LuceneField
 	private String weekOf;
 	
 	@Persistent 
 	@Column(name="publication_date_time")
+	@LuceneField
 	private Date publicationDateTime;
 	
 	@Persistent(serialized = "false",defaultFetchGroup="true",mappedBy="addendums")
@@ -49,6 +58,7 @@ public class Addendum {
 	
 	@Persistent(dependent = "false",defaultFetchGroup="true",mappedBy="addendums") 
 	@XmlTransient
+	@LuceneField
 	private Agenda agenda;
 	
 

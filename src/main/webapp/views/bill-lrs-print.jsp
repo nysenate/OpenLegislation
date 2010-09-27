@@ -4,7 +4,6 @@
  
 String appPath = request.getContextPath();
 
-CachedContentManager.fillCache(request);
 Bill bill = (Bill)request.getAttribute("bill");
 			
 String titleText = "";

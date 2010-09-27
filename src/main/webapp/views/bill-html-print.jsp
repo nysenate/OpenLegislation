@@ -7,11 +7,7 @@ int cacheTime = 0;//OpenLegConstants.DEFAULT_CACHE_TIME;
 String appPath = request.getContextPath();
 
 
-%>
- <cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>" scope="application">
-<%
 
-CachedContentManager.fillCache(request);
 Bill bill = (Bill)request.getAttribute("bill");
 			
 String titleText = "";
@@ -529,5 +525,4 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
  </body>
  </html>
  
- </cache:cache>
  

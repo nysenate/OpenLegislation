@@ -1,7 +1,11 @@
 package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.BillEvent;
 import gov.nysenate.openleg.model.Transcript;
+import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.search.SearchResult;
@@ -72,13 +76,13 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				
 		String uri = java.net.URLDecoder.decode(encodedUri,OpenLegConstants.ENCODING);
 		
-		
+		/*
 		if(uri.contains("/bill/")) {
 			
 			String nuri = BillCleaner.validBill(uri);	
 			uri = nuri;
 				
-		}
+		}*/
 			
 		logger.info("request: " + uri + " (" + encodedUri + ")");
 		
@@ -315,23 +319,13 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			{
 			
 				String jsonData = sr.getResults().get(0).getData();
+				
+				System.out.println(jsonData);
+				
 				jsonData = jsonData.substring(jsonData.indexOf(":")+1);
 				jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
 				String className = "gov.nysenate.openleg.model." + type.substring(0,1).toUpperCase() + type.substring(1);
 				
-			/*	
-				ObjectMapper mapper = new ObjectMapper();
-				
-				if (type.equals("calendar"))
-				{
-					className = "gov.nysenate.openleg.model.calendar.Calendar";
-				}
-				else if (type.equals("meeting"))
-				{
-					className = "gov.nysenate.openleg.model.committee.Meeting";
-				}
-				Object resultObj = mapper.readValue(rData, Class.forName(className));
-				*/
 
 				if (type.equals("calendar"))
 				{
@@ -354,66 +348,8 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				SearchResultSet srs = new SearchResultSet();
 				srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));
 				
-				ArrayList<SearchResult> srList = new ArrayList<SearchResult>();
 				
-				for (Result newResult : sr.getResults())
-				{
-					SearchResult sResult = new SearchResult();
-					sResult.setId(newResult.getOid());
-					sResult.setLastModified(new Date());
-					sResult.setScore(1.0f);
-					
-					
-					String jsonData = sr.getResults().get(0).getData();
-					jsonData = jsonData.substring(jsonData.indexOf(":")+1);
-					jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
-					
-					String className = "gov.nysenate.openleg.model." + type.substring(0,1).toUpperCase() + type.substring(1);
-					if (type.equals("calendar"))
-					{
-						className = "gov.nysenate.openleg.model.calendar.Calendar";
-					}
-					else if (type.equals("meeting"))
-					{
-						className = "gov.nysenate.openleg.model.committee.Meeting";
-					}
-					
-					Object resultObj = new Gson().fromJson(jsonData,  Class.forName(className));
-					
-					
-					String title = "";
-					String summary = "";
-					
-					HashMap<String,String> fields = new HashMap<String,String>();
-					
-					if (type.equals("bill"))
-					{
-						Bill bill = (Bill)resultObj;
-						title = bill.getTitle();
-						summary = bill.getSummary();
-						
-						if (bill.getSponsor()!=null)
-						fields.put("sponsor",bill.getSponsor().getFullname());
-					}
-					else if (type.equals("transcript"))
-					{
-						Transcript transcript = (Transcript)resultObj;
-						title = "Transcript: " + transcript.getTimeStamp().toLocaleString();
-						summary = transcript.getType() + ": " + transcript.getLocation();
-					}
-					
-					sResult.setTitle(title);
-					sResult.setSummary(summary);
-					
-					sResult.setType(newResult.getOtype());
-					
-					
-					sResult.setFields(fields);
-					
-					srList.add(sResult);
-				}
-				
-				srs.setResults(srList);
+				srs.setResults(buildSearchResultList(sr));
 				
 				req.setAttribute("results", srs);
 			}
@@ -422,6 +358,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		catch (Exception e)
 		{
 			logger.warn("search controller didn't work for: " + req.getRequestURI(),e);
+			e.printStackTrace();
 		}
 		
 		
@@ -481,9 +418,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		}
 		*/
 		
-		resp.sendError(500);
-		
-		/*
 		try
 		{
 			logger.info("routing to search controller:" + viewPath);
@@ -493,10 +427,151 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		catch (Exception e)
 		{
 			logger.warn("search controller didn't work for: " + req.getRequestURI(),e);
-		}*/
+		}
 		
 	}
 	
+	public static ArrayList<SearchResult> buildSearchResultList (SenateResponse sr) throws ClassNotFoundException
+	{
+		ArrayList<SearchResult> srList = new ArrayList<SearchResult>();
+		
+		for (Result newResult : sr.getResults())
+		{
+			
+			SearchResult sResult = new SearchResult();
+			sResult.setId(newResult.getOid());
+			sResult.setLastModified(new Date());
+			sResult.setScore(1.0f);
+			
+			String type = newResult.getOtype();
+			
+			String jsonData = newResult.getData();
+			
+			if (jsonData == null)
+				continue;
+			
+			jsonData = jsonData.substring(jsonData.indexOf(":")+1);
+			jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
+			
+			String className = "gov.nysenate.openleg.model." + type.substring(0,1).toUpperCase() + type.substring(1);
+			if (type.equals("calendar"))
+			{
+				className = "gov.nysenate.openleg.model.calendar.Calendar";
+			}
+			else if (type.equals("meeting"))
+			{
+				className = "gov.nysenate.openleg.model.committee.Meeting";
+			}
+			else if (type.equals("action"))
+			{
+				className = "gov.nysenate.openleg.model.BillEvent";
+			}
+			
+			//System.out.println(jsonData); //bad things happen in eclipse when you do this
+			
+			Object resultObj = new Gson().fromJson(jsonData,  Class.forName(className));
+			
+			if (resultObj == null)
+				continue;
+			
+			String title = "";
+			String summary = "";
+			
+			HashMap<String,String> fields = new HashMap<String,String>();
+			
+			if (type.equals("bill"))
+			{
+				Bill bill = (Bill)resultObj;
+				title = bill.getTitle();
+				summary = bill.getSummary();
+				
+				if (bill.getSponsor()!=null)
+					fields.put("sponsor",bill.getSponsor().getFullname());
+				
+				fields.put("committee", bill.getCurrentCommittee());
+				
+				fields.put("billno", bill.getSenateBillNo());
+
+			}
+			else if (type.equals("calendar"))
+			{
+				Calendar calendar = (Calendar)resultObj;
+				title = "Calendar - " + calendar.getType() + " - " + calendar.getNo() + "-" + calendar.getYear();
+				
+				
+				//calendar.getSupplementals();
+				
+				
+			}
+			else if (type.equals("transcript"))
+			{
+				Transcript transcript = (Transcript)resultObj;
+				title = "Transcript: " + transcript.getTimeStamp().toLocaleString();
+				summary = transcript.getType() + ": " + transcript.getLocation();
+				
+				fields.put("location", transcript.getLocation());
+
+			}
+			else if (type.equals("meeting"))
+			{
+				Meeting meeting = (Meeting)resultObj;
+				title = "Meeting: " + meeting.getCommitteeName() + " (" + meeting.getMeetingDateTime().toLocaleString() + ")";
+				
+				fields.put("location", meeting.getLocation());
+				fields.put("chair", meeting.getCommitteeChair());
+				fields.put("committee", meeting.getCommitteeName());
+
+			}
+			else if (type.equals("action"))
+			{
+				BillEvent billEvent = (BillEvent)resultObj;
+				title = "Action: ";
+				
+
+				fields.put("billno", billEvent.getBillId());
+
+			}
+			else if (type.equals("vote"))
+			{
+				Vote vote = (Vote)resultObj;
+				
+				
+				title = "Vote: ";
+				
+				title += vote.getVoteType();
+				title += " (" + vote.getVoteDate().toLocaleString() + ")";
+				
+				summary = vote.getDescription();
+				
+				if (vote.getBill() != null)
+				{
+					Bill bill = vote.getBill();
+					if (bill.getSponsor()!=null)
+						fields.put("sponsor",bill.getSponsor().getFullname());
+				
+					fields.put("committee", bill.getCurrentCommittee());
+					
+
+					fields.put("billno", bill.getSenateBillNo());
+				}
+				
+				
+
+			}
+			
+			sResult.setTitle(title);
+			sResult.setSummary(summary);
+			
+			sResult.setType(newResult.getOtype());
+			
+			
+			sResult.setFields(fields);
+			
+			srList.add(sResult);
+		}
+		
+		return srList;
+	}
 	
 	/*
 	public static boolean routeSearchRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
@@ -606,7 +681,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 	}
 	*/
-	public String dateReplace(String term) throws ParseException {
+	public static String dateReplace(String term) throws ParseException {
 		Pattern  p = Pattern.compile("(\\d{1,2}[-]?){2}(\\d{2,4})T\\d{2}-\\d{2}");
 		Matcher m = p.matcher(term);
 		

@@ -3,7 +3,6 @@
 String appPath = request.getContextPath();
 
 
-CachedContentManager.fillCache(request);
 Committee committee = (Committee)request.getAttribute("meetings");
 String title = "NY Senate Committee Meetings: " + committee.getName();
  

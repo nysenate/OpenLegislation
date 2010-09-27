@@ -3,7 +3,6 @@
 <%
 
 
-CachedContentManager.fillCache(request);
 String term = (String)request.getAttribute("term");
 ArrayList<Calendar> calendars = (ArrayList<Calendar>)request.getAttribute("calendars");
 

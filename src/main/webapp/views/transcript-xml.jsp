@@ -1,5 +1,4 @@
 <%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.*" contentType="text/xml" pageEncoding="utf-8"%><%
-CachedContentManager.fillCache(request);
 
 String appPath = request.getContextPath();
 Transcript transcript = (Transcript)request.getAttribute("transcript");

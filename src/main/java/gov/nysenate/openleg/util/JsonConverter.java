@@ -95,7 +95,19 @@ public class JsonConverter {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		
+		else if(o instanceof BillEvent)
+			try {
+				node = converter(o,null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}	
+		else if(o instanceof Vote)
+			try {
+				node = converter(o,null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 		root.add(o.getClass().getSimpleName().toLowerCase(), node);
 		
 		return root;
@@ -162,9 +174,23 @@ public class JsonConverter {
 							
 						}
 						else if(type.equals("Person")) {
+							
 							Person p;
 							if((p = (Person)method.invoke(o)) != null) {
-								root.addProperty(f.getName(), p.getFullname());
+								root.add(f.getName(),converter(p,null));
+							}
+							
+						}
+						else if (type.equals("Agenda")) {
+							Agenda a;
+							if ((a = (Agenda)method.invoke(o))!=null) {
+								root.add(f.getName(),converter(a,agenda_exclude()));
+							}
+						}
+						else if (type.equals("Addendum")) {
+							Addendum ad;
+							if ((ad = (Addendum)method.invoke(o))!=null) {
+								root.add(f.getName(),converter(ad,addendum_exclude()));
 							}
 						}
 						else if(type.equals("Sequence")) {
@@ -212,41 +238,37 @@ public class JsonConverter {
 			if(o instanceof Bill) {
 				ArrayList<Bill> bills = (ArrayList<Bill>) c;
 				for(Bill bill: bills) {
-					JsonPrimitive jp = new JsonPrimitive(bill.getSenateBillNo());
-					
-					jarray.add(jp);
+					jarray.add(converter(bill, null));
 				}
 			}
 			
 			else if(o instanceof BillEvent) {
 				ArrayList<BillEvent> events = (ArrayList<BillEvent>) c;
 				for(BillEvent be:events) {
-					JsonObject jo = new JsonObject();					
-					jo.addProperty("timestamp", DATE_FORMAT.format(be.getEventDate()));
-					jo.addProperty("event", be.getEventText());
-					
-					jarray.add(jo);
+					jarray.add(converter(be, null));
 				}
+				
+				
 			}
 			
 			else if(o instanceof Person) {
 				ArrayList<Person> persons = (ArrayList<Person>) c;
+				
+
 				for(Person p:persons) {
-					JsonPrimitive jp = new JsonPrimitive(p.getFullname());
-					
-					jarray.add(jp);
+					jarray.add(converter(p, null));
 				}
+				
 			}
 			
 			else if(o instanceof Vote) {
+			
 				ArrayList<Vote> votes = (ArrayList<Vote>) c;
-				JsonObject json_vote = new JsonObject();
 				for(Vote v:votes) {
-					json_vote.add("vote",(converter(v, vote_exclude())));
+					jarray.add((converter(v, vote_exclude())));
 					
 				}
 				
-				jarray.add(json_vote);
 			}
 		}
 		
@@ -328,6 +350,14 @@ public class JsonConverter {
 					jarray.add(converter(b,simple_bill_exclude()));
 				}
 			}
+			else if (o instanceof Addendum)
+			{
+				ArrayList<Addendum> addendums = (ArrayList<Addendum>)c;
+				
+				for(Addendum a:addendums) {
+					jarray.add(converter(a,addendum_exclude()));
+				}
+			}
 		}
 		
 		return jarray;
@@ -395,9 +425,9 @@ public class JsonConverter {
 	private static List<String> calendar_entry_exclude() {
 		List<String> calendar_entry_exclude = new ArrayList<String>();		
 		
-		calendar_entry_exclude.add("billHigh");
-		calendar_entry_exclude.add("subBill");
-		calendar_entry_exclude.add("motionDate");
+//		calendar_entry_exclude.add("billHigh");
+//		calendar_entry_exclude.add("subBill");
+//		calendar_entry_exclude.add("motionDate");
 		calendar_entry_exclude.add("section");
 		calendar_entry_exclude.add("sequence");
 		
@@ -411,6 +441,22 @@ public class JsonConverter {
 		sequence_exclude.add("notes");
 		
 		return sequence_exclude;
+	}
+	
+	private static List<String> addendum_exclude() {
+		List<String> exclude = new ArrayList<String>();
+		
+		//exclude.add("supplementalId");
+		
+		return exclude;
+	}
+	
+	private static List<String> agenda_exclude() {
+		List<String> exclude = new ArrayList<String>();
+		
+		exclude.add("addendum");
+		
+		return exclude;
 	}
 	
 	private static List<String> supplemental_exclude() {
@@ -454,7 +500,7 @@ public class JsonConverter {
 		
 		meeting_exclude.add("votes");
 		meeting_exclude.add("committee");
-		meeting_exclude.add("addendums");
+	//	meeting_exclude.add("addendums"); 
 		
 		return meeting_exclude;
 	}
@@ -462,8 +508,8 @@ public class JsonConverter {
 	private static List<String> bill_exclude() {
 		List<String> bill_exclude = new ArrayList<String>();
 		
-		bill_exclude.add("law");
-		bill_exclude.add("actClause");
+	//	bill_exclude.add("law");
+	//	bill_exclude.add("actClause");
 		bill_exclude.add("sortIndex");
 		bill_exclude.add("latestAmendment");
 		bill_exclude.add("votes");

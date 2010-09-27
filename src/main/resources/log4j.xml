@@ -9,7 +9,8 @@
 	</layout>
      </appender>
        <root>
-	  <priority value="debug"></priority>
+	  <priority value="error"></priority>
 	  <appender-ref ref="stdout"/>
 	</root>
+	
 </log4j:configuration>

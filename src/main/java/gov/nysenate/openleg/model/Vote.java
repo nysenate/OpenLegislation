@@ -324,13 +324,15 @@ public class Vote  extends SenateObject implements LuceneObject {
 	@Override
 	public HashMap<String, Field> luceneFields() {
 		HashMap<String,Field> map = new HashMap<String,Field>();
-		map.put("billno", new Field("billno",bill.getSenateBillNo(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+
+		if (bill != null)
+			map.put("billno", new Field("billno",bill.getSenateBillNo(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		
 		switch(voteType) {
 			case Vote.VOTE_TYPE_COMMITTEE:
 				if(description !=null)
 					map.put("committee", new Field("committee",description, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-				else
+				else if (bill != null)
 					map.put("committee", new Field("committee",bill.getCurrentCommittee(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		}
 		
@@ -392,6 +394,10 @@ public class Vote  extends SenateObject implements LuceneObject {
 
 	@Override
 	public String luceneOsearch() {
+		
+		if (bill == null)
+			return "";
+		
 		StringBuilder oSearch = new StringBuilder("");
 		oSearch.append(bill.getSenateBillNo() + " ");
 		switch(voteType) {
@@ -416,7 +422,14 @@ public class Vote  extends SenateObject implements LuceneObject {
 
 	@Override
 	public String luceneTitle() {
-		String title = bill.getSenateBillNo() + " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(voteDate);
+		
+		String title = "";
+		
+		if (bill != null)
+			title += bill.getSenateBillNo();
+		
+		title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(voteDate);
+		
 		switch(voteType) {
 			case Vote.VOTE_TYPE_COMMITTEE:
 				return title + " - Committee Vote";

@@ -1,9 +1,5 @@
 <%@ page language="java" import="java.util.Iterator,java.util.Date,java.util.ArrayList,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.calendar.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/plain" pageEncoding="utf-8"%><%
- 
-  
 
-
-CachedContentManager.fillCache(request);
 String term = (String)request.getAttribute("term");
 ArrayList<Calendar> calendars = (ArrayList<Calendar>)request.getAttribute("calendars");
 

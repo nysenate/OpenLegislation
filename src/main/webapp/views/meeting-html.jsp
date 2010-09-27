@@ -3,14 +3,13 @@
 String appPath = request.getContextPath();
 	DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.SHORT);
 
- CachedContentManager.fillCache(request);
 Meeting meeting = (Meeting)request.getAttribute("meeting");
 
 String title = "Committee Meeting: " + meeting.getCommitteeName() + " - " + df.format(meeting.getMeetingDateTime());
 String calNo = null;
 
-Addendum addendum = meeting.getAddendums().get(meeting.getAddendums().size()-1);
 
+Addendum addendum = meeting.getAddendums().get(meeting.getAddendums().size()-1);
 Agenda agenda = addendum.getAgenda();
 calNo = agenda.getNumber() + "";
 

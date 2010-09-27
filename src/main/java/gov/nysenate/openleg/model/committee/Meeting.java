@@ -89,7 +89,8 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	@Element(dependent = "false")
 	@Join
 	@Order(column="integer_idx")
-	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	//@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	@LuceneField
 	protected List<Vote> votes;	
 	
 	@Persistent
@@ -107,16 +108,9 @@ public class Meeting  extends SenateObject implements LuceneObject {
 	@Element(dependent = "false")
 	@Join
 	@Order(column="integer_idx")
-	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	//@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
+	@LuceneField
 	protected List<Addendum> addendums;
-	
-	/*
-	@Persistent(serialized = "false",defaultFetchGroup="true",mappedBy="meeting")
-	@Join
-	@Order(column="integer_idx")
-	@Element(dependent = "false")
-	protected List<Attendance> attendees;
-	*/
 	
 	/**
 	 * @return the votes
@@ -268,25 +262,7 @@ public class Meeting  extends SenateObject implements LuceneObject {
 		this.bills = bills;
 	}
 
-	/**
-	 * @return the attendees
-	 */
-	/*
-	@XmlElementWrapper(name = "attendees")
-	@XmlElement(name = "attendee")
-	public List<Attendance> getAttendees() {
-		return attendees;
-	}
-
-	/**
-	 * @param attendees the attendees to set
-	 */
-	/*
-	public void setAttendees(List<Attendance> attendees) {
-		this.attendees = attendees;
-	}*/
-
-
+	
 	/**
 	 * @return the committeeName
 	 */

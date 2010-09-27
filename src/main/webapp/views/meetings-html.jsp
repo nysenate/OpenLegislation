@@ -5,7 +5,6 @@ String appPath = request.getContextPath();
 String uri = request.getRequestURI();
 
 
- CachedContentManager.fillCache(request);
 //Committee committee = (Committee)request.getAttribute("meetings");
 
 String term = (String)request.getAttribute("term");

@@ -2,10 +2,8 @@
 
 String requestPath = request.getRequestURI();
 
-
 String appPath = request.getContextPath();
 
-CachedContentManager.fillCache(request);
 
 Collection<Bill> bills = (Collection<Bill>)request.getAttribute("bills");
 

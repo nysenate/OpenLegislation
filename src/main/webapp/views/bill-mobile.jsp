@@ -7,7 +7,6 @@ String appPath = request.getContextPath();
 String term = (String)request.getAttribute("term");
 
 
-CachedContentManager.fillCache(request);
 Bill bill = (Bill)request.getAttribute("bill");
 			
 String baseSenateId = bill.getSenateBillNo();

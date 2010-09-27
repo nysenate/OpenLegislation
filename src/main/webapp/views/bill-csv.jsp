@@ -5,7 +5,6 @@ String cacheKey = (String)request.getAttribute("path");
 %>
 <%
 
-CachedContentManager.fillCache(request);
 Bill bill = (Bill)request.getAttribute("bill");
 
 DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);

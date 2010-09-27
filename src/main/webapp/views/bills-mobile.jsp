@@ -1,7 +1,6 @@
 <%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="utf-8" contentType="text/html"%><%
 
 
-CachedContentManager.fillCache(request);
 
 String appPath = request.getContextPath();
 String term = "";

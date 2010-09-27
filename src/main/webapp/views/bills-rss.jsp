@@ -1,8 +1,5 @@
 <%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" contentType="application/rss+xml" pageEncoding="UTF-8"%><?xml version="1.0" encoding="utf-8"?><%
 
-
-
-CachedContentManager.fillCache(request);
 String term = "";
 
 if (request.getParameter("term")!=null)

@@ -1,10 +1,14 @@
 package gov.nysenate.openleg;
 
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.search.*;
 import gov.nysenate.openleg.util.BillCleaner;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
+
+import com.google.gson.Gson;
 
 public class SearchServlet extends HttpServlet implements OpenLegConstants
 {
@@ -289,8 +295,13 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 //	public SenateResponse search(String searchText, String format, int start, int max, String sortField, boolean reverseSort) throws ParseException, IOException {
 
 			String searchFormat = "json";
-			new SearchEngine2().search(term,format,start,pageSize,sortField,sortOrder);
+			SenateResponse sr = new SearchEngine2().search(term,searchFormat,start,pageSize,sortField,sortOrder);
 
+			srs = new SearchResultSet();
+			srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));
+			
+			srs.setResults(APIServlet.buildSearchResultList(sr));
+			
 			if (srs != null)
 			{
 				request.setAttribute("results", srs);
@@ -304,7 +315,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				response.sendError(500);
 			}
 			
-		} catch (ParseException e) {
+		} catch (Exception e) {
 		
 			logger.error("Search Error: " + request.getRequestURI(),e);
 			
