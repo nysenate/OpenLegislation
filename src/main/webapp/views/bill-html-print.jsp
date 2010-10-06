@@ -70,36 +70,25 @@ if (bill.getTitle()!=null)
  <%} %>
  
  <%
- List<Bill> billAmendments = bill.getAmendments();
- 
- //if (billAmendments == null || billAmendments.size()<=1)
- 	billAmendments = PMF.getAmendments(bill);
+ List<String> billAmendments = bill.getAmendments();
  
  if (billAmendments!=null && billAmendments.size()>1)
  {
  %>
  <h4>Other Versions:
  <% 
-	Bill billAmendment = null;
-	Iterator<Bill> itAmendments = billAmendments.iterator(); 
+	String billAmendment = null;
+	Iterator<String> itAmendments = billAmendments.iterator(); 
 	while (itAmendments.hasNext())
 	{
 		billAmendment = itAmendments.next();
 		
-		if (billAmendment.getSenateBillNo().equals(bill.getSenateBillNo()))
+		if (billAmendment.equals(bill.getSenateBillNo()))
 			continue;
 		
-		if (billSummary == null && billAmendment.getSummary()!=null)
-			billSummary = billAmendment.getSummary();
-			
-		if (billMemo == null && billAmendment.getMemo()!=null)
-			billMemo = billAmendment.getMemo();
-			
-		if (billText == null && billAmendment.getFulltext()!=null)
-			billText = billAmendment.getFulltext();
 			
   %>
-<a href="<%=appPath%>/bill/<%=billAmendment.getSenateBillNo()%>"><%=billAmendment.getSenateBillNo()%></a>
+<a href="<%=appPath%>/bill/<%=billAmendment%>"><%=billAmendment%></a>
 <%} %>
 </h4>
 <%} %> 

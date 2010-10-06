@@ -61,64 +61,7 @@ if (st.hasMoreTokens())
 <%} %>
 
 
-<%
-try
-{
 
-	StringBuilder actionSearch = new StringBuilder();
-	
-	actionSearch.append("otype:bill AND (");
-	
-	//oid:" + baseSenateId + "{A to Z}";
-	
-		actionSearch.append("oid:");
-	actionSearch.append(baseSenateId);
-	actionSearch.append(" OR ");
-	
-	for (int i = 65; i < 91; i++)
-	{
-		actionSearch.append("oid:");
-		actionSearch.append(baseSenateId);
-		actionSearch.append((char)i);
-		
-		if ( i < 90)
-			actionSearch.append(" OR ");
-	}
-	
-	actionSearch.append(")");
-	
-	SearchResultSet srs = SearchEngine1.doSearch(actionSearch.toString(),0,1000,null,true);
-
-	Iterator<SearchResult> itSrs = srs.getResults().iterator();
-	SearchResult sresult = null;
-	
-	Hashtable<String,String> htAmends = new Hashtable<String,String>();
-	
-	if (itSrs.hasNext())
-	{
-	%>
-	<b>Versions:</b>
-	<%
-	}
-	
-	while (itSrs.hasNext())
-	{
-		sresult = itSrs.next();
-		
-		
-		
-	%>
-		<a href="<%=appPath%>/bill/<%=sresult.getId()%>"><%=sresult.getId()%></a><%if (itSrs.hasNext()){%>, <%} %>
-	<%
-	}
-	
-%>
-		
-<%
-} catch (Exception e) {
-e.printStackTrace();
-}
-	%>
 
     
     </div>

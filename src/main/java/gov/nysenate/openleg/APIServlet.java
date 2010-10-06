@@ -45,14 +45,16 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 
 	private static final String SRV_DELIM = "/";
 	
+	private SearchEngine2 searchEngine = null;
+	
 	/* (non-Javadoc)
 	 * @see javax.servlet.GenericServlet#init()
 	 */
 	@Override
 	public void init() throws ServletException {
 		super.init();
-	//	CachedContentManager.initCache(getServletContext().getResourceAsStream("/WEB-INF/classes/oscache.properties"));
-		
+	
+		searchEngine = new SearchEngine2();
 	}
 
 	/* (non-Javadoc)
@@ -63,8 +65,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 		super.init(config);
 		
-	//	CachedContentManager.initCache(getServletContext().getResourceAsStream("/WEB-INF/classes/oscache.properties"));
-		
+		searchEngine = new SearchEngine2();
 		
 	}
 	
@@ -302,7 +303,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			
 			String sFormat = "json";
 			
-			SenateResponse sr = new SearchEngine2().search(dateReplace(term),sFormat,start,pageSize,null,true);
+			SenateResponse sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,null,true);
 			
 			logger.info("got search results: " + sr.getResults().size());
 			
@@ -319,11 +320,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			{
 			
 				String jsonData = sr.getResults().get(0).getData();
-				
-				System.out.println(jsonData);
-				
 				jsonData = jsonData.substring(jsonData.indexOf(":")+1);
 				jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
+				
 				String className = "gov.nysenate.openleg.model." + type.substring(0,1).toUpperCase() + type.substring(1);
 				
 
@@ -467,6 +466,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				className = "gov.nysenate.openleg.model.BillEvent";
 			}
 			
+			
 			//System.out.println(jsonData); //bad things happen in eclipse when you do this
 			
 			Object resultObj = new Gson().fromJson(jsonData,  Class.forName(className));
@@ -506,6 +506,10 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			else if (type.equals("transcript"))
 			{
 				Transcript transcript = (Transcript)resultObj;
+				
+				if (transcript.getTimeStamp() == null)
+					continue;
+				
 				title = "Transcript: " + transcript.getTimeStamp().toLocaleString();
 				summary = transcript.getType() + ": " + transcript.getLocation();
 				

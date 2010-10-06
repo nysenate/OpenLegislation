@@ -511,7 +511,7 @@ public class JsonConverter {
 	//	bill_exclude.add("law");
 	//	bill_exclude.add("actClause");
 		bill_exclude.add("sortIndex");
-		bill_exclude.add("latestAmendment");
+	//	bill_exclude.add("latestAmendment");
 		bill_exclude.add("votes");
 		
 		return bill_exclude;

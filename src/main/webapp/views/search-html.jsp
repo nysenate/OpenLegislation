@@ -151,7 +151,7 @@ String resultTitle = null;
                 resultId = sresult.getId();
 
                 contentType = resultType;
-                contentId = resultId;
+                contentId = java.net.URLEncoder.encode(resultId,"UTF-8");
 				resultTitle = sresult.getTitle();
 				
                 if (contentType.equals("vote"))

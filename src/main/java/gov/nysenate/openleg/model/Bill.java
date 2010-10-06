@@ -85,7 +85,7 @@ public class Bill extends SenateObject implements LuceneObject  {
 	@XStreamConverter(BillListConverter.class)
 	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
 	@LuceneField
-	protected List<Bill> amendments;
+	protected List<String> amendments;
 	
 	@Persistent
 	@Column(name="summary", jdbcType="VARCHAR", length=10000)
@@ -151,14 +151,14 @@ public class Bill extends SenateObject implements LuceneObject  {
 	 * @return the amendments
 	 */
 	@XmlTransient
-	public List<Bill> getAmendments() {
+	public List<String> getAmendments() {
 		return amendments;
 	}
 
 	/**
 	 * @param amendments the amendments to set
 	 */
-	public void setAmendments(List<Bill> amendments) {
+	public void setAmendments(List<String> amendments) {
 		this.amendments = amendments;
 	}
 
@@ -479,8 +479,8 @@ public class Bill extends SenateObject implements LuceneObject  {
 			return "";
 		}
 		StringBuilder response = new StringBuilder();
-		for(Bill amendment : amendments) {
-			response.append(amendment.getSenateBillNo() + ", ");
+		for(String amendment : amendments) {
+			response.append(amendment + ", ");
 		}
 		return response.toString().replaceAll(", $", "");
 	}

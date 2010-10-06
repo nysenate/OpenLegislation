@@ -180,16 +180,16 @@ public class BillRenderer {
 			
 				Element elemAmds = new Element("amendments");
 				
-				List<Bill> billsAmd = bill.getAmendments();
-				Iterator<Bill> itAmd = billsAmd.iterator();
-				Bill billAmend = null;
+				List<String> billsAmd = bill.getAmendments();
+				Iterator<String> itAmd = billsAmd.iterator();
+				String billAmend = null;
 				while (itAmd.hasNext())
 				{
 					billAmend = itAmd.next();
-					if (billAmend.getSenateBillNo().equals(bill.getSenateBillNo()))
+					if (billAmend.equals(bill.getSenateBillNo()))
 						continue;
 					Element elemAmd = new Element("amendment");
-					elemAmd.setAttribute("id",billAmend.getSenateBillNo());
+					elemAmd.setAttribute("id",billAmend);
 					elemAmds.addContent(elemAmd);
 				}
 				
