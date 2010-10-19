@@ -19,7 +19,7 @@ $(function () {
         {
         	document.getElementById("quickresult").style.visibility = "visible";
                 $.ajax({
-                        type: "POST",
+                        type: "GET",
                         url: "/legislation/search/",
                         data: dataString,
                         cache: false,

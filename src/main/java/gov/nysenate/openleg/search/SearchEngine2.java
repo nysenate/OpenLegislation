@@ -67,14 +67,7 @@ public class SearchEngine2 extends SearchEngine {
 
 	public SearchEngine2() {
 
-		//super("C:\\n-lucene\\");
 		super("/usr/local/openleg/lucene/2");
-		
-/*
- * 		"/usr/local/openleg/lucene";
- *		"C:\\n-lucene\\";
- *		"/Users/jaredwilliams/Documents/workspace/openleg/lucene2";
-*/
 		
 		logger = Logger.getLogger(SearchEngine2.class);
 	}

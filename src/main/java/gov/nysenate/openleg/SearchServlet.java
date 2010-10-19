@@ -1,14 +1,12 @@
 package gov.nysenate.openleg;
 
-import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.Transcript;
-import gov.nysenate.openleg.search.*;
+import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.search.SearchResultSet;
+import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,9 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
-
-import com.google.gson.Gson;
 
 public class SearchServlet extends HttpServlet implements OpenLegConstants
 {
@@ -30,6 +25,8 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 	
 	private static Logger logger = Logger.getLogger(SearchServlet.class);
 
+	private SearchEngine2 searchEngine = null;
+	
 	/**
 	 * Constructor of the object.
 	 */
@@ -42,6 +39,13 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 	 */
 	public void destroy() {
 		super.destroy();
+		
+		try {
+			searchEngine.closeSearcher();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -295,7 +299,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 //	public SenateResponse search(String searchText, String format, int start, int max, String sortField, boolean reverseSort) throws ParseException, IOException {
 
 			String searchFormat = "json";
-			SenateResponse sr = new SearchEngine2().search(term,searchFormat,start,pageSize,sortField,sortOrder);
+			SenateResponse sr = searchEngine.search(term,searchFormat,start,pageSize,sortField,sortOrder);
 
 			srs = new SearchResultSet();
 			srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));
@@ -331,6 +335,9 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 	 */
 	public void init() throws ServletException {
 		logger.info("SearchServlet:init()");
+		
+		searchEngine = new SearchEngine2();
+		
 	}
 
 }

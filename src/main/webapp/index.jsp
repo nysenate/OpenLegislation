@@ -152,9 +152,6 @@ View Recent:
 Community: <a href="<%=appPath%>/comments">View and respond to recent comments</a>
 </div>
 </form>
-<br/><br/>
-<a href="http://www.nysenate.gov/blogs/2010/mar/31/announcing-open-legislation-v15-dusty-daedalus">March 31st 2010 Update: Open Legislation v1.5 is released!</a><br/> 
-Faster search, complex queries, updated user interface and more!
 <br/> 
 </div>
 

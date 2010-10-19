@@ -100,9 +100,12 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
     //
     
 	public IndexSearcher openSearcher() throws IOException {
+		
 		if (indexSearcher == null) {
+			logger.info("opening search index: " + getDirectory().toString());
 			indexSearcher = new IndexSearcher(getDirectory(), true);
 		}
+		
 		return indexSearcher;
 	}
 	
@@ -148,6 +151,7 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
     
     public synchronized void closeSearcher() throws IOException {
     	if (indexSearcher != null) {
+    		logger.info("closing search index");
 			indexSearcher.close();
 			indexSearcher = null;
     	}
