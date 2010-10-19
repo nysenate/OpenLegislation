@@ -26,8 +26,8 @@ import com.google.gson.JsonPrimitive;
 public class JsonConverter {
 	
 	//2010-09-20T01:18Z
-	private static DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG);//new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-	
+	private static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	//
 	
 	public static void main(String[] args) throws Exception {
 //		/*bill from db*/

@@ -68,37 +68,38 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     	openSearcher();
     }
 	
-	public void indexSenateData(String type, LuceneSerializer[] ls) throws Exception
+	public void indexSenateData(String type, int start, int max, int pageSize, LuceneSerializer[] ls) throws Exception
 	{		
 		if (type.equals("transcripts") || type.equals("*"))	{
-			doIndex("transcript", Transcript.class, null, 25, ls);
+			doIndex("transcript", Transcript.class, null, start, max, pageSize, ls);
 		}
 		
 		if (type.equals("meetings") || type.equals("*"))	{
-			doIndex("meeting", Meeting.class, null, 10, ls);
+			doIndex("meeting", Meeting.class, null, start, max, pageSize, ls);
 		}
 		
 		if (type.equals("calendars") || type.equals("*"))	{
-			doIndex("calendar", Calendar.class, null, 25, ls);
+			doIndex("calendar", Calendar.class, null, start, max, pageSize, ls);
 		}
 		
 		if (type.equals("bills") || type.equals("*"))	{
-			doIndex("bill", Bill.class, SORTINDEX_DESCENDING, 25, ls);
+			doIndex("bill", Bill.class, SORTINDEX_DESCENDING, start, max, pageSize, ls);
 		}
 		
 		if (type.equals("billevents") || type.equals("*"))	{
-			doIndex("billevent", BillEvent.class, null, 25, ls);
+			doIndex("billevent", BillEvent.class, null,start, max, pageSize, ls);
 		}
 		
 		if (type.equals("votes") || type.equals("*"))	{
-			doIndex("vote", Vote.class, null, 25, ls);
+			doIndex("vote", Vote.class, null, start, max, pageSize, ls);
 		}
 		
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void doIndex(String type, Class objClass, String sort, int pageSize, LuceneSerializer[] ls) throws IOException {	
-		int start = 1;
+	public void doIndex(String type, Class objClass, String sort, int start, int max, int pageSize, LuceneSerializer[] ls) throws IOException {	
+		
+		int total = 0;
 		int end = start+pageSize;
 		
 		Collection<LuceneObject> result = null;
@@ -111,8 +112,9 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 			indexSenateObjects(result, ls);
 			start += pageSize;
 			end = start+pageSize;
+			total+=pageSize;
 		}
-		while (result.size() == pageSize);
+		while (result.size() == pageSize && total < max);
 		
 	}	
 	

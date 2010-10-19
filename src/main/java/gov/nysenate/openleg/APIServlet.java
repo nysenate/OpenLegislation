@@ -47,6 +47,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	
 	private SearchEngine2 searchEngine = null;
 	
+	//private static Gson gson = new Gson();
+	private static ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
+	
 	/* (non-Javadoc)
 	 * @see javax.servlet.GenericServlet#init()
 	 */
@@ -334,8 +337,27 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				{
 					className = "gov.nysenate.openleg.model.committee.Meeting";
 				}
-				Object resultObj = new Gson().fromJson(jsonData,  Class.forName(className));
-
+				
+			//	long startTime = new Date().getTime();
+				
+				
+				//Object resultObj = gson.fromJson(jsonData,  Class.forName(className));
+				
+				Object resultObj = null;
+				
+				try
+				{
+					resultObj = mapper.readValue(jsonData,  Class.forName(className));
+				   
+				//	long endTime = new Date().getTime();
+				
+				//	logger.info("json object: " + type + " - bind time=" + (endTime - startTime));
+				}
+				catch (Exception e)
+				{
+					logger.warn("error binding className", e);
+				}
+				
 				req.setAttribute(type, resultObj);
 				
 				viewPath = "/views/" + type + "-" + format + ".jsp";
@@ -469,7 +491,25 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			
 			//System.out.println(jsonData); //bad things happen in eclipse when you do this
 			
-			Object resultObj = new Gson().fromJson(jsonData,  Class.forName(className));
+			//long startTime = new Date().getTime();
+			
+			
+			//Object resultObj = gson.fromJson(jsonData,  Class.forName(className));
+			
+			
+			Object resultObj = null;
+			
+			try
+			{
+				resultObj = mapper.readValue(jsonData,  Class.forName(className));
+			   
+		//		long endTime = new Date().getTime();
+		//		logger.info("json object: " + type + " - bind time=" + (endTime - startTime));
+			}
+			catch (Exception e)
+			{
+				logger.warn("error binding className", e);
+			}
 			
 			if (resultObj == null)
 				continue;
