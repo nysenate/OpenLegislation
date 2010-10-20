@@ -1,5 +1,6 @@
 package gov.nysenate.openleg;
 
+import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.search.SearchResultSet;
 import gov.nysenate.openleg.search.SenateResponse;
@@ -30,6 +31,8 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 	
 	private static final String SRV_DELIM = "/";
 	
+	private SearchEngine2 searchEngine = null;
+	
 	public static void main(String[] args) throws ParseException, IOException {
 		System.out.println(new SearchEngine2().search("otype:calendar AND when:[1265000400000 TO 1265043540000]","xml",0,5,null,true).getResults().size());
 	
@@ -42,7 +45,15 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
         super();
     }
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException {
+    
+    @Override
+	public void init() throws ServletException {
+		super.init();
+		
+		searchEngine = new SearchEngine2();
+	}
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException {
 
     	doPost(request, response);
     }
@@ -59,12 +70,23 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 	
 		StringTokenizer st = new StringTokenizer (uri,SRV_DELIM);
 		
-		st.nextToken(); //legislation
-		st.nextToken(); //2.0
+		String appPath = st.nextToken(); //legislation
+		String arg1 = st.nextToken(); //2.0
 		
 		String command = "";		
+		String term = "";
+		
 		if (st.hasMoreTokens())
+		{
 			command = st.nextToken();
+			
+			if (!st.hasMoreTokens())
+			{
+				term = command;
+				command = arg1;
+				
+			}
+		}
 		else  {
 			req.setAttribute("term","");
 			getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
@@ -73,7 +95,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 		
 		Date date = null;
 		
-		String term = (String)req.getParameter("term");
+		term = (String)req.getParameter("term");
 		int pageSize = req.getParameter("pageSize") != null ? 
 							Integer.parseInt(req.getParameter("pageSize")) : 20;
 		int pageIdx = (String)req.getParameter("pageIdx") != null ? 
@@ -104,7 +126,9 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			req.setAttribute("format", format);
 		}
 		else {
-			term = st.nextToken();
+			
+			if (st.hasMoreTokens())
+				term = st.nextToken();
 			
 			format = "";
 			try {
@@ -143,13 +167,13 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			if (format.equals("xml"))
 				sFormat = "xml";
 			
-			SenateResponse sr = new SearchEngine2().search(dateReplace(term),sFormat,start,pageSize,null,true);
+			SenateResponse sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,null,true);
 			
 			
 			
 			if(sr.getResults().size() == 0) {
 				term = term+"*";
-				sr = new SearchEngine2().search(dateReplace(term),sFormat,start,pageSize,null,true);
+				sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,null,true);
 			}
 			
 			req.setAttribute("results", sr);
@@ -170,8 +194,10 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			}			
 			else if(sr.getResults().size() == 1) {
 			
-				if(!command.equals("search") && !term.contains(sr.getResults().iterator().next().getOid())) {
-					viewPath = "/legislation/2.0/" + command + "/" + sr.getResults().iterator().next().getOid() + "." + format;
+				Result result = sr.getResults().iterator().next();
+				
+				if(!command.equals("search") && !term.contains(result.getOid())) {
+					viewPath = "/legislation/api/2.0/" + command + "/" + result.getOid() + "." + format;
 					resp.sendRedirect(viewPath);
 				}
 				else {

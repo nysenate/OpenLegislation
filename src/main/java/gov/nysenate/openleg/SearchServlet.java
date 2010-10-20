@@ -160,7 +160,9 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 		StringBuilder searchText = new StringBuilder();
 		
 		if (term != null)
+		{
 			searchText.append(term);
+		}
 		
 		try {
 			
@@ -296,8 +298,6 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			
 			srs = null;
 			
-//	public SenateResponse search(String searchText, String format, int start, int max, String sortField, boolean reverseSort) throws ParseException, IOException {
-
 			String searchFormat = "json";
 			SenateResponse sr = searchEngine.search(term,searchFormat,start,pageSize,sortField,sortOrder);
 

@@ -178,32 +178,29 @@ String resultPath = appPath + "/api/1.0/html/" + contentType + "/" + contentId;
 
  %>
  <div class="billSummary" onmouseover="this.style.backgroundColor='#FFFFCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='<%=resultPath%>'">
-<a href="<%=resultPath%>"><%=sresult.getType().toUpperCase()%><%if (resultType.equals("bill")){ %> <%=sresult.getId()%><%} %>
-- <%=resultTitle%></a>
+<a href="<%=resultPath%>"><%=resultTitle%></a>
 <div style="font-size:90%;color:#777777;">
 
 
- <%if (sresult.getFields().get("sponsor")!=null){ %>
-Sponsor:
- <a href="<%=appPath%>/search/?term=sponsor:<%=sresult.getFields().get("sponsor")%>" class="sublink"><%=sresult.getFields().get("sponsor")%></a>
+ <%if (sresult.getFields().get("sponsor")!=null && sresult.getFields().get("sponsor").length()>0){ %>
+Sponsor:<a href="<%=appPath%>/search/?term=sponsor:%22<%=sresult.getFields().get("sponsor")%>%22" class="sublink"><%=sresult.getFields().get("sponsor")%></a>
  <%} %>
  
   <%if (sresult.getFields().get("chair")!=null){ %>
- Chairperson:
- <a href="<%=appPath%>/search/?term=chair:%22<%=java.net.URLEncoder.encode((String)sresult.getFields().get("chair"),"UTF-8")%>%22"  class="sublink"><%=sresult.getFields().get("chair")%></a>
+ Chairperson:<a href="<%=appPath%>/search/?term=chair:%22<%=java.net.URLEncoder.encode((String)sresult.getFields().get("chair"),"UTF-8")%>%22"  class="sublink"><%=sresult.getFields().get("chair")%></a>
  <%} %>
  
   <%if (sresult.getFields().get("committee")!=null){ %>
- Committee:
- <a href="<%=appPath%>/search/?term=committee:<%=sresult.getFields().get("committee")%>"  class="sublink"><%=sresult.getFields().get("committee")%></a>
- -
+ Committee:<a href="<%=appPath%>/search/?term=committee:%22<%=sresult.getFields().get("committee")%>%22"  class="sublink"><%=sresult.getFields().get("committee")%></a>
  <%} %>
  
  
   <%if (sresult.getFields().get("location")!=null){ %>
- Location:
- <a href="<%=appPath%>/search/?term=location:<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("location") + "\"")%>"  class="sublink"><%=sresult.getFields().get("location")%></a>
- -
+ Location:<a href="<%=appPath%>/search/?term=location:<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("location") + "\"")%>"  class="sublink"><%=sresult.getFields().get("location")%></a>
+ <%} %>
+ 
+   <%if (sresult.getFields().get("date")!=null){ %>
+ Date:<a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("date") + "\"")%>"  class="sublink"><%=sresult.getFields().get("date")%></a>
  <%} %>
  
  <%if (sresult.getSummary()!=null && sresult.getSummary().length() > 0){ %>

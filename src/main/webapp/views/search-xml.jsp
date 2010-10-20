@@ -31,9 +31,11 @@ while (it.hasNext())
 		
 		score = sr.getScore() + "";
 		
-		
+		String title = sr.getTitle();
+		if (title == null)
+			title = "";
 		%>
-		<result type="<%=sr.getType() %>" id="<%=sr.getId()%>" score="<%=score%>" title="<%=TextFormatter.clean(sr.getTitle())%>" 
+		<result type="<%=sr.getType() %>" id="<%=sr.getId()%>" score="<%=score%>" title="<%=TextFormatter.clean(title)%>" 
 		<%for (int i = 0; i < attribs.length; i++){if (sr.getFields().get(attribs[i])!=null){ %> <%=attribs[i]%>="<%=TextFormatter.clean(sr.getFields().get(attribs[i]))%>"<%} }%>
 		 />
 		<%

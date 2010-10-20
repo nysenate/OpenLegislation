@@ -8,10 +8,13 @@
 	title += " - New York State Senate";
 		
 	String term = (String)request.getAttribute("term");
-	if (term != null)
-		term = StringUtils.escape(term);
-	else
+	
+	if (term == null)
 		term = "";
+	else
+	{
+		term = term.replaceAll("\"","&quot;");
+	}
 	
 	String searchType = (String)request.getAttribute("type");
 	if (searchType == null)

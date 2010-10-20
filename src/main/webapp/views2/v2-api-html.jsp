@@ -15,10 +15,11 @@ for (Result result: senResponse.getResults())
 	String rData = result.getData();
 	rData = rData.substring(rData.indexOf(":")+1);
 	rData = rData.substring(0,rData.lastIndexOf("}"));
-	Transcript transcript = mapper.readValue(rData, Transcript.class);
-	request.setAttribute("transcript", transcript);
+	Object senObject = mapper.readValue(rData, Transcript.class);
+	request.setAttribute(type, senObject);
+	String senObjectPath = "/views/" + type + "-" + format + ".jsp";
 	%>
-	<jsp:include page="/views/transcript-sub-html.jsp"></jsp:include>
+	<jsp:include page="<%=senObjectPath%>"></jsp:include>
 	<%
 }
 

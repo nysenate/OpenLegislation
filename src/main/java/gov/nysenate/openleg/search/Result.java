@@ -5,12 +5,13 @@ public class Result {
 	public String otype;
 	public String data;
 	public String oid;
+	public long lastModified;
 	
-	public Result(String otype, String data, String oid) {
+	public Result(String otype, String data, String oid, long lastModified) {
 		this.otype = otype;
 		this.data = data;
 		this.oid  = oid;
-		
+		this.lastModified = lastModified;
 	}
 
 	public String getOtype() {
@@ -35,6 +36,14 @@ public class Result {
 
 	public void setOid(String oid) {
 		this.oid = oid;
+	}
+
+	public long getLastModified() {
+		return lastModified;
+	}
+
+	public void setLastModified(long lastModified) {
+		this.lastModified = lastModified;
 	}
 	
 }

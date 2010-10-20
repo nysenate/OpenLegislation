@@ -57,7 +57,8 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	public void init() throws ServletException {
 		super.init();
 	
-		searchEngine = new SearchEngine2();
+		if (searchEngine == null)
+			searchEngine = new SearchEngine2();
 	}
 
 	/* (non-Javadoc)
@@ -68,7 +69,8 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 		super.init(config);
 		
-		searchEngine = new SearchEngine2();
+		if (searchEngine == null)
+			searchEngine = new SearchEngine2();
 		
 	}
 	
@@ -210,6 +212,20 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					key = req.getParameterNames().nextElement().toString();
 				}
 				
+				if (type.equalsIgnoreCase("sponsor"))
+				{
+					
+					key = "sponsor:\"" + key + "\"";
+					type = null;
+				}
+				else if (type.equalsIgnoreCase("committee"))
+				{
+					key = "committee:\"" + key + "\"";
+					type = null;
+				}
+				
+				
+				
 				req.setAttribute(KEY_TYPE,type);
 	
 				
@@ -277,7 +293,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 		req.setAttribute(PAGE_IDX,pageIdx+"");
 		req.setAttribute(PAGE_SIZE,pageSize+"");
-		req.setAttribute("type",type);
+	
 		
 		
 		//now calculate start, end idx based on pageIdx and pageSize
@@ -288,31 +304,44 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 		try
 		{
+			String searchString = "";
 			
-			if (type.endsWith("s"))
+			if (type != null)
 			{
-				type = type.substring(0,type.length()-1);
+				if (type.endsWith("s"))
+				{
+					type = type.substring(0,type.length()-1);
+				}
+				req.setAttribute("type",type);
+			
+				searchString ="otype:" + type;
+
+			
+			
+				if (key != null && key.length() > 0)
+				{
+					searchString += " AND " + " oid:" + key;
+				}
+				
+			}
+			else
+			{
+				searchString = key;
 			}
 			
-			String command = "";
-			String term = "otype:" + type;
-			
-			if (key != null && key.length() > 0)
-				term += " AND " + " oid:" + key;
-			
 			req.setAttribute("type", type);
-			req.setAttribute("term", term);
+			req.setAttribute("term", searchString);
 			req.setAttribute("format", format);
 			
 			String sFormat = "json";
 			
-			SenateResponse sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,null,true);
+			SenateResponse sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,null,true);
 			
 			logger.info("got search results: " + sr.getResults().size());
 			
 			if(sr.getResults().size() == 0) {
-				term = term+"*";
-				sr = new SearchEngine2().search(dateReplace(term),sFormat,start,pageSize,null,true);
+				searchString = searchString+"*";
+				sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,null,true);
 			}
 			
 			if (sr.getResults().size()==0)
@@ -322,7 +351,15 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			else if (sr.getResults().size()==1)
 			{
 			
-				String jsonData = sr.getResults().get(0).getData();
+				Result result = sr.getResults().get(0);
+				
+				if (!result.getOid().equals(key))
+				{
+					resp.sendRedirect("/legislation/api/1.0/" + format + "/" + result.getOtype() + "/" + result.getOid());
+					return;
+				}
+				
+				String jsonData = result.getData();
 				jsonData = jsonData.substring(jsonData.indexOf(":")+1);
 				jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
 				
@@ -461,7 +498,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			
 			SearchResult sResult = new SearchResult();
 			sResult.setId(newResult.getOid());
-			sResult.setLastModified(new Date());
+			sResult.setLastModified(new Date(newResult.getLastModified()));
 			sResult.setScore(1.0f);
 			
 			String type = newResult.getOtype();
@@ -489,26 +526,16 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			}
 			
 			
-			//System.out.println(jsonData); //bad things happen in eclipse when you do this
-			
-			//long startTime = new Date().getTime();
-			
-			
-			//Object resultObj = gson.fromJson(jsonData,  Class.forName(className));
-			
-			
 			Object resultObj = null;
 			
 			try
 			{
 				resultObj = mapper.readValue(jsonData,  Class.forName(className));
 			   
-		//		long endTime = new Date().getTime();
-		//		logger.info("json object: " + type + " - bind time=" + (endTime - startTime));
 			}
 			catch (Exception e)
 			{
-				logger.warn("error binding className", e);
+				logger.warn("error binding:"+ className, e);
 			}
 			
 			if (resultObj == null)
@@ -522,7 +549,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			if (type.equals("bill"))
 			{
 				Bill bill = (Bill)resultObj;
-				title = bill.getTitle();
+				title = "Bill " + bill.getSenateBillNo() + '-' + bill.getYear() + ": " + bill.getTitle();
 				summary = bill.getSummary();
 				
 				if (bill.getSponsor()!=null)
@@ -536,12 +563,10 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			else if (type.equals("calendar"))
 			{
 				Calendar calendar = (Calendar)resultObj;
-				title = "Calendar - " + calendar.getType() + " - " + calendar.getNo() + "-" + calendar.getYear();
 				
+				title = calendar.getType().toUpperCase() + " Calendar: " + " - " + calendar.getNo() + "-" + calendar.getYear();
 				
-				//calendar.getSupplementals();
-				
-				
+				summary = calendar.getSupplementals().get(0).getId();
 			}
 			else if (type.equals("transcript"))
 			{
@@ -550,7 +575,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				if (transcript.getTimeStamp() == null)
 					continue;
 				
-				title = "Transcript: " + transcript.getTimeStamp().toLocaleString();
+				title = "Floor Transcript: " + transcript.getTimeStamp().toLocaleString();
 				summary = transcript.getType() + ": " + transcript.getLocation();
 				
 				fields.put("location", transcript.getLocation());
@@ -559,7 +584,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			else if (type.equals("meeting"))
 			{
 				Meeting meeting = (Meeting)resultObj;
-				title = "Meeting: " + meeting.getCommitteeName() + " (" + meeting.getMeetingDateTime().toLocaleString() + ")";
+				title = "Committee Meeting: " + meeting.getCommitteeName() + " (" + meeting.getMeetingDateTime().toLocaleString() + ")";
 				
 				fields.put("location", meeting.getLocation());
 				fields.put("chair", meeting.getCommitteeChair());
@@ -569,7 +594,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			else if (type.equals("action"))
 			{
 				BillEvent billEvent = (BillEvent)resultObj;
-				title = "Action: ";
+				title = "Bill Action: ";
 				
 
 				fields.put("billno", billEvent.getBillId());
@@ -579,25 +604,32 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			{
 				Vote vote = (Vote)resultObj;
 				
-				
-				title = "Vote: ";
-				
-				title += vote.getVoteType();
-				title += " (" + vote.getVoteDate().toLocaleString() + ")";
-				
-				summary = vote.getDescription();
+				title = "";
+				if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
+					title += "Committee Vote";
+				else if (vote.getVoteType() == Vote.VOTE_TYPE_FLOOR)
+					title += "Floor Vote";
 				
 				if (vote.getBill() != null)
 				{
+				
 					Bill bill = vote.getBill();
+					
+					title += " - " + bill.getSenateBillNo()+'-'+bill.getYear();
+					
 					if (bill.getSponsor()!=null)
 						fields.put("sponsor",bill.getSponsor().getFullname());
 				
-					fields.put("committee", bill.getCurrentCommittee());
-					
+					if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
+						fields.put("committee", bill.getCurrentCommittee());
 
 					fields.put("billno", bill.getSenateBillNo());
 				}
+				
+				//fields.put("date",vote.getVoteDate().toLocaleString());
+				title += " (" + vote.getVoteDate().toLocaleString() + ")";
+				
+				summary = vote.getDescription();
 				
 				
 

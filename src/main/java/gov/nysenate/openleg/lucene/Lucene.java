@@ -66,7 +66,9 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
     	
     	logger.info("indexing document: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue());
     	Term term = new Term("oid",doc.getField("oid").stringValue());
+    	
     	indexWriter.updateDocument(term, doc);
+    	
     	
     	return true;
     }
@@ -99,7 +101,7 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
     // Implementing Lucene Searcher
     //
     
-	public IndexSearcher openSearcher() throws IOException {
+	public synchronized IndexSearcher openSearcher() throws IOException {
 		
 		if (indexSearcher == null) {
 			logger.info("opening search index: " + getDirectory().toString());
@@ -134,6 +136,7 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
 		    	}
 		    	
 		    	for (int i=start; (i < sdocs.length && i < start+max); i++) {
+		    		
 		    		results.add(searcher.doc(sdocs[i].doc));
 		    	}
 		    	

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.search;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
@@ -111,7 +112,12 @@ public class SearchEngine2 extends SearchEngine {
     	response.addMetadataByKey("totalresults", result.total );
     	
     	for (Document doc : result.results) {
-    		response.addResult(new Result(doc.get("otype"),doc.get(data), doc.get("oid")));
+    		
+    		String lastModified = doc.get("when");
+    		if (lastModified == null || lastModified.length() == 0)
+    			lastModified = new Date().getTime()+"";
+    		
+    		response.addResult(new Result(doc.get("otype"),doc.get(data), doc.get("oid"), Long.parseLong(lastModified)));
     	}
     	
     	return response;
