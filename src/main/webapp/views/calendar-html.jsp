@@ -34,13 +34,19 @@ try
 	if (calendar.getType().equals("active") && supp.getSequence()==null)	
 		continue;
 %>
-<h3>Supplemental <%=supp.getSupplementalId()%></h3>
+<h3>
+<%if (supp.getSequence()==null) {%>
+Supplemental<%if (supp.getSupplementalId()!=null){ %> (<%=supp.getSupplementalId()%>)<%} %>:
+<%} else { %>
+Active List (<%=supp.getSequence().getNo()%>):
+<%} %>
 <% if (supp.getCalendarDate()!=null){ %>
 <b>Calendar Date:</b> <%=df.format(supp.getCalendarDate())%> / 
 <%} %>
 <% if (supp.getReleaseDateTime()!=null){ %>
 <b>Released:</b> <%=df.format(supp.getReleaseDateTime())%>
 <%} %>
+</h3>
 
 <%
 
@@ -48,13 +54,9 @@ try
 
 Sequence seq = supp.getSequence();
 
-%>
-<%if (seq.getNo()==null || seq.getNo().length()==0){ %>
-<h4>Active List</h4>
-<%}else{ %>
-<h4>Supplemental</h4>
-<%} %>
-<%
+
+if (seq != null)
+{	
 seq.getActCalDate();
 seq.getCalendarEntries();
 seq.getNo();
@@ -66,7 +68,8 @@ seq.getNotes();
  <%=seq.getNotes()%>
  <hr/>
  <%} %>
- <h4>Bills</h4>
+ 
+ <h4>Calendar Entries</h4>
  <div class="billSummary">
 	<ul>
 <%
@@ -95,7 +98,7 @@ Iterator<CalendarEntry> itCals = seq.getCalendarEntries().iterator();
 	
 	
 </div>
-
+<%} %>
 
 <%if (supp.getSections()!=null&&supp.getSections().size()>0){%>
 <hr/>
@@ -108,7 +111,7 @@ Section section = itSection.next();
 <div class="billSummary">
 	<ul>
 <%
-	 itCals = section.getCalendarEntries().iterator();
+	Iterator<CalendarEntry> itCals = section.getCalendarEntries().iterator();
 	while (itCals.hasNext()){
 	CalendarEntry calEnt = itCals.next();
 	%>

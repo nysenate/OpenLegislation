@@ -5,13 +5,14 @@ import gov.nysenate.openleg.model.BillEvent;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.calendar.Section;
+import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.search.SearchResult;
 import gov.nysenate.openleg.search.SearchResultSet;
 import gov.nysenate.openleg.search.SenateResponse;
-import gov.nysenate.openleg.util.BillCleaner;
 
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -33,8 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 import org.codehaus.jackson.map.ObjectMapper;
-
-import com.google.gson.Gson;
 
 
 public class APIServlet extends HttpServlet implements OpenLegConstants {
@@ -334,14 +334,16 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			req.setAttribute("format", format);
 			
 			String sFormat = "json";
+			String sortField = "when";
+			req.setAttribute("sortField", sortField);
 			
-			SenateResponse sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,null,true);
+			SenateResponse sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,sortField,true);
 			
 			logger.info("got search results: " + sr.getResults().size());
 			
 			if(sr.getResults().size() == 0) {
 				searchString = searchString+"*";
-				sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,null,true);
+				sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,sortField,true);
 			}
 			
 			if (sr.getResults().size()==0)
@@ -549,7 +551,23 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			if (type.equals("bill"))
 			{
 				Bill bill = (Bill)resultObj;
-				title = "Bill " + bill.getSenateBillNo() + '-' + bill.getYear() + ": " + bill.getTitle();
+				
+				if (bill.getSenateBillNo().startsWith("S"))
+					title = "Senate Bill ";
+				else if (bill.getSenateBillNo().startsWith("A"))
+					title = "Assembly Bill ";
+				else if (bill.getSenateBillNo().startsWith("J"))
+					title = "Resolution ";
+				else if (bill.getSenateBillNo().startsWith("K"))
+					title = "Resolution ";
+				else if (bill.getSenateBillNo().startsWith("R"))
+					title = "Senate Rules Bill ";
+				else
+					title = "Bill ";
+				
+				title = title.toUpperCase();
+				
+				title += bill.getSenateBillNo() + '-' + bill.getYear() + ": " + bill.getTitle();
 				summary = bill.getSummary();
 				
 				if (bill.getSponsor()!=null)
@@ -564,9 +582,36 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			{
 				Calendar calendar = (Calendar)resultObj;
 				
-				title = calendar.getType().toUpperCase() + " Calendar: " + " - " + calendar.getNo() + "-" + calendar.getYear();
+				title = calendar.getType().toUpperCase() + " CALENDAR: " + calendar.getNo() + "-" + calendar.getYear();
+
+				Supplemental supp = calendar.getSupplementals().get(0);
 				
-				summary = calendar.getSupplementals().get(0).getId();
+				if (supp.getCalendarDate()!=null)
+				{
+					fields.put("date", supp.getCalendarDate().toLocaleString());
+					
+					summary = "";
+					
+					if (supp.getSections() != null)
+					{
+						Iterator<Section> itSections = supp.getSections().iterator();
+						while (itSections.hasNext())
+						{
+							Section section = itSections.next();
+							
+							summary += section.getName() + ": ";
+							summary += section.getCalendarEntries().size() + " items;";
+							
+						}
+					}
+				}
+				else if (supp.getSequence()!=null)
+				{
+					
+					fields.put("date", supp.getSequence().getActCalDate().toLocaleString());
+					
+					summary = supp.getSequence().getCalendarEntries().size() + " item(s)";
+				}
 			}
 			else if (type.equals("transcript"))
 			{
@@ -575,7 +620,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				if (transcript.getTimeStamp() == null)
 					continue;
 				
-				title = "Floor Transcript: " + transcript.getTimeStamp().toLocaleString();
+				title = "FLOOR TRANSCRIPT: " + transcript.getTimeStamp().toLocaleString();
 				summary = transcript.getType() + ": " + transcript.getLocation();
 				
 				fields.put("location", transcript.getLocation());
@@ -584,7 +629,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			else if (type.equals("meeting"))
 			{
 				Meeting meeting = (Meeting)resultObj;
-				title = "Committee Meeting: " + meeting.getCommitteeName() + " (" + meeting.getMeetingDateTime().toLocaleString() + ")";
+				title = "COMMITTEE MEETING: " + meeting.getCommitteeName() + " (" + meeting.getMeetingDateTime().toLocaleString() + ")";
 				
 				fields.put("location", meeting.getLocation());
 				fields.put("chair", meeting.getCommitteeChair());
@@ -594,7 +639,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			else if (type.equals("action"))
 			{
 				BillEvent billEvent = (BillEvent)resultObj;
-				title = "Bill Action: ";
+				title = "BILL ACTION: " + billEvent.getBillId() + " - " + billEvent.getEventText();
+				
+				fields.put("date", billEvent.getEventDate().toLocaleString());
 				
 
 				fields.put("billno", billEvent.getBillId());
@@ -606,16 +653,16 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				
 				title = "";
 				if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
-					title += "Committee Vote";
+					title += "COMMITTEE VOTE: ";
 				else if (vote.getVoteType() == Vote.VOTE_TYPE_FLOOR)
-					title += "Floor Vote";
+					title += "FLOOR VOTE: ";
 				
 				if (vote.getBill() != null)
 				{
 				
 					Bill bill = vote.getBill();
 					
-					title += " - " + bill.getSenateBillNo()+'-'+bill.getYear();
+					title += bill.getSenateBillNo()+'-'+bill.getYear();
 					
 					if (bill.getSponsor()!=null)
 						fields.put("sponsor",bill.getSponsor().getFullname());
