@@ -20,7 +20,11 @@ calNo = agenda.getNumber() + "";
 
 <br/>
 <h2><%=meeting.getCommitteeName()%> - <%=df.format(meeting.getMeetingDateTime())%></h2>
-<br/>
+
+<div style="float:right">
+<script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
+</div>
+<br style="clear:both;"/>
  <div id="content">
   
 
@@ -35,8 +39,7 @@ chair = chair.replace("?","");
 <b>Chair:</b> <a href="<%=appPath%>/meetings/<%=java.net.URLEncoder.encode(meeting.getCommitteeChair(),OpenLegConstants.ENCODING)%>"><%=chair%></a> / 
 <b>Location:</b> <%=meeting.getLocation()%>
 
-<script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
-<br/>
+
 
 <b>Addendum:</b> <%=addendum.getAddendumId() %> / 
 <b>Published:</b> <%=addendum.getPublicationDateTime()%> /
@@ -70,21 +73,26 @@ try
 {
 request.setAttribute("bill",bill);	
 	%>
-	 <div class="billSummary">
- <b>
+	
+	<div class="billSummary" onmouseover="this.style.backgroundColor='#FFFFCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/legislation/bill/<%=bill.getSenateBillNo()%>'">
+<a href="/legislation/bill/<%=bill.getSenateBillNo()%>"><%=bill.getSenateBillNo()%>-<%=bill.getYear()%>: <%=bill.getTitle()%></a>
+<div style="font-size:90%;color:#777777;">
 
- <a href="<%=appPath%>/bill/<%=bill.getSenateBillNo()%>"><%=bill.getSenateBillNo()%>:</a>
-  
-</b>
 
- <%if (bill.getTitle()!=null){ %>
-<%=bill.getTitle()%>
-<%} else if (bill.getSummary()!=null){ %>
- <%=bill.getSummary()%>
- <%} %>
-
+ <%=bill.getSummary() %> /
  
-
+ <%if (bill.getSponsor()!=null){ %>
+Sponsor: <a href="<%=appPath%>/search/?term=sponsor:%22<%=bill.getSponsor().getFullname()%>%22" class="sublink"><%=bill.getSponsor().getFullname()%></a>
+ <%} %>
+ 
+ 
+  <%if (bill.getCurrentCommittee()!=null){ %>
+Committee: <a href="<%=appPath%>/search/?term=committee:%22<%=bill.getCurrentCommittee()%>%22"  class="sublink"><%=bill.getCurrentCommittee()%></a>
+ <%} %>
+ 
+ 
+ 
+ 
 
 	
 	<%
@@ -145,7 +153,7 @@ request.setAttribute("bill",bill);
 		System.err.println("couldn't render bill: " + bill.getSenateBillNo());
 	}
 %>
-
+</div>
 <% 
 }%>
 

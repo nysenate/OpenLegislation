@@ -298,6 +298,12 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			
 			srs = null;
 			
+			if (term.length() == 0)
+			{
+				response.sendError(404);
+				return;
+			}
+			
 			String searchFormat = "json";
 			SenateResponse sr = searchEngine.search(term,searchFormat,start,pageSize,sortField,sortOrder);
 
