@@ -308,9 +308,19 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			
 			if (srs != null)
 			{
-				request.setAttribute("results", srs);
-				String viewPath = "/views/search-" + format + DOT_JSP;
-				getServletContext().getRequestDispatcher(viewPath).forward(request, response);
+				
+				if (srs.getResults().size() == 0)
+				{
+					//getServletContext().getRequestDispatcher("/noresults.jsp").forward(request, response);
+					response.sendError(404);
+				}
+				else
+				{
+				
+					request.setAttribute("results", srs);
+					String viewPath = "/views/search-" + format + DOT_JSP;
+					getServletContext().getRequestDispatcher(viewPath).forward(request, response);
+				}
 			}
 			else
 			{

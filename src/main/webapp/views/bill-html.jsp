@@ -36,20 +36,29 @@ String title = senateBillNo + " - NY Senate Open Legislation - " + titleText;
 
 StringTokenizer st = new StringTokenizer(bill.getSameAs(),",");
 String sameAs = null;
+String lastSameAs = "";
 String sameAsLink = null;
 Bill sameAsBill = null;
 
 while(st.hasMoreTokens())
 {
+	
 	sameAs = st.nextToken().trim();
 	sameAsLink = appPath + "/bill/" + sameAs;
-
+	
+	if (sameAs.length() == 0)
+		continue;
+	
+	if (sameAs.equals(lastSameAs))
+		continue;
+	
+	lastSameAs = sameAs;
 %>
 <a href="<%=sameAsLink%>"><%=sameAs.toUpperCase()%></a>
 <%
 if (st.hasMoreTokens())
 {
-%>, <%
+%> <%
 }
 } %>
 
@@ -152,41 +161,64 @@ if (bill.getTitle()!=null)
 <h3><%=senateBillNo%> Actions</h3>
 <ul>
 <%
-Iterator<BillEvent> itActions = bill.getBillEvents().iterator();
-BillEvent beAction = null;
 
-while (itActions.hasNext())
-{
-	beAction = itActions.next();	
+ArrayList<BillEvent> rActions = (ArrayList<BillEvent>)request.getAttribute("related-action");
+
+for (BillEvent beAction:rActions){
 	%>
-	<li><%=beAction.getEventText()%></li>
+	<li><%=beAction.getEventText()%> - <%=df.format(beAction.getEventDate())%></li>
 	<%
 }
 %>
 </ul>
 
 <h3><%=senateBillNo%> Committee Meetings</h3>
+<%
 
+ArrayList<Meeting> rMeetings = (ArrayList<Meeting>)request.getAttribute("related-meeting");
+
+for (Meeting meeting:rMeetings){
+	%>
+	<div>
+<a href="<%=appPath%>/meeting/<%=meeting.getId()%>" class="sublink"><%=meeting.getCommitteeName()%>: <%=df.format(meeting.getMeetingDateTime())%></a>: Chair: <%=meeting.getCommitteeChair()%>
+/ Location: <%=meeting.getLocation()%>
+</div>
+	<%
+}
+%>
 
 
 
 <h3><%=senateBillNo%> Calendars</h3>
+<%
 
+ArrayList<gov.nysenate.openleg.model.calendar.Calendar> rCals = (ArrayList<gov.nysenate.openleg.model.calendar.Calendar>)request.getAttribute("related-calendar");
+
+for (gov.nysenate.openleg.model.calendar.Calendar cal:rCals){
+	String cEntryDateTime = "";
+	Supplemental supp = cal.getSupplementals().get(0);
+	if (supp.getCalendarDate()!=null)
+		cEntryDateTime = df.format(supp.getCalendarDate());
+	else
+		cEntryDateTime = df.format(supp.getSequence().getActCalDate());
+	
+	String calType = cal.getType();
+	String calText = "";
+	%>
+	<div>
+<a href="<%=appPath%>/calendar/<%=cal.getId()%>" class="sublink"><%=cEntryDateTime%>: <%=calType%> <%=calText%></a>
+</div>
+	<%
+}
+%>
 
 <h3><%=senateBillNo%> Votes</h3>
+<%
 
-<%if (bill.getVotes()!=null&&bill.getVotes().size()>0){ %>
+ArrayList<Vote> rVotes = (ArrayList<Vote>)request.getAttribute("related-vote");
 
- <%
-  	Iterator<Vote> itVotes = bill.getVotes().iterator();
+for (Vote vote:rVotes){
    
-   Vote vote = null;
-  // String voteDesc = null;
-   
-   while (itVotes.hasNext())
-   {
-   	vote = itVotes.next();
-   	
    	String voteType = "Floor";
 if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
 	voteType = "Committee";
@@ -272,7 +304,7 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
  		</div>
  		<%
  
- }}
+ }
   %>
   
 

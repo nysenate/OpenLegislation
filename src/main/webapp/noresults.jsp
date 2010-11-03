@@ -7,7 +7,7 @@ if (term == null)
         String appPath = request.getContextPath();
         
 %>
-<jsp:include page="header.jsp"/>
+<jsp:include page="/header.jsp"/>
 
  <div id="content">
  Sorry no results were found for that search.
@@ -34,4 +34,4 @@ There are currently five different distinct paths for searching on Open Legislat
 *Note: when entering a Bill number, OMIT any leading zero (0). 
 </div>
    
- <jsp:include page="footer.jsp"/>
+ <jsp:include page="/footer.jsp"/>

@@ -48,6 +48,7 @@ Active List (<%=supp.getSequence().getNo()%>):
 <%} %>
 </h3>
 
+
 <%
 
 
@@ -57,11 +58,6 @@ Sequence seq = supp.getSequence();
 
 if (seq != null)
 {	
-seq.getActCalDate();
-seq.getCalendarEntries();
-seq.getNo();
-seq.getNotes();
-
  %>
  <%if (seq.getNotes()!=null && seq.getNotes().trim().length()>0){ %>
  <h4>Notes</h4>
@@ -101,7 +97,7 @@ Iterator<CalendarEntry> itCals = seq.getCalendarEntries().iterator();
 <%} %>
 
 <%if (supp.getSections()!=null&&supp.getSections().size()>0){%>
-<hr/>
+<blockquote>
 <%
 Iterator<Section> itSection = supp.getSections().iterator();
 while (itSection.hasNext()){
@@ -134,16 +130,17 @@ Section section = itSection.next();
 	</ul>
 <%}%>
 	
+	</blockquote>
 	
 <%}%>
 
+</div>
 <%
 
 } catch (Exception e) {}%>
 
  <%}%>
 
-</div>
   
 <div id="formatBox">
 <b>Formats:</b> <a href="<%=appPath%>/api/1.0/xml/calendar/<%=calendar.getId()%>">XML</a>

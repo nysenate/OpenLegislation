@@ -2,6 +2,7 @@ package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.BillEvent;
+import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -47,7 +48,10 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	
 	private SearchEngine2 searchEngine = null;
 	
-	//private static Gson gson = new Gson();
+	private final static String DEFAULT_SORT_FIELD = "when";
+	private final static String DEFAULT_SEARCH_FORMAT = "json";
+	
+	//Jackson JSON parser
 	private static ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
 	
 	/* (non-Javadoc)
@@ -341,14 +345,18 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			
 			logger.info("got search results: " + sr.getResults().size());
 			
+			/*
 			if(sr.getResults().size() == 0) {
 				searchString = searchString+"*";
 				sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,sortField,true);
-			}
+			}*/
 			
 			if (sr.getResults().size()==0)
 			{
-				viewPath = "/";
+				//getServletContext().getRequestDispatcher("/noresults.jsp").forward(req, resp);
+				resp.sendError(404);
+
+				return;
 			}
 			else if (sr.getResults().size()==1)
 			{
@@ -367,8 +375,43 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				
 				String className = "gov.nysenate.openleg.model." + type.substring(0,1).toUpperCase() + type.substring(1);
 				
-
-				if (type.equals("calendar"))
+				if (type.equals("bill"))
+				{
+					String billQueryId = key;
+					if (billQueryId.indexOf("-")!=-1)
+					{
+						billQueryId = billQueryId.substring(0,billQueryId.indexOf("-"));
+					}
+					//get BillEvents for this 
+					//otype:action AND oid:A10234A-*
+					String rType = "action";
+					String rQuery = "oid:" + billQueryId + "-*";
+					ArrayList<SenateObject> relatedItems = getRelatedSenateObjects (rType,rQuery);
+					req.setAttribute("related-" + rType, relatedItems);
+					
+					//get Meetings
+					//otype:meeting AND ojson:"S67005"
+					rType = "meeting";
+					 rQuery = "ojson:\"" + billQueryId + "\"";
+					relatedItems = getRelatedSenateObjects (rType,rQuery);
+					req.setAttribute("related-" + rType, relatedItems);
+					
+					//get calendars
+					//otype:calendar AND  ojson:"S337A"
+					rType = "calendar";
+					 rQuery = "ojson:\"" + billQueryId + "\"";
+					relatedItems = getRelatedSenateObjects (rType,rQuery);
+					req.setAttribute("related-" + rType, relatedItems);
+					
+					//get votes
+					//otype:vote AND ojson:"A11597"
+					rType = "vote";
+					 rQuery = "ojson:\"" + billQueryId + "\"";
+					relatedItems = getRelatedSenateObjects (rType,rQuery);
+					req.setAttribute("related-" + rType, relatedItems);
+					
+				}
+				else if (type.equals("calendar"))
 				{
 					className = "gov.nysenate.openleg.model.calendar.Calendar";
 				}
@@ -377,20 +420,12 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					className = "gov.nysenate.openleg.model.committee.Meeting";
 				}
 				
-			//	long startTime = new Date().getTime();
-				
-				
-				//Object resultObj = gson.fromJson(jsonData,  Class.forName(className));
-				
 				Object resultObj = null;
 				
 				try
 				{
 					resultObj = mapper.readValue(jsonData,  Class.forName(className));
-				   
-				//	long endTime = new Date().getTime();
 				
-				//	logger.info("json object: " + type + " - bind time=" + (endTime - startTime));
 				}
 				catch (Exception e)
 				{
@@ -422,61 +457,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		}
 		
 		
-		/*
-		if (!format.equals("html") && !format.equals("mobile"))
-		{
-			String viewType = type;
-			
-			if (type.equals(TYPE_SENATOR) || type.equals(TYPE_SPONSOR) || type.equals(TYPE_COMMITTEE) || type.equals(TYPE_COMM) || type.equals(TYPE_SEARCH))
-				viewType = "bills";
-			
-			viewPath = "/views/" + viewType + "-" + format + ".jsp";
-		}
-		else
-		{
-			if (type.equals(TYPE_SEARCH))
-			{	
-				
-				viewPath = "/search/?term=" + key + "&type=bill&pageIdx=" + pageIdx + "&pageSize=" + pageSize + "&format=" + format;
-	
-			}
-			else if (type.equals(TYPE_SENATOR) || type.equals(TYPE_SPONSOR))
-			{	
-				key = java.net.URLEncoder.encode(key,ENCODING);
-
-				viewPath = "/search/?term=sponsor:" + key + "&type=bill&pageIdx=" + pageIdx + "&pageSize=" + pageSize + "&format=" + format;
-	
-			}
-			else if (type.equals(TYPE_COMMITTEE) || type.equals(TYPE_COMM))
-			{	
-				
-				key = java.net.URLEncoder.encode("\"" + key + "\"",ENCODING);
-				
-				viewPath = "/search/?term=committee:" + key + "&type=bill&pageIdx=" + pageIdx + "&pageSize=" + pageSize + "&format=" + format;
-	
-			}
-			else
-			{
-	
-				if (type.endsWith("s") && format.equals("html"))
-				{
-					type = type.substring(0,type.length()-1);
-				
-					viewPath = "/search/?sort=when&sortOrder=true&term=" + key + "&type=" + type + "&format=" + format + "&pageIdx=" + pageIdx + "&pageSize=" + pageSize;
-				}
-				else if (type.endsWith("s") && format.equals("mobile"))
-				{
-					type = type.substring(0,type.length()-1);
-				
-					viewPath = "/search/?sort=when&sortOrder=true&term=" + key + "&type=" + type + "&format=" + format + "&pageIdx=" + pageIdx + "&pageSize=" + pageSize;
-				}
-				else
-				{
-					viewPath = "/views/" + type + "-" + format + ".jsp";
-				}
-			}
-		}
-		*/
+		
 		
 		try
 		{
@@ -490,6 +471,57 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		}
 		
 	}
+	
+	private ArrayList<SenateObject> getRelatedSenateObjects (String type, String query) throws ParseException, IOException
+	{
+		ArrayList<SenateObject> results = new ArrayList<SenateObject>();
+		
+		StringBuffer searchString = new StringBuffer();
+		searchString.append("otype:");
+		searchString.append(type);
+		searchString.append(" AND ");
+		searchString.append(query);
+		
+		int start = 0;
+		int pageSize = 100;
+		
+		SenateResponse sr = searchEngine.search(dateReplace(searchString.toString()),DEFAULT_SEARCH_FORMAT,start,pageSize,DEFAULT_SORT_FIELD,true);
+
+		for (Result result:sr.getResults())
+		{
+			String jsonData = result.getData();
+			jsonData = jsonData.substring(jsonData.indexOf(":")+1);
+			jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
+			
+			String className = "gov.nysenate.openleg.model." + type.substring(0,1).toUpperCase() + type.substring(1);
+			if (type.equals("calendar"))
+			{
+				className = "gov.nysenate.openleg.model.calendar.Calendar";
+			}
+			else if (type.equals("meeting"))
+			{
+				className = "gov.nysenate.openleg.model.committee.Meeting";
+			}
+			
+			SenateObject resultObj = null;
+			
+			try
+			{
+				resultObj = (SenateObject)mapper.readValue(jsonData,  Class.forName(className));
+			
+				results.add(resultObj);
+			}
+			catch (Exception e)
+			{
+				logger.warn("error binding className", e);
+			}
+		}
+		
+		
+		
+		return results;
+	}
+	
 	
 	public static ArrayList<SearchResult> buildSearchResultList (SenateResponse sr) throws ClassNotFoundException
 	{

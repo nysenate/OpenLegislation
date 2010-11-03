@@ -8,7 +8,6 @@ Meeting meeting = (Meeting)request.getAttribute("meeting");
 String title = "Committee Meeting: " + meeting.getCommitteeName() + " - " + df.format(meeting.getMeetingDateTime());
 String calNo = null;
 
-
 Addendum addendum = meeting.getAddendums().get(meeting.getAddendums().size()-1);
 Agenda agenda = addendum.getAgenda();
 calNo = agenda.getNumber() + "";
@@ -74,7 +73,7 @@ request.setAttribute("bill",bill);
 	 <div class="billSummary">
  <b>
 
- <a href="<%=appPath%>/bill/<%=bill.getSenateBillNo()%>"><%=bill.getSenateBillNo()%><%if (bill.getSameAs()!=null){ %> (Same as: <%=bill.getSameAs()%>)<%}%>:</a>
+ <a href="<%=appPath%>/bill/<%=bill.getSenateBillNo()%>"><%=bill.getSenateBillNo()%>:</a>
   
 </b>
 
