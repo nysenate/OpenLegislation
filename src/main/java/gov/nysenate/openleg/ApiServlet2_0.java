@@ -80,6 +80,9 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 		{
 			command = st.nextToken();
 			
+			if (command.equals("2.0"))
+				command = st.nextToken();
+			
 			if (!st.hasMoreTokens())
 			{
 				term = command;

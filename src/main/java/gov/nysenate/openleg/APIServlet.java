@@ -580,24 +580,11 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			
 			HashMap<String,String> fields = new HashMap<String,String>();
 			
+			fields.put("type", type);
+			
 			if (type.equals("bill"))
 			{
 				Bill bill = (Bill)resultObj;
-				
-				if (bill.getSenateBillNo().startsWith("S"))
-					title = "Senate Bill ";
-				else if (bill.getSenateBillNo().startsWith("A"))
-					title = "Assembly Bill ";
-				else if (bill.getSenateBillNo().startsWith("J"))
-					title = "Resolution ";
-				else if (bill.getSenateBillNo().startsWith("K"))
-					title = "Resolution ";
-				else if (bill.getSenateBillNo().startsWith("R"))
-					title = "Senate Rules Bill ";
-				else
-					title = "Bill ";
-				
-				title = title.toUpperCase();
 				
 				title += bill.getSenateBillNo() + '-' + bill.getYear() + ": " + bill.getTitle();
 				summary = bill.getSummary();
@@ -614,8 +601,18 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			{
 				Calendar calendar = (Calendar)resultObj;
 				
-				title = calendar.getType().toUpperCase() + " CALENDAR: " + calendar.getNo() + "-" + calendar.getYear();
+				title = calendar.getNo() + "-" + calendar.getYear();
 
+				if (calendar.getType() == null)
+					fields.put("type", "");
+				else if (calendar.getType().equals("active"))
+					fields.put("type", "Active List");
+				else if (calendar.getType().equals("floor"))
+					fields.put("type", "Floor Calendar");
+				else
+					fields.put("type", calendar.getType());
+					
+				
 				Supplemental supp = calendar.getSupplementals().get(0);
 				
 				if (supp.getCalendarDate()!=null)
@@ -652,7 +649,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				if (transcript.getTimeStamp() == null)
 					continue;
 				
-				title = "FLOOR TRANSCRIPT: " + transcript.getTimeStamp().toLocaleString();
+				title = transcript.getTimeStamp().toLocaleString();
 				summary = transcript.getType() + ": " + transcript.getLocation();
 				
 				fields.put("location", transcript.getLocation());
@@ -661,7 +658,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			else if (type.equals("meeting"))
 			{
 				Meeting meeting = (Meeting)resultObj;
-				title = "COMMITTEE MEETING: " + meeting.getCommitteeName() + " (" + meeting.getMeetingDateTime().toLocaleString() + ")";
+				title = meeting.getCommitteeName() + " (" + meeting.getMeetingDateTime().toLocaleString() + ")";
 				
 				fields.put("location", meeting.getLocation());
 				fields.put("chair", meeting.getCommitteeChair());
@@ -671,23 +668,27 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			else if (type.equals("action"))
 			{
 				BillEvent billEvent = (BillEvent)resultObj;
-				title = "BILL ACTION: " + billEvent.getBillId() + " - " + billEvent.getEventText();
+
+				String billId = billEvent.getBillId();
+				if (billId.indexOf("-")==-1)
+					billId += "-2009";
+				
+				title = billId + " - " + billEvent.getEventText();
 				
 				fields.put("date", billEvent.getEventDate().toLocaleString());
 				
 
-				fields.put("billno", billEvent.getBillId());
+				fields.put("billno", billId);
 
 			}
 			else if (type.equals("vote"))
 			{
 				Vote vote = (Vote)resultObj;
 				
-				title = "";
 				if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
-					title += "COMMITTEE VOTE: ";
+					fields.put("type","Committee Vote");
 				else if (vote.getVoteType() == Vote.VOTE_TYPE_FLOOR)
-					title += "FLOOR VOTE: ";
+					fields.put("type","Floor Vote");
 				
 				if (vote.getBill() != null)
 				{

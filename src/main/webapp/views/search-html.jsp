@@ -136,6 +136,8 @@ Iterator it = srs.getResults().iterator();
   String contentId = null;
 String resultTitle = null;
 
+	String senateType = null;
+	
   while (it.hasNext())
   {
                 sresult = (SearchResult) it.next();
@@ -153,6 +155,7 @@ String resultTitle = null;
                 contentType = resultType;
                 contentId = java.net.URLEncoder.encode(resultId,"UTF-8");
 				resultTitle = sresult.getTitle();
+				senateType = (String)sresult.getFields().get("type").toUpperCase();
 				
                 if (contentType.equals("vote"))
                 {
@@ -177,7 +180,7 @@ String resultPath = appPath + "/api/1.0/html/" + contentType + "/" + contentId;
 
  %>
  <div class="billSummary" onmouseover="this.style.backgroundColor='#FFFFCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='<%=resultPath%>'">
-<a href="<%=resultPath%>"><%=resultTitle%></a>
+<a href="<%=resultPath%>"><%=senateType%>: <%=resultTitle%></a>
 <div style="font-size:90%;color:#777777;">
 
 

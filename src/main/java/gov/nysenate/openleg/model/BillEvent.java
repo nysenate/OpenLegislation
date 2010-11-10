@@ -118,13 +118,16 @@ public class BillEvent extends SenateObject implements LuceneObject
 	public HashMap<String, Field> luceneFields() {
 		HashMap<String,Field> fields = new HashMap<String,Field>();
 		
-		Bill bill = PMF.getDetachedBill(getBillId());
 		
 		fields.put("when", new Field("when",eventDate.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		fields.put("billno", new Field("billno",getBillId(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-				
+			
+		/*
 		try
 		{
+			
+			Bill bill = PMF.getDetachedBill(getBillId());
+			
 			if (bill.getSponsor()!=null) {
     			fields.put("sponsor", new Field("sponsor",bill.getSponsor().getFullname(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
     		}
@@ -142,11 +145,12 @@ public class BillEvent extends SenateObject implements LuceneObject
             	
             	fields.put("cosponsors", new Field("cosponsors",cosponsor.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
             }
+            
 		}
 		catch (Exception e)
 		{
 			
-		}
+		}*/
 		
 		return fields;
 	}
@@ -158,13 +162,16 @@ public class BillEvent extends SenateObject implements LuceneObject
 
 	@Override
 	public String luceneOsearch() {
-		Bill bill = PMF.getDetachedBill(getBillId());
+		
 		
 		StringBuilder searchContent = new StringBuilder();
 		searchContent.append(getBillId()).append(" ");
 		
+		/*
 		try
 		{
+			Bill bill = PMF.getDetachedBill(getBillId());
+			
 			if (bill.getSponsor()!=null) {
     			searchContent.append(bill.getSponsor().getFullname()).append(" ");
     		}
@@ -173,6 +180,7 @@ public class BillEvent extends SenateObject implements LuceneObject
 		{
 			
 		}
+		*/
 		
 		searchContent.append(eventText);
 		

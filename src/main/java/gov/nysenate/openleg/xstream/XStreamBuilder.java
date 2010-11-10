@@ -256,9 +256,14 @@ public class XStreamBuilder implements OpenLegConstants {
 		{
 			start--;
 			end++;
-		}
 		
-		//#TODO: Figure out how to fix indentation (shift right)
-		return responseStr.replace(start, end,"\n[\n" + results.toString() + "\n]\n").toString();
+			//#TODO: Figure out how to fix indentation (shift right)
+			return responseStr.replace(start, end,"\n[\n" + results.toString() + "\n]\n").toString();
+		
+		}
+		else
+		{
+			return responseStr.replace(start, end, results.toString() ).toString();
+		}
 	}
 }
