@@ -149,7 +149,6 @@ String resultTitle = null;
                         resultType = resultType.substring(resultType.lastIndexOf(".")+1);
                 }
 
-
                 resultId = sresult.getId();
 
                 contentType = resultType;

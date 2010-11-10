@@ -18,6 +18,10 @@ public class TextFormatter {
 
 	public static String addHyperlinks (String input)
 	{
+		 Pattern pattern = null;
+		 Matcher matcher = null;
+		 
+		/*
 		 Pattern pattern = Pattern.compile("(Senate Bill Number)\\s(\\w*)");
 		 Matcher matcher = pattern.matcher(input);
 		 input = matcher.replaceAll("<b><a href=\"/legislation/api/html/bill/S$2\">Senate Bill Number $2</a></b>");
@@ -33,7 +37,8 @@ public class TextFormatter {
 		 pattern = Pattern.compile("(Assembly Print Number)\\s(\\w*)");
 		 matcher = pattern.matcher(input);
 		 input = matcher.replaceAll("<b><a href=\"/legislation/api/html/bill/A$2\">Assembly Print Number $2</a></b>");
-
+*/
+		
 		 pattern = Pattern.compile("(SENATOR\\s)");
 		 matcher = pattern.matcher(input);
 		 input = matcher.replaceAll("<b>$1</b>");

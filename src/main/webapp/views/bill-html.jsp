@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.model.calendar.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.model.calendar.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
 <%
 
 
@@ -70,9 +70,9 @@ if (st.hasMoreTokens())
     
     </div>
  <div style="float:right;">
- <a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>" target="_new">Print HTML Page</a>
+ <a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>-<%=bill.getYear()%>" target="_new">Print HTML Page</a>
  /
- <a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=senateBillNo%>" target="_new">Print Original Bill Format</a>
+ <a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=senateBillNo%>-<%=bill.getYear()%>" target="_new">Print Original Bill Format</a>
  / <script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
   / <a href="#discuss">Read or Leave Comments</a>
   </div>
@@ -113,7 +113,7 @@ if (bill.getTitle()!=null)
 <%if (bill.getSponsor()!=null && bill.getSponsor().getFullname()!=null){ %>
  <b>Sponsor: </b>
  <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(bill.getSponsor().getFullname(),"utf-8")%>"  class="sublink"><%=bill.getSponsor().getFullname()%></a>
- <br/>
+/
  <%} %>
  
 <!--
@@ -132,13 +132,13 @@ if (bill.getTitle()!=null)
  cp = it.next();
  %>
  <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(cp.getFullname(),"utf-8")%>" class="sublink"><%=cp.getFullname()%></a><%if (it.hasNext()){%>, <%} %><%} %>
-<br/>
+/
 
  <%} %>
 
  <%if (bill.getCurrentCommittee()!=null){ %>
  <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
-<br/>
+/
 <%} %>
 
   <%if (bill.getLaw()!=null){ %>
@@ -158,75 +158,73 @@ if (bill.getTitle()!=null)
 </div>
  
  
+
+<%
+ArrayList<SearchResult> rActions = (ArrayList<SearchResult>)request.getAttribute("related-action");
+%>
+<%if (rActions.size()>0) { %>
 <h3><%=senateBillNo%> Actions</h3>
 <ul>
-<%
-
-ArrayList<BillEvent> rActions = (ArrayList<BillEvent>)request.getAttribute("related-action");
-
-for (BillEvent beAction:rActions){
-	%>
-	<li><%=beAction.getEventText()%> - <%=df.format(beAction.getEventDate())%></li>
-	<%
-}
-%>
+	<%for (SearchResult beAction:rActions){%>
+	<li>ACTION: <%=beAction.getTitle()%></li>
+	<%}%>
 </ul>
+<%}%>
 
-<h3><%=senateBillNo%> Committee Meetings</h3>
 <%
 
-ArrayList<Meeting> rMeetings = (ArrayList<Meeting>)request.getAttribute("related-meeting");
-
-for (Meeting meeting:rMeetings){
-	%>
-	<div>
-<a href="<%=appPath%>/meeting/<%=meeting.getId()%>" class="sublink"><%=meeting.getCommitteeName()%>: <%=df.format(meeting.getMeetingDateTime())%></a>: Chair: <%=meeting.getCommitteeChair()%>
-/ Location: <%=meeting.getLocation()%>
-</div>
-	<%
+ArrayList<SearchResult> rMeetings = (ArrayList<SearchResult>)request.getAttribute("related-meeting");
+%>
+<%if (rMeetings.size()>0) { %>
+<h3><%=senateBillNo%> Meetings</h3>
+<%
+	for (Iterator<SearchResult> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
+		SearchResult meeting = itMeetings.next();
+		%>
+		<a href="<%=appPath%>/meeting/<%=meeting.getId()%>" class="sublink"><%=meeting.getTitle()%></a><%if (itMeetings.hasNext()){%>,<%}
+		
+	}
 }
 %>
 
+<%
 
-
+ArrayList<SearchResult> rCals = (ArrayList<SearchResult>)request.getAttribute("related-calendar");
+%>
+<%if (rCals.size()>0) { %>
 <h3><%=senateBillNo%> Calendars</h3>
 <%
-
-ArrayList<gov.nysenate.openleg.model.calendar.Calendar> rCals = (ArrayList<gov.nysenate.openleg.model.calendar.Calendar>)request.getAttribute("related-calendar");
-
-for (gov.nysenate.openleg.model.calendar.Calendar cal:rCals){
-	String cEntryDateTime = "";
-	Supplemental supp = cal.getSupplementals().get(0);
-	if (supp.getCalendarDate()!=null)
-		cEntryDateTime = df.format(supp.getCalendarDate());
-	else
-		cEntryDateTime = df.format(supp.getSequence().getActCalDate());
+for (Iterator<SearchResult> itCals = rCals.iterator(); itCals.hasNext();)
+{
+	SearchResult cal = itCals.next();
 	
-	String calType = cal.getType();
-	String calText = "";
 	%>
-	<div>
-<a href="<%=appPath%>/calendar/<%=cal.getId()%>" class="sublink"><%=cEntryDateTime%>: <%=calType%> <%=calText%></a>
-</div>
-	<%
+<a href="<%=appPath%>/calendar/<%=cal.getId()%>" class="sublink"><%=cal.getType().toUpperCase()%>:<%=cal.getTitle()%></a><%if (itCals.hasNext()){%>,<%}
+
+}
 }
 %>
 
-<h3><%=senateBillNo%> Votes</h3>
 <%
 
-ArrayList<Vote> rVotes = (ArrayList<Vote>)request.getAttribute("related-vote");
-
-for (Vote vote:rVotes){
+ArrayList<SearchResult> rVotes = (ArrayList<SearchResult>)request.getAttribute("related-vote");
+%>
+<%if (rVotes.size()>0) { %>
+<h3><%=senateBillNo%> Votes</h3>
+<%
+ObjectMapper mapper = new ObjectMapper();
+for (SearchResult result:rVotes){
    
-   	String voteType = "Floor";
+	Vote vote = (Vote)result.getObject();
+	
+   	String voteType = "Floor Vote";
 if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
-	voteType = "Committee";
+	voteType = "Committee Vote";
 	
 
   %>
    <div>
-  <b>Vote: <%=voteType%> 
+  <b>VOTE: <%=voteType.toUpperCase()%>:
   <%if (vote.getDescription()!=null){%>- <%=vote.getDescription()%><%} %>
   - <%=DateFormat.getDateInstance(DateFormat.MEDIUM).format(vote.getVoteDate())%></b>
   <blockquote>
@@ -305,6 +303,7 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
  		<%
  
  }
+}
   %>
   
 

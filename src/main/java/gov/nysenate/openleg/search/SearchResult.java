@@ -16,7 +16,18 @@ public class SearchResult {
 	float score;
 	Date lastModified;
 	
+	Object object;
+	
 	HashMap<String,String> fields;
+
+
+	public Object getObject() {
+		return object;
+	}
+
+	public void setObject(Object object) {
+		this.object = object;
+	}
 
 	/**
 	 * @return the fields

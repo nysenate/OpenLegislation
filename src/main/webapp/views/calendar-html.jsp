@@ -72,17 +72,26 @@ if (seq != null)
 Iterator<CalendarEntry> itCals = seq.getCalendarEntries().iterator();
 	while (itCals.hasNext()){
 	CalendarEntry calEnt = itCals.next();
+	
 	%>
 		
 		<li>
 		Calendar: <%=calEnt.getNo()%>
-		<%if (calEnt.getBill()!=null){%>
+		<%if (calEnt.getBill()!=null){
+			String senateBillNo = calEnt.getBill().getSenateBillNo();
+			if (senateBillNo.indexOf("-")==-1)
+				senateBillNo+= "-" + calendar.getSessionYear();
+		%>
 		/ Sponsor: <a href="<%=appPath%>/sponsor/<%=calEnt.getBill().getSponsor().getFullname()%>"><%=calEnt.getBill().getSponsor().getFullname()%></a>
 		<%if (calEnt.getSubBill()!=null){%>(Sub-bill Sponsor: <a href="<%=appPath%>/sponsor/<%=calEnt.getSubBill().getSponsor().getFullname()%>"><%=calEnt.getSubBill().getSponsor().getFullname()%></a>)<%}%>
-		/ Printed No.: <a href="<%=appPath%>/bill/<%=calEnt.getBill().getSenateBillNo()%>"><%=calEnt.getBill().getSenateBillNo()%></a>
+		/ Printed No.: <a href="<%=appPath%>/bill/<%=senateBillNo%>"><%=senateBillNo%></a>
 				<%if (calEnt.getBillHigh()!=null){ %><b style="color:green">HIGH</b><%}%>
 
-				<%if (calEnt.getSubBill()!=null){%>(Sub-bill: <a href="<%=appPath%>/bill/<%=calEnt.getSubBill().getSenateBillNo()%>"><%=calEnt.getSubBill().getSenateBillNo()%></a>)<%}%>
+				<%if (calEnt.getSubBill()!=null){
+					String senateSubBillNo = calEnt.getSubBill().getSenateBillNo();
+					if (senateSubBillNo.indexOf("-")==-1)
+						senateSubBillNo+="-" + calendar.getSessionYear();
+					%>(Sub-bill: <a href="<%=appPath%>/bill/<%=senateSubBillNo%>"><%=senateSubBillNo%></a>)<%}%>
 		
 		<%}%>
 		
@@ -114,12 +123,21 @@ Section section = itSection.next();
 		
 		<li>
 		Calendar: <%=calEnt.getNo()%>
-		<%if (calEnt.getBill()!=null){%>
+		<%if (calEnt.getBill()!=null){
+			String senateBillNo = calEnt.getBill().getSenateBillNo();
+			if (senateBillNo.indexOf("-")==-1)
+				senateBillNo+="-" + calendar.getSessionYear();
+		%>
 		/ Sponsor: <a href="<%=appPath%>/sponsor/<%=calEnt.getBill().getSponsor().getFullname()%>"><%=calEnt.getBill().getSponsor().getFullname()%></a>
 		<%if (calEnt.getSubBill()!=null){%>(Sub-bill Sponsor: <a href="<%=appPath%>/sponsor/<%=calEnt.getSubBill().getSponsor().getFullname()%>"><%=calEnt.getSubBill().getSponsor().getFullname()%></a>)<%}%>
-		/ Printed No.: <a href="<%=appPath%>/bill/<%=calEnt.getBill().getSenateBillNo()%>"><%=calEnt.getBill().getSenateBillNo()%></a>
+		/ Printed No.: <a href="<%=appPath%>/bill/<%=senateBillNo%>"><%=senateBillNo%></a>
 				<%if (calEnt.getBillHigh()!=null){ %><b style="color:green">HIGH</b><%}%>
-				<%if (calEnt.getSubBill()!=null){%>(Sub-bill: <a href="<%=appPath%>/bill/<%=calEnt.getSubBill().getSenateBillNo()%>"><%=calEnt.getSubBill().getSenateBillNo()%></a>)<%}%>
+
+				<%if (calEnt.getSubBill()!=null){
+					String senateSubBillNo = calEnt.getSubBill().getSenateBillNo();
+					if (senateSubBillNo.indexOf("-")==-1)
+						senateSubBillNo+="-" + calendar.getSessionYear();
+					%>(Sub-bill: <a href="<%=appPath%>/bill/<%=senateSubBillNo%>"><%=senateSubBillNo%></a>)<%}%>
 		
 		<%}%>
 		

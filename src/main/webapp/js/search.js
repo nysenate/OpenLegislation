@@ -32,6 +32,7 @@ $(function () {
 
                         },
                          error:function (xhr, ajaxOptions, thrownError){
+                        	   $("#quickresult").html("");
                         }
                 });
         }

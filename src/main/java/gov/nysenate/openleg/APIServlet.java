@@ -50,6 +50,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	
 	private final static String DEFAULT_SORT_FIELD = "when";
 	private final static String DEFAULT_SEARCH_FORMAT = "json";
+	private final static String DEFAULT_SESSION_YEAR = "2009";
 	
 	//Jackson JSON parser
 	private static ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
@@ -320,11 +321,14 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			
 				searchString ="otype:" + type;
 
-			
-			
 				if (key != null && key.length() > 0)
 				{
-					searchString += " AND " + " oid:" + key;
+					if (type.equals("bill") && key.indexOf("-") == -1)
+						key += "-" + DEFAULT_SESSION_YEAR;
+
+					key = key.replace(" ","+");
+					searchString += " AND oid:" + key;
+					
 				}
 				
 			}
@@ -378,37 +382,39 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				if (type.equals("bill"))
 				{
 					String billQueryId = key;
-					if (billQueryId.indexOf("-")!=-1)
-					{
-						billQueryId = billQueryId.substring(0,billQueryId.indexOf("-"));
-					}
+					String sessionYear = DEFAULT_SESSION_YEAR;
+					
+					String[] billParts = billQueryId.split("-");
+					billQueryId = billParts[0];
+					if (billParts.length > 1)
+						sessionYear = billParts[1];
+						
 					//get BillEvents for this 
 					//otype:action AND oid:A10234A-*
 					String rType = "action";
 					String rQuery = "oid:" + billQueryId + "-*";
-					ArrayList<SenateObject> relatedItems = getRelatedSenateObjects (rType,rQuery);
-					req.setAttribute("related-" + rType, relatedItems);
+					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
 					
 					//get Meetings
 					//otype:meeting AND ojson:"S67005"
 					rType = "meeting";
-					 rQuery = "ojson:\"" + billQueryId + "\"";
-					relatedItems = getRelatedSenateObjects (rType,rQuery);
-					req.setAttribute("related-" + rType, relatedItems);
+					rQuery = "bills:" + billQueryId;					
+					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
+
 					
 					//get calendars
 					//otype:calendar AND  ojson:"S337A"
 					rType = "calendar";
 					 rQuery = "ojson:\"" + billQueryId + "\"";
-					relatedItems = getRelatedSenateObjects (rType,rQuery);
-					req.setAttribute("related-" + rType, relatedItems);
+					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
+
 					
 					//get votes
 					//otype:vote AND ojson:"A11597"
 					rType = "vote";
 					 rQuery = "ojson:\"" + billQueryId + "\"";
-					relatedItems = getRelatedSenateObjects (rType,rQuery);
-					req.setAttribute("related-" + rType, relatedItems);
+					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
+
 					
 				}
 				else if (type.equals("calendar"))
@@ -472,7 +478,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 	}
 	
-	private ArrayList<SenateObject> getRelatedSenateObjects (String type, String query) throws ParseException, IOException
+	private ArrayList<SearchResult> getRelatedSenateObjects (String type, String query) throws ParseException, IOException, ClassNotFoundException
 	{
 		ArrayList<SenateObject> results = new ArrayList<SenateObject>();
 		
@@ -487,6 +493,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 		SenateResponse sr = searchEngine.search(dateReplace(searchString.toString()),DEFAULT_SEARCH_FORMAT,start,pageSize,DEFAULT_SORT_FIELD,true);
 
+		return buildSearchResultList(sr);
+		
+		/*
 		for (Result result:sr.getResults())
 		{
 			String jsonData = result.getData();
@@ -508,18 +517,21 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			try
 			{
 				resultObj = (SenateObject)mapper.readValue(jsonData,  Class.forName(className));
-			
+		
 				results.add(resultObj);
 			}
 			catch (Exception e)
 			{
 				logger.warn("error binding className", e);
 			}
+			
+		
+		
 		}
-		
-		
-		
 		return results;
+		*/
+		
+		
 	}
 	
 	
@@ -565,7 +577,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			try
 			{
 				resultObj = mapper.readValue(jsonData,  Class.forName(className));
-			   
+				sResult.setObject(resultObj);
 			}
 			catch (Exception e)
 			{
@@ -719,7 +731,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			sResult.setSummary(summary);
 			
 			sResult.setType(newResult.getOtype());
-			
 			
 			sResult.setFields(fields);
 			
