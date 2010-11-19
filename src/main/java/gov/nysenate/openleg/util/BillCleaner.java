@@ -28,7 +28,8 @@ public class BillCleaner implements OpenLegConstants {
 	
 	public static String billFormat(String key) {		
 		if(key.matches(BILL_BAD_REGEXP)){
-			key = key.replaceAll("\\W", "");
+			key = key.replaceAll("\\.", "");
+			key = key.replaceAll("\\-", "");
 			return removeZero(key);
 		}
 		return key;

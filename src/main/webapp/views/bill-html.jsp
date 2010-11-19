@@ -56,13 +56,17 @@ while(st.hasMoreTokens())
 %>
 <a href="<%=sameAsLink%>"><%=sameAs.toUpperCase()%></a>
 <%
-if (st.hasMoreTokens())
-{
-%> <%
-}
+if (st.hasMoreTokens()) {%>, <%}
 } %>
 
 <%} %>
+
+<%
+ArrayList<SearchResult> rBills = (ArrayList<SearchResult>)request.getAttribute("related-bill");
+%>
+<%if (rBills.size()>0) { %>
+/ Versions: <%for (SearchResult rBill:rBills){%><a href="/legislation/bill/<%=rBill.getId()%>"><%=rBill.getId()%></a> <%}%>
+<%}%>
 
 
 

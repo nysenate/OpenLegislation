@@ -394,7 +394,22 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					String rType = "action";
 					String rQuery = "oid:" + billQueryId + "-*";
 					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
+
+					//get Meetings
+					//otype:meeting AND ojson:"S67005"
+					rType = "bill";
+					String billWildcard = billQueryId;
+					if (!Character.isDigit(billWildcard.charAt(billWildcard.length()-1)))
+					{
+						billWildcard = billWildcard.substring(0,billWildcard.length()-1);
+						
+					}
 					
+					billWildcard += "*-" + sessionYear;
+					
+					rQuery = "oid:" + billWildcard;			
+					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
+
 					//get Meetings
 					//otype:meeting AND ojson:"S67005"
 					rType = "meeting";
