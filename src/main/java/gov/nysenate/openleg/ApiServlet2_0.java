@@ -83,7 +83,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			if (command.equals("2.0"))
 				command = st.nextToken();
 			
-			if (!st.hasMoreTokens())
+			if ((!command.startsWith("search")) && !st.hasMoreTokens())
 			{
 				term = command;
 				command = arg1;
@@ -120,12 +120,15 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 		req.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
 		req.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
 		
-		if(command.equals("search")) {
+		if(command.startsWith("search")) {
 			if(term == null) {
 				getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
 			
 			}
-			format = st.nextToken();				
+			
+			String cmd[] = command.split("\\.");
+			command = cmd[0];
+			format = cmd[1];				
 			req.setAttribute("format", format);
 		}
 		else {

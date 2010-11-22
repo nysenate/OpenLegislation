@@ -388,26 +388,48 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					billQueryId = billParts[0];
 					if (billParts.length > 1)
 						sessionYear = billParts[1];
-						
-					//get BillEvents for this 
-					//otype:action AND oid:A10234A-*
-					String rType = "action";
-					String rQuery = "oid:" + billQueryId + "-*";
-					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
-
-					//get Meetings
-					//otype:meeting AND ojson:"S67005"
-					rType = "bill";
+				
 					String billWildcard = billQueryId;
 					if (!Character.isDigit(billWildcard.charAt(billWildcard.length()-1)))
 					{
 						billWildcard = billWildcard.substring(0,billWildcard.length()-1);
 						
 					}
+					//get BillEvents for this 
+					//otype:action AND oid:A10234A-*
+					String rType = "action";
+					String rQuery = null;
 					
-					billWildcard += "*-" + sessionYear;
+					//String rQuery = "oid:" + billQueryId + "-" + sessionYear + "-*";
 					
-					rQuery = "oid:" + billWildcard;			
+					rQuery = "oid:" + billWildcard + "-*";
+					for (int i = 65; i < 90; i++)
+					{
+						rQuery += " OR oid:" + billWildcard + (char)i + "-*";
+					}
+					
+
+					logger.info(rQuery);
+					
+					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
+
+					//get Meetings
+					//otype:meeting AND ojson:"S67005"
+					rType = "bill";
+				
+					
+					
+					//rQuery = "oid:[" + startBill + " TO " + endBill + "]";		
+					rQuery = "oid:" + billWildcard + "-" + sessionYear;
+					for (int i = 65; i < 90; i++)
+					{
+						rQuery += " OR oid:" + billWildcard + (char)i + "-" + sessionYear;
+					}
+					
+					
+					logger.info(rQuery);
+					
+//					+ " OR " + "oid:[" + billWildcard + "-" + sessionYear + " TO " + billWildcard + "Z-" + sessionYear + "]";
 					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
 
 					//get Meetings
@@ -501,7 +523,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		searchString.append("otype:");
 		searchString.append(type);
 		searchString.append(" AND ");
+		searchString.append("(");
 		searchString.append(query);
+		searchString.append(")");
 		
 		int start = 0;
 		int pageSize = 100;
@@ -556,200 +580,217 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 		for (Result newResult : sr.getResults())
 		{
-			
-			SearchResult sResult = new SearchResult();
-			sResult.setId(newResult.getOid());
-			sResult.setLastModified(new Date(newResult.getLastModified()));
-			sResult.setScore(1.0f);
-			
-			String type = newResult.getOtype();
-			
-			String jsonData = newResult.getData();
-			
-			if (jsonData == null)
-				continue;
-			
-			jsonData = jsonData.substring(jsonData.indexOf(":")+1);
-			jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
-			
-			String className = "gov.nysenate.openleg.model." + type.substring(0,1).toUpperCase() + type.substring(1);
-			if (type.equals("calendar"))
-			{
-				className = "gov.nysenate.openleg.model.calendar.Calendar";
-			}
-			else if (type.equals("meeting"))
-			{
-				className = "gov.nysenate.openleg.model.committee.Meeting";
-			}
-			else if (type.equals("action"))
-			{
-				className = "gov.nysenate.openleg.model.BillEvent";
-			}
-			
-			
-			Object resultObj = null;
-			
 			try
 			{
-				resultObj = mapper.readValue(jsonData,  Class.forName(className));
-				sResult.setObject(resultObj);
-			}
-			catch (Exception e)
-			{
-				logger.warn("error binding:"+ className, e);
-			}
-			
-			if (resultObj == null)
-				continue;
-			
-			String title = "";
-			String summary = "";
-			
-			HashMap<String,String> fields = new HashMap<String,String>();
-			
-			fields.put("type", type);
-			
-			if (type.equals("bill"))
-			{
-				Bill bill = (Bill)resultObj;
+				SearchResult sResult = new SearchResult();
+				sResult.setId(newResult.getOid());
+				sResult.setLastModified(new Date(newResult.getLastModified()));
+				sResult.setScore(1.0f);
 				
-				title += bill.getSenateBillNo() + '-' + bill.getYear() + ": " + bill.getTitle();
-				summary = bill.getSummary();
+				String type = newResult.getOtype();
 				
-				if (bill.getSponsor()!=null)
-					fields.put("sponsor",bill.getSponsor().getFullname());
+				String jsonData = newResult.getData();
 				
-				fields.put("committee", bill.getCurrentCommittee());
-				
-				fields.put("billno", bill.getSenateBillNo());
-
-			}
-			else if (type.equals("calendar"))
-			{
-				Calendar calendar = (Calendar)resultObj;
-				
-				title = calendar.getNo() + "-" + calendar.getYear();
-
-				if (calendar.getType() == null)
-					fields.put("type", "");
-				else if (calendar.getType().equals("active"))
-					fields.put("type", "Active List");
-				else if (calendar.getType().equals("floor"))
-					fields.put("type", "Floor Calendar");
-				else
-					fields.put("type", calendar.getType());
-					
-				
-				Supplemental supp = calendar.getSupplementals().get(0);
-				
-				if (supp.getCalendarDate()!=null)
-				{
-					fields.put("date", supp.getCalendarDate().toLocaleString());
-					
-					summary = "";
-					
-					if (supp.getSections() != null)
-					{
-						Iterator<Section> itSections = supp.getSections().iterator();
-						while (itSections.hasNext())
-						{
-							Section section = itSections.next();
-							
-							summary += section.getName() + ": ";
-							summary += section.getCalendarEntries().size() + " items;";
-							
-						}
-					}
-				}
-				else if (supp.getSequence()!=null)
-				{
-					
-					fields.put("date", supp.getSequence().getActCalDate().toLocaleString());
-					
-					summary = supp.getSequence().getCalendarEntries().size() + " item(s)";
-				}
-			}
-			else if (type.equals("transcript"))
-			{
-				Transcript transcript = (Transcript)resultObj;
-				
-				if (transcript.getTimeStamp() == null)
+				if (jsonData == null)
 					continue;
 				
-				title = transcript.getTimeStamp().toLocaleString();
-				summary = transcript.getType() + ": " + transcript.getLocation();
+				jsonData = jsonData.substring(jsonData.indexOf(":")+1);
+				jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
 				
-				fields.put("location", transcript.getLocation());
-
-			}
-			else if (type.equals("meeting"))
-			{
-				Meeting meeting = (Meeting)resultObj;
-				title = meeting.getCommitteeName() + " (" + meeting.getMeetingDateTime().toLocaleString() + ")";
-				
-				fields.put("location", meeting.getLocation());
-				fields.put("chair", meeting.getCommitteeChair());
-				fields.put("committee", meeting.getCommitteeName());
-
-			}
-			else if (type.equals("action"))
-			{
-				BillEvent billEvent = (BillEvent)resultObj;
-
-				String billId = billEvent.getBillId();
-				if (billId.indexOf("-")==-1)
-					billId += "-2009";
-				
-				title = billId + " - " + billEvent.getEventText();
-				
-				fields.put("date", billEvent.getEventDate().toLocaleString());
-				
-
-				fields.put("billno", billId);
-
-			}
-			else if (type.equals("vote"))
-			{
-				Vote vote = (Vote)resultObj;
-				
-				if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
-					fields.put("type","Committee Vote");
-				else if (vote.getVoteType() == Vote.VOTE_TYPE_FLOOR)
-					fields.put("type","Floor Vote");
-				
-				if (vote.getBill() != null)
+				String className = "gov.nysenate.openleg.model." + type.substring(0,1).toUpperCase() + type.substring(1);
+				if (type.equals("calendar"))
 				{
+					className = "gov.nysenate.openleg.model.calendar.Calendar";
+				}
+				else if (type.equals("meeting"))
+				{
+					className = "gov.nysenate.openleg.model.committee.Meeting";
+				}
+				else if (type.equals("action"))
+				{
+					className = "gov.nysenate.openleg.model.BillEvent";
+				}
 				
-					Bill bill = vote.getBill();
+				
+				Object resultObj = null;
+				
+				try
+				{
+					resultObj = mapper.readValue(jsonData,  Class.forName(className));
+					sResult.setObject(resultObj);
+				}
+				catch (Exception e)
+				{
+					logger.warn("error binding:"+ className, e);
+				}
+				
+				if (resultObj == null)
+					continue;
+				
+				String title = "";
+				String summary = "";
+				
+				HashMap<String,String> fields = new HashMap<String,String>();
+				
+				fields.put("type", type);
+				
+				if (type.equals("bill"))
+				{
+					Bill bill = (Bill)resultObj;
 					
-					title += bill.getSenateBillNo()+'-'+bill.getYear();
+					title += bill.getSenateBillNo() + '-' + bill.getYear() + ": ";
+					
+					if (bill.getTitle() != null)
+						title += bill.getTitle();
+					else
+						title += "(no title)";
+					summary = bill.getSummary();
 					
 					if (bill.getSponsor()!=null)
 						fields.put("sponsor",bill.getSponsor().getFullname());
-				
-					if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
-						fields.put("committee", bill.getCurrentCommittee());
-
+					
+					fields.put("committee", bill.getCurrentCommittee());
+					
 					fields.put("billno", bill.getSenateBillNo());
+	
+				}
+				else if (type.equals("calendar"))
+				{
+					Calendar calendar = (Calendar)resultObj;
+					
+					title = calendar.getNo() + "-" + calendar.getYear();
+	
+					if (calendar.getType() == null)
+						fields.put("type", "");
+					else if (calendar.getType().equals("active"))
+						fields.put("type", "Active List");
+					else if (calendar.getType().equals("floor"))
+						fields.put("type", "Floor Calendar");
+					else
+						fields.put("type", calendar.getType());
+						
+					
+					Supplemental supp = calendar.getSupplementals().get(0);
+					
+					if (supp.getCalendarDate()!=null)
+					{
+						fields.put("date", supp.getCalendarDate().toLocaleString());
+						
+						summary = "";
+						
+						if (supp.getSections() != null)
+						{
+							Iterator<Section> itSections = supp.getSections().iterator();
+							while (itSections.hasNext())
+							{
+								Section section = itSections.next();
+								
+								summary += section.getName() + ": ";
+								summary += section.getCalendarEntries().size() + " items;";
+								
+							}
+						}
+					}
+					else if (supp.getSequence()!=null)
+					{
+						
+						fields.put("date", supp.getSequence().getActCalDate().toLocaleString());
+						
+						summary = supp.getSequence().getCalendarEntries().size() + " item(s)";
+					}
+				}
+				else if (type.equals("transcript"))
+				{
+					Transcript transcript = (Transcript)resultObj;
+					
+					if (transcript.getTimeStamp() != null)
+					{
+						title = transcript.getTimeStamp().toLocaleString();
+					
+					}
+					else
+					{
+						title = transcript.getId();
+					}
+					
+					summary = transcript.getType() + ": " + transcript.getLocation();
+						
+					fields.put("location", transcript.getLocation());
+	
+				}
+				else if (type.equals("meeting"))
+				{
+					Meeting meeting = (Meeting)resultObj;
+					title = meeting.getCommitteeName() + " (" + meeting.getMeetingDateTime().toLocaleString() + ")";
+					
+					fields.put("location", meeting.getLocation());
+					fields.put("chair", meeting.getCommitteeChair());
+					fields.put("committee", meeting.getCommitteeName());
+	
+				}
+				else if (type.equals("action"))
+				{
+					BillEvent billEvent = (BillEvent)resultObj;
+	
+					String billId = billEvent.getBillId();
+					if (billId.indexOf("-")==-1)
+						billId += "-2009";
+					
+					title = billId + " - " + billEvent.getEventText();
+					
+					fields.put("date", billEvent.getEventDate().toLocaleString());
+					
+	
+					fields.put("billno", billId);
+	
+				}
+				else if (type.equals("vote"))
+				{
+					Vote vote = (Vote)resultObj;
+					
+					if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
+						fields.put("type","Committee Vote");
+					else if (vote.getVoteType() == Vote.VOTE_TYPE_FLOOR)
+						fields.put("type","Floor Vote");
+					
+					if (vote.getBill() != null)
+					{
+					
+						Bill bill = vote.getBill();
+						
+						title += bill.getSenateBillNo()+'-'+bill.getYear();
+						
+						if (bill.getSponsor()!=null)
+							fields.put("sponsor",bill.getSponsor().getFullname());
+					
+						if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
+							fields.put("committee", bill.getCurrentCommittee());
+	
+						fields.put("billno", bill.getSenateBillNo());
+					}
+					
+					//fields.put("date",vote.getVoteDate().toLocaleString());
+					title += " (" + vote.getVoteDate().toLocaleString() + ")";
+					
+					summary = vote.getDescription();
+					
+					
+	
 				}
 				
-				//fields.put("date",vote.getVoteDate().toLocaleString());
-				title += " (" + vote.getVoteDate().toLocaleString() + ")";
+				sResult.setTitle(title);
+				sResult.setSummary(summary);
 				
-				summary = vote.getDescription();
+				sResult.setType(newResult.getOtype());
 				
+				sResult.setFields(fields);
 				
-
+				srList.add(sResult);
 			}
-			
-			sResult.setTitle(title);
-			sResult.setSummary(summary);
-			
-			sResult.setType(newResult.getOtype());
-			
-			sResult.setFields(fields);
-			
-			srList.add(sResult);
+			catch (Exception e)
+			{
+				logger.warn("problem parsing result: " + newResult.otype + "-" + newResult.oid, e);
+			}
 		}
 		
 		return srList;

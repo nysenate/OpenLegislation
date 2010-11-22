@@ -1,5 +1,5 @@
 var searchType = '';
-var maxResults = 50
+var maxResults = 25
 
 $(function () {
 
@@ -25,7 +25,7 @@ $(function () {
                         type: "GET",
                         url: "/legislation/search/",
                         data: dataString,
-                        cache: false,
+                        cache: true,
                         async: true,
                         dataType: "json",
                         success: function(resultdata)

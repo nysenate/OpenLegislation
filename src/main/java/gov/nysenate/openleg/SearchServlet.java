@@ -293,8 +293,8 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			
 			term = searchText.toString();
 			
-			if (term.indexOf("\"")==-1 && term.indexOf(":")==-1)
-				term += "*";
+			//if (term.indexOf("\"")==-1 && term.indexOf(":")==-1)
+				//term += "*";
 			
 			request.setAttribute("term", term);
 

@@ -1,5 +1,7 @@
 <script type="text/javascript" src="/legislation/widgets/instant/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="/legislation/widgets/instant/search.js"></script>
+<script type="text/javascript" src="/legislation/widgets/instant/jquery-dateformat-1.0.js"></script>
+
+<script type="text/javascript" src="/legislation/widgets/instant/search-2.0.js"></script>
 <link rel="stylesheet" type="text/css" media="screen" href="/legislation/widgets/instant/style.css"/> 
 <br/><br/>
 <h1>Open Legislation Instant</h1>

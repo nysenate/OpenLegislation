@@ -315,6 +315,13 @@ float:left;
 margin:3px;
 }
 
+#billHeaderSummary
+{
+	font-size:16pt;
+	color:#333333;	
+	margin-bottom:15px;
+}
+	
 .billSummary
 {
 padding:3px;

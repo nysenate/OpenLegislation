@@ -8,7 +8,7 @@ String term = (String)request.getAttribute("term");
 String sortField = (String)request.getAttribute("sortField");
 String type = (String)request.getAttribute("type");
 
-boolean sortOrder = false;
+boolean sortOrder = true;
 if (request.getAttribute("sortOrder")!=null)
 			sortOrder = Boolean.parseBoolean(request.getParameter("sortOrder"));
 			
@@ -108,15 +108,16 @@ Page <%=pageIdx%> (Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>) -
 
 
 Order by: 
-<%if (sortField==null||(!sortField.equals(""))){%><a href="/legislation/search/?term=<%=term%>&sort=&sortOrder=">Best Match</a><%}
-else{ %>Best Match<%}%>,
+<%if (sortField.equals("when") && sortOrder){%>Recent Updates<%}
+else{ %><a href="/legislation/search/?term=<%=term%>&sort=when&sortOrder=true">Recent Updates</a><%}%>,
 
-<%if (sortField==null||(!sortField.equals("sponsor"))){%><a href="/legislation/search/?term=<%=term%>&sort=sponsor&sortOrder=false">Sponsor</a><%}
-else{ %>Sponsor<%}%>,
-<%if (sortField==null||(!sortField.equals("title"))){%><a href="/legislation/search/?term=<%=term%>&sort=title_sortby&sortOrder=false">Title</a><%}
-else{ %>Title<%}%>,
-<%if (sortField==null||(!sortField.equals("when"))){%><a href="/legislation/search/?term=<%=term%>&sort=when&sortOrder=true">Most Recent</a><%}
-else{ %>Most Recent<%}%>
+<%if (sortField.equals("when") && (!sortOrder)){%>Oldest Updates<%}
+else{ %><a href="/legislation/search/?term=<%=term%>&sort=when&sortOrder=false">Oldest Updates</a><%}%>,
+
+
+<%if (sortField.equals("")){%>Best Match<%}
+else{ %><a href="/legislation/search/?term=<%=term%>">Best Match</a><%}%>
+
 
 
 </div>
@@ -173,6 +174,9 @@ String resultTitle = null;
                         contentId = contentId + "?term=" + java.net.URLEncoder.encode(term,"UTF-8") + "&#result";
                         
                 }
+                 
+                 if (resultTitle == null)
+                	 resultTitle = "(no title)";
 
 
 String resultPath = appPath + "/api/1.0/html/" + contentType + "/" + contentId;
@@ -185,6 +189,10 @@ String resultPath = appPath + "/api/1.0/html/" + contentType + "/" + contentId;
 
  <%if (sresult.getSummary()!=null && sresult.getSummary().length() > 0){ %>
  <%=sresult.getSummary() %> /
+ <%} %>
+ 
+ <%if (sresult.getFields().get("sameAs")!=null && sresult.getFields().get("sameAs").length()>0){ %>
+Same As: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("sameAs")%>%22" class="sublink"><%=sresult.getFields().get("sameAs")%></a>
  <%} %>
  
  <%if (sresult.getFields().get("sponsor")!=null && sresult.getFields().get("sponsor").length()>0){ %>

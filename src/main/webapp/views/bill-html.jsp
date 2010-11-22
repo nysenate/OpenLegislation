@@ -16,7 +16,10 @@ if (bill.getTitle()!=null)
 else if (bill.getSummary()!=null)
 	titleText = bill.getSummary();
 
-String senateBillNo = bill.getSenateBillNo() + '-' + bill.getYear();
+String senateBillNo = bill.getSenateBillNo();
+
+if (senateBillNo.indexOf("-")==-1)
+	senateBillNo += "-" + bill.getYear();
 
 String title = senateBillNo + " - NY Senate Open Legislation - " + titleText;
 
@@ -56,16 +59,16 @@ while(st.hasMoreTokens())
 %>
 <a href="<%=sameAsLink%>"><%=sameAs.toUpperCase()%></a>
 <%
-if (st.hasMoreTokens()) {%>, <%}
+if (st.hasMoreTokens()) {%><%}
 } %>
-
+/
 <%} %>
 
 <%
 ArrayList<SearchResult> rBills = (ArrayList<SearchResult>)request.getAttribute("related-bill");
 %>
 <%if (rBills.size()>0) { %>
-/ Versions: <%for (SearchResult rBill:rBills){%><a href="/legislation/bill/<%=rBill.getId()%>"><%=rBill.getId()%></a> <%}%>
+Versions: <%for (SearchResult rBill:rBills){%><a href="/legislation/bill/<%=rBill.getId()%>"><%=rBill.getId()%></a> <%}%>
 <%}%>
 
 
@@ -74,9 +77,9 @@ ArrayList<SearchResult> rBills = (ArrayList<SearchResult>)request.getAttribute("
     
     </div>
  <div style="float:right;">
- <a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>-<%=bill.getYear()%>" target="_new">Print HTML Page</a>
+ <a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>" target="_new">Print HTML Page</a>
  /
- <a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=senateBillNo%>-<%=bill.getYear()%>" target="_new">Print Original Bill Format</a>
+ <a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=senateBillNo%>" target="_new">Print Original Bill Format</a>
  / <script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
   / <a href="#discuss">Read or Leave Comments</a>
   </div>
@@ -114,6 +117,11 @@ if (bill.getTitle()!=null)
 %>
  
   <div class="billheader">
+  
+<%if (billSummary!=null){ %>
+<%=billSummary%>
+ <%} %>
+ <hr/>
 <%if (bill.getSponsor()!=null && bill.getSponsor().getFullname()!=null){ %>
  <b>Sponsor: </b>
  <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(bill.getSponsor().getFullname(),"utf-8")%>"  class="sublink"><%=bill.getSponsor().getFullname()%></a>
@@ -153,11 +161,7 @@ if (bill.getTitle()!=null)
  <b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a><br/>
  <%} %>
 
-<h3><%=senateBillNo%> Summary</h3>
 
-<%if (billSummary!=null){ %>
-<%=billSummary%>
- <%} %>
  
 </div>
  
@@ -170,7 +174,7 @@ ArrayList<SearchResult> rActions = (ArrayList<SearchResult>)request.getAttribute
 <h3><%=senateBillNo%> Actions</h3>
 <ul>
 	<%for (SearchResult beAction:rActions){%>
-	<li>ACTION: <%=beAction.getTitle()%></li>
+	<li><%=df.format(beAction.getLastModified())%>: <%=beAction.getTitle()%></li>
 	<%}%>
 </ul>
 <%}%>

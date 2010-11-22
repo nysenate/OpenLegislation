@@ -35,8 +35,8 @@ chair = chair.replace("?","");
 
 %>  
 <div>
-<b>Agenda:</b> <a href="<%=appPath%>/meetings/<%=calNo%>"><%=calNo%></a> /
-<b>Chair:</b> <a href="<%=appPath%>/meetings/<%=java.net.URLEncoder.encode(meeting.getCommitteeChair(),OpenLegConstants.ENCODING)%>"><%=chair%></a> / 
+<b>Agenda:</b> <%=calNo%> /
+<b>Chair:</b> <a href="<%=appPath%>/search/?term=chair:<%=java.net.URLEncoder.encode("\"" + meeting.getCommitteeChair() + "\"",OpenLegConstants.ENCODING)%>"><%=chair%></a> / 
 <b>Location:</b> <%=meeting.getLocation()%>
 
 
