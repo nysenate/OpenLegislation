@@ -4,7 +4,6 @@ import gov.nysenate.openleg.PMF;
 import gov.nysenate.openleg.model.*;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.committee.*;
-import gov.nysenate.openleg.search.SearchEngine1;
 import gov.nysenate.openleg.xstream.XStreamBuilder;
 
 import java.lang.reflect.Field;

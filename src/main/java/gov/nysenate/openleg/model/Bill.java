@@ -459,10 +459,12 @@ public class Bill extends SenateObject implements LuceneObject  {
 
 	@Override public String luceneOsearch() {
 		return senateBillNo
-			+ (sameAs != null ? " - " + sameAs:"")
-			+ (sponsor != null ? " - " + sponsor.getFullname():"")
-			+ (title != null ? " - " + title:"")
-			+ (summary != null ? " - " + summary:"");
+		    + year
+		    + senateBillNo + "-" + year
+			+ (sameAs != null ? " " + sameAs:"")
+			+ (sponsor != null ? " " + sponsor.getFullname():"")
+			+ (title != null ? " " + title:"")
+			+ (summary != null ? " " + summary:"");
 		
 	}
 	

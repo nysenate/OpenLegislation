@@ -154,7 +154,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 	    	}
     	}
     	
-    	logger.info("done indexing objects(" + objects.size() + ". Closing index.");
+    	logger.info("done indexing objects(" + objects.size() + "). Closing index.");
     	indexWriter.close();
     	return true;
     }

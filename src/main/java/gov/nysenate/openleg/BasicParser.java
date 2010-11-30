@@ -1,13 +1,17 @@
 package gov.nysenate.openleg;
 
 
+import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.BillEvent;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.search.SearchEngine1;
+import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.util.BillCleaner;
+import gov.nysenate.openleg.util.JsonSerializer;
+import gov.nysenate.openleg.util.XmlSerializer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -57,7 +61,8 @@ public class BasicParser implements OpenLegConstants {
 	private Transaction currentTx = null;
 	private PersistenceManager persistenceManager = null;
 	
-	private ArrayList<Object> objectsToUpdate = new ArrayList<Object>();
+	private SearchEngine2 searchEngine = null;
+	private ArrayList<LuceneObject> objectsToUpdate = new ArrayList<LuceneObject>();
 	
 	
 	public static void main (String[] args) throws FileNotFoundException, IOException
@@ -91,7 +96,6 @@ public class BasicParser implements OpenLegConstants {
 		}
 		
 
-	//	SearchEngine.optimizeIndex();
 		
 		//"/Users/nathan/Desktop/NYSS/LBDCSOBIS1THRUS4999.TXT"
 	}
@@ -120,6 +124,7 @@ public class BasicParser implements OpenLegConstants {
 	public BasicParser ()
 	{
 		persistenceManager = PMF.getPersistenceManager();
+		searchEngine = new SearchEngine2();
 	}
 	
 	public PersistenceManager getPersistenceManager ()
@@ -145,7 +150,7 @@ public class BasicParser implements OpenLegConstants {
 				
 				parseTranscriptFile(new BufferedReader (new FileReader (dataPath)));
 				
-				new SearchEngine1().indexSenateObjects(objectsToUpdate, persistenceManager);
+				searchEngine.indexSenateObjects(objectsToUpdate, new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
 				objectsToUpdate.clear();
 				
 				currentTx.commit();
@@ -162,6 +167,8 @@ public class BasicParser implements OpenLegConstants {
 		}
 		
 	
+		searchEngine.optimize();
+		
 	
 		
 	}
@@ -661,8 +668,9 @@ public class BasicParser implements OpenLegConstants {
 			
 			try
 			{
-				objectsToUpdate.add(currentBill);
-				new SearchEngine1().indexSenateObjects(objectsToUpdate, persistenceManager);
+			
+				objectsToUpdate.add(persistenceManager.detachCopy(currentBill));
+				searchEngine.indexSenateObjects(objectsToUpdate, new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
 				objectsToUpdate.clear();
 			}
 			catch (IOException ioe)
@@ -874,6 +882,7 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 				
 				bill.setSameAs(sameAsBillNo);
 				
+				/*
 				StringTokenizer st = new StringTokenizer(sameAsBillNo,",");
 				
 				while (st.hasMoreTokens())
@@ -881,7 +890,7 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 				
 					//String singleSameAs = st.nextToken().trim().replace(" ", "");
 					
-					/*
+					
 					//now check if the same as bill is set properly
 					Bill billSameAs = PMF.getBill(persistenceManager,singleSameAs);
 					
@@ -900,9 +909,10 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 							logger.info("updating same as for: " +  billSameAs.getSenateBillNo() + " - added " + bill.getSenateBillNo());
 	
 						}
-					}*/
+					}
 					
 				}
+				*/
 					
 			}
 			
@@ -912,7 +922,7 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 		
 	}
 	
-	/*
+	/*gine
 	 * 2009S00100 1                        ABC. exemption for premises                                               
 2009S00100 6SAMPSON
 2009S00100 7
@@ -1163,7 +1173,7 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 
 				PMF.deleteBillEvents(persistenceManager, currentBill);
 				
-				new SearchEngine1().deleteSenateObjectById("action", currentBill.getSenateBillNo() + "-*");
+				searchEngine.deleteSenateObjectById("action", currentBill.getSenateBillNo() + "-*");
 				
 			} catch (Exception e) {
 				

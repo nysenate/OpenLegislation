@@ -77,6 +77,9 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		if (request.getParameter("reset")!=null)
+			searchEngine.closeSearcher();
+				
 		String term = request.getParameter("term");
 		String type = request.getParameter("type");
 		

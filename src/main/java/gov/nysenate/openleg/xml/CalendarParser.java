@@ -2,6 +2,8 @@ package gov.nysenate.openleg.xml;
 
 import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.PMF;
+import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -9,7 +11,9 @@ import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.Section;
 import gov.nysenate.openleg.model.calendar.Sequence;
 import gov.nysenate.openleg.model.calendar.Supplemental;
-import gov.nysenate.openleg.search.SearchEngine1;
+import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.util.JsonSerializer;
+import gov.nysenate.openleg.util.XmlSerializer;
 import gov.nysenate.openleg.xml.calendar.XMLCalno;
 import gov.nysenate.openleg.xml.calendar.XMLSENATEDATA;
 import gov.nysenate.openleg.xml.calendar.XMLSection;
@@ -45,6 +49,9 @@ public class CalendarParser implements OpenLegConstants {
 	private Object removeObject = null;
 	private String removeObjectId = null;
 	
+	private SearchEngine2 engine = null;
+	
+	
 	private void setRemoveObject (Object removeObject, String removeObjectId)
 	{
 		this.removeObject = removeObject;
@@ -77,6 +84,9 @@ public class CalendarParser implements OpenLegConstants {
 	
 	public void doParsing (String filePath) throws Exception
 	{
+		
+		engine = new SearchEngine2();
+		
 		XMLSENATEDATA senateData = parseStream(new FileReader(new File(filePath)));
 		
 		Iterator<Object> it = senateData.getSencalendarOrSencalendaractive().iterator();
@@ -88,7 +98,7 @@ public class CalendarParser implements OpenLegConstants {
 		Calendar calendar = null;
 		Supplemental supplemental = null;
 
-		ArrayList<Calendar> objectsToUpdate = new ArrayList<Calendar>();
+		ArrayList<LuceneObject> objectsToUpdate = new ArrayList<LuceneObject>();
 		
 		PersistenceManager pm = PMF.getPersistenceManager();
 		         
@@ -143,11 +153,10 @@ public class CalendarParser implements OpenLegConstants {
 	
 
 		Transaction currentTx = pm.currentTransaction();
-		SearchEngine1 engine = new SearchEngine1();
 		try
 		{
 	        currentTx.begin();
-			engine.indexSenateObjects(objectsToUpdate,pm);
+			engine.indexSenateObjects(objectsToUpdate, new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
 			currentTx.commit();
 		}
 		catch (Exception e)
@@ -156,7 +165,7 @@ public class CalendarParser implements OpenLegConstants {
 		}
 		
 
-        engine.optimizeIndex();
+        engine.optimize();
 	}
 	
 	

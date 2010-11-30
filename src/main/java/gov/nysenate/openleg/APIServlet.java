@@ -19,9 +19,12 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -64,6 +67,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	
 		if (searchEngine == null)
 			searchEngine = new SearchEngine2();
+		
 	}
 
 	/* (non-Javadoc)
@@ -82,6 +86,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException, ServletException
 	{
+		
+		if (req.getParameter("reset")!=null)
+			searchEngine.closeSearcher();
 		
 		String encodedUri = req.getRequestURI();
 				
@@ -409,9 +416,21 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					}
 					
 
-					logger.info(rQuery);
+					ArrayList<SearchResult> relatedActions = getRelatedSenateObjects (rType,rQuery);
+					Hashtable<String,SearchResult> uniqResults = new Hashtable<String,SearchResult>();
 					
-					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
+					for (SearchResult rResult: relatedActions)
+					{
+						BillEvent rAction = (BillEvent)rResult.getObject();
+						uniqResults.put(rAction.getEventDate().toGMTString()+'-'+rResult.getTitle().toUpperCase(), rResult);
+						
+					}
+					
+					ArrayList<SearchResult> list = Collections.list(uniqResults.elements());
+					
+					Collections.sort(list);
+					
+					req.setAttribute("related-" + rType, list);
 
 					//get Meetings
 					//otype:meeting AND ojson:"S67005"
@@ -534,41 +553,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 
 		return buildSearchResultList(sr);
 		
-		/*
-		for (Result result:sr.getResults())
-		{
-			String jsonData = result.getData();
-			jsonData = jsonData.substring(jsonData.indexOf(":")+1);
-			jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
-			
-			String className = "gov.nysenate.openleg.model." + type.substring(0,1).toUpperCase() + type.substring(1);
-			if (type.equals("calendar"))
-			{
-				className = "gov.nysenate.openleg.model.calendar.Calendar";
-			}
-			else if (type.equals("meeting"))
-			{
-				className = "gov.nysenate.openleg.model.committee.Meeting";
-			}
-			
-			SenateObject resultObj = null;
-			
-			try
-			{
-				resultObj = (SenateObject)mapper.readValue(jsonData,  Class.forName(className));
 		
-				results.add(resultObj);
-			}
-			catch (Exception e)
-			{
-				logger.warn("error binding className", e);
-			}
-			
-		
-		
-		}
-		return results;
-		*/
 		
 		
 	}
@@ -736,10 +721,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					if (billId.indexOf("-")==-1)
 						billId += "-2009";
 					
-					title = billId + " - " + billEvent.getEventText();
+					title = billEvent.getEventText();
 					
 					fields.put("date", billEvent.getEventDate().toLocaleString());
-					
 	
 					fields.put("billno", billId);
 	

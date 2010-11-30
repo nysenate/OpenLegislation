@@ -2,6 +2,8 @@ package gov.nysenate.openleg.xml;
 
 import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.PMF;
+import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Committee;
 import gov.nysenate.openleg.model.Person;
@@ -9,7 +11,9 @@ import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
-import gov.nysenate.openleg.search.SearchEngine1;
+import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.util.JsonSerializer;
+import gov.nysenate.openleg.util.XmlSerializer;
 import gov.nysenate.openleg.xml.committee.*;
 
 import java.io.File;
@@ -40,9 +44,11 @@ public class CommitteeParser implements OpenLegConstants
 
 	private static Logger logger = Logger.getLogger(CommitteeParser.class);
 
+	private SearchEngine2 engine = null;
+	
 	private PersistenceManager pm = null;
 	private Transaction trans = null;
-	ArrayList<Object> objectsToUpdate = new ArrayList<Object>();
+	ArrayList<LuceneObject> objectsToUpdate = new ArrayList<LuceneObject>();
 
 	
 	public static void main (String[] args) throws Exception
@@ -166,8 +172,8 @@ public class CommitteeParser implements OpenLegConstants
 		Iterator<Object> it = senateData.getSenagendaOrSenagendavote().iterator();
 		Object next = null;
 		
-		
-		SearchEngine1 engine = new SearchEngine1();
+
+		engine = new SearchEngine2();
 		
 		while (it.hasNext())
 		{
@@ -211,7 +217,7 @@ public class CommitteeParser implements OpenLegConstants
 
 				}
 				
-				engine.indexSenateObjects(objectsToUpdate, pm);
+				engine.indexSenateObjects(objectsToUpdate, new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
 				
 				trans.commit();
 		        
@@ -230,7 +236,7 @@ public class CommitteeParser implements OpenLegConstants
 	       
 	        pm.close();
 	      
-	        engine.optimizeIndex();
+	        engine.optimize();
 	        
 		}
 		
@@ -466,7 +472,7 @@ public class CommitteeParser implements OpenLegConstants
 			logger.info("removing agenda: " + agenda.getId());
 			
 			try {
-				SearchEngine1.deleteSenateObject(agenda, PMF.getPersistenceManager());
+				engine.deleteSenateObject(agenda);
 			} catch (Exception e) {
 				
 				logger.error("error deleting Agenda from search index: " + agenda.getId(),e);

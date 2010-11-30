@@ -4,7 +4,6 @@ package gov.nysenate.openleg;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.search.SearchEngine1;
 import gov.nysenate.openleg.search.SearchResult;
 import gov.nysenate.openleg.search.SearchResultSet;
 
@@ -207,8 +206,6 @@ public class BillRenderer {
 				
 				if (bill.getSummary()!=null)
 					elemSummary.setText(bill.getSummary());
-				else if (bill.getTitle()!=null)
-					elemSummary.setText(bill.getTitle());
 				else
 					elemSummary.setText("");
 				
@@ -297,6 +294,7 @@ public class BillRenderer {
 					}
 					
 					actionSearch.append(")");
+					/*
 					SearchResultSet srs = SearchEngine1.doSearch(actionSearch.toString(),0,1000,"when",true);
 
 					Iterator<SearchResult> itSrs = srs.getResults().iterator();
@@ -332,6 +330,7 @@ public class BillRenderer {
 					}
 					
 					elemBill.addContent(elemActions);
+					*/
 				
 			}
 			catch (Exception e)

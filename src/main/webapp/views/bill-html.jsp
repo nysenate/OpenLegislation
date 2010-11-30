@@ -10,11 +10,9 @@ String term = (String)request.getAttribute("term");
 Bill bill = (Bill)request.getAttribute("bill");
 
   	
-String titleText = "";
+String titleText = "(no title)";
 if (bill.getTitle()!=null)
 	titleText = bill.getTitle();
-else if (bill.getSummary()!=null)
-	titleText = bill.getSummary();
 
 String senateBillNo = bill.getSenateBillNo();
 
@@ -65,11 +63,27 @@ if (st.hasMoreTokens()) {%><%}
 <%} %>
 
 <%
+
+String sponsor = null;
+
+if (bill.getSponsor()!=null)
+		sponsor = bill.getSponsor().getFullname();
+
 ArrayList<SearchResult> rBills = (ArrayList<SearchResult>)request.getAttribute("related-bill");
 %>
 <%if (rBills.size()>0) { %>
-Versions: <%for (SearchResult rBill:rBills){%><a href="/legislation/bill/<%=rBill.getId()%>"><%=rBill.getId()%></a> <%}%>
-<%}%>
+Versions: <%for (SearchResult rBill:rBills){
+	
+	if ((sponsor == null || sponsor.length()==0) && rBill.getFields().get("sponsor")!=null)
+		sponsor = rBill.getFields().get("sponsor");
+	
+%><a href="/legislation/bill/<%=rBill.getId()%>"><%=rBill.getId()%></a> <%}%>
+<%}
+
+if (sponsor == null)
+	sponsor = "";
+
+%>
 
 
 
@@ -122,11 +136,9 @@ if (bill.getTitle()!=null)
 <%=billSummary%>
  <%} %>
  <hr/>
-<%if (bill.getSponsor()!=null && bill.getSponsor().getFullname()!=null){ %>
  <b>Sponsor: </b>
- <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(bill.getSponsor().getFullname(),"utf-8")%>"  class="sublink"><%=bill.getSponsor().getFullname()%></a>
+ <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(sponsor,"utf-8")%>"  class="sublink"><%=sponsor%></a>
 /
- <%} %>
  
 <!--
 <%if (bill.getActClause()!=null){ %>
@@ -170,11 +182,12 @@ if (bill.getTitle()!=null)
 <%
 ArrayList<SearchResult> rActions = (ArrayList<SearchResult>)request.getAttribute("related-action");
 %>
-<%if (rActions.size()>0) { %>
+<%if (rActions.size() > 0) { %>
 <h3><%=senateBillNo%> Actions</h3>
 <ul>
-	<%for (SearchResult beAction:rActions){%>
-	<li><%=df.format(beAction.getLastModified())%>: <%=beAction.getTitle()%></li>
+	<%for (SearchResult beAction : rActions){
+	%>
+	<li><%=df.format(beAction.getLastModified())%>: <%=beAction.getTitle().toUpperCase()%></li>
 	<%}%>
 </ul>
 <%}%>
@@ -331,10 +344,21 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
   
  </div>
   
+ <%
  
+ String disqusUrl = "";
+ 
+ if (bill.getYear()==2009)
+ {
+	 disqusUrl = "http://open.nysenate.gov/legislation/api/html/bill/" + bill.getSenateBillNo();
+ }
+ else
+ {
+	 disqusUrl = "http://open.nysenate.gov/legislation/bill/" + bill.getSenateBillNo() + "-" + bill.getYear();
+ }
+ %>
 <script type="text/javascript">
-var disqus_url = "http://open.nysenate.gov/legislation/api/html/bill/<%=senateBillNo%>";
-//var disqus_identifier = "http://open.nysenate.gov/legislation/api/1.0/html/bill/<%=senateBillNo%>";
+var disqus_url = "<%=disqusUrl%>";
  </script>
   
 <div id="comments">

@@ -12,21 +12,17 @@ boolean sortOrder = true;
 int pageIdx = 1;
 int pageSize = 1;
 
+
 int startIdx = (pageIdx - 1) * pageSize;
 int endIdx = startIdx + pageSize;
 
-SearchResultSet srs = null;// SearchEngine.doSearch(term,startIdx,pageSize,sortField,sortOrder);
-int resultCount = srs.getResults().size();
+SearchEngine2 searchEngine = new SearchEngine2();
 
-int total = srs.getTotalHitCount();
+ArrayList<SearchResult> listResults =  APIServlet.buildSearchResultList(searchEngine.search(term,"json",startIdx,pageSize,sortField,sortOrder));
 
-if (total < endIdx)
-	endIdx = total;
 
 
 String appPath = request.getContextPath();
-String cacheKey = (String)request.getAttribute("path");
-int cacheTime = 100;//OpenLegConstants.DEFAULT_CACHE_TIME;
 %>	
 <html>
   <head>
@@ -64,27 +60,25 @@ width:150px;
   </head>
 <body>  
 
-<cache:cache key="<%=cacheKey%>" time="<%=cacheTime %>" scope="application">
 
  <div class="widget-narrow">
 
  <%
-Iterator it = srs.getResults().iterator();
-  SearchResult sresult = null;
-  
+
   String resultType = null;
   String resultId = null;
   
   String contentType = null;
   String contentId = null;
 String resultTitle = null;
+gov.nysenate.openleg.model.calendar.Calendar calendar = null;
 
-  if (it.hasNext())
-  {
-                sresult = (SearchResult) it.next();
+ for (SearchResult sresult : listResults)
+ {
                 resultType = sresult.getType();
 
-
+				calendar = (gov.nysenate.openleg.model.calendar.Calendar)sresult.getObject();
+				
                 if (resultType.indexOf(".")!=-1)
                 {
                         resultType = resultType.substring(resultType.lastIndexOf(".")+1);
@@ -109,7 +103,6 @@ String resultTitle = null;
 
 String resultPath = appPath + "/api/1.0/html/" + contentType + "/" + contentId;
 
-gov.nysenate.openleg.model.calendar.Calendar calendar =  (gov.nysenate.openleg.model.calendar.Calendar)PMF.getDetachedObject(gov.nysenate.openleg.model.calendar.Calendar.class, "id", contentId, "no descending");
 String title = "Calendar " + calendar.getNo() + " " + calendar.getSessionYear();
 	DateFormat df = SimpleDateFormat.getDateInstance(DateFormat.MEDIUM);
 
@@ -130,22 +123,13 @@ Updated every 30 minutes or less
 </div>
  <div id="content">
  
-<%
-
-try
-{
-
-	
-%>
 
 <%if (supp.getSequence()!=null){%>
 
 <%
-Collection<Sequence> collSeq = null;//PMF.getDetachedObjects (Sequence.class, "id", supp.getId() + ".*", null, 0,100);
-Iterator<Sequence> itSeq = collSeq.iterator();
-int seqIdx = 1;
-while (itSeq.hasNext()) {
-Sequence seq = itSeq.next();
+
+
+Sequence seq = supp.getSequence();
 
 %>
 <%
@@ -156,9 +140,8 @@ Sequence seq = itSeq.next();
 <h2>Active List</h2>
 <%}else{%>
 <!--<h2>Sequence <%=seq.getNo()%></h2>-->
-<h2 style="font-size:12pt;background-color:#ccc;">Supplemental <%=seqIdx%></h2>
+<h2 style="font-size:12pt;background-color:#ccc;">Supplemental</h2>
 <%
-seqIdx++;
 }%>
 	<ul>
 <%
@@ -199,7 +182,6 @@ e.printStackTrace();
 	
 </div>
 
-<%}%>
 
 <%if (supp.getSections()!=null&&supp.getSections().size()>0){%>
 <hr/>
@@ -234,19 +216,13 @@ Iterator<CalendarEntry> itCals = section.getCalendarEntries().iterator();
 	<%}%>
 	</ul>
 <%}%>
+<%}%>	
 	
-	
-<%}%>
-
-<%
-
-} catch (Exception e) {}%>
 
 
 </div>
   
 
 </div> 
-</cache:cache>
 </body>
 </html>

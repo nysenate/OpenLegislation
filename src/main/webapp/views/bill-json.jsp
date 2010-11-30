@@ -86,9 +86,12 @@ String baseSenateId = bill.getSenateBillNo();
 	}
 	
 	actionSearch.append(")");
-	SearchResultSet srs = SearchEngine1.doSearch(actionSearch.toString(),0,1000,"when",true);
+	
+	SearchEngine2 searchEngine = new SearchEngine2();
+	
+	ArrayList<SearchResult> srs = APIServlet.buildSearchResultList(searchEngine.search(actionSearch.toString(),"json",0,1000,"when",true));
 
-	Iterator<SearchResult> itSrs = srs.getResults().iterator();
+	Iterator<SearchResult> itSrs = srs.iterator();
 	SearchResult sresult = null;
 	
 	Hashtable<String,String> htActions = new Hashtable<String,String>();

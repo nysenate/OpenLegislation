@@ -1,5 +1,9 @@
 package gov.nysenate.openleg.model.committee;
 
+import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.model.SenateObject;
+
+import java.util.HashMap;
 import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
@@ -15,6 +19,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.lucene.document.Field;
 
 /*
  * <SENATEDATA TIME="2009-11-10-10.26.43">
@@ -33,7 +39,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
-public class Agenda {
+public class Agenda  extends SenateObject implements LuceneObject {
 
 
 	@Persistent 
@@ -154,6 +160,42 @@ public class Agenda {
 		}
 		
 		return false;
+	}
+
+	@Override
+	public String luceneOid() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneOsearch() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneOtype() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneSummary() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String luceneTitle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, Field> luceneFields() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

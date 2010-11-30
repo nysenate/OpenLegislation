@@ -114,6 +114,9 @@ else{ %><a href="/legislation/search/?term=<%=term%>&sort=when&sortOrder=true">R
 <%if (sortField.equals("when") && (!sortOrder)){%>Oldest Updates<%}
 else{ %><a href="/legislation/search/?term=<%=term%>&sort=when&sortOrder=false">Oldest Updates</a><%}%>,
 
+<%if (sortField.equals("committee")){%>Committee<%}
+else{ %><a href="/legislation/search/?term=<%=term%>&sort=committee&sortOrder=false">Committee</a><%}%>,
+
 
 <%if (sortField.equals("")){%>Best Match<%}
 else{ %><a href="/legislation/search/?term=<%=term%>">Best Match</a><%}%>
@@ -193,6 +196,10 @@ String resultPath = appPath + "/api/1.0/html/" + contentType + "/" + contentId;
  
  <%if (sresult.getFields().get("sameAs")!=null && sresult.getFields().get("sameAs").length()>0){ %>
 Same As: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("sameAs")%>%22" class="sublink"><%=sresult.getFields().get("sameAs")%></a>
+ <%} %>
+ 
+  <%if (sresult.getFields().get("billno")!=null && sresult.getFields().get("billno").length()>0){ %>
+Bill: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("billno")%>%22" class="sublink"><%=sresult.getFields().get("billno")%></a>
  <%} %>
  
  <%if (sresult.getFields().get("sponsor")!=null && sresult.getFields().get("sponsor").length()>0){ %>

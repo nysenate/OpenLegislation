@@ -21,7 +21,7 @@ import gov.nysenate.openleg.model.*;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
-import gov.nysenate.openleg.search.SearchEngine1;
+import gov.nysenate.openleg.search.SearchEngine1Depr;
 import gov.nysenate.openleg.search.SearchResult;
 import gov.nysenate.openleg.search.SearchResultSet;
 
@@ -199,7 +199,7 @@ public class OriginalApiConverter {
 			}
 			
 			actionSearch.append(")");
-			SearchResultSet srs = SearchEngine1.doSearch(actionSearch.toString(),0,1000,"when",true);
+			SearchResultSet srs = SearchEngine1Depr.doSearch(actionSearch.toString(),0,1000,"when",true);
 
 			Iterator<SearchResult> itSrs = srs.getResults().iterator();
 			SearchResult sresult = null;

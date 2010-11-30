@@ -3,7 +3,7 @@ package gov.nysenate.openleg.search;
 import java.util.Date;
 import java.util.HashMap;
 
-public class SearchResult {
+public class SearchResult implements Comparable {
 
 	String type;
 	String id;
@@ -127,5 +127,11 @@ public class SearchResult {
 	 */
 	public void setScore(float score) {
 		this.score = score;
+	}
+
+	@Override
+	public int compareTo(Object arg0) {
+		
+		return ((SearchResult)arg0).getLastModified().compareTo(this.getLastModified());
 	}
 }

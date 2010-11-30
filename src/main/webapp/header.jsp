@@ -110,7 +110,8 @@
 						<form method="get" action="<%=appPath%>/search/" style="padding-bottom:3px">
 							<input type="text" id="txtSearchBox"  name="term" value="<%=term%>" autocomplete="off">	
 							<input type="hidden" name="searchType" value="<%=searchType%>">	
-							<input type="submit" value="Search"/> | <a href="<%=appPath%>/advanced/">Advanced Search</a>
+							<input type="submit" value="Search"/> | <a href="<%=appPath%>/advanced/">Advanced</a>
+							| <a href="<%=appPath%>/comments/">View Comments</a>
 							<div id="quickresult" class="quickresult-header"></div>
 						</form>
 					</div>
@@ -131,7 +132,6 @@
 						</form>
 					</div>
 			   </div>
-			   <br/>
 			   <br style="clear:left;"/>
    
    

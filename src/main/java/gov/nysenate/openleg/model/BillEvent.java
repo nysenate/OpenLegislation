@@ -49,7 +49,7 @@ public class BillEvent extends SenateObject implements LuceneObject
 		
 		try
 		{
-			this.billEventId = bill.getSenateBillNo() + "-" + eventDate.getTime() + "-" + URLEncoder.encode(eventText,"utf-8");
+			this.billEventId = bill.getSenateBillNo() + "-" + bill.getYear() + "-" + eventDate.getTime() + "-" + URLEncoder.encode(eventText,"utf-8");
 		}
 		catch (Exception e)
 		{
