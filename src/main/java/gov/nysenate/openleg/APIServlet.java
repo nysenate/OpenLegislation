@@ -49,7 +49,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 
 	private static final String SRV_DELIM = "/";
 	
-	private SearchEngine2 searchEngine = null;
+	private static SearchEngine2 searchEngine = null;
 	
 	private final static String DEFAULT_SORT_FIELD = "when";
 	private final static String DEFAULT_SEARCH_FORMAT = "json";
@@ -70,6 +70,11 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 	}
 
+	public static SearchEngine2 getSearchEngineInstance ()
+	{
+		return searchEngine;
+	}
+	
 	/* (non-Javadoc)
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
 	 */

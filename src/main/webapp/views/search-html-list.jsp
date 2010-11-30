@@ -53,9 +53,14 @@ while (it.hasNext())
         <%=sr.getId()%> 
         <%} %>
         - <%=contentTitle%>
+         <%if (sr.getFields().get("sameas")!=null){ %>
+        / Same as: <%=((String)sr.getFields().get("sameas"))%>
+        <%} %>
         <%if (sr.getFields().get("sponsor")!=null){ %>
         (<%=((String)sr.getFields().get("sponsor"))%>)
-        <%} %></a>
+        <%} %>
+       
+        </a>
         </li>
         <%
                 

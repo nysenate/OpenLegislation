@@ -83,7 +83,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 		}
 		
 		if (type.equals("bills") || type.equals("*"))	{
-			doIndex("bill", Bill.class, SORTINDEX_DESCENDING, start, max, pageSize, ls);
+			doIndex("bill", Bill.class, SORTINDEX_ASCENDING, start, max, pageSize, ls);
 		}
 		
 		if (type.equals("billevents") || type.equals("*"))	{

@@ -16,7 +16,9 @@ int pageSize = 1;
 int startIdx = (pageIdx - 1) * pageSize;
 int endIdx = startIdx + pageSize;
 
-SearchEngine2 searchEngine = new SearchEngine2();
+
+
+SearchEngine2 searchEngine = APIServlet.getSearchEngineInstance();
 
 ArrayList<SearchResult> listResults =  APIServlet.buildSearchResultList(searchEngine.search(term,"json",startIdx,pageSize,sortField,sortOrder));
 
