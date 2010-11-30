@@ -160,12 +160,12 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				{
 					
 					key = "sponsor:\"" + key + "\"";
-					type = null;
+					type = "bills";
 				}
 				else if (type.equalsIgnoreCase("committee"))
 				{
 					key = "committee:\"" + key + "\"";
-					type = null;
+					type = "bills";
 				}
 				
 				handleAPIv1(format, type, key, pageIdx, pageSize, req, resp);
@@ -200,12 +200,12 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				{
 					
 					key = "sponsor:\"" + key + "\"";
-					type = null;
+					type = "bills";
 				}
 				else if (type.equalsIgnoreCase("committee"))
 				{
 					key = "committee:\"" + key + "\"";
-					type = null;
+					type = "bills";
 				}
 				
 				handleAPIv1(format, type, key, pageIdx, pageSize, req, resp);
@@ -255,12 +255,12 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				{
 					
 					key = "sponsor:\"" + key + "\"";
-					type = null;
+					type = "bills";
 				}
 				else if (type.equalsIgnoreCase("committee"))
 				{
 					key = "committee:\"" + key + "\"";
-					type = null;
+					type = "bills";
 				}
 				
 				
@@ -347,22 +347,32 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			
 			if (type != null)
 			{
+				
 				if (type.endsWith("s"))
 				{
 					type = type.substring(0,type.length()-1);
-				}
-				req.setAttribute("type",type);
-			
-				searchString ="otype:" + type;
-
-				if (key != null && key.length() > 0)
-				{
-					if (type.equals("bill") && key.indexOf("-") == -1)
-						key += "-" + DEFAULT_SESSION_YEAR;
-
-					key = key.replace(" ","+");
-					searchString += " AND oid:" + key;
 					
+					req.setAttribute("type",type);
+					searchString = "otype:" + type;
+					
+					if (key != null && key.length() > 0)
+						searchString += " AND " + key;
+				}
+				else
+				{
+					req.setAttribute("type",type);
+				
+					searchString ="otype:" + type;
+	
+					if (key != null && key.length() > 0)
+					{
+						if (type.equals("bill") && key.indexOf("-") == -1)
+							key += "-" + DEFAULT_SESSION_YEAR;
+	
+						key = key.replace(" ","+");
+						searchString += " AND oid:" + key;
+						
+					}
 				}
 				
 			}
@@ -527,15 +537,34 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			}
 			else
 			{
-				viewPath = "/views/" + "search" + "-" + format + ".jsp";
 				
-				SearchResultSet srs = new SearchResultSet();
-				srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));
-				
-				
-				srs.setResults(buildSearchResultList(sr));
-				
-				req.setAttribute("results", srs);
+				if (type.equals("bill") && (!format.equals("html")))
+				{
+					viewPath = "/views/bills-" + format + ".jsp";
+					
+					ArrayList<SearchResult> searchResults = buildSearchResultList(sr);
+					
+					ArrayList<Bill> bills = new ArrayList<Bill>();
+					
+					for (SearchResult result : searchResults)
+					{
+						bills.add((Bill)result.getObject());
+					}
+					
+					req.setAttribute("bills", bills);
+				}
+				else
+				{
+					viewPath = "/views/" + "search" + "-" + format + ".jsp";
+					
+					SearchResultSet srs = new SearchResultSet();
+					srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));
+					
+					
+					srs.setResults(buildSearchResultList(sr));
+					
+					req.setAttribute("results", srs);
+				}
 			}
 			
 		}
