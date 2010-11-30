@@ -88,7 +88,10 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	{
 		
 		if (req.getParameter("reset")!=null)
+		{
 			searchEngine.closeSearcher();
+			searchEngine = new SearchEngine2();
+		}
 		
 		String encodedUri = req.getRequestURI();
 				
@@ -153,6 +156,18 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				else if (format.equals(FORMAT_XML)) //for now with XML
 					pageSize = DEFAULT_API_PAGE_SIZE;
 				
+				if (type.equalsIgnoreCase("sponsor"))
+				{
+					
+					key = "sponsor:\"" + key + "\"";
+					type = null;
+				}
+				else if (type.equalsIgnoreCase("committee"))
+				{
+					key = "committee:\"" + key + "\"";
+					type = null;
+				}
+				
 				handleAPIv1(format, type, key, pageIdx, pageSize, req, resp);
 			}
 			else if (version.equals("html"))
@@ -180,6 +195,18 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				}
 				else if (format.equals(FORMAT_XML)) //for now with XML
 					pageSize = DEFAULT_API_PAGE_SIZE;
+				
+				if (type.equalsIgnoreCase("sponsor"))
+				{
+					
+					key = "sponsor:\"" + key + "\"";
+					type = null;
+				}
+				else if (type.equalsIgnoreCase("committee"))
+				{
+					key = "committee:\"" + key + "\"";
+					type = null;
+				}
 				
 				handleAPIv1(format, type, key, pageIdx, pageSize, req, resp);
 			}
@@ -629,6 +656,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 						title += bill.getTitle();
 					else
 						title += "(no title)";
+					
 					summary = bill.getSummary();
 					
 					if (bill.getSponsor()!=null)
