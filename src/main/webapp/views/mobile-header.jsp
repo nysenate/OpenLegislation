@@ -14,6 +14,14 @@
 
 <html>
 	<head>
+	<script>
+				<!--
+				percent_mobile_track('89984697771243267044235791550489069012');
+				-->
+			</script>
+			<noscript>
+				<img src="http://tracking.percentmobile.com/pixel/89984697771243267044235791550489069012/pixel.gif?v=271009_js" width="2" height="2" alt="" />
+			</noscript>
 		<title><%=title%></title>
 		
 		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;" />

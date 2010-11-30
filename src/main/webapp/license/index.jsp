@@ -19,7 +19,10 @@ In order to make the Senate's information and software as public as possible, it
 <br/><br/>
 (iii) Regarding Software containing preexisting copyright restrictions other than GPL, the CIO shall make the determination how he or she wishes to release such Software. 
 
+<br/><br/>
 
+<hr/>
+Please visit the <a href="http://www.nysenate.gov/developers">NY Senate Developer Network</a> page for more information.
  
 </div>
 

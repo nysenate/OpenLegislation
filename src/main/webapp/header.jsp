@@ -73,11 +73,11 @@
 	      	<div style="float:right;">
 				<a href="<%=appPath%>/beta">Beta Feedback</a> &nbsp;|&nbsp; 
 				<a href="<%=appPath%>/mobile/info">Mobile Access</a> &nbsp;|&nbsp; 
-				<a href="http://wiki.github.com/nysenatecio/OpenLeg">Developers</a>
+				<a href="http://www.nysenate.gov/developers">Developers</a>
 	   		</div>
 		</div>
 		<div class="notice">
-			Open Legislation is currently in "beta" and may occasionally be inaccurate or out of date.<br/>
+			Open Legislation v1.6 is currently in "beta" and may occasionally be inaccurate or out of date.
 			Up-to-the-minute legislation is still available from the
 			<a href="http://public.leginfo.state.ny.us/menuf.cgi">Legislative Research Service</a>.
 		</div>

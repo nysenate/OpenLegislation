@@ -48,10 +48,10 @@ Whether you just want to send a text message or browse the full site on the go, 
 </ul>
 <h2>iPhone, Android and other Smartphones</h2>
 <ul>
-<li>Browse to <a href="http://open.nysenate.gov/openleg">http://open.nysenate.gov/openleg</a> on your mobile web browser
+<li>Browse to <a href="http://m.nysenate.gov">http://m.nysenate.gov</a> on your mobile web browser
 <p><em>The web content is formatted to be compatible with mobile webkit browsers on modern smartphones.</em></p>
 </li>
-<li>Subscribe via a Mobile RSS Reader: <a href="http://open.nysenate.gov/openleg/feed/">http://open.nysenate.gov/openleg/feed/</a>
+<li>Subscribe via a Mobile RSS Reader: <a href="http://open.nysenate.gov/legislatoin/feed/">http://open.nysenate.gov/legislation/feed/</a>
 <p><em>The RSS feed will contain the latest bill actions from the Senate floor.</em></p>
 </li>
 <li>Instant Messaging Client (Jabber): opensenate@bot.im

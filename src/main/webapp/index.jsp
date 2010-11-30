@@ -89,7 +89,7 @@ if (billkey == null)
    </div>
    </div>
 <div class="notice">
-Open Legislation is currently in "beta" and may occasionally be inaccurate or out of date.
+Open Legislation v1.6 is currently in "beta" and may occasionally be inaccurate or out of date.
 Up-to-the-minute legislation is still available from the <a href="http://public.leginfo.state.ny.us/menuf.cgi">Legislative Research Service</a>.
 </div>
 
@@ -150,9 +150,12 @@ View Recent:
 <a href="<%=appPath%>/votes/">Votes</a>
 <br/>
 Community: <a href="<%=appPath%>/comments">View and respond to recent comments</a>
+<br/> <br/><br/>
+
+
 </div>
+
 </form>
-<br/> 
 </div>
 
 
@@ -167,16 +170,16 @@ Community: <a href="<%=appPath%>/comments">View and respond to recent comments</
   
  
  <center>
-     <div id="footer" style="width:500px;text-align:left;line-height:12px;font-size:8px">
+     <div id="footer" style="width:500px;text-align:left;font-size:8pt;line-height:14px">
+     <em>You are using Open Legislation v1.6, an <a href="<%=appPath%>/license">open-source project</a></em>
+     
    <div style="height:400px;float:left;padding:0px;width:96px;">
  <a rel="license" href="http://www.nysenate.gov/copyright-policy"><img class="cc-logo" alt="Creative Commons License" src="http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png" align='left' /></a>
  </div>
-  <div id="footer-message" style="width:370px;line-height:9px;padding-top:3px;float:left;margin-right:10px;"><p> 
+  <div id="footer-message" style="width:370px;float:left;"><p> 
  This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">Creative Commons License</a>.
-  Permissions beyond the scope of this license are available on <a cc="http://creativecommons.org/ns#" href="http://www.nysenate.gov/copyright-policy" rel="morePermissions">NY Senate Copyright Policy</a>.
- <br/>   
-The software and services provided are offered under 
-<a href="<%=appPath%>/license">open-source licenses</a>.<br/>
+ <br/> Permissions beyond the scope of this license are available <a cc="http://creativecommons.org/ns#" href="http://www.nysenate.gov/copyright-policy" rel="morePermissions">here</a>.
+
 </p>   
 
    </div>
