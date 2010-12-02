@@ -773,6 +773,8 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					fields.put("location", meeting.getLocation());
 					fields.put("chair", meeting.getCommitteeChair());
 					fields.put("committee", meeting.getCommitteeName());
+					
+					summary = meeting.getNotes();
 	
 				}
 				else if (type.equals("action"))
