@@ -65,9 +65,21 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
     	}
     	
     	logger.info("indexing document: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue());
-    	Term term = new Term("oid",doc.getField("oid").stringValue());
+    	/*Term term = new Term("oid",doc.getField("oid").stringValue());*/
     	
-    	indexWriter.updateDocument(term, doc);
+    	Query query;
+		try {
+			query = new QueryParser(Version.LUCENE_CURRENT, "oid", indexWriter.getAnalyzer()).parse("oid:" + doc.getField("oid").stringValue());
+	        indexWriter.deleteDocuments(query);    	
+	    	indexWriter.addDocument(doc);
+
+
+		} catch (ParseException e) {
+			logger.warn("error adding document to index: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue(), e);
+		}
+
+    	
+    	/*indexWriter.updateDocument(term, doc);*/
     	
     	
     	return true;

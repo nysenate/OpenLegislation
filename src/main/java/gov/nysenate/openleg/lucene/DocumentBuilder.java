@@ -30,7 +30,7 @@ public class DocumentBuilder {
 	public static final String OSEARCH = "osearch";
 	public static final String SUMMARY = "summary";
 	public static final String TITLE = "title";
-	public static final String WHEN = "when"; //lastmodified
+	public static final String MODIFIED = "modified"; //lastmodified
 	
 	public Document buildDocument(LuceneObject o, LuceneSerializer[] serializer) {
 		if(o == null) {
@@ -72,8 +72,8 @@ public class DocumentBuilder {
 						DEFAULT_INDEX));
 			
 			String whenTimeString = new Date().getTime() + "";
-			fields.put(WHEN, new org.apache.lucene.document.Field(
-					WHEN,
+			fields.put(MODIFIED, new org.apache.lucene.document.Field(
+					MODIFIED,
 					whenTimeString,
 					DEFAULT_STORE,
 					DEFAULT_INDEX));

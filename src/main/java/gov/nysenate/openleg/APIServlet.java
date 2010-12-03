@@ -684,7 +684,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				{
 					Bill bill = (Bill)resultObj;
 					
-					title += bill.getSenateBillNo() + '-' + bill.getYear() + ": ";
+					/* title += bill.getSenateBillNo() + '-' + bill.getYear() + ": "; */
 					
 					if (bill.getTitle() != null)
 						title += bill.getTitle();
@@ -699,6 +699,11 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					fields.put("committee", bill.getCurrentCommittee());
 					
 					fields.put("billno", bill.getSenateBillNo());
+					
+					fields.put("summary", bill.getSummary());
+					
+					fields.put("year", bill.getYear()+"");
+					
 	
 				}
 				else if (type.equals("calendar"))

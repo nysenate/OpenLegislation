@@ -146,7 +146,12 @@ public class BasicParser implements OpenLegConstants {
 			try
 			{
 				currentTx = persistenceManager.currentTransaction();
-		        currentTx.begin();
+				 
+				if(!currentTx.isActive()) {
+			        currentTx.begin();
+
+				}
+				
 				
 				parseTranscriptFile(new BufferedReader (new FileReader (dataPath)));
 				
@@ -222,7 +227,10 @@ public class BasicParser implements OpenLegConstants {
 	{
 		
 		currentTx = persistenceManager.currentTransaction();
-        currentTx.begin();
+		
+		if(!currentTx.isActive()) {
+	        currentTx.begin();
+		}
         
 		billId = billId.trim();
 		
@@ -668,8 +676,8 @@ public class BasicParser implements OpenLegConstants {
 			
 			try
 			{
-			
 				objectsToUpdate.add(persistenceManager.detachCopy(currentBill));
+								
 				searchEngine.indexSenateObjects(objectsToUpdate, new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
 				objectsToUpdate.clear();
 			}
