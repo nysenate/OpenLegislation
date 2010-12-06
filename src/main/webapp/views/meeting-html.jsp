@@ -47,7 +47,7 @@ chair = chair.replace("?","");
 
 </div>
 <%if (meeting.getNotes()!=null && meeting.getNotes().trim().length()>0){%>
-<div>
+<div id="committeeNotes">
 <h3>Notes</h3>
 <%
 String meetingNotes = meeting.getNotes();
@@ -61,6 +61,7 @@ while (st.hasMoreTokens())
 {
 %><%=st.nextToken()%><%} %>
 <%} %>
+</div>
 <div>
 <h3>Bills on the Agenda</h3>
 <%
@@ -163,7 +164,5 @@ Committee: <a href="<%=appPath%>/search/?term=committee:%22<%=bill.getCurrentCom
 <b>Formats:</b> <a href="<%=appPath%>/api/1.0/xml/meeting/<%=meeting.getId()%>">XML</a>
 </div>
  </div>
-
-
 <jsp:include page="/footer.jsp"/>
 
