@@ -17,6 +17,7 @@ import gov.nysenate.openleg.search.SenateResponse;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +56,8 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	private final static String DEFAULT_SEARCH_FORMAT = "json";
 	private final static String DEFAULT_SESSION_YEAR = "2009";
 	
+	private final static DateFormat DATE_FORMAT_MED = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
+
 	//Jackson JSON parser
 	private static ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
 	
@@ -792,9 +795,10 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					
 					title = billEvent.getEventText();
 					
-					fields.put("date", billEvent.getEventDate().toLocaleString());
+					fields.put("date", DATE_FORMAT_MED.format(billEvent.getEventDate()));
 	
 					fields.put("billno", billId);
+
 	
 				}
 				else if (type.equals("vote"))
@@ -811,7 +815,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					
 						Bill bill = vote.getBill();
 						
-						title += bill.getSenateBillNo()+'-'+bill.getYear();
+						//title += bill.getSenateBillNo()+'-'+bill.getYear();
 						
 						if (bill.getSponsor()!=null)
 							fields.put("sponsor",bill.getSponsor().getFullname());
@@ -820,10 +824,12 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 							fields.put("committee", bill.getCurrentCommittee());
 	
 						fields.put("billno", bill.getSenateBillNo());
+						fields.put("year", bill.getYear()+"");
+						
 					}
 					
 					//fields.put("date",vote.getVoteDate().toLocaleString());
-					title += " (" + vote.getVoteDate().toLocaleString() + ")";
+					title += vote.getVoteDate().toLocaleString();
 					
 					summary = vote.getDescription();
 					

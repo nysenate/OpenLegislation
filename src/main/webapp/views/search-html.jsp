@@ -182,8 +182,10 @@ String resultTitle = null;
                 	 resultTitle = "(no title)";
                  else {
                 	 if(contentType.equals("bill")) {
-                    	 resultTitle = sresult.getFields().get("billno") 
-                    	 	+ "-" + sresult.getFields().get("year") + resultTitle;
+                		 senateType += " " + sresult.getFields().get("billno");
+                		 
+                		 if (sresult.getFields().get("year") != null)
+                			 senateType += "-" + sresult.getFields().get("year");
                      }
                  }
                  
