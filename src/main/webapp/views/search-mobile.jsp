@@ -180,13 +180,7 @@ String resultTitle = null;
                  
                  if (resultTitle == null)
                 	 resultTitle = "(no title)";
-                 else {
-                	 if(contentType.equals("bill")) {
-                    	 resultTitle = sresult.getFields().get("billno") 
-                    	 	+ "-" + sresult.getFields().get("year") + resultTitle;
-                     }
-                 }
-
+                 
 
 String resultPath = appPath + "/api/1.0/mobile/" + contentType + "/" + contentId;
 

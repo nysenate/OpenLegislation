@@ -83,7 +83,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 		}
 		
 		if (type.equals("bills") || type.equals("*"))	{
-			doIndex("bill", Bill.class, SORTINDEX_ASCENDING, start, max, pageSize, ls);
+			doIndex("bill", Bill.class, SORTINDEX_DESCENDING, start, max, pageSize, ls);
 		}
 		
 		if (type.equals("billevents") || type.equals("*"))	{
@@ -107,7 +107,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 		deleteDocuments(type,null);
 		
 		do {			
-			System.out.println(type + " : " + start);
+			logger.info(type + " : " + start);
 			result = (Collection<LuceneObject>)PMF.getDetachedObjects(objClass, sort, start, end);
 			indexSenateObjects(result, ls);
 			start += pageSize;

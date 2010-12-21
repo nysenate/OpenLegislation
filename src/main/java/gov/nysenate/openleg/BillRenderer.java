@@ -68,9 +68,9 @@ public class BillRenderer {
 		return baos.toString();
 	}
 	
-	public static String renderBill (String billId)
+	public static String renderBill (String billId, int  year)
 	{
-		Bill bill = PMF.getBill(PMF.getPersistenceManager(), billId);
+		Bill bill = PMF.getBill(PMF.getPersistenceManager(), billId,year);
 		
 		if (bill == null)
 		{

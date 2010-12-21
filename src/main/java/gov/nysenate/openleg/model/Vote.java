@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.jdo.annotations.Cacheable;
 import javax.jdo.annotations.Column;
+import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -31,29 +32,37 @@ import org.apache.lucene.document.Field;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@PersistenceCapable
+@PersistenceCapable(identityType = IdentityType.APPLICATION)
 @XmlRootElement
 @Cacheable
 @XStreamAlias("vote")
 public class Vote  extends SenateObject implements LuceneObject {
 	
 	@Persistent
-	@Column(name="vote_type")
+	@Column(name="VOTE_TYPE")
 	@XStreamAsAttribute
 	private int voteType;
 	
 	@Persistent
 	@PrimaryKey
-	@Column(name="VOTE_ID")
+	@Column(name="VOTE_ID", jdbcType="VARCHAR", length=50)
 	@XStreamAsAttribute
 	private String id;
 	
 	@Persistent
-	@Column(name="vote_date")
+	@Column(name="VOTE_DATE")
 	@XStreamAsAttribute
 	private Date voteDate;	
 	
+	/*
+	@Persistent
+	@Column(name="ID", jdbcType="VARCHAR", length=50)
+	private String oldId = "";
 	
+	@Persistent
+	@Column(name="VOTETYPE")
+	private int voteTypeOld = 0;
+	*/
 	
 	
 	@Persistent(defaultFetchGroup="true", serialized = "false")
@@ -214,7 +223,7 @@ public class Vote  extends SenateObject implements LuceneObject {
 	
 	public Vote (Bill bill, Date voteDate, int ayeCount, int nayCount)
 	{
-		id = buildId(bill, voteDate, ayeCount, nayCount);
+		this.id = buildId(bill, voteDate, ayeCount, nayCount);
 		this.bill = bill;
 		this.voteDate = voteDate;
 		

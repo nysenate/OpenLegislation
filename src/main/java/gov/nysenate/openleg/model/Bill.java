@@ -40,6 +40,7 @@ import gov.nysenate.openleg.xstream.BillListConverter;
 @JsonIgnoreProperties("votes")
 public class Bill extends SenateObject implements LuceneObject  {
 	
+	
 	@Persistent
 	@XStreamAsAttribute
 	@LuceneField
@@ -91,7 +92,7 @@ public class Bill extends SenateObject implements LuceneObject  {
 	@Column(name="summary", jdbcType="VARCHAR", length=10000)
 	@LuceneField
 	protected String summary;
-	
+
 	@Persistent
 	@Column(name="current_committee")
 	@XStreamAlias("committee")
@@ -439,7 +440,11 @@ public class Bill extends SenateObject implements LuceneObject  {
 	
 	@Override
 	public String luceneOid() {
-		return senateBillNo+"-"+year;
+		
+		if (senateBillNo.indexOf("-" + year)==-1)
+			return senateBillNo + "-" + year;
+		else
+			return senateBillNo;
 	}
 	
 	@Override

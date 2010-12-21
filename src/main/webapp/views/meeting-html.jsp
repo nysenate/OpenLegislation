@@ -52,15 +52,19 @@ chair = chair.replace("?","");
 <%
 String meetingNotes = meeting.getNotes();
 
-meetingNotes = meetingNotes.replaceAll("([A-Z,a-z,\\s,\\:,\\(,\\),\\.])(nn)([A-Z])","$1<br/><br/>$3");
-meetingNotes = meetingNotes.replaceAll("([A-Z,a-z,\\s,\\:,\\(,\\),\\.])(n)([A-Z])","$1<br/>$3");
-
+//meetingNotes = meetingNotes.replaceAll("([A-Z,a-z,\\s,\\:,\\(,\\),\\.])(nn)([A-Z])","$1<br/><br/>$3");
+//meetingNotes = meetingNotes.replaceAll("([A-Z,a-z,\\s,\\:,\\(,\\),\\.])(n)([A-Z])","$1<br/>$3");
+/*
 StringTokenizer st = new StringTokenizer(meetingNotes,"\n");
 
 while (st.hasMoreTokens())
 {
-%><%=st.nextToken()%><%} %>
-<%} %>
+	st.nextToken();
+} */
+%>
+<%=meetingNotes%>
+<% 
+} %>
 </div>
 <div>
 <h3>Bills on the Agenda</h3>

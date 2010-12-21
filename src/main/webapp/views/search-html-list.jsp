@@ -1,5 +1,7 @@
 <%@ page language="java" import="org.json.*,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/html" pageEncoding="utf-8" %><%
 
+response.setHeader("Access-Control-Allow-Origin","*");
+
 SearchResultSet srs = (SearchResultSet)request.getAttribute("results");
 int resultCount = srs.getResults().size();
 
@@ -11,7 +13,7 @@ SearchResult sr = null;
 String term = java.net.URLEncoder.encode((String)request.getAttribute("term"),"UTF-8");
 %>
 <li>
-<em><%=total%> total results... (<a href="/legislation/search/?term=<%=term%>">view all</a>)</em>
+<em><%=total%> total results... (<a href="http://open.nysenate.gov/legislation/search/?term=<%=term%>">view all</a>)</em>
 </li>
 <%
 String contentType = null;
@@ -46,7 +48,7 @@ while (it.hasNext())
                 }
         
         %>
-        <li class="quickresult_box"><a href="/legislation/<%=contentType%>/<%=contentId%>" class="sublink">
+        <li class="quickresult_box"><a href="http://open.nysenate.gov/legislation/<%=contentType%>/<%=contentId%>" class="sublink">
 
         <%=sr.getType().toUpperCase()%>:
         <%if (sr.getType().equals("bill")){ %>
@@ -56,7 +58,7 @@ while (it.hasNext())
          <%if (sr.getFields().get("sameas")!=null){ %>
         / Same as: <%=((String)sr.getFields().get("sameas"))%>
         <%} %>
-        <%if (sr.getFields().get("sponsor")!=null){ %>
+        <%if (sr.getFields().get("sponsor")!=null && sr.getFields().get("sponsor").length()>0){ %>
         (<%=((String)sr.getFields().get("sponsor"))%>)
         <%} %>
        

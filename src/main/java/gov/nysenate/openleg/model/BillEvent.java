@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.PMF;
 import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneObject;
 
@@ -8,7 +7,6 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import javax.jdo.annotations.Cacheable;
 import javax.jdo.annotations.Column;
@@ -122,35 +120,6 @@ public class BillEvent extends SenateObject implements LuceneObject
 		fields.put("when", new Field("when",eventDate.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		fields.put("billno", new Field("billno",getBillId(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 			
-		/*
-		try
-		{
-			
-			Bill bill = PMF.getDetachedBill(getBillId());
-			
-			if (bill.getSponsor()!=null) {
-    			fields.put("sponsor", new Field("sponsor",bill.getSponsor().getFullname(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-    		}
-    		
-            if (bill.getCoSponsors()!=null) {
-            	StringBuilder cosponsor = new StringBuilder();
-            	Iterator<Person> itCosp = bill.getCoSponsors().iterator();
-            	
-            	while (itCosp.hasNext()) {
-            		cosponsor.append((itCosp.next()).getFullname());
-            		
-            		if (itCosp.hasNext())
-            			cosponsor.append(", ");
-            	}
-            	
-            	fields.put("cosponsors", new Field("cosponsors",cosponsor.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-            }
-            
-		}
-		catch (Exception e)
-		{
-			
-		}*/
 		
 		return fields;
 	}
@@ -167,20 +136,6 @@ public class BillEvent extends SenateObject implements LuceneObject
 		StringBuilder searchContent = new StringBuilder();
 		searchContent.append(getBillId()).append(" ");
 		
-		/*
-		try
-		{
-			Bill bill = PMF.getDetachedBill(getBillId());
-			
-			if (bill.getSponsor()!=null) {
-    			searchContent.append(bill.getSponsor().getFullname()).append(" ");
-    		}
-		}
-		catch (Exception e)
-		{
-			
-		}
-		*/
 		
 		searchContent.append(eventText);
 		

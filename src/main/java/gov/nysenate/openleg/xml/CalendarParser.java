@@ -401,7 +401,7 @@ public class CalendarParser implements OpenLegConstants {
 			
 			while (itCalnos.hasNext())
 			{
-				cEntry = parseCalno (pm, sequence.getId(),itCalnos.next());
+				cEntry = parseCalno (pm, sequence.getId(),itCalnos.next(), supplemental.getCalendar().getSessionYear());
 				cEntry.setSequence(sequence);
 				
 				if (!calendarEntries.contains(cEntry))
@@ -448,7 +448,7 @@ public class CalendarParser implements OpenLegConstants {
 		{
 			try
 			{
-				cEntry = parseCalno (pm, section.getId(), itCalnos.next());
+				cEntry = parseCalno (pm, section.getId(), itCalnos.next(), supplemental.getCalendar().getSessionYear());
 				cEntry.setSection(section);
 				
 				if (!calendarEntries.contains(cEntry))
@@ -469,7 +469,7 @@ public class CalendarParser implements OpenLegConstants {
 		return section;
 	}
 	
-	public CalendarEntry parseCalno (PersistenceManager pm, String parentId, XMLCalno xmlCalNo)
+	public CalendarEntry parseCalno (PersistenceManager pm, String parentId, XMLCalno xmlCalNo, int sessionYear)
 	{
 		String calEntId = parentId + '-' + xmlCalNo.getNo();
 		
@@ -521,7 +521,7 @@ public class CalendarParser implements OpenLegConstants {
 				if (xmlCalNo.getSponsor()!=null)
 					sponsor = xmlCalNo.getSponsor().getContent();
 			
-				calEntry.setBill(getBill(pm, billId, sponsor));
+				calEntry.setBill(getBill(pm, billId, sessionYear, sponsor));
 			}
 		}
 		
@@ -536,7 +536,7 @@ public class CalendarParser implements OpenLegConstants {
 				if (xmlCalNo.getSubsponsor()!=null)
 					sponsor = xmlCalNo.getSubsponsor().getContent();
 				
-				calEntry.setSubBill(getBill(pm, billId, sponsor));
+				calEntry.setSubBill(getBill(pm, billId, sessionYear, sponsor));
 			}
 		}
 		
@@ -545,7 +545,7 @@ public class CalendarParser implements OpenLegConstants {
 		return calEntry;
 	}
 	
-	private static Bill getBill (PersistenceManager pm, String billId, String sponsorName)
+	private static Bill getBill (PersistenceManager pm, String billId, int year, String sponsorName)
 	{
 		
 		String billType = billId.substring(0,1);
@@ -569,7 +569,7 @@ public class CalendarParser implements OpenLegConstants {
 
 		}
 		
-		Bill bill = PMF.getBill(pm, senateBillNo);
+		Bill bill = PMF.getBill(pm, senateBillNo, year);
 		
 		if (bill == null)
 		{

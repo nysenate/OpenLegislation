@@ -173,7 +173,7 @@ public class BillCleaner implements OpenLegConstants {
 	        	
 	        	if(old != null && !old.equals(newS)) {
 	        		System.out.println(old + " : " + newS);
-	        		Bill bill = PMF.getBill(pm, temp.getSenateBillNo());
+	        		Bill bill = PMF.getBill(pm, temp.getSenateBillNo(), temp.getYear());
 	        		bill.setSameAs(newS);
 	        	}
 	        }

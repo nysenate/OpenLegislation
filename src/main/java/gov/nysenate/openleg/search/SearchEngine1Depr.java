@@ -447,7 +447,7 @@ public class SearchEngine1Depr implements OpenLegConstants{
     		title = billEvent.getEventText();
     		summary = DATE_FORMAT_MEDIUM.format(billEvent.getEventDate());
 
-    		Bill bill = PMF.getBill(pm,billEvent.getBillId());
+    		Bill bill = PMF.getBill(pm,billEvent.getBillId(),billEvent.getEventDate().getYear());
     		
     		if (bill.getTitle()!=null) {
     			summary += " - " + bill.getTitle();

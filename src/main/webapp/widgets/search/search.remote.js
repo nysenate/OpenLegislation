@@ -3,7 +3,7 @@ var searchType = '';
 $(function () {
 
 	var p = $("#txtSearchBox").position();
-	$("#quickresult").css({top:p.top+25, left:p.left});
+	$("#quickresult").css({top:p.top+35, left:p.left});
 	
 	$("#txtSearchBox").keyup(function() 
 	{
@@ -18,8 +18,7 @@ $(function () {
         }
         else
         {
-                        $("#quickresult").html("").load("/legislation/search/?" + dataString);
-			/*
+        //               $("#quickresult").html("").load("http://open.nysenate.gov/legislation/search/?" + dataString);
                 $.ajax({
                         type: "POST",
                         url: "http://open.nysenate.gov/legislation/search/",
@@ -37,7 +36,6 @@ $(function () {
 				alert(thrownError);
                         }
                 });
-	*/
         }
 
         return true;

@@ -245,10 +245,10 @@ public class CommitteeParser implements OpenLegConstants
 	}
 	
 	
-	public Bill handleXMLBill (PersistenceManager pm, Meeting meeting, XMLBill xmlBill)
+	public Bill handleXMLBill (PersistenceManager pm, Meeting meeting, XMLBill xmlBill, int sessionYear)
 	{
 		
-		Bill bill = getBill(pm, xmlBill.getNo(),xmlBill.getSponsor().getContent());
+		Bill bill = getBill(pm, xmlBill.getNo(), sessionYear, xmlBill.getSponsor().getContent());
 		
 		if (xmlBill.getMessage()!=null)
 		{
@@ -688,7 +688,7 @@ public class CommitteeParser implements OpenLegConstants
 				{
 					XMLBill xmlBill = itBills.next();
 					
-					bill = handleXMLBill (pm, meeting, xmlBill);
+					bill = handleXMLBill (pm, meeting, xmlBill, addendum.getAgenda().getSessionYear());
 					
 					if (!listBills.contains(bill))
 					{
@@ -789,7 +789,7 @@ public class CommitteeParser implements OpenLegConstants
 	    return sd;
 	}
 	
-	private static Bill getBill (PersistenceManager pm, String billId, String sponsorName)
+	private static Bill getBill (PersistenceManager pm, String billId, int sessionYear, String sponsorName)
 	{
 		
 		String billType = billId.substring(0,1);
@@ -813,7 +813,7 @@ public class CommitteeParser implements OpenLegConstants
 
 		}
 		
-		Bill bill = PMF.getBill(pm, senateBillNo);
+		Bill bill = PMF.getBill(pm, senateBillNo, sessionYear);
 		
 		if (bill == null)
 		{

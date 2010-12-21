@@ -23,7 +23,7 @@ public class SearchEngine2 extends SearchEngine {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		
 		String line = null;
-		System.out.print("openleg search > ");
+		System.out.print("openlegLuceneConsole> ");
 		while (!(line = reader.readLine()).equals("quit"))
 		{
 			if (line.startsWith("index "))
@@ -93,10 +93,9 @@ public class SearchEngine2 extends SearchEngine {
 				response = search( query, format, start, numberOfResults, sortField, reverseSort);
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warn(e);
 		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+			logger.warn(e);		}
 		
 		return response;
     	

@@ -108,11 +108,11 @@ Page <%=pageIdx%> (Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>) -
 
 
 Order by: 
-<%if (sortField.equals("when") && sortOrder){%>Recent Updates<%}
-else{ %><a href="/legislation/search/?term=<%=term%>&sort=when&sortOrder=true">Recent Updates</a><%}%>,
+<%if (sortField.equals("modified") && sortOrder){%>Recent Updates<%}
+else{ %><a href="/legislation/search/?term=<%=term%>&sort=modified&sortOrder=true">Recent Updates</a><%}%>,
 
-<%if (sortField.equals("when") && (!sortOrder)){%>Oldest Updates<%}
-else{ %><a href="/legislation/search/?term=<%=term%>&sort=when&sortOrder=false">Oldest Updates</a><%}%>,
+<%if (sortField.equals("modified") && (!sortOrder)){%>Oldest Updates<%}
+else{ %><a href="/legislation/search/?term=<%=term%>&sort=modified&sortOrder=false">Oldest Updates</a><%}%>,
 
 <%if (sortField.equals("committee")){%>Committee<%}
 else{ %><a href="/legislation/search/?term=<%=term%>&sort=committee&sortOrder=false">Committee</a><%}%>,
@@ -184,8 +184,6 @@ String resultTitle = null;
                 	 if(contentType.equals("bill")) {
                 		 senateType += " " + sresult.getFields().get("billno");
                 		 
-                		 if (sresult.getFields().get("year") != null)
-                			 senateType += "-" + sresult.getFields().get("year");
                      }
                  }
                  
@@ -208,7 +206,7 @@ String resultPath = appPath + "/api/1.0/html/" + contentType + "/" + contentId;
 Same As: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("sameAs")%>%22" class="sublink"><%=sresult.getFields().get("sameAs")%></a>
  <%} %>
  
-  <%if (sresult.getFields().get("billno")!=null && sresult.getFields().get("billno").length()>0){ %>
+  <%if ((!contentType.equals("bill")) && sresult.getFields().get("billno")!=null && sresult.getFields().get("billno").length()>0){ %>
 Bill: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("billno")%>%22" class="sublink"><%=sresult.getFields().get("billno")%></a>
  <%} %>
  

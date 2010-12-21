@@ -394,7 +394,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			req.setAttribute("format", format);
 			
 			String sFormat = "json";
-			String sortField = "when";
+			String sortField = "modified";
 			req.setAttribute("sortField", sortField);
 			
 			SenateResponse sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,sortField,true);
@@ -977,7 +977,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				date = sdf.parse(d);
 				term = term.substring(0, m.start()) + date.getTime() + term.substring(m.end());
 			} catch (java.text.ParseException e) {
-				e.printStackTrace();
+				logger.warn(e);
 			}
 			
 			m.reset(term);

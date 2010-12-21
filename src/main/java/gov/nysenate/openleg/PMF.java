@@ -53,12 +53,12 @@ public final class PMF implements OpenLegConstants {
 		return pmfInstance.getPersistenceManager();
     }
 
-    public static Bill getBill(PersistenceManager pm,String id){
-    	return _getBill(pm,id);
+    public static Bill getBill(PersistenceManager pm,String id, int year){
+    	return _getBill(pm,id,year);
     }
     
-    public static Bill getDetachedBill(String id) {
-    	return _getBill(null,id);
+    public static Bill getDetachedBill(String id, int year) {
+    	return _getBill(null,id,year);
     }
     
 	public static Transcript getTranscript (PersistenceManager pm,String id) {
@@ -136,17 +136,52 @@ public final class PMF implements OpenLegConstants {
     	return (Transcript) getDetachedObject(Transcript.class,"id",id,"id descending");
     }
     
-    private static Bill _getBill(PersistenceManager pm,String billId){
+    private static Bill _getBill(PersistenceManager pm,String billId, int year){
     	Bill bill = null;
-    	billId = billId.replaceAll("[\\-. ;]|%20","").trim().toUpperCase();
+    	billId = billId.replaceAll("[. ;]|%20","").trim().toUpperCase();
+    	
+    	String[] keys = {"senateBillNo","year"};
+    	Object[] vals = {billId,new Integer(year)};
+    	String[] types = {"String","int"};
+    	
+    	
     	if (pm!=null)
-    		bill = (Bill) getObject(pm,Bill.class,"senateBillNo",billId,null);
+    		bill = (Bill) getObject(pm,Bill.class,keys,types,vals,null);
     	else
-			bill = (Bill) getDetachedObject(Bill.class,"senateBillNo",billId,null);
+			bill = (Bill) getDetachedObject(Bill.class,keys,types,vals,null);
     	if (bill!=null)
     		fixSameAsDups(bill);
     	return bill;
     }
+    
+    @SuppressWarnings("unchecked")
+	public static Object getDetachedObject(Class objectClass,String[] keys,String[] types,Object[] values, String orderBy) {
+		PersistenceManager pm = getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		Object result = null;
+		
+		try {
+			tx.begin();
+
+	        result = getObject(pm,objectClass,keys,types,values,orderBy);
+	        result = pm.detachCopy(result);
+	        
+	        //Don't need to close query because closing the pm will kill it?
+	        tx.commit();
+        }
+        catch (Exception e) {
+        	        	
+        	logger.info("Unable to access object: " + e);
+        	
+        }
+        finally {
+        	if (tx.isActive())
+        		tx.rollback();
+        	if (!pm.isClosed())
+      	      pm.close();
+        }
+        return result;
+	}
     
     @SuppressWarnings("unchecked")
 	public static Object getDetachedObject(Class objectClass,String primaryKey,String value, String orderBy) {
@@ -185,6 +220,7 @@ public final class PMF implements OpenLegConstants {
         
         Extent e = pm.getExtent(objectClass,true);
         Query query = pm.newQuery(e,key + ".matches(key0)");
+        
         query.declareParameters("String key0");
         
         if (orderBy != null) {
@@ -192,6 +228,55 @@ public final class PMF implements OpenLegConstants {
         }
         
         Collection results = (Collection) query.execute("(?i)" + value);
+        if (results!=null) {
+	        java.util.Iterator<Object> iter = results.iterator();
+	        if (iter.hasNext())
+	        	return iter.next();
+	        return null;
+        }
+        return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Object getObject(PersistenceManager pm,Class objectClass, String[] keys, String[] types, Object[] values, String orderBy ) {
+		
+		pm.getFetchPlan().setMaxFetchDepth(MAX_FETCH_DEPTH);
+        pm.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
+        
+        Extent e = pm.getExtent(objectClass,true);
+        
+        StringBuilder squery = new StringBuilder();
+        StringBuilder sparams = new StringBuilder();
+
+        for (int i = 0; i < keys.length; i++)
+        {
+        	if (i != 0)
+        	{
+        		squery.append(" && ");
+        		sparams.append(",");
+        	}
+        	
+        	squery.append(keys[i]);
+        	
+        	if (types[i].equals("String"))
+        		squery.append(".matches(key" + i + ")");
+        	else
+        		squery.append(" == key" + i);
+        	
+        	sparams.append(types[i]);
+        	sparams.append(" key" + i);
+        	
+        }
+        Query query = pm.newQuery(e,squery.toString());
+        
+        query.declareParameters(sparams.toString());
+        
+        if (orderBy != null) {
+        	query.setOrdering(orderBy);
+        }
+        
+       // Collection results = (Collection) query.execute("(?i)" + value);
+        Collection results = (Collection) query.executeWithArray(values);
         if (results!=null) {
 	        java.util.Iterator<Object> iter = results.iterator();
 	        if (iter.hasNext())

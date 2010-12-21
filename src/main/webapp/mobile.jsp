@@ -13,7 +13,7 @@ if (term == null)
         term = term.substring(term.lastIndexOf('/')+1);
 }
 
-Bill bill = PMF.getBill(pm, term.toUpperCase());
+Bill bill = null;//PMF.getBill(pm, term.toUpperCase());
 Collection<?> results = null;
 
 if (bill == null)

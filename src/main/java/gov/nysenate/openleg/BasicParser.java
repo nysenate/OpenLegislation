@@ -170,12 +170,12 @@ public class BasicParser implements OpenLegConstants {
 		{
 			PMF.resetBillSortIdx();
 		}
+		else if (fileType.equals("optimize"))
+		{
+			searchEngine.optimize();
+		}
 		
 	
-		searchEngine.optimize();
-		
-	
-		
 	}
 	
 	
@@ -194,10 +194,15 @@ public class BasicParser implements OpenLegConstants {
 		int billNumber = Integer.parseInt(billId.substring(1,billId.length()-1));
 		
 		billId = billType + billNumber + billRev;
+		
+		if (year != 2009)
+			billId += "-" + year;
 			
 		if (currentBill != null)
 		{
-			if (currentBill.getYear()==year && currentBill.getSenateBillNo().equals(billId))
+			if (currentBill.getYear()==year && 
+					currentBill.getSenateBillNo().equals(billId)
+					)
 			{
 				//return existing instance
 				return currentBill;
@@ -234,13 +239,17 @@ public class BasicParser implements OpenLegConstants {
         
 		billId = billId.trim();
 		
-		currentBill = PMF.getBill(persistenceManager,billId);
+		currentBill = PMF.getBill(persistenceManager,billId,year);
 		
 		if (currentBill == null)
 		{
 			currentBill = new Bill();
+			
 			currentBill.setSenateBillNo(billId);
+			
 			currentBill.setYear(year);
+			setSortIndex();
+			
 			currentBill = (Bill)PMF.makePersistent(persistenceManager,currentBill);
 			
 		}
@@ -670,21 +679,33 @@ public class BasicParser implements OpenLegConstants {
 		
 		if (currentBill != null && currentTx != null)
 		{
-			persistBuffers();
 			setSortIndex ();
+			persistBuffers();
 			
 			
 			try
 			{
+				logger.info("committing current bill: " + currentBill.getSenateBillNo());
 				objectsToUpdate.add(persistenceManager.detachCopy(currentBill));
-								
-				searchEngine.indexSenateObjects(objectsToUpdate, new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
-				objectsToUpdate.clear();
+				
 			}
-			catch (IOException ioe)
+			catch (Exception ioe)
 			{
-				logger.warn("unable to update object index: " + currentBill.getSenateBillNo(),ioe);
+				logger.warn("error with bill detach: " + currentBill.getSenateBillNo(),ioe);
 			}
+
+			try
+			{
+				logger.info("indexing current bill: " + currentBill.getSenateBillNo());
+				searchEngine.indexSenateObjects(objectsToUpdate, new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
+				
+			}
+			catch (Exception ioe)
+			{
+				logger.warn("error with indexing: " + currentBill.getSenateBillNo(),ioe);
+			}
+			
+			objectsToUpdate.clear();
 			
 			try
 			{
@@ -694,11 +715,12 @@ public class BasicParser implements OpenLegConstants {
 			catch (Exception e)
 			{
 				logger.warn("unable to commit tx for bill: " + currentBill.getSenateBillNo(),e);
-				e.printStackTrace();
 			}
 			
 			
 			currentBill = null;
+			currentVote = null;
+			currentVoteCount = -1;
 			currentTx = null;
 		}
 	}
@@ -997,8 +1019,15 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 
 	public Bill parseVoteData (String line) throws IOException
 	{
+		/*
+		currentTx = persistenceManager.currentTransaction();
 		
-		Bill bill = getBill(line);
+		if(!currentTx.isActive()) {
+	        currentTx.begin();
+		}
+        
+		//Bill bill = getBill(line);
+		*/
 		
 		StringTokenizer st = new StringTokenizer(line.substring(12)," ");
 		
@@ -1039,13 +1068,14 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 			
 			nayCount = Integer.parseInt(st.nextToken());//Nay Count #
 			
-			currentVote = PMF.getDetachedVote(bill, voteDate, ayeCount, nayCount);//new Vote(bill, voteDate, ayeCount, nayCount);
+			currentVote = PMF.getVote(persistenceManager,currentBill, voteDate, ayeCount, nayCount);//new Vote(bill, voteDate, ayeCount, nayCount);
 			
 			if(currentVote == null) {
-				currentVote = new Vote(bill, voteDate, ayeCount, nayCount);
-				PMF.getPersistenceManager().makePersistent(currentVote);
-				logger.info("adding new vote: " + currentVote.getId());
-			}						
+				currentVote = new Vote(currentBill, voteDate, ayeCount, nayCount);
+				//persistenceManager.makePersistent(currentVote);
+				logger.info("CREATED NEW VOTE INSTANCE: " + currentVote.getId());
+			}	
+			
 			currentVote.setAyes(new ArrayList<String>());
 			currentVote.setNays(new ArrayList<String>());
 			currentVote.setAbstains(new ArrayList<String>());
@@ -1066,16 +1096,37 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 			String vote = token;
 			String voter = null;
 			Person person = null;
+			String nextToken = null;
 			
 			while (st.hasMoreTokens())
 			{
-				voter = fixVoter (st.nextToken(), st);
+				
+				voter = st.nextToken();
+				
+				//need to generalize these rules and make them configurable
+				if (voter.equals("Hassell-Thompso"))
+				{
+					voter = "Hassell-Thompson";
+				}
+				else if (voter.equals("Johnson")) //something Johnson, Johnson C, or Johnson O
+				{	
+					nextToken = st.nextToken();
+					
+					if (nextToken.length() == 1)
+					{
+						voter = voter + ' ' + nextToken;
+						nextToken = null;
+					}
+				
+				}
+				
+				
 				person = PMF.getPerson(persistenceManager,voter);
 				
 				if (person == null)
 				{
 					logger.info("couldn't find voter: " + voter);
-							
+						
 					continue;
 					
 				}
@@ -1101,32 +1152,23 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 					currentVote.addExcused(person);
 				}
 				
-				if (st.hasMoreTokens())
+				if (nextToken != null)
+				{
+					vote = nextToken;
+					nextToken = null;
+				}
+				else if (st.hasMoreTokens())
 					vote = st.nextToken();
 				
 			}
 			
-		//	tx.commit();
 			
 			
+			
 		}
 		
 		
-		return bill;
-	}
-	
-	private String fixVoter (String voter, StringTokenizer st)
-	{
-		if (voter.equals("Hassell-Thompso"))
-		{
-			voter = "Hassell-Thompson";
-		}
-		else if (voter.equals("Johnson"))
-		{
-			voter = voter + ' ' + st.nextToken();
-		}
-		
-		return voter;
+		return currentBill;
 	}
 	
 	private void persistBuffers ()
@@ -1156,7 +1198,7 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 		{
 			currentBill.setVotes(new ArrayList<Vote>());
 			currentBill.addVote(currentVote);
-			objectsToUpdate.add(currentVote);
+			objectsToUpdate.add(persistenceManager.detachCopy(currentVote));
 
 		}
 		
@@ -1179,9 +1221,10 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 			try {
 				logger.info("deleting existing bill events for: " + currentBill.getSenateBillNo());
 
-				PMF.deleteBillEvents(persistenceManager, currentBill);
+				for (BillEvent bEvent : currentBill.getBillEvents())
+					searchEngine.deleteSenateObjectById("action", bEvent.getBillEventId()); //currentBill.getSenateBillNo() + "-*");
 				
-				searchEngine.deleteSenateObjectById("action", currentBill.getSenateBillNo() + "-*");
+				PMF.deleteBillEvents(persistenceManager, currentBill);
 				
 			} catch (Exception e) {
 				
@@ -1215,14 +1258,13 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 	{
 		if (currentBill.getSortIndex() == -1 || currentBill.getSortIndex() == 0)
 		{
-			String senateId = currentBill.getSenateBillNo();
+			String senateId = currentBill.getSenateBillNo().substring(1); //remove the letter!
 			
 			//remove leg type code
-			senateId = senateId.substring(1);
-			
+			senateId = senateId.replaceAll("[\\-. ;,A-Z,a-z]|%20","").trim();
+
 			//remove amendment
-			int amendIdx = senateId.length()-1;
-			
+			int amendIdx = senateId.length()-1;			
 			if (!Character.isDigit(senateId.charAt(amendIdx)))
 			{
 				senateId = senateId.substring(0,amendIdx);
@@ -1231,8 +1273,7 @@ WARN -> [openleg.BasicParser] line:40 line=2009S52205 5Same as A 9052, S 6068, S
 			
 			currentBill.setSortIndex(Integer.parseInt(senateId));
 			
-			
-			System.out.println("bill:" + currentBill.getSenateBillNo() + " set sort index=" + currentBill.getSortIndex());
+			logger.info("bill:" + currentBill.getSenateBillNo() + " set sort index=" + currentBill.getSortIndex());
 		}
 	}
 }
