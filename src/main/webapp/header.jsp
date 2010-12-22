@@ -131,6 +131,10 @@
 							</small>
 						</form>
 					</div>
+					<div style="margin-left:10px;border-left:1px solid #aaa;height:50px;padding-left:10px;float:left;">
+						Use <a href="http://billbuzz.nysenate.gov">BillBuzz</a> to read what's<br/>
+						 being said about legislation
+					</div>
 			   </div>
 			   <br style="clear:left;"/>
    
