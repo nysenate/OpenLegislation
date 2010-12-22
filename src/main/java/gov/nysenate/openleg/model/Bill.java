@@ -361,7 +361,7 @@ public class Bill extends SenateObject implements LuceneObject  {
 	}
 
 	/**
-	 * @param law the law to set
+	 * @param law the laiw to set
 	 */
 	public void setLaw(String law) {
 		this.law = law;
@@ -463,7 +463,7 @@ public class Bill extends SenateObject implements LuceneObject  {
 	}
 
 	@Override public String luceneOsearch() {
-		return senateBillNo + " "
+		return senateBillNo.split("-")[0] + " "
 		    + year + " "
 		    + senateBillNo + "-" + year
 			+ (sameAs != null ? " " + sameAs:"")
