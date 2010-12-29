@@ -34,7 +34,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 	private SearchEngine2 searchEngine = null;
 	
 	public static void main(String[] args) throws ParseException, IOException {
-		System.out.println(new SearchEngine2().search("otype:calendar AND when:[1265000400000 TO 1265043540000]","xml",0,5,null,true).getResults().size());
+		System.out.println(SearchEngine2.getInstance().search("otype:calendar AND when:[1265000400000 TO 1265043540000]","xml",0,5,null,true).getResults().size());
 	
 //		System.out.println(new ApiServlet2_0().dateReplace("blah blah04-01-2010T00-00blahblah"));
 		
@@ -50,7 +50,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 	public void init() throws ServletException {
 		super.init();
 		
-		searchEngine = new SearchEngine2();
+		searchEngine = SearchEngine2.getInstance();
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException {

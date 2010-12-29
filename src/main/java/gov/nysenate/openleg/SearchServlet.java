@@ -359,7 +359,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 	public void init() throws ServletException {
 		logger.info("SearchServlet:init()");
 		
-		searchEngine = new SearchEngine2();
+		searchEngine = SearchEngine2.getInstance();
 		
 	}
 

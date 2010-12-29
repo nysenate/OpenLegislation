@@ -85,7 +85,7 @@ public class CalendarParser implements OpenLegConstants {
 	public void doParsing (String filePath) throws Exception
 	{
 		
-		engine = new SearchEngine2();
+		engine = SearchEngine2.getInstance();
 		
 		XMLSENATEDATA senateData = parseStream(new FileReader(new File(filePath)));
 		

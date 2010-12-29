@@ -69,7 +69,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		super.init();
 	
 		if (searchEngine == null)
-			searchEngine = new SearchEngine2();
+			searchEngine = SearchEngine2.getInstance();
 		
 	}
 
@@ -87,7 +87,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		super.init(config);
 		
 		if (searchEngine == null)
-			searchEngine = new SearchEngine2();
+			searchEngine = SearchEngine2.getInstance();
 		
 	}
 	
@@ -97,8 +97,10 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 		if (req.getParameter("reset")!=null)
 		{
-			searchEngine.closeSearcher();
-			searchEngine = new SearchEngine2();
+			if (searchEngine != null)
+				searchEngine.closeSearcher();
+			
+			searchEngine = SearchEngine2.getInstance();
 		}
 		
 		String encodedUri = req.getRequestURI();

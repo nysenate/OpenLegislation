@@ -124,7 +124,7 @@ public class BasicParser implements OpenLegConstants {
 	public BasicParser ()
 	{
 		persistenceManager = PMF.getPersistenceManager();
-		searchEngine = new SearchEngine2();
+		searchEngine = SearchEngine2.getInstance();
 	}
 	
 	public PersistenceManager getPersistenceManager ()

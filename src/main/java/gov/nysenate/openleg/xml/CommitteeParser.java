@@ -173,7 +173,7 @@ public class CommitteeParser implements OpenLegConstants
 		Object next = null;
 		
 
-		engine = new SearchEngine2();
+		engine = SearchEngine2.getInstance();
 		
 		while (it.hasNext())
 		{

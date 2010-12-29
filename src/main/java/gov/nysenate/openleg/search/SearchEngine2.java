@@ -17,8 +17,10 @@ import gov.nysenate.openleg.util.XmlSerializer;
 
 public class SearchEngine2 extends SearchEngine {
 
+	private static SearchEngine2 _instance = null;
+	
 	public static void main(String[] args) throws Exception {
-		SearchEngine2 engine = new SearchEngine2();
+		SearchEngine2 engine = SearchEngine2.getInstance();
 		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		
@@ -66,12 +68,25 @@ public class SearchEngine2 extends SearchEngine {
 		System.out.println("Exiting Search Engine");
 	}
 
-	public SearchEngine2() {
+	private SearchEngine2() {
 
 		super("/usr/local/openleg/lucene/2");
 		
 		logger = Logger.getLogger(SearchEngine2.class);
 	}
+	
+	public static synchronized SearchEngine2 getInstance ()
+	{
+		
+		if (_instance == null)
+		{
+			_instance = new SearchEngine2();
+		}
+		
+		return _instance;
+		
+	}
+	
 	
 	public SenateResponse get(String format, String otype, String oid, String sortField, int start, int numberOfResults, boolean reverseSort) {
 		
@@ -108,17 +123,27 @@ public class SearchEngine2 extends SearchEngine {
     	LuceneResult result = search(searchText,start,max,sortField,reverseSort);
     	
     	SenateResponse response = new SenateResponse();
-    	response.addMetadataByKey("totalresults", result.total );
     	
-    	for (Document doc : result.results) {
-    		
-    		String lastModified = doc.get("when");
-    		if (lastModified == null || lastModified.length() == 0)
-    			lastModified = new Date().getTime()+"";
-    		
-    		response.addResult(new Result(doc.get("otype"),doc.get(data), doc.get("oid"), Long.parseLong(lastModified)));
+    	if (result == null)
+    	{
+    		response.addMetadataByKey("totalresults", 0 );
     	}
+    	else
+    	{
+    		
     	
+	    	response.addMetadataByKey("totalresults", result.total );
+	    	
+	    	for (Document doc : result.results) {
+	    		
+	    		String lastModified = doc.get("modified");
+	    		if (lastModified == null || lastModified.length() == 0)
+	    			lastModified = new Date().getTime()+"";
+	    		
+	    		response.addResult(new Result(doc.get("otype"),doc.get(data), doc.get("oid"), Long.parseLong(lastModified)));
+	    	}
+    	}
+	    	
     	return response;
 	}
 }
