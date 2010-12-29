@@ -1,0 +1,21 @@
+{"district":"State Senate District 53","districtUrl":
+  "http://www.nysenate.gov/district/53","senator":{"name":"George Winner",
+    "contact":"winner@senate.state.ny.us","url":
+    "http://www.nysenate.gov/senator/george-h-winner-jr","imageUrl":
+    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/BudgetNewsletter07-PhotoA.jpg",
+    "social":{"contact":"winner@senate.state.ny.us","faceBook":
+      "http://www.facebook.com/pages/New-York-State-Senator-George-Winner/77930419708",
+      "twitter":"","youtube":"","flickr":"","rss":
+      "http://www.nysenate.gov/senator/george-h-winner-jr/content/feed"},
+    "offices":[{"street":"188 State Steet ","city":"Albany","state":"NY",
+        "zip":"","lat":-73.759091,"lon":42.652855,"officeName":
+        "Albany Office","phone":"(518) 455-2091","fax":"(518) 426-6976","id":
+        138,"contact":"winner@senate.state.ny.us"},{"street":
+        "228 Lake Street ","city":"Elmira","state":"NY","zip":"","lat":
+        -76.802096,"lon":42.090638,"officeName":"District Office","phone":
+        "(607) 732-2765","fax":"(607) 732-2832","id":139,"contact":
+        "winner@senate.state.ny.us"},{"street":"105 East Steuben Street",
+        "city":"Bath","state":"NY","zip":"","lat":-77.3151,"lon":42.333904,
+        "officeName":"District Office 2","phone":"(607) 776-3201","fax":
+        "(607) 776-5185","id":140,"contact":"winner@senate.state.ny.us"}],
+    "district":"State Senate District 53"}}

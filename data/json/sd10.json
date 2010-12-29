@@ -1,0 +1,21 @@
+{"district":"State Senate District 10","districtUrl":
+  "http://www.nysenate.gov/district/10","senator":{"name":
+    "Shirley L. Huntley","contact":"shuntley@nysenate.gov","url":
+    "http://www.nysenate.gov/senator/shirley-l-huntley","imageUrl":
+    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/(03-03-09) Huntley-HS-015_1.jpg",
+    "social":{"contact":"shuntley@nysenate.gov","faceBook":
+      "http://www.facebook.com/people/Shirley-L-Huntley/1210706953",
+      "twitter":"","youtube":"","flickr":"","rss":
+      "http://www.nysenate.gov/senator/shirley-l-huntley/content/feed"},
+    "offices":[{"street":"188 State Street ","city":"Albany","state":"NY",
+        "zip":"","lat":-73.759091,"lon":42.652855,"officeName":
+        "Albany Office","phone":"(518) 455-3531 ","fax":"(518) 426-6859 ",
+        "id":49,"contact":"shuntley@nysenate.gov"},{"street":
+        "161-10 Jamaica Avenue","city":"Jamaica","state":"NY","zip":"","lat":
+        -73.797826,"lon":40.70364,"officeName":"District Office","phone":
+        "(718) 523-3069 ","fax":"(718) 523-3670 ","id":50,"contact":
+        "shuntley@nysenate.gov"},{"street":"133-24 233rd Street","city":
+        "Rosedale","state":"NY","zip":"","lat":-73.73695,"lon":40.674929,
+        "officeName":"Satellite Office","phone":"(718) 949-1601","fax":
+        "(718) 949-1619","id":51,"contact":"shuntley@nysenate.gov"}],
+    "district":"State Senate District 10"}}

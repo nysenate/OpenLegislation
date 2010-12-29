@@ -1,0 +1,20 @@
+{"district":"State Senate District 25","districtUrl":
+  "http://www.nysenate.gov/district/25","senator":{"name":
+    "Daniel L. Squadron","contact":"squadron@senate.state.ny.us","url":
+    "http://www.nysenate.gov/senator/daniel-l-squadron","imageUrl":
+    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/(03-05-09) Squadron HS-040.jpg",
+    "social":{"contact":"squadron@senate.state.ny.us","faceBook":"",
+      "twitter":"","youtube":"","flickr":"","rss":
+      "http://www.nysenate.gov/senator/daniel-l-squadron/content/feed"},
+    "offices":[{"street":"188 State Street  ","city":"Albany","state":"NY",
+        "zip":"","lat":-73.759091,"lon":42.652855,"officeName":
+        "Albany Office","phone":"518-455-2625","fax":"518-426-6956","id":
+        121,"contact":"squadron@senate.state.ny.us"},{"street":
+        "401 Broadway  ","city":"New York","state":"NY","zip":"","lat":
+        -74.002553,"lon":40.718706,"officeName":"District Office","phone":
+        "212-298-5565","fax":"212-431-7836","id":122,"contact":
+        "squadron@senate.state.ny.us"},{"street":"209 Joralemon Street  ",
+        "city":"Brooklyn","state":"NY","zip":"","lat":-73.990215,"lon":
+        40.692681,"officeName":"District Office 2","phone":"718-875-1517",
+        "fax":"","id":123,"contact":"squadron@senate.state.ny.us"}],
+    "district":"State Senate District 25"}}

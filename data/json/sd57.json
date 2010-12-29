@@ -1,0 +1,21 @@
+{"district":"State Senate District 57","districtUrl":
+  "http://www.nysenate.gov/district/57","senator":{"name":
+    "Catharine Young","contact":"cyoung@senate.state.ny.us","url":
+    "http://www.nysenate.gov/senator/catharine-young","imageUrl":
+    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/young headshot-ret.jpg",
+    "social":{"contact":"cyoung@senate.state.ny.us","faceBook":"","twitter":
+      "","youtube":"","flickr":"","rss":
+      "http://www.nysenate.gov/senator/catharine-young/content/feed"},
+    "offices":[{"street":"188 State Street ","city":"Albany","state":"NY",
+        "zip":"","lat":-73.759091,"lon":42.652855,"officeName":
+        "Albany Office","phone":"(518) 455-3563","fax":"(518) 426-6905 ",
+        "id":141,"contact":"cyoung@senate.state.ny.us"},{"street":
+        "Westgate Plaza 700 W. State Street","city":"Olean","state":"NY",
+        "zip":"","lat":-78.438157,"lon":42.077777,"officeName":
+        "District Office","phone":"(716) 372-4901","fax":"(716) 372-5740 ",
+        "id":142,"contact":"cyoung@senate.state.ny.us"},{"street":
+        "2-6 East 2nd Street ","city":"Jamestown","state":"NY","zip":"",
+        "lat":-79.241688,"lon":42.094917,"officeName":"Satellite Office",
+        "phone":"(716) 664-4603","fax":"(716) 664-2430","id":143,"contact":
+        "cyoung@senate.state.ny.us"}],"district":
+    "State Senate District 57"}}

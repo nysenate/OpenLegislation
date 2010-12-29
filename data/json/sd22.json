@@ -1,0 +1,21 @@
+{"district":"State Senate District 22","districtUrl":
+  "http://www.nysenate.gov/district/22","senator":{"name":
+    "Martin J. Golden","contact":"golden@senate.state.ny.us","url":
+    "http://www.nysenate.gov/senator/martin-j-golden","imageUrl":
+    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/SD22_Golden.jpg",
+    "social":{"contact":"golden@senate.state.ny.us","faceBook":
+      "http://www.facebook.com/pages/Martin-J-Golden/29214902523","twitter":
+      "http://twitter.com/senmartygolden","youtube":"","flickr":"","rss":
+      "http://www.nysenate.gov/senator/martin-j-golden/content/feed"},
+    "offices":[{"street":"188 State Street ","city":"Albany","state":"NY",
+        "zip":"","lat":-73.759091,"lon":42.652855,"officeName":
+        "Albany Office","phone":"(518) 455-2730","fax":"","id":39,"contact":
+        "golden@senate.state.ny.us"},{"street":"7408 5th Avenue","city":
+        "Brooklyn","state":"NY","zip":"","lat":-74.022734,"lon":40.630138,
+        "officeName":"District Office","phone":"(718) 238-6044","fax":
+        "(718) 238-6170","id":40,"contact":"golden@senate.state.ny.us"},{
+        "street":"3604 Quentin Road","city":"Brooklyn","state":"NY","zip":
+        "","lat":-73.936422,"lon":40.614592,"officeName":
+        "Satellite Office","phone":"","fax":"","id":41,"contact":
+        "golden@senate.state.ny.us"}],"district":
+    "State Senate District 22"}}
