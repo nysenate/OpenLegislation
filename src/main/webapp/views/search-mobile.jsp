@@ -51,7 +51,7 @@ String mode = (String)request.getAttribute("type");
 	String prevUrl = null;
 if (pageIdx-1 > 0)
 {
-			prevUrl = "/legislation/search/?format=mobile&term=" + java.net.URLEncoder.encode(term,"UTF-8") 
+			prevUrl = "/legislation/search/?term=" + java.net.URLEncoder.encode(term,"UTF-8") 
 		//	+ "&type=" + type 
 			+ "&sort=" + sortField
 			+ "&sortOrder=" + sortOrder
@@ -63,7 +63,7 @@ String nextUrl = null;
 
 if (total > endIdx)
 {
-	nextUrl = "/legislation/search/?format=mobile&term=" + java.net.URLEncoder.encode(term,"UTF-8")
+	nextUrl = "/legislation/search/?term=" + java.net.URLEncoder.encode(term,"UTF-8")
 //	 + "&type=" + type 
 	 + "&sort=" + sortField
 	+ "&sortOrder=" + sortOrder		
@@ -108,18 +108,18 @@ Page <%=pageIdx%> (Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>) -
 
 
 Order by: 
-<%if (sortField.equals("when") && sortOrder){%>Recent Updates<%}
-else{ %><a href="/legislation/search/?format=mobile&term=<%=term%>&sort=when&sortOrder=true">Recent Updates</a><%}%>,
+<%if (sortField.equals("modified") && sortOrder){%>Recent Updates<%}
+else{ %><a href="/legislation/search/?term=<%=term%>&sort=modified&sortOrder=true">Recent Updates</a><%}%>,
 
-<%if (sortField.equals("when") && (!sortOrder)){%>Oldest Updates<%}
-else{ %><a href="/legislation/search/?format=mobile&term=<%=term%>&sort=when&sortOrder=false">Oldest Updates</a><%}%>,
+<%if (sortField.equals("modified") && (!sortOrder)){%>Oldest Updates<%}
+else{ %><a href="/legislation/search/?term=<%=term%>&sort=modified&sortOrder=false">Oldest Updates</a><%}%>,
 
 <%if (sortField.equals("committee")){%>Committee<%}
-else{ %><a href="/legislation/search/?format=mobile&term=<%=term%>&sort=committee&sortOrder=false">Committee</a><%}%>,
+else{ %><a href="/legislation/search/?term=<%=term%>&sort=committee&sortOrder=false">Committee</a><%}%>,
 
 
 <%if (sortField.equals("")){%>Best Match<%}
-else{ %><a href="/legislation/search/?format=mobile&term=<%=term%>">Best Match</a><%}%>
+else{ %><a href="/legislation/search/?term=<%=term%>">Best Match</a><%}%>
 
 
 
@@ -180,9 +180,17 @@ String resultTitle = null;
                  
                  if (resultTitle == null)
                 	 resultTitle = "(no title)";
+                 else {
+                	 if(contentType.equals("bill")) {
+                		 senateType += " " + sresult.getFields().get("billno");
+                		 
+                     }
+                 }
                  
+                
 
-String resultPath = appPath + "/api/1.0/mobile/" + contentType + "/" + contentId;
+
+String resultPath = appPath + "/api/1.0/html/" + contentType + "/" + contentId;
 
  %>
  <div class="billSummary" onmouseover="this.style.backgroundColor='#FFFFCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='<%=resultPath%>'">
@@ -195,32 +203,32 @@ String resultPath = appPath + "/api/1.0/mobile/" + contentType + "/" + contentId
  <%} %>
  
  <%if (sresult.getFields().get("sameAs")!=null && sresult.getFields().get("sameAs").length()>0){ %>
-Same As: <a href="<%=appPath%>/search/?format=mobile&term=oid:%22<%=sresult.getFields().get("sameAs")%>%22" class="sublink"><%=sresult.getFields().get("sameAs")%></a>
+Same As: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("sameAs")%>%22" class="sublink"><%=sresult.getFields().get("sameAs")%></a>
  <%} %>
  
-  <%if (sresult.getFields().get("billno")!=null && sresult.getFields().get("billno").length()>0){ %>
-Bill: <a href="<%=appPath%>/search/?format=mobile&term=oid:%22<%=sresult.getFields().get("billno")%>%22" class="sublink"><%=sresult.getFields().get("billno")%></a>
+  <%if ((!contentType.equals("bill")) && sresult.getFields().get("billno")!=null && sresult.getFields().get("billno").length()>0){ %>
+Bill: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("billno")%>%22" class="sublink"><%=sresult.getFields().get("billno")%></a>
  <%} %>
  
  <%if (sresult.getFields().get("sponsor")!=null && sresult.getFields().get("sponsor").length()>0){ %>
-Sponsor: <a href="<%=appPath%>/search/?format=mobile&term=sponsor:%22<%=sresult.getFields().get("sponsor")%>%22" class="sublink"><%=sresult.getFields().get("sponsor")%></a>
+Sponsor: <a href="<%=appPath%>/search/?term=sponsor:%22<%=sresult.getFields().get("sponsor")%>%22" class="sublink"><%=sresult.getFields().get("sponsor")%></a>
  <%} %>
  
   <%if (sresult.getFields().get("chair")!=null){ %>
-Chairperson: <a href="<%=appPath%>/search/?format=mobile&term=chair:%22<%=java.net.URLEncoder.encode((String)sresult.getFields().get("chair"),"UTF-8")%>%22"  class="sublink"><%=sresult.getFields().get("chair")%></a>
+Chairperson: <a href="<%=appPath%>/search/?term=chair:%22<%=java.net.URLEncoder.encode((String)sresult.getFields().get("chair"),"UTF-8")%>%22"  class="sublink"><%=sresult.getFields().get("chair")%></a>
  <%} %>
  
   <%if (sresult.getFields().get("committee")!=null){ %>
-Committee: <a href="<%=appPath%>/search/?format=mobile&term=committee:%22<%=sresult.getFields().get("committee")%>%22"  class="sublink"><%=sresult.getFields().get("committee")%></a>
+Committee: <a href="<%=appPath%>/search/?term=committee:%22<%=sresult.getFields().get("committee")%>%22"  class="sublink"><%=sresult.getFields().get("committee")%></a>
  <%} %>
  
  
   <%if (sresult.getFields().get("location")!=null){ %>
-Location: <a href="<%=appPath%>/search/?format=mobile&term=location:<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("location") + "\"")%>"  class="sublink"><%=sresult.getFields().get("location")%></a>
+Location: <a href="<%=appPath%>/search/?term=location:<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("location") + "\"")%>"  class="sublink"><%=sresult.getFields().get("location")%></a>
  <%} %>
  
    <%if (sresult.getFields().get("date")!=null){ %>
-Date: <a href="<%=appPath%>/search/?format=mobile&term=<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("date") + "\"")%>"  class="sublink"><%=sresult.getFields().get("date")%></a>
+Date: <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("date") + "\"")%>"  class="sublink"><%=sresult.getFields().get("date")%></a>
  <%} %>
  
  

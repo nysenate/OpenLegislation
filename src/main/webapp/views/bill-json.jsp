@@ -87,7 +87,7 @@ String baseSenateId = bill.getSenateBillNo();
 	
 	actionSearch.append(")");
 	
-	SearchEngine2 searchEngine = new SearchEngine2();
+	SearchEngine2 searchEngine = SearchEngine2.getInstance();
 	
 	ArrayList<SearchResult> srs = APIServlet.buildSearchResultList(searchEngine.search(actionSearch.toString(),"json",0,1000,"when",true));
 

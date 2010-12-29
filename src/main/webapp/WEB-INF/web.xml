@@ -8,15 +8,11 @@
     <servlet-class>gov.nysenate.openleg.APIServlet</servlet-class>
   </servlet>
   <servlet>
-    <javaee:description>search is fun</javaee:description>
-    <javaee:display-name>OpenLeg Search Servlet</javaee:display-name>
     <servlet-name>SearchServlet</servlet-name>
     <servlet-class>gov.nysenate.openleg.SearchServlet</servlet-class>
   </servlet>
   <servlet>
-    <javaee:description>
-  	</javaee:description>
-    <javaee:display-name>ApiServlet2_0</javaee:display-name>
+    
     <servlet-name>ApiServlet2_0</servlet-name>
     <servlet-class>
   	gov.nysenate.openleg.ApiServlet2_0</servlet-class>
@@ -130,8 +126,6 @@
     <location>/500.jsp</location>
   </error-page>
   <servlet>
-    <javaee:description>Presents the HTML and JSON views of Senators and Districts</javaee:description>
-    <javaee:display-name>SenatorsServlet</javaee:display-name>
     <servlet-name>SenatorsServlet</servlet-name>
     <servlet-class>gov.nysenate.openleg.SenatorsServlet</servlet-class>
   </servlet>

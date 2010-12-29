@@ -363,4 +363,9 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 		
 	}
 
+	
+	private void loadDistrictJSON ()
+	{
+		
+	}
 }
