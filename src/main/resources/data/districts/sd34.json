@@ -8,10 +8,10 @@
       "http://www.nysenate.gov/senator/jeffrey-d-klein/content/feed"},
     "offices":[{"street":"172 State Street ","city":"Albany","state":"NY",
         "zip":"","lat":-73.757823,"lon":42.652133,"officeName":
-        "Albany Office","phone":"518-455-3595","fax":"","id":56,"contact":
+        "Albany Office","phone":"518-455-3595","fax":"","id":47,"contact":
         "jdklein@senate.state.ny.us"},{"street":
         "3612 East Tremont Avenue ","city":"Bronx","state":"NY","zip":"",
         "lat":-73.824145,"lon":40.828427,"officeName":"District Office",
-        "phone":"(718) 822-2049","fax":"(718) 822-2321","id":57,"contact":
+        "phone":"(718) 822-2049","fax":"(718) 822-2321","id":48,"contact":
         "jdklein@senate.state.ny.us"}],"district":
     "State Senate District 34"}}

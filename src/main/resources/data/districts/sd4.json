@@ -8,9 +8,9 @@
       "http://www.nysenate.gov/senator/owen-h-johnson/content/feed"},
     "offices":[{"street":"188 State Street ","city":"Albany","state":"NY",
         "zip":"","lat":-73.759091,"lon":42.652855,"officeName":
-        "Albany Office","phone":"(518) 455-3411","fax":"","id":54,"contact":
+        "Albany Office","phone":"(518) 455-3411","fax":"","id":45,"contact":
         "ojohnson@senate.state.ny.us"},{"street":"23-24 Argyle Square",
         "city":"Babylon","state":"NY","zip":"","lat":-73.331454,"lon":
         40.694792,"officeName":"District Office","phone":"(631) 669-9200",
-        "fax":"","id":55,"contact":"ojohnson@senate.state.ny.us"}],
+        "fax":"","id":46,"contact":"ojohnson@senate.state.ny.us"}],
     "district":"State Senate District 4"}}

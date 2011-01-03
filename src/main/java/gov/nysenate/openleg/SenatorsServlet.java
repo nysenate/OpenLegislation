@@ -1,9 +1,11 @@
 package gov.nysenate.openleg;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -42,11 +45,49 @@ public class SenatorsServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		request.setAttribute("districts", districts);
-		getServletContext().getRequestDispatcher(VIEW_PATH).forward(request, response);
+		String format = request.getParameter("format");
+		String uri = request.getRequestURI();
+		
+		if (uri.indexOf(".")!=-1)
+			format = uri.substring(uri.indexOf(".")+1);
+		
+		if (format != null)
+		{
+			if (format.equals("json"))
+			{
+				displayJSON(request, response);
+			}
+		}
+		else
+		{
+			request.setAttribute("districts", districts);
+			getServletContext().getRequestDispatcher(VIEW_PATH).forward(request, response);
+		}
 	}
 
+	private void displayJSON (HttpServletRequest request, HttpServletResponse response)
+	{
+		response.setContentType("text/plain");
+		
+		try
+		{
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
+			JSONArray out = new JSONArray();
+			
+			for (JSONObject district : districts)
+			{
+				out.put(district);
+			}
+			
+			writer.write(out.toString());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 	/**
+	 *
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -88,6 +129,10 @@ public class SenatorsServlet extends HttpServlet {
 				JSONObject jSenator = jsono.getJSONObject("senator");
 				
 				String senatorName = jSenator.getString("name");
+				
+				senatorName = senatorName.replace("�","e");
+				jSenator.put("name", senatorName);
+				
 				String senatorKey = jSenator.getString("url");
 				senatorKey = senatorKey.substring(senatorKey.lastIndexOf('/')+1);
 				

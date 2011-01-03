@@ -133,4 +133,8 @@
     <servlet-name>SenatorsServlet</servlet-name>
     <url-pattern>/senators</url-pattern>
   </servlet-mapping>
+   <servlet-mapping>
+    <servlet-name>SenatorsServlet</servlet-name>
+    <url-pattern>/senators.json</url-pattern>
+  </servlet-mapping>
 </web-app>

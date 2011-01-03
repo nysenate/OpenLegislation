@@ -9,9 +9,9 @@
     "offices":[{"street":"172 State Street ","city":"Albany","state":"NY",
         "zip":"","lat":-73.757823,"lon":42.652133,"officeName":
         "Albany Office","phone":"(518)-455-2838","fax":"(518)-426-6885","id":
-        133,"contact":"valesky@senate.state.ny.us"},{"street":
+        115,"contact":"valesky@senate.state.ny.us"},{"street":
         "333 East Washington Street  ","city":"Syracuse","state":"NY","zip":
         "","lat":-76.148372,"lon":43.049535,"officeName":"District Office",
-        "phone":"(315)-478-8745","fax":"(315)-474-3804","id":134,"contact":
+        "phone":"(315)-478-8745","fax":"(315)-474-3804","id":116,"contact":
         "valesky@senate.state.ny.us"}],"district":
     "State Senate District 49"}}
