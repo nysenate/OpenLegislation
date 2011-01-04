@@ -2,14 +2,17 @@ package gov.nysenate.openleg;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,15 +74,17 @@ public class SenatorsServlet extends HttpServlet {
 		
 		try
 		{
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
-			JSONArray out = new JSONArray();
+		    ServletOutputStream out = response.getOutputStream();
 			
+		    out.println("[");
+		    
 			for (JSONObject district : districts)
 			{
-				out.put(district);
+				out.println(district.toString());
 			}
 			
-			writer.write(out.toString());
+			out.println("]");
+		    out.flush();
 		}
 		catch (IOException e)
 		{
