@@ -1,0 +1,23 @@
+{"district":"State Senate District 13","districtUrl":
+  "http://www.nysenate.gov/district/13","senator":{"name":"José Peralta",
+    "contact":"jperalta@senate.state.ny.us","url":
+    "http://www.nysenate.gov/senator/jose-peralta","imageUrl":
+    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Jose Peralta MAIN-Senate headshot.JPG",
+    "social":{"contact":"jperalta@senate.state.ny.us","faceBook":
+      "http://www.facebook.com/SenatorPeralta","twitter":
+      "http://twitter.com/SenatorPeralta","youtube":
+      "http://www.youtube.com/user/SenatorJosePeralta","flickr":"","rss":
+      "http://www.nysenate.gov/senator/jose-peralta/content/feed"},"offices":
+    [{"street":"188 State Street ","city":"Albany","state":"NY","zip":"",
+        "lat":-73.759091,"lon":42.652855,"officeName":"Albany Office",
+        "phone":"(518) 455-2529   ","fax":"(518) 426-6909","id":92,"contact":
+        "jperalta@senate.state.ny.us"},{"street":
+        "32-37 Junction Boulevard ","city":"East Elmhurst","state":"NY",
+        "zip":"","lat":-73.873752,"lon":40.757648,"officeName":
+        "District Office","phone":"(718) 205-3881","fax":"(718) 205-4145",
+        "id":93,"contact":"jperalta@senate.state.ny.us"},{"street":
+        "82-11 37th Avenue  ","city":"Jackson Heights","state":"NY","zip":
+        "","lat":-73.88369,"lon":40.750042,"officeName":
+        "District Office 2","phone":"(718) 396-0369","fax":
+        "(718) 396-0343","id":94,"contact":"jperalta@senate.state.ny.us"}],
+    "district":"State Senate District 13"}}

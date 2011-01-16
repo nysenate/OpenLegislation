@@ -1,0 +1,20 @@
+{"district":"State Senate District 48","districtUrl":
+  "http://www.nysenate.gov/district/48","senator":{"name":
+    "Darrel J. Aubertine","contact":"aubertin@senate.state.ny.us","url":
+    "http://www.nysenate.gov/senator/darrel-j-aubertine","imageUrl":
+    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/2009AubertineHeadshot.jpg",
+    "social":{"contact":"aubertin@senate.state.ny.us","faceBook":"",
+      "twitter":"","youtube":"","flickr":"","rss":
+      "http://www.nysenate.gov/senator/darrel-j-aubertine/content/feed"},
+    "offices":[{"street":"188 State Street ","city":"Albany","state":"NY",
+        "zip":"","lat":-73.759091,"lon":42.652855,"officeName":
+        "Albany Office","phone":"518-455-2761 ","fax":"518-426-6946 ","id":
+        11,"contact":"aubertin@senate.state.ny.us"},{"street":
+        "317 Washington Street, ","city":"Watertown","state":"NY","zip":"",
+        "lat":-75.910345,"lon":43.971604,"officeName":"District Office",
+        "phone":"315-782-3418 ","fax":"315-782-6357 ","id":12,"contact":
+        "aubertin@senate.state.ny.us"},{"street":"7060 Route 104","city":
+        "Oswego","state":"NY","zip":"","lat":-76.553449,"lon":43.440563,
+        "officeName":"Satellite Office","phone":"","fax":"","id":13,
+        "contact":"aubertin@senate.state.ny.us"}],"district":
+    "State Senate District 48"}}

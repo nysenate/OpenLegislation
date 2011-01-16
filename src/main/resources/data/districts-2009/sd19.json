@@ -1,0 +1,17 @@
+{"district":"State Senate District 19","districtUrl":
+  "http://www.nysenate.gov/district/19","senator":{"name":
+    "John L. Sampson","contact":"sampson@senate.state.ny.us","url":
+    "http://www.nysenate.gov/senator/john-l-sampson","imageUrl":
+    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/webphoto1.jpg",
+    "social":{"contact":"sampson@senate.state.ny.us","faceBook":"","twitter":
+      "","youtube":"","flickr":"","rss":
+      "http://www.nysenate.gov/senator/john-l-sampson/content/feed"},
+    "offices":[{"street":"188 State Street  ","city":"Albany","state":"NY",
+        "zip":"","lat":-73.759091,"lon":42.652855,"officeName":
+        "Albany Office","phone":"(518) 455-2788 ","fax":"(518) 426-6806",
+        "id":103,"contact":"sampson@senate.state.ny.us"},{"street":
+        "1222  East 96th Street","city":"Brooklyn","state":"NY","zip":"",
+        "lat":-73.900138,"lon":40.64166,"officeName":"District Office",
+        "phone":"(718) 649-7653 ","fax":"(718) 649-7661","id":104,"contact":
+        "sampson@senate.state.ny.us"}],"district":
+    "State Senate District 19"}}

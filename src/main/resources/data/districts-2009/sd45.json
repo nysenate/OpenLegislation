@@ -1,0 +1,20 @@
+{"district":"State Senate District 45","districtUrl":
+  "http://www.nysenate.gov/district/45","senator":{"name":"Betty Little",
+    "contact":"little@senate.state.ny.us","url":
+    "http://www.nysenate.gov/senator/elizabeth-little","imageUrl":
+    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/24x7@300dpi.jpg",
+    "social":{"contact":"little@senate.state.ny.us","faceBook":"","twitter":
+      "","youtube":"","flickr":"","rss":
+      "http://www.nysenate.gov/senator/elizabeth-little/content/feed"},
+    "offices":[{"street":"188 State Street ","city":"Albany","state":"NY",
+        "zip":"","lat":-73.759091,"lon":42.652855,"officeName":
+        "Albany Office","phone":"(518) 455-2811","fax":"","id":70,"contact":
+        "little@senate.state.ny.us"},{"street":"5 Warren Street ","city":
+        "Glens Falls","state":"NY","zip":"","lat":-73.64264,"lon":
+        43.309494,"officeName":"District Office","phone":"(518) 743-0968",
+        "fax":"","id":71,"contact":"little@senate.state.ny.us"},{"street":
+        "137 Margaret Street  ","city":"Plattsburgh","state":"NY","zip":"",
+        "lat":-73.454085,"lon":44.698907,"officeName":"District Office 2",
+        "phone":"(518) 561-2430","fax":"","id":72,"contact":
+        "little@senate.state.ny.us"}],"district":
+    "State Senate District 45"}}
