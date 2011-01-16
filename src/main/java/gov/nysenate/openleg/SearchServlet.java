@@ -315,20 +315,21 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			String searchFormat = "json";
 			
 			SenateResponse sr = null;
-			if(term != null && (!term.contains("year:") || !term.contains("when:"))) {
+			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("sponsor:")) {
 				if(type != null && type.equals("bill")) {
 					sr = searchEngine.search(term + " AND year:2011",searchFormat,start,pageSize,sortField,sortOrder);
 				}
 				else {
 					sr = searchEngine.search(term + " AND when:[" + DATE_START + " to " + DATE_END + "]",searchFormat,start,pageSize,sortField,sortOrder);
-				
 					if(sr.getResults().isEmpty()) {
 						sr = searchEngine.search(term + " AND year:2011",searchFormat,start,pageSize,sortField,sortOrder);
 					}
 				}
 			}
-			
-			
+			else {
+				sr = searchEngine.search(term,searchFormat,start,pageSize,sortField,sortOrder);
+			}
+			System.out.println(term);
 			
 			srs = new SearchResultSet();
 			srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));

@@ -11,6 +11,7 @@ if (term == null)
 
  <div id="content">
  <h3>Sorry no results were found for that search.</h3>
+ <h3>It's possible that this information isn't available yet for the current session.</h3>
 <hr/>
 There are currently five different distinct paths for searching on Open Legislation:
 <br/><br/>
