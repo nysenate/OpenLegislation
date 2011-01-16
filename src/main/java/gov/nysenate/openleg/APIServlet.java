@@ -43,7 +43,23 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 
 public class APIServlet extends HttpServlet implements OpenLegConstants {
+	private static long DATE_START = 1293858000289L;
+	private static long DATE_END = 1325393999289L;
+	
+	public static void main(String[] args) {
+		
+		java.util.Calendar now = java.util.Calendar.getInstance();
+		
+		now.set(2011, 0, 1, 0, 0, 0);
+		
+		System.out.println(now.getTime().getTime());
+		
+		now.set(2011, 11, 31, 23, 59, 59);
+		
+		System.out.println(now.getTime().getTime());
 
+	}
+	
 	private static final long serialVersionUID = -7567155903739799800L;
 
 	private static Logger logger = Logger.getLogger(APIServlet.class);	
@@ -350,7 +366,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		int end = start + pageSize;
 		
 		logger.info("request: key=" + key + ";type=" + type + ";format=" + format + ";paging=" + start + "/" + end);
-		
+		String originalType = type;
 		try
 		{
 			String searchString = "";
@@ -391,6 +407,10 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				searchString = key;
 			}
 			
+			if(key.startsWith("sponsor")) {
+				originalType = type;
+			}
+			
 			req.setAttribute("type", type);
 			req.setAttribute("term", searchString);
 			req.setAttribute("format", format);
@@ -399,7 +419,18 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			String sortField = "modified";
 			req.setAttribute("sortField", sortField);
 			
-			SenateResponse sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,sortField,true);
+			System.out.println(searchString);
+			
+			SenateResponse sr = null;
+			if(originalType.equals("bills")) {
+				sr = searchEngine.search(dateReplace(searchString) + " AND year:2011",sFormat,start,pageSize,sortField,true);
+			}
+			else if(originalType.endsWith("s")) {
+				sr = searchEngine.search(dateReplace(searchString) + " AND when:[" + DATE_START + " to " + DATE_END + "]",sFormat,start,pageSize,sortField,true);
+			}
+			else {
+				sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,sortField,true);
+			}
 			
 			logger.info("got search results: " + sr.getResults().size());
 			
