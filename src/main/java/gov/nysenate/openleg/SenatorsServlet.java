@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -78,9 +79,16 @@ public class SenatorsServlet extends HttpServlet {
 			
 		    out.println("[");
 		    
-			for (JSONObject district : districts)
+			Iterator<JSONObject> it = districts.iterator();
+			JSONObject district = null;
+			
+			while (it.hasNext())
 			{
+				district = it.next();
 				out.println(district.toString());
+				
+				if (it.hasNext())
+					out.println(",");
 			}
 			
 			out.println("]");
