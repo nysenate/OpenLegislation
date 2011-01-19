@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.calendar;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
@@ -157,6 +158,13 @@ public class Calendar  extends SenateObject implements LuceneObject {
 	 */
 	public void setSupplementals(List<Supplemental> supplementals) {
 		this.supplementals = supplementals;
+	}
+	
+	public void addSupplemental(Supplemental supplemental) {
+		if(supplementals ==  null) {
+			supplementals = new ArrayList<Supplemental>();
+		}
+		supplementals.add(supplemental);
 	}
 
 	/* (non-Javadoc)

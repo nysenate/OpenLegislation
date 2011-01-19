@@ -12,13 +12,11 @@ import gov.nysenate.openleg.model.calendar.Section;
 import gov.nysenate.openleg.model.calendar.Sequence;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.search.SearchEngine2;
-import gov.nysenate.openleg.util.JsonConverter;
 import gov.nysenate.openleg.util.JsonSerializer;
 import gov.nysenate.openleg.util.XmlSerializer;
 import gov.nysenate.openleg.xml.calendar.XMLCalno;
 import gov.nysenate.openleg.xml.calendar.XMLSENATEDATA;
 import gov.nysenate.openleg.xml.calendar.XMLSection;
-import gov.nysenate.openleg.xml.calendar.XMLSections;
 import gov.nysenate.openleg.xml.calendar.XMLSencalendar;
 import gov.nysenate.openleg.xml.calendar.XMLSencalendaractive;
 import gov.nysenate.openleg.xml.calendar.XMLSequence;
@@ -45,7 +43,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
 
-public class CalendarParser implements OpenLegConstants {
+public class NewCalendarParser implements OpenLegConstants {
 
 	private static Logger logger = Logger.getLogger(CalendarParser.class);
 
@@ -53,21 +51,21 @@ public class CalendarParser implements OpenLegConstants {
 	private String removeObjectId = null;
 	
 	private SearchEngine2 engine = null;
+	private PersistenceManager pm = null;
 	
-	private void setRemoveObject (Object removeObject, String removeObjectId)
-	{
+	private void setRemoveObject (Object removeObject, String removeObjectId) {
 		this.removeObject = removeObject;
 		this.removeObjectId = removeObjectId;
 	}
 	
-	public static void main (String[] args) throws Exception
-	{
-		CalendarParser cp = new CalendarParser();
+	public static void main (String[] args) throws Exception {
+		String f = "/Users/jaredwilliams/Desktop/sobi/SOBI.D110118.T193709.TXT-calendar-1.xml";
 
-		File inFile = new File(args[0]);
+		NewCalendarParser cp = new NewCalendarParser();
+
+		File inFile = new File(f/*args[0]*/);
 		
-		if (inFile.isDirectory())
-		{
+		if (inFile.isDirectory()) {
 			File[] files = inFile.listFiles();
 			
 			for (int i = 0; i < files.length; i++)
@@ -75,48 +73,34 @@ public class CalendarParser implements OpenLegConstants {
 				cp.doParsing(files[i].getAbsolutePath());
 			}
 		}
-		else
-		{
-			cp.doParsing(args[0]);
+		else {
+			cp.doParsing(f/*args[0]*/);
 		}
 	}
 	
-	public void doParsing (String filePath) throws Exception
-	{
-		
+	public void doParsing(String filePath) throws Exception {
 		engine = SearchEngine2.getInstance();
+		pm = PMF.getPersistenceManager();
 		
 		XMLSENATEDATA senateData = parseStream(new FileReader(new File(filePath)));
-		
-		Iterator<Object> it = senateData.getSencalendarOrSencalendaractive().iterator();
-		
-		Object nextItem = null;
-		
-		String action = null;
-		
-		Calendar calendar = null;
-		Supplemental supplemental = null;
-
 		ArrayList<LuceneObject> objectsToUpdate = new ArrayList<LuceneObject>();
 		
-		PersistenceManager pm = PMF.getPersistenceManager();
-		         
-		while (it.hasNext())
-		{
-			nextItem = it.next();
+		for(Object obj:senateData.getSencalendarOrSencalendaractive()) {
+			
+	        Calendar calendar = null;
+	        String action = null;
+			Supplemental supplemental = null;
+			Transaction tx = pm.currentTransaction();
+			tx.begin();
 
-			Transaction currentTx = pm.currentTransaction();
-	        currentTx.begin();
-
-			if (nextItem instanceof XMLSencalendar)
-			{
-				XMLSencalendar xmlCalendar = (XMLSencalendar)nextItem;
+			if (obj instanceof XMLSencalendar) {
+				XMLSencalendar xmlCalendar = (XMLSencalendar)obj;
 				
 				action = xmlCalendar.getAction();
 				
-				calendar = getCalendar(pm, Calendar.TYPE_FLOOR,xmlCalendar.getNo(),xmlCalendar.getYear(),xmlCalendar.getSessyr());
+				calendar = getCalendar(Calendar.TYPE_FLOOR,xmlCalendar.getNo(),xmlCalendar.getYear(),xmlCalendar.getSessyr());
 				
-				supplemental = parseSupplemental(pm, calendar,xmlCalendar.getSupplemental());
+				supplemental = parseSupplemental(calendar,xmlCalendar.getSupplemental());
 				
 				supplemental.setCalendar(calendar);
 				
@@ -124,75 +108,41 @@ public class CalendarParser implements OpenLegConstants {
 																
 				objectsToUpdate.add(calendar);
 			}
-			else if (nextItem instanceof XMLSencalendaractive)
-			{
-				XMLSencalendaractive xmlActiveList = (XMLSencalendaractive)nextItem;
+			else if (obj instanceof XMLSencalendaractive) {
+				XMLSencalendaractive xmlActiveList = (XMLSencalendaractive)obj;
 				
 				action = xmlActiveList.getAction();
 				
-				calendar = getCalendar(pm, Calendar.TYPE_ACTIVE,xmlActiveList.getNo(),xmlActiveList.getYear(),xmlActiveList.getSessyr());
+				calendar = getCalendar(Calendar.TYPE_ACTIVE,xmlActiveList.getNo(),xmlActiveList.getYear(),xmlActiveList.getSessyr());
 				
-				supplemental = parseSupplemental(pm, calendar,xmlActiveList.getSupplemental());
+				supplemental = parseSupplemental(calendar,xmlActiveList.getSupplemental());
 				
 				supplemental.setCalendar(calendar);
 				
 				calendar.addSupplemental(supplemental);
 
 				objectsToUpdate.add(calendar);
+				
 			}
-			
-	        
-			if (action.equals("remove") && removeObject != null)
-			{
+				        
+			if (action.equals("remove") && removeObject != null) {
 				logger.info("REMOVING: " + removeObject.getClass() + "=" + removeObjectId);
 				PMF.removePersistedObject(pm, removeObject.getClass(), removeObjectId);
 
-			}		
+			}
 			
-			currentTx.commit();
+			engine.indexSenateObjects(new ArrayList<LuceneObject>(Arrays.asList(calendar)), new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
 			
-		}
-		
-		Transaction currentTx = pm.currentTransaction();
-		try
-		{
-	        currentTx.begin();
-			engine.indexSenateObjects(objectsToUpdate, new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
-			currentTx.commit();
-		}
-		catch (Exception e)
-		{
-			currentTx.rollback();
+			tx.commit();
 		}
 		
 
-        engine.optimize();
 	}
 	
 	
-	@SuppressWarnings("unchecked")
-	public void printAllXMLCalendars () throws Exception
-	{
-		
-		System.out.println("<?xml version= '1.0' encoding='UTF-8'?>");
-
-		PersistenceManager pm = PMF.getPersistenceManager();
-        
-		Query query = pm.newQuery(Calendar.class);
-		Iterator<Calendar> result = ((Collection<Calendar>) query.execute()).iterator();
-        
-		Calendar pCalendar = null;
-		
-		while (result.hasNext())
-		{
-			pCalendar = result.next();
-			printXMLCalendar (pCalendar);
-			
-		}
-	}
 	
-	public static Calendar getCalendar (PersistenceManager pm, String type, String no, String year, String sessYr)
-	{
+	
+	public Calendar getCalendar (String type, String no, String year, String sessYr) {
 		Calendar calendar = null;
 		
 		StringBuffer calendarId = new StringBuffer();
@@ -206,10 +156,9 @@ public class CalendarParser implements OpenLegConstants {
 		calendarId.append(year);
 		
 		logger.info("getting calendar: " + calendarId.toString());
-		calendar = (Calendar)PMF.getPersistedObject(pm, Calendar.class, calendarId.toString(), false);
+		calendar = (Calendar)PMF.getDetachedObject(Calendar.class,"id",calendarId.toString(), null);
 		
-		if (calendar == null)
-		{
+		if (calendar == null) {
 			calendar = new Calendar();
 			calendar.setId(calendarId.toString());
 			calendar.setNo(Integer.parseInt(no));
@@ -217,64 +166,41 @@ public class CalendarParser implements OpenLegConstants {
 			calendar.setYear(Integer.parseInt(year));
 			calendar.setType(type);
 			
-			calendar = pm.makePersistent(calendar);
+			pm.makePersistent(calendar);
 		}
 		
 		return calendar;
 	}
 	
 	
-	
-	
-	
-	public static void printXMLCalendar (Calendar cal) throws JAXBException
-	{
-		 JAXBContext context = JAXBContext.newInstance(Calendar.class);
-		    Marshaller m = context.createMarshaller();
-		    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		    m.marshal(cal, System.out);
-	}
-	
-	
-	
-	/*
-	 * <caldate>2009-11-09</caldate>
-<releasedate>2009-11-10</releasedate>
-<releasetime>T11.33.00Z</releasetime>
-	 */
-	
-	
-	public Supplemental parseSupplemental (PersistenceManager pm, Calendar calendar, XMLSupplemental xmlSupp)
-	{
-	
+	public Supplemental parseSupplemental (Calendar calendar, XMLSupplemental xmlSupp) {
 		String suppId = calendar.getId() + "-supp-" + xmlSupp.getId();
 		
-		Supplemental supplemental = (Supplemental)PMF.getPersistedObject(pm, Supplemental.class, suppId, false);
+		Supplemental supplemental = (Supplemental)PMF.getDetachedObject(Supplemental.class, "id", suppId, null);
 		
-		if (supplemental == null)
-		{
+		if (supplemental == null) {
 			supplemental = new Supplemental();
 			supplemental.setId(suppId);
 			supplemental.setSupplementalId(xmlSupp.getId());
-			supplemental = pm.makePersistent(supplemental);
+			supplemental.setCalendar(calendar);
+
+			pm.makePersistent(supplemental);
 		}
 		
-		supplemental.setCalendar(calendar);
-		
+		//TODO what is the purpose of this?
 		setRemoveObject(supplemental, supplemental.getId());
 		
-		if (xmlSupp.getCaldate()!=null)
-		{
+		if (xmlSupp.getCaldate()!=null)	{
 			try {
 				Date calDate = OpenLegConstants.LRS_DATE_ONLY_FORMAT.parse(xmlSupp.getCaldate().getContent());
 				supplemental.setCalendarDate(calDate);
-			} catch (ParseException e) {
+			}
+			catch (ParseException e) {
 				logger.error("Unable to parse calDate for supplement=" + xmlSupp.getId(),e);
 			}
 		}
 		
-		if (xmlSupp.getReleasedate()!=null && xmlSupp.getReleasetime()!=null)
-		{
+		if (xmlSupp.getReleasedate()!=null && xmlSupp.getReleasetime()!=null) {
 			try {
 				String dateString = xmlSupp.getReleasedate().getContent() + xmlSupp.getReleasetime().getContent();
 				Date releaseDateTime = OpenLegConstants.LRS_DATETIME_FORMAT.parse(dateString);
@@ -285,197 +211,146 @@ public class CalendarParser implements OpenLegConstants {
 			}
 		}
 		
-		if (xmlSupp.getSections()!=null)
-		{
-			Iterator<XMLSection> itSections = xmlSupp.getSections().getSection().iterator();
-			
+		if (xmlSupp.getSections()!=null) {			
 			Section section = null;
 			
+			if (supplemental.getSections() == null)
+				supplemental.setSections(new ArrayList<Section>());
 			List<Section> sections = supplemental.getSections();
-			if (sections == null)
-			{
-				sections = new ArrayList<Section>();
-				supplemental.setSections(sections);
-			}
 			
-			while (itSections.hasNext())
-			{
-				section = parseSection(pm, supplemental, itSections.next());
+			for(XMLSection xmlSection:xmlSupp.getSections().getSection()) {
+				section = parseSection(supplemental, xmlSection);
 				
-				try
-				{
-					if (!sections.contains(section))
+				try	{
+					if(!sections.contains(section))
 						sections.add(section);
 				}
-				catch (Exception e)
-				{
+				catch (Exception e)	{
 					logger.warn("error adding section: " + section.getId() + ": " + e.getLocalizedMessage());
 				}
 			}
+			supplemental.setSections(sections);
 		}
-		
 		
 		XMLSequence xmlSequence = xmlSupp.getSequence();
 		
-		if (xmlSequence != null)
-		{
-			Sequence sequence = parseSequence (pm, supplemental, xmlSequence);
+		if (xmlSequence != null) {
+			Sequence sequence = parseSequence (supplemental, xmlSequence);
 			supplemental.setSequence(sequence);
 			
+			//TODO again what does this do?
 			setRemoveObject(sequence, sequence.getId());
-		
 		}
 		
 		return supplemental;
 	}
 	
-	/*
-	 * <sequence no="">
-<actcaldate>2009-11-08</actcaldate>
-<releasedate>2009-11-10</releasedate>
-<releasetime>T11.34.54Z</releasetime>
-<notes></notes>
-<calnos>
-<calno no="24">
-<bill no="S01729" />
-</calno>
-</calnos>
-</sequence>
-	 */
-	public Sequence parseSequence (PersistenceManager pm, Supplemental supplemental, XMLSequence xmlSequence)
-	{
-		
-		String sequenceId = supplemental.getId() + "-seq-" + xmlSequence.getNo();
-		
-		Sequence sequence = (Sequence)PMF.getPersistedObject(pm, Sequence.class, sequenceId, false);
-		
-		if (sequence == null)
-		{
-			sequence = new Sequence();
-
-			sequence.setId(sequenceId);
-
-			sequence.setNo(xmlSequence.getNo());
-		
-			sequence = pm.makePersistent(sequence);
-
-		}
-		
-
-		if (xmlSequence.getActcaldate()!=null)
-		{
-		
-			try {
-				Date actCalDate = LRS_DATE_ONLY_FORMAT.parse(xmlSequence.getActcaldate().getContent());
-				sequence.setActCalDate(actCalDate);
-			} catch (ParseException e) {
-				logger.error("unable to parse sequence actCalDate",e);
-			}
-		
-		}
-		
-		if (xmlSequence.getReleasedate()!=null && xmlSequence.getReleasetime()!=null)
-		{
-			try {
-				Date relDateTime = LRS_DATETIME_FORMAT.parse(xmlSequence.getReleasedate().getContent() + xmlSequence.getReleasetime().getContent());
-				sequence.setReleaseDateTime(relDateTime);
-			} catch (ParseException e) {
-				logger.error("unable to parse sequence release date/time format",e);
-			}
-		}
-		
-		if (xmlSequence.getNotes()!=null)
-		{
-			sequence.setNotes(xmlSequence.getNotes());
-		}
-		
-		if (xmlSequence.getCalnos()!=null)
-		{
-			Iterator<XMLCalno> itCalnos = xmlSequence.getCalnos().getCalno().iterator();
-			CalendarEntry cEntry = null;
-			
-			List<CalendarEntry> calendarEntries = sequence.getCalendarEntries();
-			
-			if (calendarEntries == null)
-			{
-				calendarEntries = new ArrayList<CalendarEntry>();
-				sequence.setCalendarEntries(calendarEntries);
-			}
-			
-			while (itCalnos.hasNext())
-			{
-				cEntry = parseCalno (pm, sequence.getId(),itCalnos.next(), supplemental.getCalendar().getSessionYear());
-				cEntry.setSequence(sequence);
-				
-				if (!calendarEntries.contains(cEntry))
-					calendarEntries.add(cEntry);
-				
-			}
-		}
-		
-		return sequence;
-	}
-	
-	public Section parseSection (PersistenceManager pm, Supplemental supplemental, XMLSection xmlSection)
-	{
+	public Section parseSection (Supplemental supplemental, XMLSection xmlSection) {
 		String sectionId = supplemental.getId() + "-sect-" + xmlSection.getName();
 		
-		Section section = (Section)PMF.getPersistedObject(pm, Section.class, sectionId, false);
-		
-		
-		if (section == null)
-		{
-			
+		Section section = (Section)PMF.getDetachedObject(Section.class, "id", sectionId, null);
+	
+		if (section == null) {
 			section = new Section();
-			
 			section.setId(sectionId);
 			section.setCd(xmlSection.getCd());
 			section.setName(xmlSection.getName());
 			section.setType(xmlSection.getType());
-			section = pm.makePersistent(section);
+			section.setSupplemental(supplemental);
+			
+			pm.makePersistent(section);
 		}
 		
-		Iterator<XMLCalno> itCalnos = xmlSection.getCalnos().getCalno().iterator();
 		CalendarEntry cEntry = null;
-		
+				
+		if (section.getCalendarEntries() == null)
+			section.setCalendarEntries(new ArrayList<CalendarEntry>());
 		List<CalendarEntry> calendarEntries = section.getCalendarEntries();
 		
-		if (calendarEntries == null)
-		{
-			calendarEntries = new ArrayList<CalendarEntry>();
-			section.setCalendarEntries(calendarEntries);
-		}
-		
-		while (itCalnos.hasNext())
-		{
-			try
-			{
-				cEntry = parseCalno (pm, section.getId(), itCalnos.next(), supplemental.getCalendar().getSessionYear());
+		for(XMLCalno xmlCalno:xmlSection.getCalnos().getCalno()) {
+			try	{
+				cEntry = parseCalno(section.getId(), xmlCalno, supplemental.getCalendar().getSessionYear());
 				cEntry.setSection(section);
 				
 				if (!calendarEntries.contains(cEntry))
 					calendarEntries.add(cEntry);
 			}
-			catch (Exception e)
-			{
+			catch (Exception e) {
 				if (cEntry != null)
 					logger.warn("Error adding CalenderEntry: " + cEntry.getId() + ": " + e.getLocalizedMessage()); 
-				else
-				{
+				else {
 					logger.warn("Error adding CalenderEntry: " + e.getLocalizedMessage()); 
 				}
 			}
-			
 		}
-		
+		section.setCalendarEntries(calendarEntries);
 		return section;
 	}
 	
-	public CalendarEntry parseCalno (PersistenceManager pm, String parentId, XMLCalno xmlCalNo, int sessionYear)
+	
+	
+	public Sequence parseSequence (Supplemental supplemental, XMLSequence xmlSequence)	{
+		String sequenceId = supplemental.getId() + "-seq-" + xmlSequence.getNo();
+		
+		Sequence sequence = (Sequence)PMF.getDetachedObject(Sequence.class, "id", sequenceId, null);
+		
+		if (sequence == null) {
+			sequence = new Sequence();
+			sequence.setId(sequenceId);
+			sequence.setNo(xmlSequence.getNo());
+			
+			pm.makePersistent(sequence);
+		}
+
+		if (xmlSequence.getActcaldate()!=null) {
+		
+			try {
+				Date actCalDate = LRS_DATE_ONLY_FORMAT.parse(xmlSequence.getActcaldate().getContent());
+				sequence.setActCalDate(actCalDate);
+			}
+			catch (ParseException e) {
+				logger.error("unable to parse sequence actCalDate",e);
+			}
+		}
+		
+		if (xmlSequence.getReleasedate()!=null && xmlSequence.getReleasetime()!=null) {
+			try {
+				Date relDateTime = LRS_DATETIME_FORMAT.parse(xmlSequence.getReleasedate().getContent() + xmlSequence.getReleasetime().getContent());
+				sequence.setReleaseDateTime(relDateTime);
+			}
+			catch (ParseException e) {
+				logger.error("unable to parse sequence release date/time format",e);
+			}
+		}
+		
+		if (xmlSequence.getNotes()!=null)
+			sequence.setNotes(xmlSequence.getNotes());
+		
+		if (xmlSequence.getCalnos()!=null) {
+			CalendarEntry cEntry = null;
+			
+			if (sequence.getCalendarEntries() == null)
+				sequence.setCalendarEntries(new ArrayList<CalendarEntry>());
+			List<CalendarEntry> calendarEntries = sequence.getCalendarEntries();
+			
+			for(XMLCalno xmlCalno:xmlSequence.getCalnos().getCalno()) {
+				cEntry = parseCalno(sequence.getId(),xmlCalno, supplemental.getCalendar().getSessionYear());
+				cEntry.setSequence(sequence);
+				
+				if (!calendarEntries.contains(cEntry))
+					calendarEntries.add(cEntry);
+			}
+			sequence.setCalendarEntries(calendarEntries);
+		}
+		return sequence;
+	}
+	
+	
+	public CalendarEntry parseCalno (String parentId, XMLCalno xmlCalNo, int sessionYear)
 	{
 		String calEntId = parentId + '-' + xmlCalNo.getNo();
 		
-		CalendarEntry calEntry = (CalendarEntry)PMF.getPersistedObject(pm, CalendarEntry.class, calEntId, false);
+		CalendarEntry calEntry = (CalendarEntry)PMF.getDetachedObject(CalendarEntry.class, "id", calEntId, null);
 		
 		if (calEntry == null)
 		{
@@ -492,8 +367,7 @@ public class CalendarParser implements OpenLegConstants {
 				//coudln't parse into an int! just store the string instead
 				calEntry.setNo(xmlCalNo.getNo());
 			}
-			
-			calEntry = pm.makePersistent(calEntry);
+			pm.makePersistent(calEntry);
 		}
 		
 		if (xmlCalNo.getMotiondate()!=null)
@@ -523,7 +397,7 @@ public class CalendarParser implements OpenLegConstants {
 				if (xmlCalNo.getSponsor()!=null)
 					sponsor = xmlCalNo.getSponsor().getContent();
 			
-				calEntry.setBill(getBill(pm, billId, sessionYear, sponsor));
+				calEntry.setBill(getBill(billId, sessionYear, sponsor));
 			}
 		}
 		
@@ -538,16 +412,14 @@ public class CalendarParser implements OpenLegConstants {
 				if (xmlCalNo.getSubsponsor()!=null)
 					sponsor = xmlCalNo.getSubsponsor().getContent();
 				
-				calEntry.setSubBill(getBill(pm, billId, sessionYear, sponsor));
+				calEntry.setSubBill(getBill(billId, sessionYear, sponsor));
 			}
 		}
-		
-	
 		
 		return calEntry;
 	}
 	
-	private static Bill getBill (PersistenceManager pm, String billId, int year, String sponsorName)
+	private Bill getBill (String billId, int year, String sponsorName)
 	{
 		
 		String billType = billId.substring(0,1);
@@ -577,8 +449,6 @@ public class CalendarParser implements OpenLegConstants {
 			senateBillNo += "-" + year;
 		}
 		
-		
-		
 		Bill bill = PMF.getBill(pm, senateBillNo, year);
 		
 		if (bill == null)
@@ -592,19 +462,10 @@ public class CalendarParser implements OpenLegConstants {
 		{
 			Person sponsor = PMF.getPerson(pm, sponsorName);
 			
-	
-			
 			bill.setSponsor(sponsor);
 		}
-		
+				
 		return bill;
-	}
-	
-	public CalendarParser ()
-	{
-		
-		
-		
 	}
 	
 	public XMLSENATEDATA parseStream (Reader reader) throws Exception
@@ -615,5 +476,33 @@ public class CalendarParser implements OpenLegConstants {
 	    XMLSENATEDATA sd = (XMLSENATEDATA)u.unmarshal( reader );
 	   
 	    return sd;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void printAllXMLCalendars () throws Exception
+	{
+		
+		System.out.println("<?xml version= '1.0' encoding='UTF-8'?>");
+
+		PersistenceManager pm = PMF.getPersistenceManager();
+        
+		Query query = pm.newQuery(Calendar.class);
+		Iterator<Calendar> result = ((Collection<Calendar>) query.execute()).iterator();
+        
+		Calendar pCalendar = null;
+		
+		while (result.hasNext())
+		{
+			pCalendar = result.next();
+			printXMLCalendar (pCalendar);
+		}
+	}
+	
+	public static void printXMLCalendar (Calendar cal) throws JAXBException
+	{
+		 JAXBContext context = JAXBContext.newInstance(Calendar.class);
+		    Marshaller m = context.createMarshaller();
+		    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		    m.marshal(cal, System.out);
 	}
 }

@@ -414,6 +414,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			req.setAttribute("type", type);
 			req.setAttribute("term", searchString);
 			req.setAttribute("format", format);
+			req.setAttribute("key", key);
 			
 			String sFormat = "json";
 			String sortField = "modified";

@@ -45,7 +45,7 @@ public class DocumentBuilder {
 						OTYPE,
 						getLuceneFields(o, LUCENE_OTYPE),
 						DEFAULT_STORE,
-						DEFAULT_INDEX));
+						DEFAULT_INDEX));			
 			fields.put(OID,
 					new org.apache.lucene.document.Field(
 							OID,

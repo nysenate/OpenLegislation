@@ -33,10 +33,10 @@ public class OriginalApiConverter {
 //		System.out.println(billXml(b));
 //		System.out.println(billJson(b));
 //		
-		/*calendar from db*/
-		System.out.println("\n\n-----CALENDAR-----\n\n");
-		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00060-2009", "no descending");	
-		System.out.println(calendarXml(c));
+//		/*calendar from db*/
+//		System.out.println("\n\n-----CALENDAR-----\n\n");
+//		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00001-2011-2011", "no descending");	
+//		System.out.println(calendarXml(c));
 //		
 //		/*transcript from db to xstream xml*/
 //		System.out.println("\n\n\n-----TRANSCRIPT-----\n\n");

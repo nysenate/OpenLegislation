@@ -35,7 +35,7 @@ public class JsonConverter {
 //		
 //		/*calendar from db*/
 //		System.out.println("\n\n-----CALENDAR-----\n\n");
-//		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00060-2009", "no descending");	
+//		Supplemental c = (Supplemental)PMF.getDetachedObject(Supplemental.class, "id", "cal-active-00001-2011-2011-supp-", "no descending");	
 //		System.out.println(getJson(c));
 //		
 //		/*transcript from db to xstream xml*/
@@ -168,7 +168,7 @@ public class JsonConverter {
 								
 							}
 							catch (Exception e) {
-								
+								//e.printStackTrace();
 							}
 							
 						}
@@ -230,19 +230,19 @@ public class JsonConverter {
 	private static JsonArray listBill(Collection c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((ArrayList)c).iterator().hasNext()) {
+		if(((List)c).iterator().hasNext()) {
 			
-			Object o = ((ArrayList)c).iterator().next();
+			Object o = ((List)c).iterator().next();
 			
 			if(o instanceof Bill) {
-				ArrayList<Bill> bills = (ArrayList<Bill>) c;
+				List<Bill> bills = (List<Bill>) c;
 				for(Bill bill: bills) {
 					jarray.add(converter(bill, null));
 				}
 			}
 			
 			else if(o instanceof BillEvent) {
-				ArrayList<BillEvent> events = (ArrayList<BillEvent>) c;
+				List<BillEvent> events = (List<BillEvent>) c;
 				for(BillEvent be:events) {
 					jarray.add(converter(be, null));
 				}
@@ -251,7 +251,7 @@ public class JsonConverter {
 			}
 			
 			else if(o instanceof Person) {
-				ArrayList<Person> persons = (ArrayList<Person>) c;
+				List<Person> persons = (List<Person>) c;
 				
 
 				for(Person p:persons) {
@@ -262,7 +262,7 @@ public class JsonConverter {
 			
 			else if(o instanceof Vote) {
 			
-				ArrayList<Vote> votes = (ArrayList<Vote>) c;
+				List<Vote> votes = (List<Vote>) c;
 				for(Vote v:votes) {
 					jarray.add((converter(v, vote_exclude())));
 					
@@ -278,11 +278,11 @@ public class JsonConverter {
 	private static JsonArray listVote(Collection c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((ArrayList)c).iterator().hasNext()) {
-			Object o = ((ArrayList)c).iterator().next();
+		if(((List)c).iterator().hasNext()) {
+			Object o = ((List)c).iterator().next();
 			
 			if(o instanceof String) {
-				ArrayList<String> votes = (ArrayList<String>)c;
+				List<String> votes = (List<String>)c;
 				
 				for(String name:votes) {
 					JsonPrimitive jp = new JsonPrimitive(name);
@@ -299,11 +299,11 @@ public class JsonConverter {
 	private static JsonArray listSupplemental(Collection c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((ArrayList)c).iterator().hasNext()) {
-			Object o = ((ArrayList)c).iterator().next();
-			
+		
+		if(((List)c).iterator().hasNext()) {
+			Object o = ((List)c).iterator().next();
 			if(o instanceof Section) {
-				ArrayList<Section> sections = (ArrayList<Section>)c;
+				List<Section> sections = (List<Section>)c;
 				
 				for(Section s:sections) {
 					jarray.add(converter(s, section_exclude()));
@@ -319,11 +319,11 @@ public class JsonConverter {
 	private static JsonArray listCalendar(Collection c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((ArrayList)c).iterator().hasNext()) {
-			Object o = ((ArrayList)c).iterator().next();
+		if(((List)c).iterator().hasNext()) {
+			Object o = ((List)c).iterator().next();
 			
 			if(o instanceof Supplemental) {
-				ArrayList<Supplemental> supplementals = (ArrayList<Supplemental>)c;
+				List<Supplemental> supplementals = (List<Supplemental>)c;
 				
 				for(Supplemental s:supplementals) {
 					jarray.add(converter(s, supplemental_exclude()));
@@ -339,11 +339,11 @@ public class JsonConverter {
 	private static JsonArray listMeeting(Collection c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((ArrayList)c).iterator().hasNext()) {
-			Object o = ((ArrayList)c).iterator().next();
+		if(((List)c).iterator().hasNext()) {
+			Object o = ((List)c).iterator().next();
 			
 			if(o instanceof Bill) {
-				ArrayList<Bill> bills = (ArrayList<Bill>)c;
+				List<Bill> bills = (List<Bill>)c;
 				
 				for(Bill b:bills) {
 					jarray.add(converter(b,simple_bill_exclude()));
@@ -351,7 +351,7 @@ public class JsonConverter {
 			}
 			else if (o instanceof Addendum)
 			{
-				ArrayList<Addendum> addendums = (ArrayList<Addendum>)c;
+				List<Addendum> addendums = (List<Addendum>)c;
 				
 				for(Addendum a:addendums) {
 					jarray.add(converter(a,addendum_exclude()));
@@ -366,11 +366,11 @@ public class JsonConverter {
 	private static JsonArray listSection(Collection c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((ArrayList)c).iterator().hasNext()) {
-			Object o = ((ArrayList)c).iterator().next();
+		if(((List)c).iterator().hasNext()) {
+			Object o = ((List)c).iterator().next();
 			
 			if(o instanceof CalendarEntry) {
-				List<CalendarEntry> calendarEntries = (ArrayList<CalendarEntry>)c;
+				List<CalendarEntry> calendarEntries = (List<CalendarEntry>)c;
 				
 				for(CalendarEntry entry:calendarEntries) {
 					jarray.add(converter(entry,calendar_entry_exclude()));
@@ -385,11 +385,11 @@ public class JsonConverter {
 	private static JsonArray listSequence(Collection c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((ArrayList)c).iterator().hasNext()) {
-			Object o = ((ArrayList)c).iterator().next();
+		if(((List)c).iterator().hasNext()) {
+			Object o = ((List)c).iterator().next();
 			
 			if(o instanceof CalendarEntry) {
-				List<CalendarEntry> calendarEntries = (ArrayList<CalendarEntry>)c;
+				List<CalendarEntry> calendarEntries = (List<CalendarEntry>)c;
 				
 				for(CalendarEntry entry:calendarEntries) {
 					jarray.add(converter(entry,calendar_entry_exclude()));

@@ -195,7 +195,14 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 	
 	@Override
 	public String luceneOid() {
-		return "";
+		String oid = "";
+		if(calendar.getId().startsWith("cal-floor")) {
+			oid = "floor-" + new SimpleDateFormat("MM-dd-yyyy").format(releaseDateTime);
+		}
+		else {
+			oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequence.getActCalDate());
+		}
+		return oid;
 	}
 
 	@Override
@@ -207,7 +214,10 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 	public HashMap<String,Field> luceneFields() {
 		HashMap<String,Field> fields = new HashMap<String,Field>();
 		
-		Calendar calendar = (Calendar)PMF.getDetachedObject(Calendar.class, "id", id.split("-supp")[0], "no descending");
+		Calendar calendar = this.getCalendar();
+		if(calendar == null) {
+			calendar = (Calendar)PMF.getDetachedObject(Calendar.class, "id", id.split("-supp")[0], "no descending");
+		}
 		
 		fields.put("ctype",new Field("ctype",calendar.getType(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 				
