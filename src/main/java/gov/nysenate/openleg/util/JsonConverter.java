@@ -33,10 +33,17 @@ public class JsonConverter {
 //		Bill b = PMF.getDetachedBill("S5000");		
 //		System.out.println(getJson(b));
 //		
+<<<<<<< HEAD
+		/*calendar from db*/
+		System.out.println("\n\n-----CALENDAR-----\n\n");
+		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00001-2011-2011", "no descending");	
+		System.out.println(getJson(c));
+=======
 //		/*calendar from db*/
 //		System.out.println("\n\n-----CALENDAR-----\n\n");
 //		Supplemental c = (Supplemental)PMF.getDetachedObject(Supplemental.class, "id", "cal-active-00001-2011-2011-supp-", "no descending");	
 //		System.out.println(getJson(c));
+>>>>>>> 3c7357555285ab87599d55534ca252084d8611b9
 //		
 //		/*transcript from db to xstream xml*/
 //		System.out.println("\n\n\n-----TRANSCRIPT-----\n\n");

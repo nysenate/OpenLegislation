@@ -43,22 +43,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 
 public class APIServlet extends HttpServlet implements OpenLegConstants {
-	private static long DATE_START = 1293858000289L;
-	private static long DATE_END = 1325393999289L;
-	
-	public static void main(String[] args) {
-		
-		java.util.Calendar now = java.util.Calendar.getInstance();
-		
-		now.set(2011, 0, 1, 0, 0, 0);
-		
-		System.out.println(now.getTime().getTime());
-		
-		now.set(2011, 11, 31, 23, 59, 59);
-		
-		System.out.println(now.getTime().getTime());
-
-	}
+	private static long DATE_START = 1259643600000L;
+	private static long DATE_END = 1356973199000L;
 	
 	private static final long serialVersionUID = -7567155903739799800L;
 
@@ -420,14 +406,15 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			String sortField = "modified";
 			req.setAttribute("sortField", sortField);
 			
-			System.out.println(searchString);
+			
+			//TODO
 			
 			SenateResponse sr = null;
 			if(originalType.equals("bills")) {
 				sr = searchEngine.search(dateReplace(searchString) + " AND year:2011",sFormat,start,pageSize,sortField,true);
 			}
 			else if(originalType.endsWith("s")) {
-				sr = searchEngine.search(dateReplace(searchString) + " AND when:[" + DATE_START + " to " + DATE_END + "]",sFormat,start,pageSize,sortField,true);
+				sr = searchEngine.search(dateReplace(searchString) + " AND when:[" + DATE_START + " TO " + DATE_END + "]",sFormat,start,pageSize,sortField,true);
 			}
 			else {
 				sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,sortField,true);

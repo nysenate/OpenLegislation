@@ -60,8 +60,14 @@ public class SearchEngine2 extends SearchEngine {
 			}
 			else if (line.startsWith("create"))
 				engine.createIndex();
-			else
-				engine.search(line, "xml", 1, 10, null, false);
+			else {
+				SenateResponse sr = engine.search(line, "xml", 1, 10, null, false);
+				if(sr != null && !sr.getResults().isEmpty()) {
+					for(Result r:sr.getResults()) {
+						System.out.println(r.getOid());
+					}
+				}
+			}
 			
 			System.out.print("openleg search > ");
 		}

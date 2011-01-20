@@ -17,8 +17,8 @@ import org.apache.log4j.Logger;
 
 public class SearchServlet extends HttpServlet implements OpenLegConstants
 {
-	private static long DATE_START = 1293858000289L;
-	private static long DATE_END = 1325393999289L;
+	private static long DATE_START = 1259643600000L;
+	private static long DATE_END = 1356973199000L;
 	/**
 	 * 
 	 */
@@ -314,13 +314,14 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			
 			String searchFormat = "json";
 			
+			//TODO
 			SenateResponse sr = null;
 			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("sponsor:")) {
 				if(type != null && type.equals("bill")) {
 					sr = searchEngine.search(term + " AND year:2011",searchFormat,start,pageSize,sortField,sortOrder);
 				}
 				else {
-					sr = searchEngine.search(term + " AND when:[" + DATE_START + " to " + DATE_END + "]",searchFormat,start,pageSize,sortField,sortOrder);
+					sr = searchEngine.search(term + " AND when:[" + DATE_START + " TO " + DATE_END + "]",searchFormat,start,pageSize,sortField,sortOrder);
 					if(sr.getResults().isEmpty()) {
 						sr = searchEngine.search(term + " AND year:2011",searchFormat,start,pageSize,sortField,sortOrder);
 					}
@@ -329,7 +330,6 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			else {
 				sr = searchEngine.search(term,searchFormat,start,pageSize,sortField,sortOrder);
 			}
-			System.out.println(term);
 			
 			srs = new SearchResultSet();
 			srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));

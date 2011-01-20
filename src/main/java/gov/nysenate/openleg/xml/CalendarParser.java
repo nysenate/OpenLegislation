@@ -12,13 +12,11 @@ import gov.nysenate.openleg.model.calendar.Section;
 import gov.nysenate.openleg.model.calendar.Sequence;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.search.SearchEngine2;
-import gov.nysenate.openleg.util.JsonConverter;
 import gov.nysenate.openleg.util.JsonSerializer;
 import gov.nysenate.openleg.util.XmlSerializer;
 import gov.nysenate.openleg.xml.calendar.XMLCalno;
 import gov.nysenate.openleg.xml.calendar.XMLSENATEDATA;
 import gov.nysenate.openleg.xml.calendar.XMLSection;
-import gov.nysenate.openleg.xml.calendar.XMLSections;
 import gov.nysenate.openleg.xml.calendar.XMLSencalendar;
 import gov.nysenate.openleg.xml.calendar.XMLSencalendaractive;
 import gov.nysenate.openleg.xml.calendar.XMLSequence;
@@ -54,6 +52,8 @@ public class CalendarParser implements OpenLegConstants {
 	
 	private SearchEngine2 engine = null;
 	
+	ArrayList<LuceneObject> objectsToUpdate;
+	
 	private void setRemoveObject (Object removeObject, String removeObjectId)
 	{
 		this.removeObject = removeObject;
@@ -62,9 +62,11 @@ public class CalendarParser implements OpenLegConstants {
 	
 	public static void main (String[] args) throws Exception
 	{
+		String file = args[0];
 		CalendarParser cp = new CalendarParser();
 
-		File inFile = new File(args[0]);
+		File inFile = new File(file);
+
 		
 		if (inFile.isDirectory())
 		{
@@ -77,7 +79,7 @@ public class CalendarParser implements OpenLegConstants {
 		}
 		else
 		{
-			cp.doParsing(args[0]);
+			cp.doParsing(file);
 		}
 	}
 	
@@ -97,7 +99,7 @@ public class CalendarParser implements OpenLegConstants {
 		Calendar calendar = null;
 		Supplemental supplemental = null;
 
-		ArrayList<LuceneObject> objectsToUpdate = new ArrayList<LuceneObject>();
+		objectsToUpdate = new ArrayList<LuceneObject>();
 		
 		PersistenceManager pm = PMF.getPersistenceManager();
 		         
@@ -165,7 +167,6 @@ public class CalendarParser implements OpenLegConstants {
 			currentTx.rollback();
 		}
 		
-
         engine.optimize();
 	}
 	
@@ -257,6 +258,24 @@ public class CalendarParser implements OpenLegConstants {
 			supplemental.setId(suppId);
 			supplemental.setSupplementalId(xmlSupp.getId());
 			supplemental = pm.makePersistent(supplemental);
+			//insert into calendar_supplementals(id_oid, id_eid, integer_idx, idx) values('cal-active-00001-2011-2011','cal-active-00001-2011-2011-supp-',0,0);
+			//TODO
+			int idx = 0;
+			String end = supplemental.getId().substring(supplemental.getId().length()-1);
+			if(end.equals("A")) 
+				idx = 1;
+			else if(end.equals("B"))
+				idx = 2;
+			else if(end.equals("C"))
+				idx = 3;
+			else if(end.equals("D"))
+				idx = 4;
+			else if(end.equals("E"))
+				idx = 5;
+			String query = "insert into calendar_supplementals(id_oid,id_eid,integer_idx,idx) values " +
+					"('" + calendar.getId() + "','" + supplemental.getId() + "'," + idx + "," + 0 + ")";
+			Query q = pm.newQuery("javax.jdo.query.SQL",query);
+			q.execute();
 		}
 		
 		supplemental.setCalendar(calendar);
@@ -349,6 +368,8 @@ public class CalendarParser implements OpenLegConstants {
 		
 		Sequence sequence = (Sequence)PMF.getPersistedObject(pm, Sequence.class, sequenceId, false);
 		
+		
+		
 		if (sequence == null)
 		{
 			sequence = new Sequence();
@@ -407,8 +428,20 @@ public class CalendarParser implements OpenLegConstants {
 				cEntry = parseCalno (pm, sequence.getId(),itCalnos.next(), supplemental.getCalendar().getSessionYear());
 				cEntry.setSequence(sequence);
 				
-				if (!calendarEntries.contains(cEntry))
+				
+				
+				
+				if (!calendarEntries.contains(cEntry)) {
 					calendarEntries.add(cEntry);
+					
+					//TODO
+					//insert into sequence_calendarentries(id_oid, id_eid, integer_idx, idx) values('cal-active-00001-2011-2011-supp--seq-','cal-active-00001-2011-2011-supp--seq--1',1,0);
+					String idx = cEntry.getId().substring(cEntry.getId().length()-1);
+					String query = "insert into sequence_calendarentries(id_oid, id_eid, integer_idx, idx) values" +
+						"('" + sequence.getId() + "','" + cEntry.getId() + "'," + idx + "," + 0 + ")";
+					Query q = pm.newQuery("javax.jdo.query.SQL",query);
+					q.execute();
+				}
 				
 			}
 		}
@@ -422,16 +455,15 @@ public class CalendarParser implements OpenLegConstants {
 		
 		Section section = (Section)PMF.getPersistedObject(pm, Section.class, sectionId, false);
 		
-		
 		if (section == null)
 		{
-			
 			section = new Section();
 			
 			section.setId(sectionId);
 			section.setCd(xmlSection.getCd());
 			section.setName(xmlSection.getName());
 			section.setType(xmlSection.getType());
+			section.setSupplemental(supplemental);
 			section = pm.makePersistent(section);
 		}
 		
@@ -453,8 +485,22 @@ public class CalendarParser implements OpenLegConstants {
 				cEntry = parseCalno (pm, section.getId(), itCalnos.next(), supplemental.getCalendar().getSessionYear());
 				cEntry.setSection(section);
 				
-				if (!calendarEntries.contains(cEntry))
+				if (!calendarEntries.contains(cEntry)){
+					
 					calendarEntries.add(cEntry);
+					
+					
+					
+					if (!calendarEntries.contains(cEntry)) {
+						calendarEntries.add(cEntry);
+						
+						//TODO
+						String query = "insert into section_calendarentries(id_oid, id_eid, integer_idx, idx) values" +
+								"('" + section.getId() + "','" + cEntry.getId() + "'," + 0 + "," + 0 + ")";
+						Query q = pm.newQuery("javax.jdo.query.SQL",query);
+						q.execute();
+					}
+				}
 			}
 			catch (Exception e)
 			{
@@ -547,7 +593,7 @@ public class CalendarParser implements OpenLegConstants {
 		return calEntry;
 	}
 	
-	private static Bill getBill (PersistenceManager pm, String billId, int year, String sponsorName)
+	private Bill getBill (PersistenceManager pm, String billId, int year, String sponsorName)
 	{
 		
 		String billType = billId.substring(0,1);
@@ -578,6 +624,9 @@ public class CalendarParser implements OpenLegConstants {
 		}
 		
 		
+		Person sponsor = null;
+		if (sponsorName != null)
+			sponsor = PMF.getPerson(pm, sponsorName);
 		
 		Bill bill = PMF.getBill(pm, senateBillNo, year);
 		
@@ -585,15 +634,9 @@ public class CalendarParser implements OpenLegConstants {
 		{
 			bill = new Bill();
 			bill.setSenateBillNo(senateBillNo);
+			bill.setSponsor(sponsor);
 		}
-
-		
-		if (sponsorName != null)
-		{
-			Person sponsor = PMF.getPerson(pm, sponsorName);
-			
-	
-			
+		else {
 			bill.setSponsor(sponsor);
 		}
 		

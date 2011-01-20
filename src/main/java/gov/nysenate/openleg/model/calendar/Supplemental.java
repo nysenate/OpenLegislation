@@ -275,7 +275,7 @@ public class Supplemental  extends SenateObject implements LuceneObject {
 			oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequence.getActCalDate());
 			fields.put("when", new Field("when",sequence.getActCalDate().getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		}
-		
+				
 		fields.put("oid",new Field("oid",oid, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 				
 		return fields;
