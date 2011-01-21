@@ -1,13 +1,15 @@
 package gov.nysenate.openleg;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -19,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -72,10 +73,10 @@ public class SenatorsServlet extends HttpServlet {
 	private void displayJSON (HttpServletRequest request, HttpServletResponse response)
 	{
 		response.setContentType("text/plain");
-		
+		response.setCharacterEncoding("UTF-8");
 		try
 		{
-		    ServletOutputStream out = response.getOutputStream();
+		    PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream(),"UTF-8"));
 			
 		    out.println("[");
 		    
@@ -111,7 +112,9 @@ public class SenatorsServlet extends HttpServlet {
 	public void init() throws ServletException {
 		super.init();
 		
-			
+		String rootPath = this.getServletContext().getRealPath("/");
+		String encoding = "latin1";//"UTF-8";
+		
 		try
 		{
 		
@@ -120,21 +123,22 @@ public class SenatorsServlet extends HttpServlet {
 			for (int i = 1; i <= 62; i++)
 			{
 				String jsonPath = DISTRICT_JSON_FOLDER_PATH + "sd" + i + ".json";
-				logger.info("loading: " + jsonPath);
 				
-				InputStream is = getServletContext().getResourceAsStream(jsonPath);
-			//	InputStream is = ClassLoader  
-				//.getSystemResourceAsStream(DISTRICT_JSON_FOLDER_PATH + "sd" + i + ".json");  
+				URL jsonUrl = getServletContext().getResource(jsonPath);
+				//jsonPath = rootPath + '/' + jsonPath;
 				
-				BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+				StringBuilder jsonb = new StringBuilder();
+
+				BufferedReader reader = new BufferedReader(new InputStreamReader(jsonUrl.openStream(),encoding));
+				//BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(jsonPath), encoding));
 				
-				String line = null;
-				StringBuffer jsonb = new StringBuffer();
-				while ((line = reader.readLine())!=null)
-				{	
-					jsonb.append(line);
-					
-				}
+				char[] buf = new char[1024];
+		        int numRead=0;
+		        while((numRead=reader.read(buf)) != -1){
+		            jsonb.append(buf, 0, numRead);
+		            buf = new char[1024];
+		        }
+		        reader.close();
 				
 				
 				JSONObject jsono = new JSONObject(jsonb.toString());
@@ -143,7 +147,6 @@ public class SenatorsServlet extends HttpServlet {
 				
 				String senatorName = jSenator.getString("name");
 				
-				senatorName = senatorName.replace("�","e");
 				jSenator.put("name", senatorName);
 				
 				String senatorKey = jSenator.getString("url");
