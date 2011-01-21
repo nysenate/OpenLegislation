@@ -3,6 +3,8 @@ package gov.nysenate.openleg.search;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.StringTokenizer;
 
@@ -10,8 +12,11 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
 
+import gov.nysenate.openleg.PMF;
 import gov.nysenate.openleg.lucene.LuceneResult;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.util.JsonSerializer;
 import gov.nysenate.openleg.util.XmlSerializer;
 
@@ -28,7 +33,33 @@ public class SearchEngine2 extends SearchEngine {
 		System.out.print("openlegLuceneConsole> ");
 		while (!(line = reader.readLine()).equals("quit"))
 		{
-			if (line.startsWith("index "))
+			if(line.startsWith("bill ")) {
+				String cmd = line.substring(line.indexOf(" ")+1);
+				StringTokenizer st = new StringTokenizer(cmd);
+				Bill bill = PMF.getDetachedBill(st.nextToken(),new Integer(st.nextToken()));
+				
+				if(bill != null) {
+					engine.indexSenateObjects(new ArrayList(Arrays.asList(bill)), new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
+				}
+				else {
+					System.out.println("bill was null");
+				}
+			}
+			if(line.startsWith("meeting ")) {
+				String cmd = line.substring(line.indexOf(" ")+1);
+				StringTokenizer st = new StringTokenizer(cmd);
+				
+				Meeting meeting = (Meeting)PMF.getDetachedObject(Meeting.class, "id", st.nextToken(), null);
+				
+				if(meeting != null) {
+					engine.indexSenateObjects(new ArrayList(Arrays.asList(meeting)), new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
+				}
+				else {
+					System.out.println("no meeting!");
+				}
+				
+			}
+			else if (line.startsWith("index "))
 			{
 				String cmd = line.substring(line.indexOf(" ")+1);
 				StringTokenizer st = new StringTokenizer(cmd);

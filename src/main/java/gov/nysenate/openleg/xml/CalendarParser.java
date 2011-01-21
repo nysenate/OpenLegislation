@@ -154,7 +154,12 @@ public class CalendarParser implements OpenLegConstants {
 			{
 				logger.info("REMOVING: " + removeObject.getClass() + "=" + removeObjectId);
 				PMF.removePersistedObject(pm, removeObject.getClass(), removeObjectId);
-
+				
+				if(removeObject instanceof Supplemental) {
+					engine.deleteSenateObject((LuceneObject)removeObject);
+//					engine.deleteDocuments("calendar",((LuceneObject)removeObject).luceneOid());
+				}
+				
 			}		
 			
 			currentTx.commit();

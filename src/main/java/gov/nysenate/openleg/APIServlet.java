@@ -171,8 +171,8 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				
 				if (type.equalsIgnoreCase("sponsor"))
 				{
-					
-					key = "sponsor:\"" + key + "\"";
+					String filter = req.getParameter("filter");
+					key = "sponsor:\"" + key + "\"" + (filter != null ? " AND " + filter : "");
 					type = "bills";
 				}
 				else if (type.equalsIgnoreCase("committee"))
@@ -436,7 +436,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 
 				return;
 			}
-			else if (sr.getResults().size()==1)
+			else if (sr.getResults().size()==1 && format.equals("html"))
 			{
 			
 				Result result = sr.getResults().get(0);

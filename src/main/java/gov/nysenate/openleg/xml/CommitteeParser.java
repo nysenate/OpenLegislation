@@ -54,8 +54,9 @@ public class CommitteeParser implements OpenLegConstants
 	public static void main (String[] args) throws Exception
 	{
 		
+		String f = args[0];
 		
-		File file = new File (args[0]);
+		File file = new File (f);
 		
 		if (file.isDirectory())
 		{
@@ -63,7 +64,7 @@ public class CommitteeParser implements OpenLegConstants
 			
 			for (int i = 0; i < files.length; i++)
 			{
-				file = new File(args[0] + File.separatorChar + files[i]);
+				file = new File(f + File.separatorChar + files[i]);
 				
 				if (file.isFile())
 					loadFile(file,false);
@@ -225,6 +226,7 @@ public class CommitteeParser implements OpenLegConstants
 	        catch (Exception e)
 	        {
 	        	logger.warn("EXITING: ERROR PROCESSING: " + filePath + "; " + e.getLocalizedMessage());
+	        	e.printStackTrace();
 	        	
 	        	if (trans.isActive())
 	        		trans.rollback();
@@ -236,7 +238,7 @@ public class CommitteeParser implements OpenLegConstants
 	       
 	        pm.close();
 	      
-	        engine.optimize();
+	        //engine.optimize();
 	        
 		}
 		
@@ -247,7 +249,6 @@ public class CommitteeParser implements OpenLegConstants
 	
 	public Bill handleXMLBill (PersistenceManager pm, Meeting meeting, XMLBill xmlBill, int sessionYear)
 	{
-		
 		Bill bill = getBill(pm, xmlBill.getNo(), sessionYear, xmlBill.getSponsor().getContent());
 		
 		if (xmlBill.getMessage()!=null)
@@ -542,7 +543,7 @@ public class CommitteeParser implements OpenLegConstants
 			addendum = new Addendum();
 			addendum.setAddendumId(xmlAddendum.getId());
 			addendum.setId(keyId);
-			
+			addendum.setAgenda(agenda);
 			addendum = pm.makePersistent(addendum);
 			
 			logger.info("creating new addendum: " + addendum.getId());
@@ -811,6 +812,10 @@ public class CommitteeParser implements OpenLegConstants
 			
 			senateBillNo = billType + billNumber;
 
+		}
+		
+		if(sessionYear != 2009) {
+			senateBillNo += "-" + sessionYear;
 		}
 		
 		Bill bill = PMF.getBill(pm, senateBillNo, sessionYear);

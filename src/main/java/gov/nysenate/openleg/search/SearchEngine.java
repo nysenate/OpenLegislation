@@ -32,7 +32,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 
 	protected DateFormat DATE_FORMAT_MEDIUM = java.text.DateFormat.getDateInstance(DateFormat.MEDIUM);
     
-    public void deleteSenateObject (Object obj) throws Exception
+    public void deleteSenateObject (LuceneObject obj) throws Exception
     {
     	if (obj instanceof Agenda) {
     		Agenda agenda = (Agenda)obj;
@@ -42,24 +42,35 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 	    				deleteSenateObject( meeting );
 	    			}
     	}
-    	else if (obj instanceof Bill) {
-            deleteSenateObjectById("bill",((Bill)obj).getSenateBillNo());
+    	else if(obj instanceof Calendar) {
+    		Calendar calendar = (Calendar)obj;
+    		if(calendar.getSupplementals() != null) {
+    			for(Supplemental supplemental:calendar.getSupplementals()) {
+    				deleteSenateObject(supplemental);
+    			}
+    		}
     	}
-    	else if (obj instanceof Supplemental) {
-    		deleteSenateObjectById("calendar",((Supplemental)obj).getCalendar().getId());
+    	else {
+    		deleteSenateObjectById(obj.luceneOtype(), obj.luceneOid());
     	}
-    	else if (obj instanceof Meeting) { 
-    		deleteSenateObjectById("meeting",((Meeting)obj).getId());
-		}
-    	else if (obj instanceof Transcript) {
-    		deleteSenateObjectById("transcript",((Transcript)obj).getId());
-		}
-    	else if (obj instanceof Vote) {
-    		deleteSenateObjectById("vote",((Vote)obj).getId());
-		}
-    	else if (obj instanceof BillEvent) {
-    		deleteSenateObjectById("action",((BillEvent)obj).getBillEventId());
-    	}
+//    	else if (obj instanceof Bill) {
+//    		deleteSenateObjectById("bill",((Bill)obj).luceneOid());
+//    	}
+//    	else if (obj instanceof Supplemental) {
+//    		deleteSenateObjectById("calendar",((Supplemental)obj).luceneOid());
+//    	}
+//    	else if (obj instanceof Meeting) { 
+//    		deleteSenateObjectById("meeting",((Meeting)obj).luceneOid());
+//		}
+//    	else if (obj instanceof Transcript) {
+//    		deleteSenateObjectById("transcript",((Transcript)obj).luceneOid());
+//		}
+//    	else if (obj instanceof Vote) {
+//    		deleteSenateObjectById("vote",((Vote)obj).luceneOid());
+//		}
+//    	else if (obj instanceof BillEvent) {
+//    		deleteSenateObjectById("action",((BillEvent)obj).getBillEventId());
+//    	}
     }
     
     public void deleteSenateObjectById (String type, String id) throws Exception {
@@ -146,6 +157,23 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     	    		}
     	    		catch (Exception e) {
     	    			logger.warn("unable to index senate supp",e);
+    	    		}
+    			}
+    		}
+    		else if(obj instanceof Agenda) {
+    			Agenda agenda = (Agenda)obj;
+    			
+    			if (agenda.getAddendums() != null) {
+    	    		for( Addendum addendum : agenda.getAddendums()) {
+    	    			for( Meeting meeting : addendum.getMeetings() ) {
+    	    				
+    	    				try {
+    	    					addDocument(meeting, ls, indexWriter);
+    	    				}
+    	    				catch (Exception e) {
+    	    					logger.warn("unable to index senate meeting",e);
+    	    				}
+    	    			}
     	    		}
     			}
     		}
