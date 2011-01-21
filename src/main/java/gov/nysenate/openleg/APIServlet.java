@@ -43,8 +43,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 
 public class APIServlet extends HttpServlet implements OpenLegConstants {
-	private static long DATE_START = 1259643600000L;
-	private static long DATE_END = 1356973199000L;
+
+	private static long DATE_START = 1293858000000L;
+	private static long DATE_END = 1357016340000L;
 	
 	private static final long serialVersionUID = -7567155903739799800L;
 
@@ -984,6 +985,10 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 	}
 	*/
+	public static void main(String[] args) throws ParseException {
+		System.out.println(dateReplace("01-01-2011T00-00"));
+		System.out.println(dateReplace("12-31-2012T23-59"));
+	}
 	public static String dateReplace(String term) throws ParseException {
 		Pattern  p = Pattern.compile("(\\d{1,2}[-]?){2}(\\d{2,4})T\\d{2}-\\d{2}");
 		Matcher m = p.matcher(term);

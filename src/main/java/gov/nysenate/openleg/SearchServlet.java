@@ -17,8 +17,8 @@ import org.apache.log4j.Logger;
 
 public class SearchServlet extends HttpServlet implements OpenLegConstants
 {
-	private static long DATE_START = 1259643600000L;
-	private static long DATE_END = 1356973199000L;
+	private static long DATE_START = 1293858000000L;
+	private static long DATE_END = 1357016340000L;
 	/**
 	 * 
 	 */
@@ -330,7 +330,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			else {
 				sr = searchEngine.search(term,searchFormat,start,pageSize,sortField,sortOrder);
 			}
-			
+						
 			srs = new SearchResultSet();
 			srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));
 			

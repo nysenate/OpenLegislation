@@ -134,7 +134,12 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     			Iterator<Supplemental> itSupps = cal.getSupplementals().iterator();
     			while (itSupps.hasNext()) {
     				Supplemental supp = (Supplemental)itSupps.next();
-    				supp.setCalendar(cal);
+    				try {
+        				supp.setCalendar(cal);
+    				}
+    				catch (Exception e) {
+    					
+    				}
     				
     				try {
     	    			addDocument(supp, ls, indexWriter);

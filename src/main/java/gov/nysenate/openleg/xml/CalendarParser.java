@@ -42,6 +42,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 
 public class CalendarParser implements OpenLegConstants {
 
@@ -60,9 +61,14 @@ public class CalendarParser implements OpenLegConstants {
 		this.removeObjectId = removeObjectId;
 	}
 	
-	public static void main (String[] args) throws Exception
-	{
-		String file = args[0];
+	public static void main (String[] args) throws Exception {
+//	{
+//		ObjectMapper mapper = new ObjectMapper();
+//		Calendar c = (Calendar)mapper.readValue(new File("json"), Calendar.class);
+//		
+//		System.out.println(c.getSupplementals().iterator().next().getSequence().getCalendarEntries().iterator().next().getBill().getSponsor().getFullname());
+		
+	String file = args[0];//"/Users/jaredwilliams/Desktop/sobi/SOBI.D110118.T193709.TXT-calendar-1.xml";
 		CalendarParser cp = new CalendarParser();
 
 		File inFile = new File(file);
@@ -122,7 +128,7 @@ public class CalendarParser implements OpenLegConstants {
 				
 				supplemental.setCalendar(calendar);
 				
-				calendar.addSupplemental(supplemental);
+				//calendar.addSupplemental(supplemental);
 																
 				objectsToUpdate.add(calendar);
 			}
@@ -138,7 +144,7 @@ public class CalendarParser implements OpenLegConstants {
 				
 				supplemental.setCalendar(calendar);
 				
-				calendar.addSupplemental(supplemental);
+				//calendar.addSupplemental(supplemental);
 
 				objectsToUpdate.add(calendar);
 			}
@@ -155,6 +161,9 @@ public class CalendarParser implements OpenLegConstants {
 			
 		}
 		
+		engine.indexSenateObjects(objectsToUpdate, new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
+
+		
 		Transaction currentTx = pm.currentTransaction();
 		try
 		{
@@ -167,7 +176,7 @@ public class CalendarParser implements OpenLegConstants {
 			currentTx.rollback();
 		}
 		
-        engine.optimize();
+//        engine.optimize();
 	}
 	
 	
@@ -257,28 +266,30 @@ public class CalendarParser implements OpenLegConstants {
 			supplemental = new Supplemental();
 			supplemental.setId(suppId);
 			supplemental.setSupplementalId(xmlSupp.getId());
+			supplemental.setCalendar(calendar);
 			supplemental = pm.makePersistent(supplemental);
+			
+
 			//insert into calendar_supplementals(id_oid, id_eid, integer_idx, idx) values('cal-active-00001-2011-2011','cal-active-00001-2011-2011-supp-',0,0);
 			//TODO
-			int idx = 0;
-			String end = supplemental.getId().substring(supplemental.getId().length()-1);
-			if(end.equals("A")) 
-				idx = 1;
-			else if(end.equals("B"))
-				idx = 2;
-			else if(end.equals("C"))
-				idx = 3;
-			else if(end.equals("D"))
-				idx = 4;
-			else if(end.equals("E"))
-				idx = 5;
-			String query = "insert into calendar_supplementals(id_oid,id_eid,integer_idx,idx) values " +
-					"('" + calendar.getId() + "','" + supplemental.getId() + "'," + idx + "," + 0 + ")";
-			Query q = pm.newQuery("javax.jdo.query.SQL",query);
-			q.execute();
+//			int idx = 0;
+//			String end = supplemental.getId().substring(supplemental.getId().length()-1);
+//			if(end.equals("A")) 
+//				idx = 1;
+//			else if(end.equals("B"))
+//				idx = 2;
+//			else if(end.equals("C"))
+//				idx = 3;
+//			else if(end.equals("D"))
+//				idx = 4;
+//			else if(end.equals("E"))
+//				idx = 5;
+//			String query = "insert into calendar_supplementals(id_oid,id_eid,integer_idx,idx) values " +
+//					"('" + calendar.getId() + "','" + supplemental.getId() + "'," + idx + "," + 0 + ")";
+//			Query q = pm.newQuery("javax.jdo.query.SQL",query);
+//			q.execute();
 		}
 		
-		supplemental.setCalendar(calendar);
 		
 		setRemoveObject(supplemental, supplemental.getId());
 		
@@ -338,7 +349,7 @@ public class CalendarParser implements OpenLegConstants {
 		
 		if (xmlSequence != null)
 		{
-			Sequence sequence = parseSequence (pm, supplemental, xmlSequence);
+				Sequence sequence = parseSequence (pm, supplemental, xmlSequence);
 			supplemental.setSequence(sequence);
 			
 			setRemoveObject(sequence, sequence.getId());
@@ -436,11 +447,11 @@ public class CalendarParser implements OpenLegConstants {
 					
 					//TODO
 					//insert into sequence_calendarentries(id_oid, id_eid, integer_idx, idx) values('cal-active-00001-2011-2011-supp--seq-','cal-active-00001-2011-2011-supp--seq--1',1,0);
-					String idx = cEntry.getId().substring(cEntry.getId().length()-1);
-					String query = "insert into sequence_calendarentries(id_oid, id_eid, integer_idx, idx) values" +
-						"('" + sequence.getId() + "','" + cEntry.getId() + "'," + idx + "," + 0 + ")";
-					Query q = pm.newQuery("javax.jdo.query.SQL",query);
-					q.execute();
+//					String idx = cEntry.getId().substring(cEntry.getId().length()-1);
+//					String query = "insert into sequence_calendarentries(id_oid, id_eid, integer_idx, idx) values" +
+//						"('" + sequence.getId() + "','" + cEntry.getId() + "'," + idx + "," + 0 + ")";
+//					Query q = pm.newQuery("javax.jdo.query.SQL",query);
+//					q.execute();
 				}
 				
 			}
@@ -495,10 +506,10 @@ public class CalendarParser implements OpenLegConstants {
 						calendarEntries.add(cEntry);
 						
 						//TODO
-						String query = "insert into section_calendarentries(id_oid, id_eid, integer_idx, idx) values" +
-								"('" + section.getId() + "','" + cEntry.getId() + "'," + 0 + "," + 0 + ")";
-						Query q = pm.newQuery("javax.jdo.query.SQL",query);
-						q.execute();
+//						String query = "insert into section_calendarentries(id_oid, id_eid, integer_idx, idx) values" +
+//								"('" + section.getId() + "','" + cEntry.getId() + "'," + 0 + "," + 0 + ")";
+//						Query q = pm.newQuery("javax.jdo.query.SQL",query);
+//						q.execute();
 					}
 				}
 			}
@@ -623,20 +634,19 @@ public class CalendarParser implements OpenLegConstants {
 			senateBillNo += "-" + year;
 		}
 		
-		
-		Person sponsor = null;
-		if (sponsorName != null)
-			sponsor = PMF.getPerson(pm, sponsorName);
-		
 		Bill bill = PMF.getBill(pm, senateBillNo, year);
 		
 		if (bill == null)
 		{
 			bill = new Bill();
 			bill.setSenateBillNo(senateBillNo);
-			bill.setSponsor(sponsor);
 		}
-		else {
+
+		
+		if (sponsorName != null)
+		{
+			Person sponsor = PMF.getPerson(pm, sponsorName);
+			
 			bill.setSponsor(sponsor);
 		}
 		
