@@ -436,7 +436,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 
 				return;
 			}
-			else if (sr.getResults().size()==1 && format.equals("html"))
+			else if (sr.getResults().size()==1 && (format.equals("html") || format.equals("html-print") || format.equals("lrs-print")))
 			{
 			
 				Result result = sr.getResults().get(0);
