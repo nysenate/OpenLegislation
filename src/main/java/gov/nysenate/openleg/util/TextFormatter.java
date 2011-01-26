@@ -189,7 +189,7 @@ public class TextFormatter {
 				
 
 				resp.append(line);
-				
+				resp.append("\n");
 				
 			}
 			else
@@ -205,7 +205,6 @@ public class TextFormatter {
 			
 			
 		
-			
 			
 		}
 		
@@ -302,9 +301,9 @@ public class TextFormatter {
 		return s;
     }
 	
-	public void lrsPrinter(Bill bill, JspWriter out) {
-		StringTokenizer st = new StringTokenizer(bill.getFulltext(), "\n");
-
+	public static String lrsPrinter(String fulltext) {
+		StringTokenizer st = new StringTokenizer(fulltext, "\n");
+		StringBuffer out = new StringBuffer("");
 
 		boolean redact = false;
 		int r_start = -1;
@@ -347,33 +346,38 @@ public class TextFormatter {
 						redact = false;
 					}
 					
-					if(Character.isUpperCase(textChar[i])) {
-						if(!cap) {
-							cap = true;
-							if(i < 6) {
-								start = 0;
-							}
-							else {
-								start = i;
-							}
-						}
-						capCount++;
+					if(Character.toString(textChar[i]).matches("\\s")) {
+						
 					}
-					else if(Character.isLowerCase(textChar[i])) {
-						if(cap) {
-							if(capCount > 2) {
-								end = i - 1;
-								points.add(new TextPoint(start,end,true));
+					else {
+						if(Character.isUpperCase(textChar[i])) {
+							if(!cap) {
+								cap = true;
+								if(i < 6) {
+									start = 0;
+								}
+								else {
+									start = i;
+								}
 							}
-							start = -1;
-							end = -1;
-							capCount = 0;
-							cap = false;
+							capCount++;
+						}
+						else if(Character.isLowerCase(textChar[i])) {
+							if(cap) {
+								if(capCount > 2) {
+									end = i - 1;
+									points.add(new TextPoint(start,end,true));
+								}
+								start = -1;
+								end = -1;
+								capCount = 0;
+								cap = false;
+							}
 						}
 					}
 				}
 				
-				if(cap) {
+				/*if(cap) {
 					text += "</u>";
 
 					if(start != -1) {
@@ -385,7 +389,7 @@ public class TextFormatter {
 					start = -1;
 					end = -1;
 					capCount = 0;
-				}
+				}*/
 				if(redact) {
 					text += "</del>";
 					
@@ -405,41 +409,32 @@ public class TextFormatter {
 						tp.s = 0;
 					}
 					
-					text = text.substring(0, tp.e) + (tp.uOrDel ? "</u>" : "</del>") + text.substring(tp.e);
-					text = text.substring(0,tp.s) + (tp.uOrDel ? "<u>" : "<del>") + text.substring(tp.s);
+					text = text.substring(0, tp.e) + (tp.uOrDel ? ""/*"</u>"*/ : "</del>") + text.substring(tp.e);
+					text = text.substring(0,tp.s) + (tp.uOrDel ? ""/*"<u>"*/ : "<del>") + text.substring(tp.s);
 					
 					
 				}
 
-				try {
-					out.write(lineNo + text + "\n");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				out.append(lineNo + text + "\n");
 				
 				start = -1;
 				end = -1;
 				cap = false;
 				capCount = 0;
 			}
-			else {
-				try {
-					
-					if(pageMatcher.find()) {
-						out.write("<div style=\"page-break-after:always\"></div>"+line + "\n");
-					}
-					else {
-						out.write(line + "\n");
-					}
-					
-				} catch (IOException e) {
-					e.printStackTrace();
+			else {					
+				if(pageMatcher.find()) {
+					out.append("<div style=\"page-break-after:always\"></div>"+line + "\n");
+				}
+				else {
+					out.append(line + "\n");
 				}
 			}
 		}
+		return out.toString();
 	}
 	
-	class TextPoint {
+	static class TextPoint {
 		public int s;
 		public int e;
 		public boolean uOrDel;

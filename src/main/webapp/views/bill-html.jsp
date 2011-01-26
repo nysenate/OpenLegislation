@@ -111,7 +111,7 @@ DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 
 String billSummary = bill.getSummary();
 String billMemo = bill.getMemo();
-String billText = bill.getFulltext();
+//String billText = bill.getFulltext();
 
 if (bill.getSponsor()!=null)
 	title += " - " + bill.getSponsor().getFullname();
@@ -334,11 +334,12 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
 <%=TextFormatter.formatMemo (billMemo)%><%}%>
 	
  <h3><%=senateBillNo%> Text</h3>
-<%if (billText!=null){
+<%if (bill.getFulltext()!=null){
   
+  String billText = TextFormatter.lrsPrinter(bill.getFulltext());
   billText = TextFormatter.removeBillLineNumbers (billText);
   
-  %><%=billText%><%} else{%>Not Available.<%}%>
+  %><pre><%=billText %></pre><%} else{%>Not Available.<%}%>
  
  <br/>
   
