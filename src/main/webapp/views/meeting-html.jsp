@@ -77,10 +77,16 @@ bill = itBills.next();
 try
 {
 request.setAttribute("bill",bill);	
+String billNo = bill.getSenateBillNo();
+
+if(bill.getYear() == 2009) {
+	billNo = billNo + "-" + bill.getYear();
+}
+
 	%>
 	
-	<div class="billSummary" onmouseover="this.style.backgroundColor='#FFFFCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/legislation/bill/<%=bill.getSenateBillNo()%>'">
-<a href="/legislation/bill/<%=bill.getSenateBillNo()%>-<%=bill.getYear()%>"><%=bill.getSenateBillNo()%>-<%=bill.getYear()%>: <%=bill.getTitle()%></a>
+	<div class="billSummary" onmouseover="this.style.backgroundColor='#FFFFCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/legislation/bill/<%=billNo%>'">
+<a href="/legislation/bill/<%=billNo%>"><%=billNo%>: <%=bill.getTitle()%></a>
 <div style="font-size:90%;color:#777777;">
 
 
