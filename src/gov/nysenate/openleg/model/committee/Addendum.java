@@ -1,0 +1,100 @@
+package gov.nysenate.openleg.model.committee;
+
+import gov.nysenate.openleg.lucene.LuceneField;
+
+import java.util.Date;
+import java.util.List;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("addendum")
+public class Addendum {
+
+	@LuceneField
+	private String id;
+	
+	@LuceneField
+	private String addendumId; 
+	
+	@LuceneField
+	private String weekOf;
+
+	@LuceneField
+	private Date publicationDateTime;
+	
+	private List<Meeting> meetings;
+	
+	@LuceneField
+	private Agenda agenda;
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public Agenda getAgenda() {
+		return agenda;
+	}
+
+	public void setAgenda(Agenda agenda) {
+		this.agenda = agenda;
+	}
+
+	public Addendum ()
+	{
+		
+	}
+	
+	public String getAddendumId() {
+		return addendumId;
+	}
+
+	public void setAddendumId(String addendumId) {
+		this.addendumId = addendumId;
+	}
+
+	public String getWeekOf() {
+		return weekOf;
+	}
+
+	public void setWeekOf(String weekOf) {
+		this.weekOf = weekOf;
+	}
+
+	public Date getPublicationDateTime() {
+		return publicationDateTime;
+	}
+
+	public void setPublicationDateTime(Date publicationDateTime) {
+		this.publicationDateTime = publicationDateTime;
+	}
+
+	public List<Meeting> getMeetings() {
+		return meetings;
+	}
+
+	public void setMeetings(List<Meeting> meetings) {
+		this.meetings = meetings;
+	}
+	
+	public void removeMeeting(Meeting meeting) {
+		this.meetings.remove(meeting);
+	}
+
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof Addendum)
+		{
+			if ( ((Addendum)obj).getId().equals(this.getId()))
+				return true;
+		}
+		
+		return false;
+	}
+
+	
+	
+}
