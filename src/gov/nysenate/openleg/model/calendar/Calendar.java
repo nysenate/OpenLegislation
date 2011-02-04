@@ -89,6 +89,11 @@ public class Calendar implements SenateObject {
 		if(supplementals ==  null) {
 			supplementals = new ArrayList<Supplemental>();
 		}
+		
+		int index = -1;
+		if((index = supplementals.indexOf(supplemental)) != -1) {
+			supplementals.remove(index);
+		}
 		supplementals.add(supplemental);
 	}
 
@@ -138,7 +143,14 @@ public class Calendar implements SenateObject {
 
 	@Override
 	public void merge(SenateObject obj) {
-		// TODO Auto-generated method stub
-		System.out.println("merge cal");
+		if(!(obj instanceof Calendar))
+			return;
+		
+		this.setId(((Calendar)obj).getId());
+		this.setNo(((Calendar)obj).getNo());
+		this.setSessionYear(((Calendar)obj).getSessionYear());
+		this.setSupplementals(((Calendar)obj).getSupplementals());
+		this.setType(((Calendar)obj).getType());
+		this.setYear(((Calendar)obj).getYear());
 	}
 }

@@ -106,22 +106,12 @@ public class CalendarParser implements OpenLegConstants {
 			if (action.equals("remove") && removeObject != null) {
 				logger.info("REMOVING: " + removeObject.getClass() + "=" + removeObjectId);
 				reader.deleteFile(calendar.getId(), calendar.getYear()+"", "calendar");
-//				PMF.removePersistedObject(pm, removeObject.getClass(), removeObjectId);
-//				System.out.println("REMOVING: " + removeObject.getClass() + "=" + removeObjectId);
 			}
 			else {
 				if(calendar != null) {
 					returnCalendars.add(calendar);
 				}
 			}
-			
-			
-			
-			
-			
-			//TODO
-			//engine.indexSenateObjects(new ArrayList<LuceneObject>(Arrays.asList(calendar)), new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
-			
 		}
 		removeObject = null;
 		
@@ -146,8 +136,11 @@ public class CalendarParser implements OpenLegConstants {
 		calendarId.append(year);
 		
 		logger.info("getting calendar: " + calendarId.toString());
-//		calendar = (Calendar)PMF.getDetachedObject(Calendar.class,"id",calendarId.toString(), null);
 		
+		calendar = null;
+		
+//		calendar = (Calendar)reader.loadObject(calendarId.toString(), year, "calendar", Calendar.class);
+				
 		if (calendar == null) {
 			calendar = new Calendar();
 			calendar.setId(calendarId.toString());
@@ -445,7 +438,7 @@ public class CalendarParser implements OpenLegConstants {
 			Person sponsor = new Person(sponsorName);
 			bill.setSponsor(sponsor);
 			
-			reader.writeSenateObject(bill, Bill.class);
+			reader.writeSenateObject(bill, Bill.class, false);
 		}
 		
 		bill.setFulltext("");

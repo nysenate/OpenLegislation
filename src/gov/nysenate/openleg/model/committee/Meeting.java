@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.model.committee;
 
-import ingest.SenateObject;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.text.DateFormat;
@@ -19,9 +17,10 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
+import gov.nysenate.openleg.lucene.LuceneObject;
 
 @XStreamAlias("meeting")
-public class Meeting  implements SenateObject {
+public class Meeting implements LuceneObject {
 
 	@XStreamAsAttribute
 	@LuceneField("when")
@@ -94,6 +93,7 @@ public class Meeting  implements SenateObject {
 		this.committee = committee;
 	}
 	
+	@JsonIgnore
 	public List<Addendum> getAddendums() {
 		return addendums;
 	}
@@ -196,24 +196,13 @@ public class Meeting  implements SenateObject {
 		return fields;
 	}
 
+	@JsonIgnore
 	public String getLuceneBills() {
 		StringBuilder response = new StringBuilder();
 		for(Bill bill : bills) {
 			response.append(bill.getSenateBillNo() + ", ");
 		}
 		return response.toString().replaceAll(", $", "");
-	}
-
-	@Override
-	public int getYear() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void merge(SenateObject obj) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 }

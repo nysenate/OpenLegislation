@@ -2,6 +2,8 @@ package gov.nysenate.openleg.model.committee;
 
 import java.util.ArrayList;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("committee")
@@ -33,6 +35,7 @@ public class Committee {
 		this.meetings = meetings;
 	}
 
+	@JsonIgnore
 	public ArrayList<Meeting> getMeetings() {
 		return meetings;
 	}

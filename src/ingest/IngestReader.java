@@ -1,6 +1,7 @@
 package ingest;
 
 import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.committee.Agenda;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -9,9 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
 import model.bill.Bill;
-import model.bill.Vote;
 
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonGenerationException;
@@ -32,21 +31,28 @@ public class IngestReader {
 	BasicParser basicParser = null;
 	ObjectMapper mapper = null;
 	CalendarParser calendarParser = null;
+	CommitteeParser committeeParser = null;
 	
 	ArrayList<Calendar> calendars;
 	ArrayList<Bill> bills;
+	ArrayList<SenateObject> committeeUpdates;
 	
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
-		ir.handlePath(args[0]);
+		
+		ir.handlePath("/Users/jaredwilliams/Desktop/2011");
+		
+//		ir.handlePath(args[0]);
 	}
 	
 	public IngestReader() {
 		calendarParser = new CalendarParser(this);
 		basicParser = new BasicParser();
+		committeeParser = new CommitteeParser(this);
 		
 		calendars = new ArrayList<Calendar>();
 		bills = new ArrayList<Bill>();
+		committeeUpdates = new ArrayList<SenateObject>();
 	}
 	
 	public ObjectMapper getMapper() {
@@ -69,7 +75,6 @@ public class IngestReader {
 			for (int i = 0; i < files.length; i++)
 			{
 				if(files[i].isFile()) {
-					System.out.println("\n" + files[i].getAbsolutePath());
 					handleFile(files[i]);
 				}
 				else if(files[i].isDirectory()) {
@@ -83,7 +88,7 @@ public class IngestReader {
 	}
 	
 	public void handleFile(File file) {
-		if(file.getName().endsWith(".TXT")) { //TODO always a bill?
+		if(file.getName().endsWith(".TXT")) { //TODO always a bill? nope
 			
 			bills = new ArrayList<Bill>();
 			try {
@@ -118,16 +123,41 @@ public class IngestReader {
 			
 			calendars.clear();
 		}
+		if(file.getName().contains("-agenda-")) {
+			
+			try {
+				committeeUpdates = committeeParser.doParsing(file);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			writeCommitteeUpdates(committeeUpdates);
+			committeeParser.clearUpdates();
+		}
 		else {
 			//ignore for now
 		}
 	}
 	
+	private void writeCommitteeUpdates(ArrayList<SenateObject> committeeUpdates) {
+		for(SenateObject so:committeeUpdates) {
+			if(so instanceof Bill) {
+				//if a bill is being updated from the committee xml
+				//it is either adding or removing a vote from an existing bill
+				//in which case merging isn't necessary
+				writeSenateObject(so, Bill.class, false);
+			}
+			else if(so instanceof Agenda) {
+				writeSenateObject(so, Agenda.class, true);
+			}
+		}
+	}
+	
 	private void writeCalendars(ArrayList<Calendar> calendars) {
 		for(Calendar calendar:calendars) {
-			writeSenateObject(calendar, Calendar.class);
+			writeSenateObject(calendar, Calendar.class, true);
 		}
-		
 	}
 
 	public void writeBills(ArrayList<Bill> bills) {
@@ -135,17 +165,11 @@ public class IngestReader {
 			if(bill == null)
 				continue;
 			
-			writeSenateObject(bill, Bill.class);
-			
-			if(bill.getVotes() != null) {
-				for(Vote vote:bill.getVotes()) {
-					writeSenateObject(vote, Vote.class);
-				}
-			}
+			writeSenateObject(bill, Bill.class, true);
 		}
 	}
 	
-	public void writeSenateObject(SenateObject obj, Class<?> clazz) {
+	public void writeSenateObject(SenateObject obj, Class<?> clazz, boolean merge) {
 		mapper = getMapper();
 		
 		if(obj == null)
@@ -163,22 +187,26 @@ public class IngestReader {
 		}
 		
 		File newFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
-		if(newFile.exists()) {
-			File oldFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
-			SenateObject oldObject =  null;
-			try {
-				oldObject = (SenateObject)mapper.readValue(oldFile, clazz);
-			} catch (JsonParseException e) {
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			if(oldObject != null) {
-				obj.merge(oldObject);
+		
+		if(merge) {
+			if(newFile.exists()) {
+				File oldFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
+				SenateObject oldObject =  null;
+				try {
+					oldObject = (SenateObject)mapper.readValue(oldFile, clazz);
+				} catch (JsonParseException e) {
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				if(oldObject != null) {
+					obj.merge(oldObject);
+				}
 			}
 		}
+		
 		try {
 			BufferedOutputStream osw = new BufferedOutputStream(new FileOutputStream(newFile));
 			

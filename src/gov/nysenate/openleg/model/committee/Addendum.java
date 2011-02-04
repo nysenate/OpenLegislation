@@ -5,6 +5,8 @@ import gov.nysenate.openleg.lucene.LuceneField;
 import java.util.Date;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("addendum")
@@ -35,6 +37,7 @@ public class Addendum {
 		this.id = id;
 	}
 	
+	@JsonIgnore
 	public Agenda getAgenda() {
 		return agenda;
 	}

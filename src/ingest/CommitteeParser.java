@@ -1,6 +1,5 @@
 package ingest;
 
-import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Committee;
@@ -33,30 +32,9 @@ public class CommitteeParser implements OpenLegConstants {
 
 	private static Logger logger = Logger.getLogger(CommitteeParser.class);
 		
-	ArrayList<LuceneObject> objectsToUpdate = new ArrayList<LuceneObject>();
+	ArrayList<SenateObject> objectsToUpdate = new ArrayList<SenateObject>();
 	
 	IngestReader reader = null;
-
-	
-	public static void main (String[] args) throws Exception {
-		String f = args[0];
-		
-		File file = new File (f);
-		
-		if (file.isDirectory()) {
-			String[] files = file.list();
-			
-			for (int i = 0; i < files.length; i++) {
-				file = new File(f + File.separatorChar + files[i]);
-				
-				if (file.isFile())
-					loadFile(file,false);
-			}
-		}
-		else
-			loadFile(file,true);
-		
-	}
 	
 	public CommitteeParser () {
 	}
@@ -65,32 +43,24 @@ public class CommitteeParser implements OpenLegConstants {
 		this.reader = reader;
 	}
 	
-	public static void loadFile (File file, boolean doExit) {
-
+	public ArrayList<SenateObject> doParsing (File file) {
 		try {
-			CommitteeParser cp = new CommitteeParser();
-
-			boolean success = cp.doParse(file.getAbsolutePath());
-			
-			if (doExit) {
-				if (success) {
-					
-					System.exit(0);
-				}
-				else {
-					//return err code 1 to indicate failure
-					System.exit(1);
-				}
-			}
+			doParse(file.getAbsolutePath());
 		}
 		catch (Exception e) {
 			logger.error("unable to parse committe data",e);
 			//return err code 1 to indicate failure
 			System.exit(1);
 		}
+		
+		return objectsToUpdate;
 	}
 	
-	public boolean doParse (String filePath) 
+	public void clearUpdates() {
+		objectsToUpdate.clear();
+	}
+	
+	public void doParse (String filePath) 
 			throws ParseException, JAXBException, FileNotFoundException, IOException {
 		
 		XMLSENATEDATA senateData = parseStream(new FileReader(new File(filePath)));
@@ -123,16 +93,12 @@ public class CommitteeParser implements OpenLegConstants {
 					
 					
 				}
-//				engine.indexSenateObjects(objectsToUpdate, new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
 	        }
 	        catch (Exception e) {
 	        	logger.warn("EXITING: ERROR PROCESSING: " + filePath + "; " + e.getLocalizedMessage());
 	        	e.printStackTrace();
-	        	
-	        	return false;
 	        }
 		}
-		  return true;
 	}
 	
 	
@@ -219,7 +185,7 @@ public class CommitteeParser implements OpenLegConstants {
 		
 		Agenda agendaVote = null;
 		String agendaId = "commagenda-" + xmlAgendaVote.getNo() + '-' + xmlAgendaVote.getSessyr() + '-' + xmlAgendaVote.getYear();
-	
+		
 		agendaVote = (Agenda) reader.loadObject(agendaId, xmlAgendaVote.getSessyr(), "agenda", Agenda.class);
 		
 		logger.info ("COMMITTEE AGENDA VOTE RECORD " + xmlAgendaVote.getNo());
@@ -488,13 +454,13 @@ public class CommitteeParser implements OpenLegConstants {
 		return addendum;
 	}
 	
-	public XMLSENATEDATA parseStream (Reader reader) throws ParseException, JAXBException
+	public XMLSENATEDATA parseStream (Reader xmlReader) throws ParseException, JAXBException
 	{
 		String packageName = "gov.nysenate.openleg.xml.committee";
 	    JAXBContext jc = JAXBContext.newInstance( packageName );
 	    
 	    Unmarshaller u = jc.createUnmarshaller();
-	    XMLSENATEDATA sd = (XMLSENATEDATA)u.unmarshal( reader );
+	    XMLSENATEDATA sd = (XMLSENATEDATA)u.unmarshal( xmlReader );
 	    
 	    new Date();
 
@@ -536,7 +502,7 @@ public class CommitteeParser implements OpenLegConstants {
 			Person sponsor = new Person(sponsorName);
 			bill.setSponsor(sponsor);
 			
-			reader.writeSenateObject(bill, Bill.class);
+			reader.writeSenateObject(bill, Bill.class, false);
 		}
 		
 		bill.setFulltext("");
