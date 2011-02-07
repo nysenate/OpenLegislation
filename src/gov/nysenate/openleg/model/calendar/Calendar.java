@@ -157,16 +157,6 @@ public class Calendar implements SenateObject {
 		else {
 			if(((Calendar)obj).getSupplementals() != null) {
 				this.supplementals =  ((Calendar)obj).getSupplementals();
-				
-//				System.out.println(this.supplementals.size());
-//				for(Supplemental supp:this.supplementals) {
-//					System.out.println(supp.getReleaseDateTime());
-//				}
-//				
-//				System.out.println(((Calendar)obj).getSupplementals().size());
-//				for(Supplemental supp:((Calendar)obj).getSupplementals()) {
-//					System.out.println(supp.getReleaseDateTime());
-//				}
 			}
 		}
 

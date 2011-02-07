@@ -151,11 +151,7 @@ public class CommitteeParser implements OpenLegConstants {
 				else if (voteType.startsWith("nay"))
 					vote.addNay(person);
 			}
-	
-			//TODO not necessary?
-			//objectsToUpdate.add(vote);
 			
-			//TODO delete and add vote to bill
 			bill.addVote(vote);
 			if(objectsToUpdate.contains(bill)) {
 				int index = objectsToUpdate.indexOf(bill);
@@ -349,8 +345,6 @@ public class CommitteeParser implements OpenLegConstants {
 					
 				}
 				else {
-					//TODO
-//					PMF.removePersistedObject(pm, Meeting.class, meeting.getId());
 					agenda.removeCommitteeMeeting(meeting);
 					logger.info("removing meeting: " + meeting.getId());
 				}
@@ -399,8 +393,6 @@ public class CommitteeParser implements OpenLegConstants {
 					commChair = xmlCommMeeting.getChair().getContent();
 				
 				Committee committee = new Committee();
-				//TODO
-				//PMF.getCommittee(pm, commName);
 				
 				meeting.setCommitteeChair(commChair);
 				meeting.setCommitteeName(commName);
@@ -487,10 +479,7 @@ public class CommitteeParser implements OpenLegConstants {
 		
 		
 		senateBillNo += "-" + year;
-		
-		System.out.println("getting bill: " + senateBillNo);
-		
-		//TODO add bill
+				
 		Bill bill = (Bill) reader.loadObject(senateBillNo, year +"", "bill", Bill.class);		
 				
 		if (bill == null) { 
@@ -503,9 +492,9 @@ public class CommitteeParser implements OpenLegConstants {
 			
 		}
 		
-//		bill.setFulltext("");
-//		bill.setMemo("");
-//		bill.setBillEvents(null);
+		bill.setFulltext("");
+		bill.setMemo("");
+		bill.setBillEvents(null);
 				
 		return bill;
 	}

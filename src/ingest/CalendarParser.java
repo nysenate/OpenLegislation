@@ -180,8 +180,6 @@ public class CalendarParser implements OpenLegConstants {
 		}
 		supplemental.setCalendar(calendar);
 		
-		
-		//TODO what is the purpose of this?
 		setRemoveObject(supplemental, supplemental.getId());
 		
 		if (xmlSupp.getCaldate()!=null)	{
@@ -231,8 +229,7 @@ public class CalendarParser implements OpenLegConstants {
 		if (xmlSequence != null) {
 			Sequence sequence = parseSequence (supplemental, xmlSequence);
 			supplemental.setSequence(sequence);
-			
-			//TODO again what does this do?
+
 			setRemoveObject(sequence, sequence.getId());
 		}
 		
@@ -436,7 +433,6 @@ public class CalendarParser implements OpenLegConstants {
 		
 		senateBillNo += "-" + year;
 		
-		//TODO add bill
 		Bill bill = (Bill) reader.loadObject(senateBillNo, year +"", "bill", Bill.class);		
 				
 		if (bill == null) { 
@@ -450,9 +446,9 @@ public class CalendarParser implements OpenLegConstants {
 			reader.writeSenateObject(bill, Bill.class, false);
 		}
 		
-//		bill.setFulltext("");
-//		bill.setMemo("");
-//		bill.setBillEvents(null);
+		bill.setFulltext("");
+		bill.setMemo("");
+		bill.setBillEvents(null);
 				
 		return bill;
 	}

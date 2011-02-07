@@ -126,7 +126,15 @@ public class Agenda implements SenateObject{
 		if(!(obj instanceof Agenda))
 			return;
 		
-		this.setAddendums(((Agenda)obj).getAddendums());
+		if(this.addendums == null || this.addendums.isEmpty()) {
+			this.addendums = ((Agenda)obj).getAddendums();
+		}
+		else {
+			if(((Agenda)obj).getAddendums() != null) {
+				this.addendums = ((Agenda)obj).getAddendums();
+			}
+		}
+		
 		this.setId(((Agenda)obj).getId());
 		this.setNumber(((Agenda)obj).getNumber());
 		this.setSessionYear(((Agenda)obj).getSessionYear());
