@@ -9,8 +9,6 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import model.bill.Bill;
-import model.bill.Vote;
 
 import org.apache.lucene.document.Field;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -18,6 +16,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.Vote;
 
 @XStreamAlias("meeting")
 public class Meeting implements LuceneObject {

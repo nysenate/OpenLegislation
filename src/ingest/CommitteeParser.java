@@ -1,5 +1,8 @@
 package ingest;
 
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.Person;
+import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Committee;
@@ -22,9 +25,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import model.bill.Bill;
-import model.bill.Person;
-import model.bill.Vote;
 
 import org.apache.log4j.Logger;
 
@@ -125,10 +125,7 @@ public class CommitteeParser implements OpenLegConstants {
 			int nayCount = -1;
 			
 			Date voteDate = meeting.getMeetingDateTime();
-						
-			//TODO 
-			reader.deleteFile(Vote.buildId(bill, voteDate, ayeCount, nayCount), bill.getYear() +"", "vote");
-			
+									
 			Vote vote = new Vote(bill, voteDate, ayeCount, nayCount);
 			
 			bill.removeVote(vote);
@@ -491,6 +488,8 @@ public class CommitteeParser implements OpenLegConstants {
 		
 		senateBillNo += "-" + year;
 		
+		System.out.println("getting bill: " + senateBillNo);
+		
 		//TODO add bill
 		Bill bill = (Bill) reader.loadObject(senateBillNo, year +"", "bill", Bill.class);		
 				
@@ -502,12 +501,11 @@ public class CommitteeParser implements OpenLegConstants {
 			Person sponsor = new Person(sponsorName);
 			bill.setSponsor(sponsor);
 			
-			reader.writeSenateObject(bill, Bill.class, false);
 		}
 		
-		bill.setFulltext("");
-		bill.setMemo("");
-		bill.setBillEvents(null);
+//		bill.setFulltext("");
+//		bill.setMemo("");
+//		bill.setBillEvents(null);
 				
 		return bill;
 	}

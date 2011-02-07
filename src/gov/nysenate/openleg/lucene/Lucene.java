@@ -58,11 +58,13 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
     
     public boolean addDocument(LuceneObject obj, LuceneSerializer[] serializer,IndexWriter indexWriter) throws InstantiationException,IllegalAccessException,IOException
     {
-    	Document doc = new DocumentBuilder().buildDocument(obj, serializer);
-    	
-    	if(doc ==  null) {
+    	if(obj == null)
     		return false;
-    	}
+    	
+    	Document doc = new DocumentBuilder().buildDocument(obj, serializer);
+    	    	
+    	if(doc ==  null)
+    		return false;
     	
     	logger.info("indexing document: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue());
     	/*Term term = new Term("oid",doc.getField("oid").stringValue());*/
@@ -76,6 +78,7 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
 
 		} catch (ParseException e) {
 			logger.warn("error adding document to index: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue(), e);
+			e.printStackTrace();
 		}
 
     	

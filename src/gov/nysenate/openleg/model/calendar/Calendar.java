@@ -10,20 +10,21 @@ import org.apache.lucene.document.Field;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("calendar")
 public class Calendar implements SenateObject {
 
-//	@XStreamAttribute
+	@XStreamAsAttribute
 	protected int year;
 	
-//	@XStreamAttribute
+	@XStreamAsAttribute
 	protected String type;
 	
-//	@XStreamAttribute
+	@XStreamAsAttribute
 	protected int sessionYear;
 	
-//	@XStreamAttribute
+	@XStreamAsAttribute
 	protected int no;
 	
 //	@HideFrom({Calendar.class, Suppplemental.class})
@@ -140,7 +141,7 @@ public class Calendar implements SenateObject {
 	public String luceneSummary() {
 		return null;
 	}
-
+	
 	@Override
 	public void merge(SenateObject obj) {
 		if(!(obj instanceof Calendar))
@@ -148,8 +149,27 @@ public class Calendar implements SenateObject {
 		
 		this.setId(((Calendar)obj).getId());
 		this.setNo(((Calendar)obj).getNo());
-		this.setSessionYear(((Calendar)obj).getSessionYear());
-		this.setSupplementals(((Calendar)obj).getSupplementals());
+		this.setSessionYear(((Calendar)obj).getSessionYear());		
+		
+		if(this.supplementals == null || this.supplementals.isEmpty()) {
+			this.supplementals = ((Calendar)obj).getSupplementals();
+		}
+		else {
+			if(((Calendar)obj).getSupplementals() != null) {
+				this.supplementals =  ((Calendar)obj).getSupplementals();
+				
+//				System.out.println(this.supplementals.size());
+//				for(Supplemental supp:this.supplementals) {
+//					System.out.println(supp.getReleaseDateTime());
+//				}
+//				
+//				System.out.println(((Calendar)obj).getSupplementals().size());
+//				for(Supplemental supp:((Calendar)obj).getSupplementals()) {
+//					System.out.println(supp.getReleaseDateTime());
+//				}
+			}
+		}
+
 		this.setType(((Calendar)obj).getType());
 		this.setYear(((Calendar)obj).getYear());
 	}

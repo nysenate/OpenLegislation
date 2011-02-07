@@ -1,6 +1,8 @@
 package ingest;
 
 import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.Section;
@@ -27,8 +29,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import model.bill.Bill;
-import model.bill.Person;
 
 import org.apache.log4j.Logger;
 
@@ -105,12 +105,22 @@ public class CalendarParser implements OpenLegConstants {
 				        
 			if (action.equals("remove") && removeObject != null) {
 				logger.info("REMOVING: " + removeObject.getClass() + "=" + removeObjectId);
-				reader.deleteFile(calendar.getId(), calendar.getYear()+"", "calendar");
-			}
-			else {
-				if(calendar != null) {
-					returnCalendars.add(calendar);
+				
+				if(removeObject instanceof Supplemental) {
+					calendar.getSupplementals().remove(removeObject);
 				}
+				else if (removeObject instanceof Sequence && calendar.getSupplementals() != null){
+					for(int i = 0; i < calendar.getSupplementals().size(); i++) {
+						if(calendar.getSupplementals().get(i).getSequence().equals(removeObject)) {
+							calendar.getSupplementals().get(i).setSequence(null);
+							break;
+						}
+					}
+				}
+//				reader.deleteFile(calendar.getId(), calendar.getYear()+"", "calendar");
+			}
+			if(calendar != null) {
+				returnCalendars.add(calendar);
 			}
 		}
 		removeObject = null;
@@ -136,10 +146,8 @@ public class CalendarParser implements OpenLegConstants {
 		calendarId.append(year);
 		
 		logger.info("getting calendar: " + calendarId.toString());
-		
-		calendar = null;
-		
-//		calendar = (Calendar)reader.loadObject(calendarId.toString(), year, "calendar", Calendar.class);
+						
+		calendar = (Calendar)reader.loadObject(calendarId.toString(), year, "calendar", Calendar.class);
 				
 		if (calendar == null) {
 			calendar = new Calendar();
@@ -157,16 +165,21 @@ public class CalendarParser implements OpenLegConstants {
 	public Supplemental parseSupplemental (Calendar calendar, XMLSupplemental xmlSupp) {
 		String suppId = calendar.getId() + "-supp-" + xmlSupp.getId();
 		
-		Supplemental supplemental = null;
+		Supplemental supplemental = new Supplemental();
+		supplemental.setId(suppId);
 		
-//		Supplemental supplemental = (Supplemental)PMF.getDetachedObject(Supplemental.class, "id", suppId, null);
+		//Supplemental supplemental  = (Supplemental)PMF.getDetachedObject(Supplemental.class, "id", suppId, null);
 		
-		if (supplemental == null) {
-			supplemental = new Supplemental();
-			supplemental.setId(suppId);
-			supplemental.setSupplementalId(xmlSupp.getId());
-			supplemental.setCalendar(calendar);
+		int index = -1;
+		if(calendar != null && calendar.getSupplementals() != null &&
+				(index = calendar.getSupplementals().indexOf(supplemental)) != -1) {
+			supplemental = calendar.getSupplementals().get(index);
 		}
+		else {
+			supplemental.setSupplementalId(xmlSupp.getId());
+		}
+		supplemental.setCalendar(calendar);
+		
 		
 		//TODO what is the purpose of this?
 		setRemoveObject(supplemental, supplemental.getId());
@@ -230,9 +243,7 @@ public class CalendarParser implements OpenLegConstants {
 		String sectionId = supplemental.getId() + "-sect-" + xmlSection.getName();
 		
 		Section section = null;
-		
-//		Section section = (Section)PMF.getDetachedObject(Section.class, "id", sectionId, null);
-	
+			
 		if (section == null) {
 			section = new Section();
 			section.setId(sectionId);
@@ -275,9 +286,7 @@ public class CalendarParser implements OpenLegConstants {
 		String sequenceId = supplemental.getId() + "-seq-" + xmlSequence.getNo();
 		
 		Sequence sequence = null;
-		
-//		Sequence sequence = (Sequence)PMF.getDetachedObject(Sequence.class, "id", sequenceId, null);
-		
+				
 		if (sequence == null) {
 			sequence = new Sequence();
 			sequence.setId(sequenceId);
@@ -441,9 +450,9 @@ public class CalendarParser implements OpenLegConstants {
 			reader.writeSenateObject(bill, Bill.class, false);
 		}
 		
-		bill.setFulltext("");
-		bill.setMemo("");
-		bill.setBillEvents(null);
+//		bill.setFulltext("");
+//		bill.setMemo("");
+//		bill.setBillEvents(null);
 				
 		return bill;
 	}

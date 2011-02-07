@@ -1,7 +1,11 @@
 package ingest;
 
+import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.lucene.LuceneSerializer;
+import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.committee.Agenda;
+import gov.nysenate.openleg.search.SearchEngine2;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -9,8 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import model.bill.Bill;
 
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonGenerationException;
@@ -21,17 +25,22 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.codehaus.jackson.util.DefaultPrettyPrinter;
 
+import util.JsonSerializer;
+import util.XmlSerializer;
+
+
 import com.google.gson.JsonParseException;
 
 
 public class IngestReader {
 	
-	private static String WRITE_DIRECTORY = "/Users/jaredwilliams/Desktop/test/";
+	private static String WRITE_DIRECTORY = "/Users/jaredwilliams/Desktop/1/";
 	
 	BasicParser basicParser = null;
 	ObjectMapper mapper = null;
 	CalendarParser calendarParser = null;
 	CommitteeParser committeeParser = null;
+	SearchEngine2 searchEngine = null;
 	
 	ArrayList<Calendar> calendars;
 	ArrayList<Bill> bills;
@@ -40,32 +49,61 @@ public class IngestReader {
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
 		
+//		String path = "/Users/jaredwilliams/Desktop/1/2011/calendar/cal-floor-00001-2011-2011.json";
+//		
+//		try {
+//			ir.searchEngine.indexSenateObjects(
+//					new ArrayList<LuceneObject>(Arrays.asList(
+//							ir.loadObject(path, Calendar.class))),
+//					new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+		
+		
+//		System.out.println("bills");
+//		index(ir, "/Users/jaredwilliams/Desktop/test/2011/bill/", Bill.class);
+//		System.out.println("calendars");
+//		index(ir, "/Users/jaredwilliams/Desktop/test/2011/calendar/", Calendar.class);
+//		System.out.println("agendas");
+//		index(ir, "/Users/jaredwilliams/Desktop/test/2011/agenda/", Agenda.class);
+		
+		
 		ir.handlePath("/Users/jaredwilliams/Desktop/2011");
 		
+		
 //		ir.handlePath(args[0]);
+		
+		
+	}
+	
+	public static void index(IngestReader reader, String path, Class<? extends SenateObject> clazz) {		
+		File dir = new File(path);
+		
+		for(File file:dir.listFiles()) {
+//			System.out.println(file.getAbsolutePath());
+//			System.out.println(JsonConverter.getJson(reader.loadObject(file.getAbsolutePath(), clazz)) + "\n\n\n");
+//			
+			try {
+				reader.searchEngine.indexSenateObjects(
+						new ArrayList<LuceneObject>(Arrays.asList(
+								reader.loadObject(file.getAbsolutePath(), clazz))),
+						new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public IngestReader() {
-		calendarParser = new CalendarParser(this);
-		basicParser = new BasicParser();
-		committeeParser = new CommitteeParser(this);
+		searchEngine = SearchEngine2.getInstance();
 		
 		calendars = new ArrayList<Calendar>();
 		bills = new ArrayList<Bill>();
 		committeeUpdates = new ArrayList<SenateObject>();
 	}
 	
-	public ObjectMapper getMapper() {
-		
-		if(mapper == null) {
-			mapper = new ObjectMapper();
-			SerializationConfig cnfg = mapper.getSerializationConfig();
-			cnfg.set(Feature.INDENT_OUTPUT, true);
-			mapper.setSerializationConfig(cnfg);
-		}
-		
-		return mapper;
-	}
+	
 	
 	public void handlePath(String path) {
 		File file = new File(path);
@@ -92,7 +130,7 @@ public class IngestReader {
 			
 			bills = new ArrayList<Bill>();
 			try {
-				bills.addAll(basicParser.handleBill(file.getAbsolutePath(), '-'));
+				bills.addAll(getBasicParser().handleBill(file.getAbsolutePath(), '-'));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -111,7 +149,7 @@ public class IngestReader {
 			XmlFixer.fixCalendar(file);
 			
 			try {
-				calendars = calendarParser.doParsing(file.getAbsolutePath());
+				calendars = getCalendarParser().doParsing(file.getAbsolutePath());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -123,10 +161,10 @@ public class IngestReader {
 			
 			calendars.clear();
 		}
-		if(file.getName().contains("-agenda-")) {
+		else if(file.getName().contains("-agenda-")) {
 			
 			try {
-				committeeUpdates = committeeParser.doParsing(file);
+				committeeUpdates = getCommitteeParser().doParsing(file);
 			}
 			catch(Exception e) {
 				e.printStackTrace();
@@ -187,7 +225,7 @@ public class IngestReader {
 		}
 		
 		File newFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
-		
+				
 		if(merge) {
 			if(newFile.exists()) {
 				File oldFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
@@ -207,7 +245,7 @@ public class IngestReader {
 			}
 		}
 		
-		try {
+		try {			
 			BufferedOutputStream osw = new BufferedOutputStream(new FileOutputStream(newFile));
 			
 			JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(osw,JsonEncoding.UTF8);
@@ -218,6 +256,12 @@ public class IngestReader {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			searchEngine.indexSenateObjects(new ArrayList<LuceneObject>(Arrays.asList(obj)), new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -252,5 +296,39 @@ public class IngestReader {
 	public boolean deleteFile(String path) {
 		File file = new File(path);
 		return file.delete();
+	}
+	
+	
+	
+	public ObjectMapper getMapper() {
+		if(mapper == null) {
+			mapper = new ObjectMapper();
+			SerializationConfig cnfg = mapper.getSerializationConfig();
+			cnfg.set(Feature.INDENT_OUTPUT, true);
+			mapper.setSerializationConfig(cnfg);
+		}
+		
+		return mapper;
+	}
+	
+	public CommitteeParser getCommitteeParser() {
+		if(committeeParser == null) {
+			committeeParser = new CommitteeParser(this);
+		}
+		return committeeParser;
+	}
+	
+	public BasicParser getBasicParser() {
+		if(basicParser == null) {
+			basicParser = new BasicParser();
+		}
+		return basicParser;
+	}
+	
+	public CalendarParser getCalendarParser() {
+		if(calendarParser == null) {
+			calendarParser = new CalendarParser(this);
+		}
+		return calendarParser;
 	}
 }

@@ -1,5 +1,11 @@
 package ingest;
 
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.model.bill.Person;
+import gov.nysenate.openleg.model.bill.Vote;
+import gov.nysenate.openleg.model.transcript.Transcript;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,11 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import model.bill.Bill;
-import model.bill.BillEvent;
-import model.bill.Person;
-import model.bill.Vote;
-import model.transcript.Transcript;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;

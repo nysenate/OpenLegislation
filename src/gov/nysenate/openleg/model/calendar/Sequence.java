@@ -5,12 +5,16 @@ import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+@XStreamAlias("sequence")
 public class Sequence {
 
-//	@XStreamAsAttribute
+	@XStreamAsAttribute
 	private String no;
 	
-//	@XStreamAsAttribute
+	@XStreamAsAttribute
 	private String id;
 	
 	private Date actCalDate;

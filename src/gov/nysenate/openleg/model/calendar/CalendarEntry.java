@@ -1,20 +1,22 @@
 package gov.nysenate.openleg.model.calendar;
 
+import gov.nysenate.openleg.model.bill.Bill;
+
 import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import model.bill.Bill;
 
 @XStreamAlias("calendarEntries")
 public class CalendarEntry {
 
-//	@XStreamAsAttribute
+	@XStreamAsAttribute
 	private String id;
 
-//	@XStreamAsAttribute
+	@XStreamAsAttribute
 	private String no;
 	
 	private Bill bill;

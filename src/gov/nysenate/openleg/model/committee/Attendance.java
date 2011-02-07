@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.committee;
 
-import model.bill.Person;
+import gov.nysenate.openleg.model.bill.Person;
 
 import com.thoughtworks.xstream.annotations.*;
 

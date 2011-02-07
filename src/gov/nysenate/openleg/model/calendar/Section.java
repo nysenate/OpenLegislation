@@ -4,6 +4,10 @@ import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("section")
+
 public class Section {
 
 	private String id;

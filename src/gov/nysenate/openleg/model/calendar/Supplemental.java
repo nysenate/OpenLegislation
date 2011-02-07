@@ -129,9 +129,6 @@ public class Supplemental  implements LuceneObject {
 		HashMap<String,Field> fields = new HashMap<String,Field>();
 		
 		Calendar calendar = this.getCalendar();
-//		if(calendar == null) {
-//			calendar = (Calendar)PMF.getDetachedObject(Calendar.class, "id", id.split("-supp")[0], "no descending");
-//		}
 		
 		fields.put("ctype",new Field("ctype",calendar.getType(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 				
