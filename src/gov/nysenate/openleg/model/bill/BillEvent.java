@@ -32,7 +32,7 @@ public class BillEvent implements SenateObject {
 		
 		try
 		{
-			this.billEventId = bill.getSenateBillNo() + "-" + bill.getYear() + "-" + eventDate.getTime() + "-" + URLEncoder.encode(eventText,"utf-8");
+			this.billEventId = bill.getSenateBillNo() + "-" + eventDate.getTime() + "-" + URLEncoder.encode(eventText,"utf-8");
 		}
 		catch (Exception e)
 		{
@@ -42,7 +42,7 @@ public class BillEvent implements SenateObject {
 	
 	@JsonIgnore
 	public String getBillId() {
-		return billEventId.substring(0,billEventId.indexOf("-"));
+		return billEventId.substring(0,billEventId.indexOf("-", billEventId.indexOf("-") + 1));
 	}
 	
 	

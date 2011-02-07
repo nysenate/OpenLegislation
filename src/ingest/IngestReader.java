@@ -49,18 +49,6 @@ public class IngestReader {
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
 		
-//		String path = "/Users/jaredwilliams/Desktop/1/2011/calendar/cal-floor-00001-2011-2011.json";
-//		
-//		try {
-//			ir.searchEngine.indexSenateObjects(
-//					new ArrayList<LuceneObject>(Arrays.asList(
-//							ir.loadObject(path, Calendar.class))),
-//					new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		
-		
 //		System.out.println("bills");
 //		index(ir, "/Users/jaredwilliams/Desktop/test/2011/bill/", Bill.class);
 //		System.out.println("calendars");
@@ -68,22 +56,19 @@ public class IngestReader {
 //		System.out.println("agendas");
 //		index(ir, "/Users/jaredwilliams/Desktop/test/2011/agenda/", Agenda.class);
 		
-		
-		ir.handlePath("/Users/jaredwilliams/Desktop/2011");
-		
-		
-//		ir.handlePath(args[0]);
-		
-		
+		if(args.length == 2) {
+			WRITE_DIRECTORY = args[0];
+			ir.handlePath(args[1]);
+		}
+		else {
+			System.err.println("appropriate usage is with parameters: <json directory> <sobi directory>");
+		}
 	}
 	
 	public static void index(IngestReader reader, String path, Class<? extends SenateObject> clazz) {		
 		File dir = new File(path);
 		
 		for(File file:dir.listFiles()) {
-//			System.out.println(file.getAbsolutePath());
-//			System.out.println(JsonConverter.getJson(reader.loadObject(file.getAbsolutePath(), clazz)) + "\n\n\n");
-//			
 			try {
 				reader.searchEngine.indexSenateObjects(
 						new ArrayList<LuceneObject>(Arrays.asList(
@@ -202,7 +187,7 @@ public class IngestReader {
 		for(Bill bill:bills) {
 			if(bill == null)
 				continue;
-			
+						
 			writeSenateObject(bill, Bill.class, true);
 		}
 	}

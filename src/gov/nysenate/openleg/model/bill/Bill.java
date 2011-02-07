@@ -414,12 +414,12 @@ public class Bill implements SenateObject  {
 			}
 		}
 		
-		if(fulltext == null) {
+		if(fulltext == null || fulltext.equals("")) {
 			fulltext = bill.getFulltext();
 		}
 		else {
 			if(bill.getFulltext() != null && !bill.getFulltext().equals("")) {
-				int newLineCodeStart = new Integer(bill.getFulltext().substring(1,6));
+				int newLineCodeStart = new Integer(bill.getFulltext().trim().substring(1,6));
 				int newLineCodeEnd = -1;
 				
 				int oldLineCodeStart = new Integer(this.fulltext.substring(1,6));
@@ -550,7 +550,7 @@ public class Bill implements SenateObject  {
 			coSponsors = bill.getCoSponsors();
 		}
 		else {
-			if(bill.getClass() != null) {
+			if(bill.getCoSponsors() != null) {
 				this.coSponsors = bill.getCoSponsors();
 			}
 		}

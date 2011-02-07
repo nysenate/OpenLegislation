@@ -88,6 +88,16 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
     	return true;
     }
     
+    public void deleteDocumentsByQuery(String qString, IndexWriter indexWriter) throws IOException {
+    	try {
+    		Query query = new QueryParser(Version.LUCENE_CURRENT, "otype", indexWriter.getAnalyzer()).parse(qString);
+    		indexWriter.deleteDocuments(query);
+    	}
+    	catch (Exception e) {
+    		logger.warn("error deleting document to index: " + qString);
+    	}
+    }
+    
     public void deleteDocuments(String otype, String oid) throws IOException {
     	openWriter();
         try {
