@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 
 import org.apache.lucene.document.Field;
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -532,13 +531,6 @@ public class Bill implements SenateObject  {
 			if(bill.getBillEvents() != null) {
 				this.billEvents = bill.getBillEvents();
 			}
-//			if(bill.getBillEvents() != null) {
-//				for(BillEvent event:bill.getBillEvents()) {
-//					if(!this.billEvents.contains(event)) {
-//						this.billEvents.add(event);
-//					}
-//				}
-//			}
 		}
 		
 		if(votes == null) {
@@ -553,22 +545,22 @@ public class Bill implements SenateObject  {
 				}
 			}
 		}
+		
 		if(coSponsors == null) {
 			coSponsors = bill.getCoSponsors();
 		}
 		else {
-			this.coSponsors = bill.getCoSponsors();
+			if(bill.getClass() != null) {
+				this.coSponsors = bill.getCoSponsors();
+			}
 		}
+		
 		if(amendments == null) {
 			amendments = bill.getAmendments();
 		}
 		else {
-			if(bill.getAmendments() != null) {
-				for(String amendment:bill.getAmendments()) {
-					if(!this.getAmendments().contains(amendment)) {
-						this.amendments.add(amendment);
-					}
-				}
+			if(bill.getActClause() != null) {
+				this.amendments = bill.getAmendments();
 			}
 		}		
 	}

@@ -240,7 +240,8 @@ public class IngestReader {
 					e.printStackTrace();
 				}
 				if(oldObject != null) {
-					obj.merge(oldObject);
+					oldObject.merge(obj);
+					obj = oldObject;
 				}
 			}
 		}
