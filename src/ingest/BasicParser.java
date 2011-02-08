@@ -322,7 +322,9 @@ public class BasicParser implements OpenLegConstants {
 							
 							StringTokenizer st = new StringTokenizer(cosponsor,",");
 							while(st.hasMoreTokens()) {
-								coSponsorBuffer.add(getPerson(st.nextToken().trim()));
+								Person coSponsor = getPerson(st.nextToken().trim());
+								if(!coSponsorBuffer.contains(coSponsor))
+									coSponsorBuffer.add(coSponsor);
 							}
 						}
 					}
@@ -397,8 +399,13 @@ public class BasicParser implements OpenLegConstants {
 	private void commitCurrentBill () {
 		persistBuffers();
 		
-		returnBills.add(currentBill);
-	
+		int index = -1;
+		if((index = returnBills.indexOf(currentBill)) != -1) {
+			returnBills.get(index).merge(currentBill);
+		}
+		else {
+			returnBills.add(currentBill);
+		}
 	}
 	
 	public Bill parseMemoData (String line) throws IOException {

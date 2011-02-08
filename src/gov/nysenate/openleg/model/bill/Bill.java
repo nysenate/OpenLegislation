@@ -334,8 +334,8 @@ public class Bill implements SenateObject  {
 		
 		if (obj != null && obj instanceof Bill)
 		{
-			String d = getSenateBillNo() + '-' + getYear();
-			String thatId =  ((Bill)obj).getSenateBillNo() + '-' +  ((Bill)obj).getYear();
+			String d = getSenateBillNo();
+			String thatId =  ((Bill)obj).getSenateBillNo();
 			
 			return (d.equals(thatId));
 		}

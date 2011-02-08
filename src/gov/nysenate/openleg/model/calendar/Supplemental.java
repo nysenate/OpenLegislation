@@ -150,6 +150,8 @@ public class Supplemental  implements LuceneObject {
 			title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(sequence.getActCalDate());
 		}
 		
+		StringBuilder bills = new StringBuilder("");
+		
 		searchContent.append(title);
 		
 		StringBuilder sbSummary = new StringBuilder();
@@ -160,6 +162,10 @@ public class Supplemental  implements LuceneObject {
 				Section section = itSections.next();
 				sbSummary.append(section.getName()).append(": ");
 				sbSummary.append(section.getCalendarEntries().size()).append(" bill(s); ");
+				
+				for(CalendarEntry ce:section.getCalendarEntries()) {
+					bills.append(ce.getBill().getSenateBillNo() + ", ");
+				}
 			}
 		}
 		
@@ -169,7 +175,13 @@ public class Supplemental  implements LuceneObject {
 			
 			sbSummary.append(" ").append(sequence.getCalendarEntries().size()).append(" bill(s)");
 			
+			for(CalendarEntry ce:sequence.getCalendarEntries()) {
+				bills.append(ce.getBill().getSenateBillNo() + ", ");
+			}
+			
 		}
+		
+		fields.put("bills",new Field("bills",bills.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		
 		String summary = sbSummary.toString().trim();
 		
@@ -179,8 +191,8 @@ public class Supplemental  implements LuceneObject {
 		
 		String oid = "";
 		if(calendar.getId().startsWith("cal-floor")) {
-			oid = "floor-" + new SimpleDateFormat("MM-dd-yyyy").format(releaseDateTime);
-			fields.put("when", new Field("when",releaseDateTime.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+			oid = "floor-" + new SimpleDateFormat("MM-dd-yyyy").format(this.getCalendarDate());
+			fields.put("when", new Field("when",this.getCalendarDate().getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		}
 		else {
 			oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequence.getActCalDate());
