@@ -4,7 +4,12 @@ import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.calendar.CalendarEntry;
+import gov.nysenate.openleg.model.calendar.Section;
+import gov.nysenate.openleg.model.calendar.Supplemental;
+import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
+import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.search.SearchEngine2;
 
 import java.io.BufferedOutputStream;
@@ -34,7 +39,8 @@ import com.google.gson.JsonParseException;
 
 public class IngestReader {
 	
-	private static String WRITE_DIRECTORY = "/Users/jaredwilliams/Desktop/1/";
+//	private static String WRITE_DIRECTORY = "/Users/jaredwilliams/Desktop/1/";
+	private static String WRITE_DIRECTORY = "/usr/local/openleg/json/";
 	
 	BasicParser basicParser = null;
 	ObjectMapper mapper = null;
@@ -47,7 +53,6 @@ public class IngestReader {
 	ArrayList<SenateObject> committeeUpdates;
 	
 	public static void main(String[] args) throws IOException {
-		IngestReader ir = new IngestReader();
 		
 //		System.out.println("bills");
 //		index(ir, "/Users/jaredwilliams/Desktop/test/2011/bill/", Bill.class);
@@ -56,31 +61,83 @@ public class IngestReader {
 //		System.out.println("agendas");
 //		index(ir, "/Users/jaredwilliams/Desktop/test/2011/agenda/", Agenda.class);
 		
-		if(args.length == 2) {
-			WRITE_DIRECTORY = args[0];
-			ir.handlePath(args[1]);
-		}
-		else {
-			System.err.println("appropriate usage is with parameters: <json directory> <sobi directory>");
-		}
-		
 //		ir.handlePath("/Users/jaredwilliams/Desktop/2011");
-	}
-	
-	public static void index(IngestReader reader, String path, Class<? extends SenateObject> clazz) {		
-		File dir = new File(path);
+
+		IngestReader ir = new IngestReader();
 		
-		for(File file:dir.listFiles()) {
-			try {
-				reader.searchEngine.indexSenateObjects(
-						new ArrayList<LuceneObject>(Arrays.asList(
-								reader.loadObject(file.getAbsolutePath(), clazz))),
-						new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
-			} catch (IOException e) {
-				e.printStackTrace();
+		if(args.length == 3){
+			String command = args[0];
+			String p1 = args[1];
+			String p2 = args[2];
+			if(command.equals("-c")) {
+				WRITE_DIRECTORY = p1;
+				ir.handlePath(p2);
+			}
+			else if(command.equals("-fc")) {
+				ir.fixCalendarBills(p1, p2);
+			}
+			else if(command.equals("-fa")) {
+				ir.fixAgendaBills(p1, p2);
+			}
+			else if(command.equals("-b")) {
+				Bill bill = (Bill)ir.loadObject(p1, p2, "bill", Bill.class);
+				ir.writeSenateObject(bill, Bill.class, false);
+			}
+			else if(command.equals("-c")) {
+				Calendar cal = (Calendar)ir.loadObject(p1, p2, "calendar", Calendar.class);
+				ir.writeSenateObject(cal, Calendar.class, false);
+			}
+			else if(command.equals("-a")) {
+				Agenda agenda = (Agenda)ir.loadObject(p1, p2, "agenda", Agenda.class);
+				ir.writeSenateObject(agenda, Agenda.class, false);
 			}
 		}
+		else {
+			System.err.println("appropriate usage is:\n" +
+					"\t-i <json directory> <sobi directory> (to create index)\n" +
+					"\t-fc <year> <calendar directory> (to fix calendar bills)\n" +
+					"\t-fa <year> <agenda directory> (to fix agenda bills)\n" +
+					"\t-b <billid> <year> (to reindex bill)\n" +
+					"\t-c <calendarid> <year> (to reindex calendar)\n" +
+					"\t-a <agenda id> < year> (to reindex agenda)");
+		}
 	}
+	
+	public ObjectMapper getMapper() {
+		if(mapper == null) {
+			mapper = new ObjectMapper();
+			SerializationConfig cnfg = mapper.getSerializationConfig();
+			cnfg.set(Feature.INDENT_OUTPUT, true);
+			mapper.setSerializationConfig(cnfg);
+		}
+		
+		return mapper;
+	}
+	
+	public CommitteeParser getCommitteeParser() {
+		if(committeeParser == null) {
+			committeeParser = new CommitteeParser(this);
+		}
+		return committeeParser;
+	}
+	
+	public BasicParser getBasicParser() {
+		if(basicParser == null) {
+			basicParser = new BasicParser();
+		}
+		return basicParser;
+	}
+	
+	public CalendarParser getCalendarParser() {
+		if(calendarParser == null) {
+			calendarParser = new CalendarParser(this);
+		}
+		return calendarParser;
+	}
+	
+	
+	
+	
 	
 	public IngestReader() {
 		searchEngine = SearchEngine2.getInstance();
@@ -89,8 +146,6 @@ public class IngestReader {
 		bills = new ArrayList<Bill>();
 		committeeUpdates = new ArrayList<SenateObject>();
 	}
-	
-	
 	
 	public void handlePath(String path) {
 		File file = new File(path);
@@ -112,8 +167,14 @@ public class IngestReader {
 		}
 	}
 	
+	//TODO since structure already exists to pass in files with a given type
+	// like "sobi", "transcript" or etc it would be best to move away
+	// from relying on file names to determine what sort of document is
+	// being processed
+	
 	public void handleFile(File file) {
-		if(file.getName().endsWith(".TXT")) { //TODO always a bill? nope
+		//TODO ending in .TXT doesn't necessaril signify a bill
+		if(file.getName().endsWith(".TXT")) {
 			
 			bills = new ArrayList<Bill>();
 			try {
@@ -161,6 +222,7 @@ public class IngestReader {
 			committeeParser.clearUpdates();
 		}
 		else {
+			//TODO trancsripts
 			//ignore for now
 		}
 	}
@@ -170,6 +232,7 @@ public class IngestReader {
 			if(so instanceof Bill) {
 				//if a bill is being updated from the committee xml
 				//it is either adding or removing a vote from an existing bill
+				//which has been deserialized or creating a new bill
 				//in which case merging isn't necessary
 				writeSenateObject(so, Bill.class, false);
 			}
@@ -259,6 +322,11 @@ public class IngestReader {
 		return loadObject(WRITE_DIRECTORY + year + "/" + type + "/" + id + ".json", clazz);
 	}
 	
+	/**
+	 * @param path to json document
+	 * @param clazz class of object to be loaded
+	 * @return deserialized SenateObject of type clazz
+	 */
 	public SenateObject loadObject(String path, Class<? extends SenateObject> clazz) {
 		mapper = getMapper();
 		File file = new File(path);
@@ -286,37 +354,123 @@ public class IngestReader {
 		return file.delete();
 	}
 	
+	/*
+	 * fixCalendarBills(year,path) and fixAgendaBills(year,path) can be
+	 * executed to update the two document types with the latest bill information.
+	 * This solves an issue where occasionaly calendars or agendas
+	 * would be missing relevant information that SHOULD be available to them.
+	 */
 	
-	
-	public ObjectMapper getMapper() {
-		if(mapper == null) {
-			mapper = new ObjectMapper();
-			SerializationConfig cnfg = mapper.getSerializationConfig();
-			cnfg.set(Feature.INDENT_OUTPUT, true);
-			mapper.setSerializationConfig(cnfg);
-		}
+	public void fixCalendarBills(String year, String path) {
+		File file = new File(path);
 		
-		return mapper;
+		if(!file.exists())
+			return;
+		
+		if(file.isDirectory()) {
+			for(File temp:file.listFiles()) {
+				fixCalendarBills(year, temp.getAbsolutePath());
+			}
+		}
+		else {
+			Calendar cal = (Calendar) this.loadObject(file.getAbsolutePath(), Calendar.class);
+			
+			if(cal == null) 
+				return;
+			
+			if(cal.getSupplementals() != null) {
+				for(Supplemental sup:cal.getSupplementals()) {
+					if(sup.getSections() != null) {
+						for(Section section:sup.getSections()) {
+							for(CalendarEntry ce:section.getCalendarEntries()) {
+								ce.setBill(
+									(Bill)this.loadObject(
+										ce.getBill().getSenateBillNo(),
+										year,
+										"bill",
+										Bill.class)
+								);
+							}
+						}
+					}
+					
+					if(sup.getSequence() != null) {
+						for(CalendarEntry ce:sup.getSequence().getCalendarEntries()) {
+							if(ce.getBill() != null) {							
+								ce.setBill(
+									(Bill)this.loadObject(
+										ce.getBill().getSenateBillNo(),
+										year,
+										"bill",
+										Bill.class)
+								);
+							}
+						}
+					}
+				}
+			}
+			this.writeSenateObject(cal, Calendar.class, false);
+		}
 	}
 	
-	public CommitteeParser getCommitteeParser() {
-		if(committeeParser == null) {
-			committeeParser = new CommitteeParser(this);
+	public void fixAgendaBills(String year, String path) {
+		File file = new File(path);
+		
+		if(!file.exists())
+			return;
+		
+		if(file.isDirectory()) {
+			for(File temp:file.listFiles()) {
+				fixAgendaBills(year, temp.getAbsolutePath());
+			}
 		}
-		return committeeParser;
+		else {
+			Agenda agenda = (Agenda) this.loadObject(file.getAbsolutePath(), Agenda.class);
+			
+			if(agenda == null)
+				return;
+			
+			if(agenda.getAddendums() != null) {
+				for(Addendum addendum:agenda.getAddendums()) {
+					if(addendum.getMeetings() != null) {
+						for(Meeting meeting:addendum.getMeetings()) {
+							if(meeting.getBills() ==  null)
+								continue;
+							
+							for(int i = 0; i < meeting.getBills().size(); i++) {
+								meeting.getBills().set(i,
+									(Bill)this.loadObject(
+										meeting.getBills().get(i).getSenateBillNo(),
+										year,
+										"bill",
+										Bill.class)
+								);
+							}
+						}
+					}
+				}
+			}
+			this.writeSenateObject(agenda, Agenda.class, false);
+		}
 	}
 	
-	public BasicParser getBasicParser() {
-		if(basicParser == null) {
-			basicParser = new BasicParser();
+	/**
+	 * used to index already serialized json documents
+	 * @param path directory to files (e.g. "2011/bills/")
+	 * @param clazz class of object to be indexed
+	 */
+	public void index(String path, Class<? extends SenateObject> clazz) {		
+		File dir = new File(path);
+		
+		for(File file:dir.listFiles()) {
+			try {
+				this.searchEngine.indexSenateObjects(
+						new ArrayList<LuceneObject>(Arrays.asList(
+								loadObject(file.getAbsolutePath(), clazz))),
+						new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		return basicParser;
-	}
-	
-	public CalendarParser getCalendarParser() {
-		if(calendarParser == null) {
-			calendarParser = new CalendarParser(this);
-		}
-		return calendarParser;
 	}
 }
