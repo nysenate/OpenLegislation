@@ -63,6 +63,8 @@ public class IngestReader {
 		else {
 			System.err.println("appropriate usage is with parameters: <json directory> <sobi directory>");
 		}
+		
+//		ir.handlePath("/Users/jaredwilliams/Desktop/2011");
 	}
 	
 	public static void index(IngestReader reader, String path, Class<? extends SenateObject> clazz) {		

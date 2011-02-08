@@ -446,9 +446,9 @@ public class CalendarParser implements OpenLegConstants {
 			reader.writeSenateObject(bill, Bill.class, false);
 		}
 		
-		bill.setFulltext("");
-		bill.setMemo("");
-		bill.setBillEvents(null);
+//		bill.setFulltext("");
+//		bill.setMemo("");
+//		bill.setBillEvents(null);
 				
 		return bill;
 	}

@@ -492,9 +492,9 @@ public class CommitteeParser implements OpenLegConstants {
 			
 		}
 		
-		bill.setFulltext("");
-		bill.setMemo("");
-		bill.setBillEvents(null);
+//		bill.setFulltext("");
+//		bill.setMemo("");
+//		bill.setBillEvents(null);
 				
 		return bill;
 	}

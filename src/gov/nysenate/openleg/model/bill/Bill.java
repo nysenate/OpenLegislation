@@ -524,11 +524,11 @@ public class Bill implements SenateObject  {
 		
 		
 		
-		if(billEvents == null) {
+		if(billEvents == null || billEvents.isEmpty()) {
 			billEvents = bill.getBillEvents();
 		}
 		else {
-			if(bill.getBillEvents() != null) {
+			if(bill.getBillEvents() != null && !bill.getBillEvents().isEmpty()) {
 				this.billEvents = bill.getBillEvents();
 			}
 		}
@@ -550,7 +550,7 @@ public class Bill implements SenateObject  {
 			coSponsors = bill.getCoSponsors();
 		}
 		else {
-			if(bill.getCoSponsors() != null) {
+			if(bill.getCoSponsors() != null && !bill.getCoSponsors().isEmpty()) {
 				this.coSponsors = bill.getCoSponsors();
 			}
 		}
@@ -559,7 +559,7 @@ public class Bill implements SenateObject  {
 			amendments = bill.getAmendments();
 		}
 		else {
-			if(bill.getActClause() != null) {
+			if(bill.getAmendments() != null && !bill.getAmendments().isEmpty()) {
 				this.amendments = bill.getAmendments();
 			}
 		}		
