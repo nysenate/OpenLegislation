@@ -19,6 +19,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 import org.codehaus.jackson.JsonEncoding;
@@ -53,6 +56,8 @@ public class IngestReader {
 	ArrayList<SenateObject> committeeUpdates;
 	
 	public static void main(String[] args) throws IOException {
+		IngestReader ir = new IngestReader();
+		
 		
 //		System.out.println("bills");
 //		index(ir, "/Users/jaredwilliams/Desktop/test/2011/bill/", Bill.class);
@@ -61,9 +66,7 @@ public class IngestReader {
 //		System.out.println("agendas");
 //		index(ir, "/Users/jaredwilliams/Desktop/test/2011/agenda/", Agenda.class);
 		
-//		ir.handlePath("/Users/jaredwilliams/Desktop/2011");
-
-		IngestReader ir = new IngestReader();
+//		ir.handlePath("/Users/jaredwilliams/Desktop/sample");
 		
 		if(args.length == 3){
 			String command = args[0];
@@ -186,7 +189,7 @@ public class IngestReader {
 			}
 			
 			if(!bills.isEmpty()) {
-				writeBills(bills);
+				writeBills(bills, true);
 				basicParser.clearBills();
 			}
 			
@@ -234,7 +237,7 @@ public class IngestReader {
 				//it is either adding or removing a vote from an existing bill
 				//which has been deserialized or creating a new bill
 				//in which case merging isn't necessary
-				writeSenateObject(so, Bill.class, false);
+				writeBills(new ArrayList<Bill>(Arrays.asList(((Bill)so))), false);
 			}
 			else if(so instanceof Agenda) {
 				writeSenateObject(so, Agenda.class, true);
@@ -248,22 +251,77 @@ public class IngestReader {
 		}
 	}
 
-	public void writeBills(ArrayList<Bill> bills) {
+	public void writeBills(ArrayList<Bill> bills, boolean merge) {
 		for(Bill bill:bills) {
 			if(bill == null)
 				continue;
-						
-			writeSenateObject(bill, Bill.class, true);
+			
+			writeSenateObject(bill, Bill.class, merge);
+			
 		}
 	}
 	
-	public void writeSenateObject(SenateObject obj, Class<?> clazz, boolean merge) {
+	public void writeSenateObject(SenateObject obj, Class<? extends SenateObject> clazz, boolean merge) {
 		mapper = getMapper();
 		
 		if(obj == null)
 			return;
 		
 		System.out.println(obj.luceneOtype() + " : " + obj.luceneOid());
+		
+		File newFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
+				
+		if(merge) {
+			obj = mergeSenateObject(obj, clazz, newFile);
+		}
+		
+		if(this.writeJsonFromSenateObject(obj, clazz, newFile)) {
+			indexSenateObject(obj);
+		}
+		
+	}
+	
+	public void indexSenateObject(SenateObject obj) {
+		try {
+			/*
+			 * fullText for bills must be saved and reapplied after processing.. on long processes
+			 * where many SOBIs are processed bills stay in memory, so if fulltext is reprocessed
+			 * the next update will see the new text and not be able to parse 
+			 * it properly (due to line numbers)
+			 */
+			if(obj instanceof Bill 
+					&& ((Bill)obj).getFulltext() != null 
+					&& !((Bill)obj).getFulltext().equals("")) {
+				
+				StringBuffer fullText = new StringBuffer(((Bill)obj).getFulltext());
+				((Bill)obj).setFulltext(formatBillText(((Bill)obj).getFulltext()));
+								
+				searchEngine.indexSenateObjects(
+						new ArrayList<LuceneObject>(
+							Arrays.asList(obj)), 
+							new LuceneSerializer[]{
+								new XmlSerializer(), 
+								new JsonSerializer()});
+				
+				((Bill)obj).setFulltext(fullText.toString());
+				fullText = null;
+			}
+			else {
+				searchEngine.indexSenateObjects(
+						new ArrayList<LuceneObject>(
+							Arrays.asList(obj)), 
+							new LuceneSerializer[]{
+								new XmlSerializer(), 
+								new JsonSerializer()});
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean writeJsonFromSenateObject(SenateObject obj, Class<? extends SenateObject> clazz, File file) {
+		if(file == null) 
+			file = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
 		
 		File dir = new File(WRITE_DIRECTORY + obj.getYear());
 		if(!dir.exists()) {
@@ -274,35 +332,15 @@ public class IngestReader {
 			dir.mkdir();
 		}
 		
-		File newFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
-				
-		if(merge) {
-			if(newFile.exists()) {
-				File oldFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
-				SenateObject oldObject =  null;
-				try {
-					oldObject = (SenateObject)mapper.readValue(oldFile, clazz);
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				if(oldObject != null) {
-					oldObject.merge(obj);
-					obj = oldObject;
-				}
-			}
-		}
-		
 		try {			
-			BufferedOutputStream osw = new BufferedOutputStream(new FileOutputStream(newFile));
+			BufferedOutputStream osw = new BufferedOutputStream(new FileOutputStream(file));
 			
 			JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(osw,JsonEncoding.UTF8);
 			generator.setPrettyPrinter(new DefaultPrettyPrinter());
 			mapper.writeValue(generator, obj);
 			osw.close();
+			
+			return true;
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -311,11 +349,52 @@ public class IngestReader {
 			e.printStackTrace();
 		}
 		
-		try {
-			searchEngine.indexSenateObjects(new ArrayList<LuceneObject>(Arrays.asList(obj)), new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
-		} catch (IOException e) {
-			e.printStackTrace();
+		return false;
+	}
+	
+	public SenateObject mergeSenateObject(SenateObject obj, Class<? extends SenateObject> clazz, File file) {
+		if(file == null)
+			file = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
+		
+		if(file.exists()) {
+			SenateObject oldObject =  null;
+			try {
+				oldObject = (SenateObject)mapper.readValue(file, clazz);
+			} catch (JsonParseException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if(oldObject != null) {
+				oldObject.merge(obj);
+				obj = oldObject;
+			}
 		}
+		
+		return obj;
+	}
+	
+	public String formatBillText(String text) {
+		StringBuffer ret = new StringBuffer("");
+		StringTokenizer st = new StringTokenizer (text,"\n");
+		
+		String line = null;
+		
+		while(st.hasMoreTokens()) {
+			line = st.nextToken();
+			if(line.matches("^ ?T\\d{5}\\:(\\s{3,4}\\d{1,2})?.+?")) {
+				ret.append(line.substring(13) + "\n");
+			}
+			else if(line.matches("^ ?T\\d{5}\\:")) {
+				ret.append(line.substring(7) + "\n");
+			}
+			else {
+				ret.append(line + "\n");
+			}
+		}
+		return ret.toString();
 	}
 	
 	public SenateObject loadObject(String id, String year, String type, Class<? extends SenateObject> clazz) {
