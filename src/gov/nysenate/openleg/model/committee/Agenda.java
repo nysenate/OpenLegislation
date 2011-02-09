@@ -131,6 +131,16 @@ public class Agenda implements SenateObject{
 		}
 		else {
 			if(((Agenda)obj).getAddendums() != null) {
+				
+				for(Addendum addendum:((Agenda)obj).getAddendums()) {
+					for(Meeting meeting:addendum.getMeetings()) {
+						Meeting temp = this.getCommitteeMeeting(meeting.id);
+						if(temp != null) {
+							meeting.setMeetingDateTime(temp.meetingDateTime);
+							meeting.setMeetday(temp.getMeetday());
+						}
+					}
+				}
 				this.addendums = ((Agenda)obj).getAddendums();
 			}
 		}

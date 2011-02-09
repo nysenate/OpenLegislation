@@ -29,32 +29,6 @@ public class SearchEngine2 extends SearchEngine {
 		System.out.print("openlegLuceneConsole> ");
 		while (!(line = reader.readLine()).equals("quit"))
 		{
-//			if(line.startsWith("bill ")) {
-//				String cmd = line.substring(line.indexOf(" ")+1);
-//				StringTokenizer st = new StringTokenizer(cmd);
-//				Bill bill = PMF.getDetachedBill(st.nextToken(),new Integer(st.nextToken()));
-//				
-//				if(bill != null) {
-//					engine.indexSenateObjects(new ArrayList(Arrays.asList(bill)), new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
-//				}
-//				else {
-//					System.out.println("bill was null");
-//				}
-//			}
-//			if(line.startsWith("meeting ")) {
-//				String cmd = line.substring(line.indexOf(" ")+1);
-//				StringTokenizer st = new StringTokenizer(cmd);
-//				
-//				Meeting meeting = (Meeting)PMF.getDetachedObject(Meeting.class, "id", st.nextToken(), null);
-//				
-//				if(meeting != null) {
-//					engine.indexSenateObjects(new ArrayList(Arrays.asList(meeting)), new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
-//				}
-//				else {
-//					System.out.println("no meeting!");
-//				}
-//				
-//			}
 			if (line.startsWith("index "))
 			{
 				String cmd = line.substring(line.indexOf(" ")+1);

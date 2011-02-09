@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 import org.codehaus.jackson.JsonEncoding;
@@ -56,8 +54,7 @@ public class IngestReader {
 	ArrayList<SenateObject> committeeUpdates;
 	
 	public static void main(String[] args) throws IOException {
-		IngestReader ir = new IngestReader();
-		
+		IngestReader ir = new IngestReader(); 		
 		
 //		System.out.println("bills");
 //		index(ir, "/Users/jaredwilliams/Desktop/test/2011/bill/", Bill.class);
@@ -66,7 +63,7 @@ public class IngestReader {
 //		System.out.println("agendas");
 //		index(ir, "/Users/jaredwilliams/Desktop/test/2011/agenda/", Agenda.class);
 		
-//		ir.handlePath("/Users/jaredwilliams/Desktop/sample");
+//		ir.handlePath("/Users/jaredwilliams/Desktop/2011");
 		
 		if(args.length == 3){
 			String command = args[0];
@@ -176,6 +173,7 @@ public class IngestReader {
 	// being processed
 	
 	public void handleFile(File file) {
+		System.out.println(file.getName());
 		//TODO ending in .TXT doesn't necessaril signify a bill
 		if(file.getName().endsWith(".TXT")) {
 			
@@ -388,6 +386,9 @@ public class IngestReader {
 				ret.append(line.substring(13) + "\n");
 			}
 			else if(line.matches("^ ?T\\d{5}\\:")) {
+				ret.append(line.substring(7) + "\n");
+			}
+			else if(line.matches("^ ?R\\d{5}\\:.*?")) {
 				ret.append(line.substring(7) + "\n");
 			}
 			else {
