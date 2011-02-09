@@ -65,11 +65,18 @@ public class IngestReader {
 		
 //		ir.handlePath("/Users/jaredwilliams/Desktop/2011");
 		
-		if(args.length == 3){
+		if(args.length == 2) {
+			String command = args[0];
+			String p1 = args[1];
+			if(command.equals("-gx")) {
+				ir.generateXml(p1);
+			}
+		}
+		else if(args.length == 3){
 			String command = args[0];
 			String p1 = args[1];
 			String p2 = args[2];
-			if(command.equals("-c")) {
+			if(command.equals("-i")) {
 				WRITE_DIRECTORY = p1;
 				ir.handlePath(p2);
 			}
@@ -95,11 +102,12 @@ public class IngestReader {
 		else {
 			System.err.println("appropriate usage is:\n" +
 					"\t-i <json directory> <sobi directory> (to create index)\n" +
+					"\t-gx <sobi directory> (to generate agenda and calendar xml from sobi)\n" +
 					"\t-fc <year> <calendar directory> (to fix calendar bills)\n" +
 					"\t-fa <year> <agenda directory> (to fix agenda bills)\n" +
 					"\t-b <billid> <year> (to reindex bill)\n" +
 					"\t-c <calendarid> <year> (to reindex calendar)\n" +
-					"\t-a <agenda id> < year> (to reindex agenda)");
+					"\t-a <agenda id> < year> (to reindex agenda)\n");
 		}
 	}
 	
@@ -133,11 +141,7 @@ public class IngestReader {
 			calendarParser = new CalendarParser(this);
 		}
 		return calendarParser;
-	}
-	
-	
-	
-	
+	}	
 	
 	public IngestReader() {
 		searchEngine = SearchEngine2.getInstance();
@@ -173,10 +177,8 @@ public class IngestReader {
 	// being processed
 	
 	public void handleFile(File file) {
-		System.out.println(file.getName());
 		//TODO ending in .TXT doesn't necessaril signify a bill
-		if(file.getName().endsWith(".TXT")) {
-			
+		if(file.getName().endsWith(".TXT")) {			
 			bills = new ArrayList<Bill>();
 			try {
 				bills.addAll(getBasicParser().handleBill(file.getAbsolutePath(), '-'));
@@ -531,6 +533,26 @@ public class IngestReader {
 				}
 			}
 			this.writeSenateObject(agenda, Agenda.class, false);
+		}
+	}
+	
+	public void generateXml(String path) {
+		File file = new File(path);
+		if (file.isDirectory())	{
+			File[] files = file.listFiles();
+			
+			for (int i = 0; i < files.length; i++)
+			{
+				if(files[i].isFile()) {
+					XmlFixer.separateXmlFromSobi(files[i]);
+				}
+				else if(files[i].isDirectory()) {
+					handlePath(files[i].getAbsolutePath());
+				}
+			}
+		}
+		else {
+			XmlFixer.separateXmlFromSobi(file);
 		}
 	}
 	
