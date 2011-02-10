@@ -1,0 +1,18 @@
+{"district":"State Senate District 20","districtUrl":
+  "http://www.nysenate.gov/district/20","senator":{"name":"Eric Adams",
+    "contact":"eadams@senate.state.ny.us","url":
+    "http://www.nysenate.gov/senator/eric-adams","imageUrl":
+    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/(02-04-09) Adams-HS-059NEW HEADSHOT_1.JPG",
+    "social":{"contact":"eadams@senate.state.ny.us","faceBook":
+      "http://www.facebook.com/pages/New-York-State-Senator-Eric-Adams/80559174013",
+      "twitter":"http://twitter.com/NYSSenAdams","youtube":"","flickr":"",
+      "rss":"http://www.nysenate.gov/senator/eric-adams/content/feed"},
+    "offices":[{"street":"188 State Street ","city":"Albany","state":"NY",
+        "zip":"","lat":-73.759091,"lon":42.652855,"officeName":
+        "Albany Office","phone":"(518) 455-2431","fax":"(518) 426-6856","id":
+        4,"contact":"eadams@senate.state.ny.us"},{"street":
+        "572 Flatbush Avenue","city":"Brooklyn","state":"NY","zip":"","lat":
+        -73.960689,"lon":40.659736,"officeName":"District Office","phone":
+        "(718) 284-4700","fax":"(718) 282-3585","id":5,"contact":
+        "eadams@senate.state.ny.us"}],"district":
+    "State Senate District 20"}}

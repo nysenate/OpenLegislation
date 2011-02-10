@@ -1,0 +1,18 @@
+{"district":"State Senate District 26","districtUrl":
+  "http://www.nysenate.gov/district/26","senator":{"name":"Liz Krueger",
+    "contact":"lkrueger@senate.state.ny.us","url":
+    "http://www.nysenate.gov/senator/liz-krueger","imageUrl":
+    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Senate Headshot.jpg",
+    "social":{"contact":"lkrueger@senate.state.ny.us","faceBook":
+      "http://www.facebook.com/pages/State-Senator-Liz-Krueger/127489793933856",
+      "twitter":"","youtube":"","flickr":"","rss":
+      "http://www.nysenate.gov/senator/liz-krueger/content/feed"},"offices":[
+      {"street":"172 State Street ","city":"Albany","state":"NY","zip":"",
+        "lat":-73.757823,"lon":42.652133,"officeName":"Albany Office",
+        "phone":"(518) 455-2297","fax":"(518) 426-6874","id":58,"contact":
+        "lkrueger@senate.state.ny.us"},{"street":"211 East 43rd Street ",
+        "city":"New York","state":"NY","zip":"","lat":-73.97285,"lon":
+        40.751091,"officeName":"District Office","phone":"(212) 490-9535",
+        "fax":"(212) 490-2151","id":59,"contact":
+        "lkrueger@senate.state.ny.us"}],"district":
+    "State Senate District 26"}}

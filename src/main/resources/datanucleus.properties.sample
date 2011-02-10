@@ -1,0 +1,39 @@
+javax.jdo.PersistenceManagerFactoryClass=org.datanucleus.jdo.JDOPersistenceManagerFactory
+datanucleus.ConnectionDriverName=com.mysql.jdbc.Driver
+datanucleus.ConnectionURL=jdbc:mysql://localhost/openlegdev
+datanucleus.ConnectionUserName=openlegadmin
+datanucleus.ConnectionPassword=
+datanucleus.autoCreateSchema=true
+datanucleus.autoCreateTables=true
+datanucleus.validateTables=true
+datanucleus.validateConstraints=true
+datanucleus.identifier.case=LowerCase
+datanucleus.NontransactionalWrite=false
+datanucleus.NontransactionalRead=true
+
+# Pooling of Connections
+datanucleus.connectionPoolingType=DBCP
+datanucleus.connectionPool.maxIdle=10
+datanucleus.connectionPool.minIdle=3
+datanucleus.connectionPool.maxActive=25
+datanucleus.connectionPool.maxWait=60
+datanucleus.connectionPool.maxConnections=50
+datanucleus.connectionPool.maxStatements=20
+
+#datanucleus.connectionPoolingType=C3P0
+#datanucleus.connectionPool.maxPoolSize=25
+#datanucleus.connectionPool.minPoolSize=3
+#datanucleus.connectionPool.initialPoolSize=3
+#datanucleus.connectionPool.maxStatements=20
+#datanucleus.connectionPool.numHelperThreads=5
+
+# Pooling of PreparedStatements
+datanucleus.connectionPool.testSQL=SELECT 1
+datanucleus.connectionPool.timeBetweenEvictionRunsMillis=2400000
+datanucleus.connectionPool.minEvictableIdleTimeMillis=18000000
+
+#datanucleus.connectionPool.testSQL=SELECT 1
+
+#datanucleus.cache.level2=false
+#datanucleus.cache.level2.type=oscache
+#datanucleus.cache.level2.cacheName=_openleg_cache

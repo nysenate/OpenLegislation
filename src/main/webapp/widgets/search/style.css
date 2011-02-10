@@ -1,0 +1,229 @@
+
+
+#quickresult p,ul,ol,dl,dd {
+  margin: 0 0 1em 0;
+}
+
+
+
+
+#quickresult ul {
+  padding-left: 15px;
+}
+
+
+#quickresult ul li {
+}
+
+ul.multiline li {
+  margin-bottom: 1em;
+}
+
+ul.meta li {
+}
+
+dt {
+  float: left; 
+}
+
+a {
+  /*color: #004276;*/
+  color:#003366;
+}
+
+a:visited {
+  color: #006699;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a img {
+  border: none;
+}
+
+a.sublink, a.sublink:visited, a.sublink:link
+{
+	text-decoration:none;	
+	color:#005577;
+}
+
+a.sublink:hover
+{
+	text-decoration: underline;	
+}
+
+.image a {
+  display: block;
+}
+
+/* forms */
+
+form  {
+  margin: 0;
+  padding: 0;
+}  
+
+label {
+  display: block;
+  margin: 0;
+  padding: 0;
+  font-size: 1.1em;
+  font-family: arial, helvetica, sans-serif;
+  color: #000;
+}
+
+.inlineLabel {
+  display: inline;
+}
+
+input,
+textarea,
+select {
+  font-size: 1.1em;
+  color: #000;
+}
+
+input {
+  vertical-align: middle;
+}
+
+.userMessage
+{
+padding:3px;
+font-size:80%;
+}
+
+.searchForm
+{
+float:left;
+}
+
+.headline
+{
+	
+}
+
+
+.billSummary
+{
+padding:3px;
+padding-top:12px;
+border-bottom:1px dashed #ccc;
+margin:0px;
+}
+
+.billSummary p
+{
+font-size:10pt;
+}
+
+.billSummarySmall
+{
+font-size:9pt;
+}
+
+#txtSearchBox
+{
+width:250px;
+font-size:12pt;
+}
+
+.home-sub-box
+{
+font-size:8pt;
+color:#777;
+text-align:left;
+float:left;
+width:175px;
+}
+
+#home-more-options
+{
+	margin-top:50px;
+width:500px;	
+}
+	
+.home-sub-box b
+{
+	
+color:#111;
+font-size:1.1em;
+}
+
+.home-sub-box a, .home-sub-box a:link, .home-sub-box a:visited
+{
+	color:#555;
+	text-decoration:none;
+}
+
+.home-sub-box a:hover
+{
+	color:#555;
+	text-decoration:underline;
+}
+
+.highlight { background-color: yellow }
+
+.blockFormats
+{
+font-size:80%;
+}
+
+#formatBox
+{
+font-size:90%;
+border-top:1px solid #ccc;
+}
+
+.linkActivated, .linkActivated:visited
+{
+font-weight:bold;
+color:#333333;
+text-decoration:none;
+}
+
+#quickresult
+{
+position:absolute;
+width:310px;
+z-index:10;
+border-left:solid 1px #dedede;
+border-right:solid 1px #dedede;
+background:#eee;
+color:#777;
+line-height:14px;
+font-size:10pt;
+overflow:hidden;
+text-align:left;
+}
+
+.quickresult-header
+{
+position:absolute;
+top:130px;
+left:150px;
+}
+
+#quickresult ul, #quickresult li
+{
+list-style-type:none;
+margin:0px;
+border-bottom:1px solid #ccc;
+border-top:1px solid #ccc;
+
+}
+
+.quickresult_box
+{
+margin-top:0px;
+padding:4px; 
+font-size:12px; 
+}
+.quickresult_box:hover
+{
+background:#FFFFCC;
+color:#FFFFFF;
+}
+

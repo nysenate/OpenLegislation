@@ -1,0 +1,16 @@
+{"district":"State Senate District 29","districtUrl":
+  "http://www.nysenate.gov/district/29","senator":{"name":
+    "Thomas K. Duane","contact":"duane@senate.state.ny.us","url":
+    "http://www.nysenate.gov/senator/thomas-duane","imageUrl":
+    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/DuaneHeadshot07ColorBIO.jpg",
+    "social":{"contact":"duane@senate.state.ny.us","faceBook":"","twitter":
+      "","youtube":"","flickr":"","rss":
+      "http://www.nysenate.gov/senator/thomas-duane/content/feed"},"offices":
+    [{"street":"172 State Street ","city":"Albany","state":"NY","zip":"",
+        "lat":-73.757823,"lon":42.652133,"officeName":"Albany Office",
+        "phone":"(518) 455-2451","fax":"(518) 426-6846","id":25,"contact":
+        "duane@senate.state.ny.us"},{"street":"322 Eighth Avenue","city":
+        "New York","state":"NY","zip":"","lat":-73.996599,"lon":40.747196,
+        "officeName":"District Office","phone":"(212) 633-8052","fax":
+        "(212) 633-8096","id":26,"contact":"duane@senate.state.ny.us"}],
+    "district":"State Senate District 29"}}
