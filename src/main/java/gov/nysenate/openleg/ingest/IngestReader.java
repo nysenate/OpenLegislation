@@ -47,6 +47,7 @@ import com.google.gson.JsonParseException;
 public class IngestReader {
 	
 	private static String WRITE_DIRECTORY = "/usr/local/openleg/json/";
+
 	
 	BasicParser basicParser = null;
 	ObjectMapper mapper = null;
@@ -60,7 +61,7 @@ public class IngestReader {
 	
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
-								
+										
 		if(args.length == 2) {
 			String command = args[0];
 			String p1 = args[1];
@@ -318,7 +319,7 @@ public class IngestReader {
 			}
 			
 			if(this.writeJsonFromSenateObject(obj, clazz, newFile)) {
-//				indexSenateObject(obj);
+				indexSenateObject(obj);
 			}
 		}
 		catch (Exception e) {

@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.util;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -211,7 +210,7 @@ public class TextFormatter {
 	public static String formatMemo (String input)
 	{
 		StringBuffer resp = new StringBuffer();
-		
+				
 		StringTokenizer st = new StringTokenizer (input,"\n");
 		String line = null;
 		int breakIdx = -1;
@@ -262,6 +261,7 @@ public class TextFormatter {
 			}
 			else
 			{
+				resp.append("<br/><br/>");
 				resp.append(line);
 				resp.append("<br/><br/>");
 			}
