@@ -133,9 +133,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		int pageSize = DEFAULT_PAGE_SIZE;
 		
 		try
-		{
-			
-		
+		{		
 			if (version.equals("1.0"))
 			{
 				String format = st.nextToken().toLowerCase();	
@@ -538,6 +536,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				{
 					className = "gov.nysenate.openleg.model.committee.Meeting";
 				}
+				else if(type.equals("transcript")) {
+					className = "gov.nysenate.openleg.model.transcript.Transcript";
+				}
 				
 				Object resultObj = null;
 				
@@ -600,7 +601,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		try
 		{
 			logger.info("routing to search controller:" + viewPath);
-			
 			getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
 		}
 		catch (Exception e)
@@ -665,6 +665,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				else if (type.equals("action"))
 				{
 					className = "gov.nysenate.openleg.model.bill.BillEvent";
+				}
+				else if(type.equals("transcript")) {
+					className = "gov.nysenate.openleg.model.transcript.Transcript";
 				}
 				
 				
@@ -764,7 +767,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				else if (type.equals("transcript"))
 				{
 					Transcript transcript = (Transcript)resultObj;
-					
+										
 					if (transcript.getTimeStamp() != null)
 					{
 						title = transcript.getTimeStamp().toLocaleString();
@@ -772,7 +775,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					}
 					else
 					{
-						title = transcript.getId();
+						title = "Transcript - " + transcript.getLocation();
 					}
 					
 					summary = transcript.getType() + ": " + transcript.getLocation();

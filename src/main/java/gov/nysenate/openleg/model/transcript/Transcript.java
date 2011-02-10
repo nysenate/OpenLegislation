@@ -140,6 +140,9 @@ public class Transcript implements SenateObject {
 
 	@JsonIgnore
 	public String getLuceneRelatedBills() {
+		if(relatedBills == null)
+			return "";
+		
 		StringBuilder response = new StringBuilder();
 		for(Bill bill : relatedBills) {
 			response.append(bill.getSenateBillNo() + ", ");
@@ -161,7 +164,15 @@ public class Transcript implements SenateObject {
 
 	@Override
 	public void merge(SenateObject obj) {
+		if(!(obj instanceof Transcript))
+			return;
 		
+		this.id = ((Transcript)obj).getId();
+		this.location = ((Transcript)obj).getLocation();
+		this.relatedBills = ((Transcript)obj).getRelatedBills();
+		this.timeStamp = ((Transcript)obj).getTimeStamp();
+		this.transcriptText = ((Transcript)obj).getTranscriptText();
+		this.transcriptTextProcessed = ((Transcript)obj).getTranscriptTextProcessed();
 	}
 	
 	

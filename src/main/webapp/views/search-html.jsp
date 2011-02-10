@@ -174,7 +174,7 @@ String resultTitle = null;
                 
                  if (contentType.equals("transcript"))
                 {
-                        contentId = contentId + "?term=" + java.net.URLEncoder.encode(term,"UTF-8") + "&#result";
+                       // contentId = contentId + "?term=" + java.net.URLEncoder.encode(term,"UTF-8") + "&#result";
                         
                 }
                  

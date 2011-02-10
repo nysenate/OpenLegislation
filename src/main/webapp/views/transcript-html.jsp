@@ -8,9 +8,9 @@ Transcript transcript = (Transcript)request.getAttribute("transcript");
 
 String query = request.getParameter("term");
 
-String title = "NY Senate OpenLeg - Transcript " + transcript.getId();
+String title = "NY Senate OpenLeg - Transcript";
 
-String idKey = transcript.getId();
+String idKey = transcript.luceneOid();
 
  	DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.SHORT);
 
@@ -30,10 +30,8 @@ String idKey = transcript.getId();
  <br/>
  <div class="blockFormats">
  <b>Formats:</b> 
- <a href="<%=appPath%>/api/1.0/html/transcript/<%=idKey%>">Web Format</a>,
- <a href="<%=appPath%>/api/1.0/html-plain/transcript/<%=idKey%>">Original Transcript</a>,
  <a href="<%=appPath%>/api/1.0/xml/transcript/<%=idKey%>">XML</a>,
- <a href="<%=appPath%>/api/json/transcript/<%=idKey%>">JSON</a>
+ <a href="<%=appPath%>/api/1.0/json/transcript/<%=idKey%>">JSON</a>
 </div>
 <hr/>
 <%

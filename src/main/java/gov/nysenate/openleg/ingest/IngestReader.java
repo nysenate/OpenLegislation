@@ -59,8 +59,8 @@ public class IngestReader {
 	ArrayList<SenateObject> committeeUpdates;
 	
 	public static void main(String[] args) throws IOException {
-		IngestReader ir = new IngestReader(); 				
-				
+		IngestReader ir = new IngestReader();
+								
 		if(args.length == 2) {
 			String command = args[0];
 			String p1 = args[1];
@@ -68,18 +68,18 @@ public class IngestReader {
 				ir.generateXml(p1);
 			}
 			else if(command.equals("-b")) {
-				Bill bill = (Bill)ir.loadObject(p1, Bill.class);
-				ir.writeSenateObject(bill, Bill.class, false);
+				ir.indexSenateObject((Bill)ir.loadObject(p1, Bill.class));
 			}
 			else if(command.equals("-c")) {
-				Calendar cal = (Calendar)ir.loadObject(p1, Calendar.class);
-				ir.writeSenateObject(cal, Calendar.class, false);
+				ir.indexSenateObject((Calendar)ir.loadObject(p1, Calendar.class));
 			}
 			else if(command.equals("-a")) {
-				Agenda agenda = (Agenda)ir.loadObject(p1, Agenda.class);
-				ir.writeSenateObject(agenda, Agenda.class, false);
+				ir.indexSenateObject((Agenda)ir.loadObject(p1, Agenda.class));
 			}
 			else if(command.equals("-t")) {
+				ir.indexSenateObject((Transcript)ir.loadObject(p1, Transcript.class));
+			}
+			else if(command.equals("-it")) {
 				ir.handleTranscript(p1);
 			}
 		}
@@ -107,7 +107,8 @@ public class IngestReader {
 					"\t-b <bill json path> (to reindex single bill)\n" +
 					"\t-c <calendar json path> (to reindex single calendar)\n" +
 					"\t-a <agenda json path> (to reindex single agenda)\n" +
-					"\t-t <transcript json path> (to reindex single agenda)\n");
+					"\t-t <transcript json path> (to reindex single transcript)" +
+					"\t-it <transcript sobi path> (to reindex single agenda)\n");
 		}
 	}
 	
@@ -171,13 +172,7 @@ public class IngestReader {
 		}
 	}
 	
-	//TODO since structure already exists to pass in files with a given type
-	// like "sobi", "transcript" or etc it would be best to move away
-	// from relying on file names to determine what sort of document is
-	// being processed
-	
 	public void handleFile(File file) {
-		//TODO ending in .TXT doesn't necessaril signify a bill
 		if(file.getName().endsWith(".TXT")) {			
 			bills = new ArrayList<Bill>();
 			try {
@@ -323,7 +318,7 @@ public class IngestReader {
 			}
 			
 			if(this.writeJsonFromSenateObject(obj, clazz, newFile)) {
-				indexSenateObject(obj);
+//				indexSenateObject(obj);
 			}
 		}
 		catch (Exception e) {
