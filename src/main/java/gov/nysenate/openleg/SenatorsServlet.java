@@ -1,21 +1,16 @@
 package gov.nysenate.openleg;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -112,7 +107,6 @@ public class SenatorsServlet extends HttpServlet {
 	public void init() throws ServletException {
 		super.init();
 		
-		String rootPath = this.getServletContext().getRealPath("/");
 		String encoding = "latin1";//"UTF-8";
 		
 		try

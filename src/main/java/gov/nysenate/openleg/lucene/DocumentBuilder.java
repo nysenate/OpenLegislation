@@ -32,6 +32,7 @@ public class DocumentBuilder {
 	public static final String TITLE = "title";
 	public static final String MODIFIED = "modified"; //lastmodified
 	
+	@SuppressWarnings("unchecked")
 	public Document buildDocument(LuceneObject o, LuceneSerializer[] serializer) {
 		if(o == null) {
 			return null;

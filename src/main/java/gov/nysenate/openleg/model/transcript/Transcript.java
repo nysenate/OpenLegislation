@@ -6,11 +6,13 @@ import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.model.bill.Bill;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.lucene.document.Field;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -105,7 +107,7 @@ public class Transcript implements SenateObject {
 	
 	@Override
 	public String luceneOid() {
-		return (type.replaceAll(" ", "-").toLowerCase())+((timeStamp != null) ? "-"+ new SimpleDateFormat("MM-dd-yyyy").format(timeStamp):"") + "-" + id;
+		return (type.replaceAll(" ", "-").toLowerCase())+((timeStamp != null) ? "-"+ new SimpleDateFormat("MM-dd-yyyy").format(timeStamp):"");
 	}
 	
 	@Override
@@ -136,6 +138,7 @@ public class Transcript implements SenateObject {
 		return fields;
 	}
 
+	@JsonIgnore
 	public String getLuceneRelatedBills() {
 		StringBuilder response = new StringBuilder();
 		for(Bill bill : relatedBills) {
@@ -144,11 +147,14 @@ public class Transcript implements SenateObject {
 		return response.toString().replaceAll(", $", "");
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
+	@JsonIgnore
 	public int getYear() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(timeStamp);
+		
 		if(timeStamp != null) {
-			return timeStamp.getYear();
+			return cal.get(Calendar.YEAR);
 		}
 		return 9999;
 	}

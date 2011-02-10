@@ -3,7 +3,7 @@ package gov.nysenate.openleg.search;
 import java.util.Date;
 import java.util.HashMap;
 
-public class SearchResult implements Comparable {
+public class SearchResult implements Comparable<Object> {
 
 	String type;
 	String id;

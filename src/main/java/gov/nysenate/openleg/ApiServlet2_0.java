@@ -30,19 +30,10 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 	
 	private SearchEngine2 searchEngine = null;
 	
-	public static void main(String[] args) throws ParseException, IOException {
-		System.out.println(SearchEngine2.getInstance().search("otype:calendar AND when:[1265000400000 TO 1265043540000]","xml",0,5,null,true).getResults().size());
-	
-//		System.out.println(new ApiServlet2_0().dateReplace("blah blah04-01-2010T00-00blahblah"));
-		
-//		System.out.println(BillCleaner.formatV2Bill("s-5000"));
-	}
-       
     public ApiServlet2_0() {
         super();
     }
 
-    
     @Override
 	public void init() throws ServletException {
 		super.init();

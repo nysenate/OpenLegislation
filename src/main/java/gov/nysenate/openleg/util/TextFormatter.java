@@ -164,9 +164,7 @@ public class TextFormatter {
 				{
 					line = line.substring(breakIdx+1).trim();
 				}
-				
-				int sepIdx = -1;
-				
+								
 				if (line.endsWith(":"))
 				{
 					line = line + "<br/>";
@@ -248,9 +246,7 @@ public class TextFormatter {
 				{
 					line = line.substring(breakIdx+1).trim();
 				}
-				
-				int sepIdx = -1;
-				
+								
 				if (line.endsWith(" "))
 					line = line.substring(0,line.length()-1).trim();
 				

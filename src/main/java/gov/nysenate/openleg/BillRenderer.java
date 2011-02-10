@@ -4,16 +4,12 @@ package gov.nysenate.openleg;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.model.bill.Vote;
-import gov.nysenate.openleg.search.SearchResult;
-import gov.nysenate.openleg.search.SearchResultSet;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -203,8 +199,6 @@ public class BillRenderer {
 			
 			try
 			{
-
-				Element elemActions = new Element("actions");
 				
 					String baseSenateId = bill.getSenateBillNo();
 			    	

@@ -2,7 +2,6 @@ package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
-import gov.nysenate.openleg.ingest.SenateObject;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -613,7 +612,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	
 	private ArrayList<SearchResult> getRelatedSenateObjects (String type, String query) throws ParseException, IOException, ClassNotFoundException
 	{		
-		ArrayList<SenateObject> results = new ArrayList<SenateObject>();
 		
 		StringBuffer searchString = new StringBuffer();
 		searchString.append("otype:");

@@ -13,15 +13,20 @@ import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.util.JsonSerializer;
+import gov.nysenate.openleg.util.TranscriptFixer;
+import gov.nysenate.openleg.util.XmlFixer;
 import gov.nysenate.openleg.util.XmlSerializer;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 
 
@@ -41,7 +46,6 @@ import com.google.gson.JsonParseException;
 
 public class IngestReader {
 	
-//	private static String WRITE_DIRECTORY = "/Users/jaredwilliams/Desktop/json/";
 	private static String WRITE_DIRECTORY = "/usr/local/openleg/json/";
 	
 	BasicParser basicParser = null;
@@ -55,9 +59,7 @@ public class IngestReader {
 	ArrayList<SenateObject> committeeUpdates;
 	
 	public static void main(String[] args) throws IOException {
-		IngestReader ir = new IngestReader(); 		
-		
-//		ir.handlePath("/Users/jaredwilliams/Desktop/agenda");
+		IngestReader ir = new IngestReader(); 				
 				
 		if(args.length == 2) {
 			String command = args[0];
@@ -77,7 +79,7 @@ public class IngestReader {
 				Agenda agenda = (Agenda)ir.loadObject(p1, Agenda.class);
 				ir.writeSenateObject(agenda, Agenda.class, false);
 			}
-			else if(command.equals("t")) {
+			else if(command.equals("-t")) {
 				ir.handleTranscript(p1);
 			}
 		}
@@ -225,7 +227,53 @@ public class IngestReader {
 	}
 	
 	public void handleTranscript(String path) {
-		writeSenateObject(getBasicParser().handleTranscript(path), Transcript.class, true);
+		File file = new File(path);
+		
+		if(file.isDirectory()) {
+			for(File temp:file.listFiles()) {
+				handleTranscript(temp.getAbsolutePath());
+			}
+		}
+		else {
+			Transcript trans = null;
+			
+			//transcripts often come incorrectly formatted..
+			//this attempts to reprocess and save the raw text
+			//if there is a parsing error, and then attempts
+			//parsing one more time
+			try {				
+				trans = getBasicParser().handleTranscript(path);
+			}
+			catch (Exception e) {
+				TranscriptFixer fixer = new TranscriptFixer();
+				List<String> in;
+				
+				try {
+					if((in = fixer.readContents(file)) != null) {
+						
+						List<String> ret = fixer.fix(in);
+						BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath()));
+						
+						for(String s:ret) {
+							bw.write(s);
+							bw.newLine();
+						}
+						
+						bw.close();
+						trans = getBasicParser().handleTranscript(path);
+					}
+				}
+				catch (Exception e2) {
+					e2.printStackTrace();
+					trans = null;
+				}
+				
+			}
+			if(trans != null) {
+				writeSenateObject(trans, Transcript.class, true);
+			}
+		}
+		
 	}
 	
 	private void writeCommitteeUpdates(ArrayList<SenateObject> committeeUpdates) {
@@ -260,23 +308,27 @@ public class IngestReader {
 	}
 	
 	public void writeSenateObject(SenateObject obj, Class<? extends SenateObject> clazz, boolean merge) {
-		mapper = getMapper();
-		
-		if(obj == null)
-			return;
-		
-		System.out.println(obj.luceneOtype() + " : " + obj.luceneOid());
-		
-		File newFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
-				
-		if(merge) {
-			obj = mergeSenateObject(obj, clazz, newFile);
+		try {
+			mapper = getMapper();
+			
+			if(obj == null)
+				return;
+			
+			System.out.println(obj.luceneOtype() + " : " + obj.luceneOid());
+			
+			File newFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
+					
+			if(merge) {
+				obj = mergeSenateObject(obj, clazz, newFile);
+			}
+			
+			if(this.writeJsonFromSenateObject(obj, clazz, newFile)) {
+				indexSenateObject(obj);
+			}
 		}
-		
-		if(this.writeJsonFromSenateObject(obj, clazz, newFile)) {
-//			indexSenateObject(obj);
+		catch (Exception e) {
+			e.printStackTrace();
 		}
-		
 	}
 	
 	public void indexSenateObject(SenateObject obj) {

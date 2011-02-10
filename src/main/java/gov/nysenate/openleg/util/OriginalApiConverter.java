@@ -1,12 +1,8 @@
 package gov.nysenate.openleg.util;
 
 import java.io.ByteArrayOutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.Iterator;
-
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -21,37 +17,8 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
-import gov.nysenate.openleg.search.SearchResult;
-import gov.nysenate.openleg.search.SearchResultSet;
 
 public class OriginalApiConverter {
-	
-	public static void main(String[] args) throws Exception {
-//		/*bill from db*/
-//		Bill b = PMF.getDetachedBill("S5000");		
-//		System.out.println(billXml(b));
-//		System.out.println(billJson(b));
-//		
-//		/*calendar from db*/
-//		System.out.println("\n\n-----CALENDAR-----\n\n");
-//		Calendar c = (Calendar)PMF.getDetachedObject(Calendar.class, "id", "cal-active-00001-2011-2011", "no descending");	
-//		System.out.println(calendarXml(c));
-//		
-//		/*transcript from db to xstream xml*/
-//		System.out.println("\n\n\n-----TRANSCRIPT-----\n\n");
-//		Transcript t = PMF.getDetachedTranscript("292");
-//		System.out.println(transcriptXml(t));
-//		System.out.println(transcriptJson(t));
-//		
-//		/*meeting from db to xstream xml*/
-//		System.out.println("\n\n\n-----MEETING-----\n\n");
-//		Collection<Meeting> meetings = PMF.getDetachedObjects(Meeting.class, "committeeName", ".*" + "Aging" + ".*", "meetingDateTime descending", 0, 1);
-//		List<String> meeting_exclude = new ArrayList<String>();
-//		meeting_exclude.add("votes");
-//		for(Meeting m:meetings) {
-//			System.out.println(meetingXml(m));
-//		}
-	}
 	
 	public static String doJson(Object o) {
 		if(o instanceof Bill) {
@@ -117,8 +84,6 @@ public class OriginalApiConverter {
 	}
 	
 	public static String billJson(Bill bill) throws JSONException {
-		DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
-
 		org.json.JSONStringer js = new org.json.JSONStringer();
 			
 		JSONWriter mainObj = js.array();
@@ -406,6 +371,7 @@ public class OriginalApiConverter {
 		return mainObj.toString();
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static String transcriptXml(Transcript transcript) {
 		String ret = "";
 		
