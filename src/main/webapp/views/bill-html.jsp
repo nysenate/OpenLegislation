@@ -335,7 +335,7 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
   
 <%if (billMemo!=null){%>
 <h3><%=senateBillNo%> Memo</h3>
-<%=TextFormatter.formatMemo (billMemo)%><%}%>
+<pre><%=/*TextFormatter.formatMemo (billMemo)*/billMemo%></pre><%}%>
 	
  <h3><%=senateBillNo%> Text</h3>
 <%if (bill.getFulltext()!=null){
@@ -356,12 +356,12 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
  
  if (bill.getYear()==2009)
  {
-	 disqusId = bill.getSenateBillNo();
+	 disqusId = bill.getSenateBillNo().split("-")[0];
 	 disqusUrl = "http://open.nysenate.gov/legislation/api/html/bill/" + disqusId;
  }
  else
  {
-	 disqusId = bill.getSenateBillNo() + "-" + bill.getYear();
+	 disqusId = bill.getSenateBillNo();
 	 disqusUrl = "http://open.nysenate.gov/legislation/bill/" + disqusId;
  }
  %>

@@ -314,7 +314,7 @@ public class CalendarParser implements OpenLegConstants {
 		}
 		
 		if (xmlSequence.getNotes()!=null)
-			sequence.setNotes(xmlSequence.getNotes());
+			sequence.setNotes(xmlSequence.getNotes().replaceAll("\n", ""));
 		
 		if (xmlSequence.getCalnos()!=null) {
 			CalendarEntry cEntry = null;

@@ -69,11 +69,8 @@ public interface OpenLegConstants {
 
 	public final static DateFormat LRS_DATE_ONLY_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	public final static DateFormat LRS_DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH.mm.ss'Z'");
-	//'2009-11-03 T09.30.00Z'
 	
 	public static int DEFAULT_CACHE_TIME = 3600;
-	//public static int DEFAULT_CACHE_TIME_ONE_HOUR = 3600;
-	//public static int DEFAULT_CACHE_TIME_ONE_DAY = 3600 * 24;
 	
 	public static final int DEFAULT_PAGE_SIZE = 20;
 	public static final int DEFAULT_API_PAGE_SIZE = 20;

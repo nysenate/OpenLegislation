@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -327,6 +328,14 @@ public class BasicParser implements OpenLegConstants {
 							billEventsBuffer = new ArrayList<BillEvent>();
 						
 						BillEvent bEvent = new BillEvent(bill, beDate, beText);
+						
+						while(billEventsBuffer.contains(bEvent)) {
+							Calendar c = Calendar.getInstance();
+							c.set(Calendar.SECOND, c.get(Calendar.SECOND) + 1);
+							
+							bEvent = new BillEvent(bill, c.getTime(), beText);
+						}
+						
 						billEventsBuffer.add(bEvent);						
 						
 						if (beText.startsWith("REFERRED TO ")) {

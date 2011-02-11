@@ -47,7 +47,6 @@ import com.google.gson.JsonParseException;
 public class IngestReader {
 	
 	private static String WRITE_DIRECTORY = "/usr/local/openleg/json/";
-
 	
 	BasicParser basicParser = null;
 	ObjectMapper mapper = null;
@@ -61,7 +60,7 @@ public class IngestReader {
 	
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
-										
+											
 		if(args.length == 2) {
 			String command = args[0];
 			String p1 = args[1];
@@ -485,7 +484,7 @@ public class IngestReader {
 	/*
 	 * fixCalendarBills(year,path) and fixAgendaBills(year,path) can be
 	 * executed to update the two document types with the latest bill information.
-	 * This solves an issue where occasionaly calendars or agendas
+	 * This solves an issue where occasionally calendars or agendas
 	 * would be missing relevant information that SHOULD be available to them.
 	 */
 	
