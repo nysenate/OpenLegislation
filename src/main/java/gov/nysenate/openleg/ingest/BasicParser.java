@@ -329,8 +329,10 @@ public class BasicParser implements OpenLegConstants {
 						
 						BillEvent bEvent = new BillEvent(bill, beDate, beText);
 						
-						while(billEventsBuffer.contains(bEvent)) {
-							Calendar c = Calendar.getInstance();
+						Calendar c = Calendar.getInstance();
+						c.setTime(beDate);
+						
+						while(billEventsBuffer.contains(bEvent)) {							
 							c.set(Calendar.SECOND, c.get(Calendar.SECOND) + 1);
 							
 							bEvent = new BillEvent(bill, c.getTime(), beText);

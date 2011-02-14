@@ -452,23 +452,23 @@ public class Bill implements SenateObject  {
 						this.fulltext = bill.getFulltext();
 					}
 					else if (newLineCodeStart == (oldLineCodeEnd + 1)){
-						System.out.println(senateBillNo + ": merge 1");
+//						System.out.println(senateBillNo + ": merge 1");
 						String temp = new String(this.fulltext + bill.getFulltext());
 						this.fulltext = temp;
 					}
 					else if(newLineCodeEnd == (oldLineCodeStart - 1)) {
-						System.out.println(senateBillNo + ": merge 2");
+//						System.out.println(senateBillNo + ": merge 2");
 						String temp = new String(bill.getFulltext() + this.fulltext);
 						this.fulltext = temp;
 					}
 					else {
 						if(oldLineCodeStart < newLineCodeEnd) {
-							System.out.println(3 + ": " + senateBillNo + ": " + newLineCodeStart + ", " + newLineCodeEnd + " : "
-									+ oldLineCodeStart + ", " + oldLineCodeEnd);
+//							System.out.println(3 + ": " + senateBillNo + ": " + newLineCodeStart + ", " + newLineCodeEnd + " : "
+//									+ oldLineCodeStart + ", " + oldLineCodeEnd);
 						}
 						else if(newLineCodeStart < oldLineCodeStart) {
-							System.out.println(4 + ": " + senateBillNo + ": " + newLineCodeStart + ", " + newLineCodeEnd + " : "
-									+ oldLineCodeStart + ", " + oldLineCodeEnd);
+//							System.out.println(4 + ": " + senateBillNo + ": " + newLineCodeStart + ", " + newLineCodeEnd + " : "
+//									+ oldLineCodeStart + ", " + oldLineCodeEnd);
 						}
 						else {
 							/*THIS SHOULD NOT HAPPEN*/

@@ -77,7 +77,6 @@ public class SearchEngine2 extends SearchEngine {
 	private SearchEngine2() {
 
 		super("/usr/local/openleg/lucene/2");
-//		super("/Users/jaredwilliams/Documents/lucene/2");
 		logger = Logger.getLogger(SearchEngine2.class);
 	}
 	

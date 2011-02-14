@@ -195,6 +195,9 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 						}
     				}
     			}
+    			
+    			this.deleteDocumentsByQuery("otype:vote AND billno:" + bill.getSenateBillNo(), indexWriter);
+    			
     			if(bill.getVotes() != null) {
     				for(Vote vote: bill.getVotes()) {
     					try {
