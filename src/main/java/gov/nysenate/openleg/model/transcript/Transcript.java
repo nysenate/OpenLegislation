@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.transcript;
 
+import gov.nysenate.openleg.ingest.ISenateObject;
 import gov.nysenate.openleg.ingest.SenateObject;
 import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
@@ -20,7 +21,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 
 @XStreamAlias("transcript")
-public class Transcript implements SenateObject {
+public class Transcript extends SenateObject {
 
 	@XStreamAsAttribute
 	protected String id;
@@ -130,7 +131,7 @@ public class Transcript implements SenateObject {
 	public String luceneTitle() {
 		return type;
 	}
-
+	
 	@Override
 	public HashMap<String,Field> luceneFields() {
 		HashMap<String,Field> fields = new HashMap<String,Field>();
@@ -163,7 +164,7 @@ public class Transcript implements SenateObject {
 	}
 
 	@Override
-	public void merge(SenateObject obj) {
+	public void merge(ISenateObject obj) {
 		if(!(obj instanceof Transcript))
 			return;
 		

@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
+import gov.nysenate.openleg.ingest.ISenateObject;
 import gov.nysenate.openleg.ingest.SenateObject;
 import gov.nysenate.openleg.lucene.DocumentBuilder;
 
@@ -14,18 +15,19 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("billevent")
-public class BillEvent implements SenateObject {
+public class BillEvent extends SenateObject {
 
     private String billEventId;
 	private Date eventDate;
 	private String eventText;
 	
 	public BillEvent() {
-		
+		super();
 	}
 	
 	public BillEvent (Bill bill, Date eventDate, String eventText)
 	{
+		super();
 		this.eventDate = eventDate; 
 		this.eventText = eventText;
 		
@@ -113,11 +115,10 @@ public class BillEvent implements SenateObject {
 	public String luceneOid() {
 		return billEventId;
 	}
-
+	
 	@JsonIgnore
 	@Override
 	public String luceneOsearch() {
-		
 		
 		StringBuilder searchContent = new StringBuilder();
 		searchContent.append(getBillId()).append(" ");
@@ -158,7 +159,7 @@ public class BillEvent implements SenateObject {
 
 	@Override
 	@JsonIgnore
-	public void merge(SenateObject obj) {
+	public void merge(ISenateObject obj) {
 		return;
 	}
 }

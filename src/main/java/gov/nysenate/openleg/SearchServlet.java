@@ -4,6 +4,7 @@ import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.search.SearchResultSet;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
+import gov.nysenate.openleg.util.SessionYear;
 
 import java.io.IOException;
 import java.util.Date;
@@ -16,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 public class SearchServlet extends HttpServlet implements OpenLegConstants
-{
-	private static long DATE_START = 1293858000000L;
-	private static long DATE_END = 1357016340000L;
+{	
+	private static long DATE_START = SessionYear.getSessionStart();
+	private static long DATE_END = SessionYear.getSessionEnd();
 	/**
 	 * 
 	 */
@@ -92,6 +93,8 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 		String sameas = request.getParameter("sameas");
 		String committee = request.getParameter("committee");
 		String location = request.getParameter("location");
+		
+		String session = request.getParameter("session");
 
 		String sortField = request.getParameter("sort");
 		boolean sortOrder = false;
@@ -178,7 +181,14 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 					searchText.append(" AND ");
 				
 				searchText.append("otype:");
-				searchText.append(type);
+				searchText.append(type.equals("res") ? "bill AND oid:r*":type);
+			}
+			
+			if(session != null && session.length() > 0) {
+				if(searchText.length() > 0)
+					searchText.append(" AND ");
+				
+				searchText.append("year:" + session);
 			}
 			
 			if (full != null && full.length() > 0)
@@ -316,14 +326,14 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			
 			//TODO
 			SenateResponse sr = null;
-			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("sponsor:")) {
+			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
 				if(type != null && type.equals("bill")) {
-					sr = searchEngine.search(term + " AND year:2011",searchFormat,start,pageSize,sortField,sortOrder);
+					sr = searchEngine.search(term + " AND year:" + SessionYear.getSessionYear(),searchFormat,start,pageSize,sortField,sortOrder);
 				}
 				else {
 					sr = searchEngine.search(term + " AND when:[" + DATE_START + " TO " + DATE_END + "]",searchFormat,start,pageSize,sortField,sortOrder);
 					if(sr.getResults().isEmpty()) {
-						sr = searchEngine.search(term + " AND year:2011",searchFormat,start,pageSize,sortField,sortOrder);
+						sr = searchEngine.search(term + " AND year:" + SessionYear.getSessionYear(),searchFormat,start,pageSize,sortField,sortOrder);
 					}
 				}
 			}

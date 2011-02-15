@@ -55,7 +55,7 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
 		return indexWriter;
 	}
     
-    public boolean addDocument(LuceneObject obj, LuceneSerializer[] serializer,IndexWriter indexWriter) throws InstantiationException,IllegalAccessException,IOException
+    public boolean addDocument(ILuceneObject obj, LuceneSerializer[] serializer,IndexWriter indexWriter) throws InstantiationException,IllegalAccessException,IOException
     {
     	if(obj == null)
     		return false;
@@ -64,7 +64,7 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
     	    	
     	if(doc ==  null)
     		return false;
-    	
+    	    	
     	logger.info("indexing document: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue());
     	/*Term term = new Term("oid",doc.getField("oid").stringValue());*/
     	
@@ -152,7 +152,8 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
 		      
 		    	if (sortField != null) {
 				    //If they want sorted results, do a new search with sorting enabled
-		    		Sort sort = new Sort(new SortField(sortField, SortField.STRING, reverseSort));
+		    		
+		    		Sort sort = new Sort(new SortField(sortField, /*SortField.STRING*/SortField.STRING_VAL, reverseSort));
 		    		sdocs = searcher.search(query, null, start + max, sort).scoreDocs;
 		    	}
 		    	else {
@@ -167,6 +168,7 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
 		    	return new LuceneResult(results,collector.getTotalHits());
 		    	
 			} catch (Exception e) {
+				e.printStackTrace();
 				logger.warn("Search Exception: " + query.toString(),e);
 			}
     	} catch (ParseException e) {

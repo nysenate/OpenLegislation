@@ -13,6 +13,7 @@ import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.search.SearchResult;
 import gov.nysenate.openleg.search.SearchResultSet;
 import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.util.SessionYear;
 
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -42,8 +43,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class APIServlet extends HttpServlet implements OpenLegConstants {
 
-	private static long DATE_START = 1293858000000L;
-	private static long DATE_END = 1357016340000L;
+	private static long DATE_START = SessionYear.getSessionStart();
+	private static long DATE_END = SessionYear.getSessionEnd();
 	
 	private static final long serialVersionUID = -7567155903739799800L;
 
@@ -168,7 +169,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				if (type.equalsIgnoreCase("sponsor"))
 				{
 					String filter = req.getParameter("filter");
-					key = "sponsor:\"" + key + "\"" + (filter != null ? " AND " + filter : "");
+					key = "sponsor:\"" + key + (filter != null ? " AND " + filter : "");
 					type = "bills";
 				}
 				else if (type.equalsIgnoreCase("committee"))
@@ -213,7 +214,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				}
 				else if (type.equalsIgnoreCase("committee"))
 				{
-					key = "committee:\"" + key + "\"";
+					key = "committee:\"" + key + "\" AND oid:s*";
 					type = "bills";
 				}
 				
@@ -343,7 +344,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		req.setAttribute(PAGE_SIZE,pageSize+"");
 	
 		
-		
 		//now calculate start, end idx based on pageIdx and pageSize
 		int start = (pageIdx - 1) * pageSize;
 		int end = start + pageSize;
@@ -390,28 +390,32 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				searchString = key;
 			}
 			
-			if(key.startsWith("sponsor")) {
-				originalType = type;
-			}
-			
 			req.setAttribute("type", type);
 			req.setAttribute("term", searchString);
 			req.setAttribute("format", format);
 			req.setAttribute("key", key);
 			
 			String sFormat = "json";
-			String sortField = "modified";
+			String sortField = type.contains("bill") ? "modified" : "when";
 			req.setAttribute("sortField", sortField);
 			
-			
-			//TODO
+			System.out.println(originalType);
 			
 			SenateResponse sr = null;
 			if(originalType.equals("bills")) {
-				sr = searchEngine.search(dateReplace(searchString) + " AND year:2011",sFormat,start,pageSize,sortField,true);
+				sr = searchEngine.search(dateReplace(searchString) 
+						+ " AND year:" + SessionYear.getSessionYear() 
+						+ " AND searchable:true",
+						sFormat,start,pageSize,sortField,true);
 			}
 			else if(originalType.endsWith("s")) {
-				sr = searchEngine.search(dateReplace(searchString) + " AND when:[" + DATE_START + " TO " + DATE_END + "]",sFormat,start,pageSize,sortField,true);
+				sr = searchEngine.search(dateReplace(searchString) 
+						+ " AND when:[" 
+						+ DATE_START 
+						+ " TO " 
+						+ DATE_END + "]"
+						+ " AND searchable:true",
+						sFormat,start,pageSize,sortField,true);
 			}
 			else {
 				sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,sortField,true);
@@ -421,7 +425,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 						
 			if (sr.getResults().size()==0)
 			{
-				//getServletContext().getRequestDispatcher("/noresults.jsp").forward(req, resp);
 				resp.sendError(404);
 
 				return;
@@ -558,7 +561,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			}
 			else
 			{
-				
 				if (type.equals("bill") && (!format.equals("html")))
 				{
 					viewPath = "/views/bills-" + format + ".jsp";
@@ -800,8 +802,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					BillEvent billEvent = (BillEvent)resultObj;
 	
 					String billId = billEvent.getBillId();
-					if (billId.indexOf("-")==-1)
-						billId += "-2009";
 					
 					title = billEvent.getEventText();
 					
@@ -973,10 +973,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 	}
 	*/
-	public static void main(String[] args) throws ParseException {
-		System.out.println(dateReplace("01-01-2011T00-00"));
-		System.out.println(dateReplace("12-31-2012T23-59"));
-	}
 	public static String dateReplace(String term) throws ParseException {
 		Pattern  p = Pattern.compile("(\\d{1,2}[-]?){2}(\\d{2,4})T\\d{2}-\\d{2}");
 		Matcher m = p.matcher(term);

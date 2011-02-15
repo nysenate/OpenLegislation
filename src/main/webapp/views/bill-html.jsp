@@ -166,12 +166,12 @@ if (bill.getTitle()!=null)
 <%} %>
 
   <%if (bill.getLaw()!=null){ %>
- <b>Law:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + bill.getLaw()+"\"","utf-8")%>" class="sublink"><%=bill.getLaw()%></a> /
+ <b>Law:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("law:\"" + bill.getLaw()+"\"","utf-8")%>" class="sublink"><%=bill.getLaw()%></a> /
  <%} %>
 
   <%if (bill.getLawSection()!=null){ %>
- <b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a><br/>
- <%} %>
+ <b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a><br/>
+ <%} %> e
 
 
  
@@ -187,11 +187,11 @@ ArrayList<SearchResult> rActions = (ArrayList<SearchResult>)request.getAttribute
 <ul>
 	<%for (SearchResult beAction : rActions){ 
 		BillEvent be = (BillEvent)beAction.getObject();
-		if((bill.getYear() == 2011 && be.getEventDate().getTime() > 1293858000000L) || (bill.getYear() != 2011 && be.getEventDate().getTime() < 1293858000000L)) {
+		//if((bill.getYear() == 2011 && be.getEventDate().getTime() > 1293858000000L) || (bill.getYear() != 2011 && be.getEventDate().getTime() < 1293858000000L)) {
 			%>
 			<li><%=df.format(be.getEventDate().getTime())%>: <%=beAction.getTitle().toUpperCase()%></li>
 			<%
-		}
+		//}
 	}%>
 </ul>
 <%}%>

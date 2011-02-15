@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.committee;
 
+import gov.nysenate.openleg.ingest.ISenateObject;
 import gov.nysenate.openleg.ingest.SenateObject;
 
 import java.util.HashMap;
@@ -8,7 +9,7 @@ import java.util.List;
 import org.apache.lucene.document.Field;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-public class Agenda implements SenateObject{
+public class Agenda extends SenateObject {
 
 	private String id;
 	
@@ -19,6 +20,10 @@ public class Agenda implements SenateObject{
 	private int year;
 	
 	private List<Addendum> addendums;
+	
+	public Agenda() {
+		super();
+	}
 
 	public int getNumber() {
 		return number;
@@ -121,7 +126,7 @@ public class Agenda implements SenateObject{
 	}
 
 	@Override
-	public void merge(SenateObject obj) {
+	public void merge(ISenateObject obj) {
 		if(!(obj instanceof Agenda))
 			return;
 		
@@ -131,16 +136,26 @@ public class Agenda implements SenateObject{
 		else {
 			if(((Agenda)obj).getAddendums() != null) {
 				
-				for(Addendum addendum:((Agenda)obj).getAddendums()) {
-					for(Meeting meeting:addendum.getMeetings()) {
-						Meeting temp = this.getCommitteeMeeting(meeting.id);
-						if(temp != null) {
-							meeting.setMeetingDateTime(temp.meetingDateTime);
-							meeting.setMeetday(temp.getMeetday());
+				
+				for(int i = 0; i < ((Agenda)obj).getAddendums().size(); i++) {
+					Addendum addendum = ((Agenda)obj).getAddendums().get(i);
+					
+					if(this.addendums.contains(addendum)) {
+						
+						for(int j = 0; j < addendum.getMeetings().size(); j++) {
+							Meeting meeting = addendum.getMeetings().get(j);
+							Meeting temp = this.getCommitteeMeeting(meeting.getId());
+							if(temp != null) {
+								
+//								meeting.setMeetingDateTime(temp.getMeetingDateTime());
+//								meeting.setMeetday(temp.getMeetday());
+							}
 						}
+
+						this.addendums.remove(addendum);
 					}
+					this.addendums.add(addendum);
 				}
-				this.addendums = ((Agenda)obj).getAddendums();
 			}
 		}
 		

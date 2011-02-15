@@ -2,7 +2,7 @@ package gov.nysenate.openleg.search;
 
 import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.lucene.Lucene;
-import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
@@ -33,7 +33,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 
 	protected DateFormat DATE_FORMAT_MEDIUM = java.text.DateFormat.getDateInstance(DateFormat.MEDIUM);
     
-    public void deleteSenateObject (LuceneObject obj) throws Exception
+    public void deleteSenateObject (ILuceneObject obj) throws Exception
     {
     	if (obj instanceof Agenda) {
     		Agenda agenda = (Agenda)obj;
@@ -130,15 +130,15 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
 		
 	}	
 	
-    public  boolean indexSenateObjects (Collection<LuceneObject> objects, LuceneSerializer[] ls) throws IOException
+    public  boolean indexSenateObjects (Collection<ILuceneObject> objects, LuceneSerializer[] ls) throws IOException
     {
     	createIndex ();
         Analyzer  analyzer    = getAnalyzer();
         IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, false, MaxFieldLength.UNLIMITED);
        
-    	Iterator<LuceneObject> it = objects.iterator();
+    	Iterator<ILuceneObject> it = objects.iterator();
     	while (it.hasNext()) {
-    		LuceneObject obj = it.next();
+    		ILuceneObject obj = it.next();
     		
     		if (obj instanceof Calendar) {
     			Calendar cal = (Calendar)obj;
@@ -169,6 +169,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     	    			addendum.setAgenda(agenda);
     	    			for( Meeting meeting : addendum.getMeetings() ) {
     	    				meeting.setAddendums(new ArrayList<Addendum>(Arrays.asList(addendum)));
+    	    				System.out.println(meeting.luceneOsearch() + " : " + meeting.luceneSummary() + " : " + meeting.luceneTitle());
     	    				try {
     	    					addDocument(meeting, ls, indexWriter);
     	    				}

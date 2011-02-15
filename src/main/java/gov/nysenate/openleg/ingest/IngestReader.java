@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.ingest;
 
-import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -56,11 +56,11 @@ public class IngestReader {
 	
 	ArrayList<Calendar> calendars;
 	ArrayList<Bill> bills;
-	ArrayList<SenateObject> committeeUpdates;
+	ArrayList<ISenateObject> committeeUpdates;
 	
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
-											
+				
 		if(args.length == 2) {
 			String command = args[0];
 			String p1 = args[1];
@@ -82,6 +82,9 @@ public class IngestReader {
 			else if(command.equals("-it")) {
 				ir.handleTranscript(p1);
 			}
+			else {
+				System.err.println("bad command");
+			}
 		}
 		else if(args.length == 3){
 			String command = args[0];
@@ -96,6 +99,9 @@ public class IngestReader {
 			}
 			else if(command.equals("-fa")) {
 				ir.fixAgendaBills(p1, p2);
+			}
+			else {
+				System.err.println("bad command");
 			}
 		}
 		else {
@@ -149,7 +155,7 @@ public class IngestReader {
 		
 		calendars = new ArrayList<Calendar>();
 		bills = new ArrayList<Bill>();
-		committeeUpdates = new ArrayList<SenateObject>();
+		committeeUpdates = new ArrayList<ISenateObject>();
 	}
 	
 	public void handlePath(String path) {
@@ -271,8 +277,8 @@ public class IngestReader {
 		
 	}
 	
-	private void writeCommitteeUpdates(ArrayList<SenateObject> committeeUpdates) {
-		for(SenateObject so:committeeUpdates) {
+	private void writeCommitteeUpdates(ArrayList<ISenateObject> committeeUpdates) {
+		for(ISenateObject so:committeeUpdates) {
 			if(so instanceof Bill) {
 				//if a bill is being updated from the committee xml
 				//it is either adding or removing a vote from an existing bill
@@ -297,12 +303,14 @@ public class IngestReader {
 			if(bill == null)
 				continue;
 			
+			reindexAmendedVersions(bill);
+			
 			writeSenateObject(bill, Bill.class, merge);
 			
 		}
 	}
 	
-	public void writeSenateObject(SenateObject obj, Class<? extends SenateObject> clazz, boolean merge) {
+	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, boolean merge) {
 		try {
 			mapper = getMapper();
 			
@@ -326,7 +334,7 @@ public class IngestReader {
 		}
 	}
 	
-	public void indexSenateObject(SenateObject obj) {
+	public void indexSenateObject(ISenateObject obj) {
 		try {
 			/*
 			 * fullText for bills must be saved and reapplied after processing.. on long processes
@@ -342,7 +350,7 @@ public class IngestReader {
 				((Bill)obj).setFulltext(formatBillText(((Bill)obj).getFulltext()));
 								
 				searchEngine.indexSenateObjects(
-						new ArrayList<LuceneObject>(
+						new ArrayList<ILuceneObject>(
 							Arrays.asList(obj)), 
 							new LuceneSerializer[]{
 								new XmlSerializer(), 
@@ -353,7 +361,7 @@ public class IngestReader {
 			}
 			else {
 				searchEngine.indexSenateObjects(
-						new ArrayList<LuceneObject>(
+						new ArrayList<ILuceneObject>(
 							Arrays.asList(obj)), 
 							new LuceneSerializer[]{
 								new XmlSerializer(), 
@@ -364,7 +372,7 @@ public class IngestReader {
 		}
 	}
 	
-	public boolean writeJsonFromSenateObject(SenateObject obj, Class<? extends SenateObject> clazz, File file) {
+	public boolean writeJsonFromSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file) {
 		if(file == null) 
 			file = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
 		
@@ -397,14 +405,14 @@ public class IngestReader {
 		return false;
 	}
 	
-	public SenateObject mergeSenateObject(SenateObject obj, Class<? extends SenateObject> clazz, File file) {
+	public ISenateObject mergeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file) {
 		if(file == null)
 			file = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
 		
 		if(file.exists()) {
-			SenateObject oldObject =  null;
+			ISenateObject oldObject =  null;
 			try {
-				oldObject = (SenateObject)mapper.readValue(file, clazz);
+				oldObject = (ISenateObject)mapper.readValue(file, clazz);
 			} catch (JsonParseException e) {
 				e.printStackTrace();
 			} catch (JsonMappingException e) {
@@ -445,7 +453,7 @@ public class IngestReader {
 		return ret.toString();
 	}
 	
-	public SenateObject loadObject(String id, String year, String type, Class<? extends SenateObject> clazz) {
+	public ISenateObject loadObject(String id, String year, String type, Class<? extends ISenateObject> clazz) {
 		return loadObject(WRITE_DIRECTORY + year + "/" + type + "/" + id + ".json", clazz);
 	}
 	
@@ -454,7 +462,7 @@ public class IngestReader {
 	 * @param clazz class of object to be loaded
 	 * @return deserialized SenateObject of type clazz
 	 */
-	public SenateObject loadObject(String path, Class<? extends SenateObject> clazz) {
+	public ISenateObject loadObject(String path, Class<? extends ISenateObject> clazz) {
 		mapper = getMapper();
 		File file = new File(path);
 		if(!file.exists()) 
@@ -470,6 +478,15 @@ public class IngestReader {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public boolean deleteSenateObject(ISenateObject so) {
+		try {
+			SearchEngine2.getInstance().deleteSenateObject(so);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return deleteFile(so.luceneOid(), so.getYear() +"", so.luceneOtype());
 	}
 	
 	public boolean deleteFile(String id, String year, String type) {
@@ -543,8 +560,9 @@ public class IngestReader {
 	public void fixAgendaBills(String year, String path) {
 		File file = new File(path);
 		
-		if(!file.exists())
+		if(!file.exists()){
 			return;
+		}
 		
 		if(file.isDirectory()) {
 			for(File temp:file.listFiles()) {
@@ -554,15 +572,17 @@ public class IngestReader {
 		else {
 			Agenda agenda = (Agenda) this.loadObject(file.getAbsolutePath(), Agenda.class);
 			
-			if(agenda == null)
+			if(agenda == null) {
 				return;
+			}
 			
 			if(agenda.getAddendums() != null) {
 				for(Addendum addendum:agenda.getAddendums()) {
 					if(addendum.getMeetings() != null) {
 						for(Meeting meeting:addendum.getMeetings()) {
-							if(meeting.getBills() ==  null)
+							if(meeting.getBills() ==  null) {
 								continue;
+							}
 							
 							for(int i = 0; i < meeting.getBills().size(); i++) {
 								meeting.getBills().set(i,
@@ -602,17 +622,54 @@ public class IngestReader {
 	}
 	
 	/**
+	 * desirable to hide old versions of an amended bill from the default search
+	 * this appends "searchable:false" as a field to any old verions of bills
+	 * @param bill
+	 */
+	public void reindexAmendedVersions(Bill bill) {
+		int idx = bill.getSenateBillNo().indexOf("-");
+		char c = bill.getSenateBillNo().charAt(idx-1);
+		
+		if(c >= 65 && c < 90) {
+			
+			String strings[] = bill.getSenateBillNo().split("-");
+			c--;
+			
+			while(c >= 65 && c < 90) {
+				reindexUnsearchableBill(strings[0].substring(0, strings[0].length()-1) + c + "-" + strings[1],
+						bill.getYear() + "");
+				c--;
+			}
+			
+			reindexUnsearchableBill(strings[0].substring(0, strings[0].length()-1) + "-" + strings[1],
+					bill.getYear() + "");
+		}
+	}
+	
+	private void reindexUnsearchableBill(String senateBillNo, String year) {
+		Bill temp = (Bill)this.loadObject(senateBillNo,
+				year,
+				"bill",
+				Bill.class);
+		
+		if(temp != null) {
+			temp.setLuceneSearchable(false);
+			this.indexSenateObject(temp);
+		}
+	}
+	
+	/**
 	 * used to index already serialized json documents
 	 * @param path directory to files (e.g. "2011/bills/")
 	 * @param clazz class of object to be indexed
 	 */
-	public void index(String path, Class<? extends SenateObject> clazz) {		
+	public void index(String path, Class<? extends ISenateObject> clazz) {		
 		File dir = new File(path);
 		
 		for(File file:dir.listFiles()) {
 			try {
 				this.searchEngine.indexSenateObjects(
-						new ArrayList<LuceneObject>(Arrays.asList(
+						new ArrayList<ILuceneObject>(Arrays.asList(
 								loadObject(file.getAbsolutePath(), clazz))),
 						new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
 			} catch (IOException e) {

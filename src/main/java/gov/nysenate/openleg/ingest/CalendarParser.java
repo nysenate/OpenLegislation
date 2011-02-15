@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.ingest;
 
 import gov.nysenate.openleg.OpenLegConstants;
-import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -63,7 +63,7 @@ public class CalendarParser implements OpenLegConstants {
 		
 		
 		XMLSENATEDATA senateData = parseStream(new FileReader(new File(filePath)));
-		ArrayList<LuceneObject> objectsToUpdate = new ArrayList<LuceneObject>();
+		ArrayList<ILuceneObject> objectsToUpdate = new ArrayList<ILuceneObject>();
 		
 		for(Object obj:senateData.getSencalendarOrSencalendaractive()) {
 			

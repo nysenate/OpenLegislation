@@ -20,7 +20,7 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.Vote;
 
 @XStreamAlias("meeting")
-public class Meeting implements LuceneObject {
+public class Meeting extends LuceneObject {
 
 	@XStreamAsAttribute
 	@LuceneField("when")
@@ -203,6 +203,11 @@ public class Meeting implements LuceneObject {
 			response.append(bill.getSenateBillNo() + ", ");
 		}
 		return response.toString().replaceAll(", $", "");
+	}
+	
+	@Override
+	public String toString() {
+		return this.id + " : " + meetingDateTime.getTime();
 	}
 	
 }

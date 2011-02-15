@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.xstream.XStreamBuilder;
 
 public class XmlSerializer implements LuceneSerializer {
 
 	@Override
-	public String getData(LuceneObject o) {
+	public String getData(ILuceneObject o) {
 		return XStreamBuilder.xml(o);
 	}
 

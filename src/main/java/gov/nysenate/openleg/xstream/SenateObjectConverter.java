@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.xstream;
 
-import gov.nysenate.openleg.ingest.SenateObject;
+import gov.nysenate.openleg.ingest.ISenateObject;
 
 import java.util.*;
 
@@ -53,7 +53,7 @@ public class SenateObjectConverter implements Converter {
 		//Get the LocalConversionMapper, responsible for XStreamConverter mark up
 		LocalConversionMapper conversionMapper = (LocalConversionMapper) this.mapper.lookupMapperOfType(LocalConversionMapper.class);
 		
-		SenateObject obj = (SenateObject) value;
+		ISenateObject obj = (ISenateObject) value;
 		Class c = obj.getClass();
 		
 		List<Field> attributes = new ArrayList();
@@ -207,7 +207,7 @@ public class SenateObjectConverter implements Converter {
 	@SuppressWarnings("unchecked")
 	public boolean canConvert(Class clazz) {
 		// TODO Auto-generated method stub
-		return SenateObject.class.isAssignableFrom(clazz);
+		return ISenateObject.class.isAssignableFrom(clazz);
 	}
 
 }

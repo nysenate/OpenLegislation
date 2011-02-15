@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
+import gov.nysenate.openleg.ingest.ISenateObject;
 import gov.nysenate.openleg.ingest.SenateObject;
 import gov.nysenate.openleg.lucene.LuceneField;
 
@@ -21,7 +22,7 @@ import gov.nysenate.openleg.util.BillCleaner;
 import gov.nysenate.openleg.xstream.BillListConverter;
 
 @XStreamAlias("bill")
-public class Bill implements SenateObject  {
+public class Bill extends SenateObject  {
 	
 	@XStreamAsAttribute
 	@LuceneField
@@ -96,7 +97,7 @@ public class Bill implements SenateObject  {
 	protected Bill latestAmendment;
 
 	public Bill () {
-		
+		super();
 	}
 
 	public int getYear() {
@@ -343,7 +344,7 @@ public class Bill implements SenateObject  {
 		return false;
 	}
 	
-	public void merge(SenateObject object) {
+	public void merge(ISenateObject object) {
 		if(!(object instanceof Bill)) {
 			return;
 		}

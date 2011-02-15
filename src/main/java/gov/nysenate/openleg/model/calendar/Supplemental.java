@@ -17,7 +17,7 @@ import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.lucene.LuceneObject;
 
 @XStreamAlias("supplemental")
-public class Supplemental  implements LuceneObject {
+public class Supplemental extends LuceneObject {
 	
 	@XStreamAsAttribute
 	protected String id;

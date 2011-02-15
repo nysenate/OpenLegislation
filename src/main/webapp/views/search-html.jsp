@@ -117,9 +117,8 @@ else{ %><a href="/legislation/search/?term=<%=term%>&sort=modified&sortOrder=fal
 <%if (sortField.equals("committee")){%>Committee<%}
 else{ %><a href="/legislation/search/?term=<%=term%>&sort=committee&sortOrder=false">Committee</a><%}%>,
 
-
 <%if (sortField.equals("")){%>Best Match<%}
-else{ %><a href="/legislation/search/?term=<%=term%>">Best Match</a><%}%>
+else{ %><a href="/legislation/search/?term=<%=term%>&sort=oid&sortOrder=false"">Best Match</a><%}%>
 
 
 
@@ -190,7 +189,7 @@ String resultTitle = null;
                 
 
 
-String resultPath = appPath + "/api/1.0/html/" + contentType + "/" + contentId;
+String resultPath = appPath + "/" + contentType + "/" + contentId;
 
  %>
  <div class="billSummary" onmouseover="this.style.backgroundColor='#FFFFCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='<%=resultPath%>'">
@@ -211,7 +210,7 @@ Bill: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("bill
  <%} %>
  
  <%if (sresult.getFields().get("sponsor")!=null && sresult.getFields().get("sponsor").length()>0){ %>
-Sponsor: <a href="<%=appPath%>/search/?term=sponsor:%22<%=sresult.getFields().get("sponsor")%>%22" class="sublink"><%=sresult.getFields().get("sponsor")%></a>
+Sponsor: <a href="<%=appPath%>/sponsor/<%=sresult.getFields().get("sponsor")%>" class="sublink"><%=sresult.getFields().get("sponsor")%></a>
  <%} %>
  
   <%if (sresult.getFields().get("chair")!=null){ %>
@@ -219,7 +218,7 @@ Chairperson: <a href="<%=appPath%>/search/?term=chair:%22<%=java.net.URLEncoder.
  <%} %>
  
   <%if (sresult.getFields().get("committee")!=null){ %>
-Committee: <a href="<%=appPath%>/search/?term=committee:%22<%=sresult.getFields().get("committee")%>%22"  class="sublink"><%=sresult.getFields().get("committee")%></a>
+Committee: <a href="<%=appPath%>/committee/<%=sresult.getFields().get("committee").replaceAll(" ","-")%>"  class="sublink"><%=sresult.getFields().get("committee")%></a>
  <%} %>
  
  

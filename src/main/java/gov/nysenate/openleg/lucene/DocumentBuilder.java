@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.lucene;
 
+import gov.nysenate.openleg.model.bill.Bill;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -23,17 +25,19 @@ public class DocumentBuilder {
 	public static final String LUCENE_FIELDS = "luceneFields";
 	public static final String LUCENE_SUMMARY = "luceneSummary";
 	public static final String LUCENE_TITLE = "luceneTitle";
-	public static final String LUCENE_WHEN = "luceneWhen"; //lastmodified
+	public static final String LUCENE_WHEN = "luceneWhen";
+	public static final String LUCENE_SEARCHABLE = "getLuceneSearchable";
 	
 	public static final String OTYPE = "otype";
 	public static final String OID = "oid";
 	public static final String OSEARCH = "osearch";
 	public static final String SUMMARY = "summary";
 	public static final String TITLE = "title";
-	public static final String MODIFIED = "modified"; //lastmodified
+	public static final String MODIFIED = "modified";
+	public static final String SEARCHABLE = "searchable";
 	
 	@SuppressWarnings("unchecked")
-	public Document buildDocument(LuceneObject o, LuceneSerializer[] serializer) {
+	public Document buildDocument(ILuceneObject o, LuceneSerializer[] serializer) {
 		if(o == null) {
 			return null;
 		}
@@ -76,6 +80,12 @@ public class DocumentBuilder {
 			fields.put(MODIFIED, new org.apache.lucene.document.Field(
 					MODIFIED,
 					whenTimeString,
+					DEFAULT_STORE,
+					DEFAULT_INDEX));
+			
+			fields.put(SEARCHABLE, new org.apache.lucene.document.Field(
+					SEARCHABLE,
+					getLuceneFields(o, LUCENE_SEARCHABLE),
 					DEFAULT_STORE,
 					DEFAULT_INDEX));
 			
@@ -158,10 +168,24 @@ public class DocumentBuilder {
 		return document;
 	}
 	
-	private String getLuceneFields(Object o, String method) throws Exception {
-		Method m = o.getClass().getDeclaredMethod(method);
-		String ret = (String)m.invoke(o);
-		return (ret==null) ? "":ret;
+	private String getLuceneFields(Object o, String method) {
+		Object ret = null;
+		Method m = null;
+		try {
+			m = o.getClass().getDeclaredMethod(method);
+			ret = m.invoke(o);
+		}
+		catch (Exception e) {
+			try {
+				m = o.getClass().getMethod(method);
+				ret = m.invoke(o);
+			}
+			catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return (ret==null) ? "":ret.toString();
 	}
 	
 	public AnnotatedField getAnnotatedField(Field field) {

@@ -80,7 +80,8 @@ text-align:center;
 
 		    <select name="type">
                 <option value="">All Types</option>
-                <option value="bill">Bills, Resolutions, etc. (Senate &amp; Assembly)</option>
+                <option value="bill">Bills (Senate &amp; Assembly)</option>
+                <option value="res">Resolutions</option>
                 <option value="transcript">Floor Transcripts</option>
                 <option value="meeting">Committee Meetings</option>
                 <option value="calendar">Floor &amp; Active Calendars</option>
@@ -120,6 +121,11 @@ text-align:center;
 		
 		<div class="searchrow">
 		<div class="searchlabel">and Status is:</div><div class="searchinput">
+		<select name="session">
+			<option value=""></option>
+			<option value="2009">2009</option>
+			<option value="2011">2011</option>
+		</select>
 		<select name="status">
 		   <option value="" >All Status</option>
                 <option value="Passed" >Passed</option>

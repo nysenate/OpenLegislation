@@ -1,170 +1,228 @@
-<%@ page language="java" import="java.util.Iterator,java.util.Collection,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.calendar.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*" contentType="text/html" pageEncoding="utf-8"%><%
+<%@ page language="java"
+	import="java.util.Iterator,java.util.Collection,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.calendar.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*"
+	contentType="text/html" pageEncoding="utf-8"%>
+<%
+	String oid = null;
 
-String oid = null;
+	String appPath = request.getContextPath();
 
-String appPath = request.getContextPath();
-
-Calendar calendar = (Calendar)request.getAttribute("calendar");
-String title = "Calendar " + calendar.getNo() + " " + calendar.getSessionYear();
-	DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.SHORT);
-
- %>
+	Calendar calendar = (Calendar) request.getAttribute("calendar");
+	String title = "Calendar " + calendar.getNo() + " "
+			+ calendar.getSessionYear();
+	SimpleDateFormat sdf = new SimpleDateFormat();
+	sdf.applyPattern("EEE, MMM d, yyyy");
+%>
 <jsp:include page="/header.jsp">
-	<jsp:param name="title" value="<%=title%>"/>
+	<jsp:param name="title" value="<%=title%>" />
 </jsp:include>
 
-<br/>
- 
-<h2>Calendar no. <%=calendar.getNo()%> (<%=calendar.getType()%>) / Year: <%=calendar.getYear()%> / Session: <%=calendar.getSessionYear()%> - <%=calendar.getSessionYear()+1%></h2>
- <br/>
- 
- 
- <div id="content">
- <script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
- 
-<%
-Iterator<Supplemental> itSupp = calendar.getSupplementals().iterator();
-Supplemental supp = null;
+<br />
 
-while (itSupp.hasNext()){
-try
-{
-	supp = itSupp.next();
-	supp.setCalendar(calendar);
-	oid = supp.luceneOid();
+<h2>Calendar no. <%=calendar.getNo()%> (<%=calendar.getType()%>) /
+Year: <%=calendar.getYear()%> / Session: <%=calendar.getSessionYear()%>
+- <%=calendar.getSessionYear() + 1%></h2>
+<br />
+
+
+<div id="content"><script type="text/javascript"
+	src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
+
+<%
+	int count = 0;
 	
-	if (calendar.getType().equals("active") && supp.getSequence()==null)	
-		continue;
+	Iterator<Supplemental> itSupp = calendar.getSupplementals()
+			.iterator();
+	Supplemental supp = null;
+
+	while (itSupp.hasNext()) {
+		try {
+			supp = itSupp.next();
+			supp.setCalendar(calendar);
+			oid = supp.luceneOid();
+
+			if (calendar.getType().equals("active")
+					&& supp.getSequence() == null)
+				continue;
 %>
 <h3>
-<%if (supp.getSequence()==null) {%>
-Supplemental<%if (supp.getSupplementalId()!=null){ %> (<%=supp.getSupplementalId()%>)<%} %>:
-<%} else { %>
-Active List (<%=supp.getSequence().getNo()%>):
-<%} %>
-<% if (supp.getCalendarDate()!=null){ %>
-<b>Calendar Date:</b> <%=df.format(supp.getCalendarDate())%> / 
-<%} %>
-<% if (supp.getReleaseDateTime()!=null){ %>
-<b>Released:</b> <%=df.format(supp.getReleaseDateTime())%>
-<%} %>
+<%
+	if (supp.getSequence() == null) {
+		if(count != 0) {
+			%> Supplemental<%
+			if (supp.getSupplementalId() != null) {
+				%> (<%=supp.getSupplementalId()%>)<%
+			}
+			%>: <%
+		}
+	} 
+	else {
+		%> Active List (<%=supp.getSequence().getNo()%>): <%
+	}
+	%> <%
+ 	if (supp.getCalendarDate() != null) {
+ 		%> <b>Calendar Date:</b> <%=sdf.format(supp.getCalendarDate())%> / <%
+ 	}
+ 	%> <%
+ 	if (supp.getReleaseDateTime() != null) {
+ 		%> <b>Released:</b> <%=sdf.format(supp.getReleaseDateTime())%> <%
+	}
+%>
 </h3>
 
 
 <%
+	Sequence seq = supp.getSequence();
 
-
-
-Sequence seq = supp.getSequence();
-
-
-if (seq != null)
-{	
- %>
- <%if (seq.getNotes()!=null && seq.getNotes().trim().length()>0){ %>
- <h4>Notes</h4>
- <%=seq.getNotes()%>
- <hr/>
- <%} %>
- 
- <h4>Calendar Entries</h4>
- <div class="billSummary">
-	<ul>
-<%
-Iterator<CalendarEntry> itCals = seq.getCalendarEntries().iterator();
-	while (itCals.hasNext()){
-	CalendarEntry calEnt = itCals.next();
-	
-	%>
-		
-		<li>
-		Calendar: <%=calEnt.getNo()%>
-		<%if (calEnt.getBill()!=null){
-			String senateBillNo = calEnt.getBill().getSenateBillNo();
-			if (senateBillNo.indexOf("-")==-1)
-				senateBillNo+= "-" + calendar.getSessionYear();
-		%>
-		/ Sponsor: <a href="<%=appPath%>/sponsor/<%=calEnt.getBill().getSponsor().getFullname()%>"><%=calEnt.getBill().getSponsor().getFullname()%></a>
-		<%if (calEnt.getSubBill()!=null){%>(Sub-bill Sponsor: <a href="<%=appPath%>/sponsor/<%=calEnt.getSubBill().getSponsor().getFullname()%>"><%=calEnt.getSubBill().getSponsor().getFullname()%></a>)<%}%>
-		/ Printed No.: <a href="<%=appPath%>/bill/<%=senateBillNo%>"><%=senateBillNo%></a>
-				<%if (calEnt.getBillHigh()!=null){ %><b style="color:green">HIGH</b><%}%>
-
-				<%if (calEnt.getSubBill()!=null){
-					String senateSubBillNo = calEnt.getSubBill().getSenateBillNo();
-					if (senateSubBillNo.indexOf("-")==-1)
-						senateSubBillNo+="-" + calendar.getSessionYear();
-					%>(Sub-bill: <a href="<%=appPath%>/bill/<%=senateSubBillNo%>"><%=senateSubBillNo%></a>)<%}%>
-		
-		<%}%>
-		
-		<%if (calEnt.getBill().getTitle()!=null){%><br/>Title: <%=calEnt.getBill().getTitle()%><%}else if (calEnt.getSubBill()!=null && calEnt.getSubBill().getTitle()!=null){%><br/>Title: <%=calEnt.getSubBill().getTitle()%><%}%>
-		
-</li>
-	<%}%>
-	</ul>
-	
-	
-</div>
-<%} %>
-
-<%if (supp.getSections()!=null&&supp.getSections().size()>0){%>
-<blockquote>
-<%
-Iterator<Section> itSection = supp.getSections().iterator();
-while (itSection.hasNext()){
-Section section = itSection.next();
+	if (seq != null) {
+		%> <%
+ 		if (seq.getNotes() != null && seq.getNotes().trim().length() > 0) {
+ 			%>
+			<h4>Notes</h4>
+			<%=seq.getNotes()%>
+			<hr />
+			<%
+		}
 %>
-<h4>Section:<%=section.getName()%> (<%=section.getType()%> / <%=section.getCd()%>)</h4>
+
+<h4>Calendar Entries</h4>
 <div class="billSummary">
-	<ul>
-<%
-	Iterator<CalendarEntry> itCals = section.getCalendarEntries().iterator();
-	while (itCals.hasNext()){
-	CalendarEntry calEnt = itCals.next();
-	%>
-		
-		<li>
-		Calendar: <%=calEnt.getNo()%>
-		<%if (calEnt.getBill()!=null){
-			String senateBillNo = calEnt.getBill().getSenateBillNo();
-			if (senateBillNo.indexOf("-")==-1)
-				senateBillNo+="-" + calendar.getSessionYear();
-		%>
-		/ Sponsor: <a href="<%=appPath%>/sponsor/<%=calEnt.getBill().getSponsor().getFullname()%>"><%=calEnt.getBill().getSponsor().getFullname()%></a>
-		<%if (calEnt.getSubBill()!=null){%>(Sub-bill Sponsor: <a href="<%=appPath%>/sponsor/<%=calEnt.getSubBill().getSponsor().getFullname()%>"><%=calEnt.getSubBill().getSponsor().getFullname()%></a>)<%}%>
-		/ Printed No.: <a href="<%=appPath%>/bill/<%=senateBillNo%>"><%=senateBillNo%></a>
-				<%if (calEnt.getBillHigh()!=null){ %><b style="color:green">HIGH</b><%}%>
-
-				<%if (calEnt.getSubBill()!=null){
+<ul>
+	<%
+		Iterator<CalendarEntry> itCals = seq.getCalendarEntries().iterator();
+		while (itCals.hasNext()) {
+			CalendarEntry calEnt = itCals.next();
+			%>
+			<li>Calendar: <%=calEnt.getNo()%> <%
+ 			if (calEnt.getBill() != null) {
+ 				String senateBillNo = calEnt.getBill().getSenateBillNo();
+ 					
+				%> / Sponsor: <a href="<%=appPath%>/sponsor/<%=calEnt.getBill().getSponsor()
+						.getFullname()%>"><%=calEnt.getBill().getSponsor()
+						.getFullname()%></a> <%
+				if (calEnt.getSubBill() != null) {
+					%>(Sub-bill Sponsor: 
+						<a href="<%=appPath%>/sponsor/<%=calEnt.getSubBill().getSponsor()
+								.getFullname()%>"><%=calEnt.getSubBill().getSponsor()
+								.getFullname()%></a>)<%
+				}
+				%> / Printed No.: <a href="<%=appPath%>/bill/<%=senateBillNo%>"><%=senateBillNo%></a>
+				<%
+				if (calEnt.getBillHigh() != null) {
+					%><b style="color: green">HIGH</b> <%
+				}
+				%> <%
+				if (calEnt.getSubBill() != null) {
 					String senateSubBillNo = calEnt.getSubBill().getSenateBillNo();
-					if (senateSubBillNo.indexOf("-")==-1)
-						senateSubBillNo+="-" + calendar.getSessionYear();
-					%>(Sub-bill: <a href="<%=appPath%>/bill/<%=senateSubBillNo%>"><%=senateSubBillNo%></a>)<%}%>
-		
-		<%}%>
-		
-		<%if (calEnt.getBill().getTitle()!=null){%><br/>Title: <%=calEnt.getBill().getTitle()%><%}else if (calEnt.getSubBill()!=null && calEnt.getSubBill().getTitle()!=null){%><br/>Title: <%=calEnt.getSubBill().getTitle()%><%}%>
-		
-</li>
-	<%}%>
-	</ul>
-<%}%>
-	
+					%>(Sub-bill: <a href="<%=appPath%>/bill/<%=senateSubBillNo%>"><%=senateSubBillNo%></a>)<%
+				}
+				%> <%
+			}
+			%> <%
+			if (calEnt.getBill().getTitle() != null) {
+				%><br />
+				Title: <%=calEnt.getBill().getTitle()%> <%
+			} 
+			else if (calEnt.getSubBill() != null && calEnt.getSubBill().getTitle() != null) {
+				%><br />
+				Title: <%=calEnt.getSubBill().getTitle()%> <%
+			}
+			%>
+			</li>
+			<%
+		}
+		%>
+		</ul>
+		</div>
+		<%
+	}
+%> <%
+ 	if (supp.getSections() != null && supp.getSections().size() > 0) {
+ 		%><blockquote><%
+		Iterator<Section> itSection = supp.getSections().iterator();
+		while (itSection.hasNext()) {
+			Section section = itSection.next();
+			%>
+				<h4>Section:<%=section.getName()%> (<%=section.getType()%> / <%=section.getCd()%>)</h4>
+				<div class="billSummary">
+				<ul>
+			<%
+			Iterator<CalendarEntry> itCals = section.getCalendarEntries().iterator();
+			while (itCals.hasNext()) {
+				CalendarEntry calEnt = itCals.next();
+				%>
+					<li>Calendar: <%=calEnt.getNo()%>
+				<%
+	 				if (calEnt.getBill() != null) {
+	 					String senateBillNo = calEnt.getBill().getSenateBillNo();
+	 				%> / Sponsor: <a href="<%=appPath%>/sponsor/<%=calEnt.getBill().getSponsor()
+												.getFullname()%>"><%=calEnt.getBill().getSponsor()
+												.getFullname()%></a>
+					<%
+					if (calEnt.getSubBill() != null) {
+						%>(Sub-bill Sponsor: <a href="<%=appPath%>/sponsor/<%=calEnt.getSubBill()
+													.getSponsor().getFullname()%>"><%=calEnt.getSubBill()
+													.getSponsor().getFullname()%></a>)<%
+					}
+					%> / Printed No.: <a href="<%=appPath%>/bill/<%=senateBillNo%>"><%=senateBillNo%></a><%
+					if (calEnt.getBillHigh() != null) {
+						%><b style="color: green">HIGH</b> <%
+					}
+					%> <%
+	 				if (calEnt.getSubBill() != null) {
+	 					String senateSubBillNo = calEnt.getSubBill().getSenateBillNo();
+	 					%>(Sub-bill: <a href="<%=appPath%>/bill/<%=senateSubBillNo%>"><%=senateSubBillNo%></a>)<%
+	 				}
+	 				%> <%
+				}
+				%> <%
+	 			if (calEnt.getBill().getTitle() != null) {
+	 				%>
+	 					<br />
+						Title: <%=calEnt.getBill().getTitle()%> 
+					<%
+				}
+	 			else if (calEnt.getSubBill() != null && calEnt.getSubBill().getTitle() != null) {
+					%>
+						<br />
+						Title: <%=calEnt.getSubBill().getTitle()%> 
+					<%
+				}
+				%>
+			</li>
+			<%
+			}
+			%>
+		</ul>
+	<%
+		}
+	%>
+	</div>
 	</blockquote>
-	
-<%}%>
 
+<%
+	}
+%>
 </div>
 <%
+	}
+	catch (Exception e) {
+		
+	}
+%>
 
-} catch (Exception e) {}%>
+<%
+count++;
+}
+%>
 
- <%}System.out.println(calendar.luceneOid());%>
 
-  
-<%if(oid != null) { %><div id="formatBox">
-<b>Formats:</b> <a href="<%=appPath%>/api/1.0/xml/calendar/<%=oid%>">XML</a>
- </div> <%} %>
+<%
+	if (oid != null) {
+%><div id="formatBox"><b>Formats:</b> <a
+	href="<%=appPath%>/api/1.0/xml/calendar/<%=oid%>">XML</a></div>
+<%
+	}
+%>
 
-</div> 
-<jsp:include page="/footer.jsp"/>
+<div></div>
+<jsp:include page="/footer.jsp" />

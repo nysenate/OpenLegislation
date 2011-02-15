@@ -10,5 +10,5 @@ public interface LuceneIndexer {
 	void closeWriter() throws IOException;
 	IndexWriter openWriter() throws IOException;
 	void deleteDocuments(String otype, String oid)  throws IOException;
-	boolean addDocument(LuceneObject o, LuceneSerializer[] serializer, IndexWriter writer)  throws InstantiationException,IllegalAccessException,IOException;
+	boolean addDocument(ILuceneObject o, LuceneSerializer[] serializer, IndexWriter writer)  throws InstantiationException,IllegalAccessException,IOException;
 }

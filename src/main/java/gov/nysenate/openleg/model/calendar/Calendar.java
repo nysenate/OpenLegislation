@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.calendar;
 
+import gov.nysenate.openleg.ingest.ISenateObject;
 import gov.nysenate.openleg.ingest.SenateObject;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("calendar")
-public class Calendar implements SenateObject {
+public class Calendar extends SenateObject {
 
 	@XStreamAsAttribute
 	protected int year;
@@ -35,6 +36,10 @@ public class Calendar implements SenateObject {
 	public final static String TYPE_FLOOR = "floor";
 	
 	public final static String TYPE_ACTIVE = "active";
+	
+	public Calendar() {
+		super();
+	}
 
 	public String getId() {
 		return id;
@@ -143,7 +148,7 @@ public class Calendar implements SenateObject {
 	}
 	
 	@Override
-	public void merge(SenateObject obj) {
+	public void merge(ISenateObject obj) {
 		if(!(obj instanceof Calendar))
 			return;
 		

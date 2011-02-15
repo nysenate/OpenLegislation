@@ -124,8 +124,7 @@ public class JsonConverter {
 						else if(type.equals("Date")) {
 							Date d;
 							if((d = (Date)method.invoke(o)) != null) {
-								String jsonDate = DATE_FORMAT.format(d);
-								root.addProperty(f.getName(), (d != null) ? jsonDate:"");
+								root.addProperty(f.getName(), (d != null) ? d.getTime() + "":"");
 							}
 						}
 						else if(type.equals("int")) {

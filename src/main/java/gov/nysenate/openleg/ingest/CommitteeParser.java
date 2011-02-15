@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Committee;
 import gov.nysenate.openleg.model.committee.Meeting;
+import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.xml.committee.*;
 
 import java.io.File;
@@ -33,7 +34,7 @@ public class CommitteeParser implements OpenLegConstants {
 
 	private static Logger logger = Logger.getLogger(CommitteeParser.class);
 		
-	ArrayList<SenateObject> objectsToUpdate = new ArrayList<SenateObject>();
+	ArrayList<ISenateObject> objectsToUpdate = new ArrayList<ISenateObject>();
 	
 	IngestReader reader = null;
 	
@@ -44,7 +45,7 @@ public class CommitteeParser implements OpenLegConstants {
 		this.reader = reader;
 	}
 	
-	public ArrayList<SenateObject> doParsing (File file) {
+	public ArrayList<ISenateObject> doParsing (File file) {
 		try {
 			doParse(file.getAbsolutePath());
 		}
@@ -247,7 +248,7 @@ public class CommitteeParser implements OpenLegConstants {
 		String action = xmlAgenda.getAction();
 		
 		if (agenda != null && action.equalsIgnoreCase("remove")) {
-			reader.deleteFile(agenda.getId(), agenda.getYear()+"", "agenda");
+			reader.deleteSenateObject(agenda);
 			logger.info("removing agenda: " + agenda.getId());
 						
 			return null;
@@ -283,15 +284,17 @@ public class CommitteeParser implements OpenLegConstants {
 		
 		while (itAddendum.hasNext()) {	
 			XMLAddendum xmlAddendum = (XMLAddendum)itAddendum.next();
-			String keyId = "a-" + agenda.getNumber() + '-' + agenda.getSessionYear() + '-' + agenda.getYear();
+			String keyId = xmlAddendum.getId() + "-" + agenda.getNumber() + '-' + agenda.getSessionYear() + '-' + agenda.getYear();
 			
-			addendum = parseAddendum(keyId, xmlAddendum, agenda, false);		
+			addendum = parseAddendum(keyId, xmlAddendum, agenda, false);
 			addendum.setAgenda(agenda);
 		
-			if (!listAddendums.contains(addendum))
+			if (!listAddendums.contains(addendum)) {
 				listAddendums.add(addendum);
-			
+				System.out.println(addendum.getMeetings());
+			}
 		}
+		
 		return agenda;
 	}
 	
@@ -337,7 +340,7 @@ public class CommitteeParser implements OpenLegConstants {
 			
 			Meeting meeting = null;
 			String meetingId = "meeting-" + xmlCommMeeting.getName().getContent() + '-' + agenda.getNumber() + '-' + agenda.getSessionYear() + '-' + agenda.getYear();
-			
+						
 			meeting = agenda.getCommitteeMeeting(meetingId);
 			
 			if (meeting != null && action != null && action.equals("remove")) {
@@ -348,7 +351,13 @@ public class CommitteeParser implements OpenLegConstants {
 				else {
 					agenda.removeCommitteeMeeting(meeting);
 					logger.info("removing meeting: " + meeting.getId());
+					try {
+						SearchEngine2.getInstance().deleteDocuments("meeting", meeting.luceneOid());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
+				reader.writeSenateObject(agenda, Agenda.class, false);
 				
 				continue;
 			}
@@ -385,7 +394,7 @@ public class CommitteeParser implements OpenLegConstants {
 				meeting.setMeetday(xmlCommMeeting.getMeetday().getContent());
 			
 			if (xmlCommMeeting.getNotes()!=null && xmlCommMeeting.getNotes().getContent().length() > 0)
-				meeting.setNotes(xmlCommMeeting.getNotes().getContent());
+				meeting.setNotes(xmlCommMeeting.getNotes().getContent().replaceAll("(\\\\n|\n)", ""));
 			
 			if (xmlCommMeeting.getName()!=null && xmlCommMeeting.getName().getContent().length() > 0) {
 				String commName = xmlCommMeeting.getName().getContent();

@@ -83,6 +83,10 @@ public class Addendum {
 		this.meetings = meetings;
 	}
 	
+	public void addMeeting(Meeting meeting) {
+		this.meetings.add(meeting);
+	}
+	
 	public void removeMeeting(Meeting meeting) {
 		this.meetings.remove(meeting);
 	}
@@ -98,6 +102,9 @@ public class Addendum {
 		return false;
 	}
 
-	
+	@Override
+	public String toString() {
+		return this.getId();
+	}
 	
 }

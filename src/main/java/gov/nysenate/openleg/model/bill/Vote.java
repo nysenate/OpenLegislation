@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
+import gov.nysenate.openleg.ingest.ISenateObject;
 import gov.nysenate.openleg.ingest.SenateObject;
 import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
@@ -18,7 +19,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("vote")
-public class Vote implements SenateObject {
+public class Vote extends SenateObject {
 	
 	@XStreamAsAttribute
 	private int voteType;
@@ -55,11 +56,12 @@ public class Vote implements SenateObject {
 	public final static int VOTE_TYPE_COMMITTEE = 2;
 	
 	public Vote() {
-		
+		super();
 	}
 	
 	public Vote (Bill bill, Date voteDate, int ayeCount, int nayCount)
 	{
+		super();
 		this.id = buildId(bill, voteDate, ayeCount, nayCount);
 		this.bill = bill;
 		this.voteDate = voteDate;
@@ -402,7 +404,7 @@ public class Vote implements SenateObject {
 	}
 
 	@Override
-	public void merge(SenateObject obj) {
+	public void merge(ISenateObject obj) {
 		return;
 		
 	}
