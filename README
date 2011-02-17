@@ -1,0 +1,18 @@
+
+New York State Senate Open Legislation
+IRC: #nyss_openlegislation on freenode
+
+This is the Java Web app project for the open-source legislative access system developed
+by the NY Senate CIO Team beginning in 2009. It provides both a highly usable HTML-based
+browser and seach interface, as well as XML and JSON-based RESTful APIs.
+
+Developers:
+	Nathan Freitas <freitas@nysenate.gov>
+	Jared Williams <williams@nysenate.gov>
+	Graylin Kim <graylinkim@gmail.com>
+
+Production Homepage:
+	http://open.nysenate.gov/legislation
+
+License:
+	See license file or http://open.nysenate.gov/legislation/license/

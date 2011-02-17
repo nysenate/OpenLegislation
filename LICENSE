@@ -1,0 +1,9 @@
+Open-Source Software & Software Licenses
+In order to make the Senate's information and software as public as possible, it is has adopted unique system using two types of licenses  - GNU General Public License as well as the BSD License. This system is meant to ensure the most public licsence is used in each specific case such that:
+
+(i) Any Software released containing components with preexisting GPL copyrights must be released pursuant to a GPL v3 copyright restriction.
+(ii) Any Software created independently by the Senate without any preexisting licensing restrictions on any of its components shall be released under dual licensing and take one of two forms: (a) a BSD license, or (b) a GPL v3 license.  The ultimate user of such Software shall choose which form of licensing makes the most sense for his or her project.  
+(iii) Regarding Software containing preexisting copyright restrictions other than GPL, the CIO shall make the determination how he or she wishes to release such Software. 
+
+GPL v3: http://www.gnu.org/copyleft/gpl.html
+BSD: http://www.opensource.org/licenses/bsd-license.php
