@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.ingest.ISenateObject;
 import gov.nysenate.openleg.ingest.SenateObject;
+import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
 
 import java.util.ArrayList;
@@ -62,6 +63,8 @@ public class Bill extends SenateObject  {
 	@XStreamAlias("committee")
 	@LuceneField("committee")
 	protected String currentCommittee;
+	
+	protected List<String> pastCommittees;
 	
 	@XStreamAlias("actions")
 	@XStreamConverter(BillListConverter.class)
@@ -153,13 +156,16 @@ public class Bill extends SenateObject  {
 	}
 
 
-
 	public String getCurrentCommittee() {
 		return currentCommittee;
 	}
 
 
+	public List<String> getPastCommittees() {
+		return pastCommittees;
+	}
 
+	
 	public List<BillEvent> getBillEvents() {
 		return billEvents;
 	}
@@ -265,6 +271,11 @@ public class Bill extends SenateObject  {
 	public void setCurrentCommittee(String currentCommittee) {
 		this.currentCommittee = currentCommittee;
 	}
+	
+	
+	public void setPastCommittees(List<String> pastCommittees) {
+		this.pastCommittees = pastCommittees;
+	}
 
 
 
@@ -313,7 +324,16 @@ public class Bill extends SenateObject  {
 	public void setLatestAmendment(Bill latestAmendment) {
 		this.latestAmendment = latestAmendment;
 	}
-
+	
+	
+	public void addPastCommittee(String committee) {
+		if(pastCommittees == null)
+			pastCommittees = new ArrayList<String>();
+		
+		if(!pastCommittees.contains(committee)) {
+			pastCommittees.add(committee);
+		}
+	}
 
 
 	public void addVote (Vote vote) {
@@ -523,7 +543,14 @@ public class Bill extends SenateObject  {
 		
 		
 		
-		
+		if(pastCommittees ==  null || pastCommittees.isEmpty()) {
+			pastCommittees = bill.getPastCommittees();
+		}
+		else {
+			if(bill.getPastCommittees() != null && !bill.getPastCommittees().isEmpty()) {
+				this.pastCommittees = bill.getPastCommittees();
+			}
+		}
 		
 		if(billEvents == null || billEvents.isEmpty()) {
 			billEvents = bill.getBillEvents();
@@ -575,7 +602,6 @@ public class Bill extends SenateObject  {
 	@JsonIgnore
 	@Override
 	public String luceneOid() {
-		
 		if (senateBillNo.indexOf("-" + year)==-1)
 			return senateBillNo + "-" + year;
 		else
@@ -585,7 +611,35 @@ public class Bill extends SenateObject  {
 	@JsonIgnore
 	@Override
 	public HashMap<String,Field> luceneFields() {
-		return null;
+		HashMap<String,Field> map = new HashMap<String,Field>();
+		
+		if(this.getPastCommittees() != null) {
+			String pcoms = "";
+			for(String committee:pastCommittees) {
+				pcoms += committee + ", ";
+			}
+			pcoms.replaceFirst(", $", "");
+			map.put("pastcommittees", new Field("pastcommittees",pcoms, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		}
+		
+		/*
+		 * the following creates a sortable index so we can sort
+		 * s1,s2,s3,s11 instead of s1,s11,s2,s3.  senate bills take
+		 * precedence, followed by assembly and finally anything else
+		 */
+		String num = senateBillNo.split("-")[0];
+		num = num.substring(1, (Character.isDigit(num.charAt(num.length()-1))) ? num.length() : num.length() - 1);
+		while(num.length() < 6)
+			num = "0" + num;
+		
+		if(senateBillNo.charAt(0) == 'S')
+			num = "A" + num;
+		else if(senateBillNo.charAt(0) == 'A')
+			num = "B" + num;
+		else 
+			num = "Z" + num;
+		map.put("sortindex", new Field("sortindex",num, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		return map;
 	}
 	
 	@JsonIgnore

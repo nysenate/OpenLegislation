@@ -52,6 +52,20 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     		}
     	}
     	else {
+    		if(obj instanceof Bill) {
+    			Bill bill = (Bill)obj;
+        		if(bill.getBillEvents() != null) {
+        			for(BillEvent be:bill.getBillEvents()) {
+        				deleteSenateObject(be);
+        			}
+        		}
+        		if(bill.getVotes() != null) {
+        			for(Vote vote:bill.getVotes()) {
+        				deleteSenateObject(vote);
+        			}
+        		}
+    		}
+    		
     		deleteSenateObjectById(obj.luceneOtype(), obj.luceneOid());
     	}
 //    	else if (obj instanceof Bill) {
@@ -169,7 +183,6 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     	    			addendum.setAgenda(agenda);
     	    			for( Meeting meeting : addendum.getMeetings() ) {
     	    				meeting.setAddendums(new ArrayList<Addendum>(Arrays.asList(addendum)));
-    	    				System.out.println(meeting.luceneOsearch() + " : " + meeting.luceneSummary() + " : " + meeting.luceneTitle());
     	    				try {
     	    					addDocument(meeting, ls, indexWriter);
     	    				}

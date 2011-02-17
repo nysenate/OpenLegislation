@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.lucene;
 
-import gov.nysenate.openleg.model.bill.Bill;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -26,7 +24,7 @@ public class DocumentBuilder {
 	public static final String LUCENE_SUMMARY = "luceneSummary";
 	public static final String LUCENE_TITLE = "luceneTitle";
 	public static final String LUCENE_WHEN = "luceneWhen";
-	public static final String LUCENE_SEARCHABLE = "getLuceneSearchable";
+	public static final String LUCENE_ACTIVE = "getLuceneActive";
 	
 	public static final String OTYPE = "otype";
 	public static final String OID = "oid";
@@ -34,7 +32,7 @@ public class DocumentBuilder {
 	public static final String SUMMARY = "summary";
 	public static final String TITLE = "title";
 	public static final String MODIFIED = "modified";
-	public static final String SEARCHABLE = "searchable";
+	public static final String ACTIVE = "active";
 	
 	@SuppressWarnings("unchecked")
 	public Document buildDocument(ILuceneObject o, LuceneSerializer[] serializer) {
@@ -83,9 +81,9 @@ public class DocumentBuilder {
 					DEFAULT_STORE,
 					DEFAULT_INDEX));
 			
-			fields.put(SEARCHABLE, new org.apache.lucene.document.Field(
-					SEARCHABLE,
-					getLuceneFields(o, LUCENE_SEARCHABLE),
+			fields.put(ACTIVE, new org.apache.lucene.document.Field(
+					ACTIVE,
+					getLuceneFields(o, LUCENE_ACTIVE),
 					DEFAULT_STORE,
 					DEFAULT_INDEX));
 			

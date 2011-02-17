@@ -6,12 +6,14 @@ public class Result {
 	public String data;
 	public String oid;
 	public long lastModified;
-	
-	public Result(String otype, String data, String oid, long lastModified) {
+	public String active;
+
+	public Result(String otype, String data, String oid, long lastModified, String active) {
 		this.otype = otype;
 		this.data = data;
 		this.oid  = oid;
 		this.lastModified = lastModified;
+		this.active = active;
 	}
 
 	public String getOtype() {
@@ -24,6 +26,10 @@ public class Result {
 
 	public String getOid() {
 		return oid;
+	}
+	
+	public String getActive() {
+		return active;
 	}
 
 	public void setOtype(String otype) {
@@ -44,6 +50,10 @@ public class Result {
 
 	public void setLastModified(long lastModified) {
 		this.lastModified = lastModified;
+	}
+	
+	public void setActive(String active) {
+		this.active = active;
 	}
 	
 }

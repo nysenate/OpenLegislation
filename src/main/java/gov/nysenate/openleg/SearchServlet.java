@@ -7,6 +7,7 @@ import gov.nysenate.openleg.util.BillCleaner;
 import gov.nysenate.openleg.util.SessionYear;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -18,34 +19,26 @@ import org.apache.log4j.Logger;
 
 public class SearchServlet extends HttpServlet implements OpenLegConstants
 {	
+	
 	private static long DATE_START = SessionYear.getSessionStart();
 	private static long DATE_END = SessionYear.getSessionEnd();
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	
 	private static Logger logger = Logger.getLogger(SearchServlet.class);
 
 	private SearchEngine2 searchEngine = null;
 	
-	/**
-	 * Constructor of the object.
-	 */
 	public SearchServlet() {
 		super();
 	}
 
-	/**
-	 * Destruction of the servlet. <br>
-	 */
 	public void destroy() {
 		super.destroy();
 		
 		try {
 			searchEngine.closeSearcher();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -95,6 +88,11 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 		String location = request.getParameter("location");
 		
 		String session = request.getParameter("session");
+		
+		String tempTerm = null;
+		if((tempTerm = BillCleaner.getDesiredBillNumber(term)) != null) {
+			term = "oid:" + tempTerm;
+		}
 
 		String sortField = request.getParameter("sort");
 		boolean sortOrder = false;
@@ -112,25 +110,20 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 		}
 		
 		try {
-			if (request.getParameter("enddate")!=null && (!request.getParameter("enddate").equals("mm/dd/yyyy")))
-			{
+			if (request.getParameter("enddate")!=null && (!request.getParameter("enddate").equals("mm/dd/yyyy"))) {
 				endDate = OL_SEARCH_DATE_FORMAT.parse(request.getParameter("enddate"));
-				endDate.setHours(11);
-				endDate.setMinutes(59);
-				endDate.setSeconds(59);
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(endDate);
+				cal.set(Calendar.HOUR, 11);
+				cal.set(Calendar.MINUTE, 59);
+				cal.set(Calendar.SECOND, 59);
+				
+				endDate = cal.getTime();
 			}
 		} catch (java.text.ParseException e1) {
 			logger.warn(e1);
 		}
 		
-		/*
-		boolean noTerm = (term == null || term.length() == 0);
-		boolean noType = (type == null || type.length() == 0);
-		
-		if (noTerm && noType)
-		{
-			response.sendRedirect("/legislation/");
-		}*/
 		
 		String format = "html";
 		
@@ -138,8 +131,8 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			format = request.getParameter("format");
 		
 
-		int pageIdx = 1;//Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_IDX));
-		int pageSize = 20;//Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_SIZE));
+		int pageIdx = 1;
+		int pageSize = 20;
 		
 		if (request.getParameter("pageIdx") != null)
 			pageIdx = Integer.parseInt(request.getParameter("pageIdx"));
@@ -151,32 +144,19 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 		int start = (pageIdx - 1) * pageSize;
 		
 		
-		request.setAttribute("type", type);
-		
-		if (sortField!=null)
-		{
+		if (sortField!=null) {
 			request.setAttribute("sortField", sortField);
 			request.setAttribute("sortOrder",sortOrder);
 		}
-		
-		request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
-		request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
-	
 		
 		SearchResultSet srs;
 		StringBuilder searchText = new StringBuilder();
 		
 		if (term != null)
-		{
 			searchText.append(term);
-		}
 		
 		try {
-			
-		
-			
-			if (type != null && type.length() > 0)
-			{
+			if (type != null && type.length() > 0) {
 				if (searchText.length()>0)
 					searchText.append(" AND ");
 				
@@ -191,8 +171,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				searchText.append("year:" + session);
 			}
 			
-			if (full != null && full.length() > 0)
-			{
+			if (full != null && full.length() > 0)	{
 				if (searchText.length()>0)
 					searchText.append(" AND ");
 				
@@ -206,8 +185,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				searchText.append("\")");
 			}
 			
-			if (memo != null && memo.length() > 0)
-			{
+			if (memo != null && memo.length() > 0) {
 				if (searchText.length()>0)
 					searchText.append(" AND ");
 				
@@ -216,8 +194,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				searchText.append("\"");
 			}
 			
-			if (status != null && status.length() > 0)
-			{
+			if (status != null && status.length() > 0) {
 				if (searchText.length()>0)
 					searchText.append(" AND ");
 				
@@ -226,8 +203,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				searchText.append("\"");
 			}
 			
-			if (sponsor != null && sponsor.length() > 0)
-			{
+			if (sponsor != null && sponsor.length() > 0) {
 				if (searchText.length()>0)
 					searchText.append(" AND ");
 				
@@ -236,8 +212,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				searchText.append("\"");
 			}
 			
-			if (cosponsors != null && cosponsors.length() > 0)
-			{
+			if (cosponsors != null && cosponsors.length() > 0) {
 				if (searchText.length()>0)
 					searchText.append(" AND ");
 				
@@ -254,10 +229,8 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				searchText.append("sameas:");
 				searchText.append(sameas);
 			}
-			
 
-			if (committee != null && committee.length() > 0)
-			{
+			if (committee != null && committee.length() > 0) {
 				if (searchText.length()>0)
 					searchText.append(" AND ");
 				
@@ -266,8 +239,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				searchText.append("\"");
 			}
 			
-			if (location != null && location.length() > 0)
-			{
+			if (location != null && location.length() > 0) {
 				if (searchText.length()>0)
 					searchText.append(" AND ");
 				
@@ -276,9 +248,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				searchText.append("\"");
 			}
 				
-				
-			if (startDate != null && endDate != null)
-			{
+			if (startDate != null && endDate != null) {
 				if (searchText.length()>0)
 					searchText.append(" AND ");
 				
@@ -288,8 +258,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				searchText.append(endDate.getTime());
 				searchText.append("]");
 			}
-			else if (startDate != null)
-			{
+			else if (startDate != null) {
 				if (searchText.length()>0)
 					searchText.append(" AND ");
 				
@@ -297,34 +266,37 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				searchText.append(startDate.getTime());
 				searchText.append(" TO ");
 				
-				startDate.setHours(23);
-				startDate.setMinutes(59);
-				startDate.setSeconds(59);
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(startDate);
+				cal.set(Calendar.HOUR, 23);
+				cal.set(Calendar.MINUTE, 59);
+				cal.set(Calendar.SECOND, 59);
+				
+				startDate = cal.getTime();
 				
 				searchText.append(startDate.getTime());
 				searchText.append("]");
 			}
 			
-			term = searchText.toString();
-			
-			//if (term.indexOf("\"")==-1 && term.indexOf(":")==-1)
-				//term += "*";
-			
 			request.setAttribute("term", term);
+			request.setAttribute("type", type);
+			request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
+			request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
+			
+			term = searchText.toString();
 
 			term = BillCleaner.billFormat(term);
-			
 			srs = null;
 			
-			if (term.length() == 0)
-			{
+			if (term.length() == 0)	{
 				response.sendError(404);
 				return;
 			}
 			
 			String searchFormat = "json";
 			
-			//TODO
+			System.out.println(term);
+			
 			SenateResponse sr = null;
 			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
 				if(type != null && type.equals("bill")) {
@@ -346,43 +318,27 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			
 			srs.setResults(APIServlet.buildSearchResultList(sr));
 			
-			if (srs != null)
-			{
-				
-				if (srs.getResults().size() == 0)
-				{
-					//getServletContext().getRequestDispatcher("/noresults.jsp").forward(request, response);
+			if (srs != null) {
+				if (srs.getResults().size() == 0) {
 					response.sendError(404);
 				}
-				else
-				{
-				
+				else {
 					request.setAttribute("results", srs);
 					String viewPath = "/views/search-" + format + DOT_JSP;
 					getServletContext().getRequestDispatcher(viewPath).forward(request, response);
 				}
 			}
-			else
-			{
+			else {
 				logger.error("Search Error: " + request.getRequestURI());
-
 				response.sendError(500);
 			}
 			
 		} catch (Exception e) {
-		
 			logger.error("Search Error: " + request.getRequestURI(),e);
-			
 			response.sendError(500);
-			
 		}
 	}
 
-	/**
-	 * Initialization of the servlet. <br>
-	 *
-	 * @throws ServletException if an error occurs
-	 */
 	public void init() throws ServletException {
 		logger.info("SearchServlet:init()");
 		

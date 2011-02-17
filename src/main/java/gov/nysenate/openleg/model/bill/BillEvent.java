@@ -6,6 +6,7 @@ import gov.nysenate.openleg.lucene.DocumentBuilder;
 
 import java.net.URLEncoder;
 import java.text.DateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -161,6 +162,22 @@ public class BillEvent extends SenateObject {
 	@JsonIgnore
 	public void merge(ISenateObject obj) {
 		return;
+	}
+	
+	public static class ByEventDate implements Comparator<BillEvent> {
+
+		/*
+		 * sorted newest to oldest
+		 */
+		@Override
+		public int compare(BillEvent be1, BillEvent be2) {
+			int ret = be1.getEventDate().compareTo(be2.getEventDate());
+			if(ret == 0) {
+				return -1;
+			}
+			return ret*-1;
+		}
+		
 	}
 }
 	

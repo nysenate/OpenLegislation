@@ -294,6 +294,17 @@ outline:0px;
 	
 }
 
+.amended
+{
+	background-color:#ffffcc;
+	color:#555;
+	padding:3px;
+	font-size:130%;
+	border:1px solid #aaaaaa;
+	text-align:center;
+	width:280px;
+}
+
 #content
 {
 

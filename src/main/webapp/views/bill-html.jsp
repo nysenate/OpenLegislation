@@ -1,14 +1,10 @@
 <%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.model.calendar.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
 <%
 
-
 String appPath = request.getContextPath();
-
 String term = (String)request.getAttribute("term");
-
-
+String active = (String)request.getAttribute("active");
 Bill bill = (Bill)request.getAttribute("bill");
-
   	
 String titleText = "(no title)";
 if (bill.getTitle()!=null)
@@ -28,6 +24,11 @@ String title = senateBillNo + " - NY Senate Open Legislation - " + titleText;
 <br/>
      <h2><%=senateBillNo%>: <%if (bill.getTitle()!=null){ %><%=bill.getTitle()%><%} %></h2>
     <br/>
+    
+    <% if(active != null && active.equals("false")) { %>
+		<div class="amended">This bill has been amended.</div>
+	<% } %>
+    
      <div style="float:left;">
     
     <%if (bill.getSameAs()!=null){ 
@@ -71,6 +72,7 @@ if (bill.getSponsor()!=null)
 
 ArrayList<SearchResult> rBills = (ArrayList<SearchResult>)request.getAttribute("related-bill");
 %>
+
 <%if (rBills.size()>0) { %>
 Versions: <%for (SearchResult rBill:rBills){
 	
@@ -171,7 +173,7 @@ if (bill.getTitle()!=null)
 
   <%if (bill.getLawSection()!=null){ %>
  <b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a><br/>
- <%} %> e
+ <%} %>
 
 
  
@@ -185,14 +187,14 @@ ArrayList<SearchResult> rActions = (ArrayList<SearchResult>)request.getAttribute
 <%if (rActions.size() > 0) { %>
 <h3><%=senateBillNo%> Actions</h3>
 <ul>
-	<%for (SearchResult beAction : rActions){ 
-		BillEvent be = (BillEvent)beAction.getObject();
-		//if((bill.getYear() == 2011 && be.getEventDate().getTime() > 1293858000000L) || (bill.getYear() != 2011 && be.getEventDate().getTime() < 1293858000000L)) {
+	<%
+		ArrayList<BillEvent> events = BillCleaner.sortBillEvents(rActions);
+		for (BillEvent be : events){ 
+			
 			%>
-			<li><%=df.format(be.getEventDate().getTime())%>: <%=beAction.getTitle().toUpperCase()%></li>
+				<li><%=df.format(be.getEventDate().getTime())%>: <%=BillCleaner.formatBillEvent(bill.getSenateBillNo(), be.getEventText(), appPath)%></li>
 			<%
-		//}
-	}%>
+		}%>
 </ul>
 <%}%>
 

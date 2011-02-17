@@ -11,7 +11,9 @@ import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
+import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.JsonSerializer;
 import gov.nysenate.openleg.util.TranscriptFixer;
 import gov.nysenate.openleg.util.XmlFixer;
@@ -26,9 +28,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
-
 
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonGenerationException;
@@ -303,7 +305,10 @@ public class IngestReader {
 			if(bill == null)
 				continue;
 			
-			reindexAmendedVersions(bill);
+			//if this returns true bill is not active
+			if(reindexAmendedVersions(bill)) {
+				bill.setLuceneActive(false);
+			}
 			
 			writeSenateObject(bill, Bill.class, merge);
 			
@@ -482,7 +487,7 @@ public class IngestReader {
 	
 	public boolean deleteSenateObject(ISenateObject so) {
 		try {
-			SearchEngine2.getInstance().deleteSenateObject(so);
+			searchEngine.deleteSenateObject(so);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -621,39 +626,119 @@ public class IngestReader {
 		}
 	}
 	
+//	/**
+//	 * desirable to hide old versions of an amended bill from the default search
+//	 * this appends "searchable:false" as a field to any old verions of bills
+//	 * @param bill
+//	 */
+//	public void reindexAmendedVersions(Bill bill) {
+//		int idx = bill.getSenateBillNo().indexOf("-");
+//		char c = bill.getSenateBillNo().charAt(idx-1);
+//		
+//		if(c >= 65 && c < 90) {
+//			System.out.print(bill.getSenateBillNo() + ": ");
+//			String strings[] = bill.getSenateBillNo().split("-");
+//			c--;
+//			
+//			while(c >= 65 && c < 90) {
+//				reindexInactiveBill(strings[0].substring(0, strings[0].length()-1) + c + "-" + strings[1],
+//						bill.getYear() + "");
+//				c--;
+//			}
+//			
+//			reindexInactiveBill(strings[0].substring(0, strings[0].length()-1) + "-" + strings[1],
+//					bill.getYear() + "");
+//			System.out.println();
+//		}
+//	}
+	
 	/**
 	 * desirable to hide old versions of an amended bill from the default search
-	 * this appends "searchable:false" as a field to any old verions of bills
+	 * this appends "active:false" as a field to any old verions of bills
+	 * 
+	 * to avoid constantly rewriting amended versions of bills this does a query
+	 * to lucene to check if they've already been hidden, if they haven't then 
+	 * they are sent to reindexInactiveBill
+	 * 
 	 * @param bill
+	 * 
+	 * returns true if current bill isn't searchable, false otherwise
 	 */
-	public void reindexAmendedVersions(Bill bill) {
+	public boolean reindexAmendedVersions(Bill bill) {
 		int idx = bill.getSenateBillNo().indexOf("-");
 		char c = bill.getSenateBillNo().charAt(idx-1);
+		String strings[] = bill.getSenateBillNo().split("-");
 		
-		if(c >= 65 && c < 90) {
+		String query = null;
+		
+		if(c >= 65 && c < 90)
+			query = strings[0].substring(0, strings[0].length()-1);
+		else 
+			query = strings[0];
 			
-			String strings[] = bill.getSenateBillNo().split("-");
-			c--;
+		try {
+			//oid:(S418-2009 OR [S418A-2009 TO S418Z-2009]) AND year:2009
+			query = "otype:bill AND oid:((" 
+				+ query + "-" + strings[1] 
+                    + " OR [" + query + "A-" + strings[1] 
+                       + " TO " + query + "Z-" + strings[1]
+                    + "]) AND " + query + "*-" + strings[1] + ")";
+			//caches recent searces, if s1, s1a and s1b are added in close succession
+			//it's possible they s1a won't be picked up.. closing the searcher
+			//fixes that for the time being
+			searchEngine.closeSearcher();
+			SenateResponse sr = searchEngine.search(query,
+					"json", 0,100, null, false);
 			
-			while(c >= 65 && c < 90) {
-				reindexUnsearchableBill(strings[0].substring(0, strings[0].length()-1) + c + "-" + strings[1],
-						bill.getYear() + "");
-				c--;
+			//if there aren't any results this is a new bill
+			if(sr.getResults().isEmpty())
+				return false;
+					
+			//create a list and store bill numbers from oldest to newest
+			ArrayList<String> billNumbers = new ArrayList<String>();				
+			for(Result result:sr.getResults()) {
+				billNumbers.add(result.getOid());
+			}
+			if(!billNumbers.contains(bill))
+				billNumbers.add(bill.getSenateBillNo());
+			Collections.sort(billNumbers);
+			
+			String newest = billNumbers.get(billNumbers.size()-1);
+			
+			//if bill being stored isn't the newest we can assume
+			//that the newest bill has already reindexed older bills
+			if(!bill.getSenateBillNo().equals(newest))
+				return true;
+			
+			billNumbers.remove(newest);
+			billNumbers.remove(bill.getSenateBillNo());				
+							
+			for(Result result:sr.getResults()) {
+				if(billNumbers.contains(result.getOid())) {
+					if(result.getActive().equals("true")) {
+						reindexInactiveBill(result.getOid(), bill.getYear()+"");
+					}
+				}
 			}
 			
-			reindexUnsearchableBill(strings[0].substring(0, strings[0].length()-1) + "-" + strings[1],
-					bill.getYear() + "");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (org.apache.lucene.queryParser.ParseException e) {
+			e.printStackTrace();
 		}
+		return false;
 	}
 	
-	private void reindexUnsearchableBill(String senateBillNo, String year) {
+	
+	
+	private void reindexInactiveBill(String senateBillNo, String year) {
 		Bill temp = (Bill)this.loadObject(senateBillNo,
 				year,
 				"bill",
 				Bill.class);
 		
 		if(temp != null) {
-			temp.setLuceneSearchable(false);
+			temp.setLuceneActive(false);
 			this.indexSenateObject(temp);
 		}
 	}

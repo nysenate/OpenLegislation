@@ -63,9 +63,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	//Jackson JSON parser
 	private static ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
 	
-	/* (non-Javadoc)
-	 * @see javax.servlet.GenericServlet#init()
-	 */
 	@Override
 	public void init() throws ServletException {
 		super.init();
@@ -75,17 +72,12 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 	}
 
-	public static SearchEngine2 getSearchEngineInstance ()
-	{
+	public static SearchEngine2 getSearchEngineInstance ()	{
 		return searchEngine;
 	}
 	
-	/* (non-Javadoc)
-	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
-	 */
 	@Override
 	public void init(ServletConfig config) throws ServletException {
-		
 		super.init(config);
 		
 		if (searchEngine == null)
@@ -94,11 +86,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	}
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws IOException, ServletException
-	{
+			throws IOException, ServletException {
 		
-		if (req.getParameter("reset")!=null)
-		{
+		if (req.getParameter("reset")!=null) {
 			if (searchEngine != null)
 				searchEngine.closeSearcher();
 			
@@ -106,16 +96,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		}
 		
 		String encodedUri = req.getRequestURI();
-				
 		String uri = java.net.URLDecoder.decode(encodedUri,OpenLegConstants.ENCODING);
-		
-		/*
-		if(uri.contains("/bill/")) {
-			
-			String nuri = BillCleaner.validBill(uri);	
-			uri = nuri;
-				
-		}*/
 			
 		logger.info("request: " + uri + " (" + encodedUri + ")");
 		
@@ -134,15 +115,19 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		int pageSize = DEFAULT_PAGE_SIZE;
 		
 		try
-		{		
-			if (version.equals("1.0"))
-			{
-				String format = st.nextToken().toLowerCase();	
+		{	
+			if (version.equals("1.0") || version.equals("html")) {
+				String format = null;
+				
+				if(version.equals("html"))
+					format = version;
+				else 
+					format = st.nextToken().toLowerCase();	
+				
 				String type = st.nextToken().toLowerCase();
+				String key = "";
 				
 				req.setAttribute(KEY_TYPE,type);
-				
-				String key = "";
 				
 				if (st.hasMoreTokens())
 					key = URLDecoder.decode(st.nextToken(),OpenLegConstants.ENCODING);
@@ -152,12 +137,8 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					pageIdx = Integer.parseInt(st.nextToken());
 						
 						if (st.hasMoreTokens())
-						{
 							pageSize = Integer.parseInt(st.nextToken());
-							
-						}
-						else
-						{
+						else {
 							pageSize = pageIdx;
 							pageIdx = Integer.parseInt(key);
 							key = "";
@@ -180,49 +161,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				
 				handleAPIv1(format, type, key, pageIdx, pageSize, req, resp);
 			}
-			else if (version.equals("html"))
-			{
-	
-				String format = version;
-				String type = st.nextToken().toLowerCase();
-				String key = "%20";
-				
-				if (st.hasMoreTokens())
-					key = URLDecoder.decode(st.nextToken(),OpenLegConstants.ENCODING);
-				
-				req.setAttribute(KEY_TYPE,type);
-	
-				
-				if (st.hasMoreTokens())
-				{
-					pageIdx = Integer.parseInt(st.nextToken());
-						
-						if (st.hasMoreTokens())
-						{
-							pageSize = Integer.parseInt(st.nextToken());
-							
-						}
-				}
-				else if (format.equals(FORMAT_XML)) //for now with XML
-					pageSize = DEFAULT_API_PAGE_SIZE;
-				
-				if (type.equalsIgnoreCase("sponsor"))
-				{
-					
-					key = "sponsor:\"" + key + "\"";
-					type = "bills";
-				}
-				else if (type.equalsIgnoreCase("committee"))
-				{
-					key = "committee:\"" + key + "\" AND oid:s*";
-					type = "bills";
-				}
-				
-				handleAPIv1(format, type, key, pageIdx, pageSize, req, resp);
-			}
-			else if (service.equals("api")) // /legislation/api/csv/bill/S1399
-			{
-				
+			else if (service.equals("api")) { // /legislation/api/csv/bill/S1399
 				String format = version;
 				String type = URLDecoder.decode(st.nextToken(),OpenLegConstants.ENCODING);
 				String key = URLDecoder.decode(st.nextToken(),OpenLegConstants.ENCODING);
@@ -230,15 +169,12 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				req.setAttribute(KEY_TYPE,type);
 	
 				
-				if (st.hasMoreTokens())
-				{
+				if (st.hasMoreTokens()) {
 					pageIdx = Integer.parseInt(st.nextToken());
 						
 						if (st.hasMoreTokens())
-						{
 							pageSize = Integer.parseInt(st.nextToken());
 							
-						}
 				}
 				else if (format.equals(FORMAT_XML)) //for now with XML
 					pageSize = DEFAULT_API_PAGE_SIZE;
@@ -247,7 +183,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			}
 			else 
 			{
-			
 				String format = "html";
 				
 				if (req.getSession().getAttribute("mobile")!=null)
@@ -257,33 +192,24 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				String key = URLDecoder.decode(version,OpenLegConstants.ENCODING);
 				
 				if (key.length()==0 && req.getParameterNames().hasMoreElements())
-				{
 					key = req.getParameterNames().nextElement().toString();
-				}
 				
-				if (type.equalsIgnoreCase("sponsor"))
-				{
+				if (type.equalsIgnoreCase("sponsor")) {
 					
 					key = "sponsor:\"" + key + "\"";
 					type = "bills";
 				}
-				else if (type.equalsIgnoreCase("committee"))
-				{
+				else if (type.equalsIgnoreCase("committee")) {
 					key = "committee:\"" + key + "\"";
 					type = "bills";
 				}
 				
-				
-				
 				req.setAttribute(KEY_TYPE,type);
-	
 				
-					if (st.hasMoreTokens())
-					{
+					if (st.hasMoreTokens()) {
 						pageIdx = Integer.parseInt(st.nextToken());
 							
-							if (st.hasMoreTokens())
-							{
+							if (st.hasMoreTokens()) {
 								pageSize = Integer.parseInt(st.nextToken());
 								
 							}
@@ -292,95 +218,65 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 						pageSize = DEFAULT_API_PAGE_SIZE;
 					
 					handleAPIv1(format, type, key, pageIdx, pageSize, req, resp);
-					
-				
 			}
-		
 		}
-		catch (NumberFormatException nfe)
-		{
+		catch (NumberFormatException nfe) {
 			logger.warn ("Invalid API call", nfe);
-			
-			
 		}
-		catch (NoSuchElementException nse)
-		{
+		catch (NoSuchElementException nse) {
 			logger.warn ("Invalid API call", nse);
-			
-			
 		}
-		catch (NullPointerException npe)
-		{
+		catch (NullPointerException npe) {
 			logger.warn ("Invalid API call", npe);
-			
-			
 		}
-		catch (Exception e)
-		{
+		catch (Exception e)	{
 			logger.warn ("Invalid API call", e);
-			
-			
 		}
 		
 	}
 	
-	
-	
 
 	// /openleg/api/1.0/html/bill/A9067/1/5
 	public void handleAPIv1 (String format, String type, String key, int pageIdx, int pageSize, HttpServletRequest req, HttpServletResponse resp) 
-		throws IOException, ServletException 
-	{
+		throws IOException, ServletException {
 
 		String viewPath = "";
-		
+		String originalType = type;
+		String sFormat = "json";
+		String sortField = type.contains("bill") ? "modified" : "when";
+		SenateResponse sr = null;
 		
 		key = key.trim();
 		
 		if (pageSize > MAX_PAGE_SIZE)
 			throw new ServletException ("The maximum page size is " + MAX_PAGE_SIZE);
-		
-		req.setAttribute(PAGE_IDX,pageIdx+"");
-		req.setAttribute(PAGE_SIZE,pageSize+"");
-	
-		
 		//now calculate start, end idx based on pageIdx and pageSize
 		int start = (pageIdx - 1) * pageSize;
 		int end = start + pageSize;
-		
+				
 		logger.info("request: key=" + key + ";type=" + type + ";format=" + format + ";paging=" + start + "/" + end);
-		String originalType = type;
-		try
-		{
+		try	{
 			String searchString = "";
 			
-			if (type != null)
-			{
+			if (type != null) {
 				
-				if (type.endsWith("s"))
-				{
+				if (type.endsWith("s"))	{
 					type = type.substring(0,type.length()-1);
 					
-					req.setAttribute("type",type);
 					searchString = "otype:" + type;
 					
 					if (key != null && key.length() > 0)
 						searchString += " AND " + key;
 				}
-				else
-				{
-					req.setAttribute("type",type);
-				
+				else {
 					searchString ="otype:" + type;
 	
-					if (key != null && key.length() > 0)
-					{
+					if (key != null && key.length() > 0) {
 						if (type.equals("bill") && key.indexOf("-") == -1)
 							key += "-" + DEFAULT_SESSION_YEAR;
 	
 						key = key.replace(" ","+");
 						searchString += " AND oid:" + key;
-						
 					}
 				}
 				
@@ -390,22 +286,22 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				searchString = key;
 			}
 			
+			
+			
+			
+			req.setAttribute("sortField", sortField);
 			req.setAttribute("type", type);
 			req.setAttribute("term", searchString);
 			req.setAttribute("format", format);
 			req.setAttribute("key", key);
+			req.setAttribute(PAGE_IDX,pageIdx+"");
+			req.setAttribute(PAGE_SIZE,pageSize+"");
+						
 			
-			String sFormat = "json";
-			String sortField = type.contains("bill") ? "modified" : "when";
-			req.setAttribute("sortField", sortField);
-			
-			System.out.println(originalType);
-			
-			SenateResponse sr = null;
 			if(originalType.equals("bills")) {
 				sr = searchEngine.search(dateReplace(searchString) 
 						+ " AND year:" + SessionYear.getSessionYear() 
-						+ " AND searchable:true",
+						+ " AND active:true",
 						sFormat,start,pageSize,sortField,true);
 			}
 			else if(originalType.endsWith("s")) {
@@ -414,7 +310,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 						+ DATE_START 
 						+ " TO " 
 						+ DATE_END + "]"
-						+ " AND searchable:true",
+						+ " AND active:true",
 						sFormat,start,pageSize,sortField,true);
 			}
 			else {
@@ -423,24 +319,21 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			
 			logger.info("got search results: " + sr.getResults().size());
 						
-			if (sr.getResults().size()==0)
-			{
+			if (sr.getResults().size()==0) {
 				resp.sendError(404);
-
 				return;
 			}
-			else if (sr.getResults().size()==1 && (format.equals("html") || format.equals("html-print") || format.equals("lrs-print")))
-			{
-			
+			else if (sr.getResults().size()==1 && (format.equals("html") || format.equals("html-print") || format.equals("lrs-print")) || format.equals("mobile"))	{
 				Result result = sr.getResults().get(0);
 				
-				if (!result.getOid().equals(key))
-				{
+				if (!result.getOid().equals(key)) {
 					resp.sendRedirect("/legislation/api/1.0/" + format + "/" + result.getOtype() + "/" + result.getOid());
 					return;
 				}
 				
 				String jsonData = result.getData();
+				req.setAttribute("active", result.getActive());
+								
 				jsonData = jsonData.substring(jsonData.indexOf(":")+1);
 				jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
 				
@@ -458,53 +351,48 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				
 					String billWildcard = billQueryId;
 					if (!Character.isDigit(billWildcard.charAt(billWildcard.length()-1)))
-					{
 						billWildcard = billWildcard.substring(0,billWildcard.length()-1);
 						
-					}
 					//get BillEvents for this 
 					//otype:action AND oid:A10234A-*
 					String rType = "action";
 					String rQuery = null;
-					
 					//String rQuery = "oid:" + billQueryId + "-" + sessionYear + "-*";
+					rQuery = "" + billWildcard + "-" + sessionYear;
 					
-					rQuery = "oid:" + billWildcard + "-*";
-					for (int i = 65; i < 90; i++)
-					{
-						rQuery += " OR oid:" + billWildcard + (char)i + "-*";
-					}
+					logger.info(rQuery);
 					
+					rQuery = "billno:((" 
+						+ rQuery 
+	                        + " OR [" + billWildcard + "A-" + sessionYear 
+	                           + " TO " + billWildcard + "Z-" + sessionYear
+	                        + "]) AND " + billWildcard + "*-" + sessionYear + ")";
 
 					ArrayList<SearchResult> relatedActions = getRelatedSenateObjects (rType,rQuery);
 					Hashtable<String,SearchResult> uniqResults = new Hashtable<String,SearchResult>();
-					
-					for (SearchResult rResult: relatedActions)
-					{
+					for (SearchResult rResult: relatedActions) {
 						BillEvent rAction = (BillEvent)rResult.getObject();
 						uniqResults.put(rAction.getEventDate().toGMTString()+'-'+rResult.getTitle().toUpperCase(), rResult);
 						
 					}
 					
 					ArrayList<SearchResult> list = Collections.list(uniqResults.elements());
-					
 					Collections.sort(list);
-					
 					req.setAttribute("related-" + rType, list);
 
 					//get Meetings
 					//otype:meeting AND ojson:"S67005"
 					rType = "bill";
-					
 					//rQuery = "oid:[" + startBill + " TO " + endBill + "]";		
 					rQuery = "oid:" + billWildcard + "-" + sessionYear;
-					for (int i = 65; i < 90; i++)
-					{
-						rQuery += " OR oid:" + billWildcard + (char)i + "-" + sessionYear;
-					}
-					
 					
 					logger.info(rQuery);
+					
+					rQuery = "oid:((" 
+						+ rQuery 
+	                        + " OR [" + billWildcard + "A-" + sessionYear 
+	                           + " TO " + billWildcard + "Z-" + sessionYear
+	                        + "]) AND " + billWildcard + "*-" + sessionYear + ")";
 					
 					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
 
@@ -513,14 +401,12 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					rType = "meeting";
 					rQuery = "bills:" + key;					
 					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
-
 					
 					//get calendars
 					//otype:calendar AND  bills:"S337A-2011"
 					rType = "calendar";
 					 rQuery = "bills:\"" + key + "\"";
 					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
-
 					
 					//get votes
 					//otype:vote AND billno:"A11597-2011"
@@ -528,15 +414,11 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					 rQuery = "billno:\"" + key + "\"";
 					 					 
 					req.setAttribute("related-" + rType, getRelatedSenateObjects (rType,rQuery));
-
-					
 				}
-				else if (type.equals("calendar"))
-				{
+				else if (type.equals("calendar")) {
 					className = "gov.nysenate.openleg.model.calendar.Calendar";
 				}
-				else if (type.equals("meeting"))
-				{
+				else if (type.equals("meeting")) {
 					className = "gov.nysenate.openleg.model.committee.Meeting";
 				}
 				else if(type.equals("transcript")) {
@@ -545,32 +427,24 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				
 				Object resultObj = null;
 				
-				try
-				{
+				try	{
 					resultObj = mapper.readValue(jsonData,  Class.forName(className));
-				
 				}
-				catch (Exception e)
-				{
+				catch (Exception e) {
 					logger.warn("error binding className", e);
 				}
 				
 				req.setAttribute(type, resultObj);
-				
 				viewPath = "/views/" + type + "-" + format + ".jsp";
 			}
-			else
-			{
-				if (type.equals("bill") && (!format.equals("html")))
-				{
+			else {
+				if (type.equals("bill") && (!format.equals("html"))) {
 					viewPath = "/views/bills-" + format + ".jsp";
 					
 					ArrayList<SearchResult> searchResults = buildSearchResultList(sr);
-					
 					ArrayList<Bill> bills = new ArrayList<Bill>();
 					
-					for (SearchResult result : searchResults)
-					{
+					for (SearchResult result : searchResults) {
 						bills.add((Bill)result.getObject());
 					}
 										
@@ -582,38 +456,28 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					
 					SearchResultSet srs = new SearchResultSet();
 					srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));
-					
-					
 					srs.setResults(buildSearchResultList(sr));
 					
 					req.setAttribute("results", srs);
 				}
 			}
-			
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 			logger.warn("search controller didn't work for: " + req.getRequestURI(),e);
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		try
-		{
+
+		try {
 			logger.info("routing to search controller:" + viewPath);
 			getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
 		}
-		catch (Exception e)
-		{
+		catch (Exception e)	{
 			logger.warn("search controller didn't work for: " + req.getRequestURI(),e);
 		}
-		
 	}
 	
-	private ArrayList<SearchResult> getRelatedSenateObjects (String type, String query) throws ParseException, IOException, ClassNotFoundException
-	{		
+	private ArrayList<SearchResult> getRelatedSenateObjects (String type, String query) 
+			throws ParseException, IOException, ClassNotFoundException {		
 		
 		StringBuffer searchString = new StringBuffer();
 		searchString.append("otype:");
@@ -622,31 +486,35 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		searchString.append("(");
 		searchString.append(query);
 		searchString.append(")");
-				
+						
 		int start = 0;
 		int pageSize = 100;
 		
-		SenateResponse sr = searchEngine.search(dateReplace(searchString.toString()),DEFAULT_SEARCH_FORMAT,start,pageSize,DEFAULT_SORT_FIELD,true);
+		SenateResponse sr = searchEngine.search(
+				dateReplace(
+						searchString.toString()),
+						DEFAULT_SEARCH_FORMAT,
+						start,
+						pageSize,
+						DEFAULT_SORT_FIELD,
+						true);
 
 		return buildSearchResultList(sr);
 	}
 	
 	
-	public static ArrayList<SearchResult> buildSearchResultList (SenateResponse sr) throws ClassNotFoundException
-	{
+	public static ArrayList<SearchResult> buildSearchResultList (SenateResponse sr)
+			throws ClassNotFoundException {
 		ArrayList<SearchResult> srList = new ArrayList<SearchResult>();
 		
-		for (Result newResult : sr.getResults())
-		{
-			try
-			{
+		for (Result newResult : sr.getResults()) {
+			try	{
 				SearchResult sResult = new SearchResult();
 				sResult.setId(newResult.getOid());
 				sResult.setLastModified(new Date(newResult.getLastModified()));
 				sResult.setScore(1.0f);
 				
 				String type = newResult.getOtype();
-				
 				String jsonData = newResult.getData();
 				
 				if (jsonData == null)
@@ -657,31 +525,20 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				
 				String className = "gov.nysenate.openleg.model.bill." + type.substring(0,1).toUpperCase() + type.substring(1);
 				if (type.equals("calendar"))
-				{
 					className = "gov.nysenate.openleg.model.calendar.Calendar";
-				}
 				else if (type.equals("meeting"))
-				{
 					className = "gov.nysenate.openleg.model.committee.Meeting";
-				}
 				else if (type.equals("action"))
-				{
 					className = "gov.nysenate.openleg.model.bill.BillEvent";
-				}
-				else if(type.equals("transcript")) {
+				else if(type.equals("transcript"))
 					className = "gov.nysenate.openleg.model.transcript.Transcript";
-				}
-				
 				
 				Object resultObj = null;
-				
-				try
-				{
+				try	{
 					resultObj = mapper.readValue(jsonData,  Class.forName(className));
 					sResult.setObject(resultObj);
 				}
-				catch (Exception e)
-				{
+				catch (Exception e)	{
 					logger.warn("error binding:"+ className, e);
 				}
 				
@@ -692,37 +549,27 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				String summary = "";
 				
 				HashMap<String,String> fields = new HashMap<String,String>();
-				
 				fields.put("type", type);
 				
-				if (type.equals("bill"))
-				{
+				if (type.equals("bill")) {
 					Bill bill = (Bill)resultObj;
-					
-					/* title += bill.getSenateBillNo() + '-' + bill.getYear() + ": "; */
-					
+										
 					if (bill.getTitle() != null)
 						title += bill.getTitle();
 					else
 						title += "(no title)";
 					
-					summary = bill.getSummary();
-					
 					if (bill.getSponsor()!=null)
 						fields.put("sponsor",bill.getSponsor().getFullname());
 					
+					summary = bill.getSummary();
+					
 					fields.put("committee", bill.getCurrentCommittee());
-					
 					fields.put("billno", bill.getSenateBillNo());
-					
 					fields.put("summary", bill.getSummary());
-					
 					fields.put("year", bill.getYear()+"");
-					
-	
 				}
-				else if (type.equals("calendar"))
-				{
+				else if (type.equals("calendar")) {
 					Calendar calendar = (Calendar)resultObj;
 					
 					title = calendar.getNo() + "-" + calendar.getYear();
@@ -739,54 +586,42 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					
 					Supplemental supp = calendar.getSupplementals().get(0);
 					
-					if (supp.getCalendarDate()!=null)
-					{
+					if (supp.getCalendarDate()!=null) {
 						fields.put("date", supp.getCalendarDate().toLocaleString());
 						
 						summary = "";
 						
-						if (supp.getSections() != null)
-						{
+						if (supp.getSections() != null) {
 							Iterator<Section> itSections = supp.getSections().iterator();
-							while (itSections.hasNext())
-							{
+							while (itSections.hasNext()) {
 								Section section = itSections.next();
 								
 								summary += section.getName() + ": ";
 								summary += section.getCalendarEntries().size() + " items;";
-								
 							}
 						}
 					}
-					else if (supp.getSequence()!=null)
-					{
+					else if (supp.getSequence()!=null) {
 						
 						fields.put("date", supp.getSequence().getActCalDate().toLocaleString());
 						
 						summary = supp.getSequence().getCalendarEntries().size() + " item(s)";
 					}
 				}
-				else if (type.equals("transcript"))
-				{
+				else if (type.equals("transcript")) {
 					Transcript transcript = (Transcript)resultObj;
 										
 					if (transcript.getTimeStamp() != null)
-					{
 						title = transcript.getTimeStamp().toLocaleString();
-					
-					}
 					else
-					{
 						title = "Transcript - " + transcript.getLocation();
-					}
 					
 					summary = transcript.getType() + ": " + transcript.getLocation();
 						
 					fields.put("location", transcript.getLocation());
 	
 				}
-				else if (type.equals("meeting"))
-				{
+				else if (type.equals("meeting")) {
 					Meeting meeting = (Meeting)resultObj;
 					title = meeting.getCommitteeName() + " (" + meeting.getMeetingDateTime().toLocaleString() + ")";
 					
@@ -795,24 +630,17 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					fields.put("committee", meeting.getCommitteeName());
 					
 					summary = meeting.getNotes();
-	
 				}
-				else if (type.equals("action"))
-				{
+				else if (type.equals("action")) {
 					BillEvent billEvent = (BillEvent)resultObj;
-	
 					String billId = billEvent.getBillId();
 					
 					title = billEvent.getEventText();
 					
 					fields.put("date", DATE_FORMAT_MED.format(billEvent.getEventDate()));
-	
 					fields.put("billno", billId);
-
-	
 				}
-				else if (type.equals("vote"))
-				{
+				else if (type.equals("vote")) {
 					Vote vote = (Vote)resultObj;
 					
 					if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
@@ -820,13 +648,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					else if (vote.getVoteType() == Vote.VOTE_TYPE_FLOOR)
 						fields.put("type","Floor Vote");
 					
-					if (vote.getBill() != null)
-					{
-					
+					if (vote.getBill() != null) {
 						Bill bill = vote.getBill();
-						
-						//title += bill.getSenateBillNo()+'-'+bill.getYear();
-						
+												
 						if (bill.getSponsor()!=null)
 							fields.put("sponsor",bill.getSponsor().getFullname());
 					
@@ -835,25 +659,17 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	
 						fields.put("billno", bill.getSenateBillNo());
 						fields.put("year", bill.getYear()+"");
-						
 					}
 					
-					//fields.put("date",vote.getVoteDate().toLocaleString());
 					title += vote.getVoteDate().toLocaleString();
 					
 					summary = vote.getDescription();
-					
-					
-	
 				}
 				
 				sResult.setTitle(title);
 				sResult.setSummary(summary);
-				
 				sResult.setType(newResult.getOtype());
-				
 				sResult.setFields(fields);
-				
 				srList.add(sResult);
 			}
 			catch (Exception e)
@@ -865,114 +681,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		return srList;
 	}
 	
-	/*
-	public static boolean routeSearchRequest (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
-	{
-
-		String uri = request.getRequestURI();
-		
-		logger.info("request: " + uri);
-		
-		String type = request.getParameter("type");
-
-		String appPath = request.getContextPath();
-		String term = request.getParameter("term");
-		
-		request.setAttribute("term", term);
-		request.setAttribute("type",type);
-		
-		if (type != null)
-		{
-			if (type.equals("transcripts"))
-			{
-				response.sendRedirect(appPath + "/transcripts/index.jsp?type=transcripts&term=" + java.net.URLEncoder.encode(term,"UTF-8"));
-				return true;
-			}
-			else if (type.equals("meetings"))
-			{
-				response.sendRedirect(appPath + "/meetings/?" + java.net.URLEncoder.encode(term,"UTF-8"));
-				return true;
-			}
-			else if (type.equals("calendars"))
-			{
-				response.sendRedirect(appPath + "/calendars/?" + java.net.URLEncoder.encode(term,"UTF-8"));
-				return true;
-			}
-			else if (type.equals("actions"))
-			{
-				response.sendRedirect(appPath + "/actions/?action=" + java.net.URLEncoder.encode(term,"UTF-8"));
-				return true;
-			}
-		}
-		
-		if (term != null && term.toLowerCase().indexOf("transcript")!=-1)
-		{
-			term = term.replace("transcript", "").trim();
-			request.getSession().setAttribute("type","transcript");
-
-			response.sendRedirect(appPath + "/transcripts/index.jsp?type=transcripts&term=" + java.net.URLEncoder.encode(term,"UTF-8"));
-			return true;
-		}
-			
-		String format = "html";
-
-		if (request.getParameter("format")!=null)
-			format = request.getParameter("format");
-			
-
-		long start = 0;
-		long end = 1;
-
-		String redirUrl = null;
-		
-		if (request.getParameter("start")!=null)
-		{
-			start = Long.parseLong(request.getParameter("start"));
-		}
-
-		if (request.getParameter("end")!=null)
-		{
-			end = Long.parseLong(request.getParameter("end"));
-		}
-
-		if (term == null)
-		{
-			term = request.getRequestURI();
-			term = term.substring(term.lastIndexOf('/')+1);
-			
-			term =URLDecoder.decode(term,ENCODING).trim();
-		}
-
-		
-		 String billTerm = term;
-		   billTerm = billTerm.replace("-","");
-		   billTerm = billTerm.replace(".","");
-		   billTerm = billTerm.replace("'"," ");
-
-		Bill bill = PMF.getDetachedBill(billTerm);
-
-		if (bill != null)
-		{
-		   
-			Bill latestBill = bill;
-			
-			if (bill.getAmendments() != null && bill.getAmendments().size()>0)
-			{
-				latestBill = bill.getAmendments().get(0);
-			}
-			
-			response.sendRedirect(appPath + "/api/1.0/" + format + "/bill/"+latestBill.getSenateBillNo());
-			return true;
-			
-		}
-		
-		redirUrl = appPath + "/api/1.0/" + format + "/search/"+java.net.URLEncoder.encode(term,"utf-8");
-		response.sendRedirect(redirUrl);
-		
-		return true;
-		
-	}
-	*/
+	
 	public static String dateReplace(String term) throws ParseException {
 		Pattern  p = Pattern.compile("(\\d{1,2}[-]?){2}(\\d{2,4})T\\d{2}-\\d{2}");
 		Matcher m = p.matcher(term);

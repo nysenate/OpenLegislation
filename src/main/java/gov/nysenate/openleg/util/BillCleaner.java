@@ -1,21 +1,142 @@
 package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.OpenLegConstants;
+import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.search.Result;
+import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.search.SearchResult;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.lucene.queryParser.ParseException;
+
 
 public class BillCleaner implements OpenLegConstants {
 	
 	public final static String BILL_BAD_REGEXP = "[a-zA-Z][\\W]?0?\\d{2,}+[\\W]?[a-zA-Z]?";
 	
-	public final static String BILL_SEARCH_REGEXP = "[a-zA-Z][\\W]?0?\\d{2,}+[\\W]?[a-zA-Z]?";
+	public final static String BILL_SEARCH_REGEXP = "[a-zA-Z][\\W]*0?\\d{2,}+[\\W]?[a-zA-Z]?";
 	
 	public final static String BILL_REGEXP = "[a-zA-Z][1-9]\\d{1,}+[a-zA-Z]?";
+	
+	public static String getDesiredBillNumber(String billNumber) {
+		if((billNumber = fixBillNumber(billNumber)) == null)
+			return null;
+				
+		char c = billNumber.charAt(billNumber.length()-1);
+		
+		
+		if (c == '-'){
+			return billNumber + SessionYear.getSessionYear();
+		}
+		else if(!Character.isDigit(c)) {
+			return billNumber + "-" + SessionYear.getSessionYear();
+		}
+		else {
+			return getNewestAmendment(billNumber);
+		}
+	}
+	
+	public static String fixBillNumber(String billNumber) {
+		if(billNumber.matches(BILL_SEARCH_REGEXP)) {
+			billNumber = billNumber.replaceAll("([ _\\.]|(?!\\-$)\\-)", "")
+				.replaceAll("(^\\w)(0*)(.*?$)","$1$3")
+				.toUpperCase();
+
+			return billNumber;
+		}
+		return null;
+	}
+	
+	private static String getNewestAmendment(String billNumber) {
+		ArrayList<Result> results = getRelatedBills(billNumber);
+		billNumber = billNumber + "-" + SessionYear.getSessionYear();
+		
+		ArrayList<String> billNumbers = new ArrayList<String>();				
+		for(Result result:results) {
+			billNumbers.add(result.getOid());
+		}
+		
+		Collections.sort(billNumbers);
+				
+		return billNumbers.get(billNumbers.size()-1);
+	}
+	
+	private static ArrayList<Result> getRelatedBills(String billNumber) {
+		if(!Character.isDigit(billNumber.charAt(billNumber.length()-1))) {
+			billNumber = billNumber.substring(0, billNumber.length()-1);
+		}
+		
+		String query = "otype:bill AND oid:((" 
+					+ billNumber + "-" + SessionYear.getSessionYear() 
+		                + " OR [" + billNumber + "A-" + SessionYear.getSessionYear()  
+		                   + " TO " + billNumber + "Z-" + SessionYear.getSessionYear() 
+		                + "]) AND " + billNumber + "*-" + SessionYear.getSessionYear()  + ")";
+		
+		try {
+			return SearchEngine2.getInstance().search(query, "json", 0, 100, null, false).getResults();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<Result>();
+	}
+	
+	public static String formatBillEvent(String bill, String event, String appPath) {
+		event = event.toUpperCase();
+		if(event.contains("AMENDED") || event.contains("PRINT NUMBER")) {
+			Pattern p = Pattern.compile("^(.*?)(\\d{2,5}\\w?)(.*?)$");
+			Matcher m = p.matcher(event);
+			
+			if(m.find()) {
+				return m.group(1) 
+					+ "<a href=\"" 
+						+ appPath 
+						+ "/bill/" 
+						+ bill.substring(0, 1) + m.group(2) + "-" + bill.split("-")[1] 
+					+ "\">" 
+					+ m.group(2) 
+					+ "</a>" + m.group(3);
+			}
+		}
+		else if(event.contains("SUBSTITUTED")) {
+			Pattern p = Pattern.compile("^(.*?)(\\w\\d{2,5}\\w?)(.*?)$");
+			Matcher m = p.matcher(event);
+			
+			if(m.find()) {
+				return m.group(1) 
+					+ "<a href=\"" 
+						+ appPath 
+						+ "/bill/" 
+						+ bill.substring(0, 1) + m.group(2) + "-" + bill.split("-")[1] 
+					+ "\">" 
+					+ m.group(2) 
+					+ "</a>" + m.group(3);
+			}
+		}
+		return event;
+	}
+	
+	public static ArrayList<BillEvent> sortBillEvents(List<SearchResult> results) {
+		TreeSet<BillEvent> set = new TreeSet<BillEvent>(new BillEvent.ByEventDate());
+		
+		for(SearchResult result:results) {
+			if(result.getObject() instanceof BillEvent) {
+				set.add((BillEvent)result.getObject());
+			}	
+		}
+		
+		return new ArrayList<BillEvent>(set);
+	}
 	
 	public static String billFormat(String key) {		
 		if(key.matches(BILL_BAD_REGEXP)){

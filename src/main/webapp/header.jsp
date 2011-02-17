@@ -101,7 +101,7 @@
 						<a href="<%=appPath%>/actions/"  <%if (searchType.startsWith("action")){%>class="linkActivated"<%} %> title="View and filter Floor Actions on Bills from the Floor of the Senate">Actions</a>
 						&nbsp;
 						<a href="<%=appPath%>/votes"  <%if (searchType.startsWith("vote")){%>class="linkActivated"<%} %> title="Recent committee and floor votes on Senate bills">Votes</a>
-					
+						<% if(searchType.matches("(sponsor|bill|calendar|meeting|transcript|action|vote).*?")) { term = ""; } %>
 						|	Browse by:
 							<a href="<%=appPath%>/senators">Sponsor</a>,
 							<a href="<%=appPath%>/committees">Committee</a>

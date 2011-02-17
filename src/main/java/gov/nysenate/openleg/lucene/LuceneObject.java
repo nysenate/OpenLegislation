@@ -5,11 +5,11 @@ import java.util.HashMap;
 import org.apache.lucene.document.Field;
 
 public class LuceneObject implements ILuceneObject {
-	private boolean searchable = true;
+	private boolean active = true;
 	
 	@Override
-	public boolean getLuceneSearchable() {
-		return searchable;
+	public boolean getLuceneActive() {
+		return active;
 	}
 
 	@Override
@@ -43,8 +43,8 @@ public class LuceneObject implements ILuceneObject {
 	}
 
 	@Override
-	public void setLuceneSearchable(boolean searchable) {
-		this.searchable = searchable;
+	public void setLuceneActive(boolean active) {
+		this.active = active;
 	}
 
 }

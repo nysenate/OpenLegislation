@@ -291,7 +291,6 @@ public class CommitteeParser implements OpenLegConstants {
 		
 			if (!listAddendums.contains(addendum)) {
 				listAddendums.add(addendum);
-				System.out.println(addendum.getMeetings());
 			}
 		}
 		

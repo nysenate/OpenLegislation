@@ -120,35 +120,41 @@ text-align:center;
 		<b>Bills Only (Optional)</b>
 		
 		<div class="searchrow">
-		<div class="searchlabel">and Status is:</div><div class="searchinput">
-		<select name="session">
-			<option value=""></option>
-			<option value="2009">2009</option>
-			<option value="2011">2011</option>
-		</select>
-		<select name="status">
-		   <option value="" >All Status</option>
-                <option value="Passed" >Passed</option>
-                
-		    <option value="Vetoed" >Vetoed</option>
-			    <option value="REFERRED" >Referred</option>
-                <option value="Reported" >Reported</option>
-                <option value="Delivered" >Delivered</option>
-                <option value="Home Rule Request" >Home Rule Request</option>
-                <option value="1st Report" >1st Report</option>
-                <option value="2nd Report" >2nd Report</option>
-                <option value="Third Reading" >Third Reading</option>
-                <option value="Delivered to Assembly" >Delivered</option>
-                <option value="Amended" >Amended</option>
-                <option value="Substituted" >Substituted</option>
-                <option value="Vote Reconsidered" >Vote Reconsidered</option>
-                <option value="Tabled" >Tabled</option>
-               
-                <option value="Delivered to Governor" >Delivered to Governor</option>
-                <option value="Signed" >Signed</option>
-                 <option value="Adopted" >Adopted</option>
-		</select>
+			<div class="searchlabel">Session is:</div>
+			<div class="searchinput">
+				<select name="session">
+					<option value=""></option>
+					<option value="2009">2009</option>
+					<option value="2011">2011</option>
+				</select>
+			</div>
 		</div>
+		<div class="searchrow">
+			<div class="searchlabel">and Status is:</div>
+			<div class="searchinput">
+				<select name="status">
+				   <option value="" >All Status</option>
+		                <option value="Passed" >Passed</option>
+		                
+				    <option value="Vetoed" >Vetoed</option>
+					    <option value="REFERRED" >Referred</option>
+		                <option value="Reported" >Reported</option>
+		                <option value="Delivered" >Delivered</option>
+		                <option value="Home Rule Request" >Home Rule Request</option>
+		                <option value="1st Report" >1st Report</option>
+		                <option value="2nd Report" >2nd Report</option>
+		                <option value="Third Reading" >Third Reading</option>
+		                <option value="Delivered to Assembly" >Delivered</option>
+		                <option value="Amended" >Amended</option>
+		                <option value="Substituted" >Substituted</option>
+		                <option value="Vote Reconsidered" >Vote Reconsidered</option>
+		                <option value="Tabled" >Tabled</option>
+		               
+		                <option value="Delivered to Governor" >Delivered to Governor</option>
+		                <option value="Signed" >Signed</option>
+		                 <option value="Adopted" >Adopted</option>
+				</select>
+			</div>
 		</div>
 		
 		<div class="searchrow">

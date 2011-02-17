@@ -37,7 +37,6 @@ public class SenatorsServlet extends HttpServlet {
      */
     public SenatorsServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -179,7 +178,7 @@ public class SenatorsServlet extends HttpServlet {
 	}
 	
 	
-	 class byLastName implements java.util.Comparator {
+	 class byLastName implements java.util.Comparator<Object> {
 		 public int compare(Object districtA, Object districtB) {
 			 int sdif = 0;
 			 

@@ -272,7 +272,9 @@ public class BasicParser implements OpenLegConstants {
 						bill = parseVoteData(line);
 
 					else if (lineCode == 'B') {
-						
+						if(line.contains("DELETE")) {
+							currentBill = null;
+						}
 					}
 					else if (lineCode == 'N') {
 						
@@ -342,16 +344,25 @@ public class BasicParser implements OpenLegConstants {
 						
 						if (beText.startsWith("REFERRED TO ")) {
 							String newCommittee = beText.substring(12);
+							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
+								bill.addPastCommittee(bill.getCurrentCommittee());
+							}
 							bill.setCurrentCommittee(newCommittee);
 						}
 						else if (beText.indexOf("COMMITTED TO ")!=-1) {
 							int subIdx = beText.indexOf("COMMITTED TO ") + 13; 
 							String newCommittee = beText.substring(subIdx).trim();
+							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
+								bill.addPastCommittee(bill.getCurrentCommittee());
+							}
 							bill.setCurrentCommittee(newCommittee);
 						}
 						else if (beText.indexOf("RECOMMIT TO ")!=-1) {
 							int subIdx = beText.indexOf("RECOMMIT TO ") + 12; 
 							String newCommittee = beText.substring(subIdx).trim();
+							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
+								bill.addPastCommittee(bill.getCurrentCommittee());
+							}
 							bill.setCurrentCommittee(newCommittee);
 						}
 						else if (beText.startsWith("SUBSTITUTED FOR "))	{
@@ -374,6 +385,12 @@ public class BasicParser implements OpenLegConstants {
 								String sameAs = BillCleaner.formatSameAs(bill.getSameAs(),substituted);
 								
 								bill.setSameAs(sameAs);
+							}
+						}
+						else if(beText.contains("REPORT CAL")) {
+							if(bill.getCurrentCommittee() != null) {
+								bill.addPastCommittee(bill.getCurrentCommittee());
+								bill.setCurrentCommittee(null);
 							}
 						}
 					}
@@ -682,6 +699,9 @@ public class BasicParser implements OpenLegConstants {
 	}
 	
 	private void persistBuffers () {
+		if(currentBill == null)
+			return;
+		
 		if (summaryBuffer != null) {
 			currentBill.setSummary(summaryBuffer.toString());
 			summaryBuffer = null;

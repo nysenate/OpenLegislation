@@ -136,17 +136,16 @@ public class SearchEngine2 extends SearchEngine {
     	else
     	{
     		
-    	
 	    	response.addMetadataByKey("totalresults", result.total );
 	    	
 	    	for (Document doc : result.results) {
-	    		
 	    		String lastModified = doc.get("modified");
 	    		if (lastModified == null || lastModified.length() == 0)
 	    			lastModified = new Date().getTime()+"";
 	    		
-	    		response.addResult(new Result(doc.get("otype"),doc.get(data), doc.get("oid"), Long.parseLong(lastModified)));
+	    		response.addResult(new Result(doc.get("otype"),doc.get(data), doc.get("oid"), Long.parseLong(lastModified),doc.get("active")));
 	    	}
+	    	
     	}
 	    	
     	return response;

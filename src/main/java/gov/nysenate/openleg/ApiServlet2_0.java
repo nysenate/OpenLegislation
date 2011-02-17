@@ -58,7 +58,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 	
 		StringTokenizer st = new StringTokenizer (uri,SRV_DELIM);
 		
-		String appPath = st.nextToken(); //legislation
+		st.nextToken(); //legislation
 		String arg1 = st.nextToken(); //2.0
 		
 		String command = "";		
@@ -83,9 +83,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
 			
 		}
-		
-		Date date = null;
-		
+				
 		term = (String)req.getParameter("term");
 		int pageSize = req.getParameter("pageSize") != null ? 
 							Integer.parseInt(req.getParameter("pageSize")) : 20;
@@ -93,7 +91,6 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 							Integer.parseInt(req.getParameter("pageIdx")) : 1;
 		Boolean sortOrder = Boolean.parseBoolean(req.getParameter("sortOrder"));
 		String sortField = (String)req.getParameter("sort");
-		String session = (String)req.getParameter("session");
 		String format = null;
 		
 		int start = (new Integer(pageIdx) -1) * (new Integer(pageSize));
@@ -271,9 +268,13 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 		
 		term = "when:[" + sdf.format(date) + " TO ";
 
-		date.setHours(23);
-		date.setMinutes(59);
-		date.setSeconds(59);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		
+		date = cal.getTime();
 		
 		term = term + sdf.format(date) + "]";
 		

@@ -10,6 +10,6 @@ public interface ILuceneObject {
 	public String luceneSummary();
 	public String luceneTitle();
 	public HashMap<String,Field> luceneFields();
-	public void setLuceneSearchable(boolean searchable);
-	public boolean getLuceneSearchable();
+	public void setLuceneActive(boolean active);
+	public boolean getLuceneActive();
 }
