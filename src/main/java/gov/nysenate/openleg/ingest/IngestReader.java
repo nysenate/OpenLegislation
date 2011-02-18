@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -163,7 +164,10 @@ public class IngestReader {
 	public void handlePath(String path) {
 		File file = new File(path);
 		if (file.isDirectory())	{
-			File[] files = file.listFiles();
+			
+			
+			
+			File[] files = sortFilesByName(file.listFiles());
 			
 			for (int i = 0; i < files.length; i++)
 			{
@@ -178,6 +182,17 @@ public class IngestReader {
 		else {
 			handleFile(file);
 		}
+	}
+	
+	public static File[] sortFilesByName(File[] fList) {
+		Arrays.sort(fList, new Comparator<File>() {
+			@Override
+			public int compare(File one, File two) {
+				return one.getName().compareTo(two.getName());
+			}
+		});
+		
+		return fList;
 	}
 	
 	public void handleFile(File file) {
@@ -625,32 +640,6 @@ public class IngestReader {
 			XmlFixer.separateXmlFromSobi(file);
 		}
 	}
-	
-//	/**
-//	 * desirable to hide old versions of an amended bill from the default search
-//	 * this appends "searchable:false" as a field to any old verions of bills
-//	 * @param bill
-//	 */
-//	public void reindexAmendedVersions(Bill bill) {
-//		int idx = bill.getSenateBillNo().indexOf("-");
-//		char c = bill.getSenateBillNo().charAt(idx-1);
-//		
-//		if(c >= 65 && c < 90) {
-//			System.out.print(bill.getSenateBillNo() + ": ");
-//			String strings[] = bill.getSenateBillNo().split("-");
-//			c--;
-//			
-//			while(c >= 65 && c < 90) {
-//				reindexInactiveBill(strings[0].substring(0, strings[0].length()-1) + c + "-" + strings[1],
-//						bill.getYear() + "");
-//				c--;
-//			}
-//			
-//			reindexInactiveBill(strings[0].substring(0, strings[0].length()-1) + "-" + strings[1],
-//					bill.getYear() + "");
-//			System.out.println();
-//		}
-//	}
 	
 	/**
 	 * desirable to hide old versions of an amended bill from the default search

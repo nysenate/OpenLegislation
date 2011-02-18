@@ -294,9 +294,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			}
 			
 			String searchFormat = "json";
-			
-			System.out.println(term);
-			
+						
 			SenateResponse sr = null;
 			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
 				if(type != null && type.equals("bill")) {

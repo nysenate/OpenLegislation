@@ -27,6 +27,18 @@ public class BillCleaner implements OpenLegConstants {
 	
 	public final static String BILL_REGEXP = "[a-zA-Z][1-9]\\d{1,}+[a-zA-Z]?";
 	
+	/*
+	 * on search this attempts to format a bill id based on
+	 * what version the bill is at and returns the 'desired'
+	 * result.  this mimics lrs functionality
+	 * 
+	 * if s1234, s1234a and s1234b exist:
+	 * 
+	 * s1234a -> S1234A-2011
+	 * s1234- -> S1234-2011
+	 * s1234  -> S1234B-2011
+	 * 
+	 */
 	public static String getDesiredBillNumber(String billNumber) {
 		if((billNumber = fixBillNumber(billNumber)) == null)
 			return null;

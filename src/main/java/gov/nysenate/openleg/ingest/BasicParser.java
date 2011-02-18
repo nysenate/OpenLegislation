@@ -295,8 +295,10 @@ public class BasicParser implements OpenLegConstants {
 							int zeroIdx = lineData.indexOf("0000");
 							
 							if (zeroIdx!=-1) {
-								String sponsor = lineData.substring(0,zeroIdx).trim();
-								bill.setSponsor(getPerson(sponsor));
+								if(bill.getSponsor() == null || bill.getSponsor().equals("")) {
+									String sponsor = lineData.substring(0,zeroIdx).trim();
+									bill.setSponsor(getPerson(sponsor));
+								}
 							}
 						}
 					}
@@ -342,6 +344,7 @@ public class BasicParser implements OpenLegConstants {
 						
 						billEventsBuffer.add(bEvent);						
 						
+						String beTextTemp = beText.toUpperCase();
 						if (beText.startsWith("REFERRED TO ")) {
 							String newCommittee = beText.substring(12);
 							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
@@ -365,7 +368,7 @@ public class BasicParser implements OpenLegConstants {
 							}
 							bill.setCurrentCommittee(newCommittee);
 						}
-						else if (beText.startsWith("SUBSTITUTED FOR "))	{
+						else if (beTextTemp.startsWith("SUBSTITUTED FOR "))	{
 							String substituted = beText.substring(16).trim();
 							
 							if (bill.getSameAs()==null)
@@ -376,7 +379,7 @@ public class BasicParser implements OpenLegConstants {
 								bill.setSameAs(sameAs);
 							}
 						}
-						else if (beText.startsWith("SUBSTITUTED BY ")) {
+						else if (beTextTemp.startsWith("SUBSTITUTED BY ")) {
 							String substituted = beText.substring("SUBSTITUTED BY ".length()).trim();
 							
 							if (bill.getSameAs()==null)
