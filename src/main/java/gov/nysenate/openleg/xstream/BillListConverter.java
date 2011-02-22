@@ -48,7 +48,7 @@ public class BillListConverter implements Converter {
 				ArrayList<BillEvent> events = (ArrayList<BillEvent>) value;
 				for(BillEvent be:events) {
 					writer.startNode("action");
-					writer.addAttribute("timestamp",be.getEventDate().toString());
+					writer.addAttribute("timestamp",be.getEventDate().getTime()+"");
 					writer.setValue(be.getEventText());
 					writer.endNode();
 				}
@@ -58,9 +58,9 @@ public class BillListConverter implements Converter {
 			if(o instanceof Person) {
 				ArrayList<Person> persons = (ArrayList<Person>) value;
 				for(Person p:persons) {
-//					writer.startNode("cosponsor");
+					writer.startNode("cosponsor");
 					writer.setValue(p.getFullname());
-//					writer.endNode();
+					writer.endNode();
 				}
 			}
 			

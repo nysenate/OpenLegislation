@@ -7,10 +7,11 @@ String appPath = request.getContextPath();
 String term = (String)request.getAttribute("term");
 String sortField = (String)request.getAttribute("sortField");
 String type = (String)request.getAttribute("type");
+String search = (String)request.getAttribute("search");
 
 boolean sortOrder = true;
 if (request.getAttribute("sortOrder")!=null)
-			sortOrder = Boolean.parseBoolean(request.getParameter("sortOrder"));
+			sortOrder = Boolean.parseBoolean((String)request.getAttribute("sortOrder"));
 			
 if (sortField == null)
 	sortField = "";
@@ -43,16 +44,14 @@ if (total < endIdx)
 	endIdx = total;
 
 String mode = (String)request.getAttribute("type");
-	
-
-
-	DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
+		
+	SimpleDateFormat sdf = new SimpleDateFormat();
+	sdf.applyPattern("EEE, MMM d, yyyy");
 	
 	String prevUrl = null;
 if (pageIdx-1 > 0)
 {
-			prevUrl = "/legislation/search/?term=" + java.net.URLEncoder.encode(term,"UTF-8") 
-		//	+ "&type=" + type 
+			prevUrl = "/legislation/search/" + (search != null ?  "?search=" + java.net.URLEncoder.encode(search,"UTF-8"):"?term=" + java.net.URLEncoder.encode(term,"UTF-8"))
 			+ "&sort=" + sortField
 			+ "&sortOrder=" + sortOrder
 			 + "&pageIdx=" + (pageIdx-1);
@@ -63,8 +62,7 @@ String nextUrl = null;
 
 if (total > endIdx)
 {
-	nextUrl = "/legislation/search/?term=" + java.net.URLEncoder.encode(term,"UTF-8")
-//	 + "&type=" + type 
+	nextUrl = "/legislation/search/" + (search != null ?  "?search=" + java.net.URLEncoder.encode(search,"UTF-8"):"?term=" + java.net.URLEncoder.encode(term,"UTF-8"))
 	 + "&sort=" + sortField
 	+ "&sortOrder=" + sortOrder		
 	 + "&pageIdx=" + (pageIdx+1);

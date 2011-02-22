@@ -347,7 +347,8 @@ public class BasicParser implements OpenLegConstants {
 						String beTextTemp = beText.toUpperCase();
 						if (beText.startsWith("REFERRED TO ")) {
 							String newCommittee = beText.substring(12);
-							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
+							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")
+									 && !bill.getCurrentCommittee().equals("DELETED")) {
 								bill.addPastCommittee(bill.getCurrentCommittee());
 							}
 							bill.setCurrentCommittee(newCommittee);
@@ -355,7 +356,8 @@ public class BasicParser implements OpenLegConstants {
 						else if (beText.indexOf("COMMITTED TO ")!=-1) {
 							int subIdx = beText.indexOf("COMMITTED TO ") + 13; 
 							String newCommittee = beText.substring(subIdx).trim();
-							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
+							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")
+									 && !bill.getCurrentCommittee().equals("DELETED")) {
 								bill.addPastCommittee(bill.getCurrentCommittee());
 							}
 							bill.setCurrentCommittee(newCommittee);
@@ -363,7 +365,8 @@ public class BasicParser implements OpenLegConstants {
 						else if (beText.indexOf("RECOMMIT TO ")!=-1) {
 							int subIdx = beText.indexOf("RECOMMIT TO ") + 12; 
 							String newCommittee = beText.substring(subIdx).trim();
-							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
+							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")
+									&& !bill.getCurrentCommittee().equals("DELETED")) {
 								bill.addPastCommittee(bill.getCurrentCommittee());
 							}
 							bill.setCurrentCommittee(newCommittee);
@@ -393,8 +396,14 @@ public class BasicParser implements OpenLegConstants {
 						else if(beText.contains("REPORT CAL")) {
 							if(bill.getCurrentCommittee() != null) {
 								bill.addPastCommittee(bill.getCurrentCommittee());
-								bill.setCurrentCommittee(null);
+								bill.setCurrentCommittee("DELETED");
 							}
+						}
+						
+						//currently we don't want to keep track of assembly committees
+						if(bill.getSenateBillNo().startsWith("A")) {
+							bill.setCurrentCommittee(null);
+							bill.setPastCommittees(null);
 						}
 					}
 					else if (lineCode == '2')
@@ -567,7 +576,7 @@ public class BasicParser implements OpenLegConstants {
 			if (textBuffer == null)
 				textBuffer = new StringBuffer();
 			
-			textBuffer.append(lineCode + ":" + line);
+			textBuffer.append(line);
 			textBuffer.append('\n');
 			
 		}

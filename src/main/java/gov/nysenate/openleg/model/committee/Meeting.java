@@ -193,6 +193,13 @@ public class Meeting extends LuceneObject {
 	public HashMap<String,Field> luceneFields()	{
 		HashMap<String,Field> fields = new HashMap<String,Field>();
 		fields.put("when", new Field("when",meetingDateTime.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		
+		char c1 = this.getCommitteeName().charAt(0);
+		c1 = (char)((((int)c1)-90)*-1);
+		char c2 = this.getCommitteeName().charAt(0);
+		c2 = (char)((((int)c2)-90)*-1);
+		
+		fields.put("sortindex", new Field("sortindex",meetingDateTime.getTime()+"-" + c1 + c2, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		return fields;
 	}
 

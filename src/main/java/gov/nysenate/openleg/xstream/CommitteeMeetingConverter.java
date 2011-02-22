@@ -23,7 +23,7 @@ public class CommitteeMeetingConverter implements Converter {
 				ArrayList<Meeting> meetings = (ArrayList<Meeting>) value;
 				for(Meeting m: meetings) {
 					writer.startNode("meeting");
-					writer.addAttribute("meetingDateTime", m.getMeetingDateTime().toString());
+					writer.addAttribute("meetingDateTime", m.getMeetingDateTime().getTime()+"");
 					writer.addAttribute("meetDay", m.getMeetday());
 					writer.addAttribute("location",m.getLocation());
 					writer.addAttribute("id",m.getId());

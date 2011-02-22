@@ -74,7 +74,9 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 
 		if (request.getParameter("reset")!=null)
 			searchEngine.closeSearcher();
-				
+		
+		String search = request.getParameter("search");
+						
 		String term = request.getParameter("term");
 		String type = request.getParameter("type");
 		
@@ -89,9 +91,15 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 		
 		String session = request.getParameter("session");
 		
+		if(search != null) {
+			request.setAttribute("search", search);
+			term = search;
+		}
+				
 		String tempTerm = null;
 		if((tempTerm = BillCleaner.getDesiredBillNumber(term)) != null) {
 			term = "oid:" + tempTerm;
+			type = "bill";
 		}
 
 		String sortField = request.getParameter("sort");
@@ -142,12 +150,6 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 		
 		//now calculate start, end idx based on pageIdx and pageSize
 		int start = (pageIdx - 1) * pageSize;
-		
-		
-		if (sortField!=null) {
-			request.setAttribute("sortField", sortField);
-			request.setAttribute("sortOrder",sortOrder);
-		}
 		
 		SearchResultSet srs;
 		StringBuilder searchText = new StringBuilder();
@@ -278,14 +280,33 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				searchText.append("]");
 			}
 			
-			request.setAttribute("term", term);
-			request.setAttribute("type", type);
-			request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
-			request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
-			
+			if (sortField!=null && !sortField.equals("")) {
+				request.setAttribute("sortField", sortField);
+				request.setAttribute("sortOrder",Boolean.toString(sortOrder));
+			}
+			else {
+				sortField = type != null && type.equals("bill") ? "sortindex":"when";
+				sortOrder = type != null && type.equals("bill") ? false:true;
+				request.setAttribute("sortField", sortField);
+				request.setAttribute("sortOrder", Boolean.toString(sortOrder));
+			}
+						
 			term = searchText.toString();
 
 			term = BillCleaner.billFormat(term);
+						
+			request.setAttribute("term", term);
+			request.setAttribute("type", type);
+			request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
+			request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");			
+						
+			//default behavior is to return only active bills, so if a user searches
+			//s1234 and s1234a is available then s1234a should be returned
+			if(search == null && term != null && term.contains("otype:bill")) {
+				term += " AND active:true";
+				type = "bill";
+			}
+			
 			srs = null;
 			
 			if (term.length() == 0)	{

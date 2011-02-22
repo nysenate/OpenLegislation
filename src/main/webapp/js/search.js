@@ -8,7 +8,7 @@ $(function () {
 
         var searchbox = $(this).val();
         
-        var dataString = "pageIdx=1&pageSize=10&searchType=" + searchType + "&format=html-list&term=" + escape(searchbox);
+        var dataString = "pageIdx=1&pageSize=10&searchType=" + searchType + "&format=html-list&search=" + escape(searchbox);
 
         if(searchbox=='')
         {

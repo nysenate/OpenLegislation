@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.lucene.document.Field;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -431,7 +429,10 @@ public class Bill extends SenateObject  {
 		}
 		else {
 			if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
-				currentCommittee = bill.getCurrentCommittee();
+				if(bill.getCurrentCommittee().equals("DELETED"))
+					currentCommittee = null;
+				else 
+					currentCommittee = bill.getCurrentCommittee();
 			}
 		}
 		
@@ -440,64 +441,7 @@ public class Bill extends SenateObject  {
 		}
 		else {
 			if(bill.getFulltext() != null && !bill.getFulltext().equals("")) {
-				int newLineCodeStart = new Integer(bill.getFulltext().trim().substring(1,6));
-				int newLineCodeEnd = -1;
-				
-				int oldLineCodeStart = new Integer(this.fulltext.substring(1,6));
-				int oldLineCodeEnd = -1;
-				
-				Pattern p = Pattern.compile("(\\d{5})\\:.*?\n$");
-				Matcher m = p.matcher(this.fulltext);
-				
-				if(m.find())
-					oldLineCodeEnd = new Integer(m.group(1));
-				
-				m = p.matcher(bill.getFulltext());
-				if(m.find())
-					newLineCodeEnd = new Integer(m.group(1));
-				
-				if(newLineCodeEnd == -1 || oldLineCodeEnd == -1) {
-					//THIS SHOULD NOT HAPPEN
-					System.err.println(fulltext + "" + bill.getFulltext());
-				}
-				
-				if(newLineCodeStart == oldLineCodeStart
-						&& newLineCodeEnd == oldLineCodeEnd) {
-					this.fulltext = bill.getFulltext();
-				}
-				else {
-					if(oldLineCodeStart == newLineCodeStart) {
-						this.fulltext = bill.getFulltext();
-					}
-					else if(oldLineCodeEnd == newLineCodeEnd) {
-						this.fulltext = bill.getFulltext();
-					}
-					else if (newLineCodeStart == (oldLineCodeEnd + 1)){
-//						System.out.println(senateBillNo + ": merge 1");
-						String temp = new String(this.fulltext + bill.getFulltext());
-						this.fulltext = temp;
-					}
-					else if(newLineCodeEnd == (oldLineCodeStart - 1)) {
-//						System.out.println(senateBillNo + ": merge 2");
-						String temp = new String(bill.getFulltext() + this.fulltext);
-						this.fulltext = temp;
-					}
-					else {
-						if(oldLineCodeStart < newLineCodeEnd) {
-//							System.out.println(3 + ": " + senateBillNo + ": " + newLineCodeStart + ", " + newLineCodeEnd + " : "
-//									+ oldLineCodeStart + ", " + oldLineCodeEnd);
-						}
-						else if(newLineCodeStart < oldLineCodeStart) {
-//							System.out.println(4 + ": " + senateBillNo + ": " + newLineCodeStart + ", " + newLineCodeEnd + " : "
-//									+ oldLineCodeStart + ", " + oldLineCodeEnd);
-						}
-						else {
-							/*THIS SHOULD NOT HAPPEN*/
-							System.err.println(senateBillNo + ": " + newLineCodeStart + ", " + newLineCodeEnd + " : "
-									+ oldLineCodeStart + ", " + oldLineCodeEnd);
-						}
-					}
-				}
+				this.fulltext = bill.getFulltext();
 			}
 		}
 		

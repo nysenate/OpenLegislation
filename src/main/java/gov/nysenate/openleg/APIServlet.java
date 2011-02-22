@@ -155,7 +155,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				}
 				else if (type.equalsIgnoreCase("committee"))
 				{
-					key = "committee:\"" + key + "\"";
+					key = "committee:\"" + key + "\" AND oid:s*-" + SessionYear.getSessionYear();
 					type = "bills";
 				}
 				
@@ -200,7 +200,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					type = "bills";
 				}
 				else if (type.equalsIgnoreCase("committee")) {
-					key = "committee:\"" + key + "\"";
+					key = "committee:\"" + key + "\" AND oid:s*-" + SessionYear.getSessionYear();
 					type = "bills";
 				}
 				
@@ -243,7 +243,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		String viewPath = "";
 		String originalType = type;
 		String sFormat = "json";
-		String sortField = type.contains("bill") ? "sortindex " : "when";
+		String sortField = type.contains("bill") ? "sortindex" : "when";
+		boolean sortOrder = type.contains("bill") ? false : true;
+				
 		SenateResponse sr = null;
 		
 		key = key.trim();
@@ -290,6 +292,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			
 			
 			req.setAttribute("sortField", sortField);
+			req.setAttribute("sortOrder", Boolean.toString(sortOrder));
 			req.setAttribute("type", type);
 			req.setAttribute("term", searchString);
 			req.setAttribute("format", format);
@@ -302,7 +305,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				sr = searchEngine.search(dateReplace(searchString) 
 						+ " AND year:" + SessionYear.getSessionYear() 
 						+ " AND active:true",
-						sFormat,start,pageSize,sortField,true);
+						sFormat,start,pageSize,sortField,sortOrder);
 			}
 			else if(originalType.endsWith("s")) {
 				sr = searchEngine.search(dateReplace(searchString) 
@@ -311,10 +314,10 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 						+ " TO " 
 						+ DATE_END + "]"
 						+ " AND active:true",
-						sFormat,start,pageSize,sortField,true);
+						sFormat,start,pageSize,sortField,sortOrder);
 			}
 			else {
-				sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,sortField,true);
+				sr = searchEngine.search(dateReplace(searchString),sFormat,start,pageSize,sortField,sortOrder);
 			}
 			
 			logger.info("got search results: " + sr.getResults().size());

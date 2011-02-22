@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonGenerationException;
@@ -63,7 +62,7 @@ public class IngestReader {
 	
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
-				
+						
 		if(args.length == 2) {
 			String command = args[0];
 			String p1 = args[1];
@@ -71,7 +70,7 @@ public class IngestReader {
 				ir.generateXml(p1);
 			}
 			else if(command.equals("-b")) {
-				ir.indexSenateObject((Bill)ir.loadObject(p1, Bill.class));
+				ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(p1, Bill.class))), false);
 			}
 			else if(command.equals("-c")) {
 				ir.indexSenateObject((Calendar)ir.loadObject(p1, Calendar.class));
@@ -163,9 +162,7 @@ public class IngestReader {
 	
 	public void handlePath(String path) {
 		File file = new File(path);
-		if (file.isDirectory())	{
-			
-			
+		if (file.isDirectory())	{			
 			
 			File[] files = sortFilesByName(file.listFiles());
 			
@@ -213,6 +210,7 @@ public class IngestReader {
 			
 			bills.clear();
 		}
+		
 		else if(file.getName().contains("-calendar-")) {
 			
 			XmlFixer.fixCalendar(file);
@@ -320,7 +318,7 @@ public class IngestReader {
 			if(bill == null)
 				continue;
 			
-			//if this returns true bill is not active
+//			if this returns true bill is not active
 			if(reindexAmendedVersions(bill)) {
 				bill.setLuceneActive(false);
 			}
@@ -356,37 +354,12 @@ public class IngestReader {
 	
 	public void indexSenateObject(ISenateObject obj) {
 		try {
-			/*
-			 * fullText for bills must be saved and reapplied after processing.. on long processes
-			 * where many SOBIs are processed bills stay in memory, so if fulltext is reprocessed
-			 * the next update will see the new text and not be able to parse 
-			 * it properly (due to line numbers)
-			 */
-			if(obj instanceof Bill 
-					&& ((Bill)obj).getFulltext() != null 
-					&& !((Bill)obj).getFulltext().equals("")) {
-				
-				StringBuffer fullText = new StringBuffer(((Bill)obj).getFulltext());
-				((Bill)obj).setFulltext(formatBillText(((Bill)obj).getFulltext()));
-								
-				searchEngine.indexSenateObjects(
-						new ArrayList<ILuceneObject>(
-							Arrays.asList(obj)), 
-							new LuceneSerializer[]{
-								new XmlSerializer(), 
-								new JsonSerializer()});
-				
-				((Bill)obj).setFulltext(fullText.toString());
-				fullText = null;
-			}
-			else {
-				searchEngine.indexSenateObjects(
-						new ArrayList<ILuceneObject>(
-							Arrays.asList(obj)), 
-							new LuceneSerializer[]{
-								new XmlSerializer(), 
-								new JsonSerializer()});
-			}
+			searchEngine.indexSenateObjects(
+					new ArrayList<ILuceneObject>(
+						Arrays.asList(obj)), 
+						new LuceneSerializer[]{
+							new XmlSerializer(), 
+							new JsonSerializer()});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -447,30 +420,6 @@ public class IngestReader {
 		}
 		
 		return obj;
-	}
-	
-	public String formatBillText(String text) {
-		StringBuffer ret = new StringBuffer("");
-		StringTokenizer st = new StringTokenizer (text,"\n");
-		
-		String line = null;
-		
-		while(st.hasMoreTokens()) {
-			line = st.nextToken();
-			if(line.matches("^ ?T\\d{5}\\:(\\s{3,4}\\d{1,2})?.+?")) {
-				ret.append(line.substring(13) + "\n");
-			}
-			else if(line.matches("^ ?T\\d{5}\\:")) {
-				ret.append(line.substring(7) + "\n");
-			}
-			else if(line.matches("^ ?R\\d{5}\\:.*?")) {
-				ret.append(line.substring(7) + "\n");
-			}
-			else {
-				ret.append(line + "\n");
-			}
-		}
-		return ret.toString();
 	}
 	
 	public ISenateObject loadObject(String id, String year, String type, Class<? extends ISenateObject> clazz) {
@@ -632,7 +581,7 @@ public class IngestReader {
 					XmlFixer.separateXmlFromSobi(files[i]);
 				}
 				else if(files[i].isDirectory()) {
-					handlePath(files[i].getAbsolutePath());
+					generateXml(files[i].getAbsolutePath());
 				}
 			}
 		}

@@ -16,6 +16,11 @@
 		term = term.replaceAll("\"","&quot;");
 	}
 	
+	String search = (String)request.getAttribute("search");
+	if(search == null) {
+		search = "";
+	}
+	
 	String searchType = (String)request.getAttribute("type");
 	if (searchType == null)
 		searchType = "";
@@ -108,7 +113,7 @@
 	
 						<br/>
 						<form method="get" action="<%=appPath%>/search/" style="padding-bottom:3px">
-							<input type="text" id="txtSearchBox"  name="term" value="<%=term%>" autocomplete="off">	
+							<input type="text" id="txtSearchBox"  name="search" value="<%=search%>" autocomplete="off">	
 							<input type="hidden" name="searchType" value="<%=searchType%>">	
 							<input type="submit" value="Search"/> | <a href="<%=appPath%>/advanced/">Advanced</a>
 							| <a href="<%=appPath%>/comments/">View Comments</a>
