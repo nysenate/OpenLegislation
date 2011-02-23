@@ -1,5 +1,6 @@
 package gov.nysenate.openleg;
 
+import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.search.SearchResultSet;
 import gov.nysenate.openleg.search.SenateResponse;
@@ -335,7 +336,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			srs = new SearchResultSet();
 			srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));
 			
-			srs.setResults(APIServlet.buildSearchResultList(sr));
+			srs.setResults(ApiHelper.buildSearchResultList(sr));
 			
 			if (srs != null) {
 				if (srs.getResults().size() == 0) {

@@ -18,12 +18,12 @@
   	gov.nysenate.openleg.ApiServlet2_0</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
-    <url-pattern>/api/1.0/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
     <servlet-name>ApiServlet2_0</servlet-name>
     <url-pattern>/api/2.0/*</url-pattern>
+  </servlet-mapping>
+    <servlet-mapping>
+    <servlet-name>APIServlet</servlet-name>
+    <url-pattern>/api/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>APIServlet</servlet-name>

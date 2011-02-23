@@ -85,4 +85,8 @@ public interface OpenLegConstants {
 	
 	
 	public final static String REGEX_API_KEY = ":::::|||||";
+	
+	final static String DEFAULT_SORT_FIELD = "when";
+	final static String DEFAULT_SEARCH_FORMAT = "json";
+	final static String DEFAULT_SESSION_YEAR = "2009";
 }
