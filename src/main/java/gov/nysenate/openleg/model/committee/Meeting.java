@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.committee;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.text.DateFormat;
@@ -194,12 +195,21 @@ public class Meeting extends LuceneObject {
 		HashMap<String,Field> fields = new HashMap<String,Field>();
 		fields.put("when", new Field("when",meetingDateTime.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		
-		char c1 = this.getCommitteeName().charAt(0);
-		c1 = (char)((((int)c1)-90)*-1);
-		char c2 = this.getCommitteeName().charAt(1);
-		c2 = (char)((((int)c2)-90)*-1);
+		/*
+		 * creates a sortable index based on the timestamp of the day the meeting occurred
+		 * and the inversion of the first two characters of the meeting name (e.g. A -> Z, Y -> B, etc.)
+		 */
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(this.meetingDateTime);
+		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 0, 0, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+				
+		char c1 = invertCharacter(this.getCommitteeName().charAt(0));
+		char c2 = invertCharacter(this.getCommitteeName().charAt(1));
 		
-		fields.put("sortindex", new Field("sortindex",meetingDateTime.getTime()+"-" + c1 + c2, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		System.out.println(this.luceneOid() + " : " + cal.getTimeInMillis()+"-" + c1 + "" + c2);
+		
+		fields.put("sortindex", new Field("sortindex",cal.getTimeInMillis()+"-" + c1 + "" + c2, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		return fields;
 	}
 
@@ -217,4 +227,13 @@ public class Meeting extends LuceneObject {
 		return this.id + " : " + meetingDateTime.getTime();
 	}
 	
+	public char invertCharacter(char c) {
+		if(Character.isUpperCase(c)) {
+			return (char)(((int)c - 90) * -1 + 65);
+		}
+		else if(Character.isLowerCase(c)){
+			return (char)(((int)c - 122) * -1 + 97);
+		}
+		return 'Z';
+	}
 }

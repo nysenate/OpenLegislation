@@ -286,8 +286,8 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				request.setAttribute("sortOrder",Boolean.toString(sortOrder));
 			}
 			else {
-				sortField = type != null && type.equals("bill") ? "sortindex":"when";
-				sortOrder = type != null && type.equals("bill") ? false:true;
+				sortField = "when";
+				sortOrder = true;
 				request.setAttribute("sortField", sortField);
 				request.setAttribute("sortOrder", Boolean.toString(sortOrder));
 			}
@@ -298,15 +298,22 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 						
 			request.setAttribute("term", term);
 			request.setAttribute("type", type);
-			request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
-			request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");			
 						
 			//default behavior is to return only active bills, so if a user searches
 			//s1234 and s1234a is available then s1234a should be returned
-			if(search == null && term != null && term.contains("otype:bill")) {
-				term += " AND active:true";
-				type = "bill";
+			if((search == null && 
+					(term != null && term.contains("otype:bill"))) 
+					|| (type != null && type.equals("bill"))) {
+				if(sortField == null) {
+					sortField = "sortindex";
+					sortOrder = false;
+					term += " AND active:true";
+					type = "bill";
+				}
 			}
+			
+			request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
+			request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
 			
 			srs = null;
 			
@@ -316,7 +323,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			}
 			
 			String searchFormat = "json";
-						
+									
 			SenateResponse sr = null;
 			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
 				if(type != null && type.equals("bill")) {
@@ -355,6 +362,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			
 		} catch (Exception e) {
 			logger.error("Search Error: " + request.getRequestURI(),e);
+			e.printStackTrace();
 			response.sendError(500);
 		}
 	}

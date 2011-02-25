@@ -297,7 +297,10 @@ public class BasicParser implements OpenLegConstants {
 							if (zeroIdx!=-1) {
 								if(bill.getSponsor() == null || bill.getSponsor().equals("")) {
 									String sponsor = lineData.substring(0,zeroIdx).trim();
-									bill.setSponsor(getPerson(sponsor));
+									if(!sponsor.equals("DELETE"))
+										bill.setSponsor(getPerson(sponsor));
+									else 
+										currentBill = null;
 								}
 							}
 						}
@@ -336,10 +339,27 @@ public class BasicParser implements OpenLegConstants {
 						Calendar c = Calendar.getInstance();
 						c.setTime(beDate);
 						
+						/*
+						 * this fixes instances where two identical events occur
+						 * on the same day, in the past the second instance
+						 * was left out
+						 */
 						while(billEventsBuffer.contains(bEvent)) {							
 							c.set(Calendar.SECOND, c.get(Calendar.SECOND) + 1);
 							
 							bEvent = new BillEvent(bill, c.getTime(), beText);
+						}
+						
+						/*
+						 * preserves ordering of billevents that occur on 
+						 * the same day, otherwise order is at the mercy of
+						 * the jvm higher ups
+						 */
+						for(BillEvent be:billEventsBuffer) {
+							if(be.getEventDate().equals(bEvent.getEventDate())) {
+								c.set(Calendar.SECOND, c.get(Calendar.SECOND) + 1);
+								bEvent = new BillEvent(bill, c.getTime(), beText);
+							}
 						}
 						
 						billEventsBuffer.add(bEvent);						
@@ -347,8 +367,7 @@ public class BasicParser implements OpenLegConstants {
 						String beTextTemp = beText.toUpperCase();
 						if (beText.startsWith("REFERRED TO ")) {
 							String newCommittee = beText.substring(12);
-							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")
-									 && !bill.getCurrentCommittee().equals("DELETED")) {
+							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
 								bill.addPastCommittee(bill.getCurrentCommittee());
 							}
 							bill.setCurrentCommittee(newCommittee);
@@ -356,8 +375,7 @@ public class BasicParser implements OpenLegConstants {
 						else if (beText.indexOf("COMMITTED TO ")!=-1) {
 							int subIdx = beText.indexOf("COMMITTED TO ") + 13; 
 							String newCommittee = beText.substring(subIdx).trim();
-							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")
-									 && !bill.getCurrentCommittee().equals("DELETED")) {
+							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
 								bill.addPastCommittee(bill.getCurrentCommittee());
 							}
 							bill.setCurrentCommittee(newCommittee);
@@ -365,8 +383,7 @@ public class BasicParser implements OpenLegConstants {
 						else if (beText.indexOf("RECOMMIT TO ")!=-1) {
 							int subIdx = beText.indexOf("RECOMMIT TO ") + 12; 
 							String newCommittee = beText.substring(subIdx).trim();
-							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")
-									&& !bill.getCurrentCommittee().equals("DELETED")) {
+							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
 								bill.addPastCommittee(bill.getCurrentCommittee());
 							}
 							bill.setCurrentCommittee(newCommittee);
@@ -394,10 +411,11 @@ public class BasicParser implements OpenLegConstants {
 							}
 						}
 						else if(beText.contains("REPORT CAL")) {
-							if(bill.getCurrentCommittee() != null) {
+							if(bill.getCurrentCommittee() != null 
+									&& !bill.getCurrentCommittee().equals("")) {
 								bill.addPastCommittee(bill.getCurrentCommittee());
-								bill.setCurrentCommittee("DELETED");
 							}
+							bill.setCurrentCommittee(null);
 						}
 						
 						//currently we don't want to keep track of assembly committees

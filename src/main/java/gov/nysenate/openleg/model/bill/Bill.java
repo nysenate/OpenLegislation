@@ -425,15 +425,14 @@ public class Bill extends SenateObject  {
 		}		
 		
 		if(currentCommittee == null) {
-			currentCommittee = bill.getCurrentCommittee();
+				currentCommittee = bill.getCurrentCommittee();
 		}
 		else {
-			if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
-				if(bill.getCurrentCommittee().equals("DELETED"))
-					currentCommittee = null;
-				else 
-					currentCommittee = bill.getCurrentCommittee();
-			}
+			/*
+			 * current committee will only be updated when bill events are present
+			 */
+			if(bill.getBillEvents() != null && !bill.getBillEvents().isEmpty())
+				currentCommittee = bill.getCurrentCommittee();
 		}
 		
 		if(fulltext == null || fulltext.equals("")) {
@@ -485,8 +484,9 @@ public class Bill extends SenateObject  {
 			}
 		}
 		
-		
-		
+		if(bill.getPastCommittees() != null) {
+			bill.getPastCommittees().remove("DELETED");
+		}
 		if(pastCommittees ==  null || pastCommittees.isEmpty()) {
 			pastCommittees = bill.getPastCommittees();
 		}

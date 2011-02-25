@@ -227,9 +227,19 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		String searchString = "";
 		String originalType = type;
 		String sFormat = "json";
-		String sortField = type.contains("bill") ? "sortindex" : "when";
+		String sortField = "when";
+		boolean sortOrder = true;
+
+		if(type != null) {
+			if(type.contains("bill")) {
+				sortField = "sortindex";
+				sortOrder = false;
+			}
+			else if(type.contains("meeting")) {
+				sortField = "sortindex";
+			}
+		}
 		
-		boolean sortOrder = type.contains("bill") ? false : true;
 		
 		SenateResponse sr = null;
 		

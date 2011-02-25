@@ -116,7 +116,7 @@ public class IngestReader {
 					"\t-c <calendar json path> (to reindex single calendar)\n" +
 					"\t-a <agenda json path> (to reindex single agenda)\n" +
 					"\t-t <transcript json path> (to reindex single transcript)" +
-					"\t-it <transcript sobi path> (to reindex single agenda)\n");
+					"\t-it <transcript sobi path> (to reindex dir of transcripts)\n");
 		}
 	}
 	
@@ -242,55 +242,7 @@ public class IngestReader {
 		}
 	}
 	
-	public void handleTranscript(String path) {
-		File file = new File(path);
-		
-		if(file.isDirectory()) {
-			for(File temp:file.listFiles()) {
-				handleTranscript(temp.getAbsolutePath());
-			}
-		}
-		else {
-			Transcript trans = null;
-			
-			//transcripts often come incorrectly formatted..
-			//this attempts to reprocess and save the raw text
-			//if there is a parsing error, and then attempts
-			//parsing one more time
-			try {				
-				trans = getBasicParser().handleTranscript(path);
-			}
-			catch (Exception e) {
-				TranscriptFixer fixer = new TranscriptFixer();
-				List<String> in;
-				
-				try {
-					if((in = fixer.readContents(file)) != null) {
-						
-						List<String> ret = fixer.fix(in);
-						BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath()));
-						
-						for(String s:ret) {
-							bw.write(s);
-							bw.newLine();
-						}
-						
-						bw.close();
-						trans = getBasicParser().handleTranscript(path);
-					}
-				}
-				catch (Exception e2) {
-					e2.printStackTrace();
-					trans = null;
-				}
-				
-			}
-			if(trans != null) {
-				writeSenateObject(trans, Transcript.class, true);
-			}
-		}
-		
-	}
+	
 	
 	private void writeCommitteeUpdates(ArrayList<ISenateObject> committeeUpdates) {
 		for(ISenateObject so:committeeUpdates) {
@@ -318,10 +270,11 @@ public class IngestReader {
 			if(bill == null)
 				continue;
 			
-//			if this returns true bill is not active
-			if(reindexAmendedVersions(bill)) {
-				bill.setLuceneActive(false);
-			}
+			//TODO
+			//if this returns true bill is not active
+//			if(reindexAmendedVersions(bill)) {
+//				bill.setLuceneActive(false);
+//			}
 			
 			writeSenateObject(bill, Bill.class, merge);
 			
@@ -344,7 +297,8 @@ public class IngestReader {
 			}
 			
 			if(this.writeJsonFromSenateObject(obj, clazz, newFile)) {
-				indexSenateObject(obj);
+				//TODO
+//				indexSenateObject(obj);
 			}
 		}
 		catch (Exception e) {
@@ -465,6 +419,56 @@ public class IngestReader {
 	public boolean deleteFile(String path) {
 		File file = new File(path);
 		return file.delete();
+	}
+	
+	public void handleTranscript(String path) {
+		File file = new File(path);
+		
+		if(file.isDirectory()) {
+			for(File temp:file.listFiles()) {
+				handleTranscript(temp.getAbsolutePath());
+			}
+		}
+		else {
+			Transcript trans = null;
+			
+			//transcripts often come incorrectly formatted..
+			//this attempts to reprocess and save the raw text
+			//if there is a parsing error, and then attempts
+			//parsing one more time
+			try {				
+				trans = getBasicParser().handleTranscript(path);
+			}
+			catch (Exception e) {
+				TranscriptFixer fixer = new TranscriptFixer();
+				List<String> in;
+				
+				try {
+					if((in = fixer.readContents(file)) != null) {
+						
+						List<String> ret = fixer.fix(in);
+						BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath()));
+						
+						for(String s:ret) {
+							bw.write(s);
+							bw.newLine();
+						}
+						
+						bw.close();
+						trans = getBasicParser().handleTranscript(path);
+					}
+				}
+				catch (Exception e2) {
+					e2.printStackTrace();
+					trans = null;
+				}
+				
+			}
+			if(trans != null) {
+				writeSenateObject(trans, Transcript.class, true);
+			}
+		}
+		
 	}
 	
 	/*

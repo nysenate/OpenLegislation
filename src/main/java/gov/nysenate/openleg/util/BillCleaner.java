@@ -40,8 +40,13 @@ public class BillCleaner implements OpenLegConstants {
 	 * 
 	 */
 	public static String getDesiredBillNumber(String billNumber) {
-		if(billNumber == null || (billNumber = fixBillNumber(billNumber)) == null)
+		String temp = billNumber;
+		if(billNumber == null || (billNumber = fixBillNumber(billNumber)) == null) {
+			if(temp != null && temp.split("-").length == 2) {
+				return temp;
+			}
 			return null;
+		}
 				
 		char c = billNumber.charAt(billNumber.length()-1);
 		
@@ -50,7 +55,16 @@ public class BillCleaner implements OpenLegConstants {
 			return billNumber + SessionYear.getSessionYear();
 		}
 		else if(!Character.isDigit(c)) {
-			return billNumber + "-" + SessionYear.getSessionYear();
+			try {
+				if(SearchEngine2.getInstance().search("oid:" + billNumber + "-" + SessionYear.getSessionYear(), "json", 0, 1, null, false).getResults().size() == 1) {
+					return billNumber + "-" + SessionYear.getSessionYear();
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return getNewestAmendment(billNumber);
 		}
 		else {
 			return getNewestAmendment(billNumber);
