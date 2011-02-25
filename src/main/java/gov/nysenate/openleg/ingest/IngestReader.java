@@ -272,9 +272,9 @@ public class IngestReader {
 			
 			//TODO
 			//if this returns true bill is not active
-//			if(reindexAmendedVersions(bill)) {
-//				bill.setLuceneActive(false);
-//			}
+			if(reindexAmendedVersions(bill)) {
+				bill.setLuceneActive(false);
+			}
 			
 			writeSenateObject(bill, Bill.class, merge);
 			
@@ -298,7 +298,7 @@ public class IngestReader {
 			
 			if(this.writeJsonFromSenateObject(obj, clazz, newFile)) {
 				//TODO
-//				indexSenateObject(obj);
+				indexSenateObject(obj);
 			}
 		}
 		catch (Exception e) {
