@@ -220,7 +220,8 @@ public class CommitteeParser implements OpenLegConstants {
 			if (next instanceof XMLAddendum) {
 				XMLAddendum xmlAddendum = (XMLAddendum)next;
 				
-				String keyId = "a-" + agendaVote.getNumber() + '-' + agendaVote.getSessionYear() + '-' + xmlAddendum.getId();
+//				String keyId = "a-" + agendaVote.getNumber() + '-' + agendaVote.getSessionYear() + '-' + xmlAddendum.getId();
+				String keyId = xmlAddendum.getId() + "-" + agendaVote.getNumber() + '-' + agendaVote.getSessionYear() + '-' + agendaVote.getYear();
 				addendum = parseAddendum(keyId, xmlAddendum, agendaVote, true);
 				addendum.setAgenda(agendaVote);
 				
@@ -249,6 +250,13 @@ public class CommitteeParser implements OpenLegConstants {
 		
 		if (agenda != null && action.equalsIgnoreCase("remove")) {
 			reader.deleteSenateObject(agenda);
+			
+			try {
+				SearchEngine2.getInstance().deleteSenateObject(agenda);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 			logger.info("removing agenda: " + agenda.getId());
 						
 			return null;
@@ -300,7 +308,18 @@ public class CommitteeParser implements OpenLegConstants {
 	public Addendum parseAddendum (String keyId, XMLAddendum xmlAddendum, Agenda agenda, boolean isVote)
 			throws ParseException, SQLException	{
 		
-		Addendum addendum = null;
+		Addendum addendum = new Addendum();
+		addendum.setId(keyId);
+		
+		int index = agenda.getAddendums().indexOf(addendum);
+		if(index == -1) {
+			addendum = null;
+		}
+		else {
+			addendum = agenda.getAddendums().get(index);
+			addendum.setAgenda(agenda);
+		}
+		
 		
 		if (addendum == null) {
 			addendum = new Addendum();
@@ -342,25 +361,26 @@ public class CommitteeParser implements OpenLegConstants {
 						
 			meeting = agenda.getCommitteeMeeting(meetingId);
 			
-			if (meeting != null && action != null && action.equals("remove")) {
-				if (isVote)	{
-					meeting.getBills();
-					
-				}
-				else {
-					agenda.removeCommitteeMeeting(meeting);
-					logger.info("removing meeting: " + meeting.getId());
-					try {
-						SearchEngine2.getInstance().deleteDocuments("meeting", meeting.luceneOid());
-					} catch (IOException e) {
-						e.printStackTrace();
+			if (meeting != null && action != null) {
+				if(action.matches("(remove|replace)")) {
+					if (isVote)	{
+						
 					}
+					else {
+						agenda.removeCommitteeMeeting(meeting);
+						logger.info("removing meeting: " + meeting.getId());
+						try {
+							SearchEngine2.getInstance().deleteDocuments("meeting", meeting.luceneOid());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					reader.writeSenateObject(agenda, Agenda.class, false);
+					
+					continue;
 				}
-				reader.writeSenateObject(agenda, Agenda.class, false);
 				
-				continue;
 			}
-			
 			
 			if (meeting == null) {
 				meeting = new Meeting();			

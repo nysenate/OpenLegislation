@@ -288,7 +288,7 @@ public class IngestReader {
 			if(obj == null)
 				return;
 			
-			System.out.println(obj.luceneOtype() + " : " + obj.luceneOid());
+//			System.out.println(obj.luceneOtype() + " : " + obj.luceneOid());
 			
 			File newFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
 					

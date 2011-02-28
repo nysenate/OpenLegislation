@@ -141,16 +141,9 @@ public class Agenda extends SenateObject {
 					Addendum addendum = ((Agenda)obj).getAddendums().get(i);
 					
 					if(this.addendums.contains(addendum)) {
-						
-						for(int j = 0; j < addendum.getMeetings().size(); j++) {
-							Meeting meeting = addendum.getMeetings().get(j);
-							Meeting temp = this.getCommitteeMeeting(meeting.getId());
-							if(temp != null) {
-								
-//								meeting.setMeetingDateTime(temp.getMeetingDateTime());
-//								meeting.setMeetday(temp.getMeetday());
-							}
-						}
+						Addendum tAd = this.addendums.get(this.addendums.indexOf(addendum));
+						addendum.setPublicationDateTime(tAd.getPublicationDateTime());
+						addendum.setWeekOf(tAd.getWeekOf());
 
 						this.addendums.remove(addendum);
 					}

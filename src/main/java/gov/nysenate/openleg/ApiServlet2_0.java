@@ -149,9 +149,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 		}
 		
 		try {
-			
-			System.out.println(term+"\n"+dateReplace(term));
-			
+						
 			
 			String sFormat = "json";
 			

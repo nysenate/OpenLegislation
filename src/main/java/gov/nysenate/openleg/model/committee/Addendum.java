@@ -104,7 +104,7 @@ public class Addendum {
 
 	@Override
 	public String toString() {
-		return this.getId();
+		return this.getId() + "-" + this.getPublicationDateTime() + "-" + this.getMeetings();
 	}
 	
 }

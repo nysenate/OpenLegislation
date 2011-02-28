@@ -8,6 +8,8 @@ String term = (String)request.getAttribute("term");
 String sortField = (String)request.getAttribute("sortField");
 String type = (String)request.getAttribute("type");
 String search = (String)request.getAttribute("search");
+String urlPath = (String)request.getAttribute("urlPath");
+String filter = (String) request.getAttribute("filter");
 
 boolean sortOrder = true;
 if (request.getAttribute("sortOrder")!=null)
@@ -51,22 +53,30 @@ String mode = (String)request.getAttribute("type");
 	String prevUrl = null;
 if (pageIdx-1 > 0)
 {
-			prevUrl = "/legislation/search/" + (search != null ?  "?search=" + java.net.URLEncoder.encode(search,"UTF-8"):"?term=" + java.net.URLEncoder.encode(term,"UTF-8"))
+	if(urlPath != null) {
+		prevUrl = urlPath + (pageIdx-1) + (pageSize != 20 ? "/" + pageSize:"") + (filter != null ? "?filter=" + filter:"");
+	}
+	else {
+		prevUrl = "/legislation/search/" + (search != null ?  "?search=" + java.net.URLEncoder.encode(search,"UTF-8"):"?term=" + java.net.URLEncoder.encode(term,"UTF-8"))
 			+ "&sort=" + sortField
 			+ "&sortOrder=" + sortOrder
-			 + "&pageIdx=" + (pageIdx-1);
-
+			+ "&pageIdx=" + (pageIdx-1);
+	}
 }
 	
 String nextUrl = null;
 
 if (total > endIdx)
 {
-	nextUrl = "/legislation/search/" + (search != null ?  "?search=" + java.net.URLEncoder.encode(search,"UTF-8"):"?term=" + java.net.URLEncoder.encode(term,"UTF-8"))
-	 + "&sort=" + sortField
-	+ "&sortOrder=" + sortOrder		
-	 + "&pageIdx=" + (pageIdx+1);
-
+	if(urlPath != null) {
+		nextUrl = urlPath + (pageIdx+1) + (pageSize != 20 ? "/" + pageSize:"") + (filter != null ? "?filter=" + filter:"");
+	}
+	else {
+		nextUrl = "/legislation/search/" + (search != null ?  "?search=" + java.net.URLEncoder.encode(search,"UTF-8"):"?term=" + java.net.URLEncoder.encode(term,"UTF-8"))
+			+ "&sort=" + sortField
+			+ "&sortOrder=" + sortOrder		
+			+ "&pageIdx=" + (pageIdx+1);
+	}
 }
 	
 %>

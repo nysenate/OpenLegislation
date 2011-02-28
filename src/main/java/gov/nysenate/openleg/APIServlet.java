@@ -189,15 +189,20 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				type = service;
 				key = version;
 				
-				if (key.length()==0 && req.getParameterNames().hasMoreElements())
-					key = req.getParameterNames().nextElement().toString();
+				if(type != null) {
+					if(type.endsWith("s")) {
+						pageIdx = (key != null && !key.equals("")) ? new Integer(key) : pageIdx;
+						key = "";
+					}
+					else if(type.matches("(sponsor|committee)")) {
+						if(st.hasMoreTokens()) {
+							pageIdx = Integer.parseInt(st.nextToken());
+						}
+					}
+				}
 				
 				if (st.hasMoreTokens()) {
-					pageIdx = Integer.parseInt(st.nextToken());
-						
-					if (st.hasMoreTokens())
 						pageSize = Integer.parseInt(st.nextToken());
-							
 				}
 				else if (format.equals(FORMAT_XML)) //for now with XML
 					pageSize = DEFAULT_API_PAGE_SIZE;
@@ -222,13 +227,30 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	
 	public void handleAPIv1 (String format, String type, String key, int pageIdx, int pageSize, HttpServletRequest req, HttpServletResponse resp) 
 		throws IOException, ServletException {
-
+		
+		String urlPath = "/legislation/" + type + "/" + ((key != null && !key.matches("\\s*")) ? key + "/" :"");
+		
+		if (type.equalsIgnoreCase("sponsor")) {
+			String filter = req.getParameter("filter");
+			key = "sponsor:\"" + key + "\"";
+			if(filter != null) {
+				req.setAttribute("filter", filter);
+				key += (filter != null ? " AND " + filter : "");
+			}
+			type = "bills";
+		}
+		else if (type.equalsIgnoreCase("committee")) {
+			key = "committee:\"" + key + "\"";
+			type = "bills";
+		}
+		
+		String originalType = type;
 		String viewPath = "";
 		String searchString = "";
-		String originalType = type;
 		String sFormat = "json";
 		String sortField = "when";
 		boolean sortOrder = true;
+		
 
 		if(type != null) {
 			if(type.contains("bill")) {
@@ -243,17 +265,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		
 		SenateResponse sr = null;
 		
-		
-		if (type.equalsIgnoreCase("sponsor")) {
-			String filter = req.getParameter("filter");
-			key = "sponsor:\"" + key + (filter != null ? " AND " + filter : "");
-			type = "bills";
-		}
-		else if (type.equalsIgnoreCase("committee")) {
-			key = "committee:\"" + key + "\" AND oid:s*-" + SessionYear.getSessionYear();
-			type = "bills";
-		}
-		
 		key = key.trim();
 		
 		if (pageSize > MAX_PAGE_SIZE)
@@ -261,8 +272,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		//now calculate start, end idx based on pageIdx and pageSize
 		int start = (pageIdx - 1) * pageSize;
 		int end = start + pageSize;
-		
-		
+						
 		logger.info("request: key=" + key + ";type=" + type + ";format=" + format + ";paging=" + start + "/" + end);
 		try	{
 			/*
@@ -304,6 +314,42 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			{
 				searchString = key;
 			}
+							
+			/* 
+			 * applicable to: bills
+			 * 
+			 * only return bills with "year:<currentSessionYear>"
+			 */
+			if(originalType.equals("bills")) {
+				req.setAttribute("urlPath", urlPath);
+				searchString = ApiHelper.dateReplace(searchString) 
+					+ " AND year:" + SessionYear.getSessionYear() 
+					+ " AND active:true";
+			}
+			/*
+			 * applicable to: calendars, meetings, transcripts
+			 * 
+			 * only want current session documents as defined by the time
+			 * frame between DATE_START and DATE_END
+			 */
+			else if(originalType.endsWith("s")) {
+				req.setAttribute("urlPath", urlPath);
+				searchString = ApiHelper.dateReplace(searchString) 
+					+ " AND when:[" 
+					+ DATE_START 
+					+ " TO " 
+					+ DATE_END + "]"
+					+ " AND active:true";
+			}
+			/*
+			 * applicable to: individual documents
+			 * 
+			 * attempting to access a document by id doesn't
+			 * doesn't require any special formatting
+			 */
+			else {
+				searchString = ApiHelper.dateReplace(searchString);
+			}
 			
 			req.setAttribute("sortField", sortField);
 			req.setAttribute("sortOrder", Boolean.toString(sortOrder));
@@ -313,43 +359,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			req.setAttribute("key", key);
 			req.setAttribute(PAGE_IDX,pageIdx+"");
 			req.setAttribute(PAGE_SIZE,pageSize+"");
-						
-			/* 
-			 * applicable to: bills
-			 * 
-			 * only return bills with "year:<currentSessionYear>"
-			 */
-			if(originalType.equals("bills")) {
-				sr = searchEngine.search(ApiHelper.dateReplace(searchString) 
-						+ " AND year:" + SessionYear.getSessionYear() 
-						+ " AND active:true",
-						sFormat,start,pageSize,sortField,sortOrder);
-			}
-			/*
-			 * applicable to: calendars, meetings, transcripts
-			 * 
-			 * only want current session documents as defined by the time
-			 * frame between DATE_START and DATE_END
-			 */
-			else if(originalType.endsWith("s")) {
-				sr = searchEngine.search(ApiHelper.dateReplace(searchString) 
-						+ " AND when:[" 
-						+ DATE_START 
-						+ " TO " 
-						+ DATE_END + "]"
-						+ " AND active:true",
-						sFormat,start,pageSize,sortField,sortOrder);
-			}
-			/*
-			 * applicable to: individual documents
-			 * 
-			 * attempting to access a document by id doesn't
-			 * doesn't require any special formatting
-			 */
-			else {
-				sr = searchEngine.search(ApiHelper.dateReplace(searchString),sFormat,start,pageSize,sortField,sortOrder);
-			}
 			
+			sr = searchEngine.search(searchString,sFormat,start,pageSize,sortField,sortOrder);
+						
 			logger.info("got search results: " + sr.getResults().size());
 						
 			if (sr.getResults().size()==0) {

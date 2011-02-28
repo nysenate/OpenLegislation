@@ -126,7 +126,7 @@ Up-to-the-minute legislation is still available from the <a href="http://public.
  
 	<form method="get" action="<%=appPath%>/search/">
 		
-		<input type="text" id="txtSearchBox" style="width:300px" name="term" autocomplete="off" value="<%=term%>">	
+		<input type="text" id="txtSearchBox" style="width:300px" name="search" autocomplete="off" value="<%=term%>">	
 
 <input type="submit" value="Search"/> 
 <span style="color:#999;margin:3px;font-size:12px;">

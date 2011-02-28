@@ -191,10 +191,10 @@ public class Meeting extends LuceneObject {
 	}
 
 	@Override 
-	public HashMap<String,Field> luceneFields()	{
+	public HashMap<String,Field> luceneFields()	{		
 		HashMap<String,Field> fields = new HashMap<String,Field>();
 		fields.put("when", new Field("when",meetingDateTime.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		
+				
 		/*
 		 * creates a sortable index based on the timestamp of the day the meeting occurred
 		 * and the inversion of the first two characters of the meeting name (e.g. A -> Z, Y -> B, etc.)
@@ -206,10 +206,10 @@ public class Meeting extends LuceneObject {
 				
 		char c1 = invertCharacter(this.getCommitteeName().charAt(0));
 		char c2 = invertCharacter(this.getCommitteeName().charAt(1));
-		
-		System.out.println(this.luceneOid() + " : " + cal.getTimeInMillis()+"-" + c1 + "" + c2);
-		
-		fields.put("sortindex", new Field("sortindex",cal.getTimeInMillis()+"-" + c1 + "" + c2, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		char c3 = invertCharacter(this.getCommitteeName().charAt(2));
+		char c4 = invertCharacter(this.getCommitteeName().charAt(3));
+				
+		fields.put("sortindex", new Field("sortindex",cal.getTimeInMillis()+"-" + c1 + "" + c2 + "" + c3 + "" + c4, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		return fields;
 	}
 

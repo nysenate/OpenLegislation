@@ -55,7 +55,7 @@ public class SearchEngine2 extends SearchEngine {
 			{
 				StringTokenizer cmd = new StringTokenizer(line.substring(line.indexOf(" ")+1)," ");
 				String type = cmd.nextToken();
-				String id = cmd.nextToken();
+				String id = (cmd.hasMoreTokens() ? cmd.nextToken() : null);
 				engine.deleteSenateObjectById(type, id);
 			}
 			else if (line.startsWith("create"))

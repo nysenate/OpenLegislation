@@ -280,17 +280,6 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				searchText.append(startDate.getTime());
 				searchText.append("]");
 			}
-			
-			if (sortField!=null && !sortField.equals("")) {
-				request.setAttribute("sortField", sortField);
-				request.setAttribute("sortOrder",Boolean.toString(sortOrder));
-			}
-			else {
-				sortField = "when";
-				sortOrder = true;
-				request.setAttribute("sortField", sortField);
-				request.setAttribute("sortOrder", Boolean.toString(sortOrder));
-			}
 						
 			term = searchText.toString();
 
@@ -301,8 +290,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 						
 			//default behavior is to return only active bills, so if a user searches
 			//s1234 and s1234a is available then s1234a should be returned
-			if((search == null && 
-					(term != null && term.contains("otype:bill"))) 
+			if((search == null && 	(term != null && term.contains("otype:bill"))) 
 					|| (type != null && type.equals("bill"))) {
 				if(sortField == null) {
 					sortField = "sortindex";
@@ -310,6 +298,17 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 					term += " AND active:true";
 					type = "bill";
 				}
+			}
+			
+			if (sortField!=null && !sortField.equals("")) {
+				request.setAttribute("sortField", sortField);
+				request.setAttribute("sortOrder",Boolean.toString(sortOrder));
+			}
+			else {
+				sortField = "when";
+				sortOrder = true;
+				request.setAttribute("sortField", sortField);
+				request.setAttribute("sortOrder", Boolean.toString(sortOrder));
 			}
 			
 			request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
