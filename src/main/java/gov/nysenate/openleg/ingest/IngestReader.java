@@ -288,7 +288,7 @@ public class IngestReader {
 			if(obj == null)
 				return;
 			
-//			System.out.println(obj.luceneOtype() + " : " + obj.luceneOid());
+			System.out.println(obj.luceneOtype() + " : " + obj.luceneOid());
 			
 			File newFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
 					
@@ -368,6 +368,7 @@ public class IngestReader {
 				e.printStackTrace();
 			}
 			if(oldObject != null) {
+				oldObject.setLuceneActive(obj.getLuceneActive());
 				oldObject.merge(obj);
 				obj = oldObject;
 			}
@@ -631,11 +632,11 @@ public class IngestReader {
 			searchEngine.closeSearcher();
 			SenateResponse sr = searchEngine.search(query,
 					"json", 0,100, null, false);
-			
+						
 			//if there aren't any results this is a new bill
 			if(sr.getResults().isEmpty())
 				return false;
-					
+								
 			//create a list and store bill numbers from oldest to newest
 			ArrayList<String> billNumbers = new ArrayList<String>();				
 			for(Result result:sr.getResults()) {
