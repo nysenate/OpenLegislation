@@ -406,7 +406,10 @@ public class Vote extends SenateObject {
 	@Override
 	public void merge(ISenateObject obj) {
 		return;
-		
 	}
-
+	
+	@Override
+	public String toString() {
+		return this.getId();
+	}
 }

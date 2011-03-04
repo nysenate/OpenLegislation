@@ -41,6 +41,7 @@ public class BasicParser implements OpenLegConstants {
 	private Vote currentVote = null;
 	
 	private StringBuffer summaryBuffer = null;
+	private StringBuffer tempSummaryBuffer = null;
 	private StringBuffer actBuffer = null;
 	private StringBuffer titleBuffer = null;
 	private StringBuffer textBuffer = null;
@@ -106,7 +107,7 @@ public class BasicParser implements OpenLegConstants {
 				commitCurrentBill();
 			}
 		}
-
+		
 		//get new bill instance
 		getBillMore(billId, year);
 		
@@ -447,7 +448,7 @@ public class BasicParser implements OpenLegConstants {
 			returnBills = new ArrayList<Bill>();
 		
 		persistBuffers();
-		
+				
 		int index = -1;
 		if((index = returnBills.indexOf(currentBill)) != -1) {
 			if(currentBill != null) 
@@ -477,7 +478,7 @@ public class BasicParser implements OpenLegConstants {
 			if (memoBuffer == null)
 				memoBuffer = new StringBuffer();
 			
-			memoBuffer.append(line);
+			memoBuffer.append(line.replaceAll("¤", "&sect;"));
 			memoBuffer.append('\n');
 		}
 		return bill;
@@ -493,8 +494,23 @@ public class BasicParser implements OpenLegConstants {
 			if (summaryBuffer == null)
 				summaryBuffer = new StringBuffer();
 			
-			summaryBuffer.append(line);
-			summaryBuffer.append(' ');		
+			if(summaryBuffer.toString().contains(line)) {
+				if(tempSummaryBuffer == null) {
+					tempSummaryBuffer = new StringBuffer();
+				}
+				
+				tempSummaryBuffer.append(line);
+				tempSummaryBuffer.append(' ');
+				
+				if(summaryBuffer.equals(tempSummaryBuffer)) {
+					System.out.println("saved");
+					tempSummaryBuffer = null;
+				}
+			}
+			else {
+				summaryBuffer.append(line);
+				summaryBuffer.append(' ');
+			}
 		}
 		return bill;
 	}
@@ -594,7 +610,7 @@ public class BasicParser implements OpenLegConstants {
 			if (textBuffer == null)
 				textBuffer = new StringBuffer();
 			
-			textBuffer.append(line);
+			textBuffer.append(line.replaceAll("¤", "&sect;"));
 			textBuffer.append('\n');
 			
 		}
@@ -733,8 +749,9 @@ public class BasicParser implements OpenLegConstants {
 			return;
 		
 		if (summaryBuffer != null) {
-			currentBill.setSummary(summaryBuffer.toString());
+			currentBill.setSummary(summaryBuffer.toString());			
 			summaryBuffer = null;
+			tempSummaryBuffer = null;
 		}
 		
 		if (titleBuffer != null) {

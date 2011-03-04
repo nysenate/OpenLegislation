@@ -129,7 +129,7 @@ public class CommitteeParser implements OpenLegConstants {
 			Date voteDate = meeting.getMeetingDateTime();
 									
 			Vote vote = new Vote(bill, voteDate, ayeCount, nayCount);
-			
+						
 			bill.removeVote(vote);
 			
 			vote.setVoteType(Vote.VOTE_TYPE_COMMITTEE);
@@ -219,13 +219,12 @@ public class CommitteeParser implements OpenLegConstants {
 			
 			if (next instanceof XMLAddendum) {
 				XMLAddendum xmlAddendum = (XMLAddendum)next;
-				
 //				String keyId = "a-" + agendaVote.getNumber() + '-' + agendaVote.getSessionYear() + '-' + xmlAddendum.getId();
 				String keyId = xmlAddendum.getId() + "-" + agendaVote.getNumber() + '-' + agendaVote.getSessionYear() + '-' + agendaVote.getYear();
 				addendum = parseAddendum(keyId, xmlAddendum, agendaVote, true);
 				addendum.setAgenda(agendaVote);
 				
-				if (!listAddendums.contains(addendum)) {
+				if(!listAddendums.contains(addendum)) {
 					listAddendums.add(addendum);
 				}
 			}
@@ -372,14 +371,13 @@ public class CommitteeParser implements OpenLegConstants {
 						try {
 							SearchEngine2.getInstance().deleteDocuments("meeting", meeting.luceneOid());
 						} catch (IOException e) {
-							e.printStackTrace();
+							logger.warn(e);
 						}
+						reader.writeSenateObject(agenda, Agenda.class, false);
 					}
-					reader.writeSenateObject(agenda, Agenda.class, false);
-					
-					continue;
+					if(action.equals("remove"))
+						continue;
 				}
-				
 			}
 			
 			if (meeting == null) {
@@ -455,14 +453,14 @@ public class CommitteeParser implements OpenLegConstants {
 					
 					bill = handleXMLBill (meeting, xmlBill, addendum.getAgenda().getSessionYear());
 					
-					if (!listBills.contains(bill))
+					if(!listBills.contains(bill))
 					{
 						logger.info("adding bill:" + bill.getSenateBillNo() + " to meeting:" + meeting.getId());
 						listBills.add(bill);
 					}
 					else
 					{
-						logger.info("bill:" + bill.getSenateBillNo() + " already added to meeting:" + meeting.getId());
+						logger.info("bill:" + bill.getSenateBillNo() + " already added to meeting:" + meeting.getId() + ", merging.");
 					}
 				}
 			}			

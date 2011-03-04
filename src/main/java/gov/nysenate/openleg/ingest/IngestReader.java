@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
@@ -42,11 +43,9 @@ import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.codehaus.jackson.util.DefaultPrettyPrinter;
 
 
-
-import com.google.gson.JsonParseException;
-
-
 public class IngestReader {
+	
+	private static Logger logger = Logger.getLogger(IngestReader.class);
 	
 	private static String WRITE_DIRECTORY = "/usr/local/openleg/json/";
 	
@@ -160,7 +159,7 @@ public class IngestReader {
 		committeeUpdates = new ArrayList<ISenateObject>();
 	}
 	
-	public void handlePath(String path) {
+	public void handlePath(String path) {		
 		File file = new File(path);
 		if (file.isDirectory())	{			
 			
@@ -193,6 +192,8 @@ public class IngestReader {
 	}
 	
 	public void handleFile(File file) {
+		logger.info("Reading file: " + file);
+		
 		if(file.getName().endsWith(".TXT")) {			
 			bills = new ArrayList<Bill>();
 			try {
@@ -229,7 +230,6 @@ public class IngestReader {
 			calendars.clear();
 		}
 		else if(file.getName().contains("-agenda-")) {
-			
 			try {
 				committeeUpdates = getCommitteeParser().doParsing(file);
 			}
@@ -275,21 +275,18 @@ public class IngestReader {
 			if(reindexAmendedVersions(bill)) {
 				bill.setLuceneActive(false);
 			}
-			
 			writeSenateObject(bill, Bill.class, merge);
 			
 		}
 	}
 	
 	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, boolean merge) {
-		try {
-			mapper = getMapper();
-			
+		logger.info("Writing object type: " + obj.luceneOtype() + " with id: " + obj.luceneOid());
+		
+		try {			
 			if(obj == null)
 				return;
-			
-			System.out.println(obj.luceneOtype() + " : " + obj.luceneOid());
-			
+						
 			File newFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
 					
 			if(merge) {
@@ -303,6 +300,7 @@ public class IngestReader {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+			logger.warn("Exception while writing object", e);
 		}
 	}
 	
@@ -315,57 +313,62 @@ public class IngestReader {
 							new XmlSerializer(), 
 							new JsonSerializer()});
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warn("Exception while indexing object", e);
 		}
 	}
 	
 	public boolean writeJsonFromSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file) {
+		logger.info("Writing json to path: " + file.getAbsolutePath());
+		
 		if(file == null) 
 			file = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
 		
 		File dir = new File(WRITE_DIRECTORY + obj.getYear());
 		if(!dir.exists()) {
+			logger.info("creating directory: " + dir.getAbsolutePath());
 			dir.mkdir();
 		}
 		dir = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype());
 		if(!dir.exists()) {
+			logger.info("creating directory: " + dir.getAbsolutePath());
 			dir.mkdir();
 		}
 		
 		try {			
 			BufferedOutputStream osw = new BufferedOutputStream(new FileOutputStream(file));
 			
-			JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(osw,JsonEncoding.UTF8);
+			JsonGenerator generator = this.getMapper().getJsonFactory().createJsonGenerator(osw,JsonEncoding.UTF8);
 			generator.setPrettyPrinter(new DefaultPrettyPrinter());
-			mapper.writeValue(generator, obj);
+			this.getMapper().writeValue(generator, obj);
 			osw.close();
 			
 			return true;
 		} catch (JsonGenerationException e) {
-			e.printStackTrace();
+			logger.warn("could not parse json", e);
 		} catch (JsonMappingException e) {
-			e.printStackTrace();
+			logger.warn("could not parse json", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warn("error reading file", e);
 		}
 		
 		return false;
 	}
 	
-	public ISenateObject mergeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file) {
+	public ISenateObject mergeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file) {		
 		if(file == null)
 			file = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
 		
 		if(file.exists()) {
+			logger.info("Merging object with id: " + obj.luceneOid());
 			ISenateObject oldObject =  null;
 			try {
-				oldObject = (ISenateObject)mapper.readValue(file, clazz);
-			} catch (JsonParseException e) {
-				e.printStackTrace();
+				oldObject = (ISenateObject)this.getMapper().readValue(file, clazz);
+			} catch (JsonGenerationException e) {
+				logger.warn("could not parse json", e);
 			} catch (JsonMappingException e) {
-				e.printStackTrace();
+				logger.warn("could not parse json", e);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.warn("error reading file", e);
 			}
 			if(oldObject != null) {
 				oldObject.setLuceneActive(obj.getLuceneActive());
@@ -387,20 +390,23 @@ public class IngestReader {
 	 * @return deserialized SenateObject of type clazz
 	 */
 	public ISenateObject loadObject(String path, Class<? extends ISenateObject> clazz) {
+		logger.info("Loading object at: " + path);
+		
 		mapper = getMapper();
 		File file = new File(path);
 		if(!file.exists()) 
 			return null;
 		
 		try {
-			return mapper.readValue(file, clazz);
+			return this.getMapper().readValue(file, clazz);
 		} catch (org.codehaus.jackson.JsonParseException e) {
-			e.printStackTrace();
+			logger.warn("could not parse json", e);
 		} catch (JsonMappingException e) {
-			e.printStackTrace();
+			logger.warn("could not map json", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warn("error with file", e);
 		}
+		
 		return null;
 	}
 	
@@ -418,6 +424,8 @@ public class IngestReader {
 	}
 	
 	public boolean deleteFile(String path) {
+		logger.info("Deleting file at: " + path);
+		
 		File file = new File(path);
 		return file.delete();
 	}
