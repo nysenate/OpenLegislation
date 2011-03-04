@@ -11,9 +11,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
 
 import gov.nysenate.openleg.lucene.LuceneResult;
-import gov.nysenate.openleg.lucene.LuceneSerializer;
-import gov.nysenate.openleg.util.JsonSerializer;
-import gov.nysenate.openleg.util.XmlSerializer;
 
 public class SearchEngine2 extends SearchEngine {
 
@@ -28,28 +25,7 @@ public class SearchEngine2 extends SearchEngine {
 		System.out.print("openlegLuceneConsole> ");
 		while (!(line = reader.readLine()).equals("quit"))
 		{
-			if (line.startsWith("index "))
-			{
-				String cmd = line.substring(line.indexOf(" ")+1);
-				StringTokenizer st = new StringTokenizer(cmd);
-				String iType = st.nextToken();
-				int start = 1;
-				int max = 1000000;
-				int pageSize = 10;
-				
-				if (st.hasMoreTokens())
-					start = Integer.parseInt(st.nextToken());
-				
-				if (st.hasMoreTokens())
-					max = Integer.parseInt(st.nextToken());
-				
-				if (st.hasMoreTokens())
-					pageSize = Integer.parseInt(st.nextToken());
-				
-				engine.indexSenateData(iType, start, max, pageSize,
-						new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
-			}
-			else if (line.startsWith("optimize"))
+			if (line.startsWith("optimize"))
 				engine.optimize();
 			else if (line.startsWith("delete"))
 			{

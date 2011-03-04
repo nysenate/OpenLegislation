@@ -21,7 +21,7 @@ if (sortField == null)
 if (type == null)
 	type = "";
 
-String title = term + " - Search - NY Senate Open Legislation";
+String title = "Search - NY Senate Open Legislation";
 %>
 
 <jsp:include page="/header.jsp">

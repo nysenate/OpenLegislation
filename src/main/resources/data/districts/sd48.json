@@ -1,9 +1,1 @@
-{"district":"State Senate District 48","districtUrl":
-  "http://www.nysenate.gov/district/48","senator":{"name":"Patty Ritchie",
-    "contact":"changeme@nysenate.gov","url":
-    "http://www.nysenate.gov/senator/patty-ritchie","imageUrl":
-    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/ritchie_web.jpg",
-    "social":{"contact":"changeme@nysenate.gov","faceBook":"","twitter":"",
-      "youtube":"","flickr":"","rss":
-      "http://www.nysenate.gov/senator/greg-ball/content/feed"},"offices":[],
-    "district":"State Senate District 48"}}
+{"district":"State Senate District 48","districtUrl":"http://www.nysenate.gov/district/48","senator":{"name":"Patty Ritchie","contact":"ritchie@nysenate.gov","url":"http://www.nysenate.gov/senator/patty-ritchie","imageUrl":"http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/ritchie_web.jpg","social":{"contact":"ritchie@nysenate.gov","faceBook":"","twitter":"","youtube":"","flickr":"","rss":"http://www.nysenate.gov/senator/patty-ritchie/content/feed"},"offices":[{"street":"Dulles State Office Building, Room 418","city":"Watertown","state":"NY","zip":"","lat":-75.910757,"lon":43.974784,"officeName":"District Office","phone":"315-782-3418","fax":"315-782-6357","id":102,"contact":"ritchie@nysenate.gov"},{"street":"Legislative Office Building, Room 815 ","city":"Albany","state":"NY","zip":"","lat":-73.759332,"lon":42.652442,"officeName":"Albany Office","phone":"518-455-3438","fax":"518-426-6740","id":103,"contact":"ritchie@nysenate.gov"}],"district":"State Senate District 48"}}

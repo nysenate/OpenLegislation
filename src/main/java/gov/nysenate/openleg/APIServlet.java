@@ -12,6 +12,7 @@ import gov.nysenate.openleg.util.SessionYear;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
@@ -363,6 +364,12 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			sr = searchEngine.search(searchString,sFormat,start,pageSize,sortField,sortOrder);
 						
 			logger.info("got search results: " + sr.getResults().size());
+			
+			if(key != null && !key.equals("") && sr.getResults().size() >= 1) {
+				if(sr.getResults().get(0).getOid().equalsIgnoreCase(key)) {
+					sr.setResults(new ArrayList<Result>(Arrays.asList(sr.getResults().get(0))));
+				}
+			}
 						
 			if (sr.getResults().size()==0) {
 				resp.sendError(404);

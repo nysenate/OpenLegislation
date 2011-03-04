@@ -143,7 +143,7 @@ public class BillCleaner implements OpenLegConstants {
 					+ "<a href=\"" 
 						+ appPath 
 						+ "/bill/" 
-						+ bill.substring(0, 1) + m.group(2) + "-" + bill.split("-")[1] 
+						+ m.group(2) + "-" + bill.split("-")[1] 
 					+ "\">" 
 					+ m.group(2) 
 					+ "</a>" + m.group(3);

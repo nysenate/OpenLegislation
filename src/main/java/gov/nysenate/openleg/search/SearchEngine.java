@@ -12,7 +12,6 @@ import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
-import gov.nysenate.openleg.model.transcript.Transcript;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -68,24 +67,6 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     		
     		deleteSenateObjectById(obj.luceneOtype(), obj.luceneOid());
     	}
-//    	else if (obj instanceof Bill) {
-//    		deleteSenateObjectById("bill",((Bill)obj).luceneOid());
-//    	}
-//    	else if (obj instanceof Supplemental) {
-//    		deleteSenateObjectById("calendar",((Supplemental)obj).luceneOid());
-//    	}
-//    	else if (obj instanceof Meeting) { 
-//    		deleteSenateObjectById("meeting",((Meeting)obj).luceneOid());
-//		}
-//    	else if (obj instanceof Transcript) {
-//    		deleteSenateObjectById("transcript",((Transcript)obj).luceneOid());
-//		}
-//    	else if (obj instanceof Vote) {
-//    		deleteSenateObjectById("vote",((Vote)obj).luceneOid());
-//		}
-//    	else if (obj instanceof BillEvent) {
-//    		deleteSenateObjectById("action",((BillEvent)obj).getBillEventId());
-//    	}
     }
     
     public void deleteSenateObjectById (String type, String id) throws Exception {
@@ -93,56 +74,6 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     	deleteDocuments(type, id);
     	openSearcher();
     }
-	
-	public void indexSenateData(String type, int start, int max, int pageSize, LuceneSerializer[] ls) throws Exception
-	{		
-		if (type.equals("transcripts") || type.equals("*"))	{
-			doIndex("transcript", Transcript.class, null, start, max, pageSize, ls);
-		}
-		
-		if (type.equals("meetings") || type.equals("*"))	{
-			doIndex("meeting", Meeting.class, null, start, max, pageSize, ls);
-		}
-		
-		if (type.equals("calendars") || type.equals("*"))	{
-			doIndex("calendar", Calendar.class, null, start, max, pageSize, ls);
-		}
-		
-		if (type.equals("bills") || type.equals("*"))	{
-			doIndex("bill", Bill.class, SORTINDEX_ASCENDING, start, max, pageSize, ls);
-		}
-		
-		if (type.equals("billevents") || type.equals("*"))	{
-			doIndex("billevent", BillEvent.class, null,start, max, pageSize, ls);
-		}
-		
-		if (type.equals("votes") || type.equals("*"))	{
-			doIndex("vote", Vote.class, null, start, max, pageSize, ls);
-		}
-		
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void doIndex(String type, Class objClass, String sort, int start, int max, int pageSize, LuceneSerializer[] ls) throws IOException {	
-		
-//		int total = 0;
-//		int end = start+pageSize;
-//		
-//		Collection<LuceneObject> result = null;
-//		
-//		deleteDocuments(type,null);
-//		
-//		do {			
-//			logger.info(type + " : " + start);
-//			result = (Collection<LuceneObject>)PMF.getDetachedObjects(objClass, sort, start, end);
-//			indexSenateObjects(result, ls);
-//			start += pageSize;
-//			end = start+pageSize;
-//			total+=pageSize;
-//		}
-//		while (result.size() == pageSize && total < max);
-		
-	}	
 	
     public  boolean indexSenateObjects (Collection<ILuceneObject> objects, LuceneSerializer[] ls) throws IOException
     {
@@ -160,12 +91,7 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     			Iterator<Supplemental> itSupps = cal.getSupplementals().iterator();
     			while (itSupps.hasNext()) {
     				Supplemental supp = (Supplemental)itSupps.next();
-    				try {
-        				supp.setCalendar(cal);
-    				}
-    				catch (Exception e) {
-    					
-    				}
+        			supp.setCalendar(cal);
 
     				try {
     	    			addDocument(supp, ls, indexWriter);
@@ -203,9 +129,9 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     					try {
 							addDocument(be, ls, indexWriter);
 						} catch (InstantiationException e) {
-							e.printStackTrace();
+							logger.warn(e);
 						} catch (IllegalAccessException e) {
-							e.printStackTrace();
+							logger.warn(e);
 						}
     				}
     			}
@@ -218,9 +144,9 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     						vote.setBill(bill);
 							addDocument(vote, ls, indexWriter);
 						} catch (InstantiationException e) {
-							e.printStackTrace();
+							logger.warn(e);
 						} catch (IllegalAccessException e) {
-							e.printStackTrace();
+							logger.warn(e);
 						}
     				}
     			}
@@ -228,9 +154,9 @@ public abstract class SearchEngine extends Lucene implements OpenLegConstants {
     			try {
 					addDocument(bill, ls, indexWriter);
 				} catch (InstantiationException e) {
-					e.printStackTrace();
+					logger.warn(e);
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.warn(e);
 				}
     		}
     		else {

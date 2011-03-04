@@ -1,9 +1,1 @@
-{"district":"State Senate District 7","districtUrl":
-  "http://www.nysenate.gov/district/07","senator":{"name":
-    "Jack M. Martins","contact":"changeme@nysenate.gov","url":
-    "http://www.nysenate.gov/senator/jack-m-martins","imageUrl":
-    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/martins_web.jpg",
-    "social":{"contact":"changeme@nysenate.gov","faceBook":"","twitter":"",
-      "youtube":"","flickr":"","rss":
-      "http://www.nysenate.gov/senator/greg-ball/content/feed"},"offices":[],
-    "district":"State Senate District 7"}}
+{"district":"State Senate District 7","districtUrl":"http://www.nysenate.gov/district/07","senator":{"name":"Jack M. Martins","contact":"martins@nysenate.gov","url":"http://www.nysenate.gov/senator/jack-m-martins","imageUrl":"http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/headshot.JPG","social":{"contact":"martins@nysenate.gov","faceBook":"http://www.facebook.com/pages/Senator-Jack-Martins/183072338380420?ref\u003dts\u0026v\u003dwall","twitter":"http://twitter.com/senatormartins","youtube":"","flickr":"","rss":"http://www.nysenate.gov/senator/jack-m-martins/content/feed"},"offices":[{"street":"Legislative Office Building, Room 946","city":"Albany","state":"NY","zip":"","lat":-73.759332,"lon":42.652442,"officeName":"Albany Office","phone":"518-455-3265","fax":"518-426-6739","id":78,"contact":"martins@nysenate.gov"},{"street":"151 Herricks Road, Suite 202","city":"Garden City Park","state":"NY","zip":"","lat":-73.655597,"lon":40.741138,"officeName":"District Office","phone":"516-746-5924","fax":"516-746-0439","id":79,"contact":"martins@nysenate.gov"}],"district":"State Senate District 7"}}

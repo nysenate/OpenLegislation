@@ -1,5 +1,7 @@
 package gov.nysenate.openleg;
 
+import gov.nysenate.openleg.util.SessionYear;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -88,5 +90,5 @@ public interface OpenLegConstants {
 	
 	final static String DEFAULT_SORT_FIELD = "when";
 	final static String DEFAULT_SEARCH_FORMAT = "json";
-	final static String DEFAULT_SESSION_YEAR = "2009";
+	final static String DEFAULT_SESSION_YEAR = SessionYear.getSessionYear() + "";
 }

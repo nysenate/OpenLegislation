@@ -1,18 +1,1 @@
-{"district":"State Senate District 58","districtUrl":
-  "http://www.nysenate.gov/district/58","senator":{"name":
-    "Timothy M. Kennedy","contact":"","url":
-    "http://www.nysenate.gov/senator/timothy-kennedy","imageUrl":
-    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Kennedy,Tim.jpg",
-    "social":{"contact":"","faceBook":"","twitter":"","youtube":"","flickr":
-      "","rss":
-      "http://www.nysenate.gov/senator/david-carlucci/content/feed"},
-    "offices":[{"street":"95 South Middletown Road","city":"Nanuet","state":
-        "NY","zip":"","lat":-74.012686,"lon":41.093429,"officeName":
-        "District Office","phone":"","fax":"","id":14,"contact":""},{
-        "street":"5030 Broadway","city":"New York","state":"NY","zip":"",
-        "lat":-73.917094,"lon":40.869129,"officeName":"District Office",
-        "phone":"(212) 544-0173","fax":"(212) 544-0256","id":23,"contact":
-        ""},{"street":"21-77 31st Street","city":"Asroria","state":"NY",
-        "zip":"","lat":-73.910328,"lon":40.776247,"officeName":
-        "District Office","phone":"718-545-3889","fax":"","id":31,"contact":
-        ""}],"district":"State Senate District 58"}}
+{"district":"State Senate District 58","districtUrl":"http://www.nysenate.gov/district/58","senator":{"name":"Timothy M. Kennedy","contact":"kennedy@nysenate.gov","url":"http://www.nysenate.gov/senator/timothy-kennedy","imageUrl":"http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Senator Kennedy headshot.jpg","social":{"contact":"kennedy@nysenate.gov","faceBook":"http://www.facebook.com/pages/Senator-Timothy-M-Kennedy/181461761878773?v\u003dinfo","twitter":"http://twitter.com/senkennedy","youtube":"http://www.youtube.com/senatortimkennedy","flickr":"","rss":"http://www.nysenate.gov/senator/timothy-kennedy/content/feed"},"offices":[{"street":"Legislative Office Building, Room 506","city":"Albany","state":"NY","zip":"","lat":-73.759332,"lon":42.652442,"officeName":"Albany Office","phone":"518-455-2426","fax":"518-426-6851","id":55,"contact":"kennedy@nysenate.gov"},{"street":"2239 South Park Ave.","city":"Buffalo","state":"NY","zip":"","lat":-78.823839,"lon":42.837456,"officeName":"District Office","phone":"716-826-2683","fax":"716-826-2793","id":56,"contact":"kennedy@nysenate.gov"}],"district":"State Senate District 58"}}

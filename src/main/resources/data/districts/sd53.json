@@ -1,9 +1,1 @@
-{"district":"State Senate District 53","districtUrl":
-  "http://www.nysenate.gov/district/53","senator":{"name":
-    "Thomas F. O'Mara","contact":"changeme@nysenate.gov","url":
-    "http://www.nysenate.gov/senator/thomas-f-omara","imageUrl":
-    "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/omara_web.jpg",
-    "social":{"contact":"changeme@nysenate.gov","faceBook":"","twitter":"",
-      "youtube":"","flickr":"","rss":
-      "http://www.nysenate.gov/senator/greg-ball/content/feed"},"offices":[],
-    "district":"State Senate District 53"}}
+{"district":"State Senate District 53","districtUrl":"http://www.nysenate.gov/district/53","senator":{"name":"Thomas F. O'Mara","contact":"omara@nysenate.gov","url":"http://www.nysenate.gov/senator/thomas-f-omara","imageUrl":"http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/(01-11-11) O'Mara-011.jpg","social":{"contact":"omara@nysenate.gov","faceBook":"http://www.facebook.com/pages/New-York-State-Senator-Tom-OMara/151463428240765?","twitter":"","youtube":"","flickr":"","rss":"http://www.nysenate.gov/senator/thomas-f-omara/content/feed"},"offices":[{"street":"333 East Water Street ","city":"Elmira","state":"NY","zip":"","lat":-76.801676,"lon":42.088315,"officeName":"District Office","phone":"607-735-9671","fax":"607-735-9675","id":89,"contact":"omara@nysenate.gov"},{"street":"105 East Steuben Street","city":"Bath","state":"NY","zip":"","lat":-77.3151,"lon":42.333904,"officeName":"District Office","phone":"607-776-3201","fax":"607-776-5185","id":90,"contact":"omara@nysenate.gov"},{"street":"Legislative Office Building","city":"Albany","state":"NY","zip":"","lat":-73.759332,"lon":42.652442,"officeName":"Albany Office","phone":"518-455-2091","fax":"518-426-6976","id":91,"contact":"omara@nysenate.gov"}],"district":"State Senate District 53"}}

@@ -98,7 +98,6 @@ public class CommitteeParser implements OpenLegConstants {
 	        }
 	        catch (Exception e) {
 	        	logger.warn("EXITING: ERROR PROCESSING: " + filePath + "; " + e.getLocalizedMessage());
-	        	e.printStackTrace();
 	        }
 		}
 	}
@@ -253,7 +252,7 @@ public class CommitteeParser implements OpenLegConstants {
 			try {
 				SearchEngine2.getInstance().deleteSenateObject(agenda);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.warn(e);
 			}
 			
 			logger.info("removing agenda: " + agenda.getId());
