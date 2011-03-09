@@ -299,7 +299,6 @@ public class IngestReader {
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
 			logger.warn("Exception while writing object", e);
 		}
 	}

@@ -1,0 +1,87 @@
+body {
+  font-family: helvetica, arial;
+  font-size: 89.5%;	 /* 10px */
+  color: #333;
+  background-color: #fff;
+  margin:16px;
+}
+.wrapper {
+	clear:both;
+}
+.box {
+	border: 1px dashed #CCC;
+	float:left;
+	margin: 0px 3px 6px 3px;
+	cursor:pointer;
+	background:#FED;
+}
+.box:hover {
+	border: 1px dashed #808080;
+}
+.boxLabel {
+	background:#FFFFCC;
+	border-right: 1px dashed #CCC;
+	position:relative;
+	float:left;
+	font-weight: bold;
+	margin-top: 2px;
+	margin-left: 2px;
+	color:#005588;
+}
+.boxData {
+	float:left;
+	margin-left:4px;
+	font-size: 90%;
+	margin: 2px 5px 0px 5px;;
+}
+
+.problemBill {
+	border: 1px dashed #CCC;
+	height:75px;
+	width:375px;
+	float:left;
+	margin: 0px 3px 6px 3px;
+	cursor:pointer;
+}
+.problemBill:hover {
+	border: 1px dashed #808080;
+}
+
+.problemBillNumber {
+	background:#FFFFCC;
+	border-right: 1px dashed #CCC;
+	height:71px;
+	position:relative;
+	float:left;
+	font-size: 140%;
+	margin-top: 2px;
+	margin-left: 2px;
+	color:#005588;
+	width: 140px;
+}
+
+.billNumber {
+	margin-left: 1px;
+}
+
+.modified {
+	margin-top: 2px;
+	font-size: 50%;
+	color:#333;
+}
+
+.problemBillText {
+	float:left;
+	margin-left:4px;
+	height: 56px;
+	width:220px;
+	font-size: 90%;
+}
+
+.billData {
+	margin-top: 5px;
+}
+
+.number {
+	color:#005588;
+}

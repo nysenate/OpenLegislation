@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:javaee="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+<web-app version="2.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:javaee="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
@@ -12,7 +12,6 @@
     <servlet-class>gov.nysenate.openleg.SearchServlet</servlet-class>
   </servlet>
   <servlet>
-    
     <servlet-name>ApiServlet2_0</servlet-name>
     <servlet-class>
   	gov.nysenate.openleg.ApiServlet2_0</servlet-class>
@@ -21,7 +20,7 @@
     <servlet-name>ApiServlet2_0</servlet-name>
     <url-pattern>/api/2.0/*</url-pattern>
   </servlet-mapping>
-    <servlet-mapping>
+  <servlet-mapping>
     <servlet-name>APIServlet</servlet-name>
     <url-pattern>/api/*</url-pattern>
   </servlet-mapping>
@@ -133,8 +132,20 @@
     <servlet-name>SenatorsServlet</servlet-name>
     <url-pattern>/senators</url-pattern>
   </servlet-mapping>
-   <servlet-mapping>
+  <servlet-mapping>
     <servlet-name>SenatorsServlet</servlet-name>
     <url-pattern>/senators.json</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>ReportServlet</servlet-name>
+    <servlet-class>gov.nysenate.openleg.ReportServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ReportServlet</servlet-name>
+    <url-pattern>/report</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ReportServlet</servlet-name>
+    <url-pattern>/report.json</url-pattern>
   </servlet-mapping>
 </web-app>

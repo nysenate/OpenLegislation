@@ -228,7 +228,7 @@ public class BasicParser implements OpenLegConstants {
 				else if (line.startsWith("</DATAPROCESS>"))	{
 					//EOF
 					commitCurrentBill();
-					break;
+					continue;
 				}
 				else if (line.startsWith("No data to process"))	{
 					//do nothing
@@ -252,9 +252,35 @@ public class BasicParser implements OpenLegConstants {
 						continue; //skip this line
 					}
 					
+					
 					bill = getBill(line);
 					
-					if (lineCode == 'M')//memo text
+//					if(currentBill.getSenateBillNo().equals("S1959-2011")) {
+//						System.out.println(bill.getSenateBillNo() + ": " + line);
+//					}
+					
+					if (lineCode == '1'){ //new bill
+						if(currentBill != null) {
+							commitCurrentBill();
+						}
+						
+						if (lineData.charAt(0)!='0') {
+							//SOBI.D100106.T214552.TXT:2009S06415 1JOHNSON C           000000000014825020
+							//SOBI.D100113.T200727.TXT:2009S06457 1SCHNEIDERMAN        00000
+							int zeroIdx = lineData.indexOf("0000");
+							
+							if (zeroIdx!=-1) {
+								if(bill.getSponsor() == null || bill.getSponsor().equals("")) {
+									String sponsor = lineData.substring(0,zeroIdx).trim();
+									if(!sponsor.equals("DELETE"))
+										bill.setSponsor(getPerson(sponsor));
+									else 
+										currentBill = null;
+								}
+							}
+						}
+					}
+					else if (lineCode == 'M')//memo text
 						bill = parseMemoData (line);
 					
 					else if (lineCode == 'T')//bill text
@@ -289,23 +315,6 @@ public class BasicParser implements OpenLegConstants {
 					else if (lineCode == '3')
 						bill = parseTitle(line);
 						
-					else if (lineCode == '1'){ //new bill
-						if (lineData.charAt(0)!='0') {
-							//SOBI.D100106.T214552.TXT:2009S06415 1JOHNSON C           000000000014825020
-							//SOBI.D100113.T200727.TXT:2009S06457 1SCHNEIDERMAN        00000
-							int zeroIdx = lineData.indexOf("0000");
-							
-							if (zeroIdx!=-1) {
-								if(bill.getSponsor() == null || bill.getSponsor().equals("")) {
-									String sponsor = lineData.substring(0,zeroIdx).trim();
-									if(!sponsor.equals("DELETE"))
-										bill.setSponsor(getPerson(sponsor));
-									else 
-										currentBill = null;
-								}
-							}
-						}
-					}
 					else if (lineCode == '6') {
 						if (lineData.charAt(0)!='0') {							
 							String sponsor = lineData.trim();
@@ -494,7 +503,7 @@ public class BasicParser implements OpenLegConstants {
 			if (summaryBuffer == null)
 				summaryBuffer = new StringBuffer();
 			
-			if(summaryBuffer.toString().contains(line)) {
+			if(summaryBuffer.toString().trim().contains(line)) {
 				if(tempSummaryBuffer == null) {
 					tempSummaryBuffer = new StringBuffer();
 				}
@@ -503,7 +512,6 @@ public class BasicParser implements OpenLegConstants {
 				tempSummaryBuffer.append(' ');
 				
 				if(summaryBuffer.equals(tempSummaryBuffer)) {
-					System.out.println("saved");
 					tempSummaryBuffer = null;
 				}
 			}
@@ -749,6 +757,8 @@ public class BasicParser implements OpenLegConstants {
 			return;
 		
 		if (summaryBuffer != null) {
+			
+//			System.out.println(currentBill.getSenateBillNo() + "\n--->" + summaryBuffer + "\n--->" + tempSummaryBuffer);
 			currentBill.setSummary(summaryBuffer.toString());			
 			summaryBuffer = null;
 			tempSummaryBuffer = null;
