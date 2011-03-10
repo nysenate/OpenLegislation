@@ -228,7 +228,7 @@ public class CommitteeParser implements OpenLegConstants {
 				}
 			}
 			else {
-				logger.warn("Got AgendaVote content object anonamoly: " + next.toString());
+				logger.warn("Got AgendaVote content object anonamoly: " + next.getClass());
 			}
 		}
 		

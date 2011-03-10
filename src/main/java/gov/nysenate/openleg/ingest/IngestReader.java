@@ -16,7 +16,7 @@ import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.JsonSerializer;
 import gov.nysenate.openleg.util.TranscriptFixer;
-import gov.nysenate.openleg.util.XmlFixer;
+import gov.nysenate.openleg.util.XmlHelper;
 import gov.nysenate.openleg.util.XmlSerializer;
 
 import java.io.BufferedOutputStream;
@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -47,7 +48,7 @@ public class IngestReader {
 	
 	private static Logger logger = Logger.getLogger(IngestReader.class);
 	
-	private static String WRITE_DIRECTORY = "/usr/local/openleg/json/";
+	private static String WRITE_DIRECTORY = "/usr/local/openleg/json/";	
 	
 	BasicParser basicParser = null;
 	ObjectMapper mapper = null;
@@ -66,10 +67,10 @@ public class IngestReader {
 			String command = args[0];
 			String p1 = args[1];
 			if(command.equals("-gx")) {
-				ir.generateXml(p1);
+				XmlHelper.generateXml(p1);
 			}
 			else if(command.equals("-b")) {
-				ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(p1, Bill.class))), false);
+				ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(p1, Bill.class))), null, false);
 			}
 			else if(command.equals("-c")) {
 				ir.indexSenateObject((Calendar)ir.loadObject(p1, Calendar.class));
@@ -159,6 +160,14 @@ public class IngestReader {
 		committeeUpdates = new ArrayList<ISenateObject>();
 	}
 	
+	
+	
+	
+	
+	/* TODO
+	 * FILE READING 
+	 */
+	
 	public void handlePath(String path) {		
 		File file = new File(path);
 		if (file.isDirectory())	{			
@@ -205,7 +214,7 @@ public class IngestReader {
 			}
 			
 			if(!bills.isEmpty()) {
-				writeBills(bills, true);
+				writeBills(bills, file, true);
 				basicParser.clearBills();
 			}
 			
@@ -214,7 +223,7 @@ public class IngestReader {
 		
 		else if(file.getName().contains("-calendar-")) {
 			
-			XmlFixer.fixCalendar(file);
+			XmlHelper.fixCalendar(file);
 			
 			try {
 				calendars = getCalendarParser().doParsing(file.getAbsolutePath());
@@ -223,7 +232,7 @@ public class IngestReader {
 			}
 			
 			if(!calendars.isEmpty()) {
-				writeCalendars(calendars);
+				writeCalendars(calendars, file);
 				calendarParser.clearCalendars();
 			}
 			
@@ -237,35 +246,123 @@ public class IngestReader {
 				e.printStackTrace();
 			}
 			
-			writeCommitteeUpdates(committeeUpdates);
+			writeCommitteeUpdates(committeeUpdates, file);
 			committeeParser.clearUpdates();
 		}
 	}
 	
+	//TODO this is pretty bad
+	public void handleTranscript(String path) {
+		File file = new File(path);
+		
+		if(file.isDirectory()) {
+			for(File temp:file.listFiles()) {
+				handleTranscript(temp.getAbsolutePath());
+			}
+		}
+		else {
+			Transcript trans = null;
+			
+			//transcripts often come incorrectly formatted..
+			//this attempts to reprocess and save the raw text
+			//if there is a parsing error, and then attempts
+			//parsing one more time
+			try {				
+				trans = getBasicParser().handleTranscript(path);
+			}
+			catch (Exception e) {
+				TranscriptFixer fixer = new TranscriptFixer();
+				List<String> in;
+				
+				try {
+					if((in = fixer.readContents(file)) != null) {
+						
+						List<String> ret = fixer.fix(in);
+						BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath()));
+						
+						for(String s:ret) {
+							bw.write(s);
+							bw.newLine();
+						}
+						
+						bw.close();
+						trans = getBasicParser().handleTranscript(path);
+					}
+				}
+				catch (Exception e2) {
+					e2.printStackTrace();
+					trans = null;
+				}
+				
+			}
+			if(trans != null) {
+				writeSenateObject(trans, Transcript.class, true);
+			}
+		}
+		
+	}
+	
+	public ISenateObject loadObject(String id, String year, String type, Class<? extends ISenateObject> clazz) {
+		return loadObject(WRITE_DIRECTORY + year + "/" + type + "/" + id + ".json", clazz);
+	}
+	
+	/**
+	 * @param path to json document
+	 * @param clazz class of object to be loaded
+	 * @return deserialized SenateObject of type clazz
+	 */
+	public ISenateObject loadObject(String path, Class<? extends ISenateObject> clazz) {
+		logger.info("Loading object at: " + path);
+		
+		mapper = getMapper();
+		File file = new File(path);
+		if(!file.exists()) 
+			return null;
+		
+		try {
+			return this.getMapper().readValue(file, clazz);
+		} catch (org.codehaus.jackson.JsonParseException e) {
+			logger.warn("could not parse json", e);
+		} catch (JsonMappingException e) {
+			logger.warn("could not map json", e);
+		} catch (IOException e) {
+			logger.warn("error with file", e);
+		}
+		
+		return null;
+	}
 	
 	
-	private void writeCommitteeUpdates(ArrayList<ISenateObject> committeeUpdates) {
+	
+	
+	
+	
+	/* TODO
+	 * FILE WRITING
+	 */
+	
+	private void writeCommitteeUpdates(ArrayList<ISenateObject> committeeUpdates, File file) {
 		for(ISenateObject so:committeeUpdates) {
 			if(so instanceof Bill) {
 				//if a bill is being updated from the committee xml
 				//it is either adding or removing a vote from an existing bill
 				//which has been deserialized or creating a new bill
 				//in which case merging isn't necessary
-				writeBills(new ArrayList<Bill>(Arrays.asList(((Bill)so))), false);
+				writeBills(new ArrayList<Bill>(Arrays.asList(((Bill)so))), file, false);
 			}
 			else if(so instanceof Agenda) {
-				writeSenateObject(so, Agenda.class, true);
+				writeSenateObject(so, Agenda.class, file, true);
 			}
 		}
 	}
 	
-	private void writeCalendars(ArrayList<Calendar> calendars) {
+	private void writeCalendars(ArrayList<Calendar> calendars, File file) {
 		for(Calendar calendar:calendars) {
-			writeSenateObject(calendar, Calendar.class, true);
+			writeSenateObject(calendar, Calendar.class, file, true);
 		}
 	}
 
-	public void writeBills(ArrayList<Bill> bills, boolean merge) {
+	public void writeBills(ArrayList<Bill> bills, File file, boolean merge) {
 		for(Bill bill:bills) {
 			if(bill == null)
 				continue;
@@ -275,12 +372,25 @@ public class IngestReader {
 			if(reindexAmendedVersions(bill)) {
 				bill.setLuceneActive(false);
 			}
-			writeSenateObject(bill, Bill.class, merge);
+			writeSenateObject(bill, Bill.class, file, merge);
 			
 		}
 	}
 	
+	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file, boolean merge) {
+		if(file == null)
+			writeSenateObject(obj, clazz, merge);
+		else {
+			obj.addSobiReference(file.getName());
+			writeSenateObject(obj, clazz, getDateFromFileName(file.getName()), merge);
+		}
+	}
+	
 	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, boolean merge) {
+		writeSenateObject(obj, clazz, new Date().getTime(), merge);
+	}
+	
+	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, long modified, boolean merge) {
 		logger.info("Writing object type: " + obj.luceneOtype() + " with id: " + obj.luceneOid());
 		
 		try {			
@@ -293,6 +403,8 @@ public class IngestReader {
 				obj = mergeSenateObject(obj, clazz, newFile);
 			}
 			
+			obj.setLuceneModified(modified);
+			
 			if(this.writeJsonFromSenateObject(obj, clazz, newFile)) {
 				//TODO
 				indexSenateObject(obj);
@@ -300,19 +412,6 @@ public class IngestReader {
 		}
 		catch (Exception e) {
 			logger.warn("Exception while writing object", e);
-		}
-	}
-	
-	public void indexSenateObject(ISenateObject obj) {
-		try {
-			searchEngine.indexSenateObjects(
-					new ArrayList<ILuceneObject>(
-						Arrays.asList(obj)), 
-						new LuceneSerializer[]{
-							new XmlSerializer(), 
-							new JsonSerializer()});
-		} catch (IOException e) {
-			logger.warn("Exception while indexing object", e);
 		}
 	}
 	
@@ -379,36 +478,6 @@ public class IngestReader {
 		return obj;
 	}
 	
-	public ISenateObject loadObject(String id, String year, String type, Class<? extends ISenateObject> clazz) {
-		return loadObject(WRITE_DIRECTORY + year + "/" + type + "/" + id + ".json", clazz);
-	}
-	
-	/**
-	 * @param path to json document
-	 * @param clazz class of object to be loaded
-	 * @return deserialized SenateObject of type clazz
-	 */
-	public ISenateObject loadObject(String path, Class<? extends ISenateObject> clazz) {
-		logger.info("Loading object at: " + path);
-		
-		mapper = getMapper();
-		File file = new File(path);
-		if(!file.exists()) 
-			return null;
-		
-		try {
-			return this.getMapper().readValue(file, clazz);
-		} catch (org.codehaus.jackson.JsonParseException e) {
-			logger.warn("could not parse json", e);
-		} catch (JsonMappingException e) {
-			logger.warn("could not map json", e);
-		} catch (IOException e) {
-			logger.warn("error with file", e);
-		}
-		
-		return null;
-	}
-	
 	public boolean deleteSenateObject(ISenateObject so) {
 		try {
 			searchEngine.deleteSenateObject(so);
@@ -429,55 +498,123 @@ public class IngestReader {
 		return file.delete();
 	}
 	
-	public void handleTranscript(String path) {
-		File file = new File(path);
-		
-		if(file.isDirectory()) {
-			for(File temp:file.listFiles()) {
-				handleTranscript(temp.getAbsolutePath());
-			}
+	
+	
+	
+	
+	/* TODO
+	 * INDEXING
+	 */
+	
+	public void indexSenateObject(ISenateObject obj) {
+		try {
+			searchEngine.indexSenateObjects(
+					new ArrayList<ILuceneObject>(
+						Arrays.asList(obj)), 
+						new LuceneSerializer[]{
+							new XmlSerializer(), 
+							new JsonSerializer()});
+		} catch (IOException e) {
+			logger.warn("Exception while indexing object", e);
 		}
-		else {
-			Transcript trans = null;
+	}
+	
+	/**
+	 * desirable to hide old versions of an amended bill from the default search
+	 * this appends "active:false" as a field to any old verions of bills
+	 * 
+	 * to avoid constantly rewriting amended versions of bills this does a query
+	 * to lucene to check if they've already been hidden, if they haven't then 
+	 * they are sent to reindexInactiveBill
+	 * 
+	 * @param bill
+	 * 
+	 * returns true if current bill isn't searchable, false otherwise
+	 */
+	public boolean reindexAmendedVersions(Bill bill) {
+		int idx = bill.getSenateBillNo().indexOf("-");
+		char c = bill.getSenateBillNo().charAt(idx-1);
+		String strings[] = bill.getSenateBillNo().split("-");
+		
+		String query = null;
+		
+		if(c >= 65 && c < 90)
+			query = strings[0].substring(0, strings[0].length()-1);
+		else 
+			query = strings[0];
 			
-			//transcripts often come incorrectly formatted..
-			//this attempts to reprocess and save the raw text
-			//if there is a parsing error, and then attempts
-			//parsing one more time
-			try {				
-				trans = getBasicParser().handleTranscript(path);
+		try {
+			//oid:(S418-2009 OR [S418A-2009 TO S418Z-2009]) AND year:2009
+			query = "otype:bill AND oid:((" 
+				+ query + "-" + strings[1] 
+                    + " OR [" + query + "A-" + strings[1] 
+                       + " TO " + query + "Z-" + strings[1]
+                    + "]) AND " + query + "*-" + strings[1] + ")";
+			//caches recent searces, if s1, s1a and s1b are added in close succession
+			//it's possible they s1a won't be picked up.. closing the searcher
+			//fixes that for the time being
+			searchEngine.closeSearcher();
+			SenateResponse sr = searchEngine.search(query,
+					"json", 0,100, null, false);
+						
+			//if there aren't any results this is a new bill
+			if(sr.getResults().isEmpty())
+				return false;
+								
+			//create a list and store bill numbers from oldest to newest
+			ArrayList<String> billNumbers = new ArrayList<String>();				
+			for(Result result:sr.getResults()) {
+				billNumbers.add(result.getOid());
 			}
-			catch (Exception e) {
-				TranscriptFixer fixer = new TranscriptFixer();
-				List<String> in;
-				
-				try {
-					if((in = fixer.readContents(file)) != null) {
-						
-						List<String> ret = fixer.fix(in);
-						BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath()));
-						
-						for(String s:ret) {
-							bw.write(s);
-							bw.newLine();
-						}
-						
-						bw.close();
-						trans = getBasicParser().handleTranscript(path);
+			if(!billNumbers.contains(bill))
+				billNumbers.add(bill.getSenateBillNo());
+			Collections.sort(billNumbers);
+			
+			String newest = billNumbers.get(billNumbers.size()-1);
+			
+			//if bill being stored isn't the newest we can assume
+			//that the newest bill has already reindexed older bills
+			if(!bill.getSenateBillNo().equals(newest))
+				return true;
+			
+			billNumbers.remove(newest);
+			billNumbers.remove(bill.getSenateBillNo());				
+							
+			for(Result result:sr.getResults()) {
+				if(billNumbers.contains(result.getOid())) {
+					if(result.getActive().equals("true")) {
+						reindexInactiveBill(result.getOid(), bill.getYear()+"");
 					}
 				}
-				catch (Exception e2) {
-					e2.printStackTrace();
-					trans = null;
-				}
-				
 			}
-			if(trans != null) {
-				writeSenateObject(trans, Transcript.class, true);
-			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (org.apache.lucene.queryParser.ParseException e) {
+			e.printStackTrace();
 		}
-		
+		return false;
 	}
+	
+	private void reindexInactiveBill(String senateBillNo, String year) {
+		Bill temp = (Bill)this.loadObject(senateBillNo,
+				year,
+				"bill",
+				Bill.class);
+		
+		if(temp != null) {
+			temp.setLuceneActive(false);
+			this.indexSenateObject(temp);
+		}
+	}
+	
+	
+	
+	
+	
+	/* TODO
+	 * UTILITIES
+	 */
 	
 	/*
 	 * fixCalendarBills(year,path) and fixAgendaBills(year,path) can be
@@ -582,134 +719,20 @@ public class IngestReader {
 		}
 	}
 	
-	public void generateXml(String path) {
-		File file = new File(path);
-		if (file.isDirectory())	{
-			File[] files = file.listFiles();
-			
-			for (int i = 0; i < files.length; i++)
-			{
-				if(files[i].isFile()) {
-					XmlFixer.separateXmlFromSobi(files[i]);
-				}
-				else if(files[i].isDirectory()) {
-					generateXml(files[i].getAbsolutePath());
-				}
-			}
-		}
-		else {
-			XmlFixer.separateXmlFromSobi(file);
-		}
-	}
-	
-	/**
-	 * desirable to hide old versions of an amended bill from the default search
-	 * this appends "active:false" as a field to any old verions of bills
-	 * 
-	 * to avoid constantly rewriting amended versions of bills this does a query
-	 * to lucene to check if they've already been hidden, if they haven't then 
-	 * they are sent to reindexInactiveBill
-	 * 
-	 * @param bill
-	 * 
-	 * returns true if current bill isn't searchable, false otherwise
-	 */
-	public boolean reindexAmendedVersions(Bill bill) {
-		int idx = bill.getSenateBillNo().indexOf("-");
-		char c = bill.getSenateBillNo().charAt(idx-1);
-		String strings[] = bill.getSenateBillNo().split("-");
+	public long getDateFromFileName(String fileName) {
+		java.util.Calendar cal = java.util.Calendar.getInstance();
 		
-		String query = null;
+		fileName = fileName.replaceAll("(SOBI\\.D|\\.TXT.*$)", "");
 		
-		if(c >= 65 && c < 90)
-			query = strings[0].substring(0, strings[0].length()-1);
-		else 
-			query = strings[0];
-			
-		try {
-			//oid:(S418-2009 OR [S418A-2009 TO S418Z-2009]) AND year:2009
-			query = "otype:bill AND oid:((" 
-				+ query + "-" + strings[1] 
-                    + " OR [" + query + "A-" + strings[1] 
-                       + " TO " + query + "Z-" + strings[1]
-                    + "]) AND " + query + "*-" + strings[1] + ")";
-			//caches recent searces, if s1, s1a and s1b are added in close succession
-			//it's possible they s1a won't be picked up.. closing the searcher
-			//fixes that for the time being
-			searchEngine.closeSearcher();
-			SenateResponse sr = searchEngine.search(query,
-					"json", 0,100, null, false);
-						
-			//if there aren't any results this is a new bill
-			if(sr.getResults().isEmpty())
-				return false;
-								
-			//create a list and store bill numbers from oldest to newest
-			ArrayList<String> billNumbers = new ArrayList<String>();				
-			for(Result result:sr.getResults()) {
-				billNumbers.add(result.getOid());
-			}
-			if(!billNumbers.contains(bill))
-				billNumbers.add(bill.getSenateBillNo());
-			Collections.sort(billNumbers);
-			
-			String newest = billNumbers.get(billNumbers.size()-1);
-			
-			//if bill being stored isn't the newest we can assume
-			//that the newest bill has already reindexed older bills
-			if(!bill.getSenateBillNo().equals(newest))
-				return true;
-			
-			billNumbers.remove(newest);
-			billNumbers.remove(bill.getSenateBillNo());				
-							
-			for(Result result:sr.getResults()) {
-				if(billNumbers.contains(result.getOid())) {
-					if(result.getActive().equals("true")) {
-						reindexInactiveBill(result.getOid(), bill.getYear()+"");
-					}
-				}
-			}
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (org.apache.lucene.queryParser.ParseException e) {
-			e.printStackTrace();
+		if(fileName.length() == 14) {
+			cal.set(Integer.parseInt(fileName.substring(0,2)) + 2000,
+					Integer.parseInt(fileName.substring(2,4))-1,
+					Integer.parseInt(fileName.substring(4,6)),
+					Integer.parseInt(fileName.substring(8,10)),
+					Integer.parseInt(fileName.substring(10,12)),
+					Integer.parseInt(fileName.substring(12,14)));
 		}
-		return false;
-	}
-	
-	
-	
-	private void reindexInactiveBill(String senateBillNo, String year) {
-		Bill temp = (Bill)this.loadObject(senateBillNo,
-				year,
-				"bill",
-				Bill.class);
-		
-		if(temp != null) {
-			temp.setLuceneActive(false);
-			this.indexSenateObject(temp);
-		}
-	}
-	
-	/**
-	 * used to index already serialized json documents
-	 * @param path directory to files (e.g. "2011/bills/")
-	 * @param clazz class of object to be indexed
-	 */
-	public void index(String path, Class<? extends ISenateObject> clazz) {		
-		File dir = new File(path);
-		
-		for(File file:dir.listFiles()) {
-			try {
-				this.searchEngine.indexSenateObjects(
-						new ArrayList<ILuceneObject>(Arrays.asList(
-								loadObject(file.getAbsolutePath(), clazz))),
-						new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+				
+		return cal.getTimeInMillis();
 	}
 }

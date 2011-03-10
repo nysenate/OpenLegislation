@@ -152,6 +152,8 @@ public class Calendar extends SenateObject {
 		if(!(obj instanceof Calendar))
 			return;
 		
+		super.merge(obj);
+		
 		this.setId(((Calendar)obj).getId());
 		this.setNo(((Calendar)obj).getNo());
 		this.setSessionYear(((Calendar)obj).getSessionYear());		

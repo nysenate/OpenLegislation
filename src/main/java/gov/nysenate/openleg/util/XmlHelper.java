@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class XmlFixer {
+public class XmlHelper {
 	public static void fixCalendar(File file) {
 		String data = flatten(file);
 		
@@ -82,7 +82,7 @@ public class XmlFixer {
 	private static void write(String data, File file) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-			bw.write(data);
+			bw.write(data.replaceAll("\\p{Cntrl}",""));
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -105,5 +105,25 @@ public class XmlFixer {
 			e.printStackTrace();
 		}
 		return ret;
+	}
+	
+	public static void generateXml(String path) {
+		File file = new File(path);
+		if (file.isDirectory())	{
+			File[] files = file.listFiles();
+			
+			for (int i = 0; i < files.length; i++)
+			{
+				if(files[i].isFile()) {
+					XmlHelper.separateXmlFromSobi(files[i]);
+				}
+				else if(files[i].isDirectory()) {
+					generateXml(files[i].getAbsolutePath());
+				}
+			}
+		}
+		else {
+			XmlHelper.separateXmlFromSobi(file);
+		}
 	}
 }

@@ -3,14 +3,11 @@ package gov.nysenate.openleg.lucene;
 import java.util.HashMap;
 
 import org.apache.lucene.document.Field;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class LuceneObject implements ILuceneObject {
 	private boolean active = true;
-	
-	@Override
-	public boolean getLuceneActive() {
-		return active;
-	}
+	private long modified;
 
 	@Override
 	public HashMap<String, Field> luceneFields() {
@@ -41,10 +38,27 @@ public class LuceneObject implements ILuceneObject {
 	public String luceneTitle() {
 		return null;
 	}
+	
+	@Override
+	public boolean getLuceneActive() {
+		return active;
+	}
 
 	@Override
+	@JsonIgnore
 	public void setLuceneActive(boolean active) {
 		this.active = active;
+	}
+
+	@Override
+	@JsonIgnore
+	public long getLuceneModified() {
+		return modified;
+	}
+
+	@Override
+	public void setLuceneModified(long modified) {
+		this.modified = modified;
 	}
 
 }

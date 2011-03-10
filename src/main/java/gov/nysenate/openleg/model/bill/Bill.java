@@ -7,6 +7,7 @@ import gov.nysenate.openleg.lucene.LuceneField;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -43,17 +44,14 @@ public class Bill extends SenateObject  {
 	@LuceneField
 	protected String sameAs;
 	
+	protected HashSet<String> previousVersions;
+	
 	@LuceneField
 	protected Person sponsor;
 	
 	@XStreamAlias("cosponsors")
 	@LuceneField
 	protected List<Person> coSponsors;
-	
-	@XStreamConverter(BillListConverter.class)
-//	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
-	@LuceneField
-	protected List<String> amendments;
 	
 	@LuceneField
 	protected String summary;
@@ -129,7 +127,9 @@ public class Bill extends SenateObject  {
 		return sameAs;
 	}
 
-
+	public HashSet<String> getPreviousVersions() {
+		return previousVersions;
+	}
 
 	public Person getSponsor() {
 		return sponsor;
@@ -140,13 +140,6 @@ public class Bill extends SenateObject  {
 	public List<Person> getCoSponsors() {
 		return coSponsors;
 	}
-
-
-
-	public List<String> getAmendments() {
-		return amendments;
-	}
-
 
 
 	public String getSummary() {
@@ -240,7 +233,9 @@ public class Bill extends SenateObject  {
 		this.sameAs = sameAs;
 	}
 
-
+	public void setPreviousVersions(HashSet<String> previousVersions) {
+		this.previousVersions = previousVersions;
+	}
 
 	public void setSponsor(Person sponsor) {
 		this.sponsor = sponsor;
@@ -251,13 +246,6 @@ public class Bill extends SenateObject  {
 	public void setCoSponsors(List<Person> coSponsors) {
 		this.coSponsors = coSponsors;
 	}
-
-
-
-	public void setAmendments(List<String> amendments) {
-		this.amendments = amendments;
-	}
-
 
 
 	public void setSummary(String summary) {
@@ -346,6 +334,13 @@ public class Bill extends SenateObject  {
 		}
 		votes.remove(vote);
 	}
+	
+	public void addPreviousVersion(String previousVersion) {
+		if(previousVersions == null) {
+			previousVersions = new HashSet<String>();
+		}
+		previousVersions.add(previousVersion);
+	}
 
 
 	@Override
@@ -367,6 +362,8 @@ public class Bill extends SenateObject  {
 			return;
 		}
 		Bill bill = (Bill)object;
+		
+		super.merge(object);
 		
 		if(!getSenateBillNo().equals(bill.getSenateBillNo())) {
 			return;
@@ -525,16 +522,16 @@ public class Bill extends SenateObject  {
 			if(bill.getCoSponsors() != null && !bill.getCoSponsors().isEmpty()) {
 				this.coSponsors = bill.getCoSponsors();
 			}
-		}
+		}	
 		
-		if(amendments == null) {
-			amendments = bill.getAmendments();
+		if(previousVersions == null) {
+			previousVersions = bill.getPreviousVersions();
 		}
 		else {
-			if(bill.getAmendments() != null && !bill.getAmendments().isEmpty()) {
-				this.amendments = bill.getAmendments();
+			if(bill.getPreviousVersions() != null) {
+				previousVersions.addAll(bill.getPreviousVersions());
 			}
-		}		
+		}
 	}
 	
 	@JsonIgnore
@@ -618,18 +615,6 @@ public class Bill extends SenateObject  {
 		StringBuilder response = new StringBuilder();
 		for( Person sponsor : coSponsors) {
 			response.append(sponsor.getFullname() + ", ");
-		}
-		return response.toString().replaceAll(", $", "");
-	}
-	
-	@JsonIgnore
-	public String getLuceneAmendments() {
-		if(amendments == null)
-			return "";
-		
-		StringBuilder response = new StringBuilder();
-		for(String amendment : amendments) {
-			response.append(amendment + ", ");
 		}
 		return response.toString().replaceAll(", $", "");
 	}

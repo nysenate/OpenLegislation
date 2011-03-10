@@ -51,15 +51,14 @@ public class SearchEngine2 extends SearchEngine {
 	}
 
 	private SearchEngine2() {
+		//TODO
 		super("/usr/local/openleg/lucene/2");
 		logger = Logger.getLogger(SearchEngine2.class);
 	}
 	
-	public static synchronized SearchEngine2 getInstance ()
-	{
+	public static synchronized SearchEngine2 getInstance (){ 
 		
-		if (_instance == null)
-		{
+		if (_instance == null) {
 			_instance = new SearchEngine2();
 		}
 		

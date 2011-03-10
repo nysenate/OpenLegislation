@@ -32,7 +32,7 @@ $(document).ready(function(){
 			var senator = x;
 			var bills = json.senatorBills[x];
 
-			html += "<div class=\"box\" onclick=\"window.open('/legislation/sponsor/" + senator.replace(" ","+") + "','_blank');\">";
+			html += "<div class=\"box\" onclick=\"window.open('/legislation/sponsor/" + senator.replace(/ /g,"+") + "?filter=oid:s*','_blank');\">";
 			html +=		"<div class=\"boxLabel\">";
 			html +=			senator;
 			html +=		"</div>";
@@ -47,7 +47,7 @@ $(document).ready(function(){
 		for(x in json.committeeBills) {
 			var committee = x;
 			var bills = json.committeeBills[x];
-			html += "<div class=\"box\" onclick=\"window.open('/legislation/committee/" + committee.replace(" ","+") + "','_blank');\">";
+			html += "<div class=\"box\" onclick=\"window.open('/legislation/committee/" + committee.replace(/ /g,"+") + "','_blank');\">";
 			html +=		"<div class=\"boxLabel\">";
 			html +=			committee;
 			html +=		"</div>";

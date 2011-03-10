@@ -59,21 +59,11 @@ public class ReportBuilder {
 	}
 
 	public ReportBuilder() {
-		//default interval is sunday 12:00:00 am to saturday 11:59:59 pm
 		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.DAY_OF_WEEK, 1);
-		cal.set(Calendar.HOUR, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		start = cal.getTimeInMillis();
-
-		cal.set(Calendar.DAY_OF_WEEK, 6);
-		cal.set(Calendar.HOUR, 23);
-		cal.set(Calendar.MINUTE, 59);
-		cal.set(Calendar.SECOND, 59);
-		cal.set(Calendar.MILLISECOND, 999);
 		end = cal.getTimeInMillis();
+		
+		cal.set(Calendar.DATE, cal.get(Calendar.DATE) - 7);
+		start = cal.getTimeInMillis();
 
 		report = new Report(start, end);
 	}
@@ -245,7 +235,7 @@ public class ReportBuilder {
 		while ((in = br.readLine()) != null) {
 			m = pattern.matcher(in);
 			if (m.find()) {
-				retMap.put(m.group(1), getNumberResultsForQuery("otype:bill AND sponsor:\"" + URLDecoder
+				retMap.put(m.group(1), getNumberResultsForQuery("otype:bill AND oid:s* AND sponsor:\"" + URLDecoder
 					.decode(m.group(1) + "\" AND year:" + year, "utf-8")));
 			}
 		}

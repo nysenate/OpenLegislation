@@ -253,18 +253,19 @@ public class BasicParser implements OpenLegConstants {
 					}
 					
 					
-					bill = getBill(line);
-					
-//					if(currentBill.getSenateBillNo().equals("S1959-2011")) {
-//						System.out.println(bill.getSenateBillNo() + ": " + line);
-//					}
+					try {
+						bill = getBill(line);
+					}
+					catch (NumberFormatException nfe) {
+						continue;
+					}
 					
 					if (lineCode == '1'){ //new bill
 						if(currentBill != null) {
 							commitCurrentBill();
 						}
 						
-						if (lineData.charAt(0)!='0') {
+						if (((int)lineData.charAt(0)) != 0) {
 							//SOBI.D100106.T214552.TXT:2009S06415 1JOHNSON C           000000000014825020
 							//SOBI.D100113.T200727.TXT:2009S06457 1SCHNEIDERMAN        00000
 							int zeroIdx = lineData.indexOf("0000");
@@ -276,8 +277,24 @@ public class BasicParser implements OpenLegConstants {
 										bill.setSponsor(getPerson(sponsor));
 									else 
 										currentBill = null;
-								}
+								}								
 							}
+						}
+						else {
+							lineData = lineData.replaceAll("\\p{Cntrl}","");
+							if(lineData.indexOf("00000", 5) == -1) {
+								String billId = lineData.substring(5,12);
+								int year = Integer.parseInt(lineData.substring(12,16));
+								year = (year % 2 == 0 ? (year-1):year);
+								
+								String billType = billId.substring(0,1);
+								String billRev = billId.substring(billId.length()-1).trim();
+								int billNumber = Integer.parseInt(billId.substring(1,billId.length()-1));
+								
+								billId = billType + billRev + billNumber + "-" + year;
+								bill.addPreviousVersion(billId);
+							}
+							
 						}
 					}
 					else if (lineCode == 'M')//memo text
@@ -487,7 +504,7 @@ public class BasicParser implements OpenLegConstants {
 			if (memoBuffer == null)
 				memoBuffer = new StringBuffer();
 			
-			memoBuffer.append(line.replaceAll("¤", "&sect;"));
+			memoBuffer.append(line.replaceAll("§", "&sect;"));
 			memoBuffer.append('\n');
 		}
 		return bill;
@@ -758,7 +775,6 @@ public class BasicParser implements OpenLegConstants {
 		
 		if (summaryBuffer != null) {
 			
-//			System.out.println(currentBill.getSenateBillNo() + "\n--->" + summaryBuffer + "\n--->" + tempSummaryBuffer);
 			currentBill.setSummary(summaryBuffer.toString());			
 			summaryBuffer = null;
 			tempSummaryBuffer = null;

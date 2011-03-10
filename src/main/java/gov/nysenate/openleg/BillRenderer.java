@@ -11,7 +11,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jdom.Document;
@@ -134,32 +133,6 @@ public class BillRenderer {
 			{
 				elemBill.setAttribute("assemblySameAs",bill.getSameAs());
 				elemBill.setAttribute("sameAs",bill.getSameAs());
-			}
-			
-			try
-			{
-			
-				Element elemAmds = new Element("amendments");
-				
-				List<String> billsAmd = bill.getAmendments();
-				Iterator<String> itAmd = billsAmd.iterator();
-				String billAmend = null;
-				while (itAmd.hasNext())
-				{
-					billAmend = itAmd.next();
-					if (billAmend.equals(bill.getSenateBillNo()))
-						continue;
-					Element elemAmd = new Element("amendment");
-					elemAmd.setAttribute("id",billAmend);
-					elemAmds.addContent(elemAmd);
-				}
-				
-				elemBill.addContent(elemAmds);
-				
-			}
-			catch (Exception e)
-			{
-				
 			}
 			
 			try

@@ -2,13 +2,15 @@ package gov.nysenate.openleg.lucene;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 
 
 public class DocumentBuilder {
+	
+	private static Logger logger = Logger.getLogger(DocumentBuilder.class);
 	
 	public static final String JAVA_PRIMITIVES = "char|byte|short|int|long|float|double|boolean|void|String";
 	public static final String GET = "get";
@@ -74,12 +76,13 @@ public class DocumentBuilder {
 						DEFAULT_STORE,
 						DEFAULT_INDEX));
 			
-			String whenTimeString = new Date().getTime() + "";
 			fields.put(MODIFIED, new org.apache.lucene.document.Field(
 					MODIFIED,
-					whenTimeString,
+					o.getLuceneModified() + "",
 					DEFAULT_STORE,
 					DEFAULT_INDEX));
+			
+			logger.info("MODIFIED: " + o.getLuceneModified());
 			
 			fields.put(ACTIVE, new org.apache.lucene.document.Field(
 					ACTIVE,

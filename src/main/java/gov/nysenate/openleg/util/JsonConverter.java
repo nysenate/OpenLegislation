@@ -147,6 +147,18 @@ public class JsonConverter {
 							}
 							
 						}
+						else if(type.equals("HashSet")) {
+							try {
+								root.add(f.getName(),
+										(JsonElement)JsonConverter.class.getDeclaredMethod("hashSet" + o.getClass().getSimpleName(),Collection.class)
+										.invoke(null,(List<?>)method.invoke(o)));
+								
+							}
+							catch (Exception e) {
+								//e.printStackTrace();
+							}
+							
+						}
 						else if(type.equals("Person")) {
 							
 							Person p;
@@ -200,6 +212,27 @@ public class JsonConverter {
 	 * they loop back to converter, in other cases they are simply iterated through and
 	 * returned.
 	 */
+	
+	@SuppressWarnings("unchecked")
+	private static JsonArray hashSetBill(Collection c)  throws Exception  {
+		JsonArray jarray = new JsonArray();
+		
+		if(((List)c).iterator().hasNext()) {
+			
+			Object o = ((List)c).iterator().next();
+			if(o instanceof String) {
+				List<String> strings = (List<String>)c;
+				
+				for(String name:strings) {
+					JsonPrimitive jp = new JsonPrimitive(name);
+					
+					jarray.add(jp);
+				}
+			}
+		}
+		
+		return jarray;
+	}
 	
 	@SuppressWarnings("unchecked")
 	private static JsonArray listBill(Collection c)  throws Exception  {

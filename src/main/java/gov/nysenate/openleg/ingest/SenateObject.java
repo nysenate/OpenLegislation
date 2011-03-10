@@ -3,10 +3,12 @@ package gov.nysenate.openleg.ingest;
 import gov.nysenate.openleg.lucene.LuceneObject;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.lucene.document.Field;
 
 public class SenateObject extends LuceneObject implements ISenateObject {
+	HashSet<String> sobiReferenceList = new HashSet<String>();
 
 	@Override
 	public int getYear() {
@@ -15,7 +17,7 @@ public class SenateObject extends LuceneObject implements ISenateObject {
 
 	@Override
 	public void merge(ISenateObject obj) {
-		return;
+		this.sobiReferenceList.addAll(obj.getSobiReferenceList());
 	}
 
 	@Override
@@ -46,5 +48,20 @@ public class SenateObject extends LuceneObject implements ISenateObject {
 	@Override
 	public String luceneTitle() {
 		return null;
+	}
+
+	@Override
+	public HashSet<String> getSobiReferenceList() {
+		return sobiReferenceList;
+	}
+
+	@Override
+	public void setSobiReferenceList(HashSet<String> sobiReferenceList) {
+		this.sobiReferenceList = sobiReferenceList;
+	}
+
+	@Override
+	public void addSobiReference(String reference) {
+		sobiReferenceList.add(reference);
 	}
 }

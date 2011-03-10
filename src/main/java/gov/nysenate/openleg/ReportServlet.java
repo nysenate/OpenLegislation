@@ -60,13 +60,13 @@ public class ReportServlet extends HttpServlet {
 		doGet(request, response);
 	}
 	
-	public static Report getReport() {
+	public static synchronized Report getReport() {
 		if(report == null) {
 			generateReport();
 		}
 		else {
 			if(new Date().getTime() - timeGenerated > 900000) {
-				return generateReport();
+				generateReport();
 			}
 		}
 		return report;

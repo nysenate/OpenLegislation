@@ -130,6 +130,8 @@ public class Agenda extends SenateObject {
 		if(!(obj instanceof Agenda))
 			return;
 		
+		super.merge(obj);
+		
 		if(this.addendums == null || this.addendums.isEmpty()) {
 			this.addendums = ((Agenda)obj).getAddendums();
 		}

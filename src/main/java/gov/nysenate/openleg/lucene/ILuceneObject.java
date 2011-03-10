@@ -12,4 +12,6 @@ public interface ILuceneObject {
 	public HashMap<String,Field> luceneFields();
 	public void setLuceneActive(boolean active);
 	public boolean getLuceneActive();
+	public void setLuceneModified(long modified);
+	public long getLuceneModified();
 }
