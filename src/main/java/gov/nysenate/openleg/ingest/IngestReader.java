@@ -62,7 +62,7 @@ public class IngestReader {
 	
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
-						
+		
 		if(args.length == 2) {
 			String command = args[0];
 			String p1 = args[1];

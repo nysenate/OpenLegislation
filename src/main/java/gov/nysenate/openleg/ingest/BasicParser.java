@@ -9,9 +9,11 @@ import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.util.BillCleaner;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -75,7 +77,7 @@ public class BasicParser implements OpenLegConstants {
 	}
 	
 	public ArrayList<Bill> handleBill(String dataPath, char lineCodeToMatch) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(dataPath));
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(dataPath), "ISO-8859-1"));
 		parseSOBIFile (br,lineCodeToMatch);
 		br.close();
 		
@@ -504,9 +506,10 @@ public class BasicParser implements OpenLegConstants {
 			if (memoBuffer == null)
 				memoBuffer = new StringBuffer();
 			
-			memoBuffer.append(line.replaceAll("§", "&sect;"));
+			memoBuffer.append(line.replaceAll("\\xa7", "&sect;").replaceAll("\\xDF", "&sect;"));
 			memoBuffer.append('\n');
 		}
+		
 		return bill;
 	}
 	
@@ -635,7 +638,7 @@ public class BasicParser implements OpenLegConstants {
 			if (textBuffer == null)
 				textBuffer = new StringBuffer();
 			
-			textBuffer.append(line.replaceAll("¤", "&sect;"));
+			textBuffer.append(line.replaceAll("\\xa7", "&sect;").replaceAll("\\xDF", "&sect;"));
 			textBuffer.append('\n');
 			
 		}
@@ -805,8 +808,9 @@ public class BasicParser implements OpenLegConstants {
 			}
 			textBuffer = null;
 		}
-		
+
 		if (memoBuffer != null) {
+
 			currentBill.setMemo(memoBuffer.toString());
 			memoBuffer = null;
 		}
