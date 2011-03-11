@@ -51,7 +51,6 @@ public class LuceneObject implements ILuceneObject {
 	}
 
 	@Override
-	@JsonIgnore
 	public long getLuceneModified() {
 		return modified;
 	}

@@ -25,12 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
-
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
-
 
 public class BasicParser implements OpenLegConstants {
 	private static Logger logger = Logger.getLogger(BasicParser.class);

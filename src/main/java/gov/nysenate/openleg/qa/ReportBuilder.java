@@ -51,13 +51,6 @@ public class ReportBuilder {
 	long time = new Date().getTime();
 	long oldestMod = time;
 
-	public ReportBuilder(long start, long end) {
-		this.start = start;
-		this.end = end;
-
-		report = new Report(start, end);
-	}
-
 	public ReportBuilder() {
 		Calendar cal = Calendar.getInstance();
 		end = cal.getTimeInMillis();
@@ -72,7 +65,7 @@ public class ReportBuilder {
 		return run(SessionYear.getSessionYear() + "");
 	}
 
-	public Report run(String year) throws ParseException, IOException {
+	public Report run(String year) throws ParseException, IOException {		
 		//add range counts with new, occurred and total
 		ArrayList<ReportType> types = new ArrayList<ReportType>();
 		types.add(simpleNumberResults("bill"));
@@ -203,6 +196,14 @@ public class ReportBuilder {
 		if (toggle) {
 			query += " AND modified:[" + start + " TO " + end + "]";
 		}
+		
+		if(type.contains("bill")) {
+			query += " AND year:" + SessionYear.getSessionYear();
+		}
+		else {
+			query += " AND when:["  + SessionYear.getSessionStart() + " TO " + SessionYear.getSessionEnd() + "]";
+		}
+		
 		return getNumberResultsForQuery(query);
 	}
 

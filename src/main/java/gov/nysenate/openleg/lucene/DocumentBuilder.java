@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 
@@ -78,7 +80,7 @@ public class DocumentBuilder {
 			
 			fields.put(MODIFIED, new org.apache.lucene.document.Field(
 					MODIFIED,
-					o.getLuceneModified() + "",
+					(o.getLuceneModified() == 0 ? new Date().getTime() : o.getLuceneModified()) + "",
 					DEFAULT_STORE,
 					DEFAULT_INDEX));
 			

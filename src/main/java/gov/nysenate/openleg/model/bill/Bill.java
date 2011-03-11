@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.StringTokenizer;
 
+
 import org.apache.lucene.document.Field;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
@@ -509,6 +510,10 @@ public class Bill extends SenateObject  {
 			if(bill.getVotes() != null) {
 				for(Vote vote:bill.getVotes()) {
 					if(!this.votes.contains(vote)) {
+						this.votes.add(vote);
+					}
+					else {
+						this.votes.remove(vote);
 						this.votes.add(vote);
 					}
 				}

@@ -56,6 +56,8 @@ public class IngestReader {
 	CommitteeParser committeeParser = null;
 	SearchEngine2 searchEngine = null;
 	
+	private final long THE_TIME = new Date().getTime();
+	
 	ArrayList<Calendar> calendars;
 	ArrayList<Bill> bills;
 	ArrayList<ISenateObject> committeeUpdates;
@@ -348,7 +350,7 @@ public class IngestReader {
 				//it is either adding or removing a vote from an existing bill
 				//which has been deserialized or creating a new bill
 				//in which case merging isn't necessary
-				writeBills(new ArrayList<Bill>(Arrays.asList(((Bill)so))), file, false);
+				writeBills(new ArrayList<Bill>(Arrays.asList(((Bill)so))), file, true);
 			}
 			else if(so instanceof Agenda) {
 				writeSenateObject(so, Agenda.class, file, true);
@@ -387,7 +389,7 @@ public class IngestReader {
 	}
 	
 	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, boolean merge) {
-		writeSenateObject(obj, clazz, new Date().getTime(), merge);
+		writeSenateObject(obj, clazz, THE_TIME, merge);
 	}
 	
 	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, long modified, boolean merge) {
@@ -604,6 +606,7 @@ public class IngestReader {
 		
 		if(temp != null) {
 			temp.setLuceneActive(false);
+			
 			this.indexSenateObject(temp);
 		}
 	}

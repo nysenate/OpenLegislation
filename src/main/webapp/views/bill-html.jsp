@@ -342,7 +342,7 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
  <h3><%=senateBillNo%> Text</h3>
 <%if (bill.getFulltext()!=null){
   
-  String billText = TextFormatter.lrsPrinter(bill.getFulltext().replaceAll("&sect;","§"));
+  String billText = TextFormatter.lrsPrinter(bill.getFulltext());
   billText = TextFormatter.removeBillLineNumbers (billText);
   
   %><pre><%=billText %></pre><%} else{%>Not Available.<%}%>

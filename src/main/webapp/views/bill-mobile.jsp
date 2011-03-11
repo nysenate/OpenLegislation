@@ -111,7 +111,7 @@ DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 
 String billSummary = bill.getSummary();
 String billMemo = bill.getMemo();
-String billText = bill.getFulltext().replaceAll("&sect;","§");
+String billText = bill.getFulltext();
 
 if (bill.getSponsor()!=null)
 	title += " - " + bill.getSponsor().getFullname();
