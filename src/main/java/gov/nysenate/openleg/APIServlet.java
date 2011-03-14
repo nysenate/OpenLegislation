@@ -351,9 +351,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			else {
 				searchString = ApiHelper.dateReplace(searchString);
 			}
-			
-			System.out.println(searchString);
-			
+						
 			req.setAttribute("sortField", sortField);
 			req.setAttribute("sortOrder", Boolean.toString(sortOrder));
 			req.setAttribute("type", type);

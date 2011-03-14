@@ -49,7 +49,9 @@ public class ReportBuilder {
 	long start;
 	long end;
 	long time = new Date().getTime();
-	long oldestMod = time;
+	long newestMod = 0L;
+	
+	final static double MS_IN_DAY = 86400000.0;
 
 	public ReportBuilder() {
 		Calendar cal = Calendar.getInstance();
@@ -88,8 +90,7 @@ public class ReportBuilder {
 		addBillListToReport("title", year, billReportMap);
 		addBillListToReport("actions", year, billReportMap);
 		
-		double MS_IN_DAY = 86400000.0;
-		double MS_IN_HOUR = 3600000.0;
+		
 		
 		//create and sort by heat		
 		TreeSet<ReportBill> billReportSet = new TreeSet<ReportBill>(new ReportBill.ByHeat());
@@ -98,17 +99,15 @@ public class ReportBuilder {
 			double mod = billReportMap.get(key).modified;
 			int size = billReportMap.get(key).missingFields.size();
 			
-			double difference = Math.abs((oldestMod + 1) - mod) + 0.0;
-			double offset = 0;
-			if(difference > MS_IN_DAY) {
-				offset = 1;
-			}
+			double difference = Math.abs((newestMod + 1) - mod) + 0.0;
 			
-			//an attempt to rank "heat" based on how many fields are missing and how long they've been missing
-			double hoursDiff = (difference % MS_IN_DAY) / MS_IN_HOUR;
-			hoursDiff = hoursDiff > 3 ? 4 : hoursDiff;
-			
-			double heat = 10 - (((hoursDiff)) / ((Math.pow(size*(2 + offset),1.5)) )* 10);
+			double daysDiff = difference / MS_IN_DAY;
+			if(daysDiff < 1.5)
+				daysDiff = 1.25;
+			if(daysDiff > 5)
+				daysDiff = (daysDiff / 365) + 6;
+					
+			double heat = 10 - (((daysDiff)) / ((Math.pow(size * daysDiff,1.5)) )* 10);
 
 			billReportMap.get(key).setHeat(new BigDecimal(heat).setScale(1,BigDecimal.ROUND_UP).doubleValue());
 			billReportSet.add(billReportMap.get(key));
@@ -137,8 +136,8 @@ public class ReportBuilder {
 			if((reportBill = billReportMap.get(bill.getSenateBillNo())) != null) {
 				reportBill.addMissingField(field);
 				
-				if(reportBill.modified < oldestMod)
-					oldestMod = reportBill.modified;
+				if(reportBill.modified > newestMod)
+					newestMod = reportBill.modified;
 			}
 			else {
 				reportBill = new ReportBill(result.getLastModified(), bill, field);

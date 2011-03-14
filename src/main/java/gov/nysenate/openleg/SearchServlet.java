@@ -290,14 +290,13 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 						
 			//default behavior is to return only active bills, so if a user searches
 			//s1234 and s1234a is available then s1234a should be returned
-			if((search == null && 	(term != null && term.contains("otype:bill"))) 
-					|| (type != null && type.equals("bill"))) {
-				if(sortField == null) {
-					sortField = "sortindex";
-					sortOrder = false;
-					term += " AND active:true";
-					type = "bill";
-				}
+			if(sortField == null && (((search != null && search.contains("otype:bill")) 
+					|| (term != null && term.contains("otype:bill"))) 
+					|| (type != null && type.equals("bill")))) {
+				
+				sortField = "sortindex";
+				sortOrder = false;
+				type = "bill";
 			}
 			
 			if (sortField!=null && !sortField.equals("")) {

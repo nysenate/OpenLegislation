@@ -111,11 +111,8 @@ $(document).ready(function(){
 		if(heat > 4) {
 			return "#ffbbaa";
 		}
-		if(heat > 2) {
+		else {
 			return "#ffeedd";
-		}
-		if(heat > 0) {
-			return "white";
 		}
 	}
 

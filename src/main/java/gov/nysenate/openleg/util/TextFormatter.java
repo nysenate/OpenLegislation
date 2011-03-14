@@ -308,7 +308,7 @@ public class TextFormatter {
 		while(st.hasMoreTokens()) {
 			String line = st.nextToken();
 			
-			Pattern pagePattern = Pattern.compile("^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$");
+			Pattern pagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$)");
 			Matcher pageMatcher = pagePattern.matcher(line);
 						
 			Pattern linePattern = Pattern.compile("^\\s{3,4}\\d{1,2}\\s*");

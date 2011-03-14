@@ -8,6 +8,7 @@ import gov.nysenate.openleg.search.SearchResult;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedSet;
@@ -85,6 +86,9 @@ public class BillCleaner implements OpenLegConstants {
 	private static String getNewestAmendment(String billNumber) {
 		ArrayList<Result> results = getRelatedBills(billNumber);
 		billNumber = billNumber + "-" + SessionYear.getSessionYear();
+		
+		if(results.isEmpty())
+			return billNumber;
 		
 		ArrayList<String> billNumbers = new ArrayList<String>();				
 		for(Result result:results) {
