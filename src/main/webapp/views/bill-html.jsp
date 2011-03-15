@@ -226,7 +226,7 @@ for (Iterator<SearchResult> itCals = rCals.iterator(); itCals.hasNext();)
 	SearchResult cal = itCals.next();
 	
 	%>
-<a href="<%=appPath%>/calendar/<%=cal.getId()%>" class="sublink"><%=cal.getFields().get("type")%>:<%=cal.getTitle()%></a><%if (itCals.hasNext()){%>,<%}
+<a href="<%=appPath%>/calendar/<%=cal.getId()%>" class="sublink"><%=cal.getFields().get("type")%>: <%=cal.getFields().get("date")%></a><%if (itCals.hasNext()){%>,<%}
 
 }
 }
