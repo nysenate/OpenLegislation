@@ -22,10 +22,12 @@ import gov.nysenate.openleg.util.XmlSerializer;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -65,50 +67,69 @@ public class IngestReader {
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
 		
-		if(args.length == 2) {
+		boolean tog = true;
+		
+		if(args.length > 0) {
 			String command = args[0];
-			String p1 = args[1];
-			if(command.equals("-gx")) {
-				XmlHelper.generateXml(p1);
+			if(args.length == 2) {
+				String p1 = args[1];
+				if(command.equals("-gx")) {
+					XmlHelper.generateXml(p1);
+				}
+				else if(command.equals("-b")) {
+					ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(p1, Bill.class))), null, false);
+				}
+				else if(command.equals("-c")) {
+					ir.indexSenateObject((Calendar)ir.loadObject(p1, Calendar.class));
+				}
+				else if(command.equals("-a")) {
+					ir.indexSenateObject((Agenda)ir.loadObject(p1, Agenda.class));
+				}
+				else if(command.equals("-t")) {
+					ir.indexSenateObject((Transcript)ir.loadObject(p1, Transcript.class));
+				}
+				else if(command.equals("-it")) {
+					ir.handleTranscript(p1);
+				}
+				else {
+					tog = false;
+				}
 			}
-			else if(command.equals("-b")) {
-				ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(p1, Bill.class))), null, false);
+			else if(args.length == 3){
+				String p1 = args[1];
+				String p2 = args[2];
+				if(command.equals("-i")) {
+					WRITE_DIRECTORY = p1;
+					ir.handlePath(p2);
+				}
+				else if(command.equals("-fc")) {
+					ir.fixCalendarBills(p1, p2);
+				}
+				else if(command.equals("-fa")) {
+					ir.fixAgendaBills(p1, p2);
+				}
+				else {
+					tog = false;
+				}
+				
 			}
-			else if(command.equals("-c")) {
-				ir.indexSenateObject((Calendar)ir.loadObject(p1, Calendar.class));
-			}
-			else if(command.equals("-a")) {
-				ir.indexSenateObject((Agenda)ir.loadObject(p1, Agenda.class));
-			}
-			else if(command.equals("-t")) {
-				ir.indexSenateObject((Transcript)ir.loadObject(p1, Transcript.class));
-			}
-			else if(command.equals("-it")) {
-				ir.handleTranscript(p1);
+			else if(args.length == 5) {
+				String p1 = args[1];
+				String p2 = args[2];
+				String p3 = args[3];
+				String p4 = args[4];
+				
+				if(command.equals("-pull")) {
+					ir.pullSobis(p1, p2, p3, p4);
+				}
+				
 			}
 			else {
-				System.err.println("bad command");
+				tog = false;
 			}
 		}
-		else if(args.length == 3){
-			String command = args[0];
-			String p1 = args[1];
-			String p2 = args[2];
-			if(command.equals("-i")) {
-				WRITE_DIRECTORY = p1;
-				ir.handlePath(p2);
-			}
-			else if(command.equals("-fc")) {
-				ir.fixCalendarBills(p1, p2);
-			}
-			else if(command.equals("-fa")) {
-				ir.fixAgendaBills(p1, p2);
-			}
-			else {
-				System.err.println("bad command");
-			}
-		}
-		else {
+		
+		if(!tog) {
 			System.err.println("appropriate usage is:\n" +
 					"\t-i <json directory> <sobi directory> (to create index)\n" +
 					"\t-gx <sobi directory> (to generate agenda and calendar xml from sobi)\n" +
@@ -118,9 +139,12 @@ public class IngestReader {
 					"\t-c <calendar json path> (to reindex single calendar)\n" +
 					"\t-a <agenda json path> (to reindex single agenda)\n" +
 					"\t-t <transcript json path> (to reindex single transcript)" +
-					"\t-it <transcript sobi path> (to reindex dir of transcripts)\n");
+					"\t-it <transcript sobi path> (to reindex dir of transcripts)\n" +
+					"\t-pull <sobi directory> <output directory> <id> <year> (get an objects referencing sobis)");
 		}
 	}
+	
+	
 	
 	public ObjectMapper getMapper() {
 		if(mapper == null) {
@@ -161,10 +185,6 @@ public class IngestReader {
 		bills = new ArrayList<Bill>();
 		committeeUpdates = new ArrayList<ISenateObject>();
 	}
-	
-	
-	
-	
 	
 	/* TODO
 	 * FILE READING 
@@ -305,7 +325,7 @@ public class IngestReader {
 	}
 	
 	public ISenateObject loadObject(String id, String year, String type, Class<? extends ISenateObject> clazz) {
-		return loadObject(WRITE_DIRECTORY + year + "/" + type + "/" + id + ".json", clazz);
+		return loadObject(WRITE_DIRECTORY + "/" + year + "/" + type + "/" + id + ".json", clazz);
 	}
 	
 	/**
@@ -399,7 +419,7 @@ public class IngestReader {
 			if(obj == null)
 				return;
 						
-			File newFile = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
+			File newFile = new File(WRITE_DIRECTORY + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
 					
 			if(merge) {
 				obj = mergeSenateObject(obj, clazz, newFile);
@@ -421,14 +441,14 @@ public class IngestReader {
 		logger.info("Writing json to path: " + file.getAbsolutePath());
 		
 		if(file == null) 
-			file = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
+			file = new File(WRITE_DIRECTORY + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
 		
-		File dir = new File(WRITE_DIRECTORY + obj.getYear());
+		File dir = new File(WRITE_DIRECTORY + "/" + obj.getYear());
 		if(!dir.exists()) {
 			logger.info("creating directory: " + dir.getAbsolutePath());
 			dir.mkdir();
 		}
-		dir = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype());
+		dir = new File(WRITE_DIRECTORY + "/" + obj.getYear() + "/" + obj.luceneOtype());
 		if(!dir.exists()) {
 			logger.info("creating directory: " + dir.getAbsolutePath());
 			dir.mkdir();
@@ -456,7 +476,7 @@ public class IngestReader {
 	
 	public ISenateObject mergeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file) {		
 		if(file == null)
-			file = new File(WRITE_DIRECTORY + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
+			file = new File(WRITE_DIRECTORY  + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
 		
 		if(file.exists()) {
 			logger.info("Merging object with id: " + obj.luceneOid());
@@ -490,7 +510,7 @@ public class IngestReader {
 	}
 	
 	public boolean deleteFile(String id, String year, String type) {
-		return deleteFile(WRITE_DIRECTORY + year + "/" + type + "/" + id + ".json");
+		return deleteFile(WRITE_DIRECTORY + "/" + year + "/" + type + "/" + id + ".json");
 	}
 	
 	public boolean deleteFile(String path) {
@@ -737,5 +757,53 @@ public class IngestReader {
 		}
 				
 		return cal.getTimeInMillis();
+	}
+	
+	
+	public void pullSobis(String id, String year, String sobiDirectory, String writeDirectory) {
+		Bill bill = (Bill) this.loadObject(id, year, "bill", Bill.class);
+		for(String sobi:bill.getSobiReferenceList()) {
+			File sobiFile = new File(sobiDirectory + System.getProperty("file.separator") + sobi);
+			if(sobiFile.exists()) {
+				File copySobi = new File(writeDirectory + System.getProperty("file.separator") + sobi);
+				try {
+					copySobi.createNewFile();
+				} catch (IOException e) {
+					logger.warn(e);
+				}
+				
+				if(!copySobi.exists()) 
+					continue;
+				
+				FileChannel source = null;
+				FileChannel destination = null;
+				
+				try {
+					source = new FileInputStream(sobiFile).getChannel();
+					destination = new FileOutputStream(copySobi).getChannel();
+					destination.transferFrom(source, 0, source.size());
+				} catch (FileNotFoundException e) {
+					logger.warn(e);
+				} catch (IOException e) {
+					logger.warn(e);
+				}
+				finally {
+					if(source != null) {
+						try {
+							source.close();
+						} catch (IOException e) {
+							logger.warn(e);
+						}
+					}
+					if(destination != null) {
+						try {
+							destination.close();
+						} catch (IOException e) {
+							logger.warn(e);
+						}
+					}
+				}
+			}
+		}
 	}
 }
