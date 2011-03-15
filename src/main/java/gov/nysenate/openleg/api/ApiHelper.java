@@ -30,6 +30,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class ApiHelper implements OpenLegConstants {
 	private final static DateFormat DATE_FORMAT_MED = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
+	private final static DateFormat DATE_FORMAT_CUSTOM = new SimpleDateFormat("MMM d, yyyy");
 	
 	private static Logger logger = Logger.getLogger(ApiHelper.class);
 	
@@ -152,8 +153,7 @@ public class ApiHelper implements OpenLegConstants {
 					Supplemental supp = calendar.getSupplementals().get(0);
 
 					if (supp.getCalendarDate() != null) {
-						fields.put("date", supp.getCalendarDate()
-								.toLocaleString());
+						fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getCalendarDate()));
 
 						summary = "";
 
@@ -170,8 +170,7 @@ public class ApiHelper implements OpenLegConstants {
 						}
 					} else if (supp.getSequence() != null) {
 
-						fields.put("date", supp.getSequence().getActCalDate()
-								.toLocaleString());
+						fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getSequence().getActCalDate()));
 
 						summary = supp.getSequence().getCalendarEntries()
 								.size()
@@ -181,7 +180,7 @@ public class ApiHelper implements OpenLegConstants {
 					Transcript transcript = (Transcript) resultObj;
 
 					if (transcript.getTimeStamp() != null)
-						title = transcript.getTimeStamp().toLocaleString();
+						title = DATE_FORMAT_CUSTOM.format(transcript.getTimeStamp());
 					else
 						title = "Transcript - " + transcript.getLocation();
 
