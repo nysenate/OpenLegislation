@@ -64,6 +64,13 @@
   		<version>1.2.16</version>
   		<scope>compile</scope>
   	</dependency>
+  	<dependency>
+  		<groupId>com.madgag</groupId>
+  		<artifactId>org.eclipse.jgit</artifactId>
+  		<version>0.10.99.7-UNOFFICIAL-ROBERTO-RELEASE</version>
+  		<type>jar</type>
+  		<scope>compile</scope>
+  	</dependency>
   </dependencies>
   
   

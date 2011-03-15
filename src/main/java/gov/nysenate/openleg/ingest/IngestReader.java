@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonEncoding;
@@ -45,6 +46,15 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.codehaus.jackson.util.DefaultPrettyPrinter;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.ConcurrentRefUpdateException;
+import org.eclipse.jgit.api.errors.JGitInternalException;
+import org.eclipse.jgit.api.errors.NoFilepatternException;
+import org.eclipse.jgit.api.errors.NoHeadException;
+import org.eclipse.jgit.api.errors.NoMessageException;
+import org.eclipse.jgit.api.errors.WrongRepositoryStateException;
+import org.eclipse.jgit.errors.UnmergedPathException;
+import org.eclipse.jgit.lib.RepositoryBuilder;
 
 public class IngestReader {
 	
@@ -63,6 +73,8 @@ public class IngestReader {
 	SearchEngine2 searchEngine = null;
 	
 	private final long THE_TIME = new Date().getTime();
+	
+	Git repo;
 	
 	ArrayList<Calendar> calendars;
 	ArrayList<Bill> bills;
@@ -181,11 +193,19 @@ public class IngestReader {
 	
 	public IngestReader() {
 		searchEngine = SearchEngine2.getInstance();
-		
-		//repo = RepositoryBuilder().setGitDir("/home/OpenLegislation/legdata")
 		calendars = new ArrayList<Calendar>();
 		bills = new ArrayList<Bill>();
 		committeeUpdates = new ArrayList<ISenateObject>();
+		
+		try {
+			String dir = "/home/OpenLegislation/legdata/json/";
+			if(!new File(dir+".git/").exists()) {
+				Git.init().setDirectory(new File(dir)).call();
+			}
+			repo = new Git(new RepositoryBuilder().setWorkTree(new File("/home/OpenLegislation/legdata/json/")).build());
+		} catch(IOException e) {
+			logger.error(e);
+		}
 	}
 	
 	/* TODO
@@ -272,6 +292,31 @@ public class IngestReader {
 			
 			writeCommitteeUpdates(committeeUpdates, file);
 			committeeParser.clearUpdates();
+		}
+		try {
+			repo.add().addFilepattern(".").call();
+			repo.commit().setMessage(file.getName()).setAuthor("Tester", "notmyfault@nysenate.gov").call();
+		} catch(WrongRepositoryStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoHeadException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoMessageException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnmergedPathException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ConcurrentRefUpdateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JGitInternalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoFilepatternException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
