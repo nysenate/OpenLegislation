@@ -46,6 +46,10 @@ import org.codehaus.jackson.util.DefaultPrettyPrinter;
 
 public class IngestReader {
 	
+	@SuppressWarnings("serial")
+	public static class IngestException extends Exception {}
+	
+	
 	private static Logger logger = Logger.getLogger(IngestReader.class);
 	
 	private static String WRITE_DIRECTORY = "/usr/local/openleg/json/";	
@@ -65,50 +69,54 @@ public class IngestReader {
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
 		
-		if(args.length == 2) {
-			String command = args[0];
-			String p1 = args[1];
-			if(command.equals("-gx")) {
-				XmlHelper.generateXml(p1);
+		try {
+			if(args.length == 2) {
+				String command = args[0];
+				String p1 = args[1];
+				if(command.equals("-gx")) {
+					XmlHelper.generateXml(p1);
+				}
+				else if(command.equals("-b")) {
+					ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(p1, Bill.class))), null, false);
+				}
+				else if(command.equals("-c")) {
+					ir.indexSenateObject((Calendar)ir.loadObject(p1, Calendar.class));
+				}
+				else if(command.equals("-a")) {
+					ir.indexSenateObject((Agenda)ir.loadObject(p1, Agenda.class));
+				}
+				else if(command.equals("-t")) {
+					ir.indexSenateObject((Transcript)ir.loadObject(p1, Transcript.class));
+				}
+				else if(command.equals("-it")) {
+					ir.handleTranscript(p1);
+				}
+				else {
+					throw new IngestException();
+				}
 			}
-			else if(command.equals("-b")) {
-				ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(p1, Bill.class))), null, false);
-			}
-			else if(command.equals("-c")) {
-				ir.indexSenateObject((Calendar)ir.loadObject(p1, Calendar.class));
-			}
-			else if(command.equals("-a")) {
-				ir.indexSenateObject((Agenda)ir.loadObject(p1, Agenda.class));
-			}
-			else if(command.equals("-t")) {
-				ir.indexSenateObject((Transcript)ir.loadObject(p1, Transcript.class));
-			}
-			else if(command.equals("-it")) {
-				ir.handleTranscript(p1);
+			else if(args.length == 3){
+				String command = args[0];
+				String p1 = args[1];
+				String p2 = args[2];
+				if(command.equals("-i")) {
+					WRITE_DIRECTORY = p1;
+					ir.handlePath(p2);
+				}
+				else if(command.equals("-fc")) {
+					ir.fixCalendarBills(p1, p2);
+				}
+				else if(command.equals("-fa")) {
+					ir.fixAgendaBills(p1, p2);
+				}
+				else {
+					throw new IngestException();
+				}
 			}
 			else {
-				System.err.println("bad command");
+				throw new IngestException();
 			}
-		}
-		else if(args.length == 3){
-			String command = args[0];
-			String p1 = args[1];
-			String p2 = args[2];
-			if(command.equals("-i")) {
-				WRITE_DIRECTORY = p1;
-				ir.handlePath(p2);
-			}
-			else if(command.equals("-fc")) {
-				ir.fixCalendarBills(p1, p2);
-			}
-			else if(command.equals("-fa")) {
-				ir.fixAgendaBills(p1, p2);
-			}
-			else {
-				System.err.println("bad command");
-			}
-		}
-		else {
+		} catch(IngestException e) {
 			System.err.println("appropriate usage is:\n" +
 					"\t-i <json directory> <sobi directory> (to create index)\n" +
 					"\t-gx <sobi directory> (to generate agenda and calendar xml from sobi)\n" +
@@ -157,6 +165,7 @@ public class IngestReader {
 	public IngestReader() {
 		searchEngine = SearchEngine2.getInstance();
 		
+		//repo = RepositoryBuilder().setGitDir("/home/OpenLegislation/legdata")
 		calendars = new ArrayList<Calendar>();
 		bills = new ArrayList<Bill>();
 		committeeUpdates = new ArrayList<ISenateObject>();
