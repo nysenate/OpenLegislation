@@ -470,7 +470,7 @@ public class BasicParser implements OpenLegConstants {
 	}
 	
 	private void commitCurrentBill () {
-		if(currentBill != null)
+		if(currentBill == null)
 			return;
 		
 		persistBuffers();
