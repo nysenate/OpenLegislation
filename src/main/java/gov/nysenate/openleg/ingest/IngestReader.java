@@ -65,13 +65,13 @@ public class IngestReader {
 	
 	private static Logger logger = Logger.getLogger(IngestReader.class);
 	
-	private static String WRITE_DIRECTORY = "/usr/local/openleg/json/";	
+	private static String WRITE_DIRECTORY;
 	
-	BasicParser basicParser = null;
-	ObjectMapper mapper = null;
-	CalendarParser calendarParser = null;
-	CommitteeParser committeeParser = null;
-	SearchEngine2 searchEngine = null;
+	BasicParser basicParser;
+	CalendarParser calendarParser;
+	CommitteeParser committeeParser;
+	ObjectMapper mapper;
+	SearchEngine2 searchEngine;
 	
 	private final long THE_TIME = new Date().getTime();
 	
@@ -90,20 +90,25 @@ public class IngestReader {
 				if(command.equals("-gx")) {
 					XmlHelper.generateXml(args[1]);
 				}
-				else if(command.equals("-b")) {					
-					ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(args[1], Bill.class))), null, false);
+				else if(command.equals("-b")) {
+					//In the case of bills, we also need to make sure we reindex all ammended versions
+					Bill bill = (Bill)ir.loadObject(args[1], Bill.class);
+					if(ir.reindexAmendedVersions((Bill)bill))
+						bill.setLuceneActive(false);
+					ir.indexSenateObject(bill);
 				}
 				else if(command.equals("-c")) {
-					ir.indexSenateObject((Calendar)ir.loadObject(args[1], Calendar.class));
+					ir.indexSenateObject(ir.loadObject(args[1], Calendar.class));
 				}
 				else if(command.equals("-a")) {
-					ir.indexSenateObject((Agenda)ir.loadObject(args[1], Agenda.class));
+					ir.indexSenateObject(ir.loadObject(args[1], Agenda.class));
 				}
 				else if(command.equals("-t")) {
-					ir.indexSenateObject((Transcript)ir.loadObject(args[1], Transcript.class));
+					ir.indexSenateObject(ir.loadObject(args[1], Transcript.class));
 				}
 				else if(command.equals("-it")) {
-					ir.handleTranscript(args[1]);
+					//Processes, writes, and indexes a directory of transcripts
+					ir.handleTranscript(new File(args[1]));
 				}
 				else {
 					throw new IngestException();
@@ -112,7 +117,7 @@ public class IngestReader {
 			else if(args.length == 3){
 				if(command.equals("-i")) {
 					WRITE_DIRECTORY = args[1];
-					ir.processPath(new File(args[2]));
+					ir.processFile(new File(args[2]));
 				}
 				else if(command.equals("-fc")) {
 					ir.fixCalendarBills(args[1], args[2]);
@@ -159,114 +164,81 @@ public class IngestReader {
 		calendarParser = new CalendarParser(this);
 	}
 	
-	public void processPath(File path) {	
-		if (path.isDirectory())	{			
-			for(File child: sortFilesByName(path.listFiles())) {
-				if(child.isFile())
-					processFile(child);
-				else if(child.isDirectory())
-					processPath(child);
-			}
-			
-		} else
-			processFile(path);
-	}
-	
 	public void processFile(File file) {
-		try {
-			logger.warn("Reading file: " + file);
-			ArrayList<ISenateObject> objects = new ArrayList<ISenateObject>();
-			ArrayList<ILuceneObject> luceneObjects = new ArrayList<ILuceneObject>();
-			
-			long start = System.currentTimeMillis();
-			if(file.getName().endsWith(".TXT")) {
-				for(Bill bill: basicParser.handleBill(file.getAbsolutePath(), '-')) {
-					objects.add(processSenateObject(bill, Bill.class, file, true));
-				}
-				basicParser.clearBills();
-				
-			} else if(file.getName().contains("-calendar-")) {
-				XmlHelper.fixCalendar(file);
-				for(Calendar calendar:calendarParser.doParsing(file.getAbsolutePath())) {
-					objects.add(processSenateObject(calendar, Calendar.class, file, true));
-				}
-				calendarParser.clearCalendars();
-				
-			} else if(file.getName().contains("-agenda-")) {
-				for(ISenateObject obj:committeeParser.doParsing(file)) {
-					if(obj instanceof Bill)
-						objects.add(processSenateObject(obj,Bill.class,file,true));
-					else if(obj instanceof Agenda)
-						objects.add(processSenateObject(obj,Agenda.class,file,true));
-				}
-				committeeParser.clearUpdates();
-				
-			} else {
-				//This file doesn't belong here...
-				throw new IngestException();
-			}
-			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Processed Objects");
-			
-			//Write the objects
-			start = System.currentTimeMillis();
-			for(ISenateObject obj:objects) {
-				if(writeSenateObject(obj))
-					luceneObjects.add(obj);
-			}
-			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote Objects");
-			
-			//Index the objects
-			start = System.currentTimeMillis();
-			this.searchEngine.indexSenateObjects(
-					luceneObjects,
-					new LuceneSerializer[]{	new XmlSerializer(), new JsonSerializer()});
-			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Indexed Objects");
+		if(file.isDirectory()) {
+			for(File child: sortFilesByName(file.listFiles()))
+				processFile(child);
 
-			//Commit the changes
-			start = System.currentTimeMillis();
-			commit(file.getName());
-			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+		} else {
 			
-			logger.warn("Finished with file: "+file.getName());
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (IngestException e) {
-			// TODO Auto-generated catch block
-			//We don't care about this file, do nothing
-			//e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void writeBills(ArrayList<Bill> bills, File file, boolean merge) {
-		long start = System.currentTimeMillis();
-		for(Bill bill:bills) {
-			if(bill == null)
-				continue;
-			
-			//TODO
-			//if this returns true bill is not active
-			long start2 = System.currentTimeMillis();
-			if(reindexAmendedVersions(bill)) {
-				bill.setLuceneActive(false);
-			}
-			logger.warn("Amended took "+(System.currentTimeMillis()-start2)/1000.0);
-			writeSenateObject(bill, Bill.class, file, merge);
-		}
-		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote "+bills.size()+" bills");
-	}
+			try {
+				logger.warn("Reading file: " + file);
+				ArrayList<ISenateObject> objects = new ArrayList<ISenateObject>();
+				ArrayList<ILuceneObject> luceneObjects = new ArrayList<ILuceneObject>();
+				
+				long start = System.currentTimeMillis();
+				if(file.getName().endsWith(".TXT")) {
+					for(Bill bill: basicParser.handleBill(file.getAbsolutePath(), '-')) {
+						objects.add(processSenateObject(bill, Bill.class, file, true));
+					}
+					basicParser.clearBills();
+					
+				} else if(file.getName().contains("-calendar-")) {
+					XmlHelper.fixCalendar(file);
+					for(Calendar calendar:calendarParser.doParsing(file.getAbsolutePath())) {
+						objects.add(processSenateObject(calendar, Calendar.class, file, true));
+					}
+					calendarParser.clearCalendars();
+					
+				} else if(file.getName().contains("-agenda-")) {
+					for(ISenateObject obj:committeeParser.doParsing(file)) {
+						if(obj instanceof Bill)
+							objects.add(processSenateObject(obj,Bill.class,file,true));
+						else if(obj instanceof Agenda)
+							objects.add(processSenateObject(obj,Agenda.class,file,true));
+					}
+					committeeParser.clearUpdates();
+					
+				} else {
+					//This file doesn't belong here...
+					throw new IngestException();
+				}
+				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Processed Objects");
+				
+				//Write the objects
+				start = System.currentTimeMillis();
+				for(ISenateObject obj:objects) {
+					if(writeSenateObject(obj))
+						luceneObjects.add(obj);
+				}
+				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote Objects");
+				
+				//Index the objects we wrote successfully
+				start = System.currentTimeMillis();
+				this.searchEngine.indexSenateObjects(
+						luceneObjects,
+						new LuceneSerializer[]{	new XmlSerializer(), new JsonSerializer()});
+				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Indexed Objects");
 	
-	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file, boolean merge) {
-		if(file == null)
-			writeSenateObject(obj, clazz, merge);
-		else {
-			obj.addSobiReference(file.getName());
-			writeSenateObject(obj, clazz, getDateFromFileName(file.getName()), merge);
+				//Commit the changes made to the file system
+				start = System.currentTimeMillis();
+				commit(file.getName());
+				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+				
+				logger.warn("Finished with file: "+file.getName());
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (IngestException e) {
+				// TODO Auto-generated catch block
+				//We don't care about this file, do nothing
+				//e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -336,57 +308,6 @@ public class IngestReader {
 		
 	}
 	
-	//TODO this is pretty bad
-	public void handleTranscript(String path) {
-		File file = new File(path);
-		
-		if(file.isDirectory()) {
-			for(File temp:file.listFiles()) {
-				handleTranscript(temp.getAbsolutePath());
-			}
-		}
-		else {
-			Transcript trans = null;
-			
-			//transcripts often come incorrectly formatted..
-			//this attempts to reprocess and save the raw text
-			//if there is a parsing error, and then attempts
-			//parsing one more time
-			try {				
-				trans = basicParser.handleTranscript(path);
-			}
-			catch (Exception e) {
-				TranscriptFixer fixer = new TranscriptFixer();
-				List<String> in;
-				
-				try {
-					if((in = fixer.readContents(file)) != null) {
-						
-						List<String> ret = fixer.fix(in);
-						BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath()));
-						
-						for(String s:ret) {
-							bw.write(s);
-							bw.newLine();
-						}
-						
-						bw.close();
-						trans = basicParser.handleTranscript(path);
-					}
-				}
-				catch (Exception e2) {
-					e2.printStackTrace();
-					trans = null;
-				}
-				
-			}
-			if(trans != null) {
-				writeSenateObject(trans, Transcript.class, true);
-			}
-		}
-		
-	}
-	
 	public ISenateObject loadObject(String id, String year, String type, Class<? extends ISenateObject> clazz) {
 		return loadObject(WRITE_DIRECTORY + "/" + year + "/" + type + "/" + id + ".json", clazz);
 	}
@@ -415,7 +336,7 @@ public class IngestReader {
 	}
 	
 	public ISenateObject processSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file, boolean merge) {
-		//obj.addSobiReference(file.getName());
+		obj.addSobiReference(file.getName());
 		return processSenateObject(obj, clazz, getDateFromFileName(file.getName()), merge);
 	}
 	
@@ -578,6 +499,56 @@ public class IngestReader {
 		}
 		
 		return obj;
+	}
+	
+	//TODO this is pretty bad
+	public void handleTranscript(File file) {
+		if(file.isDirectory()) {
+			for(File temp:file.listFiles()) {
+				handleTranscript(temp);
+			}
+		}
+		else {
+			Transcript trans = null;
+			
+			//transcripts often come incorrectly formatted..
+			//this attempts to reprocess and save the raw text
+			//if there is a parsing error, and then attempts
+			//parsing one more time
+			try {				
+				trans = basicParser.handleTranscript(file.getAbsolutePath());
+
+			} catch (Exception e) {
+				try {
+					List<String> in;
+					TranscriptFixer fixer = new TranscriptFixer();
+					
+					if((in = fixer.readContents(file)) != null) {
+						
+						List<String> ret = fixer.fix(in);
+						BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath()));
+						
+						for(String s:ret) {
+							bw.write(s);
+							bw.newLine();
+						}
+						
+						bw.close();
+						trans = basicParser.handleTranscript(file.getAbsolutePath());
+					}
+					
+				} catch (Exception e2) {
+					e2.printStackTrace();
+					return; //We couldn't get a good read on the transcript
+				}
+			}
+			
+			//Conduct general processing, writing, and indexing
+			processSenateObject(trans,Transcript.class,true);
+			if(writeSenateObject(trans))
+				indexSenateObject(trans);
+		}
+		
 	}
 	
 	public boolean deleteSenateObject(ISenateObject so) {
