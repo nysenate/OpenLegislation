@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonEncoding;
@@ -84,62 +83,52 @@ public class IngestReader {
 		IngestReader ir = new IngestReader();
 		
 		try {
-			if(args.length > 0) {
-				String command = args[0];		
-				if(args.length == 2) {
-					String p1 = args[1];
-					if(command.equals("-gx")) {
-						XmlHelper.generateXml(p1);
-					}
-					else if(command.equals("-b")) {
-						ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(p1, Bill.class))), null, false);
-					}
-					else if(command.equals("-c")) {
-						ir.indexSenateObject((Calendar)ir.loadObject(p1, Calendar.class));
-					}
-					else if(command.equals("-a")) {
-						ir.indexSenateObject((Agenda)ir.loadObject(p1, Agenda.class));
-					}
-					else if(command.equals("-t")) {
-						ir.indexSenateObject((Transcript)ir.loadObject(p1, Transcript.class));
-					}
-					else if(command.equals("-it")) {
-						ir.handleTranscript(p1);
-					}
-					else {
-						throw new IngestException();
-					}
+			if(args.length < 2) {
+				throw new IngestException();
+			}
+			
+			String command = args[0];
+			if(args.length == 2) {
+				if(command.equals("-gx")) {
+					XmlHelper.generateXml(args[1]);
 				}
-				else if(args.length == 3){
-					String p1 = args[1];
-					String p2 = args[2];
-					if(command.equals("-i")) {
-						WRITE_DIRECTORY = p1;
-						ir.handlePath(p2);
-					}
-					else if(command.equals("-fc")) {
-						ir.fixCalendarBills(p1, p2);
-					}
-					else if(command.equals("-fa")) {
-						ir.fixAgendaBills(p1, p2);
-					}
-					else {
-						throw new IngestException();
-					}
+				else if(command.equals("-b")) {
+					ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(args[1], Bill.class))), null, false);
 				}
-				else if(args.length == 5) {
-					String p1 = args[1];
-					String p2 = args[2];
-					String p3 = args[3];
-					String p4 = args[4];
-					
-					if(command.equals("-pull")) {
-						ir.pullSobis(p1, p2, p3, p4);
-					}
-					
+				else if(command.equals("-c")) {
+					ir.indexSenateObject((Calendar)ir.loadObject(args[1], Calendar.class));
+				}
+				else if(command.equals("-a")) {
+					ir.indexSenateObject((Agenda)ir.loadObject(args[1], Agenda.class));
+				}
+				else if(command.equals("-t")) {
+					ir.indexSenateObject((Transcript)ir.loadObject(args[1], Transcript.class));
+				}
+				else if(command.equals("-it")) {
+					ir.handleTranscript(args[1]);
 				}
 				else {
 					throw new IngestException();
+				}
+			}
+			else if(args.length == 3){
+				if(command.equals("-i")) {
+					WRITE_DIRECTORY = args[1];
+					ir.handlePath(args[2]);
+				}
+				else if(command.equals("-fc")) {
+					ir.fixCalendarBills(args[1], args[2]);
+				}
+				else if(command.equals("-fa")) {
+					ir.fixAgendaBills(args[1], args[2]);
+				}
+				else {
+					throw new IngestException();
+				}
+			}
+			else if(args.length == 5) {				
+				if(command.equals("-pull")) {
+					ir.pullSobis(args[1], args[2], args[3], args[4]);
 				}
 			}
 		} catch(IngestException e) {
@@ -157,7 +146,56 @@ public class IngestReader {
 		}
 	}
 	
+	public IngestReader() {
+		searchEngine = SearchEngine2.getInstance();
+		calendars = new ArrayList<Calendar>();
+		bills = new ArrayList<Bill>();
+		committeeUpdates = new ArrayList<ISenateObject>();
+	}
 	
+	public Git getRepo(String workingDrive) {
+		if(repo == null) {
+			try {
+				if(!new File(workingDrive+".git/").exists()) {
+					Git.init().setDirectory(new File(workingDrive)).call();
+				}
+				repo = new Git(new RepositoryBuilder().setWorkTree(new File(workingDrive)).build());
+			} catch(IOException e) {
+				logger.error(e);
+				System.exit(0);
+			}			
+		}
+		return repo;
+	}
+	
+	public void gitCommit(String message) {
+		Git git = getRepo(WRITE_DIRECTORY);
+		try {
+			git.add().addFilepattern(".").call();
+			git.commit().setMessage(message).setAuthor("Tester", "notmyfault@nysenate.gov").call();
+		} catch(WrongRepositoryStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoHeadException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoMessageException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnmergedPathException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ConcurrentRefUpdateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JGitInternalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoFilepatternException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public ObjectMapper getMapper() {
 		if(mapper == null) {
@@ -189,30 +227,13 @@ public class IngestReader {
 			calendarParser = new CalendarParser(this);
 		}
 		return calendarParser;
-	}	
-	
-	public IngestReader() {
-		searchEngine = SearchEngine2.getInstance();
-		calendars = new ArrayList<Calendar>();
-		bills = new ArrayList<Bill>();
-		committeeUpdates = new ArrayList<ISenateObject>();
-		
-		try {
-			String dir = "/home/OpenLegislation/legdata/json/";
-			if(!new File(dir+".git/").exists()) {
-				Git.init().setDirectory(new File(dir)).call();
-			}
-			repo = new Git(new RepositoryBuilder().setWorkTree(new File("/home/OpenLegislation/legdata/json/")).build());
-		} catch(IOException e) {
-			logger.error(e);
-		}
 	}
 	
 	/* TODO
 	 * FILE READING 
 	 */
 	
-	public void handlePath(String path) {		
+	public void handlePath(String path) {	
 		File file = new File(path);
 		if (file.isDirectory())	{			
 			
@@ -245,7 +266,7 @@ public class IngestReader {
 	}
 	
 	public void handleFile(File file) {
-		logger.info("Reading file: " + file);
+		logger.warn("Reading file: " + file);
 		
 		if(file.getName().endsWith(".TXT")) {			
 			bills = new ArrayList<Bill>();
@@ -293,31 +314,12 @@ public class IngestReader {
 			writeCommitteeUpdates(committeeUpdates, file);
 			committeeParser.clearUpdates();
 		}
-		try {
-			repo.add().addFilepattern(".").call();
-			repo.commit().setMessage(file.getName()).setAuthor("Tester", "notmyfault@nysenate.gov").call();
-		} catch(WrongRepositoryStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoHeadException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoMessageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnmergedPathException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ConcurrentRefUpdateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JGitInternalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoFilepatternException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		long start = System.currentTimeMillis();
+		String message = file.getName();
+		gitCommit(message);
+		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+		logger.warn("Finished with file: "+file.getName());
 	}
 	
 	//TODO this is pretty bad
@@ -411,6 +413,8 @@ public class IngestReader {
 	 */
 	
 	private void writeCommitteeUpdates(ArrayList<ISenateObject> committeeUpdates, File file) {
+		long start = System.currentTimeMillis();
+		logger.warn("Writing "+committeeUpdates.size()+" Committee Updates");
 		for(ISenateObject so:committeeUpdates) {
 			if(so instanceof Bill) {
 				//if a bill is being updated from the committee xml
@@ -423,15 +427,19 @@ public class IngestReader {
 				writeSenateObject(so, Agenda.class, file, true);
 			}
 		}
+		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote "+committeeUpdates.size()+" committee updates");
 	}
 	
 	private void writeCalendars(ArrayList<Calendar> calendars, File file) {
+		long start = System.currentTimeMillis();
 		for(Calendar calendar:calendars) {
 			writeSenateObject(calendar, Calendar.class, file, true);
 		}
+		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote "+calendars.size()+" Calendars");
 	}
 
 	public void writeBills(ArrayList<Bill> bills, File file, boolean merge) {
+		long start = System.currentTimeMillis();
 		for(Bill bill:bills) {
 			if(bill == null)
 				continue;
@@ -444,6 +452,7 @@ public class IngestReader {
 			writeSenateObject(bill, Bill.class, file, merge);
 			
 		}
+		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote "+bills.size()+" bills");
 	}
 	
 	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file, boolean merge) {
@@ -462,12 +471,12 @@ public class IngestReader {
 	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, long modified, boolean merge) {
 		logger.info("Writing object type: " + obj.luceneOtype() + " with id: " + obj.luceneOid());
 		
-		try {			
+		try {
 			if(obj == null)
 				return;
-						
+			
 			File newFile = new File(WRITE_DIRECTORY + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
-					
+			
 			if(merge) {
 				obj = mergeSenateObject(obj, clazz, newFile);
 			}
