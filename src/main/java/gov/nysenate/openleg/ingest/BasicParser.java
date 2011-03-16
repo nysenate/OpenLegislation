@@ -470,19 +470,16 @@ public class BasicParser implements OpenLegConstants {
 	}
 	
 	private void commitCurrentBill () {
-		if(returnBills == null)
-			returnBills = new ArrayList<Bill>();
+		if(currentBill != null)
+			return;
 		
 		persistBuffers();
 				
 		int index = -1;
-		if((index = returnBills.indexOf(currentBill)) != -1) {
-			if(currentBill != null) 
-				returnBills.get(index).merge(currentBill);
-		}
-		else {
+		if((index = returnBills.indexOf(currentBill)) != -1)
+			returnBills.get(index).merge(currentBill);
+		else
 			returnBills.add(currentBill);
-		}
 	}
 	
 	public Bill parseMemoData (String line) throws IOException {
