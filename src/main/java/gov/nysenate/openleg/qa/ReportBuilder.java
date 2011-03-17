@@ -80,7 +80,15 @@ public class ReportBuilder {
 		//add committee and senator bill totals
 		report.setSenatorBills(this.getOpenlegSenators(year));
 		report.setCommitteeBills(this.getOpenLegCommittees(year));
+	
+		//add bill report containing bills that are missing fields
+		//ranked by heat (combination of # fields missing and last update)
+		report.setReportedBills(getBillReportSet(year));
 		
+		return report;
+	}
+	
+	public TreeSet<ReportBill> getBillReportSet(String year) throws ParseException, IOException {
 		//add ReportBills to map, keeping track of missing fields
 		//intentionally leaving memos out for the time being
 		HashMap<String, ReportBill> billReportMap = new HashMap<String, ReportBill>();
@@ -89,8 +97,6 @@ public class ReportBuilder {
 		addBillListToReport("summary", year, billReportMap);
 		addBillListToReport("title", year, billReportMap);
 		addBillListToReport("actions", year, billReportMap);
-		
-		
 		
 		//create and sort by heat		
 		TreeSet<ReportBill> billReportSet = new TreeSet<ReportBill>(new ReportBill.ByHeat());
@@ -113,9 +119,7 @@ public class ReportBuilder {
 			billReportSet.add(billReportMap.get(key));
 		}
 		
-		report.setReportedBills(billReportSet);
-		
-		return report;
+		return billReportSet;
 	}
 
 	/**

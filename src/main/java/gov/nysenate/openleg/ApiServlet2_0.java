@@ -96,11 +96,12 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 		int start = (new Integer(pageIdx) -1) * (new Integer(pageSize));
 		
 		
-		if(sortField != null) {
-			req.setAttribute("sortField",sortField);
-			req.setAttribute("sortOrder",sortOrder);
-			
+		if(sortField == null) {
+			sortField = "modified";
+			sortOrder = true;
 		}
+		req.setAttribute("sortField",sortField);
+		req.setAttribute("sortOrder",sortOrder);
 		
 		req.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
 		req.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
@@ -156,13 +157,13 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			if (format.equals("xml"))
 				sFormat = "xml";
 			
-			SenateResponse sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,null,true);
+			SenateResponse sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);
 			
 			
 			
 			if(sr.getResults().size() == 0) {
 				term = term+"*";
-				sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,null,true);
+				sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);
 			}
 			
 			req.setAttribute("results", sr);

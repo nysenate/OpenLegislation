@@ -342,6 +342,13 @@ public class Bill extends SenateObject  {
 		}
 		previousVersions.add(previousVersion);
 	}
+	
+	public void addBillEvent(BillEvent be) {
+		if(this.billEvents == null)
+			billEvents = new ArrayList<BillEvent>();
+		
+		billEvents.add(be);
+	}
 
 
 	@Override

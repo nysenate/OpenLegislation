@@ -315,11 +315,11 @@ public class IngestReader {
 			committeeParser.clearUpdates();
 		}
 		
-		long start = System.currentTimeMillis();
-		String message = file.getName();
-		gitCommit(message);
-		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
-		logger.warn("Finished with file: "+file.getName());
+//		long start = System.currentTimeMillis();
+//		String message = file.getName();
+//		gitCommit(message);
+//		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+//		logger.warn("Finished with file: "+file.getName());
 	}
 	
 	//TODO this is pretty bad
