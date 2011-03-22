@@ -465,12 +465,11 @@ public class BasicParser implements OpenLegConstants {
 			
 			lineCount++;
 		}
-		
 		commitCurrentBill();
 	}
 	
 	private void commitCurrentBill () {
-		if(currentBill != null)
+		if(currentBill == null)
 			return;
 		
 		persistBuffers();
@@ -611,8 +610,7 @@ public class BasicParser implements OpenLegConstants {
 	}
 	
 	public Bill parseTextData (String line) throws IOException {
-		//2009S00022 T00000.SO DOC S 22                                     BTXT                 2009
-//2009S00022 T00000.SO DOC S 22            *END*                    BTXT                 2009
+				
 		Bill bill = getBill(line);
 		
 		String lineCode = line.substring(11,17);

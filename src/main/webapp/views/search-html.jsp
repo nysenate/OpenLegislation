@@ -87,9 +87,10 @@ if (total > endIdx)
 <div style="float:right">
 
 Formats:
-<a href="/legislation/search/?term=<%=term%>&format=xml">XML</a>,
+<a href="/legislation/search/?term=<%=term%>&format=csv">CSV</a>
 <a href="/legislation/search/?term=<%=term%>&format=json">JSON</a>,
 <a href="/legislation/search/?term=<%=term%>&format=rss">RSS</a>
+<a href="/legislation/search/?term=<%=term%>&format=xml">XML</a>,
 </div>
 <br style="clear:both;"/>
  <div id="content">

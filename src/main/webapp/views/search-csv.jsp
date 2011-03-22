@@ -14,41 +14,62 @@ int total = srs.getTotalHitCount();
 if (total < endIdx)
 	endIdx = total;
 
-	
-String[] attribs = {"summary","billno","year","sponsor","cosponsors","when","sameas","committee","status","location","session-type","chair"};
-
+ArrayList<String> attribs = new ArrayList<String>(Arrays.asList("billno", "chair", "committee", "cosponsors", "location", "sameas", "session-type", "sponsor", "status", "summary", "when", "year"));
 
 Iterator<SearchResult> it = srs.getResults().iterator();
 SearchResult sr = null;
 
-out.println("type,id,score,title,other");
+ArrayList<String> columns = new ArrayList<String>();
+columns.addAll(Arrays.asList("type", "id", "score", "title"));
 
-while (it.hasNext())
-{
+ArrayList<String> rows = new ArrayList<String>();
 
-	try
-	{
+while (it.hasNext()) {
 	
+	try {		
 		sr = it.next();
 		
 		String tuple = "";
-		tuple += sr.getType() + "," + sr.getId() + "," + sr.getScore() + "," + sr.getTitle().replaceAll(",","");		
+		tuple += sr.getType() 
+					+ "," + sr.getId().replaceAll(",","") 
+					+ "," + sr.getScore() 
+					+ "," + sr.getTitle().replaceAll(",","");
 		
-		for (int i = 0; i < attribs.length; i++){
-			if (sr.getFields().get(attribs[i])!=null){ 
-				tuple += ", " + attribs[i] + ": " + sr.getFields().get(attribs[i]).replaceAll(",","");
-			} 
+		sr.getFields().remove("type");
+		
+		for(int i = 4; i < columns.size(); i++) {
+			String key = columns.get(i);
+			if(sr.getFields().get(key) != null) {
+				tuple += "," + sr.getFields().get(key).replaceAll(",","");
+			}
+			else {
+				
+				tuple += ",";
+			}
+			sr.getFields().remove(key);
 		}
 		
-		out.println(tuple);
-	
+		for(String key:sr.getFields().keySet()) {
+			columns.add(key);
+			tuple += "," + sr.getFields().get(key);
+		}
+		rows.add(tuple);
 	}
-	catch (Exception e)
-	{
-		//error with this bill
+	catch (Exception e) {
+		//error with this document
 	}
-	
-	
+}
+
+String header = "";
+for(String column:columns) {
+	header += column + ",";
+}
+header = header.replaceAll(",$","");
+
+out.print(header + "\n");
+
+for(String row:rows) {
+	out.println(row);
 }
 
 %>

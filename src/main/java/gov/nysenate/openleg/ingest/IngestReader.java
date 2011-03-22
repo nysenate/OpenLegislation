@@ -81,7 +81,7 @@ public class IngestReader {
 	
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
-		
+				
 		try {
 			if(args.length < 2) {
 				throw new IngestException();
@@ -266,8 +266,8 @@ public class IngestReader {
 	}
 	
 	public void handleFile(File file) {
-		logger.warn("Reading file: " + file);
-		
+		logger.info("Reading file: " + file);
+				
 		if(file.getName().endsWith(".TXT")) {			
 			bills = new ArrayList<Bill>();
 			try {

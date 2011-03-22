@@ -6,28 +6,67 @@ import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.util.SessionYear;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
 
 public class LRSConnect {
+	private static final int PORT = 80;
 	
-	public static void main(String[] args) throws IOException {
-		LRSConnect l = LRSConnect.getInstance();
+	private static final String TEMP_FILE_NAME = "lbdc.bill.temp";
+	
+	public static void main(String[] args) throws IOException, org.apache.lucene.queryParser.ParseException, InterruptedException {
 		
-		System.out.println(l.getLbdcBill("s1234-2011").getSummary());
-		System.out.println(l.getLbdcBill("s2008-2011").getSummary());
-		System.out.println(l.getLbdcBill("s1-2011"));
+		TreeSet<String> set = new TreeSet<String>();
+		
+		set.addAll(Arrays.asList("summary","billno","year","sponsor","cosponsors","when","sameas","committee","status","location","session-type","chair"));
+		
+		
+		for(String s:set) {
+			System.out.print("\"" + s + "\", ");
+		}
+//		
+//		ReportBuilder reportBuilder = new ReportBuilder();
+//		TreeSet<ReportBill> bills = reportBuilder.getBillReportSet("2011");
+//		
+//		LRSConnect l = LRSConnect.getInstance();
+//		
+//		for(ReportBill bill:bills) {
+//			if(bill.getHeat() < 7)
+//				break;
+//			
+//			System.out.print("testing bill " + bill.getBill());
+//			
+//			if(l.getBillFromLbdc(bill.getBill()) == null)
+//				System.out.println(" -- delete " + bill.getMissingFields());
+//			else
+//				System.out.println(" -- keep " + bill.getMissingFields());
+//			
+//			
+//			Thread.currentThread().sleep(3600);
+//		}
 	}
 	
 	private static final String KEY_URL = "http://public.leginfo.state.ny.us/menugetf.cgi";
-	private static final String BASE_URL = "http://public.leginfo.state.ny.us/bstfrmef.cgi?";
+	private static final String BASE_URL = "http://public.leginfo.state.ny.us";
+	private static final String APPLICATION = "/bstfrmef.cgi?";
 	private static final String QUERY_TYPE = "QUERYTYPE=BILLNO";
 	private static final String SESSION_YEAR = "&SESSYR=";
 	private static final String QUERY_DATA = "&QUERYDATA=";
@@ -59,89 +98,97 @@ public class LRSConnect {
 		return key;
 	}
 	
-	public String queryBill(String billNumber) {
-		if(billNumber.indexOf("-") != -1) {
-			String[] parts = billNumber.split("-");
-			return constructUrl(parts[0], parts[1]);
-		}
-		return constructUrl(billNumber, SessionYear.getSessionYear() + "");
-	}
-	
-	public String queryBill(String billNumber, String year) {
-		return constructUrl(billNumber, year);
-	}
-		
-	private String constructUrl(String billNumber, String year) {
-		return BASE_URL + QUERY_TYPE + SESSION_YEAR + year 
+	private String constructUrlFile(String billNumber, String year) {
+		return APPLICATION + QUERY_TYPE + SESSION_YEAR + year 
 						+ QUERY_DATA + billNumber + QQ_DATA 
 						+ billNumber + GET_SEL + LST + BROWSER 
 						+ TOKEN + this.key + SELECT;
 	}
 	
-	public Bill getLbdcBill(String billNumber) throws IOException {
-		if(billNumber.indexOf("0") == -1)
-			return getLbdcBill(billNumber, SessionYear.getSessionYear()+"");
+	public Bill getBillFromLbdc(String bill) {
+		if(bill.indexOf("0") == -1)
+			return getBillFromLbdc(bill, SessionYear.getSessionYear()+"");
 		else {
-			String[] strings = billNumber.split("-");
-			return getLbdcBill(strings[0], strings[1]);
+			String[] strings = bill.split("-");
+			return getBillFromLbdc(strings[0], strings[1]);
 		}
 	}
 	
-	public Bill getLbdcBill(String billNo, String year) throws IOException {
-		BufferedReader br = new BufferedReader(
-				new InputStreamReader(
-						new URL(this.constructUrl(billNo, year)).openStream()));
-		
-		String in = null;
-		
-		String status = null;
-		String summary = null;
-		String text = null;
-		String memo = null;
-				
-		while((in = br.readLine()) != null) {
-			if(in.contains("<B>STATUS:</B>")) {
-				status = "";
-			}
-			else if(in.contains("<B>SUMMARY:</B>")) {
-				summary = "";
-			}
-			else if(in.contains("<B>BILL TEXT:</B>")) {
-				text = "";
-			}
-			else if(in.contains("<B>SPONSORS MEMO:</B>")) {
-				memo = "";
-			}
-			
-			if(memo != null) {
-				memo += in;
-			}
-			else if(text != null) {
-				text += in;
-			}
-			else if(summary != null) {
-				summary += in;
-			}
-			else if(status != null) {
-				status += in;
-			}
-		}
-		br.close();
-		
+	public Bill getBillFromLbdc(String billNumber, String year) {
 		Bill bill = new Bill();
-		bill.setSenateBillNo(bill + "-" + year);
-		
-		if(parseStatus(status, bill)
-				&& parseSummary(summary, bill)
-				&& parseText(text, bill)
-				&& parseMemo(memo, bill)) {
-			//success
+		File file = new File(TEMP_FILE_NAME);
+		try {
+			writeDataFromLbdc(billNumber, year);
 			
-			return bill;
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			
+			//skip past http header
+			while(!br.readLine().equals("Content-type: text/html"));
+			br.readLine();
+			
+			String in = null;
+			
+			String status = null;
+			String summary = null;
+			String text = null;
+			String memo = null;
+					
+			while((in = br.readLine()) != null) {
+				if(in.contains("<B>STATUS:</B>")) {					
+					status = "";
+				}
+				else if(in.contains("<B>SUMMARY:</B>")) {					
+					summary = "";
+				}
+				else if(in.contains("<B>BILL TEXT:</B>")) {					
+					text = "";
+				}
+				else if(in.contains("<B>SPONSORS MEMO:</B>")) {					
+					memo = "";
+				}
+				
+				if(memo != null) {
+					memo += in;
+				}
+				else if(text != null) {
+					text += in;
+				}
+				else if(summary != null) {
+					summary += in;
+				}
+				else if(status != null) {
+					status += in;
+				}
+			}
+			br.close();
+					
+			bill.setSenateBillNo(bill + "-" + year);
+			
+			if(parseStatus(status, bill)
+					&& parseSummary(summary, bill)
+					&& parseText(text, bill)
+					&& parseMemo(memo, bill)) {
+				//success
+				
+			}
+			else {
+				bill = null;
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.error(e);
 		}
-		else {
-			return null;
+		catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
 		}
+		finally {
+			if(file.exists())
+				file.delete();
+		}
+		
+		return bill;
 	}
 	
 	public boolean parseStatus(String status, Bill bill) {
@@ -213,10 +260,17 @@ public class LRSConnect {
 		
 		if(summary.contains("Bill Summary Information Not Available"))
 			return false;
-		
+				
 		String[] strings = summary.split("\n");
 		
-		bill.setSummary(strings[3]);
+		if(strings.length == 3) {
+			bill.setSummary(strings[2]);
+		}
+		else {
+			bill.setSummary(strings[3]);
+		}
+		
+		
 		
 		return true;
 	}
@@ -239,7 +293,7 @@ public class LRSConnect {
 		if(memo == null)
 			return false;
 		
-		memo = memo.replaceAll("&nbsp;", "").replaceAll("(?i)<br>","\n")
+		/*memo = memo.replaceAll("&nbsp;", "").replaceAll("(?i)<br>","\n")
 			.replaceAll("&nbsp","")
 			.replaceAll("(?i)</?(hr|b|html|head|style|title|basefont|font|pre|u|center|!\\-\\-).*?>","");
 	
@@ -248,7 +302,7 @@ public class LRSConnect {
 		
 		String[] strings = memo.split("\n");
 		
-		bill.setMemo(strings[5]);
+		bill.setMemo(strings[5]);*/
 		
 		return true;
 	}
@@ -279,5 +333,38 @@ public class LRSConnect {
 		}
 		
 		return key;
+	}
+	
+	private SocketChannel getSocketChannel(String url, String file) throws IOException {
+		URL connectUrl = new URL(url);
+		String host = connectUrl.getHost();
+		
+		SocketAddress remote = new InetSocketAddress(host, PORT);
+		SocketChannel channel = SocketChannel.open(remote);
+				
+		String request = "GET " + file + " HTTP/1.1\r\n" + "User-Agent: HTTPGrab\r\n" +
+			"Accept: text/*\r\nConnection: close\r\nHost: " + host + "\r\n\r\n";
+		
+		ByteBuffer header = ByteBuffer.wrap(request.getBytes("US-ASCII"));
+		channel.write(header);
+		
+		return channel;
+	}
+	
+	private void writeDataFromLbdc(String billNumber, String year) throws IOException {
+		SocketChannel channel = getSocketChannel(BASE_URL, this.constructUrlFile(billNumber, year));
+		
+		FileOutputStream out = new FileOutputStream(TEMP_FILE_NAME);
+		FileChannel local = out.getChannel();
+		
+		ByteBuffer buffer = ByteBuffer.allocate(131072);
+		while(channel.read(buffer) != -1) {
+			buffer.flip();
+			local.write(ByteBuffer.wrap(Charset.forName("ISO-8859-1").decode(buffer).toString().getBytes()));
+			buffer.clear();
+		}
+		
+		local.close();
+		channel.close();
 	}
 }
