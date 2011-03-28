@@ -276,7 +276,7 @@ public class BasicParser implements OpenLegConstants {
 									if(!sponsor.equals("DELETE"))
 										bill.setSponsor(getPerson(sponsor));
 									else 
-										currentBill = null;
+										currentBill.setSponsor(null);
 								}								
 							}
 						}
@@ -317,7 +317,7 @@ public class BasicParser implements OpenLegConstants {
 
 					else if (lineCode == 'B') {
 						if(line.contains("DELETE")) {
-							currentBill = null;
+							currentBill.setSummary(null);
 						}
 					}
 					else if (lineCode == 'N') {
@@ -392,8 +392,9 @@ public class BasicParser implements OpenLegConstants {
 						billEventsBuffer.add(bEvent);						
 						
 						String beTextTemp = beText.toUpperCase();
-						if (beText.startsWith("REFERRED TO ")) {
-							String newCommittee = beText.substring(12);
+						if (beText.indexOf("REFERRED TO ")!=-1) {
+							int subIdx = beText.indexOf("REFERRED TO ") + 12;
+							String newCommittee = beText.substring(subIdx).trim();
 							if(bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
 								bill.addPastCommittee(bill.getCurrentCommittee());
 							}
@@ -414,6 +415,16 @@ public class BasicParser implements OpenLegConstants {
 								bill.addPastCommittee(bill.getCurrentCommittee());
 							}
 							bill.setCurrentCommittee(newCommittee);
+						}
+						else if(beText.contains("REPORT CAL") 
+								|| beText.contains("THIRD READING") 
+								|| beText.contains("RULES REPORT")) {
+							
+							if(bill.getCurrentCommittee() != null 
+									&& !bill.getCurrentCommittee().equals("")) {
+								bill.addPastCommittee(bill.getCurrentCommittee());
+							}
+							bill.setCurrentCommittee(null);
 						}
 						else if (beTextTemp.startsWith("SUBSTITUTED FOR "))	{
 							String substituted = beText.substring(16).trim();
@@ -437,13 +448,7 @@ public class BasicParser implements OpenLegConstants {
 								bill.setSameAs(sameAs);
 							}
 						}
-						else if(beText.contains("REPORT CAL")) {
-							if(bill.getCurrentCommittee() != null 
-									&& !bill.getCurrentCommittee().equals("")) {
-								bill.addPastCommittee(bill.getCurrentCommittee());
-							}
-							bill.setCurrentCommittee(null);
-						}
+						
 						
 						//currently we don't want to keep track of assembly committees
 						if(bill.getSenateBillNo().startsWith("A")) {

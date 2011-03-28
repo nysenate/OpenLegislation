@@ -60,8 +60,15 @@ import org.eclipse.jgit.lib.RepositoryBuilder;
 public class IngestReader {
 	
 	@SuppressWarnings("serial")
-	public static class IngestException extends Exception {}
-	
+	public static class IngestException extends Exception {
+		public IngestException() {
+			super();
+		}
+
+		public IngestException(String message) {
+			super(message);
+		}
+	}
 	
 	private static Logger logger = Logger.getLogger(IngestReader.class);
 	
@@ -133,6 +140,9 @@ public class IngestReader {
 				if(command.equals("-pull")) {
 					ir.pullSobis(args[1], args[2], args[3], args[4]);
 				}
+				else {
+					throw new IngestException();
+				}
 			}
 		} catch(IngestException e) {
 			System.err.println("appropriate usage is:\n" +
@@ -201,7 +211,7 @@ public class IngestReader {
 					
 				} else {
 					//This file doesn't belong here...
-					throw new IngestException();
+					throw new IngestException(file.getName());
 				}
 				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Processed Objects");
 				
@@ -228,9 +238,9 @@ public class IngestReader {
 				logger.warn("Finished with file: "+file.getName());
 				
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				logger.error(e);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e);
 			} catch (IngestException e) {
 				// TODO Auto-generated catch block
 				//We don't care about this file, do nothing
@@ -274,7 +284,6 @@ public class IngestReader {
 		}
 	}
 	
-	
 	public void commit(String message) {
 		//Condensed for speed, don't pull the pieces out into a "run" func
 		try {
@@ -303,7 +312,7 @@ public class IngestReader {
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e);
 		}
 		
 	}

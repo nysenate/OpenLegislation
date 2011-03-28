@@ -7,7 +7,6 @@ import gov.nysenate.openleg.lucene.LuceneField;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -45,7 +44,7 @@ public class Bill extends SenateObject  {
 	@LuceneField
 	protected String sameAs;
 	
-	protected HashSet<String> previousVersions;
+	protected List<String> previousVersions;
 	
 	@LuceneField
 	protected Person sponsor;
@@ -128,7 +127,7 @@ public class Bill extends SenateObject  {
 		return sameAs;
 	}
 
-	public HashSet<String> getPreviousVersions() {
+	public List<String> getPreviousVersions() {
 		return previousVersions;
 	}
 
@@ -234,7 +233,7 @@ public class Bill extends SenateObject  {
 		this.sameAs = sameAs;
 	}
 
-	public void setPreviousVersions(HashSet<String> previousVersions) {
+	public void setPreviousVersions(List<String> previousVersions) {
 		this.previousVersions = previousVersions;
 	}
 
@@ -338,9 +337,12 @@ public class Bill extends SenateObject  {
 	
 	public void addPreviousVersion(String previousVersion) {
 		if(previousVersions == null) {
-			previousVersions = new HashSet<String>();
+			previousVersions = new ArrayList<String>();
 		}
-		previousVersions.add(previousVersion);
+		if(!previousVersions.contains(previousVersion)) {
+			previousVersions.add(previousVersion);
+		}
+		
 	}
 	
 	public void addBillEvent(BillEvent be) {
