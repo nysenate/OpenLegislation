@@ -42,7 +42,7 @@ public class BillCleaner implements OpenLegConstants {
 	public static String getDesiredBillNumber(String billNumber) {
 		String temp = billNumber;
 		if(billNumber == null || (billNumber = fixBillNumber(billNumber)) == null) {
-			if(temp != null && temp.split("-").length == 2) {
+			if(temp != null && !temp.contains("oid") && !temp.contains("otype") && temp.split("-").length == 2) {
 				return temp;
 			}
 			return null;

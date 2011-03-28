@@ -101,6 +101,8 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 		if((tempTerm = BillCleaner.getDesiredBillNumber(term)) != null) {
 			term = "oid:" + tempTerm;
 			type = "bill";
+			
+			System.out.println("!! " + tempTerm);
 		}
 
 		String sortField = request.getParameter("sort");
@@ -335,6 +337,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 				}
 			}
 			else {
+				System.out.println("!!! " + term);
 				sr = searchEngine.search(term,searchFormat,start,pageSize,sortField,sortOrder);
 			}
 						

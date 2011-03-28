@@ -3,6 +3,7 @@ package gov.nysenate.openleg.qa;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.model.bill.Person;
+import gov.nysenate.openleg.util.Mailer;
 import gov.nysenate.openleg.util.SessionYear;
 
 import java.io.BufferedReader;
@@ -20,7 +21,6 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -28,41 +28,38 @@ import java.util.regex.Matcher;
 import org.apache.log4j.Logger;
 
 public class LRSConnect {
-	private static final int PORT = 80;
-	
-	private static final String TEMP_FILE_NAME = "lbdc.bill.temp";
-	
-	public static void main(String[] args) throws IOException, org.apache.lucene.queryParser.ParseException, InterruptedException {
+	public static void main(String[] args) throws IOException, org.apache.lucene.queryParser.ParseException, InterruptedException {		
+		ReportBuilder reportBuilder = new ReportBuilder();
+		TreeSet<ReportBill> bills = reportBuilder.getBillReportSet("2011");
 		
-		TreeSet<String> set = new TreeSet<String>();
+		LRSConnect l = LRSConnect.getInstance();
 		
-		set.addAll(Arrays.asList("summary","billno","year","sponsor","cosponsors","when","sameas","committee","status","location","session-type","chair"));
+		String delete = "";
+		String report = "";
 		
-		
-		for(String s:set) {
-			System.out.print("\"" + s + "\", ");
+		for(ReportBill bill:bills) {
+			System.out.println(bill.getBill());
+			if(bill.getHeat() < 5)
+				break;
+						
+			if(l.getBillFromLbdc(bill.getBill()) == null)
+				delete += bill.getBill() + " " + bill.getMissingFields() + "<br/>";
+			else
+				report += bill.getBill() + " " + bill.getMissingFields() + "<br/>";
+			
+			Thread.sleep(3600);
 		}
-//		
-//		ReportBuilder reportBuilder = new ReportBuilder();
-//		TreeSet<ReportBill> bills = reportBuilder.getBillReportSet("2011");
-//		
-//		LRSConnect l = LRSConnect.getInstance();
-//		
-//		for(ReportBill bill:bills) {
-//			if(bill.getHeat() < 7)
-//				break;
-//			
-//			System.out.print("testing bill " + bill.getBill());
-//			
-//			if(l.getBillFromLbdc(bill.getBill()) == null)
-//				System.out.println(" -- delete " + bill.getMissingFields());
-//			else
-//				System.out.println(" -- keep " + bill.getMissingFields());
-//			
-//			
-//			Thread.currentThread().sleep(3600);
-//		}
+		
+		delete = "<b>Marked for deletion</b>:<br/>" + delete;
+		report = "<b>Report to LBDC</b>:<br/>" + report;
+		
+		Mailer.mailReport(delete + "<br/><br/>" + report);
 	}
+	
+	private static Logger logger = Logger.getLogger(LRSConnect.class);
+	
+	private static final int PORT = 80;
+	private static final String TEMP_FILE_NAME = "lbdc.bill.temp";
 	
 	private static final String KEY_URL = "http://public.leginfo.state.ny.us/menugetf.cgi";
 	private static final String BASE_URL = "http://public.leginfo.state.ny.us";
@@ -77,12 +74,12 @@ public class LRSConnect {
 	private static final String TOKEN = "&TOKEN=";
 	private static final String SELECT = "&SELECT=TEXT++&SELECT=STATUS++&SELECT=SPMEMO++&SELECT=SUMMARY++&SELECT=HISTORY";
 	
-	private static Logger logger = Logger.getLogger(LRSConnect.class);
-	
 	private final String key;
 	
 	public static LRSConnect getInstance() {
 		String key = getInstanceKey();
+		
+		logger.info("Creating instance with key: " + key);
 		
 		if(key == null)
 			return null;
@@ -169,9 +166,10 @@ public class LRSConnect {
 					&& parseText(text, bill)
 					&& parseMemo(memo, bill)) {
 				//success
-				
+				logger.info("Successfully retreieved bill: " + bill.getSenateBillNo());
 			}
 			else {
+				logger.info("Failed to retreieve bill: " + billNumber + "-" + year);
 				bill = null;
 			}
 			
@@ -191,7 +189,7 @@ public class LRSConnect {
 		return bill;
 	}
 	
-	public boolean parseStatus(String status, Bill bill) {
+	private boolean parseStatus(String status, Bill bill) {
 		if(status == null)
 			return false;
 		
@@ -250,7 +248,7 @@ public class LRSConnect {
 		return true;
 	}
 	
-	public boolean parseSummary(String summary, Bill bill) {
+	private boolean parseSummary(String summary, Bill bill) {
 		if(summary == null)
 			return false;
 		
@@ -275,7 +273,7 @@ public class LRSConnect {
 		return true;
 	}
 	
-	public boolean parseText(String text, Bill bill) {
+	private boolean parseText(String text, Bill bill) {
 		if(text == null)
 			return false;
 			
@@ -289,11 +287,15 @@ public class LRSConnect {
 		return true;
 	}
 	
-	public boolean parseMemo(String memo, Bill bill) {
+	private boolean parseMemo(String memo, Bill bill) {
 		if(memo == null)
 			return false;
 		
-		/*memo = memo.replaceAll("&nbsp;", "").replaceAll("(?i)<br>","\n")
+		/* Since it's actually possible that a bill won't have a memo
+		 * there's no sense in checking for it here.  Could create false
+		 * negatives
+		
+		   memo = memo.replaceAll("&nbsp;", "").replaceAll("(?i)<br>","\n")
 			.replaceAll("&nbsp","")
 			.replaceAll("(?i)</?(hr|b|html|head|style|title|basefont|font|pre|u|center|!\\-\\-).*?>","");
 	
@@ -345,6 +347,8 @@ public class LRSConnect {
 		String request = "GET " + file + " HTTP/1.1\r\n" + "User-Agent: HTTPGrab\r\n" +
 			"Accept: text/*\r\nConnection: close\r\nHost: " + host + "\r\n\r\n";
 		
+		logger.info("Request: " + request);
+		
 		ByteBuffer header = ByteBuffer.wrap(request.getBytes("US-ASCII"));
 		channel.write(header);
 		
@@ -352,6 +356,7 @@ public class LRSConnect {
 	}
 	
 	private void writeDataFromLbdc(String billNumber, String year) throws IOException {
+		logger.info("Reading bill " + billNumber + "-" + year + " from LBDC");
 		SocketChannel channel = getSocketChannel(BASE_URL, this.constructUrlFile(billNumber, year));
 		
 		FileOutputStream out = new FileOutputStream(TEMP_FILE_NAME);
