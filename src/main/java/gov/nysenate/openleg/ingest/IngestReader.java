@@ -123,7 +123,7 @@ public class IngestReader {
 			else if(args.length == 3){
 				if(command.equals("-i")) {
 					WRITE_DIRECTORY = args[1];
-					ir.processFile(new File(args[2]));
+					ir.processPath(args[2]);
 				}
 				else if(command.equals("-it")) {
 					//Processes, writes, and indexes a directory of transcripts
