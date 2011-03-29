@@ -231,7 +231,7 @@ public class IngestReader {
 			
 			//Write the objects
 			start = System.currentTimeMillis();
-			for(int i = senateObjects.size()-1; i > -1; i--) {
+			for(int i = 0; i < senateObjects.size(); i++) {
 				if(writeSenateObject(senateObjects.get(i)))
 					luceneObjects.add(senateObjects.get(i));
 			}
