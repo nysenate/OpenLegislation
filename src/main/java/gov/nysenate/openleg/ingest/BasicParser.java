@@ -52,7 +52,7 @@ public class BasicParser implements OpenLegConstants {
 	private HashMap<String,Person> personCache;
 	ObjectMapper mapper;
 	
-	private ArrayList<Bill> returnBills = null;
+	private ArrayList<ISenateObject> returnBills = null;
 	
 	public BasicParser () {
 		mapper = new ObjectMapper();
@@ -60,7 +60,7 @@ public class BasicParser implements OpenLegConstants {
 		cnfg.set(Feature.INDENT_OUTPUT, true);
 		mapper.setSerializationConfig(cnfg);
 		
-		returnBills = new ArrayList<Bill>();
+		returnBills = new ArrayList<ISenateObject>();
 	}
 	
 	public Transcript handleTranscript(String dataPath) {
@@ -74,7 +74,7 @@ public class BasicParser implements OpenLegConstants {
 		return null;
 	}
 	
-	public ArrayList<Bill> handleBill(String dataPath, char lineCodeToMatch) throws IOException {
+	public ArrayList<ISenateObject> handleBill(String dataPath, char lineCodeToMatch) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(dataPath), "ISO-8859-1"));
 		parseSOBIFile (br,lineCodeToMatch);
 		br.close();

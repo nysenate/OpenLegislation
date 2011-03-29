@@ -543,7 +543,7 @@ public class Bill extends SenateObject  {
 		}
 		else {
 			if(bill.getPreviousVersions() != null) {
-				previousVersions.addAll(bill.getPreviousVersions());
+				this.previousVersions = bill.getPreviousVersions();
 			}
 		}
 	}

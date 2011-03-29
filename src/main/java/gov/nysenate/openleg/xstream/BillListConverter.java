@@ -71,6 +71,16 @@ public class BillListConverter implements Converter {
 					writer.setValue(v.getDescription());
 				}
 			}
+			
+			//past versions
+			if(o instanceof String) {
+				ArrayList<String> strings = (ArrayList<String>) value;
+				for(String string:strings) {
+					writer.startNode("billNo");
+					writer.setValue(string);
+					writer.endNode();
+				}
+			}
 		}
 		
 	}

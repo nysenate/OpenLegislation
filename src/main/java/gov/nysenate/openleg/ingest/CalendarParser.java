@@ -42,7 +42,7 @@ public class CalendarParser implements OpenLegConstants {
 	private Object removeObject = null;
 	private String removeObjectId = null;
 	
-	private ArrayList<Calendar> returnCalendars;
+	private ArrayList<ISenateObject> returnCalendars;
 		
 	private void setRemoveObject (Object removeObject, String removeObjectId) {
 		this.removeObject = removeObject;
@@ -56,10 +56,10 @@ public class CalendarParser implements OpenLegConstants {
 	public CalendarParser(IngestReader reader) {
 		this.reader = reader;
 		
-		returnCalendars = new ArrayList<Calendar>();
+		returnCalendars = new ArrayList<ISenateObject>();
 	}
 	
-	public ArrayList<Calendar> doParsing(String filePath) throws Exception {
+	public ArrayList<ISenateObject> doParsing(String filePath) throws Exception {
 		
 		
 		XMLSENATEDATA senateData = parseStream(new FileReader(new File(filePath)));

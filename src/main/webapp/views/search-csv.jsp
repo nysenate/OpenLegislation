@@ -1,5 +1,8 @@
 <%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/plain" pageEncoding="utf-8" %><%
 
+response.setContentType("text/csv");
+response.setHeader("Content-disposition","attachment;filename=search-" + new Date().getTime() +".csv");
+
 int pageIdx = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_IDX));
 int pageSize = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_SIZE));
 
@@ -31,16 +34,16 @@ while (it.hasNext()) {
 		
 		String tuple = "";
 		tuple += sr.getType() 
-					+ "," + sr.getId().replaceAll(",","") 
+					+ ",\"" + sr.getId().replaceAll("\"","\"\"") + "\""
 					+ "," + sr.getScore() 
-					+ "," + sr.getTitle().replaceAll(",","");
+					+ ",\"" + sr.getTitle().replaceAll("\"","\"\"") + "\"";
 		
 		sr.getFields().remove("type");
 		
 		for(int i = 4; i < columns.size(); i++) {
 			String key = columns.get(i);
 			if(sr.getFields().get(key) != null) {
-				tuple += "," + sr.getFields().get(key).replaceAll(",","");
+				tuple += ",\"" + sr.getFields().get(key).replaceAll("\"","\"\"") + "\"";
 			}
 			else {
 				
@@ -51,7 +54,7 @@ while (it.hasNext()) {
 		
 		for(String key:sr.getFields().keySet()) {
 			columns.add(key);
-			tuple += "," + sr.getFields().get(key);
+			tuple += ",\"" + sr.getFields().get(key).replaceAll("\"","\"\"") + "\"";
 		}
 		rows.add(tuple);
 	}

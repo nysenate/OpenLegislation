@@ -20,6 +20,9 @@
 	if(search == null) {
 		search = "";
 	}
+	else {
+		search = search.replaceAll("\"","&quot;");
+	}
 	
 	String searchType = (String)request.getAttribute("type");
 	if (searchType == null)

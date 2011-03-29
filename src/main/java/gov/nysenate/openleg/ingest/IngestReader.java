@@ -79,6 +79,8 @@ public class IngestReader {
 	CommitteeParser committeeParser;
 	ObjectMapper mapper;
 	SearchEngine2 searchEngine;
+	ArrayList<ILuceneObject> luceneObjects;
+	ArrayList<ISenateObject> senateObjects;
 	
 	private final long THE_TIME = new Date().getTime();
 	
@@ -113,10 +115,7 @@ public class IngestReader {
 				else if(command.equals("-t")) {
 					ir.indexSenateObject(ir.loadObject(args[1], Transcript.class));
 				}
-				else if(command.equals("-it")) {
-					//Processes, writes, and indexes a directory of transcripts
-					ir.handleTranscript(new File(args[1]));
-				}
+				
 				else {
 					throw new IngestException();
 				}
@@ -125,6 +124,11 @@ public class IngestReader {
 				if(command.equals("-i")) {
 					WRITE_DIRECTORY = args[1];
 					ir.processFile(new File(args[2]));
+				}
+				else if(command.equals("-it")) {
+					//Processes, writes, and indexes a directory of transcripts
+					WRITE_DIRECTORY = args[1];
+					ir.handleTranscript(new File(args[1]));
 				}
 				else if(command.equals("-fc")) {
 					ir.fixCalendarBills(args[1], args[2]);
@@ -172,83 +176,98 @@ public class IngestReader {
 		basicParser = new BasicParser();
 		
 		calendarParser = new CalendarParser(this);
+		
+		luceneObjects = new ArrayList<ILuceneObject>();
+		senateObjects = new ArrayList<ISenateObject>();
+	}
+	
+	public void processPath(String path) {
+		File file = new File(path);
+		if(file.isDirectory()) {
+			File[] files = sortFilesByName(file.listFiles());
+			for(int i = 0; i < files.length; i++) {
+				if(files[i].isFile()) {
+					processFile(files[i]);
+				}
+				else if(files[i].isDirectory()) {
+					processPath(files[i].getAbsolutePath());
+				}
+			}
+		}
+		else {
+			processFile(file);
+		}
 	}
 	
 	public void processFile(File file) {
-		if(file.isDirectory()) {
-			for(File child: sortFilesByName(file.listFiles()))
-				processFile(child);
-
-		} else {
+		try {
+			logger.warn("Reading file: " + file);
 			
-			try {
-				logger.warn("Reading file: " + file);
-				ArrayList<ISenateObject> objects = new ArrayList<ISenateObject>();
-				ArrayList<ILuceneObject> luceneObjects = new ArrayList<ILuceneObject>();
-				
-				long start = System.currentTimeMillis();
-				if(file.getName().endsWith(".TXT")) {
-					for(Bill bill: basicParser.handleBill(file.getAbsolutePath(), '-')) {
-						objects.add(processSenateObject(bill, Bill.class, file, true));
-					}
-					basicParser.clearBills();
-					
-				} else if(file.getName().contains("-calendar-")) {
-					XmlHelper.fixCalendar(file);
-					for(Calendar calendar:calendarParser.doParsing(file.getAbsolutePath())) {
-						objects.add(processSenateObject(calendar, Calendar.class, file, true));
-					}
-					calendarParser.clearCalendars();
-					
-				} else if(file.getName().contains("-agenda-")) {
-					for(ISenateObject obj:committeeParser.doParsing(file)) {
-						if(obj instanceof Bill)
-							objects.add(processSenateObject(obj,Bill.class,file,true));
-						else if(obj instanceof Agenda)
-							objects.add(processSenateObject(obj,Agenda.class,file,true));
-					}
-					committeeParser.clearUpdates();
-					
-				} else {
-					//This file doesn't belong here...
-					throw new IngestException(file.getName());
+			long start = System.currentTimeMillis();
+			if(file.getName().endsWith(".TXT")) {
+				senateObjects = basicParser.handleBill(file.getAbsolutePath(), '-');
+				for(int i = 0; i < senateObjects.size(); i++) {
+					processSenateObject(senateObjects.get(i), Bill.class, file, true);
 				}
-				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Processed Objects");
-				
-				//Write the objects
-				start = System.currentTimeMillis();
-				for(ISenateObject obj:objects) {
-					if(writeSenateObject(obj))
-						luceneObjects.add(obj);
+			} else if(file.getName().contains("-calendar-")) {
+				XmlHelper.fixCalendar(file);
+				senateObjects = calendarParser.doParsing(file.getAbsolutePath());
+				for(int i = 0; i < senateObjects.size(); i++) {
+					processSenateObject(senateObjects.get(i), Calendar.class, file, true);
 				}
-				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote Objects");
-				
-				//Index the objects we wrote successfully
-				start = System.currentTimeMillis();
-				this.searchEngine.indexSenateObjects(
-						luceneObjects,
-						new LuceneSerializer[]{	new XmlSerializer(), new JsonSerializer()});
-				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Indexed Objects");
-	
-				//Commit the changes made to the file system
-				start = System.currentTimeMillis();
-				commit(file.getName());
-				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
-				
-				logger.warn("Finished with file: "+file.getName());
-				
-			} catch (FileNotFoundException e) {
-				logger.error(e);
-			} catch (IOException e) {
-				logger.error(e);
-			} catch (IngestException e) {
-				// TODO Auto-generated catch block
-				//We don't care about this file, do nothing
-				//e.printStackTrace();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} else if(file.getName().contains("-agenda-")) {
+				senateObjects = committeeParser.doParsing(file);
+				for(int i = 0; i < senateObjects.size(); i++) {
+					if(senateObjects.get(i) instanceof Bill)
+						processSenateObject(senateObjects.get(i),Bill.class,file,true);
+					else if(senateObjects.get(i) instanceof Agenda)
+						processSenateObject(senateObjects.get(i),Agenda.class,file,true);
+				}
+			} else {
+				//This file doesn't belong here...
+				throw new IngestException(file.getName());
 			}
+			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Processed Objects");
+			
+			//Write the objects
+			start = System.currentTimeMillis();
+			for(int i = senateObjects.size()-1; i > -1; i--) {
+				if(writeSenateObject(senateObjects.get(i)))
+					luceneObjects.add(senateObjects.get(i));
+			}
+			
+			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote Objects - " + luceneObjects.size());
+			
+			//Index the objects we wrote successfully
+			start = System.currentTimeMillis();
+			this.searchEngine.indexSenateObjects(
+					luceneObjects,
+					new LuceneSerializer[]{	new XmlSerializer(), new JsonSerializer()});
+			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Indexed Objects");
+
+			//Commit the changes made to the file system
+			start = System.currentTimeMillis();
+			commit(file.getName());
+			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+			
+			
+			calendarParser.clearCalendars();
+			committeeParser.clearUpdates();
+			basicParser.clearBills();
+			senateObjects.clear();
+			luceneObjects.clear();
+			
+			logger.warn("Finished with file: "+file.getName());
+			
+		} catch (FileNotFoundException e) {
+			logger.error(e);
+		} catch (IOException e) {
+			logger.error(e);
+		} catch (IngestException e) {
+			//We don't care about this file, do nothing
+			//e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -272,7 +291,6 @@ public class IngestReader {
 			obj.setLuceneModified(modified);
 			
 			if(this.writeJsonFromSenateObject(obj, clazz, newFile)) {
-				//TODO
 				start = System.currentTimeMillis();
 				indexSenateObject(obj);
 				logger.warn("Indexing took "+(System.currentTimeMillis()-start)/1000.0);
@@ -311,7 +329,6 @@ public class IngestReader {
 				logger.error(line);
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			logger.error(e);
 		}
 		
@@ -365,32 +382,6 @@ public class IngestReader {
 		return obj;
 	}
 	
-	public void processSenateObjects(ArrayList<ISenateObject> objects, Class<? extends ISenateObject> clazz, long modified, boolean merge) {
-		
-		//Process all of the objects into completed LuceneObjects for indexing
-		ArrayList<ILuceneObject> luceneObjects = new ArrayList<ILuceneObject>();
-		for(ISenateObject obj:objects) {
-			//Prepare the objects for writing
-			if(merge)
-				obj = mergeSenateObject(obj, clazz);
-			obj.setLuceneModified(modified);
-			
-			//If the write is successful, slot the object for indexing
-			if(writeSenateObject(obj)==true) {
-				luceneObjects.add(obj);
-			}
-		}
-		
-		//Attempt to index all the objects in one go!
-		try {
-			long start = System.currentTimeMillis();
-			searchEngine.indexSenateObjects(luceneObjects, new LuceneSerializer[]{new XmlSerializer(), new JsonSerializer()});
-			logger.warn("Indexing took "+(System.currentTimeMillis()-start)/1000.0);
-		} catch (IOException e) {
-			logger.warn("Exception while indexing object", e);
-		}
-	}
-	
 	public ISenateObject mergeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz) {
 		File file = new File(WRITE_DIRECTORY  + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
 		
@@ -401,6 +392,8 @@ public class IngestReader {
 				oldObject.setLuceneActive(obj.getLuceneActive());
 				oldObject.merge(obj);
 				obj = oldObject;
+				
+				
 			} catch (JsonGenerationException e) {
 				logger.warn("could not parse json", e);
 			} catch (JsonMappingException e) {
@@ -434,6 +427,7 @@ public class IngestReader {
 			generator.setPrettyPrinter(new DefaultPrettyPrinter());
 			mapper.writeValue(generator, obj);
 			osw.close();
+			
 			return true;
 		} catch (JsonGenerationException e) {
 			logger.warn("could not parse json", e);
@@ -904,25 +898,18 @@ public class IngestReader {
 			git.add().addFilepattern(".").call();
 			git.commit().setMessage(message).setAuthor("Tester", "notmyfault@nysenate.gov").call();
 		} catch(WrongRepositoryStateException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoHeadException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoMessageException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnmergedPathException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ConcurrentRefUpdateException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (JGitInternalException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoFilepatternException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
