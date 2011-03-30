@@ -83,12 +83,13 @@ public class IngestReader {
 	ArrayList<ISenateObject> senateObjects;
 	
 	private final long THE_TIME = new Date().getTime();
+	private final int CHUNK_SIZE = 1000;
 	
 	Git repo;
 	
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
-				
+		
 		try {
 			if(args.length < 2) {
 				throw new IngestException();
@@ -202,27 +203,16 @@ public class IngestReader {
 	public void processFile(File file) {
 		try {
 			logger.warn("Reading file: " + file);
+			boolean merge = true;
 			
 			long start = System.currentTimeMillis();
 			if(file.getName().endsWith(".TXT")) {
 				senateObjects = basicParser.handleBill(file.getAbsolutePath(), '-');
-				for(int i = 0; i < senateObjects.size(); i++) {
-					processSenateObject(senateObjects.get(i), Bill.class, file, true);
-				}
 			} else if(file.getName().contains("-calendar-")) {
 				XmlHelper.fixCalendar(file);
 				senateObjects = calendarParser.doParsing(file.getAbsolutePath());
-				for(int i = 0; i < senateObjects.size(); i++) {
-					processSenateObject(senateObjects.get(i), Calendar.class, file, true);
-				}
 			} else if(file.getName().contains("-agenda-")) {
 				senateObjects = committeeParser.doParsing(file);
-				for(int i = 0; i < senateObjects.size(); i++) {
-					if(senateObjects.get(i) instanceof Bill)
-						processSenateObject(senateObjects.get(i),Bill.class,file,true);
-					else if(senateObjects.get(i) instanceof Agenda)
-						processSenateObject(senateObjects.get(i),Agenda.class,file,true);
-				}
 			} else {
 				//This file doesn't belong here...
 				throw new IngestException(file.getName());
@@ -230,20 +220,37 @@ public class IngestReader {
 			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Processed Objects");
 			
 			//Write the objects
-			start = System.currentTimeMillis();
-			for(int i = 0; i < senateObjects.size(); i++) {
-				if(writeSenateObject(senateObjects.get(i)))
-					luceneObjects.add(senateObjects.get(i));
+			//due to memory issues with large files we're
+			//seperating the lists in to chunks of length CHUNK_SIZE
+			int listSize = senateObjects.size();
+			if(listSize != 0) {
+				int slices = (int) Math.ceil(listSize/(CHUNK_SIZE + 0.0));
+				slices = (slices == 0 ? 1 : slices);
+				
+				for(int i = 0; i < slices; i++) {
+					int sliceStart = i * CHUNK_SIZE;
+					int sliceEnd = (i == slices - 1) ? listSize-1 : (i+1) * CHUNK_SIZE - 1;	
+					
+					start = System.currentTimeMillis();
+					ISenateObject tempObj;
+					for(int j = sliceStart; j <= sliceEnd; j++) {
+						tempObj = this.processSenateObject(senateObjects.get(j), senateObjects.get(j).getClass(), file, merge);
+						
+						if(writeSenateObject(tempObj))
+							luceneObjects.add(tempObj);
+					}
+					logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote Objects - " + (sliceEnd - sliceStart));
+
+					
+					start = System.currentTimeMillis();
+					this.searchEngine.indexSenateObjects(
+							luceneObjects,
+							new LuceneSerializer[]{	new XmlSerializer(), new JsonSerializer()});
+					luceneObjects.clear();
+					logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Indexed Objects");
+				}
 			}
 			
-			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote Objects - " + luceneObjects.size());
-			
-			//Index the objects we wrote successfully
-			start = System.currentTimeMillis();
-			this.searchEngine.indexSenateObjects(
-					luceneObjects,
-					new LuceneSerializer[]{	new XmlSerializer(), new JsonSerializer()});
-			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Indexed Objects");
 
 			//Commit the changes made to the file system
 			start = System.currentTimeMillis();
