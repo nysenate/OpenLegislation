@@ -4,12 +4,7 @@ import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.CalendarEntry;
-import gov.nysenate.openleg.model.calendar.Section;
-import gov.nysenate.openleg.model.calendar.Supplemental;
-import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
-import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine2;
@@ -72,7 +67,8 @@ public class IngestReader {
 	
 	private static Logger logger = Logger.getLogger(IngestReader.class);
 	
-	private static String WRITE_DIRECTORY;
+//	private static String WRITE_DIRECTORY;
+	private static String WRITE_DIRECTORY = "/Users/jaredwilliams/Desktop/json/";
 	
 	BasicParser basicParser;
 	CalendarParser calendarParser;
@@ -89,7 +85,7 @@ public class IngestReader {
 	
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
-		
+				
 		try {
 			if(args.length < 2) {
 				throw new IngestException();
@@ -129,13 +125,7 @@ public class IngestReader {
 				else if(command.equals("-it")) {
 					//Processes, writes, and indexes a directory of transcripts
 					WRITE_DIRECTORY = args[1];
-					ir.handleTranscript(new File(args[1]));
-				}
-				else if(command.equals("-fc")) {
-					ir.fixCalendarBills(args[1], args[2]);
-				}
-				else if(command.equals("-fa")) {
-					ir.fixAgendaBills(args[1], args[2]);
+					ir.handleTranscript(new File(args[2]));
 				}
 				else {
 					throw new IngestException();
@@ -153,8 +143,6 @@ public class IngestReader {
 			System.err.println("appropriate usage is:\n" +
 					"\t-i <json directory> <sobi directory> (to create index)\n" +
 					"\t-gx <sobi directory> (to generate agenda and calendar xml from sobi)\n" +
-					"\t-fc <year> <calendar directory> (to fix calendar bills)\n" +
-					"\t-fa <year> <agenda directory> (to fix agenda bills)\n" +
 					"\t-b <bill json path> (to reindex single bill)\n" +
 					"\t-c <calendar json path> (to reindex single calendar)\n" +
 					"\t-a <agenda json path> (to reindex single agenda)\n" +
@@ -239,7 +227,7 @@ public class IngestReader {
 						if(writeSenateObject(tempObj))
 							luceneObjects.add(tempObj);
 					}
-					logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote Objects - " + (sliceEnd - sliceStart));
+					logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote Objects - " + (sliceEnd - sliceStart + 1));
 
 					
 					start = System.currentTimeMillis();
@@ -253,9 +241,9 @@ public class IngestReader {
 			
 
 			//Commit the changes made to the file system
-			start = System.currentTimeMillis();
-			commit(file.getName());
-			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+//			start = System.currentTimeMillis();
+//			commit(file.getName());
+//			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
 			
 			
 			calendarParser.clearCalendars();
@@ -278,96 +266,6 @@ public class IngestReader {
 		}
 	}
 	
-	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, boolean merge) {
-		writeSenateObject(obj, clazz, THE_TIME, merge);
-	}
-	
-	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, long modified, boolean merge) {
-		logger.info("Writing object type: " + obj.luceneOtype() + " with id: " + obj.luceneOid());
-		long start;
-		try {
-			if(obj == null)
-				return;
-			
-			File newFile = new File(WRITE_DIRECTORY + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
-			
-			if(merge) {
-				obj = mergeSenateObject(obj, clazz, newFile);
-			}
-			
-			obj.setLuceneModified(modified);
-			
-			if(this.writeJsonFromSenateObject(obj, clazz, newFile)) {
-				start = System.currentTimeMillis();
-				indexSenateObject(obj);
-				logger.warn("Indexing took "+(System.currentTimeMillis()-start)/1000.0);
-			}
-			
-		}
-		catch (Exception e) {
-			logger.warn("Exception while writing object", e);
-		}
-	}
-	
-	public void commit(String message) {
-		//Condensed for speed, don't pull the pieces out into a "run" func
-		try {
-			String line;
-			Process process;
-			BufferedReader error;
-			File repository = new File(WRITE_DIRECTORY);
-			Runtime runtime = Runtime.getRuntime();
-			
-			if(! new File(WRITE_DIRECTORY+"/.git").exists()) {
-				process = runtime.exec("git init",null,repository);
-				error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-				while((line = error.readLine()) != null)
-					logger.error(line);
-			}
-
-			process = runtime.exec("git add .",null,repository);
-			error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-			while((line = error.readLine()) != null)
-				logger.error(line);
-			
-			process = runtime.exec("git commit -m "+message+"\"",null,repository);
-			error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-			while((line = error.readLine()) != null)
-				logger.error(line);
-			
-		} catch (IOException e) {
-			logger.error(e);
-		}
-		
-	}
-	
-	public ISenateObject loadObject(String id, String year, String type, Class<? extends ISenateObject> clazz) {
-		return loadObject(WRITE_DIRECTORY + "/" + year + "/" + type + "/" + id + ".json", clazz);
-	}
-	
-	/**
-	 * @param path to json document
-	 * @param clazz class of object to be loaded
-	 * @return deserialized SenateObject of type clazz
-	 */
-	public ISenateObject loadObject(String path, Class<? extends ISenateObject> clazz) {
-		try {
-			logger.info("Loading object at: " + path);
-			File file = new File(path);
-			if(!file.exists()) 
-				return null;
-			return mapper.readValue(file, clazz);
-		} catch (org.codehaus.jackson.JsonParseException e) {
-			logger.warn("could not parse json", e);
-		} catch (JsonMappingException e) {
-			logger.warn("could not map json", e);
-		} catch (IOException e) {
-			logger.warn("error with file", e);
-		}
-		
-		return null;
-	}
-	
 	public ISenateObject processSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file, boolean merge) {
 		obj.addSobiReference(file.getName());
 		return processSenateObject(obj, clazz, getDateFromFileName(file.getName()), merge);
@@ -387,129 +285,7 @@ public class IngestReader {
 			obj = mergeSenateObject(obj, clazz);
 		obj.setLuceneModified(modified);
 		return obj;
-	}
-	
-	public ISenateObject mergeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz) {
-		File file = new File(WRITE_DIRECTORY  + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
-		
-		if(file.exists()) {
-			logger.info("Merging object with id: " + obj.luceneOid());
-			try {
-				ISenateObject oldObject = (ISenateObject)mapper.readValue(file, clazz);
-				oldObject.setLuceneActive(obj.getLuceneActive());
-				oldObject.merge(obj);
-				obj = oldObject;
-				
-				
-			} catch (JsonGenerationException e) {
-				logger.warn("could not parse json", e);
-			} catch (JsonMappingException e) {
-				logger.warn("could not parse json", e);
-			} catch (IOException e) {
-				logger.warn("error reading file", e);
-			}
-		}
-		
-		return obj;		
-	}
-	
-	public boolean writeSenateObject(ISenateObject obj) {		
-		File yearDir = new File(WRITE_DIRECTORY + "/" + obj.getYear());
-		File typeDir = new File(WRITE_DIRECTORY + "/" + obj.getYear() + "/" + obj.luceneOtype());
-		File newFile = new File(WRITE_DIRECTORY + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
-		
-		if(!yearDir.exists()) {
-			logger.info("creating directory: " + yearDir.getAbsolutePath());
-			yearDir.mkdir();
-		}
-		if(!typeDir.exists()) {
-			logger.info("creating directory: " + typeDir.getAbsolutePath());
-			typeDir.mkdir();
-		}
-		
-		logger.info("Writing json to path: " + newFile.getAbsolutePath());
-		try {			
-			BufferedOutputStream osw = new BufferedOutputStream(new FileOutputStream(newFile));
-			JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(osw,JsonEncoding.UTF8);
-			generator.setPrettyPrinter(new DefaultPrettyPrinter());
-			mapper.writeValue(generator, obj);
-			osw.close();
-			
-			return true;
-		} catch (JsonGenerationException e) {
-			logger.warn("could not parse json", e);
-		} catch (JsonMappingException e) {
-			logger.warn("could not parse json", e);
-		} catch (IOException e) {
-			logger.warn("error reading file", e);
-		}
-		
-		return false;
-	}
-	
-	public boolean writeJsonFromSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file) {
-		logger.info("Writing json to path: " + file.getAbsolutePath());
-		long start = System.currentTimeMillis();
-		
-		if(file == null) 
-			file = new File(WRITE_DIRECTORY + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
-		
-		File dir = new File(WRITE_DIRECTORY + "/" + obj.getYear());
-		if(!dir.exists()) {
-			logger.info("creating directory: " + dir.getAbsolutePath());
-			dir.mkdir();
-		}
-		dir = new File(WRITE_DIRECTORY + "/" + obj.getYear() + "/" + obj.luceneOtype());
-		if(!dir.exists()) {
-			logger.info("creating directory: " + dir.getAbsolutePath());
-			dir.mkdir();
-		}
-		
-		try {			
-			BufferedOutputStream osw = new BufferedOutputStream(new FileOutputStream(file));
-			
-			JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(osw,JsonEncoding.UTF8);
-			generator.setPrettyPrinter(new DefaultPrettyPrinter());
-			mapper.writeValue(generator, obj);
-			osw.close();
-			logger.warn("Writing took "+(System.currentTimeMillis()-start)/1000.0);
-			return true;
-		} catch (JsonGenerationException e) {
-			logger.warn("could not parse json", e);
-		} catch (JsonMappingException e) {
-			logger.warn("could not parse json", e);
-		} catch (IOException e) {
-			logger.warn("error reading file", e);
-		}
-		
-		return false;
-	}
-	
-	public ISenateObject mergeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file) {		
-		if(file == null)
-			file = new File(WRITE_DIRECTORY  + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
-		
-		if(file.exists()) {
-			logger.info("Merging object with id: " + obj.luceneOid());
-			ISenateObject oldObject =  null;
-			try {
-				oldObject = (ISenateObject)mapper.readValue(file, clazz);
-			} catch (JsonGenerationException e) {
-				logger.warn("could not parse json", e);
-			} catch (JsonMappingException e) {
-				logger.warn("could not parse json", e);
-			} catch (IOException e) {
-				logger.warn("error reading file", e);
-			}
-			if(oldObject != null) {
-				oldObject.setLuceneActive(obj.getLuceneActive());
-				oldObject.merge(obj);
-				obj = oldObject;
-			}
-		}
-		
-		return obj;
-	}
+	}	
 	
 	//TODO this is pretty bad
 	public void handleTranscript(File file) {
@@ -518,7 +294,9 @@ public class IngestReader {
 				handleTranscript(temp);
 			}
 		}
-		else {
+		else if (file.getName().contains(".TXT")){
+			logger.warn("Reading transcript file " + file.getAbsolutePath());
+			
 			Transcript trans = null;
 			
 			//transcripts often come incorrectly formatted..
@@ -551,35 +329,20 @@ public class IngestReader {
 					e2.printStackTrace();
 					return; //We couldn't get a good read on the transcript
 				}
+				return;
 			}
 			
 			//Conduct general processing, writing, and indexing
-			processSenateObject(trans,Transcript.class,true);
-			if(writeSenateObject(trans))
+			processSenateObject(trans,Transcript.class,false);
+			if(writeSenateObject(trans)) {
+				logger.warn("writing and indexing transcript");
 				indexSenateObject(trans);
+			}
 		}
 		
 	}
 	
-	public boolean deleteSenateObject(ISenateObject so) {
-		try {
-			searchEngine.deleteSenateObject(so);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return deleteFile(so.luceneOid(), so.getYear() +"", so.luceneOtype());
-	}
-	
-	public boolean deleteFile(String id, String year, String type) {
-		return deleteFile(WRITE_DIRECTORY + "/" + year + "/" + type + "/" + id + ".json");
-	}
-	
-	public boolean deleteFile(String path) {
-		logger.info("Deleting file at: " + path);
-		
-		File file = new File(path);
-		return file.delete();
-	}
+
 	
 	
 	
@@ -700,109 +463,6 @@ public class IngestReader {
 	 * UTILITIES
 	 */
 	
-	/*
-	 * fixCalendarBills(year,path) and fixAgendaBills(year,path) can be
-	 * executed to update the two document types with the latest bill information.
-	 * This solves an issue where occasionally calendars or agendas
-	 * would be missing relevant information that SHOULD be available to them.
-	 */
-	
-	public void fixCalendarBills(String year, String path) {
-		File file = new File(path);
-		
-		if(!file.exists())
-			return;
-		
-		if(file.isDirectory()) {
-			for(File temp:file.listFiles()) {
-				fixCalendarBills(year, temp.getAbsolutePath());
-			}
-		}
-		else {
-			Calendar cal = (Calendar) this.loadObject(file.getAbsolutePath(), Calendar.class);
-			
-			if(cal == null) 
-				return;
-			
-			if(cal.getSupplementals() != null) {
-				for(Supplemental sup:cal.getSupplementals()) {
-					if(sup.getSections() != null) {
-						for(Section section:sup.getSections()) {
-							for(CalendarEntry ce:section.getCalendarEntries()) {
-								ce.setBill(
-									(Bill)this.loadObject(
-										ce.getBill().getSenateBillNo(),
-										year,
-										"bill",
-										Bill.class)
-								);
-							}
-						}
-					}
-					
-					if(sup.getSequence() != null) {
-						for(CalendarEntry ce:sup.getSequence().getCalendarEntries()) {
-							if(ce.getBill() != null) {							
-								ce.setBill(
-									(Bill)this.loadObject(
-										ce.getBill().getSenateBillNo(),
-										year,
-										"bill",
-										Bill.class)
-								);
-							}
-						}
-					}
-				}
-			}
-			this.writeSenateObject(cal, Calendar.class, false);
-		}
-	}
-	
-	public void fixAgendaBills(String year, String path) {
-		File file = new File(path);
-		
-		if(!file.exists()){
-			return;
-		}
-		
-		if(file.isDirectory()) {
-			for(File temp:file.listFiles()) {
-				fixAgendaBills(year, temp.getAbsolutePath());
-			}
-		}
-		else {
-			Agenda agenda = (Agenda) this.loadObject(file.getAbsolutePath(), Agenda.class);
-			
-			if(agenda == null) {
-				return;
-			}
-			
-			if(agenda.getAddendums() != null) {
-				for(Addendum addendum:agenda.getAddendums()) {
-					if(addendum.getMeetings() != null) {
-						for(Meeting meeting:addendum.getMeetings()) {
-							if(meeting.getBills() ==  null) {
-								continue;
-							}
-							
-							for(int i = 0; i < meeting.getBills().size(); i++) {
-								meeting.getBills().set(i,
-									(Bill)this.loadObject(
-										meeting.getBills().get(i).getSenateBillNo(),
-										year,
-										"bill",
-										Bill.class)
-								);
-							}
-						}
-					}
-				}
-			}
-			this.writeSenateObject(agenda, Agenda.class, false);
-		}
-	}
-	
 	public long getDateFromFileName(String fileName) {
 		java.util.Calendar cal = java.util.Calendar.getInstance();
 		
@@ -879,11 +539,72 @@ public class IngestReader {
 		return fList;
 	}
 	
+	public ISenateObject mergeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz) {
+		File file = new File(WRITE_DIRECTORY  + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
+		
+		if(file.exists()) {
+			logger.info("Merging object with id: " + obj.luceneOid());
+			try {
+				ISenateObject oldObject = (ISenateObject)mapper.readValue(file, clazz);
+				oldObject.setLuceneActive(obj.getLuceneActive());
+				oldObject.merge(obj);
+				obj = oldObject;
+				
+				
+			} catch (JsonGenerationException e) {
+				logger.warn("could not parse json", e);
+			} catch (JsonMappingException e) {
+				logger.warn("could not parse json", e);
+			} catch (IOException e) {
+				logger.warn("error reading file", e);
+			}
+		}
+		
+		return obj;		
+	}
+	
+	
+	
+	
+	
+	
 	/* 
-	 * 
-	 * JGit has been retired for now
-	 * 
-	 * */
+	 * git functions
+	 */
+	
+	public void commit(String message) {
+		//Condensed for speed, don't pull the pieces out into a "run" func
+		try {
+			String line;
+			Process process;
+			BufferedReader error;
+			File repository = new File(WRITE_DIRECTORY);
+			Runtime runtime = Runtime.getRuntime();
+			
+			if(! new File(WRITE_DIRECTORY+"/.git").exists()) {
+				process = runtime.exec("git init",null,repository);
+				error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+				while((line = error.readLine()) != null)
+					logger.error(line);
+			}
+
+			process = runtime.exec("git add .",null,repository);
+			error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+			while((line = error.readLine()) != null)
+				logger.error(line);
+			
+			process = runtime.exec("git commit -m "+message+"\"",null,repository);
+			error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+			while((line = error.readLine()) != null)
+				logger.error(line);
+			
+		} catch (IOException e) {
+			logger.error(e);
+		}
+		
+	}
+	
+	//not in use
 	public Git getRepo(String workingDrive) {
 		if(repo == null) {
 			try {
@@ -899,6 +620,7 @@ public class IngestReader {
 		return repo;
 	}
 	
+	//not in use
 	public void gitCommit(String message) {
 		Git git = getRepo(WRITE_DIRECTORY);
 		try {
@@ -919,5 +641,106 @@ public class IngestReader {
 		} catch (NoFilepatternException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/* TODO
+	 * disk writing
+	 */
+	
+	public boolean writeSenateObject(ISenateObject obj) {		
+		File yearDir = new File(WRITE_DIRECTORY + "/" + obj.getYear());
+		File typeDir = new File(WRITE_DIRECTORY + "/" + obj.getYear() + "/" + obj.luceneOtype());
+		File newFile = new File(WRITE_DIRECTORY + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
+		
+		if(!yearDir.exists()) {
+			logger.info("creating directory: " + yearDir.getAbsolutePath());
+			yearDir.mkdir();
+		}
+		if(!typeDir.exists()) {
+			logger.info("creating directory: " + typeDir.getAbsolutePath());
+			typeDir.mkdir();
+		}
+		
+		logger.info("Writing json to path: " + newFile.getAbsolutePath());
+		try {			
+			BufferedOutputStream osw = new BufferedOutputStream(new FileOutputStream(newFile));
+			JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(osw,JsonEncoding.UTF8);
+			generator.setPrettyPrinter(new DefaultPrettyPrinter());
+			mapper.writeValue(generator, obj);
+			osw.close();
+			
+			return true;
+		} catch (JsonGenerationException e) {
+			logger.warn("could not parse json", e);
+		} catch (JsonMappingException e) {
+			logger.warn("could not parse json", e);
+		} catch (IOException e) {
+			logger.warn("error reading file", e);
+		}
+		
+		return false;
+	}
+	
+	public boolean deleteSenateObject(ISenateObject so) {
+		try {
+			searchEngine.deleteSenateObject(so);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return deleteFile(so.luceneOid(), so.getYear() +"", so.luceneOtype());
+	}
+	
+	public boolean deleteFile(String id, String year, String type) {
+		return deleteFile(WRITE_DIRECTORY + "/" + year + "/" + type + "/" + id + ".json");
+	}
+	
+	public boolean deleteFile(String path) {
+		logger.info("Deleting file at: " + path);
+		
+		File file = new File(path);
+		return file.delete();
+	}
+	
+	
+	
+	
+	
+	
+	
+	/* TODO
+	 * disk reading
+	 */
+	
+	public ISenateObject loadObject(String id, String year, String type, Class<? extends ISenateObject> clazz) {
+		return loadObject(WRITE_DIRECTORY + "/" + year + "/" + type + "/" + id + ".json", clazz);
+	}
+	
+	/**
+	 * @param path to json document
+	 * @param clazz class of object to be loaded
+	 * @return deserialized SenateObject of type clazz
+	 */
+	public ISenateObject loadObject(String path, Class<? extends ISenateObject> clazz) {
+		try {
+			logger.info("Loading object at: " + path);
+			File file = new File(path);
+			if(!file.exists()) 
+				return null;
+			return mapper.readValue(file, clazz);
+		} catch (org.codehaus.jackson.JsonParseException e) {
+			logger.warn("could not parse json", e);
+		} catch (JsonMappingException e) {
+			logger.warn("could not map json", e);
+		} catch (IOException e) {
+			logger.warn("error with file", e);
+		}
+		
+		return null;
 	}
 }

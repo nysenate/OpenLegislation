@@ -255,10 +255,13 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
   <%if (vote.getDescription()!=null){%>- <%=vote.getDescription()%><%} %>
   - <%=DateFormat.getDateInstance(DateFormat.MEDIUM).format(vote.getVoteDate())%></b>
   <blockquote>
+  	<%Iterator<String> itVoter = null; String voter = null;%>
+  	<%if (vote.getAyes()!=null && vote.getAyes().size()>0){ %>
+ 			<br/>
  	<b>Ayes (<%=vote.getAyes().size()%>):</b>
  	<% 
- 		Iterator<String> itVoter = vote.getAyes().iterator();
- 		String voter = null;
+ 		itVoter = vote.getAyes().iterator();
+ 		voter = null;
  		
  		while (itVoter.hasNext())
  		{
@@ -267,6 +270,7 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
  		<a href="<%=appPath%>/sponsor/<%=voter%>" class="sublink"><%=voter%></a><%if (itVoter.hasNext()){%>,<%} %>
  		<% 
  		}
+  	}
  		%>
  	<%if (vote.getAyeswr()!=null && vote.getAyeswr().size()>0){ %>
  			<br/>
@@ -335,7 +339,7 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
   
 
   
-<%if (billMemo!=null){%>
+<%if (billMemo!=null && !billMemo.matches("\\s*")){%>
 <h3><%=senateBillNo%> Memo</h3>
 <pre><%=/*TextFormatter.formatMemo (billMemo)*/billMemo%></pre><%}%>
 	

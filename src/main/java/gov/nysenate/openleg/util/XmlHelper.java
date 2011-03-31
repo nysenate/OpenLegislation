@@ -3,10 +3,12 @@ package gov.nysenate.openleg.util;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +36,7 @@ public class XmlHelper {
 		int inc = 1;
 		
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsolutePath()), "ISO-8859-1"));
 			in  = null;
 			
 			while((in = br.readLine()) != null) {
@@ -65,10 +67,10 @@ public class XmlHelper {
 		sb.append("<SENATEDATA>\n");
 		sb.append(line + "\n");
 		
-		String in = null;
+		String in = null; 
 		
 		while((in  = br.readLine()) != null) {
-			sb.append(in + "\n");
+			sb.append(in.replaceAll("\\xa7", "&sect;").replaceAll("\\xDF", "&sect;") + "\n");
 			
 			if(in.matches(escape))
 				break;

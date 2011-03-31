@@ -209,7 +209,7 @@ public class BasicParser implements OpenLegConstants {
 		}
 		transcript.setTranscriptText(fullText.toString());
 		transcript.setTranscriptTextProcessed(fullTextProcessed.toString());
-				
+		
 		return transcript;
 	}
 	

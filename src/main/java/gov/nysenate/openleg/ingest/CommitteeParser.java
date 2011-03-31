@@ -372,7 +372,7 @@ public class CommitteeParser implements OpenLegConstants {
 						} catch (IOException e) {
 							logger.warn(e);
 						}
-						reader.writeSenateObject(agenda, Agenda.class, false);
+						reader.writeSenateObject(agenda);
 					}
 					if(action.equals("remove"))
 						continue;

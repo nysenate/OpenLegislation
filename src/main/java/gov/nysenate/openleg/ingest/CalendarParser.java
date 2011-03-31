@@ -444,7 +444,7 @@ public class CalendarParser implements OpenLegConstants {
 			Person sponsor = new Person(sponsorName);
 			bill.setSponsor(sponsor);
 			
-			reader.writeSenateObject(bill, Bill.class, false);
+			reader.writeSenateObject(bill);
 		}
 		
 		bill.setFulltext("");
