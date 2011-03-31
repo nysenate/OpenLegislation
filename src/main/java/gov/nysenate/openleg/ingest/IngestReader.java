@@ -67,8 +67,7 @@ public class IngestReader {
 	
 	private static Logger logger = Logger.getLogger(IngestReader.class);
 	
-//	private static String WRITE_DIRECTORY;
-	private static String WRITE_DIRECTORY = "/Users/jaredwilliams/Desktop/json/";
+	private static String WRITE_DIRECTORY;
 	
 	BasicParser basicParser;
 	CalendarParser calendarParser;
