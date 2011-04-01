@@ -442,6 +442,10 @@ public class Bill extends SenateObject  {
 				currentCommittee = bill.getCurrentCommittee();
 		}
 		
+		if(bill.getFulltext() != null && bill.getFulltext().equals("*DELETE*")) {
+			this.fulltext = null;
+			bill.setFulltext(null);
+		}
 		if(fulltext == null || fulltext.equals("")) {
 			fulltext = bill.getFulltext();
 		}

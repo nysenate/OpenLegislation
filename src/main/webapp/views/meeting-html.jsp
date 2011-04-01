@@ -56,108 +56,80 @@ of:</b> <%=addendum.getWeekOf()%></div>
 <div>
 <h3>Bills on the Agenda</h3>
 <%
-	Iterator<Bill> itBills = meeting.getBills().iterator();
-	Bill bill = null;
-	while (itBills.hasNext()) {
-		bill = itBills.next();
-		try {
-			request.setAttribute("bill", bill);
-			String billNo = bill.getSenateBillNo();
-%>
-
-<div class="billSummary"
-	onmouseover="this.style.backgroundColor='#FFFFCC'"
-	onmouseout="this.style.backgroundColor='#FFFFFF'"
-	onclick="location.href='/legislation/bill/<%=billNo%>'"><a
-	href="/legislation/bill/<%=billNo%>"><%=billNo%>: <%=bill.getTitle()%></a>
-<div style="font-size: 90%; color: #777777;"><%=bill.getSummary()%>
-/ <%
-	if (bill.getSponsor() != null) {
-%> Sponsor: <a
-	href="<%=appPath%>/sponsor/<%=bill.getSponsor().getFullname()%>"
-	class="sublink"><%=bill.getSponsor().getFullname()%></a> <%
- 	}
- %> <%
- 	if (bill.getCurrentCommittee() != null) {
- %>
-Committee: <a
-	href="<%=appPath%>/committee/<%=bill.getCurrentCommittee().replaceAll(" ","-")%>%22"
-	class="sublink"><%=bill.getCurrentCommittee()%></a> <%
- 	}
- %> <%
- 	if (bill.getVotes() != null && bill.getVotes().size() > 0) {
-
- 				Iterator<Vote> itVotes = bill.getVotes().iterator();
- %>
-<ul>
-	<%
-		while (itVotes.hasNext()) {
+	if(meeting.getBills() == null || meeting.getBills().isEmpty()) {
+		%>No bills listed.<%
+	}
+	else {
+		Iterator<Bill> itBills = meeting.getBills().iterator();
+		Bill bill = null;
+		while (itBills.hasNext()) {
+			bill = itBills.next();
+			try {
+				request.setAttribute("bill",bill);	
+				%>
+					
+				<div class="billSummary" onmouseover="this.style.backgroundColor='#FFFFCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/legislation/bill/<%=bill.getSenateBillNo()%>'">
+				<a href="/legislation/bill/<%=bill.getSenateBillNo()%>-<%=bill.getYear()%>"><%=bill.getSenateBillNo()%>-<%=bill.getYear()%>: <%=bill.getTitle()%></a>
+				<div style="font-size:90%;color:#777777;">
+				
+				<%=bill.getSummary() %> /
+				 
+				<%if (bill.getSponsor()!=null) { %>
+					Sponsor: <a href="<%=appPath%>/search/?term=sponsor:%22<%=bill.getSponsor().getFullname()%>%22" class="sublink"><%=bill.getSponsor().getFullname()%></a>
+				<% } %>
+				 
+				<%if (bill.getCurrentCommittee()!=null) { %>
+					Committee: <a href="<%=appPath%>/search/?term=committee:%22<%=bill.getCurrentCommittee()%>%22"  class="sublink"><%=bill.getCurrentCommittee()%></a>
+				<% } 
+				if (bill.getVotes()!=null && bill.getVotes().size()>0) {
+					Iterator<Vote> itVotes = bill.getVotes().iterator();
+					%>
+						<ul>
+					<%
+					while (itVotes.hasNext()) {
 						Vote vote = itVotes.next();
-
-						if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE
-								&& vote.getVoteDate().equals(
-										meeting.getMeetingDateTime())) {
-
-							request.setAttribute("vote", vote);
-
+						
+						if (vote.getVoteType()==Vote.VOTE_TYPE_COMMITTEE && vote.getVoteDate().equals(meeting.getMeetingDateTime())) {
+							request.setAttribute("vote",vote);
 							String voteType = "Floor";
+							
 							if (vote.getVoteType() == Vote.VOTE_TYPE_FLOOR)
 								voteType = "Floor";
 							else if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
 								voteType = "Committee";
-	%>
-	<li>Vote: <%=voteType%> <%
- 	if (vote.getDescription() != null) {
- %>(<%=vote.getDescription()%>)<%
- 	}
- %>
-	<%=df.format(vote.getVoteDate())%>: <%
-		if (vote.getAyes() != null) {
-	%> <%=vote.getAyes().size()%>
-	Ayes <%
- 	}
- %> <%
- 	if (vote.getAyeswr() != null) {
- %> / <%=vote.getAyeswr().size()%>
-	Ayes W/R <%
- 	}
- %> <%
- 	if (vote.getNays() != null) {
- %> / <%=vote.getNays().size()%>
-	Nays <%
- 	}
- %> <%
- 	if (vote.getAbstains() != null) {
- %> / <%=vote.getAbstains().size()%>
-	Abstains<%
- 	}
- %> <%
- 	if (vote.getExcused() != null) {
- %> / <%=vote.getExcused().size()%>
-	Excused<%
- 	}
- %>
-	</li>
-
-	<%
-		}
+							%>
+							<li>		
+							Vote: <%=voteType%> 
+							<%if (vote.getDescription()!=null){ %>(<%=vote.getDescription()%>)<%} %>
+							<%=df.format(vote.getVoteDate())%>:
+				
+							<%if (vote.getAyes()!=null) { %> <%=vote.getAyes().size()%> Ayes <% } %>
+							<%if (vote.getAyeswr()!=null){ %> / <%=vote.getAyeswr().size()%> Ayes W/R <% } %>
+							<%if (vote.getNays()!=null){ %> / <%=vote.getNays().size()%> Nays <% } %>
+							
+							<%if (vote.getAbstains()!=null) { %> / <%=vote.getAbstains().size()%> Abstains<%} %>
+							<%if (vote.getExcused()!=null) { %> / <%=vote.getExcused().size()%> Excused<%} %>
+							</li>
+				
+							<%
+						}
 					}
-	%>
-</ul>
-<%
-	}
-%>
-</div>
-<%
-	} catch (Exception e) {
-			System.err.println("couldn't render bill: "
-					+ bill.getSenateBillNo());
+					%>
+						</ul>
+					<% 
+				}
+				%>
+					</div>
+				<%
+			}
+			catch (Exception e) {
+				System.err.println("couldn't render bill: " + bill.getSenateBillNo());
+			}
+			%>
+				</div>
+			<% 
 		}
-%>
-</div>
-<%
-	}
-%>
+	}%>
 </div>
 
 <div id="formatBox"><b>Formats:</b> <a
@@ -165,4 +137,3 @@ Committee: <a
 </div>
 </div>
 <jsp:include page="/footer.jsp" />
-

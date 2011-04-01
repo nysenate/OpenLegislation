@@ -300,8 +300,14 @@ public class BasicParser implements OpenLegConstants {
 					else if (lineCode == 'M')//memo text
 						bill = parseMemoData (line);
 					
-					else if (lineCode == 'T')//bill text
-						bill = parseTextData (line);
+					else if (lineCode == 'T') { //bill text
+						if(line.contains("*DELETE*")) {
+							currentBill.setFulltext("*DELETE*");
+						}
+						else {
+							bill = parseTextData (line);
+						}
+					}
 					
 					else if (lineCode == 'R')//resolution text
 						bill = parseTextData (line);

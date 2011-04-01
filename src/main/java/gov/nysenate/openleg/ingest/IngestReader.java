@@ -84,7 +84,7 @@ public class IngestReader {
 	
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
-				
+
 		try {
 			if(args.length < 2) {
 				throw new IngestException();
@@ -229,20 +229,19 @@ public class IngestReader {
 					logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote Objects - " + (sliceEnd - sliceStart + 1));
 
 					
-//					start = System.currentTimeMillis();
-//					this.searchEngine.indexSenateObjects(
-//							luceneObjects,
-//							new LuceneSerializer[]{	new XmlSerializer(), new JsonSerializer()});
+					start = System.currentTimeMillis();
+					this.searchEngine.indexSenateObjects(
+							luceneObjects,
+							new LuceneSerializer[]{	new XmlSerializer(), new JsonSerializer()});
 					luceneObjects.clear();
-//					logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Indexed Objects");
+					logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Indexed Objects");
 				}
 			}
 			
-
 //			Commit the changes made to the file system
-//			start = System.currentTimeMillis();
-//			commit(file.getName());
-//			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+			start = System.currentTimeMillis();
+			commit(file.getName());
+			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
 			
 			
 			calendarParser.clearCalendars();

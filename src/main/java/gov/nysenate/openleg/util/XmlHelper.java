@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class XmlHelper {
+	
 	public static void fixCalendar(File file) {
 		String data = flatten(file);
 		
@@ -70,7 +71,7 @@ public class XmlHelper {
 		String in = null; 
 		
 		while((in  = br.readLine()) != null) {
-			sb.append(in.replaceAll("\\xa7", "&sect;").replaceAll("\\xDF", "&sect;") + "\n");
+			sb.append(in.replaceAll("\\xb9","&sect;") + "\n");
 			
 			if(in.matches(escape))
 				break;
@@ -84,7 +85,7 @@ public class XmlHelper {
 	private static void write(String data, File file) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-			bw.write(data.replaceAll("\\p{Cntrl}",""));
+			bw.write(data.replaceAll("(?!\n)\\p{Cntrl}","").replaceAll("(?!\\.{2})[ ]{2,}"," "));
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
