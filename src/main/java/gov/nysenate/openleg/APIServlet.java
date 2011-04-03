@@ -399,9 +399,8 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				
 				String jsonData = result.getData();
 				req.setAttribute("active", result.getActive());
-								
-				jsonData = jsonData.substring(jsonData.indexOf(":")+1);
-				jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
+				
+				jsonData = ApiHelper.unwrapJson(jsonData);
 				
 				/* Jackson ObjectMaper will deserialize our json in to an object,
 				 * we need to know what sort of an object that is

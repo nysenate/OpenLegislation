@@ -82,20 +82,10 @@ public class ApiHelper implements OpenLegConstants {
 				if (jsonData == null)
 					continue;
 
-				jsonData = jsonData.substring(jsonData.indexOf(":") + 1);
-				jsonData = jsonData.substring(0, jsonData.lastIndexOf("}"));
-
-				String className = "gov.nysenate.openleg.model.bill."
-						+ type.substring(0, 1).toUpperCase()
-						+ type.substring(1);
-				if (type.equals("calendar"))
-					className = "gov.nysenate.openleg.model.calendar.Calendar";
-				else if (type.equals("meeting"))
-					className = "gov.nysenate.openleg.model.committee.Meeting";
-				else if (type.equals("action"))
-					className = "gov.nysenate.openleg.model.bill.BillEvent";
-				else if (type.equals("transcript"))
-					className = "gov.nysenate.openleg.model.transcript.Transcript";
+				jsonData = unwrapJson(jsonData);
+				
+				ApiType apiType = getApiType(type);
+				String className = apiType.clazz().getName();
 
 				Object resultObj = null;
 				try {
@@ -272,5 +262,20 @@ public class ApiHelper implements OpenLegConstants {
 		}
 		
 		return term;
+	}
+	
+	public static String unwrapJson(String jsonData) {
+		jsonData = jsonData.substring(jsonData.indexOf(":")+1);
+		jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
+		return jsonData;
+	}
+	
+	public static ApiType getApiType(String type) {
+		for(ApiType apiType:ApiType.values()) {
+			if(apiType.type().equalsIgnoreCase(type)) {
+				return apiType;
+			}
+		}
+		return null;
 	}
 }

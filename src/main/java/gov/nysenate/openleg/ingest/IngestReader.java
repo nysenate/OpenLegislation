@@ -54,15 +54,35 @@ import org.eclipse.jgit.lib.RepositoryBuilder;
 
 public class IngestReader {
 	
-	@SuppressWarnings("serial")
-	public static class IngestException extends Exception {
-		public IngestException() {
-			super();
+	public enum IngestType {
+		BILL("bill", Bill.class),
+		CALENDAR("calendar", Calendar.class),
+		AGENDA("meeting", Agenda.class),
+		TRANSCRIPT("transcript", Transcript.class);
+		
+		private String type;
+		private Class<? extends ISenateObject> clazz;
+		
+		private IngestType(String type, Class<? extends ISenateObject> clazz) {
+			this.type = type;
+			this.clazz = clazz;
 		}
-
-		public IngestException(String message) {
-			super(message);
+		
+		public String type() {
+			return type;
 		}
+		
+		public Class<? extends ISenateObject> clazz() {
+			return clazz;
+		}
+	}
+	
+	public IngestType getIngestType(String type) {
+		for(IngestType ingestType:IngestType.values()) {
+			if(ingestType.type().equalsIgnoreCase(type))
+				return ingestType;
+		}
+		return null;
 	}
 	
 	private static Logger logger = Logger.getLogger(IngestReader.class);
@@ -84,7 +104,7 @@ public class IngestReader {
 	
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
-
+		
 		try {
 			if(args.length < 2) {
 				throw new IngestException();
@@ -111,7 +131,6 @@ public class IngestReader {
 				else if(command.equals("-t")) {
 					ir.indexSenateObject(ir.loadObject(args[1], Transcript.class));
 				}
-				
 				else {
 					throw new IngestException();
 				}
@@ -125,6 +144,9 @@ public class IngestReader {
 					//Processes, writes, and indexes a directory of transcripts
 					WRITE_DIRECTORY = args[1];
 					ir.handleTranscript(new File(args[2]));
+				}
+				else if(command.equals("-bulk")) {
+					ir.bulkIndexJsonDirectory(ir.getIngestType(args[1]).clazz(),args[2]);
 				}
 				else {
 					throw new IngestException();
@@ -147,7 +169,35 @@ public class IngestReader {
 					"\t-a <agenda json path> (to reindex single agenda)\n" +
 					"\t-t <transcript json path> (to reindex single transcript)" +
 					"\t-it <transcript sobi path> (to reindex dir of transcripts)\n" +
-					"\t-pull <sobi directory> <output directory> <id> <year> (get an objects referencing sobis)");
+					"\t-pull <sobi directory> <output directory> <id> <year> (get an objects referencing sobis)" +
+					"\t-bulk <object type> <json directory> (bulk index directory ofjson objects)");
+		}
+	}
+	
+	public void bulkIndexJsonDirectory(Class<? extends ISenateObject> clazz, String directory) throws IOException {
+		luceneObjects = new ArrayList<ILuceneObject>();
+		
+		long start = System.currentTimeMillis();
+		doBulk(clazz, directory);
+		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Read " + luceneObjects.size() + " Objects");
+		
+		start = System.currentTimeMillis();
+		this.searchEngine.indexSenateObjects(
+				luceneObjects,
+				new LuceneSerializer[]{	new XmlSerializer(), new JsonSerializer()});
+		luceneObjects.clear();
+		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Indexed Objects");
+	}
+	
+	private void doBulk(Class<? extends ISenateObject> clazz, String directory) {
+		File file = new File(directory);
+		if(file.isDirectory()) {
+			for(File f:file.listFiles()) {
+				doBulk(clazz, f.getAbsolutePath());
+			}
+		}
+		else {
+			luceneObjects.add(loadObject(directory, clazz));
 		}
 	}
 	
@@ -351,6 +401,7 @@ public class IngestReader {
 	 */
 	
 	public void indexSenateObject(ISenateObject obj) {
+		logger.warn("Indexing object " + obj.luceneOid());
 		try {
 			searchEngine.indexSenateObjects(
 					new ArrayList<ILuceneObject>(
@@ -460,6 +511,17 @@ public class IngestReader {
 	/* TODO
 	 * UTILITIES
 	 */
+	
+	@SuppressWarnings("serial")
+	public static class IngestException extends Exception {
+		public IngestException() {
+			super();
+		}
+
+		public IngestException(String message) {
+			super(message);
+		}
+	}
 	
 	public long getDateFromFileName(String fileName) {
 		java.util.Calendar cal = java.util.Calendar.getInstance();

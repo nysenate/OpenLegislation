@@ -69,7 +69,7 @@ of:</b> <%=addendum.getWeekOf()%></div>
 				%>
 					
 				<div class="billSummary" onmouseover="this.style.backgroundColor='#FFFFCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/legislation/bill/<%=bill.getSenateBillNo()%>'">
-				<a href="/legislation/bill/<%=bill.getSenateBillNo()%>-<%=bill.getYear()%>"><%=bill.getSenateBillNo()%>-<%=bill.getYear()%>: <%=bill.getTitle()%></a>
+				<a href="/legislation/bill/<%=bill.getSenateBillNo()%>"><%=bill.getSenateBillNo()%>: <%=bill.getTitle()%></a>
 				<div style="font-size:90%;color:#777777;">
 				
 				<%=bill.getSummary() %> /
