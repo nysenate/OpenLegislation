@@ -2,7 +2,7 @@ package gov.nysenate.openleg.lucene;
 
 import java.util.HashMap;
 
-import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class LuceneObject implements ILuceneObject {
@@ -10,7 +10,7 @@ public class LuceneObject implements ILuceneObject {
 	private long modified;
 
 	@Override
-	public HashMap<String, Field> luceneFields() {
+	public HashMap<String, Fieldable> luceneFields() {
 		return null;
 	}
 

@@ -10,6 +10,8 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
+import org.apache.lucene.document.NumericField;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import gov.nysenate.openleg.lucene.DocumentBuilder;
@@ -125,8 +127,8 @@ public class Supplemental extends LuceneObject {
 	}
 
 	@Override
-	public HashMap<String,Field> luceneFields() {
-		HashMap<String,Field> fields = new HashMap<String,Field>();
+	public HashMap<String, Fieldable> luceneFields() {
+		HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
 		
 		Calendar calendar = this.getCalendar();
 		
@@ -192,11 +194,11 @@ public class Supplemental extends LuceneObject {
 		String oid = "";
 		if(calendar.getId().startsWith("cal-floor")) {
 			oid = "floor-" + new SimpleDateFormat("MM-dd-yyyy").format(this.getCalendarDate());
-			fields.put("when", new Field("when",this.getCalendarDate().getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+			fields.put("when",new NumericField("when").setLongValue(this.getCalendarDate().getTime()));
 		}
 		else {
 			oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequence.getActCalDate());
-			fields.put("when", new Field("when",sequence.getActCalDate().getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+			fields.put("when",new NumericField("when").setLongValue(sequence.getActCalDate().getTime()));
 		}
 				
 		fields.put("oid",new Field("oid",oid, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));

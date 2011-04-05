@@ -6,7 +6,7 @@ import gov.nysenate.openleg.ingest.SenateObject;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class Agenda extends SenateObject {
@@ -121,7 +121,7 @@ public class Agenda extends SenateObject {
 	}
 
 	@Override
-	public HashMap<String, Field> luceneFields() {
+	public HashMap<String, Fieldable> luceneFields() {
 		return null;
 	}
 

@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
+import org.apache.lucene.document.NumericField;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -268,8 +270,8 @@ public class Vote extends SenateObject {
 	
 	@JsonIgnore
 	@Override
-	public HashMap<String, Field> luceneFields() {
-		HashMap<String,Field> map = new HashMap<String,Field>();
+	public HashMap<String, Fieldable> luceneFields() {
+		HashMap<String,Fieldable> map = new HashMap<String,Fieldable>();
 
 		if (bill != null)
 			map.put("billno", new Field("billno",bill.getSenateBillNo(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
@@ -327,7 +329,7 @@ public class Vote extends SenateObject {
     		map.put("nay", new Field("nay",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		} 
 		
-		map.put("when", new Field("when",voteDate.getTime()+"", DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		map.put("when", new NumericField("when").setLongValue(voteDate.getTime()));
 
 		
 		return map;

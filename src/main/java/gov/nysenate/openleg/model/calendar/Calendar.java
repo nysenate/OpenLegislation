@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
-import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -133,7 +133,7 @@ public class Calendar extends SenateObject {
 	}
 	
 	@Override
-	public HashMap<String,Field> luceneFields() {
+	public HashMap<String,Fieldable> luceneFields() {
 		return null;
 	}
 

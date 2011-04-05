@@ -5,7 +5,7 @@ import gov.nysenate.openleg.lucene.LuceneObject;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
 
 public class SenateObject extends LuceneObject implements ISenateObject {
 	HashSet<String> sobiReferenceList = new HashSet<String>();
@@ -21,7 +21,7 @@ public class SenateObject extends LuceneObject implements ISenateObject {
 	}
 
 	@Override
-	public HashMap<String, Field> luceneFields() {
+	public HashMap<String, Fieldable> luceneFields() {
 		return null;
 	}
 

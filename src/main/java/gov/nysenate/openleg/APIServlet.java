@@ -325,7 +325,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				req.setAttribute("urlPath", urlPath);
 				searchString = ApiHelper.dateReplace(searchString) 
 					+ " AND year:" + SessionYear.getSessionYear() 
-					+ " AND active:true";
+					+ " AND active:" + LUCENE_ACTIVE;
 			}
 			/*
 			 * applicable to: calendars, meetings, and transcripts views
@@ -340,7 +340,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					+ DATE_START 
 					+ " TO " 
 					+ DATE_END + "]"
-					+ " AND active:true";
+					+ " AND active:" + LUCENE_ACTIVE;
 			}
 			/*
 			 * applicable to: individual documents
@@ -461,7 +461,6 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					//get votes
 					rType = "vote";
 					rQuery = "billno:\"" + key + "\"";
-					 					 
 					req.setAttribute("related-" + rType, ApiHelper.getRelatedSenateObjects(rType,rQuery));
 				}
 				
@@ -492,8 +491,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					req.setAttribute("bills", bills);
 				}
 				/* all calendar, meeting, transcript multi views go here */
-				else
-				{
+				else {
 					viewPath = "/views/" + "search" + "-" + format + ".jsp";
 					
 					sr.setResults(ApiHelper.buildSearchResultList(sr));

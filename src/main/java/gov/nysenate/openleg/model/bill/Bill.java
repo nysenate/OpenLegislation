@@ -12,6 +12,7 @@ import java.util.StringTokenizer;
 
 
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -569,8 +570,8 @@ public class Bill extends SenateObject  {
 	
 	@JsonIgnore
 	@Override
-	public HashMap<String,Field> luceneFields() {
-		HashMap<String,Field> map = new HashMap<String,Field>();
+	public HashMap<String,Fieldable> luceneFields() {
+		HashMap<String,Fieldable> map = new HashMap<String,Fieldable>();
 		
 		if(this.getPastCommittees() != null) {
 			String pcoms = "";
@@ -598,6 +599,7 @@ public class Bill extends SenateObject  {
 		else 
 			num = "Z" + num;
 		map.put("sortindex", new Field("sortindex",num, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		
 		return map;
 	}
 	

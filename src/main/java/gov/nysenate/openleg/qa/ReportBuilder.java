@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.qa;
 
+import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.search.Result;
@@ -29,7 +30,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.util.DefaultPrettyPrinter;
 
-public class ReportBuilder {
+public class ReportBuilder implements OpenLegConstants {
 	
 	public static void main(String[] args) throws ParseException, IOException {
 		ReportBuilder builder = new ReportBuilder();
@@ -213,7 +214,7 @@ public class ReportBuilder {
 	public int getNumberResultsForQuery(String query) throws ParseException,
 			IOException {
 		SenateResponse srs = SearchEngine2.getInstance().search(
-				query + " AND active:true", "json", 0, MAX_RESULTS,
+				query + " AND active:" + LUCENE_ACTIVE, "json", 0, MAX_RESULTS,
 				"sortindex", false);
 		return (Integer) srs.getMetadataByKey("totalresults");
 	}

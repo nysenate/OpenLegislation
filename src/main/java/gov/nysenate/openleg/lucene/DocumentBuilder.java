@@ -8,6 +8,8 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Fieldable;
+import org.apache.lucene.document.NumericField;
 
 
 public class DocumentBuilder {
@@ -20,15 +22,6 @@ public class DocumentBuilder {
 	
 	public static final org.apache.lucene.document.Field.Store DEFAULT_STORE = org.apache.lucene.document.Field.Store.YES;
 	public static final org.apache.lucene.document.Field.Index DEFAULT_INDEX = org.apache.lucene.document.Field.Index.ANALYZED;
-		
-	public static final String LUCENE_OTYPE = "luceneOtype";
-	public static final String LUCENE_OID = "luceneOid";
-	public static final String LUCENE_OSEARCH = "luceneOsearch";
-	public static final String LUCENE_FIELDS = "luceneFields";
-	public static final String LUCENE_SUMMARY = "luceneSummary";
-	public static final String LUCENE_TITLE = "luceneTitle";
-	public static final String LUCENE_WHEN = "luceneWhen";
-	public static final String LUCENE_ACTIVE = "getLuceneActive";
 	
 	public static final String OTYPE = "otype";
 	public static final String OID = "oid";
@@ -38,59 +31,52 @@ public class DocumentBuilder {
 	public static final String MODIFIED = "modified";
 	public static final String ACTIVE = "active";
 	
-	@SuppressWarnings("unchecked")
 	public Document buildDocument(ILuceneObject o, LuceneSerializer[] serializer) {
-		if(o == null) {
+		if(o == null || o.luceneOtype() == null || o.luceneOid() == null) {
 			return null;
 		}
 		
-		HashMap<String,org.apache.lucene.document.Field> fields = new HashMap<String,org.apache.lucene.document.Field>();
+		HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
 		
 		try {
 			fields.put(OTYPE,
 					new org.apache.lucene.document.Field(
 						OTYPE,
-						getLuceneFields(o, LUCENE_OTYPE),
+						o.luceneOtype(),
 						DEFAULT_STORE,
 						DEFAULT_INDEX));			
 			fields.put(OID,
 					new org.apache.lucene.document.Field(
-							OID,
-						getLuceneFields(o, LUCENE_OID).replace(" ", "+"),
+						OID,
+						o.luceneOid().replace(" ", "+"),
 						DEFAULT_STORE,
 						DEFAULT_INDEX));
 			fields.put(OSEARCH,
 					new org.apache.lucene.document.Field(
-							OSEARCH,
-						getLuceneFields(o, LUCENE_OSEARCH),
+						OSEARCH,
+						o.luceneOsearch() ==  null ? "" : o.luceneOsearch(),
 						DEFAULT_STORE,
 						DEFAULT_INDEX));
 			fields.put(TITLE,
 					new org.apache.lucene.document.Field(
-							TITLE,
-						getLuceneFields(o, LUCENE_TITLE),
+						TITLE,
+						o.luceneTitle() ==  null ? "" : o.luceneTitle(),
 						DEFAULT_STORE,
 						DEFAULT_INDEX));
 			fields.put(SUMMARY,
 					new org.apache.lucene.document.Field(
-							SUMMARY,
-						getLuceneFields(o, LUCENE_SUMMARY),
+						SUMMARY,
+						o.luceneSummary() ==  null ? "" : o.luceneSummary(),
 						DEFAULT_STORE,
 						DEFAULT_INDEX));
 			
-			fields.put(MODIFIED, new org.apache.lucene.document.Field(
-					MODIFIED,
-					(o.getLuceneModified() == 0 ? new Date().getTime() : o.getLuceneModified()) + "",
-					DEFAULT_STORE,
-					DEFAULT_INDEX));
-			
-			logger.info("MODIFIED: " + o.getLuceneModified());
-			
-			fields.put(ACTIVE, new org.apache.lucene.document.Field(
-					ACTIVE,
-					getLuceneFields(o, LUCENE_ACTIVE),
-					DEFAULT_STORE,
-					DEFAULT_INDEX));
+			fields.put(MODIFIED,
+					new NumericField(MODIFIED).setLongValue(
+							(o.getLuceneModified() == 0 ?
+									new Date().getTime() : o.getLuceneModified())));
+						
+			fields.put(ACTIVE, new NumericField(ACTIVE).setIntValue(
+					(o.getLuceneActive() ? 1 : 0)));
 			
 			Field[] objectFields = o.getClass().getDeclaredFields();
 
@@ -140,13 +126,11 @@ public class DocumentBuilder {
 				}
 			}
 			
-			Method otherMethod = o.getClass().getDeclaredMethod(LUCENE_FIELDS);
-			HashMap<String,org.apache.lucene.document.Field> otherMap = (HashMap<String,org.apache.lucene.document.Field>)otherMethod.invoke(o);
+			HashMap<String,Fieldable> otherMap = o.luceneFields();
 		
 			if(otherMap != null) {
 				fields.putAll(otherMap);
 			}
-			
 			if(serializer != null) {
 				for(LuceneSerializer lst:serializer) {
 					fields.put(lst.getType(),
@@ -169,26 +153,6 @@ public class DocumentBuilder {
 		}
 		
 		return document;
-	}
-	
-	private String getLuceneFields(Object o, String method) {
-		Object ret = null;
-		Method m = null;
-		try {
-			m = o.getClass().getDeclaredMethod(method);
-			ret = m.invoke(o);
-		}
-		catch (Exception e) {
-			try {
-				m = o.getClass().getMethod(method);
-				ret = m.invoke(o);
-			}
-			catch (Exception e2) {
-				e2.printStackTrace();
-			}
-		}
-		
-		return (ret==null) ? "":ret.toString();
 	}
 	
 	public AnnotatedField getAnnotatedField(Field field) {
