@@ -37,10 +37,10 @@ int pageSize = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PA
 int startIdx = (pageIdx - 1) * pageSize;
 int endIdx = startIdx + pageSize;
 
-SearchResultSet srs = (SearchResultSet)request.getAttribute("results");
-int resultCount = srs.getResults().size();
+SenateResponse sr = (SenateResponse)request.getAttribute("results");
+int resultCount = sr.getResults().size();
 
-int total = srs.getTotalHitCount();
+int total = (Integer)sr.getMetadataByKey("totalresults");
 
 if (total < endIdx)
 	endIdx = total;
@@ -138,8 +138,8 @@ else{ %><a href="/legislation/search/?term=<%=term%>&sort=oid&sortOrder=false"">
  %>
 
  <%
-Iterator it = srs.getResults().iterator();
-  SearchResult sresult = null;
+Iterator it = sr.getResults().iterator();
+  Result sresult = null;
   
   String resultType = null;
   String resultId = null;
@@ -152,8 +152,8 @@ String resultTitle = null;
 	
   while (it.hasNext())
   {
-                sresult = (SearchResult) it.next();	
-                resultType = sresult.getType();
+                sresult = (Result) it.next();	
+                resultType = sresult.getOtype();
                 
 				//System.out.println("got result type: " + resultType);
                 if (resultType.indexOf(".")!=-1)
@@ -161,7 +161,7 @@ String resultTitle = null;
                         resultType = resultType.substring(resultType.lastIndexOf(".")+1);
                 }
 
-                resultId = sresult.getId();
+                resultId = sresult.getOid();
 
                 contentType = resultType;
                 contentId = java.net.URLEncoder.encode(resultId,"UTF-8");
@@ -241,10 +241,6 @@ Date: <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + sr
  
  
 </div>
- <%if (sortField==null){ %>
- <em style="color:#999;font-size:90%">Search Score: <%=sresult.getScore()%>
- </em>
- <%} %>
 </div>
 
  <%} %>

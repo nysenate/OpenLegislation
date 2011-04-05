@@ -212,10 +212,10 @@ public class ReportBuilder {
 
 	public int getNumberResultsForQuery(String query) throws ParseException,
 			IOException {
-		SenateResponse sr = SearchEngine2.getInstance().search(
+		SenateResponse srs = SearchEngine2.getInstance().search(
 				query + " AND active:true", "json", 0, MAX_RESULTS,
 				"sortindex", false);
-		return (Integer) sr.getMetadataByKey("totalresults");
+		return (Integer) srs.getMetadataByKey("totalresults");
 	}
 	
 

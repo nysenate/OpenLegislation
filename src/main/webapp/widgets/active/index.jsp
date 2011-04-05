@@ -20,7 +20,7 @@ int endIdx = startIdx + pageSize;
 
 SearchEngine2 searchEngine = APIServlet.getSearchEngineInstance();
 
-ArrayList<SearchResult> listResults =  ApiHelper.buildSearchResultList(searchEngine.search(term,"json",startIdx,pageSize,sortField,sortOrder));
+ArrayList<Result> listResults =  ApiHelper.buildSearchResultList(searchEngine.search(term,"json",startIdx,pageSize,sortField,sortOrder));
 
 
 
@@ -75,9 +75,9 @@ width:150px;
 String resultTitle = null;
 gov.nysenate.openleg.model.calendar.Calendar calendar = null;
 
- for (SearchResult sresult : listResults)
+ for (Result sresult : listResults)
  {
-                resultType = sresult.getType();
+                resultType = sresult.getOtype();
 
 				calendar = (gov.nysenate.openleg.model.calendar.Calendar)sresult.getObject();
 				
@@ -87,7 +87,7 @@ gov.nysenate.openleg.model.calendar.Calendar calendar = null;
                 }
 
 
-                resultId = sresult.getId();
+                resultId = sresult.getOid();
 
                 contentType = resultType;
                 contentId = resultId;

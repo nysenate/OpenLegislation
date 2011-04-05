@@ -2,10 +2,10 @@
 
 String appPath = "http://open.nysenate.gov" + request.getContextPath();
 
-SearchResultSet srs = (SearchResultSet)request.getAttribute("results");
-int resultCount = srs.getResults().size();
+SenateResponse sr = (SenateResponse)request.getAttribute("results");
+int resultCount = sr.getResults().size();
 
-int total = srs.getTotalHitCount();
+int total = (Integer)sr.getMetadataByKey("totalresults");
 
 String term = (String)request.getAttribute("term");
 
@@ -37,9 +37,8 @@ String pubDate = new Date().toGMTString();
 
 <%
 
-Iterator<SearchResult> it = srs.getResults().iterator();
-SearchResult sr = null;
-String score = "";
+Iterator<Result> it = sr.getResults().iterator();
+Result r = null;
 
 String[] attribs = {"billno","sponsor","cosponsors","notes","when","sameas","committee","status","location","session-type","chair","summary"};
 
@@ -51,26 +50,25 @@ int srIdx = 0;
 
 while (it.hasNext())
 {
-		sr = it.next();
+		r = it.next();
         srIdx++;
         
-                score = sr.getScore() + "";
                 
                 
-                contentType = sr.getType();
-                contentId = sr.getId();
-                resultTitle = sr.getTitle();
+                contentType = r.getOtype();
+                contentId = r.getOid();
+                resultTitle = r.getTitle();
                                 
                 if (contentType.equals("vote"))
                 {
                         contentType = "bill";
-                        contentId = (String)sr.getFields().get("billno");
+                        contentId = (String)r.getFields().get("billno");
                 }
 
                 if (contentType.equals("action"))
                 {
                         contentType = "bill";
-                        contentId = (String)sr.getFields().get("billno");
+                        contentId = (String)r.getFields().get("billno");
                         
                         
                 }
@@ -98,21 +96,21 @@ while (it.hasNext())
                 StringBuilder resultSummary = new StringBuilder();
            
               for (int i = 0; i < attribs.length; i++){
-				if (sr.getFields().get(attribs[i])!=null){ 
+				if (r.getFields().get(attribs[i])!=null){ 
 					
 					resultSummary.append(attribs[i].trim());
 					resultSummary.append(":");
-					resultSummary.append(sr.getFields().get(attribs[i]).trim());
+					resultSummary.append(r.getFields().get(attribs[i]).trim());
 					resultSummary.append("; ");
 					
 				} 
 				}
               
               
-              if (sr.getSummary() != null && sr.getSummary().trim().length()>0)
+              if (r.getSummary() != null && r.getSummary().trim().length()>0)
               {
               	resultSummary.append("Summary:");
-              	resultSummary.append(sr.getSummary().trim());
+              	resultSummary.append(r.getSummary().trim());
               	resultSummary.append(";");
               }
               
@@ -121,7 +119,7 @@ while (it.hasNext())
                  <description><![CDATA[<%=resultSummary%>]]></description>
                         <link><%=resultPath%></link>
                         <guid><%=resultPath%>#<%=srIdx%></guid>
-                 <pubDate><%=sr.getLastModified().toGMTString()%></pubDate>
+                 <pubDate><%=new Date(r.getLastModified()).toGMTString()%></pubDate>
                  </item>
                <%
                 

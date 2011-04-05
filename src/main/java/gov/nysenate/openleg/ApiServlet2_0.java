@@ -157,11 +157,9 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			if (format.equals("xml"))
 				sFormat = "xml";
 			
-			SenateResponse sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);
+			SenateResponse sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);			
 			
-			
-			
-			if(sr.getResults().size() == 0) {
+			if(sr.getResults() == null || sr.getResults().size() == 0) {
 				term = term+"*";
 				sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);
 			}

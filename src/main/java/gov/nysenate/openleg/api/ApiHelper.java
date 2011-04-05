@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.OpenLegConstants;
+import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.model.bill.Vote;
@@ -11,7 +12,6 @@ import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine2;
-import gov.nysenate.openleg.search.SearchResult;
 import gov.nysenate.openleg.search.SenateResponse;
 
 import java.io.IOException;
@@ -43,17 +43,12 @@ public class ApiHelper implements OpenLegConstants {
 		return mapper;
 	}
 
-	public static ArrayList<SearchResult> getRelatedSenateObjects(String type,
+	public static ArrayList<Result> getRelatedSenateObjects(String type,
 			String query) throws ParseException, IOException,
 			ClassNotFoundException {
 
 		StringBuffer searchString = new StringBuffer();
-		searchString.append("otype:");
-		searchString.append(type);
-		searchString.append(" AND ");
-		searchString.append("(");
-		searchString.append(query);
-		searchString.append(")");
+		searchString.append("otype:" + type + " AND " + "(" + query + ")");
 
 		int start = 0;
 		int pageSize = 100;
@@ -65,19 +60,18 @@ public class ApiHelper implements OpenLegConstants {
 		return buildSearchResultList(sr);
 	}
 
-	public static ArrayList<SearchResult> buildSearchResultList(
+	public static ArrayList<Result> buildSearchResultList(
 			SenateResponse sr) throws ClassNotFoundException {
-		ArrayList<SearchResult> srList = new ArrayList<SearchResult>();
+		
+		ArrayList<Result> resultList = new ArrayList<Result>();
+		
+		if (sr.getResults() == null || sr.getResults().isEmpty())
+			return resultList;
 
-		for (Result newResult : sr.getResults()) {
+		for (Result result : sr.getResults()) {
 			try {
-				SearchResult sResult = new SearchResult();
-				sResult.setId(newResult.getOid());
-				sResult.setLastModified(new Date(newResult.getLastModified()));
-				sResult.setScore(1.0f);
-
-				String type = newResult.getOtype();
-				String jsonData = newResult.getData();
+				String type = result.getOtype();
+				String jsonData = result.getData();
 
 				if (jsonData == null)
 					continue;
@@ -85,15 +79,14 @@ public class ApiHelper implements OpenLegConstants {
 				jsonData = unwrapJson(jsonData);
 				
 				ApiType apiType = getApiType(type);
-				String className = apiType.clazz().getName();
+				Class<? extends ILuceneObject> clazz = apiType.clazz();
 
 				Object resultObj = null;
 				try {
-					resultObj = mapper.readValue(jsonData, Class
-							.forName(className));
-					sResult.setObject(resultObj);
+					resultObj = mapper.readValue(jsonData, clazz);
+					result.setObject(resultObj);
 				} catch (Exception e) {
-					logger.warn("error binding:" + className, e);
+					logger.warn("error binding:" + clazz.getName(), e);
 				}
 
 				if (resultObj == null)
@@ -225,19 +218,17 @@ public class ApiHelper implements OpenLegConstants {
 
 					summary = vote.getDescription();
 				}
-
-				sResult.setTitle(title);
-				sResult.setSummary(summary);
-				sResult.setType(newResult.getOtype());
-				sResult.setFields(fields);
-				srList.add(sResult);
+				
+				result.setTitle(title);
+				result.setSummary(summary);
+				result.setFields(fields);
 			} catch (Exception e) {
-				logger.warn("problem parsing result: " + newResult.otype + "-"
-						+ newResult.oid, e);
+				logger.warn("problem parsing result: " + result.getOtype() + "-"
+						+ result.getOid(), e);
 			}
 		}
 
-		return srList;
+		return sr.getResults();
 	}
 	
 	public static String dateReplace(String term) throws ParseException {
@@ -277,5 +268,13 @@ public class ApiHelper implements OpenLegConstants {
 			}
 		}
 		return null;
+	}
+	
+	public static String buildBillWildCardQuery(String billType, String billWildcard, String sessionYear) {
+		return billType + ":((" 
+			+ billWildcard + "-" + sessionYear
+            + " OR [" + billWildcard + "A-" + sessionYear 
+               + " TO " + billWildcard + "Z-" + sessionYear
+            + "]) AND " + billWildcard + "*-" + sessionYear + ")";
 	}
 }

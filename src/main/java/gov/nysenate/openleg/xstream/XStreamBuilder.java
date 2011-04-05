@@ -238,8 +238,9 @@ public class XStreamBuilder implements OpenLegConstants {
 			//#TODO: Figure out if we need to remove semicolons from end of results
 			if(type.equals("json")) {
 				results.append("{");
-				results.append("\"type\": \""+result.otype+"\", ");
-				results.append("\"data\": "+result.data);
+				results.append("\"type\": \""+result.getOtype()+"\", ");
+				
+				results.append("\"data\": " + result.getData());
 				results.append(" }");
 				
 				if (itResults.hasNext())
@@ -247,8 +248,8 @@ public class XStreamBuilder implements OpenLegConstants {
 			}
 			else if (type.equals("xml")) {
 				results.append("<result>");
-				results.append("<type>"+result.otype+"</type>");
-				results.append(result.data);
+				results.append("<type>"+result.getOtype()+"</type>");
+				results.append(result.getData());
 				results.append("</result>");
 			}
 		}

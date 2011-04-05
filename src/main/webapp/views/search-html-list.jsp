@@ -2,13 +2,13 @@
 
 response.setHeader("Access-Control-Allow-Origin","*");
 
-SearchResultSet srs = (SearchResultSet)request.getAttribute("results");
-int resultCount = srs.getResults().size();
+SenateResponse sr = (SenateResponse)request.getAttribute("results");
+int resultCount = sr.getResults().size();
 
-int total = srs.getTotalHitCount();
+int total = (Integer)sr.getMetadataByKey("totalresults");
 
-Iterator<SearchResult> it = srs.getResults().iterator();
-SearchResult sr = null;
+Iterator<Result> it = sr.getResults().iterator();
+Result r = null;
 
 String term = java.net.URLEncoder.encode((String)request.getAttribute("term"),"UTF-8");
 %>
@@ -27,39 +27,39 @@ while (it.hasNext())
         try
         {
         
-                sr = it.next();
+                r = it.next();
         
-                contentType = sr.getType();
-                contentId = sr.getId();
-                contentTitle = sr.getTitle();
+                contentType = r.getOtype();
+                contentId = r.getOid();
+                contentTitle = r.getTitle();
 
                 if (contentType.equals("vote"))
                 {
                         contentType = "bill";
-                        contentId = (String)sr.getFields().get("billno");
+                        contentId = (String)r.getFields().get("billno");
                 }
 
                 if (contentType.equals("action"))
                 {
                         contentType = "bill";
 
-                        contentId = (String)sr.getFields().get("billno");
+                        contentId = (String)r.getFields().get("billno");
                         contentTitle = contentId + " - " + contentTitle;
                 }
         
         %>
         <li class="quickresult_box"><a href="http://open.nysenate.gov/legislation/<%=contentType%>/<%=contentId%>" class="sublink">
 
-        <%=sr.getType().toUpperCase()%>:
-        <%if (sr.getType().equals("bill")){ %>
-        <%=sr.getId()%> 
+        <%=r.getOtype().toUpperCase()%>:
+        <%if (r.getOtype().equals("bill")){ %>
+        <%=r.getOid()%> 
         <%} %>
         - <%=contentTitle%>
-         <%if (sr.getFields().get("sameas")!=null){ %>
-        / Same as: <%=((String)sr.getFields().get("sameas"))%>
+         <%if (r.getFields().get("sameas")!=null){ %>
+        / Same as: <%=((String)r.getFields().get("sameas"))%>
         <%} %>
-        <%if (sr.getFields().get("sponsor")!=null && sr.getFields().get("sponsor").length()>0){ %>
-        (<%=((String)sr.getFields().get("sponsor"))%>)
+        <%if (r.getFields().get("sponsor")!=null && r.getFields().get("sponsor").length()>0){ %>
+        (<%=((String)r.getFields().get("sponsor"))%>)
         <%} %>
        
         </a>

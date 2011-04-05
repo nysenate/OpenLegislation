@@ -2,7 +2,6 @@ package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.search.SearchEngine2;
-import gov.nysenate.openleg.search.SearchResultSet;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
 import gov.nysenate.openleg.util.SessionYear;
@@ -152,7 +151,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 		//now calculate start, end idx based on pageIdx and pageSize
 		int start = (pageIdx - 1) * pageSize;
 		
-		SearchResultSet srs;
+		SenateResponse sr = null;
 		StringBuilder searchText = new StringBuilder();
 		
 		if (term != null)
@@ -312,9 +311,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			
 			request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
 			request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
-			
-			srs = null;
-			
+						
 			if (term.length() == 0)	{
 				response.sendError(404);
 				return;
@@ -322,7 +319,6 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			
 			String searchFormat = "json";
 												
-			SenateResponse sr = null;
 			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
 				if(type != null && type.equals("bill")) {
 					sr = searchEngine.search(term + " AND year:" + SessionYear.getSessionYear(),searchFormat,start,pageSize,sortField,sortOrder);
@@ -337,18 +333,15 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			else {
 				sr = searchEngine.search(term,searchFormat,start,pageSize,sortField,sortOrder);
 			}
-						
-			srs = new SearchResultSet();
-			srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));
+					
+			ApiHelper.buildSearchResultList(sr);
 			
-			srs.setResults(ApiHelper.buildSearchResultList(sr));
-			
-			if (srs != null) {
-				if (srs.getResults().size() == 0) {
+			if (sr != null) {
+				if (sr.getResults().size() == 0) {
 					response.sendError(404);
 				}
 				else {
-					request.setAttribute("results", srs);
+					request.setAttribute("results", sr);
 					String viewPath = "/views/search-" + format + DOT_JSP;
 					getServletContext().getRequestDispatcher(viewPath).forward(request, response);
 				}

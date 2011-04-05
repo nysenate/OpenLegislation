@@ -477,7 +477,7 @@ public class IngestReader {
 							
 			for(Result result:sr.getResults()) {
 				if(billNumbers.contains(result.getOid())) {
-					if(result.getActive().equals("true")) {
+					if(result.isActive()) {
 						reindexInactiveBill(result.getOid(), bill.getYear()+"");
 					}
 				}

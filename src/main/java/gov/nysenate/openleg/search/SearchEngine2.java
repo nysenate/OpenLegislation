@@ -52,7 +52,8 @@ public class SearchEngine2 extends SearchEngine {
 
 	private SearchEngine2() {
 		//TODO
-		super("/usr/local/openleg/lucene/2");
+//		super("/usr/local/openleg/lucene/2");
+		super("/Users/jaredwilliams/Documents/lucene/2");
 		logger = Logger.getLogger(SearchEngine2.class);
 	}
 	
@@ -69,7 +70,7 @@ public class SearchEngine2 extends SearchEngine {
 	
 	public SenateResponse get(String format, String otype, String oid, String sortField, int start, int numberOfResults, boolean reverseSort) {
 		
-    	SenateResponse response = null;
+		SenateResponse sr = null;
     			    	
 		try {
 			
@@ -84,14 +85,14 @@ public class SearchEngine2 extends SearchEngine {
 				logger.error("Get Request had neither otype nor oid specified");
 			
 			if (query != null)
-				response = search( query, format, start, numberOfResults, sortField, reverseSort);
+				sr = search( query, format, start, numberOfResults, sortField, reverseSort);
 			
 		} catch (IOException e) {
 			logger.warn(e);
 		} catch (ParseException e) {
 			logger.warn(e);		}
 		
-		return response;
+		return sr;
     	
     }
 	
@@ -109,7 +110,6 @@ public class SearchEngine2 extends SearchEngine {
     	}
     	else
     	{
-    		
 	    	response.addMetadataByKey("totalresults", result.total );
 	    	
 	    	for (Document doc : result.results) {
@@ -117,7 +117,12 @@ public class SearchEngine2 extends SearchEngine {
 	    		if (lastModified == null || lastModified.length() == 0)
 	    			lastModified = new Date().getTime()+"";
 	    		
-	    		response.addResult(new Result(doc.get("otype"),doc.get(data), doc.get("oid"), Long.parseLong(lastModified),doc.get("active")));
+	    		response.addResult(new Result(
+	    				doc.get("otype"),
+	    				doc.get(data),
+	    				doc.get("oid"),
+	    				Long.parseLong(lastModified),
+	    				Boolean.parseBoolean(doc.get("active"))));
 	    	}
 	    	
     	}

@@ -6,10 +6,10 @@ int pageSize = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PA
 int startIdx = (pageIdx - 1) * pageSize;
 int endIdx = startIdx + pageSize;
 
-SearchResultSet srs = (SearchResultSet)request.getAttribute("results");
-int resultCount = srs.getResults().size();
+SenateResponse sr = (SenateResponse)request.getAttribute("results");
+int resultCount = sr.getResults().size();
 
-int total = srs.getTotalHitCount();
+int total = (Integer)sr.getMetadataByKey("totalresults");
 
 if (total < endIdx)
 	endIdx = total;
@@ -21,8 +21,8 @@ String[] attribs = {"summary","billno","year","sponsor","cosponsors","when","sam
 
 JSONWriter mainObj = js.array();
 
-Iterator<SearchResult> it = srs.getResults().iterator();
-SearchResult sr = null;
+Iterator<Result> it = sr.getResults().iterator();
+Result r = null;
 
 while (it.hasNext())
 {
@@ -32,27 +32,24 @@ while (it.hasNext())
 	try
 	{
 	
-		sr = it.next();
+		r = it.next();
 		
 			
 		locObj.key("type");
-		locObj.value(sr.getType());
+		locObj.value(r.getOtype());
 		
 		locObj.key("id");
-		locObj.value(sr.getId());
-		
-		locObj.key("score");
-		locObj.value(sr.getScore()+"");
+		locObj.value(r.getOid());
 	
 										
 		locObj.key("title");
-		locObj.value(sr.getTitle());
+		locObj.value(r.getTitle());
 		
 		
 		for (int i = 0; i < attribs.length; i++){
-			if (sr.getFields().get(attribs[i])!=null){ 
+			if (r.getFields().get(attribs[i])!=null){ 
 				locObj.key(attribs[i]);
-				locObj.value(sr.getFields().get(attribs[i]));
+				locObj.value(r.getFields().get(attribs[i]));
 			} 
 		}
 	

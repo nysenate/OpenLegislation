@@ -4,7 +4,6 @@ import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine2;
-import gov.nysenate.openleg.search.SearchResult;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -155,10 +154,10 @@ public class BillCleaner implements OpenLegConstants {
 		return event;
 	}
 	
-	public static ArrayList<BillEvent> sortBillEvents(List<SearchResult> results) {
+	public static ArrayList<BillEvent> sortBillEvents(List<Result> results) {
 		TreeSet<BillEvent> set = new TreeSet<BillEvent>(new BillEvent.ByEventDate());
 		
-		for(SearchResult result:results) {
+		for(Result result:results) {
 			if(result.getObject() instanceof BillEvent) {
 				set.add((BillEvent)result.getObject());
 			}	

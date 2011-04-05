@@ -1,12 +1,12 @@
 package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.api.ApiHelper;
+import gov.nysenate.openleg.api.ApiType;
+import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine2;
-import gov.nysenate.openleg.search.SearchResult;
-import gov.nysenate.openleg.search.SearchResultSet;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.SessionYear;
 
@@ -84,7 +84,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		 * 		bill:		html, json, mobile, xml		csv, html-print, lrs-print
 		 * 		calendar:	html, json, mobile, xml
 		 * 		meeting:	html, json, mobile, xml
-		 * 		search:		html, json, mobile, xml		html-list, rss
+		 * 		search:		html, json, mobile, xml		csv, html-list, rss
 		 * 		transcript:	html, json, mobile, xml		csv
 		 */
 		String format = null;
@@ -317,7 +317,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			}
 							
 			/* 
-			 * applicable to: bills
+			 * applicable to: bills view
 			 * 
 			 * only return bills with "year:<currentSessionYear>"
 			 */
@@ -328,7 +328,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 					+ " AND active:true";
 			}
 			/*
-			 * applicable to: calendars, meetings, transcripts
+			 * applicable to: calendars, meetings, and transcripts views
 			 * 
 			 * only want current session documents as defined by the time
 			 * frame between DATE_START and DATE_END
@@ -398,14 +398,15 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				}
 				
 				String jsonData = result.getData();
-				req.setAttribute("active", result.getActive());
+				req.setAttribute("active", result.isActive());
 				
 				jsonData = ApiHelper.unwrapJson(jsonData);
 				
 				/* Jackson ObjectMaper will deserialize our json in to an object,
 				 * we need to know what sort of an object that is
 				 */
-				String className = "gov.nysenate.openleg.model.bill." + type.substring(0,1).toUpperCase() + type.substring(1);
+				ApiType apiType = ApiHelper.getApiType(type);
+				Class<? extends ILuceneObject> clazz = apiType.clazz();
 				
 				/* 
 				 * for bills we populate other relevant data, such as
@@ -424,84 +425,50 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 						sessionYear = billParts[1];
 				
 					/* turns S1234A in to S1234 */
-					String billWildcard = billQueryId;
-					if (!Character.isDigit(billWildcard.charAt(billWildcard.length()-1)))
-						billWildcard = billWildcard.substring(0,billWildcard.length()-1);
+					String billWildcard = billQueryId.replaceAll("[a-zA-Z]$", "");
 						
 					//get BillEvents for this 
 					//otype:action AND billno:((S1234-2011 OR [S1234A-2011 TO S1234Z-2011) AND S1234*-2011)
 					String rType = "action";
 					String rQuery = null;
-					rQuery = billWildcard + "-" + sessionYear;
+					rQuery = ApiHelper.buildBillWildCardQuery("billno", billWildcard, sessionYear);
 					
-					logger.info(rQuery);
-					
-					rQuery = "billno:((" 
-						+ rQuery 
-	                        + " OR [" + billWildcard + "A-" + sessionYear 
-	                           + " TO " + billWildcard + "Z-" + sessionYear
-	                        + "]) AND " + billWildcard + "*-" + sessionYear + ")";
-
-					ArrayList<SearchResult> relatedActions = ApiHelper.getRelatedSenateObjects(rType,rQuery);
-					Hashtable<String,SearchResult> uniqResults = new Hashtable<String,SearchResult>();
-					for (SearchResult rResult: relatedActions) {
+					ArrayList<Result> relatedActions = ApiHelper.getRelatedSenateObjects(rType,rQuery);
+					Hashtable<String,Result> uniqResults = new Hashtable<String,Result>();
+					for (Result rResult: relatedActions) {
 						BillEvent rAction = (BillEvent)rResult.getObject();
-						uniqResults.put(rAction.getEventDate().toGMTString()+'-'+rResult.getTitle().toUpperCase(), rResult);
-						
+						uniqResults.put(rAction.getEventDate().getTime()+'-'+rResult.getTitle().toUpperCase(), rResult);
 					}
-					
-					ArrayList<SearchResult> list = Collections.list(uniqResults.elements());
-					Collections.sort(list);
+					ArrayList<Result> list = Collections.list(uniqResults.elements());
 					req.setAttribute("related-" + rType, list);
 
-					//get older bills (e.g. for S1234A get S1234)
-					//otype:meeting AND oid:((S1234-2011 OR [S1234A-2011 TO S1234Z-2011) AND S1234*-2011)
+					//get sameas bills (e.g. for S1234A get S1234)
+					//otype:bill AND oid:((S1234-2011 OR [S1234A-2011 TO S1234Z-2011) AND S1234*-2011)
 					rType = "bill";
-					rQuery = billWildcard + "-" + sessionYear;
-					
-					logger.info(rQuery);
-					
-					rQuery = "oid:((" 
-						+ rQuery 
-	                        + " OR [" + billWildcard + "A-" + sessionYear 
-	                           + " TO " + billWildcard + "Z-" + sessionYear
-	                        + "]) AND " + billWildcard + "*-" + sessionYear + ")";
-					
-					req.setAttribute("related-" + rType, ApiHelper.getRelatedSenateObjects (rType,rQuery));
+					rQuery = ApiHelper.buildBillWildCardQuery("oid", billWildcard, sessionYear);
+					req.setAttribute("related-" + rType, ApiHelper.getRelatedSenateObjects(rType,rQuery));
 
 					//get Meetings
-					//otype:meeting AND bills:"S67005-2011"
 					rType = "meeting";
 					rQuery = "bills:\"" + key + "\"";					
 					req.setAttribute("related-" + rType, ApiHelper.getRelatedSenateObjects(rType,rQuery));
 					
 					//get calendars
-					//otype:calendar AND  bills:"S337A-2011"
 					rType = "calendar";
-					 rQuery = "bills:\"" + key + "\"";
+					rQuery = "bills:\"" + key + "\"";
 					req.setAttribute("related-" + rType, ApiHelper.getRelatedSenateObjects(rType,rQuery));
 					
 					//get votes
-					//otype:vote AND billno:"A11597-2011"
 					rType = "vote";
-					 rQuery = "billno:\"" + key + "\"";
+					rQuery = "billno:\"" + key + "\"";
 					 					 
 					req.setAttribute("related-" + rType, ApiHelper.getRelatedSenateObjects(rType,rQuery));
-				}
-				else if (type.equals("calendar")) {
-					className = "gov.nysenate.openleg.model.calendar.Calendar";
-				}
-				else if (type.equals("meeting")) {
-					className = "gov.nysenate.openleg.model.committee.Meeting";
-				}
-				else if(type.equals("transcript")) {
-					className = "gov.nysenate.openleg.model.transcript.Transcript";
 				}
 				
 				Object resultObj = null;
 				
 				try	{
-					resultObj = ApiHelper.getMapper().readValue(jsonData,  Class.forName(className));
+					resultObj = ApiHelper.getMapper().readValue(jsonData, clazz);
 				}
 				catch (Exception e) {
 					logger.warn("error binding className", e);
@@ -511,14 +478,14 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				viewPath = "/views/" + type + "-" + format + ".jsp";
 			}
 			else {
-				/* all non html/print bill views go here */
-				if (type.equals("bill") && (!format.equals("html"))) {
+				/* all non html/print/mobile bill views go here */
+				if (type.equals("bill") && !format.equals("html")) {
 					viewPath = "/views/bills-" + format + ".jsp";
 					
-					ArrayList<SearchResult> searchResults = ApiHelper.buildSearchResultList(sr);
+					ArrayList<Result> searchResults = ApiHelper.buildSearchResultList(sr);
 					ArrayList<Bill> bills = new ArrayList<Bill>();
 					
-					for (SearchResult result : searchResults) {
+					for (Result result : searchResults) {
 						bills.add((Bill)result.getObject());
 					}
 										
@@ -529,11 +496,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				{
 					viewPath = "/views/" + "search" + "-" + format + ".jsp";
 					
-					SearchResultSet srs = new SearchResultSet();
-					srs.setTotalHitCount((Integer)sr.getMetadata().get("totalresults"));
-					srs.setResults(ApiHelper.buildSearchResultList(sr));
+					sr.setResults(ApiHelper.buildSearchResultList(sr));
 					
-					req.setAttribute("results", srs);
+					req.setAttribute("results", sr);
 				}
 			}
 		}

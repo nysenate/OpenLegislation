@@ -6,10 +6,10 @@ int pageSize = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PA
 int startIdx = (pageIdx - 1) * pageSize;
 int endIdx = startIdx + pageSize;
 
-SearchResultSet srs = (SearchResultSet)request.getAttribute("results");
-int resultCount = srs.getResults().size();
+SenateResponse sr = (SenateResponse)request.getAttribute("results");
+int resultCount = sr.getResults().size();
 
-int total = srs.getTotalHitCount();
+int total = (Integer)sr.getMetadataByKey("totalresults");
 
 if (total < endIdx)
 	endIdx = total;
@@ -18,25 +18,22 @@ if (total < endIdx)
 <results total="<%=total%>">
 <%
 
-Iterator<SearchResult> it = srs.getResults().iterator();
-SearchResult sr = null;
-String score = "";
+Iterator<Result> it = sr.getResults().iterator();
+Result r = null;
 
 String[] attribs = {"summary","billno","year","sponsor","cosponsors","when","sameas","committee","status","location","session-type","chair"};
 
 while (it.hasNext())
 {
 
-		sr = it.next();
+		r = it.next();
 		
-		score = sr.getScore() + "";
-		
-		String title = sr.getTitle();
+		String title = r.getTitle();
 		if (title == null)
 			title = "";
 		%>
-		<result type="<%=sr.getType() %>" id="<%=sr.getId()%>" score="<%=score%>" title="<%=TextFormatter.clean(title)%>" 
-		<%for (int i = 0; i < attribs.length; i++){if (sr.getFields().get(attribs[i])!=null){ %> <%=attribs[i]%>="<%=TextFormatter.clean(sr.getFields().get(attribs[i]))%>"<%} }%>
+		<result type="<%=r.getOtype() %>" id="<%=r.getOid()%>" title="<%=TextFormatter.clean(title)%>" 
+		<%for (int i = 0; i < attribs.length; i++){if (r.getFields().get(attribs[i])!=null){ %> <%=attribs[i]%>="<%=TextFormatter.clean(r.getFields().get(attribs[i]))%>"<%} }%>
 		 />
 		<%
 		

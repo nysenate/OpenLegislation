@@ -32,13 +32,13 @@ public class MemoTester {
 		while((in = br.readLine()) != null) {
 			String billNo = "S" + in + "-2011";
 			
-			SenateResponse sr = search.search("otype:bill AND oid:" + billNo, "json", 0, 1, null, true);
+			SenateResponse srs = search.search("otype:bill AND oid:" + billNo, "json", 0, 1, null, true);
 			
-			if(sr.getResults().isEmpty())
+			if(srs.getResults().isEmpty())
 				continue;
 			
-			Result result = sr.getResults().iterator().next();
-			String jsonData = result.getData();
+			Result result = srs.getResults().iterator().next();
+			String jsonData = result.data;
 			
 			jsonData = jsonData.substring(jsonData.indexOf(":")+1);
 			jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));

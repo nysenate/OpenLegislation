@@ -3,7 +3,7 @@
 
 String appPath = request.getContextPath();
 String term = (String)request.getAttribute("term");
-String active = (String)request.getAttribute("active");
+boolean active = new Boolean((Boolean)request.getAttribute("active"));
 Bill bill = (Bill)request.getAttribute("bill");
   	
 String titleText = "(no title)";
@@ -25,7 +25,7 @@ String title = senateBillNo + " - NY Senate Open Legislation - " + titleText;
      <h2><%=senateBillNo%>: <%if (bill.getTitle()!=null){ %><%=bill.getTitle()%><%} %></h2>
     <br/>
     
-    <% if(active != null && active.equals("false")) { %>
+    <% if(!active) { %>
 		<div class="amended">This bill has been amended.</div>
 	<% } %>
     
@@ -70,16 +70,16 @@ String sponsor = null;
 if (bill.getSponsor()!=null)
 		sponsor = bill.getSponsor().getFullname();
 
-ArrayList<SearchResult> rBills = (ArrayList<SearchResult>)request.getAttribute("related-bill");
+ArrayList<Result> rBills = (ArrayList<Result>)request.getAttribute("related-bill");
 %>
 
 <%if (rBills.size()>0) { %>
-Versions: <%for (SearchResult rBill:rBills){
+Versions: <%for (Result rBill:rBills){
 	
 	if ((sponsor == null || sponsor.length()==0) && rBill.getFields().get("sponsor")!=null)
 		sponsor = rBill.getFields().get("sponsor");
 	
-%><a href="/legislation/bill/<%=rBill.getId()%>"><%=rBill.getId()%></a> <%}%>
+%><a href="/legislation/bill/<%=rBill.getOid()%>"><%=rBill.getOid()%></a> <%}%>
 <%}
 
 if (sponsor == null)
@@ -182,7 +182,7 @@ if (bill.getTitle()!=null)
  
 
 <%
-ArrayList<SearchResult> rActions = (ArrayList<SearchResult>)request.getAttribute("related-action");
+ArrayList<Result> rActions = (ArrayList<Result>)request.getAttribute("related-action");
 %>
 <%if (rActions.size() > 0) { %>
 <h3><%=senateBillNo%> Actions</h3>
@@ -200,15 +200,15 @@ ArrayList<SearchResult> rActions = (ArrayList<SearchResult>)request.getAttribute
 
 <%
 
-ArrayList<SearchResult> rMeetings = (ArrayList<SearchResult>)request.getAttribute("related-meeting");
+ArrayList<Result> rMeetings = (ArrayList<Result>)request.getAttribute("related-meeting");
 %>
 <%if (rMeetings.size()>0) { %>
 <h3><%=senateBillNo%> Meetings</h3>
 <%
-	for (Iterator<SearchResult> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
-		SearchResult meeting = itMeetings.next();
+	for (Iterator<Result> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
+		Result meeting = itMeetings.next();
 		%>
-		<a href="<%=appPath%>/meeting/<%=meeting.getId()%>" class="sublink"><%=meeting.getTitle()%></a><%if (itMeetings.hasNext()){%>,<%}
+		<a href="<%=appPath%>/meeting/<%=meeting.getOid()%>" class="sublink"><%=meeting.getTitle()%></a><%if (itMeetings.hasNext()){%>,<%}
 		
 	}
 }
@@ -216,17 +216,17 @@ ArrayList<SearchResult> rMeetings = (ArrayList<SearchResult>)request.getAttribut
 
 <%
 
-ArrayList<SearchResult> rCals = (ArrayList<SearchResult>)request.getAttribute("related-calendar");
+ArrayList<Result> rCals = (ArrayList<Result>)request.getAttribute("related-calendar");
 %>
 <%if (rCals.size()>0) { %>
 <h3><%=senateBillNo%> Calendars</h3>
 <%
-for (Iterator<SearchResult> itCals = rCals.iterator(); itCals.hasNext();)
+for (Iterator<Result> itCals = rCals.iterator(); itCals.hasNext();)
 {
-	SearchResult cal = itCals.next();
+	Result cal = itCals.next();
 	
 	%>
-<a href="<%=appPath%>/calendar/<%=cal.getId()%>" class="sublink"><%=cal.getFields().get("type")%>: <%=cal.getFields().get("date")%></a><%if (itCals.hasNext()){%>,<%}
+<a href="<%=appPath%>/calendar/<%=cal.getOid()%>" class="sublink"><%=cal.getFields().get("type")%>: <%=cal.getFields().get("date")%></a><%if (itCals.hasNext()){%>,<%}
 
 }
 }
@@ -234,13 +234,13 @@ for (Iterator<SearchResult> itCals = rCals.iterator(); itCals.hasNext();)
 
 <%
 
-ArrayList<SearchResult> rVotes = (ArrayList<SearchResult>)request.getAttribute("related-vote");
+ArrayList<Result> rVotes = (ArrayList<Result>)request.getAttribute("related-vote");
 %>
 <%if (rVotes.size()>0) { %>
 <h3><%=senateBillNo%> Votes</h3>
 <%
 ObjectMapper mapper = new ObjectMapper();
-for (SearchResult result:rVotes){
+for (Result result:rVotes){
    
 	Vote vote = (Vote)result.getObject();
 	
