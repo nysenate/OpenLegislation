@@ -96,6 +96,8 @@ public class Bill extends SenateObject  {
 	@LuceneField
 	protected Bill latestAmendment;
 
+	protected Boolean stricken;
+
 	public Bill () {
 		super();
 	}
@@ -203,8 +205,14 @@ public class Bill extends SenateObject  {
 	public Bill getLatestAmendment() {
 		return latestAmendment;
 	}
+	
+	public Boolean getStricken() {
+		return stricken;
+	}
 
-
+	public boolean isStricken() {
+		return stricken;
+	}
 
 	public void setYear(int year) {
 		this.year = year;
@@ -310,6 +318,10 @@ public class Bill extends SenateObject  {
 
 	public void setLatestAmendment(Bill latestAmendment) {
 		this.latestAmendment = latestAmendment;
+	}
+	
+	public void setStricken(boolean stricken) {
+		this.stricken = stricken;
 	}
 	
 	
@@ -493,6 +505,15 @@ public class Bill extends SenateObject  {
 		else {
 			if(bill.getLatestAmendment() != null) {
 				latestAmendment = bill.getLatestAmendment();
+			}
+		}
+		
+		if(stricken == null) {
+			stricken  = bill.getStricken();
+		}
+		else {
+			if(bill.getStricken() != null) {
+				stricken = bill.getStricken();
 			}
 		}
 		

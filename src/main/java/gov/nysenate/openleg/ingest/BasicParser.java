@@ -455,6 +455,13 @@ public class BasicParser implements OpenLegConstants {
 							}
 						}
 						
+						if (beTextTemp.contains("ENACTING CLAUSE STRICKEN")) {
+							bill.setStricken(true);
+						}
+						else {
+							bill.setStricken(false);
+						}
+						
 						
 						//currently we don't want to keep track of assembly committees
 						if(bill.getSenateBillNo().startsWith("A")) {
