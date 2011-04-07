@@ -300,6 +300,8 @@ public class IngestReader {
 			senateObjects.clear();
 			luceneObjects.clear();
 			
+			this.searchEngine.commit();
+			
 			logger.warn("Finished with file: "+file.getName());
 			
 		} catch (FileNotFoundException e) {

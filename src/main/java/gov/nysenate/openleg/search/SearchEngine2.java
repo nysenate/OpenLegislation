@@ -51,50 +51,17 @@ public class SearchEngine2 extends SearchEngine {
 	}
 
 	private SearchEngine2() {
-		//TODO
-//		super("/usr/local/openleg/lucene/2");
-		super("/Users/jaredwilliams/Documents/lucene/2");
+  		super("/usr/local/openleg/lucene/2");
 		logger = Logger.getLogger(SearchEngine2.class);
 	}
 	
 	public static synchronized SearchEngine2 getInstance (){ 
-		
 		if (_instance == null) {
 			_instance = new SearchEngine2();
 		}
 		
 		return _instance;
-		
 	}
-	
-	
-	public SenateResponse get(String format, String otype, String oid, String sortField, int start, int numberOfResults, boolean reverseSort) {
-		
-		SenateResponse sr = null;
-    			    	
-		try {
-			
-			String query = null;
-			if (otype != null && oid !=null)
-				query = "otype:"+otype+" AND oid:"+oid;
-			else if (otype !=null && oid == null)
-				query = "otype:"+otype;
-			else if (otype ==null && oid != null)
-				query = "oid:"+oid;
-			else
-				logger.error("Get Request had neither otype nor oid specified");
-			
-			if (query != null)
-				sr = search( query, format, start, numberOfResults, sortField, reverseSort);
-			
-		} catch (IOException e) {
-			logger.warn(e);
-		} catch (ParseException e) {
-			logger.warn(e);		}
-		
-		return sr;
-    	
-    }
 	
 	public SenateResponse search(String searchText, String format, int start, int max, String sortField, boolean reverseSort) throws ParseException, IOException {
 		
