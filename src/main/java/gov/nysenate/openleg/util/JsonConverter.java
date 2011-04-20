@@ -176,7 +176,14 @@ public class JsonConverter {
 						else if(type.equals("String")) {
 							String s;
 							if((s = (String)method.invoke(o)) != null) {
-								root.addProperty(f.getName(), (String)method.invoke(o));
+								root.addProperty(f.getName(), s);
+								
+							}
+						}
+						else if(type.equals("Boolean")) {
+							Boolean b;
+							if((b = (Boolean)method.invoke(o)) != null) {
+								root.addProperty(f.getName(), b.toString());
 								
 							}
 						}

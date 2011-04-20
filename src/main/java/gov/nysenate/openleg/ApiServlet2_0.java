@@ -1,7 +1,7 @@
 package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
 
@@ -28,8 +28,6 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 	
 	private static final String SRV_DELIM = "/";
 	
-	private SearchEngine2 searchEngine = null;
-	
     public ApiServlet2_0() {
         super();
     }
@@ -37,8 +35,6 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
     @Override
 	public void init() throws ServletException {
 		super.init();
-		
-		searchEngine = SearchEngine2.getInstance();
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException {
@@ -157,11 +153,11 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			if (format.equals("xml"))
 				sFormat = "xml";
 			
-			SenateResponse sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);			
+			SenateResponse sr = SearchEngine.getInstance().search(dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);			
 			
 			if(sr.getResults() == null || sr.getResults().size() == 0) {
 				term = term+"*";
-				sr = searchEngine.search(dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);
+				sr = SearchEngine.getInstance().search(dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);
 			}
 			
 			req.setAttribute("results", sr);

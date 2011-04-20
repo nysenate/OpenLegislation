@@ -7,7 +7,7 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.JsonSerializer;
 import gov.nysenate.openleg.util.TranscriptFixer;
@@ -57,7 +57,7 @@ public class IngestReader {
 	public enum IngestType {
 		BILL("bill", Bill.class),
 		CALENDAR("calendar", Calendar.class),
-		AGENDA("meeting", Agenda.class),
+		AGENDA("agenda", Agenda.class),
 		TRANSCRIPT("transcript", Transcript.class);
 		
 		private String type;
@@ -87,13 +87,14 @@ public class IngestReader {
 	
 	private static Logger logger = Logger.getLogger(IngestReader.class);
 	
-	private static String WRITE_DIRECTORY;
+//	private static String WRITE_DIRECTORY;
+	private static String WRITE_DIRECTORY = "/Users/jaredwilliams/Desktop/json/";
 	
 	BasicParser basicParser;
 	CalendarParser calendarParser;
 	CommitteeParser committeeParser;
 	ObjectMapper mapper;
-	SearchEngine2 searchEngine;
+	SearchEngine searchEngine;
 	ArrayList<ILuceneObject> luceneObjects;
 	ArrayList<ISenateObject> senateObjects;
 	
@@ -197,12 +198,17 @@ public class IngestReader {
 			}
 		}
 		else {
-			luceneObjects.add(loadObject(directory, clazz));
+			ISenateObject obj = loadObject(directory, clazz);
+			if(obj instanceof Bill) {
+				if(reindexAmendedVersions((Bill)obj))
+					obj.setLuceneActive(false);
+			}
+			luceneObjects.add(obj);
 		}
 	}
 	
 	public IngestReader() {
-		searchEngine = SearchEngine2.getInstance();
+		searchEngine = SearchEngine.getInstance();
 		
 		mapper = new ObjectMapper();
 		SerializationConfig cnfg = mapper.getSerializationConfig();
@@ -289,9 +295,9 @@ public class IngestReader {
 			}
 			
 //			Commit the changes made to the file system
-			start = System.currentTimeMillis();
-			commit(file.getName());
-			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+//			start = System.currentTimeMillis();
+//			commit(file.getName());
+//			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
 			
 			
 			calendarParser.clearCalendars();
@@ -299,8 +305,6 @@ public class IngestReader {
 			basicParser.clearBills();
 			senateObjects.clear();
 			luceneObjects.clear();
-			
-			this.searchEngine.commit();
 			
 			logger.warn("Finished with file: "+file.getName());
 			
@@ -447,10 +451,7 @@ public class IngestReader {
                     + " OR [" + query + "A-" + strings[1] 
                        + " TO " + query + "Z-" + strings[1]
                     + "]) AND " + query + "*-" + strings[1] + ")";
-			//caches recent searches, if s1, s1a and s1b are added in close succession
-			//it's possible they s1a won't be picked up.. closing the searcher
-			//fixes that for the time being
-			searchEngine.closeSearcher();
+			
 			SenateResponse sr = searchEngine.search(query,
 					"json", 0,100, null, false);
 						

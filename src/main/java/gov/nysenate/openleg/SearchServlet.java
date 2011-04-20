@@ -1,7 +1,7 @@
 package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.api.ApiHelper;
-import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
 import gov.nysenate.openleg.util.SessionYear;
@@ -26,21 +26,9 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 	private static final long serialVersionUID = 1L;
 	
 	private static Logger logger = Logger.getLogger(SearchServlet.class);
-
-	private SearchEngine2 searchEngine = null;
 	
 	public SearchServlet() {
 		super();
-	}
-
-	public void destroy() {
-		super.destroy();
-		
-		try {
-			searchEngine.closeSearcher();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -72,9 +60,6 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		if (request.getParameter("reset")!=null)
-			searchEngine.closeSearcher();
-		
 		String search = request.getParameter("search");
 						
 		String term = request.getParameter("term");
@@ -318,20 +303,20 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			}
 			
 			String searchFormat = "json";
-												
+			
 			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
 				if(type != null && type.equals("bill")) {
-					sr = searchEngine.search(term + " AND year:" + SessionYear.getSessionYear(),searchFormat,start,pageSize,sortField,sortOrder);
+					sr = SearchEngine.getInstance().search(term + " AND year:" + SessionYear.getSessionYear(),searchFormat,start,pageSize,sortField,sortOrder);
 				}
 				else {
-					sr = searchEngine.search(term + " AND when:[" + DATE_START + " TO " + DATE_END + "]",searchFormat,start,pageSize,sortField,sortOrder);
+					sr = SearchEngine.getInstance().search(term + " AND when:[" + DATE_START + " TO " + DATE_END + "]",searchFormat,start,pageSize,sortField,sortOrder);
 					if(sr.getResults().isEmpty()) {
-						sr = searchEngine.search(term + " AND year:" + SessionYear.getSessionYear(),searchFormat,start,pageSize,sortField,sortOrder);
+						sr = SearchEngine.getInstance().search(term + " AND year:" + SessionYear.getSessionYear(),searchFormat,start,pageSize,sortField,sortOrder);
 					}
 				}
 			}
 			else {
-				sr = searchEngine.search(term,searchFormat,start,pageSize,sortField,sortOrder);
+				sr = SearchEngine.getInstance().search(term,searchFormat,start,pageSize,sortField,sortOrder);
 			}
 					
 			ApiHelper.buildSearchResultList(sr);
@@ -360,8 +345,5 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 
 	public void init() throws ServletException {
 		logger.info("SearchServlet:init()");
-		
-		searchEngine = SearchEngine2.getInstance();
-		
 	}
 }

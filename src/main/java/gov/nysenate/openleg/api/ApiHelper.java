@@ -11,8 +11,9 @@ import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -47,15 +48,13 @@ public class ApiHelper implements OpenLegConstants {
 			String query) throws ParseException, IOException,
 			ClassNotFoundException {
 
-		StringBuffer searchString = new StringBuffer();
-		searchString.append("otype:" + type + " AND " + "(" + query + ")");
+		String searchString =TextFormatter.append("otype:", type, " AND ", "(" + query + ")");
 
 		int start = 0;
 		int pageSize = 100;
 
-		SenateResponse sr = SearchEngine2.getInstance().search(dateReplace(searchString
-				.toString()), DEFAULT_SEARCH_FORMAT, start, pageSize,
-				DEFAULT_SORT_FIELD, true);
+		SenateResponse sr = SearchEngine.getInstance().search(dateReplace(searchString), 
+				DEFAULT_SEARCH_FORMAT, start, pageSize, DEFAULT_SORT_FIELD, true);
 
 		return buildSearchResultList(sr);
 	}
@@ -147,17 +146,14 @@ public class ApiHelper implements OpenLegConstants {
 								Section section = itSections.next();
 
 								summary += section.getName() + ": ";
-								summary += section.getCalendarEntries().size()
-										+ " items;";
+								summary += section.getCalendarEntries().size() + " items;";
 							}
 						}
 					} else if (supp.getSequence() != null) {
 
 						fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getSequence().getActCalDate()));
 
-						summary = supp.getSequence().getCalendarEntries()
-								.size()
-								+ " item(s)";
+						summary = supp.getSequence().getCalendarEntries().size() + " item(s)";
 					}
 				} else if (type.equals("transcript")) {
 					Transcript transcript = (Transcript) resultObj;
@@ -167,16 +163,14 @@ public class ApiHelper implements OpenLegConstants {
 					else
 						title = "Transcript - " + transcript.getLocation();
 
-					summary = transcript.getType() + ": "
-							+ transcript.getLocation();
+					summary = TextFormatter.append(transcript.getType(), ": ", transcript.getLocation());
 
 					fields.put("location", transcript.getLocation());
 
 				} else if (type.equals("meeting")) {
 					Meeting meeting = (Meeting) resultObj;
-					title = meeting.getCommitteeName() + " ("
-							+ meeting.getMeetingDateTime().toLocaleString()
-							+ ")";
+					title = TextFormatter.append(meeting.getCommitteeName(), " (", 
+							meeting.getMeetingDateTime().toLocaleString(), ")");
 
 					fields.put("location", meeting.getLocation());
 					fields.put("chair", meeting.getCommitteeChair());
@@ -223,8 +217,9 @@ public class ApiHelper implements OpenLegConstants {
 				result.setSummary(summary);
 				result.setFields(fields);
 			} catch (Exception e) {
-				logger.warn("problem parsing result: " + result.getOtype() + "-"
-						+ result.getOid(), e);
+				logger.warn(TextFormatter.append(
+						"problem parsing result: ", result.getOtype(), "-", result.getOid()),
+					e);
 			}
 		}
 
@@ -271,10 +266,10 @@ public class ApiHelper implements OpenLegConstants {
 	}
 	
 	public static String buildBillWildCardQuery(String billType, String billWildcard, String sessionYear) {
-		return billType + ":((" 
-			+ billWildcard + "-" + sessionYear
-            + " OR [" + billWildcard + "A-" + sessionYear 
-               + " TO " + billWildcard + "Z-" + sessionYear
-            + "]) AND " + billWildcard + "*-" + sessionYear + ")";
+		return TextFormatter.append(billType,":((",
+			billWildcard, "-", sessionYear, 
+            " OR [", billWildcard, "A-", sessionYear, 
+               " TO ", billWildcard, "Z-", sessionYear, 
+            "]) AND ", billWildcard, "*-", sessionYear, ")");
 	}
 }

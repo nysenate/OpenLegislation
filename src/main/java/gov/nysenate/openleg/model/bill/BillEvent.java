@@ -12,7 +12,6 @@ import java.util.HashMap;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.document.NumericField;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -105,7 +104,7 @@ public class BillEvent extends SenateObject {
 	public HashMap<String, Fieldable> luceneFields() {
 		HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
 		
-		fields.put("when", new NumericField("when").setLongValue(eventDate.getTime()));
+		fields.put("when", new Field("when",eventDate.getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		fields.put("billno", new Field("billno",getBillId(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		
 		return fields;

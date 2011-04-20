@@ -3,8 +3,11 @@ package gov.nysenate.openleg.qa;
 import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.qa.model.BillReport;
+import gov.nysenate.openleg.qa.model.Report;
+import gov.nysenate.openleg.qa.model.TypeReport;
 import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.SessionYear;
 
@@ -42,6 +45,8 @@ public class ReportBuilder implements OpenLegConstants {
 		
 	}
 	
+	SearchEngine engine = null;
+	
 	final int MAX_RESULTS = 100;
 	final String SENATOR_URL = "http://open.nysenate.gov/legislation/senators";
 	final String COMMITTEE_URL = "http://open.nysenate.gov/legislation/committees/";
@@ -61,6 +66,8 @@ public class ReportBuilder implements OpenLegConstants {
 		cal.set(Calendar.DATE, cal.get(Calendar.DATE) - 7);
 		start = cal.getTimeInMillis();
 
+		engine = SearchEngine.getInstance();
+		
 		report = new Report(start, end);
 	}
 
@@ -70,7 +77,7 @@ public class ReportBuilder implements OpenLegConstants {
 
 	public Report run(String year) throws ParseException, IOException {		
 		//add range counts with new, occurred and total
-		ArrayList<ReportType> types = new ArrayList<ReportType>();
+		ArrayList<TypeReport> types = new ArrayList<TypeReport>();
 		types.add(simpleNumberResults("bill"));
 		types.add(simpleNumberResults("calendar"));
 		types.add(simpleNumberResults("meeting"));
@@ -89,10 +96,10 @@ public class ReportBuilder implements OpenLegConstants {
 		return report;
 	}
 	
-	public TreeSet<ReportBill> getBillReportSet(String year) throws ParseException, IOException {
+	public TreeSet<BillReport> getBillReportSet(String year) throws ParseException, IOException {
 		//add ReportBills to map, keeping track of missing fields
 		//intentionally leaving memos out for the time being
-		HashMap<String, ReportBill> billReportMap = new HashMap<String, ReportBill>();
+		HashMap<String, BillReport> billReportMap = new HashMap<String, BillReport>();
 		addBillListToReport("full", year, billReportMap);
 		addBillListToReport("sponsor", year, billReportMap);
 		addBillListToReport("summary", year, billReportMap);
@@ -100,11 +107,11 @@ public class ReportBuilder implements OpenLegConstants {
 		addBillListToReport("actions", year, billReportMap);
 		
 		//create and sort by heat		
-		TreeSet<ReportBill> billReportSet = new TreeSet<ReportBill>(new ReportBill.ByHeat());
+		TreeSet<BillReport> billReportSet = new TreeSet<BillReport>(new BillReport.ByHeat());
 		for(String key:billReportMap.keySet()) {
 			
-			double mod = billReportMap.get(key).modified;
-			int size = billReportMap.get(key).missingFields.size();
+			double mod = billReportMap.get(key).getModified();
+			int size = billReportMap.get(key).getMissingFields().size();
 			
 			double difference = Math.abs((newestMod + 1) - mod) + 0.0;
 			
@@ -130,22 +137,22 @@ public class ReportBuilder implements OpenLegConstants {
 	 * @param billReportMap
 	 */
 	public void addBillListToReport(String field,
-			String year, HashMap<String, ReportBill> billReportMap) throws ParseException, IOException {
+			String year, HashMap<String, BillReport> billReportMap) throws ParseException, IOException {
 
 		ArrayList<Result> resultList = getResultList(field, year);
 		
 		for(Result result:resultList) {
 			Bill bill =	(Bill)ApiHelper.getMapper().readValue(formatJson(result.getData()), Bill.class);
 			
-			ReportBill reportBill = null;
+			BillReport reportBill = null;
 			if((reportBill = billReportMap.get(bill.getSenateBillNo())) != null) {
 				reportBill.addMissingField(field);
 				
-				if(reportBill.modified > newestMod)
-					newestMod = reportBill.modified;
+				if(reportBill.getModified() > newestMod)
+					newestMod = reportBill.getModified();
 			}
 			else {
-				reportBill = new ReportBill(result.getLastModified(), bill, field);
+				reportBill = new BillReport(result.getLastModified(), bill, field);
 				billReportMap.put(bill.getSenateBillNo(), reportBill);
 			}
 		}
@@ -154,7 +161,7 @@ public class ReportBuilder implements OpenLegConstants {
 	public ArrayList<Result> getResultList(String field, String year)
 			throws ParseException, IOException {
 
-		SenateResponse sr = SearchEngine2.getInstance().search(
+		SenateResponse sr = engine.search(
 				"otype:bill AND NOT " + field + ":[A* TO Z*] AND NOT " + field
 						+ ":Z* AND oid:s* AND year:" + year, "json", 0,
 				MAX_RESULTS, "sortindex", false);
@@ -173,10 +180,10 @@ public class ReportBuilder implements OpenLegConstants {
 	 * @return generated ReportType object with number of occurances, updates and the total
 	 * 		   number of objects of @param type over the given time frame
 	 */
-	public ReportType simpleNumberResults(String type) throws ParseException,
+	public TypeReport simpleNumberResults(String type) throws ParseException,
 			IOException {
 
-		ReportType reportType = new ReportType();
+		TypeReport reportType = new TypeReport();
 		reportType.setType(type);
 		reportType.setOccurred(getNumberResultsForWhen(type));
 		reportType.setUpdated(getNumberResultsForType(type, true));
@@ -213,7 +220,7 @@ public class ReportBuilder implements OpenLegConstants {
 
 	public int getNumberResultsForQuery(String query) throws ParseException,
 			IOException {
-		SenateResponse srs = SearchEngine2.getInstance().search(
+		SenateResponse srs = engine.search(
 				query + " AND active:" + LUCENE_ACTIVE, "json", 0, MAX_RESULTS,
 				"sortindex", false);
 		return (Integer) srs.getMetadataByKey("totalresults");

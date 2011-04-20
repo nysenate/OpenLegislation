@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.transcript;
 
 import gov.nysenate.openleg.ingest.ISenateObject;
 import gov.nysenate.openleg.ingest.SenateObject;
+import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.model.bill.Bill;
 
@@ -11,8 +12,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.document.NumericField;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -135,7 +136,7 @@ public class Transcript extends SenateObject {
 	@Override
 	public HashMap<String,Fieldable> luceneFields() {
 		HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
-		fields.put("when", new NumericField("when").setLongValue((timeStamp == null) ? new Date().getTime() : timeStamp.getTime()));
+		fields.put("when", new Field("when",((timeStamp == null) ? new Date().getTime() : timeStamp.getTime())+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		return fields;
 	}
 

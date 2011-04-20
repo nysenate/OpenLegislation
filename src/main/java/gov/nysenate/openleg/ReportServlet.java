@@ -1,8 +1,8 @@
 package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.api.ApiHelper;
-import gov.nysenate.openleg.qa.Report;
 import gov.nysenate.openleg.qa.ReportBuilder;
+import gov.nysenate.openleg.qa.model.Report;
 
 import java.io.IOException;
 import java.util.Date;

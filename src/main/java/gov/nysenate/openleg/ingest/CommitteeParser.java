@@ -8,7 +8,6 @@ import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Committee;
 import gov.nysenate.openleg.model.committee.Meeting;
-import gov.nysenate.openleg.search.SearchEngine2;
 import gov.nysenate.openleg.xml.committee.*;
 
 import java.io.File;
@@ -250,7 +249,7 @@ public class CommitteeParser implements OpenLegConstants {
 			reader.deleteSenateObject(agenda);
 			
 			try {
-				SearchEngine2.getInstance().deleteSenateObject(agenda);
+				reader.searchEngine.deleteSenateObject(agenda);
 			} catch (Exception e) {
 				logger.warn(e);
 			}
@@ -368,7 +367,7 @@ public class CommitteeParser implements OpenLegConstants {
 						agenda.removeCommitteeMeeting(meeting);
 						logger.info("removing meeting: " + meeting.getId());
 						try {
-							SearchEngine2.getInstance().deleteDocuments("meeting", meeting.luceneOid());
+							reader.searchEngine.deleteDocuments("meeting", meeting.luceneOid());
 						} catch (IOException e) {
 							logger.warn(e);
 						}

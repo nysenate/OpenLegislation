@@ -92,6 +92,6 @@ public interface OpenLegConstants {
 	final static String DEFAULT_SEARCH_FORMAT = "json";
 	final static String DEFAULT_SESSION_YEAR = SessionYear.getSessionYear() + "";
 	
-	final static String LUCENE_ACTIVE = "1";
-	final static String LUCENE_INACTIVE = "0";
+	final static String LUCENE_ACTIVE = "true";
+	final static String LUCENE_INACTIVE = "false";
 }

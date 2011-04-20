@@ -11,7 +11,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.document.NumericField;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import gov.nysenate.openleg.lucene.DocumentBuilder;
@@ -194,11 +193,12 @@ public class Supplemental extends LuceneObject {
 		String oid = "";
 		if(calendar.getId().startsWith("cal-floor")) {
 			oid = "floor-" + new SimpleDateFormat("MM-dd-yyyy").format(this.getCalendarDate());
-			fields.put("when",new NumericField("when").setLongValue(this.getCalendarDate().getTime()));
+			fields.put("when", new Field("when",this.getCalendarDate().getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+
 		}
 		else {
 			oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequence.getActCalDate());
-			fields.put("when",new NumericField("when").setLongValue(sequence.getActCalDate().getTime()));
+			fields.put("when", new Field("when",sequence.getActCalDate().getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		}
 				
 		fields.put("oid",new Field("oid",oid, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));

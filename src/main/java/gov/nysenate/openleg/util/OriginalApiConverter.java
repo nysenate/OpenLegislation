@@ -380,9 +380,15 @@ public class OriginalApiConverter {
 		ret += "<timestamp>" + transcript.getTimeStamp().toLocaleString() + "</timestamp>" + "\n";
 		ret += "<location>" + transcript.getLocation() + "</location>" + "\n";
 		ret += "<session>" + transcript.getType() + "</session>" + "\n";
-		ret += "<text><![CDATA[" + TextFormatter.clean(EncodingCleaner.CleanInvalidXmlChars(transcript.getTranscriptText())) + "]]></text>" + "\n";
+		ret += "<text><![CDATA[" + TextFormatter.clean(cleanInvalidXmlChars(transcript.getTranscriptText())) + "]]></text>" + "\n";
 		ret += "</transcript>";
 		
 		return ret;
 	}
+	 public static String cleanInvalidXmlChars(String text)  {
+	    	text = text.replace((char)0x0C,' ');
+	    	text = text.replace((char)0x20,' ');
+	    	
+	    	return text;
+	    }
 }

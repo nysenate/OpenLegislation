@@ -3,7 +3,7 @@ package gov.nysenate.openleg.qa;
 import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 
 import java.io.BufferedReader;
@@ -26,13 +26,11 @@ public class MemoTester {
 		
 		BufferedReader br = new BufferedReader(new FileReader(new File(filePath)));
 		
-		SearchEngine2 search = SearchEngine2.getInstance();
-		
 		String in = null;
 		while((in = br.readLine()) != null) {
 			String billNo = "S" + in + "-2011";
 			
-			SenateResponse srs = search.search("otype:bill AND oid:" + billNo, "json", 0, 1, null, true);
+			SenateResponse srs = SearchEngine.getInstance().search("otype:bill AND oid:" + billNo, "json", 0, 1, null, true);
 			
 			if(srs.getResults().isEmpty())
 				continue;

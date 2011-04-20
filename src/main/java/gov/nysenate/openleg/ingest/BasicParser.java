@@ -323,7 +323,10 @@ public class BasicParser implements OpenLegConstants {
 
 					else if (lineCode == 'B') {
 						if(line.contains("DELETE")) {
-							currentBill.setSummary(null);
+							//delete code
+							persistBuffers();
+							this.returnBills.remove(currentBill);
+							currentBill = null;
 						}
 					}
 					else if (lineCode == 'N') {

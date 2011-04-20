@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.document.NumericField;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -329,9 +328,8 @@ public class Vote extends SenateObject {
     		map.put("nay", new Field("nay",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		} 
 		
-		map.put("when", new NumericField("when").setLongValue(voteDate.getTime()));
+		map.put("when", new Field("when",voteDate.getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 
-		
 		return map;
 	}
 

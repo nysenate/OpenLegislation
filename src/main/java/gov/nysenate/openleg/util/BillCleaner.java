@@ -3,7 +3,7 @@ package gov.nysenate.openleg.util;
 import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.search.SearchEngine;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,13 +17,10 @@ import java.util.regex.Pattern;
 
 import org.apache.lucene.queryParser.ParseException;
 
-
 public class BillCleaner implements OpenLegConstants {
 	
 	public final static String BILL_BAD_REGEXP = "[a-zA-Z][\\W]?0?\\d{2,}+[\\W]?[a-zA-Z]?";
-	
 	public final static String BILL_SEARCH_REGEXP = "[a-zA-Z][\\W]*0?\\d{2,}+[\\W]?[a-zA-Z]?";
-	
 	public final static String BILL_REGEXP = "[a-zA-Z][1-9]\\d{1,}+[a-zA-Z]?";
 	
 	/*
@@ -55,7 +52,7 @@ public class BillCleaner implements OpenLegConstants {
 		}
 		else if(!Character.isDigit(c)) {
 			try {
-				if(SearchEngine2.getInstance().search("oid:" + billNumber + "-" + SessionYear.getSessionYear(), "json", 0, 1, null, false).getResults().size() == 1) {
+				if(SearchEngine.getInstance().search("oid:" + billNumber + "-" + SessionYear.getSessionYear(), "json", 0, 1, null, false).getResults().size() == 1) {
 					return billNumber + "-" + SessionYear.getSessionYear();
 				}
 			} catch (ParseException e) {
@@ -103,14 +100,14 @@ public class BillCleaner implements OpenLegConstants {
 			billNumber = billNumber.substring(0, billNumber.length()-1);
 		}
 		
-		String query = "otype:bill AND oid:((" 
-					+ billNumber + "-" + SessionYear.getSessionYear() 
-		                + " OR [" + billNumber + "A-" + SessionYear.getSessionYear()  
-		                   + " TO " + billNumber + "Z-" + SessionYear.getSessionYear() 
-		                + "]) AND " + billNumber + "*-" + SessionYear.getSessionYear()  + ")";
+		String query = TextFormatter.append("otype:bill AND oid:((", 
+					billNumber, "-", SessionYear.getSessionYear(), 
+		                " OR [", billNumber, "A-", SessionYear.getSessionYear(), 
+		                   " TO ", billNumber, "Z-", SessionYear.getSessionYear(),
+		                "]) AND ", billNumber, "*-", SessionYear.getSessionYear(), ")");
 		
 		try {
-			return SearchEngine2.getInstance().search(query, "json", 0, 100, null, false).getResults();
+			return SearchEngine.getInstance().search(query, "json", 0, 100, null, false).getResults();
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -126,14 +123,14 @@ public class BillCleaner implements OpenLegConstants {
 			Matcher m = p.matcher(event);
 			
 			if(m.find()) {
-				return m.group(1) 
-					+ "<a href=\"" 
-						+ appPath 
-						+ "/bill/" 
-						+ bill.substring(0, 1) + m.group(2) + "-" + bill.split("-")[1] 
-					+ "\">" 
-					+ m.group(2) 
-					+ "</a>" + m.group(3);
+				return TextFormatter.append(m.group(1), 
+					"<a href=\"", 
+						appPath, 
+						"/bill/", 
+						bill.substring(0, 1),  m.group(2),  "-", bill.split("-")[1], 
+					"\">", 
+					m.group(2), 
+					"</a>", m.group(3));
 			}
 		}
 		else if(event.contains("SUBSTITUTED")) {
@@ -141,14 +138,14 @@ public class BillCleaner implements OpenLegConstants {
 			Matcher m = p.matcher(event);
 			
 			if(m.find()) {
-				return m.group(1) 
-					+ "<a href=\"" 
-						+ appPath 
-						+ "/bill/" 
-						+ m.group(2) + "-" + bill.split("-")[1] 
-					+ "\">" 
-					+ m.group(2) 
-					+ "</a>" + m.group(3);
+				return TextFormatter.append(m.group(1), 
+					"<a href=\"", 
+						appPath, 
+						"/bill/", 
+						m.group(2) + "-" + bill.split("-")[1], 
+					"\">", 
+					m.group(2), 
+					"</a>", m.group(3));
 			}
 		}
 		return event;

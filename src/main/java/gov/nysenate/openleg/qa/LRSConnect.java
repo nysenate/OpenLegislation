@@ -3,6 +3,7 @@ package gov.nysenate.openleg.qa;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.model.bill.Person;
+import gov.nysenate.openleg.qa.model.BillReport;
 import gov.nysenate.openleg.util.Mailer;
 import gov.nysenate.openleg.util.SessionYear;
 
@@ -30,14 +31,14 @@ import org.apache.log4j.Logger;
 public class LRSConnect {
 	public static void main(String[] args) throws IOException, org.apache.lucene.queryParser.ParseException, InterruptedException {		
 		ReportBuilder reportBuilder = new ReportBuilder();
-		TreeSet<ReportBill> bills = reportBuilder.getBillReportSet("2011");
+		TreeSet<BillReport> bills = reportBuilder.getBillReportSet("2011");
 		
 		LRSConnect l = LRSConnect.getInstance();
 		
 		String delete = "";
 		String report = "";
 		
-		for(ReportBill bill:bills) {
+		for(BillReport bill:bills) {
 			System.out.println(bill.getBill());
 			if(bill.getHeat() < 5)
 				break;

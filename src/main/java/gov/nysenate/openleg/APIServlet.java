@@ -6,9 +6,10 @@ import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine2;
+import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.SessionYear;
+import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,39 +39,22 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 
 	private static final String SRV_DELIM = "/";
 	
-	private static SearchEngine2 searchEngine = null;
-	
 	@Override
 	public void init() throws ServletException {
 		super.init();
 	
-		if (searchEngine == null)
-			searchEngine = SearchEngine2.getInstance();
-		
 	}
 
-	public static SearchEngine2 getSearchEngineInstance ()	{
-		return searchEngine;
-	}
-	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		
-		if (searchEngine == null)
-			searchEngine = SearchEngine2.getInstance();
-		
 	}
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException, ServletException {
 		
 		if (req.getParameter("reset")!=null) {
-			if (searchEngine != null)
-				searchEngine.closeSearcher();
-			
-			searchEngine = SearchEngine2.getInstance();
-			
+			SearchEngine.getInstance().closeSearcher();
 			return;
 		}
 		
@@ -100,7 +84,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		String uri = java.net.URLDecoder.decode(req.getRequestURI(),OpenLegConstants.ENCODING);
 		req.setAttribute(KEY_PATH,uri);
 			
-		logger.info("request: " + uri + " (" + req.getRequestURI() + ")");
+		logger.info(TextFormatter.append("request: ", uri, " (" + req.getRequestURI(),")"));
 		
 		
 		StringTokenizer st = new StringTokenizer (uri,SRV_DELIM);
@@ -229,19 +213,19 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 	public void handleAPIv1 (String format, String type, String key, int pageIdx, int pageSize, HttpServletRequest req, HttpServletResponse resp) 
 		throws IOException, ServletException {
 		
-		String urlPath = "/legislation/" + type + "/" + ((key != null && !key.matches("\\s*")) ? key + "/" :"");
+		String urlPath = TextFormatter.append("/legislation/", type, "/", ((key != null && !key.matches("\\s*")) ? key + "/" :""));
 		
 		if (type.equalsIgnoreCase("sponsor")) {
 			String filter = req.getParameter("filter");
-			key = "sponsor:\"" + key + "\"";
+			key = TextFormatter.append("sponsor:\"", key, "\"");
 			if(filter != null) {
 				req.setAttribute("filter", filter);
-				key += (filter != null ? " AND " + filter : "");
+				key = TextFormatter.append(key, filter != null ? " AND " + filter : "");
 			}
 			type = "bills";
 		}
 		else if (type.equalsIgnoreCase("committee")) {
-			key = "committee:\"" + key + "\"";
+			key = TextFormatter.append("committee:\"", key, "\"");
 			type = "bills";
 		}
 		
@@ -274,7 +258,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 		int start = (pageIdx - 1) * pageSize;
 		int end = start + pageSize;
 						
-		logger.info("request: key=" + key + ";type=" + type + ";format=" + format + ";paging=" + start + "/" + end);
+		logger.info(TextFormatter.append("request: key=", key, ";type=", type, ";format=", format, ";paging=", start, "/", end));
 		try	{
 			/*
 			 * construct query with "otype:<type>" if type present
@@ -289,10 +273,10 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				if (type.endsWith("s"))	{
 					type = type.substring(0,type.length()-1);
 					
-					searchString = "otype:" + type;
+					searchString = TextFormatter.append("otype:", type);
 					
 					if (key != null && key.length() > 0)
-						searchString += " AND " + key;
+						searchString = TextFormatter.append(searchString," AND ", key);
 				}
 				/*
 				 * for individual documents
@@ -300,14 +284,14 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				 * applicable to: bill, calendar, meeting, transcript
 				 */
 				else {
-					searchString ="otype:" + type;
+					searchString = TextFormatter.append("otype:", type);
 	
 					if (key != null && key.length() > 0) {
 						if (type.equals("bill") && key.indexOf("-") == -1)
-							key += "-" + DEFAULT_SESSION_YEAR;
+							key += TextFormatter.append(key,"-", DEFAULT_SESSION_YEAR);
 	
 						key = key.replace(" ","+");
-						searchString += " AND oid:" + key;
+						searchString = TextFormatter.append(searchString," AND oid:", key);
 					}
 				}
 			}
@@ -323,9 +307,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			 */
 			if(originalType.equals("bills")) {
 				req.setAttribute("urlPath", urlPath);
-				searchString = ApiHelper.dateReplace(searchString) 
-					+ " AND year:" + SessionYear.getSessionYear() 
-					+ " AND active:" + LUCENE_ACTIVE;
+				searchString = TextFormatter.append(ApiHelper.dateReplace(searchString),
+					" AND year:", SessionYear.getSessionYear(),
+					" AND active:", LUCENE_ACTIVE);
 			}
 			/*
 			 * applicable to: calendars, meetings, and transcripts views
@@ -335,12 +319,8 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			 */
 			else if(originalType.endsWith("s")) {
 				req.setAttribute("urlPath", urlPath);
-				searchString = ApiHelper.dateReplace(searchString) 
-					+ " AND when:[" 
-					+ DATE_START 
-					+ " TO " 
-					+ DATE_END + "]"
-					+ " AND active:" + LUCENE_ACTIVE;
+				searchString = TextFormatter.append(ApiHelper.dateReplace(searchString),
+					" AND when:[",DATE_START," TO ",DATE_END,"]"," AND active:", LUCENE_ACTIVE);
 			}
 			/*
 			 * applicable to: individual documents
@@ -361,9 +341,9 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			req.setAttribute(PAGE_IDX,pageIdx+"");
 			req.setAttribute(PAGE_SIZE,pageSize+"");
 			
-			sr = searchEngine.search(searchString,sFormat,start,pageSize,sortField,sortOrder);
+			sr = SearchEngine.getInstance().search(searchString,sFormat,start,pageSize,sortField,sortOrder);
 						
-			logger.info("got search results: " + sr.getResults().size());
+			logger.info(TextFormatter.append("got search results: ", sr.getResults().size()));
 			
 			if(key != null && !key.equals("") && sr.getResults().size() >= 1) {
 				if(sr.getResults().get(0).getOid().equalsIgnoreCase(key)) {
@@ -383,17 +363,10 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				 * the correct id, just the wrong case */
 				if (!result.getOid().equals(key)) {
 					if(format.equals("html"))
-						resp.sendRedirect("/legislation/" 
-								+ result.getOtype() 
-								+ "/" 
-								+ result.getOid());
+						resp.sendRedirect(TextFormatter.append("/legislation/", result.getOtype(), "/", result.getOid()));
 					else
-						resp.sendRedirect("/legislation/api/1.0/" 
-								+ format 
-								+ "/" 
-								+ result.getOtype() 
-								+ "/" 
-								+ result.getOid());
+						resp.sendRedirect(TextFormatter.append("/legislation/api/1.0/",
+								format,"/",result.getOtype(),"/",result.getOid()));
 					return;
 				}
 				
@@ -474,12 +447,12 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				}
 				
 				req.setAttribute(type, resultObj);
-				viewPath = "/views/" + type + "-" + format + ".jsp";
+				viewPath = TextFormatter.append("/views/", type, "-", format, ".jsp");
 			}
 			else {
 				/* all non html/print/mobile bill views go here */
 				if (type.equals("bill") && !format.equals("html")) {
-					viewPath = "/views/bills-" + format + ".jsp";
+					viewPath = TextFormatter.append("/views/bills-", format, ".jsp");
 					
 					ArrayList<Result> searchResults = ApiHelper.buildSearchResultList(sr);
 					ArrayList<Bill> bills = new ArrayList<Bill>();
@@ -492,7 +465,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 				}
 				/* all calendar, meeting, transcript multi views go here */
 				else {
-					viewPath = "/views/" + "search" + "-" + format + ".jsp";
+					viewPath = TextFormatter.append("/views/", "search", "-", format, ".jsp");
 					
 					sr.setResults(ApiHelper.buildSearchResultList(sr));
 					

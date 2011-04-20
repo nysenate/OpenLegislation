@@ -24,7 +24,9 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
-public class Lucene implements LuceneIndexer,LuceneSearcher{
+public class Lucene implements LuceneIndexer, LuceneSearcher {
+	
+	public SearcherManager searcherManager = null;
 
 	protected IndexWriter indexWriter = null;
 	protected IndexSearcher indexSearcher = null;
@@ -35,6 +37,12 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
 	public Lucene(String indexDir) {
 		this.indexDir = indexDir;
 		this.logger = Logger.getLogger(Lucene.class);
+		
+		try {
+			searcherManager = new SearcherManager(getDirectory());
+		} catch (IOException e) {
+			logger.error(e);
+		}
 	}
 	
 	/////////////////////////////////
@@ -114,6 +122,7 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
     
     public synchronized void closeWriter() throws IOException {
     	if (indexWriter != null) {
+  
     		indexWriter.close();
 			indexWriter = null;
     	}
@@ -130,18 +139,23 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
 			indexSearcher = new IndexSearcher(getDirectory(), true);
 		}
 		
-		if(!indexSearcher.getIndexReader().isCurrent()) {
-			indexSearcher.getIndexReader().reopen();
-		}
-		
 		return indexSearcher;
 	}
 	
-    public LuceneResult search(String searchText, int start, int max, String sortField, boolean reverseSort) throws IOException{
+    public LuceneResult search(String searchText, int start, int max, String sortField, boolean reverseSort) throws IOException{    	
+    	
+    	IndexSearcher searcher = searcherManager.get();
+    	
+    	if(!searcher.getIndexReader().isCurrent()) {
+    		try {
+				searcherManager.maybeReopen();
+			} catch (InterruptedException e) {
+				logger.error(e);
+			}
+    	}
     	
     	try {
     		ScoreDoc[] sdocs = null;
-    		IndexSearcher searcher = openSearcher();
 			ArrayList<Document> results = new ArrayList<Document>();
 		    Query query = new QueryParser(Version.LUCENE_CURRENT, "osearch", getAnalyzer()).parse(searchText);
 			TopScoreDocCollector collector = TopScoreDocCollector.create(start+max, false);
@@ -175,6 +189,9 @@ public class Lucene implements LuceneIndexer,LuceneSearcher{
 			}
     	} catch (ParseException e) {
     		logger.warn("Parse Exception: " + searchText,e);
+    	}
+    	finally {
+    		searcherManager.release(searcher);
     	}
 		
 		return null;

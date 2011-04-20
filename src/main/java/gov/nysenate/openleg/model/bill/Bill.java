@@ -96,6 +96,7 @@ public class Bill extends SenateObject  {
 	@LuceneField
 	protected Bill latestAmendment;
 
+	@LuceneField
 	protected Boolean stricken;
 
 	public Bill () {
@@ -207,10 +208,6 @@ public class Bill extends SenateObject  {
 	}
 	
 	public Boolean getStricken() {
-		return stricken;
-	}
-
-	public boolean isStricken() {
 		return stricken;
 	}
 
@@ -620,7 +617,7 @@ public class Bill extends SenateObject  {
 		else 
 			num = "Z" + num;
 		map.put("sortindex", new Field("sortindex",num, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		
+				
 		return map;
 	}
 	

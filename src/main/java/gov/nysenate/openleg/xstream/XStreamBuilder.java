@@ -131,6 +131,7 @@ public class XStreamBuilder implements OpenLegConstants {
 		xstream.omitField(Bill.class, "latestAmendment");
 		xstream.omitField(Bill.class, "person");
 		xstream.omitField(Bill.class, "pastCommittees");
+		xstream.omitField(Bill.class, "stricken");
 		
 		xstream.omitField(Person.class,"branch");
 		xstream.omitField(Person.class,"contactInfo");
@@ -202,6 +203,7 @@ public class XStreamBuilder implements OpenLegConstants {
 		xstream.omitField(Bill.class,"memo");
 		xstream.omitField(Bill.class,"sortIndex");
 		xstream.omitField(Bill.class, "pastCommittees");
+		xstream.omitField(Bill.class, "stricken");
 		
 		xstream.omitField(Meeting.class, "addendums");
 		xstream.omitField(Meeting.class,"committee");		

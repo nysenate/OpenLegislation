@@ -9,8 +9,6 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.document.NumericField;
-
 
 public class DocumentBuilder {
 	
@@ -70,13 +68,17 @@ public class DocumentBuilder {
 						DEFAULT_STORE,
 						DEFAULT_INDEX));
 			
-			fields.put(MODIFIED,
-					new NumericField(MODIFIED).setLongValue(
-							(o.getLuceneModified() == 0 ?
-									new Date().getTime() : o.getLuceneModified())));
+			fields.put(MODIFIED, new org.apache.lucene.document.Field(
+					MODIFIED,
+					(o.getLuceneModified() == 0 ? new Date().getTime() : o.getLuceneModified()) + "",
+					DEFAULT_STORE,
+					DEFAULT_INDEX));
 						
-			fields.put(ACTIVE, new NumericField(ACTIVE).setIntValue(
-					(o.getLuceneActive() ? 1 : 0)));
+			fields.put(ACTIVE, new org.apache.lucene.document.Field(
+					ACTIVE,
+					new Boolean(o.getLuceneActive()).toString(),
+					DEFAULT_STORE,
+					DEFAULT_INDEX));
 			
 			Field[] objectFields = o.getClass().getDeclaredFields();
 

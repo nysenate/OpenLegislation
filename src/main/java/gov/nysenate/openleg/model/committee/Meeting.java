@@ -13,7 +13,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.document.NumericField;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import gov.nysenate.openleg.lucene.DocumentBuilder;
@@ -195,8 +194,8 @@ public class Meeting extends LuceneObject {
 	@Override 
 	public HashMap<String,Fieldable> luceneFields()	{		
 		HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
-		fields.put("when", new NumericField("when").setLongValue(meetingDateTime.getTime()));
-				
+		fields.put("when", new Field("when", meetingDateTime.getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+
 		/*
 		 * creates a sortable index based on the timestamp of the day the meeting occurred
 		 * and the inversion of the first two characters of the meeting name (e.g. A -> Z, Y -> B, etc.)
