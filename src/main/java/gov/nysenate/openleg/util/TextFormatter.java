@@ -319,4 +319,55 @@ public class TextFormatter {
 			this.uOrDel = uOrDel;
 		}
 	}
+	
+	public static String addHyperlinks (String input)
+	{
+		 Pattern pattern = null;
+		 Matcher matcher = null;
+
+		/*
+		 Pattern pattern = Pattern.compile("(Senate Bill Number)\\s(\\w*)");
+		 Matcher matcher = pattern.matcher(input);
+		 input = matcher.replaceAll("<b><a href=\"/legislation/api/html/bill/S$2\">Senate Bill Number $2</a></b>");
+		 
+		 pattern = Pattern.compile("(Senate Print Number)\\s(\\w*)");
+		 matcher = pattern.matcher(input);
+		 input = matcher.replaceAll("<b><a href=\"/legislation/api/html/bill/S$2\">Senate Print Number $2</a></b>");
+		 
+		 pattern = Pattern.compile("(Assembly Bill Number)\\s(\\w*)");
+		 matcher = pattern.matcher(input);
+		 input = matcher.replaceAll("<b><a href=\"/legislation/api/html/bill/A$2\">Assembly Bill Number $2</a></b>");
+		 
+		 pattern = Pattern.compile("(Assembly Print Number)\\s(\\w*)");
+		 matcher = pattern.matcher(input);
+		 input = matcher.replaceAll("<b><a href=\"/legislation/api/html/bill/A$2\">Assembly Print Number $2</a></b>");
+*/
+
+		 pattern = Pattern.compile("(SENATOR\\s)");
+		 matcher = pattern.matcher(input);
+		 input = matcher.replaceAll("<b>$1</b>");
+
+		 pattern = Pattern.compile("(ACTING PRESIDENT\\s)");
+		 matcher = pattern.matcher(input);
+		 input = matcher.replaceAll("<b>$1</b>");
+
+
+		 pattern = Pattern.compile("(THE SECRETARY)");
+		 matcher = pattern.matcher(input);
+		 input = matcher.replaceAll("<b>$1</b>");
+
+
+		 /*
+		// pattern = Pattern.compile("(Senator)\\s(^[A-Z]'?[- a-zA-Z]( [a-zA-Z])*)");
+		 pattern = Pattern.compile("(Senator)\\s(\\w*)");
+		 matcher = pattern.matcher(input);
+		 input = matcher.replaceAll("<b><a href=\"/legislation/api/html/sponsor/$2\">$1 $2</a></b>");
+		 
+		 pattern = Pattern.compile("(ACTING PRESIDENT)\\s(\\w*)");
+		 matcher = pattern.matcher(input);
+		 input = matcher.replaceAll("<b><a href=\"/legislation/api/html/sponsor/$2\">$1 $2</a></b>");*/
+ 
+
+		 return input;
+	}
 }

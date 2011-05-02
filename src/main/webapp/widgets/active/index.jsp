@@ -18,7 +18,7 @@ int endIdx = startIdx + pageSize;
 
 
 
-SearchEngine2 searchEngine = APIServlet.getSearchEngineInstance();
+SearchEngine searchEngine = SearchEngine.getInstance();
 
 ArrayList<Result> listResults =  ApiHelper.buildSearchResultList(searchEngine.search(term,"json",startIdx,pageSize,sortField,sortOrder));
 
