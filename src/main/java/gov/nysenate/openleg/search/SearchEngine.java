@@ -78,8 +78,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 	}
 	
 	private SearchEngine() {
-//		super("/usr/local/openleg/lucene/2");
-		super("/Users/jaredwilliams/Documents/lucene/2");
+		super("/usr/local/openleg/lucene/2");
 		logger = Logger.getLogger(SearchEngine.class);
 	}
 
