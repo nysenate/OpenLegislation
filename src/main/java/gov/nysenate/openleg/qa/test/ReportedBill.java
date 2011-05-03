@@ -139,12 +139,18 @@ public class ReportedBill extends CouchDbDocument {
 		this.problemFields.put(fieldName, reportFieldType);
 	}
 	
+	public void removeProblematicField(String fieldName) {
+		if(this.problemFields == null)
+			return;
+		this.problemFields.remove(fieldName);
+	}
+	
 	public void removeReportedData() {
 		this.pushToReport = null;
 		this.hideFromReport = null;
 		this.rank = null;
 		this.problemBillAction = null;
-		this.problemBillAction = null;
+		this.problemFields = null;
 	}
 
 	@Override

@@ -1,8 +1,11 @@
 package gov.nysenate.openleg.search;
 
 import gov.nysenate.openleg.OpenLegConstants;
+import gov.nysenate.openleg.api.ApiHelper;
+import gov.nysenate.openleg.ingest.SenateObject;
 import gov.nysenate.openleg.lucene.Lucene;
 import gov.nysenate.openleg.lucene.ILuceneObject;
+import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.lucene.LuceneResult;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -13,6 +16,7 @@ import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
+import gov.nysenate.openleg.model.transcript.Transcript;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,6 +35,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.queryParser.ParseException;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 
 public class SearchEngine extends Lucene implements OpenLegConstants {
 	
@@ -265,4 +271,51 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
     	return response;
 	}
 	
+	public Bill getBill(String oid) {
+		return (Bill) getLuceneObject(Bill.class, "bill", oid);
+	}
+	
+	public Meeting getMeeting(String oid) {
+		return (Meeting) getLuceneObject(Meeting.class, "meeting", oid);
+	}
+	
+	public Transcript getTranscript(String oid) {
+		return (Transcript) getLuceneObject(Transcript.class, "transcript", oid);
+	}
+	
+	public Supplemental getSupplemental(String oid) {
+		return (Supplemental) getLuceneObject(Supplemental.class, "calendar", oid);
+	}
+	
+	public LuceneObject getLuceneObject(Class<? extends LuceneObject> clazz, String type, String oid) {
+		SenateResponse sr = null;
+		try {
+			sr = search("otype:" + type + " AND oid:" + oid, "json", 0, 1, null, false);
+		} catch (ParseException e) {
+			logger.error(e);
+		} catch (IOException e) {
+			logger.error(e);
+		}
+		
+		if(sr != null && sr.getResults().size() > 0) {
+			Result result = sr.getResults().get(0);
+			
+			if(result.getOid().equalsIgnoreCase(oid)) {
+				LuceneObject ret = null;
+				try {
+					ret = ApiHelper.getMapper().readValue(ApiHelper.unwrapJson(result.data), clazz);
+				} catch (JsonParseException e) {
+					logger.error(e);
+				} catch (JsonMappingException e) {
+					logger.error(e);
+				} catch (IOException e) {
+					logger.error(e);
+				}
+				if(ret != null)
+					return ret;
+			}
+		}
+		
+		return null;
+	}
 }

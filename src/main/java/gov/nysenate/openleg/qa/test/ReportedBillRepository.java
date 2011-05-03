@@ -3,6 +3,7 @@ package gov.nysenate.openleg.qa.test;
 import gov.nysenate.openleg.qa.test.ReportedBillManager.BillType;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -15,8 +16,9 @@ import org.ektorp.support.View;
 public class ReportedBillRepository extends
 		CouchDbRepositorySupport<ReportedBill> {
 	
-	protected ReportedBillRepository(Class<ReportedBill> clazz,
-			CouchDbConnector db) {
+	public static final Class<ReportedBill> clazz = ReportedBill.class;
+	
+	protected ReportedBillRepository(CouchDbConnector db) {
 		super(clazz, db);
 		initStandardDesignDocument();
 	}
@@ -28,17 +30,17 @@ public class ReportedBillRepository extends
 	
 	@View(name="by_push_to_report", map = "function(doc) { if (doc.oid && doc.modified && doc.billType) { emit(doc.pushToReport, doc) } }")
 	public List<ReportedBill> findByPushToReport(boolean pushToReport) {
-		return db.queryView(createQuery("by_push_to_report").includeDocs(true).key(pushToReport), ReportedBill.class);
+		return db.queryView(createQuery("by_push_to_report").includeDocs(true).key(pushToReport), clazz);
 	}
 	
 	@View(name="by_modified", map = "function(doc) { if (doc.oid && doc.modified && doc.billType) { emit(doc.modified, doc) } }")
 	public List<ReportedBill> findByModified(boolean descending, int limit) {
-		return db.queryView(createQuery("by_modified").includeDocs(true).descending(descending).limit(limit), ReportedBill.class);
+		return db.queryView(createQuery("by_modified").includeDocs(true).descending(descending).limit(limit), clazz);
 	}
 
 	@View(name="by_bill_type", map = "function(doc) { if (doc.oid && doc.modified && doc.billType) { emit(doc.billType, doc) } }")
 	public List<ReportedBill> findByBillType(BillType billType) {
-		return db.queryView(createQuery("by_bill_type").includeDocs(true).key(billType.toString()), ReportedBill.class);
+		return db.queryView(createQuery("by_bill_type").includeDocs(true).key(billType.toString()), clazz);
 	}
 	
 	@View(name="standard_list_for_report", map="function(doc) {" +
@@ -49,7 +51,7 @@ public class ReportedBillRepository extends
 				createQuery("standard_list_for_report")
 					.includeDocs(true)
 					.descending(false)
-					.limit(limit), ReportedBill.class);
+					.limit(limit), clazz);
 	}
 	
 	/*
@@ -63,7 +65,7 @@ public class ReportedBillRepository extends
 				createQuery("problem_list_for_report")
 					.includeDocs(true)
 					.descending(false)
-					.limit(limit), ReportedBill.class);
+					.limit(limit), clazz);
 	}
 	
 	public TreeSet<ReportedBill> getReportedBillsForReport(int limit) {
@@ -86,7 +88,7 @@ public class ReportedBillRepository extends
 		return reportedBills;
 	}
 	
-	public void persistMixedList(List<ReportedBill> reportedBills) {
+	public void persistMixedCollection(Collection<ReportedBill> reportedBills) {
 		for(ReportedBill b:reportedBills) {
 			List<ReportedBill> temp = findByOid(b.getOid());
 			if(temp == null || temp.isEmpty()) {

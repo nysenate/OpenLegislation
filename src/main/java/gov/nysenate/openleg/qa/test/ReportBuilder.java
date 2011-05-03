@@ -24,6 +24,7 @@ public class ReportBuilder {
 		// add ReportBills to map, keeping track of missing fields
 		// intentionally leaving memos out for the time being
 		HashMap<String, ReportedBill> billReportMap = new HashMap<String, ReportedBill>();
+		//addBillListToReport("memo", year, billReportMap);
 		addBillListToReport("full", year, billReportMap);
 		addBillListToReport("sponsor", year, billReportMap);
 		addBillListToReport("summary", year, billReportMap);

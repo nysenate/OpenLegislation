@@ -116,7 +116,7 @@ public class IngestReader {
 					XmlHelper.generateXml(args[1]);
 				}
 				else if(command.equals("-b")) {
-					//In the case of bills, we also need to make sure we reindex all ammended versions
+					//In the case of bills, we also need to make sure we reindex all amended versions
 					Bill bill = (Bill)ir.loadObject(args[1], Bill.class);
 					if(ir.reindexAmendedVersions((Bill)bill))
 						bill.setLuceneActive(false);

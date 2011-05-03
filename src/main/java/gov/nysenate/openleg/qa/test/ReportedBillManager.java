@@ -3,32 +3,50 @@ package gov.nysenate.openleg.qa.test;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 import org.ektorp.BulkDeleteDocument;
+import org.ektorp.http.StdHttpClient;
 
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.SessionYear;
 
-public class ReportedBillManager {
+public class ReportedBillManager extends CouchSupport {
 	private Logger logger = Logger.getLogger(ReportedBillManager.class);
 	
 	public static final long FOUR_DAYS_MS = 345600000L;
 	public static final long TWO_DAYS_MS = 172800000L;
 	public static final long ONE_DAY_MS = 86400000L;
 	public static final long CURRENT_TIME = System.currentTimeMillis();
-	
-	CouchInstance instance = CouchInstance.getInstance();
-	ReportedBillRepository rbr = new ReportedBillRepository(
-			ReportedBill.class, instance.getConnector());
 
 	public static void main(String[] args) throws ParseException, IOException {
 		System.setProperty("org.ektorp.support.AutoUpdateViewOnChange", "true");
+		
+		CouchInstance instance = CouchInstance.getInstance("test", true, new StdHttpClient.Builder().build());
+//		instance.getDbInstance().deleteDatabase("test");
+		
+//		ReportedBillManager rbm = new ReportedBillManager();
+//		rbm.refreshReportedBills();
+//		rbm.refreshMissingData();
+		
+		ReportedBillRepository rbp = new ReportedBillRepository(instance.getConnector());
+		
+		TreeSet<ReportedBill> set = rbp.getReportedBillsForReport(50);
+		
+		for(ReportedBill rb:set) {
+			System.out.println(rb.rank);
+		}
+	}
+	
+	public ReportedBillManager() {
+		super();
 	}
 	
 	public void refreshReportedBills() throws ParseException, IOException {
@@ -97,7 +115,7 @@ public class ReportedBillManager {
 		}
 		
 		logger.info("ranking and persisting problem bills");
-		rbr.persistMixedList(billsWithRank(reportedBillMap));
+		rbr.persistMixedCollection(billsWithRank(reportedBillMap.values()));
 		
 		logger.info("updating entries no longer in problem bill report");
 		instance.getConnector().flushBulkBuffer();
@@ -204,23 +222,19 @@ public class ReportedBillManager {
 		return false;
 	}
 	
-	public ArrayList<ReportedBill> billsWithRank(HashMap<String, ReportedBill> billReportMap) {
+	public Collection<ReportedBill> billsWithRank(Collection<ReportedBill> billReportList) {
 		long newestMod = 0L;
 		
-		for (String key : billReportMap.keySet()) {
-			if(billReportMap.get(key).getModified() > newestMod)
-				newestMod = billReportMap.get(key).getModified();
+		for (ReportedBill rb : billReportList) {
+			if(rb.getModified() > newestMod)
+				newestMod = rb.getModified();
 		}
 		
-		// create and sort by rank
-		ArrayList<ReportedBill> billReportList  = new ArrayList<ReportedBill>();
-		for (String key : billReportMap.keySet()) {
-			ReportedBill cur = billReportMap.get(key);
-
-			cur.setRank(getRank(newestMod, cur.getModified(), cur.getProblemFields().size()));
+		// assign rank
+		for (ReportedBill rb : billReportList) {
+			rb.setRank(getRank(newestMod, rb.getModified(), rb.getProblemFields().size()));
 			
-			cur.setActiveForReport(isActiveForReport(cur));
-			billReportList.add(cur);
+			rb.setActiveForReport(isActiveForReport(rb));
 		}
 
 		return billReportList;
