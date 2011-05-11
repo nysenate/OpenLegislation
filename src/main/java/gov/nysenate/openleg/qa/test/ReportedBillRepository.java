@@ -58,13 +58,15 @@ public class ReportedBillRepository extends
 	 * get list of ReportedBills are known to be problematic and need to be processed
 	 */
 	@View(name="problem_list_for_report", map = "function(doc) {" +
-				" if (doc.oid && doc.modified && doc.billType && doc.billType == 'PROBLEM_BILL' && !doc.processDate && doc.activeForReport) " +
-					"{ emit(doc.modified, doc) } }")
+				" if (doc.oid && doc.modified && doc.billType " +
+						"&& doc.billType == 'PROBLEM_BILL' && !doc.processDate && doc.activeForReport " +
+						"&& (!doc.hideFromReport || doc.hideFromReport == 'true')) " +
+					"{ emit(doc.rank, doc) } }")
 	public List<ReportedBill> findProblemBillsForReport(int limit) {
 		return db.queryView(
 				createQuery("problem_list_for_report")
 					.includeDocs(true)
-					.descending(false)
+					.descending(true)
 					.limit(limit), clazz);
 	}
 	

@@ -293,10 +293,13 @@ public class IngestReader {
 				}
 			}
 			
-//			Commit the changes made to the file system
-//			start = System.currentTimeMillis();
-//			commit(file.getName());
-//			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+/*
+ * commented out until a reasonable repo solution is found
+			Commit the changes made to the file system
+			start = System.currentTimeMillis();
+			commit(file.getName());
+			logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+*/
 			
 			
 			calendarParser.clearCalendars();
@@ -340,7 +343,6 @@ public class IngestReader {
 		return obj;
 	}	
 	
-	//TODO this is pretty bad
 	public void handleTranscript(File file) {
 		if(file.isDirectory()) {
 			for(File temp:file.listFiles()) {
@@ -806,3 +808,10 @@ public class IngestReader {
 		return null;
 	}
 }
+
+
+
+
+
+
+

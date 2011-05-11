@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.FieldSelector;
+import org.apache.lucene.document.FieldSelectorResult;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
@@ -169,7 +171,7 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
 		    	if (sortField != null) {
 				    //If they want sorted results, do a new search with sorting enabled
 		    		
-		    		Sort sort = new Sort(new SortField(sortField, /*SortField.STRING*/SortField.STRING_VAL, reverseSort));
+		    		Sort sort = new Sort(new SortField(sortField, SortField.STRING_VAL, reverseSort));
 		    		sdocs = searcher.search(query, null, start + max, sort).scoreDocs;
 		    	}
 		    	else {
@@ -178,7 +180,16 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
 		    	
 		    	for (int i=start; (i < sdocs.length && i < start+max); i++) {
 		    		
-		    		results.add(searcher.doc(sdocs[i].doc));
+		    		/*
+		    		 * certain bills have pretty massive json, xml and bill text fields that
+		    		 * can cause heap issues.  lazy loading is our best bet for now
+		    		 */
+		    		results.add(searcher.doc(sdocs[i].doc, new FieldSelector() {
+						private static final long serialVersionUID = -5944405015166445368L;
+						public FieldSelectorResult accept(String field) {
+		    				return FieldSelectorResult.LAZY_LOAD;
+		    			}
+		    		}));
 		    	}
 		    	
 		    	return new LuceneResult(results,collector.getTotalHits());

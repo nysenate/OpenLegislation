@@ -3,9 +3,13 @@ package gov.nysenate.openleg;
 import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.qa.ReportBuilder;
 import gov.nysenate.openleg.qa.model.Report;
+import gov.nysenate.openleg.qa.test.ReportedBill;
+import gov.nysenate.openleg.qa.test.ReportedBillManager;
+import gov.nysenate.openleg.qa.test.ReportedBillManager.BillType;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.TreeSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,18 +29,23 @@ public class ReportServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private static Report report = null;
-	private static long timeGenerated = 0L;
+	private static final String VIEW_PATH = "/report/index.jsp";
 	
-	private static final String VIEW_PATH = "/report/index.html";
+	private static ReportedBillManager rbm = null;
        
     public ReportServlet() {
         super();
+        rbm = new ReportedBillManager();
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String format = request.getParameter("format");
 		String uri = request.getRequestURI();
+		
+		TreeSet<ReportedBill> set = new TreeSet<ReportedBill>(new ReportedBill.ByHeat());
+		set.addAll(rbm.rbr.findByBillType(BillType.PROBLEM_BILL));
+		
+		rbm.rbr.findByBillType(BillType.PROBLEM_BILL);
 		
 		if (uri.indexOf(".")!=-1)
 			format = uri.substring(uri.indexOf(".")+1);
@@ -45,7 +54,7 @@ public class ReportServlet extends HttpServlet {
 			if (format.equals("json")) {
 				JsonGenerator gen = ApiHelper.getMapper().getJsonFactory().createJsonGenerator(response.getWriter());
 				gen.setPrettyPrinter(new DefaultPrettyPrinter());
-				ApiHelper.getMapper().writeValue(gen, getReport());
+				ApiHelper.getMapper().writeValue(gen, set);
 			}
 		}
 		else {
@@ -58,33 +67,6 @@ public class ReportServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
-	}
-	
-	public static synchronized Report getReport() {
-		if(report == null) {
-			generateReport();
-		}
-		else {
-			if(new Date().getTime() - timeGenerated > 900000) {
-				generateReport();
-			}
-		}
-		return report;
-	}
-	
-	private static Report generateReport() {
-		logger.info("Generating a new report");
-		
-		timeGenerated = new Date().getTime();
-		try {
-			report = new ReportBuilder().run();
-		} catch (ParseException e) {
-			logger.warn(e);
-		} catch (IOException e) {
-			logger.warn(e);
-		}
-		
-		return report;
 	}
 
 }

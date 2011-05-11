@@ -29,13 +29,17 @@ public class BillEvent extends SenateObject {
 	
 	public BillEvent (Bill bill, Date eventDate, String eventText)
 	{
+		this(bill.getSenateBillNo(), eventDate, eventText);
+	}
+	
+	public BillEvent(String billNumber, Date eventDate, String eventText) {
 		super();
 		this.eventDate = eventDate; 
 		this.eventText = eventText;
 		
 		try
 		{
-			this.billEventId = bill.getSenateBillNo() + "-" + eventDate.getTime() + "-" + URLEncoder.encode(eventText,"utf-8");
+			this.billEventId = billNumber + "-" + eventDate.getTime() + "-" + URLEncoder.encode(eventText,"utf-8");
 		}
 		catch (Exception e)
 		{

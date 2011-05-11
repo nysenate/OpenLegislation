@@ -8,8 +8,8 @@ public class CouchSupport {
 	private static final boolean CREATE_IF_NOT_EXIST = true;
 	
 	protected CouchInstance instance = null;
-	protected ReportedBillRepository rbr = null;
-	protected ReportRepository rr = null;
+	public final ReportedBillRepository rbr;
+	public final ReportRepository rr;
 	
 	public CouchSupport() {
 		this(DATABASE_NAME, CREATE_IF_NOT_EXIST);

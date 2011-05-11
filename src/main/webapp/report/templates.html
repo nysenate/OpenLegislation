@@ -1,0 +1,59 @@
+<script type="text/html" id="tmpl_container">
+	<h2>OpenLegislation Bill Reporting</h2>
+	<% if(promoted && promoted.length > 0) { %>
+		<h3>Promoted bills</h3>
+		<div id="promoted" class="bills_container wrapper">
+			<%=tmpl('tmpl_bills',{'bills':promoted})%>
+		</div>
+	<% } %>
+	<div id="reported" class="bills_container wrapper">
+		<h3>Have been reported</h3>
+		<%=tmpl('tmpl_bills',{'bills':reported})%>
+	</div>
+	<div id="unreported" class="bills_container wrapper">
+		<h3>Up for report</h3>
+		<%=tmpl('tmpl_bills',{'bills':unreported})%>
+	</div>
+	<div id="hidden" class="bills_container wrapper">
+		<h3>Hidden from report</h3>
+		<%=tmpl('tmpl_bills',{'bills':hidden})%>
+	</div>
+</script>
+<script type="text/html" id="tmpl_bills">
+	<ul class="bill_grouping">
+		<% for(idx in bills) { %>
+			<%=tmpl('tmpl_bill',{'bill':bills[idx]})%>
+		<% } %>
+	</ul>
+</script>
+<script type="text/html" id="tmpl_bill">
+	<li class="bill" style="background-color:<%=util.getColor(bill.rank)%>">
+		<div class="bill_top_container">
+			<span class="bill_id bill_field"><%=bill.oid%></span>
+			<span class="bill_modified">Modified on <%=util.formatDate(bill.modified)%></span>
+			<span class="bill_problems bill_field">Missing: <%=util.getMissing(bill.problemFields)%></span>
+		</div>
+		<div class="bill_bottom_container">
+			<div class="bill_links">
+				<ul>
+					<li><a target="_blank" href="http://open.nysenate.gov/legislation/bill/<%=bill.oid%>">OpenLegislation</a></li>
+					<li><a class="disactivated" href="#">LBDC</a></li>
+				</ul>
+			</div>
+			<div class="bill_data">
+				<ul>
+					<% if(bill.processDate) { %>
+						<li>Last reported: <span class="bill_field"><%=util.formatDate(bill.processDate)%></span></li>
+					<% } %>
+					<% if(bill.problemBillAction) { %>
+						<li>Recommended action: <span class="bill_field"><%=bill.problemBillAction%></span></li>
+					<% } %>
+				</ul>
+				<ul>
+					<li class="bill_button">Promote this bill</li>
+					<li class="bill_button">Hide this bill</li>
+				</ul>
+			</div>
+		</div>
+	</li>
+</script>

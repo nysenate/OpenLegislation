@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
@@ -32,16 +31,38 @@ public class ReportedBillManager extends CouchSupport {
 		CouchInstance instance = CouchInstance.getInstance("test", true, new StdHttpClient.Builder().build());
 //		instance.getDbInstance().deleteDatabase("test");
 		
+		
+//		ReportManager rm = new ReportManager(5);
+//		rm.executeReport();
+		
 //		ReportedBillManager rbm = new ReportedBillManager();
 //		rbm.refreshReportedBills();
 //		rbm.refreshMissingData();
+//		rbm.refreshReportedBills();
+//		rbm.refreshMissingData();
+				
+//		ReportedBillRepository rbr = new ReportedBillRepository(instance.getConnector());
 		
-		ReportedBillRepository rbp = new ReportedBillRepository(instance.getConnector());
+//		List<ReportedBill> bills = rbr.findByOid("S3914-2011");
+//		for(ReportedBill bill: bills) {
+//			bill.setHideFromReport(true);
+//			rbr.update(bill);
+//		}
 		
-		TreeSet<ReportedBill> set = rbp.getReportedBillsForReport(50);
 		
-		for(ReportedBill rb:set) {
-			System.out.println(rb.rank);
+//		List<ReportedBill> bills = rbr.findProblemBillsForReport(100);
+//		
+//		for(ReportedBill bill:bills) {
+//			System.out.println(bill.getOid() + " : " + bill.getBillType() + " : " + bill.getRank());
+//		}
+		
+		ReportedBillManager rbm = new ReportedBillManager();
+		
+		ReportedBillRepository rbr = new ReportedBillRepository(instance.getConnector());
+		
+		Collection<ReportedBill> col = rbr.findProblemBillsForReport(1000);
+		for(ReportedBill bill:col) {
+			System.out.println(bill.getOid() + " : " + bill.getProblemFields());
 		}
 	}
 	
@@ -65,6 +86,12 @@ public class ReportedBillManager extends CouchSupport {
 			
 			if (!couchBill.getModified().equals(indexBill.getModified())) {
 				couchBill.setModified(indexBill.getModified());
+				
+				/*
+				 * when a bill is updated it should probably be
+				 * flagged for reporting again
+				 */
+				couchBill.setHideFromReport(null);
 			}
 			
 			if(couchBill.getActiveForReport() == null || !couchBill.getActiveForReport()) {
@@ -133,6 +160,15 @@ public class ReportedBillManager extends CouchSupport {
 				}
 			}
 		}
+		
+		two.setActiveForReport(one.getActiveForReport());
+		two.setHideFromReport(one.getHideFromReport());
+		two.setModified(one.getModified());
+		two.setProblemBillAction(one.getProblemBillAction());
+		two.setProcessDate(one.getProcessDate());
+		two.setPushToReport(one.getPushToReport());
+		two.setRevision(one.getRevision());
+		
 		return two;
 	}
 	

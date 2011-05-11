@@ -73,19 +73,21 @@ public class ReportManager extends CouchSupport {
 				if(lbdcBill.getBillEvents().size() != indexBill.getBillEvents().size()) {
 					rb.addProblematicField("actions", ReportFieldType.BROKEN);
 				}
-			}
-			
 */
-			
-			if(rb.getProblemFields() != null || rb.getProblemFields().isEmpty()) {
-				rb.setBillType(BillType.PROBLEM_BILL);
-				rb.setProblemBillAction(ProblemBillAction.CHECK);
+				//if fields are missing/broken set to problem bill
+				if(rb.getProblemFields() != null && !rb.getProblemFields().isEmpty()) {
+					rb.setBillType(BillType.PROBLEM_BILL);
+					rb.setProblemBillAction(ProblemBillAction.CHECK);
+				}
+				else {
+					rb.setBillType(BillType.STANDARD_BILL);
+					rb.setProblemBillAction(null);
+					rb.removeReportedData();
+				}
+/*
+ * 			Leave commented until aproval
 			}
-			else {
-				rb.setBillType(BillType.STANDARD_BILL);
-				rb.setProblemBillAction(null);
-				rb.removeReportedData();
-			}
+*/
 			
 			rb.setProcessDate(TIME);
 			rb.setPushToReport(null);
@@ -95,14 +97,9 @@ public class ReportManager extends CouchSupport {
 			ret.add(rb);
 		}
 		
-/*		
- * 		commented for testing
-		
 		Report report = new Report(TIME, new ArrayList<ReportedBill>(set));
-		instance.getConnector().executeBulk(set);
+		rbr.persistMixedCollection(set);
 		rr.add(report);
-		
-*/
 	}
 	
 	private void checkField(String string, Object one, Object two, ReportedBill rb) {

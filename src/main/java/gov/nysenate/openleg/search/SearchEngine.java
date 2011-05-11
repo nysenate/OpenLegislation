@@ -265,7 +265,6 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 	    				Long.parseLong(lastModified),
 	    				Boolean.parseBoolean(doc.get("active"))));
 	    	}
-	    	
     	}
 	    	
     	return response;

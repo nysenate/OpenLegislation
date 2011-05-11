@@ -13,24 +13,36 @@ import org.ektorp.support.TypeDiscriminator;
 @SuppressWarnings("serial")
 public class ReportedBill extends CouchDbDocument {
 	
-	/* for all bills */
+	/* 
+	 * for all bills 
+	 */
+	
 	@TypeDiscriminator
 	String oid;
 	Long modified;
 	BillType billType;
-	
+	/* is it active for a report? */
 	Boolean activeForReport;
 	
-	/* for bills that have been processed */
+	/* 
+	 * for bills that have been processed 
+	 */
+	
 	Long processDate;
 	
-	/* for problematic bills */	
+	/* 
+	 * for problematic bills 
+	 */	
+	
+	/* push a bill that has potentially been processed to next report */
 	Boolean pushToReport;
+	/* hide a problematic bill from more reports */
 	Boolean hideFromReport;
 	
 	Double rank;
 	HashMap<String, ReportFieldType> problemFields;
 	
+	/* action that should be taken for a bill that's been reported */
 	ProblemBillAction problemBillAction;
 	
 	public ReportedBill() {

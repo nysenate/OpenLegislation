@@ -63,10 +63,10 @@ public class ReportBuilder {
 			}
 		}
 	}
-
+	
 	public ArrayList<Result> getResultList(String field, String year)
 			throws ParseException, IOException {
-
+		
 		SenateResponse sr = SearchEngine.getInstance().search(
 				"otype:bill AND NOT " + field + ":[A* TO Z*] AND NOT " + field
 						+ ":Z* AND oid:s* AND year:" + year, "json", 0,

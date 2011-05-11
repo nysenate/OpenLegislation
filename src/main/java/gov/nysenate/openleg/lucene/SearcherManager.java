@@ -15,6 +15,7 @@ public class SearcherManager {
 	private IndexWriter writer;
 	private boolean reopening;
 	
+	
 	public SearcherManager(Directory dir) throws IOException {
 		currentSearcher = new IndexSearcher(IndexReader.open(dir));
 		//warm

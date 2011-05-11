@@ -344,7 +344,8 @@ public class BasicParser implements OpenLegConstants {
 					else if (lineCode == '6') {
 						if (lineData.charAt(0)!='0') {							
 							String sponsor = lineData.trim();
-							bill.setSponsor(getPerson(sponsor));
+							if(!sponsor.equals("DELETE"))
+								bill.setSponsor(getPerson(sponsor));
 						}
 					}
 					else if (lineCode == '7') {
@@ -587,10 +588,10 @@ public class BasicParser implements OpenLegConstants {
 				titleBuffer.append(' ');
 			}
 			else {
-				if (!titleBuffer.toString().contains(line)) {
+				//if (!titleBuffer.toString().contains(line)) {
 					titleBuffer.append(line);
 					titleBuffer.append(' ');
-				}
+				//}
 			}		
 		}
 		return bill;
@@ -599,6 +600,11 @@ public class BasicParser implements OpenLegConstants {
 	public Bill parseSameAsData (String line) throws IOException {
 		Bill bill = null;
 		bill = getBill(line);
+		
+		if(line.contains("DELETE")) {
+			bill.setSameAs(null);
+			return bill;
+		}
 	
 		int lineCode = Integer.parseInt(line.substring(11,12));
 		
@@ -769,6 +775,10 @@ public class BasicParser implements OpenLegConstants {
 	}
 	
 	public Person getPerson(String name) {
+		if(name.equalsIgnoreCase("delete")) {
+			return null;
+		}
+		
 		if(personCache == null) {
 			personCache = new HashMap<String,Person>();
 		}

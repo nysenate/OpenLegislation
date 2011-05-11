@@ -10,6 +10,6 @@ public class ReportRepository extends CouchDbRepositorySupport<Report> {
 	
 	protected ReportRepository(CouchDbConnector db) {
 		super(clazz, db);
+		initStandardDesignDocument();
 	}
-
 }

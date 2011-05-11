@@ -9,6 +9,10 @@ public class Report extends CouchDbDocument {
 	Long reportTime;
 	ArrayList<ReportedBill> reportedBills;
 	
+	public Report() {
+		
+	}
+	
 	public Report(long reportTime, ArrayList<ReportedBill> reportedBills) {
 		this.reportTime = reportTime;
 		this.reportedBills = reportedBills;
