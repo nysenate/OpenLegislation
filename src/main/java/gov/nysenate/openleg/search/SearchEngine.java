@@ -2,7 +2,6 @@ package gov.nysenate.openleg.search;
 
 import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.api.ApiHelper;
-import gov.nysenate.openleg.ingest.SenateObject;
 import gov.nysenate.openleg.lucene.Lucene;
 import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.lucene.LuceneObject;
@@ -298,11 +297,11 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 		
 		if(sr != null && sr.getResults().size() > 0) {
 			Result result = sr.getResults().get(0);
-			
 			if(result.getOid().equalsIgnoreCase(oid)) {
 				LuceneObject ret = null;
 				try {
 					ret = ApiHelper.getMapper().readValue(ApiHelper.unwrapJson(result.data), clazz);
+					ret.setLuceneModified(result.getLastModified());
 				} catch (JsonParseException e) {
 					logger.error(e);
 				} catch (JsonMappingException e) {

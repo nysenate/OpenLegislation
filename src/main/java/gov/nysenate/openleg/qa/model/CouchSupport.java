@@ -1,4 +1,6 @@
-package gov.nysenate.openleg.qa.test;
+package gov.nysenate.openleg.qa.model;
+
+import gov.nysenate.openleg.qa.ProblemBillRepository;
 
 import org.ektorp.http.HttpClient;
 import org.ektorp.http.StdHttpClient;
@@ -8,8 +10,7 @@ public class CouchSupport {
 	private static final boolean CREATE_IF_NOT_EXIST = true;
 	
 	protected CouchInstance instance = null;
-	public final ReportedBillRepository rbr;
-	public final ReportRepository rr;
+	public final ProblemBillRepository pbr;
 	
 	public CouchSupport() {
 		this(DATABASE_NAME, CREATE_IF_NOT_EXIST);
@@ -25,7 +26,6 @@ public class CouchSupport {
 	
 	public CouchSupport(String databaseName, boolean createIfNotExist, HttpClient httpClient) {
 		instance = CouchInstance.getInstance(databaseName, createIfNotExist, httpClient);
-		rbr = new ReportedBillRepository(instance.getConnector());
-		rr = new ReportRepository(instance.getConnector());
+		pbr = new ProblemBillRepository(instance.getConnector());
 	}
 }

@@ -3,8 +3,6 @@ package gov.nysenate.openleg.qa;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.model.bill.Person;
-import gov.nysenate.openleg.qa.model.BillReport;
-import gov.nysenate.openleg.util.Mailer;
 import gov.nysenate.openleg.util.SessionYear;
 
 import java.io.BufferedReader;
@@ -22,41 +20,12 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
 
-public class LBDConnect {
-	public static void main(String[] args) throws IOException, org.apache.lucene.queryParser.ParseException, InterruptedException {		
-		ReportBuilder reportBuilder = new ReportBuilder();
-		TreeSet<BillReport> bills = reportBuilder.getBillReportSet("2011");
-		
-		LBDConnect l = LBDConnect.getInstance();
-		
-		String delete = "";
-		String report = "";
-		
-		for(BillReport bill:bills) {
-			System.out.println(bill.getBill());
-			if(bill.getHeat() < 5)
-				break;
-						
-			if(l.getBillFromLbdc(bill.getBill()) == null)
-				delete += bill.getBill() + " " + bill.getMissingFields() + "<br/>";
-			else
-				report += bill.getBill() + " " + bill.getMissingFields() + "<br/>";
-			
-			Thread.sleep(3600);
-		}
-		
-		delete = "<b>Marked for deletion</b>:<br/>" + delete;
-		report = "<b>Report to LBDC</b>:<br/>" + report;
-		
-		Mailer.mailReport(delete + "<br/><br/>" + report);
-	}
-	
+public class LBDConnect {	
 	private static Logger logger = Logger.getLogger(LBDConnect.class);
 	
 	private static final int PORT = 80;

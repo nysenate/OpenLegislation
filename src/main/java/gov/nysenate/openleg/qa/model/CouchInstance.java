@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.qa.test;
+package gov.nysenate.openleg.qa.model;
 
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
