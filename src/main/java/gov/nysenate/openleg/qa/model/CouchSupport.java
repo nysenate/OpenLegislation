@@ -6,7 +6,7 @@ import org.ektorp.http.HttpClient;
 import org.ektorp.http.StdHttpClient;
 
 public class CouchSupport {
-	private static final String DATABASE_NAME = "test";
+	public static final String DATABASE_NAME = "qa";
 	private static final boolean CREATE_IF_NOT_EXIST = true;
 	
 	protected CouchInstance instance = null;
@@ -25,6 +25,7 @@ public class CouchSupport {
 	}
 	
 	public CouchSupport(String databaseName, boolean createIfNotExist, HttpClient httpClient) {
+		System.setProperty("org.ektorp.support.AutoUpdateViewOnChange", "true");
 		instance = CouchInstance.getInstance(databaseName, createIfNotExist, httpClient);
 		pbr = new ProblemBillRepository(instance.getConnector());
 	}

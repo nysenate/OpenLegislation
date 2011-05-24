@@ -263,7 +263,7 @@ public class IngestReader {
 			
 			//Write the objects
 			//due to memory issues with large files we're
-			//seperating the lists in to chunks of length CHUNK_SIZE
+			//separating the lists in to chunks of length CHUNK_SIZE
 			int listSize = senateObjects.size();
 			if(listSize != 0) {
 				int slices = (int) Math.ceil(listSize/(CHUNK_SIZE + 0.0));

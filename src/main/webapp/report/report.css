@@ -147,7 +147,7 @@ span.boom {
 	float:left;
 	width: 78%;
 	margin: 2px 0px 1px 5px;
-	height: 35px;
+	min-height: 35px;
 }
 
 .bill_data ul {

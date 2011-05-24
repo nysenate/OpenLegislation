@@ -15,6 +15,8 @@ public class ProblemBill extends CouchDbDocument {
 	String oid;
 	Long modified;
 	
+	Long lastReported;
+	
 	Double rank;
 	
 	ArrayList<String> missingFields;
@@ -37,6 +39,10 @@ public class ProblemBill extends CouchDbDocument {
 	public Long getModified() {
 		return modified;
 	}
+	
+	public Long getLastReported() {
+		return lastReported;
+	}
 
 	public Double getRank() {
 		return rank;
@@ -56,6 +62,10 @@ public class ProblemBill extends CouchDbDocument {
 
 	public void setModified(Long modified) {
 		this.modified = modified;
+	}
+	
+	public void setLastReported(Long lastReported) {
+		this.lastReported = lastReported;
 	}
 
 	public void setRank(Double rank) {
@@ -117,6 +127,7 @@ public class ProblemBill extends CouchDbDocument {
 	@JsonIgnore
 	public static ProblemBill merge(ProblemBill theNew, ProblemBill theOld) {
 		theOld.setModified(theNew.getModified());
+		theOld.setLastReported(theNew.getLastReported());
 		
 		if(theOld.getMissingFields() == null) {
 			theOld.setMissingFields(theNew.getMissingFields());
@@ -144,5 +155,19 @@ public class ProblemBill extends CouchDbDocument {
 		
 		/* assume old version already has revision and id for couch */
 		return theOld;
+	}
+	
+	public static ProblemBill removeNonMatchingFields(ProblemBill problemBill, FieldName[] fieldNames) {
+		if(problemBill.getNonMatchingFields() != null) {
+			for(FieldName fieldName:fieldNames) {
+				problemBill.getNonMatchingFields().remove(fieldName.text());
+			}
+			
+			if(problemBill.getNonMatchingFields().isEmpty()) {
+				problemBill.setNonMatchingFields(null);
+			}
+		}
+		
+		return problemBill;
 	}
 }

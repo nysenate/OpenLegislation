@@ -18,7 +18,7 @@ public class LbdcFileMemo extends LbdcFile {
 		super(file);
 	}
 
-	public ArrayList<ProblemBill> getProblemBills() {
+	public ArrayList<ProblemBill> getProblemBills(FieldName[] fieldNames) {
 		ArrayList<ProblemBill> ret = new ArrayList<ProblemBill>();
 		
 		open();
@@ -38,6 +38,7 @@ public class LbdcFileMemo extends LbdcFile {
 						ProblemBill problemBill = new ProblemBill(
 								luceneBill.getSenateBillNo(), luceneBill.getLuceneModified());
 						problemBill.addNonMatchingField(new NonMatchingField(FieldName.MEMO, null, null));
+						problemBill.setLastReported(time);
 						
 						ret.add(problemBill);
 					}

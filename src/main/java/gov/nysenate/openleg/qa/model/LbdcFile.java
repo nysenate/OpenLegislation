@@ -9,6 +9,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.Date;
 
 public abstract class LbdcFile {
 	@Target(ElementType.TYPE)
@@ -20,12 +21,13 @@ public abstract class LbdcFile {
 	
 	protected EasyReader er = null;
 	protected File file = null;
+	protected long time = new Date().getTime();
 	
 	public LbdcFile(File file) {
 		this.file  = file;
 	}
 	
-	abstract public ArrayList<ProblemBill> getProblemBills();
+	abstract public ArrayList<ProblemBill> getProblemBills(FieldName[] fieldNames);
 	
 	protected void open() {
 		if(file.exists()) {

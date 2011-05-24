@@ -1,10 +1,12 @@
 package gov.nysenate.openleg.qa;
 
+import gov.nysenate.openleg.qa.model.FieldName;
 import gov.nysenate.openleg.qa.model.ProblemBill;
 
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.GenerateView;
@@ -13,6 +15,8 @@ import org.ektorp.support.View;
 @View(	name = "all",
 		map  = "function(doc) { if (doc.oid && doc.modified) { emit(doc.oid, doc) } }")
 public class ProblemBillRepository extends CouchDbRepositorySupport<ProblemBill> {
+	
+	private Logger logger = Logger.getLogger(ProblemBillRepository.class);
 
 	public static final Class<ProblemBill> clazz = ProblemBill.class;
 	
@@ -64,19 +68,34 @@ public class ProblemBillRepository extends CouchDbRepositorySupport<ProblemBill>
 					.includeDocs(true), clazz);
 	}
 	
+	
+	public void createOrUpdateProblemBill(ProblemBill problemBill, boolean merge) {
+		createOrUpdateProblemBill(problemBill, merge, new FieldName[0]);
+	}
+	
 	public void createOrUpdateProblemBills(Collection<ProblemBill> problemBills, boolean merge) {
+		createOrUpdateProblemBills(problemBills, merge, new FieldName[0]);
+	}
+	
+	public void createOrUpdateProblemBills(Collection<ProblemBill> problemBills, boolean merge, FieldName[] fieldNames) {
 		for(ProblemBill problemBill:problemBills) {
-			createOrUpdateProblemBill(problemBill, merge);	
+			createOrUpdateProblemBill(problemBill, merge, fieldNames);
 		}
 	}
 	
-	public void createOrUpdateProblemBill(ProblemBill problemBill, boolean merge) {
+	public void createOrUpdateProblemBill(ProblemBill problemBill, boolean merge, FieldName[] fieldNames) {
+		logger.info("Updating " + problemBill.getOid() + ", merging: " + merge);
+		
 		ProblemBill temp = findByOid(problemBill.getOid());
 		if(temp == null) {
 			db.create(problemBill);
 		}
 		else {
 			problemBill.setRevision(temp.getRevision());
+			
+			//before merge we want to remove existing fields from previous reports
+			temp = ProblemBill.removeNonMatchingFields(temp, fieldNames);
+			
 			db.update(merge ? ProblemBill.merge(problemBill, temp) : problemBill);
 		}
 	}

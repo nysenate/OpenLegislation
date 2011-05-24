@@ -21,7 +21,7 @@ public class LbdcFilePaging extends LbdcFile {
 		super(file);
 	}
 	
-	public ArrayList<ProblemBill> getProblemBills() {
+	public ArrayList<ProblemBill> getProblemBills(FieldName[] fieldNames) {
 		ArrayList<ProblemBill> ret = new ArrayList<ProblemBill>();
 		
 		open();
@@ -88,6 +88,7 @@ public class LbdcFilePaging extends LbdcFile {
 				if(pageNumber != new Integer(lbdcPageCount)) {
 					ProblemBill problemBill = new ProblemBill(formattedBillNo, luceneBill.getLuceneModified());
 					problemBill.addNonMatchingField(new NonMatchingField(FieldName.FULLTEXT, pageNumber + "", lbdcPageCount + ""));
+					problemBill.setLastReported(time);
 					return problemBill;
 				}
 			}

@@ -41,7 +41,7 @@ public class LbdcFileHtml extends LbdcFile {
 		super(file);
 	}
 	
-	public ArrayList<ProblemBill> getProblemBills() {
+	public ArrayList<ProblemBill> getProblemBills(FieldName[] fieldNames) {
 		ArrayList<ProblemBill> ret = new ArrayList<ProblemBill>();
 					
 		Bill lbdcBill = null;
@@ -57,6 +57,7 @@ public class LbdcFileHtml extends LbdcFile {
 			}
 			else {					
 				ProblemBill problemBill = new ProblemBill(luceneBill.getSenateBillNo(), luceneBill.getLuceneModified());
+				problemBill.setLastReported(time);
 				
 				if(valid(lbdcBill.getSponsor(), luceneBill.getSponsor())) {
 					if(!cln(lbdcBill.getSponsor().getFullname()).equalsIgnoreCase(cln(luceneBill.getSponsor().getFullname()))) {

@@ -7,9 +7,6 @@ $(document).ready(function(){
 	
 	cache = {
 		'reported':[], 
-		'unreported':[], 
-		'hidden':[], 
-		'promoted':[],
 		'cur_bill_elem' : null
 	};
 	
@@ -40,10 +37,7 @@ $(document).ready(function(){
 		var html="";
 		html+= tmpl("tmpl_container", {
 				'util' : util, 
-				'unreported' : cache.unreported,
 				'reported' : cache.reported,
-				'hidden' : cache.hidden,
-				'promoted' : cache.promoted
 			});
 		$('#container').html(html).find('.bill_bottom_container').hide();
 	};
@@ -51,18 +45,7 @@ $(document).ready(function(){
 	var init = function(data) {
 		if(data) {
 			for(idx in data) {
-				if(data[idx].pushToReport) {
-					cache.promoted[data[idx].oid] = data[idx];
-				}
-				else if(data[idx].processDate) {
-					cache.reported[data[idx].oid] = data[idx];
-				}
-				else if(data[idx].hideFromReport) {
-					cache.hidden[data[idx].oid] = data[idx];
-				}
-				else {
-					cache.unreported[data[idx].oid] = data[idx];
-				}
+				cache.reported[data[idx].oid] = data[idx];
 			}
 		}
 		else {
@@ -100,16 +83,15 @@ $(document).ready(function(){
     		if(heat > 4) return "#ffbbaa";
     		return "#ffeedd";
     	},
-    	'getMissing': function(fields) {
-    		var missing = "";
-    		for(idx in fields) {
-				if(missing != "") {
-					missing +=  ", ";
-				}
-				missing += idx;
-			}
-    		return missing;
-    	}
+    	'getNonMatchingFields': (function(fields) {
+			return function(nonMatching) {
+				var lst = [];
+				for(var x in fields) {
+					if(nonMatching[fields[x]]) lst[lst.length] = nonMatching[fields[x]].field;
+        		}
+				return lst;
+			};
+    	})(['full text', 'memo', 'sponsor', 'cosponsors', 'summary', 'title', 'law section', 'actions'])
     }
 	$.ajaxSetup({
 		beforeSend: function() {
