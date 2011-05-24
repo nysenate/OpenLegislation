@@ -148,4 +148,16 @@
     <servlet-name>ReportServlet</servlet-name>
     <url-pattern>/report.json</url-pattern>
   </servlet-mapping>
+   <servlet>
+    <servlet-name>RulesServlet</servlet-name>
+    <servlet-class>gov.nysenate.openleg.RulesServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RulesServlet</servlet-name>
+    <url-pattern>/rules</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>RulesServlet</servlet-name>
+    <url-pattern>/rules/*</url-pattern>
+  </servlet-mapping>
 </web-app>
