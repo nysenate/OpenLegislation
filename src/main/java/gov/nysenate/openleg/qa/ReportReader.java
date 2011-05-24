@@ -4,11 +4,14 @@ import gov.nysenate.openleg.qa.model.CouchInstance;
 import gov.nysenate.openleg.qa.model.CouchSupport;
 import gov.nysenate.openleg.qa.model.FieldName;
 import gov.nysenate.openleg.qa.model.LbdcFile;
+import gov.nysenate.openleg.qa.model.NonMatchingField;
 import gov.nysenate.openleg.qa.model.ProblemBill;
 import gov.nysenate.openleg.qa.model.LbdcFile.AssociatedFields;
 import gov.nysenate.openleg.util.SessionYear;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,14 +27,22 @@ import org.apache.lucene.queryParser.ParseException;
 import org.ektorp.http.StdHttpClient;
 
 public class ReportReader extends CouchSupport {
+	public static final String FILE_TYPE = "file-type";
+	public static final String PATH_TO_FILE = "path-to-file";
+	public static final String REPORT_MISSING_DATA = "report-missing-data";
+	public static final String DUMP = "dump";
+	public static final String RESET_COUCH = "reset-couch";
+	public static final String HELP = "help";
+	
 	public static void main(String[] args) {
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
-		options.addOption("ft", "file-type", true, "(bill_html|memo|paging)");
-		options.addOption("f", "path-to-file", true, "path to file being parsed");
-		options.addOption("m", "report-missing-data", false, "refresh report on missing data");
-		options.addOption("r", "reset-couch", false, "reset couchdb");
-		options.addOption("h", "help", false, "print this message");
+		options.addOption("ft", FILE_TYPE, true, "(bill_html|memo|paging)");
+		options.addOption("f", PATH_TO_FILE, true, "path to file being parsed");
+		options.addOption("m", REPORT_MISSING_DATA, false, "refresh report on missing data");
+		options.addOption("d", DUMP, true, "dump missing data information to file");
+		options.addOption("r", RESET_COUCH, false, "reset couchdb");
+		options.addOption("h", HELP, false, "print this message");
 		
 		try {
 		    CommandLine line = parser.parse(options, args);
@@ -43,13 +54,13 @@ public class ReportReader extends CouchSupport {
 		    else {
 		    	ReportReader reader = new ReportReader();
 		    	
-		    	if(line.hasOption("reset-couch")) {
-		    		CouchInstance instance = CouchInstance.getInstance("test", true, new StdHttpClient.Builder().build());
+		    	if(line.hasOption(RESET_COUCH)) {
+		    		CouchInstance instance = CouchInstance.getInstance(CouchSupport.DATABASE_NAME, true, new StdHttpClient.Builder().build());
 		    		instance.getDbInstance().deleteDatabase(CouchSupport.DATABASE_NAME);
 		    	}
-		    	else if(line.hasOption("file-type") && line.hasOption("path-to-file")) {
+		    	else if(line.hasOption(FILE_TYPE) && line.hasOption(PATH_TO_FILE)) {
 		    		ReportType reportType = null;
-		    		String fileType = line.getOptionValue("file-type");
+		    		String fileType = line.getOptionValue(FILE_TYPE);
 		    		
 		    		if(fileType.equalsIgnoreCase("bill_html"))
 		    			reportType = ReportType.BILL_HTML;
@@ -61,10 +72,13 @@ public class ReportReader extends CouchSupport {
 		    		if(reportType==null)
 		    			throw new org.apache.commons.cli.ParseException("invalid file type: " + fileType);
 			       
-			        reader.processFile(line.getOptionValue("path-to-file"), reportType);
+			        reader.processFile(line.getOptionValue(PATH_TO_FILE), reportType);
 			    }
-		    	else if(line.hasOption("report-missing-data")) {
+		    	else if(line.hasOption(REPORT_MISSING_DATA)) {
 		    		reader.reportMissingData();
+		    	}
+		    	else if(line.hasOption(DUMP)) {
+		    		reader.dumpToFile(line.getOptionValue(DUMP));
 		    	}
 		    	else {
 		    		throw new org.apache.commons.cli.ParseException("use with -h for options");
@@ -75,7 +89,7 @@ public class ReportReader extends CouchSupport {
 		    System.out.println( "Unexpected exception:" + exp.getMessage() );
 		}
 	}
-	
+
 	/*
 	 * report files come in three flavors:
 	 * 		1) an html dump of actions, summary, sponsors, law section
@@ -164,5 +178,58 @@ public class ReportReader extends CouchSupport {
 	
 	public List<ProblemBill> getProblemBills() {
 		return pbr.findProblemBillsByRank();
+	}
+	
+	public void dumpToFile(String filePath) {
+		if(filePath == null)
+			throw new NullPointerException();
+		
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filePath)));
+			
+			List<ProblemBill> problemBills = pbr.getAll();
+			StringBuffer missing;
+			StringBuffer nonMatching;
+			StringBuffer line;
+			
+			for(ProblemBill pb:problemBills) {
+				line = new StringBuffer(pb.getOid());
+				missing = new StringBuffer();
+				nonMatching = new StringBuffer();
+				
+				if(pb.getMissingFields() != null) {
+					for(String field:pb.getMissingFields()) {
+						if(missing.length() == 0)
+							missing.append(field);
+						else {
+							missing.append(", ");
+							missing.append(field);
+						}
+					}
+				}
+				
+				if(pb.getNonMatchingFields() != null) {
+					for(NonMatchingField nmf:pb.getNonMatchingFields().values()) {
+						if(nonMatching.length() == 0)
+							nonMatching.append(nmf.getField());
+						else {
+							nonMatching.append(", ");
+							nonMatching.append(nmf.getField());
+						}
+					}
+				}
+				
+				if(missing.length() > 0) line.append("\n\tmissing: ").append(missing);
+				if(nonMatching.length() > 0) line.append("\n\tnon matching: ").append(nonMatching);
+				line.append("\n");
+				
+				bw.write(line.toString());
+			}
+			bw.close();
+			
+		} catch (IOException e) {
+			System.err.println("Could not write to file " + filePath);
+			logger.error(e);
+		}
 	}
 }
