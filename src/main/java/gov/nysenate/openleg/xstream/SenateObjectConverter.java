@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.xstream;
 
-import gov.nysenate.openleg.ingest.ISenateObject;
+import gov.nysenate.openleg.model.ISenateObject;
 
 import java.util.*;
 

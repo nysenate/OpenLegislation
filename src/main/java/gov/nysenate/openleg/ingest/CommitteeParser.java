@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.ingest;
 
 import gov.nysenate.openleg.OpenLegConstants;
+import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.model.bill.Vote;
@@ -33,15 +34,10 @@ public class CommitteeParser implements OpenLegConstants {
 
 	private static Logger logger = Logger.getLogger(CommitteeParser.class);
 		
-	ArrayList<ISenateObject> objectsToUpdate = new ArrayList<ISenateObject>();
-	
-	IngestReader reader = null;
-	
+	ArrayList<ISenateObject> objectsToUpdate;
+		
 	public CommitteeParser () {
-	}
-	
-	public CommitteeParser(IngestReader reader) {
-		this.reader = reader;
+		objectsToUpdate = new ArrayList<ISenateObject>();
 	}
 	
 	public ArrayList<ISenateObject> doParsing (File file) {
@@ -179,7 +175,9 @@ public class CommitteeParser implements OpenLegConstants {
 		Agenda agendaVote = null;
 		String agendaId = "commagenda-" + xmlAgendaVote.getNo() + '-' + xmlAgendaVote.getSessyr() + '-' + xmlAgendaVote.getYear();
 		
+		/* TODO
 		agendaVote = (Agenda) reader.loadObject(agendaId, xmlAgendaVote.getSessyr(), "agenda", Agenda.class);
+		*/
 		
 		logger.info ("COMMITTEE AGENDA VOTE RECORD " + xmlAgendaVote.getNo());
 		
@@ -241,11 +239,16 @@ public class CommitteeParser implements OpenLegConstants {
 	
 		String agendaId = "commagenda-" + xmlAgenda.getNo() + '-' + xmlAgenda.getSessyr() + '-' + xmlAgenda.getYear();
 		
+		Agenda agenda = null;
+		/* TODO
 		Agenda agenda = (Agenda) reader.loadObject(agendaId, xmlAgenda.getSessyr(), "agenda", Agenda.class);
+		*/
 		
 		String action = xmlAgenda.getAction();
 		
 		if (agenda != null && action.equalsIgnoreCase("remove")) {
+			
+			/* TODO
 			reader.deleteSenateObject(agenda);
 			
 			try {
@@ -253,6 +256,7 @@ public class CommitteeParser implements OpenLegConstants {
 			} catch (Exception e) {
 				logger.warn(e);
 			}
+			*/
 			
 			logger.info("removing agenda: " + agenda.getId());
 						
@@ -366,12 +370,16 @@ public class CommitteeParser implements OpenLegConstants {
 					else {
 						agenda.removeCommitteeMeeting(meeting);
 						logger.info("removing meeting: " + meeting.getId());
+						
+						/* TODO
 						try {
 							reader.searchEngine.deleteDocuments("meeting", meeting.luceneOid());
 						} catch (IOException e) {
 							logger.warn(e);
 						}
 						reader.writeSenateObject(agenda);
+						
+						*/
 					}
 					if(action.equals("remove"))
 						continue;
@@ -504,9 +512,12 @@ public class CommitteeParser implements OpenLegConstants {
 		
 		
 		senateBillNo += "-" + year;
-				
+		
+		Bill bill = null;
+		/*
 		Bill bill = (Bill) reader.loadObject(senateBillNo, year +"", "bill", Bill.class);		
-				
+		*/
+			
 		if (bill == null) { 
 			bill = new Bill();
 			bill.setSenateBillNo(senateBillNo);

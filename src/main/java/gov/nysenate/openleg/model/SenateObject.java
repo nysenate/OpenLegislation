@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.ingest;
+package gov.nysenate.openleg.model;
 
 import gov.nysenate.openleg.lucene.LuceneObject;
 

@@ -2,6 +2,7 @@ package gov.nysenate.openleg.ingest;
 
 import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.lucene.ILuceneObject;
+import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -35,8 +36,6 @@ import org.apache.log4j.Logger;
 
 public class CalendarParser implements OpenLegConstants {
 	
-	IngestReader reader = null;
-
 	private static Logger logger = Logger.getLogger(CalendarParser.class);
 
 	private Object removeObject = null;
@@ -53,9 +52,7 @@ public class CalendarParser implements OpenLegConstants {
 		returnCalendars.clear();
 	}
 	
-	public CalendarParser(IngestReader reader) {
-		this.reader = reader;
-		
+	public CalendarParser() {
 		returnCalendars = new ArrayList<ISenateObject>();
 	}
 	
@@ -147,9 +144,11 @@ public class CalendarParser implements OpenLegConstants {
 		calendarId.append(year);
 		
 		logger.info("getting calendar: " + calendarId.toString());
-						
+		
+		/* TODO
 		calendar = (Calendar)reader.loadObject(calendarId.toString(), year, "calendar", Calendar.class);
-				
+				*/
+		
 		if (calendar == null) {
 			calendar = new Calendar();
 			calendar.setId(calendarId.toString());
@@ -434,8 +433,12 @@ public class CalendarParser implements OpenLegConstants {
 		
 		senateBillNo += "-" + year;
 		
+		Bill bill = null;
+		
+		/* TODO
 		Bill bill = (Bill) reader.loadObject(senateBillNo, year +"", "bill", Bill.class);		
-				
+		*/		
+		
 		if (bill == null) { 
 			bill = new Bill();
 			bill.setSenateBillNo(senateBillNo);
@@ -443,8 +446,9 @@ public class CalendarParser implements OpenLegConstants {
 			
 			Person sponsor = new Person(sponsorName);
 			bill.setSponsor(sponsor);
-			
+			/* TODO
 			reader.writeSenateObject(bill);
+			*/
 		}
 		
 		bill.setFulltext("");

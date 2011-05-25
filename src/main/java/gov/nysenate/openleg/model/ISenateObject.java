@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.ingest;
+package gov.nysenate.openleg.model;
 
 import java.util.HashSet;
 

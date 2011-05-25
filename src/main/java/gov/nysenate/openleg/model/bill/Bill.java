@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.ingest.ISenateObject;
-import gov.nysenate.openleg.ingest.SenateObject;
 import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
+import gov.nysenate.openleg.model.ISenateObject;
+import gov.nysenate.openleg.model.SenateObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;

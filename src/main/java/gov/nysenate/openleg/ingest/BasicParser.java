@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.ingest;
 
 import gov.nysenate.openleg.OpenLegConstants;
+import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.model.bill.Person;

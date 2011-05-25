@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.ingest.ISenateObject;
-import gov.nysenate.openleg.ingest.SenateObject;
+import gov.nysenate.openleg.model.ISenateObject;
+import gov.nysenate.openleg.model.SenateObject;
 
 import java.util.ArrayList;
 import java.util.List;
