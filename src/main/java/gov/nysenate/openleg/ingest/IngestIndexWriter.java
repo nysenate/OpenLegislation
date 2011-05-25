@@ -20,12 +20,12 @@ import org.apache.log4j.Logger;
 public class IngestIndexWriter {
 	private Logger logger = Logger.getLogger(IngestIndexWriter.class);
 	
-	JsonDao ingestJson;
+	JsonDao jsonDao;
 	SearchEngine searchEngine;
 	
-	public IngestIndexWriter(SearchEngine searchEngine, JsonDao ingestJson) {
+	public IngestIndexWriter(SearchEngine searchEngine, JsonDao jsonDao) {
 		this.searchEngine = searchEngine;
-		this.ingestJson = ingestJson;
+		this.jsonDao = jsonDao;
 	}
 	
 	public void indexSenateObject(ISenateObject obj) {
@@ -117,7 +117,7 @@ public class IngestIndexWriter {
 	}
 	
 	private void reindexInactiveBill(String senateBillNo, String year) {
-		Bill temp = (Bill)ingestJson.loadSenateObject(senateBillNo,
+		Bill temp = (Bill)jsonDao.loadSenateObject(senateBillNo,
 				year,
 				"bill",
 				Bill.class);

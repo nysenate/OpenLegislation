@@ -10,7 +10,10 @@ import gov.nysenate.openleg.util.EasyReader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -42,6 +45,7 @@ public class Ingest {
 	SearchEngine searchEngine;
 	JsonDao jsonDao;
 	IngestSobiParser ingestSobiParser;
+	IngestIndexWriter ingestIndexWriter;
 	
 	public Ingest(String sobiDirectory, String jsonDirectory) {
 		this.sobiDirectory = sobiDirectory;
@@ -50,6 +54,7 @@ public class Ingest {
 		searchEngine = SearchEngine.getInstance();
 		jsonDao = new JsonDao(JSON_DIRECTORY);
 		ingestSobiParser = new IngestSobiParser(jsonDao);
+		ingestIndexWriter = new IngestIndexWriter(searchEngine, jsonDao);
 	}
 	
 	public void write() {
@@ -63,16 +68,37 @@ public class Ingest {
 		
 		TreeSet<String> set = new TreeSet<String>();
 		
+		ArrayList<ISenateObject> lst;
+		Object[] files;
+		
+		Pattern p = Pattern.compile("\\d{4}/(\\w+)/.*$");
+		Matcher m = null;
+		
 		String in = null;
-		
-		while((in = er.readLine()) != null) set.add(in);
-		
+		while((in = er.readLine()) != null) {
+			set.add(in);
+		}
 		er.close();
 		
-		for(String s:set) {
-			System.out.println(s);
-		}
+		files = (Object[]) set.toArray();
 		
+		int its = files.length/1000;
+		for(int i = 0; i <= its; i++) {
+			
+			lst = new ArrayList<ISenateObject>();
+			
+			for(int j = (i * 1000); j < (((i+1) * 1000)) && j < files.length; j++) {
+				m = p.matcher((String)files[j]);
+				if(m.find()) {
+					ISenateObject senObj = jsonDao.loadSenateObject((String)files[j], getIngestType(m.group(1)).clazz());
+					if(senObj != null)
+						lst.add(senObj);
+				}
+			}
+			
+			
+			lst.clear();
+		}
 	}
 	
 	public boolean lock() {
