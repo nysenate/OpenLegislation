@@ -25,15 +25,16 @@ import java.util.regex.Pattern;
 					FieldName.TITLE, 
 					FieldName.SUMMARY, 
 					FieldName.LAW_SECTION })
-public class LbdcFileHtml extends LbdcFile {
+public class LbdcFileHtml extends LbdcFile {	
 	Pattern billP = Pattern.compile(
 			"<a .+?>(.+?)</a>" + 										//bill number
-			"(.+?)<br>" + 												//sponsors: (sponsor) (,(cosponsor))*
-			"(.+?)<br> " + 												//title
-			"<b>Primary Law: </b>(.+?)<br>" + 							//primary law
-			"(?:<b>SUMM \\: </b>)?(BILL SUMMARY NOT FOUND|.+?)<br>" + 	//summary
+			"(.+?)<br>\\s*" + 											//sponsors: (sponsor) (CO: ((, )?cosponsor))*
+			"(.+?)<br>\\s*" + 											//title
+			"<b>\\s*Primary Law:\\s*</b>(.+?)<br>\\s*" + 						//primary law
+			"(?:<b>SUMM \\: </b>)?(BILL SUMMARY NOT FOUND|.+?)<br>\\s*" + 	//summary
 			"(?:(Criminal Sanction Impact.)(?: <br>))?"); 				//criminal sanction impact
-	Pattern actionP = Pattern.compile("(<b>(?:&nbsp;)+</b>)?(\\d{2}/\\d{2}/\\d{2}) (.+?)<br>");
+	Pattern actionP = Pattern.compile("(<b>(?:&nbsp;)+</b>)?+(\\d{2}/\\d{2}/\\d{2}) (.+?)<br>");
+	Pattern sponsorP = Pattern.compile("([\\w\\-]+?)(?: CO\\: (.+))");
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
 	
@@ -48,7 +49,7 @@ public class LbdcFileHtml extends LbdcFile {
 		
 		open();
 		
-		while((lbdcBill = nextBill()) != null) {
+		while((lbdcBill = nextBill()) != null) {			
 			Bill luceneBill = SearchEngine.getInstance().getBill(lbdcBill.getSenateBillNo() + "-" + SessionYear.getSessionYear());
 			
 			if(luceneBill == null) {
@@ -97,8 +98,10 @@ public class LbdcFileHtml extends LbdcFile {
 		while((in = er.readLine()) != null) {
 			//if in matches the beginning of a new bill element
 			if(in.matches("(</td></tr>)?(<tr align=\"left\"|\\Q <script>document.getElementById(\"SRCHCNT\")\\E).*$")) {
+				
 				if(buffer != null) {
 					er.reset();
+					
 					return this.getBillFromHtml(buffer.toString());
 				}
 				
@@ -109,11 +112,13 @@ public class LbdcFileHtml extends LbdcFile {
 				else {
 					readToggle = true;
 					buffer = new StringBuffer().append(in);
+					buffer.append(" ");
 				}				
 			}
 			else {
 				if(readToggle) {
 					buffer.append(in);
+					buffer.append(" ");
 				}
 			}
 			
@@ -125,11 +130,11 @@ public class LbdcFileHtml extends LbdcFile {
 	
 	private Bill getBillFromHtml(String text) {
 		Bill bill = null;
-		
+				
 		text = text.replaceAll("(</?(tr|td).+?>|<table.+?/table>)", "");
 		Matcher m = billP.matcher((text));
 		
-		if(m.find()) {
+		if(m.find()) {			
 			bill = new Bill();
 			
 			bill.setSenateBillNo(m.group(1).trim());
@@ -138,24 +143,30 @@ public class LbdcFileHtml extends LbdcFile {
 			bill.setSummary(m.group(5).equals("BILL SUMMARY NOT FOUND") ? null : m.group(5).trim());
 			
 			String sponsorString = m.group(2).trim();
-			String[] sponsorsString = sponsorString.split(", ");
-			bill.setSponsor(new Person(sponsorsString[0]));
-			
-			if(sponsorsString.length > 1) {
-				ArrayList<Person> cosponsors = new ArrayList<Person>();
-				for(int i = 1; i < sponsorsString.length; i++) {
-					cosponsors.add(new Person(sponsorsString[i]));
-				}
-				bill.setCoSponsors(cosponsors);
-			}
 			
 			text = text.substring(m.end());
+			
+			m.usePattern(sponsorP).reset(sponsorString);
+			if(m.find()) {
+				bill.setSponsor(new Person(m.group(1)));
+				
+				if(m.group(2) != null) {
+					String[] coSpons = sponsorString.trim().split(", ");
+					
+					ArrayList<Person> cosponsors = new ArrayList<Person>();
+					for(String coSpon:coSpons) {
+						cosponsors.add(new Person(coSpon));
+					}
+					
+					bill.setCoSponsors(cosponsors);
+				}
+			}
+			
 			m.usePattern(actionP).reset(text);
 			
 			ArrayList<BillEvent> billEvents = new ArrayList<BillEvent>();
 			
 			while(m.find()) {
-				
 				if(m.group(1) != null) {
 					continue;
 				}
@@ -169,6 +180,7 @@ public class LbdcFileHtml extends LbdcFile {
 			
 			bill.setBillEvents(billEvents);
 		}
+		
 		return bill;
 	}
 	
