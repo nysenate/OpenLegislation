@@ -34,7 +34,7 @@ public class LbdcFileHtml extends LbdcFile {
 			"(?:<b>SUMM \\: </b>)?(BILL SUMMARY NOT FOUND|.+?)<br>\\s*" + 	//summary
 			"(?:(Criminal Sanction Impact.)(?: <br>))?"); 				//criminal sanction impact
 	Pattern actionP = Pattern.compile("(<b>(?:&nbsp;)+</b>)?+(\\d{2}/\\d{2}/\\d{2}) (.+?)<br>");
-	Pattern sponsorP = Pattern.compile("([\\w\\-]+?)(?: CO\\: (.+))");
+	Pattern sponsorP = Pattern.compile("([\\w\\- ']+?)(?: CO\\: (.+))");
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
 	
@@ -61,7 +61,9 @@ public class LbdcFileHtml extends LbdcFile {
 				problemBill.setLastReported(time);
 				
 				if(valid(lbdcBill.getSponsor(), luceneBill.getSponsor())) {
-					if(!cln(lbdcBill.getSponsor().getFullname()).equalsIgnoreCase(cln(luceneBill.getSponsor().getFullname()))) {
+					if(!cln(lbdcBill.getSponsor().getFullname()).equalsIgnoreCase(
+							cln(luceneBill.getSponsor().getFullname().replaceAll("\\s*\\(MS\\)", "")))) {
+						
 						problemBill.addNonMatchingField(
 								new NonMatchingField(
 										FieldName.SPONSOR, 
@@ -148,6 +150,7 @@ public class LbdcFileHtml extends LbdcFile {
 			
 			m.usePattern(sponsorP).reset(sponsorString);
 			if(m.find()) {
+				
 				bill.setSponsor(new Person(m.group(1)));
 				
 				if(m.group(2) != null) {
