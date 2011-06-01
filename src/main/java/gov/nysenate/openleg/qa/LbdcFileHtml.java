@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 					FieldName.TITLE, 
 					FieldName.SUMMARY, 
 					FieldName.LAW_SECTION })
-public class LbdcFileHtml extends LbdcFile {	
+public class LbdcFileHtml extends LbdcFile {
 	Pattern billP = Pattern.compile(
 			"<a .+?>(.+?)</a>" + 										//bill number
 			"(.+?)<br>\\s*" + 											//sponsors: (sponsor) (CO: ((, )?cosponsor))*
