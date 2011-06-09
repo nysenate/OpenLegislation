@@ -53,7 +53,10 @@ public class IngestIndexWriter {
 	 * index documents based on what is listed in log from JsonDao write function
 	 */
 	public void indexBulk() {
-		indexBulk(truncateLog());
+		String[] boom = truncateLog();
+		
+		System.out.println(boom.length);
+//		indexBulk(truncateLog());
 	}
 
 	/**
@@ -104,20 +107,7 @@ public class IngestIndexWriter {
 		/*
 		 * want bills to show up first in the 
 		 */
-		TreeSet<String> set = new TreeSet<String>(new Comparator<String>() {
-			public int compare(String s1, String s2) {
-				if(s1.equals(s2)) {
-					return 0;
-				}
-				if((s1.contains("bill") && s2.contains("bill")) || s1.contains("bill")){
-					return -1;
-				}
-				else if(s2.contains("bill")) {
-					return 1;
-				}
-				return 2;
-			}
-		});
+		TreeSet<String> set = new TreeSet<String>();
 		
 		String in = null;
 		while((in = er.readLine()) != null) {
