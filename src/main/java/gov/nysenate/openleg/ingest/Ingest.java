@@ -35,6 +35,8 @@ public class Ingest {
 	private static final String HELP = "help";
 	
 	public static void main(String[] args) throws IngestException {
+		Ingest ingest = null;
+		
 		CommandLineParser parser = new PosixParser();
 		
 		Options options = new Options();
@@ -67,7 +69,9 @@ public class Ingest {
 		    		String sobiDir = line.getOptionValue(SOBI_DIRECTORY);
 		    		String jsonDir = line.getOptionValue(JSON_DIRECTORY);
 		    		
-		    		Ingest ingest = new Ingest(sobiDir, jsonDir);
+		    		ingest = new Ingest(sobiDir, jsonDir);
+		    		
+		    		ingest.lock();
 		    		
 		    		if(line.hasOption(WRITE)) {
 		    			ingest.write();
@@ -112,6 +116,11 @@ public class Ingest {
 	    catch( org.apache.commons.cli.ParseException exp ) {
 		    System.out.println( "Unexpected exception:" + exp.getMessage() );
 		}
+	    finally {
+	    	if(ingest != null){
+	    		ingest.unlock();
+	    	}
+	    }
 	}
 	
 	private static String LOCK_FILE = ".lock";
