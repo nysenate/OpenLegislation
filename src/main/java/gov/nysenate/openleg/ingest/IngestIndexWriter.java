@@ -119,8 +119,7 @@ public class IngestIndexWriter {
 		
 		set.toArray(files);
 		
-		//TODO
-		//file.deleteOnExit();
+		file.deleteOnExit();
 		
 		return files;
 	}
