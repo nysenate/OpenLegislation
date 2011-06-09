@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,10 +52,7 @@ public class IngestIndexWriter {
 	 * index documents based on what is listed in log from JsonDao write function
 	 */
 	public void indexBulk() {
-		String[] boom = truncateLog();
-		
-		System.out.println(boom.length);
-//		indexBulk(truncateLog());
+		indexBulk(truncateLog());
 	}
 
 	/**
@@ -101,6 +97,10 @@ public class IngestIndexWriter {
 	
 	private String[] truncateLog() {
 		File file = new File(jsonDirectory + "/.log");
+		
+		if(!file.exists()) {
+			return new String[0];
+		}
 
 		EasyReader er = new EasyReader(file).open();
 		

@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.SearchEngine;
+import gov.nysenate.openleg.util.XmlHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,9 +31,10 @@ public class Ingest {
 	private static final String INDEX_DOCUMENT = "index-document";
 	private static final String DOCUMENT_TYPE = "document-type";
 	private static final String REINDEX_AMENDED_BILLS = "reindex-amended-bills";
+	private static final String GENERATE_XML = "generate-xml";
 	private static final String HELP = "help";
 	
-	public static void main(String[] args) throws IngestException {		
+	public static void main(String[] args) throws IngestException {
 		CommandLineParser parser = new PosixParser();
 		
 		Options options = new Options();
@@ -48,6 +50,8 @@ public class Ingest {
 		options.addOption("dt", DOCUMENT_TYPE, true, "Type of document being indexed with -id (REQUIRED WITH -id).. (bill|calendar|agenda|transcript)");
 		
 		options.addOption("rab", REINDEX_AMENDED_BILLS, false, "Scans index and marks amended bills as inactive");
+		
+		options.addOption("gx", GENERATE_XML, false, "Will pull XML data from SOBI documents");
 		
 		options.addOption("h", HELP, false, "Print this message");
 		
@@ -93,6 +97,10 @@ public class Ingest {
 		    		
 		    		if(line.hasOption(REINDEX_AMENDED_BILLS)) {
 		    			ingest.reindexAmendedBills();
+		    		}
+		    		
+		    		if(line.hasOption(GENERATE_XML)) {
+		    			XmlHelper.generateXml(sobiDir);
 		    		}
 		    	}
 		    	else {
