@@ -96,7 +96,7 @@ public class ApiHelper implements OpenLegConstants {
 
 				HashMap<String, String> fields = new HashMap<String, String>();
 				fields.put("type", type);
-
+				
 				/*
 				 * populate result objects with any relevant fields, this
 				 * provides our more generic, non type-specific search

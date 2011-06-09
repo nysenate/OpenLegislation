@@ -146,7 +146,7 @@ Iterator it = sr.getResults().iterator();
   
   String contentType = null;
   String contentId = null;
-String resultTitle = null;
+	String resultTitle = null;
 
 	String senateType = null;
 	

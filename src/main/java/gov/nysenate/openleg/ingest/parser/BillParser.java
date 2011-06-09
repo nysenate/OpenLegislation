@@ -1,18 +1,8 @@
-package gov.nysenate.openleg.ingest;
-
-import gov.nysenate.openleg.OpenLegConstants;
-import gov.nysenate.openleg.model.ISenateObject;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillEvent;
-import gov.nysenate.openleg.model.bill.Person;
-import gov.nysenate.openleg.model.bill.Vote;
-import gov.nysenate.openleg.model.transcript.Transcript;
-import gov.nysenate.openleg.util.BillCleaner;
+package gov.nysenate.openleg.ingest.parser;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -26,16 +16,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.SerializationConfig.Feature;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.model.bill.Person;
+import gov.nysenate.openleg.model.bill.Vote;
+import gov.nysenate.openleg.util.BillCleaner;
 
-public class BasicParser implements OpenLegConstants {
-	private static Logger logger = Logger.getLogger(BasicParser.class);
+public class BillParser extends SenateParser<Bill> {
 	
 	private final static DateFormat DATE_PARSER = new SimpleDateFormat ("MM/dd/yy");
-	private final static char NULL_LINE_CHAR = '-';
 	private int currentVoteCount = -1;
 	
 	private Bill currentBill = null;
@@ -51,36 +40,20 @@ public class BasicParser implements OpenLegConstants {
 	private List<Person> coSponsorBuffer = null;
 	
 	private HashMap<String,Person> personCache;
-	ObjectMapper mapper;
 	
-	private ArrayList<ISenateObject> returnBills = null;
-	
-	public BasicParser () {
-		mapper = new ObjectMapper();
-		SerializationConfig cnfg = mapper.getSerializationConfig();
-		cnfg.set(Feature.INDENT_OUTPUT, true);
-		mapper.setSerializationConfig(cnfg);
-		
-		returnBills = new ArrayList<ISenateObject>();
+	public BillParser() {
+		super(BillParser.class);
 	}
-	
-	public Transcript handleTranscript(String dataPath) {
+
+	public void parse(File file) {
 		try {
-			return parseTranscriptFile(new BufferedReader (new FileReader (dataPath)));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		};
-		return null;
-	}
-	
-	public ArrayList<ISenateObject> handleBill(String dataPath, char lineCodeToMatch) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(dataPath), "ISO-8859-1"));
-		parseSOBIFile (br,lineCodeToMatch);
-		br.close();
-		
-		return returnBills;
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "ISO-8859-1"));
+			parseSOBIFile (br);
+			br.close();
+		}
+		catch(IOException e) {
+			logger.error(e);
+		}
 	}
 	
 	public Bill getBill (String line) {
@@ -132,89 +105,7 @@ public class BasicParser implements OpenLegConstants {
 		}
 	}
 	
-	
-
-	public Transcript parseTranscriptFile (BufferedReader reader) throws IOException {
-		Transcript transcript = new Transcript();
-		StringBuffer fullText = new StringBuffer();
-		StringBuffer fullTextProcessed = new StringBuffer();
-		
-		String pLine = null;
-		int locationLineIdx = 9;
-		boolean checkedLineFour = false;
-		
-		String line = null;
-		while ((line = reader.readLine()) != null) {
-			pLine = line.trim();
-			
-			if (pLine.startsWith("4") && (!checkedLineFour)) {
-				if (pLine.indexOf("STENOGRAPHIC RECORD")==-1)
-					locationLineIdx = 10;
-				
-				checkedLineFour = true;
-			}
-			else if (transcript.getLocation() == null && pLine.startsWith(locationLineIdx+" "))	{
-				pLine = pLine.trim();
-				
-				if (pLine.length() < 3)
-					locationLineIdx++; //location must be on the next line
-				else {
-					//9                   ALBANY, NEW YORK
-					pLine = pLine.substring(2).trim();
-					
-					transcript.setLocation(pLine);
-					logger.info("got location: " + transcript.getLocation());
-				}
-			}
-			else if (transcript.getTimeStamp() == null && pLine.startsWith((locationLineIdx+1)+" ")) {
-				// 11                    August 7, 2009
-			      //  12                      10:00 a.m.
-				pLine = pLine.substring(2).trim();
-				
-				logger.info("got day: " + pLine);
-				
-				String nextLine = reader.readLine();
-				nextLine = reader.readLine().trim();
-				nextLine = nextLine.substring(2).trim();
-				
-				logger.info("got time: " + nextLine);
-				
-				pLine += ' ' + nextLine;
-				pLine = pLine.replace(".", "");
-				
-				try {
-					Date tTime = TRANSCRIPT_DATE_PARSER.parse(pLine);
-					transcript.setTimeStamp(tTime);
-				} catch (ParseException e) {
-					logger.warn("unable to parse transcript datetime" + pLine,e);
-				}
-			}
-			else if (transcript.getType() == null && pLine.startsWith((locationLineIdx+5)+" "))	{
-				// 15                    REGULAR SESSION
-				pLine = pLine.substring(2);
-				pLine = pLine.trim();
-				
-				transcript.setType(pLine);
-			}
-			
-			fullText.append(line);
-			fullText.append('\n');
-			
-			line = line.trim();
-			
-			if (line.length() > 2) {
-				line = line.substring(2);
-				fullTextProcessed.append(line);
-				fullTextProcessed.append('\n');
-			}
-		}
-		transcript.setTranscriptText(fullText.toString());
-		transcript.setTranscriptTextProcessed(fullTextProcessed.toString());
-		
-		return transcript;
-	}
-	
-	public void parseSOBIFile (BufferedReader reader, char lineCodeToMatch) throws IOException {
+	public void parseSOBIFile(BufferedReader reader) throws IOException {
 		Bill bill = null;
 		int lineCount = 0;
 		String lineData;
@@ -247,12 +138,6 @@ public class BasicParser implements OpenLegConstants {
 				else if (line.length() > 11) {
 					lineCode = line.charAt(11); //get the single line code letter for data type from LRS schema
 					lineData = line.substring(12);
-					
-					if (lineCodeToMatch != NULL_LINE_CHAR //okay the value is being checked
-							&& lineCodeToMatch != lineCode) {//this line isn't what we are looking for)
-						continue; //skip this line
-					}
-					
 					
 					try {
 						bill = getBill(line);
@@ -321,13 +206,20 @@ public class BasicParser implements OpenLegConstants {
 						
 					else if (lineCode == 'V')
 						bill = parseVoteData(line);
-
+					/*
+					 * TODO
+					 * 
+					 * B means delete summary/law
+					 */
 					else if (lineCode == 'B') {
 						if(line.contains("DELETE")) {
 							//delete code
 							persistBuffers();
-							this.returnBills.remove(currentBill);
+							newSenateObjects.remove(currentBill);
 							currentBill = null;
+						}
+						else {
+							bill.setLaw(lineData.replaceAll("›", "S"));
 						}
 					}
 					else if (lineCode == 'N') {
@@ -364,6 +256,13 @@ public class BasicParser implements OpenLegConstants {
 							}
 						}
 					}
+					/*
+					 * TODO
+					 * 
+					 * else if (lineCode == '8')
+					 * 
+					 * mutli-sponsor bills
+					 */
 					else if (lineCode == '4') {
 						Date beDate = DATE_PARSER.parse(lineData.substring(0,8));
 						
@@ -476,14 +375,10 @@ public class BasicParser implements OpenLegConstants {
 					}
 					else if (lineCode == '2')
 						bill.setLawSection(lineData);
-
-					else if (lineCode == 'B')
-						bill.setLaw(lineData);
-
 				}
 			}
 			catch (Exception e) {
-				logger.warn("warning line:" + lineCount + " line=" + line + " ;",e);
+				logger.error("warning line:" + lineCount + " line=" + line + " ;",e);
 			}
 			
 			lineCount++;
@@ -498,10 +393,11 @@ public class BasicParser implements OpenLegConstants {
 		persistBuffers();
 				
 		int index = -1;
-		if((index = returnBills.indexOf(currentBill)) != -1)
-			returnBills.get(index).merge(currentBill);
+		
+		if((index = newSenateObjects.indexOf(currentBill)) != -1)
+			newSenateObjects.get(index).merge(currentBill);
 		else
-			returnBills.add(currentBill);
+			newSenateObjects.add(currentBill);
 	}
 	
 	public Bill parseMemoData (String line) throws IOException {
@@ -852,7 +748,4 @@ public class BasicParser implements OpenLegConstants {
 	}
 
 
-	public void clearBills() {
-		returnBills.clear();
-	}
 }

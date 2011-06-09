@@ -18,6 +18,7 @@ import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 
+@SuppressWarnings("restriction")
 public class OriginalApiConverter {
 	
 	public static String doJson(Object o) {

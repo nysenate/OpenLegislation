@@ -1,20 +1,20 @@
 package gov.nysenate.openleg.ingest;
 
-import gov.nysenate.openleg.model.ISenateObject;
+import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.util.EasyReader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.PosixParser;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
@@ -22,20 +22,92 @@ import org.codehaus.jackson.map.SerializationConfig.Feature;
 
 public class Ingest {
 	
-	public static void main(String[] args) throws IngestException {
-		Ingest ir2 = new Ingest(SOBI_DIRECTORY, JSON_DIRECTORY);
+	private static final String JSON_DIRECTORY = "json-directory";
+	private static final String SOBI_DIRECTORY = "sobi-directory";
+	private static final String WRITE = "write";
+	private static final String INDEX = "index";
+	private static final String WRITE_TRANSCRIPT = "write-transcript";
+	private static final String INDEX_DOCUMENT = "index-document";
+	private static final String DOCUMENT_TYPE = "document-type";
+	private static final String REINDEX_AMENDED_BILLS = "reindex-amended-bills";
+	private static final String HELP = "help";
+	
+	public static void main(String[] args) throws IngestException {		
+		CommandLineParser parser = new PosixParser();
 		
-		ir2.lock();
+		Options options = new Options();
+				
+		options.addOption("sd", SOBI_DIRECTORY, true, "The path to your SOBI directory");
+		options.addOption("jd", JSON_DIRECTORY, true, "The path to your JSON directory");
 		
-		ir2.index();
+		options.addOption("w", WRITE, false, "Write SOBI's in sobi-directory to JSON in json-directory");
+		options.addOption("i", INDEX, false, "Index logged changes");
+		options.addOption("wt", WRITE_TRANSCRIPT, true, "Write transcripts located in directoy specified by argument");
 		
-		ir2.unlock();
+		options.addOption("id", INDEX_DOCUMENT, true, "Index JSON document specified by argument (path to file)");
+		options.addOption("dt", DOCUMENT_TYPE, true, "Type of document being indexed with -id (REQUIRED WITH -id).. (bill|calendar|agenda|transcript)");
+		
+		options.addOption("rab", REINDEX_AMENDED_BILLS, false, "Scans index and marks amended bills as inactive");
+		
+		options.addOption("h", HELP, false, "Print this message");
+		
+		try {
+		    CommandLine line = parser.parse(options, args);
+		    
+		    if(line.hasOption("-h")) {
+		    	HelpFormatter formatter = new HelpFormatter();
+		    	formatter.printHelp("posix", options );
+		    }
+		    else {
+		    	if(line.hasOption(SOBI_DIRECTORY) && line.hasOption(JSON_DIRECTORY)) {
+		    		String sobiDir = line.getOptionValue(SOBI_DIRECTORY);
+		    		String jsonDir = line.getOptionValue(JSON_DIRECTORY);
+		    		
+		    		Ingest ingest = new Ingest(sobiDir, jsonDir);
+		    		
+		    		if(line.hasOption(WRITE)) {
+		    			ingest.write();
+		    		}
+		    		if(line.hasOption(INDEX)) {
+		    			ingest.index();
+		    		}
+		    		
+		    		if(line.hasOption(WRITE_TRANSCRIPT)) {
+		    			String transcriptDir = line.getOptionValue(WRITE_TRANSCRIPT);
+		    			ingest.writeTranscripts(transcriptDir);
+		    		}
+		    		
+		    		if(line.hasOption(INDEX_DOCUMENT) && line.hasOption(DOCUMENT_TYPE)) {
+		    			String path = line.getOptionValue(INDEX_DOCUMENT);
+		    			String type = line.getOptionValue(DOCUMENT_TYPE);
+		    			
+		    			ingest.indexJsonDocument(type, path);
+		    		}
+		    		else {
+		    			if(line.hasOption(INDEX_DOCUMENT) || line.hasOption(DOCUMENT_TYPE)) {
+		    				throw new org.apache.commons.cli.ParseException(
+		    						"To index a single document you must use both " 
+		    						+ INDEX_DOCUMENT + " and " + DOCUMENT_TYPE);
+		    			}
+		    		}
+		    		
+		    		if(line.hasOption(REINDEX_AMENDED_BILLS)) {
+		    			ingest.reindexAmendedBills();
+		    		}
+		    	}
+		    	else {
+		    		throw new org.apache.commons.cli.ParseException(
+		    				SOBI_DIRECTORY + " and " + JSON_DIRECTORY + " are both required parameters.");
+		    	}
+		    }
+		}
+	    catch( org.apache.commons.cli.ParseException exp ) {
+		    System.out.println( "Unexpected exception:" + exp.getMessage() );
+		}
 	}
 	
 	private static String LOCK_FILE = ".lock";
-	
-	private static String SOBI_DIRECTORY = "/Users/jaredwilliams/Desktop/2011/sobi/";
-	private static String JSON_DIRECTORY = "/Users/jaredwilliams/Desktop/json/";
+	private final String LOG_FILE = ".log";
 		
 	private Logger logger = Logger.getLogger(Ingest.class);
 	
@@ -44,7 +116,7 @@ public class Ingest {
 	
 	SearchEngine searchEngine;
 	JsonDao jsonDao;
-	IngestSobiParser ingestSobiParser;
+	IngestJsonWriter ingestSobiParser;
 	IngestIndexWriter ingestIndexWriter;
 	
 	public Ingest(String sobiDirectory, String jsonDirectory) {
@@ -52,57 +124,54 @@ public class Ingest {
 		this.jsonDirectory = jsonDirectory;
 		
 		searchEngine = SearchEngine.getInstance();
-		jsonDao = new JsonDao(JSON_DIRECTORY);
-		ingestSobiParser = new IngestSobiParser(jsonDao);
-		ingestIndexWriter = new IngestIndexWriter(searchEngine, jsonDao);
+		jsonDao = new JsonDao(jsonDirectory, jsonDirectory + LOG_FILE);
+		ingestSobiParser = new IngestJsonWriter(jsonDao, searchEngine);
+		ingestIndexWriter = new IngestIndexWriter(jsonDirectory, 
+												  jsonDirectory + LOG_FILE, 
+												  searchEngine, 
+												  jsonDao);
 	}
 	
 	public void write() {
-		ingestSobiParser.writeJsonFromSobi(sobiDirectory, jsonDirectory);
+		ingestSobiParser.writeJsonFromDirectory(sobiDirectory);
 	}
 	
 	public void index() {
-		File file = new File(jsonDirectory + "/.log");
-
-		EasyReader er = new EasyReader(file).open();
+		ingestIndexWriter.indexBulk();
+	}
+	
+	public void reindexAmendedBills() {
+		ingestIndexWriter.markInactiveBills();
+	}
+	
+	public void writeTranscripts(String transcriptDirectory) {
+		ingestSobiParser.writeTranscriptsFromDirectory(transcriptDirectory);
+	}
+	
+	public void indexJsonDocument(String type, String path) {
+		IngestType ingestType = getIngestType(type);
 		
-		TreeSet<String> set = new TreeSet<String>();
-		
-		ArrayList<ISenateObject> lst;
-		Object[] files;
-		
-		Pattern p = Pattern.compile("\\d{4}/(\\w+)/.*$");
-		Matcher m = null;
-		
-		String in = null;
-		while((in = er.readLine()) != null) {
-			set.add(in);
-		}
-		er.close();
-		
-		files = (Object[]) set.toArray();
-		
-		int its = files.length/1000;
-		for(int i = 0; i <= its; i++) {
+		if(ingestType != null) {
+			SenateObject senateObject = jsonDao.load(path, ingestType.clazz());
 			
-			lst = new ArrayList<ISenateObject>();
-			
-			for(int j = (i * 1000); j < (((i+1) * 1000)) && j < files.length; j++) {
-				m = p.matcher((String)files[j]);
-				if(m.find()) {
-					ISenateObject senObj = jsonDao.loadSenateObject((String)files[j], getIngestType(m.group(1)).clazz());
-					if(senObj != null)
-						lst.add(senObj);
+			if(senateObject != null) {
+				try {
+					searchEngine.indexSenateObject(senateObject);
+				} catch (IOException e) {
+					logger.error(e);
 				}
 			}
-			
-			
-			lst.clear();
+			else {
+				logger.warn("couldn't load file " + path + "with type: " + type);
+			}
+		}
+		else {
+			logger.warn("no associated IngestType: " + type);
 		}
 	}
 	
 	public boolean lock() {
-		File lock = new File(JSON_DIRECTORY + "/" + LOCK_FILE);
+		File lock = new File(jsonDirectory + "/" + LOCK_FILE);
 		if(lock.exists())
 			return false;
 		
@@ -118,12 +187,21 @@ public class Ingest {
 	}
 	
 	public boolean unlock() {
-		File lock = new File(JSON_DIRECTORY + "/" + LOCK_FILE);
+		File lock = new File(jsonDirectory + "/" + LOCK_FILE);
 		if(lock.exists()) {
 			return lock.delete();
 		}
 		return false;
 	}	
+	
+	public static ObjectMapper getMapper() {
+		ObjectMapper mapper = new ObjectMapper();
+		SerializationConfig cnfg = mapper.getSerializationConfig();
+		cnfg.set(Feature.INDENT_OUTPUT, true);
+		mapper.setSerializationConfig(cnfg);
+		
+		return mapper;
+	}
 	
 	@SuppressWarnings("serial")
 	public class IngestException extends Exception {
@@ -135,13 +213,12 @@ public class Ingest {
 		}
 	}
 	
-	public static ObjectMapper getMapper() {
-		ObjectMapper mapper = new ObjectMapper();
-		SerializationConfig cnfg = mapper.getSerializationConfig();
-		cnfg.set(Feature.INDENT_OUTPUT, true);
-		mapper.setSerializationConfig(cnfg);
-		
-		return mapper;
+	public static IngestType getIngestType(String type) {
+		for(IngestType ingestType:IngestType.values()) {
+			if(ingestType.type().equalsIgnoreCase(type))
+				return ingestType;
+		}
+		return null;
 	}
 	
 	public enum IngestType {
@@ -151,9 +228,9 @@ public class Ingest {
 		TRANSCRIPT("transcript", Transcript.class);
 		
 		private String type;
-		private Class<? extends ISenateObject> clazz;
+		private Class<? extends SenateObject> clazz;
 		
-		private IngestType(String type, Class<? extends ISenateObject> clazz) {
+		private IngestType(String type, Class<? extends SenateObject> clazz) {
 			this.type = type;
 			this.clazz = clazz;
 		}
@@ -162,125 +239,10 @@ public class Ingest {
 			return type;
 		}
 		
-		public Class<? extends ISenateObject> clazz() {
+		public Class<? extends SenateObject> clazz() {
 			return clazz;
 		}
 	}
-	
-	public IngestType getIngestType(String type) {
-		for(IngestType ingestType:IngestType.values()) {
-			if(ingestType.type().equalsIgnoreCase(type))
-				return ingestType;
-		}
-		return null;
-	}
-	
-	
-	
-	
-	/*
-	
-	
-	public void handleTranscript(File file) {
-		if(file.isDirectory()) {
-			for(File temp:file.listFiles()) {
-				handleTranscript(temp);
-			}
-		}
-		else if (file.getName().contains(".TXT")){
-			logger.warn("Reading transcript file " + file.getAbsolutePath());
-			
-			Transcript trans = null;
-			
-			//transcripts often come incorrectly formatted..
-			//this attempts to reprocess and save the raw text
-			//if there is a parsing error, and then attempts
-			//parsing one more time
-			try {				
-				trans = basicParser.handleTranscript(file.getAbsolutePath());
-
-			} catch (Exception e) {
-				try {
-					List<String> in;
-					TranscriptFixer fixer = new TranscriptFixer();
-					
-					if((in = fixer.readContents(file)) != null) {
-						
-						List<String> ret = fixer.fix(in);
-						BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath()));
-						
-						for(String s:ret) {
-							bw.write(s);
-							bw.newLine();
-						}
-						
-						bw.close();
-						trans = basicParser.handleTranscript(file.getAbsolutePath());
-					}
-					
-				} catch (Exception e2) {
-					e2.printStackTrace();
-					return; //We couldn't get a good read on the transcript
-				}
-				return;
-			}
-			
-			//Conduct general processing, writing, and indexing
-			processSenateObject(trans,Transcript.class,false);
-			if(writeSenateObject(trans)) {
-				logger.warn("writing and indexing transcript");
-				indexSenateObject(trans);
-			}
-		}
-		
-	}
-	
-	
-	
-	*/
-	
-	
-	
-	
-	/*
-	public void bulkIndexJsonDirectory(Class<? extends ISenateObject> clazz, String directory) throws IOException {
-		luceneObjects = new ArrayList<ILuceneObject>();
-		
-		long start = System.currentTimeMillis();
-		doBulk(clazz, directory);
-		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Read " + luceneObjects.size() + " Objects");
-		
-		start = System.currentTimeMillis();
-		this.searchEngine.indexSenateObjects(
-				luceneObjects,
-				new LuceneSerializer[]{	new XmlSerializer(), new JsonSerializer()});
-		luceneObjects.clear();
-		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Indexed Objects");
-	}
-	
-	private void doBulk(Class<? extends ISenateObject> clazz, String directory) {
-		File file = new File(directory);
-		if(file.isDirectory()) {
-			for(File f:file.listFiles()) {
-				doBulk(clazz, f.getAbsolutePath());
-			}
-		}
-		else {
-			ISenateObject obj = loadObject(directory, clazz);
-			if(obj instanceof Bill) {
-				if(reindexAmendedVersions((Bill)obj))
-					obj.setLuceneActive(false);
-			}
-			luceneObjects.add(obj);
-		}
-	}
-	*/
-	
-	
-	
-	
-	
-	
 	
 	/* 
 	 * git functions (currently unused)
@@ -356,8 +318,6 @@ public class Ingest {
 			}
 		}
 		
-		commented out until a reasonable repo solution is found
-				
 				Commit the changes made to the file system
 				start = System.currentTimeMillis();
 				commit(file.getName());

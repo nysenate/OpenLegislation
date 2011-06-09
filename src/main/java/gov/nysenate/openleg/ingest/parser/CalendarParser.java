@@ -1,22 +1,4 @@
-package gov.nysenate.openleg.ingest;
-
-import gov.nysenate.openleg.OpenLegConstants;
-import gov.nysenate.openleg.lucene.ILuceneObject;
-import gov.nysenate.openleg.model.ISenateObject;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.Person;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.CalendarEntry;
-import gov.nysenate.openleg.model.calendar.Section;
-import gov.nysenate.openleg.model.calendar.Sequence;
-import gov.nysenate.openleg.model.calendar.Supplemental;
-import gov.nysenate.openleg.xml.calendar.XMLCalno;
-import gov.nysenate.openleg.xml.calendar.XMLSENATEDATA;
-import gov.nysenate.openleg.xml.calendar.XMLSection;
-import gov.nysenate.openleg.xml.calendar.XMLSencalendar;
-import gov.nysenate.openleg.xml.calendar.XMLSencalendaractive;
-import gov.nysenate.openleg.xml.calendar.XMLSequence;
-import gov.nysenate.openleg.xml.calendar.XMLSupplemental;
+package gov.nysenate.openleg.ingest.parser;
 
 import java.io.File;
 import java.io.FileReader;
@@ -31,35 +13,49 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import gov.nysenate.openleg.OpenLegConstants;
+import gov.nysenate.openleg.ingest.JsonDao;
+import gov.nysenate.openleg.lucene.ILuceneObject;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.Person;
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.calendar.CalendarEntry;
+import gov.nysenate.openleg.model.calendar.Section;
+import gov.nysenate.openleg.model.calendar.Sequence;
+import gov.nysenate.openleg.model.calendar.Supplemental;
+import gov.nysenate.openleg.search.SearchEngine;
+import gov.nysenate.openleg.xml.calendar.XMLCalno;
+import gov.nysenate.openleg.xml.calendar.XMLSENATEDATA;
+import gov.nysenate.openleg.xml.calendar.XMLSection;
+import gov.nysenate.openleg.xml.calendar.XMLSencalendar;
+import gov.nysenate.openleg.xml.calendar.XMLSencalendaractive;
+import gov.nysenate.openleg.xml.calendar.XMLSequence;
+import gov.nysenate.openleg.xml.calendar.XMLSupplemental;
 
-import org.apache.log4j.Logger;
-
-public class CalendarParser implements OpenLegConstants {
+@SuppressWarnings("restriction")
+public class CalendarParser extends SenateParser<Calendar> implements OpenLegConstants {
 	
-	private static Logger logger = Logger.getLogger(CalendarParser.class);
-
 	private Object removeObject = null;
 	private String removeObjectId = null;
 	
-	private ArrayList<ISenateObject> returnCalendars;
-		
-	private void setRemoveObject (Object removeObject, String removeObjectId) {
-		this.removeObject = removeObject;
-		this.removeObjectId = removeObjectId;
-	}
-	
-	public void clearCalendars() {
-		returnCalendars.clear();
-	}
-	
 	public CalendarParser() {
-		returnCalendars = new ArrayList<ISenateObject>();
+		this(null, null);
 	}
 	
-	public ArrayList<ISenateObject> doParsing(String filePath) throws Exception {
-		
-		
-		XMLSENATEDATA senateData = parseStream(new FileReader(new File(filePath)));
+	public CalendarParser(JsonDao jsonDao, SearchEngine searchEngine) {
+		super(CalendarParser.class, jsonDao, searchEngine);
+	}
+	
+	public void parse(File file) {
+		try {
+			doParsing(file);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+	}
+	
+	public void doParsing(File file) throws Exception {
+		XMLSENATEDATA senateData = parseStream(new FileReader(file));
 		ArrayList<ILuceneObject> objectsToUpdate = new ArrayList<ILuceneObject>();
 		
 		for(Object obj:senateData.getSencalendarOrSencalendaractive()) {
@@ -118,13 +114,10 @@ public class CalendarParser implements OpenLegConstants {
 //				reader.deleteFile(calendar.getId(), calendar.getYear()+"", "calendar");
 			}
 			if(calendar != null) {
-				returnCalendars.add(calendar);
+				newSenateObjects.add(calendar);
 			}
 		}
 		removeObject = null;
-		
-		return returnCalendars;
-
 	}
 	
 	
@@ -145,9 +138,9 @@ public class CalendarParser implements OpenLegConstants {
 		
 		logger.info("getting calendar: " + calendarId.toString());
 		
-		/* TODO
-		calendar = (Calendar)reader.loadObject(calendarId.toString(), year, "calendar", Calendar.class);
-				*/
+		if(canWrite(SenateParser.JSON)) {
+			calendar = (Calendar)jsonDao.load(calendarId.toString(), year, "calendar", Calendar.class);
+		}
 		
 		if (calendar == null) {
 			calendar = new Calendar();
@@ -430,14 +423,13 @@ public class CalendarParser implements OpenLegConstants {
 
 		}
 		
-		
 		senateBillNo += "-" + year;
 		
 		Bill bill = null;
 		
-		/* TODO
-		Bill bill = (Bill) reader.loadObject(senateBillNo, year +"", "bill", Bill.class);		
-		*/		
+		if(canWrite(SenateParser.JSON)) {
+			bill = (Bill) jsonDao.load(senateBillNo, year +"", "bill", Bill.class);	
+		}
 		
 		if (bill == null) { 
 			bill = new Bill();
@@ -446,9 +438,10 @@ public class CalendarParser implements OpenLegConstants {
 			
 			Person sponsor = new Person(sponsorName);
 			bill.setSponsor(sponsor);
-			/* TODO
-			reader.writeSenateObject(bill);
-			*/
+			
+			if(canWrite(SenateParser.JSON)) {
+				jsonDao.write(bill);
+			}
 		}
 		
 		bill.setFulltext("");
@@ -456,6 +449,11 @@ public class CalendarParser implements OpenLegConstants {
 		bill.setBillEvents(null);
 				
 		return bill;
+	}
+	
+	private void setRemoveObject (Object removeObject, String removeObjectId) {
+		this.removeObject = removeObject;
+		this.removeObjectId = removeObjectId;
 	}
 	
 	public XMLSENATEDATA parseStream (Reader reader) throws Exception
@@ -475,4 +473,5 @@ public class CalendarParser implements OpenLegConstants {
 		    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		    m.marshal(cal, System.out);
 	}
+
 }

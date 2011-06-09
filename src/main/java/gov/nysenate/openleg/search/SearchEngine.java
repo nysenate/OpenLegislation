@@ -7,6 +7,7 @@ import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.lucene.LuceneResult;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
+import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.model.bill.Vote;
@@ -16,6 +17,8 @@ import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
+import gov.nysenate.openleg.util.JsonSerializer;
+import gov.nysenate.openleg.util.XmlSerializer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -83,8 +86,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 	}
 	
 	private SearchEngine() {
-//		super("/usr/local/openleg/lucene/2");
-		super("/Users/jaredwilliams/Documents/lucene/2");
+		super("/usr/local/openleg/lucene/2");
 		logger = Logger.getLogger(SearchEngine.class);
 	}
 
@@ -132,14 +134,23 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
     	deleteDocuments(type, id);
     	openSearcher();
     }
+    
+    public boolean indexSenateObject(SenateObject senObj) throws IOException {
+    	return indexSenateObjects(
+				new ArrayList<SenateObject>(
+					Arrays.asList(senObj)), 
+					new LuceneSerializer[]{
+						new XmlSerializer(), 
+						new JsonSerializer()});
+    }
 	
-    public  boolean indexSenateObjects (Collection<ILuceneObject> objects, LuceneSerializer[] ls) throws IOException
+    public  boolean indexSenateObjects (Collection<SenateObject> objects, LuceneSerializer[] ls) throws IOException
     {
     	createIndex ();
         Analyzer  analyzer    = getAnalyzer();
         IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, false, MaxFieldLength.UNLIMITED);
        
-    	Iterator<ILuceneObject> it = objects.iterator();
+    	Iterator<SenateObject> it = objects.iterator();
     	while (it.hasNext()) {
     		ILuceneObject obj = it.next();
     		

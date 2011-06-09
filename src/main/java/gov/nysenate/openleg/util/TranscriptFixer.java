@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.util;
-import gov.nysenate.openleg.ingest.BasicParser;
+
+import gov.nysenate.openleg.ingest.parser.TranscriptParser;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,10 +28,9 @@ public class TranscriptFixer {
 	
 	public void doFix(File f) throws IOException {
 		
-		try {
-			BasicParser bp = new BasicParser();
-			
-			bp.parseTranscriptFile(new BufferedReader(new FileReader(f)));
+		try {	
+			TranscriptParser parser = new TranscriptParser();
+			parser.parse(f);
 		}
 		catch (Exception e) {			
 			List<String> in;

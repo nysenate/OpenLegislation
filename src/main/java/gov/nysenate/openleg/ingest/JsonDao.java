@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.ingest;
 
 import gov.nysenate.openleg.model.ISenateObject;
+import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.util.EasyWriter;
+import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -15,30 +18,48 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.util.DefaultPrettyPrinter;
 
+/**
+ * JsonDao is the point of contact for writing, reading and deleting
+ * any JSON file associated with a SenateObject.
+ * 
+ * Any time an object is written it can be assumed that the index
+ * must be updated as well.  An EasyWriter is created to log
+ * the absolute path of these changes.
+ * 
+ * TODO - a similar hook should be added for deleting... can consolidate
+ * 			the reading/writing in CalendarParser and AgendaParser
+ *
+ */
 public class JsonDao {
 	private Logger logger = Logger.getLogger(JsonDao.class);
 	
 	ObjectMapper mapper = null;
 	
-	String writeDirectory;
+	String jsonDirectory;
+	String logPath;
 	
-	public JsonDao(String writeDirectory) {
-		this(writeDirectory, Ingest.getMapper());
+	public JsonDao(String jsonDirectory, String logPath) {
+		this(jsonDirectory, logPath, Ingest.getMapper());
 	}
 	
-	public JsonDao(String writeDirectory, ObjectMapper mapper) {
-		this.writeDirectory = writeDirectory;
+	public JsonDao(String jsonDirectory, String logPath, ObjectMapper mapper) {
+		this.jsonDirectory = jsonDirectory;
+		this.logPath = logPath;
 		this.mapper = mapper;
 	}
 	
-	public String writeSenateObject(ISenateObject obj) {
-		if(!(obj.getYear()+"").matches("20(0[90]|1[01])")) {
-			return null;
+	public void log(String data) {
+		new EasyWriter(new File(logPath)).open().writeLine(data).close();
+	}
+	
+	public void write(ISenateObject obj) {
+		if(!(obj.getYear()+"").matches("20(09|1[0-9])")) {
+			return;
 		}
 		
-		File yearDir = new File(writeDirectory + "/" + obj.getYear());
-		File typeDir = new File(writeDirectory + "/" + obj.getYear() + "/" + obj.luceneOtype());
-		File newFile = new File(writeDirectory + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
+		File yearDir = new File(TextFormatter.append(jsonDirectory,"/",obj.getYear()));
+		File typeDir = new File(TextFormatter.append(jsonDirectory,"/",obj.getYear(),"/",obj.luceneOtype()));
+		File newFile = new File(TextFormatter.append(jsonDirectory,"/",obj.getYear(),"/",obj.luceneOtype(),"/",obj.luceneOid(),".json"));
 		
 		if(!yearDir.exists()) {
 			logger.info("creating directory: " + yearDir.getAbsolutePath());
@@ -57,7 +78,7 @@ public class JsonDao {
 			mapper.writeValue(generator, obj);
 			osw.close();
 			
-			return newFile.getAbsolutePath();
+			log(newFile.getAbsolutePath());
 		} catch (JsonGenerationException e) {
 			logger.warn("could not parse json", e);
 		} catch (JsonMappingException e) {
@@ -65,12 +86,10 @@ public class JsonDao {
 		} catch (IOException e) {
 			logger.warn("error reading file", e);
 		}
-		
-		return null;
 	}
 	
-	public ISenateObject loadSenateObject(String id, String year, String type, Class<? extends ISenateObject> clazz) {
-		return loadSenateObject(writeDirectory + "/" + year + "/" + type + "/" + id + ".json", clazz);
+	public SenateObject load(String id, String year, String type, Class<? extends SenateObject> clazz) {
+		return load(TextFormatter.append(jsonDirectory,"/",year,"/",type,"/",id,".json"), clazz);
 	}
 	
 	/**
@@ -78,7 +97,7 @@ public class JsonDao {
 	 * @param clazz class of object to be loaded
 	 * @return deserialized SenateObject of type clazz
 	 */
-	public ISenateObject loadSenateObject(String path, Class<? extends ISenateObject> clazz) {
+	public SenateObject load(String path, Class<? extends SenateObject> clazz) {
 		try {
 			logger.info("Loading object at: " + path);
 			File file = new File(path);
@@ -97,26 +116,23 @@ public class JsonDao {
 	}
 	
 	
-	public boolean deleteSenateObject(ISenateObject so) {
-		return deleteFile(so.luceneOid(), so.getYear() +"", so.luceneOtype());
+	public boolean delete(ISenateObject so) {
+		return delete(so.luceneOid(), so.getYear() +"", so.luceneOtype());
 	}
 	
-	public boolean deleteFile(String id, String year, String type) {
-		return deleteFile(writeDirectory + "/" + year + "/" + type + "/" + id + ".json");
+	public boolean delete(String id, String year, String type) {
+		return delete(TextFormatter.append(jsonDirectory,"/",year,"/",type,"/",id,".json"));
 	}
 	
-	public boolean deleteFile(String path) {
+	public boolean delete(String path) {
 		logger.info("Deleting file at: " + path);
 		
 		File file = new File(path);
 		return file.delete();
 	}
 	
-	
-	
-	
 	public ISenateObject mergeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz) {
-		File file = new File(writeDirectory  + "/" + obj.getYear() + "/" + obj.luceneOtype() + "/" + obj.luceneOid() + ".json");
+		File file = new File(TextFormatter.append(jsonDirectory,"/",obj.getYear(),"/",obj.luceneOtype(),"/",obj.luceneOid(),".json"));
 		
 		if(file.exists()) {
 			logger.info("Merging object with id: " + obj.luceneOid());
