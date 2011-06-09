@@ -46,14 +46,23 @@ public class AgendaParser extends SenateParser<Agenda> implements OpenLegConstan
 	}
 
 	public void parse(File file) {
-
+		try {
+			doParse(file);
+		} catch (FileNotFoundException e) {
+			logger.error(e);
+		} catch (ParseException e) {
+			logger.error(e);
+		} catch (JAXBException e) {
+			logger.error(e);
+		} catch (IOException e) {
+			logger.error(e);
+		}
 	}
 
-	public void doParse(String filePath) throws ParseException, JAXBException,
+	public void doParse(File file) throws ParseException, JAXBException,
 			FileNotFoundException, IOException {
 
-		XMLSENATEDATA senateData = parseStream(new FileReader(
-				new File(filePath)));
+		XMLSENATEDATA senateData = parseStream(new FileReader(file));
 
 		Iterator<Object> it = senateData.getSenagendaOrSenagendavote()
 				.iterator();
@@ -82,7 +91,7 @@ public class AgendaParser extends SenateParser<Agenda> implements OpenLegConstan
 
 				}
 			} catch (Exception e) {
-				logger.warn("EXITING: ERROR PROCESSING: " + filePath + "; "
+				logger.warn("EXITING: ERROR PROCESSING: " + file.getAbsolutePath() + "; "
 						+ e.getLocalizedMessage());
 			}
 		}
