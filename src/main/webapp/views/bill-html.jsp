@@ -139,9 +139,7 @@ if (bill.getTitle()!=null)
  <%} %>
  <hr/>
  <b>Sponsor: </b>
- <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(sponsor,"utf-8")%>"  class="sublink"><%=sponsor%></a>
-/
- 
+ <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(sponsor,"utf-8")%>"  class="sublink"><%=sponsor%></a> 
 <!--
 <%if (bill.getActClause()!=null){ %>
  <%=bill.getActClause()%>
@@ -150,7 +148,7 @@ if (bill.getTitle()!=null)
 
  
  <%if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0){%>
-<b>Co-sponsor(s):</b>
+/ <b>Co-sponsor(s):</b>
  <%
  Iterator<Person> it = bill.getCoSponsors().iterator();
  Person cp = null;
@@ -158,25 +156,22 @@ if (bill.getTitle()!=null)
  cp = it.next();
  %>
  <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(cp.getFullname(),"utf-8")%>" class="sublink"><%=cp.getFullname()%></a><%if (it.hasNext()){%>, <%} %><%} %>
-/
+
 
  <%} %>
 
  <%if (bill.getCurrentCommittee()!=null){ %>
- <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
-/
+ / <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
 <%} %>
+<br/>
+<%if (bill.getLawSection()!=null){ %>
+ <b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
+ <%} %>
 
   <%if (bill.getLaw()!=null){ %>
- <b>Law:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("law:\"" + bill.getLaw()+"\"","utf-8")%>" class="sublink"><%=bill.getLaw()%></a> /
+ / <b>Law:</b> <%=bill.getLaw()%>
  <%} %>
 
-  <%if (bill.getLawSection()!=null){ %>
- <b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a><br/>
- <%} %>
-
-
- 
 </div>
  
  

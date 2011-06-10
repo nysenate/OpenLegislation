@@ -156,21 +156,20 @@ if (bill.getTitle()!=null)
  cp = it.next();
  %>
  <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(cp.getFullname(),"utf-8")%>" class="sublink"><%=cp.getFullname()%></a><%if (it.hasNext()){%>, <%} %><%} %>
-/
+
 
  <%} %>
 
  <%if (bill.getCurrentCommittee()!=null){ %>
- <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
-/
+ / <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a> <br/>
 <%} %>
 
-  <%if (bill.getLaw()!=null){ %>
- <b>Law:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + bill.getLaw()+"\"","utf-8")%>" class="sublink"><%=bill.getLaw()%></a> /
+<%if (bill.getLawSection()!=null){ %>
+ <b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
  <%} %>
 
-  <%if (bill.getLawSection()!=null){ %>
- <b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a><br/>
+  <%if (bill.getLaw()!=null){ %>
+ / <b>Law:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("law:\"" + bill.getLaw()+"\"","utf-8")%>" class="sublink"><%=bill.getLaw()%></a>
  <%} %>
 
 
