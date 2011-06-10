@@ -219,7 +219,8 @@ public class BillParser extends SenateParser<Bill> {
 							currentBill = null;
 						}
 						else {
-							bill.setLaw(lineData.replaceAll("›", "S"));
+							lineData = lineData.replaceAll("(›|•À)", "S").replaceAll("\\xBD","");
+							bill.setLaw(lineData);
 						}
 					}
 					else if (lineCode == 'N') {
