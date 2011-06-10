@@ -46,7 +46,7 @@ public class Ingest {
 		
 		options.addOption("w", WRITE, false, "Write SOBI's in sobi-directory to JSON in json-directory");
 		options.addOption("i", INDEX, false, "Index logged changes");
-		options.addOption("wt", WRITE_TRANSCRIPT, true, "Write transcripts located in directoy specified by argument");
+		options.addOption("wt", WRITE_TRANSCRIPT, true, "Write transcripts located in directory specified by argument");
 		
 		options.addOption("id", INDEX_DOCUMENT, true, "Index JSON document specified by argument (path to file)");
 		options.addOption("dt", DOCUMENT_TYPE, true, "Type of document being indexed with -id (REQUIRED WITH -id).. (bill|calendar|agenda|transcript)");

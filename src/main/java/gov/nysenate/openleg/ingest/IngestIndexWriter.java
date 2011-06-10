@@ -59,12 +59,12 @@ public class IngestIndexWriter {
 	 * Index BATCH_SIZE number of documents per operation
 	 * @param filePaths string paths of files that must be indexed
 	 */
-	public void indexBulk(String[] filePaths) {
+	public void indexBulk(String[] files) {
 		ArrayList<SenateObject> lst;
 		Pattern p = Pattern.compile("\\d{4}/(\\w+)/.*$");
 		Matcher m = null;
 		
-		String[] files = this.truncateLog();
+		logger.warn("Indexing " + files.length + " documents");
 		
 		int its = files.length/BATCH_SIZE;
 		for(int i = 0; i <= its; i++) {

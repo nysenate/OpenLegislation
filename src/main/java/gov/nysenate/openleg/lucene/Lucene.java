@@ -41,6 +41,7 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
 		this.logger = Logger.getLogger(Lucene.class);
 		
 		try {
+			createIndex();
 			searcherManager = new SearcherManager(getDirectory());
 		} catch (IOException e) {
 			logger.error(e);
