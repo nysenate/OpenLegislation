@@ -427,7 +427,7 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 		
 		Bill bill = null;
 		
-		if(canWrite(SenateParser.JSON)) {
+		if(canWrite(JSON)) {
 			bill = (Bill) jsonDao.load(senateBillNo, year +"", "bill", Bill.class);	
 		}
 		

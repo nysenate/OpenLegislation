@@ -394,13 +394,6 @@ public class AgendaParser extends SenateParser<Agenda> implements OpenLegConstan
 						if(canWrite(JSON)) {
 							jsonDao.write(agenda);
 						}
-
-						/*
-						 * TODO try {
-						 * reader.searchEngine.deleteDocuments("meeting",
-						 * meeting.luceneOid()); } catch (IOException e) {
-						 * logger.warn(e); } reader.writeSenateObject(agenda);
-						 */
 					}
 					if (action.equals("remove"))
 						continue;
@@ -536,9 +529,14 @@ public class AgendaParser extends SenateParser<Agenda> implements OpenLegConstan
 		senateBillNo += "-" + year;
 
 		Bill bill = null;
+		
+		if(canWrite(SenateParser.JSON)) {
+			bill = (Bill) jsonDao.load(senateBillNo, year +"", "bill", Bill.class);
+		}
+		
 		/*
-		 * Bill bill = (Bill) reader.loadObject(senateBillNo, year +"", "bill",
-		 * Bill.class);
+		 * 
+		 * 
 		 */
 
 		if (bill == null) {

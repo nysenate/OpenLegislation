@@ -152,7 +152,7 @@ public class IngestIndexWriter {
 		
 		do {
 			try {
-				sr = searchEngine.search("otype:bill AND year:" + year, "json", (step * size), size, null, false);
+				sr = searchEngine.search("otype:bill AND year:" + year, "json", (step * size), size, "oid", false);
 			} catch (ParseException e) {
 				logger.error(e);
 				break;
@@ -180,13 +180,21 @@ public class IngestIndexWriter {
 				}
 				
 				if(prev != null) {
-					if(cleanBillNo(prev).equals(cleanBillNo(bill))) {
+					String billNo = bill.getSenateBillNo().split("-")[0];
+					
+					if(cleanBillNo(prev).equals(billNo.replaceAll("[A-Z]$", ""))) {
 						reindex = true;
 					}
 					else {
 						if(reindex) {
-							System.out.println(prev.getSenateBillNo());
+							logger.warn("reindexing amended versions: " + prev.getSenateBillNo());
 							reindexAmendedVersions(prev);
+						}
+						else {
+							if(Character.isLetter(billNo.charAt(billNo.length() - 1))) {
+								logger.warn("reindexing amended versions: " + prev.getSenateBillNo());
+								reindexAmendedVersions(bill);
+							}
 						}
 						reindex = false;
 					}

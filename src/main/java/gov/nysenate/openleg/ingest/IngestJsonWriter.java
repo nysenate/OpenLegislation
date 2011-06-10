@@ -56,7 +56,6 @@ public class IngestJsonWriter {
 		calendarParser = new CalendarParser(ingestJson, searchEngine);
 		transcriptParser = new TranscriptParser();
 		
-		calendarParser = new CalendarParser();
 		timer = new gov.nysenate.openleg.util.Timer();
 		
 		senateObjects = new ArrayList<ISenateObject>();
