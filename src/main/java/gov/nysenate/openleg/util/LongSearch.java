@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -23,6 +24,8 @@ import org.codehaus.jackson.map.ObjectMapper;
  * @param <T>
  */
 public class LongSearch<T extends ISenateObject> implements Iterator<T>, Iterable<T> {
+	private static Logger logger = Logger.getLogger(LongSearch.class);
+	
 	private static final int SIZE = 500;
 	private static final int PAGE = 0;
 	private static final String FORMAT = "json";
@@ -117,9 +120,9 @@ public class LongSearch<T extends ISenateObject> implements Iterator<T>, Iterabl
 		try {
 			senateResponse = searchEngine.search(query, format, (max * page++), max, sortBy, reverse);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		
 		if(senateResponse == null) {
@@ -148,12 +151,13 @@ public class LongSearch<T extends ISenateObject> implements Iterator<T>, Iterabl
 			
 			object.setLuceneModified(result.lastModified);
 			object.setLuceneActive(result.active);
+			
 		} catch (JsonParseException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (JsonMappingException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		return object;
 	}
