@@ -23,6 +23,10 @@ public class BillCleaner implements OpenLegConstants {
 	public final static String BILL_SEARCH_REGEXP = "[a-zA-Z][\\W]*0?\\d{2,}+[\\W]?[a-zA-Z]?";
 	public final static String BILL_REGEXP = "[a-zA-Z][1-9]\\d{1,}+[a-zA-Z]?";
 	
+	public static String getDesiredBillNumber(String billNumber) {
+		return getDesiredBillNumber(billNumber, SessionYear.getSessionYear() + "");
+	}
+	
 	/*
 	 * on search this attempts to format a bill id based on
 	 * what version the bill is at and returns the 'desired'
@@ -35,7 +39,7 @@ public class BillCleaner implements OpenLegConstants {
 	 * s1234  -> S1234B-2011
 	 * 
 	 */
-	public static String getDesiredBillNumber(String billNumber) {
+	public static String getDesiredBillNumber(String billNumber, String year) {
 		String temp = billNumber;
 		if(billNumber == null || (billNumber = fixBillNumber(billNumber)) == null) {
 			if(temp != null && !temp.contains("oid") && !temp.contains("otype") && temp.split("-").length == 2) {
@@ -48,22 +52,22 @@ public class BillCleaner implements OpenLegConstants {
 		
 		
 		if (c == '-'){
-			return billNumber + SessionYear.getSessionYear();
+			return billNumber + year;
 		}
 		else if(!Character.isDigit(c)) {
 			try {
-				if(SearchEngine.getInstance().search("oid:" + billNumber + "-" + SessionYear.getSessionYear(), "json", 0, 1, null, false).getResults().size() == 1) {
-					return billNumber + "-" + SessionYear.getSessionYear();
+				if(SearchEngine.getInstance().search("oid:" + billNumber + "-" + year, "json", 0, 1, null, false).getResults().size() == 1) {
+					return billNumber + "-" + year;
 				}
 			} catch (ParseException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return getNewestAmendment(billNumber);
+			return getNewestAmendment(billNumber, year);
 		}
 		else {
-			return getNewestAmendment(billNumber);
+			return getNewestAmendment(billNumber, year);
 		}
 	}
 	
@@ -78,9 +82,9 @@ public class BillCleaner implements OpenLegConstants {
 		return null;
 	}
 	
-	private static String getNewestAmendment(String billNumber) {
-		ArrayList<Result> results = getRelatedBills(billNumber);
-		billNumber = billNumber + "-" + SessionYear.getSessionYear();
+	private static String getNewestAmendment(String billNumber, String year) {
+		ArrayList<Result> results = getRelatedBills(billNumber, year);
+		billNumber = billNumber + "-" + year;
 		
 		if(results.isEmpty())
 			return billNumber;
@@ -95,16 +99,16 @@ public class BillCleaner implements OpenLegConstants {
 		return billNumbers.get(billNumbers.size()-1);
 	}
 	
-	private static ArrayList<Result> getRelatedBills(String billNumber) {
+	private static ArrayList<Result> getRelatedBills(String billNumber, String year) {
 		if(!Character.isDigit(billNumber.charAt(billNumber.length()-1))) {
 			billNumber = billNumber.substring(0, billNumber.length()-1);
 		}
 		
 		String query = TextFormatter.append("otype:bill AND oid:((", 
-					billNumber, "-", SessionYear.getSessionYear(), 
-		                " OR [", billNumber, "A-", SessionYear.getSessionYear(), 
-		                   " TO ", billNumber, "Z-", SessionYear.getSessionYear(),
-		                "]) AND ", billNumber, "*-", SessionYear.getSessionYear(), ")");
+					billNumber, "-", year, 
+		                " OR [", billNumber, "A-", year, 
+		                   " TO ", billNumber, "Z-", year,
+		                "]) AND ", billNumber, "*-", year, ")");
 		
 		try {
 			return SearchEngine.getInstance().search(query, "json", 0, 100, null, false).getResults();
