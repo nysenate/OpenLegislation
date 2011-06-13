@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.api;
 
-import gov.nysenate.openleg.lucene.ILuceneObject;
+import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.model.bill.Vote;
@@ -17,9 +17,9 @@ public enum ApiType {
 	VOTE("vote", Vote.class);
 	
 	private String type;
-	private Class<? extends ILuceneObject> clazz;
+	private Class<? extends SenateObject> clazz;
 	
-	private ApiType(String type, Class<? extends ILuceneObject> clazz) {
+	private ApiType(String type, Class<? extends SenateObject> clazz) {
 		this.type = type;
 		this.clazz = clazz;
 	}
@@ -28,7 +28,7 @@ public enum ApiType {
 		return type;
 	}
 	
-	public Class<? extends ILuceneObject> clazz() {
+	public Class<? extends SenateObject> clazz() {
 		return clazz;
 	}
 }

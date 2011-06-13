@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.ingest;
 
 import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.search.Result;
@@ -9,6 +8,7 @@ import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.EasyReader;
 import gov.nysenate.openleg.util.JsonSerializer;
+import gov.nysenate.openleg.util.LongSearch;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.Timer;
 import gov.nysenate.openleg.util.XmlSerializer;
@@ -22,9 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 
 public class IngestIndexWriter {
 	private Logger logger = Logger.getLogger(IngestIndexWriter.class);
@@ -140,71 +137,37 @@ public class IngestIndexWriter {
 	 * @param year - the session year for bills you want to be checked
 	 */
 	public void markInactiveBills(String year) {
-		int step = 0;
-		int size = 500;
-		int res = 0;
-		
-		SenateResponse sr = null;
-		Bill bill = null;
 		Bill prev = null;
 		
 		boolean reindex = false;
 		
-		do {
-			try {
-				sr = searchEngine.search("otype:bill AND year:" + year, "json", (step * size), size, "oid", false);
-			} catch (ParseException e) {
-				logger.error(e);
-				break;
-			} catch (IOException e) {
-				logger.error(e);
-				break;
-			}
-			
-			ArrayList<Result> results = sr.getResults();
-			res = results.size();
-			
-			for(Result result:results) {
+		LongSearch<Bill> longSearch = new LongSearch<Bill>()
+			.clazz(Bill.class)
+			.query("otype:bill AND year:" + year);
+		
+		for(Bill bill:longSearch) {
+			if(prev != null) {
+				String billNo = bill.getSenateBillNo().split("-")[0];
 				
-				try {
-					bill = ApiHelper.getMapper().readValue(ApiHelper.unwrapJson(result.data), Bill.class);
-				} catch (JsonParseException e) {
-					logger.error(e);
-					break;
-				} catch (JsonMappingException e) {
-					logger.error(e);
-					break;
-				} catch (IOException e) {
-					logger.error(e);
-					break;
+				if(cleanBillNo(prev).equals(billNo.replaceAll("[A-Z]$", ""))) {
+					reindex = true;
 				}
-				
-				if(prev != null) {
-					String billNo = bill.getSenateBillNo().split("-")[0];
-					
-					if(cleanBillNo(prev).equals(billNo.replaceAll("[A-Z]$", ""))) {
-						reindex = true;
+				else {
+					if(reindex) {
+						logger.warn("reindexing amended versions: " + prev.getSenateBillNo());
+						reindexAmendedVersions(prev);
 					}
 					else {
-						if(reindex) {
+						if(Character.isLetter(billNo.charAt(billNo.length() - 1))) {
 							logger.warn("reindexing amended versions: " + prev.getSenateBillNo());
-							reindexAmendedVersions(prev);
+							reindexAmendedVersions(bill);
 						}
-						else {
-							if(Character.isLetter(billNo.charAt(billNo.length() - 1))) {
-								logger.warn("reindexing amended versions: " + prev.getSenateBillNo());
-								reindexAmendedVersions(bill);
-							}
-						}
-						reindex = false;
 					}
+					reindex = false;
 				}
-				prev = bill;
 			}
-			
-			step++;
+			prev = bill;
 		}
-		while(res == size);
 	}
 	
 	private String cleanBillNo(Bill bill) {

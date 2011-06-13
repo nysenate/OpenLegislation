@@ -17,12 +17,12 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
-import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.Vote;
 
 @XStreamAlias("meeting")
-public class Meeting extends LuceneObject {
+public class Meeting extends SenateObject {
 
 	@XStreamAsAttribute
 	@LuceneField("when")
