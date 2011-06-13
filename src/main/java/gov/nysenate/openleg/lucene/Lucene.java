@@ -28,6 +28,8 @@ import org.apache.lucene.util.Version;
 
 public class Lucene implements LuceneIndexer, LuceneSearcher {
 	
+	private static final Version VERSION = Version.LUCENE_30;
+	
 	public SearcherManager searcherManager = null;
 
 	protected IndexWriter indexWriter = null;
@@ -86,7 +88,7 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
     	
     	Query query;
 		try {
-			query = new QueryParser(Version.LUCENE_CURRENT, "oid", indexWriter.getAnalyzer()).parse("oid:" + doc.getField("oid").stringValue());
+			query = new QueryParser(Version.LUCENE_30, "oid", indexWriter.getAnalyzer()).parse("oid:" + doc.getField("oid").stringValue());
 	        indexWriter.deleteDocuments(query);    	
 	    	indexWriter.addDocument(doc);
 		} catch (ParseException e) {
@@ -98,7 +100,7 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
     
     public void deleteDocumentsByQuery(String qString, IndexWriter indexWriter) throws IOException {
     	try {
-    		Query query = new QueryParser(Version.LUCENE_CURRENT, "otype", indexWriter.getAnalyzer()).parse(qString);
+    		Query query = new QueryParser(VERSION, "otype", indexWriter.getAnalyzer()).parse(qString);
     		indexWriter.deleteDocuments(query);
     	}
     	catch (Exception e) {
@@ -110,7 +112,7 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
     	openWriter();
         try {
         	String qString ="otype:"+otype + ((oid!=null) ? " AND oid:"+oid : "");
-            Query query = new QueryParser(Version.LUCENE_CURRENT, "otype", indexWriter.getAnalyzer()).parse(qString);
+            Query query = new QueryParser(VERSION, "otype", indexWriter.getAnalyzer()).parse(qString);
             indexWriter.deleteDocuments(query);
 	    }
         catch (Exception e) {
@@ -160,7 +162,7 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
     	try {
     		ScoreDoc[] sdocs = null;
 			ArrayList<Document> results = new ArrayList<Document>();
-		    Query query = new QueryParser(Version.LUCENE_CURRENT, "osearch", getAnalyzer()).parse(searchText);
+		    Query query = new QueryParser(VERSION, "osearch", getAnalyzer()).parse(searchText);
 			TopScoreDocCollector collector = TopScoreDocCollector.create(start+max, false);
 			
 			try {
@@ -226,6 +228,6 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
 	}
 	
 	public Analyzer getAnalyzer() {
-		return new StandardAnalyzer(Version.LUCENE_CURRENT);
+		return new StandardAnalyzer(VERSION);
 	}
 }

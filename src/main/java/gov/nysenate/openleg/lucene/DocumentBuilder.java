@@ -145,7 +145,7 @@ public class DocumentBuilder {
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		
 		Document document = new Document();
