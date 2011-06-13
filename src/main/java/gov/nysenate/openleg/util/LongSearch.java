@@ -145,6 +145,9 @@ public class LongSearch<T extends ISenateObject> implements Iterator<T>, Iterabl
 			object = (T) mapper.readValue(
 					ApiHelper.unwrapJson(result.data), 
 					(clazz == null ? ApiHelper.getApiType(result.getOtype()).clazz() : clazz));
+			
+			object.setLuceneModified(result.lastModified);
+			object.setLuceneActive(result.active);
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {

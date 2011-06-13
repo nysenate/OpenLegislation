@@ -1,22 +1,25 @@
 package gov.nysenate.openleg.qa;
 
-import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.qa.model.ProblemBill;
-import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.util.LongSearch;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.lucene.queryParser.ParseException;
 
 public class ReportBuilder {
-	long newestMod = 0L;
 	final static double MS_IN_DAY = 86400000.0;
 	final static int MAX_RESULTS = 500;
+	
+	long newestMod;
+	LongSearch<Bill> longSearch;
+	
+	public ReportBuilder() {
+		newestMod = 0L;
+		longSearch = new LongSearch<Bill>();
+	}
 
 	public HashMap<String, ProblemBill> getBillReportSet(String year)
 			throws ParseException, IOException {
@@ -44,33 +47,21 @@ public class ReportBuilder {
 	public void addBillListToReport(String field, String year,
 			HashMap<String, ProblemBill> problemBillMap) throws ParseException,
 			IOException {
-
-		ArrayList<Result> resultList = getResultList(field, year);
-
-		for (Result result : resultList) {
-			Bill bill = (Bill) ApiHelper.getMapper().readValue(
-					formatJson(result.getData()), Bill.class);
-
+		
+		longSearch.query("otype:bill AND NOT " + field + ":[A* TO Z*] AND NOT " + field
+						+ ":Z* AND oid:s* AND year:" + year);
+		
+		for(Bill bill:longSearch) {
 			ProblemBill problemBill = null;
 			if ((problemBill = problemBillMap.get(bill.getSenateBillNo())) != null) {
 				problemBill.addMissingField(field);
 				
 			} else {
-				problemBill = new ProblemBill(bill.getSenateBillNo(), result.getLastModified());
+				problemBill = new ProblemBill(bill.getSenateBillNo(), bill.getLuceneModified());
 				problemBill.addMissingField(field);
 				problemBillMap.put(bill.getSenateBillNo(), problemBill);
 			}
 		}
-	}
-	
-	public ArrayList<Result> getResultList(String field, String year)
-			throws ParseException, IOException {
-		
-		SenateResponse sr = SearchEngine.getInstance().search(
-				"otype:bill AND NOT " + field + ":[A* TO Z*] AND NOT " + field
-						+ ":Z* AND oid:s* AND year:" + year, "json", 0,
-				MAX_RESULTS, "sortindex", false);
-		return sr.getResults();
 	}
 
 	public String formatJson(String jsonData) {
