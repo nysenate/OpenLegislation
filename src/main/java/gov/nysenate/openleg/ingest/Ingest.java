@@ -31,6 +31,7 @@ public class Ingest {
 	private static final String INDEX_DOCUMENT = "index-document";
 	private static final String DOCUMENT_TYPE = "document-type";
 	private static final String REINDEX_AMENDED_BILLS = "reindex-amended-bills";
+	private static final String FIX_SUMMARIES = "fix-all-summaries";
 	private static final String GENERATE_XML = "generate-xml";
 	private static final String HELP = "help";
 	
@@ -52,6 +53,8 @@ public class Ingest {
 		options.addOption("dt", DOCUMENT_TYPE, true, "Type of document being indexed with -id (REQUIRED WITH -id).. (bill|calendar|agenda|transcript)");
 		
 		options.addOption("rab", REINDEX_AMENDED_BILLS, false, "Scans index and marks amended bills as inactive");
+		options.addOption("fs", FIX_SUMMARIES, false, "Scans index, attempts to assign summaries to bills " +
+				"where information was never received from LBDC");
 		
 		options.addOption("gx", GENERATE_XML, false, "Will pull XML data from SOBI documents");
 		
@@ -101,6 +104,10 @@ public class Ingest {
 		    		
 		    		if(line.hasOption(REINDEX_AMENDED_BILLS)) {
 		    			ingest.reindexAmendedBills();
+		    		}
+		    		
+		    		if(line.hasOption(FIX_SUMMARIES)) {
+		    			ingest.fixSummaries();
 		    		}
 		    		
 		    		if(line.hasOption(GENERATE_XML)) {
@@ -159,6 +166,10 @@ public class Ingest {
 	
 	public void reindexAmendedBills() {
 		ingestIndexWriter.markInactiveBills();
+	}
+	
+	public void fixSummaries() {
+		ingestIndexWriter.fixSummaries();
 	}
 	
 	public void writeTranscripts(String transcriptDirectory) {

@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.util.BillCleaner;
 import gov.nysenate.openleg.util.EasyReader;
 import gov.nysenate.openleg.util.JsonSerializer;
 import gov.nysenate.openleg.util.LongSearch;
@@ -262,6 +263,55 @@ public class IngestIndexWriter {
 			} catch (IOException e) {
 				logger.error(e);
 			}
+		}
+	}
+	
+	public void fixSummaries() {
+		fixSummaries(SessionYear.getSessionYear() + "");
+	}
+	
+	/**
+	 * LBDC doesn't always send summary data for bills that are quickly amended,
+	 * this scans the index for bills missing a summary and when possible
+	 * assigns the summary from the latest version of the bill
+	 * 
+	 * only updates JSON, indexed documents will be updated on next pass
+	 * 
+	 * @param year - session to scan
+	 */
+	public void fixSummaries(String year) {
+		LongSearch<Bill> longSearch = new LongSearch<Bill>()
+			.clazz(Bill.class)
+			.query(	"otype:bill " +
+					"AND NOT summary:[A* TO Z*] " +
+					"AND NOT summary:A* " +
+					"AND NOT summary:Z* " +
+					"AND (oid:S* OR oid:A*) " + 
+					"AND year:" + year);
+		
+		Bill newestBill = null;
+		String newestBillNo = null;
+		
+		for(Bill bill:longSearch) {
+			newestBillNo = BillCleaner.getNewestAmendment(bill.getSenateBillNo());
+			
+			/*
+			 * if newestBillNo matches the bill's senateBillNo then
+			 * the newest bill is missing it's summary
+			 */
+			if(newestBillNo.equalsIgnoreCase(bill.getSenateBillNo()))
+				continue;
+			
+			newestBill = searchEngine.getBill(newestBillNo);
+			
+			if(newestBill == null || newestBill.getSummary() == null)
+				continue;
+			
+			bill.setSummary(newestBill.getSummary());
+			
+			logger.warn("Updating summary for bill "  + bill.getSenateBillNo() + " from version " + newestBill);
+			
+			jsonDao.write(bill);
 		}
 	}
 }

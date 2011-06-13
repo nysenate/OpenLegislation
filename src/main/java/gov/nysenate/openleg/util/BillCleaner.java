@@ -24,7 +24,13 @@ public class BillCleaner implements OpenLegConstants {
 	public final static String BILL_REGEXP = "[a-zA-Z][1-9]\\d{1,}+[a-zA-Z]?";
 	
 	public static String getDesiredBillNumber(String billNumber) {
-		return getDesiredBillNumber(billNumber, SessionYear.getSessionYear() + "");
+		if(billNumber.contains("-")) {
+			String[] parts = billNumber.split("\\-");
+			return getDesiredBillNumber(parts[0], parts[1]);
+		}
+		else {
+			return getDesiredBillNumber(billNumber, SessionYear.getSessionYear() + "");
+		}
 	}
 	
 	/*
@@ -82,7 +88,17 @@ public class BillCleaner implements OpenLegConstants {
 		return null;
 	}
 	
-	private static String getNewestAmendment(String billNumber, String year) {
+	public static String getNewestAmendment(String billNumber) {
+		if(billNumber.contains("-")) {
+			String[] parts = billNumber.split("\\-");
+			return getNewestAmendment(parts[0], parts[1]);
+		}
+		else {
+			return getNewestAmendment(billNumber, SessionYear.getSessionYear() + "");
+		}
+	}
+	
+	public static String getNewestAmendment(String billNumber, String year) {
 		ArrayList<Result> results = getRelatedBills(billNumber, year);
 		billNumber = billNumber + "-" + year;
 		
