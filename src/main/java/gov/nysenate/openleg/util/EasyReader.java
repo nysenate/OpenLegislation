@@ -4,10 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
-public class EasyReader {
+public class EasyReader implements Iterator<String>, Iterable<String> {
 	private Logger logger = Logger.getLogger(EasyReader.class);
 	public BufferedReader br = null;
 	public File file;
@@ -77,5 +78,31 @@ public class EasyReader {
 			logger.error(e);
 		}
 		return false;
+	}
+	
+	private String curLine = null;
+	private String nextLine = null;
+
+	@Override
+	public Iterator<String> iterator() {
+		return this;
+	}
+
+	@Override
+	public boolean hasNext() {
+		curLine = nextLine;
+		nextLine = readLine();
+		
+		return nextLine != null;
+	}
+
+	@Override
+	public String next() {
+		return curLine;
+	}
+
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
 	}
 }
