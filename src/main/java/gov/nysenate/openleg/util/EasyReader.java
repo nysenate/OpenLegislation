@@ -98,6 +98,9 @@ public class EasyReader implements Iterator<String>, Iterable<String> {
 
 	@Override
 	public String next() {
+		if(curLine == null) {
+			curLine = nextLine = readLine();
+		}
 		return curLine;
 	}
 

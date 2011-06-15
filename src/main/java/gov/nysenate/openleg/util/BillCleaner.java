@@ -24,6 +24,7 @@ public class BillCleaner implements OpenLegConstants {
 	public final static String BILL_REGEXP = "[a-zA-Z][1-9]\\d{1,}+[a-zA-Z]?";
 	
 	public static String getDesiredBillNumber(String billNumber) {
+		if(billNumber == null) return null;
 		if(billNumber.contains("-")) {
 			String[] parts = billNumber.split("\\-");
 			return getDesiredBillNumber(parts[0], parts[1]);
