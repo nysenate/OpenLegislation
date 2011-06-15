@@ -5,6 +5,7 @@ import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
 import gov.nysenate.openleg.util.SessionYear;
+import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -305,15 +306,12 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			String searchFormat = "json";
 			
 			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
-				if(type != null && type.equals("bill")) {
-					sr = SearchEngine.getInstance().search(term + " AND year:" + SessionYear.getSessionYear(),searchFormat,start,pageSize,sortField,sortOrder);
-				}
-				else {
-					sr = SearchEngine.getInstance().search(term + " AND when:[" + DATE_START + " TO " + DATE_END + "]",searchFormat,start,pageSize,sortField,sortOrder);
-					if(sr.getResults().isEmpty()) {
-						sr = SearchEngine.getInstance().search(term + " AND year:" + SessionYear.getSessionYear(),searchFormat,start,pageSize,sortField,sortOrder);
-					}
-				}
+				sr = SearchEngine.getInstance().search(TextFormatter.append(
+						term," AND (",
+										"year:",SessionYear.getSessionYear(), 
+										" OR when:[",DATE_START," TO ",DATE_END,"]",
+									")"),
+						searchFormat,start,pageSize,sortField,sortOrder);
 			}
 			else {
 				sr = SearchEngine.getInstance().search(term,searchFormat,start,pageSize,sortField,sortOrder);
