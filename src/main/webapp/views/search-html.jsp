@@ -85,12 +85,12 @@ if (total > endIdx)
 </div>
 
 <div style="float:right">
-
+<% String encodedTerm = java.net.URLEncoder.encode(term,"UTF-8"); %>
 Formats:
-<a href="/legislation/search/?term=<%=term%>&format=csv">CSV</a>,
-<a href="/legislation/search/?term=<%=term%>&format=json">JSON</a>,
-<a href="/legislation/search/?term=<%=term%>&format=rss">RSS</a>,
-<a href="/legislation/search/?term=<%=term%>&format=xml">XML</a>
+<a href="/legislation/search/?term=<%=encodedTerm%>&format=csv">CSV</a>,
+<a href="/legislation/search/?term=<%=encodedTerm%>&format=json">JSON</a>,
+<a href="/legislation/search/?term=<%=encodedTerm%>&format=rss">RSS</a>,
+<a href="/legislation/search/?term=<%=encodedTerm%>&format=xml">XML</a>
 </div>
 <br style="clear:both;"/>
  <div id="content">
@@ -146,7 +146,7 @@ Iterator it = sr.getResults().iterator();
   
   String contentType = null;
   String contentId = null;
-	String resultTitle = null;
+String resultTitle = null;
 
 	String senateType = null;
 	
