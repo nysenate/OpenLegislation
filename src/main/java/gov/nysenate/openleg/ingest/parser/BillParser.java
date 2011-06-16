@@ -437,6 +437,12 @@ public class BillParser extends SenateParser<Bill> {
 			if (summaryBuffer == null)
 				summaryBuffer = new StringBuffer();
 			
+			/*
+			 * there is a recurring problem with summaries being
+			 * duplicated in the same activity stream, this attempts to avoid
+			 * giving assigning a duplicated summary
+			 * 
+			 */
 			if(summaryBuffer.toString().trim().contains(line)) {
 				if(tempSummaryBuffer == null) {
 					tempSummaryBuffer = new StringBuffer();
@@ -450,6 +456,15 @@ public class BillParser extends SenateParser<Bill> {
 				}
 			}
 			else {
+				/*
+				 * the logic for bill summaries tries to not add duplicate lines,
+				 * but occasionally there ARE duplicate lines in real summaries
+				 */
+				if(tempSummaryBuffer != null) {
+					summaryBuffer.append(tempSummaryBuffer);
+					tempSummaryBuffer = null;
+				}
+				
 				summaryBuffer.append(line);
 				summaryBuffer.append(' ');
 			}
@@ -699,7 +714,6 @@ public class BillParser extends SenateParser<Bill> {
 			return;
 		
 		if (summaryBuffer != null) {
-			
 			currentBill.setSummary(summaryBuffer.toString());			
 			summaryBuffer = null;
 			tempSummaryBuffer = null;
