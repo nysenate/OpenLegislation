@@ -28,22 +28,25 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractSenateObjectServlet<T extends ISenateObject>
 		extends HttpServlet implements OpenLegConstants {
+	
 	private static final long serialVersionUID = 1L;
+	
 	private static final String DEFAULT_FORMAT = "html";
+	
+	// matches /legislation/<type>/<oid>
 	private static final Pattern SHORT_PATTERN = Pattern
 			.compile("^/legislation/(.*)/((?!/).*)$");
+	// matches /legislation/api/(1.0/)?<type>/<format>/<oid>
 	private static final Pattern LONG_PATTERN = Pattern
 			.compile("^/legislation/api/(?:1\\.0/)?(.*)/(.*)/(.*)$");
+	private Matcher matcher;
 
 	private static Logger logger = Logger
 			.getLogger(AbstractSenateObjectServlet.class);
-	private Matcher matcher;
 	
 	public AbstractSenateObjectServlet() {
 		super();
 	}
-
-	protected abstract void doRelated(String oid, HttpServletRequest request);
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
@@ -64,12 +67,19 @@ public abstract class AbstractSenateObjectServlet<T extends ISenateObject>
 				return;
 			}
 
-			T senateObject = getSenateObject(sor.oid, sor.type);
-			doRelated(sor.oid, request);
+			T senateObject = getSenateObject(sor);
+			
+			if(senateObject == null) throw new InvalidRequestException();
+			
+			doRelated(sor, request);
 			doView(senateObject, sor, request, response);
 		} catch (InvalidRequestException e) {
 			sendError(response, HttpServletResponse.SC_NOT_FOUND);
 		}
+	}
+	
+	private T getSenateObject(SenateObjectRequest sor) {
+		return getSenateObject(sor.oid, sor.type);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -77,12 +87,21 @@ public abstract class AbstractSenateObjectServlet<T extends ISenateObject>
 		return (T) SearchEngine.getInstance().getSenateObject(apiType.clazz(),
 				apiType.type(), oid);
 	}
+	
+	protected abstract void doRelated(String oid, HttpServletRequest request);
+	
+	private void doRelated(SenateObjectRequest sor, HttpServletRequest request) {
+		doRelated(sor.oid, request);
+	}
 
 	private void doView(T senateObject, SenateObjectRequest sor,
 			HttpServletRequest request, HttpServletResponse response) {
 		doView(senateObject, sor.format, sor.type.type(), request, response);
 	}
 
+	/*
+	 * load JSP based on format and type
+	 */
 	protected void doView(T senateObject, String format, String type,
 			HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -114,8 +133,6 @@ public abstract class AbstractSenateObjectServlet<T extends ISenateObject>
 			logger.error(e);
 		}
 		
-		System.out.println(uri);
-
 		SenateObjectRequest sor = new SenateObjectRequest();
 		sor.format = DEFAULT_FORMAT;
 
