@@ -25,7 +25,19 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>BillServlet</servlet-name>
-    <url-pattern>/bill/*</url-pattern>
+    <url-pattern>/api/html-print/bill/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>BillServlet</servlet-name>
+    <url-pattern>/api/1.0/html-print/bill/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>BillServlet</servlet-name>
+    <url-pattern>/api/mobile/bill/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>BillServlet</servlet-name>
+    <url-pattern>/api/1.0/mobile/bill/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>SenateObjectServlet</servlet-name>
