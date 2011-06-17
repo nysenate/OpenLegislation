@@ -45,22 +45,28 @@ public class ApiHelper implements OpenLegConstants {
 	}
 
 	public static ArrayList<Result> getRelatedSenateObjects(String type,
-			String query) throws ParseException, IOException,
-			ClassNotFoundException {
+			String query) {
 
 		String searchString =TextFormatter.append("otype:", type, " AND ", "(" + query + ")");
 
 		int start = 0;
 		int pageSize = 100;
 
-		SenateResponse sr = SearchEngine.getInstance().search(dateReplace(searchString), 
-				DEFAULT_SEARCH_FORMAT, start, pageSize, DEFAULT_SORT_FIELD, true);
+		SenateResponse sr = null;
+		try {
+			sr = SearchEngine.getInstance().search(dateReplace(searchString), 
+					DEFAULT_SEARCH_FORMAT, start, pageSize, DEFAULT_SORT_FIELD, true);
+		} catch (ParseException e) {
+			logger.error(e);
+		} catch (IOException e) {
+			logger.error(e);
+		}
 
 		return buildSearchResultList(sr);
 	}
 
 	public static ArrayList<Result> buildSearchResultList(
-			SenateResponse sr) throws ClassNotFoundException {
+			SenateResponse sr) {
 		
 		DateFormat df = DateFormat.getInstance();
 		
