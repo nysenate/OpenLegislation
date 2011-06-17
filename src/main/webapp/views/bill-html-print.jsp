@@ -1,27 +1,33 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.model.calendar.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.model.calendar.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
 <%
 
 
 String appPath = request.getContextPath();
 
-String term = (String)request.getAttribute("term");
-
-
 Bill bill = (Bill)request.getAttribute("bill");
 
+boolean active = bill.getLuceneActive();
   	
-String titleText = "";
+String titleText = "(no title)";
 if (bill.getTitle()!=null)
 	titleText = bill.getTitle();
-else if (bill.getSummary()!=null)
-	titleText = bill.getSummary();
 
-String title = bill.getSenateBillNo() + " - NY Senate Open Legislation - " + titleText;
+String senateBillNo = bill.getSenateBillNo();
+
+if (senateBillNo.indexOf("-")==-1)
+	senateBillNo += "-" + bill.getYear();
+
+String title = senateBillNo + " - NY Senate Open Legislation - " + titleText;
 
  %>
 <br/>
-     <h2><%=bill.getSenateBillNo()%>: <%if (bill.getTitle()!=null){ %><%=bill.getTitle()%><%} %></h2>
+     <h2><%=senateBillNo%>: <%if (bill.getTitle()!=null){ %><%=bill.getTitle()%><%} %></h2>
     <br/>
+    
+    <% if(!active) { %>
+		<div class="amended">This bill has been amended.</div>
+	<% } %>
+    
      <div style="float:left;">
     
     <%if (bill.getSameAs()!=null){ 
@@ -31,30 +37,67 @@ String title = bill.getSenateBillNo() + " - NY Senate Open Legislation - " + tit
 
 StringTokenizer st = new StringTokenizer(bill.getSameAs(),",");
 String sameAs = null;
+String lastSameAs = "";
 String sameAsLink = null;
 Bill sameAsBill = null;
 
 while(st.hasMoreTokens())
 {
+	
 	sameAs = st.nextToken().trim();
-	sameAsLink = appPath + "/bill/" + sameAs;
-
+	sameAsLink = appPath + "/bill/" + sameAs + "-" + bill.getYear();
+	
+	if (sameAs.length() == 0)
+		continue;
+	
+	if (sameAs.equals(lastSameAs))
+		continue;
+	
+	lastSameAs = sameAs;
 %>
 <a href="<%=sameAsLink%>"><%=sameAs.toUpperCase()%></a>
 <%
-if (st.hasMoreTokens())
-{
-%>, <%
-}
+if (st.hasMoreTokens()) {%><%}
 } %>
-
+/
 <%} %>
+
+<%
+
+String sponsor = null;
+
+if (bill.getSponsor()!=null)
+		sponsor = bill.getSponsor().getFullname();
+
+ArrayList<Result> rBills = (ArrayList<Result>)request.getAttribute("related-bill");
+%>
+
+<%if (rBills.size()>0) { %>
+Versions: <%for (Result rBill:rBills){
+	
+	if ((sponsor == null || sponsor.length()==0) && rBill.getFields().get("sponsor")!=null)
+		sponsor = rBill.getFields().get("sponsor");
+	
+%><a href="/legislation/bill/<%=rBill.getOid()%>"><%=rBill.getOid()%></a> <%}%>
+<%}
+
+if (sponsor == null)
+	sponsor = "";
+
+%>
 
 
 
 
     
     </div>
+ <div style="float:right;">
+ <a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>" target="_new">Print HTML Page</a>
+ /
+ <a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=senateBillNo%>" target="_new">Print Original Bill Format</a>
+ / <script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
+  / <a href="#discuss">Read or Leave Comments</a>
+  </div>
   <br style="clear:both;"/>
   
 
@@ -69,7 +112,7 @@ DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 
 String billSummary = bill.getSummary();
 String billMemo = bill.getMemo();
-String billText = bill.getFulltext();
+//String billText = bill.getFulltext();
 
 if (bill.getSponsor()!=null)
 	title += " - " + bill.getSponsor().getFullname();
@@ -89,12 +132,13 @@ if (bill.getTitle()!=null)
 %>
  
   <div class="billheader">
-<%if (bill.getSponsor()!=null && bill.getSponsor().getFullname()!=null){ %>
- <b>Sponsor: </b>
- <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(bill.getSponsor().getFullname(),"utf-8")%>"  class="sublink"><%=bill.getSponsor().getFullname()%></a>
- <br/>
+  
+<%if (billSummary!=null){ %>
+<%=billSummary%>
  <%} %>
- 
+ <hr/>
+ <b>Sponsor: </b>
+ <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(sponsor,"utf-8")%>"  class="sublink"><%=sponsor%></a> 
 <!--
 <%if (bill.getActClause()!=null){ %>
  <%=bill.getActClause()%>
@@ -103,7 +147,7 @@ if (bill.getTitle()!=null)
 
  
  <%if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0){%>
-<b>Co-sponsor(s):</b>
+/ <b>Co-sponsor(s):</b>
  <%
  Iterator<Person> it = bill.getCoSponsors().iterator();
  Person cp = null;
@@ -111,85 +155,107 @@ if (bill.getTitle()!=null)
  cp = it.next();
  %>
  <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(cp.getFullname(),"utf-8")%>" class="sublink"><%=cp.getFullname()%></a><%if (it.hasNext()){%>, <%} %><%} %>
-<br/>
+
 
  <%} %>
 
  <%if (bill.getCurrentCommittee()!=null){ %>
- <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
-<br/>
+ / <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
 <%} %>
+<br/>
+<%if (bill.getLawSection()!=null){ %>
+ <b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
+ <%} %>
 
   <%if (bill.getLaw()!=null){ %>
- <b>Law:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + bill.getLaw()+"\"","utf-8")%>" class="sublink"><%=bill.getLaw()%></a> /
+ / <b>Law:</b> <%=bill.getLaw()%>
  <%} %>
 
-  <%if (bill.getLawSection()!=null){ %>
- <b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a><br/>
- <%} %>
-
-<h3><%=bill.getSenateBillNo()%> Summary</h3>
-
-<%if (billSummary!=null){ %>
-<%=billSummary%>
- <%} %>
- 
 </div>
  
  
-<h3><%=bill.getSenateBillNo()%> Actions</h3>
-<ul>
-<%
-Iterator<BillEvent> itActions = bill.getBillEvents().iterator();
-BillEvent beAction = null;
 
-while (itActions.hasNext())
-{
-	beAction = itActions.next();	
-	%>
-	<li><%=beAction.getEventText()%></li>
+<%
+ArrayList<Result> rActions = (ArrayList<Result>)request.getAttribute("related-action");
+%>
+<%if (rActions.size() > 0) { %>
+<h3><%=senateBillNo%> Actions</h3>
+<ul>
 	<%
+		ArrayList<BillEvent> events = BillCleaner.sortBillEvents(rActions);
+		for (BillEvent be : events){ 
+			
+			%>
+				<li><%=df.format(be.getEventDate().getTime())%>: <%=BillCleaner.formatBillEvent(bill.getSenateBillNo(), be.getEventText(), appPath)%></li>
+			<%
+		}%>
+</ul>
+<%}%>
+
+<%
+
+ArrayList<Result> rMeetings = (ArrayList<Result>)request.getAttribute("related-meeting");
+%>
+<%if (rMeetings.size()>0) { %>
+<h3><%=senateBillNo%> Meetings</h3>
+<%
+	for (Iterator<Result> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
+		Result meeting = itMeetings.next();
+		%>
+		<a href="<%=appPath%>/meeting/<%=meeting.getOid()%>" class="sublink"><%=meeting.getTitle()%></a><%if (itMeetings.hasNext()){%>,<%}
+		
+	}
 }
 %>
-</ul>
 
-<h3><%=bill.getSenateBillNo()%> Committee Meetings</h3>
+<%
 
+ArrayList<Result> rCals = (ArrayList<Result>)request.getAttribute("related-calendar");
+%>
+<%if (rCals.size()>0) { %>
+<h3><%=senateBillNo%> Calendars</h3>
+<%
+for (Iterator<Result> itCals = rCals.iterator(); itCals.hasNext();)
+{
+	Result cal = itCals.next();
+	
+	%>
+<a href="<%=appPath%>/calendar/<%=cal.getOid()%>" class="sublink"><%=cal.getFields().get("type")%>: <%=cal.getFields().get("date")%></a><%if (itCals.hasNext()){%>,<%}
 
+}
+}
+%>
 
+<%
 
-<h3><%=bill.getSenateBillNo()%> Calendars</h3>
-
-
-<h3><%=bill.getSenateBillNo()%> Votes</h3>
-
-<%if (bill.getVotes()!=null&&bill.getVotes().size()>0){ %>
-
- <%
-  	Iterator<Vote> itVotes = bill.getVotes().iterator();
+ArrayList<Result> rVotes = (ArrayList<Result>)request.getAttribute("related-vote");
+%>
+<%if (rVotes.size()>0) { %>
+<h3><%=senateBillNo%> Votes</h3>
+<%
+ObjectMapper mapper = new ObjectMapper();
+for (Result result:rVotes){
    
-   Vote vote = null;
-  // String voteDesc = null;
-   
-   while (itVotes.hasNext())
-   {
-   	vote = itVotes.next();
-   	
-   	String voteType = "Floor";
+	Vote vote = (Vote)result.getObject();
+	
+   	String voteType = "Floor Vote";
 if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
-	voteType = "Committee";
+	voteType = "Committee Vote";
 	
 
   %>
    <div>
-  <b>Vote: <%=voteType%> 
+  <b>VOTE: <%=voteType.toUpperCase()%>:
   <%if (vote.getDescription()!=null){%>- <%=vote.getDescription()%><%} %>
   - <%=DateFormat.getDateInstance(DateFormat.MEDIUM).format(vote.getVoteDate())%></b>
   <blockquote>
+  	<%Iterator<String> itVoter = null; String voter = null;%>
+  	<%if (vote.getAyes()!=null && vote.getAyes().size()>0){ %>
+ 			<br/>
  	<b>Ayes (<%=vote.getAyes().size()%>):</b>
  	<% 
- 		Iterator<String> itVoter = vote.getAyes().iterator();
- 		String voter = null;
+ 		itVoter = vote.getAyes().iterator();
+ 		voter = null;
  		
  		while (itVoter.hasNext())
  		{
@@ -198,6 +264,7 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
  		<a href="<%=appPath%>/sponsor/<%=voter%>" class="sublink"><%=voter%></a><%if (itVoter.hasNext()){%>,<%} %>
  		<% 
  		}
+  	}
  		%>
  	<%if (vote.getAyeswr()!=null && vote.getAyeswr().size()>0){ %>
  			<br/>
@@ -260,28 +327,72 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
  		</div>
  		<%
  
- }}
+ }
+}
   %>
   
 
   
-<%if (billMemo!=null){%>
-<h3><%=bill.getSenateBillNo()%> Memo</h3>
-<%=TextFormatter.formatMemo (billMemo)%><%}%>
+<%if (billMemo!=null && !billMemo.matches("\\s*")){%>
+<h3><%=senateBillNo%> Memo</h3>
+<pre><%=/*TextFormatter.formatMemo (billMemo)*/billMemo%></pre><%}%>
 	
- <h3><%=bill.getSenateBillNo()%> Text</h3>
-<%if (billText!=null){
+ <h3><%=senateBillNo%> Text</h3>
+<%if (bill.getFulltext()!=null){
   
+  String billText = TextFormatter.lrsPrinter(bill.getFulltext());
   billText = TextFormatter.removeBillLineNumbers (billText);
   
-  %><%=billText%><%} else{%>Not Available.<%}%>
+  %><pre><%=billText %></pre><%} else{%>Not Available.<%}%>
  
  <br/>
   
  </div>
   
+ <%
  
+ String disqusUrl = "";
+ String disqusId = "";
+ 
+ if (bill.getYear()==2009)
+ {
+	 disqusId = bill.getSenateBillNo().split("-")[0];
+	 disqusUrl = "http://open.nysenate.gov/legislation/api/html/bill/" + disqusId;
+ }
+ else
+ {
+	 disqusId = bill.getSenateBillNo();
+	 disqusUrl = "http://open.nysenate.gov/legislation/bill/" + disqusId;
+ }
+ %>
   
+<div id="comments">
+<b><p>*By contributing or voting you agree to the <a href = "http://nysenate.gov/legal">Terms of Participation</a> and <a href = "http://www.nysenate.gov/privacy-policy">Privacy Policy</a> and verify you are over 13.</p></b>
+ <h3> <a name="discuss">Discuss!</a></h3>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'nysenateopenleg'; // required: replace example with your forum shortname
+
+    // The following are highly recommended additional parameters. Remove the slashes in front to use.
+     var disqus_identifier = '<%=disqusUrl%>';
+     var disqus_url = '<%=disqusUrl%>';
+     var disqus_developer = 0; // developer mode is off
+     var disqus_title = '<%=title%>';
+
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</div>
 
  
 
