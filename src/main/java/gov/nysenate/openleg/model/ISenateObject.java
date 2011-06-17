@@ -7,6 +7,7 @@ import gov.nysenate.openleg.lucene.ILuceneObject;
 public interface ISenateObject extends ILuceneObject {
 	public void merge(ISenateObject obj);
 	public int getYear();
+	public void setYear(int year);
 	public HashSet<String> getSobiReferenceList();
 	public void setSobiReferenceList(HashSet<String> sobiReferenceList);
 	public void addSobiReference(String reference);

@@ -15,10 +15,10 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
-import gov.nysenate.openleg.lucene.LuceneObject;
+import gov.nysenate.openleg.model.SenateObject;
 
 @XStreamAlias("supplemental")
-public class Supplemental extends LuceneObject {
+public class Supplemental extends SenateObject {
 	
 	@XStreamAsAttribute
 	protected String id;

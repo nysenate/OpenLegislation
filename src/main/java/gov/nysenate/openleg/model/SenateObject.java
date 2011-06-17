@@ -14,6 +14,11 @@ public class SenateObject extends LuceneObject implements ISenateObject {
 	public int getYear() {
 		return 0;
 	}
+	
+	@Override
+	public void setYear(int year) {
+		
+	}
 
 	@Override
 	public void merge(ISenateObject obj) {
