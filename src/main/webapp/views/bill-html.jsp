@@ -2,9 +2,10 @@
 <%
 
 String appPath = request.getContextPath();
-String term = (String)request.getAttribute("term");
-boolean active = new Boolean((Boolean)request.getAttribute("active"));
+
 Bill bill = (Bill)request.getAttribute("bill");
+
+boolean active = bill.getLuceneActive();
   	
 String titleText = "(no title)";
 if (bill.getTitle()!=null)
