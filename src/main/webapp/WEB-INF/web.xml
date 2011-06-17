@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:javaee="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:javaee="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
@@ -12,6 +12,38 @@
     <servlet-class>gov.nysenate.openleg.SearchServlet</servlet-class>
   </servlet>
   <servlet>
+    <servlet-name>BillServlet</servlet-name>
+    <servlet-class>gov.nysenate.openleg.api.servlets.BillServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>SenateObjectServlet</servlet-name>
+    <servlet-class>gov.nysenate.openleg.api.servlets.SenateObjectServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BillServlet</servlet-name>
+    <url-pattern>/bill/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>BillServlet</servlet-name>
+    <url-pattern>/bill/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SenateObjectServlet</servlet-name>
+    <url-pattern>/api/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SenateObjectServlet</servlet-name>
+    <url-pattern>/calendar/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SenateObjectServlet</servlet-name>
+    <url-pattern>/meeting/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SenateObjectServlet</servlet-name>
+    <url-pattern>/transcript/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
     <servlet-name>ApiServlet2_0</servlet-name>
     <servlet-class>
   	gov.nysenate.openleg.ApiServlet2_0</servlet-class>
@@ -19,14 +51,6 @@
   <servlet-mapping>
     <servlet-name>ApiServlet2_0</servlet-name>
     <url-pattern>/api/2.0/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
-    <url-pattern>/api/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
-    <url-pattern>/bill/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>APIServlet</servlet-name>
@@ -46,27 +70,11 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>APIServlet</servlet-name>
-    <url-pattern>/transcript/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
-    <url-pattern>/agenda/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
-    <url-pattern>/meeting/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
     <url-pattern>/meetings/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>APIServlet</servlet-name>
     <url-pattern>/meetings</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
-    <url-pattern>/calendar/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>APIServlet</servlet-name>
@@ -148,7 +156,7 @@
     <servlet-name>ReportServlet</servlet-name>
     <url-pattern>/report.json</url-pattern>
   </servlet-mapping>
-   <servlet>
+  <servlet>
     <servlet-name>RulesServlet</servlet-name>
     <servlet-class>gov.nysenate.openleg.RulesServlet</servlet-class>
   </servlet>
