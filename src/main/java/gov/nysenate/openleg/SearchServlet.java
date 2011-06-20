@@ -1,11 +1,10 @@
 package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.api.ApiHelper;
+import gov.nysenate.openleg.api.QueryBuilder;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
-import gov.nysenate.openleg.util.SessionYear;
-import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -18,11 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-public class SearchServlet extends HttpServlet implements OpenLegConstants
-{	
-	
-	private static long DATE_START = SessionYear.getSessionStart();
-	private static long DATE_END = SessionYear.getSessionEnd();
+public class SearchServlet extends HttpServlet implements OpenLegConstants {	
 
 	private static final long serialVersionUID = 1L;
 	
@@ -138,136 +133,69 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 		int start = (pageIdx - 1) * pageSize;
 		
 		SenateResponse sr = null;
-		StringBuilder searchText = new StringBuilder();
+		
+		QueryBuilder queryBuilder = new QueryBuilder();
 		
 		if (term != null)
-			searchText.append(term);
+			queryBuilder.insertBefore(term);
 		
 		try {
-			if (type != null && type.length() > 0) {
-				if (searchText.length()>0)
-					searchText.append(" AND ");
-				
-				searchText.append("otype:");
-				searchText.append(type.equals("res") ? "bill AND oid:r*":type);
+			if (valid(type)) {
+				queryBuilder.and().otype(type);
+				if(type.equals("res")) queryBuilder.and().oid("r*");
 			}
 			
-			if(session != null && session.length() > 0) {
-				if(searchText.length() > 0)
-					searchText.append(" AND ");
-				
-				searchText.append("year:" + session);
-			}
+			if(valid(session))
+				queryBuilder.and().keyValue("year", session);
 			
-			if (full != null && full.length() > 0)	{
-				if (searchText.length()>0)
-					searchText.append(" AND ");
-				
-				searchText.append("(full:\"");
-				searchText.append(full);
-				searchText.append("\"");
-				
-				searchText.append(" OR ");
-				searchText.append("osearch:\"");
-				searchText.append(full);
-				searchText.append("\")");
-			}
+			if (valid(full))
+				queryBuilder.and()
+					.append("(")
+					.keyValue("full", full, "\"")
+					.or()
+					.keyValue("osearch", full, "\"")
+					.append(")");
 			
-			if (memo != null && memo.length() > 0) {
-				if (searchText.length()>0)
-					searchText.append(" AND ");
-				
-				searchText.append("memo:\"");
-				searchText.append(memo);
-				searchText.append("\"");
-			}
+			if (valid(memo))
+				queryBuilder.and().keyValue("memo", memo, "\"");
 			
-			if (status != null && status.length() > 0) {
-				if (searchText.length()>0)
-					searchText.append(" AND ");
-				
-				searchText.append("status:\"");
-				searchText.append(status);
-				searchText.append("\"");
-			}
+			if (valid(status))
+				queryBuilder.and().keyValue("status", status, "\"");
 			
-			if (sponsor != null && sponsor.length() > 0) {
-				if (searchText.length()>0)
-					searchText.append(" AND ");
-				
-				searchText.append("sponsor:\"");
-				searchText.append(sponsor);
-				searchText.append("\"");
-			}
+			if (valid(sponsor))
+				queryBuilder.and().keyValue("sponsor", sponsor, "\"");
 			
-			if (cosponsors != null && cosponsors.length() > 0) {
-				if (searchText.length()>0)
-					searchText.append(" AND ");
-				
-				searchText.append("cosponsors:\"");
-				searchText.append(cosponsors);
-				searchText.append("\"");
-			}
+			if (valid(cosponsors))
+				queryBuilder.and().keyValue("cosponsors", cosponsors, "\"");
 			
-			if (sameas != null && sameas.length() > 0)
-			{
-				if (searchText.length()>0)
-					searchText.append(" AND ");
-				
-				searchText.append("sameas:");
-				searchText.append(sameas);
-			}
+			if (valid(sameas))
+				queryBuilder.and().keyValue("sameas", sameas);
 
-			if (committee != null && committee.length() > 0) {
-				if (searchText.length()>0)
-					searchText.append(" AND ");
-				
-				searchText.append("committee:\"");
-				searchText.append(committee);
-				searchText.append("\"");
-			}
+			if (valid(committee))
+				queryBuilder.and().keyValue("committee", committee, "\"");
 			
-			if (location != null && location.length() > 0) {
-				if (searchText.length()>0)
-					searchText.append(" AND ");
-				
-				searchText.append("location:\"");
-				searchText.append(location);
-				searchText.append("\"");
-			}
+			if (valid(location))
+				queryBuilder.and().keyValue("location", location, "\"");
 				
 			if (startDate != null && endDate != null) {
-				if (searchText.length()>0)
-					searchText.append(" AND ");
-				
-				searchText.append("when:[");
-				searchText.append(startDate.getTime());
-				searchText.append(" TO ");
-				searchText.append(endDate.getTime());
-				searchText.append("]");
+				queryBuilder.and().range("when", 
+						Long.toString(startDate.getTime()), 
+						Long.toString(endDate.getTime()));
 			}
 			else if (startDate != null) {
-				if (searchText.length()>0)
-					searchText.append(" AND ");
-				
-				searchText.append("when:[");
-				searchText.append(startDate.getTime());
-				searchText.append(" TO ");
-				
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(startDate);
 				cal.set(Calendar.HOUR, 23);
 				cal.set(Calendar.MINUTE, 59);
 				cal.set(Calendar.SECOND, 59);
 				
-				startDate = cal.getTime();
-				
-				searchText.append(startDate.getTime());
-				searchText.append("]");
+				queryBuilder.and().range("when", 
+						Long.toString(startDate.getTime()), 
+						Long.toString(cal.getTimeInMillis()));
 			}
 						
-			term = searchText.toString();
-
+			term = queryBuilder.query();
+			
 			term = BillCleaner.billFormat(term);
 						
 			request.setAttribute("term", term);
@@ -306,11 +234,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			String searchFormat = "json";
 			
 			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
-				sr = SearchEngine.getInstance().search(TextFormatter.append(
-						term," AND (",
-										"year:",SessionYear.getSessionYear(), 
-										" OR when:[",DATE_START," TO ",DATE_END,"]",
-									")"),
+				sr = SearchEngine.getInstance().search(queryBuilder.and().current().query(),
 						searchFormat,start,pageSize,sortField,sortOrder);
 			}
 			else {
@@ -339,6 +263,10 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants
 			e.printStackTrace();
 			response.sendError(500);
 		}
+	}
+	
+	public boolean valid(String str) {
+		return str != null && str.length() > 0;
 	}
 
 	public void init() throws ServletException {

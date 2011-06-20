@@ -100,24 +100,38 @@ public class QueryBuilder {
 		return append(key,SEPARATOR, value);
 	}
 	
+	public QueryBuilder keyValue(String key, String value, String wrapper) throws QueryBuilderException {
+		condition();
+		return append(key,SEPARATOR, wrapper, value, wrapper);
+	}
+	
+	public QueryBuilder keyValue(String key, String value, String before, String after) throws QueryBuilderException {
+		condition();
+		return append(key,SEPARATOR, before, value, after);
+	}
+	
 	public QueryBuilder and() throws QueryBuilderException {
-		operator();
-		return append(" ",AND," ");
+		if(operator()) 
+			return append(" ",AND," ");
+		return this;
 	}
 	
 	public QueryBuilder or() throws QueryBuilderException {
-		operator();
-		return append(" ",OR," ");
+		if(operator())
+			return append(" ",OR," ");
+		return this;
 	}
 	
 	public QueryBuilder not() throws QueryBuilderException {
-		operator();
-		return append(" ",NOT," ");
+		if(operator())
+			return append(" ",NOT," ");
+		return this;
 	}
 	
 	public QueryBuilder andNot() throws QueryBuilderException {
-		operator();
-		return append(" ",AND," ",NOT," ");
+		if(operator())
+			return append(" ",AND," ",NOT," ");
+		return this;
 	}
 	
 	/**
@@ -130,19 +144,21 @@ public class QueryBuilder {
 		return append(strs);
 	}
 	
-	private QueryBuilder append(String... strs) {
+	public QueryBuilder append(String... strs) {
 		for(String str:strs) {
 			query.append(str);
 		}
 		return this;
 	}
 	
-	@SuppressWarnings("unused")
-	private QueryBuilder insertBefore(String... strs) {
+	public QueryBuilder insertBefore(String... strs) {
 		StringBuilder temp = new StringBuilder();
 		for(String str:strs) {
 			temp.append(str);
 		}
+		
+		if(query.length() == 0) operatorToggle = false;
+		
 		query.insert(0, temp);
 		return this;
 	}
@@ -154,11 +170,16 @@ public class QueryBuilder {
 		operatorToggle = false;
 	}
 	
-	private void operator() throws QueryBuilderException {
+	private boolean operator() throws QueryBuilderException {
+		if(query.length() == 0)
+			return false;
+		
 		if(operatorToggle)
 			throw new QueryBuilderException("putting two operators next to each other: " + query());
 		
 		operatorToggle = true;
+		
+		return true;
 	}
 	
 	public void reset() {

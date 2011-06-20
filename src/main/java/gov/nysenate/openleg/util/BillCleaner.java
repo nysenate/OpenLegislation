@@ -8,6 +8,7 @@ import gov.nysenate.openleg.search.SearchEngine;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
@@ -173,12 +174,17 @@ public class BillCleaner implements OpenLegConstants {
 	}
 	
 	public static ArrayList<BillEvent> sortBillEvents(List<BillEvent> billEvents) {
+		Hashtable<String, BillEvent> table = new Hashtable<String, BillEvent>();
 		TreeSet<BillEvent> set = new TreeSet<BillEvent>(new BillEvent.ByEventDate());
 		
-		for(BillEvent billEvent:billEvents) {
-			if(!set.contains(billEvent))
-				set.add(billEvent);
+		for(BillEvent be:billEvents) {
+			if(table.contains(be)) continue;
+			
+			table.put(Long.toString(be.getEventDate().getTime()), be);
+			set.add(be);
 		}
+		
+		table.clear();
 		
 		return new ArrayList<BillEvent>(set);
 	}
