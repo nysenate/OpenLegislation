@@ -4,7 +4,6 @@ import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.lucene.Lucene;
 import gov.nysenate.openleg.lucene.ILuceneObject;
-import gov.nysenate.openleg.lucene.LuceneObject;
 import gov.nysenate.openleg.lucene.LuceneResult;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.SenateObject;
@@ -86,7 +85,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 	}
 	
 	private SearchEngine() {
-		super("/usr/local/openleg/lucene/2");
+		super("/usr/local/openleg/lucene/");
 		logger = Logger.getLogger(SearchEngine.class);
 	}
 
@@ -282,22 +281,22 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 	}
 	
 	public Bill getBill(String oid) {
-		return (Bill) getLuceneObject(Bill.class, "bill", oid);
+		return getSenateObject(Bill.class, "bill", oid);
 	}
 	
 	public Meeting getMeeting(String oid) {
-		return (Meeting) getLuceneObject(Meeting.class, "meeting", oid);
+		return getSenateObject(Meeting.class, "meeting", oid);
 	}
 	
 	public Transcript getTranscript(String oid) {
-		return (Transcript) getLuceneObject(Transcript.class, "transcript", oid);
+		return getSenateObject(Transcript.class, "transcript", oid);
 	}
 	
 	public Supplemental getSupplemental(String oid) {
-		return (Supplemental) getLuceneObject(Supplemental.class, "calendar", oid);
+		return getSenateObject(Supplemental.class, "calendar", oid);
 	}
 	
-	public LuceneObject getLuceneObject(Class<? extends LuceneObject> clazz, String type, String oid) {
+	public <T extends SenateObject> T getSenateObject(Class<T> clazz, String type, String oid) {
 		SenateResponse sr = null;
 		try {
 			sr = search("otype:" + type + " AND oid:" + oid, "json", 0, 1, null, false);
@@ -310,7 +309,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 		if(sr != null && sr.getResults().size() > 0) {
 			Result result = sr.getResults().get(0);
 			if(result.getOid().equalsIgnoreCase(oid)) {
-				LuceneObject ret = null;
+				T ret = null;
 				try {
 					ret = ApiHelper.getMapper().readValue(ApiHelper.unwrapJson(result.data), clazz);
 					ret.setLuceneModified(result.getLastModified());

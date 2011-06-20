@@ -4,8 +4,12 @@
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
-    <servlet-name>APIServlet</servlet-name>
-    <servlet-class>gov.nysenate.openleg.APIServlet</servlet-class>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
+    <servlet-class>gov.nysenate.openleg.api.servlets.SenateObjectViewsServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>KeyValueViewsServlet</servlet-name>
+    <servlet-class>gov.nysenate.openleg.api.servlets.KeyValueViewsServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>SearchServlet</servlet-name>
@@ -19,6 +23,7 @@
     <servlet-name>SenateObjectServlet</servlet-name>
     <servlet-class>gov.nysenate.openleg.api.servlets.SenateObjectServlet</servlet-class>
   </servlet>
+ 
   <servlet-mapping>
     <servlet-name>BillServlet</servlet-name>
     <url-pattern>/bill/*</url-pattern>
@@ -65,59 +70,59 @@
     <url-pattern>/api/2.0/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
     <url-pattern>/bills/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
     <url-pattern>/bills</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>KeyValueViewsServlet</servlet-name>
     <url-pattern>/sponsor/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>KeyValueViewsServlet</servlet-name>
     <url-pattern>/committee/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
     <url-pattern>/meetings/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
     <url-pattern>/meetings</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
     <url-pattern>/calendars/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
     <url-pattern>/calendars</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
     <url-pattern>/transcripts/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
     <url-pattern>/transcripts</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
     <url-pattern>/actions/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
     <url-pattern>/actions</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
     <url-pattern>/votes/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>APIServlet</servlet-name>
+    <servlet-name>SenateObjectViewsServlet</servlet-name>
     <url-pattern>/votes</url-pattern>
   </servlet-mapping>
   <servlet-mapping>

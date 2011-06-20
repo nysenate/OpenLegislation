@@ -1,5 +1,6 @@
-package gov.nysenate.openleg;
+package gov.nysenate.openleg.api.servlets;
 
+import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
@@ -17,11 +18,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-public class APIServlet extends HttpServlet implements OpenLegConstants {
+/**
+ * 
+ * Access to SenateObject multi-views
+ *
+ */
+public class SenateObjectViewsServlet extends HttpServlet implements OpenLegConstants {
 
 	private static final long serialVersionUID = -7567155903739799800L;
 
-	private static Logger logger = Logger.getLogger(APIServlet.class);
+	private static Logger logger = Logger.getLogger(SenateObjectViewsServlet.class);
 
 	private static final String SRV_DELIM = "/";
 
@@ -70,7 +76,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 			} else if (format.equals(FORMAT_XML)) // for now with XML
 				pageSize = DEFAULT_API_PAGE_SIZE;
 
-			handleAPIv1(format, type, pageIdx, pageSize, req, resp);
+			doRequest(format, type, pageIdx, pageSize, req, resp);
 		} catch (NumberFormatException nfe) {
 			logger.warn("Invalid API call", nfe);
 		} catch (NoSuchElementException nse) {
@@ -83,7 +89,7 @@ public class APIServlet extends HttpServlet implements OpenLegConstants {
 
 	}
 
-	public void handleAPIv1(String format, String type, int pageIdx,
+	public void doRequest(String format, String type, int pageIdx,
 			int pageSize, HttpServletRequest req, HttpServletResponse resp)
 			throws IOException, ServletException {
 

@@ -24,7 +24,7 @@ import org.apache.lucene.queryParser.ParseException;
 public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = Logger.getLogger(APIServlet.class);	
+	private static Logger logger = Logger.getLogger(ApiServlet2_0.class);	
 	
 	private static final String SRV_DELIM = "/";
 	

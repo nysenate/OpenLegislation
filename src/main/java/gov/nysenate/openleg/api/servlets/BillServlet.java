@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.api.servlets;
 
 import gov.nysenate.openleg.api.ApiHelper;
-import gov.nysenate.openleg.api.ApiType;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.search.Result;
@@ -14,11 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class BillServlet extends AbstractSenateObjectServlet<Bill> {
 	private static final long serialVersionUID = 1L;
-       
-    public BillServlet() {
-        super();
-    }
-    
+	
 	@Override
 	protected void doRelated(String oid, HttpServletRequest request) {
 		String billQueryId = oid;
