@@ -52,7 +52,7 @@ public class JsonDao {
 		new EasyWriter(new File(logPath)).open().writeLine(data).close();
 	}
 	
-	public void write(ISenateObject obj) {
+	public void write(SenateObject obj) {
 		if(!(obj.getYear()+"").matches("20(09|1[0-9])")) {
 			return;
 		}
@@ -88,7 +88,7 @@ public class JsonDao {
 		}
 	}
 	
-	public SenateObject load(String id, String year, String type, Class<? extends SenateObject> clazz) {
+	public <T extends SenateObject> T load(String id, String year, String type, Class<T> clazz) {
 		return load(TextFormatter.append(jsonDirectory,"/",year,"/",type,"/",id,".json"), clazz);
 	}
 	
@@ -97,7 +97,7 @@ public class JsonDao {
 	 * @param clazz class of object to be loaded
 	 * @return deserialized SenateObject of type clazz
 	 */
-	public SenateObject load(String path, Class<? extends SenateObject> clazz) {
+	public <T extends SenateObject> T load(String path, Class<T> clazz) {
 		try {
 			logger.info("Loading object at: " + path);
 			File file = new File(path);
@@ -116,7 +116,7 @@ public class JsonDao {
 	}
 	
 	
-	public boolean delete(ISenateObject so) {
+	public boolean delete(SenateObject so) {
 		return delete(so.luceneOid(), so.getYear() +"", so.luceneOtype());
 	}
 	
@@ -131,13 +131,14 @@ public class JsonDao {
 		return file.delete();
 	}
 	
-	public ISenateObject mergeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz) {
+	@SuppressWarnings("unchecked")
+	public <T extends SenateObject> T mergeSenateObject(T obj, Class<? extends ISenateObject> clazz) {
 		File file = new File(TextFormatter.append(jsonDirectory,"/",obj.getYear(),"/",obj.luceneOtype(),"/",obj.luceneOid(),".json"));
 		
 		if(file.exists()) {
 			logger.info("Merging object with id: " + obj.luceneOid());
 			try {
-				ISenateObject oldObject = (ISenateObject)mapper.readValue(file, clazz);
+				T oldObject = (T) mapper.readValue(file, clazz);
 				oldObject.setLuceneActive(obj.getLuceneActive());
 				oldObject.merge(obj);
 				obj = oldObject;

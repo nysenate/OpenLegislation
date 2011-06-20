@@ -6,7 +6,6 @@ import gov.nysenate.openleg.ingest.parser.BillParser;
 import gov.nysenate.openleg.ingest.parser.CalendarParser;
 import gov.nysenate.openleg.ingest.parser.SenateParser;
 import gov.nysenate.openleg.ingest.parser.TranscriptParser;
-import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.util.TextFormatter;
@@ -45,7 +44,7 @@ public class IngestJsonWriter {
 	
 	Timer timer;
 	
-	ArrayList<ISenateObject> senateObjects;
+	ArrayList<SenateObject> senateObjects;
 	
 	public IngestJsonWriter(JsonDao ingestJson, SearchEngine searchEngine) {
 		this.ingestJson = ingestJson;
@@ -58,7 +57,7 @@ public class IngestJsonWriter {
 		
 		timer = new gov.nysenate.openleg.util.Timer();
 		
-		senateObjects = new ArrayList<ISenateObject>();
+		senateObjects = new ArrayList<SenateObject>();
 	}
 	
 	public void writeJsonFromDirectory(String sobiDirectory) {
@@ -120,7 +119,7 @@ public class IngestJsonWriter {
 		if(senateObjects != null) {
 			timer.start();
 			
-			ISenateObject sObj;
+			SenateObject sObj;
 			for(int i = 0; i < senateObjects.size(); i++) {
 				sObj = ingestJson.mergeSenateObject(
 						senateObjects.get(i), senateObjects.get(i).getClass());
