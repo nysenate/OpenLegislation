@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.OpenLegConstants;
-import gov.nysenate.openleg.lucene.ILuceneObject;
+import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.model.bill.Vote;
@@ -11,11 +11,9 @@ import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.TextFormatter;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,30 +41,8 @@ public class ApiHelper implements OpenLegConstants {
 		
 		return mapper;
 	}
-
-	public static ArrayList<Result> getRelatedSenateObjects(String type,
-			String query) {
-
-		String searchString =TextFormatter.append("otype:", type, " AND ", "(" + query + ")");
-
-		int start = 0;
-		int pageSize = 100;
-
-		SenateResponse sr = null;
-		try {
-			sr = SearchEngine.getInstance().search(dateReplace(searchString), 
-					DEFAULT_SEARCH_FORMAT, start, pageSize, DEFAULT_SORT_FIELD, true);
-		} catch (ParseException e) {
-			logger.error(e);
-		} catch (IOException e) {
-			logger.error(e);
-		}
-
-		return buildSearchResultList(sr);
-	}
-
-	public static ArrayList<Result> buildSearchResultList(
-			SenateResponse sr) {
+	
+	public static ArrayList<Result> buildSearchResultList(SenateResponse sr) {
 		
 		DateFormat df = DateFormat.getInstance();
 		
@@ -86,7 +62,7 @@ public class ApiHelper implements OpenLegConstants {
 				jsonData = unwrapJson(jsonData);
 				
 				ApiType apiType = getApiType(type);
-				Class<? extends ILuceneObject> clazz = apiType.clazz();
+				Class<? extends ISenateObject> clazz = apiType.clazz();
 
 				Object resultObj = null;
 				try {

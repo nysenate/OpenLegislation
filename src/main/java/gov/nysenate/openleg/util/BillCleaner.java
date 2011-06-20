@@ -172,13 +172,12 @@ public class BillCleaner implements OpenLegConstants {
 		return event;
 	}
 	
-	public static ArrayList<BillEvent> sortBillEvents(List<Result> results) {
+	public static ArrayList<BillEvent> sortBillEvents(List<BillEvent> billEvents) {
 		TreeSet<BillEvent> set = new TreeSet<BillEvent>(new BillEvent.ByEventDate());
 		
-		for(Result result:results) {
-			if(result.getObject() instanceof BillEvent) {
-				set.add((BillEvent)result.getObject());
-			}	
+		for(BillEvent billEvent:billEvents) {
+			if(!set.contains(billEvent))
+				set.add(billEvent);
 		}
 		
 		return new ArrayList<BillEvent>(set);

@@ -1,13 +1,15 @@
 package gov.nysenate.openleg.api.servlets;
 
-import gov.nysenate.openleg.api.ApiHelper;
+import gov.nysenate.openleg.api.QueryBuilder;
+import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
-import gov.nysenate.openleg.search.Result;
+import gov.nysenate.openleg.model.bill.Vote;
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.committee.Meeting;
+import gov.nysenate.openleg.search.SearchEngine;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,54 +18,34 @@ public class BillServlet extends AbstractSenateObjectServlet<Bill> {
 	
 	@Override
 	protected void doRelated(String oid, HttpServletRequest request) {
-		String billQueryId = oid;
-		String sessionYear = DEFAULT_SESSION_YEAR;
-		
-		/* default behavior to maintain previous permalinks
-		 * is if key=S1234 to transform to S1234-2009
-		 * in line with our new bill oid format <billno>-<sessYear> */
-		String[] billParts = billQueryId.split("-");
-		billQueryId = billParts[0];
-		if (billParts.length > 1)
-			sessionYear = billParts[1];
+		try {
+			String rType = "action";
+			String rQuery = QueryBuilder.build().otype(rType).and().relatedBills("billno", oid).query();
+			ArrayList<BillEvent> billEvents = SearchEngine.getInstance().getSenateObjects(rQuery, BillEvent.class);
+			request.setAttribute("related-" + rType, billEvents);
 	
-		/* turns S1234A in to S1234 */
-		String billWildcard = billQueryId.replaceAll("[a-zA-Z]$", "");
+			rType = "bill";
+			rQuery = QueryBuilder.build().otype(rType).and().relatedBills("oid", oid).query();
+			ArrayList<Bill> bills = SearchEngine.getInstance().getSenateObjects(rQuery, Bill.class);
+			request.setAttribute("related-" + rType, bills);
+	
+			rType = "meeting";
+			rQuery = QueryBuilder.build().otype(rType).and().keyValue("bills", oid).query();
+			ArrayList<Meeting> meetings = SearchEngine.getInstance().getSenateObjects(rQuery, Meeting.class);
+			request.setAttribute("related-" + rType, meetings);
 			
-		//get BillEvents for this 
-		//otype:action AND billno:((S1234-2011 OR [S1234A-2011 TO S1234Z-2011) AND S1234*-2011)
-		String rType = "action";
-		String rQuery = null;
-		rQuery = ApiHelper.buildBillWildCardQuery("billno", billWildcard, sessionYear);
-		
-		ArrayList<Result> relatedActions = ApiHelper.getRelatedSenateObjects(rType,rQuery);
-		Hashtable<String,Result> uniqResults = new Hashtable<String,Result>();
-		for (Result rResult: relatedActions) {
-			BillEvent rAction = (BillEvent)rResult.getObject();
-			uniqResults.put(rAction.getEventDate().getTime()+'-'+rResult.getTitle().toUpperCase(), rResult);
+			rType = "calendar";
+			rQuery = QueryBuilder.build().otype(rType).and().keyValue("bills", oid).query();
+			ArrayList<Calendar> calendars = SearchEngine.getInstance().getSenateObjects(rQuery, Calendar.class);
+			request.setAttribute("related-" + rType, calendars);
+			
+			rType = "vote";
+			rQuery = QueryBuilder.build().otype(rType).and().keyValue("billno", oid).query();
+			ArrayList<Vote> votes = SearchEngine.getInstance().getSenateObjects(rQuery, Vote.class);
+			request.setAttribute("related-" + rType, votes);
+			
+		} catch (QueryBuilderException e) {
+			e.printStackTrace();
 		}
-		ArrayList<Result> list = Collections.list(uniqResults.elements());
-		request.setAttribute("related-" + rType, list);
-
-		//get sameas bills (e.g. for S1234A get S1234)
-		//otype:bill AND oid:((S1234-2011 OR [S1234A-2011 TO S1234Z-2011) AND S1234*-2011)
-		rType = "bill";
-		rQuery = ApiHelper.buildBillWildCardQuery("oid", billWildcard, sessionYear);
-		request.setAttribute("related-" + rType, ApiHelper.getRelatedSenateObjects(rType,rQuery));
-
-		//get Meetings
-		rType = "meeting";
-		rQuery = "bills:\"" + oid + "\"";					
-		request.setAttribute("related-" + rType, ApiHelper.getRelatedSenateObjects(rType,rQuery));
-		
-		//get calendars
-		rType = "calendar";
-		rQuery = "bills:\"" + oid + "\"";
-		request.setAttribute("related-" + rType, ApiHelper.getRelatedSenateObjects(rType,rQuery));
-		
-		//get votes
-		rType = "vote";
-		rQuery = "billno:\"" + oid + "\"";
-		request.setAttribute("related-" + rType, ApiHelper.getRelatedSenateObjects(rType,rQuery));
 	}
 }

@@ -4,11 +4,9 @@
 
 String appPath = request.getContextPath();
 
-String term = (String)request.getAttribute("term");
-
-
 Bill bill = (Bill)request.getAttribute("bill");
 
+boolean active = bill.getLuceneActive();
   	
 String titleText = "(no title)";
 if (bill.getTitle()!=null)
@@ -21,6 +19,8 @@ if (senateBillNo.indexOf("-")==-1)
 
 String title = senateBillNo + " - NY Senate Open Legislation - " + titleText;
 
+SimpleDateFormat calendarSdf = new SimpleDateFormat("MMM d, yyyy");
+
  %>
 <jsp:include page="/views/mobile-header.jsp">
 	<jsp:param name="title" value="<%=title%>"/>
@@ -28,6 +28,11 @@ String title = senateBillNo + " - NY Senate Open Legislation - " + titleText;
 <br/>
      <h2><%=senateBillNo%>: <%if (bill.getTitle()!=null){ %><%=bill.getTitle()%><%} %></h2>
     <br/>
+    
+    <% if(!active) { %>
+		<div class="amended">This bill has been amended.</div>
+	<% } %>
+    
      <div style="float:left;">
     
     <%if (bill.getSameAs()!=null){ 
@@ -45,7 +50,7 @@ while(st.hasMoreTokens())
 {
 	
 	sameAs = st.nextToken().trim();
-	sameAsLink = appPath + "/bill/" + sameAs;
+	sameAsLink = appPath + "/bill/" + sameAs + "-" + bill.getYear();
 	
 	if (sameAs.length() == 0)
 		continue;
@@ -69,15 +74,14 @@ String sponsor = null;
 if (bill.getSponsor()!=null)
 		sponsor = bill.getSponsor().getFullname();
 
-ArrayList<Result> rBills = (ArrayList<Result>)request.getAttribute("related-bill");
+ArrayList<Bill> rBills = (ArrayList<Bill>)request.getAttribute("related-bill");
 %>
+
 <%if (rBills.size()>0) { %>
-Versions: <%for (Result rBill:rBills){
+Versions: <%for (Bill rBill:rBills){
 	
-	if ((sponsor == null || sponsor.length()==0) && rBill.getFields().get("sponsor")!=null)
-		sponsor = rBill.getFields().get("sponsor");
 	
-%><a href="/legislation/bill/<%=rBill.getOid()%>"><%=rBill.getOid()%></a> <%}%>
+%><a href="/legislation/bill/<%=rBill.getSenateBillNo()%>"><%=rBill.getSenateBillNo()%></a> <%}%>
 <%}
 
 if (sponsor == null)
@@ -111,7 +115,7 @@ DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 
 String billSummary = bill.getSummary();
 String billMemo = bill.getMemo();
-String billText = bill.getFulltext();
+//String billText = bill.getFulltext();
 
 if (bill.getSponsor()!=null)
 	title += " - " + bill.getSponsor().getFullname();
@@ -137,9 +141,7 @@ if (bill.getTitle()!=null)
  <%} %>
  <hr/>
  <b>Sponsor: </b>
- <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(sponsor,"utf-8")%>"  class="sublink"><%=sponsor%></a>
-/
- 
+ <a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(sponsor,"utf-8")%>"  class="sublink"><%=sponsor%></a> 
 <!--
 <%if (bill.getActClause()!=null){ %>
  <%=bill.getActClause()%>
@@ -148,7 +150,7 @@ if (bill.getTitle()!=null)
 
  
  <%if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0){%>
-<b>Co-sponsor(s):</b>
+/ <b>Co-sponsor(s):</b>
  <%
  Iterator<Person> it = bill.getCoSponsors().iterator();
  Person cp = null;
@@ -161,47 +163,49 @@ if (bill.getTitle()!=null)
  <%} %>
 
  <%if (bill.getCurrentCommittee()!=null){ %>
- / <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a> <br/>
+ / <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
 <%} %>
-
+<br/>
 <%if (bill.getLawSection()!=null){ %>
  <b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
  <%} %>
 
   <%if (bill.getLaw()!=null){ %>
- / <b>Law:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("law:\"" + bill.getLaw()+"\"","utf-8")%>" class="sublink"><%=bill.getLaw()%></a>
+ / <b>Law:</b> <%=bill.getLaw()%>
  <%} %>
 
-
- 
 </div>
  
  
 
 <%
-ArrayList<Result> rActions = (ArrayList<Result>)request.getAttribute("related-action");
+ArrayList<BillEvent> rActions = (ArrayList<BillEvent>)request.getAttribute("related-action");
 %>
 <%if (rActions.size() > 0) { %>
 <h3><%=senateBillNo%> Actions</h3>
 <ul>
-	<%for (Result beAction : rActions){
-	%>
-	<li><%=df.format(beAction.getLastModified())%>: <%=beAction.getTitle().toUpperCase()%></li>
-	<%}%>
+	<%
+		ArrayList<BillEvent> events = BillCleaner.sortBillEvents(rActions);
+		for (BillEvent be : events){ 
+			
+			%>
+				<li><%=df.format(be.getEventDate().getTime())%>: <%=BillCleaner.formatBillEvent(bill.getSenateBillNo(), be.getEventText(), appPath)%></li>
+			<%
+		}%>
 </ul>
 <%}%>
 
 <%
 
-ArrayList<Result> rMeetings = (ArrayList<Result>)request.getAttribute("related-meeting");
+ArrayList<Meeting> rMeetings = (ArrayList<Meeting>)request.getAttribute("related-meeting");
 %>
 <%if (rMeetings.size()>0) { %>
 <h3><%=senateBillNo%> Meetings</h3>
 <%
-	for (Iterator<Result> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
-		Result meeting = itMeetings.next();
+	for (Iterator<Meeting> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
+		Meeting meeting = itMeetings.next();
 		%>
-		<a href="<%=appPath%>/meeting/<%=meeting.getOid()%>" class="sublink"><%=meeting.getTitle()%></a><%if (itMeetings.hasNext()){%>,<%}
+		<a href="<%=appPath%>/meeting/<%=meeting.luceneOid()%>" class="sublink"><%=meeting.luceneTitle()%></a><%if (itMeetings.hasNext()){%>,<%}
 		
 	}
 }
@@ -209,17 +213,26 @@ ArrayList<Result> rMeetings = (ArrayList<Result>)request.getAttribute("related-m
 
 <%
 
-ArrayList<Result> rCals = (ArrayList<Result>)request.getAttribute("related-calendar");
+ArrayList<gov.nysenate.openleg.model.calendar.Calendar> rCals = (ArrayList<gov.nysenate.openleg.model.calendar.Calendar>)request.getAttribute("related-calendar");
 %>
 <%if (rCals.size()>0) { %>
 <h3><%=senateBillNo%> Calendars</h3>
 <%
-for (Iterator<Result> itCals = rCals.iterator(); itCals.hasNext();)
+for (Iterator<gov.nysenate.openleg.model.calendar.Calendar> itCals = rCals.iterator(); itCals.hasNext();)
 {
-	Result cal = itCals.next();
+	gov.nysenate.openleg.model.calendar.Calendar cal = itCals.next();
+	Supplemental sup = cal.getSupplementals().get(0);
+	
+	sup.setCalendar(cal);
+	
+	String type = "";
+	if (cal.getType().equals("active"))
+		type = "Active List";
+	else if (cal.getType().equals("floor"))
+		type = "Floor Calendar";
 	
 	%>
-<a href="<%=appPath%>/calendar/<%=cal.getOid()%>" class="sublink"><%=cal.getFields().get("type")%>: <%=cal.getFields().get("date")%></a><%if (itCals.hasNext()){%>,<%}
+<a href="<%=appPath%>/calendar/<%=sup.luceneOid()%>" class="sublink"><%=type%><%=sup.getCalendarDate() == null ? "" : ": " +  calendarSdf.format(sup.getCalendarDate())%></a><%if (itCals.hasNext()){%>,<%}
 
 }
 }
@@ -227,16 +240,13 @@ for (Iterator<Result> itCals = rCals.iterator(); itCals.hasNext();)
 
 <%
 
-ArrayList<Result> rVotes = (ArrayList<Result>)request.getAttribute("related-vote");
+ArrayList<Vote> rVotes = (ArrayList<Vote>)request.getAttribute("related-vote");
 %>
 <%if (rVotes.size()>0) { %>
 <h3><%=senateBillNo%> Votes</h3>
 <%
-ObjectMapper mapper = new ObjectMapper();
-for (Result result:rVotes){
-   
-	Vote vote = (Vote)result.getObject();
-	
+for (Vote vote:rVotes){
+   	
    	String voteType = "Floor Vote";
 if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
 	voteType = "Committee Vote";
@@ -248,7 +258,7 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
   <%if (vote.getDescription()!=null){%>- <%=vote.getDescription()%><%} %>
   - <%=DateFormat.getDateInstance(DateFormat.MEDIUM).format(vote.getVoteDate())%></b>
   <blockquote>
- 	<%Iterator<String> itVoter = null; String voter = null;%>
+  	<%Iterator<String> itVoter = null; String voter = null;%>
   	<%if (vote.getAyes()!=null && vote.getAyes().size()>0){ %>
  			<br/>
  	<b>Ayes (<%=vote.getAyes().size()%>):</b>
@@ -334,21 +344,21 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
   
 <%if (billMemo!=null && !billMemo.matches("\\s*")){%>
 <h3><%=senateBillNo%> Memo</h3>
-<%=TextFormatter.formatMemo (billMemo)%><%}%>
+<pre><%=/*TextFormatter.formatMemo (billMemo)*/billMemo%></pre><%}%>
 	
  <h3><%=senateBillNo%> Text</h3>
-<%if (billText!=null){
+<%if (bill.getFulltext()!=null){
   
+  String billText = TextFormatter.lrsPrinter(bill.getFulltext());
   billText = TextFormatter.removeBillLineNumbers (billText);
   
-  %><%=billText%><%} else{%>Not Available.<%}%>
+  %><pre><%=billText %></pre><%} else{%>Not Available.<%}%>
  
  <br/>
   
  </div>
   
- 
-<%
+ <%
  
  String disqusUrl = "";
  String disqusId = "";
@@ -375,8 +385,11 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
     var disqus_shortname = 'nysenateopenleg'; // required: replace example with your forum shortname
 
     // The following are highly recommended additional parameters. Remove the slashes in front to use.
-     var disqus_identifier = '<%=disqusId%>';
+     var disqus_identifier = '<%=disqusUrl%>';
      var disqus_url = '<%=disqusUrl%>';
+     var disqus_developer = 0; // developer mode is off
+     var disqus_title = '<%=title%>';
+
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
@@ -389,6 +402,7 @@ if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
 <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
 
 </div>
+
  
 
 <jsp:include page="/footer.jsp"/>

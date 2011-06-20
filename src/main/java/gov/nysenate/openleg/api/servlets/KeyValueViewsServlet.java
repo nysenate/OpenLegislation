@@ -6,9 +6,9 @@ import java.util.StringTokenizer;
 
 import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.api.ApiHelper;
+import gov.nysenate.openleg.api.QueryBuilder;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
-import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import javax.servlet.ServletException;
@@ -96,15 +96,14 @@ public class KeyValueViewsServlet extends HttpServlet implements OpenLegConstant
 		String urlPath = TextFormatter.append("/legislation/", key, "/", value, "/");
 
 		String viewPath = "";
-		String searchString = "";
 		String sFormat = "json";
 		String sortField = "sortindex";
 		boolean sortOrder = false;
 		
+		QueryBuilder queryBuilder = new QueryBuilder();
+		
 		String filter = req.getParameter("filter");
 		
-		searchString = TextFormatter.append(key,":\"",value,"\"",filter == null ? "" : " AND " + filter);
-
 		SenateResponse sr = null;
 
 		if (pageSize > MAX_PAGE_SIZE)
@@ -118,18 +117,11 @@ public class KeyValueViewsServlet extends HttpServlet implements OpenLegConstant
 		logger.info(TextFormatter.append("request: key=", key,";value=",value, ";format=",
 				format, ";paging=", start, "/", end));
 		try {
-			/*
-			 * generate default views query, filter by session year, documents
-			 * outside of this range can be manually searched
-			 */
-			searchString = TextFormatter.append(
-					ApiHelper.dateReplace(searchString), " AND (", "year:",
-					SessionYear.getSessionYear(), " OR when:[",
-					SessionYear.getSessionStart(), " TO ",
-					SessionYear.getSessionEnd(), "]", ")", " AND active:",
-					LUCENE_ACTIVE);
 			
-			sr = SearchEngine.getInstance().search(searchString, sFormat,
+			queryBuilder.keyValue(key, value).and().current().and().active();
+			if(filter != null) queryBuilder.and().insertAfter(filter);
+			
+			sr = SearchEngine.getInstance().search(queryBuilder.query(), sFormat,
 					start, pageSize, sortField, sortOrder);
 
 			logger.info(TextFormatter.append("got search results: ", sr.getResults().size()));
@@ -146,7 +138,7 @@ public class KeyValueViewsServlet extends HttpServlet implements OpenLegConstant
 				req.setAttribute("sortField", sortField);
 				req.setAttribute("sortOrder", Boolean.toString(sortOrder));
 				req.setAttribute("type", key);
-				req.setAttribute("term", searchString);
+				req.setAttribute("term", queryBuilder.query());
 				req.setAttribute("format", format);
 				req.setAttribute(PAGE_IDX, pageIdx + "");
 				req.setAttribute(PAGE_SIZE, pageSize + "");

@@ -1,7 +1,6 @@
 <%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.model.calendar.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
 <%
 
-
 String appPath = request.getContextPath();
 
 Bill bill = (Bill)request.getAttribute("bill");
@@ -19,7 +18,10 @@ if (senateBillNo.indexOf("-")==-1)
 
 String title = senateBillNo + " - NY Senate Open Legislation - " + titleText;
 
+SimpleDateFormat calendarSdf = new SimpleDateFormat("MMM d, yyyy");
+
  %>
+
 <br/>
      <h2><%=senateBillNo%>: <%if (bill.getTitle()!=null){ %><%=bill.getTitle()%><%} %></h2>
     <br/>
@@ -69,16 +71,14 @@ String sponsor = null;
 if (bill.getSponsor()!=null)
 		sponsor = bill.getSponsor().getFullname();
 
-ArrayList<Result> rBills = (ArrayList<Result>)request.getAttribute("related-bill");
+ArrayList<Bill> rBills = (ArrayList<Bill>)request.getAttribute("related-bill");
 %>
 
 <%if (rBills.size()>0) { %>
-Versions: <%for (Result rBill:rBills){
+Versions: <%for (Bill rBill:rBills){
 	
-	if ((sponsor == null || sponsor.length()==0) && rBill.getFields().get("sponsor")!=null)
-		sponsor = rBill.getFields().get("sponsor");
 	
-%><a href="/legislation/bill/<%=rBill.getOid()%>"><%=rBill.getOid()%></a> <%}%>
+%><a href="/legislation/bill/<%=rBill.getSenateBillNo()%>"><%=rBill.getSenateBillNo()%></a> <%}%>
 <%}
 
 if (sponsor == null)
@@ -176,7 +176,7 @@ if (bill.getTitle()!=null)
  
 
 <%
-ArrayList<Result> rActions = (ArrayList<Result>)request.getAttribute("related-action");
+ArrayList<BillEvent> rActions = (ArrayList<BillEvent>)request.getAttribute("related-action");
 %>
 <%if (rActions.size() > 0) { %>
 <h3><%=senateBillNo%> Actions</h3>
@@ -194,15 +194,15 @@ ArrayList<Result> rActions = (ArrayList<Result>)request.getAttribute("related-ac
 
 <%
 
-ArrayList<Result> rMeetings = (ArrayList<Result>)request.getAttribute("related-meeting");
+ArrayList<Meeting> rMeetings = (ArrayList<Meeting>)request.getAttribute("related-meeting");
 %>
 <%if (rMeetings.size()>0) { %>
 <h3><%=senateBillNo%> Meetings</h3>
 <%
-	for (Iterator<Result> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
-		Result meeting = itMeetings.next();
+	for (Iterator<Meeting> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
+		Meeting meeting = itMeetings.next();
 		%>
-		<a href="<%=appPath%>/meeting/<%=meeting.getOid()%>" class="sublink"><%=meeting.getTitle()%></a><%if (itMeetings.hasNext()){%>,<%}
+		<a href="<%=appPath%>/meeting/<%=meeting.luceneOid()%>" class="sublink"><%=meeting.luceneTitle()%></a><%if (itMeetings.hasNext()){%>,<%}
 		
 	}
 }
@@ -210,17 +210,26 @@ ArrayList<Result> rMeetings = (ArrayList<Result>)request.getAttribute("related-m
 
 <%
 
-ArrayList<Result> rCals = (ArrayList<Result>)request.getAttribute("related-calendar");
+ArrayList<gov.nysenate.openleg.model.calendar.Calendar> rCals = (ArrayList<gov.nysenate.openleg.model.calendar.Calendar>)request.getAttribute("related-calendar");
 %>
 <%if (rCals.size()>0) { %>
 <h3><%=senateBillNo%> Calendars</h3>
 <%
-for (Iterator<Result> itCals = rCals.iterator(); itCals.hasNext();)
+for (Iterator<gov.nysenate.openleg.model.calendar.Calendar> itCals = rCals.iterator(); itCals.hasNext();)
 {
-	Result cal = itCals.next();
+	gov.nysenate.openleg.model.calendar.Calendar cal = itCals.next();
+	Supplemental sup = cal.getSupplementals().get(0);
+	
+	sup.setCalendar(cal);
+	
+	String type = "";
+	if (cal.getType().equals("active"))
+		type = "Active List";
+	else if (cal.getType().equals("floor"))
+		type = "Floor Calendar";
 	
 	%>
-<a href="<%=appPath%>/calendar/<%=cal.getOid()%>" class="sublink"><%=cal.getFields().get("type")%>: <%=cal.getFields().get("date")%></a><%if (itCals.hasNext()){%>,<%}
+<a href="<%=appPath%>/calendar/<%=sup.luceneOid()%>" class="sublink"><%=type%><%=sup.getCalendarDate() == null ? "" : ": " +  calendarSdf.format(sup.getCalendarDate())%></a><%if (itCals.hasNext()){%>,<%}
 
 }
 }
@@ -228,16 +237,13 @@ for (Iterator<Result> itCals = rCals.iterator(); itCals.hasNext();)
 
 <%
 
-ArrayList<Result> rVotes = (ArrayList<Result>)request.getAttribute("related-vote");
+ArrayList<Vote> rVotes = (ArrayList<Vote>)request.getAttribute("related-vote");
 %>
 <%if (rVotes.size()>0) { %>
 <h3><%=senateBillNo%> Votes</h3>
 <%
-ObjectMapper mapper = new ObjectMapper();
-for (Result result:rVotes){
-   
-	Vote vote = (Vote)result.getObject();
-	
+for (Vote vote:rVotes){
+   	
    	String voteType = "Floor Vote";
 if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
 	voteType = "Committee Vote";

@@ -84,8 +84,8 @@ public abstract class AbstractSenateObjectServlet<T extends ISenateObject>
 	
 	@SuppressWarnings("unchecked")
 	protected T getSenateObject(String oid, ApiType apiType) {
-		return (T) SearchEngine.getInstance().getSenateObject(apiType.clazz(),
-				apiType.type(), oid);
+		return (T) SearchEngine.getInstance().getSenateObject(oid,
+				apiType.type(), apiType.clazz());
 	}
 	
 	protected abstract void doRelated(String oid, HttpServletRequest request);

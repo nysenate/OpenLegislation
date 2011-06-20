@@ -2,9 +2,9 @@ package gov.nysenate.openleg.api.servlets;
 
 import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.api.ApiHelper;
+import gov.nysenate.openleg.api.QueryBuilder;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
-import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
@@ -96,10 +96,11 @@ public class SenateObjectViewsServlet extends HttpServlet implements OpenLegCons
 		String urlPath = TextFormatter.append("/legislation/", type, "/");
 
 		String viewPath = "";
-		String searchString = "";
 		String sFormat = "json";
 		String sortField = "when";
 		boolean sortOrder = true;
+		
+		QueryBuilder queryBuilder = new QueryBuilder();
 
 		if (type.contains("bill")) {
 			sortField = "sortindex";
@@ -123,20 +124,9 @@ public class SenateObjectViewsServlet extends HttpServlet implements OpenLegCons
 		try {
 			type = type.substring(0, type.length() - 1);
 
-			searchString = TextFormatter.append("otype:", type);
-
-			/*
-			 * generate default views query, filter by session year, documents
-			 * outside of this range can be manually searched
-			 */
-			searchString = TextFormatter.append(
-					ApiHelper.dateReplace(searchString), " AND (", "year:",
-					SessionYear.getSessionYear(), " OR when:[",
-					SessionYear.getSessionStart(), " TO ",
-					SessionYear.getSessionEnd(), "]", ")", " AND active:",
-					LUCENE_ACTIVE);
+			queryBuilder.otype(type).and().current().and().active();
 			
-			sr = SearchEngine.getInstance().search(searchString, sFormat,
+			sr = SearchEngine.getInstance().search(queryBuilder.query(), sFormat,
 					start, pageSize, sortField, sortOrder);
 
 			logger.info(TextFormatter.append("got search results: ", sr.getResults().size()));
@@ -153,7 +143,7 @@ public class SenateObjectViewsServlet extends HttpServlet implements OpenLegCons
 				req.setAttribute("sortField", sortField);
 				req.setAttribute("sortOrder", Boolean.toString(sortOrder));
 				req.setAttribute("type", type);
-				req.setAttribute("term", searchString);
+				req.setAttribute("term", queryBuilder.query());
 				req.setAttribute("format", format);
 				req.setAttribute(PAGE_IDX, pageIdx + "");
 				req.setAttribute(PAGE_SIZE, pageSize + "");
