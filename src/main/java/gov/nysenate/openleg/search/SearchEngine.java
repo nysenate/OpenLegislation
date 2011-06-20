@@ -1,7 +1,8 @@
 package gov.nysenate.openleg.search;
 
 import gov.nysenate.openleg.OpenLegConstants;
-import gov.nysenate.openleg.api.ApiHelper;
+import gov.nysenate.openleg.api.QueryBuilder;
+import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.lucene.Lucene;
 import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.lucene.LuceneResult;
@@ -17,6 +18,7 @@ import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.util.JsonSerializer;
+import gov.nysenate.openleg.util.LongSearch;
 import gov.nysenate.openleg.util.XmlSerializer;
 
 import java.io.BufferedReader;
@@ -36,8 +38,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.queryParser.ParseException;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 
 public class SearchEngine extends Lucene implements OpenLegConstants {
 	
@@ -281,50 +281,53 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 	}
 	
 	public Bill getBill(String oid) {
-		return getSenateObject(Bill.class, "bill", oid);
+		return getSenateObject(oid, "bill", Bill.class);
 	}
 	
 	public Meeting getMeeting(String oid) {
-		return getSenateObject(Meeting.class, "meeting", oid);
+		return getSenateObject(oid, "meeting", Meeting.class);
 	}
 	
 	public Transcript getTranscript(String oid) {
-		return getSenateObject(Transcript.class, "transcript", oid);
+		return getSenateObject(oid, "transcript", Transcript.class);
 	}
 	
 	public Supplemental getSupplemental(String oid) {
-		return getSenateObject(Supplemental.class, "calendar", oid);
+		return getSenateObject(oid, "calendar", Supplemental.class);
 	}
 	
-	public <T extends SenateObject> T getSenateObject(Class<T> clazz, String type, String oid) {
-		SenateResponse sr = null;
+	public <T extends SenateObject> T getSenateObject(String oid, String type, Class<T> clazz) {
+		T ret = null;
+		
+		QueryBuilder queryBuilder = null;
 		try {
-			sr = search("otype:" + type + " AND oid:" + oid, "json", 0, 1, null, false);
-		} catch (ParseException e) {
+			queryBuilder = QueryBuilder.build().otype(type).and().oid(oid);
+		} catch (QueryBuilderException e) {
 			logger.error(e);
-		} catch (IOException e) {
-			logger.error(e);
+			return ret;
 		}
 		
-		if(sr != null && sr.getResults().size() > 0) {
-			Result result = sr.getResults().get(0);
-			if(result.getOid().equalsIgnoreCase(oid)) {
-				T ret = null;
-				try {
-					ret = ApiHelper.getMapper().readValue(ApiHelper.unwrapJson(result.data), clazz);
-					ret.setLuceneModified(result.getLastModified());
-				} catch (JsonParseException e) {
-					logger.error(e);
-				} catch (JsonMappingException e) {
-					logger.error(e);
-				} catch (IOException e) {
-					logger.error(e);
-				}
-				if(ret != null)
-					return ret;
-			}
+		ArrayList<T> senateObjects = getSenateObjects(queryBuilder.query(), clazz);
+		
+		if(senateObjects.isEmpty())
+			return ret;
+		
+		return senateObjects.get(0);
+	}
+	
+	public <T extends SenateObject> ArrayList<T> getSenateObjects(String query) {
+		return getSenateObjects(query, null);
+	}
+	
+	public <T extends SenateObject> ArrayList<T> getSenateObjects(String query, Class<T> clazz) {
+		ArrayList<T> senateObjects = new ArrayList<T>();
+		
+		LongSearch<T> longSearch = new LongSearch<T>().clazz(clazz).query(query);
+		
+		for(T senateObject:longSearch) {
+			senateObjects.add(senateObject);
 		}
 		
-		return null;
+		return senateObjects;
 	}
 }
