@@ -209,12 +209,12 @@ public class JsonConverter {
 	 */
 	
 	@SuppressWarnings("unchecked")
-	private static JsonArray listBill(Collection c)  throws Exception  {
+	private static JsonArray listBill(Collection<?> c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((List)c).iterator().hasNext()) {
+		if(((List<?>)c).iterator().hasNext()) {
 			
-			Object o = ((List)c).iterator().next();
+			Object o = ((List<?>)c).iterator().next();
 			
 			if(o instanceof String) {
 				List<String> strings = (List<String>) c;
@@ -266,11 +266,11 @@ public class JsonConverter {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static JsonArray listVote(Collection c)  throws Exception  {
+	private static JsonArray listVote(Collection<?> c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((List)c).iterator().hasNext()) {
-			Object o = ((List)c).iterator().next();
+		if(((List<?>)c).iterator().hasNext()) {
+			Object o = ((List<?>)c).iterator().next();
 			
 			if(o instanceof String) {
 				List<String> votes = (List<String>)c;
@@ -287,12 +287,12 @@ public class JsonConverter {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static JsonArray listSupplemental(Collection c)  throws Exception  {
+	private static JsonArray listSupplemental(Collection<?> c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
 		
-		if(((List)c).iterator().hasNext()) {
-			Object o = ((List)c).iterator().next();
+		if(((List<?>)c).iterator().hasNext()) {
+			Object o = ((List<?>)c).iterator().next();
 			if(o instanceof Section) {
 				List<Section> sections = (List<Section>)c;
 				
@@ -307,11 +307,11 @@ public class JsonConverter {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static JsonArray listCalendar(Collection c)  throws Exception  {
+	private static JsonArray listCalendar(Collection<?> c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((List)c).iterator().hasNext()) {
-			Object o = ((List)c).iterator().next();
+		if(((List<?>)c).iterator().hasNext()) {
+			Object o = ((List<?>)c).iterator().next();
 			
 			if(o instanceof Supplemental) {
 				List<Supplemental> supplementals = (List<Supplemental>)c;
@@ -327,11 +327,11 @@ public class JsonConverter {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static JsonArray listMeeting(Collection c)  throws Exception  {
+	private static JsonArray listMeeting(Collection<?> c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((List)c).iterator().hasNext()) {
-			Object o = ((List)c).iterator().next();
+		if(((List<?>)c).iterator().hasNext()) {
+			Object o = ((List<?>)c).iterator().next();
 			
 			if(o instanceof Bill) {
 				List<Bill> bills = (List<Bill>)c;
@@ -354,11 +354,11 @@ public class JsonConverter {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static JsonArray listSection(Collection c)  throws Exception  {
+	private static JsonArray listSection(Collection<?> c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((List)c).iterator().hasNext()) {
-			Object o = ((List)c).iterator().next();
+		if(((List<?>)c).iterator().hasNext()) {
+			Object o = ((List<?>)c).iterator().next();
 			
 			if(o instanceof CalendarEntry) {
 				List<CalendarEntry> calendarEntries = (List<CalendarEntry>)c;
@@ -373,11 +373,11 @@ public class JsonConverter {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static JsonArray listSequence(Collection c)  throws Exception  {
+	private static JsonArray listSequence(Collection<?> c)  throws Exception  {
 		JsonArray jarray = new JsonArray();
 		
-		if(((List)c).iterator().hasNext()) {
-			Object o = ((List)c).iterator().next();
+		if(((List<?>)c).iterator().hasNext()) {
+			Object o = ((List<?>)c).iterator().next();
 			
 			if(o instanceof CalendarEntry) {
 				List<CalendarEntry> calendarEntries = (List<CalendarEntry>)c;

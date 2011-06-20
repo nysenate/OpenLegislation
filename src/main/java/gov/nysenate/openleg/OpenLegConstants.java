@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 
 
 public interface OpenLegConstants {
-
 	public static final String FORMAT_XML = "xml";
 	
 	public static final String PAGE_IDX = "pageIdx";
