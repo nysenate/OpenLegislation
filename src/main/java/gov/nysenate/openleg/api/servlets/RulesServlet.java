@@ -1,4 +1,4 @@
-package gov.nysenate.openleg;
+package gov.nysenate.openleg.api.servlets;
 
 import java.io.IOException;
 

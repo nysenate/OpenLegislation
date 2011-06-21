@@ -1,4 +1,4 @@
-package gov.nysenate.openleg;
+package gov.nysenate.openleg.api.servlets;
 
 import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.qa.ReportReader;
