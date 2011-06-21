@@ -1,17 +1,20 @@
-package gov.nysenate.openleg;
+package gov.nysenate.openleg.api.servlets;
 
+import gov.nysenate.openleg.OpenLegConstants;
+import gov.nysenate.openleg.api.ApiHelper;
+import gov.nysenate.openleg.api.QueryBuilder;
+import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
+import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,15 +31,6 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 	
 	private static final String SRV_DELIM = "/";
 	
-    public ApiServlet2_0() {
-        super();
-    }
-
-    @Override
-	public void init() throws ServletException {
-		super.init();
-	}
-
 	public void doGet(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException {
 
     	doPost(request, response);
@@ -71,16 +65,15 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			{
 				term = command;
 				command = arg1;
-				
 			}
 		}
 		else  {
 			req.setAttribute("term","");
 			getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
-			
 		}
 				
 		term = (String)req.getParameter("term");
+		String key = term;
 		int pageSize = req.getParameter("pageSize") != null ? 
 							Integer.parseInt(req.getParameter("pageSize")) : 20;
 		int pageIdx = (String)req.getParameter("pageIdx") != null ? 
@@ -105,18 +98,26 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 		if(command.startsWith("search")) {
 			if(term == null) {
 				getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
-			
+				return;
 			}
 			
 			String cmd[] = command.split("\\.");
-			command = cmd[0];
-			format = cmd[1];				
+			
+			if(cmd.length == 1) {
+				format = "html";
+			}
+			else {
+				command = cmd[0];
+				format = cmd[1];
+			}
+							
 			req.setAttribute("format", format);
 		}
 		else {
-			
 			if (st.hasMoreTokens())
 				term = st.nextToken();
+			
+			key = term;
 			
 			format = "";
 			try {
@@ -131,104 +132,79 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 				term = formatDate(term, command);
 			}
 			else {
-				
 				if(command.equals("bill")) {
 					term = BillCleaner.formatV2Bill(term);
 				}
-				
-				term = "otype:" + command + ((term != null && !term.equals("")) ? " AND oid:" + term: "");
-				
+				try {
+					QueryBuilder queryBuilder = QueryBuilder.build().otype(command);
+					
+					if(term != null && !term.matches("\\s*")) queryBuilder.and().oid(term);
+					
+					term = queryBuilder.query();
+				}
+				catch(QueryBuilderException e) {
+					logger.error(e);
+				}
 			}
-			
 			
 			req.setAttribute("format", format);
 			req.setAttribute(KEY_TYPE, command);
 		}
 		
 		try {
-						
-			
-			String sFormat = "json";
-			
-			if (format.equals("xml"))
-				sFormat = "xml";
-			
-			SenateResponse sr = SearchEngine.getInstance().search(dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);			
-			
-			if(sr.getResults() == null || sr.getResults().size() == 0) {
-				term = term+"*";
-				sr = SearchEngine.getInstance().search(dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);
-			}
-			
-			req.setAttribute("results", sr);
-			
-			String viewPath = null;
-			
-			if (format.equals("xml") || format.equals("json") )
-			{
-				viewPath = "/views2/v2-api.jsp";
-			}
-			else
-			{
-				viewPath = "/views2/v2-api-" + format + ".jsp";
-			}
-			
-			if(sr.getResults().size() == 0) {
-				getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
-			}			
-			else if(sr.getResults().size() == 1) {
-			
-				Result result = sr.getResults().iterator().next();
-				
-				if(!command.equals("search") && !term.contains(result.getOid())) {
-					viewPath = "/legislation/api/2.0/" + command + "/" + result.getOid() + "." + format;
-					resp.sendRedirect(viewPath);
+			if (format.equalsIgnoreCase("html")) {
+				if(command.equalsIgnoreCase("search")) {
+					resp.sendRedirect("/legislation/search/?search=" + key);
 				}
 				else {
-					getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
+					resp.sendRedirect("/legislation/" + command + "/" + key);
 				}
 			}
 			else {
+				String sFormat = "json";
+				String viewPath = "/views2/v2-api.jsp";
 				
-				if(!command.equals("search") && !term.contains(sr.getResults().iterator().next().getOid())) {
-					viewPath = "/legislation/2.0/search/" +format +"?term=" + term;
-					resp.sendRedirect(viewPath);
+				if (format.equals("xml"))
+					sFormat = "xml";
+				
+				SenateResponse sr = SearchEngine.getInstance().search(ApiHelper.dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);			
+				
+				if(sr.getResults() == null || sr.getResults().size() == 0) {
+					term = term+"*";
+					sr = SearchEngine.getInstance().search(ApiHelper.dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);
+				}
+				
+				req.setAttribute("results", sr);
+				
+				if(sr == null || sr.getResults().size() == 0) {
+					getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
+				}			
+				else if(sr.getResults().size() == 1) {
+				
+					Result result = sr.getResults().get(0);
+					
+					if(!command.equals("search") && !term.contains(result.getOid())) {
+						viewPath = TextFormatter.append("/legislation/api/2.0/",command,"/",result.getOid(),".",format);
+						resp.sendRedirect(viewPath);
+					}
+					else {
+						getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
+					}
 				}
 				else {
-					getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
+					if(!command.equals("search") && !term.contains(sr.getResults().get(0).getOid())) {
+						viewPath = TextFormatter.append("/legislation/2.0/search.",format,"?term=",term);
+						resp.sendRedirect(viewPath);
+					}
+					else {
+						getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
+					}
 				}
-				
 			}
+			
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
-		
-		
-		
-	}
-	
-	public String dateReplace(String term) throws ParseException {
-		Pattern  p = Pattern.compile("(\\d{1,2}[-]?){2}(\\d{2,4})T\\d{2}-\\d{2}");
-		Matcher m = p.matcher(term);
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy'T'KK-mm");
-		
-		while(m.find()) {
-			String d = term.substring(m.start(),m.end());
-			
-			Date date = null;
-			try {
-				date = sdf.parse(d);
-				term = term.substring(0, m.start()) + date.getTime() + term.substring(m.end());
-			} catch (java.text.ParseException e) {
-				e.printStackTrace();
-			}
-			
-			m.reset(term);
-			
-		}
-		
-		return term;
 	}
 	
 	public String formatDate(String term, String command) {
@@ -254,24 +230,25 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			date = new SimpleDateFormat("MM-dd-yyyy").parse(term);
 		}
 		catch (java.text.ParseException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy'T'HH-mm");
 		
-		term = "when:[" + sdf.format(date) + " TO ";
-
+		QueryBuilder queryBuilder  = QueryBuilder.build();
+		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		cal.set(Calendar.HOUR, 23);
 		cal.set(Calendar.MINUTE, 59);
 		cal.set(Calendar.SECOND, 59);
 		
-		date = cal.getTime();
+		try {
+			queryBuilder.otype(command).and().range("when", sdf.format(date), sdf.format(cal.getTime()));
+		} catch (QueryBuilderException e) {
+			logger.error(e);
+		}
 		
-		term = term + sdf.format(date) + "]";
-		
-		return "otype:" + command + " AND " + term;
-		
+		return queryBuilder.query();
 	}
 }
