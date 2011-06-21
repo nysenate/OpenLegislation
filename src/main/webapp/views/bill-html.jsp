@@ -5,7 +5,7 @@ String appPath = request.getContextPath();
 
 Bill bill = (Bill)request.getAttribute("bill");
 
-boolean active = bill.getLuceneActive();
+boolean active = bill.getActive();
   	
 String titleText = "(no title)";
 if (bill.getTitle()!=null)

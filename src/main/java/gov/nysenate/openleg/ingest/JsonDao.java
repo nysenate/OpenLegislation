@@ -139,7 +139,7 @@ public class JsonDao {
 			logger.info("Merging object with id: " + obj.luceneOid());
 			try {
 				T oldObject = (T) mapper.readValue(file, clazz);
-				oldObject.setLuceneActive(obj.getLuceneActive());
+				oldObject.setActive(obj.getActive());
 				oldObject.merge(obj);
 				obj = oldObject;
 				

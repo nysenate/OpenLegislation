@@ -125,7 +125,7 @@ public class IngestJsonWriter {
 						senateObjects.get(i), senateObjects.get(i).getClass());
 				
 				sObj.addSobiReference(sobiFile.getName());
-				sObj.setLuceneModified(getDateFromFileName(sobiFile.getName()));
+				sObj.setModified(getDateFromFileName(sobiFile.getName()));
 				
 				ingestJson.write(sObj);
 			}

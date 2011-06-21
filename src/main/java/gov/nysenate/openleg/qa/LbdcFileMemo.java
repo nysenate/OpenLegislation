@@ -36,7 +36,7 @@ public class LbdcFileMemo extends LbdcFile {
 				else {
 					if(luceneBill.getMemo() == null || luceneBill.getMemo().matches("\\s*")) {
 						ProblemBill problemBill = new ProblemBill(
-								luceneBill.getSenateBillNo(), luceneBill.getLuceneModified());
+								luceneBill.getSenateBillNo(), luceneBill.getModified());
 						problemBill.addNonMatchingField(new NonMatchingField(FieldName.MEMO, null, null));
 						problemBill.setLastReported(time);
 						

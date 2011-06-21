@@ -132,8 +132,9 @@ of:</b> <%=addendum.getWeekOf()%></div>
 	}%>
 </div>
 
-<div id="formatBox"><b>Formats:</b> <a
-	href="<%=appPath%>/api/1.0/xml/meeting/<%=meeting.luceneOid()%>">XML</a>
+<div id="formatBox"><b>Formats:</b>
+<a href="<%=appPath%>/api/1.0/json/meeting/<%=meeting.luceneOid()%>">JSON</a>
+<a href="<%=appPath%>/api/1.0/xml/meeting/<%=meeting.luceneOid()%>">XML</a>
 </div>
 </div>
 <jsp:include page="/footer.jsp" />

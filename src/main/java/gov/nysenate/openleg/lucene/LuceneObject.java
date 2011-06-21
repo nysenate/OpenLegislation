@@ -4,8 +4,11 @@ import java.util.HashMap;
 
 import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import javax.xml.bind.annotation.*;
 
 public class LuceneObject implements ILuceneObject {
+	@SuppressWarnings("restriction")
+	
 	private boolean active = true;
 	private long modified;
 
@@ -40,23 +43,24 @@ public class LuceneObject implements ILuceneObject {
 	}
 	
 	@Override
-	public boolean getLuceneActive() {
+	@XmlTransient
+	public boolean getActive() {
 		return active;
 	}
 
 	@Override
 	@JsonIgnore
-	public void setLuceneActive(boolean active) {
+	public void setActive(boolean active) {
 		this.active = active;
 	}
 
 	@Override
-	public long getLuceneModified() {
+	public long getModified() {
 		return modified;
 	}
 
 	@Override
-	public void setLuceneModified(long modified) {
+	public void setModified(long modified) {
 		this.modified = modified;
 	}
 

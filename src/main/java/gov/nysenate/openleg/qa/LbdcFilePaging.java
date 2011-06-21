@@ -86,7 +86,7 @@ public class LbdcFilePaging extends LbdcFile {
 				int pageNumber = getPageNumber(rawBillNo.replaceAll("^0*", ""), luceneBill.getFulltext());
 				
 				if(pageNumber != new Integer(lbdcPageCount)) {
-					ProblemBill problemBill = new ProblemBill(formattedBillNo, luceneBill.getLuceneModified());
+					ProblemBill problemBill = new ProblemBill(formattedBillNo, luceneBill.getModified());
 					problemBill.addNonMatchingField(new NonMatchingField(FieldName.FULLTEXT, pageNumber + "", lbdcPageCount + ""));
 					problemBill.setLastReported(time);
 					return problemBill;

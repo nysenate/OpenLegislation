@@ -70,13 +70,13 @@ public class DocumentBuilder {
 			
 			fields.put(MODIFIED, new org.apache.lucene.document.Field(
 					MODIFIED,
-					(o.getLuceneModified() == 0 ? new Date().getTime() : o.getLuceneModified()) + "",
+					(o.getModified() == 0 ? new Date().getTime() : o.getModified()) + "",
 					DEFAULT_STORE,
 					DEFAULT_INDEX));
 						
 			fields.put(ACTIVE, new org.apache.lucene.document.Field(
 					ACTIVE,
-					new Boolean(o.getLuceneActive()).toString(),
+					new Boolean(o.getActive()).toString(),
 					DEFAULT_STORE,
 					DEFAULT_INDEX));
 			

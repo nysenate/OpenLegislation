@@ -12,8 +12,9 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
+import javax.xml.bind.annotation.*;
 @XStreamAlias("calendar")
+@XmlRootElement
 public class Calendar extends SenateObject {
 
 	@XStreamAsAttribute
@@ -30,7 +31,7 @@ public class Calendar extends SenateObject {
 	
 //	@HideFrom({Calendar.class, Suppplemental.class})
 	protected List<Supplemental> supplementals;
-	
+
 	protected String id;	
 	
 	public final static String TYPE_FLOOR = "floor";

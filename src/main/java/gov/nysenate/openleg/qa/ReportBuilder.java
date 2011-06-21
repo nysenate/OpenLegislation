@@ -57,7 +57,7 @@ public class ReportBuilder {
 				problemBill.addMissingField(field);
 				
 			} else {
-				problemBill = new ProblemBill(bill.getSenateBillNo(), bill.getLuceneModified());
+				problemBill = new ProblemBill(bill.getSenateBillNo(), bill.getModified());
 				problemBill.addMissingField(field);
 				problemBillMap.put(bill.getSenateBillNo(), problemBill);
 			}

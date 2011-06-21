@@ -160,7 +160,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
     			while (itSupps.hasNext()) {
     				Supplemental supp = (Supplemental)itSupps.next();
         			supp.setCalendar(cal);
-        			supp.setLuceneModified(cal.getLuceneModified());
+        			supp.setModified(cal.getModified());
 
     				try {
     	    			addDocument(supp, ls, indexWriter);
@@ -178,7 +178,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
     	    			addendum.setAgenda(agenda);
     	    			for( Meeting meeting : addendum.getMeetings() ) {
     	    				meeting.setAddendums(new ArrayList<Addendum>(Arrays.asList(addendum)));
-    	    				meeting.setLuceneModified(agenda.getLuceneModified());
+    	    				meeting.setModified(agenda.getModified());
     	    				try {
     	    					addDocument(meeting, ls, indexWriter);
     	    				}
@@ -196,7 +196,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
     			
     			if(bill.getBillEvents() != null) {
     				for(BillEvent be:bill.getBillEvents()) {
-    					be.setLuceneModified(bill.getLuceneModified());
+    					be.setModified(bill.getModified());
     					try {
 							addDocument(be, ls, indexWriter);
 						} catch (InstantiationException e) {
@@ -211,7 +211,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
     			
     			if(bill.getVotes() != null) {
     				for(Vote vote: bill.getVotes()) {
-    					vote.setLuceneModified(bill.getLuceneModified());
+    					vote.setModified(bill.getModified());
     					try {
     						vote.setBill(bill);
 							addDocument(vote, ls, indexWriter);

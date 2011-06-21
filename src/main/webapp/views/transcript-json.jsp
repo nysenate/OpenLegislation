@@ -3,4 +3,4 @@
 
 Transcript transcript = (Transcript)request.getAttribute("transcript");
 
-%><%=OriginalApiConverter.doXml(transcript) %>
+%><%=OriginalApiConverter.doJson(transcript) %>

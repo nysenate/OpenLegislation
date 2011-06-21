@@ -256,7 +256,7 @@ public class IngestIndexWriter {
 				Bill.class);
 		
 		if(temp != null) {
-			temp.setLuceneActive(false);
+			temp.setActive(false);
 			
 			try {
 				searchEngine.indexSenateObject(temp);

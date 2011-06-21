@@ -10,8 +10,8 @@ public interface ILuceneObject {
 	public String luceneSummary();
 	public String luceneTitle();
 	public HashMap<String, Fieldable> luceneFields();
-	public void setLuceneActive(boolean active);
-	public boolean getLuceneActive();
-	public void setLuceneModified(long modified);
-	public long getLuceneModified();
+	public void setActive(boolean active);
+	public boolean getActive();
+	public void setModified(long modified);
+	public long getModified();
 }

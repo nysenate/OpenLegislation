@@ -54,7 +54,7 @@ public class OriginalApiConverter {
 			try {
 				return calendarXml((Calendar)o);
 			} catch (JAXBException e) {
-				
+				e.printStackTrace();
 			}
 		}
 		if(o instanceof Supplemental) {
@@ -62,7 +62,7 @@ public class OriginalApiConverter {
 				return supplementalXml((Supplemental)o);
 			}
 			catch(JAXBException e) {
-				
+				e.printStackTrace();
 			}
 		}
 		if(o instanceof Meeting) {
@@ -101,14 +101,11 @@ public class OriginalApiConverter {
 		locObj.value(bill.getSponsor().getFullname());
 
 		locObj.key("cosponsors");
-		if (bill.getCoSponsors() != null)
-		{
-			JSONWriter locObjCosponsors = mainObj.array();
-
+		JSONWriter locObjCosponsors = mainObj.array();
+		if (bill.getCoSponsors() != null) {
 			Iterator<Person> it = bill.getCoSponsors().iterator();
 
-			while (it.hasNext())
-			{
+			while (it.hasNext()) {
 				JSONWriter locObjPerson = locObjCosponsors.object();
 				
 				locObjPerson.key("cosponsor");
@@ -118,8 +115,9 @@ public class OriginalApiConverter {
 			}
 			
 			locObjCosponsors.endArray();
-
 		}
+		locObjCosponsors.endArray();
+		
 
 		locObj.key("title");
 		if (bill.getTitle()!=null)
@@ -134,9 +132,7 @@ public class OriginalApiConverter {
 			locObj.value("");
 
 		locObj.key("actions");
-			
-			JSONWriter locObjActions = mainObj.array();
-			
+		JSONWriter locObjActions = mainObj.array();
 		try
 		{
 			for(BillEvent be:bill.getBillEvents()) {
@@ -162,7 +158,6 @@ public class OriginalApiConverter {
 		{ 
 			
 			locObj.key("votes");
-			
 			JSONWriter locObjVotes = mainObj.array();
 			
 			Iterator<Vote> itVotes = bill.getVotes().iterator();
@@ -243,13 +238,9 @@ public class OriginalApiConverter {
 					}
 				}
 				
-				if (vote.getAbstains()!=null)
-				{
-				
+				if (vote.getAbstains()!=null) {
 					it = vote.getAbstains().iterator();
-					
-					while (it.hasNext())
-					{
+					while (it.hasNext()) {
 						
 						JSONWriter locObjVoter = locObjVoters.object();
 					
@@ -263,12 +254,10 @@ public class OriginalApiConverter {
 					}
 				}
 				
-				if (vote.getExcused()!=null)
-				{
+				if (vote.getExcused()!=null) {
 					it = vote.getExcused().iterator();
 					
-					while (it.hasNext())
-					{
+					while (it.hasNext()) {
 						JSONWriter locObjVoter = locObjVoters.object();
 					
 						locObjVoter.key("name");
@@ -282,17 +271,13 @@ public class OriginalApiConverter {
 				}
 				
 				locObjVoters.endArray();
-					
 				locObjVote.endObject();
-				
-
 		    }
 			
 			locObjVotes.endArray();
 		}
 
 		locObj.endObject();
-
 		mainObj.endArray();
 		
 		return mainObj.toString();

@@ -5,12 +5,15 @@ import gov.nysenate.openleg.lucene.LuceneObject;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.lucene.document.Fieldable;
 
 public class SenateObject extends LuceneObject implements ISenateObject {
 	HashSet<String> sobiReferenceList = new HashSet<String>();
 
 	@Override
+	@XmlTransient
 	public int getYear() {
 		return 0;
 	}

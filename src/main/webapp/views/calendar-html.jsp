@@ -218,8 +218,9 @@ count++;
 
 <%
 	if (oid != null) {
-%><div id="formatBox"><b>Formats:</b> <a
-	href="<%=appPath%>/api/1.0/xml/calendar/<%=oid%>">XML</a></div>
+%><div id="formatBox"><b>Formats:</b>
+<a href="<%=appPath%>/api/1.0/json/calendar/<%=oid%>">JSON</a></div>
+<a href="<%=appPath%>/api/1.0/xml/calendar/<%=oid%>">XML</a></div>
 <%
 	}
 %>
