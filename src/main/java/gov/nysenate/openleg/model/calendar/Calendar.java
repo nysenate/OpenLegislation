@@ -13,6 +13,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import javax.xml.bind.annotation.*;
+
+@SuppressWarnings("restriction")
 @XStreamAlias("calendar")
 @XmlRootElement
 public class Calendar extends SenateObject {

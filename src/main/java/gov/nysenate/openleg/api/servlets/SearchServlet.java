@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.api.servlets;
 
-import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.api.QueryBuilder;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
+import gov.nysenate.openleg.util.OpenLegConstants;
 
 import java.io.IOException;
 import java.util.Calendar;

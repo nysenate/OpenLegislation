@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.ingest.parser;
 
-import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.util.EasyReader;
+import gov.nysenate.openleg.util.OpenLegConstants;
 
 import java.io.File;
 import java.text.ParseException;

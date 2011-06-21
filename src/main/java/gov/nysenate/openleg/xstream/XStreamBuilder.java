@@ -8,7 +8,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.xml.*;
 import com.thoughtworks.xstream.io.json.*;
 
-import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.model.bill.Person;
@@ -23,6 +22,7 @@ import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.xstream.SenateObjectConverter;
 import gov.nysenate.openleg.xstream.SenateResponseConverter;
 

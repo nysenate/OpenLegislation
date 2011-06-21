@@ -6,8 +6,8 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.util.OpenLegConstants;
 
 
 /**

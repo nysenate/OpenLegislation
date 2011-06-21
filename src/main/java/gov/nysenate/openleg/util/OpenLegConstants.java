@@ -1,6 +1,5 @@
-package gov.nysenate.openleg;
+package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.util.SessionYear;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

@@ -16,7 +16,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.ingest.JsonDao;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.Person;
@@ -26,6 +25,7 @@ import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Committee;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.search.SearchEngine;
+import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.xml.committee.XMLAddendum;
 import gov.nysenate.openleg.xml.committee.XMLBill;
 import gov.nysenate.openleg.xml.committee.XMLCommittee;

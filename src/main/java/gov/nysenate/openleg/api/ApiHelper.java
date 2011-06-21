@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.api;
 
-import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
@@ -12,6 +11,7 @@ import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.text.DateFormat;

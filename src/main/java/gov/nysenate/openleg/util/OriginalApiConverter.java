@@ -11,7 +11,6 @@ import javax.xml.bind.Marshaller;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import gov.nysenate.openleg.BillRenderer;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.Supplemental;

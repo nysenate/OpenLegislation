@@ -13,7 +13,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.ingest.JsonDao;
 import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -24,6 +23,7 @@ import gov.nysenate.openleg.model.calendar.Section;
 import gov.nysenate.openleg.model.calendar.Sequence;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.search.SearchEngine;
+import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.xml.calendar.XMLCalno;
 import gov.nysenate.openleg.xml.calendar.XMLSENATEDATA;
 import gov.nysenate.openleg.xml.calendar.XMLSection;

@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine;

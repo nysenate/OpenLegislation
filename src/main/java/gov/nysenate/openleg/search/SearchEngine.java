@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.search;
 
-import gov.nysenate.openleg.OpenLegConstants;
 import gov.nysenate.openleg.api.QueryBuilder;
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.lucene.Lucene;
@@ -19,6 +18,7 @@ import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.util.JsonSerializer;
 import gov.nysenate.openleg.util.LongSearch;
+import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.XmlSerializer;
 
 import java.io.BufferedReader;
