@@ -2,10 +2,20 @@ var searchType = '';
 
 $(function () {
 	
+	$("#txtSearchBox").blur(function() {
+		$('#quickresult').animate({
+			opacity:0.0
+		}, 250, 'swing');
+	});
+	
+	$("#txtSearchBox").focus(function() {
+		$('#quickresult').animate({
+			opacity:1.0
+		}, 250, 'swing');
+	});
+	
 	$("#txtSearchBox").keyup(function() 
 	{
-       // lastKeyPressCode = e.keyCode;
-
         var searchbox = $(this).val();
         
         var dataString = "pageIdx=1&pageSize=10&searchType=" + searchType + "&format=html-list&search=" + escape(searchbox);
