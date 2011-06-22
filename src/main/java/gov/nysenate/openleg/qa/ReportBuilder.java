@@ -1,22 +1,25 @@
 package gov.nysenate.openleg.qa;
 
-import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.qa.model.ProblemBill;
-import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.util.LongSearch;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.lucene.queryParser.ParseException;
 
 public class ReportBuilder {
-	long newestMod = 0L;
 	final static double MS_IN_DAY = 86400000.0;
 	final static int MAX_RESULTS = 500;
+	
+	LongSearch<Bill> longSearch;
+	long newestMod ;
+	
+	public ReportBuilder() {
+		longSearch = new LongSearch<Bill>();
+		newestMod = 0L;
+	}
 
 	public HashMap<String, ProblemBill> getBillReportSet(String year)
 			throws ParseException, IOException {

@@ -57,7 +57,7 @@ public class LbdcFileHtml extends LbdcFile {
 				continue;
 			}
 			else {					
-				ProblemBill problemBill = new ProblemBill(luceneBill.getSenateBillNo(), luceneBill.getLuceneModified());
+				ProblemBill problemBill = new ProblemBill(luceneBill.getSenateBillNo(), luceneBill.getModified());
 				problemBill.setLastReported(time);
 				
 				if(valid(lbdcBill.getSponsor(), luceneBill.getSponsor())) {
