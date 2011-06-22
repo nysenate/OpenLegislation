@@ -309,7 +309,7 @@ public class IngestIndexWriter {
 			
 			bill.setSummary(newestBill.getSummary());
 			
-			logger.warn("Updating summary for bill "  + bill.getSenateBillNo() + " from version " + newestBill);
+			logger.warn("Updating summary for bill "  + bill.getSenateBillNo() + " from version " + newestBill.getSenateBillNo());
 			
 			jsonDao.write(bill);
 		}
