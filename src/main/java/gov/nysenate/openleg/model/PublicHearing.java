@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.ArrayList;
 
@@ -22,8 +23,64 @@ public class PublicHearing extends SenateObject {
 		speakers = new ArrayList<Person>();
 	}
 	
+	public ArrayList<String> getCommittees() {
+		return committees;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public String getLocation() {
+		return location;
+	}
+	public Date getTimeStamp() {
+		return timeStamp;
+	}
+	public ArrayList<Person> getPresidingSenators() {
+		return presidingSenators;
+	}
+	public ArrayList<Person> getPresentSenators() {
+		return presentSenators;
+	}
+	public ArrayList<Person> getPresentAssemblyPersons() {
+		return presentAssemblyPersons;
+	}
+	public ArrayList<Person> getSpeakers() {
+		return speakers;
+	}
+	public void setCommittees(ArrayList<String> committees) {
+		this.committees = committees;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	public void setTimeStamp(Date timeStamp) {
+		this.timeStamp = timeStamp;
+	}
+	public void setPresidingSenators(ArrayList<Person> presidingSenators) {
+		this.presidingSenators = presidingSenators;
+	}
+	public void setPresentSenators(ArrayList<Person> presentSenators) {
+		this.presentSenators = presentSenators;
+	}
+	public void setPresentAssemblyPersons(ArrayList<Person> presentAssemblyPersons) {
+		this.presentAssemblyPersons = presentAssemblyPersons;
+	}
+	public void setSpeakers(ArrayList<Person> speakers) {
+		this.speakers = speakers;
+	}
+	
 	public void addPerson(Person person, ArrayList<Person> persons) {
 		persons.add(person);
+	}
+	
+	@Override
+	public int getYear() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(getTimeStamp());
+		return cal.get(Calendar.YEAR);
 	}
 	
 	public static class Person {
