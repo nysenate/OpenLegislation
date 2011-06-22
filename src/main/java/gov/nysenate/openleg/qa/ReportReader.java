@@ -34,7 +34,7 @@ public class ReportReader extends CouchSupport {
 	public static final String RESET_COUCH = "reset-couch";
 	public static final String HELP = "help";
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
 		options.addOption("ft", FILE_TYPE, true, "(bill_html|memo|paging)");
@@ -210,18 +210,18 @@ public class ReportReader extends CouchSupport {
 				
 				if(pb.getNonMatchingFields() != null) {
 					for(NonMatchingField nmf:pb.getNonMatchingFields().values()) {
-						if(nonMatching.length() == 0)
-							nonMatching.append(nmf.getField());
-						else {
-							nonMatching.append(", ");
-							nonMatching.append(nmf.getField());
-						}
+						nonMatching.append("\n\t\t")
+							.append(nmf.getField())
+							.append("\n\t\t\tLBDC: ")
+							.append(nmf.getLbdcField())
+							.append("\n\t\t\tOpenLeg: ")
+							.append(nmf.getOpenField());
 					}
 				}
 				
 				if(missing.length() > 0) line.append("\n\tmissing: ").append(missing);
 				if(nonMatching.length() > 0) line.append("\n\tnon matching: ").append(nonMatching);
-				line.append("\n");
+				line.append("\n\n");
 				
 				bw.write(line.toString());
 			}
