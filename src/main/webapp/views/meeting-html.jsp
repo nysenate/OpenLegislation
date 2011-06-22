@@ -1,5 +1,5 @@
 <%@ page language="java"
-	import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*"
+	import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*,gov.nysenate.openleg.util.*"
 	contentType="text/html" pageEncoding="utf-8"%>
 <%
 	String appPath = request.getContextPath();
