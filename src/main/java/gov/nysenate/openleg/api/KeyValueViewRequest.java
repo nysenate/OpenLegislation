@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 public class KeyValueViewRequest extends AbstractApiRequest {
 	private final Logger logger = Logger.getLogger(KeyValueViewRequest.class);
 	
-	String format;
 	String key;
 	String value;
 	
@@ -45,6 +44,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
 		try {
 			
 			queryBuilder.keyValue(key, value).and().current().and().active();
+			
 			if(filter != null) queryBuilder.and().insertAfter(filter);
 			
 			logger.info(TextFormatter.append("executing query ", queryBuilder.query()));

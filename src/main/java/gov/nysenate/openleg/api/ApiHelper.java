@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.api;
 
-import gov.nysenate.openleg.api.SingleViewRequest.SingleView;
 import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
@@ -62,7 +61,7 @@ public class ApiHelper implements OpenLegConstants {
 
 				jsonData = unwrapJson(jsonData);
 				
-				SingleView apiType = getApiType(type);
+				ApiType apiType = getApiType(type);
 				Class<? extends ISenateObject> clazz = apiType.clazz();
 
 				Object resultObj = null;
@@ -241,10 +240,10 @@ public class ApiHelper implements OpenLegConstants {
 		return jsonData;
 	}
 	
-	public static SingleView getApiType(String type) {
-		for(SingleView singleView:SingleView.values()) {
-			if(singleView.view().equalsIgnoreCase(type)) {
-				return singleView;
+	public static ApiType getApiType(String type) {
+		for(ApiType apiType:ApiType.values()) {
+			if(apiType.type().equalsIgnoreCase(type)) {
+				return apiType;
 			}
 		}
 		return null;
