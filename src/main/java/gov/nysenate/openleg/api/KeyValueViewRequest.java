@@ -1,7 +1,10 @@
 package gov.nysenate.openleg.api;
 
+import java.util.ArrayList;
+
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.TextFormatter;
@@ -43,7 +46,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
 
 		try {
 			
-			queryBuilder.keyValue(key, value).and().current().and().active();
+			queryBuilder.keyValue(key, value).and().otype("bill").and().current().and().active();
 			
 			if(filter != null) queryBuilder.and().insertAfter(filter);
 			
@@ -59,15 +62,25 @@ public class KeyValueViewRequest extends AbstractApiRequest {
 			
 			logger.info(TextFormatter.append("found ",sr.getResults().size()," results"));
 			
-			request.setAttribute("sortField", sortField);
-			request.setAttribute("sortOrder", Boolean.toString(sortOrder));
-			request.setAttribute("type", key);
-			request.setAttribute("term", queryBuilder.query());
-			request.setAttribute("format", format);
-			request.setAttribute(PAGE_IDX, pageNumber + "");
-			request.setAttribute(PAGE_SIZE, pageSize + "");
-			request.setAttribute("urlPath", urlPath);
-			request.setAttribute("results", sr);
+			if(format.matches("(?i)(csv|json|mobile|rss|xml)")) {
+				ArrayList<Result> searchResults = ApiHelper.buildSearchResultList(sr);
+				ArrayList<Bill> bills = new ArrayList<Bill>();
+				for(Result result: searchResults) {
+					bills.add((Bill)result.getObject());
+				}
+				request.setAttribute("bills", bills);
+			}
+			else {
+				request.setAttribute("sortField", sortField);
+				request.setAttribute("sortOrder", Boolean.toString(sortOrder));
+				request.setAttribute("type", key);
+				request.setAttribute("term", queryBuilder.query());
+				request.setAttribute("format", format);
+				request.setAttribute(PAGE_IDX, pageNumber + "");
+				request.setAttribute(PAGE_SIZE, pageSize + "");
+				request.setAttribute("urlPath", urlPath);
+				request.setAttribute("results", sr);
+			}
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -75,7 +88,12 @@ public class KeyValueViewRequest extends AbstractApiRequest {
 	
 	@Override
 	public String getView() {
-		return TextFormatter.append("/views/search-", format, ".jsp");
+		if(format.matches("(?i)(csv|json|mobile|rss|xml)")) {
+			return TextFormatter.append("/views/bills-", format, ".jsp");
+		}
+		else {
+			return TextFormatter.append("/views/search-", format, ".jsp");
+		}
 	}
 	
 	@Override
@@ -84,8 +102,8 @@ public class KeyValueViewRequest extends AbstractApiRequest {
 	}
 	
 	public enum KeyValueView implements ApiEnum {
-		SPONSOR("sponsor", 		Bill.class, 	new String[] {"html", "json", "xml", "rss"}),
-		COMMITTEE("committee", 	Bill.class, 	new String[] {"html", "json", "xml", "rss"});
+		SPONSOR("sponsor", 		Bill.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
+		COMMITTEE("committee", 	Bill.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"});
 		
 		public final String view;
 		public final Class<? extends SenateObject> clazz;

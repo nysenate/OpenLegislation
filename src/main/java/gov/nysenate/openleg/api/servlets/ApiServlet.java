@@ -223,9 +223,7 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 		try {
 			if(apiRequest.isValidFormat() && apiRequest.hasParameters()) {
 				apiRequest.fillRequest();
-				
-				System.out.println(apiRequest.getView());
-				
+								
 				getServletContext().getRequestDispatcher(apiRequest.getView())
 					.forward(request, response);
 			}

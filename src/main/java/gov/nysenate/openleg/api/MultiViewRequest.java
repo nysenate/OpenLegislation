@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.api;
 
+import java.util.ArrayList;
+
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
@@ -7,6 +9,7 @@ import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
+import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.TextFormatter;
@@ -40,8 +43,6 @@ public class MultiViewRequest extends AbstractApiRequest {
 		if (type.contains("bill")) {
 			sortField = "sortindex";
 			sortOrder = false;
-		} else if (type.contains("meeting")) {
-			sortField = "sortindex";
 		}
 
 		SenateResponse sr = null;
@@ -66,15 +67,26 @@ public class MultiViewRequest extends AbstractApiRequest {
 			
 			logger.info(TextFormatter.append("found ",sr.getResults().size()," results"));
 			
-			request.setAttribute("sortField", sortField);
-			request.setAttribute("sortOrder", Boolean.toString(sortOrder));
-			request.setAttribute("type", type);
-			request.setAttribute("term", queryBuilder.query());
-			request.setAttribute("format", format);
-			request.setAttribute(PAGE_IDX, pageNumber + "");
-			request.setAttribute(PAGE_SIZE, pageSize + "");
-			request.setAttribute("urlPath", urlPath);
-			request.setAttribute("results", sr);
+			if(type.equalsIgnoreCase("bill")
+					&& format.matches("(?i)(csv|json|mobile|rss|xml)")) {
+				ArrayList<Result> searchResults = ApiHelper.buildSearchResultList(sr);
+				ArrayList<Bill> bills = new ArrayList<Bill>();
+				for(Result result: searchResults) {
+					bills.add((Bill)result.getObject());
+				}
+				request.setAttribute("bills", bills);
+			}
+			else {
+				request.setAttribute("sortField", sortField);
+				request.setAttribute("sortOrder", Boolean.toString(sortOrder));
+				request.setAttribute("type", type);
+				request.setAttribute("term", queryBuilder.query());
+				request.setAttribute("format", format);
+				request.setAttribute(PAGE_IDX, pageNumber + "");
+				request.setAttribute(PAGE_SIZE, pageSize + "");
+				request.setAttribute("urlPath", urlPath);
+				request.setAttribute("results", sr);
+			}
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -82,7 +94,13 @@ public class MultiViewRequest extends AbstractApiRequest {
 	
 	@Override
 	public String getView() {
-		return TextFormatter.append("/views/search-", format, ".jsp");
+		if(type.equalsIgnoreCase("bill")
+				&& format.matches("(?i)(csv|json|mobile|rss|xml)")) {
+			return TextFormatter.append("/views/bills-", format, ".jsp");
+		}
+		else {
+			return TextFormatter.append("/views/search-", format, ".jsp");
+		}
 	}
 	
 	@Override
@@ -91,12 +109,12 @@ public class MultiViewRequest extends AbstractApiRequest {
 	}
 	
 	public enum MultiView implements ApiEnum {
-		BILLS		("bills", 		Bill.class, 		new String[] {"html", "json", "xml", "rss"}),
-		CALENDARS	("calendars", 	Calendar.class, 	new String[] {"html", "json", "xml", "rss"}),
-		MEETINGS	("meetings", 	Meeting.class, 		new String[] {"html", "json", "xml", "rss"}),
-		TRANSCRIPTS	("transcripts", Transcript.class, 	new String[] {"html", "json", "xml", "rss"}),
-		VOTES		("votes", 		Vote.class, 		new String[] {"html", "json", "xml", "rss"}),
-		ACTIONS		("actions", 	BillEvent.class, 	new String[] {"html", "json", "xml", "rss"});
+		BILLS		("bills", 		Bill.class, 		new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
+		CALENDARS	("calendars", 	Calendar.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
+		MEETINGS	("meetings", 	Meeting.class, 		new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
+		TRANSCRIPTS	("transcripts", Transcript.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
+		VOTES		("votes", 		Vote.class, 		new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
+		ACTIONS		("actions", 	BillEvent.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"});
 		
 		public final String view;
 		public final Class<? extends SenateObject> clazz;
