@@ -112,11 +112,13 @@ public class Supplemental extends SenateObject {
 	public String luceneOid() {
 		String oid = "";
 		if(calendar.getId().startsWith("cal-floor")) {
-			oid = "floor-" + new SimpleDateFormat("MM-dd-yyyy").format(releaseDateTime);
+			oid = "floor-" + new SimpleDateFormat("MM-dd-yyyy").format(this.getCalendarDate());
+
 		}
 		else {
 			oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequence.getActCalDate());
 		}
+		
 		return oid;
 	}
 
