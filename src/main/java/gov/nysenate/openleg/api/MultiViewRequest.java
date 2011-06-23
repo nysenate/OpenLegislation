@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.api;
 
-import gov.nysenate.openleg.api.servlets.ApiServlet.ApiEnum;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
@@ -15,14 +14,16 @@ import gov.nysenate.openleg.util.TextFormatter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 public class MultiViewRequest extends AbstractApiRequest {
-	String format;
+	private final Logger logger = Logger.getLogger(MultiViewRequest.class);
+			
 	String type;
 	
 	public MultiViewRequest(HttpServletRequest request, HttpServletResponse response,
 			String format, String type, String pageNumber, String pageSize) {
-		super(request, response, pageNumber, pageSize, getApiEnum(MultiView.values(),type));
-		this.format = thisOrThat(format, DEFAULT_FORMAT);
+		super(request, response, pageNumber, pageSize, format, getApiEnum(MultiView.values(),type));
 		this.type = type;
 	}
 	
@@ -53,10 +54,17 @@ public class MultiViewRequest extends AbstractApiRequest {
 
 			queryBuilder.otype(type).and().current().and().active();
 			
+			logger.info(TextFormatter.append("executing query ", queryBuilder.query()));
+			
 			sr = SearchEngine.getInstance().search(queryBuilder.query(), sFormat,
 					start, pageSize, sortField, sortOrder);
+			
+			if(sr.getResults() == null || sr.getResults().isEmpty()) throw new ApiRequestException(
+					TextFormatter.append("no results for query"));
 
 			sr.setResults(ApiHelper.buildSearchResultList(sr));
+			
+			logger.info(TextFormatter.append("found ",sr.getResults().size()," results"));
 			
 			request.setAttribute("sortField", sortField);
 			request.setAttribute("sortOrder", Boolean.toString(sortOrder));
@@ -68,7 +76,7 @@ public class MultiViewRequest extends AbstractApiRequest {
 			request.setAttribute("urlPath", urlPath);
 			request.setAttribute("results", sr);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 	
@@ -78,7 +86,7 @@ public class MultiViewRequest extends AbstractApiRequest {
 	}
 	
 	@Override
-	public boolean isValid() {
+	public boolean hasParameters() {
 		return type!= null;
 	}
 	

@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
-import gov.nysenate.openleg.api.servlets.ApiServlet.ApiEnum;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
@@ -17,22 +16,31 @@ import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 public class SingleViewRequest extends AbstractApiRequest {
-	String format;
+	private final Logger logger = Logger.getLogger(SingleViewRequest.class);
+	
 	String type;
 	String id;
 	
 	public SingleViewRequest(HttpServletRequest request, HttpServletResponse response,
 			String format, String type, String id) {
-		super(request, response, 1, 1, getApiEnum(SingleView.values(),type));
-		this.format = thisOrThat(format, DEFAULT_FORMAT);
+		super(request, response, 1, 1, format, getApiEnum(SingleView.values(),type));
 		this.type = type;
 		this.id = id;
 	}
 
-	public void fillRequest() {
+	public void fillRequest() throws ApiRequestException {
 		SenateObject so = SearchEngine.getInstance().getSenateObject(id,
 				type, apiEnum.clazz());
+		
+		if(so == null) throw new ApiRequestException(
+				TextFormatter.append("couldn't find id: ", id, " of type: ", type));
+		
+		logger.info(
+			TextFormatter.append(
+				"Adding ", id, " of type ", type, " to request"));
 		
 		request.setAttribute(type , so);
 		
@@ -64,7 +72,7 @@ public class SingleViewRequest extends AbstractApiRequest {
 				request.setAttribute("related-" + rType, votes);
 			}
 		} catch (QueryBuilderException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 
@@ -72,7 +80,7 @@ public class SingleViewRequest extends AbstractApiRequest {
 		return TextFormatter.append("/views/", type, "-", format, ".jsp");
 	}
 	
-	public boolean isValid() {
+	public boolean hasParameters() {
 		return type != null && id != null;
 	}
 	
