@@ -30,9 +30,9 @@ while (it.hasNext())
 		locObj.value(bill.getSponsor() != null && bill.getSponsor().getFullname() != null ? bill.getSponsor().getFullname() : "");
 		
 		locObj.key("cosponsors");
+		JSONWriter locObjCosponsors = mainObj.array();
 		if (bill.getCoSponsors() != null)
 		{
-			JSONWriter locObjCosponsors = mainObj.array();
 		
 			Iterator<Person> itCosponsors = bill.getCoSponsors().iterator();
 		
@@ -45,10 +45,10 @@ while (it.hasNext())
 				
 				locObjPerson.endObject();
 			}
-			
-			locObjCosponsors.endArray();
 		
 		}
+		locObjCosponsors.endArray();
+
 
 		locObj.key("assemblySameAs");
 		
