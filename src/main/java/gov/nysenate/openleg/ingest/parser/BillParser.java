@@ -32,12 +32,17 @@ public class BillParser extends SenateParser<Bill> {
 	
 	private StringBuffer summaryBuffer = null;
 	private StringBuffer tempSummaryBuffer = null;
+	
+	private StringBuffer lawBuffer = null;
+	private StringBuffer tempLawBuffer = null;
+	
 	private StringBuffer actBuffer = null;
 	private StringBuffer titleBuffer = null;
 	private StringBuffer textBuffer = null;
 	private StringBuffer memoBuffer = null;
 	private List<BillEvent> billEventsBuffer = null;
 	private List<Person> coSponsorBuffer = null;
+	private List<Person> multiSponsorBuffer = null;
 	
 	private HashMap<String,Person> personCache;
 	
@@ -219,8 +224,7 @@ public class BillParser extends SenateParser<Bill> {
 							currentBill = null;
 						}
 						else {
-							lineData = lineData.replaceAll("(›|•À)", "S").replaceAll("\\xBD","");
-							bill.setLaw(lineData);
+							parseLawData(line);
 						}
 					}
 					else if (lineCode == 'N') {
@@ -257,13 +261,21 @@ public class BillParser extends SenateParser<Bill> {
 							}
 						}
 					}
-					/*
-					 * TODO
-					 * 
-					 * else if (lineCode == '8')
-					 * 
-					 * mutli-sponsor bills
-					 */
+					else if (lineCode == '8') {
+						if (lineData.length() > 0 && lineData.charAt(0)!='0') {
+							if (multiSponsorBuffer == null)
+								multiSponsorBuffer = new ArrayList<Person>();
+							
+							String multisponsor = lineData.trim();
+							
+							StringTokenizer st = new StringTokenizer(multisponsor,",");
+							while(st.hasMoreTokens()) {
+								Person multiSponsor = getPerson(st.nextToken().trim());
+								if(!multiSponsorBuffer.contains(multiSponsor))
+									multiSponsorBuffer.add(multiSponsor);
+							}
+						}
+					}
 					else if (lineCode == '4') {
 						Date beDate = DATE_PARSER.parse(lineData.substring(0,8));
 						
@@ -467,6 +479,43 @@ public class BillParser extends SenateParser<Bill> {
 				
 				summaryBuffer.append(line);
 				summaryBuffer.append(' ');
+			}
+		}
+		return bill;
+	}
+	
+	public Bill parseLawData (String line) throws IOException {
+		Bill bill = getBill(line);
+	
+		if (line.length() > 12)	{
+			line = line.substring(12);
+			line = line.replace((char)0xC, ' ');
+			
+			line = line.replaceAll("(›|•À)", "S").replaceAll("\\xBD","");
+
+			if (lawBuffer == null)
+				lawBuffer = new StringBuffer();
+			
+			if(lawBuffer.toString().trim().contains(line)) {
+				if(tempLawBuffer == null) {
+					tempLawBuffer = new StringBuffer();
+				}
+				
+				tempLawBuffer.append(line);
+				tempLawBuffer.append(' ');
+				
+				if(lawBuffer.equals(tempLawBuffer)) {
+					tempLawBuffer = null;
+				}
+			}
+			else {
+				if(tempLawBuffer != null) {
+					lawBuffer.append(tempLawBuffer);
+					tempLawBuffer = null;
+				}
+				
+				lawBuffer.append(line);
+				lawBuffer.append(' ');
 			}
 		}
 		return bill;
@@ -717,6 +766,12 @@ public class BillParser extends SenateParser<Bill> {
 			currentBill.setSummary(summaryBuffer.toString());			
 			summaryBuffer = null;
 			tempSummaryBuffer = null;
+		}
+		
+		if (lawBuffer != null) {
+			currentBill.setLaw(lawBuffer.toString());			
+			lawBuffer = null;
+			tempLawBuffer = null;
 		}
 		
 		if (titleBuffer != null) {

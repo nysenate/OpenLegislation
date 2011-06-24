@@ -54,6 +54,9 @@ public class Bill extends SenateObject  {
 	@LuceneField
 	protected List<Person> coSponsors;
 	
+	@XStreamAlias("multiSponsors")
+	protected List<Person> multiSponsors;
+	
 	@LuceneField
 	protected String summary;
 	
@@ -143,6 +146,10 @@ public class Bill extends SenateObject  {
 
 	public List<Person> getCoSponsors() {
 		return coSponsors;
+	}
+	
+	public List<Person> getMultiSponsors() {
+		return multiSponsors;
 	}
 
 
@@ -251,6 +258,11 @@ public class Bill extends SenateObject  {
 
 	public void setCoSponsors(List<Person> coSponsors) {
 		this.coSponsors = coSponsors;
+	}
+	
+	
+	public void setMultiSponsors(List<Person> multiSponsors) {
+		this.multiSponsors = multiSponsors;
 	}
 
 
@@ -558,6 +570,15 @@ public class Bill extends SenateObject  {
 		else {
 			if(bill.getCoSponsors() != null && !bill.getCoSponsors().isEmpty()) {
 				this.coSponsors = bill.getCoSponsors();
+			}
+		}
+		
+		if(multiSponsors == null) {
+			multiSponsors = bill.getMultiSponsors();
+		}
+		else {
+			if(bill.getMultiSponsors() != null && !bill.getMultiSponsors().isEmpty()) {
+				this.multiSponsors = bill.getMultiSponsors();
 			}
 		}	
 		
