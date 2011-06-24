@@ -1,11 +1,14 @@
 package gov.nysenate.openleg.api;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.util.OpenLegConstants;
+import gov.nysenate.openleg.util.TextFormatter;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -48,7 +51,26 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
 		this.apiEnum = apiEnum;
 	}
 	
-	public boolean isValidFormat() {
+	public void execute() throws ApiRequestException, ServletException, IOException {
+		if(isValidFormat() && isValidPaging() && hasParameters()) {
+			fillRequest();
+							
+			request.getSession().getServletContext().getRequestDispatcher(getView())
+				.forward(request, response);
+		}
+		else {
+			throw new ApiRequestException(
+					TextFormatter.append("Request ", request.getRequestURI()," invalid"));
+		}
+	}
+	
+	protected boolean isValidPaging() {
+		if(pageSize > MAX_PAGE_SIZE)
+			return false;
+		return true;
+	}
+	
+	protected boolean isValidFormat() {
 		for(String validFormat:apiEnum.formats()) {
 			if(format.equalsIgnoreCase(validFormat)) {
 				return true;
@@ -63,10 +85,22 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
 		return str1;
 	}
 	
+	/*
+	 * append objects + data to request
+	 * that are required for the view
+	 */
 	public abstract void fillRequest() throws ApiRequestException;
 	
+	/*
+	 * used to specify where the page
+	 * is forwarding to
+	 */
 	public abstract String getView();
 	
+	/*
+	 * used to check if the request
+	 * parameters are valid/not null
+	 */
 	public abstract boolean hasParameters();
 	
 	/*

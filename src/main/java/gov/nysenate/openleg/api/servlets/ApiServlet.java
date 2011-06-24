@@ -214,31 +214,15 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 		else {
-			doReq(apiRequest, request, response);
-		}
-    }
-	
-	public void doReq(AbstractApiRequest apiRequest, HttpServletRequest request, 
-			HttpServletResponse response) throws ServletException, IOException {
-		try {
-			if(apiRequest.isValidFormat() && apiRequest.hasParameters()) {
-				apiRequest.fillRequest();
-								
-				getServletContext().getRequestDispatcher(apiRequest.getView())
-					.forward(request, response);
+			try {
+				apiRequest.execute();
 			}
-			else {
-				throw new ApiRequestException(
-						TextFormatter.append("Request ", request.getRequestURI()," invalid"));
+			catch(ApiRequestException e) {
+				logger.error(e);
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
 		}
-		catch(ApiRequestException e) {
-			logger.error(e);
-			response.sendError(HttpServletResponse.SC_NOT_FOUND);
-		}
-	}
-	
-	
+    }	
 	
 	/*
 	 * Used here to easily join lists of values
