@@ -208,19 +208,15 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 													m.group(KEY_VALUE_PAGE_SIZE));
 		}
 		
-		if(apiRequest == null) {
-			logger.info(TextFormatter.append("Failed to route request: ", uri));
-		
-			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		try {
+			if(apiRequest == null) throw new ApiRequestException(
+					TextFormatter.append("Failed to route request: ", uri));
+			
+			apiRequest.execute();
 		}
-		else {
-			try {
-				apiRequest.execute();
-			}
-			catch(ApiRequestException e) {
-				logger.error(e);
-				response.sendError(HttpServletResponse.SC_NOT_FOUND);
-			}
+		catch(ApiRequestException e) {
+			logger.error(e);
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
     }	
 	

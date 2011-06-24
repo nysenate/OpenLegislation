@@ -52,16 +52,25 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
 	}
 	
 	public void execute() throws ApiRequestException, ServletException, IOException {
-		if(isValidFormat() && isValidPaging() && hasParameters()) {
-			fillRequest();
-							
-			request.getSession().getServletContext().getRequestDispatcher(getView())
-				.forward(request, response);
-		}
-		else {
+		if(!isValidFormat())
 			throw new ApiRequestException(
-					TextFormatter.append("Request ", request.getRequestURI()," invalid"));
-		}
+				TextFormatter.append(
+						"Format ",format," invalid for request ",
+						request.getRequestURI()));
+		if(!isValidPaging())
+			throw new ApiRequestException(
+				TextFormatter.append(
+						"Page size exceeded ",pageSize,", max is ",MAX_PAGE_SIZE));
+		if(!hasParameters())
+			throw new ApiRequestException(
+				TextFormatter.append(
+					"Check documentation for required parameters, bad request", 
+					request.getRequestURI()));
+		
+		fillRequest();
+							
+		request.getSession().getServletContext().getRequestDispatcher(getView())
+			.forward(request, response);
 	}
 	
 	protected boolean isValidPaging() {

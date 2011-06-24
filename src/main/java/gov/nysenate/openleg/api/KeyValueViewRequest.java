@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.api;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.search.Result;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.queryParser.ParseException;
 
 public class KeyValueViewRequest extends AbstractApiRequest {
 	private final Logger logger = Logger.getLogger(KeyValueViewRequest.class);
@@ -28,7 +31,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
 	}
 
 	@Override
-	public void fillRequest() {
+	public void fillRequest() throws ApiRequestException {
 		String urlPath = TextFormatter.append("/legislation/", key, "/", value, "/");
 
 		String sFormat = "json";
@@ -45,44 +48,49 @@ public class KeyValueViewRequest extends AbstractApiRequest {
 		int start = (pageNumber - 1) * pageSize;
 
 		try {
-			
 			queryBuilder.keyValue(key, value).and().otype("bill").and().current().and().active();
 			
 			if(filter != null) queryBuilder.and().insertAfter(filter);
-			
-			logger.info(TextFormatter.append("executing query ", queryBuilder.query()));
-			
+		} catch (QueryBuilderException e) {
+			logger.error(e);
+		}
+		
+		logger.info(TextFormatter.append("executing query ", queryBuilder.query()));
+		
+		try {
 			sr = SearchEngine.getInstance().search(queryBuilder.query(), sFormat,
 					start, pageSize, sortField, sortOrder);
-			
-			if(sr.getResults() == null || sr.getResults().isEmpty()) throw new ApiRequestException(
-					TextFormatter.append("no results for query"));
-
-			sr.setResults(ApiHelper.buildSearchResultList(sr));
-			
-			logger.info(TextFormatter.append("found ",sr.getResults().size()," results"));
-			
-			if(format.matches("(?i)(csv|json|mobile|rss|xml)")) {
-				ArrayList<Result> searchResults = ApiHelper.buildSearchResultList(sr);
-				ArrayList<Bill> bills = new ArrayList<Bill>();
-				for(Result result: searchResults) {
-					bills.add((Bill)result.getObject());
-				}
-				request.setAttribute("bills", bills);
-			}
-			else {
-				request.setAttribute("sortField", sortField);
-				request.setAttribute("sortOrder", Boolean.toString(sortOrder));
-				request.setAttribute("type", key);
-				request.setAttribute("term", queryBuilder.query());
-				request.setAttribute("format", format);
-				request.setAttribute(PAGE_IDX, pageNumber + "");
-				request.setAttribute(PAGE_SIZE, pageSize + "");
-				request.setAttribute("urlPath", urlPath);
-				request.setAttribute("results", sr);
-			}
-		} catch (Exception e) {
+		} catch (ParseException e) {
 			logger.error(e);
+		} catch (IOException e) {
+			logger.error(e);
+		}
+		
+		if(sr == null || sr.getResults() == null || sr.getResults().isEmpty()) throw new ApiRequestException(
+				TextFormatter.append("no results for query"));
+
+		sr.setResults(ApiHelper.buildSearchResultList(sr));
+		
+		logger.info(TextFormatter.append("found ",sr.getResults().size()," results"));
+		
+		if(format.matches("(?i)(csv|json|mobile|rss|xml)")) {
+			ArrayList<Result> searchResults = ApiHelper.buildSearchResultList(sr);
+			ArrayList<Bill> bills = new ArrayList<Bill>();
+			for(Result result: searchResults) {
+				bills.add((Bill)result.getObject());
+			}
+			request.setAttribute("bills", bills);
+		}
+		else {
+			request.setAttribute("sortField", sortField);
+			request.setAttribute("sortOrder", Boolean.toString(sortOrder));
+			request.setAttribute("type", key);
+			request.setAttribute("term", queryBuilder.query());
+			request.setAttribute("format", format);
+			request.setAttribute(PAGE_IDX, pageNumber + "");
+			request.setAttribute(PAGE_SIZE, pageSize + "");
+			request.setAttribute("urlPath", urlPath);
+			request.setAttribute("results", sr);
 		}
 	}
 	
