@@ -233,9 +233,7 @@ public class BillParser extends SenateParser<Bill> {
 					else if (lineCode == 'D') {
 						
 					}
-					else if (lineCode == '5')
-						bill = parseSameAsData(line);
-						
+					
 					else if (lineCode == '3')
 						bill = parseTitle(line);
 						
@@ -350,7 +348,7 @@ public class BillParser extends SenateParser<Bill> {
 							bill.setCurrentCommittee(null);
 						}
 						else if (beTextTemp.startsWith("SUBSTITUTED FOR "))	{
-							String substituted = beText.substring(16).trim();
+							String substituted = beText.substring(16).trim().toUpperCase();
 							
 							if (bill.getSameAs()==null)
 								bill.setSameAs(substituted);
@@ -361,7 +359,7 @@ public class BillParser extends SenateParser<Bill> {
 							}
 						}
 						else if (beTextTemp.startsWith("SUBSTITUTED BY ")) {
-							String substituted = beText.substring("SUBSTITUTED BY ".length()).trim();
+							String substituted = beText.substring("SUBSTITUTED BY ".length()).trim().toUpperCase();
 							
 							if (bill.getSameAs()==null)
 								bill.setSameAs(substituted);
@@ -814,6 +812,11 @@ public class BillParser extends SenateParser<Bill> {
 		if (coSponsorBuffer != null) {
 			currentBill.setCoSponsors(coSponsorBuffer);
 			coSponsorBuffer = null;
+		}
+		
+		if(multiSponsorBuffer != null) {
+			currentBill.setMultiSponsors(multiSponsorBuffer);
+			multiSponsorBuffer = null;
 		}
 	}
 
