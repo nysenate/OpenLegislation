@@ -233,7 +233,9 @@ public class BillParser extends SenateParser<Bill> {
 					else if (lineCode == 'D') {
 						
 					}
-					
+					else if (lineCode == '5')
+						bill = parseSameAsData(line);
+						
 					else if (lineCode == '3')
 						bill = parseTitle(line);
 						
