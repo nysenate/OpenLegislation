@@ -27,11 +27,12 @@ public class BillCleaner implements OpenLegConstants {
 		if(billNumber == null) return null;
 		if(billNumber.contains("-")) {
 			String[] parts = billNumber.split("\\-");
-			return getDesiredBillNumber(parts[0], parts[1]);
+			
+			if(parts.length > 1) {
+				return getDesiredBillNumber(parts[0], parts[1]);
+			}
 		}
-		else {
-			return getDesiredBillNumber(billNumber, SessionYear.getSessionYear() + "");
-		}
+		return getDesiredBillNumber(billNumber, SessionYear.getSessionYear() + "");
 	}
 	
 	/*
@@ -138,8 +139,8 @@ public class BillCleaner implements OpenLegConstants {
 	}
 	
 	public static String formatBillEvent(String bill, String event, String appPath) {
-		event = event.toUpperCase();
-		if(event.contains("AMENDED") || event.contains("PRINT NUMBER")) {
+		if(event.matches("(?i).*(amended|print number).*")) {
+				//event.contains("AMENDED") || event.contains("PRINT NUMBER")) {
 			Pattern p = Pattern.compile("^(.*?)(\\d{2,5}\\w?)(.*?)$");
 			Matcher m = p.matcher(event);
 			
@@ -154,7 +155,8 @@ public class BillCleaner implements OpenLegConstants {
 					"</a>", m.group(3));
 			}
 		}
-		else if(event.contains("SUBSTITUTED")) {
+		else if(event.matches("(?i).*substituted.*")) {
+				//event.contains("SUBSTITUTED")) {
 			Pattern p = Pattern.compile("^(.*?)(\\w\\d{2,5}\\w?)(.*?)$");
 			Matcher m = p.matcher(event);
 			
