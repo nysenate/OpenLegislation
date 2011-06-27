@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.bill;
 import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.util.TextFormatter;
 
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -94,8 +95,14 @@ public class BillEvent extends SenateObject {
 		
 		if (obj != null && obj instanceof BillEvent)
 		{
-			String thisId = getBillEventId();
-			String thatId =  ((BillEvent)obj).getBillEventId();
+			BillEvent other = (BillEvent)obj;
+			
+			String thisId = TextFormatter.append(
+					this.getEventText(),"-",
+					this.getEventDate().getTime());
+			String thatId =  TextFormatter.append(
+					other.getEventText(),"-",
+					other.getEventDate().getTime());
 			
 			return (thisId.equals(thatId));
 		}
