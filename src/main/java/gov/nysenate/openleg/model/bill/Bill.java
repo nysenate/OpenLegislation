@@ -551,8 +551,15 @@ public class Bill extends SenateObject  {
 			votes = bill.getVotes();
 		}
 		else {
+			Vote newFloorVote = null;
+			
 			if(bill.getVotes() != null) {
 				for(Vote vote:bill.getVotes()) {
+					if(vote.getVoteType() == Vote.VOTE_TYPE_FLOOR) {
+						newFloorVote = vote;
+						continue;
+					}
+					
 					if(!this.votes.contains(vote)) {
 						this.votes.add(vote);
 					}
@@ -560,6 +567,14 @@ public class Bill extends SenateObject  {
 						this.votes.remove(vote);
 						this.votes.add(vote);
 					}
+				}
+				
+				if(newFloorVote != null) {
+					for(int i = 0; i < this.getVotes().size(); i++) {
+						if(this.getVotes().get(i).getVoteType() == Vote.VOTE_TYPE_FLOOR)
+							this.votes.remove(i);
+					}
+					this.votes.add(newFloorVote);
 				}
 			}
 		}
