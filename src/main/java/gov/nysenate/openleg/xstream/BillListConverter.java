@@ -30,8 +30,8 @@ public class BillListConverter implements Converter {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
-		if(((ArrayList)value).iterator().hasNext()) {
-			Object o = ((ArrayList)value).iterator().next();
+		if(((ArrayList<?>)value).iterator().hasNext()) {
+			Object o = ((ArrayList<?>)value).iterator().next();
 			
 			//amended bills
 			if(o instanceof Bill) {
@@ -58,7 +58,7 @@ public class BillListConverter implements Converter {
 			if(o instanceof Person) {
 				ArrayList<Person> persons = (ArrayList<Person>) value;
 				for(Person p:persons) {
-					writer.startNode("cosponsor");
+					writer.startNode("person");
 					writer.setValue(p.getFullname());
 					writer.endNode();
 				}
@@ -91,8 +91,7 @@ public class BillListConverter implements Converter {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public boolean canConvert(Class clazz) {
+	public boolean canConvert(@SuppressWarnings("rawtypes") Class clazz) {
 		return (clazz == ArrayList.class);
 	}
 
