@@ -81,7 +81,7 @@ public class QueryBuilder {
 		billNoRaw = billNo.replaceAll("[a-zA-Z]$", "");
 		
 		return keyValue(key,TextFormatter.append(
-			"((",billNo,"-",year," ",OR," ",range(
+			"((",billNoRaw,"-",year," ",OR," ",range(
 					TextFormatter.append(billNoRaw,"A-",year),
 					TextFormatter.append(billNoRaw,"Z-",year)),
 			") ",AND," ",billNoRaw,"*-",year,")"));
