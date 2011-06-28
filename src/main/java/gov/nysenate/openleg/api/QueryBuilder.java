@@ -52,6 +52,10 @@ public class QueryBuilder {
 		return keyValue(ACTIVE,"true");
 	}
 	
+	public QueryBuilder inactive() throws QueryBuilderException {
+		return keyValue(ACTIVE,"false");
+	}
+	
 	public QueryBuilder inSession(int year) throws QueryBuilderException {
 		return append("(")
 			.keyValue(YEAR, Integer.toString(SessionYear.getSessionYear(year)))
