@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.ingest;
 
 import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.api.QueryBuilder;
+import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.search.Result;
@@ -11,6 +13,7 @@ import gov.nysenate.openleg.util.EasyReader;
 import gov.nysenate.openleg.util.JsonSerializer;
 import gov.nysenate.openleg.util.LongSearch;
 import gov.nysenate.openleg.util.SessionYear;
+import gov.nysenate.openleg.util.TextFormatter;
 import gov.nysenate.openleg.util.Timer;
 import gov.nysenate.openleg.util.XmlSerializer;
 
@@ -123,6 +126,27 @@ public class IngestIndexWriter {
 	}
 	
 	/**
+	 * utility to reset all inactive bills
+	 */
+	public void resetInactiveBills() {
+		QueryBuilder queryBuilder = null;
+		
+		try {
+			queryBuilder = QueryBuilder.build().otype("bill").and().inactive();
+		} catch (QueryBuilderException e) {
+			logger.error(e);
+		}
+		
+		LongSearch<Bill> longSearch = new LongSearch<Bill>()
+			.clazz(Bill.class)
+			.query(queryBuilder.query());
+		
+		for(Bill bill:longSearch) {
+			this.reindexActiveBill(bill.getSenateBillNo(), bill.getYear() + "");
+		}
+	}
+	
+	/**
 	 *  The same as markInactiveBills(year) but passes on
 	 *  the current session year from SessionYear.getSessionYear()
 	 */
@@ -142,9 +166,17 @@ public class IngestIndexWriter {
 		
 		boolean reindex = false;
 		
+		QueryBuilder queryBuilder = null;
+		
+		try {
+			queryBuilder = QueryBuilder.build().otype("bill").and().keyValue("year", year);
+		} catch (QueryBuilderException e) {
+			logger.error(e);
+		}
+		
 		LongSearch<Bill> longSearch = new LongSearch<Bill>()
 			.clazz(Bill.class)
-			.query("otype:bill AND year:" + year);
+			.query(queryBuilder.query());
 		
 		for(Bill bill:longSearch) {
 			if(prev != null) {
@@ -155,12 +187,10 @@ public class IngestIndexWriter {
 				}
 				else {
 					if(reindex) {
-						logger.warn("reindexing amended versions: " + prev.getSenateBillNo());
 						reindexAmendedVersions(prev);
 					}
 					else {
 						if(Character.isLetter(billNo.charAt(billNo.length() - 1))) {
-							logger.warn("reindexing amended versions: " + prev.getSenateBillNo());
 							reindexAmendedVersions(bill);
 						}
 					}
@@ -187,27 +217,12 @@ public class IngestIndexWriter {
 	 * 
 	 * returns true if current bill isn't searchable, false otherwise
 	 */
-	public boolean reindexAmendedVersions(Bill bill) {
-		int idx = bill.getSenateBillNo().indexOf("-");
-		char c = bill.getSenateBillNo().charAt(idx-1);
-		String strings[] = bill.getSenateBillNo().split("-");
-		
-		String query = null;
-		
-		if(c >= 65 && c < 90)
-			query = strings[0].substring(0, strings[0].length()-1);
-		else 
-			query = strings[0];
-			
+	public boolean reindexAmendedVersions(Bill bill) {			
 		try {
 			//oid:(S418-2009 OR [S418A-2009 TO S418Z-2009]) AND year:2009
-			query = "otype:bill AND oid:((" 
-				+ query + "-" + strings[1] 
-                    + " OR [" + query + "A-" + strings[1] 
-                       + " TO " + query + "Z-" + strings[1]
-                    + "]) AND " + query + "*-" + strings[1] + ")";
+			QueryBuilder query = QueryBuilder.build().otype("bill").and().relatedBills("oid", bill.getSenateBillNo());
 			
-			SenateResponse sr = searchEngine.search(query,
+			SenateResponse sr = searchEngine.search(query.query(),
 					"json", 0,100, null, false);
 						
 			//if there aren't any results this is a new bill
@@ -242,29 +257,42 @@ public class IngestIndexWriter {
 			}
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (org.apache.lucene.queryParser.ParseException e) {
-			e.printStackTrace();
+			logger.error(e);
+		} catch (QueryBuilderException e) {
+			logger.error(e);
 		}
 		return false;
 	}
 	
+	private void reindexActiveBill(String senateBillNo, String year) {
+		reindexWithActive(senateBillNo, year, true);
+	}
+	
 	private void reindexInactiveBill(String senateBillNo, String year) {
+		reindexWithActive(senateBillNo, year, false);
+	}
+	
+	private void reindexWithActive(String senateBillNo, String year, boolean active) {
 		Bill temp = (Bill) jsonDao.load(senateBillNo,
 				year,
 				"bill",
 				Bill.class);
 		
 		if(temp != null) {
-			temp.setActive(false);
+			temp.setActive(active);
 			
 			try {
 				searchEngine.indexSenateObject(temp);
+				logger.warn(TextFormatter.append("Reset ", temp.getSenateBillNo(), " to active:", active));
 			} catch (IOException e) {
 				logger.error(e);
 			}
 		}
 	}
+	
+	
 	
 	public void fixSummaries() {
 		fixSummaries(SessionYear.getSessionYear() + "");
