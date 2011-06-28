@@ -65,6 +65,8 @@ public class BillParser extends SenateParser<Bill> {
 		if (line.trim().startsWith("<"))
 			return null;
 		
+		line = line.toUpperCase();
+		
 		int year = Integer.parseInt(line.substring(0,4));
 		
 		String billId = line.substring(4,11);
