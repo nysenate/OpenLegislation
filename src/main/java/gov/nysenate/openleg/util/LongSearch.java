@@ -117,6 +117,8 @@ public class LongSearch<T extends ISenateObject> implements Iterator<T>, Iterabl
 			return;
 		}
 		
+		Timer t = new Timer();
+		t.start();
 		try {
 			senateResponse = searchEngine.search(query, format, (max * page++), max, sortBy, reverse);
 		} catch (ParseException e) {
@@ -124,6 +126,7 @@ public class LongSearch<T extends ISenateObject> implements Iterator<T>, Iterabl
 		} catch (IOException e) {
 			logger.error(e);
 		}
+		logger.warn(TextFormatter.append("Query: ", query, " took ", t.stop()));
 		
 		if(senateResponse == null) {
 			exhausted = true;
