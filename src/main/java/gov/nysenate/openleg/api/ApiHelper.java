@@ -44,8 +44,6 @@ public class ApiHelper implements OpenLegConstants {
 	
 	public static ArrayList<Result> buildSearchResultList(SenateResponse sr) {
 		
-		DateFormat df = DateFormat.getInstance();
-		
 		ArrayList<Result> resultList = new ArrayList<Result>();
 		
 		if (sr.getResults() == null || sr.getResults().isEmpty())
@@ -154,7 +152,7 @@ public class ApiHelper implements OpenLegConstants {
 				} else if (type.equals("meeting")) {
 					Meeting meeting = (Meeting) resultObj;
 					title = TextFormatter.append(meeting.getCommitteeName(), " (", 
-							df.format(meeting.getMeetingDateTime()), ")");
+							DATE_FORMAT_CUSTOM.format(meeting.getMeetingDateTime()), ")");
 
 					fields.put("location", meeting.getLocation());
 					fields.put("chair", meeting.getCommitteeChair());
@@ -192,7 +190,7 @@ public class ApiHelper implements OpenLegConstants {
 						fields.put("year", bill.getYear() + "");
 					}
 					
-					title +=  df.format(vote.getVoteDate());
+					title +=  DATE_FORMAT_CUSTOM.format(vote.getVoteDate());
 
 					summary = vote.getDescription();
 				}
