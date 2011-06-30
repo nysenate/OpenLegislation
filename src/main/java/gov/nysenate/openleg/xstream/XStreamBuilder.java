@@ -53,6 +53,9 @@ public class XStreamBuilder implements OpenLegConstants {
 	 * Top level method for serializing any given object into XML using XStream
 	**/
 	public static String xml(Object obj){
+		if(obj instanceof Supplemental)
+			obj = ((Supplemental)obj).getCalendar();
+		
 		HierarchicalStreamDriver driver = new DomDriver();
 		return getXStream(driver,"xml",obj.getClass()).toXML(obj);
 	}
