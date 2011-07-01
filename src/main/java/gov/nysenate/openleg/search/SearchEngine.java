@@ -292,8 +292,8 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 		return getSenateObject(oid, "transcript", Transcript.class);
 	}
 	
-	public Supplemental getSupplemental(String oid) {
-		return getSenateObject(oid, "calendar", Supplemental.class);
+	public Calendar getCalendar(String oid) {
+		return getSenateObject(oid, "calendar", Calendar.class);
 	}
 	
 	public <T extends SenateObject> T getSenateObject(String oid, String type, Class<T> clazz) {
