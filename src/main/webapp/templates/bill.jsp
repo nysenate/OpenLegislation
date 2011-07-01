@@ -183,8 +183,9 @@
 		<%
 			for (Iterator<Meeting> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
 				Meeting meeting = itMeetings.next();
+				Date meetingDate = meeting.getMeetingDateTime();
 				%>
-				<a href="<%=appPath%>/meeting/<%=meeting.luceneOid()%>" class="sublink"><%=meeting.luceneTitle()%></a><%if (itMeetings.hasNext()){%>,<%}
+				<a href="<%=appPath%>/meeting/<%=meeting.luceneOid()%>" class="sublink"><%=meeting.getCommitteeName() + (meetingDate == null ? "" : ": " + calendarSdf.format(meetingDate))%></a><%if (itMeetings.hasNext()){%>,<%}
 				
 			}
 		}
@@ -195,8 +196,8 @@
 			%>
 				<h3><%=senateBillNo%> Calendars</h3>
 			<%
-			for (Iterator<gov.nysenate.openleg.model.calendar.Calendar> itCals = rCals.iterator(); itCals.hasNext();) {
-				gov.nysenate.openleg.model.calendar.Calendar cal = itCals.next();
+			for (Iterator<Calendar> itCals = rCals.iterator(); itCals.hasNext();) {
+				Calendar cal = itCals.next();
 				
 				Supplemental sup = cal.getSupplementals().get(0);
 		
