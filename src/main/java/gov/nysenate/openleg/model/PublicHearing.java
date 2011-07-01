@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 public class PublicHearing extends SenateObject {
 	public ArrayList<String> committees;
@@ -13,7 +14,9 @@ public class PublicHearing extends SenateObject {
 	public ArrayList<Person> presidingSenators;
 	public ArrayList<Person> presentSenators;
 	public ArrayList<Person> presentAssemblyPersons;
-	public ArrayList<Person> speakers;	
+	public ArrayList<Person> speakers;
+	
+	public TreeMap<Integer, String> pages;
 	
 	public PublicHearing() {
 		committees = new ArrayList<String>();
@@ -21,6 +24,8 @@ public class PublicHearing extends SenateObject {
 		presentSenators = new ArrayList<Person>();
 		presentAssemblyPersons = new ArrayList<Person>();
 		speakers = new ArrayList<Person>();
+		
+		pages = new TreeMap<Integer, String>();
 	}
 	
 	public ArrayList<String> getCommittees() {
@@ -47,6 +52,9 @@ public class PublicHearing extends SenateObject {
 	public ArrayList<Person> getSpeakers() {
 		return speakers;
 	}
+	public TreeMap<Integer, String> getPages() {
+		return pages;
+	}
 	public void setCommittees(ArrayList<String> committees) {
 		this.committees = committees;
 	}
@@ -71,9 +79,16 @@ public class PublicHearing extends SenateObject {
 	public void setSpeakers(ArrayList<Person> speakers) {
 		this.speakers = speakers;
 	}
+	public void setPages(TreeMap<Integer, String> pages) {
+		this.pages = pages;
+	}
 	
 	public void addPerson(Person person, ArrayList<Person> persons) {
 		persons.add(person);
+	}
+	
+	public void addPage(int pageNumber, String pageText) {
+		pages.put(pageNumber, pageText);
 	}
 	
 	@Override
