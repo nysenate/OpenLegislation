@@ -60,7 +60,8 @@ if (pageIdx-1 > 0)
 		prevUrl = "/legislation/search/" + (search != null ?  "?search=" + java.net.URLEncoder.encode(search,"UTF-8"):"?term=" + java.net.URLEncoder.encode(term,"UTF-8"))
 			+ "&sort=" + sortField
 			+ "&sortOrder=" + sortOrder
-			+ "&pageIdx=" + (pageIdx-1);
+			+ "&pageIdx=" + (pageIdx-1)
+			+ "&pageSize=" + pageSize;
 	}
 }
 	
@@ -75,7 +76,8 @@ if (total > endIdx)
 		nextUrl = "/legislation/search/" + (search != null ?  "?search=" + java.net.URLEncoder.encode(search,"UTF-8"):"?term=" + java.net.URLEncoder.encode(term,"UTF-8"))
 			+ "&sort=" + sortField
 			+ "&sortOrder=" + sortOrder		
-			+ "&pageIdx=" + (pageIdx+1);
+			+ "&pageIdx=" + (pageIdx+1)
+			+ "&pageSize=" + pageSize;
 	}
 }
 	
@@ -87,10 +89,10 @@ if (total > endIdx)
 <div style="float:right">
 <% String encodedTerm = java.net.URLEncoder.encode(term,"UTF-8"); %>
 Formats:
-<a href="/legislation/search/?term=<%=encodedTerm%>&format=csv">CSV</a>,
-<a href="/legislation/search/?term=<%=encodedTerm%>&format=json">JSON</a>,
-<a href="/legislation/search/?term=<%=encodedTerm%>&format=rss">RSS</a>,
-<a href="/legislation/search/?term=<%=encodedTerm%>&format=xml">XML</a>
+<a href="/legislation/search/?term=<%=encodedTerm%>&format=csv&pageIdx=<%=pageIdx%>&pageSize=<%=pageSize%>">CSV</a>,
+<a href="/legislation/search/?term=<%=encodedTerm%>&format=json&pageIdx=<%=pageIdx%>&pageSize=<%=pageSize%>">JSON</a>,
+<a href="/legislation/search/?term=<%=encodedTerm%>&format=rss&pageIdx=<%=pageIdx%>&pageSize=<%=pageSize%>">RSS</a>,
+<a href="/legislation/search/?term=<%=encodedTerm%>&format=xml&pageIdx=<%=pageIdx%>&pageSize=<%=pageSize%>">XML</a>
 </div>
 <br style="clear:both;"/>
  <div id="content">
