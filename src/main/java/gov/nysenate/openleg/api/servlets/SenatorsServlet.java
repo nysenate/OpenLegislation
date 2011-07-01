@@ -52,10 +52,10 @@ public class SenatorsServlet extends HttpServlet {
 	private void displayJSON(HttpServletRequest request,
 			HttpServletResponse response) {
 		response.setContentType("text/plain");
-		response.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("ISO-8859-1");
 		try {
 			PrintWriter out = new PrintWriter(new OutputStreamWriter(
-					response.getOutputStream(), "UTF-8"));
+					response.getOutputStream(), "ISO-8859-1"));
 
 			out.println("[");
 
@@ -86,7 +86,7 @@ public class SenatorsServlet extends HttpServlet {
 	public void init() throws ServletException {
 		super.init();
 
-		String encoding = "latin1";
+		String encoding = "ISO-8859-1";
 
 		try {
 			districts = new ArrayList<JSONObject>();
@@ -115,7 +115,7 @@ public class SenatorsServlet extends HttpServlet {
 				JSONObject jSenator = jsono.getJSONObject("senator");
 
 				String senatorName = jSenator.getString("name");
-
+				
 				jSenator.put("name", senatorName);
 
 				String senatorKey = senatorName.replaceAll(
