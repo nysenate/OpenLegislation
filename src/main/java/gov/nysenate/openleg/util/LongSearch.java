@@ -126,7 +126,7 @@ public class LongSearch<T extends ISenateObject> implements Iterator<T>, Iterabl
 		} catch (IOException e) {
 			logger.error(e);
 		}
-		logger.warn(TextFormatter.append("Query: ", query, " took ", t.stop()));
+		logger.warn(TextFormatter.append("Query: ", query," (page ", page, ") took ", t.stop()));
 		
 		if(senateResponse == null) {
 			exhausted = true;

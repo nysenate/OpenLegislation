@@ -81,30 +81,14 @@ if (billkey == null)
     
       <div style="float:right;">
 
-<a href="<%=appPath%>/beta">BETA FEEDBACK</a> &nbsp;|&nbsp; 
+<a href="<%=appPath%>/feedback">FEEDBACK</a> &nbsp;|&nbsp; 
 
 <a href="<%=appPath%>/mobile/info">Mobile Access</a> &nbsp;|&nbsp; 
 
 <a href="<%=appPath%>/developers">Developers</a>
    </div>
    </div>
-<div class="notice">
-Open Legislation v1.6 is currently in "beta" and may occasionally be inaccurate or out of date.
-Up-to-the-minute legislation is still available from the <a href="http://public.leginfo.state.ny.us/menuf.cgi">Legislative Research Service</a>.
-</div>
 
-   <!-- 
-   <div id="header">
-   <div style="float:right;font-size:80%;">
-
-<a href="<%=appPath%>/beta"><b>BETA FEEDBACK</b></a> &nbsp;|&nbsp; 
-
-<a href="<%=appPath%>/mobile/info">Mobile Access</a> &nbsp;|&nbsp; 
-
-<a href="http://open.nysenate.gov">Developers</a> &nbsp;|&nbsp;<a href="http://nysenate.gov">Senate Home</a>
-   </div>
-   </div>
-    -->
    <br/><br/>
    
   

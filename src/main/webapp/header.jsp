@@ -70,24 +70,13 @@
 	    		<a href="http://nysenate.gov/senators">Senators</a>&nbsp;|&nbsp;
 	    		<a href="http://nysenate.gov/committees">Committees</a>&nbsp;|&nbsp;
 	    		<a href="http://nysenate.gov/issues-initiatives">Issues &amp; Initiatives</a>&nbsp;|&nbsp;
-			    <!--
-			    <a href="http://nysenate.gov/legislation-open-senate">Open Senate</a>&nbsp;|&nbsp;
-			    
-			    <a href="http://nysenate.gov/about-us">About</a>&nbsp;|&nbsp;
-			    <a href="http://nysenate.gov/media">Photos &amp; Videos</a>&nbsp;|&nbsp;
-			     -->
 	    		<a href="http://nysenate.gov/newsroom">Newsroom</a>
 	    	</div>
 	      	<div style="float:right;">
-				<a href="<%=appPath%>/beta">Beta Feedback</a> &nbsp;|&nbsp; 
+				<a href="<%=appPath%>/feedback">Feedback</a> &nbsp;|&nbsp; 
 				<a href="<%=appPath%>/mobile/info">Mobile Access</a> &nbsp;|&nbsp; 
 				<a href="http://www.nysenate.gov/developers">Developers</a>
 	   		</div>
-		</div>
-		<div class="notice">
-			Open Legislation v1.6 is currently in "beta" and may occasionally be inaccurate or out of date.
-			Up-to-the-minute legislation is still available from the
-			<a href="http://public.leginfo.state.ny.us/menuf.cgi">Legislative Research Service</a>.
 		</div>
 
     	<div id="header">

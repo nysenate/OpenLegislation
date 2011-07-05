@@ -56,9 +56,6 @@ or browse:
 
 <a href="<%=appPath%>/mobile/info">Mobile Help</a>
 </p>
- <div class="notice">
-NOTE: This service is in BETA. We welcome your <a href="mailto:freitas@senate.state.ny.us">input and feedback</a>.
-</div> 
 </div>
    </div>
 </body>
