@@ -545,7 +545,9 @@ public class BillParser extends SenateParser<Bill> {
 	
 		if (line.length() > 12)	{
 			line = line.substring(12);
-			line = line.replace((char)0xC, ' ');
+			line = line.replace((char)0xC, ' ')
+					.replaceAll("\\x27(\\W|\\s)", "&apos;$1")
+					.replaceAll("›","S");
 
 			if (titleBuffer == null) {
 				titleBuffer = new StringBuffer();

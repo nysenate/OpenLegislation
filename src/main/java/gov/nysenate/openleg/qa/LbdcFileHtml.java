@@ -188,7 +188,7 @@ public class LbdcFileHtml extends LbdcFile {
 	}
 	
 	private String cln(String str) {
-		return str.trim().replaceAll("  "," ");
+		return str.trim().replaceAll("  "," ").replaceAll("&apos;", "'");
 	}
 	
 	private boolean valid(Object o1, Object o2) {
@@ -211,7 +211,9 @@ public class LbdcFileHtml extends LbdcFile {
 	
 	private void doStringField(ProblemBill problemBill, FieldName fieldName, String openField, String lbdcField, String pattern) {
 		if(valid(openField,lbdcField)) {
-			if(!cln(lbdcField).matches((pattern == null ? "" : pattern) + Pattern.quote(cln(openField)))) {
+			lbdcField = cln(lbdcField);
+			openField = cln(openField);
+			if(!lbdcField.matches((pattern == null ? "" : pattern) + Pattern.quote(openField))) {
 				problemBill.addNonMatchingField(
 					new NonMatchingField(
 						fieldName,
