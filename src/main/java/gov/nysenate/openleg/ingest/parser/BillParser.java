@@ -446,7 +446,8 @@ public class BillParser extends SenateParser<Bill> {
 	
 		if (line.length() > 12)	{
 			line = line.substring(12);
-			line = line.replace((char)0xC, ' ');
+			line = line.replace((char)0xC, ' ').replaceAll("\\x27(\\W|\\s)", "&apos;$1")
+											   .replaceAll("›","S");
 
 			if (summaryBuffer == null)
 				summaryBuffer = new StringBuffer();
@@ -765,7 +766,7 @@ public class BillParser extends SenateParser<Bill> {
 			return;
 		
 		if (summaryBuffer != null) {
-			currentBill.setSummary(summaryBuffer.toString());			
+			currentBill.setSummary(summaryBuffer.toString().trim());			
 			summaryBuffer = null;
 			tempSummaryBuffer = null;
 		}
