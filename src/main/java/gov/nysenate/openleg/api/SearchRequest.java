@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.api;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -26,7 +28,11 @@ public class SearchRequest extends AbstractApiRequest {
 			String format, String type, String term, String pageNumber, String pageSize) {
 		super(request, response, pageNumber, pageSize, format, getApiEnum(SearchView.values(),type));
 		this.type = type;
-		this.term = whichTerm(term);
+		try {
+			this.term = URLDecoder.decode(whichTerm(term),"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e);
+		}
 	}
 	
 	@Override
@@ -186,7 +192,7 @@ public class SearchRequest extends AbstractApiRequest {
 			}
 			
 			if(format.matches("(rss|atom)")) {
-				//pageSize = 1000;
+				pageSize = 1000;
 				sortField = "modified";
 			}
 			
@@ -197,7 +203,7 @@ public class SearchRequest extends AbstractApiRequest {
 					TextFormatter.append("no term given"));
 			
 			String searchFormat = "json";
-						
+									
 			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
 				sr = SearchEngine.getInstance().search(queryBuilder.and().current().query(),
 						searchFormat,start,pageSize,sortField,sortOrder);
@@ -207,7 +213,7 @@ public class SearchRequest extends AbstractApiRequest {
 			}
 					
 			ApiHelper.buildSearchResultList(sr);
-			
+						
 			if(sr == null || sr.getResults() == null || sr.getResults().isEmpty()) throw new ApiRequestException(
 					TextFormatter.append("no results for query"));
 			
