@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/plain" pageEncoding="utf-8" %><%!
+<%@ page language="java" import="gov.nysenate.openleg.search.ResultSearch,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/plain" pageEncoding="utf-8" %><%!
 	public String format(String str) {
 		if(str == null)
 			return ",";
@@ -11,30 +11,26 @@
 	}
 %><%
 
+String term = (String)request.getAttribute("term");
+String sortField = (String)request.getAttribute("sortField");
+boolean sortOrder = true;
+if (request.getAttribute("sortOrder")!=null)
+			sortOrder = Boolean.parseBoolean((String)request.getAttribute("sortOrder"));
+
+ResultSearch rs = new ResultSearch(500, 36, "json", sortField, sortOrder).query(term);
+
 response.setContentType("text/csv");
 response.setHeader("Content-disposition","attachment;filename=search-" + new Date().getTime() +".csv");
 
-SenateResponse sr = (SenateResponse)request.getAttribute("results");
-int resultCount = sr.getResults().size();
-
-int total = (Integer)sr.getMetadataByKey("totalresults");
-
-
 ArrayList<String> attribs = new ArrayList<String>(Arrays.asList("billno", "chair", "committee", "cosponsors", "location", "sameas", "session-type", "sponsor", "status", "summary", "when", "year"));
-
-Iterator<Result> it = sr.getResults().iterator();
-Result r = null;
 
 ArrayList<String> columns = new ArrayList<String>();
 columns.addAll(Arrays.asList("type", "id", "title"));
 
 ArrayList<String> rows = new ArrayList<String>();
 
-while (it.hasNext()) {
-	
+for(Result r:rs) {
 	try {		
-		r = it.next();
-		
 		String tuple = "";
 		tuple += r.getOtype() 
 					+ format(r.getOid())
@@ -57,6 +53,7 @@ while (it.hasNext()) {
 		rows.add(tuple);
 	}
 	catch (Exception e) {
+		e.printStackTrace();
 		//error with this document
 	}
 }
@@ -72,5 +69,4 @@ out.print(header + "\n");
 for(String row:rows) {
 	out.println(row);
 }
-
 %>

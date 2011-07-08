@@ -86,6 +86,7 @@ if (total > endIdx)
 <% String encodedTerm = java.net.URLEncoder.encode(term,"UTF-8"); %>
 Formats:
 <a href="/legislation/api/atom/search/<%=encodedTerm%>/">ATOM</a>,
+<a href="/legislation/api/rss/search/<%=encodedTerm%>/">RSS</a>,
 <a href="/legislation/api/json/search/<%=encodedTerm%>/<%=pageIdx%>/<%=pageSize%>">JSON</a>,
 <a href="/legislation/api/xml/search/<%=encodedTerm%>/<%=pageIdx%>/<%=pageSize%>">XML</a>
 </div>
