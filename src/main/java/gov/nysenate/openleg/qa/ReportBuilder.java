@@ -49,7 +49,7 @@ public class ReportBuilder {
 			IOException {
 		
 		longSearch.query("otype:bill AND NOT " + field + ":[A* TO Z*] AND NOT " + field
-						+ ":Z* AND year:" + year);
+						+ ":Z* AND oid:(S* OR A*) AND year:" + year);
 		
 		for(Bill bill:longSearch) {
 			ProblemBill problemBill = null;
