@@ -196,6 +196,11 @@ public class SearchRequest extends AbstractApiRequest {
 				sortField = "modified";
 			}
 			
+			if(format.equalsIgnoreCase("csv")) {
+				request.setAttribute("term", term);
+				return;
+			}
+			
 			request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
 			request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
 						
@@ -203,7 +208,7 @@ public class SearchRequest extends AbstractApiRequest {
 					TextFormatter.append("no term given"));
 			
 			String searchFormat = "json";
-									
+								
 			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
 				sr = SearchEngine.getInstance().search(queryBuilder.and().current().query(),
 						searchFormat,start,pageSize,sortField,sortOrder);
