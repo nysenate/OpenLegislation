@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
@@ -45,6 +47,8 @@ public class BillParser extends SenateParser<Bill> {
 	private List<Person> multiSponsorBuffer = null;
 	
 	private HashMap<String,Person> personCache;
+	
+	private String uniBillNumber;
 	
 	public BillParser() {
 		super(BillParser.class);
@@ -613,8 +617,13 @@ public class BillParser extends SenateParser<Bill> {
 		if (line.indexOf("*END*")!=-1)	{
 
 		}
+		//2011S05388 T00000.SO DOC C 5388/7728                              BTXT                 2011
 		else if (lineCode.equals("T00000"))	{
-			
+			Pattern p = Pattern.compile("^\\.SO DOC C \\d+/(\\d+)\\s.*$");
+			Matcher m = p.matcher(line);
+			if(m.find()) {
+				uniBillNumber = "A" + m.group(1) + "-" + currentBill.getYear();
+			}
 		}
 		else if (lineCode.equals("R00000")) {
 			
@@ -808,8 +817,22 @@ public class BillParser extends SenateParser<Bill> {
 				//there was an encoding issue with jackson, forcing conversion to utf-8
 				currentBill.setFulltext(new String(textBuffer.toString().getBytes("UTF-8"),"UTF-8"));
 			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				logger.error(e);
 			}
+			
+			if(uniBillNumber != null) {
+				Bill temp = new Bill();
+				temp.setSenateBillNo(new String(uniBillNumber));
+				temp.setYear(currentBill.getYear());
+				temp.setFulltext(currentBill.getFulltext());
+				
+				this.addNewSenateObject(temp);
+				
+				System.out.println(temp.getSenateBillNo());
+				
+				uniBillNumber = null;
+			}
+			
 			textBuffer = null;
 		}
 
