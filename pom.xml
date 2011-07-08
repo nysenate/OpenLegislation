@@ -108,7 +108,17 @@
 		<dependency>
 		    <groupId>commons-logging</groupId>
 		    <artifactId>commons-logging</artifactId>
-    	<version>1.1</version>
-</dependency>
+    		<version>1.1</version>
+    	</dependency>
+    	<dependency>
+			<groupId>org.apache.abdera</groupId>
+			<artifactId>abdera-core</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.abdera</groupId>
+			<artifactId>abdera-parser</artifactId>
+			<version>1.1.2</version>  
+		</dependency>
 	</dependencies>
 </project>
