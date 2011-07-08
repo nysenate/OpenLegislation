@@ -73,12 +73,6 @@ while (it.hasNext())
                         
                 }
                 
-                 if (contentType.equals("transcript"))
-                {
-                        contentId = contentId + "?term=" + java.net.URLEncoder.encode(term,"UTF-8") + "&#result";
-                        
-                }
-                
                 if (contentType.equals("bill"))
                 {
                 

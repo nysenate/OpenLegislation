@@ -14,19 +14,11 @@
 response.setContentType("text/csv");
 response.setHeader("Content-disposition","attachment;filename=search-" + new Date().getTime() +".csv");
 
-int pageIdx = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_IDX));
-int pageSize = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_SIZE));
-
-int startIdx = (pageIdx - 1) * pageSize;
-int endIdx = startIdx + pageSize;
-
 SenateResponse sr = (SenateResponse)request.getAttribute("results");
 int resultCount = sr.getResults().size();
 
 int total = (Integer)sr.getMetadataByKey("totalresults");
 
-if (total < endIdx)
-	endIdx = total;
 
 ArrayList<String> attribs = new ArrayList<String>(Arrays.asList("billno", "chair", "committee", "cosponsors", "location", "sameas", "session-type", "sponsor", "status", "summary", "when", "year"));
 

@@ -1,19 +1,9 @@
 <%@ page language="java" import="org.json.*,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/plain" pageEncoding="utf-8" %><%
 
-int pageIdx = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_IDX));
-int pageSize = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_SIZE));
-
-int startIdx = (pageIdx - 1) * pageSize;
-int endIdx = startIdx + pageSize;
-
 SenateResponse sr = (SenateResponse)request.getAttribute("results");
 int resultCount = sr.getResults().size();
 
 int total = (Integer)sr.getMetadataByKey("totalresults");
-
-if (total < endIdx)
-	endIdx = total;
-
 
 org.json.JSONStringer js = new org.json.JSONStringer();
 	
