@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.search;
 
+import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.util.TextFormatter;
 import gov.nysenate.openleg.util.Timer;
 
@@ -111,6 +112,8 @@ public class ResultSearch implements Iterator<Result>, Iterable<Result> {
 			exhausted = true;
 			return;
 		}
+		
+		ApiHelper.buildSearchResultList(senateResponse);
 		
 		ArrayList<Result> results = senateResponse.getResults();
 		
