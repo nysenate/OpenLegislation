@@ -1,11 +1,7 @@
-package gov.nysenate.openleg.util;
+package gov.nysenate.openleg.search;
 
-import gov.nysenate.openleg.api.ApiHelper;
-import gov.nysenate.openleg.ingest.Ingest;
-import gov.nysenate.openleg.model.ISenateObject;
-import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.util.TextFormatter;
+import gov.nysenate.openleg.util.Timer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,17 +10,9 @@ import java.util.NoSuchElementException;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 
-/**
- * An easier, iterable way to move through multiple result sets
- *
- * @param <T>
- */
-public class LongSearch<T extends ISenateObject> implements Iterator<T>, Iterable<T> {
-	private static Logger logger = Logger.getLogger(LongSearch.class);
+public class ResultSearch implements Iterator<Result>, Iterable<Result> {
+	private static Logger logger = Logger.getLogger(ResultSearch.class);
 	
 	private static final int SIZE = 500;
 	private static final int PAGE = 0;
@@ -52,33 +40,24 @@ public class LongSearch<T extends ISenateObject> implements Iterator<T>, Iterabl
 	
 	public SenateResponse senateResponse;
 	
-	public Class<T> clazz;
-	
-	private ObjectMapper mapper;
 	private SearchEngine searchEngine;
 	
-	public LongSearch() {
+	public ResultSearch() {
 		this(SIZE, PAGE, FORMAT, SORT_BY, REVERSE);
 	}
 	
-	public LongSearch(int max, int page, String format, String sortBy, boolean reverse) {
+	public ResultSearch(int max, int page, String format, String sortBy, boolean reverse) {
 		this.max = max;
 		this.page = page;
 		this.format = format;
 		this.sortBy = sortBy;
 		this.reverse = reverse;
-		mapper = Ingest.getMapper();
 		searchEngine = SearchEngine.getInstance();
 	}
 	
-	public LongSearch<T> query(String query) {
+	public ResultSearch query(String query) {
 		this.query = query;
 		reset();
-		return this;
-	}
-	
-	public LongSearch<T> clazz(Class<T> clazz) {
-		this.clazz = clazz;
 		return this;
 	}
 	
@@ -91,12 +70,12 @@ public class LongSearch<T extends ISenateObject> implements Iterator<T>, Iterabl
 		return pos < size;
 	}
 	
-	public T next() {
+	public Result next() {
 		if(pos >= size) {
 			throw new NoSuchElementException();
 		}
 		else {
-			return result(senateResponse.getResults().get(pos++));
+			return senateResponse.getResults().get(pos++);
 		}
 	}
 	
@@ -142,30 +121,9 @@ public class LongSearch<T extends ISenateObject> implements Iterator<T>, Iterabl
 		pos = 0;
 		
 	}
-	
-	@SuppressWarnings("unchecked")
-	private T result(Result result) {
-		T object = null;
-		
-		try {
-			object = (T) mapper.readValue(
-					ApiHelper.unwrapJson(result.data), 
-					(clazz == null ? ApiHelper.getApiType(result.getOtype()).clazz() : clazz));
-			
-			object.setModified(result.lastModified);
-			object.setActive(result.active);
-			
-		} catch (JsonParseException e) {
-			logger.error(e);
-		} catch (JsonMappingException e) {
-			logger.error(e);
-		} catch (IOException e) {
-			logger.error(e);
-		}
-		return object;
-	}
 
-	public Iterator<T> iterator() {
+	@Override
+	public Iterator<Result> iterator() {
 		return this;
 	}
 }

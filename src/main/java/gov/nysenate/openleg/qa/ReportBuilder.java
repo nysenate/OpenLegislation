@@ -2,7 +2,7 @@ package gov.nysenate.openleg.qa;
 
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.qa.model.ProblemBill;
-import gov.nysenate.openleg.util.LongSearch;
+import gov.nysenate.openleg.search.SenateObjectSearch;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -13,11 +13,11 @@ public class ReportBuilder {
 	final static double MS_IN_DAY = 86400000.0;
 	final static int MAX_RESULTS = 500;
 	
-	LongSearch<Bill> longSearch;
+	SenateObjectSearch<Bill> longSearch;
 	long newestMod ;
 	
 	public ReportBuilder() {
-		longSearch = new LongSearch<Bill>();
+		longSearch = new SenateObjectSearch<Bill>();
 		newestMod = 0L;
 	}
 

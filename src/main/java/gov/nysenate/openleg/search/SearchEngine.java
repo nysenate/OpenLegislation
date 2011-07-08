@@ -17,7 +17,6 @@ import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.util.JsonSerializer;
-import gov.nysenate.openleg.util.LongSearch;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.XmlSerializer;
 
@@ -322,7 +321,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 	public <T extends SenateObject> ArrayList<T> getSenateObjects(String query, Class<T> clazz) {
 		ArrayList<T> senateObjects = new ArrayList<T>();
 		
-		LongSearch<T> longSearch = new LongSearch<T>().clazz(clazz).query(query);
+		SenateObjectSearch<T> longSearch = new SenateObjectSearch<T>().clazz(clazz).query(query);
 		
 		for(T senateObject:longSearch) {
 			senateObjects.add(senateObject);

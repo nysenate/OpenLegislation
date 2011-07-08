@@ -5,13 +5,13 @@ import gov.nysenate.openleg.api.QueryBuilder;
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.search.SenateObjectSearch;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
 import gov.nysenate.openleg.util.EasyReader;
 import gov.nysenate.openleg.util.JsonSerializer;
-import gov.nysenate.openleg.util.LongSearch;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.TextFormatter;
 import gov.nysenate.openleg.util.Timer;
@@ -137,7 +137,7 @@ public class IngestIndexWriter {
 			logger.error(e);
 		}
 		
-		LongSearch<Bill> longSearch = new LongSearch<Bill>()
+		SenateObjectSearch<Bill> longSearch = new SenateObjectSearch<Bill>()
 			.clazz(Bill.class)
 			.query(queryBuilder.query());
 		
@@ -174,7 +174,7 @@ public class IngestIndexWriter {
 			logger.error(e);
 		}
 		
-		LongSearch<Bill> longSearch = new LongSearch<Bill>()
+		SenateObjectSearch<Bill> longSearch = new SenateObjectSearch<Bill>()
 			.clazz(Bill.class)
 			.query(queryBuilder.query());
 		
@@ -308,7 +308,7 @@ public class IngestIndexWriter {
 	 * @param year - session to scan
 	 */
 	public void fixSummaries(String year) {
-		LongSearch<Bill> longSearch = new LongSearch<Bill>()
+		SenateObjectSearch<Bill> longSearch = new SenateObjectSearch<Bill>()
 			.clazz(Bill.class)
 			.query(	"otype:bill " +
 					"AND NOT summary:[A* TO Z*] " +
