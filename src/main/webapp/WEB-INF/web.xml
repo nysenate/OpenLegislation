@@ -9,10 +9,6 @@
 		<servlet-class>gov.nysenate.openleg.api.servlets.ApiServlet</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>SearchServlet</servlet-name>
-		<servlet-class>gov.nysenate.openleg.api.servlets.SearchServlet</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>RulesServlet</servlet-name>
 		<servlet-class>gov.nysenate.openleg.api.servlets.RulesServlet</servlet-class>
 	</servlet>
@@ -161,11 +157,11 @@
 		<url-pattern>/sponsor/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>SearchServlet</servlet-name>
+		<servlet-name>ApiServlet</servlet-name>
 		<url-pattern>/search</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>SearchServlet</servlet-name>
+		<servlet-name>ApiServlet</servlet-name>
 		<url-pattern>/search/*</url-pattern>
 	</servlet-mapping>
 </web-app>

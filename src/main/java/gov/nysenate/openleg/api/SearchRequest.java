@@ -1,65 +1,36 @@
-package gov.nysenate.openleg.api.servlets;
+package gov.nysenate.openleg.api;
 
-import gov.nysenate.openleg.api.ApiHelper;
-import gov.nysenate.openleg.api.QueryBuilder;
+import java.util.Calendar;
+import java.util.Date;
+
+import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.BillCleaner;
 import gov.nysenate.openleg.util.OpenLegConstants;
+import gov.nysenate.openleg.util.TextFormatter;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-public class SearchServlet extends HttpServlet implements OpenLegConstants {	
-
-	private static final long serialVersionUID = 1L;
+public class SearchRequest extends AbstractApiRequest {
+	private final Logger logger = Logger.getLogger(SearchRequest.class);
 	
-	private static Logger logger = Logger.getLogger(SearchServlet.class);
+	String type;
+	String term;
 	
-	public SearchServlet() {
-		super();
+	public SearchRequest(HttpServletRequest request, HttpServletResponse response,
+			String format, String type, String term, String pageNumber, String pageSize) {
+		super(request, response, pageNumber, pageSize, format, getApiEnum(SearchView.values(),type));
+		this.type = type;
+		this.term = whichTerm(term);
 	}
-
-	/**
-	 * The doGet method of the servlet. <br>
-	 *
-	 * This method is called when a form has its tag value method equals to get.
-	 * 
-	 * @param request the request send by the client to the server
-	 * @param response the response send by the server to the client
-	 * @throws ServletException if an error occurred
-	 * @throws IOException if an error occurred
-	 */
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
-		doPost(request, response);
-	}
-
-	/**
-	 * The doPost method of the servlet. <br>
-	 *
-	 * This method is called when a form has its tag value method equals to post.
-	 * 
-	 * @param request the request send by the client to the server
-	 * @param response the response send by the server to the client
-	 * @throws ServletException if an error occurred
-	 * @throws IOException if an error occurred
-	 */
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
-		String search = request.getParameter("search");
-						
-		String term = request.getParameter("term");
+	
+	@Override
+	public void fillRequest() throws ApiRequestException {
 		String type = request.getParameter("type");
 		
 		String full = request.getParameter("full");
@@ -73,17 +44,6 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants {
 		
 		String session = request.getParameter("session");
 		
-		if(search != null) {
-			request.setAttribute("search", search);
-			term = search;
-		}
-				
-		String tempTerm = null;
-		if((tempTerm = BillCleaner.getDesiredBillNumber(term)) != null) {
-			term = "oid:" + tempTerm;
-			type = "bill";
-		}
-
 		String sortField = request.getParameter("sort");
 		boolean sortOrder = false;
 		if (request.getParameter("sortOrder")!=null)
@@ -95,8 +55,8 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants {
 		try {
 			if (request.getParameter("startdate")!=null && (!request.getParameter("startdate").equals("mm/dd/yyyy")))
 				startDate = OL_SEARCH_DATE_FORMAT.parse(request.getParameter("startdate"));
-		} catch (java.text.ParseException e1) {
-			logger.warn(e1);
+		} catch (java.text.ParseException e) {
+			logger.warn(e);
 		}
 		
 		try {
@@ -115,20 +75,21 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants {
 		}
 		
 		
-		String format = "html";
-		
-		if (request.getParameter("format")!=null)
-			format = request.getParameter("format");
-		
-
 		int pageIdx = 1;
 		int pageSize = 20;
 		
 		if (request.getParameter("pageIdx") != null)
 			pageIdx = Integer.parseInt(request.getParameter("pageIdx"));
+		else
+			pageIdx = pageNumber;
 		
 		if (request.getParameter("pageSize") != null)
 			pageSize = Integer.parseInt(request.getParameter("pageSize"));
+		else
+			pageSize = this.pageSize;
+		
+		if (request.getParameter("format")!=null)
+			this.format = request.getParameter("format").toLowerCase();
 		
 		//now calculate start, end idx based on pageIdx and pageSize
 		int start = (pageIdx - 1) * pageSize;
@@ -204,7 +165,7 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants {
 						
 			//default behavior is to return only active bills, so if a user searches
 			//s1234 and s1234a is available then s1234a should be returned
-			if(sortField == null && (((search != null && search.contains("otype:bill")) 
+			if(sortField == null && (((term != null && term.contains("otype:bill")) 
 					|| (term != null && term.contains("otype:bill"))) 
 					|| (type != null && type.equals("bill")))) {
 				
@@ -224,16 +185,19 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants {
 				request.setAttribute("sortOrder", Boolean.toString(sortOrder));
 			}
 			
+			if(format.matches("(rss|atom)")) {
+				//pageSize = 1000;
+				sortField = "modified";
+			}
+			
 			request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
 			request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
 						
-			if (term.length() == 0)	{
-				response.sendError(404);
-				return;
-			}
+			if (term.length() == 0)	throw new ApiRequestException(
+					TextFormatter.append("no term given"));
 			
 			String searchFormat = "json";
-			
+						
 			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
 				sr = SearchEngine.getInstance().search(queryBuilder.and().current().query(),
 						searchFormat,start,pageSize,sortField,sortOrder);
@@ -244,33 +208,74 @@ public class SearchServlet extends HttpServlet implements OpenLegConstants {
 					
 			ApiHelper.buildSearchResultList(sr);
 			
-			if (sr != null) {
-				if (sr.getResults().size() == 0) {
-					response.sendError(404);
-				}
-				else {
-					request.setAttribute("results", sr);
-					String viewPath = "/views/search-" + format + DOT_JSP;
-					getServletContext().getRequestDispatcher(viewPath).forward(request, response);
-				}
-			}
-			else {
-				logger.error("Search Error: " + request.getRequestURI());
-				response.sendError(500);
-			}
+			if(sr == null || sr.getResults() == null || sr.getResults().isEmpty()) throw new ApiRequestException(
+					TextFormatter.append("no results for query"));
+			
+			request.setAttribute("results", sr);
 			
 		} catch (Exception e) {
 			logger.error("Search Error: " + request.getRequestURI(),e);
-			e.printStackTrace();
-			response.sendError(500);
 		}
 	}
 	
-	public boolean valid(String str) {
+	@Override
+	public String getView() {
+		return TextFormatter.append("/views/search-", format, ".jsp");
+	}
+	
+	@Override
+	public boolean hasParameters() {
+		return type!= null && term!=null;
+	}
+	
+	private String whichTerm(String uriParam) {
+		if(valid(uriParam))
+			return uriParam;
+		
+		String search = request.getParameter("search");
+		
+		String term = request.getParameter("term");
+		
+		if(search != null) {
+			request.setAttribute("search", search);
+			term = search;
+		}
+				
+		String tempTerm = null;
+		if((tempTerm = BillCleaner.getDesiredBillNumber(term)) != null) {
+			term = "oid:" + tempTerm;
+		}
+		
+		return term;
+	}
+	
+	private boolean valid(String str) {
 		return str != null && str.length() > 0;
 	}
-
-	public void init() throws ServletException {
-		logger.info("SearchServlet:init()");
+	
+	public enum SearchView implements ApiEnum {
+		SEARCH		("search", Bill.class, new String[] {"atom", "csv", "html-list", 
+														 "html", "json", "mobile", 
+														 "rss", "xml"});
+		
+		public final String view;
+		public final Class<? extends SenateObject> clazz;
+		public final String[] formats;
+		
+		private SearchView(final String view, final Class<? extends SenateObject> clazz, final String[] formats) {
+			this.view = view;
+			this.clazz = clazz;
+			this.formats = formats;
+		}
+		
+		public String view() {
+			return view;
+		}
+		public String[] formats() {
+			return formats;
+		}
+		public Class<? extends SenateObject> clazz() {
+			return clazz;
+		}
 	}
 }

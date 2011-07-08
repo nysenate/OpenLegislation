@@ -6,7 +6,9 @@ import gov.nysenate.openleg.api.KeyValueViewRequest;
 import gov.nysenate.openleg.api.KeyValueViewRequest.KeyValueView;
 import gov.nysenate.openleg.api.MultiViewRequest;
 import gov.nysenate.openleg.api.MultiViewRequest.MultiView;
+import gov.nysenate.openleg.api.SearchRequest;
 import gov.nysenate.openleg.api.SingleViewRequest;
+import gov.nysenate.openleg.api.SearchRequest.SearchView;
 import gov.nysenate.openleg.api.SingleViewRequest.SingleView;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
@@ -78,11 +80,12 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 	/*
 	 * Captures value for Key Value view
 	 */
-	public static final String KEY_VALUE_END = ")/(.*?)/?";
+	public static final String KEY_VALUE_END = ")/(.*?)/?+";
 	
 	public final Pattern SINGLE_PATTERN;
 	public final Pattern MULTI_PATTERN;
 	public final Pattern KEY_VALUE_PATTERN;
+	public final Pattern SEARCH_PATTERN;
 	
 	private final Logger logger = Logger.getLogger(ApiServlet.class);
 	
@@ -129,6 +132,18 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 			}
 		}.join(AbstractApiRequest.getUniqueFormats(KeyValueView.values()), "|");
 		
+		String searchViews = new Join<SearchView>() {
+			public String value(SearchView t) {
+				return t.view;
+			}
+		}.join(SearchView.values(), "|");
+		
+		String searchFormats = new Join<String>() {
+			public String value(String t) {
+				return t;
+			}
+		}.join(AbstractApiRequest.getUniqueFormats(SearchView.values()), "|");
+		
 		SINGLE_PATTERN = Pattern.compile(
 				TextFormatter.append(
 					BASE_START,singleFormats,BASE_MIDDLE,singleViews,SINGLE_END,BASE_END)
@@ -146,6 +161,12 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 					BASE_START,keyValueFormats,BASE_MIDDLE,keyValueViews,KEY_VALUE_END,PAGING,BASE_END)
 			);
 		logger.info(TextFormatter.append("Key Value View pattern generated: ", SINGLE_PATTERN.pattern()));
+		
+		SEARCH_PATTERN = Pattern.compile(
+				TextFormatter.append(
+						BASE_START,searchFormats,BASE_MIDDLE,searchViews,KEY_VALUE_END,PAGING,BASE_END)
+			);
+		logger.info(TextFormatter.append("Search vView pattern generated: ", SEARCH_PATTERN.pattern()));
 	}
 	
 	
@@ -206,6 +227,18 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 													m.group(KEY_VALUE_VALUE),
 													m.group(KEY_VALUE_PAGE_NUMBER),
 													m.group(KEY_VALUE_PAGE_SIZE));
+		}
+		
+		if(apiRequest == null && (m = SEARCH_PATTERN.matcher(uri)) != null && m.find()) {
+			logger.info(TextFormatter.append("Search request: ", uri));
+			
+			apiRequest = new SearchRequest(		request,
+												response,
+												m.group(KEY_VALUE_FORMAT),
+												m.group(KEY_VALUE_KEY),
+												m.group(KEY_VALUE_VALUE),
+												m.group(KEY_VALUE_PAGE_NUMBER),
+												m.group(KEY_VALUE_PAGE_SIZE));
 		}
 		
 		try {
