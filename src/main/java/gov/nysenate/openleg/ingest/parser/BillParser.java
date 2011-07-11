@@ -619,10 +619,10 @@ public class BillParser extends SenateParser<Bill> {
 		}
 		//2011S05388 T00000.SO DOC C 5388/7728                              BTXT                 2011
 		else if (lineCode.equals("T00000"))	{
-			Pattern p = Pattern.compile("^\\.SO DOC C \\d+/(\\d+)\\s.*$");
+			Pattern p = Pattern.compile("^\\.SO DOC C \\d+[a-zA-Z]?/(\\d+[a-zA-Z]?)\\s.*$");
 			Matcher m = p.matcher(line);
 			if(m.find()) {
-				uniBillNumber = "A" + m.group(1) + "-" + currentBill.getYear();
+				uniBillNumber = "A" + m.group(1).toUpperCase() + "-" + currentBill.getYear();
 			}
 		}
 		else if (lineCode.equals("R00000")) {
