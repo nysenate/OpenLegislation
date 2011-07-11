@@ -29,7 +29,7 @@ public class SenateObjectSearch<T extends ISenateObject> implements Iterator<T>,
 	}
 	
 	public SenateObjectSearch<T> query(String query) {
-		resultSearch.query = query;
+		resultSearch.query(query);
 		return this;
 	}
 	
