@@ -55,8 +55,14 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 			{
 				StringTokenizer cmd = new StringTokenizer(line.substring(line.indexOf(" ")+1)," ");
 				String type = cmd.nextToken();
-				String id = (cmd.hasMoreTokens() ? cmd.nextToken() : null);
-				engine.deleteSenateObjectById(type, id);
+				String ids = (cmd.hasMoreTokens() ? cmd.nextToken() : null);
+				
+				if(ids != null) {
+					String tokens[] = ids.split(",");
+					for(String id:tokens) {
+						engine.deleteSenateObjectById(type, id);
+					}
+				}
 			}
 			else if (line.startsWith("create"))
 				engine.createIndex();
