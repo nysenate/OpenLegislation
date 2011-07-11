@@ -292,36 +292,71 @@ public class IngestIndexWriter {
 		}
 	}
 	
+	public void fixTitles() {
+		fixTitles(SessionYear.getSessionYear() + "");
+	}
 	
+	public void fixTitles(String year) {
+		rewriteField("title", year, new FieldRewrite<Bill>() {
+			protected boolean valid(Bill from) {
+				return from.getTitle() != null;
+			}
+			protected Bill rewriteFields(Bill from, Bill to) {
+				to.setTitle(to.getTitle());
+				return to;
+			}
+		});
+	}
 	
 	public void fixSummaries() {
 		fixSummaries(SessionYear.getSessionYear() + "");
 	}
 	
+	public void fixSummaries(String year) {
+		rewriteField("summary", year, new FieldRewrite<Bill>() {
+			protected boolean valid(Bill from) {
+				return from.getSummary() != null;
+			}
+			protected Bill rewriteFields(Bill from, Bill to) {
+				to.setSummary(from.getSummary());
+				return to;
+			}
+		});
+	}
+	
 	/**
-	 * LBDC doesn't always send summary data for bills that are quickly amended,
-	 * this scans the index for bills missing a summary and when possible
-	 * assigns the summary from the latest version of the bill
+	 * LBDC doesn't always send data for bills that are quickly amended,
+	 * this scans the index for bills missing those fields and when possible
+	 * assigns the data from the latest version of the bill
+	 * 
+	 * applicable to summaries, titles, actions
 	 * 
 	 * only updates JSON, indexed documents will be updated on next pass
 	 * 
 	 * @param year - session to scan
 	 */
-	public void fixSummaries(String year) {
-		SenateObjectSearch<Bill> longSearch = new SenateObjectSearch<Bill>()
+	public void rewriteField(String fieldName, String year, FieldRewrite<Bill> fieldRewriter) {
+		QueryBuilder builder = null;
+		
+		try {
+			builder = QueryBuilder.build().otype("bill")
+										  .andNot().range(fieldName, "A*", "Z*")
+										  .andNot().keyValue("summary", "A*")
+										  .andNot().keyValue("summary", "Z*")
+										  .and().oid("(A* OR S*)")
+										  .and().keyValue("year", year);
+		} catch (QueryBuilderException e) {
+			logger.error(e);
+		}
+		
+		if(builder == null) return;
+		
+		SenateObjectSearch<Bill> search = new SenateObjectSearch<Bill>()
 			.clazz(Bill.class)
-			.query(	"otype:bill " +
-					"AND NOT summary:[A* TO Z*] " +
-					"AND NOT summary:A* " +
-					"AND NOT summary:Z* " +
-					"AND (oid:S* OR oid:A*) " + 
-					"AND year:" + year);
+			.query(builder.query());
 		
-		Bill newestBill = null;
-		String newestBillNo = null;
-		
-		for(Bill bill:longSearch) {
-			newestBillNo = BillCleaner.getNewestAmendment(bill.getSenateBillNo());
+		for(Bill bill:search) {
+			String newestBillNo = BillCleaner.getNewestAmendment(bill.getSenateBillNo());
 			
 			/*
 			 * if newestBillNo matches the bill's senateBillNo then
@@ -330,16 +365,27 @@ public class IngestIndexWriter {
 			if(newestBillNo.equalsIgnoreCase(bill.getSenateBillNo()))
 				continue;
 			
-			newestBill = searchEngine.getBill(newestBillNo);
+			Bill newestBill = searchEngine.getBill(newestBillNo);
 			
-			if(newestBill == null || newestBill.getSummary() == null)
-				continue;
-			
-			bill.setSummary(newestBill.getSummary());
-			
-			logger.warn("Updating summary for bill "  + bill.getSenateBillNo() + " from version " + newestBill.getSenateBillNo());
-			
-			jsonDao.write(bill);
+			if(fieldRewriter.rewrite(newestBill, bill)) {
+				logger.warn(TextFormatter.append("Updating",fieldName,"for bill ",
+						bill.getSenateBillNo()," from version ",newestBill.getSenateBillNo()));
+				
+				jsonDao.write(bill);
+			}
+		}
+	}
+	
+	private static abstract class FieldRewrite<T> {
+		protected abstract boolean valid(T from);
+		protected abstract T rewriteFields(T from, T to);
+		
+		public boolean rewrite(T from, T to) {
+			if(valid(from) && from != null && to != null) {
+				rewrite(from, to);
+				return true;
+			}
+			return false;
 		}
 	}
 }
