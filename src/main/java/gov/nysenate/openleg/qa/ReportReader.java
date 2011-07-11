@@ -34,7 +34,7 @@ public class ReportReader extends CouchSupport {
 	public static final String RESET_COUCH = "reset-couch";
 	public static final String HELP = "help";
 	
-	public static void main(String[] args) {		
+	public static void main(String[] args) {
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
 		options.addOption("ft", FILE_TYPE, true, "(bill_html|memo|paging)");

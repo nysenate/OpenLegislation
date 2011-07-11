@@ -67,7 +67,7 @@ public class ApiHelper implements OpenLegConstants {
 					resultObj = mapper.readValue(jsonData, clazz);
 					result.setObject(resultObj);
 				} catch (Exception e) {
-					logger.warn("error binding:" + clazz.getName(), e);
+					logger.error("error binding:" + clazz.getName(), e);
 				}
 
 				if (resultObj == null)
@@ -199,7 +199,7 @@ public class ApiHelper implements OpenLegConstants {
 				result.setSummary(summary);
 				result.setFields(fields);
 			} catch (Exception e) {
-				logger.warn(TextFormatter.append(
+				logger.error(TextFormatter.append(
 						"problem parsing result: ", result.getOtype(), "-", result.getOid()),
 					e);
 			}

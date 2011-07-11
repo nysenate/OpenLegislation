@@ -828,8 +828,6 @@ public class BillParser extends SenateParser<Bill> {
 				
 				this.addNewSenateObject(temp);
 				
-				System.out.println(temp.getSenateBillNo());
-				
 				uniBillNumber = null;
 			}
 			

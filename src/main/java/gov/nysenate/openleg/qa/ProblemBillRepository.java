@@ -13,7 +13,7 @@ import org.ektorp.support.GenerateView;
 import org.ektorp.support.View;
 
 @View(	name = "all",
-		map  = "function(doc) { if (doc.oid && doc.modified) { emit(doc.oid, doc) } }")
+		map  = "function(doc) { if (doc.oid) { emit(doc.oid, doc) } }")
 public class ProblemBillRepository extends CouchDbRepositorySupport<ProblemBill> {
 	
 	private Logger logger = Logger.getLogger(ProblemBillRepository.class);
@@ -35,7 +35,7 @@ public class ProblemBillRepository extends CouchDbRepositorySupport<ProblemBill>
 	}
 	
 	@View(	name = "problem_bills_by_modified",
-			map  = "function(doc) { if(doc.oid && doc.modified) { emit(doc.modified, doc) } }")
+			map  = "function(doc) { if(doc.oid) { emit(doc.modified, doc) } }")
 	public List<ProblemBill> findByModified(boolean descending) {
 		return db.queryView(
 				createQuery("problem_bills_by_modified")
@@ -43,7 +43,7 @@ public class ProblemBillRepository extends CouchDbRepositorySupport<ProblemBill>
 	}
 	
 	@View(	name = "problem_bills_by_rank",
-			map  = "function(doc) { if(doc.oid && doc.modified && doc.rank) { emit(doc.rank, doc) } }")
+			map  = "function(doc) { if(doc.oid && doc.rank) { emit(doc.rank, doc) } }")
 	public List<ProblemBill> findProblemBillsByRank() {
 		return db.queryView(
 				createQuery("problem_bills_by_rank")
@@ -52,7 +52,7 @@ public class ProblemBillRepository extends CouchDbRepositorySupport<ProblemBill>
 	
 	@View(	name = "problem_bills_to_delete",
 			map  = "function(doc) { " +
-						"if(doc.oid && doc.modified && !doc.nonMatchingFields && !doc.missingFields) {" +
+						"if(doc.oid && !doc.nonMatchingFields && !doc.missingFields) {" +
 							"emit(doc.oid, doc) } }")
 	public List<ProblemBill> findProblemBillsToDelete() {
 		return db.queryView(
@@ -61,7 +61,7 @@ public class ProblemBillRepository extends CouchDbRepositorySupport<ProblemBill>
 	}
 	
 	@View(	name = "problem_bills_by_missing_fields",
-			map  = "function(doc) { if(doc.oid && doc.modified && doc.missingFields) { emit(doc.oid, doc) } }")
+			map  = "function(doc) { if(doc.oid && doc.missingFields) { emit(doc.oid, doc) } }")
 	public List<ProblemBill> findByMissingFields() {
 		return db.queryView(
 				createQuery("problem_bills_by_missing_fields")

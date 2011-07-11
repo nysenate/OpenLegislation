@@ -44,6 +44,9 @@ public class LBDConnect {
 	private static final String TOKEN = "&TOKEN=";
 	private static final String SELECT = "&SELECT=TEXT++&SELECT=STATUS++&SELECT=SPMEMO++&SELECT=SUMMARY++&SELECT=HISTORY";
 	
+	private static final String COMMON_QUERY = "COMMONQUERY=";
+	private static final String COMMON_QUERY_COMMITTEE = "VM:\\PROD\\COMLIST2.MAIN";
+	
 	private final String key;
 	
 	public static LBDConnect getInstance() {
@@ -65,11 +68,16 @@ public class LBDConnect {
 		return key;
 	}
 	
-	private String constructUrlFile(String billNumber, String year) {
+	private String constructUrlBill(String billNumber, String year) {
 		return APPLICATION + QUERY_TYPE + SESSION_YEAR + year 
 						+ QUERY_DATA + billNumber + QQ_DATA 
 						+ billNumber + GET_SEL + LST + BROWSER 
 						+ TOKEN + this.key + SELECT;
+	}
+	
+	private String constructUrlForCommittees() {
+		return APPLICATION + COMMON_QUERY + COMMON_QUERY_COMMITTEE
+				+ TOKEN + this.key;
 	}
 	
 	public Bill getBillFromLbdc(String bill) {
@@ -85,7 +93,7 @@ public class LBDConnect {
 		Bill bill = new Bill();
 		File file = new File(TEMP_FILE_NAME);
 		try {
-			writeDataFromLbdc(billNumber, year);
+			writeDataFromLbdc(constructUrlBill(billNumber, year));
 			
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			
@@ -326,9 +334,14 @@ public class LBDConnect {
 		return channel;
 	}
 	
-	private void writeDataFromLbdc(String billNumber, String year) throws IOException {
-		logger.info("Reading bill " + billNumber + "-" + year + " from LBDC");
-		SocketChannel channel = getSocketChannel(BASE_URL, this.constructUrlFile(billNumber, year));
+	public static void main(String[] args) {
+		LBDConnect l = LBDConnect.getInstance();
+		System.out.println(l.constructUrlForCommittees());
+	}
+	
+	private void writeDataFromLbdc(String uri) throws IOException {
+		logger.info("Reading " + uri + " from LBDC");
+		SocketChannel channel = getSocketChannel(BASE_URL, uri);
 		
 		FileOutputStream out = new FileOutputStream(TEMP_FILE_NAME);
 		FileChannel local = out.getChannel();
