@@ -10,6 +10,7 @@ import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.Result;
+import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
@@ -62,7 +63,7 @@ public class ApiHelper implements OpenLegConstants {
 				ApiType apiType = getApiType(type);
 				Class<? extends ISenateObject> clazz = apiType.clazz();
 
-				Object resultObj = null;
+				ISenateObject resultObj = null;
 				try {
 					resultObj = mapper.readValue(jsonData, clazz);
 					result.setObject(resultObj);
@@ -72,6 +73,8 @@ public class ApiHelper implements OpenLegConstants {
 
 				if (resultObj == null)
 					continue;
+				
+				resultObj.setModified(result.getLastModified());
 
 				String title = "";
 				String summary = "";
