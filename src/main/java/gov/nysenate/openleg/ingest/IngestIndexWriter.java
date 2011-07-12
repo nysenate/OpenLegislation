@@ -382,7 +382,7 @@ public class IngestIndexWriter {
 		
 		public boolean rewrite(T from, T to) {
 			if(valid(from) && from != null && to != null) {
-				rewrite(from, to);
+				rewriteFields(from, to);
 				return true;
 			}
 			return false;
