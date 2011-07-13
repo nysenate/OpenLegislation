@@ -34,7 +34,6 @@ import gov.nysenate.openleg.xml.committee.XMLSENATEDATA;
 import gov.nysenate.openleg.xml.committee.XMLSenagenda;
 import gov.nysenate.openleg.xml.committee.XMLSenagendavote;
 
-@SuppressWarnings("restriction")
 public class AgendaParser extends SenateParser<Agenda> implements OpenLegConstants {
 	
 	public AgendaParser() {

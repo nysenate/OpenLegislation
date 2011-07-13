@@ -23,7 +23,6 @@ import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.Vote;
 
-@SuppressWarnings("restriction")
 @XStreamAlias("meeting")
 @XmlRootElement
 public class Meeting extends SenateObject {

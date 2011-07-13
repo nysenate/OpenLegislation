@@ -6,7 +6,6 @@ import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import javax.xml.bind.annotation.*;
 
-@SuppressWarnings("restriction")
 public class LuceneObject implements ILuceneObject {
 	
 	private boolean active = true;

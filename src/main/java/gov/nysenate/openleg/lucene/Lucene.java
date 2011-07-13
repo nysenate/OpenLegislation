@@ -13,7 +13,7 @@ import org.apache.lucene.document.FieldSelector;
 import org.apache.lucene.document.FieldSelectorResult;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriter.MaxFieldLength;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -56,7 +56,7 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
 	
     public synchronized void createIndex() throws IOException{
         if (0 == new File(indexDir).listFiles().length) {
-	        IndexWriter indexWriter = new IndexWriter(getDirectory(), getAnalyzer(), true, MaxFieldLength.LIMITED);
+	        IndexWriter indexWriter = new IndexWriter(getDirectory(), getConfig());
 	        indexWriter.optimize();
 	        indexWriter.close();
         }
@@ -64,7 +64,7 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
     
 	public synchronized IndexWriter openWriter() throws IOException {
 		if (indexWriter == null) {
-			indexWriter = new IndexWriter(getDirectory(), getAnalyzer(), false, MaxFieldLength.UNLIMITED);
+			indexWriter = new IndexWriter(getDirectory(), getConfig());
 		}
 		return indexWriter;
 	}
@@ -84,15 +84,15 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
     	if(doc ==  null)
     		return false;
     	    	
-    	logger.info("indexing document: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue());
+    	logger.info("indexing document: " + doc.getFieldable("otype").stringValue() + "=" + doc.getFieldable("oid").stringValue());
     	
     	Query query;
 		try {
-			query = new QueryParser(Version.LUCENE_30, "oid", indexWriter.getAnalyzer()).parse("oid:" + doc.getField("oid").stringValue());
+			query = new QueryParser(Version.LUCENE_30, "oid", indexWriter.getAnalyzer()).parse("oid:" + doc.getFieldable("oid").stringValue());
 	        indexWriter.deleteDocuments(query);    	
 	    	indexWriter.addDocument(doc);
 		} catch (ParseException e) {
-			logger.warn("error adding document to index: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue(), e);
+			logger.warn("error adding document to index: " + doc.getFieldable("otype").stringValue() + "=" + doc.getFieldable("oid").stringValue(), e);
 			e.printStackTrace();
 		}
     	return true;
@@ -222,6 +222,10 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
 	/////////////////////
 	//Utility methods
 	//
+    
+    public IndexWriterConfig getConfig() {
+		return new IndexWriterConfig(Version.LUCENE_33, getAnalyzer());
+    }
 	
 	public Directory getDirectory() throws IOException {
 		return FSDirectory.open(new File(indexDir));

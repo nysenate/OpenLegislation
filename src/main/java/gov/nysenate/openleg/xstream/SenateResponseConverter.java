@@ -65,7 +65,7 @@ public class SenateResponseConverter implements Converter, OpenLegConstants {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {
 		return (clazz == SenateResponse.class);
 	}

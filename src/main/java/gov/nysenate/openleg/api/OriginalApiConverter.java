@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.util;
+package gov.nysenate.openleg.api;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
@@ -16,8 +16,10 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
+import gov.nysenate.openleg.util.BillRenderer;
+import gov.nysenate.openleg.util.JsonConverter;
+import gov.nysenate.openleg.util.TextFormatter;
 
-@SuppressWarnings("restriction")
 public class OriginalApiConverter {
 	
 	public static String doJson(Object o) {

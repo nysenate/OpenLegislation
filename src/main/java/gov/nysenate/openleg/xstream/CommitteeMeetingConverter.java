@@ -16,8 +16,8 @@ public class CommitteeMeetingConverter implements Converter {
 	@SuppressWarnings("unchecked")
 	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
 		
-		if(((ArrayList)value).iterator().hasNext()) {
-			Object o = ((ArrayList)value).iterator().next();
+		if(((ArrayList<?>)value).iterator().hasNext()) {
+			Object o = ((ArrayList<?>)value).iterator().next();
 			
 			if(o instanceof Meeting) {				
 				ArrayList<Meeting> meetings = (ArrayList<Meeting>) value;
@@ -41,7 +41,7 @@ public class CommitteeMeetingConverter implements Converter {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {		
 		return (clazz == ArrayList.class);
 	}

@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.lucene.document.Fieldable;
 
-@SuppressWarnings("restriction")
 public class SenateObject extends LuceneObject implements ISenateObject {
 	HashSet<String> sobiReferenceList = new HashSet<String>();
 

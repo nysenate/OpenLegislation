@@ -32,10 +32,8 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.queryParser.ParseException;
 
 public class SearchEngine extends Lucene implements OpenLegConstants {
@@ -151,8 +149,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
     public  boolean indexSenateObjects (Collection<SenateObject> objects, LuceneSerializer[] ls) throws IOException
     {
     	createIndex ();
-        Analyzer  analyzer    = getAnalyzer();
-        IndexWriter indexWriter = new IndexWriter(getDirectory(), analyzer, false, MaxFieldLength.UNLIMITED);
+        IndexWriter indexWriter = new IndexWriter(getDirectory(), getConfig());
        
     	Iterator<SenateObject> it = objects.iterator();
     	while (it.hasNext()) {

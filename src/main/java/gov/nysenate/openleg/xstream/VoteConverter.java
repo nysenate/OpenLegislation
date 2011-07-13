@@ -13,9 +13,9 @@ public class VoteConverter implements Converter {
 	@SuppressWarnings("unchecked")
 	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
 	
-		if(((ArrayList)value).iterator().hasNext()) {
+		if(((ArrayList<?>)value).iterator().hasNext()) {
 			
-			Object o = ((ArrayList)value).iterator().next();
+			Object o = ((ArrayList<?>)value).iterator().next();
 			
 			if(o instanceof String) {
 				ArrayList<String> members = (ArrayList<String>)value;
@@ -33,7 +33,7 @@ public class VoteConverter implements Converter {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {
 		return (clazz == ArrayList.class);
 	}

@@ -32,7 +32,6 @@ import gov.nysenate.openleg.xml.calendar.XMLSencalendaractive;
 import gov.nysenate.openleg.xml.calendar.XMLSequence;
 import gov.nysenate.openleg.xml.calendar.XMLSupplemental;
 
-@SuppressWarnings("restriction")
 public class CalendarParser extends SenateParser<Calendar> implements OpenLegConstants {
 	
 	private Object removeObject = null;

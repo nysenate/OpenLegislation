@@ -23,7 +23,7 @@ public class BillPersonConverter implements Converter {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean canConvert(Class clazz) {
 		return (clazz == Person.class);

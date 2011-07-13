@@ -41,7 +41,6 @@ public class SenateObjectConverter implements Converter {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
 					
 		//Get the FieldAliasMapper, responsible for XStreamOmitField and XStreamAlias mark up
@@ -54,10 +53,10 @@ public class SenateObjectConverter implements Converter {
 		LocalConversionMapper conversionMapper = (LocalConversionMapper) this.mapper.lookupMapperOfType(LocalConversionMapper.class);
 		
 		ISenateObject obj = (ISenateObject) value;
-		Class c = obj.getClass();
+		Class<?> c = obj.getClass();
 		
-		List<Field> attributes = new ArrayList();
-		List<Field> children = new ArrayList();
+		List<Field> attributes = new ArrayList<Field>();
+		List<Field> children = new ArrayList<Field>();
 		for (Field f: c.getDeclaredFields()) {
 			if (f.getName().startsWith("jdo") == false && 			//Exclude fields declared by JDO
 				Modifier.isStatic(f.getModifiers()) == false &&		//Exclude static fields
@@ -117,9 +116,8 @@ public class SenateObjectConverter implements Converter {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void writeCollectionAliased(XStreamCollectionAlias annotation, Object field, HierarchicalStreamWriter writer, MarshallingContext context, Converter converter) {
-		Collection collection = (Collection) field;
+		Collection<?> collection = (Collection<?>) field;
 		writer.startNode(annotation.node());
 		if(collection !=null) {
 			for (Object obj: collection) {
@@ -130,9 +128,8 @@ public class SenateObjectConverter implements Converter {
 		writer.endNode();
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void writeImplicit(String itemName, Object field, HierarchicalStreamWriter writer, MarshallingContext context, Converter converter) {
-		Collection collection = (Collection) field;
+		Collection<?> collection = (Collection<?>) field;
 		if(collection !=null) {
 			for (Object obj : collection) {
 				writeNode(itemName,obj,writer,context,converter);
@@ -204,7 +201,7 @@ public class SenateObjectConverter implements Converter {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {
 		// TODO Auto-generated method stub
 		return ISenateObject.class.isAssignableFrom(clazz);
