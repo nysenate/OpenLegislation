@@ -114,11 +114,6 @@ public class LBDConnect {
 		return committees;
 	}
 	
-	public static void main(String[] args) {
-		LBDConnect l = LBDConnect.getInstance();
-		System.out.println(l.getSenateCommittees());
-	}
-	
 	private String constructUrlBill(String billNumber, String year) {
 		return APPLICATION + QUERY_TYPE + SESSION_YEAR + year 
 						+ QUERY_DATA + billNumber + QQ_DATA 
