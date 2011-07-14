@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.util;
+package gov.nysenate.openleg.util.serialize;
 
 import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.lucene.LuceneSerializer;

@@ -64,13 +64,6 @@ public class CommitteeWriter {
 		}
 	}
 	
-	static class ByName implements Comparator<Member> {
-		@Override
-		public int compare(Member one, Member two) {
-			return one.getShortName().compareTo(two.getShortName());
-		}
-	}
-	
 	private static Logger logger = Logger.getLogger(CommitteeWriter.class);
 	
 	/**

@@ -6,7 +6,7 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.util.XmlHelper;
+import gov.nysenate.openleg.util.serialize.XmlHelper;
 
 import java.io.File;
 import java.io.IOException;

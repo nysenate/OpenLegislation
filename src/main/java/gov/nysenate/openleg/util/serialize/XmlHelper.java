@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.util;
+package gov.nysenate.openleg.util.serialize;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

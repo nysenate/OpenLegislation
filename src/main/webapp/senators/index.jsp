@@ -40,8 +40,6 @@ margin:3px;
 	 
 	 String senatorKey = jSenator.getString("key");
 	 
-//	 System.out.println(jSenator.get("name"));
-	 
 	 String searchUrl = "/legislation/sponsor/" + java.net.URLEncoder.encode(senatorKey, "utf-8") + "?filter=oid:s*";
 	 String searchUrlMeetings = "/legislation/search/?term=" + java.net.URLEncoder.encode("chair:\"" + jSenator.get("name") + "\"", "UTF-8");
 		

@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.util;
+package gov.nysenate.openleg.util.serialize;
 
 import gov.nysenate.openleg.model.*;
 import gov.nysenate.openleg.model.bill.Bill;

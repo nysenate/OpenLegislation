@@ -16,9 +16,9 @@ import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
-import gov.nysenate.openleg.util.JsonSerializer;
 import gov.nysenate.openleg.util.OpenLegConstants;
-import gov.nysenate.openleg.util.XmlSerializer;
+import gov.nysenate.openleg.util.serialize.JsonSerializer;
+import gov.nysenate.openleg.util.serialize.XmlSerializer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
