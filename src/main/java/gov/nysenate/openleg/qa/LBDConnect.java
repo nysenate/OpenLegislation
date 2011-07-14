@@ -3,6 +3,7 @@ package gov.nysenate.openleg.qa;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.model.bill.Person;
+import gov.nysenate.openleg.util.EasyReader;
 import gov.nysenate.openleg.util.SessionYear;
 
 import java.io.BufferedReader;
@@ -20,6 +21,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -68,16 +70,60 @@ public class LBDConnect {
 		return key;
 	}
 	
+	private String constructUrlForCommittees() {
+		return APPLICATION + COMMON_QUERY + COMMON_QUERY_COMMITTEE
+				+ TOKEN + this.key;
+	}
+	
+	public ArrayList<String> getSenateCommittees() {
+		ArrayList<String> committees = new ArrayList<String>();
+		
+		File file = new File(TEMP_FILE_NAME);
+		
+		try {
+			writeDataFromLbdc(constructUrlForCommittees());
+		} catch (IOException e) {
+			logger.error(e);
+		}
+		
+		EasyReader er = new EasyReader(file).open();
+		
+		boolean senateCom = false;
+		boolean senateComId = false;
+		
+		for(String in:er) {
+			if(senateCom && senateComId) {
+				committees.add(in.replaceAll("<.*>", ""));
+				
+				senateCom = false;
+				senateComId = false;
+			}
+			
+			if(in.matches(Pattern.quote("<a href=\"/nyslbdc1/statdoc.cgi?VM:\\PROD\\COMS"))) {
+				senateCom = true;
+			}
+			
+			if(senateCom && in.matches("\\d+\\.MAIN\">")) {
+				senateComId = true;
+			}
+		}
+		
+		if(file.exists())
+			file.delete();
+		
+		return committees;
+	}
+	
+	public static void main(String[] args) {
+		LBDConnect l = LBDConnect.getInstance();
+		System.out.println(l.getSenateCommittees());
+	}
+	
 	private String constructUrlBill(String billNumber, String year) {
 		return APPLICATION + QUERY_TYPE + SESSION_YEAR + year 
 						+ QUERY_DATA + billNumber + QQ_DATA 
 						+ billNumber + GET_SEL + LST + BROWSER 
 						+ TOKEN + this.key + SELECT;
-	}
-	
-	private String constructUrlForCommittees() {
-		return APPLICATION + COMMON_QUERY + COMMON_QUERY_COMMITTEE
-				+ TOKEN + this.key;
 	}
 	
 	public Bill getBillFromLbdc(String bill) {
@@ -152,11 +198,9 @@ public class LBDConnect {
 			}
 			
 		} catch (IOException e) {
-			e.printStackTrace();
 			logger.error(e);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
 			logger.error(e);
 		}
 		finally {
@@ -332,11 +376,6 @@ public class LBDConnect {
 		channel.write(header);
 		
 		return channel;
-	}
-	
-	public static void main(String[] args) {
-		LBDConnect l = LBDConnect.getInstance();
-		System.out.println(l.constructUrlForCommittees());
 	}
 	
 	private void writeDataFromLbdc(String uri) throws IOException {
