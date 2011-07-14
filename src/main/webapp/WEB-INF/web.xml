@@ -21,6 +21,10 @@
 		<servlet-class>gov.nysenate.openleg.api.servlets.SenatorsServlet</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>CommitteesServlet</servlet-name>
+		<servlet-class>gov.nysenate.openleg.api.servlets.CommitteesServlet</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>ReportServlet</servlet-name>
 		<servlet-class>gov.nysenate.openleg.api.servlets.ReportServlet</servlet-class>
 	</servlet>
@@ -55,6 +59,14 @@
 	<servlet-mapping>
 		<servlet-name>SenatorsServlet</servlet-name>
 		<url-pattern>/senators.json</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CommitteesServlet</servlet-name>
+		<url-pattern>/committees</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CommitteesServlet</servlet-name>
+		<url-pattern>/committees.json</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ReportServlet</servlet-name>
