@@ -224,10 +224,7 @@ public class BillParser extends SenateParser<Bill> {
 					 */
 					else if (lineCode == 'B') {
 						if(line.contains("DELETE")) {
-							//delete code
-							persistBuffers();
-							newSenateObjects.remove(currentBill);
-							currentBill = null;
+							//TODO
 						}
 						else {
 							parseLawData(line);
