@@ -74,6 +74,7 @@ public class ApiHelper implements OpenLegConstants {
 					continue;
 				
 				resultObj.setModified(result.getLastModified());
+				resultObj.setActive(result.isActive());
 
 				String title = "";
 				String summary = "";

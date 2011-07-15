@@ -147,7 +147,7 @@ public class Ingest {
 	
 	SearchEngine searchEngine;
 	JsonDao jsonDao;
-	IngestJsonWriter ingestSobiParser;
+	IngestJsonWriter ingestJsonWriter;
 	IngestIndexWriter ingestIndexWriter;
 	
 	public Ingest(String sobiDirectory, String jsonDirectory) {
@@ -156,7 +156,7 @@ public class Ingest {
 		
 		searchEngine = SearchEngine.getInstance();
 		jsonDao = new JsonDao(jsonDirectory, jsonDirectory + LOG_FILE);
-		ingestSobiParser = new IngestJsonWriter(jsonDao, searchEngine);
+		ingestJsonWriter = new IngestJsonWriter(jsonDao, searchEngine);
 		ingestIndexWriter = new IngestIndexWriter(jsonDirectory, 
 												  jsonDirectory + LOG_FILE, 
 												  searchEngine, 
@@ -164,7 +164,7 @@ public class Ingest {
 	}
 	
 	public void write() {
-		ingestSobiParser.writeJsonFromDirectory(sobiDirectory);
+		ingestJsonWriter.writeJsonFromDirectory(sobiDirectory);
 	}
 	
 	public void index() {
@@ -184,7 +184,7 @@ public class Ingest {
 	}
 	
 	public void writeTranscripts(String transcriptDirectory) {
-		ingestSobiParser.writeTranscriptsFromDirectory(transcriptDirectory);
+		ingestJsonWriter.writeTranscriptsFromDirectory(transcriptDirectory);
 	}
 	
 	public void indexJsonDocument(String type, String path) {

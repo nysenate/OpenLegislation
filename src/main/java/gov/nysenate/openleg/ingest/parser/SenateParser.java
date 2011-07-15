@@ -48,6 +48,11 @@ public abstract class SenateParser<T extends ISenateObject> {
 		return newSenateObjects;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public ArrayList<T> getNewSenateObjects(Class<T> clazz) {
+		return (ArrayList<T>) newSenateObjects;
+	}
+	
 	public ArrayList<SenateObject> getDeletedSenateObjects() {
 		return deletedSenateObjects;
 	}
