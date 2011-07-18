@@ -8,7 +8,8 @@ import gov.nysenate.openleg.model.SenateObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 import org.apache.lucene.document.Field;
@@ -19,11 +20,12 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-import gov.nysenate.openleg.util.BillCleaner;
+import gov.nysenate.openleg.util.SessionYear;
+import gov.nysenate.openleg.util.TextFormatter;
 import gov.nysenate.openleg.xstream.BillListConverter;
 
 @XStreamAlias("bill")
-public class Bill extends SenateObject  {
+public class Bill extends SenateObject implements Comparable<Bill>  {
 	
 	@XStreamAsAttribute
 	@LuceneField
@@ -428,10 +430,7 @@ public class Bill extends SenateObject  {
 		}
 		else {
 			if(bill.getSameAs() != null && !bill.getSameAs().equals("")) {
-				StringTokenizer st = new StringTokenizer(bill.getSameAs(), ", ");
-				while(st.hasMoreElements()) {
-					sameAs = BillCleaner.formatSameAs(sameAs, st.nextToken());
-				}
+				sameAs = bill.getSameAs();
 			}
 		}
 		
@@ -712,6 +711,38 @@ public class Bill extends SenateObject  {
 			return sponsor.getFullname();
 		}
 		return "";
+	}
+	
+	@Override
+	public int compareTo(Bill bill) {
+		return this.getSenateBillNo().compareTo(bill.getSenateBillNo());
+	}
+	
+	/**
+	 * if term looks like a bill number attempts to format to 
+	 * <billNo>-<sessionYear> format
+	 * @param term the term being searched
+	 * @return formatted bill number or original term
+	 */
+	public static String formatBillNo(String term) {
+		Pattern p = Pattern.compile("^((?i)[sajr]\\W?0*\\d+[a-zA-Z]?)(?:\\-)?(\\d{4})?$");
+		Matcher m = p.matcher(term);
+		
+		if(m.find()) {
+			String bill = m.group(1).replaceAll("[^a-zA-Z\\d]","")
+									.replaceAll("^((?i)[sajr])0*", "$1");
+			
+			int year = (m.group(2) == null
+							? SessionYear.getSessionYear()
+							: SessionYear.getSessionYear(new Integer(m.group(2))));
+			
+			return TextFormatter.append(bill, "-", year);
+		}
+		return term;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(formatBillNo("S607-"));
 	}
 }
 

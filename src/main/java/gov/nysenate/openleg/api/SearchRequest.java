@@ -11,7 +11,6 @@ import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
-import gov.nysenate.openleg.util.BillCleaner;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
 
@@ -173,7 +172,7 @@ public class SearchRequest extends AbstractApiRequest {
 					
 		term = queryBuilder.query();
 		
-		term = BillCleaner.billFormat(term);
+		term = Bill.formatBillNo(term);
 					
 		request.setAttribute("term", term);
 		request.setAttribute("type", type);
@@ -273,7 +272,7 @@ public class SearchRequest extends AbstractApiRequest {
 		}
 				
 		String tempTerm = null;
-		if((tempTerm = BillCleaner.getDesiredBillNumber(term)) != null) {
+		if((tempTerm = getDesiredBillNumber(term, SearchEngine.getInstance())) != null) {
 			term = "oid:" + tempTerm;
 		}
 		
@@ -282,6 +281,36 @@ public class SearchRequest extends AbstractApiRequest {
 	
 	private boolean valid(String str) {
 		return str != null && str.length() > 0;
+	}
+	
+	/*
+	 * on search this attempts to format a bill id based on
+	 * what version the bill is at and returns the 'desired'
+	 * result.  this mimics lrs functionality
+	 * 
+	 * if s1234, s1234a and s1234b exist:
+	 * 
+	 * s1234a -> S1234A-2011
+	 * s1234- -> S1234-2011
+	 * s1234  -> S1234B-2011
+	 * 
+	 */
+	public String getDesiredBillNumber(String term, SearchEngine searchEngine) {
+		if(term == null) return null;
+		
+		String billNo = Bill.formatBillNo(term);
+		
+		if(billNo.matches("(?i)[sajr]\\d+\\w?\\-\\d{4}")) {
+			if(term.matches(".+?(\\-|[a-zA-Z])")) {
+				return billNo;
+			}
+			
+			Bill newestAmendment = searchEngine.getNewestAmendment(billNo);
+			if(newestAmendment != null) {
+				return newestAmendment.getSenateBillNo();
+			}
+		}
+		return null;
 	}
 	
 	public enum SearchView implements ApiEnum {

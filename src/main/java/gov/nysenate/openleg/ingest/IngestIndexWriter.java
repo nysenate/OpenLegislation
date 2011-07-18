@@ -9,7 +9,6 @@ import gov.nysenate.openleg.search.SenateObjectSearch;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
-import gov.nysenate.openleg.util.BillCleaner;
 import gov.nysenate.openleg.util.EasyReader;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.TextFormatter;
@@ -356,7 +355,8 @@ public class IngestIndexWriter {
 			.query(builder.query());
 		
 		for(Bill bill:search) {
-			String newestBillNo = BillCleaner.getNewestAmendment(bill.getSenateBillNo());
+			String newestBillNo = searchEngine.getNewestAmendment(
+					bill.getSenateBillNo()).getSenateBillNo();
 			
 			/*
 			 * if newestBillNo matches the bill's senateBillNo then

@@ -14,7 +14,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,7 +24,6 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillEvent;
 import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.model.bill.Vote;
-import gov.nysenate.openleg.util.BillCleaner;
 
 public class BillParser extends SenateParser<Bill> {
 	
@@ -358,7 +359,7 @@ public class BillParser extends SenateParser<Bill> {
 							if (bill.getSameAs()==null)
 								bill.setSameAs(substituted);
 							else {				
-								String sameAs = BillCleaner.formatSameAs(bill.getSameAs(),substituted);
+								String sameAs = formatSameAs(bill.getSameAs(),substituted);
 								
 								bill.setSameAs(sameAs);
 							}
@@ -369,7 +370,7 @@ public class BillParser extends SenateParser<Bill> {
 							if (bill.getSameAs()==null)
 								bill.setSameAs(substituted);
 							else {
-								String sameAs = BillCleaner.formatSameAs(bill.getSameAs(),substituted);
+								String sameAs = formatSameAs(bill.getSameAs(),substituted);
 								
 								bill.setSameAs(sameAs);
 							}
@@ -636,6 +637,39 @@ public class BillParser extends SenateParser<Bill> {
 			
 		}
 		return bill;
+	}
+	
+	public String formatSameAs(String sameAs, String billNo) {
+		StringTokenizer st  = null;
+		String newSameAs = null;
+		SortedSet<String> set = new TreeSet<String>();
+		
+		if(sameAs == null)
+			sameAs = "";
+		if(billNo != null)
+			set.add(billNo);
+		
+		sameAs = sameAs.replaceAll(" ,",",");
+		sameAs = sameAs.replaceAll(",,", ",");
+		st  = new StringTokenizer(sameAs, ",");
+		
+		while(st.hasMoreElements()) {
+			String token = st.nextToken().trim();
+			if(!token.equals("")) {
+				set.add(token);
+			}
+		}
+		
+		for(String s:set) {
+			if(newSameAs == null) {
+				newSameAs = s;
+			}
+			else {
+				newSameAs += ", " + s;
+			}
+		}
+		
+		return newSameAs;
 	}
 	
 	public Bill parseVoteData (String line) throws IOException {

@@ -3,10 +3,10 @@ package gov.nysenate.openleg.api.servlets;
 import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.api.QueryBuilder;
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
+import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
-import gov.nysenate.openleg.util.BillCleaner;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
 
@@ -133,7 +133,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 			}
 			else {
 				if(command.equals("bill")) {
-					term = BillCleaner.formatV2Bill(term);
+					term = Bill.formatBillNo(term);
 				}
 				try {
 					QueryBuilder queryBuilder = QueryBuilder.build().otype(command);

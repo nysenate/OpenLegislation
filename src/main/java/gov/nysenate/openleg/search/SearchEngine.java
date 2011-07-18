@@ -17,6 +17,7 @@ import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.util.OpenLegConstants;
+import gov.nysenate.openleg.util.TextFormatter;
 import gov.nysenate.openleg.util.serialize.JsonSerializer;
 import gov.nysenate.openleg.util.serialize.XmlSerializer;
 
@@ -27,6 +28,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -283,7 +285,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 	}
 	
 	public Bill getBill(String oid) {
-		return getSenateObject(oid, "bill", Bill.class);
+		return getSenateObject(Bill.formatBillNo(oid), "bill", Bill.class);
 	}
 	
 	public Meeting getMeeting(String oid) {
@@ -331,5 +333,42 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 		}
 		
 		return senateObjects;
+	}
+	
+	public Bill getNewestAmendment(String oid) {
+		oid = Bill.formatBillNo(oid);
+		String[] billParts = oid.split("-");
+		
+		return getNewestAmendment(billParts[0], billParts[1]);
+	}
+	
+	private Bill getNewestAmendment(String billNumber, String year) {
+		ArrayList<Bill> bills = getRelatedBills(billNumber, year);
+		
+		int size = bills.size();
+
+		if(bills.isEmpty())
+			return null;
+		if(size == 1)
+			return bills.get(0);
+		
+		Collections.sort(bills);
+				
+		return bills.get(size-1);
+	}
+	
+	private ArrayList<Bill> getRelatedBills(String billNumber, String year) {
+		int length = billNumber.length();
+		if(!Character.isDigit(billNumber.charAt(length-1))) {
+			billNumber = billNumber.substring(0, length-1);
+		}
+		
+		String query = TextFormatter.append("otype:bill AND oid:((", 
+					billNumber, "-", year, 
+		                " OR [", billNumber, "A-", year, 
+		                   " TO ", billNumber, "Z-", year,
+		                "]) AND ", billNumber, "*-", year, ")");
+		
+		return getSenateObjects(query);
 	}
 }

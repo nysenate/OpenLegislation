@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.Date, java.util.ArrayList, java.util.List, java.util.Collections, java.util.StringTokenizer, java.util.Iterator, java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.model.calendar.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page language="java" import="java.util.regex.*, java.util.Hashtable, java.util.TreeSet, java.util.HashMap, java.util.Date, java.util.ArrayList, java.util.List, java.util.Collections, java.util.StringTokenizer, java.util.Iterator, java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.model.calendar.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
 <%!
 	public String getVoterString(List<String> voters, String appPath) {
 	 	StringBuffer buffer = new StringBuffer();
@@ -27,6 +27,59 @@
 			return (ArrayList<T>) Collections.EMPTY_LIST;
 		return list;
 	}
+	
+	public String formatBillEvent(String bill, String event, String appPath) {
+		if(event.matches("(?i).*(amended|print number).*")) {
+				//event.contains("AMENDED") || event.contains("PRINT NUMBER")) {
+			Pattern p = Pattern.compile("^(.*?)(\\d{2,5}\\w?)(.*?)$");
+			Matcher m = p.matcher(event);
+			
+			if(m.find()) {
+				return TextFormatter.append(m.group(1), 
+					"<a href=\"", 
+						appPath, 
+						"/bill/", 
+						bill.substring(0, 1),  m.group(2),  "-", bill.split("-")[1], 
+					"\">", 
+					m.group(2), 
+					"</a>", m.group(3));
+			}
+		}
+		else if(event.matches("(?i).*substituted.*")) {
+				//event.contains("SUBSTITUTED")) {
+			Pattern p = Pattern.compile("^(.*?)(\\w\\d{2,5}\\w?)(.*?)$");
+			Matcher m = p.matcher(event);
+			
+			if(m.find()) {
+				return TextFormatter.append(m.group(1), 
+					"<a href=\"", 
+						appPath, 
+						"/bill/", 
+						m.group(2) + "-" + bill.split("-")[1], 
+					"\">", 
+					m.group(2), 
+					"</a>", m.group(3));
+			}
+		}
+		return event;
+	}
+	
+	public ArrayList<BillEvent> sortBillEvents(List<BillEvent> billEvents) {
+		Hashtable<String, BillEvent> table = new Hashtable<String, BillEvent>();
+		TreeSet<BillEvent> set = new TreeSet<BillEvent>(new BillEvent.ByEventDate());
+		
+		for(BillEvent be:billEvents) {
+			if(table.contains(be)) continue;
+			
+			table.put(Long.toString(be.getEventDate().getTime()), be);
+			set.add(be);
+		}
+		
+		table.clear();
+		
+		return new ArrayList<BillEvent>(set);
+	}
+
 %>
 <%
 	String appPath = request.getContextPath();
@@ -168,10 +221,10 @@
 		<h3><%=senateBillNo%> Actions</h3>
 		<ul>
 		<%
-			ArrayList<BillEvent> events = BillCleaner.sortBillEvents(rActions);
+			ArrayList<BillEvent> events = sortBillEvents(rActions);
 			for (BillEvent be : events){	
 				%>
-					<li><%=df.format(be.getEventDate().getTime())%>: <%=BillCleaner.formatBillEvent(bill.getSenateBillNo(), be.getEventText(), appPath)%></li>
+					<li><%=df.format(be.getEventDate().getTime())%>: <%=formatBillEvent(bill.getSenateBillNo(), be.getEventText(), appPath)%></li>
 				<%
 			}
 		%>
