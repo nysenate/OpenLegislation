@@ -80,6 +80,66 @@
 		return new ArrayList<BillEvent>(set);
 	}
 
+	public String removeBillLineNumbers (String input) {
+		StringBuffer resp = new StringBuffer();
+		
+		input = input.replace("S E N A T E","SENATE");
+		input = input.replace("A S S E M B L Y","ASSEMBLY");
+		
+		StringTokenizer st = new StringTokenizer (input,"\n");
+		String line = null;
+		int breakIdx = -1;
+		
+		String startChar = null;
+		boolean isLineNum = false;
+		
+		while (st.hasMoreTokens()) {
+			line = st.nextToken().trim();
+
+			line = line.replace(" S ","<br/><br/>S ");
+			line = line.replace(" Section ","<br/><br/>Section ");
+			line = line.replace("AN ACT ","<br/><br/>AN ACT ");
+			line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");
+			line = line.replace("_","");
+			
+			breakIdx = line.indexOf(' ');
+		
+			if (breakIdx != -1) {
+				startChar = line.substring(0,breakIdx);
+			
+				try  {	
+					Integer.parseInt(startChar);
+					isLineNum = true;
+				}
+				catch (NumberFormatException nfe) {
+					isLineNum = false;
+				}
+				
+				if (isLineNum)
+					line = line.substring(breakIdx+1).trim();
+				if (line.endsWith(":"))
+					line = line + "<br/>";
+				
+				resp.append(' ');
+				
+				if (line.endsWith("-"))
+					line = line.substring(0,line.length()-1).trim();
+				
+
+				resp.append(line);
+				resp.append("\n");
+			}
+			else {
+				resp.append(' ');
+				resp.append(line);
+				resp.append("<br/>");
+			}
+		}
+		
+		String output =  resp.toString();
+		
+		return output;
+	}
 %>
 <%
 	String appPath = request.getContextPath();
@@ -341,7 +401,7 @@
 		if (bill.getFulltext()!=null) {
  
 			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
-			billText = TextFormatter.removeBillLineNumbers (billText);
+			billText = removeBillLineNumbers (billText);
 			%>
 				<pre><%=billText %></pre>
 		<% } else{ %>

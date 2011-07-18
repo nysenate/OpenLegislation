@@ -1,4 +1,68 @@
-<%@ page language="java" import="java.util.*,java.text.*,java.util.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.transcript.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page language="java" import="java.util.*, java.util.regex.*, java.text.*,java.util.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.transcript.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
+<%!
+	public final static String TRANSCRIPT_INDENT = "             ";
+	public final static String TRANSCRIPT_INDENT_REPLACE = "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	
+	public static String removeLineNumbers (String input) {
+		StringBuffer resp = new StringBuffer();
+		
+		StringTokenizer st = new StringTokenizer (input,"\n");
+		String line = null;
+		int breakIdx = -1;
+		
+		while (st.hasMoreTokens()) {
+			line = st.nextToken().trim();
+			
+			breakIdx = line.indexOf(' ');
+		
+			if (breakIdx != -1) {
+				
+				line = line.substring(breakIdx+1);
+				
+				if (line.startsWith("Transcription Service, Inc."))
+					continue;
+				if (line.startsWith("371-8910"))
+					continue;
+				
+				if (line.startsWith(TRANSCRIPT_INDENT))
+					resp.append(TRANSCRIPT_INDENT_REPLACE);
+				
+				line = line.trim();
+				
+				resp.append(' ');
+				resp.append(line);
+			}
+		}
+		
+		String output =  resp.toString();
+		output = output.replace("SENATOR", "<br/>SENATOR");
+		output = output.replace("REVEREND", "<br/>REVEREND");
+		output = output.replace("ACTING", "<br/>ACTING");
+		output = output.replace("REGULAR SESSION", "REGULAR SESSION<br/><br/>");
+		
+		return output;
+	}
+
+	public static String addHyperlinks (String input) {
+		Pattern pattern = null;
+		Matcher matcher = null;
+		
+		pattern = Pattern.compile("(SENATOR\\s)");
+		matcher = pattern.matcher(input);
+		input = matcher.replaceAll("<b>$1</b>");
+		
+		pattern = Pattern.compile("(ACTING PRESIDENT\\s)");
+		matcher = pattern.matcher(input);
+		input = matcher.replaceAll("<b>$1</b>");
+		
+		
+		pattern = Pattern.compile("(THE SECRETARY)");
+		matcher = pattern.matcher(input);
+		input = matcher.replaceAll("<b>$1</b>");
+		
+		return input;
+	}
+%>
 <%
 	String appPath = request.getContextPath();
 	
@@ -45,9 +109,9 @@
 		}
 
 		if (isNumberedFormat) {
-			fullText = TextFormatter.removeLineNumbers(fullText);
+			fullText = removeLineNumbers(fullText);
 			
-			fullText = TextFormatter.addHyperlinks(fullText);
+			fullText = addHyperlinks(fullText);
 			
 			if (query != null && query.length()>0) {
 			
