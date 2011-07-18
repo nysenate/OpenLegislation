@@ -1,10 +1,12 @@
 package gov.nysenate.openleg.api;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Calendar;
 import java.util.Date;
 
+import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.search.SearchEngine;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.queryParser.ParseException;
 
 public class SearchRequest extends AbstractApiRequest {
 	private final Logger logger = Logger.getLogger(SearchRequest.class);
@@ -29,7 +32,11 @@ public class SearchRequest extends AbstractApiRequest {
 		super(request, response, pageNumber, pageSize, format, getApiEnum(SearchView.values(),type));
 		this.type = type;
 		try {
-			this.term = URLDecoder.decode(whichTerm(term),"UTF-8");
+			term = whichTerm(term);
+			
+			if(term == null) term = "";
+			
+			this.term = URLDecoder.decode(term,"UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			logger.error(e);
 		}
@@ -104,12 +111,11 @@ public class SearchRequest extends AbstractApiRequest {
 		
 		QueryBuilder queryBuilder = new QueryBuilder();
 		
-		if (term != null)
+		if (valid(term))
 			queryBuilder.insertBefore(term);
 		
 		try {
 			if (valid(type)) {
-				queryBuilder.and().otype(type);
 				if(type.equals("res")) queryBuilder.and().oid("r*");
 			}
 			
@@ -161,54 +167,58 @@ public class SearchRequest extends AbstractApiRequest {
 						Long.toString(startDate.getTime()), 
 						Long.toString(cal.getTimeInMillis()));
 			}
-						
-			term = queryBuilder.query();
+		} catch (QueryBuilderException e) {
+			logger.error(e);
+		}
+					
+		term = queryBuilder.query();
+		
+		term = BillCleaner.billFormat(term);
+					
+		request.setAttribute("term", term);
+		request.setAttribute("type", type);
+					
+		//default behavior is to return only active bills, so if a user searches
+		//s1234 and s1234a is available then s1234a should be returned
+		if(sortField == null && (((term != null && term.contains("otype:bill")) 
+				|| (term != null && term.contains("otype:bill"))) 
+				|| (type != null && type.equals("bill")))) {
 			
-			term = BillCleaner.billFormat(term);
-						
+			sortField = "sortindex";
+			sortOrder = false;
+			type = "bill";
+		}
+		
+		if (sortField!=null && !sortField.equals("")) {
+			request.setAttribute("sortField", sortField);
+			request.setAttribute("sortOrder",Boolean.toString(sortOrder));
+		}
+		else {
+			sortField = "when";
+			sortOrder = true;
+			request.setAttribute("sortField", sortField);
+			request.setAttribute("sortOrder", Boolean.toString(sortOrder));
+		}
+		
+		if(format.matches("(rss|atom)")) {
+			pageSize = 1000;
+			sortField = "modified";
+		}
+		
+		if(format.equalsIgnoreCase("csv")) {
 			request.setAttribute("term", term);
-			request.setAttribute("type", type);
-						
-			//default behavior is to return only active bills, so if a user searches
-			//s1234 and s1234a is available then s1234a should be returned
-			if(sortField == null && (((term != null && term.contains("otype:bill")) 
-					|| (term != null && term.contains("otype:bill"))) 
-					|| (type != null && type.equals("bill")))) {
-				
-				sortField = "sortindex";
-				sortOrder = false;
-				type = "bill";
-			}
-			
-			if (sortField!=null && !sortField.equals("")) {
-				request.setAttribute("sortField", sortField);
-				request.setAttribute("sortOrder",Boolean.toString(sortOrder));
-			}
-			else {
-				sortField = "when";
-				sortOrder = true;
-				request.setAttribute("sortField", sortField);
-				request.setAttribute("sortOrder", Boolean.toString(sortOrder));
-			}
-			
-			if(format.matches("(rss|atom)")) {
-				pageSize = 1000;
-				sortField = "modified";
-			}
-			
-			if(format.equalsIgnoreCase("csv")) {
-				request.setAttribute("term", term);
-				return;
-			}
-			
-			request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
-			request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
-						
-			if (term.length() == 0)	throw new ApiRequestException(
-					TextFormatter.append("no term given"));
-			
-			String searchFormat = "json";
-								
+			return;
+		}
+		
+		request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
+		request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
+					
+		if (term.length() == 0)	throw new ApiRequestException(
+				TextFormatter.append("no term given"));
+		
+		String searchFormat = "json";
+		
+		try {
 			if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
 				sr = SearchEngine.getInstance().search(queryBuilder.and().current().query(),
 						searchFormat,start,pageSize,sortField,sortOrder);
@@ -216,17 +226,21 @@ public class SearchRequest extends AbstractApiRequest {
 			else {
 				sr = SearchEngine.getInstance().search(term,searchFormat,start,pageSize,sortField,sortOrder);
 			}
-					
-			ApiHelper.buildSearchResultList(sr);
-						
-			if(sr == null || sr.getResults() == null || sr.getResults().isEmpty()) throw new ApiRequestException(
-					TextFormatter.append("no results for query"));
-			
-			request.setAttribute("results", sr);
-			
-		} catch (Exception e) {
-			logger.error("Search Error: " + request.getRequestURI(),e);
+		} catch (ParseException e) {
+			logger.error(e);
+		} catch (IOException e) {
+			logger.error(e);
+		} catch (QueryBuilderException e) {
+			logger.error(e);
 		}
+				
+		ApiHelper.buildSearchResultList(sr);
+					
+		if((sr == null || sr.getResults() == null || sr.getResults().isEmpty()) 
+				&& this.format.contains("html")) throw new ApiRequestException(
+				TextFormatter.append("no results for query"));
+		
+		request.setAttribute("results", sr);
 	}
 	
 	@Override
@@ -247,9 +261,15 @@ public class SearchRequest extends AbstractApiRequest {
 		
 		String term = request.getParameter("term");
 		
-		if(search != null) {
+		String type = request.getParameter("type");
+		
+		if(valid(search)) {
 			request.setAttribute("search", search);
 			term = search;
+		}
+		
+		if(valid(type)) {
+			term = "otype:" + type;
 		}
 				
 		String tempTerm = null;
