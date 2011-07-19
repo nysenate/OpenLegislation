@@ -2,4 +2,6 @@
 *.class
 *.properties
 *.log
-
+.classpath
+.project
+.setiings/*
