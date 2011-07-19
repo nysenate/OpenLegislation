@@ -83,7 +83,7 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 	public static final String KEY_VALUE_END = ")/(.*?)/?+";
 	
 	/*
-	 * Captures value for Key Value view
+	 * Captures value for Search view
 	 */
 	public static final String SEARCH_END = ")(?:/)?(?:(.+?)/?+)?";
 	
@@ -171,7 +171,6 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 				TextFormatter.append(
 						BASE_START,searchFormats,BASE_MIDDLE,searchViews,SEARCH_END,PAGING,BASE_END)
 			);
-		System.out.println(SEARCH_PATTERN.pattern());
 		logger.info(TextFormatter.append("Search vView pattern generated: ", SEARCH_PATTERN.pattern()));
 	}
 	
