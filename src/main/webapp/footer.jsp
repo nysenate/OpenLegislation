@@ -19,24 +19,6 @@
 			} catch(err) {}
 		</script>
 		<br/><br/>
-		<script type="text/javascript">
-			var _sf_async_config={uid:2873,domain:"open.nysenate.gov"};
-			(function(){
-			  function loadChartbeat() {
-			    window._sf_endpt=(new Date()).getTime();
-			    var e = document.createElement('script');
-			    e.setAttribute('language', 'javascript');
-			    e.setAttribute('type', 'text/javascript');
-			    e.setAttribute('src',
-			       (("https:" == document.location.protocol) ? "https://s3.amazonaws.com/" : "http://") +
-			       "static.chartbeat.com/js/chartbeat.js");
-			    document.body.appendChild(e);
-			  }
-			  var oldonload = window.onload;
-			  window.onload = (typeof window.onload != 'function') ?
-			     loadChartbeat : function() { oldonload(); loadChartbeat(); };
-			})();
-		</script>
 		
 		<!-- Percent Mobile Support. For mobile viewing, place as far down as possible -->
 		

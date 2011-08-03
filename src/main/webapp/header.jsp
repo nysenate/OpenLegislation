@@ -40,7 +40,6 @@
 		<link rel="stylesheet" type="text/css" media="screen" href="<%=appPath%>/style.css"/>
 		<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<%=appPath%>/feed" />
 		
-		<script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
 		<script type="text/javascript" src="<%=appPath%>/js/jquery-1.3.2.min.js"></script>
 		<script src="http://assets.percentmobile.com/percent_mobile.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript" src="<%=appPath%>/js/search.js"></script>
