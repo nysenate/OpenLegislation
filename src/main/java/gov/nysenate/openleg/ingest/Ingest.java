@@ -81,7 +81,24 @@ public class Ingest {
 		    		String sobiDir = line.getOptionValue(SOBI_DIRECTORY);
 		    		String jsonDir = line.getOptionValue(JSON_DIRECTORY);
 		    		
-		    		ingest = new Ingest(sobiDir, jsonDir);
+		    		SearchEngine searchEngine = SearchEngine.getInstance();
+		    		JsonDao jsonDao = new JsonDao(jsonDir, jsonDir + LOG_FILE);
+		    		
+		    		ArrayList<Hook<List<? extends SenateObject>>> hooks = 
+	    				new ArrayList<Hook<List<? extends SenateObject>>>();
+	    			if(line.hasOption(PURGE_CACHE)) {
+		    			hooks.add(new CacheHook());
+	    			}
+		    		
+		    		ingest = new Ingest(sobiDir, jsonDir, SearchEngine.getInstance(),
+		    				jsonDao,
+		    				new IngestJsonWriter(jsonDao, searchEngine),
+		    				new IngestIndexWriter(
+		    							jsonDir, 
+		    							jsonDir + LOG_FILE, 
+		    							searchEngine, 
+		    							jsonDao,
+		    							hooks));
 		    		
 		    		ingest.lock();
 		    		
@@ -89,11 +106,7 @@ public class Ingest {
 		    			ingest.write();
 		    		}
 		    		if(line.hasOption(INDEX)) {
-		    			ArrayList<Hook<List<? extends SenateObject>>> hooks = 
-		    				new ArrayList<Hook<List<? extends SenateObject>>>();
-		    			if(line.hasOption(PURGE_CACHE)) {
-			    			hooks.add(new CacheHook());
-		    			}
+		    			
 		    			ingest.index(hooks);
 		    		}
 		    		
@@ -149,7 +162,7 @@ public class Ingest {
 	}
 	
 	private static String LOCK_FILE = ".lock";
-	private final String LOG_FILE = ".log";
+	public static final String LOG_FILE = ".log";
 		
 	private Logger logger = Logger.getLogger(Ingest.class);
 	
@@ -161,17 +174,16 @@ public class Ingest {
 	IngestJsonWriter ingestJsonWriter;
 	IngestIndexWriter ingestIndexWriter;
 	
-	public Ingest(String sobiDirectory, String jsonDirectory) {
+	public Ingest(String sobiDirectory, String jsonDirectory, SearchEngine searchEngine,
+			JsonDao jsonDao, IngestJsonWriter ingestJsonWriter, 
+			IngestIndexWriter ingestIndexWriter) {
 		this.sobiDirectory = sobiDirectory;
 		this.jsonDirectory = jsonDirectory;
 		
-		searchEngine = SearchEngine.getInstance();
-		jsonDao = new JsonDao(jsonDirectory, jsonDirectory + LOG_FILE);
-		ingestJsonWriter = new IngestJsonWriter(jsonDao, searchEngine);
-		ingestIndexWriter = new IngestIndexWriter(jsonDirectory, 
-												  jsonDirectory + LOG_FILE, 
-												  searchEngine, 
-												  jsonDao);
+		this.searchEngine = searchEngine;
+		this.jsonDao = jsonDao;
+		this.ingestJsonWriter = ingestJsonWriter;
+		this.ingestIndexWriter = ingestIndexWriter;
 	}
 	
 	public void write() {
