@@ -383,7 +383,9 @@ public class LBDConnect {
 		ByteBuffer buffer = ByteBuffer.allocate(131072);
 		while(channel.read(buffer) != -1) {
 			buffer.flip();
-			local.write(ByteBuffer.wrap(Charset.forName("ISO-8859-1").decode(buffer).toString().getBytes()));
+			local.write(ByteBuffer.wrap(
+							Charset.forName("ISO-8859-1")
+								.decode(buffer).toString().getBytes()));
 			buffer.clear();
 		}
 		
