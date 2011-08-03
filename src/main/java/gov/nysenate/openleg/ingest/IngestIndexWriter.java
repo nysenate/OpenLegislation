@@ -3,6 +3,7 @@ package gov.nysenate.openleg.ingest;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.api.QueryBuilder;
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
+import gov.nysenate.openleg.ingest.hook.Hook;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.search.SenateObjectSearch;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,15 +53,15 @@ public class IngestIndexWriter {
 	/**
 	 * index documents based on what is listed in log from JsonDao write function
 	 */
-	public void indexBulk() {
-		indexBulk(truncateLog());
+	public void indexBulk(ArrayList<Hook<List<? extends SenateObject>>> hooks) {
+		indexBulk(truncateLog(), hooks);
 	}
 
 	/**
 	 * Index BATCH_SIZE number of documents per operation
 	 * @param filePaths string paths of files that must be indexed
 	 */
-	public void indexBulk(String[] files) {
+	public void indexBulk(String[] files, ArrayList<Hook<List<? extends SenateObject>>> hooks) {
 		ArrayList<SenateObject> lst;
 		Pattern p = Pattern.compile("\\d{4}/(\\w+)/.*$");
 		Matcher m = null;
@@ -90,6 +92,10 @@ public class IngestIndexWriter {
 				logger.error(e);
 			}
 			logger.warn(timer.stop() + " - Indexed Objects");
+			
+			for(Hook<List<? extends SenateObject>> hook:hooks) {
+				hook.call(lst);
+			}
 			
 			lst.clear();
 		}

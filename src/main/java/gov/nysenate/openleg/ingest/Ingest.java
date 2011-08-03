@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.ingest;
 
+import gov.nysenate.openleg.ingest.hook.CacheHook;
+import gov.nysenate.openleg.ingest.hook.Hook;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -10,6 +12,8 @@ import gov.nysenate.openleg.util.serialize.XmlHelper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -27,6 +31,7 @@ public class Ingest {
 	private static final String SOBI_DIRECTORY = "sobi-directory";
 	private static final String WRITE = "write";
 	private static final String INDEX = "index";
+	private static final String PURGE_CACHE = "purge-cache";
 	private static final String WRITE_TRANSCRIPT = "write-transcript";
 	private static final String INDEX_DOCUMENT = "index-document";
 	private static final String DOCUMENT_TYPE = "document-type";
@@ -48,6 +53,7 @@ public class Ingest {
 		
 		options.addOption("w", WRITE, false, "Write SOBI's in sobi-directory to JSON in json-directory");
 		options.addOption("i", INDEX, false, "Index logged changes");
+		options.addOption("pc", PURGE_CACHE, false, "Purge cache while indexing");
 		options.addOption("wt", WRITE_TRANSCRIPT, true, "Write transcripts located in directory specified by argument");
 		
 		options.addOption("id", INDEX_DOCUMENT, true, "Index JSON document specified by argument (path to file)");
@@ -83,7 +89,12 @@ public class Ingest {
 		    			ingest.write();
 		    		}
 		    		if(line.hasOption(INDEX)) {
-		    			ingest.index();
+		    			ArrayList<Hook<List<? extends SenateObject>>> hooks = 
+		    				new ArrayList<Hook<List<? extends SenateObject>>>();
+		    			if(line.hasOption(PURGE_CACHE)) {
+			    			hooks.add(new CacheHook());
+		    			}
+		    			ingest.index(hooks);
 		    		}
 		    		
 		    		if(line.hasOption(WRITE_TRANSCRIPT)) {
@@ -167,8 +178,8 @@ public class Ingest {
 		ingestJsonWriter.writeJsonFromDirectory(sobiDirectory);
 	}
 	
-	public void index() {
-		ingestIndexWriter.indexBulk();
+	public void index(ArrayList<Hook<List<? extends SenateObject>>> hooks) {
+		ingestIndexWriter.indexBulk(hooks);
 	}
 	
 	public void reindexAmendedBills() {
