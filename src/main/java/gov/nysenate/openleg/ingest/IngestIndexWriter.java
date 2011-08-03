@@ -38,14 +38,22 @@ public class IngestIndexWriter {
 	String jsonDirectory;
 	String logPath;
 	
+	ArrayList<Hook<List<? extends SenateObject>>> hooks;
+	
 	Timer timer;
 	
-	public IngestIndexWriter(String jsonDirectory, String logPath, SearchEngine searchEngine, JsonDao jsonDao) {
+	public IngestIndexWriter(String jsonDirectory, String logPath, 
+				SearchEngine searchEngine, JsonDao jsonDao,
+				ArrayList<Hook<List<? extends SenateObject>>> hooks) {
 		this.searchEngine = searchEngine;
 		this.jsonDao = jsonDao;
 		
 		this.jsonDirectory = jsonDirectory;
 		this.logPath = logPath;
+		
+		this.hooks = hooks == null 
+						? new ArrayList<Hook<List<? extends SenateObject>>>() 
+						: hooks;
 		
 		timer = new Timer();
 	}
@@ -85,19 +93,27 @@ public class IngestIndexWriter {
 			}
 			logger.warn(timer.stop() + " - Read " + lst.size() + " Objects");
 			
-			timer.start();
-			try {
-				searchEngine.indexSenateObjects(lst, new LuceneSerializer[] {new XmlSerializer(), new JsonSerializer()});
-			} catch (IOException e) {
-				logger.error(e);
-			}
-			logger.warn(timer.stop() + " - Indexed Objects");
-			
-			for(Hook<List<? extends SenateObject>> hook:hooks) {
-				hook.call(lst);
-			}
+			indexList(lst);
 			
 			lst.clear();
+		}
+	}
+	
+	private void indexList(List<SenateObject> senateObjects) {
+		timer.start();
+		try {
+			searchEngine.indexSenateObjects(
+					senateObjects, 
+					new LuceneSerializer[] {
+							new XmlSerializer(), 
+							new JsonSerializer()});
+		} catch (IOException e) {
+			logger.error(e);
+		}
+		logger.warn(timer.stop() + " - Indexed Objects");
+		
+		for(Hook<List<? extends SenateObject>> hook:hooks) {
+			hook.call(senateObjects);
 		}
 	}
 	
@@ -288,12 +304,8 @@ public class IngestIndexWriter {
 		if(temp != null) {
 			temp.setActive(active);
 			
-			try {
-				searchEngine.indexSenateObject(temp);
-				logger.warn(TextFormatter.append("Reset ", temp.getSenateBillNo(), " to active:", active));
-			} catch (IOException e) {
-				logger.error(e);
-			}
+			logger.warn(TextFormatter.append("Reset ", temp.getSenateBillNo(), " to active:", active));
+			jsonDao.write(temp);
 		}
 	}
 	
@@ -307,7 +319,7 @@ public class IngestIndexWriter {
 				return from.getTitle() != null;
 			}
 			protected Bill rewriteFields(Bill from, Bill to) {
-				to.setTitle(to.getTitle());
+				to.setTitle(from.getTitle());
 				return to;
 			}
 		});
