@@ -3,8 +3,6 @@ package gov.nysenate.openleg.lucene;
 import java.util.HashMap;
 
 import org.apache.lucene.document.Fieldable;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import javax.xml.bind.annotation.*;
 
 public class LuceneObject implements ILuceneObject {
 	
@@ -42,13 +40,11 @@ public class LuceneObject implements ILuceneObject {
 	}
 	
 	@Override
-	@XmlTransient
 	public boolean getActive() {
 		return active;
 	}
 
 	@Override
-	@JsonIgnore
 	public void setActive(boolean active) {
 		this.active = active;
 	}
