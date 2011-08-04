@@ -45,7 +45,7 @@ public class SingleViewRequest extends AbstractApiRequest {
 		request.setAttribute(type , so);
 		
 		try {
-			if(type.equals("bill")) {
+			if(type.equals("bill") && !format.matches("(csv|json|xml)")) {
 				String rType = "action";
 				String rQuery = QueryBuilder.build().otype(rType).and().relatedBills("billno", id).query();
 				ArrayList<BillEvent> billEvents = SearchEngine.getInstance().getSenateObjects(rQuery, BillEvent.class);
