@@ -1,4 +1,6 @@
-<%@ page language="java" import="org.json.*,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/plain" pageEncoding="utf-8" %><%
+<%@ page language="java" import="org.json.*,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"%><%
+String contentType = (String) request.getAttribute("contentType");
+response.setContentType(contentType == null ? "text/html" : contentType);
 
 SenateResponse sr = (SenateResponse)request.getAttribute("results");
 int resultCount = sr.getResults().size();

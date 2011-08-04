@@ -1,5 +1,8 @@
 <%@ page language="java" import="org.json.*,java.util.*,java.util.Map.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.util.*"  contentType="text/html" pageEncoding="utf-8" %><%
 
+String contentType = (String) request.getAttribute("contentType");
+response.setContentType(contentType == null ? "text/html" : contentType);
+
 int pageIdx = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_IDX));
 int pageSize = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_SIZE));
 

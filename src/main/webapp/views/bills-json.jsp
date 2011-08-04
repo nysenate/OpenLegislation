@@ -1,5 +1,6 @@
 <%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,org.json.*,gov.nysenate.openleg.model.bill.*"  pageEncoding="utf-8" contentType="text/plain"%><%
-
+String contentType = (String) request.getAttribute("contentType");
+response.setContentType(contentType == null ? "text/html" : contentType);
 
 Collection<Bill> bills = (Collection<Bill>)request.getAttribute("bills");
 Bill bill = null;

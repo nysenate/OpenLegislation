@@ -46,7 +46,7 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
 		this.pageNumber = pageNumber;
 		this.pageSize = pageSize;
 		
-		this.format = thisOrThat(format, DEFAULT_FORMAT);
+		this.format = thisOrThat(format, DEFAULT_FORMAT).toLowerCase();
 		
 		this.apiEnum = apiEnum;
 	}
@@ -68,7 +68,9 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
 					request.getRequestURI()));
 		
 		fillRequest();
-							
+	
+		request.setAttribute("contentType", ContentType.getType(format));
+		
 		request.getSession().getServletContext().getRequestDispatcher(getView())
 			.forward(request, response);
 	}
@@ -161,6 +163,31 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
 		}
 		public ApiRequestException(String message) {
 			super(message);
+		}
+	}
+	
+	public enum ContentType {
+		HTML("html", "text/html"),
+		JSON("json", "application/json"),
+		XML("xml", "application/xml"),
+		RSS("rss", "application/rss+xml"),
+		CSV("csv", "text/csv"),
+		ATOM("atom", "application/atom+xml");
+		
+		final String type;
+		final String contentType;
+		private ContentType(String type, String contentType) {
+			this.type = type;
+			this.contentType = contentType;
+		}
+		
+		public static String getType(String value) {
+			for(ContentType ct:ContentType.values()) {
+				if(ct.type.equalsIgnoreCase(value)) {
+					return ct.contentType;
+				}
+			}
+			return ContentType.HTML.contentType;
 		}
 	}
 }

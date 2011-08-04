@@ -1,5 +1,8 @@
 <%@ page language="java" import="org.json.*,java.util.*,java.util.Map.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/xml" pageEncoding="utf-8" %><%
 
+String responseContentType = (String) request.getAttribute("contentType");
+response.setContentType(responseContentType == null ? "text/html" : responseContentType);
+
 String appPath = "http://open.nysenate.gov" + request.getContextPath();
 
 SenateResponse sr = (SenateResponse)request.getAttribute("results");

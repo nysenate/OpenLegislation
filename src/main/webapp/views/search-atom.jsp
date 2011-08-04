@@ -1,5 +1,7 @@
 <%@ page language="java" import="javax.xml.namespace.QName,gov.nysenate.openleg.util.SessionYear,gov.nysenate.openleg.util.OpenLegConstants,org.apache.abdera.model.Entry,org.apache.abdera.Abdera,org.apache.abdera.model.Feed,org.json.*,java.util.*,java.util.Map.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/xml" pageEncoding="utf-8" %><%
-	
+	String responseContentType = (String) request.getAttribute("contentType");
+	response.setContentType(responseContentType == null ? "text/html" : responseContentType);
+
 	String[] attribs = {"billno","sponsor","cosponsors","notes","when","sameas","committee","status","location","session-type","chair","summary"};
 	
 	SenateResponse sr = (SenateResponse)request.getAttribute("results");

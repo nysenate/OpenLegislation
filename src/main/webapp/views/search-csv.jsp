@@ -10,6 +10,8 @@
 		return "," + str;
 	}
 %><%
+String contentType = (String) request.getAttribute("contentType");
+response.setContentType(contentType == null ? "text/html" : contentType);
 
 String term = (String)request.getAttribute("term");
 String sortField = (String)request.getAttribute("sortField");

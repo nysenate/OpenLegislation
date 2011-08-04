@@ -1,9 +1,7 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,org.json.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.util.*"  pageEncoding="utf-8" contentType="text/plain"%>
-<%
-String cacheKey = (String)request.getAttribute("path");
- int cacheTime = OpenLegConstants.DEFAULT_CACHE_TIME;
-%>
-<%
+<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,org.json.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.util.*"  pageEncoding="utf-8" contentType="text/plain"%><%
+
+String contentType = (String) request.getAttribute("contentType");
+response.setContentType(contentType == null ? "text/html" : contentType);
 
 Bill bill = (Bill)request.getAttribute("bill");
 
