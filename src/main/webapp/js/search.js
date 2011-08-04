@@ -32,7 +32,7 @@ $(function () {
                         type: "GET",
                         url: "/legislation/search/",
                         data: dataString,
-                        cache: false,
+                        cache: true,
                         async: true,
                         dataType: "html",
                         success: function(resulthtml)
