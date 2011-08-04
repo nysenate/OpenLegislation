@@ -181,7 +181,7 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException {
 		Matcher m = null;
 		
-		String uri = URLDecoder.decode(request.getRequestURI(), ENCODING).toLowerCase();
+		String uri = URLDecoder.decode(request.getRequestURI(), ENCODING);
 		
 		AbstractApiRequest apiRequest = null;
 		
