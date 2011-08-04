@@ -112,8 +112,6 @@ public class OriginalApiConverter {
 				
 				locObjPerson.endObject();
 			}
-			
-			locObjCosponsors.endArray();
 		}
 		locObjCosponsors.endArray();
 		
