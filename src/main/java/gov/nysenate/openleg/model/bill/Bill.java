@@ -740,10 +740,6 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 		}
 		return term;
 	}
-	
-	public static void main(String[] args) {
-		System.out.println(formatBillNo("S607-"));
-	}
 }
 
 
