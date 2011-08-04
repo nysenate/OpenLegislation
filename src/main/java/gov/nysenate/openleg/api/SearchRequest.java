@@ -86,7 +86,6 @@ public class SearchRequest extends AbstractApiRequest {
 			logger.warn(e1);
 		}
 		
-		
 		int pageIdx = 1;
 		int pageSize = 20;
 		
@@ -169,7 +168,7 @@ public class SearchRequest extends AbstractApiRequest {
 		} catch (QueryBuilderException e) {
 			logger.error(e);
 		}
-					
+		
 		term = queryBuilder.query();
 		
 		term = Bill.formatBillNo(term);
@@ -205,7 +204,6 @@ public class SearchRequest extends AbstractApiRequest {
 		}
 		
 		if(format.equalsIgnoreCase("csv")) {
-			request.setAttribute("term", term);
 			return;
 		}
 		
