@@ -22,6 +22,16 @@
                 </configuration>
             </plugin>
 
+            <!-- Maven-Tomcat plugin (see http://mojo.codehaus.org/tomcat-maven-plugin/usage.html for details)  -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>tomcat-maven-plugin</artifactId>
+                <configuration>
+                    <server>openleg-tomcat</server>
+                    <path>/legislation</path>
+                </configuration>
+            </plugin>
+
             <!-- External non-maven dependency management -->
             <plugin>
                 <groupId>com.savage7.maven.plugins</groupId>
