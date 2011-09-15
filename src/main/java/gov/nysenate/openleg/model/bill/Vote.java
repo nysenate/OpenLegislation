@@ -17,18 +17,14 @@ import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("vote")
 public class Vote extends SenateObject {
 	
-	@XStreamAsAttribute
 	private int voteType;
 	
-	@XStreamAsAttribute
 	private String id;
 	
-	@XStreamAsAttribute
 	private Date voteDate;	
 	
 	@XStreamCollectionAlias(node="ayes",value="member")
@@ -44,7 +40,6 @@ public class Vote extends SenateObject {
 	private List<String> excused;
 	
 	@JsonIgnore
-//	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
 	private Bill bill;
 	
 	@XStreamCollectionAlias(node="ayeswr",value="member")

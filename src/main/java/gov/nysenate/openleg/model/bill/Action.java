@@ -17,75 +17,80 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-@XStreamAlias("billevent")
-public class BillEvent extends SenateObject {
+@XStreamAlias("action")
+public class Action extends SenateObject {
 
-    private String billEventId;
-	private Date eventDate;
-	private String eventText;
+    private String id;
+	private Date date;
+	private String text;
 	
-	public BillEvent() {
+	private Bill bill;
+	
+	public Action() {
 		super();
 	}
 	
-	public BillEvent (Bill bill, Date eventDate, String eventText)
-	{
+	public Action (Bill bill, Date eventDate, String eventText) {
 		this(bill.getSenateBillNo(), eventDate, eventText);
 	}
 	
-	public BillEvent(String billNumber, Date eventDate, String eventText) {
+	public Action(String billNumber, Date eventDate, String eventText) {
 		super();
-		this.eventDate = eventDate; 
-		this.eventText = eventText;
+		this.date = eventDate; 
+		this.text = eventText;
 		
-		try
-		{
-			this.billEventId = billNumber + "-" + eventDate.getTime() + "-" + URLEncoder.encode(eventText,"utf-8");
+		try {
+			this.id = billNumber + "-" + eventDate.getTime() + "-" + URLEncoder.encode(eventText,"utf-8");
 		}
-		catch (Exception e)
-		{
-			//foo
-		}
+		catch (Exception e) { }
 	}
 	
 	@JsonIgnore
 	public String getBillId() {
-		return billEventId.substring(0,billEventId.indexOf("-", billEventId.indexOf("-") + 1));
+		return id.substring(0,id.indexOf("-", id.indexOf("-") + 1));
 	}
 	
 	
-	public String getBillEventId() {
-		return billEventId;
+	public String getId() {
+		return id;
 	}
 
 
 
-	public Date getEventDate() {
-		return eventDate;
+	public Date getDate() {
+		return date;
 	}
 
 
 
-	public String getEventText() {
-		return eventText;
+	public String getText() {
+		return text;
 	}
 
 
 
-	public void setBillEventId(String billEventId) {
-		this.billEventId = billEventId;
+	public void setId(String billEventId) {
+		this.id = billEventId;
 	}
 
 
 
-	public void setEventDate(Date eventDate) {
-		this.eventDate = eventDate;
+	public void setDate(Date eventDate) {
+		this.date = eventDate;
 	}
 
 
 
-	public void setEventText(String eventText) {
-		this.eventText = eventText;
+	public void setText(String eventText) {
+		this.text = eventText;
+	}
+	
+	public Bill getBill() {
+		return bill;
+	}
+	
+	public void setBill(Bill bill) {
+		this.bill = bill;
 	}
 
 
@@ -93,16 +98,16 @@ public class BillEvent extends SenateObject {
 	@Override
 	public boolean equals(Object obj) {
 		
-		if (obj != null && obj instanceof BillEvent)
+		if (obj != null && obj instanceof Action)
 		{
-			BillEvent other = (BillEvent)obj;
+			Action other = (Action)obj;
 			
 			String thisId = TextFormatter.append(
-					this.getEventText(),"-",
-					this.getEventDate().getTime());
+					this.getText(),"-",
+					this.getDate().getTime());
 			String thatId =  TextFormatter.append(
-					other.getEventText(),"-",
-					other.getEventDate().getTime());
+					other.getText(),"-",
+					other.getDate().getTime());
 			
 			return (thisId.equals(thatId));
 		}
@@ -115,7 +120,7 @@ public class BillEvent extends SenateObject {
 	public HashMap<String, Fieldable> luceneFields() {
 		HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
 		
-		fields.put("when", new Field("when",eventDate.getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		fields.put("when", new Field("when",date.getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		fields.put("billno", new Field("billno",getBillId(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		
 		return fields;
@@ -124,7 +129,7 @@ public class BillEvent extends SenateObject {
 	@JsonIgnore
 	@Override
 	public String luceneOid() {
-		return billEventId;
+		return id;
 	}
 	
 	@JsonIgnore
@@ -135,9 +140,9 @@ public class BillEvent extends SenateObject {
 		searchContent.append(getBillId()).append(" ");
 		
 		
-		searchContent.append(eventText);
+		searchContent.append(text);
 		
-		return eventText.toString();
+		return text.toString();
 	}
 
 	@JsonIgnore
@@ -149,21 +154,21 @@ public class BillEvent extends SenateObject {
 	@JsonIgnore
 	@Override
 	public String luceneSummary() {
-		return java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(eventDate);
+		return java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(date);
 	}
 
 	@JsonIgnore
 	@Override
 	public String luceneTitle() {
-		return eventText;
+		return text;
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	@JsonIgnore
 	public int getYear() {
-		if(eventDate != null) {
-			return eventDate.getYear();
+		if(date != null) {
+			return date.getYear();
 		}
 		return 9999;
 	}
@@ -174,14 +179,14 @@ public class BillEvent extends SenateObject {
 		return;
 	}
 	
-	public static class ByEventDate implements Comparator<BillEvent> {
+	public static class ByEventDate implements Comparator<Action> {
 
 		/*
 		 * sorted newest to oldest
 		 */
 		@Override
-		public int compare(BillEvent be1, BillEvent be2) {
-			int ret = be1.getEventDate().compareTo(be2.getEventDate());
+		public int compare(Action be1, Action be2) {
+			int ret = be1.getDate().compareTo(be2.getDate());
 			if(ret == 0) {
 				return -1;
 			}

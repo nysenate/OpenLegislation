@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.qa;
 
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.model.bill.Action;
 import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.qa.model.FieldName;
 import gov.nysenate.openleg.qa.model.LbdcFile;
@@ -72,7 +72,7 @@ public class LbdcFileHtml extends LbdcFile {
 					}
 				}
 				
-				doCollectionField(problemBill, FieldName.ACTIONS, luceneBill.getBillEvents(), lbdcBill.getBillEvents());
+				doCollectionField(problemBill, FieldName.ACTIONS, luceneBill.getActions(), lbdcBill.getActions());
 				doCollectionField(problemBill, FieldName.COSPONSORS, luceneBill.getCoSponsors(), lbdcBill.getCoSponsors());
 				doStringField(problemBill, FieldName.SUMMARY, luceneBill.getSummary(), lbdcBill.getSummary(), ".*?");
 				doStringField(problemBill, FieldName.TITLE, luceneBill.getTitle(), lbdcBill.getTitle(), null);
@@ -167,7 +167,7 @@ public class LbdcFileHtml extends LbdcFile {
 			
 			m.usePattern(actionP).reset(text);
 			
-			ArrayList<BillEvent> billEvents = new ArrayList<BillEvent>();
+			ArrayList<Action> billEvents = new ArrayList<Action>();
 			
 			while(m.find()) {
 				if(m.group(1) != null) {
@@ -175,13 +175,13 @@ public class LbdcFileHtml extends LbdcFile {
 				}
 				
 				try {
-					billEvents.add(new BillEvent(bill.getSenateBillNo(), sdf.parse(m.group(2)), m.group(3)));
+					billEvents.add(new Action(bill.getSenateBillNo(), sdf.parse(m.group(2)), m.group(3)));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 			}
 			
-			bill.setBillEvents(billEvents);
+			bill.setActions(billEvents);
 		}
 		
 		return bill;

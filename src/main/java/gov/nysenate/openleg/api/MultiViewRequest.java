@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.model.bill.Action;
 import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.committee.Meeting;
@@ -123,7 +123,7 @@ public class MultiViewRequest extends AbstractApiRequest {
 		MEETINGS	("meetings", 	Meeting.class, 		new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
 		TRANSCRIPTS	("transcripts", Transcript.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
 		VOTES		("votes", 		Vote.class, 		new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
-		ACTIONS		("actions", 	BillEvent.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"});
+		ACTIONS		("actions", 	Action.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"});
 		
 		public final String view;
 		public final Class<? extends SenateObject> clazz;

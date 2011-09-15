@@ -1,9 +1,6 @@
 package gov.nysenate.openleg.xstream;
 
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillEvent;
-import gov.nysenate.openleg.model.bill.Person;
-import gov.nysenate.openleg.model.bill.Vote;
+import gov.nysenate.openleg.model.bill.Action;
 
 import java.util.ArrayList;
 
@@ -33,42 +30,14 @@ public class BillListConverter implements Converter {
 		if(((ArrayList<?>)value).iterator().hasNext()) {
 			Object o = ((ArrayList<?>)value).iterator().next();
 			
-			//amended bills
-			if(o instanceof Bill) {
-				ArrayList<Bill> bills = (ArrayList<Bill>) value;
-				for(Bill bill: bills) {
-					writer.startNode("amendment");
-					writer.addAttribute("id",bill.getSenateBillNo());
-					writer.endNode();
-				}
-			}
-			
 			//bill events
-			if(o instanceof BillEvent) {
-				ArrayList<BillEvent> events = (ArrayList<BillEvent>) value;
-				for(BillEvent be:events) {
+			if(o instanceof Action) {
+				ArrayList<Action> events = (ArrayList<Action>) value;
+				for(Action be:events) {
 					writer.startNode("action");
-					writer.addAttribute("timestamp",be.getEventDate().getTime()+"");
-					writer.setValue(be.getEventText());
+					writer.addAttribute("timestamp",be.getDate().getTime()+"");
+					writer.setValue(be.getText());
 					writer.endNode();
-				}
-			}
-			
-			//cosponsors
-			if(o instanceof Person) {
-				ArrayList<Person> persons = (ArrayList<Person>) value;
-				for(Person p:persons) {
-					writer.startNode("person");
-					writer.setValue(p.getFullname());
-					writer.endNode();
-				}
-			}
-			
-			//votes
-			if(o instanceof Vote) {
-				ArrayList<Vote> votes = (ArrayList<Vote>) value;
-				for(Vote v:votes) {
-					writer.setValue(v.getDescription());
 				}
 			}
 			

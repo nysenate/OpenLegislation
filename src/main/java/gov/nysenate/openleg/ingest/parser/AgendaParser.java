@@ -22,7 +22,6 @@ import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
-import gov.nysenate.openleg.model.committee.Committee;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.util.OpenLegConstants;
@@ -155,13 +154,6 @@ public class AgendaParser extends SenateParser<Agenda> implements OpenLegConstan
 				((Bill) newSenateObjects.get(index)).merge(bill);
 			} else {
 				newSenateObjects.add(bill);
-			}
-
-			List<Vote> listVotes = meeting.getVotes();
-			if (listVotes == null) {
-				listVotes = new ArrayList<Vote>();
-				listVotes.add(vote);
-				meeting.setVotes(listVotes);
 			}
 		}
 
@@ -443,11 +435,8 @@ public class AgendaParser extends SenateParser<Agenda> implements OpenLegConstan
 				if (xmlCommMeeting.getChair() != null)
 					commChair = xmlCommMeeting.getChair().getContent();
 
-				Committee committee = new Committee();
-
 				meeting.setCommitteeChair(commChair);
 				meeting.setCommitteeName(commName);
-				meeting.setCommittee(committee);
 			}
 
 			if (!listMeetings.contains(meeting)) {
@@ -550,7 +539,7 @@ public class AgendaParser extends SenateParser<Agenda> implements OpenLegConstan
 
 		bill.setFulltext("");
 		bill.setMemo("");
-		bill.setBillEvents(null);
+		bill.setActions(null);
 
 		return bill;
 	}

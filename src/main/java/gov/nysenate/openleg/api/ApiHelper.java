@@ -2,7 +2,7 @@ package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.model.bill.Action;
 import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.Section;
@@ -163,13 +163,13 @@ public class ApiHelper implements OpenLegConstants {
 
 					summary = meeting.getNotes();
 				} else if (type.equals("action")) {
-					BillEvent billEvent = (BillEvent) resultObj;
+					Action billEvent = (Action) resultObj;
 					String billId = billEvent.getBillId();
 
-					title = billEvent.getEventText();
+					title = billEvent.getText();
 
 					fields.put("date", DATE_FORMAT_MED.format(billEvent
-							.getEventDate()));
+							.getDate()));
 					fields.put("billno", billId);
 				} else if (type.equals("vote")) {
 					Vote vote = (Vote) resultObj;

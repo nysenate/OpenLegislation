@@ -14,7 +14,7 @@ public class BillPersonConverter implements Converter {
 	@Override
 	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
 		if(value instanceof Person) {
-			writer.addAttribute("sponsor", ((Person)value).getFullname());
+			writer.setValue(((Person)value).getFullname());
 		}
 	}
 

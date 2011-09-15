@@ -22,9 +22,9 @@ String title = bill.getSenateBillNo() + " - NY Senate Open Legislation - " + tit
 	<body>
 		<div id="content">
 			<pre>
-				<%=
-					TextFormatter.lrsPrinter(bill.getFulltext())
-				%>
+<%=
+	TextFormatter.lrsPrinter(bill.getFulltext())
+%>
 			</pre>
 			<br/>
   

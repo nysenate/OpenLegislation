@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.xstream;
 
 import gov.nysenate.openleg.model.ISenateObject;
+import gov.nysenate.openleg.model.bill.Bill;
 
 import java.util.*;
 
@@ -8,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import com.thoughtworks.xstream.io.*;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.mapper.*;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
@@ -31,7 +33,9 @@ import com.thoughtworks.xstream.core.TreeMarshaller;
  *	
  */
 public class SenateObjectConverter implements Converter {
-
+	
+	static HashMap<String,String> cachedSimpleBills = new HashMap<String,String>();
+	
 	private Mapper mapper;
 	private boolean isJson;
 	
@@ -42,7 +46,12 @@ public class SenateObjectConverter implements Converter {
 	
 	@Override
 	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
-					
+		
+		if(value instanceof Bill) {
+			Bill bill = (Bill)value;
+			cachedSimpleBills.remove(bill.getSenateBillNo());
+		}
+		
 		//Get the FieldAliasMapper, responsible for XStreamOmitField and XStreamAlias mark up
 		FieldAliasingMapper aliasMapper = (FieldAliasingMapper) this.mapper.lookupMapperOfType(FieldAliasingMapper.class);
 		
@@ -136,25 +145,41 @@ public class SenateObjectConverter implements Converter {
 			}
 		}
 	}
-	
+		
 	private void writeNode(String alias, Object value, HierarchicalStreamWriter writer, MarshallingContext context, Converter converter) {
 		writer.startNode(alias);
+		
 		if (value!=null) {
-			try {
-				if (converter != null) {
-					if (converter.canConvert(value.getClass())) {
-						converter.marshal(value, writer, context);
+			if(value instanceof Bill) {
+				Bill bill = (Bill) value;
+				
+				if(!cachedSimpleBills.containsKey(bill.getSenateBillNo())) {
+					HierarchicalStreamDriver driver = new DomDriver();
+					cachedSimpleBills.put(
+						bill.getSenateBillNo(), 
+						XStreamBuilder.getXStream(driver,"xml", null).toXML(value)
+					);
+				}
+				
+				writer.setValue("##" + bill.getSenateBillNo() + "##");
+			}
+			else {
+				try {
+					if (converter != null) {
+						if (converter.canConvert(value.getClass())) {
+							converter.marshal(value, writer, context);
+						}
+						else {
+							throw new ConversionException("Cannot convert "+value.getClass()+" with converter "+converter.getClass());
+						}
 					}
 					else {
-						throw new ConversionException("Cannot convert "+value.getClass()+" with converter "+converter.getClass());
+						context.convertAnother(value);
 					}
 				}
-				else {
-					context.convertAnother(value);
+				catch (TreeMarshaller.CircularReferenceException e) {
+					writer.setValue("Circular Referencing");
 				}
-			}
-			catch (TreeMarshaller.CircularReferenceException e) {
-				writer.setValue("Circular Referencing");
 			}
 		}
 		else {

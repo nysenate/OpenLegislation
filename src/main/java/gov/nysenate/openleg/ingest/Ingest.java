@@ -13,6 +13,7 @@ import gov.nysenate.openleg.util.serialize.XmlHelper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -106,7 +107,6 @@ public class Ingest {
 		    			ingest.write();
 		    		}
 		    		if(line.hasOption(INDEX)) {
-		    			
 		    			ingest.index(hooks);
 		    		}
 		    		
@@ -213,15 +213,12 @@ public class Ingest {
 	public void indexJsonDocument(String type, String path) {
 		IngestType ingestType = getIngestType(type);
 		
+		
 		if(ingestType != null) {
 			SenateObject senateObject = jsonDao.load(path, ingestType.clazz());
-			
+
 			if(senateObject != null) {
-				try {
-					searchEngine.indexSenateObject(senateObject);
-				} catch (IOException e) {
-					logger.error(e);
-				}
+				ingestIndexWriter.indexList(Arrays.asList(senateObject));
 			}
 			else {
 				logger.warn("couldn't load file " + path + "with type: " + type);

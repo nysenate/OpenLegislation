@@ -8,7 +8,7 @@ import gov.nysenate.openleg.lucene.LuceneResult;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.model.bill.Action;
 import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.Supplemental;
@@ -30,11 +30,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.queryParser.ParseException;
 
@@ -117,8 +119,8 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
     	else {
     		if(obj instanceof Bill) {
     			Bill bill = (Bill)obj;
-        		if(bill.getBillEvents() != null) {
-        			for(BillEvent be:bill.getBillEvents()) {
+        		if(bill.getActions() != null) {
+        			for(Action be:bill.getActions()) {
         				deleteSenateObject(be);
         			}
         		}
@@ -198,9 +200,11 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
     			
     			this.deleteDocumentsByQuery("otype:action AND billno:" + bill.getSenateBillNo(), indexWriter);
     			
-    			if(bill.getBillEvents() != null) {
-    				for(BillEvent be:bill.getBillEvents()) {
+    			if(bill.getActions() != null) {
+    				for(Action be:bill.getActions()) {
     					be.setModified(bill.getModified());
+    					be.setBill(bill);
+    					
     					try {
 							addDocument(be, ls, indexWriter);
 						} catch (InstantiationException e) {
@@ -272,12 +276,19 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 	    		if (lastModified == null || lastModified.length() == 0)
 	    			lastModified = new Date().getTime()+"";
 	    		
+	    		HashMap<String,String> fields = new HashMap<String,String>();
+	    		
+	    		for(Fieldable field : doc.getFields()) {
+	    			fields.put(field.name(), doc.get(field.name()));
+	    		}
+	    		
 	    		response.addResult(new Result(
 	    				doc.get("otype"),
 	    				doc.get(data),
 	    				doc.get("oid"),
 	    				Long.parseLong(lastModified),
-	    				Boolean.parseBoolean(doc.get("active"))));
+	    				Boolean.parseBoolean(doc.get("active")),
+	    				fields));
 	    	}
     	}
 	    	

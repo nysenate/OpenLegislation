@@ -1,6 +1,5 @@
 <%@ page language="java" import="java.util.regex.*, java.util.Hashtable, java.util.TreeSet, java.util.HashMap, java.util.Date, java.util.ArrayList, java.util.List, java.util.Collections, java.util.StringTokenizer, java.util.Iterator, java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.model.calendar.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
-<%!
-	public String getVoterString(List<String> voters, String appPath) {
+<%!public String getVoterString(List<String> voters, String appPath) {
 	 	StringBuffer buffer = new StringBuffer();
 	 	buffer.append(wrapPerson(voters.get(0), appPath));
 		for(int i = 1; i < voters.size(); i++) {
@@ -64,20 +63,20 @@
 		return event;
 	}
 	
-	public ArrayList<BillEvent> sortBillEvents(List<BillEvent> billEvents) {
-		Hashtable<String, BillEvent> table = new Hashtable<String, BillEvent>();
-		TreeSet<BillEvent> set = new TreeSet<BillEvent>(new BillEvent.ByEventDate());
+	public ArrayList<Action> sortBillEvents(List<Action> billEvents) {
+		Hashtable<String, Action> table = new Hashtable<String, Action>();
+		TreeSet<Action> set = new TreeSet<Action>(new Action.ByEventDate());
 		
-		for(BillEvent be:billEvents) {
+		for(Action be:billEvents) {
 			if(table.contains(be)) continue;
 			
-			table.put(Long.toString(be.getEventDate().getTime()), be);
+			table.put(Long.toString(be.getDate().getTime()), be);
 			set.add(be);
 		}
 		
 		table.clear();
 		
-		return new ArrayList<BillEvent>(set);
+		return new ArrayList<Action>(set);
 	}
 
 	public String removeBillLineNumbers (String input) {
@@ -139,15 +138,14 @@
 		String output =  resp.toString();
 		
 		return output;
-	}
-%>
+	}%>
 <%
 	String appPath = request.getContextPath();
 
 	Bill bill = (Bill)request.getAttribute("bill");
 	
 	ArrayList<Bill> rBills			= defaultList((ArrayList<Bill>)request.getAttribute("related-bill"));
-	ArrayList<BillEvent> rActions	= defaultList((ArrayList<BillEvent>)request.getAttribute("related-action"));
+	ArrayList<Action> rActions	= defaultList((ArrayList<Action>)request.getAttribute("related-action"));
 	ArrayList<Meeting> rMeetings	= defaultList((ArrayList<Meeting>)request.getAttribute("related-meeting"));
 	ArrayList<Calendar> rCals		= defaultList((ArrayList<Calendar>)request.getAttribute("related-calendar"));
 	ArrayList<Vote> rVotes			= defaultList((ArrayList<Vote>)request.getAttribute("related-vote"));
@@ -171,63 +169,73 @@
 
 <br/>
 <h2>
-	<%=senateBillNo%>: <%=bill.getTitle() == null ? "" : bill.getTitle() %>
+	<%=senateBillNo%>: <%=bill.getTitle() == null ? "" : bill.getTitle()%>
 </h2>
 <br/>
     
-<% if(!active) { %>
+<%
+    	if(!active) {
+    %>
 	<div class="amended">This bill has been amended.</div>
-<% } %>
+<%
+	}
+%>
     
 <div style="float:left;">
     
-    <%	if (bill.getSameAs()!=null){ %>
+    <%
+        	if (bill.getSameAs()!=null){
+        %>
 			<b>Same as:</b>
-		<% 
+		<%
 			StringTokenizer st = new StringTokenizer(bill.getSameAs(),",");
 			String sameAs = null;
 			String lastSameAs = "";
 			String sameAsLink = null;
 			Bill sameAsBill = null;
-	
+			
 			while(st.hasMoreTokens()) {
 				sameAs = st.nextToken().trim();
 				sameAsLink = appPath + "/bill/" + sameAs + "-" + bill.getYear();
-		
+				
 				if (sameAs.length() == 0)
 					continue;
-		
+				
 				if (sameAs.equals(lastSameAs))
 					continue;
-		
+				
 				lastSameAs = sameAs;
-				%>
+		%>
 					<a href="<%=sameAsLink%>"><%=sameAs.toUpperCase() + "-" + bill.getYear()%></a>
 				<%
-				if (st.hasMoreTokens()) {%><%}
-			} %>
+					if (st.hasMoreTokens()) {
+				%><%
+					}
+							}
+				%>
 			/
-	<%	} 
-    	
-    	String sponsor = null;
+	<%
+					} 
+						    	
+						    	String sponsor = null;
 
-		if (bill.getSponsor()!=null)
-			sponsor = bill.getSponsor().getFullname();
-		
-		if (rBills.size() > 0) { 
-			%>
+								if (bill.getSponsor()!=null)
+							sponsor = bill.getSponsor().getFullname();
+								
+								if (rBills.size() > 0) {
+				%>
 				Versions: 
 			<%
-			for (Bill rBill:rBills) {
+					for (Bill rBill:rBills) {
 				%>
 					<a href="/legislation/bill/<%=rBill.getSenateBillNo()%>"><%=rBill.getSenateBillNo()%></a> 
 				<%
-			}
-		}
+ 					}
+ 				 						}
 
-		if (sponsor == null)
-			sponsor = "";
-	%>
+ 				 						if (sponsor == null)
+ 				 					sponsor = "";
+ 				%>
 </div>
 
 <div style="float:right;">
@@ -242,49 +250,63 @@
 <div id="content">
 
 	<div class="billheader">
-  		<%=billSummary == null ? "" : billSummary %>
+  		<%=billSummary == null ? "" : billSummary%>
 		<hr/>
 		<b>Sponsor: </b>
 		<a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(sponsor,"utf-8")%>"  class="sublink"><%=sponsor%></a> 
 
  
- 		<% if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) { %>
+ 		<%
+   			if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) {
+   		%>
 			 / <b>Multi-sponsor(s):</b>
-			<%= getSponsorString(bill.getMultiSponsors(), appPath) %>
- 		<% } %>
+			<%=getSponsorString(bill.getMultiSponsors(), appPath)%>
+ 		<%
+ 			}
+ 		%>
  		
- 		<% if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) { %>
+ 		<%
+ 		 			if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) {
+ 		 		%>
 			 / <b>Co-sponsor(s):</b>
-			<%= getSponsorString(bill.getCoSponsors(), appPath) %>
- 		<% } %>
+			<%=getSponsorString(bill.getCoSponsors(), appPath)%>
+ 		<%
+ 			}
+ 		%>
  		
-		<% if (bill.getCurrentCommittee() != null) { %>
+		<%
+ 					if (bill.getCurrentCommittee() != null) {
+ 				%>
 			 / <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
-		<% } %>
+		<%
+			}
+		%>
 		<br/>
 		<%
 			if (bill.getLawSection() != null) {
-				%>
+		%>
 					<b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
 	 			<%
-	 		}
-	
-	 		if (bill.getLaw() != null) {
+	 				}
+	 				 				
+	 				 				 		if (bill.getLaw() != null) {
 	 			%>
 					 / <b>Law:</b> <%=bill.getLaw()%>
 				<%
-	 		}
-	 	%>
+					}
+				%>
 	</div>
 	
-	<% if (rActions.size() > 0) { %>
+	<%
+			if (rActions.size() > 0) {
+		%>
 		<h3><%=senateBillNo%> Actions</h3>
 		<ul>
 		<%
-			ArrayList<BillEvent> events = sortBillEvents(rActions);
-			for (BillEvent be : events){	
-				%>
-					<li><%=df.format(be.getEventDate().getTime())%>: <%=formatBillEvent(bill.getSenateBillNo(), be.getEventText(), appPath)%></li>
+			ArrayList<Action> events = sortBillEvents(rActions);
+			for (Action be : events){
+		%>
+					<li><%=df.format(be.getDate().getTime())%>: <%=formatBillEvent(bill.getSenateBillNo(), be.getText(), appPath)%></li>
 				<%
 			}
 		%>

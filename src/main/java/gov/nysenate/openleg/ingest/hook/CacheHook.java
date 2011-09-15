@@ -73,7 +73,7 @@ public class CacheHook implements Hook<List<? extends SenateObject>> {
 			SocketAddress remote = new InetSocketAddress(host, port);
 			channel = SocketChannel.open(remote);
 			
-			logger.info(TextFormatter.append("purging ", uri, " at ", host));
+			logger.warn(TextFormatter.append("purging ", uri, " at ", host));
 					
 			String request = "PURGE " + uri + " HTTP/1.1\r\n" + "User-Agent: HTTPGrab\r\n" +
 				"Accept: text/*\r\nConnection: close\r\nHost: " + host + "\r\n\r\n";
@@ -81,6 +81,11 @@ public class CacheHook implements Hook<List<? extends SenateObject>> {
 			ByteBuffer header = ByteBuffer.wrap(request.getBytes("US-ASCII"));
 			channel.write(header);
 			channel.finishConnect();
+			
+			ByteBuffer buffer = ByteBuffer.allocate(131072);
+			while(channel.read(buffer) != -1) {
+				buffer.clear();
+			}
 			
 			channel.close();
 		}

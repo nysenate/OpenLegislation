@@ -73,11 +73,14 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 				
 				supplemental = parseSupplemental(calendar,xmlCalendar.getSupplemental());
 				
-				supplemental.setCalendar(calendar);
-				
-				calendar.addSupplemental(supplemental);
-																
-				objectsToUpdate.add(calendar);
+				if(supplemental.getSequence() != null 
+						|| (supplemental.getSections() != null && !supplemental.getSections().isEmpty())) {
+					supplemental.setCalendar(calendar);
+					
+					calendar.addSupplemental(supplemental);
+					
+					objectsToUpdate.add(calendar);
+				}											
 			}
 			else if (obj instanceof XMLSencalendaractive) {
 				XMLSencalendaractive xmlActiveList = (XMLSencalendaractive)obj;
@@ -87,15 +90,17 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 				calendar = getCalendar(Calendar.TYPE_ACTIVE,xmlActiveList.getNo(),xmlActiveList.getYear(),xmlActiveList.getSessyr());
 				
 				supplemental = parseSupplemental(calendar,xmlActiveList.getSupplemental());
-				
-				supplemental.setCalendar(calendar);
-				
-				calendar.addSupplemental(supplemental);
-
-				objectsToUpdate.add(calendar);
-				
+								
+				if(supplemental.getSequence() != null 
+						|| (supplemental.getSections() != null && !supplemental.getSections().isEmpty())) {
+					supplemental.setCalendar(calendar);
+					
+					calendar.addSupplemental(supplemental);
+					
+					objectsToUpdate.add(calendar);
+				}	
 			}
-				        
+			
 			if (action.equals("remove") && removeObject != null) {
 				logger.info("REMOVING: " + removeObject.getClass() + "=" + removeObjectId);
 				
@@ -105,12 +110,14 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 				else if (removeObject instanceof Sequence && calendar.getSupplementals() != null){
 					for(int i = 0; i < calendar.getSupplementals().size(); i++) {
 						if(calendar.getSupplementals().get(i).getSequence().equals(removeObject)) {
-							calendar.getSupplementals().get(i).setSequence(null);
+							calendar.getSupplementals().remove(i);
 							break;
 						}
 					}
 				}
-//				reader.deleteFile(calendar.getId(), calendar.getYear()+"", "calendar");
+				if(this.canWrite(SenateParser.JSON)) {
+					jsonDao.write(calendar);
+				}
 			}
 			if(calendar != null) {
 				newSenateObjects.add(calendar);
@@ -445,7 +452,7 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 		
 		bill.setFulltext("");
 		bill.setMemo("");
-		bill.setBillEvents(null);
+		bill.setActions(null);
 				
 		return bill;
 	}

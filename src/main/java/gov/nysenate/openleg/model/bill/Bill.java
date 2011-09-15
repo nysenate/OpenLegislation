@@ -17,36 +17,32 @@ import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.TextFormatter;
 import gov.nysenate.openleg.xstream.BillListConverter;
+import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
 
 @XStreamAlias("bill")
 public class Bill extends SenateObject implements Comparable<Bill>  {
 	
-	@XStreamAsAttribute
 	@LuceneField
 	protected int year;
 	
 	@XStreamAlias("senateId")
-	@XStreamAsAttribute
 	protected String senateBillNo;
 	
-	@XStreamAsAttribute
 	@LuceneField
 	protected String title;
 	
-	@XStreamAsAttribute
 	@LuceneField
 	protected String lawSection;
 	
-	@XStreamAsAttribute
 	@LuceneField
 	protected String sameAs;
 	
+	@XStreamConverter(BillListConverter.class)
 	protected List<String> previousVersions;
 	
 	@LuceneField
@@ -56,7 +52,8 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 	@LuceneField
 	protected List<Person> coSponsors;
 	
-	@XStreamAlias("multiSponsors")
+	@XStreamAlias("multisponsors")
+	@LuceneField
 	protected List<Person> multiSponsors;
 	
 	@LuceneField
@@ -68,38 +65,27 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 	
 	protected List<String> pastCommittees;
 	
-	@XStreamAlias("actions")
 	@XStreamConverter(BillListConverter.class)
-//	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
-	@LuceneField("actions")
-	protected List<BillEvent> billEvents;
+	@LuceneField()
+	protected List<Action> actions;
 	
 	@XStreamAlias("text")
-//	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
 	@LuceneField("full")
 	protected String fulltext;
 	
-//	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
 	@LuceneField
 	protected String memo;
 	
-//	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
 	@LuceneField
 	protected String law;
 	
-//	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
 	@LuceneField
 	protected String actClause;
 	
-//	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
 	protected int sortIndex = -1;
 	
-//	@HideFrom({Bill.class})
+	@XStreamCollectionAlias(node="votes",value="vote")
 	protected List<Vote> votes;
-	
-//	@HideFrom({Bill.class,Meeting.class, Calendar.class, Supplemental.class})
-	@LuceneField
-	protected Bill latestAmendment;
 
 	@LuceneField
 	protected Boolean stricken;
@@ -170,8 +156,8 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 	}
 
 	
-	public List<BillEvent> getBillEvents() {
-		return billEvents;
+	public List<Action> getActions() {
+		return actions;
 	}
 
 
@@ -211,10 +197,6 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 	}
 
 
-
-	public Bill getLatestAmendment() {
-		return latestAmendment;
-	}
 	
 	public Boolean getStricken() {
 		return stricken;
@@ -285,8 +267,8 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 
 
 
-	public void setBillEvents(List<BillEvent> billEvents) {
-		this.billEvents = billEvents;
+	public void setActions(List<Action> billEvents) {
+		this.actions = billEvents;
 	}
 
 
@@ -326,11 +308,6 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 	}
 
 
-
-	public void setLatestAmendment(Bill latestAmendment) {
-		this.latestAmendment = latestAmendment;
-	}
-	
 	public void setStricken(boolean stricken) {
 		this.stricken = stricken;
 	}
@@ -369,11 +346,11 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 		
 	}
 	
-	public void addBillEvent(BillEvent be) {
-		if(this.billEvents == null)
-			billEvents = new ArrayList<BillEvent>();
+	public void addBillEvent(Action be) {
+		if(this.actions == null)
+			actions = new ArrayList<Action>();
 		
-		billEvents.add(be);
+		actions.add(be);
 	}
 
 
@@ -459,7 +436,7 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 			/*
 			 * current committee will only be updated when bill events are present
 			 */
-			if(bill.getBillEvents() != null && !bill.getBillEvents().isEmpty())
+			if(bill.getActions() != null && !bill.getActions().isEmpty())
 				currentCommittee = bill.getCurrentCommittee();
 		}
 		
@@ -507,15 +484,6 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 			sortIndex = bill.getSortIndex();
 		}
 		
-		if(latestAmendment == null) {
-			latestAmendment = bill.getLatestAmendment();
-		}
-		else {
-			if(bill.getLatestAmendment() != null) {
-				latestAmendment = bill.getLatestAmendment();
-			}
-		}
-		
 		if(stricken == null) {
 			stricken  = bill.getStricken();
 		}
@@ -537,12 +505,12 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 			}
 		}
 		
-		if(billEvents == null || billEvents.isEmpty()) {
-			billEvents = bill.getBillEvents();
+		if(actions == null || actions.isEmpty()) {
+			actions = bill.getActions();
 		}
 		else {
-			if(bill.getBillEvents() != null && !bill.getBillEvents().isEmpty()) {
-				this.billEvents = bill.getBillEvents();
+			if(bill.getActions() != null && !bill.getActions().isEmpty()) {
+				this.actions = bill.getActions();
 			}
 		}
 		
@@ -693,14 +661,26 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 	}
 	
 	@JsonIgnore
+	public String getLuceneMultiSponsors() {
+		if(this.getMultiSponsors() == null)
+			return "";
+		
+		StringBuilder response = new StringBuilder();
+		for( Person sponsor : multiSponsors) {
+			response.append(sponsor.getFullname() + ", ");
+		}
+		return response.toString().replaceAll(", $", "");
+	}
+	
+	@JsonIgnore
 	public String getLuceneBillEvents() {
-		if(this.getBillEvents() ==  null) {
+		if(this.getActions() ==  null) {
 			return "";
 		}
 		
 		StringBuilder response = new StringBuilder();
-		for(BillEvent be : billEvents) {
-			response.append(be.getEventText() + ", ");
+		for(Action be : actions) {
+			response.append(be.getText() + ", ");
 		}
 		return response.toString().replaceAll(", $", "");
 	}

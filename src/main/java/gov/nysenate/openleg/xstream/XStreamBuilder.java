@@ -2,6 +2,8 @@ package gov.nysenate.openleg.xstream;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
@@ -9,7 +11,7 @@ import com.thoughtworks.xstream.io.xml.*;
 import com.thoughtworks.xstream.io.json.*;
 
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.model.bill.Action;
 import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -17,7 +19,6 @@ import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.Section;
 import gov.nysenate.openleg.model.calendar.Sequence;
 import gov.nysenate.openleg.model.calendar.Supplemental;
-import gov.nysenate.openleg.model.committee.Committee;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.Result;
@@ -49,6 +50,8 @@ public class XStreamBuilder implements OpenLegConstants {
 		return getXStream(driver,"json",obj.getClass()).toXML(obj);
 	}
 	
+	private static final Pattern billPattern = Pattern.compile("<bill>##(.*)##</bill>");
+	
 	/**
 	 * Top level method for serializing any given object into XML using XStream
 	**/
@@ -57,7 +60,22 @@ public class XStreamBuilder implements OpenLegConstants {
 			obj = ((Supplemental)obj).getCalendar();
 		
 		HierarchicalStreamDriver driver = new DomDriver();
-		return getXStream(driver,"xml",obj.getClass()).toXML(obj);
+		String xml = getXStream(driver,"xml",obj.getClass()).toXML(obj);
+		
+		Matcher m = billPattern.matcher(xml);
+		
+		StringBuffer newXml = new StringBuffer();
+		
+		while(m.find()) {
+			m.appendReplacement(
+					newXml, 
+					Matcher.quoteReplacement(
+							SenateObjectConverter.cachedSimpleBills.get(m.group(1)
+			)));
+		}
+		m.appendTail(newXml);
+		
+		return newXml.toString();
 	}
 	
 	/**
@@ -71,7 +89,7 @@ public class XStreamBuilder implements OpenLegConstants {
 	 * 
 	 * Returns fully configured XStream object 
 	**/
-	private static XStream getXStream(HierarchicalStreamDriver driver,String type,Class<?> objClass) {
+	public static XStream getXStream(HierarchicalStreamDriver driver,String type,Class<?> objClass) {
 		
 		//Initialize XStream with the provided driver, the driver determines the output type
 		//and the libraries used for serialization (not all are created equal)
@@ -84,7 +102,7 @@ public class XStreamBuilder implements OpenLegConstants {
 		
 		//Pre-process the class annotations (safer this way than runtime)
 		xstream.processAnnotations(new Class[]{
-			Bill.class,			BillEvent.class,		Committee.class,
+			Bill.class,			Action.class,		
 			Person.class,		Transcript.class,
 			Vote.class,			SenateResponse.class,	Meeting.class,
 			Calendar.class,		Sequence.class,			Section.class,
@@ -96,7 +114,7 @@ public class XStreamBuilder implements OpenLegConstants {
 		//Try to run a class specific setup (if it exists)
 		try {
 			//Use the convention 'setup'+ObjectClassName, i.e. setupBill
-			String funcName = "setup"+objClass.getSimpleName();
+			String funcName = "setup"+ (objClass == null ? "Null" : objClass.getSimpleName());
 			
 			//to lookup a setup method for this object 
 			xstream = (XStream)XStreamBuilder.class.getDeclaredMethod(funcName, XStream.class).invoke(null, xstream);
@@ -121,18 +139,15 @@ public class XStreamBuilder implements OpenLegConstants {
 	}
 	
 	@SuppressWarnings("unused")
+	private static XStream setupNull(XStream xstream) {
+		return condensedBillFormat(xstream);
+	}
+	
+	@SuppressWarnings("unused")
 	private static XStream setupBill(XStream xstream) {
-		
-		//Removes the backward (circular) reference
-		xstream.omitField(Vote.class, "bill");		
-		
 		//omitting what is currently unavailable in api 1.0
-		xstream.omitField(Bill.class, "law");
-		xstream.omitField(Bill.class, "actClause");
 		xstream.omitField(Bill.class, "sortIndex");
-		xstream.omitField(Bill.class, "votes");
 		xstream.omitField(Bill.class, "latestAmendment");
-		xstream.omitField(Bill.class, "person");
 		xstream.omitField(Bill.class, "pastCommittees");
 		xstream.omitField(Bill.class, "stricken");
 		
@@ -140,16 +155,36 @@ public class XStreamBuilder implements OpenLegConstants {
 		xstream.omitField(Person.class,"contactInfo");
 		xstream.omitField(Person.class,"guid");
 		
+		//Removes the backward (circular) reference
+		xstream.omitField(Vote.class, "bill");		
+		
 		//properly lists lists
 		xstream.registerConverter(new BillPersonConverter());
 		xstream.registerConverter(new BillListConverter());
+		
+		return xstream;
+	}
+	
+	@SuppressWarnings("unused")
+	private static XStream setupBillEvent(XStream xstream) {
+		xstream = condensedBillFormat(xstream);
+		
+		return xstream;
+	}
+	
+	@SuppressWarnings("unused")
+	private static XStream setupVote(XStream xstream) {
+		xstream = condensedBillFormat(xstream);
+		
 		return xstream;
 	}
 	
 	@SuppressWarnings("unused")
 	private static XStream setupMeeting(XStream xstream) {		
-		
 		xstream = condensedBillFormat(xstream);
+		
+		xstream.omitField(Meeting.class, "id");
+		xstream.omitField(Meeting.class, "addendums");
 		
 		return xstream;
 	}
@@ -168,7 +203,7 @@ public class XStreamBuilder implements OpenLegConstants {
 		return setupCalendar(xstream);
 	}
 	
-		private static XStream setupCalendar(XStream xstream) {
+	private static XStream setupCalendar(XStream xstream) {
 		
 		xstream = condensedBillFormat(xstream);
 		
@@ -179,7 +214,6 @@ public class XStreamBuilder implements OpenLegConstants {
 		xstream.omitField(CalendarEntry.class, "motionDate");
 		xstream.omitField(CalendarEntry.class, "section");
 		xstream.omitField(CalendarEntry.class, "sequence");
-		xstream.omitField(CalendarEntry.class, "");		
 		
 		xstream.omitField(Sequence.class, "supplemental");
 		xstream.omitField(Sequence.class,"notes");
@@ -188,35 +222,28 @@ public class XStreamBuilder implements OpenLegConstants {
 		
 		xstream.omitField(Supplemental.class, "calendar");
 		xstream.omitField(Supplemental.class, "supplementalId");
-			
+					
 		return xstream;
 	}
 	
-	
-	
-	
 	private static XStream condensedBillFormat(XStream xstream) {
 		
+		xstream.omitField(Bill.class, "lawSection");
+		xstream.omitField(Bill.class, "previousVersions");
+		xstream.omitField(Bill.class, "coSponsors");
+		xstream.omitField(Bill.class, "multiSponsors");
+		xstream.omitField(Bill.class, "currentCommittee");
+		xstream.omitField(Bill.class, "actions");
+		xstream.omitField(Bill.class, "fulltext");
+		xstream.omitField(Bill.class, "memo");
+		xstream.omitField(Bill.class, "law");
 		xstream.omitField(Bill.class, "actClause");
-		xstream.omitField(Bill.class,"amendments");
-		xstream.omitField(Bill.class,"billEvents");		
-		xstream.omitField(Bill.class,"fulltext");		
-		xstream.omitField(Bill.class,"latestAmendment");
-		xstream.omitField(Bill.class,"law");
-		xstream.omitField(Bill.class,"memo");
-		xstream.omitField(Bill.class,"sortIndex");
-		xstream.omitField(Bill.class, "pastCommittees");
+		xstream.omitField(Bill.class, "sortIndex");
+		xstream.omitField(Bill.class, "votes");
 		xstream.omitField(Bill.class, "stricken");
+		xstream.omitField(Bill.class, "pastCommittees");
 		
-		xstream.omitField(Meeting.class, "addendums");
-		xstream.omitField(Meeting.class,"committee");		
-		xstream.omitField(Meeting.class,"votes");
-		
-		xstream.omitField(Person.class,"branch");
-		xstream.omitField(Person.class,"contactInfo");
-		xstream.omitField(Person.class,"guid");
-		
-		xstream.omitField(Vote.class, "bill");
+		xstream.registerConverter(new BillPersonConverter());
 		
 		return xstream;	
 	}
@@ -240,11 +267,28 @@ public class XStreamBuilder implements OpenLegConstants {
 		while (itResults.hasNext()) //Fields in JSON are separated by commas,
 		{
 			result = itResults.next();
+			
+			String oid = result.oid;
+			String otype = result.otype;
+			StringBuffer url = new StringBuffer();
+			url.append("http://open.nysenate.gov/legislation/");
+			
+			if(result.otype.equals("vote") || result.otype.equals("action")) {
+				oid = result.getFields().get("billno");
+				url.append("bill/").append(oid);
+			}
+			else {
+				url.append(result.getOtype()).append("/").append(result.getOid());
+			}
+			
 			//#TODO: Figure out if we need to remove semicolons from end of results
 			if(type.equals("json")) {
-				results.append("{");
-				results.append("\"type\": \""+result.getOtype()+"\", ");
 				
+				
+				results.append("{");
+				results.append("\"otype\": \""+otype+"\", ");
+				results.append("\"oid\": \""+oid+"\", ");
+				results.append("\"url\": \"" + url.toString() + "\", ");
 				results.append("\"data\": " + result.getData());
 				results.append(" }");
 				
@@ -253,7 +297,9 @@ public class XStreamBuilder implements OpenLegConstants {
 			}
 			else if (type.equals("xml")) {
 				results.append("<result>");
-				results.append("<type>"+result.getOtype()+"</type>");
+				results.append("<otype>"+otype+"</otype>");
+				results.append("<oid>"+oid+"</oid>");
+				results.append("<url>" + url.toString() + "</url>");
 				results.append(result.getData());
 				results.append("</result>");
 			}

@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -20,7 +19,6 @@ import gov.nysenate.openleg.model.SenateObject;
 @XStreamAlias("supplemental")
 public class Supplemental extends SenateObject {
 	
-	@XStreamAsAttribute
 	protected String id;
 	
 	@LuceneField("when")
@@ -33,10 +31,8 @@ public class Supplemental extends SenateObject {
 	
 	protected Sequence sequence;
 	
-//	@HideFrom({Calendar.class, Supplemental.class})
 	protected String supplementalId;
 	
-//	@HideFrom({Calendar.class, Supplemental.class})
 	protected Calendar calendar;
 	
 	public Sequence getSequence() {

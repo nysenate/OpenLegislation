@@ -2,7 +2,7 @@ package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.model.bill.Action;
 import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -13,7 +13,7 @@ public enum ApiType {
 	CALENDAR	("calendar", 	Calendar.class),
 	MEETING		("meeting", 	Meeting.class),
 	TRANSCRIPT	("transcript", 	Transcript.class),
-	ACTION		("action", 		BillEvent.class),
+	ACTION		("action", 		Action.class),
 	VOTE		("vote", 		Vote.class);
 	
 	private String type;

@@ -10,7 +10,6 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 
 import org.apache.lucene.document.Field;
@@ -21,59 +20,36 @@ import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.Vote;
 
 @XStreamAlias("meeting")
 @XmlRootElement
 public class Meeting extends SenateObject {
 
-	@XStreamAsAttribute
 	@LuceneField("when")
 	protected Date meetingDateTime;	
 	
-	@XStreamAsAttribute
 	protected String meetday;
 	
-	@XStreamAsAttribute
 	@LuceneField
 	protected String location;	
 	
-	@XStreamAsAttribute
 	protected String id;	
 	
-	@XStreamAsAttribute
 	@LuceneField("committee")
 	protected String committeeName;
 	
-	@XStreamAsAttribute
 	@LuceneField("chair")
 	protected String committeeChair;
 	
 	@LuceneField
 	protected List<Bill> bills;
 	
-//	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
-	@LuceneField
-	protected List<Vote> votes;	
-	
 	@LuceneField
 	protected String notes;
 
-//	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
-	protected Committee committee;	
-
-//	@HideFrom({Meeting.class, Calendar.class, Supplemental.class})
 	@LuceneField
 	protected List<Addendum> addendums;
 	
-	public List<Vote> getVotes() {
-		return votes;
-	}
-
-	public void setVotes(List<Vote> votes) {
-		this.votes = votes;
-	}
-
 	public String getCommitteeChair() {
 		return committeeChair;
 	}
@@ -88,14 +64,6 @@ public class Meeting extends SenateObject {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-	
-	public Committee getCommittee() {
-		return committee;
-	}
-
-	public void setCommittee(Committee committee) {
-		this.committee = committee;
 	}
 	
 	@JsonIgnore

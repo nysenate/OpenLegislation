@@ -2,7 +2,7 @@ package gov.nysenate.openleg.util.serialize;
 
 import gov.nysenate.openleg.model.*;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.model.bill.Action;
 import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.calendar.*;
@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -26,6 +27,8 @@ import com.google.gson.JsonPrimitive;
 
 @SuppressWarnings({"unused"})
 public class JsonConverter {
+	
+	static HashMap<String,JsonObject> cachedSimpleBills = new HashMap<String,JsonObject>();
 	
 	private static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	
@@ -46,12 +49,14 @@ public class JsonConverter {
 		
 		JsonObject node = null;
 
-		if(o instanceof Bill)
+		if(o instanceof Bill) {
 			try {
+				cachedSimpleBills.remove(((Bill)o).getSenateBillNo());
 				node = converter(o,bill_exclude());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
 		else if(o instanceof Meeting)
 			try {
 				node = converter(o,meeting_exclude());
@@ -70,7 +75,7 @@ public class JsonConverter {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		else if(o instanceof BillEvent)
+		else if(o instanceof Action)
 			try {
 				node = converter(o,null);
 			} catch (Exception e) {
@@ -88,6 +93,7 @@ public class JsonConverter {
 		return root;
 	}
 	
+	
 	/**
 	 * accepts an object and a list of fields that should be excluded from json output.
 	 * any field in the object aside from those noted as excluded will be processed,
@@ -104,91 +110,62 @@ public class JsonConverter {
 			exclude = new ArrayList<String>();
 		try {
 			for(Field f:fields) {
-								
 				if(!f.getName().contains("jdo") && !Modifier.isStatic(f.getModifiers())) {
 					
 					String name = fixCase(f.getName());
-					
 					String type = f.getType().getSimpleName();
 					
-					Method method = o.getClass().getDeclaredMethod("get" + name);
-					
 					if(!exclude.contains(f.getName())) {
+						f.setAccessible(true);
+						Object obj = f.get(o);
+						f.setAccessible(false);
 						
-						if(type.equals("Bill")) {
-							Object obj;
-							if((obj = method.invoke(o)) != null) {
-								root.add(f.getName(), converter(obj,simple_bill_exclude()));
-							}
-						}
-						else if(type.equals("Date")) {
-							Date d;
-							if((d = (Date)method.invoke(o)) != null) {
-								root.addProperty(f.getName(), (d != null) ? d.getTime() + "":"");
-							}
-						}
-						else if(type.equals("int")) {
-							Integer i;
-							if((i = (Integer)method.invoke(o)) != null){
-								root.addProperty(f.getName(), i);
-							}
-							
-						}
-						else if(type.equals("List")) {
-							
-							try {
-								root.add(f.getName(),
-										(JsonElement)JsonConverter.class.getDeclaredMethod("list" + o.getClass().getSimpleName(),Collection.class)
-										.invoke(null,(List<?>)method.invoke(o)));
-								
-							}
-							catch (Exception e) {
-								//e.printStackTrace();
-							}
-							
-						}
-						else if(type.equals("Person")) {
-							
-							Person p;
-							if((p = (Person)method.invoke(o)) != null) {
-								root.add(f.getName(),converter(p,null));
-							}
-							
-						}
-						else if (type.equals("Agenda")) {
-							Agenda a;
-							if ((a = (Agenda)method.invoke(o))!=null) {
-								root.add(f.getName(),converter(a,agenda_exclude()));
-							}
-						}
-						else if (type.equals("Addendum")) {
-							Addendum ad;
-							if ((ad = (Addendum)method.invoke(o))!=null) {
-								root.add(f.getName(),converter(ad,addendum_exclude()));
-							}
-						}
-						else if(type.equals("Sequence")) {
-							Object obj;
-							if((obj = method.invoke(o)) != null) {
-								root.add(f.getName(),converter(obj,sequence_exclude()));
-							}
-						}
-						else if(type.equals("String")) {
-							String s;
-							if((s = (String)method.invoke(o)) != null) {
-								root.addProperty(f.getName(), s);
-								
-							}
-						}
-						else if(type.equals("Boolean")) {
-							Boolean b;
-							if((b = (Boolean)method.invoke(o)) != null) {
-								root.addProperty(f.getName(), b.toString());
-								
-							}
+						if(obj == null) {
+							root.add(f.getName(), null);
 						}
 						else {
-							throw (new JsonConverter()).new UnknownTypeException("UNKNOWN: " + type + "(type):" + name + " (name) IN CLASS " + o.getClass().getSimpleName());
+							if(isPrimitive(obj)) {
+								root.addProperty(f.getName(), obj.toString());
+							}
+							else if(type.equals("Bill")) {
+								Bill bill = (Bill)obj;
+								
+								if(!cachedSimpleBills.containsKey(bill.getSenateBillNo())) {
+									cachedSimpleBills.put(bill.getSenateBillNo(), converter(obj,simple_bill_exclude()));
+								}
+								
+								root.add(f.getName(), cachedSimpleBills.get(bill.getSenateBillNo()));
+							}
+							else if(type.equals("Date")) {
+								Date d = (Date)obj;
+								root.addProperty(f.getName(), (d != null) ? d.getTime() + "":"");
+							}
+							else if(type.equals("List")) {
+								try {
+									root.add(f.getName(),
+											(JsonElement)JsonConverter.class.getDeclaredMethod("list" + o.getClass().getSimpleName(),Collection.class)
+											.invoke(null,(List<?>)obj));
+									
+								}
+								catch (Exception e) {
+									//e.printStackTrace();
+								}
+							}
+							else if(type.equals("Person")) {
+								root.add(f.getName(),converter(obj,person_exclude()));
+							}
+							else if (type.equals("Agenda")) {
+								root.add(f.getName(),converter(obj,agenda_exclude()));
+							}
+							else if (type.equals("Addendum")) {
+								root.add(f.getName(),converter(obj,addendum_exclude()));
+							}
+							else if(type.equals("Sequence")) {
+								root.add(f.getName(),converter(obj,sequence_exclude()));
+							}
+							else {
+								throw (new JsonConverter()).new UnknownTypeException("UNKNOWN: " + type + "(type):" + name + " (name) IN CLASS " + o.getClass().getSimpleName());
+							}
 						}
 					}
 				}
@@ -199,6 +176,20 @@ public class JsonConverter {
 			
 		}
 		return root;
+	}
+	
+	private static boolean isPrimitive(Object obj) {
+		return obj != null && (
+							   obj.getClass().isPrimitive()
+							|| obj instanceof Boolean 
+							|| obj instanceof Byte
+							|| obj instanceof Character
+							|| obj instanceof Double
+							|| obj instanceof Float
+							|| obj instanceof Integer
+							|| obj instanceof Long
+							|| obj instanceof Short
+							|| obj instanceof String);
 	}
 	
 	/**
@@ -232,10 +223,10 @@ public class JsonConverter {
 				}
 			}
 			
-			else if(o instanceof BillEvent) {
-				List<BillEvent> events = (List<BillEvent>) c;
-				for(BillEvent be:events) {
-					jarray.add(converter(be, null));
+			else if(o instanceof Action) {
+				List<Action> events = (List<Action>) c;
+				for(Action be:events) {
+					jarray.add(converter(be, internal_action_exclude()));
 				}
 				
 				
@@ -243,10 +234,8 @@ public class JsonConverter {
 			
 			else if(o instanceof Person) {
 				List<Person> persons = (List<Person>) c;
-				
-
 				for(Person p:persons) {
-					jarray.add(converter(p, null));
+					jarray.add(converter(p, person_exclude()));
 				}
 				
 			}
@@ -255,7 +244,7 @@ public class JsonConverter {
 			
 				List<Vote> votes = (List<Vote>) c;
 				for(Vote v:votes) {
-					jarray.add((converter(v, vote_exclude())));
+					jarray.add((converter(v, internal_vote_exclude())));
 					
 				}
 				
@@ -398,16 +387,22 @@ public class JsonConverter {
 	 */
 	
 	private static List<String> simple_bill_exclude() {
-		List<String> simple_bill_exclude = new ArrayList<String>();		
+		List<String> simple_bill_exclude = new ArrayList<String>();	
 		
-		simple_bill_exclude.add("actClause");
-		simple_bill_exclude.add("amendments");
-		simple_bill_exclude.add("billEvents");
+		simple_bill_exclude.add("lawSection");
+		simple_bill_exclude.add("previousVersions");
+		simple_bill_exclude.add("coSponsors");
+		simple_bill_exclude.add("multiSponsors");
+		simple_bill_exclude.add("currentCommittee");
+		simple_bill_exclude.add("actions");
 		simple_bill_exclude.add("fulltext");
-		simple_bill_exclude.add("latestAmendment");
-		simple_bill_exclude.add("law");
 		simple_bill_exclude.add("memo");
+		simple_bill_exclude.add("law");
+		simple_bill_exclude.add("actClause");
 		simple_bill_exclude.add("sortIndex");
+		simple_bill_exclude.add("votes");
+		simple_bill_exclude.add("stricken");
+		simple_bill_exclude.add("pastCommittees");
 		
 		return simple_bill_exclude;
 	}
@@ -437,6 +432,7 @@ public class JsonConverter {
 		List<String> exclude = new ArrayList<String>();
 		
 		//exclude.add("supplementalId");
+		exclude.add("meetings");
 		
 		return exclude;
 	}
@@ -470,10 +466,23 @@ public class JsonConverter {
 	private static List<String> vote_exclude() {
 		List<String> vote_exclude = new ArrayList<String>();
 		
+		return vote_exclude;
+	}
+	
+	private static List<String> internal_vote_exclude() {
+		List<String> vote_exclude = new ArrayList<String>();
+		
 		vote_exclude.add("bill");
-		vote_exclude.add("description");
 		
 		return vote_exclude;
+	}
+	
+	private static List<String> internal_action_exclude() {
+		List<String> action_exclude = new ArrayList<String>();
+		
+		action_exclude.add("bill");
+		
+		return action_exclude;
 	}
 	
 	private static List<String> transcript_exclude() {
@@ -485,12 +494,23 @@ public class JsonConverter {
 		return transcript_exclude;
 	}
 	
+	private static List<String> person_exclude() {
+		List<String> person_exclude = new ArrayList<String>();
+		
+		person_exclude.add("id");
+		person_exclude.add("contactInfo");
+		person_exclude.add("branch");
+		person_exclude.add("guid");
+		person_exclude.add("position");
+		
+		return person_exclude;
+	}
+	
 	private static List<String> meeting_exclude() {
 		List<String> meeting_exclude = new ArrayList<String>();
 		
-		meeting_exclude.add("votes");
-		meeting_exclude.add("committee");
-	//	meeting_exclude.add("addendums"); 
+		meeting_exclude.add("id");
+		meeting_exclude.add("addendums");
 		
 		return meeting_exclude;
 	}
@@ -498,11 +518,10 @@ public class JsonConverter {
 	private static List<String> bill_exclude() {
 		List<String> bill_exclude = new ArrayList<String>();
 		
-	//	bill_exclude.add("law");
-	//	bill_exclude.add("actClause");
 		bill_exclude.add("sortIndex");
-	//	bill_exclude.add("latestAmendment");
-		bill_exclude.add("votes");
+		bill_exclude.add("latestAmendment");
+		bill_exclude.add("pastCommittees");
+		bill_exclude.add("stricken");
 		
 		return bill_exclude;
 	}

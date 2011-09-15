@@ -155,10 +155,10 @@ public class Transcript extends SenateObject {
 	@Override
 	@JsonIgnore
 	public int getYear() {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(timeStamp);
-		
 		if(timeStamp != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(timeStamp);
+			
 			return cal.get(Calendar.YEAR);
 		}
 		return 9999;

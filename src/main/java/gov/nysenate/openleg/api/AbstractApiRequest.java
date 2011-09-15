@@ -46,7 +46,12 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
 		this.pageNumber = pageNumber;
 		this.pageSize = pageSize;
 		
-		this.format = thisOrThat(format, DEFAULT_FORMAT).toLowerCase();
+		if(request.getRequestURL().toString().toLowerCase().contains("m.nysenate.gov")) {
+			this.format = "mobile";
+		}
+		else {
+			this.format = thisOrThat(format, DEFAULT_FORMAT).toLowerCase();
+		}
 		
 		this.apiEnum = apiEnum;
 	}

@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.model.bill.Action;
 import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.model.bill.Vote;
 
@@ -43,7 +43,7 @@ public class BillParser extends SenateParser<Bill> {
 	private StringBuffer titleBuffer = null;
 	private StringBuffer textBuffer = null;
 	private StringBuffer memoBuffer = null;
-	private List<BillEvent> billEventsBuffer = null;
+	private List<Action> billEventsBuffer = null;
 	private List<Person> coSponsorBuffer = null;
 	private List<Person> multiSponsorBuffer = null;
 	
@@ -286,9 +286,9 @@ public class BillParser extends SenateParser<Bill> {
 						String beText = lineData.substring(9);
 						
 						if (billEventsBuffer == null)
-							billEventsBuffer = new ArrayList<BillEvent>();
+							billEventsBuffer = new ArrayList<Action>();
 						
-						BillEvent bEvent = new BillEvent(bill, beDate, beText);
+						Action bEvent = new Action(bill, beDate, beText);
 						
 						Calendar c = Calendar.getInstance();
 						c.setTime(beDate);
@@ -301,7 +301,7 @@ public class BillParser extends SenateParser<Bill> {
 						while(billEventsBuffer.contains(bEvent)) {							
 							c.set(Calendar.SECOND, c.get(Calendar.SECOND) + 1);
 							
-							bEvent = new BillEvent(bill, c.getTime(), beText);
+							bEvent = new Action(bill, c.getTime(), beText);
 						}
 						
 						/*
@@ -309,10 +309,10 @@ public class BillParser extends SenateParser<Bill> {
 						 * the same day, otherwise order is at the mercy of
 						 * the jvm higher ups
 						 */
-						for(BillEvent be:billEventsBuffer) {
-							if(be.getEventDate().equals(bEvent.getEventDate())) {
+						for(Action be:billEventsBuffer) {
+							if(be.getDate().equals(bEvent.getDate())) {
 								c.set(Calendar.SECOND, c.get(Calendar.SECOND) + 1);
-								bEvent = new BillEvent(bill, c.getTime(), beText);
+								bEvent = new Action(bill, c.getTime(), beText);
 							}
 						}
 						
@@ -872,7 +872,7 @@ public class BillParser extends SenateParser<Bill> {
 		}
 		
 		if (billEventsBuffer != null) {
-			currentBill.setBillEvents(billEventsBuffer);			
+			currentBill.setActions(billEventsBuffer);			
 			billEventsBuffer = null;
 		}
 		

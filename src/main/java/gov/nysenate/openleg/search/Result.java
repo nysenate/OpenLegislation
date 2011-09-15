@@ -12,7 +12,7 @@ public class Result {
 	public boolean active;
 	public String data;
 	public Object object;
-	HashMap<String,String> fields;
+	public HashMap<String,String> fields;
 
 	public Result(String otype, String data, String oid, long lastModified, boolean active) {
 		this.otype = otype;
@@ -20,6 +20,15 @@ public class Result {
 		this.oid  = oid;
 		this.lastModified = lastModified;
 		this.active = active;
+	}
+	
+	public Result(String otype, String data, String oid, long lastModified, boolean active, HashMap<String,String> fields) {
+		this.otype = otype;
+		this.data = data;
+		this.oid  = oid;
+		this.lastModified = lastModified;
+		this.active = active;
+		this.fields = fields;
 	}
 
 	public String getOtype() {

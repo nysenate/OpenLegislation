@@ -3,7 +3,7 @@ package gov.nysenate.openleg.api;
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.model.bill.Action;
 import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.committee.Meeting;
@@ -48,7 +48,7 @@ public class SingleViewRequest extends AbstractApiRequest {
 			if(type.equals("bill") && !format.matches("(csv|json|xml)")) {
 				String rType = "action";
 				String rQuery = QueryBuilder.build().otype(rType).and().relatedBills("billno", id).query();
-				ArrayList<BillEvent> billEvents = SearchEngine.getInstance().getSenateObjects(rQuery, BillEvent.class);
+				ArrayList<Action> billEvents = SearchEngine.getInstance().getSenateObjects(rQuery, Action.class);
 				request.setAttribute("related-" + rType, billEvents);
 		
 				rType = "bill";

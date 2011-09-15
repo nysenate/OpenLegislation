@@ -99,7 +99,7 @@ public class IngestIndexWriter {
 		}
 	}
 	
-	private void indexList(List<SenateObject> senateObjects) {
+	public void indexList(List<SenateObject> senateObjects) {
 		timer.start();
 		try {
 			searchEngine.indexSenateObjects(

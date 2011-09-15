@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.qa;
 
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillEvent;
+import gov.nysenate.openleg.model.bill.Action;
 import gov.nysenate.openleg.model.bill.Person;
 import gov.nysenate.openleg.util.EasyReader;
 import gov.nysenate.openleg.util.SessionYear;
@@ -236,12 +236,12 @@ public class LBDConnect {
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
 		for(int i = 7; i < strings.length;) {
 			if(strings[i].matches("\\d{2}/\\d{2}/\\d{2}")) {
-				BillEvent be = new BillEvent();
+				Action be = new Action();
 				try {
 					
-					be.setEventDate(sdf.parse(strings[i]));
+					be.setDate(sdf.parse(strings[i]));
 					i++;
-					be.setEventText(strings[i]);
+					be.setText(strings[i]);
 					
 					bill.addBillEvent(be);
 				} catch (ParseException e) {

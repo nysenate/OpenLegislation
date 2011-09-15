@@ -176,7 +176,9 @@ public class IngestJsonWriter {
 				}
 			}
 			else {
-				writeJson(transcriptDirectory, IngestType.TRANSCRIPT);
+				if(transcriptDirectory.getName().matches("(?i)^.+\\.txt$")) {
+					writeJson(transcriptDirectory, IngestType.TRANSCRIPT);
+				}
 			}
 		}
 	}

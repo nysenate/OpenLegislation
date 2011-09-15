@@ -132,9 +132,9 @@ public class OriginalApiConverter {
 		JSONWriter locObjActions = mainObj.array();
 		try
 		{
-			for(BillEvent be:bill.getBillEvents()) {
-				Date aDate = be.getEventDate();
-				String action = be.getEventText();
+			for(Action be:bill.getActions()) {
+				Date aDate = be.getDate();
+				String action = be.getText();
 				
 				JSONWriter locObjAction = locObjActions.object();
 				
