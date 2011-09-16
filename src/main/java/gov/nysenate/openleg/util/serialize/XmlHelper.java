@@ -14,6 +14,21 @@ import java.util.regex.Pattern;
 
 public class XmlHelper {
 	
+	public static String fixCDATA(String data) {
+		Pattern p = Pattern.compile("<\\!\\[CDATA\\[(.*?)\\]\\]>");
+		Matcher m = p.matcher(data);
+		
+		StringBuffer sb = new StringBuffer();
+		
+		while(m.find()) {
+			System.out.println(m.group(0).replaceAll("&newl;", ""));
+			m.appendReplacement(sb, Matcher.quoteReplacement(m.group(0).replaceAll("&newl;", "")));
+		}
+		m.appendTail(sb);
+		
+		return sb.toString().replaceAll("&newl;", "\n");
+	}
+	
 	public static void fixCalendar(File file) {
 		String data = flatten(file);
 		
@@ -64,14 +79,14 @@ public class XmlHelper {
 	
 	private static String getXml(String escape, String line, BufferedReader br) throws IOException {
 		StringBuffer sb = new StringBuffer("");
-		sb.append("<?xml version='1.0' encoding='UTF-8'?>\n");
-		sb.append("<SENATEDATA>\n");
-		sb.append(line + "\n");
+		sb.append("<?xml version='1.0' encoding='UTF-8'?>&newl;");
+		sb.append("<SENATEDATA>&newl;");
+		sb.append(line + "&newl;");
 		
 		String in = null; 
 		
 		while((in  = br.readLine()) != null) {
-			sb.append(in.replaceAll("\\xb9","&sect;") + "\n");
+			sb.append(in.replaceAll("\\xb9","&sect;") + "&newl;");
 			
 			if(in.matches(escape))
 				break;
@@ -84,6 +99,8 @@ public class XmlHelper {
 	
 	private static void write(String data, File file) {
 		try {
+			data = fixCDATA(data);
+
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 			bw.write(data.replaceAll("(?!\n)\\p{Cntrl}","").replaceAll("(?!\\.{2})[ ]{2,}"," "));
 			bw.close();
