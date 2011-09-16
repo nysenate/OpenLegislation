@@ -358,8 +358,8 @@ public class IngestIndexWriter {
 		try {
 			builder = QueryBuilder.build().otype("bill")
 										  .andNot().range(fieldName, "A*", "Z*")
-										  .andNot().keyValue("summary", "A*")
-										  .andNot().keyValue("summary", "Z*")
+										  .andNot().keyValue(fieldName, "A*")
+										  .andNot().keyValue(fieldName, "Z*")
 										  .and().oid("(A* OR S*)")
 										  .and().keyValue("year", year);
 		} catch (QueryBuilderException e) {

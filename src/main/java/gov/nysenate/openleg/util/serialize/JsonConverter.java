@@ -432,7 +432,7 @@ public class JsonConverter {
 		List<String> exclude = new ArrayList<String>();
 		
 		//exclude.add("supplementalId");
-		exclude.add("meetings");
+		//exclude.add("meetings");
 		
 		return exclude;
 	}
@@ -510,7 +510,7 @@ public class JsonConverter {
 		List<String> meeting_exclude = new ArrayList<String>();
 		
 		meeting_exclude.add("id");
-		meeting_exclude.add("addendums");
+		//meeting_exclude.add("addendums");
 		
 		return meeting_exclude;
 	}
@@ -522,6 +522,7 @@ public class JsonConverter {
 		bill_exclude.add("latestAmendment");
 		bill_exclude.add("pastCommittees");
 		bill_exclude.add("stricken");
+		bill_exclude.add("actClause");
 		
 		return bill_exclude;
 	}

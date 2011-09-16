@@ -213,7 +213,6 @@ public class Ingest {
 	public void indexJsonDocument(String type, String path) {
 		IngestType ingestType = getIngestType(type);
 		
-		
 		if(ingestType != null) {
 			SenateObject senateObject = jsonDao.load(path, ingestType.clazz());
 
