@@ -77,13 +77,13 @@ public class JsonConverter {
 			}
 		else if(o instanceof Action)
 			try {
-				node = converter(o,null);
+				node = converter(o,action_exclude());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}	
 		else if(o instanceof Vote)
 			try {
-				node = converter(o,null);
+				node = converter(o,vote_exclude());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -410,11 +410,9 @@ public class JsonConverter {
 	private static List<String> calendar_entry_exclude() {
 		List<String> calendar_entry_exclude = new ArrayList<String>();		
 		
-//		calendar_entry_exclude.add("billHigh");
-//		calendar_entry_exclude.add("subBill");
-//		calendar_entry_exclude.add("motionDate");
 		calendar_entry_exclude.add("section");
 		calendar_entry_exclude.add("sequence");
+		calendar_entry_exclude.add("id");
 		
 		return calendar_entry_exclude;
 	}
@@ -424,6 +422,7 @@ public class JsonConverter {
 		
 		sequence_exclude.add("supplemental");
 		sequence_exclude.add("notes");
+		sequence_exclude.add("id");
 		
 		return sequence_exclude;
 	}
@@ -431,8 +430,7 @@ public class JsonConverter {
 	private static List<String> addendum_exclude() {
 		List<String> exclude = new ArrayList<String>();
 		
-		//exclude.add("supplementalId");
-		//exclude.add("meetings");
+		exclude.add("id");
 		
 		return exclude;
 	}
@@ -441,6 +439,7 @@ public class JsonConverter {
 		List<String> exclude = new ArrayList<String>();
 		
 		exclude.add("addendum");
+		exclude.add("id");
 		
 		return exclude;
 	}
@@ -450,6 +449,7 @@ public class JsonConverter {
 		
 		supplemental_exclude.add("calendar");
 		supplemental_exclude.add("supplementalId");
+		supplemental_exclude.add("id");
 		
 		return supplemental_exclude;
 	}
@@ -459,12 +459,15 @@ public class JsonConverter {
 		
 		section_exclude.add("calendar");
 		section_exclude.add("supplemental");
+		section_exclude.add("id");
 		
 		return section_exclude;
 	}
 	
 	private static List<String> vote_exclude() {
 		List<String> vote_exclude = new ArrayList<String>();
+		
+		vote_exclude.add("id");
 		
 		return vote_exclude;
 	}
@@ -475,6 +478,14 @@ public class JsonConverter {
 		vote_exclude.add("bill");
 		
 		return vote_exclude;
+	}
+	
+	private static List<String> action_exclude() {
+		List<String> action_exclude = new ArrayList<String>();
+		
+		action_exclude.add("id");
+		
+		return action_exclude;
 	}
 	
 	private static List<String> internal_action_exclude() {
@@ -490,6 +501,7 @@ public class JsonConverter {
 		
 		transcript_exclude.add("relatedBills");
 		transcript_exclude.add("transcriptTextProcessed");
+		transcript_exclude.add("id");
 		
 		return transcript_exclude;
 	}
@@ -510,7 +522,6 @@ public class JsonConverter {
 		List<String> meeting_exclude = new ArrayList<String>();
 		
 		meeting_exclude.add("id");
-		//meeting_exclude.add("addendums");
 		
 		return meeting_exclude;
 	}

@@ -267,8 +267,10 @@ public class Vote extends SenateObject {
 	public HashMap<String, Fieldable> luceneFields() {
 		HashMap<String,Fieldable> map = new HashMap<String,Fieldable>();
 
-		if (bill != null)
+		if (bill != null) {
 			map.put("billno", new Field("billno",bill.getSenateBillNo(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+			map.put("sponsor", new Field("sponsor", bill.getSponsor().getFullname(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		}
 		
 		switch(voteType) {
 			case Vote.VOTE_TYPE_COMMITTEE:

@@ -164,7 +164,7 @@ public class ApiHelper implements OpenLegConstants {
 					summary = meeting.getNotes();
 				} else if (type.equals("action")) {
 					Action billEvent = (Action) resultObj;
-					String billId = billEvent.getBillId();
+					String billId = billEvent.getBill().getSenateBillNo();
 
 					title = billEvent.getText();
 

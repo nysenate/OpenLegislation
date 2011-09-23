@@ -673,7 +673,7 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 	}
 	
 	@JsonIgnore
-	public String getLuceneBillEvents() {
+	public String getLuceneActions() {
 		if(this.getActions() ==  null) {
 			return "";
 		}

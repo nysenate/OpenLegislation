@@ -19,6 +19,8 @@ import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.Section;
 import gov.nysenate.openleg.model.calendar.Sequence;
 import gov.nysenate.openleg.model.calendar.Supplemental;
+import gov.nysenate.openleg.model.committee.Addendum;
+import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.Result;
@@ -157,7 +159,8 @@ public class XStreamBuilder implements OpenLegConstants {
 		xstream.omitField(Person.class,"guid");
 		
 		//Removes the backward (circular) reference
-		xstream.omitField(Vote.class, "bill");		
+		xstream.omitField(Vote.class, "bill");
+		xstream.omitField(Vote.class, "id");
 		
 		//properly lists lists
 		xstream.registerConverter(new BillPersonConverter());
@@ -167,8 +170,10 @@ public class XStreamBuilder implements OpenLegConstants {
 	}
 	
 	@SuppressWarnings("unused")
-	private static XStream setupBillEvent(XStream xstream) {
+	private static XStream setupAction(XStream xstream) {
 		xstream = condensedBillFormat(xstream);
+		
+		xstream.omitField(Action.class, "id");
 		
 		return xstream;
 	}
@@ -176,6 +181,8 @@ public class XStreamBuilder implements OpenLegConstants {
 	@SuppressWarnings("unused")
 	private static XStream setupVote(XStream xstream) {
 		xstream = condensedBillFormat(xstream);
+		
+		xstream.omitField(Vote.class, "id");
 		
 		return xstream;
 	}
@@ -187,6 +194,9 @@ public class XStreamBuilder implements OpenLegConstants {
 		xstream.omitField(Meeting.class, "id");
 		xstream.omitField(Meeting.class, "addendums");
 		
+		xstream.omitField(Addendum.class, "id");
+		xstream.omitField(Agenda.class, "id");
+		
 		return xstream;
 	}
 	
@@ -195,6 +205,7 @@ public class XStreamBuilder implements OpenLegConstants {
 		
 		xstream.omitField(Transcript.class, "relatedBills");
 		xstream.omitField(Transcript.class, "transcriptTextProcessed");
+		xstream.omitField(Transcript.class, "id");
 		
 		return xstream;
 	}
@@ -210,19 +221,20 @@ public class XStreamBuilder implements OpenLegConstants {
 		
 		xstream.omitField(Calendar.class, "id");
 		
-		xstream.omitField(CalendarEntry.class, "billHigh");
-		xstream.omitField(CalendarEntry.class, "subBill");
-		xstream.omitField(CalendarEntry.class, "motionDate");
 		xstream.omitField(CalendarEntry.class, "section");
 		xstream.omitField(CalendarEntry.class, "sequence");
+		xstream.omitField(CalendarEntry.class, "id");
 		
 		xstream.omitField(Sequence.class, "supplemental");
 		xstream.omitField(Sequence.class,"notes");
+		xstream.omitField(Sequence.class,"id");
 		
 		xstream.omitField(Section.class, "supplemental");
+		xstream.omitField(Section.class, "id");
 		
 		xstream.omitField(Supplemental.class, "calendar");
 		xstream.omitField(Supplemental.class, "supplementalId");
+		xstream.omitField(Supplemental.class, "id");
 					
 		return xstream;
 	}
