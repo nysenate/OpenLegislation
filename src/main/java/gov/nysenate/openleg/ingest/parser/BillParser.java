@@ -496,7 +496,7 @@ public class BillParser extends SenateParser<Bill> {
 			line = line.substring(12);
 			line = line.replace((char)0xC, ' ');
 			
-			line = line.replaceAll("(›|•À)", "S").replaceAll("\\xBD","");
+			line = line.replaceAll("(›|\\xF5|•À)", "S").replaceAll("\\xBD","");
 
 			if (lawBuffer == null)
 				lawBuffer = new StringBuffer();
