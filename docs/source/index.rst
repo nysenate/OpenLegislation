@@ -75,7 +75,7 @@ Search requests can take advantage of several other parameters as well.
 The Fields Table
 --------------------
 
-.. note:: 
+.. note::
 
     - Dates are in Mon DD, YYYY format and usually correspond to the document when field.
     - <XXXX> refers to field XXXX of the same document.
@@ -317,36 +317,204 @@ serialization process.
 Bill
 ---------
 
-Bill Stuff
+::
+
+    {
+        "year":"2011",
+        "senateBillNo":"S607-2011",
+        "title":"Relates to the definition of alternate energy production facilities",
+        "lawSection":"Public Service Law",
+        "sameAs":"A3536",
+        "previousVersions":["S8310-2009"],
+        "sponsor":{"fullname":"MAZIARZ"},
+        "coSponsors":null,
+        "multiSponsors":null,
+        "summary":"Adds lithium ion energy batteries to the definition of alternate energy production facilities.",
+        "currentCommittee":null,
+        "actions":[Action, Action, Action],
+        "fulltext": "A really long string",
+        "memo": "A much shorter string",
+        "law":"Amd S2, Pub Serv L ",
+        "votes":[Vote, Vote, Vote]
+    }
 
 Action
 **********
 
-Action stuff
+::
+
+    {
+        "id":"S607-2011-1294185600000-REFERRED+TO+ENERGY+AND+TELECOMMUNICATIONS",
+        "date":"1294185600000",
+        "text":"REFERRED TO ENERGY AND TELECOMMUNICATIONS"
+    }
 
 Vote
 *******
 
-Vote Stuff
+::
+
+    {
+        "voteType":"2",
+        "id":"1295947800000S607-2011--1--1",
+        "voteDate":"1295947800000",
+        "ayes":["Maziarz","Alesi","Fuschillo","Ritchie","O'Mara","Ranzenhofer","Robach","Parker","Gianaris","Kennedy"],
+        "nays":null,
+        "abstains":null,
+        "excused":null,
+        "ayeswr":["Adams","Kruger"],
+        "description":"Energy and Telecommunications"
+    }
 
 Meeting
 ----------
 
-Meeting stuff
+::
+
+    {
+        "meetingDateTime":"1308873600000",
+        "meetday":"Wednesday",
+        "location":null,
+        "committeeName":"Rules",
+        "committeeChair":"Dean G. Skelos",
+        "bills":[
+            {
+                "year":"2011",
+                "senateBillNo":"S553-2011",
+                "title":"Authorizes the forest ranger force to establish a training program for volunteer search and rescue personnel to assist the forest rangers",
+                "sameAs":"A5016",
+                "sponsor":{"fullname":"LITTLE"},
+                "summary":"Authorizes the forest ranger force to establish a training program for volunteer search and rescue personnel to assist the forest rangers in wild, remote and forested areas of the state."
+            }
+         ],
+         "notes":"*ALL BILLS REPORTED DIRECT TO 3RD READING*\n\nMEETING TO BE CALLED OFF THE FLOOR",
+         "addendums":[
+            {
+                "id":"Q-20-2011-2011",
+                "addendumId":"Q",
+                "weekOf":"2011-06-20",
+                "publicationDateTime":"1308939965000",
+                "agenda":{
+                    "id":"commagenda-20-2011-2011",
+                    "number":"20",
+                    "sessionYear":"2011",
+                    "year":"2011"
+                }
+            }
+        ]
+    }
+
 
 Calendar
 -----------
 
-Calendar Stuff
+
+Active calendars use sequences.
+
+::
+
+    {
+        "year":"2011",
+        "type":"active",
+        "sessionYear":"2011",
+        "no":"60",
+        "supplementals":[
+            {
+                "id":"cal-active-00060-2011-2011-supp-",
+                "calendarDate":null,
+                "releaseDateTime":null,
+                "sections":null,
+                "sequence":{
+                    "no":"",
+                    "id":"cal-active-00060-2011-2011-supp--seq-",
+                    "actCalDate":"1308873600000",
+                    "releaseDateTime":"1308937283000",
+                    "calendarEntries":[
+                        {
+                            "id":"cal-active-00060-2011-2011-supp--seq--545",
+                            "no":"545",
+                            "bill":{
+                                "year":"2011",
+                                "senateBillNo":"S3907A-2011",
+                                "title":"Includes the Advanced Energy Research and Technology Center (AERTC) at the State University of New York at Stony Brook in the center for excellence program",
+                                "sameAs":"A4476A",
+                                "sponsor":{"fullname":"LAVALLE"},
+                                "summary":"Includes the Advanced Energy Research and Technology Center (AERTC) at the State University of New York at Stony Brook in the center for excellence program."
+                            },
+                            "billHigh":null,
+                            "subBill":null,
+                            "motionDate":null
+                        }
+                    ]
+                }
+            }
+        ],
+        "id":"cal-active-00060-2011-2011"
+    }
+
+Floor calendars use sections.
+
+::
+
+    {
+        "year":"2011",
+        "type":"floor",
+        "sessionYear":"2011",
+        "no":"60",
+        "supplementals":[
+            {
+                "id":"cal-floor-00060-2011-2011-supp-",
+                "calendarDate":"1308873600000",
+                "releaseDateTime":"1308871140000",
+                "sections":[
+                    {
+                        "id":"cal-floor-00060-2011-2011-supp--sect-BILLS ON THIRD READING",
+                        "name":"BILLS ON THIRD READING",
+                        "type":"C",
+                        "cd":"0400",
+                        "calendarEntries":[
+                            {
+                                "id":"cal-floor-00060-2011-2011-supp--sect-BILLS ON THIRD READING-0000000048",
+                                "no":"48",
+                                "bill":{
+                                    "year":"2011",
+                                    "senateBillNo":"S922-2011",
+                                    "title":"Exempts operators of law enforcement vessels from laws which regulate vessels on the navigable waters of the state while responding to emergencies",
+                                    "sameAs":null,
+                                    "sponsor":{"fullname":"MARCELLINO"},
+                                    "summary":"Exempts operators of law enforcement vessels from laws which regulate vessels on the navigable waters of the state while such operators are in the course of responding to emergencies."
+                                },
+                                "billHigh":null/true/false,
+                                "subBill":null,
+                                "motionDate":null
+                            },
+                        ]
+                    }
+                ],
+                "sequence":null,
+            }
+        ]
+    }
+
 
 Transcript
 ------------
 
-Transcript Stuff
+::
+
+    {
+        "id":null,
+        "timeStamp":"1312369200000",
+        "location":"ALBANY, NEW YORK",
+        "type":"REGULAR SESSION",
+        "transcriptText": "Really Really long String Here"
+    }
 
 
 Examples
 =============
+
+Coming Soon!
 
 .. _senator: http://open.nysenate.gov/legislation/senators.json
 .. _committee: http://open.nysenate.gov/legislation/committees.json
