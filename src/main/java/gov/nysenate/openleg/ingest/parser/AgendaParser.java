@@ -424,9 +424,9 @@ public class AgendaParser extends SenateParser<Agenda> implements OpenLegConstan
 				meeting.setMeetday(xmlCommMeeting.getMeetday().getContent());
 
 			if (xmlCommMeeting.getNotes() != null
-					&& xmlCommMeeting.getNotes().getContent().length() > 0)
-				meeting.setNotes(xmlCommMeeting.getNotes().getContent()
-						.replaceAll("(\\\\n|\n)", ""));
+					&& xmlCommMeeting.getNotes().getContent().length() > 0) {
+				meeting.setNotes(xmlCommMeeting.getNotes().getContent());
+			}
 
 			if (xmlCommMeeting.getName() != null
 					&& xmlCommMeeting.getName().getContent().length() > 0) {

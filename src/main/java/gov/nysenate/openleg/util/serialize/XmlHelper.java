@@ -21,8 +21,7 @@ public class XmlHelper {
 		StringBuffer sb = new StringBuffer();
 		
 		while(m.find()) {
-			System.out.println(m.group(0).replaceAll("&newl;", ""));
-			m.appendReplacement(sb, Matcher.quoteReplacement(m.group(0).replaceAll("&newl;", "")));
+			m.appendReplacement(sb, Matcher.quoteReplacement(m.group(0).replaceAll("&newl;", "").replaceAll("\\\\n","\n")));
 		}
 		m.appendTail(sb);
 		
