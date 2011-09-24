@@ -115,6 +115,8 @@ that you intend to retrieve. Mixing fields incorrectly will give you empty set r
 +-----------------+------------------+--------------------------------------------------------+
 |                 | when             | The unix time stamp for the action                     |
 +-----------------+------------------+--------------------------------------------------------+
+|                 | sponsor          | sponsor of bill                                        |
++-----------------+------------------+--------------------------------------------------------+
 |                 |                  |                                                        |
 +-----------------+------------------+--------------------------------------------------------+
 | **bill**        |                  |                                                        |
@@ -248,6 +250,8 @@ that you intend to retrieve. Mixing fields incorrectly will give you empty set r
 +-----------------+------------------+--------------------------------------------------------+
 |                 | when             | unix timestamp of the vote datetime.                   |
 +-----------------+------------------+--------------------------------------------------------+
+|                 | sponsor          | sponsor of bill                                        |
++-----------------+------------------+--------------------------------------------------------+
 
 
 
@@ -337,11 +341,27 @@ Bill
         "multiSponsors":null,
         "summary":"Adds lithium ion energy batteries to the definition of alternate energy production facilities.",
         "currentCommittee":null,
-        "actions":[Action, Action, Action],
+        "actions":[
+		    {
+		        "date":"1294185600000",
+		        "text":"REFERRED TO ENERGY AND TELECOMMUNICATIONS"
+		    }
+        ],
         "fulltext": "A really long string",
         "memo": "A much shorter string",
         "law":"Amd S2, Pub Serv L ",
-        "votes":[Vote, Vote, Vote]
+        "votes":[
+		    {
+		        "voteType":"2",
+		        "voteDate":"1295947800000",
+		        "ayes":["Maziarz","Alesi","Fuschillo","Ritchie","O'Mara","Ranzenhofer","Robach","Parker","Gianaris","Kennedy"],
+		        "nays":null,
+		        "abstains":null,
+		        "excused":null,
+		        "ayeswr":["Adams","Kruger"],
+		        "description":"Energy and Telecommunications"
+		    }
+        ]
     }
 
 Action
@@ -349,28 +369,50 @@ Action
 
 ::
 
-    {
-        "id":"S607-2011-1294185600000-REFERRED+TO+ENERGY+AND+TELECOMMUNICATIONS",
-        "date":"1294185600000",
-        "text":"REFERRED TO ENERGY AND TELECOMMUNICATIONS"
-    }
+	{
+		"date":"1316736000000",
+		"text":"enacting clause stricken",
+		"bill":
+			{
+				"year":"2011",
+				"senateBillNo":"A8591-2011",
+				"title":"Criminalizes unlawful conduct of a farm products dealer in certain circumstances",
+				"sameAs":null,
+				"sponsor":
+					{
+						"fullname":"Rabbitt"
+					},
+				"summary":"Criminalizes unlawful conduct of a farm products dealer in certain circumstances."}
+			}
+	} 
 
 Vote
 *******
 
 ::
 
-    {
-        "voteType":"2",
-        "id":"1295947800000S607-2011--1--1",
-        "voteDate":"1295947800000",
-        "ayes":["Maziarz","Alesi","Fuschillo","Ritchie","O'Mara","Ranzenhofer","Robach","Parker","Gianaris","Kennedy"],
-        "nays":null,
-        "abstains":null,
-        "excused":null,
-        "ayeswr":["Adams","Kruger"],
-        "description":"Energy and Telecommunications"
-    }
+	{
+		"voteType":"1",
+		"voteDate":"1308268800000",
+		"ayes":["Adams","Addabbo","Alesi","Avella","Ball","Bonacic","Breslin","Carlucci","DeFrancisco","Diaz","Dilan","Duane","Espaillat","Farley","Flanagan","Fuschillo","Gallivan","Gianaris","Golden","Griffo","Grisanti","Hannon","Hassell-Thompson","Huntley","Johnson","Kennedy","Klein","Krueger","Kruger","Lanza","Larkin","LaValle","Libous","Little","Marcellino","Martins","Maziarz","McDonald","Montgomery","Nozzolio","O'Mara","Oppenheimer","Parker","Peralta","Perkins","Ranzenhofer","Ritchie","Rivera","Robach","Saland","Sampson","Savino","Serrano","Seward","Skelos","Smith","Squadron","Stavisky","Stewart-Cousins","Valesky","Young","Zeldin"],
+		"nays":[],
+		"abstains":[],
+		"excused":[],
+		"bill":
+			{
+				"year":"2011",
+				"senateBillNo":"S2628A-2011",
+				"title":"Relates to the practice of public accountancy by accountants who are not licensed in New York state; repealer",
+				"sameAs":"A4881B",
+				"sponsor":
+					{
+						"fullname":"LAVALLE"
+					},
+					"summary":"Relates to the practice of public accountancy by accountants who are not licensed in New York state; allows accountants licensed in other states to have practice privileges in New York."
+			},
+		"ayeswr":null,
+		"description":null
+	}
 
 Meeting
 ----------
@@ -396,12 +438,10 @@ Meeting
          "notes":"*ALL BILLS REPORTED DIRECT TO 3RD READING*\n\nMEETING TO BE CALLED OFF THE FLOOR",
          "addendums":[
             {
-                "id":"Q-20-2011-2011",
                 "addendumId":"Q",
                 "weekOf":"2011-06-20",
                 "publicationDateTime":"1308939965000",
                 "agenda":{
-                    "id":"commagenda-20-2011-2011",
                     "number":"20",
                     "sessionYear":"2011",
                     "year":"2011"
@@ -426,18 +466,15 @@ Active calendars use sequences.
         "no":"60",
         "supplementals":[
             {
-                "id":"cal-active-00060-2011-2011-supp-",
                 "calendarDate":null,
                 "releaseDateTime":null,
                 "sections":null,
                 "sequence":{
                     "no":"",
-                    "id":"cal-active-00060-2011-2011-supp--seq-",
                     "actCalDate":"1308873600000",
                     "releaseDateTime":"1308937283000",
                     "calendarEntries":[
                         {
-                            "id":"cal-active-00060-2011-2011-supp--seq--545",
                             "no":"545",
                             "bill":{
                                 "year":"2011",
@@ -469,18 +506,15 @@ Floor calendars use sections.
         "no":"60",
         "supplementals":[
             {
-                "id":"cal-floor-00060-2011-2011-supp-",
                 "calendarDate":"1308873600000",
                 "releaseDateTime":"1308871140000",
                 "sections":[
                     {
-                        "id":"cal-floor-00060-2011-2011-supp--sect-BILLS ON THIRD READING",
                         "name":"BILLS ON THIRD READING",
                         "type":"C",
                         "cd":"0400",
                         "calendarEntries":[
                             {
-                                "id":"cal-floor-00060-2011-2011-supp--sect-BILLS ON THIRD READING-0000000048",
                                 "no":"48",
                                 "bill":{
                                     "year":"2011",
@@ -509,7 +543,6 @@ Transcript
 ::
 
     {
-        "id":null,
         "timeStamp":"1312369200000",
         "location":"ALBANY, NEW YORK",
         "type":"REGULAR SESSION",
