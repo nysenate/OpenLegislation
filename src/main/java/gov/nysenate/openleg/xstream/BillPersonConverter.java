@@ -14,7 +14,11 @@ public class BillPersonConverter implements Converter {
 	@Override
 	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
 		if(value instanceof Person) {
-			writer.setValue(((Person)value).getFullname());
+			Person person = (Person) value;
+			
+			if(person.getFullname() != null) {
+				writer.setValue(((Person)value).getFullname());
+			}
 		}
 	}
 

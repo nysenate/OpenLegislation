@@ -34,11 +34,11 @@
 				supp.setCalendar(calendar);
 				oid = supp.luceneOid();
 	
-				if (calendar.getType().equals("active") && supp.getSequence() == null)
+				if (calendar.getType().equals("active") && supp.getSequences() == null)
 					continue; %>
 					
 				<h3>
-					<% if (supp.getSequence() == null) {
+					<% if (supp.getSequences() == null || supp.getSequences().size() == 0) {
 						if(count != 0) {
 							%> Supplemental 
 							<% if (supp.getSupplementalId() != null) { %>
@@ -46,31 +46,32 @@
 							<% } %>
 							: 
 						<% }
-					} 
-					else {
-						%> Active List (<%=supp.getSequence().getNo()%>): <%
+					} else {
+						supp.setCalendarDate(supp.getSequences().get(0).getActCalDate());
 					}
+						
 					%> 
 					<% if (supp.getCalendarDate() != null) { %>
-						 <b>Calendar Date:</b> <%=sdf.format(supp.getCalendarDate())%> / 
+						 <b>Calendar Date:</b> <%=sdf.format(supp.getCalendarDate())%>
 				 	<% } %> 
 				 	<% if (supp.getReleaseDateTime() != null) { %>
-				 		 <b>Released:</b> <%=sdf.format(supp.getReleaseDateTime())%>
+				 		  / <b>Released:</b> <%=sdf.format(supp.getReleaseDateTime())%>
 				 	<% } %>
 				</h3>
 				
 				<%
-					Sequence seq = supp.getSequence();
+					List<Sequence> seqs = supp.getSequences();
 				
-					if (seq != null) {
-						%> 
-						<% if (seq.getNotes() != null && seq.getNotes().trim().length() > 0) { %>
+					if(seqs != null) {
+						for(Sequence seq:seqs) {
+							%> <h4>Sequence <%=seq.getNo()%>:</h4> <%
+							
+							if (seq.getNotes() != null && seq.getNotes().trim().length() > 0) { %>
 							<h4>Notes</h4>
 							<%=seq.getNotes()%>
 							<hr />
 						<% } %>
 	
-						<h4>Calendar Entries</h4>
 						<div class="billSummary">
 							<ul>
 							<%
@@ -113,9 +114,11 @@
 									</li>
 								<% } %> 
 							</ul>
-						</div>
-					<% } %> 
-					<% if (supp.getSections() != null && supp.getSections().size() > 0) { %>
+						</div> <%
+						}
+					}
+				
+					if (supp.getSections() != null && supp.getSections().size() > 0) { %>
 	 					<blockquote>
 	 					<%
 							Iterator<Section> itSection = supp.getSections().iterator();

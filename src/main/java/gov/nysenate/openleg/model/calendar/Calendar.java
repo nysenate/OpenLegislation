@@ -104,6 +104,16 @@ public class Calendar extends SenateObject {
 		}
 		supplementals.add(supplemental);
 	}
+	
+	@JsonIgnore
+	public void removeSupplemental(Supplemental supplemental) {
+		if(supplementals ==  null) {
+			supplementals = new ArrayList<Supplemental>();
+		}
+		else {
+			supplementals.remove(supplemental);
+		}
+	}
 
 	
 	@Override

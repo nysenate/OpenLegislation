@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.calendar;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,18 +30,29 @@ public class Supplemental extends SenateObject {
 	
 	protected List<Section> sections;
 	
-	protected Sequence sequence;
+	protected List<Sequence> sequences;
 	
 	protected String supplementalId;
 	
 	protected Calendar calendar;
 	
-	public Sequence getSequence() {
-		return sequence;
+	public void addSequence(Sequence sequence) {
+		if(sequences == null) {
+			sequences = new ArrayList<Sequence>();
+		}
+		else {
+			sequences.remove(sequence);
+		}
+		
+		sequences.add(sequence);
+	}
+	
+	public List<Sequence> getSequences() {
+		return sequences;
 	}
 
-	public void setSequence(Sequence sequence) {
-		this.sequence = sequence;
+	public void setSequences(List<Sequence> sequences) {
+		this.sequences = sequences;
 	}
 
 	public Date getCalendarDate() {
@@ -112,7 +124,9 @@ public class Supplemental extends SenateObject {
 
 		}
 		else {
-			oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequence.getActCalDate());
+			if(sequences != null && sequences.size() > 0) {
+				oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequences.get(0).getActCalDate());
+			}
 		}
 		
 		return oid;
@@ -144,9 +158,11 @@ public class Supplemental extends SenateObject {
 		{
 			title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(calendarDate);
 		}
-		else if (sequence!=null)
+		else if (sequences!=null)
 		{
-			title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(sequence.getActCalDate());
+			if(sequences != null && sequences.size() > 0) {
+				title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(sequences.get(0).getActCalDate());
+			}
 		}
 		
 		StringBuilder bills = new StringBuilder("");
@@ -168,16 +184,19 @@ public class Supplemental extends SenateObject {
 			}
 		}
 		
-		if (sequence != null) {
-			if (sequence.getNotes()!=null)
-				sbSummary.append(sequence.getNotes());
-			
-			sbSummary.append(" ").append(sequence.getCalendarEntries().size()).append(" bill(s)");
-			
-			for(CalendarEntry ce:sequence.getCalendarEntries()) {
-				bills.append(ce.getBill().getSenateBillNo() + ", ");
+		if (sequences != null) {
+			if(sequences != null && sequences.size() > 0) {
+				Sequence sequence = sequences.get(0);
+				
+				if (sequence.getNotes()!=null)
+					sbSummary.append(sequence.getNotes());
+				
+				sbSummary.append(" ").append(sequence.getCalendarEntries().size()).append(" bill(s)");
+				
+				for(CalendarEntry ce:sequence.getCalendarEntries()) {
+					bills.append(ce.getBill().getSenateBillNo() + ", ");
+				}
 			}
-			
 		}
 		
 		fields.put("bills",new Field("bills",bills.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
@@ -195,8 +214,12 @@ public class Supplemental extends SenateObject {
 
 		}
 		else {
-			oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequence.getActCalDate());
-			fields.put("when", new Field("when",sequence.getActCalDate().getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+			if(sequences != null && sequences.size() > 0) {
+				Sequence sequence = sequences.get(0);
+				
+				oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequence.getActCalDate());
+				fields.put("when", new Field("when",sequence.getActCalDate().getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+			}
 		}
 				
 		fields.put("oid",new Field("oid",oid, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));

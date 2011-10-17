@@ -134,11 +134,11 @@ public class ApiHelper implements OpenLegConstants {
 								summary += section.getCalendarEntries().size() + " items;";
 							}
 						}
-					} else if (supp.getSequence() != null) {
+					} else if (supp.getSequences() != null && supp.getSequences().size() > 0) {
 
-						fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getSequence().getActCalDate()));
+						fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getSequences().get(0).getActCalDate()));
 
-						summary = supp.getSequence().getCalendarEntries().size() + " item(s)";
+						summary = supp.getSequences().get(0).getCalendarEntries().size() + " item(s)";
 					}
 				} else if (type.equals("transcript")) {
 					Transcript transcript = (Transcript) resultObj;

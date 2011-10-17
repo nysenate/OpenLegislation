@@ -182,9 +182,7 @@ public class SenateObjectConverter implements Converter {
 				}
 			}
 		}
-		else {
-//			writer.setValue("null");
-		}
+		
 		writer.endNode();
 	}
 	

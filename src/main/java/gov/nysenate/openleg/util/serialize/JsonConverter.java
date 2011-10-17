@@ -160,9 +160,6 @@ public class JsonConverter {
 							else if (type.equals("Addendum")) {
 								root.add(f.getName(),converter(obj,addendum_exclude()));
 							}
-							else if(type.equals("Sequence")) {
-								root.add(f.getName(),converter(obj,sequence_exclude()));
-							}
 							else {
 								throw (new JsonConverter()).new UnknownTypeException("UNKNOWN: " + type + "(type):" + name + " (name) IN CLASS " + o.getClass().getSimpleName());
 							}
@@ -287,6 +284,14 @@ public class JsonConverter {
 				
 				for(Section s:sections) {
 					jarray.add(converter(s, section_exclude()));
+					
+				}
+			}
+			else if(o instanceof Sequence) {
+				List<Sequence> sequences = (List<Sequence>)c;
+				
+				for(Sequence s:sequences) {
+					jarray.add(converter(s, sequence_exclude()));
 					
 				}
 			}

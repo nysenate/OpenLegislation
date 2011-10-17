@@ -49,6 +49,7 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 		try {
 			doParsing(file);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e);
 		}
 	}
@@ -73,7 +74,7 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 				
 				supplemental = parseSupplemental(calendar,xmlCalendar.getSupplemental());
 				
-				if(supplemental.getSequence() != null 
+				if(supplemental.getSequences() != null 
 						|| (supplemental.getSections() != null && !supplemental.getSections().isEmpty())) {
 					supplemental.setCalendar(calendar);
 					
@@ -91,17 +92,19 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 				
 				supplemental = parseSupplemental(calendar,xmlActiveList.getSupplemental());
 								
-				if(supplemental.getSequence() != null 
+				if(supplemental.getSequences() != null 
 						|| (supplemental.getSections() != null && !supplemental.getSections().isEmpty())) {
 					supplemental.setCalendar(calendar);
 					
 					calendar.addSupplemental(supplemental);
 					
 					objectsToUpdate.add(calendar);
+					
 				}	
 			}
 			
 			if (action.equals("remove") && removeObject != null) {
+				
 				logger.info("REMOVING: " + removeObject.getClass() + "=" + removeObjectId);
 				
 				if(removeObject instanceof Supplemental) {
@@ -109,8 +112,8 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 				}
 				else if (removeObject instanceof Sequence && calendar.getSupplementals() != null){
 					for(int i = 0; i < calendar.getSupplementals().size(); i++) {
-						if(calendar.getSupplementals().get(i).getSequence().equals(removeObject)) {
-							calendar.getSupplementals().remove(i);
+						if(calendar.getSupplementals().get(i).getSequences().contains(removeObject)) {
+							calendar.getSupplementals().get(i).getSequences().remove(removeObject);
 							break;
 						}
 					}
@@ -125,9 +128,6 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 		}
 		removeObject = null;
 	}
-	
-	
-	
 	
 	public Calendar getCalendar (String type, String no, String year, String sessYr) {
 		Calendar calendar = null;
@@ -163,12 +163,10 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 	
 	public Supplemental parseSupplemental (Calendar calendar, XMLSupplemental xmlSupp) {
 		String suppId = calendar.getId() + "-supp-" + xmlSupp.getId();
-		
+				
 		Supplemental supplemental = new Supplemental();
 		supplemental.setId(suppId);
-		
-		//Supplemental supplemental  = (Supplemental)PMF.getDetachedObject(Supplemental.class, "id", suppId, null);
-		
+				
 		int index = -1;
 		if(calendar != null && calendar.getSupplementals() != null &&
 				(index = calendar.getSupplementals().indexOf(supplemental)) != -1) {
@@ -227,7 +225,7 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 		
 		if (xmlSequence != null) {
 			Sequence sequence = parseSequence (supplemental, xmlSequence);
-			supplemental.setSequence(sequence);
+			supplemental.addSequence(sequence);
 
 			setRemoveObject(sequence, sequence.getId());
 		}
@@ -279,8 +277,12 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 	
 	
 	public Sequence parseSequence (Supplemental supplemental, XMLSequence xmlSequence)	{
-		String sequenceId = supplemental.getId() + "-seq-" + xmlSequence.getNo();
+		if(xmlSequence.getNo().equals("")) {
+			xmlSequence.setNo("1");
+		}
 		
+		String sequenceId = supplemental.getId() + "-seq-" + xmlSequence.getNo();
+				
 		Sequence sequence = null;
 				
 		if (sequence == null) {
