@@ -192,7 +192,7 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 		 */
 		if(apiRequest == null && (m = SINGLE_PATTERN.matcher(uri)) != null && m.find()) {
 			logger.info(TextFormatter.append("Single request: ", uri));
-			
+			System.out.println(m.group(SINGLE_FORMAT) + " : " +  m.group(SINGLE_TYPE) + " : " + m.group(SINGLE_ID));
 			apiRequest = new SingleViewRequest(	request, 
 												response, 
 												m.group(SINGLE_FORMAT),

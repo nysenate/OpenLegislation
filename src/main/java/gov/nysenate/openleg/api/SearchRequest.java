@@ -242,7 +242,8 @@ public class SearchRequest extends AbstractApiRequest {
 	
 	@Override
 	public String getView() {
-		return TextFormatter.append("/views/search-", format, ".jsp");
+		String vFormat = format.equals("jsonp") ? "json" : format;
+		return TextFormatter.append("/views/search-", vFormat, ".jsp");
 	}
 	
 	@Override
@@ -313,7 +314,7 @@ public class SearchRequest extends AbstractApiRequest {
 	
 	public enum SearchView implements ApiEnum {
 		SEARCH		("search", Bill.class, new String[] {"atom", "csv", "html-list", 
-														 "html", "json", "mobile", 
+														 "html", "json", "jsonp", "mobile", 
 														 "rss", "xml"});
 		
 		public final String view;

@@ -12,7 +12,7 @@ int total = (Integer)sr.getMetadataByKey("totalresults");
 
 String term = (String)request.getAttribute("term");
 
-String selfLink = appPath + "/search/?format=rss&amp;term=" + java.net.URLEncoder.encode(term);
+String selfLink = appPath + "/search/?format=rss&amp;term=" + java.net.URLEncoder.encode(term, "UTF-8");
 
 %><?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0"  xmlns:atom="http://www.w3.org/2005/Atom">

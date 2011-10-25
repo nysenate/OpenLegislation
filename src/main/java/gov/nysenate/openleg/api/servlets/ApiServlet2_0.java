@@ -146,10 +146,20 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 					logger.error(e);
 				}
 			}
-			
-			req.setAttribute("format", format);
-			req.setAttribute(KEY_TYPE, command);
 		}
+		
+		String sFormat = "json";
+		String viewPath = "/views2/v2-api.jsp";
+		
+		if (format.equals("xml"))
+			sFormat = "xml";
+		else if(format.equals("jsonp")) {
+			sFormat = "json";
+			viewPath = "/views2/v2-api-jsonp.jsp";
+		}
+		
+		req.setAttribute("format", sFormat);
+		req.setAttribute(KEY_TYPE, command);
 		
 		try {
 			if (format.equalsIgnoreCase("html")) {
@@ -160,13 +170,7 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 					resp.sendRedirect("/legislation/" + command + "/" + key);
 				}
 			}
-			else {
-				String sFormat = "json";
-				String viewPath = "/views2/v2-api.jsp";
-				
-				if (format.equals("xml"))
-					sFormat = "xml";
-				
+			else {				
 				SenateResponse sr = SearchEngine.getInstance().search(ApiHelper.dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);			
 				
 				if(sr.getResults() == null || sr.getResults().size() == 0) {

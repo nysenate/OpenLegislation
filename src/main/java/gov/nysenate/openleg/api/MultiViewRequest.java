@@ -103,12 +103,13 @@ public class MultiViewRequest extends AbstractApiRequest {
 	
 	@Override
 	public String getView() {
+		String vFormat = format.equals("jsonp") ? "json" : format;
 		if(type.equalsIgnoreCase("bill")
-				&& format.matches("(?i)(csv|json|mobile|rss|xml)")) {
-			return TextFormatter.append("/views/bills-", format, ".jsp");
+				&& vFormat.matches("(?i)(csv|json|mobile|rss|xml)")) {
+			return TextFormatter.append("/views/bills-", vFormat, ".jsp");
 		}
 		else {
-			return TextFormatter.append("/views/search-", format, ".jsp");
+			return TextFormatter.append("/views/search-", vFormat, ".jsp");
 		}
 	}
 	
@@ -118,12 +119,12 @@ public class MultiViewRequest extends AbstractApiRequest {
 	}
 	
 	public enum MultiView implements ApiEnum {
-		BILLS		("bills", 		Bill.class, 		new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
-		CALENDARS	("calendars", 	Calendar.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
-		MEETINGS	("meetings", 	Meeting.class, 		new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
-		TRANSCRIPTS	("transcripts", Transcript.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
-		VOTES		("votes", 		Vote.class, 		new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
-		ACTIONS		("actions", 	Action.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"});
+		BILLS		("bills", 		Bill.class, 		new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
+		CALENDARS	("calendars", 	Calendar.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
+		MEETINGS	("meetings", 	Meeting.class, 		new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
+		TRANSCRIPTS	("transcripts", Transcript.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
+		VOTES		("votes", 		Vote.class, 		new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
+		ACTIONS		("actions", 	Action.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"});
 		
 		public final String view;
 		public final Class<? extends SenateObject> clazz;

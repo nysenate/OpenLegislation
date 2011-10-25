@@ -73,11 +73,20 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
 					request.getRequestURI()));
 		
 		fillRequest();
-	
+			
 		request.setAttribute("contentType", ContentType.getType(format));
 		
-		request.getSession().getServletContext().getRequestDispatcher(getView())
-			.forward(request, response);
+		if(format.equals("jsonp")) {
+			request.setAttribute("viewPath", getView());
+			request.getSession().getServletContext().getRequestDispatcher("/views/jsonp.jsp")
+				.forward(request, response);
+		}
+		else {
+			request.getSession().getServletContext().getRequestDispatcher(getView())
+				.forward(request, response);
+		}
+		
+		
 	}
 	
 	protected boolean isValidPaging() {
@@ -174,6 +183,7 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
 	public enum ContentType {
 		HTML("html", "text/html"),
 		JSON("json", "application/json"),
+		JSONP("jsonp", "application/json"),
 		XML("xml", "application/xml"),
 		RSS("rss", "application/rss+xml"),
 		CSV("csv", "text/csv"),

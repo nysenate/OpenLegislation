@@ -96,11 +96,12 @@ public class KeyValueViewRequest extends AbstractApiRequest {
 	
 	@Override
 	public String getView() {
-		if(format.matches("(?i)(csv|json|mobile|rss|xml)")) {
-			return TextFormatter.append("/views/bills-", format, ".jsp");
+		String vFormat = format.equals("jsonp") ? "json" : format;
+		if(vFormat.matches("(?i)(csv|json|mobile|rss|xml)")) {
+			return TextFormatter.append("/views/bills-", vFormat, ".jsp");
 		}
 		else {
-			return TextFormatter.append("/views/search-", format, ".jsp");
+			return TextFormatter.append("/views/search-", vFormat, ".jsp");
 		}
 	}
 	
@@ -110,8 +111,8 @@ public class KeyValueViewRequest extends AbstractApiRequest {
 	}
 	
 	public enum KeyValueView implements ApiEnum {
-		SPONSOR("sponsor", 		Bill.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"}),
-		COMMITTEE("committee", 	Bill.class, 	new String[] {"html", "json", "xml", "rss", "csv", "html-list"});
+		SPONSOR("sponsor", 		Bill.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
+		COMMITTEE("committee", 	Bill.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"});
 		
 		public final String view;
 		public final Class<? extends SenateObject> clazz;

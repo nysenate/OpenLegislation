@@ -77,7 +77,8 @@ public class SingleViewRequest extends AbstractApiRequest {
 	}
 
 	public String getView() {
-		return TextFormatter.append("/views/", type, "-", format, ".jsp");
+		String vFormat = format.equals("jsonp") ? "json" : format;
+		return TextFormatter.append("/views/", type, "-", vFormat, ".jsp");
 	}
 	
 	public boolean hasParameters() {
@@ -85,11 +86,11 @@ public class SingleViewRequest extends AbstractApiRequest {
 	}
 	
 	public enum SingleView implements ApiEnum {
-		BILL		("bill",		Bill.class, 		new String[] {"html", "json", "mobile", "xml", 
+		BILL		("bill",		Bill.class, 		new String[] {"html", "json", "jsonp", "mobile", "xml", 
 																					  "csv", "html-print", "lrs-print"}),
-		CALENDAR	("calendar",	Calendar.class, 	new String[] {"html", "json", "mobile", "xml"}),
-		MEETING		("meeting", 	Meeting.class, 		new String[] {"html", "json", "mobile", "xml"}),
-		TRANSCRIPT	("transcript", 	Transcript.class, 	new String[] {"html", "json", "mobile", "xml"});
+		CALENDAR	("calendar",	Calendar.class, 	new String[] {"html", "json", "jsonp", "mobile", "xml"}),
+		MEETING		("meeting", 	Meeting.class, 		new String[] {"html", "json", "jsonp", "mobile", "xml"}),
+		TRANSCRIPT	("transcript", 	Transcript.class, 	new String[] {"html", "json", "jsonp", "mobile", "xml"});
 		
 		public final String view;
 		public final Class<? extends SenateObject> clazz;
