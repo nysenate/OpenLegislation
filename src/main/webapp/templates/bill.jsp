@@ -341,7 +341,11 @@
 				String type = "";
 				if (cal.getType().equals("active")) {
 					type = "Active List";
-					calDate = sup.getSequence().getActCalDate();
+					
+					if (sup.getSequences() != null && sup.getSequences().size() != 0) {
+						
+						calDate = sup.getSequences().get(0).getActCalDate();
+					}
 				}
 				else if (cal.getType().equals("floor")){
 					type = "Floor Calendar";

@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.bill.Action;
 import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.Section;
+import gov.nysenate.openleg.model.calendar.Sequence;
 import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
@@ -137,8 +138,13 @@ public class ApiHelper implements OpenLegConstants {
 					} else if (supp.getSequences() != null && supp.getSequences().size() > 0) {
 
 						fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getSequences().get(0).getActCalDate()));
+						
+						int total = 0;
+						for(Sequence seq:supp.getSequences()) {
+							total += seq.getCalendarEntries().size();
+						}
+						summary = total + " item(s)";
 
-						summary = supp.getSequences().get(0).getCalendarEntries().size() + " item(s)";
 					}
 				} else if (type.equals("transcript")) {
 					Transcript transcript = (Transcript) resultObj;

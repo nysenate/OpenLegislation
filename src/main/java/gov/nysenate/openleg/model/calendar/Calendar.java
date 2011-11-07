@@ -177,6 +177,15 @@ public class Calendar extends SenateObject {
 			if(((Calendar)obj).getSupplementals() != null) {
 				this.supplementals =  ((Calendar)obj).getSupplementals();
 			}
+			
+			for(int i = this.getSupplementals().size() - 1; i >= 0; i--) {
+				Supplemental supp = this.getSupplementals().get(i);
+				if((supp.getSections() == null || supp.getSections().isEmpty())
+						&& (supp.getSequences() == null || supp.getSequences().isEmpty())) {
+					
+					this.getSupplementals().remove(i);
+				}
+			}
 		}
 
 		this.setType(((Calendar)obj).getType());
