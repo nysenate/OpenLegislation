@@ -4,7 +4,6 @@ import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.api.QueryBuilder;
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.OpenLegConstants;
