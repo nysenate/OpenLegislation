@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -166,40 +165,46 @@ public class Supplemental extends SenateObject {
 		}
 		
 		StringBuilder bills = new StringBuilder("");
+		StringBuilder calendarEntries = new StringBuilder();
 		
 		searchContent.append(title);
 		
 		StringBuilder sbSummary = new StringBuilder();
 		
 		if (sections != null) {
-			Iterator<Section> itSections = sections.iterator();
-			while (itSections.hasNext()) {
-				Section section = itSections.next();
+			for(Section section:sections) {
 				sbSummary.append(section.getName()).append(": ");
 				sbSummary.append(section.getCalendarEntries().size()).append(" bill(s); ");
 				
 				for(CalendarEntry ce:section.getCalendarEntries()) {
-					bills.append(ce.getBill().getSenateBillNo() + ", ");
+					bills.append(ce.getBill().getSenateBillNo()).append(", ");
+					calendarEntries.append(ce.getNo()).append("-")
+					   .append(ce.getBill().getSenateBillNo())
+					   .append(", ");
 				}
 			}
 		}
 		
 		if (sequences != null) {
-			if(sequences != null && sequences.size() > 0) {
-				Sequence sequence = sequences.get(0);
-				
-				if (sequence.getNotes()!=null)
-					sbSummary.append(sequence.getNotes());
-				
-				sbSummary.append(" ").append(sequence.getCalendarEntries().size()).append(" bill(s)");
-				
-				for(CalendarEntry ce:sequence.getCalendarEntries()) {
-					bills.append(ce.getBill().getSenateBillNo() + ", ");
+			if(sequences.size() > 0) {
+				int total = 0;
+				for(Sequence seq:sequences) {
+					total += seq.getCalendarEntries().size();
+					
+					for(CalendarEntry ce:seq.getCalendarEntries()) {
+						bills.append(ce.getBill().getSenateBillNo()).append(", ");
+						calendarEntries.append(ce.getNo()).append("-")
+						   .append(ce.getBill().getSenateBillNo())
+						   .append(", ");
+					}
 				}
+				
+				sbSummary.append(total).append(" bill(s)");
 			}
 		}
 		
 		fields.put("bills",new Field("bills",bills.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+		fields.put("calendarentries",new Field("calendarentries",calendarEntries.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 		
 		String summary = sbSummary.toString().trim();
 		
