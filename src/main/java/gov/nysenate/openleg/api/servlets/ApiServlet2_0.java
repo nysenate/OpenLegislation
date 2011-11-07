@@ -183,26 +183,14 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 				if(sr == null || sr.getResults().size() == 0) {
 					getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
 				}			
-				else if(sr.getResults().size() == 1) {
-				
-					Result result = sr.getResults().get(0);
-					
-					if(!command.equals("search") && !term.contains(result.getOid())) {
-						viewPath = TextFormatter.append("/legislation/api/2.0/",command,"/",result.getOid(),".",format);
-						resp.sendRedirect(viewPath);
-					}
-					else {
-						getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
-					}
+				else if(sr.getResults().size() == 1 || command.equals("search")) {
+					//looking for one or many
+					getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
 				}
 				else {
-					if(!command.equals("search") && !term.contains(sr.getResults().get(0).getOid())) {
-						viewPath = TextFormatter.append("/legislation/2.0/search.",format,"?term=",term);
-						resp.sendRedirect(viewPath);
-					}
-					else {
-						getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
-					}
+					//looking for single, found many
+					viewPath = TextFormatter.append("/legislation/2.0/search.",format,"?term=",term);
+					resp.sendRedirect(viewPath);
 				}
 			}
 			
