@@ -45,7 +45,7 @@ public class QueryBuilder {
 	}
 	
 	public QueryBuilder oid(String oid) throws QueryBuilderException {
-		return keyValue(OID, oid);
+		return keyValue(OID, TextFormatter.append("\"",oid, "\""));
 	}
 	
 	public QueryBuilder active() throws QueryBuilderException {
