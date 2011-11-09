@@ -6,7 +6,6 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.OpenLegConstants;
-import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -37,11 +36,12 @@ public class SearchRequest2_0 extends AbstractApiRequest {
 	
 	@Override
 	public void fillRequest() throws ApiRequestException {
-		request.setAttribute("format", format);
+		String vFormat = format.equals("jsonp") ? "json" : format;
+		request.setAttribute("format", vFormat);
 		
-		int pageSize = request.getParameter("pageSize") != null ? 
+		pageSize = request.getParameter("pageSize") != null ? 
 				Integer.parseInt(request.getParameter("pageSize")) : super.pageSize;
-		int pageIdx = (String)request.getParameter("pageIdx") != null ? 
+		pageNumber = (String)request.getParameter("pageIdx") != null ? 
 				Integer.parseInt(request.getParameter("pageIdx")) : super.pageNumber;
 		Boolean sortOrder = Boolean.parseBoolean(request.getParameter("sortOrder"));
 		String sortField = (String)request.getParameter("sort");
@@ -54,11 +54,13 @@ public class SearchRequest2_0 extends AbstractApiRequest {
 		request.setAttribute("sortField",sortField);
 		request.setAttribute("sortOrder",sortOrder);
 		
-		request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
+		request.setAttribute(OpenLegConstants.PAGE_IDX,pageNumber+"");
 		request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
 		
+		int start = (pageNumber - 1) * pageSize;
+		
 		try {
-			SenateResponse sr = SearchEngine.getInstance().search(ApiHelper.dateReplace(term), format, pageIdx, pageSize, null, false);
+			SenateResponse sr = SearchEngine.getInstance().search(ApiHelper.dateReplace(term), vFormat, start, pageSize, null, false);
 			
 			request.setAttribute("results", sr);
 		}
@@ -72,7 +74,7 @@ public class SearchRequest2_0 extends AbstractApiRequest {
 	
 	@Override
 	public String getView() {
-		return TextFormatter.append(format.equals("jsonp") ? "/views2/v2-api-jsonp.jsp" : "/views2/v2-api.jsp");
+		return "/views2/v2-api.jsp";
 	}
 	
 	@Override

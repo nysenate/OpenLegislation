@@ -86,24 +86,17 @@ public class SearchRequest extends AbstractApiRequest {
 			logger.warn(e1);
 		}
 		
-		int pageIdx = 1;
-		int pageSize = 20;
-		
 		if (request.getParameter("pageIdx") != null)
-			pageIdx = Integer.parseInt(request.getParameter("pageIdx"));
-		else
-			pageIdx = pageNumber;
+			pageNumber = Integer.parseInt(request.getParameter("pageIdx"));
 		
 		if (request.getParameter("pageSize") != null)
 			pageSize = Integer.parseInt(request.getParameter("pageSize"));
-		else
-			pageSize = this.pageSize;
 		
 		if (request.getParameter("format")!=null)
 			this.format = request.getParameter("format").toLowerCase();
 		
 		//now calculate start, end idx based on pageIdx and pageSize
-		int start = (pageIdx - 1) * pageSize;
+		int start = (pageNumber - 1) * pageSize;
 		
 		SenateResponse sr = null;
 		
@@ -207,7 +200,7 @@ public class SearchRequest extends AbstractApiRequest {
 			return;
 		}
 		
-		request.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
+		request.setAttribute(OpenLegConstants.PAGE_IDX,pageNumber+"");
 		request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
 					
 		if (term.length() == 0)	throw new ApiRequestException(

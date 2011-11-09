@@ -11,7 +11,6 @@ import gov.nysenate.openleg.model.committee.Meeting;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
-import gov.nysenate.openleg.util.TextFormatter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,13 +26,15 @@ public class SingleViewRequest2_0 extends AbstractApiRequest {
 	
 	public SingleViewRequest2_0(HttpServletRequest request, HttpServletResponse response,
 			String format, String type, String id) {
-		super(request, response, 0, 1, format, getApiEnum(SingleView.values(),type));
+		super(request, response, 1, 1, format, getApiEnum(SingleView.values(),type));
 		this.type = type;
 		this.id = id;
 	}
 
 	public void fillRequest() throws ApiRequestException {
-		request.setAttribute("format", format);
+		String vFormat = format.equals("jsonp") ? "json" : format;
+		
+		request.setAttribute("format", vFormat);
 		
 		String term = id;
 		if(type.equals("bill")) {
@@ -50,8 +51,10 @@ public class SingleViewRequest2_0 extends AbstractApiRequest {
 			logger.error(e);
 		}
 		
+		int start = (pageNumber - 1) * pageSize;
+		
 		try {
-			SenateResponse sr = SearchEngine.getInstance().search(term, format, pageNumber, pageSize, null, false);			
+			SenateResponse sr = SearchEngine.getInstance().search(term, vFormat, start, pageSize, null, false);			
 			
 			request.setAttribute("results", sr);
 		}
@@ -64,7 +67,7 @@ public class SingleViewRequest2_0 extends AbstractApiRequest {
 	}
 
 	public String getView() {
-		return TextFormatter.append(format.equals("jsonp") ? "/views2/v2-api-jsonp.jsp" : "/views2/v2-api.jsp");
+		return "/views2/v2-api.jsp";
 	}
 	
 	public boolean hasParameters() {
