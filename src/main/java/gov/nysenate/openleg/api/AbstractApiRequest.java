@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class AbstractApiRequest implements OpenLegConstants {
 	public static final String DEFAULT_FORMAT = "html";
-	public static final int DEFAULT_PAGE_NUMBER = 1;
+	public static final int DEFAULT_PAGE_NUMBER = 0;
 	public static final int DEFAULT_PAGE_SIZE = 20;
 	
 	protected HttpServletRequest request;

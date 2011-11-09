@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.api;
 
+import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.Action;
@@ -262,5 +263,50 @@ public class ApiHelper implements OpenLegConstants {
             " OR [", billWildcard, "A-", sessionYear, 
                " TO ", billWildcard, "Z-", sessionYear, 
             "]) AND ", billWildcard, "*-", sessionYear, ")");
+	}
+	
+	public static String formatDate(String term, String command) {
+		Date date = null;
+		
+		if(term.matches("(\\d{1,2}[-/]?){2}(\\d{2,4})?")) {
+			term = term.replace("/","-");
+			
+			java.util.Calendar c = java.util.Calendar.getInstance();
+			if(term.matches("\\d{1,2}-\\d{1,2}"))
+				term = term + "-" + c.get(java.util.Calendar.YEAR);
+			if(term.matches("\\d{1,2}-\\d{1,2}-\\d{2}")) {
+				
+				String yr = term.split("-")[2];
+				
+				term = term.replaceFirst("-\\d{2}$","");
+				
+				term = term + "-" + Integer.toString(c.get(java.util.Calendar.YEAR)).substring(0,2) + yr;
+			}
+		}
+		
+		try {
+			date = new SimpleDateFormat("MM-dd-yyyy").parse(term);
+		}
+		catch (java.text.ParseException e) {
+			logger.error(e);
+		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy'T'HH-mm");
+		
+		QueryBuilder queryBuilder  = QueryBuilder.build();
+		
+		java.util.Calendar cal = java.util.Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(java.util.Calendar.HOUR, 23);
+		cal.set(java.util.Calendar.MINUTE, 59);
+		cal.set(java.util.Calendar.SECOND, 59);
+		
+		try {
+			queryBuilder.otype(command).and().range("when", sdf.format(date), sdf.format(cal.getTime()));
+		} catch (QueryBuilderException e) {
+			logger.error(e);
+		}
+		
+		return queryBuilder.query();
 	}
 }

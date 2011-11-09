@@ -26,7 +26,7 @@ public class SingleViewRequest extends AbstractApiRequest {
 	
 	public SingleViewRequest(HttpServletRequest request, HttpServletResponse response,
 			String format, String type, String id) {
-		super(request, response, 1, 1, format, getApiEnum(SingleView.values(),type));
+		super(request, response, 0, 1, format, getApiEnum(SingleView.values(),type));
 		this.type = type;
 		this.id = id;
 	}

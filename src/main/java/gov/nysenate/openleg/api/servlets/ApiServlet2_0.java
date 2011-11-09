@@ -1,19 +1,19 @@
 package gov.nysenate.openleg.api.servlets;
 
-import gov.nysenate.openleg.api.ApiHelper;
-import gov.nysenate.openleg.api.QueryBuilder;
-import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.api.AbstractApiRequest;
+import gov.nysenate.openleg.api.AbstractApiRequest.ApiRequestException;
+import gov.nysenate.openleg.api.SearchRequest2_0;
+import gov.nysenate.openleg.api.SearchRequest2_0.SearchView2_0;
+import gov.nysenate.openleg.api.SingleViewRequest2_0;
+import gov.nysenate.openleg.api.SingleViewRequest2_0.SingleView2_0;
+import gov.nysenate.openleg.api.servlets.ApiServlet.Join;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.StringTokenizer;
+import java.net.URLDecoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,225 +21,115 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
 
 public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
+	
+	public static final int SINGLE_TYPE_2_0 = 1;
+	public static final int SINGLE_ID_2_0 = 2;
+	public static final int SINGLE_FORMAT_2_0 = 3;
+	
+	public static final int SEARCH_TYPE_2_0 = 1;
+	public static final int SEARCH_FORMAT_2_0 = 2;
+	
+	/*
+	 * Used to match the start of a single, multi or key value view..
+	 * 		/legislation/2.0/[view type]
+	 * 		/legislation/api/2.0/[view type]
+	 */
+	public static final String BASE_START_2_0 = "^(?i)/legislation/(?:api/)?2\\.0/(";
+	
+	/*
+	 * Ends base start, surrounds possible formats associated with a view
+	 */
+	public static final String BASE_MIDDLE_2_0 = ")\\.(";
+	
+	public static final String BASE_END_2_0 = ")$";
+	
+	public static final String SINGLE_MIDDLE_2_0 = ")/(.+)\\.(";
+	
+	public final Pattern SINGLE_PATTERN_2_0;
+	public final Pattern SEARCH_PATTERN_2_0;
+	
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = Logger.getLogger(ApiServlet2_0.class);	
-	
-	private static final String SRV_DELIM = "/";
+	private static Logger logger = Logger.getLogger(ApiServlet2_0.class);
+		
+	public ApiServlet2_0() throws ServletException {
+		super();
+		
+		String singleViews2_0 = new Join<SingleView2_0>() {
+			public String value(SingleView2_0 t) {
+				return t.view;
+			}
+		}.join(SingleView2_0.values(), "|");
+		
+		String singleFormats2_0 = new Join<String>() {
+			public String value(String t) {
+				return t;
+			}
+		}.join(AbstractApiRequest.getUniqueFormats(SingleView2_0.values()), "|");
+		
+		String searchViews2_0 = new Join<SearchView2_0>() {
+			public String value(SearchView2_0 t) {
+				return t.view;
+			}
+		}.join(SearchView2_0.values(), "|");
+		
+		String searchFormats2_0 = new Join<String>() {
+			public String value(String t) {
+				return t;
+			}
+		}.join(AbstractApiRequest.getUniqueFormats(SearchView2_0.values()), "|");
+		
+		SINGLE_PATTERN_2_0 = Pattern.compile(
+				TextFormatter.append(
+					BASE_START_2_0,singleViews2_0,SINGLE_MIDDLE_2_0,singleFormats2_0,BASE_END_2_0)
+			);
+		logger.info(TextFormatter.append("Single View pattern (2.0) generated: ", SINGLE_PATTERN_2_0.pattern()));
+		
+		SEARCH_PATTERN_2_0 = Pattern.compile(
+				TextFormatter.append(
+						BASE_START_2_0,searchViews2_0,BASE_MIDDLE_2_0,searchFormats2_0,BASE_END_2_0)
+			);
+		logger.info(TextFormatter.append("Search View pattern (2.0) generated: ", SEARCH_PATTERN_2_0.pattern()));
+	}
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException {
+		Matcher m = null;
+		
+		String uri = URLDecoder.decode(request.getRequestURI(), ENCODING);
+		
+		AbstractApiRequest apiRequest = null;
+		
+		if(apiRequest == null && (m = SINGLE_PATTERN_2_0.matcher(uri)) != null && m.find()) {
+			logger.info(TextFormatter.append("Single request: ", uri));
 
-    	doPost(request, response);
+			apiRequest = new SingleViewRequest2_0(	request, 
+													response, 
+													m.group(SINGLE_FORMAT_2_0),
+													m.group(SINGLE_TYPE_2_0),
+													m.group(SINGLE_ID_2_0));
+		}
+		
+		if(apiRequest == null && (m = SEARCH_PATTERN_2_0.matcher(uri)) != null && m.find()) {
+			logger.info(TextFormatter.append("Search request: ", uri));
+			
+			apiRequest = new SearchRequest2_0(	request,
+												response,
+												m.group(SEARCH_FORMAT_2_0),
+												m.group(SEARCH_TYPE_2_0),
+												(String) request.getParameter("term"));
+		}
+		
+		try {
+			if(apiRequest == null) throw new ApiRequestException(
+					TextFormatter.append("Failed to route request: ", uri));
+			
+			apiRequest.execute();
+		}
+		catch(ApiRequestException e) {
+			logger.error(e);
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
     }
-	
-	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-				
-		String encodedUri = req.getRequestURI();
-		
-		String uri = java.net.URLDecoder.decode(encodedUri,OpenLegConstants.ENCODING);
-			
-		logger.info("request: " + uri + " (" + encodedUri + ")");
-		
-		req.setAttribute(KEY_PATH,uri);
-	
-		StringTokenizer st = new StringTokenizer (uri,SRV_DELIM);
-		
-		st.nextToken(); //legislation
-		String arg1 = st.nextToken(); //2.0
-		
-		String command = "";		
-		String term = "";
-		
-		if (st.hasMoreTokens())
-		{
-			command = st.nextToken();
-			
-			if (command.equals("2.0"))
-				command = st.nextToken();
-			
-			if ((!command.startsWith("search")) && !st.hasMoreTokens())
-			{
-				term = command;
-				command = arg1;
-			}
-		}
-		else  {
-			req.setAttribute("term","");
-			getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
-		}
-				
-		term = (String)req.getParameter("term");
-		String key = term;
-		int pageSize = req.getParameter("pageSize") != null ? 
-							Integer.parseInt(req.getParameter("pageSize")) : 20;
-		int pageIdx = (String)req.getParameter("pageIdx") != null ? 
-							Integer.parseInt(req.getParameter("pageIdx")) : 1;
-		Boolean sortOrder = Boolean.parseBoolean(req.getParameter("sortOrder"));
-		String sortField = (String)req.getParameter("sort");
-		String format = null;
-		
-		int start = (new Integer(pageIdx) -1) * (new Integer(pageSize));
-		
-		
-		if(sortField == null) {
-			sortField = "modified";
-			sortOrder = true;
-		}
-		req.setAttribute("sortField",sortField);
-		req.setAttribute("sortOrder",sortOrder);
-		
-		req.setAttribute(OpenLegConstants.PAGE_IDX,pageIdx+"");
-		req.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
-		
-		if(command.startsWith("search")) {
-			if(term == null) {
-				getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
-				return;
-			}
-			
-			String cmd[] = command.split("\\.");
-			
-			if(cmd.length == 1) {
-				format = "html";
-			}
-			else {
-				command = cmd[0];
-				format = cmd[1];
-			}
-							
-			req.setAttribute("format", format);
-		}
-		else {
-			if (st.hasMoreTokens())
-				term = st.nextToken();
-			
-			key = term;
-			
-			format = "";
-			try {
-				format = uri.split("/")[uri.split("/").length-1].split("\\.")[1];
-				term = term.split("\\.")[0];
-			}
-			catch (Exception e) {
-				format = "html";
-			}
-			
-			if(term.matches("(\\d{1,2}[-/]?){2}(\\d{2,4})?")) {
-				term = formatDate(term, command);
-			}
-			else {
-				if(command.equals("bill")) {
-					term = Bill.formatBillNo(term);
-				}
-				try {
-					QueryBuilder queryBuilder = QueryBuilder.build().otype(command);
-					
-					if(term != null && !term.matches("\\s*")) queryBuilder.and().oid(term);
-					
-					term = queryBuilder.query();
-				}
-				catch(QueryBuilderException e) {
-					logger.error(e);
-				}
-			}
-		}
-		
-		String sFormat = "json";
-		String viewPath = "/views2/v2-api.jsp";
-		
-		if (format.equals("xml"))
-			sFormat = "xml";
-		else if(format.equals("jsonp")) {
-			sFormat = "json";
-			viewPath = "/views2/v2-api-jsonp.jsp";
-		}
-		
-		req.setAttribute("format", sFormat);
-		req.setAttribute(KEY_TYPE, command);
-		
-		try {
-			if (format.equalsIgnoreCase("html")) {
-				if(command.equalsIgnoreCase("search")) {
-					resp.sendRedirect("/legislation/search/?search=" + key);
-				}
-				else {
-					resp.sendRedirect("/legislation/" + command + "/" + key);
-				}
-			}
-			else {				
-				SenateResponse sr = SearchEngine.getInstance().search(ApiHelper.dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);			
-				
-				if(sr.getResults() == null || sr.getResults().size() == 0) {
-					term = term+"*";
-					sr = SearchEngine.getInstance().search(ApiHelper.dateReplace(term),sFormat,start,pageSize,sortField,sortOrder);
-				}
-				
-				req.setAttribute("results", sr);
-				
-				if(sr == null || sr.getResults().size() == 0) {
-					getServletContext().getRequestDispatcher("/legislation").forward(req, resp);
-				}			
-				else if(sr.getResults().size() == 1 || command.equals("search")) {
-					//looking for one or many
-					getServletContext().getRequestDispatcher(viewPath).forward(req, resp);
-				}
-				else {
-					//looking for single, found many
-					viewPath = TextFormatter.append("/legislation/2.0/search.",format,"?term=",term);
-					resp.sendRedirect(viewPath);
-				}
-			}
-			
-		} catch (ParseException e) {
-			logger.error(e);
-		}
-	}
-	
-	public String formatDate(String term, String command) {
-		Date date = null;
-		
-		if(term.matches("(\\d{1,2}[-/]?){2}(\\d{2,4})?")) {
-			term = term.replace("/","-");
-			
-			Calendar c = Calendar.getInstance();
-			if(term.matches("\\d{1,2}-\\d{1,2}"))
-				term = term + "-" + c.get(Calendar.YEAR);
-			if(term.matches("\\d{1,2}-\\d{1,2}-\\d{2}")) {
-				
-				String yr = term.split("-")[2];
-				
-				term = term.replaceFirst("-\\d{2}$","");
-				
-				term = term + "-" + Integer.toString(c.get(Calendar.YEAR)).substring(0,2) + yr;
-			}
-		}
-		
-		try {
-			date = new SimpleDateFormat("MM-dd-yyyy").parse(term);
-		}
-		catch (java.text.ParseException e) {
-			logger.error(e);
-		}
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy'T'HH-mm");
-		
-		QueryBuilder queryBuilder  = QueryBuilder.build();
-		
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		cal.set(Calendar.HOUR, 23);
-		cal.set(Calendar.MINUTE, 59);
-		cal.set(Calendar.SECOND, 59);
-		
-		try {
-			queryBuilder.otype(command).and().range("when", sdf.format(date), sdf.format(cal.getTime()));
-		} catch (QueryBuilderException e) {
-			logger.error(e);
-		}
-		
-		return queryBuilder.query();
-	}
 }

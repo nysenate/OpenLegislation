@@ -47,6 +47,12 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 	public static final int KEY_VALUE_PAGE_NUMBER = 4;
 	public static final int KEY_VALUE_PAGE_SIZE = 5;
 	
+	public static final int SEARCH_FORMAT = 1;
+	public static final int SEARCH_KEY = 2;
+	public static final int SEARCH_VALUE = 3;
+	public static final int SEARCH_PAGE_NUMBER = 4;
+	public static final int SEARCH_PAGE_SIZE = 5;
+	
 	/*
 	 * Used to match the start of a single, multi or key value view..
 	 * 		/legislation/[view type]
@@ -171,7 +177,7 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 				TextFormatter.append(
 						BASE_START,searchFormats,BASE_MIDDLE,searchViews,SEARCH_END,PAGING,BASE_END)
 			);
-		logger.info(TextFormatter.append("Search vView pattern generated: ", SEARCH_PATTERN.pattern()));
+		logger.info(TextFormatter.append("Search View pattern generated: ", SEARCH_PATTERN.pattern()));
 	}
 	
 	/**
@@ -238,11 +244,11 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
 			
 			apiRequest = new SearchRequest(		request,
 												response,
-												m.group(KEY_VALUE_FORMAT),
-												m.group(KEY_VALUE_KEY),
-												m.group(KEY_VALUE_VALUE),
-												m.group(KEY_VALUE_PAGE_NUMBER),
-												m.group(KEY_VALUE_PAGE_SIZE));
+												m.group(SEARCH_FORMAT),
+												m.group(SEARCH_KEY),
+												m.group(SEARCH_VALUE),
+												m.group(SEARCH_PAGE_NUMBER),
+												m.group(SEARCH_PAGE_SIZE));
 		}
 		
 		try {
