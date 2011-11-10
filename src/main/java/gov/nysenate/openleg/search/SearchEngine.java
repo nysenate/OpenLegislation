@@ -316,7 +316,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 		
 		QueryBuilder queryBuilder = null;
 		try {
-			queryBuilder = QueryBuilder.build().otype(type).and().oid(oid);
+			queryBuilder = QueryBuilder.build().otype(type).and().oid(oid, true);
 		} catch (QueryBuilderException e) {
 			logger.error(e);
 			return ret;

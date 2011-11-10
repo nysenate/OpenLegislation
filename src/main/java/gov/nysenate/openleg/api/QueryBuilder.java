@@ -45,7 +45,11 @@ public class QueryBuilder {
 	}
 	
 	public QueryBuilder oid(String oid) throws QueryBuilderException {
-		return keyValue(OID, TextFormatter.append("\"",oid, "\""));
+		return keyValue(OID, oid);
+	}
+	
+	public QueryBuilder oid(String oid, boolean quote) throws QueryBuilderException {
+		return keyValue(OID, quote ? TextFormatter.append("\"", oid, "\"") : oid);
 	}
 	
 	public QueryBuilder active() throws QueryBuilderException {
