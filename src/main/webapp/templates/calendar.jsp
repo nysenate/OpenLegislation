@@ -32,7 +32,7 @@
 			try {
 				supp = itSupp.next();
 				supp.setCalendar(calendar);
-				oid = supp.luceneOid();
+				oid = calendar.luceneOid();
 	
 				if (calendar.getType().equals("active") && supp.getSequences() == null)
 					continue; %>

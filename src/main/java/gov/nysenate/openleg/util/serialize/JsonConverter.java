@@ -41,9 +41,6 @@ public class JsonConverter {
 		if(o == null) {
 			return null;
 		}
-		if(o instanceof Supplemental) {
-			o = ((Supplemental)o).getCalendar();
-		}
 		
 		JsonObject root = new JsonObject();
 		

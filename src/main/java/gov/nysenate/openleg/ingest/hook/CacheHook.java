@@ -36,15 +36,7 @@ public class CacheHook implements Hook<List<? extends SenateObject>> {
 	
 	@Override
 	public void call(List<? extends SenateObject> list) {
-		for(SenateObject so:list) {
-			if(so instanceof Calendar) {
-				Calendar calendar = (Calendar) so;
-				
-				if(calendar.getSupplementals() != null) {
-	    			call(calendar.getSupplementals());
-	    		}
-			}
-			else if(so instanceof Agenda) {
+		for(SenateObject so:list) {if(so instanceof Agenda) {
 				Agenda agenda = (Agenda) so;
 				
 				if (agenda.getAddendums() != null) {

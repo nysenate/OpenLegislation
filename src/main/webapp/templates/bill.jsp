@@ -353,7 +353,7 @@
 				}
 		
 				%>
-					<a href="<%=appPath%>/calendar/<%=sup.luceneOid()%>" class="sublink"><%=type%><%=calDate == null ? "" : ": " +  calendarSdf.format(calDate)%></a>
+					<a href="<%=appPath%>/calendar/<%=cal.luceneOid()%>" class="sublink"><%=type%><%=calDate == null ? "" : ": " +  calendarSdf.format(calDate)%></a>
 				<%
 				
 				if (itCals.hasNext()) {

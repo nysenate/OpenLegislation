@@ -116,8 +116,8 @@ Supplemental supp = itSupp.next();
 for
 <% if (supp.getCalendarDate()!=null){ %>
 <%=df.format(supp.getCalendarDate())%>
-<%} else if (supp.getSequence()!=null && supp.getSequence().getActCalDate()!=null){%>
-<%=df.format(supp.getSequence().getActCalDate())%>
+<%} else if (supp.getSequences()!=null && !supp.getSequences().isEmpty()){%>
+<%=df.format(supp.getSequences().get(0).getActCalDate())%>
 <%}%>
 </h4>
 <div style="background:#00CCFF;font-size:7pt;padding:1px;">
@@ -126,13 +126,14 @@ Updated every 30 minutes or less
  <div id="content">
  
 
-<%if (supp.getSequence()!=null){%>
+<%if (supp.getSequences()!=null){%>
 
 <%
 
 
-Sequence seq = supp.getSequence();
+List<Sequence> seqs = supp.getSequences();
 
+for(Sequence seq:seqs) {
 %>
 <%
 
@@ -180,7 +181,9 @@ e.printStackTrace();
 <%
 }%>
 	</ul>
-<%}%>	
+<%}
+
+}%>	
 	
 </div>
 

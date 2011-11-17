@@ -108,12 +108,22 @@ public class CalendarParser extends SenateParser<Calendar> implements OpenLegCon
 				logger.info("REMOVING: " + removeObject.getClass() + "=" + removeObjectId);
 				
 				if(removeObject instanceof Supplemental) {
-					calendar.getSupplementals().remove(removeObject);
+					if(calendar.getSupplementals() != null) {
+						int indexOf = -1;
+						if((indexOf = calendar.getSupplementals().indexOf(removeObject)) != -1) {
+							calendar.getSupplementals().remove(indexOf);
+						}
+					}
 				}
 				else if (removeObject instanceof Sequence && calendar.getSupplementals() != null){
-					for(int i = 0; i < calendar.getSupplementals().size(); i++) {
-						if(calendar.getSupplementals().get(i).getSequences().contains(removeObject)) {
-							calendar.getSupplementals().get(i).getSequences().remove(removeObject);
+					int supSize = calendar.getSupplementals().size();
+					
+					for(int i = 0; i < supSize; i++) {
+						Supplemental sup = calendar.getSupplementals().get(i);
+						
+						int indexOf = -1;
+						if((indexOf = sup.getSequences().indexOf(removeObject)) != -1) {
+							calendar.getSupplementals().get(i).getSequences().remove(indexOf);
 							break;
 						}
 					}

@@ -42,7 +42,8 @@ public class DocumentBuilder {
 						OTYPE,
 						o.luceneOtype(),
 						DEFAULT_STORE,
-						DEFAULT_INDEX));			
+						DEFAULT_INDEX));
+			
 			fields.put(OID,
 					new org.apache.lucene.document.Field(
 						OID,
@@ -145,6 +146,7 @@ public class DocumentBuilder {
 			}
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e);
 		}
 		

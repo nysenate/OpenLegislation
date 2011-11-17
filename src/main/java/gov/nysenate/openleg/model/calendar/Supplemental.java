@@ -1,23 +1,16 @@
 package gov.nysenate.openleg.model.calendar;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
-import gov.nysenate.openleg.model.SenateObject;
 
 @XStreamAlias("supplemental")
-public class Supplemental extends SenateObject {
+public class Supplemental {
 	
 	protected String id;
 	
@@ -112,138 +105,5 @@ public class Supplemental extends SenateObject {
 		}
 		
 		return false;
-	}
-
-	
-	@Override
-	public String luceneOid() {
-		String oid = "";
-		if(calendar.getId().startsWith("cal-floor")) {
-			oid = "floor-" + new SimpleDateFormat("MM-dd-yyyy").format(this.getCalendarDate());
-
-		}
-		else {
-			if(sequences != null && sequences.size() > 0) {
-				oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequences.get(0).getActCalDate());
-			}
-		}
-		
-		return oid;
-	}
-
-	@Override
-	public String luceneOtype() {
-		return "calendar";
-	}
-
-	@Override
-	public HashMap<String, Fieldable> luceneFields() {
-		HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
-		
-		Calendar calendar = this.getCalendar();
-		
-		fields.put("ctype",new Field("ctype",calendar.getType(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-				
-		StringBuilder searchContent = new StringBuilder();
-		String title;
-		
-		title = calendar.getNo() + " - " + calendar.getType();
-		
-		if (calendarDate!=null)
-			title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(calendarDate);
-		
-		
-		else if (releaseDateTime!=null)
-		{
-			title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(calendarDate);
-		}
-		else if (sequences!=null)
-		{
-			if(sequences != null && sequences.size() > 0) {
-				title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(sequences.get(0).getActCalDate());
-			}
-		}
-		
-		StringBuilder bills = new StringBuilder("");
-		StringBuilder calendarEntries = new StringBuilder();
-		
-		searchContent.append(title);
-		
-		StringBuilder sbSummary = new StringBuilder();
-		
-		if (sections != null) {
-			for(Section section:sections) {
-				sbSummary.append(section.getName()).append(": ");
-				sbSummary.append(section.getCalendarEntries().size()).append(" bill(s); ");
-				
-				for(CalendarEntry ce:section.getCalendarEntries()) {
-					bills.append(ce.getBill().getSenateBillNo()).append(", ");
-					calendarEntries.append(ce.getNo()).append("-")
-					   .append(ce.getBill().getSenateBillNo())
-					   .append(", ");
-				}
-			}
-		}
-		
-		if (sequences != null) {
-			if(sequences.size() > 0) {
-				int total = 0;
-				for(Sequence seq:sequences) {
-					total += seq.getCalendarEntries().size();
-					
-					for(CalendarEntry ce:seq.getCalendarEntries()) {
-						bills.append(ce.getBill().getSenateBillNo()).append(", ");
-						calendarEntries.append(ce.getNo()).append("-")
-						   .append(ce.getBill().getSenateBillNo())
-						   .append(", ");
-					}
-				}
-				
-				sbSummary.append(total).append(" bill(s)");
-			}
-		}
-		
-		fields.put("bills",new Field("bills",bills.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		fields.put("calendarentries",new Field("calendarentries",calendarEntries.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		
-		String summary = sbSummary.toString().trim();
-		
-		fields.put("summary",new Field("summary",summary, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		fields.put("title",new Field("title",title, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		fields.put("osearch",new Field("osearch",searchContent.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		
-		String oid = "";
-		if(calendar.getId().startsWith("cal-floor")) {
-			oid = "floor-" + new SimpleDateFormat("MM-dd-yyyy").format(this.getCalendarDate());
-			fields.put("when", new Field("when",this.getCalendarDate().getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-
-		}
-		else {
-			if(sequences != null && sequences.size() > 0) {
-				Sequence sequence = sequences.get(0);
-				
-				oid = "active-" + new SimpleDateFormat("MM-dd-yyyy").format(sequence.getActCalDate());
-				fields.put("when", new Field("when",sequence.getActCalDate().getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-			}
-		}
-				
-		fields.put("oid",new Field("oid",oid, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-				
-		return fields;
-	}
-	
-	@Override
-	public String luceneOsearch() {
-		return "";
-	}
-
-	@Override
-	public String luceneTitle() {
-		return "";
-	}
-
-	@Override
-	public String luceneSummary() {
-		return "";
 	}
 }

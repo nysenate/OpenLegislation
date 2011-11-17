@@ -11,4 +11,5 @@ public interface ISenateObject extends ILuceneObject {
 	public HashSet<String> getSobiReferenceList();
 	public void setSobiReferenceList(HashSet<String> sobiReferenceList);
 	public void addSobiReference(String reference);
+	public String fileSystemId();
 }

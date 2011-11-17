@@ -8,6 +8,7 @@ import java.util.HashSet;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.lucene.document.Fieldable;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class SenateObject extends LuceneObject implements ISenateObject {
 	HashSet<String> sobiReferenceList = new HashSet<String>();
@@ -71,5 +72,12 @@ public class SenateObject extends LuceneObject implements ISenateObject {
 	@Override
 	public void addSobiReference(String reference) {
 		sobiReferenceList.add(reference);
+	}
+	
+	@XmlTransient
+	@JsonIgnore
+	@Override
+	public String fileSystemId() {
+		return null;
 	}
 }

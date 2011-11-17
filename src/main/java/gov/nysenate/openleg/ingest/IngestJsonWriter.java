@@ -10,6 +10,7 @@ import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.util.TextFormatter;
 import gov.nysenate.openleg.util.Timer;
+import gov.nysenate.openleg.util.serialize.XmlHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -82,6 +83,10 @@ public class IngestJsonWriter {
 	}
 	
 	private void writeJson(File sobiFile) {
+		if(sobiFile.getName().contains("-calendar-")) {
+			XmlHelper.fixCalendar(sobiFile);
+		}
+		
 		IngestType ingestType = null;
 		if(sobiFile.getName().endsWith(".TXT")) {
 			ingestType = IngestType.BILL;
@@ -131,6 +136,10 @@ public class IngestJsonWriter {
 			}
 			
 			logger.warn(TextFormatter.append(timer.stop()," - Wrote ",senateObjects.size()," Objects"));
+		}
+		
+		for(SenateObject sObj:senateParser.getDeletedSenateObjects()) {
+			ingestJson.delete(sObj);
 		}
 		
 		senateParser.clear();

@@ -59,7 +59,8 @@ public class JsonDao {
 		
 		File yearDir = new File(TextFormatter.append(jsonDirectory,"/",obj.getYear()));
 		File typeDir = new File(TextFormatter.append(jsonDirectory,"/",obj.getYear(),"/",obj.luceneOtype()));
-		File newFile = new File(TextFormatter.append(jsonDirectory,"/",obj.getYear(),"/",obj.luceneOtype(),"/",obj.luceneOid(),".json"));
+		File newFile = new File(TextFormatter.append(jsonDirectory,"/",obj.getYear(),"/",obj.luceneOtype()
+								,"/",obj.fileSystemId() != null ? obj.fileSystemId() : obj.luceneOid(),".json"));
 		
 		if(!yearDir.exists()) {
 			logger.info("creating directory: " + yearDir.getAbsolutePath());
@@ -117,7 +118,7 @@ public class JsonDao {
 	
 	
 	public boolean delete(SenateObject so) {
-		return delete(so.luceneOid(), so.getYear() +"", so.luceneOtype());
+		return delete(so.fileSystemId() != null ? so.fileSystemId() : so.luceneOid(), so.getYear() +"", so.luceneOtype());
 	}
 	
 	public boolean delete(String id, String year, String type) {
@@ -133,7 +134,11 @@ public class JsonDao {
 	
 	@SuppressWarnings("unchecked")
 	public <T extends SenateObject> T mergeSenateObject(T obj, Class<? extends ISenateObject> clazz) {
-		File file = new File(TextFormatter.append(jsonDirectory,"/",obj.getYear(),"/",obj.luceneOtype(),"/",obj.luceneOid(),".json"));
+		File file = new File(TextFormatter.append(
+				jsonDirectory,
+				"/",obj.getYear(),
+				"/",obj.luceneOtype(),
+				"/",obj.fileSystemId() != null ? obj.fileSystemId() : obj.luceneOid(),".json"));
 		
 		if(file.exists()) {
 			logger.info("Merging object with id: " + obj.luceneOid());

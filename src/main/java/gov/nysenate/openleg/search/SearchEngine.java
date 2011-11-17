@@ -11,7 +11,6 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.Action;
 import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.Supplemental;
 import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.model.committee.Meeting;
@@ -108,14 +107,6 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 	    				deleteSenateObject( meeting );
 	    			}
     	}
-    	else if(obj instanceof Calendar) {
-    		Calendar calendar = (Calendar)obj;
-    		if(calendar.getSupplementals() != null) {
-    			for(Supplemental supplemental:calendar.getSupplementals()) {
-    				deleteSenateObject(supplemental);
-    			}
-    		}
-    	}
     	else {
     		if(obj instanceof Bill) {
     			Bill bill = (Bill)obj;
@@ -130,6 +121,8 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
         			}
         		}
     		}
+    		
+    		if(obj.luceneOid() == null) return;
     		
     		deleteSenateObjectById(obj.luceneOtype(), obj.luceneOid());
     	}
@@ -159,24 +152,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
     	while (it.hasNext()) {
     		ILuceneObject obj = it.next();
     		
-    		if (obj instanceof Calendar) {
-    			Calendar cal = (Calendar)obj;
-    			
-    			Iterator<Supplemental> itSupps = cal.getSupplementals().iterator();
-    			while (itSupps.hasNext()) {
-    				Supplemental supp = (Supplemental)itSupps.next();
-        			supp.setCalendar(cal);
-        			supp.setModified(cal.getModified());
-
-    				try {
-    	    			addDocument(supp, ls, indexWriter);
-    	    		}
-    	    		catch (Exception e) {
-    	    			logger.warn("unable to index senate supp",e);
-    	    		}
-    			}
-    		}
-    		else if(obj instanceof Agenda) {
+    		if(obj instanceof Agenda) {
     			Agenda agenda = (Agenda)obj;
     			
     			if (agenda.getAddendums() != null) {
