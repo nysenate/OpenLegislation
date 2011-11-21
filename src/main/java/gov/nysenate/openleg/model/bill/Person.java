@@ -28,8 +28,6 @@ public class Person {
 	
 	public Person (String fullname) {
 		this.fullname = fullname;
-		
-		this.id = fullname;
 	}
 	
 	public Person (String fullname, String position) {

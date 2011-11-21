@@ -262,7 +262,15 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 	
 	
 	public void setPastCommittees(List<String> pastCommittees) {
-		this.pastCommittees = pastCommittees;
+		if(pastCommittees == null) {
+			this.pastCommittees = null;
+			return;
+		}
+		
+		this.pastCommittees = new ArrayList<String>();
+		for(String pc:pastCommittees) {
+			this.addPastCommittee(pc);
+		}
 	}
 
 

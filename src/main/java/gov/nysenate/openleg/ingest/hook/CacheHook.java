@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.ingest.hook;
 
 import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.committee.Addendum;
 import gov.nysenate.openleg.model.committee.Agenda;
 import gov.nysenate.openleg.util.TextFormatter;
