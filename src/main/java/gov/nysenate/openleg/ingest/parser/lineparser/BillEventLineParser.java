@@ -14,7 +14,11 @@ import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
+
 public class BillEventLineParser implements LineParser {
+	private static Logger logger = Logger.getLogger(BillEventLineParser.class);
+	
 	private final static DateFormat DATE_PARSER = new SimpleDateFormat ("MM/dd/yy");
 	
 	private ArrayList<Action> actions = new ArrayList<Action>();
@@ -33,8 +37,7 @@ public class BillEventLineParser implements LineParser {
 		try {
 			actionDate = DATE_PARSER.parse(lineData.substring(0,8));
 		} catch (ParseException e) {
-			//TODO log
-			e.printStackTrace();
+			logger.error(e);
 		}
 		finally {
 			if(actionDate == null) return;

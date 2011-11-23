@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 public class BillParser extends SenateParser<Bill> {	
 	public static final String SOBI_CHARSET = "ISO-8859-1";
 	
@@ -31,11 +33,14 @@ public class BillParser extends SenateParser<Bill> {
 	public static final Pattern BILL_TRIMMER = Pattern.compile("(?i)(^(\\s+)|\\s+$|(?<=[sajr])0+)");
 	public static final Pattern FORM_FEED = Pattern.compile("\f");
 	
+	private static Logger logger = Logger.getLogger(BillParser.class);
+	
+	private HashMap<String, String> LINE_BILL_LOOKUP_MAP = new HashMap<String, String>();
+	
 	private Matcher validLineMatcher = VALID_LINE.matcher("");
 	private Matcher billTrimmerMatcher = BILL_TRIMMER.matcher("");
 	private Matcher formFeed = FORM_FEED.matcher("");
 	
-	private static HashMap<String, String> LINE_BILL_LOOKUP_MAP = new HashMap<String, String>();
 	
 	private HashMap<String, LineParser> lineParsers = new HashMap<String, LineParser>();
 	
@@ -93,8 +98,7 @@ public class BillParser extends SenateParser<Bill> {
 							}
 						}
 						catch (Exception e) {
-							//TODO
-							e.printStackTrace();
+							logger.error(e);
 						}
 						
 					}

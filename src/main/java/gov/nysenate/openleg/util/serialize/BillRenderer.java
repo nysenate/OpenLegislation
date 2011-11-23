@@ -69,7 +69,6 @@ public class BillRenderer {
 		return renderBills(list,true);	
 	}
 	
-	
 	private static Element getBillElement(Bill bill, boolean includeFullText)
 	{
 		Element elemBill = new Element("bill");
@@ -332,12 +331,9 @@ public class BillRenderer {
 	
 	private final static String processText (String text)
 	{
-		text = text.replace((char)0x1a,' ');
-		text = text.replace((char)0x1e,' ');
+		text = text.replace((char)0x1a,' ');//sub
+		text = text.replace((char)0x1e,' ');//rs
 		text = text.replace((char)0xB5,' ');
-		text = text.replace((char)0x2D,' ');
-		text = text.replace((char)0x35,' ');
-		text = text.replace((char)0x30,' ');
 		
 		return text;
 		

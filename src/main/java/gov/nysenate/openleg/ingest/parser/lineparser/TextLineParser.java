@@ -7,7 +7,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 public class TextLineParser implements LineParser {
+	private static Logger logger = Logger.getLogger(TextLineParser.class);
+	
 	private static final Pattern SECTION = Pattern.compile("(\\xa7|\\xDF)");
 	
 	private Matcher SECTION_MATCHER = SECTION.matcher("");
@@ -31,8 +35,7 @@ public class TextLineParser implements LineParser {
 			try {
 				bill.setFulltext(new String(textBuffer.toString().getBytes("UTF-8"),"UTF-8"));
 			} catch (UnsupportedEncodingException e) {
-				//TODO log
-				e.printStackTrace();
+				logger.error(e);
 			}
 		}
 	}
