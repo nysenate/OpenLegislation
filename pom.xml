@@ -168,7 +168,6 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.16</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.madgag</groupId>
@@ -237,13 +236,6 @@
         <dependency>
             <groupId>xmlrpc</groupId>
             <artifactId>xmlrpc-client</artifactId>
-            <version>3.0</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>xmlrpc</groupId>
-            <artifactId>xmlrpc-common</artifactId>
             <version>3.0</version>
             <type>jar</type>
             <scope>compile</scope>
