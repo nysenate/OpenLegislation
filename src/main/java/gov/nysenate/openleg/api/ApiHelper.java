@@ -2,8 +2,8 @@ package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.ISenateObject;
-import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.Action;
+import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.Vote;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.Section;
@@ -30,283 +30,283 @@ import org.apache.lucene.queryParser.ParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class ApiHelper implements OpenLegConstants {
-	private final static DateFormat DATE_FORMAT_MED = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
-	private final static DateFormat DATE_FORMAT_CUSTOM = new SimpleDateFormat("MMM d, yyyy");
-	
-	private static Logger logger = Logger.getLogger(ApiHelper.class);
-	
-	private static ObjectMapper mapper = new ObjectMapper();
-	
-	public static ObjectMapper getMapper() {
-		if(mapper == null)
-			mapper = new ObjectMapper();
-		
-		return mapper;
-	}
-	
-	public static ArrayList<Result> buildSearchResultList(SenateResponse sr) {
-		
-		ArrayList<Result> resultList = new ArrayList<Result>();
-		
-		if (sr.getResults() == null || sr.getResults().isEmpty())
-			return resultList;
+    private final static DateFormat DATE_FORMAT_MED = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
+    private final static DateFormat DATE_FORMAT_CUSTOM = new SimpleDateFormat("MMM d, yyyy");
 
-		for (Result result : sr.getResults()) {
-			try {
-				String type = result.getOtype();
-				String jsonData = result.getData();
+    private static Logger logger = Logger.getLogger(ApiHelper.class);
 
-				if (jsonData == null)
-					continue;
+    private static ObjectMapper mapper = new ObjectMapper();
 
-				jsonData = unwrapJson(jsonData);
-				
-				ApiType apiType = getApiType(type);
-				Class<? extends ISenateObject> clazz = apiType.clazz();
+    public static ObjectMapper getMapper() {
+        if(mapper == null)
+            mapper = new ObjectMapper();
 
-				ISenateObject resultObj = null;
-				try {
-					resultObj = mapper.readValue(jsonData, clazz);
-					result.setObject(resultObj);
-				} catch (Exception e) {
-					logger.error("error binding:" + clazz.getName(), e);
-				}
+        return mapper;
+    }
 
-				if (resultObj == null)
-					continue;
-				
-				resultObj.setModified(result.getLastModified());
-				resultObj.setActive(result.isActive());
+    public static ArrayList<Result> buildSearchResultList(SenateResponse sr) {
 
-				String title = "";
-				String summary = "";
+        ArrayList<Result> resultList = new ArrayList<Result>();
 
-				HashMap<String, String> fields = new HashMap<String, String>();
-				fields.put("type", type);
-				
-				/*
-				 * populate result objects with any relevant fields, this
-				 * provides our more generic, non type-specific search
-				 */
-				if (type.equals("bill")) {
-					Bill bill = (Bill) resultObj;
+        if (sr.getResults() == null || sr.getResults().isEmpty())
+            return resultList;
 
-					if (bill.getTitle() != null)
-						title += bill.getTitle();
-					else
-						title += "(no title)";
+        for (Result result : sr.getResults()) {
+            try {
+                String type = result.getOtype();
+                String jsonData = result.getData();
 
-					if (bill.getSponsor() != null)
-						fields.put("sponsor", bill.getSponsor().getFullname());
+                if (jsonData == null)
+                    continue;
 
-					summary = bill.getSummary();
+                jsonData = unwrapJson(jsonData);
 
-					fields.put("committee", bill.getCurrentCommittee());
-					fields.put("billno", bill.getSenateBillNo());
-					fields.put("summary", bill.getSummary());
-					fields.put("year", bill.getYear() + "");
-				} else if (type.equals("calendar")) {
-					Calendar calendar = (Calendar) resultObj;
+                ApiType apiType = getApiType(type);
+                Class<? extends ISenateObject> clazz = apiType.clazz();
 
-					title = calendar.getNo() + "-" + calendar.getYear();
+                ISenateObject resultObj = null;
+                try {
+                    resultObj = mapper.readValue(jsonData, clazz);
+                    result.setObject(resultObj);
+                } catch (Exception e) {
+                    logger.error("error binding:" + clazz.getName(), e);
+                }
 
-					if (calendar.getType() == null)
-						fields.put("type", "");
-					else if (calendar.getType().equals("active"))
-						fields.put("type", "Active List");
-					else if (calendar.getType().equals("floor"))
-						fields.put("type", "Floor Calendar");
-					else
-						fields.put("type", calendar.getType());
+                if (resultObj == null)
+                    continue;
 
-					Supplemental supp = calendar.getSupplementals().get(0);
+                resultObj.setModified(result.getLastModified());
+                resultObj.setActive(result.isActive());
 
-					if (supp.getCalendarDate() != null) {
-						fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getCalendarDate()));
+                String title = "";
+                String summary = "";
 
-						summary = "";
+                HashMap<String, String> fields = new HashMap<String, String>();
+                fields.put("type", type);
 
-						if (supp.getSections() != null) {
-							Iterator<Section> itSections = supp.getSections()
-									.iterator();
-							while (itSections.hasNext()) {
-								Section section = itSections.next();
+                /*
+                 * populate result objects with any relevant fields, this
+                 * provides our more generic, non type-specific search
+                 */
+                if (type.equals("bill")) {
+                    Bill bill = (Bill) resultObj;
 
-								summary += section.getName() + ": ";
-								summary += section.getCalendarEntries().size() + " items;";
-							}
-						}
-					} else if (supp.getSequences() != null && supp.getSequences().size() > 0) {
+                    if (bill.getTitle() != null)
+                        title += bill.getTitle();
+                    else
+                        title += "(no title)";
 
-						fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getSequences().get(0).getActCalDate()));
-						
-						int total = 0;
-						for(Sequence seq:supp.getSequences()) {
-							total += seq.getCalendarEntries().size();
-						}
-						summary = total + " item(s)";
+                    if (bill.getSponsor() != null)
+                        fields.put("sponsor", bill.getSponsor().getFullname());
 
-					}
-				} else if (type.equals("transcript")) {
-					Transcript transcript = (Transcript) resultObj;
+                    summary = bill.getSummary();
 
-					if (transcript.getTimeStamp() != null)
-						title = DATE_FORMAT_CUSTOM.format(transcript.getTimeStamp());
-					else
-						title = "Transcript - " + transcript.getLocation();
+                    fields.put("committee", bill.getCurrentCommittee());
+                    fields.put("billno", bill.getSenateBillNo());
+                    fields.put("summary", bill.getSummary());
+                    fields.put("year", bill.getYear() + "");
+                } else if (type.equals("calendar")) {
+                    Calendar calendar = (Calendar) resultObj;
 
-					summary = TextFormatter.append(transcript.getType(), ": ", transcript.getLocation());
+                    title = calendar.getNo() + "-" + calendar.getYear();
 
-					fields.put("location", transcript.getLocation());
+                    if (calendar.getType() == null)
+                        fields.put("type", "");
+                    else if (calendar.getType().equals("active"))
+                        fields.put("type", "Active List");
+                    else if (calendar.getType().equals("floor"))
+                        fields.put("type", "Floor Calendar");
+                    else
+                        fields.put("type", calendar.getType());
 
-				} else if (type.equals("meeting")) {
-					Meeting meeting = (Meeting) resultObj;
-					title = TextFormatter.append(meeting.getCommitteeName(), " (", 
-							DATE_FORMAT_CUSTOM.format(meeting.getMeetingDateTime()), ")");
+                    Supplemental supp = calendar.getSupplementals().get(0);
 
-					fields.put("location", meeting.getLocation());
-					fields.put("chair", meeting.getCommitteeChair());
-					fields.put("committee", meeting.getCommitteeName());
+                    if (supp.getCalendarDate() != null) {
+                        fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getCalendarDate()));
 
-					summary = meeting.getNotes();
-				} else if (type.equals("action")) {
-					Action billEvent = (Action) resultObj;
-					String billId = billEvent.getBill().getSenateBillNo();
+                        summary = "";
 
-					title = billEvent.getText();
+                        if (supp.getSections() != null) {
+                            Iterator<Section> itSections = supp.getSections()
+                                    .iterator();
+                            while (itSections.hasNext()) {
+                                Section section = itSections.next();
 
-					fields.put("date", DATE_FORMAT_MED.format(billEvent
-							.getDate()));
-					fields.put("billno", billId);
-				} else if (type.equals("vote")) {
-					Vote vote = (Vote) resultObj;
+                                summary += section.getName() + ": ";
+                                summary += section.getCalendarEntries().size() + " items;";
+                            }
+                        }
+                    } else if (supp.getSequences() != null && supp.getSequences().size() > 0) {
 
-					if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
-						fields.put("type", "Committee Vote");
-					else if (vote.getVoteType() == Vote.VOTE_TYPE_FLOOR)
-						fields.put("type", "Floor Vote");
+                        fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getSequences().get(0).getActCalDate()));
 
-					if (vote.getBill() != null) {
-						Bill bill = vote.getBill();
+                        int total = 0;
+                        for(Sequence seq:supp.getSequences()) {
+                            total += seq.getCalendarEntries().size();
+                        }
+                        summary = total + " item(s)";
 
-						if (bill.getSponsor() != null)
-							fields.put("sponsor", bill.getSponsor()
-									.getFullname());
+                    }
+                } else if (type.equals("transcript")) {
+                    Transcript transcript = (Transcript) resultObj;
 
-						if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
-							fields.put("committee", bill.getCurrentCommittee());
+                    if (transcript.getTimeStamp() != null)
+                        title = DATE_FORMAT_CUSTOM.format(transcript.getTimeStamp());
+                    else
+                        title = "Transcript - " + transcript.getLocation();
 
-						fields.put("billno", bill.getSenateBillNo());
-						fields.put("year", bill.getYear() + "");
-					}
-					
-					title +=  DATE_FORMAT_CUSTOM.format(vote.getVoteDate());
+                    summary = TextFormatter.append(transcript.getType(), ": ", transcript.getLocation());
 
-					summary = vote.getDescription();
-				}
-				
-				result.setTitle(title);
-				result.setSummary(summary);
-				result.setFields(fields);
-			} catch (Exception e) {
-				logger.error(TextFormatter.append(
-						"problem parsing result: ", result.getOtype(), "-", result.getOid()),
-					e);
-			}
-		}
+                    fields.put("location", transcript.getLocation());
 
-		return sr.getResults();
-	}
-	
-	public static String dateReplace(String term) throws ParseException {
-		Pattern  p = Pattern.compile("(\\d{1,2}[-]?){2}(\\d{2,4})T\\d{2}-\\d{2}");
-		Matcher m = p.matcher(term);
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy'T'KK-mm");
-		
-		while(m.find()) {
-			String d = term.substring(m.start(),m.end());
-			
-			Date date = null;
-			try {
-				date = sdf.parse(d);
-				term = term.substring(0, m.start()) + date.getTime() + term.substring(m.end());
-			} catch (java.text.ParseException e) {
-				logger.warn(e);
-			}
-			
-			m.reset(term);
-			
-		}
-		
-		return term;
-	}
-	
-	public static String unwrapJson(String jsonData) {
-		jsonData = jsonData.substring(jsonData.indexOf(":")+1);
-		jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
-		return jsonData;
-	}
-	
-	public static ApiType getApiType(String type) {
-		for(ApiType apiType:ApiType.values()) {
-			if(apiType.type().equalsIgnoreCase(type)) {
-				return apiType;
-			}
-		}
-		return null;
-	}
-	
-	public static String buildBillWildCardQuery(String billType, String billWildcard, String sessionYear) {
-		return TextFormatter.append(billType,":((",
-			billWildcard, "-", sessionYear, 
-            " OR [", billWildcard, "A-", sessionYear, 
-               " TO ", billWildcard, "Z-", sessionYear, 
-            "]) AND ", billWildcard, "*-", sessionYear, ")");
-	}
-	
-	public static String formatDate(String term, String command) {
-		Date date = null;
-		
-		if(term.matches("(\\d{1,2}[-/]?){2}(\\d{2,4})?")) {
-			term = term.replace("/","-");
-			
-			java.util.Calendar c = java.util.Calendar.getInstance();
-			if(term.matches("\\d{1,2}-\\d{1,2}"))
-				term = term + "-" + c.get(java.util.Calendar.YEAR);
-			if(term.matches("\\d{1,2}-\\d{1,2}-\\d{2}")) {
-				
-				String yr = term.split("-")[2];
-				
-				term = term.replaceFirst("-\\d{2}$","");
-				
-				term = term + "-" + Integer.toString(c.get(java.util.Calendar.YEAR)).substring(0,2) + yr;
-			}
-		}
-		
-		try {
-			date = new SimpleDateFormat("MM-dd-yyyy").parse(term);
-		}
-		catch (java.text.ParseException e) {
-			logger.error(e);
-		}
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy'T'HH-mm");
-		
-		QueryBuilder queryBuilder  = QueryBuilder.build();
-		
-		java.util.Calendar cal = java.util.Calendar.getInstance();
-		cal.setTime(date);
-		cal.set(java.util.Calendar.HOUR, 23);
-		cal.set(java.util.Calendar.MINUTE, 59);
-		cal.set(java.util.Calendar.SECOND, 59);
-		
-		try {
-			queryBuilder.otype(command).and().range("when", sdf.format(date), sdf.format(cal.getTime()));
-		} catch (QueryBuilderException e) {
-			logger.error(e);
-		}
-		
-		return queryBuilder.query();
-	}
+                } else if (type.equals("meeting")) {
+                    Meeting meeting = (Meeting) resultObj;
+                    title = TextFormatter.append(meeting.getCommitteeName(), " (",
+                            DATE_FORMAT_CUSTOM.format(meeting.getMeetingDateTime()), ")");
+
+                    fields.put("location", meeting.getLocation());
+                    fields.put("chair", meeting.getCommitteeChair());
+                    fields.put("committee", meeting.getCommitteeName());
+
+                    summary = meeting.getNotes();
+                } else if (type.equals("action")) {
+                    Action billEvent = (Action) resultObj;
+                    String billId = billEvent.getBill().getSenateBillNo();
+
+                    title = billEvent.getText();
+
+                    fields.put("date", DATE_FORMAT_MED.format(billEvent
+                            .getDate()));
+                    fields.put("billno", billId);
+                } else if (type.equals("vote")) {
+                    Vote vote = (Vote) resultObj;
+
+                    if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
+                        fields.put("type", "Committee Vote");
+                    else if (vote.getVoteType() == Vote.VOTE_TYPE_FLOOR)
+                        fields.put("type", "Floor Vote");
+
+                    if (vote.getBill() != null) {
+                        Bill bill = vote.getBill();
+
+                        if (bill.getSponsor() != null)
+                            fields.put("sponsor", bill.getSponsor()
+                                    .getFullname());
+
+                        if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
+                            fields.put("committee", bill.getCurrentCommittee());
+
+                        fields.put("billno", bill.getSenateBillNo());
+                        fields.put("year", bill.getYear() + "");
+                    }
+
+                    title +=  DATE_FORMAT_CUSTOM.format(vote.getVoteDate());
+
+                    summary = vote.getDescription();
+                }
+
+                result.setTitle(title);
+                result.setSummary(summary);
+                result.setFields(fields);
+            } catch (Exception e) {
+                logger.error(TextFormatter.append(
+                        "problem parsing result: ", result.getOtype(), "-", result.getOid()),
+                        e);
+            }
+        }
+
+        return sr.getResults();
+    }
+
+    public static String dateReplace(String term) throws ParseException {
+        Pattern  p = Pattern.compile("(\\d{1,2}[-]?){2}(\\d{2,4})T\\d{2}-\\d{2}");
+        Matcher m = p.matcher(term);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy'T'KK-mm");
+
+        while(m.find()) {
+            String d = term.substring(m.start(),m.end());
+
+            Date date = null;
+            try {
+                date = sdf.parse(d);
+                term = term.substring(0, m.start()) + date.getTime() + term.substring(m.end());
+            } catch (java.text.ParseException e) {
+                logger.warn(e);
+            }
+
+            m.reset(term);
+
+        }
+
+        return term;
+    }
+
+    public static String unwrapJson(String jsonData) {
+        jsonData = jsonData.substring(jsonData.indexOf(":")+1);
+        jsonData = jsonData.substring(0,jsonData.lastIndexOf("}"));
+        return jsonData;
+    }
+
+    public static ApiType getApiType(String type) {
+        for(ApiType apiType:ApiType.values()) {
+            if(apiType.type().equalsIgnoreCase(type)) {
+                return apiType;
+            }
+        }
+        return null;
+    }
+
+    public static String buildBillWildCardQuery(String billType, String billWildcard, String sessionYear) {
+        return TextFormatter.append(billType,":((",
+                billWildcard, "-", sessionYear,
+                " OR [", billWildcard, "A-", sessionYear,
+                " TO ", billWildcard, "Z-", sessionYear,
+                "]) AND ", billWildcard, "*-", sessionYear, ")");
+    }
+
+    public static String formatDate(String term, String command) {
+        Date date = null;
+
+        if(term.matches("(\\d{1,2}[-/]?){2}(\\d{2,4})?")) {
+            term = term.replace("/","-");
+
+            java.util.Calendar c = java.util.Calendar.getInstance();
+            if(term.matches("\\d{1,2}-\\d{1,2}"))
+                term = term + "-" + c.get(java.util.Calendar.YEAR);
+            if(term.matches("\\d{1,2}-\\d{1,2}-\\d{2}")) {
+
+                String yr = term.split("-")[2];
+
+                term = term.replaceFirst("-\\d{2}$","");
+
+                term = term + "-" + Integer.toString(c.get(java.util.Calendar.YEAR)).substring(0,2) + yr;
+            }
+        }
+
+        try {
+            date = new SimpleDateFormat("MM-dd-yyyy").parse(term);
+        }
+        catch (java.text.ParseException e) {
+            logger.error(e);
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy'T'HH-mm");
+
+        QueryBuilder queryBuilder  = QueryBuilder.build();
+
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(java.util.Calendar.HOUR, 23);
+        cal.set(java.util.Calendar.MINUTE, 59);
+        cal.set(java.util.Calendar.SECOND, 59);
+
+        try {
+            queryBuilder.otype(command).and().range("when", sdf.format(date), sdf.format(cal.getTime()));
+        } catch (QueryBuilderException e) {
+            logger.error(e);
+        }
+
+        return queryBuilder.query();
+    }
 }

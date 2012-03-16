@@ -4,17 +4,20 @@ import gov.nysenate.openleg.ingest.parser.BillParser;
 import gov.nysenate.openleg.model.bill.Bill;
 
 public class LawSectionLineParser implements LineParser {
-	private String lawSection = null;
-	
-	public void parseLineData(String line, String lineData, BillParser billParser) {
-		lawSection = lineData.trim();
-	}
+    private String lawSection = null;
 
-	public void saveData(Bill bill) {
-		bill.setLawSection(lawSection.trim());
-	}
+    @Override
+    public void parseLineData(String line, String lineData, BillParser billParser) {
+        lawSection = lineData.trim();
+    }
 
-	public void clear() {
-		lawSection = null;
-	}
+    @Override
+    public void saveData(Bill bill) {
+        bill.setLawSection(lawSection.trim());
+    }
+
+    @Override
+    public void clear() {
+        lawSection = null;
+    }
 }

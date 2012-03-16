@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 public class RulesServlet extends HttpServlet {
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		getServletContext().getRequestDispatcher("/views/rules-html.jsp").forward(request, response);
-	}
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        getServletContext().getRequestDispatcher("/views/rules-html.jsp").forward(request, response);
+    }
 }

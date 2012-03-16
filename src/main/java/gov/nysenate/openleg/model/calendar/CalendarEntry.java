@@ -13,106 +13,106 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 @XStreamAlias("calendarEntry")
 public class CalendarEntry {
 
-	@XStreamAsAttribute
-	private String id;
+    @XStreamAsAttribute
+    private String id;
 
-	@XStreamAsAttribute
-	private String no;
-	
-	private Bill bill;
-	
-//	@HideFrom({Calendar.class, Supplemental.class})
-	private String billHigh;
-	
-//	@HideFrom({Calendar.class, Supplemental.class})
-	private Bill subBill;
-	
-//	@HideFrom({Calendar.class, Supplemental.class})
-	private Date motionDate;
+    @XStreamAsAttribute
+    private String no;
 
-//	@HideFrom({Calendar.class, Supplemental.class})
-	private Section section;
-	
-//@HideFrom({Calendar.class, Supplemental.class})
-	private Sequence sequence;
-	
-	public String getBillHigh() {
-		return billHigh;
-	}
+    private Bill bill;
 
-	public void setBillHigh(String billHigh) {
-		this.billHigh = billHigh;
-	}
+    //	@HideFrom({Calendar.class, Supplemental.class})
+    private String billHigh;
 
-	public String getId() {
-		return id;
-	}
+    //	@HideFrom({Calendar.class, Supplemental.class})
+    private Bill subBill;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    //	@HideFrom({Calendar.class, Supplemental.class})
+    private Date motionDate;
 
-	@JsonIgnore
-	public Sequence getSequence() {
-		return sequence;
-	}
+    //	@HideFrom({Calendar.class, Supplemental.class})
+    private Section section;
 
-	public void setSequence(Sequence sequence) {
-		this.sequence = sequence;
-	}
+    //@HideFrom({Calendar.class, Supplemental.class})
+    private Sequence sequence;
 
-	@JsonIgnore
-	public Section getSection() {
-		return section;
-	}
+    public String getBillHigh() {
+        return billHigh;
+    }
 
-	public void setSection(Section section) {
-		this.section = section;
-	}
+    public void setBillHigh(String billHigh) {
+        this.billHigh = billHigh;
+    }
 
-	public Date getMotionDate() {
-		return motionDate;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setMotionDate(Date motionDate) {
-		this.motionDate = motionDate;
-	}
-	
-	public Bill getBill() {
-		return bill;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setBill(Bill bill) {
-		this.bill = bill;
-	}
+    @JsonIgnore
+    public Sequence getSequence() {
+        return sequence;
+    }
 
-	public Bill getSubBill() {
-		return subBill;
-	}
+    public void setSequence(Sequence sequence) {
+        this.sequence = sequence;
+    }
 
-	public void setSubBill(Bill subBill) {
-		this.subBill = subBill;
-	}
+    @JsonIgnore
+    public Section getSection() {
+        return section;
+    }
 
-	public String getNo() {
-		return no;
-	}
+    public void setSection(Section section) {
+        this.section = section;
+    }
 
-	public void setNo(String no) {
-		this.no = no;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		
-		if (obj != null && obj instanceof CalendarEntry)
-		{
-			if ( ((CalendarEntry)obj).getId().equals(this.getId()))
-				return true;
-		}
-		
-		return false;
-	}
+    public Date getMotionDate() {
+        return motionDate;
+    }
+
+    public void setMotionDate(Date motionDate) {
+        this.motionDate = motionDate;
+    }
+
+    public Bill getBill() {
+        return bill;
+    }
+
+    public void setBill(Bill bill) {
+        this.bill = bill;
+    }
+
+    public Bill getSubBill() {
+        return subBill;
+    }
+
+    public void setSubBill(Bill subBill) {
+        this.subBill = subBill;
+    }
+
+    public String getNo() {
+        return no;
+    }
+
+    public void setNo(String no) {
+        this.no = no;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj != null && obj instanceof CalendarEntry)
+        {
+            if ( ((CalendarEntry)obj).getId().equals(this.getId()))
+                return true;
+        }
+
+        return false;
+    }
 
 
 }

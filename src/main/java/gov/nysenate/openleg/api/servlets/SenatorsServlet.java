@@ -19,142 +19,145 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 public class SenatorsServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final String DISTRICT_JSON_FOLDER_PATH = "WEB-INF/classes/data/districts/";
+    private static final String DISTRICT_JSON_FOLDER_PATH = "WEB-INF/classes/data/districts/";
 
-	private static final String VIEW_PATH = "/senators/index.jsp";
+    private static final String VIEW_PATH = "/senators/index.jsp";
 
-	private static Logger logger = Logger.getLogger(SenatorsServlet.class);
+    private static Logger logger = Logger.getLogger(SenatorsServlet.class);
 
-	private static ArrayList<JSONObject> districts = null;
+    private static ArrayList<JSONObject> districts = null;
 
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
 
-		String format = request.getParameter("format");
-		String uri = request.getRequestURI();
+        String format = request.getParameter("format");
+        String uri = request.getRequestURI();
 
-		if (uri.indexOf(".") != -1)
-			format = uri.substring(uri.indexOf(".") + 1);
+        if (uri.indexOf(".") != -1)
+            format = uri.substring(uri.indexOf(".") + 1);
 
-		if (format != null) {
-			if (format.equals("json")) {
-				displayJSON(request, response);
-			}
-		} else {
-			request.setAttribute("districts", districts);
-			getServletContext().getRequestDispatcher(VIEW_PATH).forward(
-					request, response);
-		}
-	}
+        if (format != null) {
+            if (format.equals("json")) {
+                displayJSON(request, response);
+            }
+        } else {
+            request.setAttribute("districts", districts);
+            getServletContext().getRequestDispatcher(VIEW_PATH).forward(
+                    request, response);
+        }
+    }
 
-	private void displayJSON(HttpServletRequest request,
-			HttpServletResponse response) {
-		response.setContentType("text/plain");
-		response.setCharacterEncoding("ISO-8859-1");
-		try {
-			PrintWriter out = new PrintWriter(new OutputStreamWriter(
-					response.getOutputStream(), "ISO-8859-1"));
+    private void displayJSON(HttpServletRequest request,
+            HttpServletResponse response) {
+        response.setContentType("text/plain");
+        response.setCharacterEncoding("ISO-8859-1");
+        try {
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(
+                    response.getOutputStream(), "ISO-8859-1"));
 
-			out.println("[");
+            out.println("[");
 
-			Iterator<JSONObject> it = districts.iterator();
-			JSONObject district = null;
+            Iterator<JSONObject> it = districts.iterator();
+            JSONObject district = null;
 
-			while (it.hasNext()) {
-				district = it.next();
-				out.println(district.toString());
+            while (it.hasNext()) {
+                district = it.next();
+                out.println(district.toString());
 
-				if (it.hasNext())
-					out.println(",");
-			}
+                if (it.hasNext())
+                    out.println(",");
+            }
 
-			out.println("]");
-			out.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+            out.println("]");
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
-	}
+    @Override
+    protected void doPost(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
 
-	@Override
-	public void init() throws ServletException {
-		super.init();
+    @Override
+    public void init() throws ServletException {
+        super.init();
 
-		String encoding = "ISO-8859-1";
+        String encoding = "ISO-8859-1";
 
-		try {
-			districts = new ArrayList<JSONObject>();
+        try {
+            districts = new ArrayList<JSONObject>();
 
-			for (int i = 1; i <= 62; i++) {
-				String jsonPath = DISTRICT_JSON_FOLDER_PATH + "sd" + i
-						+ ".json";
+            for (int i = 1; i <= 62; i++) {
+                String jsonPath = DISTRICT_JSON_FOLDER_PATH + "sd" + i
+                        + ".json";
 
-				URL jsonUrl = getServletContext().getResource(jsonPath);
+                URL jsonUrl = getServletContext().getResource(jsonPath);
 
-				StringBuilder jsonb = new StringBuilder();
+                StringBuilder jsonb = new StringBuilder();
 
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(jsonUrl.openStream(), encoding));
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(jsonUrl.openStream(), encoding));
 
-				char[] buf = new char[1024];
-				int numRead = 0;
-				while ((numRead = reader.read(buf)) != -1) {
-					jsonb.append(buf, 0, numRead);
-					buf = new char[1024];
-				}
-				reader.close();
+                char[] buf = new char[1024];
+                int numRead = 0;
+                while ((numRead = reader.read(buf)) != -1) {
+                    jsonb.append(buf, 0, numRead);
+                    buf = new char[1024];
+                }
+                reader.close();
 
-				JSONObject jsono = new JSONObject(jsonb.toString());
+                JSONObject jsono = new JSONObject(jsonb.toString());
 
-				JSONObject jSenator = jsono.getJSONObject("senator");
+                JSONObject jSenator = jsono.getJSONObject("senator");
 
-				String senatorName = jSenator.getString("name");
-				
-				jSenator.put("name", senatorName);
+                String senatorName = jSenator.getString("name");
 
-				String senatorKey = senatorName.replaceAll(
-						"(?i)( (jr|sr)\\.?)", "");
-				String[] tuple = senatorKey.split(" ");
-				senatorKey = tuple[tuple.length - 1].toLowerCase();
+                jSenator.put("name", senatorName);
 
-				jSenator.put("key", senatorKey);
+                String senatorKey = senatorName.replaceAll(
+                        "(?i)( (jr|sr)\\.?)", "");
+                String[] tuple = senatorKey.split(" ");
+                senatorKey = tuple[tuple.length - 1].toLowerCase();
 
-				districts.add(jsono);
+                jSenator.put("key", senatorKey);
 
-				logger.info(jsono.get("district"));
-				logger.info(jsono.getJSONObject("senator").get("name"));
+                districts.add(jsono);
 
-			}
+                logger.info(jsono.get("district"));
+                logger.info(jsono.getJSONObject("senator").get("name"));
 
-			Collections.sort(districts, new byLastName());
-		} catch (Exception e) {
-			logger.error("error loading json district files", e);
-		}
-	}
+            }
 
-	class byLastName implements java.util.Comparator<Object> {
-		public int compare(Object districtA, Object districtB) {
-			int sdif = 0;
+            Collections.sort(districts, new byLastName());
+        } catch (Exception e) {
+            logger.error("error loading json district files", e);
+        }
+    }
 
-			try {
-				JSONObject senatorA = ((JSONObject) districtA)
-						.getJSONObject("senator");
-				JSONObject senatorB = ((JSONObject) districtB)
-						.getJSONObject("senator");
+    class byLastName implements java.util.Comparator<Object> {
+        @Override
+        public int compare(Object districtA, Object districtB) {
+            int sdif = 0;
 
-				sdif = senatorA.getString("key").compareTo(
-						senatorB.getString("key"));
-			} catch (Exception e) {
-				logger.error("error sorting districts", e);
-			}
+            try {
+                JSONObject senatorA = ((JSONObject) districtA)
+                        .getJSONObject("senator");
+                JSONObject senatorB = ((JSONObject) districtB)
+                        .getJSONObject("senator");
 
-			return sdif;
-		}
-	}
+                sdif = senatorA.getString("key").compareTo(
+                        senatorB.getString("key"));
+            } catch (Exception e) {
+                logger.error("error sorting districts", e);
+            }
+
+            return sdif;
+        }
+    }
 }

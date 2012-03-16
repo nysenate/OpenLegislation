@@ -20,393 +20,393 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("vote")
 public class Vote extends SenateObject {
-	
-	private int voteType;
-	
-	private String id;
-	
-	private Date voteDate;	
-	
-	@XStreamCollectionAlias(node="ayes",value="member")
-	private List<String> ayes;
-	
-	@XStreamCollectionAlias(node="nays",value="member")
-	private List<String> nays;
-	
-	@XStreamCollectionAlias(node="abstains",value="member")
-	private List<String> abstains;	
-	
-	@XStreamCollectionAlias(node="excused",value="member")
-	private List<String> excused;
-	
-	@JsonIgnore
-	private Bill bill;
-	
-	@XStreamCollectionAlias(node="ayeswr",value="member")
-	private List<String> ayeswr;
-	
-	private String description;	
-	
-	public final static int VOTE_TYPE_FLOOR = 1;
-	
-	public final static int VOTE_TYPE_COMMITTEE = 2;
-	
-	public Vote() {
-		super();
-	}
-	
-	public Vote (Bill bill, Date voteDate, int ayeCount, int nayCount)
-	{
-		super();
-		this.id = buildId(bill, voteDate, ayeCount, nayCount);
-		this.bill = bill;
-		this.voteDate = voteDate;
-		
-	}
-	
-	public int getVoteType() {
-		return voteType;
-	}
 
+    private int voteType;
 
+    private String id;
 
-	public String getId() {
-		return id;
-	}
+    private Date voteDate;
 
+    @XStreamCollectionAlias(node="ayes",value="member")
+    private List<String> ayes;
 
+    @XStreamCollectionAlias(node="nays",value="member")
+    private List<String> nays;
 
-	public Date getVoteDate() {
-		return voteDate;
-	}
+    @XStreamCollectionAlias(node="abstains",value="member")
+    private List<String> abstains;
 
+    @XStreamCollectionAlias(node="excused",value="member")
+    private List<String> excused;
 
+    @JsonIgnore
+    private Bill bill;
 
-	public List<String> getAyes() {
-		return ayes;
-	}
+    @XStreamCollectionAlias(node="ayeswr",value="member")
+    private List<String> ayeswr;
 
+    private String description;
 
+    public final static int VOTE_TYPE_FLOOR = 1;
 
-	public List<String> getNays() {
-		return nays;
-	}
+    public final static int VOTE_TYPE_COMMITTEE = 2;
 
+    public Vote() {
+        super();
+    }
 
+    public Vote (Bill bill, Date voteDate, int ayeCount, int nayCount)
+    {
+        super();
+        this.id = buildId(bill, voteDate, ayeCount, nayCount);
+        this.bill = bill;
+        this.voteDate = voteDate;
 
-	public List<String> getAbstains() {
-		return abstains;
-	}
+    }
 
+    public int getVoteType() {
+        return voteType;
+    }
 
 
-	public List<String> getExcused() {
-		return excused;
-	}
 
+    public String getId() {
+        return id;
+    }
 
-	@JsonIgnore
-	public Bill getBill() {
-		return bill;
-	}
 
 
+    public Date getVoteDate() {
+        return voteDate;
+    }
 
-	public List<String> getAyeswr() {
-		return ayeswr;
-	}
 
 
+    public List<String> getAyes() {
+        return ayes;
+    }
 
-	public String getDescription() {
-		return description;
-	}
 
 
+    public List<String> getNays() {
+        return nays;
+    }
 
-	public static int getVoteTypeFloor() {
-		return VOTE_TYPE_FLOOR;
-	}
 
 
+    public List<String> getAbstains() {
+        return abstains;
+    }
 
-	public static int getVoteTypeCommittee() {
-		return VOTE_TYPE_COMMITTEE;
-	}
 
 
+    public List<String> getExcused() {
+        return excused;
+    }
 
-	public void setVoteType(int voteType) {
-		this.voteType = voteType;
-	}
 
+    @JsonIgnore
+    public Bill getBill() {
+        return bill;
+    }
 
 
-	public void setId(String id) {
-		this.id = id;
-	}
 
+    public List<String> getAyeswr() {
+        return ayeswr;
+    }
 
 
-	public void setVoteDate(Date voteDate) {
-		this.voteDate = voteDate;
-	}
 
+    public String getDescription() {
+        return description;
+    }
 
 
-	public void setAyes(List<String> ayes) {
-		this.ayes = ayes;
-	}
 
+    public static int getVoteTypeFloor() {
+        return VOTE_TYPE_FLOOR;
+    }
 
 
-	public void setNays(List<String> nays) {
-		this.nays = nays;
-	}
 
+    public static int getVoteTypeCommittee() {
+        return VOTE_TYPE_COMMITTEE;
+    }
 
 
-	public void setAbstains(List<String> abstains) {
-		this.abstains = abstains;
-	}
 
+    public void setVoteType(int voteType) {
+        this.voteType = voteType;
+    }
 
 
-	public void setExcused(List<String> excused) {
-		this.excused = excused;
-	}
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
 
-	public void setBill(Bill bill) {
-		this.bill = bill;
-	}
-
-
-
-	public void setAyeswr(List<String> ayeswr) {
-		this.ayeswr = ayeswr;
-	}
-
-
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-
-
-	public static String buildId (Bill bill, Date voteDate, int ayeCount, int nayCount)
-	{
-		return voteDate.getTime() + bill.getSenateBillNo() + '-' + ayeCount + '-' + nayCount;
-		
-	}
-	
-	public void addAye(Person person)
-	{
-		if (ayes == null)
-		{
-			ayes = new ArrayList<String>();
-		}
-		
-		ayes.add(person.getFullname());
-	}
-	
-	
-	public void addAyeWR(Person person)
-	{
-		if (ayeswr == null)
-		{
-			ayeswr = new ArrayList<String>();
-		}
-		
-		ayeswr.add(person.getFullname());
-	}
-	
-	public void addNay(Person person)
-	{
-		if (nays == null)
-		{
-			nays = new ArrayList<String>();
-		}
-		
-		nays.add(person.getFullname());
-	}
-	
-	public void addAbstain(Person person)
-	{
-		if (abstains == null)
-		{
-			abstains = new ArrayList<String>();
-		}
-		
-		abstains.add(person.getFullname());
-	}
-	
-	public void addExcused(Person person)
-	{
-		if (excused == null)
-		{
-			excused = new ArrayList<String>();
-		}
-		
-		excused.add(person.getFullname());
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if(obj != null && obj instanceof Vote) {
-			Vote vote = (Vote)obj;
-			return this.id.equals(vote.getId());
-		}
-		return false;
-	}
-	
-	@JsonIgnore
-	@Override
-	public HashMap<String, Fieldable> luceneFields() {
-		HashMap<String,Fieldable> map = new HashMap<String,Fieldable>();
-
-		if (bill != null) {
-			map.put("billno", new Field("billno",bill.getSenateBillNo(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-			map.put("sponsor", new Field("sponsor", bill.getSponsor().getFullname(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		}
-		
-		switch(voteType) {
-			case Vote.VOTE_TYPE_COMMITTEE:
-				if(description !=null)
-					map.put("committee", new Field("committee",description, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-				else if (bill != null)
-					map.put("committee", new Field("committee",bill.getCurrentCommittee(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		}
-		
-		Iterator<String> itVote = null;
-		StringBuilder sbVotes = null;
-		
-		if (abstains != null) {
-    		sbVotes = new StringBuilder();
-    		itVote = abstains.iterator();
-    		while (itVote.hasNext()) {
-    			sbVotes.append(itVote.next()).append(" ");
-    		}
-    		
-    		map.put("abstain", new Field("abstain",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		}
-		
-		if (ayes != null) {
-    		sbVotes = new StringBuilder();
-    		itVote = ayes.iterator();
-    		while (itVote.hasNext()) {
-    			sbVotes.append(itVote.next()).append(" ");
-    		}
-    		
-    		map.put("aye", new Field("aye",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		}
-		
-		if (excused != null) {
-    		
-    		sbVotes = new StringBuilder();
-    		itVote = excused.iterator();
-    		while (itVote.hasNext()) {
-    			sbVotes.append(itVote.next()).append(" ");
-    		}
-    		
-    		map.put("excused", new Field("excused",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		}
-		
-		if (nays != null) {
-    		
-    		sbVotes = new StringBuilder();
-    		itVote = nays.iterator();
-    		while (itVote.hasNext()) {
-    			sbVotes.append(itVote.next()).append(" ");
-    		}
-    		
-    		map.put("nay", new Field("nay",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-		} 
-		
-		map.put("when", new Field("when",voteDate.getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-
-		return map;
-	}
-
-	@JsonIgnore
-	@Override
-	public String luceneOid() {
-		return id;
-	}
-
-	@JsonIgnore
-	@Override
-	public String luceneOsearch() {
-		
-		if (bill == null)
-			return "";
-		
-		StringBuilder oSearch = new StringBuilder("");
-		oSearch.append(bill.getSenateBillNo() + " ");
-		switch(voteType) {
-			case Vote.VOTE_TYPE_COMMITTEE:
-				oSearch.append(" Committee Vote ");
-				oSearch.append(bill.getCurrentCommittee());
-			case Vote.VOTE_TYPE_FLOOR:
-				oSearch.append(" Floor Vote ");
-		}
-		return oSearch.toString();
-	}
-
-	@JsonIgnore
-	@Override
-	public String luceneOtype() {
-		return "vote";
-	}
-
-	@JsonIgnore
-	@Override
-	public String luceneSummary() {	
-		return java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(voteDate);
-	}
-
-	@JsonIgnore
-	@Override
-	public String luceneTitle() {
-		
-		String title = "";
-		
-		if (bill != null)
-			title += bill.getSenateBillNo();
-		
-		title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(voteDate);
-		
-		switch(voteType) {
-			case Vote.VOTE_TYPE_COMMITTEE:
-				return title + " - Committee Vote";
-			case Vote.VOTE_TYPE_FLOOR:
-				return title + " - Floor Vote";
-		}
-		return title;
-	}
-
-	@SuppressWarnings("deprecation")
-	@JsonIgnore
-	@Override
-	public int getYear() {
-		if(bill != null) {
-			return bill.getYear();
-		}
-		if(voteDate != null) {
-			return voteDate.getYear();
-		}
-		return 9999;
-	}
-
-	@Override
-	public void merge(ISenateObject obj) {
-		return;
-	}
-	
-	@Override
-	public String toString() {
-		return this.getId();
-	}
+
+    public void setVoteDate(Date voteDate) {
+        this.voteDate = voteDate;
+    }
+
+
+
+    public void setAyes(List<String> ayes) {
+        this.ayes = ayes;
+    }
+
+
+
+    public void setNays(List<String> nays) {
+        this.nays = nays;
+    }
+
+
+
+    public void setAbstains(List<String> abstains) {
+        this.abstains = abstains;
+    }
+
+
+
+    public void setExcused(List<String> excused) {
+        this.excused = excused;
+    }
+
+
+
+    public void setBill(Bill bill) {
+        this.bill = bill;
+    }
+
+
+
+    public void setAyeswr(List<String> ayeswr) {
+        this.ayeswr = ayeswr;
+    }
+
+
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+
+    public static String buildId (Bill bill, Date voteDate, int ayeCount, int nayCount)
+    {
+        return voteDate.getTime() + bill.getSenateBillNo() + '-' + ayeCount + '-' + nayCount;
+
+    }
+
+    public void addAye(Person person)
+    {
+        if (ayes == null)
+        {
+            ayes = new ArrayList<String>();
+        }
+
+        ayes.add(person.getFullname());
+    }
+
+
+    public void addAyeWR(Person person)
+    {
+        if (ayeswr == null)
+        {
+            ayeswr = new ArrayList<String>();
+        }
+
+        ayeswr.add(person.getFullname());
+    }
+
+    public void addNay(Person person)
+    {
+        if (nays == null)
+        {
+            nays = new ArrayList<String>();
+        }
+
+        nays.add(person.getFullname());
+    }
+
+    public void addAbstain(Person person)
+    {
+        if (abstains == null)
+        {
+            abstains = new ArrayList<String>();
+        }
+
+        abstains.add(person.getFullname());
+    }
+
+    public void addExcused(Person person)
+    {
+        if (excused == null)
+        {
+            excused = new ArrayList<String>();
+        }
+
+        excused.add(person.getFullname());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj != null && obj instanceof Vote) {
+            Vote vote = (Vote)obj;
+            return this.id.equals(vote.getId());
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    @Override
+    public HashMap<String, Fieldable> luceneFields() {
+        HashMap<String,Fieldable> map = new HashMap<String,Fieldable>();
+
+        if (bill != null) {
+            map.put("billno", new Field("billno",bill.getSenateBillNo(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+            map.put("sponsor", new Field("sponsor", bill.getSponsor().getFullname(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        }
+
+        switch(voteType) {
+        case Vote.VOTE_TYPE_COMMITTEE:
+            if(description !=null)
+                map.put("committee", new Field("committee",description, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+            else if (bill != null)
+                map.put("committee", new Field("committee",bill.getCurrentCommittee(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        }
+
+        Iterator<String> itVote = null;
+        StringBuilder sbVotes = null;
+
+        if (abstains != null) {
+            sbVotes = new StringBuilder();
+            itVote = abstains.iterator();
+            while (itVote.hasNext()) {
+                sbVotes.append(itVote.next()).append(" ");
+            }
+
+            map.put("abstain", new Field("abstain",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        }
+
+        if (ayes != null) {
+            sbVotes = new StringBuilder();
+            itVote = ayes.iterator();
+            while (itVote.hasNext()) {
+                sbVotes.append(itVote.next()).append(" ");
+            }
+
+            map.put("aye", new Field("aye",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        }
+
+        if (excused != null) {
+
+            sbVotes = new StringBuilder();
+            itVote = excused.iterator();
+            while (itVote.hasNext()) {
+                sbVotes.append(itVote.next()).append(" ");
+            }
+
+            map.put("excused", new Field("excused",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        }
+
+        if (nays != null) {
+
+            sbVotes = new StringBuilder();
+            itVote = nays.iterator();
+            while (itVote.hasNext()) {
+                sbVotes.append(itVote.next()).append(" ");
+            }
+
+            map.put("nay", new Field("nay",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        }
+
+        map.put("when", new Field("when",voteDate.getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+
+        return map;
+    }
+
+    @JsonIgnore
+    @Override
+    public String luceneOid() {
+        return id;
+    }
+
+    @JsonIgnore
+    @Override
+    public String luceneOsearch() {
+
+        if (bill == null)
+            return "";
+
+        StringBuilder oSearch = new StringBuilder("");
+        oSearch.append(bill.getSenateBillNo() + " ");
+        switch(voteType) {
+        case Vote.VOTE_TYPE_COMMITTEE:
+            oSearch.append(" Committee Vote ");
+            oSearch.append(bill.getCurrentCommittee());
+        case Vote.VOTE_TYPE_FLOOR:
+            oSearch.append(" Floor Vote ");
+        }
+        return oSearch.toString();
+    }
+
+    @JsonIgnore
+    @Override
+    public String luceneOtype() {
+        return "vote";
+    }
+
+    @JsonIgnore
+    @Override
+    public String luceneSummary() {
+        return java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(voteDate);
+    }
+
+    @JsonIgnore
+    @Override
+    public String luceneTitle() {
+
+        String title = "";
+
+        if (bill != null)
+            title += bill.getSenateBillNo();
+
+        title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(voteDate);
+
+        switch(voteType) {
+        case Vote.VOTE_TYPE_COMMITTEE:
+            return title + " - Committee Vote";
+        case Vote.VOTE_TYPE_FLOOR:
+            return title + " - Floor Vote";
+        }
+        return title;
+    }
+
+    @SuppressWarnings("deprecation")
+    @JsonIgnore
+    @Override
+    public int getYear() {
+        if(bill != null) {
+            return bill.getYear();
+        }
+        if(voteDate != null) {
+            return voteDate.getYear();
+        }
+        return 9999;
+    }
+
+    @Override
+    public void merge(ISenateObject obj) {
+        return;
+    }
+
+    @Override
+    public String toString() {
+        return this.getId();
+    }
 }

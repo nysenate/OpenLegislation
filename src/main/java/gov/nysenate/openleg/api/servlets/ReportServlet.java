@@ -18,44 +18,46 @@ import org.codehaus.jackson.util.DefaultPrettyPrinter;
 /**
  * Servlet implementation class ReportServlet
  */
-public class ReportServlet extends HttpServlet {	
-	private static final long serialVersionUID = 1L;
-	
-	private static final String VIEW_PATH = "/report/index.jsp";
-	
-	private static ReportReader rr = null;
-       
+public class ReportServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    private static final String VIEW_PATH = "/report/index.jsp";
+
+    private static ReportReader rr = null;
+
     public ReportServlet() {
         super();
         rr = new ReportReader();
     }
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String format = request.getParameter("format");
-		String uri = request.getRequestURI();
-		
-		List<ProblemBill> list = rr.getProblemBills();
-		
-		if (uri.indexOf(".")!=-1)
-			format = uri.substring(uri.indexOf(".")+1);
-		
-		if (format != null) {
-			if (format.equals("json")) {
-				JsonGenerator gen = ApiHelper.getMapper().getJsonFactory().createJsonGenerator(response.getWriter());
-				gen.setPrettyPrinter(new DefaultPrettyPrinter());
-				ApiHelper.getMapper().writeValue(gen, list);
-			}
-		}
-		else {
-			getServletContext().getRequestDispatcher(VIEW_PATH).forward(request, response);
-		}
-	}
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String format = request.getParameter("format");
+        String uri = request.getRequestURI();
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
-	}
+        List<ProblemBill> list = rr.getProblemBills();
+
+        if (uri.indexOf(".")!=-1)
+            format = uri.substring(uri.indexOf(".")+1);
+
+        if (format != null) {
+            if (format.equals("json")) {
+                JsonGenerator gen = ApiHelper.getMapper().getJsonFactory().createJsonGenerator(response.getWriter());
+                gen.setPrettyPrinter(new DefaultPrettyPrinter());
+                ApiHelper.getMapper().writeValue(gen, list);
+            }
+        }
+        else {
+            getServletContext().getRequestDispatcher(VIEW_PATH).forward(request, response);
+        }
+    }
+
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
 
 }

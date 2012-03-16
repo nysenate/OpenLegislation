@@ -6,13 +6,13 @@ import gov.nysenate.openleg.xstream.XStreamBuilder;
 
 public class XmlSerializer implements LuceneSerializer {
 
-	@Override
-	public String getData(ILuceneObject o) {
-		return XStreamBuilder.xml(o);
-	}
+    @Override
+    public String getData(ILuceneObject o) {
+        return XStreamBuilder.xml(o);
+    }
 
-	@Override
-	public String getType() {
-		return "oxml";
-	}
+    @Override
+    public String getType() {
+        return "oxml";
+    }
 }

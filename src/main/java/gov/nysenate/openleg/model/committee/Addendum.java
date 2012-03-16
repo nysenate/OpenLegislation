@@ -12,99 +12,100 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("addendum")
 public class Addendum {
 
-	@LuceneField
-	private String id;
-	
-	@LuceneField
-	private String addendumId; 
-	
-	@LuceneField
-	private String weekOf;
+    @LuceneField
+    private String id;
 
-	@LuceneField
-	private Date publicationDateTime;
-	
-	private List<Meeting> meetings;
-	
-	@LuceneField
-	private Agenda agenda;
-	
-	public String getId() {
-		return id;
-	}
+    @LuceneField
+    private String addendumId;
 
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	@JsonIgnore
-	public Agenda getAgenda() {
-		return agenda;
-	}
+    @LuceneField
+    private String weekOf;
 
-	public void setAgenda(Agenda agenda) {
-		this.agenda = agenda;
-	}
+    @LuceneField
+    private Date publicationDateTime;
 
-	public Addendum ()
-	{
-		
-	}
-	
-	public String getAddendumId() {
-		return addendumId;
-	}
+    private List<Meeting> meetings;
 
-	public void setAddendumId(String addendumId) {
-		this.addendumId = addendumId;
-	}
+    @LuceneField
+    private Agenda agenda;
 
-	public String getWeekOf() {
-		return weekOf;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setWeekOf(String weekOf) {
-		this.weekOf = weekOf;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public Date getPublicationDateTime() {
-		return publicationDateTime;
-	}
+    @JsonIgnore
+    public Agenda getAgenda() {
+        return agenda;
+    }
 
-	public void setPublicationDateTime(Date publicationDateTime) {
-		this.publicationDateTime = publicationDateTime;
-	}
+    public void setAgenda(Agenda agenda) {
+        this.agenda = agenda;
+    }
 
-	public List<Meeting> getMeetings() {
-		return meetings;
-	}
+    public Addendum ()
+    {
 
-	public void setMeetings(List<Meeting> meetings) {
-		this.meetings = meetings;
-	}
-	
-	public void addMeeting(Meeting meeting) {
-		this.meetings.add(meeting);
-	}
-	
-	public void removeMeeting(Meeting meeting) {
-		this.meetings.remove(meeting);
-	}
+    }
 
-	public boolean equals(Object obj) {
-		
-		if (obj != null && obj instanceof Addendum)
-		{
-			if ( ((Addendum)obj).getId().equals(this.getId()))
-				return true;
-		}
-		
-		return false;
-	}
+    public String getAddendumId() {
+        return addendumId;
+    }
 
-	@Override
-	public String toString() {
-		return this.getId() + "-" + this.getPublicationDateTime() + "-" + this.getMeetings();
-	}
-	
+    public void setAddendumId(String addendumId) {
+        this.addendumId = addendumId;
+    }
+
+    public String getWeekOf() {
+        return weekOf;
+    }
+
+    public void setWeekOf(String weekOf) {
+        this.weekOf = weekOf;
+    }
+
+    public Date getPublicationDateTime() {
+        return publicationDateTime;
+    }
+
+    public void setPublicationDateTime(Date publicationDateTime) {
+        this.publicationDateTime = publicationDateTime;
+    }
+
+    public List<Meeting> getMeetings() {
+        return meetings;
+    }
+
+    public void setMeetings(List<Meeting> meetings) {
+        this.meetings = meetings;
+    }
+
+    public void addMeeting(Meeting meeting) {
+        this.meetings.add(meeting);
+    }
+
+    public void removeMeeting(Meeting meeting) {
+        this.meetings.remove(meeting);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj != null && obj instanceof Addendum)
+        {
+            if ( ((Addendum)obj).getId().equals(this.getId()))
+                return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return this.getId() + "-" + this.getPublicationDateTime() + "-" + this.getMeetings();
+    }
+
 }

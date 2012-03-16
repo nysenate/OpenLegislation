@@ -11,26 +11,26 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class BillPersonConverter implements Converter {
 
-	@Override
-	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
-		if(value instanceof Person) {
-			Person person = (Person) value;
-			
-			if(person.getFullname() != null) {
-				writer.setValue(((Person)value).getFullname());
-			}
-		}
-	}
+    @Override
+    public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
+        if(value instanceof Person) {
+            Person person = (Person) value;
 
-	@Override
-	public Object unmarshal(HierarchicalStreamReader writer, UnmarshallingContext context) {
-		return null;
-	}
+            if(person.getFullname() != null) {
+                writer.setValue(((Person)value).getFullname());
+            }
+        }
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public boolean canConvert(Class clazz) {
-		return (clazz == Person.class);
-	}
+    @Override
+    public Object unmarshal(HierarchicalStreamReader writer, UnmarshallingContext context) {
+        return null;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public boolean canConvert(Class clazz) {
+        return (clazz == Person.class);
+    }
 
 }

@@ -10,79 +10,79 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 public class Section {
 
-	private String id;
-	
-	private String name;
-	
-	private String type;
-	
-	private String cd;
+    private String id;
 
-	private Supplemental supplemental;
-	
-	private List<CalendarEntry> calendarEntries;
-	
-	public String getId() {
-		return id;
-	}
+    private String name;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    private String type;
 
-	@JsonIgnore
-	public Supplemental getSupplemental() {
-		return supplemental;
-	}
+    private String cd;
 
-	public void setSupplemental(Supplemental supplemental) {
-		this.supplemental = supplemental;
-	}
+    private Supplemental supplemental;
 
-	public String getName() {
-		return name;
-	}
+    private List<CalendarEntry> calendarEntries;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    @JsonIgnore
+    public Supplemental getSupplemental() {
+        return supplemental;
+    }
 
-	public String getCd() {
-		return cd;
-	}
+    public void setSupplemental(Supplemental supplemental) {
+        this.supplemental = supplemental;
+    }
 
-	public void setCd(String cd) {
-		this.cd = cd;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public List<CalendarEntry> getCalendarEntries() {
-		return calendarEntries;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setCalendarEntries(List<CalendarEntry> calendarEntries) {
-		this.calendarEntries = calendarEntries;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		
-		if (obj != null && obj instanceof Section)
-		{
-			if ( ((Section)obj).getId().equals(this.getId()))
-				return true;
-		}
-		
-		return false;
-	}
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getCd() {
+        return cd;
+    }
+
+    public void setCd(String cd) {
+        this.cd = cd;
+    }
+
+    public List<CalendarEntry> getCalendarEntries() {
+        return calendarEntries;
+    }
+
+    public void setCalendarEntries(List<CalendarEntry> calendarEntries) {
+        this.calendarEntries = calendarEntries;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj != null && obj instanceof Section)
+        {
+            if ( ((Section)obj).getId().equals(this.getId()))
+                return true;
+        }
+
+        return false;
+    }
 
 
-	
+
 }

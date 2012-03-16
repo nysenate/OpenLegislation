@@ -5,14 +5,14 @@ import gov.nysenate.openleg.lucene.LuceneSerializer;
 
 public class JsonSerializer implements LuceneSerializer {
 
-	@Override
-	public String getData(ILuceneObject o) {
-		return JsonConverter.getJson(o).toString();
-	}
+    @Override
+    public String getData(ILuceneObject o) {
+        return JsonConverter.getJson(o).toString();
+    }
 
-	@Override
-	public String getType() {
-		return "ojson";
-	}
+    @Override
+    public String getType() {
+        return "ojson";
+    }
 
 }
