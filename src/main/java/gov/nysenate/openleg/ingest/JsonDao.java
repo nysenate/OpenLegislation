@@ -71,7 +71,7 @@ public class JsonDao {
 			typeDir.mkdir();
 		}
 		
-		logger.info("Writing json to path: " + newFile.getAbsolutePath());
+		logger.debug("Writing json to path: " + newFile.getAbsolutePath());
 		try {			
 			BufferedOutputStream osw = new BufferedOutputStream(new FileOutputStream(newFile));
 			JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(osw,JsonEncoding.UTF8);
@@ -81,11 +81,11 @@ public class JsonDao {
 			
 			log(newFile.getAbsolutePath());
 		} catch (JsonGenerationException e) {
-			logger.warn("could not parse json", e);
+			logger.error("could not parse json", e);
 		} catch (JsonMappingException e) {
-			logger.warn("could not parse json", e);
+			logger.error("could not parse json", e);
 		} catch (IOException e) {
-			logger.warn("error reading file", e);
+			logger.error("error reading file", e);
 		}
 	}
 	
