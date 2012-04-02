@@ -29,64 +29,69 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
     protected int year;
 
     @XStreamAlias("senateId")
-    protected String senateBillNo;
+    protected String senateBillNo = "";
 
     @LuceneField
-    protected String title;
+    protected String title = "";
 
     @LuceneField
-    protected String lawSection;
+    protected String lawSection = "";
 
     @LuceneField
-    protected String sameAs;
+    protected String sameAs = "";
 
     @XStreamConverter(BillListConverter.class)
-    protected List<String> previousVersions;
+    protected List<String> previousVersions = new ArrayList<String>();
 
     @LuceneField
     protected Person sponsor;
 
+    public boolean frozen = false;
+    public List<String> ammendments = new ArrayList<String>();
+
     @XStreamAlias("cosponsors")
     @LuceneField
-    protected List<Person> coSponsors;
+    protected List<Person> coSponsors = new ArrayList<Person>();
 
     @XStreamAlias("multisponsors")
     @LuceneField
-    protected List<Person> multiSponsors;
+    protected List<Person> multiSponsors = new ArrayList<Person>();
 
     @LuceneField
-    protected String summary;
+    protected String summary = "";
 
     @XStreamAlias("committee")
     @LuceneField("committee")
-    protected String currentCommittee;
+    protected String currentCommittee = "";
 
-    protected List<String> pastCommittees;
+    protected List<String> pastCommittees = new ArrayList<String>();
 
     @XStreamConverter(BillListConverter.class)
     @LuceneField()
-    protected List<Action> actions;
+    protected List<Action> actions = new ArrayList<Action>();
 
     @XStreamAlias("text")
     @LuceneField("full")
-    protected String fulltext;
+    protected String fulltext = "";
 
     @LuceneField
-    protected String memo;
+    protected String memo = "";
 
     @LuceneField
-    protected String law;
+    protected String law = "";
 
     @LuceneField
-    protected String actClause;
+    protected String actClause = "";
 
     protected int sortIndex = -1;
 
     @XStreamCollectionAlias(node="votes",value="vote")
-    protected List<Vote> votes;
+    protected List<Vote> votes = new ArrayList<Vote>();
 
     @LuceneField
-    protected Boolean stricken;
+    protected Boolean stricken = false;
+
+    public Boolean deleted = false;
 
     public Bill () {
         super();
@@ -332,8 +337,9 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
 
 
     public void addVote (Vote vote) {
-        if (votes == null)
-            votes = new ArrayList<Vote>();
+        // Votes are unique by Bill + Date + Type + SequenceNumber (currently always 1)
+        // Remove if present and add again to update
+        votes.remove(vote);
         votes.add(vote);
     }
 

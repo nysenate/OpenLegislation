@@ -194,6 +194,11 @@ public class Action extends SenateObject {
         }
 
     }
+
+    @Override
+    public String toString() {
+        return date.toString()+" "+text;
+    }
 }
 
 

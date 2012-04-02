@@ -6,21 +6,21 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 @XStreamAlias("person")
 public class Person {
     @XStreamAsAttribute
-    private String position;
+    private String position = "";
 
     @XStreamAsAttribute
-    private String fullname;
+    private String fullname = "";
 
-    private String id;
-
-    //	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
-    private String branch;
+    private String id = "";
 
     //	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
-    private String contactInfo;
+    private String branch = "";
 
     //	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
-    private String guid;
+    private String contactInfo = "";
+
+    //	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
+    private String guid = "";
 
     public Person () {
 

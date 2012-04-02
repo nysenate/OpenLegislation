@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.committee;
 
 import gov.nysenate.openleg.lucene.LuceneField;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class Addendum {
 
     public Addendum ()
     {
-
+        meetings = new ArrayList<Meeting>();
     }
 
     public String getAddendumId() {

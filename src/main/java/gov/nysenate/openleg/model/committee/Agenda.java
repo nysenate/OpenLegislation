@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.committee;
 import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.SenateObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class Agenda extends SenateObject {
 
     public Agenda() {
         super();
+        addendums = new ArrayList<Addendum>();
     }
 
     public int getNumber() {

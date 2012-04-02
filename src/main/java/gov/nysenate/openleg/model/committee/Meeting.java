@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.bill.Bill;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,6 +50,9 @@ public class Meeting extends SenateObject {
     @LuceneField
     protected List<Addendum> addendums;
 
+    public Meeting() {
+        addendums = new ArrayList<Addendum>();
+    }
     public String getCommitteeChair() {
         return committeeChair;
     }

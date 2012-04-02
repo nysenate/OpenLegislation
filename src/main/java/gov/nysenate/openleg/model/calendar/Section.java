@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.calendar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -21,6 +22,10 @@ public class Section {
     private Supplemental supplemental;
 
     private List<CalendarEntry> calendarEntries;
+
+    public Section() {
+        calendarEntries = new ArrayList<CalendarEntry>();
+    }
 
     public String getId() {
         return id;

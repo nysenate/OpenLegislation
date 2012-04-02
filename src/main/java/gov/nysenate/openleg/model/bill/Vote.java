@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +21,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("vote")
 public class Vote extends SenateObject {
+
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/DD");
 
     private int voteType;
 
@@ -36,6 +39,9 @@ public class Vote extends SenateObject {
     @XStreamCollectionAlias(node="abstains",value="member")
     private List<String> abstains;
 
+    @XStreamCollectionAlias(node="absent",value="member")
+    private List<String> absent;
+
     @XStreamCollectionAlias(node="excused",value="member")
     private List<String> excused;
 
@@ -51,14 +57,38 @@ public class Vote extends SenateObject {
 
     public final static int VOTE_TYPE_COMMITTEE = 2;
 
+    public int count() {
+        return ayes.size()+nays.size()+abstains.size()+excused.size();
+    }
+
     public Vote() {
         super();
+        ayes = new ArrayList<String>();
+        ayeswr = new ArrayList<String>();
+        nays = new ArrayList<String>();
+        abstains = new ArrayList<String>();
+        excused = new ArrayList<String>();
+        absent = new ArrayList<String>();
+    }
+
+    public Vote (Bill bill, Date date, int type, String sequenceNumber) {
+        this();
+        this.id = buildId(bill, date, sequenceNumber);
+        this.voteType = type;
+        this.bill = bill;
+        this.voteDate = date;
+    }
+
+
+    public String buildId (Bill bill, Date voteDate, String sequenceNumber)
+    {
+        return bill.getSenateBillNo()+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
     }
 
     public Vote (Bill bill, Date voteDate, int ayeCount, int nayCount)
     {
-        super();
-        this.id = buildId(bill, voteDate, ayeCount, nayCount);
+        this();
+        this.id = buildId(bill, voteDate, "1");
         this.bill = bill;
         this.voteDate = voteDate;
 
@@ -98,7 +128,9 @@ public class Vote extends SenateObject {
         return abstains;
     }
 
-
+    public List<String> getAbsent() {
+        return absent;
+    }
 
     public List<String> getExcused() {
         return excused;
@@ -170,7 +202,9 @@ public class Vote extends SenateObject {
         this.abstains = abstains;
     }
 
-
+    public void setAbsent(List<String> absent) {
+        this.absent = absent;
+    }
 
     public void setExcused(List<String> excused) {
         this.excused = excused;
@@ -194,62 +228,34 @@ public class Vote extends SenateObject {
         this.description = description;
     }
 
-
-
-    public static String buildId (Bill bill, Date voteDate, int ayeCount, int nayCount)
-    {
-        return voteDate.getTime() + bill.getSenateBillNo() + '-' + ayeCount + '-' + nayCount;
-
-    }
-
     public void addAye(Person person)
     {
-        if (ayes == null)
-        {
-            ayes = new ArrayList<String>();
-        }
-
         ayes.add(person.getFullname());
     }
 
 
     public void addAyeWR(Person person)
     {
-        if (ayeswr == null)
-        {
-            ayeswr = new ArrayList<String>();
-        }
-
         ayeswr.add(person.getFullname());
     }
 
     public void addNay(Person person)
     {
-        if (nays == null)
-        {
-            nays = new ArrayList<String>();
-        }
-
         nays.add(person.getFullname());
     }
 
     public void addAbstain(Person person)
     {
-        if (abstains == null)
-        {
-            abstains = new ArrayList<String>();
-        }
-
         abstains.add(person.getFullname());
+    }
+
+    public void addAbsent(Person person)
+    {
+        absent.add(person.getFullname());
     }
 
     public void addExcused(Person person)
     {
-        if (excused == null)
-        {
-            excused = new ArrayList<String>();
-        }
-
         excused.add(person.getFullname());
     }
 
