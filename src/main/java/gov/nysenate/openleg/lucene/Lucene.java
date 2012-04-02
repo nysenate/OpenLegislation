@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -53,9 +53,15 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
 	/////////////////////////////////
 	// Implementing LuceneIndexer
 	//
-	
+
+    @Override
     public synchronized void createIndex() throws IOException{
-        if (0 == new File(indexDir).listFiles().length) {
+        File index = new File(indexDir);
+        if (!index.exists()) {
+            FileUtils.forceMkdir(index);
+        }
+
+        if (0 == index.listFiles().length) {
 	        IndexWriter indexWriter = new IndexWriter(getDirectory(), getConfig());
 	        indexWriter.optimize();
 	        indexWriter.close();
