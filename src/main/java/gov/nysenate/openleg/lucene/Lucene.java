@@ -113,18 +113,24 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
     		logger.warn("error deleting document to index: " + qString);
     	}
     }
-    
+
+    @Override
     public void deleteDocuments(String otype, String oid) throws IOException {
     	openWriter();
-        try {
-        	String qString ="otype:"+otype + ((oid!=null) ? " AND oid:"+oid : "");
-            Query query = new QueryParser(VERSION, "otype", indexWriter.getAnalyzer()).parse(qString);
-            indexWriter.deleteDocuments(query);
-	    }
-        catch (Exception e) {
-			logger.warn("error deleting document to index: " + otype + "=" + oid, e);
-        }
+        deleteDocuments(otype, oid, indexWriter);
         closeWriter();
+    }
+
+    public void deleteDocuments(String otype, String oid, IndexWriter writer) throws IOException {
+        try {
+            String qString ="otype:"+otype + ((oid!=null) ? " AND oid:"+oid : "");
+            logger.error(qString);
+            Query query = new QueryParser(VERSION, "otype", writer.getAnalyzer()).parse(qString);
+            writer.deleteDocuments(query);
+        }
+        catch (Exception e) {
+            logger.warn("error deleting document to index: " + otype + "=" + oid, e);
+        }
     }
     
     public synchronized void optimize() throws IOException {
