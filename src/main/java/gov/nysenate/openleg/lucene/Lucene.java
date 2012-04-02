@@ -254,4 +254,9 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
 	public Analyzer getAnalyzer() {
 		return new StandardAnalyzer(VERSION);
 	}
+
+	public IndexWriter newIndexWriter() throws IOException {
+	    // Use with caution
+	    return new IndexWriter(getDirectory(), getConfig());
+	}
 }
