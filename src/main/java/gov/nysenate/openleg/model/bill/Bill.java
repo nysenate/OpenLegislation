@@ -47,7 +47,7 @@ public class Bill extends SenateObject implements Comparable<Bill>  {
     protected Person sponsor;
 
     public boolean frozen = false;
-    public List<String> ammendments = new ArrayList<String>();
+    public List<String> amendments = new ArrayList<String>();
 
     @XStreamAlias("cosponsors")
     @LuceneField
