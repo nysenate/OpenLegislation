@@ -162,12 +162,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
                         for( Meeting meeting : addendum.getMeetings() ) {
                             meeting.setAddendums(new ArrayList<Addendum>(Arrays.asList(addendum)));
                             meeting.setModified(agenda.getModified());
-                            try {
-                                addDocument(meeting, ls, indexWriter);
-                            }
-                            catch (Exception e) {
-                                logger.warn("unable to index senate meeting",e);
-                            }
+                            addDocument(meeting, ls, indexWriter);
                         }
                     }
                 }
@@ -181,14 +176,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
                     for(Action be:bill.getActions()) {
                         be.setModified(bill.getModified());
                         be.setBill(bill);
-
-                        try {
-                            addDocument(be, ls, indexWriter);
-                        } catch (InstantiationException e) {
-                            logger.warn(e);
-                        } catch (IllegalAccessException e) {
-                            logger.warn(e);
-                        }
+                        addDocument(be, ls, indexWriter);
                     }
                 }
 
@@ -197,32 +185,15 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
                 if(bill.getVotes() != null) {
                     for(Vote vote: bill.getVotes()) {
                         vote.setModified(bill.getModified());
-                        try {
-                            vote.setBill(bill);
-                            addDocument(vote, ls, indexWriter);
-                        } catch (InstantiationException e) {
-                            logger.warn(e);
-                        } catch (IllegalAccessException e) {
-                            logger.warn(e);
-                        }
+                        vote.setBill(bill);
+                        addDocument(vote, ls, indexWriter);
                     }
                 }
 
-                try {
-                    addDocument(bill, ls, indexWriter);
-                } catch (InstantiationException e) {
-                    logger.warn(e);
-                } catch (IllegalAccessException e) {
-                    logger.warn(e);
-                }
+                addDocument(bill, ls, indexWriter);
             }
             else {
-                try {
-                    addDocument(obj, ls, indexWriter);
-                }
-                catch (Exception e) {
-                    logger.warn("unable to index senate object: " + obj.getClass().getName(),e);
-                }
+                addDocument(obj, ls, indexWriter);
             }
         }
 
