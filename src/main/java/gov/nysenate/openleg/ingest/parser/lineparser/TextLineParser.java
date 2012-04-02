@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.ingest.parser.lineparser;
 
 import gov.nysenate.openleg.ingest.parser.BillParser;
-import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.Bill;
 
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;

@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.ingest.parser.TranscriptParser;
+import gov.nysenate.openleg.processors.TranscriptProcessor;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,8 +29,9 @@ public class TranscriptFixer {
     public void doFix(File f) throws IOException {
 
         try {
-            TranscriptParser parser = new TranscriptParser();
-            parser.parse(f);
+            //TODO: This needs to finish porting at some point
+            TranscriptProcessor parser = new TranscriptProcessor();
+            //parser.parse(f);
         }
         catch (Exception e) {
             List<String> in;
@@ -138,8 +139,8 @@ public class TranscriptFixer {
     /**
      * scrapes relevant information from file (date, time, location,etc...)
      * if it couldn't be processed due to formatting errors.
-     * 
-     * 
+     *
+     *
      * @param file the file to be read
      * @returns an arraylist of the lines in the file
      * @throws IOException for file read errors

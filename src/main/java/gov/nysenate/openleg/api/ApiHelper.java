@@ -1,16 +1,16 @@
 package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
+import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.ISenateObject;
-import gov.nysenate.openleg.model.bill.Action;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.Vote;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.Section;
-import gov.nysenate.openleg.model.calendar.Sequence;
-import gov.nysenate.openleg.model.calendar.Supplemental;
-import gov.nysenate.openleg.model.committee.Meeting;
-import gov.nysenate.openleg.model.transcript.Transcript;
+import gov.nysenate.openleg.model.Meeting;
+import gov.nysenate.openleg.model.Section;
+import gov.nysenate.openleg.model.Sequence;
+import gov.nysenate.openleg.model.Supplemental;
+import gov.nysenate.openleg.model.Transcript;
+import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.search.Result;
 import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.OpenLegConstants;

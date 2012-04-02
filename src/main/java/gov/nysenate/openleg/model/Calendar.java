@@ -1,8 +1,6 @@
-package gov.nysenate.openleg.model.calendar;
+package gov.nysenate.openleg.model;
 
 import gov.nysenate.openleg.lucene.DocumentBuilder;
-import gov.nysenate.openleg.model.ISenateObject;
-import gov.nysenate.openleg.model.SenateObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

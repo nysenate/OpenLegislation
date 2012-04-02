@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.xstream;
 
 
-import gov.nysenate.openleg.model.bill.Person;
+import gov.nysenate.openleg.model.Person;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

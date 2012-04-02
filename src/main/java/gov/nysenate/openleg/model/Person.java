@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model.bill;
+package gov.nysenate.openleg.model;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;

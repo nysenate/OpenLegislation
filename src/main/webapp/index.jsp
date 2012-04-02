@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.bill.*" pageEncoding="UTF-8"%>
+<%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="UTF-8"%>
 
 <%
 session.setAttribute("term","");

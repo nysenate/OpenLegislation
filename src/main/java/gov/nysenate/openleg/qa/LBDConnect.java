@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.qa;
 
-import gov.nysenate.openleg.model.bill.Action;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.Person;
+import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.util.EasyReader;
 import gov.nysenate.openleg.util.SessionYear;
 

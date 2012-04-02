@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.ingest.Ingest;
 import gov.nysenate.openleg.qa.LBDConnect;
 import gov.nysenate.services.SenateServicesDAO;
 import gov.nysenate.services.SenateServicesFactory;
@@ -22,6 +21,8 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.SimpleType;
 
@@ -53,7 +54,7 @@ public class CommitteeWriter {
                 writer.writeCommitteeJson(
                         line.getOptionValue(API_KEY),
                         line.getOptionValue(FILE),
-                        Ingest.getMapper());
+                        getMapper());
             }
             else {
                 throw new ParseException("Use -h for help");
@@ -66,7 +67,7 @@ public class CommitteeWriter {
     private static Logger logger = Logger.getLogger(CommitteeWriter.class);
 
     /**
-     * 
+     *
      * @param apiKey services APIKey
      * @param filePath
      * @param mapper
@@ -151,5 +152,14 @@ public class CommitteeWriter {
         String[] tuple = senatorKey.split(" ");
         senatorKey = tuple[tuple.length - 1].toLowerCase();
         return senatorKey;
+    }
+
+    public static ObjectMapper getMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        SerializationConfig cnfg = mapper.getSerializationConfig();
+        cnfg.set(Feature.INDENT_OUTPUT, true);
+        mapper.setSerializationConfig(cnfg);
+
+        return mapper;
     }
 }

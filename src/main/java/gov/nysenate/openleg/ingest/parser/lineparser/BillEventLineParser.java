@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.ingest.parser.lineparser;
 
 import gov.nysenate.openleg.ingest.parser.BillParser;
-import gov.nysenate.openleg.model.bill.Action;
-import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.Bill;
 
 import java.text.DateFormat;
 import java.text.ParseException;

@@ -1,6 +1,5 @@
-package gov.nysenate.openleg.model.calendar;
+package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.model.bill.Bill;
 
 import java.util.Date;
 

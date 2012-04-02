@@ -1,7 +1,5 @@
-package gov.nysenate.openleg.model.committee;
+package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.model.ISenateObject;
-import gov.nysenate.openleg.model.SenateObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;

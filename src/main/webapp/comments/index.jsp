@@ -1,9 +1,8 @@
-<%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.bill.*" pageEncoding="UTF-8"%>
+<%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*" pageEncoding="UTF-8"%>
 <%
 
 
 String appPath = request.getContextPath();
-Bill bill = null;
 String last = null;
 DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 

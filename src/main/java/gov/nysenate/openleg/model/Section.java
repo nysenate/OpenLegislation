@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model.calendar;
+package gov.nysenate.openleg.model;
 
 import java.util.ArrayList;
 import java.util.List;

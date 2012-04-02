@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.xstream;
 
-import gov.nysenate.openleg.model.bill.Action;
+import gov.nysenate.openleg.model.Action;
 
 import java.util.ArrayList;
 

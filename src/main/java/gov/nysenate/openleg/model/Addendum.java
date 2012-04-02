@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model.committee;
+package gov.nysenate.openleg.model;
 
 import gov.nysenate.openleg.lucene.LuceneField;
 

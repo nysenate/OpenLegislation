@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,org.json.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.util.*"  pageEncoding="utf-8" contentType="text/plain"%><%
+<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,org.json.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  pageEncoding="utf-8" contentType="text/plain"%><%
 
 String contentType = (String) request.getAttribute("contentType");
 response.setContentType(contentType == null ? "text/html" : contentType);

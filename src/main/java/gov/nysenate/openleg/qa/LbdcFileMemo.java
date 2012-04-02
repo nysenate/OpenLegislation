@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.qa;
 
-import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.qa.model.FieldName;
 import gov.nysenate.openleg.qa.model.LbdcFile;
 import gov.nysenate.openleg.qa.model.LbdcFile.AssociatedFields;

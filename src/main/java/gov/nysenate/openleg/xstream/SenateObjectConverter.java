@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.xstream;
 
+import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.ISenateObject;
-import gov.nysenate.openleg.model.bill.Bill;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

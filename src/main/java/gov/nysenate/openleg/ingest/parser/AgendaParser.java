@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.ingest.parser;
 
 import gov.nysenate.openleg.ingest.JsonDao;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.Person;
-import gov.nysenate.openleg.model.bill.Vote;
-import gov.nysenate.openleg.model.committee.Addendum;
-import gov.nysenate.openleg.model.committee.Agenda;
-import gov.nysenate.openleg.model.committee.Meeting;
+import gov.nysenate.openleg.model.Addendum;
+import gov.nysenate.openleg.model.Agenda;
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Meeting;
+import gov.nysenate.openleg.model.Person;
+import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.xml.committee.XMLAddendum;

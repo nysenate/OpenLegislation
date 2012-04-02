@@ -1,5 +1,5 @@
 <%@ page language="java"
-	import="java.util.Iterator,java.util.Collection,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.calendar.*,gov.nysenate.openleg.model.committee.*,javax.xml.bind.*"
+	import="java.util.Iterator,java.util.Collection,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,javax.xml.bind.*"
 	contentType="text/html" pageEncoding="utf-8"%>
 <%
 	Calendar calendar = (Calendar) request.getAttribute("calendar");

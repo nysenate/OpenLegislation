@@ -2,7 +2,7 @@ package gov.nysenate.openleg.qa;
 
 import gov.nysenate.openleg.api.QueryBuilder;
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
-import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.qa.model.ProblemBill;
 import gov.nysenate.openleg.search.SenateObjectSearch;
 import gov.nysenate.openleg.util.TextFormatter;

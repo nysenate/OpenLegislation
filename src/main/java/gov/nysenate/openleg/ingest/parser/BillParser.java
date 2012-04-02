@@ -15,7 +15,7 @@ import gov.nysenate.openleg.ingest.parser.lineparser.SummaryLineParser;
 import gov.nysenate.openleg.ingest.parser.lineparser.TextLineParser;
 import gov.nysenate.openleg.ingest.parser.lineparser.TitleLineParser;
 import gov.nysenate.openleg.ingest.parser.lineparser.VoteLineParser;
-import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.util.EasyReader;
 import gov.nysenate.openleg.util.TextFormatter;
 

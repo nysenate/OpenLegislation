@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.util.serialize;
 
 
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.Person;
-import gov.nysenate.openleg.model.bill.Vote;
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Person;
+import gov.nysenate.openleg.model.Vote;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;

@@ -2,11 +2,11 @@ package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.api.SingleViewRequest.SingleView;
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Calendar;
+import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.committee.Meeting;
-import gov.nysenate.openleg.model.transcript.Transcript;
+import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.search.SenateResponse;
 

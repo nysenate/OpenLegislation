@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.api.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.model.calendar.*"  contentType="text/html" pageEncoding="utf-8" %><%
+<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.api.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/html" pageEncoding="utf-8" %><%
 
 String requestPath = request.getRequestURI();
 
@@ -66,34 +66,31 @@ width:150px;
  <div class="widget-narrow">
 
  <%
+     String resultType = null;
+   String resultId = null;
+   
+   String contentType = null;
+   String contentId = null;
+ String resultTitle = null;
+ gov.nysenate.openleg.model.Calendar calendar = null;
 
-  String resultType = null;
-  String resultId = null;
-  
-  String contentType = null;
-  String contentId = null;
-String resultTitle = null;
-gov.nysenate.openleg.model.calendar.Calendar calendar = null;
+  for (Result sresult : listResults)
+  {
+         resultType = sresult.getOtype();
 
- for (Result sresult : listResults)
- {
-                resultType = sresult.getOtype();
-
-				calendar = (gov.nysenate.openleg.model.calendar.Calendar)sresult.getObject();
-				
-                if (resultType.indexOf(".")!=-1)
-                {
-                        resultType = resultType.substring(resultType.lastIndexOf(".")+1);
-                }
+ 				calendar = (gov.nysenate.openleg.model.Calendar)sresult.getObject();
+ 				
+         if (resultType.indexOf(".")!=-1)
+         {
+                 resultType = resultType.substring(resultType.lastIndexOf(".")+1);
+         }
 
 
-                resultId = sresult.getOid();
+         resultId = sresult.getOid();
 
-                contentType = resultType;
-                contentId = resultId;
-		resultTitle = sresult.getTitle();
-				
-
+         contentType = resultType;
+         contentId = resultId;
+ 		resultTitle = sresult.getTitle();
  %>
 
  <%} %>

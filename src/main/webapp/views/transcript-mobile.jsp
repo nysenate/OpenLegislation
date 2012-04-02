@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*,java.text.*,java.util.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.transcript.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page language="java" import="java.util.*,java.text.*,java.util.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
 
 <%
 	Transcript transcript = (Transcript)request.getAttribute("transcript");

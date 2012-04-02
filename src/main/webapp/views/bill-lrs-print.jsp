@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.regex.Matcher,java.util.regex.Pattern,java.util.*,java.text.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page language="java" import="java.util.regex.Matcher,java.util.regex.Pattern,java.util.*,java.text.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
 <%
 String appPath = request.getContextPath();
 

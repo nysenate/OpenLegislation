@@ -2,11 +2,11 @@ package gov.nysenate.openleg.ingest;
 
 import gov.nysenate.openleg.ingest.hook.CacheHook;
 import gov.nysenate.openleg.ingest.hook.Hook;
+import gov.nysenate.openleg.model.Agenda;
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.committee.Agenda;
-import gov.nysenate.openleg.model.transcript.Transcript;
+import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.openleg.util.Config;
 import gov.nysenate.openleg.util.serialize.XmlHelper;

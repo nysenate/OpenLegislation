@@ -1,9 +1,7 @@
-package gov.nysenate.openleg.model.committee;
+package gov.nysenate.openleg.model;
 
 import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.lucene.LuceneField;
-import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.model.bill.Bill;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

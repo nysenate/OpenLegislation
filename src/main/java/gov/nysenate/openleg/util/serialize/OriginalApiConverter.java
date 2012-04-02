@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.util.serialize;
 
-import gov.nysenate.openleg.model.bill.Action;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.Person;
-import gov.nysenate.openleg.model.bill.Vote;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.Supplemental;
-import gov.nysenate.openleg.model.committee.Meeting;
-import gov.nysenate.openleg.model.transcript.Transcript;
+import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Calendar;
+import gov.nysenate.openleg.model.Meeting;
+import gov.nysenate.openleg.model.Person;
+import gov.nysenate.openleg.model.Supplemental;
+import gov.nysenate.openleg.model.Transcript;
+import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.ByteArrayOutputStream;

@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.regex.*, java.util.Hashtable, java.util.TreeSet, java.util.HashMap, java.util.Date, java.util.ArrayList, java.util.List, java.util.Collections, java.util.StringTokenizer, java.util.Iterator, java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.bill.*,gov.nysenate.openleg.model.committee.*,gov.nysenate.openleg.model.calendar.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page language="java" import="java.util.regex.*, java.util.Hashtable, java.util.TreeSet, java.util.HashMap, java.util.Date, java.util.ArrayList, java.util.List, java.util.Collections, java.util.StringTokenizer, java.util.Iterator, java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
 <%!public String getVoterString(List<String> voters, String appPath) {
 	 	StringBuffer buffer = new StringBuffer();
 	 	buffer.append(wrapPerson(voters.get(0), appPath));
@@ -406,6 +406,11 @@
 			 				<b>Abstains (<%=vote.getAbstains().size()%>):</b>
 			 				<%= getVoterString(vote.getAbstains(), appPath) %>
 			 			<% } %>
+                        <%if (vote.getAbsent()!=null && vote.getAbsent().size() > 0){ %>
+                            <br/>
+                            <b>Absent (<%=vote.getAbsent().size()%>):</b>
+                            <%= getVoterString(vote.getAbsent(), appPath) %>
+                        <% } %>
 			 			<%if (vote.getExcused()!=null && vote.getExcused().size() > 0){ %>
 			 				<br/>
 			 				<b>Excused (<%=vote.getExcused().size()%>):</b>

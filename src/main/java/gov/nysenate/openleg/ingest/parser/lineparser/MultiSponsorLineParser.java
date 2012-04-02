@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.ingest.parser.lineparser;
 
 import gov.nysenate.openleg.ingest.parser.BillParser;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.Person;
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Person;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
