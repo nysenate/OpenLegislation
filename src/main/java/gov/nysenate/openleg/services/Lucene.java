@@ -1,0 +1,112 @@
+package gov.nysenate.openleg.services;
+
+import gov.nysenate.openleg.lucene.ILuceneObject;
+import gov.nysenate.openleg.lucene.LuceneSerializer;
+import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.Addendum;
+import gov.nysenate.openleg.model.Agenda;
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Meeting;
+import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.util.Storage;
+import gov.nysenate.openleg.util.serialize.JsonSerializer;
+import gov.nysenate.openleg.util.serialize.XmlSerializer;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+import org.apache.lucene.index.IndexWriter;
+
+public class Lucene extends ServiceBase {
+    public LuceneSerializer[] serializers;
+    private final gov.nysenate.openleg.lucene.Lucene lucene;
+
+    public Lucene(String indexDir) {
+        super();
+        lucene = new gov.nysenate.openleg.lucene.Lucene(indexDir);
+        serializers = new LuceneSerializer[]{ new XmlSerializer(), new JsonSerializer()};
+    }
+
+    @Override
+    public boolean process(HashMap<String, Storage.Status> changeLog, Storage storage) throws IOException {
+        // Verify that an index exists
+        lucene.createIndex();
+
+        // Get a new writer
+        IndexWriter indexWriter = lucene.newIndexWriter();
+
+        for(Entry<String, Storage.Status> entry : changeLog.entrySet()) {
+            logger.debug("Indexing "+entry.getValue()+": "+entry.getKey());
+            String key = entry.getKey();
+            String otype = key.split("/")[1];
+            String oid = key.split("/")[2];
+            logger.debug(otype+", "+oid);
+            if( entry.getValue() == Storage.Status.DELETED ) {
+                if (otype.equals("agenda")) {
+                    // Meetings should cleaned up by their respective entries
+                    lucene.deleteDocuments(otype, oid, indexWriter);
+
+                } else if(otype.equals("bill")) {
+                    lucene.deleteDocumentsByQuery("otype:action AND billno:" + oid, indexWriter);
+                    lucene.deleteDocumentsByQuery("otype:vote AND billno:" + oid, indexWriter);;
+                    lucene.deleteDocuments(otype, oid, indexWriter);
+
+                } else {
+                    lucene.deleteDocuments(otype, oid, indexWriter);
+                }
+
+            } else {
+                Class<? extends ILuceneObject> objType = classMap.get(otype);
+                ILuceneObject obj = (ILuceneObject) storage.get(key, objType);
+                if (otype.equals("agenda")) {
+                    Agenda agenda = (Agenda)obj;
+                    for( Addendum addendum : agenda.getAddendums()) {
+                        addendum.setAgenda(agenda);
+                        for( Meeting meeting : addendum.getMeetings() ) {
+                            meeting.setAddendums(new ArrayList<Addendum>(Arrays.asList(addendum)));
+                            meeting.setModified(agenda.getModified());
+                            lucene.addDocument(meeting, serializers, indexWriter);
+                        }
+                    }
+
+                } else if(otype.equals("bill")) {
+                    Bill bill = (Bill)obj;
+
+                    // Regenerate all the bill actions
+                    lucene.deleteDocumentsByQuery("otype:action AND billno:" + bill.getSenateBillNo(), indexWriter);
+                    if(bill.getActions() != null) {
+                        for(Action be:bill.getActions()) {
+                            be.setModified(bill.getModified());
+                            be.setBill(bill);
+                            lucene.addDocument(be, serializers, indexWriter);
+                        }
+                    }
+
+                    // Regenerate all the bill votes
+                    lucene.deleteDocumentsByQuery("otype:vote AND billno:" + bill.getSenateBillNo(), indexWriter);
+                    if(bill.getVotes() != null) {
+                        for(Vote vote: bill.getVotes()) {
+                            vote.setModified(bill.getModified());
+                            vote.setBill(bill);
+                            lucene.addDocument(vote, serializers, indexWriter);
+                        }
+                    }
+
+                    lucene.addDocument(bill, serializers, indexWriter);
+
+                } else {
+                    lucene.addDocument(obj, serializers, indexWriter);
+                }
+            }
+        }
+
+        indexWriter.commit();
+
+        logger.info("done indexing objects(" + changeLog.size() + "). Closing index.");
+        indexWriter.close();
+        return true;
+    }
+}
