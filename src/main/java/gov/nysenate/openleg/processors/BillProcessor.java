@@ -129,12 +129,11 @@ public class BillProcessor {
 
                     // If the bill wasn't found, make a new one
                     if (bill == null) {
-                        if (billAmendment.isEmpty()) {
-                            bill = new Bill();
-                            bill.setYear(Integer.parseInt(billYear));
-                            bill.setSenateBillNo(key);
-                        } else {
-                            throw new ParseError("Bill Ammendment filed without initial bill", oldBlock);
+                        bill = new Bill();
+                        bill.setYear(Integer.parseInt(billYear));
+                        bill.setSenateBillNo(key);
+                        if (!billAmendment.isEmpty()) {
+                            logger.error("Bill Amendment filed without initial bill in file "+fileName+":"+lineNum+" - "+oldBlock);
                         }
                     }
 
@@ -151,7 +150,11 @@ public class BillProcessor {
 
                             // get the previous version and copy it by reading from file
                             if(bill.amendments.isEmpty()) {
-                                oldkey = billId+"-"+billYear;
+                                // In case this is an amendment introduced without an original (mostly 2009 data)
+                                // we need to make sure to set the base bill we just made for flushing below.
+                                oldkey = bill.getSenateBillNo();
+                                storage.set(bucket+oldkey, bill);
+
                             } else {
                                 oldkey = bill.amendments.get(bill.amendments.size()-1);
                             }
