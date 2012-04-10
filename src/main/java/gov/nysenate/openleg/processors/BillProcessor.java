@@ -201,29 +201,36 @@ public class BillProcessor {
                     }
 
                     // commit block
-                    switch (lineCode.charAt(0)) {
-                        case '1': applyBillData(blockData.toString(), bill, date); break;
-                        case '2': applyLawSection(blockData.toString(), bill, date); break;
-                        case '3': applyTitle(blockData.toString(), bill, date); break;
-                        case '4': applyBillEvent(blockData.toString(), bill, date); break;
-                        case '5': applySameAs(blockData.toString(), bill, date); break;
-                        case '6': applySponsor(blockData.toString(), bill, date); break;
-                        case '7': applyCosponsors(blockData.toString(), bill, date); break;
-                        case '8': applyMultisponsors(blockData.toString(), bill, date); break;
-                        case '9': applyProgramInfo(blockData.toString(), bill, date); break;
-                        case 'A': applyActClause(blockData.toString(), bill, date); break;
-                        case 'B': applyLaw(blockData.toString(), bill, date); break;
-                        case 'C': applySummary(blockData.toString(), bill, date); break;
-                        case 'M':
-                        case 'R':
-                        case 'T': applyText(blockData.toString(), bill, date); break;
-                        case 'V': applyVoteMemo(blockData.toString(), bill, date); break;
-                        default: throw new ParseError("Invalid Line Code", lineCode);
+                    try {
+                        switch (lineCode.charAt(0)) {
+                            case '1': applyBillData(blockData.toString(), bill, date); break;
+                            case '2': applyLawSection(blockData.toString(), bill, date); break;
+                            case '3': applyTitle(blockData.toString(), bill, date); break;
+                            case '4': applyBillEvent(blockData.toString(), bill, date); break;
+                            case '5': applySameAs(blockData.toString(), bill, date); break;
+                            case '6': applySponsor(blockData.toString(), bill, date); break;
+                            case '7': applyCosponsors(blockData.toString(), bill, date); break;
+                            case '8': applyMultisponsors(blockData.toString(), bill, date); break;
+                            case '9': applyProgramInfo(blockData.toString(), bill, date); break;
+                            case 'A': applyActClause(blockData.toString(), bill, date); break;
+                            case 'B': applyLaw(blockData.toString(), bill, date); break;
+                            case 'C': applySummary(blockData.toString(), bill, date); break;
+                            case 'M':
+                            case 'R':
+                            case 'T': applyText(blockData.toString(), bill, date); break;
+                            case 'V': applyVoteMemo(blockData.toString(), bill, date); break;
+                            default: throw new ParseError("Invalid Line Code", lineCode);
+                        }
+
+                        bill.setModified(date.getTime());
+
+                        storage.set(bucket+key, bill);
+                    } catch (ParseError e) {
+                        throw e;
+                    } catch (Exception e) {
+                        logger.error("Unexpected Exception", e);
+                        throw new ParseError(e.getMessage(), blockData.toString());
                     }
-
-                    bill.setModified(date.getTime());
-
-                    storage.set(bucket+key, bill);
 
                 } catch (ParseError e) {
                     logger.error("ParseError at "+fileName+":"+lineNum, e);
