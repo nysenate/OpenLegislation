@@ -405,44 +405,16 @@ public class CalendarProcessor implements OpenLegConstants {
         return calEntry;
     }
 
-    private Bill getBill (Storage storage, String billId, int year, String sponsorName) {
-
-        String billType = billId.substring(0,1);
-        int billNumber = -1;
-
-        char lastVal = billId.substring(billId.length()-1,billId.length()).toCharArray()[0];
-
-        String senateBillNo = null;
-
-        if (Character.isLetter(lastVal)) {
-            billNumber = Integer.parseInt(billId.substring(1,billId.length()-1));
-
-            senateBillNo = billType + billNumber + lastVal;
-        }
-        else {
-            billNumber = Integer.parseInt(billId.substring(1));
-
-            senateBillNo = billType + billNumber;
-
-        }
-
-        senateBillNo += "-" + year;
-
-        Bill bill = null;
-
-
+    private Bill getBill(Storage storage, String billId, int year, String sponsorName) {
+        String senateBillNo = billId.replaceAll("(?<=[A-Z])0*", "")+"-"+year;
         String key = year+"/bill/"+senateBillNo;
-        bill = (Bill)storage.get(key, Bill.class);
 
+        Bill bill = (Bill)storage.get(key, Bill.class);
         if (bill == null) {
             bill = new Bill();
-            bill.setSenateBillNo(senateBillNo);
             bill.setYear(year);
-
-            Person sponsor = new Person(sponsorName);
-            bill.setSponsor(sponsor);
-
-            storage.set(key, bill);
+            bill.setSenateBillNo(senateBillNo);
+            bill.setSponsor(new Person(sponsorName));
         }
 
         return bill;
