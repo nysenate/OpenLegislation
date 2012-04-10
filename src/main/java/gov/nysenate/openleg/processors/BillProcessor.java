@@ -243,7 +243,7 @@ public class BillProcessor {
             if (blockData.length()==0) {
                 // If we're starting from a blank slate, initialize block values
                 billYear = sobiHeader.group(2);
-                billId = sobiHeader.group(3).replaceAll("([ASJK])0*", "$1");
+                billId = sobiHeader.group(3).replaceAll("(?<=[A-Z])0*", "");
                 billAmendment = sobiHeader.group(4).trim();
                 lineCode = sobiHeader.group(5);
                 blockData.append(sobiHeader.group(6));
