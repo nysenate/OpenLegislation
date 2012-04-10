@@ -28,9 +28,9 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-public class Injest {
+public class Ingest {
 
-    public static Logger logger = Logger.getLogger(Injest.class);
+    public static Logger logger = Logger.getLogger(Ingest.class);
 
     public static BillProcessor billProcessor = new BillProcessor();
     public static CalendarProcessor calendarProcessor = new CalendarProcessor();
