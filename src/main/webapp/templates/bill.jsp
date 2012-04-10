@@ -275,7 +275,7 @@
  		%>
  		
 		<%
- 					if (bill.getCurrentCommittee() != null) {
+ 					if (bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
  				%>
 			 / <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
 		<%
@@ -283,13 +283,13 @@
 		%>
 		<br/>
 		<%
-			if (bill.getLawSection() != null) {
+			if (bill.getLawSection() != null && !bill.getLawSection().equals("")) {
 		%>
 					<b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
 	 			<%
 	 				}
 	 				 				
-	 				 				 		if (bill.getLaw() != null) {
+	 				 				 		if (bill.getLaw() != null && bill.getLaw() != "") {
 	 			%>
 					 / <b>Law:</b> <%=bill.getLaw()%>
 				<%
@@ -429,7 +429,7 @@
 
 	<h3><%=senateBillNo%> Text</h3>
 	<%
-		if (bill.getFulltext()!=null) {
+		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
  
 			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
 			billText = removeBillLineNumbers (billText);
