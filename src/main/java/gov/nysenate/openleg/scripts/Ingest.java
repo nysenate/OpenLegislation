@@ -3,118 +3,95 @@ package gov.nysenate.openleg.scripts;
 import gov.nysenate.openleg.processors.AgendaProcessor;
 import gov.nysenate.openleg.processors.BillProcessor;
 import gov.nysenate.openleg.processors.CalendarProcessor;
-import gov.nysenate.openleg.services.Lucene;
-import gov.nysenate.openleg.services.ServiceBase;
-import gov.nysenate.openleg.services.Varnish;
+import gov.nysenate.openleg.processors.TranscriptProcessor;
 import gov.nysenate.openleg.util.Config;
 import gov.nysenate.openleg.util.Storage;
+import gov.nysenate.openleg.util.Storage.Status;
 import gov.nysenate.openleg.util.Timer;
-import gov.nysenate.openleg.util.serialize.XmlHelper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.xml.bind.UnmarshalException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 public class Ingest {
-
     public static Logger logger = Logger.getLogger(Ingest.class);
 
     public static BillProcessor billProcessor = new BillProcessor();
     public static CalendarProcessor calendarProcessor = new CalendarProcessor();
     public static AgendaProcessor agendaProcessor = new AgendaProcessor();
+    public static TranscriptProcessor transcriptProcessor = new TranscriptProcessor();
 
-    public static void main(String[] args) throws Exception {
-        Options options = buildOptions();
-        try {
-            CommandLine line = new PosixParser().parse(options, args);
-            if(line.hasOption("-h")) {
-                new HelpFormatter().printHelp("posix", options );
-                System.exit(0);
-            }
-
-            String sobiDir = line.hasOption("sobi-directory") ? line.getOptionValue("sobi-directory") : Config.get("data.sobi");
-            String jsonDir = line.hasOption("json-directory") ? line.getOptionValue("json-directory") : Config.get("data.json");
-
-            if( sobiDir == null || jsonDir == null ) {
-                throw new org.apache.commons.cli.ParseException("sobi-directory and json-directory are both required parameters.");
-            }
-
-            Storage storage = new Storage(jsonDir);
-            HashMap<String, Storage.Status> changeLog = storage.changeLog;
-            ArrayList<ServiceBase> services = new ArrayList<ServiceBase>();
-
-            if(line.hasOption("index")) {
-                services.add(new Lucene(Config.get("data.lucene")));
-            }
-
-            if(line.hasOption("purge-cache")) {
-                services.add(new Varnish("http://127.0.0.1", 80));
-            }
-
-            if(line.hasOption("generate-xml")) {
-                XmlHelper.generateXml(sobiDir);
-            }
-
-            // Get the source file list and persistent storage layer
-            if(line.hasOption("write")) {
-                Timer timer = new Timer();
-                timer.start();
-                Collection<File> files = FileUtils.listFiles(new File(sobiDir), null, true);
-                Collections.sort((List<File>)files);
-                changeLog = injest(files, storage);
-                logger.info(timer.stop()+" seconds to injest "+files.size()+" files.");
-            }
-
-            // Pass the change log through a set of service hooks
-            // Currently there is a Lucene hook and varnish hook, more to come
-            for(ServiceBase service:services) {
-                try {
-                    service.process(changeLog, storage);
-                } catch (Exception e) {
-                    logger.error("Fatal Error handling Service "+service.getClass().getName(), e);
-                }
-            }
-
-            if(line.hasOption("clear-log")) {
-                storage.clearLog();
-            } else {
-                storage.saveLog();
-            }
-
-        } catch( org.apache.commons.cli.ParseException exp ) {
-            System.out.println( "Unexpected exception:" + exp.getMessage() );
+    public static class FileNameComparator implements Comparator<File> {
+        @Override
+        public int compare(File a, File b) {
+            return a.getName().compareTo(b.getName());
         }
     }
 
-    public static HashMap<String, Storage.Status> injest(Collection<File> files, Storage storage) throws Exception {
+    public static void main(String[] args) throws Exception {
+        CommandLine opts = null;
+        try {
+            Options options = new Options()
+                .addOption("h", "help", false, "Print this message")
+                //.addOption("dt", "document-type", true, "Type of document being indexed with -id (REQUIRED WITH -id).. (bill|calendar|agenda|transcript)")
+                //.addOption("id", "index-document", true, "Index JSON document specified by argument (path to file)")
+                .addOption("t", "storage", true, "The path to the storage directory")
+                .addOption("s", "source", true, "The path to the files to ingest")
+                .addOption("f", "change-file", true, "The path to store the changes");
+            opts = new PosixParser().parse(options, args);
+            if(opts.hasOption("-h")) {
+                new HelpFormatter().printHelp("posix", options );
+                System.exit(0);
+            }
+        } catch (ParseException e) {
+            logger.fatal("Error parsing arguments: ", e);
+            System.exit(0);
+        }
+
+        String sourceDir = opts.getOptionValue("source", Config.get("data.sobi"));
+        String storageDir = opts.getOptionValue("storage", Config.get("data.json"));
+
+        if( sourceDir == null || storageDir == null ) {
+            throw new org.apache.commons.cli.ParseException("source and storage are both required parameters.");
+        }
+        Storage storage = new Storage(storageDir);
+
+
+        Timer timer = new Timer();
+        Collection<File> files = FileUtils.listFiles(new File(sourceDir), null, true);
+        Collections.sort((List<File>)files, new FileNameComparator());
+
         // Process each file individually, flushing changes to storage as necessary
-        // Each file processor should produce a change log indicating what happened.
+        // Each file processor should produce a change log indicating what happened
+        timer.start();
         for(File file : files) {
             try {
-                String fileName = file.getName();
-                logger.debug(fileName);
-                // process the file
-                if(fileName.startsWith("SOBI") && fileName.endsWith(".TXT")) {
+                logger.debug("Ingesting: "+file);
+                String type = file.getParentFile().getName();
+                if (type.equals("bills")) {
                     billProcessor.process(file, storage);
-                } else if(fileName.contains("-calendar-")) {
+                } else if (type.equals("calendars")) {
                     calendarProcessor.process(file, storage);
-                } else if(fileName.contains("-agenda-")){
+                } else if (type.equals("agendas")) {
                     agendaProcessor.process(file, storage);
-                } else if(fileName.contains("-transcript-")){
+                } else if (type.equals("annotations")) {
                     continue;
+                } else if (type.equals("transcripts")) {
+                    transcriptProcessor.process(file, storage);
                 }
 
                 // To avoid memory issues, occasionally flush changes to file-system and truncate memory
@@ -128,30 +105,24 @@ public class Ingest {
             } catch (UnmarshalException e) {
                 logger.error("Issue with "+file.getName(), e);
             }
+        }
+        storage.flush();
+        logger.info(timer.stop()+" seconds to injest "+files.size()+" files.");
 
+        // Dump out the change log
+        StringBuffer out = new StringBuffer();
+        for (Entry<String, Status> entry : storage.changeLog.entrySet()) {
+            out.append(entry.getKey()+"\t"+entry.getValue()+"\n");
         }
 
-        storage.flush();
-        return storage.changeLog;
-    }
-
-    public static Options buildOptions() {
-        Options options = new Options();
-
-        options.addOption("sd", "sobi-directory", true, "The path to your SOBI directory");
-        options.addOption("jd", "json-directory", true, "The path to your JSON directory");
-
-        options.addOption("w", "write", false, "Write SOBI's in sobi-directory to JSON in json-directory");
-        options.addOption("i", "index", false, "Index logged changes");
-        options.addOption("pc", "purge-cache", false, "Purge cache while indexing");
-        options.addOption("cl", "clear-log", false, "Clear the log after sending to services.");
-
-        options.addOption("id", "index-document", true, "Index JSON document specified by argument (path to file)");
-        options.addOption("dt", "document-type", true, "Type of document being indexed with -id (REQUIRED WITH -id).. (bill|calendar|agenda|transcript)");
-
-        options.addOption("gx", "generate-xml", false, "Will pull XML data from SOBI documents");
-
-        options.addOption("h", "help", false, "Print this message");
-        return options;
+        if (opts.hasOption("change-file")) {
+            try {
+                FileUtils.write(new File(opts.getOptionValue("change-file")), out);
+            } catch (IOException e) {
+                logger.error("Could not open changeLog for writing", e);
+            }
+        } else {
+            System.out.print(out);
+        }
     }
 }
