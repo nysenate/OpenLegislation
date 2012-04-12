@@ -54,22 +54,16 @@ public class Collate {
             BufferedReader br = null;
 
             try {
-                br = new BufferedReader(new StringReader(FileUtils.readFileToString(file, "UTF-8")));
-                // Sort the different file parts to their destination folders
-                in = br.readLine();
-
-                if (in==null) {
-                    br.close();
-                    logger.error("Moving empty file: "+file);
-                    FileUtils.moveFileToDirectory(file, destDirectory, false);
-
-                } else if (!in.startsWith("<?xml")) {
-                    br.close();
+                if (!file.getName().startsWith("SOBI")) {
                     logger.info("Moving transcript: "+file);
                     FileUtils.moveFileToDirectory(file, transcripts, false);
 
                 } else {
-                    do {
+                    br = new BufferedReader(new StringReader(FileUtils.readFileToString(file, "UTF-8")));
+                    // Sort the different file parts to their destination folders
+                    in = br.readLine();
+
+                    while((in = br.readLine()) != null) {
                         if(in.matches("<sencalendar.+")) {
                             File calendar = new File(calendars, file.getName()+"-calendar-"+inc+".xml");
                             logger.info("Extracting calendar: "+calendar);
@@ -88,7 +82,7 @@ public class Collate {
                             write(getXml("</senannotated.+", in, br), annotation);
                             inc++;
                         }
-                    } while((in = br.readLine()) != null);
+                    }
 
                     br.close();
                     logger.info("Moving bill: "+file);
