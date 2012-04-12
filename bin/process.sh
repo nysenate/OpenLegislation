@@ -9,12 +9,13 @@ while [ $# -gt 0 ]; do
     --work-dir) shift; work="$1" ;;
     --dest-dir) shift; dest="$1" ;;
     --storage) shift; storage="$1" ;;
+    --lucene) shift; lucene="$1" ;;
     *) echo $USAGE; exit 1 ;;
   esac
   shift
 done
 
-required_args=( "$source" "$work" "$dest" "$storage" )
+required_args=( "$source" "$work" "$dest" "$storage" "$lucene")
 for required_arg in "${required_args[@]}"; do
     if [ ! "$required_arg" ]; then
         echo $USAGE; exit 1 ;
@@ -49,7 +50,7 @@ for file_type in "${file_types[@]}"; do
 done
 
 # Push the changes out from storage
-$BINDIR/run.sh push --lucene --storage $storage --change-file $work/change.log
+$BINDIR/run.sh push --lucene $lucene --storage $storage --change-file $work/change.log
 
 # Move the change.log to $dest for archiving as well
 if [ ! -r $dest/changelogs/ ]; then

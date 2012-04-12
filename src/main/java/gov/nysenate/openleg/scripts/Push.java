@@ -41,7 +41,7 @@ public class Push {
         try {
             Options options = new Options()
                 .addOption("t", "storage", true, "The path to the storage directory")
-                .addOption("l", "lucene", false, "Push changes to the Lucene service")
+                .addOption("l", "lucene", true, "Push changes to the Lucene service")
                 .addOption("v", "varnish", false, "Push changes to the Varnish service")
                 .addOption("f", "change-file", true, "Path of changeLog file.")
                 .addOption("c", "changes", true, "A newline delimited list of changes")
@@ -79,7 +79,7 @@ public class Push {
         // Currently there is a Lucene hook and varnish hook, more to come
         ArrayList<ServiceBase> services = new ArrayList<ServiceBase>();
         if(opts.hasOption("lucene")) {
-            services.add(new Lucene(Config.get("data.lucene")));
+            services.add(new Lucene(opts.getOptionValue("lucene")));
         }
 
         if(opts.hasOption("varnish")) {
