@@ -50,7 +50,7 @@ public class TranscriptProcessor {
                     pLine = pLine.substring(2).trim();
 
                     transcript.setLocation(pLine);
-                    logger.info("got location: " + transcript.getLocation());
+                    logger.debug("got location: " + transcript.getLocation());
                 }
             }
             else if (transcript.getTimeStamp() == null && pLine.startsWith((locationLineIdx+1)+" ")) {
@@ -58,13 +58,13 @@ public class TranscriptProcessor {
                 //  12                      10:00 a.m.
                 pLine = pLine.substring(2).trim();
 
-                logger.info("got day: " + pLine);
+                logger.debug("got day: " + pLine);
 
                 String nextLine = reader.readLine();
                 nextLine = reader.readLine().trim();
                 nextLine = nextLine.substring(2).trim();
 
-                logger.info("got time: " + nextLine);
+                logger.debug("got time: " + nextLine);
 
                 pLine += ' ' + nextLine;
                 pLine = pLine.replace(".", "");
@@ -73,7 +73,7 @@ public class TranscriptProcessor {
                     Date tTime = TRANSCRIPT_DATE_PARSER.parse(pLine);
                     transcript.setTimeStamp(tTime);
                 } catch (ParseException e) {
-                    logger.warn("unable to parse transcript datetime" + pLine,e);
+                    logger.error("unable to parse transcript datetime" + pLine,e);
                 }
             }
             else if (transcript.getType() == null && pLine.startsWith((locationLineIdx+5)+" ")) {
@@ -97,7 +97,8 @@ public class TranscriptProcessor {
         }
         transcript.setTranscriptText(fullText.toString());
         transcript.setTranscriptTextProcessed(fullTextProcessed.toString());
-
-        storage.set(transcript.getYear()+"/transcript/"+transcript.getId(), transcript);
+        transcript.setId(transcript.luceneOid());
+        transcript.setModified(transcript.getTimeStamp().getTime());
+        storage.set(transcript.getYear()+"/transcript/"+transcript.luceneOid(), transcript);
     }
 }
