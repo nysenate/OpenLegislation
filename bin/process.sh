@@ -34,7 +34,7 @@ fi
 set -e
 
 # Organize the change files and ingest to storage
-$BINDIR/run.sh collate --source $source --dest $work;
+$BINDIR/run.sh collate $source $work;
 $BINDIR/run.sh ingest --source $work --storage $storage --change-file $work/change.log
 
 # Migrate all processed files to $dest for archival purposes

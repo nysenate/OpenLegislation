@@ -1,20 +1,15 @@
 package gov.nysenate.openleg.scripts;
 
-import gov.nysenate.openleg.util.Config;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -22,27 +17,18 @@ public class Collate {
     private static Logger logger = Logger.getLogger(Collate.class);
 
     public static void main(String[] args) {
-        CommandLine opts = null;
-        try {
-            Options options = new Options()
-                .addOption("s", "source", true, "Source data directory")
-                .addOption("d", "dest", true, "Destination data directory")
-                .addOption("h", "help", false, "Print this message");
-            opts = new PosixParser().parse(options, args);
-            if(opts.hasOption("-h")) {
-                new HelpFormatter().printHelp("posix", options );
-                System.exit(0);
-            }
-        } catch (ParseException e) {
-            logger.fatal("Error parsing arguments: ", e);
+        if (args.length < 2) {
+            System.out.println("USAGE: Collate source [... source] dest");
             System.exit(0);
         }
 
-        String source = opts.getOptionValue("source", Config.get("data"));
-        String dest = opts.getOptionValue("dest", Config.get("work", source));
+        File destDirectory = new File(args[args.length-1]).getAbsoluteFile();
+        Collection<File> sources = new ArrayList<File>();
+        for (int i=0; i < args.length-1; i++) {
+            sources.addAll(FileUtils.listFiles(new File(args[i]).getAbsoluteFile(), null, true));
+        }
 
-        File sourceDirectory = new File(source).getAbsoluteFile();
-        File destDirectory = new File(dest).getAbsoluteFile();
+
         File bills = new File(destDirectory, "bills");
         File agendas = new File(destDirectory, "agendas");
         File calendars = new File(destDirectory, "calendars");
@@ -60,7 +46,7 @@ public class Collate {
             System.exit(0);
         }
 
-        for (File file : FileUtils.listFiles(sourceDirectory, null, false)) {
+        for (File file : sources) {
             logger.debug("Processing: "+file);
 
             int inc = 1;
