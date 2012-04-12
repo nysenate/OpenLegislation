@@ -18,6 +18,7 @@ done
 required_args=( "$source" "$work" "$dest" "$storage" "$lucene")
 for required_arg in "${required_args[@]}"; do
     if [ ! "$required_arg" ]; then
+        echo "All options are required: source, work, dest, storage, lucene";
         echo $USAGE; exit 1 ;
     elif [ ! -r "$required_arg" ]; then
         echo "$required_arg must exist on the filesystem.";
@@ -33,9 +34,12 @@ fi
 # Stop immediately if any command below fails
 set -e
 
+errorlog=$work/process.log
+changelog=$work/change.log
+
 # Organize the change files and ingest to storage
-$BINDIR/run.sh collate $source $work;
-$BINDIR/run.sh ingest --source $work --storage $storage --change-file $work/change.log
+$BINDIR/run.sh collate $source $work &>$errorlog;
+$BINDIR/run.sh ingest $work $storage --change-file $changelog &>>$errorlog
 
 # Migrate all processed files to $dest for archival purposes
 year="`date +%Y`"
@@ -50,10 +54,11 @@ for file_type in "${file_types[@]}"; do
 done
 
 # Push the changes out from storage
-$BINDIR/run.sh push --lucene $lucene --storage $storage --change-file $work/change.log
+$BINDIR/run.sh push $storage --lucene $lucene --change-file $changelog &>>$errorlog
 
-# Move the change.log to $dest for archiving as well
-if [ ! -r $dest/changelogs/ ]; then
-    mkdir $dest/changelogs/
+# Move the logs to $dest for archiving as well
+if [ ! -r $dest/logs/ ]; then
+    mkdir $dest/logs/
 fi
-mv $work/change.log $dest/changelogs/`date +CHANGELOG.D%Y%m%d.T%H%M%S.TXT`
+mv $changelog $dest/logs/`date +D%Y%m%d.T%H%M%S.change.log`
+mv $errorlog $dest/logs/`date +D%Y%m%d.T%H%M%S.error.log`

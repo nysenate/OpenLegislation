@@ -3,7 +3,6 @@ package gov.nysenate.openleg.scripts;
 import gov.nysenate.openleg.services.Lucene;
 import gov.nysenate.openleg.services.ServiceBase;
 import gov.nysenate.openleg.services.Varnish;
-import gov.nysenate.openleg.util.Config;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.File;
@@ -13,7 +12,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
@@ -37,23 +35,29 @@ public class Push {
     }
 
     public static void main(String[] args) {
+        String[] required = null;
         CommandLine opts = null;
         try {
             Options options = new Options()
-                .addOption("t", "storage", true, "The path to the storage directory")
                 .addOption("l", "lucene", true, "Push changes to the Lucene service")
                 .addOption("v", "varnish", false, "Push changes to the Varnish service")
                 .addOption("f", "change-file", true, "Path of changeLog file.")
                 .addOption("c", "changes", true, "A newline delimited list of changes")
                 .addOption("h", "help", false, "Print this message");
             opts = new PosixParser().parse(options, args);
+            required = opts.getArgs();
             if(opts.hasOption("-h")) {
-                new HelpFormatter().printHelp("posix", options );
+                System.err.println("USAGE: Push STORAGE [--lucene LOCATION] [--varnish] [--change-file FILE] [--changes CHANGES]");
                 System.exit(0);
+
+            } else if (required.length != 1) {
+                System.err.println("Storage is a required argument.");
+                System.err.println("USAGE: Push STORAGE [--lucene LOCATION] [--varnish] [--change-file FILE] [--changes CHANGES]");
+                System.exit(1);
             }
         } catch (ParseException e) {
             logger.fatal("Error parsing arguments: ", e);
-            System.exit(0);
+            System.exit(1);
         }
 
         // Parse the specified changes into a hash
@@ -63,18 +67,15 @@ public class Push {
                 File changeFile = new File(opts.getOptionValue("change-file"));
                 changes = parseChanges(FileUtils.readLines(changeFile, "UTF-8"));
             } catch (IOException e) {
-                logger.fatal("Error reading change-file: "+opts.getOptionValue("changes"), e);
-                System.exit(0);
+                System.err.println("Error reading change-file: "+opts.getOptionValue("changes"));
+                System.exit(1);
             }
         } else if (opts.hasOption("changes")) {
             changes = parseChanges(Arrays.asList(opts.getOptionValue("changes").split("\n")));
         } else {
-            logger.fatal("Nothing to do. Specify changes or a change-file");
-            System.exit(0);
+            System.err.println("Changes to push must be specified with either --change-file or --changes");
+            System.exit(1);
         }
-
-        String storageDir = opts.getOptionValue("storage", Config.get("data.json"));
-        Storage storage = new Storage(storageDir);
 
         // Currently there is a Lucene hook and varnish hook, more to come
         ArrayList<ServiceBase> services = new ArrayList<ServiceBase>();
@@ -87,6 +88,7 @@ public class Push {
         }
 
         // Pass the change log through a set of service hooks
+        Storage storage = new Storage(required[0]);
         for(ServiceBase service:services) {
             try {
                 service.process(changes, storage);

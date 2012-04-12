@@ -4,7 +4,6 @@ import gov.nysenate.openleg.processors.AgendaProcessor;
 import gov.nysenate.openleg.processors.BillProcessor;
 import gov.nysenate.openleg.processors.CalendarProcessor;
 import gov.nysenate.openleg.processors.TranscriptProcessor;
-import gov.nysenate.openleg.util.Config;
 import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.util.Storage.Status;
 import gov.nysenate.openleg.util.Timer;
@@ -20,7 +19,6 @@ import java.util.Map.Entry;
 import javax.xml.bind.UnmarshalException;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
@@ -43,36 +41,33 @@ public class Ingest {
     }
 
     public static void main(String[] args) throws Exception {
+        String[] required = null;
         CommandLine opts = null;
         try {
             Options options = new Options()
                 .addOption("h", "help", false, "Print this message")
+                .addOption("f", "change-file", true, "The path to store the changes");
                 //.addOption("dt", "document-type", true, "Type of document being indexed with -id (REQUIRED WITH -id).. (bill|calendar|agenda|transcript)")
                 //.addOption("id", "index-document", true, "Index JSON document specified by argument (path to file)")
-                .addOption("t", "storage", true, "The path to the storage directory")
-                .addOption("s", "source", true, "The path to the files to ingest")
-                .addOption("f", "change-file", true, "The path to store the changes");
             opts = new PosixParser().parse(options, args);
+            required = opts.getArgs();
             if(opts.hasOption("-h")) {
-                new HelpFormatter().printHelp("posix", options );
+                System.out.println("USAGE: Ingest SOURCE STORAGE [--change-file FILE]");
                 System.exit(0);
+
+            } else if (required.length != 2) {
+                System.err.println("Both source and storage directories are required.");
+                System.err.println("USAGE: Ingest SOURCE STORAGE [--change-file FILE]");
+                System.exit(1);
             }
         } catch (ParseException e) {
             logger.fatal("Error parsing arguments: ", e);
             System.exit(0);
         }
 
-        String sourceDir = opts.getOptionValue("source", Config.get("data.sobi"));
-        String storageDir = opts.getOptionValue("storage", Config.get("data.json"));
-
-        if( sourceDir == null || storageDir == null ) {
-            throw new org.apache.commons.cli.ParseException("source and storage are both required parameters.");
-        }
-        Storage storage = new Storage(storageDir);
-
-
         Timer timer = new Timer();
-        Collection<File> files = FileUtils.listFiles(new File(sourceDir), null, true);
+        Storage storage = new Storage(required[1]);
+        Collection<File> files = FileUtils.listFiles(new File(required[0]), null, true);
         Collections.sort((List<File>)files, new FileNameComparator());
 
         // Process each file individually, flushing changes to storage as necessary

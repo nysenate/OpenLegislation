@@ -18,8 +18,8 @@ public class Collate {
 
     public static void main(String[] args) {
         if (args.length < 2) {
-            System.out.println("USAGE: Collate source [... source] dest");
-            System.exit(0);
+            System.err.println("USAGE: Collate source [... source] dest");
+            System.exit(1);
         }
 
         File destDirectory = new File(args[args.length-1]).getAbsoluteFile();
@@ -47,7 +47,7 @@ public class Collate {
         }
 
         for (File file : sources) {
-            logger.debug("Processing: "+file);
+            logger.info("Processing: "+file);
 
             int inc = 1;
             String in = null;
