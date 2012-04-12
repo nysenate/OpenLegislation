@@ -1,13 +1,13 @@
 #!/bin/bash
 
 BINDIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-USAGE="USAGE: `basename $0` --source-dir SOURCE --work-dir WORK --dest-dir DEST --storage STORAGE";
+USAGE="USAGE: `basename $0` --source SOURCE --work WORK --dest DEST --storage STORAGE --lucene LUCENE";
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --source-dir) shift; source="$1" ;;
-    --work-dir) shift; work="$1" ;;
-    --dest-dir) shift; dest="$1" ;;
+    --source) shift; source="$1" ;;
+    --work) shift; work="$1" ;;
+    --dest) shift; dest="$1" ;;
     --storage) shift; storage="$1" ;;
     --lucene) shift; lucene="$1" ;;
     *) echo $USAGE; exit 1 ;;
