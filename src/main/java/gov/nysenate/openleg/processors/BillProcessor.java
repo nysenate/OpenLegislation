@@ -82,6 +82,94 @@ public class BillProcessor {
         this.logger = Logger.getLogger(this.getClass());
     }
 
+    public Bill loadBill(Storage storage, String billId, String billYear, String billAmendment, String oldBlock, StringBuffer blockData, String fileName, int lineNum) throws ParseError {
+        // This really shouldn't be this complicated, but it is
+        // TODO: Because we don't get 2009 data in order there are probably
+        //       some data issues created by the logic below.
+
+        // Get the original bill
+        String oldkey;
+        String amdkey;
+        String bucket = billYear+"/bill/";
+        String key = billId+"-"+billYear;
+        Bill bill = (Bill)storage.get(bucket+key, Bill.class);
+
+        // If the bill wasn't found, make a new one
+        if (bill == null) {
+            bill = new Bill();
+            bill.setYear(Integer.parseInt(billYear));
+            bill.setSenateBillNo(key);
+            if (!billAmendment.isEmpty()) {
+                logger.error("Bill Amendment filed without initial bill in file "+fileName+":"+lineNum+" - "+oldBlock);
+            }
+        }
+
+        if (!billAmendment.isEmpty()) {
+            amdkey = billId+billAmendment+"-"+billYear;
+            Bill amd = (Bill)storage.get(bucket+amdkey, Bill.class);
+
+            if (amd == null) {
+                if(blockData.toString().startsWith("DELETE")) {
+                    //If it is just a delete block just skip making the amendment
+                    //this happens quite frequently for some reason.
+                    throw new ParseError("New amendment with DELETE command only. Skipping", oldBlock+blockData);
+                }
+
+                // get the previous version and copy it by reading from file
+                if(bill.amendments.isEmpty()) {
+                    // In case this is an amendment introduced without an original (mostly 2009 data)
+                    // we need to make sure to set the base bill we just made for flushing below.
+                    oldkey = bill.getSenateBillNo();
+                    storage.set(bucket+oldkey, bill);
+
+                } else {
+                    oldkey = bill.amendments.get(bill.amendments.size()-1);
+                }
+
+                // Flush to make sure we load the most recent copy of the bill
+                storage.flush();
+
+                // now that we're synced with the file system, load from file for a new copy
+                amd = (Bill)storage.get(bucket+oldkey , Bill.class, false);
+                if (amd==null) {
+                    throw new ParseError("Recorded amendment not found in storage", bucket+oldkey);
+                }
+
+                // Set the amendment to the correct bill number
+                amd.setSenateBillNo(amdkey);
+
+                // Update the all amendment lists and mark existing ones as inactive
+                for(String tempKey : bill.amendments) {
+                    storage.flush();
+                    Bill temp = (Bill)storage.get(bucket+tempKey, Bill.class);
+                    temp.setActive(false);
+                    temp.amendments.add(amdkey);
+                    storage.set(bucket+tempKey, temp);
+                }
+
+                // Update the base amendment list and mark it as inactive
+                bill.amendments.add(amdkey);
+                bill.setActive(false);
+                storage.set(bucket+key, bill);
+            }
+
+            bill = amd;
+            key = amdkey;
+
+        } else if(!bill.amendments.isEmpty()) {
+            amdkey = bill.amendments.get(bill.amendments.size()-1);
+            Bill amd = (Bill)storage.get(bucket+amdkey, Bill.class);
+            if (amd==null) {
+                throw new ParseError("Recorded amendment not found on filesystem",amdkey);
+            }
+
+            bill = amd;
+            key = amdkey;
+        }
+
+        return bill;
+    }
+
     public void process(File sobiFile, Storage storage) throws IOException {
 
         // Initialize file variables
@@ -120,85 +208,7 @@ public class BillProcessor {
             if (!oldBlock.equals("") && !newBlock.equals(oldBlock)) {
 
                 try {
-                    // Get the original bill
-                    String oldkey;
-                    String amdkey;
-                    String bucket = billYear+"/bill/";
-                    String key = billId+"-"+billYear;
-                    Bill bill = (Bill)storage.get(bucket+key, Bill.class);
-
-                    // If the bill wasn't found, make a new one
-                    if (bill == null) {
-                        bill = new Bill();
-                        bill.setYear(Integer.parseInt(billYear));
-                        bill.setSenateBillNo(key);
-                        if (!billAmendment.isEmpty()) {
-                            logger.error("Bill Amendment filed without initial bill in file "+fileName+":"+lineNum+" - "+oldBlock);
-                        }
-                    }
-
-                    if (!billAmendment.isEmpty()) {
-                        amdkey = billId+billAmendment+"-"+billYear;
-                        Bill amd = (Bill)storage.get(bucket+amdkey, Bill.class);
-
-                        if (amd == null) {
-                            if(blockData.toString().startsWith("DELETE")) {
-                                //If it is just a delete block just skip making the amendment
-                                //this happens quite frequently for some reason.
-                                throw new ParseError("New amendment with DELETE command only. Skipping", oldBlock+blockData);
-                            }
-
-                            // get the previous version and copy it by reading from file
-                            if(bill.amendments.isEmpty()) {
-                                // In case this is an amendment introduced without an original (mostly 2009 data)
-                                // we need to make sure to set the base bill we just made for flushing below.
-                                oldkey = bill.getSenateBillNo();
-                                storage.set(bucket+oldkey, bill);
-
-                            } else {
-                                oldkey = bill.amendments.get(bill.amendments.size()-1);
-                            }
-
-                            // Flush to make sure we load the most recent copy of the bill
-                            storage.flush();
-
-                            // now that we're synced with the file system, load from file for a new copy
-                            amd = (Bill)storage.get(bucket+oldkey , Bill.class, false);
-                            if (amd==null) {
-                                throw new ParseError("Recorded amendment not found in storage", bucket+oldkey);
-                            }
-
-                            // Set the amendment to the correct bill number
-                            amd.setSenateBillNo(amdkey);
-
-                            // Update the all amendment lists and mark existing ones as inactive
-                            for(String tempKey : bill.amendments) {
-                                storage.flush();
-                                Bill temp = (Bill)storage.get(bucket+tempKey, Bill.class);
-                                temp.setActive(false);
-                                temp.amendments.add(amdkey);
-                                storage.set(bucket+tempKey, temp);
-                            }
-
-                            // Update the base amendment list and mark it as inactive
-                            bill.amendments.add(amdkey);
-                            bill.setActive(false);
-                            storage.set(bucket+key, bill);
-                        }
-
-                        bill = amd;
-                        key = amdkey;
-
-                    } else if(!bill.amendments.isEmpty()) {
-                        amdkey = bill.amendments.get(bill.amendments.size()-1);
-                        Bill amd = (Bill)storage.get(bucket+amdkey, Bill.class);
-                        if (amd==null) {
-                            throw new ParseError("Recorded amendment not found on filesystem",amdkey);
-                        }
-
-                        bill = amd;
-                        key = amdkey;
-                    }
+                    Bill bill = loadBill(storage, billId, billYear, billAmendment, oldBlock, blockData, fileName, lineNum);
 
                     // commit block
                     try {
@@ -224,7 +234,7 @@ public class BillProcessor {
 
                         bill.setModified(date.getTime());
 
-                        storage.set(bucket+key, bill);
+                        storage.set(billYear+"/bill/"+bill.getSenateBillNo(), bill);
                     } catch (ParseError e) {
                         throw e;
                     } catch (Exception e) {
