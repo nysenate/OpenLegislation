@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -20,16 +22,17 @@ import org.apache.log4j.Logger;
 
 public class Push {
     private static Logger logger = Logger.getLogger(Push.class);
-
+    private static Pattern changePattern = Pattern.compile("(.*)\\s+(NEW|DELETE|MODIFIED)");
     public static HashMap<String, Storage.Status> parseChanges(Iterable<String> lines) {
         HashMap<String, Storage.Status> changes = new HashMap<String, Storage.Status>();
         for (String line : lines) {
-            String[] parts = line.split("\\s+");
-            if (parts.length != 2) {
+            Matcher changeLine = changePattern.matcher(line);
+            if (changeLine.find()) {
+                changes.put(changeLine.group(1), Storage.Status.valueOf(changeLine.group(2).toUpperCase()));
+            } else {
                 logger.fatal("Malformed change line: "+line);
                 System.exit(0);
             }
-            changes.put(parts[0], Storage.Status.valueOf(parts[1].toUpperCase()));
         }
         return changes;
     }
