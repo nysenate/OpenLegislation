@@ -153,6 +153,33 @@ public class BillProcessor {
         return bill;
     }
 
+    public void saveBill(Storage storage, Bill bill) throws ParseError {
+        // Sync certain information across versions.
+        // This is a hack around the horrible 2009 data set we were given
+        // TODO: We should only need to do this for certain line codes
+        String bucket = bill.getYear()+"/bill/";
+        if (bill.getSponsor()!=null) {
+            // Update the base bill if we are not the base bill
+            String baseBill = bill.getSenateBillNo().replaceAll("([A-Z][0-9]+).?-([0-9]{4})","$1-$2");
+            List<String> amendments = bill.amendments;
+            if (!baseBill.equals(bill.getSenateBillNo())) {
+                Bill base = (Bill)storage.get(bucket+baseBill, Bill.class);
+                base.setSponsor(bill.getSponsor());
+                storage.set(bucket+baseBill, base);
+                amendments = base.amendments;
+            }
+            // Update amendments (starting from the base
+            for(String amendment : amendments ) {
+                if (!amendment.equals(bill.getSenateBillNo())) {
+                    Bill amd = (Bill)storage.get(bucket+amendment, Bill.class);
+                    amd.setSponsor(bill.getSponsor());
+                    storage.set(bucket+amendment, amd);
+                }
+            }
+        }
+        storage.set(bucket+bill.getSenateBillNo(), bill);
+    }
+
     public void process(File sobiFile, Storage storage) throws IOException {
 
         // Initialize file variables
@@ -216,8 +243,7 @@ public class BillProcessor {
                         }
 
                         bill.setModified(date.getTime());
-
-                        storage.set(billYear+"/bill/"+bill.getSenateBillNo(), bill);
+                        saveBill(storage, bill);
                     } catch (ParseError e) {
                         throw e;
                     } catch (Exception e) {
