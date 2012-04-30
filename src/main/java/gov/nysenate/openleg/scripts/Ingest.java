@@ -28,11 +28,6 @@ import org.apache.log4j.Logger;
 public class Ingest {
     public static Logger logger = Logger.getLogger(Ingest.class);
 
-    public static BillProcessor billProcessor = new BillProcessor();
-    public static CalendarProcessor calendarProcessor = new CalendarProcessor();
-    public static AgendaProcessor agendaProcessor = new AgendaProcessor();
-    public static TranscriptProcessor transcriptProcessor = new TranscriptProcessor();
-
     public static class FileNameComparator implements Comparator<File> {
         @Override
         public int compare(File a, File b) {
@@ -69,6 +64,11 @@ public class Ingest {
         Storage storage = new Storage(required[1]);
         Collection<File> files = FileUtils.listFiles(new File(required[0]), null, true);
         Collections.sort((List<File>)files, new FileNameComparator());
+
+        BillProcessor billProcessor = new BillProcessor();
+        CalendarProcessor calendarProcessor = new CalendarProcessor();
+        AgendaProcessor agendaProcessor = new AgendaProcessor();
+        TranscriptProcessor transcriptProcessor = new TranscriptProcessor();
 
         // Process each file individually, flushing changes to storage as necessary
         // Each file processor should produce a change log indicating what happened
