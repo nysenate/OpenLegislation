@@ -52,6 +52,12 @@ public class Addendum {
         meetings = new ArrayList<Meeting>();
     }
 
+    public Addendum(String id) {
+        this.setId(id);
+        meetings = new ArrayList<Meeting>();
+    }
+
+
     public String getAddendumId() {
         return addendumId;
     }

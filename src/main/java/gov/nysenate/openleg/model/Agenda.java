@@ -20,6 +20,11 @@ public class Agenda extends SenateObject {
 
     private List<Addendum> addendums;
 
+    public Agenda(String id) {
+        this.setId(id);
+        addendums = new ArrayList<Addendum>();
+    }
+
     public Agenda() {
         super();
         addendums = new ArrayList<Addendum>();

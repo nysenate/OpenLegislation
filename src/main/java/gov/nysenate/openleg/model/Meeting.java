@@ -50,7 +50,15 @@ public class Meeting extends SenateObject {
 
     public Meeting() {
         addendums = new ArrayList<Addendum>();
+        bills = new ArrayList<Bill>();
     }
+
+    public Meeting(String id) {
+        this.setId(id);
+        addendums = new ArrayList<Addendum>();
+        bills = new ArrayList<Bill>();
+    }
+
     public String getCommitteeChair() {
         return committeeChair;
     }
