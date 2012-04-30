@@ -22,10 +22,13 @@ import org.apache.log4j.Logger;
 
 public class Push {
     private static Logger logger = Logger.getLogger(Push.class);
-    private static Pattern changePattern = Pattern.compile("(.*)\\s+(NEW|DELETE|MODIFIED)");
+    private static Pattern changePattern = Pattern.compile("\\s*(.*)\\s+(NEW|DELETE|MODIFIED)");
     public static HashMap<String, Storage.Status> parseChanges(Iterable<String> lines) {
         HashMap<String, Storage.Status> changes = new HashMap<String, Storage.Status>();
         for (String line : lines) {
+            if (line.isEmpty() || line.matches("\\s*#")) {
+                continue;
+            }
             Matcher changeLine = changePattern.matcher(line);
             if (changeLine.find()) {
                 changes.put(changeLine.group(1), Storage.Status.valueOf(changeLine.group(2).toUpperCase()));
