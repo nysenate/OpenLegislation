@@ -10,13 +10,14 @@ String header = "/header.jsp";
 <jsp:include page="<%=header%>"/>
 
 
- <div id="content">
-Learn more here: <a href="http://wiki.github.com/nysenatecio/OpenLeg">http://wiki.github.com/nysenatecio/OpenLeg</a>
+<div id="content">
+Learn more at the following links:<br/>
+<br/>
+<a href="http://wiki.github.com/nysenate/OpenLeg">http://wiki.github.com/nysenate/OpenLeg</a><br/>
+<br/>
+<a href="http://openlegislation.readthedocs.org/">http://openlegislation.readthedocs.org/</a><br/>
 <br/><br/>
-<iframe src="http://wiki.github.com/nysenatecio/OpenLeg" width="1000" height="800"></iframe>
 </div>
 
- 
-   
- <jsp:include page="/footer.jsp"/>
+<jsp:include page="/footer.jsp"/>
    
