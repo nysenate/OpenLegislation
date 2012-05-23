@@ -13,7 +13,7 @@ String header = "/header.jsp";
 <div id="content">
 Learn more at the following links:<br/>
 <br/>
-<a href="http://wiki.github.com/nysenate/OpenLeg">http://wiki.github.com/nysenate/OpenLeg</a><br/>
+<a href="http://github.com/nysenate/OpenLegislation">http://github.com/nysenate/OpenLegislation</a><br/>
 <br/>
 <a href="http://openlegislation.readthedocs.org/">http://openlegislation.readthedocs.org/</a><br/>
 <br/><br/>
