@@ -558,7 +558,7 @@ public class BillProcessor {
         } else {
             // We'll definitely need to clean this data up more than a little bit..
             // data = data.replaceAll("\\xBD", "");
-            bill.setLaw(data.replace("\r\n", " ").replace("õ", "S").replace("ô","P").replace("ï¿½","S").trim());
+            bill.setLaw(data.replace("\r\n", " ").replace("Ãµ", "S").replace("Ã´","P").replace("Ã¯Â¿Â½","S").replace("ï¿½", "S").trim());
         }
     }
 
@@ -610,7 +610,7 @@ public class BillProcessor {
         // The DELETE code for the summary goes through the law block (B)
         // Combine the lines with a space and handle special character issues..
         // Again, I don't have any examples of these special characters right now
-        // data = data.replace("›","S").replaceAll("\\x27(\\W|\\s)", "&apos;$1");
+        // data = data.replace("Â›","S").replaceAll("\\x27(\\W|\\s)", "&apos;$1");
         bill.setSummary(data.replace("\r\n", " ").trim());
     }
 
@@ -618,7 +618,7 @@ public class BillProcessor {
         // No DELETE code for titles
         // Combine the lines with a space and handle special character issues..
         // Again, I don't have any examples of these special characters right now
-        // data = data.replace("›","S").replaceAll("\\x27(\\W|\\s)", "&apos;$1");
+        // data = data.replace("Â›","S").replaceAll("\\x27(\\W|\\s)", "&apos;$1");
         bill.setTitle(data.replace("\r\n", " ").trim());
     }
 
