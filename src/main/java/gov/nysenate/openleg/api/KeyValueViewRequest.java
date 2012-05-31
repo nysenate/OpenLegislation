@@ -27,7 +27,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
             String format, String key, String value, String pageNumber, String pageSize) {
         super(request, response, pageNumber, pageSize, format, getApiEnum(KeyValueView.values(),key));
         this.key = key;
-        this.value = value;
+        this.value = "\""+value+"\"";
     }
 
     @Override
