@@ -242,6 +242,7 @@ public class BillProcessor {
                             default: throw new ParseError("Invalid Line Code", lineCode);
                         }
 
+                        bill.addSobiReference(sobiFile.getName());
                         bill.setModified(date.getTime());
                         saveBill(storage, bill);
                     } catch (ParseError e) {
