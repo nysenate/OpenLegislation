@@ -27,7 +27,7 @@ for required_arg in "${required_args[@]}"; do
 done
 
 # Check to see if there is any work to be done
-if [ `find $source -maxdepth 1 -type f | wc -l` -eq 0 ]; then
+if [ `find $source -type f | wc -l` -eq 0 ]; then
     exit 0;
 fi
 
