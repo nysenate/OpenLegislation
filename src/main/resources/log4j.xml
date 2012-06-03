@@ -7,7 +7,7 @@
 		</layout>
 	</appender>
     <root>
-		<priority value="warn"></priority>
+		<priority value="info"></priority>
 		<appender-ref ref="stdout"/>
 	</root>
 	
