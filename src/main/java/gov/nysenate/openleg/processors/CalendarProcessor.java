@@ -289,12 +289,6 @@ public class CalendarProcessor implements OpenLegConstants {
 
 
     public Sequence parseSequence (Storage storage, Supplemental supplemental, XMLSequence xmlSequence)	{
-        // TODO: What are sequences?
-        // Default sequence number to 1
-        if(xmlSequence.getNo().equals("")) {
-            xmlSequence.setNo("1");
-        }
-
         String sequenceId = supplemental.getId() + "-seq-" + xmlSequence.getNo();
 
         Sequence sequence = new Sequence();
