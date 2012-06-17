@@ -31,6 +31,7 @@ public class TranscriptProcessor {
 
         EasyReader reader = new EasyReader(file).open();
         String line = null;
+        logger.debug("Skipping: "+reader.readLine());
         while ((line = reader.readLine()) != null) {
             pLine = line.trim();
 
@@ -73,7 +74,7 @@ public class TranscriptProcessor {
                     Date tTime = TRANSCRIPT_DATE_PARSER.parse(pLine);
                     transcript.setTimeStamp(tTime);
                 } catch (ParseException e) {
-                    logger.error("unable to parse transcript datetime" + pLine,e);
+                    logger.error(file.getName()+": unable to parse transcript datetime " + pLine,e);
                 }
             }
             else if (transcript.getType() == null && pLine.startsWith((locationLineIdx+5)+" ")) {
@@ -99,6 +100,7 @@ public class TranscriptProcessor {
         transcript.setTranscriptTextProcessed(fullTextProcessed.toString());
         transcript.setId(transcript.luceneOid());
         transcript.setModified(transcript.getTimeStamp().getTime());
+        transcript.addSobiReference(file.getName());
         storage.set(transcript.getYear()+"/transcript/"+transcript.luceneOid(), transcript);
     }
 }
