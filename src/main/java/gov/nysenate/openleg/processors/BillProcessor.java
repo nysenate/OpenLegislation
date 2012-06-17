@@ -558,7 +558,7 @@ public class BillProcessor {
         } else {
             // We'll definitely need to clean this data up more than a little bit..
             // data = data.replaceAll("\\xBD", "");
-            bill.setLaw(data.replace("\r\n", " ").replace("õ", "S").replace("ô","P").replace("ï¿½","S").replace("�", "S").trim());
+            bill.setLaw(data.replace("\r\n", " ").replace("õ", "S").replace("ô","P").replace("ï¿½","S").replace((char)65533+"", "S").trim());
         }
     }
 
