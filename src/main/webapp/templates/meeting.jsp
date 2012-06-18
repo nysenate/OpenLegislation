@@ -5,9 +5,13 @@
 
 	Meeting meeting = (Meeting) request.getAttribute("meeting");
 	
-	Addendum addendum = meeting.getAddendums().get(meeting.getAddendums().size() - 1);
-	Agenda agenda = addendum.getAgenda();
-	String calNo = agenda.getNumber() + "";
+	//Temp Hack
+	String calNo = "";
+	Addendum addendum = null;
+	if (meeting.getAddendums().size() > 0) {
+	    addendum = meeting.getAddendums().get(meeting.getAddendums().size() - 1);
+	    calNo = addendum.getAgenda().getNumber()+"";
+	}
 %>
 
 <br />
@@ -29,7 +33,10 @@
 		<% if(meeting.getLocation() != null) { %>
 			/ <b>Location:</b> <%=meeting.getLocation()%>
 		<% } %>
- 		<b>Addendum:</b> <%=addendum.getAddendumId()%> / <b>Published:</b> <%=addendum.getPublicationDateTime()%> / <b>Week of:</b> <%=addendum.getWeekOf()%></div>
+        <% if (addendum != null) { %>
+            <b>Addendum:</b> <%=addendum.getAddendumId()%> / <b>Published:</b> <%=addendum.getPublicationDateTime()%> / <b>Week of:</b> <%=addendum.getWeekOf()%>
+        <% } %>
+ 		 </div>
 			<div id="committeeNotes">
 				<% if (meeting.getNotes() != null && meeting.getNotes().trim().length() > 0) { %>
 					<h3>Notes</h3>
