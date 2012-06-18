@@ -68,7 +68,7 @@ public class SingleViewRequest extends AbstractApiRequest {
                 request.setAttribute("related-" + rType, calendars);
 
                 rType = "vote";
-                rQuery = QueryBuilder.build().otype(rType).and().keyValue("billno", id).query();
+                rQuery = QueryBuilder.build().otype(rType).and().relatedBills("billno", id).query();
                 ArrayList<Vote> votes = SearchEngine.getInstance().getSenateObjects(rQuery, Vote.class);
                 request.setAttribute("related-" + rType, votes);
             }
