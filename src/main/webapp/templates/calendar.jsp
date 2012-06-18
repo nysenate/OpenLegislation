@@ -64,7 +64,8 @@
 				
 					if(seqs != null) {
 						for(Sequence seq:seqs) {
-							%> <h4>Sequence <%=seq.getNo()%>:</h4> <%
+                            String seqTitle = "Active List "+supp.getCalendar().getNo()+(seq.getNo() == "" ? "" : "-"+seq.getNo());
+                            %> <h4><%=seqTitle%> published <%=new SimpleDateFormat("MMM d, h:mma").format(seq.getReleaseDateTime())%>:</h4> <%
 							
 							if (seq.getNotes() != null && seq.getNotes().trim().length() > 0) { %>
 							<h4>Notes</h4>
