@@ -1,6 +1,6 @@
 #!/bin/bash
+source $(dirname "$0")/utils.sh
 
-BINDIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 USAGE="USAGE: `basename $0` --source SOURCE --work WORK --dest DEST --storage STORAGE --lucene LUCENE";
 
 while [ $# -gt 0 ]; do
@@ -62,3 +62,4 @@ if [ ! -r $dest/logs/ ]; then
 fi
 mv $changelog $dest/logs/`date +D%Y%m%d.T%H%M%S.change.log`
 mv $errorlog $dest/logs/`date +D%Y%m%d.T%H%M%S.error.log`
+

@@ -1,7 +1,6 @@
 #!/bin/bash
+source $(dirname "$0")/utils.sh
 
-ROOTDIR="$(dirname $( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd ))"
-VERSION=`sed -ne 's/\s*<version>\(.*\)<\/version>/\1/p' $ROOTDIR/pom.xml | head -1`
 BASE="$ROOTDIR/target/legislation-$VERSION/WEB-INF"
 
 case $1 in
@@ -11,4 +10,6 @@ case $1 in
     --help | -h | help) echo "USAGE: `basename $0` ingest|help <args>"; exit;;
 esac
 
-java -Xmx756m -Xms16m -cp $BASE/classes/:$BASE/lib/* $SCRIPT $@
+# TODO: This memory size should be an adjustable parameter
+java -Xmx1024m -Xms16m -cp $BASE/classes/:$BASE/lib/* $SCRIPT $@
+

@@ -9,3 +9,4 @@ function mvn_install {
 }
 
 mvn_install gov.nysenate    SenateServices         0.0.1-SNAPSHOT     $lib_dir/SenateServices-0.0.1-SNAPSHOT.jar
+

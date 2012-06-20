@@ -27,6 +27,8 @@ if [ $STATUS -ne "200" ]; then
         echo "$DATE - tomcat was unresponsive.. restarting" >&2
         kill -9 $PID
         bin/startup.sh
+        sleep 10
+        echo `curl --write-out %{http_code} http://localhost:8080/legislation/bill/S1234-2011` >&2
         exit 1
 fi
 
