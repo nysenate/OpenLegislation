@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 
 public class Push {
     private static Logger logger = Logger.getLogger(Push.class);
-    private static Pattern changePattern = Pattern.compile("\\s*(.*)\\s+(NEW|DELETE|MODIFIED)");
+    private static Pattern changePattern = Pattern.compile("\\s*(.*?)\\s+(NEW|DELETE|MODIFIED)");
     public static HashMap<String, Storage.Status> parseChanges(Iterable<String> lines) {
         HashMap<String, Storage.Status> changes = new HashMap<String, Storage.Status>();
         for (String line : lines) {
