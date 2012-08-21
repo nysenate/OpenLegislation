@@ -1,7 +1,15 @@
 #!/bin/bash
 source $(dirname "$0")/utils.sh
 
-USAGE="USAGE: `basename $0` --source SOURCE --work WORK --dest DEST --storage STORAGE --lucene LUCENE";
+USAGE="USAGE: `basename $0` --source SOURCE --work WORK --dest DEST --storage STORAGE --lucene LUCENE --basedir BASEDIR --dryrun";
+
+dryrun=0;
+basedir="";
+source="data";
+work="work";
+dest="processed";
+storage="json";
+lucene="lucene";
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -10,10 +18,32 @@ while [ $# -gt 0 ]; do
     --dest) shift; dest="$1" ;;
     --storage) shift; storage="$1" ;;
     --lucene) shift; lucene="$1" ;;
+    --basedir) shift; basedir="$1" ;;
+    --dryrun) shift; dryrun=1 ;;
     *) echo $USAGE; exit 1 ;;
   esac
   shift
 done
+
+if [ "$basedir" != "" ]; then
+    source="$basedir/$source";
+    work="$basedir/$work";
+    dest="$basedir/$dest";
+    storage="$basedir/$storage";
+    lucene="$basedir/$lucene";
+fi
+
+echo "Processing using: ";
+echo "  Source:  $source";
+echo "  Work:    $work";
+echo "  Dest:    $dest";
+echo "  Storage: $storage";
+echo "  Lucene:  $lucene";
+
+
+if [ $dryrun -eq 1 ]; then
+    exit;
+fi
 
 required_args=( "$source" "$work" "$dest" "$storage" "$lucene")
 for required_arg in "${required_args[@]}"; do
@@ -28,6 +58,7 @@ done
 
 # Check to see if there is any work to be done
 if [ `find $source -type f | wc -l` -eq 0 ]; then
+    echo "No files in $source to process."
     exit 0;
 fi
 
@@ -60,6 +91,10 @@ $BINDIR/run.sh push $storage --lucene $lucene --change-file $changelog &>>$error
 if [ ! -r $dest/logs/ ]; then
     mkdir $dest/logs/
 fi
-mv $changelog $dest/logs/`date +D%Y%m%d.T%H%M%S.change.log`
-mv $errorlog $dest/logs/`date +D%Y%m%d.T%H%M%S.error.log`
 
+new_change_log=$dest/logs/`date +D%Y%m%d.T%H%M%S.change.log`;
+new_error_log=$dest/logs/`date +D%Y%m%d.T%H%M%S.error.log`;
+mv $changelog $new_change_log
+mv $errorlog $new_error_log
+
+echo "Finished processing changes to `cat $new_change_log | wc -l` objects.";

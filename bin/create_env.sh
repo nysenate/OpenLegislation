@@ -1,10 +1,16 @@
 #!/bin/bash
 source $(dirname "$0")/utils.sh
 
+if [ "$1" = "" ]; then
+	env=".";
+else
+	env="$1";
+fi
+
 # Create the specified base drive, primary folders, and work sub-folders
-mkdir -p $1 $1/work $1/json $1/lucene $1/processed $1/data
-mkdir $1/work/bills $1/work/calendars $1/work/agendas $1/work/transcripts
+mkdir -p $env $env/work $env/json $env/lucene $env/processed $env/data
+mkdir $env/work/bills $env/work/calendars $env/work/agendas $env/work/transcripts
 
 # Create a shortcut link to the project repo for convenient access to scripts.
-ln -s $ROOTDIR/bin $1
+ln -s $ROOTDIR/bin $env
 
