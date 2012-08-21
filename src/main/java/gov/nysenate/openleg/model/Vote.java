@@ -20,7 +20,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("vote")
 public class Vote extends SenateObject {
 
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/DD");
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
     private int voteType;
 
@@ -71,10 +71,10 @@ public class Vote extends SenateObject {
 
     public Vote (Bill bill, Date date, int type, String sequenceNumber) {
         this();
-        this.id = buildId(bill, date, sequenceNumber);
-        this.voteType = type;
         this.bill = bill;
         this.voteDate = date;
+        this.voteType = type;
+        this.id = buildId(bill, date, sequenceNumber);
     }
 
 
