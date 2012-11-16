@@ -7,6 +7,11 @@ document search engine. The API has full support for ``XML`` and ``JSON``
 standard formats as well as support for ``RSS`` and ``ATOM`` formats for all
 search queries.
 
+.. note::
+
+    ``JSONP`` format now supported. Use the ``callback`` argument to specify the call
+    back function to wrap the result in.
+
 The available toplevel document types are currently:
 
 * Bill_
