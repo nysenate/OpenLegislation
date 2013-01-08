@@ -39,7 +39,7 @@ echo "  Work:    $work";
 echo "  Dest:    $dest";
 echo "  Storage: $storage";
 echo "  Lucene:  $lucene";
-
+echo "tail -f $work/process.log to watch progress.";
 
 if [ $dryrun -eq 1 ]; then
     exit;
@@ -57,7 +57,8 @@ for required_arg in "${required_args[@]}"; do
 done
 
 # Check to see if there is any work to be done
-if [ `find $source -type f | wc -l` -eq 0 ]; then
+document_count=`find $source -type f | wc -l`
+if [ $document_count -eq 0 ]; then
     echo "No files in $source to process."
     exit 0;
 fi
@@ -69,10 +70,14 @@ errorlog=$work/process.log
 changelog=$work/change.log
 
 # Organize the change files and ingest to storage
+echo "Collating $document_count files into $work";
 $BINDIR/run.sh collate $source $work &>$errorlog;
+echo "Ingesting $document_count files into $storage";
 $BINDIR/run.sh ingest $work $storage --change-file $changelog &>>$errorlog
 
 # Migrate all processed files to $dest for archival purposes
+# TODO: Get Year from the filename somehow!
+echo "Archiving processed files to $dest.";
 year="`date +%Y`"
 file_types=( "bills" "agendas" "calendars" "transcripts" "annotations" )
 for file_type in "${file_types[@]}"; do
@@ -85,9 +90,11 @@ for file_type in "${file_types[@]}"; do
 done
 
 # Push the changes out from storage
+echo "Pushing `wc -l $changelog` document changes to $lucene";
 $BINDIR/run.sh push $storage --lucene $lucene --change-file $changelog &>>$errorlog
 
 # Move the logs to $dest for archiving as well
+echo "Archiving the change and error logs to $dest/logs/";
 if [ ! -r $dest/logs/ ]; then
     mkdir $dest/logs/
 fi
