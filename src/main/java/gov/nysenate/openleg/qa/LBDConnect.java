@@ -390,6 +390,7 @@ public class LBDConnect {
         }
 
         local.close();
+        out.close();
         channel.close();
     }
 }
