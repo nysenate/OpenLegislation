@@ -27,7 +27,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
             String format, String key, String value, String pageNumber, String pageSize) {
         super(request, response, pageNumber, pageSize, format, getApiEnum(KeyValueView.values(),key));
         this.key = key;
-        this.value = "\""+value+"\"";
+        this.value = value;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
         int start = (pageNumber - 1) * pageSize;
 
         try {
-            queryBuilder.keyValue(key, value).and().otype("bill").and().current().and().active();
+            queryBuilder.keyValue(key, "\""+value+"\"").and().otype("bill").and().current().and().active();
 
             if(filter != null) queryBuilder.and().insertAfter(filter);
         } catch (QueryBuilderException e) {
