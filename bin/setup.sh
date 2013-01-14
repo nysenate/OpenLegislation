@@ -1,12 +1,11 @@
 #!/bin/bash
+source $(dirname "$0")/utils.sh
 
-
-root_dir=`dirname $0`/../
-lib_dir=$root_dir/lib
+lib_dir=$ROOTDIR/lib
 
 function mvn_install {
     mvn install:install-file -DgroupId=$1 -DartifactId=$2 -Dversion=$3 -Dfile=$4 -Dpackaging=jar -DgeneratePom=true
 }
 
-mvn_install gov.nysenate    SenateServices         0.0.1-SNAPSHOT     $lib_dir/SenateServices-0.0.1-SNAPSHOT.jar
+mvn_install gov.nysenate.services nysenate-java-client 1.0 $lib_dir/nysenate-java-client-1.0.jar
 

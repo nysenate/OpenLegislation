@@ -119,9 +119,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>gov.nysenate</groupId>
-            <artifactId>SenateServices</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>gov.nysenate.services</groupId>
+            <artifactId>nysenate-java-client</artifactId>
+            <version>1.0</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
