@@ -2,7 +2,7 @@
 
 
 root_dir=`dirname $0`/../
-lib_dir=$root_dir/src/main/resources/lib
+lib_dir=$root_dir/lib
 
 function mvn_install {
     mvn install:install-file -DgroupId=$1 -DartifactId=$2 -Dversion=$3 -Dfile=$4 -Dpackaging=jar -DgeneratePom=true
