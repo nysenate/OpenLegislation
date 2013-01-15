@@ -78,7 +78,7 @@ public class UpdateNYSenateData {
 
             List<Senator> senators =  client.getSenators();
             for (Senator senator : senators) {
-                File senatorFile = new File(currentSenatorsDir, senator.getDistrict().getNumber()+senator.getShortName());
+                File senatorFile = new File(currentSenatorsDir, senator.getDistrict().getNumber()+".json");
                 System.out.println("Writing "+senator.getName()+" to "+senatorFile.getAbsolutePath());
                 mapper.writeValue(senatorFile, senator);
             }
