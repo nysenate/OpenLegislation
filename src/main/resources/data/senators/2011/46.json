@@ -1,0 +1,55 @@
+{
+  "name" : "Neil D. Breslin",
+  "lastName" : "Breslin",
+  "shortName" : "Breslin",
+  "email" : "breslin@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Breslin202009.jpg",
+  "url" : "http://www.nysenate.gov/senator/neil-d-breslin",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "172 State Street",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2225",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.757823,
+    "longitude" : 42.652133
+  }, {
+    "name" : "District Office",
+    "street" : "172 State Street ",
+    "city" : "Albany ",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.757823,
+    "longitude" : 42.652133
+  } ],
+  "district" : {
+    "number" : 46,
+    "url" : "http://www.nysenate.gov/district/46",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

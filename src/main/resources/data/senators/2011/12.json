@@ -1,0 +1,40 @@
+{
+  "name" : "Michael Gianaris",
+  "lastName" : "Gianaris",
+  "shortName" : "Gianaris",
+  "email" : "gianaris@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Giannaris.jpg",
+  "url" : "http://www.nysenate.gov/senator/michael-gianaris",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "21-77 31st Street",
+    "city" : "Astoria",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "718-728-0960",
+    "fax" : "718-728-0963",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.910328,
+    "longitude" : 40.776247
+  } ],
+  "district" : {
+    "number" : 12,
+    "url" : "http://www.nysenate.gov/district/12",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

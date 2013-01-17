@@ -1,0 +1,70 @@
+{
+  "name" : "Hugh T. Farley",
+  "lastName" : "Farley",
+  "shortName" : "Farley",
+  "email" : "farley@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/SD44_Farley.jpg",
+  "url" : "http://www.nysenate.gov/senator/hugh-t-farley",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2181",
+    "fax" : "(518) 455-2271",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "2430 Riverfront Center",
+    "city" : "Amsterdam",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 843-2188",
+    "fax" : "(518) 843-8363",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -74.189727,
+    "longitude" : 42.936701
+  }, {
+    "name" : "District Office 2",
+    "street" : "33-41 East Main Street ",
+    "city" : "Johnstown",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 762-3721",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -74.369668,
+    "longitude" : 43.006532
+  } ],
+  "district" : {
+    "number" : 44,
+    "url" : "http://www.nysenate.gov/district/44",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/people/Hugh-Farley/1000657013336"
+  }
+}

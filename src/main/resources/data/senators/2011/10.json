@@ -1,0 +1,55 @@
+{
+  "name" : "Shirley L. Huntley",
+  "lastName" : "Huntley",
+  "shortName" : "Huntley",
+  "email" : "shuntley@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/(03-03-09) Huntley-HS-015_2.jpg",
+  "url" : "http://www.nysenate.gov/senator/shirley-l-huntley",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3531 ",
+    "fax" : "(518) 426-6859 ",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "161-10 Jamaica Avenue",
+    "city" : "Jamaica",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 523-3069 ",
+    "fax" : "(718) 523-3670 ",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.797826,
+    "longitude" : 40.70364
+  } ],
+  "district" : {
+    "number" : 10,
+    "url" : "http://www.nysenate.gov/district/10",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/people/Shirley-L-Huntley/1210706953"
+  }
+}

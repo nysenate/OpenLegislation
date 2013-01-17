@@ -1,0 +1,70 @@
+{
+  "name" : "John J. Bonacic",
+  "lastName" : "Bonacic",
+  "shortName" : "Bonacic",
+  "email" : "bonacic@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/42ProfilePic Bonacic.jpg",
+  "url" : "http://www.nysenate.gov/senator/john-j-bonacic",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3181",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "201 Dolson Avenue",
+    "city" : "Middletown",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(845) 344-3311",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -74.426096,
+    "longitude" : 41.428226
+  }, {
+    "name" : "District Office 2",
+    "street" : "111 Main Street",
+    "city" : "Delhi",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(607) 746-6675",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -74.915271,
+    "longitude" : 42.277134
+  } ],
+  "district" : {
+    "number" : 42,
+    "url" : "http://www.nysenate.gov/district/42",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

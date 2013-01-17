@@ -1,0 +1,40 @@
+{
+  "name" : "Mark Grisanti",
+  "lastName" : "Grisanti",
+  "shortName" : "Grisanti",
+  "email" : "grisanti@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/mg_web.jpg",
+  "url" : "http://www.nysenate.gov/senator/mark-grisanti",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Room 902 Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3240",
+    "fax" : "518-426-6738",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759332,
+    "longitude" : 42.652442
+  } ],
+  "district" : {
+    "number" : 60,
+    "url" : "http://www.nysenate.gov/district/60",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

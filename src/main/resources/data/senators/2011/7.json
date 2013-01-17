@@ -1,0 +1,55 @@
+{
+  "name" : "Jack M. Martins",
+  "lastName" : "Martins",
+  "shortName" : "Martins",
+  "email" : "martins@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/headshot.JPG",
+  "url" : "http://www.nysenate.gov/senator/jack-m-martins",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building, Room 946",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3265",
+    "fax" : "518-426-6739",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759332,
+    "longitude" : 42.652442
+  }, {
+    "name" : "District Office",
+    "street" : "151 Herricks Road, Suite 202",
+    "city" : "Garden City Park",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "516-746-5924",
+    "fax" : "516-746-0439",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.655597,
+    "longitude" : 40.741138
+  } ],
+  "district" : {
+    "number" : 7,
+    "url" : "http://www.nysenate.gov/district/07",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/senatormartins",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Senator-Jack-Martins/183072338380420?ref=ts&v=wall"
+  }
+}

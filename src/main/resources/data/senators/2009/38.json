@@ -1,0 +1,55 @@
+{
+  "name" : "Thomas P. Morahan",
+  "lastName" : "Morahan",
+  "shortName" : "Morahan",
+  "email" : "district38@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/MORAHAN%20headshot_0.jpg",
+  "url" : "http://www.nysenate.gov/senator/thomas-p-morahan",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3261 ",
+    "fax" : "(518) 455-2959 ",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "158 Airport Executive Park  ",
+    "city" : "Nanuet",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(845) 425-1818 ",
+    "fax" : "(845) 425-6473 ",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -74.028213,
+    "longitude" : 41.108418
+  } ],
+  "district" : {
+    "number" : 38,
+    "url" : "http://www.nysenate.gov/district/38",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

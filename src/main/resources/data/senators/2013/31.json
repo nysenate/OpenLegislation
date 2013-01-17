@@ -1,0 +1,70 @@
+{
+  "name" : "Adriano Espaillat",
+  "lastName" : "Espaillat",
+  "shortName" : "espaillat",
+  "email" : "espailla@nysenate.gov",
+  "additionalContact" : "<P>&nbsp;</P>\n<P>&nbsp;</P>",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Adriano Espaillat Headshot.JPG",
+  "url" : "http://www.nysenate.gov/senator/adriano-espaillat",
+  "partyAffiliations" : [ "D", "WF" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "5030 Broadway",
+    "city" : "New York",
+    "postalCode" : "10034",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(212) 544-0173",
+    "fax" : "(212) 544-0256",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.869129,
+    "longitude" : -73.917094
+  }, {
+    "name" : "Albany Office",
+    "street" : "LOB Room 513",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2041",
+    "fax" : "518-426-6847",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.694803,
+    "longitude" : -73.850052
+  }, {
+    "name" : "Satellite Office (TUESDAY ONLY)",
+    "street" : "563 Columbus Avenue",
+    "city" : "New York",
+    "postalCode" : "10024",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "347-994-8351",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "at 87th Street",
+    "latitude" : 40.787341,
+    "longitude" : -73.971529
+  } ],
+  "district" : {
+    "number" : 31,
+    "url" : "http://www.nysenate.gov/district/31",
+    "imageUrl" : "http://www.nysenate.gov/files/Untitled-31.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=31"
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/Adriano4Senate",
+    "youtube" : "http://www.youtube.com/user/AdrianoEspaillat",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/assemblymanadrianoespaillat"
+  }
+}

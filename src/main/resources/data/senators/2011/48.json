@@ -1,0 +1,55 @@
+{
+  "name" : "Patty Ritchie",
+  "lastName" : "Ritchie",
+  "shortName" : "Ritchie",
+  "email" : "ritchie@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/ritchie_web.jpg",
+  "url" : "http://www.nysenate.gov/senator/patty-ritchie",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "Dulles State Office Building, Room 418",
+    "city" : "Watertown",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "315-782-3418",
+    "fax" : "315-782-6357",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -75.910757,
+    "longitude" : 43.974784
+  }, {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building, Room 815 ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3438",
+    "fax" : "518-426-6740",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759332,
+    "longitude" : 42.652442
+  } ],
+  "district" : {
+    "number" : 48,
+    "url" : "http://www.nysenate.gov/district/48",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

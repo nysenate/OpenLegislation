@@ -1,0 +1,70 @@
+{
+  "name" : "George D. Maziarz",
+  "lastName" : "Maziarz",
+  "shortName" : "maziarz",
+  "email" : "maziarz@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/SD62_Maziarz_0.jpg",
+  "url" : "http://www.nysenate.gov/senator/george-d-maziarz",
+  "partyAffiliations" : [ "R" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Room 708,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2024",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Legislative Office Building",
+    "latitude" : 40.656868,
+    "longitude" : -73.939644
+  }, {
+    "name" : "District Office",
+    "street" : "175 Walnut St.,",
+    "city" : "Lockport",
+    "postalCode" : "14094",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(716) 434-0680",
+    "fax" : "(716) 434-3297",
+    "otherPhone" : "",
+    "additional" : "Suite 6",
+    "latitude" : 43.169358,
+    "longitude" : -78.690893
+  }, {
+    "name" : "Satellite Office",
+    "street" : "350 New Campus Dr.,",
+    "city" : "Brockport",
+    "postalCode" : "14420",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(585) 637-5800",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "SUNY College at Brockport",
+    "latitude" : 43.209472,
+    "longitude" : -77.957285
+  } ],
+  "district" : {
+    "number" : 62,
+    "url" : "http://www.nysenate.gov/district/62",
+    "imageUrl" : "http://www.nysenate.gov/files/sd62.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=62"
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/senatormaziarz",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/George-D-Maziarz/110844998935922"
+  }
+}

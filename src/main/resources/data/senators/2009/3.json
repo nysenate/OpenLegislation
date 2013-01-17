@@ -1,0 +1,70 @@
+{
+  "name" : "Brian X. Foley",
+  "lastName" : "Foley",
+  "shortName" : "Foley",
+  "email" : "bfoley@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Foley Headshot Flag .jpg",
+  "url" : "http://www.nysenate.gov/senator/brian-x-foley",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2303",
+    "fax" : "518-426-6825",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "Veterans' Memorial Highway",
+    "city" : "Hauppauge,",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "631-360-3356",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.222372,
+    "longitude" : 40.8243
+  }, {
+    "name" : "District Office 2",
+    "street" : "320 Carleton Avenue",
+    "city" : "Central Islip",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "631-231-0517",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.19684,
+    "longitude" : 40.766648
+  } ],
+  "district" : {
+    "number" : 3,
+    "url" : "http://www.nysenate.gov/district/03",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "http://www.youtube.com/user/SenateDistrict3",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Brian-Foley/52575085610?ref=ts"
+  }
+}

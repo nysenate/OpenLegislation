@@ -1,0 +1,55 @@
+{
+  "name" : "William T. Stachowski",
+  "lastName" : "Stachowski",
+  "shortName" : "Stachowski",
+  "email" : "stachows@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Stachowski headshot.jpg",
+  "url" : "http://www.nysenate.gov/senator/william-t-stachowski",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518)-455-2426",
+    "fax" : "(518) 426-6851",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "2030 Clinton Street",
+    "city" : "Buffalo",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(716)-826-3344",
+    "fax" : "(716)-823-6372",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -78.801373,
+    "longitude" : 42.872026
+  } ],
+  "district" : {
+    "number" : 58,
+    "url" : "http://www.nysenate.gov/district/58",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "https://twitter.com/senstachowski",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Senator-William-T-Stachowski/98309792160"
+  }
+}

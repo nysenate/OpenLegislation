@@ -1,0 +1,55 @@
+{
+  "name" : "William J. Larkin Jr.",
+  "lastName" : "Jr.",
+  "shortName" : "Jr.",
+  "email" : "larkin@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/head.JPG",
+  "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2770",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "1093 Little Britain Road",
+    "city" : "New Windsor",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(845) 567-1270",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -74.097905,
+    "longitude" : 41.483552
+  } ],
+  "district" : {
+    "number" : 39,
+    "url" : "http://www.nysenate.gov/district/39",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "name" : "Kemp Hannon",
+  "lastName" : "Hannon",
+  "shortName" : "Hannon",
+  "email" : "hannon@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Kemp head shot 2.JPG",
+  "url" : "http://www.nysenate.gov/senator/kemp-hannon",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "The Capitol",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2200",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.76,
+    "longitude" : 42.65
+  }, {
+    "name" : "District Office",
+    "street" : "224 7th Street",
+    "city" : "",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "516-739-1700",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.633153,
+    "longitude" : 40.725505
+  } ],
+  "district" : {
+    "number" : 6,
+    "url" : "http://www.nysenate.gov/district/06",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/kemphannon",
+    "youtube" : "http://www.youtube.com/senatorhannon",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/kemp.hannon"
+  }
+}

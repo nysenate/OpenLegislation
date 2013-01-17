@@ -1,0 +1,55 @@
+{
+  "name" : "Kevin S. Parker",
+  "lastName" : "Parker",
+  "shortName" : "Parker",
+  "email" : "parker@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Parker2007Biography.jpg",
+  "url" : "http://www.nysenate.gov/senator/kevin-s-parker",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2580",
+    "fax" : "(518) 426-6843",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "1300 Flatbush Avenue",
+    "city" : "Brooklyn",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 629-6401",
+    "fax" : "(718) 629-6420",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.953696,
+    "longitude" : 40.638249
+  } ],
+  "district" : {
+    "number" : 21,
+    "url" : "http://www.nysenate.gov/district/21",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Senator-Kevin-Parker/24988756132?ref=sgm"
+  }
+}

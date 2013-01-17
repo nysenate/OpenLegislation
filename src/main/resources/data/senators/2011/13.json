@@ -1,0 +1,55 @@
+{
+  "name" : "José Peralta",
+  "lastName" : "Peralta",
+  "shortName" : "Peralta",
+  "email" : "jperalta@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Jose Peralta MAIN-Senate headshot.JPG",
+  "url" : "http://www.nysenate.gov/senator/jose-peralta",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2529   ",
+    "fax" : "(518) 426-6909",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "32-37 Junction Boulevard ",
+    "city" : "East Elmhurst",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 205-3881",
+    "fax" : "(718) 205-4145",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.873752,
+    "longitude" : 40.757648
+  } ],
+  "district" : {
+    "number" : 13,
+    "url" : "http://www.nysenate.gov/district/13",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/SenatorPeralta",
+    "youtube" : "http://www.youtube.com/user/SenatorJosePeralta",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/SenatorPeralta"
+  }
+}

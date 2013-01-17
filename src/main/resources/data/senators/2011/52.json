@@ -1,0 +1,55 @@
+{
+  "name" : "Tom Libous",
+  "lastName" : "Libous",
+  "shortName" : "Libous",
+  "email" : "senator@senatorlibous.com",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Libous.jpg",
+  "url" : "http://www.nysenate.gov/senator/tom-libous",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "172 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2677",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.757823,
+    "longitude" : 42.652133
+  }, {
+    "name" : "District Office",
+    "street" : "1607 State Office Building 44 Hawley Street",
+    "city" : "Binghamton",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(607) 773-8771 - (607) 336-3401",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -75.912012,
+    "longitude" : 42.096062
+  } ],
+  "district" : {
+    "number" : 52,
+    "url" : "http://www.nysenate.gov/district/52",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

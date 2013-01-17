@@ -1,0 +1,70 @@
+{
+  "name" : "Antoine M Thompson",
+  "lastName" : "Thompson",
+  "shortName" : "Thompson",
+  "email" : "athompso@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Thompson-HSweb.jpg",
+  "url" : "http://www.nysenate.gov/senator/antoine-m-thompson",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518)-455-3371",
+    "fax" : "(518)-426-6969",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "65 Court Street",
+    "city" : "Buffalo",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(716)-854-8705",
+    "fax" : "(716)-854-3051",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -78.876876,
+    "longitude" : 42.886548
+  }, {
+    "name" : "District Office 2",
+    "street" : "1902 Main Street",
+    "city" : "Niagara Falls",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(716)-284-5789 ",
+    "fax" : "(716)-284-5820",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -79.05368,
+    "longitude" : 43.106129
+  } ],
+  "district" : {
+    "number" : 60,
+    "url" : "http://www.nysenate.gov/district/60",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

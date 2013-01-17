@@ -1,0 +1,55 @@
+{
+  "name" : "Kathleen A. Marchione",
+  "lastName" : "Marchione",
+  "shortName" : "marchione",
+  "email" : "marchione@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Senator_Kathy_Marchione.jpg",
+  "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione",
+  "partyAffiliations" : [ "R", "C" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2381",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Legislative Office Building - Room 918",
+    "latitude" : 42.668971,
+    "longitude" : -73.78689
+  }, {
+    "name" : "District Office",
+    "street" : "2 Halfmoon Town Plaza",
+    "city" : "Halfmoon",
+    "postalCode" : "12065",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.851244,
+    "longitude" : -73.699645
+  } ],
+  "district" : {
+    "number" : 43,
+    "url" : "http://www.nysenate.gov/district/43",
+    "imageUrl" : "http://www.nysenate.gov/files/district_43.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=43"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

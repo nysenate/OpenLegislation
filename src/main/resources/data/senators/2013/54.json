@@ -1,0 +1,55 @@
+{
+  "name" : "Michael F. Nozzolio",
+  "lastName" : "Nozzolio",
+  "shortName" : "nozzolio",
+  "email" : "nozzolio@senate.state.ny.us",
+  "additionalContact" : "<p>&nbsp;</p> <p>THE CONTACT FORM BELOW IS TEMPORARILY OFFLINE. UNTIL IT IS FIXED, PLEASE EMAIL ME DIRECTLY AT <a href=\"mailto:nozzolio@nysenate.gov\">nozzolio@nysenate.gov</a>.</p>",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/2.jpg",
+  "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio",
+  "partyAffiliations" : [ "R", "C", "IP" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2366",
+    "fax" : "(518) 426-6953",
+    "otherPhone" : "",
+    "additional" : "Room 412, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
+  }, {
+    "name" : "District Office",
+    "street" : "119 Fall Street",
+    "city" : "Seneca Falls",
+    "postalCode" : "13148",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(315) 568-9816",
+    "fax" : "(315) 568-2090",
+    "otherPhone" : "Toll-free 1-888-568-9816",
+    "additional" : "",
+    "latitude" : 42.910497,
+    "longitude" : -76.798896
+  } ],
+  "district" : {
+    "number" : 54,
+    "url" : "http://www.nysenate.gov/district/54",
+    "imageUrl" : "http://www.nysenate.gov/files/district_54.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=54"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

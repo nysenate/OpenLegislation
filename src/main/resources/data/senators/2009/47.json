@@ -1,0 +1,55 @@
+{
+  "name" : "Joseph A. Griffo",
+  "lastName" : "Griffo",
+  "shortName" : "Griffo",
+  "email" : "griffo@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/SD47_Griffo.jpg",
+  "url" : "http://www.nysenate.gov/senator/joseph-griffo",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3334",
+    "fax" : "(518) 426-6921",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "207 Genesee Street ",
+    "city" : "Utica",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(315) 793-9072",
+    "fax" : "(315) 793-0298",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -75.231918,
+    "longitude" : 43.101049
+  } ],
+  "district" : {
+    "number" : 47,
+    "url" : "http://www.nysenate.gov/district/47",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

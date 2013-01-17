@@ -1,0 +1,55 @@
+{
+  "name" : "James S. Alesi",
+  "lastName" : "Alesi",
+  "shortName" : "Alesi",
+  "email" : "alesi@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Senator Alesi - 55th- Headshot 6-2008.JPG",
+  "url" : "http://www.nysenate.gov/senator/james-s-alesi",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2015",
+    "fax" : "(518) 426-6968",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "220 Packetts Landing",
+    "city" : "Fairport",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(585) 223-1800",
+    "fax" : "(585) 223-3084",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -77.444624,
+    "longitude" : 43.100413
+  } ],
+  "district" : {
+    "number" : 55,
+    "url" : "http://www.nysenate.gov/district/55",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

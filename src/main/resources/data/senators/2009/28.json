@@ -1,0 +1,55 @@
+{
+  "name" : "José M. Serrano",
+  "lastName" : "Serrano",
+  "shortName" : "Serrano",
+  "email" : "serrano@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/serranoheadshot.JPG",
+  "url" : "http://www.nysenate.gov/senator/jose-m-serrano",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2795",
+    "fax" : "(518) 426-6886",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "157 East 104th Street ",
+    "city" : "New York",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(212)-828-5829",
+    "fax" : "(212)-828-2420",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.946631,
+    "longitude" : 40.790942
+  } ],
+  "district" : {
+    "number" : 28,
+    "url" : "http://www.nysenate.gov/district/28",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/senatorserrano",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/New-York-State-Senator-Serrano/134976763347?v=info"
+  }
+}

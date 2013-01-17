@@ -1,0 +1,55 @@
+{
+  "name" : "Michael F. Nozzolio",
+  "lastName" : "Nozzolio",
+  "shortName" : "Nozzolio",
+  "email" : "nozzolio@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/2.jpg",
+  "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street  ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2366 ",
+    "fax" : "(518) 426-6953",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "119 Fall Street",
+    "city" : "Seneca Falls",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(315) 568-9816 ",
+    "fax" : "(315) 568-2090",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -76.798896,
+    "longitude" : 42.910497
+  } ],
+  "district" : {
+    "number" : 54,
+    "url" : "http://www.nysenate.gov/district/54",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/SenatorNozzolio"
+  }
+}

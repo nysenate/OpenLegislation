@@ -1,0 +1,40 @@
+{
+  "name" : "Gustavo Rivera",
+  "lastName" : "Rivera",
+  "shortName" : "Rivera",
+  "email" : "grivera@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Official photo.jpg",
+  "url" : "http://www.nysenate.gov/senator/gustavo-rivera",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "181 State Street,",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3395",
+    "fax" : "516-426-6858",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.758947,
+    "longitude" : 42.652811
+  } ],
+  "district" : {
+    "number" : 33,
+    "url" : "http://www.nysenate.gov/district/33",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

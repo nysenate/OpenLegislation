@@ -1,0 +1,70 @@
+{
+  "name" : "Dale M. Volker",
+  "lastName" : "Volker",
+  "shortName" : "Volker",
+  "email" : "volker@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/volker5x7.jpg",
+  "url" : "http://www.nysenate.gov/senator/dale-m-volker",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Steet ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518)-455-3471",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "4729 Transit Road  ",
+    "city" : "Depew",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(716)-656-8544",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -78.696932,
+    "longitude" : 42.865417
+  }, {
+    "name" : "District Office 2",
+    "street" : "143 North Main Street ",
+    "city" : "Warsaw",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(585)-786-5048",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -78.133219,
+    "longitude" : 42.743199
+  } ],
+  "district" : {
+    "number" : 59,
+    "url" : "http://www.nysenate.gov/district/59",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

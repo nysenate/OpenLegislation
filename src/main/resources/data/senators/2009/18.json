@@ -1,0 +1,55 @@
+{
+  "name" : "Velmanette Montgomery",
+  "lastName" : "Montgomery",
+  "shortName" : "Montgomery",
+  "email" : "montgome@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Montgomery May Headshot 2_0.jpg",
+  "url" : "http://www.nysenate.gov/senator/velmanette-montgomery",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3451",
+    "fax" : "(518) 426-6854",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "30 Third Avenue  ",
+    "city" : "Brooklyn",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 643-6140",
+    "fax" : "(718) 237-4137",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.980247,
+    "longitude" : 40.686028
+  } ],
+  "district" : {
+    "number" : 18,
+    "url" : "http://www.nysenate.gov/district/18",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/New-York-State-Senator-Velmanette-Montgomery/103064926679"
+  }
+}
