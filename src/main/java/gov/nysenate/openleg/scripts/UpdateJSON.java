@@ -85,6 +85,14 @@ public class UpdateJSON {
                 name = "José M. Serrano";
             }
             senator.setName(name);
+            if (senator.getLastName().isEmpty()) {
+                String[] nameParts = name.split(" ");
+                String lastName = nameParts[nameParts.length-1];
+                senator.setLastName(lastName);
+            }
+            if (senator.getShortName().isEmpty()) {
+                senator.setShortName(senator.getLastName());
+            }
 
             File destFile = new File(destDir, district.getNumber()+".json");
             System.out.println("Writing "+file.getName()+" to "+destFile.getAbsolutePath());
