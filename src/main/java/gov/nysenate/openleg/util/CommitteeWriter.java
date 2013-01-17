@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.qa.LBDConnect;
-import gov.nysenate.services.SenateServicesDAO;
-import gov.nysenate.services.SenateServicesFactory;
 import gov.nysenate.services.model.Committee;
 import gov.nysenate.services.model.Member;
 
@@ -114,9 +112,10 @@ public class CommitteeWriter {
     }
 
     public ArrayList<Committee> getCommitteesFromServices(String apiKey) {
-        SenateServicesFactory factory = new SenateServicesFactory();
-        SenateServicesDAO dao = factory.createSenateServicesDAO(apiKey);
-        return dao.getCommittees();
+//        SenateServicesFactory factory = new SenateServicesFactory();
+//        SenateServicesDAO dao = factory.createSenateServicesDAO(apiKey);
+//        return dao.getCommittees();
+        return null;
     }
 
     public ArrayList<String> getCommitteeNamesFromLbdc() {
