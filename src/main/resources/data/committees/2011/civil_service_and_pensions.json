@@ -1,0 +1,60 @@
+{
+  "name" : "Civil Service and Pensions",
+  "shortName" : "civilservice",
+  "url" : "http://www.nysenate.gov/committee/civil-service-and-pensions",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Civil_Service_Pensions",
+  "chairs" : [ {
+    "name" : "Martin J. Golden",
+    "shortName" : "golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  } ],
+  "members" : [ {
+    "name" : "Charles J. Fuschillo Jr.",
+    "shortName" : "fuschillo",
+    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
+  }, {
+    "name" : "Kemp Hannon",
+    "shortName" : "hannon",
+    "url" : "http://www.nysenate.gov/senator/kemp-hannon"
+  }, {
+    "name" : "Andrew J Lanza",
+    "shortName" : "lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  }, {
+    "name" : "Betty Little",
+    "shortName" : "little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  }, {
+    "name" : "Jack M. Martins",
+    "shortName" : "martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  }, {
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "o'mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "name" : "Joseph P. Addabbo Jr",
+    "shortName" : "addabbo",
+    "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
+  }, {
+    "name" : "Martin Malavé Dilan",
+    "shortName" : "dilan",
+    "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
+  }, {
+    "name" : "Bill Perkins",
+    "shortName" : "perkins",
+    "url" : "http://www.nysenate.gov/senator/bill-perkins"
+  }, {
+    "name" : "Diane J. Savino",
+    "shortName" : "savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  }, {
+    "name" : "Martin J. Golden",
+    "shortName" : "golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "name" : "José M. Serrano",
+    "shortName" : "serrano",
+    "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
+  } ]
+}

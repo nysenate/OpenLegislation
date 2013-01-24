@@ -1,0 +1,84 @@
+{
+  "name" : "Education",
+  "shortName" : "education",
+  "url" : "http://www.nysenate.gov/committee/education",
+  "videoUrl" : "http://www.livestream.com/NYSenate_education",
+  "chairs" : [ {
+    "name" : "John J. Flanagan",
+    "shortName" : "flanagan",
+    "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  } ],
+  "members" : [ {
+    "name" : "Hugh T. Farley",
+    "shortName" : "farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "name" : "John J. Flanagan",
+    "shortName" : "flanagan",
+    "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  }, {
+    "name" : "Andrew J Lanza",
+    "shortName" : "lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  }, {
+    "name" : "Kenneth P. LaValle",
+    "shortName" : "lavalle",
+    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
+  }, {
+    "name" : "Carl L Marcellino",
+    "shortName" : "marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "name" : "George D. Maziarz",
+    "shortName" : "maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  }, {
+    "name" : "Michael H. Ranzenhofer",
+    "shortName" : "ranzenhofer",
+    "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
+  }, {
+    "name" : "Joseph E. Robach",
+    "shortName" : "robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  }, {
+    "name" : "Stephen M. Saland",
+    "shortName" : "saland",
+    "url" : "http://www.nysenate.gov/senator/stephen-m-saland"
+  }, {
+    "name" : "James L. Seward",
+    "shortName" : "seward",
+    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  }, {
+    "name" : "Suzi Oppenheimer",
+    "shortName" : "oppenheimer",
+    "url" : "http://www.nysenate.gov/senator/suzi-oppenheimer"
+  }, {
+    "name" : "Joseph P. Addabbo Jr",
+    "shortName" : "addabbo",
+    "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
+  }, {
+    "name" : "Tony Avella",
+    "shortName" : "avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
+  }, {
+    "name" : "Neil D. Breslin",
+    "shortName" : "breslin",
+    "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
+  }, {
+    "name" : "Shirley L. Huntley",
+    "shortName" : "huntley",
+    "url" : "http://www.nysenate.gov/senator/shirley-l-huntley"
+  }, {
+    "name" : "Velmanette Montgomery",
+    "shortName" : "montgomery",
+    "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
+  }, {
+    "name" : "José M. Serrano",
+    "shortName" : "serrano",
+    "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
+  }, {
+    "name" : "Toby Ann Stavisky",
+    "shortName" : "stavisky",
+    "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
+  } ]
+}

@@ -1,0 +1,32 @@
+{
+  "name" : "Alcoholism and Drug Abuse",
+  "shortName" : "",
+  "url" : "http://www.nysenate.gov/committee/alcoholism-and-drug-abuse",
+  "videoUrl" : "http://www.livestream.com/nysenate_alcoholism_drug_abuse",
+  "chairs" : [ {
+    "name" : "Jeffrey D. Klein",
+    "shortName" : "klein",
+    "url" : "http://www.nysenate.gov/senator/jeffrey-d-klein"
+  } ],
+  "members" : [ {
+    "name" : "John J. Bonacic",
+    "shortName" : "bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "name" : "Kemp Hannon",
+    "shortName" : "hannon",
+    "url" : "http://www.nysenate.gov/senator/kemp-hannon"
+  }, {
+    "name" : "Roy J. McDonald",
+    "shortName" : "mcdonald",
+    "url" : "http://www.nysenate.gov/senator/roy-j-mcdonald"
+  }, {
+    "name" : "Shirley L. Huntley",
+    "shortName" : "huntley",
+    "url" : "http://www.nysenate.gov/senator/shirley-l-huntley"
+  }, {
+    "name" : "Neil D. Breslin",
+    "shortName" : "breslin",
+    "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
+  } ]
+}

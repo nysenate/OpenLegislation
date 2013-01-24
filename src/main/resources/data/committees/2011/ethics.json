@@ -1,0 +1,32 @@
+{
+  "name" : "Ethics",
+  "shortName" : "ethics",
+  "url" : "http://www.nysenate.gov/committee/ethics",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Ethics",
+  "chairs" : [ {
+    "name" : "Andrew J Lanza",
+    "shortName" : "lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  } ],
+  "members" : [ {
+    "name" : "Hugh T. Farley",
+    "shortName" : "farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "name" : "Andrew J Lanza",
+    "shortName" : "lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  }, {
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "o'mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "name" : "Neil D. Breslin",
+    "shortName" : "breslin",
+    "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
+  }, {
+    "name" : "Ruth Hassell-Thompson",
+    "shortName" : "hassell-thompson",
+    "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
+  } ]
+}

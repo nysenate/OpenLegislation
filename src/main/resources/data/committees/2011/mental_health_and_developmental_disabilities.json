@@ -1,0 +1,52 @@
+{
+  "name" : "Mental Health and Developmental Disabilities",
+  "shortName" : "mentalhealth",
+  "url" : "http://www.nysenate.gov/committee/mental-health-and-developmental-disabilities",
+  "videoUrl" : "http://www.livestream.com/NYSenate_MentalHealth",
+  "chairs" : [ {
+    "name" : "Roy J. McDonald",
+    "shortName" : "mcdonald",
+    "url" : "http://www.nysenate.gov/senator/roy-j-mcdonald"
+  } ],
+  "members" : [ {
+    "name" : "Greg Ball",
+    "shortName" : "ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "name" : "John J. Bonacic",
+    "shortName" : "bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "name" : "Kemp Hannon",
+    "shortName" : "hannon",
+    "url" : "http://www.nysenate.gov/senator/kemp-hannon"
+  }, {
+    "name" : "Roy J. McDonald",
+    "shortName" : "mcdonald",
+    "url" : "http://www.nysenate.gov/senator/roy-j-mcdonald"
+  }, {
+    "name" : "James L. Seward",
+    "shortName" : "seward",
+    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  }, {
+    "name" : "Lee M. Zeldin",
+    "shortName" : "zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  }, {
+    "name" : "Shirley L. Huntley",
+    "shortName" : "huntley",
+    "url" : "http://www.nysenate.gov/senator/shirley-l-huntley"
+  }, {
+    "name" : "Thomas K. Duane",
+    "shortName" : "duane",
+    "url" : "http://www.nysenate.gov/senator/thomas-duane"
+  }, {
+    "name" : "Jeffrey D. Klein",
+    "shortName" : "klein",
+    "url" : "http://www.nysenate.gov/senator/jeffrey-d-klein"
+  }, {
+    "name" : "José Peralta",
+    "shortName" : "peralta",
+    "url" : "http://www.nysenate.gov/senator/jose-peralta"
+  } ]
+}

@@ -1,0 +1,68 @@
+{
+  "name" : "Crime Victims, Crime and Correction",
+  "shortName" : "crime",
+  "url" : "http://www.nysenate.gov/committee/crime-victims-crime-and-correction",
+  "videoUrl" : "http://www.livestream.com/NYSenate_VictimsCrimeCorrection",
+  "chairs" : [ {
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  } ],
+  "members" : [ {
+    "name" : "Joseph A. Griffo",
+    "shortName" : "griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "name" : "Michael H. Ranzenhofer",
+    "shortName" : "ranzenhofer",
+    "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
+  }, {
+    "name" : "Betty Little",
+    "shortName" : "little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  }, {
+    "name" : "George D. Maziarz",
+    "shortName" : "maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  }, {
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "name" : "Patty Ritchie",
+    "shortName" : "ritchie",
+    "url" : "http://www.nysenate.gov/senator/patty-ritchie"
+  }, {
+    "name" : "John A. DeFrancisco",
+    "shortName" : "defrancisco",
+    "url" : "http://www.nysenate.gov/senator/john-defrancisco"
+  }, {
+    "name" : "Gustavo Rivera",
+    "shortName" : "rivera",
+    "url" : "http://www.nysenate.gov/senator/gustavo-rivera"
+  }, {
+    "name" : "Ruth Hassell-Thompson",
+    "shortName" : "hassell-thompson",
+    "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
+  }, {
+    "name" : "Timothy M. Kennedy",
+    "shortName" : "kennedy",
+    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
+  }, {
+    "name" : "Velmanette Montgomery",
+    "shortName" : "montgomery",
+    "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
+  }, {
+    "name" : "José Peralta",
+    "shortName" : "peralta",
+    "url" : "http://www.nysenate.gov/senator/jose-peralta"
+  }, {
+    "name" : "Adriano Espaillat",
+    "shortName" : "espaillat",
+    "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
+  } ]
+}

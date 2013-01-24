@@ -1,0 +1,44 @@
+{
+  "name" : "Housing, Construction and Community Development",
+  "shortName" : "housing",
+  "url" : "http://www.nysenate.gov/committee/housing-construction-and-community-development",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Housing",
+  "chairs" : [ {
+    "name" : "Catharine Young",
+    "shortName" : "young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  } ],
+  "members" : [ {
+    "name" : "John J. Bonacic",
+    "shortName" : "bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "name" : "Mark Grisanti",
+    "shortName" : "grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  }, {
+    "name" : "Patty Ritchie",
+    "shortName" : "ritchie",
+    "url" : "http://www.nysenate.gov/senator/patty-ritchie"
+  }, {
+    "name" : "Catharine Young",
+    "shortName" : "young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "name" : "Adriano Espaillat",
+    "shortName" : "espaillat",
+    "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
+  }, {
+    "name" : "Ruben Diaz",
+    "shortName" : "diaz",
+    "url" : "http://www.nysenate.gov/senator/ruben-diaz"
+  }, {
+    "name" : "Liz Krueger",
+    "shortName" : "krueger",
+    "url" : "http://www.nysenate.gov/senator/liz-krueger"
+  } ]
+}

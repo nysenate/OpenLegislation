@@ -1,0 +1,44 @@
+{
+  "name" : "Investigations and Government Operations",
+  "shortName" : "",
+  "url" : "http://www.nysenate.gov/committee/investigations-and-government-operations",
+  "videoUrl" : "http://www.livestream.com/M3JVgsNhooo",
+  "chairs" : [ {
+    "name" : "Carl L Marcellino",
+    "shortName" : "marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  } ],
+  "members" : [ {
+    "name" : "James S. Alesi",
+    "shortName" : "alesi",
+    "url" : "http://www.nysenate.gov/senator/james-s-alesi"
+  }, {
+    "name" : "Martin J. Golden",
+    "shortName" : "golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "name" : "Carl L Marcellino",
+    "shortName" : "marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "name" : "Lee M. Zeldin",
+    "shortName" : "zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  }, {
+    "name" : "Daniel L. Squadron",
+    "shortName" : "squadron",
+    "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
+  }, {
+    "name" : "Ruben Diaz",
+    "shortName" : "diaz",
+    "url" : "http://www.nysenate.gov/senator/ruben-diaz"
+  }, {
+    "name" : "José Peralta",
+    "shortName" : "peralta",
+    "url" : "http://www.nysenate.gov/senator/jose-peralta"
+  } ]
+}

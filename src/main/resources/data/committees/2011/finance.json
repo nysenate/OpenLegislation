@@ -1,0 +1,152 @@
+{
+  "name" : "Finance",
+  "shortName" : "finance",
+  "url" : "http://www.nysenate.gov/committee/finance",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Finance",
+  "chairs" : [ {
+    "name" : "John A. DeFrancisco",
+    "shortName" : "defrancisco",
+    "url" : "http://www.nysenate.gov/senator/john-defrancisco"
+  }, {
+    "name" : "Owen H. Johnson",
+    "shortName" : "johnson",
+    "url" : "http://www.nysenate.gov/senator/owen-h-johnson"
+  } ],
+  "members" : [ {
+    "name" : "James S. Alesi",
+    "shortName" : "alesi",
+    "url" : "http://www.nysenate.gov/senator/james-s-alesi"
+  }, {
+    "name" : "John J. Bonacic",
+    "shortName" : "bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "name" : "John A. DeFrancisco",
+    "shortName" : "defrancisco",
+    "url" : "http://www.nysenate.gov/senator/john-defrancisco"
+  }, {
+    "name" : "Hugh T. Farley",
+    "shortName" : "farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "name" : "John J. Flanagan",
+    "shortName" : "flanagan",
+    "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  }, {
+    "name" : "Charles J. Fuschillo Jr.",
+    "shortName" : "fuschillo",
+    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
+  }, {
+    "name" : "Martin J. Golden",
+    "shortName" : "golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "name" : "Kemp Hannon",
+    "shortName" : "hannon",
+    "url" : "http://www.nysenate.gov/senator/kemp-hannon"
+  }, {
+    "name" : "Owen H. Johnson",
+    "shortName" : "johnson",
+    "url" : "http://www.nysenate.gov/senator/owen-h-johnson"
+  }, {
+    "name" : "William J. Larkin Jr.",
+    "shortName" : "larkin",
+    "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr"
+  }, {
+    "name" : "Kenneth P. LaValle",
+    "shortName" : "lavalle",
+    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
+  }, {
+    "name" : "Betty Little",
+    "shortName" : "little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  }, {
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "name" : "Joseph E. Robach",
+    "shortName" : "robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  }, {
+    "name" : "James L. Seward",
+    "shortName" : "seward",
+    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  }, {
+    "name" : "Catharine Young",
+    "shortName" : "young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "name" : "Carl L Marcellino",
+    "shortName" : "marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "name" : "Neil D. Breslin",
+    "shortName" : "breslin",
+    "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
+  }, {
+    "name" : "Ruben Diaz",
+    "shortName" : "diaz",
+    "url" : "http://www.nysenate.gov/senator/ruben-diaz"
+  }, {
+    "name" : "Martin Malavé Dilan",
+    "shortName" : "dilan",
+    "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
+  }, {
+    "name" : "Thomas K. Duane",
+    "shortName" : "duane",
+    "url" : "http://www.nysenate.gov/senator/thomas-duane"
+  }, {
+    "name" : "Michael Gianaris",
+    "shortName" : "gianaris",
+    "url" : "http://www.nysenate.gov/senator/michael-gianaris"
+  }, {
+    "name" : "Liz Krueger",
+    "shortName" : "krueger",
+    "url" : "http://www.nysenate.gov/senator/liz-krueger"
+  }, {
+    "name" : "Velmanette Montgomery",
+    "shortName" : "montgomery",
+    "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
+  }, {
+    "name" : "Suzi Oppenheimer",
+    "shortName" : "oppenheimer",
+    "url" : "http://www.nysenate.gov/senator/suzi-oppenheimer"
+  }, {
+    "name" : "Kevin S. Parker",
+    "shortName" : "parker",
+    "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
+  }, {
+    "name" : "José Peralta",
+    "shortName" : "peralta",
+    "url" : "http://www.nysenate.gov/senator/jose-peralta"
+  }, {
+    "name" : "Bill Perkins",
+    "shortName" : "perkins",
+    "url" : "http://www.nysenate.gov/senator/bill-perkins"
+  }, {
+    "name" : "Gustavo Rivera",
+    "shortName" : "rivera",
+    "url" : "http://www.nysenate.gov/senator/gustavo-rivera"
+  }, {
+    "name" : "Toby Ann Stavisky",
+    "shortName" : "stavisky",
+    "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
+  }, {
+    "name" : "Andrea Stewart-Cousins",
+    "shortName" : "stewart-cousins",
+    "url" : "http://www.nysenate.gov/senator/andrea-stewart-cousins"
+  }, {
+    "name" : "Andrew J Lanza",
+    "shortName" : "lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  }, {
+    "name" : "Joseph A. Griffo",
+    "shortName" : "griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "name" : "Daniel L. Squadron",
+    "shortName" : "squadron",
+    "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
+  } ]
+}

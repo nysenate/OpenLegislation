@@ -1,0 +1,36 @@
+{
+  "name" : "Children and Families",
+  "shortName" : "children",
+  "url" : "http://www.nysenate.gov/committee/children-and-families",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Children_Families",
+  "chairs" : [ {
+    "name" : "Diane J. Savino",
+    "shortName" : "savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  } ],
+  "members" : [ {
+    "name" : "Owen H. Johnson",
+    "shortName" : "johnson",
+    "url" : "http://www.nysenate.gov/senator/owen-h-johnson"
+  }, {
+    "name" : "Stephen M. Saland",
+    "shortName" : "saland",
+    "url" : "http://www.nysenate.gov/senator/stephen-m-saland"
+  }, {
+    "name" : "Catharine Young",
+    "shortName" : "young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "name" : "Diane J. Savino",
+    "shortName" : "savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  }, {
+    "name" : "Velmanette Montgomery",
+    "shortName" : "montgomery",
+    "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
+  }, {
+    "name" : "Thomas K. Duane",
+    "shortName" : "duane",
+    "url" : "http://www.nysenate.gov/senator/thomas-duane"
+  } ]
+}

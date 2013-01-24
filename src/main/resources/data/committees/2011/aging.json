@@ -1,0 +1,56 @@
+{
+  "name" : "Aging",
+  "shortName" : "aging",
+  "url" : "http://www.nysenate.gov/committee/aging",
+  "videoUrl" : "http://www.livestream.com/nysenate_aging",
+  "chairs" : [ {
+    "name" : "David J. Valesky",
+    "shortName" : "valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
+  } ],
+  "members" : [ {
+    "name" : "Greg Ball",
+    "shortName" : "ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "name" : "Hugh T. Farley",
+    "shortName" : "farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "name" : "Martin J. Golden",
+    "shortName" : "golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "name" : "Kenneth P. LaValle",
+    "shortName" : "lavalle",
+    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
+  }, {
+    "name" : "Joseph E. Robach",
+    "shortName" : "robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  }, {
+    "name" : "Lee M. Zeldin",
+    "shortName" : "zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  }, {
+    "name" : "Ruben Diaz",
+    "shortName" : "diaz",
+    "url" : "http://www.nysenate.gov/senator/ruben-diaz"
+  }, {
+    "name" : "Joseph P. Addabbo Jr",
+    "shortName" : "addabbo",
+    "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
+  }, {
+    "name" : "Tony Avella",
+    "shortName" : "avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
+  }, {
+    "name" : "Toby Ann Stavisky",
+    "shortName" : "stavisky",
+    "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
+  }, {
+    "name" : "Ruth Hassell-Thompson",
+    "shortName" : "hassell-thompson",
+    "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
+  } ]
+}

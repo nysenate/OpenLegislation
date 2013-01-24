@@ -1,0 +1,36 @@
+{
+  "name" : "Social Services",
+  "shortName" : "socialservices",
+  "url" : "http://www.nysenate.gov/committee/social-services",
+  "videoUrl" : "http://www.livestream.com/",
+  "chairs" : [ {
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  } ],
+  "members" : [ {
+    "name" : "Greg Ball",
+    "shortName" : "ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "name" : "Jack M. Martins",
+    "shortName" : "martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  }, {
+    "name" : "Hugh T. Farley",
+    "shortName" : "farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "name" : "Shirley L. Huntley",
+    "shortName" : "huntley",
+    "url" : "http://www.nysenate.gov/senator/shirley-l-huntley"
+  }, {
+    "name" : "Daniel L. Squadron",
+    "shortName" : "squadron",
+    "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
+  } ]
+}
