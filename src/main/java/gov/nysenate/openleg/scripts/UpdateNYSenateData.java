@@ -65,7 +65,8 @@ public class UpdateNYSenateData {
                 for(Member member : (List<Member>)ListUtils.union(committee.getChairs(), committee.getMembers())) {
                     member.setShortName(getSenatorKey(member.getName()));
                 }
-                File committeeFile = new File(currentCommitteesDir, committee.getShortName());
+                String filename = committee.getName().replaceAll("[',.-]", "").replaceAll(" ", "_").toLowerCase()+".json";
+                File committeeFile = new File(currentCommitteesDir, filename);
                 mapper.writeValue(committeeFile, committee);
             }
 
