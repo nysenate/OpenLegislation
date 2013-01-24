@@ -1,0 +1,44 @@
+{
+  "name" : "Local Government",
+  "shortName" : "localgovt",
+  "url" : "http://www.nysenate.gov/committee/local-government",
+  "videoUrl" : "http://www.livestream.com/NYSenate_LocalGov",
+  "chairs" : [ {
+    "name" : "Jack M. Martins",
+    "shortName" : "martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  } ],
+  "members" : [ {
+    "name" : "Greg Ball",
+    "shortName" : "ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "name" : "Betty Little",
+    "shortName" : "little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  }, {
+    "name" : "Jack M. Martins",
+    "shortName" : "martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  }, {
+    "name" : "Roy J. McDonald",
+    "shortName" : "mcdonald",
+    "url" : "http://www.nysenate.gov/senator/roy-j-mcdonald"
+  }, {
+    "name" : "Patty Ritchie",
+    "shortName" : "ritchie",
+    "url" : "http://www.nysenate.gov/senator/patty-ritchie"
+  }, {
+    "name" : "Andrea Stewart-Cousins",
+    "shortName" : "stewart-cousins",
+    "url" : "http://www.nysenate.gov/senator/andrea-stewart-cousins"
+  }, {
+    "name" : "Jeffrey D. Klein",
+    "shortName" : "klein",
+    "url" : "http://www.nysenate.gov/senator/jeffrey-d-klein"
+  }, {
+    "name" : "Suzi Oppenheimer",
+    "shortName" : "oppenheimer",
+    "url" : "http://www.nysenate.gov/senator/suzi-oppenheimer"
+  } ]
+}
