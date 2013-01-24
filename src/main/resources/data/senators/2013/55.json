@@ -1,0 +1,55 @@
+{
+  "name" : "Ted O'Brien",
+  "lastName" : "O'Brien",
+  "shortName" : "O'Brien",
+  "email" : "obrien@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(12-10-12) O'Brien-HS-008.jpg",
+  "url" : "http://www.nysenate.gov/senator/ted-obrien",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2162",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 306",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
+  }, {
+    "name" : "Temporary District Office",
+    "street" : "220 Packetts Landing",
+    "city" : "Fairport",
+    "postalCode" : "14450",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(585) 223-1800",
+    "fax" : "(585) 223-3084",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 43.100444,
+    "longitude" : -77.439932
+  } ],
+  "district" : {
+    "number" : 55,
+    "url" : "http://www.nysenate.gov/district/55",
+    "imageUrl" : "http://www.nysenate.gov/files/district_55.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=55"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

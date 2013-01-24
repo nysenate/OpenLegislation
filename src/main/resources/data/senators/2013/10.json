@@ -1,0 +1,25 @@
+{
+  "name" : "James Sanders Jr.",
+  "lastName" : "Sanders",
+  "shortName" : "sanders",
+  "email" : "",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(12-10-12) Sanders-HS-010.jpg",
+  "url" : "http://www.nysenate.gov/senator/james-sanders-jr",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ ],
+  "district" : {
+    "number" : 10,
+    "url" : "http://www.nysenate.gov/district/10",
+    "imageUrl" : "http://www.nysenate.gov/files/SD10.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=10"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

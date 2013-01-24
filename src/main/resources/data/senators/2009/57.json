@@ -1,0 +1,70 @@
+{
+  "name" : "Catharine Young",
+  "lastName" : "Young",
+  "shortName" : "Young",
+  "email" : "cyoung@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/young headshot-ret.jpg",
+  "url" : "http://www.nysenate.gov/senator/catharine-young",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3563",
+    "fax" : "(518) 426-6905 ",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "Westgate Plaza 700 W. State Street",
+    "city" : "Olean",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(716) 372-4901",
+    "fax" : "(716) 372-5740 ",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -78.438157,
+    "longitude" : 42.077777
+  }, {
+    "name" : "Satellite Office",
+    "street" : "2-6 East 2nd Street ",
+    "city" : "Jamestown",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(716) 664-4603",
+    "fax" : "(716) 664-2430",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -79.241688,
+    "longitude" : 42.094917
+  } ],
+  "district" : {
+    "number" : 57,
+    "url" : "http://www.nysenate.gov/district/57",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

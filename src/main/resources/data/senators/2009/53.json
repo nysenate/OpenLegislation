@@ -1,0 +1,70 @@
+{
+  "name" : "George Winner",
+  "lastName" : "Winner",
+  "shortName" : "Winner",
+  "email" : "winner@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/BudgetNewsletter07-PhotoA.jpg",
+  "url" : "http://www.nysenate.gov/senator/george-h-winner-jr",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Steet ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2091",
+    "fax" : "(518) 426-6976",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "228 Lake Street ",
+    "city" : "Elmira",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(607) 732-2765",
+    "fax" : "(607) 732-2832",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -76.802096,
+    "longitude" : 42.090638
+  }, {
+    "name" : "District Office 2",
+    "street" : "105 East Steuben Street",
+    "city" : "Bath",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(607) 776-3201",
+    "fax" : "(607) 776-5185",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -77.3151,
+    "longitude" : 42.333904
+  } ],
+  "district" : {
+    "number" : 53,
+    "url" : "http://www.nysenate.gov/district/53",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/New-York-State-Senator-George-Winner/77930419708"
+  }
+}

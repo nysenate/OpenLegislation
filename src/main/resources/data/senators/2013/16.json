@@ -1,0 +1,55 @@
+{
+  "name" : "Toby Ann Stavisky",
+  "lastName" : "Stavisky",
+  "shortName" : "stavisky",
+  "email" : "stavisky@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Official Website Headshot_0.jpg",
+  "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3461",
+    "fax" : "(518) 426-6857",
+    "otherPhone" : "",
+    "additional" : "Room 706, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
+  }, {
+    "name" : "District Office",
+    "street" : "144-36 Willets Point Boulevard",
+    "city" : "Flushing",
+    "postalCode" : "11357",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 445-0004",
+    "fax" : "(718) 445-8398",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.77654,
+    "longitude" : -73.822853
+  } ],
+  "district" : {
+    "number" : 16,
+    "url" : "http://www.nysenate.gov/district/16",
+    "imageUrl" : "http://www.nysenate.gov/files/sd16.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=16"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Toby-Ann-Stavisky/142077753628?ref=ts"
+  }
+}

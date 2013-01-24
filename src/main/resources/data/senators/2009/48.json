@@ -1,0 +1,70 @@
+{
+  "name" : "Darrel J. Aubertine",
+  "lastName" : "Aubertine",
+  "shortName" : "Aubertine",
+  "email" : "aubertin@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/2009AubertineHeadshot.jpg",
+  "url" : "http://www.nysenate.gov/senator/darrel-j-aubertine",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2761 ",
+    "fax" : "518-426-6946 ",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "317 Washington Street, ",
+    "city" : "Watertown",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "315-782-3418 ",
+    "fax" : "315-782-6357 ",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -75.910345,
+    "longitude" : 43.971604
+  }, {
+    "name" : "Satellite Office",
+    "street" : "7060 Route 104",
+    "city" : "Oswego",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -76.553449,
+    "longitude" : 43.440563
+  } ],
+  "district" : {
+    "number" : 48,
+    "url" : "http://www.nysenate.gov/district/48",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

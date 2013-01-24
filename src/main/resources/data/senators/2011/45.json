@@ -1,0 +1,70 @@
+{
+  "name" : "Betty Little",
+  "lastName" : "Little",
+  "shortName" : "Little",
+  "email" : "little@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/24x7@300dpi.jpg",
+  "url" : "http://www.nysenate.gov/senator/elizabeth-little",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2811",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "5 Warren Street ",
+    "city" : "Glens Falls",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 743-0968",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.64264,
+    "longitude" : 43.309494
+  }, {
+    "name" : "District Office 2",
+    "street" : "137 Margaret Street  ",
+    "city" : "Plattsburgh",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 561-2430",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.454085,
+    "longitude" : 44.698907
+  } ],
+  "district" : {
+    "number" : 45,
+    "url" : "http://www.nysenate.gov/district/45",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

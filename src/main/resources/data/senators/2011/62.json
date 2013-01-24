@@ -1,0 +1,70 @@
+{
+  "name" : "George D. Maziarz",
+  "lastName" : "Maziarz",
+  "shortName" : "Maziarz",
+  "email" : "maziarz@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/SD62_Maziarz_0.jpg",
+  "url" : "http://www.nysenate.gov/senator/george-d-maziarz",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Room 708",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2024",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.939644,
+    "longitude" : 40.656868
+  }, {
+    "name" : "District Office",
+    "street" : "2578 Niagara Falls Boulevard ",
+    "city" : "Wheatfield",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(716) 731-8740",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -78.907885,
+    "longitude" : 43.093055
+  }, {
+    "name" : "Satellite Office",
+    "street" : "350 New Campus Drive  ",
+    "city" : "Brockport",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(585) 637-5800",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -77.957285,
+    "longitude" : 43.209472
+  } ],
+  "district" : {
+    "number" : 62,
+    "url" : "http://www.nysenate.gov/district/62",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/senatormaziarz",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

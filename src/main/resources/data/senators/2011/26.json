@@ -1,0 +1,55 @@
+{
+  "name" : "Liz Krueger",
+  "lastName" : "Krueger",
+  "shortName" : "Krueger",
+  "email" : "lkrueger@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Senate Headshot.jpg",
+  "url" : "http://www.nysenate.gov/senator/liz-krueger",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "172 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2297",
+    "fax" : "(518) 426-6874",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.757823,
+    "longitude" : 42.652133
+  }, {
+    "name" : "District Office",
+    "street" : "211 East 43rd Street ",
+    "city" : "New York",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(212) 490-9535",
+    "fax" : "(212) 490-2151",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.97285,
+    "longitude" : 40.751091
+  } ],
+  "district" : {
+    "number" : 26,
+    "url" : "http://www.nysenate.gov/district/26",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/State-Senator-Liz-Krueger/127489793933856"
+  }
+}

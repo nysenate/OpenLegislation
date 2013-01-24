@@ -1,0 +1,55 @@
+{
+  "name" : "Stephen M. Saland",
+  "lastName" : "Saland",
+  "shortName" : "Saland",
+  "email" : " saland@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/SD41_Saland.jpg",
+  "url" : "http://www.nysenate.gov/senator/stephen-m-saland",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2411",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.765377,
+    "longitude" : 42.656507
+  }, {
+    "name" : "District Office",
+    "street" : "3 Neptune Road ",
+    "city" : "Poughkeepsie",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "845-463-0840",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.923134,
+    "longitude" : 41.643551
+  } ],
+  "district" : {
+    "number" : 41,
+    "url" : "http://www.nysenate.gov/district/41",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

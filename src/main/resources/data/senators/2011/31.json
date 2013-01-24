@@ -1,0 +1,55 @@
+{
+  "name" : "Adriano Espaillat",
+  "lastName" : "Espaillat",
+  "shortName" : "Espaillat",
+  "email" : "espailla@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Adriano Espaillat Headshot.JPG",
+  "url" : "http://www.nysenate.gov/senator/adriano-espaillat",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "5030 Broadway",
+    "city" : "New York",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(212) 544-0173",
+    "fax" : "(212) 544-0256",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.917094,
+    "longitude" : 40.869129
+  }, {
+    "name" : "Albany Office",
+    "street" : "LOB Room 513",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2041",
+    "fax" : "518-426-6847",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.850052,
+    "longitude" : 42.694803
+  } ],
+  "district" : {
+    "number" : 31,
+    "url" : "http://www.nysenate.gov/district/31",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/Adriano4Senate",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

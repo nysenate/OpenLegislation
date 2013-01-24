@@ -1,0 +1,55 @@
+{
+  "name" : "Ruben Diaz",
+  "lastName" : "Diaz",
+  "shortName" : "Diaz",
+  "email" : "diaz@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Diaz-HS-2009.jpg",
+  "url" : "http://www.nysenate.gov/senator/ruben-diaz",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2511",
+    "fax" : "(518) 426-6945",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "900 Rogers Place",
+    "city" : "Bronx",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 991-3161",
+    "fax" : "(718) 991-0309",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.897831,
+    "longitude" : 40.820703
+  } ],
+  "district" : {
+    "number" : 32,
+    "url" : "http://www.nysenate.gov/district/32",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

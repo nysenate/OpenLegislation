@@ -1,0 +1,55 @@
+{
+  "name" : "John J. Flanagan",
+  "lastName" : "Flanagan",
+  "shortName" : "Flanagan",
+  "email" : "flanagan@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/2010-8-5.FOR WEB PAGE.jpg",
+  "url" : "http://www.nysenate.gov/senator/john-j-flanagan",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "260 Middle Country Road",
+    "city" : "Smithtown",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "631-361-2154",
+    "fax" : "631-361-5367",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.179697,
+    "longitude" : 40.855448
+  }, {
+    "name" : "Albany Office",
+    "street" : "Room 613 Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2071",
+    "fax" : "518-426-6904",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759332,
+    "longitude" : 42.652442
+  } ],
+  "district" : {
+    "number" : 2,
+    "url" : "http://www.nysenate.gov/district/02",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "http://www.youtube.com/user/senatorflanagan",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "name" : "Diane J. Savino",
+  "lastName" : "Savino",
+  "shortName" : "Savino",
+  "email" : "savino@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/(03-03-09) Savino-HS-019.jpg",
+  "url" : "http://www.nysenate.gov/senator/diane-j-savino",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2437 ",
+    "fax" : "(518) 426-6943",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "36 Richmond Terrace ",
+    "city" : "Staten Island",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 727-9406 ",
+    "fax" : "(718) 727-9426",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -74.076587,
+    "longitude" : 40.643568
+  }, {
+    "name" : "District Office 2",
+    "street" : "2872 West 15th Street  ",
+    "city" : "Brooklyn",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 333-0311 ",
+    "fax" : "(347) 492-3263",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.982775,
+    "longitude" : 40.57742
+  } ],
+  "district" : {
+    "number" : 23,
+    "url" : "http://www.nysenate.gov/district/23",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "http://www.flickr.com/photos/senatorsavino/",
+    "facebook" : ""
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "name" : "Carl Kruger",
+  "lastName" : "Kruger",
+  "shortName" : "Kruger",
+  "email" : "kruger@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/HEADSHOT-CK 2009_0.JPG",
+  "url" : "http://www.nysenate.gov/senator/carl-kruger",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2460",
+    "fax" : "(518) 426-6855",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "2201 Avenue U",
+    "city" : "Brooklyn",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 743-8610",
+    "fax" : "(718) 743-5958",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.949351,
+    "longitude" : 40.599842
+  } ],
+  "district" : {
+    "number" : 27,
+    "url" : "http://www.nysenate.gov/district/27",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/Senator.Carl.Kruger"
+  }
+}

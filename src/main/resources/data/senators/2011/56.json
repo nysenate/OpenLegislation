@@ -1,0 +1,55 @@
+{
+  "name" : "Joseph E. Robach",
+  "lastName" : "Robach",
+  "shortName" : "Robach",
+  "email" : "robach@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/SD56_Robach.jpg",
+  "url" : "http://www.nysenate.gov/senator/joseph-e-robach",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Steet ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2909",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "2300 W. Ridge Road ",
+    "city" : "Rochester",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(585) 225-3650",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -77.688661,
+    "longitude" : 43.209487
+  } ],
+  "district" : {
+    "number" : 56,
+    "url" : "http://www.nysenate.gov/district/56",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "http://www.youtube.com/user/JoeRobach",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Joe-Robach/22775973089?ref=ts"
+  }
+}

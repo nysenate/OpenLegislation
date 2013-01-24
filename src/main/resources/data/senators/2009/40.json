@@ -1,0 +1,40 @@
+{
+  "name" : "Vincent L. Leibell",
+  "lastName" : "Leibell",
+  "shortName" : "Leibell",
+  "email" : " leibell@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/SD40_Leibell.jpg",
+  "url" : "http://www.nysenate.gov/senator/vincent-l-leibell",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street,",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3111",
+    "fax" : "(518) 426-6977",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  } ],
+  "district" : {
+    "number" : 40,
+    "url" : "http://www.nysenate.gov/district/40",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "name" : "David J. Valesky",
+  "lastName" : "Valesky",
+  "shortName" : "Valesky",
+  "email" : "valesky@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Valesky-HSmp.jpg",
+  "url" : "http://www.nysenate.gov/senator/david-j-valesky",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "172 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518)-455-2838",
+    "fax" : "(518)-426-6885",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.757823,
+    "longitude" : 42.652133
+  }, {
+    "name" : "District Office",
+    "street" : "333 East Washington Street  ",
+    "city" : "Syracuse",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(315)-478-8745",
+    "fax" : "(315)-474-3804",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -76.148372,
+    "longitude" : 43.049535
+  } ],
+  "district" : {
+    "number" : 49,
+    "url" : "http://www.nysenate.gov/district/49",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "https://twitter.com/SenDavidValesky",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

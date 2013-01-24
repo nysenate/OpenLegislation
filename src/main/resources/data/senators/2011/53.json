@@ -1,0 +1,70 @@
+{
+  "name" : "Thomas F. O'Mara",
+  "lastName" : "O'Mara",
+  "shortName" : "O'Mara",
+  "email" : "omara@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/(01-11-11) O'Mara-011.jpg",
+  "url" : "http://www.nysenate.gov/senator/thomas-f-omara",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "333 East Water Street ",
+    "city" : "Elmira",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "607-735-9671",
+    "fax" : "607-735-9675",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -76.801676,
+    "longitude" : 42.088315
+  }, {
+    "name" : "District Office",
+    "street" : "105 East Steuben Street",
+    "city" : "Bath",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "607-776-3201",
+    "fax" : "607-776-5185",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -77.3151,
+    "longitude" : 42.333904
+  }, {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2091",
+    "fax" : "518-426-6976",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759332,
+    "longitude" : 42.652442
+  } ],
+  "district" : {
+    "number" : 53,
+    "url" : "http://www.nysenate.gov/district/53",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/New-York-State-Senator-Tom-OMara/151463428240765?"
+  }
+}

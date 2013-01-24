@@ -1,0 +1,25 @@
+{
+  "name" : "Simcha Felder",
+  "lastName" : "Felder",
+  "shortName" : "felder",
+  "email" : "",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Felder-HS-012_web.jpg",
+  "url" : "http://www.nysenate.gov/senator/simcha-felder",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ ],
+  "district" : {
+    "number" : 17,
+    "url" : "http://www.nysenate.gov/district/17_0",
+    "imageUrl" : "http://www.nysenate.gov/files/sd17.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=17"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

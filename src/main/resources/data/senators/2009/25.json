@@ -1,0 +1,70 @@
+{
+  "name" : "Daniel L. Squadron",
+  "lastName" : "Squadron",
+  "shortName" : "Squadron",
+  "email" : "squadron@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/(03-05-09) Squadron HS-040.jpg",
+  "url" : "http://www.nysenate.gov/senator/daniel-l-squadron",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street  ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2625",
+    "fax" : "518-426-6956",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "401 Broadway  ",
+    "city" : "New York",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "212-298-5565",
+    "fax" : "212-431-7836",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -74.002553,
+    "longitude" : 40.718706
+  }, {
+    "name" : "District Office 2",
+    "street" : "209 Joralemon Street  ",
+    "city" : "Brooklyn",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "718-875-1517",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.990215,
+    "longitude" : 40.692681
+  } ],
+  "district" : {
+    "number" : 25,
+    "url" : "http://www.nysenate.gov/district/25",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

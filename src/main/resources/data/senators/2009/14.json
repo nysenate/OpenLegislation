@@ -1,0 +1,70 @@
+{
+  "name" : "Malcolm A. Smith",
+  "lastName" : "Smith",
+  "shortName" : "Smith",
+  "email" : "masmith@senate.state.ny.us ",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/Smith-HS-024.jpg",
+  "url" : "http://www.nysenate.gov/senator/malcolm-smith",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2701 ",
+    "fax" : "(518) 455-2816",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office 1",
+    "street" : "205-19 Linden Boulevard",
+    "city" : "St. Albans",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 528-4290 ",
+    "fax" : "(718) 528-4898",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.747689,
+    "longitude" : 40.695723
+  }, {
+    "name" : "District Office 2",
+    "street" : "250 Broadway",
+    "city" : "New York",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(212) 298-5585 ",
+    "fax" : "(212) 298-5605",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -74.007527,
+    "longitude" : 40.712895
+  } ],
+  "district" : {
+    "number" : 14,
+    "url" : "http://www.nysenate.gov/district/14",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/malcolmasmith",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Malcolm-A-Smith/74081452742"
+  }
+}

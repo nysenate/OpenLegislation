@@ -1,0 +1,55 @@
+{
+  "name" : "Roy J. McDonald",
+  "lastName" : "McDonald",
+  "shortName" : "McDonald",
+  "email" : "mcdonald@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/SD43_McDonald.jpg",
+  "url" : "http://www.nysenate.gov/senator/roy-j-mcdonald",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2381",
+    "fax" : "(518) 426-6985",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "433 River Street   ",
+    "city" : "Troy",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 274-4616",
+    "fax" : "(518) 274-4635",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.687405,
+    "longitude" : 42.737174
+  } ],
+  "district" : {
+    "number" : 43,
+    "url" : "http://www.nysenate.gov/district/43",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

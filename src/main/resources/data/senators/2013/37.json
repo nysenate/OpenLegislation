@@ -1,0 +1,40 @@
+{
+  "name" : "George S. Latimer",
+  "lastName" : "Latimer",
+  "shortName" : "latimer",
+  "email" : "latimer@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/GL_2_0.jpg",
+  "url" : "http://www.nysenate.gov/senator/george-s-latimer",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "222 Grace Church Street",
+    "city" : "Port Chester",
+    "postalCode" : "10573",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(914) 934-5250",
+    "fax" : "(914) 934-5256",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.989802,
+    "longitude" : -73.667049
+  } ],
+  "district" : {
+    "number" : 37,
+    "url" : "http://www.nysenate.gov/district/37",
+    "imageUrl" : "http://www.nysenate.gov/files/district_37.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=37"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

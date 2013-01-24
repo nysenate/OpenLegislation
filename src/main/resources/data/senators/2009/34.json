@@ -1,0 +1,55 @@
+{
+  "name" : "Jeffrey D. Klein",
+  "lastName" : "Klein",
+  "shortName" : "Klein",
+  "email" : "jdklein@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/JK_Headshot_2009mp.jpg",
+  "url" : "http://www.nysenate.gov/senator/jeffrey-d-klein",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "172 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3595",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.757823,
+    "longitude" : 42.652133
+  }, {
+    "name" : "District Office",
+    "street" : "3612 East Tremont Avenue ",
+    "city" : "Bronx",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 822-2049",
+    "fax" : "(718) 822-2321",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.824145,
+    "longitude" : 40.828427
+  } ],
+  "district" : {
+    "number" : 34,
+    "url" : "http://www.nysenate.gov/district/34",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

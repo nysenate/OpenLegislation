@@ -1,0 +1,55 @@
+{
+  "name" : "Thomas K. Duane",
+  "lastName" : "Duane",
+  "shortName" : "Duane",
+  "email" : "duane@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/DuaneHeadshot07ColorBIO.jpg",
+  "url" : "http://www.nysenate.gov/senator/thomas-duane",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "172 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2451",
+    "fax" : "(518) 426-6846",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.757823,
+    "longitude" : 42.652133
+  }, {
+    "name" : "District Office",
+    "street" : "322 Eighth Avenue",
+    "city" : "New York",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(212) 633-8052",
+    "fax" : "(212) 633-8096",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.996599,
+    "longitude" : 40.747196
+  } ],
+  "district" : {
+    "number" : 29,
+    "url" : "http://www.nysenate.gov/district/29",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

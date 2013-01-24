@@ -1,0 +1,70 @@
+{
+  "name" : "Ruth Hassell-Thompson",
+  "lastName" : "Hassell-Thompson",
+  "shortName" : "Hassell-Thompson",
+  "email" : "hassellt@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/WebBio Hassell-ThompsonHS.jpg",
+  "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2061",
+    "fax" : "(518) 426-6998",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "959 E. 233rd Street",
+    "city" : "Bronx",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 547-8854",
+    "fax" : "(718) 515-2718",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.849565,
+    "longitude" : 40.891138
+  }, {
+    "name" : "District Office 2",
+    "street" : "250 South 6th Avenue",
+    "city" : "Mount Vernon",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(914) 665-2400",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.837385,
+    "longitude" : 40.902361
+  } ],
+  "district" : {
+    "number" : 36,
+    "url" : "http://www.nysenate.gov/district/36",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

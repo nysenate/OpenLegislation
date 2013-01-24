@@ -1,0 +1,55 @@
+{
+  "name" : "Suzi Oppenheimer",
+  "lastName" : "Oppenheimer",
+  "shortName" : "Oppenheimer",
+  "email" : "oppenhei@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/imagecache/senator_teaser/profile-pictures/BIOShotOppenheimer2007newheadshotcolor.jpg",
+  "url" : "http://www.nysenate.gov/senator/suzi-oppenheimer",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street ",
+    "city" : "Albany",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2031",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.759091,
+    "longitude" : 42.652855
+  }, {
+    "name" : "District Office",
+    "street" : "222 Grace Church Street ",
+    "city" : "Port Chester",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "914-934-5250",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : -73.666806,
+    "longitude" : 40.990178
+  } ],
+  "district" : {
+    "number" : 37,
+    "url" : "http://www.nysenate.gov/district/37",
+    "imageUrl" : "",
+    "mapUrl" : ""
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

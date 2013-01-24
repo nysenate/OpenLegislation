@@ -1,0 +1,55 @@
+{
+  "name" : "Greg Ball",
+  "lastName" : "Ball",
+  "shortName" : "ball",
+  "email" : "gball@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/ball_HS2.jpg",
+  "url" : "http://www.nysenate.gov/senator/greg-ball",
+  "partyAffiliations" : [ "R", "C" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "1441 Route 22",
+    "city" : "Brewster",
+    "postalCode" : "10509",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(845) 279-3773",
+    "fax" : "(845) 279-7156",
+    "otherPhone" : "",
+    "additional" : "Suite 205",
+    "latitude" : 41.420128,
+    "longitude" : -73.577044
+  }, {
+    "name" : "Albany Office",
+    "street" : "817 Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3111",
+    "fax" : "(518) 426-6977",
+    "otherPhone" : "",
+    "additional" : "Empire State Plaza",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
+  } ],
+  "district" : {
+    "number" : 40,
+    "url" : "http://www.nysenate.gov/district/40",
+    "imageUrl" : "http://www.nysenate.gov/files/district_40.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=40"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}
