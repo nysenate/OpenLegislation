@@ -58,11 +58,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>CommitteesServlet</servlet-name>
-		<url-pattern>/committees</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>CommitteesServlet</servlet-name>
-		<url-pattern>/committees.json</url-pattern>
+		<url-pattern>/committees/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ReportServlet</servlet-name>
