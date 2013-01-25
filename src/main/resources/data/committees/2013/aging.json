@@ -1,0 +1,40 @@
+{
+  "name" : "Aging",
+  "shortName" : "aging",
+  "url" : "http://www.nysenate.gov/committee/aging",
+  "videoUrl" : "http://www.livestream.com/nysenate_aging",
+  "chairs" : [ {
+    "name" : "Eric Adams",
+    "shortName" : "adams",
+    "url" : "http://www.nysenate.gov/senator/eric-adams"
+  } ],
+  "members" : [ {
+    "name" : "Eric Adams",
+    "shortName" : "adams",
+    "url" : "http://www.nysenate.gov/senator/eric-adams"
+  }, {
+    "name" : "Simcha Felder",
+    "shortName" : "felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  }, {
+    "name" : "Martin J. Golden",
+    "shortName" : "golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "name" : "Kenneth P. LaValle",
+    "shortName" : "lavalle",
+    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
+  }, {
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "name" : "David J. Valesky",
+    "shortName" : "valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
+  }, {
+    "name" : "Lee M. Zeldin",
+    "shortName" : "zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  } ]
+}

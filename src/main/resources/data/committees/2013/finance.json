@@ -1,0 +1,100 @@
+{
+  "name" : "Finance",
+  "shortName" : "finance",
+  "url" : "http://www.nysenate.gov/committee/finance",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Finance",
+  "chairs" : [ {
+    "name" : "John A. DeFrancisco",
+    "shortName" : "defrancisco",
+    "url" : "http://www.nysenate.gov/senator/john-defrancisco"
+  } ],
+  "members" : [ {
+    "name" : "Malcolm A. Smith",
+    "shortName" : "smith",
+    "url" : "http://www.nysenate.gov/senator/malcolm-smith"
+  }, {
+    "name" : "John J. Bonacic",
+    "shortName" : "bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "name" : "John A. DeFrancisco",
+    "shortName" : "defrancisco",
+    "url" : "http://www.nysenate.gov/senator/john-defrancisco"
+  }, {
+    "name" : "Hugh T. Farley",
+    "shortName" : "farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "name" : "John J. Flanagan",
+    "shortName" : "flanagan",
+    "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  }, {
+    "name" : "Charles J. Fuschillo Jr.",
+    "shortName" : "fuschillo",
+    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
+  }, {
+    "name" : "Martin J. Golden",
+    "shortName" : "golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "name" : "Kemp Hannon",
+    "shortName" : "hannon",
+    "url" : "http://www.nysenate.gov/senator/kemp-hannon"
+  }, {
+    "name" : "Joseph A. Griffo",
+    "shortName" : "griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "name" : "William J. Larkin Jr.",
+    "shortName" : "larkin",
+    "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr"
+  }, {
+    "name" : "Kenneth P. LaValle",
+    "shortName" : "lavalle",
+    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
+  }, {
+    "name" : "Betty Little",
+    "shortName" : "little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  }, {
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "name" : "Joseph E. Robach",
+    "shortName" : "robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  }, {
+    "name" : "James L. Seward",
+    "shortName" : "seward",
+    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  }, {
+    "name" : "Catharine Young",
+    "shortName" : "young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "name" : "Carl L Marcellino",
+    "shortName" : "marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "name" : "Mark Grisanti",
+    "shortName" : "grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  }, {
+    "name" : "Andrew J Lanza",
+    "shortName" : "lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  }, {
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "o'mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "name" : "Michael H. Ranzenhofer",
+    "shortName" : "ranzenhofer",
+    "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
+  }, {
+    "name" : "Diane J. Savino",
+    "shortName" : "savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  } ]
+}

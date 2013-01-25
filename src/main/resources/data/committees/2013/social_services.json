@@ -1,0 +1,28 @@
+{
+  "name" : "Social Services",
+  "shortName" : "socialservices",
+  "url" : "http://www.nysenate.gov/committee/social-services",
+  "videoUrl" : "http://www.livestream.com/",
+  "chairs" : [ {
+    "name" : "Malcolm A. Smith",
+    "shortName" : "smith",
+    "url" : "http://www.nysenate.gov/senator/malcolm-smith"
+  } ],
+  "members" : [ {
+    "name" : "Malcolm A. Smith",
+    "shortName" : "smith",
+    "url" : "http://www.nysenate.gov/senator/malcolm-smith"
+  }, {
+    "name" : "Greg Ball",
+    "shortName" : "ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "name" : "Hugh T. Farley",
+    "shortName" : "farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "name" : "Jack M. Martins",
+    "shortName" : "martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  } ]
+}

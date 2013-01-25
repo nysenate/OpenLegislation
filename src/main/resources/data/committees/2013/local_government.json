@@ -1,0 +1,32 @@
+{
+  "name" : "Local Government",
+  "shortName" : "localgovt",
+  "url" : "http://www.nysenate.gov/committee/local-government",
+  "videoUrl" : "http://www.livestream.com/NYSenate_LocalGov",
+  "chairs" : [ {
+    "name" : "Jack M. Martins",
+    "shortName" : "martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  } ],
+  "members" : [ {
+    "name" : "Jack M. Martins",
+    "shortName" : "martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  }, {
+    "name" : "Greg Ball",
+    "shortName" : "ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "name" : "Phil Boyle",
+    "shortName" : "boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-m-boyle"
+  }, {
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "name" : "Patty Ritchie",
+    "shortName" : "ritchie",
+    "url" : "http://www.nysenate.gov/senator/patty-ritchie"
+  } ]
+}

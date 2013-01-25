@@ -1,0 +1,40 @@
+{
+  "name" : "Consumer Protection",
+  "shortName" : "consumers",
+  "url" : "http://www.nysenate.gov/committee/consumer-protection",
+  "videoUrl" : "http://www.livestream.com/NYSenate_consumerprotection",
+  "chairs" : [ {
+    "name" : "Lee M. Zeldin",
+    "shortName" : "zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  } ],
+  "members" : [ {
+    "name" : "Phil Boyle",
+    "shortName" : "boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-m-boyle"
+  }, {
+    "name" : "Charles J. Fuschillo Jr.",
+    "shortName" : "fuschillo",
+    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
+  }, {
+    "name" : "Betty Little",
+    "shortName" : "little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  }, {
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "name" : "George D. Maziarz",
+    "shortName" : "maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  }, {
+    "name" : "Lee M. Zeldin",
+    "shortName" : "zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  }, {
+    "name" : "Diane J. Savino",
+    "shortName" : "savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  } ]
+}

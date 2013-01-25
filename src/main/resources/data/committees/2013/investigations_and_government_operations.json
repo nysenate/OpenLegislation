@@ -1,0 +1,36 @@
+{
+  "name" : "Investigations and Government Operations",
+  "shortName" : "",
+  "url" : "http://www.nysenate.gov/committee/investigations-and-government-operations",
+  "videoUrl" : "http://www.livestream.com/M3JVgsNhooo",
+  "chairs" : [ {
+    "name" : "Carl L Marcellino",
+    "shortName" : "marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  } ],
+  "members" : [ {
+    "name" : "Carl L Marcellino",
+    "shortName" : "marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "name" : "David Carlucci",
+    "shortName" : "carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "name" : "Martin J. Golden",
+    "shortName" : "golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "o'mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "name" : "Lee M. Zeldin",
+    "shortName" : "zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  } ]
+}

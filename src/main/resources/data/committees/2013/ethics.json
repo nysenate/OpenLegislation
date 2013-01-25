@@ -1,0 +1,24 @@
+{
+  "name" : "Ethics",
+  "shortName" : "ethics",
+  "url" : "http://www.nysenate.gov/committee/ethics",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Ethics",
+  "chairs" : [ {
+    "name" : "Phil Boyle",
+    "shortName" : "boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-m-boyle"
+  } ],
+  "members" : [ {
+    "name" : "Hugh T. Farley",
+    "shortName" : "farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "name" : "Andrew J Lanza",
+    "shortName" : "lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  }, {
+    "name" : "Phil Boyle",
+    "shortName" : "boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-m-boyle"
+  } ]
+}

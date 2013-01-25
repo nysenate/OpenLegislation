@@ -1,0 +1,44 @@
+{
+  "name" : "Crime Victims, Crime and Correction",
+  "shortName" : "crime",
+  "url" : "http://www.nysenate.gov/committee/crime-victims-crime-and-correction",
+  "videoUrl" : "http://www.livestream.com/NYSenate_VictimsCrimeCorrection",
+  "chairs" : [ {
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  } ],
+  "members" : [ {
+    "name" : "David Carlucci",
+    "shortName" : "carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "name" : "John A. DeFrancisco",
+    "shortName" : "defrancisco",
+    "url" : "http://www.nysenate.gov/senator/john-defrancisco"
+  }, {
+    "name" : "Joseph A. Griffo",
+    "shortName" : "griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "name" : "Betty Little",
+    "shortName" : "little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  }, {
+    "name" : "George D. Maziarz",
+    "shortName" : "maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  }, {
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "name" : "Patty Ritchie",
+    "shortName" : "ritchie",
+    "url" : "http://www.nysenate.gov/senator/patty-ritchie"
+  }, {
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  } ]
+}

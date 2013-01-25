@@ -1,0 +1,60 @@
+{
+  "name" : "Insurance",
+  "shortName" : "insurance",
+  "url" : "http://www.nysenate.gov/committee/insurance",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Insurance",
+  "chairs" : [ {
+    "name" : "James L. Seward",
+    "shortName" : "seward",
+    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  } ],
+  "members" : [ {
+    "name" : "James L. Seward",
+    "shortName" : "seward",
+    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  }, {
+    "name" : "David Carlucci",
+    "shortName" : "carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "name" : "John J. Flanagan",
+    "shortName" : "flanagan",
+    "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  }, {
+    "name" : "Martin J. Golden",
+    "shortName" : "golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "name" : "Mark Grisanti",
+    "shortName" : "grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  }, {
+    "name" : "Andrew J Lanza",
+    "shortName" : "lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  }, {
+    "name" : "William J. Larkin Jr.",
+    "shortName" : "larkin",
+    "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr"
+  }, {
+    "name" : "Kenneth P. LaValle",
+    "shortName" : "lavalle",
+    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
+  }, {
+    "name" : "Jack M. Martins",
+    "shortName" : "martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  }, {
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "o'mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "name" : "David J. Valesky",
+    "shortName" : "valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
+  }, {
+    "name" : "Catharine Young",
+    "shortName" : "young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  } ]
+}
