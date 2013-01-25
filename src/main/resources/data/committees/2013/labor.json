@@ -1,0 +1,52 @@
+{
+  "name" : "Labor",
+  "shortName" : "labor",
+  "url" : "http://www.nysenate.gov/committee/labor",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Labor",
+  "chairs" : [ {
+    "name" : "Diane J. Savino",
+    "shortName" : "savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  } ],
+  "members" : [ {
+    "name" : "Greg Ball",
+    "shortName" : "ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "name" : "John A. DeFrancisco",
+    "shortName" : "defrancisco",
+    "url" : "http://www.nysenate.gov/senator/john-defrancisco"
+  }, {
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "name" : "Mark Grisanti",
+    "shortName" : "grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  }, {
+    "name" : "Kemp Hannon",
+    "shortName" : "hannon",
+    "url" : "http://www.nysenate.gov/senator/kemp-hannon"
+  }, {
+    "name" : "Carl L Marcellino",
+    "shortName" : "marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "name" : "Jack M. Martins",
+    "shortName" : "martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  }, {
+    "name" : "Joseph E. Robach",
+    "shortName" : "robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  }, {
+    "name" : "Diane J. Savino",
+    "shortName" : "savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  } ]
+}

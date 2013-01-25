@@ -1,0 +1,36 @@
+{
+  "name" : "Mental Health and Developmental Disabilities",
+  "shortName" : "mentalhealth",
+  "url" : "http://www.nysenate.gov/committee/mental-health-and-developmental-disabilities",
+  "videoUrl" : "http://www.livestream.com/NYSenate_MentalHealth",
+  "chairs" : [ {
+    "name" : "David Carlucci",
+    "shortName" : "carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  } ],
+  "members" : [ {
+    "name" : "Greg Ball",
+    "shortName" : "ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "name" : "John J. Bonacic",
+    "shortName" : "bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "name" : "Simcha Felder",
+    "shortName" : "felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  }, {
+    "name" : "Kemp Hannon",
+    "shortName" : "hannon",
+    "url" : "http://www.nysenate.gov/senator/kemp-hannon"
+  }, {
+    "name" : "James L. Seward",
+    "shortName" : "seward",
+    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  }, {
+    "name" : "Lee M. Zeldin",
+    "shortName" : "zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  } ]
+}

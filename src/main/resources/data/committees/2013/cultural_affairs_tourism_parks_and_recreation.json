@@ -1,0 +1,40 @@
+{
+  "name" : "Cultural Affairs, Tourism, Parks and Recreation",
+  "shortName" : "tourism",
+  "url" : "http://www.nysenate.gov/committee/cultural-affairs-tourism-parks-and-recreation",
+  "videoUrl" : "http://www.livestream.com/NYSenate_CulturalAffairs",
+  "chairs" : [ {
+    "name" : "Betty Little",
+    "shortName" : "little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  } ],
+  "members" : [ {
+    "name" : "John J. Bonacic",
+    "shortName" : "bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "name" : "Joseph A. Griffo",
+    "shortName" : "griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "name" : "Mark Grisanti",
+    "shortName" : "grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  }, {
+    "name" : "Carl L Marcellino",
+    "shortName" : "marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "name" : "Patty Ritchie",
+    "shortName" : "ritchie",
+    "url" : "http://www.nysenate.gov/senator/patty-ritchie"
+  }, {
+    "name" : "Betty Little",
+    "shortName" : "little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  } ]
+}

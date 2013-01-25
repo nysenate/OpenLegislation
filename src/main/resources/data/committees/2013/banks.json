@@ -1,0 +1,56 @@
+{
+  "name" : "Banks",
+  "shortName" : "banks",
+  "url" : "http://www.nysenate.gov/committee/banks",
+  "videoUrl" : "http://www.livestream.com/NYSenate_banks",
+  "chairs" : [ {
+    "name" : "Joseph A. Griffo",
+    "shortName" : "griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  } ],
+  "members" : [ {
+    "name" : "John J. Bonacic",
+    "shortName" : "bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "name" : "John A. DeFrancisco",
+    "shortName" : "defrancisco",
+    "url" : "http://www.nysenate.gov/senator/john-defrancisco"
+  }, {
+    "name" : "Hugh T. Farley",
+    "shortName" : "farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "name" : "Joseph A. Griffo",
+    "shortName" : "griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "name" : "Martin J. Golden",
+    "shortName" : "golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "o'mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "name" : "Carl L Marcellino",
+    "shortName" : "marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "name" : "Michael H. Ranzenhofer",
+    "shortName" : "ranzenhofer",
+    "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
+  }, {
+    "name" : "Jack M. Martins",
+    "shortName" : "martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  }, {
+    "name" : "David J. Valesky",
+    "shortName" : "valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
+  } ]
+}

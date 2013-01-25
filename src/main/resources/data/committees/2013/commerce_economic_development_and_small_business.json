@@ -1,0 +1,36 @@
+{
+  "name" : "Commerce, Economic Development and Small Business",
+  "shortName" : "commerce",
+  "url" : "http://www.nysenate.gov/committee/commerce-economic-development-and-small-business",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Commerce",
+  "chairs" : [ {
+    "name" : "David J. Valesky",
+    "shortName" : "valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
+  } ],
+  "members" : [ {
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "name" : "Charles J. Fuschillo Jr.",
+    "shortName" : "fuschillo",
+    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
+  }, {
+    "name" : "Joseph A. Griffo",
+    "shortName" : "griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "name" : "Joseph E. Robach",
+    "shortName" : "robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  }, {
+    "name" : "Phil Boyle",
+    "shortName" : "boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-m-boyle"
+  }, {
+    "name" : "Simcha Felder",
+    "shortName" : "felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  } ]
+}

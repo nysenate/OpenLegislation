@@ -1,0 +1,60 @@
+{
+  "name" : "Transportation",
+  "shortName" : "transportation",
+  "url" : "http://www.nysenate.gov/committee/transportation",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Transportation",
+  "chairs" : [ {
+    "name" : "Charles J. Fuschillo Jr.",
+    "shortName" : "fuschillo",
+    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
+  } ],
+  "members" : [ {
+    "name" : "Charles J. Fuschillo Jr.",
+    "shortName" : "fuschillo",
+    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
+  }, {
+    "name" : "Joseph E. Robach",
+    "shortName" : "robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  }, {
+    "name" : "David Carlucci",
+    "shortName" : "carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "name" : "William J. Larkin Jr.",
+    "shortName" : "larkin",
+    "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr"
+  }, {
+    "name" : "George D. Maziarz",
+    "shortName" : "maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  }, {
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "o'mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "name" : "Michael H. Ranzenhofer",
+    "shortName" : "ranzenhofer",
+    "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
+  }, {
+    "name" : "Malcolm A. Smith",
+    "shortName" : "smith",
+    "url" : "http://www.nysenate.gov/senator/malcolm-smith"
+  }, {
+    "name" : "Catharine Young",
+    "shortName" : "young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "name" : "Lee M. Zeldin",
+    "shortName" : "zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  } ]
+}

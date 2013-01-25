@@ -1,0 +1,36 @@
+{
+  "name" : "Racing, Gaming and Wagering",
+  "shortName" : "racing",
+  "url" : "http://www.nysenate.gov/committee/racing-gaming-and-wagering",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Gaming",
+  "chairs" : [ {
+    "name" : "John J. Bonacic",
+    "shortName" : "bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  } ],
+  "members" : [ {
+    "name" : "John J. Bonacic",
+    "shortName" : "bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "name" : "Phil Boyle",
+    "shortName" : "boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-m-boyle"
+  }, {
+    "name" : "Joseph A. Griffo",
+    "shortName" : "griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "name" : "Michael H. Ranzenhofer",
+    "shortName" : "ranzenhofer",
+    "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
+  } ]
+}

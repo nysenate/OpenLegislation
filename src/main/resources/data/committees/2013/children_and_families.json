@@ -1,0 +1,28 @@
+{
+  "name" : "Children and Families",
+  "shortName" : "children",
+  "url" : "http://www.nysenate.gov/committee/children-and-families",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Children_Families",
+  "chairs" : [ {
+    "name" : "Simcha Felder",
+    "shortName" : "felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  } ],
+  "members" : [ {
+    "name" : "Simcha Felder",
+    "shortName" : "felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  }, {
+    "name" : "John J. Bonacic",
+    "shortName" : "bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "name" : "Catharine Young",
+    "shortName" : "young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "name" : "Diane J. Savino",
+    "shortName" : "savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  } ]
+}

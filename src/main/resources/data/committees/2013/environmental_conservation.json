@@ -1,0 +1,44 @@
+{
+  "name" : "Environmental Conservation",
+  "shortName" : "environment",
+  "url" : "http://www.nysenate.gov/committee/environmental-conservation",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Environment",
+  "chairs" : [ {
+    "name" : "Mark Grisanti",
+    "shortName" : "grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  } ],
+  "members" : [ {
+    "name" : "Kenneth P. LaValle",
+    "shortName" : "lavalle",
+    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
+  }, {
+    "name" : "Betty Little",
+    "shortName" : "little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  }, {
+    "name" : "Carl L Marcellino",
+    "shortName" : "marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "name" : "George D. Maziarz",
+    "shortName" : "maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  }, {
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "o'mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "name" : "Malcolm A. Smith",
+    "shortName" : "smith",
+    "url" : "http://www.nysenate.gov/senator/malcolm-smith"
+  }, {
+    "name" : "Catharine Young",
+    "shortName" : "young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "name" : "Mark Grisanti",
+    "shortName" : "grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  } ]
+}

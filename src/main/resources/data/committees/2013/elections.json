@@ -1,0 +1,32 @@
+{
+  "name" : "Elections",
+  "shortName" : "elections",
+  "url" : "http://www.nysenate.gov/committee/elections",
+  "videoUrl" : "http://www.livestream.com/NYSenate_elections",
+  "chairs" : [ {
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "o'mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  } ],
+  "members" : [ {
+    "name" : "Greg Ball",
+    "shortName" : "ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "o'mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  } ]
+}

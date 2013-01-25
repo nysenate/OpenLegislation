@@ -1,0 +1,52 @@
+{
+  "name" : "Codes",
+  "shortName" : "codes",
+  "url" : "http://www.nysenate.gov/committee/codes",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Codes",
+  "chairs" : [ {
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  } ],
+  "members" : [ {
+    "name" : "John A. DeFrancisco",
+    "shortName" : "defrancisco",
+    "url" : "http://www.nysenate.gov/senator/john-defrancisco"
+  }, {
+    "name" : "John J. Flanagan",
+    "shortName" : "flanagan",
+    "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  }, {
+    "name" : "Charles J. Fuschillo Jr.",
+    "shortName" : "fuschillo",
+    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
+  }, {
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "name" : "Martin J. Golden",
+    "shortName" : "golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "name" : "Andrew J Lanza",
+    "shortName" : "lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  }, {
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "o'mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "name" : "Malcolm A. Smith",
+    "shortName" : "smith",
+    "url" : "http://www.nysenate.gov/senator/malcolm-smith"
+  }, {
+    "name" : "Phil Boyle",
+    "shortName" : "boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-m-boyle"
+  } ]
+}
