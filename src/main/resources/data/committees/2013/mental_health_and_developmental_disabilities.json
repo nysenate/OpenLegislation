@@ -32,5 +32,21 @@
     "name" : "Lee M. Zeldin",
     "shortName" : "zeldin",
     "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  }, {
+    "name" : "Cecilia Tkaczyk",
+    "shortName" : "tkaczyk",
+    "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
+  }, {
+    "name" : "Liz Krueger",
+    "shortName" : "krueger",
+    "url" : "http://www.nysenate.gov/senator/liz-krueger"
+  }, {
+    "name" : "Eric Adams",
+    "shortName" : "adams",
+    "url" : "http://www.nysenate.gov/senator/eric-adams"
+  }, {
+    "name" : "George S. Latimer",
+    "shortName" : "latimer",
+    "url" : "http://www.nysenate.gov/senator/george-s-latimer"
   } ]
 }

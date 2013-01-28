@@ -28,5 +28,17 @@
     "name" : "Patty Ritchie",
     "shortName" : "ritchie",
     "url" : "http://www.nysenate.gov/senator/patty-ritchie"
+  }, {
+    "name" : "Terry Gipson",
+    "shortName" : "gipson",
+    "url" : "http://www.nysenate.gov/senator/terry-gipson"
+  }, {
+    "name" : "George S. Latimer",
+    "shortName" : "latimer",
+    "url" : "http://www.nysenate.gov/senator/george-s-latimer"
+  }, {
+    "name" : "Ted O'Brien",
+    "shortName" : "o'brien",
+    "url" : "http://www.nysenate.gov/senator/ted-obrien"
   } ]
 }
