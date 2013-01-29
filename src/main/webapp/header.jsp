@@ -45,6 +45,25 @@
 	 
 		<script type="text/javascript">
 			searchType = "<%=searchType%>";
+
+			$(document).ready(function() {
+				var clearOnFocus = function(element, text) {
+	                element.focus(function() {
+	                    var self = $(this);
+	                    if (self.val() == text) {
+	                        self.val("");
+	                    }
+	                }).blur(function() {
+	                    var self = $(this);
+	                    if (self.val() == "") {
+	                        self.val(text);
+	                    }
+	                }).blur();
+	            };
+
+	            clearOnFocus($("input[name=email]"), "enter email");
+			});
+
 		</script>
 	</head>
 	<body>  

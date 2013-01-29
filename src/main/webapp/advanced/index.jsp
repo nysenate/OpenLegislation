@@ -66,7 +66,7 @@
 <script>
 $(document).ready(function() {
 
-    clearOnFocus = function(element, text) {
+    var clearOnFocus = function(element, text) {
         element.focus(function() {
             var self = $(this);
             if (self.val() == text) {
