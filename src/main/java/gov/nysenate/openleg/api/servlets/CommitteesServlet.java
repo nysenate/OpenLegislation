@@ -45,7 +45,7 @@ public class CommitteesServlet extends HttpServlet {
         if (!committeesDir.exists()) committeesDir.mkdirs();
 
         ArrayList<Committee> committees = new ArrayList<Committee>();
-        for (File committeeFile : FileUtils.listFiles(committeesDir, null, false)) {
+        for (File committeeFile : FileUtils.listFiles(committeesDir, new String[]{"json"}, false)) {
             committees.add(mapper.readValue(committeeFile, Committee.class));
         }
 

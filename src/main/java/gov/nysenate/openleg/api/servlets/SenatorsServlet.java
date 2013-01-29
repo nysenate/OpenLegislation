@@ -45,7 +45,7 @@ public class SenatorsServlet extends HttpServlet {
         if (!senatorsDir.exists()) senatorsDir.mkdirs();
 
         ArrayList<Senator> senators = new ArrayList<Senator>();
-        for (File senatorFile : FileUtils.listFiles(senatorsDir, null, false)) {
+        for (File senatorFile : FileUtils.listFiles(senatorsDir, new String[]{"json"}, false)) {
             senators.add(mapper.readValue(senatorFile, Senator.class));
         }
 
