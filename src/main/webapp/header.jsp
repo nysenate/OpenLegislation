@@ -41,7 +41,6 @@
 		<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<%=appPath%>/feed" />
 		
 		<script type="text/javascript" src="<%=appPath%>/js/jquery-1.3.2.min.js"></script>
-		<script src="http://assets.percentmobile.com/percent_mobile.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript" src="<%=appPath%>/js/search.js"></script>
 	 
 		<script type="text/javascript">
@@ -49,20 +48,6 @@
 		</script>
 	</head>
 	<body>  
-		
-		<!-- Percent Mobile support. For desktop viewing, place as high up as possible -->
-		<% if (session.getAttribute("mobile")==null) { %>
-			<script>
-				<!--
-				percent_mobile_track('89984697771243267044235791550489069012');
-				-->
-			</script>
-			<noscript>
-				<img src="http://tracking.percentmobile.com/pixel/89984697771243267044235791550489069012/pixel.gif?v=271009_js" width="2" height="2" alt="" />
-			</noscript>
-		<% } %>
-		<!-- End Percent Mobile Support -->
-		
 		<div id="header-home" style="margin-top:0px">
 	    	<div style="float:left;">
 	     		<a href="http://nysenate.gov">NYSenate.gov</a>:
