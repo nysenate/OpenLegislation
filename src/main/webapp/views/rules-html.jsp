@@ -5,8 +5,7 @@
 <br/>
 <div id="content">
 <pre>
-
-                              RULES OF THE SENATE
+                             RULES OF THE SENATE
  
                           OF THE STATE OF NEW YORK
  
@@ -19,7 +18,7 @@
  
  
   Rules  of the Senate for the year 2013-2014, as adopted by Senate Resol-
-  ution number 1 of 2013.
+  ution number 1 of 2013 and as amended by Senate Resolution 314 of 2013.
  
     Permanent Joint Rules of the Senate and Assembly, as adopted  by  Con-
   current  Resolution  numbers 459 (Senate) and 544 (Assembly) of 1984 and
@@ -774,6 +773,8 @@
  
     Housing, Construction and Community Development
  
+    Infrastructure and Capital Investment
+ 
     Investigations and Government Operations
  
     Local Government
@@ -812,104 +813,103 @@
     For  purposes  of committee composition, in the event that the propor-
   tion of Majority Coalition members would result in a fractional  amount,
   the number of Majority Coalition members shall be rounded up to the next
+
   whole  number.   Furthermore, the total number of Independent Democratic
   Conference members appointed to all committees shall be in the same pro-
-
   portion, as nearly as may be, as the number of  Independence  Democratic
   Conference  members  in  the Senate bears to the total membership of the
   Senate. Further, in the case of an excused absence of any committee mem-
   ber on either the Finance or the Rules Committee, the Conference Leaders
-  may  designate  an  alternate  member  of the conference for meetings of
-  standing committees provided written notice is provided and accepted  by
-  the  Majority Coalition Leaders at least one hour prior to the commence-
+  may designate an alternate member of  the  conference  for  meetings  of
+  standing  committees provided written notice is provided and accepted by
+  the Majority Coalition Leaders at least one hour prior to the  commence-
   ment of such committee meeting.
  
-    d. The provisions of the opening paragraph of this section  and  para-
-  graph  c of this section relative to the proportional membership on com-
-  mittees as well as the specific number of members to comprise each  com-
-  mittee  may  be  amended  by resolution adopted by a majority of members
+    d.  The  provisions of the opening paragraph of this section and para-
+  graph c of this section relative to the proportional membership on  com-
+  mittees  as well as the specific number of members to comprise each com-
+  mittee may be amended by resolution adopted by  a  majority  of  members
   elected.
  
-    § 2. Committee on Rules. The Committee on Rules may sit  at  any  time
-  and  shall  report  bills  out of committee only if they shall have been
-  duly reported to the Committee on Rules from  a  standing  committee  of
-  origin,  or  from a committee of secondary reference, or if the chair of
-  such standing committee consents, or if the bill  was  referred  to  the
-  Committee  on  Rules  upon  introduction. Other than a motion to hold, a
-  motion to discharge, or a motion to report, no other motion shall be  in
-  order  in  the  Committee  on Rules without the consent of the Committee
-  Chair. The reception and consideration of its report shall always be  in
-  order;  debate  on its adoption shall not exceed one and one half hours,
-  one-half hour for each conference, such time to be allotted by the  Con-
-  ference  Leaders;  and no other motion, except a motion by the Temporary
+    §  2.  Committee  on Rules. The Committee on Rules may sit at any time
+  and shall report bills out of committee only if  they  shall  have  been
+  duly  reported  to  the  Committee on Rules from a standing committee of
+  origin, or from a committee of secondary reference, or if the  chair  of
+  such  standing  committee  consents,  or if the bill was referred to the
+  Committee on Rules upon introduction. Other than a  motion  to  hold,  a
+  motion  to discharge, or a motion to report, no other motion shall be in
+  order in the Committee on Rules without the  consent  of  the  Committee
+  Chair.  The reception and consideration of its report shall always be in
+  order; debate on its adoption shall not exceed one and one  half  hours,
+  one-half  hour for each conference, such time to be allotted by the Con-
+  ference Leaders; and no other motion, except a motion by  the  Temporary
   President for a call of the Senate, to adjourn or to recess, shall be in
-  order until the vote of the Senate is had thereon.   If  the  report  be
-  adopted,  all  inconsistent  rules  of the Senate shall automatically be
+  order  until  the  vote  of the Senate is had thereon.  If the report be
+  adopted, all inconsistent rules of the  Senate  shall  automatically  be
   suspended until the subject of such report has been disposed of, includ-
   ing final action thereon.
  
-    § 3. Open Meetings of Standing Committees. a. (1) Standing  committees
+    §  3. Open Meetings of Standing Committees. a. (1) Standing committees
   shall hold regular meetings at such time and on such day as the Majority
   Coalition Leaders in consultation with the chair and such schedule shall
-  be  published  one week in advance of the date of such meeting and shall
-  be posted on the Senate committee board. The attendance of  the  members
-  of  the  committee shall be recorded at each meeting, and a copy of such
-  report shall be filed with the Journal Clerk  of  the  Senate  and  made
+  be published one week in advance of the date of such meeting  and  shall
+  be  posted  on the Senate committee board. The attendance of the members
+  of the committee shall be recorded at each meeting, and a copy  of  such
+  report  shall  be  filed  with  the Journal Clerk of the Senate and made
   available to the public. Each chair of a standing committee shall to the
   extent practicable, no later than 3 p.m. the Thursday preceding the reg-
-  ular  meeting,  furnish to the Conference Leaders, and make available to
-  each member of such committee, a copy of  the  agenda  of  such  regular
-  meeting  together  with  a  copy of the introducer's memorandum for each
+  ular meeting, furnish to the Conference Leaders, and make  available  to
+  each  member  of  such  committee,  a copy of the agenda of such regular
+  meeting together with a copy of the  introducer's  memorandum  for  each
   bill listed on such agenda for such regular meeting. In addition, copies
-  of such agenda for such regular meeting shall be made available to  rep-
-  resentatives  of  the  news media and to the general public. However, in
+  of  such agenda for such regular meeting shall be made available to rep-
+  resentatives of the news media and to the general  public.  However,  in
   case of necessity, the chair with consent of the ranking Democratic Con-
-  ference member may add no more than four items on the agenda  or  delete
-  items  on  the agenda up to 24 hours in advance of the scheduled meeting
-  and members shall be notified  of  such  additions  or  deletions.  Each
-  standing  committee chair shall decide all procedural issues which arise
+  ference  member  may add no more than four items on the agenda or delete
+  items on the agenda up to 24 hours in advance of the  scheduled  meeting
+  and  members  shall  be  notified  of  such additions or deletions. Each
+  standing committee chair shall decide all procedural issues which  arise
   during meetings of standing committees.
- 
-    (2) Standing committees may hold special meetings in case of necessity
-  upon the call of the chair when the announcement is made from the  floor
-  during  session, or the ranking Democratic Conference member of the com-
 
-  mittee consents thereto, or upon the call of a majority of all the  mem-
+    (2) Standing committees may hold special meetings in case of necessity
+  upon  the call of the chair when the announcement is made from the floor
+  during session, or the ranking Democratic Conference member of the  com-
+  mittee  consents thereto, or upon the call of a majority of all the mem-
   bers  thereof,  entry  of which fact shall be made on the records of the
   committee and announced by the Secretary of the Senate.
  
-    (3)  All  meetings of committees shall be open to authorized represen-
+    (3) All meetings of committees shall be open to  authorized  represen-
   tatives of the news media and the general public as observers.
  
-    (4) All meetings of committees shall be recorded by video and  to  the
-  extent  practicable  webcast live. Video of all committee meetings shall
+    (4)  All  meetings of committees shall be recorded by video and to the
+  extent practicable webcast live. Video of all committee  meetings  shall
   be made available on the Senate website and updated daily.
  
-    (5) Upon the personal vote of a majority of all the members of a  com-
-  mittee,  taken  in  an open meeting pursuant to a motion identifying the
-  general area or areas of the subject or subjects  to  be  considered,  a
+    (5)  Upon the personal vote of a majority of all the members of a com-
+  mittee, taken in an open meeting pursuant to a  motion  identifying  the
+  general  area  or  areas  of the subject or subjects to be considered, a
   committee may conduct an executive session of which only members of such
-  committee  are  present  for the following enunciated purposes provided,
-  however, that no action by formal vote shall  be  taken  to  appropriate
+  committee are present for the following  enunciated  purposes  provided,
+  however,  that  no  action  by formal vote shall be taken to appropriate
   public monies:
  
     (a) matters which will imperil the public safety if disclosed;
  
-    (b)  any  matter  which may disclose the identity of a law enforcement
+    (b) any matter which may disclose the identity of  a  law  enforcement
   agent or informer;
  
-    (c) information relating to current or future investigation or  prose-
-  cution  of a criminal offense which would imperil effective law enforce-
+    (c)  information relating to current or future investigation or prose-
+  cution of a criminal offense which would imperil effective law  enforce-
   ment if disclosed;
  
     (d) discussions regarding proposed, pending or current litigation;
  
-    (e) collective negotiations pursuant to article fourteen of the  Civil
+    (e)  collective negotiations pursuant to article fourteen of the Civil
   Service Law;
  
     (f) the medical, financial, credit, character or employment history of
-  any  person  or  corporation,  or  matters  leading  to the appointment,
-  employment, promotion, demotion, discipline,  suspension,  dismissal  or
+  any person or  corporation,  or  matters  leading  to  the  appointment,
+  employment,  promotion,  demotion,  discipline, suspension, dismissal or
   removal of any person or corporation;
  
     (g) the preparation, grading or administration of examinations; and
@@ -917,20 +917,21 @@
     (h) the proposed acquisition, sale or lease of real property, but only
   when publicity would substantially affect the value of the property.
  
-    (6)  Attendance at an executive session shall be permitted to any mem-
+    (6) Attendance at an executive session shall be permitted to any  mem-
   ber of the committee and any other persons authorized by the committee.
  
     b. (1) Minutes shall be taken at all open meetings of committees which
-  shall consist of a record or summary of all motions,  proposals,  resol-
+  shall  consist  of a record or summary of all motions, proposals, resol-
   utions and any other matter formally voted upon and the vote thereon.
  
     (2) Minutes shall be taken at executive sessions of any action that is
-  taken  by  formal vote which shall consist of a record or summary of the
-  final determination of such action, and the date and vote thereon;  pro-
-  vided,  however, that such summary shall not include any matter which is
-  not required to be made public by "the freedom of  information  law"  as
-  added by Article six of the Public Officers Law.
+  taken by formal vote which shall consist of a record or summary  of  the
+  final  determination of such action, and the date and vote thereon; pro-
+  vided, however, that such summary shall not include any matter which  is
 
+  not  required  to  be made public by "the freedom of information law" as
+  added by Article six of the Public Officers Law.
+ 
     (3)  Minutes  of  meetings of all committees shall be available to the
   public in accordance with the provisions of Article six  of  the  Public
   Officers  Law,  "the  freedom  of information law", and at such time and
@@ -986,127 +987,128 @@
   standing  committees, any Senator may convene a public forum on proposed
   or pending legislation within the jurisdiction of a committee upon which
   he or she is a member, provided that any charge  incurred  attendant  to
+
   such  forum  be  borne  by  said Senator or his or her party conference.
   Prior notice of such forum shall be filed with the chair of the  commit-
   tee.
-
+ 
     c.  Committee  oversight function. Each standing committee is required
   to conduct oversight of the administration of laws and programs by agen-
   cies within its jurisdiction.
  
-    d.  Each  standing committee is required to file with the secretary of
-  the senate an annual report, detailing  its  legislative  and  oversight
+    d. Each standing committee is required to file with the  secretary  of
+  the  senate  an  annual  report, detailing its legislative and oversight
   activities. Such report shall be posted to the Senate web site.
  
     e. Petition for a public hearing on a bill. By a petition of one-third
-  of  the  members assigned to a committee rounded up to the nearest whole
+  of the members assigned to a committee rounded up to the  nearest  whole
   number, a public hearing shall be scheduled on a specific bill or number
-  of bills within the jurisdiction of a committee, unless the majority  of
-  members  of  the committee reject such petition. Such petitions shall be
+  of  bills within the jurisdiction of a committee, unless the majority of
+  members of the committee reject such petition. Such petitions  shall  be
   submitted on the proper form to the Senate Desk for Operations, who will
-  forward it to the appropriate committee, for presentation  at  the  next
-  committee  meeting.  Such public hearings shall be held if they meet the
-  guidelines as promulgated by the Majority  Coalition  Leaders.    Public
-  hearings  scheduled  by petition will be held at least 14 days following
+  forward  it  to  the appropriate committee, for presentation at the next
+  committee meeting. Such public hearings shall be held if they  meet  the
+  guidelines  as  promulgated  by  the Majority Coalition Leaders.  Public
+  hearings scheduled by petition will be held at least 14  days  following
   the committee meeting at which the petition was considered.
  
-    f. Hearings of standing committees shall be video recorded and to  the
-  extent  practicable  webcast live. Video of such hearing shall be posted
+    f.  Hearings of standing committees shall be video recorded and to the
+  extent practicable webcast live. Video of such hearing shall  be  posted
   to the Senate web site within 24 hours.
  
-    § 5. Reports. a. No committee shall vote to report  a  bill  or  other
-  matter  unless  a  majority  of all the members thereof vote in favor of
-  such report. Each report of a committee upon a bill shall have the  vote
-  of  each  Senator  attached  thereto  and  such report and vote shall be
-  available for public inspection. A member's vote on  any  matter  before
+    §  5.  Reports.  a.  No committee shall vote to report a bill or other
+  matter unless a majority of all the members thereof  vote  in  favor  of
+  such  report. Each report of a committee upon a bill shall have the vote
+  of each Senator attached thereto and  such  report  and  vote  shall  be
+  available  for  public  inspection. A member's vote on any matter before
   the committee shall be entered by the member on a signed official voting
   sheet delivered to the Committee Chair.
  
-    Any  standing  committee  having secondary subject matter jurisdiction
-  over a bill may request the chair of the committee having  primary  sub-
+    Any standing committee having secondary  subject  matter  jurisdiction
+  over  a  bill may request the chair of the committee having primary sub-
   ject matter jurisdiction over said bill (which is the committee to which
   the said bill has been referred by the Majority Coalition Leaders pursu-
   ant to Rule VII) to commit the bill to the committee with secondary sub-
-  ject  matter  jurisdiction  either when the bill is still in the primary
+  ject matter jurisdiction either when the bill is still  in  the  primary
   committee or after it has been reported to the calendar. If the chair of
-  the primary committee refuses said request, then  the  committee  having
-  secondary  jurisdiction,  through  its  chair,  may request the Majority
+  the  primary  committee  refuses said request, then the committee having
+  secondary jurisdiction, through its  chair,  may  request  the  Majority
   Coalition Leaders to consider such secondary referencing. If a secondary
-  reference is so made, the secondary committee shall  consider  the  bill
+  reference  is  so  made, the secondary committee shall consider the bill
   forthwith and return said bill to the primary committee or the calendar,
-  as  the  case  may  be, along with the secondary committee's recommenda-
+  as the case may be, along with  the  secondary  committee's  recommenda-
   tions.
  
-    All committee reports, after the second Friday in June, shall be  made
-  directly  to  the  Committee  on Rules. Notwithstanding any provision of
-  Rule VII, the Committee on Rules shall have the authority  to  introduce
-  and  refer bills to itself and shall also have the authority to refer to
+    All  committee reports, after the second Friday in June, shall be made
+  directly to the Committee on Rules.  Notwithstanding  any  provision  of
+  Rule  VII,  the Committee on Rules shall have the authority to introduce
+  and refer bills to itself and shall also have the authority to refer  to
   itself any bill from any standing committee.
- 
-    Every report of a committee upon a bill which shall not be  considered
-  at  the  time  of making the same, or laid on the table by a vote of the
-  Senate, shall stand upon the calendar in the order of first report  with
-  the bill and be entered upon the journal.
 
+    Every  report of a committee upon a bill which shall not be considered
+  at the time of making the same, or laid on the table by a  vote  of  the
+  Senate,  shall stand upon the calendar in the order of first report with
+  the bill and be entered upon the journal.
+ 
     b.  Each bill reported by a standing committee shall be accompanied by
   a report, and the Democratic Conference shall file a Democratic  Confer-
   ence  committee  report within seven days of the bill being reported out
   of committee and said reports shall be filed with the journal clerk. The
-  report  of a committee upon any matter referred to it shall upon request
+  report of a committee upon any matter referred to it shall upon  request
   include a brief statement of the opinion of any member or members of the
   committee voting in either the majority or minority.
  
-    c. Where a "home rule" request is required as provided in any  section
-  of  Article IX of the Constitution, such request, certificate or message
-  must be filed with the Journal Clerk of the Senate before final  passage
+    c.  Where a "home rule" request is required as provided in any section
+  of Article IX of the Constitution, such request, certificate or  message
+  must  be filed with the Journal Clerk of the Senate before final passage
   of such bill.
  
-    d.  Where  a  message of necessity is received from the Governor, such
-  message shall be filed with the Journal Clerk of the Senate  upon  final
+    d. Where a message of necessity is received from  the  Governor,  such
+  message  shall  be filed with the Journal Clerk of the Senate upon final
   passage of the bill.
  
-    §  6. Nominations. Unless the Senate orders otherwise, all nominations
+    § 6. Nominations. Unless the Senate orders otherwise, all  nominations
   sent by the Governor for the appointment of any officer shall be submit-
-  ted to the Temporary President who shall  then  refer  such  nominations
-  simultaneously  to  the  Finance Committee, and the appropriate standing
-  committee, for consideration and recommendation and such  standing  com-
-  mittees,  other  than  the Committee on Judiciary shall thereafter refer
-  such nominations to the Finance Committee of the Senate who  shall  take
-  whatever  further  actions  it  deems  necessary and thereafter make its
-  report on the nominations to the full Senate. Any Senator may  submit  a
-  request  to  the Chair of a Standing Committee considering a nomination,
+  ted  to  the  Temporary  President who shall then refer such nominations
+  simultaneously to the Finance Committee, and  the  appropriate  standing
+  committee,  for  consideration and recommendation and such standing com-
+  mittees, other than the Committee on Judiciary  shall  thereafter  refer
+  such  nominations  to the Finance Committee of the Senate who shall take
+  whatever further actions it deems  necessary  and  thereafter  make  its
+  report  on  the nominations to the full Senate. Any Senator may submit a
+  request to the Chair of a Standing Committee considering  a  nomination,
   to speak before the committee for not more than five minutes on the nom-
-  ination. The granting of any such request shall  be  at  the  sole  dis-
-  cretion  of  the  Committee  Chair.  A nomination shall not be confirmed
+  ination.  The  granting  of  any  such request shall be at the sole dis-
+  cretion of the Committee Chair. A  nomination  shall  not  be  confirmed
   without reference on the day on which it is received except by unanimous
-  consent. The names of those who voted for or against the nomination  may
-  be  entered  alphabetically on the journal, if any five Senators request
+  consent.  The names of those who voted for or against the nomination may
+  be entered alphabetically on the journal, if any five  Senators  request
   it.
  
-    § 7. Finance Committee. A bill or resolution providing for  an  appro-
-  priation  or  creating  or  increasing  a charge upon the State Treasury
-  shall, when reported by any committee other than the Finance  Committee,
-  be  referred  to the Finance Committee, and the committee reporting such
-  bill or resolution shall, at the time of making such  report,  recommend
-  the  further  reference thereof to the Finance Committee. At the request
+    §  7.  Finance Committee. A bill or resolution providing for an appro-
+  priation or creating or increasing a  charge  upon  the  State  Treasury
+  shall,  when reported by any committee other than the Finance Committee,
+  be referred to the Finance Committee, and the committee  reporting  such
+  bill  or  resolution shall, at the time of making such report, recommend
+  the further reference thereof to the Finance Committee. At  the  request
   of the Majority Coalition Leaders or the Chair of the Finance Committee,
-  any such bill or resolution shall, at any time before final  reading  or
-  adoption,  be  referred to the Finance Committee, which may consider and
-  report upon any features in the bill or resolution creating or  increas-
+  any  such  bill or resolution shall, at any time before final reading or
+  adoption, be referred to the Finance Committee, which may  consider  and
+  report  upon any features in the bill or resolution creating or increas-
   ing such charge.
  
-    The  sponsor  of a bill providing for an increase or decrease in state
+    The sponsor of a bill providing for an increase or decrease  in  state
   revenues or in the appropriation or expenditure of state moneys, without
-  stating the amount thereof, must, before such bill is reported from  the
-  Finance  Committee  or  other committee to which referred, file with the
-  Finance Committee and such other committee a  fiscal  note  which  shall
+  stating  the amount thereof, must, before such bill is reported from the
+  Finance Committee or other committee to which referred,  file  with  the
+  Finance  Committee  and  such  other committee a fiscal note which shall
   state, so far as possible, the amount in dollars whereby such state mon-
-  eys, revenues or appropriations would be affected by such bill, together
-  with  a  similar  estimate,  if  the same is possible, for future fiscal
-  years. Such an estimate must be secured by the sponsor from the Division
-  of the Budget or the department or agency of  state  government  charged
 
-  with  the  fiscal  duties, functions or powers provided in such bill and
+  eys, revenues or appropriations would be affected by such bill, together
+  with a similar estimate, if the same  is  possible,  for  future  fiscal
+  years. Such an estimate must be secured by the sponsor from the Division
+  of  the  Budget  or the department or agency of state government charged
+  with the fiscal duties, functions or powers provided in  such  bill  and
   the name of such department or agency must be stated in such note.
  
     The  Finance  Committee  shall keep and maintain a file containing all
