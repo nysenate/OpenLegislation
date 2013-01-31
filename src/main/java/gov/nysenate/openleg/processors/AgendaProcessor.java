@@ -49,6 +49,7 @@ public class AgendaProcessor implements OpenLegConstants {
         Unmarshaller u = jc.createUnmarshaller();
         XMLSENATEDATA senateData = (XMLSENATEDATA)u.unmarshal(new FileReader(file));
 
+        // TODO: We need a better default here
         Date modifiedDate = null;
         try {
             modifiedDate = sobiDateFormat.parse(file.getName());
@@ -71,6 +72,10 @@ public class AgendaProcessor implements OpenLegConstants {
                             calendar.setTime(meeting.getMeetingDateTime());
                             key = calendar.get(GregorianCalendar.YEAR)+"/meeting/"+meeting.getId();
                             logger.info(key);
+
+                            // TODO: We don't actually know if the meeting was modified or not
+                            // This might be a false positive change
+                            meeting.setModified(addendum.getPublicationDateTime().getTime());
                             storage.set(key, meeting);
                         }
                     }
@@ -272,6 +277,7 @@ public class AgendaProcessor implements OpenLegConstants {
             addendum.setAgenda(agenda);
 
             // Don't add duplicates!
+            // TODO: What about addendums that are updated? Can that happen?
             if (!listAddendums.contains(addendum)) {
                 listAddendums.add(addendum);
             }
