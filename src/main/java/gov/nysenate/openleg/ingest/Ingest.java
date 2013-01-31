@@ -23,7 +23,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 
 public class Ingest {
@@ -241,10 +240,7 @@ public class Ingest {
 
     public static ObjectMapper getMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        SerializationConfig cnfg = mapper.getSerializationConfig();
-        cnfg.set(Feature.INDENT_OUTPUT, true);
-        mapper.setSerializationConfig(cnfg);
-
+        mapper.configure(Feature.INDENT_OUTPUT, true);
         return mapper;
     }
 
@@ -291,7 +287,7 @@ public class Ingest {
 
     /*
      * git functions (currently unused)
-     * 
+     *
         public void commit(String message) {
             //Condensed for speed, don't pull the pieces out into a "run" func
             try {
