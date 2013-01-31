@@ -71,9 +71,9 @@ changelog=$work/change.log
 
 # Organize the change files and ingest to storage
 echo "Collating $document_count files into $work";
-$BINDIR/run.sh collate $source $work &>$errorlog;
+$BINDIR/run.sh Collate $source $work &>$errorlog;
 echo "Ingesting $document_count files into $storage";
-$BINDIR/run.sh ingest $work $storage --change-file $changelog &>>$errorlog
+$BINDIR/run.sh Ingest $work $storage --change-file $changelog &>>$errorlog
 
 # Migrate all processed files to $dest for archival purposes
 # TODO: Get Year from the filename somehow!
@@ -91,7 +91,7 @@ done
 
 # Push the changes out from storage
 echo "Pushing `wc -l $changelog` document changes to $lucene";
-$BINDIR/run.sh push $storage --lucene $lucene --change-file $changelog &>>$errorlog
+$BINDIR/run.sh Push $storage --lucene $lucene --varnish --change-file $changelog &>>$errorlog
 
 # Move the logs to $dest for archiving as well
 echo "Archiving the change and error logs to $dest/logs/";
