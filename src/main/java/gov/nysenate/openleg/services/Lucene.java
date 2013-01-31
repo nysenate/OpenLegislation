@@ -3,18 +3,13 @@ package gov.nysenate.openleg.services;
 import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.Action;
-import gov.nysenate.openleg.model.Addendum;
-import gov.nysenate.openleg.model.Agenda;
 import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.util.serialize.JsonSerializer;
 import gov.nysenate.openleg.util.serialize.XmlSerializer;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -59,22 +54,8 @@ public class Lucene extends ServiceBase {
                 } else {
                     Class<? extends ILuceneObject> objType = classMap.get(otype);
                     ILuceneObject obj = (ILuceneObject) storage.get(key, objType);
-                    if (otype.equals("agenda")) {
-                        Agenda agenda = (Agenda)obj;
-                        for( Addendum addendum : agenda.getAddendums()) {
-                            addendum.setAgenda(agenda);
-                            for( Meeting meeting : addendum.getMeetings() ) {
-                                try {
-                                    meeting.setAddendums(new ArrayList<Addendum>(Arrays.asList(addendum)));
-                                    meeting.setModified(agenda.getModified());
-                                    lucene.addDocument(meeting, serializers, indexWriter);
-                                } catch (Exception e) {
-                                    logger.error("Error indexing: "+meeting.luceneOid(), e);
-                                }
-                            }
-                        }
 
-                    } else if(otype.equals("bill")) {
+                    if (otype.equals("bill")) {
                         Bill bill = (Bill)obj;
 
                         // Regenerate all the bill actions
@@ -113,7 +94,7 @@ public class Lucene extends ServiceBase {
                             logger.error("Error indexing: "+bill.luceneOid(), e);
                         }
 
-                    } else {
+                    } else if(!otype.equals("agenda")){
                         try {
                             lucene.addDocument(obj, serializers, indexWriter);
                         } catch (Exception e) {
