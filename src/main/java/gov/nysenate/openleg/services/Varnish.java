@@ -1,47 +1,40 @@
 package gov.nysenate.openleg.services;
 
-import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.util.Storage;
-import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class Varnish extends ServiceBase {
-    private final String host;
-    private final int port;
+    protected final InetSocketAddress remoteSocket;
+
+    protected static final String LOG_TEMPLATE = "purging %s at %s";
+
+    protected static final String PURGE_TEMPLATE = "PURGE %s HTTP/1.1\r\n" +
+                                                   "User-Agent: HTTPGrab\r\n" +
+                                                   "Accept: text/*\r\n" +
+                                                   "Connection: close\r\n" +
+                                                   "Host: %s\r\n\r\n";
 
     public Varnish(String host, int port) {
         super();
-        this.host = host;
-        this.port = port;
+        remoteSocket = new InetSocketAddress(host, port);
     }
 
     @Override
     public boolean process(HashMap<String, Storage.Status> changeLog, Storage storage) throws IOException {
-
         for(Entry<String, Storage.Status> entry : changeLog.entrySet()) {
+            // Key format is YEAR/OTYPE/OID
             String key = entry.getKey();
             String otype = key.split("/")[1];
             String oid = key.split("/")[2];
-            Class<? extends ILuceneObject> objType = classMap.get(otype);
 
-            if(entry.getValue() == Storage.Status.DELETED) {
-                if(otype.equals("agenda")) {
-                    // TODO: Need a way to handle meetings here.. very important
-                    // Probably need a whole new approach to this one
-                } else {
-                    purgeUri("doc:"+oid);
-                }
-            } else {
-                ILuceneObject obj = (ILuceneObject) storage.get(key, objType);
-                purgeUri("doc:"+obj.luceneOid());
+            if(entry.getValue()!=Storage.Status.NEW && !otype.equals("agenda")) {
+                purgeUri("doc:"+oid);
             }
         }
         purgeUri("search");
@@ -49,25 +42,18 @@ public class Varnish extends ServiceBase {
         return true;
     }
 
-
     public void purgeUri(String uri) throws IOException {
-        SocketChannel channel = null;
-
-        URL connectUrl = new URL(host);
-        String host = connectUrl.getHost();
-
-        SocketAddress remote = new InetSocketAddress(host, port);
-        channel = SocketChannel.open(remote);
-
-        logger.warn(TextFormatter.append("purging ", uri, " at ", host));
-
-        String request = "PURGE " + uri + " HTTP/1.1\r\n" + "User-Agent: HTTPGrab\r\n" +
-                "Accept: text/*\r\nConnection: close\r\nHost: " + host + "\r\n\r\n";
+        // This works, but maybe we can do it without manually opening sockets?
+        // TODO: Do we need to re-open the channel for each request?
+        logger.warn(String.format(LOG_TEMPLATE, uri, remoteSocket.getHostName()));
+        SocketChannel channel = SocketChannel.open(remoteSocket);
+        String request = String.format(PURGE_TEMPLATE, uri, remoteSocket.getHostName());
 
         ByteBuffer header = ByteBuffer.wrap(request.getBytes("US-ASCII"));
         channel.write(header);
         channel.finishConnect();
 
+        // Can't we just close it if we are throwing the response away?
         ByteBuffer buffer = ByteBuffer.allocate(131072);
         while(channel.read(buffer) != -1) {
             buffer.clear();
