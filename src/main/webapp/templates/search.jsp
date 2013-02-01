@@ -214,8 +214,15 @@ Same As: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("s
 Bill: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("billno")%>%22" class="sublink"><%=sresult.getFields().get("billno")%></a>
  <%} %>
  
- <%if (sresult.getFields().get("sponsor")!=null && sresult.getFields().get("sponsor").length()>0){ %>
-Sponsor: <a href="<%=appPath%>/sponsor/<%=sresult.getFields().get("sponsor")%>" class="sublink"><%=sresult.getFields().get("sponsor")%></a>
+ <%if (sresult.getFields().get("sponsor")!=null && sresult.getFields().get("sponsor").length()>0){ 
+    if (sresult.getFields().get("billno").equals("J375-2013")) { %>
+        Sponsors: 
+        <a href="<%=appPath%>/sponsor/STEWART-COUSINS" class="sublink">STEWART-COUSINS</a>,
+        <a href="<%=appPath%>/sponsor/SKELOS" class="sublink">SKELOS</a>,
+        <a href="<%=appPath%>/sponsor/KLEIN" class="sublink">KLEIN</a>
+    <% } else { %>
+        Sponsor: <a href="<%=appPath%>/sponsor/<%=sresult.getFields().get("sponsor")%>" class="sublink"><%=sresult.getFields().get("sponsor")%></a>    
+    <% } %>
  <%} %>
  
   <%if (sresult.getFields().get("chair")!=null){ %>
