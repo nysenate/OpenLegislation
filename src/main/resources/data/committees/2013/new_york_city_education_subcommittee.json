@@ -1,0 +1,36 @@
+{
+  "name" : "New York City Education Subcommittee",
+  "shortName" : "educationsubcommittee",
+  "url" : "http://www.nysenate.gov/committee/new-york-city-education-subcommittee",
+  "videoUrl" : "http://www.livestream.com/",
+  "chairs" : [ {
+    "name" : "Simcha Felder",
+    "shortName" : "felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  } ],
+  "members" : [ {
+    "name" : "Andrew J Lanza",
+    "shortName" : "lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  }, {
+    "name" : "Martin J. Golden",
+    "shortName" : "golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "name" : "Malcolm A. Smith",
+    "shortName" : "smith",
+    "url" : "http://www.nysenate.gov/senator/malcolm-smith"
+  }, {
+    "name" : "Simcha Felder",
+    "shortName" : "felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  }, {
+    "name" : "Bill Perkins",
+    "shortName" : "perkins",
+    "url" : "http://www.nysenate.gov/senator/bill-perkins"
+  }, {
+    "name" : "Toby Ann Stavisky",
+    "shortName" : "stavisky",
+    "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
+  } ]
+}
