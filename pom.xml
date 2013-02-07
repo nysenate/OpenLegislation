@@ -6,7 +6,7 @@
     <groupId>gov.nysenate</groupId>
     <artifactId>legislation</artifactId>
     <packaging>war</packaging>
-    <version>1.8.3</version>
+    <version>1.8.4</version>
     <build>
         <plugins>
 
