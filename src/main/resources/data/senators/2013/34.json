@@ -9,7 +9,7 @@
   "partyAffiliations" : [ "D" ],
   "offices" : [ {
     "name" : "Albany Office",
-    "street" : "Legislative Office Building, Room 304",
+    "street" : "Legislative Office Building, Room 913",
     "city" : "Albany",
     "postalCode" : "12247",
     "provinceName" : "New York",
@@ -20,8 +20,8 @@
     "fax" : "",
     "otherPhone" : "",
     "additional" : "",
-    "latitude" : 42.62691,
-    "longitude" : -73.740197
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
   }, {
     "name" : "District Office",
     "street" : "1250 Waters Place, Suite 1202",

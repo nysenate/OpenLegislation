@@ -1,5 +1,5 @@
 {
-  "name" : "George S. Latimer",
+  "name" : "George Latimer",
   "lastName" : "Latimer",
   "shortName" : "latimer",
   "email" : "latimer@nysenate.gov",
@@ -8,7 +8,7 @@
   "url" : "http://www.nysenate.gov/senator/george-s-latimer",
   "partyAffiliations" : [ "D" ],
   "offices" : [ {
-    "name" : "District Office",
+    "name" : "Interim District Office",
     "street" : "222 Grace Church Street",
     "city" : "Port Chester",
     "postalCode" : "10573",
@@ -22,6 +22,21 @@
     "additional" : "",
     "latitude" : 40.989802,
     "longitude" : -73.667049
+  }, {
+    "name" : "Albany Office",
+    "street" : "615 Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2031",
+    "fax" : "(518) 426-6860",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
   } ],
   "district" : {
     "number" : 37,
@@ -30,7 +45,7 @@
     "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=37"
   },
   "social" : {
-    "twitter" : "",
+    "twitter" : "https://twitter.com/GeorgeLatimer37",
     "youtube" : "",
     "myspace" : "",
     "picasa" : "",

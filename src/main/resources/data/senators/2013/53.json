@@ -2,7 +2,7 @@
   "name" : "David J. Valesky",
   "lastName" : "Valesky",
   "shortName" : "valesky",
-  "email" : "valesky@senate.state.ny.us",
+  "email" : "valesky@nysenate.gov",
   "additionalContact" : "",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Valesky-HSmp.jpg",
   "url" : "http://www.nysenate.gov/senator/david-j-valesky",
@@ -19,9 +19,9 @@
     "phone" : "(518)-455-2838",
     "fax" : "(518)-426-6885",
     "otherPhone" : "",
-    "additional" : "LOB Room 311",
-    "latitude" : 42.652133,
-    "longitude" : -73.757823
+    "additional" : "LOB Room 512",
+    "latitude" : 42.652228,
+    "longitude" : -73.757982
   }, {
     "name" : "District Office",
     "street" : "333 East Washington Street",

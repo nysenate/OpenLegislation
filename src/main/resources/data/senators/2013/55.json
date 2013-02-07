@@ -6,7 +6,7 @@
   "additionalContact" : "",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(12-10-12) O'Brien-HS-008.jpg",
   "url" : "http://www.nysenate.gov/senator/ted-obrien",
-  "partyAffiliations" : [ "D" ],
+  "partyAffiliations" : [ "D", "WF" ],
   "offices" : [ {
     "name" : "Albany Office",
     "street" : "Legislative Office Building,",
@@ -45,11 +45,11 @@
     "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=55"
   },
   "social" : {
-    "twitter" : "",
+    "twitter" : "http://www.twitter.com/SenTedOBrien",
     "youtube" : "",
     "myspace" : "",
     "picasa" : "",
     "flickr" : "",
-    "facebook" : ""
+    "facebook" : "http://www.facebook.com/SenatorTedOBrien"
   }
 }
