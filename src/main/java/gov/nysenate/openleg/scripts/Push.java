@@ -90,7 +90,7 @@ public class Push {
         }
 
         if(opts.hasOption("varnish")) {
-            services.add(new Varnish("http://127.0.0.1", 80));
+            services.add(new Varnish("127.0.0.1", 80));
         }
 
         // Pass the change log through a set of service hooks
