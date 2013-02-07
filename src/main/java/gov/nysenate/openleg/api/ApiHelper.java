@@ -162,7 +162,7 @@ public class ApiHelper implements OpenLegConstants {
                 } else if (type.equals("meeting")) {
                     Meeting meeting = (Meeting) resultObj;
                     title = TextFormatter.append(meeting.getCommitteeName(), " (",
-                            DATE_FORMAT_CUSTOM.format(meeting.getMeetingDateTime()), ")");
+                            new SimpleDateFormat("MMM d, yyyy - h:mm a").format(meeting.getMeetingDateTime()), ")");
 
                     fields.put("location", meeting.getLocation());
                     fields.put("chair", meeting.getCommitteeChair());

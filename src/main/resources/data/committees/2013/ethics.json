@@ -6,7 +6,7 @@
   "chairs" : [ {
     "name" : "Phil Boyle",
     "shortName" : "boyle",
-    "url" : "http://www.nysenate.gov/senator/philip-m-boyle"
+    "url" : "http://www.nysenate.gov/senator/philip-boyle"
   } ],
   "members" : [ {
     "name" : "Hugh T. Farley",
@@ -19,6 +19,18 @@
   }, {
     "name" : "Phil Boyle",
     "shortName" : "boyle",
-    "url" : "http://www.nysenate.gov/senator/philip-m-boyle"
+    "url" : "http://www.nysenate.gov/senator/philip-boyle"
+  }, {
+    "name" : "Michael Gianaris",
+    "shortName" : "gianaris",
+    "url" : "http://www.nysenate.gov/senator/michael-gianaris"
+  }, {
+    "name" : "Gustavo Rivera",
+    "shortName" : "rivera",
+    "url" : "http://www.nysenate.gov/senator/gustavo-rivera"
+  }, {
+    "name" : "Velmanette Montgomery",
+    "shortName" : "montgomery",
+    "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
   } ]
 }

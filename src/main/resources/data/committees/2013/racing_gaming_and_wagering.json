@@ -15,7 +15,7 @@
   }, {
     "name" : "Phil Boyle",
     "shortName" : "boyle",
-    "url" : "http://www.nysenate.gov/senator/philip-m-boyle"
+    "url" : "http://www.nysenate.gov/senator/philip-boyle"
   }, {
     "name" : "Joseph A. Griffo",
     "shortName" : "griffo",
@@ -32,5 +32,21 @@
     "name" : "Michael H. Ranzenhofer",
     "shortName" : "ranzenhofer",
     "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
+  }, {
+    "name" : "Joseph P. Addabbo Jr",
+    "shortName" : "addabbo",
+    "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
+  }, {
+    "name" : "Eric Adams",
+    "shortName" : "adams",
+    "url" : "http://www.nysenate.gov/senator/eric-adams"
+  }, {
+    "name" : "George Latimer",
+    "shortName" : "latimer",
+    "url" : "http://www.nysenate.gov/senator/george-s-latimer"
+  }, {
+    "name" : "James Sanders Jr.",
+    "shortName" : "sanders",
+    "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
   } ]
 }

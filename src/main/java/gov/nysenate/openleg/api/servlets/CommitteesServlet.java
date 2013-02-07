@@ -4,6 +4,7 @@ import gov.nysenate.openleg.util.RequestUtils;
 import gov.nysenate.openleg.util.RequestUtils.FORMAT;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.services.model.Committee;
+import gov.nysenate.services.model.Member;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +47,15 @@ public class CommitteesServlet extends HttpServlet {
 
         ArrayList<Committee> committees = new ArrayList<Committee>();
         for (File committeeFile : FileUtils.listFiles(committeesDir, new String[]{"json"}, false)) {
-            committees.add(mapper.readValue(committeeFile, Committee.class));
+            Committee committee = mapper.readValue(committeeFile, Committee.class);
+            ArrayList<Member> members = committee.getMembers();
+            Collections.sort(members, new Comparator<Member>() {
+                public int compare(Member a, Member b) {
+                    return a.getShortName().compareToIgnoreCase(b.getShortName());
+                }
+            });
+            committee.setMembers(members);
+            committees.add(committee);
         }
 
         Collections.sort(committees, new Comparator<Committee>() {

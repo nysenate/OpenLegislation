@@ -1,7 +1,7 @@
 <%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,javax.xml.bind.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
 <%
 	String appPath = request.getContextPath();
-	DateFormat df = new SimpleDateFormat("MMM d, yyyy");
+	DateFormat df = new SimpleDateFormat("MMM d, yyyy - h:mm a");
 
 	Meeting meeting = (Meeting) request.getAttribute("meeting");
 	

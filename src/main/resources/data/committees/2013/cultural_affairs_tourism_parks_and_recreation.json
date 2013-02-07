@@ -36,5 +36,25 @@
     "name" : "Betty Little",
     "shortName" : "little",
     "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  }, {
+    "name" : "José M. Serrano",
+    "shortName" : "serrano",
+    "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
+  }, {
+    "name" : "Timothy M. Kennedy",
+    "shortName" : "kennedy",
+    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
+  }, {
+    "name" : "Brad Hoylman",
+    "shortName" : "hoylman",
+    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
+  }, {
+    "name" : "Terry Gipson",
+    "shortName" : "gipson",
+    "url" : "http://www.nysenate.gov/senator/terry-gipson"
+  }, {
+    "name" : "Ted O'Brien",
+    "shortName" : "o'brien",
+    "url" : "http://www.nysenate.gov/senator/ted-obrien"
   } ]
 }

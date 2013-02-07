@@ -23,7 +23,7 @@
   }, {
     "name" : "Phil Boyle",
     "shortName" : "boyle",
-    "url" : "http://www.nysenate.gov/senator/philip-m-boyle"
+    "url" : "http://www.nysenate.gov/senator/philip-boyle"
   }, {
     "name" : "Malcolm A. Smith",
     "shortName" : "smith",
@@ -32,5 +32,17 @@
     "name" : "Michael F. Nozzolio",
     "shortName" : "nozzolio",
     "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "name" : "Adriano Espaillat",
+    "shortName" : "espaillat",
+    "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
+  }, {
+    "name" : "Ruben Diaz",
+    "shortName" : "diaz",
+    "url" : "http://www.nysenate.gov/senator/ruben-diaz"
+  }, {
+    "name" : "Liz Krueger",
+    "shortName" : "krueger",
+    "url" : "http://www.nysenate.gov/senator/liz-krueger"
   } ]
 }

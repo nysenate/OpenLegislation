@@ -11,7 +11,7 @@
   "members" : [ {
     "name" : "Phil Boyle",
     "shortName" : "boyle",
-    "url" : "http://www.nysenate.gov/senator/philip-m-boyle"
+    "url" : "http://www.nysenate.gov/senator/philip-boyle"
   }, {
     "name" : "Charles J. Fuschillo Jr.",
     "shortName" : "fuschillo",
@@ -36,5 +36,21 @@
     "name" : "Diane J. Savino",
     "shortName" : "savino",
     "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  }, {
+    "name" : "Brad Hoylman",
+    "shortName" : "hoylman",
+    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
+  }, {
+    "name" : "José M. Serrano",
+    "shortName" : "serrano",
+    "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
+  }, {
+    "name" : "Terry Gipson",
+    "shortName" : "gipson",
+    "url" : "http://www.nysenate.gov/senator/terry-gipson"
+  }, {
+    "name" : "George Latimer",
+    "shortName" : "latimer",
+    "url" : "http://www.nysenate.gov/senator/george-s-latimer"
   } ]
 }

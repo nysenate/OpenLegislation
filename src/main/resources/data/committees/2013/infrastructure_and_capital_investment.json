@@ -1,0 +1,36 @@
+{
+  "name" : "Infrastructure and Capital Investment",
+  "shortName" : "capitalinvestments",
+  "url" : "http://www.nysenate.gov/committee/infrastructure-and-capital-investment",
+  "videoUrl" : "http://www.livestream.com/nysenate_infrastructure_capinvestment",
+  "chairs" : [ {
+    "name" : "Joseph E. Robach",
+    "shortName" : "robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  } ],
+  "members" : [ {
+    "name" : "Joseph E. Robach",
+    "shortName" : "robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  }, {
+    "name" : "Charles J. Fuschillo Jr.",
+    "shortName" : "fuschillo",
+    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
+  }, {
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "name" : "Joseph A. Griffo",
+    "shortName" : "griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "name" : "Mark Grisanti",
+    "shortName" : "grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  }, {
+    "name" : "David Carlucci",
+    "shortName" : "carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  } ]
+}
