@@ -43,7 +43,7 @@ public class Vote extends SenateObject {
     @XStreamCollectionAlias(node="excused",value="member")
     private List<String> excused;
 
-    // @JsonIgnore
+    @JsonIgnore
     private Bill bill;
 
     @XStreamCollectionAlias(node="ayeswr",value="member")
@@ -135,7 +135,7 @@ public class Vote extends SenateObject {
     }
 
 
-    // @JsonIgnore
+    @JsonIgnore
     public Bill getBill() {
         return bill;
     }
