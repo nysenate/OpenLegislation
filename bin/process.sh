@@ -85,7 +85,7 @@ for file_type in "${file_types[@]}"; do
         if [ ! -r $dest/$year/$file_type/ ]; then
             mkdir -p $dest/$year/$file_type
         fi
-        mv $work/$file_type/* $dest/$year/$file_type/
+        find $work/$file_type/ -type f | xargs mv -t  $dest/$year/$file_type/
     fi
 done
 
