@@ -34,6 +34,16 @@
     margin:0px;
 }
 
+.senator-openleg-links {
+    margin-top:12px;
+}
+
+.senator-nysenate-links {
+}
+
+.senator-district {
+    margin-bottom: 0px;
+}
 </style>
 
 <em>Senator Listings are available for: <a href="/legislation/senators/2013">2013<a/> | <a href="/legislation/senators/2011">2011</a> | <a href="/legislation/senators/2009">2009</a></em>
@@ -47,13 +57,15 @@
         <div class="senator-block">
             <img class="senator-portrait" src="<%=imageUrl%>"/>
             <div class="senator-name"><%=senator.getName()%></div>
-            District <%=senator.getDistrict().getNumber()%>
-            <br/>
-            <a href="<%=senator.getUrl()%>"  >Home</a> | <a href="<%=senator.getUrl()%>/contact" ">Contact</a>
-            
-            <br/><br/>
-            <a href="<%=searchUrl%>">Sponsored Legislation</a>
-            <br/>
+            <div class="senator-district">
+                District <%=senator.getDistrict().getNumber()%>
+            </div>
+            <div class="senator-nysenate-links">
+            <a href="<%=senator.getUrl()%>">Home</a> | <a href="<%=senator.getUrl()%>/contact">Contact</a>
+            </div>
+            <div class="senator-openleg-links">
+                <a href="<%=searchUrl%>">Sponsored Legislation</a>
+            </div>
         </div>
     <% } %>
 
