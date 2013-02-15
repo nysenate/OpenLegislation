@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/html" pageEncoding="utf-8" %><%
+<%@ page language="java" import="gov.nysenate.openleg.util.OpenLegConstants,gov.nysenate.openleg.search.SenateResponse,gov.nysenate.openleg.search.Result,java.text.SimpleDateFormat, java.util.Iterator"  contentType="text/html" pageEncoding="utf-8" %><%
 
 String requestPath = request.getRequestURI();
 

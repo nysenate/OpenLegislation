@@ -1,6 +1,4 @@
-<%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="UTF-8"%>
-
-<%
+<%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="UTF-8"%><%
 	String appPath = request.getContextPath();
 	String title = request.getParameter("title");
 	if (title == null)
@@ -28,7 +26,7 @@
 	if (searchType == null)
 		searchType = "";
 %>
-
+<!DOCTYPE html>
 <html>
 	<head>
 		<title><%=title%></title>
