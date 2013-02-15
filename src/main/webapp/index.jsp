@@ -1,6 +1,4 @@
-<%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="UTF-8"%>
-
-<%
+<%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="UTF-8"%><%
 session.setAttribute("term","");
 	session.removeAttribute("mobile");
 	
@@ -24,15 +22,9 @@ if (userAgent.indexOf("mobile") != -1 || userAgent.indexOf("wap") != -1 || userA
         return;
 }
 
- %>
-<%
-
-
 Bill bill = null;
 String last = null;
 DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
-%>
-<%
 
 String title = request.getParameter("title");
 
@@ -47,7 +39,7 @@ String billkey = request.getParameter("billkey");
 if (billkey == null)
 	billkey = "";
  %>
-
+<!DOCTYPE html>
 <html>
 <head>
 <script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
