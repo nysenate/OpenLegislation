@@ -32,5 +32,17 @@
     "name" : "David Carlucci",
     "shortName" : "carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "name" : "Brad Hoylman",
+    "shortName" : "hoylman",
+    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
+  }, {
+    "name" : "Timothy M. Kennedy",
+    "shortName" : "kennedy",
+    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
+  }, {
+    "name" : "George Latimer",
+    "shortName" : "latimer",
+    "url" : "http://www.nysenate.gov/senator/george-s-latimer"
   } ]
 }
