@@ -19,7 +19,7 @@ import org.codehaus.jackson.util.DefaultPrettyPrinter;
 
 public class Storage {
 
-    private final String storage;
+    private final File storage;
     private final Logger logger;
     private final JsonFactory jsonFactory;
     private final ObjectMapper objectMapper;
@@ -33,19 +33,27 @@ public class Storage {
 
     public static enum Status { NEW , MODIFIED, DELETED };
 
-    public Storage(String filepath) {
-        this(filepath, true);
+    public Storage(String storagePath) {
+        this(storagePath, true);
     }
 
-    public Storage(String filepath, Boolean autoFlush) {
-        this.storage = filepath;
+    public Storage(File storageDir) {
+        this(storageDir, true);
+    }
+
+    public Storage(String storagePath, Boolean autoFlush) {
+        this(new File(storagePath),autoFlush);
+    }
+
+    public Storage(File storageDir, Boolean autoFlush) {
+        this.storage = storageDir;
         this.logger  = Logger.getLogger(this.getClass());
         this.memory  = new HashMap<String, Object>();
         this.dirty   = new HashSet<String>();
         this.autoFlush = autoFlush;
 
         this.objectMapper = new ObjectMapper();
-        this.objectMapper.getSerializationConfig().enable(Feature.INDENT_OUTPUT);
+        this.objectMapper.enable(Feature.INDENT_OUTPUT);
         this.jsonFactory = this.objectMapper.getJsonFactory();
         this.prettyPrinter = new DefaultPrettyPrinter();
 
