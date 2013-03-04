@@ -28,14 +28,11 @@ public class DeleteTests
 		}
 	}
 	
-	// Should json be deleted or just empty?
 	@Test
 	public void doesEntireBillGetDeleted()
 	{
 		File[] initialCommit = TestHelper.getFilesByName(sobiDirectory, "SOBI.D120311.T201049.TXT");
 		TestHelper.processFile(env, initialCommit);
-    	//Bill initialBill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
-    	//assertThat(initialBill, notNullValue());
 		File[] deleteCommit = TestHelper.getFilesByName(sobiDirectory, "SOBI.D120311.T202549.TXT");
 		TestHelper.processFile(env, deleteCommit);
     	Bill deletedBill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
@@ -46,35 +43,33 @@ public class DeleteTests
 	public void doesFullTextGetDeleted()
 	{
 		File[] initialCommit = TestHelper.getFilesByName(sobiDirectory, "SOBI.D120311.T201549.TXT");
-		TestHelper.processFile(env, initialCommit);
-    	//Bill initialBill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
-    	//assertThat(initialBill.getFulltext(), notNullValue()); //covered in basic test, not needed
-    	
+		TestHelper.processFile(env, initialCommit);   	
 		File[] deleteTextCommit = TestHelper.getFilesByName(sobiDirectory, "SOBI.D120311.T202049.TXT");
 		TestHelper.processFile(env, deleteTextCommit);
     	Bill deletedTextBill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
-		assertThat(deletedTextBill, notNullValue());
-		assertThat(deletedTextBill.getFulltext(), nullValue());
+    	String expectedText = "";
+		assertThat(deletedTextBill.getFulltext(), is(expectedText));
 	
 	}
 	
 	
 	/*
 	 * Will "100000 00000 0000" in the first line of SOBI will delete sponsor name?
-	 * Test says it doesnt
+	 * Test says it does not.
 	 */
 	@Test
 	public void doesNullSponsorDelete() // Needs better name
 	{
 		File[] initialCommit = TestHelper.getFilesByName(sobiDirectory, "SOBI.D120312.T000059.TXT");
 		TestHelper.processFile(env, initialCommit);
-    	Bill initialBill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
-    	//assertThat(initialBill.getSponsor().getFullname(), notNullValue());
-    	
+    	Bill initialBill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);    	
 		File[] emptyCommit = TestHelper.getFilesByName(sobiDirectory, "SOBI.D120312.T092623.TXT");
 		TestHelper.processFile(env, emptyCommit);
     	Bill nullSponsorBill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
     	assertThat(nullSponsorBill.getSponsor().getFullname(), is(initialBill.getSponsor().getFullname()));
+    	// Test if anything besides the sponsor get changed?
+    	// Bill implements comparable.. allows .equals() and .compareTo().
+    	assertThat(initialBill.equals(nullSponsorBill), is(true));
 	}
 	
 }
