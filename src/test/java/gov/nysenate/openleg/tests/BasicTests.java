@@ -13,12 +13,23 @@ import static org.hamcrest.Matchers.*;
 
 public class BasicTests
 {
-	private Environment env = new Environment("/data/openleg/test_new_environment");
-	private File sobiDirectory = new File("/home/kevin/openleg/OpenLegislation/src/test/resources/sobi");  // -- /legislation/src/test/resources/sobi??
-	private Storage storage = new Storage(env.getStorageDirectory());
-	
+	private static final String initialBill = "SOBI.D120311.T201049.TXT";
+	private static final String initialBillText = "SOBI.D120311.T201549.TXT";
+
+	protected static Environment env;
+	protected static File sobiDirectory;
+	protected static Storage storage; 
+
+	@BeforeClass
+	public static void setup()
+	{
+		env = new Environment("/data/openleg/test_new_environment");
+		sobiDirectory = new File("src/test/resources/sobi");
+		storage = new Storage(env.getStorageDirectory());
+	}
+
 	@Before
-	public void setup()
+	public void reset()
 	{
 		try {
 			env.reset();
@@ -27,48 +38,48 @@ public class BasicTests
 			e.printStackTrace();
 		}
 	}
-	
+
 	@After
 	public void clearSetup()
 	{
-		
+
 	}
-	
+
 	@Test
 	public void isBillInitiallyNull()
 	{
 		Bill bill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
-    	assertThat(bill, nullValue());
+		assertThat(bill, nullValue());
 	}
-	
+
 	@Test
 	public void doesBillExistsAfterProcessing()
 	{
-	   	File[] initialCommit = TestHelper.getFilesByName(sobiDirectory, "SOBI.D120311.T201049.TXT");
-    	TestHelper.processFile(env, initialCommit);
-    	Bill bill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
-    	assertThat(bill, notNullValue());
+		File[] initialCommit = TestHelper.getFilesByName(sobiDirectory, initialBill);
+		TestHelper.processFile(env, initialCommit);
+		Bill bill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
+		assertThat(bill, notNullValue());
 	}
-	
+
 	@Test
 	public void isSponsorNameCorrect()
 	{
-	   	File[] initialCommit = TestHelper.getFilesByName(sobiDirectory, "SOBI.D120311.T201049.TXT");
-    	TestHelper.processFile(env, initialCommit);
-    	Bill bill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
-    	String expectedName = "NOZZOLIO";
-    	String billSponsorName = bill.getSponsor().getFullname();
-    	assertThat(billSponsorName, is(expectedName));
+		File[] initialCommit = TestHelper.getFilesByName(sobiDirectory, initialBill);
+		TestHelper.processFile(env, initialCommit);
+		Bill bill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
+		String expectedName = "NOZZOLIO";
+		String billSponsorName = bill.getSponsor().getFullname();
+		assertThat(billSponsorName, is(expectedName));
 
 	}
-	
+
 	@Test
 	public void doesBillTextExist()
 	{
-		File[] billTextSobi = TestHelper.getFilesByName(sobiDirectory, "SOBI.D120311.T201549.TXT");
+		File[] billTextSobi = TestHelper.getFilesByName(sobiDirectory, initialBillText);
 		TestHelper.processFile(env, billTextSobi);
-    	Bill bill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
-    	assertThat(bill.getFulltext(), notNullValue());
+		Bill bill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class);
+		assertThat(bill.getFulltext(), notNullValue());
 	}
-	
+
 }
