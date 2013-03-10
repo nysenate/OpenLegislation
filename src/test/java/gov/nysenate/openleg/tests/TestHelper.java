@@ -23,6 +23,18 @@ public class TestHelper
 		}
         env.ingestFiles(FileUtils.listFiles(env.getWorkingDirectory(), null, true));
     }
+    public static void processFileC(Environment env, File testFiles)
+    {
+        try {
+        	env.stageFiles(testFiles);
+			env.collateFiles(FileUtils.listFiles(env.getStagingDirectory(), null, true));
+		}
+        catch (IOException e) {
+			e.printStackTrace();
+		}
+        env.ingestFiles(FileUtils.listFiles(env.getWorkingDirectory(), null, true));
+    }
+
 
     public static File[] getFilesByName(File directory, String...names)
     {
@@ -38,4 +50,9 @@ public class TestHelper
         }
         return files;
     }
+    public static Collection<File> getFilesByNameCollection(File directory, String...names)
+    {
+        return getFilesByName(directory, Arrays.asList(names));
+    }
+    
 }
