@@ -112,8 +112,7 @@ View Recent:
 <a href="<%=appPath%>/calendars/">Calendars</a>,
 <a href="<%=appPath%>/meetings/">Meetings</a>,
 <a href="<%=appPath%>/transcripts/">Transcripts</a>, 
-<a href="<%=appPath%>/actions/" title="Actions on Bills from the Floor of the Senate">Actions</a>, 
-<a href="<%=appPath%>/votes/">Votes</a>
+<a href="<%=appPath%>/actions/" title="Actions on Bills from the Floor of the Senate">Actions</a>
 <br/>
 Community: <a href="<%=appPath%>/comments">View and respond to recent comments</a>
 <br/> <br/><br/>
