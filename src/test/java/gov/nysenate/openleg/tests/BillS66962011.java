@@ -24,44 +24,48 @@ public class BillS66962011 extends TestSetup
 	 * tests from being skipped.
 	 */
 	@Test
-	public void isBillInitiallyNull()
+	public void testIfBillInitiallyNull()
 	{
 		BillTests.isBillInitiallyNull(storage, billKey);
 	}
 
 	@Test
-	public void doesExistsAfterProcessing()
+	public void testIfBillExistsAfterProcessing()
 	{
 		BillTests.doesBillExistsAfterProcessing(env, sobiDirectory, storage, billKey, initialSobi);
 	}
 
 	@Test
-	public void isSponsorNameCorrect()
+	public void testIfSponsorNameCorrect()
 	{
 		BillTests.isSponserNameCorrect(env, sobiDirectory, storage, billKey, initialSobi, sponsorName);
 
 	}
 
 	@Test
-	public void doesBillTextExist()
+	public void testIfBillTextExist()
 	{
 		BillTests.doesBillTextExist(env, sobiDirectory, storage, billKey, initialBillText);
 	}
 
 	@Test
-	public void doesEntireBillDeleteWork()
+	public void testIfEntireBillDeleteWork()
 	{
 		BillTests.doesEntireBillDeleteWork(env, sobiDirectory, storage, billKey, billStatusDelete, initialSobi, initialBillText);
 	}
 
 	@Test
-	public void doesFullTextGetDeleted()
+	public void testIfFullTextGetsDeleted()
 	{
 		BillTests.doesFullTextGetDeleted(env, sobiDirectory, storage, billKey, initialBillText, billTextDelete);
 	}
 
+	/*
+	 * Tests if "00000 00000 0000" in bill status line will change anything.
+	 * test assumes it shouldn't.
+	 */
 	@Test
-	public void doesNullSponsorChangeBill()
+	public void testIfNullSponsorChangeBill()
 	{
 		BillTests.doesNullSponsorDelete(env, sobiDirectory, storage, billKey, nullSponsorSobi, initialSobi, initialBillText);
 	}
