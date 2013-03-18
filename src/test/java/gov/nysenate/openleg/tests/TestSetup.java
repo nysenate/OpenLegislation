@@ -13,7 +13,7 @@ public abstract class TestSetup
 	protected static Environment env;
 	protected static File sobiDirectory;
 	protected static Storage storage;
-	
+
 	@BeforeClass
 	public static void initalSetup()
 	{
@@ -21,7 +21,7 @@ public abstract class TestSetup
 		sobiDirectory = new File("src/test/resources/sobi");
 		storage = new Storage(env.getStorageDirectory());
 	}
-	
+
 	@Before
 	public void setup()
 	{

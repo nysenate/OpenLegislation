@@ -2,11 +2,6 @@ package gov.nysenate.openleg.tests;
 
 import org.junit.*;
 
-/*
- * This class tests the Sobi files for bill S6696.
- * All tests needed for this bill are done here
- * All information related to this bill is stored here.
- */
 public class BillS66962011 extends TestSetup
 {
 	private static final String billKey = "2011/bill/S6696-2011"; // Directory and name of expected json file within testing environment.
@@ -14,15 +9,11 @@ public class BillS66962011 extends TestSetup
 	private static final String initialBillText = "SOBI.D120311.T201549.TXT";
 	private static final String billStatusDelete = "SOBI.D120311.T202549.TXT";
 	private static final String billTextDelete = "SOBI.D120311.T202049.TXT";
-	private static final String secondBillCommit = "SOBI.D120312.T000059.TXT";
+	//private static final String secondBillCommit = "SOBI.D120312.T000059.TXT";
 	private static final String nullSponsorSobi = "SOBI.D120312.T092623.TXT";
 	private static final String sponsorName = "NOZZOLIO";
 
-	/* 
-	 * All tests needed for this bill go here.
-	 * Limit tests to 1 per method to provide better error message feedback, keep the testing environment clean, and to prevent any
-	 * tests from being skipped.
-	 */
+
 	@Test
 	public void testIfBillInitiallyNull()
 	{
@@ -67,6 +58,6 @@ public class BillS66962011 extends TestSetup
 	@Test
 	public void testIfNullSponsorChangeBill()
 	{
-		BillTests.doesNullSponsorDelete(env, sobiDirectory, storage, billKey, nullSponsorSobi, initialSobi, initialBillText);
+		BillTests.testIrregularBillStatusLines(env, sobiDirectory, storage, billKey, nullSponsorSobi, initialSobi, initialBillText);
 	}
 }

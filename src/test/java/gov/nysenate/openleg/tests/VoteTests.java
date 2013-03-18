@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -15,14 +16,20 @@ import static org.hamcrest.Matchers.*;
 
 public class VoteTests {
 
+	/**
+	 *@param expectedVoteDate formatted in M/D/YY.
+	 */
 	public static void isVoteDateCorrect(Environment env, File sobiDirectory,
-			Storage storage, String billKey, String voteSobi, long expectedDate)
+			Storage storage, String billKey, String voteSobi, String expectedVoteDate)
 	{
 		File[] voteSobiFile = TestHelper.getFilesByName(sobiDirectory, voteSobi);
 		TestHelper.processFile(env, voteSobiFile);
 		Bill bill = TestHelper.getBill(storage, billKey);
 		Vote vote = bill.getVotes().get(0);
-		assertThat(vote.getVoteDate(), is(new Date(expectedDate)));
+		Date voteDate = vote.getVoteDate();
+		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
+		// Format the Date into a string and test.
+		assertThat(dateFormat.format(voteDate), is(expectedVoteDate));
 	}
 
 	public static void areSenateVotesCorrect(Environment env, File sobiDirectory,

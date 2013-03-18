@@ -1,0 +1,23 @@
+<?xml version= '1.0' encoding='UTF-8'?>
+<DATAPROCESS TIME="2011-06-24-23.00.28">
+2011A08354 VSenate Vote    Bill: A8354              Date: 06/24/2011  Aye - 33  Nay - 29
+2011A08354 VAye  Adams            Aye  Addabbo          Aye  Alesi            Aye  Avella
+2011A08354 VNay  Ball             Nay  Bonacic          Aye  Breslin          Aye  Carlucci
+2011A08354 VNay  DeFrancisco      Nay  Diaz             Aye  Dilan            Aye  Duane
+2011A08354 VAye  Espaillat        Nay  Farley           Nay  Flanagan         Nay  Fuschillo
+2011A08354 VNay  Gallivan         Aye  Gianaris         Nay  Golden           Nay  Griffo
+2011A08354 VAye  Grisanti         Nay  Hannon           Aye  Hassell-Thompso  Aye  Huntley
+2011A08354 VNay  Johnson          Aye  Kennedy          Aye  Klein            Aye  Krueger
+2011A08354 VAye  Kruger           Nay  Lanza            Nay  Larkin           Nay  LaValle
+2011A08354 VNay  Libous           Nay  Little           Nay  Marcellino       Nay  Martins
+2011A08354 VNay  Maziarz          Aye  McDonald         Aye  Montgomery       Nay  Nozzolio
+2011A08354 VNay  O'Mara           Aye  Oppenheimer      Aye  Parker           Aye  Peralta
+2011A08354 VAye  Perkins          Nay  Ranzenhofer      Nay  Ritchie          Aye  Rivera
+2011A08354 VNay  Robach           Aye  Saland           Aye  Sampson          Aye  Savino
+2011A08354 VAye  Serrano          Nay  Seward           Nay  Skelos           Aye  Smith
+2011A08354 VAye  Squadron         Aye  Stavisky         Aye  Stewart-Cousins  Aye  Valesky
+2011A08354 VNay  Young            Nay  Zeldin
+</DATAPROCESS>
+<SENATEDATA TIME="2011-06-24-23.00.28">
+No data to process on 24/06/2011 at 23:00:28
+</SENATEDATA>

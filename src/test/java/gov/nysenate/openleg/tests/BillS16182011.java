@@ -19,11 +19,13 @@ public class BillS16182011 extends TestSetup
 	private static final String senateVoteSobi2012 = "SOBI.D120130.T171403.TXT";
 	private static final String committeeVoteSobi2011 = "SOBI.D110308.T122351.TXT-agenda-1.xml";
 	private static final String committeeVoteSobi2012 = "SOBI.D120118.T144938.TXT-agenda-1.xml";
-	// TODO find a better way to compare dates.
-	private static final long senateVoteDate2011 = 1301544000000L; // March 31, 2011.
-	private static final long senateVoteDate2012 = 1327899600000L; // Jan 20, 2012.
-	private static final long committeeVoteDate2011 = 1299598200000L; // March 8, 2011.
-	private static final long committeeVoteDate2012 = 1326906000000L; // Jan 18, 2012.	
+	private static final String correctBillStatusSobi = "SOBI.D110309.T151716.TXT";
+	private static final String incorrectBillStatusSobi = "SOBI.D110318.T090635.TXT";
+	private static final String senateVoteDate2011 = "3/31/11";
+	private static final String senateVoteDate2012 = "1/30/12";
+	private static final String committeeVoteDate2011 = "3/8/11";
+	private static final String committeeVoteDate2012 = "1/18/12";
+
 	// Json max of 14 characters for name -- SOBI gives 15 characters
 	private static final String[] senateAyeVotes2011 = { "Adams", "Addabbo", "Alesi", "Avella", "Ball", "Bonacic",
 		"Breslin", "Carlucci", "DeFrancisco", "Diaz", "Dilan", "Duane", "Farley", "Flanagan", "Fuschillo", "Gallivan", 
@@ -47,10 +49,6 @@ public class BillS16182011 extends TestSetup
 		"Lanza", "Nozzolio", "O'Mara", "Gianaris", "Huntley", "Parker", "Perkins", "Squadron", "Espaillat"};	
 	private static final String[] committeeAyeWRVotes2012 = {"Duane"};
 
-
-	// TODO test SOBI.D110331.T112352.TXT:2011S01618 --> 100000Pen L. sex. abuse 2nd degree     00000	
-
-
 	/*
 	 * ------- Senate Vote Tests -------
 	 */
@@ -66,6 +64,9 @@ public class BillS16182011 extends TestSetup
 		VoteTests.isVoteDateCorrect(env, sobiDirectory, storage, billKey, senateVoteSobi2012, senateVoteDate2012);
 	}
 
+	/*
+	 * For Vote tests, add any non-null vote types to vote objects.
+	 */
 	@Test
 	public void testSenateVote2011()
 	{
@@ -141,5 +142,18 @@ public class BillS16182011 extends TestSetup
 	public void testSenateSponsor()
 	{
 		BillTests.isSponserNameCorrect(env, sobiDirectory, storage, billKey, initialSenateSobi, senateSponsor);
+	}
+
+	/*
+	 * Test the incorrectly formed bill status line:
+	 * "100000Pen L. sex. abuse 2nd degree     00000"
+	 * Where the data and title are positioned in the wrong character locations.
+	 * Should be like:
+	 * "1SAMPSON             00000Pen L. sex. abuse 2nd degree     000000"
+	 */
+	@Test
+	public void testIrregularBillStatus()
+	{
+		BillTests.testIrregularBillStatusLines(env, sobiDirectory, storage, billKey, incorrectBillStatusSobi, correctBillStatusSobi);
 	}
 }
