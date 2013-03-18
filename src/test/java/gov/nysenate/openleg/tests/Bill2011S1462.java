@@ -30,24 +30,10 @@ public class Bill2011S1462 {
 	 env= new Environment("/home/shweta/testing_environment");
 	env.reset();
     
-   
-	}
+   }
 	
-	@Test
-	public void testDeleteWhole()
-	{   
-		File sobiDirectory = new File("/home/shweta/OpenLegislation/src/test/resources/sobi");
-	    Storage storage = new Storage(env.getStorageDirectory());
-		File[] initialCommit = TestHelper.getFilesByName(sobiDirectory, "SOBI.D120311.T202049.TXT");
-	    TestHelper.processFile(env, initialCommit);
-	    File[] finalCommit = TestHelper.getFilesByName(sobiDirectory, "SOBI.D120311.T202549.TXT");
-	    TestHelper.processFile(env, finalCommit);
-	    Bill theBill = (Bill)storage.get("2011/bill/S6696-2011", Bill.class); 
-	    assertThat(theBill,nullValue());
-	    
-		
-	}
-	@Test
+
+    @Test
 	   public void verifyWholeBill2011S1462() throws IOException
 	  {
 		Bill theBill;
@@ -132,7 +118,12 @@ public class Bill2011S1462 {
 	      // Test for SOBI.D110614.T195743.TXT
 	      TestHelper.processFileC(env ,file.get(7));
 	      theBill=(Bill)storage.get("2011/bill/S1462A-2011", Bill.class);
-	      boolean flag=voteList2011S1462A(theBill);
+	      String[] voteDate=(theBill.getVotes().get(0).getId()).split("-");
+		  String date=voteDate[2];
+		    // Checking vote Date
+		  assertEquals(date.equals("2011/06/14"),true);
+	      Vote vote=processExpectedVote2011S1462A();
+		  boolean flag=TestHelper.voteCheck(theBill,vote);
 	      assertEquals(flag,true);
 		 
 		 // Test for SOBI.D110614.T185240.TXT
@@ -208,51 +199,117 @@ public class Bill2011S1462 {
 		Bill theBill;
 		File sobiDirectory = new File("/home/shweta/test/processed/2013/bills/");
 	    Storage storage = new Storage(env.getStorageDirectory());
-	    ArrayList<File> file = (ArrayList<File>) TestHelper.getFilesByNameCollection(sobiDirectory,"");
+	    ArrayList<File> file = (ArrayList<File>) TestHelper.getFilesByNameCollection(sobiDirectory,"SOBI.D120217.T150812.TXT",
+	    		"SOBI.D120217.T145311.TXT","SOBI.D120217.T153313.TXT");
+	    
+	    // Test for SOBI.D120217.T150812.TXT
+	    TestHelper.processFileC(env ,file.get(0));
+	    theBill=(Bill)storage.get("2011/bill/S1462C-2011", Bill.class);
+	    assertEquals(theBill.getSponsor().getFullname(),"LAVALLE");
+	    assertNotNull("The title should not be null",theBill.getTitle());
+	    
+	    // Test for SOBI.D120217.T145311.TXT
+	    TestHelper.processFileC(env ,file.get(1));
+	    theBill=(Bill)storage.get("2011/bill/S1462C-2011", Bill.class);
+	    assertEquals(theBill.getSponsor().getFullname(),"LAVALLE");
+	    assertNotNull("The title should not be null",theBill.getTitle());
+	    
+	    // Test for SOBI.D120217.T153313.TXT
+	    TestHelper.processFileC(env ,file.get(2));
+	    theBill=(Bill)storage.get("2011/bill/S1462C-2011", Bill.class);
+	    //assertEquals(theBill.getSameAs(),"A1415C");  No entry in json file 
+	    
 	
 	  }
 	
-	  public static boolean voteList2011S1462A(Bill theBill)  // Checks for vote Date and votes
+	@Test
+	   public void verifyWholeBill2011S1462D() throws IOException  // Testing Amendment D of the bill 2011S1462
+	  {
+		Bill theBill;
+		File sobiDirectory = new File("/home/shweta/test/processed/2013/bills/");
+	    Storage storage = new Storage(env.getStorageDirectory());
+	    ArrayList<File> file = (ArrayList<File>) TestHelper.getFilesByNameCollection(sobiDirectory,"SOBI.D120416.T133347.TXT",
+	    		 "SOBI.D120416.T150351.TXT","SOBI.D120416.T151351.TXT","SOBI.D120523.T100051.TXT","SOBI.D120530.T161430.TXT", 
+	    		 "SOBI.D120531.T112447.TXT", "SOBI.D120611.T165600.TXT", "SOBI.D120611.T162600.TXT","SOBI.D120620.T100719.TXT",
+	    		 "SOBI.D120706.T151155.TXT","SOBI.D120727.T100847.TXT","SOBI.D120724.T140552.TXT");
+	  
+	    // All the above SOBI files have to be tested for sponsor name and title
+	    for( File f:file)
 	    {
-	   
-		//  Date Tue Jun 14 00:00:00 EDT 2011
-	    List<String> ayes = theBill.getVotes().get(0).getAyes();
-	    List<String> nays = theBill.getVotes().get(0).getNays();
-	    List<String> excused =theBill.getVotes().get(0).getExcused();
-	    //java.util.Date voteDate= theBill.getVotes().get(0).getVoteDate();
+	    	  TestHelper.processFileC(env ,f);
+	  	      theBill=(Bill)storage.get("2011/bill/S1462D-2011", Bill.class);
+	  	      assertEquals(theBill.getSponsor().getFullname(),"LAVALLE");
+		      assertNotNull("The title should not be null",theBill.getTitle());
+		    
+	    }
+	    
+	    ArrayList<File> vfile = (ArrayList<File>) TestHelper.getFilesByNameCollection(sobiDirectory,"SOBI.D120612.T090338.TXT");
+	    TestHelper.processFileC(env ,vfile.get(0));
+	    theBill=(Bill)storage.get("2011/bill/S1462D-2011", Bill.class);
 	    String[] voteDate=(theBill.getVotes().get(0).getId()).split("-");
-	    String date=voteDate[2];
-	    assertEquals(date.equals("2011/06/14"),true);
-	   
-	    String[] yes= {"Adams", "Addabbo", "Alesi", "Avella", "Ball", "Bonacic", "Breslin", "Carlucci", "DeFrancisco", "Diaz",
-	    		"Dilan", "Duane", "Espaillat", "Farley", "Flanagan", "Fuschillo", "Gallivan", "Gianaris", "Golden", "Griffo",
-	    		"Grisanti", "Hannon", "Hassell-Thomps", "Huntley", "Johnson", "Kennedy", "Klein", "Krueger", "Kruger", "Lanza",
-	    		"Larkin", "LaValle", "Libous", "Little", "Marcellino", "Martins", "Maziarz", "McDonald", "Montgomery", "Nozzolio", 
-	    		"O'Mara", "Oppenheimer", "Parker", "Peralta", "Perkins", "Ranzenhofer", "Ritchie", "Rivera", "Robach", "Saland",
-	    		"Sampson", "Savino", "Serrano", "Seward", "Skelos", "Smith", "Squadron", "Stavisky", "Stewart-Cousin", "Valesky",
-	    		"Young", "Zeldin"};
-
-	    List<String> y=Arrays.asList(yes);
-	    
-	    
-	    
-	    
-	         if(y.equals(ayes) && nays.isEmpty() && excused.isEmpty())
-	       {
-	         return true;
-	       }
-	   
-	    return false;
-	    
-	    
-	    }	
+		String date=voteDate[2];
+		    // Checking vote Date
+		assertEquals(date.equals("2012/06/11"),true);
+		Vote vote=processExpectedVote2011S1462D();
+		boolean flag=TestHelper.voteCheck(theBill,vote);
+	    assertEquals(flag,true);	
+	  }
+	
+	public static Vote processExpectedVote2011S1462A() 
+	{
+		 String[] yes= {"Adams", "Addabbo", "Alesi", "Avella", "Ball", "Bonacic", "Breslin", "Carlucci", "DeFrancisco", "Diaz",
+		    		"Dilan", "Duane", "Espaillat", "Farley", "Flanagan", "Fuschillo", "Gallivan", "Gianaris", "Golden", "Griffo",
+		    		"Grisanti", "Hannon", "Hassell-Thomps", "Huntley", "Johnson", "Kennedy", "Klein", "Krueger", "Kruger", "Lanza",
+		    		"Larkin", "LaValle", "Libous", "Little", "Marcellino", "Martins", "Maziarz", "McDonald", "Montgomery", "Nozzolio", 
+		    		"O'Mara", "Oppenheimer", "Parker", "Peralta", "Perkins", "Ranzenhofer", "Ritchie", "Rivera", "Robach", "Saland",
+		    		"Sampson", "Savino", "Serrano", "Seward", "Skelos", "Smith", "Squadron", "Stavisky", "Stewart-Cousin", "Valesky",
+		    		"Young", "Zeldin"};
+		    String[] no= {};
+		    String [] excluded={};
+		    String [] abstained={};
+		    String [] absent={};
+		    List<String> y=Arrays.asList(yes);
+		    List<String> n=Arrays.asList(no);
+		    List<String> e=Arrays.asList(excluded);
+		    List<String> abstain=Arrays.asList(abstained);
+		    List<String> ab=Arrays.asList(absent);
+		    Vote vote=new Vote();
+		    vote.setAyes(y);
+		    vote.setNays(n);
+		    vote.setExcused(e);
+		    vote.setAbsent(ab);
+		    vote.setAbstains(abstain);
+		    return vote;
+		
+	}
+	public static Vote processExpectedVote2011S1462D() 
+	{
+		 String[] yes= {"Adams", "Addabbo", "Alesi", "Avella", "Ball", "Bonacic", "Breslin", "Carlucci", 
+				 "DeFrancisco", "Diaz", "Dilan", "Duane", "Farley", "Flanagan", "Fuschillo", "Gallivan",
+				 "Gianaris", "Golden", "Griffo", "Grisanti", "Hannon", "Hassell-Thomps", "Johnson", "Kennedy",
+				 "Klein", "Lanza", "Larkin", "LaValle", "Libous", "Little", "Marcellino", "Martins", "Maziarz", 
+				 "McDonald", "Montgomery", "Nozzolio", "O'Mara", "Oppenheimer", "Parker", "Peralta", "Perkins", "Ranzenhofer", 
+				 "Ritchie", "Rivera", "Robach", "Saland", "Sampson", "Savino", "Serrano", "Seward", "Skelos", "Smith", "Squadron", 
+				 "Stavisky", "Stewart-Cousin", "Storobin", "Valesky", "Young", "Zeldin" };
+		 
+		    String[] no= {};
+		    String [] excluded={"Espaillat", "Huntley", "Krueger"};
+		    String [] abstained={};
+		    String [] absent={};
+		    List<String> y=Arrays.asList(yes);
+		    List<String> n=Arrays.asList(no);
+		    List<String> e=Arrays.asList(excluded);
+		    List<String> abstain=Arrays.asList(abstained);
+		    List<String> ab=Arrays.asList(absent);
+		    Vote vote=new Vote();
+		    vote.setAyes(y);
+		    vote.setNays(n);
+		    vote.setExcused(e);
+		    vote.setAbsent(ab);
+		    vote.setAbstains(abstain);
+		    return vote;
+		
+	}
 	  
-	  
-	   
-	    
-	    
-	    
-	    
-	    
 }
 

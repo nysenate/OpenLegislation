@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
+import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.File;
@@ -81,7 +82,8 @@ public class Bill2013S2230 {
 	    // Tests for the SOBI.D130114.T233653.TXT
 	    TestHelper.processFileC(env ,file.get(8));
 	    theBill=(Bill)storage.get("2013/bill/S2230-2013", Bill.class);
-	    boolean var=voteList2013S2230(theBill);
+	    Vote vote=processExpectedVote();
+	    boolean var=TestHelper.voteCheck(theBill,vote);
 	    assertEquals(var,true);
 	    
 	    
@@ -116,36 +118,34 @@ public class Bill2013S2230 {
 		  assertEquals(theBill.getSponsor().getFullname(),"KLEIN");
 		  
     	}
-	 public static boolean voteList2013S2230(Bill theBill)
-	    {
-	   
-	    List<String> ayes = theBill.getVotes().get(0).getAyes();
-	    List<String> nays = theBill.getVotes().get(0).getNays();
-	    List<String> excused = theBill.getVotes().get(0).getExcused();
-	    
-	    String[] yes= {"Adams", "Addabbo", "Avella", "Boyle", "Breslin", "Carlucci", "Diaz", "Dilan", "Espaillat", "Felder", "Flanagan", 
-	  	      "Fuschillo", "Gianaris", "Gipson", "Golden", "Grisanti", "Hannon", "Hassell-Thomps", "Hoylman", "Kennedy", "Klein", 
-	  	      "Krueger", "Lanza", "Latimer", "LaValle", "Marcellino", "Martins", "Montgomery", "O'Brien", "Parker", "Peralta", "Perkins",
-	  	      "Rivera", "Sampson", "Sanders", "Savino", "Serrano", "Skelos", "Smith", "Squadron", "Stavisky", "Stewart-Cousin","Valesky"};
-	    String[] no= {"Ball", "Bonacic", "DeFrancisco", "Farley", "Gallivan", "Griffo", "Larkin", "Libous", "Little", "Marchione", 
-	    		"Maziarz", "Nozzolio", "O'Mara", "Ranzenhofer", "Ritchie", "Robach", "Seward", "Young"};
-	    String [] excluded={ "Zeldin"};
-	    List<String> y=Arrays.asList(yes);
-	    List<String> n=Arrays.asList(no);
-	    List<String> e=Arrays.asList(excluded);
-	    
-	    
-	    
-	         if(y.equals(ayes) && n.equals(nays) && e.equals(excused))
-	       {
-	         return true;
-	       }
-	   
-	    return false;
-	    
-	    
-	    }
-	   
+	
+	
+	public static Vote processExpectedVote() 
+	{
+		String[] yes= {"Adams", "Addabbo", "Avella", "Boyle", "Breslin", "Carlucci", "Diaz", "Dilan", "Espaillat", "Felder", "Flanagan", 
+		  	      "Fuschillo", "Gianaris", "Gipson", "Golden", "Grisanti", "Hannon", "Hassell-Thomps", "Hoylman", "Kennedy", "Klein", 
+		  	      "Krueger", "Lanza", "Latimer", "LaValle", "Marcellino", "Martins", "Montgomery", "O'Brien", "Parker", "Peralta", "Perkins",
+		  	      "Rivera", "Sampson", "Sanders", "Savino", "Serrano", "Skelos", "Smith", "Squadron", "Stavisky", "Stewart-Cousin","Valesky"};
+		    String[] no= {"Ball", "Bonacic", "DeFrancisco", "Farley", "Gallivan", "Griffo", "Larkin", "Libous", "Little", "Marchione", 
+		    		"Maziarz", "Nozzolio", "O'Mara", "Ranzenhofer", "Ritchie", "Robach", "Seward", "Young"};
+		    String [] excluded={ "Zeldin"};
+		    String [] abstained={};
+		    String [] absent={};
+		    List<String> y=Arrays.asList(yes);
+		    List<String> n=Arrays.asList(no);
+		    List<String> e=Arrays.asList(excluded);
+		    List<String> abstain=Arrays.asList(abstained);
+		    List<String> ab=Arrays.asList(absent);
+		    Vote vote=new Vote();
+		    vote.setAyes(y);
+		    vote.setNays(n);
+		    vote.setExcused(e);
+		    vote.setAbsent(ab);
+		    vote.setAbstains(abstain);
+		    return vote;
+		
+	}
+	
 	   
 
 }

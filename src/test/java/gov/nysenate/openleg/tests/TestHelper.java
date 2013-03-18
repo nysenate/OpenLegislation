@@ -3,6 +3,7 @@ package gov.nysenate.openleg.tests;
 import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Meeting;
+import gov.nysenate.openleg.model.Vote;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,4 +82,23 @@ public class TestHelper
 		}
 		return bill;
 	}
+	 public static boolean voteCheck(Bill theBill,Vote v )  // Checks for vote Date and votes
+    {
+		 List<String> ayes = theBill.getVotes().get(0).getAyes();
+		 List<String> nays = theBill.getVotes().get(0).getNays();
+		 List<String> excused = theBill.getVotes().get(0).getExcused();
+		 List<String> absent = theBill.getVotes().get(0).getAbsent();
+		 List<String> abstained = theBill.getVotes().get(0).getAbstains();
+
+         if((v.getAyes()).equals(ayes) && (v.getNays()).equals(nays) && (v.getExcused()).equals(excused)
+         && (v.getAbsent()).equals(absent) && (v.getAbstains()).equals(abstained)	 )
+           {
+        	 
+            return true;
+           }
+   
+       return false;
+    
+		 
+    }
 }
