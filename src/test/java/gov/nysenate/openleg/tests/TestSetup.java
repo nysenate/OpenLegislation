@@ -4,7 +4,9 @@ import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Properties;
 
 import org.junit.*;
 
@@ -17,7 +19,7 @@ public abstract class TestSetup
 	@BeforeClass
 	public static void initalSetup()
 	{
-		env = new Environment("/data/openleg/test_new_environment");
+		loadProperties();
 		sobiDirectory = new File("src/test/resources/sobi");
 		storage = new Storage(env.getStorageDirectory());
 	}
