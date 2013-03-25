@@ -34,4 +34,16 @@ public abstract class TestSetup
 			e.printStackTrace();
 		}
 	}
+	
+	private static void loadProperties()
+	{
+		Properties prop = new Properties();
+    	try {
+    		prop.load(new FileInputStream("src/test/resources/properties"));
+    		env = new Environment(prop.getProperty("environment"));
+    	}
+    	catch (IOException ex) {
+    		ex.printStackTrace();
+        }
+	}
 }
