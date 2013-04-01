@@ -7,14 +7,19 @@ import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.lang3.time.DateUtils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 /*
- * Tests bills to check if their data is equal to the data in the associated SOBI file.
+ * Tests if bill data is equal to the data in the associated SOBI file.
  */
 public class BillTests
 {
@@ -153,16 +158,24 @@ public class BillTests
 		assertThat(bill.getLawSection(), is(expectedLawSection));
 	}
 
-	//TODO NOT YET testing dates
+	/*
+	 * Tests the Bill Status Actions found in SOBI line type/prefix 4.
+	 */
 	public static void testBillStatusActions(Environment env, File sobiDirectory,
-			Storage storage, String billKey, String sobi, List<Action> expectedActions)
+			Storage storage, String billKey, String sobi, ArrayList<String[]> actionString, String billNumber)
 	{
+		List<Action> expectedActions = TestHelper.convertIntoActions(actionString, billNumber);
 		File[] initialSobi = TestHelper.getFilesByName(sobiDirectory, sobi);
 		TestHelper.processFile(env, initialSobi);
 		Bill bill = TestHelper.getBill(storage, billKey);
 		List<Action> actions = bill.getActions();
 		for(int i = 0; i < actions.size(); i++) {
+			// Test status action text
 			assertThat(actions.get(i).getText(), is(expectedActions.get(i).getText()));
+			// Test status action date. Tests year, month, and day values since that is the accuracy provided by SOBI files.
+			Date actionDate = DateUtils.round(actions.get(i).getDate(), Calendar.DAY_OF_MONTH);
+			Date expectedDate = DateUtils.round(expectedActions.get(i).getDate(), Calendar.DAY_OF_MONTH);
+			assertThat(actionDate, is(expectedDate));
 		}
 	}
 
