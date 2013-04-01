@@ -2,7 +2,7 @@
 <jsp:include page="/header.jsp"/>
 
 <div id="content">
-	If you are interested in the source code, the source code is hosted on Github at <a href="http://github.com/nysenate/OpenLegislation">http://github.com/nysenate/OpenLegislation</a>.
+	If you are interested in the source code, it is dual GPL|BSD licensed and hosted on Github at <a href="http://github.com/nysenate/OpenLegislation">http://github.com/nysenate/OpenLegislation</a>.
 	<br/><br/>
 	If you are interested in our API, please refer to our documentation hosted at <a href="http://openlegislation.readthedocs.org/">http://openlegislation.readthedocs.org/</a>.
 	<br/><br/>
