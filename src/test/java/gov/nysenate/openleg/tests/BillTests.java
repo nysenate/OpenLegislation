@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.tests;
 
 import gov.nysenate.openleg.Environment;
+import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.util.Storage;
@@ -12,6 +13,9 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+/*
+ * Tests bills to check if their data is equal to the data in the associated SOBI file.
+ */
 public class BillTests
 {
 	public static void isBillInitiallyNull(Storage storage, String billKey)
@@ -48,7 +52,7 @@ public class BillTests
 		List<Person> billCoSponsors = bill.getCoSponsors();
 		String[] coSponsorNames = new String[billCoSponsors.size()];
 		int i = 0;
-		for(Person person: billCoSponsors){
+		for(Person person: billCoSponsors) {
 			coSponsorNames[i] = person.getFullname();
 			i++;
 		}
@@ -112,6 +116,7 @@ public class BillTests
 		File[] deleteTextCommit = TestHelper.getFilesByName(sobiDirectory, deleteTextSobi);
 		TestHelper.processFile(env, deleteTextCommit);
 		Bill deletedTextBill = TestHelper.getBill(storage, billKey);
+		// After deleted, JSON stores empty values as "" instead of null.
 		String expectedText = "";
 		assertThat(deletedTextBill.getFulltext(), is(expectedText));
 	}
@@ -137,6 +142,28 @@ public class BillTests
 		assertThat(nullSponsorBill.getSponsor().getFullname(), is(initialBill.getSponsor().getFullname()));
 		// Test if anything else got changed.
 		assertThat(initialBill.equals(nullSponsorBill), is(true)); // TODO do these both reference the same object?
+	}
+
+	public static void testLawSection(Environment env, File sobiDirectory,
+			Storage storage, String billKey, String sobi, String expectedLawSection)
+	{
+		File[] initialSobi = TestHelper.getFilesByName(sobiDirectory, sobi);
+		TestHelper.processFile(env, initialSobi);
+		Bill bill = TestHelper.getBill(storage, billKey);
+		assertThat(bill.getLawSection(), is(expectedLawSection));
+	}
+
+	//TODO NOT YET testing dates
+	public static void testBillStatusActions(Environment env, File sobiDirectory,
+			Storage storage, String billKey, String sobi, List<Action> expectedActions)
+	{
+		File[] initialSobi = TestHelper.getFilesByName(sobiDirectory, sobi);
+		TestHelper.processFile(env, initialSobi);
+		Bill bill = TestHelper.getBill(storage, billKey);
+		List<Action> actions = bill.getActions();
+		for(int i = 0; i < actions.size(); i++) {
+			assertThat(actions.get(i).getText(), is(expectedActions.get(i).getText()));
+		}
 	}
 
 }

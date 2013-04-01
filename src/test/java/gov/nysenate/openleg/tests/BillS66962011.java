@@ -11,7 +11,6 @@ public class BillS66962011 extends TestSetup
 	private static final String billTextDelete = "SOBI.D120311.T202049.TXT";
 	//private static final String secondBillCommit = "SOBI.D120312.T000059.TXT";
 	private static final String nullSponsorSobi = "SOBI.D120312.T092623.TXT";
-	private static final String sponsorName = "NOZZOLIO";
 
 
 	@Test
@@ -29,6 +28,7 @@ public class BillS66962011 extends TestSetup
 	@Test
 	public void testIfSponsorNameCorrect()
 	{
+		String sponsorName = "NOZZOLIO";
 		BillTests.isSponserNameCorrect(env, sobiDirectory, storage, billKey, initialSobi, sponsorName);
 
 	}
