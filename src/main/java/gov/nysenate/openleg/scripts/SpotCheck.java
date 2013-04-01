@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.scripts;
 
 import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.util.Storage;
 
@@ -20,16 +21,9 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 public class SpotCheck {
+    public static Logger logger = Logger.getLogger(SpotCheck.class);
 
-    public static Pattern id = Pattern.compile("([A-Z]\\d+)([A-Z])");
-    public static Pattern row = Pattern.compile("<tr.*?>(.+?)</tr>");
-    public static Pattern stripParts = Pattern.compile(
-            "<b>(.*?)</b>|"+					// Remove bold text
-                    "<(a|/a|td).*?>|"+  				// Remove a, /a, and td tags. Leave /td for later
-                    "<br>\\s*Criminal Sanction Impact." // Remove criminal impact text if present
-            );
-
-    public static class Bill {
+    public static class SpotCheckBill {
         int year;
         int pages;
 
@@ -44,7 +38,7 @@ public class SpotCheck {
         ArrayList<String> multisponsors;
         ArrayList<String> amendments;
 
-        public Bill() {
+        public SpotCheckBill() {
             pages = year = 0;
             id = sponsor = title = summary = law = "";
             cosponsors = new ArrayList<String>();
@@ -58,40 +52,47 @@ public class SpotCheck {
         return StringEscapeUtils.unescapeHtml4(text).replace("&apos;", "'");
     }
 
+    public static boolean stringEquals(String a, String b, boolean ignoreCase, boolean normalizeSpaces) {
+        if (normalizeSpaces) {
+            a = a.replaceAll("\\s+", " ");
+            b = b.replaceAll("\\s+", " ");
+        }
+
+        return (ignoreCase) ? a.equalsIgnoreCase(b) : a.equals(b);
+    }
+
     public static void main(String[] args) throws Exception {
-        Logger logger = Logger.getLogger(SpotCheck.class);
-        HashMap<String, SpotCheck.Bill> bills = new HashMap<String, SpotCheck.Bill>();
+        Storage storage = new Storage("/data/openleg/lbdc_test/json");
 
         HashMap<String, Integer> errors = new HashMap<String, Integer>();
-        errors.put("title", 0);
-        errors.put("summary", 0);
-        errors.put("sponsor", 0);
-        errors.put("cosponsors", 0);
-        errors.put("events", 0);
+        for (String error_type : new String[] {"title", "summary", "sponsor", "cosponsors", "events"}) {
+            errors.put(error_type, 0);
+        }
 
-        bills.putAll(SpotCheck.readDaybreak(new File("lbdc/SenLow.htm")));
-        bills.putAll(SpotCheck.readDaybreak(new File("lbdc/SenHigh.htm")));
-        bills.putAll(SpotCheck.readDaybreak(new File("lbdc/AsmLow.htm")));
-        bills.putAll(SpotCheck.readDaybreak(new File("lbdc/AsmHigh.htm")));
+        HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();
 
-        Storage storage = new Storage("/home/test/json/");
+        for (String arg : args) {
+            bills.putAll(SpotCheck.readDaybreak(new File(arg)));
+        }
+
         for(String id : bills.keySet()) {
-            String billNo = id+"-2011";
+            String billNo = id+"-2013";
+            Bill bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
 
-            gov.nysenate.openleg.model.Bill bill = (gov.nysenate.openleg.model.Bill)storage.get("2011/bill/"+billNo, gov.nysenate.openleg.model.Bill.class);
-
-            // Compare the daybreak file to json file
+            // Compare the titles, ignore white space differences
             String jsonTitle = unescapeHTML(bill.getTitle());
             String lbdcTitle = bills.get(id).title;
-            if ( !jsonTitle.replace(" ", "").equals(lbdcTitle.replace(" ","")) ) {
+            if (stringEquals(jsonTitle, lbdcTitle, true, true)) {
+                // What is this D?
                 if (!id.startsWith("D")) {
-                    //logger.error("Title: "+billNo);
-                    //logger.error("  LBDC: "+lbdcTitle);
-                    //logger.error("  JSON: "+jsonTitle);
+                    logger.error("Title: "+billNo);
+                    logger.error("  LBDC: "+lbdcTitle);
+                    logger.error("  JSON: "+jsonTitle);
                     errors.put("title", errors.get("title")+1);
                 }
             }
 
+            // Compare the summaries. LBDC reports summary and law changes together
             String jsonLaw = bill.getLaw();
             String jsonSummary = unescapeHTML(bill.getSummary());
             String lbdcSummary = bills.get(id).summary;
@@ -102,9 +103,9 @@ public class SpotCheck {
 
             if ( !jsonSummary.replace(" ","").equals(lbdcSummary.replace(" ", "")) ) {
                 if (!id.startsWith("D")) {
-                    //logger.error("Summary: "+billNo);
-                    //logger.error("  LBDC: "+lbdcSummary);
-                    //logger.error("  JSON: "+jsonSummary);
+                    logger.error("Summary: "+billNo);
+                    logger.error("  LBDC: "+lbdcSummary);
+                    logger.error("  JSON: "+jsonSummary);
                     errors.put("summary", errors.get("summary")+1);
                 }
             }
@@ -113,9 +114,9 @@ public class SpotCheck {
             String lbdcSponsor = bills.get(id).sponsor.toUpperCase().replace("BILL", "").replace("COM", "");
             if ( !jsonSponsor.replace(" ","").equals(lbdcSponsor.replace(" ", "")) ) {
                 if (!id.startsWith("D")) {
-                    //logger.error("Sponsor: "+billNo);
-                    //logger.error("  LBDC: "+lbdcSponsor);
-                    //logger.error("  JSON: "+jsonSponsor);
+                    logger.error("Sponsor: "+billNo);
+                    logger.error("  LBDC: "+lbdcSponsor);
+                    logger.error("  JSON: "+jsonSponsor);
                     errors.put("sponsor", errors.get("sponsor")+1);
                 }
             }
@@ -132,9 +133,9 @@ public class SpotCheck {
 
             if ( lbdcCosponsors.size() != jsonCosponsors.size() || (!lbdcCosponsors.isEmpty() && !lbdcCosponsors.containsAll(jsonCosponsors)) ) {
                 if (!id.startsWith("D")) {
-                    //logger.error("Cosponsors: "+billNo);
-                    //logger.error("  LBDC: "+lbdcCosponsors);
-                    //logger.error("  JSON: "+jsonCosponsors);
+                    logger.error("Cosponsors: "+billNo);
+                    logger.error("  LBDC: "+lbdcCosponsors);
+                    logger.error("  JSON: "+jsonCosponsors);
                     errors.put("cosponsors", errors.get("cosponsors")+1);
                 }
             }
@@ -149,9 +150,9 @@ public class SpotCheck {
 
             if ( lbdcEvents.size() != jsonEvents.size() || (!lbdcEvents.isEmpty() && !lbdcEvents.containsAll(jsonEvents)) ) {
                 if (!id.startsWith("D")) {
-                    logger.error("Events: "+billNo);
-                    logger.error("  LBDC: "+lbdcEvents);
-                    logger.error("  JSON: "+jsonEvents);
+//                    logger.error("Events: "+billNo);
+//                    logger.error("  LBDC: "+lbdcEvents);
+//                    logger.error("  JSON: "+jsonEvents);
                     errors.put("events", errors.get("events")+1);
                 }
             }
@@ -163,7 +164,7 @@ public class SpotCheck {
         System.exit(0);
 
         int total = 0;
-        for(SpotCheck.Bill bill : bills.values()) {
+        for(SpotCheck.SpotCheckBill bill : bills.values()) {
             total += 1+bill.amendments.size();
         }
         System.out.println("Estimated Total: "+total);
@@ -171,7 +172,7 @@ public class SpotCheck {
         System.out.println(bills.size());
     }
 
-    public static void loadPageFile(File dataFile, HashMap<String, SpotCheck.Bill> bills) throws IOException {
+    public static void loadPageFile(File dataFile, HashMap<String, SpotCheck.SpotCheckBill> bills) throws IOException {
         List<String> entries = FileUtils.readLines(dataFile);
         entries.remove(0); // Remove the header line
         System.out.println(entries.size());
@@ -187,8 +188,16 @@ public class SpotCheck {
         }
     }
 
-    public static HashMap<String, SpotCheck.Bill> readDaybreak(File dataFile) throws IOException {
-        HashMap<String,SpotCheck.Bill> bills = new HashMap<String,SpotCheck.Bill>();
+    public static Pattern id = Pattern.compile("([A-Z]\\d+)([A-Z])");
+    public static Pattern row = Pattern.compile("<tr.*?>(.+?)</tr>");
+    public static Pattern stripParts = Pattern.compile(
+                "<b>(.*?)</b>|"+                    // Remove bold text
+                "<(a|/a|td).*?>|"+                  // Remove a, /a, and td tags. Leave /td for later
+                "<br>\\s*Criminal Sanction Impact." // Remove criminal impact text if present
+        );
+
+    public static HashMap<String, SpotCheck.SpotCheckBill> readDaybreak(File dataFile) throws IOException {
+        HashMap<String,SpotCheck.SpotCheckBill> bills = new HashMap<String,SpotCheck.SpotCheckBill>();
 
         // Open the daybreak file and remove new lines for the regular expressions
         String daybreak = FileUtils.readFileToString(dataFile).replace("\r\n", " ");
@@ -199,7 +208,7 @@ public class SpotCheck {
         while(rowMatcher.find()) {
 
             // Each table row corresponds to a single bill
-            SpotCheck.Bill bill = new SpotCheck.Bill();
+            SpotCheck.SpotCheckBill bill = new SpotCheck.SpotCheckBill();
             String row = rowMatcher.group(1);
 
             String parts[] = stripParts.matcher(row)	// Match all non <br> and </td> tags
