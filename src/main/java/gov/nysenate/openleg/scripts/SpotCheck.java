@@ -82,7 +82,7 @@ public class SpotCheck {
             // Compare the titles, ignore white space differences
             String jsonTitle = unescapeHTML(bill.getTitle());
             String lbdcTitle = bills.get(id).title;
-            if (stringEquals(jsonTitle, lbdcTitle, true, true)) {
+            if (!stringEquals(jsonTitle, lbdcTitle, true, true)) {
                 // What is this D?
                 if (!id.startsWith("D")) {
                     logger.error("Title: "+billNo);
@@ -150,9 +150,9 @@ public class SpotCheck {
 
             if ( lbdcEvents.size() != jsonEvents.size() || (!lbdcEvents.isEmpty() && !lbdcEvents.containsAll(jsonEvents)) ) {
                 if (!id.startsWith("D")) {
-//                    logger.error("Events: "+billNo);
-//                    logger.error("  LBDC: "+lbdcEvents);
-//                    logger.error("  JSON: "+jsonEvents);
+                    logger.error("Events: "+billNo);
+                    logger.error("  LBDC: "+lbdcEvents);
+                    logger.error("  JSON: "+jsonEvents);
                     errors.put("events", errors.get("events")+1);
                 }
             }
