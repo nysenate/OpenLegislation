@@ -75,7 +75,7 @@
 	    	</div>
 	      	<div style="float:right;">
 				<a href="<%=appPath%>/feedback">Feedback</a> &nbsp;|&nbsp;  
-				<a href="http://www.nysenate.gov/developers">Developers</a>
+				<a href="<%=appPath%>/developers">Developers</a>
 	   		</div>
 		</div>
 
