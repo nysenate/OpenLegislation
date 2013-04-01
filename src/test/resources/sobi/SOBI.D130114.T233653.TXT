@@ -1,0 +1,41 @@
+<?xml version= '1.0' encoding='UTF-8'?>
+<DATAPROCESS TIME="2013-01-14-23.36.53">
+2013S02230 VSenate Vote    Bill: S2230              Date: 01/14/2013  Aye - 43  Nay - 18
+2013S02230 VAye  Adams            Aye  Addabbo          Aye  Avella           Nay  Ball
+2013S02230 VNay  Bonacic          Aye  Boyle            Aye  Breslin          Aye  Carlucci
+2013S02230 VNay  DeFrancisco      Aye  Diaz             Aye  Dilan            Aye  Espaillat
+2013S02230 VNay  Farley           Aye  Felder           Aye  Flanagan         Aye  Fuschillo
+2013S02230 VNay  Gallivan         Aye  Gianaris         Aye  Gipson           Aye  Golden
+2013S02230 VNay  Griffo           Aye  Grisanti         Aye  Hannon           Aye  Hassell-Thompso
+2013S02230 VAye  Hoylman          Aye  Kennedy          Aye  Klein            Aye  Krueger
+2013S02230 VAye  Lanza            Nay  Larkin           Aye  Latimer          Aye  LaValle
+2013S02230 VNay  Libous           Nay  Little           Aye  Marcellino       Nay  Marchione
+2013S02230 VAye  Martins          Nay  Maziarz          Aye  Montgomery       Nay  Nozzolio
+2013S02230 VAye  O'Brien          Nay  O'Mara           Aye  Parker           Aye  Peralta
+2013S02230 VAye  Perkins          Nay  Ranzenhofer      Nay  Ritchie          Aye  Rivera
+2013S02230 VNay  Robach           Aye  Sampson          Aye  Sanders          Aye  Savino
+2013S02230 VAye  Serrano          Nay  Seward           Aye  Skelos           Aye  Smith
+2013S02230 VAye  Squadron         Aye  Stavisky         Aye  Stewart-Cousins  Aye  Valesky
+2013S02230 VNay  Young            Exc  Zeldin
+</DATAPROCESS>
+<SENATEDATA TIME="2013-01-14-23.36.53">
+<sencalendar no="00002" sessyr="2013" year="2013" action="replace">
+<supplemental id="">
+<caldate>2013-01-15</caldate>
+<releasedate>2013-01-14</releasedate>
+<releasetime>T23.33.00Z</releasetime>
+<sections>
+<section name="BILLS ON THIRD READING" type="C" cd="0400">
+<calnos>
+<calno no="0000000002">
+<bill no="S02107" />
+<sponsor><![CDATA[SKELOS]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+</calnos>
+</section>
+</sections>
+</supplemental>
+</sencalendar>
+</SENATEDATA>

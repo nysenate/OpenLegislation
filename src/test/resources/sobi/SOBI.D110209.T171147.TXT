@@ -1,0 +1,297 @@
+<?xml version= '1.0' encoding='UTF-8'?>
+<DATAPROCESS TIME="2011-02-09-17.11.47">
+2011S01462A5Same as Uni. A 1415-A
+2011S01462A9
+2011A01415A5Same as Uni. S 1462-A
+2011A01415A9
+2011S01462AAAN ACT to amend the real property tax law, in relation to authorizing a municipal corporation to
+2011S01462AAprovide a real property tax exemption for improvements to real property meeting LEED certification
+2011S01462AAstandards for green buildings
+2011A01415AAAN ACT to amend the real property tax law, in relation to authorizing a municipal corporation to
+2011A01415AAprovide a real property tax exemption for improvements to real property meeting LEED certification
+2011A01415AAstandards for green buildings
+2011S03140 T00000.SO DOC C 3140/4953                              BTXT                 2011
+2011S03140 T00001
+2011S03140 T00002                           S T A T E   O F   N E W   Y O R K
+2011S03140 T00003       ________________________________________________________________________
+2011S03140 T00004
+2011S03140 T00005           S. 3140                                                  A. 4953
+2011S03140 T00006
+2011S03140 T00007                              2011-2012 Regular Sessions
+2011S03140 T00008
+2011S03140 T00009                             S E N A T E - A S S E M B L Y
+2011S03140 T00010
+2011S03140 T00011                                   February 9, 2011
+2011S03140 T00012                                      ___________
+2011S03140 T00013
+2011S03140 T00014       IN  SENATE -- Introduced by Sen. KRUGER -- read twice and ordered print-
+2011S03140 T00015         ed, and when printed to be committed  to  the  Committee  on  Consumer
+2011S03140 T00016         Protection
+2011S03140 T00017
+2011S03140 T00018       IN  ASSEMBLY  -- Introduced by M. of A. ABBATE -- read once and referred
+2011S03140 T00019         to the Committee on Economic Development
+2011S03140 T00020
+2011S03140 T00021       AN ACT to amend the general business law, in relation to requiring indi-
+2011S03140 T00022         viduals and businesses who offer or solicit pet  cremation  or  burial
+2011S03140 T00023         services for profit use a facility that is in compliance with New York
+2011S03140 T00024         state laws
+2011S03140 T00025
+2011S03140 T00026         THE  PEOPLE OF THE STATE OF NEW YORK, REPRESENTED IN SENATE AND ASSEM-
+2011S03140 T00027       BLY, DO ENACT AS FOLLOWS:
+2011S03140 T00028
+2011S03140 T00029    1    Section 1. Section 750-b of the general  business  law,  as  added  by
+2011S03140 T00030    2  chapter 526 of the laws of 1992, is amended to read as follows:
+2011S03140 T00031    3    S  750-b.  License required. [On and after July thirty-first, nineteen
+2011S03140 T00032    4  hundred ninety-three, no person shall engage for a fee in  the  business
+2011S03140 T00033    5  of  operating  a  pet  cemetery  or  pet  crematorium or hold himself or
+2011S03140 T00034    6  herself out as being able so to do unless he or she is licensed therefor
+2011S03140 T00035    7  pursuant to this article] THE STATE SHALL REQUIRE THAT  ANY  INDIVIDUAL,
+2011S03140 T00036    8  BUSINESS,  OR  ENTITY  OFFERING  OR  SOLICITING  PET CREMATION OR BURIAL
+2011S03140 T00037    9  SERVICES FOR PROFIT, IN THE STATE OF NEW YORK, USE A LICENSED  CREMATORY
+2011S03140 T00038   10  OR  CEMETERY  LOCATED  IN, LICENSED BY, AND SUBJECT TO REGULATION BY THE
+2011S03140 T00039   11  STATE OF NEW YORK.  Nothing [herein] IN THIS SECTION  shall  prohibit  a
+2011S03140 T00040   12  person  licensed  in accordance with the provisions of this article from
+2011S03140 T00041   13  employing individuals to assist in the operation of a  pet  cemetery  or
+2011S03140 T00042   14  pet crematorium.
+2011S03140 T00043   15    S 2. This act shall take effect immediately.
+2011S03140 T00044
+2011S03140 T00045
+2011S03140 T00046        EXPLANATION--Matter in ITALICS (underscored) is new; matter in brackets
+2011S03140 T00047                             [ ] is old law to be omitted.
+2011S03140 T00048                                                                  LBD06395-01-1
+2011S03140 T00000.SO DOC C 3140/4953     *END*                    BTXT                 2011
+2011A04954 T00000.SO DOC A 4954                                   BTXT                 2011
+2011A04954 T00001
+2011A04954 T00002                           S T A T E   O F   N E W   Y O R K
+2011A04954 T00003       ________________________________________________________________________
+2011A04954 T00004
+2011A04954 T00005                                         4954
+2011A04954 T00006
+2011A04954 T00007                              2011-2012 Regular Sessions
+2011A04954 T00008
+2011A04954 T00009                                 I N  A S S E M B L Y
+2011A04954 T00010
+2011A04954 T00011                                   February 9, 2011
+2011A04954 T00012                                      ___________
+2011A04954 T00013
+2011A04954 T00014       Introduced by M. of A. ABBATE -- read once and referred to the Committee
+2011A04954 T00015         on Governmental Employees
+2011A04954 T00016
+2011A04954 T00017       AN ACT to amend the civil service law, in relation to providing continu-
+2011A04954 T00018         ing  coverage  to  spouse  or  dependents  of public employees who are
+2011A04954 T00019         injured in the performance of duty or taken  ill  as  a  result  of  a
+2011A04954 T00020         performance of duty
+2011A04954 T00021
+2011A04954 T00022         THE  PEOPLE OF THE STATE OF NEW YORK, REPRESENTED IN SENATE AND ASSEM-
+2011A04954 T00023       BLY, DO ENACT AS FOLLOWS:
+2011A04954 T00024
+2011A04954 T00025    1    Section 1. The civil service law is amended by adding  a  new  section
+2011A04954 T00026    2  159-d to read as follows:
+2011A04954 T00027    3    S  159-D. HEALTH INSURANCE FOR SPOUSE AND DEPENDENTS OF PUBLIC EMPLOY-
+2011A04954 T00028    4  EES INJURED OR ILL.  HEALTH INSURANCE BENEFITS FOR SPOUSE AND DEPENDENTS
+2011A04954 T00029    5  OF PUBLIC EMPLOYEES WHO ARE INJURED IN THE PERFORMANCE OF DUTY OR  TAKEN
+2011A04954 T00030    6  ILL  AS  A RESULT OF THE PERFORMANCE OF DUTY, SHALL CONTINUE COVERAGE AT
+2011A04954 T00031    7  THE SAME RATE AND IN THE SAME MANNER AS ACTIVE EMPLOYEES WITHIN THE SAME
+2011A04954 T00032    8  COLLECTIVE BARGAINING UNIT UNTIL SUCH TIME AS THE MEMBER HAS RETURNED TO
+2011A04954 T00033    9  ACTIVE SERVICE, HAS SEPARATED FROM SERVICE OR RETIRES.
+2011A04954 T00034   10    S 2. This act shall take effect immediately.
+2011A04954 T00035
+2011A04954 T00036
+2011A04954 T00037
+2011A04954 T00038
+2011A04954 T00039
+2011A04954 T00040        EXPLANATION--Matter in ITALICS (underscored) is new; matter in brackets
+2011A04954 T00041                             [ ] is old law to be omitted.
+2011A04954 T00042                                                                  LBD05697-01-1
+2011A04954 T00000.SO DOC A 4954          *END*                    BTXT                 2011
+2011A04955 T00000.SO DOC A 4955                                   BTXT                 2011
+2011A04955 T00001
+2011A04955 T00002                           S T A T E   O F   N E W   Y O R K
+2011A04955 T00003       ________________________________________________________________________
+2011A04955 T00004
+2011A04955 T00005                                         4955
+2011A04955 T00006
+2011A04955 T00007                              2011-2012 Regular Sessions
+2011A04955 T00008
+2011A04955 T00009                                 I N  A S S E M B L Y
+2011A04955 T00010
+2011A04955 T00011                                   February 9, 2011
+2011A04955 T00012                                      ___________
+2011A04955 T00013
+2011A04955 T00014       Introduced by M. of A. ABBATE -- read once and referred to the Committee
+2011A04955 T00015         on Governmental Employees
+2011A04955 T00016
+2011A04955 T00017       AN  ACT to amend the civil service law, in relation to improper employer
+2011A04955 T00018         practices
+2011A04955 T00019
+2011A04955 T00020         THE PEOPLE OF THE STATE OF NEW YORK, REPRESENTED IN SENATE AND  ASSEM-
+2011A04955 T00021       BLY, DO ENACT AS FOLLOWS:
+2011A04955 T00022
+2011A04955 T00023    1    Section 1. Subdivision 1 of section 209-a of the civil service law, as
+2011A04955 T00024    2  amended  by  chapter  244  of  the  laws  of 2007, is amended to read as
+2011A04955 T00025    3  follows:
+2011A04955 T00026    4    1. Improper employer practices. It shall be an improper practice for a
+2011A04955 T00027    5  public employer or  its  agents  deliberately  (a)  to  interfere  with,
+2011A04955 T00028    6  restrain  or  coerce  public  employees  in the exercise of their rights
+2011A04955 T00029    7  guaranteed in section two hundred two of this article for the purpose of
+2011A04955 T00030    8  depriving them of such rights; (b) to dominate  or  interfere  with  the
+2011A04955 T00031    9  formation or administration of any employee organization for the purpose
+2011A04955 T00032   10  of  depriving  them  of  such  rights;  (c)  to discriminate against any
+2011A04955 T00033   11  employee for the purpose of encouraging or discouraging  membership  in,
+2011A04955 T00034   12  or participation in the activities of, any employee organization; (d) to
+2011A04955 T00035   13  refuse  to negotiate in good faith with the duly recognized or certified
+2011A04955 T00036   14  representatives of its public employees, AND NOTWITHSTANDING  ANY  OTHER
+2011A04955 T00037   15  PROVISION  OF  THIS  ARTICLE,  WHERE SUCH EMPLOYER IS DETERMINED TO HAVE
+2011A04955 T00038   16  VIOLATED THIS PARAGRAPH, THE LAST OFFER OF THE DULY RECOGNIZED OR CERTI-
+2011A04955 T00039   17  FIED REPRESENTATIVE OF ITS PUBLIC EMPLOYEES SHALL BECOME  THE  AGREEMENT
+2011A04955 T00040   18  BETWEEN  SUCH  EMPLOYER  AND SUCH EMPLOYEES UNTIL CHANGED OR MODIFIED BY
+2011A04955 T00041   19  MUTUAL AGREEMENT OF THE PARTIES; (e) to refuse to continue all the terms
+2011A04955 T00042   20  of an expired agreement until a new agreement is negotiated, unless  the
+2011A04955 T00043   21  employee  organization  which  is  a party to such agreement has, during
+2011A04955 T00044   22  such negotiations or prior to  such  resolution  of  such  negotiations,
+2011A04955 T00045   23  engaged  in  conduct violative of subdivision one of section two hundred
+2011A04955 T00046   24  ten of this article; (f) to utilize any state funds appropriated for any
+2011A04955 T00047   25  purpose to train managers, supervisors or other administrative personnel
+2011A04955 T00048
+2011A04955 T00049        EXPLANATION--Matter in ITALICS (underscored) is new; matter in brackets
+2011A04955 T00050                             [ ] is old law to be omitted.
+2011A04955 T00051                                                                  LBD09078-01-1
+2011A04955 T00052
+2011A04955 T00053       A. 4955                             2
+2011A04955 T00054
+2011A04955 T00055    1  regarding methods to discourage union organization or to  discourage  an
+2011A04955 T00056    2  employee  from participating in a union organizing drive; or (g) to fail
+2011A04955 T00057    3  to permit or refuse to afford a public  employee  the  right,  upon  the
+2011A04955 T00058    4  employee's demand, to representation by a representative of the employee
+2011A04955 T00059    5  organization,  or  the  designee  of  such  organization, which has been
+2011A04955 T00060    6  certified or recognized under this article when at the time of question-
+2011A04955 T00061    7  ing by the employer of such employee it reasonably appears  that  he  or
+2011A04955 T00062    8  she  may be the subject of a potential disciplinary action. If represen-
+2011A04955 T00063    9  tation is requested, and the employee is a potential target of discipli-
+2011A04955 T00064   10  nary action at the time of questioning,  a  reasonable  period  of  time
+2011A04955 T00065   11  shall  be  afforded  to  the  employee to obtain such representation. It
+2011A04955 T00066   12  shall be an affirmative defense to any improper  practice  charge  under
+2011A04955 T00067   13  paragraph  (g)  of  this  subdivision  that  the employee has the right,
+2011A04955 T00068   14  pursuant to statute, interest arbitration award, collectively negotiated
+2011A04955 T00069   15  agreement, policy or practice, to present to a hearing officer or  arbi-
+2011A04955 T00070   16  trator  evidence of the employer's failure to provide representation and
+2011A04955 T00071   17  to obtain exclusion of the resulting evidence upon demonstration of such
+2011A04955 T00072   18  failure. Nothing in this section shall grant an employee  any  right  to
+2011A04955 T00073   19  representation  by the representative of an employee organization in any
+2011A04955 T00074   20  criminal investigation.
+2011A04955 T00075   21    S 2. This act shall take effect immediately.
+2011A04955 T00000.SO DOC A 4955          *END*                    BTXT                 2011
+2011A04956 T00000.SO DOC A 4956                                   BTXT                 2011
+2011A04956 T00001
+2011A04956 T00002                           S T A T E   O F   N E W   Y O R K
+2011A04956 T00003       ________________________________________________________________________
+2011A04956 T00004
+2011A04956 T00005                                         4956
+2011A04956 T00006
+2011A04956 T00007                              2011-2012 Regular Sessions
+2011A04956 T00008
+2011A04956 T00009                                 I N  A S S E M B L Y
+2011A04956 T00010
+2011A04956 T00011                                   February 9, 2011
+2011A04956 T00012                                      ___________
+2011A04956 T00013
+2011A04956 T00014       Introduced by M. of A. ABBATE -- read once and referred to the Committee
+2011A04956 T00015         on Governmental Employees
+2011A04956 T00016
+2011A04956 T00017       AN  ACT  to  amend  the  civil service law, in relation to powers of the
+2011A04956 T00018         public employment relations board to assess damages
+2011A04956 T00019
+2011A04956 T00020         THE PEOPLE OF THE STATE OF NEW YORK, REPRESENTED IN SENATE AND  ASSEM-
+2011A04956 T00021       BLY, DO ENACT AS FOLLOWS:
+2011A04956 T00022
+2011A04956 T00023    1    Section  1. Paragraph (d) of subdivision 5 of section 205 of the civil
+2011A04956 T00024    2  service law, as amended by chapter 83 of the laws of 2006, is amended to
+2011A04956 T00025    3  read as follows:
+2011A04956 T00026    4    (d) To establish procedures for the prevention  of  improper  employer
+2011A04956 T00027    5  and  employee  organization practices as provided in section two hundred
+2011A04956 T00028    6  nine-a of this article, and to issue a decision and order  directing  an
+2011A04956 T00029    7  offending  party  to cease and desist from any improper practice, and to
+2011A04956 T00030    8  take such affirmative action as will effectuate  the  policies  of  this
+2011A04956 T00031    9  article  [(but  not  to  assess  exemplary  damages)], including but not
+2011A04956 T00032   10  limited to the reinstatement of employees with or without back  pay  AND
+2011A04956 T00033   11  THE  ASSESSMENT  OF  EXEMPLARY  DAMAGES UPON A FINDING THAT AN OFFENDING
+2011A04956 T00034   12  PARTY  HAS  COMMITTED  REPEATED  IMPROPER  PRACTICES  OR  AN   EGREGIOUS
+2011A04956 T00035   13  PRACTICE;  provided,  however,  that except as appropriate to effectuate
+2011A04956 T00036   14  the policies of subdivision three of section two hundred nine-a of  this
+2011A04956 T00037   15  article,  the  board  shall  not  have authority to enforce an agreement
+2011A04956 T00038   16  between an employer and an employee organization and shall not  exercise
+2011A04956 T00039   17  jurisdiction  over  an alleged violation of such an agreement that would
+2011A04956 T00040   18  not otherwise constitute an improper employer or  employee  organization
+2011A04956 T00041   19  practice; provided further that, without limiting in any way the board's
+2011A04956 T00042   20  general  power  to  take  affirmative action, including the provision to
+2011A04956 T00043   21  make whole relief, the board's power to address employer  violations  of
+2011A04956 T00044   22  cease  and  desist  orders issued pursuant to this section in connection
+2011A04956 T00045   23  with charges of unfair labor practices under paragraph (d)  of  subdivi-
+2011A04956 T00046   24  sion one of section two hundred nine-a of this article shall include, to
+2011A04956 T00047   25  the  extent the board deems appropriate, the authority to make employees
+2011A04956 T00048
+2011A04956 T00049        EXPLANATION--Matter in ITALICS (underscored) is new; matter in brackets
+2011A04956 T00050                             [ ] is old law to be omitted.
+2011A04956 T00051                                                                  LBD05698-01-1
+2011A04956 T00052
+2011A04956 T00053       A. 4956                             2
+2011A04956 T00054
+2011A04956 T00055    1  whole for the loss of pay and/or benefits resulting from  the  violation
+2011A04956 T00056    2  of  the  cease and desist order and the underlying unfair labor practice
+2011A04956 T00057    3  by providing that any agreement between the parties be given retroactive
+2011A04956 T00058    4  effect  to the date on which the unfair labor practice was found to have
+2011A04956 T00059    5  commenced and by providing for  appropriate  interest  from  that  date,
+2011A04956 T00060    6  calculated  using  the  short-term  federal rate for the underpayment of
+2011A04956 T00061    7  taxes as set out in 26 U.S.C. 6621.14, except that the make whole relief
+2011A04956 T00062    8  provided for under this paragraph shall not be ordered when and  to  the
+2011A04956 T00063    9  extent  that  the employee organization is also found to have refused to
+2011A04956 T00064   10  bargain in good faith. When the board has determined that a duly  recog-
+2011A04956 T00065   11  nized  or  certified employee organization representing public employees
+2011A04956 T00066   12  has breached its duty of fair representation in the processing or  fail-
+2011A04956 T00067   13  ure  to process a claim alleging that a public employer has breached its
+2011A04956 T00068   14  agreement with such employee organization,  the  board  may  direct  the
+2011A04956 T00069   15  employee  organization  and  the public employer to process the contract
+2011A04956 T00070   16  claim in accordance with the parties' grievance procedure.    The  board
+2011A04956 T00071   17  may,  in  its  discretion, retain jurisdiction to apportion between such
+2011A04956 T00072   18  employee organization and public employer  any  damages  assessed  as  a
+2011A04956 T00073   19  result  of  such  grievance procedure. The pendency of proceedings under
+2011A04956 T00074   20  this paragraph shall not be used as the basis to delay or interfere with
+2011A04956 T00075   21  determination of representation status pursuant to section  two  hundred
+2011A04956 T00076   22  seven  of  this article or with collective negotiations. The board shall
+2011A04956 T00077   23  exercise exclusive nondelegable jurisdiction of the powers granted to it
+2011A04956 T00078   24  by this paragraph, in which  connection,  no  finding  of  fact  or  law
+2011A04956 T00079   25  contained  in a report and recommendation of a hearing officer appointed
+2011A04956 T00080   26  pursuant to subdivision two of  section  seventy-five  of  this  chapter
+2011A04956 T00081   27  shall  preclude  the  resolution of any issue of fact or law in a subse-
+2011A04956 T00082   28  quent proceeding held under procedures established by  the  board  under
+2011A04956 T00083   29  this paragraph; provided, however, that this sentence shall not apply to
+2011A04956 T00084   30  the  city of New York. The board of collective bargaining established by
+2011A04956 T00085   31  section eleven hundred seventy-one of the New York  city  charter  shall
+2011A04956 T00086   32  establish procedures for the prevention of improper employer and employ-
+2011A04956 T00087   33  ee  organization practices as provided in section 12-306 of the adminis-
+2011A04956 T00088   34  trative code of the city of New York, provided, however,  that  a  party
+2011A04956 T00089   35  aggrieved  by a final order issued by the board of collective bargaining
+2011A04956 T00090   36  in an improper practice proceeding may, within ten days after service of
+2011A04956 T00091   37  the final order, petition the board for review thereof.   Within  twenty
+2011A04956 T00092   38  days  thereafter,  the board, in its discretion, may assert jurisdiction
+2011A04956 T00093   39  to review such final order. The failure  or  refusal  of  the  board  to
+2011A04956 T00094   40  assert  jurisdiction  shall not be subject to judicial review.  Upon the
+2011A04956 T00095   41  refusal of the board to assert jurisdiction, an  aggrieved  party  shall
+2011A04956 T00096   42  have the right to seek review of the final order of the board of collec-
+2011A04956 T00097   43  tive bargaining. Such proceeding to review shall be brought within thir-
+2011A04956 T00098   44  ty  days  of  the  board's  refusal  and  shall otherwise conform to the
+2011A04956 T00099   45  requirements of article seventy-eight of  the  civil  practice  law  and
+2011A04956 T00000.SO DOC A 4956                                   BTXT                 2011
+2011A04956 T00100   46  rules. If the board shall choose to review, it may affirm, or reverse in
+2011A04956 T00101   47  whole  or  in  part, or modify the final order, or remand the matter for
+2011A04956 T00102   48  further proceedings, or make such other order as it may  deem  appropri-
+2011A04956 T00103   49  ate,  provided,  however,  that  findings  by  the  board  of collective
+2011A04956 T00104   50  bargaining regarding  evidentiary  matters  and  issues  of  credibility
+2011A04956 T00105   51  regarding testimony of witnesses shall be final and not subject to board
+2011A04956 T00106   52  review.
+2011A04956 T00107   53    S 2. This act shall take effect immediately.
+2011A04956 T00000.SO DOC A 4956          *END*                    BTXT                 2011
+</DATAPROCESS>
+<SENATEDATA TIME="2011-02-09-17.11.47">
+No data to process on 09/02/2011 at 17:11:47
+</SENATEDATA>
