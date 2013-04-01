@@ -12,16 +12,6 @@ if (appPath.equals("/openleg"))
 	return;
 }
 
-String userAgent = request.getHeader("user-agent").toLowerCase();
-
-if (userAgent.indexOf("mobile") != -1 || userAgent.indexOf("wap") != -1 || userAgent.indexOf("blackberry")!=-1
-|| userAgent.indexOf("wml")!=-1 || userAgent.indexOf("nokia")!=-1|| userAgent.indexOf("midp")!=-1 ||userAgent.indexOf("mobi")!=-1)
- {
-
-        response.sendRedirect(appPath + "/mobile");
-        return;
-}
-
 Bill bill = null;
 String last = null;
 DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
@@ -72,8 +62,7 @@ if (billkey == null)
 </div>
     
 <div style="float:right;">
-<a href="<%=appPath%>/feedback">FEEDBACK</a> &nbsp;|&nbsp; 
-<a href="<%=appPath%>/mobile/info">Mobile Access</a> &nbsp;|&nbsp; 
+<a href="<%=appPath%>/feedback">FEEDBACK</a> &nbsp;|&nbsp;
 <a href="<%=appPath%>/developers">Developers</a>
 </div>
 </div>

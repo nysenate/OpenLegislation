@@ -74,8 +74,7 @@
 	    		<a href="http://nysenate.gov/newsroom">Newsroom</a>
 	    	</div>
 	      	<div style="float:right;">
-				<a href="<%=appPath%>/feedback">Feedback</a> &nbsp;|&nbsp; 
-				<a href="<%=appPath%>/mobile/info">Mobile Access</a> &nbsp;|&nbsp; 
+				<a href="<%=appPath%>/feedback">Feedback</a> &nbsp;|&nbsp;  
 				<a href="http://www.nysenate.gov/developers">Developers</a>
 	   		</div>
 		</div>
