@@ -243,7 +243,7 @@ public class LBDConnect {
                     i++;
                     be.setText(strings[i]);
 
-                    bill.addBillEvent(be);
+                    bill.addAction(be);
                 } catch (ParseException e) {
                     logger.error(e);
                 }
