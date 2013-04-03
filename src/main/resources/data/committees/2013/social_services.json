@@ -3,16 +3,8 @@
   "shortName" : "socialservices",
   "url" : "http://www.nysenate.gov/committee/social-services",
   "videoUrl" : "http://www.livestream.com/NYSenate_SocialServices",
-  "chairs" : [ {
-    "name" : "Malcolm A. Smith",
-    "shortName" : "smith",
-    "url" : "http://www.nysenate.gov/senator/malcolm-smith"
-  } ],
+  "chairs" : [ ],
   "members" : [ {
-    "name" : "Malcolm A. Smith",
-    "shortName" : "smith",
-    "url" : "http://www.nysenate.gov/senator/malcolm-smith"
-  }, {
     "name" : "Greg Ball",
     "shortName" : "ball",
     "url" : "http://www.nysenate.gov/senator/greg-ball"
