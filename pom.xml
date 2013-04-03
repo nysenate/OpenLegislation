@@ -120,9 +120,7 @@
         <dependency>
             <groupId>gov.nysenate.services</groupId>
             <artifactId>nysenate-java-client</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-            <scope>compile</scope>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
