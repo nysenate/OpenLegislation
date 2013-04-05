@@ -19,7 +19,7 @@ public class VoteTests {
 	/**
 	 *@param expectedVoteDate formatted in M/D/YY.
 	 */
-	public static void isVoteDateCorrect(Environment env, File sobiDirectory,
+	public static void testVoteDate(Environment env, File sobiDirectory,
 			Storage storage, String billKey, String voteSobi, String expectedVoteDate)
 	{
 		File[] voteSobiFile = TestHelper.getFilesByName(sobiDirectory, voteSobi);
@@ -32,7 +32,7 @@ public class VoteTests {
 		assertThat(dateFormat.format(voteDate), is(expectedVoteDate));
 	}
 
-	public static void areSenateVotesCorrect(Environment env, File sobiDirectory,
+	public static void testSenateVotes(Environment env, File sobiDirectory,
 			Storage storage, String billKey, String voteSobi, Vote expected)
 	{
 		File[] voteSobiFile = TestHelper.getFilesByName(sobiDirectory, voteSobi);
@@ -48,7 +48,7 @@ public class VoteTests {
 		assertThat(testVote.getNays(), is(expected.getNays()));
 	}
 
-	public static void areCommitteeVotesCorrect(Environment env, File sobiDirectory, Storage storage,
+	public static void testCommitteeVotes(Environment env, File sobiDirectory, Storage storage,
 			String meetingKey, String billName, String committeeVoteSobi, Vote expected)
 	{
 		File[] voteSobiFile = TestHelper.getFilesByName(sobiDirectory, committeeVoteSobi);
