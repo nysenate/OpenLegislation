@@ -29,7 +29,7 @@ public class BillS66962011 extends TestSetup
 	public void testIfSponsorNameCorrect()
 	{
 		String sponsorName = "NOZZOLIO";
-		BillTests.isSponserNameCorrect(env, sobiDirectory, storage, billKey, initialSobi, sponsorName);
+		BillTests.testPrimeSponsor(env, sobiDirectory, storage, billKey, initialSobi, sponsorName, false);
 
 	}
 
