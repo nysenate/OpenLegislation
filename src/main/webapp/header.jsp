@@ -74,9 +74,8 @@
 	    		<a href="http://nysenate.gov/newsroom">Newsroom</a>
 	    	</div>
 	      	<div style="float:right;">
-				<a href="<%=appPath%>/feedback">Feedback</a> &nbsp;|&nbsp; 
-				<a href="<%=appPath%>/mobile/info">Mobile Access</a> &nbsp;|&nbsp; 
-				<a href="http://www.nysenate.gov/developers">Developers</a>
+				<a href="<%=appPath%>/feedback">Feedback</a> &nbsp;|&nbsp;  
+				<a href="<%=appPath%>/developers">Developers</a>
 	   		</div>
 		</div>
 
@@ -97,8 +96,6 @@
 						<a href="<%=appPath%>/transcripts/" <%if (searchType.startsWith("transcript")){%>class="linkActivated"<%} %> title="View and search Senate floor full text transcripts">Transcripts</a>
 						&nbsp;
 						<a href="<%=appPath%>/actions/"  <%if (searchType.startsWith("action")){%>class="linkActivated"<%} %> title="View and filter Floor Actions on Bills from the Floor of the Senate">Actions</a>
-						&nbsp;
-						<a href="<%=appPath%>/votes"  <%if (searchType.startsWith("vote")){%>class="linkActivated"<%} %> title="Recent committee and floor votes on Senate bills">Votes</a>
 						<% if(searchType.matches("(sponsor|bill|calendar|meeting|transcript|action|vote).*?")) { term = ""; } %>
 						|	Browse by:
 							<a href="<%=appPath%>/senators">Sponsor</a>,

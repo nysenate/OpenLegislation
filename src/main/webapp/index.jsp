@@ -12,16 +12,6 @@ if (appPath.equals("/openleg"))
 	return;
 }
 
-String userAgent = request.getHeader("user-agent").toLowerCase();
-
-if (userAgent.indexOf("mobile") != -1 || userAgent.indexOf("wap") != -1 || userAgent.indexOf("blackberry")!=-1
-|| userAgent.indexOf("wml")!=-1 || userAgent.indexOf("nokia")!=-1|| userAgent.indexOf("midp")!=-1 ||userAgent.indexOf("mobi")!=-1)
- {
-
-        response.sendRedirect(appPath + "/mobile");
-        return;
-}
-
 Bill bill = null;
 String last = null;
 DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
@@ -72,8 +62,7 @@ if (billkey == null)
 </div>
     
 <div style="float:right;">
-<a href="<%=appPath%>/feedback">FEEDBACK</a> &nbsp;|&nbsp; 
-<a href="<%=appPath%>/mobile/info">Mobile Access</a> &nbsp;|&nbsp; 
+<a href="<%=appPath%>/feedback">FEEDBACK</a> &nbsp;|&nbsp;
 <a href="<%=appPath%>/developers">Developers</a>
 </div>
 </div>
@@ -112,8 +101,7 @@ View Recent:
 <a href="<%=appPath%>/calendars/">Calendars</a>,
 <a href="<%=appPath%>/meetings/">Meetings</a>,
 <a href="<%=appPath%>/transcripts/">Transcripts</a>, 
-<a href="<%=appPath%>/actions/" title="Actions on Bills from the Floor of the Senate">Actions</a>, 
-<a href="<%=appPath%>/votes/">Votes</a>
+<a href="<%=appPath%>/actions/" title="Actions on Bills from the Floor of the Senate">Actions</a>
 <br/>
 Community: <a href="<%=appPath%>/comments">View and respond to recent comments</a>
 <br/> <br/><br/>
