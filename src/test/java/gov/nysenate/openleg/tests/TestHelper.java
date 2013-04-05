@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.Vote;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -109,17 +110,18 @@ public class TestHelper
 	 
 	 /**
 	  * Converts and ArrayList of Strings with Action data into a List of Action Objects.
+	  * Date of the action should be in MM/DD/yy format.
 	  * @param actions holds string[]'s where index 0 holds the date string and index 1 holds the event text.
 	  */
 	 public static List<Action> convertIntoActions(ArrayList<String[]> actions, String billName)
 	 {
 		 ArrayList<Action> actionList = new ArrayList<Action>();
 		 for(int i = 0; i < actions.size(); i++) {
-			 // Convert String representation of date to a Date object
 			 Date date = null;
+			 DateFormat dateformat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.US);
 			 try {
-				date = new SimpleDateFormat("MM/DD/yy", Locale.ENGLISH).parse(actions.get(i)[0]);
-			}
+				 date = dateformat.parse(actions.get(i)[0]);
+			 }
 			 catch (ParseException e) {
 				e.printStackTrace();
 			}

@@ -9,7 +9,6 @@ import org.junit.Test;
 public class BillA83542011 extends TestSetup
 {
 	public static final String billKey = "2011/bill/A8354-2011";
-	public static final String billTitle = "Enacts the Marriage Equality Act relating to ability of individuals to marry";
 	public static final String initialSobi = "SOBI.D110614.T162232.TXT";
 	public static final String billTextSobi = "SOBI.D110614.T162734.TXT";
 	public static final String voteSobi = "SOBI.D110624.T230028.TXT";
@@ -45,6 +44,7 @@ public class BillA83542011 extends TestSetup
 	@Test
 	public void testTitle()
 	{
+	    String billTitle = "Enacts the Marriage Equality Act relating to ability of individuals to marry";
 		BillTests.testBillTitle(env, sobiDirectory, storage, billKey, initialSobi, billTitle);
 	}
 
@@ -88,10 +88,9 @@ public class BillA83542011 extends TestSetup
 	@Test
 	public void testActions()
 	{
-		// Action 1 id = A8354-2011-1308110400000-reported+referred+to+rules
 		String billNumber = "A8354-2011";
 		ArrayList<String[]> actionStrings = new ArrayList<String[]>();
-		actionStrings.add(new String[]{"06/14/11", "referred to judiciary"});
+		actionStrings.add(new String[]{"6/14/11", "referred to judiciary"});
 		actionStrings.add(new String[]{"06/15/11", "reported referred to rules"});
 		actionStrings.add(new String[]{"06/15/11", "reported"});
 		actionStrings.add(new String[]{"06/15/11", "rules report cal.320"});
@@ -105,7 +104,7 @@ public class BillA83542011 extends TestSetup
 		actionStrings.add(new String[]{"06/24/11", "RETURNED TO ASSEMBLY"});
 		actionStrings.add(new String[]{"06/24/11", "delivered to governor"});
 		actionStrings.add(new String[]{"06/24/11", "signed chap.95"});
-
-		BillTests.testBillStatusActions(env, sobiDirectory, storage, billKey, actionsSobi, TestHelper.convertIntoActions(actionStrings, billNumber));
+		
+		BillTests.testBillStatusActions(env, sobiDirectory, storage, billKey, actionsSobi, actionStrings, billNumber);
 	}
 }
