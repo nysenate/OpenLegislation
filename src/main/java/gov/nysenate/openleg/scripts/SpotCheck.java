@@ -101,6 +101,10 @@ public class SpotCheck {
                 jsonSummary = unescapeHTML(jsonLaw)+" "+jsonSummary;
             }
 
+            // Hack around encoding issues
+            jsonSummary = jsonSummary.replace("P", "S");
+            lbdcSummary = lbdcSummary.replace("P", "S");
+
             if ( !jsonSummary.replace(" ","").equals(lbdcSummary.replace(" ", "")) ) {
                 if (!id.startsWith("D")) {
                     logger.error("Summary: "+billNo);
