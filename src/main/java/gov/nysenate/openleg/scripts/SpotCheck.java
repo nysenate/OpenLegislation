@@ -95,7 +95,7 @@ public class SpotCheck {
             // Compare the summaries. LBDC reports summary and law changes together
             String jsonLaw = bill.getLaw();
             String jsonSummary = unescapeHTML(bill.getSummary());
-            String lbdcSummary = bills.get(id).summary;
+            String lbdcSummary = bills.get(id).summary.replaceAll("\\s+", " ");
 
             if( jsonLaw != null && jsonLaw != "" && jsonLaw != "null") {
                 jsonSummary = unescapeHTML(jsonLaw)+" "+jsonSummary;
