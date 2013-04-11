@@ -18,7 +18,7 @@
                     <target>1.6</target>
 
                     <!-- avoid possible encoding issues -->
-                    <encoding>ISO-8859-1</encoding>
+                    <encoding>latin1</encoding>
                 </configuration>
             </plugin>
 
