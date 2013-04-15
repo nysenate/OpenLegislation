@@ -29,22 +29,75 @@ public class SpotCheck {
 
         String id;
         String law;
-        String title;
-        String sponsor;
-        String summary;
+        private String title;
+        private String sponsor;
+        private String summary;
 
-        ArrayList<String> actions;
-        ArrayList<String> cosponsors;
+        private ArrayList<String> actions;
+        private ArrayList<String> cosponsors;
         ArrayList<String> multisponsors;
         ArrayList<String> amendments;
 
         public SpotCheckBill() {
             pages = year = 0;
-            id = sponsor = title = summary = law = "";
-            cosponsors = new ArrayList<String>();
+            id = setSponsor(setTitle(setSummary(law = "")));
+            setCosponsors(new ArrayList<String>());
             multisponsors = new ArrayList<String>();
-            actions = new ArrayList<String>();
+            setActions(new ArrayList<String>());
             amendments = new ArrayList<String>();
+        }
+
+        public String getTitle()
+        {
+            return title;
+        }
+
+        public String setTitle(String title)
+        {
+            this.title = title;
+            return title;
+        }
+
+        public String getSummary()
+        {
+            return summary;
+        }
+
+        public String setSummary(String summary)
+        {
+            this.summary = summary;
+            return summary;
+        }
+
+        public String getSponsor()
+        {
+            return sponsor;
+        }
+
+        public String setSponsor(String sponsor)
+        {
+            this.sponsor = sponsor;
+            return sponsor;
+        }
+
+        public ArrayList<String> getCosponsors()
+        {
+            return cosponsors;
+        }
+
+        public void setCosponsors(ArrayList<String> cosponsors)
+        {
+            this.cosponsors = cosponsors;
+        }
+
+        public ArrayList<String> getActions()
+        {
+            return actions;
+        }
+
+        public void setActions(ArrayList<String> actions)
+        {
+            this.actions = actions;
         }
     }
 
@@ -62,7 +115,7 @@ public class SpotCheck {
     }
 
     public static void main(String[] args) throws Exception {
-        Storage storage = new Storage("/data/openleg/lbdc_test/json");
+        Storage storage = new Storage("/home/shweta/test/processed/lbdc_test/json");
 
         HashMap<String, Integer> errors = new HashMap<String, Integer>();
         for (String error_type : new String[] {"title", "summary", "sponsor", "cosponsors", "events"}) {
@@ -77,11 +130,12 @@ public class SpotCheck {
 
         for(String id : bills.keySet()) {
             String billNo = id+"-2013";
+           
             Bill bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
 
             // Compare the titles, ignore white space differences
             String jsonTitle = unescapeHTML(bill.getTitle());
-            String lbdcTitle = bills.get(id).title;
+            String lbdcTitle = bills.get(id).getTitle();
             if (!stringEquals(jsonTitle, lbdcTitle, true, true)) {
                 // What is this D?
                 if (!id.startsWith("D")) {
@@ -95,7 +149,7 @@ public class SpotCheck {
             // Compare the summaries. LBDC reports summary and law changes together
             String jsonLaw = bill.getLaw();
             String jsonSummary = unescapeHTML(bill.getSummary());
-            String lbdcSummary = bills.get(id).summary;
+            String lbdcSummary = bills.get(id).getSummary();
 
             if( jsonLaw != null && jsonLaw != "" && jsonLaw != "null") {
                 jsonSummary = unescapeHTML(jsonLaw)+" "+jsonSummary;
@@ -111,7 +165,7 @@ public class SpotCheck {
             }
 
             String jsonSponsor = unescapeHTML(bill.getSponsor().getFullname()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
-            String lbdcSponsor = bills.get(id).sponsor.toUpperCase().replace("BILL", "").replace("COM", "");
+            String lbdcSponsor = bills.get(id).getSponsor().toUpperCase().replace("BILL", "").replace("COM", "");
             if ( !jsonSponsor.replace(" ","").equals(lbdcSponsor.replace(" ", "")) ) {
                 if (!id.startsWith("D")) {
                     logger.error("Sponsor: "+billNo);
@@ -122,7 +176,7 @@ public class SpotCheck {
             }
 
 
-            TreeSet<String> lbdcCosponsors = new TreeSet<String>(bills.get(id).cosponsors);
+            TreeSet<String> lbdcCosponsors = new TreeSet<String>(bills.get(id).getCosponsors());
             TreeSet<String> jsonCosponsors = new TreeSet<String>();
             if ( bill.getCoSponsors() != null ) {
                 List<Person> cosponsors = bill.getCoSponsors();
@@ -140,7 +194,7 @@ public class SpotCheck {
                 }
             }
 
-            ArrayList<String> lbdcEvents = bills.get(id).actions;
+            ArrayList<String> lbdcEvents = bills.get(id).getActions();
             ArrayList<String> jsonEvents = new ArrayList<String>();
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
 
@@ -229,15 +283,15 @@ public class SpotCheck {
 			}
              */
 
-            bill.title = parts[2].trim();
+            bill.setTitle(parts[2].trim());
             bill.law = parts[3].trim();
-            bill.summary = parts[4].trim();
+            bill.setSummary(parts[4].trim());
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
             for( int i=5; i< parts.length; i++ ) {
                 String event = parts[i].trim();
                 try {
                     dateFormat.parse(event.split(" ")[0]);
-                    bill.actions.add(event);
+                    bill.getActions().add(event);
                 } catch (ParseException e) {
                     //pass
                 }
@@ -248,9 +302,9 @@ public class SpotCheck {
                 String[] all_sponsors = parts[1].split("; M-S:");
                 String[] sponsors = all_sponsors[0].split(",");
 
-                bill.sponsor = sponsors[0].trim();
+                bill.setSponsor(sponsors[0].trim());
                 for(int i=1; i<sponsors.length; i++) {
-                    bill.cosponsors.add(sponsors[i].trim());
+                    bill.getCosponsors().add(sponsors[i].trim());
                 }
 
                 if(all_sponsors.length == 2)
@@ -258,10 +312,10 @@ public class SpotCheck {
                         bill.multisponsors.add(multisponsor.trim());
             } else {
                 String[] sponsors = parts[1].split("CO:");
-                bill.sponsor = sponsors[0].trim();
+                bill.setSponsor(sponsors[0].trim());
                 if(sponsors.length == 2)
                     for(String cosponsor : sponsors[1].split(","))
-                        bill.cosponsors.add(cosponsor.trim());
+                        bill.getCosponsors().add(cosponsor.trim());
             }
 
             if (bills.get(bill.id) != null) {
