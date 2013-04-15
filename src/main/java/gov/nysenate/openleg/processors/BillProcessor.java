@@ -830,9 +830,6 @@ public class BillProcessor
      */
     public void applyBillEvent(String data, Bill bill, Date date) throws ParseError
     {
-        // currently we don't want to keep track of assembly committees
-        Boolean trackCommittees = !bill.getSenateBillNo().startsWith("A");
-
         ArrayList<Action> events = new ArrayList<Action>();
         String sameAs = "";
         Boolean stricken = false;
@@ -871,11 +868,11 @@ public class BillProcessor
 
                     if (eventText.contains("ENACTING CLAUSE STRICKEN")) {
                         stricken = true;
-                    } else if (trackCommittees && committeeEventText.find()) {
+                    } else if (committeeEventText.find()) {
                         if (!currentCommittee.isEmpty())
                             pastCommittees.add(currentCommittee);
                         currentCommittee = committeeEventText.group(2);
-                    } else if (trackCommittees && floorEventText.find()){
+                    } else if (floorEventText.find()){
                         if(!currentCommittee.isEmpty()) {
                             pastCommittees.add(currentCommittee);
                         }
