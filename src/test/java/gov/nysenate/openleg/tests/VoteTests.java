@@ -65,4 +65,17 @@ public class VoteTests {
 		assertThat(testVote.getNays(), is(expected.getNays()));
 	}
 
+    public static boolean voteCheck(Bill theBill, Vote vote)
+    {   
+        Vote v=theBill.getVotes().get(0);
+        assertThat(v.getAyes(), is(vote.getAyes()));
+        assertThat(v.getAbsent(), is(vote.getAbsent()));
+        assertThat(v.getAbstains(), is(vote.getAbstains()));
+        assertThat(v.getExcused(), is(vote.getExcused()));
+        assertThat(v.getNays(), is(vote.getNays()));
+        return true;
+        
+    }
+	
+
 }
