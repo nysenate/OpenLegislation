@@ -23,11 +23,15 @@ import java.util.regex.Pattern;
  *           the 2013-2014 state fiscal year.</li>
  * </ul>
  * <p>
+ * Certain block types and block content should always be single lined. Specifically type 1, 2, and 5 blocks as well
+ * as any blocks having "DELETE" as data. A block should always be checked for isMultiline before being extended.
+ *
  * @author GraylinKim
  *
  */
 public class SOBIBlock
 {
+
     /**
      * A list of sobi line types that are *single* line blocks. All other block types are multi-line.
      */
@@ -113,9 +117,15 @@ public class SOBIBlock
     }
 
     /**
-     * Extends the block data with the data from the new line.
+     * Extends the block data with the data from the new line. Separates new lines with a '\n' character so
+     * that line breaks information is available to downstream parsers.
+     *
+     * @throws RuntimeException - when attempting to extend a block that shouldn't be extended. Use isMultiline
+     * to check before extending.
      */
     public void extend(String line) {
+        if (this.isMultiline())
+            throw new RuntimeException("Only multi-line blocks may be extended");
         this.dataBuffer.append("\n"+line.substring(12));
     }
 
@@ -136,12 +146,17 @@ public class SOBIBlock
     }
 
     /**
-     * Returns true if the block should be extended by multiple lines. Blocks containing only DELETE should be treated as single line blocks.
+     * Returns true if the block should be extended by multiple lines. This is generally determined by block type
+     * but blocks whose data is DELETE should be treated as single line blocks regardless of type.
      */
     public boolean isMultiline() {
         return !oneLineBlocks.contains(this.getType()) && !this.getData().trim().equals("DELETE");
     }
 
+    /**
+     * Blocks are considered equal if their header and data (trimmed of all excess whitespace) are
+     * identical in content (case-sensitive).
+     */
     public boolean equals(Object obj)
     {
         return obj!= null && obj instanceof SOBIBlock
@@ -204,6 +219,14 @@ public class SOBIBlock
         return printNo;
     }
 
+    /**
+     * Strips all leading zeros from the numerical part of the print number:
+     * <p>
+     * A00370 -> A370
+     *
+     * @param printNo
+     * @throws NumberFormatException on malformed print numbers
+     */
     public void setPrintNo(String printNo)
     {
         // Integer conversion removes leading zeros in the print number.

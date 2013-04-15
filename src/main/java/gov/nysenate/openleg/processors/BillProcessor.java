@@ -22,26 +22,84 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
+/**
+ * Holds a collection of methods and Patterns for processing SOBI files and applying their change sets to Bills.
+ * <p>
+ * General Usage:
+ * <pre>
+ *     BillProcessor.process(new File('path/to/sobi_file.txt'), new Storage(new File('storage/directory')));
+ * </pre>
+ *
+ * First the incoming file is broken down into independent SOBIBlocks. Each SOBIBlock operates atomically on a
+ * single bill by loading it from storage, applying the block's data, and saving the changes back to storage.
+ *
+ * @author graylinkim
+ * @link SOBIBlock
+ */
 public class BillProcessor
 {
     private final Logger logger = Logger.getLogger(BillProcessor.class);
 
-    public static SimpleDateFormat eventDateFormat = new SimpleDateFormat("MM/dd/yy");
-    public static SimpleDateFormat voteDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+    /**
+     * The format required for the SobiFile name. e.g. SOBI.D130323.T065432.TXT
+     */
     public static SimpleDateFormat sobiDateFormat = new SimpleDateFormat("'SOBI.D'yyMMdd'.T'HHmmss'.TXT'");
 
-    public static Pattern votePattern = Pattern.compile("(.{4}) (.{1,15})");
-    public static Pattern billEventPattern = Pattern.compile("([0-9]{2}/[0-9]{2}/[0-9]{2}) (.*)");
+    /**
+     * Date format found in SOBIBlock[4] bill event blocks. e.g. 02/04/13
+     */
+    protected static SimpleDateFormat eventDateFormat = new SimpleDateFormat("MM/dd/yy");
 
-    public static Pattern sameAsPattern = Pattern.compile("Same as( Uni\\.)? ([A-Z] ?[0-9]{1,5}-?[A-Z]?)");
-    public static Pattern sobiHeaderPattern = Pattern.compile("^((\\d{4})([A-Z]\\d{5})([ A-Z])([1-9ABCMRTV]))(.*)");
+    /**
+     * Date format found in SOBIBlock[v] vote memo blocks. e.g. 02/05/2013
+     */
+    protected static SimpleDateFormat voteDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+    /**
+     * The expected format for the first line of the vote memo [V] block data.
+     */
     public static Pattern voteHeaderPattern = Pattern.compile("Senate Vote    Bill: (.{18}) Date: (.{10}).*");
-    public static Pattern billDataPattern = Pattern.compile("(.{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])(.{8}).*");
-    public static Pattern textPattern = Pattern.compile("00000\\.SO DOC ([ASC]) ([0-9R/A-Z ]{13}) ([A-Z* ]{24}) ([A-Z ]{20}) ([0-9]{4}).*");
 
+    /**
+     * The expected format for recorded votes in the vote memo. e.g. 'AYE  ADAMS          '
+     */
+    protected static Pattern votePattern = Pattern.compile("(.{4}) (.{1,15})");
+
+    /**
+     * The expected format for actions recorded in the bill events [4] block. e.g. 02/04/13 Event Text Here
+     */
+    protected static Pattern billEventPattern = Pattern.compile("([0-9]{2}/[0-9]{2}/[0-9]{2}) (.*)");
+
+    /**
+     * The expected format for SameAs [5] block data. Same as Uni A 372/S 210
+     */
+    protected static Pattern sameAsPattern = Pattern.compile("Same as( Uni\\.)? ([A-Z] ?[0-9]{1,5}-?[A-Z]?)");
+
+    /**
+     * The expected format for Bill Info [1] block data.
+     */
+    public static Pattern billInfoPattern = Pattern.compile("(.{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])(.{8}).*");
+
+    /**
+     * The expected format for header lines inside bill [T] and memo [M] text data.
+     */
+    public static Pattern textHeaderPattern = Pattern.compile("00000\\.SO DOC ([ASC]) ([0-9R/A-Z ]{13}) ([A-Z* ]{24}) ([A-Z ]{20}) ([0-9]{4}).*");
+
+    /**
+     * Pattern for extracting the committee from matching bill events.
+     */
     public static Pattern committeeEventTextPattern = Pattern.compile("(REFERRED|COMMITTED|RECOMMIT) TO (.*)");
+
+    /**
+     * Pattern for detecting calendar events in bill action lists.
+     */
     public static Pattern floorEventTextPattern = Pattern.compile("(REPORT CAL|THIRD READING|RULES REPORT)");
+
+    /**
+     * Pattern for extracting the substituting bill printNo from matching bill events.
+     */
     public static Pattern substituteEventTextPattern = Pattern.compile("SUBSTITUTED (FOR|BY) (.*)");
+
 
     public static class ParseError extends Exception
     {
@@ -51,9 +109,12 @@ public class BillProcessor
 
 
     /**
-     * Applies changes in the SOBI file to objects in storage.
+     * Applies change sets encoded in SOBI format to bill objects in storage. Creates new Bills
+     * as necessary. Does not flush changes to file system from storage.
      *
-     * @throws IOException if File cannot be opened for reading.
+     * @param sobiFile - Must encode time stamp for the changes into the filename in SOBI.DYYMMDD.THHMMSS.TXT format.
+     * @param storage
+     * @throws IOException
      */
     public void process(File sobiFile, Storage storage) throws IOException
     {
@@ -73,12 +134,13 @@ public class BillProcessor
 
                 if (block.getType() == '1' && block.getData().startsWith("DELETE")) {
                     // Special case here were we delete the whole bill
+                    // TODO: This might actually be a soft delete!
                     logger.info("DELETING "+block.getHeader());
                     deleteBill(block, storage);
                 }
                 else {
-                    String data = block.getData().toString();
                     // Otherwise, apply the block to the bill normally
+                    String data = block.getData().toString();
                     Bill bill = getOrCreateBill(block, storage);
                     switch (block.getType()) {
                         case '1': applyBillInfo(data, bill, date); break;
@@ -115,7 +177,10 @@ public class BillProcessor
     }
 
     /**
-     * Parses the given SOBI file into a list of blocks. See the Block class for more details.
+     * Parses the given SOBI file into a list of blocks. Replaces null bytes in
+     * each line with spaces to bring them into the proper fixed width formats.
+     * <p>
+     * See the Block class for more details.
      *
      * @param sobiFile
      * @return
@@ -167,9 +232,14 @@ public class BillProcessor
      * Safely gets the bill specified by the block from storage. If the bill does not
      * exist then it is created. When loading an amendment, if the parent bill does not
      * exist then it is created as well.
+     * <p>
+     * New bills will pull sponsor, amendment, law, and summary information up from the
+     * prior active version (if available).
      *
-     * New bills will pull sponsor and amendment information up from prior versions if
-     * available.
+     * @param block
+     * @param storage
+     * @return
+     * @throws ParseError
      */
     public Bill getOrCreateBill(SOBIBlock block, Storage storage) throws ParseError
     {
@@ -246,8 +316,8 @@ public class BillProcessor
 
 
     /**
-     * Safely saves the bill to storage. This makes sure to sync sponsor data across all amendments
-     * so that different versions of the bill cannot get out of sync.
+     * Safely saves the bill to storage. This makes sure to sync sponsor data across all versions
+     * so that different versions of the bill cannot get out of sync
      *
      * @param bill
      * @param storage
@@ -270,8 +340,8 @@ public class BillProcessor
 
     /**
      * Safely deletes the bill specified from by the block. This removes all references to the bill
-     * from its amendments and, if the bill was currently active, re-sets the active bill to the
-     * newest amendment.
+     * from its amendments and, if the bill was currently active, resets the active bill to be the
+     * most recent amendment.
      *
      * @param block
      * @param storage
@@ -290,6 +360,7 @@ public class BillProcessor
             List<String> amendments = bill.getAmendments();
             if (amendments.size() > 0) {
                 // Set the previous amendment to be the active one
+                // TODO: In rare cases with multiple substitutions this might not be the right thing to do!
                 String newActiveBill = amendments.get(amendments.size()-1);
 
                 // Remove all references to the current bill/amendment.
@@ -307,24 +378,10 @@ public class BillProcessor
     }
 
     /**
-     * Applies the data to the bill summary. Strips out all whitespace formatting.
-     *
-     * @param data
-     * @param bill
-     * @param date
-     * @throws ParseError
-     */
-    public void applySummary(String data, Bill bill, Date date) throws ParseError
-    {
-        // The DELETE code for the summary goes through the law block (B)
-        // Combine the lines with a space and handle special character issues..
-        // I don't have any examples of these special characters right now, here is some legacy code:
-        //      data = data.replace("","S").replaceAll("\\x27(\\W|\\s)", "&apos;$1");
-        bill.setSummary(data.replace("\n", " ").trim());
-    }
-
-    /**
-     * Applies the data to the bill title. Strips out all whitespace formatting.
+     * Applies the data to the bill title. Strips out all whitespace formatting and replaces
+     * existing content in full.
+     * <p>
+     * The bill title is a required field and cannot be deleted.
      *
      * @param data
      * @param bill
@@ -341,7 +398,9 @@ public class BillProcessor
     }
 
     /**
-     * Applies data to the bill Same-as.
+     * Applies data to the bill Same-as replacing existing content fully.
+     * <p>
+     * Both "No same as" and "DELETE" data blocks are treated as empty values for same as content.
      *
      * @param data
      * @param bill
@@ -350,8 +409,7 @@ public class BillProcessor
      */
     public void applySameAs(String data, Bill bill, Date date) throws ParseError
     {
-        // Guarenteed to be only a single line block.
-        if (data.trim().equals("No same as") || data.trim().equals("DELETE")) {
+        if (data.trim().equalsIgnoreCase("No same as") || data.trim().equalsIgnoreCase("DELETE")) {
             bill.setSameAs("");
         }
         else {
@@ -368,7 +426,7 @@ public class BillProcessor
 
     /**
      * Applies data to bill sponsor. Fully replaces existing sponsor information.
-     *
+     * <p>
      * A delete in these field removes all sponsor information.
      *
      * @param data
@@ -392,8 +450,9 @@ public class BillProcessor
     }
 
     /**
-     * Applies data to bill co-sponsors. Fully replaces existing information.
-     *
+     * Applies data to bill co-sponsors. Expects a comma separated list and
+     * fully replaces existing co-sponsor information.
+     * <p>
      * Delete code is sent through the sponsor block.
      *
      * @param data
@@ -413,8 +472,9 @@ public class BillProcessor
     }
 
     /**
-     * Applies data to bill multi-sponsors. Fully replaces existing information.
-     *
+     * Applies data to bill multi-sponsors. Expects a comma separated list and
+     * fully replaces existing information.
+     * <p>
      * Delete code is sent through the sponsor block.
      *
      * @param data
@@ -436,7 +496,7 @@ public class BillProcessor
 
     /**
      * Applies data to bill law. Fully replaces existing information.
-     *
+     * <p>
      * DELETE code here also deletes the bill summary.
      *
      * @param data
@@ -446,23 +506,40 @@ public class BillProcessor
      */
     public void applyLaw(String data, Bill bill, Date date) throws ParseError
     {
-        // This is theoretically not safe because a law line *could* start with DELETE but
-        // in practice this doesn't ever happen.
-        // We can't do an exact match because B can be multiline
+        // This is theoretically not safe because a law line *could* start with DELETE
+        // We can't do an exact match because B can be multi-line
         if (data.trim().startsWith("DELETE")) {
             bill.setLaw("");
             bill.setSummary("");
 
         } else {
             // We'll definitely need to clean this data up more than a little bit, these encoding issues are terrible!
-            // data = data.replaceAll("\\xBD", ""); // I dont' think we still need this
+            // data = data.replaceAll("\\xBD", ""); // I don't think we still need this
             bill.setLaw(data.replace("\n", " ").replace("õ", "S").replace("ô","P").replace("ï¿½","S").replace((char)65533+"", "S").trim());
         }
     }
 
     /**
-     * Applies data to law section. Fully replaces existing data.
+     * Applies the data to the bill summary. Strips out all whitespace formatting and replaces
+     * existing content in full.
+     * <p>
+     * Delete codes for this field are sent through the law block.
      *
+     * @param data
+     * @param bill
+     * @param date
+     * @throws ParseError
+     */
+    public void applySummary(String data, Bill bill, Date date) throws ParseError
+    {
+        // I don't have any examples of these special characters right now, here is some legacy code:
+        //      data = data.replace("","S").replaceAll("\\x27(\\W|\\s)", "&apos;$1");
+        bill.setSummary(data.replace("\n", " ").trim());
+    }
+
+    /**
+     * Applies data to law section. Fully replaces existing data.
+     * <p>
      * Delete code is sent through the law block.
      *
      * @param data
@@ -477,7 +554,7 @@ public class BillProcessor
 
     /**
      * Applies data to the ACT TO clause. Fully replaces existing data.
-     *
+     * <p>
      * DELETE code removes existing ACT TO clause.
      *
      * @param data
@@ -496,10 +573,10 @@ public class BillProcessor
 
     /**
      * Applies data to bill Program. Fully replaces existing information
-     *
+     * <pre>
      *      029 Governor Program
-     *
-     * Currently implemented.
+     * </pre>
+     * Currently not implemented in the bill data model.
      *
      * @param data
      * @param bill
@@ -516,10 +593,12 @@ public class BillProcessor
 
     /**
      * Apply information from the Bill Info block. Fully replaces existing information.
-     *
-     * Currently only uses sponsor and previous version (which has known issues)
-     *
-     * A DELETE code sent with this block removes the whole bill.
+     * <p>
+     * Currently fills in blank sponsors (doesn't replace existing sponsor information)
+     * and previous version information (which has known issues).
+     * <p>
+     * A DELETE code sent with this block removes the whole bill and is handled separately
+     * in the process method.
      *
      * @param data
      * @param bill
@@ -528,11 +607,7 @@ public class BillProcessor
      */
     public void applyBillInfo(String data, Bill bill, Date date) throws ParseError
     {
-        // The DELETE code here applies to the whole bill and is handled in ``process``
-        // Guarenteed to be only a 1 line block
-
-        // The null bytes screw with the regex, replace them.
-        Matcher billData = billDataPattern.matcher(data);
+        Matcher billData = billInfoPattern.matcher(data);
         if (billData.find()) {
             //TODO: Find a possible use for this information
             String sponsor = billData.group(1).trim();
@@ -550,15 +625,42 @@ public class BillProcessor
         }
     }
 
+    /**
+     * Applies information to create or replace a bill vote. Votes are
+     * uniquely identified by date/bill. If we have an existing vote on
+     * the same date, replace it; otherwise create a new one.
+     * <p>
+     * Expected vote format:
+     * <pre>
+     *  2011S01892 VSenate Vote    Bill: S1892              Date: 01/19/2011  Aye - 41  Nay - 19
+     *  2011S01892 VNay  Adams            Aye  Addabbo          Aye  Alesi            Aye  Avella
+     * </pre>
+     * Valid vote codes:
+     * <ul>
+     * <li>Nay - Vote against</li>
+     * <li>Aye - Vote for</li>
+     * <li>Abs - Absent during voting</li>
+     * <li>Exc - Excused from voting</li>
+     * <li>Abd - Abstained from voting</li>
+     * </ul>
+     * Deleting votes is not possible
+     *
+     * @param data
+     * @param bill
+     * @param date
+     * @throws ParseError
+     */
     public void applyVoteMemo(String data, Bill bill, Date date) throws ParseError
     {
-        // TODO: Parse out sequence number once LBDC includes it, #6531
+        // TODO: Parse out sequence number once LBDC (maybe) includes it, #6531
+        // Because sometimes votes are back to back we need to check for headers
         // Example of a double vote entry: SOBI.D110119.T140802.TXT:390
         Vote vote = null;
         for(String line : data.split("\n")) {
             Matcher voteHeader = voteHeaderPattern.matcher(line);
             if (voteHeader.find()) {
-                //Start over if we hit a header, sometimes we get back to back entries
+                // TODO: this assumes they are the same vote sent twice, what else could happen?
+                //Start over if we hit a header, sometimes we get back to back entries.
                 try {
                     vote = new Vote(bill, voteDateFormat.parse(voteHeader.group(2)), Vote.VOTE_TYPE_FLOOR, "1");
                 }
@@ -598,20 +700,41 @@ public class BillProcessor
             }
         }
 
-        //Misnomer, will actually update the vote if it already exists
+        // Misnomer, will actually update the vote if it already exists
         bill.addVote(vote);
     }
 
-
+    /**
+     * Applies information to bill text or memo; replaces any existing information.
+     *
+     * Expected format:
+     * <pre>
+     * SOBI.D101201.T152619.TXT:2011S00063 T00000.SO DOC S 63                                     BTXT                 2011
+     * SOBI.D101201.T152619.TXT:2011S00063 T00083   28    S 4. This act shall take effect immediately.
+     * SOBI.D101201.T152619.TXT:2011S00063 T00000.SO DOC S 63            *END*                    BTXT                 2011
+     * </pre>
+     * Header lines start with 00000.SO DOC and contain one of three actions:
+     * <ul>
+     * <li>'' - Start of the bill text</li>
+     * <li>*END* - End of the bill text</li>
+     * <li>*DELETE* - Deletes existing bill text</li>
+     * </ul>
+     *
+     * @param data
+     * @param bill
+     * @param date
+     * @throws ParseError
+     */
     public void applyText(String data, Bill bill, Date date) throws ParseError
     {
         // BillText, ResolutionText, and MemoText can be handled the same way
-        // Deleted with a *DELETE* line.
+        // Because Text Blocks can be back to back we constantly look for headers
+        // with actions that tell us to start over, end, or delete.
         String type = "";
         StringBuffer text = null;
 
         for (String line : data.split("\n")) {
-            Matcher header = textPattern.matcher(line);
+            Matcher header = textHeaderPattern.matcher(line);
             if (line.startsWith("00000") && header.find()) {
                 //TODO: If house == C then bills can be used for SAME AS verification
                 // e.g. 2013S02278 T00000.SO DOC C 2279/2392
@@ -621,7 +744,6 @@ public class BillProcessor
                 //String year = header.group(5);
                 String action = header.group(3).trim();
                 type = header.group(4).trim();
-
 
                 if (!type.equals("BTXT") && !type.equals("RESO TEXT") && !type.equals("MTXT"))
                     throw new ParseError("Unknown text type found: "+type);
@@ -682,6 +804,30 @@ public class BillProcessor
     }
 
 
+    /**
+     * Applies information to bill events; replaces existing information in full.
+     * Events are uniquely identified by text/date/bill. In cases where the same
+     * action is made on the same day to the same bill (which can happen in June)
+     * the date is incremented by 1 second until it becomes unique.
+     * <p>
+     * Also parses bill events to apply several other bits of meta data to bills:
+     * <ul>
+     * <li>sameAs - "Substituted ..."</li>
+     * <li>stricken - "ENACTING CLAUSE STRICKEN"</li>
+     * <li>currentCommittee - "Committed to ..."</li>
+     * <li>pastCommittees</li>
+     * <ul>
+     * <p>
+     * There are currently no checks for the action list starting over again which
+     * could lead back to back action blocks for a bill to produce a double long list.
+     * <p>
+     * Bill events cannot be deleted, only replaced.
+     *
+     * @param data
+     * @param bill
+     * @param date
+     * @throws ParseError
+     */
     public void applyBillEvent(String data, Bill bill, Date date) throws ParseError
     {
         // currently we don't want to keep track of assembly committees
@@ -705,6 +851,7 @@ public class BillProcessor
                     // seconds until we get clear. This also allows for strict ordering
                     // by date. Assume events come in chronological order.
                     // TODO: fix this horrible hack somehow
+                    // TODO: include some example sobi files for reference
                     // TODO: account for multiple action blocks for the same bill in a row
                     Calendar c = Calendar.getInstance();
                     c.setTime(eventDate);
