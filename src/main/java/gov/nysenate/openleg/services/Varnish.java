@@ -33,7 +33,7 @@ public class Varnish extends ServiceBase {
             String otype = key.split("/")[1];
             String oid = key.split("/")[2];
 
-            if(entry.getValue()!=Storage.Status.NEW && !otype.equals("agenda")) {
+            if(!otype.equals("agenda")) {
                 purgeUri("doc:"+oid);
             }
         }
