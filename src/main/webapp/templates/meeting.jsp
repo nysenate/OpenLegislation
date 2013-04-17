@@ -67,10 +67,7 @@
 									<%if (bill.getSponsor()!=null) { %>
 										Sponsor: <a href="<%=appPath%>/search/?term=sponsor:%22<%=bill.getSponsor().getFullname()%>%22" class="sublink"><%=bill.getSponsor().getFullname()%></a>
 									<% } %>
-							 
-									<%if (bill.getCurrentCommittee()!=null) { %>
-										Committee: <a href="<%=appPath%>/search/?term=committee:%22<%=bill.getCurrentCommittee()%>%22"  class="sublink"><%=bill.getCurrentCommittee()%></a>
-									<% } 
+
 									if (bill.getVotes()!=null && bill.getVotes().size()>0) {
 										Iterator<Vote> itVotes = bill.getVotes().iterator();
 										%>
