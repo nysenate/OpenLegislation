@@ -15,55 +15,35 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-public class Push {
+public class Push extends BaseScript
+{
     private static Logger logger = Logger.getLogger(Push.class);
-    private static Pattern changePattern = Pattern.compile("\\s*(.*?)\\s+(NEW|DELETED|MODIFIED)");
 
-    public static HashMap<String, Storage.Status> parseChanges(Iterable<String> lines) {
-        HashMap<String, Storage.Status> changes = new HashMap<String, Storage.Status>();
-        for (String line : lines) {
-            if (line.isEmpty() || line.matches("\\s*#")) {
-                continue;
-            }
-            Matcher changeLine = changePattern.matcher(line);
-            if (changeLine.find()) {
-                changes.put(changeLine.group(1), Storage.Status.valueOf(changeLine.group(2).toUpperCase()));
-            } else {
-                logger.fatal("Malformed change line: "+line);
-                System.exit(0);
-            }
-        }
-        return changes;
+    public static void main(String[] args) throws Exception
+    {
+        new Push().run(args);
     }
 
-    public static void main(String[] args) {
-        String[] required = null;
-        CommandLine opts = null;
-        try {
-            Options options = new Options()
-                .addOption("l", "lucene", true, "Push changes to the Lucene service")
-                .addOption("v", "varnish", false, "Push changes to the Varnish service")
-                .addOption("f", "change-file", true, "Path of changeLog file.")
-                .addOption("c", "changes", true, "A newline delimited list of changes")
-                .addOption("h", "help", false, "Print this message");
-            opts = new PosixParser().parse(options, args);
-            required = opts.getArgs();
-            if(opts.hasOption("-h")) {
-                System.err.println("USAGE: Push STORAGE [--lucene LOCATION] [--varnish] [--change-file FILE] [--changes CHANGES]");
-                System.exit(0);
+    protected Options getOptions()
+    {
+        Options options = new Options();
+        options.addOption("l", "lucene", true, "Push changes to the Lucene service");
+        options.addOption("v", "varnish", false, "Push changes to the Varnish service");
+        options.addOption("f", "change-file", true, "Path of changeLog file.");
+        options.addOption("c", "changes", true, "A newline delimited list of changes");
+        options.addOption("h", "help", false, "Print this message");
+        return options;
+    }
 
-            } else if (required.length != 1) {
-                System.err.println("Storage is a required argument.");
-                System.err.println("USAGE: Push STORAGE [--lucene LOCATION] [--varnish] [--change-file FILE] [--changes CHANGES]");
-                System.exit(1);
-            }
-        } catch (ParseException e) {
-            logger.fatal("Error parsing arguments: ", e);
+    protected void execute(CommandLine opts)
+    {
+        String[] required = opts.getArgs();
+        if (required.length != 1) {
+            System.err.println("Storage is a required argument.");
+            printUsage(opts);
             System.exit(1);
         }
 
@@ -103,6 +83,25 @@ public class Push {
                 logger.error("Fatal Error handling Service "+service.getClass().getName(), e);
             }
         }
+    }
+
+    public HashMap<String, Storage.Status> parseChanges(Iterable<String> lines)
+    {
+        Pattern changePattern = Pattern.compile("\\s*(.*?)\\s+(NEW|DELETED|MODIFIED)");
+        HashMap<String, Storage.Status> changes = new HashMap<String, Storage.Status>();
+        for (String line : lines) {
+            if (line.isEmpty() || line.matches("\\s*#")) {
+                continue;
+            }
+            Matcher changeLine = changePattern.matcher(line);
+            if (changeLine.find()) {
+                changes.put(changeLine.group(1), Storage.Status.valueOf(changeLine.group(2).toUpperCase()));
+            } else {
+                logger.fatal("Malformed change line: "+line);
+                System.exit(0);
+            }
+        }
+        return changes;
     }
 
 }

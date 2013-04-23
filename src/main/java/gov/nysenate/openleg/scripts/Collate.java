@@ -10,15 +10,30 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-public class Collate {
+
+public class Collate extends BaseScript
+{
+
     private static Logger logger = Logger.getLogger(Collate.class);
 
-    public static void main(String[] args) {
+    protected String SCRIPT_NAME = "Collate";
+    protected String USAGE = "USAGE: Collate source [... source] dest";
+
+    public static void main(String[] args) throws Exception
+    {
+        new Collate().run(args);
+    }
+
+    protected void execute(CommandLine opts)
+    {
+        String[] args = opts.getArgs();
         if (args.length < 2) {
-            System.err.println("USAGE: Collate source [... source] dest");
+            System.err.println("Both source and storage directories are required.");
+            printUsage(opts);
             System.exit(1);
         }
 
@@ -27,7 +42,6 @@ public class Collate {
         for (int i=0; i < args.length-1; i++) {
             sources.addAll(FileUtils.listFiles(new File(args[i]).getAbsoluteFile(), null, true));
         }
-
 
         File bills = new File(destDirectory, "bills");
         File agendas = new File(destDirectory, "agendas");
@@ -95,10 +109,9 @@ public class Collate {
                 logger.error("IO Error", e);
             }
         }
-
     }
 
-    private static void write(String data, File file) throws IOException {
+    private void write(String data, File file) throws IOException {
         // TODO: Figure out all this matcher magic. How does it work?
         StringBuffer sb = new StringBuffer();
         Matcher m = Pattern.compile("<\\!\\[CDATA\\[(.*?)\\]\\]>").matcher(data);
@@ -110,7 +123,7 @@ public class Collate {
         FileUtils.write(file, data);
     }
 
-    private static String getXml(String escape, String line, BufferedReader br) throws IOException {
+    private String getXml(String escape, String line, BufferedReader br) throws IOException {
         StringBuffer sb = new StringBuffer(
             "<?xml version='1.0' encoding='UTF-8'?>&newl;" +
             "<SENATEDATA>&newl;" +
