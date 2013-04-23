@@ -9,40 +9,38 @@ import gov.nysenate.services.model.Member;
 import gov.nysenate.services.model.Senator;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.apache.xmlrpc.XmlRpcException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 
-public class UpdateNYSenateData {
+public class UpdateNYSenateData extends BaseScript
+{
     public static Logger logger = Logger.getLogger(UpdateNYSenateData.class);
 
-    public static void main(String[] args) throws Exception {
-        CommandLine opts = null;
-        try {
-            Options options = new Options()
-                .addOption("h", "help", false, "Print this message")
-                .addOption("a","all",false, "Refresh all available data.")
-                .addOption("c","committees",false, "Refresh committee data")
-                .addOption("s","senators",false, "Refresh senator data");
-            opts = new PosixParser().parse(options, args);
-            if(opts.hasOption("-h")) {
-                System.out.println("USAGE: UpdateNYSenateData [-h|--help] [-c|--committees] [-s|--senators] [-a|--all]");
-                System.exit(0);
+    public static void main(String[] args) throws Exception
+    {
+        new UpdateNYSenateData().run(args);
+    }
 
-            }
-        } catch (ParseException e) {
-            logger.fatal("Error parsing arguments: ", e);
-            System.exit(0);
-        }
+    public Options getOptions()
+    {
+        Options options = new Options();
+        options.addOption("a","all",false, "Refresh all available data.");
+        options.addOption("c","committees",false, "Refresh committee data");
+        options.addOption("s","senators",false, "Refresh senator data");
+        return options;
+    }
 
+    public void execute(CommandLine opts) throws IOException, XmlRpcException
+    {
         String apiKey = Config.get("nysenate.apiKey");
         String apiDomain = Config.get("nysenate.apiDomain");
         NYSenateClient client = new MemoryCachedNYSenateClient(apiDomain, apiKey);
@@ -88,7 +86,7 @@ public class UpdateNYSenateData {
         logger.info("Done!");
     }
 
-    public static  String getSenatorKey(String memberName) {
+    public String getSenatorKey(String memberName) {
         String senatorKey = memberName.replaceAll(
                 "(?i)( (jr|sr)\\.?)", "");
         String[] tuple = senatorKey.split(" ");

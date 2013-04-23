@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
  */
 public class SOBIBlock
 {
-
     /**
      * A list of sobi line types that are *single* line blocks. All other block types are multi-line.
      */
@@ -83,6 +82,11 @@ public class SOBIBlock
     private StringBuffer dataBuffer = new StringBuffer();
 
     /**
+     * True for blocks that are extendible
+     */
+    private final boolean multiline;
+
+    /**
      * Construct a new block with without location information from a valid SOBI line. The line is
      * assumed to be valid SOBI file and is NOT checked for performance reasons.
      */
@@ -93,6 +97,7 @@ public class SOBIBlock
         this.setType(line.charAt(11));
         this.setHeader(line.substring(0,12));
         this.setData(line.substring(12));
+        this.multiline = !oneLineBlocks.contains(this.getType()) && !this.getData().trim().equals("DELETE");
     }
 
     /**
@@ -124,7 +129,7 @@ public class SOBIBlock
      * to check before extending.
      */
     public void extend(String line) {
-        if (this.isMultiline())
+        if (!this.isMultiline())
             throw new RuntimeException("Only multi-line blocks may be extended");
         this.dataBuffer.append("\n"+line.substring(12));
     }
@@ -150,7 +155,7 @@ public class SOBIBlock
      * but blocks whose data is DELETE should be treated as single line blocks regardless of type.
      */
     public boolean isMultiline() {
-        return !oneLineBlocks.contains(this.getType()) && !this.getData().trim().equals("DELETE");
+        return multiline;
     }
 
     /**

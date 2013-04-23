@@ -20,13 +20,20 @@ import javax.xml.bind.UnmarshalException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-public class Ingest {
-    public static Logger logger = Logger.getLogger(Ingest.class);
+public class Ingest extends BaseScript
+{
+    protected static Logger logger = Logger.getLogger(Ingest.class);
+
+    protected String SCRIPT_NAME = "Ingest";
+    protected String USAGE = "USAGE: Ingest SOURCE STORAGE [--change-file FILE]";
+
+    public static void main(String[] args) throws Exception
+    {
+        new Ingest().run(args);
+    }
 
     public static class FileNameComparator implements Comparator<File> {
         @Override
@@ -35,29 +42,22 @@ public class Ingest {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        String[] required = null;
-        CommandLine opts = null;
-        try {
-            Options options = new Options()
-                .addOption("h", "help", false, "Print this message")
-                .addOption("f", "change-file", true, "The path to store the changes");
-                //.addOption("dt", "document-type", true, "Type of document being indexed with -id (REQUIRED WITH -id).. (bill|calendar|agenda|transcript)")
-                //.addOption("id", "index-document", true, "Index JSON document specified by argument (path to file)")
-            opts = new PosixParser().parse(options, args);
-            required = opts.getArgs();
-            if(opts.hasOption("-h")) {
-                System.out.println("USAGE: Ingest SOURCE STORAGE [--change-file FILE]");
-                System.exit(0);
+    protected Options getOptions()
+    {
+        Options options = new Options();
+        options.addOption("f", "change-file", true, "The path to store the changes");
+        // options.addOption("dt", "document-type", true, "Type of document being indexed with -id (REQUIRED WITH -id).. (bill|calendar|agenda|transcript)");
+        // options.addOption("id", "index-document", true, "Index JSON document specified by argument (path to file)");
+        return options;
+    }
 
-            } else if (required.length != 2) {
-                System.err.println("Both source and storage directories are required.");
-                System.err.println("USAGE: Ingest SOURCE STORAGE [--change-file FILE]");
-                System.exit(1);
-            }
-        } catch (ParseException e) {
-            logger.fatal("Error parsing arguments: ", e);
-            System.exit(0);
+    protected void execute(CommandLine opts) throws Exception
+    {
+        String[] required = opts.getArgs();
+        if (required.length != 2) {
+            System.err.println("Both source and storage directories are required.");
+            printUsage(opts);
+            System.exit(1);
         }
 
         Timer timer = new Timer();

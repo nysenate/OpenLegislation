@@ -10,17 +10,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.FileUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 
-public class UpdateJSON {
+public class UpdateJSON extends BaseScript{
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception
+    {
+        new UpdateJSON().run(args);
+    }
+
+    public void execute(CommandLine opts) throws IOException
+    {
         File baseDir = new File("/home/graylinkim/projects/nysenate/OpenLegislation/src/main/resources/data/");
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(Feature.INDENT_OUTPUT, true);
@@ -29,7 +33,8 @@ public class UpdateJSON {
         update(new File(baseDir,"districts"), new File(baseDir,"senators/2011"), mapper);
     }
 
-    public static void update(File sourceDir, File destDir, ObjectMapper mapper) throws IOException {
+    public void update(File sourceDir, File destDir, ObjectMapper mapper) throws IOException
+    {
         FileUtils.forceMkdir(destDir);
         for (File file : FileUtils.listFiles(sourceDir, null, false)) {
             JsonNode json = mapper.readTree(file);
