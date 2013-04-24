@@ -4,6 +4,14 @@
 	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	version="2.4">
+	<filter>
+	   <filter-name>LogFilter</filter-name>
+	   <filter-class>gov.nysenate.openleg.api.servlets.LogFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	   <filter-name>LogFilter</filter-name>
+	   <url-pattern>/*</url-pattern>
+	</filter-mapping>
 	<servlet>
 		<servlet-name>ApiServlet</servlet-name>
 		<servlet-class>gov.nysenate.openleg.api.servlets.ApiServlet</servlet-class>
