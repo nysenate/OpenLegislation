@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.api.servlets;
-
-import gov.nysenate.openleg.model.ReportCreate;
 import gov.nysenate.openleg.model.Error;
+import gov.nysenate.openleg.model.ViewReport;
+
 
 
 
@@ -18,26 +18,22 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ErrorLog extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	 private static  ReportCreate rr = null;
+	
 	 private static final String VIEW_PATH = "/views/error-report.jsp";
-       
+
+	    
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ErrorLog() {
-        super();
-        rr = new ReportCreate();
-        // TODO Auto-generated constructor stub
-    }
+   
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ReportCreate.checkFiles();
-		rr.insertReport();
-		ArrayList<Error> errorList=rr.createErrorReport();
-		request.setAttribute("errorList",errorList);
+		ViewReport vr=new ViewReport();
+		ArrayList<Error> error=vr.displayReports();
+		request.setAttribute("errorList",error);
 		getServletContext().getRequestDispatcher(VIEW_PATH).forward(request, response);
 	}
 

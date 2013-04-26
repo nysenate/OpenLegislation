@@ -2,11 +2,11 @@ package gov.nysenate.openleg.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nysenate.openleg.Environment;
+
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.util.Storage;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
+
 import org.junit.Test;
 
 public class Bill2013S2230 extends TestSetup{

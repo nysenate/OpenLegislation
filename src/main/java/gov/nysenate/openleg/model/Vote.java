@@ -68,7 +68,7 @@ public class Vote extends SenateObject {
         excused = new ArrayList<String>();
         absent = new ArrayList<String>();
     }
-
+   
     public Vote (Bill bill, Date date, int type, String sequenceNumber) {
         this();
         this.bill = bill;

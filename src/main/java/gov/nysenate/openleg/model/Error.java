@@ -7,11 +7,19 @@ private int errorId;
 private int reportId;
 private String lbdc;
 private String json;
-enum errorInfo{summary,title,action,sponsor,cosponsor};
-private String errorInfo;
+enum errorType{summary,title,action,sponsor,cosponsor};
+private String errorType;
 
 
 
+public String getErrorType()
+{
+    return errorType;
+}
+public void setErrorType(String errorType)
+{
+    this.errorType = errorType;
+}
 public String getBillId()
 {
     return billId;
@@ -52,14 +60,7 @@ public void setJson(String json)
 {
     this.json = json;
 }
-public String getErrorInfo()
-{
-    return errorInfo;
-}
-public void setErrorInfo(String errorInfo)
-{
-    this.errorInfo = errorInfo;
-};
+
 
     
 }
