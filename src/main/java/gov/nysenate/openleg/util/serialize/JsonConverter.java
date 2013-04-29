@@ -387,14 +387,14 @@ public class JsonConverter {
 
     /**
      * The following <object type>_exclude methods
-     * 
-     * 
+     *
+     *
      */
 
     private static List<String> simple_bill_exclude() {
         List<String> simple_bill_exclude = new ArrayList<String>();
 
-        simple_bill_exclude.add("lawSection");
+        // simple_bill_exclude.add("lawSection");
         simple_bill_exclude.add("previousVersions");
         simple_bill_exclude.add("coSponsors");
         simple_bill_exclude.add("multiSponsors");
@@ -403,7 +403,7 @@ public class JsonConverter {
         simple_bill_exclude.add("fulltext");
         simple_bill_exclude.add("memo");
         simple_bill_exclude.add("law");
-        simple_bill_exclude.add("actClause");
+        // simple_bill_exclude.add("actClause");
         simple_bill_exclude.add("sortIndex");
         simple_bill_exclude.add("votes");
         simple_bill_exclude.add("stricken");
@@ -538,7 +538,7 @@ public class JsonConverter {
         bill_exclude.add("latestAmendment");
         bill_exclude.add("pastCommittees");
         bill_exclude.add("stricken");
-        bill_exclude.add("actClause");
+        // bill_exclude.add("actClause");
 
         return bill_exclude;
     }
