@@ -2,20 +2,23 @@
 source $(dirname "$0")/utils.sh
 
 if [ "$1" = "" ]; then
-	env=".";
+    env=".";
 else
-	env="$1";
+    env="$1";
 fi
 
 if [ `find $env/processed -type f -name SOBI* | wc -l` -ne 0 ]; then
-	mv `find $env/processed -type f -name SOBI*` data/;
+    find $env/processed/ -type f -name SOBI* | xargs mv -t $env/data/
 fi
 
 if [ `find $env/work -type f -name SOBI* | wc -l` -ne 0 ]; then
-	mv `find $env/work -type f -name SOBI*` data/;
+    find $env/work/ -type f -name SOBI* | xargs mv -t $env/data/
 fi
 
-rm -fr data/*.xml
-rm -fr processed/*
-rm -fr json/*
-rm -fr lucene/*
+rm -fr $env/work/*
+rm -fr $env/processed/*
+rm -fr $env/json/*
+rm -fr $env/lucene/*
+rm -f $env/data/*xml
+rm -f $env/data/*log
+
