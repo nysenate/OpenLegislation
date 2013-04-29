@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.scripts;
 
+import gov.nysenate.openleg.services.UpdateReporter;
 import gov.nysenate.openleg.services.Lucene;
 import gov.nysenate.openleg.services.ServiceBase;
 import gov.nysenate.openleg.services.Varnish;
@@ -50,7 +51,8 @@ public class Push {
                 .addOption("v", "varnish", false, "Push changes to the Varnish service")
                 .addOption("f", "change-file", true, "Path of changeLog file.")
                 .addOption("c", "changes", true, "A newline delimited list of changes")
-                .addOption("h", "help", false, "Print this message");
+                .addOption("h", "help", false, "Print this message")
+                .addOption("u", "updateReporter", false, "Push updates to html");
             opts = new PosixParser().parse(options, args);
             required = opts.getArgs();
             if(opts.hasOption("-h")) {
@@ -92,6 +94,10 @@ public class Push {
 
         if(opts.hasOption("varnish")) {
             services.add(new Varnish("127.0.0.1", 80));
+        }
+
+        if(opts.hasOption("updateReporter")) {
+            services.add(new UpdateReporter());
         }
 
         // Pass the change log through a set of service hooks
