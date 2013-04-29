@@ -159,12 +159,10 @@
 															<%
 														}
 													}
-													if (calEnt.getBill().getTitle() != null) { %>
-														<br />
-														Title: <%=calEnt.getBill().getTitle()%>
-													<% } else if (calEnt.getSubBill() != null && calEnt.getSubBill().getTitle() != null) { %>
-														<br/>
-														Title: <%=calEnt.getSubBill().getTitle()%> 
+													if (calEnt.getBill().getActClause() != null) { %>
+														<br /> <%=calEnt.getBill().getActClause()%>
+													<% } else if (calEnt.getSubBill() != null && calEnt.getSubBill().getActClause() != null) { %>
+														<br/> <%=calEnt.getSubBill().getActClause()%>
 													<% } %> 
 												</li>
 											<% } %> 
