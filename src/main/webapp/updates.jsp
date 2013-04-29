@@ -20,8 +20,7 @@
 	<div id="updateTable">
 		<table id="update">
 <%
-	TreeMap<Date, ArrayList<Update>> updates = new TreeMap<Date, ArrayList<Update>>(Collections.reverseOrder());
-	updates = (TreeMap<Date, ArrayList<Update>>)(request.getAttribute("updates"));
+	TreeMap<Date, ArrayList<Update>> updates = (TreeMap<Date, ArrayList<Update>>)(request.getAttribute("updates")); 
 if(updates != null){ 
 	SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, ''yyyy");
 	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");

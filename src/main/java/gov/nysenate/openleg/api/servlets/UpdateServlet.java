@@ -31,6 +31,8 @@ import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
  */
 public class UpdateServlet extends HttpServlet {
 
+    private SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+
     public UpdateServlet() {
         super();
     }
@@ -38,31 +40,24 @@ public class UpdateServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
         List<Update> updates = null;
-        // Strings in yyyy-MM-dd format inputed by user in the html date input.
-        String startDay = (String)request.getParameter("startDay");
-        String endDay = (String)request.getParameter("endDay");
-        // Strings in yyyy-MM-dd HH:mm:ss format, used in MySQL queries.
-        String startDate = null;
-        String endDate = null;
+        String startDay = (String)request.getParameter("startDay");     // Earliest day we want to see results for.
+        String endDay = (String)request.getParameter("endDay");         // Latest day to see results for, default is today.
         if(startDay == null || endDay == null){
-            startDate = makeDefaultStartDate();
-            endDate = makeDefaultEndDate();
-            endDay = endDate.split(" ")[0];
-            startDay = startDate.split(" ")[0];
-        }
-        else {
-            startDate = formatStartDateString(startDay);
-            endDate = formatEndDateString(endDay);
+            // Create a default date range.
+            Date date = new Date();
+            int numDaysToDisplay = -7;
+            startDay = dateFormat.format(DateUtils.addDays(date, numDaysToDisplay));
+            endDay = dateFormat.format(date);
         }
         request.setAttribute("endDay", endDay);
         request.setAttribute("startDay", startDay);
         try {
-            updates = processQuery(startDate, endDate);
+            updates = processQuery(startDay, endDay);
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
-        // Create a map of updates by date.
+        // Create a map of updates.
         TreeMap<Date, ArrayList<Update>> updatesMap = groupByDate(updates);
         orderDateTime(updatesMap);
         request.setAttribute("updates", updatesMap);
@@ -72,8 +67,6 @@ public class UpdateServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
     }
-
-    // TODO: Move most(all?) this code out of servlet.
     
     private List<Update> processQuery(String startDate, String endDate) throws SQLException
     {
@@ -89,55 +82,35 @@ public class UpdateServlet extends HttpServlet {
         datasource.setUrl(url);
         datasource.setUsername(userName);
         datasource.setPassword(password);
-
+        
+        // Add hh:mm:ss values to dates for the query.
+        startDate += " 00:00:00";
+        endDate += " 23:59:59";
         QueryRunner run = new QueryRunner(datasource);
         ResultSetHandler<List<Update>> handler = new BeanListHandler<Update>(Update.class);
         List<Update> updates = run.query("SELECT * FROM OpenLegUpdateTracker.Updates WHERE date BETWEEN ? AND ? ORDER BY date", handler, startDate, endDate);
         return updates;
     }
 
-    private String makeDefaultEndDate()
-    {
-        // Default end date = current date.
-        Date date = new Date();
-        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String endDate = sdf.format(date);
-        return endDate;
-    }
-
-    private String makeDefaultStartDate()
-    {
-        // Default range starts from 7 days ago.
-        int defaultRange = -7;
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        // Set to the beginning of the day.
-        DateUtils.setMilliseconds(date, 0);
-        DateUtils.setMinutes(date, 0);
-        DateUtils.setHours(date, 0);
-        String startDate = sdf.format(DateUtils.addDays(date, defaultRange));
-        return startDate;
-    }
-
     /**
-     * Sorts updates by their day of occurrence.
-     * @param updates List of updates to be group by day of occurrence.
-     * @return a mapping of updates to each day.
+     * Sorts a list of updates into a TreeMap where updates are mapped to their day of occurrence.
+     * @param updates List of updates spanning multiple days.
+     * @return a mapping of updates by their day of occurrence.
      */
     private TreeMap<Date, ArrayList<Update>> groupByDate(List<Update> updates)
     {
-        // Store the most recent days first.
+        // Reverse the default ordering of TreeMap so that the most recent day appears at the top of the web page instead of the bottom.
         TreeMap<Date, ArrayList<Update>> dateList = new TreeMap<Date, ArrayList<Update>>(Collections.reverseOrder());
+        
+        // Map each update to its associated date.
+        Date date = null;
         for(Update update: updates){
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date = null;
             try {
-                date = sdf.parse(update.getDate());
+                date = dateFormat.parse(update.getDate());
             }
             catch (ParseException e) {
                 e.printStackTrace();
             }
-            date = DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
             if (!dateList.containsKey(date)){
                 dateList.put(date, new ArrayList<Update>());
             }
@@ -145,10 +118,11 @@ public class UpdateServlet extends HttpServlet {
         }
         return dateList;
     }
-
-
-    /*
-     * Orders all updates in a day by their time of occurrence. Starting with the most recent.
+    
+    /**
+     * Orders daily updates by time of occurrence.
+     * Reverses the default order of the TreeMap values so that more recent updates appear at the top instead of the bottom.
+     * @param unOrdered
      */
     private void orderDateTime(TreeMap<Date, ArrayList<Update>> unOrdered)
     {
@@ -157,29 +131,4 @@ public class UpdateServlet extends HttpServlet {
             Collections.reverse(entry.getValue());
         }
     }
-
-    /**
-     * Converts a string representation of a date into a string format recognizable by MySQL.
-     * Since its the starting date, we want HH:mm:ss to be zeros so the day specified is included
-     *@param startDay string representing a date in yyyy-MM-dd format
-     *@return String representing the same date in yyyy-MM-dd HH:mm:ss format.
-     */
-    private String formatStartDateString(String startDay)
-    {
-        String formatted = startDay + " 00:00:00";
-        return formatted;
-    }
-
-    /**
-     * Converts a string representation of a date into a string format recognizable by MySQL.
-     * Since its the end date, we want HH:mm:ss to be 23:59:59, so the day specified is included.
-     *@param startDay string representing a date in yyyy-MM-dd format
-     *@return String representing the same date in yyyy-MM-dd HH:mm:ss format.
-     */
-    private String formatEndDateString(String endDay)
-    {
-        String formatted = endDay + " 23:59:59";
-        return formatted;
-    }
-
 }
