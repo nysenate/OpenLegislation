@@ -49,7 +49,7 @@ public class Vote extends SenateObject {
     @XStreamCollectionAlias(node="ayeswr",value="member")
     private List<String> ayeswr;
 
-    private String description;
+    private String description = "";
 
     public final static int VOTE_TYPE_FLOOR = 1;
 
