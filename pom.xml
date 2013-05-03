@@ -18,7 +18,7 @@
                     <target>1.6</target>
 
                     <!-- avoid possible encoding issues -->
-                    <encoding>ISO-8859-1</encoding>
+                    <encoding>latin1</encoding>
                 </configuration>
             </plugin>
 
@@ -157,6 +157,17 @@
         	<artifactId>mysql-connector-java</artifactId>
         	<version>5.1.24</version>
         	<scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-dbcp</artifactId>
+            <version>7.0.39</version>
         </dependency>
     </dependencies>
     <pluginRepositories>

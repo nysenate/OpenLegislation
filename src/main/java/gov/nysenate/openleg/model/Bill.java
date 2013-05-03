@@ -24,6 +24,8 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 public class Bill extends SenateObject implements Comparable<Bill>
 {
 
+    protected boolean active = true;
+
     @LuceneField
     protected int year;
 
@@ -46,6 +48,7 @@ public class Bill extends SenateObject implements Comparable<Bill>
     protected Person sponsor;
 
     public boolean frozen = false;
+
     public List<String> amendments = new ArrayList<String>();
 
     @XStreamAlias("cosponsors")
@@ -88,11 +91,23 @@ public class Bill extends SenateObject implements Comparable<Bill>
     @LuceneField
     protected Boolean stricken = false;
 
-    public Boolean deleted = false;
-
-    public Bill ()
+    public Bill()
     {
         super();
+    }
+
+    public Bill(String senateBillNo, int year) {
+        this.senateBillNo = senateBillNo;
+        this.year = year;
+    }
+
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
 
@@ -116,6 +131,32 @@ public class Bill extends SenateObject implements Comparable<Bill>
     public void setSenateBillNo(String senateBillNo)
     {
         this.senateBillNo = senateBillNo;
+    }
+
+
+    public List<String> getAmendments()
+    {
+        return this.amendments;
+    }
+
+    public void setAmendments(List<String> amendments)
+    {
+        this.amendments = amendments;
+    }
+
+    public void addAmendments(List<String> amendments)
+    {
+        this.amendments.addAll(amendments);
+    }
+
+    public void addAmendment(String amendment)
+    {
+        this.amendments.add(amendment);
+    }
+
+    public void removeAmendment(String amendment)
+    {
+        this.amendments.remove(amendment);
     }
 
 

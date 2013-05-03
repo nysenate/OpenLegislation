@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.util;
 
+import gov.nysenate.openleg.model.Bill;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -185,5 +187,18 @@ public class Storage {
 
     private File storageFile(String key) {
         return new File(storage, key+".json");
+    }
+
+    public Bill getBill(String billKey)
+    {
+        String[] keyParts = billKey.split("-");
+        return (Bill)this.get(keyParts[1]+"/bill/"+billKey, Bill.class);
+    }
+
+    public void saveBill(Bill bill)
+    {
+        String billKey = bill.getSenateBillNo();
+        String[] keyParts = billKey.split("-");
+        this.set(keyParts[1]+"/bill/"+billKey, bill);
     }
 }

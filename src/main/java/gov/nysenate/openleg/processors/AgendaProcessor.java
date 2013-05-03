@@ -113,8 +113,8 @@ public class AgendaProcessor implements OpenLegConstants {
             bill.setSponsor(new Person(xmlBill.getSponsor().getContent()));
         }
 
-        if (xmlBill.getTitle() != null && bill.getSummary().isEmpty()) {
-            bill.setSummary(xmlBill.getTitle().getContent());
+        if (xmlBill.getTitle() != null && bill.getActClause().isEmpty()) {
+            bill.setActClause(xmlBill.getTitle().getContent());
         }
 
         if (xmlBill.getVotes() != null) {

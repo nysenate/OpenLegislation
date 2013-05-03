@@ -1,0 +1,16 @@
+<?xml version= '1.0' encoding='UTF-8'?>
+<DATAPROCESS TIME="2013-03-23-23.37.25">
+2013A03006D1Budget              00000
+2013A03006D1Budget              00000
+2013A03006D2Budget Bills
+2013A03006D2Budget Bills
+2013A03006D5Same As S04643C
+2013A03006D5Same As S04643C
+2013A03006D3Amends various provisions of law relating to implementing the health and mental hygiene budget for
+2013A03006D3the 2013-2014 state fiscal year
+2013A03006D401/22/13 referred to ways and means
+2013A03006D402/13/13 amend and recommit to ways and means
+2013A03006D402/13/13 print number 3006a
+2013A03006D402/22/13 amend (t) and recommit to ways and means
+2013A03006D402/22/13 print number 3006b
+2013A03006D403/08/13 amend (t) and recommit to ways and means

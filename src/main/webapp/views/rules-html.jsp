@@ -5,7 +5,7 @@
 <br/>
 <div id="content">
 <pre>
-                             RULES OF THE SENATE
+                              RULES OF THE SENATE
  
                           OF THE STATE OF NEW YORK
  
@@ -1887,50 +1887,50 @@
  
                                       A
  
-  ABSENTEES----- .................................................... Rule
+  ABSENTEES-----
  
-    Censure or penalty for unexcused ........................... IX Sec. 7
-    Excuse of .................................................. IX Sec. 1
-    Suspension of unexcused ...................................  IX Sec. 7
-    Securing presence of ....................................... IX Sec. 7
-    Sergeant at arms may be sent for ..................... IX Sec. 2, sb a
+    Censure or penalty for unexcused ............................ X Sec. 7
+    Excuse of ................................................... X Sec. 1
+    Suspension of unexcused ....................................  X Sec. 7
+    Securing presence of ........................................ X Sec. 7
+    Sergeant at arms may be sent for ...................... X Sec. 2, sb a
  
   ADJOURNMENT-----
  
-    Limitation upon ........................................... XII Sec. 1
-    Measure under consideration at ....................... IX Sec. 3, sb f
-    Motion for, always in order, exceptions ............... V Sec. 8, sb b
-    Debate not allowed on ................................. V Sec. 8, sb b
-    One, only, in order after close of debate ............ IX Sec. 3, sb f
-    Precedence of, when question pending .................. V Sec. 8, sb a
-    Previous question .................................. V Sec. 8, sb a, d
-    Reconsideration of, not in order ...................... V Sec. 9, sb a
+    Limitation upon .......................................... XIII Sec. 1
+    Measure under consideration at ........................ X Sec. 3, sb f
+    Motion for, always in order, exceptions .............. VI Sec. 8, sb b
+    Debate not allowed on ................................ VI Sec. 8, sb b
+    One, only, in order after close of debate ............. X Sec. 3, sb f
+    Precedence of, when question pending ................. VI Sec. 8, sb a
+    Previous question ................................. VI Sec. 8, sb a, d
+    Reconsideration of, not in order ..................... VI Sec. 9, sb a
  
   ADMISSION TO FLOOR-----
  
-    Persons entitled to ......................................... X Sec. 2
-    Reporters entitled to ...................................... II Sec. 5
-                                                            X Sec. 2, sb d
-    Sergeant at arms to enforce rules respecting ............... IV Sec. 6
-                                                            X Sec. 2, sb j
+    Persons entitled to ........................................ XI Sec. 2
+    Reporters entitled to ....................................... V Sec. 5
+                                                           XI Sec. 2, sb d
+    Sergeant at arms to enforce rules respecting ................ V Sec. 6
+                                                           XI Sec. 2, sb j
  
   ALTER OR AMEND SENATE RULES (See "RULES OF SENATE")
  
   AMENDMENTS-----
  
-    Bills reported favorably, if amended to be reprinted ....... VI Sec. 3
-    Constitutional, how treated .......................... VI Sec. 9, sb c
-    Filing of .......................................... VIII Sec. 4, sb a
-    Germane, requirement respecting ...................... VI Sec. 4, sb b
-    Matter added and eliminated by, how treated .......... VI Sec. 4, sb b
-    Motion to amend by non-sponsor ........................... VIII Sec. 4
-    Order of precedence of motion offering ................ V Sec. 8, sb a
-    Pending, after debate, how vote taken ................ IX Sec. 3, sb e
-    Preparation of ............................................. VI Sec. 4
-    Proposed, to be filed with committee chairman ...... VIII Sec. 4, sb a
-    Restoring bill to earlier form ............................. VI Sec. 3
-    Third reading, allowed prior to completion of ...... VIII Sec. 4, sb a
-    Two copies for introduction of ....................... VI Sec. 4, sb b
+    Bills reported favorably, if amended to be reprinted ...... VII Sec. 3
+    Constitutional, how treated ......................... VII Sec. 9, sb c
+    Filing of ............................................ IX Sec. 4, sb c
+    Germane, requirement respecting ..................... VII Sec. 4, sb b
+    Matter added and eliminated by, how treated ......... VII Sec. 4, sb b
+    Motion to amend by non-sponsor ....................... IX Sec. 4, sb a
+    Order of precedence of motion offering ............... VI Sec. 8, sb a
+    Pending, after debate, how vote taken ................. X Sec. 3, sb e
+    Preparation of ............................................ VII Sec. 4
+    Proposed, to be filed with committee chairman ........ IX Sec. 4, sb c
+    Restoring bill to earlier form ............................ VII Sec. 3
+    Third reading, allowed prior to completion of ........ IX Sec. 4, sb c
+    Two copies for introduction of ...................... VII Sec. 4, sb b
  
   AMENDMENTS TO FEDERAL CONSTITUTION
  
@@ -1942,210 +1942,210 @@
 
   APPEAL-----
  
-    Decision of presiding officer subject to .................. III Sec. 1
-                                                           IX Sec. 4, sb c
-    Motions or questions on, when not debatable ....... IX Sec. 3, sb e, f
-    Second, not to be determined until original is decided IX Sec. 4, sb c
+    Decision of presiding officer subject to ................... IV Sec. 1
+                                                            X Sec. 4, sb c
+    Motions or questions on, when not debatable ........ X Sec. 3, sb e, f
+    Second, not to be determined until original is decided  X Sec. 4, sb c
  
   APPROPRIATIONS-----
  
-    Employees provided for by, appointment of .................. IV Sec. 4
-    Quorum required for certain bills making ............. IX Sec. 2, sb c
-    Reconsideration of vote on bills making ............... V Sec. 9, sb b
-    Reference of bills or resolutions providing for ........... VII Sec. 7
-    Resolutions making, vote required .................... VI Sec. 9, sb d
-    Vote required for certain bills making ............... IX Sec. 2, sb b
+    Employees provided for by, appointment of ................... V Sec. 4
+    Quorum required for certain bills making .............. X Sec. 2, sb c
+    Reconsideration of vote on bills making .............. VI Sec. 9, sb b
+    Reference of bills or resolutions providing for .......... VIII Sec. 7
+    Resolutions making, vote required ................... VII Sec. 9, sb d
+    Vote required for certain bills making ................ X Sec. 2, sb b
  
   ASSEMBLY-----
  
-    Bills, amended and returned by ........................... VIII Sec. 8
-      Introduced by message from ............................... VI Sec. 1
-      Recalled from, reconsideration of ................... V Sec. 9, sb a
-      Substitution of, for Senate bills ...................... VIII Sec. 5
-    Consent of, necessary for adjournment longer than two days  XII Sec. 1
-    Messages from, shall be received at any time ................ V Sec. 4
-    Resolution recalled from, reconsideration of .......... V Sec. 9, sb a
-    Resolution recalling bill or resolution from ......... VI Sec. 9, sb a
+    Bills, amended and returned by ............................. IX Sec. 8
+      Introduced by message from .............................. VII Sec. 1
+      Recalled from, reconsideration of .................. VI Sec. 9, sb a
+      Substitution of, for Senate bills ........................ IX Sec. 5
+    Consent of, necessary for adjournment longer than two days XIII Sec. 1
+    Messages from, shall be received at any time ............... VI Sec. 4
+    Resolution recalled from, reconsideration of ......... VI Sec. 9, sb a
+    Resolution recalling bill or resolution from ........ VII Sec. 9, sb a
  
   AYES AND NAYS-----
  
-    Final passage,to be taken on, and entered on journal.VIII Sec. 6, sb b
-    Five Senators may require "slow" roll call of ............. VII Sec. 6
-                                                         VIII Sec. 6, sb b
-    Quorum, presence of, when determined by call of ...... IX Sec. 2, sb f
+    Final passage,to be taken on, and entered on journal.. IX Sec. 6, sb b
+    Five Senators may require "slow" roll call of ............ VIII Sec. 6
+                                                           IX Sec. 6, sb b
+    Quorum, presence of, when determined by call of ....... X Sec. 2, sb f
  
                                       B
  
   BILLS-----
  
-    Action on, Secretary's duty respecting ..................... IV Sec. 5
-    Amended by restoring to earlier printed form ............... VI Sec. 3
-    Amending Constitution, amendment and committal ....... VI Sec. 9, sb c
-    Amending existing laws, matter eliminated in brackets  VI Sec. 4, sb b
-    Amending existing laws, new matter underscored ....... VI Sec. 4, sb b
-    Amendments, how prepared ............................. VI Sec. 4, sb b
-      Must be germane to original object of .............. VI Sec. 4, sb b
-      Allowed any time prior to third reading .......... VIII Sec. 4, sb a
-    Appropriating money, etc. ......................... IX Sec. 2, sb b, c
-      Fiscal notes required ................................... VII Sec. 7
-    Bill sections, requirements respecting ............... VI Sec. 4, sb a
-    Budget bills, submission of, by Governor ................... VI Sec. 6
-    Constitutional quorum on vote for certain ............ IX Sec. 2, sb c
-      If absent retains place on calendar ................ IX Sec. 2, sb d
-      Needed only for final passage ...................... IX Sec. 2, sb e
-    Copies of, number required for introduction ................ VI Sec. 1
-    Correction of, by revision clerk ........................... VI Sec. 1
-    Daily calendar of .......................................... IV Sec. 5
-    Debate on, generally ....................................... IX Sec. 3
-    Desks of Senators, to be placed on ......................... VI Sec. 3
+    Action on, Secretary's duty respecting ...................... V Sec. 5
+    Amended by restoring to earlier printed form .............. VII Sec. 3
+    Amending Constitution, amendment and committal ...... VII Sec. 9, sb c
+    Amending existing laws, matter eliminated in brackets VII Sec. 4, sb b
+    Amending existing laws, new matter underscored ...... VII Sec. 4, sb b
+    Amendments, how prepared ............................ VII Sec. 4, sb b
+      Must be germane to original object of ............. VII Sec. 4, sb b
+      Allowed any time prior to third reading ............ IX Sec. 4, sb a
+    Appropriating money, etc. .......................... X Sec. 2, sb b, c
+      Fiscal notes required .................................. VIII Sec. 7
+    Bill sections, requirements respecting ............. VIII Sec. 4, sb a
+    Budget bills, submission of, by Governor .................. VII Sec. 6
+    Constitutional quorum on vote for certain ............. X Sec. 2, sb c
+      If absent retains place on calendar ................. X Sec. 2, sb d
+      Needed only for final passage ....................... X Sec. 2, sb e
+    Copies of, number required for introduction ............... VII Sec. 1
+    Correction of, by revision clerk .......................... VII Sec. 1
+    Daily calendar of ........................................... V Sec. 5
+    Debate on, generally ........................................ X Sec. 3
+    Desks of Senators, to be placed on ........................ VII Sec. 3
 
-    Explanatory note to be appended to certain ........... VI Sec. 4, sb a
-    Final date for introduction ................................ VI Sec. 5
-    Final passage of, generally .............................. VIII Sec. 6
-      Appropriating money, requirements for certain ... IX Sec. 2, sb b, c
-      Appropriating money, when may be reconsidered ....... V Sec. 9, sb b
-      Preparation for .................................. VIII Sec. 3, sb b
-      Presiding officer to certify ............................ III Sec. 2
-      Question on, not debatable after third reading ... VIII Sec. 6, sb b
-      Question on, taken immediately after third reading VIII Sec. 6, sb b
-      Quorum required for, certain bills ....................... IX Sec. 2
-      Vote on, how taken ............................... VIII Sec. 6, sb b
-      Vote required for, certain bills ......................... IX Sec. 2
-      When declared lost ............................... VIII Sec. 6, sb b
-    "Home rule" requests necessary before bill passage .. VII Sec. 5, sb c
-    Fiscal notes required, in certain cases ................... VII Sec. 7
-    Illegible bills to be returned ....................... VI Sec. 4, sb a
-    Introduction of ............................................ VI Sec. 1
-      By Senator, committee, message, etc. ..................... VI Sec. 1
-      Memos .................................................... VI Sec. 1
-      Reading, first and second, prior to ...................... VI Sec. 1
-      Two copies required for .................................. VI Sec. 1
-      Time limit on ............................................ VI Sec. 5
-    Jacketing of, by Jacketing Clerk ................... VIII Sec. 3, sb b
-    Laid aside, retain place, order of business ........... V Sec. 6, sb b
-      Time restriction ................................. VIII Sec. 6, sb a
+    Explanatory note to be appended to certain .......... VII Sec. 4, sb a
+    Final date for introduction ............................... VII Sec. 5
+    Final passage of, generally ................................ IX Sec. 6
+      Appropriating money, requirements for certain .... X Sec. 2, sb b, c
+      Appropriating money, when may be reconsidered ...... VI Sec. 9, sb b
+      Preparation for .................................... IX Sec. 3, sb b
+      Presiding officer to certify ............................. IV Sec. 2
+      Question on, not debatable after third reading ..... IX Sec. 6, sb b
+      Question on, taken immediately after third reading . IX Sec. 6, sb b
+      Quorum required for, certain bills ........................ X Sec. 2
+      Vote on, how taken ................................. IX Sec. 6, sb b
+      Vote required for, certain bills .......................... X Sec. 2
+      When declared lost ................................. IX Sec. 6, sb b
+    "Home rule" requests necessary before bill passage . VIII Sec. 5, sb c
+    Fiscal notes required, in certain cases .................. VIII Sec. 7
+    Illegible bills to be returned ...................... VII Sec. 4, sb a
+    Introduction of ........................................... VII Sec. 1
+      By Senator, committee, message, etc. .................... VII Sec. 1
+      Memos ................................................... ViI Sec. 1
+      Reading, first and second, prior to ..................... VII Sec. 1
+      Two copies required for ................................. VII Sec. 1
+      Time limit on ........................................... VII Sec. 5
+    Jacketing of, by Jacketing Clerk ..................... IX Sec. 3, sb b
+    Laid aside, retain place, order of business .......... VI Sec. 6, sb b
+      Time restriction ................................... IX Sec. 6, sb a
     Motions respecting (See "Motions")
-    Multi-sponsorship .......................................... VI Sec. 2
-    New matter, how shown ................................ VI Sec. 4, sb b
-    Notice of public hearing on ............................... VII Sec. 4
-    Official copy ...................................... VIII Sec. 3, sb b
-    Passage of, certification by presiding officer ............ III Sec. 2
-    Passage of, certain requirements for final ............... VIII Sec. 1
-    Petition out of committee, notice .......................... XI Sec. 3
-    Printed immediately on introduction ........................ VI Sec. 3
+    Multi-sponsorship ......................................... VII Sec. 2
+    New matter, how shown ............................... VII Sec. 4, sb b
+    Notice of public hearing on .............................. VIII Sec. 4
+    Official copy ........................................ IX Sec. 3, sb b
+    Passage of, certification by presiding officer ............. IV Sec. 2
+    Passage of, certain requirements for final ................. IX Sec. 1
+    Petition out of committee, notice ......................... XII Sec. 3
+    Printed immediately on introduction ....................... VII Sec. 3
     Program, departmental and agency,
-      submitted to Temporary President ......................... VI Sec. 7
-      Offered to Minority Leader ............................... VI Sec. 7
-    Placed on bill files on desks of Senators .................. VI Sec. 3
-    Private or local, one subject only, expressed in title ..... VI Sec. 4
-    Public hearing on ......................................... VII Sec. 4
+      submitted to Temporary President ........................ VII Sec. 7
+      Offered to Minority Leader .............................. VII Sec. 7
+    Placed on bill files on desks of Senators ................. VII Sec. 3
+    Private or local, one subject only, expressed in title .... VII Sec. 4
+    Public hearing on ........................................ VIII Sec. 4
     Quorum, three-fifths, required for passage
-      of certain ...................................... IX Sec. 2, sb c, e
-      Reading, first and second ................................ VI Sec. 1
-      Recalled from Assembly, etc., subject to certain rules . VIII Sec. 8
-      For amendment, or amended by Assembly .................. VIII Sec. 8
-      For reconsideration ................................. V Sec. 9, sb a
-    Reconsideration of .......................................... V Sec. 9
-      When not in order ................................... V Sec. 9, sb a
-    Referred to Revision Clerk ................................. VI Sec. 1
-    Referred to Jacketing Clerk ........................ VIII Sec. 3, sb b
-    Reintroduction for second year of term ..................... VI Sec. 8
-    Repealing existing laws .................................... VI Sec. 4
-    Report of committee to which bill referred ........ VII Sec. 5 sb a, b
-    Reported favorably, with amendments, to be reprinted ....... VI Sec. 3
-    Reprinting, when not complying with rules ............ VI Sec. 4, sb b
-    Restored to earlier form, not to be reprinted .............. VI Sec. 3
-    Revision Clerk shall return, if illegible ............ VI Sec. 4, sb a
-    Special order, if incompleted, bill retains place ........... V Sec. 5
+      of certain ....................................... X Sec. 2, sb c, e
+      Reading, first and second ............................... VII Sec. 1
+      Recalled from Assembly, etc., subject to certain rules ... IX Sec. 8
+      For amendment, or amended by Assembly .................... IX Sec. 8
+      For reconsideration ................................ VI Sec. 9, sb a
+    Reconsideration of ......................................... VI Sec. 9
+      When not in order .................................. VI Sec. 9, sb a
+    Referred to Revision Clerk ................................ VII Sec. 1
+    Referred to Jacketing Clerk .......................... IX Sec. 3, sb b
+    Reintroduction for second year of term .................... VII Sec. 8
+    Repealing existing laws ................................... VII Sec. 4
+    Report of committee to which bill referred ....... VIII Sec. 5 sb a, b
+    Reported favorably, with amendments, to be reprinted ...... VII Sec. 3
+    Reprinting, when not complying with rules ........... VII Sec. 4, sb b
+    Restored to earlier form, not to be reprinted ............. VII Sec. 3
+    Revision Clerk shall return, if illegible ........... VII Sec. 4, sb a
+    Special order, if incompleted, bill retains place .......... VI Sec. 5
 
-    Starred bills ............................................ VIII Sec. 7
-    State department bills, last day for submission ............ VI Sec. 5
-    Subject matter jurisdiction, primary, secondary ..... VII Sec. 5, sb a
-    Substitution of Assembly bills ........................... VIII Sec. 5
-    Third reading calendar, what constitutes ........... VIII Sec. 3, sb a
-      Provisions regarding ............................. VIII Sec. 6, sb a
-    Third reading, no amendments allowed on completion ofVIII Sec. 4, sb a
-      Order of precedence ................................. V Sec. 6, sb a
-    Three day rule, before passage ........................... VIII Sec. 1
-    Three-fifths quorum required for passage of certain IX Sec. 2, sb c, e
-    Three readings required before passage ............. VIII Sec. 2, sb a
-    Time limit on introduction of .............................. VI Sec. 5
-    Titles of, amending certain laws, what to contain .......... VI Sec. 4
-    To amend Constitution, limitation on amendment ....... VI Sec. 9, sb c
-    Two-thirds vote required for passage of certain ... IX Sec. 2, sb b, e
-    Two year "carry over" ...................................... VI Sec. 8
-    Vetoed by Governor, vote for passage ................. IX Sec. 2, sb b
+    Starred bills .............................................. IX Sec. 7
+    State department bills, last day for submission ........... VII Sec. 5
+    Subject matter jurisdiction, primary, secondary .... VIII Sec. 5, sb a
+    Substitution of Assembly bills ............................. IX Sec. 5
+    Third reading calendar, what constitutes ............. IX Sec. 3, sb a
+      Provisions regarding ............................... IX Sec. 6, sb a
+    Third reading, no amendments allowed on completion of  IX Sec. 4, sb a
+      Order of precedence ................................ VI Sec. 6, sb a
+    Three day rule, before passage ............................. IX Sec. 1
+    Three-fifths quorum required for passage of certain  X Sec. 2, sb c, e
+    Three readings required before passage ............... IX Sec. 2, sb a
+    Time limit on introduction of ............................. VII Sec. 5
+    Titles of, amending certain laws, what to contain ......... VII Sec. 4
+    To amend Constitution, limitation on amendment ...... VII Sec. 9, sb c
+    Two-thirds vote required for passage of certain .... X Sec. 2, sb b, e
+    Two year "carry over" ..................................... VII Sec. 8
+    Vetoed by Governor, vote for passage .................. X Sec. 2, sb b
  
   BUDGET BILLS (See also "APPROPRIATIONS")-----
  
-    Consideration of ........................................... VI Sec. 6
-    Reference of ............................................... VI Sec. 6
+    Consideration of .......................................... VII Sec. 6
+    Reference of .............................................. VII Sec. 6
  
   BUFFALO-----
  
-    Amendments to charter of ............................. VI Sec. 4, sb a
+    Amendments to charter of ............................ VII Sec. 4, sb a
  
   BUSINESS-----
  
-    Interruption of, prohibited .......................... IX Sec. 4, sb a
-    Invocation, daily .................................... IX Sec. 4, sb a
-    Journal to be read and approved, first business ....... V Sec. 3, sb a
-    Order of .................................................... V Sec. 3
-    Pledge of allegiance to the flag ...................... V Sec. 3, sb a
-                                                           IX Sec. 4, sb a
-    Quorum necessary to do ................................ V Sec. 3, sb b
-                                                           IX Sec. 2, sb a
+    Interruption of, prohibited ........................... X Sec. 4, sb a
+    Invocation, daily ..................................... X Sec. 4, sb a
+    Journal to be read and approved, first business ...... VI Sec. 3, sb a
+    Order of ................................................... VI Sec. 3
+    Pledge of allegiance to the flag ..................... VI Sec. 3, sb a
+                                                            X Sec. 4, sb a
+    Quorum necessary to do ............................... VI Sec. 3, sb b
+                                                            X Sec. 2, sb a
  
                                       C
  
   CALENDAR-----
-    Bills, acted upon in their order on ................... V Sec. 6, sb a
-      Certain, to retain place on ........................ IX Sec. 2, sb d
-      Daily .................................................... IV Sec. 5
-    General, how constituted .................................... V Sec. 6
-    Resolutions, acted upon in their order on ............. V Sec. 3, sb b
-                                                           VI Sec. 9, sb e
-    Secretary's duty respecting bills on ....................... IV Sec. 5
-    Special orders, when unfinished ............................. V Sec. 5
-    Third reading, what bills to constitute ............ VIII Sec. 3, sb a
+    Bills, acted upon in their order on .................. VI Sec. 6, sb a
+      Certain, to retain place on ......................... X Sec. 2, sb d
+      Daily ..................................................... V Sec. 5
+    General, how constituted ................................... VI Sec. 6
+    Resolutions, acted upon in their order on ............ VI Sec. 3, sb b
+                                                          VII Sec. 9, sb e
+    Secretary's duty respecting bills on ........................ V Sec. 5
+    Special orders, when unfinished ........................... VII Sec. 5
+    Third reading, what bills to constitute .............. IX Sec. 3, sb a
  
   CALL OF SENATE-----
  
-    Motion for, and order of precedence ................... V Sec. 8, sb b
-    When may be ordered ........................................ IX Sec. 6
-    When not in order .......................................... IX Sec. 6
+    Motion for, and order of precedence .................. VI Sec. 8, sb b
+    When may be ordered ......................................... X Sec. 6
+    When not in order ........................................... X Sec. 6
  
   CLOSE DEBATE, MOTION TO-----
 
-    May be ordered on single motion, etc. .......... IX Sec. 3, sb d, e, f
-    May embrace all pending motions or amendments ..... IX Sec. 3, sb e, f
-    Motions in order after adoption of ................ IX Sec. 3, sb e, f
-    Not amendable or debatable ........................... IX Sec. 3, sb d
-    To be immediately put ................................ IX Sec. 3, sb d
+    May be ordered on single motion, etc. ........... X Sec. 3, sb d, e, f
+    May embrace all pending motions or amendments ...... X Sec. 3, sb e, f
+    Motions in order after adoption of ................. X Sec. 3, sb e, f
+    Not amendable or debatable ............................ X Sec. 3, sb d
+    To be immediately put ................................. X Sec. 3, sb d
  
   COMMIT, MOTION TO-----
  
-    Allowable after adoption of motion to close debate ... IX Sec. 3, sb f
-    Order of precedence of certain ........................ V Sec. 8, sb a
-    Until decided, precludes debate on main question ...... V Sec. 8, sb d
+    Allowable after adoption of motion to close debate .... X Sec. 3, sb f
+    Order of precedence of certain ....................... VI Sec. 8, sb a
+    Until decided, precludes debate on main question ..... VI Sec. 8, sb d
  
   COMMITTEE-----
  
-    Bills introduced on report of, to be referred to ........... VI Sec. 1
-      Jurisdiction over, secondary, primary ............. VII Sec. 5, sb a
-    Official hearings, testimony .............................. VII Sec. 4
-    Petition, motion to ........................................ XI Sec. 2
-      Notice required; exceptions .............................. XI Sec. 2
-    Public hearing by, prior notice required .................. VII Sec. 4
-    Report from, involving seat of Senator, always in order ..... V Sec. 4
-    Report, disposition of .............................. VII Sec. 5, sb a
-      Shall be entered upon journal ..................... VII Sec. 5, sb a
-      Shall be made by majority of ...................... VII Sec. 5, sb a
-      Shall be made directly to Committee on Rules, when  VII Sec. 5, sb a
-      Committee presentations ........................... VII Sec. 3, sb d
-      Motion for committee consideration ................ VII Sec. 3, sb e
-      Committee oversight function ...................... VII Sec. 4, sb c
-      Petition for a public hearing on a bill ........... VII Sec. 4, sb e
+    Bills introduced on report of, to be referred to .......... VII Sec. 1
+      Jurisdiction over, secondary, primary ............ VIII Sec. 5, sb a
+    Official hearings, testimony ............................. VIII Sec. 4
+    Petition, motion to ......................................... X Sec. 2
+      Notice required; exceptions ............................... X Sec. 2
+    Public hearing by, prior notice required ................. VIII Sec. 4
+    Report from, involving seat of Senator, always in order .... VI Sec. 4
+    Report, disposition of ............................. VIII Sec. 5, sb a
+      Shall be entered upon journal .................... VIII Sec. 5, sb a
+      Shall be made by majority of ..................... VIII Sec. 5, sb a
+      Shall be made directly to Committee on Rules, when VIII Sec. 5, sb a
+      Committee presentations .......................... VIII Sec. 3, sb d
+      Motion for committee consideration ............... VIII Sec. 3, sb e
+      Committee oversight function ..................... VIII Sec. 4, sb c
+      Petition for a public hearing on a bill .......... VIII Sec. 4, sb e
  
   COMMITTEE ON CONFERENCE-----
  
@@ -2154,107 +2154,112 @@
  
   COMMITTEES-----
  
-    Chairs of, appointment by Temporary President .............. II Sec. 2
-    Deputy Majority Leader for Legislative Operations,
-      ex officio member of all ................................ VII Sec. 1
-    Deputy Minority Leader, ex officio member of all .......... VII Sec. 1
-    Executive sessions, conduct ............ VII Sec. 3, sb a Par (5), (6)
-      Minutes required; exception .......... VII Sec. 3, sb b Par (2), (3)
-    Meeting of scheduled, open .......................... VII Sec. 3, sb a
-      Minutes required; available to public  VII Sec. 3, sb b Par (1), (3)
-    Members of, appointment by Temporary President ............. II Sec. 2
-    Minority Leader, ex officio member of all ................. VII Sec. 1
-    Select, reports of .................................... V Sec. 3, sb a
+    Chairs of, appointment by Temporary President ............. III Sec. 2
+    Deputy Republican Conference Leader,
+      ex officio member of all ............................... VIII Sec. 1
+    Deputy Independent Democratic
+      Conference Leader, ex officio member of all............. VIII Sec. 1
+    Deputy Democratic Conference Leader,
+     ex officio member of all ................................ VIII Sec. 1
+    Executive sessions, conduct ........... VIII Sec. 3, sb a Par (5), (6)
+      Minutes required; exception ......... VIII Sec. 3, sb b Par (2), (3)
+    Meeting of scheduled, open ......................... VIII Sec. 3, sb a
+      Minutes required; available to public VIII Sec. 3, sb b Par (1), (3)
+    Members of, appointment by Temporary President ............ III Sec. 2
+    Democratic Conference Leader, ex officio member of all ... VIII Sec. 1
+    Select, reports of ................................... VI Sec. 3, sb a
     Standing, list of, and number of members
-      composing, continuing ................................... VII Sec. 1
-      Special meetings, when may be held ........ VII Sec. 3, sb a Par (2)
-      Temporary President, ex officio member of all ........... VII Sec. 1
-      Vice President Pro Tempore, ex officio member of all .... VII Sec. 1
- 
+      composing, continuing .................................. VIII Sec. 1
+      Special meetings, when may be held........ VIII Sec. 3, sb a Par (2)
+      Republican Conference Leader,
+      ex officio member of all ............................... VIII Sec. 1
+      Independent Democratic Conference Leader,
+      ex officio member of all ............................... VIII Sec. 1
+
   CONCURRENT RESOLUTION (See "RESOLUTIONS")
  
   CONSTITUTION OF NEW YORK STATE-----
-
+ 
     Resolution to amend, amendment of, further reference to
-      Attorney General ................................... VI Sec. 9, sb c
+      Attorney General .................................. VII Sec. 9, sb c
     Amendment of, limitation on, after
-      ordered to third reading ........................... VI Sec. 9, sb c
-    After final passage, duty of Presiding Officer ............ III Sec. 2
-    Final reading of, may be committed prior to .......... VI Sec. 9, sb c
-    Treated same as bill ................................. VI Sec. 9, sb c
+      ordered to third reading .......................... VII Sec. 9, sb c
+    After final passage, duty of Presiding Officer ............. IV Sec. 2
+    Final reading of, may be committed prior to ........... V Sec. 9, sb c
+    Treated same as bill .................................. V Sec. 9, sb c
  
   CONSTITUTION OF UNITED STATES-----
  
-    Resolutions ratifying amendment to ................... VI Sec. 9, sb c
-      Duty of Presiding Officer upon final passage ............ III Sec. 2
-      Must be germane to affairs of the state ............ VI Sec. 9, sb b
+    Resolutions ratifying amendment to .................... V Sec. 9, sb c
+      Duty of Presiding Officer upon final passage ............. IV Sec. 2
+      Must be germane to affairs of the state ........... VII Sec. 9, sb b
  
   CONTEMPT-----
  
-    Refusal of Senator to vote, may be deemed; exception . IX Sec. 1, sb a
+    Refusal of Senator to vote, may be deemed; exception .. X Sec. 1, sb a
  
                                       D
  
   DEBATE-----
  
-    Closing ........................................... IX Sec. 3, sb d, e
-    Germane to the question .............................. IX Sec. 3, sb a
-    Limitation upon speaking in ....................... IX Sec. 3, sb d, e
-                                                           IX Sec. 4, sb b
-    Minority Leader may speak once after close of ........ IX Sec. 3, sb c
-    Motion to close, when in order .............. IX Sec. 3, sb c, d, e, f
-    What motions in order after adoption of ........... IX Sec. 3, sb e, f
-    Question in, when may be divided ..................... IX Sec. 3, sb b
-    Question not debatable, call of Senate ................ V Sec. 8, sb b
-    Main question, until certain motions are decided ...... V Sec. 8, sb d
-    Objections to reading paper other than petitions ..... IX Sec. 5, sb b
-    Of presence of quorum ................................ IX Sec. 2, sb f
-    On final passage ................................... VIII Sec. 6, sb b
-    Priority of business .......................... V Sec. 3, sb a par (3)
-    To adjourn ............................................ V Sec. 8, sb b
-    To close debate ................................... IX Sec. 3, sb d, e
-    To commit, when motion to close debate is pending .... IX Sec. 3, sb f
-    To lay on table .................................... V Sec. 8, sb a, b
-    Of order, after motion to close debate ............... IX Sec. 3, sb f
-    Temporary President to close ......................... IX Sec. 3, sb f
-    Vote taken after, with amendments pending ......... IX Sec. 3, sb e, f
+    Closing ............................................ X Sec. 3, sb d, e
+    Germane to the question ............................... X Sec. 3, sb a
+    Limitation upon speaking in ........................ X Sec. 3, sb d, e
+                                                            X Sec. 4, sb b
+    Conference Leaders may speak once after close of ...... X Sec. 3, sb c
+    Motion to close, when in order ............... X Sec. 3, sb c, d, e, f
+    What motions in order after adoption of ............ X Sec. 3, sb e, f
+    Question in, when may be divided ...................... X Sec. 3, sb b
+    Question not debatable, call of Senate ............... VI Sec. 8, sb b
+    Main question, until certain motions are decided ..... VI Sec. 8, sb d
+    Objections to reading paper other than petitions ...... X Sec. 5, sb b
+    Of presence of quorum ................................. X Sec. 2, sb f
+    On final passage ..................................... IX Sec. 6, sb b
+    Priority of business ......................... VI Sec. 3, sb a par (3)
+    To adjourn ........................................... VI Sec. 8, sb b
+    To close debate .................................... X Sec. 3, sb d, e
+    To commit, when motion to close debate is pending ..... X Sec. 3, sb f
+    To lay on table ................................... VI Sec. 8, sb a, b
+    Of order, after motion to close debate ................ X Sec. 3, sb f
+    Temporary President to close .......................... X Sec. 3, sb f
+    Vote taken after, with amendments pending .......... X Sec. 3, sb e, f
  
   DOORS OF SENATE-----
  
-    Matters discussed when closed, to be kept secret ............ V Sec. 7
-    Motion to close ............................................. V Sec. 7
-      During discussion of, doors to remain shut ................ V Sec. 7
-    Open except when public welfare requires secrecy ............ X Sec. 1
+    Matters discussed when closed, to be kept secret ........... VI Sec. 7
+    Motion to close ............................................ VI Sec. 7
+      During discussion of, doors to remain shut ............... VI Sec. 7
+    Open except when public welfare requires secrecy ........... XI Sec. 1
  
                                       E
  
   EMPLOYEES-----
- 
-    Appointment of, generally .................................. IV Sec. 4
-    Certain, to be appointed by Temporary President ............ II Sec. 4
-    Duties of, generally ....................................... IV Sec. 4
 
+    Appointment of, generally ................................... V Sec. 4
+    Certain, to be appointed by Temporary President ........... III Sec. 4
+    Duties of, generally ........................................ V Sec. 4
+ 
   EXECUTIVE SESSION-----
  
-    Committee may call, certain cases ........... VII Sec. 3, sb a Par (5)
-    When Senate shall go into ................................... V Sec. 7
-      All to withdraw, except Senators, etc ..................... V Sec. 7
+    Committee may call, certain cases .......... VIII Sec. 3, sb a Par (5)
+    When Senate shall go into .................................. VI Sec. 7
+      All to withdraw, except Senators, etc .................... VI Sec. 7
  
                                       F
  
   FINANCE, STANDING COMMITTEE ON-----
  
-    Certain bills and resolutions to be referred to ........... VII Sec. 7
-    Fiscal notes, to keep file of bills requiring ............. VII Sec. 7
-    Certain bills not to be reported without .................. VII Sec. 7
-    Nominations by Governor, to be submitted to; exception .... VII Sec. 6
+    Certain bills and resolutions to be referred to .......... VIII Sec. 7
+    Fiscal notes, to keep file of bills requiring ............ VIII Sec. 7
+    Certain bills not to be reported without ................. VIII Sec. 7
+    Nominations by Governor, to be submitted to; exception ... VIII Sec. 6
  
   FISCAL NOTES-----
  
-    Certain bills require ..................................... VII Sec. 7
-    Contents of ............................................... VII Sec. 7
-    Filing prior to report by committee ....................... VII Sec. 7
-    Finance committee to maintain file of ..................... VII Sec. 7
+    Certain bills require .................................... VIII Sec. 7
+    Contents of .............................................. VIII Sec. 7
+    Filing prior to report by committee ...................... VIII Sec. 7
+    Finance committee to maintain file of .................... VIII Sec. 7
  
   FISCAL IMPACT NOTES-----
  
@@ -2268,257 +2273,253 @@
  
   FLOOR-----
  
-    Admission to, persons entitled to ........................... X Sec. 2
-    Reporters entitled to admission ............................ II Sec. 5
-                                                            X Sec. 2, sb d
-    Sergeant at arms to enforce rules respecting ............... IV Sec. 6
-                                                            X Sec. 2, sb i
-    Assistant Sergeant at arms, doorkeepers .................... IV Sec. 6
-    Yielding, temporarily ................................ IX Sec. 4, sb b
+    Admission to, persons entitled to .......................... XI Sec. 2
+    Reporters entitled to admission ........................... III Sec. 5
+                                                           XI Sec. 2, sb d
+    Sergeant at arms to enforce rules respecting ................ V Sec. 6
+                                                           XI Sec. 2, sb i
+    Assistant Sergeant at arms, doorkeepers ..................... V Sec. 6
+    Yielding, temporarily ................................. X Sec. 4, sb b
  
   FREEDOM OF INFORMATION-----
  
-    Freedom of Information Law ................................ XIV Sec. 1
+    Freedom of Information Law ................................. XV Sec. 1
  
                                       G
  
   GALLERIES-----
  
-    Disturbance in, presiding officer may clear ............... III Sec. 1
+    Disturbance in, presiding officer may clear ................ IV Sec. 1
  
   GOVERNOR-----
- 
-    Admission to floor .................................... X Sec. 2, sb a
-    Bills returned from, without approval, vote to repass  IX Sec. 2, sb b
-    Budget bills submitted by .................................. VI Sec. 6
-    Messages from, for passage of certain bills ......... VII Sec. 5, sb c
 
-                                                               VIII Sec. 1
-    Order of business of .......................... V Sec. 3, sb a Par (3)
-      Shall be received at any time ............................. V Sec. 4
-    Nominations sent by, reference and confirmation of ........ VII Sec. 6
+    Admission to floor ................................... XI Sec. 2, sb a
+    Bills returned from, without approval, vote to repass . X Sec. 2, sb b
+    Budget bills submitted by ................................. VII Sec. 6
+    Messages from, for passage of certain bills ........ VIII Sec. 5, sb c
+                                                                 IX Sec. 1
+    Order of business of ......................... VI Sec. 3, sb a Par (3)
+      Shall be received at any time ............................ VI Sec. 4
+    Nominations sent by, reference and confirmation of ....... VIII Sec. 6
  
                                       H
  
   "HOME RULE" REQUESTS-----
  
-    Requirement respecting, bill ........................ VII Sec. 5, sb c
+    Requirement respecting, bill ....................... VIII Sec. 5, sb c
  
                                       J
  
   JACKETING CLERK-----
  
-    Shall cause bills to be jacketed ................... VIII Sec. 3, sb b
-    Shall cause official copies readied ................ VIII Sec. 3, sb b
+    Shall cause bills to be jacketed ..................... IX Sec. 3, sb b
+    Shall cause official copies readied .................. IX Sec. 3, sb b
  
   JOINT RULES-----
  
     Motion to amend, suspend, etc., requires
-      written notice or unanimous consent ...................... XI Sec. 2
-      Order of business in which received ...................... XI Sec. 2
-      When to be made .......................................... XI Sec. 2
+      written notice or unanimous consent ..................... XII Sec. 2
+      Order of business in which received ..................... XII Sec. 2
+      When to be made ......................................... XII Sec. 2
     Permanent joint rules of the Senate and Assembly
     (see *COMMITTEE ON CONFERENCE and/or FISCAL IMPACT NOTES)
-    Vote required to amend, suspend, etc. ...................... XI Sec. 1
+    Vote required to amend, suspend, etc. ..................... XII Sec. 1
  
   JOURNAL-----
  
-    Correction of ......................................... V Sec. 3, sb a
-    Executive and legislative proceedings to be in separate ..... V Sec. 1
-    Question on final passage of bills to be entered on  VIII Sec. 6, sb b
-    Reading and approval of, first business ............... V Sec. 3, sb a
-    Report of committee on bill, when entered upon ...... VII Sec. 5, sb a
-    Roll Call .......................................... VIII Sec. 6, sb b
-    Senate shall keep and publish ............................... V Sec. 1
-    Senator's refusal to respond, to be entered on ....... IX Sec. 2, sb g
-    To be printed, distributed, etc. ........................... IV Sec. 5
+    Correction of ........................................ VI Sec. 3, sb a
+    Executive and legislative proceedings to be in separate .... VI Sec. 1
+    Question on final passage of bills to be entered on .. IX Sec. 6, sb b
+    Reading and approval of, first business .............. VI Sec. 3, sb a
+    Report of committee on bill, when entered upon ..... VIII Sec. 5, sb a
+    Roll Call ............................................ IX Sec. 6, sb b
+    Senate shall keep and publish .............................. VI Sec. 1
+    Senator's refusal to respond, to be entered on ........ X Sec. 2, sb g
+    To be printed, distributed, etc. ............................ V Sec. 5
  
   JUDICIARY, STANDING COMMITTEE ON-----
  
-    Nominations referred to ................................... VII Sec. 6
+    Nominations referred to .................................. VIII Sec. 6
  
                                       L
  
-  LEGISLATIVE LIBRARIAN ........................................ II Sec. 7
+  LEGISLATIVE LIBRARIAN ....................................... III Sec. 7
  
-  LEGISLATIVE LIBRARY .......................................... II Sec. 7
+  LEGISLATIVE LIBRARY ......................................... III Sec. 7
  
-    Function of ................................................ II Sec. 7
+    Function of ............................................... III Sec. 7
  
   LIEUTENANT GOVERNOR (See also "PRESIDENT")-----
- 
+
     Shall be President of Senate ................................ I Sec. 1
     Shall have only casting vote in Senate ...................... I Sec. 1
  
   LIMITATION UPON SPEAKING (See "SPEAKING")-----
-
+ 
                                       M
  
   MAJORITY-----
  
-    Quorum is majority of senators elected ............... IX Sec. 2, sb a
-    Reconsideration of certain bills requires ............. V Sec. 9, sb b
-    Resolutions for expenditure of money, require ........ VI Sec. 9, sb d
-    Suspension of rules requires ............................... XI Sec. 1
+    Quorum is majority of senators elected ................ X Sec. 2, sb a
+    Reconsideration of certain bills requires ............ VI Sec. 9, sb b
+    Resolutions for expenditure of money, require ....... VII Sec. 9, sb d
+    Suspension of rules requires ................................ X Sec. 1
  
   MESSAGES-----
  
-    From Assembly, shall be received at any time ................ V Sec. 4
-    From Governor, shall be received at any time ................ V Sec. 4
-    For passage of certain bills ........................ VII Sec. 5, sb c
-                                                               VIII Sec. 1
-    Order of business of, from Governor, and Assembly ..... V Sec. 3, sb a
+    From Assembly, shall be received at any time ............... VI Sec. 4
+    From Governor, shall be received at any time ............... VI Sec. 4
+    For passage of certain bills ....................... VIII Sec. 5, sb c
+                                                                 IX Sec. 1
+    Order of business of, from Governor, and Assembly .... VI Sec. 3, sb a
  
-  MINORITY LEADER-----
+  CONFERENCE LEADERS-----
  
-    Closing debate, may speak when ....................... IX Sec. 3, sb c
-    Ex Officio member of all committees ....................... VII Sec. 1
-    Resolutions, copies to be furnished to ............... VI Sec. 9, sb a
-    Room, assignment of ........................................ II Sec. 6
-    Seat in Senate chamber ..................................... II Sec. 6
+    Closing debate, may speak when ........................ X Sec. 3, sb c
+    Ex Officio member of all committees ...................... VIII Sec. 1
  
   MOTIONS-----
  
     For call of the Senate, after close of debate,
-      one in order .................................... IX Sec. 3, sb e, f
-      Always in order; exceptions ......................... V Sec. 8, sb b
-      Not debatable ....................................... V Sec. 8, sb b
-    Precedence of ......................................... V Sec. 8, sb a
-    Previous question, of ................................. V Sec. 8, sb a
-    Question pending, when, what motions in order ............... V Sec. 8
+      one in order ..................................... X Sec. 3, sb e, f
+      Always in order; exceptions ........................ VI Sec. 8, sb b
+      Not debatable ...................................... VI Sec. 8, sb b
+    Precedence of ........................................ VI Sec. 8, sb a
+    Previous question, of ................................ VI Sec. 8, sb a
+    Question pending, when, what motions in order .............. VI Sec. 8
     To adjourn, after close of debate, one
-      in order ........................................... IX Sec. 3, sb f
-      Always in order; exceptions ......................... V Sec. 8, sb b
-      Not debatable ....................................... V Sec. 8, sb b
-      Not to be reconsidered .............................. V Sec. 9, sb a
+      in order ............................................ X Sec. 3, sb f
+      Always in order; exceptions ........................ VI Sec. 8, sb b
+      Not debatable ...................................... VI Sec. 8, sb b
+      Not to be reconsidered ............................. VI Sec. 9, sb a
     To adopt report of Committee on Rules, no other motion
-      in order, until decided; exceptions ..................... VII Sec. 2
-    To amend rule of Senate or joint rule, when in order ....... XI Sec. 1
-    To certain day, precludes debate on main question ..... V Sec. 8, sb d
+      in order, until decided; exceptions .................... VIII Sec. 2
+    To amend rule of Senate or joint rule, when in order ........ X Sec. 1
+    To certain day, precludes debate on main question .... VI Sec. 8, sb d
     To close debate, in order after bill, etc., considered
-        two hours ........................................ IX Sec. 3, sb d
+        two hours ......................................... X Sec. 3, sb d
       May be ordered on single motion, series of
-        motions, etc. ................................. IX Sec. 3, sb e, f
+        motions, etc. .................................. X Sec. 3, sb e, f
       May embrace all authorized motions,
-        amendments, etc. .............................. IX Sec. 3, sb e, f
+        amendments, etc. ............................... X Sec. 3, sb e, f
       No other motion in order until voted
-        on; exceptions ................................ IX Sec. 3, sb e, f
-      Not amendable or debatable ......................... IX Sec. 3, sb d
+        on; exceptions ................................. X Sec. 3, sb e, f
+      Not amendable or debatable .......................... X Sec. 3, sb d
       Presiding Officer shall recognize Senator
-        wishing to make .................................. IX Sec. 3, sb d
-    To be immediately put ................................ IX Sec. 3, sb d
+        wishing to make ................................... X Sec. 3, sb d
+    To be immediately put ................................. X Sec. 3, sb d
     To close doors, doors shall remain closed during
-      discussion of ............................................. V Sec. 7
-    To commit, after close of debate, one in order ....... IX Sec. 3, sb f
 
-      Precludes debate on main question ................... V Sec. 8, sb d
-      To select committee, order of precedence .... V Sec. 8, sb a Par (7)
-      To standing committee, order of precedence .. V Sec. 8, sb a Par (6)
-    To excuse from voting, to be decided by consent ....two-thirds present
-                                                           IX Sec. 1, sb b
-    To lay on table, always in order; exceptions .......... V Sec. 8, sb b
-      Not debatable ....................................... V Sec. 8, sb b
-      Not to be reconsidered .............................. V Sec. 9, sb a
+      discussion of ............................................ VI Sec. 7
+    To commit, after close of debate, one in order ........ X Sec. 3, sb f
+      Precludes debate on main question .................. VI Sec. 8, sb d
+      To select committee, order of precedence ... VI Sec. 8, sb a Par (7)
+      To standing committee, order of precedence . VI Sec. 8, sb a Par (6)
+    To excuse from voting, to be decided by consent, two-thirds present
+                                                            X Sec. 1, sb b
+    To lay on table, always in order; exceptions ......... VI Sec. 8, sb b
+      Not debatable ...................................... VI Sec. 8, sb b
+      Not to be reconsidered ............................. VI Sec. 9, sb a
       To postpone to certain day, order of
-        precedence ................................ V Sec. 8, sb a Par (5)
-    To petition a bill, when out of order ................ VI Sec. 2, sb b
-    To petition a bill or resolution out of committee .......... XI Sec. 2
-      Agreement required ....................................... XI Sec. 2
-      Notice required .......................................... XI Sec. 2
-      When not in order ........................................ XI Sec. 2
-    To reconsider, bill recalled from Assembly ............ V Sec. 9, sb a
-      Not in order, when bill not in possession of Senate . V Sec. 9, sb a
-      Vote necessary in certain cases ..................... V Sec. 9, sb b
-      Vote to adjourn or lay on table, not in order ....... V Sec. 9, sb a
-      When in order ....................................... V Sec. 9, sb a
-      When required to be made ............................ V Sec. 9, sb a
+        precedence ............................... VI Sec. 8, sb a Par (5)
+    To petition a bill, when out of order ............... VII Sec. 2, sb b
+    To petition a bill or resolution out of committee ......... XII Sec. 2
+      Agreement required ...................................... XII Sec. 2
+      Notice required ......................................... XiI Sec. 2
+      When not in order ....................................... XII Sec. 2
+    To reconsider, bill recalled from Assembly ........... VI Sec. 9, sb a
+      Not in order, when bill not in possession of Senate  VI Sec. 9, sb a
+      Vote necessary in certain cases .................... VI Sec. 9, sb b
+      Vote to adjourn or lay on table, not in order ...... VI Sec. 9, sb a
+      When in order ...................................... VI Sec. 9, sb a
+      When required to be made ........................... VI Sec. 9, sb a
       To refer, until decided, precludes debate on main question
-                                                            V Sec. 8, sb d
-    To rescind rule or Senate or joint rule, when in order ..... XI Sec. 1
-    To substitute Assembly for Senate bill, when in order .... VIII Sec. 5
+                                                           VI Sec. 8, sb d
+    To rescind rule or Senate or joint rule, when in order .... XII Sec. 1
+    To substitute Assembly for Senate bill, when in order ...... IX Sec. 5
     To suspend rule of Senate or joint rule,
-      Notice required .......................................... XI Sec. 2
-      Vote required ............................................ XI Sec. 1
-    Withdrawal of, before decision or amendment ........... V Sec. 8, sb c
-    Written, may be required .............................. V Sec. 8, sb c
+      Notice required ......................................... XII Sec. 2
+      Vote required ........................................... XII Sec. 1
+    Withdrawal of, before decision or amendment .......... VI Sec. 8, sb c
+    Written, may be required ............................. VI Sec. 8, sb c
  
                                       N
  
   NEW YORK, CITY OF-----
  
-    Amendments to charter and administrative code of ..... VI Sec. 4, sb a
+    Amendments to charter and administrative code of .... VII Sec. 4, sb a
  
-  NOMINATIONS, CONFIRMATION BY SENATE .................... IX Sec. 4, sb a
+  NOMINATIONS, CONFIRMATION BY SENATE ..................... X Sec. 4, sb a
  
   NOMINATIONS BY GOVERNOR-----
  
-    Reference and confirmation of ............................. VII Sec. 6
+    Reference and confirmation of ............................ VIII Sec. 6
  
   NOTICE; REQUIREMENTS RESPECTING-----
-    Of motion to amend, suspend or rescind rules ............... XI Sec. 1
-    Of motion to petition committee ............................ XI Sec. 2
-    Of public hearings by committees .......................... VII Sec. 4
+    Of motion to amend, suspend or rescind rules .............. XII Sec. 1
+    Of motion to petition committee ........................... XII Sec. 2
+    Of public hearings by committees ......................... VIII Sec. 4
  
                                       O
  
   OFFICERS-----
  
-    Appointment of certain, by Temporary President ............. II Sec. 5
-    Certain, to be present during executive sessions ............ V Sec. 7
-      To keep secret proceedings of executive sessions .......... V Sec. 7
-    Duties of, generally ....................................... IV Sec. 4
-    Election of certain, by Senate ............................. IV Sec. 4
-    Nominations of, sent by Governor, proceedings upon ........ VII Sec. 6
+    Appointment of certain, by Temporary President ............ III Sec. 5
+    Certain, to be present during executive sessions ........... VI Sec. 7
+      To keep secret proceedings of executive sessions ......... VI Sec. 7
+    Duties of, generally ........................................ V Sec. 4
 
-    State, communications and reports from, always in order ..... V Sec. 4
-    Order of business of .................................. V Sec. 3, sb a
-                                                                  V Sec. 4
+    Election of certain, by Senate .............................. V Sec. 4
+    Nominations of, sent by Governor, proceedings upon ....... VIII Sec. 6
+    State, communications and reports from, always in order .... VI Sec. 4
+    Order of business of ................................. VI Sec. 3, sb a
+                                                                 VI Sec. 4
  
   ORDER-----
  
-    Of business ................................................. V Sec. 3
-    Cellular phones, audible pagers; use prohibited ...... IX Sec. 4, sb a
+    Of business ................................................ VI Sec. 3
+    Cellular phones, audible pagers; use prohibited ....... X Sec. 4, sb a
     Questions of, after motion to close debate,
-      not debatable ...................................... IX Sec. 3, sb f
-    Decision by presiding officer on, subject to appeal ....... III Sec. 1
-                                                           IX Sec. 4, sb c
-    Senator called to, must take his seat ................ IX Sec. 4, sb c
-    Senator out of, must not proceed without permission .. IX Sec. 4, sb c
-    Words on which called to, must be taken in writing ... IX Sec. 4, sb c
+      not debatable ....................................... X Sec. 3, sb f
+    Decision by presiding officer on, subject to appeal ........ IV Sec. 1
+                                                            X Sec. 4, sb c
+    Senator called to, must take his seat ................. X Sec. 4, sb c
+    Senator out of, must not proceed without permission ... X Sec. 4, sb c
+    Words on which called to, must be taken in writing .... X Sec. 4, sb c
  
                                       P
  
   PAPERS, PETITIONS, MEMORIALS, ETC.-----
  
-    Objection to reading of, how decided ................. IX Sec. 5, sb b
-    Presented by Senator, shall be endorsed .............. IX Sec. 5, sb a
+    Objection to reading of, how decided .................. X Sec. 5, sb b
+    Presented by Senator, shall be endorsed ............... X Sec. 5, sb a
  
   PASSAGE OF BILLS (See "BILLS")
  
   PETITION BILL OR RESOLUTION OUT OF COMMITTEE-----
  
-    Agreement required to ...................................... XI Sec. 2
-    Motion to .................................................. XI Sec. 2
-      Limitation on ............................................ XI Sec. 2
-      Notice required .......................................... XI Sec. 2
-      When not in order ........................................ XI Sec. 2
+    Agreement required to ..................................... XII Sec. 2
+    Motion to ................................................. XII Sec. 2
+      Limitation on ........................................... XII Sec. 2
+      Notice required ......................................... XII Sec. 2
+      When not in order ....................................... XII Sec. 2
  
   PETITIONS-----
  
-    Endorsement of, required ............................. IX Sec. 5, sb a
-    Presentation of, first order of business ...... V Sec. 3, sb a Par (1)
-    Subject of, to be endorsed thereon ................... IX Sec. 5, sb a
+    Endorsement of, required .............................. X Sec. 5, sb a
+    Presentation of, first order of business ..... VI Sec. 3, sb a Par (1)
+    Subject of, to be endorsed thereon .................... X Sec. 5, sb a
  
   POSTPONE-----
  
-    To certain day, motion to, order of precedence ........ V Sec. 8, sb d
-      Until decided, precludes debate on main question .... V Sec. 8, sb d
+    To certain day, motion to, order of precedence ....... VI Sec. 8, sb d
+      Until decided, precludes debate on main question ... VI Sec. 8, sb d
  
   PRECEDENCE-----
  
-    Of motions .................................................. V Sec. 8
-    Of special order under consideration ........................ V Sec. 5
-    Pending measure to have, after close of debate ....... IX Sec. 3, sb d
+    Of motions ................................................. VI Sec. 8
+    Of special order under consideration ....................... VI Sec. 5
+    Pending measure to have, after close of debate ........ X Sec. 3, sb d
  
   PRESIDENT-----
  
@@ -2526,405 +2527,388 @@
     Vote, shall have only casting ............................... I Sec. 1
  
   PRESIDING OFFICER-----
- 
-    Bills and certain resolutions, shall certify vote by
 
-      which passed ............................................ III Sec. 2
-    Debate, when shall declare closed .................... IX Sec. 3, sb c
-    Debate, shall recognize Senator desiring to close .... IX Sec. 3, sb d
-    Decisions, may assign reasons for, if appealed from ....... III Sec. 1
+    Bills and certain resolutions, shall certify vote by
+      which passed ............................................. IV Sec. 2
+    Debate, when shall declare closed ..................... X Sec. 3, sb c
+    Debate, shall recognize Senator desiring to close ..... X Sec. 3, sb d
+    Decisions, may assign reasons for, if appealed from ........ IV Sec. 1
     Executive session, shall direct withdrawal of all except
-      members, during ........................................... V Sec. 7
-      Lobbies and galleries, may clear ........................ III Sec. 1
-      Motions, may require to be reduced to writing ....... V Sec. 8, sb c
-      Order, shall decide all questions of subject to appeal .. III Sec. 1
-                                                           IX Sec. 4, sb c
-    Order and decorum, shall preserve ......................... III Sec. 1
-    Passage of bills and certain resolutions, shall certify ... III Sec. 2
+      members, during .......................................... VI Sec. 7
+      Lobbies and galleries, may clear ......................... IV Sec. 1
+      Motions, may require to be reduced to writing ...... VI Sec. 8, sb c
+      Order, shall decide all questions of subject to appeal ... IV Sec. 1
+                                                            X Sec. 4, sb c
+    Order and decorum, shall preserve .......................... IV Sec. 1
+    Passage of bills and certain resolutions, shall certify .... IV Sec. 2
     Quorum, on questions of, shall direct calling of
-      roll ............................................... IX Sec. 2, sb f
-    Roll call, shall request Senator to respond at ....... IX Sec. 2, sb g
+      roll ................................................ X Sec. 2, sb f
+    Roll call, shall request Senator to respond at ........ X Sec. 2, sb g
     Senate, shall take the chair at hour to which
-      adjourned ........................................... V Sec. 3, sb a
+      adjourned .......................................... VI Sec. 3, sb a
     Senator to speak, when two or more address chair, to
-      be named by ........................................ IX Sec. 4, sb b
-    When other than President ................................. III Sec. 3
+      be named by ......................................... X Sec. 4, sb b
+    When other than President .................................. IV Sec. 3
  
   PRINTING OF BILLS-----
  
-    General provisions relative to ............................. VI Sec. 3
+    General provisions relative to ............................ VII Sec. 3
  
   PRIORITY OF BUSINESS-----
  
-    Questions relating to, not debatable .......... V Sec. 3, sb b, par(3)
+    Questions relating to, not debatable ......... VI Sec. 3, sb b, par(3)
  
   PRIVATE OR LOCAL BILLS-----
  
-    "Home rule" message required before committee report  VII Sec. 5, sb c
-    One subject, only, to be expressed in title ... VI Sec. 4, opening Par
+    "Home rule" message required before committee report VIII Sec. 5, sb c
+    One subject, only, to be expressed in title .. VII Sec. 4, opening Par
  
   PRIVILEGES OF THE FLOOR-----
  
-    Persons entitled to ......................................... X Sec. 2
-    Reporters entitled to ...................................... II Sec. 6
-                                                            X Sec. 2, sb d
+    Persons entitled to ........................................ XI Sec. 2
+    Reporters entitled to ..................................... III Sec. 6
+                                                           XI Sec. 2, sb d
  
   PUBLIC MONEYS-----
  
-    Bills appropriating, limitation upon reconsideration .. V Sec. 9, sb b
-      Referred to finance committee ........................... VII Sec. 7
-      Three-fifths quorum necessary, passage of certain IX Sec. 2, sb c, e
-      Vote necessary for passage of certain .............. IX Sec. 2, sb b
-    Resolutions calling for expenditure of, how decided .. VI Sec. 9, sb d
-    Reference to finance committee ............................ VII Sec. 7
-    Vote necessary for passage ........................... VI Sec. 9, sb d
+    Bills appropriating, limitation upon reconsideration . VI Sec. 9, sb b
+      Referred to finance committee .......................... VIII Sec. 7
+      Three-fifths quorum necessary, passage of certain  X Sec. 2, sb c, e
+      Vote necessary for passage of certain ............... X Sec. 2, sb b
+    Resolutions calling for expenditure of, how decided . VII Sec. 9, sb d
+    Reference to finance committee ........................... VIII Sec. 7
+    Vote necessary for passage .......................... VII Sec. 9, sb d
  
                                       Q
  
   QUESTION-----
  
-    Division of, in debate ............................... IX Sec. 3, sb b
-    Germane to, under discussion ......................... IX Sec. 3, sb a
-    Main, when debate precluded ........................... V Sec. 8, sb d
-    Motion to reconsider, when in order ................... V Sec. 9, sb a
+    Division of, in debate ................................ X Sec. 3, sb b
+    Germane to, under discussion .......................... X Sec. 3, sb a
+    Main, when debate precluded .......................... VI Sec. 8, sb d
 
-    Of priority of business, decided without debate V Sec. 3, sb b, par(3)
-    Reconsideration of, allowed only once, limitations .......... V Sec. 9
-    When before Senate, only certain motions in order ........... V Sec. 8
-    When put and decided .................................. V Sec. 9, sb a
+    Motion to reconsider, when in order .................. VI Sec. 9, sb a
+    Of priority of business, decided without
+    debate.........................................VI Sec. 3, sb b, par(3)
+    Reconsideration of, allowed only once, limitations ......... VI Sec. 9
+    When before Senate, only certain motions in order .......... VI Sec. 8
+    When put and decided ................................. VI Sec. 9, sb a
  
   QUORUM-----
  
-    Lack of, Senator not to be interrupted by question of  IX Sec. 2, sb f
-    Majority of Senators elected constitute .............. IX Sec. 2, sb a
-    Order of business, when necessary to proceed .......... V Sec. 3, sb b
-      Presence of, how determined, not debatable ......... IX Sec. 2, sb f
-      How secured ........................................ IX Sec. 2, sb a
-      Question of, how often may be raised ............... IX Sec. 2, sb f
-    Senator refusing to respond, counted present for ..... IX Sec. 2, sb g
-    Three-fifths, required for passage of certain bills IX Sec. 2, sb c, e
-      Bill retains place in absence of ................... IX Sec. 2, sb d
-    When less than, convenes, absentees may be sent for .. IX Sec. 2, sb a
+    Lack of, Senator not to be interrupted by question of . X Sec. 2, sb f
+    Majority of Senators elected constitute ............... X Sec. 2, sb a
+    Order of business, when necessary to proceed ......... VI Sec. 3, sb b
+      Presence of, how determined, not debatable .......... X Sec. 2, sb f
+      How secured ......................................... X Sec. 2, sb a
+      Question of, how often may be raised ................ X Sec. 2, sb f
+    Senator refusing to respond, counted present for ...... X Sec. 2, sb g
+    Three-fifths, required for passage of certain bills  X Sec. 2, sb c, e
+      Bill retains place in absence of .................... X Sec. 2, sb d
+    When less than, convenes, absentees may be sent for ... X Sec. 2, sb a
  
                                       R
  
   RECOMMIT, MOTION TO-----
  
-    Until decided, preclude debate on main question ....... V Sec. 8, sb d
+    Until decided, preclude debate on main question ...... VI Sec. 8, sb d
  
   RECONSIDERATION-----
  
-    Motions for, bills recalled from Assembly ............. V Sec. 9, sb a
-      Limitations upon .................................... V Sec. 9, sb a
-      Time within which to be made ........................ V Sec. 9, sb a
-      Vote necessary for certain .......................... V Sec. 9, sb b
-      When in order ....................................... V Sec. 9, sb a
-      When not in order ................................... V Sec. 9, sb a
-    Question subject to, only once ........................ V Sec. 9, sb a
-    Vote to adjourn or lay on table, not subject to ....... V Sec. 9, sb a
+    Motions for, bills recalled from Assembly ............ VI Sec. 9, sb a
+      Limitations upon ................................... VI Sec. 9, sb a
+      Time within which to be made ....................... VI Sec. 9, sb a
+      Vote necessary for certain ......................... VI Sec. 9, sb b
+      When in order ...................................... VI Sec. 9, sb a
+      When not in order .................................. VI Sec. 9, sb a
+    Question subject to, only once ....................... VI Sec. 9, sb a
+    Vote to adjourn or lay on table, not subject to ...... VI Sec. 9, sb a
  
   REFERENCE-----
  
-    Bills, providing for appropriation ........................ VII Sec. 7
-      To appropriate committee, upon introduction .............. VI Sec. 1
-      To revision and jacketing clerks ................. VIII Sec. 3, sb b
-    Nominations ............................................... VII Sec. 6
-    Resolutions providing for appropriations .................. VII Sec. 7
+    Bills, providing for appropriation ....................... VIII Sec. 7
+      To appropriate committee, upon introduction ............. VII Sec. 1
+      To revision and jacketing clerks ................... IX Sec. 3, sb b
+    Nominations .............................................. VIII Sec. 6
+    Resolutions providing for appropriations ................. VIII Sec. 7
  
   REPORTS-----
  
-    Committee, certain, to be received at any time .............. V Sec. 4
-      Majority of members necessary for ................. VII Sec. 5, sb a
-      Order of business of ................................ V Sec. 3, sb a
-    Expenditure .............................................. XIII Sec. 2
-    From state officers ......................................... V Sec. 4
+    Committee, certain, to be received at any time ............. VI Sec. 4
+      Majority of members necessary for ................ VIII Sec. 5, sb a
+      Order of business of ............................... VI Sec. 3, sb a
+    Expenditure ............................................... XIV Sec. 2
+    From state officers ........................................ VI Sec. 4
  
   REPORTERS FOR NEWS MEDIA-----
  
-    Admission to floor of Senate ............................... II Sec. 5
-                                                            X Sec. 2, sb d
- 
-  RESCIND RULES (See "RULES OF SENATE")-----
+    Admission to floor of Senate .............................. III Sec. 5
+                                                           XI Sec. 2, sb d
 
+  RESCIND RULES (See "RULES OF SENATE")-----
+ 
   RESOLUTIONS-----
  
-    Action on, Secretary's duty respecting ..................... IV Sec. 5
-    Appropriating money, reference to finance committee ....... VII Sec. 7
-    Federal law, must be germane to state ................ VI Sec. 9, sb b
-      When out of order .................................. VI Sec. 9, sb b
-    Introduction of, limitation upon ..................... VI Sec. 9, sb a
-    Order of business of .................................. V Sec. 3, sb b
-    Original, limitation upon introduction of ............ VI Sec. 9, sb a
-      Copies to be supplied Temporary President and Minority
-        Leader ........................................... VI Sec. 9, sb a
-      To be in quadruplicate ............................. VI Sec. 9, sb a
-    Petition from committee, notice ...................... XI Sec. 2, sb b
-    Privileged, certain, always in order ................. VI Sec. 9, sb a
-      Certain, regarded as privileged ..................... V Sec. 9, sb a
-    Proposing amendment to Constitution, how treated ..... VI Sec. 9, sb c
-      Passage certified by Presiding Officer .................. III Sec. 2
-      Reference to Attorney General ...................... VI Sec. 9, sb c
-    Reconsideration of, after out of possession of Senate . V Sec. 9, sb a
-      Limitation upon ..................................... V Sec. 9, sb a
-    Reference to committee; exceptions ................... VI Sec. 9, sb a
-    Senator presenting, must endorse ..................... IX Sec. 5, sb a
+    Action on, Secretary's duty respecting ...................... V Sec. 5
+    Appropriating money, reference to finance committee ...... VIII Sec. 7
+    Federal law, must be germane to state ............... VII Sec. 9, sb b
+      When out of order ................................. VII Sec. 9, sb b
+    Introduction of, limitation upon .................... VII Sec. 9, sb a
+    Order of business of ................................. VI Sec. 3, sb b
+    Original, limitation upon introduction of ........... VII Sec. 9, sb a
+      Copies to be supplied Majority Coalition Leaders ... VII Sec 9, sb a
+      To be in quadruplicate ............................ VII Sec. 9, sb a
+    Petition from committee, notice ....................... X Sec. 2, sb b
+    Privileged, certain, always in order ................ VII Sec. 9, sb a
+      Certain, regarded as privileged .................... VI Sec. 9, sb a
+    Proposing amendment to Constitution, how treated .... VII Sec. 9, sb c
+      Passage certified by Presiding Officer ................... IV Sec. 2
+      Reference to Attorney General ..................... VII Sec. 9, sb c
+    Reconsideration of, after out of possession of Senate  VI Sec. 9, sb a
+      Limitation upon .................................... VI Sec. 9, sb a
+    Reference to committee; exceptions .................. VII Sec. 9, sb a
+    Senator presenting, must endorse ...................... X Sec. 5, sb a
     Vote necessary for certain, calling for
-      expenditure of money ............................... VI Sec. 9, sb d
+      expenditure of money .............................. VII Sec. 9, sb d
  
   REVISION CLERK-----
  
-    Multi-sponsorship .......................................... VI Sec. 2
-    Shall receive, examine and correct bills ................... VI Sec. 1
-    Shall return bills incorrectly prepared to introducer ................
-                                                           VI Sec. 4, sb a
- 
-  ROOMS OF SENATORS-----
- 
-    Assignment of .............................................. II Sec. 6
+    Multi-sponsorship ......................................... VII Sec. 2
+    Shall receive, examine and correct bills .................. VII Sec. 1
+    Shall return bills incorrectly prepared to introducer VII Sec. 4, sb a
  
   RULES-----
  
-    Standing committee on .............................. VII Secs. 1, 2, 3
-      Authority to introduce and refer bills ............ VII Sec. 5, sb a
-      Consideration of report of, always in order ............. VII Sec. 2
-      May sit at any time ..................................... VII Sec. 2
-      Meeting of .............................................. VII Sec. 3
-      Exclusion from certain provisions ................. VII Sec. 3, sb c
-      News media, open to ....................... VII Sec. 3, sb a Par (3)
-      Report from may be received at any time ................. VII Sec. 2
-      Debate on adoption of ................................... VII Sec. 2
-    Suspension, upon adoption of report of .................... VII Sec. 2
+    Standing committee on ............................. VIII Secs. 1, 2, 3
+      Authority to introduce and refer bills ........... VIII Sec. 5, sb a
+      Consideration of report of, always in order ............ VIII Sec. 2
+      May sit at any time .................................... VIII Sec. 2
+      Meeting of ............................................. VIII Sec. 3
+      Exclusion from certain provisions ................ VIII Sec. 3, sb c
+      News media, open to ...................... VIII Sec. 3, sb a Par (3)
+      Report from may be received at any time ................ VIII Sec. 2
+      Debate on adoption of .................................. VIII Sec. 2
+    Suspension, upon adoption of report of ................... VIII Sec. 2
  
   RULES OF SENATE (See also "MOTIONS")-----
  
-    Bills and amendments not complying with ........... VI Sec. 4, sb a, b
-    Breach of certain, any Senator may point out .......... X Sec. 2, sb i
-    Motion to amend, suspend, etc. ............................. XI Sec. 2
-      Notice required .......................................... XI Sec. 2
-      Order of business in which received ......... V Sec. 3, sb b Par (3)
-                                                                 XI Sec. 2
-      When to be made .......................................... XI Sec. 2
-
+    Bills and amendments not complying with .......... VII Sec. 4, sb a, b
+    Breach of certain, any Senator may point out ......... XI Sec. 2, sb i
+    Motion to amend, suspend, etc. ............................ XII Sec. 2
+      Notice required ......................................... XII Sec. 2
+      Order of business in which received ........ VI Sec. 3, sb b Par (3)
+                                                                XII Sec. 2
+      When to be made ......................................... XII Sec. 2
     Suspension, upon adoption of report of
-      Rules Committee ......................................... VII Sec. 2
-    Vote required to amend, suspend, etc. ...................... XI Sec. 1
- 
+      Rules Committee ........................................ VIII Sec. 2
+    Vote required to amend, suspend, etc. ..................... XII Sec. 1
+
                                       S
- 
-  SEATS IN SENATE-----
- 
-    Assignment of .............................................. II Sec. 6
  
   SECRETARY OF SENATE-----
  
-    Assembly, shall deliver certain bills to ................... IV Sec. 5
-    Bills, duties respecting action on certain ................. IV Sec. 5
-      Direct Revision Clerk to cause certain to be amended VI Sec. 4, sb b
-      General orders calendar of, shall prepare ................ IV Sec. 5
-      Governor, shall present certain bills to ................. IV Sec. 5
-      Journals, shall make entries respecting certain in ....... IV Sec. 5
-      Presiding Officer shall deliver certain, to ............. III Sec. 2
-    Budget bills to be given introductory number by ............ VI Sec. 6
-    Committee hearings, notice to be announced by ............. VII Sec. 3
-    Duties of, generally ....................................... IV Sec. 5
-    Election of, by Senate ..................................... IV Sec. 4
-    Executive business of Senate, to remain during .............. V Sec. 7
-    General orders calendar, to print and distribute ........... IV Sec. 5
-    Governor, shall present certain bills to ................... IV Sec. 5
-    Journal, shall have printed, distributed, etc. ............. IV Sec. 5
-    Motions, when written and delivered to ................ V Sec. 8, sb c
-    Quorum, shall call roll on question of ............... IX Sec. 2, sb f
-    Senate may choose .......................................... IV Sec. 4
-    Stenographer, under direction of, copies of records from ... IV Sec. 7
-    Term of .................................................... IV Sec. 4
-    Third reading calendar, to print and distribute ............ IV Sec. 5
+    Assembly, shall deliver certain bills to .................... V Sec. 5
+    Bills, duties respecting action on certain .................. V Sec. 5
+      Direct Revision Clerk to cause certain to be amendedVII Sec. 4, sb b
+      General orders calendar of, shall prepare ................. V Sec. 5
+      Governor, shall present certain bills to .................. V Sec. 5
+      Journals, shall make entries respecting certain in ........ V Sec. 5
+      Presiding Officer shall deliver certain, to .............. IV Sec. 2
+    Budget bills to be given introductory number by ........... VII Sec. 6
+    Committee hearings, notice to be announced by ............ VIII Sec. 3
+    Duties of, generally ........................................ V Sec. 5
+    Election of, by Senate ...................................... V Sec. 4
+    Executive business of Senate, to remain during ............. VI Sec. 7
+    General orders calendar, to print and distribute ............ V Sec. 5
+    Governor, shall present certain bills to .................... V Sec. 5
+    Journal, shall have printed, distributed, etc. .............. V Sec. 5
+    Motions, when written and delivered to ............... VI Sec. 8, sb c
+    Quorum, shall call roll on question of ................ X Sec. 2, sb f
+    Senate may choose ........................................... V Sec. 4
+    Stenographer, under direction of, copies of records from .... V Sec. 7
+    Term of ..................................................... V Sec. 4
+    Third reading calendar, to print and distribute ............. V Sec. 5
  
   SENATE (See also "SENATORS")-----
  
-    Admission to floor of ....................................... X Sec. 2
-    Call of .................................................... IX Sec. 6
-      Always in order; exceptions .............................. IX Sec. 6
-      Not debatable ....................................... V Sec. 8, sb b
-      Order of precedence ......................... V Sec. 8, sb a Par (2)
-    Committees of ............................................. VII Sec. 1
-    Doors of, to be kept open; exception ........................ X Sec. 1
-    Executive session of ........................................ V Sec. 7
-    Hours in session ............................................ V Sec. 2
-    Journal, shall keep and publish ............................. V Sec. 1
-    Motions received by, precedence of .......................... V Sec. 8
-    Presiding Officer to call to order .......................... V Sec. 3
+    Admission to floor of ...................................... XI Sec. 2
+    Call of ..................................................... X Sec. 6
+      Always in order; exceptions ............................... X Sec. 6
+      Not debatable ...................................... VI Sec. 8, sb b
+      Order of precedence ........................ VI Sec. 8, sb a Par (2)
+    Committees of ............................................ VIII Sec. 1
+    Doors of, to be kept open; exception ....................... XI Sec. 1
+    Executive session of ....................................... VI Sec. 7
+    Hours in session ........................................... VI Sec. 2
+    Journal, shall keep and publish ............................ VI Sec. 1
+    Motions received by, precedence of ......................... VI Sec. 8
+    Presiding Officer to call to order ......................... VI Sec. 3
     Rules (see "RULES OF SENATE")
-    Secretary, may be chosen by ................................ IV Sec. 4
-    Sergeant at arms, may be chosen by ......................... IV Sec. 4
-    Stenographer, may be chosen by ............................. IV Sec. 4
-    Temporary President, shall be chosen by .................... II Sec. 1
+    Secretary, may be chosen by ................................. V Sec. 4
+    Sergeant at arms, may be chosen by .......................... V Sec. 4
+    Stenographer, may be chosen by .............................. V Sec. 4
+    Temporary President, shall be chosen by ................... III Sec. 1
  
   SENATE CHAMBER-----
  
-    Standing prohibited in certain areas .................. X Sec. 2, sb h
-    Temporary President shall have general control over ........ II Sec. 6
-
+    Standing prohibited in certain areas ................. XI Sec. 2, sb h
+    Temporary President shall have general control over ....... III Sec. 6
+ 
   SENATORS-----
  
-    Absence of, may be punished ................................ IX Sec. 7
-    Appeals of, from decision of Presiding Officer ............ III Sec. 1
-                                                           IX Sec. 4, sb c
-    Presiding Officer may assign reasons ...................... III Sec. 1
-    Attendance of, call of Senate to secure .................... IX Sec. 6
+    Absence of, may be punished ................................. X Sec. 7
+    Appeals of, from decision of Presiding Officer ............. IV Sec. 1
+                                                            X Sec. 4, sb c
+    Presiding Officer may assign reasons ....................... IV Sec. 1
+    Attendance of, call of Senate to secure ..................... X Sec. 6
+
     Other measures to secure, Temporary President or
-      majority of elected ...................................... IX Sec. 7
-    Bills must be placed on bill files on desks of ............. VI Sec. 3
-    Business of Senate, not to interrupt ................. IX Sec. 4, sb a
-    Called to order ...................................... IX Sec. 4, sb c
-    Chairs of, not to be occupied by others ............... X Sec. 2, sb h
-    Excused from voting, may state reasons ............... IX Sec. 1, sb b
-    Executive session, shall keep secret proceedings of ......... V Sec. 7
-    Explaining vote upon roll calls ...................... IX Sec. 3, sb e
-    Floors, may yield temporarily ........................ IX Sec. 4, sb b
-    Hours in session ............................................ V Sec. 2
-    Limitation upon speaking during same day ............. IX Sec. 4, sb b
-    List of bills etc., to be supplied with .................... IV Sec. 5
-    Majority of elected, constitute quorum ............... IX Sec. 2, sb a
-    Motions, may require in writing ....................... V Sec. 8, sb c
-    Order of, during reading of journal .................. IX Sec. 4, sb a
-    When Presiding Officer is putting question ........... IX Sec. 4, sb a
-    While another Senator is speaking .................... IX Sec. 4, sb a
-    Out of order, shall not proceed ...................... IX Sec. 4, sb c
-    Personal or pecuniary interest of, in outcome of vote ...... IX Sec. 1
-    Papers presented by, must be endorsed ................ IX Sec. 5, sb a
-    Presence of, during sessions required; exceptions .... IX Sec. 1, sb a
-    Presiding, vested with powers of President ................ III Sec. 3
-    Question, shall vote on each ......................... IX Sec. 1, sb a
-    Quorum, raising question of .......................... IX Sec. 2, sb f
-    Refusing to respond at roll call ..................... IX Sec. 2, sb g
-    Refusing to vote deemed a contempt ................... IX Sec. 1, sb a
-    Rising to debate, etc. ............................... IX Sec. 4, sb b
-    Rooms of, assignment ....................................... II Sec. 6
-    Seats of, assignment ....................................... II Sec. 6
+      majority of elected ....................................... X Sec. 7
+    Bills must be placed on bill files on desks of ............ VII Sec. 3
+    Business of Senate, not to interrupt .................. X Sec. 4, sb a
+    Called to order ....................................... X Sec. 4, sb c
+    Chairs of, not to be occupied by others .............. XI Sec. 2, sb h
+    Excused from voting, may state reasons ................ X Sec. 1, sb b
+    Executive session, shall keep secret proceedings of ........ VI Sec. 7
+    Explaining vote upon roll calls ....................... X Sec. 3, sb e
+    Floors, may yield temporarily ......................... X Sec. 4, sb b
+    Hours in session ........................................... VI Sec. 2
+    Limitation upon speaking during same day .............. X Sec. 4, sb b
+    List of bills etc., to be supplied with ..................... V Sec. 5
+    Majority of elected, constitute quorum ................ X Sec. 2, sb a
+    Motions, may require in writing ...................... VI Sec. 8, sb c
+    Order of, during reading of journal ................... X Sec. 4, sb a
+    When Presiding Officer is putting question ............ X Sec. 4, sb a
+    While another Senator is speaking ..................... X Sec. 4, sb a
+    Out of order, shall not proceed ....................... X Sec. 4, sb c
+    Personal or pecuniary interest of, in outcome of vote ....... X Sec. 1
+    Papers presented by, must be endorsed ................. X Sec. 5, sb a
+    Presence of, during sessions required; exceptions ..... X Sec. 1, sb a
+    Presiding, vested with powers of President ................. IV Sec. 3
+    Question, shall vote on each .......................... X Sec. 1, sb a
+    Quorum, raising question of ........................... X Sec. 2, sb f
+    Refusing to respond at roll call ...................... X Sec. 2, sb g
+    Refusing to vote deemed a contempt .................... X Sec. 1, sb a
+    Rising to debate, etc. ................................ X Sec. 4, sb b
     Speaking, limitation upon (See "SPEAKING")
-    Statements, may make, in certain cases ............... IX Sec. 4, sb b
-    Vote, may explain .................................... IX Sec. 3, sb e
-      Vote, regularly assigned seat ...................... IX Sec. 1, sb a
-      Not to, if financially interested ............... IX Sec. 1, sb a, b
-      Refusal to, may be contempt ........................ IX Sec. 1, sb a
-      Required to, unless excused ..................... IX Sec. 1, sb a, b
-    Voting, motion to excuse from, granted by consent .... IX Sec. 1, sb b
-    Funds for staffing ......................................... IX Sec. 8
-    Resources .................................................. IX Sec. 9
-    District offices .......................................... IX Sec. 10
-    Allocation for community projects ......................... IX Sec. 11
+    Statements, may make, in certain cases ................ X Sec. 4, sb b
+    Vote, may explain ..................................... X Sec. 3, sb e
+      Vote, regularly assigned seat ....................... X Sec. 1, sb a
+      Not to, if financially interested ................ X Sec. 1, sb a, b
+      Refusal to, may be contempt ......................... X Sec. 1, sb a
+      Required to, unless excused ...................... X Sec. 1, sb a, b
+    Voting, motion to excuse from, granted by consent ..... X Sec. 1, sb b
+    Funds for staffing .......................................... X Sec. 8
+    Resources ................................................... X Sec. 9
+    District offices ........................................... X Sec. 10
+    Allocation for community projects .......................... X Sec. 11
  
   SERGEANT AT ARMS-----
  
-    Absentees, may be sent for ........................... IX Sec. 2, sb a
-    Assistant Sergeant at Arms, doorkeepers, shall assign ...... IV Sec. 6
-    Attendance of, upon sessions of Senate ..................... IV Sec. 6
-    Hearings of Senate, maintain order ......................... IV Sec. 6
-    Jurisdiction, under ........................................ IV Sec. 6
-    Order, shall enforce, under direction of Presiding Officer . IV Sec. 6
-
-    Privileges of floor, shall enforce rule respecting ......... IV Sec. 6
-    Senate floor, to enforce rules respecting admission to  X Sec. 2, sb i
-    Senate may choose .......................................... IV Sec. 4
+    Absentees, may be sent for ............................ X Sec. 2, sb a
+    Assistant Sergeant at Arms, doorkeepers, shall assign ....... V Sec. 6
+    Attendance of, upon sessions of Senate ...................... V Sec. 6
+    Hearings of Senate, maintain order .......................... V Sec. 6
+    Jurisdiction, under ......................................... V Sec. 6
+    Order, shall enforce, under direction of Presiding Officer .. V Sec. 6
+    Privileges of floor, shall enforce rule respecting .......... V Sec. 6
+    Senate floor, to enforce rules respecting admission to XI Sec. 2, sb i
+    Senate may choose ........................................... V Sec. 4
  
   SPEAKING-----
  
-    Limitation upon ...................................... IX Sec. 4, sb a
-    Statements allowed in certain cases .................. IX Sec. 4, sb b
-    Vote, explanation of or to be excused ................ IX Sec. 1, sb b
-                                                           IX Sec. 3, sb e
+    Limitation upon ....................................... X Sec. 4, sb a
+    Statements allowed in certain cases ................... X Sec. 4, sb b
+    Vote, explanation of or to be excused ................. X Sec. 1, sb b
+
+                                                            X Sec. 3, sb e
  
   SPECIAL ORDERS----
  
-    When not completed, to retain place ......................... V Sec. 5
-    When under consideration, shall take precedence ............. V Sec. 5
+    When not completed, to retain place ........................ VI Sec. 5
+    When under consideration, shall take precedence ............ VI Sec. 5
  
   STATE DEPARTMENTS AND AGENCIES-----
  
-    Bills recommended by, last day for introduction ............ VI Sec. 5
-    Procedure for introduction purposes ........................ VI Sec. 7
+    Bills recommended by, last day for introduction ........... VII Sec. 5
+    Procedure for introduction purposes ....................... VII Sec. 7
  
   STENOGRAPHER-----
  
-    Attendance of, required at sessions of Senate .............. IV Sec. 7
-    Debates of Senate .......................................... IV Sec. 7
-    Public hearings, duties respecting ......................... IV Sec. 7
-    Secretary of Senate, under direction of .................... IV Sec. 7
-    Senate may choose .......................................... IV Sec. 4
+    Attendance of, required at sessions of Senate ............... V Sec. 7
+    Debates of Senate ........................................... V Sec. 7
+    Public hearings, duties respecting .......................... V Sec. 7
+    Secretary of Senate, under direction of ..................... V Sec. 7
+    Senate may choose ........................................... V Sec. 4
  
   SUBSTITUTION OF ASSEMBLY BILLS-----
  
-    When in order ............................................ VIII Sec. 5
+    When in order .............................................. IX Sec. 5
  
   SUSPENSION OF THE RULES (See also "RULES OF SENATE")-----
  
-    Motion for ................................................. XI Sec. 2
-      To petition committee .................................... XI Sec. 3
-      When in order ............................................ XI Sec. 3
-      Notice required .................................... XI Sec. 2, sb b
+    Motion for ................................................ XII Sec. 2
+      To petition committee ................................... XII Sec. 3
+      When in order ........................................... XII Sec. 3
+      Notice required ................................... XII Sec. 2, sb b
  
                                       T
  
   TELEVISING SESSION-----
  
-    Statewide public broadcast ................................. XV Sec. 1
-    Proprietary rights ......................................... XV Sec. 2
+    Statewide public broadcast ................................ XVI Sec. 1
+    Proprietary rights ........................................ XVI Sec. 2
  
   TEMPORARY PRESIDENT-----
  
-    Attendance of Senators at sessions, secure ................. IX Sec. 7
-    Bills, may designate last day for introduction ............. VI Sec. 5
-      Final passage, duties regarding ........................ VIII Sec. 6
-      Laid aside, duties respecting ....................... V Sec. 6, sb b
-      May require further reference of certain ................ VII Sec. 7
-      Program, departmental and agency bills, duties respecting  VI Sec. 7
-      Secondary, referencing, requests for consideration  VII Sec. 5, sb a
-    Chosen by Senate ........................................... II Sec. 1
-    Committee reports, establish date for referral of all to Rules
+    Attendance of Senators at sessions, secure .................. X Sec. 7
+    Bills, may designate last day for introduction ............ VII Sec. 5
+      Final passage, duties regarding .......................... IX Sec. 6
+      Laid aside, duties respecting ...................... VI Sec. 6, sb b
+      May require further reference of certain ............... VIII Sec. 7
+      Program, departmental and agency bills, duties respecting VII Sec. 7
+      Secondary, referencing, requests for consideration VIII Sec. 5, sb a
+    Chosen by Senate .......................................... III Sec. 1
+    Committee reports, establish date for referral
+     of all to Rules ................................... VIII Sec. 5, sb a
+    Committees, shall appoint chairs and members of all ....... III Sec. 2
+    Shall establish set of guidelines for referral .............. V Sec. 1
+    Debate, may speak once ................................ X Sec. 3, sb c
+    Employees, may appoint certain ............................ III Sec. 4
+    Expenditure reporting ..................................... XIV Sec. 2
+    Legal actions or proceedings .............................. III Sec. 8
+    Legislative librarian, assistant .......................... III Sec. 7
+    Majority leader, shall be ................................. III Sec. 1
 
-                                                          VII Sec. 5, sb a
-    Committees, member, ex officio, of all .............. VII Sec. 1, sb a
-      Shall appoint chairs and members of all .................. II Sec. 2
-      Shall establish set of guidelines for referral ........... VI Sec. 1
-    Debate, may speak once ............................... IX Sec. 3, sb c
-    Employees, may appoint certain ............................. II Sec. 4
-    Expenditure reporting .................................... XIII Sec. 2
-    Legal actions or proceedings ............................... II Sec. 8
-    Legislative librarian, assistant ........................... II Sec. 7
-    Majority leader, shall be .................................. II Sec. 1
-    Motions, certain, may be made only by ..................... VII Sec. 2
-                                                           IX Sec. 3, sb f
-    Preside, when he shall ..................................... II Sec. 1
-      Designation of other member to ........................... II Sec. 1
-    Records of Senate, duties regarding ....................... XIV Sec. 1
+    Motions, certain, may be made only by .................... VIII Sec. 2
+                                                            X Sec. 3, sb f
+    Preside, when he shall .................................... III Sec. 1
+      Designation of other member to .......................... III Sec. 1
+    Records of Senate, duties regarding ........................ XV Sec. 1
     Reporters, shall designate those entitled
-      to admission to floor .................................... II Sec. 5
-      Resolutions, copies to be furnished to ............. VI Sec. 9, sb a
-      May fix final day for introduction ....................... VI Sec. 5
-    Rooms, assignment by ....................................... II Sec. 6
-    Rules committee, shall be chairman of ...................... II Sec. 3
-    Seat of, in Senate chamber ................................. II Sec. 6
-    Senate chamber, etc., shall have general control over ...... II Sec. 6
-    Senators to preside, designation by ........................ II Sec. 1
+      to admission to floor ................................... III Sec. 5
+      May fix final day for introduction ...................... VII Sec. 5
+    Rules committee, shall be chairman of ..................... III Sec. 3
+    Senators to preside, designation by ....................... III Sec. 1
  
   THIRD READING-----
  
-    Amendment of bill allowed prior to completion of ... VIII Sec. 4, sb a
-    Bills advanced to, to be jacketed .................. VIII Sec. 3, sb b
-    Bills to have three readings ....................... VIII Sec. 2, sb a
-    Calendar of bills on ............................... VIII Sec. 3, sb a
-    List of, when to be laid aside ..................... VIII Sec. 6, sb a
-    Question to be taken immediately after ............. VIII Sec. 2, sb b
+    Amendment of bill allowed prior to completion of ..... IX Sec. 4, sb a
+    Bills advanced to, to be jacketed .................... IX Sec. 3, sb b
+    Bills to have three readings ......................... IX Sec. 2, sb a
+    Calendar of bills on ................................. IX Sec. 3, sb a
+    List of, when to be laid aside ....................... IX Sec. 6, sb a
+    Question to be taken immediately after ............... IX Sec. 2, sb b
  
   THREE-FIFTHS QUORUM-----
  
-    Bills requiring, for final passage ................ IX Sec. 2, sb c, e
-      Not required except for final passage .............. IX Sec. 2, sb e
-      To retain place on calendar, if absent ............. IX Sec. 2, sb d
+    Bills requiring, for final passage ................. X Sec. 2, sb c, e
+      Not required except for final passage ............... X Sec. 2, sb e
+      To retain place on calendar, if absent .............. X Sec. 2, sb d
  
   TITLES OF BILLS-----
  
-    Amending certain laws, what to contain ..................... VI Sec. 4
+    Amending certain laws, what to contain .................... VII Sec. 4
  
   TWO-THIRDS VOTE (See "VOTE")-----
  
@@ -2932,39 +2916,38 @@
  
   VETO-----
  
-    Two-thirds vote necessary to pass after .............. IX Sec. 2, sb b
+    Two-thirds vote necessary to pass after ............... X Sec. 2, sb b
  
   VOTE-----
  
-    Bills lost unless receiving required ............... VIII Sec. 6, sb b
-    Committee reports required majority, of committee ... VII Sec. 5, sb a
+    Bills lost unless receiving required ................. IX Sec. 6, sb b
+    Committee reports required majority, of committee .. VIII Sec. 5, sb a
     Explanation of (See "VOTING")
     Majority, of all Senators elected, necessary to pass certain resolutions
-
-                                                           VI Sec. 9, sb d
-      To reconsider vote on certain bills ................. V Sec. 9, sb b
-      To suspend rules ......................................... XI Sec. 1
-    Majority, of Senators present, necessary to close debatIX Sec. 3, sb d
-      To consider executive business ............................ V Sec. 7
-      To reconsider, on certain bills ..................... V Sec. 9, sb b
-    Reconsideration of .......................................... V Sec. 9
-    Senators shall, unless excused ....................... IX Sec. 1, sb a
+                                                          VII Sec. 9, sb d
+      To reconsider vote on certain bills ................ VI Sec. 9, sb b
+      To suspend rules ........................................ XII Sec. 1
+    Majority, of Senators present, necessary to close debateX Sec. 3, sb d
+      To consider executive business ........................... VI Sec. 7
+      To reconsider, on certain bills .................... VI Sec. 9, sb b
+    Reconsideration of ......................................... VI Sec. 9
+    Senators shall, unless excused ........................ X Sec. 1, sb a
     Two-thirds, of all Senators elected necessary to pass bills after veto
-                                                           IX Sec. 2, sb b
+                                                            X Sec. 2, sb b
     Two-thirds, of all Senators elected necessary to pass certain bills
-                                                           IX Sec. 2, sb b
-    Bills to retain place on calendar if absent .......... IX Sec. 2, sb d
- 
+                                                            X Sec. 2, sb b
+    Bills to retain place on calendar if absent ........... X Sec. 2, sb d
+
   VOTING-----
  
-    Excused from ......................................... IX Sec. 1, sb b
-    Explanation of ....................................... IX Sec. 3, sb e
+    Excused from .......................................... X Sec. 1, sb b
+    Explanation of ........................................ X Sec. 3, sb e
  
                                       W
  
   WITHDRAWAL OF MOTION-----
  
-    When in order ......................................... V Sec. 8, sb b
+    When in order ........................................ VI Sec. 8, sb b
 
 </pre>
 </div>

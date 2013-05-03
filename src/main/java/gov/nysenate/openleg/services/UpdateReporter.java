@@ -20,7 +20,7 @@ import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
  * Parses changes from a changeLog file and saves to MySQL database.
  */
 public class UpdateReporter extends ServiceBase
-{        
+{
     @Override
     public boolean process(HashMap<String, Storage.Status> changeLog, Storage storage) throws IOException
     {
@@ -38,7 +38,7 @@ public class UpdateReporter extends ServiceBase
             update.setOid(oid);
             update.setOtype(otype);
             update.setStatus(status.toString());
-            
+
             // Create date string in mySQL format for the current time.
             Date date = new Date();
             SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -49,7 +49,7 @@ public class UpdateReporter extends ServiceBase
         insertUpdates(updates);
         return true;
     }
-    
+
     public void insertUpdates(List<Update> updates)
     {
         // DataSource settings.
