@@ -6,12 +6,34 @@
 	    	<param name="ConversionPattern" value="%d{ABSOLUTE} %5p %c{1}:%L - %m%n"/>
 		</layout>
 	</appender>
+
+	<appender name="mail" class="org.apache.log4j.net.SMTPAppender">
+	  <param name="SMTPDebug" value="false" />
+	  <param name="BufferSize" value="5" />
+	  <param name="SMTPProtocol" value="smtps" />
+	  <param name="SMTPHost" value="smtp.gmail.com" />
+	  <param name="SMTPPort" value="465" />
+	  <param name="SMTPUsername" value="" />
+	  <param name="SMTPPassword" value="" />
+	  <param name="From" value="openlegislation@nysenate.gov" />
+	  <param name="To" value="" />
+	  <param name="Subject" value="OpenLegislation Exception" />
+	  <layout class="org.apache.log4j.PatternLayout">
+	    <param name="ConversionPattern" value="%d{MM/dd/yyyy HH:mm:ss} [%M] %-5p %C - %m%n" />
+	  </layout>
+	  <filter class="org.apache.log4j.varia.LevelRangeFilter">
+	    <param name="LevelMin" value="error" />
+	    <param name="LevelMax" value="fatal" />
+	  </filter>
+	</appender>
+
 	<logger name="gov.nysenate.openleg.util.Storage">
 	   <level value="info"/>
 	</logger>
+
     <root>
 		<priority value="info"></priority>
 		<appender-ref ref="stdout"/>
 	</root>
-	
+
 </log4j:configuration>
