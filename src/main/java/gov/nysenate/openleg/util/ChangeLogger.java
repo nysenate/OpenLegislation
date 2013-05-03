@@ -59,11 +59,18 @@ public class ChangeLogger
 
     public static void delete(String key, Storage storage)
     {
-        Status keyStatus = changeLog.get(key).getStatus();
-        if (keyStatus == Status.NEW) {
-            changeLog.remove(key);
+        Change change = changeLog.get(key);
+        if (change != null) {
+            // Already a change to this key waiting to be pushed to services.
+            if (change.getStatus() == Status.NEW) {
+                // If new, just remove it.
+                changeLog.remove(key);
+            } else if (change.getStatus() == Status.MODIFIED){
+                // Can't process a Modification since its file has been deleted.
+                change.setStatus(Status.DELETED);
+            }
         } else {
-            changeLog.get(key).setStatus(Status.DELETED);
+            changeLog.put(key, new Change(Status.DELETED));
         }
     }
 
