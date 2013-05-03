@@ -1,5 +1,6 @@
 package gov.nysenate.openleg;
 
+import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.processors.AgendaProcessor;
 import gov.nysenate.openleg.processors.BillProcessor;
 import gov.nysenate.openleg.processors.CalendarProcessor;
@@ -246,12 +247,12 @@ public class Environment
         }
     }
 
-    public HashMap<String, Status> ingestFiles(File...files)
+    public HashMap<String, Change> ingestFiles(File...files)
     {
         return ingestFiles(Arrays.asList(files));
     }
 
-    public HashMap<String, Status> ingestFiles(Collection<File> files)
+    public HashMap<String, Change> ingestFiles(Collection<File> files)
     {
         Timer timer = new Timer();
         Storage storage = new Storage(getStorageDirectory());

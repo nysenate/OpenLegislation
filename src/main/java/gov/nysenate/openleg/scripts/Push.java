@@ -4,6 +4,7 @@ import gov.nysenate.openleg.services.Lucene;
 import gov.nysenate.openleg.services.ServiceBase;
 import gov.nysenate.openleg.services.UpdateReporter;
 import gov.nysenate.openleg.services.Varnish;
+import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.File;
@@ -54,13 +55,13 @@ public class Push extends BaseScript
         if (opts.hasOption("change-file")) {
             try {
                 File changeFile = new File(opts.getOptionValue("change-file"));
-                changes = parseChanges(FileUtils.readLines(changeFile, "UTF-8"));
+                changes = ChangeLogger.parseChanges(FileUtils.readLines(changeFile, "UTF-8"));
             } catch (IOException e) {
                 System.err.println("Error reading change-file: "+opts.getOptionValue("changes"));
                 System.exit(1);
             }
         } else if (opts.hasOption("changes")) {
-            changes = parseChanges(Arrays.asList(opts.getOptionValue("changes").split("\n")));
+            changes = ChangeLogger.parseChanges(Arrays.asList(opts.getOptionValue("changes").split("\n")));
         } else {
             System.err.println("Changes to push must be specified with either --change-file or --changes");
             System.exit(1);
@@ -89,25 +90,6 @@ public class Push extends BaseScript
                 logger.error("Fatal Error handling Service "+service.getClass().getName(), e);
             }
         }
-    }
-
-    public HashMap<String, Storage.Status> parseChanges(Iterable<String> lines)
-    {
-        Pattern changePattern = Pattern.compile("\\s*(.*?)\\s+(NEW|DELETED|MODIFIED)");
-        HashMap<String, Storage.Status> changes = new HashMap<String, Storage.Status>();
-        for (String line : lines) {
-            if (line.isEmpty() || line.matches("\\s*#")) {
-                continue;
-            }
-            Matcher changeLine = changePattern.matcher(line);
-            if (changeLine.find()) {
-                changes.put(changeLine.group(1), Storage.Status.valueOf(changeLine.group(2).toUpperCase()));
-            } else {
-                logger.fatal("Malformed change line: "+line);
-                System.exit(0);
-            }
-        }
-        return changes;
     }
 
 }

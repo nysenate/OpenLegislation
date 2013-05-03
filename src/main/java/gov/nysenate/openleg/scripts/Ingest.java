@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.scripts;
 
+import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.processors.AgendaProcessor;
 import gov.nysenate.openleg.processors.BillProcessor;
 import gov.nysenate.openleg.processors.CalendarProcessor;
@@ -107,8 +108,8 @@ public class Ingest extends BaseScript
 
         // Dump out the change log
         StringBuffer out = new StringBuffer();
-        for (Entry<String, Status> entry : ChangeLogger.getChangeLog().entrySet()) {
-            out.append(entry.getKey()+"\t"+entry.getValue()+"\n");
+        for (Entry<String, Change> entry : ChangeLogger.getChangeLog().entrySet()) {
+            out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\n");
         }
 
         if (opts.hasOption("change-file")) {
