@@ -1,5 +1,6 @@
 <%@ page language="java" import="java.util.regex.*, java.util.Hashtable, java.util.TreeSet, java.util.HashMap, java.util.Date, java.util.ArrayList, java.util.List, java.util.Collections, java.util.StringTokenizer, java.util.Iterator, java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
-<%!public String getVoterString(List<String> voters, String appPath) {
+<%!
+    public String getVoterString(List<String> voters, String appPath) {
 	 	StringBuffer buffer = new StringBuffer();
 	 	buffer.append(wrapPerson(voters.get(0), appPath));
 		for(int i = 1; i < voters.size(); i++) {
