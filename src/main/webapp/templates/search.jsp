@@ -229,7 +229,7 @@ Bill: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("bill
 Chairperson: <a href="<%=appPath%>/search/?term=chair:%22<%=java.net.URLEncoder.encode((String)sresult.getFields().get("chair"),"UTF-8")%>%22"  class="sublink"><%=sresult.getFields().get("chair")%></a>
  <%} %>
  
-  <%if (sresult.getFields().get("committee")!=null){ %>
+  <%if (sresult.getFields().get("committee")!=null && !sresult.getFields().get("committee").isEmpty()){ %>
 Committee: <a href="<%=appPath%>/committee/<%=sresult.getFields().get("committee").replaceAll(" ","-")%>"  class="sublink"><%=sresult.getFields().get("committee")%></a>
  <%} %>
  

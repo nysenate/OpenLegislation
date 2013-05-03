@@ -20,7 +20,7 @@ public class Action extends SenateObject {
 
     private String id;
     private Date date;
-    private String text;
+    private String text = "";
 
     private Bill bill;
 

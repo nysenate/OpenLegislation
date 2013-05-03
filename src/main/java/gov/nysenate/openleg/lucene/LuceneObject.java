@@ -5,9 +5,9 @@ import java.util.HashMap;
 import org.apache.lucene.document.Fieldable;
 
 public class LuceneObject implements ILuceneObject {
-	
+
 	private boolean active = true;
-	private long modified;
+	private long modified = 0;
 
 	@Override
 	public HashMap<String, Fieldable> luceneFields() {
@@ -38,7 +38,7 @@ public class LuceneObject implements ILuceneObject {
 	public String luceneTitle() {
 		return null;
 	}
-	
+
 	@Override
 	public boolean getActive() {
 		return active;
