@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.xml.committee.XMLAddendum;
@@ -66,6 +67,7 @@ public class AgendaProcessor implements OpenLegConstants {
                     agenda.setModified(modifiedDate.getTime());
                     String key = agenda.getYear()+"/agenda/"+agenda.getId();
                     storage.set(key, agenda);
+                    ChangeLogger.record(key, storage);
 
                     for (Addendum addendum : agenda.getAddendums()) {
                         for (Meeting meeting : addendum.getMeetings()) {
@@ -77,6 +79,7 @@ public class AgendaProcessor implements OpenLegConstants {
                             // This might be a false positive change
                             meeting.setModified(addendum.getPublicationDateTime().getTime());
                             storage.set(key, meeting);
+                            ChangeLogger.record(key, storage);
                         }
                     }
                 }
@@ -89,6 +92,7 @@ public class AgendaProcessor implements OpenLegConstants {
                     agenda.setModified(modifiedDate.getTime());
                     String key = agenda.getYear()+"/agenda/"+agenda.getId();
                     storage.set(key, agenda);
+                    ChangeLogger.record(key, storage);
 
                     for (Addendum addendum : agenda.getAddendums()) {
                         for (Meeting meeting : addendum.getMeetings()) {
@@ -96,6 +100,7 @@ public class AgendaProcessor implements OpenLegConstants {
                             key = calendar.get(GregorianCalendar.YEAR)+"/meeting/"+meeting.getId();
                             logger.info(key);
                             storage.set(key, meeting);
+                            ChangeLogger.record(key, storage);
                         }
                     }
                 }
@@ -156,6 +161,7 @@ public class AgendaProcessor implements OpenLegConstants {
             // Make sure the bill gets updated on disc
             String key = String.valueOf(bill.getYear())+"/bill/"+bill.getSenateBillNo();
             storage.set(key, bill);
+            ChangeLogger.record(key, storage);
         }
 
         return bill;
@@ -237,11 +243,13 @@ public class AgendaProcessor implements OpenLegConstants {
         if (agenda != null && action.equalsIgnoreCase("remove")) {
             logger.info("removing agenda: " + agenda.getId());
             storage.del(key);
+            ChangeLogger.delete(key, storage);
 
             for (Addendum addendum : agenda.getAddendums()) {
                 for (Meeting meeting : addendum.getMeetings()) {
                     key = meeting.getYear()+"/meeting/"+meeting.getId();
                     storage.del(key);
+                    ChangeLogger.delete(key, storage);
                 }
             }
 
@@ -345,10 +353,12 @@ public class AgendaProcessor implements OpenLegConstants {
                         // Delete the meeting and save the agenda
                         String key = meeting.getYear()+"/meeting/"+meeting.getId();
                         storage.del(key);
+                        ChangeLogger.delete(key, storage);
 
                         agenda.removeCommitteeMeeting(meeting);
                         key = agenda.getYear()+"/agenda/"+agenda.getId();
                         storage.set(key, agenda);
+                        ChangeLogger.record(key, storage);
                     }
 
                     if (action.equals("remove")) {

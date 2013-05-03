@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.SOBIBlock;
 import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.File;
@@ -164,7 +165,9 @@ public class BillProcessor
                     logger.info("SAVING: "+bill.getSenateBillNo());
                     bill.addSobiReference(sobiFile.getName());
                     bill.setModified(date.getTime());
+                    String key = bill.getKey();
                     saveBill(bill, storage);
+                    ChangeLogger.record(bill.getKey(), storage);
                 }
             }
             catch (ParseError e) {
@@ -269,6 +272,7 @@ public class BillProcessor
                     logger.error("Bill Amendment filed without initial bill at "+block.getLocation()+" - "+block.getHeader());
                     baseBill = new Bill(baseKey, block.getYear());
                     storage.saveBill(baseBill);
+                    ChangeLogger.record(baseBill.getKey(), storage);
                 }
 
                 // Pull sponsor information up from the base bill
@@ -294,6 +298,7 @@ public class BillProcessor
                             billVersion.setActive(false);
                         }
                         storage.saveBill(billVersion);
+                        ChangeLogger.record(billVersion.getKey(), storage);
                     }
                 }
 
@@ -309,6 +314,7 @@ public class BillProcessor
                 // Activate yourself
                 amendment.setActive(true);
                 storage.saveBill(amendment);
+                ChangeLogger.record(amendment.getKey(), storage);
                 return amendment;
             }
         }
@@ -334,8 +340,10 @@ public class BillProcessor
             billVersion.setCoSponsors(bill.getCoSponsors());
             billVersion.setMultiSponsors(bill.getMultiSponsors());
             storage.saveBill(billVersion);
+            ChangeLogger.record(billVersion.getKey(), storage);
         }
         storage.saveBill(bill);
+        ChangeLogger.record(bill.getKey(), storage);
     }
 
     /**
@@ -371,9 +379,12 @@ public class BillProcessor
                         billVersion.setActive(true);
                     }
                     storage.saveBill(billVersion);
+                    ChangeLogger.record(billVersion.getKey(), storage);
                 }
             }
-            storage.del(bill.getYear()+"/bill/"+billKey);
+            String key = bill.getYear()+"/bill/"+billKey;
+            storage.del(key);
+            ChangeLogger.delete(key, storage);
         }
     }
 
