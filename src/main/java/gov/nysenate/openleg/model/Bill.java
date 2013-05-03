@@ -388,6 +388,21 @@ public class Bill extends SenateObject implements Comparable<Bill>
         }
     }
 
+    public static Pattern keyPattern = Pattern.compile("([ASLREJK][0-9]{1,5}[A-Z]?)-([0-9]{4})");
+
+    @JsonIgnore
+    public String getKey()
+    {
+        Matcher keyMatcher = keyPattern.matcher(this.getSenateBillNo());
+        if (keyMatcher.find()) {
+            return keyMatcher.group(2)+"/bill/"+keyMatcher.group(0);
+        }
+        else {
+            System.out.println("COULD NOT PARSE senateBillNo: "+this.getSenateBillNo());
+            return null;
+        }
+    }
+
     @JsonIgnore
     @Override
     public String luceneOtype()
