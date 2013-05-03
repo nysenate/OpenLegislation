@@ -4,6 +4,7 @@ import gov.nysenate.openleg.processors.AgendaProcessor;
 import gov.nysenate.openleg.processors.BillProcessor;
 import gov.nysenate.openleg.processors.CalendarProcessor;
 import gov.nysenate.openleg.processors.TranscriptProcessor;
+import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.util.Storage.Status;
 import gov.nysenate.openleg.util.Timer;
@@ -303,6 +304,6 @@ public class Environment
         }
         storage.flush();
         logger.info(timer.stop()+" seconds to injest "+files.size()+" files.");
-        return storage.changeLog;
+        return ChangeLogger.getChangeLog();
     }
 }
