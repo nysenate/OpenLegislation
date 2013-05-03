@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.processors;
 
 import gov.nysenate.openleg.model.Transcript;
+import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.EasyReader;
 import gov.nysenate.openleg.util.Storage;
 
@@ -96,11 +97,19 @@ public class TranscriptProcessor {
                 fullTextProcessed.append('\n');
             }
         }
+
         transcript.setTranscriptText(fullText.toString());
         transcript.setTranscriptTextProcessed(fullTextProcessed.toString());
         transcript.setId(transcript.luceneOid());
         transcript.setModified(transcript.getTimeStamp().getTime());
         transcript.addSobiReference(file.getName());
-        storage.set(transcript.getYear()+"/transcript/"+transcript.luceneOid(), transcript);
+
+        // Save the transcript
+        String key = transcript.getYear()+"/transcript/"+transcript.luceneOid();
+        storage.set(key, transcript);
+
+        // Make an entry in the change log
+        ChangeLogger.setContext(file, transcript.getTimeStamp());
+        ChangeLogger.record(key, storage);
     }
 }
