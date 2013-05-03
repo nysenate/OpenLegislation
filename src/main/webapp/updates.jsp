@@ -23,27 +23,31 @@
 	TreeMap<Date, ArrayList<Update>> updates = (TreeMap<Date, ArrayList<Update>>)(request.getAttribute("updates")); 
 if(updates != null){ 
 	SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, ''yyyy");
+	SimpleDateFormat linkFormat = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 	for(Map.Entry<Date, ArrayList<Update>> map : updates.entrySet()){
 		ArrayList<Update> dayUpdates = map.getValue();
+		String date = linkFormat.format(map.getKey());
 %>
 		<tr class="table" id="date">
-		<td class="table" id="date" colspan="4"><%=dateFormat.format(map.getKey())%></td>
+		<td class="table" id="date" colspan="4"><a href="<%="/legislation/updates?startDay=" + date + "&endDay=" + date%>">
+		<%=dateFormat.format(map.getKey())%></a></td>
 		</tr>
 		<%
 			for(Update update: dayUpdates){ 
 			Date time = update.getDateObj();
 		%>
 		<tr class="table">
-			<td class="table" id="time"><%=timeFormat.format(time)%>
+			<td class="table" id="time"><a href="#<%=update.getOid()%>"><%=timeFormat.format(time)%></a></td>
 			<td class="table" id="otype"><%=update.getOtype()%></td>
 			<%if(update.getOtype().equals("bill")){
 				String  url = "http://open.nysenate.gov/legislation/bill/" + update.getOid();
 			%>
-				<td class="table" id="oid"><a href=<%=url%>><%=update.getOid()%></a></td>
-			<%} 
+				<td class="table" id="oid"><a name=<%=update.getOid()%>></a>
+				<a href=<%=url%>><%=update.getOid()%></a></td>
+			<%}
 			else {%>
-			<td class="table" id="oid"><%=update.getOid() %></td>
+			<td class="table" id="oid"><a name=<%=update.getOid()%>></a><%=update.getOid() %></td>
 			<%} %>
 			<td class="table" id="status"><%=update.getStatus()%></td>
 		</tr>
@@ -53,5 +57,6 @@ if(updates != null){
 	</table>
 </div>
 <%}%>
+<br><br><br><br><br>
 </body>
 </html>
