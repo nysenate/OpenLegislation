@@ -24,7 +24,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 public class Bill extends SenateObject implements Comparable<Bill>
 {
 
-    protected boolean active;
+    protected boolean active = true;
 
     @LuceneField
     protected int year;

@@ -389,7 +389,7 @@
 		 		
 				<div>
 		  			<b>VOTE: <%=voteType.toUpperCase()%>:
-		  			<% if(vote.getDescription() != null){ %>
+                    <% if(vote.getDescription() != null && !vote.getDescription().isEmpty()){ %>
 		  				- <%=vote.getDescription()%>
 		  			<% } %>
 		 			 - <%=DateFormat.getDateInstance(DateFormat.MEDIUM).format(vote.getVoteDate())%></b>
