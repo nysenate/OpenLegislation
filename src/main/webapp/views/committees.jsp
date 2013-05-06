@@ -68,7 +68,7 @@ td {
                                 <ul>
                                     <% for(Member member:committee.getChairs()) { %>
                                         <li>
-                                            <a href="<%=appPath%>/sponsor/<%=member.getShortName()%>"><%=member.getName() %></a>
+                                            <a href="<%=appPath%>/sponsor/<%=member.getShortName()%>"><%=member.getName() %></a>,
                                         </li>
                                     <% } %>
                                 </ul>
@@ -80,7 +80,7 @@ td {
                                 <ul>
                                     <% for(Member member:committee.getMembers()) { %>
                                         <li>
-                                            <a href="<%=appPath%>/sponsor/<%=member.getShortName()%>"><%=member.getName() %></a>
+                                            <a href="<%=appPath%>/sponsor/<%=member.getShortName()%>"><%=member.getName() %></a>,
                                         </li>
                                     <% } %>
                                 </ul>
