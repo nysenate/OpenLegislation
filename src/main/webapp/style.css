@@ -467,10 +467,10 @@ pre {
 	text-align:left;
 	overflow-x: auto;
 	white-space: -moz-pre-wrap !important;
-	word-wrap: break-word;
+	word-wrap: break-word; 
 	margin: 0px 0px 0px 0px;
 	padding:5px 5px 3px 5px;
-	white-space : normal;
+	white-space : pre-line; 
 	max-width:550px;
 }
 
