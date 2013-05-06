@@ -67,7 +67,7 @@ public class AgendaProcessor implements OpenLegConstants {
                     agenda.setModified(modifiedDate.getTime());
                     String key = agenda.getYear()+"/agenda/"+agenda.getId();
                     storage.set(key, agenda);
-                    ChangeLogger.record(key, storage);
+                    ChangeLogger.record(key, storage, modifiedDate);
 
                     for (Addendum addendum : agenda.getAddendums()) {
                         for (Meeting meeting : addendum.getMeetings()) {
@@ -79,7 +79,7 @@ public class AgendaProcessor implements OpenLegConstants {
                             // This might be a false positive change
                             meeting.setModified(addendum.getPublicationDateTime().getTime());
                             storage.set(key, meeting);
-                            ChangeLogger.record(key, storage);
+                            ChangeLogger.record(key, storage, modifiedDate);
                         }
                     }
                 }
@@ -92,7 +92,7 @@ public class AgendaProcessor implements OpenLegConstants {
                     agenda.setModified(modifiedDate.getTime());
                     String key = agenda.getYear()+"/agenda/"+agenda.getId();
                     storage.set(key, agenda);
-                    ChangeLogger.record(key, storage);
+                    ChangeLogger.record(key, storage, modifiedDate);
 
                     for (Addendum addendum : agenda.getAddendums()) {
                         for (Meeting meeting : addendum.getMeetings()) {
@@ -100,7 +100,7 @@ public class AgendaProcessor implements OpenLegConstants {
                             key = calendar.get(GregorianCalendar.YEAR)+"/meeting/"+meeting.getId();
                             logger.info(key);
                             storage.set(key, meeting);
-                            ChangeLogger.record(key, storage);
+                            ChangeLogger.record(key, storage, modifiedDate);
                         }
                     }
                 }

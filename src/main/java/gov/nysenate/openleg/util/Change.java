@@ -1,9 +1,7 @@
-package gov.nysenate.openleg.model;
+package gov.nysenate.openleg.util;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import gov.nysenate.openleg.util.Storage;
 
 public class Change
 {
@@ -13,7 +11,12 @@ public class Change
     public Change(Storage.Status status)
     {
         this.status = status;
-        this.date = new Date();
+    }
+    
+    public Change(Storage.Status status, Date date)
+    {
+        this.status = status;
+        this.date = date;
     }
     
     public Storage.Status getStatus()
@@ -24,5 +27,15 @@ public class Change
     public void setStatus(Storage.Status status)
     {
         this.status = status;
+    }
+
+    public Date getDate()
+    {
+        return date;
+    }
+
+    public void setDate(Date date)
+    {
+        this.date = date;
     }
 }

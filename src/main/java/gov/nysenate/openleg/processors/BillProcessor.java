@@ -167,8 +167,8 @@ public class BillProcessor
                     logger.info("SAVING: "+bill.getSenateBillNo());
                     bill.addSobiReference(sobiFile.getName());
                     bill.setModified(date.getTime());
-                    saveBill(bill, storage);
-                    ChangeLogger.record(bill.getKey(), storage);
+                    String key = bill.getKey();
+                    saveBill(bill, storage, date);
                 }
             }
             catch (ParseError e) {
@@ -344,7 +344,7 @@ public class BillProcessor
      * @param bill
      * @param storage
      */
-    public void saveBill(Bill bill, Storage storage)
+    public void saveBill(Bill bill, Storage storage, Date date)
     {
         // Sponsor and summary information needs to be synced at all times.
         // Uni bills share text, always sent to the senate bill.
@@ -358,7 +358,7 @@ public class BillProcessor
             billVersion.setMultiSponsors(bill.getMultiSponsors());
             billVersion.setSummary(bill.getSummary());
             storage.saveBill(billVersion);
-            ChangeLogger.record(billVersion.getKey(), storage);
+            ChangeLogger.record(billVersion.getKey(), storage, date);
         }
         if (bill.isUniBill()) {
             // logger.error("UNIBILL: "+bill.getSenateBillNo()+", "+bill.getSameAs());
@@ -391,7 +391,7 @@ public class BillProcessor
             }
         }
         storage.saveBill(bill);
-        ChangeLogger.record(bill.getKey(), storage);
+        ChangeLogger.record(bill.getKey(), storage, date);
     }
 
     /**
