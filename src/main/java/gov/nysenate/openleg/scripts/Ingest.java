@@ -1,20 +1,21 @@
 package gov.nysenate.openleg.scripts;
 
-import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.processors.AgendaProcessor;
 import gov.nysenate.openleg.processors.BillProcessor;
 import gov.nysenate.openleg.processors.CalendarProcessor;
 import gov.nysenate.openleg.processors.TranscriptProcessor;
+import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.Storage;
-import gov.nysenate.openleg.util.Storage.Status;
 import gov.nysenate.openleg.util.Timer;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -108,8 +109,16 @@ public class Ingest extends BaseScript
 
         // Dump out the change log
         StringBuffer out = new StringBuffer();
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date;
         for (Entry<String, Change> entry : ChangeLogger.getChangeLog().entrySet()) {
-            out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\n");
+            date = entry.getValue().getDate();
+            if (date != null) {
+                out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\t"+sdf.format(date).toString()+"\n");
+            } else {
+                // If no date information available, set date to current time.
+                out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\t"+sdf.format(new Date()).toString() +"\n");
+            }
         }
 
         if (opts.hasOption("change-file")) {

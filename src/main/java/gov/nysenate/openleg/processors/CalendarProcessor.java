@@ -135,7 +135,7 @@ public class CalendarProcessor implements OpenLegConstants {
             calendar.setModified(modifiedDate.getTime());
             String key = String.valueOf(calendar.getYear())+"/calendar/"+calendar.getId();
             storage.set(key, calendar);
-            ChangeLogger.record(key, storage);
+            ChangeLogger.record(key, storage, modifiedDate);
             removeObject = null;
         }
     }

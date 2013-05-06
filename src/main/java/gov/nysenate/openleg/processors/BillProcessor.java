@@ -166,8 +166,7 @@ public class BillProcessor
                     bill.addSobiReference(sobiFile.getName());
                     bill.setModified(date.getTime());
                     String key = bill.getKey();
-                    saveBill(bill, storage);
-                    ChangeLogger.record(bill.getKey(), storage);
+                    saveBill(bill, storage, date);
                 }
             }
             catch (ParseError e) {
@@ -328,7 +327,7 @@ public class BillProcessor
      * @param bill
      * @param storage
      */
-    public void saveBill(Bill bill, Storage storage)
+    public void saveBill(Bill bill, Storage storage, Date date)
     {
         // Sponsor information needs to be synced at all times.
         // Normally it is always sent to the base bill and broadcasted to amendments
@@ -340,10 +339,10 @@ public class BillProcessor
             billVersion.setCoSponsors(bill.getCoSponsors());
             billVersion.setMultiSponsors(bill.getMultiSponsors());
             storage.saveBill(billVersion);
-            ChangeLogger.record(billVersion.getKey(), storage);
+            ChangeLogger.record(billVersion.getKey(), storage, date);
         }
         storage.saveBill(bill);
-        ChangeLogger.record(bill.getKey(), storage);
+        ChangeLogger.record(bill.getKey(), storage, date);
     }
 
     /**
