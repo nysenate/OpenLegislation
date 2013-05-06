@@ -91,6 +91,9 @@ public class Bill extends SenateObject implements Comparable<Bill>
     @LuceneField
     protected Boolean stricken = false;
 
+    @LuceneField
+    private boolean uniBill = false;
+
     public Bill()
     {
         super();
@@ -323,6 +326,15 @@ public class Bill extends SenateObject implements Comparable<Bill>
         this.stricken = stricken;
     }
 
+    public boolean isUniBill()
+    {
+        return uniBill;
+    }
+
+    public void setUniBill(boolean uniBill)
+    {
+        this.uniBill = uniBill;
+    }
 
     public String getCurrentCommittee()
     {
@@ -393,12 +405,18 @@ public class Bill extends SenateObject implements Comparable<Bill>
     @JsonIgnore
     public String getKey()
     {
-        Matcher keyMatcher = keyPattern.matcher(this.getSenateBillNo());
+        return Bill.getKey(this.getSenateBillNo());
+    }
+
+    @JsonIgnore
+    public static String getKey(String billNo)
+    {
+        Matcher keyMatcher = keyPattern.matcher(billNo);
         if (keyMatcher.find()) {
             return keyMatcher.group(2)+"/bill/"+keyMatcher.group(0);
         }
         else {
-            System.out.println("COULD NOT PARSE senateBillNo: "+this.getSenateBillNo());
+            System.out.println("COULD NOT PARSE senateBillNo: "+billNo);
             return null;
         }
     }
