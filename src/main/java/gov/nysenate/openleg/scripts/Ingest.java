@@ -116,6 +116,7 @@ public class Ingest extends BaseScript
             if (date != null) {
                 out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\t"+sdf.format(date).toString()+"\n");
             } else {
+                // TODO temporary solution.
                 // If no date information available, set date to current time.
                 out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\t"+sdf.format(new Date()).toString() +"\n");
             }
