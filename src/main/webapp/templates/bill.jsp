@@ -168,26 +168,31 @@
 	String billMemo = bill.getMemo();
 %>
 
-<br/>
-<h2>
-	<%=senateBillNo%>: <%=bill.getTitle() == null ? "" : bill.getTitle()%>
+
+<h2 class='page-title'>
+	Bill Details for <%=senateBillNo%>
 </h2>
-<br/>
-    
-<%
-    	if(!active) {
-    %>
+<div class="content-bg">
+	<h3 class='item-title'>
+		<%=senateBillNo%>: <%=bill.getTitle() == null ? "" : bill.getTitle()%>
+	</h3>
+	<div  class="summary"> <p><%=billSummary == null ? "" : billSummary%></p></div>
+	
+    <%-- <div>
+		<a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>" target="_new">Print HTML Page</a> / 
+		<a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=senateBillNo%>" target="_new">Print Original Bill Format</a> / 
+		<script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script> / 
+		<a href="#discuss">Read or Leave Comments</a>
+	</div> --%>
+<% if(!active) { %>
 	<div class="amended">This bill has been amended.</div>
-<%
-	}
-%>
+<% } %>
     
-<div style="float:left;">
-    
-    <%
-        	if (bill.getSameAs()!=null){
-        %>
-			<b>Same as:</b>
+<div class="item-meta">
+<div id="subcontent">
+	<div class="billheader">
+    <% if (bill.getSameAs()!=null){ %>
+	<div><span class="meta">Same as:</span>
 		<%
 			StringTokenizer st = new StringTokenizer(bill.getSameAs(),",");
 			String sameAs = null;
@@ -214,7 +219,7 @@
 					}
 							}
 				%>
-			/
+
 	<%
 					} 
 						    	
@@ -225,11 +230,12 @@
 								
 								if (rBills.size() > 0) {
 				%>
-				Versions: 
+				</div>
+				<div><span class="meta">Versions:</span> 
 			<%
 					for (Bill rBill:rBills) {
 				%>
-					<a href="/legislation/bill/<%=rBill.getSenateBillNo()%>"><%=rBill.getSenateBillNo()%></a> 
+					<a href="/legislation/bill/<%=rBill.getSenateBillNo()%>"><%=rBill.getSenateBillNo()%></a> </div>
 				<%
  					}
  				 						}
@@ -237,36 +243,22 @@
  				 						if (sponsor == null)
  				 					sponsor = "";
  				%>
-</div>
 
-<div style="float:right;">
-	<a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>" target="_new">Print HTML Page</a> / 
-	<a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=senateBillNo%>" target="_new">Print Original Bill Format</a> / 
-	<script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script> / 
-	<a href="#discuss">Read or Leave Comments</a>
-</div>
 
-<br style="clear:both;"/>
-
-<div id="content">
-
-	<div class="billheader">
-  		<%=billSummary == null ? "" : billSummary%>
-		<hr/>
 		<% if (bill.getSenateBillNo().equals("J375-2013")) { %>
-		    <b>Sponsors: </b>
+		    <div><span class="meta">Sponsors: </span> 
 		    <%=wrapPerson("STEWART-COUSINS",appPath)%>,
 		    <%=wrapPerson("SKELOS",appPath)%>,
-		    <%=wrapPerson("KLEIN",appPath)%>
+		    <%=wrapPerson("KLEIN",appPath)%></div>
 		<% } else { %>
-			<b>Sponsor: </b>
-			<a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(sponsor,"utf-8")%>"  class="sublink"><%=sponsor%></a>
+			<div><span class="meta">Sponsor: </span>
+			<a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(sponsor,"utf-8")%>"  class="sublink"><%=sponsor%></a></div>
 			
 			<%
             if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) {
 	        %>
-	             / <b>Multi-sponsor(s):</b>
-	            <%=getSponsorString(bill.getMultiSponsors(), appPath)%>
+	        <div><span class="meta">Multi-sponsor(s):</span>
+	            <%=getSponsorString(bill.getMultiSponsors(), appPath)%></div>
 	        <%
 	            }
 	        %>
@@ -274,8 +266,8 @@
 	        <%
 	                    if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) {
 	                %>
-	             / <b>Co-sponsor(s):</b>
-	            <%=getSponsorString(bill.getCoSponsors(), appPath)%>
+	        <div> <span class="meta">Co-sponsor(s):</span>
+	            <%=getSponsorString(bill.getCoSponsors(), appPath)%></div>
 	        <%
 	            }
 	        %>
@@ -286,21 +278,20 @@
 		<%
  					if (bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
  				%>
-			 / <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
+		<div> <span class="meta">Committee:</span> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a></div>
 		<%
 			}
 		%>
-		<br/>
 		<%
 			if (bill.getLawSection() != null && !bill.getLawSection().equals("")) {
 		%>
-					<b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
+		<div> <span class="meta">Law Section:</span> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a></div>
 	 			<%
 	 				}
 	 				 				
 	 				 				 		if (bill.getLaw() != null && bill.getLaw() != "") {
 	 			%>
-					 / <b>Law:</b> <%=bill.getLaw()%>
+		<div> <span class="meta">Law:</span> <%=bill.getLaw()%> </div>
 				<%
 					}
 				%>

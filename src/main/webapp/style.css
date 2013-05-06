@@ -4,9 +4,9 @@ body {
   line-height: 1.4em; /* 15px */
   color: #333;
   background-color: #fff;
-  background-image:url('img/nyss_bg.png');
+ background-image:url('img/nyss_bg.png');
   background-repeat: repeat-x;
-  margin:16px;
+margin:16px;
   margin-top:1px;
 }
 
@@ -252,29 +252,25 @@ float:left;
 		font-size:10pt;
 	}
 	
-#header
-{	
-
+#header{
 	padding:3px;
-
 }
-
-#header form
-{
-	
-}
-	
-#logobox
-{
- float:left;
- margin:0px;
- padding:0px;
-width:134px;
-height:45px;
-padding-top:3px;
-float:left;
- }
  
+
+#logobox{
+	float:left;
+	margin:0px;
+	padding:0px;
+	width:134px;
+	height:45px;
+	padding-top:3px;
+}
+.searchbox{
+	width:684px;
+	height:45px;	
+	float:left;	
+	padding:12px 0 0 20px;
+}
 hr
 {
 color: #ccc;
@@ -305,19 +301,84 @@ outline:0px;
 	width:280px;
 }
 
-#content
-{
-
-padding:6px;
-background:white;
-opacity:.9;
+#content{
+	width:880px;
+	margin:0 auto;
 }
 
-#footer
-{
-font-size:9px;
-margin:10px;
-color:#888;
+.content-bg{
+	background:#fff;
+	border:1px solid #ccc;
+	padding: 10px;
+	float:left;
+	width:100%;
+	
+}
+#subcontent{
+	float:left;
+	width:100%;
+	
+}
+#menu{
+	padding: 2px 0px 10px;
+	color:#fff;
+}
+#menu a{
+	color:#fff;
+	text-decoration:none;
+}
+.searbar{
+	padding: 20px 0 0 0;
+}
+#menu .searbar a,#menu .searbar{
+	color:#333;
+}
+
+.page-title{
+	float:left;
+	padding: 0 0 5px;
+}
+.item-title{
+	float:left;
+	padding: 0 0 5px;
+	width:700px;
+	border-bottom:none;
+	font-weight:normal;
+}
+.summary{
+	 border-bottom: 1px solid #AAAAAA;
+	 padding:0 0 5px;
+	 color:#7F7E73;
+}
+.summary p{
+	width:550px;
+}
+.item-meta{
+	float:left;
+	padding: 0 0 5px;
+	width:100%;
+}
+.item-meta div{
+	width:100%;
+	display:new-line;
+	float:left;
+}
+.item-meta .meta{
+	width:140px;
+	float:left;
+	display:block;
+	color:#4F4E43;
+}
+#comments{
+	float:left;
+}
+#footer{
+	font-size:9px;
+	color:#888;
+	border-top:1px solid #ccc;
+	padding: 10px;
+	float:left;
+	width:100%;
 }
 
 #footer img
@@ -325,7 +386,38 @@ color:#888;
 float:left;
 margin:3px;
 }
+#footer ul, #footer ul li{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+.footer-quarter{
+	margin:10px 0 0 0;
+	width:24%;
+	float:left;
+/* 	border:1px solid red; */
+	padding:1px;
+}
+.footer-quarter li{ 
+	font-size:12px;
+	margin:10px 0 0 0;
+	padding:10px;
+	color:#333;
+}
 
+
+.footer-quarter li.head{
+	color:#000;
+	font-weight:bold;
+} 
+
+#footer-message{
+	float:left;
+	margin:10px 0;
+	padding:10px 0;
+	border-top:1px solid #ccc;
+	width:870px;
+}
 #billHeaderSummary
 {
 	font-size:16pt;
@@ -333,31 +425,42 @@ margin:3px;
 	margin-bottom:15px;
 }
 	
-.billSummary
-{
-padding:3px;
-padding-top:12px;
-border-bottom:1px dashed #ccc;
-margin:0px;
+.row{
+	padding:3px;
+	padding-top:12px;
+	border-bottom:1px dashed #ccc;
+	margin:0px;
 }
-
-.billSummary p
+.row:hover{
+	background-color:#FFFFCC;
+}
+.row p
 {
 font-size:10pt;
 }
 
-.billSummary li
+.row li
 {
 margin-left:10px;
 border-bottom:1px solid #ccc;
 margin-bottom:3px;
 }
 	
-.billSummarySmall
-{
+.billSummarySmall{
 font-size:9pt;
 }
-
+.calendar-summary{
+	float:left;
+}
+.calendar-summary ol{
+	list-style-type: decimal-leading-zero;
+	padding: 0 0 0 20px;
+	
+}
+.calendar-summary li{
+	padding:8px 0;
+	border-bottom:1px solid #e1e1e1;
+}
 #txtSearchBox
 {
 width:250px;
@@ -405,11 +508,7 @@ font-size:1.1em;
 font-size:80%;
 }
 
-#formatBox
-{
-font-size:90%;
-border-top:1px solid #ccc;
-}
+ 
 
 .linkActivated, .linkActivated:visited
 {

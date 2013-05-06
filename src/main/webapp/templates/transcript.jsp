@@ -84,7 +84,7 @@
 			src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
 </div>
 <br style="clear: both;" />
-<div id="content">
+<div id="subcontent">
 
 	<b>Location: <%=transcript.getLocation()%></b> /
 	<b>Session: <%=transcript.getType()%></b>

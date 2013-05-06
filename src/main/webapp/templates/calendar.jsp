@@ -12,16 +12,14 @@
 	sdf.applyPattern("EEE, MMM d, yyyy");
 %>
 <br/>
-
-<h2>Calendar no. <%=calendar.getNo()%> (<%=calendar.getType()%>) / Year: <%=calendar.getYear()%> / Session: <%=calendar.getSessionYear()%> - <%=calendar.getSessionYear() + 1%></h2>
-
+<h2 class='page-title'>
+	Calendar no. <%=calendar.getNo()%> (<%=calendar.getType()%>) / Year: <%=calendar.getYear()%> / Session: <%=calendar.getSessionYear()%> - <%=calendar.getSessionYear() + 1%>
+</h2>
 <div style="float:right;">
 		<script type="text/javascript"
 			src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
 </div>
-<br style="clear: both;" />
-<div id="content">
-	
+<div class="content-bg">
 	<%
 		int count = 0;
 		
@@ -37,7 +35,7 @@
 				if (calendar.getType().equals("active") && supp.getSequences() == null)
 					continue; %>
 					
-				<h3>
+				<h3 class='item-title'>
 					<% if (supp.getSequences() == null || supp.getSequences().size() == 0) {
 						if(count != 0) {
 							%> Supplemental 
@@ -57,7 +55,7 @@
 				 	<% if (supp.getReleaseDateTime() != null) { %>
 				 		  / <b>Released:</b> <%=sdf.format(supp.getReleaseDateTime())%>
 				 	<% } %>
-				</h3>
+				</h3><hr/>
 				
 				<%
 					List<Sequence> seqs = supp.getSequences();
@@ -120,15 +118,14 @@
 					}
 				
 					if (supp.getSections() != null && supp.getSections().size() > 0) { %>
-	 					<blockquote>
 	 					<%
 							Iterator<Section> itSection = supp.getSections().iterator();
 							while (itSection.hasNext()) {
 								Section section = itSection.next();
 								%>
-									<h4>Section:<%=section.getName()%> (<%=section.getType()%> / <%=section.getCd()%>)</h4>
-									<div class="billSummary">
-										<ul>
+									<h4 class='item-title'>Section:<%=section.getName()%> (<%=section.getType()%> / <%=section.getCd()%>)</h4>
+									<div class="calendar-summary">
+										<ol>
 										<%
 											Iterator<CalendarEntry> itCals = section.getCalendarEntries().iterator();
 											while (itCals.hasNext()) {
@@ -166,10 +163,9 @@
 													<% } %> 
 												</li>
 											<% } %> 
-									</ul>
+									</ol>
 								</div>
 							<% } %>
-						</blockquote>
 					<% }
 			}
 			catch (Exception e) {

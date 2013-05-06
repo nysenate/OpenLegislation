@@ -28,7 +28,6 @@ if (type == null)
 	type = "";
 
 %>
-<br/>
 <%
 
 int pageIdx = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_IDX));
@@ -78,20 +77,19 @@ if (total > endIdx)
 }
 	
 %>
-<div style="float:left">
-<h4><%=type.toUpperCase()%> SEARCH RESULTS</h4>
-</div>
+<h2 class='page-title'>
+	<%=type.toUpperCase()%> SEARCH RESULTS
+</h2>
 
-<div style="float:right">
 <% String encodedTerm = java.net.URLEncoder.encode(term,"UTF-8"); %>
 Formats:
 <a href="/legislation/api/atom/search/<%=encodedTerm%>/">ATOM</a>,
 <a href="/legislation/api/rss/search/<%=encodedTerm%>/">RSS</a>,
 <a href="/legislation/api/json/search/<%=encodedTerm%>/<%=pageIdx%>/<%=pageSize%>">JSON</a>,
 <a href="/legislation/api/xml/search/<%=encodedTerm%>/<%=pageIdx%>/<%=pageSize%>">XML</a>
-</div>
-<br style="clear:both;"/>
- <div id="content">
+ 
+<div class="content-bg">
+ <div id="subcontent">
  <%
  	if (resultCount>0){
  %>
@@ -197,7 +195,7 @@ String resultTitle = null;
 String resultPath = appPath + "/" + contentType + "/" + contentId;
 
  %>
- <div class="billSummary" onmouseover="this.style.backgroundColor='#FFFFCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='<%=resultPath%>'">
+ <div class="row" onclick="location.href='<%=resultPath%>'">
 <a href="<%=resultPath%>"><%=senateType%>: <%=resultTitle%></a>
 <div style="font-size:90%;color:#777777;">
 

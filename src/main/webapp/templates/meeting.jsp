@@ -15,14 +15,19 @@
 	}
 %>
 
-<br />
-<h2><%=meeting.getCommitteeName()%> - <%=df.format(meeting.getMeetingDateTime())%></h2>
+<h2 class='page-title'>
+	Meeting details for <%=meeting.getCommitteeName%>
+</h2>
+<div class="content-bg">
+	<h3 class='item-title'>
+		<%=meeting.getCommitteeName()%> - <%=df.format(meeting.getMeetingDateTime())%>
+	</h3>
+ 
 
 <div style="float: right">
 	<script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
 </div>
-<br style="clear: both;" />
-<div id="content">
+<div id="subcontent">
 	<div>
 		<b>Agenda:</b> <%=calNo%> / <b>Chair:</b>
 		<a href="<%=appPath%>/search/?term=chair:<%=java.net.URLEncoder.encode("\""+meeting.getCommitteeChair() + "\"", OpenLegConstants.ENCODING)%>"><%=chair%></a>
