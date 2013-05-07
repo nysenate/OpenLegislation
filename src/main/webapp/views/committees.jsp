@@ -42,10 +42,15 @@ td {
     text-indent: 0.0em;  
 }
 </style>
+<h2 class='page-title'>
+<%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Committee Listings</h2>
+<div class='formats'>
+	<em>Committee Listings are available for: </em><a href="<%=appPath%>/committees/2013">2013</a> | <a href="<%=appPath%>/committees/2011">2011</a>
+</div>
+<div class="content-bg">
 
-<em>Committee Listings are available for: </em><a href="<%=appPath%>/committees/2013">2013</a> | <a href="<%=appPath%>/committees/2011">2011</a>
+
 <div id="content">
-    <h2><%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Committee Listings</h2>
     <h3>Standing Committees</h3>
     <ul id="committees">
         <% if (committees.size()==0) { %>

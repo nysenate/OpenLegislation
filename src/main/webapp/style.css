@@ -333,7 +333,11 @@ outline:0px;
 #menu .searbar a,#menu .searbar{
 	color:#333;
 }
-
+.title-block{
+	float:left;
+	border-bottom:1px solid #ccc;
+	width:100%;
+}
 .page-title{
 	float:left;
 	padding: 0 0 5px;
@@ -341,18 +345,17 @@ outline:0px;
 .item-title{
 	float:left;
 	padding: 0 0 5px;
-	width:700px;
+	width:675px;
 	border-bottom:none;
 	font-weight:normal;
 }
 .summary{
-	 border-bottom: 1px solid #AAAAAA;
-	 padding:0 0 5px;
+ 	 padding:0 0 5px;
 	 color:#7F7E73;
+	 width:550px;
+	 float:left;
 }
-.summary p{
-	width:550px;
-}
+ 
 .item-meta{
 	float:left;
 	padding: 0 0 5px;
@@ -368,6 +371,14 @@ outline:0px;
 	float:left;
 	display:block;
 	color:#4F4E43;
+}
+.item-actions{
+	width:180px;
+	float:right;
+	margin-top:15px;
+}
+.item-actions a{
+	font-size:12px;
 }
 #comments{
 	float:left;
@@ -418,11 +429,27 @@ margin:3px;
 	border-top:1px solid #ccc;
 	width:870px;
 }
+.billheader{
+}
+.section{
+	border-bottom:none;
+	border-top:1px solid #ccc;
+	float:left;
+	width:100%;
+	padding-top:10px;
+}
+
 #billHeaderSummary
 {
 	font-size:16pt;
 	color:#333333;	
 	margin-bottom:15px;
+}
+.sortby{
+	float:right;
+}
+.formats{
+	float:right;
 }
 	
 .row{
@@ -453,8 +480,8 @@ font-size:9pt;
 	float:left;
 }
 .calendar-summary ol{
-	list-style-type: decimal-leading-zero;
-	padding: 0 0 0 20px;
+	list-style-type: square;
+	padding: 0 0 0 0px;
 	
 }
 .calendar-summary li{
@@ -533,9 +560,7 @@ visibility:hidden;
 
 .quickresult-header
 {
-position:absolute;
-top:74px;
-left:150px;
+position:relative;
 }
 
 #quickresult ul, #quickresult li

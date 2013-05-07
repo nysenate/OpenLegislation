@@ -173,17 +173,18 @@
 	Bill Details for <%=senateBillNo%>
 </h2>
 <div class="content-bg">
-	<h3 class='item-title'>
-		<%=senateBillNo%>: <%=bill.getTitle() == null ? "" : bill.getTitle()%>
-	</h3>
-	<div  class="summary"> <p><%=billSummary == null ? "" : billSummary%></p></div>
-	
-    <%-- <div>
-		<a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>" target="_new">Print HTML Page</a> / 
-		<a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=senateBillNo%>" target="_new">Print Original Bill Format</a> / 
-		<script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script> / 
-		<a href="#discuss">Read or Leave Comments</a>
-	</div> --%>
+	<div class="title-block">
+		<h3 class='item-title'>
+			<%=senateBillNo%>: <%=bill.getTitle() == null ? "" : bill.getTitle()%>
+		</h3>		    
+		<div class='item-actions'>
+			<a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>" target="_new">Print HTML Page</a><br/>
+			<a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=senateBillNo%>" target="_new">Print Original Bill Format</a> <br/>
+			<script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script><br/>
+			<a href="#discuss">Read or Leave Comments</a>
+		</div>
+		<div  class="summary"> <p><%=billSummary == null ? "" : billSummary%></p></div>
+	 </div>
 <% if(!active) { %>
 	<div class="amended">This bill has been amended.</div>
 <% } %>
@@ -300,7 +301,7 @@
 	<%
 			if (rActions.size() > 0) {
 		%>
-		<h3><%=senateBillNo%> Actions</h3>
+		<h3 class="section"><%=senateBillNo%> Actions</h3>
 		<ul>
 		<%
 			ArrayList<Action> events = sortBillEvents(rActions);
@@ -314,7 +315,7 @@
 	<% } %>
 
 	<% if (rMeetings.size() > 0) { %>
-		<h3><%=senateBillNo%> Meetings</h3>
+		<h3  class="section" ><%=senateBillNo%> Meetings</h3>
 		<%
 			for (Iterator<Meeting> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
 				Meeting meeting = itMeetings.next();
@@ -329,7 +330,7 @@
 	<% 
 		if (rCals.size() > 0) {
 			%>
-				<h3><%=senateBillNo%> Calendars</h3>
+				<h3  class="section" ><%=senateBillNo%> Calendars</h3>
 			<%
 			for (Iterator<Calendar> itCals = rCals.iterator(); itCals.hasNext();) {
 				Calendar cal = itCals.next();
@@ -368,7 +369,7 @@
 	<%
 		if(rVotes.size() > 0) {
 			%>
-				<h3><%=senateBillNo%> Votes</h3>
+				<h3 class="section" ><%=senateBillNo%> Votes</h3>
 			<%
 			
 			for (Vote vote:rVotes) {
@@ -423,11 +424,11 @@
 		}
   	%>
 	<% if(billMemo!=null && !billMemo.matches("\\s*")) { %>
-		<h3><%=senateBillNo%> Memo</h3>
+		<h3 class="section"><%=senateBillNo%> Memo</h3>
 		<pre><%=billMemo%></pre>
 	<% } %>
 
-	<h3><%=senateBillNo%> Text</h3>
+	<h3 class="section" ><%=senateBillNo%> Text</h3>
 	<%
 		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
  

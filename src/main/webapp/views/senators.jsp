@@ -45,10 +45,17 @@
     margin-bottom: 0px;
 }
 </style>
+<h2 class='page-title'>
+	<%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Senator Listings
+</h2>
+<div class='formats'>
+	<em>Senator Listings are available for: <a href="/legislation/senators/2013">2013<a/> | <a href="/legislation/senators/2011">2011</a> | <a href="/legislation/senators/2009">2009</a></em>
 
-<em>Senator Listings are available for: <a href="/legislation/senators/2013">2013<a/> | <a href="/legislation/senators/2011">2011</a> | <a href="/legislation/senators/2009">2009</a></em>
+</div>
+<div class="content-bg">
+ 
+	
 <div id="content">
-    <h2><%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Senator Listings</h2>
     <br/>
     <% for(Senator senator : (ArrayList<Senator>)request.getAttribute("senators")) {
        String searchUrl = request.getContextPath()+"/sponsor/"+senator.getShortName();
@@ -68,9 +75,6 @@
             </div>
         </div>
     <% } %>
-
-    <br style="clear:both;"/>
-    <hr/>
 </div>
 <jsp:include page="/footer.jsp"/>
    

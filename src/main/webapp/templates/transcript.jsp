@@ -74,16 +74,15 @@
 
  	DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.SHORT);
  %>
-<br/>
-
-<h2>
-	Transcript: <%=df.format(transcript.getTimeStamp()) %>
+<h2 class='page-title'>
+Transcript: <%=df.format(transcript.getTimeStamp()) %>
 </h2>
-<div style="float:right;">
+<div class='formats'>
 		<script type="text/javascript"
 			src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
 </div>
-<br style="clear: both;" />
+<div class="content-bg">
+
 <div id="subcontent">
 
 	<b>Location: <%=transcript.getLocation()%></b> /

@@ -16,7 +16,7 @@
 %>
 
 <h2 class='page-title'>
-	Meeting details for <%=meeting.getCommitteeName%>
+	Meeting details for <%=meeting.getCommitteeName()%>
 </h2>
 <div class="content-bg">
 	<h3 class='item-title'>

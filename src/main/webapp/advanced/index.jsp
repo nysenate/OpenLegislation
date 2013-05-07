@@ -4,12 +4,6 @@
 </jsp:include>
 
 <style>
-#advsearchbox {
-    width:700px;
-    margin:24px auto;
-    border:1px solid #ccc;
-}
-
 #advsearchbox p {
     margin:12px;
     text-align:left;
@@ -33,7 +27,7 @@
 }
 
 .searchinput input,.searchinput select {
-    width:400px;
+    width:600px;
     font-size:12pt;
     border:1px solid #ccc;
 }
@@ -84,9 +78,11 @@ $(document).ready(function() {
     clearOnFocus($("input[name=enddate]"), "mm/dd/yyyy");
 });
 </script>
- <div id="content">
-        <div id="advsearchbox">
-        <div id="advsearchboxheader">Open Legislation Advanced Search</div>
+<h2 class='page-title'>
+	Open Legislation Advanced Search
+</h2>
+<div class="content-bg">
+	<div id="subcontent">
          <form method="get" action="/legislation/search/">
 
         <div id="search-help">

@@ -82,12 +82,13 @@ if (total > endIdx)
 </h2>
 
 <% String encodedTerm = java.net.URLEncoder.encode(term,"UTF-8"); %>
-Formats:
-<a href="/legislation/api/atom/search/<%=encodedTerm%>/">ATOM</a>,
-<a href="/legislation/api/rss/search/<%=encodedTerm%>/">RSS</a>,
-<a href="/legislation/api/json/search/<%=encodedTerm%>/<%=pageIdx%>/<%=pageSize%>">JSON</a>,
-<a href="/legislation/api/xml/search/<%=encodedTerm%>/<%=pageIdx%>/<%=pageSize%>">XML</a>
- 
+<div class='formats'>
+	Formats:
+	<a href="/legislation/api/atom/search/<%=encodedTerm%>/">ATOM</a>,
+	<a href="/legislation/api/rss/search/<%=encodedTerm%>/">RSS</a>,
+	<a href="/legislation/api/json/search/<%=encodedTerm%>/<%=pageIdx%>/<%=pageSize%>">JSON</a>,
+	<a href="/legislation/api/xml/search/<%=encodedTerm%>/<%=pageIdx%>/<%=pageSize%>">XML</a>
+</div>
 <div class="content-bg">
  <div id="subcontent">
  <%
@@ -105,11 +106,11 @@ Page <%=pageIdx%> (Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>) -
 
 <%
 	if (nextUrl!=null){
-%><a href="<%=nextUrl%>">next &gt;</a> |<%
+%><a href="<%=nextUrl%>">next &gt;</a><%
 	}
 %>
 
-
+<div class='sortby'>
 Order by: 
 <%if (sortField.equals("modified") && sortOrder){%>Recent Updates<%}
 else{ %><a href="/legislation/search/<%=term%>?sort=modified&sortOrder=true">Recent Updates</a><%}%>,
@@ -122,7 +123,7 @@ else{ %><a href="/legislation/search/<%=term%>?sort=committee&sortOrder=false">C
 
 <%if (sortField.equals("")){%>Best Match<%}
 else{ %><a href="/legislation/search/<%=term%>?sort=oid&sortOrder=false"">Best Match</a><%}%>
-
+</div>
 
 
 </div>
