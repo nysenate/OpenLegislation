@@ -1,3 +1,49 @@
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
 body {
   font-family: helvetica, arial;
   font-size: 89.5%;	 /* 10px */
@@ -427,7 +473,7 @@ margin:3px;
 	margin:10px 0;
 	padding:10px 0;
 	border-top:1px solid #ccc;
-	width:870px;
+	width:100%;
 }
 .billheader{
 }
@@ -596,5 +642,104 @@ pre {
 	padding:5px 5px 3px 5px;
 	white-space : pre-line; 
 	max-width:550px;
+}
+
+
+@media (min-width:220px) { 
+	/* smartphones, iPhone, portrait 480x320 phones */
+	body{
+	margin:1px 0 16px 0;
+	padding:0;
+	}
+	#content{
+		width:94%;
+		margin:0;
+		float:left;
+	}
+	.page-title{
+		padding: 0 0 10px 10px;
+	
+	}
+	.item-title {
+		width:100%;
+	}
+
+	.searchbox{
+		width:100%;
+		padding: 3px 0 0 10px;
+		height:auto;
+	}
+	
+	#logobox{
+		padding: 3px 0 0 10px;
+	}
+	.formats{
+		display:none;
+	}
+	.sortby{
+		float:left;
+		padding: 5px 0 0 0;
+	}
+	#content-full{
+		width:100%;
+		margin:0 auto;
+		float:none;
+	}
+	.main-menu{
+		background:#005588;
+	}
+	.summary{
+		width:100%
+	}
+	
+}
+ @media (min-width:920px) { 
+	body{
+		margin:1px 0 16px 16px;
+	}
+	#content,#content-full{
+		width:880px;
+		margin:0 auto;
+		float:none;
+	} 
+	
+	.content-bg{
+		background:#fff;
+		border:1px solid #ccc;
+		padding: 10px;
+		float:left;
+		width:100%;
+	}
+	
+	.page-title{
+		padding: 0 0 10px 10px;
+	
+	}
+	.item-title {
+		width:675px;
+	}
+
+	.searchbox{
+		width:684px;
+		padding: 12px 0 0 20px;
+		height:auto;
+	}
+	
+	#logobox{
+		padding: 3px 0 0 10px;
+	}
+	.formats{
+		display:inherit;
+	}
+	.sortby{
+		float:right;
+		padding: 0;
+	}
+	.summary{
+		width:550px
+	}
+	.main-menu{
+		background:none;
+	}
 }
 

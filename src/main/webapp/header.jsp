@@ -66,7 +66,7 @@
 	</head>
 	<body>
     <div id="menu">
-    	<div id="content">
+    	<div id="content-full" class="main-menu">
 		<%if (searchType.startsWith("bill")||searchType.equals("search")||searchType.equals("sponsor")||searchType.equals("committee")){ %>
 			<a href="<%=appPath%>/bills/"  class="linkActivated" title="Browse and search Senate and Assembly bills by number, keyword, sponsor and more">Bills</a>
 		<%}else{ %>
