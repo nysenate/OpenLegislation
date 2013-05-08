@@ -165,7 +165,7 @@
 	DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 	
 	String billSummary = bill.getSummary();
-	String billMemo = bill.getMemo().replace("-\n ","").replace("\n "," ");;
+	String billMemo = bill.getMemo().replace("-\n", "").replace("\n\n", "<br/><br/>").replace("\n", " ");
 %>
 
 
