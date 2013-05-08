@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -52,14 +50,16 @@ public class Push extends BaseScript
 
         // Parse the specified changes into a hash
         HashMap<String, Storage.Status> changes = null;
+        Iterable<String> changeFileLines = null;
         if (opts.hasOption("change-file")) {
             try {
                 File changeFile = new File(opts.getOptionValue("change-file"));
-                changes = ChangeLogger.parseChanges(FileUtils.readLines(changeFile, "UTF-8"));
+                changeFileLines = FileUtils.readLines(changeFile, "UTF-8");
             } catch (IOException e) {
                 System.err.println("Error reading change-file: "+opts.getOptionValue("changes"));
                 System.exit(1);
             }
+            changes = ChangeLogger.parseChanges(changeFileLines);
         } else if (opts.hasOption("changes")) {
             changes = ChangeLogger.parseChanges(Arrays.asList(opts.getOptionValue("changes").split("\n")));
         } else {
@@ -78,7 +78,7 @@ public class Push extends BaseScript
         }
 
         if(opts.hasOption("updateReporter")) {
-            services.add(new UpdateReporter());
+            UpdateReporter.process(ChangeLogger.parseChangesDetailed(changeFileLines));
         }
 
         // Pass the change log through a set of service hooks
