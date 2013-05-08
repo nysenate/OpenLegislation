@@ -643,6 +643,10 @@ pre {
 	white-space : pre-line; 
 	max-width:550px;
 }
+del{
+	color:red;
+	background:#ffeeee;
+}
 
 
 @media (min-width:220px) { 
