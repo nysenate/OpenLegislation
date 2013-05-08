@@ -165,7 +165,7 @@
 	DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 	
 	String billSummary = bill.getSummary();
-	String billMemo = bill.getMemo();
+	String billMemo = bill.getMemo().replace("-\n ","").replace("\n "," ");;
 %>
 
 
@@ -433,7 +433,7 @@
 		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
  
 			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
-			billText = removeBillLineNumbers (billText);
+			billText = removeBillLineNumbers(billText).replace("-\n ","").replace("\n "," ");
 			%>
 				<pre><%=billText %></pre>
 		<% } else{ %>
