@@ -91,7 +91,7 @@ done
 
 # Push the changes out from storage
 echo "Pushing `wc -l $changelog` document changes to $lucene";
-$BINDIR/run.sh Push $storage --lucene $lucene --varnish --change-file $changelog &>>$errorlog
+$BINDIR/run.sh Push $storage --lucene $lucene --varnish --updateReporter --change-file $changelog &>>$errorlog
 
 # Move the logs to $dest for archiving as well
 echo "Archiving the change and error logs to $dest/logs/";

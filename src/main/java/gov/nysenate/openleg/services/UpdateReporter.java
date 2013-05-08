@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.services;
 
 import gov.nysenate.openleg.model.Update;
-import gov.nysenate.openleg.util.Storage;
-import gov.nysenate.openleg.util.Storage.Status;
+import gov.nysenate.openleg.util.Change;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -19,38 +16,33 @@ import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 /*
  * Parses changes from a changeLog file and saves to MySQL database.
  */
-public class UpdateReporter extends ServiceBase
-{        
-    @Override
-    public boolean process(HashMap<String, Storage.Status> changeLog, Storage storage) throws IOException
+public class UpdateReporter
+{
+    public static void process(HashMap<String, Change> changeLog)
     {
         ArrayList<Update> updates = new ArrayList<Update>();
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         // Parse all changes in log file.
-        for(Entry<String, Storage.Status> change: changeLog.entrySet())
+        for(Entry<String, Change> changeEntry: changeLog.entrySet())
         {
-            String key = change.getKey();
-            Status status = change.getValue();
+            String key = changeEntry.getKey();
             String otype = key.split("/")[1];
             String oid = key.split("/")[2];
+            Change change = changeEntry.getValue();
 
             // Create a bean object for this update.
             Update update = new Update();
             update.setOid(oid);
             update.setOtype(otype);
-            update.setStatus(status.toString());
-            
-            // Create date string in mySQL format for the current time.
-            Date date = new Date();
-            SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String currentTime = sdf.format(date);
-            update.setDate(currentTime);
+            update.setStatus(change.getStatus().toString());
+            // Format the Date for MySql query.
+            update.setDate(sdf.format(change.getDate()));
             updates.add(update);
         }
         insertUpdates(updates);
-        return true;
     }
-    
-    public void insertUpdates(List<Update> updates)
+
+    private static void insertUpdates(List<Update> updates)
     {
         // DataSource settings.
         String server = "localhost";
