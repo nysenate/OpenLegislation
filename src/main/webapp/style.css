@@ -429,6 +429,11 @@ outline:0px;
 #comments{
 	float:left;
 }
+.comment_terms{
+	padding: 10px;
+	border-top:1px solid #ccc;
+	background-color:#ffffcc;
+}
 #footer{
 	font-size:9px;
 	color:#888;
@@ -652,8 +657,8 @@ del{
 @media (min-width:220px) { 
 	/* smartphones, iPhone, portrait 480x320 phones */
 	body{
-	margin:1px 0 16px 0;
-	padding:0;
+		margin:1px 0 16px 0;
+		padding:0;
 	}
 	#content{
 		width:94%;
@@ -694,6 +699,9 @@ del{
 	}
 	.summary{
 		width:100%
+	}
+	.item-actions{
+		float:left;
 	}
 	
 }
@@ -744,6 +752,9 @@ del{
 	}
 	.main-menu{
 		background:none;
+	}
+	.item-actions{
+		float:right;
 	}
 }
 

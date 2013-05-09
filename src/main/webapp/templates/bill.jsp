@@ -170,15 +170,15 @@
 </h2>
 <div class="content-bg">
 	<div class="title-block">
-		<h3 class='item-title'>
-			<%=senateBillNo%>: <%=bill.getTitle() == null ? "" : bill.getTitle()%>
-		</h3>		    
 		<div class='item-actions'>
 			<a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>" target="_new">Print HTML Page</a><br/>
 			<a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=senateBillNo%>" target="_new">Print Original Bill Format</a> <br/>
 			<script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script><br/>
 			<a href="#discuss">Read or Leave Comments</a>
 		</div>
+		<h3 class='item-title'>
+			<%=senateBillNo%>: <%=bill.getTitle() == null ? "" : bill.getTitle()%>
+		</h3>	
 		<div  class="summary"> <p><%=billSummary == null ? "" : billSummary%></p></div>
 	 </div>
 <% if(!active) { %>
@@ -232,9 +232,11 @@
 			<%
 					for (Bill rBill:rBills) {
 				%>
-					<a href="/legislation/bill/<%=rBill.getSenateBillNo()%>"><%=rBill.getSenateBillNo()%></a> </div>
+					<a href="/legislation/bill/<%=rBill.getSenateBillNo()%>"><%=rBill.getSenateBillNo()%></a> 
 				<%
- 					}
+ 					}%>
+ 					</div>
+ 					<%
  				 						}
 
  				 						if (sponsor == null)

@@ -52,11 +52,6 @@
 					<li class="head">Connect</li>
 					<li><a href="http://billbuzz.nysenate.gov">BillBuzz</a></li>
 					<li><a href="<%=appPath%>/comments/">View Comments</a></li>
-					<li></li>
-					<li></li>
-					<li></li>
-					<li></li>
-					<li></li>
 
 				</ul>
 			</div>
@@ -67,20 +62,13 @@
 					<li><a href="http://nysenate.gov/committees">Committees</a></li>
 					<li><a href="http://nysenate.gov/issues-initiatives">Issues &amp; Initiatives</a></li>
 					<li><a href="http://nysenate.gov/newsroom">Newsroom</a></li>
-					<li></li>
-					<li></li>
-					<li></li>
 				</ul>
 			</div>
 			<div class="footer-quarter">
 				<ul>
 					<li><a href="<%=appPath%>/feedback">Feedback</a></li>
+					<li><a href = "http://www.nysenate.gov/privacy-policy">Privacy Policy</a></li>
 					<li><a href="<%=appPath%>/developers">Developers</a></li>
-					<li></li>
-					<li></li>
-					<li></li>
-					<li></li>
-					<li></li>
 				</ul>
 			</div>
 			<div id="footer-message"><p>
