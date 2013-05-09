@@ -121,10 +121,6 @@
 					line = line + "<br/>";
 				
 				resp.append(' ');
-				
-				if (line.endsWith("-"))
-					line = line.substring(0,line.length()-1).trim();
-				
 
 				resp.append(line);
 				resp.append("\n");
