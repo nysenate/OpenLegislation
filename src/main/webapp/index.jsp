@@ -46,109 +46,87 @@ if (billkey == null)
 </head>
 
 <body> 
-<div id="header-home" style="margin-top:0px">
-<div style="float:left;">
-<a href="http://nysenate.gov">NYSenate.gov</a>:
-<a href="http://nysenate.gov/senators">Senators</a>&nbsp;|&nbsp;
-<a href="http://nysenate.gov/committees">Committees</a>&nbsp;|&nbsp;
-<a href="http://nysenate.gov/issues-initiatives">Issues &amp; Initiatives</a>&nbsp;|&nbsp;
-<!--
-    <a href="http://nysenate.gov/legislation-open-senate">Open Senate</a>&nbsp;|&nbsp;
-    
-    <a href="http://nysenate.gov/about-us">About</a>&nbsp;|&nbsp;
-    <a href="http://nysenate.gov/media">Photos &amp; Videos</a>&nbsp;|&nbsp;
--->
-<a href="http://nysenate.gov/newsroom">Newsroom</a>
-</div>
-    
-<div style="float:right;">
-<a href="<%=appPath%>/feedback">FEEDBACK</a> &nbsp;|&nbsp;
-<a href="<%=appPath%>/developers">Developers</a>
-</div>
-</div>
+    <div id="menu">
+    	<div id="content-full" class="main-menu">
+			<a href="<%=appPath%>/bills/" title="Browse and search Senate and Assembly bills by number, keyword, sponsor and more">Bills</a>
+			&nbsp;
+			<a href="<%=appPath%>/calendars/" title="View recent and search floor calendars and active lists by number or date (i.e. 1/07/2013)">Calendars</a>
+			&nbsp;
+			<a href="<%=appPath%>/meetings/" title="View upcoming and recent committee meetings, and search by committee, chairperson, location, date (i.e. 1/07/2013) and more.">Meetings</a>
+			&nbsp;
+			<a href="<%=appPath%>/transcripts/" title="View and search Senate floor full text transcripts">Transcripts</a>
+			&nbsp;
+			<a href="<%=appPath%>/actions/" title="View and filter Floor Actions on Bills from the Floor of the Senate">Actions</a>
+			<a href="<%=appPath%>/senators">Sponsor</a>
+			<a href="<%=appPath%>/committees">Committee</a>
+		</div>
+	</div>
+	<div id="content" >	
+		<div class="homelogo">
+			<div><a href="<%=appPath%>"><img src="<%=appPath%>/img/openleglogo.gif" /></a></div>
+			<div class="hometext">
+				<div>
+					<h2 class="homeText">Browse, search and share legislative<br/>
+					information from the New York State Senate</h2>
+				</div>
+				<form method="get" action="<%=appPath%>/search/">
+					<input type="text" id="txtSearchBox" style="width:300px" name="search" autocomplete="off" value="<%=term%>">	
+					<input type="submit" value="Search"/> 
+					<span style="color:#999;margin:3px;font-size:12px;">
+						<a href="<%=appPath%>/advanced/">Advanced</a>
+					</span>
+					<div id="quickresult"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+<div id="content" >
+	<div id="footer">
+			<div class="footer-quarter">
+				<ul>
+				<li class="head"><a href="http://open.nysenate.gov">Open Legislation</a></li>
+				<li><a href="<%=appPath%>/bills/" title="Browse and search Senate and Assembly bills by number, keyword, sponsor and more">Bills</a></li>
+				<li><a href="<%=appPath%>/calendars/" title="View recent and search floor calendars and active lists by number or date (i.e. 11/07/2009)">Calendars</a></li>
+				<li><a href="<%=appPath%>/meetings/"  title="View upcoming and recent committee meetings, and search by committee, chairperson, location, date (i.e. 11/07/2009) and more.">Meetings</a></li>
+				<li><a href="<%=appPath%>/transcripts/" title="View and search Senate floor full text transcripts">Transcripts</a></li>
+				<li><a href="<%=appPath%>/actions/" title="View and filter Floor Actions on Bills from the Floor of the Senate">Actions</a>
+				<li><a href="<%=appPath%>/senators">Browse by Sponsor</a></li>
+				<li><a href="<%=appPath%>/committees">Browse by Committee</a></li>
+				</ul>
+			</div>
+			<div class="footer-quarter">
+				<ul>
+					<li class="head">Connect</li>
+					<li><a href="http://billbuzz.nysenate.gov">BillBuzz</a></li>
+					<li><a href="<%=appPath%>/comments/">View Comments</a></li>
 
-<br/><br/>
- 
-<center>
-<div style="width:750px;text-align:left;">
-<div><a href="<%=appPath%>"><img src="<%=appPath%>/img/openleglogo.gif" /></a></div>
-</div>
-  
-<div style="text-align:left;width:500px;">
-<h2 class="homeText">Browse, search and share legislative<br/>
-information from the New York State Senate</h2>
-</div>
-
-<div style="text-align:left;width:500px;margin-top:20px;">
- 
-<form method="get" action="<%=appPath%>/search/">
-<input type="text" id="txtSearchBox" style="width:300px" name="search" autocomplete="off" value="<%=term%>">	
-<input type="submit" value="Search"/> 
-<span style="color:#999;margin:3px;font-size:12px;">
-<a href="<%=appPath%>/advanced/">Advanced</a>
-</span>
-<div id="quickresult"></div>
-
-<div style="color:#999;margin:3px;font-size:12px;">
-<!-- Search by bill, sponsor, committee or keyword from the 2009-2010 session -->
-Browse Bills:
-<a href="<%=appPath%>/senators">by Sponsor</a>,
-<a href="<%=appPath%>/committees">by Committee</a>
-&nbsp;
-<br/>
-View Recent:
-<a href="<%=appPath%>/bills/">Bills</a>,
-<a href="<%=appPath%>/calendars/">Calendars</a>,
-<a href="<%=appPath%>/meetings/">Meetings</a>,
-<a href="<%=appPath%>/transcripts/">Transcripts</a>, 
-<a href="<%=appPath%>/actions/" title="Actions on Bills from the Floor of the Senate">Actions</a>
-<br/>
-Community: <a href="<%=appPath%>/comments">View and respond to recent comments</a>
-<br/> <br/><br/>
-
-</div>
-</form>
-</div>
-
-<br style="clear:both;"/><br/>
-
-</center>
- 
-<center>
-<div id="footer" style="width:500px;text-align:left;font-size:8pt;line-height:14px">
-<em>You are using Open Legislation v1.8.4, an <a href="<%=appPath%>/license">open-source project</a></em>
-     
-<div style="height:400px;float:left;padding:0px;width:96px;">
-<a rel="license" href="http://www.nysenate.gov/copyright-policy"><img class="cc-logo" alt="Creative Commons License" src="http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png" align='left' /></a>
-</div>
-
-<div id="footer-message" style="width:370px;float:left;">
-<p>This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">Creative Commons License</a>.
- <br/> Permissions beyond the scope of this license are available <a cc="http://creativecommons.org/ns#" href="http://www.nysenate.gov/copyright-policy" rel="morePermissions">here</a>.
-</p>   
-
-</div>
-</div>
-
-<!-- 
-   <div id="footer" style="width:700px;text-align:left;line-height:12px;">
- 
-   <div style="height:400px;float:left;padding:0px;width:96px;">
-   <a rel="license" href="http://www.nysenate.gov/copyright-policy"><img class="cc-logo" alt="Creative Commons License" src="http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png" align='left' /></a>
-   </div>
-   <div id="footer-message" style="width:370px;line-height:9px;padding-top:3px;float:left;margin-right:10px;">
-   <p>This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">Creative Commons Attribution-Noncommercial-No Derivative Works 3.0 United States License</a>.
-   <br/><br/>
-   Permissions beyond the scope of this license are available at <a cc="http://creativecommons.org/ns#" href="http://www.nysenate.gov/copyright-policy" rel="morePermissions">http://www.nysenate.gov/copyright-policy</a>.
-   <br/><br/>  
-   The software and services provided under this site are offered under the BSD License and the GPL v3 License.<br/>
-   </p>   
-
-   </div>
-   </div>
--->
-   
-</center>
+				</ul>
+			</div>
+			<div class="footer-quarter">
+				<ul>
+					<li class="head"><a href="http://nysenate.gov">NYSenate.gov</a></li>
+					<li><a href="http://nysenate.gov/senators">Senators</a></li>
+					<li><a href="http://nysenate.gov/committees">Committees</a></li>
+					<li><a href="http://nysenate.gov/issues-initiatives">Issues &amp; Initiatives</a></li>
+					<li><a href="http://nysenate.gov/newsroom">Newsroom</a></li>
+				</ul>
+			</div>
+			<div class="footer-quarter">
+				<ul>
+					<li><a href="<%=appPath%>/feedback">Feedback</a></li>
+					<li><a href = "http://www.nysenate.gov/privacy-policy">Privacy Policy</a></li>
+					<li><a href="<%=appPath%>/developers">Developers</a></li>
+				</ul>
+			</div>
+			<div id="footer-message"><p>
+				<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">
+				<img class="cc-logo" alt="Creative Commons License" src="http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png" align='left' />
+				</a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">Creative Commons Attribution-Noncommercial-No Derivative Works 3.0 United States License</a>.<br /> Permissions beyond the scope of this license are available at <a cc="http://creativecommons.org/ns#" href="http://www.nysenate.gov/copyright-policy" rel="morePermissions">http://www.nysenate.gov/copyright-policy</a>.
+	 		</p>
+	 		<p>The software and services provided under this site are offered under the BSD License and the GPL v3 License.</p>
+	 		</div>
+		</div>
+	</div>
 
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");

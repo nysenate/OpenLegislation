@@ -54,6 +54,7 @@ body {
   background-repeat: repeat-x;
 margin:16px;
   margin-top:1px;
+  min-width:220px
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -302,7 +303,16 @@ float:left;
 	padding:3px;
 }
  
-
+.homelogo{
+	float:left;
+	width:500px;
+	padding:25px 40px;
+}
+.hometext{
+	float:left;
+	width:500px;
+	margin:0px 0 10px 137px;
+}
 #logobox{
 	float:left;
 	margin:0px;
@@ -660,6 +670,10 @@ del{
 		margin:1px 0 16px 0;
 		padding:0;
 	}
+	.hidemobile{
+		display:none;
+		height:0;
+	}
 	#content{
 		width:94%;
 		margin:0;
@@ -714,7 +728,9 @@ del{
 		margin:0 auto;
 		float:none;
 	} 
-	
+	.hidemobile{
+		display:inline;
+	}
 	.content-bg{
 		background:#fff;
 		border:1px solid #ccc;
