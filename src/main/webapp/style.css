@@ -662,8 +662,15 @@ del{
 	color:red;
 	background:#ffeeee;
 }
-
-
+.main-menu ul li, .main-menu ul{
+	list-style:none;
+	display:inline;
+	padding:0;
+	margin:0;
+}
+.main-menu ul li a{
+	padding:0 4px;
+}
 @media (min-width:220px) { 
 	/* smartphones, iPhone, portrait 480x320 phones */
 	body{

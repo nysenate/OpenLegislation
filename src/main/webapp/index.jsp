@@ -48,17 +48,15 @@ if (billkey == null)
 <body> 
     <div id="menu">
     	<div id="content-full" class="main-menu">
-			<a href="<%=appPath%>/bills/" title="Browse and search Senate and Assembly bills by number, keyword, sponsor and more">Bills</a>
-			&nbsp;
-			<a href="<%=appPath%>/calendars/" title="View recent and search floor calendars and active lists by number or date (i.e. 1/07/2013)">Calendars</a>
-			&nbsp;
-			<a href="<%=appPath%>/meetings/" title="View upcoming and recent committee meetings, and search by committee, chairperson, location, date (i.e. 1/07/2013) and more.">Meetings</a>
-			&nbsp;
-			<a href="<%=appPath%>/transcripts/" title="View and search Senate floor full text transcripts">Transcripts</a>
-			&nbsp;
-			<a href="<%=appPath%>/actions/" title="View and filter Floor Actions on Bills from the Floor of the Senate">Actions</a>
-			<a href="<%=appPath%>/senators">Sponsor</a>
-			<a href="<%=appPath%>/committees">Committee</a>
+			<ul>
+				<li><a href="<%=appPath%>/bills/" title="Browse and search Senate and Assembly bills by number, keyword, sponsor and more">Bills</a>
+				<li><a href="<%=appPath%>/calendars/" title="View recent and search floor calendars and active lists by number or date (i.e. 1/07/2013)">Calendars</a></li>
+				<li><a href="<%=appPath%>/meetings/" title="View upcoming and recent committee meetings, and search by committee, chairperson, location, date (i.e. 1/07/2013) and more.">Meetings</a></li>
+				<li><a href="<%=appPath%>/transcripts/" title="View and search Senate floor full text transcripts">Transcripts</a></li>
+				<li><a href="<%=appPath%>/actions/" title="View and filter Floor Actions on Bills from the Floor of the Senate">Actions</a></li>
+				<li><a href="<%=appPath%>/senators">Sponsor</a></li>
+				<li><a href="<%=appPath%>/committees">Committee</a></li>
+			</ul>
 		</div>
 	</div>
 	<div id="content" >	
