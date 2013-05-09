@@ -81,6 +81,11 @@ public class ChangeLogger
         return changes;
     }
 
+    public static void record(String key, Storage storage)
+    {
+        record(key, storage, null);
+    }
+
     /**
      * Appends change information to the changeLog
      * 
@@ -101,16 +106,15 @@ public class ChangeLogger
             }
         } else if (change.getStatus() != Status.NEW) {
             changeLog.put(key, new Change(Status.MODIFIED, date));
-        } 
+        }
     }
     
-    public static void record(String key, Storage storage)
+    public static void delete(String key, Storage storage)
     {
-        record(key, storage, null);
+        delete(key, storage, null);
     }
 
-    // ------------ TODO: add date information. ------------
-    public static void delete(String key, Storage storage)
+    public static void delete(String key, Storage storage, Date date)
     {
         Change change = changeLog.get(key);
         if (change != null) {
@@ -123,7 +127,7 @@ public class ChangeLogger
                 change.setStatus(Status.DELETED);
             }
         } else {
-            changeLog.put(key, new Change(Status.DELETED));
+            changeLog.put(key, new Change(Status.DELETED, date));
         }
     }
 
