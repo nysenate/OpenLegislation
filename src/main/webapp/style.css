@@ -443,6 +443,7 @@ outline:0px;
 	padding: 10px;
 	border-top:1px solid #ccc;
 	background-color:#ffffcc;
+	font-weight:bold;
 }
 #footer{
 	font-size:9px;
@@ -662,6 +663,13 @@ del{
 	color:red;
 	background:#ffeeee;
 }
+
+add{
+	color:#006600;
+	background:#daffd8;
+	tex-transform:lowercase;
+}
+
 .main-menu ul li, .main-menu ul{
 	list-style:none;
 	display:inline;
