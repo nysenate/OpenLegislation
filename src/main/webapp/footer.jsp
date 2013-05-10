@@ -30,9 +30,9 @@
 </div>
 <div id="content" >
 	<div id="footer">
-			<div class="footer-quarter">
+			<div class="footer-third">
 				<ul>
-				<li class="head"><a href="http://open.nysenate.gov">Open Legislation</a></li>
+				<li class="head">Open Legislation</li>
 				<%if (searchType.startsWith("bill")||searchType.equals("search")||searchType.equals("sponsor")||searchType.equals("committee")){ %>
 				<li><a href="<%=appPath%>/bills/"  class="linkActivated" title="Browse and search Senate and Assembly bills by number, keyword, sponsor and more">Bills</a></li>
 				<%}else{ %>
@@ -47,30 +47,26 @@
 				<li><a href="<%=appPath%>/committees">Browse by Committee</a></li>
 				</ul>
 			</div>
-			<div class="footer-quarter">
+			<div class="footer-third">
 				<ul>
 					<li class="head">Connect</li>
 					<li><a href="http://billbuzz.nysenate.gov">BillBuzz</a></li>
 					<li><a href="<%=appPath%>/comments/">View Comments</a></li>
-
+					<li><a href="<%=appPath%>/feedback">Feedback</a></li>
+					<li><a href="<%=appPath%>/developers">Developers</a></li>
 				</ul>
 			</div>
-			<div class="footer-quarter">
+			<div class="footer-third">
 				<ul>
-					<li class="head"><a href="http://nysenate.gov">NYSenate.gov</a></li>
+					<li class="head">NYSenate.gov</li>
 					<li><a href="http://nysenate.gov/senators">Senators</a></li>
 					<li><a href="http://nysenate.gov/committees">Committees</a></li>
 					<li><a href="http://nysenate.gov/issues-initiatives">Issues &amp; Initiatives</a></li>
 					<li><a href="http://nysenate.gov/newsroom">Newsroom</a></li>
-				</ul>
-			</div>
-			<div class="footer-quarter">
-				<ul>
-					<li><a href="<%=appPath%>/feedback">Feedback</a></li>
 					<li><a href = "http://www.nysenate.gov/privacy-policy">Privacy Policy</a></li>
-					<li><a href="<%=appPath%>/developers">Developers</a></li>
 				</ul>
 			</div>
+ 
 			<div id="footer-message"><p>
 				<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">
 				<img class="cc-logo" alt="Creative Commons License" src="http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png" align='left' />

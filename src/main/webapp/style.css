@@ -464,14 +464,14 @@ margin:3px;
 	padding:0;
 	list-style:none;
 }
-.footer-quarter{
+.footer-third{
 	margin:10px 0 0 0;
-	width:24%;
+	width:30%;
 	float:left;
 /* 	border:1px solid red; */
 	padding:1px;
 }
-.footer-quarter li{ 
+.footer-third li{ 
 	font-size:12px;
 	margin:10px 0 0 0;
 	padding:10px;
@@ -479,7 +479,7 @@ margin:3px;
 }
 
 
-.footer-quarter li.head{
+.footer-third li.head{
 	color:#000;
 	font-weight:bold;
 } 
