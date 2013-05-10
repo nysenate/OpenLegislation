@@ -61,6 +61,11 @@ td#oid{
 width:50%;
 }
 
+form#type{
+	margin-left:27.5%;
+	padding: 2px 2px;
+}
+
 td#status{
 	width:20%;
 }
@@ -72,28 +77,6 @@ form#date{
 }
 
 a:link{
-	text-decoration: none;	
+	text-decoration: none;
+	color: black;
 }
-/*
-td#otype
-{
-width:100px;
-background: #FF00FF;
-}
-
-
-td#date
-{
-width:200px;
-}
-
-td#status
-{
-width:100px;
-}
-
-table.update td
-{
-padding:2px 8px 2px 8px;
-}
-*/

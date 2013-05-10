@@ -17,6 +17,15 @@
 	End: <input type="date" value=<%=request.getAttribute("endDay")%> name="endDay">
   <input type="submit">
 </form>
+<form action="" id="type">
+<select name="otype" onchange="window.open(this.value,'','');">
+<option value="/legislation/updates?<%="startDay="+request.getAttribute("startDay")+"&endDay="+request.getAttribute("endDay")%>">All</option>
+<option value="/legislation/updates?<%="startDay="+request.getAttribute("startDay")+"&endDay="+request.getAttribute("endDay")+"&otype=bill"%>">Bill</option>
+<option value="/legislation/updates?<%="startDay="+request.getAttribute("startDay")+"&endDay="+request.getAttribute("endDay")+"&otype=calendar"%>">Calendar</option>
+<option value="/legislation/updates?<%="startDay="+request.getAttribute("startDay")+"&endDay="+request.getAttribute("endDay")+"&otype=agenda"%>">Agenda</option>
+<option value="/legislation/updates?<%="startDay="+request.getAttribute("startDay")+"&endDay="+request.getAttribute("endDay")+"&otype=meeting"%>">Meeting</option>
+</select>
+</form>
 	<div id="updateTable">
 		<table id="update">
 <%
@@ -49,7 +58,7 @@ if(updates != null){
 			else {%>
 			<td class="table" id="oid"><a name=<%=update.getOid()%>></a><%=update.getOid() %></td>
 			<%} %>
-			<td class="table" id="status"><%=update.getStatus()%></td>
+			<td class="table" id="status"><a href="<%="/legislation/updates?bill="+update.getOid()%>"><%=update.getStatus()%></td>
 		</tr>
 		<%}%>
 
