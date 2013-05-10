@@ -27,9 +27,6 @@ if (sortField == null)
 if (type == null)
 	type = "";
 
-%>
-<%
-
 int pageIdx = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_IDX));
 int pageSize = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_SIZE));
 
@@ -41,8 +38,9 @@ int resultCount = sr.getResults().size();
 
 int total = (Integer)sr.getMetadataByKey("totalresults");
 
-if (total < endIdx)
+if (total < endIdx) {
 	endIdx = total;
+}
 
 String mode = (String)request.getAttribute("type");
 		
@@ -197,52 +195,56 @@ String resultPath = appPath + "/" + contentType + "/" + contentId;
 
  %>
  <div class="row" onclick="location.href='<%=resultPath%>'">
-<a href="<%=resultPath%>"><%=senateType%>: <%=resultTitle%></a>
-<div style="font-size:90%;color:#777777;">
-
-
- <%if (sresult.getSummary()!=null && sresult.getSummary().length() > 0){ %>
- <%=sresult.getSummary() %> /
- <%} %>
+    <a href="<%=resultPath%>"><%=senateType%>: <%=resultTitle%></a>
+    <span style="font-size:90%;color:#777777;">
+    <%if (sresult.getSummary()!=null && sresult.getSummary().length() > 0){ %>
+        <br/>
+        <%=sresult.getSummary() %>
+    <%} %>
  
- <%if (sresult.getFields().get("sameAs")!=null && sresult.getFields().get("sameAs").length()>0){ %>
-Same As: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("sameAs")%>%22" class="sublink"><%=sresult.getFields().get("sameAs")%></a>
- <%} %>
+    <%if (sresult.getFields().get("sameAs")!=null && sresult.getFields().get("sameAs").length()>0){ %>
+        <br/>
+        Same As: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("sameAs")%>%22" class="sublink"><%=sresult.getFields().get("sameAs")%></a>
+    <%} %>
  
-  <%if ((!contentType.equals("bill")) && sresult.getFields().get("billno")!=null && sresult.getFields().get("billno").length()>0){ %>
-Bill: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("billno")%>%22" class="sublink"><%=sresult.getFields().get("billno")%></a>
- <%} %>
+    <%if ((!contentType.equals("bill")) && sresult.getFields().get("billno")!=null && sresult.getFields().get("billno").length()>0){ %>
+        <br/>
+        Bill: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("billno")%>%22" class="sublink"><%=sresult.getFields().get("billno")%></a>
+    <%} %>
  
- <%if (sresult.getFields().get("sponsor")!=null && sresult.getFields().get("sponsor").length()>0){ 
-    if (sresult.getFields().get("billno").equals("J375-2013")) { %>
-        Sponsors: 
-        <a href="<%=appPath%>/sponsor/STEWART-COUSINS" class="sublink">STEWART-COUSINS</a>,
-        <a href="<%=appPath%>/sponsor/SKELOS" class="sublink">SKELOS</a>,
-        <a href="<%=appPath%>/sponsor/KLEIN" class="sublink">KLEIN</a>
-    <% } else { %>
-        Sponsor: <a href="<%=appPath%>/sponsor/<%=sresult.getFields().get("sponsor")%>" class="sublink"><%=sresult.getFields().get("sponsor")%></a>    
-    <% } %>
- <%} %>
+    <%if (sresult.getFields().get("sponsor")!=null && sresult.getFields().get("sponsor").length()>0){ %>
+        <br/>
+        <% if (sresult.getFields().get("billno").equals("J375-2013")) { %>
+	        Sponsors: 
+	        <a href="<%=appPath%>/sponsor/STEWART-COUSINS" class="sublink">STEWART-COUSINS</a>,
+	        <a href="<%=appPath%>/sponsor/SKELOS" class="sublink">SKELOS</a>,
+	        <a href="<%=appPath%>/sponsor/KLEIN" class="sublink">KLEIN</a>
+	    <% } else { %>
+	        Sponsor: <a href="<%=appPath%>/sponsor/<%=sresult.getFields().get("sponsor")%>" class="sublink"><%=sresult.getFields().get("sponsor")%></a>    
+	    <% } %>
+    <%} %>
  
-  <%if (sresult.getFields().get("chair")!=null){ %>
-Chairperson: <a href="<%=appPath%>/search/?term=chair:%22<%=java.net.URLEncoder.encode((String)sresult.getFields().get("chair"),"UTF-8")%>%22"  class="sublink"><%=sresult.getFields().get("chair")%></a>
- <%} %>
+    <%if (sresult.getFields().get("chair")!=null){ %>
+        <br/>
+        Chairperson: <a href="<%=appPath%>/search/?term=chair:%22<%=java.net.URLEncoder.encode((String)sresult.getFields().get("chair"),"UTF-8")%>%22"  class="sublink"><%=sresult.getFields().get("chair")%></a>
+    <%} %>
  
-  <%if (sresult.getFields().get("committee")!=null && !sresult.getFields().get("committee").isEmpty()){ %>
-Committee: <a href="<%=appPath%>/committee/<%=sresult.getFields().get("committee").replaceAll(" ","-")%>"  class="sublink"><%=sresult.getFields().get("committee")%></a>
- <%} %>
+    <%if (sresult.getFields().get("committee")!=null && !sresult.getFields().get("committee").isEmpty()){ %>
+        <br/>
+        Committee: <a href="<%=appPath%>/committee/<%=sresult.getFields().get("committee").replaceAll(" ","-")%>"  class="sublink"><%=sresult.getFields().get("committee")%></a>
+    <%} %>
  
  
-  <%if (sresult.getFields().get("location")!=null){ %>
-Location: <a href="<%=appPath%>/search/?term=location:<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("location") + "\"")%>"  class="sublink"><%=sresult.getFields().get("location")%></a>
- <%} %>
+    <%if (sresult.getFields().get("location")!=null){ %>
+        <br/>
+        Location: <a href="<%=appPath%>/search/?term=location:<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("location") + "\"")%>"  class="sublink"><%=sresult.getFields().get("location")%></a>
+    <%} %>
  
    <%if (sresult.getFields().get("date")!=null){ %>
-Date: <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("date") + "\"")%>"  class="sublink"><%=sresult.getFields().get("date")%></a>
- <%} %>
- 
- 
-</div>
+        <br/>
+        Date: <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("date") + "\"")%>"  class="sublink"><%=sresult.getFields().get("date")%></a>
+   <%} %>
+   </span>
 </div>
 
  <%} %>
