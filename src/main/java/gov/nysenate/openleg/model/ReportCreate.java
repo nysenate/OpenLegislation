@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -18,6 +19,7 @@ import com.mysql.jdbc.Statement;
 
 import java.sql.PreparedStatement;
 import java.sql.Connection;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import gov.nysenate.openleg.scripts.SpotCheck;
@@ -27,57 +29,84 @@ import gov.nysenate.openleg.util.Storage;
 
 public class ReportCreate extends SpotCheck
 {
-    
+    Bill bill;
+    Report object=new Report();
+    Error ob =new Error();
+    static HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();
+    QueryRunner qRunner = new QueryRunner();
+    protected static Storage storage;
+    String query; 
+    Connection con=null;
+    /*
+      This method reads the files-assembly.low.html,assembly.high.html,senate.low.html,senate.high.html
+      Change the run time argument to edit the path of the files
+      
+     */
    public static void main(String[] args) throws IOException
    {
       ReportCreate rr=new ReportCreate();
-      readFiles();
-      rr.insertReport();
+      String dateval=args[1];
+      if (bills.size() ==0) { 
+          storage  = new Storage("/home/shweta/lbdc_test/json");
+          String arg[] = { args[0]+args[1]+".assembly.low.html",
+                  args[0]+args[1]+".assembly.high.html",
+                  args[0]+args[1]+".senate.low.html",
+                  args[0]+args[1]+".senate.high.html" };
+           readFiles(arg);
+      }
+     
+      rr.insertReport( dateval);
       rr.createErrorReport();
        
        
    }
-  Connection con=null;
  
-  Bill bill;
-  Report object=new Report();
-  Error ob =new Error();
-  static HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();
-  QueryRunner qRunner = new QueryRunner();
-  protected static Storage storage;
-  String query;
-  public static void readFiles() throws IOException{
+  /* Reads all the files
+   */
+  
+  public static void readFiles(String[] files) throws IOException{
       
      
-          if (bills.size() ==0) { 
-              storage  = new Storage("/home/shweta/test/processed/lbdc_test/json");
-              String args[]= { "/home/shweta/test/processed/lbdc_test/files/20130323.assembly.low.html",
-                      "/home/shweta/test/processed/lbdc_test/files/20130323.assembly.high.html",
-                      "/home/shweta/test/processed/lbdc_test/files/20130323.senate.low.html",
-                      "/home/shweta/test/processed/lbdc_test/files/20130323.senate.high.html" };
+         
               
-               for (String arg : args) {
+               for (String arg : files) {
                    bills.putAll(SpotCheck.readDaybreak(new File(arg)));
                }
           }
          
-      
+      /*
+       This method creates a new report for the 4 files,assign it a unique id and sets the timestamp in the database.
+       
+       */
         
-     }
-  public void insertReport() 
+     
+  public void insertReport( String val) 
   {
       con= DbConnect.connect();
+        
+      query="insert into report(rdate) values(?)";
+       System.out.println((val.substring(4, 6)));
+      String day=((val.substring(6)));
+      String year= (val.substring(0, 4));
+      String month=(val.substring(4, 6));
+      String d2=month+"/"+year+"/"+day;
+      
+      java.util.Date date=new java.util.Date(d2);
+    
+      //date.setDate(day);
+      
+      //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+      //String sqlDate = sdf.format(date);
+      //System.out.println(sqlDate);
      
-      query="insert into report(timestamp) values(?)";
-      java.util.Date date= new java.util.Date();
-      Timestamp timestamp=new Timestamp(date.getTime());
-      object.setTimestamp(timestamp);
+      java.sql.Date d1= new Date(date.getTime());
+      object.setDate(date);
      
       
      
       try {
         PreparedStatement pst=con.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
-        pst.setTimestamp(1, timestamp);
+        pst.setDate(1, d1);
         pst.executeUpdate();
         ResultSet rs = pst.getGeneratedKeys();
         
@@ -94,6 +123,9 @@ public class ReportCreate extends SpotCheck
     }
      
   }
+  /*This method creates the error report.It calls several methods which check for errors in summary,title,sponsor,co-sponsor and action.
+   * The methods insert a record in the error report if any mismatch is found between json value and lbdc value.
+   */
    public void createErrorReport()
    {   
      con= DbConnect.connect();
@@ -111,6 +143,7 @@ public class ReportCreate extends SpotCheck
      
       
      }
+   /* Inserts the title Errors in the report */
    public void checkTitleError(Bill bill,String id,Connection con)
    {
       
@@ -156,6 +189,7 @@ public class ReportCreate extends SpotCheck
        }
     
    }
+   /* Inserts the Summary Errors in the report */
    public void checkSummaryError(Bill bill,String id,Connection con)
    {
        
@@ -202,6 +236,7 @@ public class ReportCreate extends SpotCheck
           
            
        }
+   /* Inserts the sponsor errors in the report */
     public void checkSponsorError(Bill bill,String id,Connection con)
          {
         // Checking Sponsor Errors
@@ -239,7 +274,7 @@ public class ReportCreate extends SpotCheck
            }  
       
         }
-    
+    /* Inserts the co-Sponsor Errors in the report */
     public void checkcosponsorError(Bill bill,String id,Connection con)
     {
         TreeSet<String> lbdcCosponsors = new TreeSet<String>(bills.get(id).getCosponsors());
@@ -303,7 +338,7 @@ public class ReportCreate extends SpotCheck
  
    }
     
-    
+    /* Inserts the Action Errors in the report */
     public void checkActionError(Bill bill,String id,Connection con)
     {
         ArrayList<String> lbdcEvents = bills.get(id).getActions();

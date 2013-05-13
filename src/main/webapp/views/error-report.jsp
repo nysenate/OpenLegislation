@@ -7,7 +7,8 @@
  <link href="<%=request.getContextPath()%>/bootstrap.css" rel="stylesheet">
  <link href="<%=request.getContextPath()%>/bootstrap-responsive.css" rel="stylesheet">
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/diff.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.3.2.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/sortedTable.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/collapsible.js"></script>
 <% ArrayList<Error> errorLog= (ArrayList<Error>)request.getAttribute("errorList");
 	int resultCount = errorLog.size();
 	
@@ -15,75 +16,212 @@
 		
 
 <title>Error Report</title>
+
 </head>
 <jsp:include page="/reportHeader.jsp"/>
 
-<body>
+<body  onload="validate()">
 
-<form id="form1">
+<form id="form1" name="report">
 
-<table class="table table-hover">
+<table class="table table-condensed" id="errortable">
+ <thead>
 <tr>
 <th> Bill Id</th>
-<th> Report Id</th>
-<th> Error Info</th>
-<th> Lbdc Value</th>
-<th> Json Value</th>
+<th class="sorttable_nosort"> Error Info</th>
+<th class="sorttable_nosort"> Difference</th>
 </tr>
+</thead>
+<tbody>
  <% for(Error e:errorLog){ 
        
-      
+       
       if(e.getJson().isEmpty()) {%>
-       <tr style="background-color:#FDD017">
-       <td class ="span1"><%= e.getBillId() %></td>
-       <td class ="span1"><%= e.getReportId() %></td>
-      <td class ="span2"><%= e.getErrorType().toUpperCase()%></td>
-      <td class ="span4"><%= e.getLbdc() %></td>
-      <td class ="span4"><label style="color:red"> Alert! No entry in json file.</label> </td>
-      </tr>
+        
+       <tr style="background-color:#FDD017" class= "a">
+       <td class ="span1" id="<%= e.getBillId() %>"><a href="#<%= e.getBillId() %>"><p style="color:red"><%= e.getBillId() %></p></a></td>
+       <td class ="span1  "><p style="color:red"><%= e.getErrorType().toUpperCase()%></p></td>
+       <td class="span10"> <%= e.getLbdc() %></td></tr>
+       <tr><td class="span1"></td> <td class="span1"></td>
+       <td class="span10" id="values">
+       <div class="accordion-group">
+         <div class="accordion-heading">
+             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getErrorId() %>">
+                  View Details
+                </a>
+              </div>
+             
+      
+         
+              <div id="<%= e.getErrorId() %>" class="accordion-body collapse" style="height: 0px; ">
+                <div class="accordion-inner">
+                  LBDC Value:<label> <%= e.getLbdc() %>
+                 </label>               <br> 
+                JSON Value:<label>  <%= e.getJson() %></label>
+                </div>
+              </div>
+                </div>
+            </td>
+     </tr>
+     
     <% } else if(e.getErrorType().equalsIgnoreCase("title")) {%>
-    <tr style="background-color:#6AFB92">
-    <td class ="span1"><%= e.getBillId() %></td>
-       <td class ="span1"><%= e.getReportId() %></td>
-      <td class ="span2"><%= e.getErrorType().toUpperCase()%></td>
-      <td class ="span4"><%= e.getLbdc() %></td>
-      <td class ="span4"><%= e.getJson() %> </td>
-    </tr>
+     
+      <tr style="background-color:#6AFB92" class= "a">
+      <td class ="span1" id="<%= e.getBillId() %>"><a href="#<%= e.getBillId() %>"><%= e.getBillId() %></a></td>
+    <td class ="span1  "><%= e.getErrorType().toUpperCase()%></td>
+    <td class="span10">  </td></tr>
+       <tr><td class="span1"></td> <td class="span1"></td>
+       <td class="span10" id="values">
+       <div class="accordion-group">
+         <div class="accordion-heading">
+             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getErrorId() %>">
+                  View Details
+                </a>
+              </div>
+             
+      
+         
+              <div id="<%= e.getErrorId() %>" class="accordion-body collapse" style="height: 0px; ">
+                <div class="accordion-inner">
+                 LBDC Value:<label> <%= e.getLbdc() %>
+                 </label>               <br> 
+                JSON Value:<label>  <%= e.getJson() %></label>
+                </div>
+              </div>
+                </div>
+            </td>
+     </tr>
+   
     <%  }  else if(e.getErrorType().equalsIgnoreCase("summary")) { %>
-    <tr style="background-color:lightblue">
-      <td class ="span1"><%= e.getBillId() %></td>
-       <td class ="span1"><%= e.getReportId() %></td>
-      <td class ="span2"><%= e.getErrorType().toUpperCase()%></td>
-      <td class ="span4"><%= e.getLbdc() %></td>
-      <td class ="span4"><%= e.getJson() %> </td>
-    </tr>
+  
+    <tr style="background-color:lightblue" class= "a">
+    <td class ="span1" id="<%= e.getBillId() %>"><a href="#<%= e.getBillId() %>"><%= e.getBillId() %></a></td>
+    <td class ="span1  "><%= e.getErrorType().toUpperCase()%></td>
+    <td class="span10">  </td></tr>
+      <tr><td class="span1"></td> <td class="span1"></td>
+       <td class="span10" id="values">
+       <div class="accordion-group">
+         <div class="accordion-heading">
+             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getErrorId() %>">
+                  View Details
+                </a>
+              </div>
+             
+      
+         
+              <div id="<%= e.getErrorId() %>" class="accordion-body collapse" style="height: 0px; ">
+                <div class="accordion-inner">
+                LBDC Value:<label> <%= e.getLbdc() %>
+                 </label>               <br> 
+                JSON Value:<label>  <%= e.getJson() %>
+                </label>
+                </div>
+              </div>
+                </div>
+            </td>
+     </tr>
     <% } else if(e.getErrorType().equalsIgnoreCase("sponsor")) {%>
-    <tr style="background-color:#9E7BFF">
-    <td class ="span1"><%= e.getBillId() %></td>
-       <td class ="span1"><%= e.getReportId() %></td>
-      <td class ="span2"><%= e.getErrorType().toUpperCase()%></td>
-      <td class ="span4"><%= e.getLbdc() %></td>
-      <td class ="span4"><%= e.getJson() %> </td>
-    </tr>
+    <tr style="background-color:#9E7BFF" class= "a">
+    <td class ="span1" id="<%= e.getBillId() %>"><a href="#<%= e.getBillId() %>"><%= e.getBillId() %></a></td>
+    <td class ="span1  "><%= e.getErrorType().toUpperCase()%></td>
+    <td class="span10">  </td></tr>
+     <tr><td class="span1"></td> <td class="span1"></td>
+       <td class="span10" id="values">
+       <div class="accordion-group">
+         <div class="accordion-heading">
+             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getErrorId() %>">
+                  View Details
+                </a>
+              </div>
+             
+      
+         
+              <div id="<%= e.getErrorId() %>" class="accordion-body collapse" style="height: 0px; ">
+                <div class="accordion-inner">
+                  LBDC Value:<label> <%= e.getLbdc() %>
+                 </label>               <br> 
+                JSON Value:<label>  <%= e.getJson() %></label>
+                </div>
+              </div>
+                </div>
+            </td>
+     </tr>
      <% } else if(e.getErrorType().equalsIgnoreCase("cosponsor")) {%>
-    <tr style="background-color: #dcff7a">
-    <td class ="span1"><%= e.getBillId() %></td>
-       <td class ="span1"><%= e.getReportId() %></td>
-      <td class ="span2"><%= e.getErrorType().toUpperCase()%></td>
-      <td class ="span4"><%= e.getLbdc() %></td>
-      <td class ="span4"><%= e.getJson() %> </td>
-    </tr>
+    <tr style="background-color: #dcff7a" class= "a">
+   <td class ="span1" id="<%= e.getBillId() %>"><a href="#<%= e.getBillId() %>"><%= e.getBillId() %></a></td>
+    <td class ="span1  "><%= e.getErrorType().toUpperCase()%></td>
+    <td class="span10">  </td></tr>
+       <tr><td class="span1"></td> <td class="span1"></td>
+       <td class="span10" id="values">
+       <div class="accordion-group">
+         <div class="accordion-heading">
+             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getErrorId() %>">
+                  View Details
+                </a>
+              </div>
+             
+      
+         
+              <div id="<%= e.getErrorId() %>" class="accordion-body collapse" style="height: 0px; ">
+                <div class="accordion-inner">
+                  LBDC Value:<label> <%= e.getLbdc() %>
+                 </label>               <br> 
+                JSON Value:<label>  <%= e.getJson() %></label>
+                </div>
+              </div>
+                </div>
+            </td>
+     </tr>
     <%  } else {%>
-    <tr style="background-color:#FFF380">
-    <td class ="span1"><%= e.getBillId() %></td>
-       <td class ="span1"><%= e.getReportId() %></td>
-      <td class ="span2"><%= e.getErrorType().toUpperCase()%></td>
-      <td class ="span4"><%= e.getLbdc() %></td>
-      <td class ="span4"><%= e.getJson() %> </td>
-    </tr>
+    <tr style="background-color:#FFF380" class= "a">
+    <td class ="span1" id="<%= e.getBillId() %>"><a href="#<%= e.getBillId() %>"><%= e.getBillId() %></a></td>
+    <td class ="span1  "><%= e.getErrorType().toUpperCase()%></td>
+    <td class="span10">  </td></tr>
+      <tr><td class="span1"></td> <td class="span1"></td>
+       <td class="span10" id="values">
+       <div class="accordion-group">
+         <div class="accordion-heading">
+             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getErrorId() %>">
+                  View Details
+                </a>
+              </div>
+             
+      
+         
+              <div id="<%= e.getErrorId() %>" class="accordion-body collapse" style="height: 0px; ">
+                <div class="accordion-inner">
+                 LBDC Value:<label> <%= e.getLbdc() %>
+                 </label>               <br> 
+                JSON Value:<label>  <%= e.getJson() %></label>
+                </div>
+              </div>
+                </div>
+            </td>
+     </tr>
     <%  } 
-      }%>   
+      }%> 
+      </tbody>  
  </table>
  </form>
+ <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/bootstrap-collapse.js"></script>
+ <script type="text/javascript">
+
+function validate()
+{
+	 var table = document.getElementById('errortable');
+     for (var r = 1, n = table.rows.length; r < n; r=r+2) {
+    		
+    	 if((document.getElementsByTagName('label')[r+1].firstChild.data).length!=0){
+            var lbdc= document.getElementsByTagName('label')[r].firstChild.data;
+            var json=document.getElementsByTagName('label')[r+1].firstChild.data;
+           
+             table.rows[r].cells[2].innerHTML= diffString(lbdc,json);
+    	 }
+     }
+ }
+
+</script>
+
 </body>
 </html>

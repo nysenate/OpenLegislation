@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model;
 
 import java.sql.Timestamp;
+import java.util.Date;
 public class Report
 {
 public int getReportId()
@@ -11,16 +12,17 @@ public int getReportId()
     {
         this.reportId = reportId;
     }
-    public Timestamp getTimestamp()
+    public Date getDate()
     {
-        return timestamp;
+        return date;
     }
-    public void setTimestamp(Timestamp timestamp)
+    public void setDate(Date date)
     {
-        this.timestamp = timestamp;
+        this.date = date;
     }
 int reportId;
-Timestamp timestamp;
+Date date;
+
     
     
 }

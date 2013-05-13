@@ -88,10 +88,7 @@
 						
 	
 						<br/>
-						<form method="get" action="<%=appPath%>/search/" style="padding-bottom:3px">
-							<input type="text" id="txtSearchBox"  name="search" value="<%=search%>" autocomplete="off">	
-							<input type="submit" value="Search"/>
-						</form>
+						
 					</div>
 
 					</div>

@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.api.servlets;
 import gov.nysenate.openleg.model.Error;
+import gov.nysenate.openleg.model.Report;
 import gov.nysenate.openleg.model.ViewReport;
 
 
@@ -31,17 +32,40 @@ public class ErrorLog extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ViewReport vr=new ViewReport();
-		ArrayList<Error> error=vr.displayReports();
-		request.setAttribute("errorList",error);
-		getServletContext().getRequestDispatcher(VIEW_PATH).forward(request, response);
+		String val="request";
+		 String value=request.getParameter("val");
+	   
+	    if(value!=null)
+	    {
+	        val=value;
+	    }
+	  
+	    if(val.equals("report"))
+	    {
+	        ViewReport vr=new ViewReport();
+	        String id=request.getParameter("id");
+	        int reportId=Integer.parseInt(id);
+	        ArrayList<Error> error=vr.displayReports(reportId);
+	        request.setAttribute("errorList",error);
+	        getServletContext().getRequestDispatcher(VIEW_PATH).forward(request, response);
+	    }
+	    else
+	    {    
+	    ViewReport vr=new ViewReport();
+	    ArrayList<Report> report=vr.displayReportOption();
+        request.setAttribute("reportList",report);
+        getServletContext().getRequestDispatcher("/views/report.jsp").forward(request, response);
+	    }
+	   
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+	    
+	    
+	  
 	}
 
 }
