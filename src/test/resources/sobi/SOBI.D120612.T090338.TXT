@@ -1,0 +1,193 @@
+<?xml version= '1.0' encoding='UTF-8'?>
+<DATAPROCESS TIME="2012-06-12-09.03.38">
+2011S00285AVSenate Vote    Bill: S285-A             Date: 06/11/2012  Aye - 59  Nay - 0
+2011S00285AVAye  Adams            Aye  Addabbo          Aye  Alesi            Aye  Avella
+2011S00285AVAye  Ball             Aye  Bonacic          Aye  Breslin          Aye  Carlucci
+2011S00285AVAye  DeFrancisco      Aye  Diaz             Aye  Dilan            Aye  Duane
+2011S00285AVExc  Espaillat        Aye  Farley           Aye  Flanagan         Aye  Fuschillo
+2011S00285AVAye  Gallivan         Aye  Gianaris         Aye  Golden           Aye  Griffo
+2011S00285AVAye  Grisanti         Aye  Hannon           Aye  Hassell-Thompso  Exc  Huntley
+2011S00285AVAye  Johnson          Aye  Kennedy          Aye  Klein            Exc  Krueger
+2011S00285AVAye  Lanza            Aye  Larkin           Aye  LaValle          Aye  Libous
+2011S00285AVAye  Little           Aye  Marcellino       Aye  Martins          Aye  Maziarz
+2011S00285AVAye  McDonald         Aye  Montgomery       Aye  Nozzolio         Aye  O'Mara
+2011S00285AVAye  Oppenheimer      Aye  Parker           Aye  Peralta          Aye  Perkins
+2011S00285AVAye  Ranzenhofer      Aye  Ritchie          Aye  Rivera           Aye  Robach
+2011S00285AVAye  Saland           Aye  Sampson          Aye  Savino           Aye  Serrano
+2011S00285AVAye  Seward           Aye  Skelos           Aye  Smith            Aye  Squadron
+2011S00285AVAye  Stavisky         Aye  Stewart-Cousins  Aye  Storobin         Aye  Valesky
+2011S00285AVAye  Young            Aye  Zeldin
+2011S01462DVSenate Vote    Bill: S1462-D            Date: 06/11/2012  Aye - 59  Nay - 0
+2011S01462DVAye  Adams            Aye  Addabbo          Aye  Alesi            Aye  Avella
+2011S01462DVAye  Ball             Aye  Bonacic          Aye  Breslin          Aye  Carlucci
+2011S01462DVAye  DeFrancisco      Aye  Diaz             Aye  Dilan            Aye  Duane
+2011S01462DVExc  Espaillat        Aye  Farley           Aye  Flanagan         Aye  Fuschillo
+2011S01462DVAye  Gallivan         Aye  Gianaris         Aye  Golden           Aye  Griffo
+2011S01462DVAye  Grisanti         Aye  Hannon           Aye  Hassell-Thompso  Exc  Huntley
+2011S01462DVAye  Johnson          Aye  Kennedy          Aye  Klein            Exc  Krueger
+2011S01462DVAye  Lanza            Aye  Larkin           Aye  LaValle          Aye  Libous
+2011S01462DVAye  Little           Aye  Marcellino       Aye  Martins          Aye  Maziarz
+2011S01462DVAye  McDonald         Aye  Montgomery       Aye  Nozzolio         Aye  O'Mara
+2011S01462DVAye  Oppenheimer      Aye  Parker           Aye  Peralta          Aye  Perkins
+2011S01462DVAye  Ranzenhofer      Aye  Ritchie          Aye  Rivera           Aye  Robach
+2011S01462DVAye  Saland           Aye  Sampson          Aye  Savino           Aye  Serrano
+2011S01462DVAye  Seward           Aye  Skelos           Aye  Smith            Aye  Squadron
+2011S01462DVAye  Stavisky         Aye  Stewart-Cousins  Aye  Storobin         Aye  Valesky
+2011S01462DVAye  Young            Aye  Zeldin
+2011S01858 VSenate Vote    Bill: S1858              Date: 06/11/2012  Aye - 58  Nay - 1
+2011S01858 VAye  Adams            Aye  Addabbo          Aye  Alesi            Aye  Avella
+2011S01858 VNay  Ball             Aye  Bonacic          Aye  Breslin          Aye  Carlucci
+2011S01858 VAye  DeFrancisco      Aye  Diaz             Aye  Dilan            Aye  Duane
+2011S01858 VExc  Espaillat        Aye  Farley           Aye  Flanagan         Aye  Fuschillo
+2011S01858 VAye  Gallivan         Aye  Gianaris         Aye  Golden           Aye  Griffo
+2011S01858 VAye  Grisanti         Aye  Hannon           Aye  Hassell-Thompso  Exc  Huntley
+2011S01858 VAye  Johnson          Aye  Kennedy          Aye  Klein            Exc  Krueger
+2011S01858 VAye  Lanza            Aye  Larkin           Aye  LaValle          Aye  Libous
+2011S01858 VAye  Little           Aye  Marcellino       Aye  Martins          Aye  Maziarz
+2011S01858 VAye  McDonald         Aye  Montgomery       Aye  Nozzolio         Aye  O'Mara
+2011S01858 VAye  Oppenheimer      Aye  Parker           Aye  Peralta          Aye  Perkins
+2011S01858 VAye  Ranzenhofer      Aye  Ritchie          Aye  Rivera           Aye  Robach
+2011S01858 VAye  Saland           Aye  Sampson          Aye  Savino           Aye  Serrano
+2011S01858 VAye  Seward           Aye  Skelos           Aye  Smith            Aye  Squadron
+2011S01858 VAye  Stavisky         Aye  Stewart-Cousins  Aye  Storobin         Aye  Valesky
+2011S01858 VAye  Young            Aye  Zeldin
+2011S01924 VSenate Vote    Bill: S1924              Date: 06/11/2012  Aye - 59  Nay - 0
+2011S01924 VAye  Adams            Aye  Addabbo          Aye  Alesi            Aye  Avella
+2011S01924 VAye  Ball             Aye  Bonacic          Aye  Breslin          Aye  Carlucci
+2011S01924 VAye  DeFrancisco      Aye  Diaz             Aye  Dilan            Aye  Duane
+2011S01924 VExc  Espaillat        Aye  Farley           Aye  Flanagan         Aye  Fuschillo
+2011S01924 VAye  Gallivan         Aye  Gianaris         Aye  Golden           Aye  Griffo
+2011S01924 VAye  Grisanti         Aye  Hannon           Aye  Hassell-Thompso  Exc  Huntley
+2011S01924 VAye  Johnson          Aye  Kennedy          Aye  Klein            Exc  Krueger
+2011S01924 VAye  Lanza            Aye  Larkin           Aye  LaValle          Aye  Libous
+2011S01924 VAye  Little           Aye  Marcellino       Aye  Martins          Aye  Maziarz
+2011S01924 VAye  McDonald         Aye  Montgomery       Aye  Nozzolio         Aye  O'Mara
+2011S01924 VAye  Oppenheimer      Aye  Parker           Aye  Peralta          Aye  Perkins
+2011S01924 VAye  Ranzenhofer      Aye  Ritchie          Aye  Rivera           Aye  Robach
+2011S01924 VAye  Saland           Aye  Sampson          Aye  Savino           Aye  Serrano
+2011S01924 VAye  Seward           Aye  Skelos           Aye  Smith            Aye  Squadron
+2011S01924 VAye  Stavisky         Aye  Stewart-Cousins  Aye  Storobin         Aye  Valesky
+2011S01924 VAye  Young            Aye  Zeldin
+2011S03337 VSenate Vote    Bill: S3337              Date: 06/11/2012  Aye - 59  Nay - 0
+2011S03337 VAye  Adams            Aye  Addabbo          Aye  Alesi            Aye  Avella
+2011S03337 VAye  Ball             Aye  Bonacic          Aye  Breslin          Aye  Carlucci
+2011S03337 VAye  DeFrancisco      Aye  Diaz             Aye  Dilan            Aye  Duane
+2011S03337 VExc  Espaillat        Aye  Farley           Aye  Flanagan         Aye  Fuschillo
+2011S03337 VAye  Gallivan         Aye  Gianaris         Aye  Golden           Aye  Griffo
+2011S03337 VAye  Grisanti         Aye  Hannon           Aye  Hassell-Thompso  Exc  Huntley
+2011S03337 VAye  Johnson          Aye  Kennedy          Aye  Klein            Exc  Krueger
+2011S03337 VAye  Lanza            Aye  Larkin           Aye  LaValle          Aye  Libous
+2011S03337 VAye  Little           Aye  Marcellino       Aye  Martins          Aye  Maziarz
+2011S03337 VAye  McDonald         Aye  Montgomery       Aye  Nozzolio         Aye  O'Mara
+2011S03337 VAye  Oppenheimer      Aye  Parker           Aye  Peralta          Aye  Perkins
+2011S03337 VAye  Ranzenhofer      Aye  Ritchie          Aye  Rivera           Aye  Robach
+2011S03337 VAye  Saland           Aye  Sampson          Aye  Savino           Aye  Serrano
+2011S03337 VAye  Seward           Aye  Skelos           Aye  Smith            Aye  Squadron
+2011S03337 VAye  Stavisky         Aye  Stewart-Cousins  Aye  Storobin         Aye  Valesky
+2011S03337 VAye  Young            Aye  Zeldin
+2011S03576 VSenate Vote    Bill: S3576              Date: 06/11/2012  Aye - 59  Nay - 0
+2011S03576 VAye  Adams            Aye  Addabbo          Aye  Alesi            Aye  Avella
+2011S03576 VAye  Ball             Aye  Bonacic          Aye  Breslin          Aye  Carlucci
+2011S03576 VAye  DeFrancisco      Aye  Diaz             Aye  Dilan            Aye  Duane
+2011S03576 VExc  Espaillat        Aye  Farley           Aye  Flanagan         Aye  Fuschillo
+2011S03576 VAye  Gallivan         Aye  Gianaris         Aye  Golden           Aye  Griffo
+2011S03576 VAye  Grisanti         Aye  Hannon           Aye  Hassell-Thompso  Exc  Huntley
+2011S03576 VAye  Johnson          Aye  Kennedy          Aye  Klein            Exc  Krueger
+2011S03576 VAye  Lanza            Aye  Larkin           Aye  LaValle          Aye  Libous
+2011S03576 VAye  Little           Aye  Marcellino       Aye  Martins          Aye  Maziarz
+2011S03576 VAye  McDonald         Aye  Montgomery       Aye  Nozzolio         Aye  O'Mara
+2011S03576 VAye  Oppenheimer      Aye  Parker           Aye  Peralta          Aye  Perkins
+2011S03576 VAye  Ranzenhofer      Aye  Ritchie          Aye  Rivera           Aye  Robach
+2011S03576 VAye  Saland           Aye  Sampson          Aye  Savino           Aye  Serrano
+2011S03576 VAye  Seward           Aye  Skelos           Aye  Smith            Aye  Squadron
+2011S03576 VAye  Stavisky         Aye  Stewart-Cousins  Aye  Storobin         Aye  Valesky
+2011S03576 VAye  Young            Aye  Zeldin
+2011S03168AVSenate Vote    Bill: S3168-A            Date: 06/11/2012  Aye - 59  Nay - 0
+2011S03168AVAye  Adams            Aye  Addabbo          Aye  Alesi            Aye  Avella
+2011S03168AVAye  Ball             Aye  Bonacic          Aye  Breslin          Aye  Carlucci
+2011S03168AVAye  DeFrancisco      Aye  Diaz             Aye  Dilan            Aye  Duane
+2011S03168AVExc  Espaillat        Aye  Farley           Aye  Flanagan         Aye  Fuschillo
+2011S03168AVAye  Gallivan         Aye  Gianaris         Aye  Golden           Aye  Griffo
+2011S03168AVAye  Grisanti         Aye  Hannon           Aye  Hassell-Thompso  Exc  Huntley
+2011S03168AVAye  Johnson          Aye  Kennedy          Aye  Klein            Exc  Krueger
+2011S03168AVAye  Lanza            Aye  Larkin           Aye  LaValle          Aye  Libous
+2011S03168AVAye  Little           Aye  Marcellino       Aye  Martins          Aye  Maziarz
+2011S03168AVAye  McDonald         Aye  Montgomery       Aye  Nozzolio         Aye  O'Mara
+2011S03168AVAye  Oppenheimer      Aye  Parker           Aye  Peralta          Aye  Perkins
+2011S03168AVAye  Ranzenhofer      Aye  Ritchie          Aye  Rivera           Aye  Robach
+2011S03168AVAye  Saland           Aye  Sampson          Aye  Savino           Aye  Serrano
+2011S03168AVAye  Seward           Aye  Skelos           Aye  Smith            Aye  Squadron
+2011S03168AVAye  Stavisky         Aye  Stewart-Cousins  Aye  Storobin         Aye  Valesky
+2011S03168AVAye  Young            Aye  Zeldin
+2011S04486 VSenate Vote    Bill: S4486              Date: 06/11/2012  Aye - 58  Nay - 1
+2011S04486 VAye  Adams            Aye  Addabbo          Aye  Alesi            Aye  Avella
+2011S04486 VAye  Ball             Aye  Bonacic          Aye  Breslin          Aye  Carlucci
+2011S04486 VAye  DeFrancisco      Aye  Diaz             Aye  Dilan            Nay  Duane
+2011S04486 VExc  Espaillat        Aye  Farley           Aye  Flanagan         Aye  Fuschillo
+2011S04486 VAye  Gallivan         Aye  Gianaris         Aye  Golden           Aye  Griffo
+2011S04486 VAye  Grisanti         Aye  Hannon           Aye  Hassell-Thompso  Exc  Huntley
+2011S04486 VAye  Johnson          Aye  Kennedy          Aye  Klein            Exc  Krueger
+2011S04486 VAye  Lanza            Aye  Larkin           Aye  LaValle          Aye  Libous
+2011S04486 VAye  Little           Aye  Marcellino       Aye  Martins          Aye  Maziarz
+2011S04486 VAye  McDonald         Aye  Montgomery       Aye  Nozzolio         Aye  O'Mara
+2011S04486 VAye  Oppenheimer      Aye  Parker           Aye  Peralta          Aye  Perkins
+2011S04486 VAye  Ranzenhofer      Aye  Ritchie          Aye  Rivera           Aye  Robach
+2011S04486 VAye  Saland           Aye  Sampson          Aye  Savino           Aye  Serrano
+2011S04486 VAye  Seward           Aye  Skelos           Aye  Smith            Aye  Squadron
+2011S04486 VAye  Stavisky         Aye  Stewart-Cousins  Aye  Storobin         Aye  Valesky
+2011S04486 VAye  Young            Aye  Zeldin
+2011S05295AVSenate Vote    Bill: S5295-A            Date: 06/11/2012  Aye - 53  Nay - 6
+2011S05295AVAye  Adams            Aye  Addabbo          Aye  Alesi            Nay  Avella
+2011S05295AVAye  Ball             Aye  Bonacic          Aye  Breslin          Aye  Carlucci
+2011S05295AVAye  DeFrancisco      Nay  Diaz             Aye  Dilan            Nay  Duane
+2011S05295AVExc  Espaillat        Aye  Farley           Aye  Flanagan         Nay  Fuschillo
+2011S05295AVAye  Gallivan         Aye  Gianaris         Aye  Golden           Aye  Griffo
+2011S05295AVAye  Grisanti         Aye  Hannon           Aye  Hassell-Thompso  Exc  Huntley
+2011S05295AVAye  Johnson          Aye  Kennedy          Aye  Klein            Exc  Krueger
+2011S05295AVAye  Lanza            Aye  Larkin           Aye  LaValle          Aye  Libous
+2011S05295AVAye  Little           Aye  Marcellino       Aye  Martins          Aye  Maziarz
+2011S05295AVAye  McDonald         Aye  Montgomery       Aye  Nozzolio         Aye  O'Mara
+2011S05295AVAye  Oppenheimer      Aye  Parker           Aye  Peralta          Nay  Perkins
+2011S05295AVAye  Ranzenhofer      Aye  Ritchie          Nay  Rivera           Aye  Robach
+2011S05295AVAye  Saland           Aye  Sampson          Aye  Savino           Aye  Serrano
+2011S05295AVAye  Seward           Aye  Skelos           Aye  Smith            Aye  Squadron
+2011S05295AVAye  Stavisky         Aye  Stewart-Cousins  Aye  Storobin         Aye  Valesky
+2011S05295AVAye  Young            Aye  Zeldin
+2011S05905 VSenate Vote    Bill: S5905              Date: 06/11/2012  Aye - 59  Nay - 0
+2011S05905 VAye  Adams            Aye  Addabbo          Aye  Alesi            Aye  Avella
+2011S05905 VAye  Ball             Aye  Bonacic          Aye  Breslin          Aye  Carlucci
+2011S05905 VAye  DeFrancisco      Aye  Diaz             Aye  Dilan            Aye  Duane
+2011S05905 VExc  Espaillat        Aye  Farley           Aye  Flanagan         Aye  Fuschillo
+2011S05905 VAye  Gallivan         Aye  Gianaris         Aye  Golden           Aye  Griffo
+2011S05905 VAye  Grisanti         Aye  Hannon           Aye  Hassell-Thompso  Exc  Huntley
+2011S05905 VAye  Johnson          Aye  Kennedy          Aye  Klein            Exc  Krueger
+2011S05905 VAye  Lanza            Aye  Larkin           Aye  LaValle          Aye  Libous
+2011S05905 VAye  Little           Aye  Marcellino       Aye  Martins          Aye  Maziarz
+2011S05905 VAye  McDonald         Aye  Montgomery       Aye  Nozzolio         Aye  O'Mara
+2011S05905 VAye  Oppenheimer      Aye  Parker           Aye  Peralta          Aye  Perkins
+2011S05905 VAye  Ranzenhofer      Aye  Ritchie          Aye  Rivera           Aye  Robach
+2011S05905 VAye  Saland           Aye  Sampson          Aye  Savino           Aye  Serrano
+2011S05905 VAye  Seward           Aye  Skelos           Aye  Smith            Aye  Squadron
+2011S05905 VAye  Stavisky         Aye  Stewart-Cousins  Aye  Storobin         Aye  Valesky
+2011S05905 VAye  Young            Aye  Zeldin
+2011S06075AVSenate Vote    Bill: S6075-A            Date: 06/11/2012  Aye - 57  Nay - 2
+2011S06075AVAye  Adams            Aye  Addabbo          Aye  Alesi            Aye  Avella
+2011S06075AVAye  Ball             Aye  Bonacic          Aye  Breslin          Aye  Carlucci
+2011S06075AVAye  DeFrancisco      Aye  Diaz             Aye  Dilan            Nay  Duane
+2011S06075AVExc  Espaillat        Aye  Farley           Aye  Flanagan         Aye  Fuschillo
+2011S06075AVAye  Gallivan         Aye  Gianaris         Aye  Golden           Aye  Griffo
+2011S06075AVAye  Grisanti         Aye  Hannon           Aye  Hassell-Thompso  Exc  Huntley
+2011S06075AVAye  Johnson          Aye  Kennedy          Aye  Klein            Exc  Krueger
+2011S06075AVAye  Lanza            Aye  Larkin           Aye  LaValle          Aye  Libous
+2011S06075AVAye  Little           Aye  Marcellino       Aye  Martins          Aye  Maziarz
+2011S06075AVAye  McDonald         Aye  Montgomery       Aye  Nozzolio         Aye  O'Mara
+2011S06075AVAye  Oppenheimer      Aye  Parker           Aye  Peralta          Aye  Perkins
+2011S06075AVAye  Ranzenhofer      Aye  Ritchie          Nay  Rivera           Aye  Robach
+2011S06075AVAye  Saland           Aye  Sampson          Aye  Savino           Aye  Serrano
+2011S06075AVAye  Seward           Aye  Skelos           Aye  Smith            Aye  Squadron
+2011S06075AVAye  Stavisky         Aye  Stewart-Cousins  Aye  Storobin         Aye  Valesky
+2011S06075AVAye  Young            Aye  Zeldin
+</DATAPROCESS>
+<SENATEDATA TIME="2012-06-12-09.03.38">
+No data to process on 12/06/2012 at 09:03:38
+</SENATEDATA>

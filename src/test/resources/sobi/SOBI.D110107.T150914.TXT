@@ -1,0 +1,714 @@
+<?xml version= '1.0' encoding='UTF-8'?>
+<DATAPROCESS TIME="2011-01-07-15.09.14">
+2011A01088 T00000.SO DOC A 1088                                   BTXT                 2011
+2011A01088 T00001
+2011A01088 T00002                           S T A T E   O F   N E W   Y O R K
+2011A01088 T00003       ________________________________________________________________________
+2011A01088 T00004
+2011A01088 T00005                                         1088
+2011A01088 T00006
+2011A01088 T00007                              2011-2012 Regular Sessions
+2011A01088 T00008
+2011A01088 T00009                                 I N  A S S E M B L Y
+2011A01088 T00010
+2011A01088 T00011                                      (PREFILED)
+2011A01088 T00012
+2011A01088 T00013                                    January 5, 2011
+2011A01088 T00014                                      ___________
+2011A01088 T00015
+2011A01088 T00016       Introduced  by M. of A. NOLAN -- read once and referred to the Committee
+2011A01088 T00017         on Education
+2011A01088 T00018
+2011A01088 T00019       AN ACT to amend the education law, in relation to  the  construction  of
+2011A01088 T00020         school based health and mental health clinics in certain cities
+2011A01088 T00021
+2011A01088 T00022         THE  PEOPLE OF THE STATE OF NEW YORK, REPRESENTED IN SENATE AND ASSEM-
+2011A01088 T00023       BLY, DO ENACT AS FOLLOWS:
+2011A01088 T00024
+2011A01088 T00025    1    Section 1. Subparagraph 1 of paragraph a of subdivision 6  of  section
+2011A01088 T00026    2  3602  of the education law, as amended by section 5 of part A of chapter
+2011A01088 T00027    3  60 of the laws of 2000, is amended to read as follows:
+2011A01088 T00028    4    (1) For new construction and the purchase of existing structures,  the
+2011A01088 T00029    5  cost  allowances  shall be based upon the rated capacity of the building
+2011A01088 T00030    6  or addition and a basic per pupil allowance of up to six thousand  three
+2011A01088 T00031    7  hundred  seventy-five  dollars  adjusted  monthly  by  a statewide index
+2011A01088 T00032    8  reflecting changes in the cost of labor and materials since July  first,
+2011A01088 T00033    9  nineteen  hundred  ninety-two, established by the commissioner of labor,
+2011A01088 T00034   10  modified by an annual county or multi-county labor market composite wage
+2011A01088 T00035   11  rate, established by the commissioner of labor in consultation with  the
+2011A01088 T00036   12  commissioner,  for  July  first of the base year, commencing July first,
+2011A01088 T00037   13  nineteen hundred ninety-seven for general construction contracts awarded
+2011A01088 T00038   14  on or after July first, nineteen hundred ninety-eight,  indexed  to  the
+2011A01088 T00039   15  median  of  such  county  or  multi-county rates, but not less than one.
+2011A01088 T00040   16  Such base allowance shall apply to a building  or  an  addition  housing
+2011A01088 T00041   17  grades  prekindergarten through six and shall be adjusted for a building
+2011A01088 T00042   18  or an addition housing grades seven through nine by a factor of one  and
+2011A01088 T00043   19  four-tenths,  for a building or an addition housing grades seven through
+2011A01088 T00044   20  twelve by a factor of one and five-tenths, for a  building  or  addition
+2011A01088 T00045   21  housing special education programs by a factor of two, except that where
+2011A01088 T00046   22  such  building  or  addition  is  connected to, or such space is located
+2011A01088 T00047   23  within, a  public  school  facility  housing  programs  for  nondisabled
+2011A01088 T00048   24  pupils,  as  approved  by  the  commissioner, a factor of three shall be
+2011A01088 T00049
+2011A01088 T00050        EXPLANATION--Matter in ITALICS (underscored) is new; matter in brackets
+2011A01088 T00051                             [ ] is old law to be omitted.
+2011A01088 T00052                                                                  LBD01530-01-1
+2011A01088 T00053
+2011A01088 T00054       A. 1088                             2
+2011A01088 T00055
+2011A01088 T00056    1  used. Rated capacity of a building or an addition shall be determined by
+2011A01088 T00057    2  the commissioner based on space standards  and  other  requirements  for
+2011A01088 T00058    3  building  construction  specified  by  the commissioner.   Such assigned
+2011A01088 T00059    4  capacity ratings shall include, in addition to those spaces used for the
+2011A01088 T00060    5  instruction  of  pupils,  those spaces which are used for elementary and
+2011A01088 T00061    6  secondary school libraries,  cafeterias,  prekindergarten  instructional
+2011A01088 T00062    7  rooms,  teachers' conference rooms, gymnasiums [and], auditoriums AND IN
+2011A01088 T00063    8  A CITY WITH MORE THAN ONE HUNDRED TWENTY-FIVE THOUSAND INHABITANTS UP TO
+2011A01088 T00064    9  TWO THOUSAND SQUARE FEET FOR SCHOOL BASED HEALTH AND MENTAL HEALTH CLIN-
+2011A01088 T00065   10  ICS. For new construction projects approved on or after July first,  two
+2011A01088 T00066   11  thousand, by the voters of the school district or by the board of educa-
+2011A01088 T00067   12  tion  of  a  city  school  district in a city with more than one hundred
+2011A01088 T00068   13  twenty-five thousand inhabitants, and/or the chancellor in a city school
+2011A01088 T00069   14  district in a city having a population of  one  million  or  more,  such
+2011A01088 T00070   15  rated  capacity  for  new buildings and additions constructed to replace
+2011A01088 T00071   16  existing buildings that, in the judgment of the commissioner,  have  not
+2011A01088 T00072   17  been  adequately  maintained and have not reached their projected useful
+2011A01088 T00073   18  life shall be reduced by the commissioner by an amount  proportional  to
+2011A01088 T00074   19  the  remaining  unused portion of the useful life of the existing build-
+2011A01088 T00075   20  ings, provided however that the commissioner may waive such  requirement
+2011A01088 T00076   21  upon a finding that replacement of the existing building is necessary to
+2011A01088 T00077   22  protect  the health and safety of students or staff, that reconstruction
+2011A01088 T00078   23  and modernization of the existing building would not adequately  address
+2011A01088 T00079   24  such health and safety problems, and that the need to replace the build-
+2011A01088 T00080   25  ing  was  not  caused by failure to adequately maintain the building. If
+2011A01088 T00081   26  the commissioner of labor resets the statewide index reflecting  changes
+2011A01088 T00082   27  in  the  costs of labor and materials since July first, nineteen hundred
+2011A01088 T00083   28  ninety-two, the commissioner shall adopt regulations  to  supersede  the
+2011A01088 T00084   29  basic  per  pupil allowance of up to six thousand three hundred seventy-
+2011A01088 T00085   30  five dollars to the imputed allowance in effect at that time.
+2011A01088 T00086   31    S 2. Subparagraph (iii) of paragraph (j) of subdivision 1  of  section
+2011A01088 T00087   32  414  of  the education law, as added by chapter 513 of the laws of 2005,
+2011A01088 T00088   33  is amended to read as follows:
+2011A01088 T00089   34    (iii) Except where otherwise authorized by law, the cost of  providing
+2011A01088 T00090   35  health,  dental or mental health services shall not be a charge upon the
+2011A01088 T00091   36  school district or board of cooperative educational services, and  shall
+2011A01088 T00092   37  be  paid  from  federal,  state  or other local funds available for such
+2011A01088 T00093   38  purpose. Building space used for such a clinic shall  be  excluded  from
+2011A01088 T00094   39  the  rated  capacity of the school building for the purpose of computing
+2011A01088 T00095   40  building aid pursuant to subdivision six of section  thirty-six  hundred
+2011A01088 T00096   41  two of this chapter or aid pursuant to subdivision five of section nine-
+2011A01088 T00097   42  teen  hundred fifty of this chapter, EXCEPT WHEN BUILDING AID IS SPECIF-
+2011A01088 T00098   43  ICALLY AUTHORIZED IN A CITY WITH MORE THAN ONE HUNDRED TWENTY-FIVE THOU-
+2011A01088 T00099   44  SAND  INHABITANTS  PURSUANT  TO  SUBPARAGRAPH  ONE  OF  PARAGRAPH  A  OF
+2011A01088 T00000.SO DOC A 1088                                   BTXT                 2011
+2011A01088 T00100   45  SUBDIVISION SIX OF SECTION THIRTY-SIX HUNDRED TWO OF THIS CHAPTER.
+2011A01088 T00101   46    S 3. This act shall take effect immediately.
+2011A01088 T00000.SO DOC A 1088          *END*                    BTXT                 2011
+2011S01452 1                    00000                                  S06764              2010               
+2011S01452 BAmd õ1266, Pub Auth L
+2011S01452 CAuthorizes a no fare program for transportation on the Long Island Rail Road for police officers
+2011S01452 Cemployed by the towns of Suffolk.
+2011S01462 1                    00000                                  S06755              2010               
+2011S01462 BAdd õ470, RPT L
+2011S01462 CAuthorizes a municipal corporation to provide a real property tax exemption for improvements to
+2011S01462 Creal property meeting LEED certification standards for green buildings.
+2011A01089 T00000.SO DOC A 1089                                   BTXT                 2011
+2011A01089 T00001
+2011A01089 T00002                           S T A T E   O F   N E W   Y O R K
+2011A01089 T00003       ________________________________________________________________________
+2011A01089 T00004
+2011A01089 T00005                                         1089
+2011A01089 T00006
+2011A01089 T00007                              2011-2012 Regular Sessions
+2011A01089 T00008
+2011A01089 T00009                                 I N  A S S E M B L Y
+2011A01089 T00010
+2011A01089 T00011                                      (PREFILED)
+2011A01089 T00012
+2011A01089 T00013                                    January 5, 2011
+2011A01089 T00014                                      ___________
+2011A01089 T00015
+2011A01089 T00016       Introduced  by M. of A. NOLAN -- read once and referred to the Committee
+2011A01089 T00017         on Education
+2011A01089 T00018
+2011A01089 T00019       AN ACT to amend the state finance law, in relation to  establishing  the
+2011A01089 T00020         special  education  short-term revolving loan fund, and in relation to
+2011A01089 T00021         authorizing the state comptroller to provide special education  short-
+2011A01089 T00022         term  revolving  loans  to  certain  special  act  school districts or
+2011A01089 T00023         approved special education providers
+2011A01089 T00024
+2011A01089 T00025         THE PEOPLE OF THE STATE OF NEW YORK, REPRESENTED IN SENATE AND  ASSEM-
+2011A01089 T00026       BLY, DO ENACT AS FOLLOWS:
+2011A01089 T00027
+2011A01089 T00028    1    Section  1.  The  state finance law is amended by adding a new section
+2011A01089 T00029    2  99-t to read as follows:
+2011A01089 T00030    3    S 99-T. SPECIAL EDUCATION SHORT-TERM REVOLVING LOAN FUND. 1.  THERE IS
+2011A01089 T00031    4  HEREBY ESTABLISHED IN THE JOINT  CUSTODY  OF  THE  COMPTROLLER  AND  THE
+2011A01089 T00032    5  COMMISSIONER  OF  TAXATION AND FINANCE A FUND TO BE KNOWN AS THE SPECIAL
+2011A01089 T00033    6  EDUCATION SHORT-TERM REVOLVING LOAN FUND. SUCH  FUND  SHALL  CONSIST  OF
+2011A01089 T00034    7  MONEYS MADE AVAILABLE PURSUANT TO APPROPRIATION AND ANY OTHER SOURCES IN
+2011A01089 T00035    8  ORDER  TO  PROVIDE  SUPPORT  FOR  PROMPT CONTRACTING WITH AND PAYMENT OF
+2011A01089 T00036    9  NOT-FOR-PROFIT ORGANIZATIONS.
+2011A01089 T00037   10    2. MONEYS OF THE FUND MAY BE EXPENDED PURSUANT TO SECTION ONE  HUNDRED
+2011A01089 T00038   11  SEVENTY-NINE-FF OF THIS CHAPTER. MONEYS SHALL BE PAID OUT OF THE FUND ON
+2011A01089 T00039   12  THE AUDIT AND WARRANT OF THE STATE COMPTROLLER PURSUANT TO SUCH SECTION.
+2011A01089 T00040   13    S  2.  The state finance law is amended by adding a new section 179-ff
+2011A01089 T00041   14  to read as follows:
+2011A01089 T00042   15    S 179-FF. SPECIAL EDUCATION SHORT-TERM REVOLVING LOANS. 1.  THE  COMP-
+2011A01089 T00043   16  TROLLER  IS  AUTHORIZED  TO  PROVIDE  LOANS  FROM  THE SPECIAL EDUCATION
+2011A01089 T00044   17  SHORT-TERM REVOLVING LOAN FUND ESTABLISHED BY SECTION  NINETY-NINE-T  OF
+2011A01089 T00045   18  THIS  CHAPTER  TO  ANY  SPECIAL  ACT SCHOOL DISTRICT OR APPROVED SPECIAL
+2011A01089 T00046   19  EDUCATION PROVIDER SEEKING SHORT-TERM FINANCING FOR OPERATIONS,  PENDING
+2011A01089 T00047   20  TUITION  PAYMENTS AS AUTHORIZED UNDER SECTION FORTY-FOUR HUNDRED FIVE OF
+2011A01089 T00048   21  THE EDUCATION LAW. THE COMPTROLLER MAY PROVIDE SUCH A LOAN TO A  SPECIAL
+2011A01089 T00049
+2011A01089 T00050        EXPLANATION--Matter in ITALICS (underscored) is new; matter in brackets
+2011A01089 T00051                             [ ] is old law to be omitted.
+2011A01089 T00052                                                                  LBD05308-01-1
+2011A01089 T00053
+2011A01089 T00054       A. 1089                             2
+2011A01089 T00055
+2011A01089 T00056    1  ACT  SCHOOL DISTRICT OR APPROVED SPECIAL EDUCATION PROVIDER UPON RECEIPT
+2011A01089 T00057    2  OF A WRITTEN AGREEMENT BETWEEN THE SCHOOL DISTRICT OR PROVIDER  AND  THE
+2011A01089 T00058    3  STATE  EDUCATION  DEPARTMENT  OUTLINING  THE  NEED FOR SUCH LOAN AND THE
+2011A01089 T00059    4  ANTICIPATED  TUITION PAYMENT OR TUITION RECONCILIATION THAT WILL PROVIDE
+2011A01089 T00060    5  REASONABLE ASSURANCES OF REPAYMENT THAT IS  SATISFACTORY  TO  THE  COMP-
+2011A01089 T00061    6  TROLLER.  SUCH  LOAN  SHALL NOT BEAR INTEREST AND REPAYMENT OF SUCH LOAN
+2011A01089 T00062    7  MAY BE MADE UPON RECEIPT OF TUITION PAYMENTS AND RECONCILIATIONS, PURSU-
+2011A01089 T00063    8  ANT TO THE WRITTEN AGREEMENT.
+2011A01089 T00064    9    2. THE COMPTROLLER SHALL PROMULGATE RULES AND REGULATIONS WITHIN NINE-
+2011A01089 T00065   10  TY DAYS OF THE EFFECTIVE DATE OF THIS SECTION FOR THE OPERATION  OF  THE
+2011A01089 T00066   11  SPECIAL  EDUCATION  SHORT-TERM  REVOLVING LOAN FUND WHICH SHALL INCLUDE,
+2011A01089 T00067   12  BUT NOT BE LIMITED TO, THE CRITERIA TO BE USED  IN  DETERMINING  SCHOOLS
+2011A01089 T00068   13  AND SCHOOL DISTRICTS ELIGIBLE FOR ASSISTANCE; A PROCEDURE AND ANY NECES-
+2011A01089 T00069   14  SARY INFORMATION THAT SCHOOLS AND SCHOOL DISTRICTS NEED TO SUBMIT APPLI-
+2011A01089 T00070   15  CATIONS  FOR A LOAN FROM THIS FUND; A SCHEDULE FOR REVIEWING SUCH APPLI-
+2011A01089 T00071   16  CATIONS, NOT TO EXCEED THIRTY DAYS, AND NOTIFICATION TO AN APPLICANT  OF
+2011A01089 T00072   17  APPROVAL OR DISAPPROVAL OF SUCH APPLICATION FOR INTERIM FUNDING; AND ANY
+2011A01089 T00073   18  OTHER REQUIREMENTS DEEMED NECESSARY BY THE COMPTROLLER.
+2011A01089 T00074   19    S 3. This act shall take effect immediately.
+2011A01089 T00000.SO DOC A 1089          *END*                    BTXT                 2011
+2011A01415 1                    00000                                  A09819              2010               
+2011A01415 BAdd õ470, RPT L
+2011A01415 CAuthorizes a municipal corporation to provide a real property tax exemption for improvements to
+2011A01415 Creal property meeting LEED certification standards for green buildings.
+2011A01090 T00000.SO DOC A 1090                                   BTXT                 2011
+2011A01090 T00001
+2011A01090 T00002                           S T A T E   O F   N E W   Y O R K
+2011A01090 T00003       ________________________________________________________________________
+2011A01090 T00004
+2011A01090 T00005                                         1090
+2011A01090 T00006
+2011A01090 T00007                              2011-2012 Regular Sessions
+2011A01090 T00008
+2011A01090 T00009                                 I N  A S S E M B L Y
+2011A01090 T00010
+2011A01090 T00011                                      (PREFILED)
+2011A01090 T00012
+2011A01090 T00013                                    January 5, 2011
+2011A01090 T00014                                      ___________
+2011A01090 T00015
+2011A01090 T00016       Introduced by M. of A. SCHIMEL -- Multi-Sponsored by -- M. of A. ABBATE,
+2011A01090 T00017         BOYLAND,  BURLING,  CALHOUN, CASTRO, COLTON, CONTE, DenDEKKER, GABRYS-
+2011A01090 T00018         ZAK, GOTTFRIED, GUNTHER, JAFFEE, JEFFRIES, MAYERSOHN, McENENY,  McKEV-
+2011A01090 T00019         ITT,  MILLMAN, ORTIZ, REILLY, ROSENTHAL, SALADINO, SCARBOROUGH, SCHIM-
+2011A01090 T00020         MINGER, SWEENEY, TITONE, TITUS, WEISENBERG -- read once  and  referred
+2011A01090 T00021         to the Committee on Transportation
+2011A01090 T00022
+2011A01090 T00023       AN  ACT to amend the vehicle and traffic law, in relation to authorizing
+2011A01090 T00024         the issuance of distinctive license plates to members of  a  community
+2011A01090 T00025         emergency response team
+2011A01090 T00026
+2011A01090 T00027         THE  PEOPLE OF THE STATE OF NEW YORK, REPRESENTED IN SENATE AND ASSEM-
+2011A01090 T00028       BLY, DO ENACT AS FOLLOWS:
+2011A01090 T00029
+2011A01090 T00030    1    Section 1. The vehicle and traffic law is  amended  by  adding  a  new
+2011A01090 T00031    2  section 404-x to read as follows:
+2011A01090 T00032    3    S  404-X.  DISTINCTIVE  PLATES  FOR  MEMBERS  OF A COMMUNITY EMERGENCY
+2011A01090 T00033    4  RESPONSE TEAM.  1. ANY MEMBER OF A  COMMUNITY  EMERGENCY  RESPONSE  TEAM
+2011A01090 T00034    5  SHALL,  UPON  REQUEST,  BE ISSUED A LICENSE PLATE BEARING THE EMBLEM AND
+2011A01090 T00035    6  WORDS "C.E.R.T. MEMBER."  APPLICATION FOR SAID LICENSE  PLATE  SHALL  BE
+2011A01090 T00036    7  FILED  WITH THE COMMISSIONER IN SUCH FORM AND DETAIL AS THE COMMISSIONER
+2011A01090 T00037    8  SHALL PRESCRIBE, AND SHALL BE VERIFIED ANNUALLY BY THE APPLICANT.
+2011A01090 T00038    9    2. THE DISTINCTIVE PLATE AUTHORIZED IN SUBDIVISION ONE OF THIS SECTION
+2011A01090 T00039   10  SHALL BE ISSUED UPON PROOF, SATISFACTORY TO THE COMMISSIONER,  THAT  THE
+2011A01090 T00040   11  APPLICANT  IS  PRESENTLY  AN  ACTIVE  MEMBER  OF  A  COMMUNITY EMERGENCY
+2011A01090 T00041   12  RESPONSE TEAM.
+2011A01090 T00042   13    3. A DISTINCTIVE PLATE ISSUED PURSUANT TO THIS SECTION SHALL BE ISSUED
+2011A01090 T00043   14  IN THE SAME MANNER AS OTHER NUMBER PLATES UPON PAYMENT  OF  THE  REGULAR
+2011A01090 T00044   15  REGISTRATION  FEE PRESCRIBED BY SECTION FOUR HUNDRED ONE OF THIS ARTICLE
+2011A01090 T00045   16  AND AN ADDITIONAL ANNUAL SERVICE CHARGE OF TWENTY-FIVE DOLLARS.
+2011A01090 T00046   17    4. NOTHING CONTAINED HEREIN SHALL REQUIRE THE ISSUANCE  OF  A  SPECIAL
+2011A01090 T00047   18  NUMBER  PLATE  UNDER  THIS  SECTION UNLESS THE COMMISSIONER IS SATISFIED
+2011A01090 T00048   19  THAT THE AGGREGATE AMOUNT OF ANNUAL SERVICE CHARGES  COLLECTED  PURSUANT
+2011A01090 T00049
+2011A01090 T00050        EXPLANATION--Matter in ITALICS (underscored) is new; matter in brackets
+2011A01090 T00051                             [ ] is old law to be omitted.
+2011A01090 T00052                                                                  LBD01533-01-1
+2011A01090 T00053
+2011A01090 T00054       A. 1090                             2
+2011A01090 T00055
+2011A01090 T00056    1  TO  SUBDIVISION  THREE OF THIS SECTION WILL BE SUFFICIENT TO RECOVER THE
+2011A01090 T00057    2  COSTS OF THE DESIGN AND MANUFACTURE OF SUCH SPECIAL NUMBER PLATES.
+2011A01090 T00058    3    S  2. This act shall take effect on the first of April next succeeding
+2011A01090 T00059    4  the date on which it shall have become a law, except that any rules  and
+2011A01090 T00060    5  regulations  necessary  for the timely implementation of this act on its
+2011A01090 T00061    6  effective date shall be promulgated on or before such date.
+2011A01090 T00000.SO DOC A 1090          *END*                    BTXT                 2011
+2011S01461 1                    00000                                  S06463              2010               
+2011S01461 BAmd õ54, St Fin L
+2011S01461 CAuthorizes cooperative library systems to apply for funds under the local government efficiency
+2011S01461 Cgrant program municipal merger incentives.
+2011A01053 T00000.SO DOC A 1053                                   BTXT                 2011
+2011A01053 T00001
+2011A01053 T00002                           S T A T E   O F   N E W   Y O R K
+2011A01053 T00003       ________________________________________________________________________
+2011A01053 T00004
+2011A01053 T00005                                         1053
+2011A01053 T00006
+2011A01053 T00007                              2011-2012 Regular Sessions
+2011A01053 T00008
+2011A01053 T00009                                 I N  A S S E M B L Y
+2011A01053 T00010
+2011A01053 T00011                                      (PREFILED)
+2011A01053 T00012
+2011A01053 T00013                                    January 5, 2011
+2011A01053 T00014                                      ___________
+2011A01053 T00015
+2011A01053 T00016       Introduced  by  M. of A. PHEFFER, GLICK, GOTTFRIED, MARKEY, TITUS, BING,
+2011A01053 T00017         DINOWITZ, HOOPER -- Multi-Sponsored by -- M. of A.  BOYLAND,  BRENNAN,
+2011A01053 T00018         COOK,  FARRELL,  HIKIND,  LANCMAN,  LAVINE,  MILLMAN, ROBINSON, TOWNS,
+2011A01053 T00019         WEISENBERG -- read once and referred  to  the  Committee  on  Economic
+2011A01053 T00020         Development, Job Creation, Commerce and Industry
+2011A01053 T00021
+2011A01053 T00022       AN  ACT  to amend the alcoholic beverage control law, in relation to the
+2011A01053 T00023         time and form for the furnishing of  certain  information  to  munici-
+2011A01053 T00024         palities  and  community  boards  by  applicants for certain original,
+2011A01053 T00025         renewal, or alteration alcoholic beverage licenses and the applicabil-
+2011A01053 T00026         ity of certain public notice requirements
+2011A01053 T00027
+2011A01053 T00028         THE PEOPLE OF THE STATE OF NEW YORK, REPRESENTED IN SENATE AND  ASSEM-
+2011A01053 T00029       BLY, DO ENACT AS FOLLOWS:
+2011A01053 T00030
+2011A01053 T00031    1    Section 1. Section 54 of the alcoholic beverage control law is amended
+2011A01053 T00032    2  by adding a new subdivision 1-a to read as follows:
+2011A01053 T00033    3    1-A. NOTWITHSTANDING ANY OTHER PROVISION OF THIS CHAPTER, UPON RECEIPT
+2011A01053 T00034    4  OF AN APPLICATION FOR A LICENSE UNDER THIS SECTION OR AN APPLICATION FOR
+2011A01053 T00035    5  RENEWAL  UNDER  SECTION  ONE HUNDRED NINE OF THIS CHAPTER, THE APPLICANT
+2011A01053 T00036    6  SHALL NOTIFY THE CLERK OF THE VILLAGE, TOWN, OR CITY, AS  THE  CASE  MAY
+2011A01053 T00037    7  BE, BY CERTIFIED MAIL, RETURN RECEIPT REQUESTED, WHEREIN THE PROSPECTIVE
+2011A01053 T00038    8  LICENSED PREMISES IS TO BE LOCATED OR, IN THE CASE OF AN APPLICATION FOR
+2011A01053 T00039    9  RENEWAL,  WHERE  IT IS PRESENTLY LOCATED, NOT LESS THAN SIXTY DAYS PRIOR
+2011A01053 T00040   10  TO THE SUBMISSION OF ITS APPLICATION FOR A LICENSE UNDER THIS SECTION OR
+2011A01053 T00041   11  FOR A RENEWAL THEREOF PURSUANT TO SECTION ONE HUNDRED NINE OF THIS CHAP-
+2011A01053 T00042   12  TER. FOR THE PURPOSES OF THE PRECEDING SENTENCE, NOTIFICATION NEED  ONLY
+2011A01053 T00043   13  BE  GIVEN  TO THE CLERK OF A VILLAGE WHEN SUCH PREMISES IS TO BE LOCATED
+2011A01053 T00044   14  WITHIN THE BOUNDARIES OF THE VILLAGE. IN  THE  CITY  OF  NEW  YORK,  THE
+2011A01053 T00045   15  COMMUNITY  BOARD ESTABLISHED PURSUANT TO SECTION TWENTY-EIGHT HUNDRED OF
+2011A01053 T00046   16  THE NEW YORK CITY CHARTER WITH JURISDICTION OVER THE AREA IN WHICH  SUCH
+2011A01053 T00047   17  LICENSED  PREMISES IS TO BE OR IS LOCATED SHALL BE CONSIDERED THE APPRO-
+2011A01053 T00048   18  PRIATE PUBLIC BODY TO WHICH NOTIFICATION SHALL BE GIVEN.   SUCH  MUNICI-
+2011A01053 T00049
+2011A01053 T00050        EXPLANATION--Matter in ITALICS (underscored) is new; matter in brackets
+2011A01053 T00051                             [ ] is old law to be omitted.
+2011A01053 T00052                                                                  LBD00373-01-1
+2011A01053 T00053
+2011A01053 T00054       A. 1053                             2
+2011A01053 T00055
+2011A01053 T00056    1  PALITY  OR  COMMUNITY  BOARD, AS THE CASE MAY BE, MAY EXPRESS AN OPINION
+2011A01053 T00057    2  FOR OR AGAINST THE GRANTING OF SUCH LICENSE. ANY SUCH OPINION  SHALL  BE
+2011A01053 T00058    3  DEEMED PART OF THE RECORD UPON WHICH THE LIQUOR BOARD MAKES ITS DETERMI-
+2011A01053 T00059    4  NATION TO GRANT OR DENY SUCH LICENSE.
+2011A01053 T00060    5    S  2. Section 54-a of the alcoholic beverage control law is amended by
+2011A01053 T00061    6  adding a new subdivision 1-a to read as follows:
+2011A01053 T00062    7    1-A. NOTWITHSTANDING ANY OTHER PROVISION OF THIS CHAPTER, UPON RECEIPT
+2011A01053 T00063    8  OF AN APPLICATION FOR A LICENSE UNDER THIS SECTION OR AN APPLICATION FOR
+2011A01053 T00064    9  RENEWAL UNDER SECTION ONE HUNDRED NINE OF THIS  CHAPTER,  THE  APPLICANT
+2011A01053 T00065   10  SHALL  NOTIFY  THE  CLERK OF THE VILLAGE, TOWN, OR CITY, AS THE CASE MAY
+2011A01053 T00066   11  BE, BY CERTIFIED MAIL, RETURN RECEIPT REQUESTED, WHEREIN THE PROSPECTIVE
+2011A01053 T00067   12  LICENSED PREMISES IS TO BE LOCATED OR, IN THE CASE OF AN APPLICATION FOR
+2011A01053 T00068   13  RENEWAL, WHERE IT IS PRESENTLY LOCATED, NOT LESS THAN SIXTY  DAYS  PRIOR
+2011A01053 T00069   14  TO THE SUBMISSION OF ITS APPLICATION FOR A LICENSE UNDER THIS SECTION OR
+2011A01053 T00070   15  FOR A RENEWAL THEREOF PURSUANT TO SECTION ONE HUNDRED NINE OF THIS CHAP-
+2011A01053 T00071   16  TER.  FOR THE PURPOSES OF THE PRECEDING SENTENCE, NOTIFICATION NEED ONLY
+2011A01053 T00072   17  BE GIVEN TO THE CLERK OF A VILLAGE WHEN SUCH PREMISES IS TO  BE  LOCATED
+2011A01053 T00073   18  WITHIN  THE  BOUNDARIES  OF  THE  VILLAGE.  IN THE CITY OF NEW YORK, THE
+2011A01053 T00074   19  COMMUNITY BOARD ESTABLISHED PURSUANT TO SECTION TWENTY-EIGHT HUNDRED  OF
+2011A01053 T00075   20  THE  NEW YORK CITY CHARTER WITH JURISDICTION OVER THE AREA IN WHICH SUCH
+2011A01053 T00076   21  LICENSED PREMISES IS TO BE OR IS LOCATED SHALL BE CONSIDERED THE  APPRO-
+2011A01053 T00077   22  PRIATE  PUBLIC  BODY TO WHICH NOTIFICATION SHALL BE GIVEN.  SUCH MUNICI-
+2011A01053 T00078   23  PALITY OR COMMUNITY BOARD, AS THE CASE MAY BE, MAY  EXPRESS  AN  OPINION
+2011A01053 T00079   24  FOR  OR  AGAINST THE GRANTING OF SUCH LICENSE. ANY SUCH OPINION SHALL BE
+2011A01053 T00080   25  DEEMED PART OF THE RECORD UPON WHICH THE LIQUOR BOARD MAKES ITS DETERMI-
+2011A01053 T00081   26  NATION TO GRANT OR DENY SUCH LICENSE.
+2011A01053 T00082   27    S 3. Subdivision 2-a of section 55 of the alcoholic  beverage  control
+2011A01053 T00083   28  law,  as added by chapter 213 of the laws of 2010, is amended to read as
+2011A01053 T00084   29  follows:
+2011A01053 T00085   30    2-a. Notwithstanding any other provision of this chapter, upon receipt
+2011A01053 T00086   31  [in the city of New York] of an application for  a  license  under  this
+2011A01053 T00087   32  section,  an  application  for renewal under section one hundred nine of
+2011A01053 T00088   33  this chapter, or an application for an alteration to a premises licensed
+2011A01053 T00089   34  for consumption on the premises  under  section  ninety-nine-d  of  this
+2011A01053 T00090   35  chapter,  the  applicant  shall  notify the [community board established
+2011A01053 T00091   36  pursuant to section twenty-eight hundred of the New  York  city  charter
+2011A01053 T00092   37  with jurisdiction over the area in which such licensed premises is to be
+2011A01053 T00093   38  located  by  certified mail return receipt requested, overnight delivery
+2011A01053 T00094   39  service with proof of mailing, or personal service, wherein the prospec-
+2011A01053 T00095   40  tive licensed premises is to be located or, in the case of  an  applica-
+2011A01053 T00096   41  tion  for  renewal, or alteration where it is presently located not less
+2011A01053 T00097   42  than thirty days prior to  the  submission  of  its  application  for  a
+2011A01053 T00098   43  license  under this section or for a renewal thereof pursuant to section
+2011A01053 T00099   44  one hundred nine of this chapter. Such community board  may  express  an
+2011A01053 T00000.SO DOC A 1053                                   BTXT                 2011
+2011A01053 T00100   45  opinion  for  or  against the granting of such license. Any such opinion
+2011A01053 T00101   46  shall be deemed part of the record upon which the liquor board makes its
+2011A01053 T00102   47  determination to grant or deny such license] CLERK OF THE VILLAGE, TOWN,
+2011A01053 T00103   48  OR CITY,  AS  THE  CASE  MAY  BE,  BY  CERTIFIED  MAIL,  RETURN  RECEIPT
+2011A01053 T00104   49  REQUESTED,  WHEREIN  THE  PROSPECTIVE LICENSED PREMISES IS TO BE LOCATED
+2011A01053 T00105   50  OR, IN THE CASE OF AN APPLICATION FOR RENEWAL UNDER SECTION ONE  HUNDRED
+2011A01053 T00106   51  NINE  OF  THIS  CHAPTER  OR  AN  ALTERATION  TO  A PREMISES LICENSED FOR
+2011A01053 T00107   52  CONSUMPTION ON THE PREMISES UNDER SECTION NINETY-NINE-D OF THIS CHAPTER,
+2011A01053 T00108   53  WHERE IT IS PRESENTLY LOCATED NOT LESS THAN  SIXTY  DAYS  PRIOR  TO  THE
+2011A01053 T00109   54  SUBMISSION  OF  ITS  APPLICATION FOR A LICENSE UNDER THIS SECTION, FOR A
+2011A01053 T00110   55  RENEWAL THEREOF PURSUANT TO SECTION ONE HUNDRED NINE OF THIS CHAPTER, OR
+2011A01053 T00111   56  AN ALTERATION TO A PREMISES LICENSED FOR  CONSUMPTION  ON  THE  PREMISES
+2011A01053 T00112
+2011A01053 T00113       A. 1053                             3
+2011A01053 T00114
+2011A01053 T00115    1  UNDER  SECTION  NINETY-NINE-D  OF  THIS CHAPTER. FOR THE PURPOSES OF THE
+2011A01053 T00116    2  PRECEDING SENTENCE, NOTIFICATION NEED ONLY BE GIVEN TO THE  CLERK  OF  A
+2011A01053 T00117    3  VILLAGE WHEN SUCH PREMISES IS TO BE LOCATED WITHIN THE BOUNDARIES OF THE
+2011A01053 T00118    4  VILLAGE. IN THE CITY OF NEW YORK, THE COMMUNITY BOARD ESTABLISHED PURSU-
+2011A01053 T00119    5  ANT  TO  SECTION  TWENTY-EIGHT HUNDRED OF THE NEW YORK CITY CHARTER WITH
+2011A01053 T00120    6  JURISDICTION OVER THE AREA IN WHICH SUCH LICENSED PREMISES IS TO  BE  OR
+2011A01053 T00121    7  IS  LOCATED  SHALL  BE  CONSIDERED  THE APPROPRIATE PUBLIC BODY TO WHICH
+2011A01053 T00122    8  NOTIFICATION SHALL BE GIVEN. SUCH MUNICIPALITY OR  COMMUNITY  BOARD,  AS
+2011A01053 T00123    9  THE  CASE  MAY BE, MAY EXPRESS AN OPINION FOR OR AGAINST THE GRANTING OF
+2011A01053 T00124   10  SUCH LICENSE. ANY SUCH OPINION SHALL BE DEEMED PART OF THE  RECORD  UPON
+2011A01053 T00125   11  WHICH  THE  LIQUOR  BOARD  MAKES ITS DETERMINATION TO GRANT OR DENY SUCH
+2011A01053 T00126   12  LICENSE.
+2011A01053 T00127   13    S 4. Section 63 of the alcoholic beverage control law  is  amended  by
+2011A01053 T00128   14  adding a new subdivision 2-a to read as follows:
+2011A01053 T00129   15    2-A. NOTWITHSTANDING ANY OTHER PROVISION OF THIS CHAPTER, UPON RECEIPT
+2011A01053 T00130   16  OF  AN  APPLICATION FOR A LICENSE UNDER THIS SECTION, AN APPLICATION FOR
+2011A01053 T00131   17  RENEWAL UNDER SECTION ONE HUNDRED NINE OF THIS CHAPTER, OR  AN  APPLICA-
+2011A01053 T00132   18  TION  FOR  AN  ALTERATION  TO A PREMISES LICENSED FOR CONSUMPTION ON THE
+2011A01053 T00133   19  PREMISES UNDER SECTION NINETY-NINE-D  OF  THIS  CHAPTER,  THE  APPLICANT
+2011A01053 T00134   20  SHALL  NOTIFY  THE  CLERK OF THE VILLAGE, TOWN, OR CITY, AS THE CASE MAY
+2011A01053 T00135   21  BE, BY CERTIFIED MAIL, RETURN RECEIPT REQUESTED, WHEREIN THE PROSPECTIVE
+2011A01053 T00136   22  LICENSED PREMISES IS TO BE LOCATED OR, IN THE CASE OF AN APPLICATION FOR
+2011A01053 T00137   23  RENEWAL UNDER SECTION ONE HUNDRED NINE OF THIS CHAPTER OR AN  ALTERATION
+2011A01053 T00138   24  TO  A  PREMISES  LICENSED  FOR CONSUMPTION ON THE PREMISES UNDER SECTION
+2011A01053 T00139   25  NINETY-NINE-D OF THIS CHAPTER, WHERE IT IS PRESENTLY  LOCATED  NOT  LESS
+2011A01053 T00140   26  THAN SIXTY DAYS PRIOR TO THE SUBMISSION OF ITS APPLICATION FOR A LICENSE
+2011A01053 T00141   27  UNDER  THIS  SECTION,  FOR  A  RENEWAL  THEREOF  PURSUANT TO SECTION ONE
+2011A01053 T00142   28  HUNDRED NINE OF THIS CHAPTER, OR AN ALTERATION TO  A  PREMISES  LICENSED
+2011A01053 T00143   29  FOR  CONSUMPTION  ON  THE  PREMISES  UNDER SECTION NINETY-NINE-D OF THIS
+2011A01053 T00144   30  CHAPTER. FOR THE PURPOSES OF THE PRECEDING SENTENCE,  NOTIFICATION  NEED
+2011A01053 T00145   31  ONLY  BE  GIVEN  TO  THE  CLERK OF A VILLAGE WHEN SUCH PREMISES IS TO BE
+2011A01053 T00146   32  LOCATED WITHIN THE BOUNDARIES OF THE VILLAGE. IN THE CITY OF  NEW  YORK,
+2011A01053 T00147   33  THE COMMUNITY BOARD ESTABLISHED PURSUANT TO SECTION TWENTY-EIGHT HUNDRED
+2011A01053 T00148   34  OF  THE  NEW  YORK CITY CHARTER WITH JURISDICTION OVER THE AREA IN WHICH
+2011A01053 T00149   35  SUCH LICENSED PREMISES IS TO BE OR IS LOCATED SHALL  BE  CONSIDERED  THE
+2011A01053 T00150   36  APPROPRIATE  PUBLIC  BODY  TO  WHICH NOTIFICATION SHALL BE GIVEN.   SUCH
+2011A01053 T00151   37  MUNICIPALITY OR COMMUNITY BOARD, AS THE CASE  MAY  BE,  MAY  EXPRESS  AN
+2011A01053 T00152   38  OPINION  FOR  OR  AGAINST THE GRANTING OF SUCH LICENSE. ANY SUCH OPINION
+2011A01053 T00153   39  SHALL BE DEEMED PART OF THE RECORD UPON WHICH THE LIQUOR BOARD MAKES ITS
+2011A01053 T00154   40  DETERMINATION TO GRANT OR DENY SUCH LICENSE.
+2011A01053 T00155   41    S 5. Subdivision 2-a of section 64 of the alcoholic  beverage  control
+2011A01053 T00156   42  law,  as  amended by chapter 213 of the laws of 2010, is amended to read
+2011A01053 T00157   43  as follows:
+2011A01053 T00158   44    2-a. Notwithstanding any other provision of this chapter, upon receipt
+2011A01053 T00159   45  of an application for a license under this section, an  application  for
+2011A01053 T00160   46  renewal  under  section one hundred nine of this chapter, or an applica-
+2011A01053 T00161   47  tion for an alteration to a premises licensed  for  consumption  on  the
+2011A01053 T00162   48  premises  under  section  ninety-nine-d  of  this chapter, the applicant
+2011A01053 T00163   49  shall notify the clerk of the village, town or city, as the case may be,
+2011A01053 T00164   50  by certified mail return receipt requested, overnight  delivery  service
+2011A01053 T00165   51  with  proof  of  mailing,  or  personal service, wherein the prospective
+2011A01053 T00166   52  licensed premises is to be located or, in the case of an application for
+2011A01053 T00167   53  renewal[,] or alteration where it is presently  located  not  less  than
+2011A01053 T00168   54  [thirty]  SIXTY  days  prior  to the submission of its application for a
+2011A01053 T00169   55  license under this section [or],  for  a  renewal  thereof  pursuant  to
+2011A01053 T00170   56  section one hundred nine of this chapter OR AN  ALTERATION TO A PREMISES
+2011A01053 T00171
+2011A01053 T00172       A. 1053                             4
+2011A01053 T00173
+2011A01053 T00174    1  LICENSED  FOR CONSUMPTION ON THE PREMISES UNDER SECTION NINETY-NINE-D OF
+2011A01053 T00175    2  THIS CHAPTER. For the purposes of the  preceding  sentence  notification
+2011A01053 T00176    3  need only be given to the clerk of a village when such premises is to be
+2011A01053 T00177    4  located  within  the boundaries of the village. In the city of New York,
+2011A01053 T00178    5  the community board established pursuant to section twenty-eight hundred
+2011A01053 T00179    6  of the New York city charter with jurisdiction over the  area  in  which
+2011A01053 T00180    7  such  licensed  premises  IS OR is to be located shall be considered the
+2011A01053 T00181    8  appropriate public body to  which  notification  shall  be  given.  SUCH
+2011A01053 T00182    9  NOTIFICATION  SHALL  BE  MADE IN SUCH FORM AS SHALL BE PRESCRIBED BY THE
+2011A01053 T00183   10  RULES OF THE LIQUOR AUTHORITY. Such municipality or community board,  as
+2011A01053 T00184   11  the  case  may be, may express an opinion for or against the granting of
+2011A01053 T00185   12  such license. Any such opinion shall be deemed part of the  record  upon
+2011A01053 T00186   13  which  the  liquor  board  makes its determination to grant or deny such
+2011A01053 T00187   14  license.
+2011A01053 T00188   15    S 6. Section 64-a of the alcoholic beverage control law is amended  by
+2011A01053 T00189   16  adding a new subdivision 2-a to read as follows:
+2011A01053 T00190   17    2-A. NOTWITHSTANDING ANY OTHER PROVISION OF THIS CHAPTER, UPON RECEIPT
+2011A01053 T00191   18  OF  AN  APPLICATION FOR A LICENSE UNDER THIS SECTION, AN APPLICATION FOR
+2011A01053 T00192   19  RENEWAL UNDER SECTION ONE HUNDRED NINE OF THIS CHAPTER, OR  AN  APPLICA-
+2011A01053 T00193   20  TION  FOR  AN  ALTERATION  TO A PREMISES LICENSED FOR CONSUMPTION ON THE
+2011A01053 T00194   21  PREMISES UNDER SECTION NINETY-NINE-D  OF  THIS  CHAPTER,  THE  APPLICANT
+2011A01053 T00195   22  SHALL  NOTIFY  THE  CLERK OF THE VILLAGE, TOWN, OR CITY, AS THE CASE MAY
+2011A01053 T00196   23  BE, BY CERTIFIED MAIL, RETURN RECEIPT REQUESTED, WHEREIN THE PROSPECTIVE
+2011A01053 T00197   24  LICENSED PREMISES IS TO BE LOCATED OR, IN THE CASE OF AN APPLICATION FOR
+2011A01053 T00198   25  RENEWAL OR ALTERATION, WHERE IT IS PRESENTLY LOCATED NOT LESS THAN SIXTY
+2011A01053 T00000.SO DOC A 1053                                   BTXT                 2011
+2011A01053 T00199   26  DAYS PRIOR TO THE SUBMISSION OF ITS APPLICATION FOR A LICENSE UNDER THIS
+2011A01053 T00200   27  SECTION, FOR A RENEWAL THEREOF PURSUANT TO SECTION ONE HUNDRED  NINE  OF
+2011A01053 T00201   28  THIS CHAPTER, OR AN ALTERATION TO A PREMISES LICENSED FOR CONSUMPTION ON
+2011A01053 T00202   29  THE  PREMISES  UNDER  SECTION  NINETY-NINE-D  OF  THIS  CHAPTER. FOR THE
+2011A01053 T00203   30  PURPOSES OF THE PRECEDING SENTENCE, NOTIFICATION NEED ONLY BE  GIVEN  TO
+2011A01053 T00204   31  THE  CLERK  OF  A VILLAGE WHEN SUCH PREMISES IS TO BE LOCATED WITHIN THE
+2011A01053 T00205   32  BOUNDARIES OF THE VILLAGE. IN THE CITY OF NEW YORK, THE COMMUNITY  BOARD
+2011A01053 T00206   33  ESTABLISHED  PURSUANT  TO  SECTION  TWENTY-EIGHT HUNDRED OF THE NEW YORK
+2011A01053 T00207   34  CITY CHARTER WITH JURISDICTION OVER THE  AREA  IN  WHICH  SUCH  LICENSED
+2011A01053 T00208   35  PREMISES  IS  TO  BE  OR  IS LOCATED SHALL BE CONSIDERED THE APPROPRIATE
+2011A01053 T00209   36  PUBLIC BODY TO WHICH NOTIFICATION SHALL BE GIVEN.  SUCH MUNICIPALITY  OR
+2011A01053 T00210   37  COMMUNITY  BOARD,  AS  THE  CASE  MAY  BE, MAY EXPRESS AN OPINION FOR OR
+2011A01053 T00211   38  AGAINST THE GRANTING OF SUCH LICENSE. ANY SUCH OPINION SHALL  BE  DEEMED
+2011A01053 T00212   39  PART  OF  THE RECORD UPON WHICH THE LIQUOR BOARD MAKES ITS DETERMINATION
+2011A01053 T00213   40  TO GRANT OR DENY SUCH LICENSE.
+2011A01053 T00214   41    S 7. Section 64-b of the alcoholic beverage control law is amended  by
+2011A01053 T00215   42  adding a new subdivision 2-a to read as follows:
+2011A01053 T00216   43    2-A. NOTWITHSTANDING ANY OTHER PROVISION OF THIS CHAPTER, UPON RECEIPT
+2011A01053 T00217   44  OF  AN  APPLICATION FOR A LICENSE UNDER THIS SECTION, AN APPLICATION FOR
+2011A01053 T00218   45  RENEWAL UNDER SECTION ONE HUNDRED NINE OF THIS CHAPTER, OR  AN  APPLICA-
+2011A01053 T00219   46  TION  FOR  AN  ALTERATION  TO A PREMISES LICENSED FOR CONSUMPTION ON THE
+2011A01053 T00220   47  PREMISES UNDER SECTION NINETY-NINE-D  OF  THIS  CHAPTER,  THE  APPLICANT
+2011A01053 T00221   48  SHALL  NOTIFY  THE  CLERK OF THE VILLAGE, TOWN, OR CITY, AS THE CASE MAY
+2011A01053 T00222   49  BE, BY CERTIFIED MAIL, RETURN RECEIPT REQUESTED, WHEREIN THE PROSPECTIVE
+2011A01053 T00223   50  LICENSED PREMISES IS TO BE LOCATED OR, IN THE CASE OF AN APPLICATION FOR
+2011A01053 T00224   51  RENEWAL OR ALTERATION, WHERE IT IS PRESENTLY LOCATED NOT LESS THAN SIXTY
+2011A01053 T00225   52  DAYS PRIOR TO THE SUBMISSION OF ITS APPLICATION FOR A LICENSE UNDER THIS
+2011A01053 T00226   53  SECTION, FOR A RENEWAL THEREOF PURSUANT TO SECTION ONE HUNDRED  NINE  OF
+2011A01053 T00227   54  THIS CHAPTER, OR AN ALTERATION TO A PREMISES LICENSED FOR CONSUMPTION ON
+2011A01053 T00228   55  THE  PREMISES  UNDER  SECTION  NINETY-NINE-D  OF  THIS  CHAPTER. FOR THE
+2011A01053 T00229   56  PURPOSES OF THE PRECEDING SENTENCE, NOTIFICATION NEED ONLY BE  GIVEN  TO
+2011A01053 T00230
+2011A01053 T00231       A. 1053                             5
+2011A01053 T00232
+2011A01053 T00233    1  THE  CLERK  OF  A VILLAGE WHEN SUCH PREMISES IS TO BE LOCATED WITHIN THE
+2011A01053 T00234    2  BOUNDARIES OF THE VILLAGE. IN THE CITY OF NEW YORK, THE COMMUNITY  BOARD
+2011A01053 T00235    3  ESTABLISHED  PURSUANT  TO  SECTION  TWENTY-EIGHT HUNDRED OF THE NEW YORK
+2011A01053 T00236    4  CITY  CHARTER  WITH  JURISDICTION  OVER  THE AREA IN WHICH SUCH LICENSED
+2011A01053 T00237    5  PREMISES IS TO BE OR IS LOCATED  SHALL  BE  CONSIDERED  THE  APPROPRIATE
+2011A01053 T00238    6  PUBLIC  BODY TO WHICH NOTIFICATION SHALL BE GIVEN.  SUCH MUNICIPALITY OR
+2011A01053 T00239    7  COMMUNITY BOARD, AS THE CASE MAY BE,  MAY  EXPRESS  AN  OPINION  FOR  OR
+2011A01053 T00240    8  AGAINST  THE  GRANTING OF SUCH LICENSE. ANY SUCH OPINION SHALL BE DEEMED
+2011A01053 T00241    9  PART OF THE RECORD UPON WHICH THE LIQUOR BOARD MAKES  ITS  DETERMINATION
+2011A01053 T00242   10  TO GRANT OR DENY SUCH LICENSE.
+2011A01053 T00243   11    S  8.  Subdivision 3 of section 64-c of the alcoholic beverage control
+2011A01053 T00244   12  law, as added by chapter 213 of the laws of 2010, is amended to read  as
+2011A01053 T00245   13  follows:
+2011A01053 T00246   14    3.  Upon  receipt  of  an  original  [or  a renewal] application for a
+2011A01053 T00247   15  license under this section, AN APPLICATION FOR RENEWAL UNDER SECTION ONE
+2011A01053 T00248   16  HUNDRED NINE OF THIS CHAPTER, OR AN APPLICATION FOR AN ALTERATION  TO  A
+2011A01053 T00249   17  PREMISES  LICENSED FOR CONSUMPTION ON THE PREMISES UNDER SECTION NINETY-
+2011A01053 T00250   18  NINE-D OF THIS CHAPTER, the applicant shall  notify  the  clerk  of  the
+2011A01053 T00251   19  village,  town  or  city,  as  the case may be, by certified mail return
+2011A01053 T00252   20  receipt requested, overnight delivery service with proof of mailing,  or
+2011A01053 T00253   21  personal  service,  wherein  the  prospective licensed premises is to be
+2011A01053 T00254   22  located or, in the case of an application  for  renewal  OR  ALTERATION,
+2011A01053 T00255   23  where it is presently located not less than [thirty] SIXTY days prior to
+2011A01053 T00256   24  the submission of its application for a license under this section [or],
+2011A01053 T00257   25  for a renewal thereof UNDER SECTION ONE HUNDRED NINE OF THIS CHAPTER, OR
+2011A01053 T00258   26  AN  ALTERATION  TO  A  PREMISES LICENSED FOR CONSUMPTION ON THE PREMISES
+2011A01053 T00259   27  UNDER SECTION NINETY-NINE-D OF THIS CHAPTER. For  the  purposes  of  the
+2011A01053 T00260   28  preceding  sentence  notification  need  only be given to the clerk of a
+2011A01053 T00261   29  village when such premises is to be located within the boundaries of the
+2011A01053 T00262   30  village. In the city of New York, the community board established pursu-
+2011A01053 T00263   31  ant to section twenty-eight hundred of the New York  city  charter  with
+2011A01053 T00264   32  jurisdiction  over  the area in which such licensed premises is to be OR
+2011A01053 T00265   33  IS located shall be considered the  appropriate  public  body  to  which
+2011A01053 T00266   34  notification  shall  be  given. Such municipality or community board, as
+2011A01053 T00267   35  the case may be, may express an opinion for or against the  granting  of
+2011A01053 T00268   36  such  license.  Any such opinion shall be deemed part of the record upon
+2011A01053 T00269   37  which the liquor authority makes its determination to grant or deny such
+2011A01053 T00270   38  license.
+2011A01053 T00271   39    S 9. Subdivision 3 of section 64-d of the alcoholic  beverage  control
+2011A01053 T00272   40  law,  as added by chapter 213 of the laws of 2010, is amended to read as
+2011A01053 T00273   41  follows:
+2011A01053 T00274   42    3. Upon receipt of an  original  [or  a  renewal]  application  for  a
+2011A01053 T00275   43  license under this section, AN APPLICATION FOR RENEWAL UNDER SECTION ONE
+2011A01053 T00276   44  HUNDRED  NINE  OF THIS CHAPTER, OR AN APPLICATION FOR AN ALTERATION TO A
+2011A01053 T00277   45  PREMISES LICENSED FOR CONSUMPTION ON THE PREMISES UNDER SECTION  NINETY-
+2011A01053 T00278   46  NINE-D  OF  THIS  CHAPTER,  the  applicant shall notify the clerk of the
+2011A01053 T00279   47  village, town or city, as the case may  be,  by  certified  mail  return
+2011A01053 T00280   48  receipt  requested, overnight delivery service with proof of mailing, or
+2011A01053 T00281   49  personal service, wherein the prospective licensed  premises  is  to  be
+2011A01053 T00282   50  located  or,  in  the  case of an application for renewal OR ALTERATION,
+2011A01053 T00283   51  where it is presently located, not less than [thirty] SIXTY  days  prior
+2011A01053 T00284   52  to  the  submission  of its application for a license under this section
+2011A01053 T00285   53  [or], for a renewal thereof UNDER SECTION ONE HUNDRED NINE OF THIS CHAP-
+2011A01053 T00286   54  TER, OR AN ALTERATION TO A PREMISES  LICENSED  FOR  CONSUMPTION  ON  THE
+2011A01053 T00287   55  PREMISES  UNDER SECTION NINETY-NINE-D OF THIS CHAPTER.  For the purposes
+2011A01053 T00288   56  of the preceding sentence, notification need only be given to the  clerk
+2011A01053 T00289
+2011A01053 T00290       A. 1053                             6
+2011A01053 T00291
+2011A01053 T00292    1  of  a  village when such premises is to be located within the boundaries
+2011A01053 T00293    2  of the village. In the city of New York, the community board established
+2011A01053 T00294    3  pursuant to section twenty-eight hundred of the New  York  city  charter
+2011A01053 T00295    4  with jurisdiction over the area in which such licensed premises is to be
+2011A01053 T00296    5  OR  IS  located shall be considered the appropriate public body to which
+2011A01053 T00297    6  notification shall be given. Such municipality or  community  board,  as
+2011A01053 T00000.SO DOC A 1053                                   BTXT                 2011
+2011A01053 T00298    7  the  case  may be, may express an opinion for or against the granting of
+2011A01053 T00299    8  such license. Any such opinion shall be deemed part of the  record  upon
+2011A01053 T00300    9  which the liquor authority makes its determination to grant or deny such
+2011A01053 T00301   10  license.
+2011A01053 T00302   11    S  10. Subdivision 1-a of section 81 of the alcoholic beverage control
+2011A01053 T00303   12  law, as added by chapter 213 of the laws of 2010, is amended to read  as
+2011A01053 T00304   13  follows:
+2011A01053 T00305   14    1-a. Notwithstanding any other provision of this chapter, upon receipt
+2011A01053 T00306   15  [in  the  city  of  New York] of an application for a license under this
+2011A01053 T00307   16  section, an application for renewal under section one  hundred  nine  of
+2011A01053 T00308   17  this chapter, or an application for an alteration to a premises licensed
+2011A01053 T00309   18  for  consumption  on  the  premises  under section ninety-nine-d of this
+2011A01053 T00310   19  chapter, the applicant shall notify  the  [community  board  established
+2011A01053 T00311   20  pursuant  to  section  twenty-eight hundred of the New York city charter
+2011A01053 T00312   21  with jurisdiction over the area in which such licensed premises is to be
+2011A01053 T00313   22  located by certified mail return receipt requested,  overnight  delivery
+2011A01053 T00314   23  service with proof of mailing, or personal service, wherein the prospec-
+2011A01053 T00315   24  tive  licensed  premises is to be located or, in the case of an applica-
+2011A01053 T00316   25  tion for renewal, or alteration where it is presently located  not  less
+2011A01053 T00317   26  than  thirty  days  prior  to  the  submission  of its application for a
+2011A01053 T00318   27  license under this section or for a renewal thereof pursuant to  section
+2011A01053 T00319   28  one  hundred  nine  of this chapter. Such community board may express an
+2011A01053 T00320   29  opinion for or against the granting of such license.  Any  such  opinion
+2011A01053 T00321   30  shall be deemed part of the record upon which the liquor board makes its
+2011A01053 T00322   31  determination to grant or deny such license] CLERK OF THE VILLAGE, TOWN,
+2011A01053 T00323   32  OR  CITY,  AS  THE  CASE  MAY  BE,  BY  CERTIFIED  MAIL,  RETURN RECEIPT
+2011A01053 T00324   33  REQUESTED, WHEREIN THE PROSPECTIVE LICENSED PREMISES IS  TO  BE  LOCATED
+2011A01053 T00325   34  OR,  IN THE CASE OF AN APPLICATION FOR RENEWAL UNDER SECTION ONE HUNDRED
+2011A01053 T00326   35  NINE OF THIS CHAPTER  OR  AN  ALTERATION  TO  A  PREMISES  LICENSED  FOR
+2011A01053 T00327   36  CONSUMPTION ON THE PREMISES UNDER SECTION NINETY-NINE-D OF THIS CHAPTER,
+2011A01053 T00328   37  WHERE  IT  IS  PRESENTLY  LOCATED  NOT LESS THAN SIXTY DAYS PRIOR TO THE
+2011A01053 T00329   38  SUBMISSION OF ITS APPLICATION FOR A LICENSE UNDER THIS  SECTION,  FOR  A
+2011A01053 T00330   39  RENEWAL THEREOF PURSUANT TO SECTION ONE HUNDRED NINE OF THIS CHAPTER, OR
+2011A01053 T00331   40  AN  ALTERATION  TO  A  PREMISES LICENSED FOR CONSUMPTION ON THE PREMISES
+2011A01053 T00332   41  UNDER SECTION NINETY-NINE-D OF THIS CHAPTER.   FOR THE PURPOSES  OF  THE
+2011A01053 T00333   42  PRECEDING  SENTENCE,  NOTIFICATION  NEED ONLY BE GIVEN TO THE CLERK OF A
+2011A01053 T00334   43  VILLAGE WHEN SUCH PREMISES IS TO BE LOCATED WITHIN THE BOUNDARIES OF THE
+2011A01053 T00335   44  VILLAGE. IN THE CITY OF NEW YORK, THE COMMUNITY BOARD ESTABLISHED PURSU-
+2011A01053 T00336   45  ANT TO SECTION TWENTY-EIGHT HUNDRED OF THE NEW YORK  CITY  CHARTER  WITH
+2011A01053 T00337   46  JURISDICTION  OVER  THE AREA IN WHICH SUCH LICENSED PREMISES IS TO BE OR
+2011A01053 T00338   47  IS LOCATED SHALL BE CONSIDERED THE  APPROPRIATE  PUBLIC  BODY  TO  WHICH
+2011A01053 T00339   48  NOTIFICATION  SHALL  BE  GIVEN. SUCH MUNICIPALITY OR COMMUNITY BOARD, AS
+2011A01053 T00340   49  THE CASE MAY BE, MAY EXPRESS AN OPINION FOR OR AGAINST THE  GRANTING  OF
+2011A01053 T00341   50  SUCH  LICENSE.  ANY SUCH OPINION SHALL BE DEEMED PART OF THE RECORD UPON
+2011A01053 T00342   51  WHICH THE LIQUOR BOARD MAKES ITS DETERMINATION TO  GRANT  OR  DENY  SUCH
+2011A01053 T00343   52  LICENSE.
+2011A01053 T00344   53    S 11. Section 81-a of the alcoholic beverage control law is amended by
+2011A01053 T00345   54  adding a new subdivision 1-a to read as follows:
+2011A01053 T00346   55    1-A. NOTWITHSTANDING ANY OTHER PROVISION OF THIS CHAPTER, UPON RECEIPT
+2011A01053 T00347   56  OF  AN  APPLICATION FOR A LICENSE UNDER THIS SECTION, AN APPLICATION FOR
+2011A01053 T00348
+2011A01053 T00349       A. 1053                             7
+2011A01053 T00350
+2011A01053 T00351    1  RENEWAL UNDER SECTION ONE HUNDRED NINE OF THIS CHAPTER, OR  AN  APPLICA-
+2011A01053 T00352    2  TION  FOR  AN  ALTERATION  TO A PREMISES LICENSED FOR CONSUMPTION ON THE
+2011A01053 T00353    3  PREMISES UNDER SECTION NINETY-NINE-D  OF  THIS  CHAPTER,  THE  APPLICANT
+2011A01053 T00354    4  SHALL  NOTIFY  THE  CLERK OF THE VILLAGE, TOWN, OR CITY, AS THE CASE MAY
+2011A01053 T00355    5  BE, BY CERTIFIED MAIL, RETURN RECEIPT REQUESTED, WHEREIN THE PROSPECTIVE
+2011A01053 T00356    6  LICENSED PREMISES IS TO BE LOCATED OR, IN THE CASE OF AN APPLICATION FOR
+2011A01053 T00357    7  RENEWAL OR ALTERATION, WHERE IT IS PRESENTLY LOCATED NOT LESS THAN SIXTY
+2011A01053 T00358    8  DAYS PRIOR TO THE SUBMISSION OF ITS APPLICATION FOR A LICENSE UNDER THIS
+2011A01053 T00359    9  SECTION, FOR A RENEWAL THEREOF PURSUANT TO SECTION ONE HUNDRED  NINE  OF
+2011A01053 T00360   10  THIS CHAPTER, OR AN ALTERATION TO A PREMISES LICENSED FOR CONSUMPTION ON
+2011A01053 T00361   11  THE  PREMISES  UNDER  SECTION  NINETY-NINE-D  OF  THIS  CHAPTER. FOR THE
+2011A01053 T00362   12  PURPOSES OF THE PRECEDING SENTENCE, NOTIFICATION NEED ONLY BE  GIVEN  TO
+2011A01053 T00363   13  THE  CLERK  OF  A VILLAGE WHEN SUCH PREMISES IS TO BE LOCATED WITHIN THE
+2011A01053 T00364   14  BOUNDARIES OF THE VILLAGE. IN THE CITY OF NEW YORK, THE COMMUNITY  BOARD
+2011A01053 T00365   15  ESTABLISHED  PURSUANT  TO  SECTION  TWENTY-EIGHT HUNDRED OF THE NEW YORK
+2011A01053 T00366   16  CITY CHARTER WITH JURISDICTION OVER THE  AREA  IN  WHICH  SUCH  LICENSED
+2011A01053 T00367   17  PREMISES  IS  TO  BE  OR  IS LOCATED SHALL BE CONSIDERED THE APPROPRIATE
+2011A01053 T00368   18  PUBLIC BODY TO WHICH NOTIFICATION SHALL BE GIVEN.  SUCH MUNICIPALITY  OR
+2011A01053 T00369   19  COMMUNITY  BOARD,  AS  THE  CASE  MAY  BE, MAY EXPRESS AN OPINION FOR OR
+2011A01053 T00370   20  AGAINST THE GRANTING OF SUCH LICENSE. ANY SUCH OPINION SHALL  BE  DEEMED
+2011A01053 T00371   21  PART  OF  THE RECORD UPON WHICH THE LIQUOR BOARD MAKES ITS DETERMINATION
+2011A01053 T00372   22  TO GRANT OR DENY SUCH LICENSE.
+2011A01053 T00373   23    S 12. Subdivision 7 of section 100 of the alcoholic  beverage  control
+2011A01053 T00374   24  law,  as added by chapter 256 of the laws of 1978, is amended to read as
+2011A01053 T00375   25  follows:
+2011A01053 T00376   26    7. Within ten days after filing a new  application  to  sell  BEER  AT
+2011A01053 T00377   27  RETAIL  UNDER SUBDIVISION THREE OR FOUR OF SECTION FIFTY-ONE, OR SECTION
+2011A01053 T00378   28  FIFTY-TWO, FIFTY-FOUR, FIFTY-FOUR-A,  OR  FIFTY-FIVE  OF  THIS  CHAPTER,
+2011A01053 T00379   29  liquor  at  retail  under  section sixty-three, sixty-four, sixty-four-a
+2011A01053 T00380   30  [or], sixty-four-b, SIXTY-FOUR-C, OR SIXTY-FOUR-D of  this  chapter,  OR
+2011A01053 T00381   31  WINE AT RETAIL UNDER SECTION EIGHTY-ONE OR EIGHTY-ONE-A OF THIS CHAPTER,
+2011A01053 T00382   32  a  notice  thereof,  in  the  form prescribed by the authority, shall be
+2011A01053 T00383   33  posted by the applicant in a conspicuous place at the  entrance  to  the
+2011A01053 T00384   34  proposed premises. The applicant shall make reasonable efforts to insure
+2011A01053 T00385   35  such  notice shall remain posted throughout the pendency of the applica-
+2011A01053 T00386   36  tion. The provisions hereof shall apply only where  no  retail  [liquor]
+2011A01053 T00387   37  ALCOHOLIC  BEVERAGE license has previously been granted for the proposed
+2011A01053 T00388   38  [premise] PREMISES and shall,  specifically,  not  be  applicable  to  a
+2011A01053 T00389   39  proposed  sale  of  an  existing  business engaged in the retail sale of
+2011A01053 T00390   40  liquor. The authority may adopt such rules  it  may  deem  necessary  to
+2011A01053 T00391   41  carry out the purpose of this subdivision.
+2011A01053 T00392   42    S 13. Subdivision 1 of section 110-a of the alcoholic beverage control
+2011A01053 T00393   43  law,  as  added by chapter 77 of the laws of 1999, is amended to read as
+2011A01053 T00394   44  follows:
+2011A01053 T00395   45    1. Every person applying for a license  to  sell  alcoholic  beverages
+2011A01053 T00396   46  pursuant  to  subdivision THREE OR four of section fifty-one, or section
+2011A01053 T00000.SO DOC A 1053                                   BTXT                 2011
+2011A01053 T00397   47  FIFTY-TWO, FIFTY-FOUR,  FIFTY-FOUR-A,  fifty-five,  SIXTY-THREE,  sixty-
+2011A01053 T00398   48  four,    sixty-four-a,    SIXTY-FOUR-B,    sixty-four-c,   SIXTY-FOUR-D,
+2011A01053 T00399   49  eighty-one, or eighty-one-a of this chapter shall publish notice thereof
+2011A01053 T00400   50  pursuant to subdivision two of this section.
+2011A01053 T00401   51    S 14. This act shall take effect on  the  one  hundred  twentieth  day
+2011A01053 T00402   52  after it shall have become a law; provided, however, that if chapter 213
+2011A01053 T00403   53  of the laws of 2010 has not taken effect as of such date then the amend-
+2011A01053 T00404   54  ments  made  to  subdivision 2-a of section 55 of the alcoholic beverage
+2011A01053 T00405   55  control law, subdivision 2-a of section 64  of  the  alcoholic  beverage
+2011A01053 T00406   56  control  law,  subdivision  3  of section 64-c of the alcoholic beverage
+2011A01053 T00407
+2011A01053 T00408       A. 1053                             8
+2011A01053 T00409
+2011A01053 T00410    1  control law, subdivision 3 of section 64-d  of  the  alcoholic  beverage
+2011A01053 T00411    2  control law, and subdivision 1-a of section 81 of the alcoholic beverage
+2011A01053 T00412    3  control  law  by sections three, five, eight, nine and ten, respectively
+2011A01053 T00413    4  of  this  act shall take effect on the same date and same manner as such
+2011A01053 T00414    5  chapter takes effect provided, however, that the state liquor  authority
+2011A01053 T00415    6  is  authorized  to promulgate any and all rules and regulations and take
+2011A01053 T00416    7  any other measures necessary for the timely implementation of  this  act
+2011A01053 T00417    8  on its effective date on or before such date.
+2011A01053 T00000.SO DOC A 1053          *END*                    BTXT                 2011
+2011A01414 1                    00000                                   00000              0000               
+2011A01414 BAmd õ54, St Fin L
+2011A01414 CAuthorizes cooperative library systems to apply for funds under the local government efficiency
+2011A01414 Cgrant program municipal merger incentives.
+2011A01414 C============================================================================== Authorizes
+2011A01414 Ccooperative library systems to apply for funds under the local government efficiency grant
+2011A01414 Cprogram municipal merger incentives.
+2011A01414 1                    00000                                  A09121              2010               
+2011A01414 BAmd õ54, St Fin L Amd õ54, St Fin L
+2011A01414 CAuthorizes cooperative library systems to apply for funds under the local government efficiency
+2011A01414 Cgrant program municipal merger incentives.
+2011A01414 C============================================================================== Authorizes
+2011A01414 Ccooperative library systems to apply for funds under the local government efficiency grant
+2011A01414 Cprogram municipal merger incentives.
+2011S01459 1                    00000                                  S03181B             2010               
+2011S01459 BAdd Art 5-M õõ119-aaa - 119-fff, Gen Muni L
+2011S01459 CCreates the Peconic Bay regional transportation council to study the impacts of traffic
+2011S01459 Ccongestion; defines terms; outlines the powers and duties of such council; requires the
+2011S01459 Cpreparation and adoption of the transportation action plan and submission to the legislature.
+2011A01412 1                    00000                                  A06743B             2010               
+2011A01412 BAdd Art 5-M õõ119-aaa - 119-fff, Gen Muni L
+2011A01412 CCreates the Peconic Bay regional transportation council to study the impacts of traffic
+2011A01412 Ccongestion; defines terms; outlines the powers and duties of such council; requires the
+2011A01412 Cpreparation and adoption of the transportation action plan and submission to the legislature.
+2011S01352 5Same as A 1430
+2011S01352 9
+</DATAPROCESS>
+<SENATEDATA TIME="2011-01-07-15.09.14">
+No data to process on 07/01/2011 at 15:09:14
+</SENATEDATA>

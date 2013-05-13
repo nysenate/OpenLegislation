@@ -26,4 +26,59 @@ public class SpotCheckBill {
         actions = new ArrayList<String>();
         amendments = new ArrayList<String>();
     }
+    
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public String setTitle(String title)
+    {
+        this.title = title;
+        return title;
+    }
+
+    public String getSummary()
+    {
+        return summary;
+    }
+
+    public String setSummary(String summary)
+    {
+        this.summary = summary;
+        return summary;
+    }
+
+    public String getSponsor()
+    {
+        return sponsor;
+    }
+
+    public String setSponsor(String sponsor)
+    {
+        this.sponsor = sponsor;
+        return sponsor;
+    }
+
+    public ArrayList<String> getCosponsors()
+    {
+        return cosponsors;
+    }
+
+    public void setCosponsors(ArrayList<String> cosponsors)
+    {
+        this.cosponsors = cosponsors;
+    }
+
+    public ArrayList<String> getActions()
+    {
+        return actions;
+    }
+
+    public void setActions(ArrayList<String> actions)
+    {
+        this.actions = actions;
+    }
+    
 }

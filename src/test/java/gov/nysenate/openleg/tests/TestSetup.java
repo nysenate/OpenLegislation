@@ -21,6 +21,7 @@ public abstract class TestSetup
 	{
 		loadProperties();
 		sobiDirectory = new File("src/test/resources/sobi");
+		
 		storage = new Storage(env.getStorageDirectory());
 	}
 

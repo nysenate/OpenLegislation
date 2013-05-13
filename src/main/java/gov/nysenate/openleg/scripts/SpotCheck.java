@@ -66,11 +66,12 @@ public class SpotCheck extends BaseScript {
 
         for(String id : bills.keySet()) {
             String billNo = id+"-2013";
+           
             Bill bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
 
             // Compare the titles, ignore white space differences
             String jsonTitle = unescapeHTML(bill.getTitle());
-            String lbdcTitle = bills.get(id).title;
+            String lbdcTitle = bills.get(id).getTitle();
             if (!lbdcTitle.isEmpty() && !stringEquals(jsonTitle, lbdcTitle, true, true)) {
                 // What is this D?
                 if (!id.startsWith("D")) {
@@ -84,7 +85,8 @@ public class SpotCheck extends BaseScript {
             // Compare the summaries. LBDC reports summary and law changes together
             String jsonLaw = bill.getLaw();
             String jsonSummary = unescapeHTML(bill.getSummary());
-            String lbdcSummary = bills.get(id).summary.replaceAll("\\s+", " ");
+            String lbdcSummary = bills.get(id).getSummary().replaceAll("\\s+", " ");
+
 
             if( jsonLaw != null && jsonLaw != "" && jsonLaw != "null") {
                 jsonSummary = unescapeHTML(jsonLaw)+" "+jsonSummary;
@@ -109,7 +111,7 @@ public class SpotCheck extends BaseScript {
             }
 
             String jsonSponsor = unescapeHTML(bill.getSponsor().getFullname()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
-            String lbdcSponsor = bills.get(id).sponsor.toUpperCase().replace("BILL", "").replace("COM", "");
+            String lbdcSponsor = bills.get(id).getSponsor().toUpperCase().replace("BILL", "").replace("COM", "");
             if (!lbdcSponsor.isEmpty() && !jsonSponsor.replace(" ","").equals(lbdcSponsor.replace(" ", "")) ) {
                 if (!id.startsWith("D")) {
                     logger.error("Sponsor: "+billNo);
@@ -120,7 +122,7 @@ public class SpotCheck extends BaseScript {
             }
 
 
-            TreeSet<String> lbdcCosponsors = new TreeSet<String>(bills.get(id).cosponsors);
+            TreeSet<String> lbdcCosponsors = new TreeSet<String>(bills.get(id).getCosponsors());
             TreeSet<String> jsonCosponsors = new TreeSet<String>();
             if ( bill.getCoSponsors() != null ) {
                 List<Person> cosponsors = bill.getCoSponsors();
@@ -138,7 +140,7 @@ public class SpotCheck extends BaseScript {
                 }
             }
 
-            ArrayList<String> lbdcEvents = bills.get(id).actions;
+            ArrayList<String> lbdcEvents = bills.get(id).getActions();
             ArrayList<String> jsonEvents = new ArrayList<String>();
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
 
@@ -271,15 +273,15 @@ public class SpotCheck extends BaseScript {
 			}
              */
 
-            bill.title = parts[2].trim();
+            bill.setTitle(parts[2].trim());
             bill.law = parts[3].trim();
-            bill.summary = parts[4].trim();
+            bill.setSummary(parts[4].trim());
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
             for( int i=5; i< parts.length; i++ ) {
                 String event = parts[i].trim();
                 try {
                     dateFormat.parse(event.split(" ")[0]);
-                    bill.actions.add(event);
+                    bill.getActions().add(event);
                 } catch (ParseException e) {
                     //pass
                 }
@@ -290,9 +292,9 @@ public class SpotCheck extends BaseScript {
                 String[] all_sponsors = parts[1].split("; M-S:");
                 String[] sponsors = all_sponsors[0].split(",");
 
-                bill.sponsor = sponsors[0].trim();
+                bill.setSponsor(sponsors[0].trim());
                 for(int i=1; i<sponsors.length; i++) {
-                    bill.cosponsors.add(sponsors[i].trim());
+                    bill.getCosponsors().add(sponsors[i].trim());
                 }
 
                 if(all_sponsors.length == 2)
@@ -300,10 +302,10 @@ public class SpotCheck extends BaseScript {
                         bill.multisponsors.add(multisponsor.trim());
             } else {
                 String[] sponsors = parts[1].split("CO:");
-                bill.sponsor = sponsors[0].trim();
+                bill.setSponsor(sponsors[0].trim());
                 if(sponsors.length == 2)
                     for(String cosponsor : sponsors[1].split(","))
-                        bill.cosponsors.add(cosponsor.trim());
+                        bill.getCosponsors().add(cosponsor.trim());
             }
 
             if (bills.get(bill.id) != null) {
