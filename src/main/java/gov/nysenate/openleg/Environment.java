@@ -4,9 +4,9 @@ import gov.nysenate.openleg.processors.AgendaProcessor;
 import gov.nysenate.openleg.processors.BillProcessor;
 import gov.nysenate.openleg.processors.CalendarProcessor;
 import gov.nysenate.openleg.processors.TranscriptProcessor;
+import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.Storage;
-import gov.nysenate.openleg.util.Storage.Status;
 import gov.nysenate.openleg.util.Timer;
 
 import java.io.BufferedReader;
@@ -246,12 +246,12 @@ public class Environment
         }
     }
 
-    public HashMap<String, Status> ingestFiles(File...files)
+    public HashMap<String, Change> ingestFiles(File...files)
     {
         return ingestFiles(Arrays.asList(files));
     }
 
-    public HashMap<String, Status> ingestFiles(Collection<File> files)
+    public HashMap<String, Change> ingestFiles(Collection<File> files)
     {
         Timer timer = new Timer();
         Storage storage = new Storage(getStorageDirectory());

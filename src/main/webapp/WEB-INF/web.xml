@@ -36,6 +36,10 @@
 		<servlet-name>ReportServlet</servlet-name>
 		<servlet-class>gov.nysenate.openleg.api.servlets.ReportServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>Updates</servlet-name>
+		<servlet-class>gov.nysenate.openleg.api.servlets.UpdateServlet</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>ApiServlet2_0</servlet-name>
 		<url-pattern>/api/2.0/*</url-pattern>
@@ -175,5 +179,9 @@
 	<servlet-mapping>
 		<servlet-name>ApiServlet</servlet-name>
 		<url-pattern>/search/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Updates</servlet-name>
+		<url-pattern>/updates</url-pattern>
 	</servlet-mapping>
 </web-app>

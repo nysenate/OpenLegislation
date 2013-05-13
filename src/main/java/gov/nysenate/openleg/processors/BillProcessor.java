@@ -139,12 +139,12 @@ public class BillProcessor
                     // Special case here were we delete the whole bill
                     // TODO: This might actually be a soft delete!
                     logger.info("DELETING "+block.getHeader());
-                    deleteBill(block, storage);
+                    deleteBill(block, storage, date);
                 }
                 else {
                     // Otherwise, apply the block to the bill normally
                     String data = block.getData().toString();
-                    Bill bill = getOrCreateBill(block, storage);
+                    Bill bill = getOrCreateBill(block, storage, date);
                     switch (block.getType()) {
                         case '1': applyBillInfo(data, bill, date); break;
                         case '2': applyLawSection(data, bill, date); break;
@@ -167,8 +167,8 @@ public class BillProcessor
                     logger.info("SAVING: "+bill.getSenateBillNo());
                     bill.addSobiReference(sobiFile.getName());
                     bill.setModified(date.getTime());
-                    saveBill(bill, storage);
-                    ChangeLogger.record(bill.getKey(), storage);
+                    saveBill(bill, storage, date);
+
                 }
             }
             catch (ParseError e) {
@@ -245,7 +245,7 @@ public class BillProcessor
      * @return
      * @throws ParseError
      */
-    public Bill getOrCreateBill(SOBIBlock block, Storage storage) throws ParseError
+    public Bill getOrCreateBill(SOBIBlock block, Storage storage, Date date) throws ParseError
     {
         String billKey = block.getPrintNo()+block.getAmendment()+"-"+block.getYear();
         Bill bill = storage.getBill(billKey);
@@ -285,7 +285,7 @@ public class BillProcessor
                 logger.error("Bill Amendment filed without initial bill at "+block.getLocation()+" - "+block.getHeader());
                 baseBill = new Bill(baseKey, block.getYear());
                 storage.saveBill(baseBill);
-                ChangeLogger.record(baseBill.getKey(), storage);
+                ChangeLogger.record(baseBill.getKey(), storage, date);
             }
 
             // Pull sponsor information up from the base bill
@@ -311,7 +311,7 @@ public class BillProcessor
                         billVersion.setActive(false);
                     }
                     storage.saveBill(billVersion);
-                    ChangeLogger.record(billVersion.getKey(), storage);
+                    ChangeLogger.record(billVersion.getKey(), storage, date);
                 }
             }
 
@@ -329,7 +329,7 @@ public class BillProcessor
                 // Activate yourself
                 bill.setActive(true);
                 storage.saveBill(bill);
-                ChangeLogger.record(bill.getKey(), storage);
+                ChangeLogger.record(bill.getKey(), storage, date);
             }
 
             return bill;
@@ -344,7 +344,7 @@ public class BillProcessor
      * @param bill
      * @param storage
      */
-    public void saveBill(Bill bill, Storage storage)
+    public void saveBill(Bill bill, Storage storage, Date date)
     {
         // Sponsor and summary information needs to be synced at all times.
         // Uni bills share text, always sent to the senate bill.
@@ -358,7 +358,7 @@ public class BillProcessor
             billVersion.setMultiSponsors(bill.getMultiSponsors());
             billVersion.setSummary(bill.getSummary());
             storage.saveBill(billVersion);
-            ChangeLogger.record(billVersion.getKey(), storage);
+            ChangeLogger.record(billVersion.getKey(), storage, date);
         }
         if (bill.isUniBill()) {
             // logger.error("UNIBILL: "+bill.getSenateBillNo()+", "+bill.getSameAs());
@@ -391,7 +391,7 @@ public class BillProcessor
             }
         }
         storage.saveBill(bill);
-        ChangeLogger.record(bill.getKey(), storage);
+        ChangeLogger.record(bill.getKey(), storage, date);
     }
 
     /**
@@ -403,7 +403,7 @@ public class BillProcessor
      * @param storage
      * @throws ParseError
      */
-    public void deleteBill(SOBIBlock block, Storage storage) throws ParseError, IOException
+    public void deleteBill(SOBIBlock block, Storage storage, Date date) throws ParseError, IOException
     {
         String billKey = block.getPrintNo()+block.getAmendment()+"-"+block.getYear();
         Bill bill = storage.getBill(billKey);
@@ -427,12 +427,12 @@ public class BillProcessor
                         billVersion.setActive(true);
                     }
                     storage.saveBill(billVersion);
-                    ChangeLogger.record(billVersion.getKey(), storage);
+                    ChangeLogger.record(billVersion.getKey(), storage, date);
                 }
             }
             String key = bill.getYear()+"/bill/"+billKey;
             storage.del(key);
-            ChangeLogger.delete(key, storage);
+            ChangeLogger.delete(key, storage, date);
         }
     }
 

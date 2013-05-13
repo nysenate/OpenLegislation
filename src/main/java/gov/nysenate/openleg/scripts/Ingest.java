@@ -4,16 +4,18 @@ import gov.nysenate.openleg.processors.AgendaProcessor;
 import gov.nysenate.openleg.processors.BillProcessor;
 import gov.nysenate.openleg.processors.CalendarProcessor;
 import gov.nysenate.openleg.processors.TranscriptProcessor;
+import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.Storage;
-import gov.nysenate.openleg.util.Storage.Status;
 import gov.nysenate.openleg.util.Timer;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -106,9 +108,12 @@ public class Ingest extends BaseScript
         logger.info(timer.stop()+" seconds to injest "+files.size()+" files.");
 
         // Dump out the change log
+        Date date;
         StringBuffer out = new StringBuffer();
-        for (Entry<String, Status> entry : ChangeLogger.getChangeLog().entrySet()) {
-            out.append(entry.getKey()+"\t"+entry.getValue()+"\n");
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (Entry<String, Change> entry : ChangeLogger.getChangeLog().entrySet()) {
+            date = entry.getValue().getDate();
+            out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\t"+sdf.format(date).toString()+"\n");
         }
 
         if (opts.hasOption("change-file")) {
