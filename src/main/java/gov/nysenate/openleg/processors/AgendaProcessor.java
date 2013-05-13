@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.xml.committee.XMLAddendum;
@@ -59,13 +60,14 @@ public class AgendaProcessor implements OpenLegConstants {
 
         for(Object next : senateData.getSenagendaOrSenagendavote()) {
             if (next instanceof XMLSenagenda) {
-                Agenda agenda = handleXMLSenagenda(storage,(XMLSenagenda)next);
+                Agenda agenda = handleXMLSenagenda(storage,(XMLSenagenda)next, modifiedDate);
 
                 if (agenda != null) {
                     agenda.addSobiReference(file.getName());
                     agenda.setModified(modifiedDate.getTime());
                     String key = agenda.getYear()+"/agenda/"+agenda.getId();
                     storage.set(key, agenda);
+                    ChangeLogger.record(key, storage, modifiedDate);
 
                     for (Addendum addendum : agenda.getAddendums()) {
                         for (Meeting meeting : addendum.getMeetings()) {
@@ -77,18 +79,20 @@ public class AgendaProcessor implements OpenLegConstants {
                             // This might be a false positive change
                             meeting.setModified(addendum.getPublicationDateTime().getTime());
                             storage.set(key, meeting);
+                            ChangeLogger.record(key, storage, modifiedDate);
                         }
                     }
                 }
 
             } else if (next instanceof XMLSenagendavote) {
-                Agenda agenda = handleXMLSenagendavote(storage, (XMLSenagendavote)next);
+                Agenda agenda = handleXMLSenagendavote(storage, (XMLSenagendavote)next, modifiedDate);
 
                 if (agenda != null) {
                     agenda.addSobiReference(file.getName());
                     agenda.setModified(modifiedDate.getTime());
                     String key = agenda.getYear()+"/agenda/"+agenda.getId();
                     storage.set(key, agenda);
+                    ChangeLogger.record(key, storage, modifiedDate);
 
                     for (Addendum addendum : agenda.getAddendums()) {
                         for (Meeting meeting : addendum.getMeetings()) {
@@ -96,6 +100,7 @@ public class AgendaProcessor implements OpenLegConstants {
                             key = calendar.get(GregorianCalendar.YEAR)+"/meeting/"+meeting.getId();
                             logger.info(key);
                             storage.set(key, meeting);
+                            ChangeLogger.record(key, storage, modifiedDate);
                         }
                     }
                 }
@@ -106,15 +111,15 @@ public class AgendaProcessor implements OpenLegConstants {
         }
     }
 
-    public Bill handleXMLBill(Storage storage, Meeting meeting, XMLBill xmlBill, int sessionYear) {
+    public Bill handleXMLBill(Storage storage, Meeting meeting, XMLBill xmlBill, int sessionYear, Date date) {
         Bill bill = getBill(storage, xmlBill.getNo(), sessionYear, xmlBill.getSponsor().getContent());
 
         if (xmlBill.getSponsor() != null && bill.getSponsor() == null) {
             bill.setSponsor(new Person(xmlBill.getSponsor().getContent()));
         }
 
-        if (xmlBill.getTitle() != null && bill.getSummary().isEmpty()) {
-            bill.setSummary(xmlBill.getTitle().getContent());
+        if (xmlBill.getTitle() != null && bill.getActClause().isEmpty()) {
+            bill.setActClause(xmlBill.getTitle().getContent());
         }
 
         if (xmlBill.getVotes() != null) {
@@ -156,12 +161,13 @@ public class AgendaProcessor implements OpenLegConstants {
             // Make sure the bill gets updated on disc
             String key = String.valueOf(bill.getYear())+"/bill/"+bill.getSenateBillNo();
             storage.set(key, bill);
+            ChangeLogger.record(key, storage, date);
         }
 
         return bill;
     }
 
-    public Agenda handleXMLSenagendavote(Storage storage, XMLSenagendavote xmlAgendaVote) {
+    public Agenda handleXMLSenagendavote(Storage storage, XMLSenagendavote xmlAgendaVote, Date date) {
         // TODO: It doesn't look like we parse any action here. Should we?
 
         // Sometimes these come up blank on bad feeds or something
@@ -201,7 +207,7 @@ public class AgendaProcessor implements OpenLegConstants {
                 XMLAddendum xmlAddendum = (XMLAddendum) next;
                 // String keyId = "a-" + agendaVote.getNumber() + '-' + agendaVote.getSessionYear() + '-' + xmlAddendum.getId();
                 String keyId = xmlAddendum.getId() + "-" + agendaVote.getNumber() + '-' + agendaVote.getSessionYear() + '-' + agendaVote.getYear();
-                Addendum addendum = parseAddendum(storage, keyId, xmlAddendum, agendaVote, true);
+                Addendum addendum = parseAddendum(storage, keyId, xmlAddendum, agendaVote, true, date);
                 addendum.setAgenda(agendaVote);
 
                 // Don't repeat yourself
@@ -219,7 +225,7 @@ public class AgendaProcessor implements OpenLegConstants {
         return agendaVote;
     }
 
-    public Agenda handleXMLSenagenda(Storage storage, XMLSenagenda xmlAgenda) {
+    public Agenda handleXMLSenagenda(Storage storage, XMLSenagenda xmlAgenda, Date date) {
         // Sometimes these come up blank on bad feeds or something
         // TODO: Look into this with better documentation
         if (xmlAgenda.getYear().isEmpty())
@@ -237,11 +243,13 @@ public class AgendaProcessor implements OpenLegConstants {
         if (agenda != null && action.equalsIgnoreCase("remove")) {
             logger.info("removing agenda: " + agenda.getId());
             storage.del(key);
+            ChangeLogger.delete(key, storage, date);
 
             for (Addendum addendum : agenda.getAddendums()) {
                 for (Meeting meeting : addendum.getMeetings()) {
                     key = meeting.getYear()+"/meeting/"+meeting.getId();
                     storage.del(key);
+                    ChangeLogger.delete(key, storage, date);
                 }
             }
 
@@ -273,7 +281,7 @@ public class AgendaProcessor implements OpenLegConstants {
         for(XMLAddendum xmlAddendum : xmlAgenda.getAddendum()) {
             String keyId = xmlAddendum.getId() + "-" + agenda.getNumber() + '-' + agenda.getSessionYear() + '-' + agenda.getYear();
 
-            Addendum addendum = parseAddendum(storage, keyId, xmlAddendum, agenda, false);
+            Addendum addendum = parseAddendum(storage, keyId, xmlAddendum, agenda, false, date);
             addendum.setAgenda(agenda);
 
             // Don't add duplicates!
@@ -286,7 +294,7 @@ public class AgendaProcessor implements OpenLegConstants {
         return agenda;
     }
 
-    public Addendum parseAddendum(Storage storage, String keyId, XMLAddendum xmlAddendum, Agenda agenda, boolean isVote) {
+    public Addendum parseAddendum(Storage storage, String keyId, XMLAddendum xmlAddendum, Agenda agenda, boolean isVote, Date date) {
         // TODO: Are addendums resent whole each time?
         // TODO: What are addendums?
 
@@ -345,10 +353,12 @@ public class AgendaProcessor implements OpenLegConstants {
                         // Delete the meeting and save the agenda
                         String key = meeting.getYear()+"/meeting/"+meeting.getId();
                         storage.del(key);
+                        ChangeLogger.delete(key, storage, date);
 
                         agenda.removeCommitteeMeeting(meeting);
                         key = agenda.getYear()+"/agenda/"+agenda.getId();
                         storage.set(key, agenda);
+                        ChangeLogger.record(key, storage, date);
                     }
 
                     if (action.equals("remove")) {
@@ -431,7 +441,7 @@ public class AgendaProcessor implements OpenLegConstants {
                 }
 
                 for(XMLBill xmlBill : xmlCommMeeting.getBills().getBill()) {
-                    Bill bill = handleXMLBill(storage, meeting, xmlBill, addendum.getAgenda().getSessionYear());
+                    Bill bill = handleXMLBill(storage, meeting, xmlBill, addendum.getAgenda().getSessionYear(), date);
 
                     if (!listBills.contains(bill)) {
                         logger.debug("adding bill:" + bill.getSenateBillNo() + " to meeting:" + meeting.getId());

@@ -186,12 +186,15 @@ public class ApiHelper implements OpenLegConstants {
                     else if (vote.getVoteType() == Vote.VOTE_TYPE_FLOOR)
                         fields.put("type", "Floor Vote");
 
+                    HashMap<String, String> resultFields = result.getFields();
+                    fields.put("sponsor", resultFields.get("sponsor"));
+                    fields.put("billno", resultFields.get("billno"));
+
                     if (vote.getBill() != null) {
                         Bill bill = vote.getBill();
 
                         if (bill.getSponsor() != null)
-                            fields.put("sponsor", bill.getSponsor()
-                                    .getFullname());
+                            fields.put("sponsor", bill.getSponsor().getFullname());
 
                         if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
                             fields.put("committee", bill.getCurrentCommittee());

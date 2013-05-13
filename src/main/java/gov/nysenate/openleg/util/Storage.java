@@ -1,10 +1,11 @@
 package gov.nysenate.openleg.util;
 
+import gov.nysenate.openleg.model.Bill;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -25,7 +26,6 @@ public class Storage {
     private final ObjectMapper objectMapper;
     private final PrettyPrinter prettyPrinter;
 
-    public HashMap<String, Status> changeLog;
     public HashMap<String, Object> memory;
     public HashSet<String> dirty;
     public String encoding = "UTF-8";
@@ -56,9 +56,6 @@ public class Storage {
         this.objectMapper.enable(Feature.INDENT_OUTPUT);
         this.jsonFactory = this.objectMapper.getJsonFactory();
         this.prettyPrinter = new DefaultPrettyPrinter();
-
-        // Load the changeLog from last time...
-        this.changeLog = loadLog();
     }
 
     public void clearCache() {
@@ -92,18 +89,6 @@ public class Storage {
     public void set(String key, Object value) {
         memory.put(key, value);
         dirty.add(key);
-
-        // Log the change
-        Status keyStatus = changeLog.get(key);
-        if (keyStatus == null) {
-            if (storageFile(key).exists()) {
-                changeLog.put(key, Status.MODIFIED);
-            } else {
-                changeLog.put(key, Status.NEW);
-            }
-        } else if (keyStatus != Status.NEW) {
-            changeLog.put(key, Status.MODIFIED);
-        }
     }
 
     public Boolean del(String key) {
@@ -111,14 +96,6 @@ public class Storage {
         logger.debug("Deleting key: "+key);
         memory.remove(key);
         dirty.remove(key);
-
-        // Log the change
-        Status keyStatus = changeLog.get(key);
-        if (keyStatus == Status.NEW) {
-            changeLog.remove(key);
-        } else {
-            changeLog.put(key, Status.DELETED);
-        }
         return storageFile(key).delete();
     }
 
@@ -147,43 +124,20 @@ public class Storage {
         dirty.clear();
     }
 
-    public HashMap<String, Status> loadLog() {
-        changeLog = new HashMap<String, Status>();
-
-        try {
-            for(String line : FileUtils.readLines(storageFile("changeLog"))) {
-                String[] parts = line.split("\t");
-                changeLog.put(parts[0], Status.valueOf(parts[1]));
-            }
-        } catch (IOException e) {
-            logger.info("No change log found. Creating new log.");
-        }
-
-        return changeLog;
-    }
-
-    public void saveLog() {
-        try {
-            File logFile = storageFile("changeLog");
-            FileUtils.forceMkdir(logFile.getParentFile());
-
-            StringBuffer out = new StringBuffer();
-            for (Entry<String, Status> entry : changeLog.entrySet()) {
-                out.append(entry.getKey()+"\t"+entry.getValue()+"\n");
-            }
-
-            FileUtils.write(logFile, out);
-        } catch (IOException e) {
-            logger.error("Could not open changeLog for writing", e);
-        }
-    }
-
-    public void clearLog() {
-        storageFile("changeLog").delete();
-        changeLog.clear();
-    }
-
-    private File storageFile(String key) {
+    public File storageFile(String key) {
         return new File(storage, key+".json");
+    }
+
+    public Bill getBill(String billKey)
+    {
+        String[] keyParts = billKey.split("-");
+        return (Bill)this.get(keyParts[1]+"/bill/"+billKey, Bill.class);
+    }
+
+    public void saveBill(Bill bill)
+    {
+        String billKey = bill.getSenateBillNo();
+        String[] keyParts = billKey.split("-");
+        this.set(keyParts[1]+"/bill/"+billKey, bill);
     }
 }

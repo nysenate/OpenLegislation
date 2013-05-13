@@ -67,10 +67,10 @@ public class ReportCreate extends SpotCheck
   public static void readFiles(String[] files) throws IOException{
       
      
-         
+              SpotCheck spot=new SpotCheck();
               
                for (String arg : files) {
-                   bills.putAll(SpotCheck.readDaybreak(new File(arg)));
+                   bills.putAll(spot.readDaybreak(new File(arg)));
                }
           }
          

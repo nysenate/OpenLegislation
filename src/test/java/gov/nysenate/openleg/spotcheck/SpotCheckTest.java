@@ -3,7 +3,7 @@ package gov.nysenate.openleg.spotcheck;
 
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.scripts.SpotCheck;
-import gov.nysenate.openleg.scripts.SpotCheck.SpotCheckBill;
+import gov.nysenate.openleg.model.SpotCheckBill;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.File;
@@ -19,18 +19,19 @@ public class SpotCheckTest extends SpotCheckBill
     Bill bill;
     static HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();
     protected static Storage storage;
-    
+    SpotCheckHelper helper;
    
     @ BeforeClass
-    public static void checkFiles() throws IOException{
+    public  void checkFiles() throws IOException{
       storage  = new Storage("/home/shweta/test/processed/lbdc_test/json");
        String args[]= { "/home/shweta/test/processed/lbdc_test/files/20130323.assembly.low.html",
                "/home/shweta/test/processed/lbdc_test/files/20130323.assembly.high.html",
                "/home/shweta/test/processed/lbdc_test/files/20130323.senate.low.html",
                "/home/shweta/test/processed/lbdc_test/files/20130323.senate.high.html" };
-       
+       SpotCheck spot=new SpotCheck();
+        helper=new SpotCheckHelper();
         for (String arg : args) {
-            bills.putAll(SpotCheck.readDaybreak(new File(arg)));
+            bills.putAll(spot.readDaybreak(new File(arg)));
         }
         System.out.println("Total number of bills: "+bills.size());
      }
@@ -41,7 +42,7 @@ public class SpotCheckTest extends SpotCheckBill
         for(String id : bills.keySet()) {
             String billNo = id+"-2013";
             bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
-            SpotCheckHelper.testBillTitles(bill, bills,id);
+            helper.testBillTitles(bill, bills,id);
             }
        
           
@@ -52,7 +53,7 @@ public class SpotCheckTest extends SpotCheckBill
        for(String id : bills.keySet()) {
            String billNo = id+"-2013";
            bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
-           SpotCheckHelper.checkSummary(bill, bills,id);
+           helper.checkSummary(bill, bills,id);
            }
      }
     
@@ -62,7 +63,7 @@ public class SpotCheckTest extends SpotCheckBill
             for(String id : bills.keySet()) {
                 String billNo = id+"-2013";
                 bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
-                SpotCheckHelper.checkSponsors(bill, bills, id);
+                helper.checkSponsors(bill, bills, id);
                 }   
     }
       
@@ -72,7 +73,7 @@ public class SpotCheckTest extends SpotCheckBill
             for(String id : bills.keySet()) {
                 String billNo = id+"-2013";
                 bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
-                SpotCheckHelper.checkCoSponsors(bill, bills, id);
+                helper.checkCoSponsors(bill, bills, id);
                 }   
     }
     
@@ -81,7 +82,7 @@ public class SpotCheckTest extends SpotCheckBill
             for(String id : bills.keySet()) {
                 String billNo = id+"-2013";
                 bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
-                SpotCheckHelper.checkEvents(bill, bills, id);
+                helper.checkEvents(bill, bills, id);
                 }   
     }
     

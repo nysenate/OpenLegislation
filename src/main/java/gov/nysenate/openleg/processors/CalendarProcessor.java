@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Section;
 import gov.nysenate.openleg.model.Sequence;
 import gov.nysenate.openleg.model.Supplemental;
+import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.xml.calendar.XMLCalno;
@@ -58,6 +59,7 @@ public class CalendarProcessor implements OpenLegConstants {
             logger.error("Error parsing file date.", e);
         }
 
+        ChangeLogger.setContext(file, modifiedDate);
         for(Object obj:senateData.getSencalendarOrSencalendaractive()) {
 
             Calendar calendar = null;
@@ -133,6 +135,7 @@ public class CalendarProcessor implements OpenLegConstants {
             calendar.setModified(modifiedDate.getTime());
             String key = String.valueOf(calendar.getYear())+"/calendar/"+calendar.getId();
             storage.set(key, calendar);
+            ChangeLogger.record(key, storage, modifiedDate);
             removeObject = null;
         }
     }

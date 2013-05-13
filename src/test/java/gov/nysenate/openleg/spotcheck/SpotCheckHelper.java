@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.scripts.SpotCheck;
-import gov.nysenate.openleg.scripts.SpotCheck.SpotCheckBill;
+import gov.nysenate.openleg.model.SpotCheckBill;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,13 +21,14 @@ public class SpotCheckHelper
     public static int titleErrorCount=0;
     public static int coSponsorErrorCount=0;
     public static int eventErrorCount=0;
+    SpotCheck spot=new SpotCheck();
     
-    
-    public static  void testBillTitles(Bill bill,HashMap<String, SpotCheckBill> bills,String id){
+    public void testBillTitles(Bill bill,HashMap<String, SpotCheckBill> bills,String id){
         // Compare the titles, ignore white space differences
-           String jsonTitle = SpotCheck.unescapeHTML(bill.getTitle());
+        
+           String jsonTitle = spot.unescapeHTML(bill.getTitle());
            String lbdcTitle = bills.get(id).getTitle();
-            boolean check=SpotCheck.stringEquals(jsonTitle, lbdcTitle, true, true) ;
+            boolean check=spot.stringEquals(jsonTitle, lbdcTitle, true, true) ;
             if(check== false)
             {
                //assertEquals(check,true);   Tests would fail in these cases
@@ -39,16 +40,16 @@ public class SpotCheckHelper
        }
     
     
-    public static void checkSummary(Bill bill,HashMap<String, SpotCheckBill> bills,String id)
+    public void checkSummary(Bill bill,HashMap<String, SpotCheckBill> bills,String id)
     {
         // Compare the summaries. LBDC reports summary and law changes together.
         // I think we should ignore all the white spaces differences in the summary in summary too.
         String jsonLaw = bill.getLaw();
-        String jsonSummary = SpotCheck.unescapeHTML(bill.getSummary());
+        String jsonSummary = spot.unescapeHTML(bill.getSummary());
         String lbdcSummary = bills.get(id).getSummary();
 
         if( jsonLaw != null && jsonLaw != "" && jsonLaw != "null") {
-            jsonSummary = SpotCheck.unescapeHTML(jsonLaw)+" "+jsonSummary;
+            jsonSummary = spot.unescapeHTML(jsonLaw)+" "+jsonSummary;
         }
        String s1= jsonSummary.replaceAll("S","P");
        String s2= s1.replaceAll("s","P");
@@ -77,8 +78,8 @@ public class SpotCheckHelper
    }
     
     
-    public static void checkSponsors(Bill bill,HashMap<String, SpotCheckBill> bills,String id){
-        String jsonSponsor = SpotCheck.unescapeHTML(bill.getSponsor().getFullname()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
+    public  void checkSponsors(Bill bill,HashMap<String, SpotCheckBill> bills,String id){
+        String jsonSponsor = spot.unescapeHTML(bill.getSponsor().getFullname()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
         String lbdcSponsor = bills.get(id).getSponsor().toUpperCase().replace("BILL", "").replace("COM", "");
         if ( !jsonSponsor.replace(" ","").equals(lbdcSponsor.replace(" ", "")) ) {
             if (!id.startsWith("D")) {
@@ -90,7 +91,7 @@ public class SpotCheckHelper
         else assertEquals(jsonSponsor.replace(" ",""),(lbdcSponsor.replace(" ", "")));  
    }
     
-    public static void checkCoSponsors(Bill bill,HashMap<String, SpotCheckBill> bills,String id){
+    public  void checkCoSponsors(Bill bill,HashMap<String, SpotCheckBill> bills,String id){
     
         TreeSet<String> lbdcCosponsors = new TreeSet<String>(bills.get(id).getCosponsors());
         TreeSet<String> jsonCosponsors = new TreeSet<String>();
@@ -116,7 +117,7 @@ public class SpotCheckHelper
         }
      }
     
-    public static void checkEvents(Bill bill, HashMap<String, SpotCheckBill> bills, String id)
+    public void checkEvents(Bill bill, HashMap<String, SpotCheckBill> bills, String id)
     {
         ArrayList<String> lbdcEvents = bills.get(id).getActions();
         ArrayList<String> jsonEvents = new ArrayList<String>();
