@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.services;
 
 import gov.nysenate.openleg.model.Update;
+import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Change;
 
 import java.sql.SQLException;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
+import org.apache.tomcat.jdbc.pool.DataSource;
 
 /*
  * Parses changes from a changeLog file and saves to MySQL database.
@@ -44,24 +45,12 @@ public class UpdateReporter
 
     private static void insertUpdates(List<Update> updates)
     {
-        // DataSource settings.
-        String server = "localhost";
-        String port = "3306";
-        String driver = "com.mysql.jdbc.Driver";
-        String userName = "openleg";
-        String password = "openleg";
-        String url = "jdbc:mysql://" + server +":" + port + "/";
-        BasicDataSource datasource = new BasicDataSource();
-        datasource.setDriverClassName(driver);
-        datasource.setUrl(url);
-        datasource.setUsername(userName);
-        datasource.setPassword(password);
-
         // Insert changes into database.
+        DataSource datasource = Application.getDB().getDataSource();
         QueryRunner run = new QueryRunner(datasource);
         try {
             for(Update update: updates){
-                run.update("INSERT INTO OpenLegUpdateTracker.Updates(otype, oid, date, status) values(?, ?, ?, ?)",
+                run.update("INSERT INTO updates(otype, oid, date, status) values(?, ?, ?, ?)",
                         update.getOtype(), update.getOid(), update.getDate(), update.getStatus());
             }
         }
