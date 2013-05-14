@@ -2,7 +2,6 @@ package gov.nysenate.openleg.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +25,6 @@ public class TextFormatter {
     }
 
     public static String lrsPrinter(String fulltext) {
-        StringTokenizer st = new StringTokenizer(fulltext, "\n");
         StringBuffer out = new StringBuffer("");
 
         boolean redact = false;
@@ -39,7 +37,7 @@ public class TextFormatter {
 
         ArrayList<TextPoint> points;
         int linenum = 0;
-        while(st.hasMoreTokens()) {
+        for (String line : fulltext.split("\n")) {
             linenum++;
             String line = st.nextToken();
 
