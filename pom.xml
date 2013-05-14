@@ -158,10 +158,10 @@
         	<version>1.5</version>
         </dependency>
         <dependency>
-        	<groupId>mysql</groupId>
-        	<artifactId>mysql-connector-java</artifactId>
-        	<version>5.1.24</version>
-        	<scope>runtime</scope>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.24</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
