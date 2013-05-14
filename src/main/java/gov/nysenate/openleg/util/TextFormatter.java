@@ -39,8 +39,10 @@ public class TextFormatter {
 
         ArrayList<TextPoint> points;
 
+        int linenum = 0;
         while(st.hasMoreTokens()) {
             String line = st.nextToken();
+            linenum++;
 
             Pattern pagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s+\\d{1,4}$)");
             Matcher pageMatcher = pagePattern.matcher(line);
@@ -134,7 +136,8 @@ public class TextFormatter {
                 capCount = 0;
             }
             else {
-                if(pageMatcher.find()) {
+                // We need to wait till we hit the 10th line to avoid breaking on the bill header
+                if(pageMatcher.find() && linenum > 10) {
                     out.append("<div style=\"page-break-after:always\"></div>"+line + "\n");
                 }
                 else {
