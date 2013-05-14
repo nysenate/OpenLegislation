@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.scripts;
 
+import gov.nysenate.openleg.util.Application;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -39,7 +41,9 @@ abstract public class BaseScript
      */
     public void run(String[] args) throws Exception
     {
+
         try {
+            Application.bootstrap();
             Options options = getOptions();
             options.addOption("h", "help", false, "Print this message");
             CommandLine opts = new PosixParser().parse(options, args);
@@ -50,6 +54,7 @@ abstract public class BaseScript
                 execute(opts);
                 System.exit(0);
             }
+            Application.shutdown();
         }
         catch (ParseException e) {
             logger.fatal("Error parsing arguments: ", e);
@@ -59,6 +64,7 @@ abstract public class BaseScript
             logger.error("Unexpected Exception.",e);
             throw e;
         }
+
     }
 
     /**

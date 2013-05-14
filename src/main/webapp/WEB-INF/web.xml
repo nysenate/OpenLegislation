@@ -12,6 +12,15 @@
 	   <filter-name>LogFilter</filter-name>
 	   <url-pattern>/*</url-pattern>
 	</filter-mapping>
+
+    <listener>
+       <listener-class>gov.nysenate.util.listener.NYSenateContextListener</listener-class>
+    </listener>
+	<context-param>
+	   <param-name>Application</param-name>
+	   <param-value>gov.nysenate.openleg.util.Application</param-value>
+	</context-param>
+
 	<servlet>
 		<servlet-name>ApiServlet</servlet-name>
 		<servlet-class>gov.nysenate.openleg.api.servlets.ApiServlet</servlet-class>
