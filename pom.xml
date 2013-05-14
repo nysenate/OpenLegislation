@@ -123,6 +123,11 @@
             <version>1.0.1</version>
         </dependency>
         <dependency>
+            <groupId>gov.nysenate</groupId>
+            <artifactId>nysenate-utils</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers</artifactId>
             <version>3.6.1</version>

@@ -8,4 +8,5 @@ function mvn_install {
 }
 
 mvn_install gov.nysenate.services nysenate-java-client 1.0.1 $lib_dir/nysenate-java-client-1.0.1.jar
+mvn_install gov.nysenate nysenate-utils 1.0.0 $lib_dir/nysenate-utils-1.0.0.jar
 
