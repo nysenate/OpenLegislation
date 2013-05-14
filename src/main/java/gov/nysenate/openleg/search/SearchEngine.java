@@ -15,7 +15,7 @@ import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.util.Config;
+import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
 import gov.nysenate.openleg.util.serialize.JsonSerializer;
@@ -92,7 +92,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
     }
 
     private SearchEngine() {
-        super(Config.get("data.lucene"));
+        super(Application.getConfig().getValue("data.lucene"));
         logger = Logger.getLogger(SearchEngine.class);
     }
 
