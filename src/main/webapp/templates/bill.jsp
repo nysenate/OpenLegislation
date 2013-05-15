@@ -201,33 +201,25 @@
 			
 			while(st.hasMoreTokens()) {
 				sameAs = st.nextToken().trim();
-				sameAsLink = appPath + "/bill/" + sameAs + "-" + bill.getYear();
-				
+				sameAsLink = appPath + "/bill/" + sameAs;
+
 				if (sameAs.length() == 0)
 					continue;
-				
+
 				if (sameAs.equals(lastSameAs))
 					continue;
-				
+
 				lastSameAs = sameAs;
-		%>
-					<a href="<%=sameAsLink%>"><%=sameAs.toUpperCase() + "-" + bill.getYear()%></a>
-				<%
-					if (st.hasMoreTokens()) {
-				%><%
-					}
-							}
-				%>
+		        %><a href="<%=sameAsLink%>"><%=sameAs.toUpperCase()%></a><%
+			}
+		}
 
-	<%
-					} 
-						    	
-						    	String sponsor = null;
+        String sponsor = null;
 
-								if (bill.getSponsor()!=null)
-							sponsor = bill.getSponsor().getFullname();
-								
-								if (rBills.size() > 0) {
+		if (bill.getSponsor()!=null)
+		    sponsor = bill.getSponsor().getFullname();
+
+		if (rBills.size() > 0) {
 				%>
 				</div>
 				<div><span class="meta">Versions:</span> 
