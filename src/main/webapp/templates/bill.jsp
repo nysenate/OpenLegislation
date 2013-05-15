@@ -193,7 +193,7 @@
 			
 			while(st.hasMoreTokens()) {
 				sameAs = st.nextToken().trim();
-				sameAsLink = appPath + "/bill/" + sameAs + "-" + bill.getYear();
+				sameAsLink = appPath + "/bill/" + sameAs;
 				
 				if (sameAs.length() == 0)
 					continue;
@@ -203,7 +203,7 @@
 				
 				lastSameAs = sameAs;
 		%>
-					<a href="<%=sameAsLink%>"><%=sameAs.toUpperCase() + "-" + bill.getYear()%></a>
+					<a href="<%=sameAsLink%>"><%=sameAs.toUpperCase()%></a>
 				<%
 					if (st.hasMoreTokens()) {
 				%><%
