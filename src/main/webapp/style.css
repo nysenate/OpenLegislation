@@ -477,7 +477,10 @@ margin:3px;
 	padding:10px;
 	color:#333;
 }
-
+#footer .linkActivated{
+	font-weight:bold;
+	color:#003366;
+}
 
 .footer-third li.head{
 	color:#000;

@@ -12,27 +12,22 @@
 	
 	String title = senateBillNo + " - NY Senate Open Legislation - " + titleText;
 %>
-
+<style>
+pre{	
+	overflow: auto;
+	font-family: “Consolas”,monospace;
+	font-size: 9pt;
+	text-align:left;
+	overflow-x: auto;
+	white-space: -moz-pre-wrap !important;
+	word-wrap: break-word; 
+	margin: 0px 0px 0px 0px;
+	padding:5px 5px 3px 5px;
+	white-space : pre-line; 
+	max-width:100%;
+}
+.item-actions{
+	display:none;
+}
+</style>
 <jsp:include page="/templates/bill.jsp" />
-
-<%
-	String disqusUrl = null;
-	String disqusId = null;
-	
-	if (bill.getYear()==2009) {
-		disqusId = bill.getSenateBillNo().split("-")[0];
-		disqusUrl = "http://open.nysenate.gov/legislation/api/html/bill/" + disqusId;
-	}
-	else {
-		disqusId = bill.getSenateBillNo();
-		disqusUrl = "http://open.nysenate.gov/legislation/bill/" + disqusId;
-	}
-%>
-
-<jsp:include page="/templates/disqus.jsp">
-	<jsp:param name="disqusUrl" value="<%=disqusUrl%>"/>
-	<jsp:param name="title" value="<%=title%>"/>
-</jsp:include>
-
-<jsp:include page="/footer.jsp"/>
-

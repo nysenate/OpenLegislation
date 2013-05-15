@@ -80,40 +80,35 @@ if (billkey == null)
 	</div>
 <div id="content" >
 	<div id="footer">
-			<div class="footer-quarter">
+					<div class="footer-third">
 				<ul>
-				<li class="head"><a href="http://open.nysenate.gov">Open Legislation</a></li>
+				<li class="head">Open Legislation</li>
 				<li><a href="<%=appPath%>/bills/" title="Browse and search Senate and Assembly bills by number, keyword, sponsor and more">Bills</a></li>
 				<li><a href="<%=appPath%>/calendars/" title="View recent and search floor calendars and active lists by number or date (i.e. 11/07/2009)">Calendars</a></li>
-				<li><a href="<%=appPath%>/meetings/"  title="View upcoming and recent committee meetings, and search by committee, chairperson, location, date (i.e. 11/07/2009) and more.">Meetings</a></li>
-				<li><a href="<%=appPath%>/transcripts/" title="View and search Senate floor full text transcripts">Transcripts</a></li>
+				<li><a href="<%=appPath%>/meetings/" title="View upcoming and recent committee meetings, and search by committee, chairperson, location, date (i.e. 11/07/2009) and more.">Meetings</a></li>
+				<li><a href="<%=appPath%>/transcripts/"  title="View and search Senate floor full text transcripts">Transcripts</a></li>
 				<li><a href="<%=appPath%>/actions/" title="View and filter Floor Actions on Bills from the Floor of the Senate">Actions</a>
 				<li><a href="<%=appPath%>/senators">Browse by Sponsor</a></li>
 				<li><a href="<%=appPath%>/committees">Browse by Committee</a></li>
 				</ul>
 			</div>
-			<div class="footer-quarter">
+			<div class="footer-third">
 				<ul>
 					<li class="head">Connect</li>
 					<li><a href="http://billbuzz.nysenate.gov">BillBuzz</a></li>
 					<li><a href="<%=appPath%>/comments/">View Comments</a></li>
-
+					<li><a href="<%=appPath%>/feedback">Feedback</a></li>
+					<li><a href="<%=appPath%>/developers">Developers</a></li>
 				</ul>
 			</div>
-			<div class="footer-quarter">
+			<div class="footer-third">
 				<ul>
-					<li class="head"><a href="http://nysenate.gov">NYSenate.gov</a></li>
+					<li class="head">NYSenate.gov</li>
 					<li><a href="http://nysenate.gov/senators">Senators</a></li>
 					<li><a href="http://nysenate.gov/committees">Committees</a></li>
 					<li><a href="http://nysenate.gov/issues-initiatives">Issues &amp; Initiatives</a></li>
 					<li><a href="http://nysenate.gov/newsroom">Newsroom</a></li>
-				</ul>
-			</div>
-			<div class="footer-quarter">
-				<ul>
-					<li><a href="<%=appPath%>/feedback">Feedback</a></li>
 					<li><a href = "http://www.nysenate.gov/privacy-policy">Privacy Policy</a></li>
-					<li><a href="<%=appPath%>/developers">Developers</a></li>
 				</ul>
 			</div>
 			<div id="footer-message"><p>
