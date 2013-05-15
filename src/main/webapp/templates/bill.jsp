@@ -425,9 +425,16 @@
 		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
  
 			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
-			billText = removeBillLineNumbers(billText).replace("-\n ","").replace("\n "," ");
+//			billText = removeBillLineNumbers(billText).replace("[A-Za-z0-9]-\n ","").replace("[0|-|=|)] \n ","<br/>").replace("\n ","<br/>").replace("EXPLANATION--Matter", "<br/><br/>EXPLANATION--Matter").replace(" S T A T E   O F   N E W   Y O R K ", "STATE OF NEW YORK");
+			// Hyphen, budget line endings, regular line endings
+			
+			billText = removeBillLineNumbers(billText).replaceAll("([A-Za-z])-\n ","").replace("[A-Za-z0-9]\n [^A-Za-z0-9]", " ").replace("\n \n ", "<br/>").replace("EXPLANATION--Matter", "<br/><br/>EXPLANATION--Matter").replace(" S T A T E   O F   N E W   Y O R K ", "STATE OF NEW YORK");
+			String billTextFormatted = "<div class='billHeader'>" + billText.replace("Introduced ","</div>Introduced").replace("IN  SENATE ","</div>IN  SENATE").replace("</del> <del>"," ").replace("[<del>","<del>").replace("</del>]","</del>");
+// 			String billTextFormatted2 = billTextFormatted.replaceAll("([A-Z]{2,}[A-Z0-9-.\"\', ]+{2,})", "<add>$1</add>");
+ 			//String billTextFormatted2 = billTextFormatted.replaceAll("Section 1.* ([A-Z]{2,}[A-Z0-9-.\"\', ]+)", "<add>$1</add>");
+
 			%>
-				<pre><%=billText %></pre>
+				<pre><%=billTextFormatted %></pre>
 		<% } else{ %>
 			Not Available.
 	<% } %>
