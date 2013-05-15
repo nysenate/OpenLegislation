@@ -5,24 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>gov.nysenate</groupId>
-  <artifactId>nysenate-utils</artifactId>
+  <artifactId>nysenate-java-utils</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0</version>
-  <name>nysenate-utils</name>
+  <name>nysenate-java-utils</name>
   <build>
       <plugins>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-war-plugin</artifactId>
-              <configuration>
-                  <webResources>
-                      <resource>
-                          <directory>${basedir}/src/main/java</directory>
-                          <targetPath>WEB-INF/classes</targetPath>
-                      </resource>
-                  </webResources>
-              </configuration>
-          </plugin>
           <plugin>
               <artifactId>maven-compiler-plugin</artifactId>
               <configuration>
@@ -33,11 +21,6 @@
       </plugins>
   </build>
   <dependencies>
-    <dependency>
-        <groupId>commons-dbutils</groupId>
-        <artifactId>commons-dbutils</artifactId>
-        <version>1.5</version>
-    </dependency>
     <dependency>
         <groupId>org.apache.tomcat</groupId>
         <artifactId>tomcat-juli</artifactId>

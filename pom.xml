@@ -113,7 +113,7 @@
         </dependency>
         <dependency>
             <groupId>gov.nysenate</groupId>
-            <artifactId>nysenate-utils</artifactId>
+            <artifactId>nysenate-java-utils</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
