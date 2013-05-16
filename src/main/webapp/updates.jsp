@@ -10,6 +10,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" type="text/css" href="update.css">
 <title>Recent Legislation Updates</title>
+<script type="text/javascript">
+function toggle_visibility(tbid,lnkid)
+{
+  document.getElementById(tbid).style.display = document.getElementById(tbid).style.display == "table" ? "none" : "table";
+  document.getElementById(lnkid).value = document.getElementById(lnkid).value == "[-] Collapse" ? "[+] Expand" : "[-] Collapse";
+ }
+</script>
 </head>
 <body>
 <form action="updates" id="date">
@@ -18,6 +25,7 @@
   <input type="submit">
 </form>
 <form action="" id="type">
+Filter by Type:
 <select name="otype" onchange="window.open(this.value,'','');">
 <option value="/legislation/updates?<%="startDay="+request.getAttribute("startDay")+"&endDay="+request.getAttribute("endDay")%>">All</option>
 <option value="/legislation/updates?<%="startDay="+request.getAttribute("startDay")+"&endDay="+request.getAttribute("endDay")+"&otype=bill"%>">Bill</option>
@@ -27,7 +35,7 @@
 </select>
 </form>
 	<div id="updateTable">
-		<table id="update">
+		<table class="update">
 <%
 	TreeMap<Date, ArrayList<Update>> updates = (TreeMap<Date, ArrayList<Update>>)(request.getAttribute("updates")); 
 if(updates != null){
@@ -42,11 +50,23 @@ if(updates != null){
 		<td class="table" id="date" colspan="4"><a href="<%="/legislation/updates?startDay=" + date + "&endDay=" + date%>">
 		<%=dateFormat.format(map.getKey())%></a></td>
 		</tr>
-		<%
+		<%	int i = 0;
+			Date oldTime = new Date();
 			for(Update update: dayUpdates){ 
-			Date time = update.getDateObj();
+				Date time = update.getDateObj();
+
+				if (!time.equals(oldTime)){
+					i++;
 		%>
-		<tr class="table">
+		</table>
+		<table class="update">
+		<tr>
+		<td class="table" colspan="4" id="expand"><input id="lnk<%=i%>" type="button" value="[+] Expand" onclick="toggle_visibility('tbl<%=i%>','lnk<%=i%>');">&nbsp;<%=timeFormat.format(time)%>&nbsp;Sobi Changes. </td>
+		</tr>
+		</table>
+		<table class="update" id="tbl<%=i%>">
+		<%}%>
+		<tr class="hide">
 			<td class="table" id="time"><a href="#<%=update.getOid()%>"><%=timeFormat.format(time)%></a></td>
 			<td class="table" id="otype"><%=update.getOtype()%></td>
 			<%if(update.getOtype().equals("bill")){
@@ -60,7 +80,9 @@ if(updates != null){
 			<%} %>
 			<td class="table" id="status"><a href="<%="/legislation/updates?bill="+update.getOid()%>"><%=update.getStatus()%></td>
 		</tr>
-		<%}%>
+		<%
+			oldTime = time;
+			}%>
 
 	<%}%>
 	</table>

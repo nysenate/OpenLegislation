@@ -26,7 +26,7 @@ div#updateTable{
 	margin: 0;
 }
 */
-table#update
+table.update
 {
 text-align:center;
 border-collapse:collapse;
@@ -36,7 +36,6 @@ cellpadding: 0;
 width:70%; 
 margin-left:15%; 
 margin-right:15%;
-margin-bottom:50px;
 }
 
 .table{
@@ -61,13 +60,21 @@ td#oid{
 width:50%;
 }
 
+td#expand{
+	text-align:left;
+}
+
 form#type{
-	margin-left:27.5%;
+	margin-left:20%;
 	padding: 2px 2px;
 }
 
 td#status{
 	width:20%;
+}
+
+td#expand{
+	background-color: #FAF9F9;
 }
 
 form#date{
