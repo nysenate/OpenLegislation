@@ -94,7 +94,7 @@
 		boolean isLineNum = false;
 		
 		while (st.hasMoreTokens()) {
-			line = st.nextToken().trim();
+			line = st.nextToken();
 
 			line = line.replace(" S ","<br/><br/>S ");
 			line = line.replace(" Section ","<br/><br/>Section ");
@@ -102,12 +102,12 @@
 			line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");
 			line = line.replace("_","");
 			
-			breakIdx = line.indexOf(' ');
-		
+			breakIdx = 6; //line.indexOf(' ');
+
 			if (breakIdx != -1) {
-				startChar = line.substring(0,breakIdx);
+				startChar = line.substring(0,breakIdx).trim();
 			
-				try  {	
+				try {
 					Integer.parseInt(startChar);
 					isLineNum = true;
 				}
@@ -116,7 +116,7 @@
 				}
 				
 				if (isLineNum)
-					line = line.substring(breakIdx+1).trim();
+					line = line.substring(breakIdx+1);
 				if (line.endsWith(":"))
 					line = line + "<br/>";
 				
