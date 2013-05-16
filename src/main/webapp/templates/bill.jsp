@@ -81,47 +81,47 @@
 		return new ArrayList<Action>(set);
 	}
 
-	 public String removeBillLineNumbers (String input) {
-		    StringBuffer resp = new StringBuffer();
-		    
-		    input = input.replace("S E N A T E","SENATE");
-		    input = input.replace("A S S E M B L Y","ASSEMBLY");
-		    
-		    StringTokenizer st = new StringTokenizer (input,"\n");
-		    String line = null;
-		    int breakIdx = -1;
-		    
-		    String startChar = null;
-		    boolean isLineNum = false;
-		    
-		    while (st.hasMoreTokens()) {
-		      line = st.nextToken().trim();
+	public String removeBillLineNumbers (String input) {
+		StringBuffer resp = new StringBuffer();
+		
+		input = input.replace("S E N A T E","SENATE");
+		input = input.replace("A S S E M B L Y","ASSEMBLY");
+		
+		StringTokenizer st = new StringTokenizer (input,"\n");
+		String line = null;
+		int breakIdx = -1;
+		
+		String startChar = null;
+		boolean isLineNum = false;
+		
+		while (st.hasMoreTokens()) {
+			line = st.nextToken();
 
-		      line = line.replace(" S ","<br/><br/>S ");
-		      line = line.replace(" Section ","<br/><br/>Section ");
-		      line = line.replace("AN ACT ","<br/><br/>AN ACT ");
-		      line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");
-		      line = line.replace("_","");
-		      
-		      breakIdx = line.indexOf(' ');
-		    
-		      if (breakIdx != -1) {
-		        startChar = line.substring(0,breakIdx);
-		      
-		        try  {  
-		          Integer.parseInt(startChar);
-		          isLineNum = true;
-		        }
-		        catch (NumberFormatException nfe) {
-		          isLineNum = false;
-		        }
-		        
-		        if (isLineNum)
-		          line = line.substring(breakIdx+1).trim();
-		        if (line.endsWith(":"))
-		          line = line + "<br/>";
-		        
-		        resp.append(' ');
+			line = line.replace(" S ","<br/><br/>S ");
+			line = line.replace(" Section ","<br/><br/>Section ");
+			line = line.replace("AN ACT ","<br/><br/>AN ACT ");
+			line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");
+			line = line.replace("_","");
+			
+			breakIdx = 6; //line.indexOf(' ');
+
+			if (breakIdx != -1) {
+				startChar = line.substring(0,breakIdx).trim();
+			
+				try {
+					Integer.parseInt(startChar);
+					isLineNum = true;
+				}
+				catch (NumberFormatException nfe) {
+					isLineNum = false;
+				}
+				
+				if (isLineNum)
+					line = line.substring(breakIdx+1);
+				if (line.endsWith(":"))
+					line = line + "<br/>";
+				
+				resp.append(' ');
 
 		        resp.append(line);
 		        resp.append("\n");
