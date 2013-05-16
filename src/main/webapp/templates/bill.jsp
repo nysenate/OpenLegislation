@@ -459,8 +459,16 @@
 			billText = billText.replaceAll("<div style=\"page-break-after:always\"></div>","<div class='hidden'><div style=\"page-break-after:always\"></div></div>");
 
 			// Green added sections
-			int billStartIndex = billText.indexOf("Section 1.");
-			billText = billText.substring(0, billStartIndex)+billText.substring(billStartIndex).replaceAll("(?s)([A-Z]{2,}([A-Z0-9-.\"\',; \\n])+)", "<add>$1</add>");
+			Pattern section1Pattern = Pattern.compile("Section\\s+1.");
+			Matcher section1Matcher = section1Pattern.matcher(billText);
+			String addRegex = "(?s)([A-Z]{2,}([A-Z0-9-.\"\',; \\n])+)";
+			if (section1Matcher.find()) {
+			    int billStartIndex =  section1Matcher.end();
+			    billText = billText.substring(0, billStartIndex)+billText.substring(billStartIndex).replaceAll(addRegex, "<add>$1</add>");
+			}
+			else {
+			    billText = billText.replaceAll(addRegex, "<add>$1</add>");
+			}
 
 			//String billTextFormatted2 = billTextFormatted.replaceAll("Section 1.* ([A-Z]{2,}[A-Z0-9-.\"\', ]+)", "<add>$1</add>");
 
