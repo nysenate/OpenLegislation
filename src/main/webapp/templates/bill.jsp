@@ -101,9 +101,13 @@
 			line = line.replace("AN ACT ","<br/><br/>AN ACT ");
 			line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");
 			line = line.replace("_","");
+			line = line.replace("S T A T E   O F   N E W   Y O R K", "STATE OF NEW YORK<hr/>");
 			
-			breakIdx = line.indexOf(' ');
 		
+
+			breakIdx = line.indexOf(' ');
+
+
 			if (breakIdx != -1) {
 				startChar = line.substring(0,breakIdx);
 			
@@ -119,11 +123,17 @@
 					line = line.substring(breakIdx+1).trim();
 				if (line.endsWith(":"))
 					line = line + "<br/>";
-				
-				resp.append(' ');
 
+	
+				// Short lines get double BR after
+				// may need to tweak
+				int length = line.length();
+				if(length < 30 )
+					line = line + "<br/><br/>";
+				resp.append(' ');
 				resp.append(line);
-				resp.append("\n");
+				// Use ##END for absolute check
+				resp.append(" ##END");
 			}
 			else {
 				resp.append(' ');
@@ -425,16 +435,39 @@
 		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
  
 			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
-//			billText = removeBillLineNumbers(billText).replace("[A-Za-z0-9]-\n ","").replace("[0|-|=|)] \n ","<br/>").replace("\n ","<br/>").replace("EXPLANATION--Matter", "<br/><br/>EXPLANATION--Matter").replace(" S T A T E   O F   N E W   Y O R K ", "STATE OF NEW YORK");
-			// Hyphen, budget line endings, regular line endings
 			
-			billText = removeBillLineNumbers(billText).replaceAll("([A-Za-z])-\n ","").replace("[A-Za-z0-9]\n [^A-Za-z0-9]", " ").replace("\n \n ", "<br/>").replace("EXPLANATION--Matter", "<br/><br/>EXPLANATION--Matter").replace(" S T A T E   O F   N E W   Y O R K ", "STATE OF NEW YORK");
-			String billTextFormatted = "<div class='billHeader'>" + billText.replace("Introduced ","</div>Introduced").replace("IN  SENATE ","</div>IN  SENATE").replace("</del> <del>"," ").replace("[<del>","<del>").replace("</del>]","</del>");
-// 			String billTextFormatted2 = billTextFormatted.replaceAll("([A-Z]{2,}[A-Z0-9-.\"\', ]+{2,})", "<add>$1</add>");
- 			//String billTextFormatted2 = billTextFormatted.replaceAll("Section 1.* ([A-Z]{2,}[A-Z0-9-.\"\', ]+)", "<add>$1</add>");
+			billText = "<div class='billHeader'>" + removeBillLineNumbers(billText);   
+			// replace hyphens followed by break, breaks in a paragraph, multiple breaks
+			billText = billText.replaceAll("([A-Za-z])- ##END ","$1").replaceAll("([A-Za-z;]) ##END ([A-Za-z])", "$1 $2").replaceAll("##END <br/> <br/>", "");
+			// add some basic divs for styling
+			billText = billText.replace("Introduced ","</div>Introduced").replace("IN  SENATE ","</div>IN  SENATE");
+			// Make inline deleted areas continuious
+			billText = billText.replaceAll("</del> ##END <del>"," ").replace("</del> <del>"," ").replace("[<del>","<del>").replace("</del>]","</del>");
+			
+			// Hyphen, budget line endings, regular line endings
+			billText = billText.replaceAll("([0|-|=|)]) ##END ","$1<br/>");
+			// Clear out all uneeded breaks 
+			billText = billText.replaceAll(" ##END ", "").replaceAll("##END", "");
+			
+			// Make inline deleted areas continuious
+			billText = billText.replaceAll("</del>([A-Za-z])","</del> $1");
+						
+			// Explination hidden from view
+			billText = billText.replace("EXPLANATION--Matter", "<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
+			
+			// remove stupid br tags 
+			billText = billText.replaceAll("<br/><br/><br/>", "<br/>");
+			// hide page breaks from web 
+			billText = billText.replaceAll("<div style=\"page-break-after:always\"></div>","<div class='hidden'><div style=\"page-break-after:always\"></div></div>");
+
+			// Green added sections
+			int billStartIndex = billText.indexOf("Section 1.");
+			billText = billText.substring(0, billStartIndex)+billText.substring(billStartIndex).replaceAll("(?s)([A-Z]{2,}([A-Z0-9-.\"\',; \\n])+)", "<add>$1</add>");
+
+			//String billTextFormatted2 = billTextFormatted.replaceAll("Section 1.* ([A-Z]{2,}[A-Z0-9-.\"\', ]+)", "<add>$1</add>");
 
 			%>
-				<pre><%=billTextFormatted %></pre>
+				<pre><%=billText %></pre>
 		<% } else{ %>
 			Not Available.
 	<% } %>

@@ -670,7 +670,10 @@ pre {
 }
 del{
 	color:red;
-	background:#ffeeee;
+	background-color:#ffeeee;
+	text-decoration:none;
+	background-url:#ffeeee;
+	
 }
 
 add{
@@ -678,7 +681,9 @@ add{
 	background:#daffd8;
 	tex-transform:lowercase;
 }
-
+.hidden{
+	display:none;
+}
 .main-menu ul li, .main-menu ul{
 	list-style:none;
 	display:inline;
