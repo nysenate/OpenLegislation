@@ -42,6 +42,7 @@ if(updates != null){
 	SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, ''yyyy");
 	SimpleDateFormat linkFormat = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+	int i = 0;
 	for(Map.Entry<Date, ArrayList<Update>> map : updates.entrySet()){
 		ArrayList<Update> dayUpdates = map.getValue();
 		String date = linkFormat.format(map.getKey());
@@ -50,7 +51,7 @@ if(updates != null){
 		<td class="table" id="date" colspan="4"><a href="<%="/legislation/updates?startDay=" + date + "&endDay=" + date%>">
 		<%=dateFormat.format(map.getKey())%></a></td>
 		</tr>
-		<%	int i = 0;
+		<%	
 			Date oldTime = new Date();
 			for(Update update: dayUpdates){ 
 				Date time = update.getDateObj();
