@@ -42,10 +42,6 @@
 		<servlet-class>gov.nysenate.openleg.api.servlets.CommitteesServlet</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>ReportServlet</servlet-name>
-		<servlet-class>gov.nysenate.openleg.api.servlets.ReportServlet</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>Updates</servlet-name>
 		<servlet-class>gov.nysenate.openleg.api.servlets.UpdateServlet</servlet-class>
 	</servlet>
@@ -80,14 +76,6 @@
 	<servlet-mapping>
 		<servlet-name>CommitteesServlet</servlet-name>
 		<url-pattern>/committees/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>ReportServlet</servlet-name>
-		<url-pattern>/report</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>ReportServlet</servlet-name>
-		<url-pattern>/report.json</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>RulesServlet</servlet-name>
