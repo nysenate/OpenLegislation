@@ -4,17 +4,17 @@ import java.util.Date;
 
 public class Report
 {
-    private int reportId;
+    private int id;
     private Date date;
 
-    public int getReportId()
+    public int getId()
     {
-        return reportId;
+        return id;
     }
 
-    public void setReportId(int reportId)
+    public void setId(int id)
     {
-        this.reportId = reportId;
+        this.id = id;
     }
 
     public Date getDate()
@@ -25,5 +25,10 @@ public class Report
     public void setDate(Date date)
     {
         this.date = date;
+    }
+
+    public String toString()
+    {
+        return getId()+": "+getDate();
     }
 }

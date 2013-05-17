@@ -1,85 +1,37 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.util.DbConnect;
+import gov.nysenate.openleg.util.Application;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
-import java.sql.PreparedStatement;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
 
 public class ViewReport
 {
-    Connection con=null;
-    String query;
-    PreparedStatement psmt;
-     public ArrayList<Error> displayReports(int id)
-    {   
-         ArrayList<Error> error=new ArrayList<Error>();
-        
-         con= DbConnect.connect();
-         query="select * from error where report_id="+id+" order by bill_id";
-         try {
-           
-            psmt=con.prepareStatement(query);
-            ResultSet rs=psmt.executeQuery();
-           
-            while(rs.next())
-            {
-                Error object=new Error();
-               
-                object.setErrorId(rs.getInt(1));
-                object.setReportId(rs.getInt(2));
-                object.setBillId(rs.getString(3));
-                object.setErrorType(rs.getString(4));
-                object.setLbdc(rs.getString(5));
-                object.setJson(rs.getString(6));
-                error.add(object);
-                
-            }
-            
+    public List<Error> displayReports(int id)
+    {
+        try {
+            QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
+            return runner.query("SELECT * FROM error WHERE reportId = ? ORDER BY billId", new BeanListHandler<Error>(Error.class), id);
         }
         catch (SQLException e) {
-            
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<Error>();
         }
-        return error;
-         
-         
-         
     }
-     
-     public ArrayList<Report> displayReportOption()
-     {   
-          ArrayList<Report> report=new ArrayList<Report>();
-         
-          con= DbConnect.connect();
-          query="select * from report";
-          try {
-            
-             psmt=con.prepareStatement(query);
-             ResultSet rs=psmt.executeQuery();
-            
-             while(rs.next())
-             {
-                 Report object=new Report();
-                
-                 object.setReportId(rs.getInt(1));
-                 object.setDate(rs.getDate(2));
-                 report.add(object);
-                 
-             }
-             
-         }
-         catch (SQLException e) {
-             
-             System.out.println(e.getMessage());
-         }
-         return report;
-          
-          
-          
-     }
 
+    public List<Report> displayReportOption()
+    {
+        try {
+            QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
+            return runner.query("SELECT * FROM report", new BeanListHandler<Report>(Report.class));
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<Report>();
+        }
+    }
 }

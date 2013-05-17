@@ -46,14 +46,14 @@
        <td class="span10" id="values">
        <div class="accordion-group">
          <div class="accordion-heading">
-             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getErrorId() %>">
+             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getId() %>">
                   View Details
                 </a>
               </div>
              
       
          
-              <div id="<%= e.getErrorId() %>" class="accordion-body collapse" style="height: 0px; ">
+              <div id="<%= e.getId() %>" class="accordion-body collapse" style="height: 0px; ">
                 <div class="accordion-inner">
                   LBDC Value:<label> <%= e.getLbdc() %>
                  </label>               <br> 
@@ -74,14 +74,14 @@
        <td class="span10" id="values">
        <div class="accordion-group">
          <div class="accordion-heading">
-             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getErrorId() %>">
+             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getId() %>">
                   View Details
                 </a>
               </div>
              
       
          
-              <div id="<%= e.getErrorId() %>" class="accordion-body collapse" style="height: 0px; ">
+              <div id="<%= e.getId() %>" class="accordion-body collapse" style="height: 0px; ">
                 <div class="accordion-inner">
                  LBDC Value:<label> <%= e.getLbdc() %>
                  </label>               <br> 
@@ -102,14 +102,14 @@
        <td class="span10" id="values">
        <div class="accordion-group">
          <div class="accordion-heading">
-             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getErrorId() %>">
+             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getId() %>">
                   View Details
                 </a>
               </div>
              
       
          
-              <div id="<%= e.getErrorId() %>" class="accordion-body collapse" style="height: 0px; ">
+              <div id="<%= e.getId() %>" class="accordion-body collapse" style="height: 0px; ">
                 <div class="accordion-inner">
                 LBDC Value:<label> <%= e.getLbdc() %>
                  </label>               <br> 
@@ -129,14 +129,14 @@
        <td class="span10" id="values">
        <div class="accordion-group">
          <div class="accordion-heading">
-             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getErrorId() %>">
+             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getId() %>">
                   View Details
                 </a>
               </div>
              
       
          
-              <div id="<%= e.getErrorId() %>" class="accordion-body collapse" style="height: 0px; ">
+              <div id="<%= e.getId() %>" class="accordion-body collapse" style="height: 0px; ">
                 <div class="accordion-inner">
                   LBDC Value:<label> <%= e.getLbdc() %>
                  </label>               <br> 
@@ -155,14 +155,14 @@
        <td class="span10" id="values">
        <div class="accordion-group">
          <div class="accordion-heading">
-             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getErrorId() %>">
+             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getId() %>">
                   View Details
                 </a>
               </div>
              
       
          
-              <div id="<%= e.getErrorId() %>" class="accordion-body collapse" style="height: 0px; ">
+              <div id="<%= e.getId() %>" class="accordion-body collapse" style="height: 0px; ">
                 <div class="accordion-inner">
                   LBDC Value:<label> <%= e.getLbdc() %>
                  </label>               <br> 
@@ -181,14 +181,12 @@
        <td class="span10" id="values">
        <div class="accordion-group">
          <div class="accordion-heading">
-             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getErrorId() %>">
+             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= e.getId() %>">
                   View Details
                 </a>
               </div>
-             
-      
          
-              <div id="<%= e.getErrorId() %>" class="accordion-body collapse" style="height: 0px; ">
+              <div id="<%= e.getId() %>" class="accordion-body collapse" style="height: 0px; ">
                 <div class="accordion-inner">
                  LBDC Value:<label> <%= e.getLbdc() %>
                  </label>               <br> 

@@ -28,11 +28,10 @@
        
      <tr class="span12" style="background-color:white">
      <td class="span12">
-     <% java.util.Date date=r.getDate();
-    
-    
+     <%
+         java.util.Date date=r.getDate();
      %>
-    <a href="<%=request.getContextPath() %>/ErrorLog?id=<%=r.getReportId() %>&date=<%=date %>&val=report">  ERROR REPORT : <%= date%></a>
+    <a href="<%=request.getContextPath() %>/ErrorLog?id=<%=r.getId() %>&date=<%=date %>&val=report">  ERROR REPORT : <%= date%></a>
      </td>
     
      

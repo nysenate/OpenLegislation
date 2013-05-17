@@ -3,14 +3,18 @@ package gov.nysenate.openleg.scripts;
 import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
+import gov.nysenate.openleg.model.Report;
 import gov.nysenate.openleg.model.SpotCheckBill;
+import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -18,13 +22,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 public class SpotCheck extends BaseScript {
     public static Logger logger = Logger.getLogger(SpotCheck.class);
 
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
     public static void main(String[] args) throws Exception {
         new SpotCheck().run(args);
     }
@@ -44,8 +52,10 @@ public class SpotCheck extends BaseScript {
 
 
 
-    public void execute(CommandLine opts) throws IOException
+    public void execute(CommandLine opts) throws IOException, ParseException, SQLException
     {
+        QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
+
         String[] args = opts.getArgs();
         Storage storage = new Storage("/data/openleg/lbdc_test/json");
 
@@ -54,19 +64,24 @@ public class SpotCheck extends BaseScript {
             errors.put(error_type, 0);
         }
 
-        HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();
-
-        File directory = new File(args[0]);
         String prefix = args[1];
+        Date date = dateFormat.parse(prefix);
+        File directory = new File(args[0]);
+        HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();
         bills.putAll(readDaybreak(new File(directory, prefix+".senate.low.html")));
         bills.putAll(readDaybreak(new File(directory, prefix+".senate.high.html")));
         bills.putAll(readDaybreak(new File(directory, prefix+".assembly.low.html")));
         bills.putAll(readDaybreak(new File(directory, prefix+".assembly.high.html")));
         loadPageFile(new File(directory, prefix+".page_file.txt"), bills);
 
+
+        runner.update("insert ignore into report(date) values(?)", date);
+        Report report = runner.query("select * from report where date = ?", new BeanHandler<Report>(Report.class), date);
+        runner.update("delete from error where id = ?", report.getId());
+
         for(String id : bills.keySet()) {
             String billNo = id+"-2013";
-           
+
             Bill bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
 
             // Compare the titles, ignore white space differences
@@ -78,6 +93,7 @@ public class SpotCheck extends BaseScript {
                     logger.error("Title: "+billNo);
                     logger.error("  LBDC: "+lbdcTitle);
                     logger.error("  JSON: "+jsonTitle);
+                    runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getId(), billNo, "title", lbdcTitle, jsonTitle);
                     errors.put("title", errors.get("title")+1);
                 }
             }
@@ -106,6 +122,7 @@ public class SpotCheck extends BaseScript {
                     logger.error("Summary: "+billNo);
                     logger.error("  LBDC: "+lbdcSummary);
                     logger.error("  JSON: "+jsonSummary);
+                    runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getId(), billNo, "summary", lbdcSummary, jsonSummary);
                     errors.put("summary", errors.get("summary")+1);
                 }
             }
@@ -117,6 +134,7 @@ public class SpotCheck extends BaseScript {
                     logger.error("Sponsor: "+billNo);
                     logger.error("  LBDC: "+lbdcSponsor);
                     logger.error("  JSON: "+jsonSponsor);
+                    runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getId(), billNo, "sponsor", lbdcSponsor, jsonSponsor);
                     errors.put("sponsor", errors.get("sponsor")+1);
                 }
             }
@@ -136,6 +154,7 @@ public class SpotCheck extends BaseScript {
                     logger.error("Cosponsors: "+billNo);
                     logger.error("  LBDC: "+lbdcCosponsors);
                     logger.error("  JSON: "+jsonCosponsors);
+                    runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getId(), billNo, "cosponsor", StringUtils.join(lbdcCosponsors, ","), StringUtils.join(jsonCosponsors, ","));
                     errors.put("cosponsors", errors.get("cosponsors")+1);
                 }
             }
@@ -153,6 +172,7 @@ public class SpotCheck extends BaseScript {
                     logger.error("Events: "+billNo);
                     logger.error("  LBDC: "+lbdcEvents);
                     logger.error("  JSON: "+jsonEvents);
+                    runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getId(), billNo, "action", StringUtils.join(lbdcEvents,"\n"), StringUtils.join(jsonEvents,"\n"));
                     errors.put("events", errors.get("events")+1);
                 }
             }
@@ -171,6 +191,7 @@ public class SpotCheck extends BaseScript {
                 logger.error("Pages: "+billNo);
                 logger.error("  LBDC: "+lbdcPages);
                 logger.error("  JSON: "+jsonPages);
+                // runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getReport_id(), billNo, "page", lbdcPages, jsonPages);
                 errors.put("pages", errors.get("pages")+1);
             }
         }
@@ -187,6 +208,7 @@ public class SpotCheck extends BaseScript {
         System.out.println("Estimated Total: "+total);
 
         System.out.println(bills.size());
+
     }
 
     public void loadPageFile(File dataFile, HashMap<String, SpotCheckBill> bills) throws IOException {
