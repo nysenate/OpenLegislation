@@ -6,8 +6,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  <link href="<%=request.getContextPath()%>/bootstrap.css" rel="stylesheet">
  <link href="<%=request.getContextPath()%>/bootstrap-responsive.css" rel="stylesheet">
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/diff.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/collapsible.js"></script>
 <% ArrayList<Report> report= (ArrayList<Report>)request.getAttribute("reportList"); %>
 		
 
@@ -41,7 +39,7 @@
    <%   }%>   
  </table>
  </form>
- <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.js"></script>
+ <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
 
  
 

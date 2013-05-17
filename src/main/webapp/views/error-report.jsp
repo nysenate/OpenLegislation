@@ -7,8 +7,6 @@
  <link href="<%=request.getContextPath()%>/bootstrap.css" rel="stylesheet">
  <link href="<%=request.getContextPath()%>/bootstrap-responsive.css" rel="stylesheet">
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/diff.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/sortedTable.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/collapsible.js"></script>
 <% ArrayList<Error> errorLog= (ArrayList<Error>)request.getAttribute("errorList");
 	int resultCount = errorLog.size();
 	
@@ -201,8 +199,8 @@
       </tbody>  
  </table>
  </form>
- <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/bootstrap-collapse.js"></script>
+ <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/bootstrap-2.3.1.js"></script>
  <script type="text/javascript">
 
 function validate()

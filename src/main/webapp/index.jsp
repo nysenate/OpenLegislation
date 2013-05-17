@@ -41,7 +41,7 @@ if (billkey == null)
 <meta name="apple-mobile-web-app-capable" content="YES">
 <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<%=appPath%>/feed" />
  
-<script type="text/javascript" src="<%=appPath%>/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="<%=appPath%>/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="<%=appPath%>/js/search.js"></script>
 </head>
 
