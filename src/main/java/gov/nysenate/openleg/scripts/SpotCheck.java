@@ -154,7 +154,7 @@ public class SpotCheck extends BaseScript {
                     logger.error("Cosponsors: "+billNo);
                     logger.error("  LBDC: "+lbdcCosponsors);
                     logger.error("  JSON: "+jsonCosponsors);
-                    runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getId(), billNo, "cosponsor", StringUtils.join(lbdcCosponsors, ","), StringUtils.join(jsonCosponsors, ","));
+                    runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getId(), billNo, "cosponsor", StringUtils.join(lbdcCosponsors, " "), StringUtils.join(jsonCosponsors, " "));
                     errors.put("cosponsors", errors.get("cosponsors")+1);
                 }
             }

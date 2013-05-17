@@ -20,6 +20,7 @@
 
 <body  onload="validate()">
 
+<div class="content-bg">
 <form id="form1" name="report">
 
 <table class="table table-condensed" id="errortable">
@@ -199,6 +200,7 @@
       </tbody>  
  </table>
  </form>
+</div>
  <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/bootstrap-2.3.1.js"></script>
  <script type="text/javascript">
