@@ -35,7 +35,6 @@ Filter by Type:
 </select>
 </form>
 	<div id="updateTable">
-		<table class="update">
 <%
 	TreeMap<Date, ArrayList<Update>> updates = (TreeMap<Date, ArrayList<Update>>)(request.getAttribute("updates")); 
 if(updates != null){ 
@@ -47,10 +46,13 @@ if(updates != null){
 		ArrayList<Update> dayUpdates = map.getValue();
 		String date = linkFormat.format(map.getKey());
 %>
+		<table class="update">
 		<tr class="table" id="date">
 		<td class="table" id="date" colspan="4"><a href="<%="/legislation/updates?startDay=" + date + "&endDay=" + date%>">
 		<%=dateFormat.format(map.getKey())%></a></td>
 		</tr>
+		</table>
+		<table class="update">
 		<%	
 			Date oldTime = new Date();
 			for(Update update: dayUpdates){ 
