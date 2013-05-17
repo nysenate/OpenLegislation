@@ -83,8 +83,6 @@
 	public String removeBillLineNumbers (String input) {
 		StringBuffer resp = new StringBuffer();
 		
-		input = input.replace("S E N A T E","SENATE");
-		input = input.replace("A S S E M B L Y","ASSEMBLY");
 		
 		StringTokenizer st = new StringTokenizer (input,"\n");
 		String line = null;
@@ -95,20 +93,58 @@
 		
 		while (st.hasMoreTokens()) {
 			line = st.nextToken();
+			
+			/* 
+			int linelength = line.length();
+			int linelengthTrim = line.trim().length();
+			int whitespacelength = linelength-linelengthTrim;
+			int a = 80-(whitespacelength+linelength);
+			
+			 System.out.println(linelength);
+			 System.out.println(linelengthTrim);
+			 System.out.println(whitespacelength);
+			 System.out.println(a);
+			 System.out.println(line);
+			 System.out.println("-----");
 
-			line = line.replace(" S ","<br/><br/>S ");
-			line = line.replace(" Section ","<br/><br/>Section ");
-			line = line.replace("AN ACT ","<br/><br/>AN ACT ");
-			line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");
+			if(Math.abs(a-whitespacelength) <= 1) {
+				line = "<center>"+line + "</center>";
+			} */
+
+			String start = line.substring(7);
+			String postTrim = start.replaceAll("<del>","").replaceAll("</del>","");
+			int lineTextLength = postTrim.trim().length();
+			int lineLeftWhitespaceLength = postTrim.length() - lineTextLength ;
+			int lineRightWhitespaceLength = 72 - (lineTextLength + lineLeftWhitespaceLength); // 72 - (33+20) [[53]] = 19
+
+			if( lineLeftWhitespaceLength > 4 ){
+				if (Math.abs(lineRightWhitespaceLength - lineLeftWhitespaceLength) <= 4) {
+					line = "<center>"+start.trim()+"</center>";
+				}
+			}
+			
+			System.out.println(postTrim);
+			System.out.println(lineTextLength);
+			System.out.println(lineLeftWhitespaceLength);
+			System.out.println(lineRightWhitespaceLength);
+			System.out.println(line);
+			System.out.println("-----");
+			
+			line = line.replace("S E N A T E","SENATE");
+			line = line.replace("A S S E M B L Y","ASSEMBLY");
+			 
+			line = line.replace(" S "," ##END%%S ");
+			line = line.replace(" Section "," ##END%%Section ");
+			line = line.replace("AN ACT "," ##END%%AN ACT ");
+			line = line.replace("THE  PEOPLE "," ##END%%THE PEOPLE ");
 			line = line.replace("_","");
 			line = line.replace("S T A T E   O F   N E W   Y O R K", "STATE OF NEW YORK<hr/>");
-			
 		
 			breakIdx = 6; //line.indexOf(' ');
 
 			if (breakIdx != -1) {
 				startChar = line.substring(0,breakIdx).trim();
-			
+				int length = line.length();
 				try {
 					Integer.parseInt(startChar);
 					isLineNum = true;
@@ -116,18 +152,20 @@
 				catch (NumberFormatException nfe) {
 					isLineNum = false;
 				}
-				
+
 				if (isLineNum)
 					line = line.substring(breakIdx+1);
 				if (line.endsWith(":"))
-					line = line + "<br/>";
+					line = line + "##END@@";
+				
+				if (line.endsWith("-"))
+					line = line.replaceAll("-$"," ")+"##HYP";
 
-	
-				// Short lines get double BR after
-				// may need to tweak
-				int length = line.length();
-				if(length < 30 )
-					line = line + "<br/><br/>";
+                int linelength = line.length();
+            	if(linelength < 72 ){
+					line = line + " ##END##"; 
+            	} 
+				
 				resp.append(' ');
 				resp.append(line);
 				// Use ##END for absolute check
@@ -136,7 +174,7 @@
 			else {
 				resp.append(' ');
 				resp.append(line);
-				resp.append("<br/>");
+				resp.append("##END");
 			}
 		}
 		
@@ -180,7 +218,6 @@
 	<div class="title-block">
 		<div class='item-actions'>
 			<ul>
-			<li><a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>" class="hidemobile" target="_new">Print HTML Page</a></li>
 			<li><a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=senateBillNo%>" class="hidemobile" target="_new">Print Original Bill Format</a></li>
 			<li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
 			<li><a href="#discuss">Read or Leave Comments</a></li>
@@ -431,35 +468,37 @@
 	<h3 class="section" ><%=senateBillNo%> Text</h3>
 	<%
 		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
- 
-			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
-			
-			billText = "<div class='billHeader'>" + removeBillLineNumbers(billText);   
-			// replace hyphens followed by break, breaks in a paragraph, multiple breaks
-			billText = billText.replaceAll("([A-Za-z])- ##END ","$1").replaceAll("([A-Za-z;]) ##END ([A-Za-z])", "$1 $2").replaceAll("##END <br/> <br/>", "");
-			// add some basic divs for styling
-			billText = billText.replace("Introduced ","</div>Introduced").replace("IN  SENATE ","</div>IN  SENATE");
-			// Make inline deleted areas continuious
-			billText = billText.replaceAll("</del> ##END <del>"," ").replace("</del> <del>"," ").replace("[<del>","<del>").replace("</del>]","</del>");
-			
-			// Hyphen, budget line endings, regular line endings
-			billText = billText.replaceAll("([0|-|=|)]) ##END ","$1<br/>");
-			// Clear out all uneeded breaks 
-			billText = billText.replaceAll(" ##END ", "").replaceAll("##END", "");
-			
-			// Make inline deleted areas continuious
-			billText = billText.replaceAll("</del>([A-Za-z])","</del> $1");
-						
-			// Explination hidden from view
-			billText = billText.replace("EXPLANATION--Matter", "<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
-			
-			// remove stupid br tags 
-			billText = billText.replaceAll("<br/><br/><br/>", "<br/>");
-			// hide page breaks from web 
-			billText = billText.replaceAll("<div style=\"page-break-after:always\"></div>","<div class='hidden'><div style=\"page-break-after:always\"></div></div>");
 
+			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
+
+			billText = "<div class='billHeader'>" +removeBillLineNumbers(billText);
+			billText = billText.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
+		    billText = billText.replace("Introduced ","</div>Introduced").replace("IN  SENATE ","</div>IN  SENATE");
+
+		 	// remove special breaks
+	 	    billText = billText.replaceAll("##END%%","<br/><br/>");
+
+		 	// replace line endings within paragraph
+			// billText = billText.replaceAll("([A-Za-z;]) ##END ([A-Za-z])", "$1 $2").replaceAll("##END <br/> <br/>", "");
+
+		 	// replace newline with brs
+			billText = billText.replaceAll("##END## ##END ","<br/>");
+			billText = billText.replaceAll("##END##","<br/>");
+
+		 	// remove inline newline tags
+			billText = billText.replaceAll("##END[ ]+","");
+			billText = billText.replaceAll("##END@@ ","");
+			
+			// 
+		 	billText = billText.replaceAll("[ ]+##HYP[ ]+","");
+
+ 
+			// remove hyphenation
+		 	billText = billText.replaceAll("[ ]+##HYP[ ]+","");
+			billText = billText.replaceAll(" ##END","");
+			
 			// Green added sections
-			Pattern section1Pattern = Pattern.compile("Section\\s+1.");
+			 Pattern section1Pattern = Pattern.compile("Section\\s+1.");
 			Matcher section1Matcher = section1Pattern.matcher(billText);
 			String addRegex = "(?s)([A-Z]{2,}([A-Z0-9-.\"\',; \\n])+)";
 			if (section1Matcher.find()) {
@@ -469,8 +508,6 @@
 			else {
 			    billText = billText.replaceAll(addRegex, "<add>$1</add>");
 			}
-
-			//String billTextFormatted2 = billTextFormatted.replaceAll("Section 1.* ([A-Z]{2,}[A-Z0-9-.\"\', ]+)", "<add>$1</add>");
 
 			%>
 				<pre><%=billText %></pre>

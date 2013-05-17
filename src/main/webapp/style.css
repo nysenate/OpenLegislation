@@ -656,7 +656,22 @@ color:#FFFFFF;
 }
 
 pre {
-	overflow: auto;
+	padding:10px;
+	box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	webkit-box-sizing:border-box;
+	display:block; 
+	white-space: pre-wrap;  
+	white-space: -moz-pre-wrap; 
+	white-space: -pre-wrap; 
+	white-space: -o-pre-wrap; 
+	word-wrap: break-word; 
+	overflow-x:auto;
+	font-family: “Consolas”,monospace;
+	max-width:450px;
+	font-size: 9pt;
+	
+/* 	overflow: auto;
 	font-family: “Consolas”,monospace;
 	font-size: 9pt;
 	text-align:left;
@@ -666,7 +681,7 @@ pre {
 	margin: 0px 0px 0px 0px;
 	padding:5px 5px 3px 5px;
 	white-space : pre-line; 
-	max-width:550px;
+	max-width:550px; */
 }
 del{
 	color:red;
@@ -684,6 +699,11 @@ add{
 .hidden{
 	display:none;
 }
+/* .shortline{
+	white-space : pre-wrap;
+	padding:0;
+	margin:0;
+} */
 .main-menu ul li, .main-menu ul{
 	list-style:none;
 	display:inline;
