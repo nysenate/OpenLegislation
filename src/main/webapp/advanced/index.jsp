@@ -141,13 +141,13 @@ $(document).ready(function() {
         <center><b>Bills Only (Optional)</b></center>
 
         <div class="searchrow">
-            <div class="searchlabel">Session is:</div>
+            <div class="searchlabel">Legislative Session Period:</div>
             <div class="searchinput">
                 <select name="session">
                     <option value=""></option>
-                    <option value="2009">2009</option>
-                    <option value="2011">2011</option>
-                    <option value="2013">2013</option>
+                    <option value="2009">2009-2010</option>
+                    <option value="2011">2011-2012</option>
+                    <option value="2013">2013-2014</option>
                 </select>
             </div>
         </div>
