@@ -39,37 +39,42 @@ public class SearchRequest2_0 extends AbstractApiRequest {
         String vFormat = format.equals("jsonp") ? "json" : format;
         request.setAttribute("format", vFormat);
 
-        pageSize = request.getParameter("pageSize") != null ?
-                Integer.parseInt(request.getParameter("pageSize")) : super.pageSize;
-                pageNumber = request.getParameter("pageIdx") != null ?
-                        Integer.parseInt(request.getParameter("pageIdx")) : super.pageNumber;
-                        Boolean sortOrder = Boolean.parseBoolean(request.getParameter("sortOrder"));
-                        String sortField = request.getParameter("sort");
+        int pageSize = super.pageSize;
+        if (request.getParameter("pageSize") != null) {
+            pageSize = Integer.parseInt(request.getParameter("pageSize"));
+        }
 
-                        if(sortField == null) {
-                            sortField = "modified";
-                            sortOrder = true;
-                        }
+        pageNumber = super.pageNumber;
+        if (request.getParameter("pageIdx") != null) {
+            pageNumber = Integer.parseInt(request.getParameter("pageIdx"));
+        }
 
-                        request.setAttribute("sortField",sortField);
-                        request.setAttribute("sortOrder",sortOrder);
+        Boolean sortOrder = Boolean.parseBoolean(request.getParameter("sortOrder"));
+        String sortField = request.getParameter("sort");
 
-                        request.setAttribute(OpenLegConstants.PAGE_IDX,pageNumber+"");
-                        request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
+        if(sortField == null) {
+            sortField = "modified";
+            sortOrder = true;
+        }
 
-                        int start = (pageNumber - 1) * pageSize;
+        request.setAttribute("sortField",sortField);
+        request.setAttribute("sortOrder",sortOrder);
 
-                        try {
-                            SenateResponse sr = SearchEngine.getInstance().search(ApiHelper.dateReplace(term), vFormat, start, pageSize, null, false);
+        request.setAttribute(OpenLegConstants.PAGE_IDX,pageNumber+"");
+        request.setAttribute(OpenLegConstants.PAGE_SIZE,pageSize+"");
 
-                            request.setAttribute("results", sr);
-                        }
-                        catch (ParseException e) {
-                            logger.error(e);
-                        }
-                        catch (IOException e) {
-                            logger.error(e);
-                        }
+        int start = (pageNumber - 1) * pageSize;
+
+        try {
+            SenateResponse sr = SearchEngine.getInstance().search(ApiHelper.dateReplace(term), vFormat, start, pageSize, null, false);
+            request.setAttribute("results", sr);
+        }
+        catch (ParseException e) {
+            logger.error(e);
+        }
+        catch (IOException e) {
+            logger.error(e);
+        }
     }
 
     @Override
@@ -86,13 +91,13 @@ public class SearchRequest2_0 extends AbstractApiRequest {
      * on search this attempts to format a bill id based on
      * what version the bill is at and returns the 'desired'
      * result.  this mimics lrs functionality
-     * 
+     *
      * if s1234, s1234a and s1234b exist:
-     * 
+     *
      * s1234a -> S1234A-2011
      * s1234- -> S1234-2011
      * s1234  -> S1234B-2011
-     * 
+     *
      */
     public String getDesiredBillNumber(String term, SearchEngine searchEngine) {
         if(term == null) return null;
