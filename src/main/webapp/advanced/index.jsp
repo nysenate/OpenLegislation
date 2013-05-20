@@ -105,7 +105,7 @@ $(document).ready(function() {
             <select name="type">
                 <option value="">All Types</option>
                 <option value="bill">Bills (Senate &amp; Assembly)</option>
-                <option value="res">Resolutions</option>
+                <option value="resolution">Resolutions</option>
                 <option value="transcript">Floor Transcripts</option>
                 <option value="meeting">Committee Meetings</option>
                 <option value="calendar">Floor &amp; Active Calendars</option>

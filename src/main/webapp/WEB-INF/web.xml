@@ -125,6 +125,14 @@
 		<url-pattern>/actions</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
+        <servlet-name>ApiServlet</servlet-name>
+        <url-pattern>/resolutions/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ApiServlet</servlet-name>
+        <url-pattern>/resolutions</url-pattern>
+    </servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>ApiServlet</servlet-name>
 		<url-pattern>/votes</url-pattern>
 	</servlet-mapping>
