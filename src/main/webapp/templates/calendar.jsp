@@ -1,5 +1,5 @@
-<%@ page language="java" import="java.util.Iterator,java.util.Collection,java.util.List,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,javax.xml.bind.*" contentType="text/html" pageEncoding="utf-8"%>
-
+<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtils, java.util.Iterator,java.util.ArrayList, java.util.Collection,java.util.List,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,javax.xml.bind.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 	String oid = null;
 
@@ -12,7 +12,7 @@
 	sdf.applyPattern("EEE, MMM d, yyyy");
 %>
 <h2 class='page-title'>
-	Calendar no. <%=calendar.getNo()%> (<%=calendar.getType()%>) / Year: <%=calendar.getYear()%> / Session: <%=calendar.getSessionYear()%> - <%=calendar.getSessionYear() + 1%>
+	Calendar no. ${calendar.getNo()} (<%=calendar.getType()%>) / Year: <%=calendar.getYear()%> / Session: <%=calendar.getSessionYear()%> - <%=calendar.getSessionYear() + 1%>
 </h2>
 <div style="float:right;">
 		<script type="text/javascript"
@@ -80,16 +80,24 @@
 									<li>Calendar: <%=calEnt.getNo()%> 
 									<%
 							 			if (calEnt.getBill() != null) {
+							 			    Bill bill = calEnt.getBill();
 							 				String senateBillNo = calEnt.getBill().getSenateBillNo();
-							 					
-											%> / Sponsor: <a href="<%=appPath%>/sponsor/<%=calEnt.getBill().getSponsor()
-													.getFullname()%>"><%=calEnt.getBill().getSponsor()
-													.getFullname()%></a> 
-											<% if (calEnt.getSubBill() != null) { %>
-												(Sub-bill Sponsor: 
-													<a href="<%=appPath%>/sponsor/<%=calEnt.getSubBill().getSponsor()
-															.getFullname()%>"><%=calEnt.getSubBill().getSponsor()
-															.getFullname()%></a>)
+					                        if (bill.getSponsor()!=null) {
+				                                if (bill.getOtherSponsors().isEmpty()) { %>
+			                                         Sponsor: <%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                                                <% } else { %>
+			                                         Sponsors: <%=JSPHelper.getSponsorLinks(bill, appPath) %>
+			                                    <% } %>
+					                            / 
+					                        <% } %>
+
+											<% if (calEnt.getSubBill() != null) {
+											    bill = calEnt.getSubBill();
+											    if (bill.getOtherSponsors().isEmpty()) { %>
+	                                                (Sub-bill Sponsor: <%=JSPHelper.getSponsorLinks(bill, appPath) %>)
+	                                           <% } else { %>
+	                                                (Sub-bill Sponsors: <%=JSPHelper.getSponsorLinks(bill, appPath) %>)
+	                                           <% } %>
 											<% } %>
 											 / Printed No.: <a href="<%=appPath%>/bill/<%=senateBillNo%>"><%=senateBillNo%></a>
 											<% if (calEnt.getBillHigh() != null) { %>
