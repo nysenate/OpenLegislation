@@ -464,14 +464,16 @@ margin:3px;
 	padding:0;
 	list-style:none;
 }
-.footer-third{
+
+ 
+.footer-part{
 	margin:10px 0 0 0;
-	width:32%;
+	width:24%;
 	float:left;
 /* 	border:1px solid red; */
 	padding:1px;
 }
-.footer-third li{ 
+.footer-part li{ 
 	font-size:12px;
 	margin:10px 0 0 0;
 	padding:10px;
@@ -482,7 +484,7 @@ margin:3px;
 	color:#003366;
 }
 
-.footer-third li.head{
+.footer-part li.head{
 	color:#000;
 	font-weight:bold;
 } 
@@ -828,5 +830,8 @@ add{
 	.item-actions{
 		float:right;
 	}
+	
+
+ 
 }
 
