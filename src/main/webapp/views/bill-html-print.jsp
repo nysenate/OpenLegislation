@@ -29,5 +29,12 @@ pre{
 .item-actions{
 	display:none;
 }
+pre .billHeader{
+	text-align:center;
+	padding:10px 0;
+	font-weight:bold;
+	border-bottom:1px solid #ccc;
+	margin: 0 0 20px 0;
+}
 </style>
 <jsp:include page="/templates/bill.jsp" />
