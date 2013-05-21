@@ -80,49 +80,49 @@ public class SearchRequest extends AbstractApiRequest {
             // One of 2009, 2011, 2013, etc
             String session = request.getParameter("session");
             if(valid(session)) {
-                queryBuilder.and().keyValue("year", session);
+                queryBuilder.and().searchValue("year", session);
             }
 
             // TODO: Why does this also search in the osearch field in addition to the text?
             String full = request.getParameter("full");
             if (valid(full)) {
-                queryBuilder.and().append(" (").keyValue("full", full, "(", ")").or().keyValue("osearch", full, "(", ")").append(") ");
+                queryBuilder.and().append(" (").searchValue("full", full).or().searchValue("osearch", full).append(") ");
             }
 
             // Wrap in ( ) so that the user can use boolean logic if they want
             String memo = request.getParameter("memo");
             if (valid(memo)) {
-                queryBuilder.and().keyValue("memo", memo, "(", ")");
+                queryBuilder.and().searchValue("memo", memo);
             }
 
             String status = request.getParameter("status");
             if (valid(status)) {
-                queryBuilder.and().keyValue("status", status, "(", ")");
+                queryBuilder.and().searchValue("status", status);
             }
 
             String sponsor = request.getParameter("sponsor");
             if (valid(sponsor)) {
-                queryBuilder.and().keyValue("sponsor", sponsor, "(", ")");
+                queryBuilder.and().searchValue("sponsor", sponsor);
             }
 
             String cosponsors = request.getParameter("cosponsors");
             if (valid(cosponsors)) {
-                queryBuilder.and().keyValue("cosponsors", cosponsors, "(", ")");
+                queryBuilder.and().searchValue("cosponsors", cosponsors);
             }
 
             String sameas = request.getParameter("sameas");
             if (valid(sameas)) {
-                queryBuilder.and().keyValue("sameas", sameas, "(", ")");
+                queryBuilder.and().searchValue("sameas", sameas);
             }
 
             String committee = request.getParameter("committee");
             if (valid(committee)) {
-                queryBuilder.and().keyValue("committee", committee, "(", ")");
+                queryBuilder.and().searchValue("committee", committee);
             }
 
             String location = request.getParameter("location");
             if (valid(location)) {
-                queryBuilder.and().keyValue("location", location, "(", ")");
+                queryBuilder.and().searchValue("location", location);
             }
 
             // If we aren't requesting a specific document or time period, only show active documents

@@ -101,6 +101,7 @@ $(document).ready(function() {
                     <li><b>~</b>: Fuzzy search for the preceding word. Can be used if you are unsure of spelling; e.g. <span class="term">Schenectedy~</span>.
                     <li><b>""</b>: Require an exact match. <span class="term">"student loans"</span> finds documents with the exact phrase "student loans".
                 </ul>
+                If no special words or characters are used OpenLegislation will look for an exact match of the whole value. 
             </div>
         </div>
 
