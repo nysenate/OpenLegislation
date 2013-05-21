@@ -163,6 +163,11 @@
             <artifactId>tomcat-dbcp</artifactId>
             <version>7.0.39</version>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
     </dependencies>
     <pluginRepositories>
         <!-- Repository for the External Dependency Plugin -->
