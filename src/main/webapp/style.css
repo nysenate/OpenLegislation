@@ -488,7 +488,9 @@ margin:3px;
 	color:#000;
 	font-weight:bold;
 } 
-
+.footer-part p{ 
+	font-size: 11px;
+}
 #footer-message{
 	float:left;
 	margin:10px 0;

@@ -111,14 +111,9 @@ if (billkey == null)
 					<li><a href = "http://www.nysenate.gov/privacy-policy">Privacy Policy</a></li>
 				</ul>
 			</div>
-			<div id="footer-part"><p>
-				<!-- <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">
-					<img class="cc-logo" alt="Creative Commons License" src="http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png" align='left' />
-				</a> <br /><br /> -->
-				
-				<p>This work is licensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">CC BY-NC-ND 3.0</a>.</p> 
-				<p>Permissions beyond the scope of this license are available <a cc="http://creativecommons.org/ns#" href="http://www.nysenate.gov/copyright-policy" rel="morePermissions">Here</a>.</p>
-	 			<p>The software and services provided under this site are offered under the BSD License and the GPL v3 License.</p>
+			<div id="footer-part">
+				<p>This content is licensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">Creative Commons BY-NC-ND 3.0</a>. Permissions beyond the scope of this license are available <a cc="http://creativecommons.org/ns#" href="http://www.nysenate.gov/copyright-policy" rel="morePermissions">Here</a>.</p>
+	 			<p>The <a href="https://github.com/nysenate/OpenLegislation">software</a> and <a href="http://openlegislation.readthedocs.org/en/latest/">services</a> provided under this site are offered under the BSD License and the GPL v3 License.</p>
 	 		</div>
 		</div>
 	</div>
