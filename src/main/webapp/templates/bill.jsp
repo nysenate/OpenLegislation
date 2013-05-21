@@ -122,14 +122,14 @@
 					line = "<div class=\"centered\">"+start.trim()+"</div>";
 				}
 			}
-			
+			/*
 			System.out.println(postTrim);
 			System.out.println(lineTextLength);
 			System.out.println(lineLeftWhitespaceLength);
 			System.out.println(lineRightWhitespaceLength);
 			System.out.println(line);
 			System.out.println("-----");
-			
+		    */
 			line = line.replace("S E N A T E","SENATE");
 			line = line.replace("A S S E M B L Y","ASSEMBLY");
 			 
