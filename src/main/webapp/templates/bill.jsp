@@ -249,40 +249,39 @@
 	<div class="billheader">
   		<%=billSummary == null ? "" : billSummary%>
 		<hr/>
-		<% if (bill.getSenateBillNo().equals("J375-2013")) { %>
-		    <b>Sponsors: </b>
-		    <%=wrapPerson("STEWART-COUSINS",appPath)%>,
-		    <%=wrapPerson("SKELOS",appPath)%>,
-		    <%=wrapPerson("KLEIN",appPath)%>
-		<% } else { %>
-			<b>Sponsor: </b>
-			<a href="<%=appPath%>/sponsor/<%=java.net.URLEncoder.encode(sponsor,"utf-8")%>"  class="sublink"><%=sponsor%></a>
-			
-			<%
-            if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) {
-	        %>
-	             / <b>Multi-sponsor(s):</b>
-	            <%=getSponsorString(bill.getMultiSponsors(), appPath)%>
-	        <%
-	            }
-	        %>
-	        
-	        <%
-	                    if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) {
-	                %>
-	             / <b>Co-sponsor(s):</b>
-	            <%=getSponsorString(bill.getCoSponsors(), appPath)%>
-	        <%
-	            }
-	        %>
-        <% } %>
  
+                <% if (bill.getSenateBillNo().equals("J375-2013")) { %>
+                    <div>
+                                <b>Sponsors: </b>
+                                                <%=wrapPerson("STEWART-COUSINS",appPath)%>,
+                                                <%=wrapPerson("SKELOS",appPath)%>,
+                                                <%=wrapPerson("KLEIN",appPath)%>
+                                    </div>
+                <% } else { %>
+                    <div>
+                        <% if (bill.getOtherSponsors().isEmpty()) { %>
+                            <b>Sponsor:</b> <%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                        <% } else { %>
+                            <b>Sponsors:</b> <%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                        <% }
+                        if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) { %>
+                        <div>
+                            <b>Multi-sponsor(s):</b>
+                            <%=JSPHelper.getMultiSponsorLinks(bill, appPath)%>
+                        </div><%
+                    }
+
+                    if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) { %>
+                        <div>
+                            <b>Co-sponsor(s):</b>
+                            <%=JSPHelper.getCoSponsorLinks(bill, appPath)%>
+                        </div><%
+                    }
+                }
  		
- 		
-		<%
  					if (bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
  				%>
-			 / <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
+			 <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
 		<%
 			}
 		%>

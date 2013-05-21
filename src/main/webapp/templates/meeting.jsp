@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
 <%
 	String appPath = request.getContextPath();
 	DateFormat df = new SimpleDateFormat("MMM d, yyyy - h:mm a");
@@ -54,9 +54,14 @@
 					<div class="billSummary" onmouseover="this.style.backgroundColor='#FFFFCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/legislation/bill/<%=bill.getSenateBillNo()%>'">
 						<a href="/legislation/bill/<%=bill.getSenateBillNo()%>"><%=bill.getSenateBillNo()%>: <%=bill.getTitle()%></a>
 						<div style="font-size:90%;color:#777777;">
-						<%if (bill.getSponsor()!=null) { %>
-                                Sponsor: <a href="<%=appPath%>/search/?term=sponsor:%22<%=bill.getSponsor().getFullname()%>%22" class="sublink"><%=bill.getSponsor().getFullname()%></a> /
+                            <% if (bill.getSponsor()!=null) {
+                                if (bill.getOtherSponsors().isEmpty()) { %>
+                                    Sponsor: <%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                                <% } else { %>
+                                    Sponsors: <%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                                <% } %>
                             <% } %>
+
                             <%=bill.getActClause()%>
 							<%
 							if (bill.getVotes()!=null && bill.getVotes().size()>0) {

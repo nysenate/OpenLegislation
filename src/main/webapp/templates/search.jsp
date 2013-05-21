@@ -1,4 +1,4 @@
-<%@ page language="java" import="gov.nysenate.openleg.util.OpenLegConstants,gov.nysenate.openleg.search.SenateResponse,gov.nysenate.openleg.search.Result,java.text.SimpleDateFormat, java.util.Iterator"  contentType="text/html" pageEncoding="utf-8" %><%
+<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, gov.nysenate.openleg.util.OpenLegConstants,gov.nysenate.openleg.search.SenateResponse,gov.nysenate.openleg.search.Result,java.text.SimpleDateFormat, java.util.Iterator"  contentType="text/html" pageEncoding="utf-8" %><%
 
 String requestPath = request.getRequestURI();
 
@@ -214,16 +214,23 @@ Same As: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("s
 Bill: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("billno")%>%22" class="sublink"><%=sresult.getFields().get("billno")%></a>
  <%} %>
  
- <%if (sresult.getFields().get("sponsor")!=null && sresult.getFields().get("sponsor").length()>0){ 
-    if (sresult.getFields().get("billno").equals("J375-2013")) { %>
-        Sponsors: 
-        <a href="<%=appPath%>/sponsor/STEWART-COUSINS" class="sublink">STEWART-COUSINS</a>,
-        <a href="<%=appPath%>/sponsor/SKELOS" class="sublink">SKELOS</a>,
-        <a href="<%=appPath%>/sponsor/KLEIN" class="sublink">KLEIN</a>
-    <% } else { %>
-        Sponsor: <a href="<%=appPath%>/sponsor/<%=sresult.getFields().get("sponsor")%>" class="sublink"><%=sresult.getFields().get("sponsor")%></a>    
-    <% } %>
- <%} %>
+                            <%if (sresult.getFields().get("sponsor")!=null && sresult.getFields().get("sponsor").length()>0){ %>
+                                <br/>
+                                <% if (sresult.getFields().get("billno").equals("J375-2013")) { %>
+                                        Sponsors:
+                                        <a href="<%=appPath%>/sponsor/STEWART-COUSINS" class="sublink">STEWART-COUSINS</a>,
+                                        <a href="<%=appPath%>/sponsor/SKELOS" class="sublink">SKELOS</a>,
+                                        <a href="<%=appPath%>/sponsor/KLEIN" class="sublink">KLEIN</a>
+                                    <% } else {
+                                        if (sresult.getFields().get("otherSponsors").isEmpty()) { %>
+                                            Sponsor: <a href="<%=appPath%>/sponsor/<%=sresult.getFields().get("sponsor")%>" class="sublink"><%=sresult.getFields().get("sponsor")%></a>
+                                        <% }
+                                        else { %>
+                                            Sponsors: <a href="<%=appPath%>/sponsor/<%=sresult.getFields().get("sponsor")%>" class="sublink"><%=sresult.getFields().get("sponsor")%></a>,<%=JSPHelper.getSponsorLinks(sresult.getFields().get("otherSponsors").split(", ?"), appPath) %>
+                                        <% } %>
+                                    <% } %>
+                            <%} %>
+
  
   <%if (sresult.getFields().get("chair")!=null){ %>
 Chairperson: <a href="<%=appPath%>/search/?term=chair:%22<%=java.net.URLEncoder.encode((String)sresult.getFields().get("chair"),"UTF-8")%>%22"  class="sublink"><%=sresult.getFields().get("chair")%></a>
