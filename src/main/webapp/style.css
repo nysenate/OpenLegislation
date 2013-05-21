@@ -520,27 +520,100 @@ margin:3px;
 	color:#333333;	
 	margin-bottom:15px;
 }
-.sortby{
-	float:right;
-}
+
 .formats{
 	float:right;
 }
+.search-nav{
+	float:left;
+	width:100%;
+	border-bottom:1px solid #ccc;
+	padding:10px 0 ;
+	margin:0 0 10px 0; 
+}
+.result-totals{
+	float:left;
+	width:100%;
+	display:block;
+}
+.pagination{
+	float:left;
+	width:400px;
+	display:inline;
+}
+.footer-pagination{
+	float:left;
+	width:400px;
+	display:inline;
+	padding: 15px 0 0;
+	margin:0;
+}
+.footer-pagination div{
+	margin:0;
+}
+
+.pagination ul {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+.pagination ul > li {
+    display: inline;
+}
+.pagination li{
+	border:1px solid #BFBFBF;
+	margin:0;
+	text-decoration:none;
+	list-style:none;
 	
+}
+.pagination li:hover{
+	background:#e6e6e6;
+}
+
+.pagination li.disabled, .pagination li.disabled:hover{ 
+	border:1px solid #F7F7F9;
+	background:none;
+ }
+ 
+ 
+ .pagination li.disabled a{ 
+ 	color:#9DA0A4;
+ }
+.pagination li.active{ 
+	border:1px solid #9DA0A4;
+	background:#F5F5F5;
+}
+ .pagination li.active a{ 
+ 	color:#003366;
+ }
+.pagination li a{
+	text-decoration:none;
+	color:#666;
+	padding:2px 7px;
+}
 .row{
 	padding:3px;
 	padding-top:12px;
 	border-bottom:1px dashed #ccc;
 	margin:0px;
+	float:left;
+	width:100%;
 }
 .row:hover{
 	background-color:#FFFFCC;
 }
-.row p
-{
+.row p{
 font-size:10pt;
 }
-
+.row .meta{
+	font-size:90%;
+	color:#777777;
+}
+.row .meta span{
+ display:block;	
+}
 .row li
 {
 margin-left:10px;
@@ -821,7 +894,7 @@ add{
 	}
 	.sortby{
 		float:right;
-		padding: 0;
+		padding:0 10px 0 0;
 	}
 	.summary{
 		width:550px
