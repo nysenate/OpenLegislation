@@ -156,7 +156,7 @@ $(document).ready(function() {
             <div class="searchlabel">and Status is:</div>
             <div class="searchinput">
                 <select name="status">
-                   <option value="" >All Status</option>
+                   <option value="" >Any</option>
                    <option value="Passed" >Passed</option>
                    <option value="Vetoed" >Vetoed</option>
                    <option value="REFERRED" >Referred</option>
