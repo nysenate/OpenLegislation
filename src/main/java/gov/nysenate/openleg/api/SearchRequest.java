@@ -126,8 +126,9 @@ public class SearchRequest extends AbstractApiRequest {
             }
 
             // If we aren't requesting a specific document or time period, only show active documents
+            term = queryBuilder.query();
             if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
-                queryBuilder.and().current().query();
+                term = queryBuilder.and().current().query();
             }
         }
         catch (QueryBuilderException e) {
@@ -135,7 +136,6 @@ public class SearchRequest extends AbstractApiRequest {
         }
 
         // Cut this short if we've got no query
-        term = queryBuilder.query();
         if (term.length() == 0) {
             throw new ApiRequestException(TextFormatter.append("no term given"));
         }
