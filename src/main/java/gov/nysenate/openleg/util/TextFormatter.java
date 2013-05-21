@@ -2,6 +2,7 @@ package gov.nysenate.openleg.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,7 @@ public class TextFormatter {
     }
 
     public static String lrsPrinter(String fulltext) {
+        StringTokenizer st = new StringTokenizer(fulltext, "\n");
         StringBuffer out = new StringBuffer("");
 
         boolean redact = false;
@@ -37,9 +39,8 @@ public class TextFormatter {
 
         ArrayList<TextPoint> points;
 
-        int linenum = 0;
-        for (String line : fulltext.split("\n")) {
-            linenum++;
+        while(st.hasMoreTokens()) {
+            String line = st.nextToken();
 
             Pattern pagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s+\\d{1,4}$)");
             Matcher pageMatcher = pagePattern.matcher(line);
@@ -133,10 +134,8 @@ public class TextFormatter {
                 capCount = 0;
             }
             else {
-                // We need to wait till we hit the 10th line to avoid breaking on the bill header
-                if(pageMatcher.find() && linenum > 10) {
-                    out.append("<div class=\"hidden\" style=\"page-break-after:always\">"+line +"</div>"+"\n");
-                    //System.out.println(line);
+                if(pageMatcher.find()) {
+                    out.append("<div style=\"page-break-after:always\"></div>"+line + "\n");
                 }
                 else {
                     out.append(line + "\n");
