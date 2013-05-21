@@ -396,6 +396,7 @@ public class JsonConverter {
 
         // simple_bill_exclude.add("lawSection");
         simple_bill_exclude.add("previousVersions");
+        // simple_bill_exclude.add("otherSponsors");
         simple_bill_exclude.add("coSponsors");
         simple_bill_exclude.add("multiSponsors");
         simple_bill_exclude.add("currentCommittee");

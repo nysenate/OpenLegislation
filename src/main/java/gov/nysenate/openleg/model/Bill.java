@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -46,6 +47,9 @@ public class Bill extends SenateObject implements Comparable<Bill>
 
     @LuceneField
     protected Person sponsor;
+
+    @LuceneField
+    private List<Person> otherSponsors = new ArrayList<Person>();
 
     public boolean frozen = false;
 
@@ -223,6 +227,15 @@ public class Bill extends SenateObject implements Comparable<Bill>
         this.sponsor = sponsor;
     }
 
+    public List<Person> getOtherSponsors()
+    {
+        return otherSponsors;
+    }
+
+    public void setOtherSponsors(List<Person> otherSponsors)
+    {
+        this.otherSponsors = otherSponsors;
+    }
 
     public List<Person> getCoSponsors()
     {
@@ -510,6 +523,12 @@ public class Bill extends SenateObject implements Comparable<Bill>
     }
 
     @JsonIgnore
+    public String getLuceneOtherSponsors()
+    {
+        return StringUtils.join(otherSponsors, ", ");
+    }
+
+    @JsonIgnore
     public String getLuceneCoSponsors()
     {
         if(this.getCoSponsors() == null)
@@ -587,6 +606,7 @@ public class Bill extends SenateObject implements Comparable<Bill>
         }
         return term;
     }
+
 }
 
 
