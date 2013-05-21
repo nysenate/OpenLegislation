@@ -384,8 +384,7 @@ public class CalendarProcessor implements OpenLegConstants {
             }
         }
 
-        // Get the bill from storage if possible, otherwise it makes a new one
-        // TODO: What is a subbill?
+        // Get the substituted bill from storage if possible, otherwise it makes a new one
         if (xmlCalNo.getSubbill()!=null)
         {
             String billId = xmlCalNo.getSubbill().getNo();
@@ -406,13 +405,27 @@ public class CalendarProcessor implements OpenLegConstants {
         String senateBillNo = billId.replaceAll("(?<=[A-Z])0*", "")+"-"+year;
         String key = year+"/bill/"+senateBillNo;
 
+        String[] sponsors = {""};
+        if (sponsorName != null) {
+            sponsors = sponsorName.trim().split(",");
+        }
+
         Bill bill = (Bill)storage.get(key, Bill.class);
         if (bill == null) {
             bill = new Bill();
             bill.setYear(year);
             bill.setSenateBillNo(senateBillNo);
-            bill.setSponsor(new Person(sponsorName));
+            bill.setSponsor(new Person(sponsors[0].trim()));
         }
+
+        // Other sponsors are removed when a calendar/agenda is resent without
+        // The other sponsor included in the sponsors list.
+        ArrayList<Person> otherSponsors = new ArrayList<Person>();
+        for (int i = 1; i < sponsors.length; i++) {
+            otherSponsors.add(new Person(sponsors[i].trim()));
+        }
+        bill.setOtherSponsors(otherSponsors);
+        new BillProcessor().saveBill(bill, storage, new Date());
 
         return bill;
     }

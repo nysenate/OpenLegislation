@@ -384,6 +384,15 @@ public class Storage {
         }
         bill.setVotes(votes);
 
+        if (node.get("otherSponsors") != null && !node.get("otherSponsors").isNull()) {
+            List<Person> otherSponsors = new ArrayList<Person>();
+            iter = node.get("otherSponsors").getElements();
+            while(iter.hasNext()) {
+                otherSponsors.add(jsonNodeToPerson(iter.next()));
+            }
+            bill.setOtherSponsors(otherSponsors);
+        }
+
         List<Person> cosponsors = new ArrayList<Person>();
         iter = node.get("coSponsors").getElements();
         while(iter.hasNext()) {
@@ -414,6 +423,13 @@ public class Storage {
         node.put("memo", bill.getMemo());
         node.put("modified", bill.getModified());
         node.put("sameAs", bill.getSameAs());
+
+        ArrayNode otherSponsors = mapper.createArrayNode();
+        for (Person otherSponsor : bill.getOtherSponsors()) {
+            otherSponsors.add(personToObjectNode(otherSponsor));
+        }
+        node.put("otherSponsors", otherSponsors);
+
         ArrayNode multisponsors = mapper.createArrayNode();
         for (Person multisponsor : bill.getMultiSponsors()) {
             multisponsors.add(personToObjectNode(multisponsor));

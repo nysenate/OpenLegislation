@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -99,6 +100,7 @@ public class ApiHelper implements OpenLegConstants {
                     if (bill.getSponsor() != null)
                         fields.put("sponsor", bill.getSponsor().getFullname());
 
+                    fields.put("otherSponsors", StringUtils.join(bill.getOtherSponsors(), ", "));
                     summary = bill.getSummary();
 
                     fields.put("committee", bill.getCurrentCommittee());
@@ -188,7 +190,7 @@ public class ApiHelper implements OpenLegConstants {
                     HashMap<String, String> resultFields = result.getFields();
                     fields.put("sponsor", resultFields.get("sponsor"));
                     fields.put("billno", resultFields.get("billno"));
-
+                    fields.put("otherSponsors", resultFields.get("otherSponsors"));
                     if (vote.getBill() != null) {
                         Bill bill = vote.getBill();
 

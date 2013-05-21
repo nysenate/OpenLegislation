@@ -114,10 +114,6 @@ public class AgendaProcessor implements OpenLegConstants {
     public Bill handleXMLBill(Storage storage, Meeting meeting, XMLBill xmlBill, int sessionYear, Date date) {
         Bill bill = getBill(storage, xmlBill.getNo(), sessionYear, xmlBill.getSponsor().getContent());
 
-        if (xmlBill.getSponsor() != null && bill.getSponsor() == null) {
-            bill.setSponsor(new Person(xmlBill.getSponsor().getContent()));
-        }
-
         if (xmlBill.getTitle() != null && bill.getActClause().isEmpty()) {
             bill.setActClause(xmlBill.getTitle().getContent());
         }
@@ -461,13 +457,27 @@ public class AgendaProcessor implements OpenLegConstants {
         String senateBillNo = billId.replaceAll("(?<=[A-Z])0*", "")+"-"+year;
         String key = year+"/bill/"+senateBillNo;
 
+        String[] sponsors = {""};
+        if (sponsorName != null) {
+            sponsors = sponsorName.trim().split(",");
+        }
+
         Bill bill = (Bill)storage.get(key, Bill.class);
         if (bill == null) {
             bill = new Bill();
             bill.setYear(year);
             bill.setSenateBillNo(senateBillNo);
-            bill.setSponsor(new Person(sponsorName));
+            bill.setSponsor(new Person(sponsors[0].trim()));
         }
+
+        // Other sponsors are removed when a calendar/agenda is resent without
+        // The other sponsor included in the sponsors list.
+        ArrayList<Person> otherSponsors = new ArrayList<Person>();
+        for (int i = 1; i < sponsors.length; i++) {
+            otherSponsors.add(new Person(sponsors[i].trim()));
+        }
+        bill.setOtherSponsors(otherSponsors);
+        new BillProcessor().saveBill(bill, storage, new Date());
 
         return bill;
     }

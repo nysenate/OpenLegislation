@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -68,7 +69,7 @@ public class Vote extends SenateObject {
         excused = new ArrayList<String>();
         absent = new ArrayList<String>();
     }
-   
+
     public Vote (Bill bill, Date date, int type, String sequenceNumber) {
         this();
         this.bill = bill;
@@ -273,6 +274,7 @@ public class Vote extends SenateObject {
 
         if (bill != null) {
             map.put("billno", new Field("billno",bill.getSenateBillNo(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+            map.put("otherSponsors", new Field("otherSponsors",StringUtils.join(bill.getOtherSponsors(),", "), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
             map.put("sponsor", new Field("sponsor", bill.getSponsor().getFullname(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
         }
 
