@@ -2,7 +2,9 @@
 <jsp:include page="/header.jsp">
     <jsp:param name="title" value="Open Legislation - Advanced Search - NY Senate"/>
 </jsp:include>
-
+ <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <style>
 #advsearchbox p {
     margin:12px;
@@ -59,23 +61,14 @@
 
 <script>
 $(document).ready(function() {
-
-    var clearOnFocus = function(element, text) {
-        element.focus(function() {
-            var self = $(this);
-            if (self.val() == text) {
-                self.val("");
-            }
-        }).blur(function() {
-            var self = $(this);
-            if (self.val() == "") {
-                self.val(text);
-            }
-        }).blur();
-    };
-
-    clearOnFocus($("input[name=startdate]"), "mm/dd/yyyy");
-    clearOnFocus($("input[name=enddate]"), "mm/dd/yyyy");
+	$( "#startdate" ).datepicker({
+		showOtherMonths: true,
+		selectOtherMonths: true
+	});
+	$( "#enddate" ).datepicker({
+		showOtherMonths: true,
+		selectOtherMonths: true
+	});
 });
 </script>
 <h2 class='page-title'>
@@ -134,7 +127,7 @@ $(document).ready(function() {
                 <center><b>Bill Actions, Meetings, Calendars and Transcripts (Optional)</b></center>
         <div class="searchrow">
         <div class="searchlabel">Last Updated between:</div><div class="searchinput">
-        <input type="text" name="startdate" style="width:125px"/> and <input type="text" name="enddate" style="width:125px"/>
+        <input type="text" id="startdate" name="startdate" style="width:125px"/> and <input type="text" id="enddate"  name="enddate" style="width:125px"/>
         </div>
         </div>
         <br style="clear:both;"/><br/>
