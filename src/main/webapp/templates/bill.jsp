@@ -119,7 +119,7 @@
 
 			if( lineLeftWhitespaceLength > 4 ){
 				if (Math.abs(lineRightWhitespaceLength - lineLeftWhitespaceLength) <= 4) {
-					line = "<center>"+start.trim()+"</center>";
+					line = "<div class=\"centered\">"+start.trim()+"</div>";
 				}
 			}
 			

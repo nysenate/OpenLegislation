@@ -699,6 +699,13 @@ add{
 .hidden{
 	display:none;
 }
+.centered{
+	text-align:center;
+}
+.centered add{
+	background:none;
+	color:#333;
+}
 /* .shortline{
 	white-space : pre-wrap;
 	padding:0;
