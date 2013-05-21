@@ -455,6 +455,12 @@ public class Bill extends SenateObject implements Comparable<Bill>
             map.put("pastcommittees", new Field("pastcommittees",pcoms, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
         }
 
+        String billStatus = "";
+        if (!actions.isEmpty()) {
+            billStatus = actions.get(actions.size()-1).getText();
+        }
+        map.put("status", new Field("status", billStatus, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+
         /*
          * the following creates a sortable index so we can sort
          * s1,s2,s3,s11 instead of s1,s11,s2,s3.  senate bills take

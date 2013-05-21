@@ -90,6 +90,7 @@ $(document).ready(function() {
                     <li><b>~</b>: Fuzzy search for the preceding word. Can be used if you are unsure of spelling; e.g. <span class="term">Schenectedy~</span>.
                     <li><b>""</b>: Require an exact match. <span class="term">"student loans"</span> finds documents with the exact phrase "student loans".
                 </ul>
+                If no special words or characters are used OpenLegislation will look for an exact match of the whole value. 
             </div>
         </div>
 
@@ -98,7 +99,7 @@ $(document).ready(function() {
             <select name="type">
                 <option value="">All Types</option>
                 <option value="bill">Bills (Senate &amp; Assembly)</option>
-                <option value="res">Resolutions</option>
+                <option value="resolution">Resolutions</option>
                 <option value="transcript">Floor Transcripts</option>
                 <option value="meeting">Committee Meetings</option>
                 <option value="calendar">Floor &amp; Active Calendars</option>
@@ -134,13 +135,13 @@ $(document).ready(function() {
         <center><b>Bills Only (Optional)</b></center>
 
         <div class="searchrow">
-            <div class="searchlabel">Session is:</div>
+            <div class="searchlabel">Legislative Session Period:</div>
             <div class="searchinput">
                 <select name="session">
                     <option value=""></option>
-                    <option value="2009">2009</option>
-                    <option value="2011">2011</option>
-                    <option value="2013">2013</option>
+                    <option value="2009">2009-2010</option>
+                    <option value="2011">2011-2012</option>
+                    <option value="2013">2013-2014</option>
                 </select>
             </div>
         </div>
@@ -148,26 +149,24 @@ $(document).ready(function() {
             <div class="searchlabel">and Status is:</div>
             <div class="searchinput">
                 <select name="status">
-                   <option value="" >All Status</option>
-                        <option value="Passed" >Passed</option>
-
-                    <option value="Vetoed" >Vetoed</option>
-                        <option value="REFERRED" >Referred</option>
-                        <option value="Reported" >Reported</option>
-                        <option value="Delivered" >Delivered</option>
-                        <option value="Home Rule Request" >Home Rule Request</option>
-                        <option value="1st Report" >1st Report</option>
-                        <option value="2nd Report" >2nd Report</option>
-                        <option value="Third Reading" >Third Reading</option>
-                        <option value="Delivered to Assembly" >Delivered</option>
-                        <option value="Amended" >Amended</option>
-                        <option value="Substituted" >Substituted</option>
-                        <option value="Vote Reconsidered" >Vote Reconsidered</option>
-                        <option value="Tabled" >Tabled</option>
-
-                        <option value="Delivered to Governor" >Delivered to Governor</option>
-                        <option value="Signed" >Signed</option>
-                         <option value="Adopted" >Adopted</option>
+                   <option value="" >Any</option>
+                   <option value="Passed" >Passed</option>
+                   <option value="Vetoed" >Vetoed</option>
+                   <option value="REFERRED" >Referred</option>
+                   <option value="Reported" >Reported</option>
+                   <option value="Delivered" >Delivered</option>
+                   <option value="Home Rule Request" >Home Rule Request</option>
+                   <option value="1st Report" >1st Report</option>
+                   <option value="2nd Report" >2nd Report</option>
+                   <option value="Third Reading" >Third Reading</option>
+                   <option value="Delivered to Assembly" >Delivered</option>
+                   <option value="Amended" >Amended</option>
+                   <option value="Substituted" >Substituted</option>
+                   <option value="Vote Reconsidered" >Vote Reconsidered</option>
+                   <option value="Tabled" >Tabled</option>
+                   <option value="Delivered to Governor" >Delivered to Governor</option>
+                   <option value="Signed" >Signed</option>
+                   <option value="Adopted" >Adopted</option>
                 </select>
             </div>
         </div>

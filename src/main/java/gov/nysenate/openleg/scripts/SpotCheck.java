@@ -66,6 +66,7 @@ public class SpotCheck extends BaseScript {
 
         String prefix = args[1];
         Date date = dateFormat.parse(prefix);
+        logger.info("Processing daybreak files for: "+date);
         File directory = new File(args[0]);
         HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();
         bills.putAll(readDaybreak(new File(directory, prefix+".senate.low.html")));
@@ -77,11 +78,10 @@ public class SpotCheck extends BaseScript {
 
         runner.update("insert ignore into report(date) values(?)", date);
         Report report = runner.query("select * from report where date = ?", new BeanHandler<Report>(Report.class), date);
-        runner.update("delete from error where id = ?", report.getId());
+        runner.update("delete from error where reportId = ?", report.getId());
 
         for(String id : bills.keySet()) {
             String billNo = id+"-2013";
-
             Bill bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
 
             // Compare the titles, ignore white space differences
@@ -212,7 +212,7 @@ public class SpotCheck extends BaseScript {
     }
 
     public void loadPageFile(File dataFile, HashMap<String, SpotCheckBill> bills) throws IOException {
-        List<String> entries = FileUtils.readLines(dataFile);
+        List<String> entries = FileUtils.readLines(dataFile, "latin1");
         entries.remove(0); // Remove the header line
         System.out.println(entries.size());
         for(String entry : entries) {
@@ -239,7 +239,7 @@ public class SpotCheck extends BaseScript {
                     bills.get(asm_id).pages = pages;
                 }
                 else {
-                    logger.error("Unknown bill '"+asm_id+"'");
+                    //logger.error("Unknown bill '"+asm_id+"'");
                     SpotCheckBill bill = new SpotCheckBill();
                     bill.id = asm_id;
                     bill.pages = pages;
@@ -266,13 +266,12 @@ public class SpotCheck extends BaseScript {
         HashMap<String,SpotCheckBill> bills = new HashMap<String,SpotCheckBill>();
 
         // Open the daybreak file and remove new lines for the regular expressions
-        String daybreak = FileUtils.readFileToString(dataFile).replace("\r\n", " ");
+        String daybreak = FileUtils.readFileToString(dataFile, "latin1").replace("\r\n", " ");
 
         Matcher rowMatcher = row.matcher(daybreak);
         rowMatcher.find(); // Throw the first two rows away
         rowMatcher.find(); // They are just headers for the table
         while(rowMatcher.find()) {
-
             // Each table row corresponds to a single bill
             SpotCheckBill bill = new SpotCheckBill();
             String row = rowMatcher.group(1);

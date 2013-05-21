@@ -205,6 +205,7 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
     }
 
     public SenateResponse search(String searchText, String format, int start, int max, String sortField, boolean reverseSort) throws ParseException, IOException {
+        searchText = searchText.replaceAll("otype:resolution", "(otype:bill AND oid:(R* OR E* OR J* OR K* OR L*))");
         String data = "o"+format.toLowerCase()+"";
 
         LuceneResult result = search(searchText,start,max,sortField,reverseSort);

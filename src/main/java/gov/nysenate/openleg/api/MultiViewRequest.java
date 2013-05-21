@@ -120,6 +120,7 @@ public class MultiViewRequest extends AbstractApiRequest {
 
     public enum MultiView implements ApiEnum {
         BILLS		("bills", 		Bill.class, 		new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
+        RESOLUTIONS ("resolutions", Bill.class,   new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
         CALENDARS	("calendars", 	Calendar.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
         MEETINGS	("meetings", 	Meeting.class, 		new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
         TRANSCRIPTS	("transcripts", Transcript.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
