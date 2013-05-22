@@ -116,7 +116,7 @@ Community: <a href="<%=appPath%>/comments">View and respond to recent comments</
  
 <center>
 <div id="footer" style="width:500px;text-align:left;font-size:8pt;line-height:14px">
-<em>You are using Open Legislation v1.8.4, an <a href="<%=appPath%>/license">open-source project</a></em>
+<em>You are using Open Legislation v1.9.0, an <a href="<%=appPath%>/license">open-source project</a></em>
      
 <div style="height:400px;float:left;padding:0px;width:96px;">
 <a rel="license" href="http://www.nysenate.gov/copyright-policy"><img class="cc-logo" alt="Creative Commons License" src="http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png" align='left' /></a>
