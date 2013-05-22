@@ -48,9 +48,14 @@ public class KeyValueViewRequest extends AbstractApiRequest {
         int start = (pageNumber - 1) * pageSize;
 
         try {
-            queryBuilder.keyValue(key, "\""+value+"\"").and().otype("bill").and().current().and().active();
+            queryBuilder.keyValue(key, "\""+value+"\"").and().otype("bill");
 
-            if(filter != null) queryBuilder.and().insertAfter(filter);
+            if(filter != null) {
+                queryBuilder.and().insertAfter(filter);
+            }
+            else {
+                queryBuilder.and().current().and().active();
+            }
         } catch (QueryBuilderException e) {
             logger.error(e);
         }
