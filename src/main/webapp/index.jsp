@@ -98,6 +98,7 @@ Browse Bills:
 <br/>
 View Recent:
 <a href="<%=appPath%>/bills/">Bills</a>,
+<a href="<%=appPath%>/resolutions/" title="View recent senate and assembly resolutions.">Resolutions</a>,
 <a href="<%=appPath%>/calendars/">Calendars</a>,
 <a href="<%=appPath%>/meetings/">Meetings</a>,
 <a href="<%=appPath%>/transcripts/">Transcripts</a>, 
