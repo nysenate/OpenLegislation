@@ -320,6 +320,16 @@ margin:10px;
 color:#888;
 }
 
+#comments{
+float:left;
+}
+.comment_terms{
+padding: 10px;
+border-top:1px solid #ccc;
+background-color:#ffffcc;
+font-weight:bold;
+}
+
 #footer img
 {
 float:left;

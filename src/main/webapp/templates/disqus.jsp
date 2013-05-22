@@ -6,7 +6,7 @@
 
 <% if(disqusUrl != null) { %>
 <div id="comments">
-	<p>
+	<p class="comment_terms">
        Open Legislation comments facilitate discussion of New York State legislation. All comments are subject to moderation.
        Comments deemed off-topic, commercial, campaign-related, self-promotional; or that contain profanity or hate speech;
        or that links to sites outside of the nysenate.gov domain are not permitted, and will not be published. Comment moderation
