@@ -20,10 +20,10 @@ import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
 import gov.nysenate.openleg.util.serialize.JsonSerializer;
 import gov.nysenate.openleg.util.serialize.XmlSerializer;
+import gov.nysenate.util.Config;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -42,57 +41,18 @@ import org.apache.lucene.queryParser.ParseException;
 
 public class SearchEngine extends Lucene implements OpenLegConstants {
 
-    public static void main(String[] args) throws Exception {
-        SearchEngine engine = new SearchEngine();
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-        String line = null;
-        System.out.print("openlegLuceneConsole> ");
-        while (!(line = reader.readLine()).equals("quit"))
-        {
-            if (line.startsWith("optimize"))
-                engine.optimize();
-            else if (line.startsWith("delete"))
-            {
-                StringTokenizer cmd = new StringTokenizer(line.substring(line.indexOf(" ")+1)," ");
-                String type = cmd.nextToken();
-                String ids = (cmd.hasMoreTokens() ? cmd.nextToken() : null);
-
-                if(ids != null) {
-                    String tokens[] = ids.split(",");
-                    for(String id:tokens) {
-                        engine.deleteSenateObjectById(type, id);
-                    }
-                }
-            }
-            else if (line.startsWith("create"))
-                engine.createIndex();
-            else {
-                SenateResponse sr = engine.search(line, "xml", 1, 10, null, false);
-                if(sr != null && !sr.getResults().isEmpty()) {
-                    for(Result r:sr.getResults()) {
-                        System.out.println(r.getOid());
-                    }
-                }
-            }
-
-            System.out.print("openleg search > ");
-        }
-        System.out.println("Exiting Search Engine");
-    }
-
     private static SearchEngine searchEngine = null;
 
     public static synchronized SearchEngine getInstance() {
         if(searchEngine == null) {
-            searchEngine = new SearchEngine();
+            searchEngine = new SearchEngine(Application.getConfig(), "lucene");
         }
         return searchEngine;
     }
 
-    private SearchEngine() {
-        super(Application.getConfig().getValue("data.lucene"));
+    public SearchEngine(Config config, String prefix)
+    {
+        super(new File(config.getValue(prefix+".directory")));
         logger = Logger.getLogger(SearchEngine.class);
     }
 

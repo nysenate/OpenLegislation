@@ -9,6 +9,7 @@ import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.util.serialize.JsonSerializer;
 import gov.nysenate.openleg.util.serialize.XmlSerializer;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -21,7 +22,7 @@ public class Lucene extends ServiceBase {
 
     public Lucene(String indexDir) {
         super();
-        lucene = new gov.nysenate.openleg.lucene.Lucene(indexDir);
+        lucene = new gov.nysenate.openleg.lucene.Lucene(new File(indexDir));
         serializers = new LuceneSerializer[]{ new XmlSerializer(), new JsonSerializer()};
     }
 

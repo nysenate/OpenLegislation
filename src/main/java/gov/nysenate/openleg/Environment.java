@@ -8,6 +8,7 @@ import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.util.Timer;
+import gov.nysenate.util.Config;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,6 +43,15 @@ public class Environment
     public Environment(String directoryPath)
     {
         this(new File(directoryPath));
+    }
+
+    public Environment(Config config, String prefix)
+    {
+        this.directory = new File(config.getValue(prefix+".directory"));
+        this.stagingDirectory = new File(config.getValue(prefix+".data"));
+        this.workingDirectory = new File(config.getValue(prefix+".work"));
+        this.storageDirectory = new File(config.getValue(prefix+".storage"));
+        this.archiveDirectory = new File(config.getValue(prefix+".archive"));
     }
 
     public Environment(File directory)
