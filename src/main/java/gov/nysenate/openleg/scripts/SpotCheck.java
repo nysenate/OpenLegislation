@@ -56,7 +56,7 @@ public class SpotCheck extends BaseScript {
         }
 
         String prefix = args[1];
-        Date date = new SimpleDateFormat("YYYYmmdd").parse(prefix);
+        Date date = new SimpleDateFormat("yyyyMMdd").parse(prefix);
         logger.info("Processing daybreak files for: "+date);
         File directory = new File(args[0]);
         HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();
