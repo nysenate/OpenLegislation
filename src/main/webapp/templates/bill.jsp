@@ -295,7 +295,7 @@
 	 				 				
 	 				 				 		if (bill.getLaw() != null && bill.getLaw() != "") {
 	 			%>
-					 / <b>Law:</b> <%=bill.getLaw()%>
+					 <br/><b>Law:</b> <%=bill.getLaw()%>
 				<%
 					}
 				%>
