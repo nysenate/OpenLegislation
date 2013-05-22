@@ -51,7 +51,7 @@
     <h2><%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Senator Listings</h2>
     <br/>
     <% for(Senator senator : (ArrayList<Senator>)request.getAttribute("senators")) {
-       String searchUrl = request.getContextPath()+"/sponsor/"+senator.getShortName();
+       String searchUrl = request.getContextPath()+"/sponsor/"+senator.getShortName()+"?filter=year:"+request.getAttribute("sessionStart");
        String imageUrl = "http://www.nysenate.gov/files/imagecache/senator_teaser/"+senator.getImageUrl().substring(30);
        %>
         <div class="senator-block">
