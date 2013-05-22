@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -44,7 +45,7 @@ public class SpotCheck extends BaseScript {
 
 
 
-    public void execute(CommandLine opts) throws IOException
+    public void execute(CommandLine opts) throws IOException, ParseException
     {
         String[] args = opts.getArgs();
         Storage storage = new Storage("/data/openleg/lbdc_test/json");
@@ -55,7 +56,7 @@ public class SpotCheck extends BaseScript {
         }
 
         String prefix = args[1];
-        Date date = dateFormat.parse(prefix);
+        Date date = new SimpleDateFormat("YYYYmmdd").parse(prefix);
         logger.info("Processing daybreak files for: "+date);
         File directory = new File(args[0]);
         HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();

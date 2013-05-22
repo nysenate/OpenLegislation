@@ -163,7 +163,7 @@ public class AgendaProcessor implements OpenLegConstants {
         return bill;
     }
 
-    public Agenda handleXMLSenagendavote(Storage storage, XMLSenagendavote xmlAgendaVote, Date date) {
+    public Agenda handleXMLSenagendavote(Storage storage, XMLSenagendavote xmlAgendaVote, Date date) throws IOException {
         // TODO: It doesn't look like we parse any action here. Should we?
 
         // Sometimes these come up blank on bad feeds or something
@@ -221,7 +221,7 @@ public class AgendaProcessor implements OpenLegConstants {
         return agendaVote;
     }
 
-    public Agenda handleXMLSenagenda(Storage storage, XMLSenagenda xmlAgenda, Date date) {
+    public Agenda handleXMLSenagenda(Storage storage, XMLSenagenda xmlAgenda, Date date) throws IOException {
         // Sometimes these come up blank on bad feeds or something
         // TODO: Look into this with better documentation
         if (xmlAgenda.getYear().isEmpty())
@@ -290,7 +290,7 @@ public class AgendaProcessor implements OpenLegConstants {
         return agenda;
     }
 
-    public Addendum parseAddendum(Storage storage, String keyId, XMLAddendum xmlAddendum, Agenda agenda, boolean isVote, Date date) {
+    public Addendum parseAddendum(Storage storage, String keyId, XMLAddendum xmlAddendum, Agenda agenda, boolean isVote, Date date) throws IOException {
         // TODO: Are addendums resent whole each time?
         // TODO: What are addendums?
 
