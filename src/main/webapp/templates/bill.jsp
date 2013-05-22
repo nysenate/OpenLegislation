@@ -416,20 +416,20 @@
 	<% if(billMemo!=null && !billMemo.matches("\\s*")) { %>
 		<h3><%=senateBillNo%> Memo</h3>
 		<pre><%=billMemo%></pre>
-	<% } %>
+	<% }
 
-	<h3><%=senateBillNo%> Text</h3>
-	<%
-		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
- 
-			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
-			billText = removeBillLineNumbers (billText);
-			%>
-<pre>
+	if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
+		String billText = TextFormatter.lrsPrinter(bill.getFulltext());
+		billText = removeBillLineNumbers (billText); %>
+<div style="page-break-after:always"></div>
+<h3><%=senateBillNo%> Text</h3>
+<pre style="font-size:.95em">
 <%=billText %>
 </pre>
+<div style="page-break-after:always"></div>
 		<% } else{ %>
+		    <h3><%=senateBillNo%> Text</h3>
 			Not Available.
-	<% } %>
+	    <% } %>
 	<br/>
 </div>
