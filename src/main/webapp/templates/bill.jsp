@@ -86,50 +86,37 @@
 		input = input.replace("S E N A T E","SENATE");
 		input = input.replace("A S S E M B L Y","ASSEMBLY");
 		
-		StringTokenizer st = new StringTokenizer (input,"\n");
-		String line = null;
 		int breakIdx = -1;
 		
 		String startChar = null;
 		boolean isLineNum = false;
 		
-		while (st.hasMoreTokens()) {
-			line = st.nextToken();
-
-			line = line.replace(" S ","<br/><br/>S ");
-			line = line.replace(" Section ","<br/><br/>Section ");
-			line = line.replace("AN ACT ","<br/><br/>AN ACT ");
-			line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");
-			line = line.replace("_","");
+		for (String line : input.split("\n")) {
 			
-			breakIdx = 6; //line.indexOf(' ');
-
-			if (breakIdx != -1) {
-				startChar = line.substring(0,breakIdx).trim();
-			
-				try {
-					Integer.parseInt(startChar);
-					isLineNum = true;
-				}
-				catch (NumberFormatException nfe) {
-					isLineNum = false;
-				}
+		    if (line.length() > 6) {
+		        if (!line.contains("</div>")) {
+					startChar = line.substring(0,6).trim();
 				
-				if (isLineNum)
-					line = line.substring(breakIdx+1);
-				if (line.endsWith(":"))
-					line = line + "<br/>";
-				
-				resp.append(' ');
+					try {
+						Integer.parseInt(startChar);
+						isLineNum = true;
+					}
+					catch (NumberFormatException nfe) {
+						isLineNum = false;
+					}
 
-				resp.append(line);
-				resp.append("\n");
-			}
-			else {
-				resp.append(' ');
-				resp.append(line);
-				resp.append("<br/>");
-			}
+					if (line.endsWith(":"))
+						line = line + "<br/>";
+
+					resp.append(' ');
+
+					resp.append(line.substring(6));
+		        }
+		        else {
+		            resp.append(line);
+		        }
+		    }
+			resp.append("\n");
 		}
 		
 		String output =  resp.toString();
@@ -438,7 +425,9 @@
 			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
 			billText = removeBillLineNumbers (billText);
 			%>
-				<pre><%=billText %></pre>
+<pre>
+<%=billText %>
+</pre>
 		<% } else{ %>
 			Not Available.
 	<% } %>
