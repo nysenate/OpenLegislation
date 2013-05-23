@@ -39,7 +39,6 @@ public class TextFormatter {
         int linenum = 0;
         for (String line : fulltext.split("\n")) {
             linenum++;
-            String line = st.nextToken();
 
             Pattern pagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s+\\d{1,4}$)");
             Matcher pageMatcher = pagePattern.matcher(line);
