@@ -50,6 +50,7 @@ if (billkey == null)
     	<div id="content-full" class="main-menu">
 			<ul>
 				<li><a href="<%=appPath%>/bills/" title="Browse and search Senate and Assembly bills by number, keyword, sponsor and more">Bills</a>
+				<li><a href="<%=appPath%>/resolutions/" title="View senate and assembly resolutions.">Resolutions</a></li>
 				<li><a href="<%=appPath%>/calendars/" title="View recent and search floor calendars and active lists by number or date (i.e. 1/07/2013)">Calendars</a></li>
 				<li><a href="<%=appPath%>/meetings/" title="View upcoming and recent committee meetings, and search by committee, chairperson, location, date (i.e. 1/07/2013) and more.">Meetings</a></li>
 				<li><a href="<%=appPath%>/transcripts/" title="View and search Senate floor full text transcripts">Transcripts</a></li>
@@ -84,6 +85,7 @@ if (billkey == null)
 				<ul>
 				<li class="head">Open Legislation</li>
 				<li><a href="<%=appPath%>/bills/" title="Browse and search Senate and Assembly bills by number, keyword, sponsor and more">Bills</a></li>
+				<li><a href="<%=appPath%>/resolutions/" title="View senate and assembly resolutions.">Resolutions</a></li>
 				<li><a href="<%=appPath%>/calendars/" title="View recent and search floor calendars and active lists by number or date (i.e. 11/07/2009)">Calendars</a></li>
 				<li><a href="<%=appPath%>/meetings/" title="View upcoming and recent committee meetings, and search by committee, chairperson, location, date (i.e. 11/07/2009) and more.">Meetings</a></li>
 				<li><a href="<%=appPath%>/transcripts/"  title="View and search Senate floor full text transcripts">Transcripts</a></li>
