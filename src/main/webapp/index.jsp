@@ -1,39 +1,22 @@
-<%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="UTF-8"%><%
+<%@ page language="java" import="java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="UTF-8"%>
+<%
 session.setAttribute("term","");
-	session.removeAttribute("mobile");
-	
+session.removeAttribute("mobile");
+
 String appPath = request.getContextPath();
 
-if (appPath.equals("/openleg"))
-{
-	String newUri = request.getRequestURI();
-	newUri = newUri.replace("/openleg","/legislation");
-	response.sendRedirect(newUri);
+// The appPath used to be openleg, to avoid breaking URLs we still host at that context path
+// and redirect to the new correct one (/legislation)
+if (appPath.equals("/openleg")) {
+	response.sendRedirect(request.getRequestURI().replace("/openleg","/legislation"));
 	return;
 }
 
-Bill bill = null;
-String last = null;
-DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
-
-String title = request.getParameter("title");
-
-if (title == null)
-	title = "The New York Senate Open Legislation Service";
-	
-String term = (String)session.getAttribute("term");
-if (term == null)
-	term = "";
-	
-String billkey = request.getParameter("billkey");
-if (billkey == null)
-	billkey = "";
- %>
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
-<title><%=title%></title>
+<title>The New York Senate Open Legislation Service</title>
 <link rel="shortcut icon" href="<%=appPath%>/img/nys_favicon_0.ico" type="image/x-icon" />
 <link rel="stylesheet" type="text/css" media="screen" href="<%=appPath%>/style.css"/> 
 
@@ -69,7 +52,7 @@ if (billkey == null)
 					information from the New York State Senate</h2>
 				</div>
 				<form method="get" action="<%=appPath%>/search/">
-					<input type="text" id="txtSearchBox" style="width:300px" name="search" autocomplete="off" value="<%=term%>">	
+					<input type="text" id="txtSearchBox" style="width:300px" name="search" autocomplete="off">
 					<input type="submit" value="Search"/> 
 					<span style="color:#999;margin:3px;font-size:12px;">
 						<a href="<%=appPath%>/advanced/">Advanced</a>
