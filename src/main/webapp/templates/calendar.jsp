@@ -12,7 +12,7 @@
 	sdf.applyPattern("EEE, MMM d, yyyy");
 %>
 <h2 class='page-title'>
-	Calendar no. ${calendar.getNo()} (<%=calendar.getType()%>) / Year: <%=calendar.getYear()%> / Session: <%=calendar.getSessionYear()%> - <%=calendar.getSessionYear() + 1%>
+	Calendar no. <%=calendar.getNo()%> (<%=calendar.getType()%>) / Year: <%=calendar.getYear()%> / Session: <%=calendar.getSessionYear()%> - <%=calendar.getSessionYear() + 1%>
 </h2>
 <div style="float:right;">
 		<script type="text/javascript"
