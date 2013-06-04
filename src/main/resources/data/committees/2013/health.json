@@ -57,10 +57,6 @@
     "shortName" : "montgomery",
     "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
   }, {
-    "name" : "John L. Sampson",
-    "shortName" : "sampson",
-    "url" : "http://www.nysenate.gov/senator/john-l-sampson"
-  }, {
     "name" : "Ruth Hassell-Thompson",
     "shortName" : "hassell-thompson",
     "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
@@ -76,5 +72,9 @@
     "name" : "Ted O'Brien",
     "shortName" : "o'brien",
     "url" : "http://www.nysenate.gov/senator/ted-obrien"
+  }, {
+    "name" : "Brad Hoylman",
+    "shortName" : "hoylman",
+    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   } ]
 }

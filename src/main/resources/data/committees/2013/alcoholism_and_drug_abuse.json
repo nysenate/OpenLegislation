@@ -21,10 +21,6 @@
     "shortName" : "ritchie",
     "url" : "http://www.nysenate.gov/senator/patty-ritchie"
   }, {
-    "name" : "John L. Sampson",
-    "shortName" : "sampson",
-    "url" : "http://www.nysenate.gov/senator/john-l-sampson"
-  }, {
     "name" : "David Carlucci",
     "shortName" : "carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
@@ -32,5 +28,9 @@
     "name" : "James Sanders Jr.",
     "shortName" : "sanders",
     "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
+  }, {
+    "name" : "Kevin S. Parker",
+    "shortName" : "parker",
+    "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
   } ]
 }
