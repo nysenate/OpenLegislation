@@ -61,12 +61,12 @@
     "shortName" : "hoylman",
     "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
-    "name" : "John L. Sampson",
-    "shortName" : "sampson",
-    "url" : "http://www.nysenate.gov/senator/john-l-sampson"
-  }, {
     "name" : "Ted O'Brien",
     "shortName" : "o'brien",
     "url" : "http://www.nysenate.gov/senator/ted-obrien"
+  }, {
+    "name" : "Liz Krueger",
+    "shortName" : "krueger",
+    "url" : "http://www.nysenate.gov/senator/liz-krueger"
   } ]
 }

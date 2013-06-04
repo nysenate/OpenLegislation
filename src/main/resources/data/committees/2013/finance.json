@@ -149,8 +149,12 @@
     "shortName" : "espaillat",
     "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
   }, {
-    "name" : "John L. Sampson",
-    "shortName" : "sampson",
-    "url" : "http://www.nysenate.gov/senator/john-l-sampson"
+    "name" : "Ruth Hassell-Thompson",
+    "shortName" : "hassell-thompson",
+    "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
+  }, {
+    "name" : "David J. Valesky",
+    "shortName" : "valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   } ]
 }
