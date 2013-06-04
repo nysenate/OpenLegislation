@@ -121,14 +121,23 @@
 				
 		        if (line.endsWith(":"))
 		          line = line + "##END@@";
-
+		        				
 		        if (line.endsWith("-"))
-		          line = line.replaceAll("-$"," ")+"##HYP";
+		        	line = line.replaceAll("-$"," ")+"##HYP";
+		        
+	          	// table check 
+	          	int linelength = line.length();
+	          	int NonText = line.replaceAll("[A-Za-z0-9<?>]", "").length();
+				int NonSpecial = line.replaceAll("[^\\w]", "").length();
 
-		                int linelength = line.length();
-		              if(linelength < 72 ){
-		          line = line + " ##END##";
-		              }
+	            if(linelength < 72 ){
+	          		if(NonText > 20 && ( NonSpecial > 5) ){ 
+		          		line = line + " ##END&&";
+	          		}else{
+		          		line = line + " ##END##";
+	          		}
+	          		
+	            }
 
 		        resp.append(' ');
 		        resp.append(line);
@@ -408,7 +417,7 @@
 				BillHeader = "<div class='billHeader'>" +BillRaw;
 				BillHeader = BillHeader.replaceAll("Introduced[\\d\\D]*","</div>").replaceAll("IN  SENATE[\\d\\D]*","</div>").replaceAll("IN ASSEMBLY[\\d\\D]*","</div>");
 				int HeaderEnd = BillHeader.length();
-				System.out.println(HeaderEnd);
+				//System.out.println(HeaderEnd);
 
  				// Clear out all uneeded breaks 
 				BillHeader = BillHeader.replaceAll("##END## ##END[ ]+","<br/>");				
@@ -425,7 +434,10 @@
 
 			    // remove special breaks
 		        BillBody = BillBody.replaceAll("##END%%","<br/><br/>");
-
+		        BillBody = BillBody.replaceAll("##END&& ##END[ ]+","<br/>");
+		     	// remove hyphenation
+				BillBody = BillBody.replaceAll("[ ]+##HYP[ ]+","");
+		     	
 				// replace line endings within paragraph
 				// billText = billText.replaceAll("([A-Za-z;]) ##END ([A-Za-z])", "$1 $2").replaceAll("##END <br/> <br/>", "");
 				
@@ -437,21 +449,15 @@
 				BillBody = BillBody.replaceAll("##END[ ]+","");
 				BillBody = BillBody.replaceAll("##END@@ ","");
 				
-				//
-				BillBody = BillBody.replaceAll("[ ]+##HYP[ ]+","");
+			
 				
 				
-				// remove hyphenation
-				BillBody = BillBody.replaceAll("[ ]+##HYP[ ]+","");
 				BillBody = BillBody.replaceAll(" ##END","");
+				
 				// remove header block, 
 				HeaderEnd = HeaderEnd-140;
 				BillBody = BillBody.substring(HeaderEnd);
-
-				
-				
-	//	        BillBody = BillBody.replaceAll("([\\d\\D]*\\(PREFILED\\)[ ]+<br/>[ ]+[A-Z][a-z]+ [0-9]+, 20[0-9]+)","<div class='billBody'>");
-
+		
 				// Green added sections
 				Pattern section1Pattern = Pattern.compile("Section\\s+1.");
 				Matcher section1Matcher = section1Pattern.matcher(BillBody);
