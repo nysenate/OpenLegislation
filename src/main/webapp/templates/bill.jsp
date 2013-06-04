@@ -128,11 +128,24 @@
 	          	// table check 
 	          	int linelength = line.length();
 	          	int NonText = line.replaceAll("[A-Za-z0-9<?>]", "").length();
+	          	int TableDash = linelength - line.replaceAll("[-.=_]", "").length();
 				int NonSpecial = line.replaceAll("[^\\w]", "").length();
-
+				int RightAligned = (linelength - NonSpecial) - line.replaceAll("[ ]", "").length();
+	
+				
 	            if(linelength < 72 ){
-	          		if(NonText > 20 && ( NonSpecial > 5) ){ 
-		          		line = line + " ##END&&";
+	            /* 	System.out.println(" ");
+	            	System.out.println(line);
+					System.out.println(linelength);
+					System.out.println("NonText:"+NonText+" TableDash:"+TableDash+" RightAligned:"+RightAligned+" NonSpecial:"+NonSpecial); */
+					 if(RightAligned > 10){
+						System.out.println("Right");
+						System.out.println(" ");
+						line = " **START**" + line + " **END**";
+	          		}else if(NonText > 17 || TableDash > 2 ){
+						System.out.println("Table");
+						System.out.println(" ");
+		          		line = line + " &&END&&";
 	          		}else{
 		          		line = line + " ##END##";
 	          		}
@@ -433,7 +446,11 @@
 			    BillBody = BillRaw.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
 
 			    // remove special breaks
-		        BillBody = BillBody.replaceAll("##END%%","<br/><br/>");
+		       // BillBody = BillBody.replaceAll("##END%%","<br/><br/>");
+			    BillBody = BillBody.replaceAll("&&END&&","<br/> ");
+			    BillBody = BillBody.replaceAll("\\*\\*START\\*\\*","<span class='block'>");
+				 BillBody = BillBody.replaceAll("\\*\\*END\\*\\*","</span><br/> ");
+				 
 		        BillBody = BillBody.replaceAll("##END&& ##END[ ]+","<br/>");
 		     	// remove hyphenation
 				BillBody = BillBody.replaceAll("[ ]+##HYP[ ]+","");
