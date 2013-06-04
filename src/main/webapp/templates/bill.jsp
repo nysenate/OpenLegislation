@@ -403,22 +403,28 @@
 				String BillHeader = "";
 				String BillBody = "";
 				String BillRaw = removeBillLineNumbers(billText);
-				BillHeader = "<div class='billHeader'>" +BillRaw;
-				//BillHeader = BillHeader.replaceAll("Introduced[\\d\\D]*","</div>").replaceAll("IN  SENATE[\\d\\D]*","</div>"); // billText.replace("Introduced.*","</div>").replace("IN  SENATE ","</div>.*");
-				BillHeader = BillHeader.replaceAll("S T A T E   O F   N E W   Y O R K","<span class='state'>STATE OF NEW YORK</span>").replaceAll("STATE OF NEW YORK","<span class='state'>STATE OF NEW YORK</span>");
-
 				
-				// Clear out all uneeded breaks 
-				BillHeader = BillHeader.replaceAll("##END## ##END[ ]+","<br/>");
+				// Begin formatting the header block 
+				BillHeader = "<div class='billHeader'>" +BillRaw;
+				BillHeader = BillHeader.replaceAll("Introduced[\\d\\D]*","</div>").replaceAll("IN  SENATE[\\d\\D]*","</div>").replaceAll("IN ASSEMBLY[\\d\\D]*","</div>");
+				int HeaderEnd = BillHeader.length();
+				System.out.println(HeaderEnd);
+
+ 				// Clear out all uneeded breaks 
+				BillHeader = BillHeader.replaceAll("##END## ##END[ ]+","<br/>");				
+				BillHeader = BillHeader.replaceAll("##END[ ]+","<br/>");
 			    BillHeader = BillHeader.replaceAll("<br/><br/>","<br/>");
+				BillHeader = BillHeader.replaceAll("[ ]{2,}"," ");
+				BillHeader = BillHeader.replaceAll("S T A T E O F N E W Y O R K","<span class='state'>STATE OF NEW YORK</span>").replaceAll("STATE OF NEW YORK","<span class='state'>STATE OF NEW YORK</span>");
+				// End header block 
 			    
-			    
-			    BillBody = BillRaw.replaceAll("[\\d\\D]*(Introduced)","<div class='billBody'>$1").replaceAll("[\\d\\D]*(IN  SENATE)","<div class='billBody'>$1"); // billText.replace("Introduced.*","</div>").replace("IN  SENATE ","</div>.*");
-			    
-			    BillBody = BillBody.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
+				
+				// Begin formatting the body block 
+				// Hide explinations
+			    //BillBody = BillRaw.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
 
 			    // remove special breaks
-		        BillBody = BillBody.replaceAll("##END%%","<br/><br/>");
+		        BillBody = BillRaw.replaceAll("##END%%","<br/><br/>");
 
 				// replace line endings within paragraph
 				// billText = billText.replaceAll("([A-Za-z;]) ##END ([A-Za-z])", "$1 $2").replaceAll("##END <br/> <br/>", "");
@@ -438,7 +444,13 @@
 				// remove hyphenation
 				BillBody = BillBody.replaceAll("[ ]+##HYP[ ]+","");
 				BillBody = BillBody.replaceAll(" ##END","");
-		        BillBody = BillBody.replaceAll("([\\d\\D]*\\(PREFILED\\)[ ]+<br/>[ ]+[A-Z][a-z]+ [0-9]+, 20[0-9]+)","<div class='billBody'>");
+				// remove header block, 
+				HeaderEnd = HeaderEnd-140;
+				BillBody = BillBody.substring(HeaderEnd);
+
+				
+				
+	//	        BillBody = BillBody.replaceAll("([\\d\\D]*\\(PREFILED\\)[ ]+<br/>[ ]+[A-Z][a-z]+ [0-9]+, 20[0-9]+)","<div class='billBody'>");
 
 				// Green added sections
 				Pattern section1Pattern = Pattern.compile("Section\\s+1.");
