@@ -404,7 +404,7 @@
 				String BillBody = "";
 				String BillRaw = removeBillLineNumbers(billText);
 				BillHeader = "<div class='billHeader'>" +BillRaw;
-				BillHeader = BillHeader.replaceAll("Introduced[\\d\\D]*","</div>").replaceAll("IN  SENATE[\\d\\D]*","</div>"); // billText.replace("Introduced.*","</div>").replace("IN  SENATE ","</div>.*");
+				//BillHeader = BillHeader.replaceAll("Introduced[\\d\\D]*","</div>").replaceAll("IN  SENATE[\\d\\D]*","</div>"); // billText.replace("Introduced.*","</div>").replace("IN  SENATE ","</div>.*");
 				BillHeader = BillHeader.replaceAll("S T A T E   O F   N E W   Y O R K","<span class='state'>STATE OF NEW YORK</span>").replaceAll("STATE OF NEW YORK","<span class='state'>STATE OF NEW YORK</span>");
 
 				
@@ -438,7 +438,8 @@
 				// remove hyphenation
 				BillBody = BillBody.replaceAll("[ ]+##HYP[ ]+","");
 				BillBody = BillBody.replaceAll(" ##END","");
-				
+		        BillBody = BillBody.replaceAll("([\\d\\D]*\\(PREFILED\\)[ ]+<br/>[ ]+[A-Z][a-z]+ [0-9]+, 20[0-9]+)","<div class='billBody'>");
+
 				// Green added sections
 				Pattern section1Pattern = Pattern.compile("Section\\s+1.");
 				Matcher section1Matcher = section1Pattern.matcher(BillBody);
@@ -450,9 +451,8 @@
 				else {
 					BillBody = BillBody.replaceAll(addRegex, "<add>$1</add>");
 				}
-				//BillHeader = BillHeader.replaceAll(" ##END ", "").replaceAll("##END", "");
-				billText = BillHeader + BillBody; // +" -  - - "+ billText.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
-
+ 
+				billText = BillHeader + BillBody; 
 			}else{
 				billText = removeBillLineNumbers(billText);
 			}
