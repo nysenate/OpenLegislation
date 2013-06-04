@@ -388,8 +388,8 @@
 		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
 
 			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
-			
-			if ( bill.getSenateBillNo().substring(0,1) == "A" || bill.getSenateBillNo().substring(0,1) == "S"){
+			System.out.println(bill.getSenateBillNo().substring(0,1));
+			if ( bill.getSenateBillNo().startsWith("A") || bill.getSenateBillNo().startsWith("S") ){
 				billText = "<div class='billHeader'>" +removeBillLineNumbers(billText);
 				billText = billText.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
 				billText = billText.replace("Introduced ","</div>Introduced").replace("IN  SENATE ","</div>IN  SENATE");
