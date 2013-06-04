@@ -421,10 +421,10 @@
 				
 				// Begin formatting the body block 
 				// Hide explinations
-			    //BillBody = BillRaw.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
+			    BillBody = BillRaw.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
 
 			    // remove special breaks
-		        BillBody = BillRaw.replaceAll("##END%%","<br/><br/>");
+		        BillBody = BillBody.replaceAll("##END%%","<br/><br/>");
 
 				// replace line endings within paragraph
 				// billText = billText.replaceAll("([A-Za-z;]) ##END ([A-Za-z])", "$1 $2").replaceAll("##END <br/> <br/>", "");
