@@ -199,7 +199,7 @@
 	<div class="title-block">
 		<div class='item-actions'>
 			<ul>
-				<li><a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>" class="hidemobile" target="_new">Print HTML Page</a></li>
+				<li><a href="#" onclick="window.print(); return false;">Print Page</a></li>
 				<li><a href="<%=appPath%>/api/1.0/lrs-print/bill/${bill.senateBillNo}" class="hidemobile" target="_new">Print Original Bill Format</a></li>
 				<li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
 				<li><a href="#comments">Read or Leave Comments</a></li>

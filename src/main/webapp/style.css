@@ -397,6 +397,9 @@ outline:0px;
 .page-title{
 	float:left;
 	padding: 0 0 5px;
+	display:block;
+	width:100%;
+	
 }
 .item-title{
 	float:left;
@@ -692,42 +695,63 @@ color:#333333;
 text-decoration:none;
 }
 
-#quickresult
-{
-width:310px;
-z-index:10;
-border-left:solid 1px #dedede;
-border-right:solid 1px #dedede;
+#quickresult{
+margin: 0 0 0 0px;
+width:400px;
+z-index:11;
 background:#fff;
 color:#777;
 line-height:14px;
 font-size:10pt;
 overflow:hidden;
 visibility:hidden;
+background:none;
+position:absolute;
+
+
+}
+.searchResults{
+	background:url('img/transparent.png');
+	width:96%;
+	padding:10px 2% 10px 2% ;
+	float:left;
+	position:relative;
 }
 
-.quickresult-header
-{
+.quickresult-header{
 position:relative;
 }
-
-#quickresult ul, #quickresult li
-{
+.searchResults li em{
+	width:100%;
+	float:left;
+	background:#dedede;
+    height:18px;
+    color:#000;
+}
+.searchResults li{
 list-style-type:none;
 margin:0px;
-border-bottom:1px solid #ccc;
 border-top:1px solid #ccc;
-
+background:#fff;
 }
+.searchCarrot{
+	float:left;
+	width: 0; 
+	height: 0; 
+	border-left: 7px solid transparent;
+	border-right: 7px solid transparent;
+	
+	border-bottom: 7px solid #8b8a89;
+}
+ 
 
-.quickresult_box
-{
+ 
+.quickresult_box{
 margin-top:0px;
 padding:4px; 
 font-size:12px; 
 }
-.quickresult_box:hover
-{
+#quickresult li.quickresult_box:hover{
 background:#FFFFCC;
 color:#FFFFFF;
 }

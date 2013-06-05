@@ -38,7 +38,7 @@ $(function () {
                         success: function(resulthtml)
                         {
 
-                                $("#quickresult").html(resulthtml);
+                                $("#quickresult").html("<span class='searchCarrot'></span><span class='searchResults'>"+resulthtml+"</span>");
 
                         },
                          error:function (xhr, ajaxOptions, thrownError){
