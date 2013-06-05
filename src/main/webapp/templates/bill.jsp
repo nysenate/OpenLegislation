@@ -433,6 +433,8 @@
 				//System.out.println(HeaderEnd);
 
  				// Clear out all uneeded breaks 
+ 				BillHeader = BillHeader.replaceAll("\\*\\*START\\*\\*","");
+ 				BillHeader = BillHeader.replaceAll("\\*\\*END\\*\\*","");
 				BillHeader = BillHeader.replaceAll("##END## ##END[ ]+","<br/>");				
 				BillHeader = BillHeader.replaceAll("##END[ ]+","<br/>");
 			    BillHeader = BillHeader.replaceAll("<br/><br/>","<br/>");
