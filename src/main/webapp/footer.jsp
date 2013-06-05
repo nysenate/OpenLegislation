@@ -30,7 +30,7 @@
 </div>
 <div id="content" >
 	<div id="footer">
-			<div class="footer-part">
+			<div class="footer-part footer-part-first">
 				<ul>
 				<li class="head">Open Legislation</li>
 				<%if (searchType.startsWith("bill")||searchType.equals("search")||searchType.equals("sponsor")||searchType.equals("committee")){ %>
@@ -48,7 +48,7 @@
 				<li><a href="<%=appPath%>/committees">Browse by Committee</a></li>
 				</ul>
 			</div>
-			<div class="footer-part">
+			<div class="footer-part footer-part-second">
 				<ul>
 					<li class="head">Connect</li>
 					<li><a href="http://billbuzz.nysenate.gov">BillBuzz</a></li>
@@ -57,7 +57,7 @@
 					<li><a href="<%=appPath%>/developers">Developers</a></li>
 				</ul>
 			</div>
-			<div class="footer-part">
+			<div class="footer-part footer-part-third">
 				<ul>
 					<li class="head">NYSenate.gov</li>
 					<li><a href="http://nysenate.gov/senators">Senators</a></li>
@@ -68,7 +68,7 @@
 				</ul>
 			</div>
  
-			<div class="footer-part">
+			<div class="footer-part footer-part-fourth">
 				<p>This content is licensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">Creative Commons BY-NC-ND 3.0</a>. Permissions beyond the scope of this license are available <a cc="http://creativecommons.org/ns#" href="http://www.nysenate.gov/copyright-policy" rel="morePermissions">here</a>.</p>
 	 			<p>The <a href="https://github.com/nysenate/OpenLegislation">software</a> and <a href="http://openlegislation.readthedocs.org/en/latest/">services</a> provided under this site are offered under the BSD License and the GPL v3 License.</p>
 	 		</div>

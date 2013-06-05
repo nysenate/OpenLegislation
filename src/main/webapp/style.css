@@ -318,7 +318,7 @@ float:left;
 	margin:0px;
 	padding:0px;
 	width:134px;
-	height:45px;
+	height:42px;
 	padding-top:3px;
 }
 .searchbox{
@@ -396,10 +396,8 @@ outline:0px;
 }
 .page-title{
 	float:left;
-	padding: 0 0 5px;
-	display:block;
-	width:100%;
-	
+	padding: 10px 0 5px;
+	display:block;	
 }
 .item-title{
 	float:left;
@@ -897,7 +895,7 @@ add{
 	}
 	
 	.page-title{
-		padding: 0 0 10px 10px;
+		padding: 10px 0 10px 10px;
 	
 	}
 	.item-title {
@@ -915,6 +913,8 @@ add{
 	}
 	.formats{
 		display:inherit;
+		padding-top: 16px;
+		
 	}
 	.sortby{
 		float:right;

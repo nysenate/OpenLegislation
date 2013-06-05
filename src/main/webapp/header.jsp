@@ -36,6 +36,8 @@
 		
 		<link rel="shortcut icon" href="<%=appPath%>/img/nys_favicon_0.ico" type="image/x-icon" />
 		<link rel="stylesheet" type="text/css" media="screen" href="<%=appPath%>/style.css"/>
+ 		<link rel="stylesheet" type="text/css" media="print" href="<%=appPath%>/style-print.css"/>
+
 		<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<%=appPath%>/feed" />
 		
 		<script type="text/javascript" src="<%=appPath%>/js/jquery-1.9.1.min.js"></script>
