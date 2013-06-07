@@ -9,10 +9,10 @@ if (term == null)
 %>
 <jsp:include page="header.jsp"/>
 
- <div id="content">
- <h3>Sorry no results were found for that search.</h3>
- <h3>It's possible that this information isn't available yet for the current session.</h3>
-<hr/>
+<h2 class='page-title'>Sorry no results were found for that search.</h2>
+<div class="content-bg">
+  <h3>It's possible that this information isn't available yet for the current session.</h3>
+<br/><br/>
 There are currently five different distinct paths for searching on Open Legislation:
 <br/><br/>
 

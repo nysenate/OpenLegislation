@@ -15,8 +15,8 @@ catch (Exception e)
 <jsp:include page="header.jsp"/>
 
 
- <div id="content">
-<h3>Oops, something went wrong!</h3>
+<h2 class='page-title'>Oops, something went wrong!</h2>
+<div class="content-bg">
 <br/>
 <p>From time to time the Open Legislation system might have a hickup. We apologize for the inconvenience.<br/>
 The best thing to do is reload the page or try your search again. If you would think you've found a serious bug, <a href="http://open.nysenate.gov/legislation/feedback">you may submit it here!</a>.
