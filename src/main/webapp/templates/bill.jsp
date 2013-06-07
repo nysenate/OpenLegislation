@@ -379,10 +379,11 @@
 		}
   	%>
 	<% if(billMemo!=null && !billMemo.matches("\\s*")) { %>
+		<div style="page-break-after:always"></div>
 		<h3 class="section"><%=senateBillNo%> Memo</h3>
 		<pre><%=billMemo%></pre>
 	<% } %>
-
+	<div style="page-break-after:always"></div>
 	<h3 class="section" ><%=senateBillNo%> Text</h3>
 	<%
 		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {

@@ -18,10 +18,12 @@ float: none;
 pre{
 	width: 100%;
 	white-space: pre-wrap;
+	font-size:11px;
+	line-height: 15px;
 }
 
  /* Hide Things */
-.main-menu,.item-actions,.searchbox,.footer-part-third,.footer-part-second,.footer-part-first,.pagination,.sortby,.formats{
+.main-menu,.item-actions,.searchbox,.footer-part-third,.footer-part-second,.footer-part-first,.pagination,.sortby,.formats,#comments{
 	display:none;
 }
 a{
