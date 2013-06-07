@@ -9,15 +9,14 @@ DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 %>
 <jsp:include page="/header.jsp"/>
 
-
- <div id="content">
-
+<h2 class='page-title'>Open Legislation Help.</h2>
+<div class="content-bg">
        
 
-<div style="float:left;width:700px">
+<div style="float:left;width:550px">
 <div id="dsq-recentcomments" class="dsq-widget"><h2 class="dsq-widget-title">Recent Comments</h2><script type="text/javascript" src="http://disqus.com/forums/nysenateopenleg/recent_comments_widget.js?num_items=25&avatar_size=48&excerpt_length=300"></script></div><a href="http://disqus.com">Powered by Disqus</a>
 </div>
-<div style="float:left;width:200px;margin-left:20px;">
+<div style="float:left;width:250px;margin-left:55px;">
 <div id="dsq-popthreads" class="dsq-widget"><h2 class="dsq-widget-title">Popular Threads</h2><script type="text/javascript" src="http://disqus.com/forums/nysenateopenleg/popular_threads_widget.js?num_items=20"></script></div><a href="http://disqus.com">Powered by Disqus</a>
 </div>
 
