@@ -117,53 +117,22 @@
 				}
 				
 				if (isLineNum)
-		          line = line.substring(breakIdx+1);
+					line = line.substring(breakIdx+1);
+				if (line.endsWith(":"))
+					line = line + "<br/>";
 				
-		        if (line.endsWith(":"))
-		          line = line + "##END@@";
-		        				
-		        if (line.endsWith("-"))
-		        	line = line.replaceAll("-$"," ")+"##HYP";
-		        
-	          	// table check 
-	          	int linelength = line.length();
-	          	int NonText = line.replaceAll("[A-Za-z0-9<?>]", "").length();
-	          	int TableDash = linelength - line.replaceAll("[-.=_]", "").length();
-				int NonSpecial = line.replaceAll("[^\\w]", "").length();
-				int RightAligned = (linelength - NonSpecial) - line.replaceAll("[ ]", "").length();
-	
-				
-	            if(linelength < 72 ){
-	            /* 	System.out.println(" ");
-	            	System.out.println(line);
-					System.out.println(linelength);
-					System.out.println("NonText:"+NonText+" TableDash:"+TableDash+" RightAligned:"+RightAligned+" NonSpecial:"+NonSpecial); */
-					 if(RightAligned > 10){
-						System.out.println("Right");
-						System.out.println(" ");
-						line = " **START**" + line + " **END**";
-	          		}else if(NonText > 17 || TableDash > 2 ){
-						System.out.println("Table");
-						System.out.println(" ");
-		          		line = line + " &&END&&";
-	          		}else{
-		          		line = line + " ##END##";
-	          		}
-	          		
-	            }
+				resp.append(' ');
 
-		        resp.append(' ');
 		        resp.append(line);
-		        // Use ##END for absolute check
-		        resp.append(" ##END");
+		        resp.append("\n");
 		      }
 		      else {
 		        resp.append(' ');
 		        resp.append(line);
-		        resp.append("##END");
+		        resp.append("<br/>");
 		      }
 		    }
-
+		    
 		    String output =  resp.toString();
 		    
 		    return output;
@@ -199,10 +168,10 @@
 	<div class="title-block">
 		<div class='item-actions'>
 			<ul>
-				<li><a href="#" onclick="window.print(); return false;">Print Page</a></li>
-				<li><a href="<%=appPath%>/api/1.0/lrs-print/bill/${bill.senateBillNo}" class="hidemobile" target="_new">Print Original Bill Format</a></li>
+				<li><a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>" class="hidemobile" target="_new">Print HTML Page</a></li>
+				<li><a href="${appPath}/api/1.0/lrs-print/bill/${bill.senateBillNo}" class="hidemobile" target="_new">Print Original Bill Format</a></li>
 				<li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
-				<li><a href="#comments">Read or Leave Comments</a></li>
+				<li><a href="#discuss">Read or Leave Comments</a></li>
 			</ul>
 		</div>
 		<h3 class='item-title'>${bill.senateBillNo}: ${bill.title}</h3>
@@ -419,77 +388,12 @@
 		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
 
 			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
-			
+			System.out.println(bill.getSenateBillNo().substring(0,1));
 			if ( bill.getSenateBillNo().startsWith("A") || bill.getSenateBillNo().startsWith("S") ){
-				
-				String BillHeader = "";
-				String BillBody = "";
-				String BillRaw = removeBillLineNumbers(billText);
-				
-				// Begin formatting the header block 
-				BillHeader = "<div class='billHeader'>" +BillRaw;
-				BillHeader = BillHeader.replaceAll("Introduced[\\d\\D]*","</div>").replaceAll("IN  SENATE[\\d\\D]*","</div>").replaceAll("IN ASSEMBLY[\\d\\D]*","</div>");
-				int HeaderEnd = BillHeader.length();
-				//System.out.println(HeaderEnd);
-
- 				// Clear out all uneeded breaks 
- 				BillHeader = BillHeader.replaceAll("\\*\\*START\\*\\*","");
- 				BillHeader = BillHeader.replaceAll("\\*\\*END\\*\\*","");
-				BillHeader = BillHeader.replaceAll("##END## ##END[ ]+","<br/>");				
-				BillHeader = BillHeader.replaceAll("##END[ ]+","<br/>");
-			    BillHeader = BillHeader.replaceAll("<br/><br/>","<br/>");
-				BillHeader = BillHeader.replaceAll("[ ]{2,}"," ");
-				BillHeader = BillHeader.replaceAll("S T A T E O F N E W Y O R K","<span class='state'>STATE OF NEW YORK</span>").replaceAll("STATE OF NEW YORK","<span class='state'>STATE OF NEW YORK</span>");
-				// End header block 
-			    
-				
-				// Begin formatting the body block 
-				// Hide explinations
-			    BillBody = BillRaw.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
-
-			    // remove special breaks
-		       // BillBody = BillBody.replaceAll("##END%%","<br/><br/>");
-			    BillBody = BillBody.replaceAll("&&END&&","<br/> ");
-			    BillBody = BillBody.replaceAll("\\*\\*START\\*\\*","<span class='block'>");
-				 BillBody = BillBody.replaceAll("\\*\\*END\\*\\*","</span><br/> ");
-				 
-		        BillBody = BillBody.replaceAll("##END&& ##END[ ]+","<br/>");
-		     	// remove hyphenation
-				BillBody = BillBody.replaceAll("[ ]+##HYP[ ]+","");
-		     	
-				// replace line endings within paragraph
-				// billText = billText.replaceAll("([A-Za-z;]) ##END ([A-Za-z])", "$1 $2").replaceAll("##END <br/> <br/>", "");
-				
-				// replace newline with brs
-				BillBody = BillBody.replaceAll("##END## ##END ","<br/>");
-				BillBody = BillBody.replaceAll("##END##","<br/>");
-				
-				// remove inline newline tags
-				BillBody = BillBody.replaceAll("##END[ ]+","");
-				BillBody = BillBody.replaceAll("##END@@ ","");
-				
-			
-				
-				
-				BillBody = BillBody.replaceAll(" ##END","");
-				
-				// remove header block, 
-				HeaderEnd = HeaderEnd-140;
-				BillBody = BillBody.substring(HeaderEnd);
-		
-				// Green added sections
-				Pattern section1Pattern = Pattern.compile("Section\\s+1.");
-				Matcher section1Matcher = section1Pattern.matcher(BillBody);
-				String addRegex = "(?s)([A-Z]{2,}([A-Z0-9-.\"\',; \\n])+)";
-				if (section1Matcher.find()) {
-				    int billStartIndex =  section1Matcher.end();
-				    BillBody = BillBody.substring(0, billStartIndex)+BillBody.substring(billStartIndex).replaceAll(addRegex, "<add>$1</add>");
-				}
-				else {
-					BillBody = BillBody.replaceAll(addRegex, "<add>$1</add>");
-				}
- 
-				billText = BillHeader + BillBody; 
+				billText = "<div class='billHeader'>" +removeBillLineNumbers(billText);
+				billText = billText.replace("S T A T E   O F   N E W   Y O R K   ","                                   STATE OF NEW YORK");
+				billText = billText.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
+				billText = billText.replace("Introduced ","</div>Introduced").replace("IN  SENATE ","</div>IN  SENATE");
 			}else{
 				billText = removeBillLineNumbers(billText);
 			}
