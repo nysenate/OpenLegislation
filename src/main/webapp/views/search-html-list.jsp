@@ -6,6 +6,7 @@ SenateResponse sr = (SenateResponse)request.getAttribute("results");
 int resultCount = sr.getResults().size();
 
 int total = (Integer)sr.getMetadataByKey("totalresults");
+String appPath = request.getContextPath();
 
 Iterator<Result> it = sr.getResults().iterator();
 Result r = null;
@@ -13,7 +14,7 @@ Result r = null;
 String term = java.net.URLEncoder.encode((String)request.getAttribute("term"),"UTF-8");
 %>
 <li>
-<em><%=total%> total results... (<a href="http://open.nysenate.gov/legislation/search/?term=<%=term%>">view all</a>)</em>
+<em><%=total%> total results... (<a href="<%=appPath%>/search/?term=<%=term%>">view all</a>)</em>
 </li>
 <%
 String contentType = null;
@@ -48,7 +49,7 @@ while (it.hasNext())
                 }
         
         %>
-        <li class="quickresult_box"><a href="http://open.nysenate.gov/legislation/<%=contentType%>/<%=contentId%>" class="sublink">
+        <li class="quickresult_box"><a href="<%=appPath%>/<%=contentType%>/<%=contentId%>" class="sublink">
 
         <%=r.getOtype().toUpperCase()%>:
         <%if (r.getOtype().equals("bill")){ %>

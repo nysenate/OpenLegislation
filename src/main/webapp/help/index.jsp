@@ -14,10 +14,9 @@ li
 margin-bottom:9px;
 }
 </style>
- <div id="content">
-<p>
-Open Legislation offers a variety of ways to search and browse legislative information.
-</p>
+<h2 class='page-title'>Open Legislation Help.</h2>
+<div class="content-bg">
+<p>Open Legislation offers a variety of ways to search and browse legislative information.</p>
 <h2>Available Content</h2>
 <ul>
 <li>Bills: browse and search Senate and Assembly bills by number, keyword, sponsor and more</li>
