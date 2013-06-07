@@ -9,7 +9,7 @@ DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 %>
 <jsp:include page="/header.jsp"/>
 
-<h2 class='page-title'>Open Legislation Help.</h2>
+<h2 class='page-title'>Open Legislation Recent Comments.</h2>
 <div class="content-bg">
        
 

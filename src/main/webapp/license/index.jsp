@@ -2,10 +2,8 @@
 
 <jsp:include page="/header.jsp"/>
 
-
- <div id="content">
-	
-	
+<h2 class='page-title'>Open Legislation License.</h2>
+<div class="content-bg">	
 
 <h1>Open-Source Software &amp; Software Licenses</h1>
 
