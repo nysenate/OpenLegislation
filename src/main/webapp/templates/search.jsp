@@ -104,9 +104,8 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 <ul>
 <%
 	int totalPages = (total+20-1)/20;
-	System.out.println(totalPages);
 	int currentPage = ((startIdx+20-1)/20)+1;
-	System.out.println(currentPage);
+	
 	int back4 = (currentPage-4);
 	int back3 = (currentPage-3);
 	int back2 = (currentPage-2);
@@ -115,7 +114,39 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 	int forward2 = (currentPage+2);
 	int forward3 = (currentPage+3);
 	int forward4 = (currentPage+4);
-
+	String FirstPageLink = prevUrl = "/legislation/search/" + term + "/1/" + pageSize
+			+ "?sort=" + sortField
+			+ "&sortOrder=" + sortOrder;
+	
+	String totalPagesLink = prevUrl = "/legislation/search/" + term + "/" + (totalPages) + "/" + pageSize
+			+ "?sort=" + sortField
+			+ "&sortOrder=" + sortOrder;
+	
+	String back4Link = prevUrl = "/legislation/search/" + term + "/" + (back4) + "/" + pageSize
+			+ "?sort=" + sortField
+			+ "&sortOrder=" + sortOrder;
+	String back3Link = prevUrl = "/legislation/search/" + term + "/" + (back3) + "/" + pageSize
+			+ "?sort=" + sortField
+			+ "&sortOrder=" + sortOrder;
+	String back2Link = prevUrl = "/legislation/search/" + term + "/" + (back2) + "/" + pageSize
+			+ "?sort=" + sortField
+			+ "&sortOrder=" + sortOrder;
+	String back1Link = prevUrl = "/legislation/search/" + term + "/" + (back1) + "/" + pageSize
+			+ "?sort=" + sortField
+			+ "&sortOrder=" + sortOrder;
+	String forward1Link = prevUrl = "/legislation/search/" + term + "/" + (forward1) + "/" + pageSize
+			+ "?sort=" + sortField
+			+ "&sortOrder=" + sortOrder;
+	String forward2Link = prevUrl = "/legislation/search/" + term + "/" + (forward2) + "/" + pageSize
+			+ "?sort=" + sortField
+			+ "&sortOrder=" + sortOrder;
+	String forward3Link = prevUrl = "/legislation/search/" + term + "/" + (forward3) + "/" + pageSize
+			+ "?sort=" + sortField
+			+ "&sortOrder=" + sortOrder;
+	String forward4Link = prevUrl = "/legislation/search/" + term + "/" + (forward4) + "/" + pageSize
+			+ "?sort=" + sortField
+			+ "&sortOrder=" + sortOrder;
+	
  	System.out.println(totalPages-currentPage);
 		
 	if (prevUrl!=null){%>
@@ -123,42 +154,43 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 	<%}else{%>
 		<li class="disabled"><a>«</a></li>
 	<%}
-	if (currentPage >= totalPages && currentPage > 5){%>
-		<li><a href="1">1</a></li>
+	if ((currentPage >= totalPages || currentPage > 4 ) && totalPages > 4 ){%>
+		<li><a href="<%=FirstPageLink%>">1</a></li>
 		<li><a>...</a></li>
 	<%}
+	
 	if (back4 >= 1 && ((totalPages-currentPage) < 3) ){%>
-		<li><a href="<%=back4%>"><%=back4%></a></li>
+		<li><a href="<%=back4Link%>"><%=back4%></a></li>
 	<%}
 	if (back3 >= 1 && ((totalPages-currentPage) < 2) ){%>
-		<li><a href="<%=back3%>"><%=back3%></a></li>
+		<li><a href="<%=back3Link%>"><%=back3%></a></li>
 	<%}
 	if (back2 >= 1){%>
-		<li><a href="<%=back2%>"><%=back2%></a></li>
+		<li><a href="<%=back2Link%>"><%=back2%></a></li>
 	<%}
 	if (back1 >= 1){%>
-		<li><a href="<%=back1%>"><%=back1%></a></li>
+		<li><a href="<%=back1Link%>"><%=back1%></a></li>
 	<%}
 	 %>
      <li class="active"><a href="<%=currentPage%>"><%=currentPage%></a></li>
      <%
      if (forward1 < totalPages){%>
-		<li><a href="<%=forward1%>"><%=forward1%></a></li>
+		<li><a href="<%=forward1Link%>"><%=forward1%></a></li>
 	<%}
      if (forward2 < totalPages){%>
-		<li><a href="<%=forward2%>"><%=forward2%></a></li>
+		<li><a href="<%=forward2Link%>"><%=forward2%></a></li>
 	<%}
      if (forward3 < totalPages && currentPage < 3 ){%>
-		<li><a href="<%=forward3%>"><%=forward3%></a></li>
+		<li><a href="<%=forward3Link%>"><%=forward3%></a></li>
 	<%}
      if (forward4 < totalPages && currentPage < 2){%>
-		<li><a href="<%=forward4%>"><%=forward4%></a></li>
+		<li><a href="<%=forward4Link%>"><%=forward4%></a></li>
 	<%}
      if (forward3 < totalPages){%>
 		<li><a>...</a></li>
 	<%}
      if (currentPage < totalPages){%>
-		<li><a href="<%=totalPages%>"><%=totalPages%></a></li>
+		<li><a href="<%=totalPagesLink%>"><%=totalPages%></a></li>
 	<%}	
 	if (nextUrl!=null){%>
 		<li><a href="<%=nextUrl%>" title="Next page">»</a></li>
@@ -304,6 +336,7 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 <%
 int totalPages = (total+20-1)/20;
 int currentPage = ((startIdx+20-1)/20)+1;
+
 int back4 = (currentPage-4);
 int back3 = (currentPage-3);
 int back2 = (currentPage-2);
@@ -312,56 +345,89 @@ int forward1 = (currentPage+1);
 int forward2 = (currentPage+2);
 int forward3 = (currentPage+3);
 int forward4 = (currentPage+4);
+String FirstPageLink = prevUrl = "/legislation/search/" + term + "/1/" + pageSize
+		+ "?sort=" + sortField
+		+ "&sortOrder=" + sortOrder;
+
+String totalPagesLink = prevUrl = "/legislation/search/" + term + "/" + (totalPages) + "/" + pageSize
+		+ "?sort=" + sortField
+		+ "&sortOrder=" + sortOrder;
+
+String back4Link = prevUrl = "/legislation/search/" + term + "/" + (back4) + "/" + pageSize
+		+ "?sort=" + sortField
+		+ "&sortOrder=" + sortOrder;
+String back3Link = prevUrl = "/legislation/search/" + term + "/" + (back3) + "/" + pageSize
+		+ "?sort=" + sortField
+		+ "&sortOrder=" + sortOrder;
+String back2Link = prevUrl = "/legislation/search/" + term + "/" + (back2) + "/" + pageSize
+		+ "?sort=" + sortField
+		+ "&sortOrder=" + sortOrder;
+String back1Link = prevUrl = "/legislation/search/" + term + "/" + (back1) + "/" + pageSize
+		+ "?sort=" + sortField
+		+ "&sortOrder=" + sortOrder;
+String forward1Link = prevUrl = "/legislation/search/" + term + "/" + (forward1) + "/" + pageSize
+		+ "?sort=" + sortField
+		+ "&sortOrder=" + sortOrder;
+String forward2Link = prevUrl = "/legislation/search/" + term + "/" + (forward2) + "/" + pageSize
+		+ "?sort=" + sortField
+		+ "&sortOrder=" + sortOrder;
+String forward3Link = prevUrl = "/legislation/search/" + term + "/" + (forward3) + "/" + pageSize
+		+ "?sort=" + sortField
+		+ "&sortOrder=" + sortOrder;
+String forward4Link = prevUrl = "/legislation/search/" + term + "/" + (forward4) + "/" + pageSize
+		+ "?sort=" + sortField
+		+ "&sortOrder=" + sortOrder;
 
 	System.out.println(totalPages-currentPage);
-		
-	if (prevUrl!=null){%>
-		<li><a href="<%=prevUrl%>" title="Previous page">«</a></li>
-	<%}else{%>
-		<li class="disabled"><a>«</a></li>
-	<%}
-	if (currentPage >= totalPages && currentPage > 5){%>
-		<li><a href="1">1</a></li>
-		<li><a>...</a></li>
-	<%}
-	if (back4 >= 1 && ((totalPages-currentPage) < 3) ){%>
-		<li><a href="<%=back4%>"><%=back4%></a></li>
-	<%}
-	if (back3 >= 1 && ((totalPages-currentPage) < 2) ){%>
-		<li><a href="<%=back3%>"><%=back3%></a></li>
-	<%}
-	if (back2 >= 1){%>
-		<li><a href="<%=back2%>"><%=back2%></a></li>
-	<%}
-	if (back1 >= 1){%>
-		<li><a href="<%=back1%>"><%=back1%></a></li>
-	<%}
-	 %>
-     <li class="active"><a href="<%=currentPage%>"><%=currentPage%></a></li>
-     <%
-     if (forward1 < totalPages){%>
-		<li><a href="<%=forward1%>"><%=forward1%></a></li>
-	<%}
-     if (forward2 < totalPages){%>
-		<li><a href="<%=forward2%>"><%=forward2%></a></li>
-	<%}
-     if (forward3 < totalPages && currentPage < 3 ){%>
-		<li><a href="<%=forward3%>"><%=forward3%></a></li>
-	<%}
-     if (forward4 < totalPages && currentPage < 2){%>
-		<li><a href="<%=forward4%>"><%=forward4%></a></li>
-	<%}
-     if (forward3 < totalPages){%>
-		<li><a>...</a></li>
-	<%}
-     if (currentPage < totalPages){%>
-		<li><a href="<%=totalPages%>"><%=totalPages%></a></li>
-	<%}	
-	if (nextUrl!=null){%>
-		<li><a href="<%=nextUrl%>" title="Next page">»</a></li>
-	<%}else{%>
-		<li class="disabled"><a>»</a></li>
-	<%}
+	
+if (prevUrl!=null){%>
+	<li><a href="<%=prevUrl%>" title="Previous page">«</a></li>
+<%}else{%>
+	<li class="disabled"><a>«</a></li>
+<%}
+if ((currentPage >= totalPages || currentPage > 4 ) && totalPages > 4 ){%>
+	<li><a href="<%=FirstPageLink%>">1</a></li>
+	<li><a>...</a></li>
+<%}
+
+if (back4 >= 1 && ((totalPages-currentPage) < 3) ){%>
+	<li><a href="<%=back4Link%>"><%=back4%></a></li>
+<%}
+if (back3 >= 1 && ((totalPages-currentPage) < 2) ){%>
+	<li><a href="<%=back3Link%>"><%=back3%></a></li>
+<%}
+if (back2 >= 1){%>
+	<li><a href="<%=back2Link%>"><%=back2%></a></li>
+<%}
+if (back1 >= 1){%>
+	<li><a href="<%=back1Link%>"><%=back1%></a></li>
+<%}
+ %>
+ <li class="active"><a href="<%=currentPage%>"><%=currentPage%></a></li>
+ <%
+ if (forward1 < totalPages){%>
+	<li><a href="<%=forward1Link%>"><%=forward1%></a></li>
+<%}
+ if (forward2 < totalPages){%>
+	<li><a href="<%=forward2Link%>"><%=forward2%></a></li>
+<%}
+ if (forward3 < totalPages && currentPage < 3 ){%>
+	<li><a href="<%=forward3Link%>"><%=forward3%></a></li>
+<%}
+ if (forward4 < totalPages && currentPage < 2){%>
+	<li><a href="<%=forward4Link%>"><%=forward4%></a></li>
+<%}
+ if (forward3 < totalPages){%>
+	<li><a>...</a></li>
+<%}
+ if (currentPage < totalPages){%>
+	<li><a href="<%=totalPagesLink%>"><%=totalPages%></a></li>
+<%}	
+if (nextUrl!=null){%>
+	<li><a href="<%=nextUrl%>" title="Next page">»</a></li>
+<%}else{%>
+	<li class="disabled"><a>»</a></li>
+<%}
 %>
                 
  	</ul>
