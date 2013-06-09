@@ -16,7 +16,7 @@ import org.apache.commons.io.FileUtils;
 public class RulesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        File rulesFile = new File(Application.getEnvironment().getArchiveDirectory(),"CMS.TXT");
+        File rulesFile = new File(Application.getEnvironment().getStorageDirectory(),"CMS.TEXT");
         String rules = FileUtils.readFileToString(rulesFile);
         request.setAttribute("rules", rules);
         getServletContext().getRequestDispatcher("/views/rules-html.jsp").forward(request, response);
