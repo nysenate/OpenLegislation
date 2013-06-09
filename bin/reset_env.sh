@@ -19,6 +19,7 @@ rm -fr $env/work/*
 rm -fr $env/processed/*
 rm -fr $env/json/*
 rm -fr $env/lucene/*
-rm -f $env/data/*xml
-rm -f $env/data/*log
+rm -f $env/data/*.xml
+rm -f $env/data/*.log
+rm -f $env/data/*.sobi
 
