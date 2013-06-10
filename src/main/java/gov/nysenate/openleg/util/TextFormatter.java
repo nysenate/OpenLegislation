@@ -134,7 +134,7 @@ public class TextFormatter {
             else {
                 // We need to wait till we hit the 10th line to avoid breaking on the bill header
                 if(pageMatcher.find() && linenum > 10) {
-                    out.append("<div  class='hidden' style=\"page-break-after:always\"></div>"+line.substring(6) + "\n");
+                    out.append("<div  class='hidden' style=\"page-break-after:always\">"+line.substring(6) + "</div>\n");
                 }
                 else {
                     out.append(line + "\n");

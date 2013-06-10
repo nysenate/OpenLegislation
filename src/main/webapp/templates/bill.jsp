@@ -395,6 +395,7 @@
 				billText = billText.replace("S T A T E   O F   N E W   Y O R K ","                                   STATE OF NEW YORK");
 				billText = billText.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
 				billText = billText.replace("Introduced ","</div>Introduced").replace("IN  SENATE ","</div>IN  SENATE");
+				billText = billText.replaceAll(" br/>","<br/>");
 			}else{
 				billText = removeBillLineNumbers(billText);
 			}
