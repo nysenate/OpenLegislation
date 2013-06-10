@@ -3,13 +3,16 @@ package gov.nysenate.openleg.util;
 import gov.nysenate.openleg.util.Storage.Status;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 public class ChangeLogger
@@ -25,6 +28,22 @@ public class ChangeLogger
     public static void clearLog()
     {
         ChangeLogger.changeLog.clear();
+    }
+
+    public static void writeToFile(File outFile) throws IOException
+    {
+        StringBuffer out = new StringBuffer();
+        for (Entry<String, Change> entry : changeLog.entrySet()) {
+            Date date = entry.getValue().getDate();
+            out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\t"+dateFormat.format(date).toString()+"\n");
+        }
+        FileUtils.write(outFile,out.toString());
+    }
+
+    public static void readFromFile(File inFile) throws IOException
+    {
+        ChangeLogger.clearLog();
+        changeLog = ChangeLogger.parseChanges(FileUtils.readLines(inFile));
     }
 
     /**
