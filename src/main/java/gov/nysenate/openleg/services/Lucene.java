@@ -5,6 +5,7 @@ import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.util.serialize.JsonSerializer;
 import gov.nysenate.openleg.util.serialize.XmlSerializer;
@@ -27,21 +28,21 @@ public class Lucene extends ServiceBase {
     }
 
     @Override
-    public boolean process(HashMap<String, Storage.Status> changeLog, Storage storage) throws IOException {
+    public boolean process(HashMap<String, Change> changeLog, Storage storage) throws IOException {
         // Verify that an index exists
         lucene.createIndex();
 
         // Get a new writer
         IndexWriter indexWriter = lucene.newIndexWriter();
 
-        for(Entry<String, Storage.Status> entry : changeLog.entrySet()) {
+        for(Entry<String, Change> entry : changeLog.entrySet()) {
             try {
                 logger.debug("Indexing "+entry.getValue()+": "+entry.getKey());
                 String key = entry.getKey();
                 String otype = key.split("/")[1];
                 String oid = key.split("/")[2];
                 logger.debug(otype+", "+oid);
-                if( entry.getValue() == Storage.Status.DELETED ) {
+                if (entry.getValue().getStatus() == Storage.Status.DELETED) {
                     if(otype.equals("bill")) {
                         lucene.deleteDocumentsByQuery("otype:action AND billno:" + oid, indexWriter);
                         lucene.deleteDocumentsByQuery("otype:vote AND billno:" + oid, indexWriter);;

@@ -25,17 +25,19 @@ public class ChangeLogger
         ChangeLogger.changeLog.clear();
     }
 
-    public static HashMap<String, Storage.Status> parseChanges(Iterable<String> lines)
+
+
+    public static HashMap<String, Change> parseChanges(Iterable<String> lines)
     {
         Pattern changePattern = Pattern.compile("\\s*(.*?)\\s+(NEW|DELETED|MODIFIED)");
-        HashMap<String, Storage.Status> changes = new HashMap<String, Storage.Status>();
+        HashMap<String, Change> changes = new HashMap<String, Change>();
         for (String line : lines) {
             if (line.isEmpty() || line.matches("\\s*#")) {
                 continue;
             }
             Matcher changeLine = changePattern.matcher(line);
             if (changeLine.find()) {
-                changes.put(changeLine.group(1), Storage.Status.valueOf(changeLine.group(2).toUpperCase()));
+                changes.put(changeLine.group(1), new Change(Storage.Status.valueOf(changeLine.group(2).toUpperCase())));
             } else {
                 logger.fatal("Malformed change line: "+line);
                 System.exit(0);

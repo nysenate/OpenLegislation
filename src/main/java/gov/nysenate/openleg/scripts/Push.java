@@ -4,6 +4,7 @@ import gov.nysenate.openleg.services.Lucene;
 import gov.nysenate.openleg.services.ServiceBase;
 import gov.nysenate.openleg.services.UpdateReporter;
 import gov.nysenate.openleg.services.Varnish;
+import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.Storage;
 
@@ -49,7 +50,7 @@ public class Push extends BaseScript
         }
 
         // Parse the specified changes into a hash
-        HashMap<String, Storage.Status> changes = null;
+        HashMap<String, Change> changes = null;
         Iterable<String> changeFileLines = null;
         if (opts.hasOption("change-file")) {
             try {
@@ -59,9 +60,9 @@ public class Push extends BaseScript
                 System.err.println("Error reading change-file: "+opts.getOptionValue("changes"));
                 System.exit(1);
             }
-            changes = ChangeLogger.parseChanges(changeFileLines);
+            changes = ChangeLogger.parseChangesDetailed(changeFileLines);
         } else if (opts.hasOption("changes")) {
-            changes = ChangeLogger.parseChanges(Arrays.asList(opts.getOptionValue("changes").split("\n")));
+            changes = ChangeLogger.parseChangesDetailed(Arrays.asList(opts.getOptionValue("changes").split("\n")));
         } else {
             System.err.println("Changes to push must be specified with either --change-file or --changes");
             System.exit(1);
@@ -78,7 +79,7 @@ public class Push extends BaseScript
         }
 
         if(opts.hasOption("updateReporter")) {
-            UpdateReporter.process(ChangeLogger.parseChangesDetailed(changeFileLines));
+            services.add(new UpdateReporter());
         }
 
         // Pass the change log through a set of service hooks

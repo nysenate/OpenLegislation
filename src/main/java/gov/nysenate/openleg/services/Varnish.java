@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.services;
 
+import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.IOException;
@@ -26,8 +27,8 @@ public class Varnish extends ServiceBase {
     }
 
     @Override
-    public boolean process(HashMap<String, Storage.Status> changeLog, Storage storage) throws IOException {
-        for(Entry<String, Storage.Status> entry : changeLog.entrySet()) {
+    public boolean process(HashMap<String, Change> changeLog, Storage storage) throws IOException {
+        for(Entry<String, Change> entry : changeLog.entrySet()) {
             // Key format is YEAR/OTYPE/OID
             String key = entry.getKey();
             String otype = key.split("/")[1];

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.services;
 import gov.nysenate.openleg.model.Update;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Change;
+import gov.nysenate.openleg.util.Storage;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -17,9 +18,9 @@ import org.apache.tomcat.jdbc.pool.DataSource;
 /*
  * Parses changes from a changeLog file and saves to MySQL database.
  */
-public class UpdateReporter
+public class UpdateReporter extends ServiceBase
 {
-    public static void process(HashMap<String, Change> changeLog)
+    public boolean process(HashMap<String, Change> changeLog, Storage storage)
     {
         ArrayList<Update> updates = new ArrayList<Update>();
         SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -41,6 +42,7 @@ public class UpdateReporter
             updates.add(update);
         }
         insertUpdates(updates);
+        return true;
     }
 
     private static void insertUpdates(List<Update> updates)

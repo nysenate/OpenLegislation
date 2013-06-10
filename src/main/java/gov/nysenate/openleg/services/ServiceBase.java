@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Transcript;
+import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.IOException;
@@ -27,6 +28,6 @@ public abstract class ServiceBase {
         classMap.put("transcript", Transcript.class);
     }
 
-    public abstract boolean process(HashMap<String, Storage.Status> changeLog, Storage storage) throws IOException;
+    public abstract boolean process(HashMap<String, Change> changeLog, Storage storage) throws IOException;
 
 }
