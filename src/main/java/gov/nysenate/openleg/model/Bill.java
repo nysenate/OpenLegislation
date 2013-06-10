@@ -473,6 +473,7 @@ public class Bill extends SenateObject implements Comparable<Bill>
             billStatus = actions.get(actions.size()-1).getText();
         }
         map.put("status", new Field("status", billStatus, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        map.put("when", new Field("when", String.valueOf(this.getModified()), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 
         /*
          * the following creates a sortable index so we can sort
