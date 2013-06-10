@@ -27,6 +27,7 @@ public class Application
     protected Mailer mailer;
     protected Environment environment;
     protected SearchEngine searchEngine;
+    protected Storage storage;
     protected DB db;
 
     /**
@@ -47,6 +48,7 @@ public class Application
             appInstance.mailer = new Mailer(appInstance.config, "mailer");
             appInstance.environment = new Environment(appInstance.config, "env");
             appInstance.searchEngine = new SearchEngine(appInstance.config, "lucene");
+            appInstance.storage = new Storage(appInstance.environment.getStorageDirectory());
             return true;
         }
         catch (ConfigurationException ce)
@@ -81,5 +83,9 @@ public class Application
 
     public static Environment getEnvironment() {
         return appInstance.environment;
+    }
+
+    public static Storage getStorage() {
+        return appInstance.storage;
     }
 }
