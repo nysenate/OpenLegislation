@@ -17,68 +17,42 @@ public class ChangeLogger
     private static final Logger logger = Logger.getLogger(ChangeLogger.class);
     private static HashMap<String, Change> changeLog = new HashMap<String, Change>();
 
+    public static SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     private static File sourceFile;
     private static Date datetime;
 
-    public void clearLog()
+    public static void clearLog()
     {
         ChangeLogger.changeLog.clear();
     }
 
-
-
-    public static HashMap<String, Change> parseChanges(Iterable<String> lines)
-    {
-        Pattern changePattern = Pattern.compile("\\s*(.*?)\\s+(NEW|DELETED|MODIFIED)");
-        HashMap<String, Change> changes = new HashMap<String, Change>();
-        for (String line : lines) {
-            if (line.isEmpty() || line.matches("\\s*#")) {
-                continue;
-            }
-            Matcher changeLine = changePattern.matcher(line);
-            if (changeLine.find()) {
-                changes.put(changeLine.group(1), new Change(Storage.Status.valueOf(changeLine.group(2).toUpperCase())));
-            } else {
-                logger.fatal("Malformed change line: "+line);
-                System.exit(0);
-            }
-        }
-        return changes;
-    }
-
     /**
      * Creates a hash map of changes from a change log file.
-     * Stores more detailed information than the parseChanges method.
-     * Currently adds date information, more to come.
-     * <p>
-     * This is done separate from the parseChanges method since the main services, varnish and lucene, don't
-     * need this extra data and would require changes to their interfaces.
+     *
      * @param lines
      * @return
      */
-    public static HashMap<String, Change> parseChangesDetailed(Iterable<String> lines)
+    public static HashMap<String, Change> parseChanges(Iterable<String> lines)
     {
-        // TODO: errors when no date information in change log.
         Pattern changePattern = Pattern.compile("\\s*(.*?)\\s+(NEW|DELETED|MODIFIED)\\s+(.*)");
         HashMap<String, Change> changes = new HashMap<String, Change>();
-        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (String line : lines) {
-            if (line.isEmpty() || line.matches("\\s*#")) {
-                continue;
-            }
-            Matcher changeLine = changePattern.matcher(line);
-            if (changeLine.find()) {
-                Date date = null;
-                try {
-                    date = sdf.parse(changeLine.group(3));
+            if (!line.isEmpty() && !line.matches("\\s*#")) {
+                Matcher changeLine = changePattern.matcher(line);
+                if (changeLine.find()) {
+                    try {
+                        Date date = dateFormat.parse(changeLine.group(3));
+                        changes.put(changeLine.group(1), new Change(Storage.Status.valueOf(changeLine.group(2).toUpperCase()), date));
+                    }
+                    catch (ParseException e) {
+                        logger.error("Invalid date format for changeLog line:"+line,e);
+                    }
                 }
-                catch (ParseException e) {
-                    e.printStackTrace();
+                else {
+                    logger.fatal("Malformed change line: "+line);
+                    System.exit(0);
                 }
-                changes.put(changeLine.group(1), new Change(Storage.Status.valueOf(changeLine.group(2).toUpperCase()), date));
-            } else {
-                logger.fatal("Malformed change line: "+line);
-                System.exit(0);
             }
         }
         return changes;

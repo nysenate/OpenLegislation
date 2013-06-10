@@ -16,7 +16,6 @@ import java.util.HashMap;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 public class Push extends BaseScript
@@ -51,18 +50,17 @@ public class Push extends BaseScript
 
         // Parse the specified changes into a hash
         HashMap<String, Change> changes = null;
-        Iterable<String> changeFileLines = null;
         if (opts.hasOption("change-file")) {
             try {
                 File changeFile = new File(opts.getOptionValue("change-file"));
-                changeFileLines = FileUtils.readLines(changeFile, "UTF-8");
+                ChangeLogger.readFromFile(changeFile);
+                changes = ChangeLogger.getChangeLog();
             } catch (IOException e) {
                 System.err.println("Error reading change-file: "+opts.getOptionValue("changes"));
                 System.exit(1);
             }
-            changes = ChangeLogger.parseChangesDetailed(changeFileLines);
         } else if (opts.hasOption("changes")) {
-            changes = ChangeLogger.parseChangesDetailed(Arrays.asList(opts.getOptionValue("changes").split("\n")));
+            changes = ChangeLogger.parseChanges(Arrays.asList(opts.getOptionValue("changes").split("\n")));
         } else {
             System.err.println("Changes to push must be specified with either --change-file or --changes");
             System.exit(1);
