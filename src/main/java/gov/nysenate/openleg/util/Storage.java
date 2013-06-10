@@ -32,7 +32,7 @@ import org.codehaus.jackson.util.DefaultPrettyPrinter;
 
 public class Storage {
 
-    private final File storage;
+    private final File storageDir;
     private final Logger logger;
     private final JsonFactory jsonFactory;
     private final ObjectMapper objectMapper;
@@ -58,7 +58,7 @@ public class Storage {
     }
 
     public Storage(File storageDir, Boolean autoFlush) {
-        this.storage = storageDir;
+        this.storageDir = storageDir;
         this.logger  = Logger.getLogger(this.getClass());
         this.memory  = new HashMap<String, Object>();
         this.dirty   = new HashSet<String>();
@@ -80,7 +80,7 @@ public class Storage {
 
     public Object restore(String key, Class<?> cls) {
         try {
-            File file = new File(new File(storage, "unpublished"), key+".json");
+            File file = new File(new File(storageDir, "unpublished"), key+".json");
             if (file.exists()) {
                 Object value;
                 logger.info("Unpublishing: "+file.getPath());
@@ -141,7 +141,7 @@ public class Storage {
 
         // Instead, move to storage/unpublished
         if (flushKey(key)) {
-            FileUtils.moveFileToDirectory(storageFile(key), new File(storage, "unpublished"), true);
+            FileUtils.moveFileToDirectory(storageFile(key), new File(storageDir, "unpublished"), true);
         }
         memory.remove(key);
         dirty.remove(key);
@@ -186,7 +186,7 @@ public class Storage {
     }
 
     public File storageFile(String key) {
-        return new File(storage, key+".json");
+        return new File(storageDir, key+".json");
     }
 
     /*
@@ -466,9 +466,13 @@ public class Storage {
         }
         node.put("votes", votes);
 
-        File file = new File(storage, bill.getYear()+"/bill/"+bill.getSenateBillNo()+".json");
+        File file = new File(storageDir, bill.getYear()+"/bill/"+bill.getSenateBillNo()+".json");
         JsonGenerator generator = this.jsonFactory.createJsonGenerator(file, JsonEncoding.UTF8);
         generator.writeTree(node);
         generator.close();
+    }
+
+    public File getStorageDir() {
+        return storageDir;
     }
 }
