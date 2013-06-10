@@ -46,9 +46,7 @@ public class CalendarProcessor implements OpenLegConstants {
     }
 
     public void process(File file, Storage storage) throws IOException, JAXBException {
-        // TODO: Definitely needs some revisiting. What can be removed, when/how?
-        String packageName = "gov.nysenate.openleg.xml.calendar";
-        JAXBContext jc = JAXBContext.newInstance( packageName );
+        JAXBContext jc = JAXBContext.newInstance("gov.nysenate.openleg.xml.calendar");
         Unmarshaller u = jc.createUnmarshaller();
         XMLSENATEDATA senateData = (XMLSENATEDATA)u.unmarshal( new FileReader(file) );
 
