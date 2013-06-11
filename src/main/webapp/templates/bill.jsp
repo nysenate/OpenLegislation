@@ -82,66 +82,53 @@
 	}
 
 	public String removeBillLineNumbers (String input) {
-		StringBuffer resp = new StringBuffer();
-		
-		input = input.replace("S E N A T E","SENATE");
-		input = input.replace("A S S E M B L Y","ASSEMBLY");
-		
-		StringTokenizer st = new StringTokenizer (input,"\n");
-		String line = null;
-		int breakIdx = -1;
-		
-		String startChar = null;
-		boolean isLineNum = false;
-		
-		while (st.hasMoreTokens()) {
-			line = st.nextToken();
+        StringBuffer resp = new StringBuffer();
 
-			line = line.replace(" S ","<br/><br/>S ");
-			line = line.replace(" Section ","<br/><br/>Section ");
-			line = line.replace("AN ACT ","<br/><br/>AN ACT ");
-			line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");
-			line = line.replace("_","");
-			
-			breakIdx = 6; //line.indexOf(' ');
+        input = input.replace("S E N A T E","SENATE");
+        input = input.replace("A S S E M B L Y","ASSEMBLY");
 
-			if (breakIdx != -1) {
-				startChar = line.substring(0,breakIdx).trim();
-			
-				try {
-					Integer.parseInt(startChar);
-					isLineNum = true;
-				}
-				catch (NumberFormatException nfe) {
-					isLineNum = false;
-				}
-				
-				if (isLineNum)
-					line = line.substring(breakIdx+1);
-				if (line.endsWith(":"))
-					line = line + "<br/>";
-				
-				resp.append(' ');
+        StringTokenizer st = new StringTokenizer (input,"\n");
+        String line = null;
+        int breakIdx = -1;
 
-		        resp.append(line);
-		        resp.append("\n");
-		      }
-		      else {
-		        resp.append(' ');
-		        resp.append(line);
-		        resp.append("<br/>");
-		      }
-		    }
-		    
-		    String output =  resp.toString();
-		    
-		    return output;
-	}%>
+        String startChar = null;
+        boolean isLineNum = false;
+
+        while (st.hasMoreTokens()) {
+            line = st.nextToken();
+
+            line = line.replace(" S ","<br/><br/>S ");
+            line = line.replace(" Section ","<br/><br/>Section ");
+            line = line.replace("AN ACT ","<br/><br/>AN ACT ");
+            line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");
+            line = line.replace("_","");
+
+            startChar = line.substring(0,6).trim();
+
+            try {
+                Integer.parseInt(startChar);
+                isLineNum = true;
+            }
+            catch (NumberFormatException nfe) {
+                isLineNum = false;
+            }
+
+            if (isLineNum)
+                line = line.substring(7);
+            if (line.endsWith(":"))
+                line = line + "<br/>";
+
+            resp.append(' ').append(line).append("\n");
+        }
+
+        String output =  resp.toString();
+        return output;
+    }%>
 	<%
 	String appPath = request.getContextPath();
 
 	Bill bill = (Bill)request.getAttribute("bill");
-	
+
 	ArrayList<Bill> rBills			= defaultList((ArrayList<Bill>)request.getAttribute("related-bill"));
 	ArrayList<Action> rActions	= defaultList((ArrayList<Action>)request.getAttribute("related-action"));
 	ArrayList<Meeting> rMeetings	= defaultList((ArrayList<Meeting>)request.getAttribute("related-meeting"));
