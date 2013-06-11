@@ -89,7 +89,6 @@
 
         StringTokenizer st = new StringTokenizer (input,"\n");
         String line = null;
-        int breakIdx = -1;
 
         String startChar = null;
         boolean isLineNum = false;
@@ -385,7 +384,7 @@
 			    if (!bill.isResolution()) {
 			        billText = removeBillLineNumbers(billText);
 			    }
-				billText = "<div class='billHeader'>" +removeBillLineNumbers(billText);
+				billText = "<div class='billHeader'>" +billText;
 				billText = billText.replace("S T A T E   O F   N E W   Y O R K","                                   STATE OF NEW YORK");
 				billText = billText.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
 				billText = billText.replace("Introduced ","</div>Introduced").replace("IN  SENATE ","</div>IN  SENATE");
