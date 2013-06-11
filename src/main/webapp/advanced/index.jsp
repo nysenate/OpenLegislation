@@ -192,15 +192,6 @@ $(document).ready(function() {
 
         <br style="clear:both;"/><br/>
 
-        <center><b>Meetings / Session Transcripts</b></center>
-
-        <div class="searchrow">
-        <div class="searchlabel">Physical Location was:</div><div class="searchinput"><input type="text" name="location" value=""/></div>
-        </div>
-
-
-        <br style="clear:both;"/><br/>
-
         <center><input type="submit" value="Advanced Search"/></center>
             <br style="clear:both;"/><br/>
 
