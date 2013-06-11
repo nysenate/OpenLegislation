@@ -391,6 +391,9 @@
 			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
 			System.out.println(bill.getSenateBillNo().substring(0,1));
 			if ( bill.getSenateBillNo().startsWith("A") || bill.getSenateBillNo().startsWith("S") ){
+			    if (!bill.isResolution()) {
+			        billText = removeBillLineNumbers(billText);
+			    }
 				billText = "<div class='billHeader'>" +removeBillLineNumbers(billText);
 				billText = billText.replace("S T A T E   O F   N E W   Y O R K ","                                   STATE OF NEW YORK");
 				billText = billText.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
