@@ -159,12 +159,13 @@ $(document).ready(function() {
                    <option value="1st Report" >1st Report</option>
                    <option value="2nd Report" >2nd Report</option>
                    <option value="Third Reading" >Third Reading</option>
-                   <option value="Delivered to Assembly" >Delivered</option>
+                   <option value="Delivered to Senate" >Delivered to Senate</option>
+                   <option value="Delivered to Assembly" >Delivered to Assembly</option>
+                   <option value="Delivered to Governor" >Delivered to Governor</option>
                    <option value="Amended" >Amended</option>
                    <option value="Substituted" >Substituted</option>
                    <option value="Vote Reconsidered" >Vote Reconsidered</option>
                    <option value="Tabled" >Tabled</option>
-                   <option value="Delivered to Governor" >Delivered to Governor</option>
                    <option value="Signed" >Signed</option>
                    <option value="Adopted" >Adopted</option>
                 </select>
