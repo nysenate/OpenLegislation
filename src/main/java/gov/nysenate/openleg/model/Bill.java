@@ -108,6 +108,10 @@ public class Bill extends SenateObject implements Comparable<Bill>
         this.year = year;
     }
 
+    @JsonIgnore
+    public boolean isResolution() {
+        return senateBillNo.charAt(0)!='A' && senateBillNo.charAt(0)!='S';
+    }
 
     public boolean isActive() {
         return active;
