@@ -36,7 +36,8 @@ import org.apache.log4j.Logger;
  */
 public class DataProcessor
 {
-    public static String encoding = "UTF-8";
+    public static String encoding = "CP850";
+
     Logger logger = Logger.getLogger(DataProcessor.class);
 
     public Collection<File> safeListFiles(File directory, String[] extensions, boolean recursive) throws IOException {
@@ -81,7 +82,7 @@ public class DataProcessor
             String line = null;
             int fileCounter = 1;
             StringBuffer billBuffer = new StringBuffer();
-            BufferedReader br = new BufferedReader(new StringReader(FileUtils.readFileToString(sobiFile, "UTF-8")));
+            BufferedReader br = new BufferedReader(new StringReader(FileUtils.readFileToString(sobiFile, encoding)));
 
             while((line = br.readLine()) != null) {
                 if(line.matches("<sencalendar.+")) {

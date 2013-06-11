@@ -522,9 +522,7 @@ public class BillProcessor
     public void applyTitle(String data, Bill bill, Date date) throws ParseError
     {
         // No DELETE code for titles, they just get replaced
-        // Combine the lines with a space and handle special character issues..
-        // I don't have any examples of these special characters right now, here is some legacy code:
-        //      data = data.replace("","S").replaceAll("\\x27(\\W|\\s)", "&apos;$1");
+        // Combine the lines with a space
         bill.setTitle(data.replace("\n", " ").trim());
     }
 
@@ -648,9 +646,7 @@ public class BillProcessor
             bill.setSummary("");
 
         } else {
-            // We'll definitely need to clean this data up more than a little bit, these encoding issues are terrible!
-            // data = data.replaceAll("\\xBD", ""); // I don't think we still need this
-            bill.setLaw(data.replace("\n", " ").replace("õ", "S").replace("ô","P").replace("ï¿½","S").replace((char)65533+"", "S").trim());
+            bill.setLaw(data.replace("\n", " ").trim());
         }
     }
 
@@ -667,8 +663,6 @@ public class BillProcessor
      */
     public void applySummary(String data, Bill bill, Date date) throws ParseError
     {
-        // I don't have any examples of these special characters right now, here is some legacy code:
-        //      data = data.replace("","S").replaceAll("\\x27(\\W|\\s)", "&apos;$1");
         bill.setSummary(data.replace("\n", " ").trim());
     }
 
