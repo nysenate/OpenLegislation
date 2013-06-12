@@ -105,7 +105,7 @@ public class ProcessData extends BaseScript
                         System.err.println("Unable to push with an empty change log.");
                     }
                 }
-                process.push(Application.getStorage(), ChangeLogger.getChangeLog(), services);
+                process.push(Application.getStorage(), ChangeLogger.getEntries(), services);
             }
             else if (task.equalsIgnoreCase("archive")) {
                 process.archive(env.getWorkingDirectory(), env.getArchiveDirectory());

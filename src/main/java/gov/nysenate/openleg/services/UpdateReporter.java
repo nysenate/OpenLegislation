@@ -8,7 +8,6 @@ import gov.nysenate.openleg.util.Storage;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -20,12 +19,12 @@ import org.apache.tomcat.jdbc.pool.DataSource;
  */
 public class UpdateReporter extends ServiceBase
 {
-    public boolean process(HashMap<String, Change> changeLog, Storage storage)
+    public boolean process(List<Entry<String, Change>> entries, Storage storage)
     {
         ArrayList<Update> updates = new ArrayList<Update>();
         SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         // Parse all changes in log file.
-        for(Entry<String, Change> changeEntry: changeLog.entrySet())
+        for(Entry<String, Change> changeEntry: entries)
         {
             String key = changeEntry.getKey();
             String otype = key.split("/")[1];

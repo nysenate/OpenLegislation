@@ -12,7 +12,7 @@ import gov.nysenate.openleg.util.serialize.XmlSerializer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.lucene.index.IndexWriter;
@@ -28,14 +28,14 @@ public class Lucene extends ServiceBase {
     }
 
     @Override
-    public boolean process(HashMap<String, Change> changeLog, Storage storage) throws IOException {
+    public boolean process(List<Entry<String, Change>> entries, Storage storage) throws IOException {
         // Verify that an index exists
         lucene.createIndex();
 
         // Get a new writer
         IndexWriter indexWriter = lucene.newIndexWriter();
 
-        for(Entry<String, Change> entry : changeLog.entrySet()) {
+        for(Entry<String, Change> entry : entries) {
             try {
                 logger.debug("Indexing "+entry.getValue()+": "+entry.getKey());
                 String key = entry.getKey();
@@ -111,7 +111,7 @@ public class Lucene extends ServiceBase {
 
         indexWriter.commit();
 
-        logger.info("done indexing objects(" + changeLog.size() + "). Closing index.");
+        logger.info("done indexing objects(" + entries.size() + "). Closing index.");
         indexWriter.close();
         return true;
     }

@@ -6,8 +6,12 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,10 +34,23 @@ public class ChangeLogger
         ChangeLogger.changeLog.clear();
     }
 
+    public static List<Entry<String, Change>> getEntries()
+    {
+        // Use alphabetical ordering for consistency
+        List<Entry<String, Change>> entries = new ArrayList<Entry<String, Change>>(changeLog.entrySet());
+        Collections.sort(entries, new Comparator<Entry<String, Change>>() {
+            public int compare(Entry<String, Change> a, Entry<String, Change> b)
+            {
+                return a.getKey().compareTo(b.getKey());
+            }
+        });
+        return entries;
+    }
+
     public static void writeToFile(File outFile) throws IOException
     {
         StringBuffer out = new StringBuffer();
-        for (Entry<String, Change> entry : changeLog.entrySet()) {
+        for (Entry<String, Change> entry : ChangeLogger.getEntries()) {
             Date date = entry.getValue().getDate();
             out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\t"+dateFormat.format(date).toString()+"\n");
         }
@@ -42,27 +59,21 @@ public class ChangeLogger
 
     public static void readFromFile(File inFile) throws IOException
     {
-        ChangeLogger.clearLog();
-        changeLog = ChangeLogger.parseChanges(FileUtils.readLines(inFile));
+        ChangeLogger.readFromLines(FileUtils.readLines(inFile));
     }
 
-    /**
-     * Creates a hash map of changes from a change log file.
-     *
-     * @param lines
-     * @return
-     */
-    public static HashMap<String, Change> parseChanges(Iterable<String> lines)
+    public static void readFromLines(Iterable<String> lines)
     {
+        ChangeLogger.clearLog();
         Pattern changePattern = Pattern.compile("\\s*(.*?)\\s+(NEW|DELETED|MODIFIED)\\s+(.*)");
-        HashMap<String, Change> changes = new HashMap<String, Change>();
+        changeLog = new HashMap<String, Change>();
         for (String line : lines) {
             if (!line.isEmpty() && !line.matches("\\s*#")) {
                 Matcher changeLine = changePattern.matcher(line);
                 if (changeLine.find()) {
                     try {
                         Date date = dateFormat.parse(changeLine.group(3));
-                        changes.put(changeLine.group(1), new Change(Storage.Status.valueOf(changeLine.group(2).toUpperCase()), date));
+                        changeLog.put(changeLine.group(1), new Change(Storage.Status.valueOf(changeLine.group(2).toUpperCase()), date));
                     }
                     catch (ParseException e) {
                         logger.error("Invalid date format for changeLog line:"+line,e);
@@ -74,7 +85,6 @@ public class ChangeLogger
                 }
             }
         }
-        return changes;
     }
 
     public static void record(String key, Storage storage)

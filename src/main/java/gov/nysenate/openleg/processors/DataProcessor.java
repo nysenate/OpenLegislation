@@ -14,8 +14,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -154,7 +154,7 @@ public class DataProcessor
         storage.flush();
     }
 
-    public void push(Storage storage, HashMap<String, Change> changes, List<ServiceBase> services)
+    public void push(Storage storage, List<Entry<String, Change>> changes, List<ServiceBase> services)
     {
         for(ServiceBase service : services) {
             try {

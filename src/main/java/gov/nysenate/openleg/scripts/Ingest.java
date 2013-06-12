@@ -111,7 +111,7 @@ public class Ingest extends BaseScript
         Date date;
         StringBuffer out = new StringBuffer();
         SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for (Entry<String, Change> entry : ChangeLogger.getChangeLog().entrySet()) {
+        for (Entry<String, Change> entry : ChangeLogger.getEntries()) {
             date = entry.getValue().getDate();
             out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\t"+sdf.format(date).toString()+"\n");
         }
