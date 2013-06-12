@@ -99,6 +99,8 @@ public class ApiHelper implements OpenLegConstants {
 
                     if (bill.getSponsor() != null)
                         fields.put("sponsor", bill.getSponsor().getFullname());
+                    else
+                        fields.put("sponsor", null);
 
                     fields.put("otherSponsors", StringUtils.join(bill.getOtherSponsors(), ", "));
                     summary = bill.getSummary();

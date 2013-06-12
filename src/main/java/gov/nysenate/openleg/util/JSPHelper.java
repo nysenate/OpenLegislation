@@ -13,12 +13,22 @@ public class JSPHelper
 {
     public static String getPersonLink(String person, String base)
     {
-        return "<a href=\""+base+"/search/?term=sponsor:"+person+"\" class=\"sublink\">"+person+"</a>";
+        if (person != null && person.trim().length() > 0) {
+            return "<a href=\""+base+"/search/?term=sponsor:"+person+"\" class=\"sublink\">"+person+"</a>";
+        }
+        else {
+            return "None";
+        }
     }
 
     public static String getPersonLink(Person person, String base)
     {
-        return getPersonLink(person.getFullname(), base);
+        if (person != null) {
+            return getPersonLink(person.getFullname(), base);
+        }
+        else {
+            return "None";
+        }
     }
 
     public static String getSponsorLinks(String[] sponsors, String base)

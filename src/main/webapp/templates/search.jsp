@@ -287,7 +287,7 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 			        Bill: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("billno")%>%22" class="sublink"><%=sresult.getFields().get("billno")%></a>
 			    <%} %>
 			 
-			    <%if (sresult.getFields().get("sponsor")!=null && sresult.getFields().get("sponsor").length()>0){ %>
+			    <%if (sresult.getFields().containsKey("sponsor")){ %>
 			        <br/>
 			        <% if (sresult.getFields().get("billno").equals("J375-2013")) { %>
 				        Sponsors: 
@@ -296,10 +296,10 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 				        <a href="<%=appPath%>/sponsor/KLEIN" class="sublink">KLEIN</a>
 				    <% } else {
 				        if (sresult.getFields().get("otherSponsors").isEmpty()) { %>
-				            Sponsor: <a href="<%=appPath%>/sponsor/<%=sresult.getFields().get("sponsor")%>" class="sublink"><%=sresult.getFields().get("sponsor")%></a>    
+				            Sponsor: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),appPath)%>
 				        <% }
 				        else { %>
-				            Sponsors: <a href="<%=appPath%>/sponsor/<%=sresult.getFields().get("sponsor")%>" class="sublink"><%=sresult.getFields().get("sponsor")%></a>,<%=JSPHelper.getSponsorLinks(sresult.getFields().get("otherSponsors").split(", ?"), appPath) %>
+				            Sponsors: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),appPath)%>, <%=JSPHelper.getSponsorLinks(sresult.getFields().get("otherSponsors").split(", ?"), appPath) %>
 				        <% } %>  
 				    <% } %>
 			    <%} %>
