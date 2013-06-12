@@ -51,10 +51,12 @@ public class UpdateReporter extends ServiceBase
         DataSource datasource = Application.getDB().getDataSource();
         QueryRunner run = new QueryRunner(datasource);
         try {
+            run.update("BEGIN");
             for(Update update: updates){
                 run.update("INSERT INTO updates(otype, oid, date, status) values(?, ?, ?, ?)",
                         update.getOtype(), update.getOid(), update.getDate(), update.getStatus());
             }
+            run.update("COMMIT");
         }
         catch (SQLException e) {
             e.printStackTrace();
