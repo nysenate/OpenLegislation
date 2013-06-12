@@ -292,6 +292,7 @@ public class BillProcessor
             // Pull sponsor information up from the base bill
             bill.setSponsor(baseBill.getSponsor());
             bill.setCoSponsors(baseBill.getCoSponsors());
+            bill.setOtherSponsors(baseBill.getOtherSponsors());
             bill.setMultiSponsors(baseBill.getMultiSponsors());
 
             // Pull up the list of existing versions and add yourself
@@ -325,6 +326,9 @@ public class BillProcessor
             if (activeBill.getModified() > bill.getModified()) {
                 // Pull some other information up from previously active bill
                 bill.setSummary(activeBill.getSummary());
+                bill.setTitle(activeBill.getTitle());
+                bill.setActClause(activeBill.getActClause());
+                bill.setLawSection(activeBill.getLawSection());
                 bill.setLaw(activeBill.getLaw());
 
                 // Activate yourself
@@ -427,11 +431,14 @@ public class BillProcessor
             Bill billVersion = storage.getBill(versionKey);
             billVersion.setSponsor(bill.getSponsor());
             billVersion.setCoSponsors(bill.getCoSponsors());
+            billVersion.setOtherSponsors(bill.getOtherSponsors());
             billVersion.setMultiSponsors(bill.getMultiSponsors());
+            billVersion.setLawSection(bill.getLawSection());
             billVersion.setSummary(bill.getSummary());
             storage.saveBill(billVersion);
             ChangeLogger.record(billVersion.getKey(), storage, date);
         }
+
         if (bill.isUniBill()) {
             // logger.error("UNIBILL: "+bill.getSenateBillNo()+", "+bill.getSameAs());
             Bill uniBill = storage.getBill(bill.getSameAs());
