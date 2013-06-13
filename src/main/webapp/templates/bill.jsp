@@ -177,33 +177,25 @@
  					</div><%
 				}
                 
-                if (bill.getSenateBillNo().equals("J375-2013")) { %>
+                %>
+                <div>
+                    <% if (bill.getOtherSponsors().isEmpty()) { %>
+                        <span class="meta">Sponsor:</span><%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                    <% } else { %>
+                        <span class="meta">Sponsors:</span><%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                    <% }
+                    if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) { %>
                     <div>
-		                <span class="meta">Sponsors: </span> 
-						<%=JSPHelper.getPersonLink("STEWART-COUSINS",appPath)%>,
-						<%=JSPHelper.getPersonLink("SKELOS",appPath)%>,
-						<%=JSPHelper.getPersonLink("KLEIN",appPath)%>
-				    </div>
-                <% } else { %>
+                        <span class="meta">Multi-sponsor(s):</span>
+                        <%=JSPHelper.getMultiSponsorLinks(bill, appPath)%>
+                    </div><%
+                }
+       
+                if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) { %>
                     <div>
-                        <% if (bill.getOtherSponsors().isEmpty()) { %>
-                            <span class="meta">Sponsor:</span><%=JSPHelper.getSponsorLinks(bill, appPath) %>
-                        <% } else { %>
-                            <span class="meta">Sponsors:</span><%=JSPHelper.getSponsorLinks(bill, appPath) %>
-                        <% }
-                        if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) { %>
-                        <div>
-                            <span class="meta">Multi-sponsor(s):</span>
-                            <%=JSPHelper.getMultiSponsorLinks(bill, appPath)%>
-                        </div><%
-                    }
-			        
-                    if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) { %>
-                        <div>
-                            <span class="meta">Co-sponsor(s):</span>
-                            <%=JSPHelper.getCoSponsorLinks(bill, appPath)%>
-                        </div><%
-                    }
+                        <span class="meta">Co-sponsor(s):</span>
+                        <%=JSPHelper.getCoSponsorLinks(bill, appPath)%>
+                    </div><%
                 }
 
                 if (bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) { %>
