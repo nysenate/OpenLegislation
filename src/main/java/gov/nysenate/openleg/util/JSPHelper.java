@@ -31,6 +31,15 @@ public class JSPHelper
         }
     }
 
+    public static String getPersonLinks(List<String> people, String base)
+    {
+        ArrayList<String> links = new ArrayList<String>();
+        for (String person : people) {
+            links.add(getPersonLink(person, base));
+        }
+        return StringUtils.join(links, ", ");
+    }
+
     public static String getSponsorLinks(String[] sponsors, String base)
     {
         return getSponsorLinks(Arrays.asList(sponsors), base);

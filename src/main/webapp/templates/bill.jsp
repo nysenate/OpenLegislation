@@ -1,29 +1,7 @@
 <%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, java.util.regex.*, java.util.Hashtable, java.util.TreeSet, java.util.HashMap, java.util.Date, java.util.ArrayList, java.util.List, java.util.Collections, java.util.StringTokenizer, java.util.Iterator, java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%!
-    public String getVoterString(List<String> voters, String appPath) {
-	 	StringBuffer buffer = new StringBuffer();
-	 	buffer.append(wrapPerson(voters.get(0), appPath));
-		for(int i = 1; i < voters.size(); i++) {
-			buffer.append(", ").append(wrapPerson(voters.get(i), appPath));
-		}
-		return buffer.toString();
-	}
-
-	public String getSponsorString(List<Person> people, String appPath) {
-		StringBuffer buffer = new StringBuffer();
-	 	buffer.append(wrapPerson(people.get(0).getFullname(), appPath));
-		for(int i = 1; i < people.size(); i++) {
-			buffer.append(", ").append(wrapPerson(people.get(i).getFullname(), appPath));
-		}
-		return buffer.toString();
-	}
-
-	public String wrapPerson(String voter, String appPath) {
-		return TextFormatter.append("<a href=\"", appPath, "/sponsor/", voter, "\" class=\"sublink\">", voter, "</a>");
-	}
-	
-	public <T> ArrayList<T> defaultList(ArrayList<T> list) {
+    public <T> ArrayList<T> defaultList(ArrayList<T> list) {
 		if(list == null)
 			return (ArrayList<T>) Collections.EMPTY_LIST;
 		return list;
@@ -202,9 +180,9 @@
                 if (bill.getSenateBillNo().equals("J375-2013")) { %>
                     <div>
 		                <span class="meta">Sponsors: </span> 
-						<%=wrapPerson("STEWART-COUSINS",appPath)%>,
-						<%=wrapPerson("SKELOS",appPath)%>,
-						<%=wrapPerson("KLEIN",appPath)%>
+						<%=JSPHelper.getPersonLink("STEWART-COUSINS",appPath)%>,
+						<%=JSPHelper.getPersonLink("SKELOS",appPath)%>,
+						<%=JSPHelper.getPersonLink("KLEIN",appPath)%>
 				    </div>
                 <% } else { %>
                     <div>
@@ -334,32 +312,32 @@
 			  			<% if(vote.getAyes() != null && vote.getAyes().size() > 0) { %>
 	 						<br/>
 	 						<b>Ayes (<%=vote.getAyes().size()%>):</b>
-		 					<%= getVoterString(vote.getAyes(), appPath) %>
+		 					<%=JSPHelper.getPersonLinks(vote.getAyes(), appPath) %>
 			 			<% } %>
 			 			<%if (vote.getAyeswr() != null && vote.getAyeswr().size() > 0) { %>
 			 				<br/>
 			 				<b>Ayes W/R (<%=vote.getAyeswr().size()%>):</b>
-			 				<%= getVoterString(vote.getAyeswr(), appPath) %>
+			 				<%=JSPHelper.getPersonLinks(vote.getAyeswr(), appPath) %>
 			 			<% } %>
 				 		<%if (vote.getNays() != null && vote.getNays().size() > 0) { %>
 				 			<br/>
 				 			<b>Nays (<%=vote.getNays().size()%>):</b>
-				 			<%= getVoterString(vote.getNays(), appPath) %>
+				 			<%=JSPHelper.getPersonLinks(vote.getNays(), appPath) %>
 			 			<% } %>
 			 			<%if (vote.getAbstains()!=null && vote.getAbstains().size() > 0){ %>
 			 				<br/>
 			 				<b>Abstains (<%=vote.getAbstains().size()%>):</b>
-			 				<%= getVoterString(vote.getAbstains(), appPath) %>
+			 				<%=JSPHelper.getPersonLinks(vote.getAbstains(), appPath) %>
 			 			<% } %>
                         <%if (vote.getAbsent()!=null && vote.getAbsent().size() > 0){ %>
                             <br/>
                             <b>Absent (<%=vote.getAbsent().size()%>):</b>
-                            <%= getVoterString(vote.getAbsent(), appPath) %>
+                            <%=JSPHelper.getPersonLinks(vote.getAbsent(), appPath) %>
                         <% } %>
 			 			<%if (vote.getExcused()!=null && vote.getExcused().size() > 0){ %>
 			 				<br/>
 			 				<b>Excused (<%=vote.getExcused().size()%>):</b>
-			 				<%= getVoterString(vote.getExcused(), appPath) %>
+			 				<%=JSPHelper.getPersonLinks(vote.getExcused(), appPath) %>
 			 			<% } %>
 		 			</blockquote>
 		 		</div>
