@@ -417,8 +417,8 @@ public class Bill extends SenateObject implements Comparable<Bill>
         }
     }
 
-    // B??
-    public static Pattern keyPattern = Pattern.compile("([ASLREJKB][0-9]{1,5}[A-Z]?)-([0-9]{4})");
+    // B?? C??
+    public static Pattern keyPattern = Pattern.compile("([ASLREJKBC][0-9]{1,5}[A-Z]?)-([0-9]{4})");
 
     @JsonIgnore
     public String getKey()
