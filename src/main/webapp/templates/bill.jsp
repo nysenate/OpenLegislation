@@ -57,49 +57,7 @@
 		table.clear();
 		
 		return new ArrayList<Action>(set);
-	}
-
-	public String removeBillLineNumbers (String input) {
-        StringBuffer resp = new StringBuffer().append("<div class='billHeader'>");
-
-        input = input.replace("I N  S E N A T E","IN SENATE");
-        input = input.replace("I N  A S S E M B L Y","IN ASSEMBLY");
-        input = input.replace("S T A T E   O F   N E W   Y O R K","STATE OF NEW YORK");
-        StringTokenizer st = new StringTokenizer(input,"\n");
-
-        boolean isLineNum = false;
-        boolean isHeader = true;
-        boolean isText = false;
-        for (String line : input.split("\n")) {
-            System.out.println(line);
-            if (isHeader && line.matches(".*(Introduced +by|IN +SENATE +--|IN +ASSEMBLY +--).*")) {
-                resp.append("</div>");
-                isHeader = false;
-            }
-
-            if (isHeader) {
-                line = line.trim();
-                resp.append(line).append("\n");
-            }
-            else {
-                if (!line.trim().isEmpty()) {
-	                line = line.substring(7);
-	                resp.append(line).append("\n");
-                }
-                else if (!isText) {
-                    resp.append("\n");
-                }
-            }
-
-            if (line.matches(".*BLY, DO ENACT AS FOLLOWS.*")) {
-                resp.append("\n");
-                isText = true;
-            }
-        }
-
-        String output =  resp.toString();
-        return output;
-    }%>
+	}%>
 	<%
 	String appPath = request.getContextPath();
 
@@ -344,20 +302,7 @@
 	<% } %>
 	<div style="page-break-after:always"></div>
 	<h3 class="section" ><%=senateBillNo%> Text</h3>
-	<%
-		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
-
-			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
-		    if (!bill.isResolution()) {
-		        billText = removeBillLineNumbers(billText);
-		    }
-			billText = billText.replace("EXPLANATION--Matter","<div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
-
-			%>
-				<pre><%=billText %></pre>
-		<% } else { %>
-			Not Available.
-	<% } %>
+	<pre><%=TextFormatter.htmlTextPrintable(bill)%></pre>
 	<br/>
 </div>
 </div>

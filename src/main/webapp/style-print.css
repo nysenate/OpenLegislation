@@ -16,7 +16,7 @@ float: none;
 }
 
 pre{
-	width: 100%;
+	width: 530px;
 	white-space: pre-wrap;
 	font-size:11px;
 	line-height: 15px;
@@ -46,4 +46,14 @@ a{
 	color:#000;
 	font-size:12px;
 	border:none;
+}
+.billHeader{
+    text-align:center;
+    font-weight:bold;
+    /* border-bottom:1px solid #ccc; */
+    margin: 0px;
+    padding: 0px;
+}
+.page-break {
+	display:none;
 }
