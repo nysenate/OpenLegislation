@@ -378,16 +378,11 @@
 		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
 
 			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
-			if ( bill.getSenateBillNo().startsWith("A") || bill.getSenateBillNo().startsWith("S") ){
-			    if (!bill.isResolution()) {
-			        billText = removeBillLineNumbers(billText);
-			    }
-				billText = billText.replace("EXPLANATION--Matter","<div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
-			} else {
-				billText = removeBillLineNumbers(billText);
-			}
- 
-		 	 
+		    if (!bill.isResolution()) {
+		        billText = removeBillLineNumbers(billText);
+		    }
+			billText = billText.replace("EXPLANATION--Matter","<div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
+
 			%>
 				<pre><%=billText %></pre>
 		<% } else { %>
