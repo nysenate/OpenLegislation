@@ -41,7 +41,12 @@ public class ChangeLogger
         Collections.sort(entries, new Comparator<Entry<String, Change>>() {
             public int compare(Entry<String, Change> a, Entry<String, Change> b)
             {
-                return a.getKey().compareTo(b.getKey());
+                if (a.getKey() == null) {
+                    return -1;
+                }
+                else {
+                    return a.getKey().compareTo(b.getKey());
+                }
             }
         });
         return entries;

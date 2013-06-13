@@ -500,10 +500,10 @@ margin:3px;
 	width:100%;
 }
 .billHeader{
-	/* text-align:center; */
+	text-align:center;
 	padding:10px 0;
 	font-weight:bold;
-	border-bottom:1px solid #ccc;
+	/* border-bottom:1px solid #ccc; */
 	margin: 0 0 20px 0;
 	
 }
