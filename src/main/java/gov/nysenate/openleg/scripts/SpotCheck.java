@@ -112,11 +112,7 @@ public class SpotCheck extends BaseScript {
                 lbdcSummary = "";
             }
 
-
-            // Hack around encoding issues
-            jsonSummary = jsonSummary.replace("P", "S");
-            lbdcSummary = lbdcSummary.replace("P", "S");
-
+            jsonSummary = jsonSummary.replace('§', 'S').replace('¶', 'P');
             if (!lbdcSummary.isEmpty() && !jsonSummary.replace(" ","").equals(lbdcSummary.replace(" ", "")) ) {
                 if (!id.startsWith("D")) {
                     logger.error("Summary: "+billNo);
@@ -226,7 +222,7 @@ public class SpotCheck extends BaseScript {
                     bills.get(sen_id).pages = pages;
                 }
                 else {
-                    logger.error("Unknown bill '"+sen_id+"'");
+                    // logger.error("Unknown bill '"+sen_id+"'");
                     SpotCheckBill bill = new SpotCheckBill();
                     bill.id = sen_id;
                     bill.pages = pages;
