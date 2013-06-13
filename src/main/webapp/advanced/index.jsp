@@ -56,7 +56,9 @@
     padding:1px;
     margin:1px;
 }
-
+.BillsOnly{
+	display:none;
+}
 </style>
 
 <script>
@@ -69,6 +71,17 @@ $(document).ready(function() {
 		showOtherMonths: true,
 		selectOtherMonths: true
 	});
+	$( ".BillsOnly" ).hide();
+	$('#type').change(function(){
+		if($(this).val() == 'bill' || $(this).val() == 'resolution'  ){
+			$(".BillsOnly").show('slow');
+		}else{
+			$(".BillsOnly").hide('slow');
+		}
+	});
+
+
+
 });
 </script>
 <h2 class='page-title'>
@@ -96,7 +109,7 @@ $(document).ready(function() {
 
         <div class="searchrow">
         <div class="searchlabel">Legislative Content Type(s):</div><div class="searchinput">
-            <select name="type">
+            <select name="type" id="type">
                 <option value="">All Types</option>
                 <option value="bill">Bills (Senate &amp; Assembly)</option>
                 <option value="resolution">Resolutions</option>
@@ -132,6 +145,8 @@ $(document).ready(function() {
         </div>
         </div>
         <br style="clear:both;"/><br/>
+        <div class="BillsOnly">
+
         <center><b>Bills Only (Optional)</b></center>
 
         <div class="searchrow">
@@ -189,7 +204,7 @@ $(document).ready(function() {
 
         <div class="searchlabel">and current Committee is:</div><div class="searchinput"><input type="text" name="committee" value=""/></div>
             </div>
-
+</div>
         <br style="clear:both;"/><br/>
 
         <center><input type="submit" value="Advanced Search"/></center>
