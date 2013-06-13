@@ -504,8 +504,8 @@ margin:3px;
 	padding:10px 0;
 	font-weight:bold;
 	/* border-bottom:1px solid #ccc; */
-	margin: 0 0 20px 0;
-	
+	margin: 0px;
+	padding: 0px;
 }
 .section{
 	border-bottom:none;
