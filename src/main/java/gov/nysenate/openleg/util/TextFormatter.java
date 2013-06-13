@@ -37,11 +37,21 @@ public class TextFormatter {
 
         ArrayList<TextPoint> points;
         int linenum = 0;
+
+        boolean inPagebreak = false;
         for (String line : fulltext.split("\n")) {
             linenum++;
 
-            Pattern pagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s+\\d{1,4}$)");
-            Matcher pageMatcher = pagePattern.matcher(line);
+            Pattern endPagePattern = Pattern.compile("^\\s*LBD[0-9-]+$");
+            Matcher endPageMatcher = endPagePattern.matcher(line);
+            if (linenum > 10 && endPageMatcher.find()) {
+                inPagebreak = true;
+                // Pad so that removeLineNumbers doesn't break
+                out.append("       <div class=\"hidden\" style=\"page-break-after:always; padding:0px; margin:0px; \">");
+            }
+
+            Pattern startPagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s+\\d{1,4}$)");
+            Matcher startPageMatcher = startPagePattern.matcher(line);
 
             Pattern linePattern = Pattern.compile("^\\s{3,4}\\d{1,2}\\s*");
             Matcher lineMatcher = linePattern.matcher(line);
@@ -133,13 +143,24 @@ public class TextFormatter {
             }
             else {
                 // We need to wait till we hit the 10th line to avoid breaking on the bill header
-                if(pageMatcher.find() && linenum > 10) {
-                    out.append("<div  class='hidden' style=\"page-break-after:always\">"+line.substring(6) + "</div>\n");
+                if(startPageMatcher.find() && linenum > 10) {
+
+                    if (inPagebreak) {
+                        out.append(line.substring(6) + "</div>\n");
+                        inPagebreak = false;
+                    }
+                    else {
+                        out.append("       <div class=\"hidden\" style=\"page-break-after:always\">"+line.substring(6)+"</div>\n");
+                    }
+
                 }
                 else {
                     out.append(line + "\n");
                 }
             }
+        }
+        if (inPagebreak) {
+            out.append("</div>");
         }
         return out.toString();
     }

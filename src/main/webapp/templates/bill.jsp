@@ -82,42 +82,41 @@
 	}
 
 	public String removeBillLineNumbers (String input) {
-        StringBuffer resp = new StringBuffer();
+        StringBuffer resp = new StringBuffer().append("<div class='billHeader'>");
 
-        input = input.replace("S E N A T E","SENATE");
-        input = input.replace("A S S E M B L Y","ASSEMBLY");
+        input = input.replace("I N  S E N A T E","IN SENATE");
+        input = input.replace("I N  A S S E M B L Y","IN ASSEMBLY");
+        input = input.replace("S T A T E   O F   N E W   Y O R K","STATE OF NEW YORK");
+        StringTokenizer st = new StringTokenizer(input,"\n");
 
-        StringTokenizer st = new StringTokenizer (input,"\n");
-        String line = null;
-
-        String startChar = null;
         boolean isLineNum = false;
-
-        while (st.hasMoreTokens()) {
-            line = st.nextToken();
-
-            line = line.replace(" S ","<br/><br/>S ");
-            line = line.replace(" Section ","<br/><br/>Section ");
-            line = line.replace("AN ACT ","<br/><br/>AN ACT ");
-            line = line.replace("THE  PEOPLE ","<br/><br/>THE PEOPLE ");
-            line = line.replace("_","");
-
-            startChar = line.substring(0,6).trim();
-
-            try {
-                Integer.parseInt(startChar);
-                isLineNum = true;
-            }
-            catch (NumberFormatException nfe) {
-                isLineNum = false;
+        boolean isHeader = true;
+        boolean isText = false;
+        for (String line : input.split("\n")) {
+            System.out.println(line);
+            if (isHeader && line.matches(".*(Introduced +by|IN +SENATE +--|IN +ASSEMBLY +--).*")) {
+                resp.append("</div>");
+                isHeader = false;
             }
 
-            if (isLineNum)
-                line = line.substring(7);
-            if (line.endsWith(":"))
-                line = line + "<br/>";
+            if (isHeader) {
+                line = line.trim();
+                resp.append(line).append("\n");
+            }
+            else {
+                if (!line.trim().isEmpty()) {
+	                line = line.substring(7);
+	                resp.append(line).append("\n");
+                }
+                else if (!isText) {
+                    resp.append("\n");
+                }
+            }
 
-            resp.append(' ').append(line).append("\n");
+            if (line.matches(".*BLY, DO ENACT AS FOLLOWS.*")) {
+                resp.append("\n");
+                isText = true;
+            }
         }
 
         String output =  resp.toString();
@@ -379,17 +378,12 @@
 		if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
 
 			String billText = TextFormatter.lrsPrinter(bill.getFulltext());
-			System.out.println(bill.getSenateBillNo().substring(0,1));
 			if ( bill.getSenateBillNo().startsWith("A") || bill.getSenateBillNo().startsWith("S") ){
 			    if (!bill.isResolution()) {
 			        billText = removeBillLineNumbers(billText);
 			    }
-				billText = "<div class='billHeader'>" +billText;
-				billText = billText.replace("S T A T E   O F   N E W   Y O R K","                                   STATE OF NEW YORK");
-				billText = billText.replace("EXPLANATION--Matter","<br/><br/><div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
-				billText = billText.replace("Introduced ","</div>Introduced").replace("IN  SENATE ","</div>IN  SENATE");
-				billText = billText.replaceAll(" br/>","<br/>");
-			}else{
+				billText = billText.replace("EXPLANATION--Matter","<div class='hidden'>EXPLANATION--Matter").replace(" is old law to be omitted.", " is old law to be omitted.</div>");
+			} else {
 				billText = removeBillLineNumbers(billText);
 			}
  
