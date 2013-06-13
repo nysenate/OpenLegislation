@@ -1,11 +1,15 @@
 package gov.nysenate.openleg.util;
 
+import gov.nysenate.openleg.model.Bill;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TextFormatter {
+    public static Pattern startPagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s+\\d{1,4}$)");
+
     public static String append(Object... objects) {
         StringBuilder sb = new StringBuilder();
         for(Object o:objects) {
@@ -22,6 +26,29 @@ public class TextFormatter {
         s = s.replaceAll("\"","&quot;");
 
         return s;
+    }
+
+
+    /**
+     * Inserts page breaks into the bill text for printing.
+     *
+     * @param bill
+     * @return
+     */
+    public static String originalTextPrintable(Bill bill)
+    {
+        StringBuffer text = new StringBuffer();
+        if (bill != null && bill.getFulltext() != null) {
+            int linenum = 1;
+            for (String line : bill.getFulltext().split("\n")) {
+                Matcher startPageMatcher = startPagePattern.matcher(line);
+                if(linenum++ > 10 && startPageMatcher.find()) {
+                    text.append("<div class=\"hidden\" style=\"page-break-after:always\"></div>");
+                }
+                text.append(line).append("\n");
+            }
+        }
+        return text.toString();
     }
 
     public static String lrsPrinter(String fulltext) {
