@@ -29,5 +29,5 @@ rm -fr $env/json/*
 rm -fr $env/lucene/*
 rm -f $env/data/*.xml
 rm -f $env/data/*.log
-rm -f $env/data/*.sobi
+find $env/data/ -type f -name *.sobi | xargs rm
 
