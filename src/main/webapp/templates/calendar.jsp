@@ -142,7 +142,7 @@ import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtil
 										CalendarEntry calEnt = itCals.next();
 				%>
 				<div class="row">
-					<a href="#<%=calEnt.getNo()%>">Calendar: <%=calEnt.getNo()%>
+					<a id="<%=calEnt.getNo()%>" href="#<%=calEnt.getNo()%>">Calendar: <%=calEnt.getNo()%>
 					</a>
 					<span class="subrow">
 					
