@@ -269,14 +269,15 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
             }
 
             String resultPath = appPath + "/" + contentType + "/" + contentId; %>
-            <div class="row" onclick="location.href='<%=resultPath%>'">
+            <div class="row">
                 <a href="<%=resultPath%>"><%=senateType%>: <%=resultTitle%></a>
-                <span style="font-size:90%;color:#777777;">
+                <span class="subrow">
+               	<a href="<%=resultPath%>">
                 <%if (sresult.getSummary()!=null && sresult.getSummary().length() > 0){ %>
                     <br/>
                     <%=sresult.getSummary() %>
                 <%} %>
- 
+ 				</a>
 			    <%if (sresult.getFields().get("sameAs")!=null && sresult.getFields().get("sameAs").length()>0){ %>
 			        <br/>
 			        Same As: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("sameAs")%>%22" class="sublink"><%=sresult.getFields().get("sameAs")%></a>
@@ -324,7 +325,7 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 			        <br/>
 			        Date: <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("date") + "\"")%>"  class="sublink"><%=sresult.getFields().get("date")%></a>
 			    <%} %>
-                </span>
+               </span>
             </div>
         <% } %>
         <hr/>

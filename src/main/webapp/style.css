@@ -611,6 +611,11 @@ margin:3px;
 .row p{
 font-size:10pt;
 }
+.row .subrow a{
+	font-size:90%;color:#777777;
+	text-decoration:none;
+
+}
 .row .meta{
 	font-size:90%;
 	color:#777777;
