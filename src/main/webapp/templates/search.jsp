@@ -103,6 +103,10 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 	int totalPages = (total+20-1)/20;
 	int currentPage = ((startIdx+20-1)/20)+1;
 	
+	String currentPageLink = "/legislation/search/" + term + "/" + (currentPage) + "/" + pageSize
+			+ "?sort=" + sortField
+			+ "&sortOrder=" + sortOrder;
+	
 	int back4 = (currentPage-4);
 	int back3 = (currentPage-3);
 	int back2 = (currentPage-2);
@@ -169,7 +173,7 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 		<li><a href="<%=back1Link%>"><%=back1%></a></li>
 	<%}
 	 %>
-     <li class="active"><a href="<%=currentPage%>"><%=currentPage%></a></li>
+     <li class="active"><a href="<%=currentPageLink%>"><%=currentPage%></a></li>
      <%
      if (forward1 < totalPages){%>
 		<li><a href="<%=forward1Link%>"><%=forward1%></a></li>
@@ -327,6 +331,9 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 <%
 int totalPages = (total+20-1)/20;
 int currentPage = ((startIdx+20-1)/20)+1;
+String currentPageLink = "/legislation/search/" + term + "/" + (currentPage) + "/" + pageSize
++ "?sort=" + sortField
++ "&sortOrder=" + sortOrder;
 
 int back4 = (currentPage-4);
 int back3 = (currentPage-3);
@@ -394,7 +401,7 @@ if (back1 >= 1){%>
 	<li><a href="<%=back1Link%>"><%=back1%></a></li>
 <%}
  %>
- <li class="active"><a href="<%=currentPage%>"><%=currentPage%></a></li>
+ <li class="active"><a href="<%=currentPageLink%>"><%=currentPage%></a></li>
  <%
  if (forward1 < totalPages){%>
 	<li><a href="<%=forward1Link%>"><%=forward1%></a></li>
