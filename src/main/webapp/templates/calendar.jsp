@@ -142,7 +142,7 @@ import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtil
 										CalendarEntry calEnt = itCals.next();
 				%>
 				<div class="row">
-					<a>Calendar: <%=calEnt.getNo()%>
+					<a href="#<%=calEnt.getNo()%>">Calendar: <%=calEnt.getNo()%>
 					</a>
 					<span class="subrow">
 					
@@ -255,7 +255,7 @@ import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtil
 									CalendarEntry calEnt = itCals.next();
 			%>
 			<div class="row">
-				<a>Calendar: <%=calEnt.getNo()%></a><br/>
+				<a href="#<%=calEnt.getNo()%>">Calendar: <%=calEnt.getNo()%></a><br/>
 				<span class="subrow">
 
 					<%
@@ -315,14 +315,7 @@ import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtil
 
 			count++;
 		}
-		if (oid != null) {
-	%>
-	<div id="formatBox">
-		<b>Formats:</b> <a href="<%=appPath%>/api/1.0/json/calendar/<%=oid%>">JSON</a>
-		<a href="<%=appPath%>/api/1.0/xml/calendar/<%=oid%>">XML</a>
-	</div>
-	<%
-		}
+		
 	%>
 </div>
 </div>

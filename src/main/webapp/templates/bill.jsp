@@ -101,7 +101,9 @@
 			</ul>
 		</div>
 		<h3 class='item-title'>${bill.senateBillNo}: ${bill.title}</h3>
-	   <div class="summary"><p>${bill.summary}</p></div>
+	   	<% if (bill.getTitle()+"." != bill.getSummary()) { %>
+	   	<div class="summary"><p>${bill.summary}</p></div>
+	   	<% } %>
 	</div>
     <c:if test="${active} == false">
         <div class="amended">This bill has been amended.</div>

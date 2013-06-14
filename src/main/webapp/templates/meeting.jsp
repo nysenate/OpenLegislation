@@ -27,11 +27,16 @@
 						src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
 			</ul>
 		</div>
-		<h3 class='item-title'>${meeting.committeeName} - <%=df.format(meeting.getMeetingDateTime())%></h3>
+		<h3 class='item-title'>${meeting.committeeName} </h3>
     </div>
     
-    <div id="subcontent">
+<div class="item-meta">
+	<div id="subcontent">
+		<div class="billheader">
 		<div>
+           <span class="meta">Date:</span> 
+           <%=df.format(meeting.getMeetingDateTime())%>
+        </div> 
 		<div>
            <span class="meta">Agenda:</span> 
            <%=calNo%>  
@@ -61,7 +66,7 @@
         </div>  
 	    <% } %>
 	    </div>
-     
+     </div>
          
 	       <% if (meeting.getNotes() != null && meeting.getNotes().trim().length() > 0) { %>
 	           <h3 id="section">Notes</h3>
@@ -120,10 +125,5 @@
 				}
 			}
 		}%>
-	</div>
-	<div id="formatBox"><b>Formats:</b>
-		<a href="${appPath}/api/1.0/json/meeting/<%=meeting.luceneOid()%>">JSON</a>
-		<a href="${appPath}/api/1.0/xml/meeting/<%=meeting.luceneOid()%>">XML</a>
-	</div>
 </div>
 </div>
