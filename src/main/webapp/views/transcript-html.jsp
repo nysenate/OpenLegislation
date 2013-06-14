@@ -6,8 +6,5 @@
 <jsp:include page="/header.jsp">
 	<jsp:param name="title" value="<%=title%>"/>
 </jsp:include>
-
 <jsp:include page="/templates/transcript.jsp" />
-
 <jsp:include page="/footer.jsp"/>
-

@@ -13,6 +13,7 @@ import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtil
 	SimpleDateFormat sdf = new SimpleDateFormat();
 	sdf.applyPattern("EEE, MMM d, yyyy");
 %>
+<div id="content">
 <h2 class='page-title'>
 	Calendar no.
 	<%=calendar.getNo()%>
@@ -323,4 +324,5 @@ import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtil
 	<%
 		}
 	%>
+</div>
 </div>

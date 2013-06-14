@@ -84,6 +84,7 @@
 	
 	String billMemo = bill.getMemo().replace("-\n", "").replace("\n\n", "<br/><br/>").replace("\n", " ");
 %>
+<div id="content">
 <% if (bill.isResolution()) { %>
     <h2 class='page-title'>Resolution Details for ${bill.senateBillNo}</h2>
 <% } else { %>
@@ -308,6 +309,7 @@
 	<h3 class="section" ><%=senateBillNo%> Text</h3>
 	<pre><%=TextFormatter.htmlTextPrintable(bill)%></pre>
 	<br/>
+</div>
 </div>
 </div>
 </div>

@@ -113,6 +113,18 @@ public class Bill extends SenateObject implements Comparable<Bill>
         return senateBillNo.charAt(0)!='A' && senateBillNo.charAt(0)!='S';
     }
 
+    @JsonIgnore
+    public String getDisqusUrl() {
+        if (this.getYear()==2009) {
+            String disqusId = this.getSenateBillNo().split("-")[0];
+            return "http://open.nysenate.gov/legislation/api/html/bill/" + disqusId;
+        }
+        else {
+            String disqusId = this.getSenateBillNo();
+            return "http://open.nysenate.gov/legislation/bill/" + disqusId;
+        }
+    }
+
     public boolean isActive() {
         return active;
     }

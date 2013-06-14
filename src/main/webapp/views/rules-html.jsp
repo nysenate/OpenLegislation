@@ -3,11 +3,11 @@
 	<jsp:param name="title" value="Rules of the Senate 2013-2014 - NY Senate Open Legislation"/>
 </jsp:include>
 <br/>
-<div class="content-bg">
-<pre style="overflow-x: none;">
+<div id="content">
+	<div class="content-bg">
+		<pre style="overflow-x: none;">
 <%=request.getAttribute("rules")%>
-</pre>
+		</pre>
+	</div>
 </div>
-
 <jsp:include page="/footer.jsp"/>
-
