@@ -319,3 +319,4 @@ import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtil
 	%>
 </div>
 </div>
+</div>
