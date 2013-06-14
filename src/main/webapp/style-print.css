@@ -19,9 +19,12 @@ pre{
 	width: 530px;
 	white-space: pre-wrap;
 	font-size:11px;
-	line-height: 15px;
+	line-height: 13px;
+	font-family: “Consolas”, monospace;
 }
-
+.pagebreak{
+	display: block; page-break-before: always;
+}
  /* Hide Things */
 .main-menu,.item-actions,.searchbox,.footer-part-third,.footer-part-second,.footer-part-first,.pagination,.sortby,.formats,#comments{
 	display:none;

@@ -757,6 +757,10 @@ background:#FFFFCC;
 color:#FFFFFF;
 }
 
+.pagebreak{
+	display: none;
+}
+
 pre {
 	padding: 10px;
 	box-sizing: border-box;
