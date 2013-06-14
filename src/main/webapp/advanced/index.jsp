@@ -126,24 +126,23 @@ $(document).ready(function() {
         <div class="searchrow">
         <div class="searchlabel">Full text search:</div><div class="searchinput"><input type="text" name="full" value=""/></div>
         </div>
-            <div class="searchrow">
-        <div class="searchlabel">Order By:</div><div class="searchinput">
-        <select name="sort">
-            <option value="">Best Match</option>
-            <option value="when">Most Recent</option>
-                        <option value="title">Title</option>
-
-                        <option value="sponsor">Sponsor</option>
-            <option value="oid">Identifier</option>
-        </select>
-        </div>
-        </div>
-        <br style="clear:both;"/><br/>
-                <center><b>Bill Actions, Meetings, Calendars and Transcripts (Optional)</b></center>
         <div class="searchrow">
-        <div class="searchlabel">Last Updated between:</div><div class="searchinput">
-        <input type="text" id="startdate" name="startdate" style="width:125px"/> and <input type="text" id="enddate"  name="enddate" style="width:125px"/>
+            <div class="searchlabel">Order By:</div>
+            <div class="searchinput">
+                <select name="sort">
+                    <option value="">Best Match</option>
+                    <option value="when">Most Recent</option>
+                    <option value="title">Title</option>
+                    <option value="sponsor">Sponsor</option>
+                    <option value="oid">Identifier</option>
+                </select>
+            </div>
         </div>
+        <div class="searchrow">
+            <div class="searchlabel">Last Updated between:</div>
+            <div class="searchinput">
+                <input type="text" id="startdate" name="startdate" style="width:125px"/> and <input type="text" id="enddate"  name="enddate" style="width:125px"/>
+            </div>
         </div>
         <br style="clear:both;"/><br/>
         <div class="BillsOnly">
