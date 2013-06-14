@@ -15,7 +15,7 @@
 	    calNo = addendum.getAgenda().getNumber()+"";
 	}
 %>
-
+<div id="content">
 <h2 class='page-title'>Meeting details for <%=meeting.getCommitteeName()%></h2>
 <div class="content-bg">
 	<h3 class='item-title'>${meeting.committeeName} - <%=df.format(meeting.getMeetingDateTime())%></h3>
@@ -98,4 +98,5 @@
 		<a href="${appPath}/api/1.0/json/meeting/<%=meeting.luceneOid()%>">JSON</a>
 		<a href="${appPath}/api/1.0/xml/meeting/<%=meeting.luceneOid()%>">XML</a>
 	</div>
+</div>
 </div>
