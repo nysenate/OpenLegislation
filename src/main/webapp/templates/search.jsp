@@ -80,9 +80,7 @@ if (total > endIdx)
 <div class='formats'>
 	Formats:
 	<a href="/legislation/api/atom/search/<%=encodedTerm%>/">ATOM</a>,
-	<a href="/legislation/api/rss/search/<%=encodedTerm%>/">RSS</a>,
-	<a href="/legislation/api/json/search/<%=encodedTerm%>/<%=pageIdx%>/<%=pageSize%>">JSON</a>,
-	<a href="/legislation/api/xml/search/<%=encodedTerm%>/<%=pageIdx%>/<%=pageSize%>">XML</a>
+	<a href="/legislation/api/rss/search/<%=encodedTerm%>/">RSS</a>
 </div>
 <div class="content-bg">
 
