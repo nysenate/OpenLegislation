@@ -109,29 +109,37 @@ $(document).ready(function() {
         </div>
 
         <div class="searchrow">
-        <div class="searchlabel">Legislative Content Type(s):</div><div class="searchinput">
-            <select name="type" id="type">
-                <option value="">All Types</option>
-                <option value="bill">Bills (Senate &amp; Assembly)</option>
-                <option value="resolution">Resolutions</option>
-                <option value="transcript">Floor Transcripts</option>
-                <option value="meeting">Committee Meetings</option>
-                <option value="calendar">Floor &amp; Active Calendars</option>
-                <option value="action">Bill Actions</option>
-                <option value="vote">Floor &amp; Committee Votes</option>
-            </select>
+	        <div class="searchlabel">Legislative Content Type(s):</div><div class="searchinput">
+	            <select name="type" id="type">
+	                <option value="">All Types</option>
+	                <option value="bill">Bills (Senate &amp; Assembly)</option>
+	                <option value="resolution">Resolutions</option>
+	                <option value="transcript">Floor Transcripts</option>
+	                <option value="meeting">Committee Meetings</option>
+	                <option value="calendar">Floor &amp; Active Calendars</option>
+	                <option value="action">Bill Actions</option>
+	                <option value="vote">Floor &amp; Committee Votes</option>
+	            </select>
+	        </div>
         </div>
-        </div>
-
         <div class="searchrow">
-        <div class="searchlabel">Full text search:</div><div class="searchinput"><input type="text" name="full" value=""/></div>
+            <div class="searchlabel">Full text search:</div>
+            <div class="searchinput">
+                <input type="text" name="full" value=""/>
+            </div>
+        </div>
+        <div class="searchrow">
+            <div class="searchlabel">Last Updated between:</div>
+            <div class="searchinput">
+                <input type="text" id="startdate" name="startdate" style="width:125px"/> and <input type="text" id="enddate"  name="enddate" style="width:125px"/>
+            </div>
         </div>
         <div class="searchrow">
             <div class="searchlabel">Order By:</div>
             <div class="searchinput">
                 <select name="sort">
-                    <option value="">Best Match</option>
-                    <option value="when">Most Recent</option>
+                    <option value="">Relevance Score</option>
+                    <option value="when">Last Modified</option>
                     <option value="title">Title</option>
                     <option value="sponsor">Sponsor</option>
                     <option value="oid">Identifier</option>
@@ -139,9 +147,12 @@ $(document).ready(function() {
             </div>
         </div>
         <div class="searchrow">
-            <div class="searchlabel">Last Updated between:</div>
+            <div class="searchlabel">Sort Order:</div>
             <div class="searchinput">
-                <input type="text" id="startdate" name="startdate" style="width:125px"/> and <input type="text" id="enddate"  name="enddate" style="width:125px"/>
+                <select name="sortOrder">
+                    <option value="true">Descending</option>
+                    <option value="false">Ascending</option>
+                </select>
             </div>
         </div>
         <br style="clear:both;"/><br/>
