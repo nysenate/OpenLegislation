@@ -142,6 +142,9 @@
                     <% } else { %>
                         <span class="meta">Sponsors:</span><%=JSPHelper.getSponsorLinks(bill, appPath) %>
                     <% }
+                    %>
+                    </div>
+                        <%
                     if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) { %>
                     <div>
                         <span class="meta">Multi-sponsor(s):</span>
