@@ -114,40 +114,40 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 	int forward2 = (currentPage+2);
 	int forward3 = (currentPage+3);
 	int forward4 = (currentPage+4);
-	String FirstPageLink = prevUrl = "/legislation/search/" + term + "/1/" + pageSize
+	String FirstPageLink = "/legislation/search/" + term + "/1/" + pageSize
 			+ "?sort=" + sortField
 			+ "&sortOrder=" + sortOrder;
 	
-	String totalPagesLink = prevUrl = "/legislation/search/" + term + "/" + (totalPages) + "/" + pageSize
+	String totalPagesLink =  "/legislation/search/" + term + "/" + (totalPages) + "/" + pageSize
 			+ "?sort=" + sortField
 			+ "&sortOrder=" + sortOrder;
 	
-	String back4Link = prevUrl = "/legislation/search/" + term + "/" + (back4) + "/" + pageSize
+	String back4Link = "/legislation/search/" + term + "/" + (back4) + "/" + pageSize
 			+ "?sort=" + sortField
 			+ "&sortOrder=" + sortOrder;
-	String back3Link = prevUrl = "/legislation/search/" + term + "/" + (back3) + "/" + pageSize
+	String back3Link = "/legislation/search/" + term + "/" + (back3) + "/" + pageSize
 			+ "?sort=" + sortField
 			+ "&sortOrder=" + sortOrder;
-	String back2Link = prevUrl = "/legislation/search/" + term + "/" + (back2) + "/" + pageSize
+	String back2Link = "/legislation/search/" + term + "/" + (back2) + "/" + pageSize
 			+ "?sort=" + sortField
 			+ "&sortOrder=" + sortOrder;
-	String back1Link = prevUrl = "/legislation/search/" + term + "/" + (back1) + "/" + pageSize
+	String back1Link = "/legislation/search/" + term + "/" + (back1) + "/" + pageSize
 			+ "?sort=" + sortField
 			+ "&sortOrder=" + sortOrder;
-	String forward1Link = prevUrl = "/legislation/search/" + term + "/" + (forward1) + "/" + pageSize
+	String forward1Link = "/legislation/search/" + term + "/" + (forward1) + "/" + pageSize
 			+ "?sort=" + sortField
 			+ "&sortOrder=" + sortOrder;
-	String forward2Link = prevUrl = "/legislation/search/" + term + "/" + (forward2) + "/" + pageSize
+	String forward2Link = "/legislation/search/" + term + "/" + (forward2) + "/" + pageSize
 			+ "?sort=" + sortField
 			+ "&sortOrder=" + sortOrder;
-	String forward3Link = prevUrl = "/legislation/search/" + term + "/" + (forward3) + "/" + pageSize
+	String forward3Link = "/legislation/search/" + term + "/" + (forward3) + "/" + pageSize
 			+ "?sort=" + sortField
 			+ "&sortOrder=" + sortOrder;
-	String forward4Link = prevUrl = "/legislation/search/" + term + "/" + (forward4) + "/" + pageSize
+	String forward4Link = "/legislation/search/" + term + "/" + (forward4) + "/" + pageSize
 			+ "?sort=" + sortField
 			+ "&sortOrder=" + sortOrder;
 	
- 	System.out.println(totalPages-currentPage);
+ 	System.out.println(currentPage);
 		
 	if (prevUrl!=null){%>
 		<li><a href="<%=prevUrl%>" title="Previous page">«</a></li>
@@ -345,36 +345,36 @@ int forward1 = (currentPage+1);
 int forward2 = (currentPage+2);
 int forward3 = (currentPage+3);
 int forward4 = (currentPage+4);
-String FirstPageLink = prevUrl = "/legislation/search/" + term + "/1/" + pageSize
+String FirstPageLink = "/legislation/search/" + term + "/1/" + pageSize
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
 
-String totalPagesLink = prevUrl = "/legislation/search/" + term + "/" + (totalPages) + "/" + pageSize
+String totalPagesLink = "/legislation/search/" + term + "/" + (totalPages) + "/" + pageSize
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
 
-String back4Link = prevUrl = "/legislation/search/" + term + "/" + (back4) + "/" + pageSize
+String back4Link = "/legislation/search/" + term + "/" + (back4) + "/" + pageSize
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
-String back3Link = prevUrl = "/legislation/search/" + term + "/" + (back3) + "/" + pageSize
+String back3Link = "/legislation/search/" + term + "/" + (back3) + "/" + pageSize
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
-String back2Link = prevUrl = "/legislation/search/" + term + "/" + (back2) + "/" + pageSize
+String back2Link = "/legislation/search/" + term + "/" + (back2) + "/" + pageSize
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
-String back1Link = prevUrl = "/legislation/search/" + term + "/" + (back1) + "/" + pageSize
+String back1Link = "/legislation/search/" + term + "/" + (back1) + "/" + pageSize
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
-String forward1Link = prevUrl = "/legislation/search/" + term + "/" + (forward1) + "/" + pageSize
+String forward1Link = "/legislation/search/" + term + "/" + (forward1) + "/" + pageSize
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
-String forward2Link = prevUrl = "/legislation/search/" + term + "/" + (forward2) + "/" + pageSize
+String forward2Link = "/legislation/search/" + term + "/" + (forward2) + "/" + pageSize
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
-String forward3Link = prevUrl = "/legislation/search/" + term + "/" + (forward3) + "/" + pageSize
+String forward3Link = "/legislation/search/" + term + "/" + (forward3) + "/" + pageSize
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
-String forward4Link = prevUrl = "/legislation/search/" + term + "/" + (forward4) + "/" + pageSize
+String forward4Link = "/legislation/search/" + term + "/" + (forward4) + "/" + pageSize
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
 
