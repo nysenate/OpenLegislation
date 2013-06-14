@@ -193,22 +193,11 @@ public class ApiHelper implements OpenLegConstants {
                     fields.put("sponsor", resultFields.get("sponsor"));
                     fields.put("billno", resultFields.get("billno"));
                     fields.put("otherSponsors", resultFields.get("otherSponsors"));
-                    if (vote.getBill() != null) {
-                        Bill bill = vote.getBill();
 
-                        if (bill.getSponsor() != null)
-                            fields.put("sponsor", bill.getSponsor().getFullname());
-
-                        if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
-                            fields.put("committee", bill.getCurrentCommittee());
-
-                        fields.put("billno", bill.getSenateBillNo());
-                        fields.put("year", bill.getYear() + "");
-                    }
+                    if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
+                        fields.put("committee", vote.getDescription());
 
                     title +=  DATE_FORMAT_CUSTOM.format(vote.getVoteDate());
-
-                    summary = vote.getDescription();
                 }
 
                 result.setTitle(title);
