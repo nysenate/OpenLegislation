@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 
 public class JSPHelper
@@ -19,6 +21,11 @@ public class JSPHelper
         else {
             return "None";
         }
+    }
+
+    public static String getLink(HttpServletRequest request, String link)
+    {
+        return request.getContextPath()+link;
     }
 
     public static String getPersonLink(Person person, String base)

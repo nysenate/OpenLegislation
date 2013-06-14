@@ -1,7 +1,5 @@
 <%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, gov.nysenate.openleg.util.OpenLegConstants,gov.nysenate.openleg.search.SenateResponse,gov.nysenate.openleg.search.Result,java.text.SimpleDateFormat, java.util.Iterator"  contentType="text/html" pageEncoding="utf-8" %><%
 
-String requestPath = request.getRequestURI();
-
 String appPath = request.getContextPath();
 
 String term = (String)request.getAttribute("term");
@@ -75,6 +73,7 @@ if (total > endIdx)
 }
 	
 %>
+<div id="content">
 <h2 class='page-title'><%=type.toUpperCase()%> SEARCH RESULTS</h2>
 
 <% String encodedTerm = java.net.URLEncoder.encode(term,"UTF-8"); %>
@@ -290,19 +289,12 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 			 
 			    <%if (sresult.getFields().containsKey("sponsor")){ %>
 			        <br/>
-			        <% if (sresult.getFields().get("billno").equals("J375-2013")) { %>
-				        Sponsors: 
-				        <a href="<%=appPath%>/sponsor/STEWART-COUSINS" class="sublink">STEWART-COUSINS</a>,
-				        <a href="<%=appPath%>/sponsor/SKELOS" class="sublink">SKELOS</a>,
-				        <a href="<%=appPath%>/sponsor/KLEIN" class="sublink">KLEIN</a>
-				    <% } else {
-				        if (sresult.getFields().get("otherSponsors").isEmpty()) { %>
-				            Sponsor: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),appPath)%>
-				        <% }
-				        else { %>
-				            Sponsors: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),appPath)%>, <%=JSPHelper.getSponsorLinks(sresult.getFields().get("otherSponsors").split(", ?"), appPath) %>
-				        <% } %>  
-				    <% } %>
+				    <% if (sresult.getFields().get("otherSponsors").isEmpty()) { %>
+				        Sponsor: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),appPath)%>
+				    <% } else { %>
+				        Sponsors: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),appPath)%>, <%=JSPHelper.getSponsorLinks(sresult.getFields().get("otherSponsors").split(", ?"), appPath) %>
+				    <% } %>  
+				   
 			    <%} %>
 			 
 			    <%if (sresult.getFields().get("chair")!=null){ %>
@@ -435,3 +427,7 @@ if (nextUrl!=null){%>
  </div>
         <% } %>
     </div>
+    </div>
+    </div>
+</div>
+

@@ -1,82 +1,47 @@
-<%@ page language="java" import="org.json.*,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/html" pageEncoding="utf-8" %><%
-
-response.setHeader("Access-Control-Allow-Origin","*");
-
-SenateResponse sr = (SenateResponse)request.getAttribute("results");
-int resultCount = sr.getResults().size();
-
-int total = (Integer)sr.getMetadataByKey("totalresults");
-String appPath = request.getContextPath();
-
-Iterator<Result> it = sr.getResults().iterator();
-Result r = null;
-
-String term = java.net.URLEncoder.encode((String)request.getAttribute("term"),"UTF-8");
-%>
-<li>
-<em><%=total%> total results... (<a href="<%=appPath%>/search/?term=<%=term%>">view all</a>)</em>
-</li>
+<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/html" pageEncoding="utf-8" %>
 <%
-String contentType = null;
-String contentId = null;
-String contentTitle = null;
+    response.setHeader("Access-Control-Allow-Origin","*");
 
-while (it.hasNext())
-{
+	SenateResponse sr = (SenateResponse)request.getAttribute("results");
+	int total = (Integer)sr.getMetadataByKey("totalresults");
+	String term = java.net.URLEncoder.encode((String)request.getAttribute("term"), "UTF-8");
+%>
+<li><em><%=total%> total results... (<a href="<%=JSPHelper.getLink(request, "/search/?term="+term)%>">view all</a>)</em></li>
+<%
+    Iterator<Result> it = sr.getResults().iterator();
+    while (it.hasNext()) {
+        try {
+            Result r = it.next();
+            String contentType = r.getOtype();
+            String contentId = r.getOid();
+            String contentTitle = r.getTitle();
 
-        
-        try
-        {
-        
-                r = it.next();
-        
-                contentType = r.getOtype();
-                contentId = r.getOid();
-                contentTitle = r.getTitle();
+            if (contentType.equals("vote")) {
+                contentType = "bill";
+	            contentId = (String)r.getFields().get("billno");
+	        }
 
-                if (contentType.equals("vote"))
-                {
-                        contentType = "bill";
-                        contentId = (String)r.getFields().get("billno");
-                }
+            if (contentType.equals("action")) {
+                contentType = "bill";
+	            contentId = (String)r.getFields().get("billno");
+	            contentTitle = contentId + " - " + contentTitle;
+            }
 
-                if (contentType.equals("action"))
-                {
-                        contentType = "bill";
+            String liLink = JSPHelper.getLink(request, "/"+contentType+"/"+contentId);
+            String liText = r.getOtype().toUpperCase()+": ";
+            if (r.getOtype().equals("bill")) {
+                liText += r.getOid()+" ";
+            }
+            liText += " - "+contentTitle;
+            if (r.getFields().get("sameas")!=null) {
+                liText += " / Same as: "+r.getFields().get("sameas")+" ";
+            }
+            if (r.getFields().get("sponsor")!=null && r.getFields().get("sponsor").length()>0) {
+                liText += "("+r.getFields().get("sponsor")+")";
+            }
 
-                        contentId = (String)r.getFields().get("billno");
-                        contentTitle = contentId + " - " + contentTitle;
-                }
-        
-        %>
-        <li class="quickresult_box"><a href="<%=appPath%>/<%=contentType%>/<%=contentId%>" class="sublink">
-
-        <%=r.getOtype().toUpperCase()%>:
-        <%if (r.getOtype().equals("bill")){ %>
-        <%=r.getOid()%> 
-        <%} %>
-        - <%=contentTitle%>
-         <%if (r.getFields().get("sameas")!=null){ %>
-        / Same as: <%=((String)r.getFields().get("sameas"))%>
-        <%} %>
-        <%if (r.getFields().get("sponsor")!=null && r.getFields().get("sponsor").length()>0){ %>
-        (<%=((String)r.getFields().get("sponsor"))%>)
-        <%} %>
-       
-        </a>
-        </li>
-        <%
-                
-        
+            %><li class="quickresult_box"><a href="<%=liLink%>" class="sublink"><%=liText%></a></li><%
         }
-        catch (Exception e)
-        {
-                //error with this bill
-        }
-        
-        
-        
-
-}
-
+        catch (Exception e) {}
+    }
 %>
