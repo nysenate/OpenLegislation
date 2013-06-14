@@ -483,11 +483,15 @@ margin:3px;
 #footer .linkActivated{
 	font-weight:bold;
 	color:#003366;
-}
+ }
 
 .footer-part li.head{
 	color:#000;
 	font-weight:bold;
+	border-bottom:1px solid #ccc;
+	padding-bottom:5px !important;
+	margin-bottom:5px !important;
+	width:90%;	
 } 
 .footer-part p{ 
 	font-size: 11px;
@@ -538,7 +542,7 @@ margin:3px;
 }
 .pagination{
 	float:left;
-	width:400px;
+	width:425px;
 	display:inline;
 }
 .footer-pagination{
@@ -754,19 +758,19 @@ color:#FFFFFF;
 }
 
 pre {
-	padding:10px;
-	box-sizing:border-box;
-	-moz-box-sizing:border-box;
-	webkit-box-sizing:border-box;
-	display:block; 
+	padding: 10px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	webkit-box-sizing: border-box;
+	display: block; 
 	white-space: pre-wrap;  
 	white-space: -moz-pre-wrap; 
 	white-space: -pre-wrap; 
 	white-space: -o-pre-wrap; 
 	word-wrap: break-word; 
-	overflow-x:auto;
-	font-family: “Consolas”,monospace;
-	max-width:540px;
+	overflow-x: auto;
+	font-family: “Consolas”, monospace;
+	width: 540px;
 	font-size: 9pt;
 	
 /* 	overflow: auto;
