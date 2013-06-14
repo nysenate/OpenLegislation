@@ -26,13 +26,13 @@
 
 		<link rel="stylesheet" type="text/css" media="screen" href="<%=JSPHelper.getLink(request, "/style.css")%>"/>
  		<link rel="stylesheet" type="text/css" media="print" href="<%=JSPHelper.getLink(request, "/style-print.css")%>"/>
-        <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/jquery-ui.min-1.10.3.css")%> %>" />
+        <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/jquery-ui-1.10.3.min.css")%>" />
         
 		<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<%=JSPHelper.getLink(request, "/feed")%>" />
 		
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/jquery-1.9.1.min.js")%>"></script>
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/search.js")%>"></script>
-		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "jquery-ui-1.10.3.min.js")%>"></script>
+		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/jquery-ui-1.10.3.min.js")%>"></script>
 	</head>
 	<body>
     <div id="menu">
