@@ -80,8 +80,9 @@ $(document).ready(function() {
 		}
 	});
 
-
-
+   if ($('#type').val()=='bill' || $('#type').val()=='resolution') {
+	   $(".BillsOnly").show('slow');
+   }
 });
 </script>
 <h2 class='page-title'>
@@ -147,7 +148,7 @@ $(document).ready(function() {
         <br style="clear:both;"/><br/>
         <div class="BillsOnly">
 
-        <center><b>Bills Only (Optional)</b></center>
+        <center><b>Bills & Resolution Options</b></center>
 
         <div class="searchrow">
             <div class="searchlabel">Legislative Session Period:</div>
