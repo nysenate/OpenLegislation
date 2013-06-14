@@ -18,8 +18,8 @@ float: none;
 pre{
 	width: 530px;
 	white-space: pre-wrap;
-	font-size:11px;
-	line-height: 13px;
+	font-size:10px;
+	line-height: 15px;
 	font-family: “Consolas”, monospace;
 }
 .pagebreak{
