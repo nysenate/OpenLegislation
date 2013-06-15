@@ -68,18 +68,32 @@ $(document).ready(function() {
 		showOtherMonths: true,
 		selectOtherMonths: true
 	});
-	$( ".BillsOnly" ).hide();
+
+    $("[value=oid]").hide();
+    $( ".BillsOnly" ).hide();
+    $("#sortOrderField").hide();
+
 	$('#type').change(function(){
 		if($(this).val() == 'bill' || $(this).val() == 'resolution'  ){
 			$(".BillsOnly").show('slow');
+			$("[value=oid]").show();
 		}else{
 			$(".BillsOnly").hide('slow');
+			$("[value=oid]").hide();
 		}
-	});
+	}).change();
 
-   if ($('#type').val()=='bill' || $('#type').val()=='resolution') {
-	   $(".BillsOnly").show('slow');
-   }
+   var sortOrderInput = $("[name=sortOrder]");
+   $("[name=sort]").change(function() {
+	    var field = $(this).val();
+	    switch (field) {
+		    case "": sortOrderInput.val("true"); break;
+		    case "when": sortOrderInput.val("true"); break;
+		    case "title": sortOrderInput.val("false"); break;
+		    case "sponsor": sortOrderInput.val("false"); break;
+		    case "oid": sortOrderInput.val("false"); break;
+	    }
+   });
 });
 </script>
 <div id="content">
@@ -134,15 +148,15 @@ $(document).ready(function() {
 		            <div class="searchlabel">Order By:</div>
 		            <div class="searchinput">
 		                <select name="sort">
-		                    <option value="">Relevance Score</option>
-		                    <option value="when">Last Modified</option>
-		                    <option value="title">Title</option>
-		                    <option value="sponsor">Sponsor</option>
-		                    <option value="oid">Identifier</option>
+		                    <option value="">Best Match</option>
+		                    <option value="when">Most Recently Modified</option>
+		                    <option value="title">Title [A-Z]</option>
+		                    <option value="sponsor">Sponsor [A-Z]</option>
+		                    <option value="oid">Bill Number</option>
 		                </select>
 		            </div>
 		        </div>
-		        <div class="searchrow">
+		        <div class="searchrow" id="sortOrderField">
 		            <div class="searchlabel">Sort Order:</div>
 		            <div class="searchinput">
 		                <select name="sortOrder">
