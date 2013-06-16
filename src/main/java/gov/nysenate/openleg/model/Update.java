@@ -10,9 +10,9 @@ public class Update implements Comparable<Object>
     private String oid;
     private String date;
     private String status;
-    
+
     public Update(){ }
-    
+
     public String getOtype()
     {
         return otype;
@@ -33,7 +33,7 @@ public class Update implements Comparable<Object>
     {
         return status;
     }
-    
+
     public void setStatus(String status)
     {
         this.status = status;
@@ -46,7 +46,7 @@ public class Update implements Comparable<Object>
     {
         this.date = date;
     }
-    
+
     /*
      * Returns a Date object represented by the objects date string.
      */

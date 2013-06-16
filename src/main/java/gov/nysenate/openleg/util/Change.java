@@ -7,18 +7,18 @@ public class Change
 {
     private Storage.Status status;
     private Date date;
-    
+
     public Change(Storage.Status status)
     {
         this.status = status;
     }
-    
+
     public Change(Storage.Status status, Date date)
     {
         this.status = status;
         this.date = date;
     }
-    
+
     public Storage.Status getStatus()
     {
         return status;

@@ -37,7 +37,7 @@ Filter by Type:
 	<div id="updateTable">
 <%
 	TreeMap<Date, ArrayList<Update>> updates = (TreeMap<Date, ArrayList<Update>>)(request.getAttribute("updates")); 
-if(updates != null){ 
+if(updates != null){
 	SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, ''yyyy");
 	SimpleDateFormat linkFormat = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");

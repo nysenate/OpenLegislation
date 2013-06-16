@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.util;
 
+import gov.nysenate.openleg.Environment;
+import gov.nysenate.openleg.search.SearchEngine;
 import gov.nysenate.util.Config;
 import gov.nysenate.util.DB;
 import gov.nysenate.util.Mailer;
@@ -23,6 +25,9 @@ public class Application
     protected NYSenateConfigurationListener configurationListener;
     protected Config config;
     protected Mailer mailer;
+    protected Environment environment;
+    protected SearchEngine searchEngine;
+    protected Storage storage;
     protected DB db;
 
     /**
@@ -41,6 +46,9 @@ public class Application
             appInstance.config = new Config(propertyFileName);
             appInstance.db = new DB(appInstance.config, "mysqldb");
             appInstance.mailer = new Mailer(appInstance.config, "mailer");
+            appInstance.environment = new Environment(appInstance.config, "env");
+            appInstance.searchEngine = new SearchEngine(appInstance.config, "lucene");
+            appInstance.storage = new Storage(appInstance.environment.getStorageDirectory());
             return true;
         }
         catch (ConfigurationException ce)
@@ -67,5 +75,17 @@ public class Application
 
     public static DB getDB() {
         return appInstance.db;
+    }
+
+    public static SearchEngine getSearchEngine() {
+        return appInstance.searchEngine;
+    }
+
+    public static Environment getEnvironment() {
+        return appInstance.environment;
+    }
+
+    public static Storage getStorage() {
+        return appInstance.storage;
     }
 }

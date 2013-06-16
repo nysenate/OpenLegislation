@@ -11,6 +11,14 @@ if [ `find $env/processed -type f -name SOBI* | wc -l` -ne 0 ]; then
     find $env/processed/ -type f -name SOBI* | xargs mv -t $env/data/
 fi
 
+if [ -e $env/processed/CMS.TEXT ]; then
+    mv $env/processed/CMS.TEXT $env/data
+fi
+
+if [ -e $env/work/CMS.TEXT ]; then
+    mv $env/work/CMS.TEXT $env/data
+fi
+
 if [ `find $env/work -type f -name SOBI* | wc -l` -ne 0 ]; then
     find $env/work/ -type f -name SOBI* | xargs mv -t $env/data/
 fi
@@ -19,6 +27,7 @@ rm -fr $env/work/*
 rm -fr $env/processed/*
 rm -fr $env/json/*
 rm -fr $env/lucene/*
-rm -f $env/data/*xml
-rm -f $env/data/*log
+rm -f $env/data/*.xml
+rm -f $env/data/*.log
+find $env/data/ -type f -name *.sobi | xargs rm
 

@@ -1,0 +1,154 @@
+<?xml version= '1.0' encoding='UTF-8'?>
+<DATAPROCESS TIME="2011-01-10-17.01.57">
+2011S01633 5No same as
+2011S01633 9
+2011S01633 AAN ACT to amend the executive law, in relation to ethnic or racial profiling
+2011S01607 5No same as
+2011S01607 9
+2011S01607 AAN ACT to amend the New York city charter, in relation to the Atlantic Yards arena and
+2011S01607 Aredevelopment project
+2011S01634 5No same as
+2011S01634 9
+2011S01634 AAN ACT to amend the criminal procedure law, in relation to the recording of statements in certain
+2011S01634 Acriminal investigations
+2011S01614 5No same as
+2011S01614 9
+2011S01614 AAN ACT to amend the executive law, in relation to the term of the governor's appointments to a
+2011S01614 Astate agency
+2011S01608 5No same as
+2011S01608 9
+2011S01608 AAN ACT authorizing the city of New York to reconvey its interest in certain real property acquired
+2011S01608 Aby in rem tax foreclosure in the borough of Staten Island to the estate of former owner Hilda
+2011S01608 ASpivak, notwithstanding expiration of the two year period within which application may be made to
+2011S01608 Athe city to release its interest in property thus acquired; Block No. 1124, Lot No. 19 on tax map
+2011S01608 Afor the borough of Staten Island
+2011S01635 5No same as
+2011S01635 9
+2011S01635 AAN ACT to amend the penal law, in relation to increasing penalties for the criminal sale of
+2011S01635 Afirearms
+2011S01615 5No same as
+2011S01615 9
+2011S01615 AAN ACT to amend the penal law, in relation to sexual abuse of a person under the age of thirteen
+2011S01636 5No same as
+2011S01636 9
+2011S01636 AAN ACT to amend the tax law, in relation to the establishment of a tax credit for the adoption of
+2011S01636 Aa foster child
+2011S01609 5No same as
+2011S01609 9
+2011S01609 AAN ACT to amend the labor law, in relation to the entitlement to unpaid leave of absence from
+2011S01609 Aemployment for victims of domestic violence
+2011S01637 5No same as
+2011S01637 9
+2011S01637 AAN ACT to direct the conducting of an evaluation of the need for educating barbers on the health
+2011S01637 Aand safety aspects of their trade
+2011S01616 5No same as
+2011S01616 9
+2011S01616 AAN ACT to amend the public authorities law, in relation to the monitoring of vehicular traffic
+2011S01616 Aspeed by electronic toll collection systems
+2011S01638 5No same as
+2011S01638 9
+2011S01638 AAN ACT to amend the tax law, in relation to the establishment of a tax credit for the adoption of
+2011S01638 Aa child
+2011S01617 5No same as
+2011S01617 9
+2011S01617 AAN ACT to amend the labor law, in relation to prohibiting certain retaliatory personnel action by
+2011S01617 Aemployers
+2011S01639 5No same as
+2011S01639 9
+2011S01639 AAN ACT to amend the state finance law, the vehicle and traffic law, the public health law and the
+2011S01639 Atax law, in relation to anatomical gifts, rights and responsibilities
+2011S01610 5No same as
+2011S01610 9
+2011S01610 AAN ACT to authorize the city of New York to discontinue the use as parkland of parcels of real
+2011S01610 Aproperty in the borough of Brooklyn in exchange for the dedication of certain other lands in the
+2011S01610 Aborough of Brooklyn for park purposes in furtherance of a comprehensive development plan for Coney
+2011S01610 AIsland
+2011S01640 5No same as
+2011S01640 9
+2011S01640 AAN ACT to amend the tax law, in relation to permitting a credit to be taken against taxes owed to
+2011S01640 Athe state on income, such credit to offset contributions to a public school district or a public
+2011S01640 Aschool in this state, to a local education fund, or to an educational scholarship organization, or
+2011S01640 Afor the purchase of instructional materials and classroom supplies for schools and non-public
+2011S01640 Ahome-based education programs
+2011S01618 5No same as
+2011S01618 9
+2011S01618 AAN ACT to amend the penal law, in relation to changing sexual abuse in the second degree from a
+2011S01618 Aclass A misdemeanor to a class E felony
+2011S01611 5No same as
+2011S01611 9
+2011S01611 AAN ACT to amend the insurance law, in relation to coverage for the care of Alzheimer's and related
+2011S01611 Adisease patients
+2011S01641 5No same as
+2011S01641 9
+2011S01641 AAN ACT to amend the labor law, in relation to prohibiting certain retaliatory personnel action by
+2011S01641 Aemployers
+2011S01612 5No same as
+2011S01612 9
+2011S01612 AAN ACT to amend the education law, in relation to persons authorized to practice social work
+2011S01619 5No same as
+2011S01619 9
+2011S01619 AAN ACT to amend the education law, in relation to enabling elementary and secondary school
+2011S01619 Ateachers to use public transportation to ride to and from school at no charge
+2011S01642 5No same as
+2011S01642 9
+2011S01642 AAN ACT to amend the public authorities law, in relation to the financing and construction of
+2011S01642 Acertain facilities for the St. Andrew's Foundation, the Scottish Society of Hudson's Valley, Ltd.
+2011S01613 5No same as
+2011S01613 9
+2011S01613 AAN ACT to amend the banking law, in relation to refund anticipation loans
+2011S01620 5No same as
+2011S01620 9
+2011S01620 AAN ACT to amend the penal law, in relation to creating a hazard
+2011S01602 5No same as
+2011S01602 9
+2011S01602 AAN ACT to amend the executive law, in relation to the office of children and family services and
+2011S01602 Afacilitating use of alternatives to detention programs
+2011S01603 5No same as
+2011S01603 9
+2011S01603 AAN ACT to amend the domestic relations law and the family court act, in relation to the child
+2011S01603 Asupport obligation of indigent non-custodial parents
+2011S01621 5No same as
+2011S01621 9
+2011S01621 AAN ACT to amend the penal law, in relation to creating the crime of aggravated criminal conduct
+2011S01604 5No same as
+2011S01604 9
+2011S01604 AAN ACT to amend the general obligations law, in relation to the implementation of child support
+2011S01604 Aenforcement
+2011S01622 5No same as
+2011S01622 9
+2011S01622 AAN ACT to amend the vehicle and traffic law, in relation to the transportation of loose substances
+2011S01622 Ain open vehicles
+2011S01605 5No same as
+2011S01605 9
+2011S01605 AAN ACT to amend the civil practice law and rules, in relation to providing personal information
+2011S01605 Aduring disclosure by a person to whom an order of protection has been issued
+2011S01623 5No same as
+2011S01623 9
+2011S01623 AAN ACT to amend the general business law, in relation to accessibility by blind and visually
+2011S01623 Aimpaired persons to automated teller machines
+2011S01606 5No same as
+2011S01606 9
+2011S01606 AAN ACT to amend the social services law, in relation to the medical assistance presumptive
+2011S01606 Aeligibility program
+2011S01624 5No same as
+2011S01624 9
+2011S01624 AAN ACT to amend the education law, in relation to the discontinuation of certain schools in cities
+2011S01624 Awith a population of one million or more
+2011S01625 5No same as
+2011S01625 9
+2011S01625 AAN ACT to amend the mental hygiene law, in relation to the location of methadone treatment centers
+2011S01626 5No same as
+2011S01626 9
+2011S01626 AAN ACT to amend the public health law, in relation to physician charges for missed appointments by
+2011S01626 Apatients
+2011S01627 5No same as
+2011S01627 9
+2011S01627 AAN ACT to amend the banking law, in relation to the maximum rate of interest on credit cards
+2011S01628 5No same as
+2011S01628 9
+2011S01628 AAN ACT to amend the tax law, in relation to providing a credit for excessive residential insurance
+2011S01628 Apayments in certain cities
+</DATAPROCESS>
+<SENATEDATA TIME="2011-01-10-17.01.57">
+No data to process on 10/01/2011 at 17:01:57
+</SENATEDATA>

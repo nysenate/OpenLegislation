@@ -16,7 +16,7 @@ public interface OpenLegConstants {
 
     public final static String DOT_JSP = ".jsp";
 
-    public static final java.text.SimpleDateFormat TRANSCRIPT_DATE_PARSER = new java.text.SimpleDateFormat("MMMM dd, yyyy HH:mm aa");
+    public static final java.text.SimpleDateFormat TRANSCRIPT_DATE_PARSER = new java.text.SimpleDateFormat("MMMM dd, yyyy hh:mm aa");
 
     public final static DateFormat OL_SEARCH_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
 

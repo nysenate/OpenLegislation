@@ -108,18 +108,12 @@ public class Ingest extends BaseScript
         logger.info(timer.stop()+" seconds to injest "+files.size()+" files.");
 
         // Dump out the change log
+        Date date;
         StringBuffer out = new StringBuffer();
         SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date;
-        for (Entry<String, Change> entry : ChangeLogger.getChangeLog().entrySet()) {
+        for (Entry<String, Change> entry : ChangeLogger.getEntries()) {
             date = entry.getValue().getDate();
-            if (date != null) {
-                out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\t"+sdf.format(date).toString()+"\n");
-            } else {
-                // TODO temporary solution.
-                // If no date information available, set date to current time.
-                out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\t"+sdf.format(new Date()).toString() +"\n");
-            }
+            out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\t"+sdf.format(date).toString()+"\n");
         }
 
         if (opts.hasOption("change-file")) {

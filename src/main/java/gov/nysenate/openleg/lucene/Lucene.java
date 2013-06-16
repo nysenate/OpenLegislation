@@ -36,18 +36,19 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
 	protected IndexSearcher indexSearcher = null;
 
 	protected Logger logger;
-	protected String indexDir;
+	protected File indexDir;
 
-	public Lucene(String indexDir) {
-		this.indexDir = indexDir;
-		this.logger = Logger.getLogger(this.getClass());
+	public Lucene(File indexDir)
+	{
+	    this.indexDir = indexDir;
+        this.logger = Logger.getLogger(this.getClass());
 
-		try {
-			createIndex();
-			searcherManager = new SearcherManager(getDirectory());
-		} catch (IOException e) {
-			logger.error(e);
-		}
+        try {
+            createIndex();
+            searcherManager = new SearcherManager(getDirectory());
+        } catch (IOException e) {
+            logger.error(e);
+        }
 	}
 
 	/////////////////////////////////
@@ -56,12 +57,11 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
 
     @Override
     public synchronized void createIndex() throws IOException{
-        File index = new File(indexDir);
-        if (!index.exists()) {
-            FileUtils.forceMkdir(index);
+        if (!indexDir.exists()) {
+            FileUtils.forceMkdir(indexDir);
         }
 
-        if (0 == index.listFiles().length) {
+        if (0 == indexDir.listFiles().length) {
 	        IndexWriter indexWriter = new IndexWriter(getDirectory(), getConfig());
 	        indexWriter.optimize();
 	        indexWriter.close();
@@ -248,7 +248,7 @@ public class Lucene implements LuceneIndexer, LuceneSearcher {
     }
 
 	public Directory getDirectory() throws IOException {
-		return FSDirectory.open(new File(indexDir));
+		return FSDirectory.open(indexDir);
 	}
 
 	public Analyzer getAnalyzer() {

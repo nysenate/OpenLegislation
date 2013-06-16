@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 public class TranscriptProcessor {
     private final Logger logger;
 
-    public SimpleDateFormat TRANSCRIPT_DATE_PARSER = new SimpleDateFormat("MMMM dd, yyyy HH:mm aa");
+    public SimpleDateFormat TRANSCRIPT_DATE_PARSER = new SimpleDateFormat("MMMM dd, yyyy hh:mm aa");
 
     public TranscriptProcessor() {
         this.logger = Logger.getLogger(this.getClass());
@@ -69,10 +69,11 @@ public class TranscriptProcessor {
                 logger.debug("got time: " + nextLine);
 
                 pLine += ' ' + nextLine;
-                pLine = pLine.replace(".", "");
+                pLine = pLine.replace(".", "").toUpperCase();
 
                 try {
                     Date tTime = TRANSCRIPT_DATE_PARSER.parse(pLine);
+                    logger.debug(pLine+" -> "+tTime);
                     transcript.setTimeStamp(tTime);
                 } catch (ParseException e) {
                     logger.error(file.getName()+": unable to parse transcript datetime " + pLine,e);

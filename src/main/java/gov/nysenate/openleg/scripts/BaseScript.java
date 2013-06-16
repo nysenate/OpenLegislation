@@ -2,6 +2,8 @@ package gov.nysenate.openleg.scripts;
 
 import gov.nysenate.openleg.util.Application;
 
+import java.io.File;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -43,18 +45,30 @@ abstract public class BaseScript
     {
 
         try {
-            Application.bootstrap();
             Options options = getOptions();
+            options.addOption("e","environment",true,"Path to a configuration file for this environment");
             options.addOption("h", "help", false, "Print this message");
             CommandLine opts = new PosixParser().parse(options, args);
             if(opts.hasOption("-h")) {
                 printUsage(options);
                 System.exit(0);
             } else {
+                if (opts.hasOption("environment")) {
+                    File propertiesFile = new File(opts.getOptionValue("environment"));
+                    if (!propertiesFile.canRead()) {
+                        System.err.println("Cannot read: "+propertiesFile);
+                        System.exit(1);
+                    }
+                    else {
+                        Application.bootstrap(propertiesFile.getAbsolutePath());
+                    }
+                }
+                else {
+                    Application.bootstrap("app.properties");
+                }
+
                 execute(opts);
-                System.exit(0);
             }
-            Application.shutdown();
         }
         catch (ParseException e) {
             logger.fatal("Error parsing arguments: ", e);
@@ -64,7 +78,9 @@ abstract public class BaseScript
             logger.error("Unexpected Exception.",e);
             throw e;
         }
-
+        finally {
+            Application.shutdown();
+        }
     }
 
     /**

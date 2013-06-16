@@ -5,12 +5,14 @@ import gov.nysenate.openleg.lucene.LuceneSerializer;
 import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.util.serialize.JsonSerializer;
 import gov.nysenate.openleg.util.serialize.XmlSerializer;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.lucene.index.IndexWriter;
@@ -21,26 +23,26 @@ public class Lucene extends ServiceBase {
 
     public Lucene(String indexDir) {
         super();
-        lucene = new gov.nysenate.openleg.lucene.Lucene(indexDir);
+        lucene = new gov.nysenate.openleg.lucene.Lucene(new File(indexDir));
         serializers = new LuceneSerializer[]{ new XmlSerializer(), new JsonSerializer()};
     }
 
     @Override
-    public boolean process(HashMap<String, Storage.Status> changeLog, Storage storage) throws IOException {
+    public boolean process(List<Entry<String, Change>> entries, Storage storage) throws IOException {
         // Verify that an index exists
         lucene.createIndex();
 
         // Get a new writer
         IndexWriter indexWriter = lucene.newIndexWriter();
 
-        for(Entry<String, Storage.Status> entry : changeLog.entrySet()) {
+        for(Entry<String, Change> entry : entries) {
             try {
                 logger.debug("Indexing "+entry.getValue()+": "+entry.getKey());
                 String key = entry.getKey();
                 String otype = key.split("/")[1];
                 String oid = key.split("/")[2];
                 logger.debug(otype+", "+oid);
-                if( entry.getValue() == Storage.Status.DELETED ) {
+                if (entry.getValue().getStatus() == Storage.Status.DELETED) {
                     if(otype.equals("bill")) {
                         lucene.deleteDocumentsByQuery("otype:action AND billno:" + oid, indexWriter);
                         lucene.deleteDocumentsByQuery("otype:vote AND billno:" + oid, indexWriter);;
@@ -109,7 +111,7 @@ public class Lucene extends ServiceBase {
 
         indexWriter.commit();
 
-        logger.info("done indexing objects(" + changeLog.size() + "). Closing index.");
+        logger.info("done indexing objects(" + entries.size() + "). Closing index.");
         indexWriter.close();
         return true;
     }

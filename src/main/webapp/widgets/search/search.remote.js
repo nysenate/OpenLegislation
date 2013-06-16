@@ -19,9 +19,10 @@ $(function () {
         else
         {
         //               $("#quickresult").html("").load("http://open.nysenate.gov/legislation/search/?" + dataString);
+        		url = window.location.hostname;
                 $.ajax({
                         type: "POST",
-                        url: "http://open.nysenate.gov/legislation/search/",
+                        url: url+"/legislation/search/",
                         data: dataString,
                         cache: false,
                         async: true,

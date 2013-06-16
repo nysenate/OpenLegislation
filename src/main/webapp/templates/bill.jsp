@@ -1,28 +1,7 @@
-<%@ page language="java" import="java.util.regex.*, java.util.Hashtable, java.util.TreeSet, java.util.HashMap, java.util.Date, java.util.ArrayList, java.util.List, java.util.Collections, java.util.StringTokenizer, java.util.Iterator, java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, java.util.regex.*, java.util.Hashtable, java.util.TreeSet, java.util.HashMap, java.util.Date, java.util.ArrayList, java.util.List, java.util.Collections, java.util.StringTokenizer, java.util.Iterator, java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.util.*,gov.nysenate.openleg.model.*,org.codehaus.jackson.map.ObjectMapper" contentType="text/html" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%!
-    public String getVoterString(List<String> voters, String appPath) {
-	 	StringBuffer buffer = new StringBuffer();
-	 	buffer.append(wrapPerson(voters.get(0), appPath));
-		for(int i = 1; i < voters.size(); i++) {
-			buffer.append(", ").append(wrapPerson(voters.get(i), appPath));
-		}
-		return buffer.toString();
-	}
-
-	public String getSponsorString(List<Person> people, String appPath) {
-		StringBuffer buffer = new StringBuffer();
-	 	buffer.append(wrapPerson(people.get(0).getFullname(), appPath));
-		for(int i = 1; i < people.size(); i++) {
-			buffer.append(", ").append(wrapPerson(people.get(i).getFullname(), appPath));
-		}
-		return buffer.toString();
-	}
-
-	public String wrapPerson(String voter, String appPath) {
-		return TextFormatter.append("<a href=\"", appPath, "/sponsor/", voter, "\" class=\"sublink\">", voter, "</a>");
-	}
-	
-	public <T> ArrayList<T> defaultList(ArrayList<T> list) {
+    public <T> ArrayList<T> defaultList(ArrayList<T> list) {
 		if(list == null)
 			return (ArrayList<T>) Collections.EMPTY_LIST;
 		return list;
@@ -78,56 +57,12 @@
 		table.clear();
 		
 		return new ArrayList<Action>(set);
-	}
-
-	public String removeBillLineNumbers (String input) {
-		StringBuffer resp = new StringBuffer();
-		
-		input = input.replace("S E N A T E","SENATE");
-		input = input.replace("A S S E M B L Y","ASSEMBLY");
-		
-		int breakIdx = -1;
-		
-		String startChar = null;
-		boolean isLineNum = false;
-		
-		for (String line : input.split("\n")) {
-			
-		    if (line.length() > 6) {
-		        if (!line.contains("</div>")) {
-					startChar = line.substring(0,6).trim();
-				
-					try {
-						Integer.parseInt(startChar);
-						isLineNum = true;
-					}
-					catch (NumberFormatException nfe) {
-						isLineNum = false;
-					}
-
-					if (line.endsWith(":"))
-						line = line + "<br/>";
-
-					resp.append(' ');
-
-					resp.append(line.substring(6));
-		        }
-		        else {
-		            resp.append(line);
-		        }
-		    }
-			resp.append("\n");
-		}
-		
-		String output =  resp.toString();
-		
-		return output;
 	}%>
-<%
+	<%
 	String appPath = request.getContextPath();
 
 	Bill bill = (Bill)request.getAttribute("bill");
-	
+
 	ArrayList<Bill> rBills			= defaultList((ArrayList<Bill>)request.getAttribute("related-bill"));
 	ArrayList<Action> rActions	= defaultList((ArrayList<Action>)request.getAttribute("related-action"));
 	ArrayList<Meeting> rMeetings	= defaultList((ArrayList<Meeting>)request.getAttribute("related-meeting"));
@@ -147,165 +82,118 @@
 	
 	DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 	
-	String billSummary = bill.getSummary();
-	String billMemo = bill.getMemo();
+	String billMemo = bill.getMemo().replace("-\n", "").replace("\n\n", "<br/><br/>").replace("\n", " ");
 %>
-
-<br/>
-<h2>
-	<%=senateBillNo%>: <%=bill.getTitle() == null ? "" : bill.getTitle()%>
-</h2>
-<br/>
-    
-<%
-    	if(!active) {
-    %>
-	<div class="amended">This bill has been amended.</div>
-<%
-	}
-%>
-    
-<div style="float:left;">
-    
-    <%
-        	if (bill.getSameAs()!=null){
-        %>
-			<b>Same as:</b>
-		<%
-			StringTokenizer st = new StringTokenizer(bill.getSameAs(),",");
-			String sameAs = null;
-			String lastSameAs = "";
-			String sameAsLink = null;
-			Bill sameAsBill = null;
-			
-			while(st.hasMoreTokens()) {
-				sameAs = st.nextToken().trim();
-				sameAsLink = appPath + "/bill/" + sameAs;
-				
-				if (sameAs.length() == 0)
-					continue;
-				
-				if (sameAs.equals(lastSameAs))
-					continue;
-				
-				lastSameAs = sameAs;
-		%>
-					<a href="<%=sameAsLink%>"><%=sameAs.toUpperCase()%></a>
-				<%
-					if (st.hasMoreTokens()) {
-				%><%
-					}
-							}
-				%>
-			/
-	<%
-					} 
-						    	
-						    	String sponsor = null;
-
-								if (bill.getSponsor()!=null)
-							sponsor = bill.getSponsor().getFullname();
-								
-								if (rBills.size() > 0) {
-				%>
-				Versions: 
-			<%
-					for (Bill rBill:rBills) {
-				%>
-					<a href="/legislation/bill/<%=rBill.getSenateBillNo()%>"><%=rBill.getSenateBillNo()%></a> 
-				<%
- 					}
- 				 						}
-
- 				 						if (sponsor == null)
- 				 					sponsor = "";
- 				%>
-</div>
-
-<div style="float:right;">
-	<a href="<%=appPath%>/api/1.0/html-print/bill/<%=senateBillNo%>" target="_new">Print HTML Page</a> / 
-	<a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=senateBillNo%>" target="_new">Print Original Bill Format</a> / 
-	<script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script> / 
-	<a href="#discuss">Read or Leave Comments</a>
-</div>
-
-<br style="clear:both;"/>
-
 <div id="content">
-
-	<div class="billheader">
-  		<%=billSummary == null ? "" : billSummary%>
-		<hr/>
- 
-                <% if (bill.getSenateBillNo().equals("J375-2013")) { %>
-                    <div>
-                                <b>Sponsors: </b>
-                                                <%=wrapPerson("STEWART-COUSINS",appPath)%>,
-                                                <%=wrapPerson("SKELOS",appPath)%>,
-                                                <%=wrapPerson("KLEIN",appPath)%>
-                                    </div>
-                <% } else { %>
-                    <div>
-                        <% if (bill.getOtherSponsors().isEmpty()) { %>
-                            <b>Sponsor:</b> <%=JSPHelper.getSponsorLinks(bill, appPath) %>
-                        <% } else { %>
-                            <b>Sponsors:</b> <%=JSPHelper.getSponsorLinks(bill, appPath) %>
-                        <% }
-                        if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) { %>
-                        <div>
-                            <b>Multi-sponsor(s):</b>
-                            <%=JSPHelper.getMultiSponsorLinks(bill, appPath)%>
-                        </div><%
-                    }
-
-                    if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) { %>
-                        <div>
-                            <b>Co-sponsor(s):</b>
-                            <%=JSPHelper.getCoSponsorLinks(bill, appPath)%>
-                        </div><%
-                    }
-                }
- 		
- 					if (bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
- 				%>
-			 <b>Committee:</b> <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
-		<%
-			}
-		%>
-		<br/>
-		<%
-			if (bill.getLawSection() != null && !bill.getLawSection().equals("")) {
-		%>
-					<b>Law Section:</b> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
-	 			<%
-	 				}
-	 				 				
-	 				 				 		if (bill.getLaw() != null && bill.getLaw() != "") {
-	 			%>
-					 <br/><b>Law:</b> <%=bill.getLaw()%>
-				<%
-					}
-				%>
+<% if (bill.isResolution()) { %>
+    <h2 class='page-title'>Resolution Details for ${bill.senateBillNo}</h2>
+<% } else { %>
+    <h2 class='page-title'>Bill Details for ${bill.senateBillNo}</h2>
+<% } %>
+<div class="content-bg">
+	<div class="title-block">
+		<div class='item-actions'>
+			<ul>
+        		<li><a href="#" onclick="window.print(); return false;">Print Page</a></li>
+				<li><a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=bill.getSenateBillNo()%>" class="hidemobile" target="_new">Print Original Text</a></li>
+				<li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
+        		<li><a href="#comments">Read or Leave Comments</a></li>
+			</ul>
+		</div>
+		<h3 class='item-title'>${bill.senateBillNo}: ${bill.title}</h3>
+	   	<% if (bill.getTitle()+"." != bill.getSummary()) { %>
+	   	<div class="summary"><p>${bill.summary}</p></div>
+	   	<% } %>
 	</div>
-	
-	<%
-			if (rActions.size() > 0) {
-		%>
-		<h3><%=senateBillNo%> Actions</h3>
-		<ul>
-		<%
-			ArrayList<Action> events = sortBillEvents(rActions);
-			for (Action be : events){
-		%>
+    <c:if test="${active} == false">
+        <div class="amended">This bill has been amended.</div>
+    </c:if>
+    <div class="item-meta">
+        <div id="subcontent">
+	       <div class="billheader">
+                <% if (bill.getSameAs()!=null) { %>
+                    <div>
+                        <span class="meta">Same as:</span>
+                        <%
+						StringTokenizer st = new StringTokenizer(bill.getSameAs(),",");
+						String sameAs = null;
+						String lastSameAs = "";
+						String sameAsLink = null;
+						Bill sameAsBill = null;
+			
+						while(st.hasMoreTokens()) {
+							sameAs = st.nextToken().trim().toUpperCase();
+							sameAsLink = appPath + "/bill/" + sameAs;
+					        %><a href="<%=sameAsLink%>"><%=sameAs%></a><%
+						}
+					%></div><%
+			    }
+
+                if (rBills.size() > 0) { %>
+                    <div>
+                        <span class="meta">Versions:</span> 
+                        <% for (Bill rBill:rBills) { %>
+				           <a href="/legislation/bill/<%=rBill.getSenateBillNo()%>"><%=rBill.getSenateBillNo()%></a> 
+				        <% } %>
+ 					</div><%
+				}
+                
+                %>
+                <div>
+                    <% if (bill.getOtherSponsors().isEmpty()) { %>
+                        <span class="meta">Sponsor:</span><%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                    <% } else { %>
+                        <span class="meta">Sponsors:</span><%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                    <% }
+                    %>
+                    </div>
+                        <%
+                    if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) { %>
+                    <div>
+                        <span class="meta">Multi-sponsor(s):</span>
+                        <%=JSPHelper.getMultiSponsorLinks(bill, appPath)%>
+                    </div><%
+                }
+       
+                if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) { %>
+                    <div>
+                        <span class="meta">Co-sponsor(s):</span>
+                        <%=JSPHelper.getCoSponsorLinks(bill, appPath)%>
+                    </div><%
+                }
+
+                if (bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) { %>
+                    <div>
+                        <span class="meta">Committee:</span>
+                        <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
+                    </div>
+                <% }
+
+                if (bill.getLawSection() != null && !bill.getLawSection().equals("")) { %>
+                    <div>
+                        <span class="meta">Law Section:</span> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
+                    </div>
+	 			<% }
+	 				 				
+		 		if (bill.getLaw() != null && bill.getLaw() != "") { %>
+                    <div>
+                        <span class="meta">Law:</span> <%=bill.getLaw()%>
+                    </div>
+				<% } %>
+            </div>
+            <% if (rActions.size() > 0) { %>
+                <h3 class="section"><%=senateBillNo%> Actions</h3>
+                <ul>
+                <%
+                ArrayList<Action> events = sortBillEvents(rActions);
+                for (Action be : events) { %>
 					<li><%=df.format(be.getDate().getTime())%>: <%=formatBillEvent(bill.getSenateBillNo(), be.getText(), appPath)%></li>
-				<%
-			}
-		%>
-		</ul>
-	<% } %>
+				<% } %>
+                </ul>
+            <% } %>
 
 	<% if (rMeetings.size() > 0) { %>
-		<h3><%=senateBillNo%> Meetings</h3>
+		<h3  class="section" ><%=senateBillNo%> Meetings</h3>
 		<%
 			for (Iterator<Meeting> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
 				Meeting meeting = itMeetings.next();
@@ -320,7 +208,7 @@
 	<% 
 		if (rCals.size() > 0) {
 			%>
-				<h3><%=senateBillNo%> Calendars</h3>
+				<h3  class="section" ><%=senateBillNo%> Calendars</h3>
 			<%
 			for (Iterator<Calendar> itCals = rCals.iterator(); itCals.hasNext();) {
 				Calendar cal = itCals.next();
@@ -359,7 +247,7 @@
 	<%
 		if(rVotes.size() > 0) {
 			%>
-				<h3><%=senateBillNo%> Votes</h3>
+				<h3 class="section" ><%=senateBillNo%> Votes</h3>
 			<%
 			
 			for (Vote vote:rVotes) {
@@ -380,32 +268,32 @@
 			  			<% if(vote.getAyes() != null && vote.getAyes().size() > 0) { %>
 	 						<br/>
 	 						<b>Ayes (<%=vote.getAyes().size()%>):</b>
-		 					<%= getVoterString(vote.getAyes(), appPath) %>
+		 					<%=JSPHelper.getPersonLinks(vote.getAyes(), appPath) %>
 			 			<% } %>
 			 			<%if (vote.getAyeswr() != null && vote.getAyeswr().size() > 0) { %>
 			 				<br/>
 			 				<b>Ayes W/R (<%=vote.getAyeswr().size()%>):</b>
-			 				<%= getVoterString(vote.getAyeswr(), appPath) %>
+			 				<%=JSPHelper.getPersonLinks(vote.getAyeswr(), appPath) %>
 			 			<% } %>
 				 		<%if (vote.getNays() != null && vote.getNays().size() > 0) { %>
 				 			<br/>
 				 			<b>Nays (<%=vote.getNays().size()%>):</b>
-				 			<%= getVoterString(vote.getNays(), appPath) %>
+				 			<%=JSPHelper.getPersonLinks(vote.getNays(), appPath) %>
 			 			<% } %>
 			 			<%if (vote.getAbstains()!=null && vote.getAbstains().size() > 0){ %>
 			 				<br/>
 			 				<b>Abstains (<%=vote.getAbstains().size()%>):</b>
-			 				<%= getVoterString(vote.getAbstains(), appPath) %>
+			 				<%=JSPHelper.getPersonLinks(vote.getAbstains(), appPath) %>
 			 			<% } %>
                         <%if (vote.getAbsent()!=null && vote.getAbsent().size() > 0){ %>
                             <br/>
                             <b>Absent (<%=vote.getAbsent().size()%>):</b>
-                            <%= getVoterString(vote.getAbsent(), appPath) %>
+                            <%=JSPHelper.getPersonLinks(vote.getAbsent(), appPath) %>
                         <% } %>
 			 			<%if (vote.getExcused()!=null && vote.getExcused().size() > 0){ %>
 			 				<br/>
 			 				<b>Excused (<%=vote.getExcused().size()%>):</b>
-			 				<%= getVoterString(vote.getExcused(), appPath) %>
+			 				<%=JSPHelper.getPersonLinks(vote.getExcused(), appPath) %>
 			 			<% } %>
 		 			</blockquote>
 		 		</div>
@@ -414,22 +302,15 @@
 		}
   	%>
 	<% if(billMemo!=null && !billMemo.matches("\\s*")) { %>
-		<h3><%=senateBillNo%> Memo</h3>
+		<div class="pagebreak"></div>
+		<h3 class="section"><%=senateBillNo%> Memo</h3>
 		<pre><%=billMemo%></pre>
-	<% }
-
-	if (bill.getFulltext()!=null && !bill.getFulltext().equals("")) {
-		String billText = TextFormatter.lrsPrinter(bill.getFulltext());
-		billText = removeBillLineNumbers (billText); %>
-<div style="page-break-after:always"></div>
-<h3><%=senateBillNo%> Text</h3>
-<pre style="font-size:.95em">
-<%=billText %>
-</pre>
-<div style="page-break-after:always"></div>
-		<% } else{ %>
-		    <h3><%=senateBillNo%> Text</h3>
-			Not Available.
-	    <% } %>
+	<% } %>
+	<br/>
+	<div class="pagebreak"></div>
+	<h3 class="section" ><%=senateBillNo%> Text</h3>
+	<pre><%=TextFormatter.htmlTextPrintable(bill)%></pre>
 	<br/>
 </div>
+</div>
+

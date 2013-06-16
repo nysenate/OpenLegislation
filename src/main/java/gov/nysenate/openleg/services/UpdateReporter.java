@@ -3,11 +3,11 @@ package gov.nysenate.openleg.services;
 import gov.nysenate.openleg.model.Update;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Change;
+import gov.nysenate.openleg.util.Storage;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -17,14 +17,14 @@ import org.apache.tomcat.jdbc.pool.DataSource;
 /*
  * Parses changes from a changeLog file and saves to MySQL database.
  */
-public class UpdateReporter
+public class UpdateReporter extends ServiceBase
 {
-    public static void process(HashMap<String, Change> changeLog)
+    public boolean process(List<Entry<String, Change>> entries, Storage storage)
     {
         ArrayList<Update> updates = new ArrayList<Update>();
         SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         // Parse all changes in log file.
-        for(Entry<String, Change> changeEntry: changeLog.entrySet())
+        for(Entry<String, Change> changeEntry: entries)
         {
             String key = changeEntry.getKey();
             String otype = key.split("/")[1];
@@ -41,6 +41,7 @@ public class UpdateReporter
             updates.add(update);
         }
         insertUpdates(updates);
+        return true;
     }
 
     private static void insertUpdates(List<Update> updates)
@@ -49,10 +50,12 @@ public class UpdateReporter
         DataSource datasource = Application.getDB().getDataSource();
         QueryRunner run = new QueryRunner(datasource);
         try {
+            run.update("BEGIN");
             for(Update update: updates){
                 run.update("INSERT INTO updates(otype, oid, date, status) values(?, ?, ?, ?)",
                         update.getOtype(), update.getOid(), update.getDate(), update.getStatus());
             }
+            run.update("COMMIT");
         }
         catch (SQLException e) {
             e.printStackTrace();

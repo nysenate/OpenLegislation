@@ -108,6 +108,22 @@ public class Bill extends SenateObject implements Comparable<Bill>
         this.year = year;
     }
 
+    @JsonIgnore
+    public boolean isResolution() {
+        return senateBillNo.charAt(0)!='A' && senateBillNo.charAt(0)!='S';
+    }
+
+    @JsonIgnore
+    public String getDisqusUrl() {
+        if (this.getYear()==2009) {
+            String disqusId = this.getSenateBillNo().split("-")[0];
+            return "http://open.nysenate.gov/legislation/api/html/bill/" + disqusId;
+        }
+        else {
+            String disqusId = this.getSenateBillNo();
+            return "http://open.nysenate.gov/legislation/bill/" + disqusId;
+        }
+    }
 
     public boolean isActive() {
         return active;
@@ -413,7 +429,8 @@ public class Bill extends SenateObject implements Comparable<Bill>
         }
     }
 
-    public static Pattern keyPattern = Pattern.compile("([ASLREJK][0-9]{1,5}[A-Z]?)-([0-9]{4})");
+    // B?? C??
+    public static Pattern keyPattern = Pattern.compile("([ASLREJKBC][0-9]{1,5}[A-Z]?)-([0-9]{4})");
 
     @JsonIgnore
     public String getKey()
@@ -473,6 +490,7 @@ public class Bill extends SenateObject implements Comparable<Bill>
             billStatus = actions.get(actions.size()-1).getText();
         }
         map.put("status", new Field("status", billStatus, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        map.put("when", new Field("when", String.valueOf(this.getModified()), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
 
         /*
          * the following creates a sortable index so we can sort

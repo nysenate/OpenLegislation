@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -167,8 +168,8 @@ public class BillProcessor
                     logger.info("SAVING: "+bill.getSenateBillNo());
                     bill.addSobiReference(sobiFile.getName());
                     bill.setModified(date.getTime());
-                    String key = bill.getKey();
                     saveBill(bill, storage, date);
+
                 }
             }
             catch (ParseError e) {
@@ -291,6 +292,7 @@ public class BillProcessor
             // Pull sponsor information up from the base bill
             bill.setSponsor(baseBill.getSponsor());
             bill.setCoSponsors(baseBill.getCoSponsors());
+            bill.setOtherSponsors(baseBill.getOtherSponsors());
             bill.setMultiSponsors(baseBill.getMultiSponsors());
 
             // Pull up the list of existing versions and add yourself
@@ -324,6 +326,9 @@ public class BillProcessor
             if (activeBill.getModified() > bill.getModified()) {
                 // Pull some other information up from previously active bill
                 bill.setSummary(activeBill.getSummary());
+                bill.setTitle(activeBill.getTitle());
+                bill.setActClause(activeBill.getActClause());
+                bill.setLawSection(activeBill.getLawSection());
                 bill.setLaw(activeBill.getLaw());
 
                 // Activate yourself
@@ -346,6 +351,77 @@ public class BillProcessor
      */
     public void saveBill(Bill bill, Storage storage, Date date)
     {
+        // Until LBDC starts sending coPrime information for real we need overrides
+        // for the following set of bills and resolutions
+        if (bill.getSenateBillNo().equals("R314-2013")) {
+            // For reso R314  - Skelos, Klein as sponsors
+            bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
+        }
+        else if (bill.getSenateBillNo().equals("J375-2013")) {
+            // For reso J375  - Stewart-Cousins, Skelos, Klein as sponsors
+            bill.setOtherSponsors(Arrays.asList(new Person("SKELOS"), new Person("KLEIN")));
+        }
+        else if (bill.getSenateBillNo().equals("R633-2013")) {
+            // For reso R633  - Skelos, Klein as sponsors
+            bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
+        }
+        else if (bill.getSenateBillNo().equals("J694-2013")) {
+            // For reso J694  - Skelos, Klein as sponsors
+            bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
+        }
+        else if (bill.getSenateBillNo().equals("J758-2013")) {
+            // For reso J758 - Klein, Skelos as sponsors
+            bill.setOtherSponsors(Arrays.asList(new Person("SKELOS")));
+        }
+        else if (bill.getSenateBillNo().equals("R818-2013")) {
+            // For reso J818 -  Skelos, Klein as sponsors (there is no J818, typo?)
+            bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
+        }
+        else if (bill.getSenateBillNo().equals("J844-2013")) {
+            // For reso J844  - Skelos, Klein as sponsors
+            bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
+        }
+        else if (bill.getSenateBillNo().equals("J860-2013")) {
+            // For reso J860  - Gianaris, Skelos as sponsors
+            bill.setOtherSponsors(Arrays.asList(new Person("SKELOS")));
+        }
+        else if (bill.getSenateBillNo().equals("J1608-2013")) {
+            // For reso J1608 - Skelos, Klein, Stewart-Cousins as sponsors
+            bill.setOtherSponsors(Arrays.asList(new Person("KLEIN"), new Person("STEWART-COUSINS")));
+        }
+        else if (bill.getSenateBillNo().equals("J1938-2013")) {
+            // For reso J1938 - Skelos, Klein, Stewart-Cousins as sponsors
+            bill.setOtherSponsors(Arrays.asList(new Person("KLEIN"), new Person("STEWART-COUSINS")));
+        }
+        else if (bill.getSenateBillNo().equals("J3100-2013")) {
+            // For reso J3100 - Skelos, Hannon as sponsors
+            bill.setOtherSponsors(Arrays.asList(new Person("HANNON")));
+        }
+        else if (bill.getSenateBillNo().equals("S2107-2013")) {
+            // For bill S2107 - Skelos, Klein as sponsors
+            bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
+        }
+        else if (bill.getSenateBillNo().equals("S3953-2013")) {
+            // For bill S3953  - Klein, Espaillat as sponsors
+            bill.setOtherSponsors(Arrays.asList(new Person("ESPAILLAT")));
+        }
+        else if (bill.getSenateBillNo().equals("S5441-2013")) {
+            // For bill S5441 - KENNEDY, GRISANTI, RANZENHOFER, GALLIVAN
+            bill.setOtherSponsors(Arrays.asList(new Person("GRISANTI"), new Person("RANZENHOFER"), new Person("GALLIVAN")));
+        }
+        else if (bill.getSenateBillNo().equals("S5656-2013")) {
+            // For bill S5656 - MARCELLINO, FUSCHILLO
+            bill.setOtherSponsors(Arrays.asList(new Person("FUSCHILLO")));
+        }
+        else if (bill.getSenateBillNo().equals("S5657-2013")) {
+            // For bill S5657 - GALLIVAN, MARCHIONE, CARLUCCI
+            bill.setOtherSponsors(Arrays.asList(new Person("MARCHIONE"), new Person("CARLUCCI")));
+        }
+        else if (bill.getSenateBillNo().equals("S5683-2013")) {
+            // For bill S5683 - MARTINS, VALESKY
+            bill.setOtherSponsors(Arrays.asList(new Person("VALESKY")));
+        }
+
         // Sponsor and summary information needs to be synced at all times.
         // Uni bills share text, always sent to the senate bill.
         // Normally it is always sent to the base bill and broadcasted to amendments
@@ -355,11 +431,14 @@ public class BillProcessor
             Bill billVersion = storage.getBill(versionKey);
             billVersion.setSponsor(bill.getSponsor());
             billVersion.setCoSponsors(bill.getCoSponsors());
+            billVersion.setOtherSponsors(bill.getOtherSponsors());
             billVersion.setMultiSponsors(bill.getMultiSponsors());
+            billVersion.setLawSection(bill.getLawSection());
             billVersion.setSummary(bill.getSummary());
             storage.saveBill(billVersion);
             ChangeLogger.record(billVersion.getKey(), storage, date);
         }
+
         if (bill.isUniBill()) {
             // logger.error("UNIBILL: "+bill.getSenateBillNo()+", "+bill.getSameAs());
             Bill uniBill = storage.getBill(bill.getSameAs());
@@ -450,9 +529,7 @@ public class BillProcessor
     public void applyTitle(String data, Bill bill, Date date) throws ParseError
     {
         // No DELETE code for titles, they just get replaced
-        // Combine the lines with a space and handle special character issues..
-        // I don't have any examples of these special characters right now, here is some legacy code:
-        //      data = data.replace("","S").replaceAll("\\x27(\\W|\\s)", "&apos;$1");
+        // Combine the lines with a space
         bill.setTitle(data.replace("\n", " ").trim());
     }
 
@@ -576,9 +653,7 @@ public class BillProcessor
             bill.setSummary("");
 
         } else {
-            // We'll definitely need to clean this data up more than a little bit, these encoding issues are terrible!
-            // data = data.replaceAll("\\xBD", ""); // I don't think we still need this
-            bill.setLaw(data.replace("\n", " ").replace("õ", "S").replace("ô","P").replace("ï¿½","S").replace((char)65533+"", "S").trim());
+            bill.setLaw(data.replace("\n", " ").trim());
         }
     }
 
@@ -595,8 +670,6 @@ public class BillProcessor
      */
     public void applySummary(String data, Bill bill, Date date) throws ParseError
     {
-        // I don't have any examples of these special characters right now, here is some legacy code:
-        //      data = data.replace("","S").replaceAll("\\x27(\\W|\\s)", "&apos;$1");
         bill.setSummary(data.replace("\n", " ").trim());
     }
 

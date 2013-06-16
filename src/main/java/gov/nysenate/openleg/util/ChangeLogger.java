@@ -3,82 +3,93 @@ package gov.nysenate.openleg.util;
 import gov.nysenate.openleg.util.Storage.Status;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 public class ChangeLogger
 {
     private static final Logger logger = Logger.getLogger(ChangeLogger.class);
     private static HashMap<String, Change> changeLog = new HashMap<String, Change>();
+
+    public static SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     private static File sourceFile;
     private static Date datetime;
 
-    public void clearLog()
+    public static void clearLog()
     {
         ChangeLogger.changeLog.clear();
     }
 
-    public static HashMap<String, Storage.Status> parseChanges(Iterable<String> lines)
+    public static List<Entry<String, Change>> getEntries()
     {
-        Pattern changePattern = Pattern.compile("\\s*(.*?)\\s+(NEW|DELETED|MODIFIED)");
-        HashMap<String, Storage.Status> changes = new HashMap<String, Storage.Status>();
-        for (String line : lines) {
-            if (line.isEmpty() || line.matches("\\s*#")) {
-                continue;
+        // Use alphabetical ordering for consistency
+        List<Entry<String, Change>> entries = new ArrayList<Entry<String, Change>>(changeLog.entrySet());
+        Collections.sort(entries, new Comparator<Entry<String, Change>>() {
+            public int compare(Entry<String, Change> a, Entry<String, Change> b)
+            {
+                if (a.getKey() == null) {
+                    return -1;
+                }
+                else {
+                    return a.getKey().compareTo(b.getKey());
+                }
             }
-            Matcher changeLine = changePattern.matcher(line);
-            if (changeLine.find()) {
-                changes.put(changeLine.group(1), Storage.Status.valueOf(changeLine.group(2).toUpperCase()));
-            } else {
-                logger.fatal("Malformed change line: "+line);
-                System.exit(0);
-            }
-        }
-        return changes;
+        });
+        return entries;
     }
-    
-    /**
-     * Creates a hash map of changes from a change log file.
-     * Stores more detailed information than the parseChanges method.
-     * Currently adds date information, more to come.
-     * <p>
-     * This is done separate from the parseChanges method since the main services, varnish and lucene, don't 
-     * need this extra data and would require changes to their interfaces.
-     * @param lines
-     * @return
-     */
-    public static HashMap<String, Change> parseChangesDetailed(Iterable<String> lines)
+
+    public static void writeToFile(File outFile) throws IOException
     {
-        // TODO: errors when no date information in change log.
+        StringBuffer out = new StringBuffer();
+        for (Entry<String, Change> entry : ChangeLogger.getEntries()) {
+            Date date = entry.getValue().getDate();
+            out.append(entry.getKey()+"\t"+entry.getValue().getStatus()+"\t"+dateFormat.format(date).toString()+"\n");
+        }
+        FileUtils.write(outFile,out.toString());
+    }
+
+    public static void readFromFile(File inFile) throws IOException
+    {
+        ChangeLogger.readFromLines(FileUtils.readLines(inFile));
+    }
+
+    public static void readFromLines(Iterable<String> lines)
+    {
+        ChangeLogger.clearLog();
         Pattern changePattern = Pattern.compile("\\s*(.*?)\\s+(NEW|DELETED|MODIFIED)\\s+(.*)");
-        HashMap<String, Change> changes = new HashMap<String, Change>();
-        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        changeLog = new HashMap<String, Change>();
         for (String line : lines) {
-            if (line.isEmpty() || line.matches("\\s*#")) {
-                continue;
-            }
-            Matcher changeLine = changePattern.matcher(line);
-            if (changeLine.find()) {
-                Date date = null;
-                try {
-                    date = sdf.parse(changeLine.group(3));
+            if (!line.isEmpty() && !line.matches("\\s*#")) {
+                Matcher changeLine = changePattern.matcher(line);
+                if (changeLine.find()) {
+                    try {
+                        Date date = dateFormat.parse(changeLine.group(3));
+                        changeLog.put(changeLine.group(1), new Change(Storage.Status.valueOf(changeLine.group(2).toUpperCase()), date));
+                    }
+                    catch (ParseException e) {
+                        logger.error("Invalid date format for changeLog line:"+line,e);
+                    }
                 }
-                catch (ParseException e) {
-                    e.printStackTrace();
+                else {
+                    logger.fatal("Malformed change line: "+line);
+                    System.exit(0);
                 }
-                changes.put(changeLine.group(1), new Change(Storage.Status.valueOf(changeLine.group(2).toUpperCase()), date));
-            } else {
-                logger.fatal("Malformed change line: "+line);
-                System.exit(0);
             }
         }
-        return changes;
     }
 
     public static void record(String key, Storage storage)
@@ -88,7 +99,7 @@ public class ChangeLogger
 
     /**
      * Appends change information to the changeLog
-     * 
+     *
      * @param key
      * @param storage
      * @param date
@@ -108,7 +119,7 @@ public class ChangeLogger
             changeLog.put(key, new Change(Status.MODIFIED, date));
         }
     }
-    
+
     public static void delete(String key, Storage storage)
     {
         delete(key, storage, null);

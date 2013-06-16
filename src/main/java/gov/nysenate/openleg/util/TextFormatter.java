@@ -1,11 +1,15 @@
 package gov.nysenate.openleg.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import gov.nysenate.openleg.model.Bill;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TextFormatter {
+    public static Pattern startPagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s+\\d{1,4}$)");
+    public static Pattern endPagePattern = Pattern.compile("^\\s*(EXPLANATION--Matter|LBD[0-9-]+$)");
+    public static Pattern textLinePattern = Pattern.compile("^ {1,5}[0-9]+ ");
+
     public static String append(Object... objects) {
         StringBuilder sb = new StringBuilder();
         for(Object o:objects) {
@@ -20,140 +24,116 @@ public class TextFormatter {
         s = s.replaceAll("<","&lt;");
         s = s.replaceAll(">","&gt;");
         s = s.replaceAll("\"","&quot;");
-
         return s;
     }
 
-    public static String lrsPrinter(String fulltext) {
-        StringBuffer out = new StringBuffer("");
 
-        boolean redact = false;
-        int r_start = -1;
-        int r_end = -1;
-        boolean cap = false;
-        int capCount = 0;
-        int start = -1;
-        int end = -1;
-
-        ArrayList<TextPoint> points;
-
-        int linenum = 0;
-        for (String line : fulltext.split("\n")) {
-            linenum++;
-
-            Pattern pagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s+\\d{1,4}$)");
-            Matcher pageMatcher = pagePattern.matcher(line);
-
-            Pattern linePattern = Pattern.compile("^\\s{3,4}\\d{1,2}\\s*");
-            Matcher lineMatcher = linePattern.matcher(line);
-
-            points = new ArrayList<TextPoint>();
-
-            if(lineMatcher.find()) {
-                String text = line.substring(lineMatcher.end());
-                String lineNo = line.substring(lineMatcher.start(), lineMatcher.end());
-
-                char[] textChar = text.toCharArray();
-
-                for(int i = 0; i < textChar.length; i++) {
-                    if(textChar[i] == '[') {
-                        redact = true;
-                        r_start = i+1;
-                    }
-                    else if(textChar[i] == ']') {
-                        r_end = i;
-                        points.add(new TextPoint(r_start,r_end,false));
-
-                        r_start = -1;
-                        r_end = -1;
-                        redact = false;
-                    }
-
-                    if(Character.toString(textChar[i]).matches("\\s")) {
-
-                    }
-                    else {
-                        if(Character.isUpperCase(textChar[i])) {
-                            if(!cap) {
-                                cap = true;
-                                if(i < 6) {
-                                    start = 0;
-                                }
-                                else {
-                                    start = i;
-                                }
-                            }
-                            capCount++;
-                        }
-                        else if(Character.isLowerCase(textChar[i])) {
-                            if(cap) {
-                                if(capCount > 2) {
-                                    end = i - 1;
-                                    points.add(new TextPoint(start,end,true));
-                                }
-                                start = -1;
-                                end = -1;
-                                capCount = 0;
-                                cap = false;
-                            }
-                        }
-                    }
+    /**
+     * Inserts page breaks into the bill text for printing.
+     *
+     * @param bill
+     * @return
+     */
+    public static String originalTextPrintable(Bill bill)
+    {
+        StringBuffer text = new StringBuffer();
+        if (bill != null && bill.getFulltext() != null) {
+            int linenum = 1;
+            for (String line : bill.getFulltext().split("\n")) {
+                Matcher startPageMatcher = startPagePattern.matcher(line);
+                if(linenum++ > 10 && startPageMatcher.find()) {
+                    text.append("<div class=\"hidden\" style=\"page-break-after:always\"></div>");
                 }
-
-                if(redact) {
-                    text += "</del>";
-
-                    if(r_start != -1) {
-                        text = text.substring(0,r_start) + "<del>" + text.substring(r_start);
-                    }
-                    else {
-                        text = "<del>" + text;
-                    }
-                    r_start = -1;
-                    r_end = -1;
-                }
-
-                Collections.reverse(points);
-                for(TextPoint tp:points) {
-                    if(tp.s == -1) {
-                        tp.s = 0;
-                    }
-
-                    text = text.substring(0, tp.e) + (tp.uOrDel ? ""/*"</u>"*/ : "</del>") + text.substring(tp.e);
-                    text = text.substring(0,tp.s) + (tp.uOrDel ? ""/*"<u>"*/ : "<del>") + text.substring(tp.s);
-
-
-                }
-
-                out.append(lineNo + text + "\n");
-
-                start = -1;
-                end = -1;
-                cap = false;
-                capCount = 0;
-            }
-            else {
-                // We need to wait till we hit the 10th line to avoid breaking on the bill header
-                if(pageMatcher.find() && linenum > 10) {
-                    out.append("<div style=\"page-break-after:always\"></div>"+line.substring(6) + "\n");
-                }
-                else {
-                    out.append(line + "\n");
-                }
+                text.append(line).append("\n");
             }
         }
-        return out.toString();
+        return text.toString();
     }
 
-    static class TextPoint {
-        public int s;
-        public int e;
-        public boolean uOrDel;
+    /**
+     * Inserts page breaks, <del> and <add> tags, strips line numbers, formats bill headers, ...
+     *
+     * @param bill
+     * @return
+     */
+    public static String htmlTextPrintable(Bill bill)
+    {
+        StringBuffer text = new StringBuffer();
+        if (bill != null && bill.getFulltext() != null) {
+            if (bill.isResolution()) {
+                // We don't modify resolutions at all
+                return bill.getFulltext();
+            }
 
-        public TextPoint(int s, int e, boolean uOrDel) {
-            this.s = s;
-            this.e = e;
-            this.uOrDel = uOrDel;
+            String origText = bill.getFulltext();
+            origText = origText.replaceAll("I +N +S E N A T E","IN SENATE");
+            origText = origText.replaceAll("I +N +A S S E M B L Y","IN ASSEMBLY");
+            origText = origText.replaceAll("S T A T E +O F +N E W +Y O R K","STATE OF NEW YORK");
+
+            boolean inText = false;
+            boolean inHeader = true;
+            boolean inPagebreak = false;
+            text.append("<div class='billHeader'>");
+            for (String line : origText.split("\n")) {
+                Matcher startPageMatcher = startPagePattern.matcher(line);
+                Matcher endPageMatcher = endPagePattern.matcher(line);
+                Matcher textLineMatcher = textLinePattern.matcher(line);
+
+                if (inHeader) {
+                    // Header lines should be trimmed
+                    line = line.trim();
+                    if (line.matches(".*(Introduced +by|IN +SENATE +--|IN +ASSEMBLY +--).*")) {
+                        text.append("</div>");
+                        inHeader = false;
+                    }
+                }
+                else if (inText) {
+                    if (line.trim().isEmpty()) {
+                        // Skip Empty lines in text, all meaningful lines will have #s or text
+                        continue;
+                    }
+                    else if (textLineMatcher.find()) {
+                        // Numbered lines mark the end of a page break
+                        if (inPagebreak) {
+                            inPagebreak = false;
+                            text.append("\n</div><hr class='page-break'>");
+                        }
+
+                        line = line.replace("[", "<del>[").replace("]", "]</del>");
+                    }
+                    else if (inPagebreak == false && endPageMatcher.find()) {
+                        // Marks the beginning of a page break
+                        text.append("<div class=\"hidden\">\n");
+                        inPagebreak = true;
+                    }
+                    else if (startPageMatcher.find()) {
+                        // Marks a page break point for printing
+                        text.append("<div class=\"hidden\" style=\"page-break-after:always\"></div>");
+                        if (inPagebreak == false) {
+                            text.append("<div class=\"hidden\">");
+                            inPagebreak = true;
+                        }
+                    }
+
+                    // Trim the line numbers
+                    line = line.substring(7);
+                }
+                else { // Must be in the pre-amble: Introduced By, AN ACT to, THE PEOPLE..
+                    // These lines aren't always long enough to trim by 7
+                    line = line.substring(Math.min(7, line.length()));
+                    if (line.matches(".*BLY, DO ENACT AS FOLLOWS.*")) {
+                        // The extra spacing looks good
+                        line += "\n";
+                        inText = true;
+                    }
+                }
+
+                text.append(line).append("\n");
+            }
         }
+        else {
+            text.append("Not Available.");
+        }
+        return text.toString();
     }
 }

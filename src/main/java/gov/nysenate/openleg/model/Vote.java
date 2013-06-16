@@ -154,19 +154,6 @@ public class Vote extends SenateObject {
     }
 
 
-
-    public static int getVoteTypeFloor() {
-        return VOTE_TYPE_FLOOR;
-    }
-
-
-
-    public static int getVoteTypeCommittee() {
-        return VOTE_TYPE_COMMITTEE;
-    }
-
-
-
     public void setVoteType(int voteType) {
         this.voteType = voteType;
     }

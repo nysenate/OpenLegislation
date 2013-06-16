@@ -1,0 +1,34 @@
+<?xml version= '1.0' encoding='UTF-8'?>
+<DATAPROCESS TIME="2012-02-17-15.33.13">
+2011S01462C5Same as Uni. A 1415-C
+2011S01462C9
+2011A01415C5Same as Uni. S 1462-C
+2011A01415C9
+2011S01462CAAN ACT to amend the real property tax law, in relation to authorizing a municipal corporation to
+2011S01462CAprovide a real property tax exemption for improvements to real property meeting LEED certification
+2011S01462CAstandards for green buildings
+2011A01415CAAN ACT to amend the real property tax law, in relation to authorizing a municipal corporation to
+2011A01415CAprovide a real property tax exemption for improvements to real property meeting LEED certification
+2011A01415CAstandards for green buildings
+2011S01824A5No same as
+2011S01824A9
+2011S01824AAAN ACT to amend the general municipal law and the municipal home rule law, in relation to the
+2011S01824AArequirements for consolidating or dissolving certain local government entities and to repeal
+2011S01824AAsections 758, 759, 780 and 781 of the general municipal law relating thereto
+2011S01824A5No same as
+2011S01824A9
+2011S06510 5No same as
+2011S06510 9
+2011S06510 AAN ACT to amend the vehicle and traffic law, in relation to the revocation and the reissuance of
+2011S06510 Alicenses; and to repeal subparagraph 12 of paragraph (b) of subdivision 2 of section 1193 of such
+2011S06510 Alaw, relating to permanent revocation
+2011A09303 5Same as S 6511
+2011A09303 9
+2011S06511 5Same as A 9303
+2011S06511 9
+2011S06511 AAN ACT to amend the public health law, in relation to surgical technology and surgical
+2011S06511 Atechnologists
+</DATAPROCESS>
+<SENATEDATA TIME="2012-02-17-15.33.13">
+No data to process on 17/02/2012 at 15:33:13
+</SENATEDATA>

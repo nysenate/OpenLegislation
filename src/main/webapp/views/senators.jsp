@@ -1,9 +1,7 @@
 <%@ page language="java" import="java.util.ArrayList, gov.nysenate.services.model.Senator" pageEncoding="UTF-8"%>
-
 <jsp:include page="/header.jsp">
 	<jsp:param name="title" value="Senators"/>
 </jsp:include>
-
 <style>
 
 .senator-block {
@@ -46,32 +44,33 @@
 }
 </style>
 
-<em>Senator Listings are available for: <a href="/legislation/senators/2013">2013<a/> | <a href="/legislation/senators/2011">2011</a> | <a href="/legislation/senators/2009">2009</a></em>
 <div id="content">
-    <h2><%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Senator Listings</h2>
-    <br/>
-    <% for(Senator senator : (ArrayList<Senator>)request.getAttribute("senators")) {
-       String searchUrl = request.getContextPath()+"/sponsor/"+senator.getShortName()+"?filter=year:"+request.getAttribute("sessionStart");
-       String imageUrl = "http://www.nysenate.gov/files/imagecache/senator_teaser/"+senator.getImageUrl().substring(30);
-       %>
-        <div class="senator-block">
-            <img class="senator-portrait" src="<%=imageUrl%>"/>
-            <div class="senator-name"><%=senator.getName()%></div>
-            <div class="senator-district">
-                District <%=senator.getDistrict().getNumber()%>
-            </div>
-            <div class="senator-nysenate-links">
-            <a href="<%=senator.getUrl()%>">Home</a> | <a href="<%=senator.getUrl()%>/contact">Contact</a>
-            </div>
-            <div class="senator-openleg-links">
-                <a href="<%=searchUrl%>">Sponsored Legislation</a>
-            </div>
-        </div>
-    <% } %>
-
-    <br style="clear:both;"/>
-    <hr/>
+	<h2 class='page-title'>
+		<%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Senator Listings
+	</h2>
+	<div class='formats'>
+	    <em>Senator Listings are available for: <a href="/legislation/senators/2013">2013<a/> | <a href="/legislation/senators/2011">2011</a> | <a href="/legislation/senators/2009">2009</a></em>
+	</div>
+    <div class="content-bg">
+	    <br/>
+	    <% for(Senator senator : (ArrayList<Senator>)request.getAttribute("senators")) {
+	       String searchUrl = request.getContextPath()+"/sponsor/"+senator.getShortName()+"?filter=year:"+request.getAttribute("sessionStart");
+	       String imageUrl = "http://www.nysenate.gov/files/imagecache/senator_teaser/"+senator.getImageUrl().substring(30);
+	       %>
+	        <div class="senator-block">
+	            <img class="senator-portrait" src="<%=imageUrl%>"/>
+	            <div class="senator-name"><%=senator.getName()%></div>
+	            <div class="senator-district">
+	                District <%=senator.getDistrict().getNumber()%>
+	            </div>
+	            <div class="senator-nysenate-links">
+	            <a href="<%=senator.getUrl()%>">Home</a> | <a href="<%=senator.getUrl()%>/contact">Contact</a>
+	            </div>
+	            <div class="senator-openleg-links">
+	                <a href="<%=searchUrl%>">Sponsored Legislation</a>
+	            </div>
+	        </div>
+	    <% } %>
+	</div>
 </div>
 <jsp:include page="/footer.jsp"/>
-   
-    

@@ -1,4 +1,5 @@
-<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtils, java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 	String appPath = request.getContextPath();
 	DateFormat df = new SimpleDateFormat("MMM d, yyyy - h:mm a");
@@ -14,34 +15,65 @@
 	    calNo = addendum.getAgenda().getNumber()+"";
 	}
 %>
-
-<br />
-<h2><%=meeting.getCommitteeName()%> - <%=df.format(meeting.getMeetingDateTime())%></h2>
-
-<div style="float: right">
-	<script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script>
-</div>
-<br style="clear: both;" />
 <div id="content">
-	<div>
-		<b>Agenda:</b> <%=calNo%> / <b>Chair:</b>
-		<a href="<%=appPath%>/search/?term=chair:<%=java.net.URLEncoder.encode("\""+meeting.getCommitteeChair() + "\"", OpenLegConstants.ENCODING)%>"><%=chair%></a>
-		<% if(meeting.getLocation() != null) { %>
-			/ <b>Location:</b> <%=meeting.getLocation()%>
-		<% } %>
-        <% if (addendum != null) { %>
-            <b>Addendum:</b> <%=addendum.getAddendumId()%> / <b>Published:</b> <%=addendum.getPublicationDateTime()%> / <b>Week of:</b> <%=addendum.getWeekOf()%>
-        <% } %>
+<h2 class='page-title'>Meeting details for <%=meeting.getCommitteeName()%></h2>
+<div class="content-bg">
+	<div class="title-block">
+		<div class='item-actions'>
+			<ul>
+				<li><a href="#" onclick="window.print(); return false;">Print
+						Page</a></li>
+				<li><script type="text/javascript"
+						src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
+			</ul>
+		</div>
+		<h3 class='item-title'>${meeting.committeeName} </h3>
     </div>
-    <div id="committeeNotes">
-	    <% if (meeting.getNotes() != null && meeting.getNotes().trim().length() > 0) { %>
-	        <h3>Notes</h3>
-	        <%=meeting.getNotes()%>
+    
+<div class="item-meta">
+	<div id="subcontent">
+		<div class="billheader">
+		<div>
+           <span class="meta">Date:</span> 
+           <%=df.format(meeting.getMeetingDateTime())%>
+        </div> 
+		<div>
+           <span class="meta">Agenda:</span> 
+           <%=calNo%>  
+        </div>             
+		<div>
+           <span class="meta">Chair:</span> 
+           <a href="<%=appPath%>/search/?term=chair:<%=java.net.URLEncoder.encode("\""+meeting.getCommitteeChair() + "\"", OpenLegConstants.ENCODING)%>">${meeting.committeeChair}</a>
+        </div>  
+        <% if(meeting.getLocation() != null) { %>
+        <div>
+           <span class="meta">Location:</span> 
+           ${meeting.location} 
+        </div>  
+       <% } %>
+       <% if (addendum != null) { %>
+        <div>
+           <span class="meta">Addendum:</span> 
+           ${addendum.addendumId}
+        </div>  
+  		<div>
+           <span class="meta">Published:</span> 
+           ${addendum.publicationDateTime}
+        </div>  
+	    <div>
+           <span class="meta">Published in Week of:</span> 
+           ${addendum.weekOf}
+        </div>  
 	    <% } %>
-    </div>
-	<div>
-	    <h3>Bills on the Agenda</h3>
-	    <% if(meeting.getBills() == null || meeting.getBills().isEmpty()) { %>
+	    </div>
+     </div>
+         
+	       <% if (meeting.getNotes() != null && meeting.getNotes().trim().length() > 0) { %>
+	           <h3 id="section">Notes</h3>
+	           ${meeting.notes}
+	       <% } %>
+ 	    <h3 id="section">Bills on the Agenda</h3>
+	    <% if(meeting.getBills().isEmpty()) { %>
             No bills listed.
        <% } else {
 			Iterator<Bill> itBills = meeting.getBills().iterator();
@@ -49,61 +81,49 @@
 			while (itBills.hasNext()) {
 				bill = itBills.next();
 				try {
-					request.setAttribute("bill",bill);
-					%>
-					<div class="billSummary" onmouseover="this.style.backgroundColor='#FFFFCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/legislation/bill/<%=bill.getSenateBillNo()%>'">
-						<a href="/legislation/bill/<%=bill.getSenateBillNo()%>"><%=bill.getSenateBillNo()%>: <%=bill.getTitle()%></a>
-						<div style="font-size:90%;color:#777777;">
-                            <% if (bill.getSponsor()!=null) {
+					request.setAttribute("bill",bill); %>
+					<div class="row">
+						<a href="/legislation/bill/${bill.senateBillNo}">${bill.senateBillNo}: ${bill.title}</a>
+               			 <br/>
+               			 <span class="subrow">
+                         <% if (bill.getSponsor()!=null) {
                                 if (bill.getOtherSponsors().isEmpty()) { %>
                                     Sponsor: <%=JSPHelper.getSponsorLinks(bill, appPath) %>
                                 <% } else { %>
                                     Sponsors: <%=JSPHelper.getSponsorLinks(bill, appPath) %>
                                 <% } %>
                             <% } %>
+                        	<br/>
+                            ${bill.actClause}
 
-                            <%=bill.getActClause()%>
-							<%
-							if (bill.getVotes()!=null && bill.getVotes().size()>0) {
+                            <br/>
+							<% if (bill.getVotes()!=null && bill.getVotes().size()>0) {
 								Iterator<Vote> itVotes = bill.getVotes().iterator();
-								%><ul><%
 								while (itVotes.hasNext()) {
 									Vote vote = itVotes.next();
-
 									if (vote.getVoteType()==Vote.VOTE_TYPE_COMMITTEE && vote.getVoteDate().equals(meeting.getMeetingDateTime())) {
 										request.setAttribute("vote",vote);
-										String voteType = "Floor";
 
-										if (vote.getVoteType() == Vote.VOTE_TYPE_FLOOR)
-											voteType = "Floor";
-										else if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
-											voteType = "Committee";
-										%><li>Vote: <%=voteType%>
+										%>Vote: Committee
 										<%if (vote.getDescription()!=null){ %>(<%=vote.getDescription()%>)<%} %>
 										<%=df.format(vote.getVoteDate())%>:
 
 										<%if (vote.getAyes()!=null) { %> <%=vote.getAyes().size()%> Ayes <% } %>
 										<%if (vote.getAyeswr()!=null){ %> / <%=vote.getAyeswr().size()%> Ayes W/R <% } %>
 										<%if (vote.getNays()!=null){ %> / <%=vote.getNays().size()%> Nays <% } %>
-
 										<%if (vote.getAbstains()!=null) { %> / <%=vote.getAbstains().size()%> Abstains<%} %>
 										<%if (vote.getExcused()!=null) { %> / <%=vote.getExcused().size()%> Excused<%} %>
-										</li>
-										<%
+										<br/><%
 									}
 								}
-								%></ul><%
-							}%>
+							} %>
+							</span>
 						</div>
-					</div>
-			    <%} catch (Exception e) {
+					 
+			    <% } catch (Exception e) {
 					System.err.println("couldn't render bill: " + bill.getSenateBillNo());
 				}
 			}
 		}%>
-	</div>
-	<div id="formatBox"><b>Formats:</b>
-		<a href="<%=appPath%>/api/1.0/json/meeting/<%=meeting.luceneOid()%>">JSON</a>
-		<a href="<%=appPath%>/api/1.0/xml/meeting/<%=meeting.luceneOid()%>">XML</a>
-	</div>
+</div>
 </div>
