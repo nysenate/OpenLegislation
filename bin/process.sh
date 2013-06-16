@@ -57,7 +57,7 @@ for required_arg in "${required_args[@]}"; do
 done
 
 # Check to see if there is any work to be done
-document_count=`find $source -type f | wc -l`
+document_count=`find -L $source -type f | wc -l`
 if [ $document_count -eq 0 ]; then
     echo "No files in $source to process."
     exit 0;
@@ -85,7 +85,7 @@ for file_type in "${file_types[@]}"; do
         if [ ! -r $dest/$year/$file_type/ ]; then
             mkdir -p $dest/$year/$file_type
         fi
-        find $work/$file_type/ -type f | xargs mv -t  $dest/$year/$file_type/
+        find $work/$file_type/ -type f | xargs --max-args=1000 mv -t  $dest/$year/$file_type/
     fi
 done
 
