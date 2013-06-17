@@ -11,8 +11,8 @@ if (activeList.getDate() != null) {
 }
 %>
 <div id="content">
-    <h2 class="page-title"><%=activeListTitle%></h2>
     <div class="content-bg">
+        <h2 class="page-title"><%=activeListTitle%></h2>
         <div class='item-actions' style="float:right">
             <ul>
                 <li><a href="#" onclick="window.print(); return false;">Print Page</a></li>

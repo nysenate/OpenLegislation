@@ -1,8 +1,8 @@
 <%@ page language="java" import="java.util.*, java.io.*, gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="UTF-8"%>
 <jsp:include page="header.jsp"/>
 <div id="content">
-	<h2 class='page-title'>Sorry no results were found for that search.</h2>
 	<div class="content-bg">
+		<h2 class='page-title'>Sorry no results were found for that search.</h2>
 	    <h3>It's possible that this information isn't available yet for the current session.</h3>
 	    <br/>
 	    <br/>

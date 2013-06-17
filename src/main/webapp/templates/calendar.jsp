@@ -19,8 +19,8 @@ if (calendar.getDate() != null) {
 }
 %>
 <div id="content">
-	<h2 class='page-title'><%=calendarTitle%></h2>
 	<div class="content-bg">
+		<h2 class='page-title'><%=calendarTitle%></h2>
 		<div class='item-actions'>
 			<ul>
 				<li><a href="#" onclick="window.print(); return false;">Print Page</a></li>

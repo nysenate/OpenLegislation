@@ -85,13 +85,14 @@
 	String billMemo = bill.getMemo().replace("-\n", "").replace("\n\n", "<br/><br/>").replace("\n", " ");
 %>
 <div id="content">
-<% if (bill.isResolution()) { %>
-    <h2 class='page-title'>Resolution Details for ${bill.senateBillNo}</h2>
-<% } else { %>
-    <h2 class='page-title'>Bill Details for ${bill.senateBillNo}</h2>
-<% } %>
+
 <div class="content-bg">
-	<div class="title-block">
+	<% if (bill.isResolution()) { %>
+		    <h2 class='page-title'>Resolution ${bill.senateBillNo}</h2>
+		<% } else { %>
+		    <h2 class='page-title'>Bill ${bill.senateBillNo}</h2>
+		<% } %>
+		<div class="title-block">
 		<div class='item-actions'>
 			<ul>
         		<li><a href="#" onclick="window.print(); return false;">Print Page</a></li>
@@ -100,7 +101,8 @@
         		<li><a href="#comments">Read or Leave Comments</a></li>
 			</ul>
 		</div>
-		<h3 class='item-title'>${bill.senateBillNo}: ${bill.title}</h3>
+		
+		<h3 class='item-title'>${bill.title}</h3>
 	   	<% if (bill.getTitle()+"." != bill.getSummary()) { %>
 	   	<div class="summary"><p>${bill.summary}</p></div>
 	   	<% } %>
@@ -108,12 +110,14 @@
     <c:if test="${active} == false">
         <div class="amended">This bill has been amended.</div>
     </c:if>
+    <h3  class="section" ><a id="BillDetails" href="#BillDetails" class="anchor ui-icon ui-icon-bookmark"></a>Details</h3>
     <div class="item-meta">
         <div id="subcontent billmeta">
 	       <div class="billmeta">
+	       		<ul>
+	       		
                 <% if (bill.getSameAs() != null && !bill.getSameAs().trim().isEmpty()) { %>
-                    <div class="metabox">
-                        <span class="meta">Same as:</span>
+	       				<li><span class="meta">Same as:</span><span class="metadata">
                         <%
 						StringTokenizer st = new StringTokenizer(bill.getSameAs(),",");
 						String sameAs = null;
@@ -126,60 +130,60 @@
 							sameAsLink = appPath + "/bill/" + sameAs;
 					        %><a href="<%=sameAsLink%>"><%=sameAs%></a><%
 						}
-					%></div><%
+					%></span></li><%
 			    }
 
                 if (rBills.size() > 0) { %>
-                    <div class="metabox">
-                        <span class="meta">Versions:</span> 
-                        <% for (Bill rBill:rBills) { %>
+	       				<li><span class="meta">Versions</span><span class="metadata">
+                         <% for (Bill rBill:rBills) { %>
 				           <a href="/legislation/bill/<%=rBill.getSenateBillNo()%>"><%=rBill.getSenateBillNo()%></a> 
 				        <% } %>
- 					</div><%
+ 					</span></li><%
 				}
                 
                 %>
-                <div class="metabox">
+                <li>
                     <% if (bill.getOtherSponsors().isEmpty()) { %>
-                        <span class="meta">Sponsor:</span><%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                        <span class="meta">Sponsor:</span><span class="metadata"><%=JSPHelper.getSponsorLinks(bill, appPath) %></span>
                     <% } else { %>
-                        <span class="meta">Sponsors:</span><%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                        <span class="meta">Sponsors:</span><span class="metadata"><%=JSPHelper.getSponsorLinks(bill, appPath) %></span>
                     <% }
                     %>
-                    </div>
+                    </li>
                         <%
                     if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) { %>
-                    <div class="metabox">
+                    <li>
                         <span class="meta">Multi-sponsor(s):</span>
-                        <%=JSPHelper.getMultiSponsorLinks(bill, appPath)%>
-                    </div><%
+                        <span class="metadata"><%=JSPHelper.getMultiSponsorLinks(bill, appPath)%>
+                    </li><%
                 }
        
                 if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) { %>
-                    <div class="metabox">
+                    <li>
                         <span class="meta">Co-sponsor(s):</span>
-                        <%=JSPHelper.getCoSponsorLinks(bill, appPath)%>
-                    </div><%
+                        <span class="metadata"><%=JSPHelper.getCoSponsorLinks(bill, appPath)%></span>
+                    </li><%
                 }
 
                 if (bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) { %>
-                    <div class="metabox">
+                    <li>
                         <span class="meta">Committee:</span>
-                        <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
-                    </div>
+                        <span class="metadata"><a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a></span>
+                    </li>
                 <% }
 
                 if (bill.getLawSection() != null && !bill.getLawSection().equals("")) { %>
-                    <div class="metabox">
-                        <span class="meta">Law Section:</span> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
-                    </div>
+                    <li>
+                        <span class="meta">Law Section:</span> <span class="metadata"><a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
+                    </span></li>
 	 			<% }
 	 				 				
 		 		if (bill.getLaw() != null && bill.getLaw() != "") { %>
-                    <div class="metabox">
-                        <span class="meta">Law:</span> <%=bill.getLaw()%>
-                    </div>
+                    <li>
+                        <span class="meta">Law:</span> <span class="metadata"><%=bill.getLaw()%></span>
+                    </li>
 				<% } %>
+				</ul>
             </div>
             <% if (rActions.size() > 0) { %>
                 <h3 class="section"> <a id="Actions" href="#Actions" class="anchor ui-icon ui-icon-bookmark"></a> Actions</h3>

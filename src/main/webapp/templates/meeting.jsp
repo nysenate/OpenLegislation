@@ -16,63 +16,57 @@
 	}
 %>
 <div id="content">
-<h2 class='page-title'>Meeting details for <%=meeting.getCommitteeName()%></h2>
 <div class="content-bg">
-	<div class="title-block">
-		<div class='item-actions'>
-			<ul>
-				<li><a href="#" onclick="window.print(); return false;">Print
-						Page</a></li>
-				<li><script type="text/javascript"
-						src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
-			</ul>
-		</div>
-		<h3 class='item-title'>${meeting.committeeName} </h3>
-    </div>
-    
-<div class="item-meta">
-	<div id="subcontent">
-		<div class="billheader">
-		<div>
-           <span class="meta">Date:</span> 
-           <%=df.format(meeting.getMeetingDateTime())%>
-        </div> 
-		<div>
-           <span class="meta">Agenda:</span> 
-           <%=calNo%>  
-        </div>             
-		<div>
-           <span class="meta">Chair:</span> 
-           <a href="<%=appPath%>/search/?term=chair:<%=java.net.URLEncoder.encode("\""+meeting.getCommitteeChair() + "\"", OpenLegConstants.ENCODING)%>">${meeting.committeeChair}</a>
-        </div>  
-        <% if(meeting.getLocation() != null) { %>
-        <div>
-           <span class="meta">Location:</span> 
-           ${meeting.location} 
-        </div>  
-       <% } %>
-       <% if (addendum != null) { %>
-        <div>
-           <span class="meta">Addendum:</span> 
-           ${addendum.addendumId}
-        </div>  
-  		<div>
-           <span class="meta">Published:</span> 
-           ${addendum.publicationDateTime}
-        </div>  
-	    <div>
-           <span class="meta">Published in Week of:</span> 
-           ${addendum.weekOf}
-        </div>  
-	    <% } %>
-	    </div>
-     </div>
+	<h2 class='page-title'>Meeting details for <%=meeting.getCommitteeName()%></h2>
+	<div class="item-meta">
+	        <div id="subcontent" class="emptytitle">
+	       		<div class="billmeta">
+			     <ul>
+			     	<li><span class="meta">Date: </span><span class="metadata">
+          				 <%=df.format(meeting.getMeetingDateTime())%>
+ 					</span></li>
+ 					<% if(calNo != null && !calNo.trim().isEmpty()) { %>
+ 					<li><span class="meta">Agenda: </span><span class="metadata">
+           				<%=calNo%>  
+ 					</span></li>
+ 					<% } %>
+ 					<li><span class="meta">Chair: </span><span class="metadata">
+           				<a href="<%=appPath%>/search/?term=chair:<%=java.net.URLEncoder.encode("\""+meeting.getCommitteeChair() + "\"", OpenLegConstants.ENCODING)%>">${meeting.committeeChair}</a>
+ 					</span></li>
+ 					<% if(meeting.getLocation() != null) { %>
+ 					<li><span class="meta">Location: </span><span class="metadata">
+           				${meeting.location} 
+					</span></li>
+					<% } %>
+					
+ 					<% if (addendum != null) { %>
+ 					<li><span class="meta">Addendum: </span><span class="metadata">
+           				${addendum.addendumId}
+ 					</span></li>
+ 					<li><span class="meta">Published: </span><span class="metadata">
+           				${addendum.publicationDateTime}
+ 					</span></li>
+ 					<li><span class="meta">Published in Week of: </span><span class="metadata">
+           				${addendum.weekOf}
+ 					</span></li>
+ 					<% } %>
+ 					
+		        </ul>  
+ 			</div>
+ 	 		</div>
+ 			<div class='item-actions'>
+				<ul>
+	        		<li><a href="#" onclick="window.print(); return false;">Print Page</a></li>
+					<li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
+				</ul>
+			</div>
+ 		 
          
 	       <% if (meeting.getNotes() != null && meeting.getNotes().trim().length() > 0) { %>
-	           <h3 class="section" ><a id="Notes" href="#Notes" class="anchor ui-icon ui-icon-bookmark"></a> Notes</h3> -
- 	           ${meeting.notes}
+	           <h3 class="section" ><a id="Notes" href="#Notes" class="anchor ui-icon ui-icon-bookmark"></a> Notes</h3>
+ 	          	<div class="summary">${meeting.notes}</div>
 	       <% } %>
- 	    <h3 class="section" ><a id="BillsontheAgenda" href="#BillsontheAgenda" class="anchor ui-icon ui-icon-bookmark"></a> Bills on the Agenda</h3> -
+ 	    <h3 class="section" ><a id="BillsontheAgenda" href="#BillsontheAgenda" class="anchor ui-icon ui-icon-bookmark"></a> Bills on the Agenda</h3>
 	    <% if(meeting.getBills().isEmpty()) { %>
             No bills listed.
        <% } else {

@@ -390,20 +390,26 @@ outline:0px;
 }
 .title-block{
 	float:left;
-	border-bottom:1px solid #ccc;
 	width:100%;
 }
 .page-title{
+	border-bottom:1px solid #9ac7e2;
 	float:left;
-	padding: 10px 0 5px;
-	display:block;	
+	margin:-10px 0 0 -10px;
+	background:#d4e0e8;	
+	color: #005588;
+	
 }
 .item-title{
 	float:left;
-	padding: 0 0 5px;
+	margin: 20px 0 10px 10px;
+	padding: 0px 0 20px 05px;
 	width:675px;
-	border-bottom:none;
+	float:left;
 	font-weight:normal;
+	border-bottom:1px solid #e1e1e1;
+	display:block;
+	
 }
 .summary{
  	 padding:5px 0 0px 15px;
@@ -411,7 +417,9 @@ outline:0px;
 	 width:550px;
 	 float:left;
 }
- 
+ .summary p{
+ 	margin:0;
+ }
 .item-meta{
 	float:left;
 	padding: 0 0 5px;
@@ -427,11 +435,7 @@ outline:0px;
  	clear:both;
 	
 }
-.item-meta .meta{
-	width:140px;
-	float:left;
- 	color:#4F4E43;
-}
+ 
 .item-actions{
 	width:180px;
 	float:right;
@@ -510,11 +514,35 @@ margin:3px;
 	width:100%;
 }
 .billmeta{
-	margin: 0 0 0 25px;
+	margin: 4px 0;
 	float:left;
-	
+}
+ 
+.billmeta ul li{
+	padding: 4px 5px;
+	float: left;
+}
+.billmeta ul li:hover{
+	background:#F1F1F1;
+}
+.billmeta ul li .meta{
+	width:140px;
+	float:left;
+ 	color:#4F4E43;
 }
 
+.billmeta ul li .metadata{
+	width:700px;
+	display:block;
+	float:left;
+}
+
+#subcontent.emptytitle{
+	width:600px;
+}
+.emptytitle .billmeta ul li .metadata{
+	width:400px;
+}
 /* NYSS bill text header  */
 .billHeader{
 	text-align:center;
@@ -532,8 +560,8 @@ margin:3px;
 	padding:10px 0;
 	margin:5px 0 10px;
 	background:#F1F1F1;
-	
 }
+
 
 .anchor{
 	float:left;
@@ -894,8 +922,8 @@ add{
 		float:left;
 	}
 	.page-title{
-		padding: 0 0 10px 10px;
-	
+		width:100%;
+		padding:10px 10px 10px 20px;	
 	}
 	.item-title {
 		width:100%;
@@ -931,6 +959,9 @@ add{
 	.item-actions{
 		float:left;
 	}
+	.billmeta ul li .meta,.billmeta ul li .metadata{
+		width:100%;
+	}
 	
 }
  @media (min-width:920px) { 
@@ -954,8 +985,8 @@ add{
 	}
 	
 	.page-title{
-		padding: 10px 0 10px 10px;
-	
+		width:870px;
+		padding:10px 10px 10px 20px;	
 	}
 	.item-title {
 		width:675px;
@@ -968,7 +999,7 @@ add{
 	}
 	
 	#logobox{
-		padding: 3px 0 0 10px;
+		padding: 3px 0 20px 10px;
 	}
 	.formats{
 		display:inherit;
@@ -988,8 +1019,15 @@ add{
 	.item-actions{
 		float:right;
 	}
-	
+	.billmeta ul li .meta{
+		width:140px;
+	}
 
+	.billmeta ul li .metadata{
+		width:700px;
+	}
+
+	
  
 }
 

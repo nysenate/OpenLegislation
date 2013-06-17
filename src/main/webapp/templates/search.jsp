@@ -74,7 +74,6 @@ if (total > endIdx)
 	
 %>
 <div id="content">
-<h2 class='page-title'><%=type.toUpperCase()%> SEARCH RESULTS</h2>
 
 <% String encodedTerm = java.net.URLEncoder.encode(term,"UTF-8"); %>
 <div class='formats'>
@@ -83,6 +82,7 @@ if (total > endIdx)
 	<a href="/legislation/api/rss/search/<%=encodedTerm%>/">RSS</a>
 </div>
 <div class="content-bg">
+<h2 class='page-title'><%=type.toUpperCase()%> SEARCH RESULTS</h2>
 
     <div id="subcontent">
  <%

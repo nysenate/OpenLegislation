@@ -9,8 +9,7 @@
   height:100px;
   font-size:14px;
   line-height:15px;
-  margin:3px;
-  margin-bottom:12px;
+  margin:10px 3px 0px;
   float:left;
 }
 
@@ -45,14 +44,14 @@
 </style>
 
 <div id="content">
-	<h2 class='page-title'>
-		<%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Senator Listings
-	</h2>
+
 	<div class='formats'>
 	    <em>Senator Listings are available for: <a href="/legislation/senators/2013">2013<a/> | <a href="/legislation/senators/2011">2011</a> | <a href="/legislation/senators/2009">2009</a></em>
 	</div>
     <div class="content-bg">
-	    <br/>
+	<h2 class='page-title'>
+		<%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Senator Listings
+	</h2>   <br/>
 	    <% for(Senator senator : (ArrayList<Senator>)request.getAttribute("senators")) {
 	       String searchUrl = request.getContextPath()+"/sponsor/"+senator.getShortName()+"?filter=year:"+request.getAttribute("sessionStart");
 	       String imageUrl = "http://www.nysenate.gov/files/imagecache/senator_teaser/"+senator.getImageUrl().substring(30);
