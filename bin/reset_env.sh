@@ -23,6 +23,15 @@ if [ `find $env/work -type f -name SOBI* | wc -l` -ne 0 ]; then
     find $env/work/ -type f -name SOBI* | xargs mv -t $env/data/
 fi
 
+if [ `find $env/processed/transcripts/ -type f | wc -l` -ne 0 ]; then
+    find $env/processed/transcripts/ -type f | xargs mv -t $env/data/transcripts/
+fi
+
+if [ `find $env/processed/hearings/ -type f | wc -l` -ne 0 ]; then
+    find $env/processed/hearings/ -type f | xargs mv -t $env/data/hearings/
+fi
+
+
 rm -fr $env/work/*
 rm -fr $env/processed/*
 rm -fr $env/json/*

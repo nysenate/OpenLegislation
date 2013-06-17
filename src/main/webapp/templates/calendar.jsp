@@ -32,15 +32,17 @@ if (calendar.getDate() != null) {
 		    // Just to be safe, shouldn't ever happen.
 		    if (supplemental == null || supplemental.getSections() == null) continue;
 
-            String itemTitle;
-            if (supplemental.getSupplementalId() == null || supplemental.getSupplementalId().equals("null")) {
-                itemTitle = "Original Calendar";
-                if (supplemental.getReleaseDateTime() != null) {
-                    itemTitle += " - Released "+datetimeFormat.format(supplemental.getReleaseDateTime());
-                }
+		    String supplementalId = supplemental.getSupplementalId();
+		    if (supplementalId == null || supplementalId.equals("null")) {
+		        supplementalId = "";
+		    }
+
+            String itemTitle = "Calendar "+calendar.getNo();
+            if (!supplementalId.isEmpty()) {
+                itemTitle += "-"+supplementalId;
             }
-            else {
-                itemTitle = "Supplemental "+supplemental.getSupplementalId();
+            if (supplemental.getReleaseDateTime() != null) {
+                itemTitle += " - Released "+datetimeFormat.format(supplemental.getReleaseDateTime());
             }
 
             %>
@@ -52,7 +54,7 @@ if (calendar.getDate() != null) {
                 // Just to be safe, shouldn't ever happen.
                 if (section.getCalendarEntries() == null) continue;
 
-                String sectionId = section.getName().toLowerCase().replace(" ","-");
+                String sectionId = supplementalId+"-"+section.getName().toLowerCase().replace(" ","-");
                 %>
                 <div id="<%=sectionId%>" class="section">
                 <a href="#<%=sectionId%>" class="anchor-link"><%=section.getType()+section.getCd()%></a> - 
