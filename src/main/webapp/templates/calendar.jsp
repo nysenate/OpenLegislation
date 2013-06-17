@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <script>
 $(document).ready(function(){
-    $(".section").click(function() {
+    $(".calendar-section").click(function() {
         $("#"+$(this).attr('id')+"-bills").toggle();
     }).click();
 });
@@ -46,8 +46,11 @@ if (calendar.getDate() != null) {
             }
 
             %>
-            <div class="title-block">
-                <h3 class='item-title'><%=itemTitle%></h3>
+            <div>
+                <h3 class="section">
+                    <a href="#calendar-<%=calendar.getNo()+"-"+supplementalId%>" class="anchor ui-icon ui-icon-bookmark"></a>
+                    <%=itemTitle%>
+                </h3>
             </div>
             <%
             for (Section section : supplemental.getSections()) {
@@ -56,14 +59,12 @@ if (calendar.getDate() != null) {
 
                 String sectionId = supplementalId+"-"+section.getName().toLowerCase().replace(" ","-");
                 %>
-               <%--  <h3 class="section" ><a id="<%=sectionId%>" href="#<%=sectionId%>" class="anchor ui-icon ui-icon-bookmark"></a> <%=section.getName()%></h3> --%>
-                
-                <div id="<%=sectionId%>" class="section">
-                <a href="#<%=sectionId%>" class="anchor-link"><%=section.getType()+section.getCd()%></a> - 
-                <%=section.getName() %> (<%=section.getCalendarEntries().size()%> items)
+                <div id="<%=sectionId%>" class="calendar-section">
+	                <a href="#<%=sectionId%>" class="anchor ui-icon ui-icon-bookmark"></a> 
+	                <%=section.getName()%> (<%=section.getCalendarEntries().size()%> items)
                 </div>
                 
-                <div id="<%=sectionId%>-bills" class="billSummary">
+                <div id="<%=sectionId%>-bills" class="billSummary calendar-bills">
                 <%
                 for (CalendarEntry entry : section.getCalendarEntries()) {
                     Bill bill = entry.getBill();
@@ -74,7 +75,7 @@ if (calendar.getDate() != null) {
                     %>
                     <div class="row">
                         <div style="margin-bottom:3px">
-                        <a id="cal<%=entry.getNo()%>" href="#cal<%=entry.getNo()%>" style="color:#777777">#<%=entry.getNo()%></a>
+                        <a id="cal<%=entry.getNo()%>" href="#cal<%=entry.getNo()%>" class="anchor ui-icon ui-icon-bookmark" style="color:#777777">#<%=entry.getNo()%></a>
                         <%
                         if (bill.isResolution()) {
                             %> - Resolution <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%

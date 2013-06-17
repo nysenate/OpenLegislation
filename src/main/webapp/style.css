@@ -470,7 +470,7 @@ margin:3px;
 
 .section{
 	border-bottom:1px solid #e1e1e1;
-	border-top:1px solid #ccc;
+	border-top:1px solid #CCCCCC;
 	float:left;
 	width:100%;
 	padding:10px 0;
@@ -478,10 +478,18 @@ margin:3px;
 	background:#F1F1F1;
 }
 
+.calendar-section {
+    background: none repeat scroll 0 0 yellow;
+    border-bottom: 1px solid #E1E1E1;
+    border-top: 1px solid #CCCCCC;
+    float: left;
+    margin: 5px 0px 8px 10px;
+    padding: 10px 0;
+    width: 100%;
+}
 
-.anchor{
-	float:left;
-	margin:0px 2px 0 4px;
+.calendar-bills {
+	margin-left:20px;
 }
 
 .formats{
@@ -660,7 +668,7 @@ background:#fff;
 	color: #777777;
 }
 
- 
+
 .quickresult_box{
 margin-top:0px;
 padding:4px; 
@@ -758,8 +766,17 @@ add{
 .main-menu ul li a{
 	padding:0 4px;
 }
-.anchor{
+.anchor {
 	float:left;
+	opacity:0;
+	color:inherit;
+    text-style:inherit;
+	margin:0px 2px 0 4px;
+}
+
+.anchor:hover {
+
+	opacity:1;
 }
 
 @media (min-width:220px) { 
