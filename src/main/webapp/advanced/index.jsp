@@ -97,10 +97,9 @@ $(document).ready(function() {
 });
 </script>
 <div id="content">
-	<h2 class='page-title'>
-		Open Legislation Advanced Search
-	</h2>
+
 	<div class="content-bg">
+	<h2 class='page-title'>Open Legislation Advanced Search</h2>
 		<div id="subcontent">
             <div id="search-help">
                 Use the options below to create your search.
