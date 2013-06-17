@@ -807,6 +807,20 @@ pre {
 	width: 100%;
 	font-size: 9pt;
 }
+
+pre hr {
+	background-color:#999999;
+	border-width:0;
+	color:#cccccc;
+	height:2px;
+	line-height:0;
+	margin:1.4em 0 1.5em -5px;
+ 	text-align:center;
+	width:520px;
+}
+
+ 
+
 pre.memo {
 	padding: 10px 10px 10px 25px;
 	box-sizing: border-box;

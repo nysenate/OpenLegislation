@@ -111,7 +111,7 @@
     <div class="item-meta">
         <div id="subcontent billmeta">
 	       <div class="billmeta">
-                <% if (bill.getSameAs()!=null) { %>
+                <% if (bill.getSameAs() != null && !bill.getSameAs().trim().isEmpty()) { %>
                     <div class="metabox">
                         <span class="meta">Same as:</span>
                         <%
