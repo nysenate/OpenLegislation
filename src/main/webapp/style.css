@@ -575,6 +575,9 @@ font-size:10pt;
 	text-decoration:none;
 
 }
+.row .subrow.indent{
+	margin-left:10px;
+}
 .row .meta{
 	font-size:90%;
 	color:#777777;

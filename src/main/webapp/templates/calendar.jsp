@@ -60,7 +60,7 @@ if (calendar.getDate() != null) {
                 
                 <div id="<%=sectionId%>" class="section">
                 <a href="#<%=sectionId%>" class="anchor-link"><%=section.getType()+section.getCd()%></a> - 
-                 (<%=section.getCalendarEntries().size()%> items)
+                <%=section.getName() %> (<%=section.getCalendarEntries().size()%> items)
                 </div>
                 
                 <div id="<%=sectionId%>-bills" class="billSummary">
