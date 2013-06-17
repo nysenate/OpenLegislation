@@ -69,10 +69,10 @@
      </div>
          
 	       <% if (meeting.getNotes() != null && meeting.getNotes().trim().length() > 0) { %>
-	           <h3 id="section">Notes</h3>
-	           ${meeting.notes}
+	           <h3 class="section" ><a id="Notes" href="#Notes" class="anchor ui-icon ui-icon-bookmark"></a> Notes</h3> -
+ 	           ${meeting.notes}
 	       <% } %>
- 	    <h3 id="section">Bills on the Agenda</h3>
+ 	    <h3 class="section" ><a id="BillsontheAgenda" href="#BillsontheAgenda" class="anchor ui-icon ui-icon-bookmark"></a> Bills on the Agenda</h3> -
 	    <% if(meeting.getBills().isEmpty()) { %>
             No bills listed.
        <% } else {
