@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class JSPHelper
 {
+
     public static String getPersonLink(String person, String base)
     {
         if (person != null && person.trim().length() > 0) {
@@ -26,6 +27,11 @@ public class JSPHelper
     public static String getLink(HttpServletRequest request, String link)
     {
         return request.getContextPath()+link;
+    }
+
+    public static String getLink(HttpServletRequest request, Bill bill)
+    {
+        return request.getContextPath()+"/bill/"+bill.getSenateBillNo();
     }
 
     public static String getPersonLink(Person person, String base)
