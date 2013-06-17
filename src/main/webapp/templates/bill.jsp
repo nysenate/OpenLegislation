@@ -304,7 +304,7 @@
 	<% if(billMemo!=null && !billMemo.matches("\\s*")) { %>
 		<div class="pagebreak"></div>
 		<h3 class="section"><a id="Memo" href="#Memo" class="anchor ui-icon ui-icon-bookmark"></a> Memo</h3>
-		<pre><%=billMemo%></pre>
+		<pre class='memo'><%=billMemo%></pre>
 	<% } %>
 	<br/>
 	<div class="pagebreak"></div>

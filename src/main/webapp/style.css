@@ -522,6 +522,7 @@ margin:3px;
 	/* border-bottom:1px solid #ccc; */
 	margin: 0px;
 	padding: 0px;
+	width:540px;
 }
 .section{
 	border-bottom:1px solid #e1e1e1;
@@ -803,20 +804,24 @@ pre {
 	word-wrap: break-word; 
 	overflow-x: auto;
 	font-family: “Consolas”, monospace;
-	width: 560px;
+	width: 100%;
 	font-size: 9pt;
-	
-/* 	overflow: auto;
-	font-family: “Consolas”,monospace;
-	font-size: 9pt;
-	text-align:left;
-	overflow-x: auto;
-	white-space: -moz-pre-wrap !important;
+}
+pre.memo {
+	padding: 10px 10px 10px 25px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	webkit-box-sizing: border-box;
+	display: block; 
+	white-space: pre-wrap;  
+	white-space: -moz-pre-wrap; 
+	white-space: -pre-wrap; 
+	white-space: -o-pre-wrap; 
 	word-wrap: break-word; 
-	margin: 0px 0px 0px 0px;
-	padding:5px 5px 3px 5px;
-	white-space : pre-line; 
-	max-width:550px; */
+	overflow-x: auto;
+	font-family: “Consolas”, monospace;
+	width: 540px;
+	font-size: 9pt;
 }
 del{
 	color:red;
