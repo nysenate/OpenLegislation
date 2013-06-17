@@ -82,6 +82,26 @@ public class Calendar extends SenateObject {
         this.year = year;
     }
 
+    @JsonIgnore
+    public Date getDate() {
+        if (this.getType().equals("active")) {
+            if (this.getSupplementals() != null && this.getSupplementals().size() != 0 && this.getSupplementals().get(0).getSequences() != null && this.getSupplementals().get(0).getSequences().size() != 0 && this.getSupplementals().get(0).getSequences().get(0).getActCalDate() != null) {
+                return this.getSupplementals().get(0).getSequences().get(0).getActCalDate();
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            if (this.getSupplementals() != null && this.getSupplementals().size() != 0 && this.getSupplementals().get(0).getCalendarDate() != null) {
+                return this.getSupplementals().get(0).getCalendarDate();
+            }
+            else {
+                return null;
+            }
+        }
+    }
+
     public String getType() {
         return type;
     }

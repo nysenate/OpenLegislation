@@ -6,5 +6,9 @@
 <jsp:include page="/header.jsp">
 	<jsp:param name="title" value="<%=title%>" />
 </jsp:include>
-<jsp:include page="/templates/calendar.jsp" />
+<% if (calendar.getType().equals("active")) { %>
+    <jsp:include page="/templates/activelist.jsp" />
+<% } else { %>
+    <jsp:include page="/templates/calendar.jsp" />
+<% } %>
 <jsp:include page="/footer.jsp" />
