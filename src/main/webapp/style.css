@@ -584,7 +584,8 @@ font-size:10pt;
 
 }
 .row .subrow.indent{
-	margin-left:10px;
+	margin-left:20px;
+	float: left;
 }
 .row .meta{
 	font-size:90%;
