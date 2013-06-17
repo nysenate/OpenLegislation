@@ -372,8 +372,8 @@ outline:0px;
 #subcontent{
 	float:left;
 	width:100%;
-	
 }
+
 #menu{
 	padding: 2px 0px 10px;
 	color:#fff;
@@ -537,11 +537,12 @@ margin:3px;
 	float:left;
 }
 
-#subcontent.emptytitle{
-	width:600px;
+.emptytitle .billmeta{
+	width:690px;
+	margin:10px 0 0 0;
 }
 .emptytitle .billmeta ul li .metadata{
-	width:400px;
+	width:500px;
 }
 /* NYSS bill text header  */
 .billHeader{

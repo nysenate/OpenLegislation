@@ -53,13 +53,13 @@
  					
 		        </ul>  
  			</div>
- 	 		</div>
  			<div class='item-actions'>
 				<ul>
 	        		<li><a href="#" onclick="window.print(); return false;">Print Page</a></li>
 					<li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
 				</ul>
 			</div>
+ 		  </div>
  		 
          
 	       <% if (meeting.getNotes() != null && meeting.getNotes().trim().length() > 0) { %>
@@ -68,7 +68,7 @@
 	       <% } %>
  	    <h3 class="section" ><a id="BillsontheAgenda" href="#BillsontheAgenda" class="anchor ui-icon ui-icon-bookmark"></a> Bills on the Agenda</h3>
 	    <% if(meeting.getBills().isEmpty()) { %>
-            No bills listed.
+            <div class="summary">No bills listed.</div>
        <% } else {
 			Iterator<Bill> itBills = meeting.getBills().iterator();
 			Bill bill = null;
