@@ -109,10 +109,10 @@
         <div class="amended">This bill has been amended.</div>
     </c:if>
     <div class="item-meta">
-        <div id="subcontent">
-	       <div class="billheader">
+        <div id="subcontent billmeta">
+	       <div class="billmeta">
                 <% if (bill.getSameAs()!=null) { %>
-                    <div>
+                    <div class="metabox">
                         <span class="meta">Same as:</span>
                         <%
 						StringTokenizer st = new StringTokenizer(bill.getSameAs(),",");
@@ -130,7 +130,7 @@
 			    }
 
                 if (rBills.size() > 0) { %>
-                    <div>
+                    <div class="metabox">
                         <span class="meta">Versions:</span> 
                         <% for (Bill rBill:rBills) { %>
 				           <a href="/legislation/bill/<%=rBill.getSenateBillNo()%>"><%=rBill.getSenateBillNo()%></a> 
@@ -139,7 +139,7 @@
 				}
                 
                 %>
-                <div>
+                <div class="metabox">
                     <% if (bill.getOtherSponsors().isEmpty()) { %>
                         <span class="meta">Sponsor:</span><%=JSPHelper.getSponsorLinks(bill, appPath) %>
                     <% } else { %>
@@ -149,51 +149,51 @@
                     </div>
                         <%
                     if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) { %>
-                    <div>
+                    <div class="metabox">
                         <span class="meta">Multi-sponsor(s):</span>
                         <%=JSPHelper.getMultiSponsorLinks(bill, appPath)%>
                     </div><%
                 }
        
                 if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) { %>
-                    <div>
+                    <div class="metabox">
                         <span class="meta">Co-sponsor(s):</span>
                         <%=JSPHelper.getCoSponsorLinks(bill, appPath)%>
                     </div><%
                 }
 
                 if (bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) { %>
-                    <div>
+                    <div class="metabox">
                         <span class="meta">Committee:</span>
                         <a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a>
                     </div>
                 <% }
 
                 if (bill.getLawSection() != null && !bill.getLawSection().equals("")) { %>
-                    <div>
+                    <div class="metabox">
                         <span class="meta">Law Section:</span> <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
                     </div>
 	 			<% }
 	 				 				
 		 		if (bill.getLaw() != null && bill.getLaw() != "") { %>
-                    <div>
+                    <div class="metabox">
                         <span class="meta">Law:</span> <%=bill.getLaw()%>
                     </div>
 				<% } %>
             </div>
             <% if (rActions.size() > 0) { %>
-                <h3 class="section"><%=senateBillNo%> Actions</h3>
-                <ul>
+                <h3 class="section"> <a id="Actions" href="#Actions" class="anchor ui-icon ui-icon-bookmark"></a> Actions</h3>
+                <div class="actions"><ul>
                 <%
                 ArrayList<Action> events = sortBillEvents(rActions);
                 for (Action be : events) { %>
 					<li><%=df.format(be.getDate().getTime())%>: <%=formatBillEvent(bill.getSenateBillNo(), be.getText(), appPath)%></li>
 				<% } %>
-                </ul>
+                </ul></div>
             <% } %>
 
 	<% if (rMeetings.size() > 0) { %>
-		<h3  class="section" ><%=senateBillNo%> Meetings</h3>
+		<h3  class="section" ><a id="Meetings" href="#Meetings" class="anchor ui-icon ui-icon-bookmark"></a> Meetings</h3>
 		<%
 			for (Iterator<Meeting> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
 				Meeting meeting = itMeetings.next();
@@ -208,7 +208,7 @@
 	<% 
 		if (rCals.size() > 0) {
 			%>
-				<h3  class="section" ><%=senateBillNo%> Calendars</h3>
+				<h3  class="section" ><a id="Calendars" href="#Calendars" class="anchor ui-icon ui-icon-bookmark"></a> Calendars</h3>
 			<%
 			for (Iterator<Calendar> itCals = rCals.iterator(); itCals.hasNext();) {
 				Calendar cal = itCals.next();
@@ -247,7 +247,7 @@
 	<%
 		if(rVotes.size() > 0) {
 			%>
-				<h3 class="section" ><%=senateBillNo%> Votes</h3>
+				<h3 class="section" ><a id="Votes" href="#Votes" class="anchor ui-icon ui-icon-bookmark"></a> Votes</h3>
 			<%
 			
 			for (Vote vote:rVotes) {
@@ -303,12 +303,12 @@
   	%>
 	<% if(billMemo!=null && !billMemo.matches("\\s*")) { %>
 		<div class="pagebreak"></div>
-		<h3 class="section"><%=senateBillNo%> Memo</h3>
+		<h3 class="section"><a id="Memo" href="#Memo" class="anchor ui-icon ui-icon-bookmark"></a> Memo</h3>
 		<pre><%=billMemo%></pre>
 	<% } %>
 	<br/>
 	<div class="pagebreak"></div>
-	<h3 class="section" ><%=senateBillNo%> Text</h3>
+	<h3 class="section" ><a id="Text" href="#Text" class="anchor ui-icon ui-icon-bookmark"></a> Text</h3>
 	<pre><%=TextFormatter.htmlTextPrintable(bill)%></pre>
 	<br/>
 </div>

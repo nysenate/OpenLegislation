@@ -202,8 +202,7 @@ ul.multiline li {
   margin-bottom: 1em;
 }
 
-ul.meta li {
-}
+
 
 dt {
   float: left; 
@@ -407,7 +406,7 @@ outline:0px;
 	font-weight:normal;
 }
 .summary{
- 	 padding:0 0 5px;
+ 	 padding:5px 0 0px 15px;
 	 color:#7F7E73;
 	 width:550px;
 	 float:left;
@@ -418,16 +417,20 @@ outline:0px;
 	padding: 0 0 5px;
 	width:100%;
 }
-.item-meta div{
-	width:100%;
-	display:new-line;
+.metabox{
+	display:block;
 	float:left;
+	clear:both;
+}
+.actions{
+ 	padding: 0 0 0 10px;
+ 	clear:both;
+	
 }
 .item-meta .meta{
 	width:140px;
 	float:left;
-	display:block;
-	color:#4F4E43;
+ 	color:#4F4E43;
 }
 .item-actions{
 	width:180px;
@@ -485,6 +488,9 @@ margin:3px;
 	color:#003366;
  }
 
+.permalink{
+	
+}
 .footer-part li.head{
 	color:#000;
 	font-weight:bold;
@@ -503,6 +509,13 @@ margin:3px;
 	border-top:1px solid #ccc;
 	width:100%;
 }
+.billmeta{
+	margin: 0 0 0 25px;
+	float:left;
+	
+}
+
+/* NYSS bill text header  */
 .billHeader{
 	text-align:center;
 	font-weight:bold;
@@ -511,18 +524,26 @@ margin:3px;
 	padding: 0px;
 }
 .section{
-	border-bottom:none;
+	border-bottom:1px solid #e1e1e1;
 	border-top:1px solid #ccc;
 	float:left;
 	width:100%;
-	padding-top:10px;
+	padding:10px 0;
+	margin:5px 0 10px;
+	background:#F1F1F1;
+	
+}
+
+.anchor{
+	float:left;
+	margin:0px 2px 0 4px;
 }
 
 #billHeaderSummary
 {
 	font-size:16pt;
 	color:#333333;	
-	margin-bottom:15px;
+	margin:0 0 15px 15px;
 }
 
 .formats{
@@ -770,7 +791,7 @@ color:#FFFFFF;
 }
 
 pre {
-	padding: 10px;
+	padding: 10px 10px 10px 25px;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	webkit-box-sizing: border-box;
@@ -834,6 +855,10 @@ add{
 .main-menu ul li a{
 	padding:0 4px;
 }
+.anchor{
+	float:left;
+}
+
 @media (min-width:220px) { 
 	/* smartphones, iPhone, portrait 480x320 phones */
 	body{
