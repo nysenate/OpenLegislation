@@ -56,10 +56,13 @@ if (calendar.getDate() != null) {
 
                 String sectionId = supplementalId+"-"+section.getName().toLowerCase().replace(" ","-");
                 %>
+               <%--  <h3 class="section" ><a id="<%=sectionId%>" href="#<%=sectionId%>" class="anchor ui-icon ui-icon-bookmark"></a> <%=section.getName()%></h3> --%>
+                
                 <div id="<%=sectionId%>" class="section">
                 <a href="#<%=sectionId%>" class="anchor-link"><%=section.getType()+section.getCd()%></a> - 
-                <%=section.getName()%> (<%=section.getCalendarEntries().size()%> items)
+                 (<%=section.getCalendarEntries().size()%> items)
                 </div>
+                
                 <div id="<%=sectionId%>-bills" class="billSummary">
                 <%
                 for (CalendarEntry entry : section.getCalendarEntries()) {
