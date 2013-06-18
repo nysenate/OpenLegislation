@@ -414,6 +414,7 @@ public class CalendarProcessor implements OpenLegConstants {
             bill.setYear(year);
             bill.setSenateBillNo(senateBillNo);
             bill.setSponsor(new Person(sponsors[0].trim()));
+            new BillProcessor().saveBill(bill, storage, new Date());
         }
 
         // Other sponsors are removed when a calendar/agenda is resent without
@@ -422,8 +423,11 @@ public class CalendarProcessor implements OpenLegConstants {
         for (int i = 1; i < sponsors.length; i++) {
             otherSponsors.add(new Person(sponsors[i].trim()));
         }
-        bill.setOtherSponsors(otherSponsors);
-        new BillProcessor().saveBill(bill, storage, new Date());
+
+        if (!bill.getOtherSponsors().equals(otherSponsors)) {
+            bill.setOtherSponsors(otherSponsors);
+            new BillProcessor().saveBill(bill, storage, new Date());
+        }
 
         return bill;
     }
