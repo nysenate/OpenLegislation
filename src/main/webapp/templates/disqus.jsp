@@ -6,7 +6,7 @@
 	if (disqusUrl != null) {
 %>
 <div id="content">
-   	<h3 class="section" ><a id="Comments" href="#Comments" class="anchor ui-icon ui-icon-bookmark"></a>Comments</h3>
+   	<h3 class="section" ><a id="Comments" href="#Comments" class="anchor ui-icon ui-icon-link"></a>Comments</h3>
     <div id="comments">    
 		<p class='comment_terms'>
 	       Open Legislation comments facilitate discussion of New York State legislation. All comments are subject to moderation.

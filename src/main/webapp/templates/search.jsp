@@ -260,6 +260,14 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
                 contentType = "bill";
                 contentId = (String)sresult.getFields().get("billno");
             }
+            else if (contentType.equals("bill")) {
+                String billNo = sresult.getFields().get("billno");
+                if (billNo != null) {
+                    if (!billNo.startsWith("A") && !billNo.startsWith("S")) {
+                        senateType = "RESOLUTION";
+                    }
+                }
+            }
              
             if (resultTitle == null) {
                 resultTitle = "(no title)";

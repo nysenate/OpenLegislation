@@ -300,6 +300,7 @@ outline:0px;
 }
 #subcontent{
 	float:left;
+	margin-bottom:0px;
 	width:100%;
 }
 
@@ -479,13 +480,19 @@ margin:3px;
 }
 
 .calendar-section {
-    background: none repeat scroll 0 0 yellow;
+    background: none repeat scroll 0 0 white;
     border-bottom: 1px solid #E1E1E1;
     border-top: 1px solid #CCCCCC;
     float: left;
     margin: 5px 0px 8px 10px;
     padding: 10px 0;
     width: 100%;
+    cursor: pointer;
+}
+
+.calendar-section:hover {
+	background-color: #F1F1F1;
+}
 }
 
 .calendar-bills {

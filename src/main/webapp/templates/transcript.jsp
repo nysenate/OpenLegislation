@@ -97,7 +97,7 @@
 			</div>
  		</div>
  		
- 		<h3 class="section" ><a id="Transcript" href="#Transcript" class="anchor ui-icon ui-icon-bookmark"></a> Transcript</h3>
+ 		<h3 class="section" ><a id="Transcript" href="#Transcript" class="anchor ui-icon ui-icon-link"></a> Transcript</h3>
  		<pre class='memo'>   <%
 	        String fullText = transcript.getTranscriptText().trim();
 

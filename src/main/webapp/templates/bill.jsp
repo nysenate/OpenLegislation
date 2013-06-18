@@ -110,7 +110,7 @@
     <c:if test="${active} == false">
         <div class="amended">This bill has been amended.</div>
     </c:if>
-    <h3  class="section" ><a id="BillDetails" href="#BillDetails" class="anchor ui-icon ui-icon-bookmark"></a>Details</h3>
+    <h3  class="section" ><a id="BillDetails" href="#BillDetails" class="anchor ui-icon ui-icon-link"></a>Details</h3>
     <div class="item-meta">
         <div id="subcontent billmeta">
 	       <div class="billmeta">
@@ -186,7 +186,7 @@
 				</ul>
             </div>
             <% if (rActions.size() > 0) { %>
-                <h3 class="section"> <a id="Actions" href="#Actions" class="anchor ui-icon ui-icon-bookmark"></a> Actions</h3>
+                <h3 class="section"> <a id="Actions" href="#Actions" class="anchor ui-icon ui-icon-link"></a> Actions</h3>
                 <div class="actions"><ul>
                 <%
                 ArrayList<Action> events = sortBillEvents(rActions);
@@ -197,7 +197,7 @@
             <% } %>
 
 	<% if (rMeetings.size() > 0) { %>
-		<h3  class="section" ><a id="Meetings" href="#Meetings" class="anchor ui-icon ui-icon-bookmark"></a> Meetings</h3>
+		<h3  class="section" ><a id="Meetings" href="#Meetings" class="anchor ui-icon ui-icon-link"></a> Meetings</h3>
 		<%
 			for (Iterator<Meeting> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
 				Meeting meeting = itMeetings.next();
@@ -212,7 +212,7 @@
 	<% 
 		if (rCals.size() > 0) {
 			%>
-				<h3  class="section" ><a id="Calendars" href="#Calendars" class="anchor ui-icon ui-icon-bookmark"></a> Calendars</h3>
+				<h3  class="section" ><a id="Calendars" href="#Calendars" class="anchor ui-icon ui-icon-link"></a> Calendars</h3>
 			<%
 			for (Iterator<Calendar> itCals = rCals.iterator(); itCals.hasNext();) {
 				Calendar cal = itCals.next();
@@ -251,7 +251,7 @@
 	<%
 		if(rVotes.size() > 0) {
 			%>
-				<h3 class="section" ><a id="Votes" href="#Votes" class="anchor ui-icon ui-icon-bookmark"></a> Votes</h3>
+				<h3 class="section" ><a id="Votes" href="#Votes" class="anchor ui-icon ui-icon-link"></a> Votes</h3>
 			<%
 			
 			for (Vote vote:rVotes) {
@@ -307,12 +307,12 @@
   	%>
 	<% if(billMemo!=null && !billMemo.matches("\\s*")) { %>
 		<div class="pagebreak"></div>
-		<h3 class="section"><a id="Memo" href="#Memo" class="anchor ui-icon ui-icon-bookmark"></a> Memo</h3>
+		<h3 class="section"><a id="Memo" href="#Memo" class="anchor ui-icon ui-icon-link"></a> Memo</h3>
 		<pre class='memo'><%=billMemo%></pre>
 	<% } %>
 	<br/>
 	<div class="pagebreak"></div>
-	<h3 class="section" ><a id="Text" href="#Text" class="anchor ui-icon ui-icon-bookmark"></a> Text</h3>
+	<h3 class="section" ><a id="Text" href="#Text" class="anchor ui-icon ui-icon-link"></a> Text</h3>
 	<pre><%=TextFormatter.htmlTextPrintable(bill)%></pre>
 	<br/>
 </div>
