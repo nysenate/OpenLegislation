@@ -52,7 +52,6 @@ if (activeList.getDate() != null) {
                         sequenceReleaseDate = datetimeFormat.format(sequence.getReleaseDateTime());
                     }
 
-     
                     %>
                     <h3 class="section" ><a id="Transcript" href="#Transcript" class="anchor ui-icon ui-icon-link"></a><%=sequenceTitle%></h3>
                     <div class="item-meta">
@@ -90,6 +89,10 @@ if (activeList.getDate() != null) {
                             } else {
                                 %> Bill <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%
                             }
+
+	                        if (entry.getBillHigh() != null && entry.getBillHigh().equals("true")) {
+	                            %><span class="calendar-high" title="HIGH bills have not yet aged the normal 3 days."> HIGH </span><%
+	                        }
 							%>
 							<br/>
 							<span class="subrow indent">

@@ -114,6 +114,10 @@ if (calendar.getDate() != null) {
                         } else {
                             %> Bill <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%
                         }
+
+                        if (entry.getBillHigh() != null && entry.getBillHigh().equals("true")) {
+                            %><span class="calendar-high" title="HIGH bills have not yet aged the normal 3 days."> HIGH </span><%
+                        }
                         %>
                         <br/>
                         <span class="subrow indent">

@@ -499,6 +499,12 @@ margin:3px;
 	margin-left:20px;
 }
 
+.calendar-high {
+	font-size:.85em;
+	font-weight:bold;
+	color:green;
+}
+
 .formats{
 	float:right;
 }
