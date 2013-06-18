@@ -76,13 +76,16 @@ if (total > endIdx)
 <div id="content">
 
 <% String encodedTerm = java.net.URLEncoder.encode(term,"UTF-8"); %>
-<div class='formats'>
-	Formats:
-	<a href="/legislation/api/atom/search/<%=encodedTerm%>/">ATOM</a>,
-	<a href="/legislation/api/rss/search/<%=encodedTerm%>/">RSS</a>
-</div>
+
 <div class="content-bg">
-<h2 class='page-title'><%=type.toUpperCase()%> SEARCH RESULTS</h2>
+<div class="page-title">
+    <span class="formats">
+        Feeds:
+        <a href="<%=JSPHelper.getLink(request, "/api/atom/search/"+encodedTerm+"/")%>">ATOM</a>,
+        <a href="<%=JSPHelper.getLink(request, "/api/rss/search/"+encodedTerm+"/")%>">RSS</a>
+    </span>
+    <h2><%=type.toUpperCase()%> SEARCH RESULTS</h2>
+</div>
 
     <div id="subcontent">
  <%

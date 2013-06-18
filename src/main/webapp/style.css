@@ -507,6 +507,7 @@ margin:3px;
 
 .formats{
 	float:right;
+	padding-right:3px;
 }
 .search-nav{
 	float:left;
@@ -890,8 +891,6 @@ add{
 	}
 	.formats{
 		display:inherit;
-		padding-top: 16px;
-		
 	}
 	.sortby{
 		float:right;
