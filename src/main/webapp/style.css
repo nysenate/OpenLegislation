@@ -278,11 +278,11 @@ outline:0px;
 {
 	background-color:#ffffcc;
 	color:#555;
-	padding:3px;
+	padding:3px 10px;
 	font-size:130%;
 	border:1px solid #aaaaaa;
 	text-align:center;
-	width:280px;
+	float:right;
 }
 
 #content{
@@ -499,8 +499,15 @@ margin:3px;
 	margin-left:20px;
 }
 
+.calendar-high {
+	font-size:.85em;
+	font-weight:bold;
+	color:green;
+}
+
 .formats{
 	float:right;
+	padding-right:3px;
 }
 .search-nav{
 	float:left;
@@ -884,8 +891,6 @@ add{
 	}
 	.formats{
 		display:inherit;
-		padding-top: 16px;
-		
 	}
 	.sortby{
 		float:right;

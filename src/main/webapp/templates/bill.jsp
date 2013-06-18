@@ -68,9 +68,7 @@
 	ArrayList<Meeting> rMeetings	= defaultList((ArrayList<Meeting>)request.getAttribute("related-meeting"));
 	ArrayList<Calendar> rCals		= defaultList((ArrayList<Calendar>)request.getAttribute("related-calendar"));
 	ArrayList<Vote> rVotes			= defaultList((ArrayList<Vote>)request.getAttribute("related-vote"));
-	
-	boolean active = bill.getActive();
-  	
+
 	String titleText = "(no title)";
 	if (bill.getTitle()!=null)
 		titleText = bill.getTitle();
@@ -85,31 +83,36 @@
 	String billMemo = bill.getMemo().replace("-\n", "").replace("\n\n", "<br/><br/>").replace("\n", " ");
 %>
 <div id="content">
+    <div class="content-bg">
+        <div class="page-title">
+            <% if (bill.getActive() == false) { %>
+               <span class="amended">This bill has been amended</span>
+            <% } %>
+            <h2>
+	        <% if (bill.isResolution()) { %>
+	            Resolution ${bill.senateBillNo}
+	        <% } else { %>
+	            Bill ${bill.senateBillNo}
+	        <% } %>
+	        </h2>
+        </div>
 
-<div class="content-bg">
-	<% if (bill.isResolution()) { %>
-		    <h2 class='page-title'>Resolution ${bill.senateBillNo}</h2>
-		<% } else { %>
-		    <h2 class='page-title'>Bill ${bill.senateBillNo}</h2>
-		<% } %>
 		<div class="title-block">
-		<div class='item-actions'>
-			<ul>
-        		<li><a href="#" onclick="window.print(); return false;">Print Page</a></li>
-				<li><a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=bill.getSenateBillNo()%>" class="hidemobile" target="_new">Print Original Text</a></li>
-				<li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
-        		<li><a href="#Comments">Read or Leave Comments</a></li>
-			</ul>
-		</div>
+			<div class='item-actions'>
+				<ul>
+                    <li><a href="#" onclick="window.print(); return false;">Print Page</a></li>
+                    <li><a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=bill.getSenateBillNo()%>" class="hidemobile" target="_new">Print Original Text</a></li>
+                    <li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
+                    <li><a href="#Comments">Read or Leave Comments</a></li>
+				</ul>
+			</div>
 		
 		<h3 class='item-title'>${bill.title}</h3>
 	   	<% if (bill.getTitle()+"." != bill.getSummary()) { %>
 	   	<div class="summary"><p>${bill.summary}</p></div>
 	   	<% } %>
 	</div>
-    <c:if test="${active} == false">
-        <div class="amended">This bill has been amended.</div>
-    </c:if>
+
     <h3  class="section" ><a id="BillDetails" href="#BillDetails" class="anchor ui-icon ui-icon-link"></a>Details</h3>
     <div class="item-meta">
         <div id="subcontent billmeta">
