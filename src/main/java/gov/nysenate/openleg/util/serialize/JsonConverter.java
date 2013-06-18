@@ -454,8 +454,8 @@ public class JsonConverter {
         List<String> supplemental_exclude = new ArrayList<String>();
 
         supplemental_exclude.add("calendar");
-        supplemental_exclude.add("supplementalId");
-        supplemental_exclude.add("id");
+        // supplemental_exclude.add("supplementalId");
+        // supplemental_exclude.add("id");
 
         return supplemental_exclude;
     }
@@ -465,7 +465,7 @@ public class JsonConverter {
 
         section_exclude.add("calendar");
         section_exclude.add("supplemental");
-        section_exclude.add("id");
+        // section_exclude.add("id");
 
         return section_exclude;
     }

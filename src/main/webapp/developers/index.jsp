@@ -2,11 +2,9 @@
 <jsp:include page="/header.jsp"/>
 
 <div id="content">
-	<h2 class='page-title'>
-		Developer Info
-	</h2>
 	<div class="content-bg">
-	    <p>
+	<h2 class='page-title'>Developer Info</h2>
+	 	<p>
 	    All the data available on this web site is accessible using our API and licensed under a Creative Commons <a href="http://www.nysenate.gov/copyright-policy">CC+ license</a>.
 	    </p>
 	    <ul>

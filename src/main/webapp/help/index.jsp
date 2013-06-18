@@ -15,8 +15,8 @@ margin-bottom:9px;
 }
 </style>
 <div id="content">
-	<h2 class='page-title'>Open Legislation Help.</h2>
 	<div class="content-bg">
+	<h2 class='page-title'>Open Legislation Help.</h2>
 		<p>Open Legislation offers a variety of ways to search and browse legislative information.</p>
 		<h2>Available Content</h2>
 		<ul>

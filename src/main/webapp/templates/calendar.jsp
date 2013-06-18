@@ -2,63 +2,101 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <script>
 $(document).ready(function(){
-    $(".section").click(function() {
+    $(".calendar-section").click(function() {
         $("#"+$(this).attr('id')+"-bills").toggle();
     }).click();
+    
+    $(".anchor").click(function(event) {
+    	event.stopPropagation();
+   	});
 });
 </script>
 <%
 String appPath = request.getContextPath();
 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy");
 SimpleDateFormat datetimeFormat = new SimpleDateFormat("MM/d/yyyy hh:mm:ss aa");
-Calendar calendar = (Calendar) request.getAttribute("calendar");
 
+Calendar calendar = (Calendar) request.getAttribute("calendar");
 String calendarTitle = "Floor Calendar #"+calendar.getNo();
+
+String calendarDate = "";
 if (calendar.getDate() != null) {
-    calendarTitle += " - "+dateFormat.format(calendar.getDate());
+    calendarDate = dateFormat.format(calendar.getDate());
 }
 %>
 <div id="content">
-	<h2 class='page-title'><%=calendarTitle%></h2>
 	<div class="content-bg">
-		<div class='item-actions'>
-			<ul>
-				<li><a href="#" onclick="window.print(); return false;">Print Page</a></li>
-				<li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
-			</ul>
-		</div>
+		<h2 class='page-title'><%=calendarTitle%></h2>
+        <div class="item-meta">
+            <div id="subcontent" class="emptytitle">
+                <div class="billmeta">
+	                 <ul>
+	                     <li>
+	                         <span class="meta">Calendar Date: </span>
+	                         <span class="metadata"><%=calendarDate%></span>
+	                     </li>
+	                </ul>  
+	            </div>
+	            <div class='item-actions'>
+	                <ul>
+	                    <li><a href="#" onclick="window.print(); return false;">Print Page</a></li>
+	                    <li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
+	                </ul>
+	            </div>
+	        </div>
+	    </div>
 		<%
 		for (Supplemental supplemental : calendar.getSupplementals()) {
 		    // Just to be safe, shouldn't ever happen.
 		    if (supplemental == null || supplemental.getSections() == null) continue;
 
-            String itemTitle;
-            if (supplemental.getSupplementalId() == null || supplemental.getSupplementalId().equals("null")) {
-                itemTitle = "Original Calendar";
-                if (supplemental.getReleaseDateTime() != null) {
-                    itemTitle += " - Released "+datetimeFormat.format(supplemental.getReleaseDateTime());
-                }
+		    String supplementalId = supplemental.getSupplementalId();
+		    if (supplementalId == null || supplementalId.equals("null")) {
+		        supplementalId = "";
+		    }
+
+            String itemTitle = "Calendar "+calendar.getNo();
+            if (!supplementalId.isEmpty()) {
+                itemTitle += "-"+supplementalId;
             }
-            else {
-                itemTitle = "Supplemental "+supplemental.getSupplementalId();
+            
+            String supplementalReleaseDate = "";
+            if (supplemental.getReleaseDateTime() != null) {
+                supplementalReleaseDate = datetimeFormat.format(supplemental.getReleaseDateTime());
             }
 
             %>
-            <div class="title-block">
-                <h3 class='item-title'><%=itemTitle%></h3>
+            <div>
+                <h3 class="section">
+                    <a href="#calendar-<%=calendar.getNo()+"-"+supplementalId%>" class="anchor ui-icon ui-icon-link"></a>
+                    <%=itemTitle%>
+                </h3>
+            </div>
+            <div class="item-meta">
+                <div id="subcontent" class="emptytitle">
+                    <div class="billmeta">
+                         <ul>
+                            <li>
+                                <span class="meta">Released: </span>
+                                <span class="metadata"><%=supplementalReleaseDate%></span>
+                            </li>
+                        </ul>  
+                    </div> 
+                </div>
             </div>
             <%
             for (Section section : supplemental.getSections()) {
                 // Just to be safe, shouldn't ever happen.
                 if (section.getCalendarEntries() == null) continue;
 
-                String sectionId = section.getName().toLowerCase().replace(" ","-");
+                String sectionId = calendar.getNo()+supplementalId+"-"+section.getName().toLowerCase().replace(" ","-");
                 %>
-                <div id="<%=sectionId%>" class="section">
-                <a href="#<%=sectionId%>" class="anchor-link"><%=section.getType()+section.getCd()%></a> - 
-                <%=section.getName()%> (<%=section.getCalendarEntries().size()%> items)
+                <div id="<%=sectionId%>" class="calendar-section">
+	                <a href="#<%=sectionId%>" class="anchor ui-icon ui-icon-link"></a> 
+	                <%=section.getName()%> (<%=section.getCalendarEntries().size()%> items)
                 </div>
-                <div id="<%=sectionId%>-bills" class="billSummary">
+                
+                <div id="<%=sectionId%>-bills" class="billSummary calendar-bills">
                 <%
                 for (CalendarEntry entry : section.getCalendarEntries()) {
                     Bill bill = entry.getBill();
@@ -68,32 +106,37 @@ if (calendar.getDate() != null) {
                     if (bill == null) continue;
                     %>
                     <div class="row">
-                        <div style="margin-bottom:3px">
-                        <a id="cal<%=entry.getNo()%>" href="#cal<%=entry.getNo()%>" style="color:#777777">#<%=entry.getNo()%></a>
+                        <a id="cal<%=entry.getNo()%>" href="#cal<%=entry.getNo()%>" class="anchor ui-icon ui-icon-link"></a>
+                        <span style="color:#777777; font-size:0.85em;">#<%=entry.getNo()%>: </span>
                         <%
                         if (bill.isResolution()) {
-                            %> - Resolution <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%
+                            %> Resolution <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%
                         } else {
-                            %> - Bill <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%
+                            %> Bill <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%
                         }
-
-                        if (bill.getSponsor() != null) {
-                            if (bill.getOtherSponsors().isEmpty()) {
-                                %> - Sponsor: <%=JSPHelper.getSponsorLinks(bill, appPath)%> <%
-                            } else {
-                                %> - Sponsors: <%=JSPHelper.getSponsorLinks(bill, appPath)%> <%
-                            }
-                        }
-
-                        if (subBill != null) {
-                            if (subBill.getOtherSponsors().isEmpty()) {
-                                %> (Substituted-bill Sponsor: <%=JSPHelper.getSponsorLinks(subBill, appPath)%>) <%
-                            } else {
-                                %> (Substituted-bill Sponsors: <%=JSPHelper.getSponsorLinks(subBill, appPath)%>) <%
-                            }
-                        } %>
-                        </div>
-                        <%=bill.getActClause()%>
+                        %>
+                        <br/>
+                        <span class="subrow indent">
+                        <a href="<%=JSPHelper.getLink(request, bill)%>">
+                            <%=bill.getActClause()%>
+                        </a>
+	                        <%
+	                        if (bill.getSponsor() != null) {
+	                            if (bill.getOtherSponsors().isEmpty()) {
+	                                %> <br/>Sponsor: <%=JSPHelper.getSponsorLinks(bill, appPath)%> <%
+	                            } else {
+	                                %> <br/>Sponsors: <%=JSPHelper.getSponsorLinks(bill, appPath)%> <%
+	                            }
+	                        }
+	
+	                        if (subBill != null) {
+	                            if (subBill.getOtherSponsors().isEmpty()) {
+	                                %> (Substituted-bill Sponsor: <%=JSPHelper.getSponsorLinks(subBill, appPath)%>) <%
+	                            } else {
+	                                %> (Substituted-bill Sponsors: <%=JSPHelper.getSponsorLinks(subBill, appPath)%>) <%
+	                            }
+	                        } %>
+	                    </span>
                     </div>
                     <%
                 }

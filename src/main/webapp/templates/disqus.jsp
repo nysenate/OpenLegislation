@@ -6,7 +6,8 @@
 	if (disqusUrl != null) {
 %>
 <div id="content">
-    <div id="comments">
+   	<h3 class="section" ><a id="Comments" href="#Comments" class="anchor ui-icon ui-icon-link"></a>Comments</h3>
+    <div id="comments">    
 		<p class='comment_terms'>
 	       Open Legislation comments facilitate discussion of New York State legislation. All comments are subject to moderation.
 	       Comments deemed off-topic, commercial, campaign-related, self-promotional; or that contain profanity or hate speech;
