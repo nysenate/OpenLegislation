@@ -109,7 +109,8 @@ $(document).ready(function() {
                     <ul>
                         <li><b>AND</b>: Require both words. <span class="term">property AND tax</span> matches documents mentioning both property and tax.
                         <li><b>OR</b>: Require at least one of the words. <span class="term">debt OR loan</span> matches documents with the words debt or loan.
-                        <li><b>*</b>: Represents any number of additional characters. <span class="term">health*</span> matches health, healthcare, healthy, etc.
+                        <li><b>*</b>: Represents any number of wild card characters. e.g. <span class="term">health*</span> matches health, healthcare, healthy, etc. Note that the wild card character cannot start a word. e.g. <span class="term">*health</span> does not work.
+                        <li><b>?</b>: Represents a single wild card character. e.g <span class="term">defin?tely</span> matches definitely and definately. Note that the wild card character cannot start a word. e.g. <span class="term">?efinitely</span> does not work.
                         <li><b>~</b>: Fuzzy search for the preceding word. Can be used if you are unsure of spelling; e.g. <span class="term">Schenectedy~</span>.
                         <li><b>""</b>: Require an exact match. <span class="term">"student loans"</span> finds documents with the exact phrase "student loans".
                     </ul>
