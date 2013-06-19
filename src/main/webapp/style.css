@@ -479,6 +479,11 @@ margin:3px;
 	background:#F1F1F1;
 }
 
+.meeting-notes {
+    font:inherit;
+    margin-bottom:5px;
+}
+
 .calendar-section {
     background: none repeat scroll 0 0 white;
     border-bottom: 1px solid #E1E1E1;

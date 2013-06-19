@@ -64,7 +64,7 @@
          
 	       <% if (meeting.getNotes() != null && meeting.getNotes().trim().length() > 0) { %>
                 <h3 class="section" ><a id="Notes" href="#Notes" class="anchor ui-icon ui-icon-link"></a> Notes</h3>
-                <div class="summary"><pre>${meeting.notes}</pre></div>
+                <pre class="meeting-notes">${meeting.notes}</pre>
 	       <% } %>
  	    <h3 class="section" ><a id="BillsontheAgenda" href="#BillsontheAgenda" class="anchor ui-icon ui-icon-link"></a> Bills on the Agenda</h3>
 	    <% if(meeting.getBills().isEmpty()) { %>
