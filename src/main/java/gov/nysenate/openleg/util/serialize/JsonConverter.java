@@ -427,7 +427,7 @@ public class JsonConverter {
         List<String> sequence_exclude = new ArrayList<String>();
 
         sequence_exclude.add("supplemental");
-        sequence_exclude.add("notes");
+        // sequence_exclude.add("notes");
         sequence_exclude.add("id");
 
         return sequence_exclude;
