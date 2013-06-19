@@ -3,6 +3,8 @@ package gov.nysenate.openleg.api;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.TextFormatter;
 
+import org.apache.log4j.Logger;
+
 /**
  * This class attempts to make building queries
  * across the application a little easier, hiding
@@ -10,6 +12,8 @@ import gov.nysenate.openleg.util.TextFormatter;
  *
  */
 public class QueryBuilder {
+    public static Logger logger = Logger.getLogger(QueryBuilder.class);
+
     public static final String OTYPE  = "otype";
     public static final String OID  = "oid";
     public static final String YEAR = "year";
@@ -119,8 +123,8 @@ public class QueryBuilder {
     }
 
     public QueryBuilder searchValue(String key, String value) throws QueryBuilderException {
-        if (value.matches(".*( (OR|AND) |[*~?]).*")) {
-            System.out.println("Advanced term detected: "+value);
+        if (value.matches(".*( (OR|AND) |[\"*~?]).*")) {
+            logger.info("Advanced term detected: "+value);
             return keyValue(key, value, "(", ")");
         }
         else {
