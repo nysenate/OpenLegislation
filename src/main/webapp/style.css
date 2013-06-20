@@ -365,9 +365,13 @@ outline:0px;
 .actions{
  	padding: 0 0 0 10px;
  	clear:both;
-	
 }
- 
+.votes{
+ 	padding: 0 0 0 20px;
+ 	clear:both;
+}
+}
+
 .item-actions{
 	width:180px;
 	float:right;
@@ -788,7 +792,7 @@ add{
 }
 .anchor {
 	float:left;
-	opacity:0.3;
+	opacity:0.0;
 	color:inherit;
     text-style:inherit;
 	margin:0px 2px 0 4px;
