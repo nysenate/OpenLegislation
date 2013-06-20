@@ -24,6 +24,15 @@
 	});
     
     
-  });
+    
+    pageTitle = $('.page-title').text();
+    pageDescription = $('.title-block .item-title').text();
+    $('head').append('<meta http-equiv="twitter:title" content="'+pageTitle+'" /> ');
+    $('head').append('<meta http-equiv="twitter:description" content="'+pageDescription+'" /> ');
+    $('head').append('<meta http-equiv="twitter:site" content="@nysenate" /> ');
+    $('head').append('<meta http-equiv="twitter:card" content="summary" /> ');
+    var url = window.location.pathname;
+    $('head').append('<meta http-equiv="twitter:url" content="'+url+'" /> ');
+   });
 
 }(window.jQuery);
