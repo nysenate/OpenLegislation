@@ -5,10 +5,6 @@ $(document).ready(function(){
     $(".calendar-section").click(function() {
         $("#"+$(this).attr('id')+"-bills").toggle();
     }).click();
-    
-    $(".anchor").click(function(event) {
-    	event.stopPropagation();
-   	});
 });
 </script>
 <%
