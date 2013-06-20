@@ -362,14 +362,17 @@ outline:0px;
 	float:left;
 	clear:both;
 }
-.actions{
- 	padding: 0 0 0 10px;
- 	clear:both;
+.section-list {
+    padding: 0 0 0 10px;
+    clear:both;
 }
-.votes{
+.votes {
  	padding: 0 0 0 20px;
  	clear:both;
 }
+
+.vote-block {
+	padding: 10px 0px;
 }
 
 .item-actions{
