@@ -122,16 +122,6 @@ public class QueryBuilder {
         return append(key,SEPARATOR, before, value, after);
     }
 
-    public QueryBuilder searchValue(String key, String value) throws QueryBuilderException {
-        if (value.matches(".*( (OR|AND) |[\"*~?]).*")) {
-            logger.info("Advanced term detected: "+value);
-            return keyValue(key, value, "(", ")");
-        }
-        else {
-            return keyValue(key, value, "\"");
-        }
-    }
-
     public QueryBuilder and() throws QueryBuilderException {
         if(operator())
             return append(" ",AND," ");
