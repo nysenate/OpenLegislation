@@ -146,22 +146,17 @@ public class SearchRequest extends AbstractApiRequest {
         // One of bill, meeting, transcript, vote, etc
         String type = request.getParameter("type");
 
-        // Bill searches can have different default values.
-        boolean isBillSearch = term != null && term.contains("otype:bill") || (type != null && type.equals("bill"));
-
-        // If sortOrder is not specified then use false for bills true for everything else
+        // null represents default sort order
         String sortOrderParam = request.getParameter("sortOrder");
         if (!valid(sortOrderParam)) {
-            sortOrderParam = isBillSearch ? "false" : "true";
+            sortOrderParam = null;
         }
         boolean sortOrder = Boolean.parseBoolean(sortOrderParam);
 
-        // If a sortField is not specified then use:
-        //   * sortindex - for bills (TODO: what is this?)
-        //   * when - for everything else
+        // null represents sort by relevance
         String sortField = request.getParameter("sort");
         if (!valid(sortField)) {
-            sortField = isBillSearch ? "sortindex" : "when";
+            sortField = null;
         }
 
         if (request.getParameter("format")!=null) {
