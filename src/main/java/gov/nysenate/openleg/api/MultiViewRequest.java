@@ -43,7 +43,7 @@ public class MultiViewRequest extends AbstractApiRequest {
 
         QueryBuilder queryBuilder = new QueryBuilder();
 
-        if (type.contains("bill")) {
+        if (type.contains("bill") || type.contains("resolution")) {
             sortField = "sortindex";
             sortOrder = false;
         }

@@ -80,49 +80,49 @@ public class SearchRequest extends AbstractApiRequest {
             // One of 2009, 2011, 2013, etc
             String session = request.getParameter("session");
             if(valid(session)) {
-                queryBuilder.and().searchValue("year", session);
+                queryBuilder.and().keyValue("year", session, "(", ")");
             }
 
             // TODO: Why does this also search in the osearch field in addition to the text?
             String full = request.getParameter("full");
             if (valid(full)) {
-                queryBuilder.and().append(" (").searchValue("full", full).or().searchValue("osearch", full).append(") ");
+                queryBuilder.and().append(" (").keyValue("full", full, "(", ")").or().keyValue("osearch", full, "(", ")").append(") ");
             }
 
             // Wrap in ( ) so that the user can use boolean logic if they want
             String memo = request.getParameter("memo");
             if (valid(memo)) {
-                queryBuilder.and().searchValue("memo", memo);
+                queryBuilder.and().keyValue("memo", memo, "(", ")");
             }
 
             String status = request.getParameter("status");
             if (valid(status)) {
-                queryBuilder.and().searchValue("status", status);
+                queryBuilder.and().keyValue("status", status, "(", ")");
             }
 
             String sponsor = request.getParameter("sponsor");
             if (valid(sponsor)) {
-                queryBuilder.and().searchValue("sponsor", sponsor);
+                queryBuilder.and().keyValue("sponsor", sponsor, "(", ")");
             }
 
             String cosponsors = request.getParameter("cosponsors");
             if (valid(cosponsors)) {
-                queryBuilder.and().searchValue("cosponsors", cosponsors);
+                queryBuilder.and().keyValue("cosponsors", cosponsors, "(", ")");
             }
 
             String sameas = request.getParameter("sameas");
             if (valid(sameas)) {
-                queryBuilder.and().searchValue("sameas", sameas);
+                queryBuilder.and().keyValue("sameas", sameas, "(", ")");
             }
 
             String committee = request.getParameter("committee");
             if (valid(committee)) {
-                queryBuilder.and().searchValue("committee", committee);
+                queryBuilder.and().keyValue("committee", committee, "(", ")");
             }
 
             String location = request.getParameter("location");
             if (valid(location)) {
-                queryBuilder.and().searchValue("location", location);
+                queryBuilder.and().keyValue("location", location, "(", ")");
             }
 
             // If we aren't requesting a specific document or time period, only show active documents
@@ -146,22 +146,17 @@ public class SearchRequest extends AbstractApiRequest {
         // One of bill, meeting, transcript, vote, etc
         String type = request.getParameter("type");
 
-        // Bill searches can have different default values.
-        boolean isBillSearch = term != null && term.contains("otype:bill") || (type != null && type.equals("bill"));
-
-        // If sortOrder is not specified then use false for bills true for everything else
+        // null represents default sort order
         String sortOrderParam = request.getParameter("sortOrder");
         if (!valid(sortOrderParam)) {
-            sortOrderParam = isBillSearch ? "false" : "true";
+            sortOrderParam = null;
         }
         boolean sortOrder = Boolean.parseBoolean(sortOrderParam);
 
-        // If a sortField is not specified then use:
-        //   * sortindex - for bills (TODO: what is this?)
-        //   * when - for everything else
+        // null represents sort by relevance
         String sortField = request.getParameter("sort");
         if (!valid(sortField)) {
-            sortField = isBillSearch ? "sortindex" : "when";
+            sortField = null;
         }
 
         if (request.getParameter("format")!=null) {
