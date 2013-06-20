@@ -39,7 +39,7 @@
         HashMap<String, String> twitterMetaTags = (HashMap<String, String>)request.getAttribute("twitterMetaTags");
         if (twitterMetaTags != null) {
             for (Entry<String, String> entry : twitterMetaTags.entrySet()) {
-                %><meta http-equiv="<%=entry.getKey()%>" content="<%=entry.getValue()%>" />
+                %><meta name="<%=entry.getKey()%>" content="<%=entry.getValue()%>" />
             <% }
         }
         %>
