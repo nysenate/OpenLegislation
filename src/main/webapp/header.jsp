@@ -1,4 +1,4 @@
-<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="UTF-8"%>
+<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, java.util.*, java.util.Map.Entry, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 	String search = (String)request.getAttribute("search");
@@ -34,6 +34,15 @@
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/search.js")%>"></script>
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/jquery-ui-1.10.3.min.js")%>"></script>
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/app.js")%>"></script>
+
+            <%
+        HashMap<String, String> twitterMetaTags = (HashMap<String, String>)request.getAttribute("twitterMetaTags");
+        if (twitterMetaTags != null) {
+            for (Entry<String, String> entry : twitterMetaTags.entrySet()) {
+                %><meta http-equiv="<%=entry.getKey()%>" content="<%=entry.getValue()%>" />
+            <% }
+        }
+        %>
 
 	</head>
 	<body>
