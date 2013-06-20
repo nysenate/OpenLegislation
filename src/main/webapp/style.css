@@ -788,7 +788,7 @@ add{
 }
 .anchor {
 	float:left;
-	opacity:0;
+	opacity:0.3;
 	color:inherit;
     text-style:inherit;
 	margin:0px 2px 0 4px;

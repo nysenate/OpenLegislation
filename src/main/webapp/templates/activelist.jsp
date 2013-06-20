@@ -11,10 +11,30 @@ String activeListDate = "";
 if (activeList.getDate() != null) {
     activeListDate = dateFormat.format(activeList.getDate());
 }
+List<Supplemental> supplementals = activeList.getSupplementals();
+String Sections ="";
+if (supplementals != null && supplementals.size() != 0) {
+    System.out.println("processing supplemental");
+    Supplemental supplemental = activeList.getSupplementals().get(0);
+    List<Sequence> sequences = supplemental.getSequences();
+    System.out.println(sequences);
+    if (sequences != null) {
+        for (Sequence sequence : sequences) {
+            String sequenceTitle = ""+activeList.getNo();
+            if (sequence.getNo() != null && !sequence.getNo().isEmpty()) {
+                sequenceTitle += "-"+sequence.getNo();
+            }
+            Sections = Sections + "<a href=\"#Active List "+sequenceTitle+"\">"+sequenceTitle+"</a>,";
+        }
+    }
+}
+
+Sections = Sections.substring(0, Sections.length() - 1);
 %>
+
 <div id="content">
     <div class="content-bg">
-        <h2 class="page-title"><%=activeListTitle%></h2>
+        <h2 class="page-title">Active List <%=Sections%></h2>
         <div class="item-meta">
 	        <div id="subcontent" class="emptytitle">
 	       		<div class="billmeta">
@@ -34,7 +54,6 @@ if (activeList.getDate() != null) {
 	 		</div>
  		</div>
         <%
-        List<Supplemental> supplementals = activeList.getSupplementals();
         System.out.println("looking for supplemental"+ supplementals.size());
         if (supplementals != null && supplementals.size() != 0) {
             System.out.println("processing supplemental");
@@ -53,7 +72,7 @@ if (activeList.getDate() != null) {
                     }
 
                     %>
-                    <h3 class="section" ><a id="Transcript" href="#Transcript" class="anchor ui-icon ui-icon-link"></a><%=sequenceTitle%></h3>
+                    <h3 class="section" ><a id="<%=sequenceTitle%>" href="#<%=sequenceTitle%>" class="anchor ui-icon ui-icon-link"></a><%=sequenceTitle%></h3>
                     <div class="item-meta">
 				        <div id="subcontent" class="emptytitle">
 				       		<div class="billmeta">
