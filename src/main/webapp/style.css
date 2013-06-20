@@ -362,12 +362,19 @@ outline:0px;
 	float:left;
 	clear:both;
 }
-.actions{
- 	padding: 0 0 0 10px;
- 	clear:both;
-	
+.section-list {
+    padding: 0 0 0 10px;
+    clear:both;
 }
- 
+.votes {
+ 	padding: 0 0 0 20px;
+ 	clear:both;
+}
+
+.vote-block {
+	padding: 10px 0px;
+}
+
 .item-actions{
 	width:180px;
 	float:right;
@@ -788,7 +795,7 @@ add{
 }
 .anchor {
 	float:left;
-	opacity:0;
+	opacity:0.0;
 	color:inherit;
     text-style:inherit;
 	margin:0px 2px 0 4px;

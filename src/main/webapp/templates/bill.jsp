@@ -190,7 +190,7 @@
             </div>
             <% if (rActions.size() > 0) { %>
                 <h3 class="section"> <a id="Actions" href="#Actions" class="anchor ui-icon ui-icon-link"></a> Actions</h3>
-                <div class="actions"><ul>
+                <div class="section-list"><ul>
                 <%
                 ArrayList<Action> events = sortBillEvents(rActions);
                 for (Action be : events) { %>
@@ -201,21 +201,23 @@
 
 	<% if (rMeetings.size() > 0) { %>
 		<h3  class="section" ><a id="Meetings" href="#Meetings" class="anchor ui-icon ui-icon-link"></a> Meetings</h3>
+		<div class="section-list"><ul>
 		<%
 			for (Iterator<Meeting> itMeetings = rMeetings.iterator(); itMeetings.hasNext();){
 				Meeting meeting = itMeetings.next();
 				Date meetingDate = meeting.getMeetingDateTime();
 				%>
-				<a href="<%=appPath%>/meeting/<%=meeting.luceneOid()%>" class="sublink"><%=meeting.getCommitteeName() + (meetingDate == null ? "" : ": " + calendarSdf.format(meetingDate))%></a><%if (itMeetings.hasNext()){%>,<%}
-				
-			}
-		}
-	%>
+				<li><a href="<%=appPath%>/meeting/<%=meeting.luceneOid()%>" class="sublink"><%=meeting.getCommitteeName() + (meetingDate == null ? "" : ": " + calendarSdf.format(meetingDate))%></a></li>
+		<% } %>
+       </ul></div>
+      <% } %>
 	
 	<% 
 		if (rCals.size() > 0) {
 			%>
-				<h3  class="section" ><a id="Calendars" href="#Calendars" class="anchor ui-icon ui-icon-link"></a> Calendars</h3>
+			<h3  class="section" ><a id="Calendars" href="#Calendars" class="anchor ui-icon ui-icon-link"></a> Calendars</h3>
+			<div class="section-list"><ul>
+			
 			<%
 			for (Iterator<Calendar> itCals = rCals.iterator(); itCals.hasNext();) {
 				Calendar cal = itCals.next();
@@ -239,17 +241,12 @@
 				}
 		
 				%>
-					<a href="<%=appPath%>/calendar/<%=cal.luceneOid()%>" class="sublink"><%=type%><%=calDate == null ? "" : ": " +  calendarSdf.format(calDate)%></a>
-				<%
-				
-				if (itCals.hasNext()) {
-					%>
-						, 
-					<%
-				}
+					<li><a href="<%=appPath%>/calendar/<%=cal.luceneOid()%>" class="sublink"><%=type%><%=calDate == null ? "" : ": " +  calendarSdf.format(calDate)%></a></li>
+				<% 
 			}
-		}
-	%>
+			%>
+          </ul></div>
+        <% } %>
 
 	<%
 		if(rVotes.size() > 0) {
@@ -264,28 +261,28 @@
 					voteType = "Committee Vote";
 		 		%>
 		 		
-				<div>
+				<div class="votes">
 		  			<b>VOTE: <%=voteType.toUpperCase()%>:
                     <% if(vote.getDescription() != null && !vote.getDescription().isEmpty()){ %>
 		  				- <%=vote.getDescription()%>
 		  			<% } %>
 		 			 - <%=DateFormat.getDateInstance(DateFormat.MEDIUM).format(vote.getVoteDate())%></b>
 		 			 
-		  			<blockquote>
+		  			<blockquote class="vote-block">
 			  			<% if(vote.getAyes() != null && vote.getAyes().size() > 0) { %>
-	 						<br/>
 	 						<b>Ayes (<%=vote.getAyes().size()%>):</b>
 		 					<%=JSPHelper.getPersonLinks(vote.getAyes(), appPath) %>
+                            <br/>
 			 			<% } %>
 			 			<%if (vote.getAyeswr() != null && vote.getAyeswr().size() > 0) { %>
-			 				<br/>
 			 				<b>Ayes W/R (<%=vote.getAyeswr().size()%>):</b>
 			 				<%=JSPHelper.getPersonLinks(vote.getAyeswr(), appPath) %>
+			 				<br/>
 			 			<% } %>
 				 		<%if (vote.getNays() != null && vote.getNays().size() > 0) { %>
-				 			<br/>
 				 			<b>Nays (<%=vote.getNays().size()%>):</b>
 				 			<%=JSPHelper.getPersonLinks(vote.getNays(), appPath) %>
+				 			<br/>
 			 			<% } %>
 			 			<%if (vote.getAbstains()!=null && vote.getAbstains().size() > 0){ %>
 			 				<br/>
@@ -293,14 +290,14 @@
 			 				<%=JSPHelper.getPersonLinks(vote.getAbstains(), appPath) %>
 			 			<% } %>
                         <%if (vote.getAbsent()!=null && vote.getAbsent().size() > 0){ %>
-                            <br/>
                             <b>Absent (<%=vote.getAbsent().size()%>):</b>
                             <%=JSPHelper.getPersonLinks(vote.getAbsent(), appPath) %>
+                            <br/>
                         <% } %>
 			 			<%if (vote.getExcused()!=null && vote.getExcused().size() > 0){ %>
-			 				<br/>
 			 				<b>Excused (<%=vote.getExcused().size()%>):</b>
 			 				<%=JSPHelper.getPersonLinks(vote.getExcused(), appPath) %>
+			 				<br/>
 			 			<% } %>
 		 			</blockquote>
 		 		</div>
