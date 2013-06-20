@@ -24,7 +24,7 @@ if (supplementals != null && supplementals.size() != 0) {
             if (sequence.getNo() != null && !sequence.getNo().isEmpty()) {
                 sequenceTitle += "-"+sequence.getNo();
             }
-            Sections = Sections + "<a href=\"#Active List "+sequenceTitle+"\">"+sequenceTitle+"</a>,";
+            Sections = Sections + "<a href=\"#active-list-"+sequenceTitle+"\">"+sequenceTitle+"</a>,";
         }
     }
 }
@@ -66,13 +66,14 @@ Sections = Sections.substring(0, Sections.length() - 1);
                     if (sequence.getNo() != null && !sequence.getNo().isEmpty()) {
                         sequenceTitle += "-"+sequence.getNo();
                     }
+                    String sequenceLink = sequenceTitle.toLowerCase().replace(" ", "-");
                     String sequenceReleaseDate="";
                     if (sequence.getReleaseDateTime() != null) {
                         sequenceReleaseDate = datetimeFormat.format(sequence.getReleaseDateTime());
                     }
 
                     %>
-                    <h3 class="section" ><a id="<%=sequenceTitle%>" href="#<%=sequenceTitle%>" class="anchor ui-icon ui-icon-link"></a><%=sequenceTitle%></h3>
+                    <h3 class="section" ><a id="<%=sequenceLink%>" href="#<%=sequenceLink%>" class="anchor ui-icon ui-icon-link"></a><%=sequenceTitle%></h3>
                     <div class="item-meta">
 				        <div id="subcontent" class="emptytitle">
 				       		<div class="billmeta">
