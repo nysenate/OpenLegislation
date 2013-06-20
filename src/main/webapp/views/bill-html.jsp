@@ -94,10 +94,19 @@
     } else {
         pageTitle = "Bill "+bill.getSenateBillNo();
     }
-
+    String url = "http://open.nysenate.gov/legislation/bill/"+bill.getSenateBillNo();
+    String Summary = "";
+    if (bill.getSummary().length() > 200 ){
+        Summary = bill.getSummary().substring(0,196)+"...";
+    }else{
+        Summary = bill.getSummary();
+    }
     HashMap<String, String> twitterMetaTags = new HashMap<String, String>();
     twitterMetaTags.put("twitter:card", "summary");
     twitterMetaTags.put("twitter:title", pageTitle);
+    twitterMetaTags.put("twitter:description",Summary);
+    twitterMetaTags.put("twitter:site", "@nysenate");
+    twitterMetaTags.put("twitter:url", url);
     request.setAttribute("twitterMetaTags", twitterMetaTags);
 %>
 <jsp:include page="/header.jsp">
