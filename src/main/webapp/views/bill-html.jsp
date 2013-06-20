@@ -1,4 +1,4 @@
-<%@ page language="java" import="gov.nysenate.openleg.util.*, java.util.Date, java.util.ArrayList, java.util.Collections, java.util.List, java.util.Hashtable, java.util.TreeSet, java.util.StringTokenizer, java.util.regex.*, java.util.Iterator, java.text.* ,gov.nysenate.openleg.model.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page language="java" import="gov.nysenate.openleg.util.*, java.util.Date, java.util.HashMap, java.util.ArrayList, java.util.Collections, java.util.List, java.util.Hashtable, java.util.TreeSet, java.util.StringTokenizer, java.util.regex.*, java.util.Iterator, java.text.* ,gov.nysenate.openleg.model.*" contentType="text/html" pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%!
     public <T> ArrayList<T> defaultList(ArrayList<T> list) {
@@ -87,6 +87,18 @@
     DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
     
     String billMemo = bill.getMemo().replace("-\n", "").replace("\n\n", "<br/><br/>").replace("\n", " ");
+
+    String pageTitle = "";
+    if (bill.isResolution()) {
+        pageTitle = "Resolution "+ bill.getSenateBillNo();
+    } else {
+        pageTitle = "Bill "+bill.getSenateBillNo();
+    }
+
+    HashMap<String, String> twitterMetaTags = new HashMap<String, String>();
+    twitterMetaTags.put("twitter:card", "summary");
+    twitterMetaTags.put("twitter:title", pageTitle);
+    request.setAttribute("twitterMetaTags", twitterMetaTags);
 %>
 <jsp:include page="/header.jsp">
 	<jsp:param name="title" value="<%=title%>"/>
@@ -97,13 +109,7 @@
             <% if (bill.getActive() == false) { %>
                <span class="amended">This bill has been amended</span>
             <% } %>
-            <h2>
-            <% if (bill.isResolution()) { %>
-                Resolution ${bill.senateBillNo}
-            <% } else { %>
-                Bill ${bill.senateBillNo}
-            <% } %>
-            </h2>
+            <h2><%=pageTitle%></h2>
         </div>
 
         <div class="title-block">
