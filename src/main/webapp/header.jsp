@@ -33,6 +33,8 @@
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/jquery-1.9.1.min.js")%>"></script>
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/search.js")%>"></script>
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/jquery-ui-1.10.3.min.js")%>"></script>
+		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/app.js")%>"></script>
+
 	</head>
 	<body>
     <div id="menu">
