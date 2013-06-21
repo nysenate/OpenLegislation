@@ -101,6 +101,10 @@ public class DataProcessor
                     extractXml("</senannotated.+", line, br, annotationFile);
                 }
                 else if(line.matches("[0-9]{4}[A-Z][0-9]{5}[ A-Z].+")) {
+                    if (line.charAt(11) == 'M') {
+                        // Memos are latin1 encoding
+                        line = new String(line.getBytes(encoding), "latin1");
+                    }
                     billBuffer.append(line).append("\n");
                 }
             }
