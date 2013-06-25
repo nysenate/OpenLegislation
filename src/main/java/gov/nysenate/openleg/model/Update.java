@@ -1,14 +1,12 @@
 package gov.nysenate.openleg.model;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Update implements Comparable<Object>
 {
     private String otype;
     private String oid;
-    private String date;
+    private Date time;
     private String status;
 
     public Update(){ }
@@ -38,34 +36,18 @@ public class Update implements Comparable<Object>
     {
         this.status = status;
     }
-    public String getDate()
+    public Date getTime()
     {
-        return date;
+        return time;
     }
-    public void setDate(String date)
+    public void setTime(Date time)
     {
-        this.date = date;
-    }
-
-    /*
-     * Returns a Date object represented by the objects date string.
-     */
-    public Date getDateObj()
-    {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = null;
-        try {
-            date = dateFormat.parse(this.getDate());
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date;
+        this.time = time;
     }
 
     @Override
     public int compareTo(Object obj)
     {
-        return this.getDateObj().compareTo(((Update) obj).getDateObj());
+        return this.getTime().compareTo(((Update) obj).getTime());
     }
 }

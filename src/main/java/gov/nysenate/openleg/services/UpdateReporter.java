@@ -6,7 +6,6 @@ import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.Storage;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -22,7 +21,6 @@ public class UpdateReporter extends ServiceBase
     public boolean process(List<Entry<String, Change>> entries, Storage storage)
     {
         ArrayList<Update> updates = new ArrayList<Update>();
-        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         // Parse all changes in log file.
         for(Entry<String, Change> changeEntry: entries)
         {
@@ -37,7 +35,7 @@ public class UpdateReporter extends ServiceBase
             update.setOtype(otype);
             update.setStatus(change.getStatus().toString());
             // Format the Date for MySql query.
-            update.setDate(sdf.format(change.getDate()));
+            update.setTime(change.getDate());
             updates.add(update);
         }
         insertUpdates(updates);
@@ -52,8 +50,8 @@ public class UpdateReporter extends ServiceBase
         try {
             run.update("BEGIN");
             for(Update update: updates){
-                run.update("INSERT INTO updates(otype, oid, date, status) values(?, ?, ?, ?)",
-                        update.getOtype(), update.getOid(), update.getDate(), update.getStatus());
+                run.update("INSERT INTO updates(otype, oid, time, status) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE oid = ?",
+                        update.getOtype(), update.getOid(), update.getTime(), update.getStatus(), update.getOid());
             }
             run.update("COMMIT");
         }
