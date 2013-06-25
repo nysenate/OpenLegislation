@@ -27,21 +27,18 @@ public class SingleViewRequest extends AbstractApiRequest {
     public SingleViewRequest(HttpServletRequest request, HttpServletResponse response,
             String format, String type, String id) {
         super(request, response, 1, 1, format, getApiEnum(SingleView.values(),type));
+        logger.info("New single view request: format="+format+", type="+type+", id="+id);
         this.type = type;
         this.id = id;
     }
 
     @Override
     public void fillRequest() throws ApiRequestException {
-        SenateObject so = SearchEngine.getInstance().getSenateObject(id,
-                type, apiEnum.clazz());
+        SenateObject so = SearchEngine.getInstance().getSenateObject(id, type, apiEnum.clazz());
 
-        if(so == null) throw new ApiRequestException(
-                TextFormatter.append("couldn't find id: ", id, " of type: ", type));
-
-        logger.info(
-                TextFormatter.append(
-                        "Adding ", id, " of type ", type, " to request"));
+        if(so == null) {
+            throw new ApiRequestException(TextFormatter.append("couldn't find id: ", id, " of type: ", type));
+        }
 
         request.setAttribute(type , so);
 

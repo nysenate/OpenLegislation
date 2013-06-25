@@ -167,25 +167,21 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
                 TextFormatter.append(
                         BASE_START,singleFormats,BASE_MIDDLE,singleViews,SINGLE_END,BASE_END)
                 );
-        logger.info(TextFormatter.append("Single View pattern generated: ", SINGLE_PATTERN.pattern()));
 
         MULTI_PATTERN = Pattern.compile(
                 TextFormatter.append(
                         BASE_START,multiFormats,BASE_MIDDLE,multiViews,MULTI_END,PAGING,BASE_END)
                 );
-        logger.info(TextFormatter.append("Multi View pattern generated: ", SINGLE_PATTERN.pattern()));
 
         KEY_VALUE_PATTERN = Pattern.compile(
                 TextFormatter.append(
                         BASE_START,keyValueFormats,BASE_MIDDLE,keyValueViews,KEY_VALUE_END,PAGING,BASE_END)
                 );
-        logger.info(TextFormatter.append("Key Value View pattern generated: ", SINGLE_PATTERN.pattern()));
 
         SEARCH_PATTERN = Pattern.compile(
                 TextFormatter.append(
                         BASE_START,searchFormats,BASE_MIDDLE,searchViews,SEARCH_END,PAGING,BASE_END)
                 );
-        logger.info(TextFormatter.append("Search View pattern generated: ", SEARCH_PATTERN.pattern()));
     }
 
     /**
@@ -197,17 +193,22 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
         Matcher m = null;
 
         String uri = URLDecoder.decode(request.getRequestURI(), ENCODING);
-
+        String queryString = request.getQueryString();
         AbstractApiRequest apiRequest = null;
 
+        if (queryString != null) {
+            logger.info("request: "+uri+"?"+queryString);
+        }
+        else {
+            logger.info("request: "+uri);
+        }
         /*
          *	/legislation/(api/(1.0/)?[format]/)?[type]/[id]
          *
          *		ex. /legislation/api/html/bill/s1234-2011
          */
+
         if(apiRequest == null && (m = SINGLE_PATTERN.matcher(uri)) != null && m.find()) {
-            logger.info(TextFormatter.append("Single request: ", uri));
-            System.out.println(m.group(SINGLE_FORMAT) + " : " +  m.group(SINGLE_TYPE) + " : " + m.group(SINGLE_ID));
             apiRequest = new SingleViewRequest(	request,
                     response,
                     m.group(SINGLE_FORMAT),
@@ -221,8 +222,6 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
          *		ex.  legislation/bills/1/20 (first page, 20 bills a page)
          */
         if(apiRequest == null && (m = MULTI_PATTERN.matcher(uri)) != null && m.find()) {
-            logger.info(TextFormatter.append("Multi request: ", uri));
-
             apiRequest = new MultiViewRequest(	request,
                     response,
                     m.group(MULTI_FORMAT),
@@ -238,7 +237,6 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
          */
         if(apiRequest == null && (m = KEY_VALUE_PATTERN.matcher(uri)) != null && m.find()) {
             logger.info(TextFormatter.append("Key value request: ", uri));
-
             apiRequest = new KeyValueViewRequest(	request,
                     response,
                     m.group(KEY_VALUE_FORMAT),
@@ -249,8 +247,6 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
         }
 
         if(apiRequest == null && (m = SEARCH_PATTERN.matcher(uri)) != null && m.find()) {
-            logger.info(TextFormatter.append("Search request: ", uri));
-
             apiRequest = new SearchRequest(		request,
                     response,
                     m.group(SEARCH_FORMAT),
@@ -261,8 +257,8 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
         }
 
         try {
-            if(apiRequest == null) throw new ApiRequestException(
-                    TextFormatter.append("Failed to route request: ", uri));
+            if(apiRequest == null)
+                throw new ApiRequestException(TextFormatter.append("Failed to route request: ", uri));
 
             apiRequest.execute();
         }

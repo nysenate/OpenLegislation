@@ -31,15 +31,15 @@ public class SearchRequest extends AbstractApiRequest {
     public SearchRequest(HttpServletRequest request, HttpServletResponse response,
             String format, String type, String term, String pageNumber, String pageSize) {
         super(request, response, pageNumber, pageSize, format, getApiEnum(SearchView.values(),type));
+        logger.info("New search request: format="+format+", type="+type+", term="+term+", page="+pageNumber+", size="+pageSize);
         this.type = type;
         try {
-            term = whichTerm(term);
-
-            if(term == null) term = "";
-
+            this.term = whichTerm(type);
             this.term = URLDecoder.decode(term,"UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.error(e);
+            logger.error("Unsupported encoding UTF-8", e);
+        } catch (IllegalArgumentException e) {
+            logger.error("Malformed term: "+term, e);
         }
     }
 
@@ -74,7 +74,8 @@ public class SearchRequest extends AbstractApiRequest {
                     queryBuilder.and().range("when",Long.toString(startDate.getTime()), Long.toString(endDate.getTime()));
                 }
             } catch (java.text.ParseException e) {
-                logger.warn(e);
+                logger.warn("Invalid date format", e);
+                throw new ApiRequestException("Invalid date format", e);
             }
 
             // One of 2009, 2011, 2013, etc
@@ -132,7 +133,8 @@ public class SearchRequest extends AbstractApiRequest {
             }
         }
         catch (QueryBuilderException e) {
-            logger.error("Bad query Build.", e);
+            logger.error("Invalid query construction", e);
+            throw new ApiRequestException("Invalid query construction", e);
         }
 
         // Cut this short if we've got no query
@@ -182,13 +184,10 @@ public class SearchRequest extends AbstractApiRequest {
             pageSize = Integer.parseInt(request.getParameter("pageSize"));
         }
 
-
         SenateResponse sr = null;
-
         try {
-            String searchFormat = "json";
             int start = (pageNumber - 1) * pageSize;
-            sr = SearchEngine.getInstance().search(term,searchFormat,start,pageSize,sortField,sortOrder);
+            sr = SearchEngine.getInstance().search(term,"json",start,pageSize,sortField,sortOrder);
             if((sr.getResults() == null || sr.getResults().isEmpty()) && this.format.contains("html")) {
                 throw new ApiRequestException(TextFormatter.append("no results for query"));
             }
@@ -241,7 +240,7 @@ public class SearchRequest extends AbstractApiRequest {
             term = "oid:" + tempTerm;
         }
 
-        return term;
+        return (term == null) ? "" : term;
     }
 
     private boolean valid(String str) {

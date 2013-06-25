@@ -30,6 +30,7 @@ public class MultiViewRequest extends AbstractApiRequest {
     public MultiViewRequest(HttpServletRequest request, HttpServletResponse response,
             String format, String type, String pageNumber, String pageSize) {
         super(request, response, pageNumber, pageSize, format, getApiEnum(MultiView.values(),type));
+        logger.info("New multi view request: format="+format+", type="+type+", page="+pageNumber+", size="+pageSize);
         this.type = type;
     }
 
@@ -58,29 +59,24 @@ public class MultiViewRequest extends AbstractApiRequest {
         try {
             queryBuilder.otype(type).and().current().and().active();
         } catch (QueryBuilderException e) {
-            logger.error(e);
+            logger.error("Invalid query construction", e);
+            throw new ApiRequestException("Invalid query construction", e);
         }
 
-        logger.info(TextFormatter.append("executing query ", queryBuilder.query()));
-
         try {
-            sr = SearchEngine.getInstance().search(queryBuilder.query(), sFormat,
-                    start, pageSize, sortField, sortOrder);
+            sr = SearchEngine.getInstance().search(queryBuilder.query(), sFormat, start, pageSize, sortField, sortOrder);
         } catch (ParseException e) {
             logger.error(e);
         } catch (IOException e) {
             logger.error(e);
         }
 
-        if(sr == null || sr.getResults() == null || sr.getResults().isEmpty()) throw new ApiRequestException(
-                TextFormatter.append("no results for query"));
+        if(sr == null || sr.getResults() == null || sr.getResults().isEmpty())
+            throw new ApiRequestException(TextFormatter.append("no results for query"));
 
         sr.setResults(ApiHelper.buildSearchResultList(sr));
 
-        logger.info(TextFormatter.append("found ",sr.getResults().size()," results"));
-
-        if(type.equalsIgnoreCase("bill")
-                && format.matches("(?i)(csv|json|mobile|rss|xml)")) {
+        if(type.equalsIgnoreCase("bill") && format.matches("(?i)(csv|json|mobile|rss|xml)")) {
             ArrayList<Result> searchResults = ApiHelper.buildSearchResultList(sr);
             ArrayList<Bill> bills = new ArrayList<Bill>();
             for(Result result: searchResults) {

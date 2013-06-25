@@ -32,11 +32,12 @@ import org.apache.log4j.Logger;
  *     BillProcessor.process(new File('path/to/sobi_file.txt'), new Storage(new File('storage/directory')));
  * </pre>
  *
- * First the incoming file is broken down into independent SOBIBlocks. Each SOBIBlock operates atomically on a
- * single bill by loading it from storage, applying the block's data, and saving the changes back to storage.
+ * First the incoming file is broken down into independent SOBIBlocks. Each {@link SOBIBlock} operates atomically
+ * on a single bill by loading it from storage, applying the block's data, and saving the changes back to storage.
  *
- * @author graylinkim
- * @link SOBIBlock
+ * @author GraylinKim
+ *
+ * @see SOBIBlock
  */
 public class BillProcessor
 {
@@ -283,7 +284,7 @@ public class BillProcessor
 
             if (baseBill == null) {
                 // Amendments should always have original bills already made, make it happen
-                logger.error("Bill Amendment filed without initial bill at "+block.getLocation()+" - "+block.getHeader());
+                logger.warn("Bill Amendment filed without initial bill at "+block.getLocation()+" - "+block.getHeader());
                 baseBill = new Bill(baseKey, block.getYear());
                 storage.saveBill(baseBill);
                 ChangeLogger.record(baseBill.getKey(), storage, date);
@@ -318,8 +319,7 @@ public class BillProcessor
             }
 
             if (activeBill == null) {
-                logger.error("Unable to find active bill for "+bill.getSenateBillNo()+". BIG PROBLEM!");
-                logger.error("Versions: "+bill.getAmendments());
+                logger.error("Unable to find active bill for "+bill.getSenateBillNo()+" in versions: "+bill.getAmendments()+". BIG PROBLEM!");
                 activeBill = baseBill;
             }
 
@@ -440,30 +440,20 @@ public class BillProcessor
         }
 
         if (bill.isUniBill()) {
-            // logger.error("UNIBILL: "+bill.getSenateBillNo()+", "+bill.getSameAs());
             Bill uniBill = storage.getBill(bill.getSameAs());
             if (uniBill != null) {
                 String billText = bill.getFulltext();
                 String uniBillText = uniBill.getFulltext();
 
                 if (billText.isEmpty()) {
-                    logger.info(bill.getSenateBillNo()+" is empty");
                     if (!uniBillText.isEmpty()) {
                         // if we are empty then we must need their text
-                        logger.info("taking text from "+bill.getSameAs());
                         bill.setFulltext(uniBillText);
-                    }
-                    else {
-                        logger.info("but there is no text to grab from "+bill.getSameAs());
                     }
                 }
                 else if (!billText.equals(uniBillText)) {
-                    logger.info("My text has been updated, sharing with "+bill.getSameAs());
                     // If we differ, then we must have just changed, share the text
                     uniBill.setFulltext(bill.getFulltext());
-                }
-                else {
-                    logger.info("we have the same text");
                 }
 
                 storage.saveBill(uniBill);

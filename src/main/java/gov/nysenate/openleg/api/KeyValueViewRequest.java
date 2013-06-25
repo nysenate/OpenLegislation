@@ -26,6 +26,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
     public KeyValueViewRequest(HttpServletRequest request, HttpServletResponse response,
             String format, String key, String value, String pageNumber, String pageSize) {
         super(request, response, pageNumber, pageSize, format, getApiEnum(KeyValueView.values(),key));
+        logger.info("New key value request: format="+format+", key="+key+", value="+value+", page="+pageNumber+", size="+pageSize);
         this.key = key;
         this.value = value;
     }
@@ -40,7 +41,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
 
         QueryBuilder queryBuilder = new QueryBuilder();
 
-        String filter = request.getParameter("filter");
+
 
         SenateResponse sr = null;
 
@@ -50,6 +51,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
         try {
             queryBuilder.keyValue(key, "\""+value+"\"").and().otype("bill");
 
+            String filter = request.getParameter("filter");
             if(filter != null) {
                 queryBuilder.and().insertAfter(filter);
             }
@@ -57,26 +59,22 @@ public class KeyValueViewRequest extends AbstractApiRequest {
                 queryBuilder.and().current().and().active();
             }
         } catch (QueryBuilderException e) {
-            logger.error(e);
+            logger.error("Invalid query construction", e);
+            throw new ApiRequestException("Invalid query construction", e);
         }
 
-        logger.info(TextFormatter.append("executing query ", queryBuilder.query()));
-
         try {
-            sr = SearchEngine.getInstance().search(queryBuilder.query(), sFormat,
-                    start, pageSize, sortField, sortOrder);
+            sr = SearchEngine.getInstance().search(queryBuilder.query(), sFormat, start, pageSize, sortField, sortOrder);
         } catch (ParseException e) {
             logger.error(e);
         } catch (IOException e) {
             logger.error(e);
         }
 
-        if(sr == null || sr.getResults() == null || sr.getResults().isEmpty()) throw new ApiRequestException(
-                TextFormatter.append("no results for query"));
+        if(sr == null || sr.getResults() == null || sr.getResults().isEmpty())
+            throw new ApiRequestException(TextFormatter.append("no results for query"));
 
         sr.setResults(ApiHelper.buildSearchResultList(sr));
-
-        logger.info(TextFormatter.append("found ",sr.getResults().size()," results"));
 
         if(format.matches("(?i)(csv|json|mobile|rss|xml)")) {
             ArrayList<Result> searchResults = ApiHelper.buildSearchResultList(sr);

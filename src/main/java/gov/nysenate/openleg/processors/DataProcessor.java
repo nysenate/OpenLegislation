@@ -25,26 +25,71 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 /**
- * Usage:
- *  stage
- *  collate
- *  ingest
- *  push
- *  archive
- * @author graylinkim
+ * Contains an implementation for each step of the Open Legislation data processing pipeline.
  *
+ * <ul>
+ *   <li>
+ *      {@link #stage(File, File) Stage}:
+ *      Grab a distinct set of data files files to operate on. We are constantly receiving
+ *      SOBI files so it is helpful to isolate the ones we are currently processing
+ *   </li>
+ *   <li>
+ *      {@link #collate(File) Collate}:
+ *      Each SOBI file can be thought of as a collection of sub documents. The collate step
+ *      extracts these files, converts them to UTF-8 encoding, and writes them to file.
+ *      Writing to file is useful for debugging because it provides a record of what data
+ *      was sent into each processor.
+ *   </li>
+ *   <li>
+ *      {@link #ingest(File, Storage) Ingest}:
+ *      Process collated files in chronological order based on the time stamp encoded into
+ *      the SOBI file name. Delegates file processing based on document type.
+ *   </li>
+ *   <li>
+ *      {@link #push(Storage, List, List) Push}:
+ *      Pushes a set of changes out to a list of services.
+ *   </li>
+ *   <li>
+ *      {@link #archive(File, File) Archive}:
+ *      Archives all working files for reference when going through logs in the future.
+ *   </li>
+ * </ul>
+ *
+ * @author GraylinKim
  */
 public class DataProcessor
 {
-    public static String encoding = "CP850";
-
     Logger logger = Logger.getLogger(DataProcessor.class);
 
+    /**
+     * SOBI.DYYMMDD.THHMMSS.TXT files are (mostly) in a CP850 or similar encoding. This
+     * was determined from the byte mapping of paragraph/section characters to 244/245.
+     */
+    protected static String encoding = "CP850";
+
+    /**
+     * Any directory that we attempt to list files from should exist. If it doesn't then
+     * make it so. This makes the processes robust against incomplete environment setups.
+     *
+     * @param directory - The directory to list files from (and create if necessary)
+     * @param extensions - A list of extensions to grab. null for all extensions.
+     * @param recursive - true when you want to list files recursively.
+     * @return A collection of matching filenames
+     * @throws IOException
+     */
     public Collection<File> safeListFiles(File directory, String[] extensions, boolean recursive) throws IOException {
         FileUtils.forceMkdir(directory);
         return FileUtils.listFiles(directory, extensions, recursive);
     }
 
+    /**
+     * Stages CMS.TEXT, transcripts/, hearings/ and SOBI format files from the source
+     * directory into their respective destinations subfolders in the work directory.
+     *
+     * @param sourceDir - The directory to pull files from
+     * @param workDir - The directory to stage the files into
+     * @throws IOException
+     */
     public void stage(File sourceDir, File workDir) throws IOException
     {
         File rulesFile = new File(sourceDir,"CMS.TEXT");
@@ -69,6 +114,14 @@ public class DataProcessor
         }
     }
 
+    /**
+     * Looks for SOBI files in the sobis directory and extracts the various sub-documents
+     * into properly encoded UTF-8 files in their respective directories for later
+     * processing.
+     *
+     * @param workDir - The working directory with files to collate
+     * @throws IOException
+     */
     public void collate(File workDir) throws IOException
     {
         // Folders for our extracted sub documents. Extracting them and writing them to file
@@ -86,16 +139,19 @@ public class DataProcessor
 
             while((line = br.readLine()) != null) {
                 if(line.matches("<sencalendar.+")) {
+                    // Extract calendars and active lists
                     File calendarFile = new File(calendarDir, sobiFile.getName()+"-calendar-"+(fileCounter++)+".xml");
                     logger.info("Extracting calendar: "+calendarFile);
                     extractXml("</sencalendar.+", line, br, calendarFile);
                 }
                 else if(line.matches("<senagenda.+")) {
+                    // Extract agendas and corresponding votes
                     File agendaFile = new File(agendaDir, sobiFile.getName()+"-agenda-"+(fileCounter++)+".xml");
                     logger.info("Extracting agenda: "+agendaFile);
                     extractXml("</senagenda.+", line, br, agendaFile);
                 }
                 else if(line.matches("<senannotated.+")) {
+                    // Extract unused annotation files. We stopped getting these in 2009.
                     File annotationFile = new File(annotationDir, sobiFile.getName()+"-annotation-"+(fileCounter++)+".xml");
                     logger.info("Extracting annotation: "+annotationFile);
                     extractXml("</senannotated.+", line, br, annotationFile);
@@ -116,6 +172,15 @@ public class DataProcessor
         }
     }
 
+    /**
+     * Processes all staged/collated files in (mostly) chronological order by filename.
+     * CMS.TXT, transcripts, and hearings may be processed in any order. The appropriate
+     * file processor for each file is based on the directory they are stored in.
+     *
+     * @param workingDir - The working directory with collated files to process
+     * @param storage - The Storage object to use for persistence.
+     * @throws IOException
+     */
     public void ingest(File workingDir, Storage storage) throws IOException
     {
         BillProcessor billProcessor = new BillProcessor();
@@ -150,25 +215,42 @@ public class DataProcessor
                 }
             }
             catch (IOException e) {
-                logger.error("Issue with "+file.getName(), e);
+                logger.error("IO issue with "+file.getName(), e);
             } catch (JAXBException e) {
-                logger.error("Issue with "+file.getName(), e);
+                logger.error("XML issue with "+file.getName(), e);
             }
         }
         storage.flush();
     }
 
+    /**
+     * Pushes the specified changes to the indicated services in the provided order.
+     *
+     * @param storage - The Storage object used for persistence
+     * @param changes - A list of changes to push out to all services
+     * @param services - A list of services to push change to.
+     */
     public void push(Storage storage, List<Entry<String, Change>> changes, List<ServiceBase> services)
     {
         for(ServiceBase service : services) {
             try {
                 service.process(changes, storage);
             } catch (Exception e) {
-                logger.error("Fatal Error handling Service "+service.getClass().getName(), e);
+                // Services should all be independent so log the issue and move on
+                logger.error("Service exception from "+service.getClass().getName(), e);
             }
         }
     }
 
+    /**
+     * Archives all files in the working directory to the archive directory split
+     * up by year to avoid folder size limits and for easier grepping through the
+     * archives when debugging data issues.
+     *
+     * @param workingDir - The directory containing all the work files.
+     * @param archiveDir - The directory to archive all work files to.
+     * @throws IOException
+     */
     public void archive(File workingDir, File archiveDir) throws IOException
     {
         File rulesFile = new File(workingDir, "CMS.TEXT");
@@ -193,7 +275,16 @@ public class DataProcessor
         archiveFiles(new File(workingDir, "annotations"), archiveDir, "annotations");
     }
 
-    public void archiveFiles(File sourceDir, File destDir, String subFolder) throws IOException
+    /**
+     * Attempts to use the SOBI file naming convention to properly archive files based
+     * on the year that they were issued to us.
+     *
+     * @param sourceDir - The directory with files to archive, non-recursive.
+     * @param destDir - The base directory to archive files to.
+     * @param subFolder - The name of the sub-directory to store the files. Cannot be null!
+     * @throws IOException
+     */
+    protected void archiveFiles(File sourceDir, File destDir, String subFolder) throws IOException
     {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sobiDateFormat = new SimpleDateFormat("'SOBI.D'yyMMdd'.T'HHmmss'.TXT'");
@@ -209,7 +300,15 @@ public class DataProcessor
         }
     }
 
-    public Collection<File> getSortedFiles(File directory, boolean recursive) throws IOException {
+    /**
+     * Returns a collection of files sorted by file name (not file path!)
+     *
+     * @param directory - The directory to get files from.
+     * @param recursive - true to retrieve files from sub-directories.
+     * @return
+     * @throws IOException
+     */
+    protected Collection<File> getSortedFiles(File directory, boolean recursive) throws IOException {
         Collection<File> files = safeListFiles(directory, null, recursive);
         Collections.sort((List<File>)files, new Comparator<File>(){
             public int compare(File a, File b) {
@@ -219,6 +318,17 @@ public class DataProcessor
         return files;
     }
 
+    /**
+     * Extracts a well formed XML document from a BufferedReader and writes it to the given
+     * file. This depends strongly on escape sequences being on their own line; otherwise
+     * we'll get malformed XML docs.
+     *
+     * @param escape - Regex matching the escape sequence for the XML document. e.g. </senagenda.+
+     * @param line - The starting lin of the document
+     * @param br - The buffered reader used to retrieve additional lines from the document
+     * @param file - The file that the resulting XML document should be written to.
+     * @throws IOException
+     */
     protected void extractXml(String escape, String line, BufferedReader br, File file) throws IOException
     {
         StringBuffer sb = new StringBuffer(
@@ -233,6 +343,13 @@ public class DataProcessor
             if(in.matches(escape))
                 break;
         }
+
+        if (in == null) {
+            // This is bad, but don't throw a flag. If the resulting XML document
+            // is malformed we'll throw the exception during ingest.
+            logger.error("Unterminated XML document: "+line);
+        }
+
         String data = sb.append("</SENATEDATA>").toString();
 
         // TODO: Figure out all this matcher magic. How does it work?
@@ -243,6 +360,7 @@ public class DataProcessor
         }
         m.appendTail(sb);
 
+        // TODO: What exactly are we replacing here?
         data = sb.toString().replaceAll("&newl;", "\n").replaceAll("(?!\n)\\p{Cntrl}","").replaceAll("(?!\\.{2})[ ]{2,}"," ");
         FileUtils.write(file, data);
     }

@@ -172,12 +172,10 @@ public class SearchEngine extends Lucene implements OpenLegConstants {
 
         SenateResponse response = new SenateResponse();
 
-        if (result == null)
-        {
+        if (result == null) {
             response.addMetadataByKey("totalresults", 0 );
         }
-        else
-        {
+        else {
             response.addMetadataByKey("totalresults", result.total );
 
             for (Document doc : result.results) {

@@ -150,8 +150,6 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 	String forward4Link = "/legislation/search/" + term + "/" + (forward4) + "/" + pageSize
 			+ "?sort=" + sortField
 			+ "&sortOrder=" + sortOrder;
-	
- 	System.out.println(currentPage);
 		
 	if (prevUrl!=null){%>
 		<li><a href="<%=prevUrl%>" title="Previous page">«</a></li>
@@ -386,8 +384,6 @@ String forward3Link = "/legislation/search/" + term + "/" + (forward3) + "/" + p
 String forward4Link = "/legislation/search/" + term + "/" + (forward4) + "/" + pageSize
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
-
-	System.out.println(totalPages-currentPage);
 	
 if (prevUrl!=null){%>
 	<li><a href="<%=prevUrl%>" title="Previous page">«</a></li>

@@ -178,6 +178,9 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
         public ApiRequestException(String message) {
             super(message);
         }
+        public ApiRequestException(String message, Exception exception) {
+            super(message, exception);
+        }
     }
 
     public enum ContentType {

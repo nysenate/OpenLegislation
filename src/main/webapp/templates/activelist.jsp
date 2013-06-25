@@ -14,10 +14,8 @@ if (activeList.getDate() != null) {
 List<Supplemental> supplementals = activeList.getSupplementals();
 String Sections ="";
 if (supplementals != null && supplementals.size() != 0) {
-    System.out.println("processing supplemental");
     Supplemental supplemental = activeList.getSupplementals().get(0);
     List<Sequence> sequences = supplemental.getSequences();
-    System.out.println(sequences);
     if (sequences != null) {
         for (Sequence sequence : sequences) {
             String sequenceTitle = ""+activeList.getNo();
@@ -54,12 +52,9 @@ Sections = Sections.substring(0, Sections.length() - 1);
 	 		</div>
  		</div>
         <%
-        System.out.println("looking for supplemental"+ supplementals.size());
         if (supplementals != null && supplementals.size() != 0) {
-            System.out.println("processing supplemental");
             Supplemental supplemental = activeList.getSupplementals().get(0);
             List<Sequence> sequences = supplemental.getSequences();
-            System.out.println(sequences);
             if (sequences != null) {
                 for (Sequence sequence : sequences) {
                     String sequenceTitle = "Active List "+activeList.getNo();

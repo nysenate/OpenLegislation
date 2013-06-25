@@ -56,7 +56,7 @@ abstract public class BaseScript
                 if (opts.hasOption("environment")) {
                     File propertiesFile = new File(opts.getOptionValue("environment"));
                     if (!propertiesFile.canRead()) {
-                        System.err.println("Cannot read: "+propertiesFile);
+                        logger.fatal("Cannot read: "+propertiesFile);
                         System.exit(1);
                     }
                     else {
@@ -75,7 +75,7 @@ abstract public class BaseScript
             System.exit(1);
         }
         catch (Exception e) {
-            logger.error("Unexpected Exception.",e);
+            logger.fatal("Unexpected Exception.",e);
             throw e;
         }
         finally {

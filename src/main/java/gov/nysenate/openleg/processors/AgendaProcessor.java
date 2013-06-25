@@ -73,7 +73,6 @@ public class AgendaProcessor implements OpenLegConstants {
                         for (Meeting meeting : addendum.getMeetings()) {
                             calendar.setTime(meeting.getMeetingDateTime());
                             key = calendar.get(GregorianCalendar.YEAR)+"/meeting/"+meeting.getId();
-                            logger.info(key);
 
                             // TODO: We don't actually know if the meeting was modified or not
                             // This might be a false positive change
@@ -98,7 +97,6 @@ public class AgendaProcessor implements OpenLegConstants {
                         for (Meeting meeting : addendum.getMeetings()) {
                             calendar.setTime(meeting.getMeetingDateTime());
                             key = calendar.get(GregorianCalendar.YEAR)+"/meeting/"+meeting.getId();
-                            logger.info(key);
                             storage.set(key, meeting);
                             ChangeLogger.record(key, storage, modifiedDate);
                         }
@@ -134,8 +132,7 @@ public class AgendaProcessor implements OpenLegConstants {
             for( XMLMember member : xmlBill.getVotes().getMember()) {
                 Person person = new Person(member.getName().getContent());
                 String voteType = member.getVote().getContent().toLowerCase();
-
-                logger.debug("adding vote: " + bill.getSenateBillNo() + " - " + voteType + " - " + person.getFullname());
+                logger.info("adding vote: " + bill.getSenateBillNo() + " - " + voteType + " - " + person.getFullname());
 
                 if (voteType.startsWith("abstain"))
                     vote.addAbstain(person);
@@ -171,7 +168,6 @@ public class AgendaProcessor implements OpenLegConstants {
         if (xmlAgendaVote.getYear().isEmpty())
             return null;
 
-        logger.info("COMMITTEE AGENDA VOTE RECORD " + xmlAgendaVote.getNo());
         String agendaId = "commagenda-" + xmlAgendaVote.getNo() + '-' + xmlAgendaVote.getSessyr() + '-' + xmlAgendaVote.getYear();
 
         // Load the old agenda vote or create a new one
@@ -304,7 +300,7 @@ public class AgendaProcessor implements OpenLegConstants {
             addendum.setAddendumId(xmlAddendum.getId());
             addendum.setId(keyId);
             addendum.setAgenda(agenda);
-            logger.debug("creating new addendum: " + addendum.getId());
+            logger.info("creating new addendum: " + addendum.getId());
 
         } else {
             addendum = agenda.getAddendums().get(index);

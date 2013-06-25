@@ -275,9 +275,9 @@ public class CalendarProcessor implements OpenLegConstants {
             }
             catch (Exception e) {
                 if (cEntry != null)
-                    logger.warn("Error adding CalenderEntry: " + cEntry.getId(), e);
+                    logger.error("Error adding CalenderEntry: " + cEntry.getId(), e);
                 else {
-                    logger.warn("Error adding CalenderEntry: ", e);
+                    logger.error("Error adding CalenderEntry: ", e);
                 }
             }
         }
