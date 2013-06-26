@@ -323,8 +323,8 @@ public class DataProcessor
      * file. This depends strongly on escape sequences being on their own line; otherwise
      * we'll get malformed XML docs.
      *
-     * @param escape - Regex matching the escape sequence for the XML document. e.g. </senagenda.+
-     * @param line - The starting lin of the document
+     * @param escape - Regex matching the escape sequence for the XML document. e.g. {@literal </senagenda.+}
+     * @param line - The starting line of the document
      * @param br - The buffered reader used to retrieve additional lines from the document
      * @param file - The file that the resulting XML document should be written to.
      * @throws IOException
