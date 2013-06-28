@@ -44,15 +44,18 @@
 </style>
 
 <div id="content">
-
 	<div class='formats'>
-	    <em>Senator Listings are available for: <a href="/legislation/senators/2013">2013<a/> | <a href="/legislation/senators/2011">2011</a> | <a href="/legislation/senators/2009">2009</a></em>
+	    Senator Listings are available for: <a href="/legislation/senators/2013">2013</a> | <a href="/legislation/senators/2011">2011</a> | <a href="/legislation/senators/2009">2009</a>
 	</div>
     <div class="content-bg">
-	<h2 class='page-title'>
-		<%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Senator Listings
-	</h2>   <br/>
-	    <% for(Senator senator : (ArrayList<Senator>)request.getAttribute("senators")) {
+		<h2 class='page-title'>
+			<%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Senator Listings
+		</h2>
+		<br/>
+	    <%
+	    @SuppressWarnings("unchecked")
+	    ArrayList<Senator> senators = (ArrayList<Senator>)request.getAttribute("senators");
+	    for(Senator senator : senators) {
 	       String searchUrl = request.getContextPath()+"/sponsor/"+senator.getShortName()+"?filter=year:"+request.getAttribute("sessionStart");
 	       String imageUrl = "http://www.nysenate.gov/files/imagecache/senator_teaser/"+senator.getImageUrl().substring(30);
 	       %>
