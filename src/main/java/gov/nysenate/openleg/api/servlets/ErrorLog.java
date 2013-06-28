@@ -20,11 +20,10 @@ import org.apache.log4j.Logger;
 /**
  * Servlet implementation class ErrorLog
  */
+@SuppressWarnings("serial")
 public class ErrorLog extends HttpServlet
 {
     private static Logger logger = Logger.getLogger(ErrorLog.class);
-
-    private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
@@ -40,39 +39,24 @@ public class ErrorLog extends HttpServlet
 	            logger.error(e);
 	            reportList =  new ArrayList<Report>();
 	        }
-            request.setAttribute("reportList",displayReportOption());
+            request.setAttribute("reportList",reportList);
             jspPath = "/views/report.jsp";
 	    }
 	    else {
             int reportId=Integer.parseInt(reportIdParam);
-            request.setAttribute("errorList",displayReports(reportId));
+            List<Error> errorList;
+            try {
+                QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
+                errorList =  runner.query("SELECT * FROM error WHERE reportId = ? ORDER BY billId", new BeanListHandler<Error>(Error.class), reportId);
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                errorList = new ArrayList<Error>();
+            }
+            request.setAttribute("errorList",errorList);
             jspPath = "/views/error-report.jsp";
 	    }
 
         getServletContext().getRequestDispatcher(jspPath).forward(request, response);
 	}
-
-    public List<Error> displayReports(int id)
-    {
-        try {
-            QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
-            return runner.query("SELECT * FROM error WHERE reportId = ? ORDER BY billId", new BeanListHandler<Error>(Error.class), id);
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<Error>();
-        }
-    }
-
-    public List<Report> displayReportOption()
-    {
-        try {
-            QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
-            return runner.query("SELECT * FROM report", new BeanListHandler<Report>(Report.class));
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<Report>();
-        }
-    }
 }

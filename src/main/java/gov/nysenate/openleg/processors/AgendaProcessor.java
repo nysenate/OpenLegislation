@@ -104,7 +104,7 @@ public class AgendaProcessor implements OpenLegConstants {
                 }
 
             } else {
-                // TODO: log error here; maybe not. This counts strings as "text" nodes I think
+                logger.warn("Unknown agenda type found: "+next);
             }
         }
     }
@@ -438,9 +438,9 @@ public class AgendaProcessor implements OpenLegConstants {
                     if (!listBills.contains(bill)) {
                         logger.debug("adding bill:" + bill.getSenateBillNo() + " to meeting:" + meeting.getId());
                         listBills.add(bill);
-                    } else {
-                        // TODO: It isn't doing any merging here?
-                        logger.debug("bill:" + bill.getSenateBillNo() + " already added to meeting:" + meeting.getId() + ", merging.");
+                    }
+                    else {
+                        // Since we already have a reference don't do anything. handleXMLBill will update the bill details
                     }
                 }
             }

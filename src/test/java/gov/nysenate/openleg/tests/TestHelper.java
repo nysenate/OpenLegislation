@@ -5,12 +5,12 @@ import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.util.Storage;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,9 +19,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
-import gov.nysenate.openleg.util.Storage;
 
-public class TestHelper 
+public class TestHelper
 {
 	public static void processFile(Environment env, File[] testFiles)
 	{
@@ -99,15 +98,15 @@ public class TestHelper
          if((v.getAyes()).equals(ayes) && (v.getNays()).equals(nays) && (v.getExcused()).equals(excused)
          && (v.getAbsent()).equals(absent) && (v.getAbstains()).equals(abstained)	 )
            {
-        	 
+
             return true;
            }
-   
+
        return false;
-    
-		 
+
+
     }
-	 
+
 	 /**
 	  * Converts and ArrayList of Strings with Action data into a List of Action Objects.
 	  * Date of the action should be in MM/DD/yy format.
@@ -128,6 +127,6 @@ public class TestHelper
 			 // Create Action and add to list
 			 actionList.add(new Action(billName, date, actions.get(i)[1]));
 		 }
-		 return (List<Action>)actionList;
+		 return actionList;
 	 }
 }

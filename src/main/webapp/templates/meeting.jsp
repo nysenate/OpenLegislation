@@ -19,38 +19,37 @@
 <div class="content-bg">
 	<h2 class='page-title'>Meeting details for <%=meeting.getCommitteeName()%></h2>
 	<div class="item-meta">
-	        <div id="subcontent" class="emptytitle">
-	       		<div class="billmeta">
-			     <ul>
-			     	<li><span class="meta">Date: </span><span class="metadata">
-          				 <%=df.format(meeting.getMeetingDateTime())%>
- 					</span></li>
+        <div id="subcontent" class="emptytitle">
+       		<div class="billmeta">
+                   <ul>
+                       <li><span class="meta">Date: </span><span class="metadata">
+                           <%=df.format(meeting.getMeetingDateTime())%>
+					    </span></li>
  					<% if(calNo != null && !calNo.trim().isEmpty()) { %>
- 					<li><span class="meta">Agenda: </span><span class="metadata">
-           				<%=calNo%>  
- 					</span></li>
+	 					<li><span class="meta">Agenda: </span><span class="metadata">
+	           				<%=calNo%>  
+	 					</span></li>
  					<% } %>
  					<li><span class="meta">Chair: </span><span class="metadata">
            				<a href="<%=appPath%>/search/?term=chair:<%=java.net.URLEncoder.encode("\""+meeting.getCommitteeChair() + "\"", OpenLegConstants.ENCODING)%>">${meeting.committeeChair}</a>
  					</span></li>
  					<% if(meeting.getLocation() != null) { %>
- 					<li><span class="meta">Location: </span><span class="metadata">
-           				${meeting.location} 
-					</span></li>
+	 					<li><span class="meta">Location: </span><span class="metadata">
+	           				${meeting.location} 
+						</span></li>
 					<% } %>
-					
+				
  					<% if (addendum != null) { %>
- 					<li><span class="meta">Addendum: </span><span class="metadata">
-           				${addendum.addendumId}
- 					</span></li>
- 					<li><span class="meta">Published: </span><span class="metadata">
-           				${addendum.publicationDateTime}
- 					</span></li>
- 					<li><span class="meta">Published in Week of: </span><span class="metadata">
-           				${addendum.weekOf}
- 					</span></li>
+	 					<li><span class="meta">Addendum: </span><span class="metadata">
+	           				${addendum.addendumId}
+	 					</span></li>
+	 					<li><span class="meta">Published: </span><span class="metadata">
+	           				${addendum.publicationDateTime}
+	 					</span></li>
+	 					<li><span class="meta">Published in Week of: </span><span class="metadata">
+	           				${addendum.weekOf}
+	 					</span></li>
  					<% } %>
- 					
 		        </ul>  
  			</div>
  			<div class='item-actions'>
@@ -59,17 +58,15 @@
 					<li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
 				</ul>
 			</div>
- 		  </div>
- 		 
-         
-	       <% if (meeting.getNotes() != null && meeting.getNotes().trim().length() > 0) { %>
-                <h3 class="section" ><a id="Notes" href="#Notes" class="anchor ui-icon ui-icon-link"></a> Notes</h3>
-                <pre class="meeting-notes">${meeting.notes}</pre>
-	       <% } %>
- 	    <h3 class="section" ><a id="BillsontheAgenda" href="#BillsontheAgenda" class="anchor ui-icon ui-icon-link"></a> Bills on the Agenda</h3>
+        </div>
+		<% if (meeting.getNotes() != null && meeting.getNotes().trim().length() > 0) { %>
+               <h3 class="section" ><a id="Notes" href="#Notes" class="anchor ui-icon ui-icon-link"></a> Notes</h3>
+		    <pre class="meeting-notes">${meeting.notes}</pre>
+		<% } %>
+	        <h3 class="section" ><a id="BillsontheAgenda" href="#BillsontheAgenda" class="anchor ui-icon ui-icon-link"></a> Bills on the Agenda</h3>
 	    <% if(meeting.getBills().isEmpty()) { %>
             <div class="summary">No bills listed.</div>
-       <% } else {
+        <% } else {
 			Iterator<Bill> itBills = meeting.getBills().iterator();
 			Bill bill = null;
 			while (itBills.hasNext()) {
@@ -119,5 +116,6 @@
 				}
 			}
 		}%>
+    </div>
 </div>
 </div>

@@ -2,6 +2,7 @@
 <%
 String appPath = request.getContextPath();
 
+@SuppressWarnings("unchecked")
 ArrayList<Error> errorLog= (ArrayList<Error>)request.getAttribute("errorList");
 int resultCount = errorLog.size();
 
@@ -87,7 +88,7 @@ int resultCount = errorLog.size();
                 
             }
             %>
-            <tr style="background-color:<%=backgroundColor%>" id="errorHeader<%=e.getId()%>"">
+            <tr style="background-color:<%=backgroundColor%>" id="errorHeader<%=e.getId()%>">
 			    <td class="span1" id="<%=e.getBillId()%>">
 			        <a href="#<%=e.getBillId() %>" style="color:<%=textColor%>"><%=e.getBillId()%></a>
 			    </td>
@@ -106,8 +107,8 @@ int resultCount = errorLog.size();
 			            </div>
 			            <div id="<%= e.getId() %>" class="accordion-body collapse" style="height: 0px;">
                             <div class="accordion-inner">
-			                    LBDC Value:<label><pre class="lbdc"><%= e.getLbdc() %></pre></label><br> 
-			                    JSON Value:<label><pre class="json"><%= e.getJson() %></pre></label>
+			                    <label>LBDC Value:</label><pre class="lbdc"><%= e.getLbdc() %></pre><br> 
+			                    <label>JSON Value:</label><pre class="json"><%= e.getJson() %></pre>
 			                </div>
 			            </div>
 		            </div>

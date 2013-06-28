@@ -35,7 +35,8 @@
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/jquery-ui-1.10.3.min.js")%>"></script>
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/app.js")%>"></script>
 
-            <%
+        <%
+        @SuppressWarnings("unchecked")
         HashMap<String, String> twitterMetaTags = (HashMap<String, String>)request.getAttribute("twitterMetaTags");
         if (twitterMetaTags != null) {
             for (Entry<String, String> entry : twitterMetaTags.entrySet()) {

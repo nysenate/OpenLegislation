@@ -2,6 +2,7 @@
 String contentType = (String) request.getAttribute("contentType");
 response.setContentType(contentType == null ? "text/html" : contentType);
 
+@SuppressWarnings("unchecked")
 Collection<Bill> bills = (Collection<Bill>)request.getAttribute("bills");
 Bill bill = null;
 

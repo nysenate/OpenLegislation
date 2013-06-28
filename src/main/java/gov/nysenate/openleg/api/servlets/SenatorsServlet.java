@@ -22,14 +22,16 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
-public class SenatorsServlet extends HttpServlet {
+@SuppressWarnings("serial")
+public class SenatorsServlet extends HttpServlet
+{
     private static Logger logger = Logger.getLogger(SenatorsServlet.class);
 
     private static Pattern pathPattern = Pattern.compile("/([0-9]{4}).*");
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
         int sessionYear = SessionYear.getSessionYear();
         String pathInfo = request.getPathInfo();
         if (pathInfo != null) {
@@ -62,26 +64,27 @@ public class SenatorsServlet extends HttpServlet {
             response.setCharacterEncoding("UTF-8");
             mapper.writeValue(response.getOutputStream(), senators);
             break;
-        case XML:
-            // TODO: write out the xml;
-            break;
         case HTML:
             request.setAttribute("senators", senators);
             request.setAttribute("sessionStart", sessionYear);
             request.setAttribute("sessionEnd", sessionYear+1);
             request.getRequestDispatcher("/views/senators.jsp").forward(request, response);
             break;
+        case XML:
+            // There are no plans to add XML support at this time
+            break;
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
         doGet(request, response);
     }
 
     @Override
-    public void init() throws ServletException {
+    public void init() throws ServletException
+    {
         super.init();
     }
 }

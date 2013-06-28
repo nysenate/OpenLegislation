@@ -4,8 +4,9 @@
 <div>
 	<form method="get" action="http://open.nysenate.gov/legislation/search/">
 		<input type="text" id="txtSearchBox" style="width:300px" name="term" autocomplete="off"/>
-<input type="submit" value="Search"/> 
-<a href="http://open.nysenate.gov/legislation/advanced/">Advanced</a>
-<div id="quickresult"></div>
+        <input type="submit" value="Search"/>
+        <a href="http://open.nysenate.gov/legislation/advanced/">Advanced</a>
+        <div id="quickresult"></div>
+    </form>
 </div>
 <hr/>

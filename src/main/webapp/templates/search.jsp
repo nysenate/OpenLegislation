@@ -219,13 +219,13 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 				else{ %><a href="/legislation/search/<%=term%>?sort=committee&sortOrder=false">Committee</a><%}%>,
 				
 				<%if (sortField.equals("")){%>Best Match<%}
-				else{ %><a href="/legislation/search/<%=term%>?sort=oid&sortOrder=false"">Best Match</a><%}%>
+				else{ %><a href="/legislation/search/<%=term%>?sort=oid&sortOrder=false">Best Match</a><%}%>
 				</div>
             </div>
             <hr/>
         <% }
 
-		Iterator it = sr.getResults().iterator();
+		Iterator<Result> it = sr.getResults().iterator();
 		Result sresult = null;
 		  
 		String resultType = null;
@@ -321,12 +321,12 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 			 
 			    <%if (sresult.getFields().get("location")!=null){ %>
 			        <br/>
-			        Location: <a href="<%=appPath%>/search/?term=location:<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("location") + "\"")%>"  class="sublink"><%=sresult.getFields().get("location")%></a>
+			        Location: <a href="<%=appPath%>/search/?term=location:<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("location") + "\"", "UTF-8")%>"  class="sublink"><%=sresult.getFields().get("location")%></a>
 			    <%} %>
 			 
 			    <%if (sresult.getFields().get("date")!=null){ %>
 			        <br/>
-			        Date: <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("date") + "\"")%>"  class="sublink"><%=sresult.getFields().get("date")%></a>
+			        Date: <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("date") + "\"", "UTF-8")%>"  class="sublink"><%=sresult.getFields().get("date")%></a>
 			    <%} %>
                </span>
             </div>

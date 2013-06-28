@@ -30,10 +30,9 @@ import org.apache.log4j.Logger;
 /**
  * Servlet implementation class UpdateServlet
  */
+@SuppressWarnings("serial")
 public class UpdateServlet extends HttpServlet
 {
-    private static final long serialVersionUID = 1L;
-
     private final Logger logger = Logger.getLogger(UpdateServlet.class);
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");

@@ -28,7 +28,7 @@ String appPath = request.getContextPath();
 %>	
 <html>
   <head>
-
+<base target="_blank"/>
 <title>Active List</title>
 <link rel="shortcut icon" href="/legislation/img/nys_favicon_0.ico" type="image/x-icon" />
  
@@ -135,7 +135,7 @@ for(Sequence seq:seqs) {
 <%
 
  %>
-<base target="_blank"/>
+
 <%if (seq.getNo().length() == 0){%>
 <h2>Active List</h2>
 <%}else{%>

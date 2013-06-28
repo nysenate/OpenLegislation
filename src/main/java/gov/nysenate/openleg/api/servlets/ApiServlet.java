@@ -189,19 +189,13 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
      * applicable ApiRequest extension and routes request
      */
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException
+    {
         Matcher m = null;
 
         String uri = URLDecoder.decode(request.getRequestURI(), ENCODING);
-        String queryString = request.getQueryString();
         AbstractApiRequest apiRequest = null;
 
-        if (queryString != null) {
-            logger.info("request: "+uri+"?"+queryString);
-        }
-        else {
-            logger.info("request: "+uri);
-        }
         /*
          *	/legislation/(api/(1.0/)?[format]/)?[type]/[id]
          *

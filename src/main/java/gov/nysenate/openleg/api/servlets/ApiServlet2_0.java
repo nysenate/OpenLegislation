@@ -22,8 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
-
+@SuppressWarnings("serial")
+public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants
+{
     public static final int SINGLE_TYPE_2_0 = 1;
     public static final int SINGLE_ID_2_0 = 2;
     public static final int SINGLE_FORMAT_2_0 = 3;
@@ -49,8 +50,6 @@ public class ApiServlet2_0 extends HttpServlet implements OpenLegConstants {
 
     public final Pattern SINGLE_PATTERN_2_0;
     public final Pattern SEARCH_PATTERN_2_0;
-
-    private static final long serialVersionUID = 1L;
 
     private static Logger logger = Logger.getLogger(ApiServlet2_0.class);
 

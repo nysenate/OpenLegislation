@@ -56,6 +56,12 @@
 .BillsOnly{
 	display:none;
 }
+
+.centered {
+    text-align:center;
+    margin:auto;
+}
+
 </style>
 
 <script>
@@ -99,7 +105,7 @@ $(document).ready(function() {
 <div id="content">
 
 	<div class="content-bg">
-	<h2 class='page-title'>Open Legislation Advanced Search</h2>
+        <h2 class='page-title'>Open Legislation Advanced Search</h2>
 		<div id="subcontent">
             <div id="search-help">
                 Use the options below to create your search.
@@ -167,7 +173,9 @@ $(document).ready(function() {
 		        </div>
 	            <br style="clear:both;"/><br/>
                 <div class="BillsOnly">
-                    <center><b>Bills & Resolution Options</b></center>
+                    <div class="centered">
+                        Bills &amp; Resolution Options
+                    </div>
 
 			        <div class="searchrow">
 			            <div class="searchlabel">Legislative Session Period:</div>

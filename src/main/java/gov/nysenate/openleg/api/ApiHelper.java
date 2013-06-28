@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Result;
 import gov.nysenate.openleg.model.Section;
+import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.model.Sequence;
 import gov.nysenate.openleg.model.Supplemental;
@@ -65,9 +66,9 @@ public class ApiHelper implements OpenLegConstants {
                 ApiType apiType = getApiType(type);
                 Class<? extends ISenateObject> clazz = apiType.clazz();
 
-                ISenateObject resultObj = null;
+                SenateObject resultObj = null;
                 try {
-                    resultObj = mapper.readValue(jsonData, clazz);
+                    resultObj = (SenateObject)mapper.readValue(jsonData, clazz);
                     result.setObject(resultObj);
                 } catch (Exception e) {
                     logger.error("error binding:" + clazz.getName(), e);

@@ -1,6 +1,7 @@
 <%@ page language="java" import="gov.nysenate.services.model.*, java.util.ArrayList" pageEncoding="UTF-8"%>
 <%
     String appPath = request.getContextPath();
+    @SuppressWarnings("unchecked")
     ArrayList<Committee> committees = (ArrayList<Committee>)request.getAttribute("committees");
 %>
 <jsp:include page="/header.jsp">
@@ -48,21 +49,21 @@ td {
 	</div>
 	<div class="content-bg">
 	    <h3>Standing Committees</h3>
-	    <ul id="committees">
-	        <% if (committees.size()==0) { %>
-	            Committee Assignments for the current session are not yet available.
-	        <% } else { %>
+	    <% if (committees.size()==0) { %>
+            Committee Assignments for the current session are not yet available.
+        <% } else { %>
+	        <ul id="committees">
 		        <% for(Committee committee:committees) { %>
-		            <li class="committee"">
+		            <li class="committee">
 		                <div class="committee-left">
 		                    <h2><a href="<%=appPath%>/committee/<%=committee.getName()%>"><%=committee.getName()%></a></h2>
 		                </div>
 		                <div class="committee-right">
 		                    <div class="members">
-		                        <table>
 		                        <% if (committee.getMembers().size()==0) { %>
-		                            Committee member information is not yet available.
-		                        <% } else { %>
+                                    Committee member information is not yet available.
+                                <% } else { %>
+		                        <table>
 		                            <tr>
 		                                <td class="member-label">Chair</td>
 		                                <td>
@@ -87,14 +88,14 @@ td {
 		                                </ul>
 		                                </td>
 		                            </tr>
-		                            <% } %>
 		                        </table>
+		                        <% } %>
 		                    </div>
 		                </div>
 		            </li>
 		        <% } %>
-	        <% } %>
-	    </ul>
+	        </ul>
+        <% } %>
 	</div>
 </div>
 <jsp:include page="/footer.jsp"/>

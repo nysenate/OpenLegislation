@@ -138,8 +138,7 @@ public class BillProcessor
             try {
 
                 if (block.getType() == '1' && block.getData().startsWith("DELETE")) {
-                    // Special case here were we delete the whole bill
-                    // TODO: This might actually be a soft delete!
+                    // This is more like an "unpublish", we don't throw the data out.
                     logger.info("DELETING "+block.getHeader());
                     deleteBill(block, storage, date);
                 }

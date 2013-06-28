@@ -1,4 +1,4 @@
-<%@ page language="java" import="gov.nysenate.openleg.util.ResultIterator,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/plain" pageEncoding="utf-8" %><%!public String format(String str) {
+<%@ page language="java" import="gov.nysenate.openleg.util.ResultIterator,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/plain" pageEncoding="utf-8" %><%!public String format(String str) {
 		if(str == null)
 			return ",";
 		

@@ -26,8 +26,8 @@ import com.thoughtworks.xstream.mapper.LocalConversionMapper;
 import com.thoughtworks.xstream.mapper.Mapper;
 
 /**
- * 
- * @author graylin
+ *
+ * @author GraylinKim
  *
  *	Converter to handle some of the issues that came up when serializing
  *	the SenateObjects using the built in XStreamConverters. This converter
@@ -37,7 +37,7 @@ import com.thoughtworks.xstream.mapper.Mapper;
  *	Additionally, having our own converter will allow us to integrate any
  *	annotations that we want into the XML output and customize the effects
  *	that they have.
- *	
+ *
  */
 public class SenateObjectConverter implements Converter {
 
@@ -226,14 +226,12 @@ public class SenateObjectConverter implements Converter {
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     @SuppressWarnings("rawtypes")
     public boolean canConvert(Class clazz) {
-        // TODO Auto-generated method stub
         return ISenateObject.class.isAssignableFrom(clazz);
     }
 

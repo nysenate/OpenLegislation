@@ -60,6 +60,7 @@
     </form>
     <div id="updateTable">
         <%
+        @SuppressWarnings("unchecked")
         TreeMap<Date, ArrayList<Update>> updates = (TreeMap<Date, ArrayList<Update>>)(request.getAttribute("updates"));
         if(updates != null){
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, ''yyyy");

@@ -96,7 +96,7 @@ public class CalendarProcessor implements OpenLegConstants {
                     calendar.addSupplemental(supplemental);
                 }
             } else {
-                // TODO: log something here
+                logger.warn("Unknown calendar type found: "+obj);
                 continue;
             }
 
@@ -125,7 +125,7 @@ public class CalendarProcessor implements OpenLegConstants {
                         }
                     }
                 } else {
-                    // TODO: log something here
+                    logger.warn("Unknown calendar subdocument found: "+obj);
                 }
             }
 
@@ -246,8 +246,15 @@ public class CalendarProcessor implements OpenLegConstants {
         return supplemental;
     }
 
+    /**
+     * Build a calendar section from the given XML. Sections are sent in whole each time.
+     *
+     * @param storage
+     * @param supplemental
+     * @param xmlSection
+     * @return
+     */
     public Section parseSection (Storage storage, Supplemental supplemental, XMLSection xmlSection) {
-        // TODO: Confirm: build a new section from scratch, whole section is resent every time?
         String sectionId = supplemental.getId() + "-sect-" + xmlSection.getName();
 
         // Create a new section
@@ -365,7 +372,6 @@ public class CalendarProcessor implements OpenLegConstants {
         }
 
         // Get the bill for the entry, it may be marked has HIGH
-        // TODO: What is high? Importance maybe?
         if (xmlCalNo.getBill() != null)
         {
             calEntry.setBillHigh(xmlCalNo.getBill().getHigh());

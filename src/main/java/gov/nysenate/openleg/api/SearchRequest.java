@@ -84,7 +84,7 @@ public class SearchRequest extends AbstractApiRequest {
                 queryBuilder.and().keyValue("year", session, "(", ")");
             }
 
-            // TODO: Why does this also search in the osearch field in addition to the text?
+            // Currently full-text search ~= osearch (most fields) plus the bill text (where applicable)
             String full = request.getParameter("full");
             if (valid(full)) {
                 queryBuilder.and().append(" (").keyValue("full", full, "(", ")").or().keyValue("osearch", full, "(", ")").append(") ");

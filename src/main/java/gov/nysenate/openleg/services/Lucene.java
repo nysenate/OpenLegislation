@@ -84,7 +84,6 @@ public class Lucene extends ServiceBase
                                 lucene.updateDocument(vote);
                             }
                             catch(IOException e) {
-                                //TODO: Something
                                 logger.error("Error indexing: "+vote.luceneOid(), e);
                             }
                         }

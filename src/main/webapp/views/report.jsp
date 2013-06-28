@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.Date, java.util.ArrayList,gov.nysenate.openleg.model.Report,java.sql.*" %>
 <%
 String appPath = request.getContextPath();
+@SuppressWarnings("unchecked")
 ArrayList<Report> report= (ArrayList<Report>)request.getAttribute("reportList");
 %>
 <!DOCTYPE html>

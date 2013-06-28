@@ -3,7 +3,7 @@
 <%!
     public <T> ArrayList<T> defaultList(ArrayList<T> list) {
         if(list == null)
-            return (ArrayList<T>) Collections.EMPTY_LIST;
+            return new ArrayList<T>();
         return list;
     }
     
@@ -73,11 +73,16 @@
 	
     String appPath = request.getContextPath();
 
-    ArrayList<Bill> rBills          = defaultList((ArrayList<Bill>)request.getAttribute("related-bill"));
-    ArrayList<Action> rActions  = defaultList((ArrayList<Action>)request.getAttribute("related-action"));
-    ArrayList<Meeting> rMeetings    = defaultList((ArrayList<Meeting>)request.getAttribute("related-meeting"));
-    ArrayList<Calendar> rCals       = defaultList((ArrayList<Calendar>)request.getAttribute("related-calendar"));
-    ArrayList<Vote> rVotes          = defaultList((ArrayList<Vote>)request.getAttribute("related-vote"));
+    @SuppressWarnings("unchecked")
+    ArrayList<Bill> rBills = defaultList((ArrayList<Bill>)request.getAttribute("related-bill"));
+    @SuppressWarnings("unchecked")
+    ArrayList<Action> rActions = defaultList((ArrayList<Action>)request.getAttribute("related-action"));
+    @SuppressWarnings("unchecked")
+    ArrayList<Meeting> rMeetings = defaultList((ArrayList<Meeting>)request.getAttribute("related-meeting"));
+    @SuppressWarnings("unchecked")
+    ArrayList<Calendar> rCals = defaultList((ArrayList<Calendar>)request.getAttribute("related-calendar"));
+    @SuppressWarnings("unchecked")
+    ArrayList<Vote> rVotes = defaultList((ArrayList<Vote>)request.getAttribute("related-vote"));
 
     String senateBillNo = bill.getSenateBillNo();
     String year = null;

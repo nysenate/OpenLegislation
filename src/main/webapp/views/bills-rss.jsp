@@ -4,10 +4,12 @@ response.setContentType(contentType == null ? "text/html" : contentType);
 
 String term = "";
 
-if (request.getParameter("term")!=null)
-        term = request.getParameter("term");
-else if (session.getAttribute("term")!=null)
-        term = (String)session.getAttribute("term");
+if (request.getParameter("term")!=null) {
+    term = request.getParameter("term");
+}
+else if (session.getAttribute("term")!=null) {
+    term = (String)session.getAttribute("term");
+}
 %>
 <rss version="2.0">
   <channel>
@@ -42,6 +44,7 @@ DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 %>
 <%
 
+@SuppressWarnings("unchecked")
 Collection<Bill> bills = (Collection<Bill>)request.getAttribute("bills");
 
         Iterator<Bill> itEvents = bills.iterator();

@@ -87,8 +87,7 @@ public class Lucene
 	protected Analyzer analyzer = null;
 
 	/**
-	 * A list of serializers to appy to each object when converting to a document.
-	 * TODO: Make these thread safe...
+	 * A list of serializers to apply to each object when converting to a document.
 	 */
 	protected Collection<LuceneSerializer> serializers = Arrays.asList(new XmlSerializer(), new JsonSerializer());
 

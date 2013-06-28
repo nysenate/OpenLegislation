@@ -1,5 +1,10 @@
 package gov.nysenate.openleg.tests;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
@@ -14,9 +19,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.time.DateUtils;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 /*
  * Tests if bill data is equal to the data in the associated SOBI file.
@@ -226,7 +228,6 @@ public class BillTests
         assertThat(bill.getSummary(), is(expectedSummary));
     }
 
-    // TODO: do we want this to just test if it exists or test all of its text?
     public static void testSponsorMemo(Environment env, File sobiDirectory,
             Storage storage, String billKey, String sobi, String expectedMemo)
     {
