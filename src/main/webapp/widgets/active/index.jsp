@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.api.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/html" pageEncoding="utf-8" %><%
+<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.api.*,gov.nysenate.openleg.lucene.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/html" pageEncoding="utf-8" %><%
 
 String requestPath = request.getRequestURI();
 
@@ -18,7 +18,7 @@ int endIdx = startIdx + pageSize;
 
 
 
-SearchEngine searchEngine = SearchEngine.getInstance();
+Lucene searchEngine = Application.getLucene();
 
 ArrayList<Result> listResults =  ApiHelper.buildSearchResultList(searchEngine.search(term,"json",startIdx,pageSize,sortField,sortOrder));
 

@@ -1,8 +1,8 @@
-package gov.nysenate.openleg.search;
+package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.api.ApiHelper;
-import gov.nysenate.openleg.util.TextFormatter;
-import gov.nysenate.openleg.util.Timer;
+import gov.nysenate.openleg.model.Result;
+import gov.nysenate.openleg.model.SenateResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,8 +12,8 @@ import java.util.NoSuchElementException;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 
-public class ResultSearch implements Iterator<Result>, Iterable<Result> {
-    private static Logger logger = Logger.getLogger(ResultSearch.class);
+public class ResultIterator implements Iterator<Result>, Iterable<Result> {
+    private static Logger logger = Logger.getLogger(ResultIterator.class);
 
     private static final int SIZE = 500;
     private static final int PAGE = 0;
@@ -41,25 +41,18 @@ public class ResultSearch implements Iterator<Result>, Iterable<Result> {
 
     public SenateResponse senateResponse;
 
-    private final SearchEngine searchEngine;
-
-    public ResultSearch() {
-        this(SIZE, PAGE, FORMAT, SORT_BY, REVERSE);
+    public ResultIterator(String query) {
+        this(query, SIZE, PAGE, FORMAT, SORT_BY, REVERSE);
     }
 
-    public ResultSearch(int max, int page, String format, String sortBy, boolean reverse) {
+    public ResultIterator(String query, int max, int page, String format, String sortBy, boolean reverse) {
+        this.query = query;
         this.max = max;
         this.page = page;
         this.format = format;
         this.sortBy = sortBy;
         this.reverse = reverse;
-        searchEngine = SearchEngine.getInstance();
-    }
-
-    public ResultSearch query(String query) {
-        this.query = query;
         reset();
-        return this;
     }
 
     @Override
@@ -100,16 +93,14 @@ public class ResultSearch implements Iterator<Result>, Iterable<Result> {
             return;
         }
 
-        Timer t = new Timer();
-        t.start();
         try {
-            senateResponse = searchEngine.search(query, format, (max * page++), max, sortBy, reverse);
+            senateResponse = Application.getLucene().search(query, format, (max * page++), max, sortBy, reverse);
         } catch (ParseException e) {
             logger.error(e);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.error(e);
         }
-        logger.warn(TextFormatter.append("Query: ", query," (page ", page, ") took ", t.stop()));
 
         if(senateResponse == null) {
             exhausted = true;

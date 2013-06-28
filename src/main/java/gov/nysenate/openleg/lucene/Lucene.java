@@ -1,262 +1,355 @@
 package gov.nysenate.openleg.lucene;
 
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Result;
+import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.model.SenateResponse;
+import gov.nysenate.openleg.util.ResultIterator;
+import gov.nysenate.openleg.util.TextFormatter;
+import gov.nysenate.openleg.util.serialize.JsonSerializer;
+import gov.nysenate.openleg.util.serialize.XmlSerializer;
+import gov.nysenate.util.Config;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.FieldSelector;
-import org.apache.lucene.document.FieldSelectorResult;
+import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.SearcherFactory;
+import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.search.TopScoreDocCollector;
-import org.apache.lucene.store.Directory;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
-public class Lucene implements LuceneIndexer, LuceneSearcher {
+/**
+ * Encapsulates basic Lucene configuration and index manipulation.
+ *
+ * @author GraylinKim
+ *
+ */
+public class Lucene
+{
+    private static final Logger logger = Logger.getLogger(Lucene.class);
 
-	private static final Version VERSION = Version.LUCENE_30;
+    /**
+     * The version of Lucene for compatibility purposes. We can't upgrade the version right now
+     * because the StandardAnalyzer now removes hyphens from quoted terms while searching. This
+     * breaks document lookup by oid
+     */
+	protected static final Version VERSION = Version.LUCENE_30;
 
-	public SearcherManager searcherManager = null;
+	/**
+     * The directory the Lucene database is stored in.
+     */
+    protected File indexDir = null;
 
+	/**
+	 * Utility class to safely share IndexSearcher instances across multiple threads,
+	 * while periodically reopening. This class ensures each searcher is closed only
+	 * once all threads have finished using it.
+	 */
+	protected SearcherManager searcherManager = null;
+
+    /**
+     * A reference to the configuration used by the indexWriter
+     */
+    protected IndexWriterConfig indexWriterConfig = null;
+
+	/**
+	 * A reference to the open IndexWriter for this database
+	 */
 	protected IndexWriter indexWriter = null;
-	protected IndexSearcher indexSearcher = null;
 
-	protected Logger logger;
-	protected File indexDir;
+	/**
+	 * A reference to the analyzer used when adding documents and parsing queries
+	 */
+	protected Analyzer analyzer = null;
 
-	public Lucene(File indexDir)
+	/**
+	 * A list of serializers to appy to each object when converting to a document.
+	 * TODO: Make these thread safe...
+	 */
+	protected Collection<LuceneSerializer> serializers = Arrays.asList(new XmlSerializer(), new JsonSerializer());
+
+    /**
+     * Constructs a new Lucene connection from the given configuration file using
+     * parameters within the given dot separated prefix. If a lucene database
+     * does not yet exist in the directory then a new one is created.
+     *
+     * @param config - The Config class to load from
+     * @param prefix - The dot separated prefix to the configuration parameters
+     * @throws IOException
+     */
+	public Lucene(Config config, String prefix) throws IOException
+	{
+	    this(new File(config.getValue(prefix+".directory")));
+	}
+
+	/**
+	 * Creates a new Lucene connection to the given directory. If a lucene database
+	 * does not yet exist in the directory then a new one is created.
+	 *
+	 * @param indexDir -  The directory for the lucene database.
+	 */
+	public Lucene(File indexDir) throws IOException
 	{
 	    this.indexDir = indexDir;
-        this.logger = Logger.getLogger(this.getClass());
-
-        try {
-            createIndex();
-            searcherManager = new SearcherManager(getDirectory());
-        } catch (IOException e) {
-            logger.error(e);
-        }
+	    this.analyzer = new StandardAnalyzer(VERSION);
+	    this.indexWriterConfig = new IndexWriterConfig(Version.LUCENE_33, this.analyzer);
+	    this.indexWriter = new IndexWriter(FSDirectory.open(indexDir), indexWriterConfig);
+        this.searcherManager = new SearcherManager(FSDirectory.open(indexDir), new SearcherFactory());
 	}
 
-	/////////////////////////////////
-	// Implementing LuceneIndexer
-	//
 
-    @Override
-    public synchronized void createIndex() throws IOException{
-        if (!indexDir.exists()) {
-            FileUtils.forceMkdir(indexDir);
-        }
-
-        if (0 == indexDir.listFiles().length) {
-	        IndexWriter indexWriter = new IndexWriter(getDirectory(), getConfig());
-	        indexWriter.optimize();
-	        indexWriter.close();
-        }
-    }
-
-	@Override
-    public synchronized IndexWriter openWriter() throws IOException {
-		if (indexWriter == null) {
-			indexWriter = new IndexWriter(getDirectory(), getConfig());
-		}
-		return indexWriter;
-	}
-
-	@Override
-	public synchronized void commit() throws CorruptIndexException, IOException {
-		openWriter().commit();
-	}
-
-    @Override
-    public boolean addDocument(ILuceneObject obj, LuceneSerializer[] serializer,IndexWriter indexWriter) throws IOException
+	/**
+	 * Performs a sorted search on the Lucene database with the given parameters.
+	 *
+	 * @param queryString - The search query
+	 * @param skipCount - The offset of the results, e.g. to get results 101-120, use 100
+	 * @param retrieveCount - The number of results to fetch, e.g. to get results 101-120 use 20
+	 * @param sortFieldName - The document field to sort on. The field should not be tokenized. Use null to sort by relevance.
+	 * @param reversed - true to reverse the order of results
+	 * @return LuceneResult
+	 * @throws IOException
+	 */
+    public LuceneResult search(String queryString, int skipCount, int retrieveCount, String sortFieldName, boolean reversed) throws IOException
     {
-    	if(obj == null)
-    		return false;
+        // Some last minute hot fixes on the incoming query
+        queryString = queryString.replaceAll("otype:resolution", "(otype:bill AND oid:(R* OR E* OR J* OR K* OR L*))");
 
-    	Document doc = new DocumentBuilder().buildDocument(obj, serializer);
+        searcherManager.maybeRefresh();
+        IndexSearcher searcher = searcherManager.acquire();
 
-    	if(doc ==  null)
-    		return false;
-
-    	logger.info("indexing document: " + doc.getFieldable("otype").stringValue() + "=" + doc.getFieldable("oid").stringValue());
-
-    	Query query;
-		try {
-			query = new QueryParser(Version.LUCENE_30, "oid", indexWriter.getAnalyzer()).parse("oid:" + doc.getFieldable("oid").stringValue());
-	        indexWriter.deleteDocuments(query);
-	    	indexWriter.addDocument(doc);
-		} catch (ParseException e) {
-			logger.warn("error adding document to index: " + doc.getFieldable("otype").stringValue() + "=" + doc.getFieldable("oid").stringValue(), e);
-			e.printStackTrace();
-		}
-    	return true;
-    }
-
-    public void deleteDocumentsByQuery(String qString, IndexWriter indexWriter) throws IOException {
-    	try {
-    		Query query = new QueryParser(VERSION, "otype", indexWriter.getAnalyzer()).parse(qString);
-    		indexWriter.deleteDocuments(query);
-    	}
-    	catch (Exception e) {
-    		logger.warn("error deleting document to index: " + qString);
-    	}
-    }
-
-    @Override
-    public void deleteDocuments(String otype, String oid) throws IOException {
-    	openWriter();
-        deleteDocuments(otype, oid, indexWriter);
-        closeWriter();
-    }
-
-    public void deleteDocuments(String otype, String oid, IndexWriter writer) throws IOException {
         try {
-            String qString ="otype:"+otype + ((oid!=null) ? " AND oid:"+oid : "");
-            logger.error(qString);
-            Query query = new QueryParser(VERSION, "otype", writer.getAnalyzer()).parse(qString);
-            writer.deleteDocuments(query);
+            Query query = new QueryParser(VERSION, "osearch", analyzer).parse(queryString);
+
+            // Sort by relevance unless they say otherwise
+            Sort sort;
+            if (sortFieldName == null) {
+                sort = new Sort(new SortField(null, SortField.SCORE, reversed));
+            }
+            else {
+                sort = new Sort(new SortField(sortFieldName, SortField.STRING_VAL, reversed));
+            }
+
+            // Time our searches so bottle necks can be identified
+            long startTime = System.nanoTime();
+            TopDocs topDocs = searcher.search(query, skipCount + retrieveCount, sort);
+            double duration = (System.nanoTime()-startTime)/1000000.0;
+            logger.info(String.format("[%.2f ms] %,d hits for query %s; sorted by %s", duration, topDocs.totalHits, query, sort));
+
+            // Only fetch the documents for this "page" for our results. Also,
+            // don't fetch fields until we need them, often we won't. This saves
+            // a ton of memory and time with big full, memo, ojson, and oxml fields
+            ScoreDoc[] scoreDocs = topDocs.scoreDocs;
+            FieldSelector lazyFieldSelector = new LazyFieldSelector();
+            ArrayList<Document> results = new ArrayList<Document>();
+            for (int i=skipCount; (i < scoreDocs.length && i < skipCount+retrieveCount); i++) {
+                results.add(searcher.doc(scoreDocs[i].doc, lazyFieldSelector));
+            }
+
+            return new LuceneResult(results,topDocs.totalHits);
         }
-        catch (Exception e) {
-            logger.warn("error deleting document to index: " + otype + "=" + oid, e);
+        catch (ParseException e) {
+            logger.warn("Unable to parse query: "+queryString,e);
+        }
+        finally {
+            // If this doesn't get released we'll be leaking GIGANTIC amounts of memory
+            searcherManager.release(searcher);
+        }
+
+        return null;
+    }
+
+    /**
+     * Builds a lucene document from the given object using the given serializers. Updates
+     * the document in the index if it already exists, otherwise it inserts the new document
+     * into the index.
+     *
+     * @param obj - The object to be indexed.
+     * @param serializer - A list of serializers used to make serializations to store in the document
+     * @return true on success
+     * @throws IOException
+     */
+    public boolean updateDocument(ILuceneObject obj) throws IOException
+    {
+        if (obj != null) {
+            Document doc = new DocumentBuilder().buildDocument(obj, serializers);
+            if (doc != null) {
+                logger.info("indexing document: " + doc.getFieldable("otype").stringValue() + "=" + doc.getFieldable("oid").stringValue());
+                String oid = doc.getFieldable("oid").stringValue();
+                indexWriter.updateDocument(new Term("oid",oid), doc);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Deletes all documents from the index that match the given query.
+     *
+     * @param queryString - The query to use when deleting documents
+     * @throws IOException
+     * @throws ParseException
+     */
+    public void deleteDocumentsByQuery(String queryString) throws IOException, ParseException
+    {
+		Query query = new QueryParser(VERSION, "osearch", indexWriter.getAnalyzer()).parse(queryString);
+		indexWriter.deleteDocuments(query);
+    }
+
+    /**
+     * Deletes a document based on its unique lucene oid.
+     *
+     * @param oid - The oid of the document to be deleted.
+     * @throws IOException
+     */
+    public void deleteDocumentById(String oid) throws IOException
+    {
+        indexWriter.deleteDocuments(new Term("oid", oid));
+    }
+
+    /**
+     * Commits all uncommitted document changes to the index.
+     *
+     * @throws CorruptIndexException
+     * @throws IOException
+     */
+    public void commit() throws CorruptIndexException, IOException
+    {
+        this.indexWriter.commit();
+    }
+
+    /**
+     * Closes all lucene resources. This Lucene instance can no longer be used
+     * once it is closed.
+     *
+     * @throws IOException
+     */
+    public synchronized void close() throws IOException
+    {
+        if (analyzer != null) {
+            analyzer.close();
+            analyzer = null;
+        }
+
+        if (indexWriter != null) {
+            indexWriter.close();
+            indexWriter = null;
+        }
+
+        if (searcherManager != null) {
+            searcherManager.close();
+            searcherManager = null;
         }
     }
 
-    @Override
-    public synchronized void optimize() throws IOException {
-    	openWriter().optimize();
+
+
+    public SenateResponse search(String queryText, String format, int skipCount, int retrieveCount, String sortFieldName, boolean reversed) throws ParseException, IOException
+    {
+        SenateResponse response = new SenateResponse();
+
+        LuceneResult result = search(queryText,skipCount,retrieveCount,sortFieldName,reversed);
+
+        if (result != null) {
+            response.addMetadataByKey("totalresults", result.total );
+
+            for (Document doc : result.results) {
+                String lastModified = doc.get("modified");
+                if (lastModified == null || lastModified.length() == 0)
+                    lastModified = new Date().getTime()+"";
+
+                HashMap<String,String> fields = new HashMap<String,String>();
+                for(Fieldable field : doc.getFields()) {
+                    fields.put(field.name(), doc.get(field.name()));
+                }
+
+                response.addResult(new Result(
+                        doc.get("otype"),
+                        doc.get("o"+format.toLowerCase()),
+                        doc.get("oid"),
+                        Long.parseLong(lastModified),
+                        Boolean.parseBoolean(doc.get("active")),
+                        fields));
+            }
+        }
+        else {
+            response.addMetadataByKey("totalresults", 0 );
+        }
+
+        return response;
     }
 
-    @Override
-    public synchronized void closeWriter() throws IOException {
-    	if (indexWriter != null) {
-
-    		indexWriter.close();
-			indexWriter = null;
-    	}
+    public SenateObject getSenateObject(String oid, String type) {
+        ArrayList<? extends SenateObject> senateObjects = getSenateObjects("otype:"+type+" AND oid:\""+oid+"\"");
+        if (!senateObjects.isEmpty()) {
+            return senateObjects.get(0);
+        }
+        else {
+            return null;
+        }
     }
 
-    /////////////////////////////////
-    // Implementing Lucene Searcher
-    //
+    public <T extends SenateObject> ArrayList<T> getSenateObjects(String query) {
+        ArrayList<T> senateObjects = new ArrayList<T>();
 
-	@Override
-    public synchronized IndexSearcher openSearcher() throws IOException {
+        ResultIterator longSearch = new ResultIterator(query);
+        for(Result result:longSearch) {
+            senateObjects.add((T)result.getObject());
+        }
 
-		if (indexSearcher == null) {
-			logger.info("opening search index: " + getDirectory().toString());
-			indexSearcher = new IndexSearcher(getDirectory(), true);
-		}
-
-		return indexSearcher;
-	}
-
-    @Override
-    public LuceneResult search(String searchText, int start, int max, String sortField, boolean reverseSort) throws IOException{
-
-    	IndexSearcher searcher = searcherManager.get();
-
-    	if(!searcher.getIndexReader().isCurrent()) {
-    		try {
-				searcherManager.maybeReopen();
-			} catch (InterruptedException e) {
-				logger.error(e);
-			}
-    	}
-
-    	try {
-    		ScoreDoc[] sdocs = null;
-			ArrayList<Document> results = new ArrayList<Document>();
-		    Query query = new QueryParser(VERSION, "osearch", getAnalyzer()).parse(searchText);
-			TopScoreDocCollector collector = TopScoreDocCollector.create(start+max, false);
-
-			try {
-		    	//Do this search no matter what so we can get the "total hits" for the response object
-			    //The sorted result search can't give us this information (I don't think)
-		    	searcher.search(query, collector);
-		    	logger.info(collector.getTotalHits() + " total matching documents (" + query.toString() + ")");
-
-		    	if (sortField != null) {
-				    //If they want sorted results, do a new search with sorting enabled
-
-		    		Sort sort = new Sort(new SortField(sortField, SortField.STRING_VAL, reverseSort));
-		    		sdocs = searcher.search(query, null, start + max, sort).scoreDocs;
-		    	}
-		    	else {
-		    		sdocs = collector.topDocs().scoreDocs;
-		    	}
-
-		    	for (int i=start; (i < sdocs.length && i < start+max); i++) {
-
-		    		/*
-		    		 * certain bills have pretty massive json, xml and bill text fields that
-		    		 * can cause heap issues.  lazy loading is our best bet for now
-		    		 */
-		    		results.add(searcher.doc(sdocs[i].doc, new FieldSelector() {
-						private static final long serialVersionUID = -5944405015166445368L;
-						@Override
-                        public FieldSelectorResult accept(String field) {
-		    				return FieldSelectorResult.LAZY_LOAD;
-		    			}
-		    		}));
-		    	}
-
-		    	return new LuceneResult(results,collector.getTotalHits());
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.warn("Search Exception: " + query.toString(),e);
-			}
-    	} catch (ParseException e) {
-    		logger.warn("Parse Exception: " + searchText,e);
-    	}
-    	finally {
-    		searcherManager.release(searcher);
-    	}
-
-		return null;
+        return senateObjects;
     }
 
-    @Override
-    public synchronized void closeSearcher() throws IOException {
-    	if (indexSearcher != null) {
-    		logger.info("closing search index");
-			indexSearcher.close();
-			indexSearcher = null;
-    	}
+    public Bill getNewestAmendment(String oid) {
+        oid = Bill.formatBillNo(oid);
+        String[] billParts = oid.split("-");
+
+        ArrayList<Bill> bills = getRelatedBills(billParts[0], billParts[1]);
+        if (!bills.isEmpty()) {
+            Collections.sort(bills);
+            return bills.get(bills.size()-1);
+        }
+        else {
+            return null;
+        }
     }
 
-	/////////////////////
-	//Utility methods
-	//
+    private ArrayList<Bill> getRelatedBills(String billNumber, String year) {
+        int length = billNumber.length();
+        if(!Character.isDigit(billNumber.charAt(length-1))) {
+            billNumber = billNumber.substring(0, length-1);
+        }
 
-    public IndexWriterConfig getConfig() {
-		return new IndexWriterConfig(Version.LUCENE_33, getAnalyzer());
+        String query = TextFormatter.append("otype:bill AND oid:((",
+                billNumber, "-", year,
+                " OR [", billNumber, "A-", year,
+                " TO ", billNumber, "Z-", year,
+                "]) AND ", billNumber, "*-", year, ")");
+
+        return getSenateObjects(query);
     }
-
-	public Directory getDirectory() throws IOException {
-		return FSDirectory.open(indexDir);
-	}
-
-	public Analyzer getAnalyzer() {
-		return new StandardAnalyzer(VERSION);
-	}
-
-	public IndexWriter newIndexWriter() throws IOException {
-	    // Use with caution
-	    return new IndexWriter(getDirectory(), getConfig());
-	}
 }

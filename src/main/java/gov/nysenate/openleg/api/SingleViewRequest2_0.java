@@ -6,9 +6,9 @@ import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.model.Transcript;
-import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.util.Application;
 
 import java.io.IOException;
 
@@ -55,7 +55,7 @@ public class SingleViewRequest2_0 extends AbstractApiRequest {
         int start = (pageNumber - 1) * pageSize;
 
         try {
-            SenateResponse sr = SearchEngine.getInstance().search(term, vFormat, start, pageSize, null, false);
+            SenateResponse sr = Application.getLucene().search(term, vFormat, start, pageSize, null, false);
 
             request.setAttribute("results", sr);
         }

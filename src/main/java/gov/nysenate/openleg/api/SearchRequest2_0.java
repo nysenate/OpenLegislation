@@ -1,10 +1,11 @@
 package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.SearchRequest.SearchView;
+import gov.nysenate.openleg.lucene.Lucene;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.model.SenateResponse;
+import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.OpenLegConstants;
 
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class SearchRequest2_0 extends AbstractApiRequest {
         int start = (pageNumber - 1) * pageSize;
 
         try {
-            SenateResponse sr = SearchEngine.getInstance().search(ApiHelper.dateReplace(term), vFormat, start, pageSize, null, false);
+            SenateResponse sr = Application.getLucene().search(ApiHelper.dateReplace(term), vFormat, start, pageSize, null, false);
             request.setAttribute("results", sr);
         }
         catch (ParseException e) {
@@ -99,7 +100,7 @@ public class SearchRequest2_0 extends AbstractApiRequest {
      * s1234  -> S1234B-2011
      *
      */
-    public String getDesiredBillNumber(String term, SearchEngine searchEngine) {
+    public String getDesiredBillNumber(String term, Lucene lucene) {
         if(term == null) return null;
 
         String billNo = Bill.formatBillNo(term);
@@ -109,7 +110,7 @@ public class SearchRequest2_0 extends AbstractApiRequest {
                 return billNo;
             }
 
-            Bill newestAmendment = searchEngine.getNewestAmendment(billNo);
+            Bill newestAmendment = lucene.getNewestAmendment(billNo);
             if(newestAmendment != null) {
                 return newestAmendment.getSenateBillNo();
             }

@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.xstream;
 
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.util.OpenLegConstants;
 
 import com.thoughtworks.xstream.converters.Converter;

@@ -2,6 +2,7 @@ package gov.nysenate.openleg.lucene;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -28,7 +29,7 @@ public class DocumentBuilder {
     public static final String MODIFIED = "modified";
     public static final String ACTIVE = "active";
 
-    public Document buildDocument(ILuceneObject o, LuceneSerializer[] serializer) {
+    public Document buildDocument(ILuceneObject o, Collection<LuceneSerializer> serializers) {
         if(o == null || o.luceneOtype() == null || o.luceneOid() == null) {
             return null;
         }
@@ -133,8 +134,8 @@ public class DocumentBuilder {
             if(otherMap != null) {
                 fields.putAll(otherMap);
             }
-            if(serializer != null) {
-                for(LuceneSerializer lst:serializer) {
+            if(serializers != null) {
+                for(LuceneSerializer lst:serializers) {
                     fields.put(lst.getType(),
                             new org.apache.lucene.document.Field(
                                 lst.getType(),

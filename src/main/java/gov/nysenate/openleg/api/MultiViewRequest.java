@@ -5,12 +5,12 @@ import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.Meeting;
+import gov.nysenate.openleg.model.Result;
 import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
@@ -64,10 +64,11 @@ public class MultiViewRequest extends AbstractApiRequest {
         }
 
         try {
-            sr = SearchEngine.getInstance().search(queryBuilder.query(), sFormat, start, pageSize, sortField, sortOrder);
+            sr = Application.getLucene().search(queryBuilder.query(), sFormat, start, pageSize, sortField, sortOrder);
         } catch (ParseException e) {
             logger.error(e);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.error(e);
         }
 

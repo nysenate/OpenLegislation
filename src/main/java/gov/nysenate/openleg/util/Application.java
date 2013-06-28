@@ -1,11 +1,13 @@
 package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.Environment;
-import gov.nysenate.openleg.search.SearchEngine;
+import gov.nysenate.openleg.lucene.Lucene;
 import gov.nysenate.util.Config;
 import gov.nysenate.util.DB;
 import gov.nysenate.util.Mailer;
 import gov.nysenate.util.listener.NYSenateConfigurationListener;
+
+import java.io.IOException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
@@ -26,7 +28,7 @@ public class Application
     protected Config config;
     protected Mailer mailer;
     protected Environment environment;
-    protected SearchEngine searchEngine;
+    protected Lucene lucene;
     protected Storage storage;
     protected DB db;
 
@@ -47,7 +49,7 @@ public class Application
             appInstance.db = new DB(appInstance.config, "mysqldb");
             appInstance.mailer = new Mailer(appInstance.config, "mailer");
             appInstance.environment = new Environment(appInstance.config, "env");
-            appInstance.searchEngine = new SearchEngine(appInstance.config, "lucene");
+            appInstance.lucene = new Lucene(appInstance.config, "lucene");
             appInstance.storage = new Storage(appInstance.environment.getStorageDirectory());
             return true;
         }
@@ -64,8 +66,9 @@ public class Application
         return false;
     }
 
-    public static boolean shutdown()
+    public static boolean shutdown() throws IOException
     {
+        appInstance.lucene.close();
         return true;
     }
 
@@ -77,8 +80,8 @@ public class Application
         return appInstance.db;
     }
 
-    public static SearchEngine getSearchEngine() {
-        return appInstance.searchEngine;
+    public static Lucene getLucene() {
+        return appInstance.lucene;
     }
 
     public static Environment getEnvironment() {

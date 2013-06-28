@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.search;
+package gov.nysenate.openleg.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;

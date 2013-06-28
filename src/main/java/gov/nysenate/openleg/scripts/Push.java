@@ -37,7 +37,7 @@ public class Push extends BaseScript
         return options;
     }
 
-    protected void execute(CommandLine opts)
+    protected void execute(CommandLine opts) throws IOException
     {
         String[] required = opts.getArgs();
         if (required.length != 1) {

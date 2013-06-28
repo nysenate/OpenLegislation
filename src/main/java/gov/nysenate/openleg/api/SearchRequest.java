@@ -3,8 +3,8 @@ package gov.nysenate.openleg.api;
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.model.SenateResponse;
+import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
 
@@ -34,12 +34,12 @@ public class SearchRequest extends AbstractApiRequest {
         logger.info("New search request: format="+format+", type="+type+", term="+term+", page="+pageNumber+", size="+pageSize);
         this.type = type;
         try {
-            this.term = whichTerm(type);
-            this.term = URLDecoder.decode(term,"UTF-8");
+            this.term = whichTerm(term);
+            this.term = URLDecoder.decode(this.term,"UTF-8");
         } catch (UnsupportedEncodingException e) {
             logger.error("Unsupported encoding UTF-8", e);
         } catch (IllegalArgumentException e) {
-            logger.error("Malformed term: "+term, e);
+            logger.error("Malformed term: "+this.term, e);
         }
     }
 
@@ -187,14 +187,15 @@ public class SearchRequest extends AbstractApiRequest {
         SenateResponse sr = null;
         try {
             int start = (pageNumber - 1) * pageSize;
-            sr = SearchEngine.getInstance().search(term,"json",start,pageSize,sortField,sortOrder);
+            sr = Application.getLucene().search(term,"json",start,pageSize,sortField,sortOrder);
             if((sr.getResults() == null || sr.getResults().isEmpty()) && this.format.contains("html")) {
                 throw new ApiRequestException(TextFormatter.append("no results for query"));
             }
             ApiHelper.buildSearchResultList(sr);
         } catch (ParseException e) {
             logger.error(e);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.error(e);
         }
 
@@ -236,7 +237,7 @@ public class SearchRequest extends AbstractApiRequest {
         }
 
         String tempTerm = null;
-        if((tempTerm = getDesiredBillNumber(term, SearchEngine.getInstance())) != null) {
+        if((tempTerm = getDesiredBillNumber(term)) != null) {
             term = "oid:" + tempTerm;
         }
 
@@ -259,7 +260,7 @@ public class SearchRequest extends AbstractApiRequest {
      * s1234  -> S1234B-2011
      *
      */
-    public String getDesiredBillNumber(String term, SearchEngine searchEngine) {
+    public String getDesiredBillNumber(String term) {
         if(term == null) return null;
 
         String billNo = Bill.formatBillNo(term);
@@ -269,7 +270,7 @@ public class SearchRequest extends AbstractApiRequest {
                 return billNo;
             }
 
-            Bill newestAmendment = searchEngine.getNewestAmendment(billNo);
+            Bill newestAmendment = Application.getLucene().getNewestAmendment(billNo);
             if(newestAmendment != null) {
                 return newestAmendment.getSenateBillNo();
             }

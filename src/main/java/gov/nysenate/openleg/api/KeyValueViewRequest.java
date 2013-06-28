@@ -2,10 +2,10 @@ package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Result;
 import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.model.SenateResponse;
+import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
@@ -64,10 +64,11 @@ public class KeyValueViewRequest extends AbstractApiRequest {
         }
 
         try {
-            sr = SearchEngine.getInstance().search(queryBuilder.query(), sFormat, start, pageSize, sortField, sortOrder);
+            sr = Application.getLucene().search(queryBuilder.query(), sFormat, start, pageSize, sortField, sortOrder);
         } catch (ParseException e) {
             logger.error(e);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.error(e);
         }
 

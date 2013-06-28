@@ -1,5 +1,4 @@
-<%@ page language="java" import="gov.nysenate.openleg.search.ResultSearch,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/plain" pageEncoding="utf-8" %><%!
-	public String format(String str) {
+<%@ page language="java" import="gov.nysenate.openleg.util.ResultIterator,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/plain" pageEncoding="utf-8" %><%!public String format(String str) {
 		if(str == null)
 			return ",";
 		
@@ -8,9 +7,7 @@
 		}
 		
 		return "," + str;
-	}
-%><%
-String contentType = (String) request.getAttribute("contentType");
+	}%><%String contentType = (String) request.getAttribute("contentType");
 response.setContentType(contentType == null ? "text/html" : contentType);
 
 String term = (String)request.getAttribute("term");
@@ -19,7 +16,7 @@ boolean sortOrder = true;
 if (request.getAttribute("sortOrder")!=null)
 			sortOrder = Boolean.parseBoolean((String)request.getAttribute("sortOrder"));
 
-ResultSearch rs = new ResultSearch(500, 36, "json", sortField, sortOrder).query(term);
+ResultIterator rs = new ResultIterator(term, 500, 36, "json", sortField, sortOrder);
 
 response.setContentType("text/csv");
 response.setHeader("Content-disposition","attachment;filename=search-" + new Date().getTime() +".csv");
@@ -70,5 +67,4 @@ out.print(header + "\n");
 
 for(String row:rows) {
 	out.println(row);
-}
-%>
+}%>

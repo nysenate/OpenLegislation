@@ -8,13 +8,13 @@ import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.CalendarEntry;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Person;
+import gov.nysenate.openleg.model.Result;
 import gov.nysenate.openleg.model.Section;
+import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.model.Sequence;
 import gov.nysenate.openleg.model.Supplemental;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.OpenLegConstants;
 
 import java.lang.reflect.InvocationTargetException;
