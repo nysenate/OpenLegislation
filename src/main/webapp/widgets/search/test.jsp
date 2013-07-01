@@ -1,4 +1,4 @@
-<script type="text/javascript" src="http://open.nysenate.gov/legislation/widgets/search/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="http://open.nysenate.gov/legislation/static/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="http://open.nysenate.gov/legislation/widgets/search/search.js"></script>
 <link rel="stylesheet" type="text/css" media="screen" href="http://open.nysenate.gov/legislation/widgets/search/style.css"/> 
 <div>

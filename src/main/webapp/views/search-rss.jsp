@@ -31,7 +31,7 @@ String pubDate = new Date().toGMTString();
     <generator>Open Legislation v1.6</generator>
     <image>
         <title><%=term%> - Search - NY Senate Open Legislation</title>
-      <url>http://open.nysenate.gov/legislation/img/openwordlogo.gif</url>
+      <url>http://open.nysenate.gov/legislation/static/img/openwordlogo.gif</url>
       <link>http://open.nysenate.gov/legislation</link>
       <description></description>
       <width>100</width>

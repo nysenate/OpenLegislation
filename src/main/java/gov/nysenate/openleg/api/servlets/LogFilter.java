@@ -16,11 +16,10 @@ import org.apache.log4j.Logger;
 public class LogFilter implements Filter
 {
     private final Logger logger = Logger.getLogger(LogFilter.class);
-    private FilterConfig filterConfig;
 
     public void init(FilterConfig filterConfig)
     {
-        this.filterConfig = filterConfig;
+
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
@@ -32,7 +31,11 @@ public class LogFilter implements Filter
                 uri += "?"+queryString;
             }
 
-            logger.info("request: "+uri);
+
+            if (!uri.contains("/static/")) {
+                logger.info("request: "+uri);
+            }
+
             chain.doFilter(request, response);
         }
         catch (IOException e) {
@@ -48,6 +51,6 @@ public class LogFilter implements Filter
 
     public void destroy()
     {
-        this.filterConfig = null;
+
     }
 }

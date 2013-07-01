@@ -5,7 +5,7 @@ body {
   line-height: 1.4em; /* 15px */
   color: #333;
   background-color: #fff;
-  background-image:url('img/bg.png');
+  background-image:url('/legislation/static/img/bg.png');
   background-repeat: repeat-x;
   margin:6px;
 }

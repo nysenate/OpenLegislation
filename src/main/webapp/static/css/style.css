@@ -45,7 +45,7 @@ body {
   line-height: 1.4em; /* 15px */
   color: #333;
   background-color: #fff;
-  background-image:url('img/nyss_bg.png');
+  background-image:url("/legislation/static/img/nyss_bg.png");
   background-repeat: repeat-x;
   margin:16px;
   margin-top:1px;
@@ -643,6 +643,7 @@ text-decoration:none;
 }
 
 #quickresult{
+text-align:left;
 margin: 0 0 0 0px;
 width:400px;
 z-index:11;
@@ -651,14 +652,12 @@ color:#777;
 line-height:14px;
 font-size:10pt;
 overflow:hidden;
-visibility:hidden;
+display:none;
 background:none;
 position:absolute;
-
-
 }
 .searchResults{
-	background:url('img/transparent.png');
+	background:url('/legislation/static/img/transparent.png');
 	width:96%;
 	padding:10px 2% 10px 2% ;
 	float:left;

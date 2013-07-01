@@ -15,16 +15,16 @@ int resultCount = errorLog.size();
     <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;" />
     <meta name="apple-mobile-web-app-capable" content="YES"/>
 
-    <link rel="shortcut icon" href="<%=appPath%>/img/nys_favicon_0.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="<%=appPath%>/static/img/nys_favicon_0.ico" type="image/x-icon" />
     <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<%=appPath%>/feed" />
 
-    <link href="<%=request.getContextPath()%>/bootstrap.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/bootstrap-responsive.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/static/css/bootstrap.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/static/css/bootstrap-responsive.css" rel="stylesheet">
 
-    <script type="text/javascript" src="<%=appPath%>/js/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="<%=appPath%>/js/bootstrap-2.3.1.js"></script>
-    <script type="text/javascript" src="<%=appPath%>/js/search.js"></script>
-    <script type="text/javascript" src="<%=appPath%>/js/diff.js"></script>
+    <script type="text/javascript" src="<%=appPath%>/static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="<%=appPath%>/static/js/bootstrap-2.3.1.js"></script>
+    <script type="text/javascript" src="<%=appPath%>/static/js/search.js"></script>
+    <script type="text/javascript" src="<%=appPath%>/static/js/diff.js"></script>
     
     <script type="text/javascript">
 		$(document).ready(function(){

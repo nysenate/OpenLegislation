@@ -6,7 +6,7 @@
 <html>
     <head>
         <title><%=bill.getSenateBillNo()%> Text - NY Senate Open Legislation</title>
-        <link rel="stylesheet" type="text/css" media="screen" href="<%=appPath%>/style-print.css"/>
+        <link rel="stylesheet" type="text/css" media="screen" href="<%=appPath%>/static/css/style-print.css"/>
     </head>
     <body>
         <div id="content">

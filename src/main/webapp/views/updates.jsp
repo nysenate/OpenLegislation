@@ -12,9 +12,9 @@
 <head>
     <title>Recent Legislation Updates</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/jquery-ui-1.10.3.min.css")%>" />
-    <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/jquery-1.9.1.min.js")%>"></script>
-    <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/jquery-ui-1.10.3.min.js")%>"></script>
+    <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/static/css/jquery-ui-1.10.3.min.css")%>" />
+    <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/jquery-1.9.1.min.js")%>"></script>
+    <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/jquery-ui-1.10.3.min.js")%>"></script>
 
     <link rel="stylesheet" type="text/css" href="update.css">
     <script type="text/javascript">

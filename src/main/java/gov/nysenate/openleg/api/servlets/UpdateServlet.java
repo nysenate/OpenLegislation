@@ -118,7 +118,7 @@ public class UpdateServlet extends HttpServlet
             request.setAttribute("exception", e);
         }
 
-        request.getRequestDispatcher("/updates.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/updates.jsp").forward(request, response);
     }
 
     /**

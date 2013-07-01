@@ -17,7 +17,7 @@ if (request.getContextPath().equals("/openleg")) {
 </jsp:include>
 <div id="content" >	
 	<div class="homelogo">
-		<div><a href="<%=JSPHelper.getLink(request, "")%>"><img src="<%=JSPHelper.getLink(request, "/img/openleglogo.gif")%>" /></a></div>
+		<div><a href="<%=JSPHelper.getLink(request, "")%>"><img src="<%=JSPHelper.getLink(request, "/static/img/openleglogo.gif")%>" /></a></div>
 		<div class="hometext">
 			<div>
 				<h2 class="homeText">Browse, search and share legislative<br/>
