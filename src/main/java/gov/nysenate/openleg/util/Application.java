@@ -68,7 +68,9 @@ public class Application
 
     public static boolean shutdown() throws IOException
     {
-        appInstance.lucene.close();
+        if (appInstance.lucene != null) {
+            appInstance.lucene.close();
+        }
         return true;
     }
 
