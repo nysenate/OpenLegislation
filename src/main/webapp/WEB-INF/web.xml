@@ -40,10 +40,6 @@
 		<servlet-name>CommitteesServlet</servlet-name>
 		<servlet-class>gov.nysenate.openleg.api.servlets.CommitteesServlet</servlet-class>
 	</servlet>
-	<servlet>
-		<servlet-name>Updates</servlet-name>
-		<servlet-class>gov.nysenate.openleg.api.servlets.UpdateServlet</servlet-class>
-	</servlet>
 	<servlet-mapping>
 		<servlet-name>ApiServlet2_0</servlet-name>
 		<url-pattern>/api/2.0/*</url-pattern>
@@ -184,16 +180,22 @@
 		<servlet-name>ApiServlet</servlet-name>
 		<url-pattern>/search/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+        <servlet-name>AdminUpdates</servlet-name>
+        <servlet-class>gov.nysenate.openleg.api.servlets.admin.UpdatesServlet</servlet-class>
+    </servlet>
+    
 	<servlet-mapping>
-		<servlet-name>Updates</servlet-name>
-		<url-pattern>/updates</url-pattern>
+		<servlet-name>AdminUpdates</servlet-name>
+		<url-pattern>/admin/updates/*</url-pattern>
 	</servlet-mapping>
-  <servlet>
-    <servlet-name>ErrorLog</servlet-name>
-    <servlet-class>gov.nysenate.openleg.api.servlets.ErrorLog</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ErrorLog</servlet-name>
-    <url-pattern>/ErrorLog</url-pattern>
-  </servlet-mapping>
+	<servlet>
+	    <servlet-name>AdminReports</servlet-name>
+	    <servlet-class>gov.nysenate.openleg.api.servlets.admin.ReportsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>AdminReports</servlet-name>
+	    <url-pattern>/admin/reports/*</url-pattern>
+	</servlet-mapping>
 </web-app>

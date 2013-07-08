@@ -13,17 +13,25 @@ CREATE  TABLE IF NOT EXISTS updates (
 
 CREATE TABLE report (
   id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `date` Date NOT NULL UNIQUE
-) ENGINE=INNODB CHARACTER SET = 'UTF8';
+  time datetime NOT NULL UNIQUE KEY
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 
-CREATE TABLE error (
+
+CREATE TABLE report_error (
+  id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  oid varchar(255) CHARACTER SET utf8 NOT NULL,
+  field enum('BILL_SUMMARY','BILL_TITLE','BILL_ACTION','BILL_SPONSOR','BILL_COSPONSOR','BILL_TEXT_PAGE') CHARACTER SET utf8 NOT NULL,
+  openedAt datetime NOT NULL KEY,
+  closedAt datetime DEFAULT NULL KEY
+) ENGINE=InnoDB AUTO_INCREMENT=875 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+
+CREATE TABLE `report_observation` (
   id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   reportId int(11) DEFAULT NULL,
-  billId varchar(45) NOT NULL,
-  errorType enum('summary','title','action','sponsor','cosponsor') DEFAULT NULL,
-  lbdc text,
-  json text,
-  KEY `report_id_idx` (reportId),
+  oid varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  field enum('BILL_SUMMARY','BILL_TITLE','BILL_ACTION','BILL_SPONSOR','BILL_COSPONSOR','BILL_TEXT_PAGE') COLLATE utf8_unicode_ci NOT NULL,
+  actualValue text COLLATE utf8_unicode_ci,
+  observedValue text COLLATE utf8_unicode_ci,
   FOREIGN KEY (reportId) REFERENCES report (id) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=INNODB CHARACTER SET = 'UTF8';
+) ENGINE=InnoDB AUTO_INCREMENT=10129 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 

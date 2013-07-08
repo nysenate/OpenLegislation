@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.api.servlets;
+package gov.nysenate.openleg.api.servlets.admin;
 
 import gov.nysenate.openleg.model.Update;
 import gov.nysenate.openleg.util.Application;
@@ -31,9 +31,9 @@ import org.apache.log4j.Logger;
  * Servlet implementation class UpdateServlet
  */
 @SuppressWarnings("serial")
-public class UpdateServlet extends HttpServlet
+public class UpdatesServlet extends HttpServlet
 {
-    private final Logger logger = Logger.getLogger(UpdateServlet.class);
+    private final Logger logger = Logger.getLogger(UpdatesServlet.class);
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
     private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -44,7 +44,7 @@ public class UpdateServlet extends HttpServlet
 
     private final List<String> otypes = Arrays.asList("bill","calendar","meeting","agenda");
 
-    public UpdateServlet()
+    public UpdatesServlet()
     {
         super();
         handler = new BeanListHandler<Update>(Update.class);
@@ -118,7 +118,7 @@ public class UpdateServlet extends HttpServlet
             request.setAttribute("exception", e);
         }
 
-        request.getRequestDispatcher("/views/updates.jsp").forward(request, response);
+        request.getRequestDispatcher("/admin/updates.jsp").forward(request, response);
     }
 
     /**
