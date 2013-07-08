@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.api.servlets;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -25,12 +24,17 @@ public class LogFilter implements Filter
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
     {
         try {
-            String uri = URLDecoder.decode(((HttpServletRequest)request).getRequestURI(), "UTF-8");
+            String uri = ((HttpServletRequest)request).getServletPath();
+            String pathInfo = ((HttpServletRequest)request).getPathInfo();
             String queryString = ((HttpServletRequest)request).getQueryString();
+
+            if (pathInfo != null) {
+                uri += pathInfo;
+            }
+
             if (queryString != null) {
                 uri += "?"+queryString;
             }
-
 
             if (!uri.contains("/static/")) {
                 logger.info("request: "+uri);
