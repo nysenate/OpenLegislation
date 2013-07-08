@@ -137,7 +137,7 @@ th, .title-cell {
 	     %>
             <tr>
 	            <td class="report-column">
-	                <a class="report-link" href="<%=JSPHelper.getLink(request, "/admin/reports/?id="+report.getId()) %>"><%=new SimpleDateFormat("YYYY-MM-dd").format(report.getTime())%> Report</a>
+	                <a class="report-link" href="<%=JSPHelper.getLink(request, "/admin/reports/?id="+report.getId()) %>"><%=new SimpleDateFormat("yyyy-MM-dd").format(report.getTime())%> Report</a>
 	            </td>
 	            <td><%=total%></td>
                 <td>

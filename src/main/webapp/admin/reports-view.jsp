@@ -12,7 +12,7 @@ public String getStatus(Report report, ReportObservation obs) {
 <%
     @SuppressWarnings("unchecked")
 	Report report= (Report)request.getAttribute("report");
-	String title = "Report for "+new SimpleDateFormat("YYYY-MM-dd").format(report.getTime())+" - OpenLeg Admin";
+	String title = "Report for "+new SimpleDateFormat("yyyy-MM-dd").format(report.getTime())+" - OpenLeg Admin";
 %>
 <jsp:include page="/admin/header.jsp">
     <jsp:param value="<%=title%>" name="title"/>
@@ -130,7 +130,7 @@ public String getStatus(Report report, ReportObservation obs) {
 <div id="section-header">
     <label id="report-filter">Filter: <input type="text"/></label>
     <div id="section-title">
-        <%=new SimpleDateFormat("YYYY-MM-dd").format(report.getTime())%> Report
+        <%=new SimpleDateFormat("yyyy-MM-dd").format(report.getTime())%> Report
     </div>
 	<div style="clear:both;"></div>
 </div>
