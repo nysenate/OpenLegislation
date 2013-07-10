@@ -408,9 +408,8 @@ public class Bill extends SenateObject implements Comparable<Bill>
     }
 
     public void addVote(Vote vote) {
-        if (!votes.contains(vote)) {
-            votes.add(vote);
-        }
+        votes.remove(vote);
+        votes.add(vote);
     }
 
     public void removeVote(Vote vote) {
