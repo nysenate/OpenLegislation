@@ -10,6 +10,18 @@ public class ReportObservation
     private String actualValue;
     private String observedValue;
 
+    public ReportObservation() {
+
+    }
+
+    public ReportObservation(int reportId, String oid, String field, String actualValue, String observedValue) {
+        this.reportId = reportId;
+        this.oid = oid;
+        this.field = field;
+        this.actualValue = actualValue;
+        this.observedValue = observedValue;
+    }
+
     public int getId()
     {
         return id;

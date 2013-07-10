@@ -4,6 +4,7 @@ import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Report;
+import gov.nysenate.openleg.model.ReportObservation;
 import gov.nysenate.openleg.model.SpotCheckBill;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Storage;
@@ -59,9 +60,10 @@ public class SpotCheck extends BaseScript {
         String[] args = opts.getArgs();
         Storage storage = new Storage("/data/openleg/lbdc_test/json");
 
-        HashMap<String, Integer> errors = new HashMap<String, Integer>();
+        List<ReportObservation> observations = new ArrayList<ReportObservation>();
+        HashMap<String, Integer> errorTotals = new HashMap<String, Integer>();
         for (String error_type : new String[] {"title", "summary", "sponsor", "cosponsors", "events", "pages"}) {
-            errors.put(error_type, 0);
+            errorTotals.put(error_type, 0);
         }
 
         String prefix = args[1];
@@ -75,10 +77,9 @@ public class SpotCheck extends BaseScript {
         bills.putAll(readDaybreak(new File(directory, prefix+".assembly.high.html")));
         loadPageFile(new File(directory, prefix+".page_file.txt"), bills);
 
-
-        runner.update("insert ignore into report(date) values(?)", date);
-        Report report = runner.query("select * from report where date = ?", new BeanHandler<Report>(Report.class), date);
-        runner.update("delete from error where reportId = ?", report.getId());
+        runner.update("insert ignore into report(time) values(?)", date);
+        Report report = runner.query("select * from report where time = ?", new BeanHandler<Report>(Report.class), date);
+        runner.update("delete from report_observation where reportId = ?", report.getId());
 
         for(String id : bills.keySet()) {
             String billNo = id+"-2013";
@@ -93,8 +94,8 @@ public class SpotCheck extends BaseScript {
                     logger.error("Title: "+billNo);
                     logger.error("  LBDC: "+lbdcTitle);
                     logger.error("  JSON: "+jsonTitle);
-                    runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getId(), billNo, "title", lbdcTitle, jsonTitle);
-                    errors.put("title", errors.get("title")+1);
+                    observations.add(new ReportObservation(report.getId(), billNo, "BILL_TITLE", lbdcTitle, jsonTitle));
+                    errorTotals.put("title", errorTotals.get("title")+1);
                 }
             }
 
@@ -102,7 +103,6 @@ public class SpotCheck extends BaseScript {
             String jsonLaw = bill.getLaw();
             String jsonSummary = unescapeHTML(bill.getSummary());
             String lbdcSummary = bills.get(id).getSummary().replaceAll("\\s+", " ");
-
 
             if( jsonLaw != null && jsonLaw != "" && jsonLaw != "null") {
                 jsonSummary = unescapeHTML(jsonLaw)+" "+jsonSummary;
@@ -118,8 +118,8 @@ public class SpotCheck extends BaseScript {
                     logger.error("Summary: "+billNo);
                     logger.error("  LBDC: "+lbdcSummary);
                     logger.error("  JSON: "+jsonSummary);
-                    runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getId(), billNo, "summary", lbdcSummary, jsonSummary);
-                    errors.put("summary", errors.get("summary")+1);
+                    observations.add(new ReportObservation(report.getId(), billNo, "BILL_SUMMARY", lbdcSummary, jsonSummary));
+                    errorTotals.put("summary", errorTotals.get("summary")+1);
                 }
             }
 
@@ -130,8 +130,8 @@ public class SpotCheck extends BaseScript {
                     logger.error("Sponsor: "+billNo);
                     logger.error("  LBDC: "+lbdcSponsor);
                     logger.error("  JSON: "+jsonSponsor);
-                    runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getId(), billNo, "sponsor", lbdcSponsor, jsonSponsor);
-                    errors.put("sponsor", errors.get("sponsor")+1);
+                    observations.add(new ReportObservation(report.getId(), billNo, "BILL_SPONSOR", lbdcSponsor, jsonSponsor));
+                    errorTotals.put("sponsor", errorTotals.get("sponsor")+1);
                 }
             }
 
@@ -150,8 +150,8 @@ public class SpotCheck extends BaseScript {
                     logger.error("Cosponsors: "+billNo);
                     logger.error("  LBDC: "+lbdcCosponsors);
                     logger.error("  JSON: "+jsonCosponsors);
-                    runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getId(), billNo, "cosponsor", StringUtils.join(lbdcCosponsors, " "), StringUtils.join(jsonCosponsors, " "));
-                    errors.put("cosponsors", errors.get("cosponsors")+1);
+                    observations.add(new ReportObservation(report.getId(), billNo, "BILL_COSPONSOR", StringUtils.join(lbdcCosponsors, " "), StringUtils.join(jsonCosponsors, " ")));
+                    errorTotals.put("cosponsors", errorTotals.get("cosponsors")+1);
                 }
             }
 
@@ -168,8 +168,8 @@ public class SpotCheck extends BaseScript {
                     logger.error("Events: "+billNo);
                     logger.error("  LBDC: "+lbdcEvents);
                     logger.error("  JSON: "+jsonEvents);
-                    runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getId(), billNo, "action", StringUtils.join(lbdcEvents,"\n"), StringUtils.join(jsonEvents,"\n"));
-                    errors.put("events", errors.get("events")+1);
+                    observations.add(new ReportObservation(report.getId(), billNo, "BILL_ACTION", StringUtils.join(lbdcEvents,"\n"), StringUtils.join(jsonEvents,"\n")));
+                    errorTotals.put("events", errorTotals.get("events")+1);
                 }
             }
 
@@ -187,13 +187,23 @@ public class SpotCheck extends BaseScript {
                 logger.error("Pages: "+billNo);
                 logger.error("  LBDC: "+lbdcPages);
                 logger.error("  JSON: "+jsonPages);
-                // runner.update("insert into error(reportId,billId,errorType,lbdc,json) values(?,?,?,?,?)", report.getReport_id(), billNo, "page", lbdcPages, jsonPages);
-                errors.put("pages", errors.get("pages")+1);
+                observations.add(new ReportObservation(report.getId(), billNo, "BILL_TEXT_PAGE", String.valueOf(lbdcPages), String.valueOf(jsonPages)));
+                errorTotals.put("pages", errorTotals.get("pages")+1);
             }
         }
 
-        System.out.println(errors);
+        for (ReportObservation observation : observations) {
+            runner.update(
+                "INSERT INTO report_observation (reportId, oid, field, actualValue, observedValue) VALUES (?, ?, ?, ?, ?)",
+                observation.getReportId(),
+                observation.getOid(),
+                observation.getField(),
+                observation.getActualValue(),
+                observation.getObservedValue()
+            );
+        }
 
+        System.out.println(errorTotals);
         System.out.println(bills.keySet().size());
         System.exit(0);
 
