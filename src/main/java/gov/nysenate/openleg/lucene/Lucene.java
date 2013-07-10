@@ -28,6 +28,7 @@ import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -115,8 +116,14 @@ public class Lucene
 	{
 	    this.indexDir = indexDir;
 	    this.analyzer = new StandardAnalyzer(VERSION);
-	    this.indexWriterConfig = new IndexWriterConfig(Version.LUCENE_33, this.analyzer);
+	    this.indexWriterConfig = new IndexWriterConfig(VERSION, this.analyzer);
+	    this.indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
 	    this.indexWriter = new IndexWriter(FSDirectory.open(indexDir), indexWriterConfig);
+
+	    // The index needs to exist before creating the searcher manager so do a quick commit
+	    // of nothing in case the index doesn't exist already.
+	    this.indexWriter.commit();
+
         this.searcherManager = new SearcherManager(FSDirectory.open(indexDir), new SearcherFactory());
 	}
 

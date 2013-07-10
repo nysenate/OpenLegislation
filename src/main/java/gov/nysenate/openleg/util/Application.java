@@ -56,12 +56,12 @@ public class Application
         catch (ConfigurationException ce)
         {
             logger.fatal("Failed to load configuration file " + propertyFileName);
-            logger.fatal(ce.getMessage());
+            logger.fatal(ce.getMessage(), ce);
         }
         catch (Exception ex)
         {
             logger.fatal("An exception occurred while building dependencies");
-            logger.fatal(ex.getMessage());
+            logger.fatal(ex.getMessage(), ex);
         }
         return false;
     }
