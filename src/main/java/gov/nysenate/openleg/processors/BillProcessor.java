@@ -35,6 +35,8 @@ import org.apache.log4j.Logger;
  * First the incoming file is broken down into independent SOBIBlocks. Each {@link SOBIBlock} operates atomically
  * on a single bill by loading it from storage, applying the block's data, and saving the changes back to storage.
  *
+ * All each update to a bill is ALWAYS sent in full. Bill fields should never be updated, only replaced.
+ *
  * @author GraylinKim
  *
  * @see SOBIBlock
