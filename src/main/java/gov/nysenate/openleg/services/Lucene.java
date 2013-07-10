@@ -4,27 +4,25 @@ import gov.nysenate.openleg.lucene.ILuceneObject;
 import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.Storage;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map.Entry;
 
 public class Lucene extends ServiceBase
 {
-    private final gov.nysenate.openleg.lucene.Lucene lucene;
-
     public Lucene(String indexDir) throws IOException
     {
         super();
-        lucene = new gov.nysenate.openleg.lucene.Lucene(new File(indexDir));
     }
 
     @Override
     public boolean process(List<Entry<String, Change>> entries, Storage storage) throws IOException
     {
+        gov.nysenate.openleg.lucene.Lucene lucene = Application.getLucene();
         for(Entry<String, Change> entry : entries) {
             try {
                 // Extract object descriptors from the entry key
