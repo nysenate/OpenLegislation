@@ -94,23 +94,23 @@ public class DataProcessor
     {
         File rulesFile = new File(sourceDir,"CMS.TEXT");
         if (rulesFile.exists()) {
-            FileUtils.moveFileToDirectory(rulesFile, workDir, true);
+            moveFileToDirectory(rulesFile, workDir, true);
         }
 
         // Everything else on this level should be a SOBI file
         File sobiDir = new File(workDir, "sobis");
         for (File sobiFile : safeListFiles(sourceDir, null, false)) {
-            FileUtils.moveFileToDirectory(sobiFile, sobiDir, true);
+            moveFileToDirectory(sobiFile, sobiDir, true);
         }
 
         File hearingDir = new File(workDir, "hearings");
         for (File hearingFile : safeListFiles(new File(sourceDir, "hearings"), null, false)) {
-            FileUtils.moveFileToDirectory(hearingFile, hearingDir, true);
+            moveFileToDirectory(hearingFile, hearingDir, true);
         }
 
         File transcriptDir = new File(workDir, "transcripts");
         for (File transcriptFile : safeListFiles(new File(sourceDir, "transcripts"), null, false)) {
-            FileUtils.moveFileToDirectory(transcriptFile, transcriptDir, true);
+            moveFileToDirectory(transcriptFile, transcriptDir, true);
         }
     }
 
@@ -255,17 +255,17 @@ public class DataProcessor
     {
         File rulesFile = new File(workingDir, "CMS.TEXT");
         if (rulesFile.exists()) {
-            FileUtils.moveFileToDirectory(rulesFile, archiveDir, true);
+            moveFileToDirectory(rulesFile, archiveDir, true);
         }
 
         File transcriptsArchiveDir = new File(archiveDir, "transcripts");
         for (File file : safeListFiles(new File(workingDir, "transcripts"), null, false)) {
-            FileUtils.moveFileToDirectory(file, transcriptsArchiveDir, true);
+            moveFileToDirectory(file, transcriptsArchiveDir, true);
         }
 
         File hearingsArchiveDir = new File(archiveDir, "hearings");
         for (File file : safeListFiles(new File(workingDir, "hearings"), null, false)) {
-            FileUtils.moveFileToDirectory(file, hearingsArchiveDir, true);
+            moveFileToDirectory(file, hearingsArchiveDir, true);
         }
 
         archiveFiles(new File(workingDir, "sobis"), archiveDir, "sobis");
@@ -273,6 +273,14 @@ public class DataProcessor
         archiveFiles(new File(workingDir, "calendars"), archiveDir, "calendars");
         archiveFiles(new File(workingDir, "agendas"), archiveDir, "agendas");
         archiveFiles(new File(workingDir, "annotations"), archiveDir, "annotations");
+    }
+
+    public void moveFileToDirectory(File file, File directory, boolean createDirectory) throws IOException {
+        File newFile = new File(directory, file.getName());
+        if (newFile.exists()) {
+            newFile.delete();
+        }
+        FileUtils.moveFileToDirectory(file, directory, true);
     }
 
     /**
@@ -292,10 +300,10 @@ public class DataProcessor
             try {
                 calendar.setTime(sobiDateFormat.parse(file.getName()));
                 File finalDir = new File(new File(destDir, String.valueOf(calendar.get(Calendar.YEAR))), subFolder);
-                FileUtils.moveFileToDirectory(file, finalDir, true);
+                moveFileToDirectory(file, finalDir, true);
             }
             catch (ParseException e) {
-                FileUtils.moveFileToDirectory(file, new File(destDir, subFolder), true);
+                moveFileToDirectory(file, new File(destDir, subFolder), true);
             }
         }
     }
