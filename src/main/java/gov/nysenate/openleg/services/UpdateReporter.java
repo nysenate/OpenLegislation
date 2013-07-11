@@ -50,7 +50,7 @@ public class UpdateReporter extends ServiceBase
         try {
             run.update("BEGIN");
             for(Update update: updates){
-                run.update("INSERT INTO updates(otype, oid, time, status) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE oid = ?",
+                run.update("INSERT INTO changelog (otype, oid, time, status) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE oid = ?",
                         update.getOtype(), update.getOid(), update.getTime(), update.getStatus(), update.getOid());
             }
             run.update("COMMIT");

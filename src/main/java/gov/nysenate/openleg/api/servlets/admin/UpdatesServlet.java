@@ -135,7 +135,7 @@ public class UpdatesServlet extends HttpServlet
     public List<Update> getHistory(Date start, Date end, String otype, String oid) throws SQLException
     {
 
-        String query = "SELECT * FROM updates WHERE 1=1";
+        String query = "SELECT * FROM changelog WHERE 1=1";
         List<Object> params = new ArrayList<Object>();
 
         if (start != null) {
