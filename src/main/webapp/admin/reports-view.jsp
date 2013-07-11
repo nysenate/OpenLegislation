@@ -73,7 +73,7 @@ public String getStatus(Report report, ReportObservation obs) {
                 snippetCell.html("<del>"+lbdcCell.html()+"</del>");
             }
             else {
-                diffCell.html(diffString(lbdcCell.html(),jsonCell.html()));
+                diffCell.html(diffString(lbdcCell.html(),jsonCell.html()).replace("&amp;", "&"));
                 snippetCell.html("<div>"+diffCell.html()+"</div>");
             }
         });
