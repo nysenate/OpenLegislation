@@ -12,8 +12,8 @@ jQuery(function($) {
         "bSort": true,
         "aaSorting": [[0,"desc"]],
         "aoColumnDefs": [
-        	{ "sWidth":"10%", "aTargets":[1,2,3,4,5,6,7,8], "sClass":"data-cell" },
-        	{ "sWidth":"20%", "aTargets":[0], "sClass":"title-cell" }
+            { "sWidth":"9%", "aTargets":[1,2,3,4,5,6,7,8,9], "sClass":"data-cell" },
+            { "sWidth":"19%", "aTargets":[0], "sClass":"title-cell" }
         ],
         "sDom": '<"hidden-controls"f>lrtip',
     });
@@ -109,6 +109,7 @@ th, .title-cell {
                 <th>Title</th>
                 <th>Summary</th>
                 <th>Event</th>
+                <th>Page</th>
             </tr>
         </thead>
         <tbody>
@@ -151,6 +152,7 @@ th, .title-cell {
 	            <td><%=titleTotal%></td>
 	            <td><%=summaryTotal%></td>
 	            <td><%=actionTotal%></td>
+	            <td><%=pagesTotal%></td>
 	        </tr>
 	     <% } %>            
 	     </tbody>

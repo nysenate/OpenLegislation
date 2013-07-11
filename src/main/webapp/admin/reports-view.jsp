@@ -114,7 +114,7 @@ public String getStatus(Report report, ReportObservation obs) {
 	}
 
 	td > div { height:40px; width: 100%;  overflow:hidden; }
-	
+
 	#errors th, #errors td {
 	    border: solid #888;
 	    border-width: 0px 1px 0px 1px;
@@ -137,6 +137,14 @@ public String getStatus(Report report, ReportObservation obs) {
 	#report-filter {
 	    float: right;
 	    padding: 10px;
+	}
+
+	.anchor {
+        float:left;
+	    opacity:0.0;
+	    color:inherit;
+	    text-style:inherit;
+	    margin:0px 2px 0 4px;
 	}
 </style>
 <div id="section-header">
@@ -161,7 +169,7 @@ public String getStatus(Report report, ReportObservation obs) {
         <tbody>
         <% for(ReportObservation obs:report.getObservations()) { %>
             <tr id="summary<%=obs.getId()%>">
-			    <td class="oid-cell" oid="<%=obs.getOid()%>"><a href="#<%=obs.getOid()%>"><%=obs.getOid()%></a></td>
+			    <td class="oid-cell" oid="<%=obs.getOid()%>"><a href="#<%=obs.getOid()+"-"+obs.getField()%>" class="anchor ui-icon ui-icon-link"></a><a href="<%=JSPHelper.getLink(request, "/bill/"+obs.getOid())%>"><%=obs.getOid()%></a></td>
 			    <td class="field-cell"><%=obs.getField().toUpperCase()%></td>
 			    <td class="status-cell"><%=getStatus(report,obs)%></td>
 			    <td class="opened-cell"><%=new SimpleDateFormat("yyyy-MM-dd").format(obs.getError().getOpenedAt())%>

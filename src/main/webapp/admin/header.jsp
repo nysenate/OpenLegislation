@@ -13,6 +13,7 @@
     <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/jquery-1.9.1.min.js")%>"></script>
     <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-1.10.3/ui/minified/jquery-ui.min.js")%>"></script>
     <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/DataTables-1.9.4/js/jquery.dataTables.min.js")%>"></script>
+    <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/app.js")%>"></script>
     
     <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/static/vendor/Normalize-2.1.2/normalize.css")%>"/>
     <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-1.10.3/themes/base/minified/jquery-ui.min.css")%>" />
