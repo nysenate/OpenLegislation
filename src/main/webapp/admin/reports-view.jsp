@@ -1,10 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.text.SimpleDateFormat, java.util.ArrayList,gov.nysenate.openleg.model.ReportObservation, gov.nysenate.openleg.model.ReportError, gov.nysenate.openleg.model.Report,gov.nysenate.openleg.util.JSPHelper"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.text.SimpleDateFormat, java.util.ArrayList,gov.nysenate.openleg.model.admin.*,gov.nysenate.openleg.util.JSPHelper"%>
 <%!
 public String getStatus(Report report, ReportObservation obs) {
-    for (ReportError error : report.getNewErrors()) {
-        if (error.getField().equals(obs.getField()) && error.getOid().equals(obs.getOid())) {
-            return "NEW";
-        }
+    if (report.getNewErrors().contains(obs.getError())) {
+        return "NEW";
+    }
+    else if (report.getClosedErrors().contains(obs.getError())) {
+        return "CLOSED";
     }
     return "OLD";
 }
@@ -27,10 +28,10 @@ public String getStatus(Report report, ReportObservation obs) {
 			"bFilter": true,
 			"bSort": true,
             "sDom": '<"hidden-controls"f>lrtip',
-            "aaSorting": [[2, "asc"],[0,"asc"]],
+            "aaSorting": [[3, "desc"],[0,"asc"]],
             "aoColumnDefs": [
-                {"aTargets":[0,1], "sWidth":"10%" },
-                {"aTargets":[2,4], "sWidth":"5%" }
+                {"aTargets":[0,1,3], "sWidth":"10%" },
+                {"aTargets":[2,5], "sWidth":"5%" }
             ]
 		});
 		
@@ -69,10 +70,10 @@ public String getStatus(Report report, ReportObservation obs) {
             
             if (jsonCell.html() == "") {
                 diffCell.html(lbdcCell.html());
-                snippetCell.html("FIELD COMPLETELY MISSING");
+                snippetCell.html("<del>"+lbdcCell.html()+"</del>");
             }
             else {
-                diffCell.html(diffString(jsonCell.html(),lbdcCell.html()));
+                diffCell.html(diffString(lbdcCell.html(),jsonCell.html()));
                 snippetCell.html("<div>"+diffCell.html()+"</div>");
             }
         });
@@ -105,15 +106,26 @@ public String getStatus(Report report, ReportObservation obs) {
 	}
 
 	del {
-	   color: red;
-	}
-	
-	ins {
 	   color: green;
+	}
+
+	ins {
+	   color: red;
 	}
 
 	td > div { height:40px; width: 100%;  overflow:hidden; }
 	
+	#errors th, #errors td {
+	    border: solid #888;
+	    border-width: 0px 1px 0px 1px;
+	}
+	
+	#errors tr {
+	    border: solid #888;
+	    border-width: 1px;
+	    border-bottom: 1px solid #888;
+	}
+
 	.filter {
 	   float: right;
 	}
@@ -141,6 +153,7 @@ public String getStatus(Report report, ReportObservation obs) {
 				<th>Bill Id</th>
 				<th>Error Type</th>
 				<th>Status</th>
+				<th>Opened At</th>
 				<th>Snippet</th>
 				<th>Details</th>
 			</tr>
@@ -151,6 +164,7 @@ public String getStatus(Report report, ReportObservation obs) {
 			    <td class="oid-cell" oid="<%=obs.getOid()%>"><a href="#<%=obs.getOid()%>"><%=obs.getOid()%></a></td>
 			    <td class="field-cell"><%=obs.getField().toUpperCase()%></td>
 			    <td class="status-cell"><%=getStatus(report,obs)%></td>
+			    <td class="opened-cell"><%=new SimpleDateFormat("yyyy-MM-dd").format(obs.getError().getOpenedAt())%>
 			    <td class="snippet-cell"></td>
 			    <td class="details-link">Details</td>
 			</tr>

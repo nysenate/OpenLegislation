@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.Date, java.util.ArrayList,gov.nysenate.openleg.model.Report,gov.nysenate.openleg.model.ReportObservation,gov.nysenate.openleg.util.JSPHelper" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.Date, java.util.ArrayList,gov.nysenate.openleg.model.admin.Report,gov.nysenate.openleg.model.admin.ReportObservation,gov.nysenate.openleg.util.JSPHelper" %>
 <!DOCTYPE html>
 <html>
 <head>

@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.api.servlets.admin;
 
-import gov.nysenate.openleg.model.Report;
-import gov.nysenate.openleg.model.ReportError;
-import gov.nysenate.openleg.model.ReportObservation;
-import gov.nysenate.openleg.util.Application;
+import gov.nysenate.openleg.model.admin.Report;
+import gov.nysenate.openleg.model.admin.ReportDAO;
+import gov.nysenate.openleg.model.admin.ReportError;
+import gov.nysenate.openleg.model.admin.ReportObservation;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -32,20 +32,10 @@ public class ReportsServlet extends HttpServlet
 	{
 	    String jspPath;
 	    String reportIdParam = request.getParameter("id");
-	    QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
 	    if (reportIdParam == null) {
 	        List<Report> reportList;
 	        try {
-	            reportList = runner.query("SELECT * FROM report", new BeanListHandler<Report>(Report.class));
-	            for (Report report : reportList) {
-	                report = getReport(runner, report);
-	                logger.info("REPORT "+report);
-	                for (ReportError error : report.getNewErrors()) {
-	                    logger.info("["+error.getId()+"] "+error.getOid()+" - "+error.getField());
-	                }
-	                logger.info("");
-	                logger.info("");
-	            }
+	            reportList = ReportDAO.getReports();
 	        }
 	        catch (SQLException e) {
 	            logger.error(e);
@@ -57,7 +47,7 @@ public class ReportsServlet extends HttpServlet
 	    else {
             Report report = null;
             try {
-                report = getReport(runner, Integer.parseInt(reportIdParam));
+                report = ReportDAO.getReport(Integer.parseInt(reportIdParam));
             }
             catch (SQLException e) {
                 e.printStackTrace();

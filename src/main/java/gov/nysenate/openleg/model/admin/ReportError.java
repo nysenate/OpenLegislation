@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model;
+package gov.nysenate.openleg.model.admin;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +15,16 @@ public class ReportError
     private Date openedAt;
     private Date closedAt;
     private Collection<ReportObservation> observations = new ArrayList<ReportObservation>();
+
+    public ReportError() {}
+
+    public ReportError(int id, String oid, String field, Date openedAt, Date closedAt) {
+        this.id = id;
+        this.oid = oid;
+        this.field = field;
+        this.openedAt = openedAt;
+        this.closedAt = closedAt;
+    }
 
     public int getId()
     {
@@ -68,5 +78,9 @@ public class ReportError
     public void setObservations(Collection<ReportObservation> observations)
     {
         this.observations = observations;
+    }
+    public void addObservation(ReportObservation observation)
+    {
+        this.observations.add(observation);
     }
 }

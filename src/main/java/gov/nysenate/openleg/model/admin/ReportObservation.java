@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model;
+package gov.nysenate.openleg.model.admin;
 
 public class ReportObservation
 {
@@ -6,7 +6,10 @@ public class ReportObservation
     private String oid;
     private String field;
 
+    private int errorId;
+    private ReportError error;
     private int reportId;
+    private Report report;
     private String actualValue;
     private String observedValue;
 
@@ -74,5 +77,35 @@ public class ReportObservation
     public void setObservedValue(String observedValue)
     {
         this.observedValue = observedValue;
+    }
+
+    public int getErrorId()
+    {
+        return errorId;
+    }
+
+    public void setErrorId(int errorId)
+    {
+        this.errorId = errorId;
+    }
+
+    public ReportError getError()
+    {
+        return error;
+    }
+
+    public void setError(ReportError error)
+    {
+        this.error = error;
+    }
+
+    public Report getReport()
+    {
+        return report;
+    }
+
+    public void setReport(Report report)
+    {
+        this.report = report;
     }
 }
