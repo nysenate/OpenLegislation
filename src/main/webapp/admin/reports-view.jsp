@@ -107,10 +107,12 @@ public String getStatus(Report report, ReportObservation obs) {
 
 	del {
 	   color: green;
+	   text-decoration: none;
 	}
 
 	ins {
 	   color: red;
+	   text-decoration: line-through;
 	}
 
 	td > div { height:40px; width: 100%;  overflow:hidden; }

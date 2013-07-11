@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.Date,java.text.SimpleDateFormat, java.util.ArrayList,gov.nysenate.openleg.model.admin.Report,gov.nysenate.openleg.model.admin.ReportObservation,gov.nysenate.openleg.model.admin.ReportError, gov.nysenate.openleg.util.JSPHelper" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.Date,java.text.SimpleDateFormat, java.util.ArrayList, gov.nysenate.openleg.model.admin.*, gov.nysenate.openleg.util.JSPHelper" %>
 <jsp:include page="/admin/header.jsp">
     <jsp:param value="SpotCheck Reports - OpenLeg Admin" name="title"/>
 </jsp:include>
