@@ -1,29 +1,29 @@
 <%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, gov.nysenate.openleg.util.OpenLegConstants,gov.nysenate.openleg.model.SenateResponse,gov.nysenate.openleg.model.Result,java.text.SimpleDateFormat, java.util.Iterator"  contentType="text/html" pageEncoding="utf-8" %><%
 
-String appPath = request.getContextPath();
-
-String term = (String)request.getAttribute("term");
-
-String sortField = (String)request.getAttribute("sortField");
-String type = (String)request.getAttribute("type");
-String search = (String)request.getAttribute("search");
 String urlPath = (String)request.getAttribute("urlPath");
 String filter = (String) request.getAttribute("filter");
 
-if(search != null)
+String term = (String)request.getAttribute("term");
+String search = (String)request.getAttribute("search");
+if(search != null) {
 	term = search;
-
+}
 term = java.net.URLEncoder.encode(term, "UTF-8");
 
 boolean sortOrder = true;
-if (request.getAttribute("sortOrder")!=null)
-			sortOrder = Boolean.parseBoolean((String)request.getAttribute("sortOrder"));
-			
-if (sortField == null)
+if (request.getAttribute("sortOrder")!=null) {
+	sortOrder = Boolean.parseBoolean((String)request.getAttribute("sortOrder"));
+}
+
+String sortField = (String)request.getAttribute("sortField");
+if (sortField == null) {
 	sortField = "";
+}
 	
-if (type == null)
+String type = (String)request.getAttribute("type");
+if (type == null) {
 	type = "";
+}
 
 int pageIdx = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_IDX));
 int pageSize = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_SIZE));
@@ -41,11 +41,10 @@ if (total < endIdx) {
 }
 
 String mode = (String)request.getAttribute("type");
-		
-	SimpleDateFormat sdf = new SimpleDateFormat();
-	sdf.applyPattern("EEE, MMM d, yyyy");
+
+SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy");
 	
-	String prevUrl = null;
+String prevUrl = null;
 if (pageIdx-1 > 0)
 {
 	if(urlPath != null) {
@@ -74,18 +73,15 @@ if (total > endIdx)
 	
 %>
 <div id="content">
-
-<% String encodedTerm = java.net.URLEncoder.encode(term,"UTF-8"); %>
-
 <div class="content-bg">
-<div class="page-title">
-    <span class="formats">
-        Feeds:
-        <a href="<%=JSPHelper.getLink(request, "/api/atom/search/"+encodedTerm+"/")%>">ATOM</a>,
-        <a href="<%=JSPHelper.getLink(request, "/api/rss/search/"+encodedTerm+"/")%>">RSS</a>
-    </span>
-    <h2><%=type.toUpperCase()%> SEARCH RESULTS</h2>
-</div>
+	<div class="page-title">
+	    <span class="formats">
+	        Feeds:
+	        <a href="<%=JSPHelper.getLink(request, "/api/atom/search/"+term+"/?sort="+sortField+"&sortOrder="+sortOrder)%>">ATOM</a>,
+	        <a href="<%=JSPHelper.getLink(request, "/api/rss/search/"+term+"/?sort="+sortField+"&sortOrder="+sortOrder)%>">RSS</a>
+	    </span>
+	    <h2><%=type.toUpperCase()%> SEARCH RESULTS</h2>
+	</div>
 
     <div id="subcontent">
  <%
