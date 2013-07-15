@@ -1,7 +1,6 @@
 <%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtils, java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
-	String appPath = request.getContextPath();
 	DateFormat df = new SimpleDateFormat("MMM d, yyyy - h:mm a");
 
 	Meeting meeting = (Meeting) request.getAttribute("meeting");
@@ -31,7 +30,7 @@
 	 					</span></li>
  					<% } %>
  					<li><span class="meta">Chair: </span><span class="metadata">
-           				<a href="<%=appPath%>/search/?term=chair:<%=java.net.URLEncoder.encode("\""+meeting.getCommitteeChair() + "\"", OpenLegConstants.ENCODING)%>">${meeting.committeeChair}</a>
+           				<a href="<%=JSPHelper.getLink(request, "/search/?term=chair:"+java.net.URLEncoder.encode("\""+meeting.getCommitteeChair() + "\"", OpenLegConstants.ENCODING))%>">${meeting.committeeChair}</a>
  					</span></li>
  					<% if(meeting.getLocation() != null) { %>
 	 					<li><span class="meta">Location: </span><span class="metadata">
@@ -79,9 +78,9 @@
                			 <span class="subrow">
                          <% if (bill.getSponsor()!=null) {
                                 if (bill.getOtherSponsors().isEmpty()) { %>
-                                    Sponsor: <%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                                    Sponsor: <%=JSPHelper.getSponsorLinks(bill, request) %>
                                 <% } else { %>
-                                    Sponsors: <%=JSPHelper.getSponsorLinks(bill, appPath) %>
+                                    Sponsors: <%=JSPHelper.getSponsorLinks(bill, request) %>
                                 <% } %>
                             <% } %>
                         	<br/>

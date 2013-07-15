@@ -1,6 +1,5 @@
 <%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtils, java.util.Iterator,java.util.ArrayList, java.util.Collection,java.util.List,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" contentType="text/html" pageEncoding="utf-8"%>
 <%
-String appPath = request.getContextPath();
 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy");
 SimpleDateFormat datetimeFormat = new SimpleDateFormat("MM/d/yyyy hh:mm:ss aa");
 
@@ -117,17 +116,17 @@ Sections = Sections.substring(0, Sections.length() - 1);
     							<%
                                 if (bill.getSponsor() != null) {
                                     if (bill.getOtherSponsors().isEmpty()) {
-                                        %> <br/>Sponsor: <%=JSPHelper.getSponsorLinks(bill, appPath)%> <%
+                                        %> <br/>Sponsor: <%=JSPHelper.getSponsorLinks(bill, request)%> <%
                                     } else {
-                                        %> <br/>Sponsors: <%=JSPHelper.getSponsorLinks(bill, appPath)%> <%
+                                        %> <br/>Sponsors: <%=JSPHelper.getSponsorLinks(bill, request)%> <%
                                     }
                                 }
 
                                 if (subBill != null) {
                                     if (subBill.getOtherSponsors().isEmpty()) {
-                                        %> (Substituted-bill Sponsor: <%=JSPHelper.getSponsorLinks(subBill, appPath)%>) <%
+                                        %> (Substituted-bill Sponsor: <%=JSPHelper.getSponsorLinks(subBill, request)%>) <%
                                     } else {
-                                        %> (Substituted-bill Sponsors: <%=JSPHelper.getSponsorLinks(subBill, appPath)%>) <%
+                                        %> (Substituted-bill Sponsors: <%=JSPHelper.getSponsorLinks(subBill, request)%>) <%
                                     }
 	                            } %>
 	                        </span>

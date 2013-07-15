@@ -13,11 +13,10 @@ import org.apache.commons.lang3.StringUtils;
 
 public class JSPHelper
 {
-
-    public static String getPersonLink(String person, String base)
+    public static String getPersonLink(String person, HttpServletRequest request)
     {
         if (person != null && person.trim().length() > 0) {
-            return "<a href=\""+base+"/search/?term=sponsor:"+person+"\" class=\"sublink\">"+person+"</a>";
+            return "<a href=\""+getLink(request, "/search/?term=sponsor:"+person)+"\" class=\"sublink\">"+person+"</a>";
         }
         else {
             return "None";
@@ -34,69 +33,69 @@ public class JSPHelper
         return request.getContextPath()+"/bill/"+bill.getSenateBillNo();
     }
 
-    public static String getPersonLink(Person person, String base)
+    public static String getPersonLink(Person person, HttpServletRequest request)
     {
         if (person != null) {
-            return getPersonLink(person.getFullname(), base);
+            return getPersonLink(person.getFullname(), request);
         }
         else {
             return "None";
         }
     }
 
-    public static String getPersonLinks(List<String> people, String base)
+    public static String getPersonLinks(List<String> people, HttpServletRequest request)
     {
         ArrayList<String> links = new ArrayList<String>();
         for (String person : people) {
-            links.add(getPersonLink(person, base));
+            links.add(getPersonLink(person, request));
         }
         return StringUtils.join(links, ", ");
     }
 
-    public static String getSponsorLinks(String[] sponsors, String base)
+    public static String getSponsorLinks(String[] sponsors, HttpServletRequest request)
     {
-        return getSponsorLinks(Arrays.asList(sponsors), base);
+        return getSponsorLinks(Arrays.asList(sponsors), request);
     }
 
-    public static String getSponsorLinks(List<String> sponsors, String base)
+    public static String getSponsorLinks(List<String> sponsors, HttpServletRequest request)
     {
         ArrayList<String> links = new ArrayList<String>();
         for (String person : sponsors) {
-            links.add(getPersonLink(person, base));
+            links.add(getPersonLink(person, request));
         }
         return StringUtils.join(links, ", ");
     }
 
-    public static String getSponsorLinks(Bill bill, String base)
+    public static String getSponsorLinks(Bill bill, HttpServletRequest request)
     {
         Person sponsor = bill.getSponsor();
         ArrayList<String> links = new ArrayList<String>();
-        links.add(JSPHelper.getPersonLink(sponsor, base));
+        links.add(JSPHelper.getPersonLink(sponsor, request));
         for (Person otherSponsor : bill.getOtherSponsors()) {
-            links.add(JSPHelper.getPersonLink(otherSponsor, base));
+            links.add(JSPHelper.getPersonLink(otherSponsor, request));
         }
 
         return StringUtils.join(links, ", ");
     }
 
-    public static String getCoSponsorLinks(Bill bill, String base)
+    public static String getCoSponsorLinks(Bill bill, HttpServletRequest request)
     {
         ArrayList<String> links = new ArrayList<String>();
         for (Person sponsor : bill.getCoSponsors()) {
             if (!bill.getOtherSponsors().contains(sponsor)) {
-                links.add(JSPHelper.getPersonLink(sponsor, base));
+                links.add(JSPHelper.getPersonLink(sponsor, request));
             }
         }
 
         return StringUtils.join(links, ", ");
     }
 
-    public static String getMultiSponsorLinks(Bill bill, String base)
+    public static String getMultiSponsorLinks(Bill bill, HttpServletRequest request)
     {
         ArrayList<String> links = new ArrayList<String>();
         for (Person sponsor : bill.getMultiSponsors()) {
             if (!bill.getOtherSponsors().contains(sponsor)) {
-                links.add(JSPHelper.getPersonLink(sponsor, base));
+                links.add(JSPHelper.getPersonLink(sponsor, request));
             }
         }
         return StringUtils.join(links, ", ");

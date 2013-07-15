@@ -278,7 +278,7 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
                 }
             }
 
-            String resultPath = appPath + "/" + contentType + "/" + contentId; %>
+            String resultPath = JSPHelper.getLink(request, "/" + contentType + "/" + contentId); %>
             <div class="row">
                 <a href="<%=resultPath%>"><%=senateType%>: <%=resultTitle%></a>
                 <span class="subrow">
@@ -290,43 +290,43 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
  				</a>
 			    <%if (sresult.getFields().get("sameAs")!=null && sresult.getFields().get("sameAs").length()>0){ %>
 			        <br/>
-			        Same As: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("sameAs")%>%22" class="sublink"><%=sresult.getFields().get("sameAs")%></a>
+			        Same As: <a href="<%=JSPHelper.getLink(request,"/search/?term=oid:%22"+sresult.getFields().get("sameAs")+"%22")%>" class="sublink"><%=sresult.getFields().get("sameAs")%></a>
 			    <%} %>
 			 
 			    <%if ((!contentType.equals("bill")) && sresult.getFields().get("billno")!=null && sresult.getFields().get("billno").length()>0){ %>
 			        <br/>
-			        Bill: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("billno")%>%22" class="sublink"><%=sresult.getFields().get("billno")%></a>
+			        Bill: <a href="<%=JSPHelper.getLink(request, "/search/?term=oid:%22"+sresult.getFields().get("billno")+"%22")%>" class="sublink"><%=sresult.getFields().get("billno")%></a>
 			    <%} %>
 			 
 			    <%if (sresult.getFields().containsKey("sponsor")){ %>
 			        <br/>
 				    <% if (sresult.getFields().get("otherSponsors").isEmpty()) { %>
-				        Sponsor: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),appPath)%>
+				        Sponsor: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),request)%>
 				    <% } else { %>
-				        Sponsors: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),appPath)%>, <%=JSPHelper.getSponsorLinks(sresult.getFields().get("otherSponsors").split(", ?"), appPath) %>
+				        Sponsors: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),request)%>, <%=JSPHelper.getSponsorLinks(sresult.getFields().get("otherSponsors").split(", ?"), request) %>
 				    <% } %>  
 				   
 			    <%} %>
 			 
 			    <%if (sresult.getFields().get("chair")!=null){ %>
 			        <br/>
-			        Chairperson: <a href="<%=appPath%>/search/?term=chair:%22<%=java.net.URLEncoder.encode((String)sresult.getFields().get("chair"),"UTF-8")%>%22"  class="sublink"><%=sresult.getFields().get("chair")%></a>
+			        Chairperson: <a href="<%=JSPHelper.getLink(request, "/search/?term=chair:%22"+java.net.URLEncoder.encode((String)sresult.getFields().get("chair"),"UTF-8")+"%22")%>"  class="sublink"><%=sresult.getFields().get("chair")%></a>
 			    <%} %>
  
 			    <%if (sresult.getFields().get("committee")!=null && !sresult.getFields().get("committee").isEmpty()){ %>
 			        <br/>
-			        Committee: <a href="<%=appPath%>/committee/<%=sresult.getFields().get("committee").replaceAll(" ","-")%>"  class="sublink"><%=sresult.getFields().get("committee")%></a>
+			        Committee: <a href="<%=JSPHelper.getLink(request, "/committee/"+sresult.getFields().get("committee").replaceAll(" ","-"))%>"  class="sublink"><%=sresult.getFields().get("committee")%></a>
 			    <%} %>
 			 
 			 
 			    <%if (sresult.getFields().get("location")!=null){ %>
 			        <br/>
-			        Location: <a href="<%=appPath%>/search/?term=location:<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("location") + "\"", "UTF-8")%>"  class="sublink"><%=sresult.getFields().get("location")%></a>
+			        Location: <a href="<%=JSPHelper.getLink(request, "/search/?term=location:"+java.net.URLEncoder.encode("\"" + sresult.getFields().get("location") + "\"", "UTF-8"))%>"  class="sublink"><%=sresult.getFields().get("location")%></a>
 			    <%} %>
 			 
 			    <%if (sresult.getFields().get("date")!=null){ %>
 			        <br/>
-			        Date: <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("date") + "\"", "UTF-8")%>"  class="sublink"><%=sresult.getFields().get("date")%></a>
+			        Date: <a href="<%=JSPHelper.getLink(request, "/search/?term="+java.net.URLEncoder.encode("\"" + sresult.getFields().get("date") + "\"", "UTF-8"))%>"  class="sublink"><%=sresult.getFields().get("date")%></a>
 			    <%} %>
                </span>
             </div>

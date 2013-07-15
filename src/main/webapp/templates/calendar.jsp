@@ -8,7 +8,6 @@ $(document).ready(function(){
 });
 </script>
 <%
-String appPath = request.getContextPath();
 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy");
 SimpleDateFormat datetimeFormat = new SimpleDateFormat("MM/d/yyyy hh:mm:ss aa");
 
@@ -123,17 +122,17 @@ if (calendar.getDate() != null) {
 	                        <%
 	                        if (bill.getSponsor() != null) {
 	                            if (bill.getOtherSponsors().isEmpty()) {
-	                                %> <br/>Sponsor: <%=JSPHelper.getSponsorLinks(bill, appPath)%> <%
+	                                %> <br/>Sponsor: <%=JSPHelper.getSponsorLinks(bill, request)%> <%
 	                            } else {
-	                                %> <br/>Sponsors: <%=JSPHelper.getSponsorLinks(bill, appPath)%> <%
+	                                %> <br/>Sponsors: <%=JSPHelper.getSponsorLinks(bill, request)%> <%
 	                            }
 	                        }
 	
 	                        if (subBill != null) {
 	                            if (subBill.getOtherSponsors().isEmpty()) {
-	                                %> (Substituted-bill Sponsor: <%=JSPHelper.getSponsorLinks(subBill, appPath)%>) <%
+	                                %> (Substituted-bill Sponsor: <%=JSPHelper.getSponsorLinks(subBill, request)%>) <%
 	                            } else {
-	                                %> (Substituted-bill Sponsors: <%=JSPHelper.getSponsorLinks(subBill, appPath)%>) <%
+	                                %> (Substituted-bill Sponsors: <%=JSPHelper.getSponsorLinks(subBill, request)%>) <%
 	                            }
 	                        } %>
 	                    </span>
