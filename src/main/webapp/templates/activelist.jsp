@@ -11,7 +11,7 @@ if (activeList.getDate() != null) {
     activeListDate = dateFormat.format(activeList.getDate());
 }
 List<Supplemental> supplementals = activeList.getSupplementals();
-String Sections ="";
+List<String> sectionLinks = new ArrayList<String>();
 if (supplementals != null && supplementals.size() != 0) {
     Supplemental supplemental = activeList.getSupplementals().get(0);
     List<Sequence> sequences = supplemental.getSequences();
@@ -21,17 +21,18 @@ if (supplementals != null && supplementals.size() != 0) {
             if (sequence.getNo() != null && !sequence.getNo().isEmpty()) {
                 sequenceTitle += "-"+sequence.getNo();
             }
-            Sections = Sections + "<a href=\"#active-list-"+sequenceTitle+"\">"+sequenceTitle+"</a>,";
+            sectionLinks.add("<a href=\"#active-list-"+sequenceTitle+"\">"+sequenceTitle+"</a>");
         }
     }
 }
+String pageTitle = (sectionLinks.size() > 1) ? "Active Lists" : "Active List";
+pageTitle += ": "+StringUtils.join(sectionLinks, ", ");
 
-Sections = Sections.substring(0, Sections.length() - 1);
 %>
 
 <div id="content">
     <div class="content-bg">
-        <h2 class="page-title">Active List <%=Sections%></h2>
+        <h2 class="page-title"><%=pageTitle%></h2>
         <div class="item-meta">
 	        <div id="subcontent" class="emptytitle">
 	       		<div class="billmeta">
