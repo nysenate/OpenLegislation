@@ -45,7 +45,6 @@ public String getStatus(Report report, ReportObservation obs) {
             var jsonCell = $(".json", details);
             var lbdcCell = $(".lbdc", details);
             
-            
             var errorId = details.attr("id").substring(7);
             var summary = $("#summary"+errorId);
             var oidCell = $(".oid-cell", summary);

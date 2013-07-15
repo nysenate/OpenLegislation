@@ -108,7 +108,7 @@ th, .title-cell {
                 <th>Cosponsor</th>
                 <th>Title</th>
                 <th>Summary</th>
-                <th>Event</th>
+                <th>Action</th>
                 <th>Page</th>
             </tr>
         </thead>
