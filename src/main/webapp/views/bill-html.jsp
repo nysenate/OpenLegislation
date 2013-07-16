@@ -120,7 +120,7 @@
 <div id="content">
     <div class="content-bg">
         <div class="page-title">
-            <% if (bill.getActive() == false) { %>
+            <% if (bill.isActive() == false) { %>
                <span class="amended">This bill has been amended</span>
             <% } %>
             <h2><%=pageTitle%></h2>

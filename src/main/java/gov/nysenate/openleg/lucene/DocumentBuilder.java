@@ -77,7 +77,7 @@ public class DocumentBuilder {
 
             fields.put(ACTIVE, new org.apache.lucene.document.Field(
                     ACTIVE,
-                    new Boolean(o.getActive()).toString(),
+                    new Boolean(o.isActive()).toString(),
                     DEFAULT_STORE,
                     DEFAULT_INDEX));
 

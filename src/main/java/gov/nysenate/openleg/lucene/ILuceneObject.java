@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.lucene;
 
 import java.util.HashMap;
+
 import org.apache.lucene.document.Fieldable;
 
 public interface ILuceneObject {
@@ -11,7 +12,7 @@ public interface ILuceneObject {
 	public String luceneTitle();
 	public HashMap<String, Fieldable> luceneFields();
 	public void setActive(boolean active);
-	public boolean getActive();
+	public boolean isActive();
 	public void setModified(long modified);
 	public long getModified();
 }

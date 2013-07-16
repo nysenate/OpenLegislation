@@ -40,7 +40,7 @@ public class LuceneObject implements ILuceneObject {
 	}
 
 	@Override
-	public boolean getActive() {
+	public boolean isActive() {
 		return active;
 	}
 

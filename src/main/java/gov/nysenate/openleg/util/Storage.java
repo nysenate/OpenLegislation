@@ -270,7 +270,7 @@ public class Storage {
     public ObjectNode actionToObjectNode(Action action) {
         ObjectNode node = mapper.createObjectNode();
         node.put("id", action.getId());
-        node.put("active", action.getActive());
+        node.put("active", action.isActive());
         node.put("bill", (action.getBill() != null) ? action.getBill().getSenateBillNo() : "");
         node.put("date", action.getDate().getTime());
         node.put("modified", action.getModified());
@@ -295,7 +295,7 @@ public class Storage {
     public ObjectNode voteToObjectNode(Vote vote) {
         ObjectNode node = mapper.createObjectNode();
         node.put("id", vote.getId());
-        node.put("active", vote.getActive());
+        node.put("active", vote.isActive());
         node.put("modified", vote.getModified());
         node.put("sobiReferenceList", arrayToArrayNode(vote.getSobiReferenceList().toArray()));
         node.put("date", vote.getVoteDate().getTime());
