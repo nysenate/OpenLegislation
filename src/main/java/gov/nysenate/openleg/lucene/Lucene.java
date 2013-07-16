@@ -111,7 +111,9 @@ public class Lucene
 	 * Creates a new Lucene connection to the given directory. If a lucene database
 	 * does not yet exist in the directory then a new one is created.
 	 *
-	 * @param indexDir -  The directory for the lucene database.
+	 * @param indexDir - The directory for the lucene database.
+	 * @param readOnly - When true, an index writer is not created. Only one index
+	 *                   writer may be open at a time across all system processes.
 	 */
 	public Lucene(File indexDir, boolean readOnly) throws IOException
 	{
