@@ -103,7 +103,8 @@ public class Lucene
      */
 	public Lucene(Config config, String prefix) throws IOException
 	{
-	    this(new File(config.getValue(prefix+".directory")));
+	    this(new File(config.getValue(prefix+".directory")),
+	         Boolean.parseBoolean(config.getValue(prefix+".readOnly", "false")));
 	}
 
 	/**
@@ -112,17 +113,20 @@ public class Lucene
 	 *
 	 * @param indexDir -  The directory for the lucene database.
 	 */
-	public Lucene(File indexDir) throws IOException
+	public Lucene(File indexDir, boolean readOnly) throws IOException
 	{
-	    this.indexDir = indexDir;
-	    this.analyzer = new StandardAnalyzer(VERSION);
-	    this.indexWriterConfig = new IndexWriterConfig(VERSION, this.analyzer);
-	    this.indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
-	    this.indexWriter = new IndexWriter(FSDirectory.open(indexDir), indexWriterConfig);
+        this.indexDir = indexDir;
+        this.analyzer = new StandardAnalyzer(VERSION);
 
-	    // The index needs to exist before creating the searcher manager so do a quick commit
-	    // of nothing in case the index doesn't exist already.
-	    this.indexWriter.commit();
+	    if (!readOnly) {
+            this.indexWriterConfig = new IndexWriterConfig(VERSION, this.analyzer);
+            this.indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
+            this.indexWriter = new IndexWriter(FSDirectory.open(indexDir), indexWriterConfig);
+
+            // The index needs to exist before creating the searcher manager so do a quick commit
+            // of nothing in case the index doesn't exist already.
+            this.indexWriter.commit();
+        }
 
         this.searcherManager = new SearcherManager(FSDirectory.open(indexDir), new SearcherFactory());
 	}
