@@ -176,22 +176,22 @@
 	                    %>
                         <li>
 		                    <% if (bill.getOtherSponsors().isEmpty()) { %>
-		                        <span class="meta">Sponsor:</span><span class="metadata"><%=JSPHelper.getSponsorLinks(bill, appPath) %></span>
+		                        <span class="meta">Sponsor:</span><span class="metadata"><%=JSPHelper.getSponsorLinks(bill, request) %></span>
 		                    <% } else { %>
-		                        <span class="meta">Sponsors:</span><span class="metadata"><%=JSPHelper.getSponsorLinks(bill, appPath) %></span>
+		                        <span class="meta">Sponsors:</span><span class="metadata"><%=JSPHelper.getSponsorLinks(bill, request) %></span>
 		                    <% } %>
                         </li>
                         <% if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) { %>
 		                    <li>
 		                        <span class="meta">Multi-sponsor(s):</span>
-		                        <span class="metadata"><%=JSPHelper.getMultiSponsorLinks(bill, appPath)%></span>
+		                        <span class="metadata"><%=JSPHelper.getMultiSponsorLinks(bill, request)%></span>
 		                    </li>
 		                <% }
                         
                         if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) { %>
                             <li>
 		                        <span class="meta">Co-sponsor(s):</span>
-		                        <span class="metadata"><%=JSPHelper.getCoSponsorLinks(bill, appPath)%></span>
+		                        <span class="metadata"><%=JSPHelper.getCoSponsorLinks(bill, request)%></span>
 		                    </li>
 		                <% }
 
@@ -288,32 +288,32 @@
 		                    <blockquote class="vote-block">
 		                        <% if(vote.getAyes() != null && vote.getAyes().size() > 0) { %>
 		                            <b>Ayes (<%=vote.getAyes().size()%>):</b>
-		                            <%=JSPHelper.getPersonLinks(vote.getAyes(), appPath) %>
+		                            <%=JSPHelper.getPersonLinks(vote.getAyes(), request) %>
 		                            <br/>
 		                        <% } %>
 		                        <%if (vote.getAyeswr() != null && vote.getAyeswr().size() > 0) { %>
 		                            <b>Ayes W/R (<%=vote.getAyeswr().size()%>):</b>
-		                            <%=JSPHelper.getPersonLinks(vote.getAyeswr(), appPath) %>
+		                            <%=JSPHelper.getPersonLinks(vote.getAyeswr(), request) %>
 		                            <br/>
 		                        <% } %>
 		                        <%if (vote.getNays() != null && vote.getNays().size() > 0) { %>
 		                            <b>Nays (<%=vote.getNays().size()%>):</b>
-		                            <%=JSPHelper.getPersonLinks(vote.getNays(), appPath) %>
+		                            <%=JSPHelper.getPersonLinks(vote.getNays(), request) %>
 		                            <br/>
 		                        <% } %>
 		                        <%if (vote.getAbstains()!=null && vote.getAbstains().size() > 0){ %>
 		                            <br/>
 		                            <b>Abstains (<%=vote.getAbstains().size()%>):</b>
-		                            <%=JSPHelper.getPersonLinks(vote.getAbstains(), appPath) %>
+		                            <%=JSPHelper.getPersonLinks(vote.getAbstains(), request) %>
 		                        <% } %>
 		                        <%if (vote.getAbsent()!=null && vote.getAbsent().size() > 0){ %>
 		                            <b>Absent (<%=vote.getAbsent().size()%>):</b>
-		                            <%=JSPHelper.getPersonLinks(vote.getAbsent(), appPath) %>
+		                            <%=JSPHelper.getPersonLinks(vote.getAbsent(), request) %>
 		                            <br/>
 		                        <% } %>
 		                        <%if (vote.getExcused()!=null && vote.getExcused().size() > 0){ %>
 		                            <b>Excused (<%=vote.getExcused().size()%>):</b>
-		                            <%=JSPHelper.getPersonLinks(vote.getExcused(), appPath) %>
+		                            <%=JSPHelper.getPersonLinks(vote.getExcused(), request) %>
 		                            <br/>
 		                        <% } %>
 		                    </blockquote>
