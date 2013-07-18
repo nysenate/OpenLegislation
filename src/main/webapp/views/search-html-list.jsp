@@ -13,7 +13,7 @@
         try {
             Result r = it.next();
             String contentType = r.getOtype();
-            String contentId = r.getOid();
+            String contentId = r.getOid().toUpperCase();
             String contentTitle = r.getTitle();
 
             if (contentType.equals("vote")) {
@@ -30,7 +30,7 @@
             String liLink = JSPHelper.getLink(request, "/"+contentType+"/"+contentId);
             String liText = r.getOtype().toUpperCase()+": ";
             if (r.getOtype().equals("bill")) {
-                liText += r.getOid()+" ";
+                liText += contentId+" ";
             }
             liText += " - "+contentTitle;
             if (r.getFields().get("sameas")!=null) {
