@@ -2,8 +2,8 @@ package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.SearchRequest.SearchView;
 import gov.nysenate.openleg.lucene.Lucene;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.OpenLegConstants;
@@ -122,10 +122,10 @@ public class SearchRequest2_0 extends AbstractApiRequest {
         SEARCH		("search", Bill.class, new String[] {"json", "jsonp", "xml"});
 
         public final String view;
-        public final Class<? extends SenateObject> clazz;
+        public final Class<? extends BaseObject> clazz;
         public final String[] formats;
 
-        private SearchView2_0(final String view, final Class<? extends SenateObject> clazz, final String[] formats) {
+        private SearchView2_0(final String view, final Class<? extends BaseObject> clazz, final String[] formats) {
             this.view = view;
             this.clazz = clazz;
             this.formats = formats;
@@ -140,7 +140,7 @@ public class SearchRequest2_0 extends AbstractApiRequest {
             return formats;
         }
         @Override
-        public Class<? extends SenateObject> clazz() {
+        public Class<? extends BaseObject> clazz() {
             return clazz;
         }
     }

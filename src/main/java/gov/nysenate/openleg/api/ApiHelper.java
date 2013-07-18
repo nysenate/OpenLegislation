@@ -2,13 +2,12 @@ package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
-import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Result;
 import gov.nysenate.openleg.model.Section;
-import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.model.Sequence;
 import gov.nysenate.openleg.model.Supplemental;
@@ -64,11 +63,11 @@ public class ApiHelper implements OpenLegConstants {
                 jsonData = unwrapJson(jsonData);
 
                 ApiType apiType = getApiType(type);
-                Class<? extends ISenateObject> clazz = apiType.clazz();
+                Class<? extends BaseObject> clazz = apiType.clazz();
 
-                SenateObject resultObj = null;
+                BaseObject resultObj = null;
                 try {
-                    resultObj = (SenateObject)mapper.readValue(jsonData, clazz);
+                    resultObj = (BaseObject)mapper.readValue(jsonData, clazz);
                     result.setObject(resultObj);
                 } catch (Exception e) {
                     logger.error("error binding:" + clazz.getName(), e);

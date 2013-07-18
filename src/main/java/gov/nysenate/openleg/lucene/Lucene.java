@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.lucene;
 
 import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.Result;
-import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.util.ResultIterator;
 import gov.nysenate.openleg.util.TextFormatter;
@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldSelector;
 import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.CorruptIndexException;
@@ -90,7 +91,7 @@ public class Lucene
 	/**
 	 * A list of serializers to apply to each object when converting to a document.
 	 */
-	protected Collection<LuceneSerializer> serializers = Arrays.asList(new XmlSerializer(), new JsonSerializer());
+	protected Collection<ILuceneSerializer> serializers = Arrays.asList(new XmlSerializer(), new JsonSerializer());
 
     /**
      * Constructs a new Lucene connection from the given configuration file using
@@ -207,7 +208,7 @@ public class Lucene
     public boolean updateDocument(ILuceneObject obj) throws IOException
     {
         if (obj != null) {
-            Document doc = new DocumentBuilder().buildDocument(obj, serializers);
+            Document doc = this.buildDocument(obj, serializers);
             if (doc != null) {
                 logger.info("indexing document: " + doc.getFieldable("otype").stringValue() + "=" + doc.getFieldable("oid").stringValue());
                 String oid = doc.getFieldable("oid").stringValue();
@@ -315,8 +316,8 @@ public class Lucene
         return response;
     }
 
-    public SenateObject getSenateObject(String oid, String type) {
-        ArrayList<? extends SenateObject> senateObjects = getSenateObjects("otype:"+type+" AND oid:\""+oid+"\"");
+    public ISenateObject getSenateObject(String oid, String type) {
+        ArrayList<? extends ISenateObject> senateObjects = getSenateObjects("otype:"+type+" AND oid:\""+oid+"\"");
         if (!senateObjects.isEmpty()) {
             return senateObjects.get(0);
         }
@@ -325,7 +326,8 @@ public class Lucene
         }
     }
 
-    public <T extends SenateObject> ArrayList<T> getSenateObjects(String query) {
+    @SuppressWarnings("unchecked") // Doesn't seem to be a way to properly type check here
+    public <T extends ISenateObject> ArrayList<T> getSenateObjects(String query) {
         ArrayList<T> senateObjects = new ArrayList<T>();
 
         ResultIterator longSearch = new ResultIterator(query);
@@ -363,5 +365,49 @@ public class Lucene
                 "]) AND ", billNumber, "*-", year, ")");
 
         return getSenateObjects(query);
+    }
+
+
+    /**
+     * Builds a new document from the given object without writing serialized data.
+     *
+     * @param object
+     * @return
+     */
+    protected Document buildDocument(ILuceneObject object)
+    {
+        return buildDocument(object, new ArrayList<ILuceneSerializer>());
+    }
+
+
+    /**
+     * Builds a new document from the given object with stored/not_analyzed serialized
+     * data fields for re-hydration on the other side.
+     *
+     * @param object
+     * @param serializers
+     * @return
+     */
+    protected Document buildDocument(ILuceneObject object, Collection<ILuceneSerializer> serializers)
+    {
+        // Because we run queries through the standard analyzer that lower cases all words we must manually
+        // lower case document fields that are not also being passed through the analyzer on the way in.
+        Document document = new Document();
+        document.add(new Field("otype", object.luceneOtype().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", object.luceneOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED)); // was analyzed previously, why?
+        document.add(new Field("osearch", object.luceneOsearch(), Field.Store.YES, Field.Index.ANALYZED));
+        document.add(new Field("title", object.luceneTitle(), Field.Store.YES, Field.Index.ANALYZED));
+        document.add(new Field("summary", object.luceneSummary(), Field.Store.YES, Field.Index.ANALYZED));
+        document.add(new Field("modified", String.valueOf(object.getModified()), Field.Store.YES, Field.Index.NOT_ANALYZED)); // (o.getModified() == 0 ? new Date().getTime() : o.getModified()) + "",
+        document.add(new Field("active", String.valueOf(object.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED)); // was analyzed previously
+        for (Fieldable field : object.luceneFields()) {
+            document.add(field);
+        }
+
+        for(ILuceneSerializer lst:serializers) {
+            document.add(new Field(lst.getType(), lst.getData(object), Field.Store.YES, Field.Index.ANALYZED));
+        }
+
+        return document;
     }
 }

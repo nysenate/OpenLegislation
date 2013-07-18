@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.lucene.DocumentBuilder;
-import gov.nysenate.openleg.lucene.LuceneField;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,31 +18,24 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("meeting")
 @XmlRootElement
-public class Meeting extends SenateObject {
-
-    @LuceneField("when")
+public class Meeting extends BaseObject
+{
     protected Date meetingDateTime;
 
-    protected String meetday;
+    protected String meetday = "";
 
-    @LuceneField
-    protected String location;
+    protected String location = "";
 
     protected String id;
 
-    @LuceneField("committee")
-    protected String committeeName;
+    protected String committeeName = "";
 
-    @LuceneField("chair")
-    protected String committeeChair;
+    protected String committeeChair = "";
 
-    @LuceneField
     protected List<Bill> bills;
 
-    @LuceneField
-    protected String notes;
+    protected String notes = "";
 
-    @LuceneField
     protected List<Addendum> addendums;
 
     public Meeting() {
@@ -163,7 +153,7 @@ public class Meeting extends SenateObject {
 
     @Override
     public String luceneSummary() {
-        return location;
+        return location != null ? location : "";
     }
 
     @Override
@@ -173,9 +163,15 @@ public class Meeting extends SenateObject {
     }
 
     @Override
-    public HashMap<String,Fieldable> luceneFields()	{
-        HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
-        fields.put("when", new Field("when", meetingDateTime.getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+    public Collection<Fieldable> luceneFields()	{
+        Collection<Fieldable> fields = new ArrayList<Fieldable>();
+        fields.add(new Field("location", getLocation(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("committee", getCommitteeName(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("chair", getCommitteeChair(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("bills", getBills().toString(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("notes", getNotes().toString(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("addendums", getAddendums().toString(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("when", meetingDateTime.getTime()+"", Field.Store.YES, Field.Index.ANALYZED));
 
         /*
          * creates a sortable index based on the timestamp of the day the meeting occurred
@@ -191,7 +187,7 @@ public class Meeting extends SenateObject {
         char c3 = invertCharacter(this.getCommitteeName().charAt(2));
         char c4 = invertCharacter(this.getCommitteeName().charAt(3));
 
-        fields.put("sortindex", new Field("sortindex",cal.getTimeInMillis()+"-" + c1 + "" + c2 + "" + c3 + "" + c4, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        fields.add(new Field("sortindex",cal.getTimeInMillis()+"-" + c1 + "" + c2 + "" + c3 + "" + c4, Field.Store.YES, Field.Index.ANALYZED));
         return fields;
     }
 

@@ -1,13 +1,12 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("vote")
-public class Vote extends SenateObject {
+public class Vote extends BaseObject {
 
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
@@ -256,21 +255,21 @@ public class Vote extends SenateObject {
 
     @JsonIgnore
     @Override
-    public HashMap<String, Fieldable> luceneFields() {
-        HashMap<String,Fieldable> map = new HashMap<String,Fieldable>();
+    public Collection<Fieldable> luceneFields() {
+        Collection<Fieldable> fields = new ArrayList<Fieldable>();
 
         if (bill != null) {
-            map.put("billno", new Field("billno",bill.getSenateBillNo(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-            map.put("otherSponsors", new Field("otherSponsors",StringUtils.join(bill.getOtherSponsors(),", "), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-            map.put("sponsor", new Field("sponsor", bill.getSponsor().getFullname(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+            fields.add(new Field("billno",bill.getSenateBillNo(), Field.Store.YES, Field.Index.ANALYZED));
+            fields.add(new Field("otherSponsors",StringUtils.join(bill.getOtherSponsors(),", "), Field.Store.YES, Field.Index.ANALYZED));
+            fields.add(new Field("sponsor", bill.getSponsor().getFullname(), Field.Store.YES, Field.Index.ANALYZED));
         }
 
         switch(voteType) {
         case Vote.VOTE_TYPE_COMMITTEE:
             if(description !=null)
-                map.put("committee", new Field("committee",description, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+                fields.add(new Field("committee",description, Field.Store.YES, Field.Index.ANALYZED));
             else if (bill != null)
-                map.put("committee", new Field("committee",bill.getCurrentCommittee(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+                fields.add(new Field("committee",bill.getCurrentCommittee(), Field.Store.YES, Field.Index.ANALYZED));
         }
 
         Iterator<String> itVote = null;
@@ -283,7 +282,7 @@ public class Vote extends SenateObject {
                 sbVotes.append(itVote.next()).append(" ");
             }
 
-            map.put("abstain", new Field("abstain",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+            fields.add(new Field("abstain",sbVotes.toString(), Field.Store.YES, Field.Index.ANALYZED));
         }
 
         if (ayes != null) {
@@ -293,7 +292,7 @@ public class Vote extends SenateObject {
                 sbVotes.append(itVote.next()).append(" ");
             }
 
-            map.put("aye", new Field("aye",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+            fields.add(new Field("aye",sbVotes.toString(), Field.Store.YES, Field.Index.ANALYZED));
         }
 
         if (excused != null) {
@@ -304,7 +303,7 @@ public class Vote extends SenateObject {
                 sbVotes.append(itVote.next()).append(" ");
             }
 
-            map.put("excused", new Field("excused",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+            fields.add(new Field("excused",sbVotes.toString(), Field.Store.YES, Field.Index.ANALYZED));
         }
 
         if (nays != null) {
@@ -315,12 +314,12 @@ public class Vote extends SenateObject {
                 sbVotes.append(itVote.next()).append(" ");
             }
 
-            map.put("nay", new Field("nay",sbVotes.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+            fields.add(new Field("nay",sbVotes.toString(), Field.Store.YES, Field.Index.ANALYZED));
         }
 
-        map.put("when", new Field("when",voteDate.getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        fields.add(new Field("when",voteDate.getTime()+"", Field.Store.YES, Field.Index.ANALYZED));
 
-        return map;
+        return fields;
     }
 
     @JsonIgnore
@@ -391,11 +390,6 @@ public class Vote extends SenateObject {
             return voteDate.getYear();
         }
         return 9999;
-    }
-
-    @Override
-    public void merge(ISenateObject obj) {
-        return;
     }
 
     @Override

@@ -1,12 +1,10 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.lucene.DocumentBuilder;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -20,8 +18,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("calendar")
 @XmlRootElement
-public class Calendar extends SenateObject {
-
+public class Calendar extends BaseObject
+{
     @XStreamAsAttribute
     protected int year;
 
@@ -187,11 +185,6 @@ public class Calendar extends SenateObject {
     }
 
     @Override
-    public String fileSystemId() {
-        return id;
-    }
-
-    @Override
     public String luceneOsearch() {
         return "";
     }
@@ -202,8 +195,8 @@ public class Calendar extends SenateObject {
     }
 
     @Override
-    public HashMap<String,Fieldable> luceneFields() {
-        HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
+    public Collection<Fieldable> luceneFields() {
+        Collection<Fieldable> fields = new ArrayList<Fieldable>();
 
         Calendar calendar = this;
 
@@ -211,7 +204,7 @@ public class Calendar extends SenateObject {
 
         Supplemental supplemental = this.getSupplementals().get(0);
 
-        fields.put("ctype",new Field("ctype",this.getType(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        fields.add(new Field("ctype",this.getType(), Field.Store.YES, Field.Index.ANALYZED));
 
         StringBuilder searchContent = new StringBuilder();
         String title;
@@ -227,7 +220,7 @@ public class Calendar extends SenateObject {
         }
 
         if(calendar.getId().startsWith("cal-floor")) {
-            fields.put("when", new Field("when",supplemental.getCalendarDate().getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+            fields.add(new Field("when",supplemental.getCalendarDate().getTime()+"", Field.Store.YES, Field.Index.ANALYZED));
 
         }
         else if (supplemental.getSequences()!=null && supplemental.getSequences().size() > 0) {
@@ -235,7 +228,7 @@ public class Calendar extends SenateObject {
 
             title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(supplemental.getSequences().get(0).getActCalDate());
 
-            fields.put("when", new Field("when",sequence.getActCalDate().getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+            fields.add(new Field("when",sequence.getActCalDate().getTime()+"", Field.Store.YES, Field.Index.ANALYZED));
         }
 
         StringBuilder bills = new StringBuilder("");
@@ -282,16 +275,14 @@ public class Calendar extends SenateObject {
             }
         }
 
-        fields.put("bills",new Field("bills",bills.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-        fields.put("calendarentries",new Field("calendarentries",calendarEntries.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        fields.add(new Field("bills",bills.toString(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("calendarentries",calendarEntries.toString(), Field.Store.YES, Field.Index.ANALYZED));
 
         String summary = sbSummary.toString().trim();
 
-        fields.put("summary",new Field("summary",summary, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-        fields.put("title",new Field("title",title, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-        fields.put("osearch",new Field("osearch",searchContent.toString(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-
-        //fields.put("oid",new Field("oid",oid, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
+        fields.add(new Field("summary", summary, Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("title", title, Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("osearch",searchContent.toString(), Field.Store.YES, Field.Index.ANALYZED));
 
         return fields;
     }
@@ -304,38 +295,5 @@ public class Calendar extends SenateObject {
     @Override
     public String luceneSummary() {
         return "";
-    }
-
-    @Override
-    public void merge(ISenateObject obj) {
-        if(!(obj instanceof Calendar))
-            return;
-
-        super.merge(obj);
-
-        this.setId(((Calendar)obj).getId());
-        this.setNo(((Calendar)obj).getNo());
-        this.setSessionYear(((Calendar)obj).getSessionYear());
-
-        if(this.supplementals == null || this.supplementals.isEmpty()) {
-            this.supplementals = ((Calendar)obj).getSupplementals();
-        }
-        else {
-            if(((Calendar)obj).getSupplementals() != null) {
-                this.supplementals =  ((Calendar)obj).getSupplementals();
-            }
-
-            for(int i = this.getSupplementals().size() - 1; i >= 0; i--) {
-                Supplemental supp = this.getSupplementals().get(i);
-                if((supp.getSections() == null || supp.getSections().isEmpty())
-                        && (supp.getSequences() == null || supp.getSequences().isEmpty())) {
-
-                    this.getSupplementals().remove(i);
-                }
-            }
-        }
-
-        this.setType(((Calendar)obj).getType());
-        this.setYear(((Calendar)obj).getYear());
     }
 }

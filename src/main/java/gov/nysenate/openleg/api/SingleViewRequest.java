@@ -2,10 +2,11 @@ package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
+import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.Meeting;
-import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.util.Application;
@@ -34,7 +35,7 @@ public class SingleViewRequest extends AbstractApiRequest {
 
     @Override
     public void fillRequest() throws ApiRequestException {
-        SenateObject so = Application.getLucene().getSenateObject(id, type);
+        ISenateObject so = Application.getLucene().getSenateObject(id, type);
 
         if(so == null) {
             throw new ApiRequestException(TextFormatter.append("couldn't find id: ", id, " of type: ", type));
@@ -93,10 +94,10 @@ public class SingleViewRequest extends AbstractApiRequest {
             TRANSCRIPT	("transcript", 	Transcript.class, 	new String[] {"html", "json", "jsonp", "mobile", "xml"});
 
         public final String view;
-        public final Class<? extends SenateObject> clazz;
+        public final Class<? extends BaseObject> clazz;
         public final String[] formats;
 
-        private SingleView(final String view, final Class<? extends SenateObject> clazz, final String[] formats) {
+        private SingleView(final String view, final Class<? extends BaseObject> clazz, final String[] formats) {
             this.view = view;
             this.clazz = clazz;
             this.formats = formats;
@@ -111,7 +112,7 @@ public class SingleViewRequest extends AbstractApiRequest {
             return formats;
         }
         @Override
-        public Class<? extends SenateObject> clazz() {
+        public Class<? extends BaseObject> clazz() {
             return clazz;
         }
     }

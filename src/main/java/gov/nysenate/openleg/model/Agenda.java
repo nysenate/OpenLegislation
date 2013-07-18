@@ -2,13 +2,12 @@ package gov.nysenate.openleg.model;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-public class Agenda extends SenateObject {
+public class Agenda extends BaseObject
+{
 
     private String id;
 
@@ -126,46 +125,4 @@ public class Agenda extends SenateObject {
     public String luceneTitle() {
         return null;
     }
-
-    @Override
-    public HashMap<String, Fieldable> luceneFields() {
-        return null;
-    }
-
-    @Override
-    public void merge(ISenateObject obj) {
-        if(!(obj instanceof Agenda))
-            return;
-
-        super.merge(obj);
-
-        if(this.addendums == null || this.addendums.isEmpty()) {
-            this.addendums = ((Agenda)obj).getAddendums();
-        }
-        else {
-            if(((Agenda)obj).getAddendums() != null) {
-
-
-                for(int i = 0; i < ((Agenda)obj).getAddendums().size(); i++) {
-                    Addendum addendum = ((Agenda)obj).getAddendums().get(i);
-
-                    if(this.addendums.contains(addendum)) {
-                        Addendum tAd = this.addendums.get(this.addendums.indexOf(addendum));
-                        addendum.setPublicationDateTime(tAd.getPublicationDateTime());
-                        addendum.setWeekOf(tAd.getWeekOf());
-
-                        this.addendums.remove(addendum);
-                    }
-                    this.addendums.add(addendum);
-                }
-            }
-        }
-
-        this.setId(((Agenda)obj).getId());
-        this.setNumber(((Agenda)obj).getNumber());
-        this.setSessionYear(((Agenda)obj).getSessionYear());
-        this.setYear(((Agenda)obj).getYear());
-    }
-
-
 }

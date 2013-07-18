@@ -1,12 +1,10 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.lucene.DocumentBuilder;
-import gov.nysenate.openleg.lucene.LuceneField;
-
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.lucene.document.Field;
@@ -19,30 +17,33 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 
 @XStreamAlias("transcript")
-public class Transcript extends SenateObject {
+public class Transcript extends BaseObject {
 
     @XStreamAsAttribute
     protected String id;
 
-    @LuceneField("when")
     protected Date timeStamp;
 
-    @LuceneField
     protected String location;
 
-    @LuceneField("session-type")
     protected String type;
 
     @XStreamAlias("full")
-    @LuceneField("full")
     protected String transcriptText;
 
-    //	@HideFrom({Transcript.class})
     protected String transcriptTextProcessed;
 
-    //	@HideFrom({Transcript.class})
-    @LuceneField
     protected List<Bill> relatedBills;
+
+    public Collection<Fieldable> luceneFields() {
+        Collection<Fieldable> fields = new ArrayList<Fieldable>();
+        fields.add(new Field("relatedBills", this.getRelatedBills().toString(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("full", this.getTranscriptText(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("session-type", this.getType(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("location", this.getLocation(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("when", String.valueOf(this.getTimeStamp().getTime()), Field.Store.YES, Field.Index.ANALYZED)); // ((timeStamp == null) ? new Date().getTime() : timeStamp.getTime())+""
+        return fields;
+    }
 
     public Transcript() {
 
@@ -130,13 +131,6 @@ public class Transcript extends SenateObject {
         return type;
     }
 
-    @Override
-    public HashMap<String,Fieldable> luceneFields() {
-        HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
-        fields.put("when", new Field("when",((timeStamp == null) ? new Date().getTime() : timeStamp.getTime())+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-        return fields;
-    }
-
     @JsonIgnore
     public String getLuceneRelatedBills() {
         if(relatedBills == null)
@@ -160,19 +154,4 @@ public class Transcript extends SenateObject {
         }
         return 9999;
     }
-
-    @Override
-    public void merge(ISenateObject obj) {
-        if(!(obj instanceof Transcript))
-            return;
-
-        this.id = ((Transcript)obj).getId();
-        this.location = ((Transcript)obj).getLocation();
-        this.relatedBills = ((Transcript)obj).getRelatedBills();
-        this.timeStamp = ((Transcript)obj).getTimeStamp();
-        this.transcriptText = ((Transcript)obj).getTranscriptText();
-        this.transcriptTextProcessed = ((Transcript)obj).getTranscriptTextProcessed();
-    }
-
-
 }

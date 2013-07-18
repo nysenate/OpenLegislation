@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.api;
 
-import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
 
@@ -167,7 +167,7 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
     public interface ApiEnum {
         public String view();
         public String[] formats();
-        public Class<? extends SenateObject> clazz();
+        public Class<? extends BaseObject> clazz();
     }
 
     @SuppressWarnings("serial")

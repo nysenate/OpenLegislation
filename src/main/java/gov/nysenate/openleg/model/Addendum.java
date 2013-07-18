@@ -1,34 +1,41 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.lucene.LuceneField;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("addendum")
-public class Addendum {
-
-    @LuceneField
+public class Addendum
+{
     private String id;
 
-    @LuceneField
     private String addendumId;
 
-    @LuceneField
     private String weekOf;
 
-    @LuceneField
     private Date publicationDateTime;
 
     private List<Meeting> meetings;
 
-    @LuceneField
     private Agenda agenda;
+
+    public Collection<Fieldable> luceneFields()
+    {
+        Collection<Fieldable> fields = new ArrayList<Fieldable>();
+        fields.add(new Field("agenda", getAgenda().toString(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("publicationDateTime", getPublicationDateTime().toString(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("weekOf", getWeekOf(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("addendumId", getAddendumId(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("id", getId(), Field.Store.YES, Field.Index.ANALYZED));
+        return fields;
+    }
 
     public String getId() {
         return id;

@@ -5,7 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
 
-public class PublicHearing extends SenateObject {
+public class PublicHearing extends BaseObject
+{
     public ArrayList<String> committees;
     public String title;
     public String location;
@@ -96,6 +97,31 @@ public class PublicHearing extends SenateObject {
         Calendar cal = Calendar.getInstance();
         cal.setTime(getTimeStamp());
         return cal.get(Calendar.YEAR);
+    }
+
+    public String luceneOid()
+    {
+        return "";
+    }
+
+    public String luceneOtype()
+    {
+        return "hearing";
+    }
+
+    public String luceneOsearch()
+    {
+        return "";
+    }
+
+    public String luceneSummary()
+    {
+        return "";
+    }
+
+    public String luceneTitle()
+    {
+        return "";
     }
 
     public static class Person {

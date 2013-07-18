@@ -1,14 +1,12 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.lucene.DocumentBuilder;
-import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.TextFormatter;
 import gov.nysenate.openleg.xstream.BillListConverter;
 import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,33 +20,26 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 @XStreamAlias("bill")
-public class Bill extends SenateObject implements Comparable<Bill>
+public class Bill extends BaseObject implements Comparable<Bill>
 {
-
     protected boolean active = true;
 
-    @LuceneField
     protected int year;
 
     @XStreamAlias("senateId")
     protected String senateBillNo = "";
 
-    @LuceneField
     protected String title = "";
 
-    @LuceneField
     protected String lawSection = "";
 
-    @LuceneField
     protected String sameAs = "";
 
     @XStreamConverter(BillListConverter.class)
     protected List<String> previousVersions = new ArrayList<String>();
 
-    @LuceneField
     protected Person sponsor;
 
-    @LuceneField
     private List<Person> otherSponsors = new ArrayList<Person>();
 
     public boolean frozen = false;
@@ -56,47 +47,86 @@ public class Bill extends SenateObject implements Comparable<Bill>
     public List<String> amendments = new ArrayList<String>();
 
     @XStreamAlias("cosponsors")
-    @LuceneField
     protected List<Person> coSponsors = new ArrayList<Person>();
 
     @XStreamAlias("multisponsors")
-    @LuceneField
     protected List<Person> multiSponsors = new ArrayList<Person>();
 
-    @LuceneField
     protected String summary = "";
 
     @XStreamAlias("committee")
-    @LuceneField("committee")
     protected String currentCommittee = "";
 
     protected List<String> pastCommittees = new ArrayList<String>();
 
     @XStreamConverter(BillListConverter.class)
-    @LuceneField()
     protected List<Action> actions = new ArrayList<Action>();
 
     @XStreamAlias("text")
-    @LuceneField("full")
     protected String fulltext = "";
 
-    @LuceneField
     protected String memo = "";
 
-    @LuceneField
     protected String law = "";
 
-    @LuceneField
     protected String actClause = "";
 
     @XStreamCollectionAlias(node="votes",value="vote")
     protected List<Vote> votes = new ArrayList<Vote>();
 
-    @LuceneField
     protected Boolean stricken = false;
 
-    @LuceneField
     private boolean uniBill = false;
+
+    @JsonIgnore
+    public Collection<Fieldable> luceneFields()
+    {
+        Collection<Fieldable> fields = new ArrayList<Fieldable>();
+        fields.add(new Field("year", String.valueOf(this.getYear()), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("title", this.getTitle(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("lawSection", this.getLawSection(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("sameas", this.getSameAs(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("sponsor", this.getSponsor() == null ? "" : this.getSponsor().toString(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("otherSponsors", this.getOtherSponsors().toString(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("cosponsors", this.getCoSponsors().toString(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("multisponsors", this.getMultiSponsors().toString(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("summary", this.getSummary(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("committee", this.getCurrentCommittee(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("actions", this.getActions().toString(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("full", this.getFulltext(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("memo", this.getMemo(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("law", this.getLaw(), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("pastcommittees", StringUtils.join(pastCommittees, ", "), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("when", String.valueOf(this.getModified()), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("uniBill", String.valueOf(this.isUniBill()), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("stricken", String.valueOf(this.isStricken()), Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("actClause", this.getActClause(), Field.Store.YES, Field.Index.ANALYZED));
+
+        String billStatus = "";
+        if (!actions.isEmpty()) {
+            billStatus = actions.get(actions.size()-1).getText();
+        }
+        fields.add(new Field("status", billStatus, Field.Store.YES, Field.Index.ANALYZED));
+
+        // the following creates a sortable index so we can sort
+        // s1,s2,s3,s11 instead of s1,s11,s2,s3.  senate bills take
+        // precedence, followed by assembly and finally anything else
+        String num = senateBillNo.split("-")[0];
+        num = num.substring(1, (Character.isDigit(num.charAt(num.length()-1))) ? num.length() : num.length() - 1);
+        while(num.length() < 6)
+            num = "0" + num;
+
+        if(senateBillNo.charAt(0) == 'S')
+            num = "A" + num;
+        else if(senateBillNo.charAt(0) == 'A')
+            num = "B" + num;
+        else
+            num = "Z" + num;
+        fields.add(new Field("sortindex",num, Field.Store.YES, Field.Index.ANALYZED));
+
+        return fields;
+    }
+
 
     public Bill()
     {
@@ -467,49 +497,6 @@ public class Bill extends SenateObject implements Comparable<Bill>
         else {
             return senateBillNo;
         }
-    }
-
-    @JsonIgnore
-    @Override
-    public HashMap<String,Fieldable> luceneFields()
-    {
-        HashMap<String,Fieldable> map = new HashMap<String,Fieldable>();
-
-        if(this.getPastCommittees() != null) {
-            String pcoms = "";
-            for(String committee:pastCommittees) {
-                pcoms += committee + ", ";
-            }
-            pcoms.replaceFirst(", $", "");
-            map.put("pastcommittees", new Field("pastcommittees",pcoms, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-        }
-
-        String billStatus = "";
-        if (!actions.isEmpty()) {
-            billStatus = actions.get(actions.size()-1).getText();
-        }
-        map.put("status", new Field("status", billStatus, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-        map.put("when", new Field("when", String.valueOf(this.getModified()), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-
-        /*
-         * the following creates a sortable index so we can sort
-         * s1,s2,s3,s11 instead of s1,s11,s2,s3.  senate bills take
-         * precedence, followed by assembly and finally anything else
-         */
-        String num = senateBillNo.split("-")[0];
-        num = num.substring(1, (Character.isDigit(num.charAt(num.length()-1))) ? num.length() : num.length() - 1);
-        while(num.length() < 6)
-            num = "0" + num;
-
-        if(senateBillNo.charAt(0) == 'S')
-            num = "A" + num;
-        else if(senateBillNo.charAt(0) == 'A')
-            num = "B" + num;
-        else
-            num = "Z" + num;
-        map.put("sortindex", new Field("sortindex",num, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-
-        return map;
     }
 
     @JsonIgnore

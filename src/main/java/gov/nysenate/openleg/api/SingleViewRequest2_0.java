@@ -2,10 +2,10 @@ package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.api.SingleViewRequest.SingleView;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.Meeting;
-import gov.nysenate.openleg.model.SenateObject;
 import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.util.Application;
@@ -84,10 +84,10 @@ public class SingleViewRequest2_0 extends AbstractApiRequest {
         TRANSCRIPT	("transcript", 	Transcript.class, 	new String[] {"json", "jsonp", "xml"});
 
         public final String view;
-        public final Class<? extends SenateObject> clazz;
+        public final Class<? extends BaseObject> clazz;
         public final String[] formats;
 
-        private SingleView2_0(final String view, final Class<? extends SenateObject> clazz, final String[] formats) {
+        private SingleView2_0(final String view, final Class<? extends BaseObject> clazz, final String[] formats) {
             this.view = view;
             this.clazz = clazz;
             this.formats = formats;
@@ -102,7 +102,7 @@ public class SingleViewRequest2_0 extends AbstractApiRequest {
             return formats;
         }
         @Override
-        public Class<? extends SenateObject> clazz() {
+        public Class<? extends BaseObject> clazz() {
             return clazz;
         }
     }

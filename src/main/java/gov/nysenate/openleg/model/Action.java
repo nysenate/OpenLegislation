@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.net.URLEncoder;
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
@@ -16,7 +16,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("action")
-public class Action extends SenateObject {
+public class Action extends BaseObject
+{
 
     private String id;
     private Date date;
@@ -115,12 +116,10 @@ public class Action extends SenateObject {
 
     @JsonIgnore
     @Override
-    public HashMap<String, Fieldable> luceneFields() {
-        HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
-
-        fields.put("when", new Field("when",date.getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-        fields.put("billno", new Field("billno",getBillId(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-
+    public Collection<Fieldable> luceneFields() {
+        Collection<Fieldable> fields = new ArrayList<Fieldable>();
+        fields.add(new Field("when",date.getTime()+"", Field.Store.YES, Field.Index.ANALYZED));
+        fields.add(new Field("billno",getBillId(), Field.Store.YES, Field.Index.ANALYZED));
         return fields;
     }
 
@@ -169,12 +168,6 @@ public class Action extends SenateObject {
             return date.getYear();
         }
         return 9999;
-    }
-
-    @Override
-    @JsonIgnore
-    public void merge(ISenateObject obj) {
-        return;
     }
 
     public static class ByEventDate implements Comparator<Action> {

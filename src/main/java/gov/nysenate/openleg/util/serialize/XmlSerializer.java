@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.util.serialize;
 
 import gov.nysenate.openleg.lucene.ILuceneObject;
-import gov.nysenate.openleg.lucene.LuceneSerializer;
+import gov.nysenate.openleg.lucene.ILuceneSerializer;
 import gov.nysenate.openleg.xstream.XStreamBuilder;
 
-public class XmlSerializer implements LuceneSerializer {
+public class XmlSerializer implements ILuceneSerializer {
 
     @Override
     public String getData(ILuceneObject o) {
