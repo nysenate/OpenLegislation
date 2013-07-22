@@ -81,7 +81,7 @@ public class TestHelper
 	{
 		Bill bill = null;
 		for(Bill eachBill: bills){
-			if(eachBill.getSenateBillNo().equalsIgnoreCase(billName)){
+			if(eachBill.getBillId().equalsIgnoreCase(billName)){
 				bill = eachBill;
 			}
 		}

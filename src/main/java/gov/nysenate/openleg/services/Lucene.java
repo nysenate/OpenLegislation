@@ -1,19 +1,35 @@
 package gov.nysenate.openleg.services;
 
-import gov.nysenate.openleg.lucene.ILuceneObject;
+import gov.nysenate.openleg.lucene.DocumentBuilder;
 import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Calendar;
+import gov.nysenate.openleg.model.ISenateSerializer;
+import gov.nysenate.openleg.model.Meeting;
+import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.Storage;
+import gov.nysenate.openleg.util.serialize.JsonSerializer;
+import gov.nysenate.openleg.util.serialize.XmlSerializer;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.lucene.document.Document;
+
 public class Lucene extends ServiceBase
 {
+    /**
+     * A list of serializers to apply to each object when converting to a document.
+     */
+    protected Collection<ISenateSerializer> serializers = Arrays.asList(new XmlSerializer(), new JsonSerializer());
+
     public Lucene(String indexDir) throws IOException
     {
         super();
@@ -51,8 +67,9 @@ public class Lucene extends ServiceBase
                 }
                 else {
                     // Retrieve new/modified objects from storage so we can index them
-                    Class<? extends ILuceneObject> objType = classMap.get(otype);
-                    ILuceneObject obj = (ILuceneObject) storage.get(key, objType);
+                    Class<? extends BaseObject> objType = classMap.get(otype);
+                    BaseObject obj = (BaseObject) storage.get(key, objType);
+                    Document document = null;
 
                     if (otype.equals("bill")) {
                         // Regenerate all the bill sub-documents. Delete them all first to
@@ -62,36 +79,53 @@ public class Lucene extends ServiceBase
                         // TODO: Should we really be pulling the modified date from the bill?
                         Bill bill = (Bill)obj;
 
-                        lucene.deleteDocumentsByQuery("otype:action AND billno:" + bill.getSenateBillNo());
-                        for(Action be:bill.getActions()) {
+                        lucene.deleteDocumentsByQuery("otype:action AND billno:" + bill.getBillId());
+                        for(Action billEvent:bill.getActions()) {
                             try {
-                                be.setModified(bill.getModified());
-                                be.setBill(bill);
-                                lucene.updateDocument(be);
+                                billEvent.setModified(bill.getModified());
+                                billEvent.setBill(bill);
+                                lucene.updateDocument(DocumentBuilder.build(billEvent, serializers));
                             }
                             catch (IOException e) {
-                                logger.error("Error indexing: "+be.luceneOid(), e);
+                                logger.error("Error indexing: "+key, e);
                             }
                         }
 
-                        lucene.deleteDocumentsByQuery("otype:vote AND billno:" + bill.getSenateBillNo());
+                        lucene.deleteDocumentsByQuery("otype:vote AND billno:" + bill.getBillId());
                         for(Vote vote: bill.getVotes()) {
                             try {
                                 vote.setModified(bill.getModified());
                                 vote.setBill(bill);
-                                lucene.updateDocument(vote);
+                                lucene.updateDocument(DocumentBuilder.build(vote, serializers));
                             }
                             catch(IOException e) {
-                                logger.error("Error indexing: "+vote.luceneOid(), e);
+                                logger.error("Error indexing: "+key, e);
                             }
                         }
+
+                        document = DocumentBuilder.build(bill, serializers);
+                    }
+                    else if (otype.equals("meeting")) {
+                        document = DocumentBuilder.build((Meeting)obj, serializers);
+                    }
+                    else if (otype.equals("calendar")) {
+                        document = DocumentBuilder.build((Calendar)obj, serializers);
+                    }
+                    else if (otype.equals("transcript")) {
+                        document = DocumentBuilder.build((Transcript)obj, serializers);
+                    }
+                    else if (otype.equals("hearing")) {
+                        // Do nothing
                     }
 
-                    try {
-                        lucene.updateDocument(obj);
-                    }
-                    catch (IOException e) {
-                        logger.error("Error indexing: "+obj.luceneOid(), e);
+
+                    if (document != null) {
+                        try {
+                            lucene.updateDocument(document);
+                        }
+                        catch (IOException e) {
+                            logger.error("Error indexing: "+key, e);
+                        }
                     }
                 }
             }

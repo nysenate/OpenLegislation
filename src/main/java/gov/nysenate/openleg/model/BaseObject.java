@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.lucene.ILuceneObject;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,7 +14,7 @@ import org.apache.lucene.document.Fieldable;
  * @author GraylinKim
  *
  */
-abstract public class BaseObject implements ILuceneObject, ISenateObject
+abstract public class BaseObject implements ISenateObject
 {
     /**
      * The current active status of the object. Inactive objects will

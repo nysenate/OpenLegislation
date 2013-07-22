@@ -56,7 +56,7 @@ public class SenateObjectConverter implements Converter {
 
         if(value instanceof Bill) {
             Bill bill = (Bill)value;
-            cachedSimpleBills.remove(bill.getSenateBillNo());
+            cachedSimpleBills.remove(bill.getBillId());
         }
 
         //Get the FieldAliasMapper, responsible for XStreamOmitField and XStreamAlias mark up
@@ -160,15 +160,15 @@ public class SenateObjectConverter implements Converter {
             if(value instanceof Bill) {
                 Bill bill = (Bill) value;
 
-                if(!cachedSimpleBills.containsKey(bill.getSenateBillNo())) {
+                if(!cachedSimpleBills.containsKey(bill.getBillId())) {
                     HierarchicalStreamDriver driver = new DomDriver();
                     cachedSimpleBills.put(
-                            bill.getSenateBillNo(),
+                            bill.getBillId(),
                             XStreamBuilder.getXStream(driver,"xml", null).toXML(value)
                             );
                 }
 
-                writer.setValue("##" + bill.getSenateBillNo() + "##");
+                writer.setValue("##" + bill.getBillId() + "##");
             }
             else {
                 try {

@@ -110,11 +110,13 @@
 							</span>
 						</div>
 					 
-			    <% } catch (Exception e) {
-					System.err.println("couldn't render bill: " + bill.getSenateBillNo());
-				}
-			}
-		}%>
+			    <%
+					 			        } catch (Exception e) {
+					 			    					System.err.println("couldn't render bill: " + bill.getBillId());
+					 			    				}
+					 			    			}
+					 			    		}
+					 			    %>
     </div>
 </div>
 </div>

@@ -132,7 +132,7 @@ public class AgendaProcessor implements OpenLegConstants {
             for( XMLMember member : xmlBill.getVotes().getMember()) {
                 Person person = new Person(member.getName().getContent());
                 String voteType = member.getVote().getContent().toLowerCase();
-                logger.info("adding vote: " + bill.getSenateBillNo() + " - " + voteType + " - " + person.getFullname());
+                logger.info("adding vote: " + bill.getBillId() + " - " + voteType + " - " + person.getFullname());
 
                 if (voteType.startsWith("abstain"))
                     vote.addAbstain(person);
@@ -152,7 +152,7 @@ public class AgendaProcessor implements OpenLegConstants {
             bill.addVote(vote);
 
             // Make sure the bill gets updated on disc
-            String key = String.valueOf(bill.getYear())+"/bill/"+bill.getSenateBillNo();
+            String key = String.valueOf(bill.getYear())+"/bill/"+bill.getBillId();
             storage.set(key, bill);
             ChangeLogger.record(key, storage, date);
         }
@@ -436,7 +436,7 @@ public class AgendaProcessor implements OpenLegConstants {
                     Bill bill = handleXMLBill(storage, meeting, xmlBill, addendum.getAgenda().getSessionYear(), date);
 
                     if (!listBills.contains(bill)) {
-                        logger.debug("adding bill:" + bill.getSenateBillNo() + " to meeting:" + meeting.getId());
+                        logger.debug("adding bill:" + bill.getBillId() + " to meeting:" + meeting.getId());
                         listBills.add(bill);
                     }
                     else {
@@ -462,7 +462,7 @@ public class AgendaProcessor implements OpenLegConstants {
         if (bill == null) {
             bill = new Bill();
             bill.setYear(year);
-            bill.setSenateBillNo(senateBillNo);
+            bill.setBillId(senateBillNo);
             bill.setSponsor(new Person(sponsors[0].trim()));
         }
 

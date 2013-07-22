@@ -106,7 +106,7 @@ public class ApiHelper implements OpenLegConstants {
                     summary = bill.getSummary();
 
                     fields.put("committee", bill.getCurrentCommittee());
-                    fields.put("billno", bill.getSenateBillNo());
+                    fields.put("billno", bill.getBillId());
                     fields.put("summary", bill.getSummary());
                     fields.put("year", bill.getYear() + "");
                 } else if (type.equals("calendar")) {
@@ -174,7 +174,7 @@ public class ApiHelper implements OpenLegConstants {
 
                 } else if (type.equals("action")) {
                     Action billEvent = (Action) resultObj;
-                    String billId = billEvent.getBill().getSenateBillNo();
+                    String billId = billEvent.getBill().getBillId();
 
                     title = billEvent.getText();
 

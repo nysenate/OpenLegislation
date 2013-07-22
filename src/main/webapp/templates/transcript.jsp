@@ -66,7 +66,7 @@
 <%
 	Transcript transcript = (Transcript)request.getAttribute("transcript");
 	String query = request.getParameter("term");
-	String idKey = transcript.luceneOid();
+	String idKey = transcript.getOid();
  	DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.SHORT);
 %>
 <div id="content">

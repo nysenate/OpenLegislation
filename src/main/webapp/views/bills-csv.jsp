@@ -1,4 +1,5 @@
-<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,org.json.*,gov.nysenate.openleg.model.*"  pageEncoding="utf-8" contentType="text/plain"%><%
+<%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,org.json.*,gov.nysenate.openleg.model.*"  pageEncoding="utf-8" contentType="text/plain"%>
+<%
 String contentType = (String) request.getAttribute("contentType");
 response.setContentType(contentType == null ? "text/html" : contentType);
 
@@ -22,7 +23,7 @@ DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 	
 	try
 	{
-%><%=bill.getYear()%>,<%=bill.getSenateBillNo()%>,<%=bill.getSameAs()%>,<%=bill.getSponsor().getFullname()%>,<%=bill.getCurrentCommittee()%>,<%=title%>,<%=summary%>
+%><%=bill.getYear()%>,<%=bill.getBillId()%>,<%=bill.getSameAs()%>,<%=bill.getSponsor().getFullname()%>,<%=bill.getCurrentCommittee()%>,<%=title%>,<%=summary%>
 <%
  } catch (Exception e){}
  } 

@@ -100,9 +100,9 @@ pageTitle += ": "+StringUtils.join(sectionLinks, ", ");
                             <span style="color:#777777; font-size:0.85em;">#<%=entry.getNo()%>: </span>
 	                        <%
                             if (bill.isResolution()) {
-                                %> Resolution <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%
-                            } else {
-                                %> Bill <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%
+                                %> Resolution <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getBillId()%></a><%
+	                            } else {
+	                        %> Bill <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getBillId()%></a><%
                             }
 
 	                        if (entry.getBillHigh() != null && entry.getBillHigh().equals("true")) {

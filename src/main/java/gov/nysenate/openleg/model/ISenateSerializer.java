@@ -1,6 +1,7 @@
-package gov.nysenate.openleg.lucene;
+package gov.nysenate.openleg.model;
 
-public interface ILuceneSerializer {
+
+public interface ISenateSerializer {
     /**
      * @return the data type of the serialization; e.g. xml, json
      */
@@ -10,5 +11,5 @@ public interface ILuceneSerializer {
 	 * @param object The object to serialize
 	 * @return the string representation of the serialized object
 	 */
-	String getData(ILuceneObject object);
+	String getData(BaseObject object);
 }

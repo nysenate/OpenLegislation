@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.util.serialize;
 
-import gov.nysenate.openleg.lucene.ILuceneObject;
-import gov.nysenate.openleg.lucene.ILuceneSerializer;
+import gov.nysenate.openleg.model.BaseObject;
+import gov.nysenate.openleg.model.ISenateSerializer;
 
-public class JsonSerializer implements ILuceneSerializer {
+public class JsonSerializer implements ISenateSerializer {
 
     @Override
-    public String getData(ILuceneObject o) {
+    public String getData(BaseObject o) {
         return JsonConverter.getJson(o).toString();
     }
 

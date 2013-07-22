@@ -97,7 +97,7 @@ public class OriginalApiConverter {
         locObj.value(bill.getYear());
 
         locObj.key("senateId");
-        locObj.value(bill.getSenateBillNo());
+        locObj.value(bill.getBillId());
 
         locObj.key("sponsor");
         locObj.value(bill.getSponsor().getFullname());

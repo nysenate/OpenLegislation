@@ -2,17 +2,11 @@ package gov.nysenate.openleg.model;
 
 import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -80,7 +74,7 @@ public class Vote extends BaseObject {
 
     public String buildId (Bill bill, Date voteDate, String sequenceNumber)
     {
-        return bill.getSenateBillNo()+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
+        return bill.getBillId()+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
     }
 
     public Vote (Bill bill, Date voteDate, int ayeCount, int nayCount)
@@ -102,6 +96,11 @@ public class Vote extends BaseObject {
         return id;
     }
 
+    @JsonIgnore
+    public String getOid()
+    {
+        return this.getId();
+    }
 
 
     public Date getVoteDate() {
@@ -251,132 +250,6 @@ public class Vote extends BaseObject {
             return this.id.equals(vote.getId());
         }
         return false;
-    }
-
-    @JsonIgnore
-    @Override
-    public Collection<Fieldable> luceneFields() {
-        Collection<Fieldable> fields = new ArrayList<Fieldable>();
-
-        if (bill != null) {
-            fields.add(new Field("billno",bill.getSenateBillNo(), Field.Store.YES, Field.Index.ANALYZED));
-            fields.add(new Field("otherSponsors",StringUtils.join(bill.getOtherSponsors(),", "), Field.Store.YES, Field.Index.ANALYZED));
-            fields.add(new Field("sponsor", bill.getSponsor().getFullname(), Field.Store.YES, Field.Index.ANALYZED));
-        }
-
-        switch(voteType) {
-        case Vote.VOTE_TYPE_COMMITTEE:
-            if(description !=null)
-                fields.add(new Field("committee",description, Field.Store.YES, Field.Index.ANALYZED));
-            else if (bill != null)
-                fields.add(new Field("committee",bill.getCurrentCommittee(), Field.Store.YES, Field.Index.ANALYZED));
-        }
-
-        Iterator<String> itVote = null;
-        StringBuilder sbVotes = null;
-
-        if (abstains != null) {
-            sbVotes = new StringBuilder();
-            itVote = abstains.iterator();
-            while (itVote.hasNext()) {
-                sbVotes.append(itVote.next()).append(" ");
-            }
-
-            fields.add(new Field("abstain",sbVotes.toString(), Field.Store.YES, Field.Index.ANALYZED));
-        }
-
-        if (ayes != null) {
-            sbVotes = new StringBuilder();
-            itVote = ayes.iterator();
-            while (itVote.hasNext()) {
-                sbVotes.append(itVote.next()).append(" ");
-            }
-
-            fields.add(new Field("aye",sbVotes.toString(), Field.Store.YES, Field.Index.ANALYZED));
-        }
-
-        if (excused != null) {
-
-            sbVotes = new StringBuilder();
-            itVote = excused.iterator();
-            while (itVote.hasNext()) {
-                sbVotes.append(itVote.next()).append(" ");
-            }
-
-            fields.add(new Field("excused",sbVotes.toString(), Field.Store.YES, Field.Index.ANALYZED));
-        }
-
-        if (nays != null) {
-
-            sbVotes = new StringBuilder();
-            itVote = nays.iterator();
-            while (itVote.hasNext()) {
-                sbVotes.append(itVote.next()).append(" ");
-            }
-
-            fields.add(new Field("nay",sbVotes.toString(), Field.Store.YES, Field.Index.ANALYZED));
-        }
-
-        fields.add(new Field("when",voteDate.getTime()+"", Field.Store.YES, Field.Index.ANALYZED));
-
-        return fields;
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneOid() {
-        return id;
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneOsearch() {
-
-        if (bill == null)
-            return "";
-
-        StringBuilder oSearch = new StringBuilder("");
-        oSearch.append(bill.getSenateBillNo() + " ");
-        switch(voteType) {
-        case Vote.VOTE_TYPE_COMMITTEE:
-            oSearch.append(" Committee Vote ");
-            oSearch.append(bill.getCurrentCommittee());
-        case Vote.VOTE_TYPE_FLOOR:
-            oSearch.append(" Floor Vote ");
-        }
-        return oSearch.toString();
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneOtype() {
-        return "vote";
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneSummary() {
-        return java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(voteDate);
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneTitle() {
-
-        String title = "";
-
-        if (bill != null)
-            title += bill.getSenateBillNo();
-
-        title += " - " + java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(voteDate);
-
-        switch(voteType) {
-        case Vote.VOTE_TYPE_COMMITTEE:
-            return title + " - Committee Vote";
-        case Vote.VOTE_TYPE_FLOOR:
-            return title + " - Floor Vote";
-        }
-        return title;
     }
 
     @SuppressWarnings("deprecation")

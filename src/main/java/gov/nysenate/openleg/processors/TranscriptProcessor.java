@@ -101,12 +101,13 @@ public class TranscriptProcessor {
 
         transcript.setTranscriptText(fullText.toString());
         transcript.setTranscriptTextProcessed(fullTextProcessed.toString());
-        transcript.setId(transcript.luceneOid());
+        String oid = transcript.getType().replaceAll(" ",  "-")+"-"+new SimpleDateFormat("MM-dd-yyyy").format(transcript.getTimeStamp());
+        transcript.setId(oid);
         transcript.setModified(transcript.getTimeStamp().getTime());
         transcript.addSobiReference(file.getName());
 
         // Save the transcript
-        String key = transcript.getYear()+"/transcript/"+transcript.luceneOid();
+        String key = transcript.getYear()+"/transcript/"+transcript.getId();
         storage.set(key, transcript);
 
         // Make an entry in the change log

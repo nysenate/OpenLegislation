@@ -30,7 +30,7 @@ public class JSPHelper
 
     public static String getLink(HttpServletRequest request, Bill bill)
     {
-        return request.getContextPath()+"/bill/"+bill.getSenateBillNo();
+        return request.getContextPath()+"/bill/"+bill.getBillId();
     }
 
     public static String getPersonLink(Person person, HttpServletRequest request)

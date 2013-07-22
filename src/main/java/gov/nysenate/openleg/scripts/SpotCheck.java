@@ -3,9 +3,9 @@ package gov.nysenate.openleg.scripts;
 import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
-import gov.nysenate.openleg.model.SpotCheckBill;
 import gov.nysenate.openleg.model.admin.Report;
 import gov.nysenate.openleg.model.admin.ReportObservation;
+import gov.nysenate.openleg.model.admin.SpotCheckBill;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Storage;
 

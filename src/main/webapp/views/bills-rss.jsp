@@ -56,22 +56,40 @@ Collection<Bill> bills = (Collection<Bill>)request.getAttribute("bills");
                
                 %>
                    <item>
-      <title>   <%=bill.getSenateBillNo()%>
-                <%if (bill.getSameAs()!=null){ %> (Same as: <%=bill.getSameAs()%>)<%}%></title>
-      <description><%if (bill.getTitle()!=null){ %>
+      <title>   <%=bill.getBillId()%>
+                <%
+                    if (bill.getSameAs()!=null){
+                %> (Same as: <%=bill.getSameAs()%>)<%
+                    }
+                %></title>
+      <description><%
+          if (bill.getTitle()!=null){
+      %>
 <%=bill.getTitle()%>
-<%} else if (bill.getSummary()!=null){ %>
+<%
+    } else if (bill.getSummary()!=null){
+%>
  <%=bill.getSummary()%>
- <%} %>
-  <%if (bill.getSponsor()!=null){ %>
+ <%
+     }
+ %>
+  <%
+      if (bill.getSponsor()!=null){
+  %>
  Sponsor: <%=bill.getSponsor().getFullname()%>
- <%} %>
- <%if (bill.getCurrentCommittee()!=null){ %>
+ <%
+     }
+ %>
+ <%
+     if (bill.getCurrentCommittee()!=null){
+ %>
  Committee: <%=bill.getCurrentCommittee()%>
-<%} %>
+<%
+    }
+%>
  </description>
 
-      <link><%=appPath%>/api/html/bill/<%=bill.getSenateBillNo()%></link>
+      <link><%=appPath%>/api/html/bill/<%=bill.getBillId()%></link>
       <pubDate><%=pubDate%></pubDate>
     </item>
                 

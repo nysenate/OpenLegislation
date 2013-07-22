@@ -112,7 +112,7 @@ public class SearchRequest2_0 extends AbstractApiRequest {
 
             Bill newestAmendment = lucene.getNewestAmendment(billNo);
             if(newestAmendment != null) {
-                return newestAmendment.getSenateBillNo();
+                return newestAmendment.getBillId();
             }
         }
         return null;

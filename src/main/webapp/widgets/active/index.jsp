@@ -66,17 +66,29 @@
                         try { %>
                         <li>
                         Cal No. <%=calEnt.getNo()%>
-                        <% if (calEnt.getBill()!=null && calEnt.getBill().getSenateBillNo()!=null ) { %>
-                            / Bill: <a href="<%=JSPHelper.getLink(request,"/api/1.0/html/bill/"+calEnt.getBill().getSenateBillNo())%>" target="_blank"><%=calEnt.getBill().getSenateBillNo()%></a>
+                        <%
+                            if (calEnt.getBill()!=null && calEnt.getBill().getBillId()!=null ) {
+                        %>
+                            / Bill: <a href="<%=JSPHelper.getLink(request,"/api/1.0/html/bill/"+calEnt.getBill().getBillId())%>" target="_blank"><%=calEnt.getBill().getBillId()%></a>
                             / <a href="<%=JSPHelper.getLink(request,"/search?term=sponsor:"+calEnt.getBill().getSponsor().getFullname())%>" target="_blank"><%=calEnt.getBill().getSponsor().getFullname()%></a>
-                            <% if (calEnt.getSubBill()!=null) { %>
+                            <%
+                                if (calEnt.getSubBill()!=null) {
+                            %>
                                 (Sub-bill Sponsor: <a href="<%=JSPHelper.getLink(request, "/search?term=sponsor:"+calEnt.getSubBill().getSponsor().getFullname())%>"><%=calEnt.getSubBill().getSponsor().getFullname()%></a>)
-                            <% } %>
-                            <% if (calEnt.getBillHigh()!=null) { %>
+                            <%
+                                }
+                            %>
+                            <%
+                                if (calEnt.getBillHigh()!=null) {
+                            %>
                                 <b style="color:green">HIGH</b>
-                            <% } %>
-                            <% if (calEnt.getSubBill()!=null) { %>
-                                (Sub-bill: <a href="<%=JSPHelper.getLink(request, "/api/1.0/mobile/bill/"+calEnt.getSubBill().getSenateBillNo())%>"><%=calEnt.getSubBill().getSenateBillNo()%></a>)
+                            <%
+                                }
+                            %>
+                            <%
+                                if (calEnt.getSubBill()!=null) {
+                            %>
+                                (Sub-bill: <a href="<%=JSPHelper.getLink(request, "/api/1.0/mobile/bill/"+calEnt.getSubBill().getBillId())%>"><%=calEnt.getSubBill().getBillId()%></a>)
                             <% } %>
                             <div style="font-size:80%">
                                 <%if (calEnt.getBill().getTitle()!=null) { %>

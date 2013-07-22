@@ -72,6 +72,12 @@ public class Agenda extends BaseObject
     }
 
     @JsonIgnore
+    public String getOid()
+    {
+        return this.getId();
+    }
+
+    @JsonIgnore
     public Meeting getCommitteeMeeting(String id) {
         for(Addendum addendum:this.getAddendums()) {
             for(Meeting meeting:addendum.getMeetings()) {
@@ -99,30 +105,5 @@ public class Agenda extends BaseObject
         }
 
         return false;
-    }
-
-    @Override
-    public String luceneOid() {
-        return this.id;
-    }
-
-    @Override
-    public String luceneOsearch() {
-        return null;
-    }
-
-    @Override
-    public String luceneOtype() {
-        return "agenda";
-    }
-
-    @Override
-    public String luceneSummary() {
-        return null;
-    }
-
-    @Override
-    public String luceneTitle() {
-        return null;
     }
 }

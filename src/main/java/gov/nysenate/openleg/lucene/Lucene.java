@@ -6,15 +6,11 @@ import gov.nysenate.openleg.model.Result;
 import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.util.ResultIterator;
 import gov.nysenate.openleg.util.TextFormatter;
-import gov.nysenate.openleg.util.serialize.JsonSerializer;
-import gov.nysenate.openleg.util.serialize.XmlSerializer;
 import gov.nysenate.util.Config;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,7 +19,6 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldSelector;
 import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.CorruptIndexException;
@@ -48,6 +43,7 @@ import org.apache.lucene.util.Version;
  * Encapsulates basic Lucene configuration and index manipulation.
  *
  * @author GraylinKim
+ *
  *
  */
 public class Lucene
@@ -87,11 +83,6 @@ public class Lucene
 	 * A reference to the analyzer used when adding documents and parsing queries
 	 */
 	protected Analyzer analyzer = null;
-
-	/**
-	 * A list of serializers to apply to each object when converting to a document.
-	 */
-	protected Collection<ILuceneSerializer> serializers = Arrays.asList(new XmlSerializer(), new JsonSerializer());
 
     /**
      * Constructs a new Lucene connection from the given configuration file using
@@ -148,8 +139,12 @@ public class Lucene
 	 */
     public LuceneResult search(String queryString, int skipCount, int retrieveCount, String sortFieldName, boolean reversed) throws IOException
     {
-        // Some last minute hot fixes on the incoming query
+        // cheap implementation of otype:resolution
         queryString = queryString.replaceAll("otype:resolution", "(otype:bill AND oid:(R* OR E* OR J* OR K* OR L*))");
+
+        // searches should be case insensitive for fields as well
+        // Lucene keywords must be capitalized though
+        queryString = queryString.toLowerCase().replace(" to ", " TO ").replace(" and ", " AND ").replace(" or ", " OR ");
 
         searcherManager.maybeRefresh();
         IndexSearcher searcher = searcherManager.acquire();
@@ -196,28 +191,17 @@ public class Lucene
     }
 
     /**
-     * Builds a lucene document from the given object using the given serializers. Updates
-     * the document in the index if it already exists, otherwise it inserts the new document
-     * into the index.
+     * Updates the document in Lucene using the document oid as a primary key. Inserts
+     * a new document if an existing document is not found.
      *
-     * @param obj - The object to be indexed.
-     * @param serializer - A list of serializers used to make serializations to store in the document
-     * @return true on success
+     * @param doc - The document to be indexed.
      * @throws IOException
      */
-    public boolean updateDocument(ILuceneObject obj) throws IOException
+    public void updateDocument(Document doc) throws IOException
     {
-        if (obj != null) {
-            Document doc = this.buildDocument(obj, serializers);
-            if (doc != null) {
-                logger.info("indexing document: " + doc.getFieldable("otype").stringValue() + "=" + doc.getFieldable("oid").stringValue());
-                String oid = doc.getFieldable("oid").stringValue();
-                indexWriter.updateDocument(new Term("oid",oid), doc);
-                return true;
-            }
-        }
-
-        return false;
+        logger.info("indexing document: " + doc.getFieldable("otype").stringValue() + "=" + doc.getFieldable("oid").stringValue());
+        String oid = doc.getFieldable("oid").stringValue();
+        indexWriter.updateDocument(new Term("oid",oid), doc);
     }
 
     /**
@@ -365,49 +349,5 @@ public class Lucene
                 "]) AND ", billNumber, "*-", year, ")");
 
         return getSenateObjects(query);
-    }
-
-
-    /**
-     * Builds a new document from the given object without writing serialized data.
-     *
-     * @param object
-     * @return
-     */
-    protected Document buildDocument(ILuceneObject object)
-    {
-        return buildDocument(object, new ArrayList<ILuceneSerializer>());
-    }
-
-
-    /**
-     * Builds a new document from the given object with stored/not_analyzed serialized
-     * data fields for re-hydration on the other side.
-     *
-     * @param object
-     * @param serializers
-     * @return
-     */
-    protected Document buildDocument(ILuceneObject object, Collection<ILuceneSerializer> serializers)
-    {
-        // Because we run queries through the standard analyzer that lower cases all words we must manually
-        // lower case document fields that are not also being passed through the analyzer on the way in.
-        Document document = new Document();
-        document.add(new Field("otype", object.luceneOtype().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("oid", object.luceneOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED)); // was analyzed previously, why?
-        document.add(new Field("osearch", object.luceneOsearch(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("title", object.luceneTitle(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("summary", object.luceneSummary(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("modified", String.valueOf(object.getModified()), Field.Store.YES, Field.Index.NOT_ANALYZED)); // (o.getModified() == 0 ? new Date().getTime() : o.getModified()) + "",
-        document.add(new Field("active", String.valueOf(object.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED)); // was analyzed previously
-        for (Fieldable field : object.luceneFields()) {
-            document.add(field);
-        }
-
-        for(ILuceneSerializer lst:serializers) {
-            document.add(new Field(lst.getType(), lst.getData(object), Field.Store.YES, Field.Index.ANALYZED));
-        }
-
-        return document;
     }
 }

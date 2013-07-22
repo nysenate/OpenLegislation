@@ -39,11 +39,11 @@ public class Varnish extends ServiceBase {
             if (!otype.equals("agenda")) {
                 if (otype.equals("calendar")) {
                     Calendar calendar = (Calendar)storage.get(key, Calendar.class);
-                    oid = calendar.luceneOid();
+                    oid = calendar.getOid();
                 }
                 else if (otype.equals("meeting")) {
                     Meeting meeting = (Meeting)storage.get(key, Meeting.class);
-                    oid = meeting.luceneOid();
+                    oid = meeting.getOid();
                 }
 
                 purgeUri("doc:"+oid);

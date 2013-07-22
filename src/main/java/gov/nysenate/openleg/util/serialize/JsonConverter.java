@@ -51,7 +51,7 @@ public class JsonConverter {
 
         if(o instanceof Bill) {
             try {
-                cachedSimpleBills.remove(((Bill)o).getSenateBillNo());
+                cachedSimpleBills.remove(((Bill)o).getBillId());
                 node = converter(o,bill_exclude());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -130,11 +130,11 @@ public class JsonConverter {
                             else if(type.equals("Bill")) {
                                 Bill bill = (Bill)obj;
 
-                                if(!cachedSimpleBills.containsKey(bill.getSenateBillNo())) {
-                                    cachedSimpleBills.put(bill.getSenateBillNo(), converter(obj,simple_bill_exclude()));
+                                if(!cachedSimpleBills.containsKey(bill.getBillId())) {
+                                    cachedSimpleBills.put(bill.getBillId(), converter(obj,simple_bill_exclude()));
                                 }
 
-                                root.add(f.getName(), cachedSimpleBills.get(bill.getSenateBillNo()));
+                                root.add(f.getName(), cachedSimpleBills.get(bill.getBillId()));
                             }
                             else if(type.equals("Date")) {
                                 Date d = (Date)obj;

@@ -29,6 +29,11 @@ public class PublicHearing extends BaseObject
         pages = new TreeMap<Integer, String>();
     }
 
+    public String getOid()
+    {
+        return "";
+    }
+
     public ArrayList<String> getCommittees() {
         return committees;
     }
@@ -97,31 +102,6 @@ public class PublicHearing extends BaseObject
         Calendar cal = Calendar.getInstance();
         cal.setTime(getTimeStamp());
         return cal.get(Calendar.YEAR);
-    }
-
-    public String luceneOid()
-    {
-        return "";
-    }
-
-    public String luceneOtype()
-    {
-        return "hearing";
-    }
-
-    public String luceneOsearch()
-    {
-        return "";
-    }
-
-    public String luceneSummary()
-    {
-        return "";
-    }
-
-    public String luceneTitle()
-    {
-        return "";
     }
 
     public static class Person {

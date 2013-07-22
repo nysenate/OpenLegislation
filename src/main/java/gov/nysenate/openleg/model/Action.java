@@ -3,14 +3,9 @@ package gov.nysenate.openleg.model;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -18,7 +13,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("action")
 public class Action extends BaseObject
 {
-
     private String id;
     private Date date;
     private String text = "";
@@ -30,7 +24,7 @@ public class Action extends BaseObject
     }
 
     public Action (Bill bill, Date eventDate, String eventText) {
-        this(bill.getSenateBillNo(), eventDate, eventText);
+        this(bill.getBillId(), eventDate, eventText);
     }
 
     public Action(String billNumber, Date eventDate, String eventText) {
@@ -114,51 +108,6 @@ public class Action extends BaseObject
         return false;
     }
 
-    @JsonIgnore
-    @Override
-    public Collection<Fieldable> luceneFields() {
-        Collection<Fieldable> fields = new ArrayList<Fieldable>();
-        fields.add(new Field("when",date.getTime()+"", Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("billno",getBillId(), Field.Store.YES, Field.Index.ANALYZED));
-        return fields;
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneOid() {
-        return id;
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneOsearch() {
-
-        StringBuilder searchContent = new StringBuilder();
-        searchContent.append(getBillId()).append(" ");
-
-
-        searchContent.append(text);
-
-        return text.toString();
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneOtype() {
-        return "action";
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneSummary() {
-        return java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(date);
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneTitle() {
-        return text;
-    }
 
     @SuppressWarnings("deprecation")
     @Override
@@ -184,6 +133,12 @@ public class Action extends BaseObject
             return ret*-1;
         }
 
+    }
+
+    @JsonIgnore
+    public String getOid()
+    {
+        return this.getId();
     }
 
     @Override

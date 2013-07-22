@@ -219,7 +219,7 @@ public class Storage {
             this.set(key, bill);
         }
         else {
-            logger.error("Invalid bill key: "+bill.getSenateBillNo());
+            logger.error("Invalid bill key: "+bill.getBillId());
         }
     }
 
@@ -271,7 +271,7 @@ public class Storage {
         ObjectNode node = mapper.createObjectNode();
         node.put("id", action.getId());
         node.put("active", action.isActive());
-        node.put("bill", (action.getBill() != null) ? action.getBill().getSenateBillNo() : "");
+        node.put("bill", (action.getBill() != null) ? action.getBill().getBillId() : "");
         node.put("date", action.getDate().getTime());
         node.put("modified", action.getModified());
         node.put("sobiReferenceList", arrayToArrayNode(action.getSobiReferenceList().toArray()));
@@ -308,7 +308,7 @@ public class Storage {
         node.put("abstains", listToArrayNode(vote.getAbstains()));
         node.put("absent", listToArrayNode(vote.getAbsent()));
         node.put("excused", listToArrayNode(vote.getExcused()));
-        node.put("bill", (vote.getBill() != null) ? vote.getBill().getSenateBillNo() : "");
+        node.put("bill", (vote.getBill() != null) ? vote.getBill().getBillId() : "");
         node.put("year", vote.getYear());
         return node;
     }
@@ -412,7 +412,7 @@ public class Storage {
 
     public void writeBill(Bill bill) throws IOException
     {
-        logger.debug("Writing Bill: "+bill.getSenateBillNo());
+        logger.debug("Writing Bill: "+bill.getBillId());
         ObjectNode node = mapper.createObjectNode();
         node.put("actClause", bill.getActClause());
         node.put("active", bill.isActive());
@@ -452,7 +452,7 @@ public class Storage {
         node.put("stricken", bill.isStricken());
         node.put("pastCommittees", listToArrayNode(bill.getPastCommittees()));
         node.put("previousVersions", listToArrayNode(bill.getPreviousVersions()));
-        node.put("senateBillNo", bill.getSenateBillNo());
+        node.put("senateBillNo", bill.getBillId());
         node.put("summary", bill.getSummary());
         node.put("title", bill.getTitle());
         node.put("year", bill.getYear());
@@ -466,7 +466,7 @@ public class Storage {
         }
         node.put("votes", votes);
 
-        File file = new File(storageDir, bill.getYear()+"/bill/"+bill.getSenateBillNo()+".json");
+        File file = new File(storageDir, bill.getYear()+"/bill/"+bill.getBillId()+".json");
         JsonGenerator generator = this.jsonFactory.createJsonGenerator(file, JsonEncoding.UTF8);
         generator.writeTree(node);
         generator.close();

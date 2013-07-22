@@ -6,14 +6,10 @@ import gov.nysenate.openleg.xstream.BillListConverter;
 import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -27,7 +23,7 @@ public class Bill extends BaseObject implements Comparable<Bill>
     protected int year;
 
     @XStreamAlias("senateId")
-    protected String senateBillNo = "";
+    protected String billId = "";
 
     protected String title = "";
 
@@ -78,79 +74,29 @@ public class Bill extends BaseObject implements Comparable<Bill>
 
     private boolean uniBill = false;
 
-    @JsonIgnore
-    public Collection<Fieldable> luceneFields()
-    {
-        Collection<Fieldable> fields = new ArrayList<Fieldable>();
-        fields.add(new Field("year", String.valueOf(this.getYear()), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("title", this.getTitle(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("lawSection", this.getLawSection(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("sameas", this.getSameAs(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("sponsor", this.getSponsor() == null ? "" : this.getSponsor().toString(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("otherSponsors", this.getOtherSponsors().toString(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("cosponsors", this.getCoSponsors().toString(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("multisponsors", this.getMultiSponsors().toString(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("summary", this.getSummary(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("committee", this.getCurrentCommittee(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("actions", this.getActions().toString(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("full", this.getFulltext(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("memo", this.getMemo(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("law", this.getLaw(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("pastcommittees", StringUtils.join(pastCommittees, ", "), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("when", String.valueOf(this.getModified()), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("uniBill", String.valueOf(this.isUniBill()), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("stricken", String.valueOf(this.isStricken()), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("actClause", this.getActClause(), Field.Store.YES, Field.Index.ANALYZED));
-
-        String billStatus = "";
-        if (!actions.isEmpty()) {
-            billStatus = actions.get(actions.size()-1).getText();
-        }
-        fields.add(new Field("status", billStatus, Field.Store.YES, Field.Index.ANALYZED));
-
-        // the following creates a sortable index so we can sort
-        // s1,s2,s3,s11 instead of s1,s11,s2,s3.  senate bills take
-        // precedence, followed by assembly and finally anything else
-        String num = senateBillNo.split("-")[0];
-        num = num.substring(1, (Character.isDigit(num.charAt(num.length()-1))) ? num.length() : num.length() - 1);
-        while(num.length() < 6)
-            num = "0" + num;
-
-        if(senateBillNo.charAt(0) == 'S')
-            num = "A" + num;
-        else if(senateBillNo.charAt(0) == 'A')
-            num = "B" + num;
-        else
-            num = "Z" + num;
-        fields.add(new Field("sortindex",num, Field.Store.YES, Field.Index.ANALYZED));
-
-        return fields;
-    }
-
-
     public Bill()
     {
         super();
     }
 
     public Bill(String senateBillNo, int year) {
-        this.senateBillNo = senateBillNo;
+        this.billId = senateBillNo;
         this.year = year;
     }
 
     @JsonIgnore
     public boolean isResolution() {
-        return senateBillNo.charAt(0)!='A' && senateBillNo.charAt(0)!='S';
+        return billId.charAt(0)!='A' && billId.charAt(0)!='S';
     }
 
     @JsonIgnore
     public String getDisqusUrl() {
         if (this.getYear()==2009) {
-            String disqusId = this.getSenateBillNo().split("-")[0];
+            String disqusId = this.getBillId().split("-")[0];
             return "http://open.nysenate.gov/legislation/api/html/bill/" + disqusId;
         }
         else {
-            String disqusId = this.getSenateBillNo();
+            String disqusId = this.getBillId();
             return "http://open.nysenate.gov/legislation/bill/" + disqusId;
         }
     }
@@ -176,16 +122,53 @@ public class Bill extends BaseObject implements Comparable<Bill>
     }
 
 
-    public String getSenateBillNo()
+    public String getBillId()
     {
-        return senateBillNo;
+        return billId;
     }
 
-    public void setSenateBillNo(String senateBillNo)
+    public void setBillId(String billId)
     {
-        this.senateBillNo = senateBillNo;
+        this.billId = billId;
     }
 
+    @JsonIgnore
+    public String getOid()
+    {
+        return this.getBillId();
+    }
+
+    @JsonIgnore
+    public String getPaddedBillId()
+    {
+        return this.getPaddedPrintNumber()+"-"+this.getYear();
+    }
+
+    @JsonIgnore
+    public String getPaddedPrintNumber()
+    {
+        Matcher billIdMatcher = billIdPattern.matcher(this.getBillId());
+        if (billIdMatcher.find()) {
+            return String.format("%s%05d%s", billIdMatcher.group(2), Integer.parseInt(billIdMatcher.group(3)), billIdMatcher.group(4));
+        }
+        else {
+            // logger.warn("Invalid senateBillNo: "+this.senateBillNo);
+            return "";
+        }
+    }
+
+    @JsonIgnore
+    public String getPrintNumber()
+    {
+        Matcher billIdMatcher = billIdPattern.matcher(this.getBillId());
+        if (billIdMatcher.find()) {
+            return billIdMatcher.group(1);
+        }
+        else {
+            // logger.warn("Invalid senateBillNo: "+this.senateBillNo);
+            return "";
+        }
+    }
 
     public List<String> getAmendments()
     {
@@ -451,28 +434,28 @@ public class Bill extends BaseObject implements Comparable<Bill>
     public boolean equals(Object obj)
     {
         if (obj != null && obj instanceof Bill) {
-            return this.getSenateBillNo().equals(((Bill)obj).getSenateBillNo());
+            return this.getBillId().equals(((Bill)obj).getBillId());
         }
         else {
             return false;
         }
     }
 
-    // B?? C??
-    public static Pattern keyPattern = Pattern.compile("([ASLREJKBC][0-9]{1,5}[A-Z]?)-([0-9]{4})");
+    public static Pattern printNumberPattern = Pattern.compile("([ASLREJKBC])([0-9]{1,5})([A-Z]?)");
+    public static Pattern billIdPattern = Pattern.compile("("+printNumberPattern.pattern()+")-([0-9]{4})");
 
     @JsonIgnore
     public String getKey()
     {
-        return Bill.getKey(this.getSenateBillNo());
+        return Bill.getKey(this.getBillId());
     }
 
     @JsonIgnore
     public static String getKey(String billNo)
     {
-        Matcher keyMatcher = keyPattern.matcher(billNo);
+        Matcher keyMatcher = billIdPattern.matcher(billNo);
         if (keyMatcher.find()) {
-            return keyMatcher.group(2)+"/bill/"+keyMatcher.group(0);
+            return keyMatcher.group(5)+"/bill/"+keyMatcher.group(0);
         }
         else {
             System.out.println("COULD NOT PARSE senateBillNo: "+billNo);
@@ -480,111 +463,10 @@ public class Bill extends BaseObject implements Comparable<Bill>
         }
     }
 
-    @JsonIgnore
-    @Override
-    public String luceneOtype()
-    {
-        return "bill";
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneOid()
-    {
-        if (senateBillNo.indexOf("-" + year)==-1) {
-            return senateBillNo + "-" + year;
-        }
-        else {
-            return senateBillNo;
-        }
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneSummary()
-    {
-        return summary;
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneTitle()
-    {
-        return (title == null) ? summary : title;
-    }
-
-    @JsonIgnore
-    @Override public String luceneOsearch()
-    {
-        return senateBillNo.split("-")[0] + " "
-                + year + " "
-                + senateBillNo + "-" + year
-                + (sameAs != null ? " " + sameAs:"")
-                + (sponsor != null ? " " + sponsor.getFullname():"")
-                + (title != null ? " " + title:"")
-                + (summary != null ? " " + summary:"");
-
-    }
-
-    @JsonIgnore
-    public String getLuceneOtherSponsors()
-    {
-        return StringUtils.join(otherSponsors, ", ");
-    }
-
-    @JsonIgnore
-    public String getLuceneCoSponsors()
-    {
-        if(this.getCoSponsors() == null)
-            return "";
-
-        StringBuilder response = new StringBuilder();
-        for( Person sponsor : coSponsors) {
-            response.append(sponsor.getFullname() + ", ");
-        }
-        return response.toString().replaceAll(", $", "");
-    }
-
-    @JsonIgnore
-    public String getLuceneMultiSponsors()
-    {
-        if(this.getMultiSponsors() == null)
-            return "";
-
-        StringBuilder response = new StringBuilder();
-        for( Person sponsor : multiSponsors) {
-            response.append(sponsor.getFullname() + ", ");
-        }
-        return response.toString().replaceAll(", $", "");
-    }
-
-    @JsonIgnore
-    public String getLuceneActions()
-    {
-        if(this.getActions() ==  null) {
-            return "";
-        }
-
-        StringBuilder response = new StringBuilder();
-        for(Action be : actions) {
-            response.append(be.getText() + ", ");
-        }
-        return response.toString().replaceAll(", $", "");
-    }
-
-    @JsonIgnore
-    public String getLuceneSponsor()
-    {
-        if(sponsor != null) {
-            return sponsor.getFullname();
-        }
-        return "";
-    }
-
     @Override
     public int compareTo(Bill bill)
     {
-        return this.getSenateBillNo().compareTo(bill.getSenateBillNo());
+        return this.getBillId().compareTo(bill.getBillId());
     }
 
     /**

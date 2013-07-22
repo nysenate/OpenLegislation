@@ -29,4 +29,10 @@ public interface ISenateObject
      * getting a reference to the list and directly adding filenames
      */
     public void addSobiReference(String reference);
+
+
+    /**
+     * Get the unique id for this object for lucene/web indexing and purging.
+     */
+    public String getOid();
 }

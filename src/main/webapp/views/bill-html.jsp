@@ -60,14 +60,14 @@
     }
 %>
 <%
-	Bill bill = (Bill)request.getAttribute("bill");
+    Bill bill = (Bill)request.getAttribute("bill");
 	
 	String titleText = "(no title)";
 	if (bill.getTitle()!=null) {
 		titleText = bill.getTitle();
 	}
 	
-	String title = bill.getSenateBillNo() + " - NY Senate Open Legislation - " + titleText;
+	String title = bill.getBillId() + " - NY Senate Open Legislation - " + titleText;
 	
 	request.setAttribute("useTwitterCard", true);
 	
@@ -84,7 +84,7 @@
     @SuppressWarnings("unchecked")
     ArrayList<Vote> rVotes = defaultList((ArrayList<Vote>)request.getAttribute("related-vote"));
 
-    String senateBillNo = bill.getSenateBillNo();
+    String senateBillNo = bill.getBillId();
     String year = null;
     
     SimpleDateFormat calendarSdf = new SimpleDateFormat("MMM d, yyyy");
@@ -95,11 +95,11 @@
 
     String pageTitle = "";
     if (bill.isResolution()) {
-        pageTitle = "Resolution "+ bill.getSenateBillNo();
+        pageTitle = "Resolution "+ bill.getBillId();
     } else {
-        pageTitle = "Bill "+bill.getSenateBillNo();
+        pageTitle = "Bill "+bill.getBillId();
     }
-    String url = "http://open.nysenate.gov/legislation/bill/"+bill.getSenateBillNo();
+    String url = "http://open.nysenate.gov/legislation/bill/"+bill.getBillId();
     String Summary = "";
     if (bill.getSummary().length() > 200 ){
         Summary = bill.getSummary().substring(0,196)+"...";
@@ -120,9 +120,13 @@
 <div id="content">
     <div class="content-bg">
         <div class="page-title">
-            <% if (bill.isActive() == false) { %>
+            <%
+                if (bill.isActive() == false) {
+            %>
                <span class="amended">This bill has been amended</span>
-            <% } %>
+            <%
+                }
+            %>
             <h2><%=pageTitle%></h2>
         </div>
 
@@ -130,16 +134,20 @@
             <div class='item-actions'>
                 <ul>
                     <li><a href="#" onclick="window.print(); return false;">Print Page</a></li>
-                    <li><a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=bill.getSenateBillNo()%>" class="hidemobile" target="_new">Print Original Text</a></li>
+                    <li><a href="<%=appPath%>/api/1.0/lrs-print/bill/<%=bill.getBillId()%>" class="hidemobile" target="_new">Print Original Text</a></li>
                     <li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
                     <li><a href="#Comments">Read or Leave Comments</a></li>
                 </ul>
             </div>
         
             <h3 class='item-title'>${bill.title}</h3>
-	        <% if (bill.getTitle()+"." != bill.getSummary()) { %>
+	        <%
+	            if (bill.getTitle()+"." != bill.getSummary()) {
+	        %>
 	           <div class="summary"><p>${bill.summary}</p></div>
-	        <% } %>
+	        <%
+	            }
+	        %>
         </div>
 
         <h3  class="section" ><a id="BillDetails" href="#BillDetails" class="anchor ui-icon ui-icon-link"></a>Details</h3>
@@ -147,81 +155,104 @@
             <div id="subcontent billmeta">
                 <div class="billmeta">
                     <ul>
-		                <% if (bill.getSameAs() != null && !bill.getSameAs().trim().isEmpty()) { %>
-	                        <li><span class="meta">Same as:</span><span class="metadata">
-			                    <%
-		                        StringTokenizer st = new StringTokenizer(bill.getSameAs(),",");
-		                        String sameAs = null;
-		                        String lastSameAs = "";
-		                        String sameAsLink = null;
-		                        Bill sameAsBill = null;
-		            
-		                        while(st.hasMoreTokens()) {
-		                            sameAs = st.nextToken().trim().toUpperCase();
-		                            sameAsLink = appPath + "/bill/" + sameAs;
-		                            %><a href="<%=sameAsLink%>"><%=sameAs%></a><%
-		                        }
-			                    %>
-			                </span></li>
-			            <%
-		                }
-	
-		                if (rBills.size() > 0) { %>
+		            <% if (bill.getSameAs() != null && !bill.getSameAs().trim().isEmpty()) { %>
+	                    <li><span class="meta">Same as:</span><span class="metadata">
+	                    <%
+	                        StringTokenizer st = new StringTokenizer(bill.getSameAs(),",");
+	                        String sameAs = null;
+	                        String lastSameAs = "";
+	                        String sameAsLink = null;
+	                        Bill sameAsBill = null;
+
+	                        while(st.hasMoreTokens()) {
+	                            sameAs = st.nextToken().trim().toUpperCase();
+	                            sameAsLink = appPath + "/bill/" + sameAs;
+	                            %><a href="<%=sameAsLink%>"><%=sameAs%></a>
+	                        <% } %>
+			            </span></li>
+			        <% }
+			            	
+			        if (rBills.size() > 0) { %>
 	                        <li><span class="meta">Versions</span><span class="metadata">
-		                        <% for (Bill rBill:rBills) { %>
-		                           <a href="/legislation/bill/<%=rBill.getSenateBillNo()%>"><%=rBill.getSenateBillNo()%></a> 
-		                        <% } %>
+		                        <%
+		                            for (Bill rBill:rBills) {
+		                        %>
+		                           <a href="/legislation/bill/<%=rBill.getBillId()%>"><%=rBill.getBillId()%></a> 
+		                        <%
+ 		                            }
+ 		                        %>
 		                    </span></li><%
-		                }
-	                    %>
+		                        }
+		                    %>
                         <li>
-		                    <% if (bill.getOtherSponsors().isEmpty()) { %>
-		                        <span class="meta">Sponsor:</span><span class="metadata"><%=JSPHelper.getSponsorLinks(bill, request) %></span>
-		                    <% } else { %>
-		                        <span class="meta">Sponsors:</span><span class="metadata"><%=JSPHelper.getSponsorLinks(bill, request) %></span>
-		                    <% } %>
+		                    <%
+		                        if (bill.getOtherSponsors().isEmpty()) {
+		                    %>
+		                        <span class="meta">Sponsor:</span><span class="metadata"><%=JSPHelper.getSponsorLinks(bill, request)%></span>
+		                    <%
+		                        } else {
+		                    %>
+		                        <span class="meta">Sponsors:</span><span class="metadata"><%=JSPHelper.getSponsorLinks(bill, request)%></span>
+		                    <%
+		                        }
+		                    %>
                         </li>
-                        <% if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) { %>
+                        <%
+                            if(bill.getMultiSponsors() != null && bill.getMultiSponsors().size() > 0) {
+                        %>
 		                    <li>
 		                        <span class="meta">Multi-sponsor(s):</span>
 		                        <span class="metadata"><%=JSPHelper.getMultiSponsorLinks(bill, request)%></span>
 		                    </li>
-		                <% }
-                        
-                        if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) { %>
+		                <%
+		                    }
+		                                
+		                                if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) {
+		                %>
                             <li>
 		                        <span class="meta">Co-sponsor(s):</span>
 		                        <span class="metadata"><%=JSPHelper.getCoSponsorLinks(bill, request)%></span>
 		                    </li>
-		                <% }
+		                <%
+		                    }
 
-		                if (bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) { %>
+		                		                if (bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
+		                %>
 		                    <li>
 		                        <span class="meta">Committee:</span>
 		                        <span class="metadata"><a href="<%=appPath%>/committee/<%=java.net.URLEncoder.encode(bill.getCurrentCommittee(),"utf-8")%>" class="sublink"><%=bill.getCurrentCommittee()%></a></span>
 		                    </li>
-		                <% }
+		                <%
+		                    }
 
-		                if (bill.getLawSection() != null && !bill.getLawSection().equals("")) { %>
+		                		                if (bill.getLawSection() != null && !bill.getLawSection().equals("")) {
+		                %>
 		                    <li>
 		                        <span class="meta">Law Section:</span> <span class="metadata"><a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
 		                    </span></li>
-		                <% }
-                                    
-		                if (bill.getLaw() != null && bill.getLaw() != "") { %>
+		                <%
+		                    }
+		                                            
+		                		                if (bill.getLaw() != null && bill.getLaw() != "") {
+		                %>
 		                    <li>
 		                        <span class="meta">Law:</span> <span class="metadata"><%=bill.getLaw()%></span>
 		                    </li>
-		                <% } %>
+		                <%
+		                    }
+		                %>
                     </ul>
                 </div>
-	            <% if (rActions.size() > 0) { %>
+	            <%
+	                if (rActions.size() > 0) {
+	            %>
 	                <h3 class="section"> <a id="Actions" href="#Actions" class="anchor ui-icon ui-icon-link"></a> Actions</h3>
 	                <div class="section-list"><ul>
 		                <%
-		                ArrayList<Action> events = sortBillEvents(rActions);
-		                for (Action be : events) { %>
-		                    <li><%=df.format(be.getDate().getTime())%>: <%=formatBillEvent(bill.getSenateBillNo(), be.getText(), appPath)%></li>
+		                    ArrayList<Action> events = sortBillEvents(rActions);
+		                		                for (Action be : events) {
+		                %>
+		                    <li><%=df.format(be.getDate().getTime())%>: <%=formatBillEvent(bill.getBillId(), be.getText(), appPath)%></li>
 		                <% } %>
 		            </ul></div>
 	            <% } %>
@@ -234,7 +265,7 @@
 			                Meeting meeting = itMeetings.next();
 			                Date meetingDate = meeting.getMeetingDateTime();
 			                %>
-			                <li><a href="<%=appPath%>/meeting/<%=meeting.luceneOid()%>" class="sublink"><%=meeting.getCommitteeName() + (meetingDate == null ? "" : ": " + calendarSdf.format(meetingDate))%></a></li>
+			                <li><a href="<%=appPath%>/meeting/<%=meeting.getOid()%>" class="sublink"><%=meeting.getCommitteeName() + (meetingDate == null ? "" : ": " + calendarSdf.format(meetingDate))%></a></li>
 			            <% } %>
 			       </ul></div>
                 <% } %>
@@ -263,7 +294,7 @@
 			                    calDate = sup.getCalendarDate();
 			                }
 			                %>
-			                <li><a href="<%=appPath%>/calendar/<%=cal.luceneOid()%>" class="sublink"><%=type%><%=calDate == null ? "" : ": " +  calendarSdf.format(calDate)%></a></li>
+			                <li><a href="<%=appPath%>/calendar/<%=cal.getOid()%>" class="sublink"><%=type%><%=calDate == null ? "" : ": " +  calendarSdf.format(calDate)%></a></li>
 		                <% } %>
 		            </ul></div>
 		        <% } %>

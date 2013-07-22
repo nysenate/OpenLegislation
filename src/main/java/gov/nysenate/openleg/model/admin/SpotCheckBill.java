@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model;
+package gov.nysenate.openleg.model.admin;
 
 import java.util.ArrayList;
 

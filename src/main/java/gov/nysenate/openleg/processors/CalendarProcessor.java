@@ -69,7 +69,7 @@ public class CalendarProcessor implements OpenLegConstants {
 
                 action = xmlCalendar.getAction();
 
-                calendar = getCalendar(storage, Calendar.TYPE_FLOOR,xmlCalendar.getNo(),xmlCalendar.getYear(),xmlCalendar.getSessyr());
+                calendar = getCalendar(storage, "floor",xmlCalendar.getNo(),xmlCalendar.getYear(),xmlCalendar.getSessyr());
 
                 supplemental = parseSupplemental(storage, calendar,xmlCalendar.getSupplemental());
 
@@ -85,7 +85,7 @@ public class CalendarProcessor implements OpenLegConstants {
 
                 action = xmlActiveList.getAction();
 
-                calendar = getCalendar(storage, Calendar.TYPE_ACTIVE,xmlActiveList.getNo(),xmlActiveList.getYear(),xmlActiveList.getSessyr());
+                calendar = getCalendar(storage, "active",xmlActiveList.getNo(),xmlActiveList.getYear(),xmlActiveList.getSessyr());
 
                 supplemental = parseSupplemental(storage, calendar,xmlActiveList.getSupplemental());
 
@@ -146,8 +146,6 @@ public class CalendarProcessor implements OpenLegConstants {
         calendarId.append(type);
         calendarId.append('-');
         calendarId.append(no);
-        calendarId.append('-');
-        calendarId.append(sessYr);
         calendarId.append('-');
         calendarId.append(year);
 
@@ -418,7 +416,7 @@ public class CalendarProcessor implements OpenLegConstants {
         if (bill == null) {
             bill = new Bill();
             bill.setYear(year);
-            bill.setSenateBillNo(senateBillNo);
+            bill.setBillId(senateBillNo);
             bill.setSponsor(new Person(sponsors[0].trim()));
             new BillProcessor().saveBill(bill, storage, new Date());
         }

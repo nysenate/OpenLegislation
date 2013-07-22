@@ -44,7 +44,7 @@ public class BillRenderer {
             }
             catch (Exception e)
             {
-                logger.info("unable to render bill: " + bill.getSenateBillNo(),e);
+                logger.info("unable to render bill: " + bill.getBillId(),e);
             }
         }
 
@@ -74,8 +74,8 @@ public class BillRenderer {
         Element elemBill = new Element("bill");
 
         elemBill.setAttribute("year", bill.getYear()+"");
-        elemBill.setAttribute("senateId", bill.getSenateBillNo());
-        elemBill.setAttribute("billId", bill.getSenateBillNo());
+        elemBill.setAttribute("senateId", bill.getBillId());
+        elemBill.setAttribute("billId", bill.getBillId());
 
         try
         {
@@ -172,7 +172,7 @@ public class BillRenderer {
             try
             {
 
-                String baseSenateId = bill.getSenateBillNo();
+                String baseSenateId = bill.getBillId();
 
                 if (baseSenateId.matches(".*[A-Z]"))
                     baseSenateId = baseSenateId.substring(0,baseSenateId.length()-1);
@@ -322,7 +322,7 @@ public class BillRenderer {
         }
         catch (Exception e)
         {
-            logger.warn("error rendering bill:" + bill.getSenateBillNo(),e);
+            logger.warn("error rendering bill:" + bill.getBillId(),e);
         }
 
 
