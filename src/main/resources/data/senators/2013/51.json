@@ -16,12 +16,12 @@
     "province" : "NY",
     "countryName" : "United States",
     "country" : "us",
-    "phone" : "518) 455-3131",
+    "phone" : "(518) 455-3131",
     "fax" : "",
     "otherPhone" : "",
-    "additional" : "Room 430, Capital",
-    "latitude" : 42.652133,
-    "longitude" : -73.757823
+    "additional" : "Room 430, Capitol",
+    "latitude" : 42.652228,
+    "longitude" : -73.757982
   }, {
     "name" : "District Office",
     "street" : "41 So. Main Street",
@@ -55,7 +55,7 @@
   }, {
     "name" : "District Office 3",
     "street" : "4030 West Road",
-    "city" : "Cortlandville",
+    "city" : "Cortland",
     "postalCode" : "13045",
     "provinceName" : "New York",
     "province" : "NY",
@@ -65,8 +65,8 @@
     "fax" : "",
     "otherPhone" : "",
     "additional" : "",
-    "latitude" : 42.602226,
-    "longitude" : -76.201688
+    "latitude" : 42.602244,
+    "longitude" : -76.201681
   } ],
   "district" : {
     "number" : 51,

@@ -2,7 +2,7 @@
   "name" : "Malcolm A. Smith",
   "lastName" : "Smith",
   "shortName" : "smith",
-  "email" : "masmith@senate.state.ny.us",
+  "email" : "masmith@nysenate.gov",
   "additionalContact" : "",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Smith-HS-024.jpg",
   "url" : "http://www.nysenate.gov/senator/malcolm-smith",
@@ -19,9 +19,9 @@
     "phone" : "(518) 455-2701",
     "fax" : "(518) 455-2816",
     "otherPhone" : "",
-    "additional" : "Room 808, Legislative Office Building",
-    "latitude" : 42.652811,
-    "longitude" : -73.758947
+    "additional" : "Room 918, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.75903
   }, {
     "name" : "District Office ",
     "street" : "205-20 Jamaica Ave.",

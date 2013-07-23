@@ -1,10 +1,10 @@
 {
-  "name" : "Joseph P. Addabbo Jr.",
+  "name" : "Joseph P. Addabbo Jr",
   "lastName" : "Addabbo",
   "shortName" : "addabbo",
   "email" : "addabbo@senate.state.ny.us",
   "additionalContact" : "",
-  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Addabbo.SD15.jpg",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/SEN._ADDABBO_HEADSHOT_02-11-13_Addabbo-HS-051.jpg",
   "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr",
   "partyAffiliations" : [ "D" ],
   "offices" : [ {
@@ -52,6 +52,21 @@
     "additional" : "",
     "latitude" : 40.712905,
     "longitude" : -73.879421
+  }, {
+    "name" : "Satellite Office",
+    "street" : "88-08 Rockaway Beach Blvd",
+    "city" : "Rockaway Beach",
+    "postalCode" : "11693",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 318-0702",
+    "fax" : "(718) 318-0194",
+    "otherPhone" : "",
+    "additional" : "Room 311",
+    "latitude" : 40.587515,
+    "longitude" : -73.81348
   } ],
   "district" : {
     "number" : 15,
@@ -65,6 +80,6 @@
     "myspace" : "",
     "picasa" : "",
     "flickr" : "",
-    "facebook" : "http://www.facebook.com/pages/Senator-Joe-Addabbo/157310354545?ref=search&sid=567176665.3736433734..1"
+    "facebook" : "http://www.facebook.com/senatorjoeaddabbo"
   }
 }

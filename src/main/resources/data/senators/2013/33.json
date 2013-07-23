@@ -3,7 +3,7 @@
   "lastName" : "Rivera",
   "shortName" : "rivera",
   "email" : "grivera@nysenate.gov",
-  "additionalContact" : "<P>The Office s open Monday through Friday 10 a.m. to 6 p.m.&nbsp;</P>\n<P>Constituent Service hours are on Monday through Thursday from 12 pm to 4 pm&nbsp;</P>",
+  "additionalContact" : "<p>The Office s open Monday through Friday 10 a.m. to 6 p.m.</p> <p>Constituent Service hours are on Monday through Thursday from 12 pm to 4 pm</p>",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/New Official Photo.JPG",
   "url" : "http://www.nysenate.gov/senator/gustavo-rivera",
   "partyAffiliations" : [ "D", "WF" ],
@@ -45,7 +45,7 @@
     "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=33"
   },
   "social" : {
-    "twitter" : "twitter.com/NYSenatorRivera",
+    "twitter" : "https://twitter.com/NYSenatorRivera",
     "youtube" : "",
     "myspace" : "",
     "picasa" : "",

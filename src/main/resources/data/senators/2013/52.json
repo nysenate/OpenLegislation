@@ -3,7 +3,7 @@
   "lastName" : "Libous",
   "shortName" : "libous",
   "email" : "senator@senatorlibous.com",
-  "additionalContact" : "<P><A href=\"http://www.senatorlibous.tel\">www.senatorlibous.tel</A></P>",
+  "additionalContact" : "<p><a href=\"http://www.senatorlibous.tel\">www.senatorlibous.tel</a></p>",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/headshot[1][1].JPG",
   "url" : "http://www.nysenate.gov/senator/tom-libous",
   "partyAffiliations" : [ "R", "C", "IP" ],
@@ -50,6 +50,6 @@
     "myspace" : "",
     "picasa" : "",
     "flickr" : "",
-    "facebook" : "http://www.facebook.com/libous"
+    "facebook" : "http://www.facebook.com/senatorlibous"
   }
 }
