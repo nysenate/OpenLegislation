@@ -1,8 +1,9 @@
-package gov.nysenate.openleg.scripts;
+package gov.nysenate.openleg.scripts.admin;
 
 import gov.nysenate.openleg.model.admin.Report;
 import gov.nysenate.openleg.model.admin.ReportError;
 import gov.nysenate.openleg.model.admin.ReportObservation;
+import gov.nysenate.openleg.scripts.BaseScript;
 import gov.nysenate.openleg.util.Application;
 
 import java.sql.Connection;
