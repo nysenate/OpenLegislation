@@ -1,17 +1,18 @@
 package gov.nysenate.openleg.processors;
 
 import gov.nysenate.openleg.model.PublicHearing;
-import gov.nysenate.openleg.util.EasyReader;
 import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 public class PublicHearingProcessor {
@@ -69,9 +70,7 @@ public class PublicHearingProcessor {
         logger = Logger.getLogger(this.getClass());
     }
 
-    public void process(File file, Storage storage) {
-        EasyReader easyReader = new EasyReader(file, "ISO-8859-1").open();
-
+    public void process(File file, Storage storage) throws NumberFormatException, IOException {
         ArrayList<String> lineList = new ArrayList<String>();
 
         int pageNumber = -1;
@@ -80,7 +79,7 @@ public class PublicHearingProcessor {
 
         boolean readPage = false;
 
-        for(String cur:easyReader) {
+        for (String cur : FileUtils.readLines(file, "latin1")) {
             //beginning of page
             if(prev.matches(PAGE_HEAD) && cur.matches(FIRST_LINE)) {
                 pageNumber = new Integer(prev.replaceAll(PAGE_HEAD, "$1"));
@@ -104,8 +103,6 @@ public class PublicHearingProcessor {
 
             prev = cur;
         }
-
-        easyReader.close();
 
         // TODO: Generate unique id's for public hearings
         String id = "";
