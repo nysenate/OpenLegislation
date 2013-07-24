@@ -92,31 +92,25 @@ public class ChangeLogger
         }
     }
 
-    public static void record(String key, Storage storage)
-    {
-        record(key, storage, null);
-    }
-
     /**
      * Appends change information to the changeLog
      *
      * @param key
      * @param storage
-     * @param date
      * @param block
      */
-    public static void record(String key, Storage storage, Date date)
+    public static void record(String key, Storage storage)
     {
         Change change = changeLog.get(key);
         if (change == null) {
             if (storage.storageFile(key).exists()) {
                 // A json for this key already exists, it's not new.
-                changeLog.put(key, new Change(Status.MODIFIED, date));
+                changeLog.put(key, new Change(Status.MODIFIED, ChangeLogger.datetime));
             } else {
-                changeLog.put(key, new Change(Status.NEW, date));
+                changeLog.put(key, new Change(Status.NEW, ChangeLogger.datetime));
             }
         } else if (change.getStatus() != Status.NEW) {
-            changeLog.put(key, new Change(Status.MODIFIED, date));
+            changeLog.put(key, new Change(Status.MODIFIED, ChangeLogger.datetime));
         }
     }
 

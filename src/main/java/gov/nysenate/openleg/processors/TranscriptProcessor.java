@@ -116,6 +116,6 @@ public class TranscriptProcessor {
 
         // Make an entry in the change log
         ChangeLogger.setContext(file, transcript.getTimeStamp());
-        ChangeLogger.record(key, storage, transcript.getTimeStamp());
+        ChangeLogger.record(key, storage);
     }
 }

@@ -133,7 +133,7 @@ public class CalendarProcessor implements OpenLegConstants {
             calendar.setModified(modifiedDate.getTime());
             String key = String.valueOf(calendar.getYear())+"/calendar/"+calendar.getId();
             storage.set(key, calendar);
-            ChangeLogger.record(key, storage, modifiedDate);
+            ChangeLogger.record(key, storage);
             removeObject = null;
         }
     }
@@ -418,7 +418,7 @@ public class CalendarProcessor implements OpenLegConstants {
             bill.setYear(year);
             bill.setBillId(senateBillNo);
             bill.setSponsor(new Person(sponsors[0].trim()));
-            new BillProcessor().saveBill(bill, storage, new Date());
+            new BillProcessor().saveBill(bill, storage);
         }
 
         // Other sponsors are removed when a calendar/agenda is resent without
@@ -430,7 +430,7 @@ public class CalendarProcessor implements OpenLegConstants {
 
         if (!bill.getOtherSponsors().equals(otherSponsors)) {
             bill.setOtherSponsors(otherSponsors);
-            new BillProcessor().saveBill(bill, storage, new Date());
+            new BillProcessor().saveBill(bill, storage);
         }
 
         return bill;
