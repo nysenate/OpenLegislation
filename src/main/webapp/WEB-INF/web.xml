@@ -182,6 +182,15 @@
 	</servlet-mapping>
 	
 	<servlet>
+	   <servlet-name>AdvancedSearch</servlet-name>
+	   <servlet-class>gov.nysenate.openleg.api.servlets.AdvancedSearchServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	   <servlet-name>AdvancedSearch</servlet-name>
+	   <url-pattern>/advanced/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
         <servlet-name>AdminUpdates</servlet-name>
         <servlet-class>gov.nysenate.openleg.api.servlets.admin.UpdatesServlet</servlet-class>
     </servlet>

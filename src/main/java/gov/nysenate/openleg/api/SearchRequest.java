@@ -17,6 +17,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 
@@ -101,24 +102,24 @@ public class SearchRequest extends AbstractApiRequest {
                 queryBuilder.and().keyValue("status", status, "(", ")");
             }
 
-            String sponsor = request.getParameter("sponsor");
-            if (valid(sponsor)) {
-                queryBuilder.and().keyValue("sponsor", sponsor, "(", ")");
-            }
-
-            String cosponsors = request.getParameter("cosponsors");
-            if (valid(cosponsors)) {
-                queryBuilder.and().keyValue("cosponsors", cosponsors, "(", ")");
-            }
-
             String sameas = request.getParameter("sameas");
             if (valid(sameas)) {
                 queryBuilder.and().keyValue("sameas", sameas, "(", ")");
             }
 
-            String committee = request.getParameter("committee");
-            if (valid(committee)) {
-                queryBuilder.and().keyValue("committee", committee, "(", ")");
+            String[] sponsors = request.getParameterValues("sponsor");
+            if (sponsors != null) {
+                queryBuilder.and().keyValue("sponsor", StringUtils.join(sponsors, " "), "(", ")");
+            }
+
+            String[] cosponsors = request.getParameterValues("cosponsors");
+            if (cosponsors != null) {
+                queryBuilder.and().keyValue("cosponsors", StringUtils.join(cosponsors, " "), "(", ")");
+            }
+
+            String[] committee = request.getParameterValues("committee");
+            if (committee != null) {
+                queryBuilder.and().keyValue("committee", StringUtils.join(committee, " "), "(", ")");
             }
 
             String location = request.getParameter("location");

@@ -1,7 +1,12 @@
-<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper" pageEncoding="UTF-8"%>
+<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, gov.nysenate.services.model.*, java.util.ArrayList" pageEncoding="UTF-8"%>
 <jsp:include page="/header.jsp">
     <jsp:param name="title" value=" OpenLegislation Advanced Search"/>
 </jsp:include>
+<script src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-multiselect-widget-2489720d3b/src/jquery.multiselect.filter.js")%>"></script>
+<script src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-multiselect-widget-2489720d3b/src/jquery.multiselect.js")%>"></script>
+<link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-multiselect-widget-2489720d3b/jquery.multiselect.filter.css")%>"/>
+<link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-multiselect-widget-2489720d3b/jquery.multiselect.css")%>"/>
+
 <style>
 #advsearchbox p {
     margin:12px;
@@ -66,6 +71,10 @@
 
 <script>
 $(document).ready(function() {
+	$("#sponsors").multiselect().multiselectfilter();
+	$("#committees").multiselect().multiselectfilter();
+	$("#cosponsors").multiselect().multiselectfilter();
+	
 	$( "#startdate" ).datepicker({
 		showOtherMonths: true,
 		selectOtherMonths: true
@@ -95,7 +104,7 @@ $(document).ready(function() {
 	    switch (field) {
 		    case "": sortOrderInput.val("true"); break;
 		    case "when": sortOrderInput.val("true"); break;
-		    case "title": sortOrderInput.val("false"); break;
+		    case "sorttitle": sortOrderInput.val("false"); break;
 		    case "sponsor": sortOrderInput.val("false"); break;
 		    case "oid": sortOrderInput.val("false"); break;
 	    }
@@ -227,18 +236,42 @@ $(document).ready(function() {
 		            </div>
 
                     <div class="searchrow">
-                        <div class="searchlabel">and Sponsor is:</div>
-                        <div class="searchinput"><input type="text" name="sponsor" value=""/></div>
+                        <div class="searchlabel">and Sponsor is one of:</div>
+                        <div class="searchinput">
+                        <select multiple="multiple" id="sponsors" name="sponsor">
+                        <%
+                        @SuppressWarnings("unchecked")
+                        ArrayList<Senator> senators = (ArrayList<Senator>)request.getAttribute("senators");
+                        for (Senator senator : senators) { %>
+                            <option value="<%=senator.getShortName()%>"> <%=senator.getLastName() %> </option>
+                        <% } %>
+                        </select>
+                        </div>
                     </div>
 
 	                <div class="searchrow">
 	                    <div class="searchlabel">and Co-Sponsors include:</div>
-	                    <div class="searchinput"><input type="text" name="cosponsors" value=""/></div>
+	                    <div class="searchinput">
+	                    <select multiple="multiple" id="cosponsors" name="cosponsors">
+                        <% for (Senator senator : senators) { %>
+                            <option value="<%=senator.getShortName()%>"> <%=senator.getLastName() %> </option>
+                        <% } %>
+                        </select>
+	                    </div>
 	                </div>
 
 	                <div class="searchrow">
-                        <div class="searchlabel">and current Committee is:</div>
-                        <div class="searchinput"><input type="text" name="committee" value=""/></div>
+                        <div class="searchlabel">and current Committee is on of:</div>
+                        <div class="searchinput">
+                        <select multiple="multiple" id="committees" name="commitee">
+                        <%
+                        @SuppressWarnings("unchecked")
+                        ArrayList<Committee> committees = (ArrayList<Committee>)request.getAttribute("committees");
+                        for (Committee committee : committees) { %>
+                            <option value="<%=committee.getName()%>"> <%=committee.getName()%> </option>
+                        <% } %>
+                        </select>
+                        </div>
                     </div>
                 </div>
                 <br style="clear:both;"/><br/>
