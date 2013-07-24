@@ -30,7 +30,7 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", "", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", hearing.getOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // Basic document filters
         document.add(new Field("otype", "hearing", Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -43,6 +43,7 @@ public class DocumentBuilder
         document.add(new Field("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO, Field.Index.ANALYZED));
 
         // Other various search fields and filters
+        document.add(new Field("sorttitle", hearing.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Add in any serializations of the bill that we might need
         for(ISenateSerializer lst:serializers) {
@@ -57,7 +58,7 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", vote.getId().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", vote.getOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // Basic document filters
         document.add(new Field("otype", "vote", Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -76,6 +77,7 @@ public class DocumentBuilder
             searchTerms.add("Floor Vote");
         }
         document.add(new Field("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new Field("sorttitle", vote.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Other various search fields and filters
         String title = vote.getBill().getBillId()+" - "+DateFormat.getDateInstance(DateFormat.MEDIUM).format(vote.getVoteDate());
@@ -113,7 +115,7 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", transcript.getId().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", transcript.getOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // Basic document filters
         document.add(new Field("otype", "transcript", Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -138,6 +140,7 @@ public class DocumentBuilder
         document.add(new Field("session-type", transcript.getType(), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("location", transcript.getLocation(), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("when", String.valueOf(transcript.getTimeStamp().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("sorttitle", transcript.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Add in any serializations of the bill that we might need
         for(ISenateSerializer lst:serializers) {
@@ -190,6 +193,7 @@ public class DocumentBuilder
         document.add(new Field("addendums", StringUtils.join(addendumIds, ", "), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("when", String.valueOf(meeting.getMeetingDateTime().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("sortindex", meeting.getMeetingDateTime().getTime()+meeting.getCommitteeName(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new Field("sorttitle", document.getFieldable("title").stringValue().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Add in any serializations of the bill that we might need
         for(ISenateSerializer lst:serializers) {
@@ -256,6 +260,7 @@ public class DocumentBuilder
         document.add(new Field("summary", summaryBuffer.toString().trim(), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("title", calendar.getTitle(), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("when",String.valueOf(calendar.getDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("sorttitle", document.getFieldable("title").stringValue().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Add in any serializations of the bill that we might need
         for(ISenateSerializer lst:serializers) {
@@ -276,7 +281,7 @@ public class DocumentBuilder
         document.add(new Field("otype", "action", Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("year", String.valueOf(action.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("active", String.valueOf(action.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("mod)ified", String.valueOf(action.getModified()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", String.valueOf(action.getModified()), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
@@ -289,6 +294,7 @@ public class DocumentBuilder
         document.add(new Field("billno",action.getBillId().toLowerCase(), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("title", action.getText(), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("summary", DateFormat.getDateInstance(DateFormat.MEDIUM).format(action.getDate()), Field.Store.YES, Field.Index.ANALYZED));
+        document.add(new Field("sorttitle", action.getBillId()+" "+action.getText().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Add in any serializations of the bill that we might need
         for(ISenateSerializer lst:serializers) {
@@ -352,6 +358,7 @@ public class DocumentBuilder
         document.add(new Field("unibill", String.valueOf(bill.isUniBill()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("stricken", String.valueOf(bill.isStricken()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("actclause", bill.getActClause(), Field.Store.YES, Field.Index.ANALYZED));
+        document.add(new Field("sorttitle", bill.getTitle().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // The current status of the document, usually a filter on actions will be more useful
         String billStatus = "";

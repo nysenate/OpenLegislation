@@ -156,7 +156,7 @@ $(document).ready(function() {
 		                <select name="sort">
 		                    <option value="">Best Match</option>
 		                    <option value="when">Most Recently Modified</option>
-		                    <option value="title">Title [A-Z]</option>
+		                    <option value="sorttitle">Title [A-Z]</option>
 		                    <option value="sponsor">Sponsor [A-Z]</option>
 		                    <option value="oid">Bill Number</option>
 		                </select>
