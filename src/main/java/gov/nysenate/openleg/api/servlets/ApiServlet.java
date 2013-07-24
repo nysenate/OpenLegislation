@@ -15,6 +15,7 @@ import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -285,18 +286,7 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
         }
 
         public String join(T[] array, String on) {
-            StringBuffer buf = new StringBuffer();
-            int length = array.length;
-
-            if(length == 0) return buf.toString();
-
-            buf.append(value(array[0]));
-
-            for(int i = 1; i < array.length; i++) {
-                buf.append(on);
-                buf.append(value(array[i]));
-            }
-            return buf.toString();
+            return join(Arrays.asList(array), on);
         }
     }
 }
