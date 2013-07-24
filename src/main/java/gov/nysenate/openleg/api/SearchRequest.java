@@ -126,10 +126,15 @@ public class SearchRequest extends AbstractApiRequest {
                 queryBuilder.and().keyValue("location", location, "(", ")");
             }
 
-            // If we aren't requesting a specific document or time period, only show active documents
+            // If we aren't requesting a specific document or time period, only show current documents
             term = queryBuilder.query();
             if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
                 term = queryBuilder.and().current().query();
+            }
+
+            // Only show inactive documents when they search by oid
+            if (!term.contains("oid:")) {
+                term = queryBuilder.and().active().query();
             }
         }
         catch (QueryBuilderException e) {
