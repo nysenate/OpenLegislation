@@ -86,6 +86,11 @@ public class SpotCheck extends BaseScript {
             String billNo = id+"-2013";
             Bill bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
 
+            if (bill == null) {
+                logger.error("Missing bill "+"2013/bill/"+billNo);
+                continue;
+            }
+
             // Compare the titles, ignore white space differences
             String jsonTitle = unescapeHTML(bill.getTitle());
             String lbdcTitle = bills.get(id).getTitle();
@@ -165,7 +170,7 @@ public class SpotCheck extends BaseScript {
             }
 
             if (!lbdcEvents.isEmpty() &&  (lbdcEvents.size() != jsonEvents.size() || (!lbdcEvents.isEmpty() && !lbdcEvents.containsAll(jsonEvents))) ) {
-                if (!id.startsWith("D")) {
+                if (!id.startsWith("D") && !StringUtils.join(jsonEvents, " ").toLowerCase().contains(" substituted ")) {
                     logger.error("Events: "+billNo);
                     logger.error("  LBDC: "+lbdcEvents);
                     logger.error("  JSON: "+jsonEvents);
