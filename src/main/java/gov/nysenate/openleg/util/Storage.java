@@ -163,7 +163,15 @@ public class Storage {
             FileUtils.forceMkdir(file.getParentFile());
             Object value = memory.get(key);
             if (value instanceof Bill) {
-                writeBill((Bill)value);
+                Bill bill = (Bill)value;
+                writeBill(bill);
+                // Bills that shouldn't be published yet, soft delete them
+                // TODO: This needs to be re-factored
+                if (!bill.isPublished()) {
+                    FileUtils.moveFileToDirectory(storageFile(key), new File(storageDir, "unpublished"), true);
+                    memory.remove(key);
+                    dirty.remove(key);
+                }
             } else {
                 JsonGenerator generator = this.jsonFactory.createJsonGenerator(file, JsonEncoding.UTF8);
                 generator.setPrettyPrinter(this.prettyPrinter);
@@ -179,7 +187,7 @@ public class Storage {
 
     public void flush() {
         logger.info("Flushing "+dirty.size()+" objects.");
-        for(String key : dirty) {
+        for(String key : dirty.toArray(new String[]{})) {
             flushKey(key);
         }
         dirty.clear();
@@ -353,6 +361,7 @@ public class Storage {
         bill.setCurrentCommittee(node.get("currentCommittee").asText());
         bill.setFulltext(node.get("fulltext").asText());
         bill.setLaw(node.get("law").asText());
+        bill.setPublished(node.get("published").asBoolean());
         bill.setLawSection(node.get("lawSection").asText());
         bill.setMemo(node.get("memo").asText());
         bill.setModified(node.get("modified").asLong());
@@ -448,6 +457,7 @@ public class Storage {
         }
         node.put("actions", actions);
 
+        node.put("published", bill.isPublished());
         node.put("sponsor", personToObjectNode(bill.getSponsor()));
         node.put("stricken", bill.isStricken());
         node.put("pastCommittees", listToArrayNode(bill.getPastCommittees()));

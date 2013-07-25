@@ -259,7 +259,7 @@ public class BillProcessor
             return bill;
         }
         else {
-            // Check to see if we've previously deleted this bill
+            // Check to see if the bill is currently unpublished
             bill = (Bill)storage.restore(billKey, Bill.class);
 
             if (block.getAmendment().isEmpty()) {
@@ -279,7 +279,7 @@ public class BillProcessor
             }
 
             // All amendments are based on the original bill
-            // We need to do this for resurrected bills too because there
+            // We need to do this for republished amendments too because there
             // may have been updates to other versions since the bill was deleted.
             String baseKey = block.getPrintNo()+"-"+block.getYear();
             Bill baseBill = storage.getBill(baseKey);
@@ -292,51 +292,26 @@ public class BillProcessor
                 ChangeLogger.record(baseBill.getKey(), storage);
             }
 
-            // Pull sponsor information up from the base bill
+            // Pull shared information up from the base bill
             bill.setSponsor(baseBill.getSponsor());
             bill.setCoSponsors(baseBill.getCoSponsors());
             bill.setOtherSponsors(baseBill.getOtherSponsors());
             bill.setMultiSponsors(baseBill.getMultiSponsors());
+            bill.setSummary(baseBill.getSummary());
+            bill.setLaw(baseBill.getLaw());
 
-            // Pull up the list of existing versions and add yourself
+            // Set up our amendment lists
             bill.addAmendment(baseKey);
             bill.addAmendments(baseBill.getAmendments());
-
-            // Broadcast yourself to all other versions and deactivate them
-            Bill activeBill = null;
             for (String versionKey : bill.getAmendments()) {
+                // If the currently active document is more up to date, pull some info
                 Bill billVersion = storage.getBill(versionKey);
-                if (billVersion == null) {
-                    throw new ParseError("Recorded bill version not found in storage: "+versionKey);
+                if (billVersion.isActive() && billVersion.getModified() > bill.getModified()) {
+                    // Pull some other information up from previously active bill
+                    bill.setTitle(billVersion.getTitle());
+                    bill.setActClause(billVersion.getActClause());
+                    bill.setLawSection(billVersion.getLawSection());
                 }
-                else {
-                    billVersion.addAmendment(billKey);
-                    if(billVersion.isActive()) {
-                        activeBill = billVersion;
-                        billVersion.setActive(false);
-                    }
-                    storage.saveBill(billVersion);
-                    ChangeLogger.record(billVersion.getKey(), storage);
-                }
-            }
-
-            if (activeBill == null) {
-                logger.error("Unable to find active bill for "+bill.getBillId()+" in versions: "+bill.getAmendments()+". BIG PROBLEM!");
-                activeBill = baseBill;
-            }
-
-            if (activeBill.getModified() > bill.getModified()) {
-                // Pull some other information up from previously active bill
-                bill.setSummary(activeBill.getSummary());
-                bill.setTitle(activeBill.getTitle());
-                bill.setActClause(activeBill.getActClause());
-                bill.setLawSection(activeBill.getLawSection());
-                bill.setLaw(activeBill.getLaw());
-
-                // Activate yourself
-                bill.setActive(true);
-                storage.saveBill(bill);
-                ChangeLogger.record(bill.getKey(), storage);
             }
 
             return bill;
@@ -423,45 +398,52 @@ public class BillProcessor
             // For bill S5683 - MARTINS, VALESKY
             bill.setOtherSponsors(Arrays.asList(new Person("VALESKY")));
         }
-
         // Sponsor and summary information needs to be synced at all times.
         // Uni bills share text, always sent to the senate bill.
         // Normally it is always sent to the base bill and broadcasted to amendments
         // In our 2009 data set we are missing tons of base amendments and it actually
         // needs to be broadcasted backwards to the original bill.
-        for (String versionKey : bill.getAmendments()) {
-            Bill billVersion = storage.getBill(versionKey);
-            billVersion.setSponsor(bill.getSponsor());
-            billVersion.setCoSponsors(bill.getCoSponsors());
-            billVersion.setOtherSponsors(bill.getOtherSponsors());
-            billVersion.setMultiSponsors(bill.getMultiSponsors());
-            billVersion.setLawSection(bill.getLawSection());
-            billVersion.setSummary(bill.getSummary());
-            storage.saveBill(billVersion);
-            ChangeLogger.record(billVersion.getKey(), storage);
-        }
+        // Make sure we are in the amendment list and that if we are active, that no one else is
+        if (bill.isPublished()) {
+            for (String versionKey : bill.getAmendments()) {
+                Bill billVersion = storage.getBill(versionKey);
+                if (!billVersion.getAmendments().contains(bill.getBillId())) {
+                    billVersion.addAmendment(bill.getBillId());
+                }
+                if (bill.isActive()) {
+                    billVersion.setActive(false);
+                }
+                billVersion.setSponsor(bill.getSponsor());
+                billVersion.setCoSponsors(bill.getCoSponsors());
+                billVersion.setOtherSponsors(bill.getOtherSponsors());
+                billVersion.setMultiSponsors(bill.getMultiSponsors());
+                billVersion.setLawSection(bill.getLawSection());
+                billVersion.setSummary(bill.getSummary());
+                storage.saveBill(billVersion);
+                ChangeLogger.record(billVersion.getKey(), storage);
+            }
+            if (bill.isUniBill()) {
+                Bill uniBill = storage.getBill(bill.getSameAs());
+                if (uniBill != null) {
+                    String billText = bill.getFulltext();
+                    String uniBillText = uniBill.getFulltext();
 
-        if (bill.isUniBill()) {
-            Bill uniBill = storage.getBill(bill.getSameAs());
-            if (uniBill != null) {
-                String billText = bill.getFulltext();
-                String uniBillText = uniBill.getFulltext();
-
-                if (billText.isEmpty()) {
-                    if (!uniBillText.isEmpty()) {
-                        // if we are empty then we must need their text
-                        bill.setFulltext(uniBillText);
+                    if (billText.isEmpty()) {
+                        if (!uniBillText.isEmpty()) {
+                            // if we are empty then we must need their text
+                            bill.setFulltext(uniBillText);
+                        }
                     }
+                    else if (!billText.equals(uniBillText)) {
+                        // If we differ, then we must have just changed, share the text
+                        uniBill.setFulltext(bill.getFulltext());
+                    }
+                    storage.saveBill(uniBill);
                 }
-                else if (!billText.equals(uniBillText)) {
-                    // If we differ, then we must have just changed, share the text
-                    uniBill.setFulltext(bill.getFulltext());
-                }
-
-                storage.saveBill(uniBill);
             }
         }
         storage.saveBill(bill);
+
         ChangeLogger.record(bill.getKey(), storage);
     }
 
@@ -484,6 +466,7 @@ public class BillProcessor
             throw new ParseError("New bill with DELETE command only. Skipping "+block.getHeader()+block.getData().toString());
         }
         else {
+            bill.setPublished(false);
             List<String> amendments = bill.getAmendments();
             if (amendments.size() > 0) {
                 // Set the previous amendment to be the active one
@@ -735,6 +718,12 @@ public class BillProcessor
      */
     public void applyBillInfo(String data, Bill bill, Date date) throws ParseError
     {
+        // When we get a status line for an unpublished bill, set it to active and (re)publish
+        if (bill.isPublished() == false) {
+            bill.setPublished(true);
+            bill.setActive(true);
+        }
+
         Matcher billData = billInfoPattern.matcher(data);
         if (billData.find()) {
             //TODO: Find a possible use for this information

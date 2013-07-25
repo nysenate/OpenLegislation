@@ -22,6 +22,8 @@ public class Bill extends BaseObject implements Comparable<Bill>
 
     protected int year;
 
+    protected boolean published = false;
+
     @XStreamAlias("senateId")
     protected String billId = "";
 
@@ -82,6 +84,17 @@ public class Bill extends BaseObject implements Comparable<Bill>
     public Bill(String senateBillNo, int year) {
         this.billId = senateBillNo;
         this.year = year;
+    }
+
+    @JsonIgnore
+    public boolean isPublished() {
+        return this.published;
+    }
+
+    @JsonIgnore
+    public void setPublished(boolean published)
+    {
+        this.published = published;
     }
 
     @JsonIgnore
