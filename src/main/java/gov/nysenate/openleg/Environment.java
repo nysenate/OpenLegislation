@@ -1,10 +1,10 @@
 package gov.nysenate.openleg;
 
+import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.processors.AgendaProcessor;
 import gov.nysenate.openleg.processors.BillProcessor;
 import gov.nysenate.openleg.processors.CalendarProcessor;
 import gov.nysenate.openleg.processors.TranscriptProcessor;
-import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.util.Timer;

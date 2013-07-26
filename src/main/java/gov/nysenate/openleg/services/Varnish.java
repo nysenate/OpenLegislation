@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.services;
 
 import gov.nysenate.openleg.model.Calendar;
+import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.model.Meeting;
-import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.IOException;

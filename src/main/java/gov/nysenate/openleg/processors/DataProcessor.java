@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processors;
 
+import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.services.ServiceBase;
-import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.BufferedReader;

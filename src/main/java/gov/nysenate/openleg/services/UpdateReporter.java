@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.services;
 
-import gov.nysenate.openleg.model.Update;
+import gov.nysenate.openleg.model.Change;
+import gov.nysenate.openleg.model.admin.Update;
 import gov.nysenate.openleg.util.Application;
-import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.Storage;
 
 import java.sql.SQLException;

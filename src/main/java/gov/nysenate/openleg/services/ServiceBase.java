@@ -4,9 +4,9 @@ import gov.nysenate.openleg.model.Agenda;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
+import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Transcript;
-import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.IOException;

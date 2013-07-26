@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.api.servlets.admin;
 
-import gov.nysenate.openleg.model.Update;
+import gov.nysenate.openleg.model.admin.Update;
 import gov.nysenate.openleg.util.Application;
 
 import java.io.IOException;

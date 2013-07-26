@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.util;
 
+import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.util.Storage.Status;
 
 import java.io.File;

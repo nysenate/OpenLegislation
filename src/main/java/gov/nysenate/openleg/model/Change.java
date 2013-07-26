@@ -1,4 +1,7 @@
-package gov.nysenate.openleg.util;
+package gov.nysenate.openleg.model;
+
+import gov.nysenate.openleg.util.Storage;
+import gov.nysenate.openleg.util.Storage.Status;
 
 import java.util.Date;
 
