@@ -2,8 +2,8 @@
 <jsp:include page="/header.jsp">
     <jsp:param name="title" value=" OpenLegislation Advanced Search"/>
 </jsp:include>
-<script src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-multiselect-widget-2489720d3b/src/jquery.multiselect.filter.js")%>"></script>
-<script src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-multiselect-widget-2489720d3b/src/jquery.multiselect.js")%>"></script>
+<script src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-multiselect-widget-2489720d3b/src/jquery.multiselect.filter.min.js")%>"></script>
+<script src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-multiselect-widget-2489720d3b/src/jquery.multiselect.min.js")%>"></script>
 <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-multiselect-widget-2489720d3b/jquery.multiselect.filter.css")%>"/>
 <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-multiselect-widget-2489720d3b/jquery.multiselect.css")%>"/>
 
@@ -71,9 +71,9 @@
 
 <script>
 $(document).ready(function() {
-	$("#sponsors").multiselect().multiselectfilter();
-	$("#committees").multiselect().multiselectfilter();
-	$("#cosponsors").multiselect().multiselectfilter();
+	$("#sponsors").multiselect();//.multiselectfilter();
+	$("#committees").multiselect();//.multiselectfilter();
+	$("#cosponsors").multiselect();//.multiselectfilter();
 	
 	$( "#startdate" ).datepicker({
 		showOtherMonths: true,
