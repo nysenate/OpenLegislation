@@ -301,7 +301,9 @@ public class BillProcessor
             bill.setLaw(baseBill.getLaw());
 
             // Set up our amendment lists
-            bill.addAmendment(baseKey);
+            if (baseBill.isPublished()) {
+                bill.addAmendment(baseKey);
+            }
             bill.addAmendments(baseBill.getAmendments());
             for (String versionKey : bill.getAmendments()) {
                 // If the currently active document is more up to date, pull some info
