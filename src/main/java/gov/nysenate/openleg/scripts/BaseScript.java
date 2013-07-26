@@ -6,6 +6,7 @@ import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.MissingOptionException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -44,31 +45,34 @@ abstract public class BaseScript
     public void run(String[] args) throws Exception
     {
 
+        Options options = getOptions();
+        options.addOption("h", "help", false, "Print this message");
+        Option environment = new Option("e", "environment", true, "Path to a configuration file for this environment");
+        environment.setRequired(true);
+        options.addOption(environment);
+
         try {
-            Options options = getOptions();
-            options.addOption("e","environment",true,"Path to a configuration file for this environment");
-            options.addOption("h", "help", false, "Print this message");
             CommandLine opts = new PosixParser().parse(options, args);
             if(opts.hasOption("-h")) {
                 printUsage(options);
                 System.exit(0);
             } else {
-                if (opts.hasOption("environment")) {
-                    File propertiesFile = new File(opts.getOptionValue("environment"));
-                    if (!propertiesFile.canRead()) {
-                        logger.fatal("Cannot read: "+propertiesFile);
-                        System.exit(1);
-                    }
-                    else {
-                        Application.bootstrap(propertiesFile.getAbsolutePath());
-                    }
+                File propertiesFile = new File(opts.getOptionValue("environment"));
+                if (!propertiesFile.canRead()) {
+                    logger.fatal("Cannot read: "+propertiesFile);
+                    System.exit(1);
                 }
                 else {
-                    Application.bootstrap("app.properties");
+                    Application.bootstrap(propertiesFile.getAbsolutePath());
                 }
 
                 execute(opts);
             }
+        }
+        catch (MissingOptionException e) {
+            logger.fatal(e.getMessage());
+            printUsage(options);
+            System.exit(1);
         }
         catch (ParseException e) {
             logger.fatal("Error parsing arguments: ", e);
