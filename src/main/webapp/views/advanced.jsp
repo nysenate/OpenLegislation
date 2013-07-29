@@ -71,9 +71,9 @@
 
 <script>
 $(document).ready(function() {
-	$("#sponsors").multiselect();//.multiselectfilter();
-	$("#committees").multiselect();//.multiselectfilter();
-	$("#cosponsors").multiselect();//.multiselectfilter();
+	$("#sponsors").multiselect().multiselectfilter();
+	$("#committees").multiselect().multiselectfilter();
+	$("#cosponsors").multiselect().multiselectfilter();
 	
 	$( "#startdate" ).datepicker({
 		showOtherMonths: true,

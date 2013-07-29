@@ -24,15 +24,15 @@
 		
 		<link rel="shortcut icon" href="<%=JSPHelper.getLink(request, "/static/img/nys_favicon_0.ico")%>" type="image/x-icon" />
 
-		<link rel="stylesheet" type="text/css" media="screen" href="<%=JSPHelper.getLink(request, "/static/css/style.css")%>"/>
+        <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-1.10.3/themes/base/minified/jquery-ui.min.css")%>" />
+        <link rel="stylesheet" type="text/css" media="screen" href="<%=JSPHelper.getLink(request, "/static/css/style.css")%>"/>
         <link rel="stylesheet" type="text/css" media="print" href="<%=JSPHelper.getLink(request, "/static/css/style-print.css")%>"/>
-        <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/static/css/jquery-ui-1.10.3.min.css")%>" />
         
 		<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<%=JSPHelper.getLink(request, "/feed")%>" />
 		
-		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/jquery-1.9.1.min.js")%>"></script>
+		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-1.10.2/jquery.min.js")%>"></script>
+		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-1.10.3/ui/minified/jquery-ui.min.js")%>"></script>
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/search.js")%>"></script>
-		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/jquery-ui-1.10.3.min.js")%>"></script>
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/app.js")%>"></script>
 
         <%

@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="<%=JSPHelper.getLink(request, "/static/img/nys_favicon_0.ico")%>" type="image/x-icon" />
     <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<%=JSPHelper.getLink(request, "/feed")%>" />
 
-    <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/jquery-1.9.1.min.js")%>"></script>
+    <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-1.10.2/jquery.min.js")%>"></script>
     <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-1.10.3/ui/minified/jquery-ui.min.js")%>"></script>
     <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/DataTables-1.9.4/js/jquery.dataTables.min.js")%>"></script>
     <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/app.js")%>"></script>
