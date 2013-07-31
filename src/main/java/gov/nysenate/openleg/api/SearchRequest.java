@@ -133,8 +133,8 @@ public class SearchRequest extends AbstractApiRequest {
                 term = queryBuilder.and().current().query();
             }
 
-            // Only show inactive documents when they search by oid
-            if (!term.contains("oid:")) {
+            // Only show inactive documents when they search by oid, but don't repeat yourself
+            if (!term.contains("oid:") && !term.contains("active:")) {
                 term = queryBuilder.and().active().query();
             }
         }
