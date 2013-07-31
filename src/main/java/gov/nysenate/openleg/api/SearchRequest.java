@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.util.Application;
+import gov.nysenate.openleg.util.JSPHelper;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
 
@@ -13,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -174,8 +176,9 @@ public class SearchRequest extends AbstractApiRequest {
         // Override user options for rss and atom
         // TODO: Don't do anything for a CSV, what? Why not?
         if(format.matches("(rss|atom)")) {
-            pageSize = 1000;
+            pageSize = 50;
             sortField = "modified";
+            sortOrder = true;
         }
         else if(format.equalsIgnoreCase("csv")) {
             return;
@@ -212,6 +215,9 @@ public class SearchRequest extends AbstractApiRequest {
         request.setAttribute(OpenLegConstants.PAGE_IDX,String.valueOf(pageNumber));
         request.setAttribute(OpenLegConstants.PAGE_SIZE,String.valueOf(pageSize));
         request.setAttribute("results", sr);
+        HashMap<String, String> feeds = new HashMap<String, String>();
+        feeds.put(term, JSPHelper.getFullLink(request, "/search/?format=rss&amp;term="+term));
+        request.setAttribute("feeds", feeds);
     }
 
     @Override
