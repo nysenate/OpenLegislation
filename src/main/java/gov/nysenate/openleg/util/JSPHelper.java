@@ -23,6 +23,24 @@ public class JSPHelper
         }
     }
 
+    /**
+     * Joins the link path with the full URL of the servlet context path
+     * @param request
+     * @param link
+     * @return
+     */
+    public static String getFullLink(HttpServletRequest request, String link) {
+        int port = request.getServerPort();
+        return request.getScheme()+"://"+request.getServerName()+(port != 80 ? ":"+port : "")+request.getContextPath()+link;
+    }
+
+    /**
+     * Joins the link path with the context path of the request for an absolute link
+     *
+     * @param request
+     * @param link
+     * @return
+     */
     public static String getLink(HttpServletRequest request, String link)
     {
         return request.getContextPath()+link;
@@ -30,7 +48,7 @@ public class JSPHelper
 
     public static String getLink(HttpServletRequest request, Bill bill)
     {
-        return request.getContextPath()+"/bill/"+bill.getBillId();
+        return JSPHelper.getLink(request, "/bill/"+bill.getBillId());
     }
 
     public static String getPersonLink(Person person, HttpServletRequest request)

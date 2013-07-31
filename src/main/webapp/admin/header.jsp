@@ -8,7 +8,6 @@
     <meta name="apple-mobile-web-app-capable" content="YES"/>
 
     <link rel="shortcut icon" href="<%=JSPHelper.getLink(request, "/static/img/nys_favicon_0.ico")%>" type="image/x-icon" />
-    <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<%=JSPHelper.getLink(request, "/feed")%>" />
 
     <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-1.10.2/jquery.min.js")%>"></script>
     <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-1.10.3/ui/minified/jquery-ui.min.js")%>"></script>

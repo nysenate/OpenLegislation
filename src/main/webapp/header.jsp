@@ -28,7 +28,14 @@
         <link rel="stylesheet" type="text/css" media="screen" href="<%=JSPHelper.getLink(request, "/static/css/style.css")%>"/>
         <link rel="stylesheet" type="text/css" media="print" href="<%=JSPHelper.getLink(request, "/static/css/style-print.css")%>"/>
         
-		<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<%=JSPHelper.getLink(request, "/feed")%>" />
+        <%
+        @SuppressWarnings("unchecked")
+        HashMap<String, String> feeds = (HashMap<String, String>)request.getAttribute("feeds");
+        if (feeds != null) {
+            for (Entry<String, String> feed : feeds.entrySet()) { %>
+            <link rel="alternate" type="application/atom+xml" title="<%=feed.getKey()%>" href="<%=feed.getValue()%>" />
+            <% }
+        } %>
 		
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-1.10.2/jquery.min.js")%>"></script>
 		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-1.10.3/ui/minified/jquery-ui.min.js")%>"></script>
