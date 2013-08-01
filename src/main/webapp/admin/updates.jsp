@@ -17,6 +17,13 @@ jQuery(function($) {
 </script>
 <style>
 
+#alert {
+    background-color: #FFFFCC;
+    padding: 10px;
+    font-weight:bold;
+    text-align:center;
+}
+
 #controls {
     padding: 10px;
     float: right;
@@ -74,7 +81,7 @@ jQuery(function($) {
 
 </style>
 <div id="section-header">
-    <form action="GET" id="controls">
+    <form action="" id="controls">
         Date Range: <input id="start" name="start" type="text" value="<c:out value="${param['start']}" default=""/>" />
         TO <input id="end" name="end" type="text" value="<c:out value="${param['end']}" default=""/>" />
         <label>Doc ID: <input id="oid" name="oid" type="text" value="<c:out value="${param['oid']}" default=""/>" /></label>
@@ -93,16 +100,11 @@ jQuery(function($) {
     <div style="clear:both"></div>
 </div>
 <div class="container">
-    <div id="exception">
+    <div id="alert">
         <%
-        Exception exception = (Exception)request.getAttribute("exception");
-        if (exception != null) {
-            StringWriter stackTrace = new StringWriter();
-            exception.printStackTrace(new PrintWriter(stackTrace));
-            %>
-            <h2><%=exception.getMessage()%></h2>
-            <pre><%=stackTrace.toString()%></pre>
-            <%
+        String warning = (String)request.getAttribute("warning");
+        if (warning != null) {
+            %><%=warning%><%
         }
         %>
     </div>

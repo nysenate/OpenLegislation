@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -33,6 +32,8 @@ import org.apache.log4j.Logger;
 @SuppressWarnings("serial")
 public class UpdatesServlet extends HttpServlet
 {
+    public static final int QUERY_LIMIT = 250;
+
     private static class ChangeHandler implements ResultSetHandler<ArrayList<Change>> {
 
         @Override
@@ -115,34 +116,22 @@ public class UpdatesServlet extends HttpServlet
                 // Alert user to malformed type field
             }
 
-            if (start.isEmpty() && end.isEmpty() && otype.isEmpty() && oid.isEmpty()) {
-                // If no parameters were supplied, add some defaults
-                Calendar now = Calendar.getInstance();
-                now.set(Calendar.HOUR_OF_DAY, 0);
-                now.set(Calendar.HOUR, 0);
-                now.set(Calendar.MINUTE, 0);
-                now.set(Calendar.SECOND, 0);
-                now.set(Calendar.MILLISECOND, 0);
-
-                endDate = DateUtils.addDays(now.getTime(), 1);
-                startDate = DateUtils.addDays(now.getTime(), -1);
-            }
-
             List<Change> changes = getHistory(startDate, endDate, otype, oid);
-            System.out.println(changes.size());
+            if (changes.size() == QUERY_LIMIT) {
+                request.setAttribute("warning", "Result set limited to "+QUERY_LIMIT+" results. Please narrow your query.");
+            }
             TreeMap<Date, TreeMap<Date, ArrayList<Change>>> structuredChanges = structureChanges(changes);
             request.setAttribute("changes", structuredChanges);
         }
         catch (ParseException e) {
             // Alert the user to malformed date field
             logger.error(e,e);
-            request.setAttribute("exception", e);
+            request.setAttribute("warning", "Unexpected Exception: "+e.getMessage());
         }
         catch (SQLException e) {
             // Alert the user to the streams
             logger.error(e,e);
-            logger.error("Caused by", e.getCause());
-            request.setAttribute("exception", e);
+            request.setAttribute("warning", "Unexpected Exception: "+e.getMessage());
         }
 
         request.getRequestDispatcher("/admin/updates.jsp").forward(request, response);
@@ -185,6 +174,7 @@ public class UpdatesServlet extends HttpServlet
             params.add(oid);
         }
 
+        query += " ORDER BY time desc LIMIT "+QUERY_LIMIT;
         logger.info(query);
         logger.info(params);
         return runner.query(query, handler, params.toArray());
