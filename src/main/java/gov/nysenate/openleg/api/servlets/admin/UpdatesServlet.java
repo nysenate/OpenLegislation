@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.api.servlets.admin;
 
-import gov.nysenate.openleg.model.admin.Update;
+import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.util.Application;
+import gov.nysenate.openleg.util.Storage;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,7 +15,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import javax.servlet.ServletException;
@@ -23,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 
@@ -33,21 +33,44 @@ import org.apache.log4j.Logger;
 @SuppressWarnings("serial")
 public class UpdatesServlet extends HttpServlet
 {
-    private final Logger logger = Logger.getLogger(UpdatesServlet.class);
+    private static class ChangeHandler implements ResultSetHandler<ArrayList<Change>> {
 
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-    private final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        @Override
+        public ArrayList<Change> handle(ResultSet results) throws SQLException
+        {
+            ArrayList<Change> changes = new ArrayList<Change>();
+            while(results.next()) {
+                    try {
+                        changes.add(new Change(
+                            results.getString("oid"),
+                            results.getString("otype"),
+                            Storage.Status.valueOf(results.getString("status")),
+                            mysqlDateFormat.parse(results.getString("time"))
+                        ));
+                    }
+                    catch (ParseException e) {
+                        logger.error("Invalid change.time format", e);
+                    }
+            }
+            return changes;
+        }
+    }
+
+    private static final Logger logger = Logger.getLogger(UpdatesServlet.class);
+
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+    private static final SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private final QueryRunner runner;
 
-    private final ResultSetHandler<List<Update>> handler;
+    private final ResultSetHandler<ArrayList<Change>> handler;
 
     private final List<String> otypes = Arrays.asList("bill","calendar","meeting","agenda");
 
     public UpdatesServlet()
     {
         super();
-        handler = new BeanListHandler<Update>(Update.class);
+        handler = new ChangeHandler();
         runner = new QueryRunner(Application.getDB().getDataSource());
     }
 
@@ -79,10 +102,12 @@ public class UpdatesServlet extends HttpServlet
         try {
             if (!start.isEmpty()) {
                 startDate = dateFormat.parse(start+" 00:00:00");
+                request.setAttribute("startDate", startDate);
             }
 
             if (!start.isEmpty()) {
                 endDate = dateFormat.parse(end+" 23:59:59");
+                request.setAttribute("endDate", endDate);
             }
 
             otype = otype.toLowerCase();
@@ -100,21 +125,23 @@ public class UpdatesServlet extends HttpServlet
                 now.set(Calendar.MILLISECOND, 0);
 
                 endDate = DateUtils.addDays(now.getTime(), 1);
-                startDate = DateUtils.addDays(now.getTime(), -3);
+                startDate = DateUtils.addDays(now.getTime(), -1);
             }
 
-            List<Update> updates = getHistory(startDate, endDate, otype, oid);
-            System.out.println(updates.size());
-            TreeMap<Date, ArrayList<Update>> updatesMap = groupByDate(updates);
-            orderDateTime(updatesMap);
-            request.setAttribute("updates", updatesMap);
+            List<Change> changes = getHistory(startDate, endDate, otype, oid);
+            System.out.println(changes.size());
+            TreeMap<Date, TreeMap<Date, ArrayList<Change>>> structuredChanges = structureChanges(changes);
+            request.setAttribute("changes", structuredChanges);
         }
         catch (ParseException e) {
             // Alert the user to malformed date field
+            logger.error(e,e);
             request.setAttribute("exception", e);
         }
         catch (SQLException e) {
             // Alert the user to the streams
+            logger.error(e,e);
+            logger.error("Caused by", e.getCause());
             request.setAttribute("exception", e);
         }
 
@@ -132,7 +159,7 @@ public class UpdatesServlet extends HttpServlet
      * @return List of matching Updates
      * @throws SQLException
      */
-    public List<Update> getHistory(Date start, Date end, String otype, String oid) throws SQLException
+    public List<Change> getHistory(Date start, Date end, String otype, String oid) throws SQLException
     {
 
         String query = "SELECT * FROM changelog WHERE 1=1";
@@ -163,38 +190,43 @@ public class UpdatesServlet extends HttpServlet
         return runner.query(query, handler, params.toArray());
     }
 
-    /**
-     * Sorts a list of updates into a TreeMap where updates are mapped to their day of occurrence.
-     * @param updates List of updates spanning multiple days.
-     * @return a mapping of updates by their day of occurrence.
-     */
-    private TreeMap<Date, ArrayList<Update>> groupByDate(List<Update> updates)
-    {
-        // Reverse the default ordering of TreeMap so that the most recent day appears at the top of the web page instead of the bottom.
-        TreeMap<Date, ArrayList<Update>> dateList = new TreeMap<Date, ArrayList<Update>>(Collections.reverseOrder());
+    private TreeMap<Date, TreeMap<Date, ArrayList<Change>>> structureChanges(List<Change> changes) {
+        Calendar cal = Calendar.getInstance();
+        TreeMap<Date, TreeMap<Date, ArrayList<Change>>> structuredChanges = new TreeMap<Date, TreeMap<Date, ArrayList<Change>>>(Collections.reverseOrder());
 
-        // Map each update to its associated date.
-        Date date = null;
-        for(Update update: updates){
-            date = update.getTime();
-            if (!dateList.containsKey(date)){
-                dateList.put(date, new ArrayList<Update>());
+        // Step through in chronological order
+        Collections.sort(changes);
+
+        Date currentDate = null;
+        Date currentTime = null;
+
+        ArrayList<Change> timeChanges = null;
+        TreeMap<Date, ArrayList<Change>> dayChanges = null;
+        for (Change change : changes) {
+            Date time = change.getTime();
+            cal.setTime(time);
+            cal.set(Calendar.HOUR, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            Date date = cal.getTime();
+
+            if (currentDate == null || !currentDate.equals(date)) {
+                // New Date!
+                dayChanges = new TreeMap<Date, ArrayList<Change>>(Collections.reverseOrder());
+                structuredChanges.put(date, dayChanges);
+                currentDate = date;
             }
-            dateList.get(date).add(update);
-        }
-        return dateList;
-    }
 
-    /**
-     * Orders daily updates by time of occurrence.
-     * Reverses the default order of the TreeMap values so that more recent updates appear at the top instead of the bottom.
-     * @param unOrdered
-     */
-    private void orderDateTime(TreeMap<Date, ArrayList<Update>> unOrdered)
-    {
-        for(Map.Entry<Date, ArrayList<Update>> entry: unOrdered.entrySet()){
-            Collections.sort(entry.getValue());
-            Collections.reverse(entry.getValue());
+            if (currentTime == null || !currentTime.equals(time)) {
+                // New Time!
+                timeChanges = new ArrayList<Change>();
+                dayChanges.put(time, timeChanges);
+                currentTime = time;
+            }
+
+            timeChanges.add(change);
         }
+
+        return structuredChanges;
     }
 }

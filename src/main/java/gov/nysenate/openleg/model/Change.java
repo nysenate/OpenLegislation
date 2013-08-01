@@ -1,25 +1,47 @@
 package gov.nysenate.openleg.model;
 
 import gov.nysenate.openleg.util.Storage;
-import gov.nysenate.openleg.util.Storage.Status;
 
 import java.util.Date;
 
 
-public class Change
+public class Change implements Comparable<Object>
 {
+    private String otype;
+    private String oid;
     private Storage.Status status;
-    private Date date;
+    private Date time;
 
-    public Change(Storage.Status status)
-    {
-        this.status = status;
+    public Change() {
+
     }
 
-    public Change(Storage.Status status, Date date)
+    public Change(String oid, String otype, Storage.Status status, Date time)
     {
-        this.status = status;
-        this.date = date;
+        this.setOid(oid);
+        this.setOtype(otype);
+        this.setTime(time);
+        this.setStatus(status);
+    }
+
+    public String getOtype()
+    {
+        return otype;
+    }
+
+    public void setOtype(String otype)
+    {
+        this.otype = otype;
+    }
+
+    public String getOid()
+    {
+        return oid;
+    }
+
+    public void setOid(String oid)
+    {
+        this.oid = oid;
     }
 
     public Storage.Status getStatus()
@@ -32,13 +54,19 @@ public class Change
         this.status = status;
     }
 
-    public Date getDate()
+    public Date getTime()
     {
-        return date;
+        return time;
     }
 
-    public void setDate(Date date)
+    public void setTime(Date time)
     {
-        this.date = date;
+        this.time = time;
+    }
+
+    @Override
+    public int compareTo(Object obj)
+    {
+        return this.getTime().compareTo(((Change) obj).getTime());
     }
 }

@@ -1,36 +1,98 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"
-    import="java.util.*"
-    import="java.io.*"
-    import="gov.nysenate.openleg.util.JSPHelper"
-    import="gov.nysenate.openleg.model.Update"
-    import="java.text.SimpleDateFormat"
-    %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.TreeMap, java.util.Map.Entry,java.util.TreeMap,java.io.StringWriter, java.io.PrintWriter, java.util.Date,java.text.SimpleDateFormat, java.util.ArrayList,gov.nysenate.openleg.model.Change, gov.nysenate.openleg.util.JSPHelper" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <title>Recent Legislation Updates</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/static/css/jquery-ui-1.10.3.min.css")%>" />
-    <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/jquery-1.9.1.min.js")%>"></script>
-    <script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/jquery-ui-1.10.3.min.js")%>"></script>
+<jsp:include page="/admin/header.jsp">
+    <jsp:param value="Change Log Reports - OpenLeg Admin" name="title"/>
+</jsp:include>
+<script>
+jQuery(function($) {
+    $( "#start" ).datepicker({
+        showOtherMonths: true,
+        selectOtherMonths: true
+    });
+    $( "#end" ).datepicker({
+        showOtherMonths: true,
+        selectOtherMonths: true
+    });
+});
+</script>
+<style>
 
-    <link rel="stylesheet" type="text/css" href="update.css">
-    <script type="text/javascript">
-        jQuery(function($) {
-            $( "#start" ).datepicker({
-                showOtherMonths: true,
-                selectOtherMonths: true
-            });
-            $( "#end" ).datepicker({
-                showOtherMonths: true,
-                selectOtherMonths: true
-            });
-        });
-    </script>
-</head>
-<body>
+#controls {
+    padding: 10px;
+    float: right;
+}
+
+    #start, #end {
+        width: 95px;
+    }
+    
+    #otype {
+        width: 100px;
+    }
+    
+    #oid {
+        width: 80px;
+    }
+    
+    #submit {
+        padding: 3px;
+    }
+
+#updateTable {
+    width:800px;
+    margin:0px auto;
+}
+
+.field {
+    float: left;
+}
+
+.day-block {
+    margin-bottom: 20px;
+}
+
+.day-header {
+    font-size: 2em;
+    font-weight: bold;
+    background-color: #D3D6FF;
+    padding:10px;
+}
+
+.time-block {
+    margin-left:15px;
+    background-color: #EAEBFF;
+}
+
+.change {
+    background-color: #FFFFFF;
+    padding:3px 3px 3px 5px;
+}
+
+.field {
+    width:30%;
+}
+
+</style>
+<div id="section-header">
+    <form action="GET" id="controls">
+        Date Range: <input id="start" name="start" type="text" value="<c:out value="${param['start']}" default=""/>" />
+        TO <input id="end" name="end" type="text" value="<c:out value="${param['end']}" default=""/>" />
+        <label>Doc ID: <input id="oid" name="oid" type="text" value="<c:out value="${param['oid']}" default=""/>" /></label>
+        <label>Doc Type:
+            <select id="otype" name="otype">
+                <option value="">All</option>
+                <option value="bill">Bill</option>
+                <option value="calendar">Calendar</option>
+                <option value="agenda">Agenda</option>
+                <option value="meeting">Meeting</option>
+            </select>
+        </label>
+        <input id="submit" type="submit" value="Search" />
+    </form>
+    <div id="section-title">Change Log Entries</div>
+    <div style="clear:both"></div>
+</div>
+<div class="container">
     <div id="exception">
         <%
         Exception exception = (Exception)request.getAttribute("exception");
@@ -44,78 +106,57 @@
         }
         %>
     </div>
-    <form action="updates" id="date">
-        <label>Start: <input id="start" name="start" type="text" value="<c:out value="${param['start']}" default=""/>" /></label>&nbsp;&nbsp;
-        <label>End: <input id="end" name="end" type="text" value="<c:out value="${param['end']}" default=""/>" /></label>
-        <label>Document Type:
-            <select name="otype" onchange="window.open(this.value,'','');">
-                <option value="">All</option>
-                <option value="bill">Bill</option>
-                <option value="calendar">Calendar</option>
-                <option value="agenda">Agenda</option>
-                <option value="meeting">Meeting</option>
-            </select>
-        </label>
-        <input type="submit">
-    </form>
     <div id="updateTable">
         <%
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, yyyy");
+        SimpleDateFormat linkFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
         @SuppressWarnings("unchecked")
-        TreeMap<Date, ArrayList<Update>> updates = (TreeMap<Date, ArrayList<Update>>)(request.getAttribute("updates"));
-        if(updates != null){
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, ''yyyy");
-            SimpleDateFormat linkFormat = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        TreeMap<Date, TreeMap<Date, ArrayList<Change>>> changes = (TreeMap<Date, TreeMap<Date, ArrayList<Change>>>)(request.getAttribute("changes"));
+        if(changes != null) {
             int i = 0;
-            for(Map.Entry<Date, ArrayList<Update>> map : updates.entrySet()) {
-                ArrayList<Update> dayUpdates = map.getValue();
-                String date = linkFormat.format(map.getKey());
+            for(Entry<Date, TreeMap<Date, ArrayList<Change>>> dayChangeEntry : changes.entrySet()) {
+                TreeMap<Date, ArrayList<Change>> dayChanges = dayChangeEntry.getValue();
+                String date = linkFormat.format(dayChangeEntry.getKey());
                 %>
-                <table class="update">
-                    <tr class="table" id="date">
-                        <td class="table" id="date" colspan="4">
-                            <a href="<%="/legislation/updates?startDay=" + date + "&endDay=" + date%>"><%=dateFormat.format(map.getKey())%></a>
-                        </td>
-                    </tr>
-                </table>
-                <table class="update">
+                <div class="day-block">
+                    <div class="day-header">
+                        <%=date%><!-- <a href="<%="/legislation/updates?startDay=" + date + "&endDay=" + date%>">(this date only)</a>  -->
+                    </div>
+                    <div>
                     <%
-                    Date oldTime = new Date();
-                    for(Update update: dayUpdates) {
-                        Date time = update.getTime();
-                        if (!time.equals(oldTime)) {
-                            oldTime = time;
-                            i++;
-                            %>
-                            </table>
-                            <table class="update">
-                                <tr>
-                                    <td class="table" colspan="4" id="expand">
-                                        <input id="lnk<%=i%>" type="button" value="[+] Expand" onclick="toggle_visibility('tbl<%=i%>','lnk<%=i%>');">&nbsp;<%=timeFormat.format(time)%>&nbsp;Sobi Changes.
-                                    </td>
-                                </tr>
-                            </table>
-                            <table class="update" id="tbl<%=i%>">
-                        <%}%>
-                        <tr class="hide">
-                            <td class="table" id="time"><a href="#<%=update.getOid()%>"><%=timeFormat.format(time)%></a></td>
-                            <td class="table" id="otype"><%=update.getOtype()%></td>
-                            <%if(update.getOtype().equals("bill")) {
-                                String  url = "http://open.nysenate.gov/legislation/bill/" + update.getOid();
-                                %>
-                                <td class="table" id="oid">
-                                    <a name=<%=update.getOid()%>></a>
-                                    <a href=<%=url%>><%=update.getOid()%></a>
-                                </td>
-                            <% } else {%>
-                                <td class="table" id="oid"><a name=<%=update.getOid()%>></a><%=update.getOid() %></td>
-                            <%} %>
-                            <td class="table" id="status"><a href="<%="/legislation/updates?bill="+update.getOid()%>"><%=update.getStatus()%></a></td>
-                        </tr>
+                    for (Entry<Date, ArrayList<Change>> timeChangeEntry : dayChanges.entrySet()) {
+                        ArrayList<Change> timeChanges = timeChangeEntry.getValue();
+                        String time = timeFormat.format(timeChangeEntry.getKey());
+                        %>
+                        <div class="time-block">
+                            <div><%=time%> SOBI Changes</div>
+                            <div>
+                            <% for (Change change : timeChanges) {
+                                 // TODO: Finish this bit of logic up!
+                                 String url = JSPHelper.getLink(request, "/" + change.getOtype() + "/" + change.getOid());
+                                 %>
+                                 <div class="change">
+                                    <div class="field otype"><%=change.getOtype().toUpperCase()%></div>
+                                    <div class="field oid">
+                                        <a id="<%=change.getOid()%>" href="<%=url%>"><%=change.getOid()%></a>
+                                    </div>
+                                    <div class="field status">
+                                        <a href="<%="/legislation/updates?bill="+change.getOid()%>"><%=change.getStatus()%></a>
+                                    </div>
+                                    <div style="clear:both;"></div>
+                                 </div>
+                            <% } %>
+                            </div>
+                        </div>
                     <% } %>
-                </table>
-            <%}%>
-        <%}%>
+                    </div>
+                </div>
+            <%
+            }
+        }
+        %>
     </div>
-</body>
-</html>
+</div>
+<jsp:include page="/admin/footer.jsp" />
