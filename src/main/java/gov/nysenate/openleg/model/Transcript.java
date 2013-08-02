@@ -100,12 +100,8 @@ public class Transcript extends BaseObject {
     @Override
     @JsonIgnore
     public int getYear() {
-        if(timeStamp != null) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(timeStamp);
-
-            return cal.get(Calendar.YEAR);
-        }
-        return 9999;
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(timeStamp);
+        return cal.get(Calendar.YEAR);
     }
 }

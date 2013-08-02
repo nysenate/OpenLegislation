@@ -108,15 +108,12 @@ public class Action extends BaseObject
         return false;
     }
 
-
-    @SuppressWarnings("deprecation")
     @Override
     @JsonIgnore
     public int getYear() {
-        if(date != null) {
-            return date.getYear();
-        }
-        return 9999;
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(java.util.Calendar.YEAR);
     }
 
     public static class ByEventDate implements Comparator<Action> {

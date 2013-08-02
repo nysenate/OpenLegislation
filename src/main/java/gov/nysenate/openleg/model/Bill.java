@@ -18,8 +18,6 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 @XStreamAlias("bill")
 public class Bill extends BaseObject implements Comparable<Bill>
 {
-    protected boolean active = true;
-
     protected int year;
 
     protected boolean published = false;
@@ -113,15 +111,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
             return "http://open.nysenate.gov/legislation/bill/" + disqusId;
         }
     }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
 
     @Override
     public int getYear()

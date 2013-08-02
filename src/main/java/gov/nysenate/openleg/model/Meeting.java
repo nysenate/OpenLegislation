@@ -60,6 +60,12 @@ public class Meeting extends BaseObject
         this.id = id;
     }
 
+    public int getYear() {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(this.getMeetingDateTime());
+        return cal.get(java.util.Calendar.YEAR);
+    }
+
     @JsonIgnore
     public String getOid()
     {

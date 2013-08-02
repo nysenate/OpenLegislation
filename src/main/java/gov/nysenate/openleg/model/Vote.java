@@ -71,19 +71,17 @@ public class Vote extends BaseObject {
         this.id = buildId(bill, date, sequenceNumber);
     }
 
-
-    public String buildId (Bill bill, Date voteDate, String sequenceNumber)
-    {
-        return bill.getBillId()+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
-    }
-
     public Vote (Bill bill, Date voteDate, int ayeCount, int nayCount)
     {
         this();
         this.id = buildId(bill, voteDate, "1");
         this.bill = bill;
         this.voteDate = voteDate;
+    }
 
+    public String buildId (Bill bill, Date voteDate, String sequenceNumber)
+    {
+        return bill.getBillId()+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
     }
 
     public int getVoteType() {
@@ -252,17 +250,12 @@ public class Vote extends BaseObject {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     @JsonIgnore
     @Override
     public int getYear() {
-        if(bill != null) {
-            return bill.getYear();
-        }
-        if(voteDate != null) {
-            return voteDate.getYear();
-        }
-        return 9999;
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(voteDate);
+        return cal.get(java.util.Calendar.YEAR);
     }
 
     @Override
