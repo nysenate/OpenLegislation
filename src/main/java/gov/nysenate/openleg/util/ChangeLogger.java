@@ -25,7 +25,7 @@ public class ChangeLogger
     private static final Logger logger = Logger.getLogger(ChangeLogger.class);
     private static HashMap<String, Change> changeLog = new HashMap<String, Change>();
 
-    public static Pattern keyPattern = Pattern.compile("([0-9]+)/([^/])/(.*)");
+    public static Pattern keyPattern = Pattern.compile("([0-9]+)/([^/]+)/(.*)");
 
     public static SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
