@@ -212,11 +212,11 @@ public class SearchRequest extends AbstractApiRequest {
         request.setAttribute("type", type);
         request.setAttribute("sortOrder", Boolean.toString(sortOrder));
         request.setAttribute("sortField", sortField);
-        request.setAttribute(OpenLegConstants.PAGE_IDX,String.valueOf(pageNumber));
-        request.setAttribute(OpenLegConstants.PAGE_SIZE,String.valueOf(pageSize));
+        request.setAttribute(OpenLegConstants.PAGE_IDX, pageNumber);
+        request.setAttribute(OpenLegConstants.PAGE_SIZE, pageSize);
         request.setAttribute("results", sr);
         HashMap<String, String> feeds = new HashMap<String, String>();
-        feeds.put(term, JSPHelper.getFullLink(request, "/search/?format=rss&amp;term="+term));
+        feeds.put(term, JSPHelper.getFullLink(request, "/search/?format=atom&amp;term="+term));
         request.setAttribute("feeds", feeds);
     }
 

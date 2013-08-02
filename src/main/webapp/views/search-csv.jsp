@@ -1,13 +1,17 @@
-<%@ page language="java" import="gov.nysenate.openleg.util.ResultIterator,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/plain" pageEncoding="utf-8" %><%!public String format(String str) {
-		if(str == null)
-			return ",";
-		
-		if(str.contains(",")) {
-			str = "\"" + str.replaceAll("\"","\"\"") + "\"";
-		}
-		
-		return "," + str;
-	}%><%String contentType = (String) request.getAttribute("contentType");
+<%@ page language="java" import="org.apache.commons.lang.StringUtils, gov.nysenate.openleg.util.ResultIterator,java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/plain" pageEncoding="utf-8" %>
+<%!
+public String format(String str) {
+	if(str == null)
+		return ",";
+
+	if(str.contains(",")) {
+		str = "\"" + str.replaceAll("\"","\"\"") + "\"";
+	}
+
+	return "," + str;
+}
+%><%
+String contentType = (String) request.getAttribute("contentType");
 response.setContentType(contentType == null ? "text/html" : contentType);
 
 String term = (String)request.getAttribute("term");
@@ -31,9 +35,7 @@ ArrayList<String> rows = new ArrayList<String>();
 for(Result r:rs) {
 	try {		
 		String tuple = "";
-		tuple += r.getOtype() 
-					+ format(r.getOid())
-					+ format(r.getTitle());
+		tuple += r.getOtype() + format(r.getOid()) + format(r.getTitle());
 		
 		r.getFields().remove("type");
 		
@@ -57,14 +59,8 @@ for(Result r:rs) {
 	}
 }
 
-String header = "";
-for(String column:columns) {
-	header += column + ",";
-}
-header = header.replaceAll(",$","");
-
-out.print(header + "\n");
-
+out.print(StringUtils.join(columns, ",") + "\n");
 for(String row:rows) {
 	out.println(row);
-}%>
+}
+%>

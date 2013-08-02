@@ -12,11 +12,16 @@
     String currentUrl =  baseUrl + "/" + pageIdx + "/" + pageSize;
     String feedUrl = currentUrl+"?format=atom";
 
+    String title = request.getParameter("title");
+    if (title == null) {
+        title = "Feed: "+term;
+    }
+
     // RFC4287
     Abdera abdera = new Abdera();
     Feed feed = abdera.newFeed();
     feed.setId(currentUrl);
-    feed.setTitle("Feed: "+term+" - NY Senate Open Legislation");
+    feed.setTitle(title+" - NY Senate Open Legislation");
     feed.addLink(feedUrl, "self");
     feed.addLink(currentUrl, "html");
 

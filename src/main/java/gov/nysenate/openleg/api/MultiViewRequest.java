@@ -11,14 +11,17 @@ import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.util.Application;
+import gov.nysenate.openleg.util.JSPHelper;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 
@@ -91,11 +94,15 @@ public class MultiViewRequest extends AbstractApiRequest {
             request.setAttribute("type", type);
             request.setAttribute("term", queryBuilder.query());
             request.setAttribute("format", format);
-            request.setAttribute(PAGE_IDX, pageNumber + "");
-            request.setAttribute(PAGE_SIZE, pageSize + "");
+            request.setAttribute(PAGE_IDX, pageNumber);
+            request.setAttribute(PAGE_SIZE, pageSize);
             request.setAttribute("urlPath", urlPath);
             request.setAttribute("results", sr);
         }
+
+        HashMap<String, String> feeds = new HashMap<String, String>();
+        feeds.put(type+" Feed", JSPHelper.getFullLink(request, "/search/?format=atom&amp;term="+queryBuilder.query()+"&amp;title="+StringUtils.capitalize(type+" Feed")));
+        request.setAttribute("feeds", feeds);
     }
 
     @Override

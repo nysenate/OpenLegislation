@@ -25,8 +25,8 @@ if (type == null) {
 	type = "";
 }
 
-int pageIdx = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_IDX));
-int pageSize = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_SIZE));
+int pageIdx = (Integer)request.getAttribute(OpenLegConstants.PAGE_IDX);
+int pageSize = (Integer)request.getAttribute(OpenLegConstants.PAGE_SIZE);
 
 int startIdx = (pageIdx - 1) * pageSize;
 int endIdx = startIdx + pageSize;
@@ -45,8 +45,7 @@ String mode = (String)request.getAttribute("type");
 SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy");
 	
 String prevUrl = null;
-if (pageIdx-1 > 0)
-{
+if (pageIdx-1 > 0) {
 	if(urlPath != null) {
 		prevUrl = urlPath + (pageIdx-1) + (pageSize != 20 ? "/" + pageSize:"") + (filter != null ? "?filter=" + filter:"");
 	}
@@ -59,15 +58,12 @@ if (pageIdx-1 > 0)
 	
 String nextUrl = null;
 
-if (total > endIdx)
-{
+if (total > endIdx) {
 	if(urlPath != null) {
 		nextUrl = urlPath + (pageIdx+1) + (pageSize != 20 ? "/" + pageSize:"") + (filter != null ? "?filter=" + filter:"");
 	}
 	else {
-		nextUrl = "/legislation/search/" + term + "/" + (pageIdx + 1) + "/" + pageSize
-			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
+		nextUrl = "/legislation/search/" + term + "/" + (pageIdx + 1) + "/" + pageSize + "?sort=" + sortField + "&sortOrder=" + sortOrder;
 	}
 }
 	
