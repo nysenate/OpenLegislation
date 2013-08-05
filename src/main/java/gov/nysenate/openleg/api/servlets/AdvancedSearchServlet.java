@@ -7,6 +7,8 @@ import gov.nysenate.services.model.Senator;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -37,6 +39,13 @@ public class AdvancedSearchServlet extends HttpServlet
                 this.committees.add(mapper.readValue(committeeFile, Committee.class));
             }
 
+            Collections.sort(this.committees, new Comparator<Committee>() {
+                public int compare(Committee a, Committee b)
+                {
+                    return a.getName().compareTo(b.getName());
+                }
+            });
+
             File senatorsBase = new File(SenatorsServlet.class.getClassLoader().getResource("data/senators/").getPath());
             File senatorsDir = new File(senatorsBase, String.valueOf(sessionYear));
             if (!senatorsDir.exists()) senatorsDir.mkdirs();
@@ -45,6 +54,13 @@ public class AdvancedSearchServlet extends HttpServlet
             for (File senatorFile : FileUtils.listFiles(senatorsDir, new String[]{"json"}, false)) {
                 this.senators.add(mapper.readValue(senatorFile, Senator.class));
             }
+
+            Collections.sort(this.senators, new Comparator<Senator>() {
+                public int compare(Senator a, Senator b)
+                {
+                    return a.getLastName().compareTo(b.getLastName());
+                }
+            });
         }
         catch (IOException e) {
             throw new ServletException(e);
