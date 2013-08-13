@@ -102,7 +102,7 @@ public class ApiHelper implements OpenLegConstants {
                     else
                         fields.put("sponsor", null);
 
-                    fields.put("otherSponsors", StringUtils.join(bill.getOtherSponsors(), ", "));
+                    fields.put("othersponsors", StringUtils.join(bill.getOtherSponsors(), ", "));
                     summary = bill.getSummary();
 
                     fields.put("committee", bill.getCurrentCommittee());
@@ -192,7 +192,7 @@ public class ApiHelper implements OpenLegConstants {
                     HashMap<String, String> resultFields = result.getFields();
                     fields.put("sponsor", resultFields.get("sponsor"));
                     fields.put("billno", resultFields.get("billno"));
-                    fields.put("otherSponsors", resultFields.get("otherSponsors"));
+                    fields.put("othersponsors", resultFields.get("othersponsors"));
 
                     if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
                         fields.put("committee", vote.getDescription());

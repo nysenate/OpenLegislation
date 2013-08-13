@@ -292,10 +292,10 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 			 
 			    <%if (sresult.getFields().containsKey("sponsor")){ %>
 			        <br/>
-				    <% if (sresult.getFields().get("otherSponsors").isEmpty()) { %>
+				    <% if (sresult.getFields().get("othersponsors").isEmpty()) { %>
 				        Sponsor: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),request)%>
 				    <% } else { %>
-				        Sponsors: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),request)%>, <%=JSPHelper.getSponsorLinks(sresult.getFields().get("otherSponsors").split(", ?"), request) %>
+				        Sponsors: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),request)%>, <%=JSPHelper.getSponsorLinks(sresult.getFields().get("othersponsors").split(", ?"), request) %>
 				    <% } %>  
 				   
 			    <%} %>
@@ -377,7 +377,7 @@ String forward4Link = "/legislation/search/" + term + "/" + (forward4) + "/" + p
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
 	
-if (prevUrl!=null){%>
+if (prevUrl!=null) {%>
 	<li><a href="<%=prevUrl%>" title="Previous page">«</a></li>
 <%}else{%>
 	<li class="disabled"><a>«</a></li>
