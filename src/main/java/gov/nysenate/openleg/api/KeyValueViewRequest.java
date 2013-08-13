@@ -91,8 +91,8 @@ public class KeyValueViewRequest extends AbstractApiRequest {
             request.setAttribute("type", key);
             request.setAttribute("term", queryBuilder.query());
             request.setAttribute("format", format);
-            request.setAttribute(PAGE_IDX, pageNumber + "");
-            request.setAttribute(PAGE_SIZE, pageSize + "");
+            request.setAttribute(PAGE_IDX, pageNumber);
+            request.setAttribute(PAGE_SIZE, pageSize);
             request.setAttribute("urlPath", urlPath);
             request.setAttribute("results", sr);
         }

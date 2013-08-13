@@ -70,10 +70,9 @@
 			Bill bill = null;
 			while (itBills.hasNext()) {
 				bill = itBills.next();
-				try {
 					request.setAttribute("bill",bill); %>
 					<div class="row">
-						<a href="/legislation/bill/${bill.senateBillNo}">${bill.senateBillNo}: ${bill.title}</a>
+						<a href="/legislation/bill/${bill.billId}">${bill.billId}: ${bill.title}</a>
                			 <br/>
                			 <span class="subrow">
                          <% if (bill.getSponsor()!=null) {
@@ -111,9 +110,6 @@
 						</div>
 					 
 			    <%
-					 			        } catch (Exception e) {
-					 			    					System.err.println("couldn't render bill: " + bill.getBillId());
-					 			    				}
 					 			    			}
 					 			    		}
 					 			    %>
