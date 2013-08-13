@@ -357,7 +357,10 @@ public class AgendaProcessor implements OpenLegConstants {
             }
 
             if (xmlCommMeeting.getNotes() != null && xmlCommMeeting.getNotes().getContent().length() > 0) {
-                meeting.setNotes(xmlCommMeeting.getNotes().getContent());
+                // latin1 encoded
+                String notes = xmlCommMeeting.getNotes().getContent();
+                notes = new String(notes.getBytes("CP850"), "latin1");
+                meeting.setNotes(notes);
             }
 
             if (xmlCommMeeting.getChair() != null && xmlCommMeeting.getChair().getContent().length() > 0) {
