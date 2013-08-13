@@ -1,12 +1,15 @@
 package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Vote;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,39 +33,94 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.util.DefaultPrettyPrinter;
 
-public class Storage {
+/**
+ * Simple file backed key-value store with that supports both published and unpublished
+ * file modes. Buffers changes in memory to reduce file system access and increase performance.
+ *
+ * @author GraylinKim
+ */
+public class Storage
+{
 
-    private final File storageDir;
-    private final Logger logger;
-    private final JsonFactory jsonFactory;
-    private final ObjectMapper objectMapper;
-    private final PrettyPrinter prettyPrinter;
+    public static void main(String[] args) {
+        List<String> test = new ArrayList<String>();
+        System.out.println(test.getClass().cast(test));
+    }
 
-    public HashMap<String, Object> memory;
-    public HashSet<String> dirty;
+    protected final Logger logger;
+
+    /**
+     * Represents the current status of a key in storage:
+     *
+     * <ul>
+     *  <li>NEW - New and not yet flushed to file.</li>
+     *  <li>MODIFIED - Modified since the last flush to file.</li>
+     *  <li>UNMODIFIED - Currently unmodified since last flush to file.</li>
+     *  <li>DELETED - Deleted since last flush to file (not yet deleted on file).</li>
+     *  <li>UNKNOWN - Key is not known to storage, possibly because a previous delete was flushed.</li>
+     * </ul>
+     *
+     * @author GraylinKim
+     */
+   public static enum Status { NEW, MODIFIED, DELETED, UNMODIFIED, UNKNOWN };
+
+    /**
+     * The base directory for this storage on the file system.
+     */
+    protected final File storageDir;
+
+    /**
+     * The directory for published documents on the file system.
+     */
+    protected final File publishedDir;
+
+    /**
+     * The directory for unpublished documents on the file system.
+     */
+    protected final File unpublishedDir;
+
+    /**
+     * Memory buffer for cache values. Used to prevent excessive file operations.
+     */
+    public HashMap<String, BaseObject> memory;
+
+    /**
+     * Tracks the set of currently dirty keys that need to be flushed to the file system
+     */
+    protected HashSet<String> dirty;
+
+
     public String encoding = "UTF-8";
-    public Boolean autoFlush;
+    protected final JsonFactory jsonFactory;
+    protected final ObjectMapper objectMapper;
+    protected final PrettyPrinter prettyPrinter;
 
-    public static enum Status { NEW , MODIFIED, DELETED };
 
-    public Storage(String storagePath) {
-        this(storagePath, true);
+    /**
+     * Create a new storage connection to the given file path.
+     *
+     * @param storagePath - Base file path for the storage on the file system
+     */
+    public Storage(String storagePath)
+    {
+        this(new File(storagePath));
     }
 
-    public Storage(File storageDir) {
-        this(storageDir, true);
-    }
-
-    public Storage(String storagePath, Boolean autoFlush) {
-        this(new File(storagePath),autoFlush);
-    }
-
-    public Storage(File storageDir, Boolean autoFlush) {
-        this.storageDir = storageDir;
+    /**
+     * Create a new storage connection to the given directory.
+     *
+     * @param storageDir - Base directory for the storage on the file system
+     */
+    public Storage(File storageDir)
+    {
         this.logger  = Logger.getLogger(this.getClass());
-        this.memory  = new HashMap<String, Object>();
+
+        this.storageDir = storageDir;
+        this.publishedDir = new File(storageDir, "published");
+        this.unpublishedDir = new File(storageDir, "unpublished");
+
+        this.memory  = new HashMap<String, BaseObject>();
         this.dirty   = new HashSet<String>();
-        this.autoFlush = autoFlush;
 
         this.objectMapper = new ObjectMapper();
         this.objectMapper.enable(Feature.INDENT_OUTPUT);
@@ -70,132 +128,246 @@ public class Storage {
         this.prettyPrinter = new DefaultPrettyPrinter();
     }
 
-    public void clearCache() {
-        this.memory.clear();
-    }
-
-    public Object get(String key, Class<?> cls) {
-        return get(key, cls, true);
-    }
-
-    public Object restore(String key, Class<?> cls) {
-        try {
-            File file = new File(new File(storageDir, "unpublished"), key+".json");
-            if (file.exists()) {
-                Object value;
-                logger.info("Unpublishing: "+file.getPath());
-                if (cls == Bill.class) {
-                    value = this.readBill(file);
+    /**
+     * Get the current value of a key. First checks storage memory, then
+     * falls back to the file system.
+     *
+     * @param key - The key to fetch the value for.
+     * @param cls - The class interpret the value as.
+     * @return - The object from storage.
+     */
+    public BaseObject get(String key, Class<? extends BaseObject> cls)
+    {
+        BaseObject value = null;
+        if (memory.containsKey(key)) {
+            logger.debug("Cache hit: "+key);
+            value = memory.get(key);
+        }
+        else {
+            logger.debug("Cache miss: "+key);
+            File storageFile = getStorageFile(key);
+            if (storageFile != null) {
+                try {
+                    if (cls == Bill.class) {
+                        value = read(Bill.class, storageFile);
+                    }
+                    else {
+                        value = objectMapper.readValue(FileUtils.readFileToString(storageFile,encoding), cls);
+                    }
+                    value.setBrandNew(false);
+                } catch (org.codehaus.jackson.JsonParseException e) {
+                    logger.error("could not parse json", e);
+                } catch (JsonMappingException e) {
+                    logger.error("could not map json", e);
+                } catch (IOException e) {
+                    logger.debug("Storage Miss: "+storageFile);
                 }
-                else {
-                    value = objectMapper.readValue(FileUtils.readFileToString(file,encoding), cls);
-                }
-                if (!file.delete()) {
-                    logger.error("Unable to delete unpublished file: "+key);
-                }
-                return value;
             }
             else {
-                logger.info("Can't restore non-existing file: "+file.getPath());
-            }
-        } catch (IOException e) {
-            logger.error("Unexpected restoration error",e);
-        }
-        return null;
-    }
-
-    public Object get(String key, Class<?> cls, Boolean useCache) {
-        if (useCache && memory.containsKey(key))
-            return memory.get(key);
-        else {
-            //Attempt load from storage
-            logger.debug("Loading: "+key);
-            File file = storageFile(key);
-
-            try {
-                if (cls == Bill.class) {
-                    return readBill(file);
-                } else {
-                    return objectMapper.readValue(FileUtils.readFileToString(file,encoding), cls);
-                }
-            } catch (org.codehaus.jackson.JsonParseException e) {
-                logger.error("could not parse json", e);
-            } catch (JsonMappingException e) {
-                logger.error("could not map json", e);
-            } catch (IOException e) {
-                logger.debug("Storage Miss: "+file);
+                logger.debug("Missing key: "+key);
             }
         }
-
-        return null;
+        return value;
     }
 
-    public void set(String key, Object value) {
+    /**
+     * Writes the new value to system memory. To propagate these changes to the file system
+     * you must first flush the key (value.getOid()).
+     *
+     * @param value - The new value to store
+     */
+    public void set(BaseObject value)
+    {
+        String key = this.key(value);
         memory.put(key, value);
         dirty.add(key);
     }
 
-    public Boolean del(String key) throws IOException {
-        // Deletions are always automatically flushed
-        logger.debug("Deleting key: "+key);
+    /**
+     * @param value - The storage key for this object
+     */
+    public String key(BaseObject value)
+    {
+        return value.getYear()+"/"+value.getOtype()+"/"+value.getOid();
+    }
 
-        // Instead, move to storage/unpublished
-        if (flushKey(key)) {
-            FileUtils.moveFileToDirectory(storageFile(key), new File(storageDir, "unpublished"), true);
+    /**
+     * Nullifies the key in storage memory. To propagate the deletion to the file system you
+     * must flush the key.
+     *
+     * @param key - The key to delete
+     */
+    public void del(String key)
+    {
+        logger.debug("Deleting key: "+key);
+        memory.put(key, null);
+        dirty.add(key);
+    }
+
+    /**
+     * Clears out the storage memory. This operation does not affect changes written to
+     * the file system. Make sure to flush first, all unwritten changes (including deletions!)
+     * will be lost.
+     */
+    public void clear()
+    {
+        if (dirty.size() != 0) {
+            logger.warn("Clearing storage with "+dirty.size()+" dirty keys.");
+            dirty.clear();
+        }
+        else {
+            logger.debug("Clearing storage of "+memory.size()+" keys.");
+        }
+
+        memory.clear();
+
+    }
+
+    /**
+     * Clear out a specific key from storage memory. This operation does not affect changes
+     * written to the file system. make sure to flush first, all unwritten changes (including
+     * deletions!) will be lost.
+     *
+     * @param key - The key of the value to clear.
+     */
+    public void clear(String key)
+    {
+        if (dirty.contains(key)) {
+            logger.warn("Clearing dirty key: "+key);
+            dirty.remove(key);
         }
         memory.remove(key);
-        dirty.remove(key);
-        return true;
     }
 
-    public boolean flushKey(String key)
+    /**
+     * Write all values in storage memory to file for long term storage.
+     */
+    public void flush()
     {
-        //Serialize the object.
-        //Write object to file.
-        if (!memory.containsKey(key)) {
-            logger.error("Dirty entry "+key+" not found in memory.");
-            return false;
-        }
-
-        File file = storageFile(key);
-
-        try {
-            FileUtils.forceMkdir(file.getParentFile());
-            Object value = memory.get(key);
-            if (value instanceof Bill) {
-                Bill bill = (Bill)value;
-                writeBill(bill);
-                // Bills that shouldn't be published yet, soft delete them
-                // TODO: This needs to be re-factored
-                if (!bill.isPublished()) {
-                    FileUtils.moveFileToDirectory(storageFile(key), new File(storageDir, "unpublished"), true);
-                    memory.remove(key);
-                    dirty.remove(key);
-                }
-            } else {
-                JsonGenerator generator = this.jsonFactory.createJsonGenerator(file, JsonEncoding.UTF8);
-                generator.setPrettyPrinter(this.prettyPrinter);
-                objectMapper.writeValue(generator, value);
-                generator.close();
-            }
-            return true;
-        } catch (IOException e) {
-            logger.error("Cannot open file for writing: "+file, e);
-            return false;
-        }
-    }
-
-    public void flush() {
         logger.info("Flushing "+dirty.size()+" objects.");
         for(String key : dirty.toArray(new String[]{})) {
-            flushKey(key);
+            flush(key);
         }
         dirty.clear();
     }
 
-    public File storageFile(String key) {
-        return new File(storageDir, key+".json");
+    /**
+     * Write a specific value in storage memory to file for long term storage.
+     *
+     * @param key - The key of the value to write.
+     */
+    public void flush(String key)
+    {
+        logger.info("Flushing key: "+key);
+
+        // Remove existing file record.
+        FileUtils.deleteQuietly(getUnpublishedFile(key));
+        FileUtils.deleteQuietly(getPublishedFile(key));
+
+        // If the value wasn't deleted, write it to file
+        BaseObject value = memory.get(key);
+        if (value != null) {
+            File storageFile = value.isPublished() ? getPublishedFile(key) : getUnpublishedFile(key);
+
+            try {
+                FileUtils.forceMkdir(storageFile.getParentFile());
+
+                if (value instanceof Bill) {
+                    write((Bill)value, storageFile);
+                }
+                else {
+                    logger.info("Writing to: "+storageFile);
+                    JsonGenerator generator = this.jsonFactory.createJsonGenerator(storageFile, JsonEncoding.UTF8);
+                    generator.setPrettyPrinter(this.prettyPrinter);
+                    objectMapper.writeValue(generator, value);
+                    generator.close();
+                }
+            }
+            catch (IOException e) {
+                logger.error("Cannot open file for writing: "+storageFile, e);
+            }
+        }
+
+        // Mark the key as clean by removing from the dirty set.
+        dirty.remove(key);
     }
+
+    /**
+     * @param key - The key to get Status for
+     * @return - The current Status of a key
+     */
+    public Status status(String key)
+    {
+        File storageFile = getStorageFile(key);
+        if (dirty.contains(key)) {
+            if (memory.get(key) == null) {
+                return Status.DELETED;
+            }
+            else if (storageFile == null) {
+                return Status.NEW;
+            }
+            else {
+                return Status.MODIFIED;
+            }
+        }
+        else if (storageFile == null) {
+            return Status.UNKNOWN;
+        }
+        else {
+            return Status.UNMODIFIED;
+        }
+    }
+
+    /**
+     * @return - Base directory of the storage on the file system.
+     */
+    public File getStorageDir()
+    {
+        return storageDir;
+    }
+
+    /**
+     * @param key - The key to get a storage file for.
+     * @return - The storage file. null if no such file exists.
+     */
+    protected File getStorageFile(String key)
+    {
+        File storageFile = getPublishedFile(key);
+        if (storageFile.exists()) {
+            logger.debug("Published storage file found for key: "+key);
+            return storageFile;
+        }
+
+        storageFile = getUnpublishedFile(key);
+        if (storageFile.exists()) {
+           logger.debug("Unpublished storage file found for key: "+key);
+           return storageFile;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param key - The key to fetch a file for.
+     * @return - File for the published key.
+     */
+    protected File getPublishedFile(String key)
+    {
+        return new File(publishedDir, key + ".json");
+    }
+
+    /**
+     * @param key - The key to fetch a file for.
+     * @return - File for the unpublished key.
+     */
+    protected File getUnpublishedFile(String key)
+    {
+        return new File(unpublishedDir, key + ".json");
+    }
+
+
+
+
 
     /*
      * A - Assembly Bill
@@ -208,27 +380,33 @@ public class Storage {
      */
     Pattern keyPattern = Pattern.compile("([ASLREJK][0-9]{1,5}[A-Z]?)-([0-9]{4})");
 
-    public Bill getBill(String billNo)
+    private final SimpleDateFormat jsonDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    public String dateToNode(Date date)
     {
-        String key = Bill.getKey(billNo);
-        if (key != null) {
-            return (Bill)this.get(key, Bill.class);
+        return date == null ? null : jsonDateFormat.format(date);
+    }
+
+    public Date nodeToDate(JsonNode node)
+    {
+        try {
+            return node.isNull() ? null : jsonDateFormat.parse(node.asText());
         }
-        else {
-            logger.error("Invalid bill key: "+key, new IllegalArgumentException(key));
+        catch (ParseException e) {
+            logger.error("Invalid json date format: "+node.asText(), e);
             return null;
         }
     }
 
-    public void saveBill(Bill bill)
+    public Bill getBill(String billId) {
+        String[] parts = billId.split("-");
+        return getBill(parts[0], Integer.parseInt(parts[1]));
+    }
+
+    public Bill getBill(String printNumber, int session)
     {
-        String key = bill.getKey();
-        if (key != null) {
-            this.set(key, bill);
-        }
-        else {
-            logger.error("Invalid bill key: "+bill.getBillId());
-        }
+        String key = session+"/bill/"+printNumber+"-"+session;
+        return (Bill)this.get(key, Bill.class);
     }
 
     public ObjectMapper mapper = new ObjectMapper();
@@ -277,12 +455,13 @@ public class Storage {
 
     public ObjectNode actionToObjectNode(Action action) {
         ObjectNode node = mapper.createObjectNode();
-        node.put("id", action.getId());
+        node.put("id", action.getOid());
         node.put("active", action.isActive());
-        node.put("bill", (action.getBill() != null) ? action.getBill().getBillId() : "");
+        node.put("bill", (action.getBill() != null) ? action.getBill().getBillId() : null);
         node.put("date", action.getDate().getTime());
-        node.put("modified", action.getModified());
-        node.put("sobiReferenceList", arrayToArrayNode(action.getSobiReferenceList().toArray()));
+        node.put("modified", dateToNode(action.getModifiedDate()));
+        node.put("published", dateToNode(action.getPublishDate()));
+        node.put("dataSources", arrayToArrayNode(action.getDataSources().toArray()));
         node.put("text", action.getText());
         node.put("year", action.getYear());
         return node;
@@ -290,13 +469,14 @@ public class Storage {
 
     public Action jsonNodeToAction(JsonNode node) {
         Action action = new Action();
-        action.setId(node.get("id").asText());
+        action.setOid(node.get("id").asText());
         action.setActive(node.get("active").asBoolean());
         action.setDate(new Date(node.get("date").asLong()));
-        action.setModified(node.get("modified").asLong());
-        action.setSobiReferenceList(new HashSet<String>(jsonNodeToListString(node.get("sobiReferenceList"))));
+        action.setModifiedDate(nodeToDate(node.get("modified")));
+        action.setPublishDate(nodeToDate(node.get("published")));
+        action.setDataSources(new HashSet<String>(jsonNodeToListString(node.get("dataSources"))));
         action.setText(node.get("text").asText());
-        action.setYear(node.get("year").asInt());
+        action.setSession(node.get("year").asInt());
         return action;
     }
 
@@ -304,8 +484,9 @@ public class Storage {
         ObjectNode node = mapper.createObjectNode();
         node.put("id", vote.getId());
         node.put("active", vote.isActive());
-        node.put("modified", vote.getModified());
-        node.put("sobiReferenceList", arrayToArrayNode(vote.getSobiReferenceList().toArray()));
+        node.put("modified", dateToNode(vote.getModifiedDate()));
+        node.put("published", dateToNode(vote.getPublishDate()));
+        node.put("dataSources", arrayToArrayNode(vote.getDataSources().toArray()));
         node.put("date", vote.getVoteDate().getTime());
         node.put("voteType", vote.getVoteType());
         logger.debug("READING VOTE DESCRIPTION: "+vote.getDescription());
@@ -331,12 +512,13 @@ public class Storage {
         vote.setExcused(jsonNodeToListString(node.get("excused")));
         vote.setAbstains(jsonNodeToListString(node.get("abstains")));
         vote.setVoteDate(new Date(node.get("date").asLong()));
-        vote.setModified(node.get("modified").asLong());
+        vote.setModifiedDate(nodeToDate(node.get("modified")));
+        vote.setPublishDate(nodeToDate(node.get("published")));
         vote.setActive(node.get("active").asBoolean());
         logger.debug("READING VOTE DESCRIPTION: "+node.get("description").asText());
         vote.setDescription(node.get("description").asText());
         vote.setVoteType(node.get("voteType").asInt());
-        vote.setYear(node.get("year").asInt());
+        vote.setSession(node.get("year").asInt());
         return vote;
     }
 
@@ -349,7 +531,7 @@ public class Storage {
         return list;
     }
 
-    public Bill readBill(File file) throws JsonProcessingException, IOException
+    public Bill read(Class<Bill> cls, File file) throws JsonProcessingException, IOException
     {
         Iterator<JsonNode> iter;
         String contents = FileUtils.readFileToString(file,encoding);
@@ -361,14 +543,14 @@ public class Storage {
         bill.setCurrentCommittee(node.get("currentCommittee").asText());
         bill.setFulltext(node.get("fulltext").asText());
         bill.setLaw(node.get("law").asText());
-        bill.setPublished(node.get("published").asBoolean());
         bill.setLawSection(node.get("lawSection").asText());
         bill.setMemo(node.get("memo").asText());
-        bill.setModified(node.get("modified").asLong());
+        bill.setModifiedDate(nodeToDate(node.get("modified")));
+        bill.setPublishDate(nodeToDate(node.get("published")));
         bill.setPastCommittees(jsonNodeToListString(node.get("pastCommittees")));
         bill.setPreviousVersions(jsonNodeToListString(node.get("previousVersions")));
         bill.setSameAs(node.get("sameAs").asText());
-        bill.setSobiReferenceList(new HashSet<String>(jsonNodeToListString(node.get("sobiReferenceList"))));
+        bill.setDataSources(new HashSet<String>(jsonNodeToListString(node.get("dataSources"))));
         bill.setSponsor(jsonNodeToPerson(node.get("sponsor")));
         bill.setStricken(node.get("stricken").asBoolean());
         bill.setSummary(node.get("summary").asText());
@@ -419,7 +601,7 @@ public class Storage {
         return bill;
     }
 
-    public void writeBill(Bill bill) throws IOException
+    public void write(Bill bill, File storageFile) throws IOException
     {
         logger.debug("Writing Bill: "+bill.getBillId());
         ObjectNode node = mapper.createObjectNode();
@@ -430,7 +612,8 @@ public class Storage {
         node.put("law", bill.getLaw());
         node.put("lawSection", bill.getLawSection());
         node.put("memo", bill.getMemo());
-        node.put("modified", bill.getModified());
+        node.put("modified", dateToNode(bill.getModifiedDate()));
+        node.put("published", dateToNode(bill.getPublishDate()));
         node.put("sameAs", bill.getSameAs());
 
         ArrayNode otherSponsors = mapper.createArrayNode();
@@ -457,7 +640,6 @@ public class Storage {
         }
         node.put("actions", actions);
 
-        node.put("published", bill.isPublished());
         node.put("sponsor", personToObjectNode(bill.getSponsor()));
         node.put("stricken", bill.isStricken());
         node.put("pastCommittees", listToArrayNode(bill.getPastCommittees()));
@@ -465,9 +647,9 @@ public class Storage {
         node.put("senateBillNo", bill.getBillId());
         node.put("summary", bill.getSummary());
         node.put("title", bill.getTitle());
-        node.put("year", bill.getYear());
+        node.put("year", bill.getSession());
         node.put("uniBill", bill.isUniBill());
-        node.put("sobiReferenceList", arrayToArrayNode(bill.getSobiReferenceList().toArray()));
+        node.put("dataSources", arrayToArrayNode(bill.getDataSources().toArray()));
         node.put("amendments", listToArrayNode(bill.getAmendments()));
 
         ArrayNode votes = mapper.createArrayNode();
@@ -476,13 +658,8 @@ public class Storage {
         }
         node.put("votes", votes);
 
-        File file = new File(storageDir, bill.getYear()+"/bill/"+bill.getBillId()+".json");
-        JsonGenerator generator = this.jsonFactory.createJsonGenerator(file, JsonEncoding.UTF8);
+        JsonGenerator generator = this.jsonFactory.createJsonGenerator(storageFile, JsonEncoding.UTF8);
         generator.writeTree(node);
         generator.close();
-    }
-
-    public File getStorageDir() {
-        return storageDir;
     }
 }

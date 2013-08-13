@@ -15,6 +15,7 @@ import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +26,8 @@ import org.apache.lucene.document.Field;
 
 public class DocumentBuilder
 {
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     public static Document build(PublicHearing hearing, Collection<ISenateSerializer> serializers)
     {
         Document document = new Document();
@@ -36,7 +39,10 @@ public class DocumentBuilder
         document.add(new Field("otype", "hearing", Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("year", String.valueOf(hearing.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("active", String.valueOf(hearing.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(hearing.getModified()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", String.valueOf(hearing.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", String.valueOf(hearing.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", dateFormat.format(hearing.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", dateFormat.format(hearing.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
@@ -64,7 +70,10 @@ public class DocumentBuilder
         document.add(new Field("otype", "vote", Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("year", String.valueOf(vote.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("active", String.valueOf(vote.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(vote.getModified()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", String.valueOf(vote.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", String.valueOf(vote.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", dateFormat.format(vote.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", dateFormat.format(vote.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
@@ -121,7 +130,10 @@ public class DocumentBuilder
         document.add(new Field("otype", "transcript", Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("year", String.valueOf(transcript.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("active", String.valueOf(transcript.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(transcript.getModified()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", String.valueOf(transcript.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", String.valueOf(transcript.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", dateFormat.format(transcript.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", dateFormat.format(transcript.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
@@ -162,7 +174,10 @@ public class DocumentBuilder
         document.add(new Field("otype", "meeting", Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("year", String.valueOf(meeting.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("active", String.valueOf(meeting.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(meeting.getModified()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", String.valueOf(meeting.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", String.valueOf(meeting.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", dateFormat.format(meeting.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", dateFormat.format(meeting.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
@@ -179,7 +194,7 @@ public class DocumentBuilder
 
         ArrayList<String> addendumIds = new ArrayList<String>();
         for (Addendum addendum : meeting.getAddendums()) {
-            addendumIds.add(addendum.getId()+"-"+addendum.getPublicationDateTime()+"-"+addendum.getMeetings());
+            addendumIds.add(addendum.getOid()+"-"+addendum.getPublishDate()+"-"+addendum.getMeetings());
         }
 
         // Other various search fields and filters
@@ -208,13 +223,16 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", calendar.getOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", (calendar.getType()+"-"+new SimpleDateFormat("MM-dd-yyyy").format(calendar.getDate())).toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // Basic document filters
         document.add(new Field("otype", "calendar", Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("year", String.valueOf(calendar.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("active", String.valueOf(calendar.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(calendar.getModified()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", String.valueOf(calendar.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", String.valueOf(calendar.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", dateFormat.format(calendar.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", dateFormat.format(calendar.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
@@ -275,26 +293,29 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", action.getId().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", action.getOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // Basic document filters
         document.add(new Field("otype", "action", Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("year", String.valueOf(action.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("active", String.valueOf(action.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(action.getModified()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", String.valueOf(action.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", String.valueOf(action.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", dateFormat.format(action.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", dateFormat.format(action.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
-        searchTerms.add(action.getBillId());
+        searchTerms.add(action.getBill().getBillId());
         searchTerms.add(action.getText());
         document.add(new Field("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO, Field.Index.ANALYZED));
 
         // Other various search fields and filters
         document.add(new Field("when",String.valueOf(action.getDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("billno",action.getBillId().toLowerCase(), Field.Store.YES, Field.Index.ANALYZED));
+        document.add(new Field("billno",action.getBill().getBillId().toLowerCase(), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("title", action.getText(), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("summary", DateFormat.getDateInstance(DateFormat.MEDIUM).format(action.getDate()), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("sorttitle", action.getBillId()+" "+action.getText().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new Field("sorttitle", action.getBill().getBillId()+" "+action.getText().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Add in any serializations of the bill that we might need
         for(ISenateSerializer lst:serializers) {
@@ -314,14 +335,17 @@ public class DocumentBuilder
 
         // Basic document filters
         document.add(new Field("otype", "bill", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("year", String.valueOf(bill.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("year", String.valueOf(bill.getSession()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("active", String.valueOf(bill.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(bill.getModified()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", String.valueOf(bill.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", String.valueOf(bill.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("modified", dateFormat.format(bill.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("published", dateFormat.format(bill.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
         searchTerms.add(bill.getPrintNumber());
-        searchTerms.add(String.valueOf(bill.getYear()));
+        searchTerms.add(String.valueOf(bill.getSession()));
         searchTerms.add(bill.getBillId());
         searchTerms.add(bill.getSameAs());
         searchTerms.add(bill.getSponsor() != null ? bill.getSponsor().getFullname() : "");
@@ -354,7 +378,7 @@ public class DocumentBuilder
         document.add(new Field("full", bill.getFulltext(), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("memo", bill.getMemo(), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("law", bill.getLaw(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("when", String.valueOf(bill.getModified()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("when", String.valueOf(bill.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("unibill", String.valueOf(bill.isUniBill()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("stricken", String.valueOf(bill.isStricken()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("actclause", bill.getActClause(), Field.Store.YES, Field.Index.ANALYZED));

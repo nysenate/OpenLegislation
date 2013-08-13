@@ -23,7 +23,7 @@ DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 	
 	try
 	{
-%><%=bill.getYear()%>,<%=bill.getBillId()%>,<%=bill.getSameAs()%>,<%=bill.getSponsor().getFullname()%>,<%=bill.getCurrentCommittee()%>,<%=title%>,<%=summary%>
+%><%=bill.getSession()%>,<%=bill.getBillId()%>,<%=bill.getSameAs()%>,<%=bill.getSponsor().getFullname()%>,<%=bill.getCurrentCommittee()%>,<%=title%>,<%=summary%>
 <%
  } catch (Exception e){}
  } 

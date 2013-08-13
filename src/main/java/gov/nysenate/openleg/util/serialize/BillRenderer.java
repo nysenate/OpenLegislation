@@ -73,7 +73,7 @@ public class BillRenderer {
     {
         Element elemBill = new Element("bill");
 
-        elemBill.setAttribute("year", bill.getYear()+"");
+        elemBill.setAttribute("year", bill.getSession()+"");
         elemBill.setAttribute("senateId", bill.getBillId());
         elemBill.setAttribute("billId", bill.getBillId());
 

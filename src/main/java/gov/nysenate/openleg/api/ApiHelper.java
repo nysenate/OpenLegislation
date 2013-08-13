@@ -67,7 +67,7 @@ public class ApiHelper implements OpenLegConstants {
 
                 BaseObject resultObj = null;
                 try {
-                    resultObj = (BaseObject)mapper.readValue(jsonData, clazz);
+                    resultObj = mapper.readValue(jsonData, clazz);
                     result.setObject(resultObj);
                 } catch (Exception e) {
                     logger.error("error binding:" + clazz.getName(), e);
@@ -76,7 +76,7 @@ public class ApiHelper implements OpenLegConstants {
                 if (resultObj == null)
                     continue;
 
-                resultObj.setModified(result.getLastModified());
+                resultObj.setModifiedDate(new Date(result.getLastModified()));
                 resultObj.setActive(result.isActive());
 
                 String title = "";
@@ -108,7 +108,7 @@ public class ApiHelper implements OpenLegConstants {
                     fields.put("committee", bill.getCurrentCommittee());
                     fields.put("billno", bill.getBillId());
                     fields.put("summary", bill.getSummary());
-                    fields.put("year", bill.getYear() + "");
+                    fields.put("year", bill.getSession() + "");
                 } else if (type.equals("calendar")) {
                     Calendar calendar = (Calendar) resultObj;
 

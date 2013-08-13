@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.lucene;
 
 import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.ISenateObject;
+import gov.nysenate.openleg.model.IBaseObject;
 import gov.nysenate.openleg.model.Result;
 import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.util.ResultIterator;
@@ -300,8 +300,8 @@ public class Lucene
         return response;
     }
 
-    public ISenateObject getSenateObject(String oid, String type) {
-        ArrayList<? extends ISenateObject> senateObjects = getSenateObjects("otype:"+type+" AND oid:\""+oid+"\"");
+    public IBaseObject getSenateObject(String oid, String type) {
+        ArrayList<? extends IBaseObject> senateObjects = getSenateObjects("otype:"+type+" AND oid:\""+oid+"\"");
         if (!senateObjects.isEmpty()) {
             return senateObjects.get(0);
         }
@@ -311,7 +311,7 @@ public class Lucene
     }
 
     @SuppressWarnings("unchecked") // Doesn't seem to be a way to properly type check here
-    public <T extends ISenateObject> ArrayList<T> getSenateObjects(String query) {
+    public <T extends IBaseObject> ArrayList<T> getSenateObjects(String query) {
         ArrayList<T> senateObjects = new ArrayList<T>();
 
         ResultIterator longSearch = new ResultIterator(query);

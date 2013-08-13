@@ -1,7 +1,11 @@
 package gov.nysenate.openleg.model;
 
-
-public interface ISenateSerializer {
+/**
+ *
+ * @author GraylinKim
+ */
+public interface ISenateSerializer
+{
     /**
      * @return the data type of the serialization; e.g. xml, json
      */

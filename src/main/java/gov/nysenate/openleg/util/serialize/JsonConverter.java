@@ -111,7 +111,6 @@ public class JsonConverter {
         try {
             for(Field f:fields) {
                 if(!f.getName().contains("jdo") && !Modifier.isStatic(f.getModifiers())) {
-
                     String name = fixCase(f.getName());
                     String type = f.getType().getSimpleName();
 

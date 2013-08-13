@@ -10,6 +10,6 @@ String action = "";
 
 
 %>Year,SenateBillNo,SameAs,Sponsor,Committee,Title,Summary,Action
-<%=bill.getYear()%>,<%=bill.getBillId()%>,<%=bill.getSameAs()%>,<%=bill.getSponsor().getFullname()%>,<%=bill.getCurrentCommittee()%>,<%=bill.getTitle()%>,<%=bill.getSummary()%>
+<%=bill.getSession()%>,<%=bill.getBillId()%>,<%=bill.getSameAs()%>,<%=bill.getSponsor().getFullname()%>,<%=bill.getCurrentCommittee()%>,<%=bill.getTitle()%>,<%=bill.getSummary()%>
 
 

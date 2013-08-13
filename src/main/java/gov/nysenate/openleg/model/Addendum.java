@@ -1,125 +1,202 @@
 package gov.nysenate.openleg.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+/**
+ *
+ *
+ * @author GraylinKim
+ */
 @XStreamAlias("addendum")
-public class Addendum
+public class Addendum extends BaseObject
 {
-    private String id;
+    /**
+     * The object's unique id.
+     */
+    private String oid;
 
+    /**
+     * The addendum id. A letter from "" to Z
+     */
     private String addendumId;
 
+    /**
+     * The Monday of the week of committee meetings that this agenda covers.
+     */
     private String weekOf;
 
-    private Date publicationDateTime;
-
+    /**
+     * A list of meetings detailed by this addendum
+     */
     private List<Meeting> meetings;
 
-    private Agenda agenda;
+    /**
+     * The agenda that this addendum is on.
+     */
+    private Agenda agenda = null;
 
-    public Collection<Fieldable> luceneFields()
+    /**
+     * JavaBean constructor.
+     */
+    public Addendum()
     {
-        Collection<Fieldable> fields = new ArrayList<Fieldable>();
-        fields.add(new Field("agenda", getAgenda().toString(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("publicationDateTime", getPublicationDateTime().toString(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("weekOf", getWeekOf(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("addendumId", getAddendumId(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("id", getId(), Field.Store.YES, Field.Index.ANALYZED));
-        return fields;
+        super();
+        meetings = new ArrayList<Meeting>();
     }
 
-    public String getId() {
-        return id;
+    public Addendum(String addendumId, String weekOf, Date publishDate, Agenda agenda)
+    {
+        this.setAddendumId(addendumId);
+        this.setWeekOf(weekOf);
+        this.setYear(agenda.getYear());
+        this.setPublishDate(publishDate);
+        this.setModifiedDate(publishDate);
+        this.setAgenda(agenda);
+        this.setOid(agenda.getNumber()+this.addendumId+"-"+this.getYear());
+        meetings = new ArrayList<Meeting>();
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    /**
+     * The object type of the addendum.
+     */
     @JsonIgnore
-    public Agenda getAgenda() {
+    public String getOtype()
+    {
+        return "addendum";
+    }
+
+    /**
+     * @return - The object's unique id.
+     */
+    public String getOid()
+    {
+        return this.oid;
+    }
+
+    /**
+     * @param oid - The object's new object id.
+     */
+    public void setOid(String oid)
+    {
+        this.oid = oid;
+    }
+
+    /**
+     * @return - The agenda this addendum is for.
+     */
+    @JsonIgnore
+    public Agenda getAgenda()
+    {
         return agenda;
     }
 
-    public void setAgenda(Agenda agenda) {
+    /**
+     * @param agenda - The new target agenda for this addendum.
+     */
+    public void setAgenda(Agenda agenda)
+    {
         this.agenda = agenda;
     }
 
-    public Addendum ()
+    /**
+     * @return - The addendum id. Letters from "" to Z
+     */
+    public String getAddendumId()
     {
-        meetings = new ArrayList<Meeting>();
-    }
-
-    public Addendum(String id) {
-        this.setId(id);
-        meetings = new ArrayList<Meeting>();
-    }
-
-
-    public String getAddendumId() {
         return addendumId;
     }
 
-    public void setAddendumId(String addendumId) {
+    /**
+     * @param addendumId - The new addendum id.
+     */
+    public void setAddendumId(String addendumId)
+    {
         this.addendumId = addendumId;
     }
 
-    public String getWeekOf() {
+    /**
+     * @return - The Monday of the week this agenda covers.
+     */
+    public String getWeekOf()
+    {
         return weekOf;
     }
 
-    public void setWeekOf(String weekOf) {
+    /**
+     * @param weekOf - The new Monday of the week this agenda covers.
+     */
+    public void setWeekOf(String weekOf)
+    {
         this.weekOf = weekOf;
     }
 
-    public Date getPublicationDateTime() {
-        return publicationDateTime;
-    }
-
-    public void setPublicationDateTime(Date publicationDateTime) {
-        this.publicationDateTime = publicationDateTime;
-    }
-
-    public List<Meeting> getMeetings() {
+    /**
+     * @return - The list of meetings detailed by this addendum.
+     */
+    public List<Meeting> getMeetings()
+    {
         return meetings;
     }
 
-    public void setMeetings(List<Meeting> meetings) {
+    /**
+     * @param meetings - The new list of meetings for this addendum
+     */
+    public void setMeetings(List<Meeting> meetings)
+    {
         this.meetings = meetings;
     }
 
-    public void addMeeting(Meeting meeting) {
+    /**
+     * @param meeting - The new meeting to add to the addendum.
+     */
+    public void addMeeting(Meeting meeting)
+    {
         this.meetings.add(meeting);
     }
 
-    public void removeMeeting(Meeting meeting) {
+    /**
+     * @param meeting - The meeting to remove from the addendum.
+     */
+    public void removeMeeting(Meeting meeting)
+    {
         this.meetings.remove(meeting);
     }
 
     @Override
     public boolean equals(Object obj) {
-
-        if (obj != null && obj instanceof Addendum)
-        {
-            if ( ((Addendum)obj).getId().equals(this.getId()))
-                return true;
+        if (obj != null && obj instanceof Addendum) {
+            Addendum other = (Addendum)obj;
+            return this.getOid().equals(other.getOid());
         }
-
-        return false;
+        else {
+            return false;
+        }
     }
 
     @Override
     public String toString() {
-        return this.getId() + "-" + this.getPublicationDateTime() + "-" + this.getMeetings();
+        return this.getOid() + "-" + this.getPublishDate() + "-" + this.getMeetings();
     }
 
+    /**
+     * @deprecated - Only kept around for old json serializers
+     */
+    @Deprecated
+    public String getId() {
+        return this.oid;
+    }
+
+    /**
+     * @deprecated - Only kept around for old json serializers
+     */
+    @Deprecated
+    public void setId(String id) {
+        this.oid = id;
+    }
 }

@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.tests;
 
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Vote;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import gov.nysenate.openleg.model.Vote;
 import org.junit.Test;
 
 public class BillA83542011 extends TestSetup
@@ -75,7 +77,7 @@ public class BillA83542011 extends TestSetup
     {
         String voteDate = "6/24/11";
         VoteTests.testVoteDate(env, sobiDirectory, storage, billKey, voteSobi, voteDate);
-    }	
+    }
 
     @Test
     public void testLawSection()
@@ -104,7 +106,7 @@ public class BillA83542011 extends TestSetup
         actionStrings.add(new String[]{"06/24/11", "delivered to governor"});
         actionStrings.add(new String[]{"06/24/11", "signed chap.95"});
 
-        BillTests.testBillStatusActions(env, sobiDirectory, storage, billKey, actionsSobi, actionStrings, billNumber);
+        BillTests.testBillStatusActions(env, sobiDirectory, storage, billKey, actionsSobi, actionStrings, new Bill(billNumber, 2011));
     }
 
     @Test

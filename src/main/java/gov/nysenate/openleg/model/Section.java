@@ -19,6 +19,7 @@ public class Section {
 
     private String cd;
 
+    @JsonIgnore
     private Supplemental supplemental;
 
     private List<CalendarEntry> calendarEntries;

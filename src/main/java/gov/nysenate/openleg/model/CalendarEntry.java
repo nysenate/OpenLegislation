@@ -10,109 +10,250 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 
 @XStreamAlias("calendarEntry")
-public class CalendarEntry {
-
+public class CalendarEntry
+{
+    /**
+     * The entry's unique id
+     */
     @XStreamAsAttribute
-    private String id;
+    private String oid;
 
+    /**
+     * The unique calendar number for this entry. This is the same for this entry on
+     * all calendars during a calendar year.
+     */
     @XStreamAsAttribute
-    private String no;
+    private String no = "";
 
-    private Bill bill;
+    /**
+     * The original bill for this calendar entry.
+     */
+    private Bill bill = null;
 
-    //	@HideFrom({Calendar.class, Supplemental.class})
-    private String billHigh;
+    /**
+     * The substituted bill for this calendar entity. null if not substituted.
+     */
+    private Bill subBill = null;
 
-    //	@HideFrom({Calendar.class, Supplemental.class})
-    private Bill subBill;
+    /**
+     * "HIGH" if bill has not yet properly aged.
+     */
+    private String billHigh = "";
 
-    //	@HideFrom({Calendar.class, Supplemental.class})
-    private Date motionDate;
+    /**
+     *
+     */
+    private Date motionDate = null;
 
-    //	@HideFrom({Calendar.class, Supplemental.class})
-    private Section section;
+    /**
+     *
+     */
+    private Section section = null;
 
-    //@HideFrom({Calendar.class, Supplemental.class})
-    private Sequence sequence;
+    /**
+     *
+     */
+    private Sequence sequence = null;
 
-    public String getBillHigh() {
+    /**
+     * JavaBean Constructor
+     */
+    public CalendarEntry()
+    {
+
+    }
+
+    /**
+     * Fully constructs a calendar entry.
+     *
+     * @param no
+     * @param high
+     * @param motionDate
+     * @param bill
+     * @param subBill
+     */
+    public CalendarEntry(String no, String high, Date motionDate, Bill bill, Bill subBill)
+    {
+        this.setNo(no);
+        this.setBillHigh(high);
+        this.setMotionDate(motionDate);
+        this.setBill(bill);
+        this.setSubBill(subBill);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getOid()
+    {
+        return this.oid;
+    }
+
+    /**
+     *
+     * @param oid
+     */
+    public void setOId(String oid)
+    {
+        this.oid = oid;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getBillHigh()
+    {
         return billHigh;
     }
 
-    public void setBillHigh(String billHigh) {
+    /**
+     *
+     * @param billHigh
+     */
+    public void setBillHigh(String billHigh)
+    {
         this.billHigh = billHigh;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    /**
+     *
+     * @return
+     */
     @JsonIgnore
-    public Sequence getSequence() {
+    public Sequence getSequence()
+    {
         return sequence;
     }
 
-    public void setSequence(Sequence sequence) {
+    /**
+     *
+     * @param sequence
+     */
+    public void setSequence(Sequence sequence)
+    {
         this.sequence = sequence;
     }
 
+    /**
+     *
+     * @return
+     */
     @JsonIgnore
-    public Section getSection() {
+    public Section getSection()
+    {
         return section;
     }
 
-    public void setSection(Section section) {
+    /**
+     *
+     * @param section
+     */
+    public void setSection(Section section)
+    {
         this.section = section;
     }
 
-    public Date getMotionDate() {
+    /**
+     *
+     * @return
+     */
+    public Date getMotionDate()
+    {
         return motionDate;
     }
 
-    public void setMotionDate(Date motionDate) {
+    /**
+     *
+     * @param motionDate
+     */
+    public void setMotionDate(Date motionDate)
+    {
         this.motionDate = motionDate;
     }
 
-    public Bill getBill() {
+    /**
+     *
+     * @return
+     */
+    public Bill getBill()
+    {
         return bill;
     }
 
-    public void setBill(Bill bill) {
+    /**
+     *
+     * @param bill
+     */
+    public void setBill(Bill bill)
+    {
         this.bill = bill;
     }
 
-    public Bill getSubBill() {
+    /**
+     *
+     * @return
+     */
+    public Bill getSubBill()
+    {
         return subBill;
     }
 
-    public void setSubBill(Bill subBill) {
+    /**
+     *
+     * @param subBill
+     */
+    public void setSubBill(Bill subBill)
+    {
         this.subBill = subBill;
     }
 
-    public String getNo() {
+    /**
+     *
+     * @return
+     */
+    public String getNo()
+    {
         return no;
     }
 
-    public void setNo(String no) {
+    /**
+     *
+     * @param no
+     */
+    public void setNo(String no)
+    {
         this.no = no;
     }
 
     @Override
-    public boolean equals(Object obj) {
-
-        if (obj != null && obj instanceof CalendarEntry)
-        {
-            if ( ((CalendarEntry)obj).getId().equals(this.getId()))
-                return true;
+    public boolean equals(Object obj)
+    {
+        if (obj != null && obj instanceof CalendarEntry) {
+            CalendarEntry other = (CalendarEntry) obj;
+            return other.getOid().equals(this.getOid());
         }
-
-        return false;
+        else {
+            return false;
+        }
     }
 
+    /**
+     * @deprecated - Only kept around for old json serializers
+     */
+    @Deprecated
+    public String getId()
+   {
+        return oid;
+    }
 
+    /**
+     * @deprecated - Only kept around for old json serializers
+     */
+    @Deprecated
+    public void setId(String id)
+    {
+        this.oid = id;
+    }
 }
-

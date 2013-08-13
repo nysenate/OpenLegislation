@@ -11,7 +11,7 @@ public class Result {
     public long lastModified;
     public boolean active;
     public String data;
-    public ISenateObject object;
+    public IBaseObject object;
     public HashMap<String,String> fields;
 
     public Result(String otype, String data, String oid, long lastModified, boolean active) {
@@ -59,7 +59,7 @@ public class Result {
         return data;
     }
 
-    public ISenateObject getObject() {
+    public IBaseObject getObject() {
         return object;
     }
 
@@ -95,7 +95,7 @@ public class Result {
         this.data = data;
     }
 
-    public void setObject(ISenateObject object) {
+    public void setObject(IBaseObject object) {
         this.object = object;
     }
 

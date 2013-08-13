@@ -37,7 +37,6 @@ public class Vote extends BaseObject {
     @XStreamCollectionAlias(node="excused",value="member")
     private List<String> excused;
 
-    @JsonIgnore
     private Bill bill;
 
     @XStreamCollectionAlias(node="ayeswr",value="member")
@@ -88,7 +87,14 @@ public class Vote extends BaseObject {
         return voteType;
     }
 
-
+    /**
+     * The object type of the bill.
+     */
+    @JsonIgnore
+    public String getOtype()
+    {
+        return "vote";
+    }
 
     public String getId() {
         return id;
@@ -132,7 +138,6 @@ public class Vote extends BaseObject {
     }
 
 
-    @JsonIgnore
     public Bill getBill() {
         return bill;
     }
@@ -251,7 +256,6 @@ public class Vote extends BaseObject {
     }
 
     @JsonIgnore
-    @Override
     public int getYear() {
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.setTime(voteDate);

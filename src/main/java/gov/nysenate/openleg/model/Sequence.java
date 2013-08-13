@@ -27,6 +27,7 @@ public class Sequence {
     private String notes;
 
     //	@HideFrom({Calendar.class, Supplemental.class})
+    @JsonIgnore
     private Supplemental supplemental;
 
 

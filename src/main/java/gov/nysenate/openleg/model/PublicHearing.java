@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 public class PublicHearing extends BaseObject
 {
     public ArrayList<String> committees;
@@ -27,6 +29,15 @@ public class PublicHearing extends BaseObject
         speakers = new ArrayList<Person>();
 
         pages = new TreeMap<Integer, String>();
+    }
+
+    /**
+     * The object type of the hearing.
+     */
+    @JsonIgnore
+    public String getOtype()
+    {
+        return "publichearing";
     }
 
     public String getOid()
@@ -97,7 +108,6 @@ public class PublicHearing extends BaseObject
         pages.put(pageNumber, pageText);
     }
 
-    @Override
     public int getYear() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(getTimeStamp());

@@ -298,7 +298,7 @@ public class Environment
                 // To avoid memory issues, occasionally flush changes to file-system and truncate memory
                 if (storage.memory.size() > 4000) {
                     storage.flush();
-                    storage.clearCache();
+                    storage.clear();
                 }
 
             }

@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.tests;
 
+import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Vote;
 
 import java.util.ArrayList;
@@ -194,7 +195,7 @@ public class BillS16182011 extends TestSetup
         actionStrings.add(new String[]{"01/30/12", "DELIVERED TO ASSEMBLY"});
         actionStrings.add(new String[]{"01/30/12", "referred to codes"});
         // TODO: Passed assembly??
-        BillTests.testBillStatusActions(env, sobiDirectory, storage, billKey, initialSenateSobi, actionStrings, billNumber);
+        BillTests.testBillStatusActions(env, sobiDirectory, storage, billKey, initialSenateSobi, actionStrings, new Bill("S1618-2011", 2011));
     }
 
     @Test

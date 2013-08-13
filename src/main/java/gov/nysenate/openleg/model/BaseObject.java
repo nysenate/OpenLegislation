@@ -1,103 +1,191 @@
 package gov.nysenate.openleg.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.apache.lucene.document.Fieldable;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
- * Provides default methods and common operations for all indexed OpenLegislation models.
+ * Implements the BaseObject interface of all published OpenLegislation content.
+ *
+ * Does NOT implement getOid(). All base classes are responsible for forming their
+ * own unique object IDs.
  *
  * @author GraylinKim
- *
  */
-abstract public class BaseObject implements ISenateObject
+abstract public class BaseObject implements IBaseObject
 {
+    /**
+     * True if the object was not retrieved from storage.
+     */
+    protected boolean brandNew = true;
+
     /**
      * The current active status of the object. Inactive objects will
      * generally be excluded from basic searches.
      */
-    private boolean active = true;
+    protected boolean active = true;
 
     /**
-     * The last modified time of the object in milliseconds since epoch
+     * The date the object was most recently modified
      */
-    private long modified = 0;
+    protected Date modifiedDate = null;
+
+    /**
+     * The date the object was most recently published
+     */
+    protected Date publishDate = null;
+
+    /**
+     * The session this object was created in.
+     */
+    protected int session;
+
+    /**
+     * The calendar year this object was active in.
+     */
+    protected int year;
 
     /**
      * A set of SOBI files that contained modifications to this object.
      */
-    HashSet<String> sobiReferenceList = new HashSet<String>();
+    protected HashSet<String> dataSources;
 
     /**
-     * Default implementation of luceneFields which returns an empty
-     * collection. Override to add custom document fields.
+     * Initializes BaseObject parameters.
      */
-    public Collection<Fieldable> luceneFields() {
-        return new ArrayList<Fieldable>();
+    public BaseObject()
+    {
+        this.dataSources = new HashSet<String>();
     }
 
     /**
-     * Gets the active status of this object.
+     * @return - True if the object was not retrieved from storage.
      */
-    public boolean isActive() {
+    public boolean isBrandNew() {
+        return this.brandNew;
+    }
+
+    /**
+     * @param brandNew - The new brandNew state.
+     */
+    public void setBrandNew(boolean brandNew) {
+        this.brandNew = brandNew;
+    }
+
+    /**
+     * @return The current active status.
+     */
+    public boolean isActive()
+    {
         return this.active;
     }
 
     /**
-     * Sets the active status of this object
+     * @param active - The new active status
      */
-    public void setActive(boolean active) {
+    public void setActive(boolean active)
+    {
         this.active = active;
+    }
+
+    /**
+     * @return - The last publish date.
+     */
+    public Date getPublishDate()
+    {
+        return this.publishDate;
+    }
+
+    /**
+     * Set the last publish date.
+     *
+     * @param publishDate - The new publish date.
+     */
+    public void setPublishDate(Date publishDate)
+    {
+        this.publishDate = publishDate;
+    }
+
+    /**
+     * @return - true if the object has been published
+     */
+    @JsonIgnore
+    public boolean isPublished()
+    {
+        return this.publishDate != null;
     }
 
     /**
      * Gets the last modified time in milliseconds since epoch.
      */
-    public long getModified() {
-        return this.modified;
+    public Date getModifiedDate()
+    {
+        return this.modifiedDate;
     }
 
     /**
      * Sets the last modified timestamp in milliseconds since epoch.
      */
-    public void setModified(long modified) {
-        this.modified = modified;
+    public void setModifiedDate(Date modifiedDate)
+    {
+        this.modifiedDate = modifiedDate;
     }
 
-    @Override
-    @XmlTransient
+    /**
+     * @return - The session this object was created in.
+     */
+    public int getSession()
+    {
+        return this.session;
+    }
+
+    /**
+     * @param session - The new session this object was created in.
+     */
+    public void setSession(int session)
+    {
+        this.session = session;
+    }
+
+    /**
+     * @return - The calendar year this object was active in.
+     */
     public int getYear() {
-        return 0;
+        return this.year;
     }
 
-    @Override
+    /**
+     * @param year - The new calendar year for this object.
+     */
     public void setYear(int year) {
-
+        this.year = year;
     }
 
     /**
      * Get the set of SOBI files that contain modifications for this object.
      */
-    public HashSet<String> getSobiReferenceList() {
-        return sobiReferenceList;
+    public HashSet<String> getDataSources()
+    {
+        return dataSources;
     }
 
     /**
-     * Set the set of SOBI files that contain modifications for this object.
+     * @param dataSources - The new set of data sources that contain modifications for this object.
      */
-    public void setSobiReferenceList(HashSet<String> sobiReferenceList) {
-        this.sobiReferenceList = sobiReferenceList;
+    public void setDataSources(HashSet<String> dataSources)
+    {
+        this.dataSources = dataSources;
     }
 
     /**
-     * Add a new SOBI filename to the SOBI reference list. This is preferred to
+     * Add a new source to the set of data sources. This is preferred to
      * getting a reference to the list and directly adding filenames
+     *
+     * @param source - The new source to add to the data sources.
      */
-    public void addSobiReference(String reference) {
-        sobiReferenceList.add(reference);
+    public void addDataSource(String source)
+    {
+        dataSources.add(source);
     }
 }

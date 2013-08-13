@@ -11,32 +11,69 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 
-
+/**
+ *
+ * @author GraylinKim
+ */
 @XStreamAlias("transcript")
-public class Transcript extends BaseObject {
-
+public class Transcript extends BaseObject
+{
+    /**
+     *
+     */
     @XStreamAsAttribute
     protected String id;
 
+    /**
+     *
+     */
     protected Date timeStamp;
 
+    /**
+     *
+     */
     protected String location;
 
+    /**
+     *
+     */
     protected String type;
 
+    /**
+     *
+     */
     @XStreamAlias("full")
     protected String transcriptText;
 
+    /**
+     *
+     */
     protected String transcriptTextProcessed;
 
+    /**
+     *
+     */
     protected List<Bill> relatedBills;
 
-    public Transcript() {
+    /**
+     * JavaBean Constructor
+     */
+    public Transcript()
+    {
         relatedBills = new ArrayList<Bill>();
     }
 
     public String getId() {
         return id;
+    }
+
+    /**
+     * The object type of the trascript.
+     */
+    @JsonIgnore
+    public String getOtype()
+    {
+        return "transcript";
     }
 
     @JsonIgnore
@@ -97,7 +134,6 @@ public class Transcript extends BaseObject {
         this.relatedBills = relatedBills;
     }
 
-    @Override
     @JsonIgnore
     public int getYear() {
         Calendar cal = Calendar.getInstance();

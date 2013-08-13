@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
-import gov.nysenate.openleg.model.ISenateObject;
+import gov.nysenate.openleg.model.IBaseObject;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
@@ -35,7 +35,7 @@ public class SingleViewRequest extends AbstractApiRequest {
 
     @Override
     public void fillRequest() throws ApiRequestException {
-        ISenateObject so = Application.getLucene().getSenateObject(id, type);
+        IBaseObject so = Application.getLucene().getSenateObject(id, type);
 
         if(so == null) {
             throw new ApiRequestException(TextFormatter.append("couldn't find id: ", id, " of type: ", type));

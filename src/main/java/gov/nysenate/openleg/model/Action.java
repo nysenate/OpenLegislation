@@ -1,8 +1,5 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.util.TextFormatter;
-
-import java.net.URLEncoder;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -10,105 +7,145 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+/**
+ * Represents a single action on a single bill. E.g. REFERRED TO RULES
+ *
+ * Uniquely identified by Bill+Date.getTime()+Text.
+ *
+ * @author GraylinKim
+ */
 @XStreamAlias("action")
 public class Action extends BaseObject
 {
-    private String id;
-    private Date date;
+    /**
+     * This object's unique object id. Bill+Date.getTime()+Text.
+     */
+    private String oid = "";
+
+    /**
+     * The date this action was performed. Has no time component.
+     */
+    private Date date = null;
+
+    /**
+     * The text of this action.
+     */
     private String text = "";
 
-    private Bill bill;
+    /**
+     * The bill this action was taken on.
+     */
+    private Bill bill = null;
 
-    public Action() {
+    /**
+     * JavaBean constructor.
+     */
+    public Action()
+    {
         super();
     }
 
-    public Action (Bill bill, Date eventDate, String eventText) {
-        this(bill.getBillId(), eventDate, eventText);
-    }
-
-    public Action(String billNumber, Date eventDate, String eventText) {
+    /**
+     * Fully constructs a new action.
+     *
+     * @param date - The date of the action
+     * @param text - The text of the action
+     * @param bill - The bill the action was performed on
+     */
+    public Action(Date date, String text, Bill bill) {
         super();
-        this.date = eventDate;
-        this.text = eventText;
-
-        try {
-            this.id = billNumber + "-" + eventDate.getTime() + "-" + URLEncoder.encode(eventText,"utf-8");
-        }
-        catch (Exception e) { }
+        this.bill = bill;
+        this.date = date;
+        this.text = text;
+        this.oid = this.bill.getBillId() + "-" + this.date.getTime() + "-" + this.text;
+        this.setPublishDate(this.date);
+        this.setModifiedDate(this.date);
+        this.setActive(bill.isActive());
+        this.setSession(bill.getSession());
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        calendar.setTime(date);
+        this.setYear(calendar.get(java.util.Calendar.YEAR));
     }
 
+    /**
+     * @return - The object's otype
+     */
     @JsonIgnore
-    public String getBillId() {
-        return id.substring(0,id.indexOf("-", id.indexOf("-") + 1));
+    public String getOtype()
+    {
+        return "action";
     }
 
-
-    public String getId() {
-        return id;
+    /**
+     * @return - This object's unique object id.
+     */
+    @JsonIgnore
+    public String getOid()
+    {
+        return this.oid;
     }
 
+    /**
+     * @param oid - The object's new oid.
+     */
+    @JsonIgnore
+    public void setOid(String oid) {
+        this.oid = oid;
+    }
 
-
+    /**
+     * @return - The date of the action.
+     */
     public Date getDate() {
         return date;
     }
 
+    /**
+     * @param date - The new action date
+     */
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-
+    /**
+     * @return - The text of the action.
+     */
     public String getText() {
         return text;
     }
 
-
-
-    public void setId(String billEventId) {
-        this.id = billEventId;
+    /**
+     * @param text - The text of the action.
+     */
+    public void setText(String text) {
+        this.text = text;
     }
 
-
-
-    public void setDate(Date eventDate) {
-        this.date = eventDate;
-    }
-
-
-
-    public void setText(String eventText) {
-        this.text = eventText;
-    }
-
+    /**
+     * @return - The bill the action was performed on.
+     */
     public Bill getBill() {
         return bill;
     }
 
+    /**
+     * @param bill - The new bill to this action targets.
+     */
     public void setBill(Bill bill) {
         this.bill = bill;
     }
 
-
-
     @Override
     public boolean equals(Object obj) {
-
-        if (obj != null && obj instanceof Action)
-        {
+        if (obj != null && obj instanceof Action) {
             Action other = (Action)obj;
-
-            String thisId = TextFormatter.append(
-                    this.getText(),"-",
-                    this.getDate().getTime());
-            String thatId =  TextFormatter.append(
-                    other.getText(),"-",
-                    other.getDate().getTime());
-
-            return (thisId.equals(thatId));
+            return this.getOid().equals(other.getOid());
         }
-
-        return false;
+        else {
+            return false;
+        }
     }
 
-    @Override
     @JsonIgnore
     public int getYear() {
         java.util.Calendar cal = java.util.Calendar.getInstance();
@@ -117,10 +154,6 @@ public class Action extends BaseObject
     }
 
     public static class ByEventDate implements Comparator<Action> {
-
-        /*
-         * sorted newest to oldest
-         */
         @Override
         public int compare(Action be1, Action be2) {
             int ret = be1.getDate().compareTo(be2.getDate());
@@ -129,20 +162,26 @@ public class Action extends BaseObject
             }
             return ret*-1;
         }
-
-    }
-
-    @JsonIgnore
-    public String getOid()
-    {
-        return this.getId();
     }
 
     @Override
     public String toString() {
         return date.toString()+" "+text;
     }
+
+    /**
+     * @deprecated - Only kept around for old json serializers
+     */
+    @Deprecated
+    public String getId() {
+        return this.oid;
+    }
+
+    /**
+     * @deprecated - Only kept around for old json serializers
+     */
+    @Deprecated
+    public void setId(String id) {
+        this.oid = id;
+    }
 }
-
-
-

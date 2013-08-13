@@ -169,13 +169,13 @@ public class BillTests
      * Tests the Bill Status Actions found in SOBI line type/prefix 4.
      */
     public static void testBillStatusActions(Environment env, File sobiDirectory,
-            Storage storage, String billKey, String sobi, ArrayList<String[]> actionString, String billNumber)
+            Storage storage, String billKey, String sobi, ArrayList<String[]> actionString, Bill bill)
     {
-        List<Action> expectedActions = TestHelper.convertIntoActions(actionString, billNumber);
+        List<Action> expectedActions = TestHelper.convertIntoActions(actionString, bill);
         File[] initialSobi = TestHelper.getFilesByName(sobiDirectory, sobi);
         TestHelper.processFile(env, initialSobi);
-        Bill bill = TestHelper.getBill(storage, billKey);
-        List<Action> actions = bill.getActions();
+        Bill storageBill = TestHelper.getBill(storage, billKey);
+        List<Action> actions = storageBill.getActions();
         for(int i = 0; i < actions.size(); i++) {
             // Test status action text
             assertThat(actions.get(i).getText(), is(expectedActions.get(i).getText()));

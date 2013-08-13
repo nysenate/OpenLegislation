@@ -94,7 +94,7 @@ public class OriginalApiConverter {
         JSONWriter locObj = mainObj.object();
 
         locObj.key("year");
-        locObj.value(bill.getYear());
+        locObj.value(bill.getSession());
 
         locObj.key("senateId");
         locObj.value(bill.getBillId());

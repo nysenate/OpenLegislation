@@ -26,6 +26,7 @@ public class Supplemental {
 
     protected String supplementalId;
 
+    @JsonIgnore
     protected Calendar calendar;
 
     public Collection<Fieldable> luceneFields() {

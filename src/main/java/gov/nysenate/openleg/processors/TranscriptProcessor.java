@@ -107,12 +107,13 @@ public class TranscriptProcessor {
         transcript.setTranscriptTextProcessed(fullTextProcessed.toString());
         String oid = transcript.getType().replaceAll(" ",  "-")+"-"+new SimpleDateFormat("MM-dd-yyyy").format(transcript.getTimeStamp());
         transcript.setId(oid);
-        transcript.setModified(transcript.getTimeStamp().getTime());
-        transcript.addSobiReference(file.getName());
+        transcript.setModifiedDate(transcript.getTimeStamp());
+        transcript.setPublishDate(transcript.getTimeStamp());
+        transcript.addDataSource(file.getName());
 
         // Save the transcript
         String key = transcript.getYear()+"/transcript/"+transcript.getId();
-        storage.set(key, transcript);
+        storage.set(transcript);
 
         // Make an entry in the change log
         ChangeLogger.setContext(file, transcript.getTimeStamp());

@@ -30,7 +30,7 @@ public class Lucene extends ServiceBase
      */
     protected Collection<ISenateSerializer> serializers = Arrays.asList(new XmlSerializer(), new JsonSerializer());
 
-    public Lucene(String indexDir) throws IOException
+    public Lucene() throws IOException
     {
         super();
     }
@@ -68,63 +68,63 @@ public class Lucene extends ServiceBase
                 else {
                     // Retrieve new/modified objects from storage so we can index them
                     Class<? extends BaseObject> objType = classMap.get(otype);
-                    BaseObject obj = (BaseObject) storage.get(key, objType);
-                    Document document = null;
+                    BaseObject obj = storage.get(key, objType);
+                    if (obj.isPublished()) {
+                        Document document = null;
 
-                    if (otype.equals("bill")) {
-                        // Regenerate all the bill sub-documents. Delete them all first to
-                        // account for any removals or changes in the document oid. Add back
-                        // references so that the document can be properly constructed.
-                        //
-                        // TODO: Should we really be pulling the modified date from the bill?
-                        Bill bill = (Bill)obj;
+                        if (otype.equals("bill")) {
+                            // Regenerate all the bill sub-documents. Delete them all first to
+                            // account for any removals or changes in the document oid. Add back
+                            // references so that the document can be properly constructed.
+                            //
+                            // TODO: Should we really be pulling the modified date from the bill?
+                            Bill bill = (Bill)obj;
 
-                        lucene.deleteDocumentsByQuery("otype:action AND billno:" + bill.getBillId());
-                        for(Action billEvent:bill.getActions()) {
+                            lucene.deleteDocumentsByQuery("otype:action AND billno:" + bill.getBillId());
+                            for(Action billEvent:bill.getActions()) {
+                                try {
+                                    billEvent.setBill(bill);
+                                    lucene.updateDocument(DocumentBuilder.build(billEvent, serializers));
+                                }
+                                catch (IOException e) {
+                                    logger.error("Error indexing: "+key, e);
+                                }
+                            }
+
+                            lucene.deleteDocumentsByQuery("otype:vote AND billno:" + bill.getBillId());
+                            for(Vote vote: bill.getVotes()) {
+                                try {
+                                    vote.setBill(bill);
+                                    lucene.updateDocument(DocumentBuilder.build(vote, serializers));
+                                }
+                                catch(IOException e) {
+                                    logger.error("Error indexing: "+key, e);
+                                }
+                            }
+
+                            document = DocumentBuilder.build(bill, serializers);
+                        }
+                        else if (otype.equals("meeting")) {
+                            document = DocumentBuilder.build((Meeting)obj, serializers);
+                        }
+                        else if (otype.equals("calendar")) {
+                            document = DocumentBuilder.build((Calendar)obj, serializers);
+                        }
+                        else if (otype.equals("transcript")) {
+                            document = DocumentBuilder.build((Transcript)obj, serializers);
+                        }
+                        else if (otype.equals("hearing")) {
+                            // Do nothing
+                        }
+
+
+                        if (document != null) {
                             try {
-                                billEvent.setModified(bill.getModified());
-                                billEvent.setBill(bill);
-                                lucene.updateDocument(DocumentBuilder.build(billEvent, serializers));
+                                lucene.updateDocument(document);
                             }
                             catch (IOException e) {
                                 logger.error("Error indexing: "+key, e);
                             }
-                        }
-
-                        lucene.deleteDocumentsByQuery("otype:vote AND billno:" + bill.getBillId());
-                        for(Vote vote: bill.getVotes()) {
-                            try {
-                                vote.setModified(bill.getModified());
-                                vote.setBill(bill);
-                                lucene.updateDocument(DocumentBuilder.build(vote, serializers));
-                            }
-                            catch(IOException e) {
-                                logger.error("Error indexing: "+key, e);
-                            }
-                        }
-
-                        document = DocumentBuilder.build(bill, serializers);
-                    }
-                    else if (otype.equals("meeting")) {
-                        document = DocumentBuilder.build((Meeting)obj, serializers);
-                    }
-                    else if (otype.equals("calendar")) {
-                        document = DocumentBuilder.build((Calendar)obj, serializers);
-                    }
-                    else if (otype.equals("transcript")) {
-                        document = DocumentBuilder.build((Transcript)obj, serializers);
-                    }
-                    else if (otype.equals("hearing")) {
-                        // Do nothing
-                    }
-
-
-                    if (document != null) {
-                        try {
-                            lucene.updateDocument(document);
-                        }
-                        catch (IOException e) {
-                            logger.error("Error indexing: "+key, e);
                         }
                     }
                 }

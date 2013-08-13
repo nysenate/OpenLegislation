@@ -18,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class ChangeLogger
@@ -73,7 +74,7 @@ public class ChangeLogger
     public static void readFromLines(Iterable<String> lines)
     {
         ChangeLogger.clearLog();
-        Pattern changePattern = Pattern.compile("\\s*(.*?)\\s+(NEW|DELETED|MODIFIED)\\s+(.*)");
+        Pattern changePattern = Pattern.compile("\\s*(.*?)\\s+("+StringUtils.join(Storage.Status.values(), "|")+")\\s+(.*)");
         changeLog = new HashMap<String, Change>();
         for (String line : lines) {
             if (!line.isEmpty() && !line.matches("\\s*#")) {
@@ -120,26 +121,22 @@ public class ChangeLogger
 
         String otype = keyMatcher.group(2);
         String oid = keyMatcher.group(3);
-        Change change = changeLog.get(key);
 
+        Change change = changeLog.get(key);
         if (change == null) {
-            if (storage.storageFile(key).exists()) {
-                // A json for this key already exists, it's not new.
-                changeLog.put(key, new Change(oid, otype,Status.MODIFIED, ChangeLogger.datetime));
-            } else {
-                changeLog.put(key, new Change(oid, otype, Status.NEW, ChangeLogger.datetime));
-            }
-        } else if (change.getStatus() != Status.NEW) {
+            changeLog.put(key, new Change(oid, otype, storage.status(key), ChangeLogger.datetime));
+        }
+        else if (change.getStatus() == Status.DELETED) {
+            // If it was previously deleted, make it new
+            changeLog.put(key, new Change(oid, otype, Status.NEW, ChangeLogger.datetime));
+        }
+        else if (change.getStatus() != Status.NEW) {
+            // Don't change a status marked as NEW
             changeLog.put(key, new Change(oid, otype, Status.MODIFIED, ChangeLogger.datetime));
         }
     }
 
     public static void delete(String key, Storage storage)
-    {
-        delete(key, storage, null);
-    }
-
-    public static void delete(String key, Storage storage, Date date)
     {
         Change change = changeLog.get(key);
         if (change != null) {
@@ -152,11 +149,12 @@ public class ChangeLogger
                 change.setStatus(Status.DELETED);
             }
         } else {
+            // Otherwise make sure to leave a trace of the object
             Matcher keyMatcher = keyPattern.matcher(key);
             if (keyMatcher.find()) {
                 String otype = keyMatcher.group(2);
                 String oid = keyMatcher.group(3);
-                changeLog.put(key, new Change(oid, otype, Status.DELETED, date));
+                changeLog.put(key, new Change(oid, otype, Status.DELETED, ChangeLogger.datetime));
             }
             else {
                 logger.error("Invalid changelog key: "+key);

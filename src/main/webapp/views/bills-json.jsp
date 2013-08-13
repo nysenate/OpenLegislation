@@ -1,6 +1,6 @@
 <%@ page language="java" import="java.util.*,java.text.*,gov.nysenate.openleg.*,org.json.*,gov.nysenate.openleg.model.*"  pageEncoding="utf-8" contentType="text/plain"%>
 <%
-String contentType = (String) request.getAttribute("contentType");
+    String contentType = (String) request.getAttribute("contentType");
 response.setContentType(contentType == null ? "text/html" : contentType);
 
 @SuppressWarnings("unchecked")
@@ -24,7 +24,7 @@ while (it.hasNext())
 		bill = it.next();
 										
 		locObj.key("year");
-		locObj.value(bill.getYear());
+		locObj.value(bill.getSession());
 		
 		locObj.key("senateId");
 		locObj.value(bill.getBillId());
@@ -221,4 +221,5 @@ if (bill.getVotes()!=null && bill.getVotes().size()>0)
 
 }
 
-mainObj.endArray();%><%=mainObj.toString()%>
+mainObj.endArray();
+%><%=mainObj.toString()%>

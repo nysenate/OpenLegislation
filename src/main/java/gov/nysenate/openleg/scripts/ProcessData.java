@@ -11,6 +11,8 @@ import gov.nysenate.openleg.util.ChangeLogger;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -23,7 +25,8 @@ import org.apache.commons.cli.Options;
  */
 public class ProcessData extends BaseScript
 {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception
+    {
         new ProcessData().run(args);
     }
 
@@ -39,13 +42,22 @@ public class ProcessData extends BaseScript
     @Override
     protected void execute(CommandLine opts) throws Exception
     {
-
-        String[] tasks = {};
+        List<String> tasks = new ArrayList<String>();
         if (opts.hasOption("tasks")) {
-            tasks = opts.getOptionValue("tasks").split(",\\s*");
+            tasks = Arrays.asList(opts.getOptionValue("tasks").toLowerCase().split(",\\s*"));
         }
         else {
-            System.err.println("-t|--tasks is a required options");
+            System.err.println("-t|--tasks is a required option");
+            this.printUsage(opts);
+            System.exit(1);
+        }
+
+        List<String> pushTargets = new ArrayList<String>();
+        if (opts.hasOption("push-targets")) {
+            pushTargets = Arrays.asList(opts.getOptionValue("push-targets").toLowerCase().split(",\\s*"));
+        }
+        else if (tasks.contains("push")) {
+            System.err.println("-p|--push-targets is required when using the push task.");
             this.printUsage(opts);
             System.exit(1);
         }
@@ -59,24 +71,20 @@ public class ProcessData extends BaseScript
             }
         }
 
-        String[] pushTargets = {};
-        if (opts.hasOption("push-targets")) {
-            pushTargets = opts.getOptionValue("push-targets").split(",\\s*");
-        }
-
         ArrayList<ServiceBase> services = new ArrayList<ServiceBase>();
         for (String target : pushTargets) {
-            if (target.equalsIgnoreCase("lucene")) {
-                services.add(new Lucene(Application.getConfig().getValue("lucene.directory")));
+            if (target.equals("lucene")) {
+                services.add(new Lucene());
             }
-            else if (target.equalsIgnoreCase("varnish")) {
+            else if (target.equals("varnish")) {
                 services.add(new Varnish("127.0.0.1", 80));
             }
-            else if (target.equalsIgnoreCase("reporter")) {
+            else if (target.equals("reporter")) {
                 services.add(new UpdateReporter());
             }
             else {
                 System.err.println("Invalid push target: "+target);
+                this.printUsage(opts);
                 System.exit(1);
             }
         }
@@ -84,19 +92,20 @@ public class ProcessData extends BaseScript
         Environment env = Application.getEnvironment();
         DataProcessor process = new DataProcessor();
         for (String task : tasks) {
-            if (task.equalsIgnoreCase("stage")) {
+            // TODO: With Java7 we can make this a switch case
+            if (task.equals("stage")) {
                 process.stage(env.getStagingDirectory(), env.getWorkingDirectory());
             }
-            else if (task.equalsIgnoreCase("collate")) {
+            else if (task.equals("collate")) {
                 process.collate(env.getWorkingDirectory());
             }
-            else if (task.equalsIgnoreCase("ingest")) {
+            else if (task.equals("ingest")) {
                 process.ingest(env.getWorkingDirectory(), Application.getStorage());
                 if (changeFile != null) {
                     ChangeLogger.writeToFile(changeFile);
                 }
             }
-            else if (task.equalsIgnoreCase("push")) {
+            else if (task.equals("push")) {
                 if (ChangeLogger.getChangeLog().isEmpty()) {
                     if (changeFile != null) {
                         ChangeLogger.readFromFile(changeFile);

@@ -190,6 +190,7 @@ public class DataProcessor
 
         for (File file : getSortedFiles(workingDir, true)) {
             try {
+                logger.info("Working on: "+file);
                 String type = file.getParentFile().getName();
                 if (type.equals("bills")) {
                     billProcessor.process(file, storage);
@@ -211,7 +212,7 @@ public class DataProcessor
                 // To avoid memory issues, occasionally flush changes to file-system and truncate memory
                 if (storage.memory.size() > 4000) {
                     storage.flush();
-                    storage.clearCache();
+                    storage.clear();
                 }
             }
             catch (IOException e) {
@@ -285,7 +286,9 @@ public class DataProcessor
 
     /**
      * Attempts to use the SOBI file naming convention to properly archive files based
-     * on the year that they were issued to us.
+     * on the file type and the year that they were issued to us.
+     *
+     * e.g. 2013/bill/SOBI.D130628.T101200
      *
      * @param sourceDir - The directory with files to archive, non-recursive.
      * @param destDir - The base directory to archive files to.
@@ -353,14 +356,14 @@ public class DataProcessor
         }
 
         if (in == null) {
-            // This is bad, but don't throw a flag. If the resulting XML document
+            // This is bad, but don't throw an exception. If the resulting XML document
             // is malformed we'll throw the exception during ingest.
             logger.error("Unterminated XML document: "+line);
         }
 
         String data = sb.append("</SENATEDATA>").toString();
 
-        // TODO: Figure out all this matcher magic. How does it work?
+        // TODO: Figure out all this matcher magic. How does it work? What the hell is it doing?
         sb = new StringBuffer();
         Matcher m = Pattern.compile("<\\!\\[CDATA\\[(.*?)\\]\\]>").matcher(data);
         while(m.find()) {

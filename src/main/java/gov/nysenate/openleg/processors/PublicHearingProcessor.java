@@ -106,7 +106,7 @@ public class PublicHearingProcessor {
 
         // TODO: Generate unique id's for public hearings
         String id = "";
-        storage.set(publicHearing.getYear()+"/public_hearing/"+id, publicHearing);
+        storage.set(publicHearing);
     }
 
     private String trimLine(String line) {

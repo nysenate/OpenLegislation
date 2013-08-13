@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.xstream;
 
 import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.ISenateObject;
+import gov.nysenate.openleg.model.IBaseObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -68,7 +68,7 @@ public class SenateObjectConverter implements Converter {
         //Get the LocalConversionMapper, responsible for XStreamConverter mark up
         LocalConversionMapper conversionMapper = (LocalConversionMapper) this.mapper.lookupMapperOfType(LocalConversionMapper.class);
 
-        ISenateObject obj = (ISenateObject) value;
+        IBaseObject obj = (IBaseObject) value;
         Class<?> c = obj.getClass();
 
         List<Field> attributes = new ArrayList<Field>();
@@ -232,7 +232,7 @@ public class SenateObjectConverter implements Converter {
     @Override
     @SuppressWarnings("rawtypes")
     public boolean canConvert(Class clazz) {
-        return ISenateObject.class.isAssignableFrom(clazz);
+        return IBaseObject.class.isAssignableFrom(clazz);
     }
 
 }

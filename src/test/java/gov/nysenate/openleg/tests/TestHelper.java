@@ -112,7 +112,7 @@ public class TestHelper
 	  * Date of the action should be in MM/DD/yy format.
 	  * @param actions holds string[]'s where index 0 holds the date string and index 1 holds the event text.
 	  */
-	 public static List<Action> convertIntoActions(ArrayList<String[]> actions, String billName)
+	 public static List<Action> convertIntoActions(ArrayList<String[]> actions, Bill bill)
 	 {
 		 ArrayList<Action> actionList = new ArrayList<Action>();
 		 for(int i = 0; i < actions.size(); i++) {
@@ -125,7 +125,7 @@ public class TestHelper
 				e.printStackTrace();
 			}
 			 // Create Action and add to list
-			 actionList.add(new Action(billName, date, actions.get(i)[1]));
+			 actionList.add(new Action(date, actions.get(i)[1], bill));
 		 }
 		 return actionList;
 	 }
