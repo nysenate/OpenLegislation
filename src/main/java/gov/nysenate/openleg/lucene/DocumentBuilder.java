@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.lucene;
 
 import gov.nysenate.openleg.model.Action;
-import gov.nysenate.openleg.model.Addendum;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.CalendarEntry;
@@ -192,11 +191,6 @@ public class DocumentBuilder
             billIds.add(bill.getBillId());
         }
 
-        ArrayList<String> addendumIds = new ArrayList<String>();
-        for (Addendum addendum : meeting.getAddendums()) {
-            addendumIds.add(addendum.getOid()+"-"+addendum.getPublishDate()+"-"+addendum.getMeetings());
-        }
-
         // Other various search fields and filters
         document.add(new Field("title", meeting.getCommitteeName()+" - "+DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(meeting.getMeetingDateTime()), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("summary", meeting.getLocation(), Field.Store.NO, Field.Index.ANALYZED));
@@ -205,7 +199,6 @@ public class DocumentBuilder
         document.add(new Field("chair", meeting.getCommitteeChair(), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("notes", meeting.getNotes().toString(), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("bills", StringUtils.join(billIds, ", "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("addendums", StringUtils.join(addendumIds, ", "), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("when", String.valueOf(meeting.getMeetingDateTime().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("sortindex", meeting.getMeetingDateTime().getTime()+meeting.getCommitteeName(), Field.Store.NO, Field.Index.NOT_ANALYZED));
         document.add(new Field("sorttitle", document.getFieldable("title").stringValue().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));

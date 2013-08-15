@@ -35,10 +35,6 @@ public class Meeting extends BaseObject
     protected String location = "";
 
     /**
-     * The internal storage id for this meeting.
-     */
-    protected String id;
-    /**
      * The unique identifier for this object.
      */
     protected String oid;
@@ -64,16 +60,9 @@ public class Meeting extends BaseObject
     protected String notes = "";
 
     /**
-     * A list of agenda addendums that affect this meeting
-     */
-    @JsonIgnore
-    protected List<Addendum> addendums;
-
-    /**
      * JavaBean Constructor
      */
     public Meeting() {
-        addendums = new ArrayList<Addendum>();
         bills = new ArrayList<Bill>();
     }
 
@@ -91,7 +80,6 @@ public class Meeting extends BaseObject
         this.setSession(calendar.get(java.util.Calendar.YEAR));
         this.setYear(calendar.get(java.util.Calendar.YEAR));
 
-        addendums = new ArrayList<Addendum>();
         bills = new ArrayList<Bill>();
     }
 
@@ -133,15 +121,6 @@ public class Meeting extends BaseObject
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.setTime(this.getMeetingDateTime());
         return cal.get(java.util.Calendar.YEAR);
-    }
-
-    @JsonIgnore
-    public List<Addendum> getAddendums() {
-        return addendums;
-    }
-
-    public void setAddendums(List<Addendum> addendums) {
-        this.addendums = addendums;
     }
 
     public String getLocation() {
@@ -215,14 +194,14 @@ public class Meeting extends BaseObject
      */
     @Deprecated
     public String getId() {
-        return id;
+        return oid;
     }
 
     /**
      * @deprecated
      */
     @Deprecated
-    public void setId(String id) {
-        this.id = id;
+    public void setId(String oid) {
+        this.oid = oid;
     }
 }
