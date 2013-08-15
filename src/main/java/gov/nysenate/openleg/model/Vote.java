@@ -44,7 +44,8 @@ public class Vote extends BaseObject {
     @XStreamCollectionAlias(node="ayeswr",value="member")
     private List<String> ayeswr;
 
-    public String sequenceNumber;
+    @JsonIgnore
+    private String sequenceNumber;
 
     private String description = "";
 
@@ -75,7 +76,7 @@ public class Vote extends BaseObject {
         this.setYear(cal.get(java.util.Calendar.YEAR));
         this.setSession(this.getYear() % 2 == 0 ? this.getYear() -1 : this.getYear());
         this.voteType = type;
-        this.sequenceNumber = sequenceNumber;
+        this.setSequenceNumber(sequenceNumber);
         this.id = billId+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
     }
 
@@ -262,5 +263,16 @@ public class Vote extends BaseObject {
     @Deprecated
     public void setId(String oid) {
         this.oid = oid;
+    }
+
+    @JsonIgnore
+    public String getSequenceNumber()
+    {
+        return sequenceNumber;
+    }
+
+    public void setSequenceNumber(String sequenceNumber)
+    {
+        this.sequenceNumber = sequenceNumber;
     }
 }
