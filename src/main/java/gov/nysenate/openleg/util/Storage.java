@@ -504,7 +504,7 @@ public class Storage
 
     public Vote jsonNodeToVote(JsonNode node) {
         Vote vote = new Vote();
-        vote.setId(node.get("id").asText());
+        vote.setOid(node.get("oid").asText());
         vote.setAbsent(jsonNodeToListString(node.get("absent")));
         vote.setAyes(jsonNodeToListString(node.get("ayes")));
         vote.setAyeswr(jsonNodeToListString(node.get("ayeswr")));

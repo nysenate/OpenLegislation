@@ -94,7 +94,7 @@ public class CalendarEntry
      *
      * @param oid
      */
-    public void setOId(String oid)
+    public void setOid(String oid)
     {
         this.oid = oid;
     }
