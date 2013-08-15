@@ -690,7 +690,7 @@ public class BillProcessor
             String oldbill = billData.group(4).trim().replaceAll("[0-9`-]$", "");
             //String lbdnum = billData.group(5);
 
-            if (!sponsor.isEmpty() && bill.getSponsor() == null) {
+            if (!sponsor.isEmpty() && (bill.getSponsor() == null || bill.getSponsor().getFullname().isEmpty())) {
                 bill.setSponsor(new Person(sponsor));
             }
             bill.addPreviousVersion(oldbill);
