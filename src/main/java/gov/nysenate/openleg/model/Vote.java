@@ -22,6 +22,8 @@ public class Vote extends BaseObject {
 
     private Date voteDate;
 
+    public String oid;
+
     @XStreamCollectionAlias(node="ayes",value="member")
     private List<String> ayes;
 
@@ -41,6 +43,8 @@ public class Vote extends BaseObject {
 
     @XStreamCollectionAlias(node="ayeswr",value="member")
     private List<String> ayeswr;
+
+    public String sequenceNumber;
 
     private String description = "";
 
@@ -62,25 +66,22 @@ public class Vote extends BaseObject {
         absent = new ArrayList<String>();
     }
 
-    public Vote (Bill bill, Date date, int type, String sequenceNumber) {
+    public Vote(String billId, Date date, int type, String sequenceNumber)
+    {
         this();
-        this.bill = bill;
         this.voteDate = date;
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(voteDate);
+        this.setYear(cal.get(java.util.Calendar.YEAR));
+        this.setSession(this.getYear() % 2 == 0 ? this.getYear() -1 : this.getYear());
         this.voteType = type;
-        this.id = buildId(bill, date, sequenceNumber);
+        this.sequenceNumber = sequenceNumber;
+        this.id = billId+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
     }
 
-    public Vote (Bill bill, Date voteDate, int ayeCount, int nayCount)
-    {
-        this();
-        this.id = buildId(bill, voteDate, "1");
+    public Vote(Bill bill, Date date, int type, String sequenceNumber) {
+        this(bill.getBillId(), date, type, sequenceNumber);
         this.bill = bill;
-        this.voteDate = voteDate;
-    }
-
-    public String buildId (Bill bill, Date voteDate, String sequenceNumber)
-    {
-        return bill.getBillId()+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
     }
 
     public int getVoteType() {
@@ -96,14 +97,15 @@ public class Vote extends BaseObject {
         return "vote";
     }
 
-    public String getId() {
-        return id;
-    }
-
     @JsonIgnore
     public String getOid()
     {
-        return this.getId();
+        return this.oid;
+    }
+
+    public void setOid(String oid)
+    {
+        this.oid = oid;
     }
 
 
@@ -158,14 +160,6 @@ public class Vote extends BaseObject {
     public void setVoteType(int voteType) {
         this.voteType = voteType;
     }
-
-
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-
 
     public void setVoteDate(Date voteDate) {
         this.voteDate = voteDate;
@@ -250,20 +244,23 @@ public class Vote extends BaseObject {
     public boolean equals(Object obj) {
         if(obj != null && obj instanceof Vote) {
             Vote vote = (Vote)obj;
-            return this.id.equals(vote.getId());
+            return this.id.equals(vote.getOid());
         }
         return false;
     }
 
-    @JsonIgnore
-    public int getYear() {
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-        cal.setTime(voteDate);
-        return cal.get(java.util.Calendar.YEAR);
-    }
-
     @Override
     public String toString() {
-        return this.getId();
+        return this.getOid();
+    }
+
+    @Deprecated
+    public String getId() {
+        return oid;
+    }
+
+    @Deprecated
+    public void setId(String oid) {
+        this.oid = oid;
     }
 }
