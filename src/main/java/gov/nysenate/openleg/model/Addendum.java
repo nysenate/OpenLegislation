@@ -50,11 +50,12 @@ public class Addendum extends BaseObject
         meetings = new ArrayList<Meeting>();
     }
 
-    public Addendum(String addendumId, String weekOf, Date publishDate, int agendaNo)
+    public Addendum(String addendumId, String weekOf, Date publishDate, int agendaNo, int year)
     {
         this.setAddendumId(addendumId);
         this.setWeekOf(weekOf);
-        this.setYear(Integer.parseInt(weekOf.split("-")[0]));
+        this.setYear(year);
+        this.setSession(year % 2 == 0 ? year-1 : year);
         this.setPublishDate(publishDate);
         this.setModifiedDate(publishDate);
         this.setAgenda(agenda);

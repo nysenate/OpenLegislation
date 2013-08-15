@@ -277,7 +277,7 @@ public class AgendaProcessor implements OpenLegConstants {
         }
 
         // Try to retrieve existing addendum and update it
-        Addendum addendum = new Addendum(addendumId, weekOf, publishDate, agenda.getNumber());
+        Addendum addendum = new Addendum(addendumId, weekOf, publishDate, agenda.getNumber(), agenda.getYear());
         addendum.setAgenda(agenda);
         for (Addendum oldAddendum : agenda.getAddendums()) {
             if (oldAddendum.getOid().equals(addendum.getOid())) {
