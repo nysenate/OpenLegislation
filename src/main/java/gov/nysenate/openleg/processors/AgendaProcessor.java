@@ -116,10 +116,8 @@ public class AgendaProcessor implements OpenLegConstants {
         }
 
         if (xmlBill.getVotes() != null) {
-            int ayeCount = 0;
-            int nayCount = 0;
             Date voteDate = meeting.getMeetingDateTime();
-            Vote vote = new Vote(bill, voteDate, ayeCount, nayCount);
+            Vote vote = new Vote(bill, voteDate, Vote.VOTE_TYPE_COMMITTEE, "1");
             vote.setPublishDate(modifiedDate);
             vote.setModifiedDate(modifiedDate);
 
@@ -279,7 +277,8 @@ public class AgendaProcessor implements OpenLegConstants {
         }
 
         // Try to retrieve existing addendum and update it
-        Addendum addendum = new Addendum(addendumId, weekOf, publishDate, agenda);
+        Addendum addendum = new Addendum(addendumId, weekOf, publishDate, agenda.getNumber());
+        addendum.setAgenda(agenda);
         for (Addendum oldAddendum : agenda.getAddendums()) {
             if (oldAddendum.getOid().equals(addendum.getOid())) {
                 addendum = oldAddendum;
@@ -323,7 +322,6 @@ public class AgendaProcessor implements OpenLegConstants {
 
             Meeting meeting = new Meeting(commName, meetDateTime);
             meeting.setPublishDate(modifiedDate);
-            meeting.getAddendums().add(addendum);
             String key = storage.key(meeting);
             Meeting oldMeeting = (Meeting)storage.get(key, Meeting.class);
 

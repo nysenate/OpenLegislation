@@ -1,12 +1,9 @@
 package gov.nysenate.openleg.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -28,13 +25,6 @@ public class Supplemental {
 
     @JsonIgnore
     protected Calendar calendar;
-
-    public Collection<Fieldable> luceneFields() {
-        Collection<Fieldable> fields =  new ArrayList<Fieldable>();
-        fields.add(new Field("when", this.getCalendarDate().toString(), Field.Store.YES, Field.Index.ANALYZED));
-        fields.add(new Field("releasedate", this.getReleaseDateTime().toString(), Field.Store.YES, Field.Index.ANALYZED));
-        return fields;
-    }
 
     public void addSequence(Sequence sequence) {
         if(sequences == null) {
