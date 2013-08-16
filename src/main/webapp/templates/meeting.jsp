@@ -5,14 +5,6 @@
 
 	Meeting meeting = (Meeting) request.getAttribute("meeting");
 	String chair = meeting.getCommitteeChair();
-
-	//Temp Hack
-	String calNo = "";
-	Addendum addendum = null;
-	if (meeting.getAddendums().size() > 0) {
-	    addendum = meeting.getAddendums().get(meeting.getAddendums().size() - 1);
-	    calNo = addendum.getAgenda().getNumber()+"";
-	}
 %>
 <div id="content">
 <div class="content-bg">
@@ -20,15 +12,10 @@
 	<div class="item-meta">
         <div id="subcontent" class="emptytitle">
        		<div class="billmeta">
-                   <ul>
-                       <li><span class="meta">Date: </span><span class="metadata">
-                           <%=df.format(meeting.getMeetingDateTime())%>
-					    </span></li>
- 					<% if(calNo != null && !calNo.trim().isEmpty()) { %>
-	 					<li><span class="meta">Agenda: </span><span class="metadata">
-	           				<%=calNo%>  
-	 					</span></li>
- 					<% } %>
+                <ul>
+                    <li><span class="meta">Date: </span><span class="metadata">
+                          <%=df.format(meeting.getMeetingDateTime())%>
+				    </span></li>
  					<li><span class="meta">Chair: </span><span class="metadata">
            				<a href="<%=JSPHelper.getLink(request, "/search/?term=chair:"+java.net.URLEncoder.encode("\""+meeting.getCommitteeChair() + "\"", OpenLegConstants.ENCODING))%>">${meeting.committeeChair}</a>
  					</span></li>
@@ -38,17 +25,9 @@
 						</span></li>
 					<% } %>
 				
- 					<% if (addendum != null) { %>
-	 					<li><span class="meta">Addendum: </span><span class="metadata">
-	           				${addendum.addendumId}
-	 					</span></li>
-	 					<li><span class="meta">Published: </span><span class="metadata">
-	           				${addendum.publicationDateTime}
-	 					</span></li>
-	 					<li><span class="meta">Published in Week of: </span><span class="metadata">
-	           				${addendum.weekOf}
-	 					</span></li>
- 					<% } %>
+				    <li><span class="meta">Published: </span><span class="metadata">
+                        ${meeting.publishDate}
+                    </span></li>
 		        </ul>  
  			</div>
  			<div class='item-actions'>
