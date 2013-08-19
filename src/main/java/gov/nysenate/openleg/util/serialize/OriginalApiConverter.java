@@ -8,7 +8,6 @@ import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Supplemental;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
@@ -31,18 +30,15 @@ public class OriginalApiConverter {
                 e.printStackTrace();
             }
         }
-        if(o instanceof Calendar || o instanceof Supplemental) {
-            return JsonConverter.getJson(o).toString();
-        }
-        if(o instanceof Meeting) {
-            return JsonConverter.getJson(o).toString();
-        }
-        if(o instanceof Transcript) {
+        else if(o instanceof Transcript) {
             try {
                 return transcriptJson((Transcript)o);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+        else if(o instanceof Calendar || o instanceof Supplemental || o instanceof Meeting) {
+            return JsonConverter.getJson(o).toString();
         }
 
         return null;
@@ -361,20 +357,23 @@ public class OriginalApiConverter {
     public static String transcriptXml(Transcript transcript) {
         String ret = "";
 
+        String text = transcript.getTranscriptText();
+        text = text.replaceAll("&", "&amp;");
+        text = text.replaceAll("'", "&apos;");
+        text = text.replaceAll("<","&lt;");
+        text = text.replaceAll(">","&gt;");
+        text = text.replaceAll("\"","&quot;");
+        text = text.replace((char)0x0C,' ');
+        text = text.replace((char)0x20,' ');
+
         ret += "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n";
         ret += "<transcript id=\"" + transcript.getId() + "\">" + "\n";
         ret += "<timestamp>" + transcript.getTimeStamp().toLocaleString() + "</timestamp>" + "\n";
         ret += "<location>" + transcript.getLocation() + "</location>" + "\n";
         ret += "<session>" + transcript.getType() + "</session>" + "\n";
-        ret += "<text><![CDATA[" + TextFormatter.clean(cleanInvalidXmlChars(transcript.getTranscriptText())) + "]]></text>" + "\n";
+        ret += "<text><![CDATA[" + text + "]]></text>" + "\n";
         ret += "</transcript>";
 
         return ret;
-    }
-    public static String cleanInvalidXmlChars(String text)  {
-        text = text.replace((char)0x0C,' ');
-        text = text.replace((char)0x20,' ');
-
-        return text;
     }
 }
