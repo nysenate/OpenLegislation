@@ -11,10 +11,18 @@ import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Section;
 import gov.nysenate.openleg.model.Sequence;
 import gov.nysenate.openleg.model.Supplemental;
+import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonFactory;
@@ -55,14 +62,140 @@ public class StorageJsonConverter
     {
         this.storage = storage;
         this.logger  = Logger.getLogger(this.getClass());
-        this.objectMapper = new ObjectMapper();
 
+        this.objectMapper = new ObjectMapper();
         this.objectMapper.enable(Feature.INDENT_OUTPUT);
         this.jsonFactory = this.objectMapper.getJsonFactory();
         this.prettyPrinter = new DefaultPrettyPrinter();
     }
 
-    public void write(Calendar calendar, File storageFile) throws IOException
+    public void write(Transcript value, File storageFile) throws IOException
+    {
+        write(value, new FileOutputStream(storageFile));
+    }
+
+    public void write(Bill value, File storageFile) throws IOException
+    {
+        write(value, new FileOutputStream(storageFile));
+    }
+
+    public void write(Agenda value, File storageFile) throws IOException
+    {
+        write(value, new FileOutputStream(storageFile));
+    }
+
+    public void write(Meeting value, File storageFile) throws IOException
+    {
+        write(value, new FileOutputStream(storageFile));
+    }
+
+    public void write(Calendar value, File storageFile) throws IOException
+    {
+        write(value, new FileOutputStream(storageFile));
+    }
+
+    public String toString(Transcript value) throws IOException
+    {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        write(value, stream);
+        return stream.toString(this.encoding);
+    }
+
+    public String toString(Bill value) throws IOException
+    {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        write(value, stream);
+        return stream.toString(this.encoding);
+    }
+
+    public String toString(Agenda value) throws IOException
+    {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        write(value, stream);
+        return stream.toString(this.encoding);
+    }
+
+    public String toString(Meeting value) throws IOException
+    {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        write(value, stream);
+        return stream.toString(this.encoding);
+    }
+
+    public String toString(Calendar value) throws IOException
+    {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        write(value, stream);
+        return stream.toString(this.encoding);
+    }
+
+    public Transcript read(Class<Transcript> cls, File storageFile) throws JsonProcessingException, IOException
+    {
+        return read(cls, new InputStreamReader(new FileInputStream(storageFile), this.encoding));
+    }
+
+    public Bill read(Class<Bill> cls, File storageFile) throws JsonProcessingException, IOException
+    {
+        return read(cls, new InputStreamReader(new FileInputStream(storageFile), this.encoding));
+    }
+
+    public Agenda read(Class<Agenda> cls, File storageFile) throws JsonProcessingException, IOException
+    {
+        return read(cls, new InputStreamReader(new FileInputStream(storageFile), this.encoding));
+    }
+
+    public Meeting read(Class<Meeting> cls, File storageFile) throws JsonProcessingException, IOException
+    {
+        return read(cls, new InputStreamReader(new FileInputStream(storageFile), this.encoding));
+    }
+
+    public Calendar read(Class<Calendar> cls, File storageFile) throws JsonProcessingException, IOException
+    {
+        return read(cls, new InputStreamReader(new FileInputStream(storageFile), this.encoding));
+    }
+
+    public Bill read(Class<Bill> cls, String data) throws JsonProcessingException, IOException
+    {
+        return read(cls, new StringReader(data));
+    }
+
+    public Agenda read(Class<Agenda> cls, String data) throws JsonProcessingException, IOException
+    {
+        return read(cls, new StringReader(data));
+    }
+
+    public Meeting read(Class<Meeting> cls, String data) throws JsonProcessingException, IOException
+    {
+        return read(cls, new StringReader(data));
+    }
+
+    public Calendar read(Class<Calendar> cls, String data) throws JsonProcessingException, IOException
+    {
+        return read(cls, new StringReader(data));
+    }
+
+    public void write(Transcript transcript, OutputStream out) throws IOException
+    {
+        ObjectNode node = objectMapper.createObjectNode();
+        node.put("id", transcript.getId());
+        node.put("timeStamp", makeNode(transcript.getTimeStamp()));
+        node.put("location", transcript.getLocation());
+        node.put("type", transcript.getType());
+        node.put("transcriptText", transcript.getTranscriptText());
+        node.put("transcriptTextProcessed", transcript.getTranscriptTextProcessed());
+        node.put("relatedBills", makeArrayNode(transcript.getRelatedBills()));
+        node.put("active", transcript.isActive());
+        node.put("year", transcript.getYear());
+        node.put("session", transcript.getSession());
+        node.put("modified", makeNode(transcript.getModifiedDate()));
+        node.put("published", makeNode(transcript.getPublishDate()));
+        node.put("dataSources", makeArrayNode(transcript.getDataSources()));
+        JsonGenerator generator = this.jsonFactory.createJsonGenerator(out, JsonEncoding.UTF8);
+        generator.writeTree(node);
+        generator.close();
+    }
+
+    public void write(Calendar calendar, OutputStream out) throws IOException
     {
         ObjectNode node = objectMapper.createObjectNode();
         node.put("no", calendar.getNo());
@@ -74,14 +207,14 @@ public class StorageJsonConverter
         node.put("modified", makeNode(calendar.getModifiedDate()));
         node.put("published", makeNode(calendar.getPublishDate()));
         node.put("dataSources", makeArrayNode(calendar.getDataSources()));
-        JsonGenerator generator = this.jsonFactory.createJsonGenerator(storageFile, JsonEncoding.UTF8);
+        JsonGenerator generator = this.jsonFactory.createJsonGenerator(out, JsonEncoding.UTF8);
         generator.writeTree(node);
         generator.close();
     }
 
-    public Calendar read(Class<Calendar> cls, File storageFile) throws JsonProcessingException, IOException
+    public Calendar read(Class<Calendar> cls, Reader reader) throws JsonProcessingException, IOException
     {
-        JsonNode node = objectMapper.readTree(FileUtils.readFileToString(storageFile,encoding));
+        JsonNode node = objectMapper.readTree(reader);
         Calendar calendar = new Calendar(
             node.get("no").asInt(),
             node.get("session").asInt(),
@@ -100,7 +233,7 @@ public class StorageJsonConverter
         return calendar;
     }
 
-    public void write(Meeting meeting, File storageFile) throws IOException
+    public void write(Meeting meeting, OutputStream out) throws IOException
     {
         logger.debug("Writing Agenda: "+meeting.getOid());
         ObjectNode node = objectMapper.createObjectNode();
@@ -115,14 +248,14 @@ public class StorageJsonConverter
         node.put("modified", makeNode(meeting.getModifiedDate()));
         node.put("published", makeNode(meeting.getPublishDate()));
         node.put("dataSources", makeArrayNode(meeting.getDataSources()));
-        JsonGenerator generator = this.jsonFactory.createJsonGenerator(storageFile, JsonEncoding.UTF8);
+        JsonGenerator generator = this.jsonFactory.createJsonGenerator(out, JsonEncoding.UTF8);
         generator.writeTree(node);
         generator.close();
     }
 
-    public Meeting read(Class<Meeting> cls, File storageFile) throws JsonProcessingException, IOException
+    public Meeting read(Class<Meeting> cls, Reader reader) throws JsonProcessingException, IOException
     {
-        JsonNode node = objectMapper.readTree(FileUtils.readFileToString(storageFile,encoding));
+        JsonNode node = objectMapper.readTree(reader);
         Meeting meeting = new Meeting(node.get("committeeName").asText(), makeDate(node.get("meetingDateTime")));
         meeting.setMeetday(node.get("meetday").asText());
         meeting.setLocation(node.get("location").asText());
@@ -136,7 +269,7 @@ public class StorageJsonConverter
         return meeting;
     }
 
-    public void write(Agenda agenda, File storageFile) throws IOException
+    public void write(Agenda agenda, OutputStream out) throws IOException
     {
         logger.debug("Writing Agenda: "+agenda.getOid());
         ObjectNode node = objectMapper.createObjectNode();
@@ -148,14 +281,35 @@ public class StorageJsonConverter
         node.put("modified", makeNode(agenda.getModifiedDate()));
         node.put("published", makeNode(agenda.getPublishDate()));
         node.put("dataSources", makeArrayNode(agenda.getDataSources()));
-        JsonGenerator generator = this.jsonFactory.createJsonGenerator(storageFile, JsonEncoding.UTF8);
+        JsonGenerator generator = this.jsonFactory.createJsonGenerator(out, JsonEncoding.UTF8);
         generator.writeTree(node);
         generator.close();
     }
 
-    public Agenda read(Class<Agenda> cls, File storageFile) throws JsonProcessingException, IOException
+    public Transcript read(Class<Transcript> cls, Reader reader) throws JsonProcessingException, IOException
     {
-        JsonNode node = objectMapper.readTree(FileUtils.readFileToString(storageFile,encoding));
+        JsonNode node = objectMapper.readTree(reader);
+        Transcript transcript = new Transcript();
+        transcript.setId(node.get("id").asText());
+        transcript.setTimeStamp(makeDate(node.get("timeStamp")));
+        transcript.setLocation(node.get("localtion").asText());
+        transcript.setType(node.get("type").asText());
+        transcript.setTranscriptText(node.get("transcriptText").asText());
+        transcript.setTranscriptTextProcessed(node.get("transcriptTextProcessed").asText());
+        transcript.setRelatedBills((List<Bill>)makeList(Bill.class, node.get("relatedBills")));
+
+        transcript.setActive(node.get("active").asBoolean());
+        transcript.setYear(node.get("year").asInt());
+        transcript.setSession(node.get("session").asInt());
+        transcript.setModifiedDate(makeDate(node.get("modified")));
+        transcript.setPublishDate(makeDate(node.get("published")));
+        transcript.setDataSources(new HashSet<String>((HashSet<String>)makeSet(String.class, node.get("dataSources"))));
+        return transcript;
+    }
+
+    public Agenda read(Class<Agenda> cls, Reader reader) throws JsonProcessingException, IOException
+    {
+        JsonNode node = objectMapper.readTree(reader);
         Agenda agenda = new Agenda(node.get("session").asInt(), node.get("year").asInt(), node.get("number").asInt());
         agenda.setAddendums((List<Addendum>)makeList(Addendum.class, node.get("addendums")));
         for (Addendum addendum : agenda.getAddendums()) {
@@ -169,7 +323,7 @@ public class StorageJsonConverter
         return agenda;
     }
 
-    public void write(Bill bill, File storageFile) throws IOException
+    public void write(Bill bill, OutputStream out) throws IOException
     {
         logger.debug("Writing Bill: "+bill.getBillId());
         ObjectNode node = objectMapper.createObjectNode();
@@ -199,14 +353,14 @@ public class StorageJsonConverter
         node.put("uniBill", bill.isUniBill());
         node.put("amendments", makeArrayNode(bill.getAmendments()));
         node.put("votes", makeArrayNode(bill.getVotes()));
-        JsonGenerator generator = this.jsonFactory.createJsonGenerator(storageFile, JsonEncoding.UTF8);
+        JsonGenerator generator = this.jsonFactory.createJsonGenerator(out, JsonEncoding.UTF8);
         generator.writeTree(node);
         generator.close();
     }
 
-    public Bill read(Class<Bill> cls, File file) throws JsonProcessingException, IOException
+    public Bill read(Class<Bill> cls, Reader reader) throws JsonProcessingException, IOException
     {
-        JsonNode node = objectMapper.readTree(FileUtils.readFileToString(file,encoding));
+        JsonNode node = objectMapper.readTree(reader);
         Bill bill = new Bill(node.get("senateBillNo").asText(),node.get("year").asInt());
         bill.setActClause(node.get("actClause").asText());
         bill.setAmendments((List<String>)makeList(String.class, node.get("amendments")));
