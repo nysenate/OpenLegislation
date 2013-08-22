@@ -20,9 +20,14 @@
 	   <param-value>gov.nysenate.openleg.util.Application</param-value>
 	</context-param>
 
+    <servlet>
+        <servlet-name>WebServlet</servlet-name>
+        <servlet-class>gov.nysenate.openleg.api.servlets.WebServlet</servlet-class>
+    </servlet>
+    
 	<servlet>
 		<servlet-name>ApiServlet</servlet-name>
-		<servlet-class>gov.nysenate.openleg.api.servlets.ApiServlet</servlet-class>
+		<servlet-class>gov.nysenate.openleg.api.servlets.ApiServlet1</servlet-class>
 	</servlet>
     <servlet-mapping>
         <servlet-name>ApiServlet</servlet-name>
@@ -83,99 +88,99 @@
 		<url-pattern>/rules/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/bill/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/calendar/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/meeting/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/transcript/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/bills</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/calendars</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/meetings</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/transcripts</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/actions</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-        <servlet-name>ApiServlet</servlet-name>
+        <servlet-name>WebServlet</servlet-name>
         <url-pattern>/resolutions/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ApiServlet</servlet-name>
+        <servlet-name>WebServlet</servlet-name>
         <url-pattern>/resolutions</url-pattern>
     </servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/votes</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/bills/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/calendars/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/meetings/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/transcripts/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/actions/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/votes/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/committee</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/sponsor</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/committee/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/sponsor/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/search</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
+		<servlet-name>WebServlet</servlet-name>
 		<url-pattern>/search/*</url-pattern>
 	</servlet-mapping>
 	

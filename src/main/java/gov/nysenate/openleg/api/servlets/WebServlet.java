@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
  * a cleaner and [hopefully] more intelligent catch all for generated views
  */
 @SuppressWarnings("serial")
-public class ApiServlet extends HttpServlet implements OpenLegConstants {
+public class WebServlet extends HttpServlet implements OpenLegConstants {
 
     public static final int SINGLE_FORMAT = 1;
     public static final int SINGLE_TYPE = 2;
@@ -99,13 +99,13 @@ public class ApiServlet extends HttpServlet implements OpenLegConstants {
     public final Pattern KEY_VALUE_PATTERN;
     public final Pattern SEARCH_PATTERN;
 
-    private final Logger logger = Logger.getLogger(ApiServlet.class);
+    private final Logger logger = Logger.getLogger(WebServlet.class);
 
     /*
      * Generates patterns based on views listed
      * in SingleView, MultiView and KeyValueView enums
      */
-    public ApiServlet() throws ServletException {
+    public WebServlet() throws ServletException {
         super();
 
         String singleViews = new Join<SingleView>() {
