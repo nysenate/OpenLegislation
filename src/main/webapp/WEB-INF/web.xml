@@ -24,13 +24,31 @@
 		<servlet-name>ApiServlet</servlet-name>
 		<servlet-class>gov.nysenate.openleg.api.servlets.ApiServlet</servlet-class>
 	</servlet>
+    <servlet-mapping>
+        <servlet-name>ApiServlet</servlet-name>
+        <url-pattern>/api/1.0/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ApiServlet</servlet-name>
+        <url-pattern>/1.0/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ApiServlet2</servlet-name>
+        <servlet-class>gov.nysenate.openleg.api.servlets.ApiServlet2</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ApiServlet2</servlet-name>
+        <url-pattern>/api/2.0/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ApiServlet2</servlet-name>
+        <url-pattern>/2.0/*</url-pattern>
+    </servlet-mapping>
+
 	<servlet>
 		<servlet-name>RulesServlet</servlet-name>
 		<servlet-class>gov.nysenate.openleg.api.servlets.RulesServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>ApiServlet2_0</servlet-name>
-		<servlet-class>gov.nysenate.openleg.api.servlets.ApiServlet2_0</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>SenatorsServlet</servlet-name>
@@ -40,22 +58,6 @@
 		<servlet-name>CommitteesServlet</servlet-name>
 		<servlet-class>gov.nysenate.openleg.api.servlets.CommitteesServlet</servlet-class>
 	</servlet>
-	<servlet-mapping>
-		<servlet-name>ApiServlet2_0</servlet-name>
-		<url-pattern>/api/2.0/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>ApiServlet2_0</servlet-name>
-		<url-pattern>/2.0/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>ApiServlet2_0</servlet-name>
-		<url-pattern>/2.0/</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>ApiServlet2_0</servlet-name>
-		<url-pattern>/2.0</url-pattern>
-	</servlet-mapping>
 	<error-page>
 		<error-code>404</error-code>
 		<location>/404.jsp</location>
@@ -79,10 +81,6 @@
 	<servlet-mapping>
 		<servlet-name>RulesServlet</servlet-name>
 		<url-pattern>/rules/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>ApiServlet</servlet-name>
-		<url-pattern>/api/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ApiServlet</servlet-name>
