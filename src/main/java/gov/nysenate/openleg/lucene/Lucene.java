@@ -139,12 +139,27 @@ public class Lucene
 	 */
     public LuceneResult search(String queryString, int skipCount, int retrieveCount, String sortFieldName, boolean reversed) throws IOException
     {
-        // cheap implementation of otype:resolution
-        queryString = queryString.replaceAll("otype:resolution", "(otype:bill AND oid:(R* OR E* OR J* OR K* OR L*))");
-
-        // searches should be case insensitive for fields as well
-        // Lucene keywords must be capitalized though
-        queryString = queryString.toLowerCase().replace(" to ", " TO ").replace(" and ", " AND ").replace(" or ", " OR ");
+        // detect when people are trying to pull up a specific bill
+        if (queryString.matches("^[A-Z][0-9]{1,5}(-[0-9]+)?$")) {
+            queryString = "oid:"+queryString;
+        }
+        else {
+            // cheap implementation of otype:resolution
+            queryString = queryString.replaceAll("otype:resolution", "(otype:bill AND oid:(R* OR E* OR J* OR K* OR L*))");
+            logger.info(queryString);
+            // searches should be case insensitive for fields and values
+            // Lucene keywords must be capitalized though to be parsed correctly.
+            String[] tokens = queryString.split(" ");
+            queryString = "";
+            for(String token : tokens) {
+                if (token.equals("TO") || token.equals("AND") || token.equals("OR") || token.equals("NOT")) {
+                    queryString += token+" ";
+                }
+                else {
+                    queryString += token.toLowerCase()+" ";
+                }
+            }
+        }
 
         searcherManager.maybeRefresh();
         IndexSearcher searcher = searcherManager.acquire();
@@ -154,7 +169,7 @@ public class Lucene
 
             // Sort by relevance unless they say otherwise
             Sort sort;
-            if (sortFieldName == null) {
+            if (sortFieldName == null || sortFieldName.isEmpty()) {
                 sort = new Sort(new SortField(null, SortField.SCORE, reversed));
             }
             else {
