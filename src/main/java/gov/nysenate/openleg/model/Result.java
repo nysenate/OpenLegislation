@@ -14,14 +14,6 @@ public class Result {
     public IBaseObject object;
     public HashMap<String,String> fields;
 
-    public Result(String otype, String data, String oid, long lastModified, boolean active) {
-        this.otype = otype;
-        this.data = data;
-        this.oid  = oid;
-        this.lastModified = lastModified;
-        this.active = active;
-    }
-
     public Result(String otype, String data, String oid, long lastModified, boolean active, HashMap<String,String> fields) {
         this.otype = otype;
         this.data = data;
