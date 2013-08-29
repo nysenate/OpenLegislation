@@ -18,8 +18,6 @@ public class Vote extends BaseObject {
 
     private int voteType;
 
-    private String id;
-
     private Date voteDate;
 
     public String oid;
@@ -77,7 +75,7 @@ public class Vote extends BaseObject {
         this.setSession(this.getYear() % 2 == 0 ? this.getYear() -1 : this.getYear());
         this.voteType = type;
         this.setSequenceNumber(sequenceNumber);
-        this.id = billId+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
+        this.oid = billId+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
     }
 
     public Vote(Bill bill, Date date, int type, String sequenceNumber) {
@@ -245,7 +243,7 @@ public class Vote extends BaseObject {
     public boolean equals(Object obj) {
         if(obj != null && obj instanceof Vote) {
             Vote vote = (Vote)obj;
-            return this.id.equals(vote.getOid());
+            return this.oid.equals(vote.getOid());
         }
         return false;
     }
