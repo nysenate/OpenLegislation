@@ -20,7 +20,7 @@ boolean sortOrder = true;
 if (request.getAttribute("sortOrder")!=null)
 			sortOrder = Boolean.parseBoolean((String)request.getAttribute("sortOrder"));
 
-ResultIterator rs = new ResultIterator(term, 500, 36, "json", sortField, sortOrder);
+ResultIterator rs = new ResultIterator(term, 500, 36, sortField, sortOrder);
 
 response.setContentType("text/csv");
 response.setHeader("Content-disposition","attachment;filename=search-" + new Date().getTime() +".csv");

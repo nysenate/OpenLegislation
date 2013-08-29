@@ -34,7 +34,7 @@
         DateFormat df = SimpleDateFormat.getDateInstance(DateFormat.MEDIUM);
 
         Lucene lucene = Application.getLucene();
-        SenateResponse senateResponse = lucene.search("ctype:active","json",0,1,"when",true);
+        SenateResponse senateResponse = lucene.search("ctype:active", 0, 1, "when", true);
         Result result = ApiHelper.buildSearchResultList(senateResponse).get(0);
 
         Calendar calendar = (Calendar)result.getObject();

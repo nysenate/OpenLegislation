@@ -16,7 +16,6 @@ import gov.nysenate.openleg.model.Vote;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,7 +26,7 @@ public class DocumentBuilder
 {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public static Document build(PublicHearing hearing, Collection<ISenateSerializer> serializers)
+    public static Document build(PublicHearing hearing, ISenateSerializer serializer)
     {
         Document document = new Document();
 
@@ -50,15 +49,11 @@ public class DocumentBuilder
         // Other various search fields and filters
         document.add(new Field("sorttitle", hearing.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
-        // Add in any serializations of the bill that we might need
-        for(ISenateSerializer lst:serializers) {
-            document.add(new Field(lst.getType(), lst.getData(hearing), Field.Store.YES, Field.Index.NO));
-        }
-
+        document.add(new Field("odata", serializer.getData(hearing), Field.Store.YES, Field.Index.NO));
         return document;
     }
 
-    public static Document build(Vote vote, Collection<ISenateSerializer> serializers)
+    public static Document build(Vote vote, ISenateSerializer serializer)
     {
         Document document = new Document();
 
@@ -109,16 +104,12 @@ public class DocumentBuilder
             document.add(new Field("committee", (vote.getDescription().isEmpty() ? vote.getBill().getCurrentCommittee() : vote.getDescription()), Field.Store.YES, Field.Index.ANALYZED));
         }
 
-        // Add in any serializations of the bill that we might need
-        for(ISenateSerializer lst:serializers) {
-            document.add(new Field(lst.getType(), lst.getData(vote), Field.Store.YES, Field.Index.NO));
-        }
-
+        document.add(new Field("odata", serializer.getData(vote), Field.Store.YES, Field.Index.NO));
         return document;
     }
 
 
-    public static Document build(Transcript transcript, Collection<ISenateSerializer> serializers)
+    public static Document build(Transcript transcript, ISenateSerializer serializer)
     {
         Document document = new Document();
 
@@ -153,15 +144,11 @@ public class DocumentBuilder
         document.add(new Field("when", String.valueOf(transcript.getTimeStamp().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("sorttitle", transcript.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
-        // Add in any serializations of the bill that we might need
-        for(ISenateSerializer lst:serializers) {
-            document.add(new Field(lst.getType(), lst.getData(transcript), Field.Store.YES, Field.Index.NO));
-        }
-
+        document.add(new Field("odata", serializer.getData(transcript), Field.Store.YES, Field.Index.NO));
         return document;
     }
 
-    public static Document build(Meeting meeting, Collection<ISenateSerializer> serializers)
+    public static Document build(Meeting meeting, ISenateSerializer serializer)
     {
         Document document = new Document();
 
@@ -203,15 +190,11 @@ public class DocumentBuilder
         document.add(new Field("sortindex", meeting.getMeetingDateTime().getTime()+meeting.getCommitteeName(), Field.Store.NO, Field.Index.NOT_ANALYZED));
         document.add(new Field("sorttitle", document.getFieldable("title").stringValue().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
-        // Add in any serializations of the bill that we might need
-        for(ISenateSerializer lst:serializers) {
-            document.add(new Field(lst.getType(), lst.getData(meeting), Field.Store.YES, Field.Index.NO));
-        }
-
+        document.add(new Field("odata", serializer.getData(meeting), Field.Store.YES, Field.Index.NO));
         return document;
     }
 
-    public static Document build(Calendar calendar, Collection<ISenateSerializer> serializers)
+    public static Document build(Calendar calendar, ISenateSerializer serializer)
     {
         Document document = new Document();
 
@@ -273,15 +256,11 @@ public class DocumentBuilder
         document.add(new Field("when",String.valueOf(calendar.getDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("sorttitle", document.getFieldable("title").stringValue().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
-        // Add in any serializations of the bill that we might need
-        for(ISenateSerializer lst:serializers) {
-            document.add(new Field(lst.getType(), lst.getData(calendar), Field.Store.YES, Field.Index.NO));
-        }
-
+        document.add(new Field("odata", serializer.getData(calendar), Field.Store.YES, Field.Index.NO));
         return document;
     }
 
-    public static Document build(Action action, Collection<ISenateSerializer> serializers)
+    public static Document build(Action action, ISenateSerializer serializer)
     {
         Document document = new Document();
 
@@ -310,15 +289,11 @@ public class DocumentBuilder
         document.add(new Field("summary", DateFormat.getDateInstance(DateFormat.MEDIUM).format(action.getDate()), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("sorttitle", action.getBill().getBillId()+" "+action.getText().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
-        // Add in any serializations of the bill that we might need
-        for(ISenateSerializer lst:serializers) {
-            document.add(new Field(lst.getType(), lst.getData(action), Field.Store.YES, Field.Index.NO));
-        }
-
+        document.add(new Field("odata", serializer.getData(action), Field.Store.YES, Field.Index.NO));
         return document;
     }
 
-    public static Document build(Bill bill, Collection<ISenateSerializer> serializers)
+    public static Document build(Bill bill, ISenateSerializer serializer)
     {
         Document document = new Document();
 
@@ -385,11 +360,7 @@ public class DocumentBuilder
         }
         document.add(new Field("status", billStatus, Field.Store.YES, Field.Index.ANALYZED));
 
-        // Add in any serializations of the bill that we might need
-        for(ISenateSerializer lst:serializers) {
-            document.add(new Field(lst.getType(), lst.getData(bill), Field.Store.YES, Field.Index.NO));
-        }
-
+        document.add(new Field("odata", serializer.getData(bill), Field.Store.YES, Field.Index.NO));
         return document;
     }
 }

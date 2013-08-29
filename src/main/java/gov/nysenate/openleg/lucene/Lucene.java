@@ -137,7 +137,7 @@ public class Lucene
 	 * @return LuceneResult
 	 * @throws IOException
 	 */
-    public LuceneResult search(String queryString, int skipCount, int retrieveCount, String sortFieldName, boolean reversed) throws IOException
+    protected LuceneResult _search(String queryString, int skipCount, int retrieveCount, String sortFieldName, boolean reversed) throws IOException
     {
         // detect when people are trying to pull up a specific bill
         if (queryString.matches("^[A-Z][0-9]{1,5}(-[0-9]+)?$")) {
@@ -280,11 +280,11 @@ public class Lucene
 
 
 
-    public SenateResponse search(String queryText, String format, int skipCount, int retrieveCount, String sortFieldName, boolean reversed) throws ParseException, IOException
+    public SenateResponse search(String queryText, int skipCount, int retrieveCount, String sortFieldName, boolean reversed) throws ParseException, IOException
     {
         SenateResponse response = new SenateResponse();
 
-        LuceneResult result = search(queryText,skipCount,retrieveCount,sortFieldName,reversed);
+        LuceneResult result = this._search(queryText,skipCount,retrieveCount,sortFieldName,reversed);
 
         if (result != null) {
             response.addMetadataByKey("totalresults", result.total );
@@ -301,7 +301,7 @@ public class Lucene
 
                 response.addResult(new Result(
                         doc.get("otype"),
-                        doc.get("o"+format.toLowerCase()),
+                        doc.get("odata"),
                         doc.get("oid"),
                         Long.parseLong(lastModified),
                         Boolean.parseBoolean(doc.get("active")),

@@ -77,7 +77,6 @@ public class ApiServlet1 extends HttpServlet
                 throw new ApiRequestException("Invalid sortOrder parameter: "+sortOrderParam);
             }
 
-            System.out.println(path);
             Matcher searchMatcher = searchPattern.matcher(path);
             Matcher documentMatcher = documentPattern.matcher(path);
             if (searchMatcher.find()) {
@@ -126,7 +125,7 @@ public class ApiServlet1 extends HttpServlet
 
         try {
             int start = (pageNumber - 1) * pageSize;
-            SenateResponse sr = Application.getLucene().search(term,"json",start,pageSize, sort, sortOrder);
+            SenateResponse sr = Application.getLucene().search(term, start, pageSize, sort, sortOrder);
             ApiHelper.buildSearchResultList(sr);
 
             if (format.equals("json")) {
@@ -150,7 +149,7 @@ public class ApiServlet1 extends HttpServlet
             }
 
         } catch (Exception e) {
-            logger.error(e);
+            logger.error("internal server error", e);
             throw new ApiRequestException("internal server error.");
         }
     }

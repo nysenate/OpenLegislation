@@ -83,7 +83,7 @@ public class ApiServlet2 extends HttpServlet
     {
         try {
             int start = (pageNumber - 1) * pageSize;
-            SenateResponse sr = Application.getLucene().search(term,"json",start,pageSize, sort, sortOrder);
+            SenateResponse sr = Application.getLucene().search(term, start, pageSize, sort, sortOrder);
             ApiHelper.buildSearchResultList(sr);
 
             if (format.equals("json")) {

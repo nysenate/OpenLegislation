@@ -64,7 +64,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
         }
 
         try {
-            sr = Application.getLucene().search(queryBuilder.query(), sFormat, start, pageSize, sortField, sortOrder);
+            sr = Application.getLucene().search(queryBuilder.query(), start, pageSize, sortField, sortOrder);
         } catch (ParseException e) {
             logger.error(e);
         }

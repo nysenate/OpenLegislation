@@ -196,7 +196,7 @@ public class SearchRequest extends AbstractApiRequest {
         SenateResponse sr = null;
         try {
             int start = (pageNumber - 1) * pageSize;
-            sr = Application.getLucene().search(term,"json",start,pageSize,sortField,sortOrder);
+            sr = Application.getLucene().search(term, start, pageSize, sortField, sortOrder);
             if((sr.getResults() == null || sr.getResults().isEmpty()) && this.format.contains("html")) {
                 throw new ApiRequestException(TextFormatter.append("no results for query"));
             }

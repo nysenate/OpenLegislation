@@ -17,7 +17,6 @@ public class ResultIterator implements Iterator<Result>, Iterable<Result> {
 
     private static final int SIZE = 500;
     private static final int PAGE = 0;
-    private static final String FORMAT = "json";
     private static final String SORT_BY = "oid";
     private static final boolean REVERSE = false;
 
@@ -34,7 +33,6 @@ public class ResultIterator implements Iterator<Result>, Iterable<Result> {
     //true when search has been completed
     private boolean exhausted = false;
 
-    public String format;
     public String sortBy;
     public boolean reverse;
     public String query;
@@ -42,14 +40,13 @@ public class ResultIterator implements Iterator<Result>, Iterable<Result> {
     public SenateResponse senateResponse;
 
     public ResultIterator(String query) {
-        this(query, SIZE, PAGE, FORMAT, SORT_BY, REVERSE);
+        this(query, SIZE, PAGE, SORT_BY, REVERSE);
     }
 
-    public ResultIterator(String query, int max, int page, String format, String sortBy, boolean reverse) {
+    public ResultIterator(String query, int max, int page, String sortBy, boolean reverse) {
         this.query = query;
         this.max = max;
         this.page = page;
-        this.format = format;
         this.sortBy = sortBy;
         this.reverse = reverse;
         reset();
@@ -94,7 +91,7 @@ public class ResultIterator implements Iterator<Result>, Iterable<Result> {
         }
 
         try {
-            senateResponse = Application.getLucene().search(query, format, (max * page++), max, sortBy, reverse);
+            senateResponse = Application.getLucene().search(query, (max * page++), max, sortBy, reverse);
         } catch (ParseException e) {
             logger.error(e);
         }
