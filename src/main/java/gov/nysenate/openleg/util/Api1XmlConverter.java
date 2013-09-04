@@ -4,20 +4,26 @@ import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
+import gov.nysenate.openleg.model.CalendarEntry;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Result;
+import gov.nysenate.openleg.model.Section;
 import gov.nysenate.openleg.model.SenateResponse;
+import gov.nysenate.openleg.model.Sequence;
+import gov.nysenate.openleg.model.Supplemental;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.jdom2.CDATA;
-import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.XMLOutputter;
 
@@ -25,41 +31,11 @@ public class Api1XmlConverter
 {
     protected final String encoding = "UTF-8";
     protected final XMLOutputter xmlOutputter;
+    protected static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S z");
 
     public Api1XmlConverter()
     {
         xmlOutputter = new XMLOutputter();
-        Document doc = new Document();
-        Element root = new Element("bill");
-        doc.setRootElement(root);
-    }
-
-    public String toString(Bill value) throws IOException
-    {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        write(value, stream);
-        return stream.toString(this.encoding);
-    }
-
-    public String toString(Calendar value) throws IOException
-    {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        write(value, stream);
-        return stream.toString(this.encoding);
-    }
-
-    public String toString(Meeting value) throws IOException
-    {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        write(value, stream);
-        return stream.toString(this.encoding);
-    }
-
-    public String toString(Transcript value) throws IOException
-    {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        write(value, stream);
-        return stream.toString(this.encoding);
     }
 
     public String toString(SenateResponse value) throws IOException
@@ -82,10 +58,10 @@ public class Api1XmlConverter
             write((Bill)object, out);
         }
         else if (object.getOtype().equals("calendar")) {
-            write((Calendar)object, out);
+            write(object, out);
         }
         else if (object.getOtype().equals("meeting")) {
-            write((Meeting)object, out);
+            write(object, out);
         }
         else if (object.getOtype().equals("transcript")) {
             write((Transcript)object, out);
@@ -159,23 +135,7 @@ public class Api1XmlConverter
         xmlOutputter.output(root, out);
     }
 
-    public void write(Meeting meeting, OutputStream out) throws IOException
-    {
-        Element root = new Element("meeting");
-        /// Full serialization...
-        /// ?? Too broken to tell, find the code.
-        xmlOutputter.output(root, out);
-    }
-
-    public void write(Calendar calendar, OutputStream out) throws IOException
-    {
-        Element root = new Element("calendar");
-        /// Full serialization..
-        /// ?? Too broken to tell, find the code.
-        xmlOutputter.output(root, out);
-    }
-
-    public void write(Bill bill, OutputStream out) throws IOException
+    protected void write(Bill bill, OutputStream out) throws IOException
     {
         Element billElement = new Element("bill");
         billElement.setAttribute("year", bill.getSession()+"");
@@ -208,15 +168,8 @@ public class Api1XmlConverter
         }
         billElement.addContent(elemCos);
 
-
-
-        Element summaryElement = new Element("summary");
-        summaryElement.setText(bill.getSummary());
-        billElement.addContent(summaryElement);
-
-        Element committeeElement = new Element("committee");
-        committeeElement.setText(bill.getCurrentCommittee());
-        billElement.addContent(committeeElement);
+        billElement.addContent(makeElement("summary", bill.getSummary()));
+        billElement.addContent(makeElement("committee", bill.getCurrentCommittee()));
 
         Element votesElement = new Element("votes");
         for(Vote vote : bill.getVotes()) {
@@ -267,47 +220,194 @@ public class Api1XmlConverter
         }
         billElement.addContent(votesElement);
 
-
-
         if (bill.getFulltext()!=null) {
-            Element elem = new Element("text");
-            elem.addContent(new CDATA(bill.getFulltext()));
-            billElement.addContent(elem);
+            billElement.addContent(makeElement("text", new CDATA(bill.getFulltext())));
         }
 
         if (bill.getMemo()!=null) {
-            Element elem = new Element("memo");
-            elem.addContent(new CDATA(bill.getMemo()));
-            billElement.addContent(elem);
+            billElement.addContent(makeElement("memo", new CDATA(bill.getMemo())));
         }
 
-        Element docket = new Element("docket");
-        docket.addContent(billElement);
+        Element docket = makeElement("docket", billElement);
         xmlOutputter.output(docket, out);
     }
 
-    public void write(Transcript transcript, OutputStream out) throws IOException
+    protected void write(Transcript transcript, OutputStream out) throws IOException
     {
         Element root = new Element("transcript");
         root.setAttribute("id", transcript.getId());
-
-        Element timestampNode = new Element("timestamp");
-        timestampNode.addContent(String.valueOf(transcript.getTimeStamp().getTime()));
-        root.addContent(timestampNode);
-
-        Element locationNode = new Element("location");
-        locationNode.addContent(transcript.getLocation());
-        root.addContent(locationNode);
-
-        Element sessionNode = new Element("session");
-        sessionNode.addContent(String.valueOf(transcript.getSession()));
-        root.addContent(sessionNode);
-
-        Element textNode = new Element("text");
-        textNode.addContent(transcript.getTranscriptText());
-        root.addContent(textNode);
-
+        root.addContent(makeElement("location", String.valueOf(transcript.getTimeStamp().getTime())));
+        root.addContent(makeElement("location", transcript.getLocation()));
+        root.addContent(makeElement("session", String.valueOf(transcript.getSession())));
+        root.addContent(makeElement("text", new CDATA(transcript.getTranscriptText())));
         xmlOutputter.output(root, out);
     }
 
+    protected void write(Meeting meeting, OutputStream out) throws IOException
+    {
+        xmlOutputter.output(makeElement("meeting", meeting), out);
+    }
+
+    protected void write(Calendar calendar, OutputStream out) throws IOException
+    {
+        xmlOutputter.output(makeElement("calendar", calendar), out);
+    }
+
+    protected Element makeElement(String tag, Calendar value)
+    {
+        Element root = new Element(tag);
+        if (value != null) {
+            root.setAttribute("year", String.valueOf(value.getYear()));
+            root.setAttribute("type", value.getType());
+            root.setAttribute("sessionYear", String.valueOf(value.getSession()));
+            root.setAttribute("no", String.valueOf(value.getNo()));
+            root.addContent(makeElementList("supplementals", "supplementals", value.getSupplementals()));
+        }
+        return root;
+    }
+
+    protected Element makeElement(String tag, Supplemental value)
+    {
+        Element root = new Element(tag);
+        if (value != null) {
+            if (value.getSections() != null && !value.getSections().isEmpty()) {
+                root.addContent(makeElementList("sections", "section", value.getSections()));
+            }
+            if (value.getSequences() != null && !value.getSequences().isEmpty()) {
+                root.addContent(makeElementList("sequences", "sequence", value.getSequences()));
+            }
+        }
+        return root;
+    }
+
+    protected Element makeElement(String tag, Sequence value)
+    {
+        Element root = new Element(tag);
+        if (value != null) {
+            root.setAttribute("no", value.getNo());
+            root.addContent(makeElement("actCalDate", value.getActCalDate()));
+            root.addContent(makeElement("releaseDateTime", value.getReleaseDateTime()));
+            root.addContent(makeElementList("calendarEntries", "calendarEntry", value.getCalendarEntries()));
+        }
+        return root;
+    }
+
+    protected Element makeElement(String tag, Section value)
+    {
+        Element root = new Element(tag);
+        if (value != null) {
+            root.addContent(makeElement("name", value.getName()));
+            root.addContent(makeElement("type", value.getType()));
+            root.addContent(makeElement("cd", value.getCd()));
+            root.addContent(makeElementList("calendarEntries", "calendarEntry", value.getCalendarEntries()));
+        }
+        return root;
+    }
+
+    protected Element makeElement(String tag, CalendarEntry value)
+    {
+        Element root = new Element(tag);
+        if (value != null) {
+            root.setAttribute("no", value.getNo());
+            root.addContent(makeShortElement("bill", value.getBill()));
+            root.addContent(makeShortElement("subBill", value.getBill()));
+            root.addContent(makeElement("billHigh", value.getBillHigh()));
+        }
+        return root;
+    }
+
+    protected Element makeElement(String tag, Meeting value)
+    {
+        Element root = new Element(tag);
+        if (value != null) {
+            root.addContent(makeElement("meetday", value.getMeetday()));
+            root.addContent(makeElement("location", value.getLocation()));
+            root.addContent(makeElement("committeeName", value.getCommitteeName()));
+            root.addContent(makeElement("committeeChair", value.getCommitteeChair()));
+            root.addContent(makeElementList("bills", "bill", value.getBills()));
+            root.addContent(makeElement("notes", value.getNotes()));
+        }
+        return root;
+    }
+
+    protected Element makeShortElement(String tag, Bill value)
+    {
+        Element root = new Element(tag);
+        if (value != null) {
+            root.addContent(makeElement("active", String.valueOf(value.isActive())));
+            root.addContent(makeElement("year", String.valueOf(value.getSession())));
+            root.addContent(makeElement("senateId", value.getBillId()));
+            root.addContent(makeElement("title", value.getTitle()));
+            root.addContent(makeElement("sameAs", value.getSameAs()));
+            root.addContent(makeElement("sponsor", value.getSponsor().getFullname()));
+            root.addContent(makeElementList("otherSponsors", "string", value.getOtherSponsors()));
+            root.addContent(makeElement("frozen", "false"));
+            root.addContent(makeElementList("amendments", "string", value.getAmendments()));
+            root.addContent(makeElement("summary", value.getSummary()));
+            root.addContent(makeElement("uniBill", String.valueOf(value.isUniBill())));
+        }
+        return root;
+    }
+
+    protected Element makeElementList(String listTag, String itemTag, Collection<? extends Object> list)
+    {
+        Element element = new Element(listTag);
+        if (list != null) {
+            for (Object item : list) {
+                if(Bill.class.isInstance(item)) {
+                    element.addContent(makeShortElement(itemTag, (Bill)item));
+                }
+                else if(Supplemental.class.isInstance(item)) {
+                    element.addContent(makeElement(itemTag, (Supplemental)item));
+                }
+                else if(Section.class.isInstance(item)) {
+                    element.addContent(makeElement(itemTag, (Section)item));
+                }
+                else if(Sequence.class.isInstance(item)) {
+                    element.addContent(makeElement(itemTag, (Sequence)item));
+                }
+                else if(CalendarEntry.class.isInstance(item)) {
+                    element.addContent(makeElement(itemTag, (CalendarEntry)item));
+                }
+                else if(String.class.isInstance(item)) {
+                    element.addContent(makeElement(itemTag, (String)item));
+                }
+                else {
+                    throw new RuntimeException("Invalid array node type: "+item.getClass());
+                }
+            }
+        }
+        return element;
+    }
+
+
+    protected Element makeElement(String tag, Date value)
+    {
+        Element element = new Element(tag);
+        element.addContent(dateFormat.format(value));
+        return element;
+    }
+
+    protected Element makeElement(String tag, String value)
+    {
+        Element element = new Element(tag);
+        element.addContent(value);
+        return element;
+    }
+
+    protected Element makeElement(String tag, CDATA value)
+    {
+        Element element = new Element(tag);
+        element.addContent(value);
+        return element;
+    }
+
+    protected Element makeElement(String tag, Element...values)
+    {
+        Element element = new Element(tag);
+        for (Element value : values) {
+            element.addContent(value);
+        }
+        return element;
+    }
 }

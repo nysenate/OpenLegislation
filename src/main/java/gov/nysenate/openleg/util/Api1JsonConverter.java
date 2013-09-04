@@ -50,34 +50,6 @@ public class Api1JsonConverter
         return stream.toString(this.encoding);
     }
 
-    public String toString(Bill value) throws IOException
-    {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        write(value, stream);
-        return stream.toString(this.encoding);
-    }
-
-    public String toString(Calendar value) throws IOException
-    {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        write(value, stream);
-        return stream.toString(this.encoding);
-    }
-
-    public String toString(Meeting value) throws IOException
-    {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        write(value, stream);
-        return stream.toString(this.encoding);
-    }
-
-    public String toString(Transcript value) throws IOException
-    {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        write(value, stream);
-        return stream.toString(this.encoding);
-    }
-
     public String toString(BaseObject value) throws IOException
     {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -144,7 +116,7 @@ public class Api1JsonConverter
         generator.close();
     }
 
-    public void write(Calendar calendar, OutputStream out) throws IOException
+    protected void write(Calendar calendar, OutputStream out) throws IOException
     {
         ObjectNode node = objectMapper.createObjectNode();
         node.put("year", calendar.getYear());
@@ -161,7 +133,7 @@ public class Api1JsonConverter
         generator.close();
     }
 
-    public void write(Meeting meeting, OutputStream out) throws IOException
+    protected void write(Meeting meeting, OutputStream out) throws IOException
     {
         ObjectNode node = objectMapper.createObjectNode();
         node.put("meetingDateTime", meeting.getMeetingDateTime().getTime()+"");
@@ -180,7 +152,7 @@ public class Api1JsonConverter
         generator.close();
     }
 
-    public void write(Transcript transcript, OutputStream out) throws IOException
+    protected void write(Transcript transcript, OutputStream out) throws IOException
     {
         ObjectNode node = objectMapper.createObjectNode();
         node.put("id", transcript.getId());
@@ -196,7 +168,7 @@ public class Api1JsonConverter
         generator.close();
     }
 
-    public void write(Bill bill, OutputStream out) throws IOException
+    protected void write(Bill bill, OutputStream out) throws IOException
     {
         ObjectNode node = objectMapper.createObjectNode();
         node.put("year", bill.getSession());
@@ -221,7 +193,7 @@ public class Api1JsonConverter
         generator.close();
     }
 
-    public JsonNode makeNode(Supplemental supplemental)
+    protected JsonNode makeNode(Supplemental supplemental)
     {
         if (supplemental != null) {
             ObjectNode node = objectMapper.createObjectNode();
@@ -238,7 +210,7 @@ public class Api1JsonConverter
         }
     }
 
-    public JsonNode makeNode(Section section)
+    protected JsonNode makeNode(Section section)
     {
         if (section != null) {
             ObjectNode node = objectMapper.createObjectNode();
@@ -254,7 +226,7 @@ public class Api1JsonConverter
         }
     }
 
-    public JsonNode makeNode(Sequence sequence)
+    protected JsonNode makeNode(Sequence sequence)
     {
         if (sequence != null) {
             ObjectNode node = objectMapper.createObjectNode();
@@ -270,7 +242,7 @@ public class Api1JsonConverter
         }
     }
 
-    public JsonNode makeNode(CalendarEntry entry)
+    protected JsonNode makeNode(CalendarEntry entry)
     {
         if (entry != null) {
             ObjectNode node = objectMapper.createObjectNode();
@@ -286,7 +258,7 @@ public class Api1JsonConverter
         }
     }
 
-    public JsonNode makeNode(Bill bill)
+    protected JsonNode makeNode(Bill bill)
     {
         if (bill != null) {
             ObjectNode node = objectMapper.createObjectNode();
@@ -310,12 +282,12 @@ public class Api1JsonConverter
         }
     }
 
-    public String makeNode(Date date)
+    protected String makeNode(Date date)
     {
         return (date != null) ? String.valueOf(date.getTime()) : null;
     }
 
-    public JsonNode makeNode(Person person)
+    protected JsonNode makeNode(Person person)
     {
         if (person != null) {
             ObjectNode node = objectMapper.createObjectNode();
@@ -327,7 +299,7 @@ public class Api1JsonConverter
         }
     }
 
-    public JsonNode makeNode(Vote vote)
+    protected JsonNode makeNode(Vote vote)
     {
         if (vote != null) {
             ObjectNode node = objectMapper.createObjectNode();
@@ -367,7 +339,7 @@ public class Api1JsonConverter
         }
     }
 
-    public JsonNode makeNode(Action action)
+    protected JsonNode makeNode(Action action)
     {
         if (action != null) {
             ObjectNode node = objectMapper.createObjectNode();
@@ -380,7 +352,7 @@ public class Api1JsonConverter
         }
     }
 
-    public ArrayNode makeArrayNode(Collection<? extends Object> list)
+    protected ArrayNode makeArrayNode(Collection<? extends Object> list)
     {
         ArrayNode arrayNode = objectMapper.createArrayNode();
         if (list != null) {
@@ -419,5 +391,4 @@ public class Api1JsonConverter
         }
         return arrayNode;
     }
-
 }
