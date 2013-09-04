@@ -867,7 +867,6 @@ public class StorageJsonConverter
             node.put("dataSources", makeArrayNode(vote.getDataSources()));
             node.put("date", makeNode(vote.getVoteDate()));
             node.put("voteType", vote.getVoteType());
-            logger.debug("READING VOTE DESCRIPTION: "+vote.getDescription());
             node.put("description", vote.getDescription());
             node.put("sequenceNumber", vote.getSequenceNumber());
             node.put("ayes", makeArrayNode(vote.getAyes()));
