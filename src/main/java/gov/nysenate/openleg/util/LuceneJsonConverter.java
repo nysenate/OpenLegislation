@@ -1,7 +1,8 @@
-package gov.nysenate.openleg.util.serialize;
+package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Addendum;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.CalendarEntry;
@@ -23,24 +24,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-@SuppressWarnings({"unused"})
-public class JsonConverter {
-
-    static HashMap<String,JsonObject> cachedSimpleBills = new HashMap<String,JsonObject>();
-
-    private static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
+public class LuceneJsonConverter
+{
+    public static final Logger logger = Logger.getLogger(LuceneJsonConverter.class);
+    protected static HashMap<String,JsonObject> cachedSimpleBills = new HashMap<String,JsonObject>();
+    protected static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     /**
      * accepts and sends applicable objects to be converted to json via converter(object,list)
      * this is necessary to give each object it's "exclude" list
      */
-    public static JsonObject getJson(Object o) {
+    public static String toString(BaseObject o) {
         if(o == null) {
             return null;
         }
@@ -48,6 +49,15 @@ public class JsonConverter {
         JsonObject root = new JsonObject();
 
         JsonObject node = null;
+        try {
+            if (o instanceof Bill) {
+                cachedSimpleBills.remove(((Bill)o).getBillId());
+                node = converter(o,bill_exclude());
+            }
+        }
+        catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
 
         if(o instanceof Bill) {
             try {
@@ -90,7 +100,7 @@ public class JsonConverter {
 
         root.add(o.getClass().getSimpleName().toLowerCase(), node);
 
-        return root;
+        return root.toString();
     }
 
 
@@ -142,7 +152,7 @@ public class JsonConverter {
                             else if(type.equals("List")) {
                                 try {
                                     root.add(f.getName(),
-                                            (JsonElement)JsonConverter.class.getDeclaredMethod("list" + o.getClass().getSimpleName(),Collection.class)
+                                            (JsonElement)LuceneJsonConverter.class.getDeclaredMethod("list" + o.getClass().getSimpleName(),Collection.class)
                                             .invoke(null,(List<?>)obj));
 
                                 }
@@ -160,7 +170,7 @@ public class JsonConverter {
                                 root.add(f.getName(),converter(obj,addendum_exclude()));
                             }
                             else {
-                                throw (new JsonConverter()).new UnknownTypeException("UNKNOWN: " + type + "(type):" + name + " (name) IN CLASS " + o.getClass().getSimpleName());
+                                throw (new LuceneJsonConverter()).new UnknownTypeException("UNKNOWN: " + type + "(type):" + name + " (name) IN CLASS " + o.getClass().getSimpleName());
                             }
                         }
                     }

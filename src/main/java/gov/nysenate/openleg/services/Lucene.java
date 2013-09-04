@@ -6,13 +6,11 @@ import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.Change;
-import gov.nysenate.openleg.model.ISenateSerializer;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Storage;
-import gov.nysenate.openleg.util.serialize.JsonSerializer;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,7 +23,6 @@ public class Lucene extends ServiceBase
     @Override
     public boolean process(List<Entry<String, Change>> entries, Storage storage) throws IOException
     {
-        ISenateSerializer serializer = new JsonSerializer();
         gov.nysenate.openleg.lucene.Lucene lucene = Application.getLucene();
         for(Entry<String, Change> entry : entries) {
             try {
@@ -72,7 +69,7 @@ public class Lucene extends ServiceBase
                             for(Action billEvent:bill.getActions()) {
                                 try {
                                     billEvent.setBill(bill);
-                                    lucene.updateDocument(DocumentBuilder.build(billEvent, serializer));
+                                    lucene.updateDocument(DocumentBuilder.build(billEvent));
                                 }
                                 catch (IOException e) {
                                     logger.error("Error indexing: "+key, e);
@@ -83,23 +80,23 @@ public class Lucene extends ServiceBase
                             for(Vote vote: bill.getVotes()) {
                                 try {
                                     vote.setBill(bill);
-                                    lucene.updateDocument(DocumentBuilder.build(vote, serializer));
+                                    lucene.updateDocument(DocumentBuilder.build(vote));
                                 }
                                 catch(IOException e) {
                                     logger.error("Error indexing: "+key, e);
                                 }
                             }
 
-                            document = DocumentBuilder.build(bill, serializer);
+                            document = DocumentBuilder.build(bill);
                         }
                         else if (otype.equals("meeting")) {
-                            document = DocumentBuilder.build((Meeting)obj, serializer);
+                            document = DocumentBuilder.build((Meeting)obj);
                         }
                         else if (otype.equals("calendar")) {
-                            document = DocumentBuilder.build((Calendar)obj, serializer);
+                            document = DocumentBuilder.build((Calendar)obj);
                         }
                         else if (otype.equals("transcript")) {
-                            document = DocumentBuilder.build((Transcript)obj, serializer);
+                            document = DocumentBuilder.build((Transcript)obj);
                         }
                         else if (otype.equals("hearing")) {
                             // Do nothing

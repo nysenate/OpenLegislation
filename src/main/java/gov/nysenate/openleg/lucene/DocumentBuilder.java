@@ -4,7 +4,6 @@ import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.CalendarEntry;
-import gov.nysenate.openleg.model.ISenateSerializer;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.PublicHearing;
 import gov.nysenate.openleg.model.Section;
@@ -12,6 +11,7 @@ import gov.nysenate.openleg.model.Sequence;
 import gov.nysenate.openleg.model.Supplemental;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.util.LuceneJsonConverter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -26,7 +26,7 @@ public class DocumentBuilder
 {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public static Document build(PublicHearing hearing, ISenateSerializer serializer)
+    public static Document build(PublicHearing hearing)
     {
         Document document = new Document();
 
@@ -49,11 +49,11 @@ public class DocumentBuilder
         // Other various search fields and filters
         document.add(new Field("sorttitle", hearing.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
-        document.add(new Field("odata", serializer.getData(hearing), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("odata", LuceneJsonConverter.toString(hearing), Field.Store.YES, Field.Index.NO));
         return document;
     }
 
-    public static Document build(Vote vote, ISenateSerializer serializer)
+    public static Document build(Vote vote)
     {
         Document document = new Document();
 
@@ -104,12 +104,12 @@ public class DocumentBuilder
             document.add(new Field("committee", (vote.getDescription().isEmpty() ? vote.getBill().getCurrentCommittee() : vote.getDescription()), Field.Store.YES, Field.Index.ANALYZED));
         }
 
-        document.add(new Field("odata", serializer.getData(vote), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("odata", LuceneJsonConverter.toString(vote), Field.Store.YES, Field.Index.NO));
         return document;
     }
 
 
-    public static Document build(Transcript transcript, ISenateSerializer serializer)
+    public static Document build(Transcript transcript)
     {
         Document document = new Document();
 
@@ -144,11 +144,11 @@ public class DocumentBuilder
         document.add(new Field("when", String.valueOf(transcript.getTimeStamp().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("sorttitle", transcript.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
-        document.add(new Field("odata", serializer.getData(transcript), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("odata", LuceneJsonConverter.toString(transcript), Field.Store.YES, Field.Index.NO));
         return document;
     }
 
-    public static Document build(Meeting meeting, ISenateSerializer serializer)
+    public static Document build(Meeting meeting)
     {
         Document document = new Document();
 
@@ -190,11 +190,11 @@ public class DocumentBuilder
         document.add(new Field("sortindex", meeting.getMeetingDateTime().getTime()+meeting.getCommitteeName(), Field.Store.NO, Field.Index.NOT_ANALYZED));
         document.add(new Field("sorttitle", document.getFieldable("title").stringValue().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
-        document.add(new Field("odata", serializer.getData(meeting), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("odata", LuceneJsonConverter.toString(meeting), Field.Store.YES, Field.Index.NO));
         return document;
     }
 
-    public static Document build(Calendar calendar, ISenateSerializer serializer)
+    public static Document build(Calendar calendar)
     {
         Document document = new Document();
 
@@ -256,11 +256,11 @@ public class DocumentBuilder
         document.add(new Field("when",String.valueOf(calendar.getDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
         document.add(new Field("sorttitle", document.getFieldable("title").stringValue().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
-        document.add(new Field("odata", serializer.getData(calendar), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("odata", LuceneJsonConverter.toString(calendar), Field.Store.YES, Field.Index.NO));
         return document;
     }
 
-    public static Document build(Action action, ISenateSerializer serializer)
+    public static Document build(Action action)
     {
         Document document = new Document();
 
@@ -289,11 +289,11 @@ public class DocumentBuilder
         document.add(new Field("summary", DateFormat.getDateInstance(DateFormat.MEDIUM).format(action.getDate()), Field.Store.YES, Field.Index.ANALYZED));
         document.add(new Field("sorttitle", action.getBill().getBillId()+" "+action.getText().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
-        document.add(new Field("odata", serializer.getData(action), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("odata", LuceneJsonConverter.toString(action), Field.Store.YES, Field.Index.NO));
         return document;
     }
 
-    public static Document build(Bill bill, ISenateSerializer serializer)
+    public static Document build(Bill bill)
     {
         Document document = new Document();
 
@@ -360,7 +360,7 @@ public class DocumentBuilder
         }
         document.add(new Field("status", billStatus, Field.Store.YES, Field.Index.ANALYZED));
 
-        document.add(new Field("odata", serializer.getData(bill), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("odata", LuceneJsonConverter.toString(bill), Field.Store.YES, Field.Index.NO));
         return document;
     }
 }
