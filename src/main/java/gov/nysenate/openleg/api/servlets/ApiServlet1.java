@@ -28,20 +28,16 @@ import org.apache.log4j.Logger;
 public class ApiServlet1 extends HttpServlet
 {
     public static int MAX_PAGE_SIZE = 1000;
+    public static int DEFAULT_PAGE_SIZE = 20;
 
     public final Logger logger = Logger.getLogger(ApiServlet1.class);
     public final static Pattern documentPattern = Pattern.compile("(:?/api)?/1.0/(json|xml|jsonp)/(bill|calendar|meeting|transcript)/(.*)?\\.(json|jsonp|xml)");
     public final static Pattern searchPattern = Pattern.compile("(?:/api)?/1.0/(json|xml|jsonp)/(search|votes|bills|meetings|actions|calendar|transcripts)/?");
 
-    public static void main(String[] args)
-    {
-        System.out.println(searchPattern.matcher("/api/1.0/xml/meetings").find());
-    }
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int pageIdx = 1;
-        int pageSize = 20;
+        int pageSize = DEFAULT_PAGE_SIZE;
         boolean sortOrder = false;
         String uri = request.getRequestURI();
         String path = request.getServletPath()+(request.getPathInfo() != null ? request.getPathInfo() : "");
@@ -103,7 +99,7 @@ public class ApiServlet1 extends HttpServlet
             }
         }
         catch (ApiRequestException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
@@ -124,7 +120,7 @@ public class ApiServlet1 extends HttpServlet
         }
 
         try {
-            int start = (pageNumber - 1) * pageSize;
+            int start = pageNumber * pageSize;
             SenateResponse sr = Application.getLucene().search(term, start, pageSize, sort, sortOrder);
             ApiHelper.buildSearchResultList(sr);
 
@@ -149,7 +145,7 @@ public class ApiServlet1 extends HttpServlet
             }
 
         } catch (Exception e) {
-            logger.error("internal server error", e);
+            logger.error(e.getMessage(), e);
             throw new ApiRequestException("internal server error.");
         }
     }

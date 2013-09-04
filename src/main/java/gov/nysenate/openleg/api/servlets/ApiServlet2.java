@@ -2,10 +2,10 @@ package gov.nysenate.openleg.api.servlets;
 
 import gov.nysenate.openleg.api.AbstractApiRequest.ApiRequestException;
 import gov.nysenate.openleg.api.ApiHelper;
-import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.SenateResponse;
+import gov.nysenate.openleg.util.Api2JsonConverter;
+import gov.nysenate.openleg.util.Api2XmlConverter;
 import gov.nysenate.openleg.util.Application;
-import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,6 +22,8 @@ import org.apache.log4j.Logger;
 @SuppressWarnings("serial")
 public class ApiServlet2 extends HttpServlet
 {
+    public static int DEFAULT_PAGE_SIZE = 20;
+    public static int MAX_PAGE_SIZE = 1000;
     public final Logger logger = Logger.getLogger(ApiServlet2.class);
     public final static Pattern documentPattern = Pattern.compile("(?:/api)?/2.0/(bill|calendar|meeting|transcript)/(.*)?\\.(json|jsonp|xml)");
     public final static Pattern searchPattern = Pattern.compile("(?:/api)?/2.0/search.(json|jsonp|xml)");
@@ -29,10 +31,10 @@ public class ApiServlet2 extends HttpServlet
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int pageIdx = 0;
-        int pageSize = 0;
+        int pageSize = DEFAULT_PAGE_SIZE;
         boolean sortOrder = false;
         String uri = request.getRequestURI();
-        String path = request.getServletPath();
+        String path = request.getServletPath()+(request.getPathInfo() != null ? request.getPathInfo() : "");
         String sort = request.getParameter("sort");
         String pageIdxParam = request.getParameter("pageIdx");
         String pageSizeParam = request.getParameter("pageSize");
@@ -40,20 +42,29 @@ public class ApiServlet2 extends HttpServlet
 
         try {
             try {
-                pageIdx = Integer.parseInt(pageIdxParam);
-                pageSize = Integer.parseInt(pageSizeParam);
-                if ("true".equals(sortOrderParam)) {
-                    sortOrder = true;
+                if (pageIdxParam != null) {
+                    pageIdx = Integer.parseInt(pageIdxParam);
+                    if (pageIdx > MAX_PAGE_SIZE) {
+                        throw new ApiRequestException("Page size must be less than 1000");
+                    }
                 }
-                else if ("false".equals(sortOrderParam)) {
-                    sortOrder = false;
-                }
-                else {
-                    throw new ApiRequestException("Invalid sortOrder parameter: "+sortOrderParam);
+
+                if (pageSizeParam != null) {
+                    pageSize = Integer.parseInt(pageSizeParam);
                 }
             }
             catch (NumberFormatException e) {
                 throw new ApiRequestException("Invalid pageIdx ["+pageIdxParam+"] or pageSize ["+pageSizeParam+"]. Must be an integer.");
+            }
+
+            if ("true".equals(sortOrderParam)) {
+                sortOrder = true;
+            }
+            else if (sortOrderParam == null || "false".equals(sortOrderParam)) {
+                sortOrder = false;
+            }
+            else {
+                throw new ApiRequestException("Invalid sortOrder parameter: "+sortOrderParam);
             }
 
             Matcher searchMatcher = searchPattern.matcher(path);
@@ -70,7 +81,7 @@ public class ApiServlet2 extends HttpServlet
                 doSingleView(request, response, format, otype, oid);
             }
             else {
-                throw new ApiRequestException("Invalid requeset: "+uri);
+                throw new ApiRequestException("Invalid request: "+uri);
             }
         }
         catch (ApiRequestException e) {
@@ -82,20 +93,20 @@ public class ApiServlet2 extends HttpServlet
     private void doSearch(HttpServletRequest request, HttpServletResponse response, String format, String type, String term, int pageNumber, int pageSize, String sort, boolean sortOrder) throws ApiRequestException
     {
         try {
-            int start = (pageNumber - 1) * pageSize;
+            int start = pageNumber * pageSize;
             SenateResponse sr = Application.getLucene().search(term, start, pageSize, sort, sortOrder);
             ApiHelper.buildSearchResultList(sr);
 
             if (format.equals("json")) {
                 response.setContentType("application/json");
-                //new Api2JsonConverter().write(sr, response.getOutputStream());
+                new Api2JsonConverter().write(sr, response.getOutputStream());
             }
             else if (format.equals("jsonp")) {
                 String callback = request.getParameter("callback");
                 if (callback != null && callback != "") {
                     PrintWriter out = response.getWriter();
                     response.setContentType("application/javascript");
-                    //out.write(callback+"("+new Api2JsonConverter().toString(sr)+");");
+                    out.write(callback+"("+new Api2JsonConverter().toString(sr)+");");
                 }
                 else {
                     throw new ApiRequestException("callback parameter required for jsonp queries.");
@@ -103,11 +114,11 @@ public class ApiServlet2 extends HttpServlet
             }
             else if (format.equals("xml")) {
                 response.setContentType("application/xml");
-                //new Api2XmlConverter().write(sr, response.getOutputStream());
+                new Api2XmlConverter().write(sr, response.getOutputStream());
             }
 
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new ApiRequestException("internal server error.");
         }
     }
@@ -115,36 +126,32 @@ public class ApiServlet2 extends HttpServlet
     private void doSingleView(HttpServletRequest request, HttpServletResponse response, String format, String type, String id) throws ApiRequestException
     {
         try {
-            BaseObject object = (BaseObject)Application.getLucene().getSenateObject(id, type);
+            SenateResponse sr = Application.getLucene().search("otype:"+type+" AND oid:\""+id+"\"", 0, 1, null, false);
+            ApiHelper.buildSearchResultList(sr);
 
-            if(object == null) {
-                throw new ApiRequestException(TextFormatter.append("couldn't find id: ", id, " of type: ", type));
+            if (format.equals("json")) {
+                response.setContentType("application/json");
+                new Api2JsonConverter().write(sr, response.getOutputStream());
             }
-            else {
-                if (format.equals("json")) {
-                    response.setContentType("application/json");
-                    //new Api2JsonConverter().write(object, response.getOutputStream());
+            else if (format.equals("jsonp")) {
+                String callback = request.getParameter("callback");
+                if (callback != null && callback != "") {
+                    PrintWriter out = response.getWriter();
+                    response.setContentType("application/javascript");
+                    out.write(callback+"("+new Api2JsonConverter().toString(sr)+");");
                 }
-                else if (format.equals("jsonp")) {
-                    String callback = request.getParameter("callback");
-                    if (callback != null && callback != "") {
-                        PrintWriter out = response.getWriter();
-                        response.setContentType("application/javascript");
-                        //out.write(callback+"("+new Api2JsonConverter().toString(object)+");");
-                    }
-                    else {
-                        throw new ApiRequestException("callback parameter required for jsonp queries.");
-                    }
+                else {
+                    throw new ApiRequestException("callback parameter required for jsonp queries.");
                 }
-                else if (format.equals("xml")) {
-                    response.setContentType("application/xml");
-                    //new Api2XmlConverter().write(object, response.getOutputStream());
-                }
+            }
+            else if (format.equals("xml")) {
+                response.setContentType("application/xml");
+                new Api2XmlConverter().write(sr, response.getOutputStream());
             }
 
         } catch (Exception e) {
-            logger.error(e);
-            throw new ApiRequestException("internal server error.");
+            logger.error(e.getMessage(), e);
+            throw new ApiRequestException("internal server error.", e);
         }
     }
 }
