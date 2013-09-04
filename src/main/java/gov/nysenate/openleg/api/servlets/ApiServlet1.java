@@ -31,8 +31,8 @@ public class ApiServlet1 extends HttpServlet
     public static int DEFAULT_PAGE_SIZE = 20;
 
     public final Logger logger = Logger.getLogger(ApiServlet1.class);
-    public final static Pattern documentPattern = Pattern.compile("(:?/api)?/1.0/(json|xml|jsonp)/(bill|calendar|meeting|transcript)/(.*)?\\.(json|jsonp|xml)");
-    public final static Pattern searchPattern = Pattern.compile("(?:/api)?/1.0/(json|xml|jsonp)/(search|votes|bills|meetings|actions|calendar|transcripts)/?");
+    public final static Pattern documentPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(json|xml|jsonp)/(bill|calendar|meeting|transcript)/(.*)?\\.(json|jsonp|xml)");
+    public final static Pattern searchPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(csv|atom|rss|json|xml|jsonp)/(search|votes|bills|meetings|actions|calendar|transcripts)(?:/(.*?)/)/?");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -78,7 +78,9 @@ public class ApiServlet1 extends HttpServlet
             if (searchMatcher.find()) {
                 String format = searchMatcher.group(1);
                 String type = searchMatcher.group(2);
-                String term = RequestUtils.getSearchString(request);
+                String uriTerm = searchMatcher.group(3);
+                String term = RequestUtils.getSearchString(request, uriTerm);
+
                 if (!type.equals("search")) {
                     term += "otype:"+type.substring(0, type.length()-1)+" "+term;
                 }
@@ -142,6 +144,30 @@ public class ApiServlet1 extends HttpServlet
             else if (format.equals("xml")) {
                 response.setContentType("application/xml");
                 new Api1XmlConverter().write(sr, response.getOutputStream());
+            }
+            else if (format.equals("rss")) {
+                request.setAttribute("term", term);
+                request.setAttribute("results", sr);
+                request.setAttribute("pageSize", pageSize);
+                request.setAttribute("pageIdx", pageNumber);
+                response.setContentType("application/rss+xml");
+                request.getSession().getServletContext().getRequestDispatcher("/views/search-rss.jsp").forward(request, response);
+            }
+            else if (format.equals("atom")) {
+                request.setAttribute("term", term);
+                request.setAttribute("results", sr);
+                request.setAttribute("pageSize", pageSize);
+                request.setAttribute("pageIdx", pageNumber);
+                response.setContentType("application/atom+xml");
+                request.getSession().getServletContext().getRequestDispatcher("/views/search-atom.jsp").forward(request, response);
+            }
+            else if (format.equals("csv")) {
+                request.setAttribute("term", term);
+                request.setAttribute("results", sr);
+                request.setAttribute("pageSize", pageSize);
+                request.setAttribute("pageIdx", pageNumber);
+                response.setContentType("text/plain");
+                request.getSession().getServletContext().getRequestDispatcher("/views/search-csv.jsp").forward(request, response);
             }
 
         } catch (Exception e) {

@@ -43,7 +43,7 @@
     else {
         feed.setUpdated(new Date());
     }
-
+    System.out.println(sr.getResults().size());
     for(Result r:sr.getResults()) {
         Entry entry = feed.addEntry();
 

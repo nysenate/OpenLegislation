@@ -24,19 +24,6 @@
         <servlet-name>WebServlet</servlet-name>
         <servlet-class>gov.nysenate.openleg.api.servlets.WebServlet</servlet-class>
     </servlet>
-    
-	<servlet>
-		<servlet-name>ApiServlet</servlet-name>
-		<servlet-class>gov.nysenate.openleg.api.servlets.ApiServlet1</servlet-class>
-	</servlet>
-    <servlet-mapping>
-        <servlet-name>ApiServlet</servlet-name>
-        <url-pattern>/api/1.0/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ApiServlet</servlet-name>
-        <url-pattern>/1.0/*</url-pattern>
-    </servlet-mapping>
 
     <servlet>
         <servlet-name>ApiServlet2</servlet-name>
@@ -49,6 +36,23 @@
     <servlet-mapping>
         <servlet-name>ApiServlet2</servlet-name>
         <url-pattern>/2.0/*</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+		<servlet-name>ApiServlet1</servlet-name>
+		<servlet-class>gov.nysenate.openleg.api.servlets.ApiServlet1</servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>ApiServlet1</servlet-name>
+        <url-pattern>/api/1.0/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ApiServlet1</servlet-name>
+        <url-pattern>/1.0/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ApiServlet1</servlet-name>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
 	<servlet>
