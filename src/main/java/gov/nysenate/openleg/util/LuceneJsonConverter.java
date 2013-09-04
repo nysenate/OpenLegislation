@@ -19,11 +19,13 @@ import java.lang.reflect.Modifier;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonArray;
@@ -31,6 +33,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+@SuppressWarnings("unchecked")
 public class LuceneJsonConverter
 {
     public static final Logger logger = Logger.getLogger(LuceneJsonConverter.class);
@@ -42,65 +45,43 @@ public class LuceneJsonConverter
      * this is necessary to give each object it's "exclude" list
      */
     public static String toString(BaseObject o) {
-        if(o == null) {
+        if(o != null) {
+            JsonObject root = new JsonObject();
+            try {
+                JsonObject node = null;
+                if(o instanceof Bill) {
+                    cachedSimpleBills.remove(((Bill)o).getBillId());
+                    node = converter(o, null);
+                }
+                else if(o instanceof Meeting) {
+                    node = converter(o, null);
+                }
+                else if(o instanceof Transcript) {
+                    node = converter(o, transcript_exclude());
+                }
+                else if(o instanceof Calendar) {
+                    node = converter(o, null);
+                }
+                else if(o instanceof Action) {
+                    node = converter(o, null);
+                }
+                else if(o instanceof Vote) {
+                    node = converter(o, null);
+                }
+                else {
+                    throw new RuntimeException("Cannot convert BaseObject of type: "+o.getOtype());
+                }
+                root.add(o.getOtype(), node);
+                return root.toString();
+            }
+            catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                return null;
+            }
+        }
+        else {
             return null;
         }
-
-        JsonObject root = new JsonObject();
-
-        JsonObject node = null;
-        try {
-            if (o instanceof Bill) {
-                cachedSimpleBills.remove(((Bill)o).getBillId());
-                node = converter(o,bill_exclude());
-            }
-        }
-        catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-
-        if(o instanceof Bill) {
-            try {
-                cachedSimpleBills.remove(((Bill)o).getBillId());
-                node = converter(o,bill_exclude());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        else if(o instanceof Meeting)
-            try {
-                node = converter(o,meeting_exclude());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        else if(o instanceof Transcript)
-            try {
-                node = converter(o,transcript_exclude());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        else if(o instanceof Calendar)
-            try {
-                node = converter(o,null);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        else if(o instanceof Action)
-            try {
-                node = converter(o,action_exclude());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        else if(o instanceof Vote)
-            try {
-                node = converter(o,vote_exclude());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        root.add(o.getClass().getSimpleName().toLowerCase(), node);
-
-        return root.toString();
     }
 
 
@@ -110,18 +91,18 @@ public class LuceneJsonConverter
      * in particular this method will explicitly handle generic arguments and branches
      * to other methods for more complex data types (dependent on type)
      */
-    private static JsonObject converter(Object o, List<String> exclude) throws Exception {
+    private static JsonObject converter(Object o, List<String> exclude) throws Exception
+    {
         Field[] fields = o.getClass().getDeclaredFields();
-
         JsonObject root = new JsonObject();
-
-
-        if(exclude == null)
+        if(exclude == null) {
             exclude = new ArrayList<String>();
+        }
+
         try {
             for(Field f:fields) {
                 if(!f.getName().contains("jdo") && !Modifier.isStatic(f.getModifiers())) {
-                    String name = fixCase(f.getName());
+                    String name = StringUtils.capitalize(f.getName());
                     String type = f.getType().getSimpleName();
 
                     if(!exclude.contains(f.getName())) {
@@ -140,7 +121,7 @@ public class LuceneJsonConverter
                                 Bill bill = (Bill)obj;
 
                                 if(!cachedSimpleBills.containsKey(bill.getBillId())) {
-                                    cachedSimpleBills.put(bill.getBillId(), converter(obj,simple_bill_exclude()));
+                                    cachedSimpleBills.put(bill.getBillId(), converter(obj,internal_bill_exclude()));
                                 }
 
                                 root.add(f.getName(), cachedSimpleBills.get(bill.getBillId()));
@@ -157,34 +138,31 @@ public class LuceneJsonConverter
 
                                 }
                                 catch (Exception e) {
-                                    //e.printStackTrace();
+                                    logger.error(e.getMessage(), e);
                                 }
                             }
                             else if(type.equals("Person")) {
-                                root.add(f.getName(),converter(obj,person_exclude()));
+                                root.add(f.getName(),converter(obj, null));
                             }
                             else if (type.equals("Agenda")) {
                                 root.add(f.getName(),converter(obj,agenda_exclude()));
                             }
-                            else if (type.equals("Addendum")) {
-                                root.add(f.getName(),converter(obj,addendum_exclude()));
-                            }
                             else {
-                                throw (new LuceneJsonConverter()).new UnknownTypeException("UNKNOWN: " + type + "(type):" + name + " (name) IN CLASS " + o.getClass().getSimpleName());
+                                throw new RuntimeException("UNKNOWN: " + type + "(type):" + name + " (name) IN CLASS " + o.getClass().getSimpleName());
                             }
                         }
                     }
                 }
             }
         }
-        catch (Exception e){
-            e.printStackTrace();
-
+        catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
         return root;
     }
 
-    private static boolean isPrimitive(Object obj) {
+    private static boolean isPrimitive(Object obj)
+    {
         return obj != null && (
                 obj.getClass().isPrimitive()
                 || obj instanceof Boolean
@@ -204,375 +182,185 @@ public class LuceneJsonConverter
      * they loop back to converter, in other cases they are simply iterated through and
      * returned.
      */
-
-    @SuppressWarnings("unchecked")
-    private static JsonArray listBill(Collection<?> c)  throws Exception  {
+    private static JsonArray listBill(Collection<?> c) throws Exception
+    {
         JsonArray jarray = new JsonArray();
 
         if(((List<?>)c).iterator().hasNext()) {
-
             Object o = ((List<?>)c).iterator().next();
-
             if(o instanceof String) {
-                List<String> strings = (List<String>) c;
-                for(String string:strings) {
+                for(String string:(List<String>)c) {
                     JsonPrimitive jp = new JsonPrimitive(string);
-
                     jarray.add(jp);
                 }
             }
-
-            if(o instanceof Bill) {
-                List<Bill> bills = (List<Bill>) c;
-                for(Bill bill: bills) {
+            else if(o instanceof Bill) {
+                for(Bill bill: (List<Bill>) c) {
                     jarray.add(converter(bill, null));
                 }
             }
-
             else if(o instanceof Action) {
-                List<Action> events = (List<Action>) c;
-                for(Action be:events) {
+                for(Action be:(List<Action>) c) {
                     jarray.add(converter(be, internal_action_exclude()));
                 }
-
-
             }
-
             else if(o instanceof Person) {
-                List<Person> persons = (List<Person>) c;
-                for(Person p:persons) {
-                    jarray.add(converter(p, person_exclude()));
+                for(Person p:(List<Person>) c) {
+                    jarray.add(converter(p, null));
                 }
-
             }
-
             else if(o instanceof Vote) {
-
-                List<Vote> votes = (List<Vote>) c;
-                for(Vote v:votes) {
+                for(Vote v:(List<Vote>) c) {
                     jarray.add((converter(v, internal_vote_exclude())));
-
                 }
-
             }
         }
-
         return jarray;
     }
 
-    @SuppressWarnings("unchecked")
-    private static JsonArray listVote(Collection<?> c)  throws Exception  {
+    private static JsonArray listVote(Collection<?> c) throws Exception
+    {
         JsonArray jarray = new JsonArray();
-
         if(((List<?>)c).iterator().hasNext()) {
             Object o = ((List<?>)c).iterator().next();
-
             if(o instanceof String) {
-                List<String> votes = (List<String>)c;
-
-                for(String name:votes) {
+                for(String name:(List<String>)c) {
                     JsonPrimitive jp = new JsonPrimitive(name);
-
                     jarray.add(jp);
                 }
             }
         }
-
         return jarray;
     }
 
-    @SuppressWarnings("unchecked")
-    private static JsonArray listSupplemental(Collection<?> c)  throws Exception  {
+    private static JsonArray listSupplemental(Collection<?> c) throws Exception
+    {
         JsonArray jarray = new JsonArray();
-
-
         if(((List<?>)c).iterator().hasNext()) {
             Object o = ((List<?>)c).iterator().next();
             if(o instanceof Section) {
-                List<Section> sections = (List<Section>)c;
-
-                for(Section s:sections) {
+                for(Section s:(List<Section>)c) {
                     jarray.add(converter(s, section_exclude()));
-
                 }
             }
             else if(o instanceof Sequence) {
-                List<Sequence> sequences = (List<Sequence>)c;
-
-                for(Sequence s:sequences) {
+                for(Sequence s:(List<Sequence>)c) {
                     jarray.add(converter(s, sequence_exclude()));
 
                 }
             }
         }
-
         return jarray;
     }
 
-    @SuppressWarnings("unchecked")
-    private static JsonArray listCalendar(Collection<?> c)  throws Exception  {
+    private static JsonArray listCalendar(Collection<?> c) throws Exception
+    {
         JsonArray jarray = new JsonArray();
-
         if(((List<?>)c).iterator().hasNext()) {
             Object o = ((List<?>)c).iterator().next();
-
             if(o instanceof Supplemental) {
-                List<Supplemental> supplementals = (List<Supplemental>)c;
-
-                for(Supplemental s:supplementals) {
+                for(Supplemental s:(List<Supplemental>)c) {
                     jarray.add(converter(s, supplemental_exclude()));
-
                 }
             }
         }
-
         return jarray;
     }
 
-    @SuppressWarnings("unchecked")
-    private static JsonArray listMeeting(Collection<?> c)  throws Exception  {
+    private static JsonArray listMeeting(Collection<?> c) throws Exception
+    {
         JsonArray jarray = new JsonArray();
-
         if(((List<?>)c).iterator().hasNext()) {
             Object o = ((List<?>)c).iterator().next();
-
             if(o instanceof Bill) {
-                List<Bill> bills = (List<Bill>)c;
-
-                for(Bill b:bills) {
-                    jarray.add(converter(b,simple_bill_exclude()));
+                for(Bill b:(List<Bill>)c) {
+                    jarray.add(converter(b,internal_bill_exclude()));
                 }
             }
-            else if (o instanceof Addendum)
-            {
-                List<Addendum> addendums = (List<Addendum>)c;
-
-                for(Addendum a:addendums) {
+            else if (o instanceof Addendum) {
+                for(Addendum a:(List<Addendum>)c) {
                     jarray.add(converter(a,addendum_exclude()));
                 }
             }
         }
-
         return jarray;
     }
 
-    @SuppressWarnings("unchecked")
-    private static JsonArray listSection(Collection<?> c)  throws Exception  {
+    private static JsonArray listSection(Collection<?> c) throws Exception
+    {
         JsonArray jarray = new JsonArray();
-
         if(((List<?>)c).iterator().hasNext()) {
             Object o = ((List<?>)c).iterator().next();
-
             if(o instanceof CalendarEntry) {
-                List<CalendarEntry> calendarEntries = (List<CalendarEntry>)c;
-
-                for(CalendarEntry entry:calendarEntries) {
+                for(CalendarEntry entry:(List<CalendarEntry>)c) {
                     jarray.add(converter(entry,calendar_entry_exclude()));
                 }
             }
         }
-
         return jarray;
     }
 
-    @SuppressWarnings("unchecked")
-    private static JsonArray listSequence(Collection<?> c)  throws Exception  {
+    private static JsonArray listSequence(Collection<?> c) throws Exception
+    {
         JsonArray jarray = new JsonArray();
-
         if(((List<?>)c).iterator().hasNext()) {
             Object o = ((List<?>)c).iterator().next();
-
             if(o instanceof CalendarEntry) {
-                List<CalendarEntry> calendarEntries = (List<CalendarEntry>)c;
-
-                for(CalendarEntry entry:calendarEntries) {
+                for(CalendarEntry entry:(List<CalendarEntry>)c) {
                     jarray.add(converter(entry,calendar_entry_exclude()));
                 }
             }
         }
-
         return jarray;
     }
 
-    /**
-     * The following <object type>_exclude methods
-     *
-     *
-     */
-
-    private static List<String> simple_bill_exclude() {
-        List<String> simple_bill_exclude = new ArrayList<String>();
-
-        // simple_bill_exclude.add("lawSection");
-        simple_bill_exclude.add("previousVersions");
-        // simple_bill_exclude.add("otherSponsors");
-        simple_bill_exclude.add("coSponsors");
-        simple_bill_exclude.add("multiSponsors");
-        simple_bill_exclude.add("currentCommittee");
-        simple_bill_exclude.add("actions");
-        simple_bill_exclude.add("fulltext");
-        simple_bill_exclude.add("memo");
-        simple_bill_exclude.add("law");
-        // simple_bill_exclude.add("actClause");
-        simple_bill_exclude.add("sortIndex");
-        simple_bill_exclude.add("votes");
-        simple_bill_exclude.add("stricken");
-        simple_bill_exclude.add("pastCommittees");
-
-        return simple_bill_exclude;
+    private static List<String> addendum_exclude()
+    {
+        return Arrays.asList("meetings");
     }
 
-    private static List<String> calendar_entry_exclude() {
-        List<String> calendar_entry_exclude = new ArrayList<String>();
-
-        calendar_entry_exclude.add("section");
-        calendar_entry_exclude.add("sequence");
-        calendar_entry_exclude.add("id");
-
-        return calendar_entry_exclude;
+    private static List<String> agenda_exclude()
+    {
+        return Arrays.asList("addendums");
     }
 
-    private static List<String> sequence_exclude() {
-        List<String> sequence_exclude = new ArrayList<String>();
-
-        sequence_exclude.add("supplemental");
-        // sequence_exclude.add("notes");
-        sequence_exclude.add("id");
-
-        return sequence_exclude;
+    private static List<String> supplemental_exclude()
+    {
+        return Arrays.asList("calendar");
     }
 
-    private static List<String> addendum_exclude() {
-        List<String> exclude = new ArrayList<String>();
-
-        exclude.add("id");
-
-        return exclude;
+    private static List<String> section_exclude()
+    {
+        return Arrays.asList("supplemental");
     }
 
-    private static List<String> agenda_exclude() {
-        List<String> exclude = new ArrayList<String>();
-
-        exclude.add("addendum");
-        exclude.add("id");
-
-        return exclude;
+    private static List<String> sequence_exclude()
+    {
+        return Arrays.asList("supplemental");
     }
 
-    private static List<String> supplemental_exclude() {
-        List<String> supplemental_exclude = new ArrayList<String>();
-
-        supplemental_exclude.add("calendar");
-        // supplemental_exclude.add("supplementalId");
-        // supplemental_exclude.add("id");
-
-        return supplemental_exclude;
+    private static List<String> calendar_entry_exclude()
+    {
+        return Arrays.asList("section", "sequence");
     }
 
-    private static List<String> section_exclude() {
-        List<String> section_exclude = new ArrayList<String>();
-
-        section_exclude.add("calendar");
-        section_exclude.add("supplemental");
-        // section_exclude.add("id");
-
-        return section_exclude;
+    private static List<String> internal_vote_exclude()
+    {
+        return Arrays.asList("bill");
     }
 
-    private static List<String> vote_exclude() {
-        List<String> vote_exclude = new ArrayList<String>();
-
-        vote_exclude.add("id");
-
-        return vote_exclude;
+    private static List<String> internal_action_exclude()
+    {
+        return Arrays.asList("bill");
     }
 
-    private static List<String> internal_vote_exclude() {
-        List<String> vote_exclude = new ArrayList<String>();
-
-        vote_exclude.add("bill");
-
-        return vote_exclude;
+    private static List<String> internal_bill_exclude()
+    {
+        return Arrays.asList("actions", "fulltext", "memo", "sortIndex", "votes");
     }
 
-    private static List<String> action_exclude() {
-        List<String> action_exclude = new ArrayList<String>();
-
-        action_exclude.add("id");
-
-        return action_exclude;
-    }
-
-    private static List<String> internal_action_exclude() {
-        List<String> action_exclude = new ArrayList<String>();
-
-        action_exclude.add("bill");
-
-        return action_exclude;
-    }
-
-    private static List<String> transcript_exclude() {
-        List<String> transcript_exclude = new ArrayList<String>();
-
-        transcript_exclude.add("relatedBills");
-        transcript_exclude.add("transcriptTextProcessed");
-        transcript_exclude.add("id");
-
-        return transcript_exclude;
-    }
-
-    private static List<String> person_exclude() {
-        List<String> person_exclude = new ArrayList<String>();
-
-        person_exclude.add("id");
-        person_exclude.add("contactInfo");
-        person_exclude.add("branch");
-        person_exclude.add("guid");
-        person_exclude.add("position");
-
-        return person_exclude;
-    }
-
-    private static List<String> meeting_exclude() {
-        List<String> meeting_exclude = new ArrayList<String>();
-
-        meeting_exclude.add("id");
-
-        return meeting_exclude;
-    }
-
-    private static List<String> bill_exclude() {
-        List<String> bill_exclude = new ArrayList<String>();
-
-        bill_exclude.add("sortIndex");
-        bill_exclude.add("latestAmendment");
-        bill_exclude.add("pastCommittees");
-        bill_exclude.add("stricken");
-        // bill_exclude.add("actClause");
-
-        return bill_exclude;
-    }
-
-    /**
-     * returns given string with first character upper case
-     */
-
-    private static String fixCase(String s) {
-        char[] chars = s.toCharArray();
-
-        chars[0] = Character.toUpperCase(chars[0]);
-
-        return new String(chars);
-    }
-
-    public class UnknownTypeException extends Exception {
-        private static final long serialVersionUID = 1L;
-
-        public UnknownTypeException(String message) {
-            super(message);
-        }
-        public UnknownTypeException(String message, Throwable t) {
-            super(message,t);
-        }
+    private static List<String> transcript_exclude()
+    {
+        return Arrays.asList("relatedBills", "transcriptTextProcessed");
     }
 }
