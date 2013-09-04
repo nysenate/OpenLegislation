@@ -293,6 +293,9 @@ public class AgendaProcessor implements OpenLegConstants {
         for( XMLCommittee xmlCommMeeting : xmlAddendum.getCommittees().getCommittee()) {
             String action = xmlCommMeeting.getAction();
             String commName = xmlCommMeeting.getName().getContent();
+            if (commName == null) {
+                continue;
+            }
 
             if (action != null && action.equals("remove")) {
                 for (Meeting meeting : new ArrayList<Meeting>(listMeetings)) {

@@ -178,20 +178,4 @@ public class Meeting extends BaseObject
     public String toString() {
         return this.oid + " : " + meetingDateTime.getTime();
     }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public String getId() {
-        return oid;
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public void setId(String oid) {
-        this.oid = oid;
-    }
 }
