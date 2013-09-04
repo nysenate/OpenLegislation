@@ -100,7 +100,7 @@ public class Bill2011S1462 extends TestSetup{
 	      // Test for SOBI.D110614.T195743.TXT
 	      TestHelper.processFileC(env ,file.get(5));
 	      theBill=(Bill)storage.get("2011/bill/S1462A-2011", Bill.class);
-	      String[] voteDate=(theBill.getVotes().get(0).getId()).split("-");
+	      String[] voteDate=(theBill.getVotes().get(0).getOid()).split("-");
 		  String date=voteDate[2];
 		    // Checking vote Date
 		  assertEquals(date.equals("2011/06/14"),true);
@@ -223,7 +223,7 @@ public class Bill2011S1462 extends TestSetup{
 	    TestHelper.processFileC(env ,vfile.get(0));
 	    theBill=(Bill)storage.get("2011/bill/S1462D-2011", Bill.class);
 
-	    String[] voteDate=(theBill.getVotes().get(0).getId()).split("-");
+	    String[] voteDate=(theBill.getVotes().get(0).getOid()).split("-");
 		String date=voteDate[2];
 		    // Checking vote Date
 		assertEquals(date.equals("2012/06/11"),true);
