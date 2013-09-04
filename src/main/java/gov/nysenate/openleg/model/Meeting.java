@@ -5,18 +5,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 /**
  *
  * @author GraylinKim
  */
-@XStreamAlias("meeting")
-@XmlRootElement
 public class Meeting extends BaseObject
 {
     /**
@@ -86,7 +78,6 @@ public class Meeting extends BaseObject
     /**
      * The object type of the meeting.
      */
-    @JsonIgnore
     public String getOtype()
     {
         return "meeting";
@@ -116,7 +107,6 @@ public class Meeting extends BaseObject
         this.committeeChair = committeeChair;
     }
 
-    @JsonIgnore
     public int getYear() {
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.setTime(this.getMeetingDateTime());

@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
-@XStreamAlias("supplemental")
 public class Supplemental {
 
     protected String id;
@@ -23,7 +18,6 @@ public class Supplemental {
 
     protected String supplementalId;
 
-    @JsonIgnore
     protected Calendar calendar;
 
     public void addSequence(Sequence sequence) {
@@ -77,7 +71,6 @@ public class Supplemental {
         this.sections = sections;
     }
 
-    @JsonIgnore
     public Calendar getCalendar() {
         return calendar;
     }

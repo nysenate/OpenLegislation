@@ -5,23 +5,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 
 /**
  *
  * @author GraylinKim
  */
-@XStreamAlias("transcript")
 public class Transcript extends BaseObject
 {
     /**
      *
      */
-    @XStreamAsAttribute
     protected String id;
 
     /**
@@ -42,7 +35,6 @@ public class Transcript extends BaseObject
     /**
      *
      */
-    @XStreamAlias("full")
     protected String transcriptText;
 
     /**
@@ -70,13 +62,11 @@ public class Transcript extends BaseObject
     /**
      * The object type of the trascript.
      */
-    @JsonIgnore
     public String getOtype()
     {
         return "transcript";
     }
 
-    @JsonIgnore
     public String getOid()
     {
         return this.getId();
@@ -134,7 +124,6 @@ public class Transcript extends BaseObject
         this.relatedBills = relatedBills;
     }
 
-    @JsonIgnore
     public int getYear() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(timeStamp);

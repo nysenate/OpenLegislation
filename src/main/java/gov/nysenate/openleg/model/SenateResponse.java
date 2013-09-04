@@ -3,9 +3,6 @@ package gov.nysenate.openleg.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
-@XStreamAlias("response")
 public class SenateResponse {
 
     HashMap<String, Object> metadata;

@@ -2,30 +2,21 @@ package gov.nysenate.openleg.model;
 
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.TextFormatter;
-import gov.nysenate.openleg.xstream.BillListConverter;
-import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-
 /**
  *
  * @author GraylinKim
  */
-@XStreamAlias("bill")
 public class Bill extends BaseObject implements Comparable<Bill>
 {
     /**
      * The unique bill id.
      */
-    @XStreamAlias("senateId")
     protected String billId = "";
 
     /**
@@ -46,7 +37,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * A list of ids of versions of this legislation in previous sessions.
      */
-    @XStreamConverter(BillListConverter.class)
     protected List<String> previousVersions = new ArrayList<String>();
 
     /**
@@ -67,13 +57,11 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * A list of cosponsors for the bill.
      */
-    @XStreamAlias("cosponsors")
     protected List<Person> coSponsors = new ArrayList<Person>();
 
     /**
      * A list of multi-sponsors for assembly legislation.
      */
-    @XStreamAlias("multisponsors")
     protected List<Person> multiSponsors = new ArrayList<Person>();
 
     /**
@@ -84,7 +72,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * The committee the bill is currently referred to, if any.
      */
-    @XStreamAlias("committee")
     protected String currentCommittee = "";
 
     /**
@@ -95,13 +82,11 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * A list of actions that have been made on this bill.
      */
-    @XStreamConverter(BillListConverter.class)
     protected List<Action> actions = new ArrayList<Action>();
 
     /**
      * The full text of the bill.
      */
-    @XStreamAlias("text")
     protected String fulltext = "";
 
     /**
@@ -122,7 +107,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * A list of votes that have been made on this bill.
      */
-    @XStreamCollectionAlias(node="votes",value="vote")
     protected List<Vote> votes = new ArrayList<Vote>();
 
     /**
@@ -159,7 +143,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * @return - True if this bill is a resolution of some sort.
      */
-    @JsonIgnore
     public boolean isResolution()
     {
         return billId.charAt(0)!='A' && billId.charAt(0)!='S';
@@ -168,7 +151,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * @return - The URL used to construct Disqus threads
      */
-    @JsonIgnore
     public String getDisqusUrl()
     {
         if (this.getSession()==2009) {
@@ -200,7 +182,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * The object type of the bill.
      */
-    @JsonIgnore
     public String getOtype()
     {
         return "bill";
@@ -209,7 +190,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * @return - The unique object id.
      */
-    @JsonIgnore
     public String getOid()
     {
         return this.getBillId();
@@ -218,7 +198,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * @return - The billId padded to 5 digits with zeros.
      */
-    @JsonIgnore
     public String getPaddedBillId()
     {
         return this.getPaddedPrintNumber()+"-"+this.getSession();
@@ -227,7 +206,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * @return - The print number padded to 5 digits with zeros.
      */
-    @JsonIgnore
     public String getPaddedPrintNumber()
     {
         Matcher billIdMatcher = billIdPattern.matcher(this.getBillId());
@@ -243,7 +221,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * @return - Just the print number without the session year suffix.
      */
-    @JsonIgnore
     public String getPrintNumber()
     {
         Matcher billIdMatcher = billIdPattern.matcher(this.getBillId());
@@ -643,7 +620,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
     public void removeVote(Vote vote) {
         votes.remove(vote);
     }
-
 
     @Override
     public boolean equals(Object obj)

@@ -5,8 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 public class PublicHearing extends BaseObject
 {
     public ArrayList<String> committees;
@@ -34,7 +32,6 @@ public class PublicHearing extends BaseObject
     /**
      * The object type of the hearing.
      */
-    @JsonIgnore
     public String getOtype()
     {
         return "publichearing";

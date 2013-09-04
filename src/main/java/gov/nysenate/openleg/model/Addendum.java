@@ -6,14 +6,11 @@ import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 /**
  *
  *
  * @author GraylinKim
  */
-@XStreamAlias("addendum")
 public class Addendum extends BaseObject
 {
     /**
@@ -66,7 +63,6 @@ public class Addendum extends BaseObject
     /**
      * The object type of the addendum.
      */
-    @JsonIgnore
     public String getOtype()
     {
         return "addendum";
@@ -183,21 +179,5 @@ public class Addendum extends BaseObject
     @Override
     public String toString() {
         return this.getOid() + "-" + this.getPublishDate() + "-" + this.getMeetings();
-    }
-
-    /**
-     * @deprecated - Only kept around for old json serializers
-     */
-    @Deprecated
-    public String getId() {
-        return this.oid;
-    }
-
-    /**
-     * @deprecated - Only kept around for old json serializers
-     */
-    @Deprecated
-    public void setId(String id) {
-        this.oid = id;
     }
 }

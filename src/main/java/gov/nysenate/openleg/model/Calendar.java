@@ -5,50 +5,36 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 /**
  *
  * @author Graylin Kim
  */
-@XStreamAlias("calendar")
-@XmlRootElement
 public class Calendar extends BaseObject
 {
     /**
      * The calendar year for the calendar.
      */
-    @XStreamAsAttribute
     protected int year;
 
     /**
      * The type of calendar, active list or floor.
      */
-    @XStreamAsAttribute
     protected String type;
 
     /**
      * The session base year for the calendar.
      */
-    @XStreamAsAttribute
     protected int session;
 
     /**
      * The number for the calendar in this calendar year.
      */
-    @XStreamAsAttribute
     protected int no;
 
     /**
      * The list of supplementals for this calendar.
      */
     protected List<Supplemental> supplementals;
-
 
     /**
      * The unique object id.
@@ -84,7 +70,6 @@ public class Calendar extends BaseObject
     /**
      * The object type of the calendar.
      */
-    @JsonIgnore
     public String getOtype()
     {
         return "calendar";
@@ -93,7 +78,6 @@ public class Calendar extends BaseObject
     /**
      * @return - This calendar's unique object id.
      */
-    @JsonIgnore
     public String getOid()
     {
         return oid;
@@ -175,7 +159,6 @@ public class Calendar extends BaseObject
     /**
      * @param supplemental - The supplemental to add to our list of supplementals. Replaces previous versions of this supplemental.
      */
-    @JsonIgnore
     public void addSupplemental(Supplemental supplemental)
     {
         if(supplementals ==  null) {
@@ -192,7 +175,6 @@ public class Calendar extends BaseObject
     /**
      * @return - The calendar date as described by the supplementals.
      */
-    @JsonIgnore
     public Date getDate()
     {
         if (this.getType().equals("active")) {
@@ -216,7 +198,6 @@ public class Calendar extends BaseObject
     /**
      * @return - The calendar title
      */
-    @JsonIgnore
     public String getTitle()
     {
         return this.getNo()+" - "+this.getType()+" - "+DateFormat.getDateInstance(DateFormat.MEDIUM).format(this.getDate());
@@ -233,21 +214,4 @@ public class Calendar extends BaseObject
             return false;
         }
     }
-
-    /**
-    *
-    * @deprecated - Only kept around for old json serializers
-    */
-   @Deprecated
-   public String getId() {
-       return oid;
-   }
-
-   /**
-    * @deprecated - Only kept around for old json serializers
-    */
-   @Deprecated
-   public void setId(String id) {
-       this.oid = id;
-   }
 }

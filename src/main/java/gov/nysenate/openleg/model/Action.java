@@ -3,10 +3,6 @@ package gov.nysenate.openleg.model;
 import java.util.Comparator;
 import java.util.Date;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 /**
  * Represents a single action on a single bill. E.g. REFERRED TO RULES
  *
@@ -14,7 +10,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *
  * @author GraylinKim
  */
-@XStreamAlias("action")
 public class Action extends BaseObject
 {
     /**
@@ -70,7 +65,6 @@ public class Action extends BaseObject
     /**
      * @return - The object's otype
      */
-    @JsonIgnore
     public String getOtype()
     {
         return "action";
@@ -79,7 +73,6 @@ public class Action extends BaseObject
     /**
      * @return - This object's unique object id.
      */
-    @JsonIgnore
     public String getOid()
     {
         return this.oid;
@@ -88,7 +81,6 @@ public class Action extends BaseObject
     /**
      * @param oid - The object's new oid.
      */
-    @JsonIgnore
     public void setOid(String oid) {
         this.oid = oid;
     }
@@ -146,7 +138,6 @@ public class Action extends BaseObject
         }
     }
 
-    @JsonIgnore
     public int getYear() {
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.setTime(date);
@@ -167,21 +158,5 @@ public class Action extends BaseObject
     @Override
     public String toString() {
         return date.toString()+" "+text;
-    }
-
-    /**
-     * @deprecated - Only kept around for old json serializers
-     */
-    @Deprecated
-    public String getId() {
-        return this.oid;
-    }
-
-    /**
-     * @deprecated - Only kept around for old json serializers
-     */
-    @Deprecated
-    public void setId(String id) {
-        this.oid = id;
     }
 }

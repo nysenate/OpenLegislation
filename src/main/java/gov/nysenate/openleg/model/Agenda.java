@@ -3,8 +3,6 @@ package gov.nysenate.openleg.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 /**
  * Represents a weekly senate meetings agenda.
  *
@@ -55,7 +53,6 @@ public class Agenda extends BaseObject
     /**
      * The object type of the agenda.
      */
-    @JsonIgnore
     public String getOtype()
     {
         return "agenda";
@@ -64,7 +61,6 @@ public class Agenda extends BaseObject
     /**
      * @return - This object's unique object id.
      */
-    @JsonIgnore
     public String getOid()
     {
         return this.oid;
@@ -130,23 +126,5 @@ public class Agenda extends BaseObject
         else {
             return false;
         }
-    }
-
-    /**
-     * @deprecated - Only kept around for old json serializers
-     */
-    @Deprecated
-    public String getId()
-    {
-        return oid;
-    }
-
-    /**
-     * @deprecated - Only kept around for old json serializers
-     */
-    @Deprecated
-    public void setId(String id)
-    {
-        this.oid = id;
     }
 }

@@ -3,26 +3,18 @@ package gov.nysenate.openleg.model;
 
 import java.util.Date;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
-
-@XStreamAlias("calendarEntry")
 public class CalendarEntry
 {
     /**
      * The entry's unique id
      */
-    @XStreamAsAttribute
     private String oid;
 
     /**
      * The unique calendar number for this entry. This is the same for this entry on
      * all calendars during a calendar year.
      */
-    @XStreamAsAttribute
     private String no = "";
 
     /**
@@ -121,7 +113,6 @@ public class CalendarEntry
      *
      * @return
      */
-    @JsonIgnore
     public Sequence getSequence()
     {
         return sequence;
@@ -140,7 +131,6 @@ public class CalendarEntry
      *
      * @return
      */
-    @JsonIgnore
     public Section getSection()
     {
         return section;
@@ -237,23 +227,5 @@ public class CalendarEntry
         else {
             return false;
         }
-    }
-
-    /**
-     * @deprecated - Only kept around for old json serializers
-     */
-    @Deprecated
-    public String getId()
-   {
-        return oid;
-    }
-
-    /**
-     * @deprecated - Only kept around for old json serializers
-     */
-    @Deprecated
-    public void setId(String id)
-    {
-        this.oid = id;
     }
 }

@@ -3,8 +3,6 @@ package gov.nysenate.openleg.model;
 import java.util.Date;
 import java.util.HashSet;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 /**
  * Base object model of all published OpenLegislation content.
  *
@@ -47,7 +45,6 @@ public interface IBaseObject
     /**
      * @return - true if the object has been published
      */
-    @JsonIgnore
     public boolean isPublished();
 
     /**
@@ -106,6 +103,5 @@ public interface IBaseObject
     /**
      * Get the document type for this object.
      */
-    @JsonIgnore
     public String getOtype();
 }
