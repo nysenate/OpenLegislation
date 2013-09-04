@@ -283,7 +283,7 @@ public class CalendarProcessor implements OpenLegConstants {
             }
             catch (Exception e) {
                 if (cEntry != null)
-                    logger.error("Error adding CalenderEntry: " + cEntry.getId(), e);
+                    logger.error("Error adding CalenderEntry: " + cEntry.getOid(), e);
                 else {
                     logger.error("Error adding CalenderEntry: ", e);
                 }
@@ -355,7 +355,7 @@ public class CalendarProcessor implements OpenLegConstants {
         String calEntId = parentId + '-' + xmlCalNo.getNo();
 
         CalendarEntry calEntry = new CalendarEntry();
-        calEntry.setId(calEntId);
+        calEntry.setOid(calEntId);
 
         // remove all the leading 0's
         calEntry.setNo(xmlCalNo.getNo().replaceAll("^0*", ""));
