@@ -443,6 +443,9 @@ public class StorageJsonConverter
                 throw new RuntimeException("Invalid list item type: "+cls);
             }
         }
+        // Remove all null entries from the list since null == deleted in storage
+        while (list.remove(null)) {}
+
         return list;
     }
 
