@@ -23,7 +23,7 @@ if (sr.getResults().size() > 0) {
     <generator>Open Legislation v1.9</generator>
 
     <image>
-      <title>Feed <%=term%> - NY Senate Open Legislation</title>
+      <title>Feed - <%=term%> - NY Senate Open Legislation</title>
       <url>http://open.nysenate.gov/legislation/static/img/openwordlogo.gif</url>
       <link>http://open.nysenate.gov/legislation</link>
       <description></description>

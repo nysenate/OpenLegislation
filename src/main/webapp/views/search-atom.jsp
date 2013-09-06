@@ -88,10 +88,11 @@
         String entryUrl = JSPHelper.getFullLink(request, "/" + otype + "/" + oid);
         entry.setId(entryUrl+"#"+oid);
         entry.setTitle(resultTitle);
-        entry.setSummary(resultSummary.toString().replaceAll(";$",""));
+        entry.addAuthor("NYSenate");
+        entry.setContent(resultSummary.toString().replaceAll(";$",""));
         entry.setUpdated(new Date(r.getLastModified()));
         entry.setEdited(new Date(r.getLastModified()));
-        entry.addLink(entryUrl, "html");
+        entry.addLink(entryUrl, "self");
         entry.complete();
     }
     out.print(abdera.getWriter().write(feed));
