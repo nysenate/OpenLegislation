@@ -23,7 +23,7 @@
     feed.setId(currentUrl);
     feed.setTitle(title+" - NY Senate Open Legislation");
     feed.addLink(feedUrl, "self");
-    feed.addLink(currentUrl, "html");
+    feed.addLink(currentUrl, "alternate");
 
     // RFC5005
     int pages = (int)Math.ceil(total/(double)pageSize);
