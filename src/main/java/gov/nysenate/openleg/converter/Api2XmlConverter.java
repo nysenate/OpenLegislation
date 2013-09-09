@@ -220,6 +220,7 @@ public class Api2XmlConverter
     {
         Element root = new Element(tag);
         if (value != null) {
+            root.addContent(makeElement("meetingDateTime", value.getMeetingDateTime()));
             root.addContent(makeElement("meetday", value.getMeetday()));
             root.addContent(makeElement("location", value.getLocation()));
             root.addContent(makeElement("committeeName", value.getCommitteeName()));
@@ -241,7 +242,7 @@ public class Api2XmlConverter
             root.addContent(makeElement("lawSection", value.getLawSection()));
             root.addContent(makeElement("sameAs", value.getSameAs()));
             root.addContent(makeElementList("previousVersions", "billNo", value.getPreviousVersions()));
-            root.addContent(makeElement("sponsor", value.getSponsor().getFullname()));
+            root.addContent(makeElement("sponsor", (value.getSponsor() != null ? value.getSponsor().getFullname() : "")));
             root.addContent(makeElementList("otherSponsors", "string", value.getOtherSponsors()));
             root.addContent(makeElement("frozen", "false"));
             root.addContent(makeElementList("amendments", "string", value.getAmendments()));
