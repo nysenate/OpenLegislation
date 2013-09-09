@@ -32,7 +32,7 @@ public class ApiServlet1 extends HttpServlet
 
     public final Logger logger = Logger.getLogger(ApiServlet1.class);
     public final static Pattern documentPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(json|xml|jsonp)/(bill|calendar|meeting|transcript)/(.*)");
-    public final static Pattern searchPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(csv|atom|rss|json|xml|jsonp)/(search|votes|bills|meetings|actions|calendar|transcripts)(?:/(.*?)/)?/?");
+    public final static Pattern searchPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(csv|atom|rss|json|xml|jsonp)/(search|votes|bills|meetings|actions|calendars|transcripts)(?:/(.*))?/?");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
