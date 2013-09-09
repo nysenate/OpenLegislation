@@ -31,7 +31,8 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", hearing.getOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", hearing.getOid(), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("oid", hearing.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Basic document filters
         document.add(new Field("otype", "hearing", Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -58,7 +59,8 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", vote.getOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", vote.getOid(), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("oid", vote.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Basic document filters
         document.add(new Field("otype", "vote", Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -114,7 +116,8 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", transcript.getOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", transcript.getOid(), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("oid", transcript.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Basic document filters
         document.add(new Field("otype", "transcript", Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -153,8 +156,8 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-
-        document.add(new Field("oid", meeting.getOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", meeting.getOid(), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("oid", meeting.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Basic document filters
         document.add(new Field("otype", "meeting", Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -199,7 +202,9 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", (calendar.getType()+"-"+new SimpleDateFormat("MM-dd-yyyy").format(calendar.getDate())).toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        String oid = calendar.getType()+"-"+new SimpleDateFormat("MM-dd-yyyy").format(calendar.getDate());
+        document.add(new Field("oid", oid, Field.Store.YES, Field.Index.NO));
+        document.add(new Field("oid", oid.toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Basic document filters
         document.add(new Field("otype", "calendar", Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -265,7 +270,8 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", action.getOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", action.getOid(), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("oid", action.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Basic document filters
         document.add(new Field("otype", "action", Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -298,8 +304,9 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based on printNumber as well as oid; e.g. S11 or S11-2013
-        document.add(new Field("oid", bill.getOid().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("oid", bill.getPrintNumber().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", bill.getOid(), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("oid", bill.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new Field("oid", bill.getPrintNumber().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
         // Basic document filters
         document.add(new Field("otype", "bill", Field.Store.YES, Field.Index.NOT_ANALYZED));
