@@ -140,7 +140,7 @@ public class Api1XmlConverter
             }
             root.addContent(resultNode);
         }
-        xmlOutputter.output(root, out);
+        write(root, out);
     }
 
     protected void write(Bill bill, OutputStream out) throws IOException
@@ -236,9 +236,7 @@ public class Api1XmlConverter
             billElement.addContent(makeElement("memo", new CDATA(bill.getMemo())));
         }
 
-        Element docket = makeElement("docket", billElement);
-        doc.setContent(docket);
-        xmlOutputter.output(doc, out);
+        write(makeElement("docket", billElement), out);
     }
 
     protected void write(Transcript transcript, OutputStream out) throws IOException
@@ -249,17 +247,23 @@ public class Api1XmlConverter
         root.addContent(makeElement("location", transcript.getLocation()));
         root.addContent(makeElement("session", String.valueOf(transcript.getSession())));
         root.addContent(makeElement("text", new CDATA(transcript.getTranscriptText())));
-        xmlOutputter.output(root, out);
+        write(root, out);
     }
 
     protected void write(Meeting meeting, OutputStream out) throws IOException
     {
-        xmlOutputter.output(makeElement("meeting", meeting), out);
+        write(makeElement("meeting", meeting), out);
     }
 
     protected void write(Calendar calendar, OutputStream out) throws IOException
     {
-        xmlOutputter.output(makeElement("calendar", calendar), out);
+        write(makeElement("calendar", calendar), out);
+    }
+
+    protected void write(Element root, OutputStream out) throws IOException
+    {
+        doc.setContent(root);
+        xmlOutputter.output(doc, out);
     }
 
     protected Element makeElement(String tag, Calendar value)

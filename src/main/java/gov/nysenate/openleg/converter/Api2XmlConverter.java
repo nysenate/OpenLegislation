@@ -23,19 +23,28 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.jdom2.CDATA;
+import org.jdom2.DocType;
+import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.XMLOutputter;
 
 public class Api2XmlConverter
 {
-    protected static Logger logger = Logger.getLogger(Api2JsonConverter.class);
-    protected final String encoding = "UTF-8";
+    protected static Logger logger = Logger.getLogger(Api2XmlConverter.class);
+
+    protected final Document doc;
     protected final XMLOutputter xmlOutputter;
+    protected final String encoding = "UTF-8";
+
     protected static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S z");
 
     public Api2XmlConverter()
     {
         xmlOutputter = new XMLOutputter();
+        doc = new Document();
+        doc.setDocType(new DocType("xml"));
+        doc.setProperty("version", "1.0");
+        doc.setProperty("encoding", "UTF-8");
     }
 
     public void write(SenateResponse response, OutputStream out) throws IOException
@@ -63,7 +72,8 @@ public class Api2XmlConverter
             results.addContent(resultNode);
         }
         root.addContent(results);
-        xmlOutputter.output(root, out);
+        doc.setContent(root);
+        xmlOutputter.output(doc, out);
     }
 
     protected Element makeElementList(String listTag, String itemTag, Collection<? extends Object> list)
