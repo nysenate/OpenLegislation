@@ -82,7 +82,7 @@ public class ApiServlet1 extends HttpServlet
                 String term = RequestUtils.getSearchString(request, uriTerm);
 
                 if (!type.equals("search")) {
-                    term += "otype:"+type.substring(0, type.length()-1)+" "+term;
+                    term = "otype:"+type.substring(0, type.length()-1)+(term.isEmpty() ? "" : " AND "+term);
                 }
                 else if (term.isEmpty()) {
                     throw new ApiRequestException("A search term is required.");

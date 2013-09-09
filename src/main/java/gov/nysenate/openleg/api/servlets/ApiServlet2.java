@@ -25,8 +25,8 @@ public class ApiServlet2 extends HttpServlet
     public static int DEFAULT_PAGE_SIZE = 20;
     public static int MAX_PAGE_SIZE = 1000;
     public final Logger logger = Logger.getLogger(ApiServlet2.class);
-    public final static Pattern documentPattern = Pattern.compile("(?:/api)?/2.0/(bill|calendar|meeting|transcript)/(.*)?\\.(json|jsonp|xml)");
-    public final static Pattern searchPattern = Pattern.compile("(?:/api)?/2.0/search.(json|jsonp|xml)");
+    public final static Pattern documentPattern = Pattern.compile("(?:/api)?/2.0/(vote|action|bill|calendar|meeting|transcript)/(.*)?\\.(json|jsonp|xml)");
+    public final static Pattern searchPattern = Pattern.compile("(?:/api)?/2.0/(search|votes|bills|meetings|actions|calendars|transcripts).(json|jsonp|xml)");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -70,9 +70,15 @@ public class ApiServlet2 extends HttpServlet
             Matcher searchMatcher = searchPattern.matcher(path);
             Matcher documentMatcher = documentPattern.matcher(path);
             if (searchMatcher.find()) {
-                String format = searchMatcher.group(1);
+                String type = searchMatcher.group(1);
+                String format = searchMatcher.group(2);
                 String term = request.getParameter("term");
-                doSearch(request, response, format, "search", term, pageIdx, pageSize, sort, sortOrder);
+
+                if (!type.equals("search")) {
+                    term = "otype:"+type.substring(0, type.length()-1)+(term == null ? "" : " AND "+term);
+                }
+
+                doSearch(request, response, format, type, term, pageIdx, pageSize, sort, sortOrder);
             }
             else if (documentMatcher.find()) {
                 String otype = documentMatcher.group(1);
