@@ -31,8 +31,8 @@ public class ApiServlet1 extends HttpServlet
     public static int DEFAULT_PAGE_SIZE = 20;
 
     public final Logger logger = Logger.getLogger(ApiServlet1.class);
-    public final static Pattern documentPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(json|xml|jsonp)/(bill|calendar|meeting|transcript)/(.*)?\\.(json|jsonp|xml)");
-    public final static Pattern searchPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(csv|atom|rss|json|xml|jsonp)/(search|votes|bills|meetings|actions|calendar|transcripts)(?:/(.*?)/)/?");
+    public final static Pattern documentPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(json|xml|jsonp)/(bill|calendar|meeting|transcript)/(.*)");
+    public final static Pattern searchPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(csv|atom|rss|json|xml|jsonp)/(search|votes|bills|meetings|actions|calendar|transcripts)(?:/(.*?)/)?/?");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -91,9 +91,9 @@ public class ApiServlet1 extends HttpServlet
                 doSearch(request, response, format, type, term, pageIdx, pageSize, sort, sortOrder);
             }
             else if (documentMatcher.find()) {
-                String otype = documentMatcher.group(1);
-                String oid = documentMatcher.group(2);
-                String format = documentMatcher.group(3);
+                String format = documentMatcher.group(1);
+                String otype = documentMatcher.group(2);
+                String oid = documentMatcher.group(3);
                 doSingleView(request, response, format, otype, oid);
             }
             else {
