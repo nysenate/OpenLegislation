@@ -23,13 +23,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -93,7 +93,13 @@ public class LuceneJsonConverter
      */
     private static JsonObject converter(Object o, List<String> exclude) throws Exception
     {
-        Field[] fields = o.getClass().getDeclaredFields();
+        List<Field> fields = new ArrayList<Field>();
+        Class<?> cls = o.getClass();
+        while (cls != null) {
+            fields.addAll(Arrays.asList(cls.getDeclaredFields()));
+            cls = cls.getSuperclass();
+        }
+
         JsonObject root = new JsonObject();
         if(exclude == null) {
             exclude = new ArrayList<String>();
@@ -130,16 +136,22 @@ public class LuceneJsonConverter
                                 Date d = (Date)obj;
                                 root.addProperty(f.getName(), (d != null) ? d.getTime() + "":"");
                             }
-                            else if(type.equals("List")) {
-                                try {
-                                    root.add(f.getName(),
-                                            (JsonElement)LuceneJsonConverter.class.getDeclaredMethod("list" + o.getClass().getSimpleName(),Collection.class)
-                                            .invoke(null,(List<?>)obj));
-
+                            else if(type.equals("List") || type.equals("HashSet")) {
+                                Collection<?> collection = ((Collection<?>)obj);
+                                Iterator<?> iter = collection.iterator();
+                                JsonArray jarray = new JsonArray();
+                                if (iter.hasNext()) {
+                                    if (iter.next() instanceof String) {
+                                        for(String str :(Collection<String>)collection) {
+                                            JsonPrimitive jp = new JsonPrimitive(str);
+                                            jarray.add(jp);
+                                        }
+                                    }
+                                    else {
+                                        jarray = (JsonArray)LuceneJsonConverter.class.getDeclaredMethod("list" + o.getClass().getSimpleName(),Collection.class).invoke(null,collection);
+                                    }
                                 }
-                                catch (Exception e) {
-                                    logger.error(e.getMessage(), e);
-                                }
+                                root.add(f.getName(), jarray);
                             }
                             else if(type.equals("Person")) {
                                 root.add(f.getName(),converter(obj, null));
@@ -182,35 +194,30 @@ public class LuceneJsonConverter
      * they loop back to converter, in other cases they are simply iterated through and
      * returned.
      */
+    @SuppressWarnings("unused")
     private static JsonArray listBill(Collection<?> c) throws Exception
     {
         JsonArray jarray = new JsonArray();
 
-        if(((List<?>)c).iterator().hasNext()) {
-            Object o = ((List<?>)c).iterator().next();
-            if(o instanceof String) {
-                for(String string:(List<String>)c) {
-                    JsonPrimitive jp = new JsonPrimitive(string);
-                    jarray.add(jp);
-                }
-            }
-            else if(o instanceof Bill) {
-                for(Bill bill: (List<Bill>) c) {
+        if(c.iterator().hasNext()) {
+            Object o = c.iterator().next();
+            if(o instanceof Bill) {
+                for(Bill bill: (Collection<Bill>) c) {
                     jarray.add(converter(bill, null));
                 }
             }
             else if(o instanceof Action) {
-                for(Action be:(List<Action>) c) {
+                for(Action be:(Collection<Action>) c) {
                     jarray.add(converter(be, internal_action_exclude()));
                 }
             }
             else if(o instanceof Person) {
-                for(Person p:(List<Person>) c) {
+                for(Person p:(Collection<Person>) c) {
                     jarray.add(converter(p, null));
                 }
             }
             else if(o instanceof Vote) {
-                for(Vote v:(List<Vote>) c) {
+                for(Vote v:(Collection<Vote>) c) {
                     jarray.add((converter(v, internal_vote_exclude())));
                 }
             }
@@ -218,33 +225,19 @@ public class LuceneJsonConverter
         return jarray;
     }
 
-    private static JsonArray listVote(Collection<?> c) throws Exception
-    {
-        JsonArray jarray = new JsonArray();
-        if(((List<?>)c).iterator().hasNext()) {
-            Object o = ((List<?>)c).iterator().next();
-            if(o instanceof String) {
-                for(String name:(List<String>)c) {
-                    JsonPrimitive jp = new JsonPrimitive(name);
-                    jarray.add(jp);
-                }
-            }
-        }
-        return jarray;
-    }
-
+    @SuppressWarnings("unused")
     private static JsonArray listSupplemental(Collection<?> c) throws Exception
     {
         JsonArray jarray = new JsonArray();
-        if(((List<?>)c).iterator().hasNext()) {
-            Object o = ((List<?>)c).iterator().next();
+        if(c.iterator().hasNext()) {
+            Object o = c.iterator().next();
             if(o instanceof Section) {
-                for(Section s:(List<Section>)c) {
+                for(Section s:(Collection<Section>)c) {
                     jarray.add(converter(s, section_exclude()));
                 }
             }
             else if(o instanceof Sequence) {
-                for(Sequence s:(List<Sequence>)c) {
+                for(Sequence s:(Collection<Sequence>)c) {
                     jarray.add(converter(s, sequence_exclude()));
 
                 }
@@ -253,13 +246,14 @@ public class LuceneJsonConverter
         return jarray;
     }
 
+    @SuppressWarnings("unused")
     private static JsonArray listCalendar(Collection<?> c) throws Exception
     {
         JsonArray jarray = new JsonArray();
-        if(((List<?>)c).iterator().hasNext()) {
-            Object o = ((List<?>)c).iterator().next();
+        if(c.iterator().hasNext()) {
+            Object o = c.iterator().next();
             if(o instanceof Supplemental) {
-                for(Supplemental s:(List<Supplemental>)c) {
+                for(Supplemental s:(Collection<Supplemental>)c) {
                     jarray.add(converter(s, supplemental_exclude()));
                 }
             }
@@ -267,18 +261,19 @@ public class LuceneJsonConverter
         return jarray;
     }
 
+    @SuppressWarnings("unused")
     private static JsonArray listMeeting(Collection<?> c) throws Exception
     {
         JsonArray jarray = new JsonArray();
-        if(((List<?>)c).iterator().hasNext()) {
-            Object o = ((List<?>)c).iterator().next();
+        if(c.iterator().hasNext()) {
+            Object o = c.iterator().next();
             if(o instanceof Bill) {
-                for(Bill b:(List<Bill>)c) {
+                for(Bill b:(Collection<Bill>)c) {
                     jarray.add(converter(b,internal_bill_exclude()));
                 }
             }
             else if (o instanceof Addendum) {
-                for(Addendum a:(List<Addendum>)c) {
+                for(Addendum a:(Collection<Addendum>)c) {
                     jarray.add(converter(a,addendum_exclude()));
                 }
             }
@@ -286,13 +281,14 @@ public class LuceneJsonConverter
         return jarray;
     }
 
+    @SuppressWarnings("unused")
     private static JsonArray listSection(Collection<?> c) throws Exception
     {
         JsonArray jarray = new JsonArray();
-        if(((List<?>)c).iterator().hasNext()) {
-            Object o = ((List<?>)c).iterator().next();
+        if(c.iterator().hasNext()) {
+            Object o = c.iterator().next();
             if(o instanceof CalendarEntry) {
-                for(CalendarEntry entry:(List<CalendarEntry>)c) {
+                for(CalendarEntry entry:(Collection<CalendarEntry>)c) {
                     jarray.add(converter(entry,calendar_entry_exclude()));
                 }
             }
@@ -300,13 +296,14 @@ public class LuceneJsonConverter
         return jarray;
     }
 
+    @SuppressWarnings("unused")
     private static JsonArray listSequence(Collection<?> c) throws Exception
     {
         JsonArray jarray = new JsonArray();
-        if(((List<?>)c).iterator().hasNext()) {
-            Object o = ((List<?>)c).iterator().next();
+        if(c.iterator().hasNext()) {
+            Object o = c.iterator().next();
             if(o instanceof CalendarEntry) {
-                for(CalendarEntry entry:(List<CalendarEntry>)c) {
+                for(CalendarEntry entry:(Collection<CalendarEntry>)c) {
                     jarray.add(converter(entry,calendar_entry_exclude()));
                 }
             }
