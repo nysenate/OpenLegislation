@@ -66,10 +66,10 @@ public class Api1XmlConverter
             write((Bill)object, out);
         }
         else if (object.getOtype().equals("calendar")) {
-            write(object, out);
+            write((Calendar)object, out);
         }
         else if (object.getOtype().equals("meeting")) {
-            write(object, out);
+            write((Meeting)object, out);
         }
         else if (object.getOtype().equals("transcript")) {
             write((Transcript)object, out);
