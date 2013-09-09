@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.util;
+package gov.nysenate.openleg.converter;
 
 import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.BaseObject;
@@ -24,18 +24,26 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.jdom2.CDATA;
+import org.jdom2.DocType;
+import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.XMLOutputter;
 
 public class Api1XmlConverter
 {
-    protected final String encoding = "UTF-8";
+    protected final Document doc;
     protected final XMLOutputter xmlOutputter;
+    protected final String encoding = "UTF-8";
+
     protected static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S z");
 
     public Api1XmlConverter()
     {
         xmlOutputter = new XMLOutputter();
+        doc = new Document();
+        doc.setDocType(new DocType("xml"));
+        doc.setProperty("version", "1.0");
+        doc.setProperty("encoding", "UTF-8");
     }
 
     public String toString(SenateResponse value) throws IOException
@@ -229,7 +237,8 @@ public class Api1XmlConverter
         }
 
         Element docket = makeElement("docket", billElement);
-        xmlOutputter.output(docket, out);
+        doc.setContent(docket);
+        xmlOutputter.output(doc, out);
     }
 
     protected void write(Transcript transcript, OutputStream out) throws IOException

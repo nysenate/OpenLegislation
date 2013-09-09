@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.util;
+package gov.nysenate.openleg.converter;
 
 import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Addendum;
@@ -13,6 +13,7 @@ import gov.nysenate.openleg.model.Sequence;
 import gov.nysenate.openleg.model.Supplemental;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.util.Storage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
