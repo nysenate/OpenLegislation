@@ -2,9 +2,9 @@ package gov.nysenate.openleg.api.servlets;
 
 import gov.nysenate.openleg.api.AbstractApiRequest.ApiRequestException;
 import gov.nysenate.openleg.api.ApiHelper;
+import gov.nysenate.openleg.converter.Api2JsonConverter;
+import gov.nysenate.openleg.converter.Api2XmlConverter;
 import gov.nysenate.openleg.model.SenateResponse;
-import gov.nysenate.openleg.util.Api2JsonConverter;
-import gov.nysenate.openleg.util.Api2XmlConverter;
 import gov.nysenate.openleg.util.Application;
 
 import java.io.IOException;

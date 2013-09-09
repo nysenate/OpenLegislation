@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.util;
 
+import gov.nysenate.openleg.converter.StorageJsonConverter;
 import gov.nysenate.openleg.model.Agenda;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;

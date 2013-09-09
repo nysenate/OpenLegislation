@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.lucene;
 
+import gov.nysenate.openleg.converter.LuceneJsonConverter;
 import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
@@ -11,7 +12,6 @@ import gov.nysenate.openleg.model.Sequence;
 import gov.nysenate.openleg.model.Supplemental;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.util.LuceneJsonConverter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

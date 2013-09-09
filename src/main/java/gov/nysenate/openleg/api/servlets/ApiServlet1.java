@@ -2,11 +2,11 @@ package gov.nysenate.openleg.api.servlets;
 
 import gov.nysenate.openleg.api.AbstractApiRequest.ApiRequestException;
 import gov.nysenate.openleg.api.ApiHelper;
+import gov.nysenate.openleg.converter.Api1JsonConverter;
+import gov.nysenate.openleg.converter.Api1XmlConverter;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.SenateResponse;
-import gov.nysenate.openleg.util.Api1JsonConverter;
-import gov.nysenate.openleg.util.Api1XmlConverter;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.RequestUtils;
 import gov.nysenate.openleg.util.SessionYear;
