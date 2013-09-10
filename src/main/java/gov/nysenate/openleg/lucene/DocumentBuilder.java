@@ -318,6 +318,7 @@ public class DocumentBuilder
         document.add(new Field("published", dateFormat.format(bill.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         // When searching without a field, match against the following terms.
+        // TODO: Use field boosting to rank results better
         ArrayList<String> searchTerms = new ArrayList<String>();
         searchTerms.add(bill.getPrintNumber());
         searchTerms.add(String.valueOf(bill.getSession()));
