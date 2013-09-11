@@ -62,11 +62,28 @@ public class Api2XmlConverter
 
         Element results = new Element("results");
         for (Result result : response.getResults()) {
+            String oid, type;
+            Element urlElement, oidElement;
+            if (result.getOtype().equals("vote")) {
+                oid = ((Vote)result.getObject()).getBill().getBillId();
+                urlElement = makeElement("url", "http://open.nysenate.gov/legislation/bill/"+oid);
+                oidElement = makeElement("oid", oid);
+            }
+            else if (result.getOtype().equals("action")) {
+                oid = ((Action)result.getObject()).getBill().getBillId();
+                urlElement = makeElement("url", "http://open.nysenate.gov/legislation/bill/"+oid);
+                oidElement = makeElement("oid", oid);
+            }
+            else {
+                urlElement = makeElement("url", "http://open.nysenate.gov/legislation/"+result.getOtype()+"/"+result.getOid());
+                oidElement = makeElement("oid", result.getOid());
+            }
+
             Element resultNode = makeElement(
                 "result",
                 makeElement("otype", result.getOtype()),
-                makeElement("oid", result.getOid()),
-                makeElement("url", "http://open.nysenate.gov/legislation/"+result.getOtype()+"/"+result.getOid()),
+                oidElement,
+                urlElement,
                 makeElement(result.getObject())
             );
             results.addContent(resultNode);

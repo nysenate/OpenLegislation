@@ -67,9 +67,17 @@ public class Api2JsonConverter
         ArrayNode resultsArray = objectMapper.createArrayNode();
         for (Result result : response.getResults()) {
             ObjectNode node = objectMapper.createObjectNode();
-            node.put("type", result.getOtype());
+            node.put("otype", result.getOtype());
             node.put("oid", result.getOid());
-            node.put("url", "http://open.nysenate.gov/legislation/"+result.getOtype()+"/"+result.getOid());
+            if (result.getOtype().equals("vote")) {
+                node.put("url", "http://open.nysenate.gov/legislation/bill/"+((Vote)result.getObject()).getBill().getBillId());
+            }
+            else if (result.getOtype().equals("action")) {
+                node.put("url", "http://open.nysenate.gov/legislation/bill/"+((Action)result.getObject()).getBill().getBillId());
+            }
+            else {
+                node.put("url", "http://open.nysenate.gov/legislation/"+result.getOtype()+"/"+result.getOid());
+            }
             ObjectNode data = objectMapper.createObjectNode();
             data.put(result.getOtype(), makeNode(result.getObject()));
             node.put("data", data);
@@ -86,7 +94,7 @@ public class Api2JsonConverter
     public JsonNode makeNode(IBaseObject object) throws IOException
     {
         if (object.getOtype().equals("bill")) {
-            return makeNode(object);
+            return makeNode((Bill)object);
         }
         else if (object.getOtype().equals("calendar")) {
             return makeNode((Calendar)object);
@@ -98,10 +106,10 @@ public class Api2JsonConverter
             return makeNode((Transcript)object);
         }
         else if (object.getOtype().equals("vote")) {
-            return makeNode(object);
+            return makeNode((Vote)object);
         }
         else if (object.getOtype().equals("action")) {
-            return makeNode(object);
+            return makeNode((Action)object);
         }
         else {
             throw new RuntimeException("Invalid base object otype: "+object.getOtype());
@@ -174,8 +182,8 @@ public class Api2JsonConverter
             ObjectNode node = objectMapper.createObjectNode();
             node.put("id", supplemental.getId());
             node.put("supplementalId", supplemental.getSupplementalId());
-            node.put("calendarDate", String.valueOf(supplemental.getCalendarDate().getTime()));
-            node.put("releaseDateTime", String.valueOf(supplemental.getReleaseDateTime().getTime()));
+            node.put("calendarDate", (supplemental.getCalendarDate() == null ? null : String.valueOf(supplemental.getCalendarDate().getTime())));
+            node.put("releaseDateTime", (supplemental.getReleaseDateTime() == null ? null : String.valueOf(supplemental.getReleaseDateTime().getTime())));
             node.put("sections", makeArrayNode(supplemental.getSections()));
             node.put("sequences", makeArrayNode(supplemental.getSequences()));
             return node;
@@ -224,7 +232,7 @@ public class Api2JsonConverter
             node.put("bill", makeShortNode(entry.getBill()));
             node.put("subBill", makeShortNode(entry.getSubBill()));
             node.put("billHigh", entry.getBillHigh());
-            node.put("motionDate", String.valueOf(entry.getMotionDate().getTime()));
+            node.put("motionDate", (entry.getMotionDate() == null ? null : String.valueOf(entry.getMotionDate().getTime())));
             return node;
         }
         else {
@@ -258,8 +266,9 @@ public class Api2JsonConverter
         if (action != null) {
             ObjectNode node = objectMapper.createObjectNode();
             node.put("date", String.valueOf(action.getDate().getTime()));
+            node.put("id",  action.getOid());
             node.put("text", action.getText());
-            node.put("bill", makeNode(action.getBill()));
+            node.put("bill", makeShortNode(action.getBill()));
             return node;
         }
         else {
@@ -290,7 +299,7 @@ public class Api2JsonConverter
             node.put("sponsor", makeNode(bill.getSponsor()));
             node.put("summary", bill.getSummary());
             node.put("title", bill.getTitle());
-            node.put("uniBill", bill.isUniBill());
+            node.put("uniBill", String.valueOf(bill.isUniBill()));
             node.put("votes", makeArrayNode(bill.getVotes()));
             node.put("year", bill.getSession());
             return node;

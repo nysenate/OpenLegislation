@@ -81,7 +81,7 @@ public class Api1JsonConverter
         ArrayNode array = objectMapper.createArrayNode();
         for (Result result : response.getResults()) {
             ObjectNode node = objectMapper.createObjectNode();
-            node.put("type", result.getOtype());
+            node.put("otype", result.getOtype());
             node.put("id", result.getOid());
             node.put("title", result.getTitle());
             if (result.getOtype().equals("action")) {

@@ -25,8 +25,8 @@ public class ApiServlet2 extends HttpServlet
     public static int DEFAULT_PAGE_SIZE = 20;
     public static int MAX_PAGE_SIZE = 1000;
     public final Logger logger = Logger.getLogger(ApiServlet2.class);
-    public final static Pattern documentPattern = Pattern.compile("(?:/api)?/2.0/(vote|action|bill|calendar|meeting|transcript)/(.*)?\\.(json|jsonp|xml)");
-    public final static Pattern searchPattern = Pattern.compile("(?:/api)?/2.0/(search|votes|bills|meetings|actions|calendars|transcripts).(json|jsonp|xml)");
+    public final static Pattern documentPattern = Pattern.compile("(?:/api)?/2.0/(vote|action|bill|calendar|meeting|transcript)/(.*)?\\.(json|jsonp|xml)$");
+    public final static Pattern searchPattern = Pattern.compile("(?:/api)?/2.0/(search|votes|bills|meetings|actions|calendars|transcripts).(json|jsonp|xml)$");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -137,7 +137,8 @@ public class ApiServlet2 extends HttpServlet
 
             if (format.equals("json")) {
                 response.setContentType("application/json");
-                new Api2JsonConverter().write(sr, response.getOutputStream());
+                // Writing directly to the output stream here currently makes UTF8 errors.
+                response.getWriter().write(new Api2JsonConverter().toString(sr));
             }
             else if (format.equals("jsonp")) {
                 String callback = request.getParameter("callback");
