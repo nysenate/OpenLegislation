@@ -18,16 +18,6 @@ public class TextFormatter {
         return sb.toString();
     }
 
-    public static String clean(String s) {
-        s = s.replaceAll("&", "&amp;");
-        s = s.replaceAll("'", "&apos;");
-        s = s.replaceAll("<","&lt;");
-        s = s.replaceAll(">","&gt;");
-        s = s.replaceAll("\"","&quot;");
-        return s;
-    }
-
-
     /**
      * Inserts page breaks into the bill text for printing.
      *

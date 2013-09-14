@@ -2,17 +2,17 @@ package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
-import gov.nysenate.openleg.model.ISenateObject;
 import gov.nysenate.openleg.model.Meeting;
+import gov.nysenate.openleg.model.Result;
 import gov.nysenate.openleg.model.Section;
+import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.model.Sequence;
 import gov.nysenate.openleg.model.Supplemental;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SenateResponse;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
 
@@ -63,9 +63,9 @@ public class ApiHelper implements OpenLegConstants {
                 jsonData = unwrapJson(jsonData);
 
                 ApiType apiType = getApiType(type);
-                Class<? extends ISenateObject> clazz = apiType.clazz();
+                Class<? extends BaseObject> clazz = apiType.clazz();
 
-                ISenateObject resultObj = null;
+                BaseObject resultObj = null;
                 try {
                     resultObj = mapper.readValue(jsonData, clazz);
                     result.setObject(resultObj);
@@ -76,7 +76,7 @@ public class ApiHelper implements OpenLegConstants {
                 if (resultObj == null)
                     continue;
 
-                resultObj.setModified(result.getLastModified());
+                resultObj.setModifiedDate(new Date(result.getLastModified()));
                 resultObj.setActive(result.isActive());
 
                 String title = "";
@@ -102,13 +102,13 @@ public class ApiHelper implements OpenLegConstants {
                     else
                         fields.put("sponsor", null);
 
-                    fields.put("otherSponsors", StringUtils.join(bill.getOtherSponsors(), ", "));
+                    fields.put("othersponsors", StringUtils.join(bill.getOtherSponsors(), ", "));
                     summary = bill.getSummary();
 
                     fields.put("committee", bill.getCurrentCommittee());
-                    fields.put("billno", bill.getSenateBillNo());
+                    fields.put("billno", bill.getBillId());
                     fields.put("summary", bill.getSummary());
-                    fields.put("year", bill.getYear() + "");
+                    fields.put("year", bill.getSession() + "");
                 } else if (type.equals("calendar")) {
                     Calendar calendar = (Calendar) resultObj;
 
@@ -174,7 +174,7 @@ public class ApiHelper implements OpenLegConstants {
 
                 } else if (type.equals("action")) {
                     Action billEvent = (Action) resultObj;
-                    String billId = billEvent.getBill().getSenateBillNo();
+                    String billId = billEvent.getBill().getBillId();
 
                     title = billEvent.getText();
 
@@ -192,7 +192,7 @@ public class ApiHelper implements OpenLegConstants {
                     HashMap<String, String> resultFields = result.getFields();
                     fields.put("sponsor", resultFields.get("sponsor"));
                     fields.put("billno", resultFields.get("billno"));
-                    fields.put("otherSponsors", resultFields.get("otherSponsors"));
+                    fields.put("othersponsors", resultFields.get("othersponsors"));
 
                     if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE)
                         fields.put("committee", vote.getDescription());

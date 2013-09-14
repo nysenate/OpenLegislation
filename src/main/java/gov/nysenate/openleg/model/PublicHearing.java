@@ -5,7 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
 
-public class PublicHearing extends SenateObject {
+public class PublicHearing extends BaseObject
+{
     public ArrayList<String> committees;
     public String title;
     public String location;
@@ -26,6 +27,19 @@ public class PublicHearing extends SenateObject {
         speakers = new ArrayList<Person>();
 
         pages = new TreeMap<Integer, String>();
+    }
+
+    /**
+     * The object type of the hearing.
+     */
+    public String getOtype()
+    {
+        return "publichearing";
+    }
+
+    public String getOid()
+    {
+        return "";
     }
 
     public ArrayList<String> getCommittees() {
@@ -91,7 +105,6 @@ public class PublicHearing extends SenateObject {
         pages.put(pageNumber, pageText);
     }
 
-    @Override
     public int getYear() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(getTimeStamp());

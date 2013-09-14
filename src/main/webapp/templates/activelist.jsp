@@ -1,6 +1,5 @@
 <%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtils, java.util.Iterator,java.util.ArrayList, java.util.Collection,java.util.List,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" contentType="text/html" pageEncoding="utf-8"%>
 <%
-String appPath = request.getContextPath();
 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy");
 SimpleDateFormat datetimeFormat = new SimpleDateFormat("MM/d/yyyy hh:mm:ss aa");
 
@@ -12,29 +11,28 @@ if (activeList.getDate() != null) {
     activeListDate = dateFormat.format(activeList.getDate());
 }
 List<Supplemental> supplementals = activeList.getSupplementals();
-String Sections ="";
+List<String> sectionLinks = new ArrayList<String>();
 if (supplementals != null && supplementals.size() != 0) {
-    System.out.println("processing supplemental");
     Supplemental supplemental = activeList.getSupplementals().get(0);
     List<Sequence> sequences = supplemental.getSequences();
-    System.out.println(sequences);
     if (sequences != null) {
         for (Sequence sequence : sequences) {
             String sequenceTitle = ""+activeList.getNo();
             if (sequence.getNo() != null && !sequence.getNo().isEmpty()) {
                 sequenceTitle += "-"+sequence.getNo();
             }
-            Sections = Sections + "<a href=\"#active-list-"+sequenceTitle+"\">"+sequenceTitle+"</a>,";
+            sectionLinks.add("<a href=\"#active-list-"+sequenceTitle+"\">"+sequenceTitle+"</a>");
         }
     }
 }
+String pageTitle = (sectionLinks.size() > 1) ? "Active Lists" : "Active List";
+pageTitle += ": "+StringUtils.join(sectionLinks, ", ");
 
-Sections = Sections.substring(0, Sections.length() - 1);
 %>
 
 <div id="content">
     <div class="content-bg">
-        <h2 class="page-title">Active List <%=Sections%></h2>
+        <h2 class="page-title"><%=pageTitle%></h2>
         <div class="item-meta">
 	        <div id="subcontent" class="emptytitle">
 	       		<div class="billmeta">
@@ -54,12 +52,9 @@ Sections = Sections.substring(0, Sections.length() - 1);
 	 		</div>
  		</div>
         <%
-        System.out.println("looking for supplemental"+ supplementals.size());
         if (supplementals != null && supplementals.size() != 0) {
-            System.out.println("processing supplemental");
             Supplemental supplemental = activeList.getSupplementals().get(0);
             List<Sequence> sequences = supplemental.getSequences();
-            System.out.println(sequences);
             if (sequences != null) {
                 for (Sequence sequence : sequences) {
                     String sequenceTitle = "Active List "+activeList.getNo();
@@ -105,9 +100,9 @@ Sections = Sections.substring(0, Sections.length() - 1);
                             <span style="color:#777777; font-size:0.85em;">#<%=entry.getNo()%>: </span>
 	                        <%
                             if (bill.isResolution()) {
-                                %> Resolution <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%
-                            } else {
-                                %> Bill <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%
+                                %> Resolution <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getBillId()%></a><%
+	                            } else {
+	                        %> Bill <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getBillId()%></a><%
                             }
 
 	                        if (entry.getBillHigh() != null && entry.getBillHigh().equals("true")) {
@@ -122,17 +117,17 @@ Sections = Sections.substring(0, Sections.length() - 1);
     							<%
                                 if (bill.getSponsor() != null) {
                                     if (bill.getOtherSponsors().isEmpty()) {
-                                        %> <br/>Sponsor: <%=JSPHelper.getSponsorLinks(bill, appPath)%> <%
+                                        %> <br/>Sponsor: <%=JSPHelper.getSponsorLinks(bill, request)%> <%
                                     } else {
-                                        %> <br/>Sponsors: <%=JSPHelper.getSponsorLinks(bill, appPath)%> <%
+                                        %> <br/>Sponsors: <%=JSPHelper.getSponsorLinks(bill, request)%> <%
                                     }
                                 }
 
                                 if (subBill != null) {
                                     if (subBill.getOtherSponsors().isEmpty()) {
-                                        %> (Substituted-bill Sponsor: <%=JSPHelper.getSponsorLinks(subBill, appPath)%>) <%
+                                        %> (Substituted-bill Sponsor: <%=JSPHelper.getSponsorLinks(subBill, request)%>) <%
                                     } else {
-                                        %> (Substituted-bill Sponsors: <%=JSPHelper.getSponsorLinks(subBill, appPath)%>) <%
+                                        %> (Substituted-bill Sponsors: <%=JSPHelper.getSponsorLinks(subBill, request)%>) <%
                                     }
 	                            } %>
 	                        </span>

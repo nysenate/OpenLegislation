@@ -1,386 +1,577 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.lucene.DocumentBuilder;
-import gov.nysenate.openleg.lucene.LuceneField;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.TextFormatter;
-import gov.nysenate.openleg.xstream.BillListConverter;
-import gov.nysenate.openleg.xstream.XStreamCollectionAlias;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-
-@XStreamAlias("bill")
-public class Bill extends SenateObject implements Comparable<Bill>
+/**
+ *
+ * @author GraylinKim
+ */
+public class Bill extends BaseObject implements Comparable<Bill>
 {
+    /**
+     * The unique bill id.
+     */
+    protected String billId = "";
 
-    protected boolean active = true;
-
-    @LuceneField
-    protected int year;
-
-    @XStreamAlias("senateId")
-    protected String senateBillNo = "";
-
-    @LuceneField
+    /**
+     * The bill title.
+     */
     protected String title = "";
 
-    @LuceneField
+    /**
+     * The section of the law this bill affects
+     */
     protected String lawSection = "";
 
-    @LuceneField
+    /**
+     * The "sameAs" bill in the other chamber
+     */
     protected String sameAs = "";
 
-    @XStreamConverter(BillListConverter.class)
+    /**
+     * A list of ids of versions of this legislation in previous sessions.
+     */
     protected List<String> previousVersions = new ArrayList<String>();
 
-    @LuceneField
+    /**
+     * The sponsor of this bill.
+     */
     protected Person sponsor;
 
-    @LuceneField
+    /**
+     * A list of coSponsors to be given preferential display treatment.
+     */
     private List<Person> otherSponsors = new ArrayList<Person>();
 
-    public boolean frozen = false;
-
+    /**
+     *
+     */
     public List<String> amendments = new ArrayList<String>();
 
-    @XStreamAlias("cosponsors")
-    @LuceneField
+    /**
+     * A list of cosponsors for the bill.
+     */
     protected List<Person> coSponsors = new ArrayList<Person>();
 
-    @XStreamAlias("multisponsors")
-    @LuceneField
+    /**
+     * A list of multi-sponsors for assembly legislation.
+     */
     protected List<Person> multiSponsors = new ArrayList<Person>();
 
-    @LuceneField
+    /**
+     * The summary of the bill
+     */
     protected String summary = "";
 
-    @XStreamAlias("committee")
-    @LuceneField("committee")
+    /**
+     * The committee the bill is currently referred to, if any.
+     */
     protected String currentCommittee = "";
 
+    /**
+     * A list of committees this bill has been referred to.
+     */
     protected List<String> pastCommittees = new ArrayList<String>();
 
-    @XStreamConverter(BillListConverter.class)
-    @LuceneField()
+    /**
+     * A list of actions that have been made on this bill.
+     */
     protected List<Action> actions = new ArrayList<Action>();
 
-    @XStreamAlias("text")
-    @LuceneField("full")
+    /**
+     * The full text of the bill.
+     */
     protected String fulltext = "";
 
-    @LuceneField
+    /**
+     * The bill's sponsor memo.
+     */
     protected String memo = "";
 
-    @LuceneField
+    /**
+     * The law code modification summary.
+     */
     protected String law = "";
 
-    @LuceneField
+    /**
+     * The AN ACT TO... clause for the bill.
+     */
     protected String actClause = "";
 
-    @XStreamCollectionAlias(node="votes",value="vote")
+    /**
+     * A list of votes that have been made on this bill.
+     */
     protected List<Vote> votes = new ArrayList<Vote>();
 
-    @LuceneField
+    /**
+     * A flag marking this bill as stricken (effectively withdrawn)
+     */
     protected Boolean stricken = false;
 
-    @LuceneField
+    /**
+     * A flag marking this bill as a uniBill with a companion bill in the other house.
+     */
     private boolean uniBill = false;
 
+    /**
+     * JavaBean Constructor
+     */
     public Bill()
     {
         super();
     }
 
-    public Bill(String senateBillNo, int year) {
-        this.senateBillNo = senateBillNo;
-        this.year = year;
+    /**
+     * Constructs a minimal Bill object.
+     *
+     * @param senateBillNo - The unique bill id
+     * @param year - The session year this bill was introduced to
+     */
+    public Bill(String billId, int session)
+    {
+        this.setBillId(billId);
+        this.setSession(session);
+        this.setYear(session);
     }
 
-    @JsonIgnore
-    public boolean isResolution() {
-        return senateBillNo.charAt(0)!='A' && senateBillNo.charAt(0)!='S';
+    /**
+     * @return - True if this bill is a resolution of some sort.
+     */
+    public boolean isResolution()
+    {
+        return billId.charAt(0)!='A' && billId.charAt(0)!='S';
     }
 
-    @JsonIgnore
-    public String getDisqusUrl() {
-        if (this.getYear()==2009) {
-            String disqusId = this.getSenateBillNo().split("-")[0];
+    /**
+     * @return - The URL used to construct Disqus threads
+     */
+    public String getDisqusUrl()
+    {
+        if (this.getSession()==2009) {
+            String disqusId = this.getBillId().split("-")[0];
             return "http://open.nysenate.gov/legislation/api/html/bill/" + disqusId;
         }
         else {
-            String disqusId = this.getSenateBillNo();
+            String disqusId = this.getBillId();
             return "http://open.nysenate.gov/legislation/bill/" + disqusId;
         }
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-
-    @Override
-    public int getYear()
+    /**
+     * @return - The bill's unique id.
+     */
+    public String getBillId()
     {
-        return year;
+        return billId;
     }
 
-    public void setYear(int year)
+    /**
+     * @param billId - The new bill id.
+     */
+    public void setBillId(String billId)
     {
-        this.year = year;
+        this.billId = billId;
     }
 
-
-    public String getSenateBillNo()
+    /**
+     * The object type of the bill.
+     */
+    public String getOtype()
     {
-        return senateBillNo;
+        return "bill";
     }
 
-    public void setSenateBillNo(String senateBillNo)
+    /**
+     * @return - The unique object id.
+     */
+    public String getOid()
     {
-        this.senateBillNo = senateBillNo;
+        return this.getBillId();
     }
 
+    /**
+     * @return - The billId padded to 5 digits with zeros.
+     */
+    public String getPaddedBillId()
+    {
+        return this.getPaddedPrintNumber()+"-"+this.getSession();
+    }
 
+    /**
+     * @return - The print number padded to 5 digits with zeros.
+     */
+    public String getPaddedPrintNumber()
+    {
+        Matcher billIdMatcher = billIdPattern.matcher(this.getBillId());
+        if (billIdMatcher.find()) {
+            return String.format("%s%05d%s", billIdMatcher.group(2), Integer.parseInt(billIdMatcher.group(3)), billIdMatcher.group(4));
+        }
+        else {
+            // logger.warn("Invalid senateBillNo: "+this.senateBillNo);
+            return "";
+        }
+    }
+
+    /**
+     * @return - Just the print number without the session year suffix.
+     */
+    public String getPrintNumber()
+    {
+        Matcher billIdMatcher = billIdPattern.matcher(this.getBillId());
+        if (billIdMatcher.find()) {
+            return billIdMatcher.group(1);
+        }
+        else {
+            // logger.warn("Invalid senateBillNo: "+this.senateBillNo);
+            return "";
+        }
+    }
+
+    /**
+     * @return - A list of billIds for the various other versions of this bill.
+     */
     public List<String> getAmendments()
     {
         return this.amendments;
     }
 
+    /**
+     * @param amendments - The new list of billIds for the various other versions of this bill.
+     */
     public void setAmendments(List<String> amendments)
     {
         this.amendments = amendments;
     }
 
+    /**
+     * @param amendments - A list of additional billIds for the various other versions of this bill.
+     */
     public void addAmendments(List<String> amendments)
     {
         this.amendments.addAll(amendments);
     }
 
+    /**
+     * @param amendment - The new billId to add to our list of amendments.
+     */
     public void addAmendment(String amendment)
     {
         this.amendments.add(amendment);
     }
 
+    /**
+     * @param amendment - The billId to remove from our list of amendments.
+     */
     public void removeAmendment(String amendment)
     {
         this.amendments.remove(amendment);
     }
 
-
+    /**
+     * @return - The current bill title
+     */
     public String getTitle()
     {
         return title;
     }
 
+    /**
+     * @param title - The new bill title
+     */
     public void setTitle(String title)
     {
         this.title = title;
     }
 
-
+    /**
+     * @return - The current law section.
+     */
     public String getLawSection()
     {
         return lawSection;
     }
 
+    /**
+     * @param lawSection - The new law section
+     */
     public void setLawSection(String lawSection)
     {
         this.lawSection = lawSection;
     }
 
-
+    /**
+     * @return - The same as bill ID.
+     */
     public String getSameAs()
     {
         return sameAs;
     }
 
+    /**
+     * @param sameAs - The new same as bill ID.
+     */
     public void setSameAs(String sameAs)
     {
         this.sameAs = sameAs;
     }
 
-
+    /**
+     * @return - The current list of bill ids of previous bill versions.
+     */
     public List<String> getPreviousVersions()
     {
         return previousVersions;
     }
 
+    /**
+     * @param previousVersions - The new list of bill IDs of previous versions.
+     */
     public void setPreviousVersions(List<String> previousVersions)
     {
         this.previousVersions = previousVersions;
     }
 
+    /**
+     * @param previousVersion - The new bill ID to add to the previous versions list.
+     */
     public void addPreviousVersion(String previousVersion) {
         if(!previousVersions.contains(previousVersion)) {
             previousVersions.add(previousVersion);
         }
     }
 
-
+    /**
+     * @return - The current bill sponsor.
+     */
     public Person getSponsor()
     {
         return sponsor;
     }
 
+    /**
+     * @param sponsor - The new bill sponsor.
+     */
     public void setSponsor(Person sponsor)
     {
         this.sponsor = sponsor;
     }
 
+    /**
+     * @return - The current list of "other" sponsors.
+     */
     public List<Person> getOtherSponsors()
     {
         return otherSponsors;
     }
 
+    /**
+     * @param otherSponsors - The new list of "other" sponsors.
+     */
     public void setOtherSponsors(List<Person> otherSponsors)
     {
         this.otherSponsors = otherSponsors;
     }
 
+    /**
+     * @return - The current list of cosponsors.
+     */
     public List<Person> getCoSponsors()
     {
         return coSponsors;
     }
 
+    /**
+     * @param coSponsors - The new list of cosponsors.
+     */
     public void setCoSponsors(List<Person> coSponsors)
     {
         this.coSponsors = coSponsors;
     }
 
-
+    /**
+     * @return - The current list of multisponsors.
+     */
     public List<Person> getMultiSponsors()
     {
         return multiSponsors;
     }
 
+    /**
+     * @param multiSponsors - The new list of multisponsors.
+     */
     public void setMultiSponsors(List<Person> multiSponsors)
     {
         this.multiSponsors = multiSponsors;
     }
 
-
+    /**
+     * @return - The current bill summary.
+     */
     public String getSummary()
     {
         return summary;
     }
 
+    /**
+     * @param summary - The new bill summary.
+     */
     public void setSummary(String summary)
     {
         this.summary = summary;
     }
 
-
+    /**
+     * @return - The current list of bill actions.
+     */
     public List<Action> getActions()
     {
         return actions;
     }
 
+    /**
+     * @param actions - The new list of bill actions.
+     */
     public void setActions(List<Action> actions)
     {
         this.actions = actions;
     }
 
-    public void addAction(Action be) {
-        actions.add(be);
+    /**
+     * @param action - The action to add to the list of bill actions.
+     */
+    public void addAction(Action action) {
+        actions.add(action);
     }
 
-
+    /**
+     * @return - The current full text of the bill
+     */
     public String getFulltext()
     {
         return fulltext;
     }
 
+    /**
+     * @param fulltext - The new full text of the bill.
+     */
     public void setFulltext(String fulltext)
     {
         this.fulltext = fulltext;
     }
 
-
+    /**
+     * @return - The current sponsor memo for the bill.
+     */
     public String getMemo()
     {
         return memo;
     }
 
+    /**
+     * @param memo - The new sponsor memo for the bill.
+     */
     public void setMemo(String memo)
     {
         this.memo = memo;
     }
 
-
+    /**
+     * @return - The current law modifications for the bill.
+     */
     public String getLaw()
     {
         return law;
     }
 
+    /**
+     * @param law - The new law modifications for the bill.
+     */
     public void setLaw(String law)
     {
         this.law = law;
     }
 
-
+    /**
+     * @return - The current AN ACT TO clause for the bill.
+     */
     public String getActClause()
     {
         return actClause;
     }
 
+    /**
+     * @param actClause - The new AN ACT TO clause for the bill.
+     */
     public void setActClause(String actClause)
     {
         this.actClause = actClause;
     }
 
-
+    /**
+     * @return - true if the bill has been stricken.
+     */
     public Boolean isStricken()
     {
         return stricken;
     }
 
+    /**
+     * @param stricken - The new stricken state for the bill.
+     */
     public void setStricken(Boolean stricken)
     {
         this.stricken = stricken;
     }
 
+    /**
+     * @return - true if the bill is a uniBill.
+     */
     public boolean isUniBill()
     {
         return uniBill;
     }
 
+    /**
+     * @param uniBill - The new uniBill state for the bill.
+     */
     public void setUniBill(boolean uniBill)
     {
         this.uniBill = uniBill;
     }
 
+    /**
+     * @return - The current committee for the bill.
+     */
     public String getCurrentCommittee()
     {
         return currentCommittee;
     }
 
+    /**
+     * @param currentCommittee - The new current committee for the bill.
+     */
     public void setCurrentCommittee(String currentCommittee)
     {
         this.currentCommittee = currentCommittee;
     }
 
-
+    /**
+     * @return - The current list of past committees.
+     */
     public List<String> getPastCommittees()
     {
         return pastCommittees;
     }
 
+    /**
+     * @param pastCommittees - The new list of past committees.
+     */
     public void setPastCommittees(List<String> pastCommittees)
     {
         this.pastCommittees = new ArrayList<String>();
@@ -389,6 +580,9 @@ public class Bill extends SenateObject implements Comparable<Bill>
         }
     }
 
+    /**
+     * @param committee - The name of the new committee to add to past committees.
+     */
     public void addPastCommittee(String committee)
     {
         if(!pastCommittees.contains(committee)) {
@@ -396,208 +590,58 @@ public class Bill extends SenateObject implements Comparable<Bill>
         }
     }
 
-
+    /**
+     * @return - The current list of votes on this bill.
+     */
     public List<Vote> getVotes()
     {
         return votes;
     }
 
+    /**
+     * @param votes - The new list of votes on this bill.
+     */
     public void setVotes(List<Vote> votes)
     {
         this.votes = votes;
     }
 
-    public void addVote(Vote vote) {
+    /**
+     * @param vote - The new vote to add to the list of votes on this bill. Replaces exiting vote data if a match is found.
+     */
+    public void updateVote(Vote vote) {
         votes.remove(vote);
         votes.add(vote);
     }
 
+    /**
+     * @param vote - The vote to remove from the list of votes on this bill.
+     */
     public void removeVote(Vote vote) {
         votes.remove(vote);
     }
-
 
     @Override
     public boolean equals(Object obj)
     {
         if (obj != null && obj instanceof Bill) {
-            return this.getSenateBillNo().equals(((Bill)obj).getSenateBillNo());
+            Bill other = (Bill)obj;
+            return this.getBillId().equals(other.getBillId());
         }
         else {
             return false;
         }
     }
 
-    // B?? C??
-    public static Pattern keyPattern = Pattern.compile("([ASLREJKBC][0-9]{1,5}[A-Z]?)-([0-9]{4})");
 
-    @JsonIgnore
-    public String getKey()
-    {
-        return Bill.getKey(this.getSenateBillNo());
-    }
+    public static Pattern printNumberPattern = Pattern.compile("([ASLREJKBC])([0-9]{1,5})([A-Z]?)");
+    public static Pattern billIdPattern = Pattern.compile("("+printNumberPattern.pattern()+")-([0-9]{4})");
 
-    @JsonIgnore
-    public static String getKey(String billNo)
-    {
-        Matcher keyMatcher = keyPattern.matcher(billNo);
-        if (keyMatcher.find()) {
-            return keyMatcher.group(2)+"/bill/"+keyMatcher.group(0);
-        }
-        else {
-            System.out.println("COULD NOT PARSE senateBillNo: "+billNo);
-            return null;
-        }
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneOtype()
-    {
-        return "bill";
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneOid()
-    {
-        if (senateBillNo.indexOf("-" + year)==-1) {
-            return senateBillNo + "-" + year;
-        }
-        else {
-            return senateBillNo;
-        }
-    }
-
-    @JsonIgnore
-    @Override
-    public HashMap<String,Fieldable> luceneFields()
-    {
-        HashMap<String,Fieldable> map = new HashMap<String,Fieldable>();
-
-        if(this.getPastCommittees() != null) {
-            String pcoms = "";
-            for(String committee:pastCommittees) {
-                pcoms += committee + ", ";
-            }
-            pcoms.replaceFirst(", $", "");
-            map.put("pastcommittees", new Field("pastcommittees",pcoms, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-        }
-
-        String billStatus = "";
-        if (!actions.isEmpty()) {
-            billStatus = actions.get(actions.size()-1).getText();
-        }
-        map.put("status", new Field("status", billStatus, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-        map.put("when", new Field("when", String.valueOf(this.getModified()), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-
-        /*
-         * the following creates a sortable index so we can sort
-         * s1,s2,s3,s11 instead of s1,s11,s2,s3.  senate bills take
-         * precedence, followed by assembly and finally anything else
-         */
-        String num = senateBillNo.split("-")[0];
-        num = num.substring(1, (Character.isDigit(num.charAt(num.length()-1))) ? num.length() : num.length() - 1);
-        while(num.length() < 6)
-            num = "0" + num;
-
-        if(senateBillNo.charAt(0) == 'S')
-            num = "A" + num;
-        else if(senateBillNo.charAt(0) == 'A')
-            num = "B" + num;
-        else
-            num = "Z" + num;
-        map.put("sortindex", new Field("sortindex",num, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-
-        return map;
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneSummary()
-    {
-        return summary;
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneTitle()
-    {
-        return (title == null) ? summary : title;
-    }
-
-    @JsonIgnore
-    @Override public String luceneOsearch()
-    {
-        return senateBillNo.split("-")[0] + " "
-                + year + " "
-                + senateBillNo + "-" + year
-                + (sameAs != null ? " " + sameAs:"")
-                + (sponsor != null ? " " + sponsor.getFullname():"")
-                + (title != null ? " " + title:"")
-                + (summary != null ? " " + summary:"");
-
-    }
-
-    @JsonIgnore
-    public String getLuceneOtherSponsors()
-    {
-        return StringUtils.join(otherSponsors, ", ");
-    }
-
-    @JsonIgnore
-    public String getLuceneCoSponsors()
-    {
-        if(this.getCoSponsors() == null)
-            return "";
-
-        StringBuilder response = new StringBuilder();
-        for( Person sponsor : coSponsors) {
-            response.append(sponsor.getFullname() + ", ");
-        }
-        return response.toString().replaceAll(", $", "");
-    }
-
-    @JsonIgnore
-    public String getLuceneMultiSponsors()
-    {
-        if(this.getMultiSponsors() == null)
-            return "";
-
-        StringBuilder response = new StringBuilder();
-        for( Person sponsor : multiSponsors) {
-            response.append(sponsor.getFullname() + ", ");
-        }
-        return response.toString().replaceAll(", $", "");
-    }
-
-    @JsonIgnore
-    public String getLuceneActions()
-    {
-        if(this.getActions() ==  null) {
-            return "";
-        }
-
-        StringBuilder response = new StringBuilder();
-        for(Action be : actions) {
-            response.append(be.getText() + ", ");
-        }
-        return response.toString().replaceAll(", $", "");
-    }
-
-    @JsonIgnore
-    public String getLuceneSponsor()
-    {
-        if(sponsor != null) {
-            return sponsor.getFullname();
-        }
-        return "";
-    }
 
     @Override
     public int compareTo(Bill bill)
     {
-        return this.getSenateBillNo().compareTo(bill.getSenateBillNo());
+        return this.getBillId().compareTo(bill.getBillId());
     }
 
     /**
@@ -623,15 +667,4 @@ public class Bill extends SenateObject implements Comparable<Bill>
         }
         return term;
     }
-
 }
-
-
-
-
-
-
-
-
-
-

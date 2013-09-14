@@ -1,10 +1,11 @@
 package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.model.SenateResponse;
+import gov.nysenate.openleg.util.Application;
+import gov.nysenate.openleg.util.JSPHelper;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
 
@@ -13,10 +14,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 
@@ -31,15 +34,15 @@ public class SearchRequest extends AbstractApiRequest {
     public SearchRequest(HttpServletRequest request, HttpServletResponse response,
             String format, String type, String term, String pageNumber, String pageSize) {
         super(request, response, pageNumber, pageSize, format, getApiEnum(SearchView.values(),type));
+        logger.info("New search request: format="+format+", type="+type+", term="+term+", page="+pageNumber+", size="+pageSize);
         this.type = type;
         try {
-            term = whichTerm(term);
-
-            if(term == null) term = "";
-
-            this.term = URLDecoder.decode(term,"UTF-8");
+            this.term = whichTerm(term);
+            this.term = URLDecoder.decode(this.term,"UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.error(e);
+            logger.error("Unsupported encoding UTF-8", e);
+        } catch (IllegalArgumentException e) {
+            logger.error("Malformed term: "+this.term, e);
         }
     }
 
@@ -74,7 +77,8 @@ public class SearchRequest extends AbstractApiRequest {
                     queryBuilder.and().range("when",Long.toString(startDate.getTime()), Long.toString(endDate.getTime()));
                 }
             } catch (java.text.ParseException e) {
-                logger.warn(e);
+                logger.warn("Invalid date format", e);
+                throw new ApiRequestException("Invalid date format", e);
             }
 
             // One of 2009, 2011, 2013, etc
@@ -83,7 +87,7 @@ public class SearchRequest extends AbstractApiRequest {
                 queryBuilder.and().keyValue("year", session, "(", ")");
             }
 
-            // TODO: Why does this also search in the osearch field in addition to the text?
+            // Currently full-text search ~= osearch (most fields) plus the bill text (where applicable)
             String full = request.getParameter("full");
             if (valid(full)) {
                 queryBuilder.and().append(" (").keyValue("full", full, "(", ")").or().keyValue("osearch", full, "(", ")").append(") ");
@@ -100,24 +104,24 @@ public class SearchRequest extends AbstractApiRequest {
                 queryBuilder.and().keyValue("status", status, "(", ")");
             }
 
-            String sponsor = request.getParameter("sponsor");
-            if (valid(sponsor)) {
-                queryBuilder.and().keyValue("sponsor", sponsor, "(", ")");
-            }
-
-            String cosponsors = request.getParameter("cosponsors");
-            if (valid(cosponsors)) {
-                queryBuilder.and().keyValue("cosponsors", cosponsors, "(", ")");
-            }
-
             String sameas = request.getParameter("sameas");
             if (valid(sameas)) {
                 queryBuilder.and().keyValue("sameas", sameas, "(", ")");
             }
 
-            String committee = request.getParameter("committee");
-            if (valid(committee)) {
-                queryBuilder.and().keyValue("committee", committee, "(", ")");
+            String[] sponsors = request.getParameterValues("sponsor");
+            if (sponsors != null) {
+                queryBuilder.and().keyValue("sponsor", StringUtils.join(sponsors, " "), "(", ")");
+            }
+
+            String[] cosponsors = request.getParameterValues("cosponsors");
+            if (cosponsors != null) {
+                queryBuilder.and().keyValue("cosponsors", StringUtils.join(cosponsors, " "), "(", ")");
+            }
+
+            String[] committee = request.getParameterValues("committee");
+            if (committee != null) {
+                queryBuilder.and().keyValue("committee", StringUtils.join(committee, " "), "(", ")");
             }
 
             String location = request.getParameter("location");
@@ -125,14 +129,20 @@ public class SearchRequest extends AbstractApiRequest {
                 queryBuilder.and().keyValue("location", location, "(", ")");
             }
 
-            // If we aren't requesting a specific document or time period, only show active documents
+            // If we aren't requesting a specific document or time period, only show current documents
             term = queryBuilder.query();
             if(term != null && !term.contains("year:") && !term.contains("when:") && !term.contains("oid:")) {
                 term = queryBuilder.and().current().query();
             }
+
+            // Only show inactive documents when they search by oid, but don't repeat yourself
+            if (!term.contains("oid:") && !term.contains("active:")) {
+                term = queryBuilder.and().active().query();
+            }
         }
         catch (QueryBuilderException e) {
-            logger.error("Bad query Build.", e);
+            logger.error("Invalid query construction", e);
+            throw new ApiRequestException("Invalid query construction", e);
         }
 
         // Cut this short if we've got no query
@@ -166,8 +176,9 @@ public class SearchRequest extends AbstractApiRequest {
         // Override user options for rss and atom
         // TODO: Don't do anything for a CSV, what? Why not?
         if(format.matches("(rss|atom)")) {
-            pageSize = 1000;
+            pageSize = 50;
             sortField = "modified";
+            sortOrder = true;
         }
         else if(format.equalsIgnoreCase("csv")) {
             return;
@@ -182,20 +193,18 @@ public class SearchRequest extends AbstractApiRequest {
             pageSize = Integer.parseInt(request.getParameter("pageSize"));
         }
 
-
         SenateResponse sr = null;
-
         try {
-            String searchFormat = "json";
             int start = (pageNumber - 1) * pageSize;
-            sr = SearchEngine.getInstance().search(term,searchFormat,start,pageSize,sortField,sortOrder);
+            sr = Application.getLucene().search(term, start, pageSize, sortField, sortOrder);
             if((sr.getResults() == null || sr.getResults().isEmpty()) && this.format.contains("html")) {
                 throw new ApiRequestException(TextFormatter.append("no results for query"));
             }
             ApiHelper.buildSearchResultList(sr);
         } catch (ParseException e) {
             logger.error(e);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.error(e);
         }
 
@@ -203,9 +212,12 @@ public class SearchRequest extends AbstractApiRequest {
         request.setAttribute("type", type);
         request.setAttribute("sortOrder", Boolean.toString(sortOrder));
         request.setAttribute("sortField", sortField);
-        request.setAttribute(OpenLegConstants.PAGE_IDX,String.valueOf(pageNumber));
-        request.setAttribute(OpenLegConstants.PAGE_SIZE,String.valueOf(pageSize));
+        request.setAttribute(OpenLegConstants.PAGE_IDX, pageNumber);
+        request.setAttribute(OpenLegConstants.PAGE_SIZE, pageSize);
         request.setAttribute("results", sr);
+        HashMap<String, String> feeds = new HashMap<String, String>();
+        feeds.put(term, JSPHelper.getFullLink(request, "/search/?format=atom&amp;term="+term));
+        request.setAttribute("feeds", feeds);
     }
 
     @Override
@@ -237,11 +249,11 @@ public class SearchRequest extends AbstractApiRequest {
         }
 
         String tempTerm = null;
-        if((tempTerm = getDesiredBillNumber(term, SearchEngine.getInstance())) != null) {
+        if((tempTerm = getDesiredBillNumber(term)) != null) {
             term = "oid:" + tempTerm;
         }
 
-        return term;
+        return (term == null) ? "" : term;
     }
 
     private boolean valid(String str) {
@@ -260,7 +272,7 @@ public class SearchRequest extends AbstractApiRequest {
      * s1234  -> S1234B-2011
      *
      */
-    public String getDesiredBillNumber(String term, SearchEngine searchEngine) {
+    public String getDesiredBillNumber(String term) {
         if(term == null) return null;
 
         String billNo = Bill.formatBillNo(term);
@@ -270,9 +282,9 @@ public class SearchRequest extends AbstractApiRequest {
                 return billNo;
             }
 
-            Bill newestAmendment = searchEngine.getNewestAmendment(billNo);
+            Bill newestAmendment = Application.getLucene().getNewestAmendment(billNo);
             if(newestAmendment != null) {
-                return newestAmendment.getSenateBillNo();
+                return newestAmendment.getBillId();
             }
         }
         return null;
@@ -284,10 +296,10 @@ public class SearchRequest extends AbstractApiRequest {
             "rss", "xml"});
 
         public final String view;
-        public final Class<? extends SenateObject> clazz;
+        public final Class<? extends BaseObject> clazz;
         public final String[] formats;
 
-        private SearchView(final String view, final Class<? extends SenateObject> clazz, final String[] formats) {
+        private SearchView(final String view, final Class<? extends BaseObject> clazz, final String[] formats) {
             this.view = view;
             this.clazz = clazz;
             this.formats = formats;
@@ -302,7 +314,7 @@ public class SearchRequest extends AbstractApiRequest {
             return formats;
         }
         @Override
-        public Class<? extends SenateObject> clazz() {
+        public Class<? extends BaseObject> clazz() {
             return clazz;
         }
     }

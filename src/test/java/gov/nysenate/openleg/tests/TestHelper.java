@@ -5,12 +5,12 @@ import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.util.Storage;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,9 +19,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
-import gov.nysenate.openleg.util.Storage;
 
-public class TestHelper 
+public class TestHelper
 {
 	public static void processFile(Environment env, File[] testFiles)
 	{
@@ -82,7 +81,7 @@ public class TestHelper
 	{
 		Bill bill = null;
 		for(Bill eachBill: bills){
-			if(eachBill.getSenateBillNo().equalsIgnoreCase(billName)){
+			if(eachBill.getBillId().equalsIgnoreCase(billName)){
 				bill = eachBill;
 			}
 		}
@@ -99,21 +98,21 @@ public class TestHelper
          if((v.getAyes()).equals(ayes) && (v.getNays()).equals(nays) && (v.getExcused()).equals(excused)
          && (v.getAbsent()).equals(absent) && (v.getAbstains()).equals(abstained)	 )
            {
-        	 
+
             return true;
            }
-   
+
        return false;
-    
-		 
+
+
     }
-	 
+
 	 /**
 	  * Converts and ArrayList of Strings with Action data into a List of Action Objects.
 	  * Date of the action should be in MM/DD/yy format.
 	  * @param actions holds string[]'s where index 0 holds the date string and index 1 holds the event text.
 	  */
-	 public static List<Action> convertIntoActions(ArrayList<String[]> actions, String billName)
+	 public static List<Action> convertIntoActions(ArrayList<String[]> actions, Bill bill)
 	 {
 		 ArrayList<Action> actionList = new ArrayList<Action>();
 		 for(int i = 0; i < actions.size(); i++) {
@@ -126,8 +125,8 @@ public class TestHelper
 				e.printStackTrace();
 			}
 			 // Create Action and add to list
-			 actionList.add(new Action(billName, date, actions.get(i)[1]));
+			 actionList.add(new Action(date, actions.get(i)[1], bill));
 		 }
-		 return (List<Action>)actionList;
+		 return actionList;
 	 }
 }

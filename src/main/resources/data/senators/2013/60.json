@@ -3,7 +3,7 @@
   "lastName" : "Grisanti",
   "shortName" : "grisanti",
   "email" : "grisanti@nysenate.gov",
-  "additionalContact" : "<P>&nbsp;</P>\n<P><SPAN style=\"TEXT-DECORATION: underline\"><STRONG>Buffalo</STRONG></SPAN></P>\n<P><STRONG></STRONG>Walter J. Mahoney Building<BR>65 Court Street<BR>Room 213<BR>Buffalo, NY 14202<BR>Phone: 716-854-8705<BR>Fax: 716-854-3051<BR>E-mail: <A href=\"mailto:wny.grisanti@gmail.com\">wny.grisanti@gmail.com</A></P>\n<P><STRONG>Office Hours</STRONG>:<BR>Monday-Friday 8:30am-5:00pm</P>",
+  "additionalContact" : "",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Grisanti.jpg",
   "url" : "http://www.nysenate.gov/senator/mark-grisanti",
   "partyAffiliations" : [ "R", "IP" ],
@@ -80,6 +80,6 @@
     "myspace" : "",
     "picasa" : "",
     "flickr" : "",
-    "facebook" : "http://www.facebook.com/SenatorGrisanti"
+    "facebook" : "https://www.facebook.com/markgrisanti?fref=ts"
   }
 }

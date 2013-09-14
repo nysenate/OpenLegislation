@@ -8,23 +8,8 @@
   "url" : "http://www.nysenate.gov/senator/philip-boyle",
   "partyAffiliations" : [ "R" ],
   "offices" : [ {
-    "name" : "District Office",
-    "street" : "23 Argyle Square",
-    "city" : "Babylon",
-    "postalCode" : "11702",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(631) 669-9200",
-    "fax" : "",
-    "otherPhone" : "",
-    "additional" : "",
-    "latitude" : 40.696561,
-    "longitude" : -73.327826
-  }, {
     "name" : "Albany Office",
-    "street" : "304 Legislative Office Building",
+    "street" : "814 Legislative Office Building",
     "city" : "Albany",
     "postalCode" : "12247",
     "provinceName" : "New York",
@@ -37,6 +22,21 @@
     "additional" : "",
     "latitude" : 42.652442,
     "longitude" : -73.759332
+  }, {
+    "name" : "District Office",
+    "street" : "69 W Main Street",
+    "city" : "Bay Shore",
+    "postalCode" : "11706",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(631) 665-2311",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Suite B",
+    "latitude" : 40.72048,
+    "longitude" : -73.249339
   } ],
   "district" : {
     "number" : 4,

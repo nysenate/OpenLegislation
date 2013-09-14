@@ -1,11 +1,12 @@
 package gov.nysenate.openleg.api;
 
-import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.util.OpenLegConstants;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import javax.servlet.ServletException;
@@ -26,6 +27,8 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
     protected int pageSize;
     protected String format;
     protected ApiEnum apiEnum;
+
+    public final HashMap<String, String> CONTENT_TYPE;
 
     public AbstractApiRequest(HttpServletRequest request, HttpServletResponse response,
             String pageNumber, String pageSize, String format, ApiEnum apiEnum) {
@@ -54,6 +57,15 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
         }
 
         this.apiEnum = apiEnum;
+
+        this.CONTENT_TYPE = new HashMap<String, String>();
+        this.CONTENT_TYPE.put("html", "text/html");
+        this.CONTENT_TYPE.put("json", "application/json");
+        this.CONTENT_TYPE.put("jsonp", "application/json");
+        this.CONTENT_TYPE.put("xml", "application/xml");
+        this.CONTENT_TYPE.put("rss", "application/rss+xml");
+        this.CONTENT_TYPE.put("csv", "text/csv");
+        this.CONTENT_TYPE.put("atom", "application/atom+xml");
     }
 
     public void execute() throws ApiRequestException, ServletException, IOException {
@@ -74,7 +86,7 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
 
         fillRequest();
 
-        request.setAttribute("contentType", ContentType.getType(format));
+        request.setAttribute("contentType", CONTENT_TYPE.get(format));
 
         if(format.equals("jsonp")) {
             request.setAttribute("viewPath", getView());
@@ -167,7 +179,7 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
     public interface ApiEnum {
         public String view();
         public String[] formats();
-        public Class<? extends SenateObject> clazz();
+        public Class<? extends BaseObject> clazz();
     }
 
     @SuppressWarnings("serial")
@@ -178,31 +190,8 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
         public ApiRequestException(String message) {
             super(message);
         }
-    }
-
-    public enum ContentType {
-        HTML("html", "text/html"),
-        JSON("json", "application/json"),
-        JSONP("jsonp", "application/json"),
-        XML("xml", "application/xml"),
-        RSS("rss", "application/rss+xml"),
-        CSV("csv", "text/csv"),
-        ATOM("atom", "application/atom+xml");
-
-        final String type;
-        final String contentType;
-        private ContentType(String type, String contentType) {
-            this.type = type;
-            this.contentType = contentType;
-        }
-
-        public static String getType(String value) {
-            for(ContentType ct:ContentType.values()) {
-                if(ct.type.equalsIgnoreCase(value)) {
-                    return ct.contentType;
-                }
-            }
-            return ContentType.HTML.contentType;
+        public ApiRequestException(String message, Exception exception) {
+            super(message, exception);
         }
     }
 }

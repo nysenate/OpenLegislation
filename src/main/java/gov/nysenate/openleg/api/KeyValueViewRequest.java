@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.SenateObject;
-import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.model.Result;
+import gov.nysenate.openleg.model.SenateResponse;
+import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
@@ -26,6 +26,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
     public KeyValueViewRequest(HttpServletRequest request, HttpServletResponse response,
             String format, String key, String value, String pageNumber, String pageSize) {
         super(request, response, pageNumber, pageSize, format, getApiEnum(KeyValueView.values(),key));
+        logger.info("New key value request: format="+format+", key="+key+", value="+value+", page="+pageNumber+", size="+pageSize);
         this.key = key;
         this.value = value;
     }
@@ -40,7 +41,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
 
         QueryBuilder queryBuilder = new QueryBuilder();
 
-        String filter = request.getParameter("filter");
+
 
         SenateResponse sr = null;
 
@@ -50,6 +51,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
         try {
             queryBuilder.keyValue(key, "\""+value+"\"").and().otype("bill");
 
+            String filter = request.getParameter("filter");
             if(filter != null) {
                 queryBuilder.and().insertAfter(filter);
             }
@@ -57,26 +59,23 @@ public class KeyValueViewRequest extends AbstractApiRequest {
                 queryBuilder.and().current().and().active();
             }
         } catch (QueryBuilderException e) {
-            logger.error(e);
+            logger.error("Invalid query construction", e);
+            throw new ApiRequestException("Invalid query construction", e);
         }
-
-        logger.info(TextFormatter.append("executing query ", queryBuilder.query()));
 
         try {
-            sr = SearchEngine.getInstance().search(queryBuilder.query(), sFormat,
-                    start, pageSize, sortField, sortOrder);
+            sr = Application.getLucene().search(queryBuilder.query(), start, pageSize, sortField, sortOrder);
         } catch (ParseException e) {
             logger.error(e);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.error(e);
         }
 
-        if(sr == null || sr.getResults() == null || sr.getResults().isEmpty()) throw new ApiRequestException(
-                TextFormatter.append("no results for query"));
+        if(sr == null || sr.getResults() == null || sr.getResults().isEmpty())
+            throw new ApiRequestException(TextFormatter.append("no results for query"));
 
         sr.setResults(ApiHelper.buildSearchResultList(sr));
-
-        logger.info(TextFormatter.append("found ",sr.getResults().size()," results"));
 
         if(format.matches("(?i)(csv|json|mobile|rss|xml)")) {
             ArrayList<Result> searchResults = ApiHelper.buildSearchResultList(sr);
@@ -92,8 +91,8 @@ public class KeyValueViewRequest extends AbstractApiRequest {
             request.setAttribute("type", key);
             request.setAttribute("term", queryBuilder.query());
             request.setAttribute("format", format);
-            request.setAttribute(PAGE_IDX, pageNumber + "");
-            request.setAttribute(PAGE_SIZE, pageSize + "");
+            request.setAttribute(PAGE_IDX, pageNumber);
+            request.setAttribute(PAGE_SIZE, pageSize);
             request.setAttribute("urlPath", urlPath);
             request.setAttribute("results", sr);
         }
@@ -120,10 +119,10 @@ public class KeyValueViewRequest extends AbstractApiRequest {
         COMMITTEE("committee", 	Bill.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"});
 
         public final String view;
-        public final Class<? extends SenateObject> clazz;
+        public final Class<? extends BaseObject> clazz;
         public final String[] formats;
 
-        private KeyValueView(final String view, final Class<? extends SenateObject> clazz, final String[] formats) {
+        private KeyValueView(final String view, final Class<? extends BaseObject> clazz, final String[] formats) {
             this.view = view;
             this.clazz = clazz;
             this.formats = formats;
@@ -138,7 +137,7 @@ public class KeyValueViewRequest extends AbstractApiRequest {
             return formats;
         }
         @Override
-        public Class<? extends SenateObject> clazz() {
+        public Class<? extends BaseObject> clazz() {
             return clazz;
         }
     }

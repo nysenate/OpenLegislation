@@ -1,11 +1,12 @@
 package gov.nysenate.openleg.tests;
 
+import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.Vote;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import gov.nysenate.openleg.model.Vote;
-
-import org.junit.*;
+import org.junit.Test;
 
 
 public class BillS16182011 extends TestSetup
@@ -44,11 +45,11 @@ public class BillS16182011 extends TestSetup
     public void testSenateVote2011()
     {
         String[] senateAyeVotes2011 = { "Adams", "Addabbo", "Alesi", "Avella", "Ball", "Bonacic",
-                "Breslin", "Carlucci", "DeFrancisco", "Diaz", "Dilan", "Duane", "Farley", "Flanagan", "Fuschillo", "Gallivan", 
-                "Gianaris", "Golden", "Griffo", "Grisanti", "Hannon", "Hassell-Thomps", "Johnson", "Kennedy", "Klein", "Krueger", 
-                "Kruger", "Lanza", "Larkin", "LaValle", "Libous", "Little", "Marcellino", "Martins", "Maziarz", "McDonald", 
-                "Montgomery", "Nozzolio", "O'Mara", "Oppenheimer", "Parker", "Peralta", "Perkins", "Ranzenhofer", "Ritchie", 
-                "Rivera", "Robach", "Saland", "Sampson", "Savino", "Serrano", "Seward", "Skelos", "Smith", "Squadron", "Stavisky", 
+                "Breslin", "Carlucci", "DeFrancisco", "Diaz", "Dilan", "Duane", "Farley", "Flanagan", "Fuschillo", "Gallivan",
+                "Gianaris", "Golden", "Griffo", "Grisanti", "Hannon", "Hassell-Thomps", "Johnson", "Kennedy", "Klein", "Krueger",
+                "Kruger", "Lanza", "Larkin", "LaValle", "Libous", "Little", "Marcellino", "Martins", "Maziarz", "McDonald",
+                "Montgomery", "Nozzolio", "O'Mara", "Oppenheimer", "Parker", "Peralta", "Perkins", "Ranzenhofer", "Ritchie",
+                "Rivera", "Robach", "Saland", "Sampson", "Savino", "Serrano", "Seward", "Skelos", "Smith", "Squadron", "Stavisky",
                 "Stewart-Cousin", "Valesky", "Young", "Zeldin"};
         String[] senateAbsVotes2011 = { "Espaillat", "Huntley" };
         Vote expected = new Vote();
@@ -60,12 +61,12 @@ public class BillS16182011 extends TestSetup
     @Test
     public void testSenateVote2012()
     {
-        String[] senateAyeVotes2012 = { "Adams", "Addabbo", "Alesi", "Avella", "Ball", "Bonacic", 
-                "Breslin", "Carlucci", "DeFrancisco", "Diaz", "Dilan", "Duane", "Espaillat", "Farley", "Flanagan", "Fuschillo", 
-                "Gallivan", "Gianaris", "Golden", "Griffo", "Grisanti", "Hannon", "Hassell-Thomps", "Johnson", "Kennedy", 
-                "Klein", "Krueger", "Lanza", "Larkin", "LaValle", "Libous", "Little", "Marcellino", "Martins", "Maziarz", "McDonald", 
-                "Montgomery", "Nozzolio", "O'Mara", "Oppenheimer", "Parker", "Peralta", "Perkins", "Ranzenhofer", "Ritchie", "Rivera", 
-                "Robach", "Saland", "Sampson", "Savino", "Serrano", "Seward", "Skelos", "Smith", "Squadron", "Stavisky", "Stewart-Cousin", 
+        String[] senateAyeVotes2012 = { "Adams", "Addabbo", "Alesi", "Avella", "Ball", "Bonacic",
+                "Breslin", "Carlucci", "DeFrancisco", "Diaz", "Dilan", "Duane", "Espaillat", "Farley", "Flanagan", "Fuschillo",
+                "Gallivan", "Gianaris", "Golden", "Griffo", "Grisanti", "Hannon", "Hassell-Thomps", "Johnson", "Kennedy",
+                "Klein", "Krueger", "Lanza", "Larkin", "LaValle", "Libous", "Little", "Marcellino", "Martins", "Maziarz", "McDonald",
+                "Montgomery", "Nozzolio", "O'Mara", "Oppenheimer", "Parker", "Peralta", "Perkins", "Ranzenhofer", "Ritchie", "Rivera",
+                "Robach", "Saland", "Sampson", "Savino", "Serrano", "Seward", "Skelos", "Smith", "Squadron", "Stavisky", "Stewart-Cousin",
                 "Valesky", "Young", "Zeldin"};
         String[] senateExcusedVotes2012 = {"Huntley"};
         Vote expected = new Vote();
@@ -107,7 +108,7 @@ public class BillS16182011 extends TestSetup
     {
         String meetingKey2012 = "2012/meeting/meeting-Codes-2-2011-2012";
         String[] committeeAyeVotes2012 = {"Saland", "DeFrancisco", "Flanagan", "Fuschillo", "Gallivan", "Golden", "Lanza",
-                "Nozzolio", "O'Mara", "Gianaris", "Huntley", "Parker", "Perkins", "Squadron", "Espaillat"};	
+                "Nozzolio", "O'Mara", "Gianaris", "Huntley", "Parker", "Perkins", "Squadron", "Espaillat"};
         String[] committeeAyeWRVotes2012 = {"Duane"};
         Vote expected = new Vote();
         expected.setAyes(Arrays.asList(committeeAyeVotes2012));
@@ -193,8 +194,8 @@ public class BillS16182011 extends TestSetup
         actionStrings.add(new String[]{"01/30/12", "PASSED SENATE"});
         actionStrings.add(new String[]{"01/30/12", "DELIVERED TO ASSEMBLY"});
         actionStrings.add(new String[]{"01/30/12", "referred to codes"});
-        // TODO: Passed assembly??		
-        BillTests.testBillStatusActions(env, sobiDirectory, storage, billKey, initialSenateSobi, actionStrings, billNumber);
+        // TODO: Passed assembly??
+        BillTests.testBillStatusActions(env, sobiDirectory, storage, billKey, initialSenateSobi, actionStrings, new Bill("S1618-2011", 2011));
     }
 
     @Test

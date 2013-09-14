@@ -2,23 +2,26 @@ package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
 import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.Meeting;
-import gov.nysenate.openleg.model.SenateObject;
+import gov.nysenate.openleg.model.Result;
+import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
-import gov.nysenate.openleg.search.Result;
-import gov.nysenate.openleg.search.SearchEngine;
-import gov.nysenate.openleg.search.SenateResponse;
+import gov.nysenate.openleg.util.Application;
+import gov.nysenate.openleg.util.JSPHelper;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 
@@ -30,6 +33,7 @@ public class MultiViewRequest extends AbstractApiRequest {
     public MultiViewRequest(HttpServletRequest request, HttpServletResponse response,
             String format, String type, String pageNumber, String pageSize) {
         super(request, response, pageNumber, pageSize, format, getApiEnum(MultiView.values(),type));
+        logger.info("New multi view request: format="+format+", type="+type+", page="+pageNumber+", size="+pageSize);
         this.type = type;
     }
 
@@ -58,29 +62,25 @@ public class MultiViewRequest extends AbstractApiRequest {
         try {
             queryBuilder.otype(type).and().current().and().active();
         } catch (QueryBuilderException e) {
-            logger.error(e);
+            logger.error("Invalid query construction", e);
+            throw new ApiRequestException("Invalid query construction", e);
         }
-
-        logger.info(TextFormatter.append("executing query ", queryBuilder.query()));
 
         try {
-            sr = SearchEngine.getInstance().search(queryBuilder.query(), sFormat,
-                    start, pageSize, sortField, sortOrder);
+            sr = Application.getLucene().search(queryBuilder.query(), start, pageSize, sortField, sortOrder);
         } catch (ParseException e) {
             logger.error(e);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.error(e);
         }
 
-        if(sr == null || sr.getResults() == null || sr.getResults().isEmpty()) throw new ApiRequestException(
-                TextFormatter.append("no results for query"));
+        if(sr == null || sr.getResults() == null || sr.getResults().isEmpty())
+            throw new ApiRequestException(TextFormatter.append("no results for query"));
 
         sr.setResults(ApiHelper.buildSearchResultList(sr));
 
-        logger.info(TextFormatter.append("found ",sr.getResults().size()," results"));
-
-        if(type.equalsIgnoreCase("bill")
-                && format.matches("(?i)(csv|json|mobile|rss|xml)")) {
+        if(type.equalsIgnoreCase("bill") && format.matches("(?i)(csv|json|mobile|rss|xml)")) {
             ArrayList<Result> searchResults = ApiHelper.buildSearchResultList(sr);
             ArrayList<Bill> bills = new ArrayList<Bill>();
             for(Result result: searchResults) {
@@ -94,11 +94,15 @@ public class MultiViewRequest extends AbstractApiRequest {
             request.setAttribute("type", type);
             request.setAttribute("term", queryBuilder.query());
             request.setAttribute("format", format);
-            request.setAttribute(PAGE_IDX, pageNumber + "");
-            request.setAttribute(PAGE_SIZE, pageSize + "");
+            request.setAttribute(PAGE_IDX, pageNumber);
+            request.setAttribute(PAGE_SIZE, pageSize);
             request.setAttribute("urlPath", urlPath);
             request.setAttribute("results", sr);
         }
+
+        HashMap<String, String> feeds = new HashMap<String, String>();
+        feeds.put(type+" Feed", JSPHelper.getFullLink(request, "/search/?format=atom&amp;term="+queryBuilder.query()+"&amp;title="+StringUtils.capitalize(type+" Feed")));
+        request.setAttribute("feeds", feeds);
     }
 
     @Override
@@ -128,10 +132,10 @@ public class MultiViewRequest extends AbstractApiRequest {
         ACTIONS		("actions", 	Action.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"});
 
         public final String view;
-        public final Class<? extends SenateObject> clazz;
+        public final Class<? extends BaseObject> clazz;
         public final String[] formats;
 
-        private MultiView(final String view, final Class<? extends SenateObject> clazz, final String[] formats) {
+        private MultiView(final String view, final Class<? extends BaseObject> clazz, final String[] formats) {
             this.view = view;
             this.clazz = clazz;
             this.formats = formats;
@@ -146,7 +150,7 @@ public class MultiViewRequest extends AbstractApiRequest {
             return formats;
         }
         @Override
-        public Class<? extends SenateObject> clazz() {
+        public Class<? extends BaseObject> clazz() {
             return clazz;
         }
     }

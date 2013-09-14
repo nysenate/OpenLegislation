@@ -10,7 +10,7 @@
 		<br/>
 		Otherwise, be assured that we're working away like eager beavers <a href="http://www.nysenate.gov/department/cio">over here</a> to improve this service day by day.
 		</p>
-		<a href="http://www.nysl.nysed.gov/emblems/animal.htm"><img src="<%=JSPHelper.getLink(request, "/img/beaver.gif")%>"/></a>
+		<a href="http://www.nysl.nysed.gov/emblems/animal.htm"><img src="<%=JSPHelper.getLink(request, "/static/img/beaver.gif")%>"/></a>
 		<br/>
 		<a href="http://www.nysl.nysed.gov/emblems/animal.htm">Learn more about the New York State Beaver!</a>
 		<hr/>

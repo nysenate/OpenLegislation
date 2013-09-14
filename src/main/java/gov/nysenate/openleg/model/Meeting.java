@@ -1,62 +1,102 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.lucene.DocumentBuilder;
-import gov.nysenate.openleg.lucene.LuceneField;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
-@XStreamAlias("meeting")
-@XmlRootElement
-public class Meeting extends SenateObject {
-
-    @LuceneField("when")
+/**
+ *
+ * @author GraylinKim
+ */
+public class Meeting extends BaseObject
+{
+    /**
+     * The date and time of the meeting.
+     */
     protected Date meetingDateTime;
 
-    protected String meetday;
+    /**
+     * Day of the week; e.g. Wednesday.
+     */
+    protected String meetday = "";
 
-    @LuceneField
-    protected String location;
+    /**
+     * The physical location of the meeting; e.g. 332 CAP.
+     */
+    protected String location = "";
 
-    protected String id;
+    /**
+     * The unique identifier for this object.
+     */
+    protected String oid;
 
-    @LuceneField("committee")
-    protected String committeeName;
+    /**
+     * The name of the committee that is meeting
+     */
+    protected String committeeName = "";
 
-    @LuceneField("chair")
-    protected String committeeChair;
+    /**
+     * The full name of the chair of the committee
+     */
+    protected String committeeChair = "";
 
-    @LuceneField
+    /**
+     * A list of bills on the agenda for the meeting
+     */
     protected List<Bill> bills;
 
-    @LuceneField
-    protected String notes;
+    /**
+     * The notes for the meeting. Will often detail appointments to be made or experts to appear.
+     */
+    protected String notes = "";
 
-    @LuceneField
-    protected List<Addendum> addendums;
-
+    /**
+     * JavaBean Constructor
+     */
     public Meeting() {
-        addendums = new ArrayList<Addendum>();
         bills = new ArrayList<Bill>();
     }
 
-    public Meeting(String id) {
-        this.setId(id);
-        addendums = new ArrayList<Addendum>();
+    /**
+     *
+     * @param id
+     */
+    public Meeting(String committeeName, Date meetingDateTime) {
+        this.setCommitteeName(committeeName);
+        this.setMeetingDateTime(meetingDateTime);
+        this.setOid(committeeName+"-"+new SimpleDateFormat("MM-dd-yyyy").format(this.getMeetingDateTime()));
+
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        calendar.setTime(meetingDateTime);
+        this.setSession(calendar.get(java.util.Calendar.YEAR));
+        this.setYear(calendar.get(java.util.Calendar.YEAR));
+
         bills = new ArrayList<Bill>();
+    }
+
+    /**
+     * The object type of the meeting.
+     */
+    public String getOtype()
+    {
+        return "meeting";
+    }
+
+    /**
+     * @return - The object's id.
+     */
+    public String getOid()
+    {
+        return this.oid;
+    }
+
+    /**
+     * @param oid - The object's new oid
+     */
+    public void setOid(String oid)
+    {
+        this.oid = oid;
     }
 
     public String getCommitteeChair() {
@@ -67,21 +107,10 @@ public class Meeting extends SenateObject {
         this.committeeChair = committeeChair;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @JsonIgnore
-    public List<Addendum> getAddendums() {
-        return addendums;
-    }
-
-    public void setAddendums(List<Addendum> addendums) {
-        this.addendums = addendums;
+    public int getYear() {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(this.getMeetingDateTime());
+        return cal.get(java.util.Calendar.YEAR);
     }
 
     public String getLocation() {
@@ -134,88 +163,19 @@ public class Meeting extends SenateObject {
     }
 
     @Override
-    public boolean equals(Object obj) {
-
+    public boolean equals(Object obj)
+    {
         if (obj != null && obj instanceof Meeting)
         {
-            if ( ((Meeting)obj).getId().equals(this.getId()))
+            if ( ((Meeting)obj).getOid().equals(this.getOid()))
                 return true;
         }
 
         return false;
     }
 
-
-    @Override
-    public String luceneOid() {
-        return committeeName+"-"+new SimpleDateFormat("MM-dd-yyyy").format(meetingDateTime);
-    }
-
-    @Override
-    public String luceneOsearch() {
-        return committeeName + " - " + committeeChair + " - " + location + " - " + notes;
-    }
-
-    @Override
-    public String luceneOtype()	{
-        return "meeting";
-    }
-
-    @Override
-    public String luceneSummary() {
-        return location;
-    }
-
-    @Override
-    public String luceneTitle() {
-        DateFormat df = java.text.DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
-        return committeeName + " - " + df.format(meetingDateTime);
-    }
-
-    @Override
-    public HashMap<String,Fieldable> luceneFields()	{
-        HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
-        fields.put("when", new Field("when", meetingDateTime.getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-
-        /*
-         * creates a sortable index based on the timestamp of the day the meeting occurred
-         * and the inversion of the first two characters of the meeting name (e.g. A -> Z, Y -> B, etc.)
-         */
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(this.meetingDateTime);
-        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 0, 0, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        char c1 = invertCharacter(this.getCommitteeName().charAt(0));
-        char c2 = invertCharacter(this.getCommitteeName().charAt(1));
-        char c3 = invertCharacter(this.getCommitteeName().charAt(2));
-        char c4 = invertCharacter(this.getCommitteeName().charAt(3));
-
-        fields.put("sortindex", new Field("sortindex",cal.getTimeInMillis()+"-" + c1 + "" + c2 + "" + c3 + "" + c4, DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-        return fields;
-    }
-
-    @JsonIgnore
-    public String getLuceneBills() {
-        StringBuilder response = new StringBuilder();
-        for(Bill bill : bills) {
-            response.append(bill.getSenateBillNo() + ", ");
-        }
-        return response.toString().replaceAll(", $", "");
-    }
-
     @Override
     public String toString() {
-        return this.id + " : " + meetingDateTime.getTime();
-    }
-
-    public char invertCharacter(char c) {
-        if(Character.isUpperCase(c)) {
-            return (char)((c - 90) * -1 + 65);
-        }
-        else if(Character.isLowerCase(c)){
-            return (char)((c - 122) * -1 + 97);
-        }
-        return 'Z';
+        return this.oid + " : " + meetingDateTime.getTime();
     }
 }

@@ -34,9 +34,39 @@
     "phone" : "518-455-2991",
     "fax" : "518-426-6737",
     "otherPhone" : "",
-    "additional" : "302 Legislative Office Building",
-    "latitude" : 42.652811,
-    "longitude" : -73.758947
+    "additional" : "815 Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.75903
+  }, {
+    "name" : "Ossining Office",
+    "street" : "2 Church Street",
+    "city" : "Ossining",
+    "postalCode" : "10562",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "914-941-2041",
+    "fax" : "914-941-2054",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 41.160786,
+    "longitude" : -73.862112
+  }, {
+    "name" : "",
+    "street" : "",
+    "city" : "",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 0.0,
+    "longitude" : 0.0
   } ],
   "district" : {
     "number" : 38,

@@ -15,7 +15,7 @@
 	       is generally performed Monday through Friday.<br/><br/>
 	       <b>By contributing or voting you agree to the <a href = "http://nysenate.gov/legal">Terms of Participation</a> and verify you are over 13.</b>
 		</p>
-		<h3><a name="discuss">Discuss!</a></h3>
+		<h3><a>Discuss!</a></h3>
 		<div id="disqus_thread">
             <script type="text/javascript">
 			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */

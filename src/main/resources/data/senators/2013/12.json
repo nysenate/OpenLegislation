@@ -9,9 +9,9 @@
   "partyAffiliations" : [ "D" ],
   "offices" : [ {
     "name" : "District Office",
-    "street" : "21-77 31st Street",
+    "street" : "31-19 Newtown Avenue",
     "city" : "Astoria",
-    "postalCode" : "11105",
+    "postalCode" : "11102",
     "provinceName" : "New York",
     "province" : "NY",
     "countryName" : "United States",
@@ -19,9 +19,9 @@
     "phone" : "718-728-0960",
     "fax" : "718-728-0963",
     "otherPhone" : "",
-    "additional" : "",
-    "latitude" : 40.776247,
-    "longitude" : -73.910328
+    "additional" : "Suite 402",
+    "latitude" : 40.767141,
+    "longitude" : -73.92044
   }, {
     "name" : "Albany Office",
     "street" : "Senate Capitol Building,",

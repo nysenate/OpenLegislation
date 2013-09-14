@@ -3,7 +3,7 @@
   "lastName" : "Espaillat",
   "shortName" : "espaillat",
   "email" : "espailla@nysenate.gov",
-  "additionalContact" : "<P>&nbsp;</P>\n<P>&nbsp;</P>",
+  "additionalContact" : "<p>&nbsp;</p> <p>&nbsp;</p>",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Adriano Espaillat Headshot.JPG",
   "url" : "http://www.nysenate.gov/senator/adriano-espaillat",
   "partyAffiliations" : [ "D", "WF" ],

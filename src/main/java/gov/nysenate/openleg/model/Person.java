@@ -1,25 +1,17 @@
 package gov.nysenate.openleg.model;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@XStreamAlias("person")
 public class Person {
-    @XStreamAsAttribute
     private String position = "";
 
-    @XStreamAsAttribute
     private String fullname = "";
 
     private String id = "";
 
-    //	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
     private String branch = "";
 
-    //	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
     private String contactInfo = "";
 
-    //	@HideFrom({Bill.class, Meeting.class, Calendar.class, Supplemental.class})
     private String guid = "";
 
     public Person () {

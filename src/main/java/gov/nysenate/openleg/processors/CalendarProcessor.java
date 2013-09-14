@@ -4,6 +4,7 @@ import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.CalendarEntry;
 import gov.nysenate.openleg.model.Person;
+import gov.nysenate.openleg.model.SOBIBlock;
 import gov.nysenate.openleg.model.Section;
 import gov.nysenate.openleg.model.Sequence;
 import gov.nysenate.openleg.model.Supplemental;
@@ -36,6 +37,7 @@ import org.apache.log4j.Logger;
 public class CalendarProcessor implements OpenLegConstants {
 
     private final Logger logger;
+    private Date modifiedDate;
     private Object removeObject = null;
     private String removeObjectId = null;
 
@@ -50,7 +52,7 @@ public class CalendarProcessor implements OpenLegConstants {
         Unmarshaller u = jc.createUnmarshaller();
         XMLSENATEDATA senateData = (XMLSENATEDATA)u.unmarshal( new FileReader(file) );
 
-        Date modifiedDate = null;
+        modifiedDate = null;
         try {
             modifiedDate = sobiDateFormat.parse(file.getName());
         } catch (ParseException e) {
@@ -69,8 +71,7 @@ public class CalendarProcessor implements OpenLegConstants {
 
                 action = xmlCalendar.getAction();
 
-                calendar = getCalendar(storage, Calendar.TYPE_FLOOR,xmlCalendar.getNo(),xmlCalendar.getYear(),xmlCalendar.getSessyr());
-
+                calendar = getCalendar(storage, "floor",xmlCalendar.getNo(),xmlCalendar.getYear(),xmlCalendar.getSessyr());
                 supplemental = parseSupplemental(storage, calendar,xmlCalendar.getSupplemental());
 
                 if(supplemental.getSequences() != null
@@ -85,7 +86,7 @@ public class CalendarProcessor implements OpenLegConstants {
 
                 action = xmlActiveList.getAction();
 
-                calendar = getCalendar(storage, Calendar.TYPE_ACTIVE,xmlActiveList.getNo(),xmlActiveList.getYear(),xmlActiveList.getSessyr());
+                calendar = getCalendar(storage, "active",xmlActiveList.getNo(),xmlActiveList.getYear(),xmlActiveList.getSessyr());
 
                 supplemental = parseSupplemental(storage, calendar,xmlActiveList.getSupplemental());
 
@@ -96,7 +97,7 @@ public class CalendarProcessor implements OpenLegConstants {
                     calendar.addSupplemental(supplemental);
                 }
             } else {
-                // TODO: log something here
+                logger.warn("Unknown calendar type found: "+obj);
                 continue;
             }
 
@@ -125,15 +126,17 @@ public class CalendarProcessor implements OpenLegConstants {
                         }
                     }
                 } else {
-                    // TODO: log something here
+                    logger.warn("Unknown calendar subdocument found: "+obj);
                 }
             }
 
-            calendar.addSobiReference(file.getName());
-            calendar.setModified(modifiedDate.getTime());
-            String key = String.valueOf(calendar.getYear())+"/calendar/"+calendar.getId();
-            storage.set(key, calendar);
-            ChangeLogger.record(key, storage, modifiedDate);
+            calendar.addDataSource(file.getName());
+            calendar.setModifiedDate(modifiedDate);
+            if (calendar.getPublishDate() == null) {
+                calendar.setPublishDate(modifiedDate);
+            }
+            storage.set(calendar);
+            ChangeLogger.record(storage.key(calendar), storage);
             removeObject = null;
         }
     }
@@ -147,8 +150,6 @@ public class CalendarProcessor implements OpenLegConstants {
         calendarId.append('-');
         calendarId.append(no);
         calendarId.append('-');
-        calendarId.append(sessYr);
-        calendarId.append('-');
         calendarId.append(year);
 
         logger.info("getting calendar: " + calendarId.toString());
@@ -157,12 +158,12 @@ public class CalendarProcessor implements OpenLegConstants {
         calendar = (Calendar)storage.get(key, Calendar.class);
 
         if (calendar == null) {
-            calendar = new Calendar();
-            calendar.setId(calendarId.toString());
-            calendar.setNo(Integer.parseInt(no));
-            calendar.setSessionYear(Integer.parseInt(sessYr));
-            calendar.setYear(Integer.parseInt(year));
-            calendar.setType(type);
+            calendar = new Calendar(
+                Integer.parseInt(no),
+                Integer.parseInt(sessYr),
+                Integer.parseInt(year),
+                type
+            );
         }
 
         return calendar;
@@ -170,7 +171,7 @@ public class CalendarProcessor implements OpenLegConstants {
 
 
     public Supplemental parseSupplemental (Storage storage, Calendar calendar, XMLSupplemental xmlSupp) {
-        String suppId = calendar.getId() + "-supp-" + xmlSupp.getId();
+        String suppId = calendar.getOid() + "-supp-" + xmlSupp.getId();
 
         // Create a new supplemental or get the existing one from the calendar
         Supplemental supplemental = new Supplemental();
@@ -246,8 +247,15 @@ public class CalendarProcessor implements OpenLegConstants {
         return supplemental;
     }
 
+    /**
+     * Build a calendar section from the given XML. Sections are sent in whole each time.
+     *
+     * @param storage
+     * @param supplemental
+     * @param xmlSection
+     * @return
+     */
     public Section parseSection (Storage storage, Supplemental supplemental, XMLSection xmlSection) {
-        // TODO: Confirm: build a new section from scratch, whole section is resent every time?
         String sectionId = supplemental.getId() + "-sect-" + xmlSection.getName();
 
         // Create a new section
@@ -266,7 +274,7 @@ public class CalendarProcessor implements OpenLegConstants {
             CalendarEntry cEntry = null;
             try	{
                 // Add each entry with a parent reference
-                cEntry = parseCalno(storage, section.getId(), xmlCalno, supplemental.getCalendar().getSessionYear());
+                cEntry = parseCalno(storage, section.getId(), xmlCalno, supplemental.getCalendar().getSession());
                 cEntry.setSection(section);
 
                 // But don't add things twice
@@ -275,9 +283,9 @@ public class CalendarProcessor implements OpenLegConstants {
             }
             catch (Exception e) {
                 if (cEntry != null)
-                    logger.warn("Error adding CalenderEntry: " + cEntry.getId(), e);
+                    logger.error("Error adding CalenderEntry: " + cEntry.getOid(), e);
                 else {
-                    logger.warn("Error adding CalenderEntry: ", e);
+                    logger.error("Error adding CalenderEntry: ", e);
                 }
             }
         }
@@ -330,7 +338,7 @@ public class CalendarProcessor implements OpenLegConstants {
 
 
             for(XMLCalno xmlCalno:xmlSequence.getCalnos().getCalno()) {
-                CalendarEntry cEntry = parseCalno(storage, sequence.getId(),xmlCalno, supplemental.getCalendar().getSessionYear());
+                CalendarEntry cEntry = parseCalno(storage, sequence.getId(),xmlCalno, supplemental.getCalendar().getSession());
                 cEntry.setSequence(sequence);
 
                 if (!calendarEntries.contains(cEntry))
@@ -347,7 +355,7 @@ public class CalendarProcessor implements OpenLegConstants {
         String calEntId = parentId + '-' + xmlCalNo.getNo();
 
         CalendarEntry calEntry = new CalendarEntry();
-        calEntry.setId(calEntId);
+        calEntry.setOid(calEntId);
 
         // remove all the leading 0's
         calEntry.setNo(xmlCalNo.getNo().replaceAll("^0*", ""));
@@ -365,7 +373,6 @@ public class CalendarProcessor implements OpenLegConstants {
         }
 
         // Get the bill for the entry, it may be marked has HIGH
-        // TODO: What is high? Importance maybe?
         if (xmlCalNo.getBill() != null)
         {
             calEntry.setBillHigh(xmlCalNo.getBill().getHigh());
@@ -400,21 +407,25 @@ public class CalendarProcessor implements OpenLegConstants {
     }
 
     private Bill getBill(Storage storage, String billId, int year, String sponsorName) {
-        String senateBillNo = billId.replaceAll("(?<=[A-Z])0*", "")+"-"+year;
-        String key = year+"/bill/"+senateBillNo;
-
         String[] sponsors = {""};
         if (sponsorName != null) {
             sponsors = sponsorName.trim().split(",");
         }
 
-        Bill bill = (Bill)storage.get(key, Bill.class);
-        if (bill == null) {
-            bill = new Bill();
-            bill.setYear(year);
-            bill.setSenateBillNo(senateBillNo);
-            bill.setSponsor(new Person(sponsors[0].trim()));
-            new BillProcessor().saveBill(bill, storage, new Date());
+        BillProcessor processor = new BillProcessor();
+        SOBIBlock mockBlock = new SOBIBlock(year+billId+(billId.matches("[A-Z]$") ? "" : " ")+1+"     ");
+
+        // This is a crappy situation, all bills on calendars should already exist but sometimes they won't.
+        // This almost exclusively because we are missing sobi files. It shouldn't happen in production but
+        // does frequently in development.
+        Bill bill = processor.getOrCreateBill(mockBlock, modifiedDate, storage);
+        bill.setSponsor(new Person(sponsors[0].trim()));
+
+        if (!bill.isPublished()) {
+            // It must be published if it is on the calendar
+            bill.setPublishDate(modifiedDate);
+            bill.setActive(true);
+            processor.saveBill(bill, storage);
         }
 
         // Other sponsors are removed when a calendar/agenda is resent without
@@ -426,7 +437,7 @@ public class CalendarProcessor implements OpenLegConstants {
 
         if (!bill.getOtherSponsors().equals(otherSponsors)) {
             bill.setOtherSponsors(otherSponsors);
-            new BillProcessor().saveBill(bill, storage, new Date());
+            processor.saveBill(bill, storage);
         }
 
         return bill;

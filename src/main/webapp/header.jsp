@@ -1,4 +1,4 @@
-<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, java.util.*, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="UTF-8"%>
+<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, java.util.*, java.util.Map.Entry, java.text.*,java.io.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 	String search = (String)request.getAttribute("search");
@@ -22,18 +22,35 @@
 		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;" />
 		<meta name="apple-mobile-web-app-capable" content="YES"/>
 		
-		<link rel="shortcut icon" href="<%=JSPHelper.getLink(request, "/img/nys_favicon_0.ico")%>" type="image/x-icon" />
+		<link rel="shortcut icon" href="<%=JSPHelper.getLink(request, "/static/img/nys_favicon_0.ico")%>" type="image/x-icon" />
 
-		<link rel="stylesheet" type="text/css" media="screen" href="<%=JSPHelper.getLink(request, "/style.css")%>"/>
- 		<link rel="stylesheet" type="text/css" media="print" href="<%=JSPHelper.getLink(request, "/style-print.css")%>"/>
-        <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/jquery-ui-1.10.3.min.css")%>" />
+        <link rel="stylesheet" type="text/css" href="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-1.10.3/themes/base/minified/jquery-ui.min.css")%>" />
+        <link rel="stylesheet" type="text/css" media="screen" href="<%=JSPHelper.getLink(request, "/static/css/style.css")%>"/>
+        <link rel="stylesheet" type="text/css" media="print" href="<%=JSPHelper.getLink(request, "/static/css/style-print.css")%>"/>
         
-		<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<%=JSPHelper.getLink(request, "/feed")%>" />
+        <%
+        @SuppressWarnings("unchecked")
+        HashMap<String, String> feeds = (HashMap<String, String>)request.getAttribute("feeds");
+        if (feeds != null) {
+            for (Entry<String, String> feed : feeds.entrySet()) { %>
+            <link rel="alternate" type="application/atom+xml" title="<%=feed.getKey()%>" href="<%=feed.getValue()%>" />
+            <% }
+        } %>
 		
-		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/jquery-1.9.1.min.js")%>"></script>
-		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/search.js")%>"></script>
-		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/jquery-ui-1.10.3.min.js")%>"></script>
-		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/js/app.js")%>"></script>
+		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-1.10.2/jquery.min.js")%>"></script>
+		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/vendor/jquery-ui-1.10.3/ui/minified/jquery-ui.min.js")%>"></script>
+		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/search.js")%>"></script>
+		<script type="text/javascript" src="<%=JSPHelper.getLink(request, "/static/js/app.js")%>"></script>
+
+        <%
+        @SuppressWarnings("unchecked")
+        HashMap<String, String> twitterMetaTags = (HashMap<String, String>)request.getAttribute("twitterMetaTags");
+        if (twitterMetaTags != null) {
+            for (Entry<String, String> entry : twitterMetaTags.entrySet()) {
+                %><meta name="<%=entry.getKey()%>" content="<%=entry.getValue()%>" />
+            <% }
+        }
+        %>
 
 	</head>
 	<body>
@@ -57,7 +74,7 @@
 		<c:if test="${param.useSearchBar != 'false'}">
 		<div id="content" class='searbar'>
 			<div id="logobox">
-				<a href="<%=JSPHelper.getLink(request, "/")%>"><img src="<%=JSPHelper.getLink(request, "/img/openwordlogo.gif")%>" /></a>
+				<a href="<%=JSPHelper.getLink(request, "/")%>"><img src="<%=JSPHelper.getLink(request, "/static/img/openwordlogo.gif")%>" /></a>
 			</div>
 			<div class='searchbox'>
 			<form method="get" action="<%=JSPHelper.getLink(request, "/search/")%>">

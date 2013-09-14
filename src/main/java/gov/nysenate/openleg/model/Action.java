@@ -1,187 +1,150 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.lucene.DocumentBuilder;
-import gov.nysenate.openleg.util.TextFormatter;
-
-import java.net.URLEncoder;
-import java.text.DateFormat;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
-import org.codehaus.jackson.annotate.JsonIgnore;
+/**
+ * Represents a single action on a single bill. E.g. REFERRED TO RULES
+ *
+ * Uniquely identified by Bill+Date.getTime()+Text.
+ *
+ * @author GraylinKim
+ */
+public class Action extends BaseObject
+{
+    /**
+     * This object's unique object id. Bill+Date.getTime()+Text.
+     */
+    private String oid = "";
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+    /**
+     * The date this action was performed. Has no time component.
+     */
+    private Date date = null;
 
-@XStreamAlias("action")
-public class Action extends SenateObject {
-
-    private String id;
-    private Date date;
+    /**
+     * The text of this action.
+     */
     private String text = "";
 
-    private Bill bill;
+    /**
+     * The bill this action was taken on.
+     */
+    private Bill bill = null;
 
-    public Action() {
+    /**
+     * JavaBean constructor.
+     */
+    public Action()
+    {
         super();
     }
 
-    public Action (Bill bill, Date eventDate, String eventText) {
-        this(bill.getSenateBillNo(), eventDate, eventText);
-    }
-
-    public Action(String billNumber, Date eventDate, String eventText) {
+    /**
+     * Fully constructs a new action.
+     *
+     * @param date - The date of the action
+     * @param text - The text of the action
+     * @param bill - The bill the action was performed on
+     */
+    public Action(Date date, String text, Bill bill) {
         super();
-        this.date = eventDate;
-        this.text = eventText;
-
-        try {
-            this.id = billNumber + "-" + eventDate.getTime() + "-" + URLEncoder.encode(eventText,"utf-8");
-        }
-        catch (Exception e) { }
+        this.bill = bill;
+        this.date = date;
+        this.text = text;
+        this.oid = this.bill.getBillId() + "-" + this.date.getTime() + "-" + this.text;
+        this.setPublishDate(this.date);
+        this.setModifiedDate(this.date);
+        this.setActive(bill.isActive());
+        this.setSession(bill.getSession());
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        calendar.setTime(date);
+        this.setYear(calendar.get(java.util.Calendar.YEAR));
     }
 
-    @JsonIgnore
-    public String getBillId() {
-        return id.substring(0,id.indexOf("-", id.indexOf("-") + 1));
+    /**
+     * @return - The object's otype
+     */
+    public String getOtype()
+    {
+        return "action";
     }
 
-
-    public String getId() {
-        return id;
+    /**
+     * @return - This object's unique object id.
+     */
+    public String getOid()
+    {
+        return this.oid;
     }
 
+    /**
+     * @param oid - The object's new oid.
+     */
+    public void setOid(String oid) {
+        this.oid = oid;
+    }
 
-
+    /**
+     * @return - The date of the action.
+     */
     public Date getDate() {
         return date;
     }
 
+    /**
+     * @param date - The new action date
+     */
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-
+    /**
+     * @return - The text of the action.
+     */
     public String getText() {
         return text;
     }
 
-
-
-    public void setId(String billEventId) {
-        this.id = billEventId;
+    /**
+     * @param text - The text of the action.
+     */
+    public void setText(String text) {
+        this.text = text;
     }
 
-
-
-    public void setDate(Date eventDate) {
-        this.date = eventDate;
-    }
-
-
-
-    public void setText(String eventText) {
-        this.text = eventText;
-    }
-
+    /**
+     * @return - The bill the action was performed on.
+     */
     public Bill getBill() {
         return bill;
     }
 
+    /**
+     * @param bill - The new bill to this action targets.
+     */
     public void setBill(Bill bill) {
         this.bill = bill;
     }
 
-
-
     @Override
     public boolean equals(Object obj) {
-
-        if (obj != null && obj instanceof Action)
-        {
+        if (obj != null && obj instanceof Action) {
             Action other = (Action)obj;
-
-            String thisId = TextFormatter.append(
-                    this.getText(),"-",
-                    this.getDate().getTime());
-            String thatId =  TextFormatter.append(
-                    other.getText(),"-",
-                    other.getDate().getTime());
-
-            return (thisId.equals(thatId));
+            return this.getOid().equals(other.getOid());
         }
-
-        return false;
+        else {
+            return false;
+        }
     }
 
-    @JsonIgnore
-    @Override
-    public HashMap<String, Fieldable> luceneFields() {
-        HashMap<String,Fieldable> fields = new HashMap<String,Fieldable>();
-
-        fields.put("when", new Field("when",date.getTime()+"",DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-        fields.put("billno", new Field("billno",getBillId(), DocumentBuilder.DEFAULT_STORE, DocumentBuilder.DEFAULT_INDEX));
-
-        return fields;
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneOid() {
-        return id;
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneOsearch() {
-
-        StringBuilder searchContent = new StringBuilder();
-        searchContent.append(getBillId()).append(" ");
-
-
-        searchContent.append(text);
-
-        return text.toString();
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneOtype() {
-        return "action";
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneSummary() {
-        return java.text.DateFormat.getDateInstance(DateFormat.MEDIUM).format(date);
-    }
-
-    @JsonIgnore
-    @Override
-    public String luceneTitle() {
-        return text;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    @JsonIgnore
     public int getYear() {
-        if(date != null) {
-            return date.getYear();
-        }
-        return 9999;
-    }
-
-    @Override
-    @JsonIgnore
-    public void merge(ISenateObject obj) {
-        return;
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(java.util.Calendar.YEAR);
     }
 
     public static class ByEventDate implements Comparator<Action> {
-
-        /*
-         * sorted newest to oldest
-         */
         @Override
         public int compare(Action be1, Action be2) {
             int ret = be1.getDate().compareTo(be2.getDate());
@@ -190,7 +153,6 @@ public class Action extends SenateObject {
             }
             return ret*-1;
         }
-
     }
 
     @Override
@@ -198,6 +160,3 @@ public class Action extends SenateObject {
         return date.toString()+" "+text;
     }
 }
-
-
-

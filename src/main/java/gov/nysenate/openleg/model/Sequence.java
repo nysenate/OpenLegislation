@@ -3,18 +3,10 @@ package gov.nysenate.openleg.model;
 import java.util.Date;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
-@XStreamAlias("sequence")
 public class Sequence {
 
-    @XStreamAsAttribute
     private String no;
 
-    @XStreamAsAttribute
     private String id;
 
     private Date actCalDate;
@@ -23,14 +15,10 @@ public class Sequence {
 
     private List<CalendarEntry> calendarEntries;
 
-    //	@HideFrom({Calendar.class, Supplemental.class})
     private String notes;
 
-    //	@HideFrom({Calendar.class, Supplemental.class})
     private Supplemental supplemental;
 
-
-    @JsonIgnore
     public Supplemental getSupplemental() {
         return supplemental;
     }

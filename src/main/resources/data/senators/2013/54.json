@@ -9,7 +9,7 @@
   "partyAffiliations" : [ "R", "C", "IP" ],
   "offices" : [ {
     "name" : "Albany Office",
-    "street" : "188 State Street",
+    "street" : "188 State Street,",
     "city" : "Albany",
     "postalCode" : "12247",
     "provinceName" : "New York",
@@ -19,9 +19,9 @@
     "phone" : "(518) 455-2366",
     "fax" : "(518) 426-6953",
     "otherPhone" : "",
-    "additional" : "Room 412, Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
+    "additional" : "Room 503, Capitol Building",
+    "latitude" : 42.652894,
+    "longitude" : -73.759161
   }, {
     "name" : "District Office",
     "street" : "119 Fall Street",

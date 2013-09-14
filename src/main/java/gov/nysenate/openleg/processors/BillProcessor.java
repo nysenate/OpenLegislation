@@ -32,11 +32,14 @@ import org.apache.log4j.Logger;
  *     BillProcessor.process(new File('path/to/sobi_file.txt'), new Storage(new File('storage/directory')));
  * </pre>
  *
- * First the incoming file is broken down into independent SOBIBlocks. Each SOBIBlock operates atomically on a
- * single bill by loading it from storage, applying the block's data, and saving the changes back to storage.
+ * First the incoming file is broken down into independent SOBIBlocks. Each {@link SOBIBlock} operates atomically
+ * on a single bill by loading it from storage, applying the block's data, and saving the changes back to storage.
  *
- * @author graylinkim
- * @link SOBIBlock
+ * All individual blocks updating a bill are ALWAYS sent in full. Bill fields should never be updated, only replaced.
+ *
+ * @author GraylinKim
+ *
+ * @see SOBIBlock
  */
 public class BillProcessor
 {
@@ -53,7 +56,7 @@ public class BillProcessor
     protected static SimpleDateFormat eventDateFormat = new SimpleDateFormat("MM/dd/yy");
 
     /**
-     * Date format found in SOBIBlock[v] vote memo blocks. e.g. 02/05/2013
+     * Date format found in SOBIBlock[V] vote memo blocks. e.g. 02/05/2013
      */
     protected static SimpleDateFormat voteDateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
@@ -63,7 +66,7 @@ public class BillProcessor
     public static Pattern voteHeaderPattern = Pattern.compile("Senate Vote    Bill: (.{18}) Date: (.{10}).*");
 
     /**
-     * The expected format for recorded votes in the vote memo. e.g. 'AYE  ADAMS          '
+     * The expected format for recorded votes in the SOBIBlock[V] vote memo blocks; e.g. 'AYE  ADAMS          '
      */
     protected static Pattern votePattern = Pattern.compile("(.{4}) (.{1,15})");
 
@@ -105,9 +108,9 @@ public class BillProcessor
     public static Pattern substituteEventTextPattern = Pattern.compile("SUBSTITUTED (FOR|BY) (.*)");
 
 
+    @SuppressWarnings("serial")
     public static class ParseError extends Exception
     {
-        private static final long serialVersionUID = -2394555333799843588L;
         public ParseError(String message) { super(message); }
     }
 
@@ -131,46 +134,37 @@ public class BillProcessor
             return;
         }
 
+        // Set the context for all future changes logged.
+        ChangeLogger.setContext(sobiFile, date);
+
         // Catch exceptions on a per-block basis so that a single error won't corrupt the whole file.
         for (SOBIBlock block : getBlocks(sobiFile)) {
             logger.info("Processing "+block);
             try {
-
-                if (block.getType() == '1' && block.getData().startsWith("DELETE")) {
-                    // Special case here were we delete the whole bill
-                    // TODO: This might actually be a soft delete!
-                    logger.info("DELETING "+block.getHeader());
-                    deleteBill(block, storage, date);
+                String data = block.getData().toString();
+                Bill bill = getOrCreateBill(block, date, storage);
+                switch (block.getType()) {
+                    case '1': applyBillInfo(data, bill, date); break;
+                    case '2': applyLawSection(data, bill, date); break;
+                    case '3': applyTitle(data, bill, date); break;
+                    case '4': applyBillEvent(data, bill, date); break;
+                    case '5': applySameAs(data, bill, date); break;
+                    case '6': applySponsor(data, bill, date); break;
+                    case '7': applyCosponsors(data, bill, date); break;
+                    case '8': applyMultisponsors(data, bill, date); break;
+                    case '9': applyProgramInfo(data, bill, date); break;
+                    case 'A': applyActClause(data, bill, date); break;
+                    case 'B': applyLaw(data, bill, date); break;
+                    case 'C': applySummary(data, bill, date); break;
+                    case 'M': // Sponsor memo text - handled by applyText
+                    case 'R': // Resolution text - handled by applyText
+                    case 'T': applyText(data, bill, date); break;
+                    case 'V': applyVoteMemo(data, bill, date); break;
+                    default: throw new ParseError("Invalid Line Code "+block.getType() );
                 }
-                else {
-                    // Otherwise, apply the block to the bill normally
-                    String data = block.getData().toString();
-                    Bill bill = getOrCreateBill(block, storage, date);
-                    switch (block.getType()) {
-                        case '1': applyBillInfo(data, bill, date); break;
-                        case '2': applyLawSection(data, bill, date); break;
-                        case '3': applyTitle(data, bill, date); break;
-                        case '4': applyBillEvent(data, bill, date); break;
-                        case '5': applySameAs(data, bill, date); break;
-                        case '6': applySponsor(data, bill, date); break;
-                        case '7': applyCosponsors(data, bill, date); break;
-                        case '8': applyMultisponsors(data, bill, date); break;
-                        case '9': applyProgramInfo(data, bill, date); break;
-                        case 'A': applyActClause(data, bill, date); break;
-                        case 'B': applyLaw(data, bill, date); break;
-                        case 'C': applySummary(data, bill, date); break;
-                        case 'M':
-                        case 'R':
-                        case 'T': applyText(data, bill, date); break;
-                        case 'V': applyVoteMemo(data, bill, date); break;
-                        default: throw new ParseError("Invalid Line Code "+block.getType() );
-                    }
-                    logger.info("SAVING: "+bill.getSenateBillNo());
-                    bill.addSobiReference(sobiFile.getName());
-                    bill.setModified(date.getTime());
-                    saveBill(bill, storage, date);
-
-                }
+                logger.info("SAVING: "+bill.getBillId());
+                bill.addDataSource(sobiFile.getName());
+                saveBill(bill, storage);
             }
             catch (ParseError e) {
                 logger.error("ParseError at "+block.getLocation(), e);
@@ -246,99 +240,67 @@ public class BillProcessor
      * @return
      * @throws ParseError
      */
-    public Bill getOrCreateBill(SOBIBlock block, Storage storage, Date date) throws ParseError
+    public Bill getOrCreateBill(SOBIBlock block, Date date, Storage storage)
     {
-        String billKey = block.getPrintNo()+block.getAmendment()+"-"+block.getYear();
-        Bill bill = storage.getBill(billKey);
+        String billId = block.getPrintNo()+block.getAmendment()+"-"+block.getYear();
+        Bill bill = storage.getBill(block.getPrintNo()+block.getAmendment(), block.getYear());
 
-        if (bill != null) {
-            // We retrieved the bill successfully!
+        if (bill == null) {
+            bill = new Bill(billId, block.getYear());
+            bill.setModifiedDate(date);
+        }
+
+        // If this bill is currently published or it is a new base bill
+        // then we don't need to worry about syncing up all the versions.
+        if (bill.isPublished() || block.getAmendment().isEmpty()) {
             return bill;
+        }
+
+        // All amendments are based on the original bill. New and unpublished
+        // bill amendments need to sync certain data with the base bill.
+        String baseBillId = block.getPrintNo()+"-"+block.getYear();
+        Bill baseBill = storage.getBill(block.getPrintNo(), block.getYear());
+        if (baseBill == null) {
+            // Amendments should always have original bills already made, make it happen
+            logger.warn("Bill Amendment filed without initial bill at "+block.getLocation()+" - "+block.getHeader());
+            baseBill = new Bill(baseBillId, block.getYear());
+            baseBill.setModifiedDate(date);
+            // TODO: This isn't quite right since it isn't published..
+            // ??/
+            storage.set(baseBill);
         }
         else {
-            // Check to see if we've previously deleted this bill
-            bill = (Bill)storage.restore(billKey, Bill.class);
-
-            if (block.getAmendment().isEmpty()) {
-                if (bill == null) {
-                    // New base bill. Easy.
-                    return new Bill(billKey, block.getYear());
-                }
-                else {
-                    // Bringing back deleted base bill, also easy.
-                    return bill;
-                }
-            }
-
-            if (bill == null) {
-                // No previous record found, create a new amendment
-                bill = new Bill(billKey, block.getYear());
-            }
-
-            // All amendments are based on the original bill
-            // We need to do this for resurrected bills too because there
-            // may have been updates to other versions since the bill was deleted.
-            String baseKey = block.getPrintNo()+"-"+block.getYear();
-            Bill baseBill = storage.getBill(baseKey);
-
-            if (baseBill == null) {
-                // Amendments should always have original bills already made, make it happen
-                logger.error("Bill Amendment filed without initial bill at "+block.getLocation()+" - "+block.getHeader());
-                baseBill = new Bill(baseKey, block.getYear());
-                storage.saveBill(baseBill);
-                ChangeLogger.record(baseBill.getKey(), storage, date);
-            }
-
-            // Pull sponsor information up from the base bill
-            bill.setSponsor(baseBill.getSponsor());
-            bill.setCoSponsors(baseBill.getCoSponsors());
-            bill.setOtherSponsors(baseBill.getOtherSponsors());
-            bill.setMultiSponsors(baseBill.getMultiSponsors());
-
-            // Pull up the list of existing versions and add yourself
-            bill.addAmendment(baseKey);
-            bill.addAmendments(baseBill.getAmendments());
-
-            // Broadcast yourself to all other versions and deactivate them
-            Bill activeBill = null;
-            for (String versionKey : bill.getAmendments()) {
-                Bill billVersion = storage.getBill(versionKey);
-                if (billVersion == null) {
-                    throw new ParseError("Recorded bill version not found in storage: "+versionKey);
-                }
-                else {
-                    billVersion.addAmendment(billKey);
-                    if(billVersion.isActive()) {
-                        activeBill = billVersion;
-                        billVersion.setActive(false);
-                    }
-                    storage.saveBill(billVersion);
-                    ChangeLogger.record(billVersion.getKey(), storage, date);
-                }
-            }
-
-            if (activeBill == null) {
-                logger.error("Unable to find active bill for "+bill.getSenateBillNo()+". BIG PROBLEM!");
-                logger.error("Versions: "+bill.getAmendments());
-                activeBill = baseBill;
-            }
-
-            if (activeBill.getModified() > bill.getModified()) {
-                // Pull some other information up from previously active bill
-                bill.setSummary(activeBill.getSummary());
-                bill.setTitle(activeBill.getTitle());
-                bill.setActClause(activeBill.getActClause());
-                bill.setLawSection(activeBill.getLawSection());
-                bill.setLaw(activeBill.getLaw());
-
-                // Activate yourself
-                bill.setActive(true);
-                storage.saveBill(bill);
-                ChangeLogger.record(bill.getKey(), storage, date);
-            }
-
-            return bill;
+            // Base bills are always the first "amendment" to a bill.
+            bill.setAmendments(new ArrayList<String>(Arrays.asList(baseBillId)));
         }
+
+        // Grab any other amendments that the base bill knows about.
+        bill.addAmendments(baseBill.getAmendments());
+
+        // Pull shared information up from the base bill
+        bill.setSponsor(baseBill.getSponsor());
+        bill.setCoSponsors(baseBill.getCoSponsors());
+        bill.setOtherSponsors(baseBill.getOtherSponsors());
+        bill.setMultiSponsors(baseBill.getMultiSponsors());
+        bill.setSummary(baseBill.getSummary());
+        bill.setLaw(baseBill.getLaw());
+
+        // Some information isn't exactly shared but should be pulled
+        // up from the previously active version of the bill until a
+        // proper update comes through for the data.
+        for (String versionKey : bill.getAmendments()) {
+            // Sometimes a re-published bill version was more recently updated than the
+            // currently active bill version. In these cases, don't update values.
+            Bill billVersion = storage.getBill(versionKey);
+            logger.info(versionKey + " - "+billVersion.getModifiedDate()+"; "+bill.getBillId() + " - "+bill.getModifiedDate());
+            if (billVersion.isActive() && billVersion.getModifiedDate().getTime() > bill.getModifiedDate().getTime()) {
+                bill.setTitle(billVersion.getTitle());
+                bill.setActClause(billVersion.getActClause());
+                bill.setLawSection(billVersion.getLawSection());
+            }
+        }
+
+        return bill;
     }
 
 
@@ -349,169 +311,136 @@ public class BillProcessor
      * @param bill
      * @param storage
      */
-    public void saveBill(Bill bill, Storage storage, Date date)
+    public void saveBill(Bill bill, Storage storage)
     {
+        logger.info("saving "+bill.getBillId());
         // Until LBDC starts sending coPrime information for real we need overrides
         // for the following set of bills and resolutions
-        if (bill.getSenateBillNo().equals("R314-2013")) {
-            // For reso R314  - Skelos, Klein as sponsors
+        if (bill.getBillId().equals("R314-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
         }
-        else if (bill.getSenateBillNo().equals("J375-2013")) {
-            // For reso J375  - Stewart-Cousins, Skelos, Klein as sponsors
+        else if (bill.getBillId().equals("J375-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("SKELOS"), new Person("KLEIN")));
         }
-        else if (bill.getSenateBillNo().equals("R633-2013")) {
-            // For reso R633  - Skelos, Klein as sponsors
+        else if (bill.getBillId().equals("R633-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
         }
-        else if (bill.getSenateBillNo().equals("J694-2013")) {
-            // For reso J694  - Skelos, Klein as sponsors
+        else if (bill.getBillId().equals("J694-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
         }
-        else if (bill.getSenateBillNo().equals("J758-2013")) {
-            // For reso J758 - Klein, Skelos as sponsors
+        else if (bill.getBillId().equals("J758-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("SKELOS")));
         }
-        else if (bill.getSenateBillNo().equals("R818-2013")) {
-            // For reso J818 -  Skelos, Klein as sponsors (there is no J818, typo?)
+        else if (bill.getBillId().equals("R818-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
         }
-        else if (bill.getSenateBillNo().equals("J844-2013")) {
-            // For reso J844  - Skelos, Klein as sponsors
+        else if (bill.getBillId().equals("J844-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
         }
-        else if (bill.getSenateBillNo().equals("J860-2013")) {
-            // For reso J860  - Gianaris, Skelos as sponsors
+        else if (bill.getBillId().equals("J860-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("SKELOS")));
         }
-        else if (bill.getSenateBillNo().equals("J1608-2013")) {
-            // For reso J1608 - Skelos, Klein, Stewart-Cousins as sponsors
+        else if (bill.getBillId().equals("J1608-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("KLEIN"), new Person("STEWART-COUSINS")));
         }
-        else if (bill.getSenateBillNo().equals("J1938-2013")) {
-            // For reso J1938 - Skelos, Klein, Stewart-Cousins as sponsors
+        else if (bill.getBillId().equals("J1938-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("KLEIN"), new Person("STEWART-COUSINS")));
         }
-        else if (bill.getSenateBillNo().equals("J3100-2013")) {
-            // For reso J3100 - Skelos, Hannon as sponsors
+        else if (bill.getBillId().equals("J3100-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("HANNON")));
         }
-        else if (bill.getSenateBillNo().equals("S2107-2013")) {
-            // For bill S2107 - Skelos, Klein as sponsors
+        else if (bill.getBillId().equals("S2107-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
         }
-        else if (bill.getSenateBillNo().equals("S3953-2013")) {
-            // For bill S3953  - Klein, Espaillat as sponsors
+        else if (bill.getBillId().equals("S3953-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("ESPAILLAT")));
         }
-        else if (bill.getSenateBillNo().equals("S5441-2013")) {
-            // For bill S5441 - KENNEDY, GRISANTI, RANZENHOFER, GALLIVAN
+        else if (bill.getBillId().equals("S5441-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("GRISANTI"), new Person("RANZENHOFER"), new Person("GALLIVAN")));
         }
-        else if (bill.getSenateBillNo().equals("S5656-2013")) {
-            // For bill S5656 - MARCELLINO, FUSCHILLO
+        else if (bill.getBillId().equals("S5656-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("FUSCHILLO")));
         }
-        else if (bill.getSenateBillNo().equals("S5657-2013")) {
-            // For bill S5657 - GALLIVAN, MARCHIONE, CARLUCCI
+        else if (bill.getBillId().equals("S5657-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("MARCHIONE"), new Person("CARLUCCI")));
         }
-        else if (bill.getSenateBillNo().equals("S5683-2013")) {
-            // For bill S5683 - MARTINS, VALESKY
+        else if (bill.getBillId().equals("S5683-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("VALESKY")));
         }
 
-        // Sponsor and summary information needs to be synced at all times.
-        // Uni bills share text, always sent to the senate bill.
-        // Normally it is always sent to the base bill and broadcasted to amendments
-        // In our 2009 data set we are missing tons of base amendments and it actually
-        // needs to be broadcasted backwards to the original bill.
-        for (String versionKey : bill.getAmendments()) {
-            Bill billVersion = storage.getBill(versionKey);
-            billVersion.setSponsor(bill.getSponsor());
-            billVersion.setCoSponsors(bill.getCoSponsors());
-            billVersion.setOtherSponsors(bill.getOtherSponsors());
-            billVersion.setMultiSponsors(bill.getMultiSponsors());
-            billVersion.setLawSection(bill.getLawSection());
-            billVersion.setSummary(bill.getSummary());
-            storage.saveBill(billVersion);
-            ChangeLogger.record(billVersion.getKey(), storage, date);
-        }
-
-        if (bill.isUniBill()) {
-            // logger.error("UNIBILL: "+bill.getSenateBillNo()+", "+bill.getSameAs());
-            Bill uniBill = storage.getBill(bill.getSameAs());
-            if (uniBill != null) {
-                String billText = bill.getFulltext();
-                String uniBillText = uniBill.getFulltext();
-
-                if (billText.isEmpty()) {
-                    logger.info(bill.getSenateBillNo()+" is empty");
-                    if (!uniBillText.isEmpty()) {
-                        // if we are empty then we must need their text
-                        logger.info("taking text from "+bill.getSameAs());
-                        bill.setFulltext(uniBillText);
-                    }
-                    else {
-                        logger.info("but there is no text to grab from "+bill.getSameAs());
-                    }
+        if (bill.isPublished()) {
+            // Sponsor and summary information needs to be synced at all times.
+            // Normally it is always sent to the base bill and broadcasted to amendments
+            // In our 2009 data set we are missing tons of base amendments and it actually
+            // needs to be broadcasted backwards to the original bill.
+            // Make sure we are in the amendment list and that if we are active, that no one else is
+            for (String versionKey : bill.getAmendments()) {
+                Bill billVersion = storage.getBill(versionKey);
+                if (!billVersion.getAmendments().contains(bill.getBillId())) {
+                    billVersion.addAmendment(bill.getBillId());
                 }
-                else if (!billText.equals(uniBillText)) {
-                    logger.info("My text has been updated, sharing with "+bill.getSameAs());
-                    // If we differ, then we must have just changed, share the text
-                    uniBill.setFulltext(bill.getFulltext());
+                if (bill.isActive()) {
+                    billVersion.setActive(false);
                 }
-                else {
-                    logger.info("we have the same text");
-                }
-
-                storage.saveBill(uniBill);
+                billVersion.setSponsor(bill.getSponsor());
+                billVersion.setCoSponsors(bill.getCoSponsors());
+                billVersion.setOtherSponsors(bill.getOtherSponsors());
+                billVersion.setMultiSponsors(bill.getMultiSponsors());
+                billVersion.setLawSection(bill.getLawSection());
+                billVersion.setSummary(bill.getSummary());
+                storage.set(billVersion);
+                ChangeLogger.record(storage.key(billVersion), storage);
             }
-        }
-        storage.saveBill(bill);
-        ChangeLogger.record(bill.getKey(), storage, date);
-    }
+            if (bill.isUniBill()) {
+                // Uni bills share text, always sent to the senate bill.
+                Bill uniBill = storage.getBill(bill.getSameAs());
+                if (uniBill != null) {
+                    String billText = bill.getFulltext();
+                    String uniBillText = uniBill.getFulltext();
 
-    /**
-     * Safely deletes the bill specified from by the block. This removes all references to the bill
-     * from its amendments and, if the bill was currently active, resets the active bill to be the
-     * most recent amendment.
-     *
-     * @param block
-     * @param storage
-     * @throws ParseError
-     */
-    public void deleteBill(SOBIBlock block, Storage storage, Date date) throws ParseError, IOException
-    {
-        String billKey = block.getPrintNo()+block.getAmendment()+"-"+block.getYear();
-        Bill bill = storage.getBill(billKey);
+                    if (billText.isEmpty()) {
+                        if (!uniBillText.isEmpty()) {
+                            // if we are empty then we must need their text
+                            bill.setFulltext(uniBillText);
+                        }
+                    }
+                    else if (!billText.equals(uniBillText)) {
+                        // If we differ, then we must have just changed, share the text
+                        uniBill.setFulltext(bill.getFulltext());
+                    }
+                    storage.set(uniBill);
+                }
+            }
 
-        if (bill == null) {
-            // If we can't find a bill they are asking us to delete, don't worry about it.
-            throw new ParseError("New bill with DELETE command only. Skipping "+block.getHeader()+block.getData().toString());
+            storage.set(bill);
+            ChangeLogger.record(storage.key(bill), storage);
         }
         else {
+            // When saving an unpublished bill make sure that references to it are removed
+            // from other bills and find a new bill to make active.
             List<String> amendments = bill.getAmendments();
             if (amendments.size() > 0) {
-                // Set the previous amendment to be the active one
+                // This assumes that the last amendment on the list is the most recent one.
                 // TODO: In rare cases with multiple substitutions this might not be the right thing to do!
                 String newActiveBill = amendments.get(amendments.size()-1);
 
-                // Remove all references to the current bill/amendment.
+                // Remove all references to the unpublished bill from other versions.
                 for (String versionKey : bill.getAmendments()) {
                     Bill billVersion = storage.getBill(versionKey);
-                    billVersion.removeAmendment(billKey);
+                    billVersion.removeAmendment(bill.getBillId());
                     if (bill.isActive() && versionKey.equals(newActiveBill)) {
                         billVersion.setActive(true);
                     }
-                    storage.saveBill(billVersion);
-                    ChangeLogger.record(billVersion.getKey(), storage, date);
+                    storage.set(billVersion);
+                    ChangeLogger.record(storage.key(billVersion), storage);
                 }
             }
-            String key = bill.getYear()+"/bill/"+billKey;
-            storage.del(key);
-            ChangeLogger.delete(key, storage, date);
+            // Deactivate ourselves.
+            bill.setActive(false);
+            storage.set(bill);
+            if (!bill.isBrandNew()) {
+                ChangeLogger.delete(storage.key(bill), storage);
+            }
         }
     }
 
@@ -519,7 +448,7 @@ public class BillProcessor
      * Applies the data to the bill title. Strips out all whitespace formatting and replaces
      * existing content in full.
      * <p>
-     * The bill title is a required field and cannot be deleted.
+     * The bill title is a required field and cannot be deleted, only replaced.
      *
      * @param data
      * @param bill
@@ -528,8 +457,6 @@ public class BillProcessor
      */
     public void applyTitle(String data, Bill bill, Date date) throws ParseError
     {
-        // No DELETE code for titles, they just get replaced
-        // Combine the lines with a space
         bill.setTitle(data.replace("\n", " ").trim());
     }
 
@@ -557,7 +484,7 @@ public class BillProcessor
                 if (sameAsMatcher.group(1) != null && !sameAsMatcher.group(1).isEmpty()) {
                     bill.setUniBill(true);
                 }
-                bill.setSameAs(sameAsMatcher.group(2).replace("-","").replace(" ","")+"-"+bill.getYear());
+                bill.setSameAs(sameAsMatcher.group(2).replace("-","").replace(" ","")+"-"+bill.getSession());
             } else {
                 logger.error("sameAsPattern not matched: "+data);
             }
@@ -565,7 +492,9 @@ public class BillProcessor
     }
 
     /**
-     * Applies data to bill sponsor. Fully replaces existing sponsor information.
+     * Applies data to bill sponsor. Fully replaces existing sponsor information. Because
+     * this is a one line field the block parser is sometimes tricked into combining consecutive
+     * blocks. Make sure to process the data 1 line at a time.
      * <p>
      * A delete in these field removes all sponsor information.
      *
@@ -603,10 +532,8 @@ public class BillProcessor
     public void applyCosponsors(String data, Bill bill, Date date) throws ParseError
     {
         ArrayList<Person> coSponsors = new ArrayList<Person>();
-        if (!data.trim().isEmpty()) {
-            for(String coSponsor : data.replace("\n", " ").split(",")) {
-                coSponsors.add(new Person(coSponsor.trim()));
-            }
+        for(String coSponsor : data.replace("\n", " ").split(",")) {
+            coSponsors.add(new Person(coSponsor.trim()));
         }
         bill.setCoSponsors(coSponsors);
     }
@@ -625,10 +552,8 @@ public class BillProcessor
     public void applyMultisponsors(String data, Bill bill, Date date) throws ParseError
     {
         ArrayList<Person> multiSponsors = new ArrayList<Person>();
-        if (!data.trim().isEmpty()) {
-            for(String multiSponsor : data.replace("\n", " ").split(",")) {
-                multiSponsors.add(new Person(multiSponsor.trim()));
-            }
+        for(String multiSponsor : data.replace("\n", " ").split(",")) {
+            multiSponsors.add(new Person(multiSponsor.trim()));
         }
         bill.setMultiSponsors(multiSponsors);
     }
@@ -651,8 +576,8 @@ public class BillProcessor
         if (data.trim().startsWith("DELETE")) {
             bill.setLaw("");
             bill.setSummary("");
-
-        } else {
+        }
+        else {
             bill.setLaw(data.replace("\n", " ").trim());
         }
     }
@@ -676,7 +601,7 @@ public class BillProcessor
     /**
      * Applies data to law section. Fully replaces existing data.
      * <p>
-     * Delete code is sent through the law block.
+     * Cannot be deleted, only replaced.
      *
      * @param data
      * @param bill
@@ -702,7 +627,8 @@ public class BillProcessor
     {
         if (data.trim().equals("DELETE")) {
             bill.setActClause("");
-        } else {
+        }
+        else {
             bill.setActClause(data.replace("\n", " ").trim());
         }
     }
@@ -733,8 +659,7 @@ public class BillProcessor
      * Currently fills in blank sponsors (doesn't replace existing sponsor information)
      * and previous version information (which has known issues).
      * <p>
-     * A DELETE code sent with this block removes the whole bill and is handled separately
-     * in the process method.
+     * A DELETE code sent with this block causes the bill to be unpublished.
      *
      * @param data
      * @param bill
@@ -743,6 +668,19 @@ public class BillProcessor
      */
     public void applyBillInfo(String data, Bill bill, Date date) throws ParseError
     {
+        if (data.startsWith("DELETE")) {
+            bill.setPublishDate(null);
+            return;
+        }
+
+        else if (bill.isPublished() == false) {
+            // When we get a status line for an unpublished bill, (re)publish it and activate it
+            // TODO: Marking as active isn't always the right thing to do. A base bill could be
+            //       unpublished/republished behind a currently active amendment for now particular reason.
+            bill.setPublishDate(date);
+            bill.setActive(true);
+        }
+
         Matcher billData = billInfoPattern.matcher(data);
         if (billData.find()) {
             //TODO: Find a possible use for this information
@@ -752,7 +690,7 @@ public class BillProcessor
             String oldbill = billData.group(4).trim().replaceAll("[0-9`-]$", "");
             //String lbdnum = billData.group(5);
 
-            if (!sponsor.isEmpty() && bill.getSponsor() == null) {
+            if (!sponsor.isEmpty() && (bill.getSponsor() == null || bill.getSponsor().getFullname().isEmpty())) {
                 bill.setSponsor(new Person(sponsor));
             }
             bill.addPreviousVersion(oldbill);
@@ -798,11 +736,21 @@ public class BillProcessor
                 // TODO: this assumes they are the same vote sent twice, what else could happen?
                 //Start over if we hit a header, sometimes we get back to back entries.
                 try {
+                    // Use the old vote if we can find it, otherwise make a new one using now as the publish date
                     vote = new Vote(bill, voteDateFormat.parse(voteHeader.group(2)), Vote.VOTE_TYPE_FLOOR, "1");
-                }
-                catch (ParseException e) {
+                    vote.setPublishDate(date);
+                    for (Vote oldVote : bill.getVotes()) {
+                        if (oldVote.equals(vote)) {
+                            // If we've received this vote before, use the old publish date
+                            vote.setPublishDate(oldVote.getPublishDate());
+                            break;
+                        }
+                    }
+                    vote.setModifiedDate(date);
+                } catch (ParseException e) {
                     throw new ParseError("voteDateFormat not matched: "+line);
                 }
+
             }
             else if (vote!=null){
                 //Otherwise, build the existing vote
@@ -837,7 +785,7 @@ public class BillProcessor
         }
 
         // Misnomer, will actually update the vote if it already exists
-        bill.addVote(vote);
+        bill.updateVote(vote);
     }
 
     /**
@@ -966,7 +914,7 @@ public class BillProcessor
      */
     public void applyBillEvent(String data, Bill bill, Date date) throws ParseError
     {
-        ArrayList<Action> events = new ArrayList<Action>();
+        ArrayList<Action> actions = new ArrayList<Action>();
         String sameAs = bill.getSameAs();
         Boolean stricken = false;
         String currentCommittee = "";
@@ -988,13 +936,14 @@ public class BillProcessor
                     // TODO: account for multiple action blocks for the same bill in a row
                     Calendar c = Calendar.getInstance();
                     c.setTime(eventDate);
-                    for(Action event : events) {
+                    for(Action event : actions) {
                         if(event.getDate().equals(c.getTime())) {
                             c.set(Calendar.SECOND, c.get(Calendar.SECOND) + 1);
                         }
                     }
-
-                    events.add(new Action(bill, c.getTime(), eventText));
+                    Action action = new Action(c.getTime(), eventText, bill);
+                    action.setBill(null); // This is terribad.
+                    actions.add(action);
 
                     eventText = eventText.toUpperCase();
 
@@ -1014,7 +963,7 @@ public class BillProcessor
                         }
                         currentCommittee = "";
                     } else if(substituteEventText.find()) {
-                        sameAs = substituteEventText.group(2)+"-"+bill.getYear();
+                        sameAs = substituteEventText.group(2)+"-"+bill.getSession();
 //                        String newSameAs = substituteEventText.group(2);
 //                        for(String billId : sameAs.split(",")) {
 //                            if (!billId.trim().isEmpty()) {
@@ -1032,7 +981,7 @@ public class BillProcessor
             }
         }
 
-        bill.setActions(events);
+        bill.setActions(actions);
         bill.setSameAs(sameAs);
         bill.setCurrentCommittee(currentCommittee);
         bill.setPastCommittees(pastCommittees);

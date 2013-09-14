@@ -3,12 +3,6 @@ package gov.nysenate.openleg.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
-@XStreamAlias("section")
-
 public class Section {
 
     private String id;
@@ -35,7 +29,6 @@ public class Section {
         this.id = id;
     }
 
-    @JsonIgnore
     public Supplemental getSupplemental() {
         return supplemental;
     }
@@ -87,7 +80,4 @@ public class Section {
 
         return false;
     }
-
-
-
 }

@@ -1,4 +1,4 @@
-<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.search.*,gov.nysenate.openleg.model.*"  contentType="text/html" pageEncoding="utf-8" %>
+<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*"  contentType="text/html" pageEncoding="utf-8" %>
 <%
     response.setHeader("Access-Control-Allow-Origin","*");
 
@@ -13,7 +13,7 @@
         try {
             Result r = it.next();
             String contentType = r.getOtype();
-            String contentId = r.getOid();
+            String contentId = r.getOid().toUpperCase();
             String contentTitle = r.getTitle();
 
             if (contentType.equals("vote")) {
@@ -30,7 +30,7 @@
             String liLink = JSPHelper.getLink(request, "/"+contentType+"/"+contentId);
             String liText = r.getOtype().toUpperCase()+": ";
             if (r.getOtype().equals("bill")) {
-                liText += r.getOid()+" ";
+                liText += contentId+" ";
             }
             liText += " - "+contentTitle;
             if (r.getFields().get("sameas")!=null) {

@@ -1,5 +1,10 @@
 package gov.nysenate.openleg.tests;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
@@ -14,9 +19,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.time.DateUtils;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 /*
  * Tests if bill data is equal to the data in the associated SOBI file.
@@ -167,13 +169,13 @@ public class BillTests
      * Tests the Bill Status Actions found in SOBI line type/prefix 4.
      */
     public static void testBillStatusActions(Environment env, File sobiDirectory,
-            Storage storage, String billKey, String sobi, ArrayList<String[]> actionString, String billNumber)
+            Storage storage, String billKey, String sobi, ArrayList<String[]> actionString, Bill bill)
     {
-        List<Action> expectedActions = TestHelper.convertIntoActions(actionString, billNumber);
+        List<Action> expectedActions = TestHelper.convertIntoActions(actionString, bill);
         File[] initialSobi = TestHelper.getFilesByName(sobiDirectory, sobi);
         TestHelper.processFile(env, initialSobi);
-        Bill bill = TestHelper.getBill(storage, billKey);
-        List<Action> actions = bill.getActions();
+        Bill storageBill = TestHelper.getBill(storage, billKey);
+        List<Action> actions = storageBill.getActions();
         for(int i = 0; i < actions.size(); i++) {
             // Test status action text
             assertThat(actions.get(i).getText(), is(expectedActions.get(i).getText()));
@@ -226,7 +228,6 @@ public class BillTests
         assertThat(bill.getSummary(), is(expectedSummary));
     }
 
-    // TODO: do we want this to just test if it exists or test all of its text?
     public static void testSponsorMemo(Environment env, File sobiDirectory,
             Storage storage, String billKey, String sobi, String expectedMemo)
     {

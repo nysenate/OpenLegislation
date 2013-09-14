@@ -1,32 +1,32 @@
-<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, gov.nysenate.openleg.util.OpenLegConstants,gov.nysenate.openleg.search.SenateResponse,gov.nysenate.openleg.search.Result,java.text.SimpleDateFormat, java.util.Iterator"  contentType="text/html" pageEncoding="utf-8" %><%
+<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, gov.nysenate.openleg.util.OpenLegConstants,gov.nysenate.openleg.model.SenateResponse,gov.nysenate.openleg.model.Result,java.text.SimpleDateFormat, java.util.Iterator"  contentType="text/html" pageEncoding="utf-8" %><%
 
-String appPath = request.getContextPath();
-
-String term = (String)request.getAttribute("term");
-
-String sortField = (String)request.getAttribute("sortField");
-String type = (String)request.getAttribute("type");
-String search = (String)request.getAttribute("search");
 String urlPath = (String)request.getAttribute("urlPath");
 String filter = (String) request.getAttribute("filter");
 
-if(search != null)
+String term = (String)request.getAttribute("term");
+String search = (String)request.getAttribute("search");
+if(search != null) {
 	term = search;
-
+}
 term = java.net.URLEncoder.encode(term, "UTF-8");
 
 boolean sortOrder = true;
-if (request.getAttribute("sortOrder")!=null)
-			sortOrder = Boolean.parseBoolean((String)request.getAttribute("sortOrder"));
-			
-if (sortField == null)
-	sortField = "";
-	
-if (type == null)
-	type = "";
+if (request.getAttribute("sortOrder")!=null) {
+	sortOrder = Boolean.parseBoolean((String)request.getAttribute("sortOrder"));
+}
 
-int pageIdx = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_IDX));
-int pageSize = Integer.parseInt((String)request.getAttribute(OpenLegConstants.PAGE_SIZE));
+String sortField = (String)request.getAttribute("sortField");
+if (sortField == null) {
+	sortField = "";
+}
+	
+String type = (String)request.getAttribute("type");
+if (type == null) {
+	type = "";
+}
+
+int pageIdx = (Integer)request.getAttribute(OpenLegConstants.PAGE_IDX);
+int pageSize = (Integer)request.getAttribute(OpenLegConstants.PAGE_SIZE);
 
 int startIdx = (pageIdx - 1) * pageSize;
 int endIdx = startIdx + pageSize;
@@ -41,13 +41,11 @@ if (total < endIdx) {
 }
 
 String mode = (String)request.getAttribute("type");
-		
-	SimpleDateFormat sdf = new SimpleDateFormat();
-	sdf.applyPattern("EEE, MMM d, yyyy");
+
+SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy");
 	
-	String prevUrl = null;
-if (pageIdx-1 > 0)
-{
+String prevUrl = null;
+if (pageIdx-1 > 0) {
 	if(urlPath != null) {
 		prevUrl = urlPath + (pageIdx-1) + (pageSize != 20 ? "/" + pageSize:"") + (filter != null ? "?filter=" + filter:"");
 	}
@@ -60,32 +58,26 @@ if (pageIdx-1 > 0)
 	
 String nextUrl = null;
 
-if (total > endIdx)
-{
+if (total > endIdx) {
 	if(urlPath != null) {
 		nextUrl = urlPath + (pageIdx+1) + (pageSize != 20 ? "/" + pageSize:"") + (filter != null ? "?filter=" + filter:"");
 	}
 	else {
-		nextUrl = "/legislation/search/" + term + "/" + (pageIdx + 1) + "/" + pageSize
-			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
+		nextUrl = "/legislation/search/" + term + "/" + (pageIdx + 1) + "/" + pageSize + "?sort=" + sortField + "&sortOrder=" + sortOrder;
 	}
 }
 	
 %>
 <div id="content">
-
-<% String encodedTerm = java.net.URLEncoder.encode(term,"UTF-8"); %>
-
 <div class="content-bg">
-<div class="page-title">
-    <span class="formats">
-        Feeds:
-        <a href="<%=JSPHelper.getLink(request, "/api/atom/search/"+encodedTerm+"/")%>">ATOM</a>,
-        <a href="<%=JSPHelper.getLink(request, "/api/rss/search/"+encodedTerm+"/")%>">RSS</a>
-    </span>
-    <h2><%=type.toUpperCase()%> SEARCH RESULTS</h2>
-</div>
+	<div class="page-title">
+	    <span class="formats">
+	        Feeds:
+	        <a href="<%=JSPHelper.getLink(request, "/api/atom/search/"+term+"/?sort="+sortField+"&sortOrder="+sortOrder)%>">ATOM</a>,
+	        <a href="<%=JSPHelper.getLink(request, "/api/rss/search/"+term+"/?sort="+sortField+"&sortOrder="+sortOrder)%>">RSS</a>
+	    </span>
+	    <h2><%=type.toUpperCase()%> SEARCH RESULTS</h2>
+	</div>
 
     <div id="subcontent">
  <%
@@ -150,8 +142,6 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 	String forward4Link = "/legislation/search/" + term + "/" + (forward4) + "/" + pageSize
 			+ "?sort=" + sortField
 			+ "&sortOrder=" + sortOrder;
-	
- 	System.out.println(currentPage);
 		
 	if (prevUrl!=null){%>
 		<li><a href="<%=prevUrl%>" title="Previous page">«</a></li>
@@ -221,13 +211,13 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 				else{ %><a href="/legislation/search/<%=term%>?sort=committee&sortOrder=false">Committee</a><%}%>,
 				
 				<%if (sortField.equals("")){%>Best Match<%}
-				else{ %><a href="/legislation/search/<%=term%>?sort=oid&sortOrder=false"">Best Match</a><%}%>
+				else{ %><a href="/legislation/search/<%=term%>?sort=oid&sortOrder=false">Best Match</a><%}%>
 				</div>
             </div>
             <hr/>
         <% }
 
-		Iterator it = sr.getResults().iterator();
+		Iterator<Result> it = sr.getResults().iterator();
 		Result sresult = null;
 		  
 		String resultType = null;
@@ -280,7 +270,7 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
                 }
             }
 
-            String resultPath = appPath + "/" + contentType + "/" + contentId; %>
+            String resultPath = JSPHelper.getLink(request, "/" + contentType + "/" + contentId); %>
             <div class="row">
                 <a href="<%=resultPath%>"><%=senateType%>: <%=resultTitle%></a>
                 <span class="subrow">
@@ -292,43 +282,43 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
  				</a>
 			    <%if (sresult.getFields().get("sameAs")!=null && sresult.getFields().get("sameAs").length()>0){ %>
 			        <br/>
-			        Same As: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("sameAs")%>%22" class="sublink"><%=sresult.getFields().get("sameAs")%></a>
+			        Same As: <a href="<%=JSPHelper.getLink(request,"/search/?term=oid:%22"+sresult.getFields().get("sameAs")+"%22")%>" class="sublink"><%=sresult.getFields().get("sameAs")%></a>
 			    <%} %>
 			 
 			    <%if ((!contentType.equals("bill")) && sresult.getFields().get("billno")!=null && sresult.getFields().get("billno").length()>0){ %>
 			        <br/>
-			        Bill: <a href="<%=appPath%>/search/?term=oid:%22<%=sresult.getFields().get("billno")%>%22" class="sublink"><%=sresult.getFields().get("billno")%></a>
+			        Bill: <a href="<%=JSPHelper.getLink(request, "/search/?term=oid:%22"+sresult.getFields().get("billno")+"%22")%>" class="sublink"><%=sresult.getFields().get("billno")%></a>
 			    <%} %>
 			 
 			    <%if (sresult.getFields().containsKey("sponsor")){ %>
 			        <br/>
-				    <% if (sresult.getFields().get("otherSponsors").isEmpty()) { %>
-				        Sponsor: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),appPath)%>
+				    <% if (sresult.getFields().get("othersponsors").isEmpty()) { %>
+				        Sponsor: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),request)%>
 				    <% } else { %>
-				        Sponsors: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),appPath)%>, <%=JSPHelper.getSponsorLinks(sresult.getFields().get("otherSponsors").split(", ?"), appPath) %>
+				        Sponsors: <%=JSPHelper.getPersonLink(sresult.getFields().get("sponsor"),request)%>, <%=JSPHelper.getSponsorLinks(sresult.getFields().get("othersponsors").split(", ?"), request) %>
 				    <% } %>  
 				   
 			    <%} %>
 			 
 			    <%if (sresult.getFields().get("chair")!=null){ %>
 			        <br/>
-			        Chairperson: <a href="<%=appPath%>/search/?term=chair:%22<%=java.net.URLEncoder.encode((String)sresult.getFields().get("chair"),"UTF-8")%>%22"  class="sublink"><%=sresult.getFields().get("chair")%></a>
+			        Chairperson: <a href="<%=JSPHelper.getLink(request, "/search/?term=chair:%22"+java.net.URLEncoder.encode((String)sresult.getFields().get("chair"),"UTF-8")+"%22")%>"  class="sublink"><%=sresult.getFields().get("chair")%></a>
 			    <%} %>
  
 			    <%if (sresult.getFields().get("committee")!=null && !sresult.getFields().get("committee").isEmpty()){ %>
 			        <br/>
-			        Committee: <a href="<%=appPath%>/committee/<%=sresult.getFields().get("committee").replaceAll(" ","-")%>"  class="sublink"><%=sresult.getFields().get("committee")%></a>
+			        Committee: <a href="<%=JSPHelper.getLink(request, "/committee/"+sresult.getFields().get("committee").replaceAll(" ","-"))%>"  class="sublink"><%=sresult.getFields().get("committee")%></a>
 			    <%} %>
 			 
 			 
 			    <%if (sresult.getFields().get("location")!=null){ %>
 			        <br/>
-			        Location: <a href="<%=appPath%>/search/?term=location:<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("location") + "\"")%>"  class="sublink"><%=sresult.getFields().get("location")%></a>
+			        Location: <a href="<%=JSPHelper.getLink(request, "/search/?term=location:"+java.net.URLEncoder.encode("\"" + sresult.getFields().get("location") + "\"", "UTF-8"))%>"  class="sublink"><%=sresult.getFields().get("location")%></a>
 			    <%} %>
 			 
 			    <%if (sresult.getFields().get("date")!=null){ %>
 			        <br/>
-			        Date: <a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("\"" + sresult.getFields().get("date") + "\"")%>"  class="sublink"><%=sresult.getFields().get("date")%></a>
+			        Date: <a href="<%=JSPHelper.getLink(request, "/search/?term="+java.net.URLEncoder.encode("\"" + sresult.getFields().get("date") + "\"", "UTF-8"))%>"  class="sublink"><%=sresult.getFields().get("date")%></a>
 			    <%} %>
                </span>
             </div>
@@ -386,10 +376,8 @@ String forward3Link = "/legislation/search/" + term + "/" + (forward3) + "/" + p
 String forward4Link = "/legislation/search/" + term + "/" + (forward4) + "/" + pageSize
 		+ "?sort=" + sortField
 		+ "&sortOrder=" + sortOrder;
-
-	System.out.println(totalPages-currentPage);
 	
-if (prevUrl!=null){%>
+if (prevUrl!=null) {%>
 	<li><a href="<%=prevUrl%>" title="Previous page">«</a></li>
 <%}else{%>
 	<li class="disabled"><a>«</a></li>

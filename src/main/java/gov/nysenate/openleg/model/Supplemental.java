@@ -1,24 +1,15 @@
 package gov.nysenate.openleg.model;
 
-import gov.nysenate.openleg.lucene.LuceneField;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
-@XStreamAlias("supplemental")
 public class Supplemental {
 
     protected String id;
 
-    @LuceneField("when")
     protected Date calendarDate;
 
-    @LuceneField("releasedate")
     protected Date releaseDateTime;
 
     protected List<Section> sections;
@@ -80,7 +71,6 @@ public class Supplemental {
         this.sections = sections;
     }
 
-    @JsonIgnore
     public Calendar getCalendar() {
         return calendar;
     }

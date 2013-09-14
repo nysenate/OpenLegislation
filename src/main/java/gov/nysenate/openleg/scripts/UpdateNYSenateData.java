@@ -60,7 +60,9 @@ public class UpdateNYSenateData extends BaseScript
 
             List<Committee> committees = client.getStandingCommittees();
             for (Committee committee : committees) {
-                for(Member member : (List<Member>)ListUtils.union(committee.getChairs(), committee.getMembers())) {
+                @SuppressWarnings("unchecked")
+                List<Member> members = ListUtils.union(committee.getChairs(), committee.getMembers());
+                for(Member member : members) {
                     member.setShortName(getSenatorKey(member.getName()));
                 }
                 String filename = committee.getName().replaceAll("[',.-]", "").replaceAll(" ", "_").toLowerCase()+".json";

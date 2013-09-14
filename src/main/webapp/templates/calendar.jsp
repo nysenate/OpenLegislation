@@ -8,7 +8,6 @@ $(document).ready(function(){
 });
 </script>
 <%
-String appPath = request.getContextPath();
 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy");
 SimpleDateFormat datetimeFormat = new SimpleDateFormat("MM/d/yyyy hh:mm:ss aa");
 
@@ -106,9 +105,9 @@ if (calendar.getDate() != null) {
                         <span style="color:#777777; font-size:0.85em;">#<%=entry.getNo()%>: </span>
                         <%
                         if (bill.isResolution()) {
-                            %> Resolution <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%
-                        } else {
-                            %> Bill <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getSenateBillNo()%></a><%
+                            %> Resolution <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getBillId()%></a><%
+                            } else {
+                        %> Bill <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getBillId()%></a><%
                         }
 
                         if (entry.getBillHigh() != null && entry.getBillHigh().equals("true")) {
@@ -123,17 +122,17 @@ if (calendar.getDate() != null) {
 	                        <%
 	                        if (bill.getSponsor() != null) {
 	                            if (bill.getOtherSponsors().isEmpty()) {
-	                                %> <br/>Sponsor: <%=JSPHelper.getSponsorLinks(bill, appPath)%> <%
+	                                %> <br/>Sponsor: <%=JSPHelper.getSponsorLinks(bill, request)%> <%
 	                            } else {
-	                                %> <br/>Sponsors: <%=JSPHelper.getSponsorLinks(bill, appPath)%> <%
+	                                %> <br/>Sponsors: <%=JSPHelper.getSponsorLinks(bill, request)%> <%
 	                            }
 	                        }
 	
 	                        if (subBill != null) {
 	                            if (subBill.getOtherSponsors().isEmpty()) {
-	                                %> (Substituted-bill Sponsor: <%=JSPHelper.getSponsorLinks(subBill, appPath)%>) <%
+	                                %> (Substituted-bill Sponsor: <%=JSPHelper.getSponsorLinks(subBill, request)%>) <%
 	                            } else {
-	                                %> (Substituted-bill Sponsors: <%=JSPHelper.getSponsorLinks(subBill, appPath)%>) <%
+	                                %> (Substituted-bill Sponsors: <%=JSPHelper.getSponsorLinks(subBill, request)%>) <%
 	                            }
 	                        } %>
 	                    </span>

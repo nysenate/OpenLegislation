@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.services;
 
 import gov.nysenate.openleg.model.Calendar;
+import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.model.Meeting;
-import gov.nysenate.openleg.util.Change;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.IOException;
@@ -39,11 +39,11 @@ public class Varnish extends ServiceBase {
             if (!otype.equals("agenda")) {
                 if (otype.equals("calendar")) {
                     Calendar calendar = (Calendar)storage.get(key, Calendar.class);
-                    oid = calendar.luceneOid();
+                    oid = calendar.getOid();
                 }
                 else if (otype.equals("meeting")) {
                     Meeting meeting = (Meeting)storage.get(key, Meeting.class);
-                    oid = meeting.luceneOid();
+                    oid = meeting.getOid();
                 }
 
                 purgeUri("doc:"+oid);

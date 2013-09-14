@@ -24,19 +24,19 @@
     "longitude" : -73.759091
   }, {
     "name" : "District Office",
-    "street" : "2430 Riverfront Center",
-    "city" : "Amsterdam",
-    "postalCode" : "12010",
+    "street" : "199 Milton Avenue",
+    "city" : "Ballston Spa",
+    "postalCode" : "12020",
     "provinceName" : "New York",
     "province" : "NY",
     "countryName" : "United States",
     "country" : "us",
-    "phone" : "(518) 843-2188",
-    "fax" : "(518) 843-8363",
+    "phone" : "(518) 885-1829",
+    "fax" : "(518) 885-1970",
     "otherPhone" : "",
-    "additional" : "",
-    "latitude" : 42.936701,
-    "longitude" : -74.189727
+    "additional" : "Suite 4",
+    "latitude" : 43.006458,
+    "longitude" : -73.849918
   }, {
     "name" : "District Office 2",
     "street" : "33-41 East Main Street",
