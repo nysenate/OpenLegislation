@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.Meeting;
+import gov.nysenate.openleg.model.Transcript;
 
 import java.io.File;
 import java.io.IOException;
@@ -270,6 +271,9 @@ public class Storage
                 }
                 else if (value instanceof Calendar) {
                     this.converter.write((Calendar)value, storageFile);
+                }
+                else if (value instanceof Transcript) {
+                    this.converter.write((Transcript)value, storageFile);
                 }
                 else {
                     logger.error("Unable to write value of type "+value.getClass().getName()+": "+value.getOid());
