@@ -31,8 +31,8 @@ public class ApiServlet1 extends HttpServlet
     public static int DEFAULT_PAGE_SIZE = 20;
 
     public final Logger logger = Logger.getLogger(ApiServlet1.class);
-    public final static Pattern documentPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(json|xml|jsonp|lrs-print|html)/(bill|calendar|meeting|transcript)/(.*)$");
-    public final static Pattern searchPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(csv|atom|rss|json|xml|jsonp)/(search|votes|bills|meetings|actions|calendars|transcripts)(?:/(.*))?/?$");
+    public final static Pattern documentPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(json|xml|jsonp|lrs-print|html)/(bill|calendar|meeting|transcript)/(.*)$", Pattern.CASE_INSENSITIVE);
+    public final static Pattern searchPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(csv|atom|rss|json|xml|jsonp)/(search|votes|bills|meetings|actions|calendars|transcripts|sponsor)(?:/(.*?[a-z].*?))?(?:/([0-9]+))?(?:/([0-9]+))?/?$", Pattern.CASE_INSENSITIVE);
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -79,10 +79,24 @@ public class ApiServlet1 extends HttpServlet
                 String format = searchMatcher.group(1);
                 String type = searchMatcher.group(2);
                 String uriTerm = searchMatcher.group(3);
+                String pagePart = searchMatcher.group(4);
+                String sizePart = searchMatcher.group(5);
                 String term = RequestUtils.getSearchString(request, uriTerm);
 
+                if (pagePart != null) {
+                    pageIdx = Integer.valueOf(pagePart);
+                }
+                if (sizePart != null) {
+                    pageSize = Integer.valueOf(sizePart);
+                }
+
                 if (!type.equals("search")) {
-                    term = "otype:"+type.substring(0, type.length()-1)+(term.isEmpty() ? "" : " AND "+term);
+                    if (type.equals("sponsor")) {
+                        term = "sponsor:"+uriTerm+" AND otype:bill";
+                    }
+                    else {
+                        term = "otype:"+type.substring(0, type.length()-1)+(term.isEmpty() ? "" : " AND "+term);
+                    }
                 }
                 else if (term.isEmpty()) {
                     throw new ApiRequestException("A search term is required.");
