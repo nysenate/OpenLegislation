@@ -85,6 +85,7 @@
             resultSummary.append(";");
         }
 
+        oid = oid.replace(" ", "+");
         String entryUrl = JSPHelper.getFullLink(request, "/" + otype + "/" + oid);
         entry.setId(entryUrl+"#"+oid);
         entry.setTitle(resultTitle);
