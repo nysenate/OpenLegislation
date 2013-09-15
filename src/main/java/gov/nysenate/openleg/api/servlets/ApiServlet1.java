@@ -31,7 +31,7 @@ public class ApiServlet1 extends HttpServlet
     public static int DEFAULT_PAGE_SIZE = 20;
 
     public final Logger logger = Logger.getLogger(ApiServlet1.class);
-    public final static Pattern documentPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(json|xml|jsonp)/(bill|calendar|meeting|transcript)/(.*)$");
+    public final static Pattern documentPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(json|xml|jsonp|lrs-print)/(bill|calendar|meeting|transcript)/(.*)$");
     public final static Pattern searchPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(csv|atom|rss|json|xml|jsonp)/(search|votes|bills|meetings|actions|calendars|transcripts)(?:/(.*))?/?$");
 
     @Override
@@ -176,7 +176,7 @@ public class ApiServlet1 extends HttpServlet
         }
     }
 
-    private void doSingleView(HttpServletRequest request, HttpServletResponse response, String format, String type, String id) throws ApiRequestException, IOException
+    private void doSingleView(HttpServletRequest request, HttpServletResponse response, String format, String type, String id) throws ApiRequestException, IOException, ServletException
     {
         BaseObject object = (BaseObject)Application.getLucene().getSenateObject(id, type);
 
@@ -202,6 +202,10 @@ public class ApiServlet1 extends HttpServlet
             else if (format.equals("xml")) {
                 response.setContentType("application/xml");
                 new Api1XmlConverter().write(object, response.getOutputStream());
+            }
+            else if (format.equals("lrs-print")) {
+                request.setAttribute("bill", object);
+                request.getSession().getServletContext().getRequestDispatcher("/views/bill-lrs-print.jsp").forward(request, response);
             }
         }
     }
