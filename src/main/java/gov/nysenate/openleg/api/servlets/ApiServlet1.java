@@ -31,7 +31,7 @@ public class ApiServlet1 extends HttpServlet
     public static int DEFAULT_PAGE_SIZE = 20;
 
     public final Logger logger = Logger.getLogger(ApiServlet1.class);
-    public final static Pattern documentPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(json|xml|jsonp|lrs-print)/(bill|calendar|meeting|transcript)/(.*)$");
+    public final static Pattern documentPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(json|xml|jsonp|lrs-print|html)/(bill|calendar|meeting|transcript)/(.*)$");
     public final static Pattern searchPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(csv|atom|rss|json|xml|jsonp)/(search|votes|bills|meetings|actions|calendars|transcripts)(?:/(.*))?/?$");
 
     @Override
@@ -206,6 +206,10 @@ public class ApiServlet1 extends HttpServlet
             else if (format.equals("lrs-print")) {
                 request.setAttribute("bill", object);
                 request.getSession().getServletContext().getRequestDispatcher("/views/bill-lrs-print.jsp").forward(request, response);
+            }
+            else if (format.equals("html")) {
+                // TODO: Send a 301 response instead.
+                response.sendRedirect(request.getContextPath()+"/"+type+"/"+id );
             }
         }
     }
