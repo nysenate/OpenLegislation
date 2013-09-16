@@ -293,7 +293,7 @@ public class StorageJsonConverter
         Transcript transcript = new Transcript();
         transcript.setId(node.get("id").asText());
         transcript.setTimeStamp(makeDate(node.get("timeStamp")));
-        transcript.setLocation(node.get("localtion").asText());
+        transcript.setLocation(node.get("location").asText());
         transcript.setType(node.get("type").asText());
         transcript.setTranscriptText(node.get("transcriptText").asText());
         transcript.setTranscriptTextProcessed(node.get("transcriptTextProcessed").asText());
