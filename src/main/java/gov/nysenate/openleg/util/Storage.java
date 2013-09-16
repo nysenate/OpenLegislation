@@ -139,6 +139,9 @@ public class Storage
                     else if (cls == Calendar.class) {
                         value = this.converter.read(Calendar.class, storageFile);
                     }
+                    else if (cls == Transcript.class) {
+                        value = this.converter.read(Transcript.class, storageFile);
+                    }
                     else {
                         logger.error("Unable to read value of type "+cls.getName()+" from: "+storageFile);
                         return null;
