@@ -36,7 +36,7 @@ public class ApiServlet1 extends HttpServlet
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int pageIdx = 1;
+        int pageIdx = 0;
         int pageSize = DEFAULT_PAGE_SIZE;
         boolean sortOrder = false;
         String uri = request.getRequestURI();
