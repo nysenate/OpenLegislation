@@ -216,7 +216,7 @@ public class Lucene
     {
         logger.info("indexing document: " + doc.getFieldable("otype").stringValue() + "=" + doc.getFieldable("oid").stringValue());
         String oid = doc.getFieldable("oid").stringValue();
-        indexWriter.updateDocument(new Term("oid",oid), doc);
+        indexWriter.updateDocument(new Term("oid", oid.toLowerCase()), doc);
     }
 
     /**
@@ -228,7 +228,7 @@ public class Lucene
      */
     public void deleteDocumentsByQuery(String queryString) throws IOException, ParseException
     {
-		Query query = new QueryParser(VERSION, "osearch", indexWriter.getAnalyzer()).parse(queryString);
+		Query query = new QueryParser(VERSION, "osearch", indexWriter.getAnalyzer()).parse(queryString.toLowerCase());
 		indexWriter.deleteDocuments(query);
     }
 
@@ -240,7 +240,7 @@ public class Lucene
      */
     public void deleteDocumentById(String oid) throws IOException
     {
-        indexWriter.deleteDocuments(new Term("oid", oid));
+        indexWriter.deleteDocuments(new Term("oid", oid.toLowerCase()));
     }
 
     /**
@@ -329,7 +329,7 @@ public class Lucene
     public <T extends IBaseObject> ArrayList<T> getSenateObjects(String query) {
         ArrayList<T> senateObjects = new ArrayList<T>();
 
-        ResultIterator longSearch = new ResultIterator(query);
+        ResultIterator longSearch = new ResultIterator(query.toLowerCase());
         for(Result result:longSearch) {
             senateObjects.add((T)result.getObject());
         }
@@ -363,6 +363,6 @@ public class Lucene
                 " TO ", billNumber, "Z-", year,
                 "]) AND ", billNumber, "*-", year, ")");
 
-        return getSenateObjects(query);
+        return getSenateObjects(query.toLowerCase());
     }
 }
