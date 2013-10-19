@@ -147,18 +147,7 @@ public class Lucene
             // cheap implementation of otype:resolution
             queryString = queryString.replaceAll("otype:resolution", "(otype:bill AND oid:(R* OR E* OR J* OR K* OR L*))");
             logger.info(queryString);
-            // searches should be case insensitive for fields and values
-            // Lucene keywords must be capitalized though to be parsed correctly.
-            String[] tokens = queryString.split(" ");
-            queryString = "";
-            for(String token : tokens) {
-                if (token.equals("TO") || token.equals("AND") || token.equals("OR") || token.equals("NOT")) {
-                    queryString += token+" ";
-                }
-                else {
-                    queryString += token.toLowerCase()+" ";
-                }
-            }
+            queryString = queryToLowerCase(queryString);
         }
 
         searcherManager.maybeRefresh();
@@ -228,7 +217,8 @@ public class Lucene
      */
     public void deleteDocumentsByQuery(String queryString) throws IOException, ParseException
     {
-		Query query = new QueryParser(VERSION, "osearch", indexWriter.getAnalyzer()).parse(queryString.toLowerCase());
+        queryString = queryToLowerCase(queryString);
+		Query query = new QueryParser(VERSION, "osearch", indexWriter.getAnalyzer()).parse(queryString);
 		indexWriter.deleteDocuments(query);
     }
 
@@ -329,7 +319,7 @@ public class Lucene
     public <T extends IBaseObject> ArrayList<T> getSenateObjects(String query) {
         ArrayList<T> senateObjects = new ArrayList<T>();
 
-        ResultIterator longSearch = new ResultIterator(query.toLowerCase());
+        ResultIterator longSearch = new ResultIterator(query);
         for(Result result:longSearch) {
             senateObjects.add((T)result.getObject());
         }
@@ -363,6 +353,28 @@ public class Lucene
                 " TO ", billNumber, "Z-", year,
                 "]) AND ", billNumber, "*-", year, ")");
 
-        return getSenateObjects(query.toLowerCase());
+        return getSenateObjects(query);
+    }
+
+    /**
+     * Searches should be case insensitive for fields and values
+     * Lucene keywords must be capitalized though to be parsed correctly.
+     *
+     * @param query
+     * @return
+     */
+    private String queryToLowerCase(String query)
+    {
+        String[] tokens = query.split(" ");
+        query = "";
+        for(String token : tokens) {
+            if (token.equals("TO") || token.equals("AND") || token.equals("OR") || token.equals("NOT")) {
+                query += token+" ";
+            }
+            else {
+                query += token.toLowerCase()+" ";
+            }
+        }
+        return query;
     }
 }
