@@ -754,13 +754,14 @@ pre.memo {
 	font-family: “Consolas”, monospace;
 	width: 540px;
 	font-size: 9pt;
+	float:left;
 }
+
 del{
 	color:red;
 	background-color:#ffeeee;
 	text-decoration:none;
 	background-url:#ffeeee;
-	
 }
 
 add{
