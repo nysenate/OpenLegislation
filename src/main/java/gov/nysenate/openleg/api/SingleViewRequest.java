@@ -1,14 +1,12 @@
 package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
-import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.IBaseObject;
 import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Transcript;
-import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.TextFormatter;
 
@@ -45,13 +43,12 @@ public class SingleViewRequest extends AbstractApiRequest {
 
         try {
             if(type.equals("bill") && !format.matches("(csv|json|xml)")) {
-                String rType = "action";
-                String rQuery = QueryBuilder.build().otype(rType).and().relatedBills("billno", id).query();
-                ArrayList<Action> billEvents = Application.getLucene().getSenateObjects(rQuery);
-                request.setAttribute("related-" + rType, billEvents);
+                Bill bill = (Bill) so;
+                request.setAttribute("related-action", bill.getActions());
+                request.setAttribute("related-vote", bill.getVotes());
 
-                rType = "bill";
-                rQuery = QueryBuilder.build().otype(rType).and().relatedBills("oid", id).query();
+                String rType = "bill";
+                String rQuery = QueryBuilder.build().otype(rType).and().relatedBills("oid", id).query();
                 ArrayList<Bill> bills = Application.getLucene().getSenateObjects(rQuery);
                 request.setAttribute("related-" + rType, bills);
 
@@ -64,11 +61,6 @@ public class SingleViewRequest extends AbstractApiRequest {
                 rQuery = QueryBuilder.build().otype(rType).and().keyValue("bills", id).query();
                 ArrayList<Calendar> calendars = Application.getLucene().getSenateObjects(rQuery);
                 request.setAttribute("related-" + rType, calendars);
-
-                rType = "vote";
-                rQuery = QueryBuilder.build().otype(rType).and().relatedBills("billno", id).query();
-                ArrayList<Vote> votes = Application.getLucene().getSenateObjects(rQuery);
-                request.setAttribute("related-" + rType, votes);
             }
         } catch (QueryBuilderException e) {
             logger.error(e);
