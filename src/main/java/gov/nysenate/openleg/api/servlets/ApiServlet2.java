@@ -30,7 +30,7 @@ public class ApiServlet2 extends HttpServlet
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int pageIdx = 0;
+        int pageIdx = 1;
         int pageSize = DEFAULT_PAGE_SIZE;
         boolean sortOrder = false;
         String uri = request.getRequestURI();
@@ -44,13 +44,19 @@ public class ApiServlet2 extends HttpServlet
             try {
                 if (pageIdxParam != null) {
                     pageIdx = Integer.parseInt(pageIdxParam);
-                    if (pageIdx > MAX_PAGE_SIZE) {
-                        throw new ApiRequestException("Page size must be less than 1000");
+                    if (pageIdx < 1) {
+                        throw new ApiRequestException("Page number must be greater than 0");
                     }
                 }
 
                 if (pageSizeParam != null) {
                     pageSize = Integer.parseInt(pageSizeParam);
+                    if (pageSize > MAX_PAGE_SIZE) {
+                        throw new ApiRequestException("Page size must be less than 1000");
+                    }
+                    else if (pageSize < 1) {
+                        throw new ApiRequestException("Page size must be greater than 0");
+                    }
                 }
             }
             catch (NumberFormatException e) {
@@ -99,7 +105,7 @@ public class ApiServlet2 extends HttpServlet
     private void doSearch(HttpServletRequest request, HttpServletResponse response, String format, String type, String term, int pageNumber, int pageSize, String sort, boolean sortOrder) throws ApiRequestException
     {
         try {
-            int start = pageNumber * pageSize;
+            int start = (pageNumber-1) * pageSize;
             SenateResponse sr = Application.getLucene().search(term, start, pageSize, sort, sortOrder);
             ApiHelper.buildSearchResultList(sr);
 

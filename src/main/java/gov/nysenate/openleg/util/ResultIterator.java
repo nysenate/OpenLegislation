@@ -16,7 +16,7 @@ public class ResultIterator implements Iterator<Result>, Iterable<Result> {
     private static Logger logger = Logger.getLogger(ResultIterator.class);
 
     private static final int SIZE = 500;
-    private static final int PAGE = 0;
+    private static final int PAGE = 1;
     private static final String SORT_BY = "oid";
     private static final boolean REVERSE = false;
 
@@ -78,7 +78,7 @@ public class ResultIterator implements Iterator<Result>, Iterable<Result> {
     }
 
     private void reset() {
-        page = 0;
+        page = 1;
         pos = 0;
         size = 0;
         exhausted = false;
@@ -91,7 +91,9 @@ public class ResultIterator implements Iterator<Result>, Iterable<Result> {
         }
 
         try {
-            senateResponse = Application.getLucene().search(query, (max * page++), max, sortBy, reverse);
+            int start = (page-1)*max;
+            senateResponse = Application.getLucene().search(query, start, max, sortBy, reverse);
+            page++;
         } catch (ParseException e) {
             logger.error(e);
         }
