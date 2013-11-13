@@ -1,7 +1,7 @@
 {
   "name" : "James Sanders Jr.",
   "lastName" : "Sanders",
-  "shortName" : "sanders",
+  "shortName" : "Sanders",
   "email" : "sanders@nysenate.gov",
   "additionalContact" : "",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(12-10-12) Sanders-HS-010.jpg",
@@ -9,9 +9,9 @@
   "partyAffiliations" : [ "D" ],
   "offices" : [ {
     "name" : "District Office",
-    "street" : "161-10 Jamaica Avenue,",
-    "city" : "Jamaica,",
-    "postalCode" : "11432",
+    "street" : "142-01 Rockaway Blvd.,",
+    "city" : "South Ozone Park,",
+    "postalCode" : "11436",
     "provinceName" : "New York",
     "province" : "NY",
     "countryName" : "United States",
@@ -19,9 +19,9 @@
     "phone" : "718-523-3069",
     "fax" : "",
     "otherPhone" : "",
-    "additional" : "Suite 504",
-    "latitude" : 40.70364,
-    "longitude" : -73.797826
+    "additional" : "",
+    "latitude" : 40.674144,
+    "longitude" : -73.798334
   }, {
     "name" : "Albany Office",
     "street" : "Legislative Office Building",
@@ -37,6 +37,21 @@
     "additional" : "Room 508",
     "latitude" : 42.652442,
     "longitude" : -73.759332
+  }, {
+    "name" : "Satellite Office",
+    "street" : "1931 Mott Avenue,",
+    "city" : "Far Rockaway,",
+    "postalCode" : "11691",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Suite 305",
+    "latitude" : 40.604055,
+    "longitude" : -73.752681
   } ],
   "district" : {
     "number" : 10,

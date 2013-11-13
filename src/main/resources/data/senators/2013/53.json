@@ -1,7 +1,7 @@
 {
   "name" : "David J. Valesky",
   "lastName" : "Valesky",
-  "shortName" : "valesky",
+  "shortName" : "Valesky",
   "email" : "valesky@nysenate.gov",
   "additionalContact" : "",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Valesky-HSmp.jpg",
@@ -45,8 +45,8 @@
     "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=53"
   },
   "social" : {
-    "twitter" : "",
-    "youtube" : "",
+    "twitter" : "https://twitter.com/SenDaveValesky",
+    "youtube" : "http://www.youtube.com/user/SenatorValesky",
     "myspace" : "",
     "picasa" : "",
     "flickr" : "",

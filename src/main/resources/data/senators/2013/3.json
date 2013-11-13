@@ -1,7 +1,7 @@
 {
   "name" : "Lee M. Zeldin",
   "lastName" : "Zeldin",
-  "shortName" : "zeldin",
+  "shortName" : "Zeldin",
   "email" : "zeldin@nysenate.gov",
   "additionalContact" : "<p>For press inquiries contact: Kara Cumoletti at 518-455-3570 or cumolett@nysenate.gov</p> <p>&nbsp;</p>",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(01-10-11) Zeldin-HS-042.jpg",
@@ -60,11 +60,11 @@
     "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=03"
   },
   "social" : {
-    "twitter" : "http://twitter.com/leezeldin",
+    "twitter" : "",
     "youtube" : "",
     "myspace" : "",
     "picasa" : "",
     "flickr" : "",
-    "facebook" : "https://www.facebook.com/LeeMZeldin"
+    "facebook" : ""
   }
 }

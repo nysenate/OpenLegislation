@@ -1,7 +1,7 @@
 {
   "name" : "Liz Krueger",
   "lastName" : "Krueger",
-  "shortName" : "krueger",
+  "shortName" : "Krueger",
   "email" : "lkrueger@senate.state.ny.us",
   "additionalContact" : "",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Senate Headshot.jpg",
@@ -24,9 +24,9 @@
     "longitude" : -73.757823
   }, {
     "name" : "District Office",
-    "street" : "211 East 43rd Street",
+    "street" : "1850 Second Avenue",
     "city" : "New York",
-    "postalCode" : "10017",
+    "postalCode" : "10128",
     "provinceName" : "New York",
     "province" : "NY",
     "countryName" : "United States",
@@ -34,9 +34,9 @@
     "phone" : "(212) 490-9535",
     "fax" : "(212) 490-2151",
     "otherPhone" : "",
-    "additional" : "Suite 401",
-    "latitude" : 40.751091,
-    "longitude" : -73.97285
+    "additional" : "",
+    "latitude" : 0.0,
+    "longitude" : 0.0
   } ],
   "district" : {
     "number" : 28,

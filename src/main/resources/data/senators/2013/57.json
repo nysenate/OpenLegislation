@@ -1,12 +1,12 @@
 {
   "name" : "Catharine Young",
   "lastName" : "Young",
-  "shortName" : "young",
+  "shortName" : "Young",
   "email" : "cyoung@senate.state.ny.us",
   "additionalContact" : "",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/young headshot-ret.jpg",
   "url" : "http://www.nysenate.gov/senator/catharine-young",
-  "partyAffiliations" : [ "R", "C", "Ind" ],
+  "partyAffiliations" : [ "R", "C", "IP" ],
   "offices" : [ {
     "name" : "Albany Office",
     "street" : "188 State Street",
@@ -65,6 +65,6 @@
     "myspace" : "",
     "picasa" : "",
     "flickr" : "",
-    "facebook" : ""
+    "facebook" : "https://www.facebook.com/SenatorCathyYoung"
   }
 }
