@@ -79,8 +79,9 @@ public class UpdateNYSenateData extends BaseScript
 
             List<Senator> senators =  client.getSenators();
             for (Senator senator : senators) {
+                senator.setShortName(getSenatorKey(senator.getName()));
                 File senatorFile = new File(currentSenatorsDir, senator.getDistrict().getNumber()+".json");
-                System.out.println("Writing "+senator.getName()+" to "+senatorFile.getAbsolutePath());
+                System.out.println("Writing "+senator.getName()+" ["+senator.getShortName()+"] to "+senatorFile.getAbsolutePath());
                 mapper.writeValue(senatorFile, senator);
             }
         }
@@ -89,10 +90,9 @@ public class UpdateNYSenateData extends BaseScript
     }
 
     public String getSenatorKey(String memberName) {
-        String senatorKey = memberName.replaceAll(
-                "(?i)( (jr|sr)\\.?)", "");
+        String senatorKey = memberName.replaceAll("(?i)( (jr|sr)\\.?)", "");
         String[] tuple = senatorKey.split(" ");
-        senatorKey = tuple[tuple.length - 1].toLowerCase();
+        senatorKey = tuple[tuple.length - 1];
         return senatorKey;
     }
 }
