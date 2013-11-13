@@ -24,7 +24,7 @@
     "longitude" : -73.917094
   }, {
     "name" : "Albany Office",
-    "street" : "LOB Room 513",
+    "street" : "Legislative Office Building, Room 513",
     "city" : "Albany",
     "postalCode" : "12247",
     "provinceName" : "New York",
@@ -35,8 +35,8 @@
     "fax" : "518-426-6847",
     "otherPhone" : "",
     "additional" : "",
-    "latitude" : 42.694803,
-    "longitude" : -73.850052
+    "latitude" : 0.0,
+    "longitude" : 0.0
   }, {
     "name" : "Satellite Office (TUESDAY ONLY)",
     "street" : "563 Columbus Avenue",
@@ -60,11 +60,11 @@
     "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=31"
   },
   "social" : {
-    "twitter" : "http://twitter.com/Adriano4Senate",
-    "youtube" : "http://www.youtube.com/user/AdrianoEspaillat",
+    "twitter" : "https://twitter.com/EspaillatNY",
+    "youtube" : "http://www.youtube.com/channel/UCDxUywfr7tnIzsgvmDsyo5g",
     "myspace" : "",
     "picasa" : "",
     "flickr" : "",
-    "facebook" : "http://www.facebook.com/assemblymanadrianoespaillat"
+    "facebook" : "https://www.facebook.com/SenAdrianoEspaillat"
   }
 }

@@ -24,9 +24,9 @@
     "longitude" : -73.759091
   }, {
     "name" : "District Office",
-    "street" : "144-36 Willets Point Boulevard",
+    "street" : "142-29 37th Ave",
     "city" : "Flushing",
-    "postalCode" : "11357",
+    "postalCode" : "11355-4190",
     "provinceName" : "New York",
     "province" : "NY",
     "countryName" : "United States",
@@ -34,9 +34,9 @@
     "phone" : "(718) 445-0004",
     "fax" : "(718) 445-8398",
     "otherPhone" : "",
-    "additional" : "",
-    "latitude" : 40.77654,
-    "longitude" : -73.822853
+    "additional" : "Suite 1",
+    "latitude" : 0.0,
+    "longitude" : 0.0
   } ],
   "district" : {
     "number" : 16,
