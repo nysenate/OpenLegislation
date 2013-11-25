@@ -24,9 +24,9 @@
     "longitude" : -73.759161
   }, {
     "name" : "District Office",
-    "street" : "786 Knickerbocker Avenue",
+    "street" : "718 Knickerbocker Avenue",
     "city" : "Brooklyn",
-    "postalCode" : "11207",
+    "postalCode" : "11221",
     "provinceName" : "New York",
     "province" : "NY",
     "countryName" : "United States",
@@ -35,8 +35,8 @@
     "fax" : "(718) 573-2407",
     "otherPhone" : "",
     "additional" : "",
-    "latitude" : 40.692665,
-    "longitude" : -73.908129
+    "latitude" : 40.694149,
+    "longitude" : -73.91017
   } ],
   "district" : {
     "number" : 18,
