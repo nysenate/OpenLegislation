@@ -5,32 +5,32 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_Ethics",
   "chairs" : [ {
     "name" : "Phil Boyle",
-    "shortName" : "boyle",
+    "shortName" : "Boyle",
     "url" : "http://www.nysenate.gov/senator/philip-boyle"
   } ],
   "members" : [ {
     "name" : "Hugh T. Farley",
-    "shortName" : "farley",
+    "shortName" : "Farley",
     "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
   }, {
     "name" : "Andrew J Lanza",
-    "shortName" : "lanza",
+    "shortName" : "Lanza",
     "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
   }, {
     "name" : "Phil Boyle",
-    "shortName" : "boyle",
+    "shortName" : "Boyle",
     "url" : "http://www.nysenate.gov/senator/philip-boyle"
   }, {
     "name" : "Michael Gianaris",
-    "shortName" : "gianaris",
+    "shortName" : "Gianaris",
     "url" : "http://www.nysenate.gov/senator/michael-gianaris"
   }, {
     "name" : "Gustavo Rivera",
-    "shortName" : "rivera",
+    "shortName" : "Rivera",
     "url" : "http://www.nysenate.gov/senator/gustavo-rivera"
   }, {
     "name" : "Neil D. Breslin",
-    "shortName" : "breslin",
+    "shortName" : "Breslin",
     "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
   } ]
 }

@@ -5,156 +5,156 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_Finance",
   "chairs" : [ {
     "name" : "John A. DeFrancisco",
-    "shortName" : "defrancisco",
+    "shortName" : "DeFrancisco",
     "url" : "http://www.nysenate.gov/senator/john-defrancisco"
   } ],
   "members" : [ {
     "name" : "John J. Bonacic",
-    "shortName" : "bonacic",
+    "shortName" : "Bonacic",
     "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
   }, {
     "name" : "John A. DeFrancisco",
-    "shortName" : "defrancisco",
+    "shortName" : "DeFrancisco",
     "url" : "http://www.nysenate.gov/senator/john-defrancisco"
   }, {
     "name" : "Hugh T. Farley",
-    "shortName" : "farley",
+    "shortName" : "Farley",
     "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
   }, {
     "name" : "John J. Flanagan",
-    "shortName" : "flanagan",
+    "shortName" : "Flanagan",
     "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
   }, {
     "name" : "Charles J. Fuschillo Jr.",
-    "shortName" : "fuschillo",
+    "shortName" : "Fuschillo",
     "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
   }, {
     "name" : "Martin J. Golden",
-    "shortName" : "golden",
+    "shortName" : "Golden",
     "url" : "http://www.nysenate.gov/senator/martin-j-golden"
   }, {
     "name" : "Kemp Hannon",
-    "shortName" : "hannon",
+    "shortName" : "Hannon",
     "url" : "http://www.nysenate.gov/senator/kemp-hannon"
   }, {
     "name" : "Joseph A. Griffo",
-    "shortName" : "griffo",
+    "shortName" : "Griffo",
     "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   }, {
     "name" : "William J. Larkin Jr.",
-    "shortName" : "larkin",
+    "shortName" : "Larkin",
     "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr"
   }, {
     "name" : "Kenneth P. LaValle",
-    "shortName" : "lavalle",
+    "shortName" : "LaValle",
     "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
   }, {
     "name" : "Betty Little",
-    "shortName" : "little",
+    "shortName" : "Little",
     "url" : "http://www.nysenate.gov/senator/elizabeth-little"
   }, {
     "name" : "Michael F. Nozzolio",
-    "shortName" : "nozzolio",
+    "shortName" : "Nozzolio",
     "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
   }, {
     "name" : "Joseph E. Robach",
-    "shortName" : "robach",
+    "shortName" : "Robach",
     "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
   }, {
     "name" : "James L. Seward",
-    "shortName" : "seward",
+    "shortName" : "Seward",
     "url" : "http://www.nysenate.gov/senator/james-l-seward"
   }, {
     "name" : "Catharine Young",
-    "shortName" : "young",
+    "shortName" : "Young",
     "url" : "http://www.nysenate.gov/senator/catharine-young"
   }, {
     "name" : "Carl L Marcellino",
-    "shortName" : "marcellino",
+    "shortName" : "Marcellino",
     "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
   }, {
     "name" : "Mark Grisanti",
-    "shortName" : "grisanti",
+    "shortName" : "Grisanti",
     "url" : "http://www.nysenate.gov/senator/mark-grisanti"
   }, {
     "name" : "Andrew J Lanza",
-    "shortName" : "lanza",
+    "shortName" : "Lanza",
     "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
   }, {
     "name" : "Thomas F. O'Mara",
-    "shortName" : "o'mara",
+    "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
     "name" : "Michael H. Ranzenhofer",
-    "shortName" : "ranzenhofer",
+    "shortName" : "Ranzenhofer",
     "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
   }, {
     "name" : "Diane J. Savino",
-    "shortName" : "savino",
+    "shortName" : "Savino",
     "url" : "http://www.nysenate.gov/senator/diane-j-savino"
   }, {
     "name" : "Liz Krueger",
-    "shortName" : "krueger",
+    "shortName" : "Krueger",
     "url" : "http://www.nysenate.gov/senator/liz-krueger"
   }, {
     "name" : "Ruben Diaz",
-    "shortName" : "diaz",
+    "shortName" : "Diaz",
     "url" : "http://www.nysenate.gov/senator/ruben-diaz"
   }, {
     "name" : "Martin Malavé Dilan",
-    "shortName" : "dilan",
+    "shortName" : "Dilan",
     "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
   }, {
     "name" : "Gustavo Rivera",
-    "shortName" : "rivera",
+    "shortName" : "Rivera",
     "url" : "http://www.nysenate.gov/senator/gustavo-rivera"
   }, {
     "name" : "Michael Gianaris",
-    "shortName" : "gianaris",
+    "shortName" : "Gianaris",
     "url" : "http://www.nysenate.gov/senator/michael-gianaris"
   }, {
     "name" : "Neil D. Breslin",
-    "shortName" : "breslin",
+    "shortName" : "Breslin",
     "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
   }, {
     "name" : "Velmanette Montgomery",
-    "shortName" : "montgomery",
+    "shortName" : "Montgomery",
     "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
   }, {
     "name" : "Kevin S. Parker",
-    "shortName" : "parker",
+    "shortName" : "Parker",
     "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
   }, {
     "name" : "José Peralta",
-    "shortName" : "peralta",
+    "shortName" : "Peralta",
     "url" : "http://www.nysenate.gov/senator/jose-peralta"
   }, {
     "name" : "Bill Perkins",
-    "shortName" : "perkins",
+    "shortName" : "Perkins",
     "url" : "http://www.nysenate.gov/senator/bill-perkins"
   }, {
     "name" : "Toby Ann Stavisky",
-    "shortName" : "stavisky",
+    "shortName" : "Stavisky",
     "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
   }, {
     "name" : "Daniel L. Squadron",
-    "shortName" : "squadron",
+    "shortName" : "Squadron",
     "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
   }, {
     "name" : "Timothy M. Kennedy",
-    "shortName" : "kennedy",
+    "shortName" : "Kennedy",
     "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
   }, {
     "name" : "Adriano Espaillat",
-    "shortName" : "espaillat",
+    "shortName" : "Espaillat",
     "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
   }, {
     "name" : "Ruth Hassell-Thompson",
-    "shortName" : "hassell-thompson",
+    "shortName" : "Hassell-Thompson",
     "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
   }, {
     "name" : "David J. Valesky",
-    "shortName" : "valesky",
+    "shortName" : "Valesky",
     "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   } ]
 }

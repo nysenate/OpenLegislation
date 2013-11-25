@@ -5,60 +5,60 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_VetsHomeSecurityMil",
   "chairs" : [ {
     "name" : "Greg Ball",
-    "shortName" : "ball",
+    "shortName" : "Ball",
     "url" : "http://www.nysenate.gov/senator/greg-ball"
   } ],
   "members" : [ {
     "name" : "Greg Ball",
-    "shortName" : "ball",
+    "shortName" : "Ball",
     "url" : "http://www.nysenate.gov/senator/greg-ball"
   }, {
     "name" : "David Carlucci",
-    "shortName" : "carlucci",
+    "shortName" : "Carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
   }, {
     "name" : "John J. Flanagan",
-    "shortName" : "flanagan",
+    "shortName" : "Flanagan",
     "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
   }, {
     "name" : "Martin J. Golden",
-    "shortName" : "golden",
+    "shortName" : "Golden",
     "url" : "http://www.nysenate.gov/senator/martin-j-golden"
   }, {
     "name" : "Joseph A. Griffo",
-    "shortName" : "griffo",
+    "shortName" : "Griffo",
     "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   }, {
     "name" : "Mark Grisanti",
-    "shortName" : "grisanti",
+    "shortName" : "Grisanti",
     "url" : "http://www.nysenate.gov/senator/mark-grisanti"
   }, {
     "name" : "William J. Larkin Jr.",
-    "shortName" : "larkin",
+    "shortName" : "Larkin",
     "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr"
   }, {
     "name" : "Lee M. Zeldin",
-    "shortName" : "zeldin",
+    "shortName" : "Zeldin",
     "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
   }, {
     "name" : "Joseph P. Addabbo Jr",
-    "shortName" : "addabbo",
+    "shortName" : "Addabbo",
     "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
   }, {
     "name" : "Tony Avella",
-    "shortName" : "avella",
+    "shortName" : "Avella",
     "url" : "http://www.nysenate.gov/senator/tony-avella"
   }, {
     "name" : "Terry Gipson",
-    "shortName" : "gipson",
+    "shortName" : "Gipson",
     "url" : "http://www.nysenate.gov/senator/terry-gipson"
   }, {
     "name" : "James Sanders Jr.",
-    "shortName" : "sanders",
+    "shortName" : "Sanders",
     "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
   }, {
     "name" : "Cecilia Tkaczyk",
-    "shortName" : "tkaczyk",
+    "shortName" : "Tkaczyk",
     "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
   } ]
 }

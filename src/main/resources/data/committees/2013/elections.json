@@ -5,44 +5,44 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_elections",
   "chairs" : [ {
     "name" : "Thomas F. O'Mara",
-    "shortName" : "o'mara",
+    "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   } ],
   "members" : [ {
     "name" : "Greg Ball",
-    "shortName" : "ball",
+    "shortName" : "Ball",
     "url" : "http://www.nysenate.gov/senator/greg-ball"
   }, {
     "name" : "Patrick M. Gallivan",
-    "shortName" : "gallivan",
+    "shortName" : "Gallivan",
     "url" : "http://www.nysenate.gov/senator/pat-gallivan"
   }, {
     "name" : "Kathleen A. Marchione",
-    "shortName" : "marchione",
+    "shortName" : "Marchione",
     "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
   }, {
     "name" : "Michael F. Nozzolio",
-    "shortName" : "nozzolio",
+    "shortName" : "Nozzolio",
     "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
   }, {
     "name" : "Thomas F. O'Mara",
-    "shortName" : "o'mara",
+    "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
     "name" : "Cecilia Tkaczyk",
-    "shortName" : "tkaczyk",
+    "shortName" : "Tkaczyk",
     "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
   }, {
     "name" : "Martin Malavé Dilan",
-    "shortName" : "dilan",
+    "shortName" : "Dilan",
     "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
   }, {
     "name" : "Liz Krueger",
-    "shortName" : "krueger",
+    "shortName" : "Krueger",
     "url" : "http://www.nysenate.gov/senator/liz-krueger"
   }, {
     "name" : "Diane J. Savino",
-    "shortName" : "savino",
+    "shortName" : "Savino",
     "url" : "http://www.nysenate.gov/senator/diane-j-savino"
   } ]
 }

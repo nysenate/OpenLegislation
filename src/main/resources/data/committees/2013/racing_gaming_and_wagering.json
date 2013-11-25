@@ -5,52 +5,52 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_Gaming",
   "chairs" : [ {
     "name" : "John J. Bonacic",
-    "shortName" : "bonacic",
+    "shortName" : "Bonacic",
     "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
   } ],
   "members" : [ {
     "name" : "John J. Bonacic",
-    "shortName" : "bonacic",
+    "shortName" : "Bonacic",
     "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
   }, {
     "name" : "Phil Boyle",
-    "shortName" : "boyle",
+    "shortName" : "Boyle",
     "url" : "http://www.nysenate.gov/senator/philip-boyle"
   }, {
     "name" : "Joseph A. Griffo",
-    "shortName" : "griffo",
+    "shortName" : "Griffo",
     "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   }, {
     "name" : "Kathleen A. Marchione",
-    "shortName" : "marchione",
+    "shortName" : "Marchione",
     "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
   }, {
     "name" : "Michael F. Nozzolio",
-    "shortName" : "nozzolio",
+    "shortName" : "Nozzolio",
     "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
   }, {
     "name" : "Michael H. Ranzenhofer",
-    "shortName" : "ranzenhofer",
+    "shortName" : "Ranzenhofer",
     "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
   }, {
     "name" : "Joseph P. Addabbo Jr",
-    "shortName" : "addabbo",
+    "shortName" : "Addabbo",
     "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
   }, {
     "name" : "Eric Adams",
-    "shortName" : "adams",
+    "shortName" : "Adams",
     "url" : "http://www.nysenate.gov/senator/eric-adams"
   }, {
     "name" : "George Latimer",
-    "shortName" : "latimer",
+    "shortName" : "Latimer",
     "url" : "http://www.nysenate.gov/senator/george-s-latimer"
   }, {
     "name" : "James Sanders Jr.",
-    "shortName" : "sanders",
+    "shortName" : "Sanders",
     "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
   }, {
     "name" : "David Carlucci",
-    "shortName" : "carlucci",
+    "shortName" : "Carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
   } ]
 }

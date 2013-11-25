@@ -5,52 +5,52 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_EnergyTelcom",
   "chairs" : [ {
     "name" : "George D. Maziarz",
-    "shortName" : "maziarz",
+    "shortName" : "Maziarz",
     "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
   } ],
   "members" : [ {
     "name" : "David Carlucci",
-    "shortName" : "carlucci",
+    "shortName" : "Carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
   }, {
     "name" : "Charles J. Fuschillo Jr.",
-    "shortName" : "fuschillo",
+    "shortName" : "Fuschillo",
     "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
   }, {
     "name" : "George D. Maziarz",
-    "shortName" : "maziarz",
+    "shortName" : "Maziarz",
     "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
   }, {
     "name" : "Thomas F. O'Mara",
-    "shortName" : "o'mara",
+    "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
     "name" : "Joseph A. Griffo",
-    "shortName" : "griffo",
+    "shortName" : "Griffo",
     "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   }, {
     "name" : "Patty Ritchie",
-    "shortName" : "ritchie",
+    "shortName" : "Ritchie",
     "url" : "http://www.nysenate.gov/senator/patty-ritchie"
   }, {
     "name" : "Joseph E. Robach",
-    "shortName" : "robach",
+    "shortName" : "Robach",
     "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
   }, {
     "name" : "Kevin S. Parker",
-    "shortName" : "parker",
+    "shortName" : "Parker",
     "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
   }, {
     "name" : "Eric Adams",
-    "shortName" : "adams",
+    "shortName" : "Adams",
     "url" : "http://www.nysenate.gov/senator/eric-adams"
   }, {
     "name" : "Timothy M. Kennedy",
-    "shortName" : "kennedy",
+    "shortName" : "Kennedy",
     "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
   }, {
     "name" : "Martin Malavé Dilan",
-    "shortName" : "dilan",
+    "shortName" : "Dilan",
     "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
   } ]
 }

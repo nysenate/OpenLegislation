@@ -5,32 +5,32 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_NYC_Education",
   "chairs" : [ {
     "name" : "Simcha Felder",
-    "shortName" : "felder",
+    "shortName" : "Felder",
     "url" : "http://www.nysenate.gov/senator/simcha-felder"
   } ],
   "members" : [ {
     "name" : "Andrew J Lanza",
-    "shortName" : "lanza",
+    "shortName" : "Lanza",
     "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
   }, {
     "name" : "Martin J. Golden",
-    "shortName" : "golden",
+    "shortName" : "Golden",
     "url" : "http://www.nysenate.gov/senator/martin-j-golden"
   }, {
     "name" : "Simcha Felder",
-    "shortName" : "felder",
+    "shortName" : "Felder",
     "url" : "http://www.nysenate.gov/senator/simcha-felder"
   }, {
     "name" : "Bill Perkins",
-    "shortName" : "perkins",
+    "shortName" : "Perkins",
     "url" : "http://www.nysenate.gov/senator/bill-perkins"
   }, {
     "name" : "Toby Ann Stavisky",
-    "shortName" : "stavisky",
+    "shortName" : "Stavisky",
     "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
   }, {
     "name" : "Diane J. Savino",
-    "shortName" : "savino",
+    "shortName" : "Savino",
     "url" : "http://www.nysenate.gov/senator/diane-j-savino"
   } ]
 }

@@ -5,48 +5,48 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_Commerce",
   "chairs" : [ {
     "name" : "David J. Valesky",
-    "shortName" : "valesky",
+    "shortName" : "Valesky",
     "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   } ],
   "members" : [ {
     "name" : "Patrick M. Gallivan",
-    "shortName" : "gallivan",
+    "shortName" : "Gallivan",
     "url" : "http://www.nysenate.gov/senator/pat-gallivan"
   }, {
     "name" : "Charles J. Fuschillo Jr.",
-    "shortName" : "fuschillo",
+    "shortName" : "Fuschillo",
     "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
   }, {
     "name" : "Joseph A. Griffo",
-    "shortName" : "griffo",
+    "shortName" : "Griffo",
     "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   }, {
     "name" : "Joseph E. Robach",
-    "shortName" : "robach",
+    "shortName" : "Robach",
     "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
   }, {
     "name" : "Phil Boyle",
-    "shortName" : "boyle",
+    "shortName" : "Boyle",
     "url" : "http://www.nysenate.gov/senator/philip-boyle"
   }, {
     "name" : "Simcha Felder",
-    "shortName" : "felder",
+    "shortName" : "Felder",
     "url" : "http://www.nysenate.gov/senator/simcha-felder"
   }, {
     "name" : "Timothy M. Kennedy",
-    "shortName" : "kennedy",
+    "shortName" : "Kennedy",
     "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
   }, {
     "name" : "Ruth Hassell-Thompson",
-    "shortName" : "hassell-thompson",
+    "shortName" : "Hassell-Thompson",
     "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
   }, {
     "name" : "James Sanders Jr.",
-    "shortName" : "sanders",
+    "shortName" : "Sanders",
     "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
   }, {
     "name" : "Ted O'Brien",
-    "shortName" : "o'brien",
+    "shortName" : "O'Brien",
     "url" : "http://www.nysenate.gov/senator/ted-obrien"
   } ]
 }

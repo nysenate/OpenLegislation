@@ -5,32 +5,32 @@
   "videoUrl" : "http://www.livestream.com/nysenate_alcoholism_drug_abuse",
   "chairs" : [ {
     "name" : "Phil Boyle",
-    "shortName" : "boyle",
+    "shortName" : "Boyle",
     "url" : "http://www.nysenate.gov/senator/philip-boyle"
   } ],
   "members" : [ {
     "name" : "John J. Bonacic",
-    "shortName" : "bonacic",
+    "shortName" : "Bonacic",
     "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
   }, {
     "name" : "Phil Boyle",
-    "shortName" : "boyle",
+    "shortName" : "Boyle",
     "url" : "http://www.nysenate.gov/senator/philip-boyle"
   }, {
     "name" : "Patty Ritchie",
-    "shortName" : "ritchie",
+    "shortName" : "Ritchie",
     "url" : "http://www.nysenate.gov/senator/patty-ritchie"
   }, {
     "name" : "David Carlucci",
-    "shortName" : "carlucci",
+    "shortName" : "Carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
   }, {
     "name" : "James Sanders Jr.",
-    "shortName" : "sanders",
+    "shortName" : "Sanders",
     "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
   }, {
     "name" : "Kevin S. Parker",
-    "shortName" : "parker",
+    "shortName" : "Parker",
     "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
   } ]
 }

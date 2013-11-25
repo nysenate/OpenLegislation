@@ -5,52 +5,52 @@
   "videoUrl" : "http://www.livestream.com/nysenate_agriculture",
   "chairs" : [ {
     "name" : "Patty Ritchie",
-    "shortName" : "ritchie",
+    "shortName" : "Ritchie",
     "url" : "http://www.nysenate.gov/senator/patty-ritchie"
   } ],
   "members" : [ {
     "name" : "Patrick M. Gallivan",
-    "shortName" : "gallivan",
+    "shortName" : "Gallivan",
     "url" : "http://www.nysenate.gov/senator/pat-gallivan"
   }, {
     "name" : "Thomas F. O'Mara",
-    "shortName" : "o'mara",
+    "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
     "name" : "Michael H. Ranzenhofer",
-    "shortName" : "ranzenhofer",
+    "shortName" : "Ranzenhofer",
     "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
   }, {
     "name" : "Patty Ritchie",
-    "shortName" : "ritchie",
+    "shortName" : "Ritchie",
     "url" : "http://www.nysenate.gov/senator/patty-ritchie"
   }, {
     "name" : "James L. Seward",
-    "shortName" : "seward",
+    "shortName" : "Seward",
     "url" : "http://www.nysenate.gov/senator/james-l-seward"
   }, {
     "name" : "Catharine Young",
-    "shortName" : "young",
+    "shortName" : "Young",
     "url" : "http://www.nysenate.gov/senator/catharine-young"
   }, {
     "name" : "David J. Valesky",
-    "shortName" : "valesky",
+    "shortName" : "Valesky",
     "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   }, {
     "name" : "Terry Gipson",
-    "shortName" : "gipson",
+    "shortName" : "Gipson",
     "url" : "http://www.nysenate.gov/senator/terry-gipson"
   }, {
     "name" : "Velmanette Montgomery",
-    "shortName" : "montgomery",
+    "shortName" : "Montgomery",
     "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
   }, {
     "name" : "José M. Serrano",
-    "shortName" : "serrano",
+    "shortName" : "Serrano",
     "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
   }, {
     "name" : "Cecilia Tkaczyk",
-    "shortName" : "tkaczyk",
+    "shortName" : "Tkaczyk",
     "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
   } ]
 }

@@ -5,44 +5,44 @@
   "videoUrl" : "http://www.livestream.com/M3JVgsNhooo",
   "chairs" : [ {
     "name" : "Carl L Marcellino",
-    "shortName" : "marcellino",
+    "shortName" : "Marcellino",
     "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
   } ],
   "members" : [ {
     "name" : "Carl L Marcellino",
-    "shortName" : "marcellino",
+    "shortName" : "Marcellino",
     "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
   }, {
     "name" : "David Carlucci",
-    "shortName" : "carlucci",
+    "shortName" : "Carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
   }, {
     "name" : "Martin J. Golden",
-    "shortName" : "golden",
+    "shortName" : "Golden",
     "url" : "http://www.nysenate.gov/senator/martin-j-golden"
   }, {
     "name" : "Michael F. Nozzolio",
-    "shortName" : "nozzolio",
+    "shortName" : "Nozzolio",
     "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
   }, {
     "name" : "Thomas F. O'Mara",
-    "shortName" : "o'mara",
+    "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
     "name" : "Lee M. Zeldin",
-    "shortName" : "zeldin",
+    "shortName" : "Zeldin",
     "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
   }, {
     "name" : "Brad Hoylman",
-    "shortName" : "hoylman",
+    "shortName" : "Hoylman",
     "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
     "name" : "Ruben Diaz",
-    "shortName" : "diaz",
+    "shortName" : "Diaz",
     "url" : "http://www.nysenate.gov/senator/ruben-diaz"
   }, {
     "name" : "Daniel L. Squadron",
-    "shortName" : "squadron",
+    "shortName" : "Squadron",
     "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
   } ]
 }

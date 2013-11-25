@@ -5,32 +5,32 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_Children_Families",
   "chairs" : [ {
     "name" : "Simcha Felder",
-    "shortName" : "felder",
+    "shortName" : "Felder",
     "url" : "http://www.nysenate.gov/senator/simcha-felder"
   } ],
   "members" : [ {
     "name" : "Simcha Felder",
-    "shortName" : "felder",
+    "shortName" : "Felder",
     "url" : "http://www.nysenate.gov/senator/simcha-felder"
   }, {
     "name" : "John J. Bonacic",
-    "shortName" : "bonacic",
+    "shortName" : "Bonacic",
     "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
   }, {
     "name" : "Catharine Young",
-    "shortName" : "young",
+    "shortName" : "Young",
     "url" : "http://www.nysenate.gov/senator/catharine-young"
   }, {
     "name" : "Diane J. Savino",
-    "shortName" : "savino",
+    "shortName" : "Savino",
     "url" : "http://www.nysenate.gov/senator/diane-j-savino"
   }, {
     "name" : "Velmanette Montgomery",
-    "shortName" : "montgomery",
+    "shortName" : "Montgomery",
     "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
   }, {
     "name" : "Cecilia Tkaczyk",
-    "shortName" : "tkaczyk",
+    "shortName" : "Tkaczyk",
     "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
   } ]
 }

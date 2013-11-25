@@ -5,44 +5,44 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_LocalGov",
   "chairs" : [ {
     "name" : "Jack M. Martins",
-    "shortName" : "martins",
+    "shortName" : "Martins",
     "url" : "http://www.nysenate.gov/senator/jack-m-martins"
   } ],
   "members" : [ {
     "name" : "Jack M. Martins",
-    "shortName" : "martins",
+    "shortName" : "Martins",
     "url" : "http://www.nysenate.gov/senator/jack-m-martins"
   }, {
     "name" : "Greg Ball",
-    "shortName" : "ball",
+    "shortName" : "Ball",
     "url" : "http://www.nysenate.gov/senator/greg-ball"
   }, {
     "name" : "Phil Boyle",
-    "shortName" : "boyle",
+    "shortName" : "Boyle",
     "url" : "http://www.nysenate.gov/senator/philip-boyle"
   }, {
     "name" : "Kathleen A. Marchione",
-    "shortName" : "marchione",
+    "shortName" : "Marchione",
     "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
   }, {
     "name" : "Patty Ritchie",
-    "shortName" : "ritchie",
+    "shortName" : "Ritchie",
     "url" : "http://www.nysenate.gov/senator/patty-ritchie"
   }, {
     "name" : "Terry Gipson",
-    "shortName" : "gipson",
+    "shortName" : "Gipson",
     "url" : "http://www.nysenate.gov/senator/terry-gipson"
   }, {
     "name" : "George Latimer",
-    "shortName" : "latimer",
+    "shortName" : "Latimer",
     "url" : "http://www.nysenate.gov/senator/george-s-latimer"
   }, {
     "name" : "Ted O'Brien",
-    "shortName" : "o'brien",
+    "shortName" : "O'Brien",
     "url" : "http://www.nysenate.gov/senator/ted-obrien"
   }, {
     "name" : "David J. Valesky",
-    "shortName" : "valesky",
+    "shortName" : "Valesky",
     "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   } ]
 }

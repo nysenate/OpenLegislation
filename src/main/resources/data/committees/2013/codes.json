@@ -5,68 +5,68 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_Codes",
   "chairs" : [ {
     "name" : "Michael F. Nozzolio",
-    "shortName" : "nozzolio",
+    "shortName" : "Nozzolio",
     "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
   } ],
   "members" : [ {
     "name" : "John A. DeFrancisco",
-    "shortName" : "defrancisco",
+    "shortName" : "DeFrancisco",
     "url" : "http://www.nysenate.gov/senator/john-defrancisco"
   }, {
     "name" : "John J. Flanagan",
-    "shortName" : "flanagan",
+    "shortName" : "Flanagan",
     "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
   }, {
     "name" : "Charles J. Fuschillo Jr.",
-    "shortName" : "fuschillo",
+    "shortName" : "Fuschillo",
     "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
   }, {
     "name" : "Patrick M. Gallivan",
-    "shortName" : "gallivan",
+    "shortName" : "Gallivan",
     "url" : "http://www.nysenate.gov/senator/pat-gallivan"
   }, {
     "name" : "Martin J. Golden",
-    "shortName" : "golden",
+    "shortName" : "Golden",
     "url" : "http://www.nysenate.gov/senator/martin-j-golden"
   }, {
     "name" : "Andrew J Lanza",
-    "shortName" : "lanza",
+    "shortName" : "Lanza",
     "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
   }, {
     "name" : "Michael F. Nozzolio",
-    "shortName" : "nozzolio",
+    "shortName" : "Nozzolio",
     "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
   }, {
     "name" : "Thomas F. O'Mara",
-    "shortName" : "o'mara",
+    "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
     "name" : "Phil Boyle",
-    "shortName" : "boyle",
+    "shortName" : "Boyle",
     "url" : "http://www.nysenate.gov/senator/philip-boyle"
   }, {
     "name" : "Daniel L. Squadron",
-    "shortName" : "squadron",
+    "shortName" : "Squadron",
     "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
   }, {
     "name" : "Bill Perkins",
-    "shortName" : "perkins",
+    "shortName" : "Perkins",
     "url" : "http://www.nysenate.gov/senator/bill-perkins"
   }, {
     "name" : "Adriano Espaillat",
-    "shortName" : "espaillat",
+    "shortName" : "Espaillat",
     "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
   }, {
     "name" : "Brad Hoylman",
-    "shortName" : "hoylman",
+    "shortName" : "Hoylman",
     "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
     "name" : "Ted O'Brien",
-    "shortName" : "o'brien",
+    "shortName" : "O'Brien",
     "url" : "http://www.nysenate.gov/senator/ted-obrien"
   }, {
     "name" : "Liz Krueger",
-    "shortName" : "krueger",
+    "shortName" : "Krueger",
     "url" : "http://www.nysenate.gov/senator/liz-krueger"
   } ]
 }

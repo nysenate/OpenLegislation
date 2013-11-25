@@ -6,23 +6,23 @@
   "chairs" : [ ],
   "members" : [ {
     "name" : "Greg Ball",
-    "shortName" : "ball",
+    "shortName" : "Ball",
     "url" : "http://www.nysenate.gov/senator/greg-ball"
   }, {
     "name" : "Hugh T. Farley",
-    "shortName" : "farley",
+    "shortName" : "Farley",
     "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
   }, {
     "name" : "Jack M. Martins",
-    "shortName" : "martins",
+    "shortName" : "Martins",
     "url" : "http://www.nysenate.gov/senator/jack-m-martins"
   }, {
     "name" : "James Sanders Jr.",
-    "shortName" : "sanders",
+    "shortName" : "Sanders",
     "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
   }, {
     "name" : "Daniel L. Squadron",
-    "shortName" : "squadron",
+    "shortName" : "Squadron",
     "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
   } ]
 }

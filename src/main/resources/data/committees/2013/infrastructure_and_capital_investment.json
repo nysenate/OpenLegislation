@@ -5,44 +5,44 @@
   "videoUrl" : "http://www.livestream.com/nysenate_infrastructure_capinvestment",
   "chairs" : [ {
     "name" : "Joseph E. Robach",
-    "shortName" : "robach",
+    "shortName" : "Robach",
     "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
   } ],
   "members" : [ {
     "name" : "Joseph E. Robach",
-    "shortName" : "robach",
+    "shortName" : "Robach",
     "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
   }, {
     "name" : "Charles J. Fuschillo Jr.",
-    "shortName" : "fuschillo",
+    "shortName" : "Fuschillo",
     "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
   }, {
     "name" : "Patrick M. Gallivan",
-    "shortName" : "gallivan",
+    "shortName" : "Gallivan",
     "url" : "http://www.nysenate.gov/senator/pat-gallivan"
   }, {
     "name" : "Joseph A. Griffo",
-    "shortName" : "griffo",
+    "shortName" : "Griffo",
     "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   }, {
     "name" : "Mark Grisanti",
-    "shortName" : "grisanti",
+    "shortName" : "Grisanti",
     "url" : "http://www.nysenate.gov/senator/mark-grisanti"
   }, {
     "name" : "David Carlucci",
-    "shortName" : "carlucci",
+    "shortName" : "Carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
   }, {
     "name" : "Brad Hoylman",
-    "shortName" : "hoylman",
+    "shortName" : "Hoylman",
     "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
     "name" : "Timothy M. Kennedy",
-    "shortName" : "kennedy",
+    "shortName" : "Kennedy",
     "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
   }, {
     "name" : "George Latimer",
-    "shortName" : "latimer",
+    "shortName" : "Latimer",
     "url" : "http://www.nysenate.gov/senator/george-s-latimer"
   } ]
 }

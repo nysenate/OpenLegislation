@@ -5,32 +5,32 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_cities",
   "chairs" : [ {
     "name" : "Andrew J Lanza",
-    "shortName" : "lanza",
+    "shortName" : "Lanza",
     "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
   } ],
   "members" : [ {
     "name" : "John A. DeFrancisco",
-    "shortName" : "defrancisco",
+    "shortName" : "DeFrancisco",
     "url" : "http://www.nysenate.gov/senator/john-defrancisco"
   }, {
     "name" : "Mark Grisanti",
-    "shortName" : "grisanti",
+    "shortName" : "Grisanti",
     "url" : "http://www.nysenate.gov/senator/mark-grisanti"
   }, {
     "name" : "Greg Ball",
-    "shortName" : "ball",
+    "shortName" : "Ball",
     "url" : "http://www.nysenate.gov/senator/greg-ball"
   }, {
     "name" : "Andrew J Lanza",
-    "shortName" : "lanza",
+    "shortName" : "Lanza",
     "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
   }, {
     "name" : "Tony Avella",
-    "shortName" : "avella",
+    "shortName" : "Avella",
     "url" : "http://www.nysenate.gov/senator/tony-avella"
   }, {
     "name" : "Neil D. Breslin",
-    "shortName" : "breslin",
+    "shortName" : "Breslin",
     "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
   } ]
 }

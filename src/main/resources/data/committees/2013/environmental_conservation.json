@@ -5,56 +5,56 @@
   "videoUrl" : "http://www.livestream.com/NYSenate_Environment",
   "chairs" : [ {
     "name" : "Mark Grisanti",
-    "shortName" : "grisanti",
+    "shortName" : "Grisanti",
     "url" : "http://www.nysenate.gov/senator/mark-grisanti"
   } ],
   "members" : [ {
     "name" : "Kenneth P. LaValle",
-    "shortName" : "lavalle",
+    "shortName" : "LaValle",
     "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
   }, {
     "name" : "Betty Little",
-    "shortName" : "little",
+    "shortName" : "Little",
     "url" : "http://www.nysenate.gov/senator/elizabeth-little"
   }, {
     "name" : "Carl L Marcellino",
-    "shortName" : "marcellino",
+    "shortName" : "Marcellino",
     "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
   }, {
     "name" : "George D. Maziarz",
-    "shortName" : "maziarz",
+    "shortName" : "Maziarz",
     "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
   }, {
     "name" : "Thomas F. O'Mara",
-    "shortName" : "o'mara",
+    "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
     "name" : "Catharine Young",
-    "shortName" : "young",
+    "shortName" : "Young",
     "url" : "http://www.nysenate.gov/senator/catharine-young"
   }, {
     "name" : "Mark Grisanti",
-    "shortName" : "grisanti",
+    "shortName" : "Grisanti",
     "url" : "http://www.nysenate.gov/senator/mark-grisanti"
   }, {
     "name" : "Tony Avella",
-    "shortName" : "avella",
+    "shortName" : "Avella",
     "url" : "http://www.nysenate.gov/senator/tony-avella"
   }, {
     "name" : "Adriano Espaillat",
-    "shortName" : "espaillat",
+    "shortName" : "Espaillat",
     "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
   }, {
     "name" : "José M. Serrano",
-    "shortName" : "serrano",
+    "shortName" : "Serrano",
     "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
   }, {
     "name" : "George Latimer",
-    "shortName" : "latimer",
+    "shortName" : "Latimer",
     "url" : "http://www.nysenate.gov/senator/george-s-latimer"
   }, {
     "name" : "Cecilia Tkaczyk",
-    "shortName" : "tkaczyk",
+    "shortName" : "Tkaczyk",
     "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
   } ]
 }

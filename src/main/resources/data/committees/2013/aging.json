@@ -5,52 +5,52 @@
   "videoUrl" : "http://www.livestream.com/nysenate_aging",
   "chairs" : [ {
     "name" : "Eric Adams",
-    "shortName" : "adams",
+    "shortName" : "Adams",
     "url" : "http://www.nysenate.gov/senator/eric-adams"
   } ],
   "members" : [ {
     "name" : "Eric Adams",
-    "shortName" : "adams",
+    "shortName" : "Adams",
     "url" : "http://www.nysenate.gov/senator/eric-adams"
   }, {
     "name" : "Simcha Felder",
-    "shortName" : "felder",
+    "shortName" : "Felder",
     "url" : "http://www.nysenate.gov/senator/simcha-felder"
   }, {
     "name" : "Martin J. Golden",
-    "shortName" : "golden",
+    "shortName" : "Golden",
     "url" : "http://www.nysenate.gov/senator/martin-j-golden"
   }, {
     "name" : "Kenneth P. LaValle",
-    "shortName" : "lavalle",
+    "shortName" : "LaValle",
     "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
   }, {
     "name" : "Kathleen A. Marchione",
-    "shortName" : "marchione",
+    "shortName" : "Marchione",
     "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
   }, {
     "name" : "David J. Valesky",
-    "shortName" : "valesky",
+    "shortName" : "Valesky",
     "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   }, {
     "name" : "Lee M. Zeldin",
-    "shortName" : "zeldin",
+    "shortName" : "Zeldin",
     "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
   }, {
     "name" : "Ruben Diaz",
-    "shortName" : "diaz",
+    "shortName" : "Diaz",
     "url" : "http://www.nysenate.gov/senator/ruben-diaz"
   }, {
     "name" : "Joseph P. Addabbo Jr",
-    "shortName" : "addabbo",
+    "shortName" : "Addabbo",
     "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
   }, {
     "name" : "Tony Avella",
-    "shortName" : "avella",
+    "shortName" : "Avella",
     "url" : "http://www.nysenate.gov/senator/tony-avella"
   }, {
     "name" : "Toby Ann Stavisky",
-    "shortName" : "stavisky",
+    "shortName" : "Stavisky",
     "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
   } ]
 }
