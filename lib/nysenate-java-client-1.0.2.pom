@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>gov.nysenate.services</groupId>
     <artifactId>nysenate-java-client</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <build>
         <plugins>
             <plugin>

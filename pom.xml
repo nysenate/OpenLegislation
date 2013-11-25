@@ -109,7 +109,7 @@
         <dependency>
             <groupId>gov.nysenate.services</groupId>
             <artifactId>nysenate-java-client</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>gov.nysenate</groupId>
