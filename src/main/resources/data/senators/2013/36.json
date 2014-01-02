@@ -1,4 +1,5 @@
 {
+  "nid" : 201,
   "name" : "Ruth Hassell-Thompson",
   "lastName" : "Hassell-Thompson",
   "shortName" : "Hassell-Thompson",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson",
   "partyAffiliations" : [ "D", "WF" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2061",
-    "fax" : "(518) 426-6998",
-    "otherPhone" : "",
-    "additional" : "Room 707 Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "959 E. 233rd Street",
     "city" : "Bronx",
@@ -52,6 +38,21 @@
     "additional" : "Doles Center",
     "latitude" : 40.902361,
     "longitude" : -73.837385
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2061",
+    "fax" : "(518) 426-6998",
+    "otherPhone" : "",
+    "additional" : "Room 707 Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
   } ],
   "district" : {
     "number" : 36,

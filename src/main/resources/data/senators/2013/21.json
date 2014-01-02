@@ -1,4 +1,5 @@
 {
+  "nid" : 109,
   "name" : "Kevin S. Parker",
   "lastName" : "Parker",
   "shortName" : "Parker",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/kevin-s-parker",
   "partyAffiliations" : [ "D", "WF" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2580",
-    "fax" : "(518) 426-6843",
-    "otherPhone" : "",
-    "additional" : "Room 604, Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "1300 Flatbush Avenue",
     "city" : "Brooklyn",
@@ -37,6 +23,21 @@
     "additional" : "",
     "latitude" : 40.638249,
     "longitude" : -73.953696
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2580",
+    "fax" : "(518) 426-6843",
+    "otherPhone" : "",
+    "additional" : "Room 604, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
   } ],
   "district" : {
     "number" : 21,

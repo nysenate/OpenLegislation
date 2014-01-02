@@ -1,4 +1,5 @@
 {
+  "nid" : 228,
   "name" : "Hugh T. Farley",
   "lastName" : "Farley",
   "shortName" : "Farley",
@@ -23,21 +24,6 @@
     "latitude" : 42.652855,
     "longitude" : -73.759091
   }, {
-    "name" : "District Office",
-    "street" : "199 Milton Avenue",
-    "city" : "Ballston Spa",
-    "postalCode" : "12020",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 885-1829",
-    "fax" : "(518) 885-1970",
-    "otherPhone" : "",
-    "additional" : "Suite 4",
-    "latitude" : 43.006458,
-    "longitude" : -73.849918
-  }, {
     "name" : "District Office 2",
     "street" : "33-41 East Main Street",
     "city" : "Johnstown",
@@ -52,6 +38,21 @@
     "additional" : "City Hall",
     "latitude" : 43.007144,
     "longitude" : -74.37005
+  }, {
+    "name" : "District Office",
+    "street" : "199 Milton Avenue",
+    "city" : "Ballston Spa",
+    "postalCode" : "12020",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 885-1829",
+    "fax" : "(518) 885-1970",
+    "otherPhone" : "",
+    "additional" : "Suite 4",
+    "latitude" : 43.006458,
+    "longitude" : -73.849918
   } ],
   "district" : {
     "number" : 49,

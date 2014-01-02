@@ -1,52 +1,59 @@
 {
+  "nid" : 268,
   "name" : "Commerce, Economic Development and Small Business",
   "shortName" : "commerce",
   "url" : "http://www.nysenate.gov/committee/commerce-economic-development-and-small-business",
   "videoUrl" : "http://www.livestream.com/NYSenate_Commerce",
   "chairs" : [ {
+    "nid" : 211,
     "name" : "David J. Valesky",
-    "shortName" : "valesky",
+    "shortName" : "Valesky",
     "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   } ],
   "members" : [ {
+    "nid" : 75006,
     "name" : "Patrick M. Gallivan",
-    "shortName" : "gallivan",
+    "shortName" : "Gallivan",
     "url" : "http://www.nysenate.gov/senator/pat-gallivan"
   }, {
-    "name" : "Charles J. Fuschillo Jr.",
-    "shortName" : "fuschillo",
-    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
-  }, {
+    "nid" : 217,
     "name" : "Joseph A. Griffo",
-    "shortName" : "griffo",
+    "shortName" : "Griffo",
     "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   }, {
+    "nid" : 204,
     "name" : "Joseph E. Robach",
-    "shortName" : "robach",
+    "shortName" : "Robach",
     "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
   }, {
+    "nid" : 170126,
     "name" : "Phil Boyle",
-    "shortName" : "boyle",
+    "shortName" : "Boyle",
     "url" : "http://www.nysenate.gov/senator/philip-boyle"
   }, {
+    "nid" : 170136,
     "name" : "Simcha Felder",
-    "shortName" : "felder",
+    "shortName" : "Felder",
     "url" : "http://www.nysenate.gov/senator/simcha-felder"
   }, {
+    "nid" : 75581,
     "name" : "Timothy M. Kennedy",
-    "shortName" : "kennedy",
+    "shortName" : "Kennedy",
     "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
   }, {
+    "nid" : 201,
     "name" : "Ruth Hassell-Thompson",
-    "shortName" : "hassell-thompson",
+    "shortName" : "Hassell-Thompson",
     "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
   }, {
+    "nid" : 170131,
     "name" : "James Sanders Jr.",
-    "shortName" : "sanders",
+    "shortName" : "Sanders",
     "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
   }, {
+    "nid" : 170161,
     "name" : "Ted O'Brien",
-    "shortName" : "o'brien",
+    "shortName" : "O'Brien",
     "url" : "http://www.nysenate.gov/senator/ted-obrien"
   } ]
 }

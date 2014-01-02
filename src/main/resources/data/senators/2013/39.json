@@ -1,4 +1,5 @@
 {
+  "nid" : 239,
   "name" : "William J. Larkin Jr.",
   "lastName" : "Larkin",
   "shortName" : "Larkin",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr",
   "partyAffiliations" : [ "R", "C" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2770",
-    "fax" : "",
-    "otherPhone" : "",
-    "additional" : "Room 502, Senate Capitol Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "1093 Little Britain Road",
     "city" : "New Windsor",
@@ -37,6 +23,21 @@
     "additional" : "",
     "latitude" : 41.483552,
     "longitude" : -74.097905
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2770",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 502, Senate Capitol Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
   } ],
   "district" : {
     "number" : 39,

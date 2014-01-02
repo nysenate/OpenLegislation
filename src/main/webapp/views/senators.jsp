@@ -69,7 +69,7 @@
 	            <a href="<%=senator.getUrl()%>">Home</a> | <a href="<%=senator.getUrl()%>/contact">Contact</a>
 	            </div>
 	            <div class="senator-openleg-links">
-	                <a href="<%=searchUrl%>">Sponsored Legislation</a>
+	                <a href="<%=searchUrl%>"><%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Legislation</a>
 	            </div>
 	        </div>
 	    <% } %>

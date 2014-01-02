@@ -1,64 +1,79 @@
 {
+  "nid" : 275,
   "name" : "Veterans, Homeland Security and Military Affairs",
   "shortName" : "veterans",
   "url" : "http://www.nysenate.gov/committee/veterans-homeland-security-and-military-affairs",
   "videoUrl" : "http://www.livestream.com/NYSenate_VetsHomeSecurityMil",
   "chairs" : [ {
+    "nid" : 74991,
     "name" : "Greg Ball",
-    "shortName" : "ball",
+    "shortName" : "Ball",
     "url" : "http://www.nysenate.gov/senator/greg-ball"
   } ],
   "members" : [ {
+    "nid" : 74991,
     "name" : "Greg Ball",
-    "shortName" : "ball",
+    "shortName" : "Ball",
     "url" : "http://www.nysenate.gov/senator/greg-ball"
   }, {
+    "nid" : 75566,
     "name" : "David Carlucci",
-    "shortName" : "carlucci",
+    "shortName" : "Carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
   }, {
+    "nid" : 229,
     "name" : "John J. Flanagan",
-    "shortName" : "flanagan",
+    "shortName" : "Flanagan",
     "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
   }, {
+    "nid" : 232,
     "name" : "Martin J. Golden",
-    "shortName" : "golden",
+    "shortName" : "Golden",
     "url" : "http://www.nysenate.gov/senator/martin-j-golden"
   }, {
+    "nid" : 217,
     "name" : "Joseph A. Griffo",
-    "shortName" : "griffo",
+    "shortName" : "Griffo",
     "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   }, {
+    "nid" : 75011,
     "name" : "Mark Grisanti",
-    "shortName" : "grisanti",
+    "shortName" : "Grisanti",
     "url" : "http://www.nysenate.gov/senator/mark-grisanti"
   }, {
+    "nid" : 239,
     "name" : "William J. Larkin Jr.",
-    "shortName" : "larkin",
+    "shortName" : "Larkin",
     "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr"
   }, {
+    "nid" : 74981,
     "name" : "Lee M. Zeldin",
-    "shortName" : "zeldin",
+    "shortName" : "Zeldin",
     "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
   }, {
+    "nid" : 97,
     "name" : "Joseph P. Addabbo Jr",
-    "shortName" : "addabbo",
+    "shortName" : "Addabbo",
     "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
   }, {
+    "nid" : 75586,
     "name" : "Tony Avella",
-    "shortName" : "avella",
+    "shortName" : "Avella",
     "url" : "http://www.nysenate.gov/senator/tony-avella"
   }, {
+    "nid" : 170151,
     "name" : "Terry Gipson",
-    "shortName" : "gipson",
+    "shortName" : "Gipson",
     "url" : "http://www.nysenate.gov/senator/terry-gipson"
   }, {
+    "nid" : 170131,
     "name" : "James Sanders Jr.",
-    "shortName" : "sanders",
+    "shortName" : "Sanders",
     "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
   }, {
+    "nid" : 172641,
     "name" : "Cecilia Tkaczyk",
-    "shortName" : "tkaczyk",
+    "shortName" : "Tkaczyk",
     "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
   } ]
 }

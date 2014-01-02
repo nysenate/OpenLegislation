@@ -1,48 +1,54 @@
 {
+  "nid" : 173646,
   "name" : "Infrastructure and Capital Investment",
   "shortName" : "capitalinvestments",
   "url" : "http://www.nysenate.gov/committee/infrastructure-and-capital-investment",
   "videoUrl" : "http://www.livestream.com/nysenate_infrastructure_capinvestment",
   "chairs" : [ {
+    "nid" : 204,
     "name" : "Joseph E. Robach",
-    "shortName" : "robach",
+    "shortName" : "Robach",
     "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
   } ],
   "members" : [ {
+    "nid" : 204,
     "name" : "Joseph E. Robach",
-    "shortName" : "robach",
+    "shortName" : "Robach",
     "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
   }, {
-    "name" : "Charles J. Fuschillo Jr.",
-    "shortName" : "fuschillo",
-    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
-  }, {
+    "nid" : 75006,
     "name" : "Patrick M. Gallivan",
-    "shortName" : "gallivan",
+    "shortName" : "Gallivan",
     "url" : "http://www.nysenate.gov/senator/pat-gallivan"
   }, {
+    "nid" : 217,
     "name" : "Joseph A. Griffo",
-    "shortName" : "griffo",
+    "shortName" : "Griffo",
     "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   }, {
+    "nid" : 75011,
     "name" : "Mark Grisanti",
-    "shortName" : "grisanti",
+    "shortName" : "Grisanti",
     "url" : "http://www.nysenate.gov/senator/mark-grisanti"
   }, {
+    "nid" : 75566,
     "name" : "David Carlucci",
-    "shortName" : "carlucci",
+    "shortName" : "Carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
   }, {
+    "nid" : 170141,
     "name" : "Brad Hoylman",
-    "shortName" : "hoylman",
+    "shortName" : "Hoylman",
     "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
+    "nid" : 75581,
     "name" : "Timothy M. Kennedy",
-    "shortName" : "kennedy",
+    "shortName" : "Kennedy",
     "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
   }, {
+    "nid" : 170116,
     "name" : "George Latimer",
-    "shortName" : "latimer",
+    "shortName" : "Latimer",
     "url" : "http://www.nysenate.gov/senator/george-s-latimer"
   } ]
 }

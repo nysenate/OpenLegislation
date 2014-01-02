@@ -1,4 +1,5 @@
 {
+  "nid" : 75586,
   "name" : "Tony Avella",
   "lastName" : "Avella",
   "shortName" : "Avella",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/tony-avella",
   "partyAffiliations" : [ "D" ],
   "offices" : [ {
-    "name" : "District Office",
-    "street" : "38-50 Bell Boulevard",
-    "city" : "Bayside",
-    "postalCode" : "11361",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "718-357-3094",
-    "fax" : "718-357-3491",
-    "otherPhone" : "",
-    "additional" : "Suite C",
-    "latitude" : 40.765282,
-    "longitude" : -73.77224
-  }, {
     "name" : "Albany Office",
     "street" : "Room 504, LOB",
     "city" : "Albany",
@@ -37,6 +23,21 @@
     "additional" : "",
     "latitude" : 42.694803,
     "longitude" : -73.850052
+  }, {
+    "name" : "District Office",
+    "street" : "38-50 Bell Boulevard",
+    "city" : "Bayside",
+    "postalCode" : "11361",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "718-357-3094",
+    "fax" : "718-357-3491",
+    "otherPhone" : "",
+    "additional" : "Suite C",
+    "latitude" : 40.765282,
+    "longitude" : -73.77224
   } ],
   "district" : {
     "number" : 11,

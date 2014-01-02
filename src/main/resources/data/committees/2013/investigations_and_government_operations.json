@@ -1,48 +1,59 @@
 {
+  "nid" : 262,
   "name" : "Investigations and Government Operations",
   "shortName" : "",
   "url" : "http://www.nysenate.gov/committee/investigations-and-government-operations",
   "videoUrl" : "http://www.livestream.com/M3JVgsNhooo",
   "chairs" : [ {
+    "nid" : 222,
     "name" : "Carl L Marcellino",
-    "shortName" : "marcellino",
+    "shortName" : "Marcellino",
     "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
   } ],
   "members" : [ {
+    "nid" : 222,
     "name" : "Carl L Marcellino",
-    "shortName" : "marcellino",
+    "shortName" : "Marcellino",
     "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
   }, {
+    "nid" : 75566,
     "name" : "David Carlucci",
-    "shortName" : "carlucci",
+    "shortName" : "Carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
   }, {
+    "nid" : 232,
     "name" : "Martin J. Golden",
-    "shortName" : "golden",
+    "shortName" : "Golden",
     "url" : "http://www.nysenate.gov/senator/martin-j-golden"
   }, {
+    "nid" : 208,
     "name" : "Michael F. Nozzolio",
-    "shortName" : "nozzolio",
+    "shortName" : "Nozzolio",
     "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
   }, {
+    "nid" : 75001,
     "name" : "Thomas F. O'Mara",
-    "shortName" : "o'mara",
+    "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
+    "nid" : 74981,
     "name" : "Lee M. Zeldin",
-    "shortName" : "zeldin",
+    "shortName" : "Zeldin",
     "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
   }, {
+    "nid" : 170141,
     "name" : "Brad Hoylman",
-    "shortName" : "hoylman",
+    "shortName" : "Hoylman",
     "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
+    "nid" : 198,
     "name" : "Ruben Diaz",
-    "shortName" : "diaz",
+    "shortName" : "Diaz",
     "url" : "http://www.nysenate.gov/senator/ruben-diaz"
   }, {
+    "nid" : 113,
     "name" : "Daniel L. Squadron",
-    "shortName" : "squadron",
+    "shortName" : "Squadron",
     "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
   } ]
 }

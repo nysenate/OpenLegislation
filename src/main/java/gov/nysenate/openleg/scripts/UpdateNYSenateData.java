@@ -10,6 +10,8 @@ import gov.nysenate.services.model.Senator;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -60,11 +62,20 @@ public class UpdateNYSenateData extends BaseScript
 
             List<Committee> committees = client.getStandingCommittees();
             for (Committee committee : committees) {
+                // Fix senator shortNames.
                 @SuppressWarnings("unchecked")
                 List<Member> members = ListUtils.union(committee.getChairs(), committee.getMembers());
                 for(Member member : members) {
                     member.setShortName(getSenatorKey(member.getName()));
                 }
+
+                // Remove all but the first listed chair, remove that chair from member listings.
+                if (!committee.getChairs().isEmpty()) {
+                    Member chair = committee.getChairs().get(0);
+                    committee.setChairs(new ArrayList<Member>(Arrays.asList(new Member[]{chair})));
+                    committee.getMembers().remove(chair);
+                }
+
                 String filename = committee.getName().replaceAll("[',.-]", "").replaceAll(" ", "_").toLowerCase()+".json";
                 File committeeFile = new File(currentCommitteesDir, filename);
                 mapper.writeValue(committeeFile, committee);

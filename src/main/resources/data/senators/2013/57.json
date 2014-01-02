@@ -1,4 +1,5 @@
 {
+  "nid" : 203,
   "name" : "Catharine Young",
   "lastName" : "Young",
   "shortName" : "Young",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/catharine-young",
   "partyAffiliations" : [ "R", "C", "IP" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-3563",
-    "fax" : "(518) 426-6905",
-    "otherPhone" : "",
-    "additional" : "Room 307 Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "Westgate Plaza 700 W. State Street",
     "city" : "Olean",
@@ -52,6 +38,21 @@
     "additional" : "Fenton Building, Suite 302",
     "latitude" : 42.094917,
     "longitude" : -79.241688
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3563",
+    "fax" : "(518) 426-6905",
+    "otherPhone" : "",
+    "additional" : "Room 307 Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
   } ],
   "district" : {
     "number" : 57,

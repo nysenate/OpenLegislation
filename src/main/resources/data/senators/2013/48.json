@@ -1,4 +1,5 @@
 {
+  "nid" : 74996,
   "name" : "Patty Ritchie",
   "lastName" : "Ritchie",
   "shortName" : "Ritchie",
@@ -22,21 +23,6 @@
     "additional" : "",
     "latitude" : 43.974784,
     "longitude" : -75.910757
-  }, {
-    "name" : "Albany Office",
-    "street" : "Legislative Office Building, Room 412",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "518-455-3438",
-    "fax" : "518-426-6740",
-    "otherPhone" : "",
-    "additional" : "",
-    "latitude" : 42.652442,
-    "longitude" : -73.759332
   }, {
     "name" : "District Office",
     "street" : "46 East Bridge St., 1st Floor",
@@ -67,6 +53,21 @@
     "additional" : "(basement of City Hall)",
     "latitude" : 44.698385,
     "longitude" : -75.492149
+  }, {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building, Room 412",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3438",
+    "fax" : "518-426-6740",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
   } ],
   "district" : {
     "number" : 48,
@@ -75,7 +76,7 @@
     "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=48"
   },
   "social" : {
-    "twitter" : "",
+    "twitter" : "https://twitter.com/SenatorRitchie",
     "youtube" : "",
     "myspace" : "",
     "picasa" : "",

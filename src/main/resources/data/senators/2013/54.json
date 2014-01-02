@@ -1,4 +1,5 @@
 {
+  "nid" : 208,
   "name" : "Michael F. Nozzolio",
   "lastName" : "Nozzolio",
   "shortName" : "Nozzolio",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio",
   "partyAffiliations" : [ "R", "C", "IP" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street,",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2366",
-    "fax" : "(518) 426-6953",
-    "otherPhone" : "",
-    "additional" : "Room 503, Capitol Building",
-    "latitude" : 42.652894,
-    "longitude" : -73.759161
-  }, {
     "name" : "District Office",
     "street" : "119 Fall Street",
     "city" : "Seneca Falls",
@@ -37,6 +23,21 @@
     "additional" : "",
     "latitude" : 42.910497,
     "longitude" : -76.798896
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2366",
+    "fax" : "(518) 426-6953",
+    "otherPhone" : "",
+    "additional" : "Room 503, Capitol Building",
+    "latitude" : 42.652894,
+    "longitude" : -73.759161
   } ],
   "district" : {
     "number" : 54,

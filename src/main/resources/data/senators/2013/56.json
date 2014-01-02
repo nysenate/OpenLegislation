@@ -1,4 +1,5 @@
 {
+  "nid" : 204,
   "name" : "Joseph E. Robach",
   "lastName" : "Robach",
   "shortName" : "Robach",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/joseph-e-robach",
   "partyAffiliations" : [ "R", "C", "IP" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Steet",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2909",
-    "fax" : "",
-    "otherPhone" : "",
-    "additional" : "Room 803, Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "2300 W. Ridge Road",
     "city" : "Rochester",
@@ -37,6 +23,21 @@
     "additional" : "",
     "latitude" : 43.209487,
     "longitude" : -77.688661
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Steet",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2909",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 803, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
   } ],
   "district" : {
     "number" : 56,

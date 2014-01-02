@@ -1,56 +1,64 @@
 {
+  "nid" : 269,
   "name" : "Consumer Protection",
   "shortName" : "consumers",
   "url" : "http://www.nysenate.gov/committee/consumer-protection",
   "videoUrl" : "http://www.livestream.com/NYSenate_consumerprotection",
   "chairs" : [ {
+    "nid" : 74981,
     "name" : "Lee M. Zeldin",
-    "shortName" : "zeldin",
+    "shortName" : "Zeldin",
     "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
   } ],
   "members" : [ {
+    "nid" : 170126,
     "name" : "Phil Boyle",
-    "shortName" : "boyle",
+    "shortName" : "Boyle",
     "url" : "http://www.nysenate.gov/senator/philip-boyle"
   }, {
-    "name" : "Charles J. Fuschillo Jr.",
-    "shortName" : "fuschillo",
-    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
-  }, {
+    "nid" : 218,
     "name" : "Betty Little",
-    "shortName" : "little",
+    "shortName" : "Little",
     "url" : "http://www.nysenate.gov/senator/elizabeth-little"
   }, {
+    "nid" : 170156,
     "name" : "Kathleen A. Marchione",
-    "shortName" : "marchione",
+    "shortName" : "Marchione",
     "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
   }, {
+    "nid" : 227,
     "name" : "George D. Maziarz",
-    "shortName" : "maziarz",
+    "shortName" : "Maziarz",
     "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
   }, {
+    "nid" : 74981,
     "name" : "Lee M. Zeldin",
-    "shortName" : "zeldin",
+    "shortName" : "Zeldin",
     "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
   }, {
+    "nid" : 111,
     "name" : "Diane J. Savino",
-    "shortName" : "savino",
+    "shortName" : "Savino",
     "url" : "http://www.nysenate.gov/senator/diane-j-savino"
   }, {
+    "nid" : 170141,
     "name" : "Brad Hoylman",
-    "shortName" : "hoylman",
+    "shortName" : "Hoylman",
     "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
+    "nid" : 119,
     "name" : "José M. Serrano",
-    "shortName" : "serrano",
+    "shortName" : "Serrano",
     "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
   }, {
+    "nid" : 170151,
     "name" : "Terry Gipson",
-    "shortName" : "gipson",
+    "shortName" : "Gipson",
     "url" : "http://www.nysenate.gov/senator/terry-gipson"
   }, {
+    "nid" : 170116,
     "name" : "George Latimer",
-    "shortName" : "latimer",
+    "shortName" : "Latimer",
     "url" : "http://www.nysenate.gov/senator/george-s-latimer"
   } ]
 }

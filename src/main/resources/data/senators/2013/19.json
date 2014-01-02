@@ -1,4 +1,5 @@
 {
+  "nid" : 105,
   "name" : "John L. Sampson",
   "lastName" : "Sampson",
   "shortName" : "Sampson",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/john-l-sampson",
   "partyAffiliations" : [ "D", "WF" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2788",
-    "fax" : "(518) 426-6806",
-    "otherPhone" : "",
-    "additional" : "Room 808, Legislative Office Building",
-    "latitude" : 42.652894,
-    "longitude" : -73.759161
-  }, {
     "name" : "District Office",
     "street" : "1222  East 96th Street",
     "city" : "Brooklyn",
@@ -37,6 +23,21 @@
     "additional" : "",
     "latitude" : 40.64166,
     "longitude" : -73.900138
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2788",
+    "fax" : "(518) 426-6806",
+    "otherPhone" : "",
+    "additional" : "Room 808, Legislative Office Building",
+    "latitude" : 42.652894,
+    "longitude" : -73.759161
   } ],
   "district" : {
     "number" : 19,

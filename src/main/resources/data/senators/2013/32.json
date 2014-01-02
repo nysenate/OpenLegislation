@@ -1,4 +1,5 @@
 {
+  "nid" : 198,
   "name" : "Ruben Diaz",
   "lastName" : "Diaz",
   "shortName" : "Diaz",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/ruben-diaz",
   "partyAffiliations" : [ "D" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2511",
-    "fax" : "(518) 426-6945",
-    "otherPhone" : "",
-    "additional" : "Room 606, Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "900 Rogers Place",
     "city" : "Bronx",
@@ -37,6 +23,21 @@
     "additional" : "",
     "latitude" : 40.820703,
     "longitude" : -73.897831
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2511",
+    "fax" : "(518) 426-6945",
+    "otherPhone" : "",
+    "additional" : "Room 606, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
   } ],
   "district" : {
     "number" : 32,

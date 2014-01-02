@@ -1,64 +1,79 @@
 {
+  "nid" : 271,
   "name" : "Crime Victims, Crime and Correction",
   "shortName" : "crime",
   "url" : "http://www.nysenate.gov/committee/crime-victims-crime-and-correction",
   "videoUrl" : "http://www.livestream.com/NYSenate_VictimsCrimeCorrection",
   "chairs" : [ {
+    "nid" : 75006,
     "name" : "Patrick M. Gallivan",
-    "shortName" : "gallivan",
+    "shortName" : "Gallivan",
     "url" : "http://www.nysenate.gov/senator/pat-gallivan"
   } ],
   "members" : [ {
+    "nid" : 75566,
     "name" : "David Carlucci",
-    "shortName" : "carlucci",
+    "shortName" : "Carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
   }, {
+    "nid" : 216,
     "name" : "John A. DeFrancisco",
-    "shortName" : "defrancisco",
+    "shortName" : "DeFrancisco",
     "url" : "http://www.nysenate.gov/senator/john-defrancisco"
   }, {
+    "nid" : 217,
     "name" : "Joseph A. Griffo",
-    "shortName" : "griffo",
+    "shortName" : "Griffo",
     "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   }, {
+    "nid" : 218,
     "name" : "Betty Little",
-    "shortName" : "little",
+    "shortName" : "Little",
     "url" : "http://www.nysenate.gov/senator/elizabeth-little"
   }, {
+    "nid" : 227,
     "name" : "George D. Maziarz",
-    "shortName" : "maziarz",
+    "shortName" : "Maziarz",
     "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
   }, {
+    "nid" : 208,
     "name" : "Michael F. Nozzolio",
-    "shortName" : "nozzolio",
+    "shortName" : "Nozzolio",
     "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
   }, {
+    "nid" : 74996,
     "name" : "Patty Ritchie",
-    "shortName" : "ritchie",
+    "shortName" : "Ritchie",
     "url" : "http://www.nysenate.gov/senator/patty-ritchie"
   }, {
+    "nid" : 75006,
     "name" : "Patrick M. Gallivan",
-    "shortName" : "gallivan",
+    "shortName" : "Gallivan",
     "url" : "http://www.nysenate.gov/senator/pat-gallivan"
   }, {
+    "nid" : 201,
     "name" : "Ruth Hassell-Thompson",
-    "shortName" : "hassell-thompson",
+    "shortName" : "Hassell-Thompson",
     "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
   }, {
+    "nid" : 103,
     "name" : "Velmanette Montgomery",
-    "shortName" : "montgomery",
+    "shortName" : "Montgomery",
     "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
   }, {
+    "nid" : 170141,
     "name" : "Brad Hoylman",
-    "shortName" : "hoylman",
+    "shortName" : "Hoylman",
     "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
+    "nid" : 42181,
     "name" : "José Peralta",
-    "shortName" : "peralta",
+    "shortName" : "Peralta",
     "url" : "http://www.nysenate.gov/senator/jose-peralta"
   }, {
+    "nid" : 75571,
     "name" : "Gustavo Rivera",
-    "shortName" : "rivera",
+    "shortName" : "Rivera",
     "url" : "http://www.nysenate.gov/senator/gustavo-rivera"
   } ]
 }

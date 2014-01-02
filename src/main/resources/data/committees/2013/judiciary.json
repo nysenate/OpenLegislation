@@ -1,108 +1,124 @@
 {
+  "nid" : 263,
   "name" : "Judiciary",
   "shortName" : "judiciary",
   "url" : "http://www.nysenate.gov/committee/judiciary",
   "videoUrl" : "http://www.livestream.com/NYSenate_Judiciary",
   "chairs" : [ {
+    "nid" : 220,
     "name" : "John J. Bonacic",
-    "shortName" : "bonacic",
+    "shortName" : "Bonacic",
     "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
   } ],
   "members" : [ {
+    "nid" : 220,
     "name" : "John J. Bonacic",
-    "shortName" : "bonacic",
+    "shortName" : "Bonacic",
     "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
   }, {
+    "nid" : 216,
     "name" : "John A. DeFrancisco",
-    "shortName" : "defrancisco",
+    "shortName" : "DeFrancisco",
     "url" : "http://www.nysenate.gov/senator/john-defrancisco"
   }, {
+    "nid" : 229,
     "name" : "John J. Flanagan",
-    "shortName" : "flanagan",
+    "shortName" : "Flanagan",
     "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
   }, {
-    "name" : "Charles J. Fuschillo Jr.",
-    "shortName" : "fuschillo",
-    "url" : "http://www.nysenate.gov/senator/charles-j-fuschillo-jr"
-  }, {
+    "nid" : 230,
     "name" : "Kemp Hannon",
-    "shortName" : "hannon",
+    "shortName" : "Hannon",
     "url" : "http://www.nysenate.gov/senator/kemp-hannon"
   }, {
+    "nid" : 221,
     "name" : "Andrew J Lanza",
-    "shortName" : "lanza",
+    "shortName" : "Lanza",
     "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
   }, {
+    "nid" : 231,
     "name" : "Kenneth P. LaValle",
-    "shortName" : "lavalle",
+    "shortName" : "LaValle",
     "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
   }, {
+    "nid" : 218,
     "name" : "Betty Little",
-    "shortName" : "little",
+    "shortName" : "Little",
     "url" : "http://www.nysenate.gov/senator/elizabeth-little"
   }, {
+    "nid" : 208,
     "name" : "Michael F. Nozzolio",
-    "shortName" : "nozzolio",
+    "shortName" : "Nozzolio",
     "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
   }, {
+    "nid" : 75001,
     "name" : "Thomas F. O'Mara",
-    "shortName" : "o'mara",
+    "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
+    "nid" : 111,
     "name" : "Diane J. Savino",
-    "shortName" : "savino",
+    "shortName" : "Savino",
     "url" : "http://www.nysenate.gov/senator/diane-j-savino"
   }, {
+    "nid" : 233,
     "name" : "Michael H. Ranzenhofer",
-    "shortName" : "ranzenhofer",
+    "shortName" : "Ranzenhofer",
     "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
   }, {
+    "nid" : 74981,
     "name" : "Lee M. Zeldin",
-    "shortName" : "zeldin",
+    "shortName" : "Zeldin",
     "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
   }, {
+    "nid" : 201,
     "name" : "Ruth Hassell-Thompson",
-    "shortName" : "hassell-thompson",
+    "shortName" : "Hassell-Thompson",
     "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
   }, {
-    "name" : "Eric Adams",
-    "shortName" : "adams",
-    "url" : "http://www.nysenate.gov/senator/eric-adams"
-  }, {
+    "nid" : 207,
     "name" : "Neil D. Breslin",
-    "shortName" : "breslin",
+    "shortName" : "Breslin",
     "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
   }, {
+    "nid" : 75556,
     "name" : "Adriano Espaillat",
-    "shortName" : "espaillat",
+    "shortName" : "Espaillat",
     "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
   }, {
+    "nid" : 123,
     "name" : "Bill Perkins",
-    "shortName" : "perkins",
+    "shortName" : "Perkins",
     "url" : "http://www.nysenate.gov/senator/bill-perkins"
   }, {
+    "nid" : 99,
     "name" : "Toby Ann Stavisky",
-    "shortName" : "stavisky",
+    "shortName" : "Stavisky",
     "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
   }, {
+    "nid" : 170141,
     "name" : "Brad Hoylman",
-    "shortName" : "hoylman",
+    "shortName" : "Hoylman",
     "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
+    "nid" : 101,
     "name" : "Martin Malavé Dilan",
-    "shortName" : "dilan",
+    "shortName" : "Dilan",
     "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
   }, {
+    "nid" : 201,
     "name" : "Ruth Hassell-Thompson",
-    "shortName" : "hassell-thompson",
+    "shortName" : "Hassell-Thompson",
     "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
   }, {
+    "nid" : 97,
     "name" : "Joseph P. Addabbo Jr",
-    "shortName" : "addabbo",
+    "shortName" : "Addabbo",
     "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
   }, {
+    "nid" : 75566,
     "name" : "David Carlucci",
-    "shortName" : "carlucci",
+    "shortName" : "Carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
   } ]
 }
