@@ -1,29 +1,24 @@
 body {
-  background-color: #FFFFFF;
-  background-repeat: ;
-  color: #000;
   font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
   font-size: 0.8em;
   line-height: 1.45em;
-  margin: 0;
+  color: #333;
+  background-color: #fff;
+  margin:16px;
+  margin-top:1px;
 }
-#content {
+#content{
+  margin: 0;
   float: none;
-  margin: 0;
 }
-pre, #footer {
-  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+pre{
+  width: 530px;
+  white-space: pre-wrap;
   font-size: 0.8em;
   line-height: 1.45em;
-  white-space: pre-wrap;
-  width: 530px;
-  color: #000;
-  font-weight: normal;
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
 }
-.page-break{
-  display: none;
-  page-break-before: always;
-}
+/* Hide Things */
 .main-menu,
 .item-actions,
 .searchbox,
@@ -36,33 +31,34 @@ pre, #footer {
 #comments {
   display: none;
 }
-a {
-  color: #000000;
-  text-decoration: none;
+a{
+  text-decoration:none;
+  color:#000;
 }
-.section, .footer-part-fourth {
-  border-top: 1px solid #AAAAAA;
-  padding: 10px 0 0;
+.section,
+.footer-part-fourth{
+  border-top:1px solid #aaa;
+  padding:10px 0 0 0;
 }
-.row {
-  border-bottom: 1px solid #AAAAAA;
-  padding: 10px 0;
+.row{
+  border-bottom:1px solid #aaa;
+  padding:10px 0 10px 0;
 }
-.row a {
-  border-bottom: 1px solid #CCCCCC;
+.row a{
+  border-bottom:1px solid #ccc;
 }
 .row span,
 .row span a {
-  border: medium none;
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
+  text-decoration:none;
+  color:#000;
+  font-size:12px;
+  border:none;
 }
-.billHeader {
-  font-weight: bold;
-  margin: 0;
-  padding: 0;
-  text-align: center;
+.billHeader{
+  text-align:center;
+  font-weight:bold;
+  margin: 0px;
+  padding: 0px;
 }
 
 ul li {
@@ -80,3 +76,14 @@ blockquote {
   margin: 0;
   padding: 0;
 }
+/* confusing naming, comments to the rescue */
+/* a hr class, not needed in print view */
+.page-break {
+  display:none;
+}
+/* div to break up the distinct parts of the page */
+.pagebreak{
+  display: block;
+  page-break-before: always;
+}
+
