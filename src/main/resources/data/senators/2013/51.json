@@ -1,4 +1,5 @@
 {
+  "nid" : 215,
   "name" : "James L. Seward",
   "lastName" : "Seward",
   "shortName" : "Seward",
@@ -8,20 +9,20 @@
   "url" : "http://www.nysenate.gov/senator/james-l-seward",
   "partyAffiliations" : [ "R", "C", "IP" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "172 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
+    "name" : "District Office 2",
+    "street" : "235 N. Prospect Street",
+    "city" : "Herkimer",
+    "postalCode" : "13350",
     "provinceName" : "New York",
     "province" : "NY",
     "countryName" : "United States",
     "country" : "us",
-    "phone" : "(518) 455-3131",
+    "phone" : "(315) 866-1632",
     "fax" : "",
     "otherPhone" : "",
-    "additional" : "Room 430, Capitol",
-    "latitude" : 42.652228,
-    "longitude" : -73.757982
+    "additional" : "",
+    "latitude" : 43.026787,
+    "longitude" : -74.989896
   }, {
     "name" : "District Office",
     "street" : "41 So. Main Street",
@@ -38,21 +39,6 @@
     "latitude" : 42.454105,
     "longitude" : -75.060446
   }, {
-    "name" : "District Office 2",
-    "street" : "235 N. Prospect Street",
-    "city" : "Herkimer",
-    "postalCode" : "13350",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(315) 866-1632",
-    "fax" : "",
-    "otherPhone" : "",
-    "additional" : "",
-    "latitude" : 43.026787,
-    "longitude" : -74.989896
-  }, {
     "name" : "District Office 3",
     "street" : "4030 West Road",
     "city" : "Cortland",
@@ -67,6 +53,21 @@
     "additional" : "",
     "latitude" : 42.602244,
     "longitude" : -76.201681
+  }, {
+    "name" : "Albany Office",
+    "street" : "172 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3131",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 430, Capitol",
+    "latitude" : 42.652228,
+    "longitude" : -73.757982
   } ],
   "district" : {
     "number" : 51,

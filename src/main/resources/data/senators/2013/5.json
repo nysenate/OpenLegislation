@@ -1,4 +1,5 @@
 {
+  "nid" : 222,
   "name" : "Carl L Marcellino",
   "lastName" : "Marcellino",
   "shortName" : "Marcellino",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/carl-l-marcellino",
   "partyAffiliations" : [ "R" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2390",
-    "fax" : "",
-    "otherPhone" : "",
-    "additional" : "Room 811, Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "250 Townsend Square",
     "city" : "Oyster Bay",
@@ -37,6 +23,21 @@
     "additional" : "",
     "latitude" : 40.871879,
     "longitude" : -73.530397
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2390",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 811, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
   } ],
   "district" : {
     "number" : 5,

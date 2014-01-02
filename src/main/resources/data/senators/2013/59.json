@@ -1,4 +1,5 @@
 {
+  "nid" : 75006,
   "name" : "Patrick M. Gallivan",
   "lastName" : "Gallivan",
   "shortName" : "Gallivan",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/pat-gallivan",
   "partyAffiliations" : [ "R", "C", "IP" ],
   "offices" : [ {
-    "name" : "District Office",
-    "street" : "2721 Transit Road",
-    "city" : "Elma",
-    "postalCode" : "14059",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "716-656-8544",
-    "fax" : "716-656-8961",
-    "otherPhone" : "",
-    "additional" : "Suite 116",
-    "latitude" : 42.83849,
-    "longitude" : -78.696875
-  }, {
     "name" : "Albany Office",
     "street" : "947 LOB",
     "city" : "Albany",
@@ -67,6 +53,21 @@
     "additional" : "6 Court Street, Rm 304",
     "latitude" : 42.795896,
     "longitude" : -77.816947
+  }, {
+    "name" : "District Office",
+    "street" : "2721 Transit Road",
+    "city" : "Elma",
+    "postalCode" : "14059",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "716-656-8544",
+    "fax" : "716-656-8961",
+    "otherPhone" : "",
+    "additional" : "Suite 116",
+    "latitude" : 42.83849,
+    "longitude" : -78.696875
   } ],
   "district" : {
     "number" : 59,

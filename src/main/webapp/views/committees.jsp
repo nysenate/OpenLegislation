@@ -1,4 +1,4 @@
-<%@ page language="java" import="gov.nysenate.services.model.*, java.util.ArrayList" pageEncoding="UTF-8"%>
+<%@ page language="java" import="gov.nysenate.services.model.*, java.util.*, org.apache.commons.lang.StringUtils" pageEncoding="UTF-8"%>
 <%
     String appPath = request.getContextPath();
     @SuppressWarnings("unchecked")
@@ -60,36 +60,37 @@ td {
 		                </div>
 		                <div class="committee-right">
 		                    <div class="members">
-		                        <% if (committee.getMembers().size()==0) { %>
-                                    Committee member information is not yet available.
-                                <% } else { %>
+                            <% if (committee.getMembers().size()==0) { %>
+                                Committee member information is not yet available.
+                            <% } else { %>
 		                        <table>
+                                <%
+                                if (committee.getChairs().size() > 0) {
+                                    Member chair = committee.getChairs().get(0);
+                                    %>
 		                            <tr>
 		                                <td class="member-label">Chair</td>
-		                                <td>
-		                                <ul>
-		                                    <% for(Member member:committee.getChairs()) { %>
-		                                        <li>
-		                                            <a href="<%=appPath%>/sponsor/<%=member.getShortName()%>"><%=member.getName() %></a>,
-		                                        </li>
-		                                    <% } %>
-		                                </ul>
-		                                </td>
+		                                <td><a href="<%=appPath%>/sponsor/<%=chair.getShortName()%>"><%=chair.getName() %></a></td>
 		                            </tr>
+	                            <% }
+                                else {
+                                    %>
+                                    <tr>
+                                        <td class="member-label">Chair</td>
+                                        <td>Committee chair information is not yet available.</a></td>
+                                    </tr>
+                                <% }
+
+                                ArrayList<String> links = new ArrayList<String>();
+                                for(Member member:committee.getMembers()) {
+                                    links.add("<a href=\""+appPath+"/sponsor/"+member.getShortName()+"\">"+member.getName()+"</a>");
+                                } %>
 		                            <tr>
 		                                <td class="member-label">Members</td>
-		                                <td>
-		                                <ul>
-		                                    <% for(Member member:committee.getMembers()) { %>
-		                                        <li>
-		                                            <a href="<%=appPath%>/sponsor/<%=member.getShortName()%>"><%=member.getName() %></a>,
-		                                        </li>
-		                                    <% } %>
-		                                </ul>
-		                                </td>
+		                                <td><%=StringUtils.join(links, ", ")%></td>
 		                            </tr>
 		                        </table>
-		                        <% } %>
+		                    <% } %>
 		                    </div>
 		                </div>
 		            </li>

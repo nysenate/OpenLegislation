@@ -1,4 +1,5 @@
 {
+  "nid" : 97,
   "name" : "Joseph P. Addabbo Jr",
   "lastName" : "Addabbo",
   "shortName" : "Addabbo",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr",
   "partyAffiliations" : [ "D" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2322",
-    "fax" : "(518) 426-6875",
-    "otherPhone" : "",
-    "additional" : "Room 613, Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "159-53 102nd Street",
     "city" : "Howard Beach",
@@ -52,6 +38,21 @@
     "additional" : "",
     "latitude" : 40.712905,
     "longitude" : -73.879421
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2322",
+    "fax" : "(518) 426-6875",
+    "otherPhone" : "",
+    "additional" : "Room 613, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
   }, {
     "name" : "Satellite Office",
     "street" : "88-08 Rockaway Beach Blvd",

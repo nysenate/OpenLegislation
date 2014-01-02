@@ -1,4 +1,5 @@
 {
+  "nid" : 113,
   "name" : "Daniel L. Squadron",
   "lastName" : "Squadron",
   "shortName" : "Squadron",
@@ -8,6 +9,21 @@
   "url" : "http://www.nysenate.gov/senator/daniel-l-squadron",
   "partyAffiliations" : [ "D" ],
   "offices" : [ {
+    "name" : "District Office 2",
+    "street" : "209 Joralemon Street",
+    "city" : "Brooklyn",
+    "postalCode" : "11201",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "718-875-1517",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Borough Hall, Room 310",
+    "latitude" : 40.692681,
+    "longitude" : -73.990215
+  }, {
     "name" : "Albany Office",
     "street" : "188 State Street",
     "city" : "Albany",
@@ -37,21 +53,6 @@
     "additional" : "Suite 2011",
     "latitude" : 40.712895,
     "longitude" : -74.007527
-  }, {
-    "name" : "District Office 2",
-    "street" : "209 Joralemon Street",
-    "city" : "Brooklyn",
-    "postalCode" : "11201",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "718-875-1517",
-    "fax" : "",
-    "otherPhone" : "",
-    "additional" : "Borough Hall, Room 310",
-    "latitude" : 40.692681,
-    "longitude" : -73.990215
   } ],
   "district" : {
     "number" : 26,

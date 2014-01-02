@@ -1,4 +1,5 @@
 {
+  "nid" : 227,
   "name" : "George D. Maziarz",
   "lastName" : "Maziarz",
   "shortName" : "Maziarz",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/george-d-maziarz",
   "partyAffiliations" : [ "R" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "Room 708,",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2024",
-    "fax" : "",
-    "otherPhone" : "",
-    "additional" : "Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "175 Walnut St.,",
     "city" : "Lockport",
@@ -52,6 +38,21 @@
     "additional" : "SUNY College at Brockport",
     "latitude" : 43.209472,
     "longitude" : -77.957285
+  }, {
+    "name" : "Albany Office",
+    "street" : "Room 708,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2024",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
   } ],
   "district" : {
     "number" : 62,

@@ -1,4 +1,5 @@
 {
+  "nid" : 170116,
   "name" : "George Latimer",
   "lastName" : "Latimer",
   "shortName" : "Latimer",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/george-s-latimer",
   "partyAffiliations" : [ "D" ],
   "offices" : [ {
-    "name" : "District Office",
-    "street" : "222 Grace Church Street",
-    "city" : "Port Chester",
-    "postalCode" : "10573",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(914) 934-5250",
-    "fax" : "(914) 934-5256",
-    "otherPhone" : "",
-    "additional" : "Suite 300",
-    "latitude" : 40.991677,
-    "longitude" : -73.663921
-  }, {
     "name" : "Albany Office",
     "street" : "615 Legislative Office Building",
     "city" : "Albany",
@@ -37,6 +23,21 @@
     "additional" : "",
     "latitude" : 42.652442,
     "longitude" : -73.759332
+  }, {
+    "name" : "District Office",
+    "street" : "222 Grace Church Street",
+    "city" : "Port Chester",
+    "postalCode" : "10573",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(914) 934-5250",
+    "fax" : "(914) 934-5256",
+    "otherPhone" : "",
+    "additional" : "Suite 300",
+    "latitude" : 40.991677,
+    "longitude" : -73.663921
   } ],
   "district" : {
     "number" : 37,

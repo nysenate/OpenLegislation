@@ -1,4 +1,5 @@
 {
+  "nid" : 218,
   "name" : "Betty Little",
   "lastName" : "Little",
   "shortName" : "Little",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/elizabeth-little",
   "partyAffiliations" : [ "R", "C", "IP" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2811",
-    "fax" : "",
-    "otherPhone" : "",
-    "additional" : "Room 310, Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "5 Warren Street",
     "city" : "Glens Falls",
@@ -52,6 +38,21 @@
     "additional" : "Suite 100",
     "latitude" : 44.698907,
     "longitude" : -73.454085
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2811",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 310, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
   } ],
   "district" : {
     "number" : 45,

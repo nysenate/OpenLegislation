@@ -1,4 +1,5 @@
 {
+  "nid" : 202,
   "name" : "Jeffrey D. Klein",
   "lastName" : "Klein",
   "shortName" : "Klein",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/jeffrey-d-klein",
   "partyAffiliations" : [ "D" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "Legislative Office Building, Room 913",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "518-455-3595",
-    "fax" : "",
-    "otherPhone" : "",
-    "additional" : "",
-    "latitude" : 42.652442,
-    "longitude" : -73.759332
-  }, {
     "name" : "District Office",
     "street" : "1250 Waters Place, Suite 1202",
     "city" : "Bronx",
@@ -37,6 +23,21 @@
     "additional" : "",
     "latitude" : 40.846444,
     "longitude" : -73.842866
+  }, {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building, Room 913",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3595",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
   } ],
   "district" : {
     "number" : 34,

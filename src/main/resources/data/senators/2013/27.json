@@ -1,9 +1,10 @@
 {
+  "nid" : 170141,
   "name" : "Brad Hoylman",
   "lastName" : "Hoylman",
   "shortName" : "Hoylman",
   "email" : "hoylman@nysenate.gov",
-  "additionalContact" : "<p>Please direct media inquiries to Laura Morrison, Chief of Staff, at laura@bradhoylman.com.</p><p>Please send invitations to in-district events or requests for in-district meetings to schedule@bradhoylman.com.</p><p>Please send invitations to Albany events or requests for Albany meetings to hoylmanrequest@gmail.com.</p><p>&nbsp;</p>",
+  "additionalContact" : "<p>Please direct media inquiries to Communications Director Julia Alschuler at <a href=\"mailto:julia@bradhoylman.com\">julia@bradhoylman.com</a>. Please send invitations to in-district events or requests for in-district meetings to <a href=\"mailto:schedule@bradhoylman.com\">schedule@bradhoylman.com</a>.Please send invitations to Albany events or requests for Albany meetings to <a href=\"mailto:hoylmanrequest@gmail.com\">hoylmanrequest@gmail.com</a>.&nbsp;</p>",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(12-10-12) Hoylman-HS-010 RE_0.jpg",
   "url" : "http://www.nysenate.gov/senator/brad-hoylman",
   "partyAffiliations" : [ "D" ],

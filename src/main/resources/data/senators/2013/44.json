@@ -1,4 +1,5 @@
 {
+  "nid" : 207,
   "name" : "Neil D. Breslin",
   "lastName" : "Breslin",
   "shortName" : "Breslin",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/neil-d-breslin",
   "partyAffiliations" : [ "D", "IP", "WF" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "172 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2225",
-    "fax" : "",
-    "otherPhone" : "",
-    "additional" : "Room 414, Capitol",
-    "latitude" : 42.652228,
-    "longitude" : -73.757982
-  }, {
     "name" : "",
     "street" : "",
     "city" : "",
@@ -37,6 +23,21 @@
     "additional" : "",
     "latitude" : 0.0,
     "longitude" : 0.0
+  }, {
+    "name" : "Albany Office",
+    "street" : "172 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2225",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 414, Capitol",
+    "latitude" : 42.652228,
+    "longitude" : -73.757982
   } ],
   "district" : {
     "number" : 44,

@@ -1,4 +1,5 @@
 {
+  "nid" : 216,
   "name" : "John A. DeFrancisco",
   "lastName" : "DeFrancisco",
   "shortName" : "DeFrancisco",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/john-defrancisco",
   "partyAffiliations" : [ "R", "C", "I" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "416 Capitol",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-3511",
-    "fax" : "",
-    "otherPhone" : "",
-    "additional" : "",
-    "latitude" : 42.654507,
-    "longitude" : -73.780244
-  }, {
     "name" : "District Office",
     "street" : "333 East Washington Street",
     "city" : "Syracuse",
@@ -37,6 +23,21 @@
     "additional" : "800 State Office Building",
     "latitude" : 43.049535,
     "longitude" : -76.148372
+  }, {
+    "name" : "Albany Office",
+    "street" : "416 Capitol",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3511",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.654507,
+    "longitude" : -73.780244
   } ],
   "district" : {
     "number" : 50,

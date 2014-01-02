@@ -1,4 +1,5 @@
 {
+  "nid" : 42181,
   "name" : "José Peralta",
   "lastName" : "Peralta",
   "shortName" : "Peralta",
@@ -8,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/jose-peralta",
   "partyAffiliations" : [ "D", "WF" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2529",
-    "fax" : "(518) 426-6909",
-    "otherPhone" : "",
-    "additional" : "Room 415, Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "32-37 Junction Boulevard",
     "city" : "East Elmhurst",
@@ -37,6 +23,21 @@
     "additional" : "",
     "latitude" : 40.757648,
     "longitude" : -73.873752
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2529",
+    "fax" : "(518) 426-6909",
+    "otherPhone" : "",
+    "additional" : "Room 415, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
   } ],
   "district" : {
     "number" : 13,

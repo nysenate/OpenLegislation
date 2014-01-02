@@ -1,4 +1,5 @@
 {
+  "nid" : 99,
   "name" : "Toby Ann Stavisky",
   "lastName" : "Stavisky",
   "shortName" : "Stavisky",
@@ -26,7 +27,7 @@
     "name" : "District Office",
     "street" : "142-29 37th Ave",
     "city" : "Flushing",
-    "postalCode" : "11355-4190",
+    "postalCode" : "11354",
     "provinceName" : "New York",
     "province" : "NY",
     "countryName" : "United States",
