@@ -39,16 +39,16 @@
 }
 
 td {
-    text-indent: 0.0em;  
+    text-indent: 0.0em;
 }
 </style>
 <div id="content">
-    <h2 class='page-title'><%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Committee Listings</h2>
-	<div class='formats'>
-		<em>Committee Listings are available for: </em><a href="<%=appPath%>/committees/2013">2013</a> | <a href="<%=appPath%>/committees/2011">2011</a>
-	</div>
+    <div class='formats'>
+        <em>Committee Listings are available for: </em><a href="<%=appPath%>/committees/2013">2013</a> | <a href="<%=appPath%>/committees/2011">2011</a>
+    </div>
 	<div class="content-bg">
-	    <h3>Standing Committees</h3>
+        <h2 class='page-title'><%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Standing Committees</h2>
+        <div style="clear:both"></div>
 	    <% if (committees.size()==0) { %>
             Committee Assignments for the current session are not yet available.
         <% } else { %>
