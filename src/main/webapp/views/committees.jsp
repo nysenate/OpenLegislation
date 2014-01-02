@@ -77,7 +77,7 @@ td {
                                     %>
                                     <tr>
                                         <td class="member-label">Chair</td>
-                                        <td>Committee chair information is not yet available.</a></td>
+                                        <td>Committee chair information is not yet available.</td>
                                     </tr>
                                 <% }
 
