@@ -1,62 +1,82 @@
 body {
-  font-family: helvetica, arial;
-  font-size: 89.5%;	 /* 10px */
-  line-height: 1.4em; /* 15px */
-  color: #333;
-  background-color: #fff;
-  background-repeat: repeat-x;
-  margin:16px;
-  margin-top:1px;
+  background-color: #FFFFFF;
+  background-repeat: ;
+  color: #000;
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+  font-size: 0.8em;
+  line-height: 1.45em;
+  margin: 0;
+}
+#content {
+  float: none;
+  margin: 0;
+}
+pre, #footer {
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+  font-size: 0.8em;
+  line-height: 1.45em;
+  white-space: pre-wrap;
+  width: 470px;
+  color: #000;
+  font-weight: normal;
+}
+.page-break{
+  display: none;
+  page-break-before: always;
+}
+.main-menu,
+.item-actions,
+.searchbox,
+.footer-part-third,
+.footer-part-second,
+.footer-part-first,
+.pagination,
+.sortby,
+.formats,
+#comments {
+  display: none;
+}
+a {
+  color: #000000;
+  text-decoration: none;
+}
+.section, .footer-part-fourth {
+  border-top: 1px solid #AAAAAA;
+  padding: 10px 0 0;
+}
+.row {
+  border-bottom: 1px solid #AAAAAA;
+  padding: 10px 0;
+}
+.row a {
+  border-bottom: 1px solid #CCCCCC;
+}
+.row span,
+.row span a {
+  border: medium none;
+  color: #000000;
+  font-size: 12px;
+  text-decoration: none;
+}
+.billHeader {
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }
 
-
-#content{
-margin: 0;
-float: none;
+ul li {
+  list-style: circle;
+  padding: 0;
+  margin: 0;
+  line-height: 1.3em;
 }
-
-pre{
-	width: 530px;
-	white-space: pre-wrap;
-	font-size:10px;
-	line-height: 15px;
-	font-family: “Consolas”, monospace;
+ul {
+  margin: 0;
+  padding: 0 0 0 20px;
 }
-.pagebreak{
-	display: block; page-break-before: always;
-}
- /* Hide Things */
-.main-menu,.item-actions,.searchbox,.footer-part-third,.footer-part-second,.footer-part-first,.pagination,.sortby,.formats,#comments{
-	display:none;
-}
-a{
-	text-decoration:none;
-	color:#000;
-}
-.section,.footer-part-fourth{
-	border-top:1px solid #aaa;
-	padding:10px 0 0 0;
-}
-.row{
-	border-bottom:1px solid #aaa;
-	padding:10px 0 10px 0;
-}
-.row a{
-	border-bottom:1px solid #ccc;
-}
-.row span,.row span a {
-	text-decoration:none;
-	color:#000;
-	font-size:12px;
-	border:none;
-}
-.billHeader{
-    text-align:center;
-    font-weight:bold;
-    /* border-bottom:1px solid #ccc; */
-    margin: 0px;
-    padding: 0px;
-}
-.page-break {
-	display:none;
+.vote-block,
+blockquote {
+  margin: 0;
+  padding: 0;
 }
