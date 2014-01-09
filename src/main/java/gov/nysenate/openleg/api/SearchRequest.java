@@ -84,7 +84,7 @@ public class SearchRequest extends AbstractApiRequest {
             // One of 2009, 2011, 2013, etc
             String session = request.getParameter("session");
             if(valid(session)) {
-                queryBuilder.and().keyValue("year", session, "(", ")");
+                queryBuilder.and().inSession(Integer.parseInt(session));
             }
 
             // Currently full-text search ~= osearch (most fields) plus the bill text (where applicable)
