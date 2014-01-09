@@ -65,11 +65,9 @@ public class QueryBuilder {
     }
 
     public QueryBuilder inSession(int year) throws QueryBuilderException {
-        return keyValue(YEAR, Integer.toString(SessionYear.getSessionYear(year)));
-//                .or()
-//                .range(WHEN, Long.toString(SessionYear.getSessionStart(year)),
-//                        Long.toString(SessionYear.getSessionEnd(year)))
-//                        .append(")");
+        int session = SessionYear.getSessionYear(year);
+        condition();
+        return append(YEAR, SEPARATOR, "[", Integer.toString(session), " TO ", Integer.toString(session+1), "] ");
     }
 
     public QueryBuilder current() throws QueryBuilderException {
