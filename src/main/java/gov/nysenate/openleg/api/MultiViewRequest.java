@@ -41,7 +41,6 @@ public class MultiViewRequest extends AbstractApiRequest {
     public void fillRequest() throws ApiRequestException {
         String urlPath = TextFormatter.append("/legislation/", type, "/");
 
-        String sFormat = "json";
         String sortField = "when";
         boolean sortOrder = true;
 

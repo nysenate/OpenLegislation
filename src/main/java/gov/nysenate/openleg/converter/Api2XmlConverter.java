@@ -62,7 +62,7 @@ public class Api2XmlConverter
 
         Element results = new Element("results");
         for (Result result : response.getResults()) {
-            String oid, type;
+            String oid;
             Element urlElement, oidElement;
             if (result.getOtype().equals("vote")) {
                 oid = ((Vote)result.getObject()).getBill().getBillId();

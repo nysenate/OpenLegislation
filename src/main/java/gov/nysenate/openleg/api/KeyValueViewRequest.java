@@ -35,7 +35,6 @@ public class KeyValueViewRequest extends AbstractApiRequest {
     public void fillRequest() throws ApiRequestException {
         String urlPath = TextFormatter.append("/legislation/", key, "/", value, "/");
 
-        String sFormat = "json";
         String sortField = "sortindex";
         boolean sortOrder = false;
 
