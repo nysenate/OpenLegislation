@@ -19,15 +19,14 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.FieldSelector;
-import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
+import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -38,6 +37,7 @@ import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
+
 
 /**
  * Encapsulates basic Lucene configuration and index manipulation.
@@ -55,7 +55,7 @@ public class Lucene
      * because the StandardAnalyzer now removes hyphens from quoted terms while searching. This
      * breaks document lookup by oid
      */
-	protected static final Version VERSION = Version.LUCENE_30;
+	protected static final Version VERSION = Version.LUCENE_46;
 
 	/**
      * The directory the Lucene database is stored in.
@@ -154,15 +154,15 @@ public class Lucene
         IndexSearcher searcher = searcherManager.acquire();
 
         try {
-            Query query = new QueryParser(VERSION, "osearch", analyzer).parse(queryString);
+            Query query = new StandardQueryParser(analyzer).parse(queryString, "osearch");
 
             // Sort by relevance unless they say otherwise
             Sort sort;
             if (sortFieldName == null || sortFieldName.isEmpty()) {
-                sort = new Sort(new SortField(null, SortField.SCORE, reversed));
+                sort = new Sort(new SortField(null, SortField.Type.SCORE, reversed));
             }
             else {
-                sort = new Sort(new SortField(sortFieldName, SortField.STRING_VAL, reversed));
+                sort = new Sort(new SortField(sortFieldName, SortField.Type.STRING_VAL, reversed));
             }
 
             // Time our searches so bottle necks can be identified
@@ -180,7 +180,7 @@ public class Lucene
 
             return new LuceneResult(results,topDocs.totalHits);
         }
-        catch (ParseException e) {
+        catch (QueryNodeException e) {
             logger.warn("Unable to parse query: "+queryString,e);
         }
         finally {
@@ -200,8 +200,8 @@ public class Lucene
      */
     public void updateDocument(Document doc) throws IOException
     {
-        logger.info("indexing document: " + doc.getFieldable("otype").stringValue() + "=" + doc.getFieldable("oid").stringValue());
-        String oid = doc.getFieldable("oid").stringValue();
+        logger.info("indexing document: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue());
+        String oid = doc.getField("oid").stringValue();
         indexWriter.updateDocument(new Term("oid", oid.toLowerCase()), doc);
     }
 
@@ -212,10 +212,10 @@ public class Lucene
      * @throws IOException
      * @throws ParseException
      */
-    public void deleteDocumentsByQuery(String queryString) throws IOException, ParseException
+    public void deleteDocumentsByQuery(String queryString) throws IOException, QueryNodeException
     {
         queryString = queryToLowerCase(queryString);
-		Query query = new QueryParser(VERSION, "osearch", indexWriter.getAnalyzer()).parse(queryString);
+		Query query = new StandardQueryParser(indexWriter.getAnalyzer()).parse(queryString, "osearch");
 		indexWriter.deleteDocuments(query);
     }
 
@@ -267,7 +267,7 @@ public class Lucene
 
 
 
-    public SenateResponse search(String queryText, int skipCount, int retrieveCount, String sortFieldName, boolean reversed) throws ParseException, IOException
+    public SenateResponse search(String queryText, int skipCount, int retrieveCount, String sortFieldName, boolean reversed) throws IOException
     {
         SenateResponse response = new SenateResponse();
 
@@ -282,7 +282,7 @@ public class Lucene
                     lastModified = new Date().getTime()+"";
 
                 HashMap<String,String> fields = new HashMap<String,String>();
-                for(Fieldable field : doc.getFields()) {
+                for(IndexableField field : doc.getFields()) {
                     fields.put(field.name(), doc.get(field.name()));
                 }
 

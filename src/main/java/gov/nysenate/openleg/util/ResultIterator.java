@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
 
 public class ResultIterator implements Iterator<Result>, Iterable<Result> {
     private static Logger logger = Logger.getLogger(ResultIterator.class);
@@ -94,8 +93,6 @@ public class ResultIterator implements Iterator<Result>, Iterable<Result> {
             int start = (page-1)*max;
             senateResponse = Application.getLucene().search(query, start, max, sortBy, reverse);
             page++;
-        } catch (ParseException e) {
-            logger.error(e);
         }
         catch (IOException e) {
             logger.error(e);

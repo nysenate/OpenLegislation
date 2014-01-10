@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
 
 public class KeyValueViewRequest extends AbstractApiRequest {
     private final Logger logger = Logger.getLogger(KeyValueViewRequest.class);
@@ -64,8 +63,6 @@ public class KeyValueViewRequest extends AbstractApiRequest {
 
         try {
             sr = Application.getLucene().search(queryBuilder.query(), start, pageSize, sortField, sortOrder);
-        } catch (ParseException e) {
-            logger.error(e);
         }
         catch (IOException e) {
             logger.error(e);

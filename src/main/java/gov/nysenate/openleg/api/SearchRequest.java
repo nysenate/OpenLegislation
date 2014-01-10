@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
 
 public class SearchRequest extends AbstractApiRequest {
     private final Logger logger = Logger.getLogger(SearchRequest.class);
@@ -201,8 +200,6 @@ public class SearchRequest extends AbstractApiRequest {
                 throw new ApiRequestException(TextFormatter.append("no results for query"));
             }
             ApiHelper.buildSearchResultList(sr);
-        } catch (ParseException e) {
-            logger.error(e);
         }
         catch (IOException e) {
             logger.error(e);

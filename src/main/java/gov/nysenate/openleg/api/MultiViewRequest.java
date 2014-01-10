@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
 
 public class MultiViewRequest extends AbstractApiRequest {
     private final Logger logger = Logger.getLogger(MultiViewRequest.class);
@@ -67,8 +66,6 @@ public class MultiViewRequest extends AbstractApiRequest {
 
         try {
             sr = Application.getLucene().search(queryBuilder.query(), start, pageSize, sortField, sortOrder);
-        } catch (ParseException e) {
-            logger.error(e);
         }
         catch (IOException e) {
             logger.error(e);
