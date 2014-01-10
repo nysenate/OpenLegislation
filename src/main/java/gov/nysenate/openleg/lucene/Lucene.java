@@ -171,14 +171,11 @@ public class Lucene
             double duration = (System.nanoTime()-startTime)/1000000.0;
             logger.info(String.format("[%.2f ms] %,d hits for query %s; sorted by %s", duration, topDocs.totalHits, query, sort));
 
-            // Only fetch the documents for this "page" for our results. Also,
-            // don't fetch fields until we need them, often we won't. This saves
-            // a ton of memory and time with big full, memo, ojson, and oxml fields
+            // Only fetch the documents for this "page" for our results.
             ScoreDoc[] scoreDocs = topDocs.scoreDocs;
-            FieldSelector lazyFieldSelector = new LazyFieldSelector();
             ArrayList<Document> results = new ArrayList<Document>();
             for (int i=skipCount; (i < scoreDocs.length && i < skipCount+retrieveCount); i++) {
-                results.add(searcher.doc(scoreDocs[i].doc, lazyFieldSelector));
+                results.add(searcher.doc(scoreDocs[i].doc));
             }
 
             return new LuceneResult(results,topDocs.totalHits);
