@@ -365,6 +365,11 @@ public class BillProcessor
             bill.setOtherSponsors(Arrays.asList(new Person("VALESKY")));
         }
 
+        // An old bug with the assembly sponsors field needs to be corrected, NYSS 7215
+        if (bill.getSponsor() != null && bill.getSponsor().getFullname().startsWith("RULES ")) {
+            bill.getSponsor().setFullname("RULES");
+        }
+
         if (bill.isPublished()) {
             // Sponsor and summary information needs to be synced at all times.
             // Normally it is always sent to the base bill and broadcasted to amendments
