@@ -17,7 +17,6 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
@@ -49,13 +48,6 @@ import org.apache.lucene.util.Version;
 public class Lucene
 {
     private static final Logger logger = Logger.getLogger(Lucene.class);
-
-    /**
-     * The version of Lucene for compatibility purposes. We can't upgrade the version right now
-     * because the StandardAnalyzer now removes hyphens from quoted terms while searching. This
-     * breaks document lookup by oid
-     */
-	protected static final Version VERSION = Version.LUCENE_46;
 
 	/**
      * The directory the Lucene database is stored in.
@@ -110,10 +102,10 @@ public class Lucene
 	public Lucene(File indexDir, boolean readOnly) throws IOException
 	{
         this.indexDir = indexDir;
-        this.analyzer = new StandardAnalyzer(VERSION);
+        this.analyzer = new OpenLegislationAnalyzer(Version.LUCENE_46);
 
 	    if (!readOnly) {
-            this.indexWriterConfig = new IndexWriterConfig(VERSION, this.analyzer);
+            this.indexWriterConfig = new IndexWriterConfig(Version.LUCENE_46, this.analyzer);
             this.indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
             this.indexWriter = new IndexWriter(FSDirectory.open(indexDir), indexWriterConfig);
 
