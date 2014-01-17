@@ -128,19 +128,19 @@ public class Storage
             if (storageFile != null) {
                 try {
                     if (cls == Bill.class) {
-                        value = this.converter.read(Bill.class, storageFile);
+                        value = this.converter.readBill(storageFile);
                     }
                     else if (cls == Agenda.class) {
-                        value = this.converter.read(Agenda.class, storageFile);
+                        value = this.converter.readAgenda(storageFile);
                     }
                     else if (cls == Meeting.class) {
-                        value = this.converter.read(Meeting.class, storageFile);
+                        value = this.converter.readMeeting(storageFile);
                     }
                     else if (cls == Calendar.class) {
-                        value = this.converter.read(Calendar.class, storageFile);
+                        value = this.converter.readCalendar(storageFile);
                     }
                     else if (cls == Transcript.class) {
-                        value = this.converter.read(Transcript.class, storageFile);
+                        value = this.converter.readTranscript(storageFile);
                     }
                     else {
                         logger.error("Unable to read value of type "+cls.getName()+" from: "+storageFile);
