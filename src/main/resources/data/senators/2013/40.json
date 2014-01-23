@@ -4,7 +4,7 @@
   "lastName" : "Ball",
   "shortName" : "Ball",
   "email" : "gball@nysenate.gov",
-  "additionalContact" : "<p class=\"MsoNormal\"><span style=\"line-height: 18px;\">Media inquires:</span></p><p class=\"MsoNormal\"><span style=\"font-size: 16px; line-height: 18px;\">Joe Bachmeier, Communications Director</span></p><p class=\"MsoNormal\"><span style=\"line-height: 18px;\">Jbachmei@nysenate.gov or (845) 531-9796</span></p>",
+  "additionalContact" : "<p class=\"MsoNormal\"><span style=\"line-height: 18px;\">Media inquires:</span></p><p class=\"MsoNormal\"><span style=\"line-height: 18px; font-size: 16px;\">Joe Bachmeier, Communications Director</span></p><p class=\"MsoNormal\"><span style=\"line-height: 18px;\">Jbachmei@nysenate.gov or (845) 531-9796</span></p>",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/ball_HS2.jpg",
   "url" : "http://www.nysenate.gov/senator/greg-ball",
   "partyAffiliations" : [ "R", "C", "IP" ],

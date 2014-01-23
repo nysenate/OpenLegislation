@@ -38,6 +38,21 @@
     "additional" : "",
     "latitude" : 41.933911,
     "longitude" : -74.020752
+  }, {
+    "name" : "Satellite Office",
+    "street" : "1170 Riverfront Center",
+    "city" : "Amsterdam",
+    "postalCode" : "12010",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "1st Floor",
+    "latitude" : 42.936699,
+    "longitude" : -74.189727
   } ],
   "district" : {
     "number" : 46,
