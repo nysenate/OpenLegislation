@@ -109,6 +109,10 @@ public class ApiServlet1 extends HttpServlet
                 if (!type.equals("search")) {
                     if (type.equals("sponsor")) {
                         term = "sponsor:"+uriTerm+" AND otype:bill";
+                        String filter = RequestUtils.getSearchString(request, "");
+                        if (!filter.isEmpty()) {
+                            term += " AND "+filter;
+                        }
                     }
                     else {
                         term = "otype:"+type.substring(0, type.length()-1)+(term.isEmpty() ? "" : " AND "+term);
