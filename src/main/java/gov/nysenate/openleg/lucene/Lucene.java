@@ -25,7 +25,6 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
-import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -146,7 +145,7 @@ public class Lucene
         IndexSearcher searcher = searcherManager.acquire();
 
         try {
-            Query query = new StandardQueryParser(analyzer).parse(queryString, "osearch");
+            Query query = new OpenLegislationQueryParser(analyzer).parse(queryString, "osearch");
 
             // Sort by relevance unless they say otherwise
             Sort sort;
@@ -207,7 +206,7 @@ public class Lucene
     public void deleteDocumentsByQuery(String queryString) throws IOException, QueryNodeException
     {
         queryString = queryToLowerCase(queryString);
-		Query query = new StandardQueryParser(indexWriter.getAnalyzer()).parse(queryString, "osearch");
+		Query query = new OpenLegislationQueryParser(indexWriter.getAnalyzer()).parse(queryString, "osearch");
 		indexWriter.deleteDocuments(query);
     }
 

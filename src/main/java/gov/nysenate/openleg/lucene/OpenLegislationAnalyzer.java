@@ -15,17 +15,17 @@ public class OpenLegislationAnalyzer extends Analyzer
 {
     private final Version matchVersion;
 
-    public OpenLegislationAnalyzer(Version matchVersion) {
+    public OpenLegislationAnalyzer(Version matchVersion)
+    {
         this.matchVersion = matchVersion;
     }
 
     @Override
-    protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-
+    protected TokenStreamComponents createComponents(String fieldName, Reader reader)
+    {
         Tokenizer source = new WhitespaceTokenizer(matchVersion, reader);
         TokenFilter filter = new StopFilter(matchVersion, source, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
         filter = new LowerCaseFilter(matchVersion, filter);
         return new TokenStreamComponents(source, filter);
     }
-
 }
