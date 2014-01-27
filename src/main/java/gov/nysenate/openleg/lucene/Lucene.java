@@ -306,13 +306,11 @@ public class Lucene
     }
 
     public IBaseObject getSenateObject(String oid, String type) {
-        ArrayList<? extends IBaseObject> senateObjects = getSenateObjects("otype:"+type+" AND oid:\""+oid+"\"");
-        if (!senateObjects.isEmpty()) {
-            return senateObjects.get(0);
+        ResultIterator longSearch = new ResultIterator("otype:"+type+" AND oid:\""+oid+"\"", 1, 1, "oid", true);
+        for(Result result:longSearch) {
+            return result.getObject();
         }
-        else {
-            return null;
-        }
+        return null;
     }
 
     @SuppressWarnings("unchecked") // Doesn't seem to be a way to properly type check here

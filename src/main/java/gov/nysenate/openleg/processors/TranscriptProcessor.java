@@ -105,7 +105,7 @@ public class TranscriptProcessor {
 
         transcript.setTranscriptText(fullText.toString());
         transcript.setTranscriptTextProcessed(fullTextProcessed.toString());
-        String oid = transcript.getType().replaceAll(" ",  "-")+"-"+new SimpleDateFormat("MM-dd-yyyy").format(transcript.getTimeStamp());
+        String oid = transcript.getType().replaceAll(" ",  "-")+"-"+new SimpleDateFormat("MM-dd-yyyy_HH:mm").format(transcript.getTimeStamp());
         transcript.setId(oid);
         transcript.setModifiedDate(transcript.getTimeStamp());
         transcript.setPublishDate(transcript.getTimeStamp());
