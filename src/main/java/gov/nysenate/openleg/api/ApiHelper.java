@@ -155,7 +155,7 @@ public class ApiHelper implements OpenLegConstants {
                     Transcript transcript = (Transcript) resultObj;
 
                     if (transcript.getTimeStamp() != null)
-                        title = DATE_FORMAT_CUSTOM.format(transcript.getTimeStamp());
+                        title = new SimpleDateFormat("MMM d, yyyy h:mm aa").format(transcript.getTimeStamp());
                     else
                         title = "Transcript - " + transcript.getLocation();
 

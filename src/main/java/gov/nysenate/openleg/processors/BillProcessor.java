@@ -162,7 +162,6 @@ public class BillProcessor
                     case 'V': applyVoteMemo(data, bill, date); break;
                     default: throw new ParseError("Invalid Line Code "+block.getType() );
                 }
-                logger.info("SAVING: "+bill.getBillId());
                 bill.addDataSource(sobiFile.getName());
                 saveBill(bill, storage);
             }
@@ -269,12 +268,10 @@ public class BillProcessor
             // ??/
             storage.set(baseBill);
         }
-        else {
-            // Base bills are always the first "amendment" to a bill.
-            bill.setAmendments(new ArrayList<String>(Arrays.asList(baseBillId)));
-        }
 
+        // Base bills are always the first "amendment" to a bill.
         // Grab any other amendments that the base bill knows about.
+        bill.setAmendments(new ArrayList<String>(Arrays.asList(baseBillId)));
         bill.addAmendments(baseBill.getAmendments());
 
         // Pull shared information up from the base bill
@@ -313,7 +310,7 @@ public class BillProcessor
      */
     public void saveBill(Bill bill, Storage storage)
     {
-        logger.info("saving "+bill.getBillId());
+        logger.info("SAVING "+bill.getBillId());
         // Until LBDC starts sending coPrime information for real we need overrides
         // for the following set of bills and resolutions
         if (bill.getBillId().equals("R314-2013")) {
@@ -366,6 +363,14 @@ public class BillProcessor
         }
         else if (bill.getBillId().equals("S5683-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("VALESKY")));
+        }
+        else if (bill.getBillId().equals("J2885-2013")) {
+            bill.setOtherSponsors(Arrays.asList(new Person("KLEIN"), new Person("STEWART-COUSINS")));
+        }
+
+        // An old bug with the assembly sponsors field needs to be corrected, NYSS 7215
+        if (bill.getSponsor() != null && bill.getSponsor().getFullname().startsWith("RULES ")) {
+            bill.getSponsor().setFullname("RULES");
         }
 
         if (bill.isPublished()) {

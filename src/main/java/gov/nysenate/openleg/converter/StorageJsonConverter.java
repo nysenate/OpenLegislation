@@ -130,49 +130,49 @@ public class StorageJsonConverter
         return stream.toString(this.encoding);
     }
 
-    public Transcript read(Class<Transcript> cls, File storageFile) throws JsonProcessingException, IOException
+    public Transcript readTranscript(File storageFile) throws JsonProcessingException, IOException
     {
-        return read(cls, new InputStreamReader(new FileInputStream(storageFile), this.encoding));
+        return readTranscript(new InputStreamReader(new FileInputStream(storageFile), this.encoding));
     }
 
-    public Bill read(Class<Bill> cls, File storageFile) throws JsonProcessingException, IOException
+    public Bill readBill(File storageFile) throws JsonProcessingException, IOException
     {
-        return read(cls, new InputStreamReader(new FileInputStream(storageFile), this.encoding));
+        return readBill(new InputStreamReader(new FileInputStream(storageFile), this.encoding));
     }
 
-    public Agenda read(Class<Agenda> cls, File storageFile) throws JsonProcessingException, IOException
+    public Agenda readAgenda(File storageFile) throws JsonProcessingException, IOException
     {
-        return read(cls, new InputStreamReader(new FileInputStream(storageFile), this.encoding));
+        return readAgenda(new InputStreamReader(new FileInputStream(storageFile), this.encoding));
     }
 
-    public Meeting read(Class<Meeting> cls, File storageFile) throws JsonProcessingException, IOException
+    public Meeting readMeeting(File storageFile) throws JsonProcessingException, IOException
     {
-        return read(cls, new InputStreamReader(new FileInputStream(storageFile), this.encoding));
+        return readMeeting(new InputStreamReader(new FileInputStream(storageFile), this.encoding));
     }
 
-    public Calendar read(Class<Calendar> cls, File storageFile) throws JsonProcessingException, IOException
+    public Calendar readCalendar(File storageFile) throws JsonProcessingException, IOException
     {
-        return read(cls, new InputStreamReader(new FileInputStream(storageFile), this.encoding));
+        return readCalendar(new InputStreamReader(new FileInputStream(storageFile), this.encoding));
     }
 
-    public Bill read(Class<Bill> cls, String data) throws JsonProcessingException, IOException
+    public Bill readBill(String data) throws JsonProcessingException, IOException
     {
-        return read(cls, new StringReader(data));
+        return readBill(new StringReader(data));
     }
 
-    public Agenda read(Class<Agenda> cls, String data) throws JsonProcessingException, IOException
+    public Agenda readAgenda(String data) throws JsonProcessingException, IOException
     {
-        return read(cls, new StringReader(data));
+        return readAgenda(new StringReader(data));
     }
 
-    public Meeting read(Class<Meeting> cls, String data) throws JsonProcessingException, IOException
+    public Meeting readMeeting(String data) throws JsonProcessingException, IOException
     {
-        return read(cls, new StringReader(data));
+        return readMeeting(new StringReader(data));
     }
 
-    public Calendar read(Class<Calendar> cls, String data) throws JsonProcessingException, IOException
+    public Calendar readCalendar(String data) throws JsonProcessingException, IOException
     {
-        return read(cls, new StringReader(data));
+        return readCalendar(new StringReader(data));
     }
 
     public void write(Transcript transcript, OutputStream out) throws IOException
@@ -213,7 +213,7 @@ public class StorageJsonConverter
         generator.close();
     }
 
-    public Calendar read(Class<Calendar> cls, Reader reader) throws JsonProcessingException, IOException
+    public Calendar readCalendar(Reader reader) throws JsonProcessingException, IOException
     {
         JsonNode node = objectMapper.readTree(reader);
         Calendar calendar = new Calendar(
@@ -254,7 +254,7 @@ public class StorageJsonConverter
         generator.close();
     }
 
-    public Meeting read(Class<Meeting> cls, Reader reader) throws JsonProcessingException, IOException
+    public Meeting readMeeting(Reader reader) throws JsonProcessingException, IOException
     {
         JsonNode node = objectMapper.readTree(reader);
         Meeting meeting = new Meeting(node.get("committeeName").asText(), makeDate(node.get("meetingDateTime")));
@@ -287,7 +287,7 @@ public class StorageJsonConverter
         generator.close();
     }
 
-    public Transcript read(Class<Transcript> cls, Reader reader) throws JsonProcessingException, IOException
+    public Transcript readTranscript(Reader reader) throws JsonProcessingException, IOException
     {
         JsonNode node = objectMapper.readTree(reader);
         Transcript transcript = new Transcript();
@@ -308,7 +308,7 @@ public class StorageJsonConverter
         return transcript;
     }
 
-    public Agenda read(Class<Agenda> cls, Reader reader) throws JsonProcessingException, IOException
+    public Agenda readAgenda(Reader reader) throws JsonProcessingException, IOException
     {
         JsonNode node = objectMapper.readTree(reader);
         Agenda agenda = new Agenda(node.get("session").asInt(), node.get("year").asInt(), node.get("number").asInt());
@@ -359,7 +359,7 @@ public class StorageJsonConverter
         generator.close();
     }
 
-    public Bill read(Class<Bill> cls, Reader reader) throws JsonProcessingException, IOException
+    public Bill readBill(Reader reader) throws JsonProcessingException, IOException
     {
         JsonNode node = objectMapper.readTree(reader);
         Bill bill = new Bill(node.get("senateBillNo").asText(),node.get("year").asInt());

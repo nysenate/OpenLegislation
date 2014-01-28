@@ -117,6 +117,7 @@ public class DocumentBuilder
 
         // Allow identification based id only
         document.add(new Field("oid", transcript.getOid(), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("oid", transcript.getOid().split("_")[0].toLowerCase(), Field.Store.NO, Field.Index.ANALYZED));
         document.add(new Field("oid", transcript.getOid().toLowerCase(), Field.Store.NO, Field.Index.ANALYZED));
 
         // Basic document filters

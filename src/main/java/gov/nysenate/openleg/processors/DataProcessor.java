@@ -64,6 +64,9 @@ public class DataProcessor
     /**
      * SOBI.DYYMMDD.THHMMSS.TXT files are (mostly) in a CP850 or similar encoding. This
      * was determined from the byte mapping of paragraph/section characters to 244/245.
+     *
+     * This can't be 100% correct though because the degree symbol must be 193 in the
+     * correct code set. See SOBI.D120612.T125850.TXT.
      */
     protected static String encoding = "CP850";
 
@@ -161,6 +164,8 @@ public class DataProcessor
                         // Memos are latin1 encoding
                         line = new String(line.getBytes(encoding), "latin1");
                     }
+
+                    line = line.replace((char)193, '°');
                     billBuffer.append(line).append("\n");
                 }
             }
