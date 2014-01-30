@@ -131,7 +131,6 @@ public class AgendaProcessor implements OpenLegConstants {
             for( XMLMember member : xmlBill.getVotes().getMember()) {
                 Person person = new Person(member.getName().getContent());
                 String voteType = member.getVote().getContent().toLowerCase();
-                logger.info("adding vote: " + bill.getBillId() + " - " + voteType + " - " + person.getFullname());
 
                 if (voteType.startsWith("abstain"))
                     vote.addAbstain(person);

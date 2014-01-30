@@ -31,19 +31,19 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
-public class SpotCheck extends BaseScript {
+public class SpotCheck extends BaseScript
+{
     public static Logger logger = Logger.getLogger(SpotCheck.class);
 
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-    public static void main(String[] args) throws Exception {
-        new SpotCheck().run(args);
-    }
 
-    public String unescapeHTML(String text) {
+    public String unescapeHTML(String text)
+    {
         return StringEscapeUtils.unescapeHtml4(text).replace("&apos;", "'");
     }
 
-    public boolean stringEquals(String a, String b, boolean ignoreCase, boolean normalizeSpaces) {
+    public boolean stringEquals(String a, String b, boolean ignoreCase, boolean normalizeSpaces)
+    {
         if (normalizeSpaces) {
             a = a.replaceAll("\\s+", " ");
             b = b.replaceAll("\\s+", " ");
@@ -51,8 +51,6 @@ public class SpotCheck extends BaseScript {
 
         return (ignoreCase) ? a.equalsIgnoreCase(b) : a.equals(b);
     }
-
-
 
     public void execute(CommandLine opts) throws IOException, ParseException, SQLException
     {
@@ -223,7 +221,8 @@ public class SpotCheck extends BaseScript {
 
     }
 
-    public void loadPageFile(File dataFile, HashMap<String, SpotCheckBill> bills) throws IOException {
+    public void loadPageFile(File dataFile, HashMap<String, SpotCheckBill> bills) throws IOException
+    {
         List<String> entries = FileUtils.readLines(dataFile, "latin1");
         entries.remove(0); // Remove the header line
         System.out.println(entries.size());
@@ -274,7 +273,8 @@ public class SpotCheck extends BaseScript {
                 "<br>\\s*Criminal Sanction Impact." // Remove criminal impact text if present
         );
 
-    public HashMap<String, SpotCheckBill> readDaybreak(File dataFile) throws IOException {
+    public HashMap<String, SpotCheckBill> readDaybreak(File dataFile) throws IOException
+    {
         HashMap<String,SpotCheckBill> bills = new HashMap<String,SpotCheckBill>();
 
         // Open the daybreak file and remove new lines for the regular expressions
