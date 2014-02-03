@@ -37,6 +37,11 @@ public class SpotCheck extends BaseScript
 
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
+    public static void main(String[] args) throws Exception
+    {
+        new SpotCheck().run(args);
+    }
+
     public String unescapeHTML(String text)
     {
         return StringEscapeUtils.unescapeHtml4(text).replace("&apos;", "'");
@@ -57,7 +62,7 @@ public class SpotCheck extends BaseScript
         QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
 
         String[] args = opts.getArgs();
-        Storage storage = new Storage("/data/openleg/lbdc_test/json");
+        Storage storage = Application.getStorage();
 
         List<ReportObservation> observations = new ArrayList<ReportObservation>();
         HashMap<String, Integer> errorTotals = new HashMap<String, Integer>();

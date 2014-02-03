@@ -24,12 +24,17 @@ public class CheckMail extends BaseScript
 {
     private static final Logger logger = Logger.getLogger(CheckMail.class);
 
+    public static void main(String[] args) throws Exception
+    {
+        new CheckMail().run(args);
+    }
+
     @Override
     protected void execute(CommandLine opts) throws Exception
     {
         String[] args = opts.getArgs();
-        File lrsFileDir = new File(args[1]);
-        String filenamePrefix = args[0];
+        File lrsFileDir = new File(args[0]);
+        String filenamePrefix = args[1];
 
         Properties props = System.getProperties();
         props.setProperty("mail.store.protocol", "imaps");
@@ -42,23 +47,28 @@ public class CheckMail extends BaseScript
         Folder destination = store.getFolder("OpenLegislation").getFolder("LRSProcessed");
         source.open(Folder.READ_WRITE);
 
+        boolean runSpotCheck = false;
         for(Message message : source.getMessages()) {
             Date sent = message.getSentDate();
             String filename = new SimpleDateFormat("YYYYMMdd").format(sent);
             if (message.getSubject().contains("Sen Act Title Sum Spon Law 4001-9999")) {
                 filename = filenamePrefix + ".senate.high.html";
+                runSpotCheck = true;
             }
             else if (message.getSubject().contains("Sen Act Title Sum Spon Law 1-4000")) {
                 filename = filenamePrefix + ".senate.low.html";
+                runSpotCheck = true;
             }
             else if (message.getSubject().contains("Asm Act Title Sum Spon Law 4001-99999")) {
                 filename = filenamePrefix + ".assembly.high.html";
+                runSpotCheck = true;
             }
             else if (message.getSubject().contains("Asm Act Title Sum Spon Law 1-4000")) {
                 filename = filenamePrefix + ".assembly.low.html";
+                runSpotCheck = true;
             }
             else if (message.getSubject().contains("Job ABPSDD - LBDC all Bills")) {
-                filename = filenamePrefix + ".pagefile.txt";
+                filename = filenamePrefix + ".page_file.txt";
             }
             else {
                 logger.error("Unknown subject line: "+message.getSubject());
@@ -70,7 +80,7 @@ public class CheckMail extends BaseScript
                 for (int i = 0; i < content.getCount(); i++) {
                     Part part = content.getBodyPart(i);
                     if (Part.ATTACHMENT.equals(part.getDisposition())) {
-                        System.out.println(">> "+part.getFileName());
+                        System.out.println("Saving "+part.getFileName()+" to "+filename);
                         String attachment = IOUtils.toString(part.getInputStream());
                         FileUtils.write(new File(lrsFileDir, filename), attachment);
                     }
@@ -85,8 +95,10 @@ public class CheckMail extends BaseScript
         source.expunge();
 
         // Run the new report and regenerate our errors.
-        new SpotCheck().execute(opts);
-        new CreateErrors().execute(opts);
+        if (runSpotCheck) {
+            new SpotCheck().execute(opts);
+            new CreateErrors().execute(opts);
+        }
     }
 
 }
