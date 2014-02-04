@@ -21,6 +21,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.IntField;
+import org.apache.lucene.document.LongField;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 
 public class DocumentBuilder
 {
@@ -31,26 +36,26 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", hearing.getOid(), Field.Store.YES, Field.Index.NO));
-        document.add(new Field("oid", hearing.getOid().toLowerCase(), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new StoredField("oid", hearing.getOid()));
+        document.add(new StringField("oid", hearing.getOid().toLowerCase(), Field.Store.NO));
 
         // Basic document filters
-        document.add(new Field("otype", "hearing", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("year", String.valueOf(hearing.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("active", String.valueOf(hearing.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(hearing.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", String.valueOf(hearing.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", dateFormat.format(hearing.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", dateFormat.format(hearing.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new StringField("otype", "hearing", Field.Store.YES));
+        document.add(new IntField("year", hearing.getYear(), Field.Store.YES));
+        document.add(new StringField("active", String.valueOf(hearing.isActive()), Field.Store.YES));
+        document.add(new LongField("modified", hearing.getModifiedDate().getTime(), Field.Store.YES));
+        document.add(new LongField("published", hearing.getPublishDate().getTime(), Field.Store.YES));
+        document.add(new StringField("modified", dateFormat.format(hearing.getModifiedDate()), Field.Store.NO));
+        document.add(new StringField("published", dateFormat.format(hearing.getPublishDate()), Field.Store.NO));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
-        document.add(new Field("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new TextField("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO));
 
         // Other various search fields and filters
-        document.add(new Field("sorttitle", hearing.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new StringField("sorttitle", hearing.getOid().toLowerCase(), Field.Store.NO));
 
-        document.add(new Field("odata", LuceneJsonConverter.toString(hearing), Field.Store.YES, Field.Index.NO));
+        document.add(new StoredField("odata", LuceneJsonConverter.toString(hearing)));
         return document;
     }
 
@@ -59,17 +64,17 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", vote.getOid(), Field.Store.YES, Field.Index.NO));
-        document.add(new Field("oid", vote.getOid().toLowerCase(), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new StoredField("oid", vote.getOid()));
+        document.add(new StringField("oid", vote.getOid().toLowerCase(), Field.Store.NO));
 
         // Basic document filters
-        document.add(new Field("otype", "vote", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("year", String.valueOf(vote.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("active", String.valueOf(vote.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(vote.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", String.valueOf(vote.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", dateFormat.format(vote.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", dateFormat.format(vote.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new StringField("otype", "vote", Field.Store.YES));
+        document.add(new IntField("year", vote.getYear(), Field.Store.YES));
+        document.add(new StringField("active", String.valueOf(vote.isActive()), Field.Store.YES));
+        document.add(new LongField("modified", vote.getModifiedDate().getTime(), Field.Store.YES));
+        document.add(new LongField("published", vote.getPublishDate().getTime(), Field.Store.YES));
+        document.add(new StringField("modified", dateFormat.format(vote.getModifiedDate()), Field.Store.NO));
+        document.add(new StringField("published", dateFormat.format(vote.getPublishDate()), Field.Store.NO));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
@@ -81,8 +86,8 @@ public class DocumentBuilder
         else {
             searchTerms.add("Floor Vote");
         }
-        document.add(new Field("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO, Field.Index.ANALYZED));
-        document.add(new Field("sorttitle", vote.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new TextField("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO));
+        document.add(new StringField("sorttitle", vote.getOid().toLowerCase(), Field.Store.NO));
 
         // Other various search fields and filters
         String title = vote.getBill().getBillId()+" - "+DateFormat.getDateInstance(DateFormat.MEDIUM).format(vote.getVoteDate());
@@ -92,21 +97,21 @@ public class DocumentBuilder
         case Vote.VOTE_TYPE_FLOOR:
             title +=  " - Floor Vote"; break;
         }
-        document.add(new Field("title", title, Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("summary", DateFormat.getDateInstance(DateFormat.MEDIUM).format(vote.getVoteDate()), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("billno",vote.getBill().getBillId(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("othersponsors",StringUtils.join(vote.getBill().getOtherSponsors(), ", "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("sponsor", vote.getBill().getSponsor().getFullname(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("abstain", StringUtils.join(vote.getAbstains(), " "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("aye", StringUtils.join(vote.getAyes(), " "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("excused", StringUtils.join(vote.getExcused(), " "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("nay", StringUtils.join(vote.getNays(), " "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("when",String.valueOf(vote.getVoteDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new TextField("title", title, Field.Store.YES));
+        document.add(new TextField("summary", DateFormat.getDateInstance(DateFormat.MEDIUM).format(vote.getVoteDate()), Field.Store.YES));
+        document.add(new TextField("billno",vote.getBill().getBillId(), Field.Store.YES));
+        document.add(new TextField("othersponsors",StringUtils.join(vote.getBill().getOtherSponsors(), ", "), Field.Store.YES));
+        document.add(new TextField("sponsor", vote.getBill().getSponsor().getFullname(), Field.Store.YES));
+        document.add(new TextField("abstain", StringUtils.join(vote.getAbstains(), " "), Field.Store.YES));
+        document.add(new TextField("aye", StringUtils.join(vote.getAyes(), " "), Field.Store.YES));
+        document.add(new TextField("excused", StringUtils.join(vote.getExcused(), " "), Field.Store.YES));
+        document.add(new TextField("nay", StringUtils.join(vote.getNays(), " "), Field.Store.YES));
+        document.add(new LongField("when", vote.getVoteDate().getTime(), Field.Store.YES));
         if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE) {
-            document.add(new Field("committee", (vote.getDescription().isEmpty() ? vote.getBill().getCurrentCommittee() : vote.getDescription()), Field.Store.YES, Field.Index.ANALYZED));
+            document.add(new TextField("committee", (vote.getDescription().isEmpty() ? vote.getBill().getCurrentCommittee() : vote.getDescription()), Field.Store.YES));
         }
 
-        document.add(new Field("odata", LuceneJsonConverter.toString(vote), Field.Store.YES, Field.Index.NO));
+        document.add(new StoredField("odata", LuceneJsonConverter.toString(vote)));
         return document;
     }
 
@@ -116,39 +121,39 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", transcript.getOid(), Field.Store.YES, Field.Index.NO));
-        document.add(new Field("oid", transcript.getOid().split("_")[0].toLowerCase(), Field.Store.NO, Field.Index.ANALYZED));
-        document.add(new Field("oid", transcript.getOid().toLowerCase(), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new StoredField("oid", transcript.getOid()));
+        document.add(new StringField("oid", transcript.getOid().split("_")[0].toLowerCase(), Field.Store.NO));
+        document.add(new StringField("oid", transcript.getOid().toLowerCase(), Field.Store.NO));
 
         // Basic document filters
-        document.add(new Field("otype", "transcript", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("year", String.valueOf(transcript.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("active", String.valueOf(transcript.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(transcript.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", String.valueOf(transcript.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", dateFormat.format(transcript.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", dateFormat.format(transcript.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new StringField("otype", "transcript", Field.Store.YES));
+        document.add(new IntField("year", transcript.getYear(), Field.Store.YES));
+        document.add(new StringField("active", String.valueOf(transcript.isActive()), Field.Store.YES));
+        document.add(new LongField("modified", transcript.getModifiedDate().getTime(), Field.Store.YES));
+        document.add(new LongField("published", transcript.getPublishDate().getTime(), Field.Store.YES));
+        document.add(new StringField("modified", dateFormat.format(transcript.getModifiedDate()), Field.Store.YES));
+        document.add(new StringField("published", dateFormat.format(transcript.getPublishDate()), Field.Store.YES));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
         searchTerms.add(transcript.getTranscriptText());
-        document.add(new Field("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new TextField("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO));
 
         // Other various search fields and filters
         ArrayList<String> billIds = new ArrayList<String>();
         for (Bill bill : transcript.getRelatedBills()) {
             billIds.add(bill.getBillId());
         }
-        document.add(new Field("title", transcript.getType(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("summary", transcript.getLocation(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("relatedBills", StringUtils.join(billIds, ", "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("full", transcript.getTranscriptText(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("session-type", transcript.getType(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("location", transcript.getLocation(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("when", String.valueOf(transcript.getTimeStamp().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("sorttitle", transcript.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new TextField("title", transcript.getType(), Field.Store.YES));
+        document.add(new TextField("summary", transcript.getLocation(), Field.Store.YES));
+        document.add(new TextField("relatedBills", StringUtils.join(billIds, ", "), Field.Store.YES));
+        document.add(new TextField("full", transcript.getTranscriptText(), Field.Store.YES));
+        document.add(new TextField("session-type", transcript.getType(), Field.Store.YES));
+        document.add(new TextField("location", transcript.getLocation(), Field.Store.YES));
+        document.add(new LongField("when", transcript.getTimeStamp().getTime(), Field.Store.YES));
+        document.add(new StringField("sorttitle", transcript.getOid().toLowerCase(), Field.Store.NO));
 
-        document.add(new Field("odata", LuceneJsonConverter.toString(transcript), Field.Store.YES, Field.Index.NO));
+        document.add(new StoredField("odata", LuceneJsonConverter.toString(transcript)));
         return document;
     }
 
@@ -157,17 +162,17 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", meeting.getOid(), Field.Store.YES, Field.Index.NO));
-        document.add(new Field("oid", meeting.getOid().toLowerCase(), Field.Store.YES, Field.Index.ANALYZED));
+        document.add(new StoredField("oid", meeting.getOid()));
+        document.add(new StringField("oid", meeting.getOid().toLowerCase(), Field.Store.YES));
 
         // Basic document filters
-        document.add(new Field("otype", "meeting", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("year", String.valueOf(meeting.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("active", String.valueOf(meeting.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(meeting.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", String.valueOf(meeting.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", dateFormat.format(meeting.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", dateFormat.format(meeting.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new StringField("otype", "meeting", Field.Store.YES));
+        document.add(new IntField("year", meeting.getYear(), Field.Store.YES));
+        document.add(new StringField("active", String.valueOf(meeting.isActive()), Field.Store.YES));
+        document.add(new LongField("modified", meeting.getModifiedDate().getTime(), Field.Store.YES));
+        document.add(new LongField("published", meeting.getPublishDate().getTime(), Field.Store.YES));
+        document.add(new StringField("modified", dateFormat.format(meeting.getModifiedDate()), Field.Store.YES));
+        document.add(new StringField("published", dateFormat.format(meeting.getPublishDate()), Field.Store.YES));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
@@ -175,7 +180,7 @@ public class DocumentBuilder
         searchTerms.add(meeting.getCommitteeChair());
         searchTerms.add(meeting.getLocation());
         searchTerms.add(meeting.getNotes());
-        document.add(new Field("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new TextField("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO));
 
         ArrayList<String> billIds = new ArrayList<String>();
         for (Bill bill : meeting.getBills()) {
@@ -183,18 +188,18 @@ public class DocumentBuilder
         }
 
         // Other various search fields and filters
-        document.add(new Field("title", meeting.getCommitteeName()+" - "+DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(meeting.getMeetingDateTime()), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("summary", meeting.getLocation(), Field.Store.NO, Field.Index.ANALYZED));
-        document.add(new Field("location", meeting.getLocation(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("committee", meeting.getCommitteeName(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("chair", meeting.getCommitteeChair(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("notes", meeting.getNotes().toString(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("bills", StringUtils.join(billIds, ", "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("when", String.valueOf(meeting.getMeetingDateTime().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("sortindex", meeting.getMeetingDateTime().getTime()+meeting.getCommitteeName(), Field.Store.NO, Field.Index.NOT_ANALYZED));
-        document.add(new Field("sorttitle", document.getFieldable("title").stringValue().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new TextField("title", meeting.getCommitteeName()+" - "+DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(meeting.getMeetingDateTime()), Field.Store.YES));
+        document.add(new TextField("summary", meeting.getLocation(), Field.Store.NO));
+        document.add(new TextField("location", meeting.getLocation(), Field.Store.YES));
+        document.add(new TextField("committee", meeting.getCommitteeName(), Field.Store.YES));
+        document.add(new TextField("chair", meeting.getCommitteeChair(), Field.Store.YES));
+        document.add(new TextField("notes", meeting.getNotes().toString(), Field.Store.YES));
+        document.add(new TextField("bills", StringUtils.join(billIds, ", "), Field.Store.YES));
+        document.add(new LongField("when", meeting.getMeetingDateTime().getTime(), Field.Store.YES));
+        document.add(new StringField("sortindex", meeting.getMeetingDateTime().getTime()+meeting.getCommitteeName(), Field.Store.NO));
+        document.add(new StringField("sorttitle", document.getField("title").stringValue().toLowerCase(), Field.Store.NO));
 
-        document.add(new Field("odata", LuceneJsonConverter.toString(meeting), Field.Store.YES, Field.Index.NO));
+        document.add(new StoredField("odata", LuceneJsonConverter.toString(meeting)));
         return document;
     }
 
@@ -204,22 +209,22 @@ public class DocumentBuilder
 
         // Allow identification based id only
         String oid = calendar.getType()+"-"+new SimpleDateFormat("MM-dd-yyyy").format(calendar.getDate());
-        document.add(new Field("oid", oid, Field.Store.YES, Field.Index.NO));
-        document.add(new Field("oid", oid.toLowerCase(), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new StoredField("oid", oid));
+        document.add(new StringField("oid", oid.toLowerCase(), Field.Store.NO));
 
         // Basic document filters
-        document.add(new Field("otype", "calendar", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("year", String.valueOf(calendar.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("active", String.valueOf(calendar.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(calendar.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", String.valueOf(calendar.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", dateFormat.format(calendar.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", dateFormat.format(calendar.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new StringField("otype", "calendar", Field.Store.YES));
+        document.add(new IntField("year", calendar.getYear(), Field.Store.YES));
+        document.add(new StringField("active", String.valueOf(calendar.isActive()), Field.Store.YES));
+        document.add(new LongField("modified", calendar.getModifiedDate().getTime(), Field.Store.YES));
+        document.add(new LongField("published", calendar.getPublishDate().getTime(), Field.Store.YES));
+        document.add(new StringField("modified", dateFormat.format(calendar.getModifiedDate()), Field.Store.YES));
+        document.add(new StringField("published", dateFormat.format(calendar.getPublishDate()), Field.Store.YES));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
         searchTerms.add(calendar.getTitle());
-        document.add(new Field("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new TextField("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO));
 
         // Other various search fields and filters
         StringBuilder bills = new StringBuilder("");
@@ -254,15 +259,15 @@ public class DocumentBuilder
             }
         }
 
-        document.add(new Field("ctype", calendar.getType().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("bills", bills.toString(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("calendarentries",calendarEntries.toString(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("summary", summaryBuffer.toString().trim(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("title", calendar.getTitle(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("when",String.valueOf(calendar.getDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("sorttitle", document.getFieldable("title").stringValue().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new StringField("ctype", calendar.getType().toLowerCase(), Field.Store.YES));
+        document.add(new TextField("bills", bills.toString(), Field.Store.YES));
+        document.add(new TextField("calendarentries",calendarEntries.toString(), Field.Store.YES));
+        document.add(new TextField("summary", summaryBuffer.toString().trim(), Field.Store.YES));
+        document.add(new TextField("title", calendar.getTitle(), Field.Store.YES));
+        document.add(new LongField("when", calendar.getDate().getTime(), Field.Store.YES));
+        document.add(new StringField("sorttitle", document.getField("title").stringValue().toLowerCase(), Field.Store.NO));
 
-        document.add(new Field("odata", LuceneJsonConverter.toString(calendar), Field.Store.YES, Field.Index.NO));
+        document.add(new StoredField("odata", LuceneJsonConverter.toString(calendar)));
         return document;
     }
 
@@ -271,32 +276,32 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        document.add(new Field("oid", action.getOid(), Field.Store.YES, Field.Index.NO));
-        document.add(new Field("oid", action.getOid().toLowerCase(), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new StoredField("oid", action.getOid()));
+        document.add(new StringField("oid", action.getOid().toLowerCase(), Field.Store.NO));
 
         // Basic document filters
-        document.add(new Field("otype", "action", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("year", String.valueOf(action.getYear()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("active", String.valueOf(action.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(action.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", String.valueOf(action.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", dateFormat.format(action.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", dateFormat.format(action.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new StringField("otype", "action", Field.Store.YES));
+        document.add(new IntField("year", action.getYear(), Field.Store.YES));
+        document.add(new StringField("active", String.valueOf(action.isActive()), Field.Store.YES));
+        document.add(new LongField("modified", action.getModifiedDate().getTime(), Field.Store.YES));
+        document.add(new LongField("published", action.getPublishDate().getTime(), Field.Store.YES));
+        document.add(new StringField("modified", dateFormat.format(action.getModifiedDate()), Field.Store.YES));
+        document.add(new StringField("published", dateFormat.format(action.getPublishDate()), Field.Store.YES));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
         searchTerms.add(action.getBill().getBillId());
         searchTerms.add(action.getText());
-        document.add(new Field("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new TextField("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO));
 
         // Other various search fields and filters
-        document.add(new Field("when",String.valueOf(action.getDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("billno",action.getBill().getBillId().toLowerCase(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("title", action.getText(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("summary", DateFormat.getDateInstance(DateFormat.MEDIUM).format(action.getDate()), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("sorttitle", action.getBill().getBillId()+" "+action.getText().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new LongField("when", action.getDate().getTime(), Field.Store.YES));
+        document.add(new TextField("billno", action.getBill().getBillId().toLowerCase(), Field.Store.YES));
+        document.add(new TextField("title", action.getText(), Field.Store.YES));
+        document.add(new TextField("summary", DateFormat.getDateInstance(DateFormat.MEDIUM).format(action.getDate()), Field.Store.YES));
+        document.add(new StringField("sorttitle", action.getBill().getBillId()+" "+action.getText().toLowerCase(), Field.Store.NO));
 
-        document.add(new Field("odata", LuceneJsonConverter.toString(action), Field.Store.YES, Field.Index.NO));
+        document.add(new StoredField("odata", LuceneJsonConverter.toString(action)));
         return document;
     }
 
@@ -305,18 +310,18 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based on printNumber as well as oid; e.g. S11 or S11-2013
-        document.add(new Field("oid", bill.getOid(), Field.Store.YES, Field.Index.NO));
-        document.add(new Field("oid", bill.getOid().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
-        document.add(new Field("oid", bill.getPrintNumber().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new StoredField("oid", bill.getOid()));
+        document.add(new StringField("oid", bill.getOid().toLowerCase(), Field.Store.NO));
+        document.add(new StringField("oid", bill.getPrintNumber().toLowerCase(), Field.Store.NO));
 
         // Basic document filters
-        document.add(new Field("otype", "bill", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("year", String.valueOf(bill.getSession()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("active", String.valueOf(bill.isActive()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", String.valueOf(bill.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", String.valueOf(bill.getPublishDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("modified", dateFormat.format(bill.getModifiedDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("published", dateFormat.format(bill.getPublishDate()), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        document.add(new StringField("otype", "bill", Field.Store.YES));
+        document.add(new IntField("year", bill.getSession(), Field.Store.YES));
+        document.add(new StringField("active", String.valueOf(bill.isActive()), Field.Store.YES));
+        document.add(new LongField("modified", bill.getModifiedDate().getTime(), Field.Store.YES));
+        document.add(new LongField("published", bill.getPublishDate().getTime(), Field.Store.YES));
+        document.add(new StringField("modified", dateFormat.format(bill.getModifiedDate()), Field.Store.YES));
+        document.add(new StringField("published", dateFormat.format(bill.getPublishDate()), Field.Store.YES));
 
         // When searching without a field, match against the following terms.
         // TODO: Use field boosting to rank results better
@@ -329,7 +334,7 @@ public class DocumentBuilder
         searchTerms.add(bill.getTitle());
         searchTerms.add(bill.getSummary());
         searchTerms.add(bill.getFulltext());
-        document.add(new Field("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new TextField("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO));
 
         // Sorting should prioritize senate bills over assembly bills and resolutions.
         String sortId = bill.getPaddedBillId();
@@ -338,28 +343,28 @@ public class DocumentBuilder
         case 'A': sortId = "02_"+sortId; break;
         default: sortId = "99_"+sortId;
         }
-        document.add(new Field("sortindex", sortId, Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new StringField("sortindex", sortId, Field.Store.NO));
 
         // Other various search fields and filters
-        document.add(new Field("title", bill.getTitle(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("summary", bill.getSummary(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("lawsection", bill.getLawSection(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("sameas", bill.getSameAs(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("sponsor", bill.getSponsor() == null ? "" : bill.getSponsor().toString(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("cosponsors", StringUtils.join(bill.getCoSponsors(), ", "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("multisponsors", StringUtils.join(bill.getMultiSponsors(), ", "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("othersponsors", StringUtils.join(bill.getOtherSponsors(), ", "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("pastcommittees", StringUtils.join(bill.getPastCommittees(), ", "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("actions", StringUtils.join(bill.getActions(), ", "), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("committee", bill.getCurrentCommittee(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("full", bill.getFulltext(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("memo", bill.getMemo(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("law", bill.getLaw(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("when", String.valueOf(bill.getModifiedDate().getTime()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("unibill", String.valueOf(bill.isUniBill()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("stricken", String.valueOf(bill.isStricken()), Field.Store.YES, Field.Index.NOT_ANALYZED));
-        document.add(new Field("actclause", bill.getActClause(), Field.Store.YES, Field.Index.ANALYZED));
-        document.add(new Field("sorttitle", bill.getTitle().toLowerCase(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new TextField("title", bill.getTitle(), Field.Store.YES));
+        document.add(new TextField("summary", bill.getSummary(), Field.Store.YES));
+        document.add(new TextField("lawsection", bill.getLawSection(), Field.Store.YES));
+        document.add(new TextField("sameas", bill.getSameAs(), Field.Store.YES));
+        document.add(new TextField("sponsor", bill.getSponsor() == null ? "" : bill.getSponsor().toString(), Field.Store.YES));
+        document.add(new TextField("cosponsors", StringUtils.join(bill.getCoSponsors(), ", "), Field.Store.YES));
+        document.add(new TextField("multisponsors", StringUtils.join(bill.getMultiSponsors(), ", "), Field.Store.YES));
+        document.add(new TextField("othersponsors", StringUtils.join(bill.getOtherSponsors(), ", "), Field.Store.YES));
+        document.add(new TextField("pastcommittees", StringUtils.join(bill.getPastCommittees(), ", "), Field.Store.YES));
+        document.add(new TextField("actions", StringUtils.join(bill.getActions(), ", "), Field.Store.YES));
+        document.add(new TextField("committee", bill.getCurrentCommittee(), Field.Store.YES));
+        document.add(new TextField("full", bill.getFulltext(), Field.Store.YES));
+        document.add(new TextField("memo", bill.getMemo(), Field.Store.YES));
+        document.add(new TextField("law", bill.getLaw(), Field.Store.YES));
+        document.add(new TextField("actclause", bill.getActClause(), Field.Store.YES));
+        document.add(new LongField("when", bill.getModifiedDate().getTime(), Field.Store.YES));
+        document.add(new StringField("unibill", String.valueOf(bill.isUniBill()), Field.Store.YES));
+        document.add(new StringField("stricken", String.valueOf(bill.isStricken()), Field.Store.YES));
+        document.add(new StringField("sorttitle", bill.getTitle().toLowerCase(), Field.Store.NO));
 
         // The current status of the document, usually a filter on actions will be more useful
         String billStatus = "";
@@ -367,9 +372,9 @@ public class DocumentBuilder
         if (!actions.isEmpty()) {
             billStatus = actions.get(actions.size()-1).getText();
         }
-        document.add(new Field("status", billStatus, Field.Store.YES, Field.Index.ANALYZED));
+        document.add(new TextField("status", billStatus, Field.Store.YES));
 
-        document.add(new Field("odata", LuceneJsonConverter.toString(bill), Field.Store.YES, Field.Index.NO));
+        document.add(new StoredField("odata", LuceneJsonConverter.toString(bill)));
         return document;
     }
 }

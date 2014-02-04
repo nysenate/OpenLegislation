@@ -96,7 +96,7 @@ public class Meeting extends BaseObject
      */
     public void setOid(String oid)
     {
-        this.oid = oid;
+        this.oid = oid.replace(" ", "-").replace(",", "");
     }
 
     public String getCommitteeChair() {

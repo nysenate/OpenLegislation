@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class ApiHelper implements OpenLegConstants {
@@ -213,7 +212,7 @@ public class ApiHelper implements OpenLegConstants {
         return sr.getResults();
     }
 
-    public static String dateReplace(String term) throws ParseException {
+    public static String dateReplace(String term) {
         Pattern  p = Pattern.compile("(\\d{1,2}[-]?){2}(\\d{2,4})T\\d{2}-\\d{2}");
         Matcher m = p.matcher(term);
 

@@ -17,17 +17,14 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.FieldSelector;
-import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -39,6 +36,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
+
 /**
  * Encapsulates basic Lucene configuration and index manipulation.
  *
@@ -49,13 +47,6 @@ import org.apache.lucene.util.Version;
 public class Lucene
 {
     private static final Logger logger = Logger.getLogger(Lucene.class);
-
-    /**
-     * The version of Lucene for compatibility purposes. We can't upgrade the version right now
-     * because the StandardAnalyzer now removes hyphens from quoted terms while searching. This
-     * breaks document lookup by oid
-     */
-	protected static final Version VERSION = Version.LUCENE_30;
 
 	/**
      * The directory the Lucene database is stored in.
@@ -110,10 +101,10 @@ public class Lucene
 	public Lucene(File indexDir, boolean readOnly) throws IOException
 	{
         this.indexDir = indexDir;
-        this.analyzer = new StandardAnalyzer(VERSION);
+        this.analyzer = new OpenLegislationAnalyzer(Version.LUCENE_46);
 
 	    if (!readOnly) {
-            this.indexWriterConfig = new IndexWriterConfig(VERSION, this.analyzer);
+            this.indexWriterConfig = new IndexWriterConfig(Version.LUCENE_46, this.analyzer);
             this.indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
             this.indexWriter = new IndexWriter(FSDirectory.open(indexDir), indexWriterConfig);
 
@@ -154,15 +145,15 @@ public class Lucene
         IndexSearcher searcher = searcherManager.acquire();
 
         try {
-            Query query = new QueryParser(VERSION, "osearch", analyzer).parse(queryString);
+            Query query = new OpenLegislationQueryParser(analyzer).parse(queryString, "osearch");
 
             // Sort by relevance unless they say otherwise
             Sort sort;
             if (sortFieldName == null || sortFieldName.isEmpty()) {
-                sort = new Sort(new SortField(null, SortField.SCORE, reversed));
+                sort = new Sort(new SortField(null, SortField.Type.SCORE, reversed));
             }
             else {
-                sort = new Sort(new SortField(sortFieldName, SortField.STRING_VAL, reversed));
+                sort = new Sort(new SortField(sortFieldName, SortField.Type.STRING_VAL, reversed));
             }
 
             // Time our searches so bottle necks can be identified
@@ -171,19 +162,16 @@ public class Lucene
             double duration = (System.nanoTime()-startTime)/1000000.0;
             logger.info(String.format("[%.2f ms] %,d hits for query %s; sorted by %s", duration, topDocs.totalHits, query, sort));
 
-            // Only fetch the documents for this "page" for our results. Also,
-            // don't fetch fields until we need them, often we won't. This saves
-            // a ton of memory and time with big full, memo, ojson, and oxml fields
+            // Only fetch the documents for this "page" for our results.
             ScoreDoc[] scoreDocs = topDocs.scoreDocs;
-            FieldSelector lazyFieldSelector = new LazyFieldSelector();
             ArrayList<Document> results = new ArrayList<Document>();
             for (int i=skipCount; (i < scoreDocs.length && i < skipCount+retrieveCount); i++) {
-                results.add(searcher.doc(scoreDocs[i].doc, lazyFieldSelector));
+                results.add(searcher.doc(scoreDocs[i].doc));
             }
 
             return new LuceneResult(results,topDocs.totalHits);
         }
-        catch (ParseException e) {
+        catch (QueryNodeException e) {
             logger.warn("Unable to parse query: "+queryString,e);
         }
         finally {
@@ -203,8 +191,8 @@ public class Lucene
      */
     public void updateDocument(Document doc) throws IOException
     {
-        logger.info("indexing document: " + doc.getFieldable("otype").stringValue() + "=" + doc.getFieldable("oid").stringValue());
-        String oid = doc.getFieldable("oid").stringValue();
+        logger.info("indexing document: " + doc.getField("otype").stringValue() + "=" + doc.getField("oid").stringValue());
+        String oid = doc.getField("oid").stringValue();
         indexWriter.updateDocument(new Term("oid", oid.toLowerCase()), doc);
     }
 
@@ -215,10 +203,10 @@ public class Lucene
      * @throws IOException
      * @throws ParseException
      */
-    public void deleteDocumentsByQuery(String queryString) throws IOException, ParseException
+    public void deleteDocumentsByQuery(String queryString) throws IOException, QueryNodeException
     {
         queryString = queryToLowerCase(queryString);
-		Query query = new QueryParser(VERSION, "osearch", indexWriter.getAnalyzer()).parse(queryString);
+		Query query = new OpenLegislationQueryParser(indexWriter.getAnalyzer()).parse(queryString, "osearch");
 		indexWriter.deleteDocuments(query);
     }
 
@@ -270,7 +258,7 @@ public class Lucene
 
 
 
-    public SenateResponse search(String queryText, int skipCount, int retrieveCount, String sortFieldName, boolean reversed) throws ParseException, IOException
+    public SenateResponse search(String queryText, int skipCount, int retrieveCount, String sortFieldName, boolean reversed) throws IOException
     {
         SenateResponse response = new SenateResponse();
 
@@ -285,7 +273,7 @@ public class Lucene
                     lastModified = new Date().getTime()+"";
 
                 HashMap<String,String> fields = new HashMap<String,String>();
-                for(Fieldable field : doc.getFields()) {
+                for(IndexableField field : doc.getFields()) {
                     fields.put(field.name(), doc.get(field.name()));
                 }
 
@@ -306,6 +294,7 @@ public class Lucene
     }
 
     public IBaseObject getSenateObject(String oid, String type) {
+        oid = oid.replace(" ", "-").replace(",", "");
         ResultIterator longSearch = new ResultIterator("otype:"+type+" AND oid:\""+oid+"\"", 1, 1, "oid", true);
         for(Result result:longSearch) {
             return result.getObject();
