@@ -294,6 +294,7 @@ public class Lucene
     }
 
     public IBaseObject getSenateObject(String oid, String type) {
+        oid = oid.replace(" ", "-").replace(",", "");
         ResultIterator longSearch = new ResultIterator("otype:"+type+" AND oid:\""+oid+"\"", 1, 1, "oid", true);
         for(Result result:longSearch) {
             return result.getObject();
