@@ -94,6 +94,11 @@ public class SpotCheck extends BaseScript
                 continue;
             }
 
+            if (!bill.isPublished()) {
+                logger.error("Bill Unpublished: "+billNo);
+                continue;
+            }
+
             // Compare the titles, ignore white space differences
             String jsonTitle = unescapeHTML(bill.getTitle());
             String lbdcTitle = bills.get(id).getTitle();
