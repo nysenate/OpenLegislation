@@ -153,7 +153,17 @@ public class Lucene
                 sort = new Sort(new SortField(null, SortField.Type.SCORE, reversed));
             }
             else {
-                sort = new Sort(new SortField(sortFieldName, SortField.Type.STRING_VAL, reversed));
+                SortField.Type sortType;
+                if (sortFieldName.equals("year")) {
+                    sortType = SortField.Type.INT;
+                }
+                else if (sortFieldName.equals("when") || sortFieldName.equals("modified") || sortFieldName.equals("published")) {
+                    sortType = SortField.Type.LONG;
+                }
+                else {
+                    sortType = SortField.Type.STRING_VAL;
+                }
+                sort = new Sort(new SortField(sortFieldName, sortType, reversed));
             }
 
             // Time our searches so bottle necks can be identified
