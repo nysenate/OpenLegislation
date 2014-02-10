@@ -407,36 +407,34 @@ public class CalendarProcessor implements OpenLegConstants {
     }
 
     private Bill getBill(Storage storage, String billId, int year, String sponsorName) {
-        String[] sponsors = {""};
-        if (sponsorName != null) {
-            sponsors = sponsorName.trim().split(",");
-        }
-
-        BillProcessor processor = new BillProcessor();
-        SOBIBlock mockBlock = new SOBIBlock(year+billId+(billId.matches("[A-Z]$") ? "" : " ")+1+"     ");
-
         // This is a crappy situation, all bills on calendars should already exist but sometimes they won't.
         // This almost exclusively because we are missing sobi files. It shouldn't happen in production but
         // does frequently in development.
+        BillProcessor processor = new BillProcessor();
+        SOBIBlock mockBlock = new SOBIBlock(year+billId+(billId.matches("[A-Z]$") ? "" : " ")+1+"     ");
         Bill bill = processor.getOrCreateBill(mockBlock, modifiedDate, storage);
-        bill.setSponsor(new Person(sponsors[0].trim()));
+
+        if (sponsorName != null) {
+            String[] sponsors = sponsorName.trim().split(",");
+            bill.setSponsor(new Person(sponsors[0].trim()));
+
+            // Other sponsors are removed when a calendar/agenda is resent without
+            // The other sponsor included in the sponsors list.
+            ArrayList<Person> otherSponsors = new ArrayList<Person>();
+            for (int i = 1; i < sponsors.length; i++) {
+                otherSponsors.add(new Person(sponsors[i].trim()));
+            }
+
+            if (!bill.getOtherSponsors().equals(otherSponsors)) {
+                bill.setOtherSponsors(otherSponsors);
+                processor.saveBill(bill, storage);
+            }
+        }
 
         if (!bill.isPublished()) {
             // It must be published if it is on the calendar
             bill.setPublishDate(modifiedDate);
             bill.setActive(true);
-            processor.saveBill(bill, storage);
-        }
-
-        // Other sponsors are removed when a calendar/agenda is resent without
-        // The other sponsor included in the sponsors list.
-        ArrayList<Person> otherSponsors = new ArrayList<Person>();
-        for (int i = 1; i < sponsors.length; i++) {
-            otherSponsors.add(new Person(sponsors[i].trim()));
-        }
-
-        if (!bill.getOtherSponsors().equals(otherSponsors)) {
-            bill.setOtherSponsors(otherSponsors);
             processor.saveBill(bill, storage);
         }
 
