@@ -80,9 +80,25 @@ public class DataProcessor
      * @return A collection of matching filenames
      * @throws IOException
      */
-    public Collection<File> safeListFiles(File directory, String[] extensions, boolean recursive) throws IOException {
+    public Collection<File> safeListFiles(File directory, String[] extensions, boolean recursive) throws IOException
+    {
         FileUtils.forceMkdir(directory);
         return FileUtils.listFiles(directory, extensions, recursive);
+    }
+
+    /**
+     * Create the specified folder if necessary and return a File handle to it.
+     *
+     * @param parent - The parent directory for this folder
+     * @param folderName - The name of the directory to retrieve
+     * @return a File handle to the requested folder.
+     * @throws IOException
+     */
+    public File safeGetFolder(File parent, String folderName) throws IOException
+    {
+        File directory = new File(parent, folderName);
+        FileUtils.forceMkdir(directory);
+        return directory;
     }
 
     /**
@@ -101,18 +117,18 @@ public class DataProcessor
         }
 
         // Everything else on this level should be a SOBI file
-        File sobiDir = new File(workDir, "sobis");
+        File sobiDir = safeGetFolder(workDir, "sobis");
         for (File sobiFile : safeListFiles(sourceDir, null, false)) {
             moveFileToDirectory(sobiFile, sobiDir, true);
         }
 
-        File hearingDir = new File(workDir, "hearings");
-        for (File hearingFile : safeListFiles(new File(sourceDir, "hearings"), null, false)) {
+        File hearingDir = safeGetFolder(workDir, "hearings");
+        for (File hearingFile : safeListFiles(safeGetFolder(sourceDir, "hearings"), null, false)) {
             moveFileToDirectory(hearingFile, hearingDir, true);
         }
 
-        File transcriptDir = new File(workDir, "transcripts");
-        for (File transcriptFile : safeListFiles(new File(sourceDir, "transcripts"), null, false)) {
+        File transcriptDir = safeGetFolder(workDir, "transcripts");
+        for (File transcriptFile : safeListFiles(safeGetFolder(sourceDir, "transcripts"), null, false)) {
             moveFileToDirectory(transcriptFile, transcriptDir, true);
         }
     }
@@ -129,12 +145,13 @@ public class DataProcessor
     {
         // Folders for our extracted sub documents. Extracting them and writing them to file
         // provides an easily inspectable record of how this step went.
-        File billDir = new File(workDir, "bills");
-        File agendaDir = new File(workDir, "agendas");
-        File calendarDir = new File(workDir, "calendars");
-        File annotationDir = new File(workDir, "annotations");
+        File billDir = safeGetFolder(workDir, "bills");
+        File agendaDir = safeGetFolder(workDir, "agendas");
+        File calendarDir = safeGetFolder(workDir, "calendars");
+        File committeeDir = safeGetFolder(workDir, "committees");
+        File annotationDir = safeGetFolder(workDir, "annotations");
 
-        for (File sobiFile : safeListFiles(new File(workDir, "sobis"), null, true)) {
+        for (File sobiFile : safeListFiles(safeGetFolder(workDir, "sobis"), null, true)) {
             String line = null;
             int fileCounter = 1;
             StringBuffer billBuffer = new StringBuffer();
@@ -146,6 +163,11 @@ public class DataProcessor
                     File calendarFile = new File(calendarDir, sobiFile.getName()+"-calendar-"+(fileCounter++)+".xml");
                     logger.info("Extracting calendar: "+calendarFile);
                     extractXml("</sencalendar.+", line, br, calendarFile);
+                }
+                else if(line.matches("<sencommittee.+")) {
+                    File committeeFile = new File(committeeDir, sobiFile.getName()+"-committee-"+(fileCounter++)+".xml");
+                    logger.info("Extracting commitee: "+committeeFile);
+                    extractXml("</sencommittee.+", line, br, committeeFile);
                 }
                 else if(line.matches("<senagenda.+")) {
                     // Extract agendas and corresponding votes
@@ -209,6 +231,8 @@ public class DataProcessor
                     transcriptProcessor.process(file, storage);
                 } else if (type.equals("hearings")) {
                     continue; // we don't process or receive these yet.
+                } else if (type.equals("committees")) {
+                    continue; // We don't process or receive these yet.
                 } else if (file.getName().equals("CMS.TEXT")) {
                     // The rules don't really need processing, just put them somewhere for later
                     FileUtils.copyFileToDirectory(file, storage.getStorageDir());
@@ -264,24 +288,26 @@ public class DataProcessor
             moveFileToDirectory(rulesFile, archiveDir, true);
         }
 
-        File transcriptsArchiveDir = new File(archiveDir, "transcripts");
-        for (File file : safeListFiles(new File(workingDir, "transcripts"), null, false)) {
+        File transcriptsArchiveDir = safeGetFolder(archiveDir, "transcripts");
+        for (File file : safeListFiles(safeGetFolder(workingDir, "transcripts"), null, false)) {
             moveFileToDirectory(file, transcriptsArchiveDir, true);
         }
 
-        File hearingsArchiveDir = new File(archiveDir, "hearings");
-        for (File file : safeListFiles(new File(workingDir, "hearings"), null, false)) {
+        File hearingsArchiveDir = safeGetFolder(archiveDir, "hearings");
+        for (File file : safeListFiles(safeGetFolder(workingDir, "hearings"), null, false)) {
             moveFileToDirectory(file, hearingsArchiveDir, true);
         }
 
-        archiveFiles(new File(workingDir, "sobis"), archiveDir, "sobis");
-        archiveFiles(new File(workingDir, "bills"), archiveDir, "bills");
-        archiveFiles(new File(workingDir, "calendars"), archiveDir, "calendars");
-        archiveFiles(new File(workingDir, "agendas"), archiveDir, "agendas");
-        archiveFiles(new File(workingDir, "annotations"), archiveDir, "annotations");
+        archiveFiles(safeGetFolder(workingDir, "sobis"), archiveDir, "sobis");
+        archiveFiles(safeGetFolder(workingDir, "bills"), archiveDir, "bills");
+        archiveFiles(safeGetFolder(workingDir, "calendars"), archiveDir, "calendars");
+        archiveFiles(safeGetFolder(workingDir, "committees"), archiveDir, "committees");
+        archiveFiles(safeGetFolder(workingDir, "agendas"), archiveDir, "agendas");
+        archiveFiles(safeGetFolder(workingDir, "annotations"), archiveDir, "annotations");
     }
 
-    public void moveFileToDirectory(File file, File directory, boolean createDirectory) throws IOException {
+    public void moveFileToDirectory(File file, File directory, boolean createDirectory) throws IOException
+    {
         File newFile = new File(directory, file.getName());
         if (newFile.exists()) {
             newFile.delete();
@@ -295,8 +321,8 @@ public class DataProcessor
      *
      * e.g. 2013/bill/SOBI.D130628.T101200
      *
-     * @param sourceDir - The directory with files to archive, non-recursive.
-     * @param destDir - The base directory to archive files to.
+     * @param sourceDir - The directory with files to archive, non-recursive. Must exist.
+     * @param destDir - The base directory to archive files to. Must exist.
      * @param subFolder - The name of the sub-directory to store the files. Cannot be null!
      * @throws IOException
      */
@@ -307,7 +333,7 @@ public class DataProcessor
         for (File file : safeListFiles(sourceDir, null, false)) {
             try {
                 calendar.setTime(sobiDateFormat.parse(file.getName()));
-                File finalDir = new File(new File(destDir, String.valueOf(calendar.get(Calendar.YEAR))), subFolder);
+                File finalDir = safeGetFolder(new File(destDir, String.valueOf(calendar.get(Calendar.YEAR))), subFolder);
                 moveFileToDirectory(file, finalDir, true);
             }
             catch (ParseException e) {
