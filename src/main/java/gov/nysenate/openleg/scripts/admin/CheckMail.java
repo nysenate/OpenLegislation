@@ -50,7 +50,7 @@ public class CheckMail extends BaseScript
         boolean runSpotCheck = false;
         for(Message message : source.getMessages()) {
             Date sent = message.getSentDate();
-            String filename = new SimpleDateFormat("YYYYMMdd").format(sent);
+            String filename = new SimpleDateFormat("yyyyMMdd").format(sent);
             if (message.getSubject().contains("Sen Act Title Sum Spon Law 4001-9999")) {
                 filename = filenamePrefix + ".senate.high.html";
                 runSpotCheck = true;
