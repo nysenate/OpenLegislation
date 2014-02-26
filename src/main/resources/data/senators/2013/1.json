@@ -9,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle",
   "partyAffiliations" : [ "R" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-3121",
-    "fax" : "",
-    "otherPhone" : "",
-    "additional" : "Room 806, Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "28 North Country Rd",
     "city" : "Mount Sinai",
@@ -38,6 +23,21 @@
     "additional" : "Suite 203",
     "latitude" : 40.938617,
     "longitude" : -73.035149
+  }, {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building, Room 806",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3121",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.65,
+    "longitude" : -73.76
   } ],
   "district" : {
     "number" : 1,
