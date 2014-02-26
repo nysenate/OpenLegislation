@@ -1,0 +1,56 @@
+{
+  "nid" : 215336,
+  "name" : "Senate District 8",
+  "lastName" : "Senate District 8",
+  "shortName" : "8",
+  "email" : "district08@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/district_8.png",
+  "url" : "http://www.nysenate.gov/senator/senate-district-8",
+  "partyAffiliations" : [ ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3341",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 609, Legislative Office Building",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  }, {
+    "name" : "District Office",
+    "street" : "5550 Merrick Road",
+    "city" : "Massapequa",
+    "postalCode" : "11758-6238",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "516-882-0630",
+    "fax" : "516-882-0636",
+    "otherPhone" : "",
+    "additional" : "Suite 205",
+    "latitude" : 40.668929,
+    "longitude" : -73.432602
+  } ],
+  "district" : {
+    "number" : 8,
+    "url" : "http://www.nysenate.gov/district/08",
+    "imageUrl" : "http://www.nysenate.gov/files/SD8.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=08"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

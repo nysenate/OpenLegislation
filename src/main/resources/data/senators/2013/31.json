@@ -61,11 +61,11 @@
     "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=31"
   },
   "social" : {
-    "twitter" : "https://twitter.com/EspaillatNY",
-    "youtube" : "http://www.youtube.com/channel/UCDxUywfr7tnIzsgvmDsyo5g",
+    "twitter" : "",
+    "youtube" : "",
     "myspace" : "",
     "picasa" : "",
     "flickr" : "",
-    "facebook" : "https://www.facebook.com/AdrianoEspaillat"
+    "facebook" : ""
   }
 }
