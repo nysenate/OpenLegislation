@@ -4,7 +4,12 @@
   "shortName" : "socialservices",
   "url" : "http://www.nysenate.gov/committee/social-services",
   "videoUrl" : "http://www.livestream.com/NYSenate_SocialServices",
-  "chairs" : [ ],
+  "chairs" : [ {
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
+  } ],
   "members" : [ {
     "nid" : 74991,
     "name" : "Greg Ball",
@@ -30,5 +35,10 @@
     "name" : "Daniel L. Squadron",
     "shortName" : "Squadron",
     "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
+  }, {
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
   } ]
 }
