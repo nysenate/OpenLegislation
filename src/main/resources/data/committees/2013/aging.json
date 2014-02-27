@@ -4,7 +4,12 @@
   "shortName" : "aging",
   "url" : "http://www.nysenate.gov/committee/aging",
   "videoUrl" : "http://www.livestream.com/nysenate_aging",
-  "chairs" : [ ],
+  "chairs" : [ {
+    "nid" : 211,
+    "name" : "David J. Valesky",
+    "shortName" : "Valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
+  } ],
   "members" : [ {
     "nid" : 170136,
     "name" : "Simcha Felder",

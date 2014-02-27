@@ -5,10 +5,10 @@
   "url" : "http://www.nysenate.gov/committee/infrastructure-and-capital-investment",
   "videoUrl" : "http://www.livestream.com/nysenate_infrastructure_capinvestment",
   "chairs" : [ {
-    "nid" : 204,
-    "name" : "Joseph E. Robach",
-    "shortName" : "Robach",
-    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+    "nid" : 222,
+    "name" : "Carl L Marcellino",
+    "shortName" : "Marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
   } ],
   "members" : [ {
     "nid" : 204,
@@ -50,5 +50,10 @@
     "name" : "George Latimer",
     "shortName" : "Latimer",
     "url" : "http://www.nysenate.gov/senator/george-s-latimer"
+  }, {
+    "nid" : 222,
+    "name" : "Carl L Marcellino",
+    "shortName" : "Marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
   } ]
 }

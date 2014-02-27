@@ -4,12 +4,7 @@
   "shortName" : "commerce",
   "url" : "http://www.nysenate.gov/committee/commerce-economic-development-and-small-business",
   "videoUrl" : "http://www.livestream.com/NYSenate_Commerce",
-  "chairs" : [ {
-    "nid" : 211,
-    "name" : "David J. Valesky",
-    "shortName" : "Valesky",
-    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
-  } ],
+  "chairs" : [ ],
   "members" : [ {
     "nid" : 75006,
     "name" : "Patrick M. Gallivan",
@@ -55,5 +50,10 @@
     "name" : "Ted O'Brien",
     "shortName" : "O'Brien",
     "url" : "http://www.nysenate.gov/senator/ted-obrien"
+  }, {
+    "nid" : 211,
+    "name" : "David J. Valesky",
+    "shortName" : "Valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   } ]
 }
