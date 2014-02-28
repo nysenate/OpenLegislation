@@ -164,10 +164,10 @@ public class DataProcessor
                     logger.info("Extracting calendar: "+calendarFile);
                     extractXml("</sencalendar.+", line, br, calendarFile);
                 }
-                else if(line.matches("<sencommittee.+")) {
+                else if(line.matches("<sencommmem.+")) {
                     File committeeFile = new File(committeeDir, sobiFile.getName()+"-committee-"+(fileCounter++)+".xml");
                     logger.info("Extracting commitee: "+committeeFile);
-                    extractXml("</sencommittee.+", line, br, committeeFile);
+                    extractXml("</sencommmem.+", line, br, committeeFile);
                 }
                 else if(line.matches("<senagenda.+")) {
                     // Extract agendas and corresponding votes
