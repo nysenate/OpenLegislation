@@ -96,14 +96,14 @@
     "shortName" : "Gipson",
     "url" : "http://www.nysenate.gov/senator/terry-gipson"
   }, {
-    "nid" : 74986,
-    "name" : "Jack M. Martins",
-    "shortName" : "Martins",
-    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
-  }, {
     "nid" : 222,
     "name" : "Carl L Marcellino",
     "shortName" : "Marcellino",
     "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
   } ]
 }
