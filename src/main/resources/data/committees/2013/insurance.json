@@ -61,11 +61,6 @@
     "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
-    "nid" : 211,
-    "name" : "David J. Valesky",
-    "shortName" : "Valesky",
-    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
-  }, {
     "nid" : 203,
     "name" : "Catharine Young",
     "shortName" : "Young",
@@ -105,5 +100,10 @@
     "name" : "Jose Peralta",
     "shortName" : "Peralta",
     "url" : "http://www.nysenate.gov/senator/jose-peralta"
+  }, {
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
   } ]
 }

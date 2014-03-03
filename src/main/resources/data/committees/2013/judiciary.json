@@ -116,14 +116,19 @@
     "shortName" : "Addabbo",
     "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
   }, {
-    "nid" : 75566,
-    "name" : "David Carlucci",
-    "shortName" : "Carlucci",
-    "url" : "http://www.nysenate.gov/senator/david-carlucci"
-  }, {
     "nid" : 113,
     "name" : "Daniel L. Squadron",
     "shortName" : "Squadron",
     "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
+  }, {
+    "nid" : 75011,
+    "name" : "Mark Grisanti",
+    "shortName" : "Grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  }, {
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
   } ]
 }
