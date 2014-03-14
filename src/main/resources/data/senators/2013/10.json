@@ -57,7 +57,7 @@
   "district" : {
     "number" : 10,
     "url" : "http://www.nysenate.gov/district/10",
-    "imageUrl" : "http://www.nysenate.gov/files/SD10.png",
+    "imageUrl" : "http://www.nysenate.gov/files/SD10_0.png",
     "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=10"
   },
   "social" : {
