@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
-import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Result;
 import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.model.Transcript;
@@ -122,7 +121,6 @@ public class MultiViewRequest extends AbstractApiRequest {
         BILLS		("bills", 		Bill.class, 		new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
         RESOLUTIONS ("resolutions", Bill.class,   new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
         CALENDARS	("calendars", 	Calendar.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
-        MEETINGS	("meetings", 	Meeting.class, 		new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
         TRANSCRIPTS	("transcripts", Transcript.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
         VOTES		("votes", 		Vote.class, 		new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
         ACTIONS		("actions", 	Action.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"});

@@ -1,12 +1,10 @@
 package gov.nysenate.openleg.converter;
 
 import gov.nysenate.openleg.model.Action;
-import gov.nysenate.openleg.model.Addendum;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.CalendarEntry;
-import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Section;
 import gov.nysenate.openleg.model.Sequence;
@@ -51,9 +49,6 @@ public class LuceneJsonConverter
                 JsonObject node = null;
                 if(o instanceof Bill) {
                     cachedSimpleBills.remove(((Bill)o).getBillId());
-                    node = converter(o, null);
-                }
-                else if(o instanceof Meeting) {
                     node = converter(o, null);
                 }
                 else if(o instanceof Transcript) {
@@ -272,11 +267,6 @@ public class LuceneJsonConverter
                     jarray.add(converter(b,internal_bill_exclude()));
                 }
             }
-            else if (o instanceof Addendum) {
-                for(Addendum a:(Collection<Addendum>)c) {
-                    jarray.add(converter(a,addendum_exclude()));
-                }
-            }
         }
         return jarray;
     }
@@ -309,11 +299,6 @@ public class LuceneJsonConverter
             }
         }
         return jarray;
-    }
-
-    private static List<String> addendum_exclude()
-    {
-        return Arrays.asList("meetings");
     }
 
     private static List<String> agenda_exclude()

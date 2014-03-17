@@ -1,11 +1,9 @@
 package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.converter.StorageJsonConverter;
-import gov.nysenate.openleg.model.Agenda;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
-import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Transcript;
 
 import java.io.File;
@@ -129,12 +127,6 @@ public class Storage
                 try {
                     if (cls == Bill.class) {
                         value = this.converter.readBill(storageFile);
-                    }
-                    else if (cls == Agenda.class) {
-                        value = this.converter.readAgenda(storageFile);
-                    }
-                    else if (cls == Meeting.class) {
-                        value = this.converter.readMeeting(storageFile);
                     }
                     else if (cls == Calendar.class) {
                         value = this.converter.readCalendar(storageFile);
@@ -265,12 +257,6 @@ public class Storage
                 FileUtils.forceMkdir(storageFile.getParentFile());
                 if (value instanceof Bill) {
                     this.converter.write((Bill)value, storageFile);
-                }
-                else if (value instanceof Agenda) {
-                    this.converter.write((Agenda)value, storageFile);
-                }
-                else if (value instanceof Meeting) {
-                    this.converter.write((Meeting)value, storageFile);
                 }
                 else if (value instanceof Calendar) {
                     this.converter.write((Calendar)value, storageFile);

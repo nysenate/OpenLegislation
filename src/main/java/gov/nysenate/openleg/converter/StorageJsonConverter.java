@@ -1,12 +1,9 @@
 package gov.nysenate.openleg.converter;
 
 import gov.nysenate.openleg.model.Action;
-import gov.nysenate.openleg.model.Addendum;
-import gov.nysenate.openleg.model.Agenda;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.CalendarEntry;
-import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Section;
 import gov.nysenate.openleg.model.Sequence;
@@ -80,16 +77,6 @@ public class StorageJsonConverter
         write(value, new FileOutputStream(storageFile));
     }
 
-    public void write(Agenda value, File storageFile) throws IOException
-    {
-        write(value, new FileOutputStream(storageFile));
-    }
-
-    public void write(Meeting value, File storageFile) throws IOException
-    {
-        write(value, new FileOutputStream(storageFile));
-    }
-
     public void write(Calendar value, File storageFile) throws IOException
     {
         write(value, new FileOutputStream(storageFile));
@@ -103,20 +90,6 @@ public class StorageJsonConverter
     }
 
     public String toString(Bill value) throws IOException
-    {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        write(value, stream);
-        return stream.toString(this.encoding);
-    }
-
-    public String toString(Agenda value) throws IOException
-    {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        write(value, stream);
-        return stream.toString(this.encoding);
-    }
-
-    public String toString(Meeting value) throws IOException
     {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         write(value, stream);
@@ -140,16 +113,6 @@ public class StorageJsonConverter
         return readBill(new InputStreamReader(new FileInputStream(storageFile), this.encoding));
     }
 
-    public Agenda readAgenda(File storageFile) throws JsonProcessingException, IOException
-    {
-        return readAgenda(new InputStreamReader(new FileInputStream(storageFile), this.encoding));
-    }
-
-    public Meeting readMeeting(File storageFile) throws JsonProcessingException, IOException
-    {
-        return readMeeting(new InputStreamReader(new FileInputStream(storageFile), this.encoding));
-    }
-
     public Calendar readCalendar(File storageFile) throws JsonProcessingException, IOException
     {
         return readCalendar(new InputStreamReader(new FileInputStream(storageFile), this.encoding));
@@ -158,16 +121,6 @@ public class StorageJsonConverter
     public Bill readBill(String data) throws JsonProcessingException, IOException
     {
         return readBill(new StringReader(data));
-    }
-
-    public Agenda readAgenda(String data) throws JsonProcessingException, IOException
-    {
-        return readAgenda(new StringReader(data));
-    }
-
-    public Meeting readMeeting(String data) throws JsonProcessingException, IOException
-    {
-        return readMeeting(new StringReader(data));
     }
 
     public Calendar readCalendar(String data) throws JsonProcessingException, IOException
@@ -234,59 +187,6 @@ public class StorageJsonConverter
         return calendar;
     }
 
-    public void write(Meeting meeting, OutputStream out) throws IOException
-    {
-        logger.debug("Writing Agenda: "+meeting.getOid());
-        ObjectNode node = objectMapper.createObjectNode();
-        node.put("meetingDateTime", makeNode(meeting.getMeetingDateTime()));
-        node.put("meetday", meeting.getMeetday());
-        node.put("location", meeting.getLocation());
-        node.put("committeeName", meeting.getCommitteeName());
-        node.put("committeeChair", meeting.getCommitteeChair());
-        node.put("bills", makeArrayNode(meeting.getBills()));
-        node.put("notes", meeting.getNotes());
-        node.put("active", meeting.isActive());
-        node.put("modified", makeNode(meeting.getModifiedDate()));
-        node.put("published", makeNode(meeting.getPublishDate()));
-        node.put("dataSources", makeArrayNode(meeting.getDataSources()));
-        JsonGenerator generator = this.jsonFactory.createJsonGenerator(out, JsonEncoding.UTF8);
-        generator.writeTree(node);
-        generator.close();
-    }
-
-    public Meeting readMeeting(Reader reader) throws JsonProcessingException, IOException
-    {
-        JsonNode node = objectMapper.readTree(reader);
-        Meeting meeting = new Meeting(node.get("committeeName").asText(), makeDate(node.get("meetingDateTime")));
-        meeting.setMeetday(node.get("meetday").asText());
-        meeting.setLocation(node.get("location").asText());
-        meeting.setCommitteeChair(node.get("committeeChair").asText());
-        meeting.setBills((List<Bill>)makeList(Bill.class, node.get("bills")));
-        meeting.setNotes(node.get("notes").asText());
-        meeting.setActive(node.get("active").asBoolean());
-        meeting.setModifiedDate(makeDate(node.get("modified")));
-        meeting.setPublishDate(makeDate(node.get("published")));
-        meeting.setDataSources(new HashSet<String>((HashSet<String>)makeSet(String.class, node.get("dataSources"))));
-        return meeting;
-    }
-
-    public void write(Agenda agenda, OutputStream out) throws IOException
-    {
-        logger.debug("Writing Agenda: "+agenda.getOid());
-        ObjectNode node = objectMapper.createObjectNode();
-        node.put("session", agenda.getSession());
-        node.put("year", agenda.getYear());
-        node.put("number", agenda.getNumber());
-        node.put("addendums", makeArrayNode(agenda.getAddendums()));
-        node.put("active", agenda.isActive());
-        node.put("modified", makeNode(agenda.getModifiedDate()));
-        node.put("published", makeNode(agenda.getPublishDate()));
-        node.put("dataSources", makeArrayNode(agenda.getDataSources()));
-        JsonGenerator generator = this.jsonFactory.createJsonGenerator(out, JsonEncoding.UTF8);
-        generator.writeTree(node);
-        generator.close();
-    }
-
     public Transcript readTranscript(Reader reader) throws JsonProcessingException, IOException
     {
         JsonNode node = objectMapper.readTree(reader);
@@ -306,22 +206,6 @@ public class StorageJsonConverter
         transcript.setPublishDate(makeDate(node.get("published")));
         transcript.setDataSources(new HashSet<String>((HashSet<String>)makeSet(String.class, node.get("dataSources"))));
         return transcript;
-    }
-
-    public Agenda readAgenda(Reader reader) throws JsonProcessingException, IOException
-    {
-        JsonNode node = objectMapper.readTree(reader);
-        Agenda agenda = new Agenda(node.get("session").asInt(), node.get("year").asInt(), node.get("number").asInt());
-        agenda.setAddendums((List<Addendum>)makeList(Addendum.class, node.get("addendums")));
-        for (Addendum addendum : agenda.getAddendums()) {
-            addendum.setAgenda(agenda);
-        }
-
-        agenda.setActive(node.get("active").asBoolean());
-        agenda.setModifiedDate(makeDate(node.get("modified")));
-        agenda.setPublishDate(makeDate(node.get("published")));
-        agenda.setDataSources(new HashSet<String>((HashSet<String>)makeSet(String.class, node.get("dataSources"))));
-        return agenda;
     }
 
     public void write(Bill bill, OutputStream out) throws IOException
@@ -415,15 +299,6 @@ public class StorageJsonConverter
             }
             else if (cls == Action.class) {
                 list.add(makeAction(iter.next()));
-            }
-            else if (cls == Agenda.class) {
-                list.add(makeAgenda(iter.next()));
-            }
-            else if (cls == Addendum.class) {
-                list.add(makeAddendum(iter.next()));
-            }
-            else if (cls == Meeting.class) {
-                list.add(makeMeeting(iter.next()));
             }
             else if (cls == Person.class) {
                 list.add(makePerson(iter.next()));
@@ -542,16 +417,6 @@ public class StorageJsonConverter
         return node.isNull() ? null : (Bill)storage.get(node.asText(), Bill.class);
     }
 
-    public Meeting makeMeeting(JsonNode node)
-    {
-        return node.isNull() ? null : (Meeting)storage.get(node.asText(), Meeting.class);
-    }
-
-    public Agenda makeAgenda(JsonNode node)
-    {
-        return node.isNull() ? null : (Agenda)storage.get(node.asText(), Agenda.class);
-    }
-
     public Date makeDate(JsonNode node)
     {
         try {
@@ -626,28 +491,6 @@ public class StorageJsonConverter
         }
     }
 
-    public Addendum makeAddendum(JsonNode node)
-    {
-        if (node.isNull()) {
-            return null;
-        }
-        else {
-            Addendum addendum = new Addendum(
-                node.get("addendumId").asText(),
-                node.get("weekOf").asText(),
-                makeDate(node.get("published")),
-                node.get("agendaNo").asInt(),
-                node.get("year").asInt()
-            );
-            addendum.setMeetings((List<Meeting>)makeList(Meeting.class, node.get("meetings")));
-            addendum.setActive(node.get("active").asBoolean());
-            addendum.setModifiedDate(makeDate(node.get("modified")));
-            addendum.setPublishDate(makeDate(node.get("published")));
-            addendum.setDataSources(new HashSet<String>((List<String>)makeList(String.class, node.get("dataSources"))));
-            return addendum;
-        }
-    }
-
     public ArrayNode makeArrayNode(Collection<? extends Object> list)
     {
         ArrayNode arrayNode = objectMapper.createArrayNode();
@@ -664,15 +507,6 @@ public class StorageJsonConverter
                 }
                 else if (Bill.class.isInstance(item)) {
                     arrayNode.add(makeNode((Bill)item));
-                }
-                else if (Agenda.class.isInstance(item)) {
-                    arrayNode.add(makeNode((Agenda)item));
-                }
-                else if (Addendum.class.isInstance(item)) {
-                    arrayNode.add(makeNode((Addendum)item));
-                }
-                else if (Meeting.class.isInstance(item)) {
-                    arrayNode.add(makeNode((Meeting)item));
                 }
                 else if (Action.class.isInstance(item)) {
                     arrayNode.add(makeNode((Action)item));
@@ -701,26 +535,6 @@ public class StorageJsonConverter
     {
         if (bill != null) {
             return storage.key(bill);
-        }
-        else {
-            return null;
-        }
-    }
-
-    public String makeNode(Meeting meeting)
-    {
-        if (meeting != null) {
-            return storage.key(meeting);
-        }
-        else {
-            return null;
-        }
-    }
-
-    public String makeNode(Agenda agenda)
-    {
-        if (agenda != null) {
-            return storage.key(agenda);
         }
         else {
             return null;
@@ -797,26 +611,6 @@ public class StorageJsonConverter
             node.put("releaseDateTime", makeNode(supplemental.getReleaseDateTime()));
             node.put("sections", makeArrayNode(supplemental.getSections()));
             node.put("sequences", makeArrayNode(supplemental.getSequences()));
-            return node;
-        }
-        else {
-            return objectMapper.createObjectNode().nullNode();
-        }
-    }
-
-    public JsonNode makeNode(Addendum addendum)
-    {
-        if (addendum != null) {
-            ObjectNode node = objectMapper.createObjectNode();
-            node.put("addendumId", addendum.getAddendumId());
-            node.put("weekOf", addendum.getWeekOf());
-            node.put("meetings", makeArrayNode(addendum.getMeetings()));
-            node.put("year", addendum.getYear());
-            node.put("agendaNo", addendum.getAgenda().getNumber());
-            node.put("active", addendum.isActive());
-            node.put("modified", makeNode(addendum.getModifiedDate()));
-            node.put("published", makeNode(addendum.getPublishDate()));
-            node.put("dataSources", makeArrayNode(addendum.getDataSources()));
             return node;
         }
         else {

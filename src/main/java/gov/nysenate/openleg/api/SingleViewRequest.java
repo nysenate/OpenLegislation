@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.IBaseObject;
-import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.TextFormatter;
@@ -52,11 +51,6 @@ public class SingleViewRequest extends AbstractApiRequest {
                 ArrayList<Bill> bills = Application.getLucene().getSenateObjects(rQuery);
                 request.setAttribute("related-" + rType, bills);
 
-                rType = "meeting";
-                rQuery = QueryBuilder.build().otype(rType).and().keyValue("bills", id).query();
-                ArrayList<Meeting> meetings = Application.getLucene().getSenateObjects(rQuery);
-                request.setAttribute("related-" + rType, meetings);
-
                 rType = "calendar";
                 rQuery = QueryBuilder.build().otype(rType).and().keyValue("bills", id).query();
                 ArrayList<Calendar> calendars = Application.getLucene().getSenateObjects(rQuery);
@@ -82,7 +76,6 @@ public class SingleViewRequest extends AbstractApiRequest {
         BILL		("bill",		Bill.class, 		new String[] {"html", "json", "jsonp", "mobile", "xml",
             "csv", "html-print", "lrs-print"}),
             CALENDAR	("calendar",	Calendar.class, 	new String[] {"html", "json", "jsonp", "mobile", "xml"}),
-            MEETING		("meeting", 	Meeting.class, 		new String[] {"html", "json", "jsonp", "mobile", "xml"}),
             TRANSCRIPT	("transcript", 	Transcript.class, 	new String[] {"html", "json", "jsonp", "mobile", "xml"});
 
         public final String view;

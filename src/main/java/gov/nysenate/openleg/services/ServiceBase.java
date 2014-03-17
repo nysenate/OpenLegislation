@@ -1,11 +1,9 @@
 package gov.nysenate.openleg.services;
 
-import gov.nysenate.openleg.model.Agenda;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.Change;
-import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.util.Storage;
 
@@ -24,9 +22,7 @@ public abstract class ServiceBase {
         logger = Logger.getLogger(this.getClass());
         classMap = new HashMap<String, Class<? extends BaseObject>>();
         classMap.put("bill", Bill.class);
-        classMap.put("agenda", Agenda.class);
         classMap.put("calendar", Calendar.class);
-        classMap.put("meeting", Meeting.class);
         classMap.put("transcript", Transcript.class);
     }
 

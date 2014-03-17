@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.CalendarEntry;
-import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.PublicHearing;
 import gov.nysenate.openleg.model.Section;
 import gov.nysenate.openleg.model.Sequence;
@@ -154,52 +153,6 @@ public class DocumentBuilder
         document.add(new StringField("sorttitle", transcript.getOid().toLowerCase(), Field.Store.NO));
 
         document.add(new StoredField("odata", LuceneJsonConverter.toString(transcript)));
-        return document;
-    }
-
-    public static Document build(Meeting meeting)
-    {
-        Document document = new Document();
-
-        // Allow identification based id only
-        document.add(new StoredField("oid", meeting.getOid()));
-        document.add(new StringField("oid", meeting.getOid().toLowerCase(), Field.Store.YES));
-
-        // Basic document filters
-        document.add(new StringField("otype", "meeting", Field.Store.YES));
-        document.add(new IntField("year", meeting.getYear(), Field.Store.YES));
-        document.add(new StringField("active", String.valueOf(meeting.isActive()), Field.Store.YES));
-        document.add(new LongField("modified", meeting.getModifiedDate().getTime(), Field.Store.YES));
-        document.add(new LongField("published", meeting.getPublishDate().getTime(), Field.Store.YES));
-        document.add(new StringField("modified", dateFormat.format(meeting.getModifiedDate()), Field.Store.YES));
-        document.add(new StringField("published", dateFormat.format(meeting.getPublishDate()), Field.Store.YES));
-
-        // When searching without a field, match against the following terms.
-        ArrayList<String> searchTerms = new ArrayList<String>();
-        searchTerms.add(meeting.getCommitteeName());
-        searchTerms.add(meeting.getCommitteeChair());
-        searchTerms.add(meeting.getLocation());
-        searchTerms.add(meeting.getNotes());
-        document.add(new TextField("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO));
-
-        ArrayList<String> billIds = new ArrayList<String>();
-        for (Bill bill : meeting.getBills()) {
-            billIds.add(bill.getBillId());
-        }
-
-        // Other various search fields and filters
-        document.add(new TextField("title", meeting.getCommitteeName()+" - "+DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(meeting.getMeetingDateTime()), Field.Store.YES));
-        document.add(new TextField("summary", meeting.getLocation(), Field.Store.NO));
-        document.add(new TextField("location", meeting.getLocation(), Field.Store.YES));
-        document.add(new TextField("committee", meeting.getCommitteeName(), Field.Store.YES));
-        document.add(new TextField("chair", meeting.getCommitteeChair(), Field.Store.YES));
-        document.add(new TextField("notes", meeting.getNotes().toString(), Field.Store.YES));
-        document.add(new TextField("bills", StringUtils.join(billIds, ", "), Field.Store.YES));
-        document.add(new LongField("when", meeting.getMeetingDateTime().getTime(), Field.Store.YES));
-        document.add(new StringField("sortindex", meeting.getMeetingDateTime().getTime()+meeting.getCommitteeName(), Field.Store.NO));
-        document.add(new StringField("sorttitle", document.getField("title").stringValue().toLowerCase(), Field.Store.NO));
-
-        document.add(new StoredField("odata", LuceneJsonConverter.toString(meeting)));
         return document;
     }
 

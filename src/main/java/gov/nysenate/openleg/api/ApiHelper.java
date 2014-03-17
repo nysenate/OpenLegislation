@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.Action;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
-import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Result;
 import gov.nysenate.openleg.model.Section;
 import gov.nysenate.openleg.model.SenateResponse;
@@ -161,15 +160,6 @@ public class ApiHelper implements OpenLegConstants {
                     summary = TextFormatter.append(transcript.getType(), ": ", transcript.getLocation());
 
                     fields.put("location", transcript.getLocation());
-
-                } else if (type.equals("meeting")) {
-                    Meeting meeting = (Meeting) resultObj;
-                    title = TextFormatter.append(meeting.getCommitteeName(), " (",
-                            new SimpleDateFormat("MMM d, yyyy - h:mm a").format(meeting.getMeetingDateTime()), ")");
-
-                    fields.put("location", meeting.getLocation());
-                    fields.put("chair", meeting.getCommitteeChair());
-                    fields.put("committee", meeting.getCommitteeName());
 
                 } else if (type.equals("action")) {
                     Action billEvent = (Action) resultObj;

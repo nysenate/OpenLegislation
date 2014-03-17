@@ -6,7 +6,6 @@ import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.Change;
-import gov.nysenate.openleg.model.Meeting;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.util.Application;
@@ -88,9 +87,6 @@ public class Lucene extends ServiceBase
                             }
 
                             document = DocumentBuilder.build(bill);
-                        }
-                        else if (otype.equals("meeting")) {
-                            document = DocumentBuilder.build((Meeting)obj);
                         }
                         else if (otype.equals("calendar")) {
                             document = DocumentBuilder.build((Calendar)obj);

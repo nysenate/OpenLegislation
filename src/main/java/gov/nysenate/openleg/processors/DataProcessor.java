@@ -20,9 +20,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.xml.sax.SAXException;
 
 /**
  * Contains an implementation for each step of the Open Legislation data processing pipeline.
@@ -147,6 +150,7 @@ public class DataProcessor
         // provides an easily inspectable record of how this step went.
         File billDir = safeGetFolder(workDir, "bills");
         File agendaDir = safeGetFolder(workDir, "agendas");
+        File agendaVoteDir = safeGetFolder(workDir, "agendavotes");
         File calendarDir = safeGetFolder(workDir, "calendars");
         File committeeDir = safeGetFolder(workDir, "committees");
         File annotationDir = safeGetFolder(workDir, "annotations");
@@ -168,6 +172,12 @@ public class DataProcessor
                     File committeeFile = new File(committeeDir, sobiFile.getName()+"-committee-"+(fileCounter++)+".xml");
                     logger.info("Extracting commitee: "+committeeFile);
                     extractXml("</sencommmem.+", line, br, committeeFile);
+                }
+                else if(line.matches("<senagendavote.+")) {
+                    // Extract agendas and corresponding votes
+                    File agendaVoteFile = new File(agendaVoteDir, sobiFile.getName()+"-agendavote-"+(fileCounter++)+".xml");
+                    logger.info("Extracting agendavote: "+agendaVoteFile);
+                    extractXml("</senagendavote.+", line, br, agendaVoteFile);
                 }
                 else if(line.matches("<senagenda.+")) {
                     // Extract agendas and corresponding votes
@@ -207,11 +217,12 @@ public class DataProcessor
      * @param workingDir - The working directory with collated files to process
      * @param storage - The Storage object to use for persistence.
      * @throws IOException
+     * @throws ParserConfigurationException
      */
-    public void ingest(File workingDir, Storage storage) throws IOException
+    public void ingest(File workingDir, Storage storage) throws IOException, ParserConfigurationException
     {
         BillProcessor billProcessor = new BillProcessor();
-        AgendaProcessor agendaProcessor = new AgendaProcessor();
+        SenagendaProcessor agendaProcessor = new SenagendaProcessor();
         CalendarProcessor calendarProcessor = new CalendarProcessor();
         TranscriptProcessor transcriptProcessor = new TranscriptProcessor();
 
@@ -224,7 +235,9 @@ public class DataProcessor
                 } else if (type.equals("calendars")) {
                     calendarProcessor.process(file, storage);
                 } else if (type.equals("agendas")) {
-                    agendaProcessor.process(file, storage);
+                    agendaProcessor.processSenagenda(file, storage);
+                } else if (type.equals("agendas")) {
+                    agendaProcessor.processSenagendaVote(file, storage);
                 } else if (type.equals("annotations")) {
                     continue; // we don't process or receive these anymore
                 } else if (type.equals("transcripts")) {
@@ -232,7 +245,7 @@ public class DataProcessor
                 } else if (type.equals("hearings")) {
                     continue; // we don't process or receive these yet.
                 } else if (type.equals("committees")) {
-                    continue; // We don't process or receive these yet.
+                    continue; // We don't process
                 } else if (file.getName().equals("CMS.TEXT")) {
                     // The rules don't really need processing, just put them somewhere for later
                     FileUtils.copyFileToDirectory(file, storage.getStorageDir());
@@ -247,6 +260,15 @@ public class DataProcessor
             catch (IOException e) {
                 logger.error("IO issue with "+file.getName(), e);
             } catch (JAXBException e) {
+                logger.error("XML issue with "+file.getName(), e);
+            }
+            catch (XPathExpressionException e) {
+                logger.error("Xpath issue with "+file.getName(), e);
+            }
+            catch (SAXException e) {
+                logger.error("SAX issue with "+file.getName(), e);
+            }
+            catch (ParseException e) {
                 logger.error("XML issue with "+file.getName(), e);
             }
         }
