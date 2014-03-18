@@ -4,7 +4,12 @@
   "shortName" : "commerce",
   "url" : "http://www.nysenate.gov/committee/commerce-economic-development-and-small-business",
   "videoUrl" : "http://www.livestream.com/NYSenate_Commerce",
-  "chairs" : [ ],
+  "chairs" : [ {
+    "nid" : 74986,
+    "name" : "Jack M. Martins",
+    "shortName" : "Martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  } ],
   "members" : [ {
     "nid" : 75006,
     "name" : "Patrick M. Gallivan",
@@ -35,6 +40,11 @@
     "name" : "Timothy M. Kennedy",
     "shortName" : "Kennedy",
     "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
+  }, {
+    "nid" : 74986,
+    "name" : "Jack M. Martins",
+    "shortName" : "Martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
   }, {
     "nid" : 201,
     "name" : "Ruth Hassell-Thompson",
