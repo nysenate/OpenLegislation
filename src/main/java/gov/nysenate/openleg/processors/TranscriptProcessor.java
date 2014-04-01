@@ -35,7 +35,6 @@ public class TranscriptProcessor {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "latin1"));
         String line = null;
-        logger.debug("Skipping: "+reader.readLine());
         while ((line = reader.readLine()) != null) {
             pLine = line.trim();
 
