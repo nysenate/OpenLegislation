@@ -19,7 +19,7 @@ public class OpenLegislationQueryParser extends StandardQueryParser
         Map<String, NumericConfig> numericConfigMap = new HashMap<String, NumericConfig>();
         numericConfigMap.put("year", new NumericConfig(8, NumberFormat.getInstance(), FieldType.NumericType.INT));
         numericConfigMap.put("modified", new NumericConfig(8, NumberFormat.getInstance(), FieldType.NumericType.LONG));
-        numericConfigMap.put("pulished", new NumericConfig(8, NumberFormat.getInstance(), FieldType.NumericType.LONG));
+        numericConfigMap.put("published", new NumericConfig(8, NumberFormat.getInstance(), FieldType.NumericType.LONG));
         numericConfigMap.put("when", new NumericConfig(8, NumberFormat.getInstance(), FieldType.NumericType.LONG));
         this.setNumericConfigMap(numericConfigMap);
     }
