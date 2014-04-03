@@ -4,134 +4,74 @@ import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.TextFormatter;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- *
- * @author GraylinKim
- */
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 public class Bill extends BaseObject implements Comparable<Bill>
 {
-    /**
-     * The unique bill id.
-     */
+    public static Pattern printNumberPattern = Pattern.compile("([ASLREJKBC])([0-9]{1,5})([A-Z]?)");
+    public static Pattern billIdPattern = Pattern.compile("("+printNumberPattern.pattern()+")-([0-9]{4})");
+
+    /** The default amendment version letter. */
+    public static final String BASE_VERSION = "";
+
+    /** Error message for when an invalid bill version is supplied as an argument */
+    private static final String INVALID_AMENDMENT_VERSION = "Specified amendment version does not exist: ";
+
+    /** The unique bill id. */
     protected String billId = "";
 
-    /**
-     * The bill title.
-     */
+    /** The bill title. */
     protected String title = "";
 
-    /**
-     * The section of the law this bill affects
-     */
-    protected String lawSection = "";
+    /** The section of the law the bill affects. */
+    protected String lawSection;
 
-    /**
-     * The "sameAs" bill in the other chamber
-     */
-    protected String sameAs = "";
+    /** The summary of the amendment. */
+    protected String summary;
 
-    /**
-     * A list of ids of versions of this legislation in previous sessions.
-     */
+    /** Map of amendment version -> Amendment. The default amendment should
+     *  not be included in this mapping. */
+    protected LinkedHashMap<String, BillAmendment> amendmentMap = new LinkedHashMap<>();
+
+    /** Indicates the amendment version that is active for this bill. */
+    protected String activeVersion = Bill.BASE_VERSION;
+
+    /** Retains a history of versions that were activated */
+    protected LinkedList<String> activeHistory = new LinkedList<>();
+
+    /** A list of ids of versions of this legislation in previous sessions. */
     protected List<String> previousVersions = new ArrayList<String>();
 
-    /**
-     * The sponsor of this bill.
-     */
+    /** The sponsor of this bill. */
     protected Person sponsor;
 
-    /**
-     * A list of coSponsors to be given preferential display treatment.
-     */
+    /** A list of coSponsors to be given preferential display treatment. */
     private List<Person> otherSponsors = new ArrayList<Person>();
 
-    /**
-     *
-     */
-    public List<String> amendments = new ArrayList<String>();
-
-    /**
-     * A list of cosponsors for the bill.
-     */
-    protected List<Person> coSponsors = new ArrayList<Person>();
-
-    /**
-     * A list of multi-sponsors for assembly legislation.
-     */
-    protected List<Person> multiSponsors = new ArrayList<Person>();
-
-    /**
-     * The summary of the bill
-     */
-    protected String summary = "";
-
-    /**
-     * The committee the bill is currently referred to, if any.
-     */
-    protected String currentCommittee = "";
-
-    /**
-     * A list of committees this bill has been referred to.
-     */
+    /** A list of committees this bill has been referred to. */
     protected List<String> pastCommittees = new ArrayList<String>();
 
-    /**
-     * A list of actions that have been made on this bill.
-     */
-    protected List<Action> actions = new ArrayList<Action>();
+    /** A list of actions that have been made on this bill. */
+    protected List<BillAction> actions = new ArrayList<BillAction>();
 
-    /**
-     * The full text of the bill.
-     */
-    protected String fulltext = "";
-
-    /**
-     * The bill's sponsor memo.
-     */
-    protected String memo = "";
-
-    /**
-     * The law code modification summary.
-     */
-    protected String law = "";
-
-    /**
-     * The AN ACT TO... clause for the bill.
-     */
-    protected String actClause = "";
-
-    /**
-     * A list of votes that have been made on this bill.
-     */
-    protected List<Vote> votes = new ArrayList<Vote>();
-
-    /**
-     * A flag marking this bill as stricken (effectively withdrawn)
-     */
-    protected Boolean stricken = false;
-
-    /**
-     * A flag marking this bill as a uniBill with a companion bill in the other house.
-     */
+    /** A flag marking this bill as a uniBill with a companion bill in the other house. */
     private boolean uniBill = false;
 
-    /**
-     * JavaBean Constructor
-     */
-    public Bill()
-    {
-        super();
-    }
+    public Bill() { super(); }
 
     /**
      * Constructs a minimal Bill object.
      *
-     * @param senateBillNo - The unique bill id
-     * @param year - The session year this bill was introduced to
+     * @param billId - The unique bill id
+     * @param session - The session year this bill was introduced to
      */
     public Bill(String billId, int session)
     {
@@ -141,8 +81,19 @@ public class Bill extends BaseObject implements Comparable<Bill>
     }
 
     /**
+     * @param version The bill version
+     * @return Returns true if the version will be represented as a base bill
+     */
+    @JsonIgnore
+    public static boolean isBaseVersion(String version)
+    {
+        return version == null || version.equals(BASE_VERSION);
+    }
+
+    /**
      * @return - True if this bill is a resolution of some sort.
      */
+    @JsonIgnore
     public boolean isResolution()
     {
         return billId.charAt(0)!='A' && billId.charAt(0)!='S';
@@ -151,6 +102,7 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * @return - The URL used to construct Disqus threads
      */
+    @JsonIgnore
     public String getDisqusUrl()
     {
         if (this.getSession()==2009) {
@@ -182,6 +134,7 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * The object type of the bill.
      */
+    @JsonIgnore
     public String getOtype()
     {
         return "bill";
@@ -190,6 +143,7 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * @return - The unique object id.
      */
+    @JsonIgnore
     public String getOid()
     {
         return this.getBillId();
@@ -198,6 +152,7 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * @return - The billId padded to 5 digits with zeros.
      */
+    @JsonIgnore
     public String getPaddedBillId()
     {
         return this.getPaddedPrintNumber()+"-"+this.getSession();
@@ -206,6 +161,7 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * @return - The print number padded to 5 digits with zeros.
      */
+    @JsonIgnore
     public String getPaddedPrintNumber()
     {
         Matcher billIdMatcher = billIdPattern.matcher(this.getBillId());
@@ -221,6 +177,7 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /**
      * @return - Just the print number without the session year suffix.
      */
+    @JsonIgnore
     public String getPrintNumber()
     {
         Matcher billIdMatcher = billIdPattern.matcher(this.getBillId());
@@ -234,43 +191,90 @@ public class Bill extends BaseObject implements Comparable<Bill>
     }
 
     /**
-     * @return - A list of billIds for the various other versions of this bill.
+     * @param version - The amendment version of the bill (e.g "A", "B", etc)
+     * @return Amendment if found, null otherwise
      */
-    public List<String> getAmendments()
+    @JsonIgnore
+    public BillAmendment getAmendment(String version)
     {
-        return this.amendments;
+        return this.amendmentMap.get(version.toUpperCase());
     }
 
     /**
-     * @param amendments - The new list of billIds for the various other versions of this bill.
+     * @return - A list of all Amendments associated with this Bill.
      */
-    public void setAmendments(List<String> amendments)
+    @JsonIgnore
+    public List<BillAmendment> getAmendmentList()
     {
-        this.amendments = amendments;
+        return new ArrayList<>(this.amendmentMap.values());
     }
 
     /**
-     * @param amendments - A list of additional billIds for the various other versions of this bill.
+     * Associate an amendment with this bill.
+     * @param billAmendment - Amendment to associate.
      */
-    public void addAmendments(List<String> amendments)
+    public void addAmendment(BillAmendment billAmendment)
     {
-        this.amendments.addAll(amendments);
+        this.amendmentMap.put(billAmendment.getVersion().toUpperCase(), billAmendment);
     }
 
     /**
-     * @param amendment - The new billId to add to our list of amendments.
+     * Indicate whether the bill has a reference to a given amendment version.
+     * @param version String - Amendment version
+     * @return boolean
      */
-    public void addAmendment(String amendment)
+    public boolean hasAmendment(String version)
     {
-        this.amendments.add(amendment);
+        return this.amendmentMap.containsKey(version.toUpperCase()) &&
+               this.amendmentMap.get(version.toUpperCase()) != null;
     }
 
     /**
-     * @param amendment - The billId to remove from our list of amendments.
+     * Indicates if the amendment had a setter method invoked for specific bill section.
+     * @param version String - Amendment version
+     * @param billSection BillSection type to check
+     * @return boolean - true if amendment had a setter method invoked
      */
-    public void removeAmendment(String amendment)
+    public boolean amendmentHasSection(String version, BillSection billSection)
     {
-        this.amendments.remove(amendment);
+        return this.amendmentMap.get(version).getSectionsSet().contains(billSection);
+    }
+
+    /**
+     * @return Mapping of Amendment versions to Amendment objects for keyed retrieval.
+     */
+    public Map<String, BillAmendment> getAmendmentMap()
+    {
+        return amendmentMap;
+    }
+
+    public BillAmendment getActiveAmendment()
+    {
+        return this.getAmendment(this.getActiveVersion());
+    }
+
+    /**
+     * @return The active amendment version.
+     */
+    public String getActiveVersion()
+    {
+        return activeVersion;
+    }
+
+    /**
+     * @param activeVersion - The new active amendment version.
+     */
+    public void setActiveVersion(String activeVersion)
+    {
+        this.activeVersion = activeVersion;
+    }
+
+    public LinkedList<String> getActiveHistory() {
+        return activeHistory;
+    }
+
+    public void setActiveHistory(LinkedList<String> activeHistory) {
+        this.activeHistory = activeHistory;
     }
 
     /**
@@ -297,28 +301,34 @@ public class Bill extends BaseObject implements Comparable<Bill>
         return lawSection;
     }
 
-    /**
-     * @param lawSection - The new law section
-     */
     public void setLawSection(String lawSection)
     {
         this.lawSection = lawSection;
     }
 
-    /**
-     * @return - The same as bill ID.
-     */
     public String getSameAs()
     {
-        return sameAs;
+        return this.getActiveAmendment().getSameAs();
+    }
+
+    public String getSameAs(String version)
+    {
+        if (hasAmendment(version)) {
+            return getAmendment(version).getSameAs();
+        }
+        throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
     }
 
     /**
      * @param sameAs - The new same as bill ID.
      */
-    public void setSameAs(String sameAs)
+    public void setSameAs(String sameAs, String version)
     {
-        this.sameAs = sameAs;
+        if (hasAmendment(version)) {
+            getAmendment(version).setSameAs(sameAs);
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
     }
 
     /**
@@ -378,211 +388,220 @@ public class Bill extends BaseObject implements Comparable<Bill>
         this.otherSponsors = otherSponsors;
     }
 
-    /**
-     * @return - The current list of cosponsors.
-     */
     public List<Person> getCoSponsors()
     {
-        return coSponsors;
+        return this.getActiveAmendment().getCoSponsors();
+    }
+
+    public List<Person> getCoSponsors(String version)
+    {
+        if (hasAmendment(version)) {
+            return getAmendment(version).getCoSponsors();
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
     }
 
     /**
      * @param coSponsors - The new list of cosponsors.
      */
-    public void setCoSponsors(List<Person> coSponsors)
+    public void setCoSponsors(List<Person> coSponsors, String version)
     {
-        this.coSponsors = coSponsors;
+        if (hasAmendment(version)) {
+            getAmendment(version).setCoSponsors(coSponsors);
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
     }
 
-    /**
-     * @return - The current list of multisponsors.
-     */
     public List<Person> getMultiSponsors()
     {
-        return multiSponsors;
+        return this.getActiveAmendment().getMultiSponsors();
     }
 
-    /**
-     * @param multiSponsors - The new list of multisponsors.
-     */
-    public void setMultiSponsors(List<Person> multiSponsors)
+    public List<Person> getMultiSponsorsList(String version)
     {
-        this.multiSponsors = multiSponsors;
+        if (hasAmendment(version)) {
+            return getAmendment(version).getMultiSponsors();
+        }
+        throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
     }
 
-    /**
-     * @return - The current bill summary.
-     */
+    public void setMultiSponsors(List<Person> multiSponsors, String version)
+    {
+        if (hasAmendment(version)) {
+            getAmendment(version).setMultiSponsors(multiSponsors);
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
+    }
+
     public String getSummary()
     {
         return summary;
     }
 
-    /**
-     * @param summary - The new bill summary.
-     */
     public void setSummary(String summary)
     {
         this.summary = summary;
     }
 
-    /**
-     * @return - The current list of bill actions.
-     */
-    public List<Action> getActions()
+    public List<BillAction> getActions()
     {
         return actions;
     }
 
-    /**
-     * @param actions - The new list of bill actions.
-     */
-    public void setActions(List<Action> actions)
+    public void setActions(List<BillAction> actions)
     {
         this.actions = actions;
     }
 
-    /**
-     * @param action - The action to add to the list of bill actions.
-     */
-    public void addAction(Action action) {
+    public void addAction(BillAction action) {
         actions.add(action);
     }
 
-    /**
-     * @return - The current full text of the bill
-     */
     public String getFulltext()
     {
-        return fulltext;
+        return this.getActiveAmendment().getFulltext();
     }
 
-    /**
-     * @param fulltext - The new full text of the bill.
-     */
-    public void setFulltext(String fulltext)
+    public String getFulltext(String version)
     {
-        this.fulltext = fulltext;
+        if (hasAmendment(version)) {
+            return getAmendment(version).getFulltext();
+        }
+        throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
     }
 
-    /**
-     * @return - The current sponsor memo for the bill.
-     */
+    public void setFulltext(String fulltext, String version)
+    {
+        if (hasAmendment(version)) {
+            getAmendment(version).setFulltext(fulltext);
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
+    }
+
     public String getMemo()
     {
-        return memo;
+        return this.getActiveAmendment().getMemo();
     }
 
-    /**
-     * @param memo - The new sponsor memo for the bill.
-     */
-    public void setMemo(String memo)
+    public String getMemo(String version)
     {
-        this.memo = memo;
+        if (hasAmendment(version)) {
+            getAmendment(version).getMemo();
+        }
+        throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
     }
 
-    /**
-     * @return - The current law modifications for the bill.
-     */
+    public void setMemo(String memo, String version)
+    {
+        if (hasAmendment(version)) {
+            getAmendment(version).setMemo(memo);
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
+    }
+
     public String getLaw()
     {
-        return law;
+        return this.getActiveAmendment().getLaw();
     }
 
-    /**
-     * @param law - The new law modifications for the bill.
-     */
-    public void setLaw(String law)
+    public String getLaw(String version)
     {
-        this.law = law;
+        if (hasAmendment(version)) {
+            return getAmendment(version).getLaw();
+        }
+        throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
     }
 
-    /**
-     * @return - The current AN ACT TO clause for the bill.
-     */
-    public String getActClause()
+    public void setLaw(String law, String version)
     {
-        return actClause;
+        if (hasAmendment(version)) {
+            getAmendment(version).setLaw(law);
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
     }
 
-    /**
-     * @param actClause - The new AN ACT TO clause for the bill.
-     */
-    public void setActClause(String actClause)
+    public String getActClause(String version)
     {
-        this.actClause = actClause;
+        if (hasAmendment(version)) {
+            return getAmendment(version).getActClause();
+        }
+        throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
     }
 
-    /**
-     * @return - true if the bill has been stricken.
-     */
-    public Boolean isStricken()
+    public void setActClause(String actClause, String version)
     {
-        return stricken;
+        if (hasAmendment(version)) {
+            getAmendment(version).setActClause(actClause);
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
     }
 
-    /**
-     * @param stricken - The new stricken state for the bill.
-     */
-    public void setStricken(Boolean stricken)
+    public Boolean isStricken(String version)
     {
-        this.stricken = stricken;
+        if (hasAmendment(version)) {
+            return getAmendment(version).isStricken();
+        }
+        throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
     }
 
-    /**
-     * @return - true if the bill is a uniBill.
-     */
+    public void setStricken(Boolean stricken, String version)
+    {
+        if (hasAmendment(version)) {
+            getAmendment(version).setStricken(stricken);
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
+    }
+
     public boolean isUniBill()
     {
         return uniBill;
     }
 
-    /**
-     * @param uniBill - The new uniBill state for the bill.
-     */
     public void setUniBill(boolean uniBill)
     {
         this.uniBill = uniBill;
     }
 
-    /**
-     * @return - The current committee for the bill.
-     */
     public String getCurrentCommittee()
     {
-        return currentCommittee;
+        return this.getActiveAmendment().getCurrentCommittee();
     }
 
-    /**
-     * @param currentCommittee - The new current committee for the bill.
-     */
-    public void setCurrentCommittee(String currentCommittee)
+    public String getCurrentCommittee(String version)
     {
-        this.currentCommittee = currentCommittee;
+        if (hasAmendment(version)) {
+            return getAmendment(version).getCurrentCommittee();
+        }
+        throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
     }
 
-    /**
-     * @return - The current list of past committees.
-     */
+    public void setCurrentCommittee(String currentCommittee, String version)
+    {
+        if (hasAmendment(version)) {
+            getAmendment(version).setCurrentCommittee(currentCommittee);
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
+    }
+
     public List<String> getPastCommittees()
     {
         return pastCommittees;
     }
 
-    /**
-     * @param pastCommittees - The new list of past committees.
-     */
     public void setPastCommittees(List<String> pastCommittees)
     {
-        this.pastCommittees = new ArrayList<String>();
-        for(String pc:pastCommittees) {
-            this.addPastCommittee(pc);
-        }
+        this.pastCommittees = new ArrayList<String>(pastCommittees);
     }
 
-    /**
-     * @param committee - The name of the new committee to add to past committees.
-     */
     public void addPastCommittee(String committee)
     {
         if(!pastCommittees.contains(committee)) {
@@ -590,35 +609,85 @@ public class Bill extends BaseObject implements Comparable<Bill>
         }
     }
 
-    /**
-     * @return - The current list of votes on this bill.
-     */
     public List<Vote> getVotes()
     {
+        ArrayList<Vote> votes = new ArrayList<Vote>();
+        for(BillAmendment amendment : this.getAmendmentList()) {
+            votes.addAll(amendment.getVotes());
+        }
         return votes;
     }
 
-    /**
-     * @param votes - The new list of votes on this bill.
-     */
-    public void setVotes(List<Vote> votes)
+    public List<Vote> getVotes(String version)
     {
-        this.votes = votes;
+        if (hasAmendment(version)) {
+            return getAmendment(version).getVotes();
+        }
+        throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+    }
+
+    public void setVotes(List<Vote> votes, String version)
+    {
+        if (hasAmendment(version)) {
+            getAmendment(version).setVotes(votes);
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
     }
 
     /**
      * @param vote - The new vote to add to the list of votes on this bill. Replaces exiting vote data if a match is found.
      */
-    public void updateVote(Vote vote) {
-        votes.remove(vote);
-        votes.add(vote);
+    public void updateVote(Vote vote, String version)
+    {
+        if (hasAmendment(version)) {
+            getAmendment(version).getVotes().remove(vote);
+            getAmendment(version).getVotes().add(vote);
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
+    }
+
+    @Override
+    @JsonIgnore
+    public Date getPublishDate()
+    {
+        for (BillAmendment amendment : amendmentMap.values()) {
+            if (amendment.getPublishDate() != null) {
+                return amendment.getPublishDate();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setPublishDate(Date publishDate)
+    {
+        throw new RuntimeException("Cannot set publish on the bill container.");
+    }
+
+    @Override
+    @JsonIgnore
+    public Date getModifiedDate()
+    {
+        for (BillAmendment amendment : amendmentMap.values()) {
+            if (amendment.getModifiedDate().after(this.modifiedDate)) {
+                return amendment.getModifiedDate();
+            }
+        }
+        return this.modifiedDate;
     }
 
     /**
      * @param vote - The vote to remove from the list of votes on this bill.
      */
-    public void removeVote(Vote vote) {
-        votes.remove(vote);
+    public void removeVote(Vote vote, String version)
+    {
+        if (hasAmendment(version)) {
+            getAmendment(version).getVotes().remove(vote);
+        } else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
     }
 
     @Override
@@ -627,16 +696,10 @@ public class Bill extends BaseObject implements Comparable<Bill>
         if (obj != null && obj instanceof Bill) {
             Bill other = (Bill)obj;
             return this.getBillId().equals(other.getBillId());
-        }
-        else {
+        } else {
             return false;
         }
     }
-
-
-    public static Pattern printNumberPattern = Pattern.compile("([ASLREJKBC])([0-9]{1,5})([A-Z]?)");
-    public static Pattern billIdPattern = Pattern.compile("("+printNumberPattern.pattern()+")-([0-9]{4})");
-
 
     @Override
     public int compareTo(Bill bill)

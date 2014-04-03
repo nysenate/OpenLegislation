@@ -1,14 +1,10 @@
 package gov.nysenate.openleg.lucene;
 
 import gov.nysenate.openleg.converter.LuceneJsonConverter;
-import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
-import gov.nysenate.openleg.model.CalendarEntry;
 import gov.nysenate.openleg.model.PublicHearing;
-import gov.nysenate.openleg.model.Section;
-import gov.nysenate.openleg.model.Sequence;
-import gov.nysenate.openleg.model.Supplemental;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 
@@ -41,7 +37,6 @@ public class DocumentBuilder
         // Basic document filters
         document.add(new StringField("otype", "hearing", Field.Store.YES));
         document.add(new IntField("year", hearing.getYear(), Field.Store.YES));
-        document.add(new StringField("active", String.valueOf(hearing.isActive()), Field.Store.YES));
         document.add(new LongField("modified", hearing.getModifiedDate().getTime(), Field.Store.YES));
         document.add(new LongField("published", hearing.getPublishDate().getTime(), Field.Store.YES));
         document.add(new StringField("modified", dateFormat.format(hearing.getModifiedDate()), Field.Store.NO));
@@ -69,7 +64,6 @@ public class DocumentBuilder
         // Basic document filters
         document.add(new StringField("otype", "vote", Field.Store.YES));
         document.add(new IntField("year", vote.getYear(), Field.Store.YES));
-        document.add(new StringField("active", String.valueOf(vote.isActive()), Field.Store.YES));
         document.add(new LongField("modified", vote.getModifiedDate().getTime(), Field.Store.YES));
         document.add(new LongField("published", vote.getPublishDate().getTime(), Field.Store.YES));
         document.add(new StringField("modified", dateFormat.format(vote.getModifiedDate()), Field.Store.NO));
@@ -127,7 +121,6 @@ public class DocumentBuilder
         // Basic document filters
         document.add(new StringField("otype", "transcript", Field.Store.YES));
         document.add(new IntField("year", transcript.getYear(), Field.Store.YES));
-        document.add(new StringField("active", String.valueOf(transcript.isActive()), Field.Store.YES));
         document.add(new LongField("modified", transcript.getModifiedDate().getTime(), Field.Store.YES));
         document.add(new LongField("published", transcript.getPublishDate().getTime(), Field.Store.YES));
         document.add(new StringField("modified", dateFormat.format(transcript.getModifiedDate()), Field.Store.YES));
@@ -161,14 +154,13 @@ public class DocumentBuilder
         Document document = new Document();
 
         // Allow identification based id only
-        String oid = calendar.getType()+"-"+new SimpleDateFormat("MM-dd-yyyy").format(calendar.getDate());
+        String oid = calendar.getOid();
         document.add(new StoredField("oid", oid));
         document.add(new StringField("oid", oid.toLowerCase(), Field.Store.NO));
 
         // Basic document filters
         document.add(new StringField("otype", "calendar", Field.Store.YES));
         document.add(new IntField("year", calendar.getYear(), Field.Store.YES));
-        document.add(new StringField("active", String.valueOf(calendar.isActive()), Field.Store.YES));
         document.add(new LongField("modified", calendar.getModifiedDate().getTime(), Field.Store.YES));
         document.add(new LongField("published", calendar.getPublishDate().getTime(), Field.Store.YES));
         document.add(new StringField("modified", dateFormat.format(calendar.getModifiedDate()), Field.Store.YES));
@@ -176,55 +168,55 @@ public class DocumentBuilder
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();
-        searchTerms.add(calendar.getTitle());
+        // searchTerms.add(calendar.getTitle());
         document.add(new TextField("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO));
 
         // Other various search fields and filters
         StringBuilder bills = new StringBuilder("");
         StringBuilder calendarEntries = new StringBuilder();
         StringBuilder summaryBuffer = new StringBuilder();
-        if (calendar.getType().equals("floor")) {
-            for (Supplemental supplemental : calendar.getSupplementals()) {
-                for (Section section : supplemental.getSections()) {
-                    summaryBuffer.append(section.getName()).append(": ");
-                    summaryBuffer.append(section.getCalendarEntries().size()).append(" bill(s); ");
+//        if (calendar.getType().equals("floor")) {
+//            for (Supplemental supplemental : calendar.getSupplementals()) {
+//                for (Section section : supplemental.getSections()) {
+//                    summaryBuffer.append(section.getName()).append(": ");
+//                    summaryBuffer.append(section.getCalendarEntries().size()).append(" bill(s); ");
+//
+//                    for(CalendarSectionEntry entry:section.getCalendarEntries()) {
+//                        bills.append(entry.getBill().getBillId()).append(", ");
+//                        calendarEntries.append(entry.getNumber()).append("-").append(entry.getBill().getBillId()).append(", ");
+//                    }
+//                }
+//            }
+//        }
+//        else {
+//            for (Supplemental supplemental : calendar.getSupplementals()) {
+//                int total = 0;
+//                for (Sequence sequence : supplemental.getSequences()) {
+//                    total += sequence.getCalendarEntries().size();
+//
+//                    for(CalendarSectionEntry entry : sequence.getCalendarEntries()) {
+//                        bills.append(entry.getBill().getBillId()).append(", ");
+//                        calendarEntries.append(entry.getNumber()).append("-").append(entry.getBill().getBillId()).append(", ");
+//                    }
+//
+//                    summaryBuffer.append(total).append(" bill(s)");
+//                }
+//            }
+//        }
 
-                    for(CalendarEntry entry:section.getCalendarEntries()) {
-                        bills.append(entry.getBill().getBillId()).append(", ");
-                        calendarEntries.append(entry.getNo()).append("-").append(entry.getBill().getBillId()).append(", ");
-                    }
-                }
-            }
-        }
-        else {
-            for (Supplemental supplemental : calendar.getSupplementals()) {
-                int total = 0;
-                for (Sequence sequence : supplemental.getSequences()) {
-                    total += sequence.getCalendarEntries().size();
-
-                    for(CalendarEntry entry : sequence.getCalendarEntries()) {
-                        bills.append(entry.getBill().getBillId()).append(", ");
-                        calendarEntries.append(entry.getNo()).append("-").append(entry.getBill().getBillId()).append(", ");
-                    }
-
-                    summaryBuffer.append(total).append(" bill(s)");
-                }
-            }
-        }
-
-        document.add(new StringField("ctype", calendar.getType().toLowerCase(), Field.Store.YES));
+//        document.add(new StringField("ctype", calendar.getType().toLowerCase(), Field.Store.YES));
         document.add(new TextField("bills", bills.toString(), Field.Store.YES));
         document.add(new TextField("calendarentries",calendarEntries.toString(), Field.Store.YES));
         document.add(new TextField("summary", summaryBuffer.toString().trim(), Field.Store.YES));
-        document.add(new TextField("title", calendar.getTitle(), Field.Store.YES));
-        document.add(new LongField("when", calendar.getDate().getTime(), Field.Store.YES));
+//        document.add(new TextField("title", calendar.getTitle(), Field.Store.YES));
+//        document.add(new LongField("when", calendar.getDate().getTime(), Field.Store.YES));
         document.add(new StringField("sorttitle", document.getField("title").stringValue().toLowerCase(), Field.Store.NO));
 
         document.add(new StoredField("odata", LuceneJsonConverter.toString(calendar)));
         return document;
     }
 
-    public static Document build(Action action)
+    public static Document build(BillAction action)
     {
         Document document = new Document();
 
@@ -235,7 +227,6 @@ public class DocumentBuilder
         // Basic document filters
         document.add(new StringField("otype", "action", Field.Store.YES));
         document.add(new IntField("year", action.getYear(), Field.Store.YES));
-        document.add(new StringField("active", String.valueOf(action.isActive()), Field.Store.YES));
         document.add(new LongField("modified", action.getModifiedDate().getTime(), Field.Store.YES));
         document.add(new LongField("published", action.getPublishDate().getTime(), Field.Store.YES));
         document.add(new StringField("modified", dateFormat.format(action.getModifiedDate()), Field.Store.YES));
@@ -270,7 +261,6 @@ public class DocumentBuilder
         // Basic document filters
         document.add(new StringField("otype", "bill", Field.Store.YES));
         document.add(new IntField("year", bill.getSession(), Field.Store.YES));
-        document.add(new StringField("active", String.valueOf(bill.isActive()), Field.Store.YES));
         document.add(new LongField("modified", bill.getModifiedDate().getTime(), Field.Store.YES));
         document.add(new LongField("published", bill.getPublishDate().getTime(), Field.Store.YES));
         document.add(new StringField("modified", dateFormat.format(bill.getModifiedDate()), Field.Store.YES));
@@ -282,11 +272,11 @@ public class DocumentBuilder
         searchTerms.add(bill.getPrintNumber());
         searchTerms.add(String.valueOf(bill.getSession()));
         searchTerms.add(bill.getBillId());
-        searchTerms.add(bill.getSameAs());
+//        searchTerms.add(bill.getSameAs());
         searchTerms.add(bill.getSponsor() != null ? bill.getSponsor().getFullname() : "");
         searchTerms.add(bill.getTitle());
         searchTerms.add(bill.getSummary());
-        searchTerms.add(bill.getFulltext());
+//        searchTerms.add(bill.getFulltext());
         document.add(new TextField("osearch", StringUtils.join(searchTerms, "; "), Field.Store.NO));
 
         // Sorting should prioritize senate bills over assembly bills and resolutions.
@@ -311,17 +301,17 @@ public class DocumentBuilder
         document.add(new TextField("actions", StringUtils.join(bill.getActions(), ", "), Field.Store.YES));
         document.add(new TextField("committee", bill.getCurrentCommittee(), Field.Store.YES));
         document.add(new TextField("full", bill.getFulltext(), Field.Store.YES));
-        document.add(new TextField("memo", bill.getMemo(), Field.Store.YES));
-        document.add(new TextField("law", bill.getLaw(), Field.Store.YES));
-        document.add(new TextField("actclause", bill.getActClause(), Field.Store.YES));
+//        document.add(new TextField("memo", bill.getMemo(), Field.Store.YES));
+//        document.add(new TextField("law", bill.getLaw(), Field.Store.YES));
+//        document.add(new TextField("actclause", bill.getActClause(), Field.Store.YES));
         document.add(new LongField("when", bill.getModifiedDate().getTime(), Field.Store.YES));
         document.add(new StringField("unibill", String.valueOf(bill.isUniBill()), Field.Store.YES));
-        document.add(new StringField("stricken", String.valueOf(bill.isStricken()), Field.Store.YES));
+//        document.add(new StringField("stricken", String.valueOf(bill.isStricken()), Field.Store.YES));
         document.add(new StringField("sorttitle", bill.getTitle().toLowerCase(), Field.Store.NO));
 
         // The current status of the document, usually a filter on actions will be more useful
         String billStatus = "";
-        List<Action> actions = bill.getActions();
+        List<BillAction> actions = bill.getActions();
         if (!actions.isEmpty()) {
             billStatus = actions.get(actions.size()-1).getText();
         }

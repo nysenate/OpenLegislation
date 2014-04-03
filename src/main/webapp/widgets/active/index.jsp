@@ -62,10 +62,11 @@
                     <h2><%=seqTitle %></h2>
                     <ul>
                     <%
-                    for (CalendarEntry calEnt : seq.getCalendarEntries()) {
-                        try { %>
+                        for (CalendarSectionEntry calEnt : seq.getCalendarEntries()) {
+                                    try {
+                    %>
                         <li>
-                        Cal No. <%=calEnt.getNo()%>
+                        Cal No. <%=calEnt.getNumber()%>
                         <%
                             if (calEnt.getBill()!=null && calEnt.getBill().getBillId()!=null ) {
                         %>

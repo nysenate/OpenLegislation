@@ -30,6 +30,7 @@ public class Application
     protected Environment environment;
     protected Lucene lucene;
     protected Storage storage;
+    protected XmlHelper xmlhelper;
     protected DB db;
 
     /**
@@ -45,7 +46,9 @@ public class Application
     {
         try
         {
+
             appInstance.config = new Config(propertyFileName);
+            appInstance.xmlhelper = new XmlHelper(appInstance.config, "xml");
             appInstance.db = new DB(appInstance.config, "mysqldb");
             appInstance.mailer = new Mailer(appInstance.config, "mailer");
             appInstance.environment = new Environment(appInstance.config, "env");
@@ -92,5 +95,10 @@ public class Application
 
     public static Storage getStorage() {
         return appInstance.storage;
+    }
+
+    public static XmlHelper getXmlHelper()
+    {
+        return appInstance.xmlhelper;
     }
 }

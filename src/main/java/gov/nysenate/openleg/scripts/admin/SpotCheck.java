@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.scripts.admin;
 
-import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.admin.Report;
@@ -173,7 +173,7 @@ public class SpotCheck extends BaseScript
             ArrayList<String> jsonEvents = new ArrayList<String>();
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
 
-            for (Action action : bill.getActions()) {
+            for (BillAction action : bill.getActions()) {
                 jsonEvents.add(dateFormat.format(action.getDate())+" "+action.getText());
             }
 

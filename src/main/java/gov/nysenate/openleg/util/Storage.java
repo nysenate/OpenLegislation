@@ -73,6 +73,11 @@ public class Storage
      */
     protected HashSet<String> dirty;
 
+    /**
+     * Tracks the set of brand new keys that need to have that status persisted through the current process.
+     */
+    protected HashSet<String> brandNew;
+
     private final StorageJsonConverter converter;
 
 
@@ -101,6 +106,7 @@ public class Storage
 
         this.memory  = new HashMap<String, BaseObject>();
         this.dirty   = new HashSet<String>();
+        this.brandNew = new HashSet<String>();
 
         this.converter = new StorageJsonConverter(this);
     }
@@ -138,7 +144,8 @@ public class Storage
                         logger.error("Unable to read value of type "+cls.getName()+" from: "+storageFile);
                         return null;
                     }
-                    value.setBrandNew(false);
+
+                    value.setBrandNew(brandNew.contains(key));
                 } catch (org.codehaus.jackson.JsonParseException e) {
                     logger.error("could not parse json", e);
                 } catch (JsonMappingException e) {
@@ -165,6 +172,9 @@ public class Storage
         String key = this.key(value);
         memory.put(key, value);
         dirty.add(key);
+        if (value.isBrandNew()) {
+            brandNew.add(key);
+        }
     }
 
     /**

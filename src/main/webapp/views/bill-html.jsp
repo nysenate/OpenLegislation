@@ -1,7 +1,6 @@
 <%@ page language="java" import="gov.nysenate.openleg.util.*, java.util.Date, java.util.HashMap, java.util.ArrayList, java.util.Collections, java.util.List, java.util.Hashtable, java.util.TreeSet, java.util.StringTokenizer, java.util.regex.*, java.util.Iterator, java.text.* ,gov.nysenate.openleg.model.*" contentType="text/html" pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%!
-    public <T> ArrayList<T> defaultList(ArrayList<T> list) {
+<%!public <T> ArrayList<T> defaultList(ArrayList<T> list) {
         if(list == null)
             return new ArrayList<T>();
         return list;
@@ -43,11 +42,11 @@
         return event;
     }
     
-    public ArrayList<Action> sortBillEvents(List<Action> billEvents) {
-        Hashtable<String, Action> table = new Hashtable<String, Action>();
-        TreeSet<Action> set = new TreeSet<Action>(new Action.ByEventDate());
+    public ArrayList<BillAction> sortBillEvents(List<BillAction> billEvents) {
+        Hashtable<String, BillAction> table = new Hashtable<String, BillAction>();
+        TreeSet<BillAction> set = new TreeSet<BillAction>(new BillAction.ByEventDate());
         
-        for(Action be:billEvents) {
+        for(BillAction be:billEvents) {
             if(table.contains(be)) continue;
             
             table.put(Long.toString(be.getDate().getTime()), be);
@@ -56,9 +55,8 @@
         
         table.clear();
         
-        return new ArrayList<Action>(set);
-    }
-%>
+        return new ArrayList<BillAction>(set);
+    }%>
 <%
     Bill bill = (Bill)request.getAttribute("bill");
 	
@@ -76,7 +74,7 @@
     @SuppressWarnings("unchecked")
     ArrayList<Bill> rBills = defaultList((ArrayList<Bill>)request.getAttribute("related-bill"));
     @SuppressWarnings("unchecked")
-    ArrayList<Action> rActions = defaultList((ArrayList<Action>)request.getAttribute("related-action"));
+    ArrayList<BillAction> rActions = defaultList((ArrayList<BillAction>)request.getAttribute("related-action"));
     @SuppressWarnings("unchecked")
     ArrayList<Meeting> rMeetings = defaultList((ArrayList<Meeting>)request.getAttribute("related-meeting"));
     @SuppressWarnings("unchecked")
@@ -155,24 +153,30 @@
             <div id="subcontent billmeta">
                 <div class="billmeta">
                     <ul>
-		            <% if (bill.getSameAs() != null && !bill.getSameAs().trim().isEmpty()) { %>
+		            <%
+		                if (bill.getSameAs() != null && !bill.getSameAs().trim().isEmpty()) {
+		            %>
 	                    <li><span class="meta">Same as:</span><span class="metadata">
 	                    <%
 	                        StringTokenizer st = new StringTokenizer(bill.getSameAs(),",");
-	                        String sameAs = null;
-	                        String lastSameAs = "";
-	                        String sameAsLink = null;
-	                        Bill sameAsBill = null;
+	                    	                    	                    	                        String sameAs = null;
+	                    	                    	                    	                        String lastSameAs = "";
+	                    	                    	                    	                        String sameAsLink = null;
+	                    	                    	                    	                        Bill sameAsBill = null;
 
-	                        while(st.hasMoreTokens()) {
-	                            sameAs = st.nextToken().trim().toUpperCase();
-	                            sameAsLink = appPath + "/bill/" + sameAs;
-	                            %><a href="<%=sameAsLink%>"><%=sameAs%></a>
-	                        <% } %>
+	                    	                    	                    	                        while(st.hasMoreTokens()) {
+	                    	                    	                    	                            sameAs = st.nextToken().trim().toUpperCase();
+	                    	                    	                    	                            sameAsLink = appPath + "/bill/" + sameAs;
+	                    %><a href="<%=sameAsLink%>"><%=sameAs%></a>
+	                        <%
+	                            }
+	                        %>
 			            </span></li>
-			        <% }
-			            	
-			        if (rBills.size() > 0) { %>
+			        <%
+			            }
+			        			        			        			            	
+			        			        			        			        if (rBills.size() > 0) {
+			        %>
 	                        <li><span class="meta">Versions</span><span class="metadata">
 		                        <%
 		                            for (Bill rBill:rBills) {
@@ -206,8 +210,8 @@
 		                    </li>
 		                <%
 		                    }
-		                                
-		                                if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) {
+		                		                		                		                                
+		                		                		                		                                if (bill.getCoSponsors()!=null && bill.getCoSponsors().size()>0) {
 		                %>
                             <li>
 		                        <span class="meta">Co-sponsor(s):</span>
@@ -216,7 +220,7 @@
 		                <%
 		                    }
 
-		                		                if (bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
+		                		                		                		                		                if (bill.getCurrentCommittee() != null && !bill.getCurrentCommittee().equals("")) {
 		                %>
 		                    <li>
 		                        <span class="meta">Committee:</span>
@@ -225,15 +229,15 @@
 		                <%
 		                    }
 
-		                		                if (bill.getLawSection() != null && !bill.getLawSection().equals("")) {
+		                		                		                		                		                if (bill.getLawSection() != null && !bill.getLawSection().equals("")) {
 		                %>
 		                    <li>
 		                        <span class="meta">Law Section:</span> <span class="metadata"><a href="<%=appPath%>/search/?term=<%=java.net.URLEncoder.encode("lawsection:\"" + bill.getLawSection()+"\"","utf-8")%>" class="sublink"><%=bill.getLawSection()%></a>
 		                    </span></li>
 		                <%
 		                    }
-		                                            
-		                		                if (bill.getLaw() != null && bill.getLaw() != "") {
+		                		                		                		                                            
+		                		                		                		                		                if (bill.getLaw() != null && bill.getLaw() != "") {
 		                %>
 		                    <li>
 		                        <span class="meta">Law:</span> <span class="metadata"><%=bill.getLaw()%></span>
@@ -249,8 +253,8 @@
 	                <h3 class="section"> <a id="Actions" href="#Actions" class="anchor ui-icon ui-icon-link"></a> Actions</h3>
 	                <div class="section-list"><ul>
 		                <%
-		                    ArrayList<Action> events = sortBillEvents(rActions);
-		                		                for (Action be : events) {
+		                    ArrayList<BillAction> events = sortBillEvents(rActions);
+		                		                		                		                		                for (BillAction be : events) {
 		                %>
 		                    <li><%=df.format(be.getDate().getTime())%>: <%=formatBillEvent(bill.getBillId(), be.getText(), appPath)%></li>
 		                <% } %>

@@ -1,18 +1,18 @@
 package gov.nysenate.openleg.model;
 
-public class MeetingVote
+public class AgendaVoteCommitteeVote
 {
     private String name;
     private String rank;
     private String party;
     private String vote;
 
-    public MeetingVote()
+    public AgendaVoteCommitteeVote()
     {
 
     }
 
-    public MeetingVote(String name, String rank, String party, String vote)
+    public AgendaVoteCommitteeVote(String name, String rank, String party, String vote)
     {
         super();
         this.setName(name);

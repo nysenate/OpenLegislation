@@ -5,23 +5,25 @@ import gov.nysenate.openleg.processors.SenagendaProcessor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MeetingItem
+public class AgendaVoteCommitteeItem
 {
     private Bill bill;
+    private String billAmendment;
     private SenagendaProcessor.VoteAction action;
     private String referCommittee;
     private Boolean withAmd;
-    private List<MeetingVote> votes;
+    private List<AgendaVoteCommitteeVote> votes;
 
-    public MeetingItem()
+    public AgendaVoteCommitteeItem()
     {
-        this.setVotes(new ArrayList<MeetingVote>());
+        this.setVotes(new ArrayList<AgendaVoteCommitteeVote>());
     }
 
-    public MeetingItem(Bill bill, SenagendaProcessor.VoteAction action, String referCommittee, Boolean withAmd)
+    public AgendaVoteCommitteeItem(Bill bill, String billAmendment, SenagendaProcessor.VoteAction action, String referCommittee, Boolean withAmd)
     {
         super();
         this.setBill(bill);
+        this.setBillAmendment(billAmendment);
         this.setAction(action);
         this.setReferCommittee(referCommittee);
         this.setWithAmd(withAmd);
@@ -67,13 +69,28 @@ public class MeetingItem
         this.withAmd = withAmd;
     }
 
-    public List<MeetingVote> getVotes()
+    public List<AgendaVoteCommitteeVote> getVotes()
     {
         return votes;
     }
 
-    public void setVotes(List<MeetingVote> votes)
+    public void setVotes(List<AgendaVoteCommitteeVote> votes)
     {
         this.votes = votes;
+    }
+
+    public void addVote(AgendaVoteCommitteeVote vote)
+    {
+        this.votes.add(vote);
+    }
+
+    public String getBillAmendment()
+    {
+        return billAmendment;
+    }
+
+    public void setBillAmendment(String billAmendment)
+    {
+        this.billAmendment = billAmendment;
     }
 }

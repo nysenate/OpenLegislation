@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.converter;
 
-import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
-import gov.nysenate.openleg.model.CalendarEntry;
+import gov.nysenate.openleg.model.CalendarSectionEntry;
 import gov.nysenate.openleg.model.Person;
-import gov.nysenate.openleg.model.Section;
-import gov.nysenate.openleg.model.Sequence;
-import gov.nysenate.openleg.model.Supplemental;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 
@@ -57,7 +54,7 @@ public class LuceneJsonConverter
                 else if(o instanceof Calendar) {
                     node = converter(o, null);
                 }
-                else if(o instanceof Action) {
+                else if(o instanceof BillAction) {
                     node = converter(o, null);
                 }
                 else if(o instanceof Vote) {
@@ -201,8 +198,8 @@ public class LuceneJsonConverter
                     jarray.add(converter(bill, null));
                 }
             }
-            else if(o instanceof Action) {
-                for(Action be:(Collection<Action>) c) {
+            else if(o instanceof BillAction) {
+                for(BillAction be:(Collection<BillAction>) c) {
                     jarray.add(converter(be, internal_action_exclude()));
                 }
             }
@@ -224,20 +221,20 @@ public class LuceneJsonConverter
     private static JsonArray listSupplemental(Collection<?> c) throws Exception
     {
         JsonArray jarray = new JsonArray();
-        if(c.iterator().hasNext()) {
-            Object o = c.iterator().next();
-            if(o instanceof Section) {
-                for(Section s:(Collection<Section>)c) {
-                    jarray.add(converter(s, section_exclude()));
-                }
-            }
-            else if(o instanceof Sequence) {
-                for(Sequence s:(Collection<Sequence>)c) {
-                    jarray.add(converter(s, sequence_exclude()));
-
-                }
-            }
-        }
+//        if(c.iterator().hasNext()) {
+//            Object o = c.iterator().next();
+//            if(o instanceof Section) {
+//                for(Section s:(Collection<Section>)c) {
+//                    jarray.add(converter(s, section_exclude()));
+//                }
+//            }
+//            else if(o instanceof Sequence) {
+//                for(Sequence s:(Collection<Sequence>)c) {
+//                    jarray.add(converter(s, sequence_exclude()));
+//
+//                }
+//            }
+//        }
         return jarray;
     }
 
@@ -245,14 +242,14 @@ public class LuceneJsonConverter
     private static JsonArray listCalendar(Collection<?> c) throws Exception
     {
         JsonArray jarray = new JsonArray();
-        if(c.iterator().hasNext()) {
-            Object o = c.iterator().next();
-            if(o instanceof Supplemental) {
-                for(Supplemental s:(Collection<Supplemental>)c) {
-                    jarray.add(converter(s, supplemental_exclude()));
-                }
-            }
-        }
+//        if(c.iterator().hasNext()) {
+//            Object o = c.iterator().next();
+//            if(o instanceof Supplemental) {
+//                for(Supplemental s:(Collection<Supplemental>)c) {
+//                    jarray.add(converter(s, supplemental_exclude()));
+//                }
+//            }
+//        }
         return jarray;
     }
 
@@ -277,8 +274,8 @@ public class LuceneJsonConverter
         JsonArray jarray = new JsonArray();
         if(c.iterator().hasNext()) {
             Object o = c.iterator().next();
-            if(o instanceof CalendarEntry) {
-                for(CalendarEntry entry:(Collection<CalendarEntry>)c) {
+            if(o instanceof CalendarSectionEntry) {
+                for(CalendarSectionEntry entry:(Collection<CalendarSectionEntry>)c) {
                     jarray.add(converter(entry,calendar_entry_exclude()));
                 }
             }
@@ -292,8 +289,8 @@ public class LuceneJsonConverter
         JsonArray jarray = new JsonArray();
         if(c.iterator().hasNext()) {
             Object o = c.iterator().next();
-            if(o instanceof CalendarEntry) {
-                for(CalendarEntry entry:(Collection<CalendarEntry>)c) {
+            if(o instanceof CalendarSectionEntry) {
+                for(CalendarSectionEntry entry:(Collection<CalendarSectionEntry>)c) {
                     jarray.add(converter(entry,calendar_entry_exclude()));
                 }
             }

@@ -10,7 +10,7 @@ import java.util.Date;
  *
  * @author GraylinKim
  */
-public class Action extends BaseObject
+public class BillAction extends BaseObject
 {
     /**
      * This object's unique object id. Bill+Date.getTime()+Text.
@@ -35,7 +35,7 @@ public class Action extends BaseObject
     /**
      * JavaBean constructor.
      */
-    public Action()
+    public BillAction()
     {
         super();
     }
@@ -47,7 +47,7 @@ public class Action extends BaseObject
      * @param text - The text of the action
      * @param bill - The bill the action was performed on
      */
-    public Action(Date date, String text, Bill bill) {
+    public BillAction(Date date, String text, Bill bill) {
         super();
         this.bill = bill;
         this.date = date;
@@ -55,7 +55,6 @@ public class Action extends BaseObject
         this.oid = this.bill.getBillId() + "-" + this.date.getTime() + "-" + this.text;
         this.setPublishDate(this.date);
         this.setModifiedDate(this.date);
-        this.setActive(bill.isActive());
         this.setSession(bill.getSession());
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         calendar.setTime(date);
@@ -129,8 +128,8 @@ public class Action extends BaseObject
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof Action) {
-            Action other = (Action)obj;
+        if (obj != null && obj instanceof BillAction) {
+            BillAction other = (BillAction)obj;
             return this.getOid().equals(other.getOid());
         }
         else {
@@ -144,9 +143,9 @@ public class Action extends BaseObject
         return cal.get(java.util.Calendar.YEAR);
     }
 
-    public static class ByEventDate implements Comparator<Action> {
+    public static class ByEventDate implements Comparator<BillAction> {
         @Override
-        public int compare(Action be1, Action be2) {
+        public int compare(BillAction be1, BillAction be2) {
             int ret = be1.getDate().compareTo(be2.getDate());
             if(ret == 0) {
                 return -1;

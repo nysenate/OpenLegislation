@@ -1,37 +1,32 @@
 package gov.nysenate.openleg.processors;
 
+import gov.nysenate.openleg.model.Agenda;
+import gov.nysenate.openleg.model.AgendaInfoAddendum;
+import gov.nysenate.openleg.model.AgendaInfoCommittee;
+import gov.nysenate.openleg.model.AgendaInfoCommitteeItem;
+import gov.nysenate.openleg.model.AgendaVoteAddendum;
+import gov.nysenate.openleg.model.AgendaVoteCommittee;
+import gov.nysenate.openleg.model.AgendaVoteCommitteeAttendance;
+import gov.nysenate.openleg.model.AgendaVoteCommitteeItem;
+import gov.nysenate.openleg.model.AgendaVoteCommitteeVote;
 import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.MeetingAttendance;
-import gov.nysenate.openleg.model.MeetingItem;
-import gov.nysenate.openleg.model.MeetingVote;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.SOBIBlock;
-import gov.nysenate.openleg.model.Senagenda;
-import gov.nysenate.openleg.model.SenagendaInfoAddendum;
-import gov.nysenate.openleg.model.SenagendaInfoCommittee;
-import gov.nysenate.openleg.model.SenagendaVoteAddendum;
-import gov.nysenate.openleg.model.SenagendaVoteCommittee;
+import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.ChangeLogger;
-import gov.nysenate.openleg.util.OpenLegConstants;
+import gov.nysenate.openleg.util.DateHelper;
 import gov.nysenate.openleg.util.Storage;
+import gov.nysenate.openleg.util.XmlHelper;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -41,6 +36,8 @@ import org.xml.sax.SAXException;
 
 public class SenagendaProcessor
 {
+    private final Logger logger = Logger.getLogger(SenagendaProcessor.class);
+
     public static enum VoteAction { FIRST_READING, THIRD_READING, REFERRED_TO_COMMITTEE, DEFEATED, RESTORED_TO_THIRD, SPECIAL}
     public static Map<String, VoteAction> VOTE_ACTION_MAP = new TreeMap<String, VoteAction>();
     static {
@@ -52,101 +49,80 @@ public class SenagendaProcessor
         VOTE_ACTION_MAP.put("S", VoteAction.SPECIAL);
     }
 
-    private final Logger logger = Logger.getLogger(SenagendaProcessor.class);
-    private Date modifiedDate;
-    public static SimpleDateFormat sobiDateFormat = new SimpleDateFormat("'SOBI.D'yyMMdd'.T'HHmmss'.TXT'");
-
-    private final DocumentBuilder dBuilder;
-    private final XPath xpath;
-
-    public SenagendaProcessor() throws ParserConfigurationException
-    {
-        dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        xpath = XPathFactory.newInstance().newXPath();
-    }
-
-    public void processSenagenda(File file, Storage storage) throws XPathExpressionException, SAXException, IOException, ParseException
+    public void processSenagenda(File file, Storage storage) throws XPathExpressionException, SAXException, IOException
     {
         // TODO: We need a better default here
-        modifiedDate = null;
-        try {
-            modifiedDate = sobiDateFormat.parse(file.getName());
-        } catch (ParseException e) {
-            logger.error("Error parsing file date.", e);
-        }
+        Date modifiedDate = DateHelper.getFileDate(file.getName());
         ChangeLogger.setContext(file, modifiedDate);
+        XmlHelper xml = Application.getXmlHelper();
 
         // Parse the document and construct our base agenda.
-        Document doc = dBuilder.parse(file);
-        Node xmlAgenda = (Node)xpath.evaluate("SENATEDATA/senagenda", doc, XPathConstants.NODE);
-        Integer agendaNo = (Integer)xpath.evaluate("@no", xmlAgenda, XPathConstants.NUMBER);
-        Integer sessYr = (Integer)xpath.evaluate("@sessYr", xmlAgenda, XPathConstants.NUMBER);
-        Integer year = (Integer)xpath.evaluate("@year", xmlAgenda, XPathConstants.NUMBER);
-        Senagenda agenda = new Senagenda(agendaNo, sessYr, year);
+        Document doc = xml.parse(file);
+        Node xmlAgenda = xml.getNode("SENATEDATA/senagenda", doc);
+        Integer agendaNo = xml.getInteger("@no", xmlAgenda);
+        Integer sessYr = xml.getInteger("@sessYr", xmlAgenda);
+        Integer year = xml.getInteger("@year", xmlAgenda);
+        Agenda agenda = new Agenda(agendaNo, sessYr, year);
         agenda.setPublishDate(modifiedDate);
 
         // action="remove" removes the whole agenda and all its addendum.
         // action="replace" replaces the whole agenda and all its addendum and inserts new ones.
         // As such, if we have an old agenda, clean out the old addendum and meeting information.
         String key = storage.key(agenda);
-        Senagenda oldAgenda = (Senagenda)storage.get(key, Senagenda.class);
+        Agenda oldAgenda = (Agenda)storage.get(key, Agenda.class);
         if (oldAgenda != null) {
             agenda = oldAgenda;
         }
         agenda.setModifiedDate(modifiedDate);
         agenda.addDataSource(file.getName());
 
-        String action = xpath.evaluate("@action", xmlAgenda);
+        String action = xml.getString("@action", xmlAgenda);
         if (action.equalsIgnoreCase("remove")) {
             logger.info("Removing agenda: " + agenda.getOid());
             storage.del(key);
             ChangeLogger.delete(key, storage);
         }
         else if (action.equalsIgnoreCase("replace")) {
-            logger.info("Replacing senagendaAddendums: "+agenda.getOid());
-            NodeList xmlAddendums = (NodeList)xpath.evaluate("addendum", xmlAgenda, XPathConstants.NODESET);
-            Map<String, SenagendaInfoAddendum> addendums = new TreeMap<String, SenagendaInfoAddendum>();
+            logger.info("Replacing senagenda addendums: "+agenda.getOid());
+            NodeList xmlAddendums = xml.getNodeList("addendum", xmlAgenda);
+            // Because we are replacing them in full, we create a new map here
+            Map<String, AgendaInfoAddendum> addendums = new TreeMap<String, AgendaInfoAddendum>();
             for (int i=0; i < xmlAddendums.getLength(); i++) {
                 Node xmlAddendum = xmlAddendums.item(i);
-                String id = xpath.evaluate("@id", xmlAddendum);
-                String weekOf = xpath.evaluate("weekof/text()", xmlAddendum);
-                String pubDate = xpath.evaluate("pubdate/text()", xmlAddendum);
-                String pubTime = xpath.evaluate("pubtime/text()", xmlAddendum);
-                Date pubDateTime = OpenLegConstants.LRS_DATETIME_FORMAT.parse(pubDate+pubTime);
-                SenagendaInfoAddendum addendum = new SenagendaInfoAddendum(id, weekOf, pubDateTime);
+                String id = xml.getString("@id", xmlAddendum);
+                Date weekOf = DateHelper.getDate(xml.getString("weekof/text()", xmlAddendum));
+                Date pubDateTime = DateHelper.getDateTime(xml.getString("pubdate/text()", xmlAddendum)+xml.getString("pubtime/text()", xmlAddendum));
+                AgendaInfoAddendum addendum = new AgendaInfoAddendum(id, weekOf, pubDateTime);
 
-                Map<String, SenagendaInfoCommittee> committees = new TreeMap<String, SenagendaInfoCommittee>();
-                NodeList xmlCommittees = (NodeList)xpath.evaluate("committees/committee", xmlAddendum, XPathConstants.NODESET);
+                NodeList xmlCommittees = xml.getNodeList("committees/committee", xmlAddendum);
                 for (int j=0; j < xmlCommittees.getLength(); j++) {
                     Node xmlCommittee = xmlCommittees.item(j);
-                    String name = xpath.evaluate("name/text()", xmlCommittee);
-                    String chair = xpath.evaluate("chair/text()", xmlCommittee);
-                    String location = xpath.evaluate("location/text()", xmlCommittee);
-                    String meetDay = xpath.evaluate("meetday/text()", xmlCommittee);
-                    String meetDate = xpath.evaluate("meetdate/text()", xmlCommittee);
-                    String meetTime = xpath.evaluate("meettime/text()", xmlCommittee);
-                    String notes = xpath.evaluate("notes/text()", xmlCommittee);
-                    Date meetDateTime = OpenLegConstants.LRS_DATETIME_FORMAT.parse(meetDate+meetTime);
-                    SenagendaInfoCommittee committee = new SenagendaInfoCommittee(name, chair, location, notes, meetDay, meetDateTime);
+                    String name = xml.getString("name/text()", xmlCommittee);
+                    String chair = xml.getString("chair/text()", xmlCommittee);
+                    String location = xml.getString("location/text()", xmlCommittee);
+                    String meetDay = xml.getString("meetday/text()", xmlCommittee);
+                    String notes = xml.getString("notes/text()", xmlCommittee);
+                    Date meetDateTime = DateHelper.getDateTime(xml.getString("meetdate/text()", xmlCommittee)+xml.getString("meettime/text()", xmlCommittee));
+                    AgendaInfoCommittee committee = new AgendaInfoCommittee(name, chair, location, notes, meetDay, meetDateTime);
 
-                    HashMap<String, Bill> bills = new HashMap<String, Bill>();
-                    NodeList xmlBills = (NodeList)xpath.evaluate("bills/bill", xmlCommittee, XPathConstants.NODESET);
+                    NodeList xmlBills = xml.getNodeList("bills/bill", xmlCommittee);
                     for (int k=0; k < xmlBills.getLength(); k++) {
                         Node xmlBill = xmlBills.item(k);
-                        String billno = xpath.evaluate("@no", xmlBill);
-                        String sponsor = xpath.evaluate("sponsor/text()", xmlBill);
-                        // String message = xpath.evaluate("message/text()", xmlBill);
-                        // String title = xpath.evaluate("title/text()", xmlBill);
-                        Bill bill = getOrCreateBill(storage, billno, sessYr, sponsor);
-                        bills.put(billno, bill);
+                        String billno = xml.getString("@no", xmlBill);
+                        String sponsor = xml.getString("sponsor/text()", xmlBill);
+                        String message = xml.getString("message/text()", xmlBill);
+                        String title = xml.getString("title/text()", xmlBill);
+                        String billAmendment = billno.matches("[A-Z]$") ? billno.substring(billno.length()-1) : "";
+                        Bill bill = getOrCreateBill(storage, billno, billAmendment, sessYr, sponsor, modifiedDate);
+                        AgendaInfoCommitteeItem item = new AgendaInfoCommitteeItem(bill, billAmendment, message, title);
+                        committee.putItem(item);
                     }
-                    committee.bills = bills;
-                    committees.put(name, committee);
+                    addendum.putCommittee(committee);
                 }
-                addendum.committees = committees;
                 addendums.put(id, addendum);
             }
-            agenda.setSenagendaAddendum(addendums);
+            // This will override the existing set of addendums.
+            agenda.setAgendaAddendum(addendums);
 
             // Record and persist these changes
             ChangeLogger.record(key, storage);
@@ -160,104 +136,99 @@ public class SenagendaProcessor
     public void processSenagendaVote(File file, Storage storage) throws SAXException, IOException, XPathExpressionException, ParseException
     {
         // TODO: We need a better default here
-        modifiedDate = null;
-        try {
-            modifiedDate = sobiDateFormat.parse(file.getName());
-        } catch (ParseException e) {
-            logger.error("Error parsing file date.", e);
-        }
+        Date modifiedDate = DateHelper.getFileDate(file.getName());
         ChangeLogger.setContext(file, modifiedDate);
 
-        Document doc = dBuilder.parse(file);
-        Node xmlAgendgaVote = (Node)xpath.evaluate("SENATEDATA/senagendavote", doc, XPathConstants.NODE);
-        Integer agendaNo = (Integer)xpath.evaluate("@no", xmlAgendgaVote, XPathConstants.NUMBER);
-        Integer sessYr = (Integer)xpath.evaluate("@sessYr", xmlAgendgaVote, XPathConstants.NUMBER);
-        Integer year = (Integer)xpath.evaluate("@year", xmlAgendgaVote, XPathConstants.NUMBER);
-        Senagenda agenda = new Senagenda(agendaNo, sessYr, year);
+        XmlHelper xml = Application.getXmlHelper();
+        Document doc = xml.parse(file);
+        Node xmlAgendgaVote = xml.getNode("SENATEDATA/senagendavote", doc);
+        Integer agendaNo = xml.getInteger("@no", xmlAgendgaVote);
+        Integer sessYr = xml.getInteger("@sessYr", xmlAgendgaVote);
+        Integer year = xml.getInteger("@year", xmlAgendgaVote);
+        Agenda agenda = new Agenda(agendaNo, sessYr, year);
 
         // Use the old agenda if we have it
         String key = storage.key(agenda);
-        Senagenda oldAgenda = (Senagenda)storage.get(key, Senagenda.class);
+        Agenda oldAgenda = (Agenda)storage.get(key, Agenda.class);
         if (oldAgenda != null) {
             agenda = oldAgenda;
         }
         agenda.setModifiedDate(modifiedDate);
         agenda.addDataSource(file.getName());
 
-        Map<String, SenagendaVoteAddendum> addendums = agenda.getSenagendaVoteAddendum();
-        NodeList xmlAddendums = (NodeList)xpath.evaluate("addendum", xmlAgendgaVote, XPathConstants.NODESET);
+        NodeList xmlAddendums = xml.getNodeList("addendum", xmlAgendgaVote);
         for (int i=0; i < xmlAddendums.getLength(); i++) {
             Node xmlAddendum = xmlAddendums.item(i);
-            String addendumId = xpath.evaluate("@id", xmlAddendum);
+            String addendumId = xml.getString("@id", xmlAddendum);
 
             // Use the existing vote addendum if available, else create a new one
-            SenagendaVoteAddendum addendum = addendums.get(addendumId);
+            AgendaVoteAddendum addendum = agenda.getAgendaVoteAddendum(addendumId);
             if (addendum == null) {
-                addendum = new SenagendaVoteAddendum(addendumId);
+                addendum = new AgendaVoteAddendum(addendumId, year, sessYr);
+                agenda.putAgendaVoteAddendum(addendum);
             }
 
-            NodeList xmlCommittees = (NodeList)xpath.evaluate("committees/committee", xmlAddendum, XPathConstants.NODESET);
+            NodeList xmlCommittees = xml.getNodeList("committees/committee", xmlAddendum);
             for (int j=0; j < xmlCommittees.getLength(); j++) {
                 Node xmlCommittee = xmlCommittees.item(j);
-                String action = xpath.evaluate("@action", xmlCommittee);
-                String name = xpath.evaluate("name/text()", xmlCommittee);
-                String chair = xpath.evaluate("chair/text()", xmlCommittee);
-                String meetdate = xpath.evaluate("meetdate/text()", xmlCommittee);
-                String meettime = xpath.evaluate("meettime/text()", xmlCommittee);
-                Date meetDateTime = OpenLegConstants.LRS_DATETIME_FORMAT.parse(meetdate + meettime);
+                String action = xml.getString("@action", xmlCommittee);
+                String name = xml.getString("name/text()", xmlCommittee);
+                String chair = xml.getString("chair/text()", xmlCommittee);
+                Date meetDateTime = DateHelper.getDateTime(xml.getString("meetdate/text()", xmlCommittee)+xml.getString("meettime/text()", xmlCommittee));
 
                 // If the action is remove, then discard the committee and move on
                 if (action.equals("remove")) {
-                    addendum.committees.remove(name);
+                    addendum.removeCommittee(name);
                     continue;
                 }
 
                 // Otherwise, the committee is completely replaced
-                SenagendaVoteCommittee committee = new SenagendaVoteCommittee(name, chair, meetDateTime);
-                committee.modifiedDate = modifiedDate;
-                NodeList xmlMembers = (NodeList)xpath.evaluate("attendancelist/member", xmlCommittee, XPathConstants.NODESET);
+                AgendaVoteCommittee committee = new AgendaVoteCommittee(name, chair, meetDateTime);
+                committee.setModifiedDate(modifiedDate);
+                NodeList xmlMembers = xml.getNodeList("attendancelist/member", xmlCommittee);
                 for (int k=0; k < xmlMembers.getLength(); k++) {
                     Node xmlMember = xmlMembers.item(k);
-                    String memberName = xpath.evaluate("name/text()", xmlMember);
-                    String rank = xpath.evaluate("rank/text()", xmlMember);
-                    String party = xpath.evaluate("party/text()", xmlMember);
-                    String attendance = xpath.evaluate("attendance", xmlMember);
-                    MeetingAttendance member = new MeetingAttendance(memberName, rank, party, attendance);
-                    committee.attendance.add(member);
+                    String memberName = xml.getString("name/text()", xmlMember);
+                    String rank = xml.getString("rank/text()", xmlMember);
+                    String party = xml.getString("party/text()", xmlMember);
+                    String attendance = xml.getString("attendance", xmlMember);
+                    AgendaVoteCommitteeAttendance member = new AgendaVoteCommitteeAttendance(memberName, rank, party, attendance);
+                    committee.addAttendance(member);
                 }
 
-                NodeList xmlBills = (NodeList)xpath.evaluate("bills/bill", xmlCommittee, XPathConstants.NODESET);
+                NodeList xmlBills = xml.getNodeList("bills/bill", xmlCommittee);
                 for (int k=0; k < xmlBills.getLength(); k++) {
                     Node xmlBill = xmlBills.item(k);
-                    String billno = xpath.evaluate("@no", xmlBill);
-                    String sponsor = xpath.evaluate("sponsor/text()", xmlBill);
-                    Bill bill = getOrCreateBill(storage, billno, sessYr, sponsor);
+                    String billno = xml.getString("@no", xmlBill);
+                    String sponsor = xml.getString("sponsor/text()", xmlBill);
+                    String billAmendment = billno.matches("[A-Z]$") ? billno.substring(billno.length()-1) : "";
+                    Bill bill = getOrCreateBill(storage, billno, billAmendment, sessYr, sponsor, modifiedDate);
 
-                    String billActionId = xpath.evaluate("action/text()", xmlBill);
+                    String billActionId = xml.getString("action/text()", xmlBill);
                     VoteAction billAction = VoteAction.valueOf(billActionId);
-                    String referCommittee = xpath.evaluate("referCommittee/text()", xmlBill);
-                    String withAmd = xpath.evaluate("withamd/text()", xmlBill);
-                    MeetingItem item = new MeetingItem(bill, billAction, referCommittee, withAmd.equalsIgnoreCase("Y"));
+                    String referCommittee = xml.getString("referCommittee/text()", xmlBill);
+                    String withAmd = xml.getString("withamd/text()", xmlBill);
+                    AgendaVoteCommitteeItem item = new AgendaVoteCommitteeItem(bill, billAmendment, billAction, referCommittee, withAmd.equalsIgnoreCase("Y"));
 
-                    NodeList xmlVotes = (NodeList)xpath.evaluate("votes/member", xmlBill, XPathConstants.NODESET);
+                    NodeList xmlVotes = xml.getNodeList("votes/member", xmlBill);
                     for (int v=0; v < xmlVotes.getLength(); v++) {
                         Node xmlVote = xmlVotes.item(v);
-                        String voterName = xpath.evaluate("name/text()", xmlVote);
-                        String voterRank = xpath.evaluate("rank/text()", xmlVote);
-                        String voterVote = xpath.evaluate("vote/text()", xmlVote);
-                        String voterParty = xpath.evaluate("party/text()", xmlVote);
-                        MeetingVote vote = new MeetingVote(voterName, voterRank, voterParty, voterVote);
-                        item.getVotes().add(vote);
+                        String voterName = xml.getString("name/text()", xmlVote);
+                        String voterRank = xml.getString("rank/text()", xmlVote);
+                        String voterVote = xml.getString("vote/text()", xmlVote);
+                        String voterParty = xml.getString("party/text()", xmlVote);
+                        AgendaVoteCommitteeVote vote = new AgendaVoteCommitteeVote(voterName, voterRank, voterParty, voterVote);
+                        item.addVote(vote);
                     }
 
-                    committee.items.put(billno, item);
+                    committee.putItem(item);
                 }
-                addendum.committees.put(name, committee);
+                addendum.putCommittee(committee);
             }
         }
     }
 
-    private Bill getOrCreateBill(Storage storage, String printNo, int year, String sponsorName) {
+    private Bill getOrCreateBill(Storage storage, String printNo, String billAmendment, int year, String sponsorName, Date modifiedDate) {
         String[] sponsors = {""};
         if (sponsorName != null) {
             sponsors = sponsorName.trim().split(",");
@@ -267,14 +238,13 @@ public class SenagendaProcessor
         // they won't. Instead of breaking the processing, create a new bill using the bill processor.
         BillProcessor processor = new BillProcessor();
         SOBIBlock mockBlock = new SOBIBlock(year+printNo+(printNo.matches("[A-Z]$") ? "" : " ")+1+"     ");
-        Bill bill = processor.getOrCreateBill(mockBlock, modifiedDate, storage);
+        Bill bill = processor.getOrCreateBaseBill(mockBlock, modifiedDate, storage);
         bill.setSponsor(new Person(sponsors[0].trim()));
 
         // It must be published if it is on the agenda
         if (!bill.isPublished()) {
             bill.setPublishDate(modifiedDate);
-            bill.setActive(true);
-            processor.saveBill(bill, storage);
+            processor.saveBill(bill, billAmendment, storage);
         }
 
         // Other sponsors are removed when a calendar/agenda is resent without
@@ -286,7 +256,7 @@ public class SenagendaProcessor
 
         if (!bill.getOtherSponsors().equals(otherSponsors)) {
             bill.setOtherSponsors(otherSponsors);
-            new BillProcessor().saveBill(bill, storage);
+            new BillProcessor().saveBill(bill, billAmendment, storage);
         }
 
         return bill;

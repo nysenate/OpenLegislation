@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.services;
 
 import gov.nysenate.openleg.lucene.DocumentBuilder;
-import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
@@ -65,7 +65,7 @@ public class Lucene extends ServiceBase
                             Bill bill = (Bill)obj;
 
                             lucene.deleteDocumentsByQuery("otype:action AND billno:" + bill.getBillId());
-                            for(Action billEvent:bill.getActions()) {
+                            for(BillAction billEvent:bill.getActions()) {
                                 try {
                                     billEvent.setBill(bill);
                                     lucene.updateDocument(DocumentBuilder.build(billEvent));

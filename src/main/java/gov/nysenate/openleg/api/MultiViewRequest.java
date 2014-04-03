@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
-import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
@@ -123,7 +123,7 @@ public class MultiViewRequest extends AbstractApiRequest {
         CALENDARS	("calendars", 	Calendar.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
         TRANSCRIPTS	("transcripts", Transcript.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
         VOTES		("votes", 		Vote.class, 		new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"}),
-        ACTIONS		("actions", 	Action.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"});
+        ACTIONS		("actions", 	BillAction.class, 	new String[] {"html", "json", "jsonp", "xml", "rss", "csv", "html-list"});
 
         public final String view;
         public final Class<? extends BaseObject> clazz;

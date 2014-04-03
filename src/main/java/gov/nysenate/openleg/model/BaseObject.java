@@ -6,23 +6,17 @@ import java.util.HashSet;
 /**
  * Implements the BaseObject interface of all published OpenLegislation content.
  *
- * Does NOT implement getOid(). All base classes are responsible for forming their
- * own unique object IDs.
+ * Does NOT implement getOid() or getOType(). All base classes are responsible for forming their
+ * own unique object IDs and object types.
  *
  * @author GraylinKim
  */
-abstract public class BaseObject implements IBaseObject
+abstract public class BaseObject
 {
     /**
      * True if the object was not retrieved from storage.
      */
     protected boolean brandNew = true;
-
-    /**
-     * The current active status of the object. Inactive objects will
-     * generally be excluded from basic searches.
-     */
-    protected boolean active = true;
 
     /**
      * The date the object was most recently modified
@@ -58,6 +52,16 @@ abstract public class BaseObject implements IBaseObject
     }
 
     /**
+     * Get the unique id for this object for Lucene/web indexing and purging.
+     */
+    abstract public String getOid();
+
+    /**
+     * Get the document type for this object.
+     */
+    abstract public String getOtype();
+
+    /**
      * @return - True if the object was not retrieved from storage.
      */
     public boolean isBrandNew() {
@@ -69,22 +73,6 @@ abstract public class BaseObject implements IBaseObject
      */
     public void setBrandNew(boolean brandNew) {
         this.brandNew = brandNew;
-    }
-
-    /**
-     * @return The current active status.
-     */
-    public boolean isActive()
-    {
-        return this.active;
-    }
-
-    /**
-     * @param active - The new active status
-     */
-    public void setActive(boolean active)
-    {
-        this.active = active;
     }
 
     /**

@@ -19,7 +19,6 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -152,6 +151,7 @@ public class DataProcessor
         File agendaDir = safeGetFolder(workDir, "agendas");
         File agendaVoteDir = safeGetFolder(workDir, "agendavotes");
         File calendarDir = safeGetFolder(workDir, "calendars");
+        File activeListDir = safeGetFolder(workDir, "calendaractives");
         File committeeDir = safeGetFolder(workDir, "committees");
         File annotationDir = safeGetFolder(workDir, "annotations");
 
@@ -162,7 +162,13 @@ public class DataProcessor
             BufferedReader br = new BufferedReader(new StringReader(FileUtils.readFileToString(sobiFile, encoding)));
 
             while((line = br.readLine()) != null) {
-                if(line.matches("<sencalendar.+")) {
+                if(line.matches("<sencalendaractive.+")) {
+                    // Extract calendars and active lists
+                    File activeListFile = new File(activeListDir, sobiFile.getName()+"-calendaractive-"+(fileCounter++)+".xml");
+                    logger.info("Extracting calendaractive: "+activeListFile);
+                    extractXml("</sencalendaractive.+", line, br, activeListFile);
+                }
+                else if(line.matches("<sencalendar.+")) {
                     // Extract calendars and active lists
                     File calendarFile = new File(calendarDir, sobiFile.getName()+"-calendar-"+(fileCounter++)+".xml");
                     logger.info("Extracting calendar: "+calendarFile);
@@ -223,7 +229,7 @@ public class DataProcessor
     {
         BillProcessor billProcessor = new BillProcessor();
         SenagendaProcessor agendaProcessor = new SenagendaProcessor();
-        CalendarProcessor calendarProcessor = new CalendarProcessor();
+        SencalendarProcessor calendarProcessor = new SencalendarProcessor();
         TranscriptProcessor transcriptProcessor = new TranscriptProcessor();
 
         for (File file : getSortedFiles(workingDir, true)) {
@@ -233,10 +239,12 @@ public class DataProcessor
                 if (type.equals("bills")) {
                     billProcessor.process(file, storage);
                 } else if (type.equals("calendars")) {
-                    calendarProcessor.process(file, storage);
+                    calendarProcessor.processSencalendar(file, storage);
+                } else if (type.equals("calendaractives")) {
+                    calendarProcessor.processSencalendarActive(file, storage);
                 } else if (type.equals("agendas")) {
                     agendaProcessor.processSenagenda(file, storage);
-                } else if (type.equals("agendas")) {
+                } else if (type.equals("agendavotes")) {
                     agendaProcessor.processSenagendaVote(file, storage);
                 } else if (type.equals("annotations")) {
                     continue; // we don't process or receive these anymore
@@ -259,8 +267,6 @@ public class DataProcessor
             }
             catch (IOException e) {
                 logger.error("IO issue with "+file.getName(), e);
-            } catch (JAXBException e) {
-                logger.error("XML issue with "+file.getName(), e);
             }
             catch (XPathExpressionException e) {
                 logger.error("Xpath issue with "+file.getName(), e);

@@ -1,217 +1,114 @@
 package gov.nysenate.openleg.model;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.TreeMap;
 
-/**
- *
- * @author Graylin Kim
- */
 public class Calendar extends BaseObject
 {
-    /**
-     * The calendar year for the calendar.
-     */
-    protected int year;
+    private Integer number;
+    private Integer session;
+    private Integer year;
+    private TreeMap<String, CalendarSupplemental> supplementals;
+    private LinkedHashMap<Integer, CalendarActiveList> activeLists;
 
-    /**
-     * The type of calendar, active list or floor.
-     */
-    protected String type;
-
-    /**
-     * The session base year for the calendar.
-     */
-    protected int session;
-
-    /**
-     * The number for the calendar in this calendar year.
-     */
-    protected int no;
-
-    /**
-     * The list of supplementals for this calendar.
-     */
-    protected List<Supplemental> supplementals;
-
-    /**
-     * The unique object id.
-     */
-    protected String oid;
-
-    /**
-     * JavaBean Constructor
-     */
     public Calendar()
     {
-        super();
-        supplementals = new ArrayList<Supplemental>();
+        this.setSupplementals(new TreeMap<String, CalendarSupplemental>());
+        this.setActiveLists(new LinkedHashMap<Integer, CalendarActiveList>());
     }
 
-    /**
-     * Fully constructs a calendar object.
-     * @param no
-     * @param session
-     * @param year
-     * @param type
-     */
-    public Calendar(int no, int session, int year, String type)
+    public Calendar(Integer number, Integer session, Integer year)
     {
-        this();
-        this.setNo(no);
+        super();
+        this.setNumber(number);
         this.setSession(session);
         this.setYear(year);
-        this.setType(type);
-        this.setOid("cal-"+type+"-"+no+"-"+year);
     }
 
-    /**
-     * The object type of the calendar.
-     */
-    public String getOtype()
-    {
-        return "calendar";
-    }
-
-    /**
-     * @return - This calendar's unique object id.
-     */
+    @Override
     public String getOid()
     {
-        return oid;
+        return "senagenda-"+this.session+"-"+this.year;
     }
 
-    /**
-     *
-     * @return
-     */
-    public void setOid(String oid)
+    @Override
+    public String getOtype()
     {
-        this.oid = oid;
+        // TODO Auto-generated method stub
+        return "sencalendar";
     }
 
-    /**
-     * @return - The calendar number of this object.
-     */
-    public int getNo()
+    public Integer getNumber()
     {
-        return no;
+        return number;
     }
 
-    /**
-     * @param no - The new calendar number for this object.
-     */
-    public void setNo(int no)
+    public void setNumber(Integer number)
     {
-        this.no = no;
+        this.number = number;
     }
 
-    /**
-     * @return - The calendar year for this object.
-     */
-    public int getYear()
+    public LinkedHashMap<Integer, CalendarActiveList> getActiveLists()
     {
-        return year;
+        return activeLists;
     }
 
-    /**
-     * @param year - The new calendar year for this object.
-     */
-    public void setYear(int year)
+    public void setActiveLists(LinkedHashMap<Integer, CalendarActiveList> activeLists)
     {
-        this.year = year;
+        this.activeLists = activeLists;
     }
 
-    /**
-     * @return - The current calendar type. One of "active" or "floor".
-     */
-    public String getType()
+    public CalendarActiveList getActiveList(String id)
     {
-        return type;
+        return this.activeLists.get(id);
     }
 
-    /**
-     * @param type - The new calendar type. One of "active" or "floor".
-     */
-    public void setType(String type)
+    public void putActiveList(CalendarActiveList activeList)
     {
-        this.type = type;
+        this.activeLists.put(activeList.getId(), activeList);
     }
 
-    /**
-     * @return - The current list of supplementals.
-     */
-    public List<Supplemental> getSupplementals()
+    public void removeActiveList(Integer id)
+    {
+        this.activeLists.remove(id);
+    }
+
+    public TreeMap<String, CalendarSupplemental> getSupplementals()
     {
         return supplementals;
     }
 
-    /**
-     * @param supplementals - The new list of supplementals.
-     */
-    public void setSupplementals(List<Supplemental> supplementals)
+    public void setSupplementals(TreeMap<String, CalendarSupplemental> supplementals)
     {
         this.supplementals = supplementals;
     }
 
-    /**
-     * @param supplemental - The supplemental to add to our list of supplementals. Replaces previous versions of this supplemental.
-     */
-    public void addSupplemental(Supplemental supplemental)
+    public CalendarSupplemental getSupplemental(String id)
     {
-        if(supplementals ==  null) {
-            supplementals = new ArrayList<Supplemental>();
-        }
-
-        int index = -1;
-        if((index = supplementals.indexOf(supplemental)) != -1) {
-            supplementals.remove(index);
-        }
-        supplementals.add(supplemental);
+        return this.supplementals.get(id);
     }
 
-    /**
-     * @return - The calendar date as described by the supplementals.
-     */
-    public Date getDate()
+    public void putSupplemental(CalendarSupplemental supplemental)
     {
-        if (this.getType().equals("active")) {
-            if (this.getSupplementals() != null && this.getSupplementals().size() != 0 && this.getSupplementals().get(0).getSequences() != null && this.getSupplementals().get(0).getSequences().size() != 0 && this.getSupplementals().get(0).getSequences().get(0).getActCalDate() != null) {
-                return this.getSupplementals().get(0).getSequences().get(0).getActCalDate();
-            }
-            else {
-                return null;
-            }
+        this.supplementals.put(supplemental.getId(), supplemental);
+    }
+
+    public void removeSupplemental(String id)
+    {
+        this.supplementals.remove(id);
+    }
+
+    public Date getCalDate()
+    {
+        if (this.supplementals.size() > 0) {
+            return this.supplementals.values().iterator().next().getCalDate();
+        }
+        else if (this.activeLists.size() > 0) {
+            return this.activeLists.values().iterator().next().getCalDate();
         }
         else {
-            if (this.getSupplementals() != null && this.getSupplementals().size() != 0 && this.getSupplementals().get(0).getCalendarDate() != null) {
-                return this.getSupplementals().get(0).getCalendarDate();
-            }
-            else {
-                return null;
-            }
-        }
-    }
-
-    /**
-     * @return - The calendar title
-     */
-    public String getTitle()
-    {
-        return this.getNo()+" - "+this.getType()+" - "+DateFormat.getDateInstance(DateFormat.MEDIUM).format(this.getDate());
-    }
-
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (obj != null && obj instanceof Calendar) {
-            Calendar other = (Calendar)obj;
-            return other.getOid().equals(this.getOid());
-        }
-        else {
-            return false;
+            return null;
         }
     }
 }

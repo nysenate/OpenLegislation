@@ -88,16 +88,17 @@ pageTitle += ": "+StringUtils.join(sectionLinks, ", ");
 	                    <% } %>
                     </div>
                     <div id="sequence-<%=sequence.getNo()%>-bills" class="billSummary">
-                    <% for (CalendarEntry entry : sequence.getCalendarEntries()) {
-                        Bill bill = entry.getBill();
-                        Bill subBill = entry.getSubBill();
+                    <%
+                        for (CalendarSectionEntry entry : sequence.getCalendarEntries()) {
+                                    Bill bill = entry.getBill();
+                                    Bill subBill = entry.getSubBill();
 
-                        // Just to be safe, this shouldn't ever happen
-                        if (bill == null) continue;
-                        %>
+                                    // Just to be safe, this shouldn't ever happen
+                                    if (bill == null) continue;
+                    %>
                         <div class="row">
-                            <a id="cal<%=entry.getNo()%>" href="#cal<%=entry.getNo()%>" class="anchor ui-icon ui-icon-link"></a>
-                            <span style="color:#777777; font-size:0.85em;">#<%=entry.getNo()%>: </span>
+                            <a id="cal<%=entry.getNumber()%>" href="#cal<%=entry.getNumber()%>" class="anchor ui-icon ui-icon-link"></a>
+                            <span style="color:#777777; font-size:0.85em;">#<%=entry.getNumber()%>: </span>
 	                        <%
                             if (bill.isResolution()) {
                                 %> Resolution <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getBillId()%></a><%

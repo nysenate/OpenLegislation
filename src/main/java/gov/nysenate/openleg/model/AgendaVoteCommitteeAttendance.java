@@ -1,18 +1,18 @@
 package gov.nysenate.openleg.model;
 
-public class MeetingAttendance
+public class AgendaVoteCommitteeAttendance
 {
     String name;
     String rank;
     String party;
     String attendance;
 
-    public MeetingAttendance()
+    public AgendaVoteCommitteeAttendance()
     {
 
     }
 
-    public MeetingAttendance(String name, String rank, String party, String attendance)
+    public AgendaVoteCommitteeAttendance(String name, String rank, String party, String attendance)
     {
         super();
         this.name = name;

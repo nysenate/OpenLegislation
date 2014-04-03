@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.lucene;
 
+import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.IBaseObject;
 import gov.nysenate.openleg.model.Result;
 import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.util.ResultIterator;
@@ -303,7 +303,7 @@ public class Lucene
         return response;
     }
 
-    public IBaseObject getSenateObject(String oid, String type) {
+    public BaseObject getSenateObject(String oid, String type) {
         oid = oid.replace(" ", "-").replace(",", "");
         ResultIterator longSearch = new ResultIterator("otype:"+type+" AND oid:\""+oid+"\"", 1, 1, "oid", true);
         for(Result result:longSearch) {
@@ -313,7 +313,7 @@ public class Lucene
     }
 
     @SuppressWarnings("unchecked") // Doesn't seem to be a way to properly type check here
-    public <T extends IBaseObject> ArrayList<T> getSenateObjects(String query) {
+    public <T extends BaseObject> ArrayList<T> getSenateObjects(String query) {
         ArrayList<T> senateObjects = new ArrayList<T>();
 
         ResultIterator longSearch = new ResultIterator(query);

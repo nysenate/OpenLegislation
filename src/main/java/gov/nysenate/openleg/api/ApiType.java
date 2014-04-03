@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.api;
 
-import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
@@ -11,7 +11,7 @@ public enum ApiType {
     BILL		("bill", 		Bill.class),
     CALENDAR	("calendar", 	Calendar.class),
     TRANSCRIPT	("transcript", 	Transcript.class),
-    ACTION		("action", 		Action.class),
+    ACTION		("action", 		BillAction.class),
     VOTE		("vote", 		Vote.class);
 
     private String type;

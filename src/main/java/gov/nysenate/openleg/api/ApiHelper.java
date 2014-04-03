@@ -1,15 +1,12 @@
 package gov.nysenate.openleg.api;
 
 import gov.nysenate.openleg.api.QueryBuilder.QueryBuilderException;
-import gov.nysenate.openleg.model.Action;
+import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.Result;
-import gov.nysenate.openleg.model.Section;
 import gov.nysenate.openleg.model.SenateResponse;
-import gov.nysenate.openleg.model.Sequence;
-import gov.nysenate.openleg.model.Supplemental;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
 import gov.nysenate.openleg.util.OpenLegConstants;
@@ -20,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,7 +71,6 @@ public class ApiHelper implements OpenLegConstants {
                     continue;
 
                 resultObj.setModifiedDate(new Date(result.getLastModified()));
-                resultObj.setActive(result.isActive());
 
                 String title = "";
                 String summary = "";
@@ -110,45 +105,45 @@ public class ApiHelper implements OpenLegConstants {
                 } else if (type.equals("calendar")) {
                     Calendar calendar = (Calendar) resultObj;
 
-                    title = calendar.getNo() + "-" + calendar.getYear();
-
-                    if (calendar.getType() == null)
-                        fields.put("type", "");
-                    else if (calendar.getType().equals("active"))
-                        fields.put("type", "Active List");
-                    else if (calendar.getType().equals("floor"))
-                        fields.put("type", "Floor Calendar");
-                    else
-                        fields.put("type", calendar.getType());
-
-                    Supplemental supp = calendar.getSupplementals().get(0);
-
-                    if (supp.getCalendarDate() != null) {
-                        fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getCalendarDate()));
-
-                        summary = "";
-
-                        if (supp.getSections() != null) {
-                            Iterator<Section> itSections = supp.getSections()
-                                    .iterator();
-                            while (itSections.hasNext()) {
-                                Section section = itSections.next();
-
-                                summary += section.getName() + ": ";
-                                summary += section.getCalendarEntries().size() + " items;";
-                            }
-                        }
-                    } else if (supp.getSequences() != null && supp.getSequences().size() > 0) {
-
-                        fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getSequences().get(0).getActCalDate()));
-
-                        int total = 0;
-                        for(Sequence seq:supp.getSequences()) {
-                            total += seq.getCalendarEntries().size();
-                        }
-                        summary = total + " item(s)";
-
-                    }
+//                    title = calendar.getNo() + "-" + calendar.getYear();
+//
+//                    if (calendar.getType() == null)
+//                        fields.put("type", "");
+//                    else if (calendar.getType().equals("active"))
+//                        fields.put("type", "Active List");
+//                    else if (calendar.getType().equals("floor"))
+//                        fields.put("type", "Floor Calendar");
+//                    else
+//                        fields.put("type", calendar.getType());
+//
+//                    Supplemental supp = calendar.getSupplementals().get(0);
+//
+//                    if (supp.getCalendarDate() != null) {
+//                        fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getCalendarDate()));
+//
+//                        summary = "";
+//
+//                        if (supp.getSections() != null) {
+//                            Iterator<Section> itSections = supp.getSections()
+//                                    .iterator();
+//                            while (itSections.hasNext()) {
+//                                Section section = itSections.next();
+//
+//                                summary += section.getName() + ": ";
+//                                summary += section.getCalendarEntries().size() + " items;";
+//                            }
+//                        }
+//                    } else if (supp.getSequences() != null && supp.getSequences().size() > 0) {
+//
+//                        fields.put("date", DATE_FORMAT_CUSTOM.format(supp.getSequences().get(0).getActCalDate()));
+//
+//                        int total = 0;
+//                        for(Sequence seq:supp.getSequences()) {
+//                            total += seq.getCalendarEntries().size();
+//                        }
+//                        summary = total + " item(s)";
+//
+//                    }
                 } else if (type.equals("transcript")) {
                     Transcript transcript = (Transcript) resultObj;
 
@@ -162,7 +157,7 @@ public class ApiHelper implements OpenLegConstants {
                     fields.put("location", transcript.getLocation());
 
                 } else if (type.equals("action")) {
-                    Action billEvent = (Action) resultObj;
+                    BillAction billEvent = (BillAction) resultObj;
                     String billId = billEvent.getBill().getBillId();
 
                     title = billEvent.getText();

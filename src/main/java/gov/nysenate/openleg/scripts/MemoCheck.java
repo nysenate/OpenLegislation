@@ -45,7 +45,7 @@ public class MemoCheck extends BaseScript
             String billNo = block.getPrintNo()+block.getAmendment()+"-"+block.getYear();
             Bill jsonBill = storage.getBill(block.getPrintNo()+block.getAmendment(), block.getYear());
             Bill lbdcBill = new Bill(billNo, block.getYear());
-            bp.applyText(block.getData(), lbdcBill, new Date());
+            bp.applyText(block.getData(), lbdcBill, "", new Date());
 
             String jsonMemo = StringUtils.normalizeSpace(jsonBill.getMemo().replaceAll("[?�]","§").replaceAll("-\n+ *", "").replaceAll("\n *", " ").replaceAll(" *([:,]) *", "$1").replaceAll(" *([()!\\\"]) *", " $1 ").replaceAll("([A-Za-z])- ?([A-Za-z])","$1$2").trim()).toLowerCase();
             String lbdcMemo = StringUtils.normalizeSpace(lbdcBill.getMemo().replaceAll("[?�]","§").replaceAll("-\n+ *", "").replaceAll("\n *", " ").replaceAll(" *([:,]) *", "$1").replaceAll(" *([()!\\\"]) *", " $1 ").replaceAll("([A-Za-z])- ?([A-Za-z])","$1$2").trim()).toLowerCase();
