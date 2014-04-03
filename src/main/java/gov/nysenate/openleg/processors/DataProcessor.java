@@ -3,28 +3,23 @@ package gov.nysenate.openleg.processors;
 import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.services.ServiceBase;
 import gov.nysenate.openleg.util.Storage;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.*;
+import org.apache.log4j.Logger;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-import org.xml.sax.SAXException;
 
 /**
  * Contains an implementation for each step of the Open Legislation data processing pipeline.
@@ -74,7 +69,7 @@ public class DataProcessor
 
     /**
      * Any directory that we attempt to list files from should exist. If it doesn't then
-     * make it so. This makes the processes robust against incomplete environment setups.
+     * create them. This makes the processes robust against incomplete environment setups.
      *
      * @param directory - The directory to list files from (and create if necessary)
      * @param extensions - A list of extensions to grab. null for all extensions.
@@ -86,6 +81,34 @@ public class DataProcessor
     {
         FileUtils.forceMkdir(directory);
         return FileUtils.listFiles(directory, extensions, recursive);
+    }
+
+    /**
+     * Any directory that we attempt to list files from should exist. If it doesn't then
+     * create them. This overload can be used to exclude certain directories if recursive is true.
+     *
+     * @param directory - The directory to list files from (and create if necessary)
+     * @param recursive - true when you want to list files recursively.
+     * @param excludeDirs - Array of directory names that should be excluded from the match.
+     *                      Set to null if all directories should be matched.
+     * @return A collection of matching filenames
+     * @throws IOException
+     */
+    public Collection<File> safeListFiles(File directory, boolean recursive, String[] excludeDirs) throws IOException
+    {
+        FileUtils.forceMkdir(directory);
+        IOFileFilter dirFileFilter;
+        if (excludeDirs != null && excludeDirs.length > 0) {
+            List<IOFileFilter> excludeDirFilters = new ArrayList<>();
+            for (String excludeDir : excludeDirs) {
+                excludeDirFilters.add(FileFilterUtils.nameFileFilter(excludeDir));
+            }
+            dirFileFilter = FileFilterUtils.notFileFilter(new OrFileFilter(excludeDirFilters));
+        }
+        else {
+            dirFileFilter = (recursive) ? TrueFileFilter.TRUE : FalseFileFilter.FALSE;
+        }
+        return FileUtils.listFiles(directory, TrueFileFilter.TRUE, dirFileFilter);
     }
 
     /**
@@ -232,7 +255,7 @@ public class DataProcessor
         SencalendarProcessor calendarProcessor = new SencalendarProcessor();
         TranscriptProcessor transcriptProcessor = new TranscriptProcessor();
 
-        for (File file : getSortedFiles(workingDir, true)) {
+        for (File file : getSortedFiles(workingDir, true, new String[] {"sobis"})) {
             try {
                 logger.info("Working on: "+file);
                 String type = file.getParentFile().getName();
@@ -378,8 +401,8 @@ public class DataProcessor
      * @return
      * @throws IOException
      */
-    protected Collection<File> getSortedFiles(File directory, boolean recursive) throws IOException {
-        Collection<File> files = safeListFiles(directory, null, recursive);
+    protected Collection<File> getSortedFiles(File directory, boolean recursive, String[] excludeDirs) throws IOException {
+        Collection<File> files = safeListFiles(directory, recursive, excludeDirs);
         Collections.sort((List<File>)files, new Comparator<File>(){
             public int compare(File a, File b) {
                 return a.getName().compareTo(b.getName());
