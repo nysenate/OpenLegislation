@@ -93,25 +93,25 @@ if (calendar.getDate() != null) {
                 
                 <div id="<%=sectionId%>-bills" class="billSummary calendar-bills">
                 <%
-                    for (CalendarSectionEntry entry : section.getCalendarEntries()) {
-                            Bill bill = entry.getBill();
-                            Bill subBill = entry.getSubBill();
+                    for (CalendarSupplementalSectionEntry entry : section.getCalendarEntries()) {
+                                    Bill bill = entry.getBill();
+                                    Bill subBill = entry.getSubBill();
 
-                            // Just to be safe, this shouldn't ever happen
-                            if (bill == null) continue;
+                                    // Just to be safe, this shouldn't ever happen
+                                    if (bill == null) continue;
                 %>
                     <div class="row">
-                        <a id="cal<%=entry.getNumber()%>" href="#cal<%=entry.getNumber()%>" class="anchor ui-icon ui-icon-link"></a>
-                        <span style="color:#777777; font-size:0.85em;">#<%=entry.getNumber()%>: </span>
+                        <a id="cal<%=entry.getCalendarNumber()%>" href="#cal<%=entry.getCalendarNumber()%>" class="anchor ui-icon ui-icon-link"></a>
+                        <span style="color:#777777; font-size:0.85em;">#<%=entry.getCalendarNumber()%>: </span>
                         <%
                         if (bill.isResolution()) {
                             %> Resolution <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getBillId()%></a><%
                             } else {
                         %> Bill <a href="<%=JSPHelper.getLink(request, bill)%>"><%=bill.getBillId()%></a><%
-                        }
+                            }
 
-                        if (entry.getBillHigh() != null && entry.getBillHigh().equals("true")) {
-                            %><span class="calendar-high" title="HIGH bills have not yet aged the normal 3 days."> HIGH </span><%
+                                        if (entry.isBillHigh() != null && entry.isBillHigh().equals("true")) {
+                        %><span class="calendar-high" title="HIGH bills have not yet aged the normal 3 days."> HIGH </span><%
                         }
                         %>
                         <br/>

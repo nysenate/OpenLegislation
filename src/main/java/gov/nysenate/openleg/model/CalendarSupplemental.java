@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model;
 
+import gov.nysenate.openleg.util.DateHelper;
+
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -8,21 +10,25 @@ public class CalendarSupplemental extends BaseObject
     private String id;
     private Date calDate;
     private Date releaseDateTime;
-    private LinkedHashMap<Integer, CalendarSection> sections;
+    private LinkedHashMap<Integer, CalendarSupplementalSection> sections;
+
+    public CalendarSupplemental()
+    {
+        this.setSections(new LinkedHashMap<Integer, CalendarSupplementalSection>());
+    }
 
     public CalendarSupplemental(String id, Date calDate, Date releaseDateTime)
     {
+        super();
         this.setId(id);
         this.setCalDate(calDate);
         this.setReleaseDateTime(releaseDateTime);
-        this.setSections(new LinkedHashMap<Integer, CalendarSection>());
     }
 
     @Override
     public String getOid()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return this.getOtype()+"-"+DateHelper.LRS_DATE_ONLY_FORMAT.format(this.getCalDate())+"-"+this.getId();
     }
 
     @Override
@@ -61,22 +67,22 @@ public class CalendarSupplemental extends BaseObject
         this.releaseDateTime = releaseDateTime;
     }
 
-    public LinkedHashMap<Integer, CalendarSection> getSections()
+    public LinkedHashMap<Integer, CalendarSupplementalSection> getSections()
     {
         return sections;
     }
 
-    public void setSections(LinkedHashMap<Integer, CalendarSection> sections)
+    public void setSections(LinkedHashMap<Integer, CalendarSupplementalSection> sections)
     {
         this.sections = sections;
     }
 
-    public CalendarSection getSection(Integer cd)
+    public CalendarSupplementalSection getSection(Integer cd)
     {
         return this.sections.get(cd);
     }
 
-    public void putSection(CalendarSection section)
+    public void putSection(CalendarSupplementalSection section)
     {
         this.sections.put(section.getCd(), section);
     }

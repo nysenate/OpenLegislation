@@ -8,7 +8,6 @@ public class AgendaInfoAddendum extends BaseObject
 {
     private String id;
     private Date weekOf;
-    private Date pubDate;
     private Integer agendaNumber;
     private Map<String, AgendaInfoCommittee> committees;
 
@@ -22,7 +21,7 @@ public class AgendaInfoAddendum extends BaseObject
         super();
         this.setId(id);
         this.setWeekOf(weekOf);
-        this.setPubDate(pubDate);
+        this.setPublishDate(pubDate);
     }
 
     public String getId()
@@ -43,16 +42,6 @@ public class AgendaInfoAddendum extends BaseObject
     public void setWeekOf(Date weekOf)
     {
         this.weekOf = weekOf;
-    }
-
-    public Date getPubDate()
-    {
-        return pubDate;
-    }
-
-    public void setPubDate(Date pubDate)
-    {
-        this.pubDate = pubDate;
     }
 
     public Map<String, AgendaInfoCommittee> getCommittees()
@@ -83,14 +72,13 @@ public class AgendaInfoAddendum extends BaseObject
     @Override
     public String getOid()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return this.getOtype()+"-"+this.getYear()+"-"+this.getAgendaNumber()+this.getId();
     }
 
     @Override
     public String getOtype()
     {
-        return "agendainfo";
+        return "agenda-info";
     }
 
     public Integer getAgendaNumber()

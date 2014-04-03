@@ -24,7 +24,7 @@ public class Agenda extends BaseObject
 
     public Agenda()
     {
-        this.setAgendaAddendum(new TreeMap<String, AgendaInfoAddendum>());
+        this.setAgendaInfoAddendum(new TreeMap<String, AgendaInfoAddendum>());
         this.setAgendaVoteAddendum(new TreeMap<String, AgendaVoteAddendum>());
     }
 
@@ -48,7 +48,7 @@ public class Agenda extends BaseObject
 
     public String getOid()
     {
-        return "agenda-"+this.session+"-"+this.year;
+        return this.getOtype()+"-"+this.getYear()+"-"+this.getNumber();
     }
 
     public boolean equals(Object obj)
@@ -89,12 +89,12 @@ public class Agenda extends BaseObject
         this.agendaVoteAddendum.remove(id);
     }
 
-    public Map<String, AgendaInfoAddendum> getAgendaAddendum()
+    public Map<String, AgendaInfoAddendum> getAgendaInfoAddendum()
     {
         return agendaInfoAddendum;
     }
 
-    public void setAgendaAddendum(Map<String, AgendaInfoAddendum> agendaAddendum)
+    public void setAgendaInfoAddendum(Map<String, AgendaInfoAddendum> agendaAddendum)
     {
         this.agendaInfoAddendum = agendaAddendum;
     }

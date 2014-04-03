@@ -7,8 +7,6 @@ import java.util.TreeMap;
 public class Calendar extends BaseObject
 {
     private Integer number;
-    private Integer session;
-    private Integer year;
     private TreeMap<String, CalendarSupplemental> supplementals;
     private LinkedHashMap<Integer, CalendarActiveList> activeLists;
 
@@ -29,14 +27,13 @@ public class Calendar extends BaseObject
     @Override
     public String getOid()
     {
-        return "senagenda-"+this.session+"-"+this.year;
+        return "calendar-"+this.getYear()+"-"+this.getNumber();
     }
 
     @Override
     public String getOtype()
     {
-        // TODO Auto-generated method stub
-        return "sencalendar";
+        return "calendar";
     }
 
     public Integer getNumber()

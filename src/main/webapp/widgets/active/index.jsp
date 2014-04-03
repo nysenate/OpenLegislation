@@ -62,11 +62,11 @@
                     <h2><%=seqTitle %></h2>
                     <ul>
                     <%
-                        for (CalendarSectionEntry calEnt : seq.getCalendarEntries()) {
-                                    try {
+                        for (CalendarSupplementalSectionEntry calEnt : seq.getCalendarEntries()) {
+                                                try {
                     %>
                         <li>
-                        Cal No. <%=calEnt.getNumber()%>
+                        Cal No. <%=calEnt.getCalendarNumber()%>
                         <%
                             if (calEnt.getBill()!=null && calEnt.getBill().getBillId()!=null ) {
                         %>
@@ -80,7 +80,7 @@
                                 }
                             %>
                             <%
-                                if (calEnt.getBillHigh()!=null) {
+                                if (calEnt.isBillHigh()!=null) {
                             %>
                                 <b style="color:green">HIGH</b>
                             <%

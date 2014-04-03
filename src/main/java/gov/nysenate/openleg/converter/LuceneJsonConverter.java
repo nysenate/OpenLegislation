@@ -4,7 +4,7 @@ import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
-import gov.nysenate.openleg.model.CalendarSectionEntry;
+import gov.nysenate.openleg.model.CalendarSupplementalSectionEntry;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.model.Vote;
@@ -274,8 +274,8 @@ public class LuceneJsonConverter
         JsonArray jarray = new JsonArray();
         if(c.iterator().hasNext()) {
             Object o = c.iterator().next();
-            if(o instanceof CalendarSectionEntry) {
-                for(CalendarSectionEntry entry:(Collection<CalendarSectionEntry>)c) {
+            if(o instanceof CalendarSupplementalSectionEntry) {
+                for(CalendarSupplementalSectionEntry entry:(Collection<CalendarSupplementalSectionEntry>)c) {
                     jarray.add(converter(entry,calendar_entry_exclude()));
                 }
             }
@@ -289,8 +289,8 @@ public class LuceneJsonConverter
         JsonArray jarray = new JsonArray();
         if(c.iterator().hasNext()) {
             Object o = c.iterator().next();
-            if(o instanceof CalendarSectionEntry) {
-                for(CalendarSectionEntry entry:(Collection<CalendarSectionEntry>)c) {
+            if(o instanceof CalendarSupplementalSectionEntry) {
+                for(CalendarSupplementalSectionEntry entry:(Collection<CalendarSupplementalSectionEntry>)c) {
                     jarray.add(converter(entry,calendar_entry_exclude()));
                 }
             }

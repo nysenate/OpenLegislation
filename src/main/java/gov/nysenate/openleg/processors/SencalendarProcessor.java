@@ -4,8 +4,8 @@ import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.CalendarActiveList;
 import gov.nysenate.openleg.model.CalendarActiveListEntry;
-import gov.nysenate.openleg.model.CalendarSection;
-import gov.nysenate.openleg.model.CalendarSectionEntry;
+import gov.nysenate.openleg.model.CalendarSupplementalSection;
+import gov.nysenate.openleg.model.CalendarSupplementalSectionEntry;
 import gov.nysenate.openleg.model.CalendarSupplemental;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.SOBIBlock;
@@ -81,7 +81,7 @@ public class SencalendarProcessor
                     String name = xml.getString("@name", xmlSection);
                     String type = xml.getString("@type", xmlSection);
                     Integer cd = xml.getInteger("@cd", xmlSection);
-                    CalendarSection section = new CalendarSection(name, type, cd);
+                    CalendarSupplementalSection section = new CalendarSupplementalSection(name, type, cd);
 
                     NodeList xmlCalNos = xml.getNodeList("calnos/calno", xmlSection);
                     for (int k=0; k < xmlCalNos.getLength(); k++) {
@@ -96,7 +96,7 @@ public class SencalendarProcessor
                         String subBillAmendment = subBillNo.matches("[A-Z]$") ? subBillNo.substring(subBillNo.length()-1) : "";
                         String subBillSponsor = xml.getString("subsponsor/text()", xmlCalNo);
                         Bill subBill = this.getOrCreateBill(storage, subBillNo, subBillAmendment, year, subBillSponsor, modifiedDate);
-                        CalendarSectionEntry entry = new CalendarSectionEntry(no, bill, billAmendment, billHigh, subBill, subBillAmendment);
+                        CalendarSupplementalSectionEntry entry = new CalendarSupplementalSectionEntry(no, bill, billAmendment, billHigh, subBill, subBillAmendment);
                         section.addEntry(entry);
                     }
 

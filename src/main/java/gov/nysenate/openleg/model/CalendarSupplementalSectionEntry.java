@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.model;
 
-public class CalendarSectionEntry
+public class CalendarSupplementalSectionEntry
 {
 
     /**
      * The unique calendar number for this entry. This is the same for this entry on
      * all calendars during a calendar year.
      */
-    private Integer number = 0;
+    private Integer calendarNumber = 0;
 
     /**
      * The original bill for this calendar entry.
@@ -31,7 +31,7 @@ public class CalendarSectionEntry
     /**
      * JavaBean Constructor
      */
-    public CalendarSectionEntry()
+    public CalendarSupplementalSectionEntry()
     {
 
     }
@@ -45,9 +45,9 @@ public class CalendarSectionEntry
      * @param bill
      * @param subBill
      */
-    public CalendarSectionEntry(Integer no, Bill bill, String billAmendment, Boolean high, Bill subBill, String subBillAmendment)
+    public CalendarSupplementalSectionEntry(Integer no, Bill bill, String billAmendment, Boolean high, Bill subBill, String subBillAmendment)
     {
-        this.setNumber(no);
+        this.setCalendarNumber(no);
         this.setBillHigh(high);
         this.setBill(bill);
         this.setBillAmendment(subBillAmendment);
@@ -55,7 +55,7 @@ public class CalendarSectionEntry
         this.setSubBillAmendment(subBillAmendment);
     }
 
-    public Boolean getBillHigh()
+    public Boolean isBillHigh()
     {
         return billHigh;
     }
@@ -85,14 +85,14 @@ public class CalendarSectionEntry
         this.subBill = subBill;
     }
 
-    public Integer getNumber()
+    public Integer getCalendarNumber()
     {
-        return number;
+        return calendarNumber;
     }
 
-    public void setNumber(Integer number)
+    public void setCalendarNumber(Integer number)
     {
-        this.number = number;
+        this.calendarNumber = number;
     }
 
     public String getBillAmendment()

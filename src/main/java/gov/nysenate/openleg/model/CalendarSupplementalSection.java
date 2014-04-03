@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class CalendarSection
+public class CalendarSupplementalSection
 {
     public static enum SectionType { ORDER_OF_THE_FIRST_REPORT, ORDER_OF_THE_SECOND_REPORT, ORDER_OF_THE_SPECIAL_REPORT, THIRD_READING_FROM_SPECIAL_REPORT, THIRD_READING, STARRED_ON_THIRD_READING }
     public static Map<Integer, SectionType> SECTION_MAP = new TreeMap<Integer, SectionType>();
@@ -21,14 +21,19 @@ public class CalendarSection
     private String name;
     private String type;
     private Integer cd;
-    private List<CalendarSectionEntry> entries;
+    private List<CalendarSupplementalSectionEntry> entries;
 
-    public CalendarSection(String name, String type, Integer cd)
+    public CalendarSupplementalSection()
     {
+        this.setEntries(new ArrayList<CalendarSupplementalSectionEntry>());
+    }
+
+    public CalendarSupplementalSection(String name, String type, Integer cd)
+    {
+        super();
         this.setName(name);
         this.setType(type);
         this.setCd(cd);
-        this.setEntries(new ArrayList<CalendarSectionEntry>());
     }
 
     public String getName()
@@ -61,17 +66,17 @@ public class CalendarSection
         this.cd = cd;
     }
 
-    public List<CalendarSectionEntry> getEntries()
+    public List<CalendarSupplementalSectionEntry> getEntries()
     {
         return entries;
     }
 
-    public void setEntries(List<CalendarSectionEntry> entries)
+    public void setEntries(List<CalendarSupplementalSectionEntry> entries)
     {
         this.entries = entries;
     }
 
-    public void addEntry(CalendarSectionEntry entry)
+    public void addEntry(CalendarSupplementalSectionEntry entry)
     {
         this.entries.add(entry);
     }

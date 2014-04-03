@@ -122,7 +122,7 @@ public class SenagendaProcessor
                 addendums.put(id, addendum);
             }
             // This will override the existing set of addendums.
-            agenda.setAgendaAddendum(addendums);
+            agenda.setAgendaInfoAddendum(addendums);
 
             // Record and persist these changes
             ChangeLogger.record(key, storage);
