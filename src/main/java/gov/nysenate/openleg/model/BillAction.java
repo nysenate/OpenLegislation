@@ -32,6 +32,9 @@ public class BillAction extends BaseObject
      */
     private Bill bill = null;
 
+
+    private String billVersion;
+
     /**
      * JavaBean constructor.
      */
@@ -47,9 +50,10 @@ public class BillAction extends BaseObject
      * @param text - The text of the action
      * @param bill - The bill the action was performed on
      */
-    public BillAction(Date date, String text, Bill bill) {
+    public BillAction(Date date, String text, Bill bill, String billAmendment) {
         super();
         this.bill = bill;
+        this.setBillAmendment(billAmendment);
         this.date = date;
         this.text = text;
         this.oid = this.bill.getBillId() + "-" + this.date.getTime() + "-" + this.text;
@@ -157,5 +161,15 @@ public class BillAction extends BaseObject
     @Override
     public String toString() {
         return date.toString()+" "+text;
+    }
+
+    public String getBillAmendment()
+    {
+        return billVersion;
+    }
+
+    public void setBillAmendment(String billVersion)
+    {
+        this.billVersion = billVersion;
     }
 }

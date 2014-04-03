@@ -27,6 +27,8 @@ public class Vote extends BaseObject {
 
     private Bill bill;
 
+    private String billAmendment;
+
     private List<String> ayeswr;
 
     private String sequenceNumber;
@@ -53,7 +55,7 @@ public class Vote extends BaseObject {
         absent = new ArrayList<String>();
     }
 
-    public Vote(String billId, Date date, int type, String sequenceNumber)
+    public Vote(String billId, String billAmendment, Date date, int type, String sequenceNumber)
     {
         this();
         this.voteDate = date;
@@ -66,9 +68,9 @@ public class Vote extends BaseObject {
         this.oid = billId+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
     }
 
-    public Vote(Bill bill, Date date, int type, String sequenceNumber)
+    public Vote(Bill bill, String billAmendment, Date date, int type, String sequenceNumber)
     {
-        this(bill.getBillId(), date, type, sequenceNumber);
+        this(bill.getBillId(), billAmendment, date, type, sequenceNumber);
         this.bill = bill;
     }
 
@@ -243,5 +245,15 @@ public class Vote extends BaseObject {
     public void setSequenceNumber(String sequenceNumber)
     {
         this.sequenceNumber = sequenceNumber;
+    }
+
+    public String getBillAmendment()
+    {
+        return billAmendment;
+    }
+
+    public void setBillAmendment(String billAmendment)
+    {
+        this.billAmendment = billAmendment;
     }
 }

@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processors;
 
-import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.BillAmendment;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.SOBIBlock;
@@ -711,7 +711,7 @@ public class BillProcessor
                 //Start over if we hit a header, sometimes we get back to back entries.
                 try {
                     // Use the old vote if we can find it, otherwise make a new one using now as the publish date
-                    vote = new Vote(bill, voteDateFormat.parse(voteHeader.group(2)), Vote.VOTE_TYPE_FLOOR, "1");
+                    vote = new Vote(bill, version, voteDateFormat.parse(voteHeader.group(2)), Vote.VOTE_TYPE_FLOOR, "1");
                     vote.setPublishDate(date);
                     for (Vote oldVote : bill.getVotes(version)) {
                         if (oldVote.equals(vote)) {
@@ -926,7 +926,7 @@ public class BillProcessor
                             c.set(Calendar.SECOND, c.get(Calendar.SECOND) + 1);
                         }
                     }
-                    BillAction action = new BillAction(c.getTime(), eventText, bill);
+                    BillAction action = new BillAction(c.getTime(), eventText, bill, version);
                     action.setBill(null); // This is terribad.
                     actions.add(action);
 

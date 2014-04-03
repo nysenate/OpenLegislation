@@ -352,6 +352,7 @@ public class StorageJsonConverter
             node.put("absent", makeArrayNode(vote.getAbsent()));
             node.put("excused", makeArrayNode(vote.getExcused()));
             node.put("billId", vote.getBill().getBillId());
+            node.put("billAmendment", vote.getBillAmendment());
             node.put("year", vote.getYear());
             return node;
         }
@@ -689,8 +690,15 @@ public class StorageJsonConverter
         bill.setOtherSponsors((List<Person>)makeList(Person.class, node.get("otherSponsors")));
         bill.setPastCommittees((List<String>)makeList(String.class, node.get("pastCommittees")));
         bill.setActions((List<BillAction>)makeList(BillAction.class, node.get("actions")));
+        for (BillAction action : bill.getActions()) {
+            action.setBill(bill);
+        }
         bill.setUniBill(node.get("uniBill").asBoolean());
         for (Object obj : makeList(BillAmendment.class, node.get("amendments"))) {
+            BillAmendment amendment = (BillAmendment)obj;
+            for (Vote vote : amendment.getVotes()) {
+                vote.setBill(bill);
+            }
             bill.addAmendment((BillAmendment)obj);
         }
 
@@ -1149,6 +1157,7 @@ public class StorageJsonConverter
         else {
             Vote vote = new Vote(
                 node.get("billId").asText(),
+                node.get("billAmendment").asText(),
                 makeDate(node.get("date")),
                 node.get("voteType").asInt(),
                 node.get("sequenceNumber").asText()
