@@ -10,6 +10,7 @@ import gov.nysenate.openleg.model.AgendaVoteCommitteeAttendance;
 import gov.nysenate.openleg.model.AgendaVoteCommitteeItem;
 import gov.nysenate.openleg.model.AgendaVoteCommitteeVote;
 import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.BillAmendment;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.SOBIBlock;
 import gov.nysenate.openleg.util.Application;
@@ -60,7 +61,7 @@ public class SenagendaProcessor
         Document doc = xml.parse(file);
         Node xmlAgenda = xml.getNode("SENATEDATA/senagenda", doc);
         Integer agendaNo = xml.getInteger("@no", xmlAgenda);
-        Integer sessYr = xml.getInteger("@sessYr", xmlAgenda);
+        Integer sessYr = xml.getInteger("@sessyr", xmlAgenda);
         Integer year = xml.getInteger("@year", xmlAgenda);
         Agenda agenda = new Agenda(agendaNo, sessYr, year);
         agenda.setPublishDate(modifiedDate);
@@ -143,7 +144,7 @@ public class SenagendaProcessor
         Document doc = xml.parse(file);
         Node xmlAgendgaVote = xml.getNode("SENATEDATA/senagendavote", doc);
         Integer agendaNo = xml.getInteger("@no", xmlAgendgaVote);
-        Integer sessYr = xml.getInteger("@sessYr", xmlAgendgaVote);
+        Integer sessYr = xml.getInteger("@sessyr", xmlAgendgaVote);
         Integer year = xml.getInteger("@year", xmlAgendgaVote);
         Agenda agenda = new Agenda(agendaNo, sessYr, year);
 
@@ -205,7 +206,7 @@ public class SenagendaProcessor
                     Bill bill = getOrCreateBill(storage, billno, billAmendment, sessYr, sponsor, modifiedDate);
 
                     String billActionId = xml.getString("action/text()", xmlBill);
-                    VoteAction billAction = VoteAction.valueOf(billActionId);
+                    VoteAction billAction = VOTE_ACTION_MAP.get(billActionId);
                     String referCommittee = xml.getString("referCommittee/text()", xmlBill);
                     String withAmd = xml.getString("withamd/text()", xmlBill);
                     AgendaVoteCommitteeItem item = new AgendaVoteCommitteeItem(bill, billAmendment, billAction, referCommittee, withAmd.equalsIgnoreCase("Y"));
@@ -242,8 +243,9 @@ public class SenagendaProcessor
         bill.setSponsor(new Person(sponsors[0].trim()));
 
         // It must be published if it is on the agenda
-        if (!bill.isPublished()) {
-            bill.setPublishDate(modifiedDate);
+        BillAmendment amendment = bill.getAmendment(billAmendment);
+        if (!amendment.isPublished()) {
+            amendment.setPublishDate(modifiedDate);
             processor.saveBill(bill, billAmendment, storage);
         }
 
@@ -256,7 +258,7 @@ public class SenagendaProcessor
 
         if (!bill.getOtherSponsors().equals(otherSponsors)) {
             bill.setOtherSponsors(otherSponsors);
-            new BillProcessor().saveBill(bill, billAmendment, storage);
+            new BillProcessor().saveBill(bill, Bill.BASE_VERSION, storage);
         }
 
         return bill;

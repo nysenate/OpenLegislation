@@ -22,7 +22,7 @@ public class AgendaInfoCommittee
 
     public AgendaInfoCommittee(String name, String chair, String location, String notes, String meetDay, Date meetDate)
     {
-        super();
+        this();
         this.setName(name);
         this.setChair(chair);
         this.setLocation(location);

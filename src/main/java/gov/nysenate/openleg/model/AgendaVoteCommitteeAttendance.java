@@ -14,7 +14,7 @@ public class AgendaVoteCommitteeAttendance
 
     public AgendaVoteCommitteeAttendance(String name, String rank, String party, String attendance)
     {
-        super();
+        this();
         this.setName(name);
         this.setRank(rank);
         this.setParty(party);

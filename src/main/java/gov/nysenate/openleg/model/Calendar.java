@@ -12,13 +12,14 @@ public class Calendar extends BaseObject
 
     public Calendar()
     {
+        super();
         this.setSupplementals(new TreeMap<String, CalendarSupplemental>());
         this.setActiveLists(new LinkedHashMap<Integer, CalendarActiveList>());
     }
 
     public Calendar(Integer number, Integer session, Integer year)
     {
-        super();
+        this();
         this.setNumber(number);
         this.setSession(session);
         this.setYear(year);

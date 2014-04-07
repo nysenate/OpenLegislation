@@ -1,12 +1,13 @@
 package gov.nysenate.openleg.processors;
 
 import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.BillAmendment;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.CalendarActiveList;
 import gov.nysenate.openleg.model.CalendarActiveListEntry;
+import gov.nysenate.openleg.model.CalendarSupplemental;
 import gov.nysenate.openleg.model.CalendarSupplementalSection;
 import gov.nysenate.openleg.model.CalendarSupplementalSectionEntry;
-import gov.nysenate.openleg.model.CalendarSupplemental;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.SOBIBlock;
 import gov.nysenate.openleg.util.Application;
@@ -52,7 +53,7 @@ public class SencalendarProcessor
         Document doc = xml.parse(file);
         Node xmlCalendar = xml.getNode("SENATEDATA/sencalendar", doc);
         Integer calendarNo = xml.getInteger("@no", xmlCalendar);
-        Integer sessYr = xml.getInteger("@sessYr", xmlCalendar);
+        Integer sessYr = xml.getInteger("@sessyr", xmlCalendar);
         Integer year = xml.getInteger("@year", xmlCalendar);
         Calendar calendar = getOrCreateCalendar(calendarNo, sessYr, year, storage, modifiedDate);
         calendar.setModifiedDate(modifiedDate);
@@ -120,7 +121,7 @@ public class SencalendarProcessor
         Document doc = xml.parse(file);
         Node xmlCalendarActive = xml.getNode("SENATEDATA/sencalendaractive", doc);
         Integer calendarNo = xml.getInteger("@no", xmlCalendarActive);
-        Integer sessYr = xml.getInteger("@sessYr", xmlCalendarActive);
+        Integer sessYr = xml.getInteger("@sessyr", xmlCalendarActive);
         Integer year = xml.getInteger("@year", xmlCalendarActive);
         Calendar calendar = getOrCreateCalendar(calendarNo, sessYr, year, storage, modifiedDate);
         calendar.setModifiedDate(modifiedDate);
@@ -138,7 +139,7 @@ public class SencalendarProcessor
                 calendar.removeActiveList(id);
             }
             else {
-                Date calDate = DateHelper.getDate(xml.getString("caldate/text()", xmlSequence));
+                Date calDate = DateHelper.getDate(xml.getString("actcaldate/text()", xmlSequence));
                 Date releaseDateTime = DateHelper.getDate(xml.getString("releasedate/text()", xmlSequence)+xml.getString("releasetime/text()", xmlSequence));
                 String notes = xml.getString("notes/text()", xmlSequence);
 
@@ -169,6 +170,7 @@ public class SencalendarProcessor
         SOBIBlock mockBlock = new SOBIBlock(year+billId+(billId.matches("[A-Z]$") ? "" : " ")+1+"     ");
         Bill bill = processor.getOrCreateBaseBill(mockBlock, modifiedDate, storage);
 
+        // Active lists don't have sponsor listed, so check first!
         if (sponsorName != null) {
             String[] sponsors = sponsorName.trim().split(",");
             bill.setSponsor(new Person(sponsors[0].trim()));
@@ -186,9 +188,10 @@ public class SencalendarProcessor
             }
         }
 
-        if (!bill.isPublished()) {
-            // It must be published if it is on the calendar
-            bill.setPublishDate(modifiedDate);
+        // It must be published if it is on the calendar
+        BillAmendment amendment = bill.getAmendment(billAmendment);
+        if (!amendment.isPublished()) {
+            amendment.setPublishDate(modifiedDate);
             processor.saveBill(bill, billAmendment, storage);
         }
 

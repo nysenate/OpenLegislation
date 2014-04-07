@@ -65,7 +65,9 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /** A flag marking this bill as a uniBill with a companion bill in the other house. */
     private boolean uniBill = false;
 
-    public Bill() { super(); }
+    public Bill() {
+        super();
+    }
 
     /**
      * Constructs a minimal Bill object.
@@ -75,6 +77,7 @@ public class Bill extends BaseObject implements Comparable<Bill>
      */
     public Bill(String billId, int session)
     {
+        this();
         this.setBillId(billId);
         this.setSession(session);
         this.setYear(session);

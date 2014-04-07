@@ -21,7 +21,7 @@ public class AgendaVoteCommitteeItem
 
     public AgendaVoteCommitteeItem(Bill bill, String billAmendment, SenagendaProcessor.VoteAction action, String referCommittee, Boolean withAmd)
     {
-        super();
+        this();
         this.setBill(bill);
         this.setBillAmendment(billAmendment);
         this.setAction(action);

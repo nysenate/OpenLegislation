@@ -13,7 +13,7 @@ public class CalendarActiveListEntry
 
     public CalendarActiveListEntry(Integer calno, Bill bill, String billAmendment)
     {
-        super();
+        this();
         this.setCalendarNumber(calno);
         this.setBill(bill);
         this.setBillAmendment(billAmendment);

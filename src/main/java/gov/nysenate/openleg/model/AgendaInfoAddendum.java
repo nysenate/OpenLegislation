@@ -13,12 +13,13 @@ public class AgendaInfoAddendum extends BaseObject
 
     public AgendaInfoAddendum()
     {
+        super();
         this.setCommittees(new HashMap<String, AgendaInfoCommittee>());
     }
 
     public AgendaInfoAddendum(String id, Date weekOf, Date pubDate)
     {
-        super();
+        this();
         this.setId(id);
         this.setWeekOf(weekOf);
         this.setPublishDate(pubDate);

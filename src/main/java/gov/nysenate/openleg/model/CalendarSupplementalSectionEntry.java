@@ -47,6 +47,7 @@ public class CalendarSupplementalSectionEntry
      */
     public CalendarSupplementalSectionEntry(Integer no, Bill bill, String billAmendment, Boolean high, Bill subBill, String subBillAmendment)
     {
+        this();
         this.setCalendarNumber(no);
         this.setBillHigh(high);
         this.setBill(bill);

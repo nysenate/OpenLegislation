@@ -10,11 +10,13 @@ public class AgendaVoteAddendum extends BaseObject
 
     public AgendaVoteAddendum()
     {
+        super();
         this.setCommittees(new HashMap<String, AgendaVoteCommittee>());
     }
 
     public AgendaVoteAddendum(String id, Integer year, Integer session)
     {
+        this();
         this.setId(id);
         this.setYear(year);
         this.setSession(session);

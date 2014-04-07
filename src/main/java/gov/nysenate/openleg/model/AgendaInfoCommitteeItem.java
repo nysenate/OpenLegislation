@@ -14,7 +14,7 @@ public class AgendaInfoCommitteeItem
 
     public AgendaInfoCommitteeItem(Bill bill, String billAmendment, String message, String title)
     {
-        super();
+        this();
         this.setBill(bill);
         this.setBillAmendment(billAmendment);
         this.setMessage(message);

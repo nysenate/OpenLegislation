@@ -22,6 +22,7 @@ public class AgendaVoteCommittee
 
     public AgendaVoteCommittee(String name, String chair, Date meetDate)
     {
+        this();
         this.setName(name);
         this.setChair(chair);
         this.setMeetDate(meetDate);

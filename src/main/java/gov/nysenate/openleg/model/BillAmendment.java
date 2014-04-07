@@ -48,10 +48,13 @@ public class BillAmendment extends BaseObject
     /** A list of votes that have been made on this bill. */
     protected List<Vote> votes = new ArrayList<>();
 
-    public BillAmendment() {}
+    public BillAmendment() {
+        super();
+    }
 
     public BillAmendment(Bill baseBill, String version)
     {
+        this();
         this.baseBillPrintNo = baseBill.getPrintNumber();
         this.baseBillId = baseBill.getBillId();
         this.session = baseBill.getSession();

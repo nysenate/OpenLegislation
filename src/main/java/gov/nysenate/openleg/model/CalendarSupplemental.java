@@ -14,12 +14,13 @@ public class CalendarSupplemental extends BaseObject
 
     public CalendarSupplemental()
     {
+        super();
         this.setSections(new LinkedHashMap<Integer, CalendarSupplementalSection>());
     }
 
     public CalendarSupplemental(String id, Date calDate, Date releaseDateTime)
     {
-        super();
+        this();
         this.setId(id);
         this.setCalDate(calDate);
         this.setReleaseDateTime(releaseDateTime);

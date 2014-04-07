@@ -24,13 +24,14 @@ public class Agenda extends BaseObject
 
     public Agenda()
     {
+        super();
         this.setAgendaInfoAddendum(new TreeMap<String, AgendaInfoAddendum>());
         this.setAgendaVoteAddendum(new TreeMap<String, AgendaVoteAddendum>());
     }
 
     public Agenda(Integer number, Integer session, Integer year)
     {
-        super();
+        this();
         this.setNumber(number);
         this.setSession(session);
         this.setYear(year);

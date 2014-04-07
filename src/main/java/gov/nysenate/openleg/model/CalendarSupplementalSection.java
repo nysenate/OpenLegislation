@@ -30,7 +30,7 @@ public class CalendarSupplementalSection
 
     public CalendarSupplementalSection(String name, String type, Integer cd)
     {
-        super();
+        this();
         this.setName(name);
         this.setType(type);
         this.setCd(cd);

@@ -16,12 +16,13 @@ public class CalendarActiveList extends BaseObject
 
     public CalendarActiveList()
     {
+        super();
         this.setEntries(new ArrayList<CalendarActiveListEntry>());
     }
 
     public CalendarActiveList(Integer id, String notes, Date calDate, Date releaseDateTime)
     {
-        super();
+        this();
         this.setId(id);
         this.setCalDate(calDate);
         this.setReleaseDateTime(releaseDateTime);
