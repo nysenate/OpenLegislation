@@ -42,14 +42,12 @@
     }
 </style>
 
-<div id="viewer">
-    <div class="pane ui-layout-west" style="float:left;width:40%;height:100%;border-right:1px solid #ddd;overflow-y:scroll;">
-        <h3 class="bill-info-header"><%= request.getAttribute("billId") %></h3>
-        <pre style="font-size:12px;font-weight:normal;" id="json"></pre>
-    </div>
-    <div class="pane ui-layout-center" style="width:59.5%;height:100%;border-right:1px solid #ddd;overflow-y:scroll;">
-        <div style="font-size:12px;font-weight:normal;" id="sobis"></div>
-    </div>
+<div class="pane ui-layout-west" style="float:left;width:40%;height:100%;border-right:1px solid #ddd;overflow-y:scroll;">
+    <h3 class="bill-info-header"><%= request.getAttribute("billId") %></h3>
+    <pre style="font-size:12px;font-weight:normal;" id="json"></pre>
+</div>
+<div class="pane ui-layout-center" style="width:59.5%;height:100%;border-right:1px solid #ddd;overflow-y:scroll;">
+    <div style="font-size:12px;font-weight:normal;" id="sobis"></div>
 </div>
 
 <script>
