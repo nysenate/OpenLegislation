@@ -201,11 +201,11 @@
         <servlet-name>AdminUpdates</servlet-name>
         <servlet-class>gov.nysenate.openleg.api.servlets.admin.UpdatesServlet</servlet-class>
     </servlet>
-    
 	<servlet-mapping>
 		<servlet-name>AdminUpdates</servlet-name>
 		<url-pattern>/admin/updates/*</url-pattern>
 	</servlet-mapping>
+
 	<servlet>
 	    <servlet-name>AdminReports</servlet-name>
 	    <servlet-class>gov.nysenate.openleg.api.servlets.admin.ReportsServlet</servlet-class>
@@ -214,4 +214,13 @@
 	    <servlet-name>AdminReports</servlet-name>
 	    <url-pattern>/admin/reports/*</url-pattern>
 	</servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminDataViewer</servlet-name>
+        <servlet-class>gov.nysenate.openleg.api.servlets.admin.DataViewerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminDataViewer</servlet-name>
+        <url-pattern>/admin/data/*</url-pattern>
+    </servlet-mapping>
 </web-app>
