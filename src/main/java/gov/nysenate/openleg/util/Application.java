@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 
 public class Application
 {
@@ -31,6 +32,7 @@ public class Application
     protected Lucene lucene;
     protected Storage storage;
     protected XmlHelper xmlhelper;
+    protected ObjectMapper objectMapper;
     protected DB db;
 
     /**
@@ -46,7 +48,6 @@ public class Application
     {
         try
         {
-
             appInstance.config = new Config(propertyFileName);
             appInstance.xmlhelper = new XmlHelper(appInstance.config, "xml");
             appInstance.db = new DB(appInstance.config, "mysqldb");
@@ -54,6 +55,7 @@ public class Application
             appInstance.environment = new Environment(appInstance.config, "env");
             appInstance.lucene = new Lucene(appInstance.config, "lucene");
             appInstance.storage = new Storage(appInstance.environment.getStorageDirectory());
+            appInstance.objectMapper = new ObjectMapper();
             return true;
         }
         catch (ConfigurationException ce)
@@ -100,5 +102,10 @@ public class Application
     public static XmlHelper getXmlHelper()
     {
         return appInstance.xmlhelper;
+    }
+
+    public static ObjectMapper getObjectMapper()
+    {
+        return appInstance.objectMapper;
     }
 }

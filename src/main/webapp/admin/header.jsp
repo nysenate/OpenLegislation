@@ -23,6 +23,7 @@
     <div id="menu">
         <div class="logo">OpenLeg Admin</div>
         <ul>
+            <li class="<%=(request.getServletPath().startsWith("/admin/data") ? "menu-active" : "menu-inactive")%>"><a href="<%=JSPHelper.getLink(request, "/admin/data/")%>">Data Viewer</a></li>
             <li class="<%=(request.getServletPath().startsWith("/admin/report") ? "menu-active" : "menu-inactive")%>"><a href="<%=JSPHelper.getLink(request, "/admin/reports/")%>">Reports</a></li>
             <li class="<%=(request.getServletPath().startsWith("/admin/update") ? "menu-active" : "menu-inactive")%>"><a href="<%=JSPHelper.getLink(request, "/admin/updates/")%>">Updates</a></li>
         </ul>
