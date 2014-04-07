@@ -126,7 +126,7 @@ public class SpotCheck extends BaseScript
                 lbdcSummary = "";
             }
 
-            jsonSummary = jsonSummary.replace('§', 'S').replace('¶', 'P');
+            jsonSummary = jsonSummary.replace('Â§', 'S').replace('Â¶', 'P');
             if (!lbdcSummary.isEmpty() && !jsonSummary.replace(" ","").equals(lbdcSummary.replace(" ", "")) ) {
                 if (!id.startsWith("D")) {
                     logger.error("Summary: "+billNo);
@@ -191,6 +191,7 @@ public class SpotCheck extends BaseScript
             int jsonPages = 0;
             Pattern pagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d*(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s{11,}\\d{1,4}(--\\w)?$)");
             for (String line : bill.getFulltext().split("\n")) {
+
                 if (pagePattern.matcher(line).find()) {
                     // logger.info(billNo+": "+line);
                     jsonPages++;
@@ -331,13 +332,22 @@ public class SpotCheck extends BaseScript
             }
 
             if (bill.id.startsWith("A")) {
-                parts[1] = parts[1].replaceAll("([A-Z])\\.[¦ ]([A-Z'-]+)", "$2 $1");
+                parts[1] = parts[1].replaceAll("([A-Z])\\.[Â¦ ]([A-Z'-]+)", "$2 $1");
                 String[] all_sponsors = parts[1].split("; M-S:");
                 String[] sponsors = all_sponsors[0].split(",");
 
-                bill.setSponsor(sponsors[0].trim());
+                String sponsor = sponsors[0].trim();
+                if (sponsor.contains("LOPEZ")) {
+                    sponsor = "LOPEZ P";
+                }
+                bill.setSponsor(sponsor);
+
                 for(int i=1; i<sponsors.length; i++) {
-                    bill.getCosponsors().add(sponsors[i].trim());
+                    String coSponsor = sponsors[i].trim();
+                    if (coSponsor.contains("LOPEZ")) {
+                        coSponsor = "LOPEZ P";
+                    }
+                    bill.getCosponsors().add(coSponsor);
                 }
 
                 if(all_sponsors.length == 2)

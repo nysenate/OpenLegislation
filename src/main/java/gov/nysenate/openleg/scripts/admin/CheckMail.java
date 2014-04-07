@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.scripts.admin;
 
 import gov.nysenate.openleg.scripts.BaseScript;
+import gov.nysenate.openleg.util.Application;
+import gov.nysenate.util.Config;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -41,7 +43,12 @@ public class CheckMail extends BaseScript
         props.setProperty("mail.imaps.ssl.protocols", "SSLv3");
         Session session = Session.getDefaultInstance(props, null);
         Store store = session.getStore("imaps");
-        store.connect("webmail.senate.state.ny.us", "kim", "s3nat32011");
+        Config config = Application.getConfig();
+        store.connect(
+            config.getValue("checkmail.host"),
+            config.getValue("checkmail.user"),
+            config.getValue("checkmail.pass")
+        );
 
         Folder source = store.getFolder("OpenLegislation").getFolder("LRSAutomated");
         Folder destination = store.getFolder("OpenLegislation").getFolder("LRSProcessed");
