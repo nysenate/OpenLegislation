@@ -33,16 +33,43 @@ public class PDFConverter
         PDFont font = PDType1Font.COURIER;
         ArrayList<String[]> pages = pagify(transcript.getTranscriptText());
 
+        Float bot = 90f;
+        Float right = 575f;
+        Float top = 710f;
+        Float left = 105f;
+        Float fontSize = 12f;
+
         for (String[] pageLines : pages) {
             PDPage page = new PDPage(PDPage.PAGE_SIZE_LETTER);
             PDPageContentStream contentStream = new PDPageContentStream(doc, page);
+            contentStream.drawLine(left, top, left, bot);
+            contentStream.drawLine(left, top, right, top);
+            contentStream.drawLine(left, bot, right, bot);
+            contentStream.drawLine(right, top, right, bot);
             contentStream.beginText();
-            contentStream.setFont(font, 11);
-            contentStream.moveTextPositionByAmount(75, 725);
+            contentStream.setFont(font, fontSize);
+            contentStream.moveTextPositionByAmount(85, 730);
+            boolean firstLine = true;
             for (String line : pageLines) {
-                contentStream.moveTextPositionByAmount(0f, -12f);
+                if (line.length() > 0 && firstLine == false) {
+                    line = line.substring(0, 2)+"   "+line.substring(2);
+                }
+                contentStream.moveTextPositionByAmount(0f, -fontSize);
                 contentStream.drawString(line);
+                if (firstLine) {
+                    contentStream.moveTextPositionByAmount(0f, -fontSize);
+                    contentStream.drawString("");
+                    firstLine = false;
+                }
             }
+
+            String stenographer = "Kirkland Reporting Service";
+            contentStream.moveTextPositionByAmount(0f, -12f);
+            contentStream.moveTextPositionByAmount(0f, -12f);
+            contentStream.moveTextPositionByAmount(0f, -12f);
+            contentStream.moveTextPositionByAmount((right-left-stenographer.length()*5)/2, 0f);
+            contentStream.drawString(stenographer);
+
             contentStream.endText();
             contentStream.close();
             doc.addPage(page);
