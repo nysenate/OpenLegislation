@@ -42,8 +42,12 @@ public class TranscriptServlet extends HttpServlet
         if (searchtext != null) {
             query += " AND (full:\""+searchtext+"\")";
         }
+        else {
+            searchtext = "";
+        }
+
         Lucene lucene = Application.getLucene();
-        SenateResponse luceneResults = lucene.search(query, 0, 1000, "published", false);
+        SenateResponse luceneResults = lucene.search(query, 0, 1000, "published", true);
         ApiHelper.buildSearchResultList(luceneResults);
         ArrayList<Transcript> transcripts = new ArrayList<Transcript>();
         for (Result result : luceneResults.getResults()) {
