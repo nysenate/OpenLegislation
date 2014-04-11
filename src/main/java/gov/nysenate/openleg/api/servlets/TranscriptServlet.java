@@ -39,8 +39,8 @@ public class TranscriptServlet extends HttpServlet
 
         String query = "otype:transcript AND publish_date:"+year+"-"+month+"*";
         String searchtext = request.getParameter("searchtext");
-        if (searchtext != null) {
-            query += " AND (full:\""+searchtext+"\")";
+        if (searchtext != null && searchtext.trim().length() != 0) {
+            query += " AND full:("+searchtext+")";
         }
         else {
             searchtext = "";
