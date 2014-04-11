@@ -379,6 +379,9 @@ public class BillProcessor
         else if (bill.getBillId().equals("R4036-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
         }
+        else if (bill.getBillId().equals("S6966-2013")) {
+            bill.setOtherSponsors(Arrays.asList(new Person("GRIFFO")));
+        }
 
         // An old bug with the assembly sponsors field needs to be corrected, NYSS 7215
         if (bill.getSponsor() != null && bill.getSponsor().getFullname().startsWith("RULES ")) {
