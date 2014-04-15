@@ -259,15 +259,15 @@ public class BillProcessor
             billAmendment.setModifiedDate(date);
 
             // Create the base version if an amendment was received before the base version *
-            if (!isBaseVersion && !baseBill.hasAmendment(Bill.BASE_VERSION)) {
-                BillAmendment baseAmendment = new BillAmendment(baseBill, Bill.BASE_VERSION);
-                baseAmendment.setModifiedDate(date);
-                baseBill.addAmendment(baseAmendment);
-                baseBill.setActiveVersion(Bill.BASE_VERSION);
-                baseBill.getActiveHistory().add(Bill.BASE_VERSION);
-            }
-
             if (!isBaseVersion) {
+                if (!baseBill.hasAmendment(Bill.BASE_VERSION)) {
+                    BillAmendment baseAmendment = new BillAmendment(baseBill, Bill.BASE_VERSION);
+                    baseAmendment.setModifiedDate(date);
+                    baseBill.addAmendment(baseAmendment);
+                    baseBill.setActiveVersion(Bill.BASE_VERSION);
+                    baseBill.getActiveHistory().add(Bill.BASE_VERSION);
+                }
+
                 // Pull 'shared' data from the currently active amendment
                 BillAmendment activeAmendment = baseBill.getAmendment(baseBill.getActiveVersion());
                 billAmendment.setCoSponsors(activeAmendment.getCoSponsors());
@@ -276,6 +276,8 @@ public class BillProcessor
             }
 
             baseBill.addAmendment(billAmendment);
+            baseBill.setActiveVersion(billAmendment.getVersion());
+            baseBill.getActiveHistory().add(billAmendment.getVersion());
         }
 
         return baseBill;
@@ -366,7 +368,7 @@ public class BillProcessor
         }
 
         if (bill.isPublished()) {
-           if (bill.isUniBill()) {
+           if (bill.isUniBill() && !bill.getSameAs(version).isEmpty()) {
                 // Uni bills share text, always sent to the senate bill.
                 Bill uniBill = storage.getBill(bill.getSameAs(version));
                 if (uniBill != null) {
@@ -645,7 +647,7 @@ public class BillProcessor
             return;
         }
 
-        else if (!bill.isPublished()) {
+        else if (!bill.getAmendment(version).isPublished()) {
             // When we get a status line for an unpublished bill, (re)publish it and activate it
             // TODO: Marking as active isn't always the right thing to do. A base bill could be
             //       unpublished/republished behind a currently active amendment for now particular reason.

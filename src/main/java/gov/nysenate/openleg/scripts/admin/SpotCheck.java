@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.scripts.admin;
 
-import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.admin.Report;
 import gov.nysenate.openleg.model.admin.ReportObservation;
@@ -74,24 +74,34 @@ public class SpotCheck extends BaseScript
         Date date = dateFormat.parse(prefix);
         logger.info("Processing daybreak files for: "+date);
         File directory = new File(args[0]);
-        HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();
-        bills.putAll(readDaybreak(new File(directory, prefix+".senate.low.html")));
-        bills.putAll(readDaybreak(new File(directory, prefix+".senate.high.html")));
-        bills.putAll(readDaybreak(new File(directory, prefix+".assembly.low.html")));
-        bills.putAll(readDaybreak(new File(directory, prefix+".assembly.high.html")));
-        loadPageFile(new File(directory, prefix+".page_file.txt"), bills);
+        HashMap<String, SpotCheckBill> spotCheckBills = new HashMap<String, SpotCheckBill>();
+        spotCheckBills.putAll(readDaybreak(new File(directory, prefix+".senate.low.html")));
+        spotCheckBills.putAll(readDaybreak(new File(directory, prefix+".senate.high.html")));
+        spotCheckBills.putAll(readDaybreak(new File(directory, prefix+".assembly.low.html")));
+        spotCheckBills.putAll(readDaybreak(new File(directory, prefix+".assembly.high.html")));
+        loadPageFile(new File(directory, prefix+".page_file.txt"), spotCheckBills);
 
         runner.update("insert ignore into report(time) values(?)", date);
         Report report = runner.query("select * from report where time = ?", new BeanHandler<Report>(Report.class), date);
         runner.update("delete from report_observation where reportId = ?", report.getId());
 
-        for(String id : bills.keySet()) {
-            String billNo = id+"-2013";
+        for(String printNo : spotCheckBills.keySet()) {
+            String billAmendment = "";
+            String billNo = printNo+"-2013";
+            if (printNo.matches(".*[A-Z]$")) {
+                billAmendment = printNo.substring(printNo.length()-1);
+                billNo = printNo.substring(0, printNo.length()-1)+"-2013";
+            }
+
             Bill bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
 
             if (bill == null) {
-                logger.error("Missing bill "+"2013/bill/"+billNo);
+                logger.error("Missing bill 2013/bill/"+billNo);
                 continue;
+            }
+
+            if (bill.hasAmendment(billAmendment) == false) {
+                logger.error("Missing bill amendment: "+billNo);
             }
 
             if (!bill.isPublished()) {
@@ -101,10 +111,10 @@ public class SpotCheck extends BaseScript
 
             // Compare the titles, ignore white space differences
             String jsonTitle = unescapeHTML(bill.getTitle());
-            String lbdcTitle = bills.get(id).getTitle();
+            String lbdcTitle = spotCheckBills.get(printNo).getTitle();
             if (!lbdcTitle.isEmpty() && !stringEquals(jsonTitle, lbdcTitle, true, true)) {
                 // What is this D?
-                if (!id.startsWith("D")) {
+                if (!printNo.startsWith("D")) {
                     logger.error("Title: "+billNo);
                     logger.error("  LBDC: "+lbdcTitle);
                     logger.error("  JSON: "+jsonTitle);
@@ -114,9 +124,9 @@ public class SpotCheck extends BaseScript
             }
 
             // Compare the summaries. LBDC reports summary and law changes together
-            String jsonLaw = bill.getLaw();
+            String jsonLaw = bill.getLaw(billAmendment);
             String jsonSummary = unescapeHTML(bill.getSummary());
-            String lbdcSummary = bills.get(id).getSummary().replaceAll("\\s+", " ");
+            String lbdcSummary = spotCheckBills.get(printNo).getSummary().replaceAll("\\s+", " ");
 
             if( jsonLaw != null && jsonLaw != "" && jsonLaw != "null") {
                 jsonSummary = unescapeHTML(jsonLaw)+" "+jsonSummary;
@@ -126,10 +136,10 @@ public class SpotCheck extends BaseScript
                 lbdcSummary = "";
             }
 
-            jsonSummary = jsonSummary.replace('§', 'S').replace('¶', 'P');
+            jsonSummary = jsonSummary.replace('Â§', 'S').replace('Â¶', 'P');
             if (!lbdcSummary.isEmpty() && !jsonSummary.replace(" ","").equals(lbdcSummary.replace(" ", "")) ) {
-                if (!id.startsWith("D")) {
-                    logger.error("Summary: "+billNo);
+                if (!printNo.startsWith("D")) {
+                    logger.error("Summary: "+printNo);
                     logger.error("  LBDC: "+lbdcSummary);
                     logger.error("  JSON: "+jsonSummary);
                     observations.add(new ReportObservation(report.getId(), billNo, "BILL_SUMMARY", lbdcSummary, jsonSummary));
@@ -138,10 +148,10 @@ public class SpotCheck extends BaseScript
             }
 
             String jsonSponsor = unescapeHTML(bill.getSponsor().getFullname()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
-            String lbdcSponsor = bills.get(id).getSponsor().toUpperCase().replace("BILL", "").replace("COM", "");
+            String lbdcSponsor = spotCheckBills.get(printNo).getSponsor().toUpperCase().replace("BILL", "").replace("COM", "");
             if (!lbdcSponsor.isEmpty() && !jsonSponsor.replace(" ","").equals(lbdcSponsor.replace(" ", "")) ) {
-                if (!id.startsWith("D")) {
-                    logger.error("Sponsor: "+billNo);
+                if (!printNo.startsWith("D")) {
+                    logger.error("Sponsor: "+printNo);
                     logger.error("  LBDC: "+lbdcSponsor);
                     logger.error("  JSON: "+jsonSponsor);
                     observations.add(new ReportObservation(report.getId(), billNo, "BILL_SPONSOR", lbdcSponsor, jsonSponsor));
@@ -150,18 +160,18 @@ public class SpotCheck extends BaseScript
             }
 
 
-            TreeSet<String> lbdcCosponsors = new TreeSet<String>(bills.get(id).getCosponsors());
+            TreeSet<String> lbdcCosponsors = new TreeSet<String>(spotCheckBills.get(printNo).getCosponsors());
             TreeSet<String> jsonCosponsors = new TreeSet<String>();
             if ( bill.getCoSponsors() != null ) {
-                List<Person> cosponsors = bill.getCoSponsors();
+                List<Person> cosponsors = bill.getCoSponsors(billAmendment);
                 for(Person cosponsor : cosponsors) {
                     jsonCosponsors.add(cosponsor.getFullname().toUpperCase());
                 }
             }
 
             if (!lbdcCosponsors.isEmpty() && (lbdcCosponsors.size() != jsonCosponsors.size() || (!lbdcCosponsors.isEmpty() && !lbdcCosponsors.containsAll(jsonCosponsors))) ) {
-                if (!id.startsWith("D")) {
-                    logger.error("Cosponsors: "+billNo);
+                if (!printNo.startsWith("D")) {
+                    logger.error("Cosponsors: "+printNo);
                     logger.error("  LBDC: "+lbdcCosponsors);
                     logger.error("  JSON: "+jsonCosponsors);
                     observations.add(new ReportObservation(report.getId(), billNo, "BILL_COSPONSOR", StringUtils.join(lbdcCosponsors, " "), StringUtils.join(jsonCosponsors, " ")));
@@ -169,7 +179,7 @@ public class SpotCheck extends BaseScript
                 }
             }
 
-            ArrayList<String> lbdcEvents = bills.get(id).getActions();
+            ArrayList<String> lbdcEvents = spotCheckBills.get(printNo).getActions();
             ArrayList<String> jsonEvents = new ArrayList<String>();
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
 
@@ -178,8 +188,8 @@ public class SpotCheck extends BaseScript
             }
 
             if (!lbdcEvents.isEmpty() &&  (lbdcEvents.size() != jsonEvents.size() || (!lbdcEvents.isEmpty() && !lbdcEvents.containsAll(jsonEvents))) ) {
-                if (!id.startsWith("D") && !StringUtils.join(jsonEvents, " ").toLowerCase().contains(" substituted ")) {
-                    logger.error("Events: "+billNo);
+                if (!printNo.startsWith("D") && !StringUtils.join(jsonEvents, " ").toLowerCase().contains(" substituted ")) {
+                    logger.error("Events: "+printNo);
                     logger.error("  LBDC: "+lbdcEvents);
                     logger.error("  JSON: "+jsonEvents);
                     observations.add(new ReportObservation(report.getId(), billNo, "BILL_ACTION", StringUtils.join(lbdcEvents,"\n"), StringUtils.join(jsonEvents,"\n")));
@@ -187,10 +197,10 @@ public class SpotCheck extends BaseScript
                 }
             }
 
-            int lbdcPages = bills.get(id).pages;
+            int lbdcPages = spotCheckBills.get(printNo).pages;
             int jsonPages = 0;
             Pattern pagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d*(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s{11,}\\d{1,4}(--\\w)?$)");
-            for (String line : bill.getFulltext().split("\n")) {
+            for (String line : bill.getFulltext(billAmendment).split("\n")) {
                 if (pagePattern.matcher(line).find()) {
                     // logger.info(billNo+": "+line);
                     jsonPages++;
@@ -198,7 +208,7 @@ public class SpotCheck extends BaseScript
             }
 
             if (jsonPages != lbdcPages) {
-                logger.error("Pages: "+billNo);
+                logger.error("Pages: "+printNo);
                 logger.error("  LBDC: "+lbdcPages);
                 logger.error("  JSON: "+jsonPages);
                 observations.add(new ReportObservation(report.getId(), billNo, "BILL_TEXT_PAGE", String.valueOf(lbdcPages), String.valueOf(jsonPages)));
@@ -218,17 +228,16 @@ public class SpotCheck extends BaseScript
         }
 
         System.out.println(errorTotals);
-        System.out.println(bills.keySet().size());
+        System.out.println(spotCheckBills.keySet().size());
         System.exit(0);
 
         int total = 0;
-        for(SpotCheckBill bill : bills.values()) {
+        for(SpotCheckBill bill : spotCheckBills.values()) {
             total += 1+bill.amendments.size();
         }
         System.out.println("Estimated Total: "+total);
 
-        System.out.println(bills.size());
-
+        System.out.println(spotCheckBills.size());
     }
 
     public void loadPageFile(File dataFile, HashMap<String, SpotCheckBill> bills) throws IOException
@@ -305,17 +314,6 @@ public class SpotCheck extends BaseScript
 
 
             bill.id = parts[0].trim();
-
-            /*
-			Matcher idMatcher = id.matcher(bill.id);
-			if( idMatcher.find() ) {
-				bill.id = idMatcher.group(1);
-				for(int i = 65; i <= idMatcher.group(2).charAt(0); i++){
-					bill.amendments.add(String.valueOf((char)i));
-				}
-			}
-             */
-
             bill.setTitle(parts[2].trim());
             bill.law = parts[3].trim();
             bill.setSummary(parts[4].trim());
@@ -331,18 +329,31 @@ public class SpotCheck extends BaseScript
             }
 
             if (bill.id.startsWith("A")) {
-                parts[1] = parts[1].replaceAll("([A-Z])\\.[¦ ]([A-Z'-]+)", "$2 $1");
+                parts[1] = parts[1].replaceAll("([A-Z])\\.[ï¿½ ]([A-Z'-]+)", "$2 $1");
                 String[] all_sponsors = parts[1].split("; M-S:");
                 String[] sponsors = all_sponsors[0].split(",");
 
-                bill.setSponsor(sponsors[0].trim());
+                String sponsor = sponsors[0].trim();
+                if (sponsor.contains("LOPEZ")) {
+                    sponsor = "LOPEZ P";
+                }
+                bill.setSponsor(sponsor);
                 for(int i=1; i<sponsors.length; i++) {
-                    bill.getCosponsors().add(sponsors[i].trim());
+                    String coSponsor = sponsors[i].trim();
+                    if (coSponsor.contains("LOPEZ")) {
+                        coSponsor = "LOPEZ P";
+                    }
+                    bill.getCosponsors().add(coSponsor.trim());
                 }
 
-                if(all_sponsors.length == 2)
-                    for(String multisponsor : all_sponsors[1].split(","))
+                if(all_sponsors.length == 2) {
+                    for(String multisponsor : all_sponsors[1].split(",")) {
+                        if (multisponsor.contains("LOPEZ")) {
+                            multisponsor = "LOPEZ P";
+                        }
                         bill.multisponsors.add(multisponsor.trim());
+                    }
+                }
             } else {
                 String[] sponsors = parts[1].split("CO:");
                 bill.setSponsor(sponsors[0].trim());

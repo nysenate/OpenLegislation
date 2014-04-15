@@ -363,7 +363,11 @@ public class Storage
 
     public Bill getBill(String billId) {
         String[] parts = billId.split("-");
-        return getBill(parts[0], Integer.parseInt(parts[1]));
+        String printNumber = parts[0];
+        if (printNumber.matches(".*[A-Z]$")) {
+            printNumber = printNumber.substring(0, printNumber.length()-1);
+        }
+        return getBill(printNumber, Integer.parseInt(parts[1]));
     }
 
     public Bill getBill(String printNumber, int session)

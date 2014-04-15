@@ -16,7 +16,7 @@
                     <target>1.7</target>
 
                     <!-- avoid possible encoding issues -->
-                    <encoding>latin1</encoding>
+                    <encoding>utf-8</encoding>
                 </configuration>
             </plugin>
         </plugins>

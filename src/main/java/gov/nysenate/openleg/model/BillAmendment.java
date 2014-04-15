@@ -22,10 +22,10 @@ public class BillAmendment extends BaseObject
     protected String sameAs = "";
 
     /** The sponsor memo of the amendment. */
-    protected String memo;
+    protected String memo = "";
 
     /** The law code of the amendment. */
-    protected String law;
+    protected String law = "";
 
     /** The AN ACT TO... clause for the bill version. */
     protected String actClause = "";

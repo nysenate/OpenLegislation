@@ -32,10 +32,10 @@ public class Bill extends BaseObject implements Comparable<Bill>
     protected String title = "";
 
     /** The section of the law the bill affects. */
-    protected String lawSection;
+    protected String lawSection = "";
 
     /** The summary of the amendment. */
-    protected String summary;
+    protected String summary = "";
 
     /** Map of amendment version -> Amendment. The default amendment should
      *  not be included in this mapping. */

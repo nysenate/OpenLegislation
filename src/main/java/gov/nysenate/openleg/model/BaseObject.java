@@ -98,7 +98,7 @@ abstract public class BaseObject
      */
     public boolean isPublished()
     {
-        return this.publishDate != null;
+        return this.getPublishDate() != null;
     }
 
     /**
