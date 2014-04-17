@@ -552,14 +552,14 @@ public class BillProcessor
         // This is theoretically not safe because a law line *could* start with DELETE
         // We can't do an exact match because B can be multi-line
         if (data.trim().startsWith("DELETE")) {
-            bill.setLaw("", version);
+            bill.getActiveAmendment().setLaw("");
             bill.setSummary("");
             bill.setModifiedDate(date);
         }
         else {
-            bill.setLaw(data.replace("\n", " ").trim(), version);
+            bill.getActiveAmendment().setLaw(data.replace("\n", " ").trim());
         }
-        bill.getAmendment(version).setModifiedDate(date);
+        bill.getActiveAmendment().setModifiedDate(date);
     }
 
     /**
