@@ -48,6 +48,9 @@ public class BillAmendment extends BaseObject
     /** A list of votes that have been made on this bill. */
     protected List<Vote> votes = new ArrayList<>();
 
+    /** A flag marking this bill as introduced in unison in both houses **/
+    protected Boolean uniBill = false;
+
     public BillAmendment() {
         super();
     }
@@ -208,5 +211,15 @@ public class BillAmendment extends BaseObject
     public String getOtype()
     {
         return "billamendment";
+    }
+
+    public Boolean isUniBill()
+    {
+        return uniBill;
+    }
+
+    public void setUniBill(Boolean uniBill)
+    {
+        this.uniBill = uniBill;
     }
 }

@@ -368,7 +368,7 @@ public class BillProcessor
         }
 
         if (bill.isPublished()) {
-           if (bill.isUniBill() && !bill.getSameAs(version).isEmpty()) {
+           if (bill.isUniBill(version) && !bill.getSameAs(version).isEmpty()) {
                 // Uni bills share text, always sent to the senate bill.
                 Bill uniBill = storage.getBill(bill.getSameAs(version));
                 if (uniBill != null) {
@@ -429,7 +429,7 @@ public class BillProcessor
     {
         if (data.trim().equalsIgnoreCase("No same as") || data.trim().equalsIgnoreCase("DELETE")) {
             bill.setSameAs("", version);
-            bill.setUniBill(false);
+            bill.setUniBill(false, version);
             bill.setModifiedDate(date);
             bill.getAmendment(version).setModifiedDate(date);
         }
@@ -439,7 +439,7 @@ public class BillProcessor
             Matcher sameAsMatcher = sameAsPattern.matcher(data);
             if (sameAsMatcher.find()) {
                 if (sameAsMatcher.group(1) != null && !sameAsMatcher.group(1).isEmpty()) {
-                    bill.setUniBill(true);
+                    bill.setUniBill(true, version);
                     bill.setModifiedDate(date);
                 }
                 bill.setSameAs(sameAsMatcher.group(2).replace("-","").replace(" ","")+"-"+bill.getSession(), version);

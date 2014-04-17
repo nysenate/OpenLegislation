@@ -162,7 +162,6 @@ public class StorageJsonConverter
         node.put("otherSponsors", makeArrayNode(bill.getOtherSponsors()));
         node.put("pastCommittees", makeArrayNode(bill.getPastCommittees()));
         node.put("actions", makeArrayNode(bill.getActions()));
-        node.put("uniBill", bill.isUniBill());
         node.put("amendments", makeArrayNode(bill.getAmendmentList()));
 
         node.put("year", bill.getYear());
@@ -291,6 +290,7 @@ public class StorageJsonConverter
             node.put("baseBillId", amendment.getBaseBillId());
             node.put("baseBillPrintNo", amendment.getBaseBillPrintNo());
             node.put("version", amendment.getVersion());
+            node.put("uniBill", amendment.isUniBill());
             node.put("sameAs", amendment.getSameAs());
             node.put("memo", amendment.getMemo());
             node.put("law", amendment.getLaw());
@@ -693,7 +693,6 @@ public class StorageJsonConverter
         for (BillAction action : bill.getActions()) {
             action.setBill(bill);
         }
-        bill.setUniBill(node.get("uniBill").asBoolean());
         for (Object obj : makeList(BillAmendment.class, node.get("amendments"))) {
             BillAmendment amendment = (BillAmendment)obj;
             for (Vote vote : amendment.getVotes()) {
@@ -1083,6 +1082,7 @@ public class StorageJsonConverter
             amendment.setBaseBillId(node.get("baseBillId").asText());
             amendment.setBaseBillPrintNo(node.get("baseBillPrintNo").asText());
             amendment.setVersion(node.get("version").asText());
+            amendment.setUniBill(node.get("uniBill").asBoolean());
             amendment.setSameAs(node.get("sameAs").asText());
             amendment.setMemo(node.get("memo").asText());
             amendment.setLaw(node.get("law").asText());

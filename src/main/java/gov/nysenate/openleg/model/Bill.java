@@ -62,9 +62,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /** A list of actions that have been made on this bill. */
     protected List<BillAction> actions = new ArrayList<BillAction>();
 
-    /** A flag marking this bill as a uniBill with a companion bill in the other house. */
-    private boolean uniBill = false;
-
     public Bill() {
         super();
     }
@@ -563,14 +560,25 @@ public class Bill extends BaseObject implements Comparable<Bill>
         }
     }
 
-    public boolean isUniBill()
+    public boolean isUniBill(String version)
     {
-        return uniBill;
+        if (hasAmendment(version)) {
+            return this.getAmendment(version).isUniBill();
+        }
+        else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
     }
 
-    public void setUniBill(boolean uniBill)
+    public void setUniBill(boolean uniBill, String version)
     {
-        this.uniBill = uniBill;
+        if (hasAmendment(version)) {
+            this.getAmendment(version).setUniBill(uniBill);
+        }
+        else {
+            throw new IllegalArgumentException(INVALID_AMENDMENT_VERSION+version);
+        }
+
     }
 
     public String getCurrentCommittee()

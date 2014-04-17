@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.lucene;
 
 import gov.nysenate.openleg.converter.LuceneJsonConverter;
-import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.PublicHearing;
 import gov.nysenate.openleg.model.Transcript;
@@ -305,7 +305,7 @@ public class DocumentBuilder
 //        document.add(new TextField("law", bill.getLaw(), Field.Store.YES));
 //        document.add(new TextField("actclause", bill.getActClause(), Field.Store.YES));
         document.add(new LongField("when", bill.getModifiedDate().getTime(), Field.Store.YES));
-        document.add(new StringField("unibill", String.valueOf(bill.isUniBill()), Field.Store.YES));
+//        document.add(new StringField("unibill", String.valueOf(bill.isUniBill()), Field.Store.YES));
 //        document.add(new StringField("stricken", String.valueOf(bill.isStricken()), Field.Store.YES));
         document.add(new StringField("sorttitle", bill.getTitle().toLowerCase(), Field.Store.NO));
 
