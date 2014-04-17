@@ -287,8 +287,6 @@ public class BillProcessor
             }
 
             baseBill.addAmendment(billAmendment);
-            baseBill.setActiveVersion(billAmendment.getVersion());
-            baseBill.getActiveHistory().add(billAmendment.getVersion());
         }
 
         return baseBill;
@@ -514,7 +512,7 @@ public class BillProcessor
         // The cosponsor info is always to a base bill version. We can use the currently active
         // version instead.
         bill.setCoSponsors(coSponsors, bill.getActiveVersion());
-        bill.getAmendment(bill.getActiveVersion()).setModifiedDate(date);
+        bill.getActiveAmendment().setModifiedDate(date);
     }
 
     /**
