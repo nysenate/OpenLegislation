@@ -178,7 +178,9 @@ public class SpotCheck extends BaseScript
             }
 
             if (!lbdcEvents.isEmpty() &&  (lbdcEvents.size() != jsonEvents.size() || (!lbdcEvents.isEmpty() && !lbdcEvents.containsAll(jsonEvents))) ) {
-                if (!id.startsWith("D") && !StringUtils.join(jsonEvents, " ").toLowerCase().contains(" substituted ")) {
+                boolean substituted = StringUtils.join(jsonEvents, " ").toLowerCase().contains(" substituted ");
+                boolean delivered = jsonEvents.get(jsonEvents.size()-1).toLowerCase().contains(" delivered to ");
+                if (!id.startsWith("D") && !substituted && !delivered) {
                     logger.error("Events: "+billNo);
                     logger.error("  LBDC: "+lbdcEvents);
                     logger.error("  JSON: "+jsonEvents);
