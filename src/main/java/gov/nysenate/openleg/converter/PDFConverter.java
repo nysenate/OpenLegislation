@@ -53,17 +53,16 @@ public class PDFConverter
             contentStream.beginText();
             contentStream.setFont(font, fontSize);
 
-            boolean firstLine = true;
+            int lineCount = 0;
             for (String line : pageLines) {
                 line = line.trim();
                 String[] parts = line.split("\\s");
                 if (parts.length > 0 && parts[0].matches("[0-9]+")) {
-                    if (firstLine) {
+                    if (lineCount == 0) {
                         float offset = right-(parts[0].length()+1)*fontWidth;
                         contentStream.moveTextPositionByAmount(offset, top+fontWidth);
                         contentStream.drawString(parts[0]);
                         contentStream.moveTextPositionByAmount(-offset, -fontSize*2);
-                        firstLine = false;
                     }
                     else {
                         float offset = left-(parts[0].length()+1)*fontWidth;
@@ -71,6 +70,7 @@ public class PDFConverter
                         contentStream.drawString(line);
                         contentStream.moveTextPositionByAmount(-offset, -fontSize);
                     }
+                    lineCount++;
                 }
             }
 
@@ -81,7 +81,10 @@ public class PDFConverter
             else {
                 stenographer = "Candyco Transcription Service, Inc.";
             }
-            contentStream.moveTextPositionByAmount(left+ (right-left-stenographer.length()*fontWidth)/2, -fontSize*2);
+
+            // 27 because page# + 25 lines + 1 line stenographer offset
+            float offset = (lineCount-27)*2*fontSize;
+            contentStream.moveTextPositionByAmount(left+ (right-left-stenographer.length()*fontWidth)/2, offset);
             contentStream.drawString(stenographer);
 
             contentStream.endText();
