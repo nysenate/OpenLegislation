@@ -24,8 +24,7 @@ public class OpenLegislationTokenizer extends CharTokenizer
                && c != '"'
                && c != '\''
                && c != ';'
-               && c != '`'
-               && c != ':';
+               && c != '`';
     }
 
 }
