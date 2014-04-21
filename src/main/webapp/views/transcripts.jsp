@@ -58,7 +58,7 @@ $(document).ready(function() {
     <span><a href="<%=JSPHelper.getLink(request, "/transcript/"+transcript.getOid()) %>">
         <%=new SimpleDateFormat("MMM dd, yyyy").format(transcript.getTimeStamp()) %> <%=transcript.getType() %>
     </a></span>
-    <div style="float:right"><a href="<%=JSPHelper.getLink(request, "/api/2.0/transcript/"+transcript.getOid()+".pdf")%>">(Download PDF)</a></div>
+    <div style="float:right"><a href="<%=JSPHelper.getLink(request, "/api/2.0/transcript/"+transcript.getOid()+".pdf")%>">Download Formatted Transcript (PDF)</a></div>
 </div>
 <% } %>
 </div>
