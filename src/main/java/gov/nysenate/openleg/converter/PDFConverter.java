@@ -17,6 +17,9 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 public class PDFConverter
 {
+    // Kirkland started on May 16, 2011
+    protected static long KIRKLAND_START_TIME = 1305086400000L;
+
     public static void write(IBaseObject object, OutputStream out) throws IOException, COSVisitorException, ApiRequestException
     {
         if (object instanceof Transcript) {
@@ -38,6 +41,7 @@ public class PDFConverter
         Float top = 710f;
         Float left = 105f;
         Float fontSize = 12f;
+        Float fontWidth = 7f;
 
         for (String[] pageLines : pages) {
             PDPage page = new PDPage(PDPage.PAGE_SIZE_LETTER);
@@ -48,26 +52,36 @@ public class PDFConverter
             contentStream.drawLine(right, top, right, bot);
             contentStream.beginText();
             contentStream.setFont(font, fontSize);
-            contentStream.moveTextPositionByAmount(85, 730);
+
             boolean firstLine = true;
             for (String line : pageLines) {
-                if (line.length() > 0 && firstLine == false) {
-                    line = line.substring(0, 2)+"   "+line.substring(2);
-                }
-                contentStream.moveTextPositionByAmount(0f, -fontSize);
-                contentStream.drawString(line);
-                if (firstLine) {
-                    contentStream.moveTextPositionByAmount(0f, -fontSize);
-                    contentStream.drawString("");
-                    firstLine = false;
+                line = line.trim();
+                String[] parts = line.split("\\s");
+                if (parts.length > 0 && parts[0].matches("[0-9]+")) {
+                    if (firstLine) {
+                        float offset = right-(parts[0].length()+1)*fontWidth;
+                        contentStream.moveTextPositionByAmount(offset, top+fontWidth);
+                        contentStream.drawString(parts[0]);
+                        contentStream.moveTextPositionByAmount(-offset, -fontSize*2);
+                        firstLine = false;
+                    }
+                    else {
+                        float offset = left-(parts[0].length()+1)*fontWidth;
+                        contentStream.moveTextPositionByAmount(offset, -fontSize);
+                        contentStream.drawString(line);
+                        contentStream.moveTextPositionByAmount(-offset, -fontSize);
+                    }
                 }
             }
 
-            String stenographer = "Kirkland Reporting Service";
-            contentStream.moveTextPositionByAmount(0f, -12f);
-            contentStream.moveTextPositionByAmount(0f, -12f);
-            contentStream.moveTextPositionByAmount(0f, -12f);
-            contentStream.moveTextPositionByAmount((right-left-stenographer.length()*5)/2, 0f);
+            String stenographer;
+            if (transcript.getTimeStamp().getTime() >= KIRKLAND_START_TIME) {
+                stenographer = "Kirkland Reporting Service";
+            }
+            else {
+                stenographer = "Candyco Transcription Service, Inc.";
+            }
+            contentStream.moveTextPositionByAmount(left+ (right-left-stenographer.length()*fontWidth)/2, -fontSize*2);
             contentStream.drawString(stenographer);
 
             contentStream.endText();
