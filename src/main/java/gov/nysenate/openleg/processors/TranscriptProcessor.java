@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 public class TranscriptProcessor {
     private final Logger logger;
 
-    public SimpleDateFormat TRANSCRIPT_DATE_PARSER = new SimpleDateFormat("MMMM dd, yyyy hh:mm aa");
+    public SimpleDateFormat TRANSCRIPT_DATE_PARSER = new SimpleDateFormat("MMMM dd, yyyy hhmmaa");
 
     public TranscriptProcessor() {
         this.logger = Logger.getLogger(this.getClass());
@@ -41,9 +41,19 @@ public class TranscriptProcessor {
                 switch (contentLineNumber) {
                 case 3: transcript.setLocation(content); break;
                 case 4: date = content; break;
-                case 5: time = content.replace(".", ""); break;
+                case 5:
+                    // e.g. transcripts/032611v1.TXT
+                    time = content.replace(".", "").replace(":", "").replace(" ", ""); break;
                 case 6: transcript.setType(content); break;
-                case 1: // NEW YORK STATE SENATE
+                case 1:
+                    // e.g. transcripts/061310v1.TXT
+                    if (content.contains("STATE SENATE")) {
+                        break; // NEW YORK STATE SENATE
+                    }
+                    else {
+                        // e.g. transcripts/012109v1.TXT
+                        contentLineNumber+=1;
+                    }
                 case 2: // THE STENOGRAPHIC RECORD, sometimes split on 2 lines
                     if (content.equals("THE")) contentLineNumber--;
                 default: break;
