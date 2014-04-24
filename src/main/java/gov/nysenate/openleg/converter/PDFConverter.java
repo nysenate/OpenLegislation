@@ -7,6 +7,8 @@ import gov.nysenate.openleg.model.Transcript;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -19,6 +21,9 @@ public class PDFConverter
 {
     // Kirkland started on May 16, 2011
     protected static long KIRKLAND_START_TIME = 1305086400000L;
+
+    // Line feeds started on Feb 7, 2008
+    protected static long LINEFEED_START_TIME = 1202360400000L;
 
     public static void write(IBaseObject object, OutputStream out) throws IOException, COSVisitorException, ApiRequestException
     {
@@ -34,7 +39,14 @@ public class PDFConverter
     {
         PDDocument doc = new PDDocument();
         PDFont font = PDType1Font.COURIER;
-        ArrayList<String[]> pages = pagify(transcript.getTranscriptText());
+
+        ArrayList<List<String>> pages;
+        if (transcript.getTimeStamp().getTime() > LINEFEED_START_TIME) {
+            pages = pagifyWithLineFeeds(transcript.getTranscriptText());
+        }
+        else {
+            pages = pagifyByString(transcript.getTranscriptText(), "(518) 371-8910");
+        }
 
         Float bot = 90f;
         Float right = 575f;
@@ -43,7 +55,7 @@ public class PDFConverter
         Float fontSize = 12f;
         Float fontWidth = 7f;
 
-        for (String[] pageLines : pages) {
+        for (List<String> pageLines : pages) {
             PDPage page = new PDPage(PDPage.PAGE_SIZE_LETTER);
             PDPageContentStream contentStream = new PDPageContentStream(doc, page);
             contentStream.drawLine(left, top, left, bot);
@@ -95,13 +107,27 @@ public class PDFConverter
         doc.close();
     }
 
-    public static ArrayList<String[]> pagify(String text)
+    public static ArrayList<List<String>> pagifyByString(String text, String separator)
     {
-        ArrayList<String[]> pages = new ArrayList<String[]>();
+        List<String> page = new ArrayList<String>();
+        ArrayList<List<String>> pages = new ArrayList<List<String>>();
+        for (String line : text.split("\n")) {
+            page.add(line);
+            if (line.trim().equals(separator)) {
+                // The separator is always the last line on the old page
+                pages.add(page);
+                page = new ArrayList<String>();
+            }
+        }
+        return pages;
+    }
+    public static ArrayList<List<String>> pagifyWithLineFeeds(String text)
+    {
+        ArrayList<List<String>> pages = new ArrayList<List<String>>();
         for (String pageText : text.split((char)12+"")) {
             String[] lines = pageText.split("\n");
             if (lines.length > 0) {
-                pages.add(lines);
+                pages.add(Arrays.asList(lines));
             }
         }
         return pages;
