@@ -16,7 +16,7 @@
                     <target>1.7</target>
 
                     <!-- avoid possible encoding issues -->
-                    <encoding>latin1</encoding>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
         </plugins>
@@ -180,6 +180,11 @@
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
             <version>4.6.0</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.apache.pdfbox</groupId>
+        	<artifactId>pdfbox</artifactId>
+        	<version>1.8.4</version>
         </dependency>
     </dependencies>
     <pluginRepositories>

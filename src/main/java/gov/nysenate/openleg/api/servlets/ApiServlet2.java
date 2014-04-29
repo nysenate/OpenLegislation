@@ -4,6 +4,7 @@ import gov.nysenate.openleg.api.AbstractApiRequest.ApiRequestException;
 import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.converter.Api2JsonConverter;
 import gov.nysenate.openleg.converter.Api2XmlConverter;
+import gov.nysenate.openleg.converter.PDFConverter;
 import gov.nysenate.openleg.model.SenateResponse;
 import gov.nysenate.openleg.util.Application;
 
@@ -25,7 +26,7 @@ public class ApiServlet2 extends HttpServlet
     public static int DEFAULT_PAGE_SIZE = 20;
     public static int MAX_PAGE_SIZE = 1000;
     public final Logger logger = Logger.getLogger(ApiServlet2.class);
-    public final static Pattern documentPattern = Pattern.compile("(?:/api)?/2.0/(vote|action|bill|calendar|meeting|transcript)/(.*)?\\.(json|jsonp|xml)$");
+    public final static Pattern documentPattern = Pattern.compile("(?:/api)?/2.0/(vote|action|bill|calendar|meeting|transcript)/(.*)?\\.(json|jsonp|xml|pdf)$");
     public final static Pattern searchPattern = Pattern.compile("(?:/api)?/2.0/(search|votes|bills|meetings|actions|calendars|transcripts).(json|jsonp|xml)$");
 
     @Override
@@ -160,6 +161,14 @@ public class ApiServlet2 extends HttpServlet
             else if (format.equals("xml")) {
                 response.setContentType("application/xml");
                 new Api2XmlConverter().write(sr, response.getOutputStream());
+            }
+            else if (format.equals("pdf")) {
+                if (sr.getResults().size() == 0) {
+                    throw new ApiRequestException("No matching document could be found.");
+                }
+
+                response.setContentType("application/pdf");
+                PDFConverter.write(sr.getResults().get(0).object, response.getOutputStream());
             }
 
         } catch (Exception e) {

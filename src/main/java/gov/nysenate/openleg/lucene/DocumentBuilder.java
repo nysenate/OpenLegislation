@@ -133,6 +133,8 @@ public class DocumentBuilder
         document.add(new LongField("published", transcript.getPublishDate().getTime(), Field.Store.YES));
         document.add(new StringField("modified", dateFormat.format(transcript.getModifiedDate()), Field.Store.YES));
         document.add(new StringField("published", dateFormat.format(transcript.getPublishDate()), Field.Store.YES));
+        document.add(new StringField("modified_date", dateFormat.format(transcript.getModifiedDate()), Field.Store.YES));
+        document.add(new StringField("publish_date", dateFormat.format(transcript.getPublishDate()), Field.Store.YES));
 
         // When searching without a field, match against the following terms.
         ArrayList<String> searchTerms = new ArrayList<String>();

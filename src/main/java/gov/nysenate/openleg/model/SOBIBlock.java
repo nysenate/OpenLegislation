@@ -57,6 +57,11 @@ public class SOBIBlock
     private String header = "";
 
     /**
+     *
+     */
+    private String billHeader = "";
+
+    /**
      * The year indicated in the block header.
      */
     private Integer year = 0;
@@ -94,6 +99,7 @@ public class SOBIBlock
         this.setYear(Integer.parseInt(line.substring(0,4)));
         this.setPrintNo(line.substring(4,10));
         this.setAmendment(line.substring(10,11).trim());
+        this.setBillHeader(line.substring(0, 11));
         this.setType(line.charAt(11));
         this.setHeader(line.substring(0,12));
         this.setData(line.substring(12));
@@ -258,5 +264,15 @@ public class SOBIBlock
     public void setType(char type)
     {
         this.type = type;
+    }
+
+    public String getBillHeader()
+    {
+        return billHeader;
+    }
+
+    public void setBillHeader(String billHeader)
+    {
+        this.billHeader = billHeader;
     }
 }

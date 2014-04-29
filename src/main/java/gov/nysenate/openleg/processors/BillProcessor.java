@@ -210,7 +210,18 @@ public class BillProcessor
                 else {
                     // active block does not match new line or can't be extended: create new block
                     blocks.add(block);
-                    block = new SOBIBlock(sobiFile, lineNum, line);
+                    SOBIBlock newBlock = new SOBIBlock(sobiFile, lineNum, line);
+
+                    // Handle certain SOBI grouping edge cases.
+                    if (newBlock.getBillHeader().equals(block.getBillHeader())) {
+                        // The law code line can be omitted when blank but it always precedes the 'C' line
+                        if (newBlock.getType() == 'C' && block.getType() != 'B') {
+                            blocks.add(new SOBIBlock(sobiFile, lineNum, block.getBillHeader()+"B"));
+                        }
+                    }
+
+                    // Start a new block
+                    block = newBlock;
                 }
             }
             else if (block != null) {
@@ -378,6 +389,9 @@ public class BillProcessor
         }
         else if (bill.getBillId().equals("R4036-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
+        }
+        else if (bill.getBillId().equals("S6966-2013")) {
+            bill.setOtherSponsors(Arrays.asList(new Person("GRIFFO")));
         }
 
         // An old bug with the assembly sponsors field needs to be corrected, NYSS 7215
