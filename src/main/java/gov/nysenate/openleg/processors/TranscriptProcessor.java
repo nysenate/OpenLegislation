@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 public class TranscriptProcessor {
     private final Logger logger;
 
-    public SimpleDateFormat TRANSCRIPT_DATE_PARSER = new SimpleDateFormat("MMMM dd, yyyy hhmmaa");
+    public SimpleDateFormat TRANSCRIPT_DATE_PARSER = new SimpleDateFormat("MMM dd, yyyy hhmmaa");
 
     public TranscriptProcessor() {
         this.logger = Logger.getLogger(this.getClass());
@@ -43,7 +43,11 @@ public class TranscriptProcessor {
                 case 4: date = content; break;
                 case 5:
                     // e.g. transcripts/032611v1.TXT
-                    time = content.replace(".", "").replace(":", "").replace(" ", ""); break;
+                    time = content.replace(".", "").replace(":", "").replace(" ", "");
+                    if (time.length() == 5) {
+                        time = "0"+time;
+                    }
+                    break;
                 case 6: transcript.setType(content); break;
                 case 1:
                     // e.g. transcripts/061310v1.TXT
