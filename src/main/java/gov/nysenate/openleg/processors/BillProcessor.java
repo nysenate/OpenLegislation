@@ -85,7 +85,7 @@ public class BillProcessor
     /**
      * The expected format for Bill Info [1] block data.
      */
-    public static Pattern billInfoPattern = Pattern.compile("(.{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])(.{8}).*");
+    public static Pattern billInfoPattern = Pattern.compile("([ A-Z]{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])([ A-Z]{8})(.{5})([ 0-9]{4})(.{15})");
 
     /**
      * The expected format for header lines inside bill [T] and memo [M] text data.
@@ -714,17 +714,21 @@ public class BillProcessor
 
         Matcher billData = billInfoPattern.matcher(data);
         if (billData.find()) {
+            // sponsor, reprint billno/amd, blurb, old bill house/billno/amd, LBD Number, ??, year, ??
             //TODO: Find a possible use for this information
             String sponsor = billData.group(1).trim();
             //String reprint = billData.group(2);
             //String blurb = billData.group(3);
-            String oldbill = billData.group(4).trim().replaceAll("[0-9`-]$", "");
+            String oldbill = billData.group(4).trim().replaceAll("[^A-Z]$", "");
             //String lbdnum = billData.group(5);
+            String oldyear = billData.group(7).trim();
 
             if (!sponsor.isEmpty() && (bill.getSponsor() == null || bill.getSponsor().getFullname().isEmpty())) {
                 bill.setSponsor(new Person(sponsor));
             }
-            bill.addPreviousVersion(oldbill);
+            if (oldbill.trim().startsWith("0") == false) {
+                bill.setPreviousVersions(Arrays.asList(oldbill+"-"+oldyear));
+            }
         } else {
             throw new ParseError("billDataPattern not matched by "+data);
         }
