@@ -21,6 +21,11 @@
 	</context-param>
 
     <servlet>
+        <servlet-name>TranscriptServlet</servlet-name>
+        <servlet-class>gov.nysenate.openleg.api.servlets.TranscriptServlet</servlet-class>
+    </servlet>
+    
+    <servlet>
         <servlet-name>WebServlet</servlet-name>
         <servlet-class>gov.nysenate.openleg.api.servlets.WebServlet</servlet-class>
     </servlet>
@@ -120,7 +125,7 @@
 		<url-pattern>/meetings</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
+		<servlet-name>TranscriptServlet</servlet-name>
 		<url-pattern>/transcripts</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
@@ -152,7 +157,7 @@
 		<url-pattern>/meetings/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
+		<servlet-name>TranscriptServlet</servlet-name>
 		<url-pattern>/transcripts/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>

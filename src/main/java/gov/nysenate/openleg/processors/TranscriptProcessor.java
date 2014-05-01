@@ -11,14 +11,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.apache.log4j.Logger;
 
 public class TranscriptProcessor {
     private final Logger logger;
 
-    public SimpleDateFormat TRANSCRIPT_DATE_PARSER = new SimpleDateFormat("MMMM dd, yyyy hh:mm aa");
+    public SimpleDateFormat TRANSCRIPT_DATE_PARSER = new SimpleDateFormat("MMM dd, yyyy hhmmaa");
 
     public TranscriptProcessor() {
         this.logger = Logger.getLogger(this.getClass());
@@ -29,78 +28,51 @@ public class TranscriptProcessor {
         StringBuffer fullText = new StringBuffer();
         StringBuffer fullTextProcessed = new StringBuffer();
 
-        String pLine = null;
-        int locationLineIdx = 9;
-        boolean checkedLineFour = false;
-
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "latin1"));
         String line = null;
+        String date = null;
+        String time = null;
+        Integer contentLineNumber = 0;
         while ((line = reader.readLine()) != null) {
-            pLine = line.trim();
+            if (line.trim().length() > 4) {
+                contentLineNumber += 1;
+                String content = line.trim().substring(2).trim();
 
-            if (pLine.startsWith("4") && (!checkedLineFour)) {
-                if (pLine.indexOf("STENOGRAPHIC RECORD")==-1)
-                    locationLineIdx = 10;
-
-                checkedLineFour = true;
-            }
-            else if (transcript.getLocation() == null && pLine.startsWith(locationLineIdx+" ")) {
-                pLine = pLine.trim();
-
-                if (pLine.length() < 3)
-                    locationLineIdx++; //location must be on the next line
-                else {
-                    //9                   ALBANY, NEW YORK
-                    pLine = pLine.substring(2).trim();
-
-                    transcript.setLocation(pLine);
-                    logger.debug("got location: " + transcript.getLocation());
+                switch (contentLineNumber) {
+                case 3: transcript.setLocation(content); break;
+                case 4: date = content; break;
+                case 5:
+                    // e.g. transcripts/032611v1.TXT
+                    time = content.replace(".", "").replace(":", "").replace(" ", "");
+                    if (time.length() == 5) {
+                        time = "0"+time;
+                    }
+                    break;
+                case 6: transcript.setType(content); break;
+                case 1:
+                    // e.g. transcripts/061310v1.TXT
+                    if (content.contains("STATE SENATE")) {
+                        break; // NEW YORK STATE SENATE
+                    }
+                    else {
+                        // e.g. transcripts/012109v1.TXT
+                        contentLineNumber+=1;
+                    }
+                case 2: // THE STENOGRAPHIC RECORD, sometimes split on 2 lines
+                    if (content.equals("THE")) contentLineNumber--;
+                default: break;
                 }
+                fullTextProcessed.append(line.substring(2).trim()).append("\n");
             }
-            else if (transcript.getTimeStamp() == null && pLine.startsWith((locationLineIdx+1)+" ")) {
-                // 11                    August 7, 2009
-                //  12                      10:00 a.m.
-                pLine = pLine.substring(2).trim();
-
-                logger.debug("got day: " + pLine);
-
-                String nextLine = reader.readLine();
-                nextLine = reader.readLine().trim();
-                nextLine = nextLine.substring(2).trim();
-
-                logger.debug("got time: " + nextLine);
-
-                pLine += ' ' + nextLine;
-                pLine = pLine.replace(".", "").toUpperCase();
-
-                try {
-                    Date tTime = TRANSCRIPT_DATE_PARSER.parse(pLine);
-                    logger.debug(pLine+" -> "+tTime);
-                    transcript.setTimeStamp(tTime);
-                } catch (ParseException e) {
-                    logger.error(file.getName()+": unable to parse transcript datetime " + pLine,e);
-                }
-            }
-            else if (transcript.getType() == null && pLine.startsWith((locationLineIdx+5)+" ")) {
-                // 15                    REGULAR SESSION
-                pLine = pLine.substring(2);
-                pLine = pLine.trim();
-
-                transcript.setType(pLine);
-            }
-
-            fullText.append(line);
-            fullText.append('\n');
-
-            line = line.trim();
-
-            if (line.length() > 2) {
-                line = line.substring(2);
-                fullTextProcessed.append(line);
-                fullTextProcessed.append('\n');
-            }
+            fullText.append(line).append("\n");
         }
         reader.close();
+
+        try {
+            transcript.setTimeStamp(TRANSCRIPT_DATE_PARSER.parse(date+" "+time));
+        } catch (ParseException e) {
+            logger.error(file.getName()+": unable to parse transcript datetime " + date+" "+time, e);
+        }
 
         transcript.setTranscriptText(fullText.toString());
         transcript.setTranscriptTextProcessed(fullTextProcessed.toString());
