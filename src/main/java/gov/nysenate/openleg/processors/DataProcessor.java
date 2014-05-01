@@ -226,7 +226,7 @@ public class DataProcessor
                         line = new String(line.getBytes(encoding), "latin1");
                     }
 
-                    line = line.replace((char)193, '°');
+                    line = line.replace((char)193, 'Â°');
                     billBuffer.append(line).append("\n");
                 }
             }
