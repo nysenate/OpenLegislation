@@ -100,7 +100,7 @@ public class SpotCheck extends BaseScript
                 continue;
             }
 
-            if (bill.hasAmendment(billAmendment) == false) {
+            if (!bill.hasAmendment(billAmendment)) {
                 logger.error("Missing bill amendment: "+billNo);
             }
 
@@ -147,7 +147,10 @@ public class SpotCheck extends BaseScript
                 }
             }
 
-            String jsonSponsor = unescapeHTML(bill.getSponsor().getFullname()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
+            String jsonSponsor = "";
+            if (bill.getSponsor() != null) {
+                jsonSponsor = unescapeHTML(bill.getSponsor().getFullname()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
+            }
             String lbdcSponsor = spotCheckBills.get(printNo).getSponsor().toUpperCase().replace("BILL", "").replace("COM", "");
             if (!lbdcSponsor.isEmpty() && !jsonSponsor.replace(" ","").equals(lbdcSponsor.replace(" ", "")) ) {
                 if (!printNo.startsWith("D")) {
