@@ -3,6 +3,7 @@ package gov.nysenate.openleg.scripts;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.SOBIBlock;
 import gov.nysenate.openleg.processors.BillProcessor;
+import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Storage;
 
 import java.io.File;
@@ -38,17 +39,15 @@ public class MemoCheck extends BaseScript
         errors.put("mismatch", 0);
         File blockFile = new File("/data/openleg/PALMER.SEN.ALL.MEMO2011.TXT");
         BillProcessor bp = new BillProcessor();
-        File storageDir = new File("/data/openleg/2011_test/json/");
-        Storage storage = new Storage(storageDir);
+        Storage storage = Application.getStorage();
         List<SOBIBlock> blocks = bp.getBlocks(blockFile);
         for (SOBIBlock block : blocks) {
             String billNo = block.getPrintNo()+block.getAmendment()+"-"+block.getYear();
             Bill jsonBill = storage.getBill(block.getPrintNo()+block.getAmendment(), block.getYear());
             Bill lbdcBill = new Bill(billNo, block.getYear());
-            bp.applyText(block.getData(), lbdcBill, new Date());
-
-            String jsonMemo = StringUtils.normalizeSpace(jsonBill.getMemo().replaceAll("[?�]","§").replaceAll("-\n+ *", "").replaceAll("\n *", " ").replaceAll(" *([:,]) *", "$1").replaceAll(" *([()!\\\"]) *", " $1 ").replaceAll("([A-Za-z])- ?([A-Za-z])","$1$2").trim()).toLowerCase();
-            String lbdcMemo = StringUtils.normalizeSpace(lbdcBill.getMemo().replaceAll("[?�]","§").replaceAll("-\n+ *", "").replaceAll("\n *", " ").replaceAll(" *([:,]) *", "$1").replaceAll(" *([()!\\\"]) *", " $1 ").replaceAll("([A-Za-z])- ?([A-Za-z])","$1$2").trim()).toLowerCase();
+            bp.applyText(new String(block.getData().getBytes(), "utf-8"), lbdcBill, new Date());
+            String jsonMemo = StringUtils.normalizeSpace(jsonBill.getMemo().replaceAll("-\n+ *", "").replaceAll("\n *", " ").replaceAll(" *([:,]) *", "$1").replaceAll(" *([()!\\\"]) *", " $1 ").replaceAll("([A-Za-z])- ?([A-Za-z])","$1$2").replaceAll("-", "").trim()).toLowerCase();
+            String lbdcMemo = StringUtils.normalizeSpace(lbdcBill.getMemo().replaceAll("�", "§").replaceAll("-\n+ *", "").replaceAll("\n *", " ").replaceAll(" *([:,]) *", "$1").replaceAll(" *([()!\\\"]) *", " $1 ").replaceAll("([A-Za-z])- ?([A-Za-z])","$1$2").replaceAll("-", "").trim()).toLowerCase();
 
             if(jsonMemo.isEmpty()) {
                 logger.error(billNo+": MISSING");
