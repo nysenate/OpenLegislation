@@ -56,7 +56,8 @@
 	    @SuppressWarnings("unchecked")
 	    ArrayList<Senator> senators = (ArrayList<Senator>)request.getAttribute("senators");
 	    for(Senator senator : senators) {
-	       String searchUrl = request.getContextPath()+"/sponsor/"+senator.getShortName()+"?filter=year:"+request.getAttribute("sessionStart");
+	       String searchUrl = request.getContextPath()+"/sponsor/"+senator.getShortName()+"?filter=year:"+request.getAttribute("sessionStart") +
+                                                                                          " AND active:true AND stricken:false";
 	       String imageUrl = "http://www.nysenate.gov/files/imagecache/senator_teaser/"+senator.getImageUrl().substring(30);
 	       %>
 	        <div class="senator-block">
