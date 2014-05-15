@@ -26,7 +26,7 @@ public class UpdateReporter extends ServiceBase
             for(Entry<String, Change> entry: entries) {
                 Change change = entry.getValue();
                 run.update("INSERT INTO changelog (otype, oid, time, status) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE oid = ?",
-                        change.getOtype(), change.getOid(), change.getTime(), change.getStatus(), change.getOid());
+                        change.getOtype(), change.getOid(), change.getTime(), change.getStatus().name(), change.getOid());
             }
             run.update("COMMIT");
         }
