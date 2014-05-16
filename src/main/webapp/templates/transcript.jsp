@@ -1,46 +1,54 @@
 <%@ page language="java" import="java.util.*, java.util.regex.*, java.text.*,java.util.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
 <%!
-	public final static String TRANSCRIPT_INDENT = "             ";
-	public final static String TRANSCRIPT_INDENT_REPLACE = "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-	
-	public static String removeLineNumbers (String input) {
-		StringBuffer resp = new StringBuffer();
+	// Big indents ended Jan 1st 2005
+    public static long BIG_INDENT_END = 1104555600000L;
+
+    // Big indents started Jan 1st 1999
+    public static long BIG_INDENT_START = 915166800000L;
+
+	public static String removeLineNumbers (String fullText, long date) {
+        String htmlText = "";
+
+        String TRANSCRIPT_INDENT = "             ";
+        String BIG_TRANSCRIPT_INDENT = "                   ";
+        String TRANSCRIPT_INDENT_REPLACE = "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+
+        for (String aLine: fullText.split("\n")) {
+            gov.nysenate.openleg.util.TranscriptLine line = new TranscriptLine(aLine);
+            String tmp = line.fullText();
+
+            if (line.isTranscriptNumber())
+                continue;
+			if (tmp.trim().contains("Transcription Service, Inc."))
+				continue;
+			if (tmp.trim().contains("(518)"))
+				continue;
+
+            if (line.hasLineNumber())
+                tmp = line.removeLineNumber();
+
+            // Skip blank lines.
+            if (tmp.trim().length() < 1)
+                continue;
+
+            String indent = TRANSCRIPT_INDENT;
+            if (date > BIG_INDENT_START && date < BIG_INDENT_END) {
+                indent = BIG_TRANSCRIPT_INDENT;
+            }
+
+            if (tmp.startsWith(indent))
+                htmlText += TRANSCRIPT_INDENT_REPLACE;
+
+            htmlText += " " + tmp.trim();
+
+        }
 		
-		StringTokenizer st = new StringTokenizer (input,"\n");
-		String line = null;
-		int breakIdx = -1;
+		htmlText = htmlText.replace("SENATOR", "<br/>SENATOR");
+		htmlText = htmlText.replace("REVEREND", "<br/>REVEREND");
+		htmlText = htmlText.replace("ACTING", "<br/>ACTING");
+		htmlText = htmlText.replace("REGULAR SESSION", "REGULAR SESSION<br/><br/>");
 		
-		while (st.hasMoreTokens()) {
-			line = st.nextToken().trim();
-			
-			breakIdx = line.indexOf(' ');
-		
-			if (breakIdx != -1) {
-				
-				line = line.substring(breakIdx+1);
-				
-				if (line.startsWith("Transcription Service, Inc."))
-					continue;
-				if (line.startsWith("371-8910"))
-					continue;
-				
-				if (line.startsWith(TRANSCRIPT_INDENT))
-					resp.append(TRANSCRIPT_INDENT_REPLACE);
-				
-				line = line.trim();
-				
-				resp.append(' ');
-				resp.append(line);
-			}
-		}
-		
-		String output =  resp.toString();
-		output = output.replace("SENATOR", "<br/>SENATOR");
-		output = output.replace("REVEREND", "<br/>REVEREND");
-		output = output.replace("ACTING", "<br/>ACTING");
-		output = output.replace("REGULAR SESSION", "REGULAR SESSION<br/><br/>");
-		
-		return output;
+		return htmlText;
 	}
 
 	public static String addHyperlinks (String input) {
@@ -100,11 +108,10 @@
  		
  		<h3 class="section" ><a id="Transcript" href="#Transcript" class="anchor ui-icon ui-icon-link"></a> Transcript</h3>
  		<pre class='memo'>   <%
-	        String fullText = transcript.getTranscriptText().trim();
+	        String fullText = transcript.getTranscriptText();
 
 			try {
-			    int number = Integer.parseInt(fullText.substring(0,1));
-		        fullText = removeLineNumbers(fullText);
+		        fullText = removeLineNumbers(fullText, transcript.getTimeStamp().getTime());
 		        fullText = addHyperlinks(fullText);
 
 		        if (query != null && query.length()>0) {
