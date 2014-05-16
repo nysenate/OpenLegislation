@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processors;
 
+import gov.nysenate.openleg.util.TranscriptLine;
 import gov.nysenate.openleg.model.Transcript;
 import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.Storage;
@@ -17,7 +18,7 @@ import org.apache.log4j.Logger;
 public class TranscriptProcessor {
     private final Logger logger;
 
-    public SimpleDateFormat TRANSCRIPT_DATE_PARSER = new SimpleDateFormat("MMM dd, yyyy hhmmaa");
+    public SimpleDateFormat TRANSCRIPT_DATE_PARSER = new SimpleDateFormat("MMM dd yyyy hhmmaa");
 
     public TranscriptProcessor() {
         this.logger = Logger.getLogger(this.getClass());
@@ -29,43 +30,39 @@ public class TranscriptProcessor {
         StringBuffer fullTextProcessed = new StringBuffer();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "latin1"));
-        String line = null;
+        String lineText;
+        TranscriptLine line;
         String date = null;
         String time = null;
-        Integer contentLineNumber = 0;
-        while ((line = reader.readLine()) != null) {
-            if (line.trim().length() > 4) {
-                contentLineNumber += 1;
-                String content = line.trim().substring(2).trim();
+        boolean firstPageParsed = false;
 
-                switch (contentLineNumber) {
-                case 3: transcript.setLocation(content); break;
-                case 4: date = content; break;
-                case 5:
-                    // e.g. transcripts/032611v1.TXT
-                    time = content.replace(".", "").replace(":", "").replace(" ", "");
-                    if (time.length() == 5) {
-                        time = "0"+time;
-                    }
-                    break;
-                case 6: transcript.setType(content); break;
-                case 1:
-                    // e.g. transcripts/061310v1.TXT
-                    if (content.contains("STATE SENATE")) {
-                        break; // NEW YORK STATE SENATE
-                    }
-                    else {
-                        // e.g. transcripts/012109v1.TXT
-                        contentLineNumber+=1;
-                    }
-                case 2: // THE STENOGRAPHIC RECORD, sometimes split on 2 lines
-                    if (content.equals("THE")) contentLineNumber--;
-                default: break;
-                }
-                fullTextProcessed.append(line.substring(2).trim()).append("\n");
+        while ((lineText = reader.readLine()) != null) {
+            line = new TranscriptLine(lineText);
+
+            if (!firstPageParsed) {
+                if (line.isLocation())
+                    transcript.setLocation(line.textTrimmed());
+
+                if (line.isDate())
+                    date = line.getDateString();
+
+                if (line.isTime())
+                    time = line.getTimeString();
+
+                if (line.isSession())
+                    transcript.setType(line.textTrimmed());
+
+                if (transcript.getLocation() != null && date != null && time != null && transcript.getType() != null)
+                    firstPageParsed = true;
             }
-            fullText.append(line).append("\n");
+
+            fullText.append(line.fullText()).append("\n");
+
+            if (line.textTrimmed().length() > 0) {
+                fullTextProcessed.append(line.textTrimmed()).append("\n");
+            }
         }
+
         reader.close();
 
         try {
