@@ -57,7 +57,7 @@ public class SOBIBlock
     private String header = "";
 
     /**
-     *
+     * The portion of the header containing just the bill designator, i.e not including line type.
      */
     private String billHeader = "";
 
@@ -77,7 +77,7 @@ public class SOBIBlock
     private String amendment = "";
 
     /**
-     * The sobi line type of the block. Determines how the data is interpretted.
+     * The sobi line type of the block. Determines how the data is interpreted.
      */
     private Character type = 0;
 
@@ -111,19 +111,16 @@ public class SOBIBlock
      * the source file and line number the block was initialized from. The line is assumed to be
      * valid SOBI file and is NOT checked for performance reasons.
      */
-    public SOBIBlock(File file, int lineNumber, String line)
-    {
+    public SOBIBlock(File file, int lineNumber, String line) {
         this(line);
         this.setFile(file);
         this.setLineNumber(lineNumber);
     }
 
-
     /**
      * Returns a representation of the location of the block: fileName:lineNumber.
      */
-    public String getLocation()
-    {
+    public String getLocation() {
         return (this.getFile() == null ? "null" : this.getFile().getName())+":"+this.getLineNumber();
     }
 
@@ -143,16 +140,14 @@ public class SOBIBlock
     /**
      * Gets the string representation of the block's data.
      */
-    public String getData()
-    {
+    public String getData() {
         return dataBuffer.toString();
     }
 
     /**
      * Replaces the block data with the input string.
      */
-    public void setData(String data)
-    {
+    public void setData(String data) {
         this.dataBuffer = new StringBuffer(data);
     }
 
@@ -168,65 +163,51 @@ public class SOBIBlock
      * Blocks are considered equal if their header and data (trimmed of all excess whitespace) are
      * identical in content (case-sensitive).
      */
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
         return obj!= null && obj instanceof SOBIBlock
            && ((SOBIBlock)obj).getHeader().equals(this.getHeader())
            && ((SOBIBlock)obj).getData().trim().equals(this.getData().trim());
     }
 
-    public String toString()
-    {
+    public String toString() {
         return this.getLocation()+":"+this.getHeader();
     }
 
-
-    public int getLineNumber()
-    {
+    public int getLineNumber() {
         return lineNumber;
     }
 
-    public void setLineNumber(int lineNumber)
-    {
+    public void setLineNumber(int lineNumber) {
         this.lineNumber = lineNumber;
     }
 
-
-    public File getFile()
-    {
+    public File getFile() {
         return file;
     }
 
-    public void setFile(File file)
-    {
+    public void setFile(File file) {
         this.file = file;
     }
 
-
-    public String getHeader()
-    {
+    public String getHeader() {
         return header;
     }
 
-    public void setHeader(String header)
-    {
+    public void setHeader(String header) {
         this.header = header;
     }
 
 
-    public int getYear()
-    {
+    public int getYear() {
         return year;
     }
 
-    public void setYear(int year)
-    {
+    public void setYear(int year) {
         this.year = year;
     }
 
 
-    public String getPrintNo()
-    {
+    public String getPrintNo() {
         return printNo;
     }
 
@@ -238,41 +219,33 @@ public class SOBIBlock
      * @param printNo
      * @throws NumberFormatException on malformed print numbers
      */
-    public void setPrintNo(String printNo)
-    {
+    public void setPrintNo(String printNo) {
         // Integer conversion removes leading zeros in the print number.
         this.printNo = printNo.substring(0,1)+Integer.parseInt(printNo.substring(1));
     }
 
 
-    public String getAmendment()
-    {
+    public String getAmendment() {
         return amendment;
     }
 
-    public void setAmendment(String amendment)
-    {
+    public void setAmendment(String amendment) {
         this.amendment = amendment;
     }
 
-
-    public char getType()
-    {
+    public char getType() {
         return type;
     }
 
-    public void setType(char type)
-    {
+    public void setType(char type) {
         this.type = type;
     }
 
-    public String getBillHeader()
-    {
+    public String getBillHeader() {
         return billHeader;
     }
 
-    public void setBillHeader(String billHeader)
-    {
+    public void setBillHeader(String billHeader) {
         this.billHeader = billHeader;
     }
 }
