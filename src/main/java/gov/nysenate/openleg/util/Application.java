@@ -21,8 +21,8 @@ public class Application
     protected static Application appInstance = new Application();
 
     /** Default values */
-    protected static final String prodPropertyFileName = "app.properties";
-    protected static final String testPropertyFileName = "test.app.properties";
+    public static final String PROD_PROPERTY_FILENAME = "app.properties";
+    public static final String TEST_PROPERTY_FILENAME = "test.app.properties";
 
     /** Dependency instances */
     protected NYSenateConfigurationListener configurationListener;
@@ -41,7 +41,7 @@ public class Application
      */
     public static boolean bootstrap()
     {
-        return bootstrap(prodPropertyFileName);
+        return bootstrap(PROD_PROPERTY_FILENAME);
     }
 
     public static boolean bootstrap(String propertyFileName)
@@ -50,7 +50,7 @@ public class Application
         {
             appInstance.config = new Config(propertyFileName);
             appInstance.xmlhelper = new XmlHelper(appInstance.config, "xml");
-            appInstance.db = new DB(appInstance.config, "mysqldb");
+            appInstance.db = new DB(appInstance.config, "postgresdb");
             appInstance.mailer = new Mailer(appInstance.config, "mailer");
             appInstance.environment = new Environment(appInstance.config, "env");
             appInstance.lucene = new Lucene(appInstance.config, "lucene");
