@@ -31,65 +31,44 @@ import java.util.regex.Pattern;
  */
 public class SOBIBlock
 {
-    /**
-     * A list of sobi line types that are *single* line blocks. All other block types are multi-line.
-     */
+    /** A list of sobi line types that are *single* line blocks. All other block types are multi-line. */
     public static final List<Character> oneLineBlocks = Arrays.asList('1','2','5');
 
-    /**
-     * A pattern to verify that a string is in the SOBI line format.
-     */
+    /** A pattern to verify that a string is in the SOBI line format. */
     public static final Pattern blockPattern = Pattern.compile("^[0-9]{4}[A-Z][0-9]{5}[ A-Z][1-9ABCMRTV]");
 
-    /**
-     * The line number that the block starts at. Defaults to zero when using the basic constructor.
-     */
+    /** The line number that the block starts at. Defaults to zero when using the basic constructor. */
     private Integer lineNumber = 0;
 
-    /**
-     * The file from which the block was found. Defaults to null when using the basic constructor.
-     */
+    /** The file from which the block was found. Defaults to null when using the basic constructor. */
     private File file = null;
 
-    /**
-     * The full line header from the line used to construct the Block.
-     */
+    /** The full line header from the line used to construct the Block. */
     private String header = "";
 
-    /**
-     * The portion of the header containing just the bill designator, i.e not including line type.
-     */
+    /** The portion of the header containing just the bill designator, i.e not including line type. */
     private String billHeader = "";
 
-    /**
-     * The year indicated in the block header.
-     */
+    /** The year indicated in the block header. */
     private Integer year = 0;
 
-    /**
-     * The printNo of the base bill. The amendment character is NOT included.
-     */
+    /** The printNo of the base bill. The amendment character is NOT included. */
     private String printNo = "";
 
-    /**
-     * The amendment character for the base bill. Can be empty or single letter string from "A-Z"
-     */
+    /** The amendment character for the base bill. Can be empty or single letter string from "A-Z" */
     private String amendment = "";
 
-    /**
-     * The sobi line type of the block. Determines how the data is interpreted.
-     */
+    /** The sobi line type of the block. Determines how the data is interpreted. */
     private Character type = 0;
 
-    /**
-     * An internal buffer used to accumulate block data over several lines.
-     */
+    /** An internal buffer used to accumulate block data over several lines. */
     private StringBuffer dataBuffer = new StringBuffer();
 
-    /**
-     * True for blocks that are extendible
-     */
+    /** True if the block should be extended by multiple lines. This is generally determined by block type
+     *  but blocks whose data is DELETE should be treated as single line blocks regardless of type. */
     private final boolean multiline;
+
+    /** --- Constructors --- */
 
     /**
      * Construct a new block with without location information from a valid SOBI line. The line is
@@ -117,12 +96,7 @@ public class SOBIBlock
         this.setLineNumber(lineNumber);
     }
 
-    /**
-     * Returns a representation of the location of the block: fileName:lineNumber.
-     */
-    public String getLocation() {
-        return (this.getFile() == null ? "null" : this.getFile().getName())+":"+this.getLineNumber();
-    }
+    /** --- Methods --- */
 
     /**
      * Extends the block data with the data from the new line. Separates new lines with a '\n' character so
@@ -135,6 +109,29 @@ public class SOBIBlock
         if (!this.isMultiline())
             throw new RuntimeException("Only multi-line blocks may be extended");
         this.dataBuffer.append("\n"+line.substring(12));
+    }
+
+    /**
+     * Blocks are considered equal if their header and data (trimmed of all excess whitespace) are
+     * identical in content (case-sensitive).
+     */
+    public boolean equals(Object obj) {
+        return obj!= null && obj instanceof SOBIBlock
+           && ((SOBIBlock)obj).getHeader().equals(this.getHeader())
+           && ((SOBIBlock)obj).getData().trim().equals(this.getData().trim());
+    }
+
+    public String toString() {
+        return this.getLocation()+":"+this.getHeader();
+    }
+
+    /** --- Functional Getters/Setters */
+
+    /**
+     * Returns a representation of the location of the block: fileName:lineNumber.
+     */
+    public String getLocation() {
+        return (this.getFile() == null ? "null" : this.getFile().getName())+":"+this.getLineNumber();
     }
 
     /**
@@ -152,26 +149,19 @@ public class SOBIBlock
     }
 
     /**
-     * Returns true if the block should be extended by multiple lines. This is generally determined by block type
-     * but blocks whose data is DELETE should be treated as single line blocks regardless of type.
+     * Strips all leading zeros from the numerical part of the print number:
+     * <p>
+     * A00370 -> A370
+     *
+     * @param printNo
+     * @throws NumberFormatException on malformed print numbers
      */
-    public boolean isMultiline() {
-        return multiline;
+    public void setPrintNo(String printNo) {
+        // Integer conversion removes leading zeros in the print number.
+        this.printNo = printNo.substring(0,1)+Integer.parseInt(printNo.substring(1));
     }
 
-    /**
-     * Blocks are considered equal if their header and data (trimmed of all excess whitespace) are
-     * identical in content (case-sensitive).
-     */
-    public boolean equals(Object obj) {
-        return obj!= null && obj instanceof SOBIBlock
-           && ((SOBIBlock)obj).getHeader().equals(this.getHeader())
-           && ((SOBIBlock)obj).getData().trim().equals(this.getData().trim());
-    }
-
-    public String toString() {
-        return this.getLocation()+":"+this.getHeader();
-    }
+    /** --- Basic Getters/Setters */
 
     public int getLineNumber() {
         return lineNumber;
@@ -211,20 +201,6 @@ public class SOBIBlock
         return printNo;
     }
 
-    /**
-     * Strips all leading zeros from the numerical part of the print number:
-     * <p>
-     * A00370 -> A370
-     *
-     * @param printNo
-     * @throws NumberFormatException on malformed print numbers
-     */
-    public void setPrintNo(String printNo) {
-        // Integer conversion removes leading zeros in the print number.
-        this.printNo = printNo.substring(0,1)+Integer.parseInt(printNo.substring(1));
-    }
-
-
     public String getAmendment() {
         return amendment;
     }
@@ -247,5 +223,9 @@ public class SOBIBlock
 
     public void setBillHeader(String billHeader) {
         this.billHeader = billHeader;
+    }
+
+    public boolean isMultiline() {
+        return multiline;
     }
 }
