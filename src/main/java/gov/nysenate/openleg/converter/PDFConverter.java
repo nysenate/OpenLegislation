@@ -22,6 +22,9 @@ public class PDFConverter
     // Kirkland started on May 16, 2011
     protected static long KIRKLAND_START_TIME = 1305086400000L;
 
+    // Candyco started Jan 1st, 2005
+    private static long CANDYCO_START_TIME = 1104555600000L;
+
     private static Float bot = 90f;
     private static Float right = 575f;
     private static Float top = 710f;
@@ -87,8 +90,11 @@ public class PDFConverter
             if (transcript.getTimeStamp().getTime() >= KIRKLAND_START_TIME) {
                 stenographer = "Kirkland Reporting Service";
             }
-            else {
+            else if (transcript.getTimeStamp().getTime() >= CANDYCO_START_TIME) {
                 stenographer = "Candyco Transcription Service, Inc.";
+            }
+            else {
+                stenographer = "";
             }
 
             // 27 because page# + 25 lines + 1 line stenographer offset
