@@ -17,19 +17,27 @@ public class SOBI
     /** The format required for the SOBI file name. e.g. SOBI.D130323.T065432.TXT */
     public static SimpleDateFormat sobiDateFormat = new SimpleDateFormat("'SOBI.D'yyMMdd'.T'HHmmss'.TXT'");
 
+    /** The file name of the SOBI file, serves as the unique identifier */
     private String fileName;
 
+    /** The published datetime of the SOBI file which is determined via the file name */
     private Date publishedDateTime;
 
+    /** The datetime when the SOBI file was processed by the system */
     private Date processedDateTime;
 
+    /** The actual text body of the file */
     private String text;
 
+    /** --- Constructors --- */
+
     public SOBI(File sobiFile, String encoding) throws IOException, ParseException {
-        fileName = sobiFile.getName();
-        publishedDateTime = sobiDateFormat.parse(fileName);
-        text = FileUtils.readFileToString(sobiFile, encoding);
+        this.fileName = sobiFile.getName();
+        this.publishedDateTime = sobiDateFormat.parse(fileName);
+        this.text = FileUtils.readFileToString(sobiFile, encoding);
     }
+
+    /** --- Basic Getters/Setters --- */
 
     public String getFileName() {
         return fileName;

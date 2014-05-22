@@ -12,17 +12,25 @@ import java.util.Date;
  */
 public class SOBIFragment
 {
+    /** Reference to the original SOBI object that created this fragment. */
     private SOBI parentSOBI;
 
+    /** The type of fragment, e.g bill, agenda, etc. */
     private SOBIFragmentType fragmentType;
 
+    /** The file name of the fragment. Serves as a unique identifier for the fragment. */
     private String fileName;
 
-    private String text;
-
+    /** The published datetime of the fragment which is the same as that of the parent SOBI. */
     private Date publishedDateTime;
 
+    /** The datetime when the fragment was processed. */
     private Date processedDateTime;
+
+    /** The actual text body of the fragment. */
+    private String text;
+
+    /** --- Constructors --- */
 
     public SOBIFragment(SOBI parentSOBI, SOBIFragmentType fragmentType, String fileName) {
         this.parentSOBI = parentSOBI;
@@ -30,6 +38,8 @@ public class SOBIFragment
         this.fileName = fileName;
         this.publishedDateTime = parentSOBI.getPublishedDateTime();
     }
+
+    /** --- Basic Getters/Setters --- */
 
     public SOBI getParentSOBI() {
         return parentSOBI;
