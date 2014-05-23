@@ -14,8 +14,10 @@ import java.util.Date;
  */
 public class SOBI
 {
+    public static final String DEFAULT_ENCODING = "CP850";
+
     /** The format required for the SOBI file name. e.g. SOBI.D130323.T065432.TXT */
-    public static SimpleDateFormat sobiDateFormat = new SimpleDateFormat("'SOBI.D'yyMMdd'.T'HHmmss'.TXT'");
+    public static final SimpleDateFormat sobiDateFormat = new SimpleDateFormat("'SOBI.D'yyMMdd'.T'HHmmss'.TXT'");
 
     /** The file name of the SOBI file, serves as the unique identifier */
     private String fileName;
@@ -30,6 +32,10 @@ public class SOBI
     private String text;
 
     /** --- Constructors --- */
+
+    public SOBI(File sobiFile) throws IOException, ParseException {
+        this(sobiFile, DEFAULT_ENCODING);
+    }
 
     public SOBI(File sobiFile, String encoding) throws IOException, ParseException {
         this.fileName = sobiFile.getName();

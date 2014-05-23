@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.model.sobi;
 
-import gov.nysenate.openleg.model.SOBIBlock;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -49,12 +48,13 @@ public class SOBIFragment
 
     /** --- Constructors --- */
 
-    public SOBIFragment(SOBI parentSOBI, SOBIFragmentType fragmentType, File fragmentFile) {
+    public SOBIFragment(SOBI parentSOBI, SOBIFragmentType fragmentType, File fragmentFile) throws IOException {
         this.parentSOBI = parentSOBI;
         this.fragmentType = fragmentType;
         this.fragmentFile = fragmentFile;
         this.fileName = fragmentFile.getName();
         this.publishedDateTime = parentSOBI.getPublishedDateTime();
+        this.text = FileUtils.readFileToString(fragmentFile);
     }
 
     /** --- Methods --- */
@@ -81,9 +81,9 @@ public class SOBIFragment
             List<String> lines = FileUtils.readLines(fragmentFile);
             lines.add(""); // Add a trailing line to end the last block and remove edge cases
 
-            for(int lineNum = 0; lineNum < lines.size(); lineNum++) {
+            for(int lineNo = 0; lineNo < lines.size(); lineNo++) {
                 // Replace NULL bytes with spaces to properly format lines.
-                String line = lines.get(lineNum).replace('\0', ' ');
+                String line = lines.get(lineNo).replace('\0', ' ');
 
                 // Source file is not assumed to be 100% SOBI so we filter out other lines
                 Matcher headerMatcher = SOBIBlock.blockPattern.matcher(line);
@@ -91,7 +91,7 @@ public class SOBIFragment
                 if (headerMatcher.find()) {
                     if (block == null) {
                         // No active block with a new matching line: create new block
-                        block = new SOBIBlock(fragmentFile, lineNum, line);
+                        block = new SOBIBlock(fragmentFile, lineNo, line);
                     }
                     else if (block.getHeader().equals(headerMatcher.group()) && block.isMultiline()) {
                         // active multi-line block with a new matching line: extend block
@@ -99,14 +99,15 @@ public class SOBIFragment
                     }
                     else {
                         // active block does not match new line or can't be extended: create new block
+                        block.setEndLineNo(lineNo - 1);
                         blocks.add(block);
-                        SOBIBlock newBlock = new SOBIBlock(fragmentFile, lineNum, line);
+                        SOBIBlock newBlock = new SOBIBlock(fragmentFile, lineNo, line);
 
                         // Handle certain SOBI grouping edge cases.
                         if (newBlock.getBillHeader().equals(block.getBillHeader())) {
                             // The law code line can be omitted when blank but it always precedes the 'C' line
-                            if (newBlock.getType() == 'C' && block.getType() != 'B') {
-                                blocks.add(new SOBIBlock(fragmentFile, lineNum, block.getBillHeader()+"B"));
+                            if (newBlock.getType().equals(SOBILineType.SUMMARY) && !block.getType().equals(SOBILineType.LAW)) {
+                                blocks.add(new SOBIBlock(fragmentFile, lineNo, block.getBillHeader()+"B"));
                             }
                         }
 
@@ -116,6 +117,7 @@ public class SOBIFragment
                 }
                 else if (block != null) {
                     // Active block with non-matching line: end the current blockAny non-matching line ends the current block
+                    block.setEndLineNo(lineNo - 1);
                     blocks.add(block);
                     block = null;
                 }
@@ -130,24 +132,12 @@ public class SOBIFragment
         return parentSOBI;
     }
 
-    public void setParentSOBI(SOBI parentSOBI) {
-        this.parentSOBI = parentSOBI;
-    }
-
     public SOBIFragmentType getFragmentType() {
         return fragmentType;
     }
 
-    public void setFragmentType(SOBIFragmentType fragmentType) {
-        this.fragmentType = fragmentType;
-    }
-
     public String getFileName() {
         return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     public String getText() {
