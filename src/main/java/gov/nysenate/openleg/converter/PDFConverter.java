@@ -50,6 +50,7 @@ public class PDFConverter
 
         ArrayList<List<String>> pages;
         pages = parsePages(transcript.getTranscriptText());
+        int pageNum = 1;
 
         for (List<String> pageLines : pages) {
             PDPage page = new PDPage(PDPage.PAGE_SIZE_LETTER);
@@ -62,8 +63,10 @@ public class PDFConverter
 
             int lineCount = 0;
             TranscriptLine line;
-            for (String aLine : pageLines) {
-                line = new TranscriptLine(aLine);
+            TranscriptLine nextLine;
+            for (int i = 0; i < pageLines.size(); i++) {
+                line = new TranscriptLine(pageLines.get(i));
+                nextLine = getNextLine(pageLines, i);
 
                 if (!line.isEmpty()) {
                     if (lineCount == 0) {
@@ -79,7 +82,41 @@ public class PDFConverter
                         drawTranscriptNumber(contentStream, line);
                     }
                     else {
-                        drawLine(contentStream, line);
+                        int indent;
+                        if (line.hasLineNumber()) {
+                            String text = line.fullText().trim();
+                            indent = line.fullText().trim().split("\\s")[0].length() + 1;
+
+                            if (pageNum == 1) {
+                                // fix formatting issues in originals. e.g 122995.v1, 123096.v1
+                                if (line.fullText().endsWith(",") || line.fullText().endsWith(", Acting")) {
+                                    if (nextLine.fullText().trim().equals("President") || nextLine.fullText().trim().equals("Acting President")) {
+                                        text += " " + nextLine.fullText();
+                                        // Skip next line since we merged it with this line.
+                                        i++;
+                                    }
+                                }
+                            }
+                            draw(contentStream, indent, text);
+                        }
+                        else {
+                            // Shift lines to the left to reduce indent size
+                            indent = 11;
+                            draw(contentStream, indent, line.fullText());
+
+                            // Fix spacing on first page. Spacing info is lost without line numbers marking blank lines.
+                            if (line.textTrimmed().equals("NEW YORK STATE SENATE"))
+                                contentStream.moveTextPositionByAmount(0, -(fontSize * 4));
+
+                            if (line.textTrimmed().contains("STENOGRAPHIC RECORD"))
+                                contentStream.moveTextPositionByAmount(0, -(fontSize * 5));
+
+                            if (line.isTime())
+                                contentStream.moveTextPositionByAmount(0, -(fontSize * 3));
+
+                            if (line.isSession())
+                                contentStream.moveTextPositionByAmount(0, -(fontSize * 6));
+                        }
                     }
                     lineCount++;
                 }
@@ -102,12 +139,21 @@ public class PDFConverter
             contentStream.moveTextPositionByAmount(left+ (right-left-stenographer.length()*fontWidth)/2, offset);
             contentStream.drawString(stenographer);
 
+            pageNum++;
+
             contentStream.endText();
             contentStream.close();
             doc.addPage(page);
         }
         doc.save(out);
         doc.close();
+    }
+
+    private static TranscriptLine getNextLine(List<String> pageLines, int i) {
+        if (i + 1 < pageLines.size()) {
+            return new TranscriptLine(pageLines.get(i + 1));
+        }
+        return null;
     }
 
     private static void drawBorder(PDPageContentStream contentStream) throws IOException {
@@ -122,32 +168,6 @@ public class PDFConverter
         contentStream.moveTextPositionByAmount(offset, top + fontWidth);
         contentStream.drawString(line.fullText().trim());
         contentStream.moveTextPositionByAmount(-offset, -fontSize * 2);
-    }
-
-    private static void drawLine(PDPageContentStream contentStream, TranscriptLine line) throws IOException {
-        int indent;
-        if (line.hasLineNumber()) {
-            indent = line.fullText().trim().split("\\s")[0].length() + 1;
-            draw(contentStream, indent, line.fullText().trim());
-        }
-        else {
-            // Shift lines to the left to reduce indent size
-            indent = 11;
-            draw(contentStream, indent, line.fullText());
-
-            // Fix spacing on first page. Spacing info is lost without line numbers marking blank lines.
-            if (line.textTrimmed().equals("NEW YORK STATE SENATE"))
-                contentStream.moveTextPositionByAmount(0, -(fontSize * 4));
-
-            if (line.textTrimmed().contains("STENOGRAPHIC RECORD"))
-                contentStream.moveTextPositionByAmount(0, -(fontSize * 5));
-
-            if (line.isTime())
-                contentStream.moveTextPositionByAmount(0, -(fontSize * 3));
-
-            if (line.isSession())
-                contentStream.moveTextPositionByAmount(0, -(fontSize * 6));
-        }
     }
 
     private static void draw(PDPageContentStream contentStream, int indent, String text) throws IOException {
