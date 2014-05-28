@@ -182,7 +182,7 @@ public class SpotCheck extends BaseScript
 
             if (!lbdcEvents.isEmpty() &&  (lbdcEvents.size() != jsonEvents.size() || (!lbdcEvents.isEmpty() && !lbdcEvents.containsAll(jsonEvents))) ) {
                 boolean substituted = StringUtils.join(jsonEvents, " ").toLowerCase().contains(" substituted ");
-                boolean delivered = jsonEvents.get(jsonEvents.size()-1).toLowerCase().contains(" delivered to ");
+                boolean delivered =  !jsonEvents.isEmpty() ? jsonEvents.get(jsonEvents.size()-1).toLowerCase().contains(" delivered to ") : false;
                 if (!id.startsWith("D") && !substituted && !delivered) {
                     logger.error("Events: "+billNo);
                     logger.error("  LBDC: "+lbdcEvents);
@@ -294,7 +294,7 @@ public class SpotCheck extends BaseScript
         HashMap<String,SpotCheckBill> bills = new HashMap<String,SpotCheckBill>();
 
         // Open the daybreak file and remove new lines for the regular expressions
-        String daybreak = FileUtils.readFileToString(dataFile, "latin1").replace("\r\n", " ");
+        String daybreak = FileUtils.readFileToString(dataFile, "latin1").replaceAll("\\r?\\n", " ");
 
         Matcher rowMatcher = row.matcher(daybreak);
         rowMatcher.find(); // Throw the first two rows away
