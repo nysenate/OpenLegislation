@@ -1,7 +1,8 @@
 DROP TABLE IF EXISTS changelog;
-DROP TABLE IF EXISTS report;
-DROP TABLE IF EXISTS report_error;
 DROP TABLE IF EXISTS report_observation;
+DROP TABLE IF EXISTS report_error;
+DROP TABLE IF EXISTS report;
+
 
 
 CREATE TABLE `changelog` (
@@ -23,7 +24,7 @@ CREATE TABLE `report` (
 CREATE TABLE `report_error` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `oid` varchar(255) CHARACTER SET utf8 NOT NULL,
-  `field` enum('BILL_SUMMARY','BILL_TITLE','BILL_ACTION','BILL_SPONSOR','BILL_COSPONSOR','BILL_TEXT_PAGE') CHARACTER SET utf8 NOT NULL,
+  `field` enum('BILL_SUMMARY','BILL_TITLE','BILL_ACTION','BILL_SPONSOR','BILL_COSPONSOR','BILL_TEXT_PAGE', 'BILL_AMENDMENT') CHARACTER SET utf8 NOT NULL,
   `openedAt` datetime NOT NULL,
   `closedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -35,7 +36,7 @@ CREATE TABLE `report_observation` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `reportId` int(11) DEFAULT NULL,
   `oid` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `field` enum('BILL_SUMMARY','BILL_TITLE','BILL_ACTION','BILL_SPONSOR','BILL_COSPONSOR','BILL_TEXT_PAGE') COLLATE utf8_unicode_ci NOT NULL,
+  `field` enum('BILL_SUMMARY','BILL_TITLE','BILL_ACTION','BILL_SPONSOR','BILL_COSPONSOR','BILL_TEXT_PAGE', 'BILL_AMENDMENT') COLLATE utf8_unicode_ci NOT NULL,
   `actualValue` text COLLATE utf8_unicode_ci,
   `observedValue` text COLLATE utf8_unicode_ci,
   `errorId` int(11) DEFAULT NULL,

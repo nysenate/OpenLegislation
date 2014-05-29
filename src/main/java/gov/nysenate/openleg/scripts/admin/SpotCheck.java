@@ -66,7 +66,7 @@ public class SpotCheck extends BaseScript
 
         List<ReportObservation> observations = new ArrayList<ReportObservation>();
         HashMap<String, Integer> errorTotals = new HashMap<String, Integer>();
-        for (String error_type : new String[] {"title", "summary", "sponsor", "cosponsors", "events", "pages"}) {
+        for (String error_type : new String[] {"title", "summary", "sponsor", "cosponsors", "events", "pages", "amendments"}) {
             errorTotals.put(error_type, 0);
         }
 
@@ -87,20 +87,20 @@ public class SpotCheck extends BaseScript
 
         for(String id : bills.keySet()) {
             String billNo = id+"-2013";
-            Bill bill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
+            Bill jsonBill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
 
-            if (bill == null) {
+            if (jsonBill == null) {
                 logger.error("Missing bill "+"2013/bill/"+billNo);
                 continue;
             }
 
-            if (!bill.isPublished()) {
+            if (!jsonBill.isPublished()) {
                 logger.error("Bill Unpublished: "+billNo);
                 continue;
             }
 
             // Compare the titles, ignore white space differences
-            String jsonTitle = unescapeHTML(bill.getTitle());
+            String jsonTitle = unescapeHTML(jsonBill.getTitle());
             String lbdcTitle = bills.get(id).getTitle();
             if (!lbdcTitle.isEmpty() && !stringEquals(jsonTitle, lbdcTitle, true, true)) {
                 // What is this D?
@@ -114,8 +114,8 @@ public class SpotCheck extends BaseScript
             }
 
             // Compare the summaries. LBDC reports summary and law changes together
-            String jsonLaw = bill.getLaw();
-            String jsonSummary = unescapeHTML(bill.getSummary());
+            String jsonLaw = jsonBill.getLaw();
+            String jsonSummary = unescapeHTML(jsonBill.getSummary());
             String lbdcSummary = bills.get(id).getSummary().replaceAll("\\s+", " ");
 
             if( jsonLaw != null && jsonLaw != "" && jsonLaw != "null") {
@@ -138,8 +138,8 @@ public class SpotCheck extends BaseScript
             }
 
             String jsonSponsor = "";
-            if (bill.getSponsor() != null) {
-                jsonSponsor = unescapeHTML(bill.getSponsor().getFullname()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
+            if (jsonBill.getSponsor() != null) {
+                jsonSponsor = unescapeHTML(jsonBill.getSponsor().getFullname()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
             }
             String lbdcSponsor = bills.get(id).getSponsor().toUpperCase().replace("BILL", "").replace("COM", "");
             if (!lbdcSponsor.isEmpty() && !jsonSponsor.replace(" ","").equals(lbdcSponsor.replace(" ", "")) ) {
@@ -155,8 +155,8 @@ public class SpotCheck extends BaseScript
 
             TreeSet<String> lbdcCosponsors = new TreeSet<String>(bills.get(id).getCosponsors());
             TreeSet<String> jsonCosponsors = new TreeSet<String>();
-            if ( bill.getCoSponsors() != null ) {
-                List<Person> cosponsors = bill.getCoSponsors();
+            if ( jsonBill.getCoSponsors() != null ) {
+                List<Person> cosponsors = jsonBill.getCoSponsors();
                 for(Person cosponsor : cosponsors) {
                     jsonCosponsors.add(cosponsor.getFullname().toUpperCase());
                 }
@@ -176,7 +176,7 @@ public class SpotCheck extends BaseScript
             ArrayList<String> jsonEvents = new ArrayList<String>();
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
 
-            for (Action action : bill.getActions()) {
+            for (Action action : jsonBill.getActions()) {
                 jsonEvents.add(dateFormat.format(action.getDate())+" "+action.getText());
             }
 
@@ -195,7 +195,7 @@ public class SpotCheck extends BaseScript
             int lbdcPages = bills.get(id).pages;
             int jsonPages = 0;
             Pattern pagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d*(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s{11,}\\d{1,4}(--\\w)?$)");
-            for (String line : bill.getFulltext().split("\n")) {
+            for (String line : jsonBill.getFulltext().split("\n")) {
 
                 if (pagePattern.matcher(line).find()) {
                     // logger.info(billNo+": "+line);
@@ -209,6 +209,19 @@ public class SpotCheck extends BaseScript
                 logger.error("  JSON: "+jsonPages);
                 observations.add(new ReportObservation(report.getId(), billNo, "BILL_TEXT_PAGE", String.valueOf(lbdcPages), String.valueOf(jsonPages)));
                 errorTotals.put("pages", errorTotals.get("pages")+1);
+            }
+
+            ArrayList<String> lbdcAmendments = bills.get(id).getAmendments();
+            ArrayList<String> jsonAmendments = (ArrayList) jsonBill.getAmendments();
+            jsonAmendments.add(jsonBill.getBillId());
+
+            if (!amendmentsEqual(lbdcAmendments, jsonAmendments)) {
+                logger.error("Amendments: " + billNo);
+                logger.error("This Bill amendment : " + jsonBill.getBillId());
+                logger.error("  LBDC: " + lbdcAmendments);
+                logger.error("  JSON: " + jsonAmendments);
+                observations.add(new ReportObservation(report.getId(), billNo, "BILL_AMENDMENT", StringUtils.join(lbdcAmendments, "\n"), StringUtils.join(jsonAmendments, "\n")));
+                errorTotals.put("amendments", errorTotals.get("amendments") + 1);
             }
         }
 
@@ -235,6 +248,18 @@ public class SpotCheck extends BaseScript
 
         System.out.println(bills.size());
 
+    }
+
+    private boolean amendmentsEqual(ArrayList<String> lbdcAmendments, ArrayList<String> jsonAmendments) {
+        if (!lbdcAmendments.isEmpty()) {
+            if (lbdcAmendments.size() != jsonAmendments.size())
+                return false;
+
+            if (!lbdcAmendments.containsAll(jsonAmendments))
+                return false;
+        }
+
+        return true;
     }
 
     public void loadPageFile(File dataFile, HashMap<String, SpotCheckBill> bills) throws IOException
@@ -292,7 +317,6 @@ public class SpotCheck extends BaseScript
     public HashMap<String, SpotCheckBill> readDaybreak(File dataFile) throws IOException
     {
         HashMap<String,SpotCheckBill> bills = new HashMap<String,SpotCheckBill>();
-
         // Open the daybreak file and remove new lines for the regular expressions
         String daybreak = FileUtils.readFileToString(dataFile, "latin1").replaceAll("\\r?\\n", " ");
 
@@ -309,18 +333,19 @@ public class SpotCheck extends BaseScript
                     .replace("</td>", "<br>")	// convert </td> to <br> as a special case
                     .split("<br>");				// Split the delimited row into parts
 
-
+            // Add amendments
             bill.id = parts[0].trim();
-
-            /*
 			Matcher idMatcher = id.matcher(bill.id);
 			if( idMatcher.find() ) {
-				bill.id = idMatcher.group(1);
+                String billId = idMatcher.group(1);
+                String sessionYear = "2013";
 				for(int i = 65; i <= idMatcher.group(2).charAt(0); i++){
-					bill.amendments.add(String.valueOf((char)i));
+					bill.amendments.add(billId + String.valueOf((char)i) + "-" + sessionYear);
 				}
+                // Also add the base bill as an amendment to match our data model.
+                bill.amendments.add(billId + "-" + sessionYear);
 			}
-             */
+
 
             bill.setTitle(parts[2].trim());
             bill.law = parts[3].trim();

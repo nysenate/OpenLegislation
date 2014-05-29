@@ -80,5 +80,8 @@ public class SpotCheckBill {
     {
         this.actions = actions;
     }
-    
+
+    public ArrayList<String> getAmendments() {
+        return amendments;
+    }
 }

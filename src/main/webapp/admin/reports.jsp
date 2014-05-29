@@ -110,6 +110,7 @@ th, .title-cell {
                 <th>Summary</th>
                 <th>Action</th>
                 <th>Page</th>
+                <th>Amendments</th>
             </tr>
         </thead>
         <tbody>
@@ -125,6 +126,7 @@ th, .title-cell {
     	         int sponsorTotal = 0;
     	         int cosponsorTotal = 0;
     	         int pagesTotal = 0;
+    	         int amendmentsTotal = 0;
     	         for (ReportObservation error : report.getObservations()) {
     	             switch(ReportError.FIELD.valueOf(error.getField())) {
     	             case BILL_SUMMARY: summaryTotal++; break;
@@ -133,6 +135,7 @@ th, .title-cell {
     	             case BILL_SPONSOR: sponsorTotal++; break;
     	             case BILL_COSPONSOR: cosponsorTotal++; break;
     	             case BILL_TEXT_PAGE: pagesTotal++; break;
+    	             case BILL_AMENDMENT: amendmentsTotal++; break;
     	             }
     	         }
 	     %>
@@ -153,6 +156,7 @@ th, .title-cell {
 	            <td><%=summaryTotal%></td>
 	            <td><%=actionTotal%></td>
 	            <td><%=pagesTotal%></td>
+	            <td><%=amendmentsTotal%></td>
 	        </tr>
 	     <% } %>            
 	     </tbody>

@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class ReportError
 {
-    public enum FIELD {BILL_SUMMARY, BILL_TITLE, BILL_ACTION, BILL_SPONSOR, BILL_COSPONSOR, BILL_TEXT_PAGE};
+    public enum FIELD {BILL_SUMMARY, BILL_TITLE, BILL_ACTION, BILL_SPONSOR, BILL_COSPONSOR, BILL_TEXT_PAGE, BILL_AMENDMENT};
 
     private int id;
     private String oid;
