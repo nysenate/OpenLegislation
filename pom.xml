@@ -181,6 +181,21 @@
             <artifactId>lucene-analyzers-common</artifactId>
             <version>4.6.0</version>
         </dependency>
+
+
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>4.0.5.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.3-1101-jdbc4</version>
+        </dependency>
+
     </dependencies>
     <pluginRepositories>
         <!-- Repository for the External Dependency Plugin -->

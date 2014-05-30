@@ -9,10 +9,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * The SOBI class represents a SOBI file and contains the metadata of the file as well as the
+ * The SOBIFile class represents a SOBIFile file and contains the metadata of the file as well as the
  * body text.
  */
-public class SOBI
+public class SOBIFile
 {
     public static final String DEFAULT_ENCODING = "CP850";
 
@@ -25,22 +25,30 @@ public class SOBI
     /** The published datetime of the SOBI file which is determined via the file name */
     private Date publishedDateTime;
 
-    /** The datetime when the SOBI file was processed by the system */
+    /** The datetime when the SOBI file was last processed */
     private Date processedDateTime;
 
     /** The actual text body of the file */
     private String text;
 
+    /** If true, the SOBIFile is awaiting processing */
+    private boolean pendingProcessing;
+
+    /** The number of times this file has been processed */
+    private int processedCount;
+
     /** --- Constructors --- */
 
-    public SOBI(File sobiFile) throws IOException, ParseException {
+    public SOBIFile(File sobiFile) throws IOException, ParseException {
         this(sobiFile, DEFAULT_ENCODING);
     }
 
-    public SOBI(File sobiFile, String encoding) throws IOException, ParseException {
+    public SOBIFile(File sobiFile, String encoding) throws IOException, ParseException {
         this.fileName = sobiFile.getName();
         this.publishedDateTime = sobiDateFormat.parse(fileName);
         this.text = FileUtils.readFileToString(sobiFile, encoding);
+        this.processedCount = 0;
+        this.pendingProcessing = false;
     }
 
     /** --- Basic Getters/Setters --- */
@@ -75,5 +83,21 @@ public class SOBI
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public int getProcessedCount() {
+        return processedCount;
+    }
+
+    public void setProcessedCount(int processedCount) {
+        this.processedCount = processedCount;
+    }
+
+    public boolean isPendingProcessing() {
+        return pendingProcessing;
+    }
+
+    public void setPendingProcessing(boolean pendingProcessing) {
+        this.pendingProcessing = pendingProcessing;
     }
 }
