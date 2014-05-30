@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.bill;
 
+import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.sobi.SOBIFragment;
@@ -11,6 +12,14 @@ import java.sql.Timestamp;
 public class SqlBillDao extends SqlBaseDao
 {
     private static Logger logger = Logger.getLogger(SqlBillDao.class);
+
+    public SqlBillDao() {
+        super(null);
+    }
+
+    public SqlBillDao(Environment environment) {
+        super(environment);
+    }
 
     public Bill getBill(String printNo, int sessionYear) {
         return null;
@@ -30,7 +39,7 @@ public class SqlBillDao extends SqlBaseDao
 
     public void saveBill(Bill bill, SOBIFragment sobiFragment) {
         if (bill != null) {
-            try {
+            /* try {
 
                 runner.update(UPDATE_BILL_SQL, bill.getTitle(), bill.getLawSection(), bill.getSummary(), bill.getActiveVersion(),
                         bill.getSponsor().getId(), bill.getYear(), new Timestamp(bill.getModifiedDate().getTime()),
@@ -43,7 +52,7 @@ public class SqlBillDao extends SqlBaseDao
             }
             catch (SQLException e) {
                 logger.error("Failed to ", e);
-            }
+            } */
         }
     }
 }

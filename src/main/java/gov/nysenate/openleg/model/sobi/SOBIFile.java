@@ -9,8 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * The SOBIFile class represents a SOBIFile file and contains the metadata of the file as well as the
- * body text.
+ * The SOBIFile class represents a SOBI file and contains the metadata of the file as well as the body text.
+ * This class doesn't have any awareness about the type of content in the file whereas the SOBIFragments that
+ * are generated do.
+ *
+ * @see gov.nysenate.openleg.model.sobi.SOBIFragment
  */
 public class SOBIFile
 {
@@ -39,16 +42,33 @@ public class SOBIFile
 
     /** --- Constructors --- */
 
-    public SOBIFile(File sobiFile) throws IOException, ParseException {
+    public SOBIFile(File sobiFile) throws IOException {
         this(sobiFile, DEFAULT_ENCODING);
     }
 
-    public SOBIFile(File sobiFile, String encoding) throws IOException, ParseException {
-        this.fileName = sobiFile.getName();
-        this.publishedDateTime = sobiDateFormat.parse(fileName);
-        this.text = FileUtils.readFileToString(sobiFile, encoding);
-        this.processedCount = 0;
-        this.pendingProcessing = false;
+    public SOBIFile(File sobiFile, String encoding) throws IOException {
+        if (sobiFile.exists()) {
+            this.fileName = sobiFile.getName();
+            this.text = FileUtils.readFileToString(sobiFile, encoding);
+            this.processedCount = 0;
+            this.pendingProcessing = false;
+            try {
+                this.publishedDateTime = sobiDateFormat.parse(fileName);
+            }
+            catch (ParseException ex) {
+                this.publishedDateTime = new Date(sobiFile.lastModified());
+                ex.printStackTrace();
+            }
+        }
+        else {
+            throw new IOException("Given sobiFile does not exist in the file system! (" + sobiFile.getAbsolutePath() + ")");
+        }
+    }
+
+    /** --- Override Methods --- */
+    @Override
+    public String toString() {
+        return "SOBIFile {fileName='" + fileName + '\'' + ", processedCount=" + processedCount + '}';
     }
 
     /** --- Basic Getters/Setters --- */
@@ -79,10 +99,6 @@ public class SOBIFile
 
     public String getText() {
         return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     public int getProcessedCount() {

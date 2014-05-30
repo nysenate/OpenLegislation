@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.dao;
 
-import gov.nysenate.openleg.model.BillAmendment;
+import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.sobi.SOBIFragment;
 
 public class BillAmendmentDao

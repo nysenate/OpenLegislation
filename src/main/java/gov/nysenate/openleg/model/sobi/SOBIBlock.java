@@ -75,8 +75,8 @@ public class SOBIBlock
     /** --- Constructors --- */
 
     /**
-     * Construct a new block with without location information from a valid SOBI line. The line is
-     * assumed to be valid SOBI file and is NOT checked for performance reasons.
+     * Construct a new block with without location information from a valid SOBIFile line. The line is
+     * assumed to be valid SOBIFile file and is NOT checked for performance reasons.
      */
     public SOBIBlock(String line) {
         this.setYear(Integer.parseInt(line.substring(0,4)));

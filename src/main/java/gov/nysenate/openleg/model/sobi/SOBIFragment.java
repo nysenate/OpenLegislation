@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 /**
- * The SOBIFragment class represents a portion of a SOBI file that contains data pertaining
+ * The SOBIFragment class represents a portion of a SOBIFile file that contains data pertaining
  * to a certain entity type.
  *
  * For example if a SOBI file contains bill data and agenda data, the file can be broken down
@@ -19,8 +19,8 @@ import java.util.regex.Matcher;
  */
 public class SOBIFragment
 {
-    /** Reference to the original SOBI object that created this fragment. */
-    private SOBI parentSOBI;
+    /** Reference to the original SOBIFile object that created this fragment. */
+    private SOBIFile parentSOBIFile;
 
     /** The type of fragment, e.g bill, agenda, etc. */
     private SOBIFragmentType fragmentType;
@@ -28,7 +28,7 @@ public class SOBIFragment
     /** The file name of the fragment. Serves as a unique identifier for the fragment. */
     private String fileName;
 
-    /** The published datetime of the fragment which is the same as that of the parent SOBI. */
+    /** The published datetime of the fragment which is the same as that of the parent SOBIFile. */
     private Date publishedDateTime;
 
     /** The datetime when the fragment was processed. */
@@ -40,20 +40,14 @@ public class SOBIFragment
     /** The actual text body of the fragment. */
     private String text;
 
-    /** The line number in the parent sobi file where this fragment starts. */
-    private int startLineNo;
-
-    /** The line number in the parent sobi file where this fragment end. */
-    private int endLineNo;
-
     /** --- Constructors --- */
 
-    public SOBIFragment(SOBI parentSOBI, SOBIFragmentType fragmentType, File fragmentFile) throws IOException {
-        this.parentSOBI = parentSOBI;
+    public SOBIFragment(SOBIFile parentSOBIFile, SOBIFragmentType fragmentType, File fragmentFile) throws IOException {
+        this.parentSOBIFile = parentSOBIFile;
         this.fragmentType = fragmentType;
         this.fragmentFile = fragmentFile;
         this.fileName = fragmentFile.getName();
-        this.publishedDateTime = parentSOBI.getPublishedDateTime();
+        this.publishedDateTime = parentSOBIFile.getPublishedDateTime();
         this.text = FileUtils.readFileToString(fragmentFile);
     }
 
@@ -128,8 +122,8 @@ public class SOBIFragment
 
     /** --- Basic Getters/Setters --- */
 
-    public SOBI getParentSOBI() {
-        return parentSOBI;
+    public SOBIFile getParentSOBIFile() {
+        return parentSOBIFile;
     }
 
     public SOBIFragmentType getFragmentType() {
@@ -158,21 +152,5 @@ public class SOBIFragment
 
     public void setProcessedDateTime(Date processedDateTime) {
         this.processedDateTime = processedDateTime;
-    }
-
-    public int getStartLineNo() {
-        return startLineNo;
-    }
-
-    public void setStartLineNo(int startLineNo) {
-        this.startLineNo = startLineNo;
-    }
-
-    public int getEndLineNo() {
-        return endLineNo;
-    }
-
-    public void setEndLineNo(int endLineNo) {
-        this.endLineNo = endLineNo;
     }
 }
