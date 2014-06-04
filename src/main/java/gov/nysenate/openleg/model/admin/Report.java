@@ -10,6 +10,7 @@ public class Report
     private Date time;
     private Collection<ReportObservation> observations = new ArrayList<ReportObservation>();
     private Collection<ReportError> openErrors = new ArrayList<ReportError>();
+    private Collection<ReportObservation> closedObservations = new ArrayList<ReportObservation>();
     private Collection<ReportError> closedErrors = new ArrayList<ReportError>();
     private Collection<ReportError> newErrors = new ArrayList<ReportError>();
 
@@ -88,5 +89,13 @@ public class Report
     public void setNewErrors(Collection<ReportError> newErrors)
     {
         this.newErrors = newErrors;
+    }
+
+    public Collection<ReportObservation> getClosedObservations() {
+        return closedObservations;
+    }
+
+    public void setClosedObservations(Collection<ReportObservation> closedObservations) {
+        this.closedObservations = closedObservations;
     }
 }

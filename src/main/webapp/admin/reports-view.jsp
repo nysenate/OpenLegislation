@@ -28,7 +28,7 @@ public String getStatus(Report report, ReportObservation obs) {
 			"bFilter": true,
 			"bSort": true,
             "sDom": '<"hidden-controls"f>lrtip',
-            "aaSorting": [[3, "desc"],[0,"asc"]],
+            "aaSorting": [[3, "desc"],[2, "desc"], [0,"asc"]],
             "aoColumnDefs": [
                 {"aTargets":[0,1,3], "sWidth":"10%" },
                 {"aTargets":[2,5], "sWidth":"5%" }
@@ -178,7 +178,8 @@ public String getStatus(Report report, ReportObservation obs) {
 			    <td class="details-link">Details</td>
 			</tr>
         <% } %>
-        </tbody>  
+
+
     </table>
     <div id="errorDetails">
     <% for (ReportObservation obs:report.getObservations()) { %>

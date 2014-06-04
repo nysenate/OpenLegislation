@@ -45,13 +45,20 @@ public class ReportsServlet extends HttpServlet
             jspPath = "/admin/reports.jsp";
 	    }
 	    else {
+            List<Report> reportList = null;
             Report report = null;
             try {
-                report = ReportDAO.getReport(Integer.parseInt(reportIdParam));
+                reportList = ReportDAO.getReports();
             }
             catch (SQLException e) {
                 e.printStackTrace();
             }
+
+            for (Report rep : reportList) {
+                if (rep.getId() == Integer.parseInt(reportIdParam))
+                    report = rep;
+            }
+
             request.setAttribute("report",report);
             jspPath = "/admin/reports-view.jsp";
 	    }

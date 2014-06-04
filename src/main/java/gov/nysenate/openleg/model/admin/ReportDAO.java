@@ -22,7 +22,7 @@ public class ReportDAO
             // So that we can return the reports in a sorted order if necessary
             ArrayList<Report> orderedReports = new ArrayList<Report>();
             HashMap<Integer, Report> reports = new HashMap<Integer, Report>();
-            HashMap<Integer, ReportError> reportErrors = new HashMap<Integer, ReportError>();
+            HashMap<Integer, ReportError> allErrors = new HashMap<Integer, ReportError>();
 
             while(results.next()) {
                 // Create report (if we need to)
@@ -37,10 +37,10 @@ public class ReportDAO
                 int errorId = results.getInt("errorId");
                 String oid = results.getString("oid");
                 String field = results.getString("field");
-                if (!reportErrors.containsKey(errorId)) {
+                if (!allErrors.containsKey(errorId)) {
                     Date openedAt = results.getTimestamp("openedAt");
                     Date closedAt = results.getTimestamp("closedAt");
-                    reportErrors.put(errorId, new ReportError(errorId, oid, field, openedAt, closedAt));
+                    allErrors.put(errorId, new ReportError(errorId, oid, field, openedAt, closedAt));
                 }
 
                 // Create observation
@@ -58,7 +58,7 @@ public class ReportDAO
                 report.addObservation(observation);
                 observation.setReport(report);
 
-                ReportError error = reportErrors.get(errorId);
+                ReportError error = allErrors.get(errorId);
                 error.addObservation(observation);
                 observation.setError(error);
             }
@@ -74,7 +74,8 @@ public class ReportDAO
                 ArrayList<ReportError> newErrors = new ArrayList<ReportError>();
                 ArrayList<ReportError> openErrors = new ArrayList<ReportError>();
                 ArrayList<ReportError> closedErrors = new ArrayList<ReportError>();
-                for (ReportError error : reportErrors.values()) {
+                ArrayList<ReportObservation> closedObservations = new ArrayList<ReportObservation>();
+                for (ReportError error : allErrors.values()) {
                     Date openedAt = error.getOpenedAt();
                     Date closedAt = error.getClosedAt();
 
@@ -86,11 +87,13 @@ public class ReportDAO
                     }
                     else if (closedAt != null && closedAt.after(reportStartTime) && (closedAt.equals(reportEndTime) || closedAt.before(reportEndTime))) {
                         closedErrors.add(error);
+                        closedObservations.add(error.getObservations().iterator().next());
                     }
                 }
                 report.setNewErrors(newErrors);
                 report.setOpenErrors(openErrors);
                 report.setClosedErrors(closedErrors);
+                report.getObservations().addAll((closedObservations));
             }
 
             return orderedReports;
