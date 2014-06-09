@@ -85,7 +85,7 @@ public class BillProcessor
     /**
      * The expected format for Bill Info [1] block data.
      */
-    public static Pattern billInfoPattern = Pattern.compile("([ A-Z]{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])([ A-Z]{8})(.{5})([ 0-9]{4})(.{15})");
+    public static Pattern billInfoPattern = Pattern.compile("(.{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])([ A-Z]{8})(.{5})([ 0-9]{4})(.{15})");
 
     /**
      * The expected format for header lines inside bill [T] and memo [M] text data.
