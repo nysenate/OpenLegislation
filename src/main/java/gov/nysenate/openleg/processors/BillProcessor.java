@@ -721,20 +721,15 @@ public class BillProcessor
         Matcher billData = billInfoPattern.matcher(data);
         if (billData.find()) {
             // sponsor, reprint billno/amd, blurb, old bill house/billno/amd, LBD Number, ??, year, ??
-            //TODO: Find a possible use for this information
             String sponsor = billData.group(1).trim();
-            //String reprint = billData.group(2);
-            //String blurb = billData.group(3);
             String oldbill = billData.group(4).trim().replaceAll("[0-9`-]$", "");
-            //String lbdnum = billData.group(5);
-            String oldyear = billData.group(7).trim();
 
             if (!sponsor.isEmpty() && (bill.getSponsor() == null || bill.getSponsor().getFullname().isEmpty())) {
                 bill.setSponsor(new Person(sponsor));
             }
-            if (oldbill.trim().startsWith("0") == false) {
-                bill.setPreviousVersions(Arrays.asList(oldbill+"-"+oldyear));
-            }
+            //if (oldbill.trim().startsWith("0") == false) {
+            //    bill.setPreviousVersions(Arrays.asList(oldbill+"-"+oldyear));
+            //}
         } else {
             throw new ParseError("billDataPattern not matched by "+data);
         }
