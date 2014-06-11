@@ -424,6 +424,7 @@ public class BillProcessor
                 billVersion.setOtherSponsors(bill.getOtherSponsors());
                 billVersion.setMultiSponsors(bill.getMultiSponsors());
                 billVersion.setLawSection(bill.getLawSection());
+                billVersion.setLaw(bill.getLaw());
                 billVersion.setSummary(bill.getSummary());
                 storage.set(billVersion);
                 ChangeLogger.record(storage.key(billVersion), storage);
