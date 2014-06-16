@@ -119,7 +119,7 @@
         <dependency>
             <groupId>gov.nysenate</groupId>
             <artifactId>nysenate-java-utils</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -161,6 +161,11 @@
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-dbcp</artifactId>
             <version>7.0.39</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+            <version>7.0.34</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
