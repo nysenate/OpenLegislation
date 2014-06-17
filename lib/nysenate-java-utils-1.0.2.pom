@@ -7,15 +7,17 @@
   <groupId>gov.nysenate</groupId>
   <artifactId>nysenate-java-utils</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>1.0.2</version>
   <name>nysenate-java-utils</name>
   <build>
       <plugins>
           <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.1</version>
               <configuration>
-                  <source>1.6</source>
-                  <target>1.6</target>
+                  <source>1.7</source>
+                  <target>1.7</target>
               </configuration>
           </plugin>
       </plugins>
@@ -24,17 +26,17 @@
     <dependency>
         <groupId>org.apache.tomcat</groupId>
         <artifactId>tomcat-juli</artifactId>
-        <version>7.0.34</version>
+        <version>7.0.47</version>
     </dependency>
     <dependency>
         <groupId>org.apache.tomcat</groupId>
         <artifactId>tomcat-dbcp</artifactId>
-        <version>7.0.34</version>
+        <version>7.0.47</version>
     </dependency>
     <dependency>
         <groupId>org.apache.tomcat</groupId>
         <artifactId>tomcat-jdbc</artifactId>
-        <version>7.0.34</version>
+        <version>7.0.47</version>
     </dependency>
     <dependency>
           <groupId>junit</groupId>
