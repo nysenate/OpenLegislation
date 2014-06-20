@@ -1,2 +1,4 @@
-*/2 12-23 * * FRI /data/openleg/olroot/bin/run.sh admin.CheckMail -e app.properties
-*/2 * * * SAT,SUN /data/openleg/olroot/bin/run.sh admin.CheckMail -e app.properties
+# Poll the inbox for LBDC day break updates every Friday, Saturday, and Sunday. 
+
+*/2 12-23 * * FRI /PATH_TO_SOURCE_ROOT/bin/run.sh admin.CheckMail -e app.properties
+*/2 * * * SAT,SUN /PATH_TO_SOURCE_ROOT/bin/run.sh admin.CheckMail -e app.properties
