@@ -42,7 +42,7 @@ public class CheckMail extends BaseScript
         props.setProperty("mail.store.protocol", "imaps");
         props.setProperty("mail.imaps.ssl.protocols", "SSLv3");
         Session session = Session.getDefaultInstance(props, null);
-        session.setDebug(true);
+        //session.setDebug(true);
         Store store = session.getStore("imaps");
         Config config = Application.getConfig();
 //        logger.info(config.getValue("checkmail.host"));
