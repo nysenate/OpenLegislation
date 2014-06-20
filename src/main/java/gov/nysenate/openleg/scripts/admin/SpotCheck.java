@@ -10,6 +10,8 @@ import gov.nysenate.openleg.scripts.BaseScript;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Storage;
 
+import gov.nysenate.util.Config;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -27,7 +29,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
@@ -64,16 +66,18 @@ public class SpotCheck extends BaseScript
         String[] args = opts.getArgs();
         Storage storage = Application.getStorage();
 
+        Config config = Application.getConfig();
+
         List<ReportObservation> observations = new ArrayList<ReportObservation>();
         HashMap<String, Integer> errorTotals = new HashMap<String, Integer>();
         for (String error_type : new String[] {"title", "summary", "sponsor", "cosponsors", "events", "pages", "amendments"}) {
             errorTotals.put(error_type, 0);
         }
 
-        String prefix = args[1];
+        String prefix = args[0];
         Date date = dateFormat.parse(prefix);
         logger.info("Processing daybreak files for: "+date);
-        File directory = new File(args[0]);
+        File directory = new File(config.getValue("checkmail.lrsFileDir"));
         HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();
         bills.putAll(readDaybreak(new File(directory, prefix+".senate.low.html")));
         bills.putAll(readDaybreak(new File(directory, prefix+".senate.high.html")));
@@ -238,7 +242,7 @@ public class SpotCheck extends BaseScript
 
         System.out.println(errorTotals);
         System.out.println(bills.keySet().size());
-        System.exit(0);
+        //System.exit(0);
 
         int total = 0;
         for(SpotCheckBill bill : bills.values()) {

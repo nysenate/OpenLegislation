@@ -1,0 +1,4 @@
+# Poll the inbox for LBDC day break updates every Friday, Saturday, and Sunday. 
+
+*/2 12-23 * * FRI /PATH_TO_SOURCE_ROOT/bin/run.sh admin.CheckMail -e /PATH_TO_PROP_FILE/app.properties >> /PATH_TO_LOG_DIR/`date +D\%Y\%m\%d.spotcheck.log` 2>&1
+*/2 * * * SAT,SUN /PATH_TO_SOURCE_ROOT/bin/run.sh admin.CheckMail -e /PATH_TO_PROP_FILE/app.properties >> /PATH_TO_LOG_DIR/`date +D\%Y\%m\%d.spotcheck.log` 2>&1
