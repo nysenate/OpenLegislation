@@ -1,0 +1,2 @@
+*/2 12-23 * * FRI /data/openleg/olroot/bin/run.sh admin.CheckMail -e app.properties
+*/2 * * * SAT,SUN /data/openleg/olroot/bin/run.sh admin.CheckMail -e app.properties
