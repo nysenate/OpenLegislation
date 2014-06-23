@@ -118,4 +118,13 @@ public class TranscriptLineTest {
         line = new TranscriptLine("       ");
         assertTrue(line.isEmpty());
     }
+
+    @Test
+    public void testIsStenographer() {
+        TranscriptLine line = new TranscriptLine("  Candyco Transcription Service, Inc. ");
+        assertTrue(line.isStenographer());
+
+        line = new TranscriptLine(" (518) 371-8910 ");
+        assertTrue(line.isStenographer());
+    }
 }
