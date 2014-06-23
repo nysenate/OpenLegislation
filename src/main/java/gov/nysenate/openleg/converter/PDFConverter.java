@@ -78,44 +78,49 @@ public class PDFConverter
                             drawTranscriptNumber(contentStream, line);
                         }
                     }
-                    else if (line.isTranscriptNumber()) {
-                        drawTranscriptNumber(contentStream, line);
+                    else if (line.isStenographer()) {
+                        lineCount--;
                     }
                     else {
-                        int indent;
-                        if (line.hasLineNumber()) {
-                            String text = line.fullText().trim();
-                            indent = line.fullText().trim().split("\\s")[0].length() + 1;
-
-                            if (pageNum == 1) {
-                                // fix formatting issues in originals. e.g 122995.v1, 123096.v1
-                                if (line.fullText().endsWith(",") || line.fullText().endsWith(", Acting")) {
-                                    if (nextLine.fullText().trim().equals("President") || nextLine.fullText().trim().equals("Acting President")) {
-                                        text += " " + nextLine.fullText();
-                                        // Skip next line since we merged it with this line.
-                                        i++;
-                                    }
-                                }
-                            }
-                            draw(contentStream, indent, text);
+                        if (line.isTranscriptNumber()) {
+                            drawTranscriptNumber(contentStream, line);
                         }
                         else {
-                            // Shift lines to the left to reduce indent size
-                            indent = 11;
-                            draw(contentStream, indent, line.fullText());
+                            int indent;
+                            if (line.hasLineNumber()) {
+                                String text = line.fullText().trim();
+                                indent = line.fullText().trim().split("\\s")[0].length() + 1;
 
-                            // Fix spacing on first page. Spacing info is lost without line numbers marking blank lines.
-                            if (line.textTrimmed().equals("NEW YORK STATE SENATE"))
-                                contentStream.moveTextPositionByAmount(0, -(fontSize * 4));
+                                if (pageNum == 1) {
+                                    // fix formatting issues in originals. e.g 122995.v1, 123096.v1
+                                    if (line.fullText().endsWith(",") || line.fullText().endsWith(", Acting")) {
+                                        if (nextLine.fullText().trim().equals("President") || nextLine.fullText().trim().equals("Acting President")) {
+                                            text += " " + nextLine.fullText();
+                                            // Skip next line since we merged it with this line.
+                                            i++;
+                                        }
+                                    }
+                                }
+                                draw(contentStream, indent, text);
+                            } else {
+                                // Shift lines to the left to reduce indent size
+                                indent = 11;
+                                draw(contentStream, indent, line.fullText());
 
-                            if (line.textTrimmed().contains("STENOGRAPHIC RECORD"))
-                                contentStream.moveTextPositionByAmount(0, -(fontSize * 5));
+                                // Fix spacing on first page. Spacing info is lost without line numbers marking blank lines.
+                                if (line.textTrimmed().equals("NEW YORK STATE SENATE"))
+                                    contentStream.moveTextPositionByAmount(0, -(fontSize * 4));
 
-                            if (line.isTime())
-                                contentStream.moveTextPositionByAmount(0, -(fontSize * 3));
+                                if (line.textTrimmed().contains("STENOGRAPHIC RECORD"))
+                                    contentStream.moveTextPositionByAmount(0, -(fontSize * 5));
 
-                            if (line.isSession())
-                                contentStream.moveTextPositionByAmount(0, -(fontSize * 6));
+                                if (line.isTime())
+                                    contentStream.moveTextPositionByAmount(0, -(fontSize * 3));
+
+                                if (line.isSession())
+                                    contentStream.moveTextPositionByAmount(0, -(fontSize * 6));
+                            }
+
                         }
                     }
                     lineCount++;

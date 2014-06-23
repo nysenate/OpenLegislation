@@ -126,4 +126,8 @@ public class TranscriptLine {
     public boolean isEmpty() {
         return line.replaceAll("[^a-zA-Z0-9]+","").isEmpty();
     }
+
+    public boolean isStenographer() {
+        return line.contains("Candyco Transcription Service, Inc.") || line.contains("(518) 371-8910");
+    }
 }
