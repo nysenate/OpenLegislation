@@ -67,7 +67,7 @@ public class CheckMail extends BaseScript
         boolean runSpotCheck;
         boolean senateHigh, senateLow, assemblyHigh, assemblyLow, pageFile;
         senateHigh = senateLow = assemblyHigh = assemblyLow = pageFile = false;
-        Map<String, Message> validMessages = new HashMap<>();   // Stores filename, message
+        Map<String, Message> validMessages = new HashMap<String, Message>();   // Stores filename, message
 
         for(Message message : source.getMessages()) {
             Date sent = message.getSentDate();
