@@ -7,6 +7,8 @@ import gov.nysenate.util.Config;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Flags;
@@ -62,60 +64,75 @@ public class CheckMail extends BaseScript
         source.open(Folder.READ_WRITE);
 
         String prefix="";
-        boolean runSpotCheck = false;
+        boolean runSpotCheck;
+        boolean senateHigh, senateLow, assemblyHigh, assemblyLow, pageFile;
+        senateHigh = senateLow = assemblyHigh = assemblyLow = pageFile = false;
+        Map<String, Message> validMessages = new HashMap<>();   // Stores filename, message
+
         for(Message message : source.getMessages()) {
             Date sent = message.getSentDate();
             String filename;
             prefix = new SimpleDateFormat("yyyyMMdd").format(sent);
             if (message.getSubject().contains("Sen Act Title Sum Spon Law 4001-9999")) {
                 filename = prefix + ".senate.high.html";
-                runSpotCheck = true;
-            }
-            else if (message.getSubject().contains("Sen Act Title Sum Spon Law 1-4000")) {
+                senateHigh = true;
+            } else if (message.getSubject().contains("Sen Act Title Sum Spon Law 1-4000")) {
                 filename = prefix + ".senate.low.html";
-                runSpotCheck = true;
-            }
-            else if (message.getSubject().contains("Asm Act Title Sum Spon Law 4001-99999")) {
+                senateLow = true;
+            } else if (message.getSubject().contains("Asm Act Title Sum Spon Law 4001-99999")) {
                 filename = prefix + ".assembly.high.html";
-                runSpotCheck = true;
-            }
-            else if (message.getSubject().contains("Asm Act Title Sum Spon Law 1-4000")) {
+                assemblyHigh = true;
+            } else if (message.getSubject().contains("Asm Act Title Sum Spon Law 1-4000")) {
                 filename = prefix + ".assembly.low.html";
-                runSpotCheck = true;
-            }
-            else if (message.getSubject().contains("Job ABPSDD - LBDC all Bills")) {
+                assemblyLow = true;
+            } else if (message.getSubject().contains("Job ABPSDD - LBDC all Bills")) {
                 filename = prefix + ".page_file.txt";
-            }
-            else {
-                logger.error("Unknown subject line: "+message.getSubject());
+                pageFile = true;
+            } else {
+                logger.error("Unknown subject line: " + message.getSubject());
                 continue;
             }
-
-            if (message.isMimeType("multipart/*")) {
-                Multipart content = (Multipart) message.getContent();
-                for (int i = 0; i < content.getCount(); i++) {
-                    Part part = content.getBodyPart(i);
-                    if (Part.ATTACHMENT.equals(part.getDisposition())) {
-                        System.out.println("Saving " + part.getFileName() + " to " + filename);
-                        String attachment = IOUtils.toString(part.getInputStream());
-                        String lrsFileDir = config.getValue("checkmail.lrsFileDir");
-                        FileUtils.write(new File(lrsFileDir, filename), attachment);
-                    }
-                }
-            }
-
-            source.copyMessages(new Message[]{message}, destination);
-            message.setFlag(Flags.Flag.DELETED, true);
+            validMessages.put(filename, message);
         }
 
-        // Finalize the message deletion from the source folder
-        source.expunge();
+        runSpotCheck = senateHigh && senateLow && assemblyHigh && assemblyLow && pageFile;
 
-        // Run the new report and regenerate our errors.
         if (runSpotCheck) {
+            // Download the messages
+            for(Map.Entry<String, Message> messageEntry : validMessages.entrySet()) {
+                String filename = messageEntry.getKey();
+                Message message = messageEntry.getValue();
+
+                if (message.isMimeType("multipart/*")) {
+                    Multipart content = (Multipart) message.getContent();
+                    for (int i = 0; i < content.getCount(); i++) {
+                        Part part = content.getBodyPart(i);
+                        if (Part.ATTACHMENT.equals(part.getDisposition())) {
+                            System.out.println("Saving " + part.getFileName() + " to " + filename);
+                            String attachment = IOUtils.toString(part.getInputStream());
+                            String lrsFileDir = config.getValue("checkmail.lrsFileDir");
+                            FileUtils.write(new File(lrsFileDir, filename), attachment);
+                        }
+                    }
+                }
+
+                source.copyMessages(new Message[]{message}, destination);
+                message.setFlag(Flags.Flag.DELETED, true);
+            }
+
+            // Finalize the message deletion from the source folder
+            source.expunge();
+
+            // Run the new report and regenerate our errors.
             opts.getArgList().add(prefix);
             new SpotCheck().execute(opts);
             new CreateErrors().execute(opts);
+        }
+        else{
+            if(senateHigh || senateLow || assemblyHigh || assemblyLow || pageFile)
+                logger.info("Spot check email(s) detected, one or more MISSING");
+            else
+                logger.info("No relevant emails detected");
         }
 
         //unlock();
