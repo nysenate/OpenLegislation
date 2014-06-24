@@ -402,7 +402,15 @@ public class BillProcessor
 
         // An old bug with the assembly sponsors field needs to be corrected, NYSS 7215
         if (bill.getSponsor() != null && bill.getSponsor().getFullname().startsWith("RULES ")) {
-            bill.getSponsor().setFullname("RULES");
+            final String sponsorMatch = "RULES COM ([a-zA-Z-']+)( [A-Z])?(.*)";
+            final String sponsorReplacement = "RULES (REQUEST OF $1$2)";
+            final String sponsorReplacementMatch = "RULES \\(REQUEST OF [a-zA-Z-']*\\)";
+
+            String sponsorName = bill.getSponsor().getFullname();
+            if(sponsorName.matches(sponsorMatch))
+                bill.getSponsor().setFullname(sponsorName.replaceAll(sponsorMatch, sponsorReplacement).toUpperCase());
+            else if(!sponsorName.matches(sponsorReplacementMatch))
+                bill.getSponsor().setFullname("RULES");
         }
 
         if (bill.isPublished()) {
