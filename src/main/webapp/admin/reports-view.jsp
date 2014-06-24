@@ -170,7 +170,7 @@ public String getStatus(Report report, ReportObservation obs) {
         <tbody>
         <% for(ReportObservation obs:report.getObservations()) { %>
             <tr id="summary<%=obs.getId()%>">
-			    <td class="oid-cell" oid="<%=obs.getOid()%>"><a href="#<%=obs.getOid()+"-"+obs.getField()%>" class="anchor ui-icon ui-icon-link"></a><a href="<%=JSPHelper.getLink(request, "/bill/"+obs.getOid())%>"><%=obs.getOid()%></a></td>
+			    <td class="oid-cell" oid="<%=obs.getOid()%>"><a href="#<%=obs.getOid()+"-"+obs.getField()%>" class="anchor ui-icon ui-icon-link"></a><a target="_blank" href="<%=JSPHelper.getLink(request, "/bill/"+obs.getOid())%>"><%=obs.getOid()%></a></td>
 			    <td class="field-cell"><%=obs.getField().toUpperCase()%></td>
 			    <td class="status-cell"><%=getStatus(report,obs)%></td>
 			    <td class="opened-cell"><%=new SimpleDateFormat("yyyy-MM-dd").format(obs.getError().getOpenedAt())%>
