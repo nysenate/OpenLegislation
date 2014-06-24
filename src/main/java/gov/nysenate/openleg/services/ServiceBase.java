@@ -1,18 +1,17 @@
 package gov.nysenate.openleg.services;
 
 import gov.nysenate.openleg.model.BaseObject;
-import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.Calendar;
 import gov.nysenate.openleg.model.Change;
-import gov.nysenate.openleg.model.Transcript;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.util.Storage;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.apache.log4j.Logger;
 
 public abstract class ServiceBase {
     protected HashMap<String, Class<? extends BaseObject>> classMap;

@@ -1,8 +1,10 @@
 package gov.nysenate.openleg.processors;
 
-import gov.nysenate.openleg.model.PublicHearing;
+import gov.nysenate.openleg.model.transcript.PublicHearing;
 import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.util.TextFormatter;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,9 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 
 public class PublicHearingProcessor {
     private final Logger logger;

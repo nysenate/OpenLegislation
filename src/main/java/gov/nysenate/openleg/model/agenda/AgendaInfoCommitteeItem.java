@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.agenda;
 
-import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.bill.Bill;
 
 public class AgendaInfoCommitteeItem
 {

@@ -1,48 +1,32 @@
 package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.BaseObject;
+import org.joda.time.LocalDate;
 
 import java.util.Comparator;
 import java.util.Date;
 
 /**
- * Represents a single action on a single bill. E.g. REFERRED TO RULES
- *
+ * Represents a single action on a single bill. E.g. REFERRED TO RULES.*
  * Uniquely identified by Bill+Date.getTime()+Text.
- *
- * @author GraylinKim
  */
 public class BillAction extends BaseObject
 {
-    /**
-     * This object's unique object id. Bill+Date.getTime()+Text.
-     */
-    private String oid = "";
+    /** Print number of the base bill. */
+    protected String baseBillPrintNo = "";
 
-    /**
-     * The date this action was performed. Has no time component.
-     */
+    /** The bill amendment version the action was taken on. */
+    private String amendmentVersion;
+
+    /** The date this action was performed. Has no time component. */
     private Date date = null;
 
-    /**
-     * The text of this action.
-     */
+    /** The text of this action. */
     private String text = "";
 
-    /**
-     * The bill this action was taken on.
-     */
-    private Bill bill = null;
+    /** --- Constructors --- */
 
-
-
-    private String billVersion;
-
-    /**
-     * JavaBean constructor.
-     */
-    public BillAction()
-    {
+    public BillAction() {
         super();
     }
 
@@ -55,100 +39,54 @@ public class BillAction extends BaseObject
      */
     public BillAction(Date date, String text, Bill bill, String billAmendment) {
         super();
-        this.bill = bill;
-        this.setBillAmendment(billAmendment);
         this.date = date;
         this.text = text;
-        this.oid = this.bill.getBillId() + "-" + this.date.getTime() + "-" + this.text;
+        this.setBaseBillPrintNo(bill.getPrintNo());
+        this.setAmendmentVersion(billAmendment);
         this.setPublishDate(this.date);
         this.setModifiedDate(this.date);
         this.setSession(bill.getSession());
-        java.util.Calendar calendar = java.util.Calendar.getInstance();
-        calendar.setTime(date);
-        this.setYear(calendar.get(java.util.Calendar.YEAR));
     }
 
-    /**
-     * @return - The object's otype
-     */
-    public String getOtype()
-    {
-        return "action";
+    /** --- Functional Getters/Setters --- */
+
+    public int getYear() {
+        return new LocalDate(date).getYear();
     }
 
-    /**
-     * @return - This object's unique object id.
-     */
-    public String getOid()
-    {
-        return this.oid;
-    }
+    /** --- Overrides --- */
 
-    /**
-     * @param oid - The object's new oid.
-     */
-    public void setOid(String oid) {
-        this.oid = oid;
-    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-    /**
-     * @return - The date of the action.
-     */
-    public Date getDate() {
-        return date;
-    }
+        BillAction that = (BillAction) o;
 
-    /**
-     * @param date - The new action date
-     */
-    public void setDate(Date date) {
-        this.date = date;
-    }
+        if (baseBillPrintNo != null ? !baseBillPrintNo.equals(that.baseBillPrintNo) : that.baseBillPrintNo != null)
+            return false;
+        if (amendmentVersion != null ? !amendmentVersion.equals(that.amendmentVersion) : that.amendmentVersion != null) return false;
+        if (date != null ? !date.equals(that.date) : that.date != null) return false;
+        if (text != null ? !text.equals(that.text) : that.text != null) return false;
 
-    /**
-     * @return - The text of the action.
-     */
-    public String getText() {
-        return text;
-    }
-
-    /**
-     * @param text - The text of the action.
-     */
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    /**
-     * @return - The bill the action was performed on.
-     */
-    public Bill getBill() {
-        return bill;
-    }
-
-    /**
-     * @param bill - The new bill to this action targets.
-     */
-    public void setBill(Bill bill) {
-        this.bill = bill;
+        return true;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj != null && obj instanceof BillAction) {
-            BillAction other = (BillAction)obj;
-            return this.getOid().equals(other.getOid());
-        }
-        else {
-            return false;
-        }
+    public int hashCode() {
+        int result = baseBillPrintNo != null ? baseBillPrintNo.hashCode() : 0;
+        result = 31 * result + (amendmentVersion != null ? amendmentVersion.hashCode() : 0);
+        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + (text != null ? text.hashCode() : 0);
+        return result;
     }
 
-    public int getYear() {
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-        cal.setTime(date);
-        return cal.get(java.util.Calendar.YEAR);
+    @Override
+    public String toString() {
+        return date.toString() + " " + text;
     }
+
+    /** --- Helper classes --- */
 
     public static class ByEventDate implements Comparator<BillAction> {
         @Override
@@ -161,18 +99,37 @@ public class BillAction extends BaseObject
         }
     }
 
-    @Override
-    public String toString() {
-        return date.toString()+" "+text;
+    /** --- Basic Getters/Setters --- */
+
+    public String getBaseBillPrintNo() {
+        return baseBillPrintNo;
     }
 
-    public String getBillAmendment()
-    {
-        return billVersion;
+    public void setBaseBillPrintNo(String baseBillPrintNo) {
+        this.baseBillPrintNo = baseBillPrintNo;
     }
 
-    public void setBillAmendment(String billVersion)
-    {
-        this.billVersion = billVersion;
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getAmendmentVersion() {
+        return amendmentVersion;
+    }
+
+    public void setAmendmentVersion(String amendmentVersion) {
+        this.amendmentVersion = amendmentVersion;
     }
 }

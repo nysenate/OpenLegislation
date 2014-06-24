@@ -72,18 +72,6 @@ public class AgendaInfoAddendum extends BaseObject
         this.committees.remove(name);
     }
 
-    @Override
-    public String getOid()
-    {
-        return this.getOtype()+"-"+this.getYear()+"-"+this.getAgendaNumber()+this.getId();
-    }
-
-    @Override
-    public String getOtype()
-    {
-        return "agenda-info";
-    }
-
     public Integer getAgendaNumber()
     {
         return agendaNumber;

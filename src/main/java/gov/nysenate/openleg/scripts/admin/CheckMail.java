@@ -1,24 +1,16 @@
 package gov.nysenate.openleg.scripts.admin;
 
 import gov.nysenate.openleg.scripts.BaseScript;
-
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
-
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.Session;
-import javax.mail.Store;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+
+import javax.mail.*;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Properties;
 
 public class CheckMail extends BaseScript
 {
@@ -100,5 +92,4 @@ public class CheckMail extends BaseScript
             new CreateErrors().execute(opts);
         }
     }
-
 }

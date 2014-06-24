@@ -1,19 +1,14 @@
-package gov.nysenate.openleg.processors;
+package gov.nysenate.openleg.processors.transcript;
 
-import gov.nysenate.openleg.model.Transcript;
+import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.Storage;
+import org.apache.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.apache.log4j.Logger;
 
 public class TranscriptProcessor {
     private final Logger logger;

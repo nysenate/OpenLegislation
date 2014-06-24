@@ -5,14 +5,13 @@ import gov.nysenate.openleg.model.admin.ReportError;
 import gov.nysenate.openleg.model.admin.ReportObservation;
 import gov.nysenate.openleg.scripts.BaseScript;
 import gov.nysenate.openleg.util.Application;
-
-import java.sql.Connection;
-import java.util.Collection;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.log4j.Logger;
+
+import java.sql.Connection;
+import java.util.Collection;
 
 public class CreateErrors extends BaseScript
 {

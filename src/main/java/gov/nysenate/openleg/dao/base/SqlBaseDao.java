@@ -2,12 +2,12 @@ package gov.nysenate.openleg.dao.base;
 
 import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.util.Application;
-import org.apache.commons.dbutils.QueryRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Base class for SQL data access layer classes to inherit common functionality from.
@@ -26,6 +26,14 @@ public abstract class SqlBaseDao
     /** Reference to the environment in which the data is stored */
     protected Environment environment;
 
+    /** --- Table Name Definitions --- */
+
+    protected static String BILL_TABLE = "bill";
+    protected static String BILL_AMENDEMENT_TABLE = "bill_amendment";
+    protected static String BILL_AMENDMENT_ACTION_TABLE = "bill_amendment_action";
+    protected static String BILL_AMENDMENT_COSPONSOR_TABLE = "bill_amendment_cosponsor";
+    protected static String BILL_AMENDMENT_VOTE = "bill_amendment_vote";
+
     protected SqlBaseDao(Environment environment) {
         this.environment = environment;
     }
@@ -34,7 +42,7 @@ public abstract class SqlBaseDao
      * Returns the schema of the environment instance.
      * @return String
      */
-    protected String getEnvSchema() {
+    protected String schema() {
         if (environment == null) {
             throw new IllegalStateException("The environment has not been initialized. Cannot perform SQL queries " +
                                             "since we can't determine which database schema to operate on.");
@@ -50,7 +58,7 @@ public abstract class SqlBaseDao
      * @return String
      */
     protected String table(String tableName) {
-        return getEnvSchema() + "." + tableName;
+        return schema() + "." + tableName;
     }
 
     /**
@@ -64,6 +72,25 @@ public abstract class SqlBaseDao
             return "";
         }
         return "ORDER BY " + columnName  + " " + sortOrder.name();
+    }
+
+    /**
+     * Outputs the ORDER BY clause for multiple column name and sort order pairs.
+     * @param columnNames List<String>
+     * @param sortOrders List<SortOrder>>
+     * @return String
+     */
+    protected String orderBy(List<String> columnNames, List<SortOrder> sortOrders) {
+        if (columnNames.size() != sortOrders.size()) {
+            throw new IllegalArgumentException("For order by clause, number of column names must match sort orders!");
+        }
+        String orderByClause = "ORDER BY ";
+        for (int i = 0; i < columnNames.size(); i++) {
+            if (sortOrders.get(i) != null && !sortOrders.get(i).equals(SortOrder.NONE)) {
+                orderByClause += (columnNames.get(i) + " " + sortOrders.get(i).name() + ((i + 1 == columnNames.size()) ? " " : ", "));
+            }
+        }
+        return orderByClause;
     }
 
     /** --- Static Helper Methods --- */

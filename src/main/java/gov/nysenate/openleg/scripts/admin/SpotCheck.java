@@ -1,28 +1,14 @@
 package gov.nysenate.openleg.scripts.admin;
 
-import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.BillAction;
-import gov.nysenate.openleg.model.Person;
 import gov.nysenate.openleg.model.admin.Report;
 import gov.nysenate.openleg.model.admin.ReportObservation;
 import gov.nysenate.openleg.model.admin.SpotCheckBill;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAction;
+import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.scripts.BaseScript;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Storage;
-
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -30,6 +16,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SpotCheck extends BaseScript
 {
@@ -124,7 +119,7 @@ public class SpotCheck extends BaseScript
             }
 
             // Compare the summaries. LBDC reports summary and law changes together
-            String jsonLaw = bill.getLaw(billAmendment);
+            String jsonLaw = bill.getLaw();
             String jsonSummary = unescapeHTML(bill.getSummary());
             String lbdcSummary = spotCheckBills.get(printNo).getSummary().replaceAll("\\s+", " ");
 
@@ -165,8 +160,8 @@ public class SpotCheck extends BaseScript
 
             TreeSet<String> lbdcCosponsors = new TreeSet<String>(spotCheckBills.get(printNo).getCosponsors());
             TreeSet<String> jsonCosponsors = new TreeSet<String>();
-            if ( bill.getCoSponsors() != null ) {
-                List<Person> cosponsors = bill.getCoSponsors(billAmendment);
+            if ( bill.getAmendment(billAmendment).getCoSponsors() != null ) {
+                List<Person> cosponsors = bill.getAmendment(billAmendment).getCoSponsors();
                 for(Person cosponsor : cosponsors) {
                     jsonCosponsors.add(cosponsor.getFullname().toUpperCase());
                 }
@@ -205,7 +200,7 @@ public class SpotCheck extends BaseScript
             int lbdcPages = spotCheckBills.get(printNo).pages;
             int jsonPages = 0;
             Pattern pagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d*(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s{11,}\\d{1,4}(--\\w)?$)");
-            for (String line : bill.getFulltext(billAmendment).split("\n")) {
+            for (String line : bill.getAmendment(billAmendment).getFulltext().split("\n")) {
                 if (pagePattern.matcher(line).find()) {
                     // logger.info(billNo+": "+line);
                     jsonPages++;

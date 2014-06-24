@@ -2,20 +2,16 @@ package gov.nysenate.openleg.scripts;
 
 import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.processors.DataProcessor;
-import gov.nysenate.openleg.services.Lucene;
 import gov.nysenate.openleg.services.ServiceBase;
 import gov.nysenate.openleg.services.UpdateReporter;
-import gov.nysenate.openleg.services.Varnish;
 import gov.nysenate.openleg.util.Application;
-import gov.nysenate.openleg.util.ChangeLogger;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
 
 /**
  * Usage: bin/run.sh ProcessData --environment app.properties --tasks collate,ingest,push,archive --push-targets lucene,varnish,reporter --change-file logs/D20130511.T123500.change.log &>> logs/D20130511.T123500.process.log
@@ -73,13 +69,7 @@ public class ProcessData extends BaseScript
 
         ArrayList<ServiceBase> services = new ArrayList<ServiceBase>();
         for (String target : pushTargets) {
-            if (target.equals("lucene")) {
-                services.add(new Lucene());
-            }
-            else if (target.equals("varnish")) {
-                services.add(new Varnish("127.0.0.1", 80));
-            }
-            else if (target.equals("reporter")) {
+            if (target.equals("reporter")) {
                 services.add(new UpdateReporter());
             }
             else {
@@ -90,38 +80,16 @@ public class ProcessData extends BaseScript
         }
 
         Environment env = Application.getEnvironment();
-        DataProcessor process = new DataProcessor();
+        DataProcessor process = new DataProcessor(env);
         for (String task : tasks) {
-            // TODO: With Java7 we can make this a switch case
-            if (task.equals("stage")) {
-                process.stage(env.getStagingDirectory(), env.getWorkingDirectory());
-            }
-            else if (task.equals("collate")) {
-                process.collate(env.getWorkingDirectory());
-            }
-            else if (task.equals("ingest")) {
-                process.ingest(env.getWorkingDirectory(), Application.getStorage());
-                if (changeFile != null) {
-                    ChangeLogger.writeToFile(changeFile);
-                }
-            }
-            else if (task.equals("push")) {
-                if (ChangeLogger.getChangeLog().isEmpty()) {
-                    if (changeFile != null) {
-                        ChangeLogger.readFromFile(changeFile);
-                    }
-                    else {
-                        System.err.println("Unable to push with an empty change log.");
-                    }
-                }
-                process.push(Application.getStorage(), ChangeLogger.getEntries(), services);
-            }
-            else if (task.equalsIgnoreCase("archive")) {
-                process.archive(env.getWorkingDirectory(), env.getArchiveDirectory());
-            }
-            else {
-                System.err.println("Invalid task.");
-                System.exit(1);
+            switch (task) {
+                case "stage": process.stage(env.getStagingDirectory(), env.getWorkingDirectory()); break;
+                case "collate": process.collate(env.getWorkingDirectory()); break;
+                case "ingest": process.ingest(env.getWorkingDirectory(), Application.getStorage()); break;
+                case "archive": process.archive(env.getWorkingDirectory(), env.getArchiveDirectory()); break;
+                default:
+                    System.err.println("Invalid task.");
+                    System.exit(1);
             }
         }
     }

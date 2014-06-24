@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.model.admin;
 
 import gov.nysenate.openleg.util.Application;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,9 +10,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.ResultSetHandler;
 
 public class ReportDAO
 {

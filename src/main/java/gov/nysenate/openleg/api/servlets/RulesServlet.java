@@ -1,16 +1,14 @@
 package gov.nysenate.openleg.api.servlets;
 
 import gov.nysenate.openleg.util.Application;
-
-import java.io.File;
-import java.io.IOException;
+import org.apache.commons.io.FileUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FileUtils;
+import java.io.File;
+import java.io.IOException;
 
 @SuppressWarnings("serial")
 public class RulesServlet extends HttpServlet {

@@ -1,22 +1,29 @@
-package gov.nysenate.openleg.model.person;
+package gov.nysenate.openleg.model.entity;
 
-
-public class Person {
-    private String position = "";
-
-    private String fullname = "";
-
+public class Person
+{
+    /** */
     private String id = "";
 
+    /** */
+    private String position = "";
+
+    /** */
+    private String fullname = "";
+
+    /** */
     private String branch = "";
 
+    /** */
     private String contactInfo = "";
 
+    /** */
     private String guid = "";
 
-    public Person () {
 
-    }
+    /** --- Constructors --- */
+
+    public Person () {}
 
     public Person (String fullname) {
         this.fullname = fullname;
@@ -28,6 +35,8 @@ public class Person {
 
         this.id = fullname + '-' + position;
     }
+
+    /** --- Basic Getters/Setters --- */
 
     public String getPosition() {
         return position;

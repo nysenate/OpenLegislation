@@ -1,17 +1,15 @@
 package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.Environment;
-import gov.nysenate.openleg.lucene.Lucene;
 import gov.nysenate.util.Config;
 import gov.nysenate.util.DB;
 import gov.nysenate.util.Mailer;
 import gov.nysenate.util.listener.NYSenateConfigurationListener;
-
-import java.io.IOException;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
 
 public class Application
 {
@@ -29,7 +27,6 @@ public class Application
     protected Config config;
     protected Mailer mailer;
     protected Environment environment;
-    protected Lucene lucene;
     protected Storage storage;
     protected XmlHelper xmlhelper;
     protected ObjectMapper objectMapper;
@@ -52,8 +49,8 @@ public class Application
             appInstance.xmlhelper = new XmlHelper(appInstance.config, "xml");
             appInstance.db = new DB(appInstance.config, "postgresdb");
             appInstance.mailer = new Mailer(appInstance.config, "mailer");
-            appInstance.environment = new Environment(appInstance.config, "env");
-            appInstance.lucene = new Lucene(appInstance.config, "lucene");
+            appInstance.environment = new Environment(appInstance.config, "env", "master");
+            //appInstance.lucene = new Lucene(appInstance.config, "lucene");
             appInstance.storage = new Storage(appInstance.environment.getStorageDirectory());
             appInstance.objectMapper = new ObjectMapper();
             return true;
@@ -73,9 +70,9 @@ public class Application
 
     public static boolean shutdown() throws IOException
     {
-        if (appInstance.lucene != null) {
-            appInstance.lucene.close();
-        }
+       // if (appInstance.lucene != null) {
+            //appInstance.lucene.close();
+       // }
         return true;
     }
 
@@ -85,10 +82,6 @@ public class Application
 
     public static DB getDB() {
         return appInstance.db;
-    }
-
-    public static Lucene getLucene() {
-        return appInstance.lucene;
     }
 
     public static Environment getEnvironment() {

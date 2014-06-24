@@ -67,17 +67,4 @@ public class AgendaVoteAddendum extends BaseObject
     {
         this.agendaNumber = id;
     }
-
-    @Override
-    public String getOid()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getOtype()
-    {
-        return "agendavote";
-    }
 }

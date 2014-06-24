@@ -1,21 +1,19 @@
 package gov.nysenate.openleg.scripts;
 
-import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.SOBIBlock;
-import gov.nysenate.openleg.processors.BillProcessor;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.sobi.SOBIBlock;
+import gov.nysenate.openleg.processors.sobi.BillProcessor;
+import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Storage;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 public class MemoCheck extends BaseScript
 {
@@ -37,33 +35,33 @@ public class MemoCheck extends BaseScript
         errors.put("missing",0);
         errors.put("mismatch", 0);
         File blockFile = new File("/data/openleg/PALMER.SEN.ALL.MEMO2011.TXT");
-        BillProcessor bp = new BillProcessor();
+        BillProcessor bp = new BillProcessor(Application.getEnvironment());
         File storageDir = new File("/data/openleg/2011_test/json/");
         Storage storage = new Storage(storageDir);
-        List<SOBIBlock> blocks = bp.getBlocks(blockFile);
+        List<SOBIBlock> blocks = null; //FIXME: bp.getBlocks(blockFile);
         for (SOBIBlock block : blocks) {
-            String billNo = block.getPrintNo()+block.getAmendment()+"-"+block.getYear();
-            Bill jsonBill = storage.getBill(block.getPrintNo()+block.getAmendment(), block.getYear());
+            String billNo = block.getBasePrintNo()+block.getAmendment()+"-"+block.getYear();
+            Bill jsonBill = storage.getBill(block.getBasePrintNo()+block.getAmendment(), block.getYear());
             Bill lbdcBill = new Bill(billNo, block.getYear());
-            bp.applyText(block.getData(), lbdcBill, "", new Date());
-
-            String jsonMemo = StringUtils.normalizeSpace(jsonBill.getMemo().replaceAll("[?�]","§").replaceAll("-\n+ *", "").replaceAll("\n *", " ").replaceAll(" *([:,]) *", "$1").replaceAll(" *([()!\\\"]) *", " $1 ").replaceAll("([A-Za-z])- ?([A-Za-z])","$1$2").trim()).toLowerCase();
-            String lbdcMemo = StringUtils.normalizeSpace(lbdcBill.getMemo().replaceAll("[?�]","§").replaceAll("-\n+ *", "").replaceAll("\n *", " ").replaceAll(" *([:,]) *", "$1").replaceAll(" *([()!\\\"]) *", " $1 ").replaceAll("([A-Za-z])- ?([A-Za-z])","$1$2").trim()).toLowerCase();
-
-            if(jsonMemo.isEmpty()) {
-                logger.error(billNo+": MISSING");
-                errors.put("missing", errors.get("missing")+1);
-            }
-            else if (!jsonMemo.equals(lbdcMemo)) {
-                logger.error(billNo+": MISMATCH");
-                errors.put("mismatch", errors.get("mismatch")+1);
-                System.out.println(get_diff(jsonMemo, lbdcMemo));
+//            bp.applyText(block.getData(), lbdcBill, "", new Date());
+//
+//            String jsonMemo = StringUtils.normalizeSpace(jsonBill.getMemo().replaceAll("[?�]","§").replaceAll("-\n+ *", "").replaceAll("\n *", " ").replaceAll(" *([:,]) *", "$1").replaceAll(" *([()!\\\"]) *", " $1 ").replaceAll("([A-Za-z])- ?([A-Za-z])","$1$2").trim()).toLowerCase();
+//            String lbdcMemo = StringUtils.normalizeSpace(lbdcBill.getMemo().replaceAll("[?�]","§").replaceAll("-\n+ *", "").replaceAll("\n *", " ").replaceAll(" *([:,]) *", "$1").replaceAll(" *([()!\\\"]) *", " $1 ").replaceAll("([A-Za-z])- ?([A-Za-z])","$1$2").trim()).toLowerCase();
+//
+//            if(jsonMemo.isEmpty()) {
+//                logger.error(billNo+": MISSING");
+//                errors.put("missing", errors.get("missing")+1);
+//            }
+//            else if (!jsonMemo.equals(lbdcMemo)) {
+//                logger.error(billNo+": MISMATCH");
+//                errors.put("mismatch", errors.get("mismatch")+1);
+//                System.out.println(get_diff(jsonMemo, lbdcMemo));
 //                System.in.read();
             }
         }
-        System.out.println(errors);
-        System.out.println("Total bills "+blocks.size());
-    }
+//        System.out.println(errors);
+//        System.out.println("Total bills "+blocks.size());
+//    }
 
     public static void main(String[] args) throws Exception
     {

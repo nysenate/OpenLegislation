@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.sobi;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +18,11 @@ import java.util.Date;
  */
 public class SOBIFile
 {
+    /**
+     * SOBI files are (mostly) in a CP850 or similar encoding. This was determined from the byte mapping of
+     * paragraph/section characters to 244/245. This can't be 100% correct though because the degree symbol
+     * must be 193 in the correct code set. See SOBI.D120612.T125850.TXT.
+     */
     public static final String DEFAULT_ENCODING = "CP850";
 
     /** The format required for the SOBI file name. e.g. SOBI.D130323.T065432.TXT */
@@ -30,6 +36,9 @@ public class SOBIFile
 
     /** The datetime when the SOBI file was last processed */
     private Date processedDateTime;
+
+    /** The datetime when the SOBI file was last staged for processing */
+    private Date stagedDateTime;
 
     /** The actual text body of the file */
     private String text;
@@ -46,29 +55,41 @@ public class SOBIFile
         this(sobiFile, DEFAULT_ENCODING);
     }
 
-    public SOBIFile(File sobiFile, String encoding) throws IOException {
-        if (sobiFile.exists()) {
-            this.fileName = sobiFile.getName();
-            this.text = FileUtils.readFileToString(sobiFile, encoding);
+    public SOBIFile(File file, String encoding) throws IOException {
+        if (file.exists()) {
+            this.fileName = file.getName();
+            this.text = FileUtils.readFileToString(file, encoding);
             this.processedCount = 0;
             this.pendingProcessing = false;
             try {
                 this.publishedDateTime = sobiDateFormat.parse(fileName);
             }
             catch (ParseException ex) {
-                this.publishedDateTime = new Date(sobiFile.lastModified());
+                this.publishedDateTime = new Date(file.lastModified());
                 ex.printStackTrace();
             }
         }
         else {
-            throw new IOException("Given sobiFile does not exist in the file system! (" + sobiFile.getAbsolutePath() + ")");
+            throw new FileNotFoundException(file.getAbsolutePath());
         }
     }
 
     /** --- Override Methods --- */
     @Override
     public String toString() {
-        return "SOBIFile {fileName='" + fileName + '\'' + ", processedCount=" + processedCount + '}';
+        return "SOBIFile{" +
+                "fileName='" + fileName + '\'' +
+                ", processedCount=" + processedCount +
+                ", processedDateTime=" + processedDateTime +
+                ", publishedDateTime=" + publishedDateTime +
+                ", pendingProcessing=" + pendingProcessing +
+                '}';
+    }
+
+    /** --- Functional Getters/Setters --- */
+
+    public void incrementProcessedCount() {
+        this.processedCount++;
     }
 
     /** --- Basic Getters/Setters --- */
@@ -95,6 +116,14 @@ public class SOBIFile
 
     public void setProcessedDateTime(Date processedDateTime) {
         this.processedDateTime = processedDateTime;
+    }
+
+    public Date getStagedDateTime() {
+        return stagedDateTime;
+    }
+
+    public void setStagedDateTime(Date stagedDateTime) {
+        this.stagedDateTime = stagedDateTime;
     }
 
     public String getText() {

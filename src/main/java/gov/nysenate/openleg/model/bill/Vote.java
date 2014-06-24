@@ -1,15 +1,16 @@
 package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.BaseObject;
-import gov.nysenate.openleg.model.person.Person;
+import gov.nysenate.openleg.model.entity.Person;
+import org.joda.time.LocalDate;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Vote extends BaseObject {
-
+public class Vote extends BaseObject
+{
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
     private int voteType;
@@ -42,24 +43,21 @@ public class Vote extends BaseObject {
 
     public final static int VOTE_TYPE_COMMITTEE = 2;
 
-    public int count()
-    {
-        return ayes.size()+nays.size()+abstains.size()+excused.size();
+    public int count() {
+        return ayes.size() + nays.size() + abstains.size() + excused.size();
     }
 
-    public Vote()
-    {
+    public Vote() {
         super();
-        ayes = new ArrayList<String>();
-        ayeswr = new ArrayList<String>();
-        nays = new ArrayList<String>();
-        abstains = new ArrayList<String>();
-        excused = new ArrayList<String>();
-        absent = new ArrayList<String>();
+        ayes = new ArrayList<>();
+        ayeswr = new ArrayList<>();
+        nays = new ArrayList<>();
+        abstains = new ArrayList<>();
+        excused = new ArrayList<>();
+        absent = new ArrayList<>();
     }
 
-    public Vote(String billId, String billAmendment, Date date, int type, String sequenceNumber)
-    {
+    public Vote(String billId, String billAmendment, Date date, int type, String sequenceNumber) {
         this();
         this.voteDate = date;
         java.util.Calendar cal = java.util.Calendar.getInstance();
@@ -71,23 +69,25 @@ public class Vote extends BaseObject {
         this.oid = billId+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
     }
 
-    public Vote(Bill bill, String billAmendment, Date date, int type, String sequenceNumber)
-    {
+    public Vote(Bill bill, String billAmendment, Date date, int type, String sequenceNumber) {
         this(bill.getBillId(), billAmendment, date, type, sequenceNumber);
         this.bill = bill;
     }
 
+    public Vote(BillAmendment amendment, Date date, int type, String sequenceNumber) {
+        this();
+        this.voteDate = date;
+        this.setYear(new LocalDate(voteDate).getYear());
+        this.setSession(this.getYear() % 2 == 0 ? this.getYear() - 1 : this.getYear());
+        this.voteType = type;
+        this.setSequenceNumber(sequenceNumber);
+    }
+
+    /** --- Basic Getters/Setters --- */
+
     public int getVoteType()
     {
         return voteType;
-    }
-
-    /**
-     * The object type of the bill.
-     */
-    public String getOtype()
-    {
-        return "vote";
     }
 
     public String getOid()

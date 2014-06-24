@@ -1,15 +1,12 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.model.Result;
 import gov.nysenate.openleg.model.SenateResponse;
+import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import org.apache.log4j.Logger;
 
 public class ResultIterator implements Iterator<Result>, Iterable<Result> {
     private static Logger logger = Logger.getLogger(ResultIterator.class);
@@ -89,21 +86,21 @@ public class ResultIterator implements Iterator<Result>, Iterable<Result> {
             return;
         }
 
-        try {
-            int start = (page-1)*max;
-            senateResponse = Application.getLucene().search(query, start, max, sortBy, reverse);
-            page++;
-        }
-        catch (IOException e) {
-            logger.error(e);
-        }
+//        try {
+//            int start = (page-1)*max;
+            //senateResponse = Application.getLucene().search(query, start, max, sortBy, reverse);
+//            page++;
+//        }
+//        catch (IOException e) {
+//            logger.error(e);
+//        }
 
         if(senateResponse == null) {
             exhausted = true;
             return;
         }
 
-        ApiHelper.buildSearchResultList(senateResponse);
+//        ApiHelper.buildSearchResultList(senateResponse);
 
         ArrayList<Result> results = senateResponse.getResults();
 

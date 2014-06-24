@@ -1,11 +1,10 @@
 package gov.nysenate.openleg.util;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class RequestUtils {
     private static Pattern formatPattern = Pattern.compile("\\.(json|xml)$");

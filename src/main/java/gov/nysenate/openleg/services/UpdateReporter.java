@@ -3,13 +3,12 @@ package gov.nysenate.openleg.services;
 import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Storage;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.tomcat.jdbc.pool.DataSource;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.tomcat.jdbc.pool.DataSource;
 
 /*
  * Parses changes from a changeLog file and saves to MySQL database.

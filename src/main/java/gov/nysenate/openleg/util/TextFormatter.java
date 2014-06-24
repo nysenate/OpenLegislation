@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.model.Bill;
+import gov.nysenate.openleg.model.bill.Bill;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

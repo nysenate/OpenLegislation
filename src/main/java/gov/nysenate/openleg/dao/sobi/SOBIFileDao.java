@@ -10,6 +10,12 @@ import java.util.Map;
 
 /**
  * DAO interface for managing and persisting SOBIFiles.
+ *
+ * A typical call stack when processing SOBI files could look like the following:
+ * 1. stageSOBIFiles(true)                - Stage new files for processing
+ * 2. getPendingSOBIFiles(SortOrder.ASC)  - Retrieve those new files
+ * 3. [ Do some processing ]              - Create and process SOBIFragments somewhere
+ * 4. updateSOBIFile(..)                  - Update record after processing for the file is done
  */
 public interface SOBIFileDao
 {
@@ -70,6 +76,7 @@ public interface SOBIFileDao
 
     /**
      * Updates an existing SOBIFile in the backing store with the given instance.
+     * If the record doesn't already exist, no action will be taken.
      *
      * @param sobiFile SOBIFile
      * @return boolean - true if record was updated, false if nothing was updated

@@ -1,24 +1,19 @@
 package gov.nysenate.openleg.processors;
 
-import gov.nysenate.openleg.model.Agenda;
-import gov.nysenate.openleg.model.AgendaInfoAddendum;
-import gov.nysenate.openleg.model.AgendaInfoCommittee;
-import gov.nysenate.openleg.model.AgendaInfoCommitteeItem;
-import gov.nysenate.openleg.model.AgendaVoteAddendum;
-import gov.nysenate.openleg.model.AgendaVoteCommittee;
-import gov.nysenate.openleg.model.AgendaVoteCommitteeAttendance;
-import gov.nysenate.openleg.model.AgendaVoteCommitteeItem;
-import gov.nysenate.openleg.model.AgendaVoteCommitteeVote;
-import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.BillAmendment;
-import gov.nysenate.openleg.model.Person;
-import gov.nysenate.openleg.model.SOBIBlock;
-import gov.nysenate.openleg.util.Application;
-import gov.nysenate.openleg.util.ChangeLogger;
-import gov.nysenate.openleg.util.DateHelper;
-import gov.nysenate.openleg.util.Storage;
-import gov.nysenate.openleg.util.XmlHelper;
+import gov.nysenate.openleg.model.agenda.*;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.model.entity.Person;
+import gov.nysenate.openleg.model.sobi.SOBIBlock;
+import gov.nysenate.openleg.processors.sobi.BillProcessor;
+import gov.nysenate.openleg.util.*;
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -27,20 +22,12 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.xml.xpath.XPathExpressionException;
-
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 public class SenagendaProcessor
 {
     private final Logger logger = Logger.getLogger(SenagendaProcessor.class);
 
     public static enum VoteAction { FIRST_READING, THIRD_READING, REFERRED_TO_COMMITTEE, DEFEATED, RESTORED_TO_THIRD, SPECIAL}
-    public static Map<String, VoteAction> VOTE_ACTION_MAP = new TreeMap<String, VoteAction>();
+    public static Map<String, VoteAction> VOTE_ACTION_MAP = new TreeMap<>();
     static {
         VOTE_ACTION_MAP.put("F", VoteAction.FIRST_READING);
         VOTE_ACTION_MAP.put("3", VoteAction.THIRD_READING);
@@ -237,16 +224,16 @@ public class SenagendaProcessor
 
         // All bills on calendars should already exist but sometimes, particularly during development/testing
         // they won't. Instead of breaking the processing, create a new bill using the bill processor.
-        BillProcessor processor = new BillProcessor();
+        BillProcessor processor = new BillProcessor(Application.getEnvironment());
         SOBIBlock mockBlock = new SOBIBlock(year+printNo+(printNo.matches("[A-Z]$") ? "" : " ")+1+"     ");
-        Bill bill = processor.getOrCreateBaseBill(mockBlock, modifiedDate, storage);
+        Bill bill = null; /** FIXME processor.getOrCreateBaseBill(mockBlock, modifiedDate, storage); */
         bill.setSponsor(new Person(sponsors[0].trim()));
 
         // It must be published if it is on the agenda
         BillAmendment amendment = bill.getAmendment(billAmendment);
         if (!amendment.isPublished()) {
             amendment.setPublishDate(modifiedDate);
-            processor.saveBill(bill, billAmendment, storage);
+            /** FIXME processor.saveBill(bill, billAmendment, storage); */
         }
 
         // Other sponsors are removed when a calendar/agenda is resent without
@@ -258,7 +245,7 @@ public class SenagendaProcessor
 
         if (!bill.getOtherSponsors().equals(otherSponsors)) {
             bill.setOtherSponsors(otherSponsors);
-            new BillProcessor().saveBill(bill, Bill.BASE_VERSION, storage);
+            /** FIXME new BillProcessor(Application.getEnvironment()).saveBill(bill, Bill.BASE_VERSION, storage); */
         }
 
         return bill;

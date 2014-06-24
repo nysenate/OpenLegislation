@@ -1,32 +1,22 @@
 package gov.nysenate.openleg.processors;
 
-import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.BillAmendment;
-import gov.nysenate.openleg.model.Calendar;
-import gov.nysenate.openleg.model.CalendarActiveList;
-import gov.nysenate.openleg.model.CalendarActiveListEntry;
-import gov.nysenate.openleg.model.CalendarSupplemental;
-import gov.nysenate.openleg.model.CalendarSupplementalSection;
-import gov.nysenate.openleg.model.CalendarSupplementalSectionEntry;
-import gov.nysenate.openleg.model.Person;
-import gov.nysenate.openleg.model.SOBIBlock;
-import gov.nysenate.openleg.util.Application;
-import gov.nysenate.openleg.util.ChangeLogger;
-import gov.nysenate.openleg.util.DateHelper;
-import gov.nysenate.openleg.util.Storage;
-import gov.nysenate.openleg.util.XmlHelper;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-
-import javax.xml.xpath.XPathExpressionException;
-
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.model.calendar.*;
+import gov.nysenate.openleg.model.entity.Person;
+import gov.nysenate.openleg.model.sobi.SOBIBlock;
+import gov.nysenate.openleg.processors.sobi.BillProcessor;
+import gov.nysenate.openleg.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import javax.xml.xpath.XPathExpressionException;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class SencalendarProcessor
 {
@@ -166,9 +156,9 @@ public class SencalendarProcessor
         // This is a crappy situation, all bills on calendars should already exist but sometimes they won't.
         // This almost exclusively because we are missing sobi files. It shouldn't happen in production but
         // does frequently in development.
-        BillProcessor processor = new BillProcessor();
+        BillProcessor processor = new BillProcessor(Application.getEnvironment());
         SOBIBlock mockBlock = new SOBIBlock(year+billId+(billId.matches("[A-Z]$") ? "" : " ")+1+"     ");
-        Bill bill = processor.getOrCreateBaseBill(mockBlock, modifiedDate, storage);
+        Bill bill = null; /**FIXME processor.getOrCreateBaseBill(mockBlock, modifiedDate, storage); */
 
         // Active lists don't have sponsor listed, so check first!
         if (sponsorName != null) {
@@ -184,7 +174,7 @@ public class SencalendarProcessor
 
             if (!bill.getOtherSponsors().equals(otherSponsors)) {
                 bill.setOtherSponsors(otherSponsors);
-                processor.saveBill(bill, billAmendment, storage);
+                /** FIXME processor.saveBill(bill, billAmendment, storage); */
             }
         }
 
@@ -192,7 +182,7 @@ public class SencalendarProcessor
         BillAmendment amendment = bill.getAmendment(billAmendment);
         if (!amendment.isPublished()) {
             amendment.setPublishDate(modifiedDate);
-            processor.saveBill(bill, billAmendment, storage);
+            /** FIXME processor.saveBill(bill, billAmendment, storage); */
         }
 
         return bill;

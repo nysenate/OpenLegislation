@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.scripts;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -8,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.FileUtils;
 
 public class TextUpdateFrequency
 {

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.sobi;
 
-import java.io.File;
+import gov.nysenate.openleg.model.bill.BillId;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -38,14 +39,17 @@ public class SOBIBlock
     /** A pattern to verify that a string is in the SOBI line format. */
     public static final Pattern blockPattern = Pattern.compile("^[0-9]{4}[A-Z][0-9]{5}[ A-Z][1-9ABCMRTV]");
 
+    /** The file name of the fragment that generated this block. */
+    private String fragmentFileName;
+
+    /** The type of SOBIFragment that generated this block. */
+    private SOBIFragmentType fragmentType;
+
     /** The line number that the block starts at. Defaults to zero when using the basic constructor. */
     private Integer startLineNo = 0;
 
     /** The line number that the block ends at. Defaults to zero when using the basic constructor. */
     private Integer endLineNo = 0;
-
-    /** The file from which the block was found. Defaults to null when using the basic constructor. */
-    private File file = null;
 
     /** The full line header from the line used to construct the Block. */
     private String header = "";
@@ -53,14 +57,8 @@ public class SOBIBlock
     /** The portion of the header containing just the bill designator, i.e not including line type. */
     private String billHeader = "";
 
-    /** The year indicated in the block header. */
-    private Integer year = 0;
-
-    /** The printNo of the base bill. The amendment character is NOT included. */
-    private String printNo = "";
-
-    /** The amendment character for the base bill. Can be empty or single letter string from "A-Z" */
-    private String amendment = "";
+    /** The bill identifier. */
+    private BillId billId;
 
     /** The sobi line type of the block. Determines how the data is interpreted. */
     private SOBILineType type;
@@ -76,13 +74,11 @@ public class SOBIBlock
 
     /**
      * Construct a new block with without location information from a valid SOBIFile line. The line is
-     * assumed to be valid SOBIFile file and is NOT checked for performance reasons.
+     * assumed to be valid sobi file and is NOT checked for performance reasons.
      */
     public SOBIBlock(String line) {
-        this.setYear(Integer.parseInt(line.substring(0,4)));
-        this.setPrintNo(line.substring(4,10));
-        this.setAmendment(line.substring(10,11).trim());
         this.setBillHeader(line.substring(0, 11));
+        this.setBillId(line.substring(4,10), line.substring(10,11), Integer.parseInt(line.substring(0,4)));
         this.setType(SOBILineType.valueOfCode(line.charAt(11)));
         this.setHeader(line.substring(0,12));
         this.setData(line.substring(12));
@@ -94,9 +90,10 @@ public class SOBIBlock
      * the source file and line number the block was initialized from. The line is assumed to be
      * valid SOBI file and is NOT checked for performance reasons.
      */
-    public SOBIBlock(File file, int startLineNo, String line) {
+    public SOBIBlock(String fragmentFileName, SOBIFragmentType type, int startLineNo, String line) {
         this(line);
-        this.setFile(file);
+        this.fragmentFileName = fragmentFileName;
+        this.fragmentType = type;
         this.setStartLineNo(startLineNo);
     }
 
@@ -135,7 +132,7 @@ public class SOBIBlock
      * Returns a representation of the location of the block: fileName:lineNumber.
      */
     public String getLocation() {
-        return (this.getFile() == null ? "null" : this.getFile().getName())+":"+this.getStartLineNo();
+        return (this.fragmentFileName + ":" + this.getStartLineNo() + "-" + this.getEndLineNo());
     }
 
     /**
@@ -153,16 +150,37 @@ public class SOBIBlock
     }
 
     /**
-     * Strips all leading zeros from the numerical part of the print number:
-     * <p>
-     * A00370 -> A370
-     *
-     * @param printNo
+     * Returns the session year of the bill.
+     */
+    public int getYear() {
+        return (this.billId != null) ? this.billId.getSession() : -1;
+    }
+
+    /**
+     * Returns the print no of the base bill.
+     */
+    public String getBasePrintNo() {
+        return (this.billId != null) ? this.billId.getBasePrintNo() : null;
+    }
+
+    /**
+     * Returns the amendment version.
+     */
+    public String getAmendment() {
+        return (this.billId != null) ? this.billId.getVersion() : null;
+    }
+
+    /**
+     * Sets the BillId for this block.
+     * @param printNo String
+     * @param version String
+     * @param session int
      * @throws NumberFormatException on malformed print numbers
      */
-    public void setPrintNo(String printNo) {
+    public void setBillId(String printNo, String version, int session) {
         // Integer conversion removes leading zeros in the print number.
-        this.printNo = printNo.substring(0,1)+Integer.parseInt(printNo.substring(1));
+        this.billId = new BillId(printNo.substring(0,1) + Integer.parseInt(printNo.substring(1)),
+                                 session, version.trim());
     }
 
     /**
@@ -178,6 +196,22 @@ public class SOBIBlock
 
     /** --- Basic Getters/Setters */
 
+    public String getFragmentFileName() {
+        return fragmentFileName;
+    }
+
+    public void setFragmentFileName(String fragmentFileName) {
+        this.fragmentFileName = fragmentFileName;
+    }
+
+    public SOBIFragmentType getFragmentType() {
+        return fragmentType;
+    }
+
+    public void setFragmentType(SOBIFragmentType fragmentType) {
+        this.fragmentType = fragmentType;
+    }
+
     public int getStartLineNo() {
         return startLineNo;
     }
@@ -190,40 +224,12 @@ public class SOBIBlock
         return endLineNo;
     }
 
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
     public String getHeader() {
         return header;
     }
 
     public void setHeader(String header) {
         this.header = header;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public String getPrintNo() {
-        return printNo;
-    }
-
-    public String getAmendment() {
-        return amendment;
-    }
-
-    public void setAmendment(String amendment) {
-        this.amendment = amendment;
     }
 
     public SOBILineType getType() {

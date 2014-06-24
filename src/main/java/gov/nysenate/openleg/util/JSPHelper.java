@@ -1,15 +1,13 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.Person;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.entity.Person;
+import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
 
 public class JSPHelper
 {
@@ -99,11 +97,12 @@ public class JSPHelper
     public static String getCoSponsorLinks(Bill bill, HttpServletRequest request)
     {
         ArrayList<String> links = new ArrayList<String>();
+        /** FIXME
         for (Person sponsor : bill.getCoSponsors()) {
             if (!bill.getOtherSponsors().contains(sponsor)) {
                 links.add(JSPHelper.getPersonLink(sponsor, request));
             }
-        }
+        }         */
 
         return StringUtils.join(links, ", ");
     }
@@ -111,11 +110,12 @@ public class JSPHelper
     public static String getMultiSponsorLinks(Bill bill, HttpServletRequest request)
     {
         ArrayList<String> links = new ArrayList<String>();
+        /** FIXME
         for (Person sponsor : bill.getMultiSponsors()) {
             if (!bill.getOtherSponsors().contains(sponsor)) {
                 links.add(JSPHelper.getPersonLink(sponsor, request));
             }
-        }
+        }        */
         return StringUtils.join(links, ", ");
     }
 }

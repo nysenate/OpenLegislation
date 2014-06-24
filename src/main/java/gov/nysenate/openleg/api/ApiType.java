@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.api;
 
-import gov.nysenate.openleg.model.BillAction;
 import gov.nysenate.openleg.model.BaseObject;
-import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.Calendar;
-import gov.nysenate.openleg.model.Transcript;
-import gov.nysenate.openleg.model.Vote;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAction;
+import gov.nysenate.openleg.model.bill.Vote;
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.transcript.Transcript;
 
 public enum ApiType {
     BILL		("bill", 		Bill.class),

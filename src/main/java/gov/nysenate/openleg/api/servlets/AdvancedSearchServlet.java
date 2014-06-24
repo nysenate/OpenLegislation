@@ -3,20 +3,18 @@ package gov.nysenate.openleg.api.servlets;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.services.model.Committee;
 import gov.nysenate.services.model.Senator;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import org.apache.commons.io.FileUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FileUtils;
-import org.codehaus.jackson.map.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 @SuppressWarnings("serial")
 public class AdvancedSearchServlet extends HttpServlet

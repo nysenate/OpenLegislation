@@ -7,13 +7,6 @@ import gov.nysenate.services.NYSenateClient;
 import gov.nysenate.services.model.Committee;
 import gov.nysenate.services.model.Member;
 import gov.nysenate.services.model.Senator;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.collections.ListUtils;
@@ -22,6 +15,12 @@ import org.apache.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class UpdateNYSenateData extends BaseScript
 {

@@ -27,18 +27,6 @@ public class Calendar extends BaseObject
         this.setYear(year);
     }
 
-    @Override
-    public String getOid()
-    {
-        return "calendar-"+this.getYear()+"-"+this.getNumber();
-    }
-
-    @Override
-    public String getOtype()
-    {
-        return "calendar";
-    }
-
     public Integer getNumber()
     {
         return number;

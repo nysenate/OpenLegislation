@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.model.calendar;
 
 import gov.nysenate.openleg.model.BaseObject;
-import gov.nysenate.openleg.util.DateHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -82,17 +81,5 @@ public class CalendarActiveList extends BaseObject
     public void setReleaseDateTime(Date releaseDateTime)
     {
         this.releaseDateTime = releaseDateTime;
-    }
-
-    @Override
-    public String getOid()
-    {
-        return this.getOtype()+"-"+DateHelper.LRS_DATE_ONLY_FORMAT.format(this.getCalDate())+"-"+this.getId();
-    }
-
-    @Override
-    public String getOtype()
-    {
-        return "calendar-active";
     }
 }

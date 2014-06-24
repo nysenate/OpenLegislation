@@ -1,17 +1,10 @@
 package gov.nysenate.openleg.scripts;
 
 import gov.nysenate.openleg.util.Application;
+import org.apache.commons.cli.*;
+import org.apache.log4j.Logger;
 
 import java.io.File;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.MissingOptionException;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
-import org.apache.log4j.Logger;
 
 /**
  * Provides a base wrapping layer for scripts that logs all uncaught exceptions

@@ -1,21 +1,13 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.converter.StorageJsonConverter;
 import gov.nysenate.openleg.model.BaseObject;
-import gov.nysenate.openleg.model.Bill;
-import gov.nysenate.openleg.model.Calendar;
-import gov.nysenate.openleg.model.Transcript;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
+import gov.nysenate.openleg.model.bill.Bill;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.JsonMappingException;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Simple file backed key-value store with that supports both published and unpublished
@@ -25,13 +17,7 @@ import org.codehaus.jackson.map.JsonMappingException;
  */
 public class Storage
 {
-
-    public static void main(String[] args) {
-        List<String> test = new ArrayList<String>();
-        System.out.println(test.getClass().cast(test));
-    }
-
-    protected final Logger logger;
+    private static final Logger logger = Logger.getLogger(Storage.class);
 
     /**
      * Represents the current status of a key in storage:
@@ -78,7 +64,7 @@ public class Storage
      */
     protected HashSet<String> brandNew;
 
-    private final StorageJsonConverter converter;
+//    private final StorageJsonConverter converter;
 
 
     /**
@@ -98,8 +84,6 @@ public class Storage
      */
     public Storage(File storageDir)
     {
-        this.logger  = Logger.getLogger(this.getClass());
-
         this.storageDir = storageDir;
         this.publishedDir = new File(storageDir, "published");
         this.unpublishedDir = new File(storageDir, "unpublished");
@@ -108,7 +92,7 @@ public class Storage
         this.dirty   = new HashSet<String>();
         this.brandNew = new HashSet<String>();
 
-        this.converter = new StorageJsonConverter(this);
+//        this.converter = new StorageJsonConverter(this);
     }
 
     /**
@@ -130,32 +114,32 @@ public class Storage
             logger.debug("Cache miss: "+key);
             File storageFile = getStorageFile(key);
             if (storageFile != null) {
-                try {
-                    if (cls == Bill.class) {
-                        value = this.converter.readBill(storageFile);
-                    }
-                    else if (cls == Calendar.class) {
-                        value = this.converter.readCalendar(storageFile);
-                    }
-                    else if (cls == Transcript.class) {
-                        value = this.converter.readTranscript(storageFile);
-                    }
-                    else {
-                        logger.error("Unable to read value of type "+cls.getName()+" from: "+storageFile);
-                        return null;
-                    }
+//                try {
+//                    if (cls == Bill.class) {
+//                        value = this.converter.readBill(storageFile);
+//                    }
+//                    else if (cls == Calendar.class) {
+//                        value = this.converter.readCalendar(storageFile);
+//                    }
+//                    else if (cls == Transcript.class) {
+//                        value = this.converter.readTranscript(storageFile);
+//                    }
+//                    else {
+//                        logger.error("Unable to read value of type "+cls.getName()+" from: "+storageFile);
+//                        return null;
+//                    }
 
                     value.setBrandNew(brandNew.contains(key));
-                } catch (org.codehaus.jackson.JsonParseException e) {
-                    logger.error("could not parse json", e);
-                } catch (JsonMappingException e) {
-                    logger.error("could not map json", e);
-                } catch (IOException e) {
-                    logger.debug("Storage Miss: "+storageFile);
-                }
-            }
-            else {
-                logger.debug("Missing key: "+key);
+//                } catch (org.codehaus.jackson.JsonParseException e) {
+//                    logger.error("could not parse json", e);
+//                } catch (JsonMappingException e) {
+//                    logger.error("could not map json", e);
+//                } catch (IOException e) {
+//                    logger.debug("Storage Miss: "+storageFile);
+//                }
+//            }
+//            else {
+//                logger.debug("Missing key: "+key);
             }
         }
         return value;
@@ -182,7 +166,8 @@ public class Storage
      */
     public String key(BaseObject value)
     {
-        return value.getYear()+"/"+value.getOtype()+"/"+value.getOid();
+        return null; /** KILLED THIS */
+        //return value.getYear()+"/"+value.getOtype()+"/"+value.getOid();
     }
 
     /**
@@ -263,25 +248,25 @@ public class Storage
         if (value != null) {
             File storageFile = value.isPublished() ? getPublishedFile(key) : getUnpublishedFile(key);
 
-            try {
-                FileUtils.forceMkdir(storageFile.getParentFile());
-                if (value instanceof Bill) {
-                    this.converter.write((Bill)value, storageFile);
-                }
-                else if (value instanceof Calendar) {
-                    this.converter.write((Calendar)value, storageFile);
-                }
-                else if (value instanceof Transcript) {
-                    this.converter.write((Transcript)value, storageFile);
-                }
-                else {
-                    logger.error("Unable to write value of type "+value.getClass().getName()+": "+value.getOid());
-                    return;
-                }
-            }
-            catch (IOException e) {
-                logger.error("Cannot open file for writing: "+storageFile, e);
-            }
+//            try {
+//                FileUtils.forceMkdir(storageFile.getParentFile());
+//                if (value instanceof Bill) {
+//                    this.converter.write((Bill)value, storageFile);
+//                }
+//                else if (value instanceof Calendar) {
+//                    this.converter.write((Calendar)value, storageFile);
+//                }
+//                else if (value instanceof Transcript) {
+//                    this.converter.write((Transcript)value, storageFile);
+//                }
+//                else {
+//                    logger.error("Unable to write value of type "+value.getClass().getName()+": "+value.getOid());
+//                    return;
+//                }
+//            }
+//            catch (IOException e) {
+//                logger.error("Cannot open file for writing: "+storageFile, e);
+//            }
         }
 
         // Mark the key as clean by removing from the dirty set.

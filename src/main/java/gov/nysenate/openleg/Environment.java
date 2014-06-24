@@ -1,12 +1,11 @@
 package gov.nysenate.openleg;
 
 import gov.nysenate.util.Config;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-
-import org.apache.commons.io.FileUtils;
 
 /**
  * The Environment class is essentially a configuration for an OpenLeg workspace.

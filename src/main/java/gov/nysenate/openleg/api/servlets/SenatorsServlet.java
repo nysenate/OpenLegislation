@@ -4,7 +4,14 @@ import gov.nysenate.openleg.util.RequestUtils;
 import gov.nysenate.openleg.util.RequestUtils.FORMAT;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.services.model.Senator;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,15 +19,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 
 @SuppressWarnings("serial")
 public class SenatorsServlet extends HttpServlet
