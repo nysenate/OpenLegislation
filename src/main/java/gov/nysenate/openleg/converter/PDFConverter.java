@@ -25,6 +25,15 @@ public class PDFConverter
     // Candyco started Jan 1st, 2005
     private static long CANDYCO_START_TIME = 1104555600000L;
 
+    // Candyco also did 1999-2003
+    private static long CANDYCO_1999_START = 915166800000L;
+    private static long CANDYCO_2003_END = 1072932900000L;
+
+    // Pauline Williman did 1993-1998
+    private static long WILLIMAN_START = 725864400000L;
+    private static long WILLIMAN_END = 915166500000L;
+
+
     private static Float bot = 90f;
     private static Float right = 575f;
     private static Float top = 710f;
@@ -108,17 +117,25 @@ public class PDFConverter
                                 draw(contentStream, indent, line.fullText());
 
                                 // Fix spacing on first page. Spacing info is lost without line numbers marking blank lines.
-                                if (line.textTrimmed().equals("NEW YORK STATE SENATE"))
+                                if (line.textTrimmed().equals("NEW YORK STATE SENATE")) {
                                     contentStream.moveTextPositionByAmount(0, -(fontSize * 4));
+                                    lineCount += 2;
+                                }
 
-                                if (line.textTrimmed().contains("STENOGRAPHIC RECORD"))
-                                    contentStream.moveTextPositionByAmount(0, -(fontSize * 5));
+                                if (line.textTrimmed().contains("STENOGRAPHIC RECORD")) {
+                                    contentStream.moveTextPositionByAmount(0, -(fontSize * 4));
+                                    lineCount += 2;
+                                }
 
-                                if (line.isTime())
-                                    contentStream.moveTextPositionByAmount(0, -(fontSize * 3));
+                                if (line.isTime()) {
+                                    contentStream.moveTextPositionByAmount(0, -(fontSize * 4));
+                                    lineCount += 2;
+                                }
 
-                                if (line.isSession())
+                                if (line.isSession()) {
                                     contentStream.moveTextPositionByAmount(0, -(fontSize * 6));
+                                    lineCount += 3;
+                                }
                             }
 
                         }
@@ -134,6 +151,12 @@ public class PDFConverter
             }
             else if (transcript.getTimeStamp().getTime() >= CANDYCO_START_TIME) {
                 stenographer = "Candyco Transcription Service, Inc.";
+            }
+            else if (transcript.getTimeStamp().getTime() >= CANDYCO_1999_START && transcript.getTimeStamp().getTime() <= CANDYCO_2003_END) {
+                stenographer = "Candyco Transcription Service, Inc.";
+            }
+            else if (transcript.getTimeStamp().getTime() >= WILLIMAN_START && transcript.getTimeStamp().getTime() <= WILLIMAN_END) {
+                stenographer = "Pauline Williman, Certified Shorthand Reporter";
             }
             else {
                 stenographer = "";
