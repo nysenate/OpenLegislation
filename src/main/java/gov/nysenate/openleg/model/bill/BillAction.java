@@ -1,25 +1,24 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.BaseObject;
+import gov.nysenate.openleg.model.BaseLegContent;
 import org.joda.time.LocalDate;
 
 import java.util.Comparator;
 import java.util.Date;
 
 /**
- * Represents a single action on a single bill. E.g. REFERRED TO RULES.*
- * Uniquely identified by Bill+Date.getTime()+Text.
+ * Represents a single action on a single bill. E.g. REFERRED TO RULES.
  */
-public class BillAction extends BaseObject
+public class BillAction extends BaseLegContent
 {
-    /** Print number of the base bill. */
-    protected String baseBillPrintNo = "";
-
-    /** The bill amendment version the action was taken on. */
-    private String amendmentVersion;
+    /** Identifies the bill this action was taken on. */
+    private BillId billId;
 
     /** The date this action was performed. Has no time component. */
     private Date date = null;
+
+    /** Number used for chronological ordering. */
+    private int sequenceNo = 0;
 
     /** The text of this action. */
     private String text = "";
@@ -35,17 +34,17 @@ public class BillAction extends BaseObject
      *
      * @param date - The date of the action
      * @param text - The text of the action
-     * @param bill - The bill the action was performed on
+     * @param billId - The id of the bill the action was performed on
      */
-    public BillAction(Date date, String text, Bill bill, String billAmendment) {
+    public BillAction(Date date, String text, int sequenceNo, BillId billId) {
         super();
         this.date = date;
         this.text = text;
-        this.setBaseBillPrintNo(bill.getPrintNo());
-        this.setAmendmentVersion(billAmendment);
+        this.billId = billId;
+        this.sequenceNo = sequenceNo;
+        this.session = billId.getSession();
         this.setPublishDate(this.date);
         this.setModifiedDate(this.date);
-        this.setSession(bill.getSession());
     }
 
     /** --- Functional Getters/Setters --- */
@@ -57,56 +56,75 @@ public class BillAction extends BaseObject
     /** --- Overrides --- */
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BillAction that = (BillAction) o;
-
-        if (baseBillPrintNo != null ? !baseBillPrintNo.equals(that.baseBillPrintNo) : that.baseBillPrintNo != null)
-            return false;
-        if (amendmentVersion != null ? !amendmentVersion.equals(that.amendmentVersion) : that.amendmentVersion != null) return false;
-        if (date != null ? !date.equals(that.date) : that.date != null) return false;
-        if (text != null ? !text.equals(that.text) : that.text != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = baseBillPrintNo != null ? baseBillPrintNo.hashCode() : 0;
-        result = 31 * result + (amendmentVersion != null ? amendmentVersion.hashCode() : 0);
-        result = 31 * result + (date != null ? date.hashCode() : 0);
-        result = 31 * result + (text != null ? text.hashCode() : 0);
-        return result;
-    }
-
-    @Override
     public String toString() {
         return date.toString() + " " + text;
     }
 
+    /**
+     * Every BillAction is assigned a BillId which may contain an amendment version other than
+     * the base version. For the sake of equality checking, we will use the base version of the
+     * bill id since the actions are stored on the base bill anyways. Seq no, date, and text will
+     * also be checked.
+     * @param o Object
+     * @return boolean
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BillAction)) return false;
+        BillAction that = (BillAction) o;
+        if (sequenceNo != that.sequenceNo) return false;
+        if (!billId.getBase().equals(that.billId.getBase())) return false;
+        if (!date.equals(that.date)) return false;
+        if (!text.equals(that.text)) return false;
+        return true;
+    }
+
+    /**
+     * Similar to the equals() method, the hashCode() method will use the base version of the BillId.
+     * @return int
+     */
+    @Override
+    public int hashCode() {
+        int result = billId.getBase().hashCode();
+        result = 31 * result + date.hashCode();
+        result = 31 * result + sequenceNo;
+        result = 31 * result + text.hashCode();
+        return result;
+    }
+
     /** --- Helper classes --- */
 
-    public static class ByEventDate implements Comparator<BillAction> {
+    public static class ByEventSequenceNoAsc implements Comparator<BillAction> {
         @Override
-        public int compare(BillAction be1, BillAction be2) {
-            int ret = be1.getDate().compareTo(be2.getDate());
-            if(ret == 0) {
-                return -1;
-            }
-            return ret*-1;
+        public int compare(BillAction o1, BillAction o2) {
+            return Integer.compare(o1.getSequenceNo(), o2.getSequenceNo());
+        }
+    }
+
+    public static class ByEventSequenceNoDesc implements Comparator<BillAction> {
+        @Override
+        public int compare(BillAction o1, BillAction o2) {
+            return Integer.compare(o1.getSequenceNo(), o2.getSequenceNo()) * -1;
         }
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public String getBaseBillPrintNo() {
-        return baseBillPrintNo;
+    public BillId getBillId() {
+        return billId;
     }
 
-    public void setBaseBillPrintNo(String baseBillPrintNo) {
-        this.baseBillPrintNo = baseBillPrintNo;
+    public void setBillId(BillId billId) {
+        this.billId = billId;
+    }
+
+    public int getSequenceNo() {
+        return sequenceNo;
+    }
+
+    public void setSequenceNo(int sequenceNo) {
+        this.sequenceNo = sequenceNo;
     }
 
     public Date getDate() {
@@ -123,13 +141,5 @@ public class BillAction extends BaseObject
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public String getAmendmentVersion() {
-        return amendmentVersion;
-    }
-
-    public void setAmendmentVersion(String amendmentVersion) {
-        this.amendmentVersion = amendmentVersion;
     }
 }

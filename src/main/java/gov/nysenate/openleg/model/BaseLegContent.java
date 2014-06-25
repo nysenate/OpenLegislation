@@ -4,14 +4,11 @@ import java.util.Date;
 import java.util.HashSet;
 
 /**
- * Implements the BaseObject interface of all published OpenLegislation content.
+ * Implements the BaseLegContent interface of all published OpenLegislation content.
  * @author GraylinKim
  */
-abstract public class BaseObject
+abstract public class BaseLegContent
 {
-    /** True if the object was not retrieved from storage. */
-    protected boolean brandNew = true;
-
     /** The date the object was most recently modified. */
     protected Date modifiedDate = null;
 
@@ -27,8 +24,8 @@ abstract public class BaseObject
     /** A set of SOBI files that contained modifications to this object. */
     protected HashSet<String> dataSources;
 
-    /** Initializes BaseObject parameters. */
-    public BaseObject()
+    /** Initializes BaseLegContent parameters. */
+    public BaseLegContent()
     {
         this.dataSources = new HashSet<String>();
     }

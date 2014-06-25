@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Vote extends BaseObject
+public class BillVote extends BaseObject
 {
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
@@ -47,7 +47,7 @@ public class Vote extends BaseObject
         return ayes.size() + nays.size() + abstains.size() + excused.size();
     }
 
-    public Vote() {
+    public BillVote() {
         super();
         ayes = new ArrayList<>();
         ayeswr = new ArrayList<>();
@@ -57,7 +57,7 @@ public class Vote extends BaseObject
         absent = new ArrayList<>();
     }
 
-    public Vote(String billId, String billAmendment, Date date, int type, String sequenceNumber) {
+    public BillVote(String billId, String billAmendment, Date date, int type, String sequenceNumber) {
         this();
         this.voteDate = date;
         java.util.Calendar cal = java.util.Calendar.getInstance();
@@ -69,12 +69,12 @@ public class Vote extends BaseObject
         this.oid = billId+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
     }
 
-    public Vote(Bill bill, String billAmendment, Date date, int type, String sequenceNumber) {
+    public BillVote(Bill bill, String billAmendment, Date date, int type, String sequenceNumber) {
         this(bill.getBillId(), billAmendment, date, type, sequenceNumber);
         this.bill = bill;
     }
 
-    public Vote(BillAmendment amendment, Date date, int type, String sequenceNumber) {
+    public BillVote(BillAmendment amendment, Date date, int type, String sequenceNumber) {
         this();
         this.voteDate = date;
         this.setYear(new LocalDate(voteDate).getYear());
@@ -228,8 +228,8 @@ public class Vote extends BaseObject
     @Override
     public boolean equals(Object obj)
     {
-        if(obj != null && obj instanceof Vote) {
-            Vote vote = (Vote)obj;
+        if(obj != null && obj instanceof BillVote) {
+            BillVote vote = (BillVote)obj;
             return this.oid.equals(vote.getOid());
         }
         return false;
