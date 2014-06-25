@@ -148,6 +148,9 @@ public class SpotCheck extends BaseScript
                 jsonSponsor = unescapeHTML(jsonBill.getSponsor().getFullname()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
             }
             String lbdcSponsor = bills.get(id).getSponsor().toUpperCase().replace("BILL", "").replace("COM", "");
+            if (lbdcSponsor.startsWith("RULES ") && lbdcSponsor.contains("(") && !lbdcSponsor.contains(")")){
+                lbdcSponsor = lbdcSponsor.concat(")");
+            }
             if (!lbdcSponsor.isEmpty() && !jsonSponsor.replace(" ","").equals(lbdcSponsor.replace(" ", "")) ) {
                 if (!id.startsWith("D")) {
                     logger.error("Sponsor: "+billNo);
