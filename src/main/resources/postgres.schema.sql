@@ -28,28 +28,28 @@ CREATE SCHEMA master;
 ALTER SCHEMA master OWNER TO postgres;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
--- Name: hstore; Type: EXTENSION; Schema: -; Owner:
+-- Name: hstore; Type: EXTENSION; Schema: -; Owner: 
 --
 
 CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner:
+-- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
@@ -58,7 +58,7 @@ COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs
 SET search_path = master, pg_catalog;
 
 --
--- Name: sobi_fragment_type; Type: TYPE; Schema: master; Owner: ash
+-- Name: sobi_fragment_type; Type: TYPE; Schema: master; Owner: postgres
 --
 
 CREATE TYPE sobi_fragment_type AS ENUM (
@@ -72,7 +72,7 @@ CREATE TYPE sobi_fragment_type AS ENUM (
 );
 
 
-ALTER TYPE master.sobi_fragment_type OWNER TO ash;
+ALTER TYPE master.sobi_fragment_type OWNER TO postgres;
 
 --
 -- Name: data_updated(); Type: FUNCTION; Schema: master; Owner: postgres
@@ -89,11 +89,11 @@ BEGIN
  ELSIF tg_op = 'DELETE' THEN
    INSERT INTO master.sobi_change_log(table_name, action, key, data, modified_date_time)
    VALUES (tg_table_name::text, 'd', hstore(ARRAY['print_no', OLD.print_no, 'session_year', OLD.session_year::character varying]), hstore(old.*), current_timestamp);
-   RETURN OLD;
+   RETURN OLD;			
  ELSIF tg_op = 'INSERT' THEN
    INSERT INTO master.sobi_change_log(table_name, action,key, data, modified_date_time, sobi_fragment_id)
    VALUES (tg_table_name::text, 'i', hstore(ARRAY['print_no', NEW.print_no, 'session_year', NEW.session_year::character varying]), hstore(new.*), current_timestamp, NEW.last_fragment_file_name);
-   RETURN NEW;
+   RETURN NEW;			
  END IF;
 END;
 $$;
@@ -104,7 +104,7 @@ ALTER FUNCTION master.data_updated() OWNER TO postgres;
 SET search_path = public, pg_catalog;
 
 --
--- Name: test_args(character varying[]); Type: FUNCTION; Schema: public; Owner: ash
+-- Name: test_args(character varying[]); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
 CREATE FUNCTION test_args(exclude_cols character varying[]) RETURNS hstore
@@ -112,10 +112,10 @@ CREATE FUNCTION test_args(exclude_cols character varying[]) RETURNS hstore
     AS $$SELECT hstore(exclude_cols)$$;
 
 
-ALTER FUNCTION public.test_args(exclude_cols character varying[]) OWNER TO ash;
+ALTER FUNCTION public.test_args(exclude_cols character varying[]) OWNER TO postgres;
 
 --
--- Name: write_muwhahah(); Type: FUNCTION; Schema: public; Owner: ash
+-- Name: write_muwhahah(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
 CREATE FUNCTION write_muwhahah() RETURNS trigger
@@ -126,12 +126,12 @@ CREATE FUNCTION write_muwhahah() RETURNS trigger
 END$$;
 
 
-ALTER FUNCTION public.write_muwhahah() OWNER TO ash;
+ALTER FUNCTION public.write_muwhahah() OWNER TO postgres;
 
 SET search_path = master, pg_catalog;
 
 --
--- Name: openleg_fts_config; Type: TEXT SEARCH CONFIGURATION; Schema: master; Owner: ash
+-- Name: openleg_fts_config; Type: TEXT SEARCH CONFIGURATION; Schema: master; Owner: postgres
 --
 
 CREATE TEXT SEARCH CONFIGURATION openleg_fts_config (
@@ -195,7 +195,7 @@ ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
     ADD MAPPING FOR uint WITH simple;
 
 
-ALTER TEXT SEARCH CONFIGURATION master.openleg_fts_config OWNER TO ash;
+ALTER TEXT SEARCH CONFIGURATION master.openleg_fts_config OWNER TO postgres;
 
 SET search_path = lbdc, pg_catalog;
 
@@ -204,7 +204,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: bill_daybreak; Type: TABLE; Schema: lbdc; Owner: ash; Tablespace:
+-- Name: bill_daybreak; Type: TABLE; Schema: lbdc; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_daybreak (
@@ -214,10 +214,10 @@ CREATE TABLE bill_daybreak (
 );
 
 
-ALTER TABLE lbdc.bill_daybreak OWNER TO ash;
+ALTER TABLE lbdc.bill_daybreak OWNER TO postgres;
 
 --
--- Name: daybreak; Type: TABLE; Schema: lbdc; Owner: ash; Tablespace:
+-- Name: daybreak; Type: TABLE; Schema: lbdc; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE daybreak (
@@ -226,10 +226,10 @@ CREATE TABLE daybreak (
 );
 
 
-ALTER TABLE lbdc.daybreak OWNER TO ash;
+ALTER TABLE lbdc.daybreak OWNER TO postgres;
 
 --
--- Name: daybreak_id_seq; Type: SEQUENCE; Schema: lbdc; Owner: ash
+-- Name: daybreak_id_seq; Type: SEQUENCE; Schema: lbdc; Owner: postgres
 --
 
 CREATE SEQUENCE daybreak_id_seq
@@ -240,10 +240,10 @@ CREATE SEQUENCE daybreak_id_seq
     CACHE 1;
 
 
-ALTER TABLE lbdc.daybreak_id_seq OWNER TO ash;
+ALTER TABLE lbdc.daybreak_id_seq OWNER TO postgres;
 
 --
--- Name: daybreak_id_seq; Type: SEQUENCE OWNED BY; Schema: lbdc; Owner: ash
+-- Name: daybreak_id_seq; Type: SEQUENCE OWNED BY; Schema: lbdc; Owner: postgres
 --
 
 ALTER SEQUENCE daybreak_id_seq OWNED BY daybreak.id;
@@ -252,7 +252,7 @@ ALTER SEQUENCE daybreak_id_seq OWNED BY daybreak.id;
 SET search_path = master, pg_catalog;
 
 --
--- Name: action; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: action; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE action (
@@ -262,10 +262,10 @@ CREATE TABLE action (
 );
 
 
-ALTER TABLE master.action OWNER TO ash;
+ALTER TABLE master.action OWNER TO postgres;
 
 --
--- Name: action_id_seq; Type: SEQUENCE; Schema: master; Owner: ash
+-- Name: action_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
 CREATE SEQUENCE action_id_seq
@@ -276,17 +276,17 @@ CREATE SEQUENCE action_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.action_id_seq OWNER TO ash;
+ALTER TABLE master.action_id_seq OWNER TO postgres;
 
 --
--- Name: action_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: ash
+-- Name: action_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
 ALTER SEQUENCE action_id_seq OWNED BY action.id;
 
 
 --
--- Name: agenda; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda (
@@ -294,10 +294,10 @@ CREATE TABLE agenda (
 );
 
 
-ALTER TABLE master.agenda OWNER TO ash;
+ALTER TABLE master.agenda OWNER TO postgres;
 
 --
--- Name: agenda_info_addendum; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_info_addendum; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_info_addendum (
@@ -307,10 +307,10 @@ CREATE TABLE agenda_info_addendum (
 );
 
 
-ALTER TABLE master.agenda_info_addendum OWNER TO ash;
+ALTER TABLE master.agenda_info_addendum OWNER TO postgres;
 
 --
--- Name: agenda_info_committee; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_info_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_info_committee (
@@ -323,10 +323,10 @@ CREATE TABLE agenda_info_committee (
 );
 
 
-ALTER TABLE master.agenda_info_committee OWNER TO ash;
+ALTER TABLE master.agenda_info_committee OWNER TO postgres;
 
 --
--- Name: agenda_info_committee_item; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_info_committee_item; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_info_committee_item (
@@ -341,10 +341,10 @@ CREATE TABLE agenda_info_committee_item (
 );
 
 
-ALTER TABLE master.agenda_info_committee_item OWNER TO ash;
+ALTER TABLE master.agenda_info_committee_item OWNER TO postgres;
 
 --
--- Name: agenda_info_committee_item_id_seq; Type: SEQUENCE; Schema: master; Owner: ash
+-- Name: agenda_info_committee_item_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
 CREATE SEQUENCE agenda_info_committee_item_id_seq
@@ -355,17 +355,17 @@ CREATE SEQUENCE agenda_info_committee_item_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.agenda_info_committee_item_id_seq OWNER TO ash;
+ALTER TABLE master.agenda_info_committee_item_id_seq OWNER TO postgres;
 
 --
--- Name: agenda_info_committee_item_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: ash
+-- Name: agenda_info_committee_item_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
 ALTER SEQUENCE agenda_info_committee_item_id_seq OWNED BY agenda_info_committee_item.id;
 
 
 --
--- Name: agenda_vote_action; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_vote_action; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_vote_action (
@@ -374,10 +374,10 @@ CREATE TABLE agenda_vote_action (
 );
 
 
-ALTER TABLE master.agenda_vote_action OWNER TO ash;
+ALTER TABLE master.agenda_vote_action OWNER TO postgres;
 
 --
--- Name: agenda_vote_addendum; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_vote_addendum; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_vote_addendum (
@@ -386,10 +386,10 @@ CREATE TABLE agenda_vote_addendum (
 );
 
 
-ALTER TABLE master.agenda_vote_addendum OWNER TO ash;
+ALTER TABLE master.agenda_vote_addendum OWNER TO postgres;
 
 --
--- Name: agenda_vote_committee; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_vote_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_vote_committee (
@@ -402,10 +402,10 @@ CREATE TABLE agenda_vote_committee (
 );
 
 
-ALTER TABLE master.agenda_vote_committee OWNER TO ash;
+ALTER TABLE master.agenda_vote_committee OWNER TO postgres;
 
 --
--- Name: agenda_vote_committee_attend; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_vote_committee_attend; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_vote_committee_attend (
@@ -418,10 +418,10 @@ CREATE TABLE agenda_vote_committee_attend (
 );
 
 
-ALTER TABLE master.agenda_vote_committee_attend OWNER TO ash;
+ALTER TABLE master.agenda_vote_committee_attend OWNER TO postgres;
 
 --
--- Name: agenda_vote_committee_attend_id_seq; Type: SEQUENCE; Schema: master; Owner: ash
+-- Name: agenda_vote_committee_attend_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
 CREATE SEQUENCE agenda_vote_committee_attend_id_seq
@@ -432,17 +432,17 @@ CREATE SEQUENCE agenda_vote_committee_attend_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.agenda_vote_committee_attend_id_seq OWNER TO ash;
+ALTER TABLE master.agenda_vote_committee_attend_id_seq OWNER TO postgres;
 
 --
--- Name: agenda_vote_committee_attend_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: ash
+-- Name: agenda_vote_committee_attend_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
 ALTER SEQUENCE agenda_vote_committee_attend_id_seq OWNED BY agenda_vote_committee_attend.id;
 
 
 --
--- Name: agenda_vote_committee_id_seq; Type: SEQUENCE; Schema: master; Owner: ash
+-- Name: agenda_vote_committee_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
 CREATE SEQUENCE agenda_vote_committee_id_seq
@@ -453,17 +453,17 @@ CREATE SEQUENCE agenda_vote_committee_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.agenda_vote_committee_id_seq OWNER TO ash;
+ALTER TABLE master.agenda_vote_committee_id_seq OWNER TO postgres;
 
 --
--- Name: agenda_vote_committee_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: ash
+-- Name: agenda_vote_committee_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
 ALTER SEQUENCE agenda_vote_committee_id_seq OWNED BY agenda_vote_committee.id;
 
 
 --
--- Name: agenda_vote_committee_item; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_vote_committee_item; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_vote_committee_item (
@@ -477,10 +477,10 @@ CREATE TABLE agenda_vote_committee_item (
 );
 
 
-ALTER TABLE master.agenda_vote_committee_item OWNER TO ash;
+ALTER TABLE master.agenda_vote_committee_item OWNER TO postgres;
 
 --
--- Name: agenda_vote_committee_item_id_seq; Type: SEQUENCE; Schema: master; Owner: ash
+-- Name: agenda_vote_committee_item_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
 CREATE SEQUENCE agenda_vote_committee_item_id_seq
@@ -491,17 +491,17 @@ CREATE SEQUENCE agenda_vote_committee_item_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.agenda_vote_committee_item_id_seq OWNER TO ash;
+ALTER TABLE master.agenda_vote_committee_item_id_seq OWNER TO postgres;
 
 --
--- Name: agenda_vote_committee_item_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: ash
+-- Name: agenda_vote_committee_item_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
 ALTER SEQUENCE agenda_vote_committee_item_id_seq OWNED BY agenda_vote_committee_item.id;
 
 
 --
--- Name: agenda_vote_committee_vote; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_vote_committee_vote; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_vote_committee_vote (
@@ -514,10 +514,10 @@ CREATE TABLE agenda_vote_committee_vote (
 );
 
 
-ALTER TABLE master.agenda_vote_committee_vote OWNER TO ash;
+ALTER TABLE master.agenda_vote_committee_vote OWNER TO postgres;
 
 --
--- Name: agenda_vote_committee_vote_id_seq; Type: SEQUENCE; Schema: master; Owner: ash
+-- Name: agenda_vote_committee_vote_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
 CREATE SEQUENCE agenda_vote_committee_vote_id_seq
@@ -528,17 +528,17 @@ CREATE SEQUENCE agenda_vote_committee_vote_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.agenda_vote_committee_vote_id_seq OWNER TO ash;
+ALTER TABLE master.agenda_vote_committee_vote_id_seq OWNER TO postgres;
 
 --
--- Name: agenda_vote_committee_vote_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: ash
+-- Name: agenda_vote_committee_vote_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
 ALTER SEQUENCE agenda_vote_committee_vote_id_seq OWNED BY agenda_vote_committee_vote.id;
 
 
 --
--- Name: bill; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: bill; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill (
@@ -559,17 +559,17 @@ CREATE TABLE bill (
 );
 
 
-ALTER TABLE master.bill OWNER TO ash;
+ALTER TABLE master.bill OWNER TO postgres;
 
 --
--- Name: TABLE bill; Type: COMMENT; Schema: master; Owner: ash
+-- Name: TABLE bill; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON TABLE bill IS 'General information about a bill';
 
 
 --
--- Name: bill_amendment; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_amendment; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment (
@@ -589,17 +589,17 @@ CREATE TABLE bill_amendment (
 );
 
 
-ALTER TABLE master.bill_amendment OWNER TO ash;
+ALTER TABLE master.bill_amendment OWNER TO postgres;
 
 --
--- Name: TABLE bill_amendment; Type: COMMENT; Schema: master; Owner: ash
+-- Name: TABLE bill_amendment; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON TABLE bill_amendment IS 'Information specific to a bill amendment';
 
 
 --
--- Name: bill_amendment_action; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_amendment_action; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment_action (
@@ -616,17 +616,17 @@ CREATE TABLE bill_amendment_action (
 );
 
 
-ALTER TABLE master.bill_amendment_action OWNER TO ash;
+ALTER TABLE master.bill_amendment_action OWNER TO postgres;
 
 --
--- Name: TABLE bill_amendment_action; Type: COMMENT; Schema: master; Owner: ash
+-- Name: TABLE bill_amendment_action; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON TABLE bill_amendment_action IS 'Actions that have been taken on an amendment';
 
 
 --
--- Name: bill_amendment_cosponsor; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_amendment_cosponsor; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment_cosponsor (
@@ -637,17 +637,17 @@ CREATE TABLE bill_amendment_cosponsor (
 );
 
 
-ALTER TABLE master.bill_amendment_cosponsor OWNER TO ash;
+ALTER TABLE master.bill_amendment_cosponsor OWNER TO postgres;
 
 --
--- Name: TABLE bill_amendment_cosponsor; Type: COMMENT; Schema: master; Owner: ash
+-- Name: TABLE bill_amendment_cosponsor; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON TABLE bill_amendment_cosponsor IS 'Listing of co-sponsors for an amendment';
 
 
 --
--- Name: bill_amendment_same_as; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_amendment_same_as; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment_same_as (
@@ -660,17 +660,17 @@ CREATE TABLE bill_amendment_same_as (
 );
 
 
-ALTER TABLE master.bill_amendment_same_as OWNER TO ash;
+ALTER TABLE master.bill_amendment_same_as OWNER TO postgres;
 
 --
--- Name: TABLE bill_amendment_same_as; Type: COMMENT; Schema: master; Owner: ash
+-- Name: TABLE bill_amendment_same_as; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON TABLE bill_amendment_same_as IS 'Same as bills for an amendment';
 
 
 --
--- Name: bill_amendment_vote; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_amendment_vote; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment_vote (
@@ -678,17 +678,17 @@ CREATE TABLE bill_amendment_vote (
 );
 
 
-ALTER TABLE master.bill_amendment_vote OWNER TO ash;
+ALTER TABLE master.bill_amendment_vote OWNER TO postgres;
 
 --
--- Name: TABLE bill_amendment_vote; Type: COMMENT; Schema: master; Owner: ash
+-- Name: TABLE bill_amendment_vote; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON TABLE bill_amendment_vote IS 'Votes taken on the amendments';
 
 
 --
--- Name: bill_amendment_vote_blah_seq; Type: SEQUENCE; Schema: master; Owner: ash
+-- Name: bill_amendment_vote_blah_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
 CREATE SEQUENCE bill_amendment_vote_blah_seq
@@ -699,17 +699,17 @@ CREATE SEQUENCE bill_amendment_vote_blah_seq
     CACHE 1;
 
 
-ALTER TABLE master.bill_amendment_vote_blah_seq OWNER TO ash;
+ALTER TABLE master.bill_amendment_vote_blah_seq OWNER TO postgres;
 
 --
--- Name: bill_amendment_vote_blah_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: ash
+-- Name: bill_amendment_vote_blah_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
 ALTER SEQUENCE bill_amendment_vote_blah_seq OWNED BY bill_amendment_vote.blah;
 
 
 --
--- Name: bill_committee; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_committee (
@@ -719,17 +719,17 @@ CREATE TABLE bill_committee (
 );
 
 
-ALTER TABLE master.bill_committee OWNER TO ash;
+ALTER TABLE master.bill_committee OWNER TO postgres;
 
 --
--- Name: TABLE bill_committee; Type: COMMENT; Schema: master; Owner: ash
+-- Name: TABLE bill_committee; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON TABLE bill_committee IS 'Mapping of bills to committees';
 
 
 --
--- Name: bill_multi_sponsor; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_multi_sponsor; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_multi_sponsor (
@@ -739,17 +739,17 @@ CREATE TABLE bill_multi_sponsor (
 );
 
 
-ALTER TABLE master.bill_multi_sponsor OWNER TO ash;
+ALTER TABLE master.bill_multi_sponsor OWNER TO postgres;
 
 --
--- Name: TABLE bill_multi_sponsor; Type: COMMENT; Schema: master; Owner: ash
+-- Name: TABLE bill_multi_sponsor; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON TABLE bill_multi_sponsor IS 'Listing of multi-sponsors for a bill';
 
 
 --
--- Name: bill_previous_version; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_previous_version; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_previous_version (
@@ -760,10 +760,10 @@ CREATE TABLE bill_previous_version (
 );
 
 
-ALTER TABLE master.bill_previous_version OWNER TO ash;
+ALTER TABLE master.bill_previous_version OWNER TO postgres;
 
 --
--- Name: calendar; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: calendar; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE calendar (
@@ -772,10 +772,10 @@ CREATE TABLE calendar (
 );
 
 
-ALTER TABLE master.calendar OWNER TO ash;
+ALTER TABLE master.calendar OWNER TO postgres;
 
 --
--- Name: calendar_active_list; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: calendar_active_list; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE calendar_active_list (
@@ -788,10 +788,10 @@ CREATE TABLE calendar_active_list (
 );
 
 
-ALTER TABLE master.calendar_active_list OWNER TO ash;
+ALTER TABLE master.calendar_active_list OWNER TO postgres;
 
 --
--- Name: calendar_active_list_entry; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: calendar_active_list_entry; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE calendar_active_list_entry (
@@ -803,10 +803,10 @@ CREATE TABLE calendar_active_list_entry (
 );
 
 
-ALTER TABLE master.calendar_active_list_entry OWNER TO ash;
+ALTER TABLE master.calendar_active_list_entry OWNER TO postgres;
 
 --
--- Name: calendar_active_list_id_seq; Type: SEQUENCE; Schema: master; Owner: ash
+-- Name: calendar_active_list_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
 CREATE SEQUENCE calendar_active_list_id_seq
@@ -817,17 +817,17 @@ CREATE SEQUENCE calendar_active_list_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.calendar_active_list_id_seq OWNER TO ash;
+ALTER TABLE master.calendar_active_list_id_seq OWNER TO postgres;
 
 --
--- Name: calendar_active_list_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: ash
+-- Name: calendar_active_list_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
 ALTER SEQUENCE calendar_active_list_id_seq OWNED BY calendar_active_list.id;
 
 
 --
--- Name: calendar_supplemental; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: calendar_supplemental; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE calendar_supplemental (
@@ -840,10 +840,10 @@ CREATE TABLE calendar_supplemental (
 );
 
 
-ALTER TABLE master.calendar_supplemental OWNER TO ash;
+ALTER TABLE master.calendar_supplemental OWNER TO postgres;
 
 --
--- Name: calendar_supplemental_id_seq; Type: SEQUENCE; Schema: master; Owner: ash
+-- Name: calendar_supplemental_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
 CREATE SEQUENCE calendar_supplemental_id_seq
@@ -854,17 +854,17 @@ CREATE SEQUENCE calendar_supplemental_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.calendar_supplemental_id_seq OWNER TO ash;
+ALTER TABLE master.calendar_supplemental_id_seq OWNER TO postgres;
 
 --
--- Name: calendar_supplemental_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: ash
+-- Name: calendar_supplemental_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
 ALTER SEQUENCE calendar_supplemental_id_seq OWNED BY calendar_supplemental.id;
 
 
 --
--- Name: calendar_supplemental_section; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: calendar_supplemental_section; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE calendar_supplemental_section (
@@ -873,10 +873,10 @@ CREATE TABLE calendar_supplemental_section (
 );
 
 
-ALTER TABLE master.calendar_supplemental_section OWNER TO ash;
+ALTER TABLE master.calendar_supplemental_section OWNER TO postgres;
 
 --
--- Name: calendar_supplemental_section_entry; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: calendar_supplemental_section_entry; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE calendar_supplemental_section_entry (
@@ -894,38 +894,38 @@ CREATE TABLE calendar_supplemental_section_entry (
 );
 
 
-ALTER TABLE master.calendar_supplemental_section_entry OWNER TO ash;
+ALTER TABLE master.calendar_supplemental_section_entry OWNER TO postgres;
 
 --
--- Name: COLUMN calendar_supplemental_section_entry.sub_bill_print_no; Type: COMMENT; Schema: master; Owner: ash
+-- Name: COLUMN calendar_supplemental_section_entry.sub_bill_print_no; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON COLUMN calendar_supplemental_section_entry.sub_bill_print_no IS 'The substituted bill''s print no, null if not substituted.';
 
 
 --
--- Name: COLUMN calendar_supplemental_section_entry.sub_bill_amend_version; Type: COMMENT; Schema: master; Owner: ash
+-- Name: COLUMN calendar_supplemental_section_entry.sub_bill_amend_version; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON COLUMN calendar_supplemental_section_entry.sub_bill_amend_version IS 'The substituted bill''s amendment version, null if not substituted.';
 
 
 --
--- Name: COLUMN calendar_supplemental_section_entry.sub_bill_session_year; Type: COMMENT; Schema: master; Owner: ash
+-- Name: COLUMN calendar_supplemental_section_entry.sub_bill_session_year; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON COLUMN calendar_supplemental_section_entry.sub_bill_session_year IS 'The substituted bill''s session year, null if not substituted.';
 
 
 --
--- Name: COLUMN calendar_supplemental_section_entry.high; Type: COMMENT; Schema: master; Owner: ash
+-- Name: COLUMN calendar_supplemental_section_entry.high; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON COLUMN calendar_supplemental_section_entry.high IS 'true if bill has not yet properly aged';
 
 
 --
--- Name: calendar_supplemental_section_entry_id_seq; Type: SEQUENCE; Schema: master; Owner: ash
+-- Name: calendar_supplemental_section_entry_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
 CREATE SEQUENCE calendar_supplemental_section_entry_id_seq
@@ -936,17 +936,17 @@ CREATE SEQUENCE calendar_supplemental_section_entry_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.calendar_supplemental_section_entry_id_seq OWNER TO ash;
+ALTER TABLE master.calendar_supplemental_section_entry_id_seq OWNER TO postgres;
 
 --
--- Name: calendar_supplemental_section_entry_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: ash
+-- Name: calendar_supplemental_section_entry_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
 ALTER SEQUENCE calendar_supplemental_section_entry_id_seq OWNED BY calendar_supplemental_section_entry.id;
 
 
 --
--- Name: committee; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE committee (
@@ -955,10 +955,10 @@ CREATE TABLE committee (
 );
 
 
-ALTER TABLE master.committee OWNER TO ash;
+ALTER TABLE master.committee OWNER TO postgres;
 
 --
--- Name: person; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: person; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE person (
@@ -973,10 +973,10 @@ CREATE TABLE person (
 );
 
 
-ALTER TABLE master.person OWNER TO ash;
+ALTER TABLE master.person OWNER TO postgres;
 
 --
--- Name: sobi_change_log; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: sobi_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE sobi_change_log (
@@ -990,17 +990,17 @@ CREATE TABLE sobi_change_log (
 );
 
 
-ALTER TABLE master.sobi_change_log OWNER TO ash;
+ALTER TABLE master.sobi_change_log OWNER TO postgres;
 
 --
--- Name: TABLE sobi_change_log; Type: COMMENT; Schema: master; Owner: ash
+-- Name: TABLE sobi_change_log; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON TABLE sobi_change_log IS 'Change log for all entities utilizing SOBI files as the primary data source';
 
 
 --
--- Name: sobi_change_log_id_seq; Type: SEQUENCE; Schema: master; Owner: ash
+-- Name: sobi_change_log_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
 CREATE SEQUENCE sobi_change_log_id_seq
@@ -1011,17 +1011,17 @@ CREATE SEQUENCE sobi_change_log_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.sobi_change_log_id_seq OWNER TO ash;
+ALTER TABLE master.sobi_change_log_id_seq OWNER TO postgres;
 
 --
--- Name: sobi_change_log_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: ash
+-- Name: sobi_change_log_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
 ALTER SEQUENCE sobi_change_log_id_seq OWNED BY sobi_change_log.id;
 
 
 --
--- Name: sobi_file; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: sobi_file; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE sobi_file (
@@ -1034,31 +1034,31 @@ CREATE TABLE sobi_file (
 );
 
 
-ALTER TABLE master.sobi_file OWNER TO ash;
+ALTER TABLE master.sobi_file OWNER TO postgres;
 
 --
--- Name: TABLE sobi_file; Type: COMMENT; Schema: master; Owner: ash
+-- Name: TABLE sobi_file; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON TABLE sobi_file IS 'Listing of all SOBI files';
 
 
 --
--- Name: COLUMN sobi_file.processed_count; Type: COMMENT; Schema: master; Owner: ash
+-- Name: COLUMN sobi_file.processed_count; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON COLUMN sobi_file.processed_count IS 'Number of times this sobi has been processed';
 
 
 --
--- Name: COLUMN sobi_file.pending_processing; Type: COMMENT; Schema: master; Owner: ash
+-- Name: COLUMN sobi_file.pending_processing; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON COLUMN sobi_file.pending_processing IS 'True if SOBI is awaiting processing';
 
 
 --
--- Name: sobi_fragment; Type: TABLE; Schema: master; Owner: ash; Tablespace:
+-- Name: sobi_fragment; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE sobi_fragment (
@@ -1071,10 +1071,10 @@ CREATE TABLE sobi_fragment (
 );
 
 
-ALTER TABLE master.sobi_fragment OWNER TO ash;
+ALTER TABLE master.sobi_fragment OWNER TO postgres;
 
 --
--- Name: TABLE sobi_fragment; Type: COMMENT; Schema: master; Owner: ash
+-- Name: TABLE sobi_fragment; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON TABLE sobi_fragment IS 'Listing of all SOBI fragments';
@@ -1083,7 +1083,7 @@ COMMENT ON TABLE sobi_fragment IS 'Listing of all SOBI fragments';
 SET search_path = public, pg_catalog;
 
 --
--- Name: environment; Type: TABLE; Schema: public; Owner: ash; Tablespace:
+-- Name: environment; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE environment (
@@ -1099,10 +1099,10 @@ CREATE TABLE environment (
 );
 
 
-ALTER TABLE public.environment OWNER TO ash;
+ALTER TABLE public.environment OWNER TO postgres;
 
 --
--- Name: environment_id_seq; Type: SEQUENCE; Schema: public; Owner: ash
+-- Name: environment_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE environment_id_seq
@@ -1113,17 +1113,17 @@ CREATE SEQUENCE environment_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.environment_id_seq OWNER TO ash;
+ALTER TABLE public.environment_id_seq OWNER TO postgres;
 
 --
--- Name: environment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: ash
+-- Name: environment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE environment_id_seq OWNED BY environment.id;
 
 
 --
--- Name: test_fts_billtext; Type: TABLE; Schema: public; Owner: ash; Tablespace:
+-- Name: test_fts_billtext; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE test_fts_billtext (
@@ -1134,10 +1134,10 @@ CREATE TABLE test_fts_billtext (
 );
 
 
-ALTER TABLE public.test_fts_billtext OWNER TO ash;
+ALTER TABLE public.test_fts_billtext OWNER TO postgres;
 
 --
--- Name: test_hstore; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+-- Name: test_hstore; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE test_hstore (
@@ -1170,7 +1170,7 @@ ALTER SEQUENCE test_hstore_id_seq OWNED BY test_hstore.id;
 
 
 --
--- Name: test_trigger; Type: TABLE; Schema: public; Owner: ash; Tablespace:
+-- Name: test_trigger; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE test_trigger (
@@ -1179,10 +1179,10 @@ CREATE TABLE test_trigger (
 );
 
 
-ALTER TABLE public.test_trigger OWNER TO ash;
+ALTER TABLE public.test_trigger OWNER TO postgres;
 
 --
--- Name: test_trigger_id_seq; Type: SEQUENCE; Schema: public; Owner: ash
+-- Name: test_trigger_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE test_trigger_id_seq
@@ -1193,10 +1193,10 @@ CREATE SEQUENCE test_trigger_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.test_trigger_id_seq OWNER TO ash;
+ALTER TABLE public.test_trigger_id_seq OWNER TO postgres;
 
 --
--- Name: test_trigger_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: ash
+-- Name: test_trigger_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE test_trigger_id_seq OWNED BY test_trigger.id;
@@ -1205,7 +1205,7 @@ ALTER SEQUENCE test_trigger_id_seq OWNED BY test_trigger.id;
 SET search_path = lbdc, pg_catalog;
 
 --
--- Name: id; Type: DEFAULT; Schema: lbdc; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: lbdc; Owner: postgres
 --
 
 ALTER TABLE ONLY daybreak ALTER COLUMN id SET DEFAULT nextval('daybreak_id_seq'::regclass);
@@ -1214,77 +1214,77 @@ ALTER TABLE ONLY daybreak ALTER COLUMN id SET DEFAULT nextval('daybreak_id_seq':
 SET search_path = master, pg_catalog;
 
 --
--- Name: id; Type: DEFAULT; Schema: master; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY action ALTER COLUMN id SET DEFAULT nextval('action_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: master; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY agenda_info_committee_item ALTER COLUMN id SET DEFAULT nextval('agenda_info_committee_item_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: master; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY agenda_vote_committee ALTER COLUMN id SET DEFAULT nextval('agenda_vote_committee_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: master; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY agenda_vote_committee_attend ALTER COLUMN id SET DEFAULT nextval('agenda_vote_committee_attend_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: master; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY agenda_vote_committee_item ALTER COLUMN id SET DEFAULT nextval('agenda_vote_committee_item_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: master; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY agenda_vote_committee_vote ALTER COLUMN id SET DEFAULT nextval('agenda_vote_committee_vote_id_seq'::regclass);
 
 
 --
--- Name: blah; Type: DEFAULT; Schema: master; Owner: ash
+-- Name: blah; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_amendment_vote ALTER COLUMN blah SET DEFAULT nextval('bill_amendment_vote_blah_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: master; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY calendar_active_list ALTER COLUMN id SET DEFAULT nextval('calendar_active_list_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: master; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY calendar_supplemental ALTER COLUMN id SET DEFAULT nextval('calendar_supplemental_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: master; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY calendar_supplemental_section_entry ALTER COLUMN id SET DEFAULT nextval('calendar_supplemental_section_entry_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: master; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY sobi_change_log ALTER COLUMN id SET DEFAULT nextval('sobi_change_log_id_seq'::regclass);
@@ -1293,7 +1293,7 @@ ALTER TABLE ONLY sobi_change_log ALTER COLUMN id SET DEFAULT nextval('sobi_chang
 SET search_path = public, pg_catalog;
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY environment ALTER COLUMN id SET DEFAULT nextval('environment_id_seq'::regclass);
@@ -1307,7 +1307,7 @@ ALTER TABLE ONLY test_hstore ALTER COLUMN id SET DEFAULT nextval('test_hstore_id
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: ash
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY test_trigger ALTER COLUMN id SET DEFAULT nextval('test_trigger_id_seq'::regclass);
@@ -1316,7 +1316,7 @@ ALTER TABLE ONLY test_trigger ALTER COLUMN id SET DEFAULT nextval('test_trigger_
 SET search_path = lbdc, pg_catalog;
 
 --
--- Name: daybreak_snapshot_date_time_key; Type: CONSTRAINT; Schema: lbdc; Owner: ash; Tablespace:
+-- Name: daybreak_snapshot_date_time_key; Type: CONSTRAINT; Schema: lbdc; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY daybreak
@@ -1326,7 +1326,7 @@ ALTER TABLE ONLY daybreak
 SET search_path = master, pg_catalog;
 
 --
--- Name: action_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: action_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY action
@@ -1334,7 +1334,7 @@ ALTER TABLE ONLY action
 
 
 --
--- Name: agenda_info_addendum_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_info_addendum_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_info_addendum
@@ -1342,7 +1342,7 @@ ALTER TABLE ONLY agenda_info_addendum
 
 
 --
--- Name: agenda_info_committee_item_agenda_addendum_id_committee_id__key; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_info_committee_item_agenda_addendum_id_committee_id__key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_info_committee_item
@@ -1350,7 +1350,7 @@ ALTER TABLE ONLY agenda_info_committee_item
 
 
 --
--- Name: agenda_info_committee_item_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_info_committee_item_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_info_committee_item
@@ -1358,7 +1358,7 @@ ALTER TABLE ONLY agenda_info_committee_item
 
 
 --
--- Name: agenda_info_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_info_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_info_committee
@@ -1366,7 +1366,7 @@ ALTER TABLE ONLY agenda_info_committee
 
 
 --
--- Name: agenda_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda
@@ -1374,7 +1374,7 @@ ALTER TABLE ONLY agenda
 
 
 --
--- Name: agenda_vote_addendum_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_vote_addendum_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_vote_addendum
@@ -1382,7 +1382,7 @@ ALTER TABLE ONLY agenda_vote_addendum
 
 
 --
--- Name: agenda_vote_committee_agenda_vote_addendum_id_agenda_number_key; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_vote_committee_agenda_vote_addendum_id_agenda_number_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_vote_committee
@@ -1390,7 +1390,7 @@ ALTER TABLE ONLY agenda_vote_committee
 
 
 --
--- Name: agenda_vote_committee_attend_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_vote_committee_attend_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_vote_committee_attend
@@ -1398,7 +1398,7 @@ ALTER TABLE ONLY agenda_vote_committee_attend
 
 
 --
--- Name: agenda_vote_committee_item_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_vote_committee_item_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_vote_committee_item
@@ -1406,7 +1406,7 @@ ALTER TABLE ONLY agenda_vote_committee_item
 
 
 --
--- Name: agenda_vote_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: agenda_vote_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_vote_committee
@@ -1414,7 +1414,7 @@ ALTER TABLE ONLY agenda_vote_committee
 
 
 --
--- Name: bill_amendment_cosponsor_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_amendment_cosponsor_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_amendment_cosponsor
@@ -1422,7 +1422,7 @@ ALTER TABLE ONLY bill_amendment_cosponsor
 
 
 --
--- Name: bill_amendment_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_amendment_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_amendment
@@ -1430,7 +1430,7 @@ ALTER TABLE ONLY bill_amendment
 
 
 --
--- Name: bill_multi_sponsor_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_multi_sponsor_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_multi_sponsor
@@ -1438,7 +1438,7 @@ ALTER TABLE ONLY bill_multi_sponsor
 
 
 --
--- Name: bill_past_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_past_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_committee
@@ -1446,7 +1446,7 @@ ALTER TABLE ONLY bill_committee
 
 
 --
--- Name: bill_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: bill_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill
@@ -1454,7 +1454,7 @@ ALTER TABLE ONLY bill
 
 
 --
--- Name: calendar_active_list_entry_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: calendar_active_list_entry_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY calendar_active_list_entry
@@ -1462,7 +1462,7 @@ ALTER TABLE ONLY calendar_active_list_entry
 
 
 --
--- Name: calendar_active_list_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: calendar_active_list_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY calendar_active_list
@@ -1470,7 +1470,7 @@ ALTER TABLE ONLY calendar_active_list
 
 
 --
--- Name: calendar_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: calendar_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY calendar
@@ -1478,7 +1478,7 @@ ALTER TABLE ONLY calendar
 
 
 --
--- Name: committee_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY committee
@@ -1486,7 +1486,7 @@ ALTER TABLE ONLY committee
 
 
 --
--- Name: person_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: person_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY person
@@ -1494,7 +1494,7 @@ ALTER TABLE ONLY person
 
 
 --
--- Name: person_short_name_session_year_key; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: person_short_name_session_year_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY person
@@ -1502,7 +1502,7 @@ ALTER TABLE ONLY person
 
 
 --
--- Name: sobi_fragment_fragment_file_name_sobi_fragment_type_key; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: sobi_fragment_fragment_file_name_sobi_fragment_type_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY sobi_fragment
@@ -1510,7 +1510,7 @@ ALTER TABLE ONLY sobi_fragment
 
 
 --
--- Name: sobi_fragment_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: sobi_fragment_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY sobi_fragment
@@ -1518,7 +1518,7 @@ ALTER TABLE ONLY sobi_fragment
 
 
 --
--- Name: sobi_pkey; Type: CONSTRAINT; Schema: master; Owner: ash; Tablespace:
+-- Name: sobi_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY sobi_file
@@ -1528,7 +1528,7 @@ ALTER TABLE ONLY sobi_file
 SET search_path = public, pg_catalog;
 
 --
--- Name: environment_pkey; Type: CONSTRAINT; Schema: public; Owner: ash; Tablespace:
+-- Name: environment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY environment
@@ -1536,7 +1536,7 @@ ALTER TABLE ONLY environment
 
 
 --
--- Name: environment_schema_key; Type: CONSTRAINT; Schema: public; Owner: ash; Tablespace:
+-- Name: environment_schema_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY environment
@@ -1546,7 +1546,7 @@ ALTER TABLE ONLY environment
 SET search_path = master, pg_catalog;
 
 --
--- Name: sobi_change_log_keygin; Type: INDEX; Schema: master; Owner: ash; Tablespace:
+-- Name: sobi_change_log_keygin; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX sobi_change_log_keygin ON sobi_change_log USING gin (key);
@@ -1555,21 +1555,21 @@ CREATE INDEX sobi_change_log_keygin ON sobi_change_log USING gin (key);
 SET search_path = public, pg_catalog;
 
 --
--- Name: test_gin_index; Type: INDEX; Schema: public; Owner: postgres; Tablespace:
+-- Name: test_gin_index; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX test_gin_index ON test_hstore USING btree (((store -> 'print_no'::text)));
 
 
 --
--- Name: test_gin_index_2; Type: INDEX; Schema: public; Owner: postgres; Tablespace:
+-- Name: test_gin_index_2; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX test_gin_index_2 ON test_hstore USING gin (store);
 
 
 --
--- Name: textsearch_idx; Type: INDEX; Schema: public; Owner: ash; Tablespace:
+-- Name: textsearch_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX textsearch_idx ON test_fts_billtext USING gin (full_text_vector);
@@ -1578,7 +1578,7 @@ CREATE INDEX textsearch_idx ON test_fts_billtext USING gin (full_text_vector);
 SET search_path = master, pg_catalog;
 
 --
--- Name: log_bill_changes; Type: TRIGGER; Schema: master; Owner: ash
+-- Name: log_bill_changes; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
 CREATE TRIGGER log_bill_changes BEFORE INSERT OR DELETE OR UPDATE ON bill FOR EACH ROW EXECUTE PROCEDURE data_updated();
@@ -1587,7 +1587,7 @@ CREATE TRIGGER log_bill_changes BEFORE INSERT OR DELETE OR UPDATE ON bill FOR EA
 SET search_path = public, pg_catalog;
 
 --
--- Name: insert_muwahaha; Type: TRIGGER; Schema: public; Owner: ash
+-- Name: insert_muwahaha; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
 CREATE TRIGGER insert_muwahaha BEFORE INSERT OR UPDATE ON test_trigger FOR EACH ROW EXECUTE PROCEDURE write_muwhahah();
@@ -1596,7 +1596,7 @@ CREATE TRIGGER insert_muwahaha BEFORE INSERT OR UPDATE ON test_trigger FOR EACH 
 SET search_path = master, pg_catalog;
 
 --
--- Name: agenda_info_addendum_agenda_number_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: agenda_info_addendum_agenda_number_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY agenda_info_addendum
@@ -1604,7 +1604,7 @@ ALTER TABLE ONLY agenda_info_addendum
 
 
 --
--- Name: bill_amendment_action_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: bill_amendment_action_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_amendment_action
@@ -1612,7 +1612,7 @@ ALTER TABLE ONLY bill_amendment_action
 
 
 --
--- Name: bill_amendment_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: bill_amendment_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_amendment
@@ -1620,7 +1620,7 @@ ALTER TABLE ONLY bill_amendment
 
 
 --
--- Name: bill_amendment_cosponsor_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: bill_amendment_cosponsor_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_amendment_cosponsor
@@ -1628,7 +1628,7 @@ ALTER TABLE ONLY bill_amendment_cosponsor
 
 
 --
--- Name: bill_amendment_current_committee_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: bill_amendment_current_committee_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_amendment
@@ -1636,7 +1636,7 @@ ALTER TABLE ONLY bill_amendment
 
 
 --
--- Name: bill_amendment_last_fragment_file_name_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: bill_amendment_last_fragment_file_name_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_amendment
@@ -1644,7 +1644,7 @@ ALTER TABLE ONLY bill_amendment
 
 
 --
--- Name: bill_amendment_same_as_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: bill_amendment_same_as_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_amendment_same_as
@@ -1652,7 +1652,7 @@ ALTER TABLE ONLY bill_amendment_same_as
 
 
 --
--- Name: bill_last_fragment_file_name_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: bill_last_fragment_file_name_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill
@@ -1660,7 +1660,7 @@ ALTER TABLE ONLY bill
 
 
 --
--- Name: bill_past_committee_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: bill_past_committee_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_committee
@@ -1668,7 +1668,7 @@ ALTER TABLE ONLY bill_committee
 
 
 --
--- Name: calendar_active_list_calendar_number_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: calendar_active_list_calendar_number_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY calendar_active_list
@@ -1676,7 +1676,7 @@ ALTER TABLE ONLY calendar_active_list
 
 
 --
--- Name: calendar_supplemental_calendar_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: calendar_supplemental_calendar_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY calendar_supplemental
@@ -1684,7 +1684,7 @@ ALTER TABLE ONLY calendar_supplemental
 
 
 --
--- Name: sobi_change_log_sobi_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: sobi_change_log_sobi_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY sobi_change_log
@@ -1692,7 +1692,7 @@ ALTER TABLE ONLY sobi_change_log
 
 
 --
--- Name: sobi_fragment_sobi_file_name_fkey; Type: FK CONSTRAINT; Schema: master; Owner: ash
+-- Name: sobi_fragment_sobi_file_name_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY sobi_fragment
