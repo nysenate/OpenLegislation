@@ -15,13 +15,11 @@ public class AgendaInfoCommittee
     private String notes;
     private Map<String, AgendaInfoCommitteeItem> items;
 
-    public AgendaInfoCommittee()
-    {
+    public AgendaInfoCommittee() {
         this.setItems(new HashMap<String, AgendaInfoCommitteeItem>());
     }
 
-    public AgendaInfoCommittee(String name, String chair, String location, String notes, String meetDay, Date meetDate)
-    {
+    public AgendaInfoCommittee(String name, String chair, String location, String notes, String meetDay, Date meetDate) {
         this();
         this.setName(name);
         this.setChair(chair);

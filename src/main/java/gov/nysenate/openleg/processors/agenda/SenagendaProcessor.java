@@ -1,11 +1,11 @@
-package gov.nysenate.openleg.processors;
+package gov.nysenate.openleg.processors.agenda;
 
 import gov.nysenate.openleg.model.agenda.*;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.model.sobi.SOBIBlock;
-import gov.nysenate.openleg.processors.sobi.BillProcessor;
+import gov.nysenate.openleg.processors.bill.BillProcessor;
 import gov.nysenate.openleg.util.*;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -62,7 +62,7 @@ public class SenagendaProcessor
             agenda = oldAgenda;
         }
         agenda.setModifiedDate(modifiedDate);
-        agenda.addDataSource(file.getName());
+        //agenda.addDataSource(file.getName());
 
         String action = xml.getString("@action", xmlAgenda);
         if (action.equalsIgnoreCase("remove")) {
@@ -142,7 +142,7 @@ public class SenagendaProcessor
             agenda = oldAgenda;
         }
         agenda.setModifiedDate(modifiedDate);
-        agenda.addDataSource(file.getName());
+        //agenda.addDataSource(file.getName());
 
         NodeList xmlAddendums = xml.getNodeList("addendum", xmlAgendgaVote);
         for (int i=0; i < xmlAddendums.getLength(); i++) {

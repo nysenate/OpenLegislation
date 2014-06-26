@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model.admin;
+package gov.nysenate.openleg.model.admin.report;
 
 import gov.nysenate.openleg.util.Application;
 import org.apache.commons.dbutils.QueryRunner;

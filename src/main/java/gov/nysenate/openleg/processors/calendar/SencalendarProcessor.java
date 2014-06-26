@@ -1,11 +1,11 @@
-package gov.nysenate.openleg.processors;
+package gov.nysenate.openleg.processors.calendar;
 
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.model.sobi.SOBIBlock;
-import gov.nysenate.openleg.processors.sobi.BillProcessor;
+import gov.nysenate.openleg.processors.bill.BillProcessor;
 import gov.nysenate.openleg.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -47,7 +47,7 @@ public class SencalendarProcessor
         Integer year = xml.getInteger("@year", xmlCalendar);
         Calendar calendar = getOrCreateCalendar(calendarNo, sessYr, year, storage, modifiedDate);
         calendar.setModifiedDate(modifiedDate);
-        calendar.addDataSource(file.getName());
+        //calendar.addDataSource(file.getName());
 
         // Actions apply to supplemental and not the whole calendar
         String action = xml.getString("@action", xmlCalendar);
@@ -115,7 +115,7 @@ public class SencalendarProcessor
         Integer year = xml.getInteger("@year", xmlCalendarActive);
         Calendar calendar = getOrCreateCalendar(calendarNo, sessYr, year, storage, modifiedDate);
         calendar.setModifiedDate(modifiedDate);
-        calendar.addDataSource(file.getName());
+        //calendar.addDataSource(file.getName());
 
         // Actions apply to supplemental and not the whole calendar
         String action = xml.getString("@action", xmlCalendarActive);

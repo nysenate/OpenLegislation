@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.model.agenda;
 
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.processors.SenagendaProcessor;
+import gov.nysenate.openleg.processors.agenda.SenagendaProcessor;
 
 import java.util.ArrayList;
 import java.util.List;

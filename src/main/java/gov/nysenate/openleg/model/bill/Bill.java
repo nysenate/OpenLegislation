@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.BaseObject;
+import gov.nysenate.openleg.model.BaseLegContent;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.TextFormatter;
@@ -15,14 +15,11 @@ import java.util.regex.Pattern;
  * and session year. It contains a collection of amendments (including the base amendment) as well as
  * shared information such as the sponsor or actions.
  */
-public class Bill extends BaseObject implements Comparable<Bill>
+public class Bill extends BaseLegContent implements Comparable<Bill>
 {
     public static Pattern printNumberPattern = Pattern.compile("([ASLREJKBC])([0-9]{1,5})([A-Z]?)");
 
-    /** The default amendment version letter. */
-    public static final String BASE_VERSION = "";
-
-    /** The print number of the bill, e.g S1234 */
+    /** The print number of the bill, e.g S1234. No versions should be specified. */
     protected String printNo = "";
 
     /** The bill title. */
@@ -41,7 +38,7 @@ public class Bill extends BaseObject implements Comparable<Bill>
     protected Map<String, BillAmendment> amendmentMap = new TreeMap<>();
 
     /** Indicates the amendment version that is active for this bill. */
-    protected String activeVersion = BASE_VERSION;
+    protected String activeVersion = BillId.BASE_VERSION;
 
     /** A list of ids of versions of this legislation in previous sessions. */
     protected List<String> previousVersions = new ArrayList<>();
@@ -73,20 +70,11 @@ public class Bill extends BaseObject implements Comparable<Bill>
     /** --- Functional Getters/Setter --- */
 
     /**
-     * Indicates if this bill is currently set to the base version.
-     * @param version The bill version
-     * @return Returns true if the version will be represented as a base bill
+     * Returns a reference that identifies this base bill.
+     * @return BillId
      */
-    public static boolean isBaseVersion(String version) {
-        return version == null || version.equals(BASE_VERSION);
-    }
-
-    /**
-     * Creates a unique id for the bill by using printNo and session year, e.g S1234-2013
-     * @return - The bill's unique id.
-     */
-    public String getBillId() {
-        return this.printNo + "-" + this.session;
+    public BillId getBillId() {
+        return new BillId(this.printNo, this.session);
     }
 
     /**
@@ -95,28 +83,6 @@ public class Bill extends BaseObject implements Comparable<Bill>
      */
     public boolean isResolution() {
         return this.printNo.charAt(0) != 'A' && this.printNo.charAt(0) != 'S';
-    }
-
-    /**
-     * Creates a unique id for the bill with padding to resemble LBDC's representation.
-     * @return - The billId padded to 5 digits with zeros.
-     */
-    public String getPaddedBillId() {
-        return this.getPaddedPrintNumber() + "-" + this.getSession();
-    }
-
-    /**
-     * Returns the print number padded with 5 zeros, e.g S01234. This is how LBDC represents
-     * print numbers in their SOBI files.
-     * @return - The print number padded to 5 digits with zeros.
-     */
-    public String getPaddedPrintNumber() {
-        Matcher billIdMatcher = printNumberPattern.matcher(this.getPrintNo());
-        if (billIdMatcher.find()) {
-            return String.format("%s%05d%s", billIdMatcher.group(1), Integer.parseInt(billIdMatcher.group(2)),
-                                             billIdMatcher.group(3));
-        }
-        return "";
     }
 
     /**
@@ -302,8 +268,7 @@ public class Bill extends BaseObject implements Comparable<Bill>
 
     @Override
     @JsonIgnore
-    public Date getPublishDate()
-    {
+    public Date getPublishDate() {
         for (BillAmendment amendment : amendmentMap.values()) {
             if (amendment.getPublishDate() != null) {
                 return amendment.getPublishDate();

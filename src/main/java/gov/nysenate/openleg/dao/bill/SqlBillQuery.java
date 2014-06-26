@@ -56,23 +56,25 @@ public enum SqlBillQuery
 
     SELECT_BILL_ACTIONS_SQL(
         "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_ACTION + "\n" +
-        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear\n" +
+        "ORDER BY sequence_no ASC"
     ),
     SELECT_BILL_AMENDMENT_ACTIONS_SQL(
         "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_ACTION + "\n" +
-        "WHERE print_no = :printNo AND session_year = :sessionYear AND version = :version"
+        "WHERE print_no = :printNo AND session_year = :sessionYear AND version = :version\n" +
+        "ORDER BY sequence_no DESC"
     ),
     INSERT_BILL_ACTION_SQL(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_ACTION + "\n" +
-        "(bill_print_no, bill_session_year, bill_amend_version, effect_date, text, modified_date_time, published_date_time," +
-        " last_fragment_file_name, last_fragment_type) \n" +
-        "VALUES (:printNo, :sessionYear, :version, :effectDate, :text, :modifiedDateTime, :publishedDateTime, " +
-        "        :lastFragmentFileName, :lastFragmentType)"
+        "(bill_print_no, bill_session_year, bill_amend_version, effect_date, text, sequence_no, " +
+        " modified_date_time, published_date_time, last_fragment_file_name, last_fragment_type) \n" +
+        "VALUES (:printNo, :sessionYear, :version, :effectDate, :text, :sequenceNo, " +
+        "        :modifiedDateTime, :publishedDateTime, :lastFragmentFileName, :lastFragmentType)"
     ),
     DELETE_BILL_ACTION_SQL("" +
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_ACTION + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version \n" +
-        "      AND effect_date = :effectDate AND text = :text"),
+        "      AND sequence_no = :sequenceNo"),
 
     /** --- Bill Same As --- */
 
@@ -88,6 +90,22 @@ public enum SqlBillQuery
     DELETE_SAME_AS_FOR_BILL_SQL(
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_SAME_AS + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
+    ),
+
+    /** --- Bill Previous Version --- */
+
+    SELECT_BILL_PREVIOUS_VERSIONS_SQL(
+        "SELECT * FROM ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
+    INSERT_BILL_PREVIOUS_VERSION_SQL(
+        "INSERT INTO ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +
+        "(bill_print_no, bill_session_year, prev_bill_print_no, prev_session_year)\n" +
+        "VALUES (:printNo, :sessionYear, :prevPrintNo, :prevSessionYear)"
+    ),
+    DELETE_BILL_PREVIOUS_VERSION_SQL(
+        "DELETE FROM ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     );
 
     private String sql;

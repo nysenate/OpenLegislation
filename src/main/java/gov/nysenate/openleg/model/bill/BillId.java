@@ -92,6 +92,11 @@ public class BillId implements Comparable<BillId>
 
     /** --- Overrides --- */
 
+    /**
+     * Given {basePrint:'S1234', version:'A', session:2013}, Output: 'S1234A-2013'
+     * Note: Does not pad the string to a fixed length, use #getPaddedBillIdString() if padding is desired
+     * @return String representation of BillId.
+     */
     @Override
     public String toString() {
         return basePrintNo + ((version != null) ? version : "") + "-" + session;

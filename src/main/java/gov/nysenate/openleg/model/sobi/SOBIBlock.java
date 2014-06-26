@@ -152,7 +152,7 @@ public class SOBIBlock
     /**
      * Returns the session year of the bill.
      */
-    public int getYear() {
+    public int getSession() {
         return (this.billId != null) ? this.billId.getSession() : -1;
     }
 
@@ -246,6 +246,14 @@ public class SOBIBlock
 
     public void setBillHeader(String billHeader) {
         this.billHeader = billHeader;
+    }
+
+    public BillId getBillId() {
+        return billId;
+    }
+
+    public void setBillId(BillId billId) {
+        this.billId = billId;
     }
 
     public boolean isMultiline() {

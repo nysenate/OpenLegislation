@@ -10,24 +10,19 @@ import java.util.*;
  * processing step to the SOBIFragments that serve as the data source. The purpose of this
  * cache is to queue updates to the persistence layer so that they can be committed to the
  * file system at a later time in the processing stage.
- * @param <T>
  */
-public class IngestCache<T>
+public class IngestCache<K,V>
 {
     /** A cache of unique id strings to DataFragmentPair mappings */
-    private Map<String, T> cache = new HashMap<>();
-
-    /** Maintain an ordered list of DataFragmentPairs so that we can apply the changes to the
-     *  persistence layer in the order that they occurred. */
-    private List<Pair<SOBIFragment, T>> orderedCache = new ArrayList<>();
+    private Map<K, V> cache = new HashMap<>();
 
     /**
      * Retrieve the object from cache using a unique id key. Returns null
      * on a cache miss.
      * @param key String - Unique Id
-     * @return T
+     * @return V
      */
-    public T get(String key) {
+    public V get(K key) {
         return cache.get(key);
     }
 
@@ -36,7 +31,7 @@ public class IngestCache<T>
      * @param key String - Unique Id
      * @return boolean - true if key is found, false otherwise.
      */
-    public boolean has(String key) {
+    public boolean has(K key) {
         return cache.containsKey(key);
     }
 
@@ -45,11 +40,11 @@ public class IngestCache<T>
      * @param key String - Unique Id
      * @param obj T
      */
-    public void set(String key, T obj) {
+    public void set(K key, V obj) {
         cache.put(key, obj);
     }
 
-    public Collection<T> getCurrentCache() {
+    public Collection<V> getCurrentCache() {
         return cache.values();
     }
 

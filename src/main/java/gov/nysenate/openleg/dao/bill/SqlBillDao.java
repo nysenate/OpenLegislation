@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -88,7 +87,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
                 }
             }
         }
-        // Determine which actions need to be inserted/deleted. Individual actions are not updated.
+        // Determine which actions need to be inserted/deleted. Individual actions are never updated.
         List<BillAction> existingBillActions =
             jdbcNamed.query(SqlBillQuery.SELECT_BILL_ACTIONS_SQL.getSql(schema()), billParams, new BillActionRowMapper());
         List<BillAction> newBillActions = new ArrayList<>(bill.getActions());
@@ -176,9 +175,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         @Override
         public BillAction mapRow(ResultSet rs, int rowNum) throws SQLException {
             BillAction billAction = new BillAction();
-            billAction.setBaseBillPrintNo(rs.getString("bill_print_no"));
-            billAction.setAmendmentVersion(rs.getString("bill_amend_version"));
+            billAction.setBillId(new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"),
+                                            rs.getString("bill_amend_version")));
             billAction.setSession(rs.getInt("bill_session_year"));
+            billAction.setSequenceNo(rs.getInt("sequence_no"));
             billAction.setDate(rs.getDate("effect_date"));
             billAction.setText(rs.getString("text"));
             billAction.setModifiedDate(rs.getDate("modified_date_time"));
@@ -193,6 +193,14 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         public BillId mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new BillId(rs.getString("same_as_bill_print_no"), rs.getInt("same_as_session_year"),
                               rs.getString("same_as_amend_version"));
+        }
+    }
+
+    private class BillPreviousVersionRowMapper implements RowMapper<BillId>
+    {
+        @Override
+        public BillId mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new BillId(rs.getString("prev_bill_print_no"), rs.getInt("prev_bill_session_year"));
         }
     }
 
@@ -254,11 +262,12 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      */
     private MapSqlParameterSource getBillActionParams(BillAction billAction, SOBIFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("printNo", billAction.getBaseBillPrintNo());
-        params.addValue("sessionYear", billAction.getSession());
-        params.addValue("version", billAction.getAmendmentVersion());
+        params.addValue("printNo", billAction.getBillId().getBasePrintNo());
+        params.addValue("sessionYear", billAction.getBillId().getSession());
+        params.addValue("version", billAction.getBillId().getVersion());
         params.addValue("effectDate", billAction.getDate());
         params.addValue("text", billAction.getText());
+        params.addValue("sequenceNo", billAction.getSequenceNo());
         params.addValue("modifiedDateTime", toTimestamp(billAction.getModifiedDate()));
         params.addValue("publishedDateTime", toTimestamp(billAction.getPublishDate()));
         addSOBIFragmentParams(fragment, params);

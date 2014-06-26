@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.api.servlets.admin;
 
-import gov.nysenate.openleg.model.admin.Report;
-import gov.nysenate.openleg.model.admin.ReportDAO;
-import gov.nysenate.openleg.model.admin.ReportError;
-import gov.nysenate.openleg.model.admin.ReportObservation;
+import gov.nysenate.openleg.model.admin.report.Report;
+import gov.nysenate.openleg.model.admin.report.ReportDAO;
+import gov.nysenate.openleg.model.admin.report.ReportError;
+import gov.nysenate.openleg.model.admin.report.ReportObservation;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;

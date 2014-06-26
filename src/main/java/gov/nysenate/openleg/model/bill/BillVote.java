@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.BaseObject;
+import gov.nysenate.openleg.model.BaseLegContent;
 import gov.nysenate.openleg.model.entity.Person;
 import org.joda.time.LocalDate;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BillVote extends BaseObject
+public class BillVote extends BaseLegContent
 {
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
@@ -67,11 +67,6 @@ public class BillVote extends BaseObject
         this.voteType = type;
         this.setSequenceNumber(sequenceNumber);
         this.oid = billId+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
-    }
-
-    public BillVote(Bill bill, String billAmendment, Date date, int type, String sequenceNumber) {
-        this(bill.getBillId(), billAmendment, date, type, sequenceNumber);
-        this.bill = bill;
     }
 
     public BillVote(BillAmendment amendment, Date date, int type, String sequenceNumber) {

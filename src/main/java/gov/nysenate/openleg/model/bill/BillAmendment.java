@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.BaseObject;
+import gov.nysenate.openleg.model.BaseLegContent;
 import gov.nysenate.openleg.model.entity.Person;
 
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BillAmendment extends BaseObject
+public class BillAmendment extends BaseLegContent
 {
     /** Print number of the base bill. */
     protected String baseBillPrintNo = "";
@@ -17,7 +17,7 @@ public class BillAmendment extends BaseObject
     protected String version = "";
 
     /** The "sameAs" bill in the other chamber that matches this version.
-     *  There can be multiple same as bills in some cases, typically just 0 or 1 though. */
+        There can be multiple same as bills in some cases, typically just 0 or 1 though. */
     protected Set<BillId> sameAs = new HashSet<>();
 
     /** The sponsor memo of the amendment. */
@@ -42,10 +42,12 @@ public class BillAmendment extends BaseObject
     protected Boolean stricken = false;
 
     /** A list of votes that have been made on this bill. */
-    protected List<Vote> votes = new ArrayList<>();
+    protected List<BillVote> votes = new ArrayList<>();
 
     /** A flag marking this bill as introduced in unison in both houses **/
     protected Boolean uniBill = false;
+
+    /** --- Constructors --- */
 
     public BillAmendment() {
         super();
@@ -61,17 +63,21 @@ public class BillAmendment extends BaseObject
 
     /** --- Functional Getters/Setters --- */
 
-    public String getBillId() {
-        return this.baseBillPrintNo + this.version + "-" + this.session;
+    public BillId getBillId() {
+        return new BillId(this.baseBillPrintNo, this.session, this.version);
     }
 
     public void setVersion(String version) {
         this.version = version.trim().toUpperCase();
     }
 
-    public void updateVote(Vote vote) {
+    public void updateVote(BillVote vote) {
         this.getVotes().remove(vote);
         this.getVotes().add(vote);
+    }
+
+    public boolean isBaseVersion() {
+        return BillId.isBaseVersion(this.version);
     }
 
     /** --- Basic Getters/Setters --- */
@@ -152,11 +158,11 @@ public class BillAmendment extends BaseObject
         this.stricken = stricken;
     }
 
-    public List<Vote> getVotes() {
+    public List<BillVote> getVotes() {
         return votes;
     }
 
-    public void setVotes(List<Vote> votes) {
+    public void setVotes(List<BillVote> votes) {
         this.votes = votes;
     }
 

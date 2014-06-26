@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.scripts.admin;
 
-import gov.nysenate.openleg.model.admin.Report;
-import gov.nysenate.openleg.model.admin.ReportObservation;
-import gov.nysenate.openleg.model.admin.SpotCheckBill;
+import gov.nysenate.openleg.model.admin.report.Report;
+import gov.nysenate.openleg.model.admin.report.ReportObservation;
+import gov.nysenate.openleg.model.admin.report.SpotCheckBill;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.entity.Person;

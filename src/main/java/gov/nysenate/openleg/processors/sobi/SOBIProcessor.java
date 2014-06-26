@@ -6,7 +6,6 @@ public abstract class SOBIProcessor
 {
     public abstract void process(SOBIFragment sobiFragment);
 
-    @SuppressWarnings("serial")
     public static class ParseError extends Exception
     {
         public ParseError(String message) { super(message); }

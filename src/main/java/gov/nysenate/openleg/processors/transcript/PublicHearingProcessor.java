@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.processors;
+package gov.nysenate.openleg.processors.transcript;
 
 import gov.nysenate.openleg.model.transcript.PublicHearing;
 import gov.nysenate.openleg.util.Storage;

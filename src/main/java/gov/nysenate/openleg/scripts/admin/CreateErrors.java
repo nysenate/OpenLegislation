@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.scripts.admin;
 
-import gov.nysenate.openleg.model.admin.Report;
-import gov.nysenate.openleg.model.admin.ReportError;
-import gov.nysenate.openleg.model.admin.ReportObservation;
+import gov.nysenate.openleg.model.admin.report.Report;
+import gov.nysenate.openleg.model.admin.report.ReportError;
+import gov.nysenate.openleg.model.admin.report.ReportObservation;
 import gov.nysenate.openleg.scripts.BaseScript;
 import gov.nysenate.openleg.util.Application;
 import org.apache.commons.cli.CommandLine;

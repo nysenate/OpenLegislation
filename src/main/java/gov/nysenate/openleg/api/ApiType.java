@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.api;
 
-import gov.nysenate.openleg.model.BaseObject;
+import gov.nysenate.openleg.model.BaseLegContent;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAction;
-import gov.nysenate.openleg.model.bill.Vote;
+import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.transcript.Transcript;
 
@@ -12,12 +12,12 @@ public enum ApiType {
     CALENDAR	("calendar", 	Calendar.class),
     TRANSCRIPT	("transcript", 	Transcript.class),
     ACTION		("action", 		BillAction.class),
-    VOTE		("vote", 		Vote.class);
+    VOTE		("vote", 		BillVote.class);
 
     private String type;
-    private Class<? extends BaseObject> clazz;
+    private Class<? extends BaseLegContent> clazz;
 
-    private ApiType(String type, Class<? extends BaseObject> clazz) {
+    private ApiType(String type, Class<? extends BaseLegContent> clazz) {
         this.type = type;
         this.clazz = clazz;
     }
@@ -26,7 +26,7 @@ public enum ApiType {
         return type;
     }
 
-    public Class<? extends BaseObject> clazz() {
+    public Class<? extends BaseLegContent> clazz() {
         return clazz;
     }
 }

@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.model.BaseObject;
+import gov.nysenate.openleg.model.BaseLegContent;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CalendarActiveList extends BaseObject
+public class CalendarActiveList extends BaseLegContent
 {
     private Integer id;
     private String notes;

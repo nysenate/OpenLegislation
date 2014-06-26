@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.model.BaseObject;
+import gov.nysenate.openleg.model.BaseLegContent;
 import gov.nysenate.openleg.model.bill.Bill;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -52,7 +52,7 @@ public class Storage
     /**
      * Memory buffer for cache values. Used to prevent excessive file operations.
      */
-    public HashMap<String, BaseObject> memory;
+    public HashMap<String, BaseLegContent> memory;
 
     /**
      * Tracks the set of currently dirty keys that need to be flushed to the file system
@@ -88,7 +88,7 @@ public class Storage
         this.publishedDir = new File(storageDir, "published");
         this.unpublishedDir = new File(storageDir, "unpublished");
 
-        this.memory  = new HashMap<String, BaseObject>();
+        this.memory  = new HashMap<String, BaseLegContent>();
         this.dirty   = new HashSet<String>();
         this.brandNew = new HashSet<String>();
 
@@ -103,9 +103,9 @@ public class Storage
      * @param cls - The class interpret the value as.
      * @return - The object from storage.
      */
-    public BaseObject get(String key, Class<? extends BaseObject> cls)
+    public BaseLegContent get(String key, Class<? extends BaseLegContent> cls)
     {
-        BaseObject value = null;
+        BaseLegContent value = null;
         if (memory.containsKey(key)) {
             logger.debug("Cache hit: "+key);
             value = memory.get(key);
@@ -129,7 +129,7 @@ public class Storage
 //                        return null;
 //                    }
 
-                    value.setBrandNew(brandNew.contains(key));
+                    //value.setBrandNew(brandNew.contains(key));
 //                } catch (org.codehaus.jackson.JsonParseException e) {
 //                    logger.error("could not parse json", e);
 //                } catch (JsonMappingException e) {
@@ -151,20 +151,20 @@ public class Storage
      *
      * @param value - The new value to store
      */
-    public void set(BaseObject value)
+    public void set(BaseLegContent value)
     {
         String key = this.key(value);
         memory.put(key, value);
         dirty.add(key);
-        if (value.isBrandNew()) {
-            brandNew.add(key);
-        }
+       // if (value.isBrandNew()) {
+       //     brandNew.add(key);
+       // }
     }
 
     /**
      * @param value - The storage key for this object
      */
-    public String key(BaseObject value)
+    public String key(BaseLegContent value)
     {
         return null; /** KILLED THIS */
         //return value.getYear()+"/"+value.getOtype()+"/"+value.getOid();
@@ -244,7 +244,7 @@ public class Storage
         FileUtils.deleteQuietly(getPublishedFile(key));
 
         // If the value wasn't deleted, write it to file
-        BaseObject value = memory.get(key);
+        BaseLegContent value = memory.get(key);
         if (value != null) {
             File storageFile = value.isPublished() ? getPublishedFile(key) : getUnpublishedFile(key);
 

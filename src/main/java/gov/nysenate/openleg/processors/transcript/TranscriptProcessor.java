@@ -104,7 +104,6 @@ public class TranscriptProcessor {
         transcript.setId(oid);
         transcript.setModifiedDate(transcript.getTimeStamp());
         transcript.setPublishDate(transcript.getTimeStamp());
-        transcript.addDataSource(file.getName());
 
         // Save the transcript
         String key = transcript.getYear()+"/transcript/"+transcript.getId();

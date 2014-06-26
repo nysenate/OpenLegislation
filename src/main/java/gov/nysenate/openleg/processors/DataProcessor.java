@@ -10,6 +10,12 @@ import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.model.sobi.SOBIFile;
 import gov.nysenate.openleg.model.sobi.SOBIFragment;
 import gov.nysenate.openleg.model.sobi.SOBIFragmentType;
+import gov.nysenate.openleg.processors.agenda.AgendaProcessor;
+import gov.nysenate.openleg.processors.agenda.AgendaVoteProcessor;
+import gov.nysenate.openleg.processors.bill.BillProcessor;
+import gov.nysenate.openleg.processors.calendar.CalendarActiveListProcessor;
+import gov.nysenate.openleg.processors.calendar.CalendarProcessor;
+import gov.nysenate.openleg.processors.entity.CommitteeProcessor;
 import gov.nysenate.openleg.processors.sobi.*;
 import gov.nysenate.openleg.services.ServiceBase;
 import gov.nysenate.openleg.util.Storage;
@@ -167,12 +173,10 @@ public class DataProcessor
      * CMS.TXT, transcripts, and hearings may be processed in any order. The appropriate
      * file processor for each file is based on the directory they are stored in.
      *
-     * @param workingDir - The working directory with collated files to process
-     * @param storage - The Storage object to use for persistence.
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    public void ingest(File workingDir, Storage storage) throws IOException {
+    public void ingest() throws IOException {
         // Process SOBI files
         for (SOBIFile sobiFile : sobiFileDao.getPendingSOBIFiles(SortOrder.ASC)) {
             List<SOBIFragment> fragments = sobiFragmentDao.getSOBIFragments(sobiFile, SortOrder.ASC);

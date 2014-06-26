@@ -4,8 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 
 /**
- * Implements the BaseLegContent interface of all published OpenLegislation content.
- * @author GraylinKim
+ * Basic info that is common to all pieces of legislative content.
  */
 abstract public class BaseLegContent
 {
@@ -21,36 +20,11 @@ abstract public class BaseLegContent
     /** The calendar year this object was active in. */
     protected int year;
 
-    /** A set of SOBI files that contained modifications to this object. */
-    protected HashSet<String> dataSources;
+    /** --- Constructors --- */
 
-    /** Initializes BaseLegContent parameters. */
-    public BaseLegContent()
-    {
-        this.dataSources = new HashSet<String>();
-    }
-
-    /** --- Functional Getters/Setters --- */
-
-    /**
-     * Add a new source to the set of data sources. This is preferred to
-     * getting a reference to the list and directly adding filenames
-     *
-     * @param source - The new source to add to the data sources.
-     */
-    public void addDataSource(String source) {
-        dataSources.add(source);
-    }
+    public BaseLegContent() {}
 
     /** --- Basic Getters/Setters --- */
-
-    public boolean isBrandNew() {
-        return this.brandNew;
-    }
-
-    public void setBrandNew(boolean brandNew) {
-        this.brandNew = brandNew;
-    }
 
     public Date getPublishDate() {
         return this.publishDate;
@@ -64,23 +38,19 @@ abstract public class BaseLegContent
         return this.getPublishDate() != null;
     }
 
-    public Date getModifiedDate()
-    {
+    public Date getModifiedDate() {
         return this.modifiedDate;
     }
 
-    public void setModifiedDate(Date modifiedDate)
-    {
+    public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
 
-    public int getSession()
-    {
+    public int getSession() {
         return this.session;
     }
 
-    public void setSession(int session)
-    {
+    public void setSession(int session) {
         this.session = session;
     }
 
@@ -90,15 +60,5 @@ abstract public class BaseLegContent
 
     public void setYear(int year) {
         this.year = year;
-    }
-
-    public HashSet<String> getDataSources()
-    {
-        return dataSources;
-    }
-
-    public void setDataSources(HashSet<String> dataSources)
-    {
-        this.dataSources = dataSources;
     }
 }

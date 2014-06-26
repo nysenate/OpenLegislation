@@ -2,7 +2,7 @@ package gov.nysenate.openleg.scripts;
 
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.sobi.SOBIBlock;
-import gov.nysenate.openleg.processors.sobi.BillProcessor;
+import gov.nysenate.openleg.processors.bill.BillProcessor;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Storage;
 import org.apache.commons.cli.CommandLine;
@@ -40,9 +40,9 @@ public class MemoCheck extends BaseScript
         Storage storage = new Storage(storageDir);
         List<SOBIBlock> blocks = null; //FIXME: bp.getBlocks(blockFile);
         for (SOBIBlock block : blocks) {
-            String billNo = block.getBasePrintNo()+block.getAmendment()+"-"+block.getYear();
-            Bill jsonBill = storage.getBill(block.getBasePrintNo()+block.getAmendment(), block.getYear());
-            Bill lbdcBill = new Bill(billNo, block.getYear());
+            String billNo = block.getBasePrintNo()+block.getAmendment()+"-"+block.getSession();
+            Bill jsonBill = storage.getBill(block.getBasePrintNo()+block.getAmendment(), block.getSession());
+            Bill lbdcBill = new Bill(billNo, block.getSession());
 //            bp.applyText(block.getData(), lbdcBill, "", new Date());
 //
 //            String jsonMemo = StringUtils.normalizeSpace(jsonBill.getMemo().replaceAll("[?�]","§").replaceAll("-\n+ *", "").replaceAll("\n *", " ").replaceAll(" *([:,]) *", "$1").replaceAll(" *([()!\\\"]) *", " $1 ").replaceAll("([A-Za-z])- ?([A-Za-z])","$1$2").trim()).toLowerCase();

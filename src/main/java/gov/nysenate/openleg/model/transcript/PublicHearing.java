@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.model.transcript;
 
-import gov.nysenate.openleg.model.BaseObject;
+import gov.nysenate.openleg.model.BaseLegContent;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
 
-public class PublicHearing extends BaseObject
+public class PublicHearing extends BaseLegContent
 {
     public ArrayList<String> committees;
     public String title;
