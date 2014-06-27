@@ -2,102 +2,119 @@ package gov.nysenate.openleg.model.entity;
 
 public class Person
 {
-    /** */
-    private String id = "";
+    /** The unique id used to globally identify the person */
+    private int id;
 
-    /** */
-    private String position = "";
+    /** The full name of the person. */
+    private String fullName = "";
 
-    /** */
-    private String fullname = "";
+    /** The first name of the person. */
+    private String firstName = "";
 
-    /** */
-    private String branch = "";
+    /** The middle name of the person. */
+    private String middleName = "";
 
-    /** */
-    private String contactInfo = "";
+    /** The last name of the person. */
+    private String lastName = "";
 
-    /** */
-    private String guid = "";
+    /** The phone number of the person. */
+    private String phone = "";
 
+    /** The email address of the person. */
+    private String email = "";
 
     /** --- Constructors --- */
 
     public Person () {}
 
-    public Person (String fullname) {
-        this.fullname = fullname;
+    public Person (String fullName) {
+        this.fullName = fullName;
     }
 
-    public Person (String fullname, String position) {
-        this.fullname = fullname;
-        this.position = position;
+    /** --- Overrides --- */
 
-        this.id = fullname + '-' + position;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Person)) return false;
+        Person person = (Person) o;
+        if (id != person.id) return false;
+        if (email != null ? !email.equals(person.email) : person.email != null) return false;
+        if (firstName != null ? !firstName.equals(person.firstName) : person.firstName != null) return false;
+        if (fullName != null ? !fullName.equals(person.fullName) : person.fullName != null) return false;
+        if (lastName != null ? !lastName.equals(person.lastName) : person.lastName != null) return false;
+        if (middleName != null ? !middleName.equals(person.middleName) : person.middleName != null) return false;
+        if (phone != null ? !phone.equals(person.phone) : person.phone != null) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (fullName != null ? fullName.hashCode() : 0);
+        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
+        result = 31 * result + (middleName != null ? middleName.hashCode() : 0);
+        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+        result = 31 * result + (phone != null ? phone.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        return result;
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public String getPosition() {
-        return position;
-    }
-
-    public String getFullname() {
-        return fullname;
-    }
-
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public String getBranch() {
-        return branch;
-    }
-
-    public String getContactInfo() {
-        return contactInfo;
-    }
-
-    public String getGuid() {
-        return guid;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
-    }
-
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public void setBranch(String branch) {
-        this.branch = branch;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setContactInfo(String contactInfo) {
-        this.contactInfo = contactInfo;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
-    public void setGuid(String guid) {
-        this.guid = guid;
+    public String getFirstName() {
+        return firstName;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if(obj != null && obj instanceof Person)
-        {
-            Person person = (Person)obj;
-            return this.fullname.equals(person.getFullname());
-        }
-        return false;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    @Override
-    public String toString() {
-        return this.fullname;
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

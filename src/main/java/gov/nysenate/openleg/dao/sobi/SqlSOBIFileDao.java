@@ -113,7 +113,7 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
     /** {@inheritDoc }*/
     @Override
     public List<SOBIFile> getPendingSOBIFiles(SortOrder sortByPubDate) {
-        return jdbc.query(GET_PENDING_SOBI_FILES_SQL + orderBy("published_date_time", sortByPubDate),                new SOBIFileRowMapper());
+        return jdbc.query(GET_PENDING_SOBI_FILES_SQL + orderBy("published_date_time", sortByPubDate), new SOBIFileRowMapper());
     }
 
     /** {@inheritDoc }*/
