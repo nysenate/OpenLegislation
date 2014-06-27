@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 public class TranscriptLine {
 
     private static final int PAGE_NUM_INDEX = 10;
-    private static final int MAX_PAGE_NUM = 27;
+    private static final int PAGE_NUM_MAX = 27;
     private final String line;
 
     public TranscriptLine(String line) {
@@ -20,7 +20,7 @@ public class TranscriptLine {
     /**
      * @return the line stripped of line number and whitespace
      */
-    public String textTrimmed() {
+    public String removeLineNumsAndTrim() {
         if (!isTranscriptNumber()) {
             if (hasLineNumber())
                 return removeLineNumber().trim();
@@ -36,12 +36,12 @@ public class TranscriptLine {
      *         <code>false</code> otherwise.
      */
     public boolean isTranscriptNumber() {
-        String trim = line.trim();
+        String trim = line.replaceAll("[^a-zA-Z0-9]+","").trim();
         if (!isNumber(trim)) {
             return false;
         }
         int startIndex = line.indexOf(trim);
-        if (startIndex > PAGE_NUM_INDEX || Integer.valueOf(trim) > MAX_PAGE_NUM) {
+        if (startIndex > PAGE_NUM_INDEX || Integer.valueOf(trim) > PAGE_NUM_MAX) {
             return true;
         }
         return false;
@@ -53,10 +53,15 @@ public class TranscriptLine {
     }
 
     public String removeLineNumber() {
-        if (line.trim().length() < 2)
-            return line.trim().substring(1);
+        if (!isTranscriptNumber()) {
+            if (hasLineNumber()) {
+                if (line.trim().length() < 2)
+                    return line.trim().substring(1);
 
-        return line.trim().substring(2);
+                return line.trim().substring(2);
+            }
+        }
+        return line;
     }
 
     public boolean isLocation() {
@@ -67,7 +72,7 @@ public class TranscriptLine {
     }
 
     public boolean isDate() {
-        String date = textTrimmed().replace(", ", " ").replace(",", " ");
+        String date = removeLineNumber().trim().replace(", ", " ").replace(",", " ");
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
         try {
             sdf.parse(date);
@@ -79,7 +84,7 @@ public class TranscriptLine {
     }
 
     public String getDateString() {
-        return textTrimmed().replace(" , ", " ").replace(", ", " ").replace(",", " ").replace(".", "");
+        return removeLineNumber().trim().replace(" , ", " ").replace(", ", " ").replace(",", " ").replace(".", "");
     }
 
     public boolean isTime() {
@@ -96,7 +101,7 @@ public class TranscriptLine {
     }
 
     public String getTimeString() {
-        String date = textTrimmed().replace(":", "").replace(".", "").replace(" ", "");
+        String date = removeLineNumber().trim().replace(":", "").replace(".", "").replace(" ", "");
 
         if (date.length() == 5)
             date = "0" + date;
