@@ -41,7 +41,7 @@ public class TranscriptProcessor {
 
             if (!firstPageParsed) {
                 if (line.isLocation())
-                    transcript.setLocation(line.textTrimmed());
+                    transcript.setLocation(line.removeLineNumber().trim());
 
                 if (line.isDate())
                     date = line.getDateString();
@@ -50,7 +50,7 @@ public class TranscriptProcessor {
                     time = line.getTimeString();
 
                 if (line.isSession())
-                    transcript.setType(line.textTrimmed());
+                    transcript.setType(line.removeLineNumber().trim());
 
                 if (transcript.getLocation() != null && date != null && time != null && transcript.getType() != null)
                     firstPageParsed = true;
@@ -58,8 +58,8 @@ public class TranscriptProcessor {
 
             fullText.append(line.fullText()).append("\n");
 
-            if (line.textTrimmed().length() > 0) {
-                fullTextProcessed.append(line.textTrimmed()).append("\n");
+            if (line.removeLineNumber().trim().length() > 0) {
+                fullTextProcessed.append(line.removeLineNumber().trim()).append("\n");
             }
         }
 
