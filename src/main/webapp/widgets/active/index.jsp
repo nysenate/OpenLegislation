@@ -1,4 +1,6 @@
 <%@ page language="java" import="java.util.ArrayList, java.util.Iterator, java.util.List, java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.api.*,gov.nysenate.openleg.lucene.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/html" pageEncoding="utf-8" %>
+<%@ page import="gov.nysenate.openleg.model.calendar.Calendar" %>
+<%@ page import="gov.nysenate.openleg.model.calendar.CalendarSupplementalSectionEntry" %>
 <!DOCTYPE HTML>
 <html>
     <head>
@@ -71,11 +73,11 @@
                             if (calEnt.getBill()!=null && calEnt.getBill().getBillId()!=null ) {
                         %>
                             / Bill: <a href="<%=JSPHelper.getLink(request,"/api/1.0/html/bill/"+calEnt.getBill().getBillId())%>" target="_blank"><%=calEnt.getBill().getBillId()%></a>
-                            / <a href="<%=JSPHelper.getLink(request,"/search?term=sponsor:"+calEnt.getBill().getSponsor().getFullname())%>" target="_blank"><%=calEnt.getBill().getSponsor().getFullname()%></a>
+                            / <a href="<%=JSPHelper.getLink(request,"/search?term=sponsor:"+calEnt.getBill().getSponsor().getFullName())%>" target="_blank"><%=calEnt.getBill().getSponsor().getFullName()%></a>
                             <%
                                 if (calEnt.getSubBill()!=null) {
                             %>
-                                (Sub-bill Sponsor: <a href="<%=JSPHelper.getLink(request, "/search?term=sponsor:"+calEnt.getSubBill().getSponsor().getFullname())%>"><%=calEnt.getSubBill().getSponsor().getFullname()%></a>)
+                                (Sub-bill Sponsor: <a href="<%=JSPHelper.getLink(request, "/search?term=sponsor:"+calEnt.getSubBill().getSponsor().getFullName())%>"><%=calEnt.getSubBill().getSponsor().getFullName()%></a>)
                             <%
                                 }
                             %>

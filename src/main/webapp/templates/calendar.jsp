@@ -1,4 +1,7 @@
 <%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, java.util.Date,  org.apache.commons.lang3.StringUtils, java.util.Iterator,java.util.ArrayList, java.util.Collection,java.util.List,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page import="gov.nysenate.openleg.model.bill.Bill" %>
+<%@ page import="gov.nysenate.openleg.model.calendar.Calendar" %>
+<%@ page import="gov.nysenate.openleg.model.calendar.CalendarSupplementalSectionEntry" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <script>
 $(document).ready(function(){

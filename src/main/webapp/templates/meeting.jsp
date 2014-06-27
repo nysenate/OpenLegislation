@@ -1,4 +1,6 @@
 <%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtils, java.util.*,java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page import="gov.nysenate.openleg.model.bill.Bill" %>
+<%@ page import="gov.nysenate.openleg.model.bill.BillVote" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 	DateFormat df = new SimpleDateFormat("MMM d, yyyy - h:mm a");
@@ -66,10 +68,10 @@
 
                             <br/>
 							<% if (bill.getVotes()!=null && bill.getVotes().size()>0) {
-								Iterator<Vote> itVotes = bill.getVotes().iterator();
+								Iterator<BillVote> itVotes = bill.getVotes().iterator();
 								while (itVotes.hasNext()) {
-									Vote vote = itVotes.next();
-									if (vote.getVoteType()==Vote.VOTE_TYPE_COMMITTEE && vote.getVoteDate().equals(meeting.getMeetingDateTime())) {
+									BillVote vote = itVotes.next();
+									if (vote.getVoteType()== BillVote.VOTE_TYPE_COMMITTEE && vote.getVoteDate().equals(meeting.getMeetingDateTime())) {
 										request.setAttribute("vote",vote);
 
 										%>Vote: Committee

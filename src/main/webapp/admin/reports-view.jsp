@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.text.SimpleDateFormat, java.util.ArrayList,gov.nysenate.openleg.model.admin.*,gov.nysenate.openleg.util.JSPHelper"%>
+<%@ page import="gov.nysenate.openleg.model.admin.report.Report" %>
+<%@ page import="gov.nysenate.openleg.model.admin.report.ReportObservation" %>
 <%!
 public String getStatus(Report report, ReportObservation obs) {
     if (report.getNewErrors().contains(obs.getError())) {

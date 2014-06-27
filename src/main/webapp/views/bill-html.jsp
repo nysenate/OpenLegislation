@@ -1,4 +1,8 @@
 <%@ page language="java" import="gov.nysenate.openleg.util.*, java.util.Date, java.util.HashMap, java.util.ArrayList, java.util.Collections, java.util.List, java.util.Hashtable, java.util.TreeSet, java.util.StringTokenizer, java.util.regex.*, java.util.Iterator, java.text.* ,gov.nysenate.openleg.model.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page import="gov.nysenate.openleg.model.bill.Bill" %>
+<%@ page import="gov.nysenate.openleg.model.bill.BillAction" %>
+<%@ page import="gov.nysenate.openleg.model.calendar.Calendar" %>
+<%@ page import="gov.nysenate.openleg.model.bill.BillVote" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%!public <T> ArrayList<T> defaultList(ArrayList<T> list) {
         if(list == null)
@@ -44,7 +48,7 @@
     
     public ArrayList<BillAction> sortBillEvents(List<BillAction> billEvents) {
         Hashtable<String, BillAction> table = new Hashtable<String, BillAction>();
-        TreeSet<BillAction> set = new TreeSet<BillAction>(new BillAction.ByEventDate());
+        TreeSet<BillAction> set = new TreeSet<BillAction>(new BillAction.ByEventSequenceNo());
         
         for(BillAction be:billEvents) {
             if(table.contains(be)) continue;
@@ -80,7 +84,7 @@
     @SuppressWarnings("unchecked")
     ArrayList<Calendar> rCals = defaultList((ArrayList<Calendar>)request.getAttribute("related-calendar"));
     @SuppressWarnings("unchecked")
-    ArrayList<Vote> rVotes = defaultList((ArrayList<Vote>)request.getAttribute("related-vote"));
+    ArrayList<BillVote> rVotes = defaultList((ArrayList<BillVote>)request.getAttribute("related-vote"));
 
     String senateBillNo = bill.getBillId();
     String year = null;
@@ -306,10 +310,10 @@
                 <% if(rVotes.size() > 0) { %>
                     <h3 class="section" ><a id="Votes" href="#Votes" class="anchor ui-icon ui-icon-link"></a> Votes</h3>
                     <%
-		            for (Vote vote:rVotes) {
+		            for (BillVote vote:rVotes) {
 		                String voteType = "Floor Vote";
 		                
-		                if (vote.getVoteType() == Vote.VOTE_TYPE_COMMITTEE) {
+		                if (vote.getVoteType() == BillVote.VOTE_TYPE_COMMITTEE) {
 		                    voteType = "Committee Vote";
 		                }
 		                %>

@@ -1,4 +1,7 @@
 <%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, org.apache.commons.lang3.StringUtils, java.util.Iterator,java.util.ArrayList, java.util.Collection,java.util.List,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page import="gov.nysenate.openleg.model.bill.Bill" %>
+<%@ page import="gov.nysenate.openleg.model.calendar.Calendar" %>
+<%@ page import="gov.nysenate.openleg.model.calendar.CalendarSupplementalSectionEntry" %>
 <%
 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy");
 SimpleDateFormat datetimeFormat = new SimpleDateFormat("MM/d/yyyy hh:mm:ss aa");

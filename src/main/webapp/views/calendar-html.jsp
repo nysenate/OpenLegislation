@@ -1,4 +1,5 @@
 <%@ page language="java" import="java.util.Iterator,java.util.Collection,java.text.DateFormat,java.text.SimpleDateFormat,gov.nysenate.openleg.*,gov.nysenate.openleg.model.*,javax.xml.bind.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page import="gov.nysenate.openleg.model.calendar.Calendar" %>
 <%
     Calendar calendar = (Calendar) request.getAttribute("calendar");
 	String title = "Calendar " + calendar.getNo() + " " + calendar.getSession();
