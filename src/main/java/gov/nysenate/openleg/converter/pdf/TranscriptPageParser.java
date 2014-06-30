@@ -37,19 +37,19 @@ public class TranscriptPageParser
             TranscriptLine line = new TranscriptLine(pageLines.get(i));
 
             if (line.isTranscriptNumber()) {
-                page.setTranscriptNumber(line);
+                page.setTranscriptNumber(line.removeInvalidCharacters());
                 lineCount++;
             }
             else if (!line.isEmpty() && !line.isStenographer()) {
                 page.addLine(line);
                 lineCount++;
 
-                if (line.removeLineNumber().trim().equals("NEW YORK STATE SENATE")) {
+                if (line.fullText().trim().equals("NEW YORK STATE SENATE")) {
                     addBlankLines(page, 2);
                     lineCount += 2;
                 }
 
-                else if (line.removeLineNumber().trim().contains("STENOGRAPHIC RECORD")) {
+                else if (line.fullText().trim().contains("STENOGRAPHIC RECORD")) {
                     addBlankLines(page, 2);
                     lineCount += 2;
                 }
@@ -78,7 +78,7 @@ public class TranscriptPageParser
             TranscriptLine line = new TranscriptLine(pageLine);
 
             if (line.isTranscriptNumber()) {
-                page.setTranscriptNumber(line);
+                page.setTranscriptNumber(line.removeInvalidCharacters());
                 lineCount++;
             }
             else if (!line.isEmpty() && !line.isStenographer()) {
@@ -98,31 +98,21 @@ public class TranscriptPageParser
         List<String> correctedFirstPage = new ArrayList<String>();
         List<String> firstPage = pages.get(0);
 
-        boolean firstLineWithContent = true;
         for (int i = 0; i < firstPage.size(); i++) {
             TranscriptLine line = new TranscriptLine(firstPage.get(i));
 
             if (!line.isEmpty()) {
-                // Remove the first 3 lines if invalid. i.e. 052600.V1
-                if (firstLineWithContent && firstPage.get(i).contains("SESSION")) {
-                    i += 3;
-                }
-                else if (line.fullText().endsWith(",") || line.fullText().endsWith(", Acting")) {
+                if (line.fullText().endsWith(",") || line.fullText().endsWith(", Acting")) {
                     // Combine two lines into one; corrects formatting. i.e. 123096.v1
                     TranscriptLine nextLine = getNextLine(firstPage, i);
                     if (nextLine.fullText().trim().equals("President") || nextLine.fullText().trim().equals("Acting President")) {
-                        line = new TranscriptLine(line.fullText() + " " + nextLine.fullText());
+                        line = new TranscriptLine(line.fullText() + " " + nextLine.fullText().trim());
                         // Skip next line since we combined it with the previous line.
                         i++;
                     }
-
-                    correctedFirstPage.add(line.fullText());
-                }
-                else {
-                    correctedFirstPage.add(line.fullText());
                 }
 
-                firstLineWithContent = false;
+                correctedFirstPage.add(line.fullText());
             }
         }
 

@@ -8,7 +8,7 @@ import java.util.List;
 public class TranscriptPage
 {
     private int lineCount;
-    private TranscriptLine transcriptNumber;
+    private String transcriptNumber;
     private List<TranscriptLine> lines = new ArrayList<TranscriptLine>();
 
     public int getLineCount() {
@@ -19,11 +19,11 @@ public class TranscriptPage
         this.lineCount = lineCount;
     }
 
-    public TranscriptLine getTranscriptNumber() {
+    public String getTranscriptNumber() {
         return transcriptNumber;
     }
 
-    public void setTranscriptNumber(TranscriptLine transcriptNumber) {
+    public void setTranscriptNumber(String transcriptNumber) {
         this.transcriptNumber = transcriptNumber;
     }
 

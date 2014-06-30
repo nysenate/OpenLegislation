@@ -82,8 +82,8 @@ public class PDFConverter
         if (page.getTranscriptNumber() == null) {
             contentStream.moveTextPositionByAmount(0, top - fontWidth);
         } else {
-            float offset = right - (page.getTranscriptNumber().removeLineNumber().trim().length() + 1) * fontWidth;
-            drawTranscriptNumber(page.getTranscriptNumber().fullText().trim(), offset, contentStream);
+            float offset = right - (page.getTranscriptNumber().length() + 1) * fontWidth;
+            drawTranscriptNumber(page.getTranscriptNumber(), offset, contentStream);
         }
 
         for (TranscriptLine line : page.getLines()) {
