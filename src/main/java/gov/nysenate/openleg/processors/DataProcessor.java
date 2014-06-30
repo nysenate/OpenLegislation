@@ -1,11 +1,8 @@
 package gov.nysenate.openleg.processors;
 
-import gov.nysenate.openleg.Environment;
-import gov.nysenate.openleg.dao.TranscriptDao;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.sobi.SOBIFileDao;
 import gov.nysenate.openleg.dao.sobi.SOBIFragmentDao;
-import gov.nysenate.openleg.dao.sobi.SqlSOBIFragmentDao;
 import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.model.sobi.SOBIFile;
 import gov.nysenate.openleg.model.sobi.SOBIFragment;
@@ -16,11 +13,14 @@ import gov.nysenate.openleg.processors.bill.BillProcessor;
 import gov.nysenate.openleg.processors.calendar.CalendarActiveListProcessor;
 import gov.nysenate.openleg.processors.calendar.CalendarProcessor;
 import gov.nysenate.openleg.processors.entity.CommitteeProcessor;
-import gov.nysenate.openleg.processors.sobi.*;
+import gov.nysenate.openleg.processors.sobi.SOBIProcessor;
 import gov.nysenate.openleg.services.ServiceBase;
 import gov.nysenate.openleg.util.Storage;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
@@ -43,55 +43,50 @@ import static gov.nysenate.openleg.util.FileHelper.*;
  *      SOBI files so it is helpful to isolate the ones we are currently processing
  *   </li>
  *   <li>
- *      {@link #collate(File) Collate}:
+ *      {@link #collate() Collate}:
  *      Each SOBI file can be thought of as a collection of sub documents. The collate step
  *      extracts these files, converts them to UTF-8 encoding, and writes them to file.
  *      Writing to file is useful for debugging because it provides a record of what data
  *      was sent into each processor.
  *   </li>
  *   <li>
- *      {@link #ingest(File, Storage) Ingest}:
+ *      {@link #ingest() Ingest}:
  *      Process collated files in chronological order based on the time stamp encoded into
  *      the SOBI file name. Delegates file processing based on document type.
  *   </li>
- *   <li>
- *      {@link #push(Storage, List, List) Push}:
- *      Pushes a set of changes out to a list of services.
- *   </li>
- *   <li>
- *      {@link #archive(File, File) Archive}:
- *      Archives all working files for reference when going through logs in the future.
- *   </li>
  * </ul>
  */
+@Service
 public class DataProcessor
 {
     private static Logger logger = Logger.getLogger(DataProcessor.class);
 
     protected static String encoding = "CP850";
 
-    /** The environment where the data is to be processed. */
-    private Environment environment;
-
     private Map<SOBIFragmentType, SOBIProcessor> processorMap;
 
-    /** -- DAO instances --- */
+    /** --- DAO instances --- */
 
+    @Autowired
     private SOBIFileDao sobiFileDao;
+
+    @Autowired
     private SOBIFragmentDao sobiFragmentDao;
-    private TranscriptDao transcriptDao;
+
+    /** --- Processor Instances --- */
+
+    @Autowired
+    private BillProcessor billProcessor;
 
     /** --- Constructors --- */
 
-    public DataProcessor(Environment environment) {
-        this.environment = environment;
-
-        SqlSOBIFragmentDao fragmentDao = new SqlSOBIFragmentDao(environment);
-        this.sobiFileDao = fragmentDao;
-        this.sobiFragmentDao = fragmentDao;
-
+    public DataProcessor() {
         this.processorMap = new HashMap<>();
-        this.processorMap.put(SOBIFragmentType.BILL, new BillProcessor(environment));
+    }
+
+    @PostConstruct
+    public void init() {
+        this.processorMap.put(SOBIFragmentType.BILL, billProcessor);
         this.processorMap.put(SOBIFragmentType.AGENDA, new AgendaProcessor());
         this.processorMap.put(SOBIFragmentType.AGENDA_VOTE, new AgendaVoteProcessor());
         this.processorMap.put(SOBIFragmentType.CALENDAR, new CalendarProcessor());
@@ -124,13 +119,7 @@ public class DataProcessor
         // TODO: Stage all transcripts
     }
 
-    /**
-     *
-     *
-     * @param workDir - The working directory with files to collate
-     * @throws IOException, ParseException
-     */
-    public void collate(File workDir) throws IOException, ParseException {
+    public void collate() throws IOException, ParseException {
         for (SOBIFile sobiFile : sobiFileDao.getPendingSOBIFiles(SortOrder.ASC)) {
             StringBuilder billBuffer = new StringBuilder();
             int fragmentCounter = 1;

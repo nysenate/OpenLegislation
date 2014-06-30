@@ -1,10 +1,16 @@
 package gov.nysenate.openleg.dao.base;
 
 import gov.nysenate.openleg.Environment;
+import gov.nysenate.openleg.dao.app.EnvironmentDao;
 import gov.nysenate.openleg.util.Application;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -14,28 +20,27 @@ import java.util.List;
  */
 public abstract class SqlBaseDao
 {
+    private static final Logger logger = LoggerFactory.getLogger(SqlBaseDao.class);
+
     protected static String DEFAULT_ENV_SCHEMA = Environment.DEFAULT_SCHEMA;
 
     /** JdbcTemplate reference for use by sub classes to execute SQL queries */
-    protected JdbcTemplate jdbc = new JdbcTemplate(Application.getDB().getDataSource());
+    @Autowired
+    protected JdbcTemplate jdbc;
 
-    /** Similar to JdbcTemplate but forces the use of named query parameter.
-     *  Can aid in readability for complex queries. */
-    protected NamedParameterJdbcTemplate jdbcNamed = new NamedParameterJdbcTemplate(Application.getDB().getDataSource());
+    /** Similar to JdbcTemplate but forces the use of named query parameter for readability. */
+    @Autowired
+    protected NamedParameterJdbcTemplate jdbcNamed;
 
     /** Reference to the environment in which the data is stored */
+    @Autowired
     protected Environment environment;
 
-    /** --- Table Name Definitions --- */
+    public SqlBaseDao() {}
 
-    protected static String BILL_TABLE = "bill";
-    protected static String BILL_AMENDEMENT_TABLE = "bill_amendment";
-    protected static String BILL_AMENDMENT_ACTION_TABLE = "bill_amendment_action";
-    protected static String BILL_AMENDMENT_COSPONSOR_TABLE = "bill_amendment_cosponsor";
-    protected static String BILL_AMENDMENT_VOTE = "bill_amendment_vote";
-
-    protected SqlBaseDao(Environment environment) {
-        this.environment = environment;
+    @PostConstruct
+    private void init() {
+        logger.info("Environment autowired: " + environment);
     }
 
     /**
@@ -71,7 +76,7 @@ public abstract class SqlBaseDao
         if (sortOrder == null || sortOrder.equals(SortOrder.NONE)) {
             return "";
         }
-        return "ORDER BY " + columnName  + " " + sortOrder.name();
+        return " ORDER BY " + columnName  + " " + sortOrder.name();
     }
 
     /**
@@ -84,7 +89,7 @@ public abstract class SqlBaseDao
         if (columnNames.size() != sortOrders.size()) {
             throw new IllegalArgumentException("For order by clause, number of column names must match sort orders!");
         }
-        String orderByClause = "ORDER BY ";
+        String orderByClause = " ORDER BY ";
         for (int i = 0; i < columnNames.size(); i++) {
             if (sortOrders.get(i) != null && !sortOrders.get(i).equals(SortOrder.NONE)) {
                 orderByClause += (columnNames.get(i) + " " + sortOrders.get(i).name() + ((i + 1 == columnNames.size()) ? " " : ", "));

@@ -20,10 +20,11 @@ public class BillAmendment extends BaseLegContent
         There can be multiple same as bills in some cases, typically just 0 or 1 though. */
     protected Set<BillId> sameAs = new HashSet<>();
 
-    /** The sponsor memo of the amendment. */
+    /** Opinion from a bill's sponsor as to what the bill will accomplish and why it should become
+     * a law. Usually it's written in more easily understandable language. */
     protected String memo = "";
 
-    /** The AN ACT TO... clause for the bill version. */
+    /** The AN ACT TO... clause which describes the bill's intent. */
     protected String actClause = "";
 
     /** The full text of the amendment. */
@@ -32,7 +33,8 @@ public class BillAmendment extends BaseLegContent
     /** The committee the bill is currently referred to, if any. */
     protected String currentCommittee = "";
 
-    /** List of co-sponsors for the amendment. */
+    /** List of co-sponsors for the amendment. It's a list of Legislators who share credit for
+     *  introducing a bill. */
     protected List<Person> coSponsors = new ArrayList<>();
 
     /** List of multi-sponsors for the amendment. */
@@ -44,7 +46,7 @@ public class BillAmendment extends BaseLegContent
     /** A list of votes that have been made on this bill. */
     protected List<BillVote> votes = new ArrayList<>();
 
-    /** A flag marking this bill as introduced in unison in both houses **/
+    /** A flag marking this bill as introduced in unison in both houses */
     protected Boolean uniBill = false;
 
     /** --- Constructors --- */

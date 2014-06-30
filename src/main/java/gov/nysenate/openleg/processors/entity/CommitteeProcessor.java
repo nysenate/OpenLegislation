@@ -11,5 +11,6 @@ public class CommitteeProcessor extends SOBIProcessor
     @Override
     public void process(SOBIFragment sobiFragment) {
         logger.info("Called committee processor");
+
     }
 }

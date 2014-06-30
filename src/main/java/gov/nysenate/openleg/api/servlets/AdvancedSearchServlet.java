@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.api.servlets;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.services.model.Committee;
 import gov.nysenate.services.model.Senator;
 import org.apache.commons.io.FileUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

@@ -4,7 +4,6 @@ import gov.nysenate.openleg.model.BaseLegContent;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.TextFormatter;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -19,10 +18,12 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
 {
     public static Pattern printNumberPattern = Pattern.compile("([ASLREJKBC])([0-9]{1,5})([A-Z]?)");
 
-    /** The print number of the bill, e.g S1234. No versions should be specified. */
+    /** A number assigned to a bill when it's introduced in the Legislature. Each printNo begins with a
+     *  letter (A for Assembly, S for Senate) followed by 1 to 5 digits. This printNo is valid only for the
+     *  2 year session period. */
     protected String printNo = "";
 
-    /** The bill title. */
+    /** Starting with the terms "An act", it's a short description about the topic of the bill. */
     protected String title = "";
 
     /** The section of the law the bill affects. */
@@ -31,19 +32,20 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
     /** The law code of the bill. */
     protected String law = "";
 
-    /** The summary of the bill. */
+    /** An overview of a bill that list's specific sections of NYS law to be amended by that bill. */
     protected String summary = "";
 
-    /** Map of amendment version -> Amendment. */
+    /** A letter at the end of the printNo indicates the amendment version.
+     *  This is a mapping of amendment versions to Amendment objects (includes base amendment). */
     protected Map<String, BillAmendment> amendmentMap = new TreeMap<>();
 
-    /** Indicates the amendment version that is active for this bill. */
+    /** Indicates the amendment version that is currently active for this bill. */
     protected String activeVersion = BillId.BASE_VERSION;
 
     /** A list of ids of versions of this legislation in previous sessions. */
-    protected List<String> previousVersions = new ArrayList<>();
+    protected List<BillId> previousVersions = new ArrayList<>();
 
-    /** The sponsor of this bill. */
+    /** The Legislator who formally introduced the bill. */
     protected Person sponsor;
 
     /** A list of coSponsors to be given preferential display treatment. */
@@ -142,7 +144,7 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
     /**
      * @param previousVersion - The new bill ID to add to the previous versions list.
      */
-    public void addPreviousVersion(String previousVersion) {
+    public void addPreviousVersion(BillId previousVersion) {
         if(!previousVersions.contains(previousVersion)) {
             previousVersions.add(previousVersion);
         }
@@ -226,11 +228,11 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
         return amendmentMap;
     }
 
-    public List<String> getPreviousVersions() {
+    public List<BillId> getPreviousVersions() {
         return previousVersions;
     }
 
-    public void setPreviousVersions(List<String> previousVersions) {
+    public void setPreviousVersions(List<BillId> previousVersions) {
         this.previousVersions = previousVersions;
     }
 
@@ -267,7 +269,6 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
     }
 
     @Override
-    @JsonIgnore
     public Date getPublishDate() {
         for (BillAmendment amendment : amendmentMap.values()) {
             if (amendment.getPublishDate() != null) {
@@ -283,7 +284,6 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
     }
 
     @Override
-    @JsonIgnore
     public Date getModifiedDate() {
         for (BillAmendment amendment : amendmentMap.values()) {
             if (amendment.getModifiedDate().after(this.modifiedDate)) {

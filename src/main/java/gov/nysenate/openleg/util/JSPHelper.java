@@ -52,7 +52,7 @@ public class JSPHelper
     public static String getPersonLink(Person person, HttpServletRequest request)
     {
         if (person != null) {
-            return getPersonLink(person.getFullname(), request);
+            return getPersonLink(person.getFullName(), request);
         }
         else {
             return "None";

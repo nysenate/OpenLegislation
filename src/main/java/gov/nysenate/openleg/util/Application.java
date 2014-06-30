@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.Environment;
 import gov.nysenate.util.Config;
 import gov.nysenate.util.DB;
@@ -7,7 +8,6 @@ import gov.nysenate.util.Mailer;
 import gov.nysenate.util.listener.NYSenateConfigurationListener;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 
@@ -51,7 +51,6 @@ public class Application
             appInstance.mailer = new Mailer(appInstance.config, "mailer");
             appInstance.environment = new Environment(appInstance.config, "env", "master");
             //appInstance.lucene = new Lucene(appInstance.config, "lucene");
-            appInstance.storage = new Storage(appInstance.environment.getStorageDirectory());
             appInstance.objectMapper = new ObjectMapper();
             return true;
         }

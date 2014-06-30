@@ -24,6 +24,7 @@ public class Member extends Person
     /** Historical mapping of session years -> LBDC's short name. */
     private Map<Integer, String> sessionLBDCShortNameMap;
 
+    /** Mapping of session years to district codes. */
     private Map<Integer, Integer> sessionDistrictMap;
 
     /** --- Constructors --- */

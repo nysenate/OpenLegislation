@@ -1,16 +1,17 @@
 package gov.nysenate.openleg.dao.bill;
 
-import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.sobi.SOBIFragment;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,13 +19,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+@Repository
 public class SqlBillDao extends SqlBaseDao implements BillDao
 {
-    private static Logger logger = Logger.getLogger(SqlBillDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(SqlBillDao.class);
 
-    public SqlBillDao(Environment environment) {
-        super(environment);
-    }
+    public SqlBillDao() {}
 
     /* --- Implemented Methods --- */
 

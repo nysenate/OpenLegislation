@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.api.servlets.admin;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.util.Config;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -109,7 +109,7 @@ public class DataViewerServlet extends HttpServlet
     private List<File> getSobiFiles(JsonNode root, String workDir)
     {
         List<File> sobis = new ArrayList<>();
-        Iterator<JsonNode> dataSources = root.get("dataSources").getElements();
+        Iterator<JsonNode> dataSources = root.get("dataSources").elements();
         while (dataSources.hasNext()) {
             sobis.add(FileUtils.getFile(workDir + "/bills", dataSources.next().asText()));
         }

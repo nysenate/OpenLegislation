@@ -156,7 +156,7 @@ public class SencalendarProcessor
         // This is a crappy situation, all bills on calendars should already exist but sometimes they won't.
         // This almost exclusively because we are missing sobi files. It shouldn't happen in production but
         // does frequently in development.
-        BillProcessor processor = new BillProcessor(Application.getEnvironment());
+        BillProcessor processor = new BillProcessor();
         SOBIBlock mockBlock = new SOBIBlock(year+billId+(billId.matches("[A-Z]$") ? "" : " ")+1+"     ");
         Bill bill = null; /**FIXME processor.getOrCreateBaseBill(mockBlock, modifiedDate, storage); */
 

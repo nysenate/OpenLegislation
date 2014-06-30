@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.scripts;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.services.MemoryCachedNYSenateClient;
@@ -13,8 +15,6 @@ import org.apache.commons.collections.ListUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig.Feature;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class UpdateNYSenateData extends BaseScript
         NYSenateClient client = new MemoryCachedNYSenateClient(apiDomain, apiKey);
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(Feature.INDENT_OUTPUT, true);
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 
 
         File baseDir = new File("/home/graylinkim/projects/nysenate/OpenLegislation/src/main/resources/data/");

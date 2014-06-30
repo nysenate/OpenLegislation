@@ -1,12 +1,13 @@
 package gov.nysenate.openleg.dao.bill;
 
+import gov.nysenate.openleg.dao.base.SqlQueryEnum;
 import gov.nysenate.openleg.dao.base.SqlTable;
 import org.apache.commons.lang.text.StrSubstitutor;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public enum SqlBillQuery
+public enum SqlBillQuery implements SqlQueryEnum
 {
     /** --- Bill --- */
 
@@ -33,8 +34,8 @@ public enum SqlBillQuery
     /** --- Bill Amendment --- */
 
     SELECT_BILL_AMENDMENTS_SQL(
-            "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
-                    "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+        "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
     UPDATE_BILL_AMENDMENT_SQL(
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
@@ -114,10 +115,9 @@ public enum SqlBillQuery
         this.sql = sql;
     }
 
-    public String getSql(String schema) {
+    public String getSql(String environmentSchema) {
         Map<String, String> replaceMap = new HashMap<>();
-        replaceMap.put("schema", schema);
-        StrSubstitutor sub = new StrSubstitutor(replaceMap);
-        return sub.replace(this.sql);
+        replaceMap.put("schema", environmentSchema);
+        return new StrSubstitutor(replaceMap).replace(this.sql);
     }
 }

@@ -1,65 +1,35 @@
 package gov.nysenate.openleg.dao.sobi;
 
-import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.sobi.SOBIFile;
 import gov.nysenate.openleg.model.sobi.SOBIFragment;
 import gov.nysenate.openleg.model.sobi.SOBIFragmentType;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.joda.time.LocalDate;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.stereotype.Repository;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-public class SqlSOBIFragmentDao extends SqlSOBIFileDao implements SOBIFragmentDao
+@Repository
+public class SqlSOBIFragmentDao extends SqlBaseDao implements SOBIFragmentDao
 {
     private static Logger logger = Logger.getLogger(SqlSOBIFragmentDao.class);
 
     /** The database table where SOBI fragments are recorded */
     protected static final String SOBI_FRAGMENT_TABLE = "sobi_fragment";
 
-    /** --- SQL Statements --- */
-
-    private final String CHECK_SOBI_FRAGMENT_EXISTS_SQL =
-        "SELECT 1 FROM " + table(SOBI_FRAGMENT_TABLE) + "\n" +
-        "WHERE fragment_file_name = :fragmentFileName";
-
-    private final String GET_SOBI_FRAGMENT_BY_FILE_NAME_SQL =
-        "SELECT * FROM " + table(SOBI_FRAGMENT_TABLE) + "\n" +
-        "WHERE sobi_fragment_type = :sobiFragmentType AND fragment_file_name = :fileName";
-
-    private final String GET_SOBI_FRAGMENTS_BY_SOBI_FILE_SQL =
-        "SELECT * FROM " + table(SOBI_FRAGMENT_TABLE) + " WHERE sobi_file_name = :sobiFileName ";
-
-    private final String GET_SOBI_FRAGMENTS_BY_SOBI_FILE_FILTERED_SQL =
-        "SELECT * FROM " + table(SOBI_FRAGMENT_TABLE) + "\n" +
-        "WHERE sobi_file_name = :sobiFileName AND sobi_fragment_type = :sobiFragmentType ";
-
-    private final String UPDATE_SOBI_FRAGMENT_SQL =
-        "UPDATE " + table(SOBI_FRAGMENT_TABLE) + "\n" +
-        "SET sobi_file_name = :sobiFileName, published_date_time = :publishedDateTime, " +
-        "    sobi_fragment_type = :sobiFragmentType, file_counter = :fileCounter, text = :text\n" +
-        "WHERE fragment_file_name = :fragmentFileName";
-
-    private final String INSERT_SOBI_FRAGMENT_SQL =
-        "INSERT INTO " + table(SOBI_FRAGMENT_TABLE) +
-        " (sobi_file_name, fragment_file_name, published_date_time, sobi_fragment_type, file_counter, text)" +
-        " VALUES (:sobiFileName, :fragmentFileName, :publishedDateTime, :sobiFragmentType, :fileCounter, :text)";
-
-    private final String DELETE_SOBI_FRAGMENTS_SQL =
-        "DELETE FROM " + table(SOBI_FRAGMENT_TABLE) + " WHERE sobi_file_name = :sobiFileName";
+    @Autowired
+    private SOBIFileDao sobiFileDao;
 
     /** --- Constructors --- */
 
-    public SqlSOBIFragmentDao(Environment environment) {
-        super(environment);
+    public SqlSOBIFragmentDao() {
+        super();
     }
 
     /** --- Implemented Methods --- */
@@ -69,15 +39,17 @@ public class SqlSOBIFragmentDao extends SqlSOBIFileDao implements SOBIFragmentDa
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("sobiFragmentType", fragmentType.name());
         params.addValue("fileName", fragmentFileName);
-        return jdbcNamed.queryForObject(GET_SOBI_FRAGMENT_BY_FILE_NAME_SQL, params, new SOBIFragmentRowMapper());
+        return jdbcNamed.queryForObject(
+            SqlSOBIFragmentQuery.GET_SOBI_FRAGMENT_BY_FILE_NAME_SQL.getSql(schema()), params, new SOBIFragmentRowMapper());
     }
 
     /** {@inheritDoc} */
     @Override
     public List<SOBIFragment> getSOBIFragments(SOBIFile sobiFile, SortOrder order) {
         MapSqlParameterSource params = new MapSqlParameterSource("sobiFileName", sobiFile.getFileName());
-        return jdbcNamed.query(GET_SOBI_FRAGMENTS_BY_SOBI_FILE_SQL + orderBy("fragment_file_name", order), params,
-                               new SOBIFragmentRowMapper(sobiFile));
+        return jdbcNamed.query(
+             SqlSOBIFragmentQuery.GET_SOBI_FRAGMENTS_BY_SOBI_FILE_SQL.getSql(schema()) + orderBy("fragment_file_name", order),
+             params, new SOBIFragmentRowMapper(sobiFile));
     }
 
     /** {@inheritDoc} */
@@ -86,8 +58,9 @@ public class SqlSOBIFragmentDao extends SqlSOBIFileDao implements SOBIFragmentDa
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("sobiFileName", sobiFile.getFileName());
         params.addValue("sobiFragmentType", fragmentType.name());
-        return jdbcNamed.query(GET_SOBI_FRAGMENTS_BY_SOBI_FILE_FILTERED_SQL + orderBy("fragment_file_name", order),
-                              params, new SOBIFragmentRowMapper(sobiFile));
+        return jdbcNamed.query(
+            SqlSOBIFragmentQuery.GET_SOBI_FRAGMENTS_BY_SOBI_FILE_FILTERED_SQL.getSql(schema()) + orderBy("fragment_file_name", order),
+            params, new SOBIFragmentRowMapper(sobiFile));
     }
 
     /** {@inheritDoc} */
@@ -104,8 +77,8 @@ public class SqlSOBIFragmentDao extends SqlSOBIFileDao implements SOBIFragmentDa
             params.addValue("sobiFragmentType", fragment.getType().name());
             params.addValue("fileCounter", fragment.getCounter());
             params.addValue("text", fragment.getText().replace('\0', ' '));
-            if (jdbcNamed.update(UPDATE_SOBI_FRAGMENT_SQL, params) == 0) {
-                jdbcNamed.update(INSERT_SOBI_FRAGMENT_SQL, params);
+            if (jdbcNamed.update(SqlSOBIFragmentQuery.UPDATE_SOBI_FRAGMENT_SQL.getSql(schema()), params) == 0) {
+                jdbcNamed.update(SqlSOBIFragmentQuery.INSERT_SOBI_FRAGMENT_SQL.getSql(schema()), params);
             }
             logger.debug("Saved sobi fragment " + fragment.getFileName());
         }
@@ -115,7 +88,7 @@ public class SqlSOBIFragmentDao extends SqlSOBIFileDao implements SOBIFragmentDa
     @Override
     public void deleteSOBIFragments(SOBIFile sobiFile) {
         MapSqlParameterSource params = new MapSqlParameterSource("sobiFileName", sobiFile.getFileName());
-        jdbcNamed.update(DELETE_SOBI_FRAGMENTS_SQL, params);
+        jdbcNamed.update(SqlSOBIFragmentQuery.DELETE_SOBI_FRAGMENTS_SQL.getSql(schema()), params);
     }
 
     /** --- Helper Classes --- */
@@ -150,7 +123,7 @@ public class SqlSOBIFragmentDao extends SqlSOBIFileDao implements SOBIFragmentDa
             // will need to be utilized.
             SOBIFile sobiFile = this.sobiFileMap.get(sobiFileName);
             if (sobiFile == null) {
-                sobiFile = getSOBIFile(sobiFileName);
+                sobiFile = sobiFileDao.getSOBIFile(sobiFileName);
             }
             String fileName = rs.getString(pfx + "fragment_file_name");
             SOBIFragmentType type = SOBIFragmentType.valueOf(rs.getString(pfx + "sobi_fragment_type"));

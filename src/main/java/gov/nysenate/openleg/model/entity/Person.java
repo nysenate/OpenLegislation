@@ -2,8 +2,9 @@ package gov.nysenate.openleg.model.entity;
 
 public class Person
 {
-    /** The unique id used to globally identify the person */
-    private int id;
+    /** The unique id used to globally identify the person.
+     *  This value should only be set after retrieval from the persistence layer. */
+    private Integer id;
 
     /** The full name of the person. */
     private String fullName = "";
@@ -26,6 +27,10 @@ public class Person
     /** --- Constructors --- */
 
     public Person () {}
+
+    public Person(Integer id) {
+        this.id = id;
+    }
 
     public Person (String fullName) {
         this.fullName = fullName;
@@ -64,10 +69,6 @@ public class Person
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getFullName() {

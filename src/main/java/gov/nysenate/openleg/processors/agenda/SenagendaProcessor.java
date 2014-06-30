@@ -224,7 +224,7 @@ public class SenagendaProcessor
 
         // All bills on calendars should already exist but sometimes, particularly during development/testing
         // they won't. Instead of breaking the processing, create a new bill using the bill processor.
-        BillProcessor processor = new BillProcessor(Application.getEnvironment());
+        BillProcessor processor = new BillProcessor();
         SOBIBlock mockBlock = new SOBIBlock(year+printNo+(printNo.matches("[A-Z]$") ? "" : " ")+1+"     ");
         Bill bill = null; /** FIXME processor.getOrCreateBaseBill(mockBlock, modifiedDate, storage); */
         bill.setSponsor(new Person(sponsors[0].trim()));

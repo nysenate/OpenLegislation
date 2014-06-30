@@ -35,7 +35,7 @@ public class MemoCheck extends BaseScript
         errors.put("missing",0);
         errors.put("mismatch", 0);
         File blockFile = new File("/data/openleg/PALMER.SEN.ALL.MEMO2011.TXT");
-        BillProcessor bp = new BillProcessor(Application.getEnvironment());
+        BillProcessor bp = new BillProcessor();
         File storageDir = new File("/data/openleg/2011_test/json/");
         Storage storage = new Storage(storageDir);
         List<SOBIBlock> blocks = null; //FIXME: bp.getBlocks(blockFile);

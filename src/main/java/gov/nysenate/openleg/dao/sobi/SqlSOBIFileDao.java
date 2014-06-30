@@ -11,7 +11,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,6 +30,7 @@ import static gov.nysenate.openleg.util.FileHelper.safeListFiles;
  * for the files are stored in the database. The returned SOBIFile instances are constructed
  * utilizing both data sources.
  */
+@Repository
 public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
 {
     private static Logger logger = Logger.getLogger(SqlSOBIFileDao.class);
@@ -36,46 +39,22 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
     private static final String SOBI_FILE_TABLE = "sobi_file";
 
     /** Directory where new sobi files come in from external sources. */
-    protected final File stagingSobiDir;
+    protected File stagingSobiDir;
 
     /** Directory where sobi files that are awaiting processing are stored. */
-    protected final File workingSobiDir;
+    protected File workingSobiDir;
 
     /** Directory where sobi files that have been processed are stored. */
-    protected final File archiveSobiDir;
+    protected File archiveSobiDir;
 
-    public SqlSOBIFileDao(Environment environment) {
-        super(environment);
-        this.stagingSobiDir = new File(environment.getStagingDirectory(), "sobis");
-        this.workingSobiDir = new File(environment.getWorkingDirectory(), "sobis");
-        this.archiveSobiDir = new File(environment.getArchiveDirectory(), "sobis");
+    public SqlSOBIFileDao() {}
+
+    @PostConstruct
+    protected void init() {
+        this.stagingSobiDir = new File(super.environment.getStagingDirectory(), "sobis");
+        this.workingSobiDir = new File(super.environment.getWorkingDirectory(), "sobis");
+        this.archiveSobiDir = new File(super.environment.getArchiveDirectory(), "sobis");
     }
-
-    /** --- SQL Statements --- */
-
-    private final String GET_SOBI_FILES_BY_FILE_NAMES_SQL =
-        "SELECT * FROM " + table(SOBI_FILE_TABLE) + " WHERE file_name IN (:fileNames) ";
-
-    private final String GET_SOBI_FILES_DURING_SQL =
-        "SELECT * FROM " + table(SOBI_FILE_TABLE) + "\n" +
-        "WHERE (published_date_time BETWEEN :startDate AND :endDate) AND (:processedOnly = false OR processed_count > 0) ";
-
-    private final String GET_PENDING_SOBI_FILES_SQL =
-        "SELECT * FROM " + table(SOBI_FILE_TABLE) + " WHERE pending_processing = true ";
-
-    private final String INSERT_SOBI_FILE =
-        "INSERT INTO " + table(SOBI_FILE_TABLE) + "\n" +
-        "(file_name, published_date_time, staged_date_time, processed_date_time, processed_count, pending_processing) " +
-        "VALUES (:fileName, :publishedDateTime, :stagedDateTime, :processedDateTime, :processedCount, :pendingProcessing)";
-
-    private final String UPDATE_SOBI_FILE =
-        "UPDATE " + table(SOBI_FILE_TABLE) + "\n" +
-        "SET published_date_time = :publishedDateTime," +
-        "    staged_date_time = :stagedDateTime," +
-        "    processed_date_time = :processedDateTime," +
-        "    pending_processing = :pendingProcessing," +
-        "    processed_count = :processedCount " +
-        "WHERE file_name = :fileName";
 
     /** --- Implemented Methods --- */
 
@@ -84,7 +63,8 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
     public SOBIFile getSOBIFile(String fileName) {
         SOBIFile sobiFile = null;
         MapSqlParameterSource params = new MapSqlParameterSource("fileNames", Arrays.asList(fileName));
-        return jdbcNamed.queryForObject(GET_SOBI_FILES_BY_FILE_NAMES_SQL, params, new SOBIFileRowMapper());
+        return jdbcNamed.queryForObject(
+            SqlSOBIFileQuery.GET_SOBI_FILES_BY_FILE_NAMES_SQL.getSql(schema()), params, new SOBIFileRowMapper());
     }
 
     /** {@inheritDoc }*/
@@ -92,7 +72,8 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
     public Map<String, SOBIFile> getSOBIFiles(List<String> fileNames) {
         MapSqlParameterSource params = new MapSqlParameterSource("fileNames", fileNames);
         Map<String, SOBIFile> sobiFileMap = new HashMap<>();
-        List<SOBIFile> sobiList = jdbcNamed.query(GET_SOBI_FILES_BY_FILE_NAMES_SQL, params, new SOBIFileRowMapper());
+        List<SOBIFile> sobiList = jdbcNamed.query(
+            SqlSOBIFileQuery.GET_SOBI_FILES_BY_FILE_NAMES_SQL.getSql(schema()), params, new SOBIFileRowMapper());
         for (SOBIFile sobiFile : sobiList) {
             sobiFileMap.put(sobiFile.getFileName(), sobiFile);
         }
@@ -106,14 +87,16 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
         params.addValue("startDate", start);
         params.addValue("endDate", end);
         params.addValue("processedOnly", processedOnly);
-        return jdbcNamed.query(GET_SOBI_FILES_DURING_SQL + orderBy("published_date_time", sortByPubDate),
-                params, new SOBIFileRowMapper());
+        return jdbcNamed.query(
+            SqlSOBIFileQuery.GET_SOBI_FILES_DURING_SQL.getSql(schema()) + orderBy("published_date_time", sortByPubDate),
+            params, new SOBIFileRowMapper());
     }
 
     /** {@inheritDoc }*/
     @Override
     public List<SOBIFile> getPendingSOBIFiles(SortOrder sortByPubDate) {
-        return jdbc.query(GET_PENDING_SOBI_FILES_SQL + orderBy("published_date_time", sortByPubDate), new SOBIFileRowMapper());
+        return jdbc.query(SqlSOBIFileQuery.GET_PENDING_SOBI_FILES_SQL.getSql(schema()) +
+               orderBy("published_date_time", sortByPubDate), new SOBIFileRowMapper());
     }
 
     /** {@inheritDoc }*/
@@ -243,7 +226,7 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
      * @throws java.lang.IllegalArgumentException if sobiFile is null
      */
     private void insertSOBIMetadataInDatabase(SOBIFile sobiFile) throws DataAccessException {
-        jdbcNamed.update(INSERT_SOBI_FILE, getSOBIInsertUpdateParams(sobiFile));
+        jdbcNamed.update(SqlSOBIFileQuery.INSERT_SOBI_FILE.getSql(schema()), getSOBIInsertUpdateParams(sobiFile));
     }
 
     /**
@@ -251,7 +234,7 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
      * @throws java.lang.IllegalArgumentException if sobiFile is null
      */
     private int updateSOBIMetadataInDatabase(SOBIFile sobiFile) throws DataAccessException {
-        return jdbcNamed.update(UPDATE_SOBI_FILE, getSOBIInsertUpdateParams(sobiFile));
+        return jdbcNamed.update(SqlSOBIFileQuery.UPDATE_SOBI_FILE.getSql(schema()), getSOBIInsertUpdateParams(sobiFile));
     }
 
     /**

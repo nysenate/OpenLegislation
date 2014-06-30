@@ -1,10 +1,11 @@
 package gov.nysenate.openleg.util;
 
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * OutputHelper serves as a simple utility class to convert Objects to string representations.
@@ -12,11 +13,11 @@ import org.codehaus.jackson.map.SerializationConfig;
  */
 public class OutputHelper
 {
-    private static final Logger logger = Logger.getLogger(OutputHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(OutputHelper.class);
 
     private static ObjectMapper jsonMapper = new ObjectMapper();
     static {
-        jsonMapper.enable(SerializationConfig.Feature.INDENT_OUTPUT);
+        jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
     /**

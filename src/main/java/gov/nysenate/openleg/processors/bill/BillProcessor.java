@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.processors.bill;
 
-import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.dao.bill.BillDao;
-import gov.nysenate.openleg.dao.bill.SqlBillDao;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.model.sobi.SOBIBlock;
@@ -11,13 +9,17 @@ import gov.nysenate.openleg.processors.sobi.SOBIProcessor;
 import gov.nysenate.openleg.processors.util.IngestCache;
 import gov.nysenate.openleg.util.Storage;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Service
 public class BillProcessor extends SOBIProcessor
 {
     private static final Logger logger = Logger.getLogger(BillProcessor.class);
@@ -41,7 +43,7 @@ public class BillProcessor extends SOBIProcessor
     protected static final Pattern sameAsPattern = Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?)+)");
 
     /** The expected format for Bill Info [1] block data. */
-    public static final Pattern billInfoPattern = Pattern.compile("(.{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])(.{8}).*");
+    public static final Pattern billInfoPattern = Pattern.compile("(.{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])(.{8})(.*)");
 
     /** The expected format for header lines inside bill [T] and memo [M] text data. */
     public static final Pattern textHeaderPattern = Pattern.compile("00000\\.SO DOC ([ASC]) ([0-9R/A-Z ]{13}) ([A-Z* ]{24}) ([A-Z ]{20}) ([0-9]{4}).*");
@@ -74,6 +76,7 @@ public class BillProcessor extends SOBIProcessor
     );
 
     /** Retrieves/saves bill data to the persistence layer. */
+    @Autowired
     private BillDao billDao;
 
     /** Cache used to improve processing performance. */
@@ -81,8 +84,7 @@ public class BillProcessor extends SOBIProcessor
 
     /** --- Constructors --- */
 
-    public BillProcessor(Environment env) {
-        this.billDao = new SqlBillDao(env);
+    public BillProcessor() {
         this.ingestCache = new IngestCache<>();
     }
 
@@ -243,15 +245,26 @@ public class BillProcessor extends SOBIProcessor
         Matcher billData = billInfoPattern.matcher(data);
         if (billData.find()) {
             String sponsor = billData.group(1).trim();
-            String oldbill = billData.group(4).trim().replaceAll("[0-9`-]$", "");
-            if (!sponsor.isEmpty() && (baseBill.getSponsor() == null || baseBill.getSponsor().getFullname().isEmpty())) {
+            if (!sponsor.isEmpty() && (baseBill.getSponsor() == null || baseBill.getSponsor().getFullName().isEmpty())) {
                 baseBill.setSponsor(new Person(sponsor));
+                baseBill.setModifiedDate(date);
             }
-            baseBill.addPreviousVersion(oldbill);
-            baseBill.setModifiedDate(date);
+
+            String prevPrintNo = billData.group(4).trim().replaceAll("[0-9`-]$", "");
+            String prevSessionYearStr = billData.group(6).trim();
+            if (!prevSessionYearStr.equals("0000") && !prevPrintNo.equals("00000")) {
+                try {
+                    Integer prevSessionYear = Integer.parseInt(prevSessionYearStr);
+                    baseBill.addPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
+                    baseBill.setModifiedDate(date);
+                }
+                catch (NumberFormatException ex) {
+                    logger.debug("Failed to parse previous session year from Bill Info line: " + prevSessionYearStr);
+                }
+            }
         }
         else {
-            throw new ParseError("billDataPattern not matched by "+data);
+            throw new ParseError("Bill Info Pattern not matched by " + data);
         }
     }
 
@@ -455,8 +468,8 @@ public class BillProcessor extends SOBIProcessor
         logger.info("SAVING "+bill.getBillId());
 
         // An old bug with the assembly sponsors field needs to be corrected, NYSS 7215
-        if (bill.getSponsor() != null && bill.getSponsor().getFullname().startsWith("RULES ")) {
-            bill.getSponsor().setFullname("RULES");
+        if (bill.getSponsor() != null && bill.getSponsor().getFullName().startsWith("RULES ")) {
+            bill.getSponsor().setFullName("RULES");
         }
 
         if (specifiedAmendment.isPublished()) {

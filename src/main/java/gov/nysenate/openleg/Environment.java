@@ -20,15 +20,16 @@ public class Environment
     public final static String DEFAULT_SCHEMA = "master";
 
     private int id;
-    private String schema;
-    private final File directory;
-    private final File stagingDirectory;
-    private final File workingDirectory;
-    private final File storageDirectory;
-    private final File archiveDirectory;
+    private String schema = DEFAULT_SCHEMA;
+    private File baseDirectory;
+    private File stagingDirectory;
+    private File workingDirectory;
+    private File archiveDirectory;
     private boolean active;
     private Date createdDateTime;
     private Date modifiedDateTime;
+
+    public Environment() {}
 
     public Environment(String directoryPath) {
         this(new File(directoryPath));
@@ -37,23 +38,21 @@ public class Environment
     public Environment(Config config, String prefix, String schema) {
         this.schema = schema;
         this.active = true;
-        this.directory = new File(config.getValue(prefix+".directory"));
+        this.baseDirectory = new File(config.getValue(prefix+".directory"));
         this.stagingDirectory = new File(config.getValue(prefix+".data"));
         this.workingDirectory = new File(config.getValue(prefix+".work"));
-        this.storageDirectory = new File(config.getValue(prefix+".storage"));
         this.archiveDirectory = new File(config.getValue(prefix+".archive"));
     }
 
-    public Environment(File directory) {
-        this.directory = directory;
-        this.stagingDirectory = new File(directory,"data");
-        this.workingDirectory = new File(directory,"work");
-        this.storageDirectory = new File(directory,"json");
-        this.archiveDirectory = new File(directory,"archive");
+    public Environment(File baseDirectory) {
+        this.baseDirectory = baseDirectory;
+        this.stagingDirectory = new File(baseDirectory,"data");
+        this.workingDirectory = new File(baseDirectory,"work");
+        this.archiveDirectory = new File(baseDirectory,"archive");
     }
 
-    public File getDirectory() {
-        return directory;
+    public File getBaseDirectory() {
+        return baseDirectory;
     }
 
     public File getStagingDirectory() {
@@ -62,10 +61,6 @@ public class Environment
 
     public File getWorkingDirectory() {
         return workingDirectory;
-    }
-
-    public File getStorageDirectory() {
-        return storageDirectory;
     }
 
     public File getArchiveDirectory() {
@@ -94,16 +89,15 @@ public class Environment
 
     /** TODO: Move this to the DAO */
     public void create() throws IOException {
-        FileUtils.forceMkdir(directory);
+        FileUtils.forceMkdir(baseDirectory);
         FileUtils.forceMkdir(stagingDirectory);
         FileUtils.forceMkdir(workingDirectory);
-        FileUtils.forceMkdir(storageDirectory);
         FileUtils.forceMkdir(archiveDirectory);
     }
 
     /** TODO: Move this to the DAO */
     public void delete() throws IOException {
-        FileUtils.deleteQuietly(directory);
+        FileUtils.deleteQuietly(baseDirectory);
     }
 
     /** TODO: Move this to the DAO */

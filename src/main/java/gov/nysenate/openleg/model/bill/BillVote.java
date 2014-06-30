@@ -192,32 +192,32 @@ public class BillVote extends BaseLegContent
 
     public void addAye(Person person)
     {
-        ayes.add(person.getFullname());
+        ayes.add(person.getFullName());
     }
 
     public void addAyeWR(Person person)
     {
-        ayeswr.add(person.getFullname());
+        ayeswr.add(person.getFullName());
     }
 
     public void addNay(Person person)
     {
-        nays.add(person.getFullname());
+        nays.add(person.getFullName());
     }
 
     public void addAbstain(Person person)
     {
-        abstains.add(person.getFullname());
+        abstains.add(person.getFullName());
     }
 
     public void addAbsent(Person person)
     {
-        absent.add(person.getFullname());
+        absent.add(person.getFullName());
     }
 
     public void addExcused(Person person)
     {
-        excused.add(person.getFullname());
+        excused.add(person.getFullName());
     }
 
     @Override

@@ -144,7 +144,7 @@ public class SpotCheck extends BaseScript
 
             String jsonSponsor = "";
             if (bill.getSponsor() != null) {
-                jsonSponsor = unescapeHTML(bill.getSponsor().getFullname()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
+                jsonSponsor = unescapeHTML(bill.getSponsor().getFullName()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
             }
             String lbdcSponsor = spotCheckBills.get(printNo).getSponsor().toUpperCase().replace("BILL", "").replace("COM", "");
             if (!lbdcSponsor.isEmpty() && !jsonSponsor.replace(" ","").equals(lbdcSponsor.replace(" ", "")) ) {
@@ -163,7 +163,7 @@ public class SpotCheck extends BaseScript
             if ( bill.getAmendment(billAmendment).getCoSponsors() != null ) {
                 List<Person> cosponsors = bill.getAmendment(billAmendment).getCoSponsors();
                 for(Person cosponsor : cosponsors) {
-                    jsonCosponsors.add(cosponsor.getFullname().toUpperCase());
+                    jsonCosponsors.add(cosponsor.getFullName().toUpperCase());
                 }
             }
 
