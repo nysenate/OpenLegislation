@@ -6,10 +6,7 @@ import gov.nysenate.util.Config;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -20,6 +17,7 @@ import javax.mail.Session;
 import javax.mail.Store;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -36,9 +34,20 @@ public class CheckMail extends BaseScript
     }
 
     @Override
+    protected Options getOptions() {
+        Options options = super.getOptions();
+        options.addOption("d","debug", false, "Runs the CheckMail script but does not continue with a spot check");
+        options.addOption("s", "save-emails", false, "Prevents expungement of daybreak emails, allowing them to be detected again");
+        return options;
+    }
+
+    @Override
     protected void execute(CommandLine opts) throws Exception
     {
         lock();
+
+        boolean debug = opts.hasOption("debug");
+        boolean saveEmails = opts.hasOption("save-emails");
 
         Properties props = System.getProperties();
         props.setProperty("mail.store.protocol", "imaps");
@@ -63,44 +72,48 @@ public class CheckMail extends BaseScript
         Folder destination = navigateToFolder(processedFolder, store);
         source.open(Folder.READ_WRITE);
 
-        String prefix="";
+        Date prefixDate = null;
         boolean runSpotCheck;
         boolean senateHigh, senateLow, assemblyHigh, assemblyLow, pageFile;
         senateHigh = senateLow = assemblyHigh = assemblyLow = pageFile = false;
         Map<String, Message> validMessages = new HashMap<String, Message>();   // Stores filename, message
 
         for(Message message : source.getMessages()) {
-            Date sent = message.getSentDate();
             String filename;
-            prefix = new SimpleDateFormat("yyyyMMdd").format(sent);
             if (message.getSubject().contains("Sen Act Title Sum Spon Law 4001-9999")) {
-                filename = prefix + ".senate.high.html";
+                filename = ".senate.high.html";
                 senateHigh = true;
             } else if (message.getSubject().contains("Sen Act Title Sum Spon Law 1-4000")) {
-                filename = prefix + ".senate.low.html";
+                filename = ".senate.low.html";
                 senateLow = true;
             } else if (message.getSubject().contains("Asm Act Title Sum Spon Law 4001-99999")) {
-                filename = prefix + ".assembly.high.html";
+                filename = ".assembly.high.html";
                 assemblyHigh = true;
             } else if (message.getSubject().contains("Asm Act Title Sum Spon Law 1-4000")) {
-                filename = prefix + ".assembly.low.html";
+                filename = ".assembly.low.html";
                 assemblyLow = true;
             } else if (message.getSubject().contains("Job ABPSDD - LBDC all Bills")) {
-                filename = prefix + ".page_file.txt";
+                filename = ".page_file.txt";
                 pageFile = true;
             } else {
                 logger.error("Unknown subject line: " + message.getSubject());
                 continue;
             }
+            Date messageDate = message.getSentDate();
+            if(prefixDate==null || prefixDate.before(messageDate)){
+                prefixDate = messageDate;
+            }
             validMessages.put(filename, message);
         }
+
+        String prefix = new SimpleDateFormat("yyyyMMdd").format(prefixDate);
 
         runSpotCheck = senateHigh && senateLow && assemblyHigh && assemblyLow && pageFile;
 
         if (runSpotCheck) {
             // Download the messages
             for(Map.Entry<String, Message> messageEntry : validMessages.entrySet()) {
-                String filename = messageEntry.getKey();
+                String filename = prefix + messageEntry.getKey();
                 Message message = messageEntry.getValue();
 
                 if (message.isMimeType("multipart/*")) {
@@ -108,7 +121,7 @@ public class CheckMail extends BaseScript
                     for (int i = 0; i < content.getCount(); i++) {
                         Part part = content.getBodyPart(i);
                         if (Part.ATTACHMENT.equals(part.getDisposition())) {
-                            System.out.println("Saving " + part.getFileName() + " to " + filename);
+                            logger.info("Saving " + part.getFileName() + " to " + filename);
                             String attachment = IOUtils.toString(part.getInputStream());
                             String lrsFileDir = config.getValue("checkmail.lrsFileDir");
                             FileUtils.write(new File(lrsFileDir, filename), attachment);
@@ -116,17 +129,23 @@ public class CheckMail extends BaseScript
                     }
                 }
 
-                source.copyMessages(new Message[]{message}, destination);
-                message.setFlag(Flags.Flag.DELETED, true);
+                if(!saveEmails) {
+                    source.copyMessages(new Message[]{message}, destination);
+                    message.setFlag(Flags.Flag.DELETED, true);
+                }
             }
 
-            // Finalize the message deletion from the source folder
-            source.expunge();
+            if(!saveEmails) {
+                // Finalize the message deletion from the source folder
+                source.expunge();
+            }
 
-            // Run the new report and regenerate our errors.
-            opts.getArgList().add(prefix);
-            new SpotCheck().execute(opts);
-            new CreateErrors().execute(opts);
+            if(!debug) {
+                // Run the new report and regenerate our errors.
+                opts.getArgList().add(0, prefix);
+                new SpotCheck().execute(opts);
+                new CreateErrors().execute(opts);
+            }
         }
         else{
             if(senateHigh || senateLow || assemblyHigh || assemblyLow || pageFile)
@@ -146,28 +165,35 @@ public class CheckMail extends BaseScript
         return folder;
     }
 
-    private void lock() throws Exception{
+    private void lock() throws IOException{
         File lockFile = new File(lockFilePath);
         if(lockFile.exists()){
             logger.error("Instance of CheckMail already running: halting execution.");
             System.exit(1);
         }
         logger.info("Creating lockfile: " + lockFilePath);
-        lockFile.createNewFile();
+        boolean fileCreated = lockFile.createNewFile();
+        if(!fileCreated){
+            logger.error("Error creating lock file");
+            throw new IOException("Could not create lock file");
+        }
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run(){
                 try {
                     unlock();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Error deleting lock file", e);
                 }
             }
         });
     }
 
-    private void unlock() throws Exception{
-        new File(lockFilePath).delete();
+    private void unlock() throws IOException{
+        boolean deleteResult = new File(lockFilePath).delete();
+        if(!deleteResult){
+            throw new IOException("Lock file was not deleted");
+        }
         logger.info("Lockfile " + lockFilePath + " destroyed");
     }
 
