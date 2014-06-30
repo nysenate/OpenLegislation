@@ -35,11 +35,28 @@ public class TranscriptProcessor {
         String date = null;
         String time = null;
         boolean firstPageParsed = false;
+        boolean firstLineParsed = false;
+        boolean skipFirstThreeLines = false;
+        int numSkipped = 0;
 
         while ((lineText = reader.readLine()) != null) {
             line = new TranscriptLine(lineText);
 
             if (!firstPageParsed) {
+
+                // Handle transcripts with 3 incorrect lines at start of transcript.
+                if (!firstLineParsed) {
+                    if (lineText.contains("SESSION")) {
+                        skipFirstThreeLines = true;
+                        numSkipped = 1;
+                        continue;
+                    }
+                }
+                if (skipFirstThreeLines == true && numSkipped <= 3) {
+                    numSkipped++;
+                    continue;
+                }
+
                 if (line.isLocation())
                     transcript.setLocation(line.removeLineNumber().trim());
 
@@ -55,6 +72,8 @@ public class TranscriptProcessor {
                 if (transcript.getLocation() != null && date != null && time != null && transcript.getType() != null)
                     firstPageParsed = true;
             }
+
+            firstLineParsed = true;
 
             fullText.append(line.fullText()).append("\n");
 
