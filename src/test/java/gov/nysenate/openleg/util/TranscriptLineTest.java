@@ -1,16 +1,13 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.util.TranscriptLine;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TranscriptLineTest {
 
     @Test
-    public void transcriptNumberHandledCorrectly() {
+    public void testTranscriptNumber() {
         TranscriptLine line = new TranscriptLine("                                 1234");
         assertTrue(line.isTranscriptNumber());
 
@@ -20,24 +17,31 @@ public class TranscriptLineTest {
         // Sometimes transcript number starts the second line. e.g. 011299.v1, 020597.v1
         line = new TranscriptLine("55");
         assertTrue(line.isTranscriptNumber());
+
+        // Remove broken pipe character. e.g. 122099.v1
+        line = new TranscriptLine("  �                               2301");
+        assertTrue(line.isTranscriptNumber());
     }
 
     @Test
-    public void testTextTrimmed() {
-        TranscriptLine line = new TranscriptLine("        21        NEW YORK STATE SENATE ");
-        assertEquals("NEW YORK STATE SENATE", line.textTrimmed());
+    public void testRemoveLineNumber() {
+        TranscriptLine line = new TranscriptLine("        21   NEW YORK STATE SENATE ");
+        assertEquals("   NEW YORK STATE SENATE", line.removeLineNumber());
 
         line = new TranscriptLine("    22");
-        assertEquals("", line.textTrimmed());
+        assertEquals("", line.removeLineNumber().trim());
 
         line = new TranscriptLine("    2");
-        assertEquals("", line.textTrimmed());
+        assertEquals("", line.removeLineNumber().trim());
+
+        line = new TranscriptLine("       THE NEW YORK SENATE");
+        assertEquals("       THE NEW YORK SENATE", line.removeLineNumber());
     }
 
     @Test
     public void timeTypoNotInterpretedAsLineNumber() {
         TranscriptLine line = new TranscriptLine("           10 00 a.m.");
-        assertEquals("10 00 a.m.", line.textTrimmed());
+        assertEquals("1000am", line.getTimeString());
     }
 
     @Test
@@ -126,5 +130,11 @@ public class TranscriptLineTest {
 
         line = new TranscriptLine(" (518) 371-8910 ");
         assertTrue(line.isStenographer());
+    }
+
+    @Test
+    public void testRemoveInvalidCharacters() {
+        TranscriptLine line = new TranscriptLine("  �                               2301");
+        assertEquals("2301", line.removeInvalidCharacters());
     }
 }

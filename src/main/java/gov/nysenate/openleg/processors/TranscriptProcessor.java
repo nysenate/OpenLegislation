@@ -35,13 +35,30 @@ public class TranscriptProcessor {
         String date = null;
         String time = null;
         boolean firstPageParsed = false;
+        boolean firstLineParsed = false;
+        boolean skipFirstThreeLines = false;
+        int numSkipped = 0;
 
         while ((lineText = reader.readLine()) != null) {
             line = new TranscriptLine(lineText);
 
             if (!firstPageParsed) {
+
+                // Handle transcripts with 3 incorrect lines at start of transcript.
+                if (!firstLineParsed) {
+                    if (lineText.contains("SESSION")) {
+                        skipFirstThreeLines = true;
+                        numSkipped = 1;
+                        continue;
+                    }
+                }
+                if (skipFirstThreeLines == true && numSkipped <= 3) {
+                    numSkipped++;
+                    continue;
+                }
+
                 if (line.isLocation())
-                    transcript.setLocation(line.textTrimmed());
+                    transcript.setLocation(line.removeLineNumber().trim());
 
                 if (line.isDate())
                     date = line.getDateString();
@@ -50,16 +67,18 @@ public class TranscriptProcessor {
                     time = line.getTimeString();
 
                 if (line.isSession())
-                    transcript.setType(line.textTrimmed());
+                    transcript.setType(line.removeLineNumber().trim());
 
                 if (transcript.getLocation() != null && date != null && time != null && transcript.getType() != null)
                     firstPageParsed = true;
             }
 
+            firstLineParsed = true;
+
             fullText.append(line.fullText()).append("\n");
 
-            if (line.textTrimmed().length() > 0) {
-                fullTextProcessed.append(line.textTrimmed()).append("\n");
+            if (line.removeLineNumber().trim().length() > 0) {
+                fullTextProcessed.append(line.removeLineNumber().trim()).append("\n");
             }
         }
 
