@@ -2,6 +2,8 @@ package gov.nysenate.openleg.dao.entity;
 
 public enum SqlMemberQuery
 {
+    /** --- Memebr --- */
+
     SELECT_MEMBER_SQL(
         "SELECT * FROM session_member sm\n" +
         "JOIN member ON member.id = sm.member_id\n" +

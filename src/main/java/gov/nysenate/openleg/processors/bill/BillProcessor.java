@@ -250,7 +250,7 @@ public class BillProcessor extends SOBIProcessor
                 baseBill.setModifiedDate(date);
             }
 
-            String prevPrintNo = billData.group(4).trim().replaceAll("[0-9`-]$", "");
+            String prevPrintNo = billData.group(4).trim();
             String prevSessionYearStr = billData.group(6).trim();
             if (!prevSessionYearStr.equals("0000") && !prevPrintNo.equals("00000")) {
                 try {

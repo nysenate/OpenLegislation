@@ -5,9 +5,6 @@ import java.util.Map;
 
 public class Member extends Person
 {
-    /** The unique id used to identify the member. */
-    private int memberId;
-
     /** The legislative chamber this member is associated with. */
     private Chamber chamber;
 
@@ -32,14 +29,6 @@ public class Member extends Person
     public Member() {}
 
     /** --- Basic Getters/Setters --- */
-
-    public int getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(int memberId) {
-        this.memberId = memberId;
-    }
 
     public Chamber getChamber() {
         return chamber;

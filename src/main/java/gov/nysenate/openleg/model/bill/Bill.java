@@ -16,8 +16,6 @@ import java.util.regex.Pattern;
  */
 public class Bill extends BaseLegContent implements Comparable<Bill>
 {
-    public static Pattern printNumberPattern = Pattern.compile("([ASLREJKBC])([0-9]{1,5})([A-Z]?)");
-
     /** A number assigned to a bill when it's introduced in the Legislature. Each printNo begins with a
      *  letter (A for Assembly, S for Senate) followed by 1 to 5 digits. This printNo is valid only for the
      *  2 year session period. */
@@ -43,7 +41,7 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
     protected String activeVersion = BillId.BASE_VERSION;
 
     /** A list of ids of versions of this legislation in previous sessions. */
-    protected List<BillId> previousVersions = new ArrayList<>();
+    protected Set<BillId> previousVersions = new HashSet<>();
 
     /** The Legislator who formally introduced the bill. */
     protected Person sponsor;
@@ -67,6 +65,44 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
         this.printNo = printNo;
         this.session = sessionYear;
         this.year = sessionYear;
+    }
+
+    /** --- Overrides --- */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof Bill) {
+            Bill other = (Bill)obj;
+            return this.getBillId().equals(other.getBillId());
+        }
+        else {
+            return false;
+        }
+    }
+
+    @Override
+    public int compareTo(Bill bill) {
+        return this.getBillId().compareTo(bill.getBillId());
+    }
+
+    @Override
+    public Date getPublishDate() {
+        for (BillAmendment amendment : amendmentMap.values()) {
+            if (amendment.getPublishDate() != null) {
+                return amendment.getPublishDate();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setPublishDate(Date publishDate) {
+        throw new RuntimeException("Cannot set publish on the bill container.");
+    }
+
+    @Override
+    public Date getModifiedDate() {
+        return this.modifiedDate;
     }
 
     /** --- Functional Getters/Setter --- */
@@ -228,11 +264,11 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
         return amendmentMap;
     }
 
-    public List<BillId> getPreviousVersions() {
+    public Set<BillId> getPreviousVersions() {
         return previousVersions;
     }
 
-    public void setPreviousVersions(List<BillId> previousVersions) {
+    public void setPreviousVersions(Set<BillId> previousVersions) {
         this.previousVersions = previousVersions;
     }
 
@@ -266,46 +302,6 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
 
     public void setOtherSponsors(List<Person> otherSponsors) {
         this.otherSponsors = otherSponsors;
-    }
-
-    @Override
-    public Date getPublishDate() {
-        for (BillAmendment amendment : amendmentMap.values()) {
-            if (amendment.getPublishDate() != null) {
-                return amendment.getPublishDate();
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void setPublishDate(Date publishDate) {
-        throw new RuntimeException("Cannot set publish on the bill container.");
-    }
-
-    @Override
-    public Date getModifiedDate() {
-        for (BillAmendment amendment : amendmentMap.values()) {
-            if (amendment.getModifiedDate().after(this.modifiedDate)) {
-                return amendment.getModifiedDate();
-            }
-        }
-        return this.modifiedDate;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj != null && obj instanceof Bill) {
-            Bill other = (Bill)obj;
-            return this.getBillId().equals(other.getBillId());
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int compareTo(Bill bill) {
-        return this.getBillId().compareTo(bill.getBillId());
     }
 
     /**

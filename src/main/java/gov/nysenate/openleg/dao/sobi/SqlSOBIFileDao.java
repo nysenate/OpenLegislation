@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.dao.sobi;
 
-import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.sobi.SOBIFile;

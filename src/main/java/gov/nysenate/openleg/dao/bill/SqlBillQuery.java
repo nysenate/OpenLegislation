@@ -101,10 +101,10 @@ public enum SqlBillQuery implements SqlQueryEnum
     ),
     INSERT_BILL_PREVIOUS_VERSION_SQL(
         "INSERT INTO ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +
-        "(bill_print_no, bill_session_year, prev_bill_print_no, prev_session_year)\n" +
-        "VALUES (:printNo, :sessionYear, :prevPrintNo, :prevSessionYear)"
+        "(bill_print_no, bill_session_year, prev_bill_print_no, prev_bill_session_year, prev_amend_version)\n" +
+        "VALUES (:printNo, :sessionYear, :prevPrintNo, :prevSessionYear, :prevVersion)"
     ),
-    DELETE_BILL_PREVIOUS_VERSION_SQL(
+    DELETE_BILL_PREVIOUS_VERSIONS_SQL(
         "DELETE FROM ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     );

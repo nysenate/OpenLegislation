@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.bill;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +17,7 @@ public class BillId implements Comparable<BillId>
     /** The default amendment version letter. */
     public static final String BASE_VERSION = "";
 
-    /** The base print number of the bill, e.g S1234 */
+    /** The base print number of the bill (no trailing character), e.g S1234 */
     private String basePrintNo;
 
     /** The session year of the bill. */
@@ -26,23 +28,45 @@ public class BillId implements Comparable<BillId>
 
     /* --- Constructors --- */
 
+    /**
+     * Use this constructor when the version is not known/applicable.
+     * @param printNo String
+     * @param session int
+     */
     public BillId(String printNo, int session) {
-        if (printNo != null && printNo.trim().matches(".*[a-zA-Z]$")) {
-            printNo = printNo.trim();
-            this.basePrintNo = printNo.substring(0, printNo.length() - 1).toUpperCase();
-            this.version = printNo.substring(printNo.length() - 1).toUpperCase();
-        }
-        else {
-            this.basePrintNo = (printNo != null) ? printNo.toUpperCase() : "";
-            this.version = "";
-        }
-        this.session = session;
+        this(printNo, session, null);
     }
 
+    /**
+     * Performs strict checks on the basePrintNo when constructing BillId. If you have a bill id
+     * as S02134A-2013, you should pass it in as ("S02134", 2013, "A"). However you can also
+     * pass it in as ("S02134A", 2013, null|"") and the constructor will parse out the version.
+     * @param basePrintNo String
+     * @param session int
+     * @param version String
+     */
     public BillId(String basePrintNo, int session, String version) {
-        this.basePrintNo = (basePrintNo != null) ? basePrintNo.trim().toUpperCase() : "";
-        this.session = session;
+        if (basePrintNo == null) {
+            throw new IllegalArgumentException("basePrintNo when constructing BillId cannot be null!");
+        }
+        basePrintNo = basePrintNo.trim().toUpperCase().replaceAll("[^0-9A-Z]", "");
+        if (!basePrintNo.matches("[A-Z].*")) {
+            throw new IllegalArgumentException("basePrintNo must begin with the letter designator!");
+        }
+        if (basePrintNo.matches(".*[A-Z]$")) {
+            String strippedPrintNo = basePrintNo.substring(0, basePrintNo.length() - 1);
+            version = (version == null || version.isEmpty()) ? basePrintNo.substring(basePrintNo.length() - 1)
+                                                             : version;
+            basePrintNo = strippedPrintNo;
+        }
+        try {
+            this.basePrintNo = basePrintNo.substring(0, 1) + Integer.parseInt(basePrintNo.substring(1, basePrintNo.length()));
+        }
+        catch (NumberFormatException ex) {
+            throw new IllegalArgumentException("basePrintNo must be numerical after the letter designator!");
+        }
         this.version = (version != null) ? version.trim().toUpperCase() : "";
+        this.session = (session % 2 == 0) ? session - 1 : session;
     }
 
     /** --- Methods --- */

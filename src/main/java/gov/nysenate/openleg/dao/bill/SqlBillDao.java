@@ -34,19 +34,21 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("printNo", printNo);
         params.addValue("sessionYear", sessionYear);
         try {
-            Bill bill = jdbcNamed.queryForObject(SqlBillQuery.SELECT_BILL_SQL.getSql(schema()), params, new BillRowMapper());
-            List<BillAmendment> billAmendments =
-                jdbcNamed.query(SqlBillQuery.SELECT_BILL_AMENDMENTS_SQL.getSql(schema()), params, new BillAmendmentRowMapper());
+            // Retrieve base Bill object
+            Bill bill = getBaseBill(params);
+            // Fetch the amendments
+            List<BillAmendment> billAmendments = getBillAmendment(params);
             for (BillAmendment amendment : billAmendments) {
                 params.addValue("version", amendment.getVersion());
-                List<BillId> sameAsList =
-                    jdbcNamed.query(SqlBillQuery.SELECT_BILL_SAME_AS_SQL.getSql(schema()), params, new BillSameAsRowMapper());
-                amendment.setSameAs(new HashSet<>(sameAsList));
+                // Fetch all the same as bill ids
+                amendment.setSameAs(new HashSet<>(getSameAsBills(params)));
             }
-            List<BillAction> billActions =
-                jdbcNamed.query(SqlBillQuery.SELECT_BILL_ACTIONS_SQL.getSql(schema()), params, new BillActionRowMapper());
             bill.addAmendments(billAmendments);
-            bill.setActions(billActions);
+            // Get the actions
+            bill.setActions(getBillActions(params));
+            // Get the prev bill version ids
+            bill.setPreviousVersions(new HashSet<>(getPrevVersions(params)));
+
             return bill;
         }
         catch (EmptyResultDataAccessException ex) {
@@ -77,32 +79,12 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
                 jdbcNamed.update(SqlBillQuery.INSERT_BILL_AMENDMENT_SQL.getSql(schema()), amendParams);
             }
             // Update the same as bills
-            List<BillId> existingSameAs =
-                jdbcNamed.query(SqlBillQuery.SELECT_BILL_SAME_AS_SQL.getSql(schema()), amendParams, new BillSameAsRowMapper());
-            if (existingSameAs.size() != amendment.getSameAs().size() || !existingSameAs.containsAll(amendment.getSameAs())) {
-                jdbcNamed.update(SqlBillQuery.DELETE_SAME_AS_FOR_BILL_SQL.getSql(schema()), amendParams);
-                for (BillId sameAsBillId : amendment.getSameAs()) {
-                    MapSqlParameterSource sameAsParams = getBillSameAsParams(amendment, sameAsBillId, sobiFragment);
-                    jdbcNamed.update(SqlBillQuery.INSERT_BILL_SAME_AS_SQL.getSql(schema()), sameAsParams);
-                }
-            }
+            updateBillSameAs(sobiFragment, amendment, amendParams);
         }
         // Determine which actions need to be inserted/deleted. Individual actions are never updated.
-        List<BillAction> existingBillActions =
-            jdbcNamed.query(SqlBillQuery.SELECT_BILL_ACTIONS_SQL.getSql(schema()), billParams, new BillActionRowMapper());
-        List<BillAction> newBillActions = new ArrayList<>(bill.getActions());
-        newBillActions.removeAll(existingBillActions);    // New actions to insert
-        existingBillActions.removeAll(bill.getActions()); // Old actions to delete
-        // Delete actions that are not in the updated list
-        for (BillAction action : existingBillActions) {
-            MapSqlParameterSource actionParams = getBillActionParams(action, sobiFragment);
-            jdbcNamed.update(SqlBillQuery.DELETE_BILL_ACTION_SQL.getSql(schema()), actionParams);
-        }
-        // Insert all new actions
-        for (BillAction action : newBillActions) {
-            MapSqlParameterSource actionParams = getBillActionParams(action, sobiFragment);
-            jdbcNamed.update(SqlBillQuery.INSERT_BILL_ACTION_SQL.getSql(schema()), actionParams);
-        }
+        updateActions(bill, sobiFragment, billParams);
+        // Determine if the previous versions have changed and insert accordingly.
+        updatePreviousBillVersions(bill, sobiFragment, billParams);
     }
 
     /** {@inheritDoc} */
@@ -127,6 +109,78 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     @Override
     public void deleteAllBills() {
 
+    }
+
+    /** --- Internal Methods --- */
+
+    private Bill getBaseBill(MapSqlParameterSource params) {
+        return jdbcNamed.queryForObject(SqlBillQuery.SELECT_BILL_SQL.getSql(schema()), params, new BillRowMapper());
+    }
+
+    private List<BillAction> getBillActions(MapSqlParameterSource params) {
+        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_ACTIONS_SQL.getSql(schema()), params, new BillActionRowMapper());
+    }
+
+    private List<BillId> getPrevVersions(MapSqlParameterSource params) {
+        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_PREVIOUS_VERSIONS_SQL.getSql(schema()), params, new BillPreviousVersionRowMapper());
+    }
+
+    private List<BillId> getSameAsBills(MapSqlParameterSource params) {
+        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_SAME_AS_SQL.getSql(schema()), params, new BillSameAsRowMapper());
+    }
+
+    private List<BillAmendment> getBillAmendment(MapSqlParameterSource params) {
+        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_AMENDMENTS_SQL.getSql(schema()), params, new BillAmendmentRowMapper());
+    }
+
+    /**
+     * Save the bill's same as list by replacing the existing records with the current records if they are not
+     * the same.
+     */
+    private void updateBillSameAs(SOBIFragment sobiFragment, BillAmendment amendment, MapSqlParameterSource amendParams) {
+        List<BillId> existingSameAs = getSameAsBills(amendParams);
+        if (existingSameAs.size() != amendment.getSameAs().size() || !existingSameAs.containsAll(amendment.getSameAs())) {
+            jdbcNamed.update(SqlBillQuery.DELETE_SAME_AS_FOR_BILL_SQL.getSql(schema()), amendParams);
+            for (BillId sameAsBillId : amendment.getSameAs()) {
+                MapSqlParameterSource sameAsParams = getBillSameAsParams(amendment, sameAsBillId, sobiFragment);
+                jdbcNamed.update(SqlBillQuery.INSERT_BILL_SAME_AS_SQL.getSql(schema()), sameAsParams);
+            }
+        }
+    }
+
+    /**
+     * Save the bill's action list into the database. Only delete/insert where necessary to allow for a
+     * better snapshot of how the actions came in.
+     */
+    private void updateActions(Bill bill, SOBIFragment sobiFragment, MapSqlParameterSource billParams) {
+        List<BillAction> existingBillActions = getBillActions(billParams);
+        List<BillAction> newBillActions = new ArrayList<>(bill.getActions());
+        newBillActions.removeAll(existingBillActions);    // New actions to insert
+        existingBillActions.removeAll(bill.getActions()); // Old actions to delete
+        // Delete actions that are not in the updated list
+        for (BillAction action : existingBillActions) {
+            MapSqlParameterSource actionParams = getBillActionParams(action, sobiFragment);
+            jdbcNamed.update(SqlBillQuery.DELETE_BILL_ACTION_SQL.getSql(schema()), actionParams);
+        }
+        // Insert all new actions
+        for (BillAction action : newBillActions) {
+            MapSqlParameterSource actionParams = getBillActionParams(action, sobiFragment);
+            jdbcNamed.update(SqlBillQuery.INSERT_BILL_ACTION_SQL.getSql(schema()), actionParams);
+        }
+    }
+
+    /**
+     * Save the bill's previous version list by replacing the existing list with the current list.
+     */
+    private void updatePreviousBillVersions(Bill bill, SOBIFragment sobiFragment, MapSqlParameterSource billParams) {
+        List<BillId> existingPrevBills = getPrevVersions(billParams);
+        if (existingPrevBills.size() != bill.getPreviousVersions().size() || existingPrevBills.containsAll(bill.getPreviousVersions())) {
+            jdbcNamed.update(SqlBillQuery.DELETE_BILL_PREVIOUS_VERSIONS_SQL.getSql(schema()), billParams);
+        }
+        for (BillId prevBillId : bill.getPreviousVersions()) {
+            MapSqlParameterSource prevParams = getBillPrevVersionParams(bill, prevBillId, sobiFragment);
+            jdbcNamed.update(SqlBillQuery.INSERT_BILL_PREVIOUS_VERSION_SQL.getSql(schema()), prevParams);
+        }
     }
 
     /** --- Helper Classes --- */
@@ -200,11 +254,12 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     {
         @Override
         public BillId mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new BillId(rs.getString("prev_bill_print_no"), rs.getInt("prev_bill_session_year"));
+            return new BillId(rs.getString("prev_bill_print_no"), rs.getInt("prev_bill_session_year"),
+                              rs.getString("prev_amend_version"));
         }
     }
 
-    /** --- Internal Methods --- */
+    /** --- Param Source Methods --- */
 
     /**
      * Returns a MapSqlParameterSource with columns mapped to Bill values for use in update/insert queries on
@@ -282,6 +337,17 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("sameAsPrintNo", sameAs.getBasePrintNo());
         params.addValue("sameAsSessionYear", sameAs.getSession());
         params.addValue("sameAsVersion", sameAs.getVersion());
+        addSOBIFragmentParams(fragment, params);
+        return params;
+    }
+
+    private MapSqlParameterSource getBillPrevVersionParams(Bill bill, BillId prevVersion, SOBIFragment fragment) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("printNo", bill.getPrintNo());
+        params.addValue("sessionYear", bill.getSession());
+        params.addValue("prevPrintNo", prevVersion.getBasePrintNo());
+        params.addValue("prevSessionYear", prevVersion.getSession());
+        params.addValue("prevVersion", prevVersion.getVersion());
         addSOBIFragmentParams(fragment, params);
         return params;
     }
