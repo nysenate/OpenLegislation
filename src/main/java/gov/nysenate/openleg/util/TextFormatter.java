@@ -2,6 +2,8 @@ package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.model.Bill;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +40,44 @@ public class TextFormatter {
             }
         }
         return text.toString();
+    }
+
+    public static List<List<String>> pdfPrintablePages(Bill bill) {
+        List<List<String>> pages = new ArrayList<List<String>>();
+
+        if (bill != null && bill.getFulltext() != null) {
+            pages = generatePages(bill);
+        }
+        return pages;
+    }
+
+    private static List<List<String>> generatePages(Bill bill) {
+        List<List<String>> pages = new ArrayList<List<String>>();
+        List<String> page = new ArrayList<String>();
+        int lineNum = 1;
+        String line;
+        String[] lines = bill.getFulltext().split("\n");
+        for (int i = 0; i < lines.length; i++) {
+            line = lines[i];
+            if (isFirstLineOfNextPage(line, lineNum)) {
+                pages.add(page);
+                page = new ArrayList<String>();
+            }
+            page.add(line);
+            lineNum++;
+
+            if (i == lines.length - 1) {
+                pages.add(page);
+            }
+        }
+
+        return pages;
+    }
+
+    private static boolean isFirstLineOfNextPage(String line, int lineNum) {
+        Matcher startPageMatcher = startPagePattern.matcher(line);
+        // Ignore erroneous matches in first 10 lines of bill text.
+        return lineNum > 10 && startPageMatcher.find();
     }
 
     /**
