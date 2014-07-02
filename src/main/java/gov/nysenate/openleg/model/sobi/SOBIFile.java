@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.sobi;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,7 +27,10 @@ public class SOBIFile
     public static final String DEFAULT_ENCODING = "CP850";
 
     /** The format required for the SOBI file name. e.g. SOBI.D130323.T065432.TXT */
-    public static final SimpleDateFormat sobiDateFormat = new SimpleDateFormat("'SOBI.D'yyMMdd'.T'HHmmss'.TXT'");
+    private static final String sobiDateFullPattern = "'SOBI.D'yyMMdd'.T'HHmmss'.TXT'";
+
+    /** Alternate format for SOBI files with no seconds specified in the filename */
+    private static final String sobiDateNoSecsPattern = "'SOBI.D'yyMMdd'.T'HHmm'.TXT'";
 
     /** The file name of the SOBI file, serves as the unique identifier */
     private String fileName;
@@ -62,7 +66,7 @@ public class SOBIFile
             this.processedCount = 0;
             this.pendingProcessing = false;
             try {
-                this.publishedDateTime = sobiDateFormat.parse(fileName);
+                this.publishedDateTime = DateUtils.parseDate(fileName, sobiDateFullPattern, sobiDateNoSecsPattern);
             }
             catch (ParseException ex) {
                 this.publishedDateTime = new Date(file.lastModified());
