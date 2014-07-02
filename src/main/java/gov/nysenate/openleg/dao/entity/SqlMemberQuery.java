@@ -1,14 +1,23 @@
 package gov.nysenate.openleg.dao.entity;
 
-public enum SqlMemberQuery
+import gov.nysenate.openleg.dao.base.SqlQueryEnum;
+import gov.nysenate.openleg.dao.base.SqlQueryUtils;
+import gov.nysenate.openleg.dao.base.SqlTable;
+
+public enum SqlMemberQuery implements SqlQueryEnum
 {
     /** --- Memebr --- */
 
-    SELECT_MEMBER_SQL(
-        "SELECT * FROM session_member sm\n" +
-        "JOIN member ON member.id = sm.member_id\n" +
-        "JOIN person ON person.id = member.person_id\n" +
-        "WHERE sm.short_name = :shortName AND sm.session_year = :sessionYear"
+    SELECT_MEMBER_BY_SHORTNAME_SQL(
+        "SELECT sm.lbdc_short_name, sm.session_year, sm.district_code, m.chamber, m.incumbent,\n" +
+        "       p.id AS person_id, p.full_name, p.first_name, p.middle_name, p.last_name, p.suffix " +
+        "FROM " + SqlTable.SESSION_MEMBER + " sm\n" +
+        "JOIN " + SqlTable.MEMBER + " m ON m.id = sm.member_id\n" +
+        "JOIN " + SqlTable.PERSON + " p ON p.id = m.person_id\n" +
+        "WHERE sm.lbdc_short_name ILIKE :shortName AND m.chamber = :chamber::chamber "
+    ),
+    SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL(
+         SELECT_MEMBER_BY_SHORTNAME_SQL.sql + " AND sm.session_year = :sessionYear"
     );
 
     private String sql;
@@ -17,7 +26,8 @@ public enum SqlMemberQuery
         this.sql = sql;
     }
 
-    public String getSql() {
-        return this.sql;
+    @Override
+    public String getSql(String environmentSchema) {
+        return SqlQueryUtils.getSqlWithSchema(sql, environmentSchema);
     }
 }
