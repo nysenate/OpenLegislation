@@ -29,6 +29,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -90,6 +91,7 @@ public class SpotCheck extends BaseScript
         runner.update("delete from report_observation where reportId = ?", report.getId());
 
         for(String id : bills.keySet()) {
+            //logger.info("checking bill "+id);
             String billNo = id+"-2013";
             Bill jsonBill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
 
@@ -146,6 +148,9 @@ public class SpotCheck extends BaseScript
                 jsonSponsor = unescapeHTML(jsonBill.getSponsor().getFullname()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", "");
             }
             String lbdcSponsor = bills.get(id).getSponsor().toUpperCase().replace("BILL", "").replace("COM", "");
+            if (lbdcSponsor.startsWith("RULES ") && lbdcSponsor.contains("(") && !lbdcSponsor.contains(")")){
+                lbdcSponsor = lbdcSponsor.concat(")");
+            }
             if (!lbdcSponsor.isEmpty() && !jsonSponsor.replace(" ","").equals(lbdcSponsor.replace(" ", "")) ) {
                 if (!id.startsWith("D")) {
                     logger.error("Sponsor: "+billNo);
@@ -157,14 +162,20 @@ public class SpotCheck extends BaseScript
             }
 
 
-            TreeSet<String> lbdcCosponsors = new TreeSet<String>(bills.get(id).getCosponsors());
+            TreeSet<String> lbdcCosponsors = new TreeSet<String>();
             TreeSet<String> jsonCosponsors = new TreeSet<String>();
             if ( jsonBill.getCoSponsors() != null ) {
                 List<Person> cosponsors = jsonBill.getCoSponsors();
                 for(Person cosponsor : cosponsors) {
-                    jsonCosponsors.add(cosponsor.getFullname().toUpperCase());
+                    // store all names as Capitalized without () for comparison
+                    jsonCosponsors.add(WordUtils.capitalizeFully(cosponsor.getFullname().replaceAll("[\\(\\)]+", "")));
                 }
             }
+            // Capitalize and remove () for lbdc too
+            for(String cosponsor : bills.get(id).getCosponsors()){
+                lbdcCosponsors.add(WordUtils.capitalizeFully(cosponsor.replaceAll("[\\(\\)]+", "")));
+            }
+
 
             if (!lbdcCosponsors.isEmpty() && (lbdcCosponsors.size() != jsonCosponsors.size() || (!lbdcCosponsors.isEmpty() && !lbdcCosponsors.containsAll(jsonCosponsors))) ) {
                 if (!id.startsWith("D")) {
@@ -227,17 +238,22 @@ public class SpotCheck extends BaseScript
                 observations.add(new ReportObservation(report.getId(), billNo, "BILL_AMENDMENT", StringUtils.join(lbdcAmendments, "\n"), StringUtils.join(jsonAmendments, "\n")));
                 errorTotals.put("amendments", errorTotals.get("amendments") + 1);
             }
+            //logger.info("Bill "+id+" checked");
         }
 
+        logger.info("Bills checked, writing observations to db...");
+
         for (ReportObservation observation : observations) {
+            //logger.info("inserting observation  "+observation.getOid() + " " + observation.getField() + " " + observation.getActualValue() + " " + observation.getObservedValue());
             runner.update(
-                "INSERT INTO report_observation (reportId, oid, field, actualValue, observedValue) VALUES (?, ?, ?, ?, ?)",
-                observation.getReportId(),
-                observation.getOid(),
-                observation.getField(),
-                observation.getActualValue(),
-                observation.getObservedValue()
+                    "INSERT INTO report_observation (reportId, oid, field, actualValue, observedValue) VALUES (?, ?, ?, ?, ?)",
+                    observation.getReportId(),
+                    observation.getOid(),
+                    observation.getField(),
+                    observation.getActualValue(),
+                    observation.getObservedValue()
             );
+            //logger.info("observation " + observation.getOid() + " inserted");
         }
 
         System.out.println(errorTotals);

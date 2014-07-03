@@ -400,11 +400,6 @@ public class BillProcessor
             bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
         }
 
-        // An old bug with the assembly sponsors field needs to be corrected, NYSS 7215
-        if (bill.getSponsor() != null && bill.getSponsor().getFullname().startsWith("RULES ")) {
-            bill.getSponsor().setFullname("RULES");
-        }
-
         if (bill.isPublished()) {
             // Sponsor and summary information needs to be synced at all times.
             // Normally it is always sent to the base bill and broadcasted to amendments
@@ -551,7 +546,23 @@ public class BillProcessor
                 bill.setMultiSponsors(new ArrayList<Person>());
 
             } else {
-                bill.setSponsor(new Person(line.trim()));
+                // An old bug with the assembly sponsors field needs to be corrected, NYSS 7215
+                if (bill.getSponsor() != null && bill.getSponsor().getFullname().startsWith("RULES ")) {
+                    final String sponsorMatch = "RULES COM ([a-zA-Z-']+)( [A-Z])?(.*)";
+                    final String sponsorReplacement = "RULES (REQUEST OF $1$2)";
+                    final String sponsorReplacementMatch = "RULES \\(REQUEST OF [a-zA-Z-']*\\)";
+
+                    String sponsorName = bill.getSponsor().getFullname();
+                    if (sponsorName.matches(sponsorMatch)) {
+                        bill.getSponsor().setFullname(sponsorName.replaceAll(sponsorMatch, sponsorReplacement).toUpperCase());
+                    }
+                    else if (!sponsorName.matches(sponsorReplacementMatch)) {
+                        bill.getSponsor().setFullname("RULES");
+                    }
+                }
+                else {
+                    bill.setSponsor(new Person(line.trim()));
+                }
             }
         }
     }

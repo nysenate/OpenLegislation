@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 
 public class TranscriptLine {
 
+    private static final String invalidCharactersRegex = "[^a-zA-Z0-9]+";
     private static final int PAGE_NUM_INDEX = 10;
     private static final int PAGE_NUM_MAX = 27;
     private final String line;
@@ -18,17 +19,6 @@ public class TranscriptLine {
     }
 
     /**
-     * @return the line stripped of line number and whitespace
-     */
-    public String removeLineNumsAndTrim() {
-        if (!isTranscriptNumber()) {
-            if (hasLineNumber())
-                return removeLineNumber().trim();
-        }
-        return line.trim();
-    }
-
-    /**
      * Transcript number is usually right aligned at the top of each page.
      * However, sometimes it's left aligned on the next line instead.
      * e.g. 082895.v1, 011299.v1
@@ -36,7 +26,7 @@ public class TranscriptLine {
      *         <code>false</code> otherwise.
      */
     public boolean isTranscriptNumber() {
-        String trim = line.replaceAll("[^a-zA-Z0-9]+","").trim();
+        String trim = line.replaceAll(invalidCharactersRegex,"").trim();
         if (!isNumber(trim)) {
             return false;
         }
@@ -129,10 +119,14 @@ public class TranscriptLine {
     }
 
     public boolean isEmpty() {
-        return line.replaceAll("[^a-zA-Z0-9]+","").isEmpty();
+        return line.replaceAll(invalidCharactersRegex,"").isEmpty();
     }
 
     public boolean isStenographer() {
         return line.contains("Candyco Transcription Service, Inc.") || line.contains("(518) 371-8910");
+    }
+
+    public String removeInvalidCharacters() {
+        return fullText().replaceAll(invalidCharactersRegex, "");
     }
 }

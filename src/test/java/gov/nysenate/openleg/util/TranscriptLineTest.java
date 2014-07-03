@@ -41,7 +41,7 @@ public class TranscriptLineTest {
     @Test
     public void timeTypoNotInterpretedAsLineNumber() {
         TranscriptLine line = new TranscriptLine("           10 00 a.m.");
-        assertEquals("10 00 a.m.", line.removeLineNumber().trim());
+        assertEquals("1000am", line.getTimeString());
     }
 
     @Test
@@ -132,4 +132,9 @@ public class TranscriptLineTest {
         assertTrue(line.isStenographer());
     }
 
+    @Test
+    public void testRemoveInvalidCharacters() {
+        TranscriptLine line = new TranscriptLine("  �                               2301");
+        assertEquals("2301", line.removeInvalidCharacters());
+    }
 }
