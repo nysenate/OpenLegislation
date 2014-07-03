@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.model.bill;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,6 +71,10 @@ public class BillId implements Comparable<BillId>
 
     public String getPrintNo() {
         return this.basePrintNo + ((this.version != null) ? this.version : "");
+    }
+
+    public BillType getBillType() {
+        return BillType.valueOf(this.basePrintNo.substring(0, 1));
     }
 
     /**

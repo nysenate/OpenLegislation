@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.config;
+package gov.nysenate.openleg;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +15,9 @@ import org.springframework.core.io.Resource;
  */
 @Configuration
 @Profile({"test"})
-public class TestPropertyConfig
+public class TestConfig
 {
-    private static final Logger logger = LoggerFactory.getLogger(TestPropertyConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestConfig.class);
 
     public static final String PROPERTY_FILENAME = "test.app.properties";
 

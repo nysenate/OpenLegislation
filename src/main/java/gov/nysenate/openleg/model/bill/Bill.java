@@ -44,10 +44,10 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
     protected Set<BillId> previousVersions = new HashSet<>();
 
     /** The Legislator who formally introduced the bill. */
-    protected Person sponsor;
+    protected BillSponsor sponsor;
 
     /** A list of coSponsors to be given preferential display treatment. */
-    private List<Person> otherSponsors = new ArrayList<>();
+    protected List<Person> otherSponsors = new ArrayList<>();
 
     /** A list of committees this bill has been referred to. */
     protected List<String> pastCommittees = new ArrayList<>();
@@ -105,7 +105,7 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
         return this.modifiedDate;
     }
 
-    /** --- Functional Getters/Setter --- */
+    /** --- Functional Getters/Setters --- */
 
     /**
      * Returns a reference that identifies this base bill.
@@ -116,11 +116,19 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
     }
 
     /**
-     * Indicate if this bill is a resolution by checking that it's not a senate/assembly bill.
+     * Returns the BillType which contains info such as the prefix and chamber.
+     * @return BillType
+     */
+    public BillType getBillType() {
+        return this.getBillId().getBillType();
+    }
+
+    /**
+     * Indicate if this bill is a resolution.
      * @return - True if this bill is a resolution of some sort.
      */
     public boolean isResolution() {
-        return this.printNo.charAt(0) != 'A' && this.printNo.charAt(0) != 'S';
+        return getBillType().isResolution();
     }
 
     /**
@@ -280,11 +288,11 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
         this.actions = actions;
     }
 
-    public Person getSponsor() {
+    public BillSponsor getSponsor() {
         return sponsor;
     }
 
-    public void setSponsor(Person sponsor) {
+    public void setSponsor(BillSponsor sponsor) {
         this.sponsor = sponsor;
     }
 

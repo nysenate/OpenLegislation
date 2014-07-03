@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.services;
+package gov.nysenate.openleg.service;
 
 import gov.nysenate.openleg.model.BaseLegContent;
 import gov.nysenate.openleg.model.Change;

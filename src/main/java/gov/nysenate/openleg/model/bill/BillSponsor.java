@@ -22,7 +22,7 @@ public class BillSponsor
     private boolean rulesSponsor = false;
 
     /** A RULES sponsor can have a list of members that requested it. */
-    private List<Member> rulesRequestMembers = new ArrayList<>();
+    private List<Member> rulesRequestMembers;
 
     /** --- Constructors --- */
 
@@ -30,6 +30,7 @@ public class BillSponsor
 
     public BillSponsor(Member member) {
         this.member = member;
+        this.rulesRequestMembers = new ArrayList<>();
     }
 
     /** --- Functional Getters/Setters --- */
