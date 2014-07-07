@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -17,40 +16,52 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-@Repository
+@Repository("sqlMember")
 public class SqlMemberDao extends SqlBaseDao implements MemberDao
 {
     private static final Logger logger = LoggerFactory.getLogger(SqlMemberDao.class);
 
+    /* --- Implemented Methods --- */
+
     /** {@inheritDoc} */
     @Override
-    public Map<Integer, Member> getMembersByLBDCShortName(String lbdcShortName, Chamber chamber) {
+    public Map<Integer, Member> getMemberById(int id) {
+        MapSqlParameterSource params = new MapSqlParameterSource("memberId", id);
+        List<Member> memberList =
+            jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
+        return getMemberSessionMap(memberList);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Member getMemberById(int id, int session) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("memberId", id);
+        params.addValue("sessionYear", session);
+        return jdbcNamed.queryForObject(
+            SqlMemberQuery.SELECT_MEMBER_BY_ID_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Map<Integer, Member> getMembersByLBDCName(String lbdcShortName, Chamber chamber) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("shortName", lbdcShortName);
         params.addValue("chamber", chamber.name().toLowerCase());
         List<Member> members =
             jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SQL.getSql(schema()), params, new MemberRowMapper());
-        TreeMap<Integer, Member> memberMap = new TreeMap<>();
-        for (Member member : members) {
-            memberMap.put(member.getSessionYear(), member);
-        }
-        return memberMap;
+        return getMemberSessionMap(members);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Member getMemberByLBDCShortName(String lbdcShortName, int sessionYear, Chamber chamber) {
+    public Member getMemberByLBDCName(String lbdcShortName, int sessionYear, Chamber chamber) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("shortName", lbdcShortName.trim());
         params.addValue("sessionYear", (sessionYear % 2 == 0) ? sessionYear - 1 : sessionYear);
         params.addValue("chamber", chamber.name().toLowerCase());
-        try {
-            return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
-        }
-        catch (EmptyResultDataAccessException ex) {
-            logger.debug("Member with given shortName: {} and session year: {} was not found!", lbdcShortName, sessionYear);
-            return null;
-        }
+        logger.debug("Fetching member {} ({}) from database...", lbdcShortName, sessionYear);
+        return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
     }
 
     /** {@inheritDoc} */
@@ -72,6 +83,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         @Override
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
             Member member = new Member();
+            member.setMemberId(rs.getInt("member_id"));
             member.setLbdcShortName(rs.getString("lbdc_short_name"));
             member.setSessionYear(rs.getInt("session_year"));
             member.setDistrictCode(rs.getInt("district_code"));
@@ -85,5 +97,21 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             member.setSuffix(rs.getString("suffix"));
             return member;
         }
+    }
+
+    /** --- Internal Methods --- */
+
+    /**
+     * Converts a list of member objects referring to multiple session years into a
+     * map keyed by the session year.
+     * @param members List<Member>
+     * @return Map<Integer, Member>
+     */
+    private Map<Integer, Member> getMemberSessionMap(List<Member> members) {
+        TreeMap<Integer, Member> memberMap = new TreeMap<>();
+        for (Member member : members) {
+            memberMap.put(member.getSessionYear(), member);
+        }
+        return memberMap;
     }
 }

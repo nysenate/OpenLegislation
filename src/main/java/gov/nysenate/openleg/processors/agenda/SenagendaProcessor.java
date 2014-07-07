@@ -227,7 +227,7 @@ public class SenagendaProcessor
         BillProcessor processor = new BillProcessor();
         SOBIBlock mockBlock = new SOBIBlock(year+printNo+(printNo.matches("[A-Z]$") ? "" : " ")+1+"     ");
         Bill bill = null; /** FIXME processor.getOrCreateBaseBill(mockBlock, modifiedDate, storage); */
-        bill.setSponsor(new Person(sponsors[0].trim()));
+        /** FIXME: bill.setSponsor(new Person(sponsors[0].trim())); */
 
         // It must be published if it is on the agenda
         BillAmendment amendment = bill.getAmendment(billAmendment);

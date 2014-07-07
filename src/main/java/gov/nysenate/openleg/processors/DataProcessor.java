@@ -14,7 +14,7 @@ import gov.nysenate.openleg.processors.calendar.CalendarActiveListProcessor;
 import gov.nysenate.openleg.processors.calendar.CalendarProcessor;
 import gov.nysenate.openleg.processors.entity.CommitteeProcessor;
 import gov.nysenate.openleg.processors.sobi.SOBIProcessor;
-import gov.nysenate.openleg.services.ServiceBase;
+import gov.nysenate.openleg.service.ServiceBase;
 import gov.nysenate.openleg.util.Storage;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

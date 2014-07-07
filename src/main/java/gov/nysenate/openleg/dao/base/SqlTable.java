@@ -19,6 +19,7 @@ public enum SqlTable
     AGENDA_VOTE_COMMITTEE_VOTE   ("agenda_vote_committee_vote"),
 
     BILL                         ("bill"),
+    BILL_SPONSOR                 ("bill_sponsor"),
     BILL_COMMITTEE               ("bill_committee"),
     BILL_AMENDMENT               ("bill_amendment"),
     BILL_AMENDMENT_ACTION        ("bill_amendment_action"),

@@ -1,11 +1,17 @@
 package gov.nysenate.openleg.dao.bill;
 
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.sobi.SOBIFragment;
 
 public interface BillDao
 {
-    public Bill getBill(String printNo, int sessionYear);
+    /**
+     * Retrieve a Bill via a BillId.
+     * @param billId BillId
+     * @return Bill object if found, null otherwise.
+     */
+    public Bill getBill(BillId billId);
 
     public void updateBill(Bill bill, SOBIFragment sobiFragment);
 

@@ -2,8 +2,8 @@ package gov.nysenate.openleg.scripts;
 
 import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.processors.DataProcessor;
-import gov.nysenate.openleg.services.ServiceBase;
-import gov.nysenate.openleg.services.UpdateReporter;
+import gov.nysenate.openleg.service.ServiceBase;
+import gov.nysenate.openleg.service.UpdateReporter;
 import gov.nysenate.openleg.util.Application;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;

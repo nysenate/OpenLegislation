@@ -2,17 +2,21 @@ package gov.nysenate.openleg.processors.bill;
 
 import gov.nysenate.openleg.dao.bill.BillDao;
 import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.model.sobi.SOBIBlock;
 import gov.nysenate.openleg.model.sobi.SOBIFragment;
 import gov.nysenate.openleg.processors.sobi.SOBIProcessor;
 import gov.nysenate.openleg.processors.util.IngestCache;
+import gov.nysenate.openleg.service.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.service.entity.MemberService;
 import gov.nysenate.openleg.util.Storage;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -57,6 +61,9 @@ public class BillProcessor extends SOBIProcessor
     /** Pattern for extracting the substituting bill printNo from matching bill events. */
     public static final Pattern substituteEventTextPattern = Pattern.compile("SUBSTITUTED (FOR|BY) (.*)");
 
+    /** RULES Sponsors are formatted as RULES COM followed by the name of the sponsor that requested passage. */
+    protected static final Pattern rulesSponsorPattern = Pattern.compile("RULES COM ([a-zA-Z-']+)( [A-Z])?(.*)");
+
     /** Pattern to extract bill number and version when in the format 1234A. */
     public static final String simpleBillRegex = "([0-9]{2,})([ a-zA-Z]?)";
 
@@ -78,6 +85,9 @@ public class BillProcessor extends SOBIProcessor
     /** Retrieves/saves bill data to the persistence layer. */
     @Autowired
     private BillDao billDao;
+
+    @Autowired
+    private MemberService memberService;
 
     /** Cache used to improve processing performance. */
     private IngestCache<BillId, Bill> ingestCache;
@@ -174,7 +184,7 @@ public class BillProcessor extends SOBIProcessor
         BillId baseBillId = new BillId(block.getBasePrintNo(), block.getSession());
         boolean isCached = billCache.has(baseBillId);
         logger.trace("Bill ingest cache " + ((isCached) ? "hit" : "miss") + " for bill id " + baseBillId);
-        Bill baseBill = (isCached) ? billCache.get(baseBillId) : billDao.getBill(block.getBasePrintNo(), block.getSession());
+        Bill baseBill = (isCached) ? billCache.get(baseBillId) : billDao.getBill(baseBillId);
         if (baseBill == null) {
             if (!isBaseVersion) {
                 logger.warn("Bill Amendment filed without initial bill at " + block.getLocation() + " - " + block.getHeader());
@@ -245,10 +255,11 @@ public class BillProcessor extends SOBIProcessor
         Matcher billData = billInfoPattern.matcher(data);
         if (billData.find()) {
             String sponsor = billData.group(1).trim();
-            if (!sponsor.isEmpty() && (baseBill.getSponsor() == null || baseBill.getSponsor().getFullName().isEmpty())) {
-                baseBill.setSponsor(new Person(sponsor));
-                baseBill.setModifiedDate(date);
-            }
+            /** TODO: FIX SPONSORS */
+           // if (!sponsor.isEmpty() && (baseBill.getSponsor() == null || baseBill.getSponsor().getFullName().isEmpty())) {
+           //     baseBill.setSponsor(new Person(sponsor));
+           //     baseBill.setModifiedDate(date);
+           // }
 
             String prevPrintNo = billData.group(4).trim();
             String prevSessionYearStr = billData.group(6).trim();
@@ -468,9 +479,9 @@ public class BillProcessor extends SOBIProcessor
         logger.info("SAVING "+bill.getBillId());
 
         // An old bug with the assembly sponsors field needs to be corrected, NYSS 7215
-        if (bill.getSponsor() != null && bill.getSponsor().getFullName().startsWith("RULES ")) {
-            bill.getSponsor().setFullName("RULES");
-        }
+//        if (bill.getSponsor() != null && bill.getSponsor().getFullName().startsWith("RULES ")) {
+//            bill.getSponsor().setFullName("RULES");
+//        }
 
         if (specifiedAmendment.isPublished()) {
             /** FIXME: Handle the syncing of uni bill text */
@@ -573,18 +584,67 @@ public class BillProcessor extends SOBIProcessor
      */
     public void applySponsor(String data, Bill baseBill, BillAmendment specifiedAmendment, Date date) {
         // Apply the lines in order given as each represents its own "block"
+        int sessionYear = baseBill.getSession();
+        Chamber chamber = baseBill.getBillType().getChamber();
+
         for(String line : data.split("\n")) {
-            if (line.trim().equals("DELETE")) {
+            line = line.trim();
+            if (line.equals("DELETE")) {
                 baseBill.setSponsor(null);
                 specifiedAmendment.setCoSponsors(new ArrayList<Person>());
                 specifiedAmendment.setMultiSponsors(new ArrayList<Person>());
                 specifiedAmendment.setModifiedDate(date);
             }
             else {
-                baseBill.setSponsor(new Person(line.trim()));
+                baseBill.setSponsor(getBillSponsorFromSponsorLine(line, sessionYear, chamber));
             }
         }
         baseBill.setModifiedDate(date);
+    }
+
+    /**
+     * Constructs a BillSponsor via the sponsorLine string.
+     * @param sponsorLine String
+     * @param sessionYear int
+     * @param chamber Chamber
+     */
+    private BillSponsor getBillSponsorFromSponsorLine(String sponsorLine, int sessionYear, Chamber chamber) {
+        BillSponsor billSponsor = new BillSponsor();
+        if (sponsorLine.startsWith("RULES")) {
+            billSponsor.setRulesSponsor(true);
+            Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
+            if (rules.matches()) {
+                sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
+                Member member = getMemberFromShortName(sponsorLine, sessionYear, chamber);
+                billSponsor.setRulesRequestMembers(new ArrayList<>(Arrays.asList(member)));
+            }
+        }
+        else if (sponsorLine.equals("BUDGET BILL")) {
+            billSponsor.setBudgetBill(true);
+        }
+        else {
+            billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
+        }
+        return billSponsor;
+    }
+
+    /**
+     * Retrieves a member from the LBDC short name, returning null if the member is not found.
+     * @param shortName String
+     * @param sessionYear int
+     * @param chamber Chamber
+     * @return Member
+     */
+    private Member getMemberFromShortName(String shortName, int sessionYear, Chamber chamber) {
+        if (StringUtils.isNotBlank(shortName)) {
+            try {
+                return memberService.getMemberByLBDCName(shortName, sessionYear, chamber);
+            }
+            catch (MemberNotFoundEx memberNotFoundEx) {
+                logger.fatal(memberNotFoundEx);
+            }
+        }
+        return null;
     }
 
     /**
@@ -604,8 +664,10 @@ public class BillProcessor extends SOBIProcessor
      */
     public void applyCosponsors(String data, BillAmendment activeAmendment, Date date) {
         ArrayList<Person> coSponsors = new ArrayList<>();
+        int session = activeAmendment.getSession();
+        Chamber chamber = activeAmendment.getBillType().getChamber();
         for(String coSponsor : data.replace("\n", " ").split(",")) {
-            coSponsors.add(new Person(coSponsor.trim()));
+            coSponsors.add(getMemberFromShortName(coSponsor, session, chamber));
         }
         // The cosponsor info is always sent for the base bill version.
         // We can use the currently active amendment instead.
@@ -630,8 +692,13 @@ public class BillProcessor extends SOBIProcessor
      */
     public void applyMultisponsors(String data, BillAmendment activeAmendment, Date date) {
         ArrayList<Person> multiSponsors = new ArrayList<>();
+        int session = activeAmendment.getSession();
+        Chamber chamber = activeAmendment.getBillType().getChamber();
         for (String multiSponsor : data.replace("\n", " ").split(",")) {
-            multiSponsors.add(new Person(multiSponsor.trim()));
+            multiSponsor = multiSponsor.trim();
+            if (!multiSponsor.isEmpty()) {
+                multiSponsors.add(getMemberFromShortName(multiSponsor, session, chamber));
+            }
         }
         activeAmendment.setMultiSponsors(multiSponsors);
         activeAmendment.setModifiedDate(date);

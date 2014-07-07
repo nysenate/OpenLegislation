@@ -220,15 +220,16 @@ public class BillVote extends BaseLegContent
         excused.add(person.getFullName());
     }
 
-    @Override
-    public boolean equals(Object obj)
-    {
-        if(obj != null && obj instanceof BillVote) {
-            BillVote vote = (BillVote)obj;
-            return this.oid.equals(vote.getOid());
-        }
-        return false;
-    }
+    /** FIXME */
+//    @Override
+//    public boolean equals(Object obj)
+//    {
+//        if(obj != null && obj instanceof BillVote) {
+//            BillVote vote = (BillVote)obj;
+//            return this.oid.equals(vote.getOid());
+//        }
+//        return false;
+//    }
 
     @Override
     public String toString() {

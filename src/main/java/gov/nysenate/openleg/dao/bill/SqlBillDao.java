@@ -1,13 +1,12 @@
 package gov.nysenate.openleg.dao.bill;
 
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAction;
-import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.dao.entity.MemberDao;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.sobi.SOBIFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -24,15 +23,16 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 {
     private static final Logger logger = LoggerFactory.getLogger(SqlBillDao.class);
 
-    public SqlBillDao() {}
+    @Autowired
+    private MemberDao memberDao;
 
     /* --- Implemented Methods --- */
 
     @Override
-    public Bill getBill(String printNo, int sessionYear) {
+    public Bill getBill(BillId billId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("printNo", printNo);
-        params.addValue("sessionYear", sessionYear);
+        params.addValue("printNo", billId.getBasePrintNo());
+        params.addValue("sessionYear", billId.getSession());
         try {
             // Retrieve base Bill object
             Bill bill = getBaseBill(params);
@@ -43,7 +43,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
                 // Fetch all the same as bill ids
                 amendment.setSameAs(new HashSet<>(getSameAsBills(params)));
             }
+            // Set the amendments
             bill.addAmendments(billAmendments);
+            // Get the sponsor
+            bill.setSponsor(getBillSponsor(params));
             // Get the actions
             bill.setActions(getBillActions(params));
             // Get the prev bill version ids
@@ -52,7 +55,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             return bill;
         }
         catch (EmptyResultDataAccessException ex) {
-            logger.debug("Bill " + printNo + "-" + sessionYear + " does not exist in database.");
+            logger.debug("Bill " + billId + " does not exist in database.");
             return null;
         }
     }
@@ -81,6 +84,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             // Update the same as bills
             updateBillSameAs(sobiFragment, amendment, amendParams);
         }
+        // Update the sponsor
+        updateBillSponsor(bill, sobiFragment);
         // Determine which actions need to be inserted/deleted. Individual actions are never updated.
         updateActions(bill, sobiFragment, billParams);
         // Determine if the previous versions have changed and insert accordingly.
@@ -122,11 +127,17 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     }
 
     private List<BillId> getPrevVersions(MapSqlParameterSource params) {
-        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_PREVIOUS_VERSIONS_SQL.getSql(schema()), params, new BillPreviousVersionRowMapper());
+        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_PREVIOUS_VERSIONS_SQL.getSql(schema()), params,
+                               new BillPreviousVersionRowMapper());
     }
 
     private List<BillId> getSameAsBills(MapSqlParameterSource params) {
         return jdbcNamed.query(SqlBillQuery.SELECT_BILL_SAME_AS_SQL.getSql(schema()), params, new BillSameAsRowMapper());
+    }
+
+    private BillSponsor getBillSponsor(MapSqlParameterSource params) {
+        return jdbcNamed.queryForObject(
+            SqlBillQuery.SELECT_BILL_SPONSOR_SQL.getSql(schema()), params, new BillSponsorRowMapper(memberDao));
     }
 
     private List<BillAmendment> getBillAmendment(MapSqlParameterSource params) {
@@ -183,9 +194,19 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         }
     }
 
+    /**
+     * Update the bill's sponsor information.
+     */
+    private void updateBillSponsor(Bill bill, SOBIFragment sobiFragment) {
+        MapSqlParameterSource params = getBillSponsorParams(bill, sobiFragment);
+        if (jdbcNamed.update(SqlBillQuery.UPDATE_BILL_SPONSOR_SQL.getSql(schema()), params) == 0) {
+            jdbcNamed.update(SqlBillQuery.INSERT_BILL_SPONSOR_SQL.getSql(schema()), params);
+        }
+    }
+
     /** --- Helper Classes --- */
 
-    private class BillRowMapper implements RowMapper<Bill>
+    private static class BillRowMapper implements RowMapper<Bill>
     {
         @Override
         public Bill mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -204,7 +225,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         }
     }
 
-    private class BillAmendmentRowMapper implements RowMapper<BillAmendment>
+    private static class BillAmendmentRowMapper implements RowMapper<BillAmendment>
     {
         @Override
         public BillAmendment mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -224,7 +245,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         }
     }
 
-    private class BillActionRowMapper implements RowMapper<BillAction>
+    private static class BillActionRowMapper implements RowMapper<BillAction>
     {
         @Override
         public BillAction mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -241,7 +262,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         }
     }
 
-    private class BillSameAsRowMapper implements RowMapper<BillId>
+    private static class BillSameAsRowMapper implements RowMapper<BillId>
     {
         @Override
         public BillId mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -250,12 +271,34 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         }
     }
 
-    private class BillPreviousVersionRowMapper implements RowMapper<BillId>
+    private static class BillPreviousVersionRowMapper implements RowMapper<BillId>
     {
         @Override
         public BillId mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new BillId(rs.getString("prev_bill_print_no"), rs.getInt("prev_bill_session_year"),
                               rs.getString("prev_amend_version"));
+        }
+    }
+
+    private static class BillSponsorRowMapper implements RowMapper<BillSponsor>
+    {
+        MemberDao memberDao;
+
+        private BillSponsorRowMapper(MemberDao memberDao) {
+            this.memberDao = memberDao;
+        }
+
+        @Override
+        public BillSponsor mapRow(ResultSet rs, int rowNum) throws SQLException {
+            BillSponsor sponsor = new BillSponsor();
+            int memberId = rs.getInt("member_id");
+            int sessionYear = rs.getInt("bill_session_year");
+            sponsor.setBudgetBill(rs.getBoolean("budget_bill"));
+            sponsor.setRulesSponsor(rs.getBoolean("rules_sponsor"));
+            if (memberId > 0) {
+                sponsor.setMember(memberDao.getMemberById(memberId, sessionYear));
+            }
+            return sponsor;
         }
     }
 
@@ -267,10 +310,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * @param bill String
      * @return MapSqlParameterSource
      */
-    private MapSqlParameterSource getBillParams(Bill bill, SOBIFragment fragment) {
+    private static MapSqlParameterSource getBillParams(Bill bill, SOBIFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("printNo", bill.getPrintNo());
-        params.addValue("sessionYear", bill.getSession());
+        addBillIdParams(bill, params);
         params.addValue("title", bill.getTitle());
         params.addValue("lawSection", bill.getLawSection());
         params.addValue("lawCode", bill.getLaw());
@@ -291,11 +333,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * @param fragment SOBIFragment
      * @return MapSqlParameterSource
      */
-    private MapSqlParameterSource getBillAmendmentParams(BillAmendment amendment, SOBIFragment fragment) {
+    private static MapSqlParameterSource getBillAmendmentParams(BillAmendment amendment, SOBIFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("printNo", amendment.getBaseBillPrintNo());
-        params.addValue("sessionYear", amendment.getSession());
-        params.addValue("version", amendment.getVersion());
+        addBillIdParams(amendment, params);
         params.addValue("sponsorMemo", amendment.getMemo());
         params.addValue("actClause", amendment.getActClause());
         params.addValue("fullText", amendment.getFulltext());
@@ -315,7 +355,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * @param fragment SOBIFragment
      * @return MapSqlParameterSource
      */
-    private MapSqlParameterSource getBillActionParams(BillAction billAction, SOBIFragment fragment) {
+    private static MapSqlParameterSource getBillActionParams(BillAction billAction, SOBIFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("printNo", billAction.getBillId().getBasePrintNo());
         params.addValue("sessionYear", billAction.getBillId().getSession());
@@ -329,11 +369,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return params;
     }
 
-    private MapSqlParameterSource getBillSameAsParams(BillAmendment billAmendment, BillId sameAs, SOBIFragment fragment) {
+    private static MapSqlParameterSource getBillSameAsParams(BillAmendment billAmendment, BillId sameAs, SOBIFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("printNo", billAmendment.getBaseBillPrintNo());
-        params.addValue("sessionYear", billAmendment.getSession());
-        params.addValue("version", billAmendment.getVersion());
+        addBillIdParams(billAmendment, params);
         params.addValue("sameAsPrintNo", sameAs.getBasePrintNo());
         params.addValue("sameAsSessionYear", sameAs.getSession());
         params.addValue("sameAsVersion", sameAs.getVersion());
@@ -341,10 +379,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return params;
     }
 
-    private MapSqlParameterSource getBillPrevVersionParams(Bill bill, BillId prevVersion, SOBIFragment fragment) {
+    private static MapSqlParameterSource getBillPrevVersionParams(Bill bill, BillId prevVersion, SOBIFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("printNo", bill.getPrintNo());
-        params.addValue("sessionYear", bill.getSession());
+        addBillIdParams(bill, params);
         params.addValue("prevPrintNo", prevVersion.getBasePrintNo());
         params.addValue("prevSessionYear", prevVersion.getSession());
         params.addValue("prevVersion", prevVersion.getVersion());
@@ -352,12 +389,45 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return params;
     }
 
+    private static MapSqlParameterSource getBillSponsorParams(Bill bill, SOBIFragment fragment) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        BillSponsor billSponsor = bill.getSponsor();
+        boolean hasMember = billSponsor != null && billSponsor.hasMember();
+        addBillIdParams(bill, params);
+        params.addValue("memberId", (hasMember) ? billSponsor.getMember().getMemberId() : null);
+        params.addValue("budgetBill", (billSponsor != null && billSponsor.isBudgetBill()));
+        params.addValue("rulesSponsor", (billSponsor != null && billSponsor.isRulesSponsor()));
+        addSOBIFragmentParams(fragment, params);
+        return params;
+    }
+
+    /**
+     * Applies columns that identify the base bill.
+     * @param bill Bill
+     * @param params MapSqlParameterSource
+     */
+    private static void addBillIdParams(Bill bill, MapSqlParameterSource params) {
+        params.addValue("printNo", bill.getPrintNo());
+        params.addValue("sessionYear", bill.getSession());
+    }
+
+    /**
+     * Adds columns that identify the bill amendment.
+     * @param billAmendment BillAmendment
+     * @param params MapSqlParameterSource
+     */
+    private static void addBillIdParams(BillAmendment billAmendment, MapSqlParameterSource params) {
+        params.addValue("printNo", billAmendment.getBaseBillPrintNo());
+        params.addValue("sessionYear", billAmendment.getSession());
+        params.addValue("version", billAmendment.getVersion());
+    }
+
     /**
      * Applies columns that identify a SOBIFragment to an existing MapSqlParameterSource.
      * @param fragment SOBIFragment
      * @param params MapSqlParameterSource
      */
-    private void addSOBIFragmentParams(SOBIFragment fragment, MapSqlParameterSource params) {
+    private static void addSOBIFragmentParams(SOBIFragment fragment, MapSqlParameterSource params) {
         params.addValue("lastFragmentFileName", fragment.getFileName());
         params.addValue("lastFragmentType", fragment.getType().name());
     }

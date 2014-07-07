@@ -43,4 +43,6 @@ public class SqlMemberService implements MemberService
             throw new MemberNotFoundEx(lbdcShortName, sessionYear, chamber);
         }
     }
+
+
 }

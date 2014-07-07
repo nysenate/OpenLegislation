@@ -31,6 +31,23 @@ public enum SqlBillQuery implements SqlQueryEnum
         "        :modifiedDateTime, :publishedDateTime, :lastFragmentFileName, :lastFragmentType)"
     ),
 
+    /** --- Bill Sponsor --- */
+
+    SELECT_BILL_SPONSOR_SQL(
+        "SELECT * FROM ${schema}." + SqlTable.BILL_SPONSOR + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
+    INSERT_BILL_SPONSOR_SQL(
+        "INSERT INTO ${schema}." + SqlTable.BILL_SPONSOR + "\n" +
+        "(bill_print_no, bill_session_year, member_id, budget_bill, rules_sponsor) " +
+        "VALUES (:printNo, :sessionYear, :memberId, :budgetBill, :rulesSponsor)"
+    ),
+    UPDATE_BILL_SPONSOR_SQL(
+        "UPDATE ${schema}." + SqlTable.BILL_SPONSOR + "\n" +
+        "SET member_id = :memberId, budget_bill = :budgetBill, rules_sponsor = :rulesSponsor \n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
+
     /** --- Bill Amendment --- */
 
     SELECT_BILL_AMENDMENTS_SQL(

@@ -69,6 +69,10 @@ public class BillAmendment extends BaseLegContent
         return new BillId(this.baseBillPrintNo, this.session, this.version);
     }
 
+    public BillType getBillType() {
+        return this.getBillId().getBillType();
+    }
+
     public void setVersion(String version) {
         this.version = version.trim().toUpperCase();
     }

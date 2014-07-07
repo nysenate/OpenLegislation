@@ -163,7 +163,7 @@ public class SencalendarProcessor
         // Active lists don't have sponsor listed, so check first!
         if (sponsorName != null) {
             String[] sponsors = sponsorName.trim().split(",");
-            bill.setSponsor(new Person(sponsors[0].trim()));
+            /** TODO: FIXME bill.setSponsor(new Person(sponsors[0].trim())); */
 
             // Other sponsors are removed when a calendar/agenda is resent without
             // The other sponsor included in the sponsors list.
