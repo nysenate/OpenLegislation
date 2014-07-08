@@ -10,6 +10,7 @@ import gov.nysenate.openleg.scripts.BaseScript;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Storage;
 
+import gov.nysenate.openleg.util.TextFormatter;
 import gov.nysenate.util.Config;
 
 import java.io.File;
@@ -208,14 +209,9 @@ public class SpotCheck extends BaseScript
             }
 
             int lbdcPages = bills.get(id).pages;
-            int jsonPages = 0;
-            Pattern pagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d*(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s{11,}\\d{1,4}(--\\w)?$)");
-            for (String line : jsonBill.getFulltext().split("\n")) {
-
-                if (pagePattern.matcher(line).find()) {
-                    // logger.info(billNo+": "+line);
-                    jsonPages++;
-                }
+            int jsonPages = TextFormatter.pdfPrintablePages(jsonBill).size();
+            if (jsonBill.getFulltext().equals("")) {
+                jsonPages = 0;
             }
 
             if (jsonPages != lbdcPages) {
