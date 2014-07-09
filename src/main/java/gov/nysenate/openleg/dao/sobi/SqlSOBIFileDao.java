@@ -202,6 +202,7 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
             try {
                 SOBIFile sobiFile = new SOBIFile(file);
                 sobiFile.setPendingProcessing(pendingProcessing);
+                sobiFile.setStagedDateTime(rs.getDate(pfx + "staged_date_time"));
                 sobiFile.setProcessedDateTime(rs.getDate(pfx + "processed_date_time"));
                 sobiFile.setProcessedCount(rs.getInt(pfx + "processed_count"));
                 return sobiFile;

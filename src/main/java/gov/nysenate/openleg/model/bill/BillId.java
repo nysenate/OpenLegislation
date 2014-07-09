@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.bill;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,20 +71,16 @@ public class BillId implements Comparable<BillId>
 
     /** --- Methods --- */
 
+    public static BillId getBaseId(BillId billId) {
+        return new BillId(billId.basePrintNo, billId.session);
+    }
+
     public String getPrintNo() {
         return this.basePrintNo + ((this.version != null) ? this.version : "");
     }
 
     public BillType getBillType() {
         return BillType.valueOf(this.basePrintNo.substring(0, 1));
-    }
-
-    /**
-     * Returns a new BillId using the base (default) amendment version.
-     * @return BillId
-     */
-    public BillId getBase() {
-        return new BillId(this.basePrintNo, this.session, BillId.BASE_VERSION);
     }
 
     /**
@@ -130,20 +128,43 @@ public class BillId implements Comparable<BillId>
 
     @Override
     public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!equalsBase(o)) return false;
+        BillId billId = (BillId) o;
+        if (version != null ? !version.equals(billId.version) : billId.version != null) return false;
+        return true;
+    }
+
+    /**
+     * Not an override but is a useful equals comparison that ignores version so that two BillIds are
+     * equivalent if their base BillIds match.
+     * @param o
+     * @return boolean
+     */
+    public boolean equalsBase(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BillId billId = (BillId) o;
         if (session != billId.session) return false;
         if (!basePrintNo.equals(billId.basePrintNo)) return false;
-        if (version != null ? !version.equals(billId.version) : billId.version != null) return false;
         return true;
     }
 
     @Override
     public int hashCode() {
+        int result = hashCodeBase();
+        result = 31 * result + (version != null ? version.hashCode() : 0);
+        return result;
+    }
+
+    /**
+     * Get hashcode without factoring in the version. Should use this when implementing hashcode method
+     * for classes that contain a BillId where the version of the bill is not relevant.
+     * @return int
+     */
+    public int hashCodeBase() {
         int result = basePrintNo.hashCode();
         result = 31 * result + session;
-        result = 31 * result + (version != null ? version.hashCode() : 0);
         return result;
     }
 

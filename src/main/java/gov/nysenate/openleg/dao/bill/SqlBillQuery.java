@@ -47,6 +47,10 @@ public enum SqlBillQuery implements SqlQueryEnum
         "SET member_id = :memberId, budget_bill = :budgetBill, rules_sponsor = :rulesSponsor \n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
+    DELETE_BILL_SPONSOR_SQL(
+        "DELETE FROM ${schema}." + SqlTable.BILL_SPONSOR + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
 
     /** --- Bill Amendment --- */
 
@@ -68,6 +72,40 @@ public enum SqlBillQuery implements SqlQueryEnum
         " uni_bill, modified_date_time, published_date_time, last_fragment_file_name, last_fragment_type)\n" +
         "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, :currentCommitteeId, " +
         "       :uniBill, :modifiedDateTime, :publishedDateTime, :lastFragmentFileName, :lastFragmentType)"
+    ),
+
+    /** --- Bill Amendment Cosponsors --- */
+
+    SELECT_BILL_COSPONSORS_SQL(
+        "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
+        "ORDER BY sequence_no ASC"
+    ),
+    INSERT_BILL_COSPONSORS_SQL(
+        "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + " " +
+        "(bill_print_no, bill_session_year, bill_amend_version, member_id, sequence_no)\n" +
+        "VALUES (:printNo, :sessionYear, :version, :memberId, :sequenceNo)"
+    ),
+    DELETE_BILL_COSPONSORS_SQL(
+        "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
+    ),
+
+    /** --- Bill Amendment Multi-sponsors --- */
+
+    SELECT_BILL_MULTISPONSORS_SQL(
+        "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
+        "ORDER BY sequence_no ASC"
+    ),
+    INSERT_BILL_MULTISPONSORS_SQL(
+        "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + " " +
+        "(bill_print_no, bill_session_year, bill_amend_version, member_id, sequence_no)\n" +
+        "VALUES (:printNo, :sessionYear, :version, :memberId, :sequenceNo)"
+    ),
+    DELETE_BILL_MULTISPONSORS_SQL(
+        "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
 
     /** --- Bill Actions --- */

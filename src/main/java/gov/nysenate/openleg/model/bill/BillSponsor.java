@@ -2,9 +2,6 @@ package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.entity.Member;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Represents the bill's sponsor. Typically this would just be a reference to a Member
  * but there are special cases where the bill is sponsored by the RULES committee or
@@ -21,16 +18,12 @@ public class BillSponsor
     /** Indicates if bill is introduced through RULES. (no member). */
     private boolean rulesSponsor = false;
 
-    /** A RULES sponsor can have a list of members that requested it. */
-    private List<Member> rulesRequestMembers;
-
     /** --- Constructors --- */
 
     public BillSponsor() {}
 
     public BillSponsor(Member member) {
         this.member = member;
-        this.rulesRequestMembers = new ArrayList<>();
     }
 
     /** --- Functional Getters/Setters --- */
@@ -63,13 +56,5 @@ public class BillSponsor
 
     public void setRulesSponsor(boolean rulesSponsor) {
         this.rulesSponsor = rulesSponsor;
-    }
-
-    public List<Member> getRulesRequestMembers() {
-        return rulesRequestMembers;
-    }
-
-    public void setRulesRequestMembers(List<Member> rulesRequestMembers) {
-        this.rulesRequestMembers = rulesRequestMembers;
     }
 }

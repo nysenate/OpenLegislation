@@ -26,7 +26,7 @@ public class SqlMemberService implements MemberService
     private MemberDao memberDao;
 
     @PostConstruct
-    public void init() {
+    private void init() {
         cacheManager.addCache("memberShortName");
     }
 

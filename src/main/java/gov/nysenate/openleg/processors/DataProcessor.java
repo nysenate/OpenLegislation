@@ -19,6 +19,8 @@ import gov.nysenate.openleg.util.Storage;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.xml.parsers.ParserConfigurationException;
@@ -169,22 +171,39 @@ public class DataProcessor
         // Process SOBI files
         for (SOBIFile sobiFile : sobiFileDao.getPendingSOBIFiles(SortOrder.ASC)) {
             List<SOBIFragment> fragments = sobiFragmentDao.getSOBIFragments(sobiFile, SortOrder.ASC);
-            for (SOBIFragment fragment : fragments) {
-                if (processorMap.containsKey(fragment.getType())) {
-                    processorMap.get(fragment.getType()).process(fragment);
-                }
-                else {
-                    logger.warn("No processors have been registered to handle: " + fragment);
-                }
-            }
-            sobiFile.incrementProcessedCount();
-            sobiFile.setProcessedDateTime(new Date());
-            sobiFile.setPendingProcessing(false);
-            sobiFileDao.updateSOBIFile(sobiFile);
+            ingestFragments(fragments);
+            markSobiFileAsProcessed(sobiFile);
         }
 
         // TODO: Process Transcripts / Public Hearings
         // TODO: Handle CMS.TEXT (Rules file)
+    }
+
+    /**
+     * Processes the SOBI Fragments using the registered implementations.
+     * @param fragments List<SOBIFragment>
+     */
+    @Transactional
+    private void ingestFragments(List<SOBIFragment> fragments) {
+        for (SOBIFragment fragment : fragments) {
+            if (processorMap.containsKey(fragment.getType())) {
+                processorMap.get(fragment.getType()).process(fragment);
+            }
+            else {
+                logger.warn("No processors have been registered to handle: " + fragment);
+            }
+        }
+    }
+
+    /**
+     * Updates the status of the SOBIFile such that it is marked as processed.
+     * @param sobiFile SOBIFile
+     */
+    private void markSobiFileAsProcessed(SOBIFile sobiFile) {
+        sobiFile.incrementProcessedCount();
+        sobiFile.setProcessedDateTime(new Date());
+        sobiFile.setPendingProcessing(false);
+        sobiFileDao.updateSOBIFile(sobiFile);
     }
 
     /**
@@ -313,7 +332,7 @@ public class DataProcessor
         if (in == null) {
             // This is bad, but don't throw an exception. If the resulting XML document
             // is malformed we'll throw the exception during ingest.
-            logger.error("Unterminated XML document: "+line);
+            logger.error("Unterminated XML document: " + line);
         }
 
         String data = sb.append("</SENATEDATA>").toString();

@@ -16,10 +16,10 @@ public enum SqlMemberQuery implements SqlQueryEnum
         "JOIN " + SqlTable.PERSON + " p ON p.id = m.person_id\n"
     ),
     SELECT_MEMBER_BY_ID_SQL(
-        SELECT_MEMBER_FRAGMENT.sql + " WHERE sm.member_id = :memberId"
+        SELECT_MEMBER_FRAGMENT.sql + " WHERE sm.member_id = :memberId AND alternate = false"
     ),
     SELECT_MEMBER_BY_ID_SESSION_SQL(
-        SELECT_MEMBER_BY_ID_SQL.sql + " AND sm.session_year = :sessionYear"
+        SELECT_MEMBER_BY_ID_SQL.sql + " AND sm.session_year = :sessionYear AND alternate = false"
     ),
     SELECT_MEMBER_BY_SHORTNAME_SQL(
         SELECT_MEMBER_FRAGMENT.sql + " WHERE sm.lbdc_short_name ILIKE :shortName AND m.chamber = :chamber::chamber "

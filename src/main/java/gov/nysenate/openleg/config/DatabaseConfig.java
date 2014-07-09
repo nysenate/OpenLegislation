@@ -68,7 +68,7 @@ public class DatabaseConfig
      * @return PlatformTransactionManager
      */
     @Bean
-    public PlatformTransactionManager postgresTxManager() {
+    public PlatformTransactionManager transactionManager() {
         return new DataSourceTransactionManager(postgresDataSource());
     }
 }

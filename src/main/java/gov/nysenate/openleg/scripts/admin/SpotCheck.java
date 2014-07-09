@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.admin.report.ReportObservation;
 import gov.nysenate.openleg.model.admin.report.SpotCheckBill;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAction;
+import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.scripts.BaseScript;
 import gov.nysenate.openleg.util.Application;
@@ -161,7 +162,7 @@ public class SpotCheck extends BaseScript
             TreeSet<String> lbdcCosponsors = new TreeSet<String>(spotCheckBills.get(printNo).getCosponsors());
             TreeSet<String> jsonCosponsors = new TreeSet<String>();
             if ( bill.getAmendment(billAmendment).getCoSponsors() != null ) {
-                List<Person> cosponsors = bill.getAmendment(billAmendment).getCoSponsors();
+                List<Member> cosponsors = bill.getAmendment(billAmendment).getCoSponsors();
                 for(Person cosponsor : cosponsors) {
                     jsonCosponsors.add(cosponsor.getFullName().toUpperCase());
                 }

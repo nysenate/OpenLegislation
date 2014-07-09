@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.BaseLegContent;
+import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.Person;
 
 import java.util.ArrayList;
@@ -35,10 +36,10 @@ public class BillAmendment extends BaseLegContent
 
     /** List of co-sponsors for the amendment. It's a list of Legislators who share credit for
      *  introducing a bill. */
-    protected List<Person> coSponsors = new ArrayList<>();
+    protected List<Member> coSponsors = new ArrayList<>();
 
     /** List of multi-sponsors for the amendment. */
-    protected List<Person> multiSponsors = new ArrayList<>();
+    protected List<Member> multiSponsors = new ArrayList<>();
 
     /** A flag marking this bill as stricken (effectively withdrawn) */
     protected Boolean stricken = false;
@@ -140,19 +141,19 @@ public class BillAmendment extends BaseLegContent
         this.currentCommittee = currentCommittee;
     }
 
-    public List<Person> getCoSponsors() {
+    public List<Member> getCoSponsors() {
         return coSponsors;
     }
 
-    public void setCoSponsors(List<Person> coSponsors) {
+    public void setCoSponsors(List<Member> coSponsors) {
         this.coSponsors = coSponsors;
     }
 
-    public List<Person> getMultiSponsors() {
+    public List<Member> getMultiSponsors() {
         return multiSponsors;
     }
 
-    public void setMultiSponsors(List<Person> multiSponsors) {
+    public void setMultiSponsors(List<Member> multiSponsors) {
         this.multiSponsors = multiSponsors;
     }
 

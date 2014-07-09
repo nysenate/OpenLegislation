@@ -1,9 +1,8 @@
 package gov.nysenate.openleg.processors.util;
 
-import gov.nysenate.openleg.model.sobi.SOBIFragment;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A generic key-value pair cache to map objects that are being generated during the ingest

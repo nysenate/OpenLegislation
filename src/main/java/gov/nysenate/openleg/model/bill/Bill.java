@@ -105,6 +105,11 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
         return this.modifiedDate;
     }
 
+    @Override
+    public String toString() {
+        return this.getBillId().toString();
+    }
+
     /** --- Functional Getters/Setters --- */
 
     /**

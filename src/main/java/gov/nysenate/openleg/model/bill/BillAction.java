@@ -74,7 +74,7 @@ public class BillAction extends BaseLegContent
         if (!(o instanceof BillAction)) return false;
         BillAction that = (BillAction) o;
         if (sequenceNo != that.sequenceNo) return false;
-        if (!billId.getBase().equals(that.billId.getBase())) return false;
+        if (!billId.equalsBase(billId)) return false;
         if (!date.equals(that.date)) return false;
         if (!text.equals(that.text)) return false;
         return true;
@@ -86,7 +86,7 @@ public class BillAction extends BaseLegContent
      */
     @Override
     public int hashCode() {
-        int result = billId.getBase().hashCode();
+        int result = billId.hashCodeBase();
         result = 31 * result + date.hashCode();
         result = 31 * result + sequenceNo;
         result = 31 * result + text.hashCode();
