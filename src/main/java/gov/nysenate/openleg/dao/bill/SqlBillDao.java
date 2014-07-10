@@ -12,6 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -99,26 +100,14 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     /** {@inheritDoc} */
     @Override
-    public void deleteBill(Bill bill) {
-
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void publishBill(Bill bill) {
-
+        throw new NotImplementedException();
     }
 
     /** {@inheritDoc} */
     @Override
     public void unPublishBill(Bill bill) {
-
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void deleteAllBills() {
-
+        throw new NotImplementedException();
     }
 
     /** --- Internal Methods --- */
@@ -278,6 +267,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             bill.setActiveVersion(rs.getString("active_version").trim());
             bill.setYear(rs.getInt("active_year"));
             bill.setModifiedDate(rs.getDate("modified_date_time"));
+            bill.setPublishDate(rs.getDate("published_date_time"));
             return bill;
         }
     }
@@ -389,7 +379,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("lawCode", bill.getLaw());
         params.addValue("summary", bill.getSummary());
         params.addValue("activeVersion", bill.getActiveVersion());
-        params.addValue("sponsorId", null /**TODO */);
         params.addValue("activeYear", bill.getYear());
         params.addValue("modifiedDateTime", toTimestamp(bill.getModifiedDate()));
         params.addValue("publishedDateTime", toTimestamp(bill.getPublishDate()));

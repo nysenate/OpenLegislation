@@ -24,11 +24,7 @@ public interface BillDao
      */
     public void updateBill(Bill bill, SOBIFragment sobiFragment) throws DataAccessException;
 
-    public void deleteBill(Bill bill);
-
     public void publishBill(Bill bill);
 
     public void unPublishBill(Bill bill);
-
-    public void deleteAllBills();
 }

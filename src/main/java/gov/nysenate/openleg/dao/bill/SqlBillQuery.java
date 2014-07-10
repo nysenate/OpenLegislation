@@ -18,16 +18,15 @@ public enum SqlBillQuery implements SqlQueryEnum
     UPDATE_BILL_SQL(
         "UPDATE ${schema}." + SqlTable.BILL + "\n" +
         "SET title = :title, law_section = :lawSection, law_code = :lawCode, summary = :summary, active_version = :activeVersion, " +
-        "    sponsor_id = :sponsorId, active_year = :activeYear, modified_date_time = :modifiedDateTime, " +
-        "    published_date_time = :publishedDateTime, last_fragment_file_name = :lastFragmentFileName," +
-        "    last_fragment_type = :lastFragmentType \n" +
+        "    active_year = :activeYear, modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, " +
+        "    last_fragment_file_name = :lastFragmentFileName, last_fragment_type = :lastFragmentType \n" +
         "WHERE print_no = :printNo AND session_year = :sessionYear"
     ),
     INSERT_BILL_SQL(
         "INSERT INTO ${schema}." + SqlTable.BILL + "\n" +
-        "(print_no, session_year, title, law_section, law_code, summary, active_version, sponsor_id, active_year, " +
+        "(print_no, session_year, title, law_section, law_code, summary, active_version, active_year, " +
         " modified_date_time, published_date_time, last_fragment_file_name, last_fragment_type) \n" +
-        "VALUES (:printNo, :sessionYear, :title, :lawSection, :lawCode, :summary, :activeVersion, :sponsorId, :activeYear, " +
+        "VALUES (:printNo, :sessionYear, :title, :lawSection, :lawCode, :summary, :activeVersion, :activeYear, " +
         "        :modifiedDateTime, :publishedDateTime, :lastFragmentFileName, :lastFragmentType)"
     ),
 
