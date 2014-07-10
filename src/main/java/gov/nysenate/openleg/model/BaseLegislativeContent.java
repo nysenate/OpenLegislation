@@ -24,6 +24,13 @@ abstract public class BaseLegislativeContent
 
     public BaseLegislativeContent() {}
 
+    public BaseLegislativeContent(BaseLegislativeContent other) {
+        this.modifiedDate = other.modifiedDate;
+        this.publishDate = other.publishDate;
+        this.session = other.session;
+        this.year = other.year;
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public Date getPublishDate() {

@@ -38,6 +38,8 @@ public enum SqlTable
     CALENDAR_SUPP_SECTION_ENTRY  ("calendar_supplemental_section_entry"),
 
     COMMITTEE                    ("committee"),
+    COMMITTEE_VERSION            ("committee_version"),
+    COMMITTEE_MEMBER             ("committee_member"),
 
     MEMBER                       ("member"),
     PERSON                       ("person"),

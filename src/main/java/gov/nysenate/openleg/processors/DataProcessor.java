@@ -79,6 +79,8 @@ public class DataProcessor
 
     @Autowired
     private BillProcessor billProcessor;
+    @Autowired
+    private CommitteeProcessor committeeProcessor;
 
     /** --- Constructors --- */
 
@@ -93,7 +95,7 @@ public class DataProcessor
         this.processorMap.put(SOBIFragmentType.AGENDA_VOTE, new AgendaVoteProcessor());
         this.processorMap.put(SOBIFragmentType.CALENDAR, new CalendarProcessor());
         this.processorMap.put(SOBIFragmentType.CALENDAR_ACTIVE, new CalendarActiveListProcessor());
-        this.processorMap.put(SOBIFragmentType.COMMITTEE, new CommitteeProcessor());
+        this.processorMap.put(SOBIFragmentType.COMMITTEE, committeeProcessor);
     }
 
     /** --- Processing methods --- */

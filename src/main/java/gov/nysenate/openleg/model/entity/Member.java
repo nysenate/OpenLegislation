@@ -25,6 +25,16 @@ public class Member extends Person
 
     public Member() {}
 
+    public Member(Member other) {
+        super(other);
+        this.memberId = other.memberId;
+        this.lbdcShortName = other.lbdcShortName;
+        this.sessionYear = other.sessionYear;
+        this.chamber = other.chamber;
+        this.incumbent = other.incumbent;
+        this.districtCode = other.districtCode;
+    }
+
     /** --- Overrides --- */
 
     @Override

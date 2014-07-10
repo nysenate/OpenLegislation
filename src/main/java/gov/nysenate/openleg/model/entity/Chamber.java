@@ -6,5 +6,12 @@ package gov.nysenate.openleg.model.entity;
 public enum Chamber
 {
     SENATE,
-    ASSEMBLY
+    ASSEMBLY;
+
+    public String asSqlEnum(){
+        return this.toString().toLowerCase();
+    }
+    public static Chamber valueOfSqlEnum(String sqlEnum){
+        return Chamber.valueOf(sqlEnum.toUpperCase());
+    }
 }

@@ -1,22 +1,71 @@
 package gov.nysenate.openleg.model.entity;
 
+import java.util.Comparator;
+
 public class CommitteeMember
 {
     /** A number that indicates the position this member should appear in listings. */
     protected int sequenceNo;
 
-    /** The name of the member. */
-    protected String name;
+    /** The member. */
+    protected Member member;
 
     /** The title of the member, e.g Chairperson, Vice-Chair. */
     protected CommitteeMemberTitle title;
 
-    /** A tag for which list the member goes in, e.g. Majority, Minority. */
-    protected String memberList;
+    /** True if the member is part of the current majority */
+    protected boolean majority;
+
+    /** --- Operators --- */
+
+    public static final Comparator<CommitteeMember> BY_SEQUENCE_NO =
+        new Comparator<CommitteeMember>() {
+            @Override
+            public int compare(CommitteeMember left, CommitteeMember right) {
+                if(left.getSequenceNo() == right.getSequenceNo()){
+                    return 0;
+                }else if (left.getSequenceNo() > right.getSequenceNo()){
+                    return 1;
+                }else{
+                    return -1;
+                }
+            }
+        };
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CommitteeMember that = (CommitteeMember) o;
+
+        if (majority != that.majority) return false;
+        //if (sequenceNo != that.sequenceNo) return false;
+        if (!member.equals(that.member)) return false;
+        if (title != that.title) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = sequenceNo;
+        result = 31 * result + member.hashCode();
+        result = 31 * result + title.hashCode();
+        result = 31 * result + (majority ? 1 : 0);
+        return result;
+    }
 
     /** --- Constructors --- */
 
     public CommitteeMember() {}
+
+    public CommitteeMember(CommitteeMember other) {
+        this.sequenceNo = other.sequenceNo;
+        this.member = new Member(other.member);
+        this.title = other.title;
+        this.majority = other.majority;
+    }
 
     /** --- Basic Getters/Setters --- */
 
@@ -28,12 +77,12 @@ public class CommitteeMember
         this.sequenceNo = sequenceNo;
     }
 
-    public String getName() {
-        return name;
+    public Member getMember() {
+        return member;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMember(Member member) {
+        this.member = member;
     }
 
     public CommitteeMemberTitle getTitle() {
@@ -44,11 +93,12 @@ public class CommitteeMember
         this.title = title;
     }
 
-    public String getMemberList() {
-        return memberList;
+    public boolean isMajority() {
+        return majority;
     }
 
-    public void setMemberList(String memberList) {
-        this.memberList = memberList;
+    public void setMajority(boolean majority) {
+        this.majority = majority;
     }
+
 }

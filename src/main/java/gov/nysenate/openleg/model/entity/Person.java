@@ -39,6 +39,17 @@ public class Person
         this.fullName = fullName;
     }
 
+    public Person(Person other) {
+        this.id = other.id;
+        this.prefix = other.prefix;
+        this.fullName = other.fullName;
+        this.firstName = other.firstName;
+        this.middleName = other.middleName;
+        this.lastName = other.lastName;
+        this.suffix = other.suffix;
+        this.email = other.email;
+    }
+
     /** --- Overrides --- */
 
     @Override

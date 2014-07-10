@@ -46,7 +46,7 @@ public class Application
         try
         {
             appInstance.config = new Config(propertyFileName);
-            appInstance.xmlhelper = new XmlHelper(appInstance.config, "xml");
+            appInstance.xmlhelper = new XmlHelper();
             appInstance.db = new DB(appInstance.config, "postgresdb");
             appInstance.mailer = new Mailer(appInstance.config, "mailer");
             appInstance.environment = new Environment(appInstance.config, "env", "master");

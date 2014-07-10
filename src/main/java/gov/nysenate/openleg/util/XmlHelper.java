@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.util;
 
 import gov.nysenate.util.Config;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -13,15 +15,17 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
+@Service
 public class XmlHelper
 {
     private final DocumentBuilder dBuilder;
     private final XPath xpath;
 
-    public XmlHelper(Config config, String section) throws ParserConfigurationException
+    public XmlHelper() throws ParserConfigurationException
     {
         dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         xpath = XPathFactory.newInstance().newXPath();
@@ -30,6 +34,11 @@ public class XmlHelper
     public Document parse(File file) throws SAXException, IOException
     {
         return dBuilder.parse(file);
+    }
+
+    public Document parse(String xmlString) throws IOException, SAXException {
+        InputSource is = new InputSource(new ByteArrayInputStream(xmlString.getBytes("utf-8")));
+        return dBuilder.parse(is);
     }
 
     public Boolean getBoolean(String path, Node node) throws XPathExpressionException
