@@ -54,7 +54,7 @@ public class CommitteeProcessor extends SOBIProcessor
             NodeList committeeNodes = committeeRoot.getChildNodes();
             for(int i=0;i<committeeNodes.getLength();i++){
                 Node committeeNode = committeeNodes.item(i);
-                if(committeeNode.getNodeName()=="committee"){
+                if(committeeNode.getNodeName().equals("committee")){
                     try {
                         Committee committee = new Committee();
                         committee.setSession(sessionYear);
