@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.BaseLegContent;
+import gov.nysenate.openleg.model.BaseLegislativeContent;
 import org.joda.time.LocalDate;
 
 import java.util.Comparator;
@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Represents a single action on a single bill. E.g. REFERRED TO RULES.
  */
-public class BillAction extends BaseLegContent
+public class BillAction extends BaseLegislativeContent
 {
     /** Identifies the bill this action was taken on. */
     private BillId billId;

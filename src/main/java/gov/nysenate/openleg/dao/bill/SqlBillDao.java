@@ -35,7 +35,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("printNo", billId.getBasePrintNo());
         params.addValue("sessionYear", billId.getSession());
-        logger.debug("Fetching Bill {} from database...", billId);
+        logger.trace("Fetching Bill {} from database...", billId);
         // Retrieve base Bill object
         Bill bill = getBaseBill(params);
         // Fetch the amendments
@@ -70,7 +70,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      */
     @Override
     public void updateBill(Bill bill, SOBIFragment sobiFragment) {
-        logger.debug("Updating Bill {} in database...", bill);
+        logger.trace("Updating Bill {} in database...", bill);
         // Update the bill record
         MapSqlParameterSource billParams = getBillParams(bill, sobiFragment);
         if (jdbcNamed.update(SqlBillQuery.UPDATE_BILL_SQL.getSql(schema()), billParams) == 0) {
@@ -509,7 +509,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * @param params MapSqlParameterSource
      */
     private static void addSOBIFragmentParams(SOBIFragment fragment, MapSqlParameterSource params) {
-        params.addValue("lastFragmentFileName", fragment.getFileName());
-        params.addValue("lastFragmentType", fragment.getType().name());
+        params.addValue("lastFragmentFileName", (fragment != null) ? fragment.getFileName() : null);
+        params.addValue("lastFragmentType", (fragment != null) ? fragment.getType().name() : null);
     }
 }

@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.model.BaseLegContent;
+import gov.nysenate.openleg.model.BaseLegislativeContent;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
-public class Calendar extends BaseLegContent
+public class Calendar extends BaseLegislativeContent
 {
     private Integer number;
     private TreeMap<String, CalendarSupplemental> supplementals;

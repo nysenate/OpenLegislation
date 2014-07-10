@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.api;
 
-import gov.nysenate.openleg.model.BaseLegContent;
+import gov.nysenate.openleg.model.BaseLegislativeContent;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillVote;
@@ -15,9 +15,9 @@ public enum ApiType {
     VOTE		("vote", 		BillVote.class);
 
     private String type;
-    private Class<? extends BaseLegContent> clazz;
+    private Class<? extends BaseLegislativeContent> clazz;
 
-    private ApiType(String type, Class<? extends BaseLegContent> clazz) {
+    private ApiType(String type, Class<? extends BaseLegislativeContent> clazz) {
         this.type = type;
         this.clazz = clazz;
     }
@@ -26,7 +26,7 @@ public enum ApiType {
         return type;
     }
 
-    public Class<? extends BaseLegContent> clazz() {
+    public Class<? extends BaseLegislativeContent> clazz() {
         return clazz;
     }
 }

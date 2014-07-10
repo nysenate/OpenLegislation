@@ -6,7 +6,7 @@ import java.util.HashSet;
 /**
  * Basic info that is common to all pieces of legislative content.
  */
-abstract public class BaseLegContent
+abstract public class BaseLegislativeContent
 {
     /** The date the object was most recently modified. */
     protected Date modifiedDate = null;
@@ -22,7 +22,7 @@ abstract public class BaseLegContent
 
     /** --- Constructors --- */
 
-    public BaseLegContent() {}
+    public BaseLegislativeContent() {}
 
     /** --- Basic Getters/Setters --- */
 

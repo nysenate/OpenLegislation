@@ -1,15 +1,14 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.BaseLegContent;
+import gov.nysenate.openleg.model.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.entity.Person;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BillAmendment extends BaseLegContent
+public class BillAmendment extends BaseLegislativeContent
 {
     /** Print number of the base bill. */
     protected String baseBillPrintNo = "";

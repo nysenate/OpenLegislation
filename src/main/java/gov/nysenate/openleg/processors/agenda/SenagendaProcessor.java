@@ -243,10 +243,10 @@ public class SenagendaProcessor
             otherSponsors.add(new Person(sponsors[i].trim()));
         }
 
-        if (!bill.getOtherSponsors().equals(otherSponsors)) {
-            bill.setOtherSponsors(otherSponsors);
+//        if (!bill.getAdditionalSponsors().equals(otherSponsors)) {
+//            bill.setAdditionalSponsors(otherSponsors);
             /** FIXME new BillProcessor(Application.getEnvironment()).saveBill(bill, Bill.BASE_VERSION, storage); */
-        }
+//        }
 
         return bill;
     }

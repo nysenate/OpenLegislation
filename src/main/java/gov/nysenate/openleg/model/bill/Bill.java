@@ -1,20 +1,16 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.BaseLegContent;
-import gov.nysenate.openleg.model.entity.Person;
-import gov.nysenate.openleg.util.SessionYear;
-import gov.nysenate.openleg.util.TextFormatter;
+import gov.nysenate.openleg.model.BaseLegislativeContent;
+import gov.nysenate.openleg.model.entity.Member;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * The Bill class serves as a container for all the entities that can be classified under a print number
  * and session year. It contains a collection of amendments (including the base amendment) as well as
  * shared information such as the sponsor or actions.
  */
-public class Bill extends BaseLegContent implements Comparable<Bill>
+public class Bill extends BaseLegislativeContent implements Comparable<Bill>
 {
     /** A number assigned to a bill when it's introduced in the Legislature. Each printNo begins with a
      *  letter (A for Assembly, S for Senate) followed by 1 to 5 digits. This printNo is valid only for the
@@ -47,7 +43,7 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
     protected BillSponsor sponsor;
 
     /** A list of coSponsors to be given preferential display treatment. */
-    protected List<Person> otherSponsors = new ArrayList<>();
+    protected List<Member> additionalSponsors = new ArrayList<>();
 
     /** A list of committees this bill has been referred to. */
     protected List<String> pastCommittees = new ArrayList<>();
@@ -87,17 +83,23 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
 
     @Override
     public Date getPublishDate() {
-        for (BillAmendment amendment : amendmentMap.values()) {
-            if (amendment.getPublishDate() != null) {
-                return amendment.getPublishDate();
-            }
-        }
-        return null;
+        return this.publishDate;
     }
 
+    /**
+     * Set the publish date of the bill container. This is useful for knowing when this bill
+     * was first created as well as allowing for all amendments to become unpublished when
+     * the publish date is set to null.
+     * @param publishDate Date
+     */
     @Override
     public void setPublishDate(Date publishDate) {
-        throw new RuntimeException("Cannot set publish on the bill container.");
+        this.publishDate = publishDate;
+        if (publishDate == null) {
+            for (BillAmendment amendment : this.getAmendmentList()) {
+                amendment.setPublishDate(null);
+            }
+        }
     }
 
     @Override
@@ -223,6 +225,19 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
         return this.getActiveAmendment().getFulltext();
     }
 
+    /**
+     * Indicates the first non-null publish date for any of the amendments in this bill.
+     * @return Date or null if no amendments are published.
+     */
+    public Date getAmendmentPublishDate() {
+        for (BillAmendment amendment : this.getAmendmentList()) {
+            if (amendment.getPublishDate() != null) {
+                return amendment.getPublishDate();
+            }
+        }
+        return null;
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public String getPrintNo() {
@@ -309,34 +324,11 @@ public class Bill extends BaseLegContent implements Comparable<Bill>
         this.pastCommittees = new ArrayList<>(pastCommittees);
     }
 
-    public List<Person> getOtherSponsors() {
-        return otherSponsors;
+    public List<Member> getAdditionalSponsors() {
+        return additionalSponsors;
     }
 
-    public void setOtherSponsors(List<Person> otherSponsors) {
-        this.otherSponsors = otherSponsors;
-    }
-
-    /**
-     * if term looks like a bill number attempts to format to
-     * <billNo>-<sessionYear> format
-     * @param term the term being searched
-     * @return formatted bill number or original term
-     */
-    public static String formatBillNo(String term) {
-        Pattern p = Pattern.compile("^((?i)[sajr]\\W?0*\\d+[a-zA-Z]?)(?:\\-)?(\\d{4})?$");
-        Matcher m = p.matcher(term);
-
-        if(m.find()) {
-            String bill = m.group(1).replaceAll("[^a-zA-Z\\d]","")
-                    .replaceAll("^((?i)[sajr])0*", "$1");
-
-            int year = (m.group(2) == null
-                    ? SessionYear.getSessionYear()
-                            : SessionYear.getSessionYear(new Integer(m.group(2))));
-
-            return TextFormatter.append(bill, "-", year);
-        }
-        return term;
+    public void setAdditionalSponsors(List<Member> additionalSponsors) {
+        this.additionalSponsors = additionalSponsors;
     }
 }

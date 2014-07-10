@@ -172,10 +172,10 @@ public class SencalendarProcessor
                 otherSponsors.add(new Person(sponsors[i].trim()));
             }
 
-            if (!bill.getOtherSponsors().equals(otherSponsors)) {
-                bill.setOtherSponsors(otherSponsors);
-                /** FIXME processor.saveBill(bill, billAmendment, storage); */
-            }
+//            if (!bill.getAdditionalSponsors().equals(otherSponsors)) {
+//                bill.setAdditionalSponsors(otherSponsors);
+//                /** FIXME processor.saveBill(bill, billAmendment, storage); */
+//            }
         }
 
         // It must be published if it is on the calendar

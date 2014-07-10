@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.model.agenda;
 
-import gov.nysenate.openleg.model.BaseLegContent;
+import gov.nysenate.openleg.model.BaseLegislativeContent;
 
 import java.util.HashMap;
 
-public class AgendaVoteAddendum extends BaseLegContent
+public class AgendaVoteAddendum extends BaseLegislativeContent
 {
     private String id;
     private Integer agendaNumber;

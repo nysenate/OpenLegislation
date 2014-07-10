@@ -71,11 +71,11 @@ public class BillProcessor extends SOBIProcessor
 
     /** Patterns for bill actions that indicate that the specified bill amendment should be published. */
     public static final List<Pattern> publishBillEventPatterns = Arrays.asList(
-        Pattern.compile("PRINT NUMBER " + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? ON THIRD READING " + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? " + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? ON THIRD READING \\(T\\) " + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? AND RECOMMIT(?:TED) TO RULES " + simpleBillRegex)
+            Pattern.compile("PRINT NUMBER " + simpleBillRegex),
+            Pattern.compile("AMEND(?:ED)? ON THIRD READING " + simpleBillRegex),
+            Pattern.compile("AMEND(?:ED)? " + simpleBillRegex),
+            Pattern.compile("AMEND(?:ED)? ON THIRD READING \\(T\\) " + simpleBillRegex),
+            Pattern.compile("AMEND(?:ED)? AND RECOMMIT(?:TED) TO RULES " + simpleBillRegex)
     );
 
     /** Patterns for bill actions that indicate that the specified bill amendment should be unpublished. */
@@ -84,7 +84,8 @@ public class BillProcessor extends SOBIProcessor
         Pattern.compile("AMEND(?:ED)? BY RESTORING TO ORIGINAL PRINT " + simpleBillRegex)
     );
 
-    /** Retrieves/saves bill data to the persistence layer. */
+    /** --- Services --- */
+    
     @Autowired
     private BillDataService billDataService;
 
@@ -154,66 +155,15 @@ public class BillProcessor extends SOBIProcessor
             billIngestCache.set(baseBill.getBillId(), baseBill);
         }
 
+        // Save all the bills worked on for this sobi file
         for (Bill bill : billIngestCache.getCurrentCache()) {
-            logger.debug("Saving bill " + bill.getBillId());
+            logger.trace("Saving bill " + bill.getBillId());
+            applyPublishStatus(bill);
             billDataService.updateBill(bill, sobiFragment);
         }
     }
 
-    /**
-     * Retrieves the base Bill from storage using the bill print number and year set in the SOBIBlock.
-     * If this base bill does not exist, it will be created. The amendment instance will also be created
-     * if it does not exist.
-     *
-     * @param fragment SOBIFragment
-     * @param block SOBIBlock
-     * @param billCache IngestCache<Bill>
-     * @return Bill
-     */
-    public Bill getOrCreateBaseBill(SOBIFragment fragment, SOBIBlock block, IngestCache<BillId, Bill> billCache) {
-        Date modifiedDate = fragment.getPublishedDateTime();
-        boolean isBaseVersion = block.getAmendment().equals(BillId.BASE_VERSION);
-        BillId baseBillId = new BillId(block.getBasePrintNo(), block.getSession());
-        // Check the ingest cache first before retrieving the bill from the repository
-        boolean isCached = billCache.has(baseBillId);
-        logger.trace("Bill ingest cache " + ((isCached) ? "hit" : "miss") + " for bill id " + baseBillId);
-        Bill baseBill;
-        try {
-            baseBill = (isCached) ? billCache.get(baseBillId) : billDataService.getBill(baseBillId);
-        }
-        catch (BillNotFoundEx ex) {
-            // Create the bill since it does not exist
-            if (!isBaseVersion) {
-                logger.warn("Bill Amendment filed without initial bill at " + block.getLocation() + " - " + block.getHeader());
-            }
-            baseBill = new Bill(block.getBasePrintNo(), block.getSession());
-            baseBill.setModifiedDate(modifiedDate);
-            billCache.set(baseBillId, baseBill);
-        }
-        if (!baseBill.hasAmendment(block.getAmendment())) {
-            BillAmendment billAmendment = new BillAmendment(baseBill, block.getAmendment());
-            billAmendment.setModifiedDate(modifiedDate);
-            // If an active amendment exists, apply its ACT TO clause to this amendment
-            if (baseBill.getActiveAmendment() != null) {
-                billAmendment.setActClause(baseBill.getActiveAmendment().getActClause());
-            }
-            // Create the base version if an amendment was received before the base version
-            if (!isBaseVersion) {
-                if (!baseBill.hasAmendment(BillId.BASE_VERSION)) {
-                    BillAmendment baseAmendment = new BillAmendment(baseBill, BillId.BASE_VERSION);
-                    baseAmendment.setModifiedDate(modifiedDate);
-                    baseBill.addAmendment(baseAmendment);
-                    baseBill.setActiveVersion(BillId.BASE_VERSION);
-                }
-                // Pull 'shared' data from the currently active amendment
-                BillAmendment activeAmendment = baseBill.getAmendment(baseBill.getActiveVersion());
-                billAmendment.setCoSponsors(activeAmendment.getCoSponsors());
-                billAmendment.setMultiSponsors(activeAmendment.getMultiSponsors());
-            }
-            baseBill.addAmendment(billAmendment);
-        }
-        return baseBill;
-    }
+    /** --- Processing Methods --- */
 
     /**
      * Apply information from the Bill Info block. Fully replaces existing information.
@@ -238,9 +188,9 @@ public class BillProcessor extends SOBIProcessor
      * @param date Date
      * @throws ParseError
      */
-    public void applyBillInfo(String data, Bill baseBill, BillAmendment specifiedAmendent, Date date) throws ParseError {
+    protected void applyBillInfo(String data, Bill baseBill, BillAmendment specifiedAmendent, Date date) throws ParseError {
         if (data.startsWith("DELETE")) {
-            specifiedAmendent.setPublishDate(null);
+            baseBill.setPublishDate(null);
             return;
         }
         else {
@@ -290,7 +240,7 @@ public class BillProcessor extends SOBIProcessor
      * @param date Date
      * @throws ParseError
      */
-    public void applyLawSection(String data, Bill baseBill, Date date) {
+    protected void applyLawSection(String data, Bill baseBill, Date date) {
         baseBill.setLawSection(data.trim());
         baseBill.setModifiedDate(date);
     }
@@ -310,7 +260,7 @@ public class BillProcessor extends SOBIProcessor
      * @param date Date
      * @throws ParseError
      */
-    public void applyTitle(String data, Bill baseBill, Date date) {
+    protected void applyTitle(String data, Bill baseBill, Date date) {
         baseBill.setTitle(data.replace("\n", " ").trim());
         baseBill.setModifiedDate(date);
     }
@@ -340,7 +290,7 @@ public class BillProcessor extends SOBIProcessor
      * @param date
      * @throws ParseError
      */
-    public void applyBillEvent(String data, Bill baseBill, BillAmendment specifiedAmendment, Date date) throws ParseError {
+    protected void applyBillEvent(String data, Bill baseBill, BillAmendment specifiedAmendment, Date date) throws ParseError {
         ArrayList<BillAction> actions = new ArrayList<>();
         Boolean stricken = false;
         BillId sameAsBillId = null;
@@ -392,11 +342,6 @@ public class BillProcessor extends SOBIProcessor
             }
         }
 
-        // The actions will indicate which bill amendments should be published.
-        if (!actions.isEmpty()) {
-            applyPublishStatus(baseBill, actions);
-        }
-
         baseBill.setActions(actions);
         baseBill.setPastCommittees(pastCommittees);
         baseBill.setModifiedDate(date);
@@ -409,107 +354,6 @@ public class BillProcessor extends SOBIProcessor
         specifiedAmendment.setCurrentCommittee(currentCommittee);
         specifiedAmendment.setStricken(stricken);
         specifiedAmendment.setModifiedDate(date);
-    }
-
-    /**
-     * The publish date for a bill amendment indicates if and when an amendment should be visible.
-     * We can parse the actions list to determine the dates for when the amendments were published
-     * as well as when they were reverted (if applicable).
-     * @param baseBill Bill
-     * @param actions ArrayList<BillAction>
-     */
-    private void applyPublishStatus(Bill baseBill, ArrayList<BillAction> actions) {
-        ArrayList<BillAction> sortedActions = new ArrayList<>(actions);
-        // Un-publish all the non-base bill amendments.
-        for (BillAmendment amendment : baseBill.getAmendmentList()) {
-            if (!amendment.isBaseVersion()) {
-                amendment.setPublishDate(null);
-            }
-        }
-        // Publish/unpublish an amendment depending on the action.
-        for (BillAction action : sortedActions) {
-            boolean foundPublishPattern = false;
-            for (Pattern pattern : publishBillEventPatterns) {
-                Matcher matcher = pattern.matcher(action.getText());
-                if (matcher.find()) {
-                    foundPublishPattern = true;
-                    String version = matcher.group(2).trim();
-                    if (baseBill.hasAmendment(version)) {
-                        logger.debug("Publishing version " + version + " via action " + action.getText());
-                        baseBill.getAmendment(version).setPublishDate(action.getDate());
-                        baseBill.setActiveVersion(version);
-                    }
-                    else {
-                        logger.warn("The publish action " + action.getText() + " referenced a bill amendment that was " +
-                                "not added to the base bill.");
-                    }
-                    break;
-                }
-            }
-            if (!foundPublishPattern) {
-                for (Pattern pattern : unpublishBillEventPatterns) {
-                    Matcher matcher = pattern.matcher(action.getText());
-                    if (matcher.find()) {
-                        String version = matcher.group(2).trim();
-                        baseBill.setActiveVersion(version);
-                        for (BillAmendment amendment : baseBill.getAmendmentList()) {
-                            if (amendment.getVersion().compareTo(version) > 0) {
-                                baseBill.getAmendment(version).setPublishDate(null);
-                                logger.debug("Unpublishing version " + version + " via action " + action.getText());
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Safely saves the bill to storage. This makes sure to sync sponsor data across all versions
-     * so that different versions of the bill cannot get out of sync
-     *
-     * @param bill
-     * @param storage
-     */
-    public void saveBill(Bill bill, BillAmendment specifiedAmendment, Storage storage) {
-        logger.info("SAVING "+bill.getBillId());
-
-        // An old bug with the assembly sponsors field needs to be corrected, NYSS 7215
-//        if (bill.getSponsor() != null && bill.getSponsor().getFullName().startsWith("RULES ")) {
-//            bill.getSponsor().setFullName("RULES");
-//        }
-
-        if (specifiedAmendment.isPublished()) {
-            /** FIXME: Handle the syncing of uni bill text */
-//            if (specifiedAmendment.isUniBill() && !specifiedAmendment.getSameAs().isEmpty()) {
-//                Uni bills share text, always sent to the senate bill.
-//                Bill uniBill = storage.getBill(bill.getSameAs(version));
-//                if (uniBill != null) {
-//                    String billText = bill.getFulltext(version);
-//                    String uniBillText = uniBill.getFulltext(version);
-//
-//                    If our bill text was deleted, it will still copy the uni-bill's text
-//                    if (billText.isEmpty()) {
-//                        if (!uniBillText.isEmpty()) {
-//                            bill.setFulltext(uniBillText, version);
-//                        }
-//                    }
-//                    else if (!billText.equals(uniBillText)) {
-//                        If we differ, then we must have just changed, share the text
-//                        uniBill.setFulltext(bill.getFulltext(version), version);
-//                    }
-//                    storage.set(uniBill);
-//                }
-//            }
-
-            storage.set(bill);
-        }
-//        else {
-//            storage.set(bill);
-//        }
-
-        //billDao.saveBill(bill, null);
     }
 
     /**
@@ -532,7 +376,7 @@ public class BillProcessor extends SOBIProcessor
      * @param specifiedAmendment BillAmendment
      * @param date Date
      */
-    public void applySameAs(String data, BillAmendment specifiedAmendment, Date date) {
+    protected void applySameAs(String data, BillAmendment specifiedAmendment, Date date) {
         if (data.trim().equalsIgnoreCase("No same as") || data.trim().equalsIgnoreCase("DELETE")) {
             specifiedAmendment.getSameAs().clear();
             specifiedAmendment.setUniBill(false);
@@ -579,7 +423,7 @@ public class BillProcessor extends SOBIProcessor
      * @param specifiedAmendment BillAmendment
      * @param date Date
      */
-    public void applySponsor(String data, Bill baseBill, BillAmendment specifiedAmendment, Date date) {
+    protected void applySponsor(String data, Bill baseBill, BillAmendment specifiedAmendment, Date date) {
         // Apply the lines in order given as each represents its own "block"
         int sessionYear = baseBill.getSession();
         Chamber chamber = baseBill.getBillType().getChamber();
@@ -600,60 +444,6 @@ public class BillProcessor extends SOBIProcessor
     }
 
     /**
-     * Constructs a BillSponsor via the sponsorLine string.
-     * @param sponsorLine String
-     * @param sessionYear int
-     * @param chamber Chamber
-     */
-    protected BillSponsor getBillSponsorFromSponsorLine(String sponsorLine, int sessionYear, Chamber chamber) {
-        BillSponsor billSponsor = new BillSponsor();
-        // Format the sponsor line
-        sponsorLine = sponsorLine.replace("(MS)", "").toUpperCase().trim();
-        // Check for RULES sponsors
-        if (sponsorLine.startsWith("RULES")) {
-            billSponsor.setRulesSponsor(true);
-            Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
-            if (!sponsorLine.equals("RULES COM") && rules.matches()) {
-                sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
-                billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber, false));
-            }
-        }
-        // Budget bills don't have a specific sponsor
-        else if (sponsorLine.startsWith("BUDGET")) {
-            billSponsor.setBudgetBill(true);
-        }
-        // Apply the sponsor by looking up the member
-        else {
-            billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber, true));
-        }
-        return billSponsor;
-    }
-
-    /**
-     * Retrieves a member from the LBDC short name with special processing if the member was not found 
-     * and required is true. Returns null if required is false and member is not found.
-     * @param shortName String
-     * @param sessionYear int
-     * @param chamber Chamber
-     * @param required boolean
-     * @return Member
-     */
-    private Member getMemberFromShortName(String shortName, int sessionYear, Chamber chamber, boolean required) {
-        if (StringUtils.isNotBlank(shortName)) {
-            try {
-                return memberService.getMemberByLBDCName(shortName, sessionYear, chamber);
-            }
-            catch (MemberNotFoundEx memberNotFoundEx) {
-                logger.error("", memberNotFoundEx);
-                if (required) {
-                    System.exit(-1); /** FIXME */
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Applies data to bill co-sponsors. Expects a comma separated list and fully replaces
      * existing co-sponsor information. The delete code is sent through the sponsor block.
      *
@@ -668,7 +458,7 @@ public class BillProcessor extends SOBIProcessor
      * @param activeAmendment BillAmendment
      * @param date Date
      */
-    public void applyCosponsors(String data, BillAmendment activeAmendment, Date date) {
+    protected void applyCosponsors(String data, BillAmendment activeAmendment, Date date) {
         ArrayList<Member> coSponsors = new ArrayList<>();
         int session = activeAmendment.getSession();
         Chamber chamber = activeAmendment.getBillType().getChamber();
@@ -699,7 +489,7 @@ public class BillProcessor extends SOBIProcessor
      * @param activeAmendment BillAmendment
      * @param date Date
      */
-    public void applyMultisponsors(String data, BillAmendment activeAmendment, Date date) {
+    protected void applyMultisponsors(String data, BillAmendment activeAmendment, Date date) {
         ArrayList<Member> multiSponsors = new ArrayList<>();
         int session = activeAmendment.getSession();
         Chamber chamber = activeAmendment.getBillType().getChamber();
@@ -728,7 +518,7 @@ public class BillProcessor extends SOBIProcessor
      * @param specifiedAmendment BillAmendment
      * @param date Date
      */
-    public void applyActClause(String data, BillAmendment specifiedAmendment, Date date) {
+    protected void applyActClause(String data, BillAmendment specifiedAmendment, Date date) {
         if (data.trim().equals("DELETE")) {
             specifiedAmendment.setActClause("");
         }
@@ -755,7 +545,7 @@ public class BillProcessor extends SOBIProcessor
      * @param baseBill Bill
      * @param date Date
      */
-    public void applyLaw(String data, Bill baseBill, Date date) {
+    protected void applyLaw(String data, Bill baseBill, Date date) {
         // This is theoretically not safe because a law line *could* start with DELETE
         // We can't do an exact match because B can be multi-line
         if (data.trim().startsWith("DELETE")) {
@@ -777,7 +567,7 @@ public class BillProcessor extends SOBIProcessor
      * @param baseBill Bill
      * @param date Date
      */
-    public void applySummary(String data, Bill baseBill, Date date) {
+    protected void applySummary(String data, Bill baseBill, Date date) {
         baseBill.setSummary(data.replace("\n", " ").trim());
         baseBill.setModifiedDate(date);
     }
@@ -802,7 +592,7 @@ public class BillProcessor extends SOBIProcessor
      * @param date
      * @throws ParseError
      */
-    public void applyText(String data, BillAmendment specifiedAmendment, Date date) throws ParseError {
+    protected void applyText(String data, BillAmendment specifiedAmendment, Date date) throws ParseError {
         // BillText, ResolutionText, and MemoText can be handled the same way.
         // Since Text Blocks can be back to back we constantly look for headers
         // with actions that tell us to start over, end, or delete.
@@ -910,7 +700,7 @@ public class BillProcessor extends SOBIProcessor
      * @param specifiedAmendment BillAmendment
      * @param date Date
      */
-    public void applyProgramInfo(String data, BillAmendment specifiedAmendment, Date date) {
+    protected void applyProgramInfo(String data, BillAmendment specifiedAmendment, Date date) {
         // This information currently isn't used for anything
         //if (!data.equals(""))
         //    throw new ParseError("Program info not implemented", data);
@@ -941,7 +731,7 @@ public class BillProcessor extends SOBIProcessor
      * @param date Date
      * @throws ParseError
      */
-    public void applyVoteMemo(String data, BillAmendment specifiedAmendment, Date date) throws ParseError {
+    protected void applyVoteMemo(String data, BillAmendment specifiedAmendment, Date date) throws ParseError {
         // TODO: Parse out sequence number once LBDC (maybe) includes it, #6531
         // Because sometimes votes are back to back we need to check for headers
         // Example of a double vote entry: SOBI.D110119.T140802.TXT:390
@@ -1002,4 +792,219 @@ public class BillProcessor extends SOBIProcessor
         specifiedAmendment.updateVote(vote);
         specifiedAmendment.setModifiedDate(date);
     }
+
+    /** --- Helper Methods --- */
+
+    /**
+     * Retrieves the base Bill from storage using the bill print number and year set in the SOBIBlock.
+     * If this base bill does not exist, it will be created. The amendment instance will also be created
+     * if it does not exist.
+     *
+     * @param fragment SOBIFragment
+     * @param block SOBIBlock
+     * @param billCache IngestCache<Bill>
+     * @return Bill
+     */
+    public Bill getOrCreateBaseBill(SOBIFragment fragment, SOBIBlock block, IngestCache<BillId, Bill> billCache) {
+        Date modifiedDate = fragment.getPublishedDateTime();
+        boolean isBaseVersion = block.getAmendment().equals(BillId.BASE_VERSION);
+        BillId baseBillId = new BillId(block.getBasePrintNo(), block.getSession());
+        // Check the ingest cache first before retrieving the bill from the repository
+        boolean isCached = billCache.has(baseBillId);
+        logger.trace("Bill ingest cache " + ((isCached) ? "hit" : "miss") + " for bill id " + baseBillId);
+        Bill baseBill;
+        try {
+            baseBill = (isCached) ? billCache.get(baseBillId) : billDataService.getBill(baseBillId);
+        }
+        catch (BillNotFoundEx ex) {
+            // Create the bill since it does not exist
+            if (!isBaseVersion) {
+                logger.warn("Bill Amendment filed without initial bill at " + block.getLocation() + " - " + block.getHeader());
+            }
+            baseBill = new Bill(block.getBasePrintNo(), block.getSession());
+            baseBill.setModifiedDate(modifiedDate);
+            billCache.set(baseBillId, baseBill);
+        }
+        if (!baseBill.hasAmendment(block.getAmendment())) {
+            BillAmendment billAmendment = new BillAmendment(baseBill, block.getAmendment());
+            billAmendment.setModifiedDate(modifiedDate);
+            // If an active amendment exists, apply its ACT TO clause to this amendment
+            if (baseBill.getActiveAmendment() != null) {
+                billAmendment.setActClause(baseBill.getActiveAmendment().getActClause());
+            }
+            // Create the base version if an amendment was received before the base version
+            if (!isBaseVersion) {
+                if (!baseBill.hasAmendment(BillId.BASE_VERSION)) {
+                    BillAmendment baseAmendment = new BillAmendment(baseBill, BillId.BASE_VERSION);
+                    baseAmendment.setModifiedDate(modifiedDate);
+                    baseBill.addAmendment(baseAmendment);
+                    baseBill.setActiveVersion(BillId.BASE_VERSION);
+                }
+                // Pull 'shared' data from the currently active amendment
+                BillAmendment activeAmendment = baseBill.getAmendment(baseBill.getActiveVersion());
+                billAmendment.setCoSponsors(activeAmendment.getCoSponsors());
+                billAmendment.setMultiSponsors(activeAmendment.getMultiSponsors());
+            }
+            baseBill.addAmendment(billAmendment);
+        }
+        return baseBill;
+    }
+
+    /**
+     * The publish date for a bill amendment indicates if and when an amendment should be visible.
+     * We can parse the actions list to determine the dates for when the amendments were published
+     * as well as when they were reverted (if applicable).
+     * @param baseBill Bill
+     */
+    protected void applyPublishStatus(Bill baseBill) {
+        // The actions will indicate which bill amendments should be published.
+        if (!baseBill.getActions().isEmpty()) {
+            ArrayList<BillAction> sortedActions = new ArrayList<>(baseBill.getActions());
+            // Un-publish all the non-base bill amendments.
+            for (BillAmendment amendment : baseBill.getAmendmentList()) {
+                if (!amendment.isBaseVersion()) {
+                    amendment.setPublishDate(null);
+                }
+            }
+            // Publish/unpublish an amendment depending on the action.
+            for (BillAction action : sortedActions) {
+                boolean foundPublishPattern = false;
+                for (Pattern pattern : publishBillEventPatterns) {
+                    Matcher matcher = pattern.matcher(action.getText());
+                    if (matcher.find()) {
+                        foundPublishPattern = true;
+                        String version = matcher.group(2).trim();
+                        if (baseBill.hasAmendment(version)) {
+                            logger.trace("Publishing version " + version + " via action " + action.getText());
+                            baseBill.getAmendment(version).setPublishDate(action.getDate());
+                            baseBill.setActiveVersion(version);
+                        }
+                        else {
+                            logger.warn("The publish action " + action.getText() + " referenced a bill amendment that was " +
+                                    "not added to the base bill.");
+                        }
+                        break;
+                    }
+                }
+                if (!foundPublishPattern) {
+                    for (Pattern pattern : unpublishBillEventPatterns) {
+                        Matcher matcher = pattern.matcher(action.getText());
+                        if (matcher.find()) {
+                            String version = matcher.group(2).trim();
+                            baseBill.setActiveVersion(version);
+                            for (BillAmendment amendment : baseBill.getAmendmentList()) {
+                                if (amendment.getVersion().compareTo(version) > 0) {
+                                    baseBill.getAmendment(version).setPublishDate(null);
+                                    logger.trace("Unpublishing version " + version + " via action " + action.getText());
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Constructs a BillSponsor via the sponsorLine string.
+     * @param sponsorLine String
+     * @param sessionYear int
+     * @param chamber Chamber
+     */
+    protected BillSponsor getBillSponsorFromSponsorLine(String sponsorLine, int sessionYear, Chamber chamber) {
+        BillSponsor billSponsor = new BillSponsor();
+        // Format the sponsor line
+        sponsorLine = sponsorLine.replace("(MS)", "").toUpperCase().trim();
+        // Check for RULES sponsors
+        if (sponsorLine.startsWith("RULES")) {
+            billSponsor.setRulesSponsor(true);
+            Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
+            if (!sponsorLine.equals("RULES COM") && rules.matches()) {
+                sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
+                billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber, false));
+            }
+        }
+        // Budget bills don't have a specific sponsor
+        else if (sponsorLine.startsWith("BUDGET")) {
+            billSponsor.setBudgetBill(true);
+        }
+        // Apply the sponsor by looking up the member
+        else {
+            billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber, true));
+        }
+        return billSponsor;
+    }
+
+    /**
+     * Retrieves a member from the LBDC short name with special processing if the member was not found
+     * and required is true. Returns null if required is false and member is not found.
+     * @param shortName String
+     * @param sessionYear int
+     * @param chamber Chamber
+     * @param required boolean
+     * @return Member
+     */
+    protected Member getMemberFromShortName(String shortName, int sessionYear, Chamber chamber, boolean required) {
+        if (StringUtils.isNotBlank(shortName)) {
+            try {
+                return memberService.getMemberByLBDCName(shortName, sessionYear, chamber);
+            }
+            catch (MemberNotFoundEx memberNotFoundEx) {
+                logger.error("", memberNotFoundEx);
+                if (required) {
+                    System.exit(-1); /** FIXME */
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Safely saves the bill to storage. This makes sure to sync sponsor data across all versions
+     * so that different versions of the bill cannot get out of sync
+     *
+     * @param bill
+     * @param storage
+     */
+    protected void saveBill(Bill bill, BillAmendment specifiedAmendment, Storage storage) {
+        logger.info("SAVING "+bill.getBillId());
+
+        // An old bug with the assembly sponsors field needs to be corrected, NYSS 7215
+//        if (bill.getSponsor() != null && bill.getSponsor().getFullName().startsWith("RULES ")) {
+//            bill.getSponsor().setFullName("RULES");
+//        }
+
+        if (specifiedAmendment.isPublished()) {
+            /** FIXME: Handle the syncing of uni bill text */
+//            if (specifiedAmendment.isUniBill() && !specifiedAmendment.getSameAs().isEmpty()) {
+//                Uni bills share text, always sent to the senate bill.
+//                Bill uniBill = storage.getBill(bill.getSameAs(version));
+//                if (uniBill != null) {
+//                    String billText = bill.getFulltext(version);
+//                    String uniBillText = uniBill.getFulltext(version);
+//
+//                    If our bill text was deleted, it will still copy the uni-bill's text
+//                    if (billText.isEmpty()) {
+//                        if (!uniBillText.isEmpty()) {
+//                            bill.setFulltext(uniBillText, version);
+//                        }
+//                    }
+//                    else if (!billText.equals(uniBillText)) {
+//                        If we differ, then we must have just changed, share the text
+//                        uniBill.setFulltext(bill.getFulltext(version), version);
+//                    }
+//                    storage.set(uniBill);
+//                }
+//            }
+
+            storage.set(bill);
+        }
+//        else {
+//            storage.set(bill);
+//        }
+
+        //billDao.saveBill(bill, null);
+    }
+
 }

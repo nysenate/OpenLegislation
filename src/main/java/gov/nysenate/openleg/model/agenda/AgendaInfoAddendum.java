@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.model.agenda;
 
-import gov.nysenate.openleg.model.BaseLegContent;
+import gov.nysenate.openleg.model.BaseLegislativeContent;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AgendaInfoAddendum extends BaseLegContent
+public class AgendaInfoAddendum extends BaseLegislativeContent
 {
     private String id;
     private Date weekOf;

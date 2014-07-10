@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.model.agenda;
 
-import gov.nysenate.openleg.model.BaseLegContent;
+import gov.nysenate.openleg.model.BaseLegislativeContent;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Agenda extends BaseLegContent
+public class Agenda extends BaseLegislativeContent
 {
     /** The agenda's calendar number. Starts at 1 at the beginning of each calendar year. */
     private Integer number;

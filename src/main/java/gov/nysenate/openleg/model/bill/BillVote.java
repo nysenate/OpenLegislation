@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.BaseLegContent;
+import gov.nysenate.openleg.model.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Person;
 import org.joda.time.LocalDate;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BillVote extends BaseLegContent
+public class BillVote extends BaseLegislativeContent
 {
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 

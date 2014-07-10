@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.model.BaseLegContent;
+import gov.nysenate.openleg.model.BaseLegislativeContent;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
 
-public class CalendarSupplemental extends BaseLegContent
+public class CalendarSupplemental extends BaseLegislativeContent
 {
     private String id;
     private Date calDate;

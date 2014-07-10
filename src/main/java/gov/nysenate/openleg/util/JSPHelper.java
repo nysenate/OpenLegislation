@@ -87,7 +87,7 @@ public class JSPHelper
         //Person sponsor = bill.getSponsor();
         ArrayList<String> links = new ArrayList<String>();
         //links.add(JSPHelper.getPersonLink(sponsor, request));
-        for (Person otherSponsor : bill.getOtherSponsors()) {
+        for (Person otherSponsor : bill.getAdditionalSponsors()) {
             links.add(JSPHelper.getPersonLink(otherSponsor, request));
         }
 

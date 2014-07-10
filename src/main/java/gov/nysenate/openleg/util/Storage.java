@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.model.BaseLegContent;
+import gov.nysenate.openleg.model.BaseLegislativeContent;
 import gov.nysenate.openleg.model.bill.Bill;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -52,7 +52,7 @@ public class Storage
     /**
      * Memory buffer for cache values. Used to prevent excessive file operations.
      */
-    public HashMap<String, BaseLegContent> memory;
+    public HashMap<String, BaseLegislativeContent> memory;
 
     /**
      * Tracks the set of currently dirty keys that need to be flushed to the file system
@@ -88,7 +88,7 @@ public class Storage
         this.publishedDir = new File(storageDir, "published");
         this.unpublishedDir = new File(storageDir, "unpublished");
 
-        this.memory  = new HashMap<String, BaseLegContent>();
+        this.memory  = new HashMap<String, BaseLegislativeContent>();
         this.dirty   = new HashSet<String>();
         this.brandNew = new HashSet<String>();
 
@@ -103,9 +103,9 @@ public class Storage
      * @param cls - The class interpret the value as.
      * @return - The object from storage.
      */
-    public BaseLegContent get(String key, Class<? extends BaseLegContent> cls)
+    public BaseLegislativeContent get(String key, Class<? extends BaseLegislativeContent> cls)
     {
-        BaseLegContent value = null;
+        BaseLegislativeContent value = null;
         if (memory.containsKey(key)) {
             logger.debug("Cache hit: "+key);
             value = memory.get(key);
@@ -151,7 +151,7 @@ public class Storage
      *
      * @param value - The new value to store
      */
-    public void set(BaseLegContent value)
+    public void set(BaseLegislativeContent value)
     {
         String key = this.key(value);
         memory.put(key, value);
@@ -164,7 +164,7 @@ public class Storage
     /**
      * @param value - The storage key for this object
      */
-    public String key(BaseLegContent value)
+    public String key(BaseLegislativeContent value)
     {
         return null; /** KILLED THIS */
         //return value.getYear()+"/"+value.getOtype()+"/"+value.getOid();
@@ -244,7 +244,7 @@ public class Storage
         FileUtils.deleteQuietly(getPublishedFile(key));
 
         // If the value wasn't deleted, write it to file
-        BaseLegContent value = memory.get(key);
+        BaseLegislativeContent value = memory.get(key);
         if (value != null) {
             File storageFile = value.isPublished() ? getPublishedFile(key) : getUnpublishedFile(key);
 
