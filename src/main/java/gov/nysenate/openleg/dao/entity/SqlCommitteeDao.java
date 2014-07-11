@@ -28,8 +28,6 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
 
     /**
      * @inheritDoc
-     *
-     * Retrieves the most recent information on the committee designated by name
      * */
     @Override
     public Committee getCommittee(String name, Chamber chamber) {
@@ -51,8 +49,6 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
 
     /**
      * @inheritDoc
-     *
-     * Retrieves committee information for the specified committee name at a particular time
      * */
     @Override
     public Committee getCommittee(String name, Chamber chamber, Date date) {
@@ -73,6 +69,9 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public List<Committee> getCommitteeList(Chamber chamber) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -91,6 +90,9 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public List<Committee> getCommitteeHistory(String name, Chamber chamber) {
         try {
@@ -108,15 +110,13 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
     }
 
     /**
-     * Updates the database for the input committee
-     *
-     * @param committee
+     * @inheritDoc
      */
     @Override
     public void updateCommittee(Committee committee) {
         logger.info("Updating committee " + committee.getChamber() + " " + committee.getName());
         // Try to create a new committee
-        if (createNewCommittee(committee)) {
+        if (insertCommittee(committee)) {
             insertCommitteeVersion(committee);
             updateCommitteeCurrentVersion(committee);
         } else {  // if that fails perform updates to an existing committee
@@ -125,6 +125,9 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void deleteCommittee(Committee committee) {
         logger.info("Deleting all records for " + committee.getChamber() + " " + committee.getName());
@@ -144,9 +147,10 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
 
     /**
      * Tries to insert a new committee into the database from the given parameter
+     * @param committee
      * @return true if a new committee was created, false if the committee already exists
      */
-    private boolean createNewCommittee(Committee committee){
+    private boolean insertCommittee(Committee committee){
         logger.debug("creating new committee " + committee.getChamber() + " " + committee.getName());
         // Create the committee
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -162,6 +166,91 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
             return false;
         }
         return true;
+    }
+
+    /**
+     * Creates a record for a new version of a committee
+     * @param committee
+     */
+    private void insertCommitteeVersion(Committee committee){
+        logger.debug("inserting new version of " + committee.getChamber() + " " + committee.getName() + " " + committee.getPublishDate());
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("committee_name", committee.getName());
+        params.addValue("chamber", committee.getChamber().asSqlEnum());
+        params.addValue("session_year", committee.getSession());
+        params.addValue("location", committee.getLocation());
+        params.addValue("meetday", committee.getMeetDay());
+        params.addValue("meettime", committee.getMeetTime());
+        params.addValue("meetaltweek", committee.isMeetAltWeek());
+        params.addValue("meetaltweektext", committee.getMeetAltWeekText());
+        params.addValue("created", committee.getPublishDate());
+        jdbcNamed.update(SqlCommitteeQuery.INSERT_COMMITTEE_VERSION.getSql(schema()), params);
+
+        insertCommitteeMembers(committee);
+    }
+
+    /**
+     * Inserts the committee members for a particular version of a committee
+     * @param committee
+     */
+    private void insertCommitteeMembers(Committee committee){
+        for(CommitteeMember committeeMember : committee.getMembers()){
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("committee_name", committee.getName());
+            params.addValue("chamber", committee.getChamber().asSqlEnum());
+            params.addValue("version_created", committee.getPublishDate());
+            params.addValue("member_id", committeeMember.getMember().getMemberId());
+            params.addValue("session_year", committee.getSession());
+            params.addValue("sequence_no", committeeMember.getSequenceNo());
+            params.addValue("title", committeeMember.getTitle().asSqlEnum());
+            params.addValue("majority", committeeMember.isMajority());
+            jdbcNamed.update(SqlCommitteeQuery.INSERT_COMMITTEE_MEMBER.getSql(schema()), params);
+        }
+    }
+
+    /**
+     * Gets all committee members for a given committee version
+     * @param committee
+     * @return
+     */
+    private List<CommitteeMember> selectCommitteeMembers(Committee committee){
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("committee_name", committee.getName());
+        params.addValue("chamber", committee.getChamber().asSqlEnum());
+        params.addValue("session_year", committee.getSession());
+        params.addValue("version_created", committee.getPublishDate());
+        return jdbcNamed.query(SqlCommitteeQuery.SELECT_COMMITTEE_MEMBERS.getSql(schema()),
+                               params, new CommitteeMemberRowMapper());
+    }
+
+    /**
+     * Gets all committee versions fo a given comittee
+     * @param committee
+     * @return
+     */
+    private List<Committee> selectAllCommitteeVersions(Committee committee){
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("committee_name", committee.getName());
+        params.addValue("chamber", committee.getChamber().asSqlEnum());
+        return jdbcNamed.query(SqlCommitteeQuery.SELECT_ALL_COMMITTEE_VERSIONS.getSql(schema()),
+                                            params, new CommitteeRowMapper());
+    }
+
+    /**
+     * Retrieves the committee version with the next highest created date from the given committee version
+     * @param committee
+     * @return
+     */
+    private Committee selectNextCommittee(Committee committee){
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("committee_name", committee.getName());
+        params.addValue("chamber", committee.getChamber().asSqlEnum());
+        params.addValue("session_year", committee.getSession());
+        params.addValue("date", committee.getPublishDate());
+        Committee nextCommittee = jdbcNamed.queryForObject(SqlCommitteeQuery.SELECT_NEXT_COMMITTEE_VERSION.getSql(schema()),
+                params, new CommitteeRowMapper());
+        nextCommittee.setMembers(selectCommitteeMembers(nextCommittee));
+        return nextCommittee;
     }
 
     /**
@@ -212,63 +301,10 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
 
     }
 
-    private List<CommitteeMember> selectCommitteeMembers(Committee committee){
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("committee_name", committee.getName());
-        params.addValue("chamber", committee.getChamber().asSqlEnum());
-        params.addValue("session_year", committee.getSession());
-        params.addValue("version_created", committee.getPublishDate());
-        return jdbcNamed.query(SqlCommitteeQuery.SELECT_COMMITTEE_MEMBERS.getSql(schema()),
-                               params, new CommitteeMemberRowMapper());
-    }
-
-    private List<Committee> selectAllCommitteeVersions(Committee committee){
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("committee_name", committee.getName());
-        params.addValue("chamber", committee.getChamber().asSqlEnum());
-        return jdbcNamed.query(SqlCommitteeQuery.SELECT_ALL_COMMITTEE_VERSIONS.getSql(schema()),
-                                            params, new CommitteeRowMapper());
-    }
-
     /**
-     * Gets the current version date for a given committee
-     * @param name
-     * @return the most recent version date for that committee
-     * returns null if no committee exists for the given name
-     */
-    private Date getCommitteeCurrentVersion(String name){
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("name", name);
-        try{
-            Date version = jdbcNamed.queryForObject(SqlCommitteeQuery.SELECT_COMMITTEE_CURRENT_VERSION.getSql(schema()), params, Date.class);
-            return version;
-        }
-        catch (EmptyResultDataAccessException e){
-            return null;
-        }
-    }
-
-    /**
-     * Creates a record for a new version of a committee
+     * Modifies the record of a given committee version update data relating to meetings
      * @param committee
      */
-    private void insertCommitteeVersion(Committee committee){
-        logger.debug("inserting new version of " + committee.getChamber() + " " + committee.getName() + " " + committee.getPublishDate());
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("committee_name", committee.getName());
-        params.addValue("chamber", committee.getChamber().asSqlEnum());
-        params.addValue("session_year", committee.getSession());
-        params.addValue("location", committee.getLocation());
-        params.addValue("meetday", committee.getMeetDay());
-        params.addValue("meettime", committee.getMeetTime());
-        params.addValue("meetaltweek", committee.isMeetAltWeek());
-        params.addValue("meetaltweektext", committee.getMeetAltWeekText());
-        params.addValue("created", committee.getPublishDate());
-        jdbcNamed.update(SqlCommitteeQuery.INSERT_COMMITTEE_VERSION.getSql(schema()), params);
-
-        insertCommitteeMembers(committee);
-    }
-
     private void updateCommitteeMeetingInfo(Committee committee){
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("committee_name", committee.getName());
@@ -283,6 +319,10 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
         jdbcNamed.update(SqlCommitteeQuery.UPDATE_COMMITTEE_MEETING_INFO.getSql(schema()), params);
     }
 
+    /**
+     * Sets the reformed date for a given commitee version
+     * @param committee
+     */
     private void updateCommitteeReformed(Committee committee){
         logger.debug("updating reformed date for" + committee.getChamber() + " " + committee.getName() + " " + committee.getPublishDate() + " to " + committee.getReformed());
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -294,6 +334,10 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
         jdbcNamed.update(SqlCommitteeQuery.UPDATE_COMMITTEE_VERSION_REFORMED.getSql(schema()), params);
     }
 
+    /**
+     * Updates the current version of a committee record to the version specified by the given committee
+     * @param committee
+     */
     private void updateCommitteeCurrentVersion(Committee committee){
         logger.debug("updating current version of " + committee.getChamber() + " " + committee.getName() + " to " + committee.getPublishDate());
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -304,6 +348,11 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
         jdbcNamed.update(SqlCommitteeQuery.UPDATE_COMMITTEE_CURRENT_VERSION.getSql(schema()), params);
     }
 
+    /**
+     * Given two committees, merges records for the second committee into the first creating a single version record
+     * @param first
+     * @param second
+     */
     private void mergeCommittees(Committee first, Committee second){
         first.updateMeetingInfo(second);
         first.setReformed(second.getReformed());
@@ -314,18 +363,10 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
         }
     }
 
-    private Committee selectNextCommittee(Committee committee){
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("committee_name", committee.getName());
-        params.addValue("chamber", committee.getChamber().asSqlEnum());
-        params.addValue("session_year", committee.getSession());
-        params.addValue("date", committee.getPublishDate());
-        Committee nextCommittee = jdbcNamed.queryForObject(SqlCommitteeQuery.SELECT_NEXT_COMMITTEE_VERSION.getSql(schema()),
-                                                            params, new CommitteeRowMapper());
-        nextCommittee.setMembers(selectCommitteeMembers(nextCommittee));
-        return nextCommittee;
-    }
-
+    /**
+     * Removes the all entries for a given committee version
+     * @param committee
+     */
     private void deleteCommitteeVersion(Committee committee){
         deleteCommitteeMembers(committee);
 
@@ -337,6 +378,10 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
         jdbcNamed.update(SqlCommitteeQuery.DELETE_COMMITTEE_VERSION.getSql(schema()), params);
     }
 
+    /**
+     * Removes all committee member records for a given committee version
+     * @param committee
+     */
     private void deleteCommitteeMembers(Committee committee){
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("committee_name", committee.getName());
@@ -344,25 +389,6 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
         params.addValue("session_year", committee.getSession());
         params.addValue("version_created", committee.getPublishDate());
         jdbcNamed.update(SqlCommitteeQuery.DELETE_COMMITTEE_MEMBERS.getSql(schema()), params);
-    }
-
-    /**
-     * Inserts the committee members for a particular version of a committee
-     * @param committee
-     */
-    private void insertCommitteeMembers(Committee committee){
-        for(CommitteeMember committeeMember : committee.getMembers()){
-            MapSqlParameterSource params = new MapSqlParameterSource();
-            params.addValue("committee_name", committee.getName());
-            params.addValue("chamber", committee.getChamber().asSqlEnum());
-            params.addValue("version_created", committee.getPublishDate());
-            params.addValue("member_id", committeeMember.getMember().getMemberId());
-            params.addValue("session_year", committee.getSession());
-            params.addValue("sequence_no", committeeMember.getSequenceNo());
-            params.addValue("title", committeeMember.getTitle().asSqlEnum());
-            params.addValue("majority", committeeMember.isMajority());
-            jdbcNamed.update(SqlCommitteeQuery.INSERT_COMMITTEE_MEMBER.getSql(schema()), params);
-        }
     }
 
     /** --- Row Mappers --- */
