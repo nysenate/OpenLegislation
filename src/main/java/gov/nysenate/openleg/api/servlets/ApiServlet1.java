@@ -4,6 +4,7 @@ import gov.nysenate.openleg.api.AbstractApiRequest.ApiRequestException;
 import gov.nysenate.openleg.api.ApiHelper;
 import gov.nysenate.openleg.converter.Api1JsonConverter;
 import gov.nysenate.openleg.converter.Api1XmlConverter;
+import gov.nysenate.openleg.converter.pdf.BillTextPDFConverter;
 import gov.nysenate.openleg.model.BaseObject;
 import gov.nysenate.openleg.model.Bill;
 import gov.nysenate.openleg.model.SenateResponse;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 
 @SuppressWarnings("serial")
 public class ApiServlet1 extends HttpServlet
@@ -31,7 +33,7 @@ public class ApiServlet1 extends HttpServlet
     public static int DEFAULT_PAGE_SIZE = 20;
 
     public final Logger logger = Logger.getLogger(ApiServlet1.class);
-    public final static Pattern documentPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(json|xml|jsonp|html-print|lrs-print|html)/(bill|calendar|meeting|transcript)/(.*)$", Pattern.CASE_INSENSITIVE);
+    public final static Pattern documentPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(json|xml|jsonp|html-print|lrs-print|html|pdf)/(bill|calendar|meeting|transcript)/(.*)$", Pattern.CASE_INSENSITIVE);
     public final static Pattern searchPattern = Pattern.compile("(?:/api)?(?:/1.0)?/(csv|atom|rss|json|xml|jsonp)/(search|votes|bills|meetings|actions|calendars|transcripts|sponsor)(?:/(.*?[a-z].*?))?(?:/([0-9]+))?(?:/([0-9]+))?/?$", Pattern.CASE_INSENSITIVE);
 
     @Override
@@ -240,6 +242,15 @@ public class ApiServlet1 extends HttpServlet
             else if (format.equals("lrs-print")) {
                 request.setAttribute("bill", object);
                 request.getSession().getServletContext().getRequestDispatcher("/views/bill-lrs-print.jsp").forward(request, response);
+            }
+            else if (format.equals("pdf")) {
+                response.setContentType("application/pdf");
+                try {
+                    BillTextPDFConverter.write(object, response.getOutputStream());
+                } catch (COSVisitorException e) {
+                    logger.error(e.getMessage(), e);
+                    throw new ApiRequestException("internal server error.", e);
+                }
             }
             else if (format.equals("html") || format.equals("html-print")) {
                 // TODO: Send a 301 response instead.

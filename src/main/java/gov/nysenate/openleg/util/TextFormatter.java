@@ -2,13 +2,17 @@ package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.model.Bill;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TextFormatter {
+
     public static Pattern startPagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s+\\d{1,4}$)");
     public static Pattern endPagePattern = Pattern.compile("^\\s*(EXPLANATION--Matter|LBD[0-9-]+$)");
     public static Pattern textLinePattern = Pattern.compile("^ {1,5}[0-9]+ ");
+    private static Pattern billTextPageStartPatern = Pattern.compile("^(\\s+\\w.\\s\\d+(--\\w)?)?\\s{10,}\\d+(\\s{10,}(\\w.\\s\\d+(--\\w)?)?(\\d+-\\d+-\\d(--\\w)?)?)?$");
 
     public static String append(Object... objects) {
         StringBuilder sb = new StringBuilder();
@@ -38,6 +42,42 @@ public class TextFormatter {
             }
         }
         return text.toString();
+    }
+
+    public static List<List<String>> pdfPrintablePages(Bill bill) {
+        List<List<String>> pages = new ArrayList<List<String>>();
+
+        if (bill != null && bill.getFulltext() != null) {
+            pages = generatePages(bill);
+        }
+        return pages;
+    }
+
+    private static List<List<String>> generatePages(Bill bill) {
+        List<List<String>> pages = new ArrayList<List<String>>();
+        List<String> page = new ArrayList<String>();
+        int lineNum = 1;
+        String[] lines = bill.getFulltext().split("\n");
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (isFirstLineOfNextPage(line, lineNum)) {
+                pages.add(page);
+                page = new ArrayList<String>();
+            }
+            page.add(line);
+            lineNum++;
+
+            if (i == lines.length - 1) {
+                pages.add(page);
+            }
+        }
+
+        return pages;
+    }
+
+    private static boolean isFirstLineOfNextPage(String line, int lineNum) {
+        Matcher billTextPageMatcher = billTextPageStartPatern.matcher(line);
+        return lineNum > 10 && billTextPageMatcher.find(); // Ignore erroneous result in first 10 lines.
     }
 
     /**
