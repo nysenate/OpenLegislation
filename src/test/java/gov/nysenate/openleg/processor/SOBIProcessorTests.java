@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 
 
@@ -40,8 +41,9 @@ public class SOBIProcessorTests extends BaseTests{
     @Autowired
     protected SOBIFragmentDao sobiFragmentDao;
 
-    @Before
+    @PostConstruct
     public void init() {
+        this.processorMap = new HashMap<SOBIFragmentType, SOBIProcessor>();
         this.processorMap.put(SOBIFragmentType.BILL, billProcessor);
         this.processorMap.put(SOBIFragmentType.AGENDA, new AgendaProcessor());
         this.processorMap.put(SOBIFragmentType.AGENDA_VOTE, new AgendaVoteProcessor());
