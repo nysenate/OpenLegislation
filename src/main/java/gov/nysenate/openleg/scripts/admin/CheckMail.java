@@ -106,11 +106,11 @@ public class CheckMail extends BaseScript
             validMessages.put(filename, message);
         }
 
-        String prefix = new SimpleDateFormat("yyyyMMdd").format(prefixDate);
-
         runSpotCheck = senateHigh && senateLow && assemblyHigh && assemblyLow && pageFile;
 
         if (runSpotCheck) {
+            String prefix = new SimpleDateFormat("yyyyMMdd").format(prefixDate);
+
             // Download the messages
             for(Map.Entry<String, Message> messageEntry : validMessages.entrySet()) {
                 String filename = prefix + messageEntry.getKey();
