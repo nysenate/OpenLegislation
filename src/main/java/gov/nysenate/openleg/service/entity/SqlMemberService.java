@@ -28,6 +28,20 @@ public class SqlMemberService implements MemberService
     @PostConstruct
     private void init() {
         cacheManager.addCache("memberShortName");
+        cacheManager.addCache("memberId");
+    }
+
+    @Cacheable("memberId")
+    public Member getMemberById(int memberId, int sessionYear) throws MemberNotFoundEx {
+        if (memberId <= 0) {
+            throw new IllegalArgumentException("Member Id cannot be less than or equal to 0.");
+        }
+        try {
+            return memberDao.getMemberById(memberId, sessionYear);
+        }
+        catch (EmptyResultDataAccessException ex) {
+            throw new MemberNotFoundEx(memberId, sessionYear);
+        }
     }
 
     @Override
@@ -43,6 +57,4 @@ public class SqlMemberService implements MemberService
             throw new MemberNotFoundEx(lbdcShortName, sessionYear, chamber);
         }
     }
-
-
 }

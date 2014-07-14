@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.util.Config;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

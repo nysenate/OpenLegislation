@@ -5,10 +5,13 @@ import gov.nysenate.openleg.dao.entity.MemberDao;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.sobi.SOBIFragment;
+import gov.nysenate.openleg.service.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.service.entity.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -16,10 +19,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class SqlBillDao extends SqlBaseDao implements BillDao
@@ -27,7 +27,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     private static final Logger logger = LoggerFactory.getLogger(SqlBillDao.class);
 
     @Autowired
-    private MemberDao memberDao;
+    private MemberService memberService;
 
     /* --- Implemented Methods --- */
 
@@ -89,6 +89,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             updateBillCosponsor(amendment, sobiFragment, amendParams);
             // Update the multi-sponsors list
             updateBillMultiSponsor(amendment, sobiFragment, amendParams);
+            // Update votes
+            updateBillVotes(amendment, sobiFragment, amendParams);
         }
         // Update the sponsor
         updateBillSponsor(bill, sobiFragment, billParams);
@@ -129,10 +131,20 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return jdbcNamed.query(SqlBillQuery.SELECT_BILL_SAME_AS_SQL.getSql(schema()), params, new BillSameAsRowMapper());
     }
 
+    private List<BillVote> getBillVotes(MapSqlParameterSource params) {
+//        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_VOTES_SQL.getSql(schema()), params, new RowCallbackHandler() {
+//            @Override
+//            public void processRow(ResultSet rs) throws SQLException {
+//
+//            }
+//        })
+    return null;
+    }
+
     private BillSponsor getBillSponsor(MapSqlParameterSource params) {
         try {
             return jdbcNamed.queryForObject(
-                SqlBillQuery.SELECT_BILL_SPONSOR_SQL.getSql(schema()), params, new BillSponsorRowMapper(memberDao));
+                SqlBillQuery.SELECT_BILL_SPONSOR_SQL.getSql(schema()), params, new BillSponsorRowMapper(memberService));
         }
         catch (EmptyResultDataAccessException ex) {
             return null;
@@ -144,11 +156,11 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     }
 
     private List<Member> getCoSponsors(MapSqlParameterSource params) {
-        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_MULTISPONSORS_SQL.getSql(schema()), params, new BillMemberRowMapper(memberDao));
+        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_MULTISPONSORS_SQL.getSql(schema()), params, new BillMemberRowMapper(memberService));
     }
 
     private List<Member> getMultiSponsors(MapSqlParameterSource params) {
-        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_MULTISPONSORS_SQL.getSql(schema()), params, new BillMemberRowMapper(memberDao));
+        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_MULTISPONSORS_SQL.getSql(schema()), params, new BillMemberRowMapper(memberService));
     }
 
     /**
@@ -251,6 +263,12 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         }
     }
 
+    /**
+     * Update the bill amendment's list of votes.
+     */
+    private void updateBillVotes(BillAmendment amendment, SOBIFragment sobiFragment, MapSqlParameterSource amendParams) {
+    }
+
     /** --- Helper Classes --- */
 
     private static class BillRowMapper implements RowMapper<Bill>
@@ -329,10 +347,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     private static class BillSponsorRowMapper implements RowMapper<BillSponsor>
     {
-        MemberDao memberDao;
+        MemberService memberService;
 
-        private BillSponsorRowMapper(MemberDao memberDao) {
-            this.memberDao = memberDao;
+        private BillSponsorRowMapper(MemberService memberService) {
+            this.memberService = memberService;
         }
 
         @Override
@@ -343,7 +361,12 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             sponsor.setBudgetBill(rs.getBoolean("budget_bill"));
             sponsor.setRulesSponsor(rs.getBoolean("rules_sponsor"));
             if (memberId > 0) {
-                sponsor.setMember(memberDao.getMemberById(memberId, sessionYear));
+                try {
+                    sponsor.setMember(memberService.getMemberById(memberId, sessionYear));
+                }
+                catch (MemberNotFoundEx memberNotFoundEx) {
+                    logger.warn("Bill referenced a sponsor that does not exist. {}", memberNotFoundEx.getMessage());
+                }
             }
             return sponsor;
         }
@@ -351,15 +374,49 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     private static class BillMemberRowMapper implements RowMapper<Member>
     {
-        MemberDao memberDao;
+        MemberService memberService;
 
-        private BillMemberRowMapper(MemberDao memberDao) {
-            this.memberDao = memberDao;
+        private BillMemberRowMapper(MemberService memberService) {
+            this.memberService = memberService;
         }
 
         @Override
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return memberDao.getMemberById(rs.getInt("member_id"), rs.getInt("bill_session_year"));
+            int memberId = rs.getInt("member_id");
+            int sessionYear = rs.getInt("bill_session_year");
+            try {
+                return memberService.getMemberById(memberId, sessionYear);
+            }
+            catch (MemberNotFoundEx memberNotFoundEx) {
+                logger.warn("Bill referenced a member that does not exist: {}", memberNotFoundEx.getMessage());
+            }
+            return null;
+        }
+    }
+
+    private static class BillVoteRowCallbackHandler implements RowCallbackHandler
+    {
+        private TreeMap<String, BillVote> billVoteMap = new TreeMap<>();
+
+        @Override
+        public void processRow(ResultSet rs) throws SQLException {
+            BillId billId = new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"), rs.getString("bill_amend_version"));
+            Date voteDate = rs.getDate("vote_date");
+            int voteType = rs.getInt("vote_type");
+            int sequenceNo = rs.getInt("sequence_no");
+
+            BillVote billVote = new BillVote(billId, voteDate, BillVoteType.valueOfCode(voteType), sequenceNo);
+
+            if (!billVoteMap.containsKey(billVote.getVoteId())) {
+                billVoteMap.put(billVote.getVoteId(), billVote);
+            }
+
+            billVote = billVoteMap.get(billVote.getVoteId());
+            rs.getString("vote_code");
+            rs.getInt("member_id");
+            rs.getString("member_short_name");
+            rs.getDate("published_date_time");
+            rs.getDate("modified_date_time");
         }
     }
 

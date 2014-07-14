@@ -1,258 +1,227 @@
 package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.BaseLegislativeContent;
-import gov.nysenate.openleg.model.entity.Person;
+import gov.nysenate.openleg.model.entity.Member;
 import org.joda.time.LocalDate;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-public class BillVote extends BaseLegislativeContent
+public class BillVote extends BaseLegislativeContent implements Serializable
 {
+    private static final long serialVersionUID = -5265803060674818213L;
+
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
-    private int voteType;
+    /** The type of bill vote (floor/committee) */
+    private BillVoteType voteType;
 
+    /** Date the vote was taken on. */
     private Date voteDate;
 
-    public String oid;
+    /** Reference to the specific bill this vote was taken on. */
+    private BillId billId;
 
-    private List<String> ayes;
+    /** Members that voted 'Yes'. */
+    private Set<Member> ayes = new LinkedHashSet<>();
 
-    private List<String> nays;
+    /** Members that voted 'No'. */
+    private Set<Member> nays = new LinkedHashSet<>();
 
-    private List<String> abstains;
+    /** Members that abstained from vote. */
+    private Set<Member> abstains = new LinkedHashSet<>();
 
-    private List<String> absent;
+    /** Members that were absent for the vote. */
+    private Set<Member> absent = new LinkedHashSet<>();
 
-    private List<String> excused;
+    /** Members that were excused from the vote. */
+    private Set<Member> excused = new LinkedHashSet<>();
 
-    private Bill bill;
+    /** Members that voted 'Yes with reservations'. */
+    private Set<Member> ayeswr = new LinkedHashSet<>();
 
-    private String billAmendment;
+    /** An identifier to uniquely identify votes that came in on the same day.
+     *  Currently not implemented as the source data does not contain this value. */
+    private int sequenceNumber;
 
-    private List<String> ayeswr;
+    /** --- Constructors --- */
 
-    private String sequenceNumber;
+    public BillVote() {
+        super();
+    }
 
-    private String description = "";
+    public BillVote(BillId billId, Date date, BillVoteType type, int sequenceNumber) {
+        this();
+        this.billId = billId;
+        this.voteDate = date;
+        this.setYear(new LocalDate(date).getYear());
+        this.setSession(resolveSessionYear(this.getYear()));
+        this.voteType = type;
+        this.sequenceNumber = sequenceNumber;
+    }
 
-    public final static int VOTE_TYPE_FLOOR = 1;
+    /** --- Functional Getters/Setters --- */
 
-    public final static int VOTE_TYPE_COMMITTEE = 2;
+    /** Creates and returns a unique id for the BillVote */
+    public String getVoteId() {
+        return this.billId.toString() + ":" + this.voteType + ":" + this.voteDate + ":" + this.sequenceNumber;
+    }
 
     public int count() {
         return ayes.size() + nays.size() + abstains.size() + excused.size();
     }
 
-    public BillVote() {
-        super();
-        ayes = new ArrayList<>();
-        ayeswr = new ArrayList<>();
-        nays = new ArrayList<>();
-        abstains = new ArrayList<>();
-        excused = new ArrayList<>();
-        absent = new ArrayList<>();
+    public void addAye(Member member) {
+        ayes.add(member);
     }
 
-    public BillVote(String billId, String billAmendment, Date date, int type, String sequenceNumber) {
-        this();
-        this.voteDate = date;
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-        cal.setTime(voteDate);
-        this.setYear(cal.get(java.util.Calendar.YEAR));
-        this.setSession(this.getYear() % 2 == 0 ? this.getYear() -1 : this.getYear());
-        this.voteType = type;
-        this.setSequenceNumber(sequenceNumber);
-        this.oid = billId+'-'+dateFormat.format(voteDate)+'-'+String.valueOf(voteType)+'-'+sequenceNumber;
+    public void addAyeWR(Member member) {
+        ayeswr.add(member);
     }
 
-    public BillVote(BillAmendment amendment, Date date, int type, String sequenceNumber) {
-        this();
-        this.voteDate = date;
-        this.setYear(new LocalDate(voteDate).getYear());
-        this.setSession(this.getYear() % 2 == 0 ? this.getYear() - 1 : this.getYear());
-        this.voteType = type;
-        this.setSequenceNumber(sequenceNumber);
+    public void addNay(Member member) {
+        nays.add(member);
+    }
+
+    public void addAbstain(Member member) {
+        abstains.add(member);
+    }
+
+    public void addAbsent(Member member) {
+        absent.add(member);
+    }
+
+    public void addExcused(Member member) {
+        excused.add(member);
+    }
+
+    /** --- Overrides --- */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BillVote)) return false;
+        BillVote billVote = (BillVote) o;
+        if (sequenceNumber != billVote.sequenceNumber) return false;
+        if (absent != null ? !absent.equals(billVote.absent) : billVote.absent != null) return false;
+        if (abstains != null ? !abstains.equals(billVote.abstains) : billVote.abstains != null) return false;
+        if (ayes != null ? !ayes.equals(billVote.ayes) : billVote.ayes != null) return false;
+        if (ayeswr != null ? !ayeswr.equals(billVote.ayeswr) : billVote.ayeswr != null) return false;
+        if (billId != null ? !billId.equals(billVote.billId) : billVote.billId != null) return false;
+        if (excused != null ? !excused.equals(billVote.excused) : billVote.excused != null) return false;
+        if (nays != null ? !nays.equals(billVote.nays) : billVote.nays != null) return false;
+        if (voteDate != null ? !voteDate.equals(billVote.voteDate) : billVote.voteDate != null) return false;
+        if (voteType != billVote.voteType) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = voteType != null ? voteType.hashCode() : 0;
+        result = 31 * result + (voteDate != null ? voteDate.hashCode() : 0);
+        result = 31 * result + (billId != null ? billId.hashCode() : 0);
+        result = 31 * result + (ayes != null ? ayes.hashCode() : 0);
+        result = 31 * result + (nays != null ? nays.hashCode() : 0);
+        result = 31 * result + (abstains != null ? abstains.hashCode() : 0);
+        result = 31 * result + (absent != null ? absent.hashCode() : 0);
+        result = 31 * result + (excused != null ? excused.hashCode() : 0);
+        result = 31 * result + (ayeswr != null ? ayeswr.hashCode() : 0);
+        result = 31 * result + sequenceNumber;
+        return result;
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public int getVoteType()
-    {
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public static SimpleDateFormat getDateFormat() {
+        return dateFormat;
+    }
+
+    public static void setDateFormat(SimpleDateFormat dateFormat) {
+        BillVote.dateFormat = dateFormat;
+    }
+
+    public BillVoteType getVoteType() {
         return voteType;
     }
 
-    public String getOid()
-    {
-        return this.oid;
-    }
-
-    public void setOid(String oid)
-    {
-        this.oid = oid;
-    }
-
-    public Date getVoteDate()
-    {
-        return voteDate;
-    }
-
-    public List<String> getAyes()
-    {
-        return ayes;
-    }
-
-    public List<String> getNays()
-    {
-        return nays;
-    }
-
-    public List<String> getAbstains()
-    {
-        return abstains;
-    }
-
-    public List<String> getAbsent()
-    {
-        return absent;
-    }
-
-    public List<String> getExcused()
-    {
-        return excused;
-    }
-
-    public Bill getBill()
-    {
-        return bill;
-    }
-
-    public List<String> getAyeswr()
-    {
-        return ayeswr;
-    }
-
-    public String getDescription()
-    {
-        return description;
-    }
-
-    public void setVoteType(int voteType)
-    {
+    public void setVoteType(BillVoteType voteType) {
         this.voteType = voteType;
     }
 
-    public void setVoteDate(Date voteDate)
-    {
+    public Date getVoteDate() {
+        return voteDate;
+    }
+
+    public void setVoteDate(Date voteDate) {
         this.voteDate = voteDate;
     }
 
-    public void setAyes(List<String> ayes)
-    {
+    public BillId getBillId() {
+        return billId;
+    }
+
+    public void setBillId(BillId billId) {
+        this.billId = billId;
+    }
+
+    public Set<Member> getAyes() {
+        return ayes;
+    }
+
+    public void setAyes(Set<Member> ayes) {
         this.ayes = ayes;
     }
 
-    public void setNays(List<String> nays)
-    {
+    public Set<Member> getNays() {
+        return nays;
+    }
+
+    public void setNays(Set<Member> nays) {
         this.nays = nays;
     }
 
-    public void setAbstains(List<String> abstains)
-    {
+    public Set<Member> getAbstains() {
+        return abstains;
+    }
+
+    public void setAbstains(Set<Member> abstains) {
         this.abstains = abstains;
     }
 
-    public void setAbsent(List<String> absent)
-    {
+    public Set<Member> getAbsent() {
+        return absent;
+    }
+
+    public void setAbsent(Set<Member> absent) {
         this.absent = absent;
     }
 
-    public void setExcused(List<String> excused)
-    {
+    public Set<Member> getExcused() {
+        return excused;
+    }
+
+    public void setExcused(Set<Member> excused) {
         this.excused = excused;
     }
 
-    public void setBill(Bill bill)
-    {
-        this.bill = bill;
+    public Set<Member> getAyeswr() {
+        return ayeswr;
     }
 
-    public void setAyeswr(List<String> ayeswr)
-    {
+    public void setAyeswr(Set<Member> ayeswr) {
         this.ayeswr = ayeswr;
     }
 
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
-
-    public void addAye(Person person)
-    {
-        ayes.add(person.getFullName());
-    }
-
-    public void addAyeWR(Person person)
-    {
-        ayeswr.add(person.getFullName());
-    }
-
-    public void addNay(Person person)
-    {
-        nays.add(person.getFullName());
-    }
-
-    public void addAbstain(Person person)
-    {
-        abstains.add(person.getFullName());
-    }
-
-    public void addAbsent(Person person)
-    {
-        absent.add(person.getFullName());
-    }
-
-    public void addExcused(Person person)
-    {
-        excused.add(person.getFullName());
-    }
-
-    /** FIXME */
-//    @Override
-//    public boolean equals(Object obj)
-//    {
-//        if(obj != null && obj instanceof BillVote) {
-//            BillVote vote = (BillVote)obj;
-//            return this.oid.equals(vote.getOid());
-//        }
-//        return false;
-//    }
-
-    @Override
-    public String toString() {
-        return this.getOid();
-    }
-
-    public String getSequenceNumber()
-    {
+    public int getSequenceNumber() {
         return sequenceNumber;
     }
 
-    public void setSequenceNumber(String sequenceNumber)
-    {
+    public void setSequenceNumber(int sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
-    }
-
-    public String getBillAmendment()
-    {
-        return billAmendment;
-    }
-
-    public void setBillAmendment(String billAmendment)
-    {
-        this.billAmendment = billAmendment;
     }
 }

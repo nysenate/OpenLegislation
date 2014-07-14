@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -60,20 +61,20 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         params.addValue("shortName", lbdcShortName.trim());
         params.addValue("sessionYear", (sessionYear % 2 == 0) ? sessionYear - 1 : sessionYear);
         params.addValue("chamber", chamber.name().toLowerCase());
-        logger.debug("Fetching member {} ({}) from database...", lbdcShortName, sessionYear);
+        logger.trace("Fetching member {} ({}) from database...", lbdcShortName, sessionYear);
         return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateMember(Member member) {
-
+        throw new NotImplementedException();
     }
 
     /** {@inheritDoc} */
     @Override
     public void deleteMember(Member member) {
-
+        throw new NotImplementedException();
     }
 
     /** --- Helper classes --- */

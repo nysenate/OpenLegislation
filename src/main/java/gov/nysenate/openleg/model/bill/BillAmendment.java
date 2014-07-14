@@ -3,13 +3,16 @@ package gov.nysenate.openleg.model.bill;
 import gov.nysenate.openleg.model.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Member;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BillAmendment extends BaseLegislativeContent
+public class BillAmendment extends BaseLegislativeContent implements Serializable
 {
+    private static final long serialVersionUID = -2020934234685630361L;
+
     /** Print number of the base bill. */
     protected String baseBillPrintNo = "";
 
@@ -28,7 +31,7 @@ public class BillAmendment extends BaseLegislativeContent
     protected String actClause = "";
 
     /** The full text of the amendment. */
-    protected String fulltext;
+    protected String fulltext = "";
 
     /** The committee the bill is currently referred to, if any. */
     protected String currentCommittee = "";
@@ -55,12 +58,18 @@ public class BillAmendment extends BaseLegislativeContent
         super();
     }
 
-    public BillAmendment(Bill baseBill, String version) {
+    public BillAmendment(BillId baseBillId, String version) {
         this();
-        this.baseBillPrintNo = baseBill.getPrintNo();
-        this.session = baseBill.getSession();
-        this.year = baseBill.getYear();
+        this.baseBillPrintNo = baseBillId.getPrintNo();
+        this.session = year = baseBillId.getSession();
         this.version = version;
+    }
+
+    /** --- Overrides --- */
+
+    @Override
+    public String toString() {
+        return this.getBillId().toString();
     }
 
     /** --- Functional Getters/Setters --- */

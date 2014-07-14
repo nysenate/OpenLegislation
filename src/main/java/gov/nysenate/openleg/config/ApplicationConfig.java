@@ -30,19 +30,23 @@ public class ApplicationConfig implements CachingConfigurer
     /** --- Caching Configuration --- */
 
     @Bean(destroyMethod = "shutdown")
-    public net.sf.ehcache.CacheManager ehCacheManager() {
+    public net.sf.ehcache.CacheManager pooledCacheManger() {
+        // Configure the default cache to be used as a template for actual caches.
         CacheConfiguration cacheConfiguration = new CacheConfiguration();
         cacheConfiguration.setMemoryStoreEvictionPolicy("LRU");
+
+        // Configure the cache manager.
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
         config.setMaxBytesLocalHeap(cacheMaxHeapSize);
         config.addDefaultCache(cacheConfiguration);
+
         return net.sf.ehcache.CacheManager.newInstance(config);
     }
 
     @Override
     @Bean
     public CacheManager cacheManager() {
-        return new EhCacheCacheManager(ehCacheManager());
+        return new EhCacheCacheManager(pooledCacheManger());
     }
 
     @Override

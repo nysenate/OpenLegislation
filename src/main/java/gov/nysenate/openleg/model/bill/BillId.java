@@ -1,17 +1,22 @@
 package gov.nysenate.openleg.model.bill;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import gov.nysenate.openleg.model.entity.Chamber;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static gov.nysenate.openleg.model.BaseLegislativeContent.resolveSessionYear;
 
 /**
  * An immutable representation of the fields that are used to identify a particular bill.
  * This is mostly useful when other classes need to reference a particular bill but do not
  * necessarily need to store a complete object reference of the Bill or BillAmendment.
  */
-public class BillId implements Comparable<BillId>
+public class BillId implements Serializable, Comparable<BillId>
 {
+    private static final long serialVersionUID = 6494036869654732240L;
+
     public static Pattern printNumberPattern = Pattern.compile("([ASLREJKBC])([0-9]{1,5})([A-Z]?)");
 
     /** The default amendment version letter. */
@@ -66,7 +71,7 @@ public class BillId implements Comparable<BillId>
             throw new IllegalArgumentException("basePrintNo must be numerical after the letter designator!");
         }
         this.version = (version != null) ? version.trim().toUpperCase() : "";
-        this.session = (session % 2 == 0) ? session - 1 : session;
+        this.session = resolveSessionYear(session);
     }
 
     /** --- Methods --- */
@@ -81,6 +86,10 @@ public class BillId implements Comparable<BillId>
 
     public BillType getBillType() {
         return BillType.valueOf(this.basePrintNo.substring(0, 1));
+    }
+
+    public Chamber getChamber() {
+        return getBillType().getChamber();
     }
 
     /**

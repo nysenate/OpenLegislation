@@ -2,13 +2,17 @@ package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.entity.Member;
 
+import java.io.Serializable;
+
 /**
  * Represents the bill's sponsor. Typically this would just be a reference to a Member
  * but there are special cases where the bill is sponsored by the RULES committee or
  * it's a budget bill and has no sponsor.
  */
-public class BillSponsor
+public class BillSponsor implements Serializable
 {
+    private static final long serialVersionUID = -9140631420743063575L;
+
     /** Typically a bill will have a single member that sponsored it. */
     private Member member;
 

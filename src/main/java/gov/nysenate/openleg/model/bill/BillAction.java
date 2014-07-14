@@ -3,14 +3,17 @@ package gov.nysenate.openleg.model.bill;
 import gov.nysenate.openleg.model.BaseLegislativeContent;
 import org.joda.time.LocalDate;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 
 /**
  * Represents a single action on a single bill. E.g. REFERRED TO RULES.
  */
-public class BillAction extends BaseLegislativeContent
+public class BillAction extends BaseLegislativeContent implements Serializable
 {
+    private static final long serialVersionUID = -508975280380827827L;
+
     /** Identifies the bill this action was taken on. */
     private BillId billId;
 

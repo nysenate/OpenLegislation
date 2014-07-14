@@ -2,7 +2,9 @@ package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.service.bill.BillAmendNotFoundEx;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -10,8 +12,10 @@ import java.util.*;
  * and session year. It contains a collection of amendments (including the base amendment) as well as
  * shared information such as the sponsor or actions.
  */
-public class Bill extends BaseLegislativeContent implements Comparable<Bill>
+public class Bill extends BaseLegislativeContent implements Serializable, Comparable<Bill>
 {
+    private static final long serialVersionUID = 2925424993477789289L;
+
     /** A number assigned to a bill when it's introduced in the Legislature. Each printNo begins with a
      *  letter (A for Assembly, S for Senate) followed by 1 to 5 digits. This printNo is valid only for the
      *  2 year session period. */
@@ -59,7 +63,7 @@ public class Bill extends BaseLegislativeContent implements Comparable<Bill>
 
     public Bill(String printNo, int sessionYear) {
         this.printNo = printNo;
-        this.session = sessionYear;
+        this.session = resolveSessionYear(sessionYear);
         this.year = sessionYear;
     }
 
@@ -141,10 +145,14 @@ public class Bill extends BaseLegislativeContent implements Comparable<Bill>
     /**
      * Retrieves an amendment stored in this bill using the version as the key.
      * @param version - The amendment version of the bill (e.g "A", "B", etc)
-     * @return BillAmendment if found, null otherwise
+     * @return BillAmendment
+     * @throws BillAmendNotFoundEx if the bill amendment does not exist
      */
-    public BillAmendment getAmendment(String version) {
-        return this.amendmentMap.get(version.toUpperCase());
+    public BillAmendment getAmendment(String version) throws BillAmendNotFoundEx {
+        if (this.hasAmendment(version)) {
+            return this.amendmentMap.get(version.toUpperCase());
+        }
+        throw new BillAmendNotFoundEx(new BillId(printNo, session, version));
     }
 
     /**
@@ -178,17 +186,25 @@ public class Bill extends BaseLegislativeContent implements Comparable<Bill>
      * @param version String - Amendment version
      * @return boolean
      */
-    public boolean hasAmendment(String version)
-    {
+    public boolean hasAmendment(String version) {
         return this.amendmentMap.containsKey(version.toUpperCase()) &&
                this.amendmentMap.get(version.toUpperCase()) != null;
     }
 
     /**
+     * Indicate if the bill has a reference to the active amendment version.
+     * @return boolean
+     */
+    public boolean hasActiveAmendment() {
+        return hasAmendment(this.activeVersion);
+    }
+
+    /**
      * Convenience method to retrieve the currently active Amendment object.
      * @return BillAmendment
+     * @throws BillAmendNotFoundEx if the bill amendment does not exist
      */
-    public BillAmendment getActiveAmendment() {
+    public BillAmendment getActiveAmendment() throws BillAmendNotFoundEx {
         return this.getAmendment(this.getActiveVersion());
     }
 
