@@ -261,7 +261,7 @@ $(document).ready(function() {
 	                </div>
 
 	                <div class="searchrow">
-                        <div class="searchlabel">and current Committee is on of:</div>
+                        <div class="searchlabel">and current Committee is one of:</div>
                         <div class="searchinput">
                         <select multiple="multiple" id="committees" name="commitee">
                         <%
