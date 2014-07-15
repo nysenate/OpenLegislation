@@ -7,7 +7,7 @@ public enum BillVoteCode
 {
     AYE,   // Voted 'Yes'
     NAY,   // Voted 'No'
-    EXC,   // Excluded from Vote
+    EXC,   // Excused from Vote
     ABS,   // Absent from Vote
     ABD,   // Abstained from Vote
     AYEWR  // Vote 'Yes, with reservations'
