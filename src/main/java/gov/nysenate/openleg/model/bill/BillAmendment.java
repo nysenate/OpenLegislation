@@ -4,10 +4,7 @@ import gov.nysenate.openleg.model.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Member;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class BillAmendment extends BaseLegislativeContent implements Serializable
 {
@@ -46,8 +43,8 @@ public class BillAmendment extends BaseLegislativeContent implements Serializabl
     /** A flag marking this bill as stricken (effectively withdrawn) */
     protected Boolean stricken = false;
 
-    /** A list of votes that have been made on this bill. */
-    protected List<BillVote> votes = new ArrayList<>();
+    /** A list of votes that have been made on this bill. Maps the vote id -> BillVote */
+    protected Map<BillVoteId, BillVote> votesMap = new HashMap<>();
 
     /** A flag marking this bill as introduced in unison in both houses */
     protected Boolean uniBill = false;
@@ -87,8 +84,7 @@ public class BillAmendment extends BaseLegislativeContent implements Serializabl
     }
 
     public void updateVote(BillVote vote) {
-        this.getVotes().remove(vote);
-        this.getVotes().add(vote);
+        this.votesMap.put(vote.getVoteId(), vote);
     }
 
     public boolean isBaseVersion() {
@@ -173,12 +169,18 @@ public class BillAmendment extends BaseLegislativeContent implements Serializabl
         this.stricken = stricken;
     }
 
-    public List<BillVote> getVotes() {
-        return votes;
+    public Map<BillVoteId, BillVote> getVotesMap() {
+        return votesMap;
     }
 
-    public void setVotes(List<BillVote> votes) {
-        this.votes = votes;
+    public List<BillVote> getVotesList() {
+        return new ArrayList<>(votesMap.values());
+    }
+
+    public void setVotesMap(List<BillVote> votesMap) {
+        for (BillVote vote : votesMap) {
+            this.votesMap.put(vote.getVoteId(), vote);
+        }
     }
 
     public Boolean isUniBill() {

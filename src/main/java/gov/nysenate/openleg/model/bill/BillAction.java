@@ -67,7 +67,8 @@ public class BillAction extends BaseLegislativeContent implements Serializable
      * Every BillAction is assigned a BillId which may contain an amendment version other than
      * the base version. For the sake of equality checking, we will use the base version of the
      * bill id since the actions are stored on the base bill anyways. Seq no, date, and text will
-     * also be checked.
+     * also be checked. NOTE that published/modified date are ignored since an individual action
+     * is never updated.
      * @param o Object
      * @return boolean
      */

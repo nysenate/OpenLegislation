@@ -41,6 +41,9 @@ public class Member extends Person implements Serializable
 
     /** --- Overrides --- */
 
+    /**
+     * Ignores LBDC Shortname since there can be multiple variations.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -53,8 +56,6 @@ public class Member extends Person implements Serializable
         if (chamber != member.chamber) return false;
         if (districtCode != null ? !districtCode.equals(member.districtCode) : member.districtCode != null)
             return false;
-        if (lbdcShortName != null ? !lbdcShortName.equals(member.lbdcShortName) : member.lbdcShortName != null)
-            return false;
         return true;
     }
 
@@ -62,7 +63,6 @@ public class Member extends Person implements Serializable
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + memberId;
-        result = 31 * result + (lbdcShortName != null ? lbdcShortName.hashCode() : 0);
         result = 31 * result + sessionYear;
         result = 31 * result + (chamber != null ? chamber.hashCode() : 0);
         result = 31 * result + (incumbent ? 1 : 0);

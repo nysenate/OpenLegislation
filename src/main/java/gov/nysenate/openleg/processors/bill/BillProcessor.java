@@ -3,7 +3,6 @@ package gov.nysenate.openleg.processors.bill;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.model.sobi.SOBIBlock;
 import gov.nysenate.openleg.model.sobi.SOBIFragment;
 import gov.nysenate.openleg.processors.sobi.SOBIProcessor;
@@ -13,8 +12,6 @@ import gov.nysenate.openleg.service.bill.BillDataService;
 import gov.nysenate.openleg.service.bill.BillNotFoundEx;
 import gov.nysenate.openleg.service.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.MemberService;
-import gov.nysenate.openleg.util.OutputHelper;
-import gov.nysenate.openleg.util.Storage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +39,7 @@ public class BillProcessor extends SOBIProcessor
     public static final Pattern voteHeaderPattern = Pattern.compile("Senate Vote    Bill: (.{18}) Date: (.{10}).*");
 
     /** The expected format for recorded votes in the SOBIBlock[V] vote memo blocks; e.g. 'AYE  ADAMS' */
-    protected static final Pattern votePattern = Pattern.compile("(.{4}) (.{1,15})");
+    protected static final Pattern votePattern = Pattern.compile("(Aye|Nay|Abs|Exc|Abd) (.{1,16})");
 
     /** The expected format for actions recorded in the bill events [4] block. e.g. 02/04/13 Event Text Here */
     protected static final Pattern billEventPattern = Pattern.compile("([0-9]{2}/[0-9]{2}/[0-9]{2}) (.*)");
@@ -696,9 +693,10 @@ public class BillProcessor extends SOBIProcessor
     }
 
     /**
-     * Applies information to create or replace a bill vote. Votes are
-     * uniquely identified by date/bill. If we have an existing vote on
-     * the same date, replace it; otherwise create a new one.
+     * Applies information to create or replace a bill vote. Votes are uniquely identified by date/bill.
+     * If we have an existing vote on the same date, replace it; otherwise create a new one.
+     *
+     * Note: Only Floor votes are processed here, Committee votes are handled through the agendas.
      *
      * Examples:
      * -------------------------------------------------------------------------------------------
@@ -734,7 +732,7 @@ public class BillProcessor extends SOBIProcessor
                     // Use the old vote if we can find it, otherwise make a new one using now as the publish date
                     vote = new BillVote(billId, voteDateFormat.parse(voteHeader.group(2)), BillVoteType.FLOOR, 1);
                     vote.setPublishDate(date);
-                    for (BillVote oldVote : specifiedAmendment.getVotes()) {
+                    for (BillVote oldVote : specifiedAmendment.getVotesList()) {
                         if (oldVote.getVoteId().equals(vote.getVoteId())) {
                             // If we've received this vote before, use the old publish date
                             vote.setPublishDate(oldVote.getPublishDate());
@@ -751,23 +749,16 @@ public class BillProcessor extends SOBIProcessor
                 //Otherwise, build the existing vote
                 Matcher voteLine = votePattern.matcher(line);
                 while(voteLine.find()) {
-                    String type = voteLine.group(1).trim();
+                    BillVoteCode voteCode;
+                    try {
+                        voteCode = BillVoteCode.valueOf(voteLine.group(1).trim().toUpperCase());
+                    }
+                    catch (IllegalArgumentException ex) {
+                        throw new ParseError("No vote code mapping for " + voteLine);
+                    }
                     String shortName = voteLine.group(2).trim();
                     Member voter = getMemberFromShortName(shortName, billId.getSession(), billId.getChamber(), true);
-                    switch (type) {
-                        case "Aye":
-                            vote.addAye(voter); break;
-                        case "Nay":
-                            vote.addNay(voter); break;
-                        case "Abs":
-                            vote.addAbsent(voter); break;
-                        case "Abd":
-                            vote.addAbstain(voter); break;
-                        case "Exc":
-                            vote.addExcused(voter); break;
-                        default:
-                            throw new ParseError("Unknown vote type found: " + line);
-                    }
+                    vote.addMemberVote(voteCode, voter);
                 }
             }
             else {

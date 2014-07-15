@@ -41,6 +41,29 @@ abstract public class BaseLegislativeContent
         return (year % 2 == 0) ? year - 1 : year;
     }
 
+    /** --- Overrides --- */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BaseLegislativeContent)) return false;
+        BaseLegislativeContent that = (BaseLegislativeContent) o;
+        if (session != that.session) return false;
+        if (year != that.year) return false;
+        if (modifiedDate != null ? !modifiedDate.equals(that.modifiedDate) : that.modifiedDate != null) return false;
+        if (publishDate != null ? !publishDate.equals(that.publishDate) : that.publishDate != null) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = modifiedDate != null ? modifiedDate.hashCode() : 0;
+        result = 31 * result + (publishDate != null ? publishDate.hashCode() : 0);
+        result = 31 * result + session;
+        result = 31 * result + year;
+        return result;
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public Date getPublishDate() {

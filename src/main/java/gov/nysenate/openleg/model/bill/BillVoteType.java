@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.model.bill;
 
+/**
+ * Represents the possible types of votes that can take place.
+ */
 public enum BillVoteType
 {
     FLOOR(1),

@@ -110,22 +110,27 @@ public enum SqlBillQuery implements SqlQueryEnum
     /** --- Bill Amendment Votes --- */
 
     SELECT_BILL_VOTES_SQL(
-        "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_VOTE + "\n" +
+        "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + " info \n" +
+        "JOIN ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_ROLL + " roll ON info.id = roll.vote_id\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
-    INSERT_BILL_VOTES_SQL(
-        "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_VOTE + "\n" +
-        "(bill_print_no, bill_session_year, bill_amend_version, vote_type, vote_code, vote_date, sequence_no, member_id, " +
-        " member_short_name, modified_date_time, published_date_time) " +
-        "VALUES (:printNo, :sessionYear, :version, :voteType, :voteCode, :voteDate, :sequenceNo, :memberId, :memberShortName" +
-        "        :modifiedDateTime, :publishedDateTime)"
+    INSERT_BILL_VOTES_INFO_SQL(
+        "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + "\n" +
+        "(bill_print_no, bill_session_year, bill_amend_version, vote_type, vote_date, sequence_no, modified_date_time, published_date_time) " +
+        "VALUES (:printNo, :sessionYear, :version, :voteType, :voteDate, :sequenceNo, :modifiedDateTime, :publishedDateTime)"
     ),
-    DELETE_BILL_VOTES_SQL(
-        "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_VOTE + "\n" +
-        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
+    INSERT_BILL_VOTES_ROLL_SQL(
+        "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_ROLL + "\n" +
+        "(vote_id, vote_code, member_id, member_short_name, session_year)\n" +
+        "SELECT id, :voteCode::${schema}.vote_code, :memberId, :memberShortName, :sessionYear " +
+        "FROM ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
+        "AND vote_date = :voteDate AND vote_type = :voteType AND sequence_no = :sequenceNo"
     ),
-    DELETE_BILL_VOTES_BY_DATE_SQL(
-        DELETE_BILL_VOTES_SQL + " AND vote_date = :voteDate"
+    DELETE_BILL_VOTES_INFO_SQL(
+        "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
+        "AND vote_date = :voteDate AND vote_type = :voteType AND sequence_no = :sequenceNo"
     ),
 
     /** --- Bill Actions --- */
