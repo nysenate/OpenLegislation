@@ -25,7 +25,7 @@ $(function () {
         else {
             $.ajax({
                 type: "GET",
-                url: "http://"+window.location.host+"/legislation/search/",
+                url: "search/",
                 data: dataString,
                 cache: false,
                 async: true,
