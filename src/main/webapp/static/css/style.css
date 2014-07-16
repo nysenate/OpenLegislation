@@ -45,7 +45,7 @@ body {
   line-height: 1.4em; /* 15px */
   color: #333;
   background-color: #fff;
-  background-image:url("/legislation/static/img/nyss_bg.png");
+  background-image:url("../img/nyss_bg.png");
   background-repeat: repeat-x;
   margin:16px;
   margin-top:1px;
@@ -657,7 +657,7 @@ background:none;
 position:absolute;
 }
 .searchResults{
-	background:url('/legislation/static/img/transparent.png');
+	background:url('../img/transparent.png');
 	width:96%;
 	padding:10px 2% 10px 2% ;
 	float:left;
