@@ -3,7 +3,7 @@ package gov.nysenate.openleg.util;
 import gov.nysenate.openleg.model.Change;
 import gov.nysenate.openleg.util.Storage.Status;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;

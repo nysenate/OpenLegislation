@@ -66,7 +66,7 @@ public class Committee extends BaseLegislativeContent
 
         Committee that = (Committee) o;
 
-        if(this.publishDate!=null ? !this.publishDate.equals(that.publishDate) : that.publishDate!=null) return false;
+        if(this.publishDate!=null ? this.publishDate.getTime()!=that.publishDate.getTime() : that.publishDate!=null) return false;
         if(this.session!=that.session) return false;
         if (meetAltWeek != that.meetAltWeek) return false;
         if (chamber != that.chamber) return false;
@@ -103,8 +103,8 @@ public class Committee extends BaseLegislativeContent
                 if(left.session<right.session) return -1;
                 else if(left.session>right.session) return 1;
                 else {
-                    if (left.publishDate.equals(right.publishDate)) return 0;
-                    else if (left.publishDate.after(right.publishDate)) return 1;
+                    if (left.publishDate.getTime()==right.publishDate.getTime()) return 0;
+                    else if (left.publishDate.getTime()>=right.publishDate.getTime()) return 1;
                     else return -1;
                 }
             }

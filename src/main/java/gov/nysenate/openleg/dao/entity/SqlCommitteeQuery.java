@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.dao.entity;
 
 import gov.nysenate.openleg.dao.base.SqlTable;
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.lang3.text.StrSubstitutor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ public enum SqlCommitteeQuery {
     ),
     SELECT_COMMITTEE_AT_DATE_SQL(
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
-        "WHERE committee_name=:committee_name AND chamber=CAST(:chamber AS chamber)" + "\n" +
+        "WHERE committee_name=:committee_name AND chamber=CAST(:chamber AS chamber) AND session_year=:session_year" + "\n" +
             "AND :date >= " + SqlTable.COMMITTEE_VERSION + ".created" + "\n" +
             "AND :date < " + SqlTable.COMMITTEE_VERSION + ".reformed"
     ),
