@@ -7,6 +7,17 @@
     <artifactId>legislation</artifactId>
     <packaging>war</packaging>
     <version>1.9.1</version>
+
+    <!-- NY Senate Maven Repository -->
+
+    <repositories>
+        <repository>
+            <id>gov.nysenate</id>
+            <name>NY Senate Maven Repository</name>
+            <url>http://dev.nysenate.gov/maven/repo</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -180,7 +191,7 @@
         <!-- NY Senate Java libraries -->
 
         <dependency>
-            <groupId>gov.nysenate.services</groupId>
+            <groupId>gov.nysenate</groupId>
             <artifactId>nysenate-java-client</artifactId>
             <version>1.0.2</version>
         </dependency>
