@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.dao.base;
 
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.lang3.text.StrSubstitutor;
 
 import java.util.HashMap;
 import java.util.Map;

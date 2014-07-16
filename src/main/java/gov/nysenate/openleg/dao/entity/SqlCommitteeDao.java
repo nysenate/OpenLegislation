@@ -2,9 +2,12 @@ package gov.nysenate.openleg.dao.entity;
 
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.entity.*;
+import gov.nysenate.openleg.service.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.service.entity.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -25,12 +28,14 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
 
     @Autowired
     MemberDao memberDao;
+    @Autowired
+    MemberService memberService;
 
     /**
      * @inheritDoc
      * */
     @Override
-    public Committee getCommittee(String name, Chamber chamber) {
+    public Committee getCommittee(String name, Chamber chamber) throws DataAccessException {
         logger.debug("Looking up committee " + chamber + " " + name);
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("name", name);
@@ -41,9 +46,8 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
             committee.setMembers(selectCommitteeMembers(committee));
             return committee;
         }
-        catch(EmptyResultDataAccessException e){
-            logger.error("Could not find committee in db: " + chamber + " " + name);
-            return null;
+        catch(Exception e){
+            throw new EmptyResultDataAccessException("Could not find committee in db: " + chamber + " " + name, 1, e);
         }
     }
 
@@ -51,11 +55,12 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
      * @inheritDoc
      * */
     @Override
-    public Committee getCommittee(String name, Chamber chamber, Date date) {
+    public Committee getCommittee(String name, Chamber chamber, int session, Date date) {
         logger.debug("Looking up committee " + chamber + " " + name + " at " + date);
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("committee_name", name);
         params.addValue("chamber", chamber.asSqlEnum());
+        params.addValue("session_year", session);
         params.addValue("date", date);
         try {
             Committee committee = jdbcNamed.queryForObject(SqlCommitteeQuery.SELECT_COMMITTEE_AT_DATE_SQL.getSql(schema()),
@@ -63,9 +68,8 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
             committee.setMembers(selectCommitteeMembers(committee));
             return committee;
         }
-        catch(EmptyResultDataAccessException e){
-            logger.error("Could not find committee version in db: " + chamber + " " + name + " at " + date);
-            return null;
+        catch(Exception e){
+            throw new EmptyResultDataAccessException("Could not find committee version in db: " + chamber + " " + name + " at " + date, 1, e);
         }
     }
 
@@ -84,9 +88,8 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
             }
             return allCommittees;
         }
-        catch(EmptyResultDataAccessException e){
-            logger.error("Could not find committees for " + chamber );
-            return null;
+        catch(Exception e){
+            throw new EmptyResultDataAccessException("Could not find committees for " + chamber, 1, e);
         }
     }
 
@@ -103,9 +106,8 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
             Collections.sort(committeeHistory, Committee.BY_DATE);
             return committeeHistory;
         }
-        catch(EmptyResultDataAccessException e){
-            logger.error("Could not find committee in db: " + chamber + " " + name);
-            return null;
+        catch(Exception e){
+            throw new EmptyResultDataAccessException("Could not find committee in db: " + chamber + " " + name, 1, e);
         }
     }
 
@@ -120,7 +122,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
             insertCommitteeVersion(committee);
             updateCommitteeCurrentVersion(committee);
         } else {  // if that fails perform updates to an existing committee
-            Committee existingCommittee = getCommittee(committee.getName(), committee.getChamber(), committee.getPublishDate());
+            Committee existingCommittee = getCommittee(committee.getName(), committee.getChamber(), committee.getSession(), committee.getPublishDate());
             updateExistingCommittee(committee, existingCommittee);
         }
     }
@@ -402,7 +404,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
             committee.setName(rs.getString("committee_name"));
             committee.setChamber(Chamber.valueOfSqlEnum(rs.getString("chamber")));
             committee.setPublishDate(rs.getTimestamp("created"));
-            committee.setReformed(rs.getDate("reformed"));
+            committee.setReformed(rs.getTimestamp("reformed"));
             committee.setLocation(rs.getString("location"));
             committee.setMeetDay(rs.getString("meetday"));
             committee.setMeetTime(rs.getTime("meettime"));
@@ -421,7 +423,12 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
             committeeMember.setSequenceNo(rs.getInt("sequence_no"));
             int memberId = rs.getInt("member_id");
             int sessionYear = rs.getInt("session_year");
-            committeeMember.setMember(memberDao.getMemberById(memberId,sessionYear));
+            //committeeMember.setMember(memberDao.getMemberById(memberId,sessionYear));
+            try {
+                committeeMember.setMember(memberService.getMemberById(memberId, sessionYear));
+            } catch (MemberNotFoundEx memberNotFoundEx) {
+                logger.error(String.valueOf(memberNotFoundEx));
+            }
             committeeMember.setTitle(CommitteeMemberTitle.valueOfSqlEnum(rs.getString("title")));
             committeeMember.setMajority(rs.getBoolean("majority"));
             return committeeMember;
