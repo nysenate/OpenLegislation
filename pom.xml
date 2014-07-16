@@ -22,6 +22,13 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>gov.nysenate</id>
+            <name>NY Senate Maven Repository</name>
+            <url>http://dev.nysenate.gov/maven/repo</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
@@ -112,7 +119,7 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>gov.nysenate.services</groupId>
+            <groupId>gov.nysenate</groupId>
             <artifactId>nysenate-java-client</artifactId>
             <version>1.0.2</version>
         </dependency>
