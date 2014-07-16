@@ -15,9 +15,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 @Service
-public class SqlMemberService implements MemberService
+public class CachedMemberService implements MemberService
 {
-    private static final Logger logger = LoggerFactory.getLogger(SqlMemberService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CachedMemberService.class);
 
     @Autowired
     private CacheManager cacheManager;

@@ -17,9 +17,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 @Service
-public class SqlBillDataService implements BillDataService
+public class CachedBillDataService implements BillDataService
 {
-    private static final Logger logger = LoggerFactory.getLogger(SqlBillDataService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CachedBillDataService.class);
 
     @Autowired
     private CacheManager cacheManager;
