@@ -3,7 +3,7 @@ package gov.nysenate.openleg.model.sobi;
 /**
  * SOBIFragments are constructed to delineate a SOBI file into components based on a
  * common entity type. The SOBIFragmentType enum lists all the available entities
- * that a SOBIFragment can represent and regex patterns to extract them.
+ * that a SobiFragment can represent and regex patterns to extract them.
  */
 public enum SOBIFragmentType
 {

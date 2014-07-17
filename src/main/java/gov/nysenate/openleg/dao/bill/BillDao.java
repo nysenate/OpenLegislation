@@ -2,7 +2,7 @@ package gov.nysenate.openleg.dao.bill;
 
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.sobi.SOBIFragment;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
 
 public interface BillDao
@@ -17,12 +17,12 @@ public interface BillDao
 
     /**
      * Updates the bill or inserts it if it does not yet exist. Associates the update
-     * with the SOBIFragment that triggered the update (set null if not applicable).
+     * with the SobiFragment that triggered the update (set null if not applicable).
      * @param bill Bill
-     * @param sobiFragment SOBIFragment
+     * @param sobiFragment SobiFragment
      * @throws DataAccessException - If there was an error while trying to save the Bill.
      */
-    public void updateBill(Bill bill, SOBIFragment sobiFragment) throws DataAccessException;
+    public void updateBill(Bill bill, SobiFragment sobiFragment) throws DataAccessException;
 
     public void publishBill(Bill bill);
 

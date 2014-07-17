@@ -1,39 +1,33 @@
 package gov.nysenate.openleg.processors;
 
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.sobi.SOBIFileDao;
-import gov.nysenate.openleg.dao.sobi.SOBIFragmentDao;
-import gov.nysenate.openleg.model.Change;
-import gov.nysenate.openleg.model.sobi.SOBIFile;
-import gov.nysenate.openleg.model.sobi.SOBIFragment;
+import gov.nysenate.openleg.dao.sobi.SobiFileDao;
+import gov.nysenate.openleg.dao.sobi.SobiFragmentDao;
 import gov.nysenate.openleg.model.sobi.SOBIFragmentType;
-import gov.nysenate.openleg.processors.agenda.AgendaProcessor;
-import gov.nysenate.openleg.processors.agenda.AgendaVoteProcessor;
-import gov.nysenate.openleg.processors.bill.BillProcessor;
-import gov.nysenate.openleg.processors.calendar.CalendarActiveListProcessor;
-import gov.nysenate.openleg.processors.calendar.CalendarProcessor;
-import gov.nysenate.openleg.processors.entity.CommitteeProcessor;
-import gov.nysenate.openleg.processors.sobi.SOBIProcessor;
-import gov.nysenate.openleg.service.ServiceBase;
-import gov.nysenate.openleg.util.Storage;
-import org.apache.log4j.Logger;
+import gov.nysenate.openleg.model.sobi.SobiFile;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.processors.sobi.SobiProcessor;
+import gov.nysenate.openleg.processors.sobi.agenda.AgendaProcessor;
+import gov.nysenate.openleg.processors.sobi.agenda.AgendaVoteProcessor;
+import gov.nysenate.openleg.processors.sobi.bill.BillProcessor;
+import gov.nysenate.openleg.processors.sobi.calendar.CalendarActiveListProcessor;
+import gov.nysenate.openleg.processors.sobi.calendar.CalendarProcessor;
+import gov.nysenate.openleg.processors.sobi.entity.CommitteeProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static gov.nysenate.openleg.util.FileHelper.*;
+import static gov.nysenate.openleg.util.FileHelper.moveFileToDirectory;
 
 /**
  * Contains an implementation for each step of the Open Legislation data processing pipeline.
@@ -61,24 +55,25 @@ import static gov.nysenate.openleg.util.FileHelper.*;
 @Service
 public class DataProcessor
 {
-    private static Logger logger = Logger.getLogger(DataProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataProcessor.class);
 
     protected static String encoding = "CP850";
 
-    private Map<SOBIFragmentType, SOBIProcessor> processorMap;
+    private Map<SOBIFragmentType, SobiProcessor> processorMap;
 
     /** --- DAO instances --- */
 
     @Autowired
-    private SOBIFileDao sobiFileDao;
+    private SobiFileDao sobiFileDao;
 
     @Autowired
-    private SOBIFragmentDao sobiFragmentDao;
+    private SobiFragmentDao sobiFragmentDao;
 
     /** --- Processor Instances --- */
 
     @Autowired
     private BillProcessor billProcessor;
+
     @Autowired
     private CommitteeProcessor committeeProcessor;
 
@@ -116,48 +111,59 @@ public class DataProcessor
         }
 
         // Prepares incoming SOBI files for processing
-        sobiFileDao.stageSOBIFiles(true);
+        sobiFileDao.stageSobiFiles(true);
 
         // TODO: Stage all hearings to the work directory.
-
         // TODO: Stage all transcripts
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws ParseException
+     */
     public void collate() throws IOException, ParseException {
-        for (SOBIFile sobiFile : sobiFileDao.getPendingSOBIFiles(SortOrder.ASC)) {
-            StringBuilder billBuffer = new StringBuilder();
-            int fragmentCounter = 1;
-            List<SOBIFragment> sobiFragments = new ArrayList<>();
-            List<String> lines = Arrays.asList(sobiFile.getText().split("\\r?\\n"));
-            Iterator<String> lineIterator = lines.iterator();
-            // Construct fragments from SOBI text
-            while (lineIterator.hasNext()) {
-                String line = lineIterator.next();
-                SOBIFragmentType fragmentType = getFragmentTypeFromLine(line);
-                if (fragmentType != null) {
-                    // Bill portions are appended into a single buffer
-                    if (fragmentType.equals(SOBIFragmentType.BILL)) {
-                        if (line.charAt(11) == 'M') {
-                            // Memos are latin1 encoding
-                            line = new String(line.getBytes(encoding), "latin1");
+        int offset = 0;
+        List<SobiFile> pendingSobiFiles = sobiFileDao.getPendingSobiFiles(SortOrder.ASC, 1000, offset);
+        while (!pendingSobiFiles.isEmpty()) {
+            logger.info("Collating batch of {} sobi files.", pendingSobiFiles.size());
+            offset += pendingSobiFiles.size();
+            for (SobiFile sobiFile : pendingSobiFiles) {
+                StringBuilder billBuffer = new StringBuilder();
+                int fragmentCounter = 1;
+                List<SobiFragment> sobiFragments = new ArrayList<>();
+                List<String> lines = Arrays.asList(sobiFile.getText().split("\\r?\\n"));
+                Iterator<String> lineIterator = lines.iterator();
+                // Construct fragments from SOBI text
+                while (lineIterator.hasNext()) {
+                    String line = lineIterator.next();
+                    SOBIFragmentType fragmentType = getFragmentTypeFromLine(line);
+                    if (fragmentType != null) {
+                        // Bill portions are appended into a single buffer
+                        if (fragmentType.equals(SOBIFragmentType.BILL)) {
+                            if (line.charAt(11) == 'M') {
+                                // Memos are latin1 encoding
+                                line = new String(line.getBytes(encoding), "latin1");
+                            }
+                            line = line.replace((char)193, '°');
+                            billBuffer.append(line).append("\n");
                         }
-                        line = line.replace((char)193, '°');
-                        billBuffer.append(line).append("\n");
-                    }
-                    // Other fragment types are in XML format
-                    else {
-                        String xmlText = extractXmlText(fragmentType, line, lineIterator);
-                        SOBIFragment fragment = new SOBIFragment(sobiFile, fragmentType, xmlText, fragmentCounter++);
-                        sobiFragments.add(fragment);
+                        // Other fragment types are in XML format
+                        else {
+                            String xmlText = extractXmlText(fragmentType, line, lineIterator);
+                            SobiFragment fragment = new SobiFragment(sobiFile, fragmentType, xmlText, fragmentCounter++);
+                            sobiFragments.add(fragment);
+                        }
                     }
                 }
+                if (billBuffer.length() > 0) {
+                    SobiFragment billFragment = new SobiFragment(sobiFile, SOBIFragmentType.BILL, billBuffer.toString(), 1);
+                    sobiFragments.add(billFragment);
+                }
+                // Persist the fragments
+                sobiFragmentDao.saveSOBIFragments(sobiFragments);
             }
-            if (billBuffer.length() > 0) {
-                SOBIFragment billFragment = new SOBIFragment(sobiFile, SOBIFragmentType.BILL, billBuffer.toString(), 1);
-                sobiFragments.add(billFragment);
-            }
-            // Persist the fragments
-            sobiFragmentDao.saveSOBIFragments(sobiFragments);
+            pendingSobiFiles = sobiFileDao.getPendingSobiFiles(SortOrder.ASC, 1000, offset);
         }
     }
 
@@ -167,14 +173,17 @@ public class DataProcessor
      * file processor for each file is based on the directory they are stored in.
      *
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public void ingest() throws IOException {
         // Process SOBI files
-        for (SOBIFile sobiFile : sobiFileDao.getPendingSOBIFiles(SortOrder.ASC)) {
-            List<SOBIFragment> fragments = sobiFragmentDao.getSOBIFragments(sobiFile, SortOrder.ASC);
-            ingestFragments(fragments);
-            markSobiFileAsProcessed(sobiFile);
+        List<SobiFile> pendingSobiFiles = sobiFileDao.getPendingSobiFiles(SortOrder.ASC, 1000, 0);
+        while (!pendingSobiFiles.isEmpty()) {
+            for (SobiFile sobiFile : pendingSobiFiles) {
+                List<SobiFragment> fragments = sobiFragmentDao.getSOBIFragments(sobiFile, SortOrder.ASC);
+                ingestSobiFragments(fragments);
+                markSobiFileAsProcessed(sobiFile);
+            }
+            pendingSobiFiles = sobiFileDao.getPendingSobiFiles(SortOrder.ASC, 1000, 0);
         }
 
         // TODO: Process Transcripts / Public Hearings
@@ -183,11 +192,11 @@ public class DataProcessor
 
     /**
      * Processes the SOBI Fragments using the registered implementations.
-     * @param fragments List<SOBIFragment>
+     * @param fragments List<SobiFragment>
      */
     @Transactional
-    private void ingestFragments(List<SOBIFragment> fragments) {
-        for (SOBIFragment fragment : fragments) {
+    private void ingestSobiFragments(List<SobiFragment> fragments) {
+        for (SobiFragment fragment : fragments) {
             if (processorMap.containsKey(fragment.getType())) {
                 processorMap.get(fragment.getType()).process(fragment);
             }
@@ -197,69 +206,18 @@ public class DataProcessor
         }
     }
 
+    /** --- Internal Methods --- */
+
     /**
-     * Updates the status of the SOBIFile such that it is marked as processed.
-     * @param sobiFile SOBIFile
+     * Updates the status of the SobiFile such that it is marked as processed.
+     * @param sobiFile SobiFile
      */
-    private void markSobiFileAsProcessed(SOBIFile sobiFile) {
+    private void markSobiFileAsProcessed(SobiFile sobiFile) {
         sobiFile.incrementProcessedCount();
         sobiFile.setProcessedDateTime(new Date());
         sobiFile.setPendingProcessing(false);
-        sobiFileDao.updateSOBIFile(sobiFile);
+        sobiFileDao.updateSobiFile(sobiFile);
     }
-
-    /**
-     * Pushes the specified changes to the indicated services in the provided order.
-     *
-     * @param storage - The Storage object used for persistence
-     * @param changes - A list of changes to push out to all services
-     * @param services - A list of services to push change to.
-     */
-    public void push(Storage storage, List<Entry<String, Change>> changes, List<ServiceBase> services) {
-        for(ServiceBase service : services) {
-            try {
-                service.process(changes, storage);
-            } catch (Exception e) {
-                // Services should all be independent so log the issue and move on
-                logger.error("Service exception from "+service.getClass().getName(), e);
-            }
-        }
-    }
-
-    /**
-     * Archives all files in the working directory to the archive directory split
-     * up by year to avoid folder size limits and for easier grepping through the
-     * archives when debugging data issues.
-     *
-     * @param workingDir - The directory containing all the work files.
-     * @param archiveDir - The directory to archive all work files to.
-     * @throws IOException
-     */
-    public void archive(File workingDir, File archiveDir) throws IOException {
-        File rulesFile = new File(workingDir, "CMS.TEXT");
-        if (rulesFile.exists()) {
-            moveFileToDirectory(rulesFile, archiveDir, true);
-        }
-
-        File transcriptsArchiveDir = safeGetFolder(archiveDir, "transcripts");
-        for (File file : safeListFiles(safeGetFolder(workingDir, "transcripts"), null, false)) {
-            moveFileToDirectory(file, transcriptsArchiveDir, true);
-        }
-
-        File hearingsArchiveDir = safeGetFolder(archiveDir, "hearings");
-        for (File file : safeListFiles(safeGetFolder(workingDir, "hearings"), null, false)) {
-            moveFileToDirectory(file, hearingsArchiveDir, true);
-        }
-
-        archiveFiles(safeGetFolder(workingDir, "sobis"), archiveDir, "sobis");
-        archiveFiles(safeGetFolder(workingDir, "bills"), archiveDir, "bills");
-        archiveFiles(safeGetFolder(workingDir, "calendars"), archiveDir, "calendars");
-        archiveFiles(safeGetFolder(workingDir, "committees"), archiveDir, "committees");
-        archiveFiles(safeGetFolder(workingDir, "agendas"), archiveDir, "agendas");
-        archiveFiles(safeGetFolder(workingDir, "annotations"), archiveDir, "annotations");
-    }
-
-    /** --- Internal Methods --- */
 
     /**
      * Check the given SOBI line to determine if it matches the start of a SOBI Fragment type.
@@ -273,32 +231,6 @@ public class DataProcessor
             }
         }
         return null;
-    }
-
-    /**
-     * Attempts to use the SOBI file naming convention to properly archive files based
-     * on the file type and the year that they were issued to us.
-     *
-     * e.g. 2013/bill/SOBI.D130628.T101200
-     *
-     * @param sourceDir - The directory with files to archive, non-recursive. Must exist.
-     * @param destDir - The base directory to archive files to. Must exist.
-     * @param subFolder - The name of the sub-directory to store the files. Cannot be null!
-     * @throws IOException
-     */
-    protected void archiveFiles(File sourceDir, File destDir, String subFolder) throws IOException {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sobiDateFormat = new SimpleDateFormat("'SOBI.D'yyMMdd'.T'HHmmss'.TXT'");
-        for (File file : safeListFiles(sourceDir, null, false)) {
-            try {
-                calendar.setTime(sobiDateFormat.parse(file.getName()));
-                File finalDir = safeGetFolder(new File(destDir, String.valueOf(calendar.get(Calendar.YEAR))), subFolder);
-                moveFileToDirectory(file, finalDir, true);
-            }
-            catch (ParseException e) {
-                moveFileToDirectory(file, new File(destDir, subFolder), true);
-            }
-        }
     }
 
     /**

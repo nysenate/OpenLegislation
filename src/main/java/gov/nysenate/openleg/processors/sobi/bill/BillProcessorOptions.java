@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.processors.bill;
+package gov.nysenate.openleg.processors.sobi.bill;
 
 import gov.nysenate.openleg.model.bill.BillId;
 

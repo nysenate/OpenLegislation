@@ -5,10 +5,10 @@ import java.util.Map;
 
 /**
  * SOBI files that are in the line item format contain character codes that indicate the type
- * of information that is to be applied. The SOBILineType enum maps the character codes for
+ * of information that is to be applied. The SobiLineType enum maps the character codes for
  * easy use within the code base.
  */
-public enum SOBILineType
+public enum SobiLineType
 {
     BILL_INFO('1'),
     LAW_SECTION('2'),
@@ -28,18 +28,18 @@ public enum SOBILineType
     VOTE_MEMO('V');
 
     private Character typeCode;
-    private static Map<Character, SOBILineType> typeCodeMap = new HashMap<>();
+    private static Map<Character, SobiLineType> typeCodeMap = new HashMap<>();
     static {
-        for (SOBILineType lineItem : SOBILineType.values()) {
+        for (SobiLineType lineItem : SobiLineType.values()) {
             typeCodeMap.put(lineItem.getTypeCode(), lineItem);
         }
     }
 
-    SOBILineType(Character typeCode) {
+    SobiLineType(Character typeCode) {
         this.typeCode = typeCode;
     }
 
-    public static SOBILineType valueOfCode(Character typeCode) {
+    public static SobiLineType valueOfCode(Character typeCode) {
         return typeCodeMap.get(typeCode);
     }
 

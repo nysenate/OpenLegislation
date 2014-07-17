@@ -1,11 +1,11 @@
-package gov.nysenate.openleg.processors.agenda;
+package gov.nysenate.openleg.processors.sobi.agenda;
 
 import gov.nysenate.openleg.model.agenda.*;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.entity.Person;
-import gov.nysenate.openleg.model.sobi.SOBIBlock;
-import gov.nysenate.openleg.processors.bill.BillProcessor;
+import gov.nysenate.openleg.model.sobi.SobiBlock;
+import gov.nysenate.openleg.processors.sobi.bill.BillProcessor;
 import gov.nysenate.openleg.util.*;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -225,7 +225,7 @@ public class SenagendaProcessor
         // All bills on calendars should already exist but sometimes, particularly during development/testing
         // they won't. Instead of breaking the processing, create a new bill using the bill processor.
         BillProcessor processor = new BillProcessor();
-        SOBIBlock mockBlock = new SOBIBlock(year+printNo+(printNo.matches("[A-Z]$") ? "" : " ")+1+"     ");
+        SobiBlock mockBlock = new SobiBlock(year+printNo+(printNo.matches("[A-Z]$") ? "" : " ")+1+"     ");
         Bill bill = null; /** FIXME processor.getOrCreateBaseBill(mockBlock, modifiedDate, storage); */
         /** FIXME: bill.setSponsor(new Person(sponsors[0].trim())); */
 

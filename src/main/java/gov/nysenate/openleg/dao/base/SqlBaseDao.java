@@ -36,8 +36,6 @@ public abstract class SqlBaseDao
     @Autowired
     protected Environment environment;
 
-    public SqlBaseDao() {}
-
     @PostConstruct
     private void init() {
         logger.info("Environment autowired: " + environment);
@@ -72,7 +70,7 @@ public abstract class SqlBaseDao
      * @param sortOrder SortOrder
      * @return String
      */
-    protected String orderBy(String columnName, SortOrder sortOrder) {
+    protected static String orderBy(String columnName, SortOrder sortOrder) {
         if (sortOrder == null || sortOrder.equals(SortOrder.NONE)) {
             return "";
         }
@@ -85,7 +83,7 @@ public abstract class SqlBaseDao
      * @param sortOrders List<SortOrder>>
      * @return String
      */
-    protected String orderBy(List<String> columnNames, List<SortOrder> sortOrders) {
+    protected static String orderBy(List<String> columnNames, List<SortOrder> sortOrders) {
         if (columnNames.size() != sortOrders.size()) {
             throw new IllegalArgumentException("For order by clause, number of column names must match sort orders!");
         }
@@ -96,6 +94,24 @@ public abstract class SqlBaseDao
             }
         }
         return orderByClause;
+    }
+
+    /**
+     * Outputs the LIMIT clause if 'limit' > 0.
+     * @param limit int
+     * @return String
+     */
+    protected static String limit(int limit) {
+        return (limit > 0) ? " LIMIT " + limit : "";
+    }
+
+    /**
+     * Outputs the LIMIT OFFSET clause if 'limit' > 0.
+     * @param limit int
+     * @return String
+     */
+    protected static String limitOffset(int limit, int offset) {
+        return (limit > 0) ? limit(limit) + " OFFSET " + offset : "";
     }
 
     /** --- Static Helper Methods --- */

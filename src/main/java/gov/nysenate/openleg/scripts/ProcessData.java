@@ -86,7 +86,6 @@ public class ProcessData extends BaseScript
                 case "stage": process.stage(env.getStagingDirectory(), env.getWorkingDirectory()); break;
                 case "collate": process.collate(); break;
                 case "ingest": process.ingest(); break;
-                case "archive": process.archive(env.getWorkingDirectory(), env.getArchiveDirectory()); break;
                 default:
                     System.err.println("Invalid task.");
                     System.exit(1);

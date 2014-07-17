@@ -4,7 +4,7 @@ import gov.nysenate.openleg.dao.base.SqlQueryEnum;
 import gov.nysenate.openleg.dao.base.SqlQueryUtils;
 import gov.nysenate.openleg.dao.base.SqlTable;
 
-public enum SqlSOBIFileQuery implements SqlQueryEnum
+public enum SqlSobiFileQuery implements SqlQueryEnum
 {
     GET_SOBI_FILES_BY_FILE_NAMES_SQL(
         "SELECT * FROM ${schema}." + SqlTable.SOBI_FILE + "\n" +
@@ -35,7 +35,7 @@ public enum SqlSOBIFileQuery implements SqlQueryEnum
 
     private String sql;
 
-    SqlSOBIFileQuery(String sql) {
+    SqlSobiFileQuery(String sql) {
         this.sql = sql;
     }
 

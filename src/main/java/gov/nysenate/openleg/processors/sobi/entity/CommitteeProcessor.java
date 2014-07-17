@@ -1,9 +1,9 @@
-package gov.nysenate.openleg.processors.entity;
+package gov.nysenate.openleg.processors.sobi.entity;
 
 import gov.nysenate.openleg.dao.entity.CommitteeDao;
 import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.model.sobi.SOBIFragment;
-import gov.nysenate.openleg.processors.sobi.SOBIProcessor;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.processors.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.MemberService;
 import gov.nysenate.openleg.util.XmlHelper;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CommitteeProcessor extends SOBIProcessor
+public class CommitteeProcessor extends SobiProcessor
 {
     private static final Logger logger = Logger.getLogger(CommitteeProcessor.class);
 
@@ -38,7 +38,7 @@ public class CommitteeProcessor extends SOBIProcessor
     protected XmlHelper xmlh;
 
     @Override
-    public void process(SOBIFragment sobiFragment) {
+    public void process(SobiFragment sobiFragment) {
         logger.info("Called committee processor");
         String xmlString = sobiFragment.getText();
         try {

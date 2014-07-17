@@ -7,17 +7,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * The SOBIFile class represents a SOBI file and contains the metadata of the file as well as the body text.
+ * The SobiFile class represents a SOBI file and contains the metadata of the file as well as the body text.
  * This class doesn't have any awareness about the type of content in the file whereas the SOBIFragments that
  * are generated do.
  *
- * @see gov.nysenate.openleg.model.sobi.SOBIFragment
+ * @see SobiFragment
  */
-public class SOBIFile
+public class SobiFile
 {
     /**
      * SOBI files are (mostly) in a CP850 or similar encoding. This was determined from the byte mapping of
@@ -47,7 +46,7 @@ public class SOBIFile
     /** The actual text body of the file */
     private String text;
 
-    /** If true, the SOBIFile is awaiting processing */
+    /** If true, the SobiFile is awaiting processing */
     private boolean pendingProcessing;
 
     /** The number of times this file has been processed */
@@ -55,11 +54,11 @@ public class SOBIFile
 
     /** --- Constructors --- */
 
-    public SOBIFile(File sobiFile) throws IOException {
+    public SobiFile(File sobiFile) throws IOException {
         this(sobiFile, DEFAULT_ENCODING);
     }
 
-    public SOBIFile(File file, String encoding) throws IOException {
+    public SobiFile(File file, String encoding) throws IOException {
         if (file.exists()) {
             this.fileName = file.getName();
             this.text = FileUtils.readFileToString(file, encoding);
@@ -81,7 +80,7 @@ public class SOBIFile
     /** --- Override Methods --- */
     @Override
     public String toString() {
-        return "SOBIFile{" +
+        return "SobiFile{" +
                 "fileName='" + fileName + '\'' +
                 ", processedCount=" + processedCount +
                 ", processedDateTime=" + processedDateTime +

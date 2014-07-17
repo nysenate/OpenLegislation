@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.bill;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.sobi.SOBIFragment;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.MemberService;
 import org.slf4j.Logger;
@@ -73,7 +73,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * reference is used to keep track of changes to the bill.
      */
     @Override
-    public void updateBill(Bill bill, SOBIFragment sobiFragment) {
+    public void updateBill(Bill bill, SobiFragment sobiFragment) {
         logger.trace("Updating Bill {} in database...", bill);
         // Update the bill record
         MapSqlParameterSource billParams = getBillParams(bill, sobiFragment);
@@ -166,7 +166,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * Save the bill's same as list by replacing the existing records with the current records if they are not
      * the same.
      */
-    private void updateBillSameAs(BillAmendment amendment, SOBIFragment sobiFragment, MapSqlParameterSource amendParams) {
+    private void updateBillSameAs(BillAmendment amendment, SobiFragment sobiFragment, MapSqlParameterSource amendParams) {
         List<BillId> existingSameAs = getSameAsBills(amendParams);
         if (existingSameAs.size() != amendment.getSameAs().size() || !existingSameAs.containsAll(amendment.getSameAs())) {
             jdbcNamed.update(DELETE_SAME_AS_FOR_BILL_SQL.getSql(schema()), amendParams);
@@ -181,7 +181,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * Save the bill's action list into the database. Only delete/insert where necessary to allow for a
      * better snapshot of how the actions came in.
      */
-    private void updateActions(Bill bill, SOBIFragment sobiFragment, MapSqlParameterSource billParams) {
+    private void updateActions(Bill bill, SobiFragment sobiFragment, MapSqlParameterSource billParams) {
         List<BillAction> existingBillActions = getBillActions(billParams);
         List<BillAction> newBillActions = new ArrayList<>(bill.getActions());
         newBillActions.removeAll(existingBillActions);    // New actions to insert
@@ -201,7 +201,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Save the bill's previous version list by replacing the existing list with the current list.
      */
-    private void updatePreviousBillVersions(Bill bill, SOBIFragment sobiFragment, MapSqlParameterSource billParams) {
+    private void updatePreviousBillVersions(Bill bill, SobiFragment sobiFragment, MapSqlParameterSource billParams) {
         List<BillId> existingPrevBills = getPrevVersions(billParams);
         if (existingPrevBills.size() != bill.getPreviousVersions().size() || existingPrevBills.containsAll(bill.getPreviousVersions())) {
             jdbcNamed.update(DELETE_BILL_PREVIOUS_VERSIONS_SQL.getSql(schema()), billParams);
@@ -215,7 +215,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update the bill's sponsor information.
      */
-    private void updateBillSponsor(Bill bill, SOBIFragment sobiFragment, MapSqlParameterSource billParams) {
+    private void updateBillSponsor(Bill bill, SobiFragment sobiFragment, MapSqlParameterSource billParams) {
         if (bill.getSponsor() != null) {
             MapSqlParameterSource params = getBillSponsorParams(bill, sobiFragment);
             if (jdbcNamed.update(UPDATE_BILL_SPONSOR_SQL.getSql(schema()), params) == 0) {
@@ -230,7 +230,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update the bill's co sponsor list.
      */
-    private void updateBillCosponsor(BillAmendment billAmendment, SOBIFragment sobiFragment, MapSqlParameterSource amendParams) {
+    private void updateBillCosponsor(BillAmendment billAmendment, SobiFragment sobiFragment, MapSqlParameterSource amendParams) {
         List<Member> existingCoSponsors = getCoSponsors(amendParams);
         if (!existingCoSponsors.equals(billAmendment.getCoSponsors())){
             jdbcNamed.update(DELETE_BILL_COSPONSORS_SQL.getSql(schema()), amendParams);
@@ -248,7 +248,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update the bill's multi sponsor list.
      */
-    private void updateBillMultiSponsor(BillAmendment billAmendment, SOBIFragment sobiFragment, MapSqlParameterSource amendParams) {
+    private void updateBillMultiSponsor(BillAmendment billAmendment, SobiFragment sobiFragment, MapSqlParameterSource amendParams) {
         List<Member> existingMultiSponsors = getMultiSponsors(amendParams);
         if (!existingMultiSponsors.equals(billAmendment.getMultiSponsors())){
             jdbcNamed.update(DELETE_BILL_MULTISPONSORS_SQL.getSql(schema()), amendParams);
@@ -265,7 +265,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update the bill amendment's list of votes.
      */
-    private void updateBillVotes(BillAmendment billAmendment, SOBIFragment sobiFragment, MapSqlParameterSource amendParams) {
+    private void updateBillVotes(BillAmendment billAmendment, SobiFragment sobiFragment, MapSqlParameterSource amendParams) {
         List<BillVote> existingBillVotes = getBillVotes(amendParams);
         List<BillVote> newBillVotes = new ArrayList<>(billAmendment.getVotesList());
         newBillVotes.removeAll(existingBillVotes);                 // New votes to insert/update
@@ -305,8 +305,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             bill.setSummary(rs.getString("summary"));
             bill.setActiveVersion(rs.getString("active_version").trim());
             bill.setYear(rs.getInt("active_year"));
-            bill.setModifiedDate(rs.getDate("modified_date_time"));
-            bill.setPublishDate(rs.getDate("published_date_time"));
+            bill.setModifiedDate(rs.getTimestamp("modified_date_time"));
+            bill.setPublishDate(rs.getTimestamp("published_date_time"));
             return bill;
         }
     }
@@ -325,8 +325,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             amend.setStricken(rs.getBoolean("stricken"));
             amend.setCurrentCommittee(null); /** TODO */
             amend.setUniBill(rs.getBoolean("uni_bill"));
-            amend.setModifiedDate(rs.getDate("modified_date_time"));
-            amend.setPublishDate(rs.getDate("published_date_time"));
+            amend.setModifiedDate(rs.getTimestamp("modified_date_time"));
+            amend.setPublishDate(rs.getTimestamp("published_date_time"));
             return amend;
         }
     }
@@ -342,8 +342,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             billAction.setSequenceNo(rs.getInt("sequence_no"));
             billAction.setDate(rs.getDate("effect_date"));
             billAction.setText(rs.getString("text"));
-            billAction.setModifiedDate(rs.getDate("modified_date_time"));
-            billAction.setPublishDate(rs.getDate("published_date_time"));
+            billAction.setModifiedDate(rs.getTimestamp("modified_date_time"));
+            billAction.setPublishDate(rs.getTimestamp("published_date_time"));
             return billAction;
         }
     }
@@ -438,8 +438,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             BillVote billVote = new BillVote(billId, voteDate, BillVoteType.valueOfCode(voteType), sequenceNo);
 
             if (!billVoteMap.containsKey(billVote.getVoteId())) {
-                billVote.setModifiedDate(rs.getDate("modified_date_time"));
-                billVote.setPublishDate(rs.getDate("published_date_time"));
+                billVote.setModifiedDate(rs.getTimestamp("modified_date_time"));
+                billVote.setPublishDate(rs.getTimestamp("published_date_time"));
                 billVoteMap.put(billVote.getVoteId(), billVote);
             }
 
@@ -463,7 +463,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * @param bill String
      * @return MapSqlParameterSource
      */
-    private static MapSqlParameterSource getBillParams(Bill bill, SOBIFragment fragment) {
+    private static MapSqlParameterSource getBillParams(Bill bill, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(bill, params);
         params.addValue("title", bill.getTitle());
@@ -482,10 +482,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * Returns a MapSqlParameterSource with columns mapped to BillAmendment values for use in update/insert
      * queries on the bill amendment table.
      * @param amendment BillAmendment
-     * @param fragment SOBIFragment
+     * @param fragment SobiFragment
      * @return MapSqlParameterSource
      */
-    private static MapSqlParameterSource getBillAmendmentParams(BillAmendment amendment, SOBIFragment fragment) {
+    private static MapSqlParameterSource getBillAmendmentParams(BillAmendment amendment, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(amendment, params);
         params.addValue("sponsorMemo", amendment.getMemo());
@@ -504,10 +504,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * Returns a MapSqlParameterSource with columns mapped to BillAction for use in inserting records
      * into the bill action table.
      * @param billAction BillAction
-     * @param fragment SOBIFragment
+     * @param fragment SobiFragment
      * @return MapSqlParameterSource
      */
-    private static MapSqlParameterSource getBillActionParams(BillAction billAction, SOBIFragment fragment) {
+    private static MapSqlParameterSource getBillActionParams(BillAction billAction, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("printNo", billAction.getBillId().getBasePrintNo());
         params.addValue("sessionYear", billAction.getBillId().getSession());
@@ -521,7 +521,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return params;
     }
 
-    private static MapSqlParameterSource getBillSameAsParams(BillAmendment billAmendment, BillId sameAs, SOBIFragment fragment) {
+    private static MapSqlParameterSource getBillSameAsParams(BillAmendment billAmendment, BillId sameAs, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(billAmendment, params);
         params.addValue("sameAsPrintNo", sameAs.getBasePrintNo());
@@ -531,7 +531,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return params;
     }
 
-    private static MapSqlParameterSource getBillPrevVersionParams(Bill bill, BillId prevVersion, SOBIFragment fragment) {
+    private static MapSqlParameterSource getBillPrevVersionParams(Bill bill, BillId prevVersion, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(bill, params);
         params.addValue("prevPrintNo", prevVersion.getBasePrintNo());
@@ -541,7 +541,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return params;
     }
 
-    private static MapSqlParameterSource getBillSponsorParams(Bill bill, SOBIFragment fragment) {
+    private static MapSqlParameterSource getBillSponsorParams(Bill bill, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         BillSponsor billSponsor = bill.getSponsor();
         boolean hasMember = billSponsor != null && billSponsor.hasMember();
@@ -554,7 +554,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     }
 
     private static MapSqlParameterSource getCoMultiSponsorMemberParams(BillAmendment billAmendment, Member member,
-                                                                       int sequenceNo, SOBIFragment fragment) {
+                                                                       int sequenceNo, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(billAmendment, params);
         params.addValue("memberId", member.getMemberId());
@@ -564,14 +564,14 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     }
 
     private static MapSqlParameterSource getBillVoteInfoParams(BillAmendment billAmendment, BillVote billVote,
-                                                               SOBIFragment fragment) {
+                                                               SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(billAmendment, params);
         params.addValue("voteDate", billVote.getVoteDate());
         params.addValue("voteType", billVote.getVoteType().getCode());
         params.addValue("sequenceNo", billVote.getSequenceNumber());
-        params.addValue("modifiedDateTime", billVote.getModifiedDate());
-        params.addValue("publishedDateTime", billVote.getPublishDate());
+        params.addValue("modifiedDateTime", toTimestamp(billVote.getModifiedDate()));
+        params.addValue("publishedDateTime", toTimestamp(billVote.getPublishDate()));
         addSOBIFragmentParams(fragment, params);
         return params;
     }
@@ -598,12 +598,12 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     }
 
     /**
-     * Applies columns that identify a SOBIFragment to an existing MapSqlParameterSource.
-     * @param fragment SOBIFragment
+     * Applies columns that identify a SobiFragment to an existing MapSqlParameterSource.
+     * @param fragment SobiFragment
      * @param params MapSqlParameterSource
      */
-    private static void addSOBIFragmentParams(SOBIFragment fragment, MapSqlParameterSource params) {
-        params.addValue("lastFragmentFileName", (fragment != null) ? fragment.getFileName() : null);
+    private static void addSOBIFragmentParams(SobiFragment fragment, MapSqlParameterSource params) {
+        params.addValue("lastFragmentFileName", (fragment != null) ? fragment.getFragmentId() : null);
         params.addValue("lastFragmentType", (fragment != null) ? fragment.getType().name() : null);
     }
 }

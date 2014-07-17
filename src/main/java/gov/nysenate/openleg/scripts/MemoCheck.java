@@ -1,9 +1,8 @@
 package gov.nysenate.openleg.scripts;
 
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.sobi.SOBIBlock;
-import gov.nysenate.openleg.processors.bill.BillProcessor;
-import gov.nysenate.openleg.util.Application;
+import gov.nysenate.openleg.model.sobi.SobiBlock;
+import gov.nysenate.openleg.processors.sobi.bill.BillProcessor;
 import gov.nysenate.openleg.util.Storage;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.FileUtils;
@@ -38,8 +37,8 @@ public class MemoCheck extends BaseScript
         BillProcessor bp = new BillProcessor();
         File storageDir = new File("/data/openleg/2011_test/json/");
         Storage storage = new Storage(storageDir);
-        List<SOBIBlock> blocks = null; //FIXME: bp.getBlocks(blockFile);
-        for (SOBIBlock block : blocks) {
+        List<SobiBlock> blocks = null; //FIXME: bp.getBlocks(blockFile);
+        for (SobiBlock block : blocks) {
             String billNo = block.getBasePrintNo()+block.getAmendment()+"-"+block.getSession();
             Bill jsonBill = storage.getBill(block.getBasePrintNo()+block.getAmendment(), block.getSession());
             Bill lbdcBill = new Bill(billNo, block.getSession());

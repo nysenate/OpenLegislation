@@ -55,7 +55,7 @@ public class SpotCheck extends BaseScript
 
     public void execute(CommandLine opts) throws IOException, ParseException, SQLException
     {
-        QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
+        QueryRunner runner = new QueryRunner();//Application.getDB().getDataSource());
 
         String[] args = opts.getArgs();
         Storage storage = Application.getStorage();

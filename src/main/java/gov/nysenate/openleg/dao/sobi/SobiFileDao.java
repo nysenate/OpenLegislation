@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.dao.sobi;
 
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.sobi.SOBIFile;
+import gov.nysenate.openleg.model.sobi.SobiFile;
 
 import java.io.IOException;
 import java.util.Date;
@@ -12,31 +12,31 @@ import java.util.Map;
  * DAO interface for managing and persisting SOBIFiles.
  *
  * A typical call stack when processing SOBI files could look like the following:
- * 1. stageSOBIFiles(true)                - Stage new files for processing
- * 2. getPendingSOBIFiles(SortOrder.ASC)  - Retrieve those new files
+ * 1. stageSobiFiles(true)                - Stage new files for processing
+ * 2. getPendingSobiFiles(SortOrder.ASC)  - Retrieve those new files
  * 3. [ Do some processing ]              - Create and process SOBIFragments somewhere
- * 4. updateSOBIFile(..)                  - Update record after processing for the file is done
+ * 4. updateSobiFile(..)                  - Update record after processing for the file is done
  */
-public interface SOBIFileDao
+public interface SobiFileDao
 {
     /** --- Retrieval Methods --- */
 
     /**
-     * Retrieves a SOBIFile object given its file name.
+     * Retrieves a SobiFile object given its file name.
      *
      * @param fileName String - The file name of the SOBI file.
-     * @return SOBIFile, null if no matching file name in the database.
+     * @return SobiFile, null if no matching file name in the database.
      */
-    public SOBIFile getSOBIFile(String fileName);
+    public SobiFile getSobiFile(String fileName);
 
     /**
      * Retrieves a collection of SOBIFiles that match the list of file names.
      * The map will contain a key-value pair for only the file names that were found.
      *
      * @param fileNames List<String> - File names to get SOBIFiles for.
-     * @return Map<String, SOBIFile> - Map of file name to SOBIFile
+     * @return Map<String, SobiFile> - Map of file name to SobiFile
      */
-    public Map<String, SOBIFile> getSOBIFiles(List<String> fileNames);
+    public Map<String, SobiFile> getSobiFiles(List<String> fileNames);
 
     /**
      * Retrieve a list of SOBIFiles during the given date range.
@@ -45,17 +45,19 @@ public interface SOBIFileDao
      * @param end Date - End of date range (inclusive)
      * @param processedOnly boolean - If true, only return processed SOBIFiles.
      * @param sortByPubDate SortOrder - Sort order for published date
-     * @return List<SOBIFile>
+     * @return List<SobiFile>
      */
-    public List<SOBIFile> getSOBIFilesDuring(Date start, Date end, boolean processedOnly, SortOrder sortByPubDate);
+    public List<SobiFile> getSobiFilesDuring(Date start, Date end, boolean processedOnly, SortOrder sortByPubDate);
 
     /**
      * Retrieves the SOBIFiles that are awaiting processing.
      *
      * @param sortByPubDate SortOrder - Sort order for published date
-     * @return List<SOBIFile>
+     * @param limit int - Limit the number of SOBIFiles retrieved, 0 for no limit
+     * @param offset int - Used in conjunction with the limit clause, ignored if limit is 0.
+     * @return List<SobiFile>
      */
-    public List<SOBIFile> getPendingSOBIFiles(SortOrder sortByPubDate);
+    public List<SobiFile> getPendingSobiFiles(SortOrder sortByPubDate, int limit, int offset);
 
     /** --- Processing/Insertion Methods --- */
 
@@ -64,7 +66,7 @@ public interface SOBIFileDao
      * files that are awaiting processing. The files will be moved out of the staging area
      * so that future calls to the method will not see the prior files.
      *
-     * Only after a SOBIFile has been staged will it be available to access by file name using
+     * Only after a SobiFile has been staged will it be available to access by file name using
      * the get methods in this interface.
      *
      * @param allowReStaging boolean - If true, a SOBI file with the same file name as one that's
@@ -72,14 +74,14 @@ public interface SOBIFileDao
      *                                 just skip it.
      * @throws java.io.IOException - Might occur if something goes wrong with the file manipulation.
      */
-    public void stageSOBIFiles(boolean allowReStaging) throws IOException;
+    public void stageSobiFiles(boolean allowReStaging) throws IOException;
 
     /**
-     * Updates an existing SOBIFile in the backing store with the given instance.
+     * Updates an existing SobiFile in the backing store with the given instance.
      * If the record doesn't already exist, no action will be taken.
      *
-     * @param sobiFile SOBIFile
-     * @return boolean - true if record was updated, false if nothing was updated
+     * @param sobiFile SobiFile
+     * @return boolean - true if record was upsdated, false if nothing was updated
      */
-    public boolean updateSOBIFile(SOBIFile sobiFile);
+    public boolean updateSobiFile(SobiFile sobiFile);
 }

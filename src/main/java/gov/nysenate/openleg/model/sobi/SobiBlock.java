@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * The SOBIBlock class represents a set of SOBI lines sharing the same header:
+ * The SobiBlock class represents a set of SOBI lines sharing the same header:
  * <p>
  * <pre>
  *     2013A03006D3Amends various provisions of law relating to implementing the health and mental hygiene budget for
@@ -30,11 +30,11 @@ import java.util.regex.Pattern;
  * @author GraylinKim
  *
  */
-public class SOBIBlock
+public class SobiBlock
 {
     /** A list of sobi line types that are *single* line blocks. All other block types are multi-line. */
-    public static final List<SOBILineType> oneLineBlocks =
-        Arrays.asList(SOBILineType.BILL_INFO, SOBILineType.LAW_SECTION, SOBILineType.SAME_AS);
+    public static final List<SobiLineType> oneLineBlocks =
+        Arrays.asList(SobiLineType.BILL_INFO, SobiLineType.LAW_SECTION, SobiLineType.SAME_AS);
 
     /** A pattern to verify that a string is in the SOBI line format. */
     public static final Pattern blockPattern = Pattern.compile("^[0-9]{4}[A-Z][0-9]{5}[ A-Z][1-9ABCMRTV]");
@@ -42,7 +42,7 @@ public class SOBIBlock
     /** The file name of the fragment that generated this block. */
     private String fragmentFileName;
 
-    /** The type of SOBIFragment that generated this block. */
+    /** The type of SobiFragment that generated this block. */
     private SOBIFragmentType fragmentType;
 
     /** The line number that the block starts at. Defaults to zero when using the basic constructor. */
@@ -61,7 +61,7 @@ public class SOBIBlock
     private BillId billId;
 
     /** The sobi line type of the block. Determines how the data is interpreted. */
-    private SOBILineType type;
+    private SobiLineType type;
 
     /** An internal buffer used to accumulate block data over several lines. */
     private StringBuffer dataBuffer = new StringBuffer();
@@ -73,13 +73,13 @@ public class SOBIBlock
     /** --- Constructors --- */
 
     /**
-     * Construct a new block with without location information from a valid SOBIFile line. The line is
+     * Construct a new block with without location information from a valid SobiFile line. The line is
      * assumed to be valid sobi file and is NOT checked for performance reasons.
      */
-    public SOBIBlock(String line) {
+    public SobiBlock(String line) {
         this.setBillHeader(line.substring(0, 11));
         this.setBillId(line.substring(4,10), line.substring(10,11), Integer.parseInt(line.substring(0,4)));
-        this.setType(SOBILineType.valueOfCode(line.charAt(11)));
+        this.setType(SobiLineType.valueOfCode(line.charAt(11)));
         this.setHeader(line.substring(0,12));
         this.setData(line.substring(12));
         this.multiline = !oneLineBlocks.contains(this.getType()) && !this.getData().trim().equals("DELETE");
@@ -90,7 +90,7 @@ public class SOBIBlock
      * the source file and line number the block was initialized from. The line is assumed to be
      * valid SOBI file and is NOT checked for performance reasons.
      */
-    public SOBIBlock(String fragmentFileName, SOBIFragmentType type, int startLineNo, String line) {
+    public SobiBlock(String fragmentFileName, SOBIFragmentType type, int startLineNo, String line) {
         this(line);
         this.fragmentFileName = fragmentFileName;
         this.fragmentType = type;
@@ -117,9 +117,9 @@ public class SOBIBlock
      * identical in content (case-sensitive).
      */
     public boolean equals(Object obj) {
-        return obj!= null && obj instanceof SOBIBlock
-           && ((SOBIBlock)obj).getHeader().equals(this.getHeader())
-           && ((SOBIBlock)obj).getData().trim().equals(this.getData().trim());
+        return obj!= null && obj instanceof SobiBlock
+           && ((SobiBlock)obj).getHeader().equals(this.getHeader())
+           && ((SobiBlock)obj).getData().trim().equals(this.getData().trim());
     }
 
     public String toString() {
@@ -232,11 +232,11 @@ public class SOBIBlock
         this.header = header;
     }
 
-    public SOBILineType getType() {
+    public SobiLineType getType() {
         return type;
     }
 
-    public void setType(SOBILineType type) {
+    public void setType(SobiLineType type) {
         this.type = type;
     }
 

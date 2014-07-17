@@ -1,21 +1,18 @@
-package gov.nysenate.openleg.processors.bill;
+package gov.nysenate.openleg.processors.sobi.bill;
 
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.sobi.SOBIBlock;
-import gov.nysenate.openleg.model.sobi.SOBIFragment;
-import gov.nysenate.openleg.processors.sobi.SOBIProcessor;
+import gov.nysenate.openleg.model.sobi.SobiBlock;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.processors.sobi.SobiProcessor;
 import gov.nysenate.openleg.processors.util.IngestCache;
 import gov.nysenate.openleg.service.bill.BillAmendNotFoundEx;
-import gov.nysenate.openleg.service.bill.BillDataService;
 import gov.nysenate.openleg.service.bill.BillNotFoundEx;
 import gov.nysenate.openleg.service.entity.MemberNotFoundEx;
-import gov.nysenate.openleg.service.entity.MemberService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -25,20 +22,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class BillProcessor extends SOBIProcessor
+public class BillProcessor extends SobiProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(BillProcessor.class);
 
-    /** Date format found in SOBIBlock[4] bill event blocks. e.g. 02/04/13 */
+    /** Date format found in SobiBlock[4] bill event blocks. e.g. 02/04/13 */
     protected static final SimpleDateFormat eventDateFormat = new SimpleDateFormat("MM/dd/yy");
 
-    /** Date format found in SOBIBlock[V] vote memo blocks. e.g. 02/05/2013 */
+    /** Date format found in SobiBlock[V] vote memo blocks. e.g. 02/05/2013 */
     protected static final SimpleDateFormat voteDateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
     /** The expected format for the first line of the vote memo [V] block data. */
     public static final Pattern voteHeaderPattern = Pattern.compile("Senate Vote    Bill: (.{18}) Date: (.{10}).*");
 
-    /** The expected format for recorded votes in the SOBIBlock[V] vote memo blocks; e.g. 'AYE  ADAMS' */
+    /** The expected format for recorded votes in the SobiBlock[V] vote memo blocks; e.g. 'AYE  ADAMS' */
     protected static final Pattern votePattern = Pattern.compile("(Aye|Nay|Abs|Exc|Abd) (.{1,16})");
 
     /** The expected format for actions recorded in the bill events [4] block. e.g. 02/04/13 Event Text Here */
@@ -84,12 +81,6 @@ public class BillProcessor extends SOBIProcessor
     );
 
     /** --- Services --- */
-    
-    @Autowired
-    private BillDataService billDataService;
-
-    @Autowired
-    private MemberService memberService;
 
     /** --- Constructors --- */
 
@@ -98,29 +89,29 @@ public class BillProcessor extends SOBIProcessor
     /** --- Implementation methods --- */
 
     /**
-     * Process all bills with updates that are referenced in the given SOBIFragment.
-     * @param sobiFragment SOBIFragment
+     * Process all bills with updates that are referenced in the given SobiFragment.
+     * @param sobiFragment SobiFragment
      */
     @Override
-    public void process(SOBIFragment sobiFragment) {
+    public void process(SobiFragment sobiFragment) {
         process(sobiFragment, null);
     }
 
     /**
      * Performs processing of the SOBI bill fragments with the option to limit to a collection of
      * bills using the restrictToBillIds set (for testing/development purposes only).
-     * @param sobiFragment SOBIFragment
+     * @param sobiFragment SobiFragment
      * @param restrictToBillIds Set<BillId> - Set as null or empty to process all bills that come up.
      *                                        To restrict the processing, add the bill ids into the set. All
      *                                        amendments of the bill will be processed so the version in the
      *                                        bill id is ignored.
      */
-    public void process(SOBIFragment sobiFragment, Set<BillId> restrictToBillIds) {
+    public void process(SobiFragment sobiFragment, Set<BillId> restrictToBillIds) {
         IngestCache<BillId, Bill> billIngestCache = new IngestCache<>();
         Date date = sobiFragment.getPublishedDateTime();
-        List<SOBIBlock> blocks = sobiFragment.getSOBIBlocks();
-        logger.info("Processing " + sobiFragment.getFileName() + " with (" + blocks.size() + ") blocks.");
-        for (SOBIBlock block : blocks) {
+        List<SobiBlock> blocks = sobiFragment.getSOBIBlocks();
+        logger.info("Processing " + sobiFragment.getFragmentId() + " with (" + blocks.size() + ") blocks.");
+        for (SobiBlock block : blocks) {
             String data = block.getData();
             Bill baseBill = getOrCreateBaseBill(sobiFragment, block, billIngestCache);
             String specifiedVersion = block.getAmendment();
@@ -160,7 +151,7 @@ public class BillProcessor extends SOBIProcessor
             applyPublishStatus(bill);
             applyUniBillText(bill, billIngestCache, sobiFragment);
             logger.trace("Saving bill " + bill.getBillId());
-            billDataService.updateBill(bill, sobiFragment);
+            billDataService.saveBill(bill, sobiFragment);
         }
     }
 
@@ -757,7 +748,8 @@ public class BillProcessor extends SOBIProcessor
                         throw new ParseError("No vote code mapping for " + voteLine);
                     }
                     String shortName = voteLine.group(2).trim();
-                    Member voter = getMemberFromShortName(shortName, billId.getSession(), billId.getChamber(), true);
+                    // Only senator votes are received
+                    Member voter = getMemberFromShortName(shortName, billId.getSession(), Chamber.SENATE, true);
                     vote.addMemberVote(voteCode, voter);
                 }
             }
@@ -770,80 +762,6 @@ public class BillProcessor extends SOBIProcessor
     }
 
     /** --- Helper Methods --- */
-
-    /**
-     * Retrieves the base Bill from storage using the bill print number and year set in the SOBIBlock.
-     * If this base bill does not exist, it will be created. The amendment instance will also be created
-     * if it does not exist.
-     *
-     * @param fragment SOBIFragment
-     * @param block SOBIBlock
-     * @param billIngestCache IngestCache<Bill>
-     * @return Bill
-     */
-    public Bill getOrCreateBaseBill(SOBIFragment fragment, SOBIBlock block, IngestCache<BillId, Bill> billIngestCache) {
-        Date modifiedDate = fragment.getPublishedDateTime();
-        boolean isBaseVersion = block.getAmendment().equals(BillId.BASE_VERSION);
-        BillId baseBillId = new BillId(block.getBasePrintNo(), block.getSession());
-        Bill baseBill;
-        try {
-            baseBill = getBaseBillFromCacheOrService(baseBillId, billIngestCache);
-        }
-        catch (BillNotFoundEx ex) {
-            // Create the bill since it does not exist and add it to the ingest cache.
-            if (!isBaseVersion) {
-                logger.warn("Bill Amendment filed without initial bill at " + block.getLocation() + " - " + block.getHeader());
-            }
-            baseBill = new Bill(block.getBasePrintNo(), block.getSession());
-            baseBill.setModifiedDate(modifiedDate);
-            baseBill.setPublishDate(modifiedDate);
-            billIngestCache.set(baseBillId, baseBill);
-        }
-        if (!baseBill.hasAmendment(block.getAmendment())) {
-            BillAmendment billAmendment = new BillAmendment(baseBillId, block.getAmendment());
-            billAmendment.setModifiedDate(modifiedDate);
-            // If an active amendment exists, apply its ACT TO clause to this amendment
-            if (baseBill.hasActiveAmendment()) {
-                billAmendment.setActClause(baseBill.getActiveAmendment().getActClause());
-            }
-            // Create the base version if an amendment was received before the base version
-            if (!isBaseVersion) {
-                if (!baseBill.hasAmendment(BillId.BASE_VERSION)) {
-                    BillAmendment baseAmendment = new BillAmendment(baseBillId, BillId.BASE_VERSION);
-                    baseAmendment.setModifiedDate(modifiedDate);
-                    baseBill.addAmendment(baseAmendment);
-                    baseBill.setActiveVersion(BillId.BASE_VERSION);
-                }
-                // Pull 'shared' data from the currently active amendment
-                BillAmendment activeAmendment = baseBill.getAmendment(baseBill.getActiveVersion());
-                billAmendment.setCoSponsors(activeAmendment.getCoSponsors());
-                billAmendment.setMultiSponsors(activeAmendment.getMultiSponsors());
-            }
-            logger.trace("Adding bill amendment: " + billAmendment);
-            baseBill.addAmendment(billAmendment);
-        }
-        return baseBill;
-    }
-
-    /**
-     * Helper method to retrieve Bill references from either the cache or the BillDataService.
-     * @param billId BillId
-     * @param billIngestCache IngestCache<BillId, Bill>
-     * @return Bill
-     * @throws BillNotFoundEx - If the bill was not found by the service.
-     */
-    protected Bill getBaseBillFromCacheOrService(BillId billId, IngestCache<BillId, Bill> billIngestCache)
-            throws BillNotFoundEx {
-        if (billId == null) {
-            throw new IllegalArgumentException("Bill Id cannot be null!");
-        }
-        // Ensure bill id references the base bill id since the cache will not distinguish.
-        BillId baseBillId = BillId.getBaseId(billId);
-        // Try the cache, otherwise use the service which can throw the BillNotFoundEx exception.
-        boolean isCached = billIngestCache.has(baseBillId);
-        logger.trace("Bill ingest cache " + ((isCached) ? "HIT" : "MISS") + " for bill id " + baseBillId);
-        return (isCached) ? billIngestCache.get(baseBillId) : billDataService.getBill(baseBillId);
-    }
 
     /**
      * The publish date for a bill amendment indicates if and when an amendment should be visible.
@@ -905,9 +823,9 @@ public class BillProcessor extends SOBIProcessor
      * Uni-bills share text with their counterpart house. Ensure that the full text of bill amendments that
      * have a uni-bill designator are kept in sync.
      * @param baseBill Bill
-     * @param sobiFragment SOBIFragment
+     * @param sobiFragment SobiFragment
      */
-    protected void applyUniBillText(Bill baseBill, IngestCache<BillId, Bill> ingestCache, SOBIFragment sobiFragment) {
+    protected void applyUniBillText(Bill baseBill, IngestCache<BillId, Bill> ingestCache, SobiFragment sobiFragment) {
         for (BillAmendment billAmendment : baseBill.getAmendmentList()) {
             if (billAmendment.isUniBill()) {
                 for (BillId unibillId : billAmendment.getSameAs()) {
@@ -922,7 +840,7 @@ public class BillProcessor extends SOBIProcessor
                         else if (!fullText.isEmpty() && !fullText.equals(uniFullText)) {
                             // Perform an update of the same as bill that is receiving the text.
                             uniBillAmend.setFulltext(fullText);
-                            billDataService.updateBill(uniBill, sobiFragment);
+                            billDataService.saveBill(uniBill, sobiFragment);
                         }
                     }
                     catch (BillNotFoundEx | BillAmendNotFoundEx ex) {

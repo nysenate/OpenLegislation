@@ -1,11 +1,11 @@
-package gov.nysenate.openleg.processors.calendar;
+package gov.nysenate.openleg.processors.sobi.calendar;
 
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.entity.Person;
-import gov.nysenate.openleg.model.sobi.SOBIBlock;
-import gov.nysenate.openleg.processors.bill.BillProcessor;
+import gov.nysenate.openleg.model.sobi.SobiBlock;
+import gov.nysenate.openleg.processors.sobi.bill.BillProcessor;
 import gov.nysenate.openleg.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -157,7 +157,7 @@ public class SencalendarProcessor
         // This almost exclusively because we are missing sobi files. It shouldn't happen in production but
         // does frequently in development.
         BillProcessor processor = new BillProcessor();
-        SOBIBlock mockBlock = new SOBIBlock(year+billId+(billId.matches("[A-Z]$") ? "" : " ")+1+"     ");
+        SobiBlock mockBlock = new SobiBlock(year+billId+(billId.matches("[A-Z]$") ? "" : " ")+1+"     ");
         Bill bill = null; /**FIXME processor.getOrCreateBaseBill(mockBlock, modifiedDate, storage); */
 
         // Active lists don't have sponsor listed, so check first!

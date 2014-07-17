@@ -3,7 +3,8 @@ package gov.nysenate.openleg.service.bill;
 import gov.nysenate.openleg.dao.bill.BillDao;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.sobi.SOBIFragment;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.service.CachingService;
 import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 @Service
-public class CachedBillDataService implements BillDataService
+public class CachedBillDataService implements BillDataService, CachingService
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedBillDataService.class);
 
@@ -29,8 +30,17 @@ public class CachedBillDataService implements BillDataService
 
     @PostConstruct
     private void init() {
+        setupCaches();
+    }
+
+    @Override
+    public void setupCaches() {
         cacheManager.addCache("billData");
     }
+
+    @Override
+    @CacheEvict(value = "billData", allEntries = true)
+    public void evictCaches() {}
 
     /** {@inheritDoc} */
     @Override
@@ -47,10 +57,16 @@ public class CachedBillDataService implements BillDataService
         }
     }
 
+    @Override
+    public Bill createBill() {
+        return null;
+    }
+
     /** {@inheritDoc} */
     @Override
     @CacheEvict(value = "billData", key = "#bill.getBillId()")
-    public void updateBill(Bill bill, SOBIFragment fragment) {
+    public void saveBill(Bill bill, SobiFragment fragment) {
+        logger.debug("Persisting bill {}", bill);
         billDao.updateBill(bill, fragment);
     }
 }

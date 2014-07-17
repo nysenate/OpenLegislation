@@ -2,7 +2,7 @@ package gov.nysenate.openleg.dao.sobi;
 
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
-import gov.nysenate.openleg.model.sobi.SOBIFile;
+import gov.nysenate.openleg.model.sobi.SobiFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.LocalDate;
@@ -20,19 +20,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static gov.nysenate.openleg.dao.sobi.SqlSobiFileQuery.*;
 import static gov.nysenate.openleg.util.FileHelper.safeListFiles;
 
 /**
- * Sql / File System implementation of SOBIFileDao.
+ * Sql / File System implementation of SobiFileDao.
  *
  * SOBI files are stored in the file system to preserve their original formatting but metadata
- * for the files are stored in the database. The returned SOBIFile instances are constructed
+ * for the files are stored in the database. The returned SobiFile instances are constructed
  * utilizing both data sources.
  */
 @Repository
-public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
+public class SqlSobiFileDao extends SqlBaseDao implements SobiFileDao
 {
-    private static Logger logger = Logger.getLogger(SqlSOBIFileDao.class);
+    private static Logger logger = Logger.getLogger(SqlSobiFileDao.class);
 
     /** The database table where the sobi files are recorded */
     private static final String SOBI_FILE_TABLE = "sobi_file";
@@ -46,7 +47,7 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
     /** Directory where sobi files that have been processed are stored. */
     protected File archiveSobiDir;
 
-    public SqlSOBIFileDao() {}
+    public SqlSobiFileDao() {}
 
     @PostConstruct
     protected void init() {
@@ -59,21 +60,21 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
 
     /** {@inheritDoc }*/
     @Override
-    public SOBIFile getSOBIFile(String fileName) {
-        SOBIFile sobiFile = null;
+    public SobiFile getSobiFile(String fileName) {
+        SobiFile sobiFile = null;
         MapSqlParameterSource params = new MapSqlParameterSource("fileNames", Arrays.asList(fileName));
         return jdbcNamed.queryForObject(
-            SqlSOBIFileQuery.GET_SOBI_FILES_BY_FILE_NAMES_SQL.getSql(schema()), params, new SOBIFileRowMapper());
+            SqlSobiFileQuery.GET_SOBI_FILES_BY_FILE_NAMES_SQL.getSql(schema()), params, new SobiFileRowMapper());
     }
 
     /** {@inheritDoc }*/
     @Override
-    public Map<String, SOBIFile> getSOBIFiles(List<String> fileNames) {
+    public Map<String, SobiFile> getSobiFiles(List<String> fileNames) {
         MapSqlParameterSource params = new MapSqlParameterSource("fileNames", fileNames);
-        Map<String, SOBIFile> sobiFileMap = new HashMap<>();
-        List<SOBIFile> sobiList = jdbcNamed.query(
-            SqlSOBIFileQuery.GET_SOBI_FILES_BY_FILE_NAMES_SQL.getSql(schema()), params, new SOBIFileRowMapper());
-        for (SOBIFile sobiFile : sobiList) {
+        Map<String, SobiFile> sobiFileMap = new HashMap<>();
+        List<SobiFile> sobiList = jdbcNamed.query(GET_SOBI_FILES_BY_FILE_NAMES_SQL.getSql(schema()),
+                                                  params, new SobiFileRowMapper());
+        for (SobiFile sobiFile : sobiList) {
             sobiFileMap.put(sobiFile.getFileName(), sobiFile);
         }
         return sobiFileMap;
@@ -81,30 +82,29 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
 
     /** {@inheritDoc }*/
     @Override
-    public List<SOBIFile> getSOBIFilesDuring(Date start, Date end, boolean processedOnly, SortOrder sortByPubDate) {
+    public List<SobiFile> getSobiFilesDuring(Date start, Date end, boolean processedOnly, SortOrder sortByPubDate) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("startDate", start);
         params.addValue("endDate", end);
         params.addValue("processedOnly", processedOnly);
-        return jdbcNamed.query(
-            SqlSOBIFileQuery.GET_SOBI_FILES_DURING_SQL.getSql(schema()) + orderBy("published_date_time", sortByPubDate),
-            params, new SOBIFileRowMapper());
+        return jdbcNamed.query(GET_SOBI_FILES_DURING_SQL.getSql(schema()) + orderBy("published_date_time", sortByPubDate),
+                               params, new SobiFileRowMapper());
     }
 
     /** {@inheritDoc }*/
     @Override
-    public List<SOBIFile> getPendingSOBIFiles(SortOrder sortByPubDate) {
-        return jdbc.query(SqlSOBIFileQuery.GET_PENDING_SOBI_FILES_SQL.getSql(schema()) +
-               orderBy("published_date_time", sortByPubDate), new SOBIFileRowMapper());
+    public List<SobiFile> getPendingSobiFiles(SortOrder sortByPubDate, int limit, int offset) {
+        return jdbc.query(GET_PENDING_SOBI_FILES_SQL.getSql(schema()) +
+               orderBy("published_date_time", sortByPubDate) + limitOffset(limit, offset), new SobiFileRowMapper());
     }
 
     /** {@inheritDoc }*/
     @Override
-    public void stageSOBIFiles(boolean allowReStaging) throws IOException {
+    public void stageSobiFiles(boolean allowReStaging) throws IOException {
         logger.info("Performing staging of new SOBI files...");
         int filesStaged = 0;
         for (File file : safeListFiles(this.stagingSobiDir, null, false)) {
-            SOBIFile sobiFile = new SOBIFile(file);
+            SobiFile sobiFile = new SobiFile(file);
             sobiFile.setStagedDateTime(new Date());
             sobiFile.setPendingProcessing(true);
             try {
@@ -118,14 +118,14 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
                     // The SOBI file has been staged once before so we want to re-stage it with the contents of the
                     // new file which may or may not be identical. This should rarely occur in production but can
                     // be helpful during development.
-                    SOBIFile existingSOBIFile = getSOBIFile(sobiFile.getFileName());
-                    if (existingSOBIFile != null) {
-                        existingSOBIFile.setStagedDateTime(new Date());
-                        existingSOBIFile.setPendingProcessing(true);
-                        updateSOBIFile(existingSOBIFile);
+                    SobiFile existingSobiFile = getSobiFile(sobiFile.getFileName());
+                    if (existingSobiFile != null) {
+                        existingSobiFile.setStagedDateTime(new Date());
+                        existingSobiFile.setPendingProcessing(true);
+                        updateSobiFile(existingSobiFile);
                         moveFileToWorking(file);
                         filesStaged++;
-                        logger.debug("Re-staged " + existingSOBIFile + " with latest file contents.");
+                        logger.debug("Re-staged " + existingSobiFile + " with latest file contents.");
                     }
                     else {
                         logger.warn("Failed to stage " + sobiFile + " because a prior record exists but cannot be retrieved!");
@@ -141,7 +141,7 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
 
     /** {@inheritDoc }*/
     @Override
-    public boolean updateSOBIFile(SOBIFile sobiFile) {
+    public boolean updateSobiFile(SobiFile sobiFile) {
         if (sobiFile != null) {
             try {
                 int affected = updateSOBIMetadataInDatabase(sobiFile);
@@ -157,7 +157,7 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
                 return false;
             }
             catch (DataAccessException ex) {
-                logger.error("Failed to update SOBIFile record with file name " + sobiFile.getFileName(), ex);
+                logger.error("Failed to update SobiFile record with file name " + sobiFile.getFileName(), ex);
             }
             catch (IOException ex) {
                 logger.error("Failed to update SOBI file " + sobiFile.getFileName() + " in file system!", ex);
@@ -165,7 +165,7 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
             return false;
         }
         else {
-            throw new IllegalArgumentException("Supplied SOBIFile object is null. Cannot persist to database.");
+            throw new IllegalArgumentException("Supplied SobiFile object is null. Cannot persist to database.");
         }
     }
 
@@ -183,27 +183,27 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
     /** --- Helper Classes --- */
 
     /**
-     * Maps rows from the sobi table to SOBIFile objects.
+     * Maps rows from the sobi table to SobiFile objects.
      */
-    protected class SOBIFileRowMapper implements RowMapper<SOBIFile> {
+    protected class SobiFileRowMapper implements RowMapper<SobiFile> {
         private String pfx = "";
 
-        public SOBIFileRowMapper(){}
-        public SOBIFileRowMapper(String pfx) {
+        public SobiFileRowMapper(){}
+        public SobiFileRowMapper(String pfx) {
             this.pfx = pfx;
         }
 
         @Override
-        public SOBIFile mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public SobiFile mapRow(ResultSet rs, int rowNum) throws SQLException {
             String fileName = rs.getString(pfx + "file_name");
-            Date publishedDateTime = rs.getDate(pfx + "published_date_time");
+            Date publishedDateTime = rs.getTimestamp(pfx + "published_date_time");
             boolean pendingProcessing = rs.getBoolean(pfx + "pending_processing");
             File file = getSOBIFileFromFileSystem(fileName, publishedDateTime, pendingProcessing);
             try {
-                SOBIFile sobiFile = new SOBIFile(file);
+                SobiFile sobiFile = new SobiFile(file);
                 sobiFile.setPendingProcessing(pendingProcessing);
-                sobiFile.setStagedDateTime(rs.getDate(pfx + "staged_date_time"));
-                sobiFile.setProcessedDateTime(rs.getDate(pfx + "processed_date_time"));
+                sobiFile.setStagedDateTime(rs.getTimestamp(pfx + "staged_date_time"));
+                sobiFile.setProcessedDateTime(rs.getTimestamp(pfx + "processed_date_time"));
                 sobiFile.setProcessedCount(rs.getInt(pfx + "processed_count"));
                 return sobiFile;
             }
@@ -222,19 +222,19 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
     /** --- Internal Methods --- */
 
     /**
-     * Saves the metadata of the SOBIFile into the database.
+     * Saves the metadata of the SobiFile into the database.
      * @throws java.lang.IllegalArgumentException if sobiFile is null
      */
-    private void insertSOBIMetadataInDatabase(SOBIFile sobiFile) throws DataAccessException {
-        jdbcNamed.update(SqlSOBIFileQuery.INSERT_SOBI_FILE.getSql(schema()), getSOBIInsertUpdateParams(sobiFile));
+    private void insertSOBIMetadataInDatabase(SobiFile sobiFile) throws DataAccessException {
+        jdbcNamed.update(SqlSobiFileQuery.INSERT_SOBI_FILE.getSql(schema()), getSOBIInsertUpdateParams(sobiFile));
     }
 
     /**
-     * Updates the metadata of the SOBIFile into the database.
+     * Updates the metadata of the SobiFile into the database.
      * @throws java.lang.IllegalArgumentException if sobiFile is null
      */
-    private int updateSOBIMetadataInDatabase(SOBIFile sobiFile) throws DataAccessException {
-        return jdbcNamed.update(SqlSOBIFileQuery.UPDATE_SOBI_FILE.getSql(schema()), getSOBIInsertUpdateParams(sobiFile));
+    private int updateSOBIMetadataInDatabase(SobiFile sobiFile) throws DataAccessException {
+        return jdbcNamed.update(SqlSobiFileQuery.UPDATE_SOBI_FILE.getSql(schema()), getSOBIInsertUpdateParams(sobiFile));
     }
 
     /**
@@ -249,7 +249,7 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
     }
 
     /** Overload for convenience. @see #getSOBIFileFromFileSystem(String, java.util.Date, boolean) */
-    private File getSOBIFileFromFileSystem(SOBIFile sobiFile) {
+    private File getSOBIFileFromFileSystem(SobiFile sobiFile) {
         return getSOBIFileFromFileSystem(sobiFile.getFileName(), sobiFile.getPublishedDateTime(), sobiFile.isPendingProcessing());
     }
 
@@ -309,11 +309,11 @@ public class SqlSOBIFileDao extends SqlBaseDao implements SOBIFileDao
     }
 
     /**
-     * Returns a MapSqlParameterSource with columns mapped to SOBIFile values for use in update/insert queries.
-     * @param sobiFile SOBIFile
+     * Returns a MapSqlParameterSource with columns mapped to SobiFile values for use in update/insert queries.
+     * @param sobiFile SobiFile
      * @return MapSqlParameterSource
      */
-    private MapSqlParameterSource getSOBIInsertUpdateParams(SOBIFile sobiFile) {
+    private MapSqlParameterSource getSOBIInsertUpdateParams(SobiFile sobiFile) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("fileName", sobiFile.getFileName());
         params.addValue("publishedDateTime", toTimestamp(sobiFile.getPublishedDateTime()));

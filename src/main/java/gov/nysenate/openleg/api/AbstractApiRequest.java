@@ -38,6 +38,7 @@ public abstract class AbstractApiRequest implements OpenLegConstants {
                 getNumber(pageSize, DEFAULT_PAGE_SIZE),
                 format,
                 apiEnum);
+
     }
 
     public AbstractApiRequest(HttpServletRequest request, HttpServletResponse response,

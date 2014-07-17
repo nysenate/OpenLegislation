@@ -7,23 +7,23 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 /**
- * The SOBIFragment class represents a portion of a SOBIFile file that contains data pertaining
+ * The SobiFragment class represents a portion of a SobiFile file that contains data pertaining
  * to a certain entity type.
  *
  * For example if a SOBI file contains bill data and agenda data, the file can be broken down
  * into two SOBIFragments, one containing the portion for just the bill data and the other with
  * just the agenda data.
  */
-public class SOBIFragment
+public class SobiFragment
 {
-    /** Reference to the original SOBIFile object that created this fragment. */
-    private SOBIFile parentSOBIFile;
+    /** Reference to the original SobiFile object that created this fragment. */
+    private SobiFile parentSobiFile;
 
     /** The type of fragment, e.g bill, agenda, etc. */
     private SOBIFragmentType type;
 
-    /** The file name of the fragment. Serves as a unique identifier for the fragment. */
-    private String fileName;
+    /** The id of the fragment which is set by the collate process. */
+    private String fragmentId;
 
     /** A counter used to provide a means of ordering multiple fragments of the same type. */
     private int counter;
@@ -33,8 +33,8 @@ public class SOBIFragment
 
     /** --- Constructors --- */
 
-    public SOBIFragment(SOBIFile parentSOBIFile, SOBIFragmentType type, String text, int counter) {
-        this.parentSOBIFile = parentSOBIFile;
+    public SobiFragment(SobiFile parentSobiFile, SOBIFragmentType type, String text, int counter) {
+        this.parentSobiFile = parentSobiFile;
         this.type = type;
         this.text = text;
         this.counter = counter;
@@ -53,24 +53,24 @@ public class SOBIFragment
     /**
      * Parses the given SOBI fragment into a list of blocks. Replaces null bytes in each line with spaces to
      * bring them into the proper fixed width formats.
-     * <p>See the SOBIBlock class for more details.</p>
-     * @return List<SOBIBlock> if fragment type supports blocks, empty list otherwise.
+     * <p>See the SobiBlock class for more details.</p>
+     * @return List<SobiBlock> if fragment type supports blocks, empty list otherwise.
      */
-    public List<SOBIBlock> getSOBIBlocks() {
-        List<SOBIBlock> blocks = new ArrayList<>();
+    public List<SobiBlock> getSOBIBlocks() {
+        List<SobiBlock> blocks = new ArrayList<>();
         if (isBlockFormat()) {
-            SOBIBlock block = null;
+            SobiBlock block = null;
             List<String> lines = new ArrayList<>(Arrays.asList(this.text.split("\\r?\\n")));
             lines.add(""); // Add a trailing line to end the last block and remove edge cases
             for(int lineNo = 0; lineNo < lines.size(); lineNo++) {
                 // Replace NULL bytes with spaces to properly format lines.
                 String line = lines.get(lineNo).replace('\0', ' ');
                 // Source file is not assumed to be 100% SOBI so we filter out other lines
-                Matcher headerMatcher = SOBIBlock.blockPattern.matcher(line);
+                Matcher headerMatcher = SobiBlock.blockPattern.matcher(line);
                 if (headerMatcher.find()) {
                     if (block == null) {
                         // No active block with a new matching line: create new block
-                        block = new SOBIBlock(fileName, type, lineNo, line);
+                        block = new SobiBlock(fragmentId, type, lineNo, line);
                     }
                     else if (block.getHeader().equals(headerMatcher.group()) && block.isMultiline()) {
                         // active multi-line block with a new matching line: extend block
@@ -80,13 +80,13 @@ public class SOBIFragment
                         // active block does not match new line or can't be extended: create new block
                         block.setEndLineNo(lineNo - 1);
                         blocks.add(block);
-                        SOBIBlock newBlock = new SOBIBlock(fileName, type, lineNo, line);
+                        SobiBlock newBlock = new SobiBlock(fragmentId, type, lineNo, line);
                         // Handle certain SOBI grouping edge cases.
                         if (newBlock.getBillHeader().equals(block.getBillHeader())) {
                             // The law code line can be omitted when blank but it always precedes the 'C' line
-                            if (newBlock.getType().equals(SOBILineType.SUMMARY) && !block.getType().equals(SOBILineType.LAW)) {
-                                blocks.add(new SOBIBlock(fileName, type, lineNo,
-                                           block.getBillHeader() + SOBILineType.LAW.getTypeCode()));
+                            if (newBlock.getType().equals(SobiLineType.SUMMARY) && !block.getType().equals(SobiLineType.LAW)) {
+                                blocks.add(new SobiBlock(fragmentId, type, lineNo,
+                                           block.getBillHeader() + SobiLineType.LAW.getTypeCode()));
                             }
                         }
                         // Start a new block
@@ -106,36 +106,36 @@ public class SOBIFragment
 
     @Override
     public String toString() {
-        return "SOBIFragment{" + "fragmentType=" + type + ", fileName='" + fileName + '\'' +
-                ", parentSOBIFile=" + parentSOBIFile + '}';
+        return "SobiFragment{" + "fragmentType=" + type + ", fileName='" + fragmentId + '\'' +
+                ", parentSobiFile=" + parentSobiFile + '}';
     }
 
     /** --= Functional Getters/Setters --- */
 
     public Date getPublishedDateTime() {
-        return parentSOBIFile.getPublishedDateTime();
+        return parentSobiFile.getPublishedDateTime();
     }
 
     public Date getProcessedDateTime() {
-        return parentSOBIFile.getProcessedDateTime();
+        return parentSobiFile.getProcessedDateTime();
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public SOBIFile getParentSOBIFile() {
-        return parentSOBIFile;
+    public SobiFile getParentSobiFile() {
+        return parentSobiFile;
     }
 
     public SOBIFragmentType getType() {
         return type;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getFragmentId() {
+        return fragmentId;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFragmentId(String fragmentId) {
+        this.fragmentId = fragmentId;
     }
 
     public String getText() {

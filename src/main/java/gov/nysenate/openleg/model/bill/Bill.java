@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.bill;
 import gov.nysenate.openleg.model.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.service.bill.BillAmendNotFoundEx;
+import org.joda.time.LocalDate;
 
 import java.io.Serializable;
 import java.util.*;
@@ -62,9 +63,13 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     public Bill(String printNo, int sessionYear) {
+        this();
         this.printNo = printNo;
         this.session = resolveSessionYear(sessionYear);
-        this.year = sessionYear;
+    }
+
+    public Bill(BillId billId) {
+        this(billId.getBasePrintNo(), billId.getSession());
     }
 
     /** --- Overrides --- */
@@ -91,19 +96,13 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     /**
-     * Set the publish date of the bill container. This is useful for knowing when this bill
-     * was first created as well as allowing for all amendments to become unpublished when
-     * the publish date is set to null.
+     * Set the publish date of the bill container.
      * @param publishDate Date
      */
     @Override
     public void setPublishDate(Date publishDate) {
         this.publishDate = publishDate;
-        if (publishDate == null) {
-            for (BillAmendment amendment : this.getAmendmentList()) {
-                amendment.setPublishDate(null);
-            }
-        }
+        this.year = new LocalDate(publishDate).getYear();
     }
 
     @Override
