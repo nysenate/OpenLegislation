@@ -239,6 +239,28 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
     }
 
     /**
+     * Retrieves the committee version with the next lowest created date from the given committee version
+     * @param committee
+     * @return
+     */
+    private Committee selectPreviousCommittee(Committee committee){
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("committee_name", committee.getName());
+        params.addValue("chamber", committee.getChamber().asSqlEnum());
+        params.addValue("session_year", committee.getSession());
+        params.addValue("date", committee.getPublishDate());
+        try {
+            Committee nextCommittee = jdbcNamed.queryForObject(SqlCommitteeQuery.SELECT_PREVIOUS_COMMITTEE_VERSION.getSql(schema()),
+                    params, new CommitteeRowMapper());
+            nextCommittee.setMembers(selectCommitteeMembers(nextCommittee));
+            return nextCommittee;
+        }
+        catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    /**
      * Retrieves the committee version with the next highest created date from the given committee version
      * @param committee
      * @return
@@ -267,27 +289,35 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao{
             // replace existing committee if they share the same creation date
             if(committee.getPublishDate().equals(existingCommittee.getPublishDate())){
                 deleteCommitteeVersion(existingCommittee);
+                Committee previousCommittee = selectPreviousCommittee(existingCommittee);
+                if(committee.memberEquals(previousCommittee)){  // merge with previous committee if same membership
+                    committee.setReformed(existingCommittee.getReformed());
+                    mergeCommittees(previousCommittee, committee);
+                    committee = previousCommittee;
+                }
+                else{   // Create a new version of the committee
+                    insertCommitteeVersion(committee);
+                }
             }
-            // Create a new version of the committee
-            insertCommitteeVersion(committee);
+            else{   // Create a new version of the committee and update reformed for existing committee
+                insertCommitteeVersion(committee);
+                existingCommittee.setReformed(committee.getPublishDate());
+                updateCommitteeReformed(existingCommittee);
+            }
+
             // Update references
             if(existingCommittee.isCurrent()){
                 updateCommitteeCurrentVersion(committee);
             }
             else{
                 Committee nextCommittee = selectNextCommittee(committee);
-                if(committee.memberEquals(nextCommittee)){
+                if(committee.memberEquals(nextCommittee)){  //  merge with next committee if same membership
                     mergeCommittees(committee, nextCommittee);
                 }
                 else {
                     committee.setReformed(nextCommittee.getPublishDate());
                     updateCommitteeReformed(committee);
                 }
-            }
-            if(!committee.getPublishDate().equals(existingCommittee.getPublishDate())) {
-                // If the existing committee was not replaced, update its reformed date
-                existingCommittee.setReformed(committee.getPublishDate());
-                updateCommitteeReformed(existingCommittee);
             }
         }
         else if(!committee.meetingEquals(existingCommittee)){   // if there has been a change in meeting protocol
