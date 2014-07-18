@@ -29,15 +29,12 @@ public class CachedCommitteeService implements CommitteeService{
 
     @PostConstruct
     private void init(){
-        cacheManager.addCache("committeeCurrent");
-        cacheManager.addCache("committeeVersion");
-        cacheManager.addCache("committeeList");
-        cacheManager.addCache("committeeHistory");
+        cacheManager.addCache("committee");
     }
 
     /** {@inheritDoc} */
     @Override
-    @Cacheable(value = "committeeCurrent", key = "#name + #chamber.toString()")
+    @Cacheable(value = "committee", key = "#root.methodName + '-' + #name + '-' + #chamber.toString()")
     public Committee getCommittee(String name, Chamber chamber) throws CommitteeNotFoundEx {
         if(name==null){
             throw new IllegalArgumentException("Name cannot be null!");
@@ -55,7 +52,9 @@ public class CachedCommitteeService implements CommitteeService{
 
     /** {@inheritDoc} */
     @Override
-    @Cacheable(value = "committeeVersion", key = "#name + #chamber.toString() + #session + #time.toString()")
+    @Cacheable(value = "committee",
+            key = "#root.methodName + '-' + #name + '-' + #chamber.toString() + '-' + #session + '-' + #time.toString()"
+    )
     public Committee getCommittee(String name, Chamber chamber, int session, Date time) throws CommitteeNotFoundEx {
         if(name==null){
             throw new IllegalArgumentException("Name cannot be null!");
@@ -67,7 +66,7 @@ public class CachedCommitteeService implements CommitteeService{
             throw new IllegalArgumentException("Time cannot be null!");
         }
         DateTime now = new DateTime();
-        if(time.after(now.toDate()) && (now.getYear()<=session || now.getYear()%2==0 && now.getYear()==session+1)){
+        if(time.after(now.toDate()) && now.getYear()<session+2){
             logger.debug("Using committeeCurrent instead of committeeVersion for " + chamber + " " + name + " " + session + " " + time);
             return getCommittee(name, chamber);
         }
@@ -81,7 +80,7 @@ public class CachedCommitteeService implements CommitteeService{
 
     /** {@inheritDoc} */
     @Override
-    @Cacheable(value = "committeeList", key = "#chamber.toString()")
+    @Cacheable(value = "committee", key = "#root.methodName + '-' + #chamber.toString()")
     public List<Committee> getCommitteeList(Chamber chamber) throws CommitteeNotFoundEx {
         if (chamber==null){
             throw new IllegalArgumentException("Chamber cannot be null!");
@@ -96,7 +95,7 @@ public class CachedCommitteeService implements CommitteeService{
 
     /** {@inheritDoc} */
     @Override
-    @Cacheable(value = "committeeHistory", key = "#name + #chamber.toString()")
+    @Cacheable(value = "committee", key = "#root.methodName + '-' + #name + '-' + #chamber.toString()")
     public List<Committee> getCommitteeHistory(String name, Chamber chamber) throws CommitteeNotFoundEx {
         if(name==null){
             throw new IllegalArgumentException("Name cannot be null!");
@@ -115,14 +114,7 @@ public class CachedCommitteeService implements CommitteeService{
 
     /** {@inheritDoc} */
     @Override
-    @Caching(
-        evict = {
-            @CacheEvict(value = "committeeCurrent", key = "#committee.getName() + #committee.getChamber().toString()"),
-            @CacheEvict(value = "committeeVersion", allEntries = true),
-            @CacheEvict(value = "committeeList", key = "#committee.getChamber().toString()"),
-            @CacheEvict(value = "committeeHistory", key = "#committee.getName() + #committee.getChamber().toString()")
-        }
-    )
+    @CacheEvict(value = "committee", allEntries = true)
     public void updateCommittee(Committee committee) {
         if(committee==null){
             throw new IllegalArgumentException("Committee cannot be null.");
@@ -132,14 +124,7 @@ public class CachedCommitteeService implements CommitteeService{
 
     /** {@inheritDoc} */
     @Override
-    @Caching(
-        evict = {
-            @CacheEvict(value = "committeeCurrent", key = "#committee.getName() + #committee.getChamber().toString()"),
-            @CacheEvict(value = "committeeVersion", allEntries = true),
-            @CacheEvict(value = "committeeList", key = "#committee.getChamber().toString()"),
-            @CacheEvict(value = "committeeHistory", key = "#committee.getName() + #committee.getChamber().toString()")
-        }
-    )
+    @CacheEvict(value = "committee", allEntries = true)
     public void deleteCommittee(Committee committee) {
         if(committee==null){
             throw new IllegalArgumentException("Committee cannot be null.");
