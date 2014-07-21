@@ -38,10 +38,16 @@ public class CommitteeServiceTests extends BaseTests{
     }
 
     @Test
-    public void cacheTimer(){
+    public void insertAllCommittees(){
         for(Committee committee : testCommittees.getCommittees()){
             committeeService.updateCommittee(committee);
         }
+    }
+
+    private static int cacheTimerRunCount = 0;
+    @Test
+    public void cacheTimer(){
+        logger.info(" === Cache Timer " + ++cacheTimerRunCount + " === ");
         MethodTimer.Method getCurrentCommittee = new MethodTimer.Method() {
             @Override
             public void run() throws Exception{
@@ -77,6 +83,19 @@ public class CommitteeServiceTests extends BaseTests{
         logger.info("getCommitteeHistory run 2:\t" + NumberFormat.getNumberInstance(Locale.US).format(MethodTimer.timeMethod(getCommitteeHistory)));
     }
 
+    @Test
+    public void cacheEvictTimer(){
+        deleteCommittees();
+        insertAllCommittees();  // Reset test committees
+        committeeService.deleteCommittee(testCommittees.getCommittee("test2"));
+        cacheTimer();
+        cacheTimer();
+        committeeService.updateCommittee(testCommittees.getCommittee("test2"));
+        cacheTimer();
+        committeeService.deleteCommittee(testCommittees.getCommittee("test2"));
+        cacheTimer();
+    }
+
     private static class MethodTimer{
         public static interface Method{
             public void run() throws Exception;
@@ -87,7 +106,7 @@ public class CommitteeServiceTests extends BaseTests{
                 method.run();
             }
             catch(Exception e){
-                throw new RuntimeException();
+                throw new RuntimeException(e);
             }
             long stopTime = System.nanoTime();
             return stopTime-startTime;

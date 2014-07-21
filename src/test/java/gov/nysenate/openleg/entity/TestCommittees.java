@@ -93,6 +93,18 @@ public class TestCommittees {
         Committee test1v2merge = new Committee(test1v2);
         test1v2merge.setPublishDate(dateFormat.parseDateTime("2009-02-10").toDate());
         createdCommittees.put("test1v2merge", test1v2merge);
+
+        Committee test1v2mergeReplace = new Committee(test1);
+        test1v2merge.setPublishDate(test1v2merge.getPublishDate());
+        createdCommittees.put("test1v2mergeReplace", test1v2mergeReplace);
+
+        Committee test1v3 = new Committee(test1);
+        test1v3.setPublishDate((dateFormat.parseDateTime("2009-05-01").toDate()));
+        createdCommittees.put("test1v3", test1v3);
+
+        Committee test2 = new Committee(test1);
+        test2.setName("test committee 2");
+        createdCommittees.put("test2", test2);
     }
 
     public Committee getCommittee(String name){

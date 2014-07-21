@@ -44,6 +44,12 @@ public enum SqlCommitteeQuery {
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
         "WHERE committee_name=:committee_name AND chamber=CAST(:chamber AS chamber)"
     ),
+    SELECT_PREVIOUS_COMMITTEE_VERSION(
+        "SELECT * FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
+        "WHERE committee_name=:committee_name AND chamber=CAST(:chamber AS chamber) AND session_year=:session_year AND :date > created" + "\n" +
+        "ORDER BY created DESC" + "\n" +
+        "LIMIT 1"
+    ),
     SELECT_NEXT_COMMITTEE_VERSION(
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
         "WHERE committee_name=:committee_name AND chamber=CAST(:chamber AS chamber) AND session_year=:session_year AND :date < created" + "\n" +
