@@ -1,7 +1,11 @@
 package gov.nysenate.openleg;
 
+import gov.nysenate.openleg.config.ApplicationConfig;
+import gov.nysenate.openleg.config.CacheConfigurationTests;
+import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -21,6 +25,9 @@ public class TestConfig
 
     public static final String PROPERTY_FILENAME = "test.app.properties";
 
+    @Autowired
+    CacheManager cacheManager;
+
     @Bean
     public static PropertySourcesPlaceholderConfigurer properties() {
         logger.info("Test property file loaded");
@@ -29,5 +36,10 @@ public class TestConfig
         pspc.setLocations(resources);
         pspc.setIgnoreUnresolvablePlaceholders(true);
         return pspc;
+    }
+
+    @Bean
+    public CacheConfigurationTests.CacheTester cacheTester() {
+        return new CacheConfigurationTests.CacheTester(cacheManager);
     }
 }

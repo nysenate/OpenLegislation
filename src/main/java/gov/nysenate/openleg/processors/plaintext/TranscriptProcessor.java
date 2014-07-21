@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.processors.transcript;
+package gov.nysenate.openleg.processors.plaintext;
 
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.util.ChangeLogger;

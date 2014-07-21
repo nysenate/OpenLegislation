@@ -4,7 +4,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.sobi.SobiFile;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sobi.SOBIFragmentType;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class SqlSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao
     /** --- Implemented Methods --- */
 
     @Override
-    public SobiFragment getSOBIFragment(SOBIFragmentType fragmentType, String fragmentFileName) {
+    public SobiFragment getSOBIFragment(SobiFragmentType fragmentType, String fragmentFileName) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("sobiFragmentType", fragmentType.name());
         params.addValue("fileName", fragmentFileName);
@@ -54,7 +54,7 @@ public class SqlSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao
 
     /** {@inheritDoc} */
     @Override
-    public List<SobiFragment> getSOBIFragments(SobiFile sobiFile, SOBIFragmentType fragmentType, SortOrder order) {
+    public List<SobiFragment> getSOBIFragments(SobiFile sobiFile, SobiFragmentType fragmentType, SortOrder order) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("sobiFileName", sobiFile.getFileName());
         params.addValue("sobiFragmentType", fragmentType.name());
@@ -126,7 +126,7 @@ public class SqlSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao
                 sobiFile = sobiFileDao.getSobiFile(sobiFileName);
             }
             String fragmentId = rs.getString(pfx + "fragment_id");
-            SOBIFragmentType type = SOBIFragmentType.valueOf(rs.getString(pfx + "sobi_fragment_type"));
+            SobiFragmentType type = SobiFragmentType.valueOf(rs.getString(pfx + "sobi_fragment_type"));
             int counter = rs.getInt(pfx + "file_counter");
             String text = rs.getString(pfx + "text");
             SobiFragment fragment = new SobiFragment(sobiFile, type, text, counter);

@@ -2,10 +2,10 @@ package gov.nysenate.openleg.model.sobi;
 
 /**
  * SOBIFragments are constructed to delineate a SOBI file into components based on a
- * common entity type. The SOBIFragmentType enum lists all the available entities
+ * common entity type. The SobiFragmentType enum lists all the available entities
  * that a SobiFragment can represent and regex patterns to extract them.
  */
-public enum SOBIFragmentType
+public enum SobiFragmentType
 {
     BILL            (false, "[0-9]{4}[A-Z][0-9]{5}[ A-Z].+", ""),
     AGENDA          (true, "<senagenda.+", "</senagenda.+"),
@@ -19,7 +19,7 @@ public enum SOBIFragmentType
     String startPattern;
     String endPattern;
 
-    SOBIFragmentType(boolean isXml, String startPattern, String endPattern) {
+    SobiFragmentType(boolean isXml, String startPattern, String endPattern) {
         this.isXml = isXml;
         this.startPattern = startPattern;
         this.endPattern = endPattern;

@@ -3,15 +3,15 @@ package gov.nysenate.openleg.processors;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.sobi.SobiFileDao;
 import gov.nysenate.openleg.dao.sobi.SobiFragmentDao;
-import gov.nysenate.openleg.model.sobi.SOBIFragmentType;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sobi.SobiFile;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.processors.sobi.SobiProcessor;
 import gov.nysenate.openleg.processors.sobi.agenda.AgendaProcessor;
 import gov.nysenate.openleg.processors.sobi.agenda.AgendaVoteProcessor;
-import gov.nysenate.openleg.processors.sobi.bill.BillProcessor;
-import gov.nysenate.openleg.processors.sobi.calendar.CalendarActiveListProcessor;
-import gov.nysenate.openleg.processors.sobi.calendar.CalendarProcessor;
+import gov.nysenate.openleg.processors.sobi.bill.SobiBillProcessor;
+import gov.nysenate.openleg.processors.sobi.calendar.SobiActiveListProcessor;
+import gov.nysenate.openleg.processors.sobi.calendar.SobiCalendarProcessor;
 import gov.nysenate.openleg.processors.sobi.entity.CommitteeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +59,7 @@ public class DataProcessor
 
     protected static String encoding = "CP850";
 
-    private Map<SOBIFragmentType, SobiProcessor> processorMap;
+    private Map<SobiFragmentType, SobiProcessor> processorMap;
 
     /** --- DAO instances --- */
 
@@ -72,7 +72,7 @@ public class DataProcessor
     /** --- Processor Instances --- */
 
     @Autowired
-    private BillProcessor billProcessor;
+    private SobiBillProcessor sobiBillProcessor;
 
     @Autowired
     private CommitteeProcessor committeeProcessor;
@@ -85,12 +85,12 @@ public class DataProcessor
 
     @PostConstruct
     public void init() {
-        this.processorMap.put(SOBIFragmentType.BILL, billProcessor);
-        this.processorMap.put(SOBIFragmentType.AGENDA, new AgendaProcessor());
-        this.processorMap.put(SOBIFragmentType.AGENDA_VOTE, new AgendaVoteProcessor());
-        this.processorMap.put(SOBIFragmentType.CALENDAR, new CalendarProcessor());
-        this.processorMap.put(SOBIFragmentType.CALENDAR_ACTIVE, new CalendarActiveListProcessor());
-        this.processorMap.put(SOBIFragmentType.COMMITTEE, committeeProcessor);
+        this.processorMap.put(SobiFragmentType.BILL, sobiBillProcessor);
+        this.processorMap.put(SobiFragmentType.AGENDA, new AgendaProcessor());
+        this.processorMap.put(SobiFragmentType.AGENDA_VOTE, new AgendaVoteProcessor());
+        this.processorMap.put(SobiFragmentType.CALENDAR, new SobiCalendarProcessor());
+        this.processorMap.put(SobiFragmentType.CALENDAR_ACTIVE, new SobiActiveListProcessor());
+        this.processorMap.put(SobiFragmentType.COMMITTEE, committeeProcessor);
     }
 
     /** --- Processing methods --- */
@@ -137,10 +137,10 @@ public class DataProcessor
                 // Construct fragments from SOBI text
                 while (lineIterator.hasNext()) {
                     String line = lineIterator.next();
-                    SOBIFragmentType fragmentType = getFragmentTypeFromLine(line);
+                    SobiFragmentType fragmentType = getFragmentTypeFromLine(line);
                     if (fragmentType != null) {
                         // Bill portions are appended into a single buffer
-                        if (fragmentType.equals(SOBIFragmentType.BILL)) {
+                        if (fragmentType.equals(SobiFragmentType.BILL)) {
                             if (line.charAt(11) == 'M') {
                                 // Memos are latin1 encoding
                                 line = new String(line.getBytes(encoding), "latin1");
@@ -157,7 +157,7 @@ public class DataProcessor
                     }
                 }
                 if (billBuffer.length() > 0) {
-                    SobiFragment billFragment = new SobiFragment(sobiFile, SOBIFragmentType.BILL, billBuffer.toString(), 1);
+                    SobiFragment billFragment = new SobiFragment(sobiFile, SobiFragmentType.BILL, billBuffer.toString(), 1);
                     sobiFragments.add(billFragment);
                 }
                 // Persist the fragments
@@ -222,10 +222,10 @@ public class DataProcessor
     /**
      * Check the given SOBI line to determine if it matches the start of a SOBI Fragment type.
      * @param line String
-     * @return SOBIFragmentType or null if no match
+     * @return SobiFragmentType or null if no match
      */
-    protected SOBIFragmentType getFragmentTypeFromLine(String line) {
-        for (SOBIFragmentType fragmentType : SOBIFragmentType.values()) {
+    protected SobiFragmentType getFragmentTypeFromLine(String line) {
+        for (SobiFragmentType fragmentType : SobiFragmentType.values()) {
             if (line.matches(fragmentType.getStartPattern())) {
                 return fragmentType;
             }
@@ -238,14 +238,14 @@ public class DataProcessor
      * file. This depends strongly on escape sequences being on their own line; otherwise
      * we'll get malformed XML docs. TODO: EDIT THIS DOC
      *
-     * @param fragmentType SOBIFragmentType
+     * @param fragmentType SobiFragmentType
      * @param line String - The starting line of the document
      * @param iterator Iterator<String>
      *
      * @return String - The resulting XML string.
      * @throws IOException
      */
-    protected String extractXmlText(SOBIFragmentType fragmentType, String line, Iterator<String> iterator) throws IOException {
+    protected String extractXmlText(SobiFragmentType fragmentType, String line, Iterator<String> iterator) throws IOException {
         String endPattern = fragmentType.getEndPattern();
 
         StringBuffer sb = new StringBuffer(

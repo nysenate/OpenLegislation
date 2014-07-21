@@ -25,7 +25,7 @@ public class CachedBillDataService implements BillDataService, CachingService
     @Autowired
     private CacheManager cacheManager;
 
-    @Resource(name = "sqlBillDao")
+    @Autowired
     private BillDao billDao;
 
     @PostConstruct
@@ -55,11 +55,6 @@ public class CachedBillDataService implements BillDataService, CachingService
         catch (DataAccessException ex) {
             throw new BillNotFoundEx(billId, ex);
         }
-    }
-
-    @Override
-    public Bill createBill() {
-        return null;
     }
 
     /** {@inheritDoc} */

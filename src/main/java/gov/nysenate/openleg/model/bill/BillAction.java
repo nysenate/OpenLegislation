@@ -99,14 +99,14 @@ public class BillAction extends BaseLegislativeContent implements Serializable
 
     /** --- Helper classes --- */
 
-    public static class ByEventSequenceNoAsc implements Comparator<BillAction> {
+    public static class ByEventSequenceAsc implements Comparator<BillAction> {
         @Override
         public int compare(BillAction o1, BillAction o2) {
             return Integer.compare(o1.getSequenceNo(), o2.getSequenceNo());
         }
     }
 
-    public static class ByEventSequenceNoDesc implements Comparator<BillAction> {
+    public static class ByEventSequenceDesc implements Comparator<BillAction> {
         @Override
         public int compare(BillAction o1, BillAction o2) {
             return Integer.compare(o1.getSequenceNo(), o2.getSequenceNo()) * -1;

@@ -2,7 +2,7 @@ package gov.nysenate.openleg.service.sobi;
 
 import gov.nysenate.openleg.dao.sobi.SobiFileDao;
 import gov.nysenate.openleg.dao.sobi.SobiFragmentDao;
-import gov.nysenate.openleg.model.sobi.SOBIFragmentType;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sobi.SobiFile;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.CachingService;
@@ -50,7 +50,7 @@ public class CachedSobiDataService implements SobiDataService, CachingService
     }
 
     @Override
-    public Map<SOBIFragmentType, SobiFragment> getSobiFragments(String sobiFileName) {
+    public Map<SobiFragmentType, SobiFragment> getSobiFragments(String sobiFileName) {
         return null;
     }
 

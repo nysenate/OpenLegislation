@@ -43,7 +43,7 @@ public class SobiBlock
     private String fragmentFileName;
 
     /** The type of SobiFragment that generated this block. */
-    private SOBIFragmentType fragmentType;
+    private SobiFragmentType fragmentType;
 
     /** The line number that the block starts at. Defaults to zero when using the basic constructor. */
     private Integer startLineNo = 0;
@@ -90,7 +90,7 @@ public class SobiBlock
      * the source file and line number the block was initialized from. The line is assumed to be
      * valid SOBI file and is NOT checked for performance reasons.
      */
-    public SobiBlock(String fragmentFileName, SOBIFragmentType type, int startLineNo, String line) {
+    public SobiBlock(String fragmentFileName, SobiFragmentType type, int startLineNo, String line) {
         this(line);
         this.fragmentFileName = fragmentFileName;
         this.fragmentType = type;
@@ -204,11 +204,11 @@ public class SobiBlock
         this.fragmentFileName = fragmentFileName;
     }
 
-    public SOBIFragmentType getFragmentType() {
+    public SobiFragmentType getFragmentType() {
         return fragmentType;
     }
 
-    public void setFragmentType(SOBIFragmentType fragmentType) {
+    public void setFragmentType(SobiFragmentType fragmentType) {
         this.fragmentType = fragmentType;
     }
 

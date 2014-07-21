@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
-import gov.nysenate.openleg.processors.sobi.bill.BillProcessor;
+import gov.nysenate.openleg.processors.sobi.bill.SobiBillProcessor;
 import gov.nysenate.openleg.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -18,11 +18,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
+@Deprecated
 public class SencalendarProcessor
 {
     public Calendar getOrCreateCalendar(Integer calno, Integer sessYr, Integer year, Storage storage, Date date)
     {
-        Calendar calendar = new Calendar(calno, sessYr, year);
+        Calendar calendar = null; //FIXME new Calendar(calno, sessYr, year);
         calendar.setPublishDate(date);
 
         String key = storage.key(calendar);
@@ -65,14 +66,14 @@ public class SencalendarProcessor
                 Date calDate = DateHelper.getDate(xml.getString("caldate/text()", xmlSupplemental));
                 Date releaseDateTime = DateHelper.getDateTime(xml.getString("releasedate/text()", xmlSupplemental)+xml.getString("releasetime/text()", xmlSupplemental));
 
-                CalendarSupplemental supplemental = new CalendarSupplemental(id, calDate, releaseDateTime);
+          //      CalendarSupplemental supplemental = new CalendarSupplemental(id, calDate, releaseDateTime);
                 NodeList xmlSections = xml.getNodeList("sections/section", xmlCalendar);
                 for (int j=0; j < xmlSections.getLength(); j++) {
                     Node xmlSection = xmlSections.item(j);
                     String name = xml.getString("@name", xmlSection);
                     String type = xml.getString("@type", xmlSection);
                     Integer cd = xml.getInteger("@cd", xmlSection);
-                    CalendarSupplementalSection section = new CalendarSupplementalSection(name, type, cd);
+          // FIXME          CalendarSupplementalSection section = new CalendarSupplementalSection(name, type, cd);
 
                     NodeList xmlCalNos = xml.getNodeList("calnos/calno", xmlSection);
                     for (int k=0; k < xmlCalNos.getLength(); k++) {
@@ -87,14 +88,14 @@ public class SencalendarProcessor
                         String subBillAmendment = subBillNo.matches("[A-Z]$") ? subBillNo.substring(subBillNo.length()-1) : "";
                         String subBillSponsor = xml.getString("subsponsor/text()", xmlCalNo);
                         Bill subBill = this.getOrCreateBill(storage, subBillNo, subBillAmendment, year, subBillSponsor, modifiedDate);
-                        CalendarSupplementalSectionEntry entry = new CalendarSupplementalSectionEntry(no, bill, billAmendment, billHigh, subBill, subBillAmendment);
-                        section.addEntry(entry);
+                // FIXME        CalendarSupplementalEntry entry = new CalendarSupplementalEntry(no, bill, billAmendment, billHigh, subBill, subBillAmendment);
+                        // FIXME        section.addEntry(entry);
                     }
 
-                    supplemental.putSection(section);
+                    // FIXME supplemental.putSection(section);
                 }
 
-                calendar.putSupplemental(supplemental);
+          //      calendar.putSupplemental(supplemental);
             }
         }
 
@@ -133,7 +134,7 @@ public class SencalendarProcessor
                 Date releaseDateTime = DateHelper.getDate(xml.getString("releasedate/text()", xmlSequence)+xml.getString("releasetime/text()", xmlSequence));
                 String notes = xml.getString("notes/text()", xmlSequence);
 
-                CalendarActiveList activeList = new CalendarActiveList(id, notes, calDate, releaseDateTime);
+              //  CalendarActiveList activeList = new CalendarActiveList(id, notes, calDate, releaseDateTime);
                 NodeList xmlCalNos = xml.getNodeList("calnos/calno", xmlSequence);
                 for (int k=0; k < xmlSequences.getLength(); k++) {
                     Node xmlCalNo = xmlCalNos.item(k);
@@ -141,11 +142,11 @@ public class SencalendarProcessor
                     String billno = xml.getString("bill/@no", xmlCalNo);
                     String billAmendment = billno.matches("[A-Z]$") ? billno.substring(billno.length()-1) : "";
                     Bill bill = this.getOrCreateBill(storage, billno, billAmendment, year, "", modifiedDate);
-                    CalendarActiveListEntry entry = new CalendarActiveListEntry(calno, bill, billAmendment);
-                    activeList.addEntry(entry);
+                  //  CalendarActiveListEntry entry = new CalendarActiveListEntry(calno, bill, billAmendment);
+                   // activeList.addEntry(entry);
                 }
 
-                calendar.putActiveList(activeList);
+          //      calendar.putActiveList(activeList);
             }
         }
 
@@ -156,7 +157,7 @@ public class SencalendarProcessor
         // This is a crappy situation, all bills on calendars should already exist but sometimes they won't.
         // This almost exclusively because we are missing sobi files. It shouldn't happen in production but
         // does frequently in development.
-        BillProcessor processor = new BillProcessor();
+        SobiBillProcessor processor = new SobiBillProcessor();
         SobiBlock mockBlock = new SobiBlock(year+billId+(billId.matches("[A-Z]$") ? "" : " ")+1+"     ");
         Bill bill = null; /**FIXME processor.getOrCreateBaseBill(mockBlock, modifiedDate, storage); */
 

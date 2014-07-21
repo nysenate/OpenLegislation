@@ -20,7 +20,7 @@ public class SobiFragment
     private SobiFile parentSobiFile;
 
     /** The type of fragment, e.g bill, agenda, etc. */
-    private SOBIFragmentType type;
+    private SobiFragmentType type;
 
     /** The id of the fragment which is set by the collate process. */
     private String fragmentId;
@@ -33,7 +33,7 @@ public class SobiFragment
 
     /** --- Constructors --- */
 
-    public SobiFragment(SobiFile parentSobiFile, SOBIFragmentType type, String text, int counter) {
+    public SobiFragment(SobiFile parentSobiFile, SobiFragmentType type, String text, int counter) {
         this.parentSobiFile = parentSobiFile;
         this.type = type;
         this.text = text;
@@ -47,7 +47,7 @@ public class SobiFragment
      * @return boolean
      */
     public boolean isBlockFormat() {
-        return type.equals(SOBIFragmentType.BILL);
+        return type.equals(SobiFragmentType.BILL);
     }
 
     /**
@@ -126,7 +126,7 @@ public class SobiFragment
         return parentSobiFile;
     }
 
-    public SOBIFragmentType getType() {
+    public SobiFragmentType getType() {
         return type;
     }
 

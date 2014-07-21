@@ -1,53 +1,42 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillId;
 
 public class CalendarActiveListEntry
 {
+    /** This calendar number refers to a specific entry on the calendar, not the
+     *  number assigned to the calendar container. This value is consistent for this entry
+     *  across all calendars during a year. */
     private Integer calendarNumber;
-    private Bill bill;
-    private String billAmendment;
 
-    public CalendarActiveListEntry()
-    {
+    /** The BillId referenced in this active list entry. */
+    private BillId billId;
 
-    }
+    /** --- Constructors --- */
 
-    public CalendarActiveListEntry(Integer calno, Bill bill, String billAmendment)
-    {
+    public CalendarActiveListEntry() {}
+
+    public CalendarActiveListEntry(Integer calNo, BillId billId) {
         this();
-        this.setCalendarNumber(calno);
-        this.setBill(bill);
-        this.setBillAmendment(billAmendment);
+        this.setCalendarNumber(calNo);
+        this.setBillId(billId);
     }
 
-    public Integer getCalendarNumber()
-    {
+    /** --- Basic Getters/Setters --- */
+
+    public Integer getCalendarNumber() {
         return calendarNumber;
     }
 
-    public void setCalendarNumber(Integer calendarNumber)
-    {
+    public void setCalendarNumber(Integer calendarNumber) {
         this.calendarNumber = calendarNumber;
     }
 
-    public Bill getBill()
-    {
-        return bill;
+    public BillId getBillId() {
+        return billId;
     }
 
-    public void setBill(Bill bill)
-    {
-        this.bill = bill;
-    }
-
-    public String getBillAmendment()
-    {
-        return billAmendment;
-    }
-
-    public void setBillAmendment(String billAmendment)
-    {
-        this.billAmendment = billAmendment;
+    public void setBillId(BillId billId) {
+        this.billId = billId;
     }
 }

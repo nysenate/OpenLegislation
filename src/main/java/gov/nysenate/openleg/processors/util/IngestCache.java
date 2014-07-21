@@ -12,9 +12,6 @@ import java.util.Map;
  */
 public class IngestCache<K,V>
 {
-    /** Maximum number of entries that can be stored in memory */
-    private int maxEntries = 4000;
-
     /** A cache of unique id strings to DataFragmentPair mappings */
     private Map<K, V> cache = new HashMap<>();
 

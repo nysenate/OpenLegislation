@@ -3,100 +3,107 @@ package gov.nysenate.openleg.model.calendar;
 import gov.nysenate.openleg.model.BaseLegislativeContent;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
+/**
+ * Each day the Senate is in session an associated calendar is present which lists all the bills
+ * that have been reported for consideration, split into sections based on their type and
+ * status information.
+ */
 public class Calendar extends BaseLegislativeContent
 {
-    private Integer number;
-    private TreeMap<String, CalendarSupplemental> supplementals;
-    private LinkedHashMap<Integer, CalendarActiveList> activeLists;
+    /** The calendar id */
+    private CalendarId id;
 
-    public Calendar()
-    {
+    /** Map of all the supplementals associated with this calendar. */
+    private TreeMap<String, CalendarSupplemental> supplementalMap;
+
+    /** Map of all the active lists associated with this calendar. */
+    private TreeMap<Integer, CalendarActiveList> activeListMap;
+
+    /** --- Constructors --- */
+
+    public Calendar() {
         super();
-        this.setSupplementals(new TreeMap<String, CalendarSupplemental>());
-        this.setActiveLists(new LinkedHashMap<Integer, CalendarActiveList>());
+        this.supplementalMap = new TreeMap<>();
+        this.activeListMap = new TreeMap<>();
     }
 
-    public Calendar(Integer number, Integer session, Integer year)
-    {
+    public Calendar(CalendarId calendarId) {
         this();
-        this.setNumber(number);
-        this.setSession(session);
-        this.setYear(year);
+        this.setId(calendarId);
+        this.setYear(resolveSessionYear(calendarId.getYear()));
+        this.setSession(resolveSessionYear(getYear()));
     }
 
-    public Integer getNumber()
-    {
-        return number;
+    /** --- Functional Getters/Setters --- */
+
+    public CalendarActiveList getActiveList(Integer id) {
+        return this.activeListMap.get(id);
     }
 
-    public void setNumber(Integer number)
-    {
-        this.number = number;
+    public void putActiveList(CalendarActiveList activeList) {
+        this.activeListMap.put(activeList.getId(), activeList);
     }
 
-    public LinkedHashMap<Integer, CalendarActiveList> getActiveLists()
-    {
-        return activeLists;
+    public void removeActiveList(Integer id) {
+        this.activeListMap.remove(id);
     }
 
-    public void setActiveLists(LinkedHashMap<Integer, CalendarActiveList> activeLists)
-    {
-        this.activeLists = activeLists;
+    public CalendarSupplemental getSupplemental(String id) {
+        return this.supplementalMap.get(id);
     }
 
-    public CalendarActiveList getActiveList(String id)
-    {
-        return this.activeLists.get(id);
+    public void putSupplemental(CalendarSupplemental supplemental) {
+        this.supplementalMap.put(supplemental.getId(), supplemental);
     }
 
-    public void putActiveList(CalendarActiveList activeList)
-    {
-        this.activeLists.put(activeList.getId(), activeList);
+    public void removeSupplemental(String id) {
+        this.supplementalMap.remove(id);
     }
 
-    public void removeActiveList(Integer id)
-    {
-        this.activeLists.remove(id);
-    }
-
-    public TreeMap<String, CalendarSupplemental> getSupplementals()
-    {
-        return supplementals;
-    }
-
-    public void setSupplementals(TreeMap<String, CalendarSupplemental> supplementals)
-    {
-        this.supplementals = supplementals;
-    }
-
-    public CalendarSupplemental getSupplemental(String id)
-    {
-        return this.supplementals.get(id);
-    }
-
-    public void putSupplemental(CalendarSupplemental supplemental)
-    {
-        this.supplementals.put(supplemental.getId(), supplemental);
-    }
-
-    public void removeSupplemental(String id)
-    {
-        this.supplementals.remove(id);
-    }
-
-    public Date getCalDate()
-    {
-        if (this.supplementals.size() > 0) {
-            return this.supplementals.values().iterator().next().getCalDate();
+    public Date getCalDate() {
+        if (this.supplementalMap.size() > 0) {
+            return this.supplementalMap.values().iterator().next().getCalDate();
         }
-        else if (this.activeLists.size() > 0) {
-            return this.activeLists.values().iterator().next().getCalDate();
+        else if (this.activeListMap.size() > 0) {
+            return this.activeListMap.values().iterator().next().getCalDate();
         }
         else {
             return null;
         }
+    }
+
+    /** --- Overrides --- */
+
+    @Override
+    public String toString() {
+        return "Senate Calendar " + this.id;
+    }
+
+    /** --- Basic Getters/Setters --- */
+
+    public CalendarId getId() {
+        return id;
+    }
+
+    public void setId(CalendarId id) {
+        this.id = id;
+    }
+
+    public TreeMap<String, CalendarSupplemental> getSupplementalMap() {
+        return supplementalMap;
+    }
+
+    public void setSupplementalMap(TreeMap<String, CalendarSupplemental> supplementalMap) {
+        this.supplementalMap = supplementalMap;
+    }
+
+    public TreeMap<Integer, CalendarActiveList> getActiveListMap() {
+        return activeListMap;
+    }
+
+    public void setActiveListMap(TreeMap<Integer, CalendarActiveList> activeListMap) {
+        this.activeListMap = activeListMap;
     }
 }

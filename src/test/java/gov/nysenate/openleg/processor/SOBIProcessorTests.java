@@ -3,20 +3,19 @@ package gov.nysenate.openleg.processor;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.sobi.SOBIFileDao;
-import gov.nysenate.openleg.dao.sobi.SOBIFragmentDao;
-import gov.nysenate.openleg.model.sobi.SOBIFile;
-import gov.nysenate.openleg.model.sobi.SOBIFragment;
-import gov.nysenate.openleg.model.sobi.SOBIFragmentType;
+import gov.nysenate.openleg.dao.sobi.SobiFileDao;
+import gov.nysenate.openleg.dao.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.model.sobi.SobiFile;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processors.DataProcessor;
-import gov.nysenate.openleg.processors.agenda.AgendaProcessor;
-import gov.nysenate.openleg.processors.agenda.AgendaVoteProcessor;
-import gov.nysenate.openleg.processors.bill.BillProcessor;
-import gov.nysenate.openleg.processors.calendar.CalendarActiveListProcessor;
-import gov.nysenate.openleg.processors.calendar.CalendarProcessor;
-import gov.nysenate.openleg.processors.entity.CommitteeProcessor;
-import gov.nysenate.openleg.processors.sobi.SOBIProcessor;
-import org.junit.Before;
+import gov.nysenate.openleg.processors.sobi.SobiProcessor;
+import gov.nysenate.openleg.processors.sobi.agenda.AgendaProcessor;
+import gov.nysenate.openleg.processors.sobi.agenda.AgendaVoteProcessor;
+import gov.nysenate.openleg.processors.sobi.bill.SobiBillProcessor;
+import gov.nysenate.openleg.processors.sobi.calendar.SobiActiveListProcessor;
+import gov.nysenate.openleg.processors.sobi.calendar.SobiCalendarProcessor;
+import gov.nysenate.openleg.processors.sobi.entity.CommitteeProcessor;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,38 +26,38 @@ import java.util.*;
 public class SOBIProcessorTests extends BaseTests{
 
 
-    private Map<SOBIFragmentType, SOBIProcessor> processorMap;
+    private Map<SobiFragmentType, SobiProcessor> processorMap;
 
     @Autowired
     protected DataProcessor dataProcessor;
     @Autowired
-    protected BillProcessor billProcessor;
+    protected SobiBillProcessor sobiBillProcessor;
     @Autowired
     protected CommitteeProcessor committeeProcessor;
 
     @Autowired
-    protected SOBIFileDao sobiFileDao;
+    protected SobiFileDao sobiFileDao;
     @Autowired
-    protected SOBIFragmentDao sobiFragmentDao;
+    protected SobiFragmentDao sobiFragmentDao;
 
     @PostConstruct
     public void init() {
-        this.processorMap = new HashMap<SOBIFragmentType, SOBIProcessor>();
-        this.processorMap.put(SOBIFragmentType.BILL, billProcessor);
-        this.processorMap.put(SOBIFragmentType.AGENDA, new AgendaProcessor());
-        this.processorMap.put(SOBIFragmentType.AGENDA_VOTE, new AgendaVoteProcessor());
-        this.processorMap.put(SOBIFragmentType.CALENDAR, new CalendarProcessor());
-        this.processorMap.put(SOBIFragmentType.CALENDAR_ACTIVE, new CalendarActiveListProcessor());
-        this.processorMap.put(SOBIFragmentType.COMMITTEE, committeeProcessor);
+        this.processorMap = new HashMap<SobiFragmentType, SobiProcessor>();
+        this.processorMap.put(SobiFragmentType.BILL, sobiBillProcessor);
+        this.processorMap.put(SobiFragmentType.AGENDA, new AgendaProcessor());
+        this.processorMap.put(SobiFragmentType.AGENDA_VOTE, new AgendaVoteProcessor());
+        this.processorMap.put(SobiFragmentType.CALENDAR, new SobiCalendarProcessor());
+        this.processorMap.put(SobiFragmentType.CALENDAR_ACTIVE, new SobiActiveListProcessor());
+        this.processorMap.put(SobiFragmentType.COMMITTEE, committeeProcessor);
     }
 
-    public void ProcessorSubsetTest(Set<SOBIFragmentType> types) throws Exception{
+    public void ProcessorSubsetTest(Set<SobiFragmentType> types) throws Exception{
         dataProcessor.stage(null, null);
         dataProcessor.collate();
 
-        for (SOBIFile sobiFile : sobiFileDao.getPendingSOBIFiles(SortOrder.ASC)) {
-            List<SOBIFragment> fragments = sobiFragmentDao.getSOBIFragments(sobiFile, SortOrder.ASC);
-            for (SOBIFragment fragment : fragments) {
+        for (SobiFile sobiFile : sobiFileDao.getPendingSobiFiles(SortOrder.ASC, 0, 0)) {
+            List<SobiFragment> fragments = sobiFragmentDao.getSOBIFragments(sobiFile, SortOrder.ASC);
+            for (SobiFragment fragment : fragments) {
                 if(types.contains(fragment.getType()) && processorMap.containsKey(fragment.getType())){
                     processorMap.get(fragment.getType()).process(fragment);
                 }
@@ -66,21 +65,21 @@ public class SOBIProcessorTests extends BaseTests{
             sobiFile.incrementProcessedCount();
             sobiFile.setProcessedDateTime(new Date());
             sobiFile.setPendingProcessing(false);
-            sobiFileDao.updateSOBIFile(sobiFile);
+            sobiFileDao.updateSobiFile(sobiFile);
         }
     }
 
     @Test
     public void CommitteeProcessorTest() throws Exception {
-        Set<SOBIFragmentType> types = new HashSet<SOBIFragmentType>();
-        types.add(SOBIFragmentType.COMMITTEE);
+        Set<SobiFragmentType> types = new HashSet<SobiFragmentType>();
+        types.add(SobiFragmentType.COMMITTEE);
         ProcessorSubsetTest(types);
     }
 
     @Test
     public void BillProcessorTest() throws Exception {
-        Set<SOBIFragmentType> types = new HashSet<SOBIFragmentType>();
-        types.add(SOBIFragmentType.BILL);
+        Set<SobiFragmentType> types = new HashSet<SobiFragmentType>();
+        types.add(SobiFragmentType.BILL);
         ProcessorSubsetTest(types);
     }
 }

@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.sobi;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.sobi.SobiFile;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sobi.SOBIFragmentType;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 
 import java.util.List;
 
@@ -14,11 +14,11 @@ public interface SobiFragmentDao
 {
     /** --- Retrieval Methods --- */
 
-    public SobiFragment getSOBIFragment(SOBIFragmentType fragmentType, String fragmentFileName);
+    public SobiFragment getSOBIFragment(SobiFragmentType fragmentType, String fragmentFileName);
 
     public List<SobiFragment> getSOBIFragments(SobiFile sobiFile, SortOrder order);
 
-    public List<SobiFragment> getSOBIFragments(SobiFile sobiFile, SOBIFragmentType fragmentType, SortOrder order);
+    public List<SobiFragment> getSOBIFragments(SobiFile sobiFile, SobiFragmentType fragmentType, SortOrder order);
 
     /** --- Processing/Insertion Methods --- */
 

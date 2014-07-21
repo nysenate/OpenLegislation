@@ -24,14 +24,12 @@ public class XmlHelper
     private final DocumentBuilder dBuilder;
     private final XPath xpath;
 
-    public XmlHelper() throws ParserConfigurationException
-    {
+    public XmlHelper() throws ParserConfigurationException {
         dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         xpath = XPathFactory.newInstance().newXPath();
     }
 
-    public Document parse(File file) throws SAXException, IOException
-    {
+    public Document parse(File file) throws SAXException, IOException {
         return dBuilder.parse(file);
     }
 
@@ -40,33 +38,27 @@ public class XmlHelper
         return dBuilder.parse(is);
     }
 
-    public Boolean getBoolean(String path, Node node) throws XPathExpressionException
-    {
+    public Boolean getBoolean(String path, Node node) throws XPathExpressionException {
         return (Boolean)xpath.evaluate(path, node, XPathConstants.BOOLEAN);
     }
 
-    public String getString(String path, Node node) throws XPathExpressionException
-    {
+    public String getString(String path, Node node) throws XPathExpressionException {
         return (String)xpath.evaluate(path, node, XPathConstants.STRING);
     }
 
-    public Double getDouble(String path, Node node) throws XPathExpressionException
-    {
+    public Double getDouble(String path, Node node) throws XPathExpressionException {
         return (Double)xpath.evaluate(path, node, XPathConstants.NUMBER);
     }
 
-    public Integer getInteger(String path, Node node) throws XPathExpressionException
-    {
+    public Integer getInteger(String path, Node node) throws XPathExpressionException {
         return ((Double)xpath.evaluate(path, node, XPathConstants.NUMBER)).intValue();
     }
 
-    public Node getNode(String path, Node node) throws XPathExpressionException
-    {
+    public Node getNode(String path, Node node) throws XPathExpressionException {
         return (Node)xpath.evaluate(path, node, XPathConstants.NODE);
     }
 
-    public NodeList getNodeList(String path, Node node) throws XPathExpressionException
-    {
+    public NodeList getNodeList(String path, Node node) throws XPathExpressionException {
         return (NodeList)xpath.evaluate(path, node, XPathConstants.NODESET);
     }
 }

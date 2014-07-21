@@ -54,10 +54,12 @@ public class BillId implements Serializable, Comparable<BillId>
         if (basePrintNo == null) {
             throw new IllegalArgumentException("basePrintNo when constructing BillId cannot be null!");
         }
+        // Remove all non-alphanumeric characters from the print no.
         basePrintNo = basePrintNo.trim().toUpperCase().replaceAll("[^0-9A-Z]", "");
         if (!basePrintNo.matches("[A-Z].*")) {
             throw new IllegalArgumentException("basePrintNo must begin with the letter designator!");
         }
+        // Strip out the version from the print no if it exists.
         if (basePrintNo.matches(".*[A-Z]$")) {
             String strippedPrintNo = basePrintNo.substring(0, basePrintNo.length() - 1);
             version = (version == null || version.isEmpty()) ? basePrintNo.substring(basePrintNo.length() - 1)
@@ -65,6 +67,7 @@ public class BillId implements Serializable, Comparable<BillId>
             basePrintNo = strippedPrintNo;
         }
         try {
+            // Remove any leading zeros from the print no.
             this.basePrintNo = basePrintNo.substring(0, 1) + Integer.parseInt(basePrintNo.substring(1, basePrintNo.length()));
         }
         catch (NumberFormatException ex) {
