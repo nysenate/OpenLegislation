@@ -40,6 +40,8 @@
         <c3p0.version>0.9.1.2</c3p0.version>
         <joda-time.version>2.3</joda-time.version>
         <tomcat.servlet.version>7.0.47</tomcat.servlet.version>
+        <guava.version>17.0</guava.version>
+        <guava.jackson.version>2.4.0</guava.jackson.version>
     </properties>
 
     <dependencies>
@@ -114,6 +116,20 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
+        </dependency>
+
+        <!-- Guava -->
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-guava</artifactId>
+            <version>${guava.jackson.version}</version>
         </dependency>
 
         <!-- Serializers -->
