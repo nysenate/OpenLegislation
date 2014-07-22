@@ -42,6 +42,7 @@ public class CachedCommitteeService implements CommitteeService{
         if(chamber==null) {
             throw new IllegalArgumentException("Chamber cannot be null!");
         }
+        name = name.toUpperCase();
         try{
             return committeeDao.getCommittee(name, chamber);
         }
@@ -65,6 +66,7 @@ public class CachedCommitteeService implements CommitteeService{
         if(time==null){
             throw new IllegalArgumentException("Time cannot be null!");
         }
+        name = name.toUpperCase();
         DateTime now = new DateTime();
         if(time.after(now.toDate()) && now.getYear()<session+2){
             logger.debug("Using committeeCurrent instead of committeeVersion for " + chamber + " " + name + " " + session + " " + time);

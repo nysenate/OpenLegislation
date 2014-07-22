@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.BaseLegislativeContent;
+import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.service.bill.BillAmendNotFoundEx;
 import org.joda.time.LocalDate;
@@ -51,7 +52,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected List<Member> additionalSponsors = new ArrayList<>();
 
     /** A list of committees this bill has been referred to. */
-    protected List<String> pastCommittees = new ArrayList<>();
+    protected Map<Committee, SortedSet<Date> > pastCommittees = new HashMap<>();
 
     /** A list of actions that have been made on this bill. */
     protected List<BillAction> actions = new ArrayList<>();
@@ -121,8 +122,8 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      * Returns a reference that identifies this base bill.
      * @return BillId
      */
-    public BillId getBillId() {
-        return new BillId(this.printNo, this.session);
+    public BaseBillId getBillId() {
+        return new BaseBillId(this.printNo, this.session);
     }
 
     /**
@@ -228,10 +229,28 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      * Adds a committee to the list of past committees.
      * @param committee
      */
-    public void addPastCommittee(String committee) {
-        if(!pastCommittees.contains(committee)) {
-            pastCommittees.add(committee);
+    public void addPastCommittee(Committee committee, Date actionDate) {
+        if(!pastCommittees.containsKey(committee)){
+            pastCommittees.put(committee, new TreeSet<Date>());
         }
+        pastCommittees.get(committee).add(actionDate);
+    }
+
+    public void setPastCommittees(Map<Committee, SortedSet<Date> > pastCommittees) {
+        if(pastCommittees.isEmpty()) {
+            this.pastCommittees = new HashMap<>(pastCommittees);
+        }
+        else {
+            for(Map.Entry<Committee, SortedSet<Date> > entry : pastCommittees.entrySet()){
+                for(Date date : entry.getValue()){
+                    addPastCommittee(entry.getKey(), date);
+                }
+            }
+        }
+    }
+
+    public Set<Committee> getPastCommitteeSet(){
+        return pastCommittees.keySet();
     }
 
     /** --- Delegates --- */
@@ -331,12 +350,8 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.sponsor = sponsor;
     }
 
-    public List<String> getPastCommittees() {
+    public Map<Committee, SortedSet<Date> > getPastCommittees() {
         return pastCommittees;
-    }
-
-    public void setPastCommittees(List<String> pastCommittees) {
-        this.pastCommittees = new ArrayList<>(pastCommittees);
     }
 
     public List<Member> getAdditionalSponsors() {

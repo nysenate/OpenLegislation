@@ -79,8 +79,8 @@ public class BillId implements Serializable, Comparable<BillId>
 
     /** --- Methods --- */
 
-    public static BillId getBaseId(BillId billId) {
-        return new BillId(billId.basePrintNo, billId.session);
+    public static BaseBillId getBaseId(BillId billId) {
+        return new BaseBillId(billId.basePrintNo, billId.session);
     }
 
     public String getPrintNo() {

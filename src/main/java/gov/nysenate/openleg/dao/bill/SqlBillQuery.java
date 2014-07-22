@@ -60,16 +60,16 @@ public enum SqlBillQuery implements SqlQueryEnum
     UPDATE_BILL_AMENDMENT_SQL(
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "SET sponsor_memo = :sponsorMemo, act_clause = :actClause, full_text = :fullText, stricken = :stricken, " +
-        "    current_committee_id = :currentCommitteeId, uni_bill = :uniBill, modified_date_time = :modifiedDateTime, " +
+        "    current_committee_name = :currentCommitteeName, uni_bill = :uniBill, modified_date_time = :modifiedDateTime, " +
         "    published_date_time = :publishedDateTime, last_fragment_file_name = :lastFragmentFileName, " +
         "    last_fragment_type = :lastFragmentType \n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND version = :version"
     ),
     INSERT_BILL_AMENDMENT_SQL(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
-        "(bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, stricken, current_committee_id, " +
+        "(bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, stricken, current_committee_name, " +
         " uni_bill, modified_date_time, published_date_time, last_fragment_file_name, last_fragment_type)\n" +
-        "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, :currentCommitteeId, " +
+        "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, :currentCommitteeName, " +
         "       :uniBill, :modifiedDateTime, :publishedDateTime, :lastFragmentFileName, :lastFragmentType)"
     ),
 
@@ -171,6 +171,22 @@ public enum SqlBillQuery implements SqlQueryEnum
     DELETE_SAME_AS_FOR_BILL_SQL(
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_SAME_AS + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
+    ),
+
+    /** --- Bill Committee --- */
+
+    SELECT_BILL_COMMITTEES(
+        "SELECT * FROM ${schema}." + SqlTable.BILL_COMMITTEE + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
+    INSERT_BILL_COMMITTEE(
+        "INSERT INTO ${schema}." + SqlTable.BILL_COMMITTEE + "\n" +
+        "( bill_print_no, bill_session_year, committee_name, committee_chamber, action_date )" + "\n" +
+        "VALUES ( :printNo, :sessionYear, :committeeName, CAST(:committeeChamber as chamber), :actionDate )"
+    ),
+    DELETE_BILL_COMMITTEES(
+        "DELETE FROM ${schema}." + SqlTable.BILL_COMMITTEE + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
 
     /** --- Bill Previous Version --- */

@@ -2,16 +2,23 @@ package gov.nysenate.openleg.processors.sobi.bill;
 
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.processors.sobi.SobiProcessor;
 import gov.nysenate.openleg.processors.util.IngestCache;
 import gov.nysenate.openleg.service.bill.BillAmendNotFoundEx;
+import gov.nysenate.openleg.service.bill.BillDataService;
 import gov.nysenate.openleg.service.bill.BillNotFoundEx;
+import gov.nysenate.openleg.service.entity.CommitteeNotFoundEx;
+import gov.nysenate.openleg.service.entity.CommitteeService;
+import gov.nysenate.openleg.service.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.service.entity.MemberService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -82,6 +89,17 @@ public class SobiBillProcessor extends SobiProcessor
             Pattern.compile("AMEND(?:ED)? BY RESTORING TO PREVIOUS PRINT " + simpleBillRegex),
             Pattern.compile("AMEND(?:ED)? BY RESTORING TO ORIGINAL PRINT " + simpleBillRegex)
     );
+
+    /** --- Services --- */
+    
+    @Autowired
+    private BillDataService billDataService;
+
+    @Autowired
+    private MemberService memberService;
+
+    @Autowired
+    private CommitteeService committeeService;
 
     /** --- Constructors --- */
 
@@ -288,8 +306,8 @@ public class SobiBillProcessor extends SobiProcessor
         ArrayList<BillAction> actions = new ArrayList<>();
         Boolean stricken = false;
         BillId sameAsBillId = null;
-        String currentCommittee = "";
-        List<String> pastCommittees = new ArrayList<>();
+        Committee currentCommittee = null;
+        Map<Committee, SortedSet<Date> > pastCommittees = new HashMap<>();
         BillId billId = specifiedAmendment.getBillId();
         int sequenceNo = 0;
 
@@ -311,16 +329,30 @@ public class SobiBillProcessor extends SobiProcessor
                         stricken = true;
                     }
                     else if (committeeEventText.find()) {
-                        if (!currentCommittee.isEmpty()) {
-                            pastCommittees.add(currentCommittee);
+                        if (currentCommittee!=null) {
+                            if(!pastCommittees.containsKey(currentCommittee)){
+                                pastCommittees.put(currentCommittee, new TreeSet<Date>() {
+                                });
+                            }
+                            pastCommittees.get(currentCommittee).add(eventDate);
                         }
-                        currentCommittee = committeeEventText.group(2);
+                        try {
+                            currentCommittee = committeeService.getCommittee(
+                                    committeeEventText.group(2), billId.getChamber(), billId.getSession(), eventDate
+                            );
+                        }
+                        catch(CommitteeNotFoundEx ex){
+                            logger.error(ex.getMessage());
+                        }
                     }
                     else if (floorEventText.find()){
-                        if (!currentCommittee.isEmpty()) {
-                            pastCommittees.add(currentCommittee);
+                        if (currentCommittee!=null) {
+                            if(!pastCommittees.containsKey(currentCommittee)){
+                                pastCommittees.put(currentCommittee, new TreeSet<Date>());
+                            }
+                            pastCommittees.get(currentCommittee).add(eventDate);
                         }
-                        currentCommittee = "";
+                        currentCommittee = null;
                     }
                     else if (substituteEventText.find()) {
                         // Note: Does not account for multiple same-as here.

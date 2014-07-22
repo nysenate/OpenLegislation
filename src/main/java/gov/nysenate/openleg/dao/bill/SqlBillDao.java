@@ -2,13 +2,18 @@ package gov.nysenate.openleg.dao.bill;
 
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.service.entity.CommitteeNotFoundEx;
+import gov.nysenate.openleg.service.entity.CommitteeService;
 import gov.nysenate.openleg.service.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -29,6 +34,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private CommitteeService committeeService;
 
     /* --- Implemented Methods --- */
 
@@ -61,6 +68,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         bill.setActions(getBillActions(params));
         // Get the prev bill version ids
         bill.setPreviousVersions(new HashSet<>(getPrevVersions(params)));
+        // Get the associated bill committees
+        bill.setPastCommittees(getBillCommittees(params));
+
         return bill;
     }
 
@@ -101,6 +111,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         updateActions(bill, sobiFragment, billParams);
         // Determine if the previous versions have changed and insert accordingly.
         updatePreviousBillVersions(bill, sobiFragment, billParams);
+        // Update associated committees
+        updateBillCommittees(bill);
     }
 
     /** {@inheritDoc} */
@@ -130,6 +142,23 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
                                new BillPreviousVersionRowMapper());
     }
 
+    private Map<Committee, SortedSet<Date>> getBillCommittees(MapSqlParameterSource params){
+
+        List<Map.Entry<Committee, Date>> rawCommitteeList =
+                jdbcNamed.query(SELECT_BILL_COMMITTEES.getSql(schema()), params, new BillCommitteeRowMapper(committeeService));
+
+        Map<Committee, SortedSet<Date>> committeeMap = new HashMap<>();
+
+        for(Map.Entry<Committee, Date> entry : rawCommitteeList){
+            if(!committeeMap.containsKey(entry.getKey())){
+                committeeMap.put(entry.getKey(), new TreeSet<Date>());
+            }
+            committeeMap.get(entry.getKey()).add(entry.getValue());
+        }
+
+        return committeeMap;
+    }
+
     private List<BillId> getSameAsBills(MapSqlParameterSource params) {
         return jdbcNamed.query(SELECT_BILL_SAME_AS_SQL.getSql(schema()), params, new BillSameAsRowMapper());
     }
@@ -145,7 +174,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     }
 
     private List<BillAmendment> getBillAmendment(MapSqlParameterSource params) {
-        return jdbcNamed.query(SELECT_BILL_AMENDMENTS_SQL.getSql(schema()), params, new BillAmendmentRowMapper());
+        return jdbcNamed.query(SELECT_BILL_AMENDMENTS_SQL.getSql(schema()), params, new BillAmendmentRowMapper(committeeService));
     }
 
     private List<Member> getCoSponsors(MapSqlParameterSource params) {
@@ -209,6 +238,21 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         for (BillId prevBillId : bill.getPreviousVersions()) {
             MapSqlParameterSource prevParams = getBillPrevVersionParams(bill, prevBillId, sobiFragment);
             jdbcNamed.update(INSERT_BILL_PREVIOUS_VERSION_SQL.getSql(schema()), prevParams);
+        }
+    }
+
+    /**
+     * Replace the bill's previous committee list with the current list
+     */
+    private void updateBillCommittees(Bill bill){
+        MapSqlParameterSource deleteParams = new MapSqlParameterSource();
+        addBillIdParams(bill, deleteParams);
+        jdbcNamed.update(DELETE_BILL_COMMITTEES.getSql(schema()), deleteParams);
+        for(Map.Entry<Committee, SortedSet<Date>> entry : bill.getPastCommittees().entrySet()){
+            for(Date actionDate : entry.getValue()){
+                MapSqlParameterSource params = getBillCommitteeParams(bill, entry.getKey(), actionDate);
+                jdbcNamed.update(INSERT_BILL_COMMITTEE.getSql(schema()), params);
+            }
         }
     }
 
@@ -313,6 +357,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     private static class BillAmendmentRowMapper implements RowMapper<BillAmendment>
     {
+        private CommitteeService committeeService;
+
+        public BillAmendmentRowMapper(CommitteeService committeeService) { this.committeeService=committeeService;}
+
         @Override
         public BillAmendment mapRow(ResultSet rs, int rowNum) throws SQLException {
             BillAmendment amend = new BillAmendment();
@@ -323,10 +371,19 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             amend.setActClause(rs.getString("act_clause"));
             amend.setFulltext(rs.getString("full_text"));
             amend.setStricken(rs.getBoolean("stricken"));
-            amend.setCurrentCommittee(null); /** TODO */
             amend.setUniBill(rs.getBoolean("uni_bill"));
             amend.setModifiedDate(rs.getTimestamp("modified_date_time"));
             amend.setPublishDate(rs.getTimestamp("published_date_time"));
+            amend.setCurrentCommittee(null);
+            String currentCommitteeName = rs.getString("current_committee_name");
+            if(currentCommitteeName!=null) {
+                try {
+                    amend.setCurrentCommittee(committeeService.getCommittee(currentCommitteeName,
+                                    amend.getBillId().getChamber(), amend.getSession(), amend.getModifiedDate())
+                    );
+                } catch (CommitteeNotFoundEx ex) {
+                }
+            }
             return amend;
         }
     }
@@ -415,6 +472,30 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         }
     }
 
+    private static class BillCommitteeRowMapper implements RowMapper<Map.Entry<Committee, Date>>
+    {
+        protected CommitteeService committeeService;
+
+        public BillCommitteeRowMapper(CommitteeService committeeService){
+            this.committeeService = committeeService;
+        }
+
+        @Override
+        public Map.Entry<Committee, Date> mapRow(ResultSet rs, int rowNum) throws SQLException {
+            String committeeName = rs.getString("committee_name");
+            Chamber committeeChamber = Chamber.valueOfSqlEnum(rs.getString("committee_chamber"));
+            int session = rs.getInt("bill_session_year");
+            Date actionDate = rs.getTimestamp("action_date");
+            try{
+                Committee committee = this.committeeService.getCommittee(committeeName, committeeChamber, session, actionDate);
+                return new AbstractMap.SimpleEntry<>(committee, actionDate);
+            }
+            catch( CommitteeNotFoundEx ex) {
+                return null;
+            }
+        }
+    }
+
     private static class BillVoteRowCallbackHandler implements RowCallbackHandler
     {
         private TreeMap<BillVoteId, BillVote> billVoteMap = new TreeMap<>();
@@ -492,7 +573,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("actClause", amendment.getActClause());
         params.addValue("fullText", amendment.getFulltext());
         params.addValue("stricken", amendment.isStricken());
-        params.addValue("currentCommitteeId", null);
+        params.addValue("currentCommitteeName", amendment.getCurrentCommittee()!=null ? amendment.getCurrentCommittee().getName() : null);
         params.addValue("uniBill", amendment.isUniBill());
         params.addValue("modifiedDateTime", toTimestamp(amendment.getModifiedDate()));
         params.addValue("publishedDateTime", toTimestamp(amendment.getPublishDate()));
@@ -573,6 +654,15 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("modifiedDateTime", toTimestamp(billVote.getModifiedDate()));
         params.addValue("publishedDateTime", toTimestamp(billVote.getPublishDate()));
         addSOBIFragmentParams(fragment, params);
+        return params;
+    }
+
+    private static MapSqlParameterSource getBillCommitteeParams(Bill bill, Committee committee, Date actionDate){
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        addBillIdParams(bill, params);
+        params.addValue("committeeName", committee.getName());
+        params.addValue("committeeChamber", committee.getChamber().asSqlEnum());
+        params.addValue("actionDate", actionDate);
         return params;
     }
 
