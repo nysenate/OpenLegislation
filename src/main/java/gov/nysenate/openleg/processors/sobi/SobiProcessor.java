@@ -14,6 +14,7 @@ import gov.nysenate.openleg.service.bill.BillDataService;
 import gov.nysenate.openleg.service.bill.BillNotFoundEx;
 import gov.nysenate.openleg.service.calendar.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.CalendarNotFoundEx;
+import gov.nysenate.openleg.service.entity.CommitteeService;
 import gov.nysenate.openleg.service.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.MemberService;
 import org.apache.commons.lang3.StringUtils;
@@ -56,6 +57,9 @@ public abstract class SobiProcessor
 
     @Autowired
     protected MemberService memberService;
+
+    @Autowired
+    protected CommitteeService committeeService;
 
     /** --- Methods --- */
 

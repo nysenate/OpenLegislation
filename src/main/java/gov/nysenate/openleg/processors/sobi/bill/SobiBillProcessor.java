@@ -90,17 +90,6 @@ public class SobiBillProcessor extends SobiProcessor
             Pattern.compile("AMEND(?:ED)? BY RESTORING TO ORIGINAL PRINT " + simpleBillRegex)
     );
 
-    /** --- Services --- */
-    
-    @Autowired
-    private BillDataService billDataService;
-
-    @Autowired
-    private MemberService memberService;
-
-    @Autowired
-    private CommitteeService committeeService;
-
     /** --- Constructors --- */
 
     public SobiBillProcessor() {}
