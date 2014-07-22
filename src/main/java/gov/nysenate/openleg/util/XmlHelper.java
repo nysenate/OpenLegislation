@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.util;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -18,7 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
-@Service
+@Component
 public class XmlHelper
 {
     private final DocumentBuilder dBuilder;

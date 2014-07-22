@@ -1,23 +1,19 @@
 package gov.nysenate.openleg.service.calendar;
 
+import gov.nysenate.openleg.model.calendar.CalendarId;
+
 public class CalendarNotFoundEx extends RuntimeException
 {
     private static final long serialVersionUID = -5337097504936947862L;
 
-    private int calendarNo;
-    private int year;
+    private CalendarId calendarId;
 
-    public CalendarNotFoundEx(String message, int calendarNo, int year) {
-        super("Calendar No: " + calendarNo + " Year: " + year + " could not be retrieved.");
-        this.calendarNo = calendarNo;
-        this.year = year;
+    public CalendarNotFoundEx(CalendarId calendarId) {
+        super("Calendar with " + calendarId + " could not be retrieved.");
+        this.calendarId = calendarId;
     }
 
-    public int getCalendarNo() {
-        return calendarNo;
-    }
-
-    public int getYear() {
-        return year;
+    public CalendarId getCalendarId() {
+        return calendarId;
     }
 }

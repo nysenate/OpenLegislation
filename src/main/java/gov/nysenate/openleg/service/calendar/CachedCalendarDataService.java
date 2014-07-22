@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.calendar;
 
 import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.CachingService;
 import net.sf.ehcache.CacheManager;
@@ -35,8 +36,8 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     }
 
     @Override
-    public Calendar getCalendar(int calendarNo, int year) throws CalendarNotFoundEx {
-        return null;
+    public Calendar getCalendar(CalendarId calendarId) throws CalendarNotFoundEx {
+        throw new CalendarNotFoundEx(calendarId);
     }
 
     @Override

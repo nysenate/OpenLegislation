@@ -59,7 +59,7 @@ public class DataProcessor
 
     protected static String encoding = "CP850";
 
-    private Map<SobiFragmentType, SobiProcessor> processorMap;
+    private Map<SobiFragmentType, SobiProcessor> sobiProcessorMap;
 
     /** --- DAO instances --- */
 
@@ -75,22 +75,28 @@ public class DataProcessor
     private SobiBillProcessor sobiBillProcessor;
 
     @Autowired
+    private SobiCalendarProcessor sobiCalendarProcessor;
+
+    @Autowired
+    private SobiActiveListProcessor sobiActiveListProcessor;
+
+    @Autowired
     private CommitteeProcessor committeeProcessor;
 
     /** --- Constructors --- */
 
     public DataProcessor() {
-        this.processorMap = new HashMap<>();
+        this.sobiProcessorMap = new HashMap<>();
     }
 
     @PostConstruct
     public void init() {
-        this.processorMap.put(SobiFragmentType.BILL, sobiBillProcessor);
-        this.processorMap.put(SobiFragmentType.AGENDA, new AgendaProcessor());
-        this.processorMap.put(SobiFragmentType.AGENDA_VOTE, new AgendaVoteProcessor());
-        this.processorMap.put(SobiFragmentType.CALENDAR, new SobiCalendarProcessor());
-        this.processorMap.put(SobiFragmentType.CALENDAR_ACTIVE, new SobiActiveListProcessor());
-        this.processorMap.put(SobiFragmentType.COMMITTEE, committeeProcessor);
+        this.sobiProcessorMap.put(SobiFragmentType.BILL, sobiBillProcessor);
+        this.sobiProcessorMap.put(SobiFragmentType.AGENDA, new AgendaProcessor());
+        this.sobiProcessorMap.put(SobiFragmentType.AGENDA_VOTE, new AgendaVoteProcessor());
+        this.sobiProcessorMap.put(SobiFragmentType.CALENDAR, sobiCalendarProcessor);
+        this.sobiProcessorMap.put(SobiFragmentType.CALENDAR_ACTIVE, sobiActiveListProcessor);
+        this.sobiProcessorMap.put(SobiFragmentType.COMMITTEE, committeeProcessor);
     }
 
     /** --- Processing methods --- */
@@ -197,8 +203,8 @@ public class DataProcessor
     @Transactional
     private void ingestSobiFragments(List<SobiFragment> fragments) {
         for (SobiFragment fragment : fragments) {
-            if (processorMap.containsKey(fragment.getType())) {
-                processorMap.get(fragment.getType()).process(fragment);
+            if (sobiProcessorMap.containsKey(fragment.getType())) {
+                sobiProcessorMap.get(fragment.getType()).process(fragment);
             }
             else {
                 logger.warn("No processors have been registered to handle: " + fragment);

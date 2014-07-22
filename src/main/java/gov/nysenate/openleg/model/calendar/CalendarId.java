@@ -1,10 +1,14 @@
 package gov.nysenate.openleg.model.calendar;
 
+import java.io.Serializable;
+
 /**
  * CalendarId is a simple wrapper used to uniquely identify a Calendar instance.
  */
-public class CalendarId
+public class CalendarId implements Serializable
 {
+    private static final long serialVersionUID = -3781478188305754813L;
+
     /** The calendar id which is scoped to a single year. */
     private int calNo;
 

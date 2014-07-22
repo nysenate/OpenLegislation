@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.config;
 
 import gov.nysenate.openleg.Environment;
+import gov.nysenate.openleg.util.XmlHelper;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
@@ -11,6 +12,8 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 @Configuration
 @EnableCaching

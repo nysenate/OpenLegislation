@@ -59,7 +59,7 @@ public class SobiCalendarProcessor extends SobiProcessor
                         + xml.getString("releasetime/text()", xmlSupplemental));
 
                     CalendarSupplemental supplemental = new CalendarSupplemental(calendarId, supId, calDate, releaseDateTime);
-                    NodeList xmlSections = xml.getNodeList("sections/section", xmlCalendar);
+                    NodeList xmlSections = xml.getNodeList("sections/section", xmlSupplemental);
                     for (int j = 0; j < xmlSections.getLength(); j++) {
                         Node xmlSection = xmlSections.item(j);
                         Integer cd = xml.getInteger("@cd", xmlSection);

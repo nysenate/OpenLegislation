@@ -12,6 +12,7 @@ import gov.nysenate.openleg.util.DateHelper;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -21,6 +22,7 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.util.Date;
 
+@Service
 public class SobiActiveListProcessor extends SobiProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(SobiActiveListProcessor.class);
@@ -32,8 +34,7 @@ public class SobiActiveListProcessor extends SobiProcessor
         XmlHelper xml = Application.getXmlHelper();
         try {
             Document doc = xml.parse(sobiFragment.getText());
-            Node xmlCalendarActive = null;
-            xmlCalendarActive = xml.getNode("SENATEDATA/sencalendaractive", doc);
+            Node xmlCalendarActive = xml.getNode("SENATEDATA/sencalendaractive", doc);
             Integer calendarNo = xml.getInteger("@no", xmlCalendarActive);
             Integer sessionYear = xml.getInteger("@sessyr", xmlCalendarActive);
             Integer year = xml.getInteger("@year", xmlCalendarActive);

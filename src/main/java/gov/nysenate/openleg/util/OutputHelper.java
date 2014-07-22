@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,7 @@ public class OutputHelper
     private static ObjectMapper jsonMapper = new ObjectMapper();
     static {
         jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        jsonMapper.registerModule(new GuavaModule());
     }
 
     /**
