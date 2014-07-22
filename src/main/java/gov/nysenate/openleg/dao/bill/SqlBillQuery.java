@@ -9,7 +9,7 @@ import java.util.Map;
 
 public enum SqlBillQuery implements SqlQueryEnum
 {
-    /** --- Bill --- */
+    /** --- Bill Base --- */
 
     SELECT_BILL_SQL(
         "SELECT * FROM ${schema}." + SqlTable.BILL + "\n" +

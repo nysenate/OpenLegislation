@@ -55,7 +55,7 @@ public class Calendar extends BaseLegislativeContent
     }
 
     public void putSupplemental(CalendarSupplemental supplemental) {
-        this.supplementalMap.put(supplemental.getId(), supplemental);
+        this.supplementalMap.put(supplemental.getVersion(), supplemental);
     }
 
     public void removeSupplemental(String id) {

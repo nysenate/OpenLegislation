@@ -53,7 +53,8 @@ public class SobiFragment
     /**
      * Parses the given SOBI fragment into a list of blocks. Replaces null bytes in each line with spaces to
      * bring them into the proper fixed width formats.
-     * <p>See the SobiBlock class for more details.</p>
+     *
+     * @see gov.nysenate.openleg.model.sobi.SobiBlock
      * @return List<SobiBlock> if fragment type supports blocks, empty list otherwise.
      */
     public List<SobiBlock> getSOBIBlocks() {
@@ -94,7 +95,7 @@ public class SobiFragment
                     }
                 }
                 else if (block != null) {
-                    // Active block with non-matching line: end the current blockAny non-matching line ends the current block
+                    // Active block with non-matching line: end the current block. Any non-matching line ends the current block
                     block.setEndLineNo(lineNo - 1);
                     blocks.add(block);
                     block = null;

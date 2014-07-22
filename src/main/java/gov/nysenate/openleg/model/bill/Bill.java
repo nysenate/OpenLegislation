@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
+import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.model.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.entity.Member;

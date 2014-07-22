@@ -9,6 +9,7 @@ public interface BillDao
 {
     /**
      * Retrieve a Bill via a BillId.
+     *
      * @param billId BillId
      * @return Bill
      * @throws DataAccessException - If there was an error while retrieving the Bill.
@@ -16,8 +17,9 @@ public interface BillDao
     public Bill getBill(BillId billId) throws DataAccessException;
 
     /**
-     * Updates the bill or inserts it if it does not yet exist. Associates the update
-     * with the SobiFragment that triggered the update (set null if not applicable).
+     * Updates the bill or inserts it if it does not yet exist. Associates
+     * the SobiFragment that triggered the update (set null if not applicable).
+     *
      * @param bill Bill
      * @param sobiFragment SobiFragment
      * @throws DataAccessException - If there was an error while trying to save the Bill.

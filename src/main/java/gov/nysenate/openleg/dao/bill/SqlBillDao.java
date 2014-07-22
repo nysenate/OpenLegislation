@@ -39,6 +39,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     /* --- Implemented Methods --- */
 
+    /** {@inheritDoc} */
     @Override
     public Bill getBill(BillId billId) {
         MapSqlParameterSource params = new MapSqlParameterSource();

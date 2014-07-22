@@ -27,7 +27,24 @@ public class CalendarId implements Serializable
 
     @Override
     public String toString() {
-        return "CalendarId {" + "calNo=" + calNo + ", year=" + year + '}';
+        return "{CalNo=" + calNo + ", year=" + year + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CalendarId)) return false;
+        CalendarId that = (CalendarId) o;
+        if (calNo != that.calNo) return false;
+        if (year != that.year) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = calNo;
+        result = 31 * result + year;
+        return result;
     }
 
     /** --- Basic Getters/Setters --- */

@@ -61,7 +61,7 @@ public abstract class SobiProcessor
     @Autowired
     protected CommitteeService committeeService;
 
-    /** --- Methods --- */
+    /** --- Bill Methods --- */
 
     /**
      * Retrieves/creates the Bill without checking a cache.
@@ -172,6 +172,8 @@ public abstract class SobiProcessor
         billDataService.saveBill(bill, sobiFragment);
     }
 
+    /** --- Member Methods --- */
+
     /**
      * Retrieves a member from the LBDC short name with special processing if the member was not found
      * and required is true. Returns null if required is false and member is not found.
@@ -190,12 +192,14 @@ public abstract class SobiProcessor
             catch (MemberNotFoundEx memberNotFoundEx) {
                 logger.error("", memberNotFoundEx);
                 if (required) {
-                        System.exit(-1); /** FIXME */
+                    System.exit(-1); /** FIXME */
                 }
             }
         }
         return null;
     }
+
+    /** --- Calendar Methods --- */
 
     /**
      * Retrieve a Calendar from the persistence layer or create it if it does not exist.

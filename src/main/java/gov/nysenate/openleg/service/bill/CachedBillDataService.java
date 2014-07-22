@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -21,6 +22,8 @@ import javax.annotation.Resource;
 public class CachedBillDataService implements BillDataService, CachingService
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedBillDataService.class);
+
+    private static final String billDataCache = "billData";
 
     @Autowired
     private CacheManager cacheManager;
@@ -39,12 +42,12 @@ public class CachedBillDataService implements BillDataService, CachingService
     }
 
     @Override
-    @CacheEvict(value = "billData", allEntries = true)
+    @CacheEvict(value = billDataCache, allEntries = true)
     public void evictCaches() {}
 
     /** {@inheritDoc} */
     @Override
-    @Cacheable(value = "billData")
+    @Cacheable(value = billDataCache)
     public Bill getBill(BillId billId) throws BillNotFoundEx {
         if (billId == null) {
             throw new IllegalArgumentException("BillId cannot be null!");
@@ -52,14 +55,14 @@ public class CachedBillDataService implements BillDataService, CachingService
         try {
             return billDao.getBill(billId);
         }
-        catch (DataAccessException ex) {
+        catch (EmptyResultDataAccessException ex) {
             throw new BillNotFoundEx(billId, ex);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    @CacheEvict(value = "billData", key = "#bill.getBillId()")
+    @CacheEvict(value = billDataCache, key = "#bill.getBillId()")
     public void saveBill(Bill bill, SobiFragment fragment) {
         logger.debug("Persisting bill {}", bill);
         billDao.updateBill(bill, fragment);

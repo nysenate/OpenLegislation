@@ -23,6 +23,7 @@ public enum SobiLineType
     LAW('B'),
     SUMMARY('C'),
     SPONSOR_MEMO('M'),
+    VETO_APPROVE_MEMO('O'),
     RESOLUTION_TEXT('R'),
     TEXT('T'),
     VOTE_MEMO('V');

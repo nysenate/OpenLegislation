@@ -35,8 +35,7 @@ public enum SqlTable
     CALENDAR_ACTIVE_LIST         ("calendar_active_list"),
     CALENDAR_ACTIVE_LIST_ENTRY   ("calendar_active_list_entry"),
     CALENDAR_SUPPLEMENTAL        ("calendar_supplemental"),
-    CALENDAR_SUPP_SECTION        ("calendar_supplemental_section"),
-    CALENDAR_SUPP_SECTION_ENTRY  ("calendar_supplemental_section_entry"),
+    CALENDAR_SUP_ENTRY           ("calendar_supplemental_entry"),
 
     COMMITTEE                    ("committee"),
     COMMITTEE_VERSION            ("committee_version"),

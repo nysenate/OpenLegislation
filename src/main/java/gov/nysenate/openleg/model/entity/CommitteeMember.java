@@ -1,9 +1,12 @@
 package gov.nysenate.openleg.model.entity;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class CommitteeMember
+public class CommitteeMember implements Serializable
 {
+    private static final long serialVersionUID = -3988868068553499472L;
+
     /** A number that indicates the position this member should appear in listings. */
     protected int sequenceNo;
 

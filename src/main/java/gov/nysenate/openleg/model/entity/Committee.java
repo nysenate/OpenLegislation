@@ -2,14 +2,17 @@ package gov.nysenate.openleg.model.entity;
 
 import gov.nysenate.openleg.model.BaseLegislativeContent;
 
+import java.io.Serializable;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class Committee extends BaseLegislativeContent
+public class Committee extends BaseLegislativeContent implements Serializable
 {
+    private static final long serialVersionUID = 867918085158335059L;
+
     /** The name of the committee */
     protected String name;
 

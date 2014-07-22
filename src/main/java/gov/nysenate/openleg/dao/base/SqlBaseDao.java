@@ -2,11 +2,13 @@ package gov.nysenate.openleg.dao.base;
 
 import gov.nysenate.openleg.Environment;
 import gov.nysenate.openleg.dao.app.EnvironmentDao;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.util.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -41,8 +43,27 @@ public abstract class SqlBaseDao
         logger.info("Environment autowired: " + environment);
     }
 
+    /** --- Common Param Methods --- */
+
+    /**
+     * Applies the 'last SobiFragment id' column value. Useful for tracking which sobiFragment
+     * serves as the source data for the update.
+     */
+    protected static void addSobiFragmentParams(SobiFragment fragment, MapSqlParameterSource params) {
+        params.addValue("lastFragmentId", (fragment != null) ? fragment.getFragmentId() : null);
+    }
+
+    /**
+     * Applies the published date / modified date column values.
+     */
+    protected static void addModPubDateParams(Date modifiedDate, Date publishedDate, MapSqlParameterSource params) {
+        params.addValue("modifiedDateTime", modifiedDate);
+        params.addValue("publishedDateTime", publishedDate);
+    }
+
     /**
      * Returns the schema of the environment instance.
+     *
      * @return String
      */
     protected String schema() {
@@ -57,6 +78,7 @@ public abstract class SqlBaseDao
      * For the given tableName this method will return a string with the current environment schema
      * prefixed. For example if current env schema is master and 'tableName' is test, the string
      * 'master.test' will be returned.
+     *
      * @param tableName String
      * @return String
      */
@@ -66,6 +88,7 @@ public abstract class SqlBaseDao
 
     /**
      * Outputs the ORDER BY clause for the given column name and sort order.
+     *
      * @param columnName String
      * @param sortOrder SortOrder
      * @return String
@@ -79,6 +102,7 @@ public abstract class SqlBaseDao
 
     /**
      * Outputs the ORDER BY clause for multiple column name and sort order pairs.
+     *
      * @param columnNames List<String>
      * @param sortOrders List<SortOrder>>
      * @return String
@@ -98,6 +122,7 @@ public abstract class SqlBaseDao
 
     /**
      * Outputs the LIMIT clause if 'limit' > 0.
+     *
      * @param limit int
      * @return String
      */
@@ -107,6 +132,7 @@ public abstract class SqlBaseDao
 
     /**
      * Outputs the LIMIT OFFSET clause if 'limit' > 0.
+     *
      * @param limit int
      * @return String
      */
@@ -118,6 +144,7 @@ public abstract class SqlBaseDao
 
     /**
      * Converts Date to Timestamp since the conversion may not be implicit with all database libraries.
+     *
      * @param date Date
      * @return Timestamp
      */
