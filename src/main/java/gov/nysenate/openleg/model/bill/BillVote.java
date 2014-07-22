@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.bill;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.model.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Member;
 import org.joda.time.LocalDate;
@@ -24,7 +26,8 @@ public class BillVote extends BaseLegislativeContent implements Serializable
     private BillId billId;
 
     /** Sets of members grouped based upon how they voted. */
-    private Map<BillVoteCode, Set<Member>> memberVotes = new HashMap<>();
+    @SuppressWarnings("serial")
+    private SetMultimap<BillVoteCode, Member> memberVotes = HashMultimap.create();
 
     /** An identifier to uniquely identify votes that came in on the same day.
      *  Currently not implemented as the source data does not contain this value. */
@@ -34,10 +37,6 @@ public class BillVote extends BaseLegislativeContent implements Serializable
 
     public BillVote() {
         super();
-        // Initialize the member vote map with empty sets.
-        for (BillVoteCode voteCode : BillVoteCode.values()) {
-            memberVotes.put(voteCode, new HashSet<Member>());
-        }
     }
 
     public BillVote(BillId billId, Date date, BillVoteType type, int sequenceNumber) {
@@ -74,22 +73,21 @@ public class BillVote extends BaseLegislativeContent implements Serializable
      * @param member Member
      */
     public void addMemberVote(BillVoteCode voteCode, Member member) {
-        memberVotes.get(voteCode).add(member);
+        memberVotes.put(voteCode, member);
     }
 
     /**
      * Returns a count of all the members that have been added to the voting roll.
      */
     public int count() {
-        int count = 0;
-        for (Set<Member> members : memberVotes.values()) {
-            count += members.size();
-        }
-        return count;
+        return memberVotes.size();
     }
 
     /** --- Overrides --- */
 
+    /**
+     * Ignores the parent class during equality checking.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -97,22 +95,10 @@ public class BillVote extends BaseLegislativeContent implements Serializable
         BillVote billVote = (BillVote) o;
         if (sequenceNumber != billVote.sequenceNumber) return false;
         if (billId != null ? !billId.equals(billVote.billId) : billVote.billId != null) return false;
-        if (memberVotes != null ? !memberVotesEquals(billVote) : billVote.memberVotes != null) return false;
+        if (memberVotes != null ? !memberVotes.equals(billVote.memberVotes) : billVote.memberVotes != null)
+            return false;
         if (voteDate != null ? !voteDate.equals(billVote.voteDate) : billVote.voteDate != null) return false;
         if (voteType != billVote.voteType) return false;
-        return true;
-    }
-
-    /**
-     * Determines if the member sets are equal.
-     */
-    private boolean memberVotesEquals(BillVote other) {
-        if (this.memberVotes == other.memberVotes) return true;
-        for (BillVoteCode code : this.memberVotes.keySet()) {
-            if (!this.getMembersByVote(code).equals(other.getMembersByVote(code))) {
-                return false;
-            }
-        }
         return true;
     }
 
@@ -165,7 +151,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable
         this.billId = billId;
     }
 
-    public Map<BillVoteCode, Set<Member>> getMemberVotes() {
+    public SetMultimap<BillVoteCode, Member> getMemberVotes() {
         return memberVotes;
     }
 
