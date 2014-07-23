@@ -3,6 +3,7 @@ package gov.nysenate.openleg.processors.sobi.bill;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Committee;
+import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
@@ -60,10 +61,14 @@ public class SobiBillProcessor extends SobiProcessor
         Pattern.compile("00000\\.SO DOC ([ASC]) ([0-9R/A-Z ]{13}) ([A-Z* ]{24}) ([A-Z ]{20}) ([0-9]{4}).*");
 
     /** Pattern for extracting the committee from matching bill events. */
-    public static final Pattern committeeEventTextPattern = Pattern.compile("(REFERRED|COMMITTED|RECOMMIT) TO (.*)");
+    public static final Pattern committeeEventTextPattern =
+            Pattern.compile("(REFERRED|COMMITTED|RECOMMIT) TO ([A-Z, ]*[A-Z]+)\\s?([0-9]+[A-Z]?)?");
 
     /** Pattern for detecting calendar events in bill action lists. */
     public static final Pattern floorEventTextPattern = Pattern.compile("(REPORT CAL|THIRD READING|RULES REPORT)");
+
+    /** Pattern to detect a bill being delivered/returned from one chamber to another */
+    public static final Pattern chamberSwitchEventTextPattern = Pattern.compile("(DELIVERED|RETURNED) TO (SENATE|ASSEMBLY)");
 
     /** Pattern for extracting the substituting bill printNo from matching bill events. */
     public static final Pattern substituteEventTextPattern = Pattern.compile("SUBSTITUTED (FOR|BY) (.*)");
@@ -295,8 +300,9 @@ public class SobiBillProcessor extends SobiProcessor
         ArrayList<BillAction> actions = new ArrayList<>();
         Boolean stricken = false;
         BillId sameAsBillId = null;
-        Committee currentCommittee = null;
-        Map<Committee, SortedSet<Date> > pastCommittees = new HashMap<>();
+        Chamber currentChamber = baseBill.getBillId().getChamber();
+        CommitteeVersionId currentCommittee = null;
+        SortedSet<CommitteeVersionId> pastCommittees = new TreeSet<>();
         BillId billId = specifiedAmendment.getBillId();
         int sequenceNo = 0;
 
@@ -313,35 +319,27 @@ public class SobiBillProcessor extends SobiProcessor
                     Matcher committeeEventText = committeeEventTextPattern.matcher(eventText);
                     Matcher substituteEventText = substituteEventTextPattern.matcher(eventText);
                     Matcher floorEventText = floorEventTextPattern.matcher(eventText);
+                    Matcher chamberSwitchEventText = chamberSwitchEventTextPattern.matcher(eventText);
 
                     if (eventText.contains("ENACTING CLAUSE STRICKEN")) {
                         stricken = true;
                     }
                     else if (committeeEventText.find()) {
                         if (currentCommittee!=null) {
-                            if(!pastCommittees.containsKey(currentCommittee)){
-                                pastCommittees.put(currentCommittee, new TreeSet<Date>() {
-                                });
-                            }
-                            pastCommittees.get(currentCommittee).add(eventDate);
+                            pastCommittees.add(currentCommittee);
                         }
-                        try {
-                            currentCommittee = committeeService.getCommittee(
-                                    committeeEventText.group(2), billId.getChamber(), billId.getSession(), eventDate
-                            );
-                        }
-                        catch(CommitteeNotFoundEx ex){
-                            logger.error(ex.getMessage());
-                        }
+                        currentCommittee = new CommitteeVersionId(
+                                currentChamber, committeeEventText.group(2), billId.getSession(), eventDate
+                        );
                     }
                     else if (floorEventText.find()){
                         if (currentCommittee!=null) {
-                            if(!pastCommittees.containsKey(currentCommittee)){
-                                pastCommittees.put(currentCommittee, new TreeSet<Date>());
-                            }
-                            pastCommittees.get(currentCommittee).add(eventDate);
+                            pastCommittees.add(currentCommittee);
                         }
                         currentCommittee = null;
+                    }
+                    else if (chamberSwitchEventText.find()){
+                        currentChamber = Chamber.valueOf(chamberSwitchEventText.group(2));
                     }
                     else if (substituteEventText.find()) {
                         // Note: Does not account for multiple same-as here.

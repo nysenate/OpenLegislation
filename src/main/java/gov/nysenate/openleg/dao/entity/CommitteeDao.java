@@ -3,6 +3,8 @@ package gov.nysenate.openleg.dao.entity;
 
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Committee;
+import gov.nysenate.openleg.model.entity.CommitteeId;
+import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import org.joda.time.DateTime;
 import org.springframework.dao.DataAccessException;
 
@@ -13,20 +15,16 @@ public interface CommitteeDao {
 
     /**
      * Retrieves the most recent information on the committee designated by name
-     * @param name
-     * @param chamber
+     * @param committeeId
      * @return Committee
      * */
-    public Committee getCommittee(String name, Chamber chamber) throws DataAccessException;
+    public Committee getCommittee(CommitteeId committeeId) throws DataAccessException;
     /**
      * Retrieves committee information for the specified committee name at a particular time
-     * @param name
-     * @param chamber
-     * @param session
-     * @param time
+     * @param committeeVersionId
      * @return Committee
      * */
-    public Committee getCommittee(String name, Chamber chamber, int session, Date time) throws DataAccessException;
+    public Committee getCommittee(CommitteeVersionId committeeVersionId) throws DataAccessException;
 
     /**
      * Retrieves a list containing the most recent version of each committee
@@ -37,11 +35,10 @@ public interface CommitteeDao {
 
     /**
      * Retrieves a list of committee versions for a given committee, ordered from first version to most recent
-     * @param name
-     * @param chamber
+     * @param committeeId
      * @return List<Committee>
      */
-    public List<Committee> getCommitteeHistory(String name, Chamber chamber) throws DataAccessException;
+    public List<Committee> getCommitteeHistory(CommitteeId committeeId) throws DataAccessException;
 
     /**
      * Retrieves a list of committee versions for a given committee, ordered from first version to most recent
@@ -51,7 +48,7 @@ public interface CommitteeDao {
 
     /**
      * Deletes all records for a given committee
-     * @param committee
+     * @param committeeId
      */
-    public void deleteCommittee(Committee committee) throws DataAccessException;
+    public void deleteCommittee(CommitteeId committeeId) throws DataAccessException;
 }

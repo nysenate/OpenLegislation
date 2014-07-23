@@ -14,23 +14,23 @@ public enum SqlCommitteeQuery {
             "AND " + SqlTable.COMMITTEE + ".chamber=" + SqlTable.COMMITTEE_VERSION + ".chamber" + "\n" +
             "AND " + SqlTable.COMMITTEE + ".current_version=" + SqlTable.COMMITTEE_VERSION + ".created" + "\n" +
             "AND " + SqlTable.COMMITTEE + ".current_session=" + SqlTable.COMMITTEE_VERSION + ".session_year" + "\n" +
-        "WHERE LOWER(" + SqlTable.COMMITTEE + ".name)=LOWER(:name)" + "\n" +
+        "WHERE " + SqlTable.COMMITTEE + ".name=:committeeName" + "\n" +
             "AND " + SqlTable.COMMITTEE + ".chamber=CAST(:chamber AS chamber)"
     ),
     SELECT_COMMITTEE_AT_DATE_SQL(
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
-        "WHERE LOWER(committee_name)=LOWER(:committee_name) AND chamber=CAST(:chamber AS chamber) AND session_year=:session_year" + "\n" +
-            "AND :date >= " + SqlTable.COMMITTEE_VERSION + ".created" + "\n" +
-            "AND :date < " + SqlTable.COMMITTEE_VERSION + ".reformed"
+        "WHERE committee_name=:committeeName AND chamber=CAST(:chamber AS chamber) AND session_year=:sessionYear" + "\n" +
+            "AND :referenceDate >= " + SqlTable.COMMITTEE_VERSION + ".created" + "\n" +
+            "AND :referenceDate < " + SqlTable.COMMITTEE_VERSION + ".reformed"
     ),
     SELECT_COMMITTEE_MEMBERS(
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE_MEMBER + "\n" +
-        "WHERE LOWER(committee_name)=LOWER(:committee_name) AND chamber=CAST(:chamber AS chamber)" + "\n" +
-            "AND session_year=:session_year AND version_created=:version_created"
+        "WHERE committee_name=:committeeName AND chamber=CAST(:chamber AS chamber)" + "\n" +
+            "AND session_year=:sessionYear AND version_created=:referenceDate"
     ),
     SELECT_COMMITTEE_CURRENT_VERSION(
         "SELECT current_version FROM ${schema}." + SqlTable.COMMITTEE + "\n" +
-        "WHERE LOWER(name)=LOWER(:name) AND chamber=CAST(:chamber AS chamber)"
+        "WHERE name=:committeeName AND chamber=CAST(:chamber AS chamber)"
     ),
     SELECT_ALL_COMMITTEES(
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE + " JOIN ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
@@ -42,60 +42,60 @@ public enum SqlCommitteeQuery {
     ),
     SELECT_ALL_COMMITTEE_VERSIONS(
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
-        "WHERE LOWER(committee_name)=LOWER(:committee_name) AND chamber=CAST(:chamber AS chamber)"
+        "WHERE committee_name=:committeeName AND chamber=CAST(:chamber AS chamber)"
     ),
     SELECT_PREVIOUS_COMMITTEE_VERSION(
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
-        "WHERE LOWER(committee_name)=LOWER(:committee_name) AND chamber=CAST(:chamber AS chamber) AND session_year=:session_year AND :date > created" + "\n" +
+        "WHERE committee_name=:committeeName AND chamber=CAST(:chamber AS chamber) AND session_year=:sessionYear AND :referenceDate > created" + "\n" +
         "ORDER BY created DESC" + "\n" +
         "LIMIT 1"
     ),
     SELECT_NEXT_COMMITTEE_VERSION(
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
-        "WHERE LOWER(committee_name)=LOWER(:committee_name) AND chamber=CAST(:chamber AS chamber) AND session_year=:session_year AND :date < created" + "\n" +
+        "WHERE committee_name=:committeeName AND chamber=CAST(:chamber AS chamber) AND session_year=:sessionYear AND :referenceDate < created" + "\n" +
         "ORDER BY created" + "\n" +
         "LIMIT 1"
     ),
     INSERT_COMMITTEE(
         "INSERT INTO ${schema}." + SqlTable.COMMITTEE + " (name, chamber)" + "\n" +
-        "VALUES (:name, CAST(:chamber AS chamber))"
+        "VALUES (:committeeName, CAST(:chamber AS chamber))"
     ),
     INSERT_COMMITTEE_VERSION(
         "INSERT INTO ${schema}." + SqlTable.COMMITTEE_VERSION +
         " (committee_name, chamber, session_year, location, meetday, meettime, meetaltweek, meetaltweektext, created)" + "\n" +
-        "VALUES (:committee_name, CAST(:chamber AS chamber), :session_year, :location, :meetday, :meettime, :meetaltweek, :meetaltweektext, :created)"
+        "VALUES (:committeeName, CAST(:chamber AS chamber), :sessionYear, :location, :meetday, :meettime, :meetaltweek, :meetaltweektext, :referenceDate)"
     ),
     INSERT_COMMITTEE_MEMBER(
         "INSERT INTO ${schema}." + SqlTable.COMMITTEE_MEMBER +
         " (committee_name, chamber, version_created, member_id, session_year, sequence_no, title, majority)" + "\n" +
-        "VALUES (:committee_name, CAST(:chamber AS chamber), :version_created, :member_id, :session_year, :sequence_no, CAST(:title AS committee_member_title), :majority)"
+        "VALUES (:committeeName, CAST(:chamber AS chamber), :referenceDate, :member_id, :sessionYear, :sequence_no, CAST(:title AS committee_member_title), :majority)"
     ),
     UPDATE_COMMITTEE_MEETING_INFO(
         "UPDATE ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
         "SET location=:location, meetday=:meetday, meettime=:meettime, meetaltweek=:meetaltweek, meetaltweektext=:meetaltweektext" + "\n" +
-        "WHERE LOWER(committee_name)=LOWER(:committee_name)  AND chamber=CAST(:chamber AS chamber) AND session_year=:session_year AND created=:created"
+        "WHERE committee_name=:committeeName  AND chamber=CAST(:chamber AS chamber) AND session_year=:sessionYear AND created=:referenceDate"
     ),
     UPDATE_COMMITTEE_CURRENT_VERSION(
         "UPDATE ${schema}." + SqlTable.COMMITTEE + "\n" +
-        "SET current_version=:current_version, current_session=:session" + "\n" +
-        "WHERE LOWER(name)=LOWER(:name) AND chamber=CAST(:chamber AS chamber) AND current_session<=:session"
+        "SET current_version=:referenceDate, current_session=:sessionYear" + "\n" +
+        "WHERE name=:committeeName AND chamber=CAST(:chamber AS chamber) AND current_session<=:sessionYear"
     ),
     UPDATE_COMMITTEE_VERSION_REFORMED(
         "UPDATE ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
         "SET reformed=:reformed" + "\n" +
-        "WHERE LOWER(committee_name)=LOWER(:committee_name) AND chamber=CAST(:chamber AS chamber) AND session_year=:session_year AND created=:created"
+        "WHERE committee_name=:committeeName AND chamber=CAST(:chamber AS chamber) AND session_year=:sessionYear AND created=:referenceDate"
     ),
     DELETE_COMMITTEE(
         "DELETE FROM ${schema}." + SqlTable.COMMITTEE + "\n" +
-        "WHERE LOWER(name)=LOWER(:name) AND chamber=CAST(:chamber AS chamber)"
+        "WHERE name=:committeeName AND chamber=CAST(:chamber AS chamber)"
     ),
     DELETE_COMMITTEE_VERSION(
         "DELETE FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
-        "WHERE LOWER(committee_name)=LOWER(:committee_name) AND chamber=CAST(:chamber AS chamber) AND session_year=:session_year AND created=:created"
+        "WHERE committee_name=:committeeName AND chamber=CAST(:chamber AS chamber) AND session_year=:sessionYear AND created=:referenceDate"
     ),
     DELETE_COMMITTEE_MEMBERS(
         "DELETE FROM ${schema}." + SqlTable.COMMITTEE_MEMBER + "\n" +
-        "WHERE LOWER(committee_name)=LOWER(:committee_name) AND chamber=CAST(:chamber AS chamber) AND session_year=:session_year AND version_created=:version_created"
+        "WHERE committee_name=:committeeName AND chamber=CAST(:chamber AS chamber) AND session_year=:sessionYear AND version_created=:referenceDate"
     )
     ;
     private String sql;

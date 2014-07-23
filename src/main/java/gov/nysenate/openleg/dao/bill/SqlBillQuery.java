@@ -60,17 +60,19 @@ public enum SqlBillQuery implements SqlQueryEnum
     UPDATE_BILL_AMENDMENT_SQL(
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "SET sponsor_memo = :sponsorMemo, act_clause = :actClause, full_text = :fullText, stricken = :stricken, " +
-        "    current_committee_name = :currentCommitteeName, uni_bill = :uniBill, modified_date_time = :modifiedDateTime, " +
+        "    current_committee_name = :currentCommitteeName, current_committee_action = :currentCommitteeAction, " +
+        "    uni_bill = :uniBill, modified_date_time = :modifiedDateTime, " +
         "    published_date_time = :publishedDateTime, last_fragment_file_name = :lastFragmentFileName, " +
         "    last_fragment_type = :lastFragmentType \n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND version = :version"
     ),
     INSERT_BILL_AMENDMENT_SQL(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
-        "(bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, stricken, current_committee_name, " +
+        "(bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, stricken, " +
+        " current_committee_name, current_committee_action" +
         " uni_bill, modified_date_time, published_date_time, last_fragment_file_name, last_fragment_type)\n" +
         "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, :currentCommitteeName, " +
-        "       :uniBill, :modifiedDateTime, :publishedDateTime, :lastFragmentFileName, :lastFragmentType)"
+        "       :currentCommitteeAction, :uniBill, :modifiedDateTime, :publishedDateTime, :lastFragmentFileName, :lastFragmentType)"
     ),
 
     /** --- Bill Amendment Cosponsors --- */

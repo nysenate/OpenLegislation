@@ -3,6 +3,8 @@ package gov.nysenate.openleg.service.entity;
 import gov.nysenate.openleg.dao.entity.CommitteeDao;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Committee;
+import gov.nysenate.openleg.model.entity.CommitteeId;
+import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import net.sf.ehcache.CacheManager;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -34,49 +36,33 @@ public class CachedCommitteeService implements CommitteeService{
 
     /** {@inheritDoc} */
     @Override
-    @Cacheable(value = "committee", key = "#root.methodName + '-' + #name + '-' + #chamber.toString()")
-    public Committee getCommittee(String name, Chamber chamber) throws CommitteeNotFoundEx {
-        if(name==null){
-            throw new IllegalArgumentException("Name cannot be null!");
+    @Cacheable(value = "committee", key = "#root.methodName + '-' + #committeeId.toString()")
+    public Committee getCommittee(CommitteeId committeeId) throws CommitteeNotFoundEx {
+        if(committeeId==null) {
+            throw new IllegalArgumentException("CommitteeId cannot be null!");
         }
-        if(chamber==null) {
-            throw new IllegalArgumentException("Chamber cannot be null!");
-        }
-        name = name.toUpperCase();
         try{
-            return committeeDao.getCommittee(name, chamber);
+            return committeeDao.getCommittee(committeeId);
         }
         catch(Exception ex){
-            throw new CommitteeNotFoundEx(name, chamber, ex);
+            throw new CommitteeNotFoundEx(committeeId, ex);
         }
     }
 
     /** {@inheritDoc} */
     @Override
     @Cacheable(value = "committee",
-            key = "#root.methodName + '-' + #name + '-' + #chamber.toString() + '-' + #session + '-' + #time.toString()"
+            key = "#root.methodName + '-' + #name + '-' + #committeeVersionId.toString()"
     )
-    public Committee getCommittee(String name, Chamber chamber, int session, Date time) throws CommitteeNotFoundEx {
-        if(name==null){
-            throw new IllegalArgumentException("Name cannot be null!");
-        }
-        if(chamber==null) {
-            throw new IllegalArgumentException("Chamber cannot be null!");
-        }
-        if(time==null){
-            throw new IllegalArgumentException("Time cannot be null!");
-        }
-        name = name.toUpperCase();
-        DateTime now = new DateTime();
-        if(time.after(now.toDate()) && now.getYear()<session+2){
-            logger.debug("Using committeeCurrent instead of committeeVersion for " + chamber + " " + name + " " + session + " " + time);
-            return getCommittee(name, chamber);
+    public Committee getCommittee(CommitteeVersionId committeeVersionId) throws CommitteeNotFoundEx {
+        if(committeeVersionId==null){
+            throw new IllegalArgumentException("committeeVersionId cannot be null!");
         }
         try{
-            return committeeDao.getCommittee(name, chamber, session, time);
+            return committeeDao.getCommittee(committeeVersionId);
         }
         catch(Exception ex){
-            throw new CommitteeNotFoundEx(name, chamber, session, time, ex);
+            throw new CommitteeNotFoundEx(committeeVersionId, ex);
         }
     }
 
@@ -97,20 +83,17 @@ public class CachedCommitteeService implements CommitteeService{
 
     /** {@inheritDoc} */
     @Override
-    @Cacheable(value = "committee", key = "#root.methodName + '-' + #name + '-' + #chamber.toString()")
-    public List<Committee> getCommitteeHistory(String name, Chamber chamber) throws CommitteeNotFoundEx {
-        if(name==null){
-            throw new IllegalArgumentException("Name cannot be null!");
-        }
-        if(chamber==null) {
-            throw new IllegalArgumentException("Chamber cannot be null!");
+    @Cacheable(value = "committee", key = "#root.methodName + '-' + #committeeId.toString()")
+    public List<Committee> getCommitteeHistory(CommitteeId committeeId) throws CommitteeNotFoundEx {
+        if(committeeId==null) {
+            throw new IllegalArgumentException("CommitteeId cannot be null!");
         }
 
         try{
-            return committeeDao.getCommitteeHistory(name, chamber);
+            return committeeDao.getCommitteeHistory(committeeId);
         }
         catch(Exception ex){
-            throw new CommitteeNotFoundEx(name, chamber, ex);
+            throw new CommitteeNotFoundEx(committeeId, ex);
         }
     }
 
@@ -127,10 +110,10 @@ public class CachedCommitteeService implements CommitteeService{
     /** {@inheritDoc} */
     @Override
     @CacheEvict(value = "committee", allEntries = true)
-    public void deleteCommittee(Committee committee) {
-        if(committee==null){
-            throw new IllegalArgumentException("Committee cannot be null.");
+    public void deleteCommittee(CommitteeId committeeId) {
+        if(committeeId==null) {
+            throw new IllegalArgumentException("CommitteeId cannot be null!");
         }
-        committeeDao.deleteCommittee(committee);
+        committeeDao.deleteCommittee(committeeId);
     }
 }

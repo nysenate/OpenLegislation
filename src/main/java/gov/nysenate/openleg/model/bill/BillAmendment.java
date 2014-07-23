@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Committee;
+import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 
 import java.io.Serializable;
@@ -32,7 +33,7 @@ public class BillAmendment extends BaseLegislativeContent implements Serializabl
     protected String fulltext = "";
 
     /** The committee the bill is currently referred to, if any. */
-    protected Committee currentCommittee = null;
+    protected CommitteeVersionId currentCommittee = null;
 
     /** List of co-sponsors for the amendment. It's a list of Legislators who share credit for
      *  introducing a bill. */
@@ -138,11 +139,11 @@ public class BillAmendment extends BaseLegislativeContent implements Serializabl
         this.fulltext = fulltext;
     }
 
-    public Committee getCurrentCommittee() {
+    public CommitteeVersionId getCurrentCommittee() {
         return currentCommittee;
     }
 
-    public void setCurrentCommittee(Committee currentCommittee) {
+    public void setCurrentCommittee(CommitteeVersionId currentCommittee) {
         this.currentCommittee = currentCommittee;
     }
 

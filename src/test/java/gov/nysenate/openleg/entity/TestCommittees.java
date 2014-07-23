@@ -95,7 +95,7 @@ public class TestCommittees {
         createdCommittees.put("test1v2merge", test1v2merge);
 
         Committee test1v2mergeReplace = new Committee(test1);
-        test1v2merge.setPublishDate(test1v2merge.getPublishDate());
+        test1v2mergeReplace.setPublishDate(test1v2merge.getPublishDate());
         createdCommittees.put("test1v2mergeReplace", test1v2mergeReplace);
 
         Committee test1v3 = new Committee(test1);
