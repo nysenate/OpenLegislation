@@ -4,6 +4,8 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.entity.TestCommittees;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Committee;
+import gov.nysenate.openleg.model.entity.CommitteeId;
+import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.service.entity.CommitteeService;
 import org.junit.After;
 import org.junit.Test;
@@ -27,7 +29,7 @@ public class CommitteeServiceTests extends BaseTests{
     public void deleteCommittees(){
         logger.info("Deleting all committees");
         for(Committee committee : testCommittees.getCommittees()){
-            committeeService.deleteCommittee(committee);
+            committeeService.deleteCommittee(committee.getId());
         }
     }
 
@@ -51,13 +53,13 @@ public class CommitteeServiceTests extends BaseTests{
         MethodTimer.Method getCurrentCommittee = new MethodTimer.Method() {
             @Override
             public void run() throws Exception{
-                committeeService.getCommittee("test committee 1", Chamber.SENATE);
+                committeeService.getCommittee(new CommitteeId(Chamber.SENATE, "test committee 1"));
             }
         };
         MethodTimer.Method getCommitteeAtTime = new MethodTimer.Method() {
             @Override
             public void run() throws Exception{
-                committeeService.getCommittee("test committee 1", Chamber.SENATE, 2009, new Date());
+                committeeService.getCommittee(new CommitteeVersionId(Chamber.SENATE, "test committee 1", 2009, new Date()));
             }
         };
         MethodTimer.Method getCommitteeList = new MethodTimer.Method() {
@@ -69,7 +71,7 @@ public class CommitteeServiceTests extends BaseTests{
         MethodTimer.Method getCommitteeHistory = new MethodTimer.Method() {
             @Override
             public void run() throws Exception {
-                committeeService.getCommitteeHistory("test committee 1", Chamber.SENATE);
+                committeeService.getCommitteeHistory(new CommitteeId(Chamber.SENATE, "test committee 1"));
             }
         };
 
@@ -87,12 +89,12 @@ public class CommitteeServiceTests extends BaseTests{
     public void cacheEvictTimer(){
         deleteCommittees();
         insertAllCommittees();  // Reset test committees
-        committeeService.deleteCommittee(testCommittees.getCommittee("test2"));
+        committeeService.deleteCommittee(testCommittees.getCommittee("test2").getId());
         cacheTimer();
         cacheTimer();
         committeeService.updateCommittee(testCommittees.getCommittee("test2"));
         cacheTimer();
-        committeeService.deleteCommittee(testCommittees.getCommittee("test2"));
+        committeeService.deleteCommittee(testCommittees.getCommittee("test2").getId());
         cacheTimer();
     }
 

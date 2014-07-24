@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processors.sobi;
 
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -99,7 +100,7 @@ public abstract class SobiProcessor
      */
     protected Bill getOrCreateBaseBill(Date publishDate, BillId billId, IngestCache<BillId, Bill> billIngestCache) {
         boolean isBaseVersion = BillId.isBaseVersion(billId.getVersion());
-        BillId baseBillId = BillId.getBaseId(billId);
+        BaseBillId baseBillId = BillId.getBaseId(billId);
         Bill baseBill;
         try {
             baseBill = getBaseBillFromCacheOrService(baseBillId, billIngestCache);
@@ -155,7 +156,7 @@ public abstract class SobiProcessor
             throw new IllegalArgumentException("Bill Id cannot be null!");
         }
         // Ensure bill id references the base bill id since the cache will not distinguish.
-        BillId baseBillId = BillId.getBaseId(billId);
+        BaseBillId baseBillId = BillId.getBaseId(billId);
         // Try the cache, otherwise use the service which can throw the BillNotFoundEx exception.
         boolean isCached = (billIngestCache != null) && billIngestCache.has(baseBillId);
         logger.trace("Bill ingest cache " + ((isCached) ? "HIT" : "MISS") + " for bill id " + baseBillId);

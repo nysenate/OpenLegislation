@@ -40,6 +40,33 @@ public class Committee extends BaseLegislativeContent implements Serializable
     /** List of all the committee members. */
     protected List<CommitteeMember> members;
 
+    /** --- Constructors --- */
+
+    public Committee() {
+        super();
+    }
+
+    public Committee(Committee other) {
+        super(other);
+        this.name = other.name;
+        this.chamber = other.chamber;
+        this.reformed = other.reformed;
+        this.location = other.location;
+        this.meetDay = other.meetDay;
+        this.meetTime = other.meetTime;
+        this.meetAltWeek = other.meetAltWeek;
+        this.meetAltWeekText = other.meetAltWeekText;
+        this.members = new ArrayList<CommitteeMember>();
+        for(CommitteeMember cm : other.members){
+            members.add(new CommitteeMember(cm));
+        }
+    }
+
+    public Committee(String name, Chamber chamber){
+        this.name = name;
+        this.chamber = chamber;
+    }
+
     /** --- Operators --- */
 
     public boolean memberEquals(Committee that){
@@ -113,33 +140,6 @@ public class Committee extends BaseLegislativeContent implements Serializable
             }
         };
 
-    /** --- Constructors --- */
-
-    public Committee() {
-        super();
-    }
-
-    public Committee(Committee other) {
-        super(other);
-        this.name = other.name;
-        this.chamber = other.chamber;
-        this.reformed = other.reformed;
-        this.location = other.location;
-        this.meetDay = other.meetDay;
-        this.meetTime = other.meetTime;
-        this.meetAltWeek = other.meetAltWeek;
-        this.meetAltWeekText = other.meetAltWeekText;
-        this.members = new ArrayList<CommitteeMember>();
-        for(CommitteeMember cm : other.members){
-            members.add(new CommitteeMember(cm));
-        }
-    }
-
-    public Committee(String name, Chamber chamber){
-        this.name = name;
-        this.chamber = chamber;
-    }
-
     /** --- Helper functions --- */
 
     public boolean isCurrent(){
@@ -153,6 +153,16 @@ public class Committee extends BaseLegislativeContent implements Serializable
         this.meetTime = updatedCommittee.meetTime;
         this.meetAltWeek = updatedCommittee.meetAltWeek;
         this.meetAltWeekText = updatedCommittee.meetAltWeekText;
+    }
+
+    /** --- Functional Getters/Setters --- */
+
+    public CommitteeId getId(){
+        return new CommitteeId(this.chamber, this.name);
+    }
+
+    public CommitteeVersionId getVersionId(){
+        return new CommitteeVersionId(this.chamber, this.name, this.session, this.publishDate);
     }
 
     /** --- Basic Getters/Setters --- */
