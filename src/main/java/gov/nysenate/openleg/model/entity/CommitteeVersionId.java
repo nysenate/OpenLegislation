@@ -1,14 +1,18 @@
 package gov.nysenate.openleg.model.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class CommitteeVersionId extends CommitteeId implements Comparable<CommitteeVersionId>{
+public class CommitteeVersionId extends CommitteeId implements Serializable
+{
+    private static final long serialVersionUID = 2679527346305021089L;
+
     private int session;
     private Date referenceDate;
 
     public CommitteeVersionId(Chamber chamber, String name, int session, Date referenceDate){
         super(chamber, name);
-        if(referenceDate==null){
+        if (referenceDate == null) {
             throw new IllegalArgumentException("referenceDate cannot be null!");
         }
         this.session = session;
@@ -29,7 +33,12 @@ public class CommitteeVersionId extends CommitteeId implements Comparable<Commit
     }
 
     @Override
-    public int compareTo(CommitteeVersionId o) {
-        return this.referenceDate.compareTo(o.referenceDate);
+    public int compareTo(CommitteeId o) {
+        int res = super.compareTo(o);
+        if (res == 0) {
+            CommitteeVersionId cvId = (CommitteeVersionId) o;
+            res = this.referenceDate.compareTo(cvId.referenceDate);
+        }
+        return res;
     }
 }

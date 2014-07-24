@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.dao.sobi;
 
-import gov.nysenate.openleg.dao.base.Limit;
+import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.sobi.SobiFile;
@@ -31,9 +31,9 @@ import static gov.nysenate.openleg.util.FileHelper.*;
  * utilizing both data sources.
  */
 @Repository
-public class SqlSobiDao extends SqlBaseDao implements SobiFileDao
+public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
 {
-    private static final Logger logger = LoggerFactory.getLogger(SqlSobiDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(SqlFsSobiDao.class);
 
     /** Directory where new sobi files come in from external sources. */
     protected File incomingSobiDir;
@@ -41,7 +41,7 @@ public class SqlSobiDao extends SqlBaseDao implements SobiFileDao
     /** Directory where sobi files that have been processed are stored. */
     protected File archiveSobiDir;
 
-    public SqlSobiDao() {}
+    public SqlFsSobiDao() {}
 
     @PostConstruct
     protected void init() {
@@ -90,16 +90,31 @@ public class SqlSobiDao extends SqlBaseDao implements SobiFileDao
                orderBy("published_date_time", sortByPubDate) + limitOffset(limit, offset), new SobiFileRowMapper());
     }
 
-    public List<SobiFile> getIncomingSobiFiles(SortOrder sortByFileName, Limit limit) throws IOException {
+    /** {@inheritDoc} */
+    public List<SobiFile> getIncomingSobiFiles(SortOrder sortByFileName, LimitOffset limitOffset) throws IOException {
         List<File> files = new ArrayList<>(getSortedFiles(this.incomingSobiDir, false, null));
-        if (limit.hasLimit()) {
-            files = new ArrayList<>(files.subList(limit.getOffset(), limit.getOffset() + limit.getSize() - 1));
+        if (sortByFileName.equals(SortOrder.DESC)) {
+            Collections.reverse(files);
         }
+        files = LimitOffset.limitList(files, limitOffset);
         List<SobiFile> sobiFiles = new ArrayList<>();
         for (File file : files) {
             sobiFiles.add(new SobiFile(file));
         }
         return sobiFiles;
+    }
+
+    /** {@inheritDoc} */
+    public void archiveSobiFile(SobiFile sobiFile) throws IOException {
+        File stageFile = sobiFile.getFile();
+        // Archive the file only if the current one is residing in the incoming sobis directory.
+        if (stageFile.getParentFile().compareTo(incomingSobiDir) == 0) {
+            moveFileToArchive(stageFile, sobiFile.getPublishedDateTime());
+        }
+        else {
+            throw new FileNotFoundException(
+                "SobiFile " + stageFile + " must be in the incoming sobis directory in order to be archived.");
+        }
     }
 
     /** {@inheritDoc} */
