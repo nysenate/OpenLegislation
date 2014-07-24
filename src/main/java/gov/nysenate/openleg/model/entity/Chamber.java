@@ -8,10 +8,11 @@ public enum Chamber
     SENATE,
     ASSEMBLY;
 
-    public String asSqlEnum(){
+    public String asSqlEnum() {
         return this.toString().toLowerCase();
     }
-    public static Chamber valueOfSqlEnum(String sqlEnum){
+
+    public static Chamber valueOfSqlEnum(String sqlEnum) {
         return Chamber.valueOf(sqlEnum.toUpperCase());
     }
 }

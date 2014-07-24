@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
+import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.entity.Chamber;
 
 import java.io.Serializable;
@@ -182,7 +183,11 @@ public class BillId implements Serializable, Comparable<BillId>
 
     @Override
     public int compareTo(BillId o) {
-        return this.toString().compareTo(o.toString());
+        return ComparisonChain.start()
+            .compare(this.session, o.session)
+            .compare(this.basePrintNo, o.basePrintNo)
+            .compare(this.version, o.version)
+            .result();
     }
 
     /** --- Basic Getters/Setters --- */
