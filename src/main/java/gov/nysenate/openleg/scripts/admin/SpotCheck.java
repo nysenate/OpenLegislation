@@ -18,11 +18,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -224,6 +220,8 @@ public class SpotCheck extends BaseScript
 
             ArrayList<String> lbdcAmendments = bills.get(id).getAmendments();
             ArrayList<String> jsonAmendments = (ArrayList) jsonBill.getAmendments();
+
+            // Bill.getAmendments() does not include Bill itself, SpotCheckBill.getAmendments() does.
             jsonAmendments.add(jsonBill.getBillId());
 
             if (!amendmentsEqual(lbdcAmendments, jsonAmendments)) {
@@ -267,15 +265,12 @@ public class SpotCheck extends BaseScript
     }
 
     private boolean amendmentsEqual(ArrayList<String> lbdcAmendments, ArrayList<String> jsonAmendments) {
-        if (!lbdcAmendments.isEmpty()) {
-            if (lbdcAmendments.size() != jsonAmendments.size())
-                return false;
-
-            if (!lbdcAmendments.containsAll(jsonAmendments))
-                return false;
+        if (lbdcAmendments.size() == 0) {
+            return true;
         }
-
-        return true;
+        Collections.sort(lbdcAmendments);
+        Collections.sort(jsonAmendments);
+        return lbdcAmendments.equals(jsonAmendments);
     }
 
     public void loadPageFile(File dataFile, HashMap<String, SpotCheckBill> bills) throws IOException
@@ -322,7 +317,8 @@ public class SpotCheck extends BaseScript
         }
     }
 
-    public Pattern id = Pattern.compile("([A-Z]\\d+)([A-Z])");
+    private String SESSION_YEAR = "2013";
+    public Pattern spotcheckBillId = Pattern.compile("([A-Z]\\d+)([A-Z])");
     public Pattern row = Pattern.compile("<tr.*?>(.+?)</tr>");
     public Pattern stripParts = Pattern.compile(
                 "<b>(.*?)</b>|"+                    // Remove bold text
@@ -349,19 +345,7 @@ public class SpotCheck extends BaseScript
                     .replace("</td>", "<br>")	// convert </td> to <br> as a special case
                     .split("<br>");				// Split the delimited row into parts
 
-            // Add amendments
-            bill.id = parts[0].trim();
-			Matcher idMatcher = id.matcher(bill.id);
-			if( idMatcher.find() ) {
-                String billId = idMatcher.group(1);
-                String sessionYear = "2013";
-				for(int i = 65; i <= idMatcher.group(2).charAt(0); i++){
-					bill.amendments.add(billId + String.valueOf((char)i) + "-" + sessionYear);
-				}
-                // Also add the base bill as an amendment to match our data model.
-                bill.amendments.add(billId + "-" + sessionYear);
-			}
-
+            addAmendments(bill, parts);
 
             bill.setTitle(parts[2].trim());
             bill.law = parts[3].trim();
@@ -415,6 +399,28 @@ public class SpotCheck extends BaseScript
         }
 
         return bills;
+    }
+
+    private void addAmendments(SpotCheckBill bill, String[] parts) {
+        bill.id = parts[0].trim();
+        Matcher idMatcher = spotcheckBillId.matcher(bill.id);
+
+        if(anAmendmentExists(idMatcher)) {
+            String billId = idMatcher.group(1);
+            char amendment = idMatcher.group(2).charAt(0);
+            for (int i = amendment-1; i >= 'A'; i--) {
+                bill.amendments.add(billId + String.valueOf((char)i) + "-" + SESSION_YEAR);
+            }
+            // Also add the base bill
+            bill.amendments.add(billId + "-" + SESSION_YEAR);
+        }
+
+        // Add bill itself as an amendment.
+        bill.amendments.add(bill.id + "-" + SESSION_YEAR);
+    }
+
+    private boolean anAmendmentExists(Matcher idMatcher) {
+        return idMatcher.find();
     }
 
 }
