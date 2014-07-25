@@ -1,7 +1,7 @@
 #!/bin/bash
 source $(dirname "$0")/utils.sh
 
-BASE="$ROOTDIR/target/legislation-$VERSION/WEB-INF"
+BASE="$ROOTDIR/target/legislation##$VERSION/WEB-INF"
 TOMCAT_HOME=/usr/share/tomcat
 SCRIPT=$1; shift
 
