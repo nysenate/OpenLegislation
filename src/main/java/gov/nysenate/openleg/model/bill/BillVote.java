@@ -2,7 +2,7 @@ package gov.nysenate.openleg.model.bill;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import gov.nysenate.openleg.model.BaseLegislativeContent;
+import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Member;
 import org.joda.time.LocalDate;
 

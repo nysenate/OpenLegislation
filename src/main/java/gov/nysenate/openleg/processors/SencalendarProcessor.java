@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
-import gov.nysenate.openleg.processors.BillProcessor;
+import gov.nysenate.openleg.service.bill.BillProcessor;
 import gov.nysenate.openleg.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -38,9 +38,9 @@ public class SencalendarProcessor
     {
         // TODO: We need a better default here
         Date modifiedDate = DateHelper.getFileDate(file.getName());
-        ChangeLogger.setContext(file, modifiedDate);
+//        ChangeLogger.setContext(file, modifiedDate);
 
-        XmlHelper xml = Application.getXmlHelper();
+        XmlHelper xml = null;//Application.getXmlHelper();
         Document doc = xml.parse(file);
         Node xmlCalendar = xml.getNode("SENATEDATA/sencalendar", doc);
         Integer calendarNo = xml.getInteger("@no", xmlCalendar);
@@ -106,9 +106,9 @@ public class SencalendarProcessor
     {
         // TODO: We need a better default here
         Date modifiedDate = DateHelper.getFileDate(file.getName());
-        ChangeLogger.setContext(file, modifiedDate);
+//        ChangeLogger.setContext(file, modifiedDate);
 
-        XmlHelper xml = Application.getXmlHelper();
+        XmlHelper xml = null;//Application.getXmlHelper();
         Document doc = xml.parse(file);
         Node xmlCalendarActive = xml.getNode("SENATEDATA/sencalendaractive", doc);
         Integer calendarNo = xml.getInteger("@no", xmlCalendarActive);

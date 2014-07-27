@@ -2,7 +2,7 @@ package gov.nysenate.openleg.scripts;
 
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
-import gov.nysenate.openleg.processors.sobi.bill.SobiBillProcessor;
+import gov.nysenate.openleg.service.bill.BillProcessor;
 import gov.nysenate.openleg.util.Storage;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.FileUtils;
@@ -34,7 +34,7 @@ public class MemoCheck extends BaseScript
         errors.put("missing",0);
         errors.put("mismatch", 0);
         File blockFile = new File("/data/openleg/PALMER.SEN.ALL.MEMO2011.TXT");
-        SobiBillProcessor bp = new SobiBillProcessor();
+        BillProcessor bp = new BillProcessor();
         File storageDir = new File("/data/openleg/2011_test/json/");
         Storage storage = new Storage(storageDir);
         List<SobiBlock> blocks = null; //FIXME: bp.getBlocks(blockFile);

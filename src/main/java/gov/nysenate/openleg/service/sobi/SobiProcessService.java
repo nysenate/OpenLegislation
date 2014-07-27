@@ -2,14 +2,15 @@ package gov.nysenate.openleg.service.sobi;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.sobi.SobiFragmentType;
-import gov.nysenate.openleg.model.sobi.SobiFile;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * The SobiProcessService interface provides the necessary methods for collating
+ * and processing sobi files. These methods should typically be used via a
+ * process intended to parse new sobi files.
+ */
 public interface SobiProcessService
 {
     /**
@@ -32,9 +33,26 @@ public interface SobiProcessService
     public List<SobiFragment> getPendingFragments(SortOrder sortByPubDate, LimitOffset limitOffset);
 
     /**
-     * Retrieves the pending fragments are processes them.
+     * Process the list of supplied SobiFragments.
      *
-     * @return int - The number of fragments that have been processed.
+     * @param fragments List<SobiFragment> - List of fragments to process.
      */
-    public int processPendingFragments();
+    public void processFragments(List<SobiFragment> fragments);
+
+    /**
+     * Retrieves all pending fragments and processes them. This is essentially a shorthand
+     * for invoking {@link #getPendingFragments} and running {@link #processFragments} on
+     * the results.
+     */
+    public void processPendingFragments();
+
+    /**
+     * Toggle the pending processing status of a SobiFragment via it's fragmentId.
+     *
+     * @param fragmentId String - The fragment id
+     * @param pendingProcessing boolean - Indicate if fragment is pending processing
+     * @throws SobiFragmentNotFoundEx - If the fragmentId did not match a stored fragment
+     */
+    public void updatePendingProcessing(String fragmentId, boolean pendingProcessing)
+                                        throws SobiFragmentNotFoundEx;
 }

@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.sobi;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Objects;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -10,9 +12,9 @@ import java.text.ParseException;
 import java.util.Date;
 
 /**
- * The SobiFile class represents a SOBI file and contains the metadata of the file as well as the body text.
- * This class doesn't have any awareness about the type of content in the file whereas the SOBIFragments that
- * are generated do.
+ * The SobiFile class wraps the sobi files sent from LBDC and retains some basic meta data.
+ * SobiFiles can be broken down into SobiFragments which store data about the type of content in
+ * the file and various processing related meta data.
  *
  * @see SobiFragment
  */
@@ -31,26 +33,17 @@ public class SobiFile
     /** Alternate format for SOBI files with no seconds specified in the filename */
     private static final String sobiDateNoSecsPattern = "'SOBI.D'yyMMdd'.T'HHmm'.TXT'";
 
-    /** The file name of the SOBI file, serves as the unique identifier */
-    private String fileName;
+    /** Reference to the actual sobi file. */
+    private File file;
 
-    /** The published datetime of the SOBI file which is determined via the file name */
-    private Date publishedDateTime;
+    /** The encoding this file was written in. */
+    private String encoding;
 
-    /** The datetime when the SOBI file was last processed */
-    private Date processedDateTime;
-
-    /** The datetime when the SOBI file was last staged for processing */
+    /** The datetime when the SobiFile was recorded into the backing store. */
     private Date stagedDateTime;
 
-    /** The actual text body of the file */
-    private String text;
-
-    /** If true, the SobiFile is awaiting processing */
-    private boolean pendingProcessing;
-
-    /** The number of times this file has been processed */
-    private int processedCount;
+    /** Indicates if the underlying 'file' reference has been moved into an archive directory. */
+    private boolean archived;
 
     /** --- Constructors --- */
 
@@ -60,65 +53,75 @@ public class SobiFile
 
     public SobiFile(File file, String encoding) throws IOException {
         if (file.exists()) {
-            this.fileName = file.getName();
-            this.text = FileUtils.readFileToString(file, encoding);
-            this.processedCount = 0;
-            this.pendingProcessing = false;
-            try {
-                this.publishedDateTime = DateUtils.parseDate(fileName, sobiDateFullPattern, sobiDateNoSecsPattern);
-            }
-            catch (ParseException ex) {
-                this.publishedDateTime = new Date(file.lastModified());
-                ex.printStackTrace();
-            }
+            this.file = file;
+            this.encoding = encoding;
+            this.archived = false;
         }
         else {
             throw new FileNotFoundException(file.getAbsolutePath());
         }
     }
 
-    /** --- Override Methods --- */
-    @Override
-    public String toString() {
-        return "SobiFile{" +
-                "fileName='" + fileName + '\'' +
-                ", processedCount=" + processedCount +
-                ", processedDateTime=" + processedDateTime +
-                ", publishedDateTime=" + publishedDateTime +
-                ", pendingProcessing=" + pendingProcessing +
-                '}';
-    }
-
     /** --- Functional Getters/Setters --- */
 
-    public void incrementProcessedCount() {
-        this.processedCount++;
+    /**
+     * The file name serves as the unique identifier for the SobiFile.
+     */
+    public String getFileName() {
+        return this.file.getName();
+    }
+
+    /**
+     * Retrieves the text contained within the file. The text is not saved due to the
+     * added memory overhead when retaining references to SobiFiles.
+     */
+    @JsonIgnore
+    public String getText() {
+        try {
+            return FileUtils.readFileToString(file, encoding);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to read text from SobiFile:" + this.toString());
+        }
+    }
+
+    /**
+     * The published datetime is determined via the file name.
+     */
+    public Date getPublishedDateTime() {
+        try {
+            return DateUtils.parseDate(getFileName(), sobiDateFullPattern, sobiDateNoSecsPattern);
+        }
+        catch (ParseException ex) {
+            ex.printStackTrace();
+            return new Date(file.lastModified());
+        }
+    }
+
+    /** --- Override Methods --- */
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+            .add("file", file)
+            .add("encoding", encoding)
+            .add("stagedDateTime", stagedDateTime)
+            .add("archived", archived)
+            .toString();
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public String getFileName() {
-        return fileName;
+    public File getFile() {
+        return file;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFile(File file) {
+        this.file = file;
     }
 
-    public Date getPublishedDateTime() {
-        return publishedDateTime;
-    }
-
-    public void setPublishedDateTime(Date publishedDateTime) {
-        this.publishedDateTime = publishedDateTime;
-    }
-
-    public Date getProcessedDateTime() {
-        return processedDateTime;
-    }
-
-    public void setProcessedDateTime(Date processedDateTime) {
-        this.processedDateTime = processedDateTime;
+    public String getEncoding() {
+        return encoding;
     }
 
     public Date getStagedDateTime() {
@@ -129,23 +132,11 @@ public class SobiFile
         this.stagedDateTime = stagedDateTime;
     }
 
-    public String getText() {
-        return text;
+    public boolean isArchived() {
+        return archived;
     }
 
-    public int getProcessedCount() {
-        return processedCount;
-    }
-
-    public void setProcessedCount(int processedCount) {
-        this.processedCount = processedCount;
-    }
-
-    public boolean isPendingProcessing() {
-        return pendingProcessing;
-    }
-
-    public void setPendingProcessing(boolean pendingProcessing) {
-        this.pendingProcessing = pendingProcessing;
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 }

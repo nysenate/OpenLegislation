@@ -19,14 +19,13 @@ public interface CalendarDao
     public Calendar getCalendar(CalendarId calendarId) throws DataAccessException;
 
     /**
-     * Returns a list of all the calendars for the given year, * sorted by the calendar
-     * date via the given 'dateOrder'.
+     * Returns a list of all the calendar ids for the given year, sorted by the calendar no.
      *
-     * @param year int
-     * @param dateOrder SortOrder
-     * @return List<Calendar>
+     * @param year int - The year to retrieve calendar ids for.
+     * @param calOrder SortOrder - Order by the calendar no.
+     * @return List<CalendarId>
      */
-    public List<Calendar> getCalendars(int year, SortOrder dateOrder) throws DataAccessException;
+    public List<CalendarId> getCalendarIds(int year, SortOrder calOrder);
 
     /**
      * Updates the calendar or inserts it if it does not yet exist. Associates the

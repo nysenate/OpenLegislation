@@ -8,7 +8,6 @@ import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.scripts.BaseScript;
-import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.Storage;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.dbutils.QueryRunner;
@@ -58,7 +57,7 @@ public class SpotCheck extends BaseScript
         QueryRunner runner = new QueryRunner();//Application.getDB().getDataSource());
 
         String[] args = opts.getArgs();
-        Storage storage = Application.getStorage();
+        Storage storage = null;// FIXME Application.getStorage();
 
         List<ReportObservation> observations = new ArrayList<ReportObservation>();
         HashMap<String, Integer> errorTotals = new HashMap<String, Integer>();

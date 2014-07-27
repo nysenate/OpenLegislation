@@ -1,15 +1,16 @@
 package gov.nysenate.openleg.dao.sobi;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.sobi.SobiFile;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -22,8 +23,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import static gov.nysenate.openleg.dao.sobi.SqlSobiFileQuery.*;
-import static gov.nysenate.openleg.util.FileHelper.*;
+import static gov.nysenate.openleg.dao.sobi.SqlSobiQuery.*;
+import static gov.nysenate.openleg.util.FileHelper.getSortedFiles;
 
 /**
  * Sobi files are stored in the file system to preserve their original formatting but metadata
@@ -36,12 +37,10 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
     private static final Logger logger = LoggerFactory.getLogger(SqlFsSobiDao.class);
 
     /** Directory where new sobi files come in from external sources. */
-    protected File incomingSobiDir;
+    private File incomingSobiDir;
 
     /** Directory where sobi files that have been processed are stored. */
-    protected File archiveSobiDir;
-
-    public SqlFsSobiDao() {}
+    private File archiveSobiDir;
 
     @PostConstruct
     protected void init() {
@@ -56,7 +55,7 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
     public SobiFile getSobiFile(String fileName) {
         MapSqlParameterSource params = new MapSqlParameterSource("fileNames", Arrays.asList(fileName));
         return jdbcNamed.queryForObject(
-            SqlSobiFileQuery.GET_SOBI_FILES_BY_FILE_NAMES_SQL.getSql(schema()), params, new SobiFileRowMapper());
+            GET_SOBI_FILES_BY_FILE_NAMES.getSql(schema()), params, new SobiFileRowMapper());
     }
 
     /** {@inheritDoc} */
@@ -64,7 +63,7 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
     public Map<String, SobiFile> getSobiFiles(List<String> fileNames) {
         MapSqlParameterSource params = new MapSqlParameterSource("fileNames", fileNames);
         Map<String, SobiFile> sobiFileMap = new HashMap<>();
-        List<SobiFile> sobiList = jdbcNamed.query(GET_SOBI_FILES_BY_FILE_NAMES_SQL.getSql(schema()),
+        List<SobiFile> sobiList = jdbcNamed.query(GET_SOBI_FILES_BY_FILE_NAMES.getSql(schema()),
                                                   params, new SobiFileRowMapper());
         for (SobiFile sobiFile : sobiList) {
             sobiFileMap.put(sobiFile.getFileName(), sobiFile);
@@ -74,23 +73,17 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
 
     /** {@inheritDoc} */
     @Override
-    public List<SobiFile> getSobiFilesDuring(Date start, Date end, boolean processedOnly, SortOrder sortByPubDate) {
+    public List<SobiFile> getSobiFilesDuring(Date start, Date end, SortOrder sortByPubDate, LimitOffset limitOffset) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("startDate", start);
         params.addValue("endDate", end);
-        params.addValue("processedOnly", processedOnly);
-        return jdbcNamed.query(GET_SOBI_FILES_DURING_SQL.getSql(schema()) + orderBy("published_date_time", sortByPubDate),
-                               params, new SobiFileRowMapper());
+        OrderBy orderBy = new OrderBy("published_date_time", sortByPubDate);
+        return jdbcNamed.query(
+            GET_SOBI_FILES_DURING.getSql(schema(), orderBy, limitOffset), params, new SobiFileRowMapper());
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<SobiFile> getPendingSobiFiles(SortOrder sortByPubDate, int limit, int offset) {
-        return jdbc.query(GET_PENDING_SOBI_FILES_SQL.getSql(schema()) +
-               orderBy("published_date_time", sortByPubDate) + limitOffset(limit, offset), new SobiFileRowMapper());
-    }
-
-    /** {@inheritDoc} */
     public List<SobiFile> getIncomingSobiFiles(SortOrder sortByFileName, LimitOffset limitOffset) throws IOException {
         List<File> files = new ArrayList<>(getSortedFiles(this.incomingSobiDir, false, null));
         if (sortByFileName.equals(SortOrder.DESC)) {
@@ -105,11 +98,57 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
     }
 
     /** {@inheritDoc} */
+    @Override
+    public SobiFragment getSobiFragment(String fragmentId) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("fragmentId", fragmentId);
+        return jdbcNamed.queryForObject(
+            GET_SOBI_FRAGMENT_BY_FILE_NAME.getSql(schema()), params, new SobiFragmentRowMapper());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<SobiFragment> getSobiFragments(SobiFile sobiFile, SortOrder sortById) {
+        MapSqlParameterSource params = new MapSqlParameterSource("sobiFileName", sobiFile.getFileName());
+        OrderBy orderBy = new OrderBy("fragment_id", sortById);
+        return jdbcNamed.query(
+            GET_SOBI_FRAGMENTS_BY_SOBI_FILE.getSql(schema(), orderBy, LimitOffset.ALL),
+            params, new SobiFragmentRowMapper(sobiFile));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<SobiFragment> getSobiFragments(SobiFile sobiFile, SobiFragmentType fragmentType, SortOrder sortById) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("sobiFileName", sobiFile.getFileName());
+        params.addValue("fragmentType", fragmentType.name());
+        OrderBy orderBy = new OrderBy("fragment_id", sortById);
+        return jdbcNamed.query(
+            GET_SOBI_FRAGMENTS_BY_SOBI_FILE_AND_TYPE.getSql(schema(), orderBy, LimitOffset.ALL),
+            params, new SobiFragmentRowMapper(sobiFile));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<SobiFragment> getPendingSobiFragments(SortOrder sortById, LimitOffset limitOffset) {
+        OrderBy orderBy = new OrderBy("fragment_id", sortById);
+        return jdbcNamed.query(
+            GET_PENDING_SOBI_FRAGMENTS.getSql(schema(), orderBy, limitOffset), new SobiFragmentRowMapper());
+    }
+
+    /** --- Update/Insert Methods --- */
+
+    /** {@inheritDoc} */
+    @Override
     public void archiveSobiFile(SobiFile sobiFile) throws IOException {
         File stageFile = sobiFile.getFile();
         // Archive the file only if the current one is residing in the incoming sobis directory.
         if (stageFile.getParentFile().compareTo(incomingSobiDir) == 0) {
-            moveFileToArchive(stageFile, sobiFile.getPublishedDateTime());
+            File archiveFile = getFileInArchiveDir(sobiFile.getFileName(), sobiFile.getPublishedDateTime());
+            moveFile(stageFile, archiveFile);
+            sobiFile.setFile(archiveFile);
+            sobiFile.setArchived(true);
+            updateSobiFile(sobiFile);
         }
         else {
             throw new FileNotFoundException(
@@ -119,88 +158,40 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
 
     /** {@inheritDoc} */
     @Override
-    public void stageSobiFiles(boolean allowReStaging) throws IOException {
-        logger.info("Performing staging of new SOBI files...");
-        int filesStaged = 0;
-        for (File file : safeListFiles(this.incomingSobiDir, null, false)) {
-            SobiFile sobiFile = new SobiFile(file);
-            sobiFile.setStagedDateTime(new Date());
-            try {
-                insertSOBIMetadataInDatabase(sobiFile);
-                filesStaged++;
-                logger.debug("Staged " + sobiFile);
-            }
-            catch (DuplicateKeyException ex) {
-                if (allowReStaging) {
-                    // The SOBI file has been staged once before so we want to re-stage it with the contents of the
-                    // new file which may or may not be identical. This should rarely occur in production but can
-                    // be helpful during development.
-                    SobiFile existingSobiFile = getSobiFile(sobiFile.getFileName());
-                    if (existingSobiFile != null) {
-                        existingSobiFile.setStagedDateTime(new Date());
-                        updateSobiFile(existingSobiFile);
-                        filesStaged++;
-                        logger.debug("Re-staged " + existingSobiFile + " with latest file contents.");
-                    }
-                    else {
-                        logger.warn("Failed to stage " + sobiFile + " because a prior record exists but cannot be retrieved!");
-                    }
-                }
-                else {
-                    logger.debug("Ignoring " + sobiFile + " since re-staging is disabled and file was previously processed.");
-                }
-            }
+    public void updateSobiFile(SobiFile sobiFile) {
+        MapSqlParameterSource params = getSobiFileParams(sobiFile);
+        if (jdbcNamed.update(UPDATE_SOBI_FILE.getSql(schema()), params) == 0) {
+            jdbcNamed.update(INSERT_SOBI_FILE.getSql(schema()), params);
         }
-        logger.info("Staging of " + filesStaged + " SOBI files completed.");
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean updateSobiFile(SobiFile sobiFile) {
-        if (sobiFile != null) {
-            try {
-                int affected = updateSOBIMetadataInDatabase(sobiFile);
-                if (affected > 0) {
-//                    if (!sobiFile.isPendingProcessing()) {
-//                        File workFile = getFileInWorkingDirectory(sobiFile.getFileName());
-//                        if (workFile.exists()) {
-//                            moveFileToArchive(workFile, sobiFile.getPublishedDateTime());
-//                        }
-//                    }
-                    return true;
-                }
-                return false;
-            }
-            catch (DataAccessException ex) {
-                logger.error("Failed to update SobiFile record with file name " + sobiFile.getFileName(), ex);
-            }
-//            catch (IOException ex) {
-//                logger.error("Failed to update SOBI file " + sobiFile.getFileName() + " in file system!", ex);
-//            }
-            return false;
-        }
-        else {
-            throw new IllegalArgumentException("Supplied SobiFile object is null. Cannot persist to database.");
+    public void updateSobiFragment(SobiFragment fragment) {
+        MapSqlParameterSource params = getSobiFragmentParams(fragment);
+        if (jdbcNamed.update(UPDATE_SOBI_FRAGMENT.getSql(schema()), params) == 0) {
+            jdbcNamed.update(INSERT_SOBI_FRAGMENT.getSql(schema()), params);
         }
     }
 
     /** --- Helper Classes --- */
 
     /**
-     * Maps rows from the sobi table to SobiFile objects.
+     * Maps rows from the sobi file table to SobiFile objects.
      */
     protected class SobiFileRowMapper implements RowMapper<SobiFile>
     {
-        public SobiFileRowMapper(){}
-
         @Override
         public SobiFile mapRow(ResultSet rs, int rowNum) throws SQLException {
             String fileName = rs.getString("file_name");
             Date publishedDateTime = rs.getTimestamp("published_date_time");
-            File file = getFileInArchiveDirectory(fileName, publishedDateTime);
+            boolean archived = rs.getBoolean("archived");
+            File file = (archived) ? getFileInArchiveDir(fileName, publishedDateTime)
+                                   : getFileInIncomingDir(fileName);
             String encoding = rs.getString("encoding");
             try {
                 SobiFile sobiFile = new SobiFile(file, encoding);
+                sobiFile.setArchived(archived);
                 sobiFile.setStagedDateTime(rs.getTimestamp("staged_date_time"));
                 return sobiFile;
             }
@@ -217,53 +208,108 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
         }
     }
 
+    /**
+     * Maps rows from the sobi fragment table to SobiFragment objects.
+     */
+    protected class SobiFragmentRowMapper implements RowMapper<SobiFragment> {
+        private String pfx = "";
+        private Map<String, SobiFile> sobiFileMap = new HashMap<>();
+
+        public SobiFragmentRowMapper() {
+            this("", Collections.<SobiFile>emptyList());
+        }
+
+        public SobiFragmentRowMapper(SobiFile sobiFile) {
+            this("", Arrays.asList(sobiFile));
+        }
+
+        public SobiFragmentRowMapper(String pfx, List<SobiFile> sobiFiles) {
+            this.pfx = pfx;
+            for (SobiFile sobiFile : sobiFiles) {
+                this.sobiFileMap.put(sobiFile.getFileName(), sobiFile);
+            }
+        }
+
+        @Override
+        public SobiFragment mapRow(ResultSet rs, int rowNum) throws SQLException {
+            String sobiFileName = rs.getString(pfx + "sobi_file_name");
+            // Passing the sobi file objects in the constructor is a means of caching the objects
+            // so that they don't have to be re-mapped. If not supplied, an extra call will be
+            // made to fetch the sobi file.
+            SobiFile sobiFile = this.sobiFileMap.get(sobiFileName);
+            if (sobiFile == null) {
+                sobiFile = getSobiFile(sobiFileName);
+            }
+            SobiFragmentType type = SobiFragmentType.valueOf(rs.getString(pfx + "fragment_type").toUpperCase());
+            int sequenceNo = rs.getInt(pfx + "sequence_no");
+            String text = rs.getString(pfx + "text");
+            SobiFragment fragment = new SobiFragment(sobiFile, type, text, sequenceNo);
+            fragment.setStagedDateTime(rs.getTimestamp("staged_date_time"));
+            fragment.setPendingProcessing(rs.getBoolean("pending_processing"));
+            fragment.setProcessedCount(rs.getInt("processed_count"));
+            fragment.setProcessedDateTime(rs.getTimestamp("processed_date_time"));
+            return fragment;
+        }
+    }
+
     /** --- Internal Methods --- */
 
     /**
-     * Saves the metadata of the SobiFile into the database.
-     * @throws java.lang.IllegalArgumentException if sobiFile is null
+     * Get file handle from incoming sobi directory.
      */
-    private void insertSOBIMetadataInDatabase(SobiFile sobiFile) throws DataAccessException {
-        jdbcNamed.update(SqlSobiFileQuery.INSERT_SOBI_FILE.getSql(schema()), getSobiInsertUpdateParams(sobiFile));
-    }
-
-    /**
-     * Updates the metadata of the SobiFile into the database.
-     * @throws java.lang.IllegalArgumentException if sobiFile is null
-     */
-    private int updateSOBIMetadataInDatabase(SobiFile sobiFile) throws DataAccessException {
-        return jdbcNamed.update(SqlSobiFileQuery.UPDATE_SOBI_FILE.getSql(schema()), getSobiInsertUpdateParams(sobiFile));
+    private File getFileInIncomingDir(String fileName) {
+        return new File(this.incomingSobiDir, fileName);
     }
 
     /**
      * Get file handle from the sobi archive directory.
      */
-    private File getFileInArchiveDirectory(String fileName, Date publishedDateTime) {
+    private File getFileInArchiveDir(String fileName, Date publishedDateTime) {
         String year = Integer.toString(new LocalDate(publishedDateTime).getYear());
         File dir = new File(this.archiveSobiDir, year);
         return new File(dir, fileName);
     }
 
     /**
-     * Moves the file into the archive SOBI file directory.
+     * Moves the file into the destination quietly.
      */
-    private void moveFileToArchive(File file, Date publishedDateTime) throws IOException {
-        File archiveFile = getFileInArchiveDirectory(file.getName(), publishedDateTime);
-        if (archiveFile.exists()) {
-            FileUtils.deleteQuietly(archiveFile);
+    private void moveFile(File sourceFile, File destFile) throws IOException {
+        if (destFile.exists()) {
+            FileUtils.deleteQuietly(destFile);
         }
-        FileUtils.moveFile(file, archiveFile);
+        FileUtils.moveFile(sourceFile, destFile);
     }
 
+    /** --- Param Source Methods --- */
+
     /**
-     * Returns a MapSqlParameterSource with columns mapped to SobiFile values for use in update/insert queries.
+     * Returns a MapSqlParameterSource with columns mapped to SobiFile values.
      */
-    private MapSqlParameterSource getSobiInsertUpdateParams(SobiFile sobiFile) {
+    private MapSqlParameterSource getSobiFileParams(SobiFile sobiFile) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("fileName", sobiFile.getFileName());
         params.addValue("encoding", sobiFile.getEncoding());
         params.addValue("publishedDateTime", sobiFile.getPublishedDateTime());
         params.addValue("stagedDateTime", sobiFile.getStagedDateTime());
+        params.addValue("archived", sobiFile.isArchived());
+        return params;
+    }
+
+    /**
+     * Returns a MapSqlParameterSource with columns mapped to SobiFragment values.
+     */
+    private MapSqlParameterSource getSobiFragmentParams(SobiFragment fragment) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("fragmentId", fragment.getFragmentId());
+        params.addValue("sobiFileName", fragment.getParentSobiFile().getFileName());
+        params.addValue("publishedDateTime", fragment.getPublishedDateTime());
+        params.addValue("fragmentType", fragment.getType().name());
+        params.addValue("sequenceNo", fragment.getSequenceNo());
+        // Replace all null characters with empty string.
+        params.addValue("text", fragment.getText().replace('\0', ' '));
+        params.addValue("processedCount", fragment.getProcessedCount());
+        params.addValue("processedDateTime", fragment.getProcessedDateTime());
+        params.addValue("pendingProcessing", fragment.isPendingProcessing());
         return params;
     }
 }

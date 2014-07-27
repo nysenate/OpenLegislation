@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.BaseLegislativeContent;
-import gov.nysenate.openleg.model.entity.Committee;
+import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 

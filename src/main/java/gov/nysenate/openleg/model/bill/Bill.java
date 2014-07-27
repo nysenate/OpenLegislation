@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
-import com.google.common.collect.SetMultimap;
-import gov.nysenate.openleg.model.BaseLegislativeContent;
-import gov.nysenate.openleg.model.entity.Committee;
+import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.service.bill.BillAmendNotFoundEx;
@@ -44,9 +42,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** Indicates the amendment version that is currently active for this bill. */
     protected String activeVersion = BillId.BASE_VERSION;
 
-    /** A list of ids of versions of this legislation in previous sessions. */
-    protected Set<BillId> previousVersions = new HashSet<>();
-
     /** The Legislator who formally introduced the bill. */
     protected BillSponsor sponsor;
 
@@ -58,6 +53,12 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /** A list of actions that have been made on this bill. */
     protected List<BillAction> actions = new ArrayList<>();
+
+    /** A list of ids for versions of this legislation in previous sessions. */
+    protected Set<BillId> previousVersions = new HashSet<>();
+
+    /** Designates the type of program bill, if applicable. */
+    protected String programInfo = "";
 
     /** --- Constructors --- */
 
@@ -346,5 +347,13 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     public void setAdditionalSponsors(List<Member> additionalSponsors) {
         this.additionalSponsors = additionalSponsors;
+    }
+
+    public String getProgramInfo() {
+        return programInfo;
+    }
+
+    public void setProgramInfo(String programInfo) {
+        this.programInfo = programInfo;
     }
 }

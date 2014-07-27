@@ -1,13 +1,11 @@
 package gov.nysenate.openleg.dao.calendar;
 
-import gov.nysenate.openleg.dao.base.SqlQueryEnum;
-import gov.nysenate.openleg.dao.base.SqlTable;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import gov.nysenate.openleg.dao.base.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public enum SqlCalendarQuery implements SqlQueryEnum
+/**
+ * Queries related to the retrieval and persistence of senate calendars.
+ */
+public enum SqlCalendarQuery implements BasicSqlQuery
 {
     /** --- Calendar Base --- */
 
@@ -46,7 +44,7 @@ public enum SqlCalendarQuery implements SqlQueryEnum
     ),
     SELECT_CALENDAR_SUP_ID(
         "SELECT id FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + "\n" +
-        "WHERE calendar_no = :calendarNo AND calendar_year = :year AND sup_version = :supVersion)"
+        "WHERE calendar_no = :calendarNo AND calendar_year = :year AND sup_version = :supVersion"
     ),
     INSERT_CALENDAR_SUP(
         "INSERT INTO ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + "\n" +
@@ -62,7 +60,6 @@ public enum SqlCalendarQuery implements SqlQueryEnum
 
     /** --- Calendar Supplemental Entries --- */
 
-
     SELECT_CALENDAR_SUP_ENTRIES(
         "SELECT * FROM ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + "\n" +
         "WHERE calendar_sup_id IN (" + SELECT_CALENDAR_SUP_ID.sql + ")"
@@ -74,7 +71,7 @@ public enum SqlCalendarQuery implements SqlQueryEnum
         "INSERT INTO ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + "\n" +
         "(calendar_sup_id, section_code, bill_calendar_no, bill_print_no, bill_amend_version, bill_session_year, \n" +
         " sub_bill_print_no, sub_bill_amend_version, sub_bill_session_year, high)\n" +
-        "SELECT id, :sectionCode, :billCalNo, :printNo, :session, :amendVersion, :subPrintNo, :subAmendVersion, " +
+        "SELECT id, :sectionCode, :billCalNo, :printNo, :amendVersion, :session, :subPrintNo, :subAmendVersion, " +
         "       :subSession, :high \n" +
         "FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + "\n" +
         "WHERE calendar_no = :calendarNo AND calendar_year = :year AND sup_version = :supVersion"
@@ -82,8 +79,56 @@ public enum SqlCalendarQuery implements SqlQueryEnum
     DELETE_CALENDAR_SUP_ENTRIES(
         "DELETE FROM ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + "\n" +
         "WHERE calendar_sup_id IN (" + SELECT_CALENDAR_SUP_ID.sql + ")"
-    );
+    ),
 
+    /** --- Calendar Active List --- */
+
+    SELECT_CALENDAR_ACTIVE_LISTS(
+        "SELECT * FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + "\n" +
+        "WHERE calendar_no = :calendarNo AND calendar_year = :year"
+    ),
+    SELECT_CALENDAR_ACTIVE_LIST(
+        SELECT_CALENDAR_ACTIVE_LISTS + " AND active_list_no = :activeListNo"
+    ),
+    SELECT_CALENDAR_ACTIVE_LIST_ID(
+        "SELECT id FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + "\n" +
+        "WHERE calendar_no = :calendarNo AND calendar_year = :year AND active_list_no = :activeListNo"
+    ),
+    INSERT_CALENDAR_ACTIVE_LIST(
+        "INSERT INTO ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + "\n" +
+        "(active_list_no, calendar_no, calendar_year, calendar_date, notes, release_date_time, last_fragment_id, " +
+        " modified_date_time, published_date_time)\n" +
+        "VALUES (:activeListNo, :calendarNo, :year, :calendarDate, :notes, :releaseDateTime, :lastFragmentId, " +
+        "        :modifiedDateTime, :publishedDateTime)"
+    ),
+    UPDATE_CALENDAR_ACTIVE_LIST(
+        "UPDATE ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + "\n" +
+        "SET calendar_date = :calendarDate, notes = :notes, release_date_time = :releaseDateTime, " +
+        "    last_fragment_id = :lastFragmentId, modified_date_time = :modifiedDateTime, " +
+        "    published_date_time = :publishedDateTime\n" +
+        "WHERE calendar_no = :calendarNo AND calendar_year = :year AND active_list_no = :activeListNo"
+    ),
+    DELETE_CALENDAR_ACTIVE_LIST(
+        "DELETE FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + "\n" +
+        "WHERE calendar_no = :calendarNo AND calendar_year = :year AND active_list_no = :activeListNo"
+    ),
+
+    /** --- Calendar Active List --- */
+
+    SELECT_CALENDAR_ACTIVE_LIST_ENTRIES(
+        "SELECT * FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST_ENTRY + "\n" +
+        "WHERE calendar_active_list_id IN (" + SELECT_CALENDAR_ACTIVE_LIST_ID.sql + ")"
+    ),
+    INSERT_CALENDAR_ACTIVE_LIST_ENTRY(
+        "INSERT INTO ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST_ENTRY + "\n" +
+        "(calendar_active_list_id, bill_calendar_no, bill_print_no, bill_amend_version, bill_session_year)\n" +
+        "SELECT id, :billCalendarNo, :printNo, :amendVersion, :session\n" +
+        "FROM (" + SELECT_CALENDAR_ACTIVE_LIST_ID.sql + ") cal_act_list_id"
+    ),
+    DELETE_CALENDAR_ACTIVE_LIST_ENTRY(
+        "DELETE FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST_ENTRY + "\n" +
+        "WHERE calendar_active_list_id IN (" + SELECT_CALENDAR_ACTIVE_LIST_ID.sql + ")"
+    );
 
     private String sql;
 
@@ -92,9 +137,17 @@ public enum SqlCalendarQuery implements SqlQueryEnum
     }
 
     @Override
-    public String getSql(String environmentSchema) {
-        Map<String, String> replaceMap = new HashMap<>();
-        replaceMap.put("schema", environmentSchema);
-        return new StrSubstitutor(replaceMap).replace(this.sql);
+    public String getSql(String envSchema) {
+        return SqlQueryUtils.getSqlWithSchema(this.sql, envSchema);
+    }
+
+    @Override
+    public String getSql(String envSchema, LimitOffset limitOffset) {
+        return SqlQueryUtils.getSqlWithSchema(sql, envSchema, limitOffset);
+    }
+
+    @Override
+    public String getSql(String envSchema, OrderBy orderBy, LimitOffset limitOffset) {
+        return SqlQueryUtils.getSqlWithSchema(this.sql, envSchema, orderBy, limitOffset);
     }
 }

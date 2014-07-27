@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.util;
 
-import gov.nysenate.openleg.model.BaseLegislativeContent;
+import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.bill.Bill;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;

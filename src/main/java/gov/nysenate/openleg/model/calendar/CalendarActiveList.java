@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.model.BaseLegislativeContent;
+import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +48,36 @@ public class CalendarActiveList extends BaseLegislativeContent
 
     public void addEntry(CalendarActiveListEntry entry) {
         this.entries.add(entry);
+    }
+
+    /** --- Overrides --- */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CalendarActiveList)) return false;
+        if (!super.equals(o)) return false;
+        CalendarActiveList that = (CalendarActiveList) o;
+        if (calDate != null ? !calDate.equals(that.calDate) : that.calDate != null) return false;
+        if (calendarId != null ? !calendarId.equals(that.calendarId) : that.calendarId != null) return false;
+        if (entries != null ? !entries.equals(that.entries) : that.entries != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (notes != null ? !notes.equals(that.notes) : that.notes != null) return false;
+        if (releaseDateTime != null ? !releaseDateTime.equals(that.releaseDateTime) : that.releaseDateTime != null)
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + (calendarId != null ? calendarId.hashCode() : 0);
+        result = 31 * result + (notes != null ? notes.hashCode() : 0);
+        result = 31 * result + (calDate != null ? calDate.hashCode() : 0);
+        result = 31 * result + (releaseDateTime != null ? releaseDateTime.hashCode() : 0);
+        result = 31 * result + (entries != null ? entries.hashCode() : 0);
+        return result;
     }
 
     /** --- Basic Getters/Setters --- */

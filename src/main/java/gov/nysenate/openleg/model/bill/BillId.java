@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static gov.nysenate.openleg.model.BaseLegislativeContent.resolveSessionYear;
+import static gov.nysenate.openleg.model.base.BaseLegislativeContent.resolveSessionYear;
 
 /**
  * An immutable representation of the fields that are used to identify a particular bill.
@@ -36,6 +36,7 @@ public class BillId implements Serializable, Comparable<BillId>
 
     /**
      * Use this constructor when the version is not known/applicable.
+     *
      * @param printNo String
      * @param session int
      */
@@ -47,6 +48,7 @@ public class BillId implements Serializable, Comparable<BillId>
      * Performs strict checks on the basePrintNo when constructing BillId. If you have a bill id
      * as S02134A-2013, you should pass it in as ("S02134", 2013, "A"). However you can also
      * pass it in as ("S02134A", 2013, null|"") and the constructor will parse out the version.
+     *
      * @param basePrintNo String
      * @param session int
      * @param version String
@@ -98,6 +100,7 @@ public class BillId implements Serializable, Comparable<BillId>
 
     /**
      * Indicates if this bill is currently set to the base version.
+     *
      * @param version The bill version
      * @return Returns true if the version will be represented as a base bill
      */
@@ -107,6 +110,7 @@ public class BillId implements Serializable, Comparable<BillId>
 
     /**
      * Creates a unique id for the bill with padding to resemble LBDC's representation.
+     *
      * @return - The billId padded to 5 digits with zeros.
      */
     public String getPaddedBillIdString() {
@@ -116,6 +120,7 @@ public class BillId implements Serializable, Comparable<BillId>
     /**
      * Returns the print number padded with 5 zeros, e.g S01234. This is how LBDC represents
      * print numbers in their SOBI files.
+     *
      * @return - The print number padded to 5 digits with zeros.
      */
     public String getPaddedPrintNumber() {
@@ -132,6 +137,7 @@ public class BillId implements Serializable, Comparable<BillId>
     /**
      * Given {basePrint:'S1234', version:'A', session:2013}, Output: 'S1234A-2013'
      * Note: Does not pad the string to a fixed length, use #getPaddedBillIdString() if padding is desired
+     *
      * @return String representation of BillId.
      */
     @Override
@@ -151,6 +157,7 @@ public class BillId implements Serializable, Comparable<BillId>
     /**
      * Not an override but is a useful equals comparison that ignores version so that two BillIds are
      * equivalent if their base BillIds match.
+     *
      * @param o
      * @return boolean
      */

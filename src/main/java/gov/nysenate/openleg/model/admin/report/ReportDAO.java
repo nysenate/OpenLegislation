@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.model.admin.report;
 
-import gov.nysenate.openleg.util.Application;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 
@@ -114,7 +113,7 @@ public class ReportDAO
             "LEFT JOIN report_observation ON (report.id=report_observation.reportId) " +
             "LEFT JOIN report_error ON (report_observation.errorId=report_error.id) ";
 
-        QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
+        QueryRunner runner = new QueryRunner(null);//Application.getDB().getDataSource());
         return runner.query(sql, new JoinedReportHandler());
     }
 
@@ -137,7 +136,7 @@ public class ReportDAO
         "WHERE report.id = ?";
 
         try {
-            QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
+            QueryRunner runner = new QueryRunner(null);//Application.getDB().getDataSource());
             return runner.query(sql, new JoinedReportHandler(), reportId).get(0);
         }
         catch (IndexOutOfBoundsException e) {

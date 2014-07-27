@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -10,10 +11,15 @@ import java.util.Date;
 
 public class DateHelper
 {
-    private static Logger logger = Logger.getLogger(DateHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(DateHelper.class);
+
+    /** --- Date Formats --- */
+
     public final static DateFormat LRS_DATE_ONLY_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     public final static DateFormat LRS_DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH.mm.ss'Z'");
     public static SimpleDateFormat SOBI_FILE_DATE_FORMAT = new SimpleDateFormat("'SOBI.D'yyMMdd'.T'HHmmss'.TXT'");
+
+    /** --- Static Methods --- */
 
     public static Date getDate(String lbdcDate)
     {

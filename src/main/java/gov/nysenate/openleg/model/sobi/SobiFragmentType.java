@@ -8,12 +8,12 @@ package gov.nysenate.openleg.model.sobi;
 public enum SobiFragmentType
 {
     BILL            (false, "[0-9]{4}[A-Z][0-9]{5}[ A-Z].+", ""),
-    AGENDA          (true, "<senagenda.+", "</senagenda.+"),
-    AGENDA_VOTE     (true, "<senagendavote.+", "</senagendavote.+"),
-    CALENDAR        (true, "<sencalendar.+", "</sencalendar.+"),
-    CALENDAR_ACTIVE (true, "<sencalendaractive.+", "</sencalendaractive.+"),
-    COMMITTEE       (true, "<sencommmem.+", "</sencommmem.+"),
-    ANNOTATION      (true, "<senannotated.+", "</senannotated.+");
+    AGENDA          (true, "<senagenda .+", "</senagenda.+"),
+    AGENDA_VOTE     (true, "<senagendavote .+", "</senagendavote.+"),
+    CALENDAR        (true, "<sencalendar .+", "</sencalendar.+"),
+    CALENDAR_ACTIVE (true, "<sencalendaractive .+", "</sencalendaractive.+"),
+    COMMITTEE       (true, "<sencommmem .+", "</sencommmem.+"),
+    ANNOTATION      (true, "<senannotated .+", "</senannotated.+");
 
     boolean isXml;
     String startPattern;

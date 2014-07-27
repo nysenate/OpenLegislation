@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.BaseLegislativeContent;
+import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import org.joda.time.LocalDate;
 
 import java.io.Serializable;

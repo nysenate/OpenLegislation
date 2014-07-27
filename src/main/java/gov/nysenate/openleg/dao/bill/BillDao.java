@@ -5,6 +5,9 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
 
+/**
+ * DAO interface for retrieving and persisting Bill data.
+ */
 public interface BillDao
 {
     /**

@@ -4,7 +4,6 @@ import gov.nysenate.openleg.model.admin.report.Report;
 import gov.nysenate.openleg.model.admin.report.ReportError;
 import gov.nysenate.openleg.model.admin.report.ReportObservation;
 import gov.nysenate.openleg.scripts.BaseScript;
-import gov.nysenate.openleg.util.Application;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -30,7 +29,7 @@ public class CreateErrors extends BaseScript
 
         // Use a single connection so that LAST_INSERT_ID works.
         QueryRunner runner = new QueryRunner();
-        Connection conn = Application.getDB().getDataSource().getConnection();
+        Connection conn = null;// FIXME Application.getDB().getDataSource().getConnection();
 
         runner.update(conn, "UPDATE report_observation SET errorId = NULL WHERE 1=1");
         runner.update(conn, "DELETE FROM report_error WHERE 1=1");

@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.sobi;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -8,7 +10,7 @@ import java.util.regex.Matcher;
 
 /**
  * The SobiFragment class represents a portion of a SobiFile file that contains data pertaining
- * to a certain entity type.
+ * to a certain entity type (Bill, Calendar, etc).
  *
  * For example if a SOBI file contains bill data and agenda data, the file can be broken down
  * into two SOBIFragments, one containing the portion for just the bill data and the other with
@@ -22,22 +24,41 @@ public class SobiFragment
     /** The type of fragment, e.g bill, agenda, etc. */
     private SobiFragmentType type;
 
-    /** The id of the fragment which is set by the collate process. */
+    /** The unique id of the fragment which is derived from the other fields.
+     *  The fragmentId is created such that it can be used for sorting. */
     private String fragmentId;
 
-    /** A counter used to provide a means of ordering multiple fragments of the same type. */
-    private int counter;
+    /** A number used to provide a means of ordering fragments within the same SobiFile. */
+    private int sequenceNo;
 
     /** The actual text body of the fragment. */
     private String text;
 
+    /** The date/time when the fragment was recorded into the backing store. */
+    private Date stagedDateTime;
+
+    /** If true, this SobiFragment is awaiting processing. */
+    private boolean pendingProcessing;
+
+    /** The number of times this file has been processed. */
+    private int processedCount;
+
+    /** The datetime when the SOBI file was last processed. */
+    private Date processedDateTime;
+
     /** --- Constructors --- */
 
-    public SobiFragment(SobiFile parentSobiFile, SobiFragmentType type, String text, int counter) {
+    public SobiFragment(SobiFile parentSobiFile, SobiFragmentType type, String text, int sequenceNo) {
+        this(generateFragmentId(parentSobiFile, type, sequenceNo),
+             parentSobiFile, type, text, sequenceNo);
+    }
+
+    public SobiFragment(String fragmentId, SobiFile parentSobiFile, SobiFragmentType type, String text, int sequenceNo) {
+        this.fragmentId = fragmentId;
         this.parentSobiFile = parentSobiFile;
         this.type = type;
         this.text = text;
-        this.counter = counter;
+        this.sequenceNo = sequenceNo;
     }
 
     /** --- Methods --- */
@@ -51,13 +72,14 @@ public class SobiFragment
     }
 
     /**
-     * Parses the given SOBI fragment into a list of blocks. Replaces null bytes in each line with spaces to
-     * bring them into the proper fixed width formats.
+     * Parses the given Sobi fragment into a list of blocks if it's in block format.
+     * Replaces null bytes in each line with spaces to bring them into the proper fixed width formats.
      *
      * @see gov.nysenate.openleg.model.sobi.SobiBlock
      * @return List<SobiBlock> if fragment type supports blocks, empty list otherwise.
      */
-    public List<SobiBlock> getSOBIBlocks() {
+    @JsonIgnore
+    public List<SobiBlock> getSobiBlocks() {
         List<SobiBlock> blocks = new ArrayList<>();
         if (isBlockFormat()) {
             SobiBlock block = null;
@@ -74,11 +96,11 @@ public class SobiFragment
                         block = new SobiBlock(fragmentId, type, lineNo, line);
                     }
                     else if (block.getHeader().equals(headerMatcher.group()) && block.isMultiline()) {
-                        // active multi-line block with a new matching line: extend block
+                        // Active multi-line block with a new matching line: extend block
                         block.extend(line);
                     }
                     else {
-                        // active block does not match new line or can't be extended: create new block
+                        // Active block does not match new line or can't be extended: create new block
                         block.setEndLineNo(lineNo - 1);
                         blocks.add(block);
                         SobiBlock newBlock = new SobiBlock(fragmentId, type, lineNo, line);
@@ -105,20 +127,25 @@ public class SobiFragment
         return blocks;
     }
 
+    /**
+     * Creates a unique fragment id using the given parameters.
+     */
+    public static String generateFragmentId(SobiFile sf, SobiFragmentType type, int sequenceNo) {
+        return String.format("%s-%d-%s", sf.getFileName(), sequenceNo, type.name());
+    }
+
+    /** --- Overrides --- */
+
     @Override
     public String toString() {
         return "SobiFragment{" + "fragmentType=" + type + ", fileName='" + fragmentId + '\'' +
                 ", parentSobiFile=" + parentSobiFile + '}';
     }
 
-    /** --= Functional Getters/Setters --- */
+    /** --- Functional Getters/Setters --- */
 
     public Date getPublishedDateTime() {
         return parentSobiFile.getPublishedDateTime();
-    }
-
-    public Date getProcessedDateTime() {
-        return parentSobiFile.getProcessedDateTime();
     }
 
     /** --- Basic Getters/Setters --- */
@@ -135,15 +162,43 @@ public class SobiFragment
         return fragmentId;
     }
 
-    public void setFragmentId(String fragmentId) {
-        this.fragmentId = fragmentId;
-    }
-
     public String getText() {
         return text;
     }
 
-    public int getCounter() {
-        return counter;
+    public int getSequenceNo() {
+        return sequenceNo;
+    }
+
+    public Date getStagedDateTime() {
+        return stagedDateTime;
+    }
+
+    public void setStagedDateTime(Date stagedDateTime) {
+        this.stagedDateTime = stagedDateTime;
+    }
+
+    public boolean isPendingProcessing() {
+        return pendingProcessing;
+    }
+
+    public void setPendingProcessing(boolean pendingProcessing) {
+        this.pendingProcessing = pendingProcessing;
+    }
+
+    public int getProcessedCount() {
+        return processedCount;
+    }
+
+    public void setProcessedCount(int processedCount) {
+        this.processedCount = processedCount;
+    }
+
+    public Date getProcessedDateTime() {
+        return processedDateTime;
+    }
+
+    public void setProcessedDateTime(Date processedDateTime) {
+        this.processedDateTime = processedDateTime;
     }
 }

@@ -1,13 +1,8 @@
 package gov.nysenate.openleg.dao.bill;
 
-import gov.nysenate.openleg.dao.base.SqlQueryEnum;
-import gov.nysenate.openleg.dao.base.SqlTable;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import gov.nysenate.openleg.dao.base.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public enum SqlBillQuery implements SqlQueryEnum
+public enum SqlBillQuery implements BasicSqlQuery
 {
     /** --- Bill Base --- */
 
@@ -18,16 +13,16 @@ public enum SqlBillQuery implements SqlQueryEnum
     UPDATE_BILL_SQL(
         "UPDATE ${schema}." + SqlTable.BILL + "\n" +
         "SET title = :title, law_section = :lawSection, law_code = :lawCode, summary = :summary, active_version = :activeVersion, " +
-        "    active_year = :activeYear, modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, " +
-        "    last_fragment_file_name = :lastFragmentFileName, last_fragment_type = :lastFragmentType \n" +
+        "    active_year = :activeYear, program_info = :programInfo, modified_date_time = :modifiedDateTime, " +
+        "    published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId \n" +
         "WHERE print_no = :printNo AND session_year = :sessionYear"
     ),
     INSERT_BILL_SQL(
         "INSERT INTO ${schema}." + SqlTable.BILL + "\n" +
         "(print_no, session_year, title, law_section, law_code, summary, active_version, active_year, " +
-        " modified_date_time, published_date_time, last_fragment_file_name, last_fragment_type) \n" +
+        " program_info, modified_date_time, published_date_time, last_fragment_id) \n" +
         "VALUES (:printNo, :sessionYear, :title, :lawSection, :lawCode, :summary, :activeVersion, :activeYear, " +
-        "        :modifiedDateTime, :publishedDateTime, :lastFragmentFileName, :lastFragmentType)"
+        "        :programInfo, :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
 
     /** --- Bill Sponsor --- */
@@ -62,17 +57,17 @@ public enum SqlBillQuery implements SqlQueryEnum
         "SET sponsor_memo = :sponsorMemo, act_clause = :actClause, full_text = :fullText, stricken = :stricken, " +
         "    current_committee_name = :currentCommitteeName, current_committee_action = :currentCommitteeAction, " +
         "    uni_bill = :uniBill, modified_date_time = :modifiedDateTime, " +
-        "    published_date_time = :publishedDateTime, last_fragment_file_name = :lastFragmentFileName, " +
-        "    last_fragment_type = :lastFragmentType \n" +
+        "    published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId \n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND version = :version"
     ),
     INSERT_BILL_AMENDMENT_SQL(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "(bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, stricken, " +
-        " current_committee_name, current_committee_action" +
-        " uni_bill, modified_date_time, published_date_time, last_fragment_file_name, last_fragment_type)\n" +
-        "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, :currentCommitteeName, " +
-        "       :currentCommitteeAction, :uniBill, :modifiedDateTime, :publishedDateTime, :lastFragmentFileName, :lastFragmentType)"
+        " current_committee_name, current_committee_action, uni_bill, modified_date_time, " +
+        " published_date_time, last_fragment_id)\n" +
+        "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, " +
+        "       :currentCommitteeName, :currentCommitteeAction, :uniBill, :modifiedDateTime, " +
+        "       :publishedDateTime, :lastFragmentId)"
     ),
 
     /** --- Bill Amendment Cosponsors --- */
@@ -150,9 +145,9 @@ public enum SqlBillQuery implements SqlQueryEnum
     INSERT_BILL_ACTION_SQL(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_ACTION + "\n" +
         "(bill_print_no, bill_session_year, bill_amend_version, effect_date, text, sequence_no, " +
-        " modified_date_time, published_date_time, last_fragment_file_name, last_fragment_type) \n" +
+        " modified_date_time, published_date_time, last_fragment_id) \n" +
         "VALUES (:printNo, :sessionYear, :version, :effectDate, :text, :sequenceNo, " +
-        "        :modifiedDateTime, :publishedDateTime, :lastFragmentFileName, :lastFragmentType)"
+        "        :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
     DELETE_BILL_ACTION_SQL("" +
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_ACTION + "\n" +
@@ -213,9 +208,18 @@ public enum SqlBillQuery implements SqlQueryEnum
         this.sql = sql;
     }
 
-    public String getSql(String environmentSchema) {
-        Map<String, String> replaceMap = new HashMap<>();
-        replaceMap.put("schema", environmentSchema);
-        return new StrSubstitutor(replaceMap).replace(this.sql);
+    @Override
+    public String getSql(String envSchema) {
+        return SqlQueryUtils.getSqlWithSchema(sql, envSchema);
+    }
+
+    @Override
+    public String getSql(String envSchema, LimitOffset limitOffset) {
+        return SqlQueryUtils.getSqlWithSchema(sql, envSchema, limitOffset);
+    }
+
+    @Override
+    public String getSql(String envSchema, OrderBy orderBy, LimitOffset limitOffset) {
+        return SqlQueryUtils.getSqlWithSchema(this.sql, envSchema, orderBy, limitOffset);
     }
 }

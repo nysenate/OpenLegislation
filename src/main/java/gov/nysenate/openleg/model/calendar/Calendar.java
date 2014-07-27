@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.calendar;
 
-import gov.nysenate.openleg.model.BaseLegislativeContent;
+import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 
 import java.util.Date;
 import java.util.TreeMap;

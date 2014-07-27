@@ -10,7 +10,14 @@ import java.util.List;
 public class LimitOffset
 {
     /** Use this reference when no limit is desired. */
-    public static LimitOffset ALL = new LimitOffset(0,0);
+    public static final LimitOffset ALL = new LimitOffset(0,0);
+
+    /** Some references for convenience. */
+    public static final LimitOffset TEN = new LimitOffset(10);
+    public static final LimitOffset TWENTY_FIVE = new LimitOffset(25);
+    public static final LimitOffset FIFTY = new LimitOffset(50);
+    public static final LimitOffset HUNDRED = new LimitOffset(100);
+    public static final LimitOffset THOUSAND = new LimitOffset(1000);
 
     /** Number of elements to limit the result set to. */
     private final int limit;

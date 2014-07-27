@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
-import gov.nysenate.openleg.processors.sobi.bill.BillProcessor;
+import gov.nysenate.openleg.service.bill.BillProcessor;
 import gov.nysenate.openleg.util.*;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -41,8 +41,8 @@ public class SenagendaProcessor
     {
         // TODO: We need a better default here
         Date modifiedDate = DateHelper.getFileDate(file.getName());
-        ChangeLogger.setContext(file, modifiedDate);
-        XmlHelper xml = Application.getXmlHelper();
+//        ChangeLogger.setContext(file, modifiedDate);
+        XmlHelper xml = null;//Application.getXmlHelper();
 
         // Parse the document and construct our base agenda.
         Document doc = xml.parse(file);
@@ -68,7 +68,7 @@ public class SenagendaProcessor
         if (action.equalsIgnoreCase("remove")) {
             logger.info("Removing agenda: " + agenda.getOid());
             storage.del(key);
-            ChangeLogger.delete(key, storage);
+//            ChangeLogger.delete(key, storage);
         }
         else if (action.equalsIgnoreCase("replace")) {
             logger.info("Replacing senagenda addendums: "+agenda.getOid());
@@ -113,7 +113,7 @@ public class SenagendaProcessor
             agenda.setAgendaInfoAddendum(addendums);
 
             // Record and persist these changes
-            ChangeLogger.record(key, storage);
+//            ChangeLogger.record(key, storage);
             storage.set(agenda);
         }
         else {
@@ -125,9 +125,9 @@ public class SenagendaProcessor
     {
         // TODO: We need a better default here
         Date modifiedDate = DateHelper.getFileDate(file.getName());
-        ChangeLogger.setContext(file, modifiedDate);
+//        ChangeLogger.setContext(file, modifiedDate);
 
-        XmlHelper xml = Application.getXmlHelper();
+        XmlHelper xml = null;//Application.getXmlHelper();
         Document doc = xml.parse(file);
         Node xmlAgendgaVote = xml.getNode("SENATEDATA/senagendavote", doc);
         Integer agendaNo = xml.getInteger("@no", xmlAgendgaVote);

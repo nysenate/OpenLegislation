@@ -3,6 +3,8 @@ package gov.nysenate.openleg.service.entity;
 import gov.nysenate.openleg.dao.entity.CommitteeDao;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import gov.nysenate.openleg.service.base.SobiProcessor;
 import gov.nysenate.openleg.service.sobi.AbstractSobiProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.apache.log4j.Logger;
@@ -20,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CommitteeProcessor extends AbstractSobiProcessor
+public class CommitteeProcessor extends AbstractSobiProcessor implements SobiProcessor
 {
     private static final Logger logger = Logger.getLogger(CommitteeProcessor.class);
 
@@ -35,6 +37,13 @@ public class CommitteeProcessor extends AbstractSobiProcessor
     @Autowired
     protected XmlHelper xml;
 
+    /** {@inheritDoc  */
+    @Override
+    public SobiFragmentType getSupportedType() {
+        return SobiFragmentType.COMMITTEE;
+    }
+
+    /** {@inheritDoc  */
     @Override
     public void process(SobiFragment sobiFragment) {
         logger.info("Called committee processor");
@@ -50,9 +59,9 @@ public class CommitteeProcessor extends AbstractSobiProcessor
 
             committeeRoot = xml.getNode("committees", committeeRoot);
             NodeList committeeNodes = committeeRoot.getChildNodes();
-            for(int i=0;i<committeeNodes.getLength();i++){
+            for(int i = 0; i < committeeNodes.getLength() ; i++){
                 Node committeeNode = committeeNodes.item(i);
-                if(committeeNode.getNodeName().equals("committee")){
+                if (committeeNode.getNodeName().equals("committee")) {
                     try {
                         Committee committee = new Committee();
                         committee.setSession(sessionYear);
@@ -72,6 +81,8 @@ public class CommitteeProcessor extends AbstractSobiProcessor
         }
     }
 
+    /** --- Internal Methods --- */
+
     private Committee processCommittee(Node committeeNode, Committee committee) throws XPathExpressionException, ParseException {
         committee.setName(xml.getString("name/text()", committeeNode));
         committee.setLocation(xml.getString("location/text()", committeeNode));
@@ -88,9 +99,9 @@ public class CommitteeProcessor extends AbstractSobiProcessor
     private List<CommitteeMember> processCommitteeMembers(Node committeeMembership, Committee committee) throws XPathExpressionException {
         List<CommitteeMember> committeeMembers = new ArrayList<CommitteeMember>();
         NodeList committeeMembersNodes = committeeMembership.getChildNodes();
-        for(int i=0; i<committeeMembersNodes.getLength(); i++){
+        for(int i = 0; i < committeeMembersNodes.getLength(); i++){
             Node memberNode = committeeMembersNodes.item(i);
-            if(memberNode.getNodeName().equals("member")) {
+            if (memberNode.getNodeName().equals("member")) {
                 String shortName = xml.getString("name/text()", memberNode);
                 Member sessionMember;
                 try {

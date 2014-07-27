@@ -172,9 +172,7 @@ public class SobiBlock
 
     /**
      * Sets the BillId for this block.
-     * @param printNo String
-     * @param version String
-     * @param session int
+     *
      * @throws NumberFormatException on malformed print numbers
      */
     public void setBillId(String printNo, String version, int session) {
@@ -185,7 +183,6 @@ public class SobiBlock
 
     /**
      * Sets the end line number ensuring that it is >= 0.
-     * @param endLineNo Integer
      */
     public void setEndLineNo(Integer endLineNo) {
         if (endLineNo < 0) {

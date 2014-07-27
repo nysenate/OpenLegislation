@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.dao.entity;
 
-import gov.nysenate.openleg.dao.base.SqlQueryEnum;
-import gov.nysenate.openleg.dao.base.SqlQueryUtils;
-import gov.nysenate.openleg.dao.base.SqlTable;
+import gov.nysenate.openleg.dao.base.*;
 
-public enum SqlMemberQuery implements SqlQueryEnum
+public enum SqlMemberQuery implements BasicSqlQuery
 {
     /** --- Member --- */
 
@@ -35,7 +33,17 @@ public enum SqlMemberQuery implements SqlQueryEnum
     }
 
     @Override
-    public String getSql(String environmentSchema) {
-        return SqlQueryUtils.getSqlWithSchema(sql, environmentSchema);
+    public String getSql(String envSchema) {
+        return SqlQueryUtils.getSqlWithSchema(sql, envSchema);
+    }
+
+    @Override
+    public String getSql(String envSchema, LimitOffset limitOffset) {
+        return SqlQueryUtils.getSqlWithSchema(sql, envSchema, limitOffset);
+    }
+
+    @Override
+    public String getSql(String envSchema, OrderBy orderBy, LimitOffset limitOffset) {
+        return SqlQueryUtils.getSqlWithSchema(this.sql, envSchema, orderBy, limitOffset);
     }
 }

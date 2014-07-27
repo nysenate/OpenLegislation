@@ -4,7 +4,7 @@ import gov.nysenate.openleg.dao.calendar.CalendarDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.service.CachingService;
+import gov.nysenate.openleg.service.base.CachingService;
 import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

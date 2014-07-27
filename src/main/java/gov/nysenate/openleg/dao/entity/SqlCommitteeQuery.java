@@ -1,13 +1,9 @@
 package gov.nysenate.openleg.dao.entity;
 
-import gov.nysenate.openleg.dao.base.SqlTable;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import gov.nysenate.openleg.dao.base.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public enum SqlCommitteeQuery {
-
+public enum SqlCommitteeQuery implements BasicSqlQuery
+{
     SELECT_COMMITTEE_CURRENT_SQL(
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE + " JOIN ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
         "ON " + SqlTable.COMMITTEE + ".name=" + SqlTable.COMMITTEE_VERSION + ".committee_name" + "\n" +
@@ -96,17 +92,26 @@ public enum SqlCommitteeQuery {
     DELETE_COMMITTEE_MEMBERS(
         "DELETE FROM ${schema}." + SqlTable.COMMITTEE_MEMBER + "\n" +
         "WHERE committee_name=:committeeName AND chamber=CAST(:chamber AS chamber) AND session_year=:sessionYear AND version_created=:referenceDate"
-    )
-    ;
+    );
+
     private String sql;
 
     SqlCommitteeQuery(String sql) {
-        this.sql=sql;
+        this.sql = sql;
     }
 
-    public String getSql(String environmentSchema) {
-        Map<String, String> replaceMap=new HashMap<>();
-        replaceMap.put("schema", environmentSchema);
-        return new StrSubstitutor(replaceMap).replace(this.sql);
+    @Override
+    public String getSql(String envSchema) {
+        return SqlQueryUtils.getSqlWithSchema(sql, envSchema);
+    }
+
+    @Override
+    public String getSql(String envSchema, LimitOffset limitOffset) {
+        return SqlQueryUtils.getSqlWithSchema(sql, envSchema, limitOffset);
+    }
+
+    @Override
+    public String getSql(String envSchema, OrderBy orderBy, LimitOffset limitOffset) {
+        return SqlQueryUtils.getSqlWithSchema(this.sql, envSchema, orderBy, limitOffset);
     }
 }

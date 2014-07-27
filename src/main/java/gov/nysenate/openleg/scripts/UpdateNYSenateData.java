@@ -2,7 +2,6 @@ package gov.nysenate.openleg.scripts;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.services.MemoryCachedNYSenateClient;
 import gov.nysenate.services.NYSenateClient;
@@ -42,8 +41,8 @@ public class UpdateNYSenateData extends BaseScript
 
     public void execute(CommandLine opts) throws IOException, XmlRpcException
     {
-        String apiKey = Application.getConfig().getValue("nysenate.apiKey");
-        String apiDomain = Application.getConfig().getValue("nysenate.apiDomain");
+        String apiKey = "";// FIXME Application.getConfig().getValue("nysenate.apiKey");
+        String apiDomain = "";// FIXME Application.getConfig().getValue("nysenate.apiDomain");
         NYSenateClient client = new MemoryCachedNYSenateClient(apiDomain, apiKey);
 
         ObjectMapper mapper = new ObjectMapper();

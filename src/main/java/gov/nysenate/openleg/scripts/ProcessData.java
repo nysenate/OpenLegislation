@@ -1,10 +1,7 @@
 package gov.nysenate.openleg.scripts;
 
-import gov.nysenate.openleg.Environment;
+import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.processors.DataProcessor;
-import gov.nysenate.openleg.service.ServiceBase;
-import gov.nysenate.openleg.service.UpdateReporter;
-import gov.nysenate.openleg.util.Application;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
@@ -67,23 +64,10 @@ public class ProcessData extends BaseScript
             }
         }
 
-        ArrayList<ServiceBase> services = new ArrayList<ServiceBase>();
-        for (String target : pushTargets) {
-            if (target.equals("reporter")) {
-                services.add(new UpdateReporter());
-            }
-            else {
-                System.err.println("Invalid push target: "+target);
-                this.printUsage(opts);
-                System.exit(1);
-            }
-        }
-
-        Environment env = Application.getEnvironment();
+        Environment env = null;// FIXME Application.getEnvironment();
         DataProcessor process = new DataProcessor();
         for (String task : tasks) {
             switch (task) {
-                case "stage": process.stage(env.getStagingDirectory(), env.getWorkingDirectory()); break;
                 case "collate": process.collate(); break;
                 case "ingest": process.ingest(); break;
                 default:

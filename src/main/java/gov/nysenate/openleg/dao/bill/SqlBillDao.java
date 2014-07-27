@@ -329,6 +329,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             bill.setLaw(rs.getString("law_code"));
             bill.setSummary(rs.getString("summary"));
             bill.setActiveVersion(rs.getString("active_version").trim());
+            bill.setProgramInfo(rs.getString("program_info"));
             bill.setYear(rs.getInt("active_year"));
             bill.setModifiedDate(rs.getTimestamp("modified_date_time"));
             bill.setPublishDate(rs.getTimestamp("published_date_time"));
@@ -508,8 +509,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Returns a MapSqlParameterSource with columns mapped to Bill values for use in update/insert queries on
      * the bill table.
-     * @param bill String
-     * @return MapSqlParameterSource
      */
     private static MapSqlParameterSource getBillParams(Bill bill, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -520,18 +519,15 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("summary", bill.getSummary());
         params.addValue("activeVersion", bill.getActiveVersion());
         params.addValue("activeYear", bill.getYear());
-        params.addValue("modifiedDateTime", toTimestamp(bill.getModifiedDate()));
-        params.addValue("publishedDateTime", toTimestamp(bill.getPublishDate()));
-        addSOBIFragmentParams(fragment, params);
+        params.addValue("programInfo", bill.getProgramInfo());
+        addModPubDateParams(bill.getModifiedDate(), bill.getPublishDate(), params);
+        addLastFragmentParam(fragment, params);
         return params;
     }
 
     /**
      * Returns a MapSqlParameterSource with columns mapped to BillAmendment values for use in update/insert
      * queries on the bill amendment table.
-     * @param amendment BillAmendment
-     * @param fragment SobiFragment
-     * @return MapSqlParameterSource
      */
     private static MapSqlParameterSource getBillAmendmentParams(BillAmendment amendment, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -540,21 +536,19 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("actClause", amendment.getActClause());
         params.addValue("fullText", amendment.getFulltext());
         params.addValue("stricken", amendment.isStricken());
-        params.addValue("currentCommitteeName", amendment.getCurrentCommittee()!=null ? amendment.getCurrentCommittee().getName() : null);
-        params.addValue("currentCommitteeAction", amendment.getCurrentCommittee()!=null ? amendment.getCurrentCommittee().getReferenceDate() : null);
+        params.addValue("currentCommitteeName",
+            amendment.getCurrentCommittee() != null ? amendment.getCurrentCommittee().getName() : null);
+        params.addValue("currentCommitteeAction",
+            amendment.getCurrentCommittee() != null ? amendment.getCurrentCommittee().getReferenceDate() : null);
         params.addValue("uniBill", amendment.isUniBill());
-        params.addValue("modifiedDateTime", toTimestamp(amendment.getModifiedDate()));
-        params.addValue("publishedDateTime", toTimestamp(amendment.getPublishDate()));
-        addSOBIFragmentParams(fragment, params);
+        addModPubDateParams(amendment.getModifiedDate(), amendment.getPublishDate(), params);
+        addLastFragmentParam(fragment, params);
         return params;
     }
 
     /**
      * Returns a MapSqlParameterSource with columns mapped to BillAction for use in inserting records
      * into the bill action table.
-     * @param billAction BillAction
-     * @param fragment SobiFragment
-     * @return MapSqlParameterSource
      */
     private static MapSqlParameterSource getBillActionParams(BillAction billAction, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -564,9 +558,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("effectDate", billAction.getDate());
         params.addValue("text", billAction.getText());
         params.addValue("sequenceNo", billAction.getSequenceNo());
-        params.addValue("modifiedDateTime", toTimestamp(billAction.getModifiedDate()));
-        params.addValue("publishedDateTime", toTimestamp(billAction.getPublishDate()));
-        addSOBIFragmentParams(fragment, params);
+        addModPubDateParams(billAction.getModifiedDate(), billAction.getPublishDate(), params);
+        addLastFragmentParam(fragment, params);
         return params;
     }
 
@@ -576,7 +569,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("sameAsPrintNo", sameAs.getBasePrintNo());
         params.addValue("sameAsSessionYear", sameAs.getSession());
         params.addValue("sameAsVersion", sameAs.getVersion());
-        addSOBIFragmentParams(fragment, params);
+        addLastFragmentParam(fragment, params);
         return params;
     }
 
@@ -586,7 +579,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("prevPrintNo", prevVersion.getBasePrintNo());
         params.addValue("prevSessionYear", prevVersion.getSession());
         params.addValue("prevVersion", prevVersion.getVersion());
-        addSOBIFragmentParams(fragment, params);
+        addLastFragmentParam(fragment, params);
         return params;
     }
 
@@ -598,7 +591,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("memberId", (hasMember) ? billSponsor.getMember().getMemberId() : null);
         params.addValue("budgetBill", (billSponsor != null && billSponsor.isBudgetBill()));
         params.addValue("rulesSponsor", (billSponsor != null && billSponsor.isRulesSponsor()));
-        addSOBIFragmentParams(fragment, params);
+        addLastFragmentParam(fragment, params);
         return params;
     }
 
@@ -608,7 +601,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         addBillIdParams(billAmendment, params);
         params.addValue("memberId", member.getMemberId());
         params.addValue("sequenceNo", sequenceNo);
-        addSOBIFragmentParams(fragment, params);
+        addLastFragmentParam(fragment, params);
         return params;
     }
 
@@ -619,9 +612,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("voteDate", billVote.getVoteDate());
         params.addValue("voteType", billVote.getVoteType().getCode());
         params.addValue("sequenceNo", billVote.getSequenceNumber());
-        params.addValue("modifiedDateTime", toTimestamp(billVote.getModifiedDate()));
-        params.addValue("publishedDateTime", toTimestamp(billVote.getPublishDate()));
-        addSOBIFragmentParams(fragment, params);
+        addModPubDateParams(billVote.getModifiedDate(), billVote.getPublishDate(), params);
+        addLastFragmentParam(fragment, params);
         return params;
     }
 
@@ -636,8 +628,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     /**
      * Applies columns that identify the base bill.
-     * @param bill Bill
-     * @param params MapSqlParameterSource
      */
     private static void addBillIdParams(Bill bill, MapSqlParameterSource params) {
         params.addValue("printNo", bill.getPrintNo());
@@ -646,22 +636,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     /**
      * Adds columns that identify the bill amendment.
-     * @param billAmendment BillAmendment
-     * @param params MapSqlParameterSource
      */
     private static void addBillIdParams(BillAmendment billAmendment, MapSqlParameterSource params) {
         params.addValue("printNo", billAmendment.getBaseBillPrintNo());
         params.addValue("sessionYear", billAmendment.getSession());
         params.addValue("version", billAmendment.getVersion());
-    }
-
-    /**
-     * Applies columns that identify a SobiFragment to an existing MapSqlParameterSource.
-     * @param fragment SobiFragment
-     * @param params MapSqlParameterSource
-     */
-    private static void addSOBIFragmentParams(SobiFragment fragment, MapSqlParameterSource params) {
-        params.addValue("lastFragmentFileName", (fragment != null) ? fragment.getFragmentId() : null);
-        params.addValue("lastFragmentType", (fragment != null) ? fragment.getType().name() : null);
     }
 }

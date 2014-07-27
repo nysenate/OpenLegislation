@@ -10,7 +10,7 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.processors.IngestCache;
+import gov.nysenate.openleg.service.base.IngestCache;
 import gov.nysenate.openleg.service.bill.BillDataService;
 import gov.nysenate.openleg.service.bill.BillNotFoundEx;
 import gov.nysenate.openleg.service.calendar.CalendarDataService;
@@ -27,20 +27,15 @@ import java.util.Date;
 
 /**
  * The AbstractSobiProcessor class is intended to serve as a common base for all the
- * Sobi file processors and provides functionality that can be reused amongst them.
+ * Sobi file processors and provides functionality to fetch and persist various
+ * entity types. This is to allow different processors to be consistent in how they
+ * utilize various data operations.
  */
 public abstract class AbstractSobiProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSobiProcessor.class);
 
-    /**
-     * Subclasses should override this method to perform parsing of a specific type of
-     * sobiFragment.
-     *
-     * @param sobiFragment SobiFragment
-     */
-    public abstract void process(SobiFragment sobiFragment);
-
+    // TODO: Move this class out of here
     public static class ParseError extends Exception
     {
         private static final long serialVersionUID = 2809768377369235106L;
@@ -48,17 +43,14 @@ public abstract class AbstractSobiProcessor
         public ParseError(String message) { super(message); }
     }
 
-    /** --- Services --- */
+    /** --- Data Services --- */
 
     @Autowired
     protected BillDataService billDataService;
-
     @Autowired
     protected CalendarDataService calendarDataService;
-
     @Autowired
     protected MemberService memberService;
-
     @Autowired
     protected CommitteeService committeeService;
 

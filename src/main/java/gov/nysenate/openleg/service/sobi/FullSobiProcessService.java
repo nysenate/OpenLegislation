@@ -1,12 +1,16 @@
 package gov.nysenate.openleg.service.sobi;
 
+import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.sobi.SobiDao;
-import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sobi.SobiFile;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sobi.SobiLineType;
+import gov.nysenate.openleg.service.agenda.AgendaProcessor;
+import gov.nysenate.openleg.service.agenda.AgendaVoteProcessor;
+import gov.nysenate.openleg.service.base.SobiProcessor;
 import gov.nysenate.openleg.service.bill.BillProcessor;
 import gov.nysenate.openleg.service.calendar.ActiveListProcessor;
 import gov.nysenate.openleg.service.calendar.CalendarProcessor;
@@ -14,6 +18,7 @@ import gov.nysenate.openleg.service.entity.CommitteeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -22,6 +27,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This SobiProcessService implementation processes every type of sobi fragment.
+ */
 @Service
 public class FullSobiProcessService implements SobiProcessService
 {
@@ -30,20 +38,33 @@ public class FullSobiProcessService implements SobiProcessService
     @Autowired
     private SobiDao sobiDao;
 
+    /** --- Processor Dependencies --- */
+
+    @Autowired
+    private AgendaProcessor agendaProcessor;
+    @Autowired
+    private AgendaVoteProcessor agendaVoteProcessor;
     @Autowired
     private BillProcessor billProcessor;
-
     @Autowired
     private CalendarProcessor calendarProcessor;
-
     @Autowired
     private ActiveListProcessor activeListProcessor;
-
     @Autowired
     private CommitteeProcessor committeeProcessor;
 
+    /** Register processors to handle a specific SobiFragment via this mapping. */
+    private ImmutableMap<SobiFragmentType, SobiProcessor> processorMap;
+
     @PostConstruct
-    protected void init() {}
+    protected void init() {
+        processorMap = ImmutableMap.<SobiFragmentType, SobiProcessor>builder()
+            .put(SobiFragmentType.BILL, billProcessor)
+            .put(SobiFragmentType.CALENDAR, calendarProcessor)
+            .put(SobiFragmentType.CALENDAR_ACTIVE, activeListProcessor)
+            .put(SobiFragmentType.COMMITTEE, committeeProcessor)
+            .build();
+    }
 
     /** --- Implemented Methods --- */
 
@@ -90,8 +111,48 @@ public class FullSobiProcessService implements SobiProcessService
 
     /** {@inheritDoc} */
     @Override
-    public int processPendingFragments() {
+    public void processFragments(List<SobiFragment> fragments) {
+        logger.info((fragments.isEmpty()) ? "No more fragments to process"
+                                          : "Processing {} fragments", fragments.size());
+        for (SobiFragment fragment : fragments) {
+            if (processorMap.containsKey(fragment.getType())) {
+                processorMap.get(fragment.getType()).process(fragment);
+            }
+            else {
+                logger.error("No processors have been registered to handle: " + fragment);
+                // TODO: Figure out what to do here.
+            }
+            markFragmentAsProcessed(fragment, new Date());
+            sobiDao.updateSobiFragment(fragment);
+        }
+    }
 
+    /** {@inheritDoc}
+     *
+     *  Perform the operation in small batches so memory is not saturated.
+     */
+    @Override
+    public void processPendingFragments() {
+        List<SobiFragment> fragments;
+        do {
+            fragments = getPendingFragments(SortOrder.ASC, LimitOffset.HUNDRED);
+            processFragments(fragments);
+        }
+        while (!fragments.isEmpty());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updatePendingProcessing(String fragmentId, boolean pendingProcessing)
+                                        throws SobiFragmentNotFoundEx {
+        try {
+            SobiFragment fragment = sobiDao.getSobiFragment(fragmentId);
+            fragment.setPendingProcessing(pendingProcessing);
+            sobiDao.updateSobiFragment(fragment);
+        }
+        catch (DataAccessException ex) {
+            throw new SobiFragmentNotFoundEx();
+        }
     }
 
     /** --- Internal Methods --- */
@@ -140,6 +201,9 @@ public class FullSobiProcessService implements SobiProcessService
         return sobiFragments;
     }
 
+    /**
+     * Applies process completion details to the given SobiFragment.
+     */
     private void markFragmentAsProcessed(SobiFragment fragment, Date processedDate) {
         fragment.setPendingProcessing(false);
         fragment.setProcessedCount(fragment.getProcessedCount() + 1);

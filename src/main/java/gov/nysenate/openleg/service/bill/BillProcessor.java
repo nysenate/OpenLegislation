@@ -6,8 +6,10 @@ import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.processors.AbstractSobiProcessor;
-import gov.nysenate.openleg.processors.IngestCache;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import gov.nysenate.openleg.service.base.SobiProcessor;
+import gov.nysenate.openleg.service.sobi.AbstractSobiProcessor;
+import gov.nysenate.openleg.service.base.IngestCache;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class BillProcessor extends AbstractSobiProcessor
+public class BillProcessor extends AbstractSobiProcessor implements SobiProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(BillProcessor.class);
 
@@ -94,6 +96,11 @@ public class BillProcessor extends AbstractSobiProcessor
     public BillProcessor() {}
 
     /** --- Implementation methods --- */
+
+    @Override
+    public SobiFragmentType getSupportedType() {
+        return SobiFragmentType.BILL;
+    }
 
     /**
      * Performs processing of the SOBI bill fragments with the option to limit to a collection of

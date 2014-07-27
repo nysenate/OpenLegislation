@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.model.calendar;
 
 import com.google.common.collect.LinkedListMultimap;
-import gov.nysenate.openleg.model.BaseLegislativeContent;
+import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 
 import java.util.Date;
 import java.util.List;
@@ -65,6 +65,8 @@ public class CalendarSupplemental extends BaseLegislativeContent
     public List<CalendarSupplementalEntry> getEntriesBySection(CalendarSectionType sectionType) {
         return this.sectionEntries.get(sectionType);
     }
+
+    /** --- Overrides --- */
 
     @Override
     public boolean equals(Object o) {

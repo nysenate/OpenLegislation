@@ -4,6 +4,8 @@ import com.google.common.base.Strings;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import gov.nysenate.openleg.service.base.SobiProcessor;
 import gov.nysenate.openleg.service.sobi.AbstractSobiProcessor;
 import gov.nysenate.openleg.util.DateHelper;
 import gov.nysenate.openleg.util.XmlHelper;
@@ -21,7 +23,7 @@ import java.io.IOException;
 import java.util.Date;
 
 @Service
-public class CalendarProcessor extends AbstractSobiProcessor
+public class CalendarProcessor extends AbstractSobiProcessor implements SobiProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(CalendarProcessor.class);
 
@@ -29,8 +31,13 @@ public class CalendarProcessor extends AbstractSobiProcessor
     protected XmlHelper xml;
 
     @Override
+    public SobiFragmentType getSupportedType() {
+        return SobiFragmentType.CALENDAR;
+    }
+
+    @Override
     public void process(SobiFragment sobiFragment) {
-        logger.info("Processing Senate Calendar...");
+        logger.info("Processing Senate Calendar... {}", sobiFragment.getFragmentId());
         Date modifiedDate = sobiFragment.getPublishedDateTime();
         try {
             Document doc = xml.parse(sobiFragment.getText());
@@ -87,7 +94,7 @@ public class CalendarProcessor extends AbstractSobiProcessor
             saveCalendar(calendar, sobiFragment);
         }
         catch (IOException | SAXException | XPathExpressionException ex) {
-            logger.error("Failed to parse calendar sobi", ex);
+            logger.error("Failed to parse calendar sobi {}", sobiFragment.getFragmentId(), ex);
         }
     }
 }

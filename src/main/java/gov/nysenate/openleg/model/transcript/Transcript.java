@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.transcript;
 
-import gov.nysenate.openleg.model.BaseLegislativeContent;
+import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.bill.Bill;
 
 import java.util.ArrayList;

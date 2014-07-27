@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.scripts;
 
-import gov.nysenate.openleg.util.Application;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 
@@ -9,9 +8,6 @@ import java.io.File;
 /**
  * Provides a base wrapping layer for scripts that logs all uncaught exceptions
  * and provides utility functions for processing options and help messages.
- *
- * @author graylinkim
- *
  */
 abstract public class BaseScript
 {
@@ -35,9 +31,7 @@ abstract public class BaseScript
      *
      * @param args
      */
-    public void run(String[] args) throws Exception
-    {
-
+    public void run(String[] args) throws Exception {
         Options options = getOptions();
         options.addOption("h", "help", false, "Print this message");
         Option environment = new Option("e", "environment", true, "Path to a configuration file for this environment");
@@ -56,7 +50,7 @@ abstract public class BaseScript
                     System.exit(1);
                 }
                 else {
-                    Application.bootstrap(propertiesFile.getAbsolutePath());
+                    /** TODO: Initialize Spring */
                 }
 
                 execute(opts);
@@ -76,7 +70,7 @@ abstract public class BaseScript
             throw e;
         }
         finally {
-            Application.shutdown();
+            /** TODO: Shutdown Spring */
         }
     }
 
@@ -85,8 +79,7 @@ abstract public class BaseScript
      *
      * @param opts
      */
-    protected void printUsage(CommandLine opts)
-    {
+    protected void printUsage(CommandLine opts) {
         Options options = new Options();
         for (Option option : opts.getOptions()) {
             options.addOption(option);
@@ -100,8 +93,7 @@ abstract public class BaseScript
      *
      * @param options
      */
-    protected void printUsage(Options options)
-    {
+    protected void printUsage(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(SCRIPT_NAME, options, USAGE.isEmpty());
     }
@@ -113,11 +105,9 @@ abstract public class BaseScript
      * @return
      * @throws ParseException
      */
-    protected Options getOptions()
-    {
+    protected Options getOptions(){
         return new Options();
     }
-
 
     /**
      * Executes the actual script with the parsed command line options.
