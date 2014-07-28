@@ -310,6 +310,7 @@ public class SpotCheck extends BaseScript
             bills.get(bill_id).pages = pages;
         }
         else {
+            // Look for
             //logger.error("Unknown bill '"+asm_id+"'");
             SpotCheckBill bill = new SpotCheckBill();
             bill.id = bill_id;
@@ -325,12 +326,15 @@ public class SpotCheck extends BaseScript
     private void updateAmendmentsFromPageFile(HashMap<String, SpotCheckBill> bills, String billId, Matcher billMatcher){
         String baseBill = billMatcher.group(1).trim() + billMatcher.group(2).trim();
         char amendment = billMatcher.group(3).charAt(0);
-        if(bills.containsKey(baseBill) && !bills.get(baseBill).amendments.contains(billId)){
+        if(bills.containsKey(baseBill) &&
+                bills.get(baseBill).isCurrentAmendment() && !bills.get(baseBill).amendments.contains(billId)){
             bills.get(baseBill).amendments.add(billId);
         }
         for (int i = amendment-1; i >= 'A'; i--) {
             String checkedBillId = baseBill + (char)i;
-            if(bills.containsKey(checkedBillId) && !bills.get(checkedBillId).amendments.contains(billId)){
+            if(bills.containsKey(checkedBillId) &&
+                        bills.get(checkedBillId).isCurrentAmendment() &&
+                        !bills.get(checkedBillId).amendments.contains(billId) ){
                     bills.get(checkedBillId).amendments.add(billId);
             }
         }
@@ -357,6 +361,7 @@ public class SpotCheck extends BaseScript
         while(rowMatcher.find()) {
             // Each table row corresponds to a single bill
             SpotCheckBill bill = new SpotCheckBill();
+            bill.setCurrentAmendment(true);
             String row = rowMatcher.group(1);
 
             String parts[] = stripParts.matcher(row)	// Match all non <br> and </td> tags

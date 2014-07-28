@@ -13,6 +13,8 @@ public class SpotCheckBill {
     public String summary;
     public String sameas;
 
+    private boolean currentAmendment;
+
     public ArrayList<String> actions;
     public ArrayList<String> cosponsors;
     public ArrayList<String> multisponsors;
@@ -21,12 +23,13 @@ public class SpotCheckBill {
     public SpotCheckBill() {
         pages = year = 0;
         sameas = id = sponsor = title = summary = law = "";
+        currentAmendment = false;
         cosponsors = new ArrayList<String>();
         multisponsors = new ArrayList<String>();
         actions = new ArrayList<String>();
         amendments = new ArrayList<String>();
     }
-    
+
 
     public String getTitle()
     {
@@ -59,6 +62,14 @@ public class SpotCheckBill {
     {
         this.sponsor = sponsor;
         return sponsor;
+    }
+
+    public boolean isCurrentAmendment() {
+        return currentAmendment;
+    }
+
+    public void setCurrentAmendment(boolean currentAmendment) {
+        this.currentAmendment = currentAmendment;
     }
 
     public ArrayList<String> getCosponsors()
