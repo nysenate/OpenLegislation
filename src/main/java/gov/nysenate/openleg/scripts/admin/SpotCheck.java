@@ -77,11 +77,18 @@ public class SpotCheck extends BaseScript
         logger.info("Processing daybreak files for: "+date);
         File directory = new File(config.getValue("checkmail.lrsFileDir"));
         HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();
+        logger.info("Reading " + prefix+".senate.low.html");
         bills.putAll(readDaybreak(new File(directory, prefix+".senate.low.html")));
+        logger.info("Reading " + prefix+".senate.high.html");
         bills.putAll(readDaybreak(new File(directory, prefix+".senate.high.html")));
+        logger.info("Reading " + prefix+".assembly.low.html");
         bills.putAll(readDaybreak(new File(directory, prefix+".assembly.low.html")));
+        logger.info("Reading " + prefix+".assembly.high.html");
         bills.putAll(readDaybreak(new File(directory, prefix+".assembly.high.html")));
+        logger.info("Reading " + prefix+".page_file.txt");
         loadPageFile(new File(directory, prefix+".page_file.txt"), bills);
+
+        SpotCheckBill testbill = bills.get("S1743A");
 
         runner.update("insert ignore into report(time) values(?)", date);
         Report report = runner.query("select * from report where time = ?", new BeanHandler<Report>(Report.class), date);
@@ -285,29 +292,11 @@ public class SpotCheck extends BaseScript
             int pages = Integer.parseInt(parts[8]);
 
             if(!sen_id.isEmpty()) {
-                if (bills.containsKey(sen_id)) {
-                    bills.get(sen_id).pages = pages;
-                }
-                else {
-                    // logger.error("Unknown bill '"+sen_id+"'");
-                    SpotCheckBill bill = new SpotCheckBill();
-                    bill.id = sen_id;
-                    bill.pages = pages;
-                    bills.put(sen_id, bill);
-                }
+                updateBillFromPageFile(bills, sen_id, pages);
             }
 
             if(!asm_id.isEmpty()) {
-                if (bills.containsKey(asm_id)) {
-                    bills.get(asm_id).pages = pages;
-                }
-                else {
-                    //logger.error("Unknown bill '"+asm_id+"'");
-                    SpotCheckBill bill = new SpotCheckBill();
-                    bill.id = asm_id;
-                    bill.pages = pages;
-                    bills.put(asm_id, bill);
-                }
+                updateBillFromPageFile(bills, asm_id, pages);
             }
 
             if (!sen_id.isEmpty() && !asm_id.isEmpty()) {
@@ -316,9 +305,39 @@ public class SpotCheck extends BaseScript
             }
         }
     }
+    private void updateBillFromPageFile(HashMap<String, SpotCheckBill> bills, String bill_id, int pages){
+        if (bills.containsKey(bill_id)) {
+            bills.get(bill_id).pages = pages;
+        }
+        else {
+            //logger.error("Unknown bill '"+asm_id+"'");
+            SpotCheckBill bill = new SpotCheckBill();
+            bill.id = bill_id;
+            bill.pages = pages;
+            bills.put(bill_id, bill);
+
+            Matcher billMatcher = spotcheckBillId.matcher(bill_id);
+            if(anAmendmentExists(billMatcher)){
+                updateAmendmentsFromPageFile(bills, bill_id + "-" + SESSION_YEAR, billMatcher);
+            }
+        }
+    }
+    private void updateAmendmentsFromPageFile(HashMap<String, SpotCheckBill> bills, String billId, Matcher billMatcher){
+        String baseBill = billMatcher.group(1).trim() + billMatcher.group(2).trim();
+        char amendment = billMatcher.group(3).charAt(0);
+        if(bills.containsKey(baseBill) && !bills.get(baseBill).amendments.contains(billId)){
+            bills.get(baseBill).amendments.add(billId);
+        }
+        for (int i = amendment-1; i >= 'A'; i--) {
+            String checkedBillId = baseBill + (char)i;
+            if(bills.containsKey(checkedBillId) && !bills.get(checkedBillId).amendments.contains(billId)){
+                    bills.get(checkedBillId).amendments.add(billId);
+            }
+        }
+    }
 
     private String SESSION_YEAR = "2013";
-    public Pattern spotcheckBillId = Pattern.compile("([A-Z]\\d+)([A-Z])");
+    public Pattern spotcheckBillId = Pattern.compile("([A-Z])(\\d+)([A-Z]?)");
     public Pattern row = Pattern.compile("<tr.*?>(.+?)</tr>");
     public Pattern stripParts = Pattern.compile(
                 "<b>(.*?)</b>|"+                    // Remove bold text
@@ -406,8 +425,9 @@ public class SpotCheck extends BaseScript
         Matcher idMatcher = spotcheckBillId.matcher(bill.id);
 
         if(anAmendmentExists(idMatcher)) {
-            String billId = idMatcher.group(1);
-            char amendment = idMatcher.group(2).charAt(0);
+            String billNo = idMatcher.group(2).trim();
+            String billId = idMatcher.group(1).trim() + billNo;
+            char amendment = idMatcher.group(3).charAt(0);
             for (int i = amendment-1; i >= 'A'; i--) {
                 bill.amendments.add(billId + String.valueOf((char)i) + "-" + SESSION_YEAR);
             }
@@ -420,7 +440,7 @@ public class SpotCheck extends BaseScript
     }
 
     private boolean anAmendmentExists(Matcher idMatcher) {
-        return idMatcher.find();
+        return idMatcher.find() && !idMatcher.group(3).isEmpty();
     }
 
 }
