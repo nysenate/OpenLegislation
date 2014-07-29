@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class BillVoteTests extends BaseTests
 {
@@ -28,8 +29,11 @@ public class BillVoteTests extends BaseTests
         BillVote vote2 = new BillVote(billId, date, BillVoteType.FLOOR, 1);
         vote2.addMemberVote(BillVoteCode.AYE, memberService.getMemberByLBDCName("BALL", 2013, Chamber.SENATE));
         vote2.addMemberVote(BillVoteCode.AYE, memberService.getMemberByLBDCName("LAVALLE", 2013, Chamber.SENATE));
-        vote2.addMemberVote(BillVoteCode.NAY, memberService.getMemberByLBDCName("BRESLIN", 2013, Chamber.SENATE));
+        vote2.addMemberVote(BillVoteCode.NAY, memberService.getMemberByLBDCName("LANZA", 2013, Chamber.SENATE));
 
         assertEquals(vote1, vote2);
+
+        vote2.addMemberVote(BillVoteCode.NAY, memberService.getMemberByLBDCName("BRESLIN", 2013, Chamber.SENATE));
+        assertNotEquals(vote1, vote2);
     }
 }

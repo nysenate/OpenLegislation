@@ -1,10 +1,7 @@
 package gov.nysenate.openleg;
 
-import gov.nysenate.openleg.config.DatabaseConfig;
 import gov.nysenate.openleg.config.WebApplicationConfig;
-import gov.nysenate.openleg.util.Application;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -27,11 +24,6 @@ public abstract class BaseTests
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     protected WebApplicationContext wac;
-
-    @BeforeClass
-    public static void bootstrap() {
-        Application.bootstrap(Application.TEST_PROPERTY_FILENAME);
-    }
 
     @Before
     public void setup() {
