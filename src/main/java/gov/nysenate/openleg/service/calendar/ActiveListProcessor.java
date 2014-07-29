@@ -62,9 +62,9 @@ public class ActiveListProcessor extends AbstractSobiProcessor implements SobiPr
                     calendar.removeActiveList(id);
                 }
                 else {
-                    Date calDate = DateHelper.getDate(xml.getString("actcaldate/text()", xmlSequence));
-                    Date releaseDateTime = DateHelper.getDateTime(xml.getString("releasedate/text()", xmlSequence)
-                        + xml.getString("releasetime/text()", xmlSequence));
+                    Date calDate = DateHelper.getLrsDate(xml.getString("actcaldate/text()", xmlSequence));
+                    Date releaseDateTime = DateHelper.getLrsDateTime(xml.getString("releasedate/text()", xmlSequence)
+                            + xml.getString("releasetime/text()", xmlSequence));
                     String notes = xml.getString("notes/text()", xmlSequence);
 
                     CalendarActiveList activeList = new CalendarActiveList(calendarId, id, notes, calDate, releaseDateTime);

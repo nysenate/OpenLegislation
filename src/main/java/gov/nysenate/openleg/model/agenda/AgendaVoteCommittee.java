@@ -11,18 +11,20 @@ public class AgendaVoteCommittee
     private Map<String, AgendaVoteCommitteeItem> items;
     private List<AgendaVoteCommitteeAttendance> attendance = new ArrayList<AgendaVoteCommitteeAttendance>();
 
-    public AgendaVoteCommittee()
-    {
+    /** --- Constructors --- */
+
+    public AgendaVoteCommittee() {
         this.setItems(new HashMap<String, AgendaVoteCommitteeItem>());
     }
 
-    public AgendaVoteCommittee(String name, String chair, Date meetDate)
-    {
+    public AgendaVoteCommittee(String name, String chair, Date meetDate) {
         this();
         this.setName(name);
         this.setChair(chair);
         this.setMeetDate(meetDate);
     }
+
+    /** --- Functional Getters/Setters --- */
 
     public String getName()
     {

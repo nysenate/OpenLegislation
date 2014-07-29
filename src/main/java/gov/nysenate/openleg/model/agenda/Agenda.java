@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.model.agenda;
 
+import com.google.common.base.Objects;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
+import gov.nysenate.openleg.util.DateHelper;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -19,10 +21,10 @@ public class Agenda extends BaseLegislativeContent implements Serializable
     /** The agenda id. */
     private AgendaId id;
 
-    /** The list of addendum to the agenda. */
+    /** The map of committee info updates keyed by the addendum id. */
     private Map<String, AgendaInfoAddendum> agendaInfoAddendum;
 
-    /** The list of vote addendum to the agenda. */
+    /** The map of committee vote updates keyeed by the addendum id. */
     private Map<String, AgendaVoteAddendum> agendaVoteAddendum;
 
     /** --- Constructors --- */
@@ -37,10 +39,17 @@ public class Agenda extends BaseLegislativeContent implements Serializable
         this();
         this.setId(id);
         this.setYear(id.getYear());
-        this.setSession(resolveSessionYear(this.getYear()));
+        this.setSession(DateHelper.resolveSession(this.getYear()));
     }
 
     /** --- Overrides --- */
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .toString();
+    }
 
     @Override
     public boolean equals(Object o) {

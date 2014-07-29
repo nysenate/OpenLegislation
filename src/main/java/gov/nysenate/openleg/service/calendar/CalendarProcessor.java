@@ -61,9 +61,9 @@ public class CalendarProcessor extends AbstractSobiProcessor implements SobiProc
                 }
                 else {
                     // Replace this supplemental
-                    Date calDate = DateHelper.getDate(xml.getString("caldate/text()", xmlSupplemental));
-                    Date releaseDateTime = DateHelper.getDateTime(xml.getString("releasedate/text()", xmlSupplemental)
-                        + xml.getString("releasetime/text()", xmlSupplemental));
+                    Date calDate = DateHelper.getLrsDate(xml.getString("caldate/text()", xmlSupplemental));
+                    Date releaseDateTime = DateHelper.getLrsDateTime(xml.getString("releasedate/text()", xmlSupplemental)
+                            + xml.getString("releasetime/text()", xmlSupplemental));
 
                     CalendarSupplemental supplemental = new CalendarSupplemental(calendarId, supId, calDate, releaseDateTime);
                     NodeList xmlSections = xml.getNodeList("sections/section", xmlSupplemental);

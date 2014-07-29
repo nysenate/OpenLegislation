@@ -30,16 +30,6 @@ abstract public class BaseLegislativeContent
         this.year = other.year;
     }
 
-    /**
-     * A session year refers to that start of a 2 year legislative session period.
-     * This method ensures that any given year will resolve to the correct session start year.
-     * @param year int
-     * @return int
-     */
-    public static int resolveSessionYear(int year) {
-        return (year % 2 == 0) ? year - 1 : year;
-    }
-
     /** --- Overrides --- */
 
     @Override

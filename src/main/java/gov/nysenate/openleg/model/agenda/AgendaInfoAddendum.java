@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.agenda;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.CommitteeId;
+import gov.nysenate.openleg.util.DateHelper;
 import org.joda.time.LocalDate;
 
 import java.io.Serializable;
@@ -10,7 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Info for an Agenda is constructed via a series of addenda that are either
+ * added, updated, or removed from the parent Agenda container.
  */
 public class AgendaInfoAddendum extends BaseLegislativeContent implements Serializable
 {
@@ -35,14 +37,15 @@ public class AgendaInfoAddendum extends BaseLegislativeContent implements Serial
         this.committeeInfoMap = new HashMap<>();
     }
 
-    public AgendaInfoAddendum(String id, Date weekOf, Date pubDate) {
+    public AgendaInfoAddendum(AgendaId agendaId, String addendumId, Date weekOf, Date pubDate) {
         this();
-        this.setId(id);
+        this.setAgendaId(agendaId);
+        this.setId(addendumId);
         this.setWeekOf(weekOf);
+        this.setYear(agendaId.getYear());
+        this.setSession(DateHelper.resolveSession(this.getYear()));
         this.setModifiedDate(pubDate);
         this.setPublishDate(pubDate);
-        this.setYear(new LocalDate(pubDate).getYear());
-        this.setSession(resolveSessionYear(this.getYear()));
     }
 
     /** --- Functional Getters/Setters --- */

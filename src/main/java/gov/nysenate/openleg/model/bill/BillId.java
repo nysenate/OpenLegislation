@@ -2,12 +2,11 @@ package gov.nysenate.openleg.model.bill;
 
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.util.DateHelper;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static gov.nysenate.openleg.model.base.BaseLegislativeContent.resolveSessionYear;
 
 /**
  * An immutable representation of the fields that are used to identify a particular bill.
@@ -77,7 +76,7 @@ public class BillId implements Serializable, Comparable<BillId>
             throw new IllegalArgumentException("basePrintNo must be numerical after the letter designator!");
         }
         this.version = (version != null) ? version.trim().toUpperCase() : "";
-        this.session = resolveSessionYear(session);
+        this.session = DateHelper.resolveSession(session);
     }
 
     /** --- Methods --- */

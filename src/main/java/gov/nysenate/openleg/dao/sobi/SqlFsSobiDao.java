@@ -7,6 +7,7 @@ import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.sobi.SobiFile;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import gov.nysenate.openleg.util.DateHelper;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -265,7 +266,7 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
      * Get file handle from the sobi archive directory.
      */
     private File getFileInArchiveDir(String fileName, Date publishedDateTime) {
-        String year = Integer.toString(new LocalDate(publishedDateTime).getYear());
+        String year = Integer.toString(DateHelper.getYear(publishedDateTime));
         File dir = new File(this.archiveSobiDir, year);
         return new File(dir, fileName);
     }

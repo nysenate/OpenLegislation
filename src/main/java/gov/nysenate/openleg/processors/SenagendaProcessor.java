@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
+@Deprecated
 public class SenagendaProcessor
 {
     private final Logger logger = Logger.getLogger(SenagendaProcessor.class);
@@ -40,7 +41,7 @@ public class SenagendaProcessor
     public void processSenagenda(File file, Storage storage) throws XPathExpressionException, SAXException, IOException
     {
         // TODO: We need a better default here
-        Date modifiedDate = DateHelper.getFileDate(file.getName());
+        Date modifiedDate = DateHelper.getSobiFileDate(file.getName());
 //        ChangeLogger.setContext(file, modifiedDate);
         XmlHelper xml = null;//Application.getXmlHelper();
 
@@ -78,9 +79,9 @@ public class SenagendaProcessor
             for (int i=0; i < xmlAddendums.getLength(); i++) {
                 Node xmlAddendum = xmlAddendums.item(i);
                 String id = xml.getString("@id", xmlAddendum);
-                Date weekOf = DateHelper.getDate(xml.getString("weekof/text()", xmlAddendum));
-                Date pubDateTime = DateHelper.getDateTime(xml.getString("pubdate/text()", xmlAddendum)+xml.getString("pubtime/text()", xmlAddendum));
-                AgendaInfoAddendum addendum = new AgendaInfoAddendum(id, weekOf, pubDateTime);
+                Date weekOf = DateHelper.getLrsDate(xml.getString("weekof/text()", xmlAddendum));
+                Date pubDateTime = DateHelper.getLrsDateTime(xml.getString("pubdate/text()", xmlAddendum) + xml.getString("pubtime/text()", xmlAddendum));
+                AgendaInfoAddendum addendum = new AgendaInfoAddendum(null,id, weekOf, pubDateTime);
 
                 NodeList xmlCommittees = xml.getNodeList("committees/committee", xmlAddendum);
                 for (int j=0; j < xmlCommittees.getLength(); j++) {
@@ -90,7 +91,7 @@ public class SenagendaProcessor
                     String location = xml.getString("location/text()", xmlCommittee);
                     String meetDay = xml.getString("meetday/text()", xmlCommittee);
                     String notes = xml.getString("notes/text()", xmlCommittee);
-                    Date meetDateTime = DateHelper.getDateTime(xml.getString("meetdate/text()", xmlCommittee)+xml.getString("meettime/text()", xmlCommittee));
+                    Date meetDateTime = DateHelper.getLrsDateTime(xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
                     AgendaInfoCommittee committee = new AgendaInfoCommittee();//new AgendaInfoCommittee(name, chair, location, notes, meetDay, meetDateTime);
 
                     NodeList xmlBills = xml.getNodeList("bills/bill", xmlCommittee);
@@ -124,7 +125,7 @@ public class SenagendaProcessor
     public void processSenagendaVote(File file, Storage storage) throws SAXException, IOException, XPathExpressionException, ParseException
     {
         // TODO: We need a better default here
-        Date modifiedDate = DateHelper.getFileDate(file.getName());
+        Date modifiedDate = DateHelper.getSobiFileDate(file.getName());
 //        ChangeLogger.setContext(file, modifiedDate);
 
         XmlHelper xml = null;//Application.getXmlHelper();
@@ -152,7 +153,7 @@ public class SenagendaProcessor
             // Use the existing vote addendum if available, else create a new one
             AgendaVoteAddendum addendum = agenda.getAgendaVoteAddendum(addendumId);
             if (addendum == null) {
-                addendum = new AgendaVoteAddendum(addendumId, year, sessYr);
+                addendum = new AgendaVoteAddendum(null, addendumId, null);
                 agenda.putAgendaVoteAddendum(addendum);
             }
 
@@ -162,11 +163,11 @@ public class SenagendaProcessor
                 String action = xml.getString("@action", xmlCommittee);
                 String name = xml.getString("name/text()", xmlCommittee);
                 String chair = xml.getString("chair/text()", xmlCommittee);
-                Date meetDateTime = DateHelper.getDateTime(xml.getString("meetdate/text()", xmlCommittee)+xml.getString("meettime/text()", xmlCommittee));
+                Date meetDateTime = DateHelper.getLrsDateTime(xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
 
                 // If the action is remove, then discard the committee and move on
                 if (action.equals("remove")) {
-                    addendum.removeCommittee(name);
+                   // addendum.removeCommittee(name);
                     continue;
                 }
 
@@ -211,7 +212,7 @@ public class SenagendaProcessor
 
                     committee.putItem(item);
                 }
-                addendum.putCommittee(committee);
+              //  addendum.putCommittee(committee);
             }
         }
     }

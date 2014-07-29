@@ -4,6 +4,7 @@ import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.service.bill.BillAmendNotFoundEx;
+import gov.nysenate.openleg.util.DateHelper;
 import org.joda.time.LocalDate;
 
 import java.io.Serializable;
@@ -69,7 +70,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     public Bill(String printNo, int sessionYear) {
         this();
         this.printNo = printNo;
-        this.session = resolveSessionYear(sessionYear);
+        this.session = DateHelper.resolveSession(sessionYear);
     }
 
     public Bill(BillId billId) {

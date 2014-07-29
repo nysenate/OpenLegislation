@@ -29,12 +29,12 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
     /** {@inheritDoc} */
     @Override
     public void saveAgenda(Agenda agenda, SobiFragment sobiFragment) {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     /** {@inheritDoc} */
     @Override
     public void deleteAgenda(AgendaId agendaId) {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 }

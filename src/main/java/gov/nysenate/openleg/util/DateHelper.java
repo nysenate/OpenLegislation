@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.util;
 
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,19 +22,50 @@ public class DateHelper
 
     /** --- Static Methods --- */
 
-    public static Date getDate(String lbdcDate)
-    {
+    /**
+     * Retrieve the year of the given date.
+     *
+     * @param date Date
+     * @return Integer
+     */
+    public static Integer getYear(Date date) {
+        return new LocalDate(date).getYear();
+    }
+
+    /**
+     * A session year refers to that start of a 2 year legislative session period.
+     * This method ensures that any given year will resolve to the correct session start year.
+     *
+     * @param year int
+     * @return int
+     */
+    public static int resolveSession(int year) {
+        return (year % 2 == 0) ? year - 1 : year;
+    }
+
+    /**
+     * Extract the Date value from the LRS formatted date string.
+     *
+     * @param lbdcDate String
+     * @return Date
+     */
+    public static Date getLrsDate(String lbdcDate) {
         try {
             return LRS_DATE_ONLY_FORMAT.parse(lbdcDate);
         }
         catch (ParseException e) {
-            logger.error("Error parsing date: "+lbdcDate, e);
+            logger.error("Error parsing date: "+ lbdcDate, e);
             return null;
         }
     }
 
-    public static Date getDateTime(String lbdcDateTime)
-    {
+    /**
+     * Extract the date and time from the LRS formatted date/time string
+     *
+     * @param lbdcDateTime String
+     * @return Date
+     */
+    public static Date getLrsDateTime(String lbdcDateTime) {
         try {
             return LRS_DATETIME_FORMAT.parse(lbdcDateTime);
         }
@@ -43,20 +75,18 @@ public class DateHelper
         }
     }
 
-    public static Date getFileDate(String sobiFileName)
-    {
+    /**
+     * Extract the date from the filename of a Sobi file.
+     *
+     * @param sobiFileName - Filename of the sobi file.
+     * @return Date
+     */
+    public static Date getSobiFileDate(String sobiFileName) {
         try {
             return SOBI_FILE_DATE_FORMAT.parse(sobiFileName);
         } catch (ParseException e) {
             logger.error("Error parsing file date.", e);
             return null;
         }
-    }
-
-    public static Integer getYear(Date date)
-    {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return calendar.get(Calendar.YEAR);
     }
 }
