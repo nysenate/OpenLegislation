@@ -7,9 +7,9 @@ import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import gov.nysenate.openleg.service.base.IngestCache;
 import gov.nysenate.openleg.service.base.SobiProcessor;
 import gov.nysenate.openleg.service.sobi.AbstractSobiProcessor;
-import gov.nysenate.openleg.service.base.IngestCache;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +21,11 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The BillProcessor parses bill sobi fragments, applies bill updates, and persists into the backing
+ * store via the service layer. This implementation is fairly lengthy due to the various types of data that
+ * are applied to the bills via these fragments.
+ */
 @Service
 public class BillProcessor extends AbstractSobiProcessor implements SobiProcessor
 {
@@ -154,7 +159,7 @@ public class BillProcessor extends AbstractSobiProcessor implements SobiProcesso
             logger.trace("Saving bill " + bill.getBillId());
             applyPublishStatus(bill);
             applyUniBillText(bill, billIngestCache, sobiFragment);
-            saveBill(bill, sobiFragment);
+            billDataService.saveBill(bill, sobiFragment);
         }
     }
 
@@ -181,7 +186,7 @@ public class BillProcessor extends AbstractSobiProcessor implements SobiProcesso
      */
     private void applyBillInfo(String data, Bill baseBill, BillAmendment specifiedAmendent, Date date) throws ParseError {
         if (data.startsWith("DELETE")) {
-            baseBill.setPublishDate(null);
+            specifiedAmendent.setPublishDate(null);
             return;
         }
         else {
@@ -287,11 +292,10 @@ public class BillProcessor extends AbstractSobiProcessor implements SobiProcesso
             if (billEvent.find()) {
                 try {
                     Date eventDate = eventDateFormat.parse(billEvent.group(1));
-                    String eventText = billEvent.group(2).trim();
+                    String eventText = billEvent.group(2).trim().toUpperCase();
                     BillAction action = new BillAction(eventDate, eventText, ++sequenceNo, billId);
                     actions.add(action);
 
-                    eventText = eventText.toUpperCase();
                     Matcher committeeEventText = committeeEventTextPattern.matcher(eventText);
                     Matcher substituteEventText = substituteEventTextPattern.matcher(eventText);
                     Matcher floorEventText = floorEventTextPattern.matcher(eventText);
@@ -301,7 +305,7 @@ public class BillProcessor extends AbstractSobiProcessor implements SobiProcesso
                         stricken = true;
                     }
                     else if (committeeEventText.find()) {
-                        if (currentCommittee!=null) {
+                        if (currentCommittee != null) {
                             pastCommittees.add(currentCommittee);
                         }
                         currentCommittee = new CommitteeVersionId(
@@ -309,7 +313,7 @@ public class BillProcessor extends AbstractSobiProcessor implements SobiProcesso
                         );
                     }
                     else if (floorEventText.find()){
-                        if (currentCommittee!=null) {
+                        if (currentCommittee != null) {
                             pastCommittees.add(currentCommittee);
                         }
                         currentCommittee = null;
@@ -788,10 +792,6 @@ public class BillProcessor extends AbstractSobiProcessor implements SobiProcesso
                             logger.trace("Publishing version " + version + " via action " + action.getText());
                             baseBill.getAmendment(version).setPublishDate(action.getDate());
                             baseBill.setActiveVersion(version);
-                        }
-                        else {
-                            logger.warn("The publish action " + action.getText() + " referenced a bill amendment that was " +
-                                    "not added to the base bill.");
                         }
                         break;
                     }

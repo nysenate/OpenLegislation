@@ -1,117 +1,101 @@
 package gov.nysenate.openleg.model.agenda;
 
+import gov.nysenate.openleg.model.entity.CommitteeId;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AgendaInfoCommittee
+/**
+ *
+ */
+public class AgendaInfoCommittee implements Serializable
 {
-    private String name;
+    private static final long serialVersionUID = 6788116636375650193L;
+
+    /** Reference to the id of the committee this info is associated with. */
+    private CommitteeId committeeId;
+
+    /** Name of the committee chair. */
     private String chair;
+
+    /** Location of the committee meeting. */
     private String location;
-    private String meetDay;
-    private Date meetDate;
+
+    /** Date/time of the meeting. */
+    private Date meetDateTime;
+
+    /** Any notes associated with this addendum. */
     private String notes;
+
+    /** */
     private Map<String, AgendaInfoCommitteeItem> items;
+
+    /** --- Constructors --- */
 
     public AgendaInfoCommittee() {
         this.setItems(new HashMap<String, AgendaInfoCommitteeItem>());
     }
 
-    public AgendaInfoCommittee(String name, String chair, String location, String notes, String meetDay, Date meetDate) {
+    public AgendaInfoCommittee(CommitteeId committeeId, String chair, String location, String notes, Date meetDateTime) {
         this();
-        this.setName(name);
+        this.setCommitteeId(committeeId);
         this.setChair(chair);
         this.setLocation(location);
         this.setNotes(notes);
-        this.setMeetDay(meetDay);
-        this.setMeetDate(meetDate);
+        this.setMeetDateTime(meetDateTime);
     }
 
-    public String getName()
-    {
-        return name;
+    /** --- Functional Getters/Setters --- */
+
+    /** --- Basic Getters/Setters --- */
+
+    public CommitteeId getCommitteeId() {
+        return committeeId;
     }
 
-    public void setName(String name)
-    {
-        this.name = name;
+    public void setCommitteeId(CommitteeId committeeId) {
+        this.committeeId = committeeId;
     }
 
-    public String getChair()
-    {
+    public String getChair() {
         return chair;
     }
 
-    public void setChair(String chair)
-    {
+    public void setChair(String chair) {
         this.chair = chair;
     }
 
-    public String getLocation()
-    {
+    public String getLocation() {
         return location;
     }
 
-    public void setLocation(String location)
-    {
+    public void setLocation(String location) {
         this.location = location;
     }
 
-    public Date getMeetDate()
-    {
-        return meetDate;
+    public Date getMeetDateTime() {
+        return meetDateTime;
     }
 
-    public void setMeetDate(Date meetDate)
-    {
-        this.meetDate = meetDate;
+    public void setMeetDateTime(Date meetDateTime) {
+        this.meetDateTime = meetDateTime;
     }
 
-    public String getMeetDay()
-    {
-        return meetDay;
-    }
-
-    public void setMeetDay(String meetDay)
-    {
-        this.meetDay = meetDay;
-    }
-
-    public String getNotes()
-    {
+    public String getNotes() {
         return notes;
     }
 
-    public void setNotes(String notes)
-    {
+    public void setNotes(String notes) {
         this.notes = notes;
     }
 
-    public Map<String, AgendaInfoCommitteeItem> getItems()
-    {
+    public Map<String, AgendaInfoCommitteeItem> getItems() {
         return items;
     }
 
-    public void setItems(Map<String, AgendaInfoCommitteeItem> items)
-    {
+    public void setItems(Map<String, AgendaInfoCommitteeItem> items) {
         this.items = items;
     }
-
-    public void putItem(AgendaInfoCommitteeItem item)
-    {
-        this.items.put(item.getBill().getBillId()+item.getBillAmendment(), item);
-    }
-
-    public AgendaInfoCommitteeItem getItem(String printNumber)
-    {
-        return this.items.get(printNumber);
-    }
-
-    public void removeItem(String printNumber)
-    {
-        this.items.remove(printNumber);
-    }
 }
-

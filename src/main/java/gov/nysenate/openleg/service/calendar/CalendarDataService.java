@@ -14,7 +14,7 @@ public interface CalendarDataService
      *
      * @param calendarId CalendarId
      * @return Calendar
-     * @throws CalendarNotFoundEx = If no Calendar was matched via the given id.
+     * @throws CalendarNotFoundEx - If no Calendar was matched via the given id.
      */
     public Calendar getCalendar(CalendarId calendarId) throws CalendarNotFoundEx;
 

@@ -2,13 +2,22 @@ package gov.nysenate.openleg.model.agenda;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Agenda extends BaseLegislativeContent
+/**
+ * An Agenda is essentially a list of items (bills) that are brought up for discussion in
+ * committees. This Agenda class models the agendas closely to how LBDC formats its source data.
+ * It is comprised of a collection of addenda which either contains committee meeting information
+ * including bills that are to be brought up, or committee votes.
+ */
+public class Agenda extends BaseLegislativeContent implements Serializable
 {
-    /** The agenda's calendar number. Starts at 1 at the beginning of each calendar year. */
-    private Integer number;
+    private static final long serialVersionUID = -6763891242038699549L;
+
+    /** The agenda id. */
+    private AgendaId id;
 
     /** The list of addendum to the agenda. */
     private Map<String, AgendaInfoAddendum> agendaInfoAddendum;
@@ -24,20 +33,36 @@ public class Agenda extends BaseLegislativeContent
         this.setAgendaVoteAddendum(new TreeMap<String, AgendaVoteAddendum>());
     }
 
-    public Agenda(Integer number, Integer session, Integer year) {
+    public Agenda(AgendaId id) {
         this();
-        this.setNumber(number);
-        this.setSession(session);
-        this.setYear(year);
+        this.setId(id);
+        this.setYear(id.getYear());
+        this.setSession(resolveSessionYear(this.getYear()));
     }
 
     /** --- Overrides --- */
 
-    public boolean equals(Object obj) {
-        if (obj != null && obj instanceof Agenda) {
-            return ((Agenda)obj).getOid().equals(this.getOid());
-        }
-        return false;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Agenda)) return false;
+        if (!super.equals(o)) return false;
+        Agenda agenda = (Agenda) o;
+        if (agendaInfoAddendum != null ? !agendaInfoAddendum.equals(agenda.agendaInfoAddendum) : agenda.agendaInfoAddendum != null)
+            return false;
+        if (agendaVoteAddendum != null ? !agendaVoteAddendum.equals(agenda.agendaVoteAddendum) : agenda.agendaVoteAddendum != null)
+            return false;
+        if (id != null ? !id.equals(agenda.id) : agenda.id != null) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + (agendaInfoAddendum != null ? agendaInfoAddendum.hashCode() : 0);
+        result = 31 * result + (agendaVoteAddendum != null ? agendaVoteAddendum.hashCode() : 0);
+        return result;
     }
 
     /** --- Functional Getters/Setters --- */
@@ -60,20 +85,12 @@ public class Agenda extends BaseLegislativeContent
 
     /** --- Basic Getters/Setters --- */
 
-    public Integer getNumber() {
-        return number;
+    public AgendaId getId() {
+        return id;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-
-    public String getOid() {
-        return this.getOtype()+"-"+this.getYear()+"-"+this.getNumber();
-    }
-
-    public String getOtype() {
-        return "agenda";
+    public void setId(AgendaId id) {
+        this.id = id;
     }
 
     public Map<String, AgendaInfoAddendum> getAgendaInfoAddendum() {

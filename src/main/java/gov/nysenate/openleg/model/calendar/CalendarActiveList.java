@@ -9,7 +9,7 @@ import java.util.List;
 public class CalendarActiveList extends BaseLegislativeContent
 {
     /** A sequence number that identifies this active list. */
-    private Integer id;
+    private Integer sequenceNo;
 
     /** Reference to the parent Calendar's id. */
     private CalendarId calendarId;
@@ -33,12 +33,12 @@ public class CalendarActiveList extends BaseLegislativeContent
         this.setEntries(new ArrayList<CalendarActiveListEntry>());
     }
 
-    public CalendarActiveList(CalendarId calId, Integer id, String notes, Date calDate, Date releaseDateTime) {
+    public CalendarActiveList(CalendarId calId, Integer sequenceNo, String notes, Date calDate, Date releaseDateTime) {
         this();
         this.setCalendarId(calId);
         this.setYear(calId.getYear());
         this.setSession(resolveSessionYear(getYear()));
-        this.setId(id);
+        this.setSequenceNo(sequenceNo);
         this.setNotes(notes);
         this.setCalDate(calDate);
         this.setReleaseDateTime(releaseDateTime);
@@ -61,7 +61,7 @@ public class CalendarActiveList extends BaseLegislativeContent
         if (calDate != null ? !calDate.equals(that.calDate) : that.calDate != null) return false;
         if (calendarId != null ? !calendarId.equals(that.calendarId) : that.calendarId != null) return false;
         if (entries != null ? !entries.equals(that.entries) : that.entries != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (sequenceNo != null ? !sequenceNo.equals(that.sequenceNo) : that.sequenceNo != null) return false;
         if (notes != null ? !notes.equals(that.notes) : that.notes != null) return false;
         if (releaseDateTime != null ? !releaseDateTime.equals(that.releaseDateTime) : that.releaseDateTime != null)
             return false;
@@ -71,7 +71,7 @@ public class CalendarActiveList extends BaseLegislativeContent
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + (sequenceNo != null ? sequenceNo.hashCode() : 0);
         result = 31 * result + (calendarId != null ? calendarId.hashCode() : 0);
         result = 31 * result + (notes != null ? notes.hashCode() : 0);
         result = 31 * result + (calDate != null ? calDate.hashCode() : 0);
@@ -82,12 +82,12 @@ public class CalendarActiveList extends BaseLegislativeContent
 
     /** --- Basic Getters/Setters --- */
 
-    public Integer getId() {
-        return id;
+    public Integer getSequenceNo() {
+        return sequenceNo;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setSequenceNo(Integer sequenceNo) {
+        this.sequenceNo = sequenceNo;
     }
 
     public CalendarId getCalendarId() {

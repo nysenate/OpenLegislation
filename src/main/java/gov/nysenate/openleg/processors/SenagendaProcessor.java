@@ -50,30 +50,30 @@ public class SenagendaProcessor
         Integer agendaNo = xml.getInteger("@no", xmlAgenda);
         Integer sessYr = xml.getInteger("@sessyr", xmlAgenda);
         Integer year = xml.getInteger("@year", xmlAgenda);
-        Agenda agenda = new Agenda(agendaNo, sessYr, year);
-        agenda.setPublishDate(modifiedDate);
+//        Agenda agenda = new Agenda(agendaNo, sessYr, year);
+//        agenda.setPublishDate(modifiedDate);
 
         // action="remove" removes the whole agenda and all its addendum.
         // action="replace" replaces the whole agenda and all its addendum and inserts new ones.
         // As such, if we have an old agenda, clean out the old addendum and meeting information.
-        String key = storage.key(agenda);
-        Agenda oldAgenda = (Agenda)storage.get(key, Agenda.class);
-        if (oldAgenda != null) {
-            agenda = oldAgenda;
-        }
-        agenda.setModifiedDate(modifiedDate);
+//        String key = storage.key(agenda);
+//        Agenda oldAgenda = (Agenda)storage.get(key, Agenda.class);
+//        if (oldAgenda != null) {
+//            agenda = oldAgenda;
+//        }
+//        agenda.setModifiedDate(modifiedDate);
         //agenda.addDataSource(file.getName());
 
-        String action = xml.getString("@action", xmlAgenda);
-        if (action.equalsIgnoreCase("remove")) {
-            logger.info("Removing agenda: " + agenda.getOid());
-            storage.del(key);
+//        String action = xml.getString("@action", xmlAgenda);
+//        if (action.equalsIgnoreCase("remove")) {
+//            logger.info("Removing agenda: " + agenda.getOid());
+//            storage.del(key);
 //            ChangeLogger.delete(key, storage);
-        }
-        else if (action.equalsIgnoreCase("replace")) {
-            logger.info("Replacing senagenda addendums: "+agenda.getOid());
+//        }
+//        else if (action.equalsIgnoreCase("replace")) {
+//            logger.info("Replacing senagenda addendums: "+agenda.getOid());
             NodeList xmlAddendums = xml.getNodeList("addendum", xmlAgenda);
-            // Because we are replacing them in full, we create a new map here
+//            Because we are replacing them in full, we create a new map here
             Map<String, AgendaInfoAddendum> addendums = new TreeMap<String, AgendaInfoAddendum>();
             for (int i=0; i < xmlAddendums.getLength(); i++) {
                 Node xmlAddendum = xmlAddendums.item(i);
@@ -91,7 +91,7 @@ public class SenagendaProcessor
                     String meetDay = xml.getString("meetday/text()", xmlCommittee);
                     String notes = xml.getString("notes/text()", xmlCommittee);
                     Date meetDateTime = DateHelper.getDateTime(xml.getString("meetdate/text()", xmlCommittee)+xml.getString("meettime/text()", xmlCommittee));
-                    AgendaInfoCommittee committee = new AgendaInfoCommittee(name, chair, location, notes, meetDay, meetDateTime);
+                    AgendaInfoCommittee committee = new AgendaInfoCommittee();//new AgendaInfoCommittee(name, chair, location, notes, meetDay, meetDateTime);
 
                     NodeList xmlBills = xml.getNodeList("bills/bill", xmlCommittee);
                     for (int k=0; k < xmlBills.getLength(); k++) {
@@ -102,23 +102,23 @@ public class SenagendaProcessor
                         String title = xml.getString("title/text()", xmlBill);
                         String billAmendment = billno.matches("[A-Z]$") ? billno.substring(billno.length()-1) : "";
                         Bill bill = getOrCreateBill(storage, billno, billAmendment, sessYr, sponsor, modifiedDate);
-                        AgendaInfoCommitteeItem item = new AgendaInfoCommitteeItem(bill, billAmendment, message, title);
-                        committee.putItem(item);
+//                        AgendaInfoCommitteeItem item = new AgendaInfoCommitteeItem(bill, billAmendment, message, title);
+//                        committee.putItem(item);
                     }
                     addendum.putCommittee(committee);
                 }
                 addendums.put(id, addendum);
             }
             // This will override the existing set of addendums.
-            agenda.setAgendaInfoAddendum(addendums);
+//            agenda.setAgendaInfoAddendum(addendums);
 
             // Record and persist these changes
 //            ChangeLogger.record(key, storage);
-            storage.set(agenda);
-        }
-        else {
-            logger.error("Unknown senagenda action: "+action);
-        }
+//            storage.set(agenda);
+//        }
+//        else {
+//            logger.error("Unknown senagenda action: "+action);
+//        }
     }
 
     public void processSenagendaVote(File file, Storage storage) throws SAXException, IOException, XPathExpressionException, ParseException
@@ -133,7 +133,7 @@ public class SenagendaProcessor
         Integer agendaNo = xml.getInteger("@no", xmlAgendgaVote);
         Integer sessYr = xml.getInteger("@sessyr", xmlAgendgaVote);
         Integer year = xml.getInteger("@year", xmlAgendgaVote);
-        Agenda agenda = new Agenda(agendaNo, sessYr, year);
+        Agenda agenda = new Agenda();//new Agenda(agendaNo, sessYr, year);
 
         // Use the old agenda if we have it
         String key = storage.key(agenda);
@@ -142,7 +142,7 @@ public class SenagendaProcessor
             agenda = oldAgenda;
         }
         agenda.setModifiedDate(modifiedDate);
-        //agenda.addDataSource(file.getName());
+        //agenda.addDataSource(file.getName h );
 
         NodeList xmlAddendums = xml.getNodeList("addendum", xmlAgendgaVote);
         for (int i=0; i < xmlAddendums.getLength(); i++) {

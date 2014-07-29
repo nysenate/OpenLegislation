@@ -2,10 +2,13 @@ package gov.nysenate.openleg.model.agenda;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class AgendaVoteAddendum extends BaseLegislativeContent
+public class AgendaVoteAddendum extends BaseLegislativeContent implements Serializable
 {
+    private static final long serialVersionUID = -4592278008570984247L;
+
     private String id;
     private Integer agendaNumber;
     private HashMap<String, AgendaVoteCommittee> committees;

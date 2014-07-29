@@ -91,7 +91,7 @@ public class CalendarProcessor extends AbstractSobiProcessor implements SobiProc
                 }
             }
             logger.debug("Saving {}", calendar);
-            saveCalendar(calendar, sobiFragment);
+            calendarDataService.saveCalendar(calendar, sobiFragment);
         }
         catch (IOException | SAXException | XPathExpressionException ex) {
             logger.error("Failed to parse calendar sobi {}", sobiFragment.getFragmentId(), ex);

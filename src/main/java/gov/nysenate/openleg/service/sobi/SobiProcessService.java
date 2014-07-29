@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.sobi;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
 
 import java.util.List;
 
@@ -36,15 +37,20 @@ public interface SobiProcessService
      * Process the list of supplied SobiFragments.
      *
      * @param fragments List<SobiFragment> - List of fragments to process.
+     * @param options - SobiProcessOptions - Provide custom processing options or
+     *                                       set to null to use the default options.
      */
-    public void processFragments(List<SobiFragment> fragments);
+    public void processFragments(List<SobiFragment> fragments, SobiProcessOptions options);
 
     /**
      * Retrieves all pending fragments and processes them. This is essentially a shorthand
      * for invoking {@link #getPendingFragments} and running {@link #processFragments} on
      * the results.
+     *
+     * @param options - SobiProcessOptions - Provide custom processing options or
+     *                                       set to null to use the default options.
      */
-    public void processPendingFragments();
+    public void processPendingFragments(SobiProcessOptions options);
 
     /**
      * Toggle the pending processing status of a SobiFragment via it's fragmentId.

@@ -82,18 +82,31 @@ public class BillId implements Serializable, Comparable<BillId>
 
     /** --- Methods --- */
 
+    /**
+     * Returns a BaseBillId instance from the given bill id which ensures that no amendment
+     * version info will be stored.
+     */
     public static BaseBillId getBaseId(BillId billId) {
         return new BaseBillId(billId.basePrintNo, billId.session);
     }
 
+    /**
+     * Returns the full print no including amendment version, e.g. S1234A
+     */
     public String getPrintNo() {
         return this.basePrintNo + ((this.version != null) ? this.version : "");
     }
 
+    /**
+     * Retrieves the type of bill based on the first letter designator.
+     */
     public BillType getBillType() {
         return BillType.valueOf(this.basePrintNo.substring(0, 1));
     }
 
+    /**
+     * Indicates the chamber of the bill based on the letter designator.
+     */
     public Chamber getChamber() {
         return getBillType().getChamber();
     }

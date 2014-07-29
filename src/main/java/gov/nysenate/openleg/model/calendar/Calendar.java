@@ -43,7 +43,7 @@ public class Calendar extends BaseLegislativeContent
     }
 
     public void putActiveList(CalendarActiveList activeList) {
-        this.activeListMap.put(activeList.getId(), activeList);
+        this.activeListMap.put(activeList.getSequenceNo(), activeList);
     }
 
     public void removeActiveList(Integer id) {

@@ -611,7 +611,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         addBillIdParams(billAmendment, params);
         params.addValue("voteDate", billVote.getVoteDate());
         params.addValue("voteType", billVote.getVoteType().getCode());
-        params.addValue("sequenceNo", billVote.getSequenceNumber());
+        params.addValue("sequenceNo", billVote.getSequenceNo());
         addModPubDateParams(billVote.getModifiedDate(), billVote.getPublishDate(), params);
         addLastFragmentParam(fragment, params);
         return params;

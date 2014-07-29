@@ -139,9 +139,9 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
             jdbcNamed.query(SELECT_CALENDAR_ACTIVE_LISTS.getSql(schema()), calParams, new CalendarActiveListRowMapper());
         TreeMap<Integer, CalendarActiveList> activeListMap = new TreeMap<>();
         for (CalendarActiveList activeList : activeLists) {
-            calParams.addValue("activeListNo", activeList.getId());
+            calParams.addValue("sequenceNo", activeList.getSequenceNo());
             activeList.setEntries(getActiveListEntries(calParams));
-            activeListMap.put(activeList.getId(), activeList);
+            activeListMap.put(activeList.getSequenceNo(), activeList);
         }
         return activeListMap;
     }
@@ -164,15 +164,15 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         MapDifference<Integer, CalendarActiveList> diff =
                 Maps.difference(existingActiveListMap, calendar.getActiveListMap());
         // Delete any active lists that were not found in the current map or were different.
-        Set<Integer> deleteActListIds = Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnLeft().keySet());
-        for (Integer actListId : deleteActListIds) {
-            calParams.addValue("activeListNo", actListId);
+        Set<Integer> deleteActListSeqs = Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnLeft().keySet());
+        for (Integer actListSeq : deleteActListSeqs) {
+            calParams.addValue("sequenceNo", actListSeq);
             jdbcNamed.update(DELETE_CALENDAR_ACTIVE_LIST.getSql(schema()), calParams);
         }
         // Insert any new or differing active lists
-        Set<Integer> updateActListIds = Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnRight().keySet());
-        for (Integer actListId : updateActListIds) {
-            CalendarActiveList actList = calendar.getActiveList(actListId);
+        Set<Integer> updateActListSeqs = Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnRight().keySet());
+        for (Integer actListSeq : updateActListSeqs) {
+            CalendarActiveList actList = calendar.getActiveList(actListSeq);
             MapSqlParameterSource actListParams = getCalActiveListParams(actList, fragment);
             jdbcNamed.update(INSERT_CALENDAR_ACTIVE_LIST.getSql(schema()), actListParams);
             // Insert the active list entries
@@ -234,7 +234,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         @Override
         public CalendarActiveList mapRow(ResultSet rs, int rowNum) throws SQLException {
             CalendarActiveList activeList = new CalendarActiveList();
-            activeList.setId(rs.getInt("active_list_no"));
+            activeList.setSequenceNo(rs.getInt("sequence_no"));
             activeList.setCalendarId(new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")));
             activeList.setCalDate(rs.getDate("calendar_date"));
             activeList.setReleaseDateTime(rs.getTimestamp("release_date_time"));
@@ -295,7 +295,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     protected static MapSqlParameterSource getCalActiveListParams(CalendarActiveList actList, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(actList.getCalendarId(), params);
-        params.addValue("activeListNo", actList.getId());
+        params.addValue("sequenceNo", actList.getSequenceNo());
         params.addValue("calendarDate", actList.getCalDate());
         params.addValue("releaseDateTime", actList.getReleaseDateTime());
         params.addValue("notes", actList.getNotes());
@@ -308,7 +308,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
                                                                        CalendarActiveListEntry entry) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(actList.getCalendarId(), params);
-        params.addValue("activeListNo", actList.getId());
+        params.addValue("sequenceNo", actList.getSequenceNo());
         params.addValue("billCalendarNo", entry.getBillCalNo());
         addBillIdParams(entry.getBillId(), params);
         return params;
@@ -320,7 +320,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     }
 
     protected static void addBillIdParams(BillId billId, MapSqlParameterSource params) {
-        params.addValue("printNo", billId.getPrintNo());
+        params.addValue("printNo", billId.getBasePrintNo());
         params.addValue("session", billId.getSession());
         params.addValue("amendVersion", billId.getVersion());
     }

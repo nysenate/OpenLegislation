@@ -34,7 +34,7 @@ public class DataProcessor
     }
 
     public void ingest() throws IOException {
-        sobiProcessService.processPendingFragments();
+//        sobiProcessService.processPendingFragments();
         // TODO: Process Transcripts / Public Hearings
     }
 }

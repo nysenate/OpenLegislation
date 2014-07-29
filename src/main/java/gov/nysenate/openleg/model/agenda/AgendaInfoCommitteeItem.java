@@ -1,65 +1,66 @@
 package gov.nysenate.openleg.model.agenda;
 
-import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillId;
 
-public class AgendaInfoCommitteeItem
+import java.io.Serializable;
+
+/**
+ * An AgendaInfoCommitteeItem indicates a specific bill that will be brought up for consideration.
+ */
+public class AgendaInfoCommitteeItem implements Serializable
 {
-    private Bill bill;
-    private String billAmendment;
+    private static final long serialVersionUID = -8904159113309808493L;
+
+    /** Reference to the bill id associated with the bill being considered */
+    private BillId billId;
+
+    /** An optional message associated with this item. */
     private String message;
-    private String title;
 
-    public AgendaInfoCommitteeItem()
-    {
+    /** --- Constructors --- */
 
-    }
+    public AgendaInfoCommitteeItem() {}
 
-    public AgendaInfoCommitteeItem(Bill bill, String billAmendment, String message, String title)
-    {
+    public AgendaInfoCommitteeItem(BillId billId, String message) {
         this();
-        this.setBill(bill);
-        this.setBillAmendment(billAmendment);
+        this.setBillId(billId);
         this.setMessage(message);
-        this.setTitle(title);
     }
 
-    public Bill getBill()
-    {
-        return bill;
+    /** --- Overrides --- */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AgendaInfoCommitteeItem)) return false;
+        AgendaInfoCommitteeItem that = (AgendaInfoCommitteeItem) o;
+        if (billId != null ? !billId.equals(that.billId) : that.billId != null) return false;
+        if (message != null ? !message.equals(that.message) : that.message != null) return false;
+        return true;
     }
 
-    public void setBill(Bill bill)
-    {
-        this.bill = bill;
+    @Override
+    public int hashCode() {
+        int result = billId != null ? billId.hashCode() : 0;
+        result = 31 * result + (message != null ? message.hashCode() : 0);
+        return result;
     }
 
-    public String getBillAmendment()
-    {
-        return billAmendment;
+    /** --- Basic Getters/Setters --- */
+
+    public BillId getBillId() {
+        return billId;
     }
 
-    public void setBillAmendment(String billAmendment)
-    {
-        this.billAmendment = billAmendment;
+    public void setBillId(BillId billId) {
+        this.billId = billId;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message)
-    {
+    public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getTitle()
-    {
-        return title;
-    }
-
-    public void setTitle(String title)
-    {
-        this.title = title;
     }
 }

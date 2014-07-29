@@ -31,7 +31,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable
 
     /** An identifier to uniquely identify votes that came in on the same day.
      *  Currently not implemented as the source data does not contain this value. */
-    private int sequenceNumber;
+    private int sequenceNo;
 
     /** --- Constructors --- */
 
@@ -39,14 +39,14 @@ public class BillVote extends BaseLegislativeContent implements Serializable
         super();
     }
 
-    public BillVote(BillId billId, Date date, BillVoteType type, int sequenceNumber) {
+    public BillVote(BillId billId, Date date, BillVoteType type, int sequenceNo) {
         this();
         this.billId = billId;
         this.voteDate = date;
         this.setYear(new LocalDate(date).getYear());
         this.setSession(resolveSessionYear(this.getYear()));
         this.voteType = type;
-        this.sequenceNumber = sequenceNumber;
+        this.sequenceNo = sequenceNo;
     }
 
     /** --- Functional Getters/Setters --- */
@@ -55,7 +55,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable
      * Creates and returns a unique id for the BillVote.
      */
     public BillVoteId getVoteId() {
-        return new BillVoteId(this.billId, this.voteDate, this.voteType, this.sequenceNumber);
+        return new BillVoteId(this.billId, this.voteDate, this.voteType, this.sequenceNo);
     }
 
     /**
@@ -93,7 +93,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable
         if (this == o) return true;
         if (!(o instanceof BillVote)) return false;
         BillVote billVote = (BillVote) o;
-        if (sequenceNumber != billVote.sequenceNumber) return false;
+        if (sequenceNo != billVote.sequenceNo) return false;
         if (billId != null ? !billId.equals(billVote.billId) : billVote.billId != null) return false;
         if (memberVotes != null ? !memberVotes.equals(billVote.memberVotes) : billVote.memberVotes != null)
             return false;
@@ -109,7 +109,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable
         result = 31 * result + (voteDate != null ? voteDate.hashCode() : 0);
         result = 31 * result + (billId != null ? billId.hashCode() : 0);
         result = 31 * result + (memberVotes != null ? memberVotes.hashCode() : 0);
-        result = 31 * result + sequenceNumber;
+        result = 31 * result + sequenceNo;
         return result;
     }
 
@@ -155,11 +155,11 @@ public class BillVote extends BaseLegislativeContent implements Serializable
         return memberVotes;
     }
 
-    public int getSequenceNumber() {
-        return sequenceNumber;
+    public int getSequenceNo() {
+        return sequenceNo;
     }
 
-    public void setSequenceNumber(int sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
+    public void setSequenceNo(int sequenceNo) {
+        this.sequenceNo = sequenceNo;
     }
 }

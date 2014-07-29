@@ -88,17 +88,17 @@ public enum SqlCalendarQuery implements BasicSqlQuery
         "WHERE calendar_no = :calendarNo AND calendar_year = :year"
     ),
     SELECT_CALENDAR_ACTIVE_LIST(
-        SELECT_CALENDAR_ACTIVE_LISTS + " AND active_list_no = :activeListNo"
+        SELECT_CALENDAR_ACTIVE_LISTS + " AND sequence_no = :sequenceNo"
     ),
     SELECT_CALENDAR_ACTIVE_LIST_ID(
         "SELECT id FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + "\n" +
-        "WHERE calendar_no = :calendarNo AND calendar_year = :year AND active_list_no = :activeListNo"
+        "WHERE calendar_no = :calendarNo AND calendar_year = :year AND sequence_no = :sequenceNo"
     ),
     INSERT_CALENDAR_ACTIVE_LIST(
         "INSERT INTO ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + "\n" +
-        "(active_list_no, calendar_no, calendar_year, calendar_date, notes, release_date_time, last_fragment_id, " +
+        "(sequence_no, calendar_no, calendar_year, calendar_date, notes, release_date_time, last_fragment_id, " +
         " modified_date_time, published_date_time)\n" +
-        "VALUES (:activeListNo, :calendarNo, :year, :calendarDate, :notes, :releaseDateTime, :lastFragmentId, " +
+        "VALUES (:sequenceNo, :calendarNo, :year, :calendarDate, :notes, :releaseDateTime, :lastFragmentId, " +
         "        :modifiedDateTime, :publishedDateTime)"
     ),
     UPDATE_CALENDAR_ACTIVE_LIST(
@@ -106,11 +106,11 @@ public enum SqlCalendarQuery implements BasicSqlQuery
         "SET calendar_date = :calendarDate, notes = :notes, release_date_time = :releaseDateTime, " +
         "    last_fragment_id = :lastFragmentId, modified_date_time = :modifiedDateTime, " +
         "    published_date_time = :publishedDateTime\n" +
-        "WHERE calendar_no = :calendarNo AND calendar_year = :year AND active_list_no = :activeListNo"
+        "WHERE calendar_no = :calendarNo AND calendar_year = :year AND sequence_no = :sequenceNo"
     ),
     DELETE_CALENDAR_ACTIVE_LIST(
         "DELETE FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + "\n" +
-        "WHERE calendar_no = :calendarNo AND calendar_year = :year AND active_list_no = :activeListNo"
+        "WHERE calendar_no = :calendarNo AND calendar_year = :year AND sequence_no = :sequenceNo"
     ),
 
     /** --- Calendar Active List --- */

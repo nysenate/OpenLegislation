@@ -69,7 +69,7 @@ public class ActiveListProcessor extends AbstractSobiProcessor implements SobiPr
 
                     CalendarActiveList activeList = new CalendarActiveList(calendarId, id, notes, calDate, releaseDateTime);
                     NodeList xmlCalNos = xml.getNodeList("calnos/calno", xmlSequence);
-                    for (int k = 0; k < xmlSequences.getLength(); k++) {
+                    for (int k = 0; k < xmlCalNos.getLength(); k++) {
                         Node xmlCalNo = xmlCalNos.item(k);
                         Integer calNo = xml.getInteger("@no", xmlCalNo);
                         String billPrintNo = xml.getString("bill/@no", xmlCalNo);
@@ -81,7 +81,7 @@ public class ActiveListProcessor extends AbstractSobiProcessor implements SobiPr
                 }
             }
             logger.debug("Saving {}", calendar);
-            saveCalendar(calendar, sobiFragment);
+            calendarDataService.saveCalendar(calendar, sobiFragment);
         }
         catch (IOException | SAXException | XPathExpressionException ex) {
             logger.error("Failed to parse active list sobi", ex);

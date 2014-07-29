@@ -2,6 +2,7 @@ package gov.nysenate.openleg.config;
 
 import gov.nysenate.openleg.model.base.Environment;
 import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurer;
@@ -31,9 +32,17 @@ public class ApplicationConfig implements CachingConfigurer
 
     @Bean(destroyMethod = "shutdown")
     public net.sf.ehcache.CacheManager pooledCacheManger() {
+        // Set the upper limit when computing heap size for objects. Once it reaches the limit
+        // it stops computing further. Some objects can contain many references so we set the limit
+        // fairly high.
+        SizeOfPolicyConfiguration sizeOfConfig = new SizeOfPolicyConfiguration();
+        sizeOfConfig.setMaxDepth(50000);
+        sizeOfConfig.setMaxDepthExceededBehavior("abort");
+
         // Configure the default cache to be used as a template for actual caches.
         CacheConfiguration cacheConfiguration = new CacheConfiguration();
         cacheConfiguration.setMemoryStoreEvictionPolicy("LRU");
+        cacheConfiguration.addSizeOfPolicy(sizeOfConfig);
 
         // Configure the cache manager.
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();

@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.service.sobi;
 
+import gov.nysenate.openleg.model.agenda.Agenda;
+import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
@@ -10,6 +12,8 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.service.agenda.AgendaDataService;
+import gov.nysenate.openleg.service.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.service.base.IngestCache;
 import gov.nysenate.openleg.service.bill.BillDataService;
 import gov.nysenate.openleg.service.bill.BillNotFoundEx;
@@ -49,6 +53,8 @@ public abstract class AbstractSobiProcessor
     protected BillDataService billDataService;
     @Autowired
     protected CalendarDataService calendarDataService;
+    @Autowired
+    protected AgendaDataService agendaDataService;
     @Autowired
     protected MemberService memberService;
     @Autowired
@@ -155,16 +161,6 @@ public abstract class AbstractSobiProcessor
         return (isCached) ? billIngestCache.get(baseBillId) : billDataService.getBill(baseBillId);
     }
 
-    /**
-     * Saves the bill into the persistence layer.
-     *
-     * @param bill Bill
-     * @param sobiFragment SobiFragment
-     */
-    protected void saveBill(Bill bill, SobiFragment sobiFragment) {
-        billDataService.saveBill(bill, sobiFragment);
-    }
-
     /** --- Member Methods --- */
 
     /**
@@ -192,13 +188,35 @@ public abstract class AbstractSobiProcessor
         return null;
     }
 
+    /** --- Agenda Methods --- */
+
+    /**
+     * Retrieve an Agenda instance from the backing store or create it if it does not exist.
+     *
+     * @param agendaId AgendaId - Retrieve Agenda via this agendaId.
+     * @param date Date - The published date of the requesting sobi fragment.
+     * @return Agenda
+     */
+    protected Agenda getOrCreateAgenda(AgendaId agendaId, Date date) {
+        Agenda agenda;
+        try {
+            agenda = agendaDataService.getAgenda(agendaId);
+        }
+        catch (AgendaNotFoundEx ex) {
+            agenda = new Agenda(agendaId);
+            agenda.setModifiedDate(date);
+            agenda.setPublishDate(date);
+        }
+        return agenda;
+    }
+
     /** --- Calendar Methods --- */
 
     /**
-     * Retrieve a Calendar from the persistence layer or create it if it does not exist.
+     * Retrieve a Calendar from the backing store or create it if it does not exist.
      *
-     * @param calendarId CalendarId
-     * @param date Date
+     * @param calendarId CalendarId - Retrieve Calendar via this calendarId.
+     * @param date Date - The published date of the requesting sobi fragment.
      * @return Calendar
      */
     protected Calendar getOrCreateCalendar(CalendarId calendarId, Date date) {
@@ -208,18 +226,9 @@ public abstract class AbstractSobiProcessor
         }
         catch (CalendarNotFoundEx ex) {
             calendar = new Calendar(calendarId);
+            calendar.setModifiedDate(date);
             calendar.setPublishDate(date);
         }
         return calendar;
-    }
-
-    /**
-     * Saves the calendar into the persistence layer.
-     *
-     * @param calendar Calendar
-     * @param sobiFragment SobiFragment
-     */
-    protected void saveCalendar(Calendar calendar, SobiFragment sobiFragment) {
-        calendarDataService.saveCalendar(calendar, sobiFragment);
     }
 }
