@@ -118,7 +118,7 @@ public class ManagedSobiProcessService implements SobiProcessService
         }
         for (SobiFragment fragment : fragments) {
             // Process only fragments that pass the filter condition specified in the options.
-            if (options.getFragmentFilter().apply(fragment)) {
+            if (options.getFragmentFilter().test(fragment)) {
                 // Hand off processing to specific implementations based on fragment type.
                 if (processorMap.containsKey(fragment.getType())) {
                     processorMap.get(fragment.getType()).process(fragment);
@@ -178,7 +178,8 @@ public class ManagedSobiProcessService implements SobiProcessService
         // is always set to 0 to ensure that they are always processed first.
         int sequenceNo = 1;
 
-        List<String> lines = Arrays.asList(sobiFile.getText().split("\\r?\\n"));
+        // Replace the null characters with spaces and split by newline.
+        List<String> lines = Arrays.asList(sobiFile.getText().replace('\0', ' ').split("\\r?\\n"));
         Iterator<String> lineIterator = lines.iterator();
         while (lineIterator.hasNext()) {
             String line = lineIterator.next();
