@@ -163,7 +163,7 @@ public class BillId implements Serializable, Comparable<BillId>
         if (o == null || getClass() != o.getClass()) return false;
         if (!equalsBase(o)) return false;
         BillId oBillId = (BillId) o;
-        return Objects.equals(this.version, oBillId);
+        return Objects.equals(this.version, oBillId.version);
     }
 
     @Override
