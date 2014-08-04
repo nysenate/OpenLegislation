@@ -85,7 +85,7 @@ public class SobiFragment
             SobiBlock block = null;
             List<String> lines = new ArrayList<>(Arrays.asList(this.text.split("\\r?\\n")));
             lines.add(""); // Add a trailing line to end the last block and remove edge cases
-            for(int lineNo = 0; lineNo < lines.size(); lineNo++) {
+            for (int lineNo = 0; lineNo < lines.size(); lineNo++) {
                 // Replace NULL bytes with spaces to properly format lines.
                 String line = lines.get(lineNo).replace('\0', ' ');
                 // Source file is not assumed to be 100% SOBI so we filter out other lines

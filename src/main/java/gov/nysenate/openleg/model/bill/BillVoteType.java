@@ -18,8 +18,19 @@ public enum BillVoteType
         return code;
     }
 
-    public static BillVoteType valueOfCode(int code) {
-        for (BillVoteType type : BillVoteType.values()) {
+    /**
+     * Delegate to valueOf but performs some string normalization to prevent errors.
+     */
+    public static BillVoteType getValue(String type) {
+        if (type != null) {
+            type = type.trim().toUpperCase();
+            return valueOf(type);
+        }
+        throw new IllegalArgumentException("Supplied null 'type' when mapping BillVoteType.");
+    }
+
+    public static BillVoteType getValueFromCode(int code) {
+        for (BillVoteType type : values()) {
             if (type.code == code) {
                 return type;
             }

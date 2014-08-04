@@ -37,7 +37,7 @@ public class SobiBlock
         Arrays.asList(SobiLineType.BILL_INFO, SobiLineType.LAW_SECTION, SobiLineType.SAME_AS);
 
     /** A pattern to verify that a string is in the SOBI line format. */
-    public static final Pattern blockPattern = Pattern.compile("^[0-9]{4}[A-Z][0-9]{5}[ A-Z][1-9ABCMRTV]");
+    public static final Pattern blockPattern = Pattern.compile("^[0-9]{4}[A-Z][0-9]{5}[ A-Z][1-9A-Z]");
 
     /** The file name of the fragment that generated this block. */
     private String fragmentFileName;

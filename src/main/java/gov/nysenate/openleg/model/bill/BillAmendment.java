@@ -44,7 +44,8 @@ public class BillAmendment extends BaseLegislativeContent implements Serializabl
     /** A flag marking this bill as stricken (effectively withdrawn) */
     protected Boolean stricken = false;
 
-    /** A list of votes that have been made on this bill. Maps the vote id -> BillVote */
+    /** A list of votes that have been made on this bill. Maps the vote id -> BillVote to make it
+     *  easy to update votes. */
     protected Map<BillVoteId, BillVote> votesMap = new HashMap<>();
 
     /** A flag marking this bill as introduced in unison in both houses */

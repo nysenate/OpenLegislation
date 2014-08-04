@@ -6,6 +6,7 @@ import org.joda.time.LocalDate;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Represents a single action on a single bill. E.g. REFERRED TO RULES.
@@ -67,34 +68,23 @@ public class BillAction extends BaseLegislativeContent implements Serializable
      * Every BillAction is assigned a BillId which may contain an amendment version other than
      * the base version. For the sake of equality checking, we will use the base version of the
      * bill id since the actions are stored on the base bill anyways. Seq no, date, and text will
-     * also be checked. NOTE that published/modified date are ignored since an individual action
+     * also be checked. NOTE: published/modified date are ignored since an individual action
      * is never updated.
-     * @param o Object
-     * @return boolean
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BillAction)) return false;
-        BillAction that = (BillAction) o;
-        if (sequenceNo != that.sequenceNo) return false;
-        if (!billId.equalsBase(billId)) return false;
-        if (!date.equals(that.date)) return false;
-        if (!text.equals(that.text)) return false;
-        return true;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final BillAction other = (BillAction) obj;
+        return this.billId.equalsBase(other.billId) &&
+               Objects.equals(this.date, other.date) &&
+               Objects.equals(this.sequenceNo, other.sequenceNo) &&
+               Objects.equals(this.text, other.text);
     }
 
-    /**
-     * Similar to the equals() method, the hashCode() method will use the base version of the BillId.
-     * @return int
-     */
     @Override
     public int hashCode() {
-        int result = billId.hashCodeBase();
-        result = 31 * result + date.hashCode();
-        result = 31 * result + sequenceNo;
-        result = 31 * result + text.hashCode();
-        return result;
+        return 31 * billId.hashCodeBase() + Objects.hash(date, sequenceNo, text);
     }
 
     /** --- Helper classes --- */
@@ -109,7 +99,7 @@ public class BillAction extends BaseLegislativeContent implements Serializable
     public static class ByEventSequenceDesc implements Comparator<BillAction> {
         @Override
         public int compare(BillAction o1, BillAction o2) {
-            return Integer.compare(o1.getSequenceNo(), o2.getSequenceNo()) * -1;
+            return Integer.compare(o2.getSequenceNo(), o1.getSequenceNo());
         }
     }
 

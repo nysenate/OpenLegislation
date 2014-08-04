@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.base;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Basic info that is common to all pieces of legislative content.
@@ -33,24 +34,19 @@ abstract public class BaseLegislativeContent
     /** --- Overrides --- */
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BaseLegislativeContent)) return false;
-        BaseLegislativeContent that = (BaseLegislativeContent) o;
-        if (session != that.session) return false;
-        if (year != that.year) return false;
-        if (modifiedDate != null ? !modifiedDate.equals(that.modifiedDate) : that.modifiedDate != null) return false;
-        if (publishDate != null ? !publishDate.equals(that.publishDate) : that.publishDate != null) return false;
-        return true;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final BaseLegislativeContent other = (BaseLegislativeContent) obj;
+        return Objects.equals(this.modifiedDate, other.modifiedDate) &&
+               Objects.equals(this.publishDate, other.publishDate) &&
+               Objects.equals(this.session, other.session) &&
+               Objects.equals(this.year, other.year);
     }
 
     @Override
     public int hashCode() {
-        int result = modifiedDate != null ? modifiedDate.hashCode() : 0;
-        result = 31 * result + (publishDate != null ? publishDate.hashCode() : 0);
-        result = 31 * result + session;
-        result = 31 * result + year;
-        return result;
+        return Objects.hash(modifiedDate, publishDate, session, year);
     }
 
     /** --- Basic Getters/Setters --- */

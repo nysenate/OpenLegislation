@@ -69,11 +69,13 @@ public class CalendarSupplemental extends BaseLegislativeContent
 
     /** --- Overrides --- */
 
+    /**
+     * Ignore the parent class (session/modified/published date) during equality checking.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof CalendarSupplemental)) return false;
-        if (!super.equals(o)) return false;
         CalendarSupplemental that = (CalendarSupplemental) o;
         if (calDate != null ? !calDate.equals(that.calDate) : that.calDate != null) return false;
         if (calendarId != null ? !calendarId.equals(that.calendarId) : that.calendarId != null) return false;

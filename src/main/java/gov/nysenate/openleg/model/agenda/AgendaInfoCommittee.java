@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The AgendaInfoCommittee models the agenda addenda which indicate committee meeting(s)
@@ -27,7 +28,7 @@ public class AgendaInfoCommittee implements Serializable
     private String location;
 
     /** Date/time of the meeting. */
-    private Date meetDateTime;
+    private Date meetingDateTime;
 
     /** Any notes associated with this addendum. */
     private String notes;
@@ -45,13 +46,33 @@ public class AgendaInfoCommittee implements Serializable
         this.setChair(chair);
         this.setLocation(location);
         this.setNotes(notes);
-        this.setMeetDateTime(meetDateTime);
+        this.setMeetingDateTime(meetDateTime);
     }
 
     /** --- Functional Getters/Setters --- */
 
     public void addCommitteeItem(AgendaInfoCommitteeItem item) {
         items.add(item);
+    }
+
+    /** --- Overrides --- */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final AgendaInfoCommittee other = (AgendaInfoCommittee) obj;
+        return Objects.equals(this.committeeId, other.committeeId) &&
+               Objects.equals(this.chair, other.chair) &&
+               Objects.equals(this.location, other.location) &&
+               Objects.equals(this.meetingDateTime, other.meetingDateTime) &&
+               Objects.equals(this.notes, other.notes) &&
+               Objects.equals(this.items, other.items);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(committeeId, chair, location, meetingDateTime, notes, items);
     }
 
     /** --- Basic Getters/Setters --- */
@@ -80,12 +101,12 @@ public class AgendaInfoCommittee implements Serializable
         this.location = location;
     }
 
-    public Date getMeetDateTime() {
-        return meetDateTime;
+    public Date getMeetingDateTime() {
+        return meetingDateTime;
     }
 
-    public void setMeetDateTime(Date meetDateTime) {
-        this.meetDateTime = meetDateTime;
+    public void setMeetingDateTime(Date meetingDateTime) {
+        this.meetingDateTime = meetingDateTime;
     }
 
     public String getNotes() {

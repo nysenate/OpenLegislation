@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.model.entity;
 
+import com.google.common.collect.ComparisonChain;
+
 import java.io.Serializable;
 import java.util.Comparator;
 
-public class CommitteeMember implements Serializable
+public class CommitteeMember implements Serializable, Comparable<CommitteeMember>
 {
     private static final long serialVersionUID = -3988868068553499472L;
 
@@ -19,21 +21,14 @@ public class CommitteeMember implements Serializable
     /** True if the member is part of the current majority */
     protected boolean majority;
 
-    /** --- Operators --- */
+    /** --- Overrides --- */
 
-    public static final Comparator<CommitteeMember> BY_SEQUENCE_NO =
-        new Comparator<CommitteeMember>() {
-            @Override
-            public int compare(CommitteeMember left, CommitteeMember right) {
-                if(left.getSequenceNo() == right.getSequenceNo()){
-                    return 0;
-                }else if (left.getSequenceNo() > right.getSequenceNo()){
-                    return 1;
-                }else{
-                    return -1;
-                }
-            }
-        };
+    @Override
+    public int compareTo(CommitteeMember o) {
+        return ComparisonChain.start()
+            .compare(this.getSequenceNo(), o.getSequenceNo())
+            .result();
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -103,5 +98,4 @@ public class CommitteeMember implements Serializable
     public void setMajority(boolean majority) {
         this.majority = majority;
     }
-
 }

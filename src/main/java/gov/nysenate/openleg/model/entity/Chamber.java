@@ -12,7 +12,10 @@ public enum Chamber
         return this.toString().toLowerCase();
     }
 
-    public static Chamber valueOfSqlEnum(String sqlEnum) {
-        return Chamber.valueOf(sqlEnum.toUpperCase());
+    public static Chamber getValue(String value) {
+        if (value != null) {
+            return Chamber.valueOf(value.toUpperCase());
+        }
+        throw new IllegalArgumentException("Supplied value cannot be null when mapping to Chamber.");
     }
 }

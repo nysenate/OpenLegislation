@@ -3,7 +3,6 @@ package gov.nysenate.openleg.model.bill;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.service.bill.BillAmendNotFoundEx;
 import gov.nysenate.openleg.util.DateHelper;
 import org.joda.time.LocalDate;
 
@@ -102,7 +101,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Set the publish date of the bill container.
-     * @param publishDate Date
      */
     @Override
     public void setPublishDate(Date publishDate) {
@@ -124,7 +122,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Returns a reference that identifies this base bill.
-     * @return BillId
      */
     public BaseBillId getBillId() {
         return new BaseBillId(this.printNo, this.session);
@@ -132,7 +129,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Returns the BillType which contains info such as the prefix and chamber.
-     * @return BillType
      */
     public BillType getBillType() {
         return this.getBillId().getBillType();
@@ -140,6 +136,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Indicate if this bill is a resolution.
+     *
      * @return - True if this bill is a resolution of some sort.
      */
     public boolean isResolution() {
@@ -148,6 +145,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Retrieves an amendment stored in this bill using the version as the key.
+     *
      * @param version - The amendment version of the bill (e.g "A", "B", etc)
      * @return BillAmendment
      * @throws BillAmendNotFoundEx if the bill amendment does not exist
@@ -161,7 +159,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Retrieves a list of all amendments stored in this bill.
-     * @return - List<BillAmendment>
      */
     public List<BillAmendment> getAmendmentList() {
         return new ArrayList<>(this.amendmentMap.values());
@@ -169,6 +166,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Associate an amendment with this bill.
+     *
      * @param billAmendment - Amendment to add to this bill.
      */
     public void addAmendment(BillAmendment billAmendment) {
@@ -177,6 +175,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Associate a list of amendments with this bill.
+     *
      * @param billAmendments - List<Amendment> - Amendments to add to this bill
      */
     public void addAmendments(List<BillAmendment> billAmendments) {
@@ -187,8 +186,9 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Indicate whether the bill has a reference to a given amendment version.
+     *
      * @param version String - Amendment version
-     * @return boolean
+     * @return boolean - true if amendment exists, false otherwise
      */
     public boolean hasAmendment(String version) {
         return this.amendmentMap.containsKey(version.toUpperCase()) &&
@@ -197,7 +197,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Indicate if the bill has a reference to the active amendment version.
-     * @return boolean
      */
     public boolean hasActiveAmendment() {
         return hasAmendment(this.activeVersion);
@@ -205,6 +204,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Convenience method to retrieve the currently active Amendment object.
+     *
      * @return BillAmendment
      * @throws BillAmendNotFoundEx if the bill amendment does not exist
      */
@@ -213,7 +213,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     /**
-     * @param previousVersion - The new bill ID to add to the previous versions list.
+     * Add the bill id to the previous bill versions list.
      */
     public void addPreviousVersion(BillId previousVersion) {
         if(!previousVersions.contains(previousVersion)) {
@@ -223,7 +223,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Add an action to the list of actions.
-     * @param action BillAction
      */
     public void addAction(BillAction action) {
         actions.add(action);
@@ -231,7 +230,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /**
      * Adds a committee to the list of past committees.
-     * @param committeeVersionId
      */
     public void addPastCommittee(CommitteeVersionId committeeVersionId) {
         pastCommittees.add(committeeVersionId);
@@ -245,19 +243,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     public String getFulltext() {
         return this.getActiveAmendment().getFulltext();
-    }
-
-    /**
-     * Indicates the first non-null publish date for any of the amendments in this bill.
-     * @return Date or null if no amendments are published.
-     */
-    public Date getAmendmentPublishDate() {
-        for (BillAmendment amendment : this.getAmendmentList()) {
-            if (amendment.getPublishDate() != null) {
-                return amendment.getPublishDate();
-            }
-        }
-        return null;
     }
 
     /** --- Basic Getters/Setters --- */

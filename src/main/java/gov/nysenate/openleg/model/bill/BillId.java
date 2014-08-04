@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.util.DateHelper;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,13 +24,13 @@ public class BillId implements Serializable, Comparable<BillId>
     public static final String BASE_VERSION = "";
 
     /** The base print number of the bill (no trailing character), e.g S1234 */
-    private String basePrintNo;
+    protected String basePrintNo;
 
     /** The session year of the bill. */
-    private int session;
+    protected int session;
 
     /** The version of the bill. */
-    private String version = BASE_VERSION;
+    protected String version = BASE_VERSION;
 
     /* --- Constructors --- */
 
@@ -161,43 +162,34 @@ public class BillId implements Serializable, Comparable<BillId>
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         if (!equalsBase(o)) return false;
-        BillId billId = (BillId) o;
-        if (version != null ? !version.equals(billId.version) : billId.version != null) return false;
-        return true;
-    }
-
-    /**
-     * Not an override but is a useful equals comparison that ignores version so that two BillIds are
-     * equivalent if their base BillIds match.
-     *
-     * @param o
-     * @return boolean
-     */
-    public boolean equalsBase(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BillId billId = (BillId) o;
-        if (session != billId.session) return false;
-        if (!basePrintNo.equals(billId.basePrintNo)) return false;
-        return true;
+        BillId oBillId = (BillId) o;
+        return Objects.equals(this.version, oBillId);
     }
 
     @Override
     public int hashCode() {
         int result = hashCodeBase();
-        result = 31 * result + (version != null ? version.hashCode() : 0);
-        return result;
+        return (31 * result + Objects.hash(this.version));
+    }
+
+    /**
+     * An alternate equals comparison that ignores version so that two BillIds are equivalent if
+     * their base BillIds match.
+     */
+    public boolean equalsBase(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BillId oBillId = (BillId) o;
+        return Objects.equals(this.session, oBillId.session) &&
+               Objects.equals(this.basePrintNo, oBillId.basePrintNo);
     }
 
     /**
      * Get hashcode without factoring in the version. Should use this when implementing hashcode method
      * for classes that contain a BillId where the version of the bill is not relevant.
-     * @return int
      */
     public int hashCodeBase() {
-        int result = basePrintNo.hashCode();
-        result = 31 * result + session;
-        return result;
+        return Objects.hash(this.basePrintNo, this.session);
     }
 
     @Override

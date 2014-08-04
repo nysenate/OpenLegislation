@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 /**
- *
+ * Votes during committee meetings are sent via these agenda vote addenda.
  */
 public class AgendaVoteAddendum extends BaseLegislativeContent implements Serializable
 {
@@ -34,11 +34,21 @@ public class AgendaVoteAddendum extends BaseLegislativeContent implements Serial
     public AgendaVoteAddendum(AgendaId agendaId, String addendumId, Date pubDate) {
         this();
         this.setAgendaId(agendaId);
-        this.setId(id);
+        this.setId(addendumId);
         this.setYear(agendaId.getYear());
         this.setSession(DateHelper.resolveSession(this.getYear()));
         this.setModifiedDate(pubDate);
         this.setPublishDate(pubDate);
+    }
+
+    /** --- Functional Getters/Setters --- */
+
+    public void putCommittee(AgendaVoteCommittee committee) {
+        this.committees.put(committee.getCommitteeId(), committee);
+    }
+
+    public void removeCommittee(CommitteeId committeeId) {
+        this.committees.remove(committeeId);
     }
 
     /** --- Basic Getters/Setters --- */

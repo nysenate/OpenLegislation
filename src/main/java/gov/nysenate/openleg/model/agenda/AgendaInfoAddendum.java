@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Info for an Agenda is constructed via a series of addenda that are either
@@ -60,6 +61,30 @@ public class AgendaInfoAddendum extends BaseLegislativeContent implements Serial
 
     public void removeCommittee(String name) {
         this.committeeInfoMap.remove(name);
+    }
+
+    /** --- Overrides --- */
+
+    /**
+     * AgendaInfoAddendums should ignore the modified/published dates during equality testing.
+     * This is because previous addendum are resent every time there is a new one to add, and
+     * we want to preserve the existing one if nothing else changed.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final AgendaInfoAddendum other = (AgendaInfoAddendum) obj;
+        return Objects.equals(this.year, other.year) &&
+               Objects.equals(this.agendaId, other.agendaId) &&
+               Objects.equals(this.id, other.id) &&
+               Objects.equals(this.weekOf, other.weekOf) &&
+               Objects.equals(this.committeeInfoMap, other.committeeInfoMap);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * super.hashCode() + Objects.hash(year, agendaId, id, weekOf, committeeInfoMap);
     }
 
     /** --- Basic Getters/Setters --- */

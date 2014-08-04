@@ -11,20 +11,25 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * The BillVote class is used to store vote information pertaining to a specific bill.
+ * This model can be used for representing both floor and committee votes although
+ * committee votes will have some extra metadata that should be tracked elsewhere.
+ */
 public class BillVote extends BaseLegislativeContent implements Serializable
 {
     private static final long serialVersionUID = -5265803060674818213L;
 
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
+    /** Reference to the specific bill this vote was taken on. */
+    private BillId billId;
+
     /** The type of bill vote (floor/committee) */
     private BillVoteType voteType;
 
     /** Date the vote was taken on. */
     private Date voteDate;
-
-    /** Reference to the specific bill this vote was taken on. */
-    private BillId billId;
 
     /** Sets of members grouped based upon how they voted. */
     @SuppressWarnings("serial")
@@ -40,11 +45,15 @@ public class BillVote extends BaseLegislativeContent implements Serializable
         super();
     }
 
+    public BillVote(BillId billId, Date date, BillVoteType type) {
+        this(billId, date, type, 1);
+    }
+
     public BillVote(BillId billId, Date date, BillVoteType type, int sequenceNo) {
         this();
         this.billId = billId;
         this.voteDate = date;
-        this.setYear(new LocalDate(date).getYear());
+        this.setYear(DateHelper.getYear(date));
         this.setSession(DateHelper.resolveSession(this.getYear()));
         this.voteType = type;
         this.sequenceNo = sequenceNo;
@@ -87,31 +96,24 @@ public class BillVote extends BaseLegislativeContent implements Serializable
     /** --- Overrides --- */
 
     /**
-     * Ignores the parent class during equality checking.
+     * Ignore the parent class (session/modified/published date) during equality checking.
+     * The vote date and type should suffice in uniquely identifying the vote for a certain billId.
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BillVote)) return false;
-        BillVote billVote = (BillVote) o;
-        if (sequenceNo != billVote.sequenceNo) return false;
-        if (billId != null ? !billId.equals(billVote.billId) : billVote.billId != null) return false;
-        if (memberVotes != null ? !memberVotes.equals(billVote.memberVotes) : billVote.memberVotes != null)
-            return false;
-        if (voteDate != null ? !voteDate.equals(billVote.voteDate) : billVote.voteDate != null) return false;
-        if (voteType != billVote.voteType) return false;
-        return true;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final BillVote other = (BillVote) obj;
+        return Objects.equals(this.billId, other.billId) &&
+               Objects.equals(this.voteType, other.voteType) &&
+               Objects.equals(this.voteDate, other.voteDate) &&
+               Objects.equals(this.memberVotes, other.memberVotes) &&
+               Objects.equals(this.sequenceNo, other.sequenceNo);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (voteType != null ? voteType.hashCode() : 0);
-        result = 31 * result + (voteDate != null ? voteDate.hashCode() : 0);
-        result = 31 * result + (billId != null ? billId.hashCode() : 0);
-        result = 31 * result + (memberVotes != null ? memberVotes.hashCode() : 0);
-        result = 31 * result + sequenceNo;
-        return result;
+        return Objects.hash(billId, voteType, voteDate, memberVotes, sequenceNo);
     }
 
     /** --- Basic Getters/Setters --- */

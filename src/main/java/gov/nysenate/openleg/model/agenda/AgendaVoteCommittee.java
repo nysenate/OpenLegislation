@@ -1,108 +1,100 @@
 package gov.nysenate.openleg.model.agenda;
 
+import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.entity.CommitteeId;
+
+import java.io.Serializable;
 import java.util.*;
 
-public class AgendaVoteCommittee
+/**
+ * Represents committee meeting vote information such as who was present during the vote
+ * as well as the votes for one or more bills.
+ */
+public class AgendaVoteCommittee implements Serializable
 {
-    private String name;
+    private static final long serialVersionUID = -8716962051349762641L;
+
+    /** Reference to the id of the committee the votes are associated with. */
+    private CommitteeId committeeId;
+
+    /** Name of the committee chair. */
     private String chair;
-    private Date meetDate;
-    private Date modifiedDate;
-    private Map<String, AgendaVoteCommitteeItem> items;
-    private List<AgendaVoteCommitteeAttendance> attendance = new ArrayList<AgendaVoteCommitteeAttendance>();
+
+    /** Date/time of the meeting. */
+    private Date meetDateTime;
+
+    /** The attendance list. */
+    private List<AgendaVoteAttendance> attendance = new ArrayList<>();
+
+    /** Collection of bills that have been voted on. */
+    private Map<BillId, AgendaVoteBill> votedBills;
 
     /** --- Constructors --- */
 
     public AgendaVoteCommittee() {
-        this.setItems(new HashMap<String, AgendaVoteCommitteeItem>());
+        this.votedBills = new HashMap<>();
     }
 
-    public AgendaVoteCommittee(String name, String chair, Date meetDate) {
+    public AgendaVoteCommittee(CommitteeId committeeId, String chair, Date meetDateTime) {
         this();
-        this.setName(name);
+        this.setCommitteeId(committeeId);
         this.setChair(chair);
-        this.setMeetDate(meetDate);
+        this.setMeetDateTime(meetDateTime);
     }
 
     /** --- Functional Getters/Setters --- */
 
-    public String getName()
-    {
-        return name;
+    public void addVoteBill(AgendaVoteBill agendaVoteBill) {
+        this.votedBills.put(agendaVoteBill.getBillId(), agendaVoteBill);
     }
 
-    public void setName(String name)
-    {
-        this.name = name;
+    public void removeVoteBill(BillId billId) {
+        this.votedBills.remove(billId);
     }
 
-    public String getChair()
-    {
+    /** --- Basic Getters/Setters --- */
+
+    public CommitteeId getCommitteeId() {
+        return committeeId;
+    }
+
+    public void setCommitteeId(CommitteeId committeeId) {
+        this.committeeId = committeeId;
+    }
+
+    public String getChair() {
         return chair;
     }
 
-    public void setChair(String chair)
-    {
+    public void setChair(String chair) {
         this.chair = chair;
     }
 
-    public Date getMeetDate()
-    {
-        return meetDate;
+    public Date getMeetDateTime() {
+        return meetDateTime;
     }
 
-    public void setMeetDate(Date meetDate)
-    {
-        this.meetDate = meetDate;
+    public void setMeetDateTime(Date meetDateTime) {
+        this.meetDateTime = meetDateTime;
     }
 
-    public Date getModifiedDate()
-    {
-        return modifiedDate;
+    public Map<BillId, AgendaVoteBill> getVotedBills() {
+        return votedBills;
     }
 
-    public void setModifiedDate(Date modifiedDate)
-    {
-        this.modifiedDate = modifiedDate;
+    public void setVotedBills(Map<BillId, AgendaVoteBill> votedBills) {
+        this.votedBills = votedBills;
     }
 
-    public Map<String, AgendaVoteCommitteeItem> getItems()
-    {
-        return items;
-    }
-
-    public void setItems(Map<String, AgendaVoteCommitteeItem> items)
-    {
-        this.items = items;
-    }
-
-    public void putItem(AgendaVoteCommitteeItem item)
-    {
-        this.items.put(item.getBill().getBillId()+item.getBillAmendment(), item);
-    }
-
-    public AgendaVoteCommitteeItem getItem(String printNumber)
-    {
-        return this.items.get(printNumber);
-    }
-
-    public void removeItem(String printNumber)
-    {
-        this.items.remove(printNumber);
-    }
-
-    public List<AgendaVoteCommitteeAttendance> getAttendance()
-    {
+    public List<AgendaVoteAttendance> getAttendance() {
         return attendance;
     }
 
-    public void setAttendance(List<AgendaVoteCommitteeAttendance> attendance)
-    {
+    public void setAttendance(List<AgendaVoteAttendance> attendance) {
         this.attendance = attendance;
     }
 
-    public void addAttendance(AgendaVoteCommitteeAttendance attendance)
-    {
+    public void addAttendance(AgendaVoteAttendance attendance) {
         this.attendance.add(attendance);
     }
 }
