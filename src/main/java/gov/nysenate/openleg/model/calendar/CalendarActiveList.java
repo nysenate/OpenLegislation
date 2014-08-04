@@ -6,6 +6,7 @@ import gov.nysenate.openleg.util.DateHelper;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class CalendarActiveList extends BaseLegislativeContent
 {
@@ -31,7 +32,7 @@ public class CalendarActiveList extends BaseLegislativeContent
 
     public CalendarActiveList() {
         super();
-        this.setEntries(new ArrayList<CalendarActiveListEntry>());
+        this.setEntries(new ArrayList<>());
     }
 
     public CalendarActiveList(CalendarId calId, Integer sequenceNo, String notes, Date calDate, Date releaseDateTime) {
@@ -54,31 +55,21 @@ public class CalendarActiveList extends BaseLegislativeContent
     /** --- Overrides --- */
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CalendarActiveList)) return false;
-        if (!super.equals(o)) return false;
-        CalendarActiveList that = (CalendarActiveList) o;
-        if (calDate != null ? !calDate.equals(that.calDate) : that.calDate != null) return false;
-        if (calendarId != null ? !calendarId.equals(that.calendarId) : that.calendarId != null) return false;
-        if (entries != null ? !entries.equals(that.entries) : that.entries != null) return false;
-        if (sequenceNo != null ? !sequenceNo.equals(that.sequenceNo) : that.sequenceNo != null) return false;
-        if (notes != null ? !notes.equals(that.notes) : that.notes != null) return false;
-        if (releaseDateTime != null ? !releaseDateTime.equals(that.releaseDateTime) : that.releaseDateTime != null)
-            return false;
-        return true;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final CalendarActiveList other = (CalendarActiveList) obj;
+        return Objects.equals(this.sequenceNo, other.sequenceNo) &&
+               Objects.equals(this.calendarId, other.calendarId) &&
+               Objects.equals(this.notes, other.notes) &&
+               Objects.equals(this.calDate, other.calDate) &&
+               Objects.equals(this.releaseDateTime, other.releaseDateTime) &&
+               Objects.equals(this.entries, other.entries);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (sequenceNo != null ? sequenceNo.hashCode() : 0);
-        result = 31 * result + (calendarId != null ? calendarId.hashCode() : 0);
-        result = 31 * result + (notes != null ? notes.hashCode() : 0);
-        result = 31 * result + (calDate != null ? calDate.hashCode() : 0);
-        result = 31 * result + (releaseDateTime != null ? releaseDateTime.hashCode() : 0);
-        result = 31 * result + (entries != null ? entries.hashCode() : 0);
-        return result;
+        return Objects.hash(sequenceNo, calendarId, notes, calDate, releaseDateTime, entries);
     }
 
     /** --- Basic Getters/Setters --- */

@@ -19,6 +19,7 @@ public enum AgendaVoteAction
         }
     }
 
+    /** Code referenced by the sobi files. */
     private String code;
 
     AgendaVoteAction(String code) {
@@ -33,6 +34,6 @@ public enum AgendaVoteAction
         if (code != null) {
             return codeMap.get(code.trim().toUpperCase());
         }
-        return null;
+        throw new IllegalArgumentException("Supplied code cannot be null when mapping to AgendaVoteAction.");
     }
 }

@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class AgendaVoteBill implements Serializable
 {
@@ -36,6 +37,24 @@ public class AgendaVoteBill implements Serializable
 
     public BillId getBillId() {
         return this.getBillVote().getBillId();
+    }
+
+    /** --- Overrides --- */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final AgendaVoteBill other = (AgendaVoteBill) obj;
+        return Objects.equals(this.voteAction, other.voteAction) &&
+               Objects.equals(this.referCommittee, other.referCommittee) &&
+               Objects.equals(this.withAmendment, other.withAmendment) &&
+               Objects.equals(this.billVote, other.billVote);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(voteAction, referCommittee, withAmendment, billVote);
     }
 
     /** --- Basic Getters/Setters --- */

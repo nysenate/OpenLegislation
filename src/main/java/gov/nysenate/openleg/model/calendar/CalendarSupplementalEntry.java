@@ -2,6 +2,8 @@ package gov.nysenate.openleg.model.calendar;
 
 import gov.nysenate.openleg.model.bill.BillId;
 
+import java.util.Objects;
+
 public class CalendarSupplementalEntry
 {
     /** This calendar number refers to a specific entry on the calendar.
@@ -36,27 +38,20 @@ public class CalendarSupplementalEntry
     /** --- Overrides --- */
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CalendarSupplementalEntry)) return false;
-        CalendarSupplementalEntry that = (CalendarSupplementalEntry) o;
-        if (billHigh != null ? !billHigh.equals(that.billHigh) : that.billHigh != null) return false;
-        if (billId != null ? !billId.equals(that.billId) : that.billId != null) return false;
-        if (billCalNo != null ? !billCalNo.equals(that.billCalNo) : that.billCalNo != null)
-            return false;
-        if (sectionType != that.sectionType) return false;
-        if (subBillId != null ? !subBillId.equals(that.subBillId) : that.subBillId != null) return false;
-        return true;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final CalendarSupplementalEntry other = (CalendarSupplementalEntry) obj;
+        return Objects.equals(this.billCalNo, other.billCalNo) &&
+               Objects.equals(this.sectionType, other.sectionType) &&
+               Objects.equals(this.billId, other.billId) &&
+               Objects.equals(this.subBillId, other.subBillId) &&
+               Objects.equals(this.billHigh, other.billHigh);
     }
 
     @Override
     public int hashCode() {
-        int result = billCalNo != null ? billCalNo.hashCode() : 0;
-        result = 31 * result + (sectionType != null ? sectionType.hashCode() : 0);
-        result = 31 * result + (billId != null ? billId.hashCode() : 0);
-        result = 31 * result + (subBillId != null ? subBillId.hashCode() : 0);
-        result = 31 * result + (billHigh != null ? billHigh.hashCode() : 0);
-        return result;
+        return Objects.hash(billCalNo, sectionType, billId, subBillId, billHigh);
     }
 
     /** --- Basic Getters/Setters --- */

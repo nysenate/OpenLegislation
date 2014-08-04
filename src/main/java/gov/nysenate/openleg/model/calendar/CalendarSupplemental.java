@@ -6,6 +6,7 @@ import gov.nysenate.openleg.util.DateHelper;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class CalendarSupplemental extends BaseLegislativeContent
 {
@@ -69,33 +70,21 @@ public class CalendarSupplemental extends BaseLegislativeContent
 
     /** --- Overrides --- */
 
-    /**
-     * Ignore the parent class (session/modified/published date) during equality checking.
-     */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CalendarSupplemental)) return false;
-        CalendarSupplemental that = (CalendarSupplemental) o;
-        if (calDate != null ? !calDate.equals(that.calDate) : that.calDate != null) return false;
-        if (calendarId != null ? !calendarId.equals(that.calendarId) : that.calendarId != null) return false;
-        if (sectionEntries != null ? !sectionEntries.equals(that.sectionEntries) : that.sectionEntries != null)
-            return false;
-        if (releaseDateTime != null ? !releaseDateTime.equals(that.releaseDateTime) : that.releaseDateTime != null)
-            return false;
-        if (version != null ? !version.equals(that.version) : that.version != null) return false;
-        return true;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final CalendarSupplemental other = (CalendarSupplemental) obj;
+        return Objects.equals(this.version, other.version) &&
+               Objects.equals(this.calendarId, other.calendarId) &&
+               Objects.equals(this.calDate, other.calDate) &&
+               Objects.equals(this.releaseDateTime, other.releaseDateTime) &&
+               Objects.equals(this.sectionEntries, other.sectionEntries);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (version != null ? version.hashCode() : 0);
-        result = 31 * result + (calendarId != null ? calendarId.hashCode() : 0);
-        result = 31 * result + (calDate != null ? calDate.hashCode() : 0);
-        result = 31 * result + (releaseDateTime != null ? releaseDateTime.hashCode() : 0);
-        result = 31 * result + (sectionEntries != null ? sectionEntries.hashCode() : 0);
-        return result;
+        return Objects.hash(version, calendarId, calDate, releaseDateTime, sectionEntries);
     }
 
     /** --- Basic Getters/Setters --- */

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.agenda;
 import gov.nysenate.openleg.model.entity.Member;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVoteAttendance>
 {
@@ -33,6 +34,22 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
     }
 
     /** --- Overrides --- */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final AgendaVoteAttendance other = (AgendaVoteAttendance) obj;
+        return Objects.equals(this.member, other.member) &&
+               Objects.equals(this.rank, other.rank) &&
+               Objects.equals(this.party, other.party) &&
+               Objects.equals(this.attendance, other.attendance);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(member, rank, party, attendance);
+    }
 
     @Override
     public int compareTo(AgendaVoteAttendance o) {

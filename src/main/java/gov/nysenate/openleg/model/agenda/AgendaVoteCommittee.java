@@ -52,6 +52,25 @@ public class AgendaVoteCommittee implements Serializable
         this.votedBills.remove(billId);
     }
 
+    /** --- Overrides --- */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final AgendaVoteCommittee other = (AgendaVoteCommittee) obj;
+        return Objects.equals(this.committeeId, other.committeeId) &&
+               Objects.equals(this.chair, other.chair) &&
+               Objects.equals(this.meetDateTime, other.meetDateTime) &&
+               Objects.equals(this.attendance, other.attendance) &&
+               Objects.equals(this.votedBills, other.votedBills);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(committeeId, chair, meetDateTime, attendance, votedBills);
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public CommitteeId getCommitteeId() {

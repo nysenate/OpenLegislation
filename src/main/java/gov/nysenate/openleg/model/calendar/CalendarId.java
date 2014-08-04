@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.calendar;
 import com.google.common.collect.ComparisonChain;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * CalendarId is a simple wrapper used to uniquely identify a Calendar instance.
@@ -33,20 +34,17 @@ public class CalendarId implements Serializable, Comparable<CalendarId>
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CalendarId)) return false;
-        CalendarId that = (CalendarId) o;
-        if (calNo != that.calNo) return false;
-        if (year != that.year) return false;
-        return true;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final CalendarId other = (CalendarId) obj;
+        return Objects.equals(this.calNo, other.calNo) &&
+               Objects.equals(this.year, other.year);
     }
 
     @Override
     public int hashCode() {
-        int result = calNo;
-        result = 31 * result + year;
-        return result;
+        return Objects.hash(calNo, year);
     }
 
     @Override

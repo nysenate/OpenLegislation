@@ -7,6 +7,7 @@ import gov.nysenate.openleg.util.DateHelper;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Votes during committee meetings are sent via these agenda vote addenda.
@@ -49,6 +50,23 @@ public class AgendaVoteAddendum extends BaseLegislativeContent implements Serial
 
     public void removeCommittee(CommitteeId committeeId) {
         this.committees.remove(committeeId);
+    }
+
+    /** --- Overrides --- */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final AgendaVoteAddendum other = (AgendaVoteAddendum) obj;
+        return Objects.equals(this.agendaId, other.agendaId) &&
+               Objects.equals(this.id, other.id) &&
+               Objects.equals(this.committees, other.committees);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(agendaId, id, committees);
     }
 
     /** --- Basic Getters/Setters --- */

@@ -4,6 +4,7 @@ import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.util.DateHelper;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.TreeMap;
 
 /**
@@ -80,6 +81,22 @@ public class Calendar extends BaseLegislativeContent
     @Override
     public String toString() {
         return "Senate Calendar " + this.id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final Calendar other = (Calendar) obj;
+        return Objects.equals(this.id, other.id) &&
+               Objects.equals(this.supplementalMap, other.supplementalMap) &&
+               Objects.equals(this.activeListMap, other.activeListMap) &&
+               Objects.equals(this.publishDate, other.publishDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, supplementalMap, activeListMap, publishDate);
     }
 
     /** --- Basic Getters/Setters --- */

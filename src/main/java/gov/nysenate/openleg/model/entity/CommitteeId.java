@@ -3,21 +3,25 @@ package gov.nysenate.openleg.model.entity;
 import com.google.common.collect.ComparisonChain;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class CommitteeId implements Serializable, Comparable<CommitteeId>
 {
     private static final long serialVersionUID = -4463517719215556844L;
 
+    /** The chamber this committee belongs to. */
     protected Chamber chamber;
+
+    /** The official name of this committee according to LBDC. */
     protected String name;
 
     /* --- Constructors --- */
 
     public CommitteeId(Chamber chamber, String name) {
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException("Name cannot be null!");
         }
-        if(chamber == null) {
+        if (chamber == null) {
             throw new IllegalArgumentException("Chamber cannot be null!");
         }
         this.chamber = chamber;
@@ -32,20 +36,17 @@ public class CommitteeId implements Serializable, Comparable<CommitteeId>
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CommitteeId)) return false;
-        CommitteeId that = (CommitteeId) o;
-        if (chamber != that.chamber) return false;
-        if (!name.equals(that.name)) return false;
-        return true;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final CommitteeId other = (CommitteeId) obj;
+        return Objects.equals(this.chamber, other.chamber) &&
+               Objects.equals(this.name, other.name);
     }
 
     @Override
     public int hashCode() {
-        int result = chamber.hashCode();
-        result = 31 * result + name.hashCode();
-        return result;
+        return Objects.hash(chamber, name);
     }
 
     @Override

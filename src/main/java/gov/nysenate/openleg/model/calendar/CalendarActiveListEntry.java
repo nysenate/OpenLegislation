@@ -2,6 +2,8 @@ package gov.nysenate.openleg.model.calendar;
 
 import gov.nysenate.openleg.model.bill.BillId;
 
+import java.util.Objects;
+
 public class CalendarActiveListEntry
 {
     /** This calendar number refers to a specific entry on the calendar.
@@ -24,20 +26,17 @@ public class CalendarActiveListEntry
     /** --- Overrides --- */
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CalendarActiveListEntry)) return false;
-        CalendarActiveListEntry that = (CalendarActiveListEntry) o;
-        if (billCalNo != null ? !billCalNo.equals(that.billCalNo) : that.billCalNo != null) return false;
-        if (billId != null ? !billId.equals(that.billId) : that.billId != null) return false;
-        return true;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final CalendarActiveListEntry other = (CalendarActiveListEntry) obj;
+        return Objects.equals(this.billCalNo, other.billCalNo) &&
+               Objects.equals(this.billId, other.billId);
     }
 
     @Override
     public int hashCode() {
-        int result = billCalNo != null ? billCalNo.hashCode() : 0;
-        result = 31 * result + (billId != null ? billId.hashCode() : 0);
-        return result;
+        return Objects.hash(billCalNo, billId);
     }
 
     /** --- Basic Getters/Setters --- */

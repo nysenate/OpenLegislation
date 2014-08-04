@@ -3,7 +3,6 @@ package gov.nysenate.openleg.model.agenda;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.util.DateHelper;
-import org.joda.time.LocalDate;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -65,11 +64,6 @@ public class AgendaInfoAddendum extends BaseLegislativeContent implements Serial
 
     /** --- Overrides --- */
 
-    /**
-     * AgendaInfoAddendums should ignore the modified/published dates during equality testing.
-     * This is because previous addendum are resent every time there is a new one to add, and
-     * we want to preserve the existing one if nothing else changed.
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -84,7 +78,7 @@ public class AgendaInfoAddendum extends BaseLegislativeContent implements Serial
 
     @Override
     public int hashCode() {
-        return 31 * super.hashCode() + Objects.hash(year, agendaId, id, weekOf, committeeInfoMap);
+        return Objects.hash(year, agendaId, id, weekOf, committeeInfoMap);
     }
 
     /** --- Basic Getters/Setters --- */

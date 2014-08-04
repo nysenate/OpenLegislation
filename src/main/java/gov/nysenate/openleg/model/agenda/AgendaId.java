@@ -1,8 +1,9 @@
 package gov.nysenate.openleg.model.agenda;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
+
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * AgendaId is a simple wrapper used to uniquely identify an Agenda instance.
@@ -28,27 +29,21 @@ public class AgendaId implements Serializable, Comparable<AgendaId>
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-            .add("number", number)
-            .add("year", year)
-            .toString();
+        return "Agenda #" + number + " (" + year +")";
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AgendaId)) return false;
-        AgendaId agendaId = (AgendaId) o;
-        if (number != agendaId.number) return false;
-        if (year != agendaId.year) return false;
-        return true;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final AgendaId other = (AgendaId) obj;
+        return Objects.equals(this.number, other.number) &&
+               Objects.equals(this.year, other.year);
     }
 
     @Override
     public int hashCode() {
-        int result = number;
-        result = 31 * result + year;
-        return result;
+        return Objects.hash(number, year);
     }
 
     @Override
