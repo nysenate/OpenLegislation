@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
-import gov.nysenate.openleg.service.bill.BillProcessor;
+import gov.nysenate.openleg.processor.bill.BillProcessor;
 import gov.nysenate.openleg.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

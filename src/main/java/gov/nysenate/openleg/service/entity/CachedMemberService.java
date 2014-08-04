@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.entity;
 import gov.nysenate.openleg.dao.entity.MemberDao;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

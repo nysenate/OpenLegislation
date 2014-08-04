@@ -5,8 +5,8 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
-import gov.nysenate.openleg.service.base.SobiProcessor;
-import gov.nysenate.openleg.service.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.SobiProcessor;
+import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.util.DateHelper;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -66,6 +66,9 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
                             + xml.getString("releasetime/text()", xmlSupplemental));
 
                     CalendarSupplemental supplemental = new CalendarSupplemental(calendarId, supId, calDate, releaseDateTime);
+                    supplemental.setModifiedDate(modifiedDate);
+                    supplemental.setPublishDate(modifiedDate);
+
                     NodeList xmlSections = xml.getNodeList("sections/section", xmlSupplemental);
                     for (int j = 0; j < xmlSections.getLength(); j++) {
                         Node xmlSection = xmlSections.item(j);

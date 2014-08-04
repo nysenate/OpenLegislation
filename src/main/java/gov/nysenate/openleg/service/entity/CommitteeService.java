@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.service.entity;
 
-import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.Committee;
-import gov.nysenate.openleg.model.entity.CommitteeId;
-import gov.nysenate.openleg.model.entity.CommitteeVersionId;
+import gov.nysenate.openleg.model.entity.*;
 
-import java.util.Date;
 import java.util.List;
 
-public interface CommitteeService {
+public interface CommitteeService
+{
     /**
      * Retrieves the most recent information on the committee designated by name
      * @param committeeId

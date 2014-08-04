@@ -2,7 +2,7 @@ package gov.nysenate.openleg.script;
 
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
-import gov.nysenate.openleg.service.bill.BillProcessor;
+import gov.nysenate.openleg.processor.bill.BillProcessor;
 import gov.nysenate.openleg.util.Storage;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.FileUtils;

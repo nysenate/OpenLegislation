@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.entity;
 
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 
 public interface MemberService
 {
@@ -10,7 +11,7 @@ public interface MemberService
      * @param memberId int
      * @param sessionYear int
      * @return Member
-     * @throws MemberNotFoundEx If no matching member was found.
+     * @throws gov.nysenate.openleg.model.entity.MemberNotFoundEx If no matching member was found.
      */
     public Member getMemberById(int memberId, int sessionYear) throws MemberNotFoundEx;
 

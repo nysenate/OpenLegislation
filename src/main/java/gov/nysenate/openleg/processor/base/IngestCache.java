@@ -6,13 +6,12 @@ import java.util.Map;
 
 /**
  * A generic key-value pair cache to map objects that are being generated during the ingest
- * processing step to the SOBIFragments that serve as the data source. The purpose of this
+ * processing step to the SobiFragments that serve as the data source. The purpose of this
  * cache is to queue updates to the persistence layer so that they can be committed to the
  * file system at a later time in the processing stage.
  */
 public class IngestCache<K,V>
 {
-    /** A cache of unique id strings to DataFragmentPair mappings */
     private Map<K, V> cache = new HashMap<>();
 
     /**

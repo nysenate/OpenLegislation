@@ -7,8 +7,8 @@ import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
-import gov.nysenate.openleg.service.base.SobiProcessor;
-import gov.nysenate.openleg.service.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.SobiProcessor;
+import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.util.DateHelper;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -68,6 +68,9 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
                     String notes = xml.getString("notes/text()", xmlSequence);
 
                     CalendarActiveList activeList = new CalendarActiveList(calendarId, id, notes, calDate, releaseDateTime);
+                    activeList.setModifiedDate(modifiedDate);
+                    activeList.setPublishDate(modifiedDate);
+
                     NodeList xmlCalNos = xml.getNodeList("calnos/calno", xmlSequence);
                     for (int k = 0; k < xmlCalNos.getLength(); k++) {
                         Node xmlCalNo = xmlCalNos.item(k);

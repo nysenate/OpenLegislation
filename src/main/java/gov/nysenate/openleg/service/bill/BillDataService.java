@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.bill;
 
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 
 /**

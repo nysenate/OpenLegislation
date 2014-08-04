@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.processor;
 
-import gov.nysenate.openleg.service.sobi.SobiProcessService;
+import gov.nysenate.openleg.processor.base.SobiProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

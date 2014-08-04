@@ -10,7 +10,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.annotation.PostConstruct;
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 
 /**
@@ -66,13 +68,13 @@ public abstract class SqlBaseDao
 
     /** --- Static Helper Methods --- */
 
-    /**
-     * Converts Date to Timestamp since the conversion may not be implicit with all database libraries.
-     */
-    protected static Timestamp toTimestamp(Date date) {
-        if (date != null) {
-            return new Timestamp(date.getTime());
-        }
-        return null;
+    public static Date toDate(LocalDateTime localDateTime) {
+        if (localDateTime == null) return null;
+        return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
+    }
+
+    public static Date toDate(LocalDate localDate) {
+        if (localDate == null) return null;
+        return toDate(localDate.atStartOfDay());
     }
 }

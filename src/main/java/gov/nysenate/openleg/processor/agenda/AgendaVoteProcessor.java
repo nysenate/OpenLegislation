@@ -135,9 +135,9 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                         voteCommittee.addVoteBill(voteBill);
 
                         // Update the actual Bill with the vote information and persist it.
-                        Bill bill = getOrCreateBaseBill(modifiedDate, billId);
-                        bill.getAmendment(billId.getVersion()).updateVote(vote);
-                        billDataService.saveBill(bill, sobiFragment);
+//                        Bill bill = getOrCreateBaseBill(modifiedDate, billId);
+//                        bill.getAmendment(billId.getVersion()).updateVote(vote);
+//                        billDataService.saveBill(bill, sobiFragment);
                     }
                     addendum.putCommittee(voteCommittee);
                 }

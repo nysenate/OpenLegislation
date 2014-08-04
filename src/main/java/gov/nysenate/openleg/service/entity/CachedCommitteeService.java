@@ -1,22 +1,17 @@
 package gov.nysenate.openleg.service.entity;
 
 import gov.nysenate.openleg.dao.entity.CommitteeDao;
-import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.Committee;
-import gov.nysenate.openleg.model.entity.CommitteeId;
-import gov.nysenate.openleg.model.entity.CommitteeVersionId;
+import gov.nysenate.openleg.model.entity.*;
 import net.sf.ehcache.CacheManager;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -38,13 +33,13 @@ public class CachedCommitteeService implements CommitteeService{
     @Override
     @Cacheable(value = "committee", key = "#root.methodName + '-' + #committeeId.toString()")
     public Committee getCommittee(CommitteeId committeeId) throws CommitteeNotFoundEx {
-        if(committeeId==null) {
+        if (committeeId == null) {
             throw new IllegalArgumentException("CommitteeId cannot be null!");
         }
         try{
             return committeeDao.getCommittee(committeeId);
         }
-        catch(Exception ex){
+        catch (EmptyResultDataAccessException ex) {
             throw new CommitteeNotFoundEx(committeeId, ex);
         }
     }
@@ -52,16 +47,15 @@ public class CachedCommitteeService implements CommitteeService{
     /** {@inheritDoc} */
     @Override
     @Cacheable(value = "committee",
-            key = "#root.methodName + '-' + #name + '-' + #committeeVersionId.toString()"
-    )
+               key = "#root.methodName + '-' + #name + '-' + #committeeVersionId.toString()")
     public Committee getCommittee(CommitteeVersionId committeeVersionId) throws CommitteeNotFoundEx {
-        if(committeeVersionId==null){
+        if (committeeVersionId == null) {
             throw new IllegalArgumentException("committeeVersionId cannot be null!");
         }
-        try{
+        try {
             return committeeDao.getCommittee(committeeVersionId);
         }
-        catch(Exception ex){
+        catch (EmptyResultDataAccessException ex) {
             throw new CommitteeNotFoundEx(committeeVersionId, ex);
         }
     }
@@ -69,16 +63,11 @@ public class CachedCommitteeService implements CommitteeService{
     /** {@inheritDoc} */
     @Override
     @Cacheable(value = "committee", key = "#root.methodName + '-' + #chamber.toString()")
-    public List<Committee> getCommitteeList(Chamber chamber) throws CommitteeNotFoundEx {
-        if (chamber==null){
+    public List<Committee> getCommitteeList(Chamber chamber) {
+        if (chamber == null) {
             throw new IllegalArgumentException("Chamber cannot be null!");
         }
-        try{
-            return committeeDao.getCommitteeList(chamber);
-        }
-        catch(Exception ex){
-            throw new CommitteeNotFoundEx(chamber, ex);
-        }
+        return committeeDao.getCommitteeList(chamber);
     }
 
     /** {@inheritDoc} */

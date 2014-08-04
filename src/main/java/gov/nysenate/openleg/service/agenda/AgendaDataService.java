@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.agenda;
 
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
+import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 
 /**
@@ -14,7 +15,7 @@ public interface AgendaDataService
      *
      * @param agendaId AgendaId
      * @return Agenda
-     * @throws AgendaNotFoundEx = If an agenda with the given agendaId could not be found.
+     * @throws AgendaNotFoundEx - If an agenda with the given agendaId could not be found.
      */
     public Agenda getAgenda(AgendaId agendaId) throws AgendaNotFoundEx;
 

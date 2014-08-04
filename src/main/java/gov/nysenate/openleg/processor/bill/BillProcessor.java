@@ -7,11 +7,11 @@ import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
-import gov.nysenate.openleg.service.base.IngestCache;
-import gov.nysenate.openleg.service.base.SobiProcessor;
-import gov.nysenate.openleg.service.base.AbstractDataProcessor;
-import gov.nysenate.openleg.service.bill.BillAmendNotFoundEx;
-import gov.nysenate.openleg.service.bill.BillNotFoundEx;
+import gov.nysenate.openleg.processor.base.IngestCache;
+import gov.nysenate.openleg.processor.base.SobiProcessor;
+import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.model.bill.BillAmendNotFoundEx;
+import gov.nysenate.openleg.model.bill.BillNotFoundEx;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * The BillProcessor parses bill sobi fragments, applies bill updates, and persists into the backing
@@ -395,7 +396,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     /**
      * Applies data to bill sponsor. Fully replaces existing sponsor information. Because
      * this is a one line field the block parser is sometimes tricked into combining consecutive
-     * blocks. Make sure to process the dta 1 line at a time.
+     * blocks. Make sure to process the data 1 line at a time.
      *
      * Examples
      * ----------------------------------------
@@ -686,21 +687,13 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         // Example of a double vote entry: SOBI.D110119.T140802.TXT:390
         BillVote vote = null;
         BillId billId = specifiedAmendment.getBillId();
-        for(String line : data.split("\n")) {
+        for (String line : data.split("\n")) {
             Matcher voteHeader = voteHeaderPattern.matcher(line);
             if (voteHeader.find()) {
                 // Start over if we hit a header, sometimes we get back to back entries.
                 try {
-                    // Use the old vote if we can find it, otherwise make a new one using now as the publish date
                     vote = new BillVote(billId, voteDateFormat.parse(voteHeader.group(2)), BillVoteType.FLOOR);
                     vote.setPublishDate(date);
-                    for (BillVote oldVote : specifiedAmendment.getVotesList()) {
-                        if (oldVote.getVoteId().equals(vote.getVoteId())) {
-                            // If we've received this vote before, use the old publish date
-                            vote.setPublishDate(oldVote.getPublishDate());
-                            break;
-                        }
-                    }
                     vote.setModifiedDate(date);
                 }
                 catch (ParseException ex) {
@@ -710,7 +703,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             else if (vote != null) {
                 //Otherwise, build the existing vote
                 Matcher voteLine = votePattern.matcher(line);
-                while(voteLine.find()) {
+                while (voteLine.find()) {
                     BillVoteCode voteCode;
                     try {
                         voteCode = BillVoteCode.getValue(voteLine.group(1));
@@ -758,7 +751,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     }
                     catch (BillNotFoundEx | BillAmendNotFoundEx ex) {
                         logger.warn("Failed to synchronize full text of {} with same as bill {}. Reason: {}",
-                                billAmendment, uniBillId, ex.getMessage());
+                            billAmendment, uniBillId, ex.getMessage());
                     }
                 }
             }

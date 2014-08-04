@@ -30,7 +30,7 @@ public class CalendarId implements Serializable, Comparable<CalendarId>
 
     @Override
     public String toString() {
-        return "{CalNo=" + calNo + ", year=" + year + '}';
+        return "#" + calNo + " (" + year + ')';
     }
 
     @Override

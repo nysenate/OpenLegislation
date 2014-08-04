@@ -46,7 +46,7 @@ public class Agenda extends BaseLegislativeContent implements Serializable
 
     @Override
     public String toString() {
-        return "Agenda " + id + " (" + year + ")";
+        return "Agenda " + id;
     }
 
     @Override

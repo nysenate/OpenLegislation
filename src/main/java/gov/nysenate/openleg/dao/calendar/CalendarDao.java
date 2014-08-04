@@ -8,6 +8,9 @@ import org.springframework.dao.DataAccessException;
 
 import java.util.List;
 
+/**
+ * DAO interface for retrieving and persisting calendar data.
+ */
 public interface CalendarDao
 {
     /**
@@ -15,6 +18,7 @@ public interface CalendarDao
      *
      * @param calendarId CalendarId
      * @return Calendar
+     * @throws org.springframework.dao.DataAccessException
      */
     public Calendar getCalendar(CalendarId calendarId) throws DataAccessException;
 
@@ -31,8 +35,8 @@ public interface CalendarDao
      * Updates the calendar or inserts it if it does not yet exist. Associates the
      * the SobiFragment that triggered the update (set null if not applicable).
      *
-     * @param calendar
-     * @param sobiFragment
+     * @param calendar Calendar - The calendar to save.
+     * @param sobiFragment SobiFragment - The fragment that triggered this update.
      */
     public void updateCalendar(Calendar calendar, SobiFragment sobiFragment) throws DataAccessException;
 }

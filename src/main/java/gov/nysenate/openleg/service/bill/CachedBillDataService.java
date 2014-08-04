@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.bill;
 import gov.nysenate.openleg.dao.bill.BillDao;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.base.CachingService;
 import net.sf.ehcache.CacheManager;
@@ -21,6 +22,7 @@ public class CachedBillDataService implements BillDataService, CachingService
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedBillDataService.class);
 
+    /** The name of the bill data cache */
     private static final String billDataCache = "billData";
 
     @Autowired

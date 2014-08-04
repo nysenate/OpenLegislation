@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.sobi;
 
+import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.sobi.SobiFile;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The SobiDao interface exposes methods for retrieving and modifying SobiFiles and
@@ -91,13 +93,25 @@ public interface SobiDao
     public List<SobiFragment> getSobiFragments(SobiFile sobiFile, SobiFragmentType fragmentType, SortOrder sortById);
 
     /**
-     * Retrieves the SobiFragments that are awaiting processing.
+     * Retrieves all SobiFragments that are awaiting processing.
      *
      * @param sortById SortOrder - Sort order for the fragment id.
      * @param limOff LimitOffset - Restrict the results list.
      * @return List<SobiFragment>
      */
     public List<SobiFragment> getPendingSobiFragments(SortOrder sortById, LimitOffset limOff);
+
+    /**
+     * Retrieves the SobiFragments that are awaiting processing and belong to one of the types
+     * in the given 'restrict' set.
+     *
+     * @param restrict ImmutableSet<SobiFragmentType> - Filter result set to only include these types.
+     * @param sortById SortOrder - Sort order for the fragment id.
+     * @param limOff LimitOffset - Restrict the results list.
+     * @return List<SobiFragment>
+     */
+    public List<SobiFragment> getPendingSobiFragments(ImmutableSet<SobiFragmentType> restrict, SortOrder sortById,
+                                                      LimitOffset limOff);
 
     /** --- Update/Insert Methods --- */
 

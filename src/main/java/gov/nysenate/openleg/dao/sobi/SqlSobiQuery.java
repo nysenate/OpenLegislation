@@ -49,6 +49,9 @@ public enum SqlSobiQuery implements BasicSqlQuery
         "SELECT * FROM ${schema}." + SqlTable.SOBI_FRAGMENT + "\n" +
         "WHERE pending_processing = true"
     ),
+    GET_PENDING_SOBI_FRAGMENTS_BY_TYPE(
+        GET_PENDING_SOBI_FRAGMENTS.sql + " AND fragment_type IN (:fragmentTypes)"
+    ),
     UPDATE_SOBI_FRAGMENT(
         "UPDATE ${schema}." + SqlTable.SOBI_FRAGMENT + "\n" +
         "SET sobi_file_name = :sobiFileName, published_date_time = :publishedDateTime, " +

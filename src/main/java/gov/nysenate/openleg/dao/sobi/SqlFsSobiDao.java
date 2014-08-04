@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.sobi;
 
+import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
@@ -9,7 +10,6 @@ import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.util.DateHelper;
 import org.apache.commons.io.FileUtils;
-import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.sobi.SqlSobiQuery.*;
 import static gov.nysenate.openleg.util.FileHelper.getSortedFiles;
@@ -131,10 +132,21 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
 
     /** {@inheritDoc} */
     @Override
-    public List<SobiFragment> getPendingSobiFragments(SortOrder sortById, LimitOffset limitOffset) {
+    public List<SobiFragment> getPendingSobiFragments(SortOrder sortById, LimitOffset limOff) {
         OrderBy orderBy = new OrderBy("fragment_id", sortById);
         return jdbcNamed.query(
-            GET_PENDING_SOBI_FRAGMENTS.getSql(schema(), orderBy, limitOffset), new SobiFragmentRowMapper());
+            GET_PENDING_SOBI_FRAGMENTS.getSql(schema(), orderBy, limOff), new SobiFragmentRowMapper());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<SobiFragment> getPendingSobiFragments(ImmutableSet<SobiFragmentType> restrict, SortOrder sortById,
+                                                      LimitOffset limOff) {
+        OrderBy orderBy = new OrderBy("fragment_id", sortById);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("fragmentTypes", restrict.stream().map(Enum::name).collect(Collectors.toSet()));
+        return jdbcNamed.query(
+            GET_PENDING_SOBI_FRAGMENTS_BY_TYPE.getSql(schema(), orderBy, limOff), params, new SobiFragmentRowMapper());
     }
 
     /** --- Update/Insert Methods --- */

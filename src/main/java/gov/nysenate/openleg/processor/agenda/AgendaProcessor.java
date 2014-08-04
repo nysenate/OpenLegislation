@@ -109,7 +109,6 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
                 }
                 logger.info("Saving {}", agenda);
                 agendaDataService.saveAgenda(agenda, sobiFragment);
-                logger.info("AGENDA {}", OutputHelper.toJson(agenda));
             }
         }
         catch (IOException | SAXException | XPathExpressionException ex) {
