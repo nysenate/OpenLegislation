@@ -7,11 +7,12 @@ import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
-import gov.nysenate.openleg.processor.base.IngestCache;
-import gov.nysenate.openleg.processor.base.SobiProcessor;
+import gov.nysenate.openleg.model.sobi.SobiLineType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.model.bill.BillAmendNotFoundEx;
-import gov.nysenate.openleg.model.bill.BillNotFoundEx;
+import gov.nysenate.openleg.processor.base.IngestCache;
+import gov.nysenate.openleg.processor.base.ParseError;
+import gov.nysenate.openleg.processor.base.SobiProcessor;
+import gov.nysenate.openleg.service.bill.FullTextType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * The BillProcessor parses bill sobi fragments, applies bill updates, and persists into the backing
@@ -144,9 +144,10 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     case ACT_CLAUSE: applyActClause(data, specifiedAmendment, date); break;
                     case LAW: applyLaw(data, baseBill, date); break;
                     case SUMMARY: applySummary(data, baseBill, date); break;
-                    case SPONSOR_MEMO:    // Sponsor memo text - handled by applyText
-                    case RESOLUTION_TEXT: // Resolution text - handled by applyText
-                    case TEXT: applyText(data, specifiedAmendment, date); break;
+                    case SPONSOR_MEMO:
+                    case RESOLUTION_TEXT:
+                    case TEXT: applyText(data, specifiedAmendment, date, block.getType()); break;
+                    case VETO_APPROVE_MEMO: applyVetoMessageText(data, baseBill, date); break;
                     case VOTE_MEMO: applyVoteMemo(data, specifiedAmendment, date); break;
                     default: throw new ParseError("Invalid Line Code " + block.getType());
                 }
@@ -296,7 +297,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                 try {
                     Date eventDate = eventDateFormat.parse(billEvent.group(1));
                     String eventText = billEvent.group(2).trim().toUpperCase();
-                    BillAction action = new BillAction(eventDate, eventText, ++sequenceNo, billId);
+                    BillAction action = new BillAction(eventDate, eventText, currentChamber, ++sequenceNo, billId);
                     actions.add(action);
 
                     Matcher committeeEventText = committeeEventTextPattern.matcher(eventText);
@@ -545,100 +546,41 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     }
 
     /**
-     * Applies information to bill text or memo; replaces any existing information.
-     * Header lines start with 00000.SO DOC and contain one of three actions:
-     *
-     * '' - Start of the bill text</li>
-     * *END* - End of the bill text</li>
-     * *DELETE* - Deletes existing bill text</li>
-     *
-     * Examples
-     * -----------------------------------------------------------------------------------------------------
-     * Resolution Text | R00000.SO DOC A R22                                    RESO TEXT            2013
-     *                 | R00001LEGISLATIVE  RESOLUTION  congratulating  the Maine-Endwell Football Team
-     *                 | R00000.SO DOC A R22           *END*                    RESO TEXT            2013
-     * -----------------------------------------------------------------------------------------------------
-     * Bill Text       | T00000.SO DOC S 53                                     BTXT                 2013
-     *                 | T00002                           S T A T E   O F   N E W   Y O R K
-     *                 | T00000.SO DOC S 53            *END*                    BTXT                 2013
-     * -----------------------------------------------------------------------------------------------------
-     * Memo Text       | M00000.SO DOC S 1626                                   MTXT                 2013
-     *                 | M00006PURPOSE OR GENERAL IDEA OF BILL:  The purpose of this bill is to
-     *                 | M00000.SO DOC S 1625          *END*                    MTXT                 2013
-     * -----------------------------------------------------------------------------------------------------
-     * Delete          | T00000.SO DOC A 8396          *DELETE*                 BTXT                 2013
-     * -----------------------------------------------------------------------------------------------------
-     *
+     * Applies sobi block information to a bill resolution or memo text
+     * @param data
+     * @param billAmendment
+     * @param date
+     */
+    private void applyText(String data, BillAmendment billAmendment, Date date, SobiLineType lineType) throws ParseError{
+        BillTextParser billTextParser = new BillTextParser(data, FullTextType.getTypeString(lineType), date);
+        String fullText = billTextParser.extractText();
+        if (fullText!=null) {
+            if(lineType==SobiLineType.SPONSOR_MEMO){
+                billAmendment.setMemo(fullText);
+            }
+            else if (lineType==SobiLineType.RESOLUTION_TEXT || lineType==SobiLineType.TEXT){
+                billAmendment.setFulltext(fullText);
+            }
+            billAmendment.setModifiedDate(date);
+        }
+    }
+
+    /**
+     * Constructs a veto message object by parsing the memo
+     * @param data
+     * @param date
      * @throws ParseError
      */
-    private void applyText(String data, BillAmendment specifiedAmendment, Date date) throws ParseError {
-        // BillText, ResolutionText, and MemoText can be handled the same way.
-        // Since Text Blocks can be back to back we constantly look for headers
-        // with actions that tell us to start over, end, or delete.
-        String type = "";
-        StringBuilder text = null;
-        String fullText = null;
+    private void applyVetoMessageText(String data, Bill baseBill, Date date) throws ParseError{
+        VetoBillTextParser vetoBillTextParser = new VetoBillTextParser(data, date);
+        vetoBillTextParser.extractText();
+        VetoMessage vetoMessage = vetoBillTextParser.getVetoMessage();
+        vetoMessage.setSession(baseBill.getSession());
+        vetoMessage.setBillId(baseBill.getBillId());
+        vetoMessage.setModifiedDate(date);
+        vetoMessage.setPublishDate(date);
 
-        for (String line : data.split("\n")) {
-            Matcher header = textHeaderPattern.matcher(line);
-            if (line.startsWith("00000") && header.find()) {
-                String action = header.group(3).trim();
-                type = header.group(4).trim();
-                if (!type.equals("BTXT") && !type.equals("RESO TEXT") && !type.equals("MTXT")) {
-                    throw new ParseError("Unknown text type found: " + type);
-                }
-                if (action.equals("*DELETE*")) {
-                    fullText = "";
-                }
-                else if (action.equals("*END*")) {
-                    if (text != null) {
-                        fullText = text.toString();
-                        text = null;
-                    }
-                    else {
-                        throw new ParseError("Text END Found before a body: " + line);
-                    }
-                }
-                else if (action.equals("")) {
-                    if (text == null) {
-                        //First header for this text segment so initialize
-                        text = new StringBuilder();
-                        text.ensureCapacity(data.length());
-                    }
-                    //Every 100th line is a repeated header for some reason
-                }
-                else {
-                    throw new ParseError("Unknown text action found: "+action);
-                }
-            }
-            else if (text != null) {
-                // Remove the leading numbers
-                text.append((line.length() > 5) ? line.substring(5) : line.substring(line.length()));
-                text.append("\n");
-            }
-            else {
-                throw new ParseError("Text Body found before header: "+line);
-            }
-        }
-        if (text != null) {
-            // This is a known issue that was resolved on 03/23/2011
-            if (new GregorianCalendar(2011, 3, 23).after(date)) {
-                throw new ParseError("Finished text data without a footer");
-            }
-            else {
-                // Commit what we have and move on
-                fullText = text.toString();
-            }
-        }
-        if (fullText != null) {
-            if (type.equals("BTXT") || type.equals("RESO TEXT")) {
-                specifiedAmendment.setFulltext(fullText);
-            }
-            else {
-                specifiedAmendment.setMemo(fullText);
-            }
-            specifiedAmendment.setModifiedDate(date);
-        }
+        vetoDataService.updateVetoMessage(vetoMessage);
     }
 
     /**

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
+import gov.nysenate.openleg.model.entity.Chamber;
 import org.joda.time.LocalDate;
 
 import java.io.Serializable;
@@ -21,6 +22,9 @@ public class BillAction extends BaseLegislativeContent implements Serializable
     /** The date this action was performed. Has no time component. */
     private Date date = null;
 
+    /** The chamber in which this action occurred */
+    private Chamber chamber;
+
     /** Number used for chronological ordering. */
     private int sequenceNo = 0;
 
@@ -40,11 +44,12 @@ public class BillAction extends BaseLegislativeContent implements Serializable
      * @param text - The text of the action
      * @param billId - The id of the bill the action was performed on
      */
-    public BillAction(Date date, String text, int sequenceNo, BillId billId) {
+    public BillAction(Date date, String text, Chamber chamber, int sequenceNo, BillId billId) {
         super();
         this.date = date;
         this.text = text;
         this.billId = billId;
+        this.chamber = chamber;
         this.sequenceNo = sequenceNo;
         this.session = billId.getSession();
         this.setPublishDate(this.date);
@@ -119,6 +124,14 @@ public class BillAction extends BaseLegislativeContent implements Serializable
 
     public void setSequenceNo(int sequenceNo) {
         this.sequenceNo = sequenceNo;
+    }
+
+    public Chamber getChamber() {
+        return chamber;
+    }
+
+    public void setChamber(Chamber chamber) {
+        this.chamber = chamber;
     }
 
     public Date getDate() {

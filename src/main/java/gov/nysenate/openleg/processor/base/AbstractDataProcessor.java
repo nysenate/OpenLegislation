@@ -16,6 +16,7 @@ import gov.nysenate.openleg.service.agenda.AgendaDataService;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.service.bill.BillDataService;
 import gov.nysenate.openleg.model.bill.BillNotFoundEx;
+import gov.nysenate.openleg.service.bill.VetoDataService;
 import gov.nysenate.openleg.service.calendar.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.CalendarNotFoundEx;
 import gov.nysenate.openleg.service.entity.CommitteeService;
@@ -38,14 +39,6 @@ public abstract class AbstractDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(AbstractDataProcessor.class);
 
-    // TODO: Move this class out of here
-    public static class ParseError extends Exception
-    {
-        private static final long serialVersionUID = 2809768377369235106L;
-
-        public ParseError(String message) { super(message); }
-    }
-
     /** --- Data Services --- */
 
     @Autowired
@@ -58,6 +51,8 @@ public abstract class AbstractDataProcessor
     protected MemberService memberService;
     @Autowired
     protected CommitteeService committeeService;
+    @Autowired
+    protected VetoDataService vetoDataService;
 
     /** --- Bill Methods --- */
 

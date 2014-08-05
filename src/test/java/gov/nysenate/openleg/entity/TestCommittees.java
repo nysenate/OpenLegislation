@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.entity;
 
 import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.service.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.MemberService;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;

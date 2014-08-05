@@ -30,6 +30,7 @@ public enum SqlTable
     BILL_AMENDMENT_VOTE_ROLL     ("bill_amendment_vote_roll"),
     BILL_MULTI_SPONSOR           ("bill_multi_sponsor"),
     BILL_PREVIOUS_VERSION        ("bill_previous_version"),
+    BILL_VETO                    ("bill_veto"),
 
     CALENDAR                     ("calendar"),
     CALENDAR_ACTIVE_LIST         ("calendar_active_list"),

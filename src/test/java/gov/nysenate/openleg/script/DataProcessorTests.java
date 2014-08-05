@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.script;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.processors.DataProcessor;
+import gov.nysenate.openleg.processor.DataProcessor;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

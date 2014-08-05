@@ -11,6 +11,7 @@ import gov.nysenate.openleg.service.entity.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -409,6 +410,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             billAction.setBillId(new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"),
                     rs.getString("bill_amend_version")));
             billAction.setSession(rs.getInt("bill_session_year"));
+            billAction.setChamber(Chamber.valueOf(rs.getString("chamber").toUpperCase()));
             billAction.setSequenceNo(rs.getInt("sequence_no"));
             billAction.setDate(rs.getDate("effect_date"));
             billAction.setText(rs.getString("text"));
@@ -587,6 +589,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("printNo", billAction.getBillId().getBasePrintNo());
         params.addValue("sessionYear", billAction.getBillId().getSession());
+        params.addValue("chamber", billAction.getChamber().toString().toLowerCase());
         params.addValue("version", billAction.getBillId().getVersion());
         params.addValue("effectDate", billAction.getDate());
         params.addValue("text", billAction.getText());

@@ -146,9 +146,9 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_ACTION(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_ACTION + "\n" +
-        "(bill_print_no, bill_session_year, bill_amend_version, effect_date, text, sequence_no, " +
+        "(bill_print_no, bill_session_year, bill_amend_version, effect_date, chamber, text, sequence_no, " +
         " modified_date_time, published_date_time, last_fragment_id) \n" +
-        "VALUES (:printNo, :sessionYear, :version, :effectDate, :text, :sequenceNo, " +
+        "VALUES (:printNo, :sessionYear, :version, :effectDate, CAST(:chamber as chamber), :text, :sequenceNo, " +
         "        :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
     DELETE_BILL_ACTION("" +

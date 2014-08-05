@@ -1,12 +1,16 @@
 package gov.nysenate.openleg.service.sobi;
 
+import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
+import gov.nysenate.openleg.processor.base.SobiProcessService;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.TreeSet;
 
 public class ManagedSobiProcessServiceTest extends BaseTests
 {
@@ -38,8 +42,9 @@ public class ManagedSobiProcessServiceTest extends BaseTests
     @Test
     public void testProcessPendingFragments() throws Exception {
         SobiProcessOptions options = SobiProcessOptions.builder()
-            .allowFragmentType(SobiFragmentType.AGENDA)
-            .allowFragmentType(SobiFragmentType.AGENDA_VOTE)
+            .setAllowedFragmentTypes(ImmutableSet.of(
+                    SobiFragmentType.BILL
+            ))
             .build();
         sobiProcessService.processPendingFragments(options);
     }
