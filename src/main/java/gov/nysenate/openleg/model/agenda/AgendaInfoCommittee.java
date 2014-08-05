@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.agenda;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +29,7 @@ public class AgendaInfoCommittee implements Serializable
     private String location;
 
     /** Date/time of the meeting. */
-    private Date meetingDateTime;
+    private LocalDateTime meetingDateTime;
 
     /** Any notes associated with this addendum. */
     private String notes;
@@ -40,7 +41,7 @@ public class AgendaInfoCommittee implements Serializable
 
     public AgendaInfoCommittee() {}
 
-    public AgendaInfoCommittee(CommitteeId committeeId, String chair, String location, String notes, Date meetDateTime) {
+    public AgendaInfoCommittee(CommitteeId committeeId, String chair, String location, String notes, LocalDateTime meetDateTime) {
         this();
         this.setCommitteeId(committeeId);
         this.setChair(chair);
@@ -101,11 +102,11 @@ public class AgendaInfoCommittee implements Serializable
         this.location = location;
     }
 
-    public Date getMeetingDateTime() {
+    public LocalDateTime getMeetingDateTime() {
         return meetingDateTime;
     }
 
-    public void setMeetingDateTime(Date meetingDateTime) {
+    public void setMeetingDateTime(LocalDateTime meetingDateTime) {
         this.meetingDateTime = meetingDateTime;
     }
 

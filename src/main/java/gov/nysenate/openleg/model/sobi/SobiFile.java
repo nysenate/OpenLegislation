@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.sobi;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
+import gov.nysenate.openleg.util.DateHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -9,6 +10,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -40,7 +44,7 @@ public class SobiFile
     private String encoding;
 
     /** The datetime when the SobiFile was recorded into the backing store. */
-    private Date stagedDateTime;
+    private LocalDateTime stagedDateTime;
 
     /** Indicates if the underlying 'file' reference has been moved into an archive directory. */
     private boolean archived;
@@ -86,15 +90,18 @@ public class SobiFile
     }
 
     /**
-     * The published datetime is determined via the file name.
+     * The published datetime is determined via the file name. If an error is encountered when
+     * parsing the date, the last modified datetime of the file will be used instead.
      */
-    public Date getPublishedDateTime() {
+    public LocalDateTime getPublishedDateTime() {
         try {
-            return DateUtils.parseDate(getFileName(), sobiDateFullPattern, sobiDateNoSecsPattern);
+            return LocalDateTime.ofInstant(
+                DateUtils.parseDateStrictly(getFileName(), sobiDateFullPattern, sobiDateNoSecsPattern).toInstant(),
+                ZoneId.systemDefault());
         }
         catch (ParseException ex) {
             ex.printStackTrace();
-            return new Date(file.lastModified());
+            return DateHelper.getLocalDateTimeFromMillis(file.lastModified());
         }
     }
 
@@ -124,11 +131,11 @@ public class SobiFile
         return encoding;
     }
 
-    public Date getStagedDateTime() {
+    public LocalDateTime getStagedDateTime() {
         return stagedDateTime;
     }
 
-    public void setStagedDateTime(Date stagedDateTime) {
+    public void setStagedDateTime(LocalDateTime stagedDateTime) {
         this.stagedDateTime = stagedDateTime;
     }
 

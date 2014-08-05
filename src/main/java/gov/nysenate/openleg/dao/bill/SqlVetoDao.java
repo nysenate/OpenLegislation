@@ -19,31 +19,25 @@ import java.time.ZoneId;
 import java.util.List;
 
 @Repository
-public class SqlVetoDao extends SqlBaseDao implements VetoDao{
-
+public class SqlVetoDao extends SqlBaseDao implements VetoDao
+{
     public static final Logger logger = LoggerFactory.getLogger(SqlVetoDao.class);
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     @Override
     public VetoMessage getVetoMessage(VetoId vetoId) throws DataAccessException {
         MapSqlParameterSource params = getVetoIdParams(vetoId);
         return jdbcNamed.queryForObject(SqlVetoQuery.SELECT_VETO_MESSAGE_SQL.getSql(schema()), params, new VetoRowMapper());
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     @Override
     public List<VetoMessage> getBillVetoes(BaseBillId baseBillId) throws DataAccessException {
         MapSqlParameterSource params = getBaseBillIdParams(baseBillId);
         return jdbcNamed.query(SqlVetoQuery.SELECT_BILL_VETOES_SQL.getSql(schema()), params, new VetoRowMapper());
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     @Override
     public void updateVetoMessage(VetoMessage vetoMessage) throws DataAccessException {
         MapSqlParameterSource params = getVetoParams(vetoMessage);
@@ -52,8 +46,8 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao{
         }
     }
 
-    private class VetoRowMapper implements RowMapper<VetoMessage> {
-
+    private class VetoRowMapper implements RowMapper<VetoMessage>
+    {
         @Override
         public VetoMessage mapRow(ResultSet rs, int rowNum) throws SQLException {
             VetoMessage vetoMessage = new VetoMessage();
@@ -69,8 +63,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao{
             vetoMessage.setSigner(rs.getString("signer"));
             vetoMessage.setSignedDate(rs.getDate("date").toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
             vetoMessage.setMemoText(rs.getString("memo_text"));
-            vetoMessage.setModifiedDate(rs.getTimestamp("modified_datetime"));
-            vetoMessage.setPublishDate(rs.getTimestamp("published_datetime"));
+            setModPubDatesFromResultSet(vetoMessage, rs);
             return vetoMessage;
         }
     }
@@ -94,8 +87,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao{
         params.addValue("date", Date.from(vetoMessage.getSignedDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
         params.addValue("memoText", vetoMessage.getMemoText());
         params.addValue("type", vetoMessage.getType().toString().toLowerCase());
-        params.addValue("modified", vetoMessage.getModifiedDate());
-        params.addValue("published", vetoMessage.getPublishDate());
+        addModPubDateParams(vetoMessage.getModifiedDateTime(), vetoMessage.getPublishedDateTime(), params);
         return params;
     }
 

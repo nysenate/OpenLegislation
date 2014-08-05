@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -124,7 +125,7 @@ public class ManagedSobiProcessService implements SobiProcessService
                 // TODO: Figure out what to do here.
             }
             fragment.setProcessedCount(fragment.getProcessedCount() + 1);
-            fragment.setProcessedDateTime(new Date());
+            fragment.setProcessedDateTime(LocalDateTime.now());
             fragment.setPendingProcessing(false);
             // Update fragment status in the backing store.
             sobiDao.updateSobiFragment(fragment);

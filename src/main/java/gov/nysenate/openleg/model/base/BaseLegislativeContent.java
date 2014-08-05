@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.base;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
@@ -9,10 +10,10 @@ import java.util.Objects;
 abstract public class BaseLegislativeContent
 {
     /** The date the object was most recently modified. */
-    protected Date modifiedDate = null;
+    protected LocalDateTime modifiedDateTime;
 
     /** The date the object was most recently published. */
-    protected Date publishDate = null;
+    protected LocalDateTime publishedDateTime;
 
     /** The session this object was created in. */
     protected int session;
@@ -25,8 +26,8 @@ abstract public class BaseLegislativeContent
     public BaseLegislativeContent() {}
 
     public BaseLegislativeContent(BaseLegislativeContent other) {
-        this.modifiedDate = other.modifiedDate;
-        this.publishDate = other.publishDate;
+        this.modifiedDateTime = other.modifiedDateTime;
+        this.publishedDateTime = other.publishedDateTime;
         this.session = other.session;
         this.year = other.year;
     }
@@ -38,37 +39,37 @@ abstract public class BaseLegislativeContent
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         final BaseLegislativeContent other = (BaseLegislativeContent) obj;
-        return Objects.equals(this.modifiedDate, other.modifiedDate) &&
-               Objects.equals(this.publishDate, other.publishDate) &&
+        return Objects.equals(this.modifiedDateTime, other.modifiedDateTime) &&
+               Objects.equals(this.publishedDateTime, other.publishedDateTime) &&
                Objects.equals(this.session, other.session) &&
                Objects.equals(this.year, other.year);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(modifiedDate, publishDate, session, year);
+        return Objects.hash(modifiedDateTime, publishedDateTime, session, year);
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public Date getPublishDate() {
-        return this.publishDate;
+    public LocalDateTime getPublishedDateTime() {
+        return this.publishedDateTime;
     }
 
-    public void setPublishDate(Date publishDate) {
-        this.publishDate = publishDate;
+    public void setPublishedDateTime(LocalDateTime publishedDateTime) {
+        this.publishedDateTime = publishedDateTime;
     }
 
     public boolean isPublished() {
-        return this.getPublishDate() != null;
+        return this.getPublishedDateTime() != null;
     }
 
-    public Date getModifiedDate() {
-        return this.modifiedDate;
+    public LocalDateTime getModifiedDateTime() {
+        return this.modifiedDateTime;
     }
 
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
+    public void setModifiedDateTime(LocalDateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 
     public int getSession() {

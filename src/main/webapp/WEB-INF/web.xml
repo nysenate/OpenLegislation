@@ -3,70 +3,20 @@
 	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	version="2.4">
-	<filter>
-	   <filter-name>LogFilter</filter-name>
-	   <filter-class>gov.nysenate.openleg.api.servlets.LogFilter</filter-class>
-	</filter>
-	<filter-mapping>
-	   <filter-name>LogFilter</filter-name>
-	   <url-pattern>/*</url-pattern>
-	</filter-mapping>
 
     <listener>
        <listener-class>gov.nysenate.util.listener.NYSenateContextListener</listener-class>
     </listener>
-	<context-param>
+    <context-param>
 	   <param-name>Application</param-name>
 	   <param-value>gov.nysenate.openleg.util.Application</param-value>
 	</context-param>
 
-    <servlet>
-        <servlet-name>WebServlet</servlet-name>
-        <servlet-class>gov.nysenate.openleg.api.servlets.WebServlet</servlet-class>
-    </servlet>
+    <context-param>
+        <param-name>spring.profiles.active</param-name>
+        <param-value>dev</param-value>
+    </context-param>
 
-    <servlet>
-        <servlet-name>ApiServlet2</servlet-name>
-        <servlet-class>gov.nysenate.openleg.api.servlets.ApiServlet2</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ApiServlet2</servlet-name>
-        <url-pattern>/api/2.0/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ApiServlet2</servlet-name>
-        <url-pattern>/2.0/*</url-pattern>
-    </servlet-mapping>
-
-	<servlet>
-		<servlet-name>ApiServlet1</servlet-name>
-		<servlet-class>gov.nysenate.openleg.api.servlets.ApiServlet1</servlet-class>
-	</servlet>
-    <servlet-mapping>
-        <servlet-name>ApiServlet1</servlet-name>
-        <url-pattern>/api/1.0/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ApiServlet1</servlet-name>
-        <url-pattern>/1.0/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ApiServlet1</servlet-name>
-        <url-pattern>/api/*</url-pattern>
-    </servlet-mapping>
-
-	<servlet>
-		<servlet-name>RulesServlet</servlet-name>
-		<servlet-class>gov.nysenate.openleg.api.servlets.RulesServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>SenatorsServlet</servlet-name>
-		<servlet-class>gov.nysenate.openleg.api.servlets.SenatorsServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>CommitteesServlet</servlet-name>
-		<servlet-class>gov.nysenate.openleg.api.servlets.CommitteesServlet</servlet-class>
-	</servlet>
 	<error-page>
 		<error-code>404</error-code>
 		<location>/404.jsp</location>
@@ -75,152 +25,6 @@
 		<error-code>500</error-code>
 		<location>/500.jsp</location>
 	</error-page>
-	<servlet-mapping>
-		<servlet-name>SenatorsServlet</servlet-name>
-		<url-pattern>/senators/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>CommitteesServlet</servlet-name>
-		<url-pattern>/committees/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>RulesServlet</servlet-name>
-		<url-pattern>/rules</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>RulesServlet</servlet-name>
-		<url-pattern>/rules/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/bill/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/calendar/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/meeting/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/transcript/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/bills</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/calendars</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/meetings</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/transcripts</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/actions</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-        <servlet-name>WebServlet</servlet-name>
-        <url-pattern>/resolutions/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>WebServlet</servlet-name>
-        <url-pattern>/resolutions</url-pattern>
-    </servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/votes</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/bills/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/calendars/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/meetings/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/transcripts/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/actions/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/votes/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/committee</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/sponsor</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/committee/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/sponsor/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/search</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>WebServlet</servlet-name>
-		<url-pattern>/search/*</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-	   <servlet-name>AdvancedSearch</servlet-name>
-	   <servlet-class>gov.nysenate.openleg.api.servlets.AdvancedSearchServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-	   <servlet-name>AdvancedSearch</servlet-name>
-	   <url-pattern>/advanced/*</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-        <servlet-name>AdminUpdates</servlet-name>
-        <servlet-class>gov.nysenate.openleg.api.servlets.admin.UpdatesServlet</servlet-class>
-    </servlet>
-	<servlet-mapping>
-		<servlet-name>AdminUpdates</servlet-name>
-		<url-pattern>/admin/updates/*</url-pattern>
-	</servlet-mapping>
 
-	<servlet>
-	    <servlet-name>AdminReports</servlet-name>
-	    <servlet-class>gov.nysenate.openleg.api.servlets.admin.ReportsServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-	    <servlet-name>AdminReports</servlet-name>
-	    <url-pattern>/admin/reports/*</url-pattern>
-	</servlet-mapping>
 
-    <servlet>
-        <servlet-name>AdminDataViewer</servlet-name>
-        <servlet-class>gov.nysenate.openleg.api.servlets.admin.DataViewerServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AdminDataViewer</servlet-name>
-        <url-pattern>/admin/data/*</url-pattern>
-    </servlet-mapping>
 </web-app>

@@ -15,16 +15,17 @@ import org.xml.sax.SAXException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
 @Deprecated
 public class SencalendarProcessor
 {
-    public Calendar getOrCreateCalendar(Integer calno, Integer sessYr, Integer year, Storage storage, Date date)
+    public Calendar getOrCreateCalendar(Integer calno, Integer sessYr, Integer year, Storage storage, LocalDateTime date)
     {
         Calendar calendar = null; //FIXME new Calendar(calno, sessYr, year);
-        calendar.setPublishDate(date);
+        calendar.setPublishedDateTime(date);
 
         String key = storage.key(calendar);
         Calendar oldCalendar = (Calendar)storage.get(key, Calendar.class);
@@ -37,7 +38,7 @@ public class SencalendarProcessor
     public void processSencalendar(File file, Storage storage) throws SAXException, IOException, XPathExpressionException
     {
         // TODO: We need a better default here
-        Date modifiedDate = DateHelper.getSobiFileDate(file.getName());
+//        LocalDateTime modifiedDate = DateHelper.getSobiFileDate(file.getName());
 //        ChangeLogger.setContext(file, modifiedDate);
 
         XmlHelper xml = null;//Application.getXmlHelper();
@@ -46,8 +47,8 @@ public class SencalendarProcessor
         Integer calendarNo = xml.getInteger("@no", xmlCalendar);
         Integer sessYr = xml.getInteger("@sessyr", xmlCalendar);
         Integer year = xml.getInteger("@year", xmlCalendar);
-        Calendar calendar = getOrCreateCalendar(calendarNo, sessYr, year, storage, modifiedDate);
-        calendar.setModifiedDate(modifiedDate);
+//        Calendar calendar = getOrCreateCalendar(calendarNo, sessYr, year, storage, modifiedDate);
+//        calendar.setModifiedDateTime(modifiedDate);
         //calendar.addDataSource(file.getName());
 
         // Actions apply to supplemental and not the whole calendar
@@ -58,13 +59,13 @@ public class SencalendarProcessor
             Node xmlSupplemental = xmlSupplementals.item(i);
             String id = xml.getString("@id", xmlSupplemental);
             if (action.equalsIgnoreCase("remove")) {
-                calendar.removeSupplemental(id);
+//                calendar.removeSupplemental(id);
                 // ChangeLogger.delete( ??? );
             }
             else {
                 // Replace this supplemental
-                Date calDate = DateHelper.getLrsDate(xml.getString("caldate/text()", xmlSupplemental));
-                Date releaseDateTime = DateHelper.getLrsDateTime(xml.getString("releasedate/text()", xmlSupplemental) + xml.getString("releasetime/text()", xmlSupplemental));
+//                Date calDate = DateHelper.getLrsDate(xml.getString("caldate/text()", xmlSupplemental));
+//                LocalDateTime releaseDateTime = DateHelper.getLrsDateTime(xml.getString("releasedate/text()", xmlSupplemental) + xml.getString("releasetime/text()", xmlSupplemental));
 
           //      CalendarSupplemental supplemental = new CalendarSupplemental(id, calDate, releaseDateTime);
                 NodeList xmlSections = xml.getNodeList("sections/section", xmlCalendar);
@@ -82,12 +83,12 @@ public class SencalendarProcessor
                         String billno = xml.getString("bill/@no", xmlCalNo);
                         String billAmendment = billno.matches("[A-Z]$") ? billno.substring(billno.length()-1) : "";
                         String billSponsor = xml.getString("sponsor/text()", xmlCalNo);
-                        Bill bill = this.getOrCreateBill(storage, billno, billAmendment, year, billSponsor, modifiedDate);
+//                        Bill bill = this.getOrCreateBill(storage, billno, billAmendment, year, billSponsor, modifiedDate);
                         Boolean billHigh = xml.getString("bill/@high", xmlCalNo).equals("true");
                         String subBillNo = xml.getString("subbill/@no", xmlCalNo);
                         String subBillAmendment = subBillNo.matches("[A-Z]$") ? subBillNo.substring(subBillNo.length()-1) : "";
                         String subBillSponsor = xml.getString("subsponsor/text()", xmlCalNo);
-                        Bill subBill = this.getOrCreateBill(storage, subBillNo, subBillAmendment, year, subBillSponsor, modifiedDate);
+//                        Bill subBill = this.getOrCreateBill(storage, subBillNo, subBillAmendment, year, subBillSponsor, modifiedDate);
                 // FIXME        CalendarSupplementalEntry entry = new CalendarSupplementalEntry(no, bill, billAmendment, billHigh, subBill, subBillAmendment);
                         // FIXME        section.addEntry(entry);
                     }
@@ -99,13 +100,13 @@ public class SencalendarProcessor
             }
         }
 
-        storage.set(calendar);
+//        storage.set(calendar);
     }
 
     public void processSencalendarActive(File file, Storage storage) throws SAXException, IOException, XPathExpressionException
     {
         // TODO: We need a better default here
-        Date modifiedDate = DateHelper.getSobiFileDate(file.getName());
+//        LocalDateTime modifiedDate = DateHelper.getSobiFileDate(file.getName());
 //        ChangeLogger.setContext(file, modifiedDate);
 
         XmlHelper xml = null;//Application.getXmlHelper();
@@ -114,8 +115,8 @@ public class SencalendarProcessor
         Integer calendarNo = xml.getInteger("@no", xmlCalendarActive);
         Integer sessYr = xml.getInteger("@sessyr", xmlCalendarActive);
         Integer year = xml.getInteger("@year", xmlCalendarActive);
-        Calendar calendar = getOrCreateCalendar(calendarNo, sessYr, year, storage, modifiedDate);
-        calendar.setModifiedDate(modifiedDate);
+//        Calendar calendar = getOrCreateCalendar(calendarNo, sessYr, year, storage, modifiedDate);
+//        calendar.setModifiedDateTime(modifiedDate);
         //calendar.addDataSource(file.getName());
 
         // Actions apply to supplemental and not the whole calendar
@@ -127,11 +128,11 @@ public class SencalendarProcessor
             Integer id = xml.getInteger("@id", xmlSequence);
             if (action.equalsIgnoreCase("remove")) {
                 // Remove this supplemental
-                calendar.removeActiveList(id);
+//                calendar.removeActiveList(id);
             }
             else {
-                Date calDate = DateHelper.getLrsDate(xml.getString("actcaldate/text()", xmlSequence));
-                Date releaseDateTime = DateHelper.getLrsDate(xml.getString("releasedate/text()", xmlSequence) + xml.getString("releasetime/text()", xmlSequence));
+//                Date calDate = DateHelper.getLrsDate(xml.getString("actcaldate/text()", xmlSequence));
+//                Date releaseDateTime = DateHelper.getLrsDate(xml.getString("releasedate/text()", xmlSequence) + xml.getString("releasetime/text()", xmlSequence));
                 String notes = xml.getString("notes/text()", xmlSequence);
 
               //  CalendarActiveList activeList = new CalendarActiveList(id, notes, calDate, releaseDateTime);
@@ -141,7 +142,7 @@ public class SencalendarProcessor
                     Integer calno = xml.getInteger("@no", xmlCalNo);
                     String billno = xml.getString("bill/@no", xmlCalNo);
                     String billAmendment = billno.matches("[A-Z]$") ? billno.substring(billno.length()-1) : "";
-                    Bill bill = this.getOrCreateBill(storage, billno, billAmendment, year, "", modifiedDate);
+//                    Bill bill = this.getOrCreateBill(storage, billno, billAmendment, year, "", modifiedDate);
                   //  CalendarActiveListEntry entry = new CalendarActiveListEntry(calno, bill, billAmendment);
                    // activeList.addEntry(entry);
                 }
@@ -150,10 +151,10 @@ public class SencalendarProcessor
             }
         }
 
-        storage.set(calendar);
+//        storage.set(calendar);
     }
 
-    private Bill getOrCreateBill(Storage storage, String billId, String billAmendment, int year, String sponsorName, Date modifiedDate) {
+    private Bill getOrCreateBill(Storage storage, String billId, String billAmendment, int year, String sponsorName, LocalDateTime modifiedDate) {
         // This is a crappy situation, all bills on calendars should already exist but sometimes they won't.
         // This almost exclusively because we are missing sobi files. It shouldn't happen in production but
         // does frequently in development.
@@ -182,7 +183,7 @@ public class SencalendarProcessor
         // It must be published if it is on the calendar
         BillAmendment amendment = bill.getAmendment(billAmendment);
         if (!amendment.isPublished()) {
-            amendment.setPublishDate(modifiedDate);
+            amendment.setPublishedDateTime(modifiedDate);
             /** FIXME processor.saveBill(bill, billAmendment, storage); */
         }
 

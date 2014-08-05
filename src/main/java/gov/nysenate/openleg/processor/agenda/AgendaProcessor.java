@@ -9,7 +9,6 @@ import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.SobiProcessor;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.util.DateHelper;
-import gov.nysenate.openleg.util.OutputHelper;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +21,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
@@ -42,7 +43,7 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
     @Override
     public void process(SobiFragment sobiFragment) {
         logger.info("Processing Agenda...");
-        Date modifiedDate = sobiFragment.getPublishedDateTime();
+        LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
         try {
             Document doc = xml.parse(sobiFragment.getText());
             Node xmlAgenda = xml.getNode("SENATEDATA/senagenda", doc);
@@ -50,7 +51,7 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
             Integer year = xml.getInteger("@year", xmlAgenda);
             AgendaId agendaId = new AgendaId(agendaNo, year);
             Agenda agenda = getOrCreateAgenda(agendaId, modifiedDate);
-            agenda.setModifiedDate(modifiedDate);
+            agenda.setModifiedDateTime(modifiedDate);
             String action = xml.getString("@action", xmlAgenda);
             // Remove the Agenda if the action = 'remove'
             if (action.equalsIgnoreCase("remove")) {
@@ -67,8 +68,8 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
                     Node xmlAddendum = xmlAddendums.item(i);
                     String addendumId = xml.getString("@id", xmlAddendum);
                     logger.info("Updating Addendum {} for {}", addendumId, agenda);
-                    Date weekOf = DateHelper.getLrsDate(xml.getString("weekof/text()", xmlAddendum));
-                    Date pubDateTime = DateHelper.getLrsDateTime(xml.getString("pubdate/text()", xmlAddendum) +
+                    LocalDate weekOf = DateHelper.getLrsLocalDate(xml.getString("weekof/text()", xmlAddendum));
+                    LocalDateTime pubDateTime = DateHelper.getLrsDateTime(xml.getString("pubdate/text()", xmlAddendum) +
                             xml.getString("pubtime/text()", xmlAddendum));
                     AgendaInfoAddendum addendum = new AgendaInfoAddendum(agendaId, addendumId, weekOf, pubDateTime);
                     // Each addendum will contain a section for each committee that has an update.
@@ -87,8 +88,8 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
 
                         // The meeting date/time may not be entirely accurate because often the data is expressed
                         // through the notes field, especially for multiple ad-hoc meetings during the end of session.
-                        Date meetDateTime = DateHelper.getLrsDateTime(xml.getString("meetdate/text()", xmlCommittee) +
-                            xml.getString("meettime/text()", xmlCommittee));
+                        LocalDateTime meetDateTime = DateHelper.getLrsDateTime(
+                                xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
 
                         // Construct the committee info model using the parsed data.
                         AgendaInfoCommittee infoCommittee =

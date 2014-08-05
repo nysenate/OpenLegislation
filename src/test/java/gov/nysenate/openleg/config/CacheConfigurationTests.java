@@ -2,6 +2,8 @@ package gov.nysenate.openleg.config;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.service.bill.BillDataService;
 import gov.nysenate.openleg.util.OutputHelper;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.config.CacheConfiguration;
@@ -20,6 +22,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class CacheConfigurationTests extends BaseTests
 {
@@ -27,6 +32,9 @@ public class CacheConfigurationTests extends BaseTests
 
     @Autowired
     CacheTester cacheTester;
+
+    @Autowired
+    BillDataService billDataService;
 
     public static class CacheTester
     {
@@ -38,8 +46,13 @@ public class CacheConfigurationTests extends BaseTests
 
         @Cacheable(value = "test", key = "#root.methodName + #s")
         public String method(String s) {
-            logger.info("invoking method");
+            logger.info("invoking method1");
             return "moose";
+        }
+
+        public String method2(String s) {
+            logger.info("invoking method2");
+            return method(s);
         }
 
         @Cacheable(value = "test", key = "#root.methodName + #s")
@@ -67,10 +80,14 @@ public class CacheConfigurationTests extends BaseTests
 
     @Test
     public void testCacheTester_usesCacheProperly() throws Exception {
-        logger.info(cacheTester.method("a"));
-        logger.info(cacheTester.method("a"));
-        logger.info("{}", cacheTester.methodList("a"));
-        logger.info("{}", cacheTester.methodList("a"));
+        List<BillId> ids = Arrays.asList(new BillId("S123", 2013), new BillId("S1234", 2013));
+        List<Bill> bills = ids.stream().map(billDataService::getBill).collect(toList());
+        bills.forEach(f -> logger.info("{}", f.getTitle()));
+//        logger.info("{}", bills);
+
+//        logger.info(cacheTester.method("a"));
+//        logger.info(cacheTester.method("a"));
+//        logger.info(cacheTester.method2("a"));
     }
 
 

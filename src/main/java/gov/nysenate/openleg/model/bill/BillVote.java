@@ -5,10 +5,11 @@ import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.util.DateHelper;
-import org.joda.time.LocalDate;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -29,7 +30,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable
     private BillVoteType voteType;
 
     /** Date the vote was taken on. */
-    private Date voteDate;
+    private LocalDate voteDate;
 
     /** Sets of members grouped based upon how they voted. */
     @SuppressWarnings("serial")
@@ -45,15 +46,15 @@ public class BillVote extends BaseLegislativeContent implements Serializable
         super();
     }
 
-    public BillVote(BillId billId, Date date, BillVoteType type) {
-        this(billId, date, type, 1);
+    public BillVote(BillId billId, LocalDate voteDate, BillVoteType type) {
+        this(billId, voteDate, type, 1);
     }
 
-    public BillVote(BillId billId, Date date, BillVoteType type, int sequenceNo) {
+    public BillVote(BillId billId, LocalDate voteDate, BillVoteType type, int sequenceNo) {
         this();
         this.billId = billId;
-        this.voteDate = date;
-        this.setYear(DateHelper.getYear(date));
+        this.voteDate = voteDate;
+        this.setYear(voteDate.getYear());
         this.setSession(DateHelper.resolveSession(this.getYear()));
         this.voteType = type;
         this.sequenceNo = sequenceNo;
@@ -138,11 +139,11 @@ public class BillVote extends BaseLegislativeContent implements Serializable
         this.voteType = voteType;
     }
 
-    public Date getVoteDate() {
+    public LocalDate getVoteDate() {
         return voteDate;
     }
 
-    public void setVoteDate(Date voteDate) {
+    public void setVoteDate(LocalDate voteDate) {
         this.voteDate = voteDate;
     }
 

@@ -22,6 +22,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
@@ -40,7 +42,7 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
     @Override
     public void process(SobiFragment sobiFragment) {
         logger.info("Processing Senate Calendar Active List... {}", sobiFragment.getFragmentId());
-        Date modifiedDate = sobiFragment.getPublishedDateTime();
+        LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
         try {
             Document doc = xml.parse(sobiFragment.getText());
             Node xmlCalendarActive = xml.getNode("SENATEDATA/sencalendaractive", doc);
@@ -49,7 +51,7 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
             Integer year = xml.getInteger("@year", xmlCalendarActive);
             CalendarId calendarId = new CalendarId(calendarNo, year);
             Calendar calendar = getOrCreateCalendar(calendarId, modifiedDate);
-            calendar.setModifiedDate(modifiedDate);
+            calendar.setModifiedDateTime(modifiedDate);
 
             String action = xml.getString("@action", xmlCalendarActive);
             // So far the only case we've seen is a single supplemental per active list.
@@ -62,14 +64,13 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
                     calendar.removeActiveList(id);
                 }
                 else {
-                    Date calDate = DateHelper.getLrsDate(xml.getString("actcaldate/text()", xmlSequence));
-                    Date releaseDateTime = DateHelper.getLrsDateTime(xml.getString("releasedate/text()", xmlSequence)
-                            + xml.getString("releasetime/text()", xmlSequence));
+                    LocalDate calDate = DateHelper.getLrsLocalDate(xml.getString("actcaldate/text()", xmlSequence));
+                    LocalDateTime releaseDateTime = DateHelper.getLrsDateTime(
+                        xml.getString("releasedate/text()", xmlSequence) + xml.getString("releasetime/text()", xmlSequence));
                     String notes = xml.getString("notes/text()", xmlSequence);
-
                     CalendarActiveList activeList = new CalendarActiveList(calendarId, id, notes, calDate, releaseDateTime);
-                    activeList.setModifiedDate(modifiedDate);
-                    activeList.setPublishDate(modifiedDate);
+                    activeList.setModifiedDateTime(modifiedDate);
+                    activeList.setPublishedDateTime(modifiedDate);
 
                     NodeList xmlCalNos = xml.getNodeList("calnos/calno", xmlSequence);
                     for (int k = 0; k < xmlCalNos.getLength(); k++) {

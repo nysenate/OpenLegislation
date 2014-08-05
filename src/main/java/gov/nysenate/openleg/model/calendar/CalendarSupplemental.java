@@ -4,6 +4,8 @@ import com.google.common.collect.LinkedListMultimap;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.util.DateHelper;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -17,17 +19,17 @@ public class CalendarSupplemental extends BaseLegislativeContent
     private CalendarId calendarId;
 
     /** The calendar date associated with this supplemental. */
-    private Date calDate;
+    private LocalDate calDate;
 
     /** The date when this supplemental was released. */
-    private Date releaseDateTime;
+    private LocalDateTime releaseDateTime;
 
     /** Mapping of supplemental entries to sections. */
     private LinkedListMultimap<CalendarSectionType, CalendarSupplementalEntry> sectionEntries;
 
     /** --- Constructors --- */
 
-    public CalendarSupplemental(CalendarId calId, String version, Date calDate, Date releaseDateTime) {
+    public CalendarSupplemental(CalendarId calId, String version, LocalDate calDate, LocalDateTime releaseDateTime) {
         this.sectionEntries = LinkedListMultimap.create();
         this.setCalendarId(calId);
         this.setYear(calId.getYear());
@@ -105,19 +107,19 @@ public class CalendarSupplemental extends BaseLegislativeContent
         this.calendarId = calendarId;
     }
 
-    public Date getCalDate() {
+    public LocalDate getCalDate() {
         return calDate;
     }
 
-    public void setCalDate(Date calDate) {
+    public void setCalDate(LocalDate calDate) {
         this.calDate = calDate;
     }
 
-    public Date getReleaseDateTime() {
+    public LocalDateTime getReleaseDateTime() {
         return releaseDateTime;
     }
 
-    public void setReleaseDateTime(Date releaseDateTime) {
+    public void setReleaseDateTime(LocalDateTime releaseDateTime) {
         this.releaseDateTime = releaseDateTime;
     }
 

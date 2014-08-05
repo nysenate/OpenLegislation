@@ -18,6 +18,8 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static gov.nysenate.openleg.dao.calendar.SqlCalendarQuery.*;
@@ -190,8 +192,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         @Override
         public Calendar mapRow(ResultSet rs, int rowNum) throws SQLException {
             Calendar calendar = new Calendar(new CalendarId(rs.getInt("calendar_no"), rs.getInt("year")));
-            calendar.setModifiedDate(rs.getTimestamp("modified_date_time"));
-            calendar.setPublishDate(rs.getTimestamp("published_date_time"));
+            setModPubDatesFromResultSet(calendar, rs);
             return calendar;
         }
     }
@@ -202,11 +203,10 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         public CalendarSupplemental mapRow(ResultSet rs, int rowNum) throws SQLException {
             CalendarId calendarId = new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year"));
             String version = rs.getString("sup_version");
-            Date calDate = rs.getDate("calendar_date");
-            Date releaseDateTime = rs.getTimestamp("release_date_time");
+            LocalDate calDate = getLocalDate(rs, "calendar_date");
+            LocalDateTime releaseDateTime = getLocalDateTime(rs, "release_date_time");
             CalendarSupplemental calSup = new CalendarSupplemental(calendarId, version, calDate, releaseDateTime);
-            calSup.setModifiedDate(rs.getTimestamp("modified_date_time"));
-            calSup.setPublishDate(rs.getTimestamp("published_date_time"));
+            setModPubDatesFromResultSet(calSup, rs);
             return calSup;
         }
     }
@@ -236,10 +236,9 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
             CalendarActiveList activeList = new CalendarActiveList();
             activeList.setSequenceNo(rs.getInt("sequence_no"));
             activeList.setCalendarId(new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")));
-            activeList.setCalDate(rs.getDate("calendar_date"));
-            activeList.setReleaseDateTime(rs.getTimestamp("release_date_time"));
-            activeList.setModifiedDate(rs.getTimestamp("modified_date_time"));
-            activeList.setPublishDate(rs.getTimestamp("published_date_time"));
+            activeList.setCalDate(getLocalDate(rs, "calendar_date"));
+            activeList.setReleaseDateTime(getLocalDateTime(rs, "release_date_time"));
+            setModPubDatesFromResultSet(activeList, rs);
             return activeList;
         }
     }
@@ -261,7 +260,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     protected static MapSqlParameterSource getCalendarParams(Calendar calendar, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(calendar.getId(), params);
-        addModPubDateParams(calendar.getModifiedDate(), calendar.getPublishDate(), params);
+        addModPubDateParams(calendar.getModifiedDateTime(), calendar.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;
     }
@@ -272,7 +271,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         params.addValue("supVersion", sup.getVersion());
         params.addValue("calendarDate", sup.getCalDate());
         params.addValue("releaseDateTime", sup.getReleaseDateTime());
-        addModPubDateParams(sup.getModifiedDate(), sup.getPublishDate(), params);
+        addModPubDateParams(sup.getModifiedDateTime(), sup.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;
     }
@@ -299,7 +298,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         params.addValue("calendarDate", actList.getCalDate());
         params.addValue("releaseDateTime", actList.getReleaseDateTime());
         params.addValue("notes", actList.getNotes());
-        addModPubDateParams(actList.getModifiedDate(), actList.getPublishDate(), params);
+        addModPubDateParams(actList.getModifiedDateTime(), actList.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;
     }

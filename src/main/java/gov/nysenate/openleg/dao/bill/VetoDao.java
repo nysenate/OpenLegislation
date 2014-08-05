@@ -7,8 +7,8 @@ import org.springframework.dao.DataAccessException;
 
 import java.util.List;
 
-public interface VetoDao {
-
+public interface VetoDao
+{
     /**
      * Get a specific veto via its veto number
      *

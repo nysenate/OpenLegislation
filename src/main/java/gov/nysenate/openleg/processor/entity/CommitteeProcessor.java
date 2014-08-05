@@ -67,7 +67,7 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
                     try {
                         Committee committee = new Committee();
                         committee.setSession(sessionYear);
-                        committee.setPublishDate(sobiFragment.getPublishedDateTime());
+                        committee.setPublishedDateTime(sobiFragment.getPublishedDateTime());
                         committee.setChamber(chamber);
                         processCommittee(committeeNode, committee);
                         committeeDao.updateCommittee(committee);

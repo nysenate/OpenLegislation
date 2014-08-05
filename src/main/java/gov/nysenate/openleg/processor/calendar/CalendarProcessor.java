@@ -20,6 +20,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
@@ -38,7 +40,7 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
     @Override
     public void process(SobiFragment sobiFragment) {
         logger.info("Processing Senate Calendar... {}", sobiFragment.getFragmentId());
-        Date modifiedDate = sobiFragment.getPublishedDateTime();
+        LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
         try {
             Document doc = xml.parse(sobiFragment.getText());
             Node xmlCalendar = xml.getNode("SENATEDATA/sencalendar", doc);
@@ -47,7 +49,7 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
             Integer year = xml.getInteger("@year", xmlCalendar);
             CalendarId calendarId = new CalendarId(calendarNo, year);
             Calendar calendar = getOrCreateCalendar(calendarId, modifiedDate);
-            calendar.setModifiedDate(modifiedDate);
+            calendar.setModifiedDateTime(modifiedDate);
 
             // Actions apply to supplemental and not the whole calendar
             String action = xml.getString("@action", xmlCalendar);
@@ -61,13 +63,13 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
                 }
                 else {
                     // Replace this supplemental
-                    Date calDate = DateHelper.getLrsDate(xml.getString("caldate/text()", xmlSupplemental));
-                    Date releaseDateTime = DateHelper.getLrsDateTime(xml.getString("releasedate/text()", xmlSupplemental)
+                    LocalDate calDate = DateHelper.getLrsLocalDate(xml.getString("caldate/text()", xmlSupplemental));
+                    LocalDateTime releaseDateTime = DateHelper.getLrsDateTime(xml.getString("releasedate/text()", xmlSupplemental)
                             + xml.getString("releasetime/text()", xmlSupplemental));
 
                     CalendarSupplemental supplemental = new CalendarSupplemental(calendarId, supId, calDate, releaseDateTime);
-                    supplemental.setModifiedDate(modifiedDate);
-                    supplemental.setPublishDate(modifiedDate);
+                    supplemental.setModifiedDateTime(modifiedDate);
+                    supplemental.setPublishedDateTime(modifiedDate);
 
                     NodeList xmlSections = xml.getNodeList("sections/section", xmlSupplemental);
                     for (int j = 0; j < xmlSections.getLength(); j++) {

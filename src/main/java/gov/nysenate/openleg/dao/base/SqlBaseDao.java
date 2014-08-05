@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.base;
 
+import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import org.slf4j.Logger;
@@ -10,8 +11,11 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.annotation.PostConstruct;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Date;
 
@@ -61,20 +65,66 @@ public abstract class SqlBaseDao
     /**
      * Applies the published date / modified date column values.
      */
-    protected static void addModPubDateParams(Date modifiedDate, Date publishedDate, MapSqlParameterSource params) {
+    protected static void addModPubDateParams(LocalDateTime modifiedDate, LocalDateTime publishedDate, MapSqlParameterSource params) {
         params.addValue("modifiedDateTime", modifiedDate);
         params.addValue("publishedDateTime", publishedDate);
     }
 
-    /** --- Static Helper Methods --- */
-
-    public static Date toDate(LocalDateTime localDateTime) {
-        if (localDateTime == null) return null;
-        return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
+    /**
+     * Convenience method for setting the modified and published date time via the default columns
+     * in the result set. Use this method only when the result set is guaranteed to have these
+     * default columns.
+     */
+    protected static void setModPubDatesFromResultSet(BaseLegislativeContent obj, ResultSet rs) throws SQLException {
+        obj.setModifiedDateTime(getLocalDateTime(rs, "modified_date_time"));
+        obj.setPublishedDateTime(getLocalDateTime(rs.getTimestamp("published_date_time")));
     }
 
+    /** --- Static Helper Methods --- */
+
+    /**
+     * Convert a LocalDateTime to a Date.
+     */
+    public static Date toDate(LocalDateTime localDateTime) {
+        if (localDateTime == null) return null;
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    /**
+     * Convert a LocalDate to a Date.
+     */
     public static Date toDate(LocalDate localDate) {
         if (localDate == null) return null;
         return toDate(localDate.atStartOfDay());
+    }
+
+    /**
+     * Convert a Date to a LocalDateTime at the system's default time zone.
+     */
+    public static LocalDateTime getLocalDateTime(Date date) {
+        if (date == null) return null;
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+    }
+
+    /**
+     * Read the 'column' date value from the result set and cast it to a LocalDateTime.
+     */
+    public static LocalDateTime getLocalDateTime(ResultSet rs, String column) throws SQLException {
+        return getLocalDateTime(rs.getTimestamp(column));
+    }
+
+    /**
+     * Convert a Date to a LocalDate at the system's default time zone.
+     */
+    public static LocalDate getLocalDate(Date date) {
+        if (date == null) return null;
+        return getLocalDateTime(date).toLocalDate();
+    }
+
+    /**
+     * Read the 'column' date value from the result set and cast it to a LocalDate.
+     */
+    public static LocalDate getLocalDate(ResultSet rs, String column) throws SQLException {
+        return getLocalDate(rs.getDate(column));
     }
 }

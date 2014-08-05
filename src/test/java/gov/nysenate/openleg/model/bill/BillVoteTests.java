@@ -6,6 +6,8 @@ import gov.nysenate.openleg.service.entity.MemberService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
@@ -18,7 +20,7 @@ public class BillVoteTests extends BaseTests
 
     @Test
     public void testBillVoteEquality() throws Exception {
-        Date date = new Date();
+        LocalDate date = LocalDate.now();
         BillId billId = new BillId("S1234", 2013);
 
         BillVote vote1 = new BillVote(billId, date, BillVoteType.FLOOR, 1);

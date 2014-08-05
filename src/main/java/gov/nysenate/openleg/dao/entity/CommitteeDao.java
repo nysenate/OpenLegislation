@@ -5,10 +5,8 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
-import org.joda.time.DateTime;
 import org.springframework.dao.DataAccessException;
 
-import java.util.Date;
 import java.util.List;
 
 public interface CommitteeDao {

@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.agenda.SqlAgendaQuery.*;
 import static java.util.stream.Collectors.toMap;
@@ -53,7 +52,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     /** {@inheritDoc} */
     @Override
     public void updateAgenda(Agenda agenda, SobiFragment sobiFragment) throws DataAccessException {
-        logger.trace("Updating Agenda {} in database...", agenda);
+        logger.debug("Persisting {} in database...", agenda);
         // Update the base agenda record
         MapSqlParameterSource agendaParams = getAgendaParams(agenda, sobiFragment);
         if (jdbcNamed.update(UPDATE_AGENDA.getSql(schema()), agendaParams) == 0) {
@@ -177,8 +176,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         public Agenda mapRow(ResultSet rs, int rowNum) throws SQLException {
             Agenda agenda = new Agenda();
             agenda.setId(new AgendaIdRowMapper().mapRow(rs, rowNum));
-            agenda.setPublishDate(rs.getTimestamp("published_date_time"));
-            agenda.setModifiedDate(rs.getTimestamp("modified_date_time"));
+            agenda.setPublishedDateTime(getLocalDateTime(rs, "published_date_time"));
+            agenda.setModifiedDateTime(getLocalDateTime(rs, "modified_date_time"));
             return agenda;
         }
     }
@@ -190,9 +189,9 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
             AgendaInfoAddendum addendum = new AgendaInfoAddendum();
             addendum.setAgendaId(new AgendaIdRowMapper().mapRow(rs, rowNum));
             addendum.setId(rs.getString("addendum_id"));
-            addendum.setWeekOf(rs.getDate("week_of"));
-            addendum.setModifiedDate(rs.getTimestamp("modified_date_time"));
-            addendum.setPublishDate(rs.getTimestamp("published_date_time"));
+            addendum.setWeekOf(getLocalDate(rs, "week_of"));
+            addendum.setModifiedDateTime(getLocalDateTime(rs, "modified_date_time"));
+            addendum.setPublishedDateTime(getLocalDateTime(rs.getTimestamp("published_date_time")));
             return addendum;
         }
     }
@@ -206,7 +205,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
                 new CommitteeId(Chamber.getValue(rs.getString("committee_chamber")), rs.getString("committee_name")));
             infoComm.setChair(rs.getString("chair"));
             infoComm.setLocation(rs.getString("location"));
-            infoComm.setMeetingDateTime(rs.getTimestamp("meeting_date_time"));
+            infoComm.setMeetingDateTime(rs.getTimestamp("meeting_date_time").toLocalDateTime());
             infoComm.setNotes(rs.getString("notes"));
             return infoComm;
         }
@@ -217,8 +216,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         @Override
         public AgendaInfoCommitteeItem mapRow(ResultSet rs, int rowNum) throws SQLException {
             AgendaInfoCommitteeItem item = new AgendaInfoCommitteeItem();
-            item.setBillId(
-                new BillId(rs.getString("bill_print_no"), rs.getInt("bill_year"), rs.getString("bill_amend_version")));
+            item.setBillId(new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"),
+                                      rs.getString("bill_amend_version")));
             item.setMessage(rs.getString("message"));
             return item;
         }
@@ -235,7 +234,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     private static MapSqlParameterSource getAgendaParams(Agenda agenda, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addAgendaIdParams(agenda.getId(), params);
-        addModPubDateParams(agenda.getModifiedDate(), agenda.getPublishDate(), params);
+        addModPubDateParams(agenda.getModifiedDateTime(), agenda.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;
     }
@@ -244,8 +243,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         MapSqlParameterSource params = new MapSqlParameterSource();
         addAgendaIdParams(addendum.getAgendaId(), params);
         params.addValue("addendumId", addendum.getId());
-        params.addValue("weekOf", addendum.getWeekOf());
-        addModPubDateParams(addendum.getModifiedDate(), addendum.getPublishDate(), params);
+        params.addValue("weekOf", toDate(addendum.getWeekOf()));
+        addModPubDateParams(addendum.getModifiedDateTime(), addendum.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;
     }
@@ -259,7 +258,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         params.addValue("committeeChamber", infoComm.getCommitteeId().getChamber().asSqlEnum());
         params.addValue("chair", infoComm.getChair());
         params.addValue("location", infoComm.getLocation());
-        params.addValue("meetingDateTime", infoComm.getMeetingDateTime());
+        params.addValue("meetingDateTime", toDate(infoComm.getMeetingDateTime()));
         params.addValue("notes", infoComm.getNotes());
         addLastFragmentParam(fragment, params);
         return params;

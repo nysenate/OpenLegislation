@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.transcript;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.bill.Bill;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,7 +24,7 @@ public class Transcript extends BaseLegislativeContent
     /**
      *
      */
-    protected Date timeStamp;
+    protected LocalDateTime timeStamp;
 
     /**
      *
@@ -50,12 +51,9 @@ public class Transcript extends BaseLegislativeContent
      */
     protected List<Bill> relatedBills;
 
-    /**
-     * JavaBean Constructor
-     */
-    public Transcript()
-    {
-        relatedBills = new ArrayList<Bill>();
+
+    public Transcript() {
+        relatedBills = new ArrayList<>();
     }
 
     public String getId() {
@@ -63,19 +61,17 @@ public class Transcript extends BaseLegislativeContent
     }
 
     /**
-     * The object type of the trascript.
+     * The object type of the transcript.
      */
-    public String getOtype()
-    {
+    public String getOtype() {
         return "transcript";
     }
 
-    public String getOid()
-    {
+    public String getOid() {
         return this.getId();
     }
 
-    public Date getTimeStamp() {
+    public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
 
@@ -103,7 +99,7 @@ public class Transcript extends BaseLegislativeContent
         this.id = id;
     }
 
-    public void setTimeStamp(Date timeStamp) {
+    public void setTimeStamp(LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -125,11 +121,5 @@ public class Transcript extends BaseLegislativeContent
 
     public void setRelatedBills(List<Bill> relatedBills) {
         this.relatedBills = relatedBills;
-    }
-
-    public int getYear() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(timeStamp);
-        return cal.get(Calendar.YEAR);
     }
 }

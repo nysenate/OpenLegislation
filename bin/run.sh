@@ -9,5 +9,5 @@ if [ ! $SCRIPT ]; then
 fi
 
 # TODO: This memory size should be an adjustable parameter
-java -Xmx1024m -Xms16m -cp $BASE/classes/:$BASE/lib/* gov.nysenate.openleg.scripts.$SCRIPT $@
+java -Xmx1024m -Xms16m -cp $BASE/classes/:$BASE/lib/* gov.nysenate.openleg.script.$SCRIPT $@
 

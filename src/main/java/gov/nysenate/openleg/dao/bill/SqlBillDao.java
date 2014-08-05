@@ -21,6 +21,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static gov.nysenate.openleg.dao.bill.SqlBillQuery.*;
@@ -355,9 +357,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     {
         @Override
         public Bill mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Bill bill = new Bill();
-            bill.setPrintNo(rs.getString("print_no"));
-            bill.setSession(rs.getInt("session_year"));
+            Bill bill = new Bill(new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
             bill.setTitle(rs.getString("title"));
             bill.setLawSection(rs.getString("law_section"));
             bill.setLaw(rs.getString("law_code"));
@@ -365,8 +365,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             bill.setActiveVersion(rs.getString("active_version").trim());
             bill.setProgramInfo(rs.getString("program_info"));
             bill.setYear(rs.getInt("active_year"));
-            bill.setModifiedDate(rs.getTimestamp("modified_date_time"));
-            bill.setPublishDate(rs.getTimestamp("published_date_time"));
+            setModPubDatesFromResultSet(bill, rs);
             return bill;
         }
     }
@@ -384,15 +383,14 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             amend.setFulltext(rs.getString("full_text"));
             amend.setStricken(rs.getBoolean("stricken"));
             amend.setUniBill(rs.getBoolean("uni_bill"));
-            amend.setModifiedDate(rs.getTimestamp("modified_date_time"));
-            amend.setPublishDate(rs.getTimestamp("published_date_time"));
+            setModPubDatesFromResultSet(amend, rs);
             String currentCommitteeName = rs.getString("current_committee_name");
             if (currentCommitteeName != null) {
                 amend.setCurrentCommittee(
-                        new CommitteeVersionId(
-                                amend.getBillId().getChamber(), rs.getString("current_committee_name"),
-                                amend.getSession(), rs.getTimestamp("current_committee_action")
-                        )
+                    new CommitteeVersionId(
+                        amend.getBillId().getChamber(), rs.getString("current_committee_name"),
+                        amend.getSession(), getLocalDate(rs, "current_committee_action")
+                    )
                 );
             }
             else {
@@ -412,10 +410,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             billAction.setSession(rs.getInt("bill_session_year"));
             billAction.setChamber(Chamber.valueOf(rs.getString("chamber").toUpperCase()));
             billAction.setSequenceNo(rs.getInt("sequence_no"));
-            billAction.setDate(rs.getDate("effect_date"));
+            billAction.setDate(getLocalDate(rs, "effect_date"));
             billAction.setText(rs.getString("text"));
-            billAction.setModifiedDate(rs.getTimestamp("modified_date_time"));
-            billAction.setPublishDate(rs.getTimestamp("published_date_time"));
+            setModPubDatesFromResultSet(billAction, rs);
             return billAction;
         }
     }
@@ -494,7 +491,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             String committeeName = rs.getString("committee_name");
             Chamber committeeChamber = Chamber.getValue(rs.getString("committee_chamber"));
             int session = rs.getInt("bill_session_year");
-            Date actionDate = rs.getTimestamp("action_date");
+            LocalDate actionDate = getLocalDate(rs, "action_date");
             return new CommitteeVersionId(committeeChamber, committeeName, session, actionDate);
         }
     }
@@ -516,14 +513,13 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         public void processRow(ResultSet rs) throws SQLException {
             BillId billId = new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"),
                                        rs.getString("bill_amend_version"));
-            Date voteDate = rs.getTimestamp("vote_date");
+            LocalDate voteDate = getLocalDate(rs, "vote_date");
             BillVoteType voteType = BillVoteType.getValue(rs.getString("vote_type"));
             int sequenceNo = rs.getInt("sequence_no");
             BillVote billVote = new BillVote(billId, voteDate, voteType, sequenceNo);
 
             if (!billVoteMap.containsKey(billVote.getVoteId())) {
-                billVote.setModifiedDate(rs.getTimestamp("modified_date_time"));
-                billVote.setPublishDate(rs.getTimestamp("published_date_time"));
+                setModPubDatesFromResultSet(billVote, rs);
                 billVoteMap.put(billVote.getVoteId(), billVote);
             }
 
@@ -555,7 +551,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("activeVersion", bill.getActiveVersion());
         params.addValue("activeYear", bill.getYear());
         params.addValue("programInfo", bill.getProgramInfo());
-        addModPubDateParams(bill.getModifiedDate(), bill.getPublishDate(), params);
+        addModPubDateParams(bill.getModifiedDateTime(), bill.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;
     }
@@ -576,7 +572,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("currentCommitteeAction",
             amendment.getCurrentCommittee() != null ? amendment.getCurrentCommittee().getReferenceDate() : null);
         params.addValue("uniBill", amendment.isUniBill());
-        addModPubDateParams(amendment.getModifiedDate(), amendment.getPublishDate(), params);
+        addModPubDateParams(amendment.getModifiedDateTime(), amendment.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;
     }
@@ -594,7 +590,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("effectDate", billAction.getDate());
         params.addValue("text", billAction.getText());
         params.addValue("sequenceNo", billAction.getSequenceNo());
-        addModPubDateParams(billAction.getModifiedDate(), billAction.getPublishDate(), params);
+        addModPubDateParams(billAction.getModifiedDateTime(), billAction.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;
     }
@@ -648,7 +644,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("voteDate", billVote.getVoteDate());
         params.addValue("voteType", billVote.getVoteType().name().toLowerCase());
         params.addValue("sequenceNo", billVote.getSequenceNo());
-        addModPubDateParams(billVote.getModifiedDate(), billVote.getPublishDate(), params);
+        addModPubDateParams(billVote.getModifiedDateTime(), billVote.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;
     }
@@ -666,7 +662,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * Applies columns that identify the base bill.
      */
     private static void addBillIdParams(Bill bill, MapSqlParameterSource params) {
-        params.addValue("printNo", bill.getPrintNo());
+        params.addValue("printNo", bill.getBasePrintNo());
         params.addValue("sessionYear", bill.getSession());
     }
 

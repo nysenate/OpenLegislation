@@ -7,7 +7,7 @@
 		</layout>
 	</appender>
 
-	<appender name="mail" class="org.apache.log4j.net.SMTPAppender">
+    <appender name="mail" class="org.apache.log4j.net.SMTPAppender">
 	  <param name="SMTPDebug" value="false" />
 	  <param name="BufferSize" value="5" />
 	  <param name="SMTPProtocol" value="smtps" />
@@ -30,6 +30,18 @@
 	<logger name="gov.nysenate.openleg.util.Storage">
 	   <level value="info"/>
 	</logger>
+
+    <logger name="gov.nysenate.openleg">
+        <level value="debug"/>
+    </logger>
+
+    <logger name="gov.nysenate.openleg.processor">
+        <level value="debug"/>
+    </logger>
+
+    <logger name="org.springframework.jdbc">
+        <level value="info"/>
+    </logger>
 
     <root>
 		<priority value="info"></priority>

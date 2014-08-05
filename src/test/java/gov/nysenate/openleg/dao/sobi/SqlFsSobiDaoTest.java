@@ -1,17 +1,21 @@
 package gov.nysenate.openleg.dao.sobi;
 
+import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.sobi.SobiFile;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.util.OutputHelper;
-import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SqlFsSobiDaoTest extends BaseTests
 {
@@ -44,9 +48,9 @@ public class SqlFsSobiDaoTest extends BaseTests
 
     @Test
     public void testGetSobiFilesDuring() throws Exception {
-        List<SobiFile> sobiFiles = sobiDao.getSobiFilesDuring(new LocalDate(2013, 1, 1).toDate(), new LocalDate(2013, 2, 1).toDate(),
-                SortOrder.ASC, LimitOffset.ALL);
-        logger.info("{}", OutputHelper.toJson(sobiFiles));
+//        List<SobiFile> sobiFiles = sobiDao.getSobiFilesDuring(LocalDate.of(2013, 1, 1), LocalDate.of(2013, 2, 1),
+//                SortOrder.ASC, LimitOffset.ALL);
+//        logger.info("{}", OutputHelper.toJson(sobiFiles));
     }
 
     @Test
@@ -72,6 +76,14 @@ public class SqlFsSobiDaoTest extends BaseTests
     @Test
     public void testGetPendingSobiFragments() throws Exception {
 
+    }
+
+    @Test
+    public void testGetPendingSobiFragments_filterSet() throws Exception {
+        ImmutableSet<SobiFragmentType> types = ImmutableSet.of(SobiFragmentType.AGENDA);
+        List<SobiFragment> fragments =
+            sobiDao.getPendingSobiFragments(types, SortOrder.ASC, LimitOffset.ALL);
+        fragments.stream().forEach(f -> logger.info(f.getFragmentId()));
     }
 
     @Test

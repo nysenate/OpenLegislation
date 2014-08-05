@@ -3,25 +3,26 @@ package gov.nysenate.openleg.processor.bill;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.bill.FullTextType;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BillTextParser {
-
+public class BillTextParser
+{
     private static final Pattern textHeaderPattern =
-            Pattern.compile("00000\\.SO DOC.{17}([A-Z* ]{9})[A-Z0-9 ]{16}([A-Z ]{20}) ([0-9]{4}).*");
+        Pattern.compile("00000\\.SO DOC.{17}([A-Z* ]{9})[A-Z0-9 ]{16}([A-Z ]{20}) ([0-9]{4}).*");
 
     private String data;
     private FullTextType fullTextType;
-    private Date date;
+    private LocalDateTime date;
 
-    /** This is set as true when the parser has recieved a valid text header
-     *     and has not yet received a closing header */
+    /** This is set as true when the parser has received a valid text header
+     *  and has not yet received a closing header */
     private boolean insideTextHeader;
 
-    public BillTextParser(String data, FullTextType fullTextType, Date date) {
+    public BillTextParser(String data, FullTextType fullTextType, LocalDateTime date) {
         this.data = data;
         this.fullTextType = fullTextType;
         this.date = date;
@@ -53,7 +54,7 @@ public class BillTextParser {
      * Delete          | T00000.SO DOC A 8396          *DELETE*                 BTXT                 2013
      * -----------------------------------------------------------------------------------------------------
      *
- * @throws ParseError
+     * @throws ParseError
      */
     public String extractText() throws ParseError {
         // BillText, ResolutionText, and MemoText can be handled the same way.

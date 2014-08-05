@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -63,7 +64,7 @@ public abstract class AbstractDataProcessor
      * @param billId BillId
      * @return Bill
      */
-    protected Bill getOrCreateBaseBill(Date publishDate, BillId billId) {
+    protected Bill getOrCreateBaseBill(LocalDateTime publishDate, BillId billId) {
         return getOrCreateBaseBill(publishDate, billId, null);
     }
 
@@ -75,7 +76,7 @@ public abstract class AbstractDataProcessor
      * @param billIngestCache IngestCache<Bill>
      * @return Bill
      */
-    protected Bill getOrCreateBaseBill(SobiFragment fragment, SobiBlock block, IngestCache<BillId, Bill> billIngestCache) {
+    protected Bill getOrCreateBaseBill(SobiFragment fragment, SobiBlock block, IngestCache<BaseBillId, Bill> billIngestCache) {
         return getOrCreateBaseBill(fragment.getPublishedDateTime(), block.getBillId(), billIngestCache);
     }
 
@@ -90,7 +91,7 @@ public abstract class AbstractDataProcessor
      * @param billIngestCache IngestCache<BillId, Bill> - Optional cache used to speed up processing.
      * @return Bill
      */
-    protected Bill getOrCreateBaseBill(Date publishDate, BillId billId, IngestCache<BillId, Bill> billIngestCache) {
+    protected Bill getOrCreateBaseBill(LocalDateTime publishDate, BillId billId, IngestCache<BaseBillId, Bill> billIngestCache) {
         boolean isBaseVersion = BillId.isBaseVersion(billId.getVersion());
         BaseBillId baseBillId = BillId.getBaseId(billId);
         Bill baseBill;
@@ -103,15 +104,15 @@ public abstract class AbstractDataProcessor
                 logger.warn("Bill Amendment {} filed without initial bill.", billId);
             }
             baseBill = new Bill(baseBillId);
-            baseBill.setModifiedDate(publishDate);
-            baseBill.setPublishDate(publishDate);
+            baseBill.setModifiedDateTime(publishDate);
+            baseBill.setPublishedDateTime(publishDate);
             if (billIngestCache != null) {
                 billIngestCache.set(baseBillId, baseBill);
             }
         }
         if (!baseBill.hasAmendment(billId.getVersion())) {
             BillAmendment billAmendment = new BillAmendment(baseBillId, billId.getVersion());
-            billAmendment.setModifiedDate(publishDate);
+            billAmendment.setModifiedDateTime(publishDate);
             // If an active amendment exists, apply its ACT TO clause to this amendment
             if (baseBill.hasActiveAmendment()) {
                 billAmendment.setActClause(baseBill.getActiveAmendment().getActClause());
@@ -120,7 +121,7 @@ public abstract class AbstractDataProcessor
             if (!isBaseVersion) {
                 if (!baseBill.hasAmendment(BillId.BASE_VERSION)) {
                     BillAmendment baseAmendment = new BillAmendment(baseBillId, BillId.BASE_VERSION);
-                    baseAmendment.setModifiedDate(publishDate);
+                    baseAmendment.setModifiedDateTime(publishDate);
                     baseBill.addAmendment(baseAmendment);
                     baseBill.setActiveVersion(BillId.BASE_VERSION);
                 }
@@ -143,7 +144,7 @@ public abstract class AbstractDataProcessor
      * @return Bill
      * @throws BillNotFoundEx - If the bill was not found by the service.
      */
-    protected Bill getBaseBillFromCacheOrService(BillId billId, IngestCache<BillId, Bill> billIngestCache) throws BillNotFoundEx {
+    protected Bill getBaseBillFromCacheOrService(BillId billId, IngestCache<BaseBillId, Bill> billIngestCache) throws BillNotFoundEx {
         if (billId == null) {
             throw new IllegalArgumentException("Bill Id cannot be null!");
         }
@@ -191,15 +192,15 @@ public abstract class AbstractDataProcessor
      * @param date Date - The published date of the requesting sobi fragment.
      * @return Agenda
      */
-    protected Agenda getOrCreateAgenda(AgendaId agendaId, Date date) {
+    protected Agenda getOrCreateAgenda(AgendaId agendaId, LocalDateTime date) {
         Agenda agenda;
         try {
             agenda = agendaDataService.getAgenda(agendaId);
         }
         catch (AgendaNotFoundEx ex) {
             agenda = new Agenda(agendaId);
-            agenda.setModifiedDate(date);
-            agenda.setPublishDate(date);
+            agenda.setModifiedDateTime(date);
+            agenda.setPublishedDateTime(date);
         }
         return agenda;
     }
@@ -213,15 +214,15 @@ public abstract class AbstractDataProcessor
      * @param date Date - The published date of the requesting sobi fragment.
      * @return Calendar
      */
-    protected Calendar getOrCreateCalendar(CalendarId calendarId, Date date) {
+    protected Calendar getOrCreateCalendar(CalendarId calendarId, LocalDateTime date) {
         Calendar calendar;
         try {
             calendar = calendarDataService.getCalendar(calendarId);
         }
         catch (CalendarNotFoundEx ex) {
             calendar = new Calendar(calendarId);
-            calendar.setModifiedDate(date);
-            calendar.setPublishDate(date);
+            calendar.setModifiedDateTime(date);
+            calendar.setPublishedDateTime(date);
         }
         return calendar;
     }

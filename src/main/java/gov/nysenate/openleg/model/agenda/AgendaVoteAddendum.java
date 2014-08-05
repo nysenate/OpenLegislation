@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.util.DateHelper;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
@@ -32,14 +33,14 @@ public class AgendaVoteAddendum extends BaseLegislativeContent implements Serial
         this.committees = new HashMap<>();
     }
 
-    public AgendaVoteAddendum(AgendaId agendaId, String addendumId, Date pubDate) {
+    public AgendaVoteAddendum(AgendaId agendaId, String addendumId, LocalDateTime pubDate) {
         this();
         this.setAgendaId(agendaId);
         this.setId(addendumId);
         this.setYear(agendaId.getYear());
         this.setSession(DateHelper.resolveSession(this.getYear()));
-        this.setModifiedDate(pubDate);
-        this.setPublishDate(pubDate);
+        this.setModifiedDateTime(pubDate);
+        this.setPublishedDateTime(pubDate);
     }
 
     /** --- Functional Getters/Setters --- */

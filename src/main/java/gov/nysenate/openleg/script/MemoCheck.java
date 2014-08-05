@@ -41,7 +41,7 @@ public class MemoCheck extends BaseScript
         for (SobiBlock block : blocks) {
             String billNo = block.getBasePrintNo()+block.getAmendment()+"-"+block.getSession();
             Bill jsonBill = storage.getBill(block.getBasePrintNo()+block.getAmendment(), block.getSession());
-            Bill lbdcBill = new Bill(billNo, block.getSession());
+//            Bill lbdcBill = new Bill(billNo, block.getSession());
 //            bp.applyText(block.getData(), lbdcBill, "", new Date());
 //
 //            String jsonMemo = StringUtils.normalizeSpace(jsonBill.getMemo().replaceAll("[?�]","§").replaceAll("-\n+ *", "").replaceAll("\n *", " ").replaceAll(" *([:,]) *", "$1").replaceAll(" *([()!\\\"]) *", " $1 ").replaceAll("([A-Za-z])- ?([A-Za-z])","$1$2").trim()).toLowerCase();

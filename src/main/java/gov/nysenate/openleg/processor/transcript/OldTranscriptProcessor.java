@@ -7,15 +7,16 @@ import org.apache.log4j.Logger;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Deprecated
-public class TranscriptProcessor {
+public class OldTranscriptProcessor {
     private final Logger logger;
 
     public SimpleDateFormat TRANSCRIPT_DATE_PARSER = new SimpleDateFormat("MMMM dd, yyyy hh:mm aa");
 
-    public TranscriptProcessor() {
+    public OldTranscriptProcessor() {
         this.logger = Logger.getLogger(this.getClass());
     }
 
@@ -69,13 +70,15 @@ public class TranscriptProcessor {
                 pLine += ' ' + nextLine;
                 pLine = pLine.replace(".", "").toUpperCase();
 
-                try {
-                    Date tTime = TRANSCRIPT_DATE_PARSER.parse(pLine);
-                    logger.debug(pLine+" -> "+tTime);
-                    transcript.setTimeStamp(tTime);
-                } catch (ParseException e) {
-                    logger.error(file.getName()+": unable to parse transcript datetime " + pLine,e);
-                }
+                //FIXME: 2014-08-05: Convert to LocalDateTime.
+//                try {
+//                    LocalDateTime tTime;
+//                tTime = TRANSCRIPT_DATE_PARSER.parse(pLine);
+//                    logger.debug(pLine+" -> "+tTime);
+//                    transcript.setTimeStamp(tTime);
+//                } catch (ParseException e) {
+//                    logger.error(file.getName()+": unable to parse transcript datetime " + pLine,e);
+//                }
             }
             else if (transcript.getType() == null && pLine.startsWith((locationLineIdx+5)+" ")) {
                 // 15                    REGULAR SESSION
@@ -102,8 +105,8 @@ public class TranscriptProcessor {
         transcript.setTranscriptTextProcessed(fullTextProcessed.toString());
         String oid = transcript.getType().replaceAll(" ",  "-")+"-"+new SimpleDateFormat("MM-dd-yyyy_HH:mm").format(transcript.getTimeStamp());
         transcript.setId(oid);
-        transcript.setModifiedDate(transcript.getTimeStamp());
-        transcript.setPublishDate(transcript.getTimeStamp());
+        transcript.setModifiedDateTime(transcript.getTimeStamp());
+        transcript.setPublishedDateTime(transcript.getTimeStamp());
 
         // Save the transcript
         String key = transcript.getYear()+"/transcript/"+transcript.getId();

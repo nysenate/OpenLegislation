@@ -225,16 +225,16 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
      */
     private void updateExistingCommittee(Committee committee, Committee existingCommittee){
         logger.debug("Updating committee " + committee.getChamber() + " " + committee.getName() +
-                     " published on " + committee.getPublishDate());
+                     " published on " + committee.getPublishedDateTime());
 
-        if (!committee.memberEquals(existingCommittee)) { // if there has been a change in membership
+        if (!committee.membersEquals(existingCommittee)) { // if there has been a change in membership
             logger.debug("\tMember discrepancy detected.. creating new version");
             committee.setReformed(existingCommittee.getReformed());
             // replace existing committee if they share the same creation date
-            if (committee.getPublishDate().equals(existingCommittee.getPublishDate())) {
+            if (committee.getPublishedDateTime().equals(existingCommittee.getPublishedDateTime())) {
                 deleteCommitteeVersion(existingCommittee.getVersionId());
                 Committee previousCommittee = selectPreviousCommittee(existingCommittee.getVersionId());
-                if (previousCommittee!=null && committee.memberEquals(previousCommittee)) {
+                if (previousCommittee!=null && committee.membersEquals(previousCommittee)) {
                 // Merge with previous committee if same membership
                     mergeCommittees(previousCommittee, committee);
                     committee = previousCommittee;
@@ -245,7 +245,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
             }
             else { // Create a new version of the committee and update reformed for existing committee
                 insertCommitteeVersion(committee);
-                existingCommittee.setReformed(committee.getPublishDate());
+                existingCommittee.setReformed(committee.getPublishedDateTime());
                 updateCommitteeReformed(existingCommittee);
             }
 
@@ -254,11 +254,11 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
             }
             else {
                 Committee nextCommittee = selectNextCommittee(committee.getVersionId());
-                if (committee.memberEquals(nextCommittee)) { //  Merge with next committee if same membership
+                if (committee.membersEquals(nextCommittee)) { //  Merge with next committee if same membership
                     mergeCommittees(committee, nextCommittee);
                 }
                 else {
-                    committee.setReformed(nextCommittee.getPublishDate());
+                    committee.setReformed(nextCommittee.getPublishedDateTime());
                     updateCommitteeReformed(committee);
                 }
             }
@@ -349,8 +349,8 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
             Committee committee = new Committee();
             committee.setName(rs.getString("committee_name"));
             committee.setChamber(Chamber.getValue(rs.getString("chamber")));
-            committee.setPublishDate(rs.getTimestamp("created"));
-            committee.setReformed(rs.getTimestamp("reformed"));
+            committee.setPublishedDateTime(getLocalDateTime(rs, "created"));
+            committee.setReformed(getLocalDateTime(rs, "reformed"));
             committee.setLocation(rs.getString("location"));
             committee.setMeetDay(rs.getString("meetday"));
             committee.setMeetTime(rs.getTime("meettime"));

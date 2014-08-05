@@ -23,13 +23,15 @@ public class BillId implements Serializable, Comparable<BillId>
     /** The default amendment version letter. */
     public static final String BASE_VERSION = "";
 
-    /** The base print number of the bill (no trailing character), e.g S1234 */
+    /** A number assigned to a bill when it's introduced in the Legislature. Each printNo begins with a
+     *  letter (A for Assembly, S for Senate) followed by 1 to 5 digits. This printNo is valid only for the
+     *  2 year session period, after which it will be recycled. */
     protected String basePrintNo;
 
     /** The session year of the bill. */
     protected int session;
 
-    /** The version of the bill. */
+    /** The amendment version of the bill. Its either a blank string or a single character from A-Z. */
     protected String version = BASE_VERSION;
 
     /* --- Constructors --- */

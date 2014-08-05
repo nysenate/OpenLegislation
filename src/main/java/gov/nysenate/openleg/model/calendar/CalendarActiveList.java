@@ -3,6 +3,8 @@ package gov.nysenate.openleg.model.calendar;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.util.DateHelper;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,10 +22,10 @@ public class CalendarActiveList extends BaseLegislativeContent
     private String notes;
 
     /** The calendar date associated with this supplemental. */
-    private Date calDate;
+    private LocalDate calDate;
 
     /** The date time this active list was released. */
-    private Date releaseDateTime;
+    private LocalDateTime releaseDateTime;
 
     /** Active list entries. */
     private List<CalendarActiveListEntry> entries;
@@ -35,7 +37,8 @@ public class CalendarActiveList extends BaseLegislativeContent
         this.setEntries(new ArrayList<>());
     }
 
-    public CalendarActiveList(CalendarId calId, Integer sequenceNo, String notes, Date calDate, Date releaseDateTime) {
+    public CalendarActiveList(CalendarId calId, Integer sequenceNo, String notes, LocalDate calDate,
+                              LocalDateTime releaseDateTime) {
         this();
         this.setCalendarId(calId);
         this.setYear(calId.getYear());
@@ -98,19 +101,19 @@ public class CalendarActiveList extends BaseLegislativeContent
         this.notes = notes;
     }
 
-    public Date getCalDate() {
+    public LocalDate getCalDate() {
         return calDate;
     }
 
-    public void setCalDate(Date calDate) {
+    public void setCalDate(LocalDate calDate) {
         this.calDate = calDate;
     }
 
-    public Date getReleaseDateTime() {
+    public LocalDateTime getReleaseDateTime() {
         return releaseDateTime;
     }
 
-    public void setReleaseDateTime(Date releaseDateTime) {
+    public void setReleaseDateTime(LocalDateTime releaseDateTime) {
         this.releaseDateTime = releaseDateTime;
     }
 

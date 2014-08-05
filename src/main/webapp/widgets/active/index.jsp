@@ -1,12 +1,12 @@
 <%@ page language="java" import="java.util.ArrayList, java.util.Iterator, java.util.List, java.text.*,gov.nysenate.openleg.*,gov.nysenate.openleg.api.*,gov.nysenate.openleg.lucene.*,gov.nysenate.openleg.model.*,gov.nysenate.openleg.util.*"  contentType="text/html" pageEncoding="utf-8" %>
 <%@ page import="gov.nysenate.openleg.model.calendar.Calendar" %>
-<%@ page import="gov.nysenate.openleg.model.calendar.CalendarSupplementalSectionEntry" %>
+<%@ page import="gov.nysenate.openleg.model.calendar.CalendarSupplementalEntry" %>
 <!DOCTYPE HTML>
 <html>
-    <head>
+<head>
     <base target="_blank"/>
     <title>Active List</title>
-    <link rel="shortcut icon" href="<%=JSPHelper.getLink(request, "/static/img/nys_favicon_0.ico")%>" type="image/x-icon" /> 
+    <link rel="shortcut icon" href="<%=JSPHelper.getLink(request, "/static/img/nys_favicon_0.ico")%>" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" media="screen" href="<%=JSPHelper.getLink(request, "/static/css/style.css")%>"/> 
     <link rel="stylesheet" type="text/css" media="screen" href="<%=JSPHelper.getLink(request, "/static/css/style-mobile.css")%>"/> 
     <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;" />
@@ -40,7 +40,7 @@
         Result result = ApiHelper.buildSearchResultList(senateResponse).get(0);
 
         Calendar calendar = (Calendar)result.getObject();
-        Supplemental supp = calendar.getSupplementals().get(0);
+        Supplemental supp = calendar.getSupplementalMap().get(0);
         %>
         <h4>New York Senate<br/>Active List (Cal <%=calendar.getNo()%>)
             for
@@ -64,11 +64,11 @@
                     <h2><%=seqTitle %></h2>
                     <ul>
                     <%
-                        for (CalendarSupplementalSectionEntry calEnt : seq.getCalendarEntries()) {
+                        for (CalendarSupplementalEntry calEnt : seq.getCalendarEntries()) {
                                                 try {
                     %>
                         <li>
-                        Cal No. <%=calEnt.getCalendarNumber()%>
+                        Cal No. <%=calEnt.getBillCalNo()%>
                         <%
                             if (calEnt.getBill()!=null && calEnt.getBill().getBillId()!=null ) {
                         %>

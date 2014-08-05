@@ -4,6 +4,7 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -21,7 +22,7 @@ public class AgendaVoteCommittee implements Serializable
     private String chair;
 
     /** Date/time of the meeting. */
-    private Date meetDateTime;
+    private LocalDateTime meetDateTime;
 
     /** The attendance list. */
     private List<AgendaVoteAttendance> attendance = new ArrayList<>();
@@ -35,7 +36,7 @@ public class AgendaVoteCommittee implements Serializable
         this.votedBills = new HashMap<>();
     }
 
-    public AgendaVoteCommittee(CommitteeId committeeId, String chair, Date meetDateTime) {
+    public AgendaVoteCommittee(CommitteeId committeeId, String chair, LocalDateTime meetDateTime) {
         this();
         this.setCommitteeId(committeeId);
         this.setChair(chair);
@@ -89,11 +90,11 @@ public class AgendaVoteCommittee implements Serializable
         this.chair = chair;
     }
 
-    public Date getMeetDateTime() {
+    public LocalDateTime getMeetDateTime() {
         return meetDateTime;
     }
 
-    public void setMeetDateTime(Date meetDateTime) {
+    public void setMeetDateTime(LocalDateTime meetDateTime) {
         this.meetDateTime = meetDateTime;
     }
 

@@ -9,6 +9,7 @@ import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import org.springframework.dao.DataAccessException;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -45,13 +46,13 @@ public interface SobiDao
     /**
      * Retrieve a list of archived SobiFiles during the given date/time range.
      *
-     * @param start Date - Start of date range (inclusive)
-     * @param end Date - End of date range (inclusive)
+     * @param start LocalDate - Start of date range (inclusive)
+     * @param end LocalDate - End of date range (inclusive)
      * @param sortByFileName SortOrder - Sort order for the file name.
      * @param limOff LimitOffset - Restrict the results list.
      * @return List<SobiFile>
      */
-    public List<SobiFile> getSobiFilesDuring(Date start, Date end, SortOrder sortByFileName, LimitOffset limOff);
+    public List<SobiFile> getSobiFilesDuring(LocalDate start, LocalDate end, SortOrder sortByFileName, LimitOffset limOff);
 
     /**
      * Returns SobiFile instances of the files residing in the incoming sobis directory.

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 public class CommitteeVersionId extends CommitteeId implements Serializable
@@ -10,12 +11,12 @@ public class CommitteeVersionId extends CommitteeId implements Serializable
     /** The session year this committee is referenced in. */
     private int session;
 
-    /** Refers to the creation date of this committee version. */
-    private Date referenceDate;
+    /** Refers to the date this committee was referenced. */
+    private LocalDate referenceDate;
 
     /** --- Constructors --- */
 
-    public CommitteeVersionId(Chamber chamber, String name, int session, Date referenceDate){
+    public CommitteeVersionId(Chamber chamber, String name, int session, LocalDate referenceDate) {
         super(chamber, name);
         if (referenceDate == null) {
             throw new IllegalArgumentException("referenceDate cannot be null!");
@@ -66,7 +67,7 @@ public class CommitteeVersionId extends CommitteeId implements Serializable
         return session;
     }
 
-    public Date getReferenceDate() {
+    public LocalDate getReferenceDate() {
         return referenceDate;
     }
 }

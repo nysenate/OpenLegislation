@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class BillAmendment extends BaseLegislativeContent implements Serializable
@@ -59,9 +60,10 @@ public class BillAmendment extends BaseLegislativeContent implements Serializabl
 
     public BillAmendment(BillId baseBillId, String version) {
         this();
-        this.baseBillPrintNo = baseBillId.getPrintNo();
-        this.session = year = baseBillId.getSession();
-        this.version = version;
+        this.setBaseBillPrintNo(baseBillId.getPrintNo());
+        this.setSession(baseBillId.getSession());
+        this.setYear(this.getSession());
+        this.setVersion(version);
     }
 
     /** --- Overrides --- */

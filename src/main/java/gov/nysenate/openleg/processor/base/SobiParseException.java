@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.processor.base;
 
 import gov.nysenate.openleg.model.sobi.SobiFragment;
-import org.joda.time.LocalDateTime;
+
+import java.time.LocalDateTime;
+
 
 public class SobiParseException extends Exception
 {

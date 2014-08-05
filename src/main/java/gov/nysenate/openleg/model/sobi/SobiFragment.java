@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.sobi;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,7 +36,7 @@ public class SobiFragment
     private String text;
 
     /** The date/time when the fragment was recorded into the backing store. */
-    private Date stagedDateTime;
+    private LocalDateTime stagedDateTime;
 
     /** If true, this SobiFragment is awaiting processing. */
     private boolean pendingProcessing;
@@ -44,7 +45,7 @@ public class SobiFragment
     private int processedCount;
 
     /** The datetime when the SOBI file was last processed. */
-    private Date processedDateTime;
+    private LocalDateTime processedDateTime;
 
     /** --- Constructors --- */
 
@@ -144,7 +145,7 @@ public class SobiFragment
 
     /** --- Functional Getters/Setters --- */
 
-    public Date getPublishedDateTime() {
+    public LocalDateTime getPublishedDateTime() {
         return parentSobiFile.getPublishedDateTime();
     }
 
@@ -170,11 +171,11 @@ public class SobiFragment
         return sequenceNo;
     }
 
-    public Date getStagedDateTime() {
+    public LocalDateTime getStagedDateTime() {
         return stagedDateTime;
     }
 
-    public void setStagedDateTime(Date stagedDateTime) {
+    public void setStagedDateTime(LocalDateTime stagedDateTime) {
         this.stagedDateTime = stagedDateTime;
     }
 
@@ -194,11 +195,11 @@ public class SobiFragment
         this.processedCount = processedCount;
     }
 
-    public Date getProcessedDateTime() {
+    public LocalDateTime getProcessedDateTime() {
         return processedDateTime;
     }
 
-    public void setProcessedDateTime(Date processedDateTime) {
+    public void setProcessedDateTime(LocalDateTime processedDateTime) {
         this.processedDateTime = processedDateTime;
     }
 }

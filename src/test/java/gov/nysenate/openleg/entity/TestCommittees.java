@@ -2,17 +2,13 @@ package gov.nysenate.openleg.entity;
 
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.service.entity.MemberService;
-import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.sql.Time;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Component
@@ -31,7 +27,7 @@ public class TestCommittees {
             {"BRESLIN", 372, 2009}
     };
 
-    private static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private CommitteeMember committeeMemberFromTriple(Object[] triple){
         try {
@@ -52,13 +48,13 @@ public class TestCommittees {
         Committee test1 = new Committee();
         test1.setName("test committee 1");
         test1.setChamber(Chamber.SENATE);
-        test1.setMeetTime(new Time(LocalTime.parse("09:00").toDateTimeToday().toDate().getTime()));
+//        test1.setMeetTime(new Time(LocalTime.parse("09:00").toDateTimeToday().toDate().getTime()));
         test1.setLocation("my house");
         test1.setMeetDay("every day");
         test1.setMeetAltWeek(false);
         test1.setMeetAltWeekText("dont do it");
         test1.setSession(2009);
-        test1.setPublishDate(dateFormat.parseDateTime("2009-01-01").toDate());
+//        test1.setPublishDate(dateFormat.parseDateTime("2009-01-01").toDate());
         test1.setMembers(new ArrayList<CommitteeMember>());
         for(int n=0; n<2; n++){
             CommitteeMember cm = committeeMemberFromTriple(testMembers[n]);
@@ -68,19 +64,19 @@ public class TestCommittees {
         createdCommittees.put("test1", test1);
 
         Committee test1nomod = new Committee(test1);
-        test1nomod.setPublishDate(dateFormat.parseDateTime("2009-02-01").toDate());
+//        test1nomod.setPublishDate(dateFormat.parseDateTime("2009-02-01").toDate());
         createdCommittees.put("test1nomod", test1nomod);
 
         Committee test1v2 = new Committee(test1);
         CommitteeMember seward = committeeMemberFromTriple(testMembers[2]);
         seward.setSequenceNo(3);
         test1v2.getMembers().add(seward);
-        test1v2.setPublishDate(dateFormat.parseDateTime("2009-03-01").toDate());
+//        test1v2.setPublishDate(dateFormat.parseDateTime("2009-03-01").toDate());
         createdCommittees.put("test1v2", test1v2);
 
         Committee test1MeetChange = new Committee(test1);
         test1MeetChange.setLocation("broom closet");
-        test1MeetChange.setPublishDate(dateFormat.parseDateTime("2009-04-01").toDate());
+//        test1MeetChange.setPublishDate(dateFormat.parseDateTime("2009-04-01").toDate());
         createdCommittees.put("test1MeetChange", test1MeetChange);
 
         Committee test1replace = new Committee(test1);
@@ -90,15 +86,15 @@ public class TestCommittees {
         createdCommittees.put("test1replace", test1replace);
 
         Committee test1v2merge = new Committee(test1v2);
-        test1v2merge.setPublishDate(dateFormat.parseDateTime("2009-02-10").toDate());
+//        test1v2merge.setPublishDate(dateFormat.parseDateTime("2009-02-10").toDate());
         createdCommittees.put("test1v2merge", test1v2merge);
 
         Committee test1v2mergeReplace = new Committee(test1);
-        test1v2mergeReplace.setPublishDate(test1v2merge.getPublishDate());
+        test1v2mergeReplace.setPublishedDateTime(test1v2merge.getPublishedDateTime());
         createdCommittees.put("test1v2mergeReplace", test1v2mergeReplace);
 
         Committee test1v3 = new Committee(test1);
-        test1v3.setPublishDate((dateFormat.parseDateTime("2009-05-01").toDate()));
+//        test1v3.setPublishDate((dateFormat.parseDateTime("2009-05-01").toDate()));
         createdCommittees.put("test1v3", test1v3);
 
         Committee test2 = new Committee(test1);

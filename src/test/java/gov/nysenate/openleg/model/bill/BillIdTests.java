@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.bill;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BillIdTests
 {
@@ -37,5 +38,16 @@ public class BillIdTests
     @Test(expected = IllegalArgumentException.class)
     public void testBillIdConstructor_multipleLetters() throws Exception {
         new BillId("SS123", 2013);
+    }
+
+    @Test
+    public void testEquals() throws Exception {
+        BillId id = new BillId("S1234a", 2013);
+        BillId id2 = new BillId("S1234A", 2013);
+        BillId id3 = new BillId("s1234", 2013);
+
+        assertEquals(id, id2);
+        assertTrue(id.equalsBase(id2));
+        assertTrue(id.equalsBase(id3));
     }
 }

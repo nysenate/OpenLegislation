@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sobi.SobiLineType;
+
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.IngestCache;
 import gov.nysenate.openleg.processor.base.ParseError;
@@ -18,8 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,10 +38,10 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     private static final Logger logger = LoggerFactory.getLogger(BillProcessor.class);
 
     /** Date format found in SobiBlock[4] bill event blocks. e.g. 02/04/13 */
-    protected static final SimpleDateFormat eventDateFormat = new SimpleDateFormat("MM/dd/yy");
+    protected static final DateTimeFormatter eventDateFormat = DateTimeFormatter.ofPattern("MM/dd/yy");
 
     /** Date format found in SobiBlock[V] vote memo blocks. e.g. 02/05/2013 */
-    protected static final SimpleDateFormat voteDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+    protected static final DateTimeFormatter voteDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     /** The expected format for the first line of the vote memo [V] block data. */
     public static final Pattern voteHeaderPattern = Pattern.compile("Senate Vote    Bill: (.{18}) Date: (.{10}).*");
@@ -118,8 +121,8 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      */
     @Override
     public void process(SobiFragment sobiFragment) {
-        IngestCache<BillId, Bill> billIngestCache = new IngestCache<>();
-        Date date = sobiFragment.getPublishedDateTime();
+        IngestCache<BaseBillId, Bill> billIngestCache = new IngestCache<>();
+        LocalDateTime date = sobiFragment.getPublishedDateTime();
         List<SobiBlock> blocks = sobiFragment.getSobiBlocks();
         logger.info("Processing " + sobiFragment.getFragmentId() + " with (" + blocks.size() + ") blocks.");
         for (SobiBlock block : blocks) {
@@ -155,12 +158,12 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             catch (ParseError ex) {
                 logger.error("Parse Error: {}", ex);
             }
-            billIngestCache.set(baseBill.getBillId(), baseBill);
+            billIngestCache.set(baseBill.getBaseBillId(), baseBill);
         }
 
         // Save all the bills worked on for this sobi file
         for (Bill bill : billIngestCache.getCurrentCache()) {
-            logger.trace("Saving bill " + bill.getBillId());
+            logger.trace("Saving bill " + bill);
             applyPublishStatus(bill);
             applyUniBillText(bill, billIngestCache, sobiFragment);
             billDataService.saveBill(bill, sobiFragment);
@@ -188,15 +191,15 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *
      * @throws ParseError
      */
-    private void applyBillInfo(String data, Bill baseBill, BillAmendment specifiedAmendent, Date date) throws ParseError {
+    private void applyBillInfo(String data, Bill baseBill, BillAmendment specifiedAmendent, LocalDateTime date) throws ParseError {
         if (data.startsWith("DELETE")) {
-            specifiedAmendent.setPublishDate(null);
+            specifiedAmendent.setPublishedDateTime(null);
             return;
         }
         else {
             // The base amendment can be published as soon as a bill info line is received.
             if (specifiedAmendent.isBaseVersion() && !specifiedAmendent.isPublished()) {
-                specifiedAmendent.setPublishDate(date);
+                specifiedAmendent.setPublishedDateTime(date);
             }
         }
         Matcher billData = billInfoPattern.matcher(data);
@@ -206,7 +209,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                 // Apply the sponsor from bill info when the sponsor has not yet been set.
                 baseBill.setSponsor(getBillSponsorFromSponsorLine(sponsor, baseBill.getSession(),
                                                                   baseBill.getBillType().getChamber()));
-                baseBill.setModifiedDate(date);
+                baseBill.setModifiedDateTime(date);
             }
             String prevPrintNo = billData.group(4).trim();
             String prevSessionYearStr = billData.group(6).trim();
@@ -214,7 +217,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                 try {
                     Integer prevSessionYear = Integer.parseInt(prevSessionYearStr);
                     baseBill.addPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
-                    baseBill.setModifiedDate(date);
+                    baseBill.setModifiedDateTime(date);
                 }
                 catch (NumberFormatException ex) {
                     logger.debug("Failed to parse previous session year from Bill Info line: " + prevSessionYearStr);
@@ -237,9 +240,9 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *
      * @throws ParseError
      */
-    private void applyLawSection(String data, Bill baseBill, Date date) {
+    private void applyLawSection(String data, Bill baseBill, LocalDateTime date) {
         baseBill.setLawSection(data.trim());
-        baseBill.setModifiedDate(date);
+        baseBill.setModifiedDateTime(date);
     }
 
     /**
@@ -254,9 +257,9 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *
      * @throws ParseError
      */
-    private void applyTitle(String data, Bill baseBill, Date date) {
+    private void applyTitle(String data, Bill baseBill, LocalDateTime date) {
         baseBill.setTitle(data.replace("\n", " ").trim());
-        baseBill.setModifiedDate(date);
+        baseBill.setModifiedDateTime(date);
     }
 
     /**
@@ -281,11 +284,11 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *
      * @throws ParseError
      */
-    private void applyBillEvent(String data, Bill baseBill, BillAmendment specifiedAmendment, Date date) throws ParseError {
+    private void applyBillEvent(String data, Bill baseBill, BillAmendment specifiedAmendment, LocalDateTime date) throws ParseError {
         ArrayList<BillAction> actions = new ArrayList<>();
         Boolean stricken = false;
         BillId sameAsBillId = null;
-        Chamber currentChamber = baseBill.getBillId().getChamber();
+        Chamber currentChamber = baseBill.getBaseBillId().getChamber();
         CommitteeVersionId currentCommittee = null;
         SortedSet<CommitteeVersionId> pastCommittees = new TreeSet<>();
         BillId billId = specifiedAmendment.getBillId();
@@ -294,43 +297,47 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         for (String line : data.split("\n")) {
             Matcher billEvent = billEventPattern.matcher(line);
             if (billEvent.find()) {
+                LocalDate eventDate;
                 try {
-                    Date eventDate = eventDateFormat.parse(billEvent.group(1));
-                    String eventText = billEvent.group(2).trim().toUpperCase();
-                    BillAction action = new BillAction(eventDate, eventText, currentChamber, ++sequenceNo, billId);
-                    actions.add(action);
-
-                    Matcher committeeEventText = committeeEventTextPattern.matcher(eventText);
-                    Matcher substituteEventText = substituteEventTextPattern.matcher(eventText);
-                    Matcher floorEventText = floorEventTextPattern.matcher(eventText);
-                    Matcher chamberSwitchEventText = chamberSwitchEventTextPattern.matcher(eventText);
-
-                    if (eventText.contains("ENACTING CLAUSE STRICKEN")) {
-                        stricken = true;
-                    }
-                    else if (committeeEventText.find()) {
-                        if (currentCommittee != null) {
-                            pastCommittees.add(currentCommittee);
-                        }
-                        currentCommittee = new CommitteeVersionId(
-                            currentChamber, committeeEventText.group(2), billId.getSession(), eventDate);
-                    }
-                    else if (floorEventText.find()) {
-                        if (currentCommittee != null) {
-                            pastCommittees.add(currentCommittee);
-                        }
-                        currentCommittee = null;
-                    }
-                    else if (chamberSwitchEventText.find()) {
-                        currentChamber = Chamber.valueOf(chamberSwitchEventText.group(2));
-                    }
-                    else if (substituteEventText.find()) {
-                        // Note: Does not account for multiple same-as here.
-                        sameAsBillId = new BillId(substituteEventText.group(2), baseBill.getSession());
-                    }
+                    eventDate = LocalDate.from(eventDateFormat.parse(billEvent.group(1)));
                 }
-                catch (ParseException e) {
+                catch (DateTimeParseException ex) {
                     throw new ParseError("eventDateFormat parse failure: " + billEvent.group(1));
+                }
+
+                String eventText = billEvent.group(2).trim().toUpperCase();
+                BillAction action = new BillAction(eventDate, eventText, currentChamber, ++sequenceNo, billId);
+                action.setModifiedDateTime(date);
+                action.setPublishedDateTime(date);
+                actions.add(action);
+
+                Matcher committeeEventText = committeeEventTextPattern.matcher(eventText);
+                Matcher substituteEventText = substituteEventTextPattern.matcher(eventText);
+                Matcher floorEventText = floorEventTextPattern.matcher(eventText);
+                Matcher chamberSwitchEventText = chamberSwitchEventTextPattern.matcher(eventText);
+
+                if (eventText.contains("ENACTING CLAUSE STRICKEN")) {
+                    stricken = true;
+                }
+                else if (committeeEventText.find()) {
+                    if (currentCommittee != null) {
+                        pastCommittees.add(currentCommittee);
+                    }
+                    currentCommittee = new CommitteeVersionId(
+                        currentChamber, committeeEventText.group(2), billId.getSession(), eventDate);
+                }
+                else if (floorEventText.find()) {
+                    if (currentCommittee != null) {
+                        pastCommittees.add(currentCommittee);
+                    }
+                    currentCommittee = null;
+                }
+                else if (chamberSwitchEventText.find()) {
+                    currentChamber = Chamber.valueOf(chamberSwitchEventText.group(2));
+                }
+                else if (substituteEventText.find()) {
+                    // Note: Does not account for multiple same-as here.
+                    sameAsBillId = new BillId(substituteEventText.group(2), baseBill.getSession());
                 }
             }
             else {
@@ -340,7 +347,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
 
         baseBill.setActions(actions);
         baseBill.setPastCommittees(pastCommittees);
-        baseBill.setModifiedDate(date);
+        baseBill.setModifiedDateTime(date);
 
         if (sameAsBillId != null) {
             specifiedAmendment.getSameAs().clear();
@@ -349,7 +356,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
 
         specifiedAmendment.setCurrentCommittee(currentCommittee);
         specifiedAmendment.setStricken(stricken);
-        specifiedAmendment.setModifiedDate(date);
+        specifiedAmendment.setModifiedDateTime(date);
     }
 
     /**
@@ -368,11 +375,11 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *                              | 2009S51106 5No same as
      * ----------------------------------------------------------------------
      */
-    private void applySameAs(String data, BillAmendment specifiedAmendment, Date date) {
+    private void applySameAs(String data, BillAmendment specifiedAmendment, LocalDateTime date) {
         if (data.trim().equalsIgnoreCase("No same as") || data.trim().equalsIgnoreCase("DELETE")) {
             specifiedAmendment.getSameAs().clear();
             specifiedAmendment.setUniBill(false);
-            specifiedAmendment.setModifiedDate(date);
+            specifiedAmendment.setModifiedDateTime(date);
         }
         else {
             Matcher sameAsMatcher = sameAsPattern.matcher(data);
@@ -386,7 +393,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     specifiedAmendment.getSameAs().add(new BillId(sameAs.replace("-", "").replace(" ",""),
                                                        specifiedAmendment.getSession()));
                 }
-                specifiedAmendment.setModifiedDate(date);
+                specifiedAmendment.setModifiedDateTime(date);
             }
             else {
                 logger.error("sameAsPattern not matched: " + data);
@@ -410,7 +417,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *
      * A delete in these field removes all sponsor information.
      */
-    private void applySponsor(String data, Bill baseBill, BillAmendment specifiedAmendment, Date date) {
+    private void applySponsor(String data, Bill baseBill, BillAmendment specifiedAmendment, LocalDateTime date) {
         // Apply the lines in order given as each represents its own "block"
         int sessionYear = baseBill.getSession();
         Chamber chamber = baseBill.getBillType().getChamber();
@@ -419,15 +426,15 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             line = line.toUpperCase().trim();
             if (line.equals("DELETE")) {
                 baseBill.setSponsor(null);
-                specifiedAmendment.setCoSponsors(new ArrayList<Member>());
-                specifiedAmendment.setMultiSponsors(new ArrayList<Member>());
-                specifiedAmendment.setModifiedDate(date);
+                specifiedAmendment.setCoSponsors(new ArrayList<>());
+                specifiedAmendment.setMultiSponsors(new ArrayList<>());
+                specifiedAmendment.setModifiedDateTime(date);
             }
             else {
                 baseBill.setSponsor(getBillSponsorFromSponsorLine(line, sessionYear, chamber));
             }
         }
-        baseBill.setModifiedDate(date);
+        baseBill.setModifiedDateTime(date);
     }
 
     /**
@@ -441,7 +448,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * Nothing      | 7
      * -------------------------------------------
      */
-    private void applyCosponsors(String data, BillAmendment activeAmendment, Date date) {
+    private void applyCosponsors(String data, BillAmendment activeAmendment, LocalDateTime date) {
         ArrayList<Member> coSponsors = new ArrayList<>();
         int session = activeAmendment.getSession();
         Chamber chamber = activeAmendment.getBillType().getChamber();
@@ -454,7 +461,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         // The cosponsor info is always sent for the base bill version.
         // We can use the currently active amendment instead.
         activeAmendment.setCoSponsors(coSponsors);
-        activeAmendment.setModifiedDate(date);
+        activeAmendment.setModifiedDateTime(date);
     }
 
     /**
@@ -468,7 +475,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * Nothing        | 8
      * ----------------------------------------------
      */
-    private void applyMultisponsors(String data, BillAmendment activeAmendment, Date date) {
+    private void applyMultisponsors(String data, BillAmendment activeAmendment, LocalDateTime date) {
         ArrayList<Member> multiSponsors = new ArrayList<>();
         int session = activeAmendment.getSession();
         Chamber chamber = activeAmendment.getBillType().getChamber();
@@ -479,7 +486,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             }
         }
         activeAmendment.setMultiSponsors(multiSponsors);
-        activeAmendment.setModifiedDate(date);
+        activeAmendment.setModifiedDateTime(date);
     }
 
     /**
@@ -493,14 +500,14 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * Delete   | ADELETE*
      * ------------------------------------------------------------------------------
      */
-    private void applyActClause(String data, BillAmendment specifiedAmendment, Date date) {
+    private void applyActClause(String data, BillAmendment specifiedAmendment, LocalDateTime date) {
         if (data.trim().equals("DELETE")) {
             specifiedAmendment.setActClause("");
         }
         else {
             specifiedAmendment.setActClause(data.replace("\n", " ").trim());
         }
-        specifiedAmendment.setModifiedDate(date);
+        specifiedAmendment.setModifiedDateTime(date);
     }
 
     /**
@@ -516,18 +523,18 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * Delete  | BDELETE
      * -------------------------------------
      */
-    private void applyLaw(String data, Bill baseBill, Date date) {
+    private void applyLaw(String data, Bill baseBill, LocalDateTime date) {
         // This is theoretically not safe because a law line *could* start with DELETE
         // We can't do an exact match because B can be multi-line
         if (data.trim().startsWith("DELETE")) {
             baseBill.setLaw("");
             baseBill.setSummary("");
-            baseBill.setModifiedDate(date);
+            baseBill.setModifiedDateTime(date);
         }
         else {
             baseBill.setLaw(data.replace("\n", " ").trim());
         }
-        baseBill.setModifiedDate(date);
+        baseBill.setModifiedDateTime(date);
     }
 
     /**
@@ -540,9 +547,9 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *                     |  Cauthorization by the social services official
      * ----------------------------------------------------------------------------------------------------------
      */
-    private void applySummary(String data, Bill baseBill, Date date) {
+    private void applySummary(String data, Bill baseBill, LocalDateTime date) {
         baseBill.setSummary(data.replace("\n", " ").trim());
-        baseBill.setModifiedDate(date);
+        baseBill.setModifiedDateTime(date);
     }
 
     /**
@@ -551,34 +558,33 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * @param billAmendment
      * @param date
      */
-    private void applyText(String data, BillAmendment billAmendment, Date date, SobiLineType lineType) throws ParseError{
+
+    private void applyText(String data, BillAmendment billAmendment, LocalDateTime date, SobiLineType lineType) throws ParseError{
         BillTextParser billTextParser = new BillTextParser(data, FullTextType.getTypeString(lineType), date);
         String fullText = billTextParser.extractText();
-        if (fullText!=null) {
-            if(lineType==SobiLineType.SPONSOR_MEMO){
+        if (fullText != null) {
+            if (lineType == SobiLineType.SPONSOR_MEMO) {
                 billAmendment.setMemo(fullText);
             }
-            else if (lineType==SobiLineType.RESOLUTION_TEXT || lineType==SobiLineType.TEXT){
+            else if (lineType == SobiLineType.RESOLUTION_TEXT || lineType == SobiLineType.TEXT){
                 billAmendment.setFulltext(fullText);
             }
-            billAmendment.setModifiedDate(date);
+            billAmendment.setModifiedDateTime(date);
         }
     }
 
     /**
      * Constructs a veto message object by parsing the memo
-     * @param data
-     * @param date
      * @throws ParseError
      */
-    private void applyVetoMessageText(String data, Bill baseBill, Date date) throws ParseError{
+    private void applyVetoMessageText(String data, Bill baseBill, LocalDateTime date) throws ParseError{
         VetoBillTextParser vetoBillTextParser = new VetoBillTextParser(data, date);
         vetoBillTextParser.extractText();
         VetoMessage vetoMessage = vetoBillTextParser.getVetoMessage();
         vetoMessage.setSession(baseBill.getSession());
-        vetoMessage.setBillId(baseBill.getBillId());
-        vetoMessage.setModifiedDate(date);
-        vetoMessage.setPublishDate(date);
+        vetoMessage.setBillId(baseBill.getBaseBillId());
+        vetoMessage.setModifiedDateTime(date);
+        vetoMessage.setPublishedDateTime(date);
 
         vetoDataService.updateVetoMessage(vetoMessage);
     }
@@ -591,12 +597,12 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * Program Info   | 9020 Office of Court Administration
      * -----------------------------------------------------
      */
-    private void applyProgramInfo(String data, Bill baseBill, Date date) {
+    private void applyProgramInfo(String data, Bill baseBill, LocalDateTime date) {
         if (!data.isEmpty()) {
             Matcher programMatcher = programInfoPattern.matcher(data);
             if (programMatcher.find()) {
                 baseBill.setProgramInfo(programMatcher.group(1));
-                baseBill.setModifiedDate(date);
+                baseBill.setModifiedDateTime(date);
             }
         }
     }
@@ -624,26 +630,28 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *
      * @throws ParseError
      */
-    private void applyVoteMemo(String data, BillAmendment specifiedAmendment, Date date) throws ParseError {
+    private void applyVoteMemo(String data, BillAmendment specifiedAmendment, LocalDateTime date) throws ParseError {
         // Because sometimes votes are back to back we need to check for headers
         // Example of a double vote entry: SOBI.D110119.T140802.TXT:390
         BillVote vote = null;
         BillId billId = specifiedAmendment.getBillId();
         for (String line : data.split("\n")) {
             Matcher voteHeader = voteHeaderPattern.matcher(line);
+            // Start over if we hit a header, sometimes we get back to back entries.
             if (voteHeader.find()) {
-                // Start over if we hit a header, sometimes we get back to back entries.
+                LocalDate voteDate;
                 try {
-                    vote = new BillVote(billId, voteDateFormat.parse(voteHeader.group(2)), BillVoteType.FLOOR);
-                    vote.setPublishDate(date);
-                    vote.setModifiedDate(date);
+                    voteDate = LocalDate.from(voteDateFormat.parse(voteHeader.group(2)));
+                    vote = new BillVote(billId, voteDate, BillVoteType.FLOOR);
+                    vote.setModifiedDateTime(date);
+                    vote.setPublishedDateTime(date);
                 }
-                catch (ParseException ex) {
+                catch (DateTimeParseException ex) {
                     throw new ParseError("voteDateFormat not matched: " + line);
                 }
             }
+            // Otherwise, build the existing vote
             else if (vote != null) {
-                //Otherwise, build the existing vote
                 Matcher voteLine = votePattern.matcher(line);
                 while (voteLine.find()) {
                     BillVoteCode voteCode;
@@ -654,7 +662,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                         throw new ParseError("No vote code mapping for " + voteLine);
                     }
                     String shortName = voteLine.group(2).trim();
-                    // Only senator votes are received
+                    // Only senator votes are received. A valid member mapping is required.
                     Member voter = getMemberFromShortName(shortName, billId.getSession(), Chamber.SENATE, true);
                     vote.addMemberVote(voteCode, voter);
                 }
@@ -664,7 +672,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             }
         }
         specifiedAmendment.updateVote(vote);
-        specifiedAmendment.setModifiedDate(date);
+        specifiedAmendment.setModifiedDateTime(date);
     }
 
     /** --- Post Process Methods --- */
@@ -673,7 +681,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * Uni-bills share text with their counterpart house. Ensure that the full text of bill amendments that
      * have a uni-bill designator are kept in sync.
      */
-    protected void applyUniBillText(Bill baseBill, IngestCache<BillId, Bill> ingestCache, SobiFragment sobiFragment) {
+    protected void applyUniBillText(Bill baseBill, IngestCache<BaseBillId, Bill> ingestCache, SobiFragment sobiFragment) {
         for (BillAmendment billAmendment : baseBill.getAmendmentList()) {
             if (billAmendment.isUniBill()) {
                 for (BillId uniBillId : billAmendment.getSameAs()) {
@@ -713,7 +721,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             // Un-publish all the non-base bill amendments.
             for (BillAmendment amendment : baseBill.getAmendmentList()) {
                 if (!amendment.isBaseVersion()) {
-                    amendment.setPublishDate(null);
+                    amendment.setPublishedDateTime(null);
                 }
             }
             // Publish/unpublish an amendment depending on the action.
@@ -726,7 +734,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                         String version = matcher.group(2).trim();
                         if (baseBill.hasAmendment(version)) {
                             logger.trace("Publishing version " + version + " via action " + action.getText());
-                            baseBill.getAmendment(version).setPublishDate(action.getDate());
+                            baseBill.getAmendment(version).setPublishedDateTime(action.getDate().atStartOfDay());
                             baseBill.setActiveVersion(version);
                         }
                         break;
@@ -740,7 +748,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                             baseBill.setActiveVersion(version);
                             for (BillAmendment amendment : baseBill.getAmendmentList()) {
                                 if (amendment.getVersion().compareTo(version) > 0) {
-                                    baseBill.getAmendment(version).setPublishDate(null);
+                                    baseBill.getAmendment(version).setPublishedDateTime(null);
                                     logger.trace("Unpublishing version " + version + " via action " + action.getText());
                                 }
                             }

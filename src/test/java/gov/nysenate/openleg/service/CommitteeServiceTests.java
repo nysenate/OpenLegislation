@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Locale;
 
@@ -59,7 +60,7 @@ public class CommitteeServiceTests extends BaseTests{
         MethodTimer.Method getCommitteeAtTime = new MethodTimer.Method() {
             @Override
             public void run() throws Exception{
-                committeeService.getCommittee(new CommitteeVersionId(Chamber.SENATE, "test committee 1", 2009, new Date()));
+                committeeService.getCommittee(new CommitteeVersionId(Chamber.SENATE, "test committee 1", 2009, LocalDate.now()));
             }
         };
         MethodTimer.Method getCommitteeList = new MethodTimer.Method() {

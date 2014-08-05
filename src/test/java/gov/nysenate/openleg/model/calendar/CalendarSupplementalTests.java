@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.TreeMap;
 
@@ -21,22 +22,22 @@ public class CalendarSupplementalTests
     public void testCalSupEqualityInMaps() throws Exception {
         CalendarId calId1 = new CalendarId(1, 2014);
         CalendarId calId2 = new CalendarId(1, 2014);
-        Date date = new Date();
+        LocalDateTime date = LocalDateTime.now();
 
-        CalendarSupplemental sup1 = new CalendarSupplemental(calId1, "P", date, date);
+        CalendarSupplemental sup1 = new CalendarSupplemental(calId1, "P", date.toLocalDate(), date);
         sup1.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_FIRST_REPORT, new BillId("S1234", 2013), null, false));
         sup1.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_SECOND_REPORT, new BillId("S1235", 2013), null, true));
 
-        CalendarSupplemental sup2 = new CalendarSupplemental(calId2, "A", date, date);
+        CalendarSupplemental sup2 = new CalendarSupplemental(calId2, "A", date.toLocalDate(), date);
         sup2.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_FIRST_REPORT, new BillId("S1234", 2013), null, false));
         sup2.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_SECOND_REPORT, new BillId("S1235", 2013), null, true));
         sup2.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_SECOND_REPORT, new BillId("S1236", 2013), null, true));
 
-        CalendarSupplemental sup3 = new CalendarSupplemental(calId1, "S", date, date);
+        CalendarSupplemental sup3 = new CalendarSupplemental(calId1, "S", date.toLocalDate(), date);
         sup3.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_FIRST_REPORT, new BillId("S1234", 2013), null, false));
         sup3.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_SECOND_REPORT, new BillId("S1235", 2013), null, true));
 
-        CalendarSupplemental sup4 = new CalendarSupplemental(calId2, "A", date, date);
+        CalendarSupplemental sup4 = new CalendarSupplemental(calId2, "A", date.toLocalDate(), date);
         sup4.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_FIRST_REPORT, new BillId("S1234", 2013), null, false));
         sup4.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_SECOND_REPORT, new BillId("S1235", 2013), null, true));
         sup4.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_SECOND_REPORT, new BillId("S1231", 2013), null, true));

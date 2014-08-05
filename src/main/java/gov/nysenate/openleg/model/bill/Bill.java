@@ -4,9 +4,10 @@ import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.util.DateHelper;
-import org.joda.time.LocalDate;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -18,21 +19,19 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 {
     private static final long serialVersionUID = 2925424993477789289L;
 
-    /** A number assigned to a bill when it's introduced in the Legislature. Each printNo begins with a
-     *  letter (A for Assembly, S for Senate) followed by 1 to 5 digits. This printNo is valid only for the
-     *  2 year session period. */
-    protected String printNo = "";
+    /** The base bill id which should be used to uniquely identify this instance. */
+    protected BaseBillId baseBillId;
 
     /** Starting with the terms "An act", it's a short description about the topic of the bill. */
     protected String title = "";
 
-    /** The section of the law the bill affects. */
+    /** The section of the law the bill affects. e.g (Vehicle And Traffic) */
     protected String lawSection = "";
 
-    /** The law code of the bill. */
+    /** The law code of the bill. e.g (Amd §1373, Pub Health L) */
     protected String law = "";
 
-    /** An overview of a bill that list's specific sections of NYS law to be amended by that bill. */
+    /** An overview of a bill that list's specific sections of NYS law to be amended by the bill. */
     protected String summary = "";
 
     /** A letter at the end of the printNo indicates the amendment version.
@@ -45,7 +44,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** The Legislator who formally introduced the bill. */
     protected BillSponsor sponsor;
 
-    /** A list of coSponsors to be given preferential display treatment. */
+    /** A list of co-sponsors that will be given preferential display treatment. */
     protected List<Member> additionalSponsors = new ArrayList<>();
 
     /** A list of committees this bill has been referred to. */
@@ -62,82 +61,58 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /** --- Constructors --- */
 
-    public Bill() {
-        super();
-    }
+    public Bill() {}
 
-    public Bill(String printNo, int sessionYear) {
-        this();
-        this.printNo = printNo;
-        this.session = DateHelper.resolveSession(sessionYear);
-    }
-
-    public Bill(BillId billId) {
-        this(billId.getBasePrintNo(), billId.getSession());
+    public Bill(BaseBillId baseBillId) {
+        this.setBaseBillId(baseBillId);
+        this.setSession(baseBillId.getSession());
     }
 
     /** --- Overrides --- */
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj != null && obj instanceof Bill) {
-            Bill other = (Bill)obj;
-            return this.getBillId().equals(other.getBillId());
-        }
-        else {
-            return false;
-        }
-    }
-
-    @Override
-    public int compareTo(Bill bill) {
-        return this.getBillId().compareTo(bill.getBillId());
-    }
-
-    @Override
-    public Date getPublishDate() {
-        return this.publishDate;
+    public int compareTo(Bill other) {
+        return this.getBaseBillId().compareTo(other.getBaseBillId());
     }
 
     /**
-     * Set the publish date of the bill container.
+     * Set the publish date of the bill container and use that to set the active year of the bill.
      */
     @Override
-    public void setPublishDate(Date publishDate) {
-        this.publishDate = publishDate;
-        this.year = new LocalDate(publishDate).getYear();
-    }
-
-    @Override
-    public Date getModifiedDate() {
-        return this.modifiedDate;
+    public void setPublishedDateTime(LocalDateTime publishDateTime) {
+        super.setPublishedDateTime(publishDateTime);
+        if (super.publishedDateTime != null) {
+            // Sometimes bills are pre-filed before the session actually starts so we account for this.
+            super.setYear(Integer.max(this.session, publishDateTime.getYear()));
+        }
+        else {
+            super.setYear(this.session);
+        }
     }
 
     @Override
     public String toString() {
-        return this.getBillId().toString();
+        return this.getBaseBillId().toString();
     }
 
     /** --- Functional Getters/Setters --- */
 
     /**
-     * Returns a reference that identifies this base bill.
+     * Delegate to retrieve print no.
      */
-    public BaseBillId getBillId() {
-        return new BaseBillId(this.printNo, this.session);
+    public String getBasePrintNo() {
+        return this.getBaseBillId().getBasePrintNo();
     }
 
     /**
      * Returns the BillType which contains info such as the prefix and chamber.
      */
     public BillType getBillType() {
-        return this.getBillId().getBillType();
+        return this.getBaseBillId().getBillType();
     }
 
     /**
-     * Indicate if this bill is a resolution.
-     *
-     * @return - True if this bill is a resolution of some sort.
+     * Returns true if this bill is a resolution of some sort.
      */
     public boolean isResolution() {
         return getBillType().isResolution();
@@ -154,7 +129,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         if (this.hasAmendment(version)) {
             return this.amendmentMap.get(version.toUpperCase());
         }
-        throw new BillAmendNotFoundEx(new BillId(printNo, session, version));
+        throw new BillAmendNotFoundEx(baseBillId.withVersion(version));
     }
 
     /**
@@ -213,12 +188,10 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     /**
-     * Add the bill id to the previous bill versions list.
+     * Add the bill id to the previous bill versions set.
      */
     public void addPreviousVersion(BillId previousVersion) {
-        if(!previousVersions.contains(previousVersion)) {
-            previousVersions.add(previousVersion);
-        }
+        previousVersions.add(previousVersion);
     }
 
     /**
@@ -247,12 +220,12 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /** --- Basic Getters/Setters --- */
 
-    public String getPrintNo() {
-        return printNo;
+    public BaseBillId getBaseBillId() {
+        return baseBillId;
     }
 
-    public void setPrintNo(String printNo) {
-        this.printNo = printNo;
+    public void setBaseBillId(BaseBillId baseBillId) {
+        this.baseBillId = baseBillId;
     }
 
     public String getTitle() {

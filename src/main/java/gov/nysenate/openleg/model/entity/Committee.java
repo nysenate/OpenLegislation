@@ -1,13 +1,12 @@
 package gov.nysenate.openleg.model.entity;
 
+import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 
 import java.io.Serializable;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class Committee extends BaseLegislativeContent implements Serializable
 {
@@ -20,7 +19,7 @@ public class Committee extends BaseLegislativeContent implements Serializable
     protected Chamber chamber;
 
     /** The date that this version of the committee was reformed */
-    protected Date reformed;
+    protected LocalDateTime reformed;
 
     /** The normal meeting location. */
     protected String location;
@@ -57,7 +56,7 @@ public class Committee extends BaseLegislativeContent implements Serializable
         this.meetAltWeek = other.meetAltWeek;
         this.meetAltWeekText = other.meetAltWeekText;
         this.members = new ArrayList<CommitteeMember>();
-        for(CommitteeMember cm : other.members){
+        for (CommitteeMember cm : other.members) {
             members.add(new CommitteeMember(cm));
         }
     }
@@ -69,85 +68,57 @@ public class Committee extends BaseLegislativeContent implements Serializable
 
     /** --- Operators --- */
 
-    public boolean memberEquals(Committee that){
-        if(!this.name.equals(that.name)) return false;
-        if(this.session!=that.session) return false;
-        if(this.members.size()!=that.members.size()) return false;
-        if(!this.members.containsAll(that.members)) return false;
-        return true;
+    public boolean membersEquals(Committee other) {
+        return
+            Objects.equals(this.name, other.name) &&
+            Objects.equals(this.session, other.session) &&
+            Objects.equals(this.members.size(), other.members.size()) &&
+            this.members.containsAll(other.members);
     }
 
-    public boolean meetingEquals(Committee that){
-        if(!this.name.equals(that.name)) return false;
-        if(this.session!=that.session) return false;
-        if (location != null ? !location.equals(that.location) : that.location != null) return false;
-        if (meetDay != null ? !meetDay.equals(that.meetDay) : that.meetDay != null) return false;
-        if (meetTime != null ? !meetTime.toString().equals(that.meetTime.toString()) : that.meetTime != null) return false;
-        if(this.meetAltWeek!=that.meetAltWeek) return false;
-        if (meetAltWeekText != null ? !meetAltWeekText.equals(that.meetAltWeekText) : that.meetAltWeekText != null)
-            return false;
-        return true;
+    public boolean meetingEquals(Committee other) {
+        return
+            Objects.equals(this.name, other.name) &&
+            Objects.equals(this.session, other.session) &&
+            Objects.equals(this.location, other.location) &&
+            Objects.equals(this.meetDay, other.meetDay) &&
+            Objects.equals(this.meetTime, other.meetTime) &&
+            Objects.equals(this.meetAltWeek, other.meetAltWeek) &&
+            Objects.equals(this.meetAltWeekText, other.meetAltWeekText);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Committee that = (Committee) o;
-
-        if(this.publishDate!=null ? this.publishDate.getTime()!=that.publishDate.getTime() : that.publishDate!=null) return false;
-        if(this.session!=that.session) return false;
-        if (meetAltWeek != that.meetAltWeek) return false;
-        if (chamber != that.chamber) return false;
-        if (location != null ? !location.equals(that.location) : that.location != null) return false;
-        if (meetAltWeekText != null ? !meetAltWeekText.equals(that.meetAltWeekText) : that.meetAltWeekText != null)
-            return false;
-        if (meetDay != null ? !meetDay.equals(that.meetDay) : that.meetDay != null) return false;
-        if (meetTime != null ? !meetTime.toString().equals(that.meetTime.toString()) : that.meetTime != null) return false;
-        if(this.members.size()!=that.members.size()) return false;
-        if(!this.members.containsAll(that.members)) return false;
-        if (!name.equals(that.name)) return false;
-
-        return true;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final Committee other = (Committee) obj;
+        return
+            Objects.equals(this.name, other.name) &&
+            Objects.equals(this.chamber, other.chamber) &&
+            Objects.equals(this.reformed, other.reformed) &&
+            meetingEquals(other) &&
+            membersEquals(other);
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + chamber.hashCode();
-        result = 31 * result + (reformed != null ? reformed.hashCode() : 0);
-        result = 31 * result + (location != null ? location.hashCode() : 0);
-        result = 31 * result + (meetDay != null ? meetDay.hashCode() : 0);
-        result = 31 * result + (meetTime != null ? meetTime.hashCode() : 0);
-        result = 31 * result + (meetAltWeek ? 1 : 0);
-        result = 31 * result + (meetAltWeekText != null ? meetAltWeekText.hashCode() : 0);
-        result = 31 * result + members.hashCode();
-        return result;
+        return Objects.hash(name, chamber, reformed, location, meetDay, meetTime, meetAltWeek, meetAltWeekText, members);
     }
 
-    public static final Comparator<Committee> BY_DATE =
-        new Comparator<Committee>() {
-            @Override
-            public int compare(Committee left, Committee right) {
-                if(left.session<right.session) return -1;
-                else if(left.session>right.session) return 1;
-                else {
-                    if (left.publishDate.getTime()==right.publishDate.getTime()) return 0;
-                    else if (left.publishDate.getTime()>=right.publishDate.getTime()) return 1;
-                    else return -1;
-                }
-            }
-        };
+    public static final Comparator<Committee> BY_DATE = (left, right) ->
+        ComparisonChain.start()
+            .compare(left.session, right.session)
+            .compare(left.publishedDateTime, right.publishedDateTime)
+            .result();
 
     /** --- Helper functions --- */
 
-    public boolean isCurrent(){
+    public boolean isCurrent() {
         // The current Committee should have a reformed date of 'infinity'
-        return reformed.after(new Date());
+        return reformed.isAfter(LocalDateTime.now());
     }
 
-    public void updateMeetingInfo(Committee updatedCommittee){
+    public void updateMeetingInfo(Committee updatedCommittee) {
         this.location = updatedCommittee.location;
         this.meetDay = updatedCommittee.meetDay;
         this.meetTime = updatedCommittee.meetTime;
@@ -161,8 +132,8 @@ public class Committee extends BaseLegislativeContent implements Serializable
         return new CommitteeId(this.chamber, this.name);
     }
 
-    public CommitteeVersionId getVersionId(){
-        return new CommitteeVersionId(this.chamber, this.name, this.session, this.publishDate);
+    public CommitteeVersionId getVersionId() {
+        return new CommitteeVersionId(this.chamber, this.name, this.session, this.publishedDateTime.toLocalDate());
     }
 
     /** --- Basic Getters/Setters --- */
@@ -183,11 +154,11 @@ public class Committee extends BaseLegislativeContent implements Serializable
         this.chamber = chamber;
     }
 
-    public Date getReformed() {
+    public LocalDateTime getReformed() {
         return reformed;
     }
 
-    public void setReformed(Date reformed) {
+    public void setReformed(LocalDateTime reformed) {
         this.reformed = reformed;
     }
 

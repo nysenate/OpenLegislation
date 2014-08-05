@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.calendar;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.util.DateHelper;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -64,7 +65,7 @@ public class Calendar extends BaseLegislativeContent
         this.supplementalMap.remove(id);
     }
 
-    public Date getCalDate() {
+    public LocalDate getCalDate() {
         if (this.supplementalMap.size() > 0) {
             return this.supplementalMap.values().iterator().next().getCalDate();
         }
@@ -91,12 +92,12 @@ public class Calendar extends BaseLegislativeContent
         return Objects.equals(this.id, other.id) &&
                Objects.equals(this.supplementalMap, other.supplementalMap) &&
                Objects.equals(this.activeListMap, other.activeListMap) &&
-               Objects.equals(this.publishDate, other.publishDate);
+               Objects.equals(this.publishedDateTime, other.publishedDateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, supplementalMap, activeListMap, publishDate);
+        return Objects.hash(id, supplementalMap, activeListMap, publishedDateTime);
     }
 
     /** --- Basic Getters/Setters --- */

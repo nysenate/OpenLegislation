@@ -2,11 +2,10 @@ package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Chamber;
-import org.joda.time.LocalDate;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -20,7 +19,7 @@ public class BillAction extends BaseLegislativeContent implements Serializable
     private BillId billId;
 
     /** The date this action was performed. Has no time component. */
-    private Date date = null;
+    private LocalDate date = null;
 
     /** The chamber in which this action occurred */
     private Chamber chamber;
@@ -40,29 +39,29 @@ public class BillAction extends BaseLegislativeContent implements Serializable
     /**
      * Fully constructs a new action.
      *
-     * @param date - The date of the action
-     * @param text - The text of the action
-     * @param billId - The id of the bill the action was performed on
+     * @param date LocalDate - The date of the action
+     * @param text String - The text of the action
+     * @param chamber Chamber - The chamber this bill action occurred in
+     * @param sequenceNo int - Indicates the ordering of this action
+     * @param billId BillId - The id of the bill the action was performed on
      */
-    public BillAction(Date date, String text, Chamber chamber, int sequenceNo, BillId billId) {
+    public BillAction(LocalDate date, String text, Chamber chamber, int sequenceNo, BillId billId) {
         super();
-        this.date = date;
-        this.text = text;
-        this.billId = billId;
-        this.chamber = chamber;
-        this.sequenceNo = sequenceNo;
-        this.session = billId.getSession();
-        this.setPublishDate(this.date);
-        this.setModifiedDate(this.date);
-    }
-
-    /** --- Functional Getters/Setters --- */
-
-    public int getYear() {
-        return new LocalDate(date).getYear();
+        this.setDate(date);
+        this.setText(text);
+        this.setBillId(billId);
+        this.setChamber(chamber);
+        this.setSequenceNo(sequenceNo);
+        this.setSession(billId.getSession());
+        this.setYear(date.getYear());
     }
 
     /** --- Overrides --- */
+
+    @Override
+    public int getYear() {
+        return this.getDate().getYear();
+    }
 
     @Override
     public String toString() {
@@ -134,11 +133,11 @@ public class BillAction extends BaseLegislativeContent implements Serializable
         this.chamber = chamber;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

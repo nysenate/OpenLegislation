@@ -5,6 +5,8 @@ import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.util.DateHelper;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +27,7 @@ public class AgendaInfoAddendum extends BaseLegislativeContent implements Serial
     private String id;
 
     /** The week this agenda is for. */
-    private Date weekOf;
+    private LocalDate weekOf;
 
     /** Committee information including bills up for consideration. */
     private Map<CommitteeId, AgendaInfoCommittee> committeeInfoMap;
@@ -37,15 +39,15 @@ public class AgendaInfoAddendum extends BaseLegislativeContent implements Serial
         this.committeeInfoMap = new HashMap<>();
     }
 
-    public AgendaInfoAddendum(AgendaId agendaId, String addendumId, Date weekOf, Date pubDate) {
+    public AgendaInfoAddendum(AgendaId agendaId, String addendumId, LocalDate weekOf, LocalDateTime pubDate) {
         this();
         this.setAgendaId(agendaId);
         this.setId(addendumId);
         this.setWeekOf(weekOf);
         this.setYear(agendaId.getYear());
         this.setSession(DateHelper.resolveSession(this.getYear()));
-        this.setModifiedDate(pubDate);
-        this.setPublishDate(pubDate);
+        this.setModifiedDateTime(pubDate);
+        this.setPublishedDateTime(pubDate);
     }
 
     /** --- Functional Getters/Setters --- */
@@ -99,11 +101,11 @@ public class AgendaInfoAddendum extends BaseLegislativeContent implements Serial
         this.id = id;
     }
 
-    public Date getWeekOf() {
+    public LocalDate getWeekOf() {
         return weekOf;
     }
 
-    public void setWeekOf(Date weekOf) {
+    public void setWeekOf(LocalDate weekOf) {
         this.weekOf = weekOf;
     }
 

@@ -58,12 +58,12 @@ public class Agenda extends BaseLegislativeContent implements Serializable
                Objects.equals(this.id, other.id) &&
                Objects.equals(this.agendaInfoAddenda, other.agendaInfoAddenda) &&
                Objects.equals(this.agendaVoteAddenda, other.agendaVoteAddenda) &&
-               Objects.equals(this.publishDate, other.publishDate);
+               Objects.equals(this.publishedDateTime, other.publishedDateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(year, id, agendaInfoAddenda, agendaVoteAddenda, publishDate);
+        return Objects.hash(year, id, agendaInfoAddenda, agendaVoteAddenda, publishedDateTime);
     }
 
     /** --- Functional Getters/Setters --- */

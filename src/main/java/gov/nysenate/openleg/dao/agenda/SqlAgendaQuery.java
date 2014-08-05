@@ -66,8 +66,10 @@ public enum SqlAgendaQuery implements BasicSqlQuery
     ),
     INSERT_AGENDA_INFO_COMMITTEE(
         "INSERT INTO ${schema}." + SqlTable.AGENDA_INFO_COMMITTEE + "\n" +
-        "(agenda_no, year, addendum_id, committee_name, committee_chamber, chair, meeting_date_time, last_fragment_id)\n" +
-        "VALUES (:agendaNo, :year, :addendumId, :committeeName, :committeeChamber::chamber, :chair, :meetingDateTime, :lastFragmentId)"
+        "(agenda_no, year, addendum_id, committee_name, committee_chamber, chair, location, meeting_date_time, " +
+        " notes, last_fragment_id)\n" +
+        "VALUES (:agendaNo, :year, :addendumId, :committeeName, :committeeChamber::chamber, :chair, :location, " +
+        "        :meetingDateTime, :notes, :lastFragmentId)"
     ),
     DELETE_AGENDA_INFO_COMMITTEE(
         "DELETE ${schema}." + SqlTable.AGENDA_INFO_COMMITTEE + "\n" +
@@ -86,7 +88,57 @@ public enum SqlAgendaQuery implements BasicSqlQuery
         "(info_committee_id, bill_print_no, bill_session_year, bill_amend_version, message, last_fragment_id)\n" +
         "SELECT c.id, :printNo, :session, :amendVersion, :message, :lastFragmentId\n" +
         "FROM (" + SELECT_AGENDA_INFO_COMMITTEE_ID.sql + ") c"
-    );
+    ),
+
+    /** --- Agenda Vote Addendum --- */
+
+    SELECT_AGENDA_VOTE_ADDENDA(
+        "SELECT * FROM ${schema}." + SqlTable.AGENDA_VOTE_ADDENDUM + "\n" +
+        "WHERE agenda_no = :agendaNo AND year = :year"
+    ),
+    SELECT_AGENDA_VOTE_ADDENDUM(
+        SELECT_AGENDA_VOTE_ADDENDA.sql + " AND addendum_id = :addendumId"
+    ),
+    UPDATE_AGENDA_VOTE_ADDENDUM(
+        "UPDATE ${schema}." + SqlTable.AGENDA_VOTE_ADDENDUM + "\n" +
+        "SET modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, " +
+        "    last_fragment_id = :lastFragmentId\n" +
+        "WHERE agenda_no = :agendaNo AND year = :year AND addendum_id = :addendumId"
+    ),
+    INSERT_AGENDA_VOTE_ADDENDUM(
+        "INSERT INTO ${schema}." + SqlTable.AGENDA_VOTE_ADDENDUM + "\n" +
+        "(agenda_no, year, addendum_id, modified_date_time, published_date_time, last_fragment_id)\n" +
+        "VALUES (:agendaNo, :year, :addendumId, :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
+    ),
+    DELETE_AGENDA_VOTE_ADDENDUM(
+        "DELETE FROM ${schema}." + SqlTable.AGENDA_VOTE_ADDENDUM + "\n" +
+        "WHERE agenda_no = :agendaNo AND year = :year AND addendum_id = :addendumId"
+    ),
+
+    /** --- Agenda Vote Committee --- */
+
+    SELECT_AGENDA_VOTE_COMMITTEES(
+        "SELECT * FROM ${schema}." + SqlTable.AGENDA_VOTE_COMMITTEE + "\n" +
+        "WHERE agenda_no = :agendaNo AND year = :year AND addendum_id = :addendumId"
+    ),
+    SELECT_AGENDA_VOTE_COMMITTEE_ID(
+        "SELECT id FROM ${schema}." + SqlTable.AGENDA_VOTE_COMMITTEE + "\n" +
+        "WHERE agenda_no = :agendaNo AND year = :year AND addendum_id = :addendumId\n" +
+        "      AND committee_name = :committeeName AND committee_chamber = :committeeChamber::chamber"
+    ),
+    INSERT_AGENDA_VOTE_COMMITTEE(
+        "INSERT INTO ${schema}." + SqlTable.AGENDA_VOTE_COMMITTEE + "\n" +
+        "(agenda_no, year, addendum_id, committee_name, committee_chamber, chair, meeting_date_time, last_fragment_id)\n" +
+        "VALUES (:agendaNo, :year, :addendumId, :committeeName, :committeeChamber::chamber, :chair, " +
+        "        :meetingDateTime, :lastFragmentId)"
+    ),
+    DELETE_AGENDA_VOTE_COMMITTEE(
+        "DELETE ${schema}." + SqlTable.AGENDA_VOTE_COMMITTEE + "\n" +
+        "WHERE agenda_no = :agendaNo AND year = :year AND addendum_id = :addendumId AND " +
+        "      committee_name = :committeeName AND committee_chamber = :committeeChamber::chamber"
+    ),
+
+    ;
 
     private String sql;
 

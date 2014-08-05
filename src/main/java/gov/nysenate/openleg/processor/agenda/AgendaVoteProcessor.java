@@ -22,6 +22,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
@@ -39,7 +40,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
 
     @Override
     public void process(SobiFragment sobiFragment) {
-        Date modifiedDate = sobiFragment.getPublishedDateTime();
+        LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
         try {
             Document doc = xml.parse(sobiFragment.getText());
             Node xmlAgendaVote = xml.getNode("SENATEDATA/senagendavote", doc);
@@ -48,7 +49,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
             Integer year = xml.getInteger("@year", xmlAgendaVote);
             AgendaId agendaId = new AgendaId(agendaNo, year);
             Agenda agenda = getOrCreateAgenda(agendaId, modifiedDate);
-            agenda.setModifiedDate(modifiedDate);
+            agenda.setModifiedDateTime(modifiedDate);
 
             logger.info("Processing Votes for {}", agendaId);
 
@@ -65,7 +66,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                     addendum = new AgendaVoteAddendum(agendaId, addendumId, modifiedDate);
                     agenda.putAgendaVoteAddendum(addendum);
                 }
-                addendum.setModifiedDate(modifiedDate);
+                addendum.setModifiedDateTime(modifiedDate);
 
                 NodeList xmlCommittees = xml.getNodeList("committees/committee", xmlAddendum);
                 for (int j = 0; j < xmlCommittees.getLength(); j++) {
@@ -81,7 +82,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                     }
                     // Otherwise, the committee is completely replaced
                     String chair = xml.getString("chair/text()", xmlCommittee);
-                    Date meetDateTime = DateHelper.getLrsDateTime(
+                    LocalDateTime meetDateTime = DateHelper.getLrsDateTime(
                             xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
                     AgendaVoteCommittee voteCommittee = new AgendaVoteCommittee(committeeId, chair, meetDateTime);
 
@@ -117,9 +118,9 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                         AgendaVoteBill voteBill = new AgendaVoteBill(voteAction, referCommitteeId, withAmdBoolean);
 
                         // Create the committee bill vote.
-                        BillVote vote = new BillVote(billId, meetDateTime, BillVoteType.COMMITTEE);
-                        vote.setModifiedDate(modifiedDate);
-                        vote.setPublishDate(modifiedDate);
+                        BillVote vote = new BillVote(billId, meetDateTime.toLocalDate(), BillVoteType.COMMITTEE);
+                        vote.setModifiedDateTime(modifiedDate);
+                        vote.setPublishedDateTime(modifiedDate);
 
                         // Add the members and their vote to the BillVote.
                         NodeList xmlVotes = xml.getNodeList("votes/member", xmlBill);

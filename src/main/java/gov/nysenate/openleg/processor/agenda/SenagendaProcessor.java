@@ -17,6 +17,7 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class SenagendaProcessor
     public void processSenagenda(File file, Storage storage) throws XPathExpressionException, SAXException, IOException
     {
         // TODO: We need a better default here
-        Date modifiedDate = DateHelper.getSobiFileDate(file.getName());
+//        LocalDateTime modifiedDate = DateHelper.getSobiFileDate(file.getName());
 //        ChangeLogger.setContext(file, modifiedDate);
         XmlHelper xml = null;//Application.getXmlHelper();
 
@@ -79,9 +80,9 @@ public class SenagendaProcessor
             for (int i=0; i < xmlAddendums.getLength(); i++) {
                 Node xmlAddendum = xmlAddendums.item(i);
                 String id = xml.getString("@id", xmlAddendum);
-                Date weekOf = DateHelper.getLrsDate(xml.getString("weekof/text()", xmlAddendum));
-                Date pubDateTime = DateHelper.getLrsDateTime(xml.getString("pubdate/text()", xmlAddendum) + xml.getString("pubtime/text()", xmlAddendum));
-                AgendaInfoAddendum addendum = new AgendaInfoAddendum(null,id, weekOf, pubDateTime);
+//                Date weekOf = DateHelper.getLrsDate(xml.getString("weekof/text()", xmlAddendum));
+                LocalDateTime pubDateTime = DateHelper.getLrsDateTime(xml.getString("pubdate/text()", xmlAddendum) + xml.getString("pubtime/text()", xmlAddendum));
+                AgendaInfoAddendum addendum = new AgendaInfoAddendum();//null, id, weekOf, pubDateTime);
 
                 NodeList xmlCommittees = xml.getNodeList("committees/committee", xmlAddendum);
                 for (int j=0; j < xmlCommittees.getLength(); j++) {
@@ -91,7 +92,7 @@ public class SenagendaProcessor
                     String location = xml.getString("location/text()", xmlCommittee);
                     String meetDay = xml.getString("meetday/text()", xmlCommittee);
                     String notes = xml.getString("notes/text()", xmlCommittee);
-                    Date meetDateTime = DateHelper.getLrsDateTime(xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
+                    LocalDateTime meetDateTime = DateHelper.getLrsDateTime(xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
                     AgendaInfoCommittee committee = new AgendaInfoCommittee();//new AgendaInfoCommittee(name, chair, location, notes, meetDay, meetDateTime);
 
                     NodeList xmlBills = xml.getNodeList("bills/bill", xmlCommittee);
@@ -102,7 +103,7 @@ public class SenagendaProcessor
                         String message = xml.getString("message/text()", xmlBill);
                         String title = xml.getString("title/text()", xmlBill);
                         String billAmendment = billno.matches("[A-Z]$") ? billno.substring(billno.length()-1) : "";
-                        Bill bill = getOrCreateBill(storage, billno, billAmendment, sessYr, sponsor, modifiedDate);
+//                        Bill bill = getOrCreateBill(storage, billno, billAmendment, sessYr, sponsor, modifiedDate);
 //                        AgendaInfoCommitteeItem item = new AgendaInfoCommitteeItem(bill, billAmendment, message, title);
 //                        committee.putItem(item);
                     }
@@ -125,7 +126,7 @@ public class SenagendaProcessor
     public void processSenagendaVote(File file, Storage storage) throws SAXException, IOException, XPathExpressionException, ParseException
     {
         // TODO: We need a better default here
-        Date modifiedDate = DateHelper.getSobiFileDate(file.getName());
+//        LocalDateTime modifiedDate = DateHelper.getSobiFileDate(file.getName());
 //        ChangeLogger.setContext(file, modifiedDate);
 
         XmlHelper xml = null;//Application.getXmlHelper();
@@ -142,7 +143,7 @@ public class SenagendaProcessor
         if (oldAgenda != null) {
             agenda = oldAgenda;
         }
-        agenda.setModifiedDate(modifiedDate);
+//        agenda.setModifiedDateTime(modifiedDate);
         //agenda.addDataSource(file.getName h );
 
         NodeList xmlAddendums = xml.getNodeList("addendum", xmlAgendgaVote);
@@ -163,7 +164,7 @@ public class SenagendaProcessor
                 String action = xml.getString("@action", xmlCommittee);
                 String name = xml.getString("name/text()", xmlCommittee);
                 String chair = xml.getString("chair/text()", xmlCommittee);
-                Date meetDateTime = DateHelper.getLrsDateTime(xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
+                LocalDateTime meetDateTime = DateHelper.getLrsDateTime(xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
 
                 // If the action is remove, then discard the committee and move on
                 if (action.equals("remove")) {
@@ -191,7 +192,7 @@ public class SenagendaProcessor
                     String billno = xml.getString("@no", xmlBill);
                     String sponsor = xml.getString("sponsor/text()", xmlBill);
                     String billAmendment = billno.matches("[A-Z]$") ? billno.substring(billno.length()-1) : "";
-                    Bill bill = getOrCreateBill(storage, billno, billAmendment, sessYr, sponsor, modifiedDate);
+//                    Bill bill = getOrCreateBill(storage, billno, billAmendment, sessYr, sponsor, modifiedDate);
 
                     String billActionId = xml.getString("action/text()", xmlBill);
                     VoteAction billAction = VOTE_ACTION_MAP.get(billActionId);
@@ -217,7 +218,7 @@ public class SenagendaProcessor
         }
     }
 
-    private Bill getOrCreateBill(Storage storage, String printNo, String billAmendment, int year, String sponsorName, Date modifiedDate) {
+    private Bill getOrCreateBill(Storage storage, String printNo, String billAmendment, int year, String sponsorName, LocalDateTime modifiedDate) {
         String[] sponsors = {""};
         if (sponsorName != null) {
             sponsors = sponsorName.trim().split(",");
@@ -233,7 +234,7 @@ public class SenagendaProcessor
         // It must be published if it is on the agenda
         BillAmendment amendment = bill.getAmendment(billAmendment);
         if (!amendment.isPublished()) {
-            amendment.setPublishDate(modifiedDate);
+            amendment.setPublishedDateTime(modifiedDate);
             /** FIXME processor.saveBill(bill, billAmendment, storage); */
         }
 
