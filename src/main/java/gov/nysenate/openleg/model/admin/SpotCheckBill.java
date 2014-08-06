@@ -95,4 +95,12 @@ public class SpotCheckBill {
     public ArrayList<String> getAmendments() {
         return amendments;
     }
+
+    public void setMultisponsors(ArrayList<String> multisponsors) {
+        this.multisponsors = multisponsors;
+    }
+
+    public void setAmendments(ArrayList<String> amendments) {
+        this.amendments = amendments;
+    }
 }
