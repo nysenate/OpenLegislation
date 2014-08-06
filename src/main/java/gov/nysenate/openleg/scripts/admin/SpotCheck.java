@@ -367,6 +367,7 @@ public class SpotCheck extends BaseScript
     private SpotCheckBill extractBill(String[] billParts) {
         SpotCheckBill bill = new SpotCheckBill();
 
+        bill.setCurrentAmendment(true);
         bill.id = billParts[0].trim();
         bill.setTitle(billParts[2].trim());
         bill.law = billParts[3].trim();
@@ -390,8 +391,9 @@ public class SpotCheck extends BaseScript
         for (int i = 5; i < billParts.length; i++) {
             String action = billParts[i].trim();
             try {
+                SimpleDateFormat actionDateFormat = new SimpleDateFormat("MM/dd/yy");
                 // Valid actions must start with date
-                dateFormat.parse(action.split(" ")[0]);
+                actionDateFormat.parse(action.split(" ")[0]);
                 actions.add(action);
             } catch (ParseException e) {
                 // Skip this action
@@ -401,9 +403,21 @@ public class SpotCheck extends BaseScript
         return actions;
     }
 
-    // Used in old code for assembly sponsors: parts[1] = parts[1].replaceAll("([A-Z])\\.[¦ ]([A-Z'-]+)", "$2 $1");
+    // Used in old code for parsing all types of assembly sponsors:
+    // parts[1] = parts[1].replaceAll("([A-Z])\\.[¦ ]([A-Z'-]+)", "$2 $1");
+
+    /**
+     * Extract the sponsor from a text field containing sponsor, cosponsors, and multisponsors.
+     * <pre>Examples:
+     * Senate: "DIAZ CO: ESPAILLAT, SAMPSON". returns DIAZ.
+     * Assembly: "MONTESANO, GOODELL, NOJAY; M-S: Barclay, Hawley, Oaks, Tenney, Thiele". returns MONTESANO.
+     * Assembly: "RULES COM (Request of Farrell, Wright)". returns itself unchanged.
+     * </pre>
+     * @param billPart string containing all sponsor, cosponsor, and multisponsor information.
+     * @return sponsor of bill.
+     */
     private String extractSponsor(String billPart) {
-        String sponsor = billPart.split(" ")[0].trim();
+        String sponsor = billPart.split("CO:|; M-S:")[0].split(",")[0].trim();
         return formatInitials(sponsor);
     }
 
@@ -443,7 +457,7 @@ public class SpotCheck extends BaseScript
         if (split.length >= 2) {
             for (String cosponsor : split[1].split(",")) {
                 cosponsor = cosponsor.trim();
-                formatInitials(cosponsor);
+                cosponsor = formatInitials(cosponsor);
                 cosponsors.add(cosponsor);
             }
         }
@@ -461,7 +475,7 @@ public class SpotCheck extends BaseScript
         // The first element is the sponsor, skip him.
         for (int i = 1; i < sponsorAndCosponsors.length; i++) {
             String cosponsor = sponsorAndCosponsors[i].trim();
-            formatInitials(cosponsor);
+            cosponsor = formatInitials(cosponsor);
             cosponsors.add(cosponsor);
         }
         return cosponsors;
@@ -474,16 +488,29 @@ public class SpotCheck extends BaseScript
         if (split.length >= 2) {
             for (String multisponsor : split[1].split(",")) {
                 multisponsor = multisponsor.trim();
-                formatInitials(multisponsor);
+                multisponsor = formatInitials(multisponsor);
                 multisponsors.add(multisponsor);
             }
         }
         return multisponsors;
     }
 
+    /**
+     * Changes a name to its uniquely identifying value if not already in that form.
+     * i.e. change 'P. Lopez' to 'LOPEZ P'
+     * @param name Name to format if in incorrect format.
+     * @return Name formatted to match the uniquely identifying name found in sobi files.
+     */
     private String formatInitials(String name) {
+        String[] parts = name.split("[^\\x00-\\x7F]+"); // Split on non ascii characters.
+        if (parts.length > 1) {
+            String firstInitial = parts[0].replace(".", "");
+            String lastName = parts[1];
+            name = lastName + " " + firstInitial;
+            name = name.toUpperCase();
+        }
 
-        return name; // TODO: implement.
+        return name;
     }
 
     private boolean isSenateBill(SpotCheckBill bill) {
