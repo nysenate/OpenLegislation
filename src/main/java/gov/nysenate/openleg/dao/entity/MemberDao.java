@@ -18,6 +18,7 @@ public interface MemberDao
     /**
      * Retrieves map of session year -> Member for a given member id. The member references
      * will point to the same person but will represent
+     *
      * @param id int
      * @return Map<Integer, Member>
      */
@@ -25,6 +26,7 @@ public interface MemberDao
 
     /**
      * Retrieve a map of session year -> Member given the LBDC short name.
+     *
      * @param lbdcShortName String
      * @param chamber Chamber
      * @return Map<Integer,Member>
@@ -33,6 +35,7 @@ public interface MemberDao
 
     /**
      * Retrieve the Member instance via the LBDC shortName and the session year.
+     *
      * @param lbdcShortName String
      * @param sessionYear int
      * @param chamber Chamber

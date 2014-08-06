@@ -54,4 +54,20 @@ public class BillVoteId implements Serializable, Comparable<BillVoteId>
             .compare(this.sequenceNo, o.sequenceNo)
             .result();
     }
+
+    public BillId getBillId() {
+        return billId;
+    }
+
+    public LocalDate getVoteDate() {
+        return voteDate;
+    }
+
+    public BillVoteType getVoteType() {
+        return voteType;
+    }
+
+    public int getSequenceNo() {
+        return sequenceNo;
+    }
 }

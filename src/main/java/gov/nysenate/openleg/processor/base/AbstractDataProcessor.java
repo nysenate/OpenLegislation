@@ -10,6 +10,7 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.MemberId;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.agenda.AgendaDataService;
@@ -172,6 +173,22 @@ public abstract class AbstractDataProcessor
         if (StringUtils.isNotBlank(shortName)) {
             try {
                 return memberService.getMemberByLBDCName(shortName, sessionYear, chamber);
+            }
+            catch (MemberNotFoundEx memberNotFoundEx) {
+                logger.error("", memberNotFoundEx);
+                if (required) {
+                    System.exit(-1); /** FIXME */
+                }
+            }
+        }
+        return null;
+    }
+
+    /** FIXME: Need to think this through */
+    protected MemberId getMemberIdFromShortName(String shortName, int sessionYear, Chamber chamber, boolean required) {
+        if (StringUtils.isNotBlank(shortName)) {
+            try {
+                return memberService.getMemberId(shortName, sessionYear, chamber);
             }
             catch (MemberNotFoundEx memberNotFoundEx) {
                 logger.error("", memberNotFoundEx);

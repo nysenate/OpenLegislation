@@ -66,8 +66,8 @@ public abstract class SqlBaseDao
      * Applies the published date / modified date column values.
      */
     protected static void addModPubDateParams(LocalDateTime modifiedDate, LocalDateTime publishedDate, MapSqlParameterSource params) {
-        params.addValue("modifiedDateTime", modifiedDate);
-        params.addValue("publishedDateTime", publishedDate);
+        params.addValue("modifiedDateTime", toDate(modifiedDate));
+        params.addValue("publishedDateTime", toDate(publishedDate));
     }
 
     /**
@@ -125,6 +125,6 @@ public abstract class SqlBaseDao
      * Read the 'column' date value from the result set and cast it to a LocalDate.
      */
     public static LocalDate getLocalDate(ResultSet rs, String column) throws SQLException {
-        return getLocalDate(rs.getDate(column));
+        return rs.getDate(column).toLocalDate();
     }
 }

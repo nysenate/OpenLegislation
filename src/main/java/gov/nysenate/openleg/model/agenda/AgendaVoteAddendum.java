@@ -6,8 +6,8 @@ import gov.nysenate.openleg.util.DateHelper;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -24,13 +24,13 @@ public class AgendaVoteAddendum extends BaseLegislativeContent implements Serial
     private String id;
 
     /** Committee vote information keyed by the committee id. */
-    private HashMap<CommitteeId, AgendaVoteCommittee> committees;
+    private Map<CommitteeId, AgendaVoteCommittee> committeeVoteMap;
 
     /** --- Constructors --- */
 
     public AgendaVoteAddendum() {
         super();
-        this.committees = new HashMap<>();
+        this.committeeVoteMap = new HashMap<>();
     }
 
     public AgendaVoteAddendum(AgendaId agendaId, String addendumId, LocalDateTime pubDate) {
@@ -46,11 +46,11 @@ public class AgendaVoteAddendum extends BaseLegislativeContent implements Serial
     /** --- Functional Getters/Setters --- */
 
     public void putCommittee(AgendaVoteCommittee committee) {
-        this.committees.put(committee.getCommitteeId(), committee);
+        this.committeeVoteMap.put(committee.getCommitteeId(), committee);
     }
 
     public void removeCommittee(CommitteeId committeeId) {
-        this.committees.remove(committeeId);
+        this.committeeVoteMap.remove(committeeId);
     }
 
     /** --- Overrides --- */
@@ -62,12 +62,12 @@ public class AgendaVoteAddendum extends BaseLegislativeContent implements Serial
         final AgendaVoteAddendum other = (AgendaVoteAddendum) obj;
         return Objects.equals(this.agendaId, other.agendaId) &&
                Objects.equals(this.id, other.id) &&
-               Objects.equals(this.committees, other.committees);
+               Objects.equals(this.committeeVoteMap, other.committeeVoteMap);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(agendaId, id, committees);
+        return Objects.hash(agendaId, id, committeeVoteMap);
     }
 
     /** --- Basic Getters/Setters --- */
@@ -88,11 +88,11 @@ public class AgendaVoteAddendum extends BaseLegislativeContent implements Serial
         this.id = id;
     }
 
-    public HashMap<CommitteeId, AgendaVoteCommittee> getCommittees() {
-        return committees;
+    public Map<CommitteeId, AgendaVoteCommittee> getCommitteeVoteMap () {
+        return committeeVoteMap;
     }
 
-    public void setCommittees(HashMap<CommitteeId, AgendaVoteCommittee> committees) {
-        this.committees = committees;
+    public void setCommitteeVoteMap (Map<CommitteeId, AgendaVoteCommittee> committeeVoteMap) {
+        this.committeeVoteMap = committeeVoteMap;
     }
 }

@@ -19,7 +19,8 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
-public class CachedVetoDataService implements VetoDataService, CachingService{
+public class CachedVetoDataService implements VetoDataService, CachingService
+{
     private static final Logger logger = LoggerFactory.getLogger(CachedVetoDataService.class);
 
     private static final String vetoDataCache = "vetoData";

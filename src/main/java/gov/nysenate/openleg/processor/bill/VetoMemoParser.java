@@ -3,7 +3,7 @@ package gov.nysenate.openleg.processor.bill;
 import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoType;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.service.bill.FullTextType;
+import gov.nysenate.openleg.model.bill.BillTextType;
 import gov.nysenate.openleg.util.SessionYear;
 
 import java.time.LocalDate;
@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class VetoBillTextParser extends BillTextParser
+public class VetoMemoParser extends BillTextParser
 {
     /** --- RegEx Patterns --- */
 
@@ -39,8 +39,8 @@ public class VetoBillTextParser extends BillTextParser
     /** A veto message object that is constructed while parsing the veto memo */
     private VetoMessage vetoMessage;
 
-    public VetoBillTextParser(String data, LocalDateTime date) {
-        super(data, FullTextType.VETO , date);
+    public VetoMemoParser (String data, LocalDateTime date) {
+        super(data, BillTextType.VETO , date);
         vetoMessage = new VetoMessage();
         vetoMessage.setType(VetoType.STANDARD);
     }

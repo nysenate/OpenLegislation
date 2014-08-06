@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.model.agenda;
 
-import java.util.HashMap;
+import com.google.common.collect.Maps;
+
+import java.util.Arrays;
 import java.util.Map;
 
 public enum AgendaVoteAction
@@ -12,12 +14,8 @@ public enum AgendaVoteAction
     RESTORED_TO_THIRD("R3"),
     SPECIAL("S");
 
-    private static Map<String, AgendaVoteAction> codeMap = new HashMap<>();
-    static {
-        for (AgendaVoteAction ava : AgendaVoteAction.values()) {
-            codeMap.put(ava.code, ava);
-        }
-    }
+    private static Map<String, AgendaVoteAction> codeMap =
+        Maps.uniqueIndex(Arrays.asList(values()), AgendaVoteAction::getCode);
 
     /** Code referenced by the sobi files. */
     private String code;

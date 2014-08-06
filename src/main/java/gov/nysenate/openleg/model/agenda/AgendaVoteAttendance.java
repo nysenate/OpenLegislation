@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.agenda;
 
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.MemberId;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -9,28 +9,28 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
 {
     private static final long serialVersionUID = -4328021920936602603L;
 
-    /** Reference to the member in the attendance list. */
-    private Member member;
+    /** Id of the member in the attendance list. */
+    private MemberId memberId;
 
     /** The order in which this member is listed. */
-    private Integer rank;
+    private int rank;
 
     /** Indicates the political party of the member. */
     private String party;
 
     /** Indicates the attendance status (e.g. Present) */
-    private String attendance;
+    private String attendStatus;
 
     /** --- Constructors --- */
 
     public AgendaVoteAttendance() {}
 
-    public AgendaVoteAttendance(Member member, int rank, String party, String attendance) {
+    public AgendaVoteAttendance(MemberId memberId, int rank, String party, String attendStatus) {
         this();
-        this.setMember(member);
+        this.setMemberId(memberId);
         this.setRank(rank);
         this.setParty(party);
-        this.setAttendance(attendance);
+        this.setAttendStatus(attendStatus);
     }
 
     /** --- Overrides --- */
@@ -40,15 +40,15 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         final AgendaVoteAttendance other = (AgendaVoteAttendance) obj;
-        return Objects.equals(this.member, other.member) &&
+        return Objects.equals(this.memberId, other.memberId) &&
                Objects.equals(this.rank, other.rank) &&
                Objects.equals(this.party, other.party) &&
-               Objects.equals(this.attendance, other.attendance);
+               Objects.equals(this.attendStatus, other.attendStatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(member, rank, party, attendance);
+        return Objects.hash(memberId, rank, party, attendStatus);
     }
 
     @Override
@@ -58,12 +58,12 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
 
     /** --- Basic Getters/Setters --- */
 
-    public Member getMember() {
-        return member;
+    public MemberId getMemberId() {
+        return memberId;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setMemberId(MemberId memberId) {
+        this.memberId = memberId;
     }
 
     public Integer getRank() {
@@ -82,11 +82,11 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
         this.party = party;
     }
 
-    public String getAttendance() {
-        return attendance;
+    public String getAttendStatus () {
+        return attendStatus;
     }
 
-    public void setAttendance(String attendance) {
-        this.attendance = attendance;
+    public void setAttendStatus (String attendStatus) {
+        this.attendStatus = attendStatus;
     }
 }

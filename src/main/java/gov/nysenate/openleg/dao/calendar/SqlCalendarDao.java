@@ -269,8 +269,8 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(sup.getCalendarId(), params);
         params.addValue("supVersion", sup.getVersion());
-        params.addValue("calendarDate", sup.getCalDate());
-        params.addValue("releaseDateTime", sup.getReleaseDateTime());
+        params.addValue("calendarDate", toDate(sup.getCalDate()));
+        params.addValue("releaseDateTime", toDate(sup.getReleaseDateTime()));
         addModPubDateParams(sup.getModifiedDateTime(), sup.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;
@@ -295,8 +295,8 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(actList.getCalendarId(), params);
         params.addValue("sequenceNo", actList.getSequenceNo());
-        params.addValue("calendarDate", actList.getCalDate());
-        params.addValue("releaseDateTime", actList.getReleaseDateTime());
+        params.addValue("calendarDate", toDate(actList.getCalDate()));
+        params.addValue("releaseDateTime", toDate(actList.getReleaseDateTime()));
         params.addValue("notes", actList.getNotes());
         addModPubDateParams(actList.getModifiedDateTime(), actList.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);

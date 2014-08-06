@@ -46,6 +46,10 @@ public class BillVote extends BaseLegislativeContent implements Serializable
         super();
     }
 
+    public BillVote(BillVoteId billVoteId) {
+        this(billVoteId.getBillId(), billVoteId.getVoteDate(), billVoteId.getVoteType(), billVoteId.getSequenceNo());
+    }
+
     public BillVote(BillId billId, LocalDate voteDate, BillVoteType type) {
         this(billId, voteDate, type, 1);
     }

@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.MemberId;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.SobiProcessor;
@@ -51,7 +52,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
             Agenda agenda = getOrCreateAgenda(agendaId, modifiedDate);
             agenda.setModifiedDateTime(modifiedDate);
 
-            logger.info("Processing Votes for {}", agendaId);
+            logger.info("Processing Votes for {} - {}", agendaId, sobiFragment);
 
             NodeList xmlAddenda = xml.getNodeList("addendum", xmlAgendaVote);
             for (int i = 0; i < xmlAddenda.getLength(); i++) {
@@ -90,11 +91,11 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                     for (int k = 0; k < xmlMembers.getLength(); k++) {
                         Node xmlMember = xmlMembers.item(k);
                         String memberName = xml.getString("name/text()", xmlMember);
-                        Member member = getMemberFromShortName(memberName, session, Chamber.SENATE, true);
+                        MemberId memberId = getMemberIdFromShortName(memberName, session, Chamber.SENATE, true);
                         Integer rank = xml.getInteger("rank/text()", xmlMember);
                         String party = xml.getString("party/text()", xmlMember);
                         String attendance = xml.getString("attendance", xmlMember);
-                        AgendaVoteAttendance memberAttendance = new AgendaVoteAttendance(member, rank, party, attendance);
+                        AgendaVoteAttendance memberAttendance = new AgendaVoteAttendance(memberId, rank, party, attendance);
                         voteCommittee.addAttendance(memberAttendance);
                     }
 
@@ -105,7 +106,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                         BillId billId = new BillId(printNo, session);
                         String voteActionCode = xml.getString("action/text()", xmlBill);
                         AgendaVoteAction voteAction = AgendaVoteAction.valueOfCode(voteActionCode);
-                        String referCommittee = xml.getString("referCommittee/text()", xmlBill);
+                        String referCommittee = xml.getString("refercomm/text()", xmlBill);
                         CommitteeId referCommitteeId = null;
                         if (!referCommittee.isEmpty()) {
                             referCommitteeId = new CommitteeId(Chamber.SENATE, referCommittee);
@@ -136,9 +137,9 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                         voteCommittee.addVoteBill(voteBill);
 
                         // Update the actual Bill with the vote information and persist it.
-//                        Bill bill = getOrCreateBaseBill(modifiedDate, billId);
-//                        bill.getAmendment(billId.getVersion()).updateVote(vote);
-//                        billDataService.saveBill(bill, sobiFragment);
+                        Bill bill = getOrCreateBaseBill(modifiedDate, billId);
+                        bill.getAmendment(billId.getVersion()).updateVote(vote);
+                        billDataService.saveBill(bill, sobiFragment);
                     }
                     addendum.putCommittee(voteCommittee);
                 }

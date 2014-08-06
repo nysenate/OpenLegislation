@@ -38,7 +38,7 @@ public class CachedBillDataService implements BillDataService, CachingService
 
     @Override
     public void setupCaches() {
-        cacheManager.addCache("billData");
+        cacheManager.addCache(billDataCache);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class CachedBillDataService implements BillDataService, CachingService
 
     /** {@inheritDoc} */
     @Override
-    @CacheEvict(value = billDataCache, key = "#bill.getBillId()")
+    @CacheEvict(value = billDataCache, key = "#bill.getBaseBillId()")
     public void saveBill(Bill bill, SobiFragment fragment) {
         logger.debug("Persisting bill {}", bill);
         billDao.updateBill(bill, fragment);

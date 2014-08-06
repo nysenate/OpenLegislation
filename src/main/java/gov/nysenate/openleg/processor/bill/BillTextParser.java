@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.processor.bill;
 
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.service.bill.FullTextType;
+import gov.nysenate.openleg.model.bill.BillTextType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,17 +15,17 @@ public class BillTextParser
         Pattern.compile("00000\\.SO DOC.{17}([A-Z* ]{9})[A-Z0-9 ]{16}([A-Z ]{20}) ([0-9]{4}).*");
 
     private String data;
-    private FullTextType fullTextType;
-    private LocalDateTime date;
+    private BillTextType billTextType;
+    private LocalDateTime dateTime;
 
     /** This is set as true when the parser has received a valid text header
      *  and has not yet received a closing header */
     private boolean insideTextHeader;
 
-    public BillTextParser(String data, FullTextType fullTextType, LocalDateTime date) {
+    public BillTextParser(String data, BillTextType billTextType, LocalDateTime dateTime) {
         this.data = data;
-        this.fullTextType = fullTextType;
-        this.date = date;
+        this.billTextType = billTextType;
+        this.dateTime = dateTime;
         this.insideTextHeader = false;
     }
 
@@ -69,7 +69,7 @@ public class BillTextParser
         }
         if (insideTextHeader) {
             // This is a known issue that was resolved on 03/23/2011
-            if (new GregorianCalendar(2011, 3, 23).after(date)) {
+            if (dateTime.isAfter(LocalDate.of(2011, 3, 23).atStartOfDay())) {
                 throw new ParseError("Finished text data without a footer");
             }
             else {
@@ -89,10 +89,10 @@ public class BillTextParser
         if (line.startsWith("00000") && header.find()) {
             String action = header.group(1).trim();
             String type = header.group(2).trim();
-            if (!type.equals(fullTextType.getTypeString())) {
+            if (!type.equals(billTextType.getTypeString())) {
                 throw new ParseError("Unknown text type found: " + type);
             }
-            switch(action){
+            switch (action) {
                 case "*DELETE*":
                     text.setLength(0);
                     insideTextHeader = false;

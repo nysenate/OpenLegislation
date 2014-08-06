@@ -13,7 +13,7 @@ import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.IngestCache;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.base.SobiProcessor;
-import gov.nysenate.openleg.service.bill.FullTextType;
+import gov.nysenate.openleg.model.bill.BillTextType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -560,7 +560,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      */
 
     private void applyText(String data, BillAmendment billAmendment, LocalDateTime date, SobiLineType lineType) throws ParseError{
-        BillTextParser billTextParser = new BillTextParser(data, FullTextType.getTypeString(lineType), date);
+        BillTextParser billTextParser = new BillTextParser(data, BillTextType.getTypeString(lineType), date);
         String fullText = billTextParser.extractText();
         if (fullText != null) {
             if (lineType == SobiLineType.SPONSOR_MEMO) {
@@ -578,9 +578,9 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * @throws ParseError
      */
     private void applyVetoMessageText(String data, Bill baseBill, LocalDateTime date) throws ParseError{
-        VetoBillTextParser vetoBillTextParser = new VetoBillTextParser(data, date);
-        vetoBillTextParser.extractText();
-        VetoMessage vetoMessage = vetoBillTextParser.getVetoMessage();
+        VetoMemoParser vetoMemoParser = new VetoMemoParser(data, date);
+        vetoMemoParser.extractText();
+        VetoMessage vetoMessage = vetoMemoParser.getVetoMessage();
         vetoMessage.setSession(baseBill.getSession());
         vetoMessage.setBillId(baseBill.getBaseBillId());
         vetoMessage.setModifiedDateTime(date);

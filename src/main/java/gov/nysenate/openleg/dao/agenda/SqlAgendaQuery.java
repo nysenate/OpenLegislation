@@ -138,7 +138,43 @@ public enum SqlAgendaQuery implements BasicSqlQuery
         "      committee_name = :committeeName AND committee_chamber = :committeeChamber::chamber"
     ),
 
-    ;
+    /** --- Agenda Vote Attendance --- */
+
+    SELECT_AGENDA_VOTE_ATTENDANCE(
+        "SELECT * FROM ${schema}." + SqlTable.AGENDA_VOTE_COMMITTEE_ATTEND + "\n" +
+        "WHERE vote_committee_id IN (" + SELECT_AGENDA_VOTE_COMMITTEE_ID.sql + ")"
+    ),
+    INSERT_AGENDA_VOTE_ATTENDANCE(
+        "INSERT INTO ${schema}." + SqlTable.AGENDA_VOTE_COMMITTEE_ATTEND + "\n" +
+        "(vote_committee_id, member_id, session_year, lbdc_short_name, rank, party, attend_status, last_fragment_id)\n" +
+        "SELECT c.id, :memberId, :sessionYear, :lbdcShortName, :rank, :party, :attendStatus, :lastFragmentId\n" +
+        "FROM (" + SELECT_AGENDA_VOTE_COMMITTEE_ID.sql + ") c"
+    ),
+
+    /** --- Agenda Committee Votes --- */
+
+    SELECT_AGENDA_COMM_VOTES(
+        "SELECT cv.id, cv.vote_action, cv.refer_committee_name, cv.refer_committee_chamber, cv.with_amendment," +
+        "       vi.bill_print_no, vi.bill_session_year, vi.bill_amend_version, vi.vote_date, vi.vote_type," +
+        "       vi.sequence_no, vi.published_date_time, vi.modified_date_time," +
+        "       vr.member_id, vr.session_year, vr.vote_code\n" +
+        "FROM ${schema}." + SqlTable.AGENDA_VOTE_COMMITTEE_VOTE + " cv\n" +
+        "JOIN ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + " vi ON cv.vote_info_id = vi.id\n" +
+        "JOIN ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_ROLL + " vr ON vi.id = vr.vote_id\n" +
+        "WHERE cv.vote_committee_id IN (" + SELECT_AGENDA_VOTE_COMMITTEE_ID.sql + ")"
+    ),
+    INSERT_AGENDA_COMM_BILL_VOTES(
+        "INSERT INTO ${schema}." + SqlTable.AGENDA_VOTE_COMMITTEE_VOTE + "\n" +
+        "(vote_committee_id, vote_action, vote_info_id, refer_committee_name, refer_committee_chamber, with_amendment," +
+        " last_fragment_id) \n" +
+        "SELECT c.id, :voteAction, vi.id, :referCommitteeName, :referCommitteeChamber::chamber, :withAmend, " +
+        "       :lastFragmentId\n" +
+        "FROM (" + SELECT_AGENDA_VOTE_COMMITTEE_ID.sql + ") c, " +
+        "     ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + " vi\n" +
+        "WHERE vi.bill_print_no = :billPrintNo AND vi.bill_session_year = :sessionYear AND \n" +
+        "      vi.bill_amend_version = :amendVersion AND vote_date = :voteDate AND sequence_no = :sequenceNo AND" +
+        "      vi.vote_type = :voteType::${schema}.vote_type"
+    );
 
     private String sql;
 

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.bill;
 
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.common.BillVoteRowHandler;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
@@ -11,9 +12,7 @@ import gov.nysenate.openleg.service.entity.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -22,7 +21,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static gov.nysenate.openleg.dao.bill.SqlBillQuery.*;
@@ -204,9 +202,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * Get the votes for the bill id in the params.
      */
     private List<BillVote> getBillVotes(MapSqlParameterSource params) {
-        BillVoteRowCallbackHandler handler = new BillVoteRowCallbackHandler(memberService);
-        jdbcNamed.query(SELECT_BILL_VOTES.getSql(schema()), params, handler);
-        return handler.getBillVotes();
+        BillVoteRowHandler voteHandler = new BillVoteRowHandler(memberService);
+        jdbcNamed.query(SELECT_BILL_VOTES.getSql(schema()), params, voteHandler);
+        return voteHandler.getBillVotes();
     }
 
     /**
@@ -496,45 +494,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         }
     }
 
-    private static class BillVoteRowCallbackHandler implements RowCallbackHandler
-    {
-        private TreeMap<BillVoteId, BillVote> billVoteMap = new TreeMap<>();
-        private MemberService memberService;
-
-        private BillVoteRowCallbackHandler(MemberService memberService) {
-            this.memberService = memberService;
-        }
-
-        public List<BillVote> getBillVotes() {
-            return new ArrayList<>(billVoteMap.values());
-        }
-
-        @Override
-        public void processRow(ResultSet rs) throws SQLException {
-            BillId billId = new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"),
-                                       rs.getString("bill_amend_version"));
-            LocalDate voteDate = getLocalDate(rs, "vote_date");
-            BillVoteType voteType = BillVoteType.getValue(rs.getString("vote_type"));
-            int sequenceNo = rs.getInt("sequence_no");
-            BillVote billVote = new BillVote(billId, voteDate, voteType, sequenceNo);
-
-            if (!billVoteMap.containsKey(billVote.getVoteId())) {
-                setModPubDatesFromResultSet(billVote, rs);
-                billVoteMap.put(billVote.getVoteId(), billVote);
-            }
-
-            billVote = billVoteMap.get(billVote.getVoteId());
-            try {
-                Member voter = memberService.getMemberById(rs.getInt("member_id"), rs.getInt("session_year"));
-                BillVoteCode voteCode = BillVoteCode.getValue(rs.getString("vote_code"));
-                billVote.addMemberVote(voteCode, voter);
-            }
-            catch (MemberNotFoundEx memberNotFoundEx) {
-                logger.error("Failed to add member vote since member could not be found!", memberNotFoundEx);
-            }
-        }
-    }
-
     /** --- Param Source Methods --- */
 
     /**
@@ -570,7 +529,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("currentCommitteeName",
             amendment.getCurrentCommittee() != null ? amendment.getCurrentCommittee().getName() : null);
         params.addValue("currentCommitteeAction",
-            amendment.getCurrentCommittee() != null ? amendment.getCurrentCommittee().getReferenceDate() : null);
+            amendment.getCurrentCommittee() != null ? toDate(amendment.getCurrentCommittee().getReferenceDate()) : null);
         params.addValue("uniBill", amendment.isUniBill());
         addModPubDateParams(amendment.getModifiedDateTime(), amendment.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
@@ -587,7 +546,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("sessionYear", billAction.getBillId().getSession());
         params.addValue("chamber", billAction.getChamber().toString().toLowerCase());
         params.addValue("version", billAction.getBillId().getVersion());
-        params.addValue("effectDate", billAction.getDate());
+        params.addValue("effectDate", toDate(billAction.getDate()));
         params.addValue("text", billAction.getText());
         params.addValue("sequenceNo", billAction.getSequenceNo());
         addModPubDateParams(billAction.getModifiedDateTime(), billAction.getPublishedDateTime(), params);
@@ -641,7 +600,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
                                                                SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(billAmendment, params);
-        params.addValue("voteDate", billVote.getVoteDate());
+        params.addValue("voteDate", toDate(billVote.getVoteDate()));
         params.addValue("voteType", billVote.getVoteType().name().toLowerCase());
         params.addValue("sequenceNo", billVote.getSequenceNo());
         addModPubDateParams(billVote.getModifiedDateTime(), billVote.getPublishedDateTime(), params);
@@ -654,7 +613,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         addBillIdParams(bill, params);
         params.addValue("committeeName", committee.getName());
         params.addValue("committeeChamber", committee.getChamber().asSqlEnum());
-        params.addValue("actionDate", committee.getReferenceDate());
+        params.addValue("actionDate", toDate(committee.getReferenceDate()));
         return params;
     }
 

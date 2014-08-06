@@ -5,30 +5,38 @@ import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 
-public class VetoMessage extends BaseLegislativeContent implements Serializable, Comparable<VetoMessage>{
-
+public class VetoMessage extends BaseLegislativeContent implements Serializable, Comparable<VetoMessage>
+{
     private static final long serialVersionUID = 8761376058922061047L;
 
     /** The id of the vetoed bill */
     private BaseBillId billId;
+
     /** The veto id, good for a single year */
     private int vetoNumber;
+
     /** The full text of the memo */
     private String memoText;
+
     /** True if the veto is a line veto */
     private VetoType type;
+
     /** The chapter of law that the bill would affect */
     private int chapter;
+
     /** The page of the bill containing the vetoed section */
     private int billPage;
+
     /** The beginning of the vetoed bill section */
     private int lineStart;
+
     /** The end of the vetoed bill section */
     private int lineEnd;
+
     /** The name of the governor who signed the bill */
     private String signer;
+
     /** The date that the veto memo was signed */
     private LocalDate signedDate;
 
@@ -43,9 +51,9 @@ public class VetoMessage extends BaseLegislativeContent implements Serializable,
     @Override
     public int compareTo(VetoMessage o) {
         return ComparisonChain.start()
-                .compare(this.year, o.year)
-                .compare(this.vetoNumber, o.vetoNumber)
-                .result();
+            .compare(this.year, o.year)
+            .compare(this.vetoNumber, o.vetoNumber)
+            .result();
     }
 
     /* --- Functional Getters/Setters --- */

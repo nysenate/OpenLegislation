@@ -22,7 +22,7 @@ public class AgendaVoteCommittee implements Serializable
     private String chair;
 
     /** Date/time of the meeting. */
-    private LocalDateTime meetDateTime;
+    private LocalDateTime meetingDateTime;
 
     /** The attendance list. */
     private List<AgendaVoteAttendance> attendance = new ArrayList<>();
@@ -36,11 +36,11 @@ public class AgendaVoteCommittee implements Serializable
         this.votedBills = new HashMap<>();
     }
 
-    public AgendaVoteCommittee(CommitteeId committeeId, String chair, LocalDateTime meetDateTime) {
+    public AgendaVoteCommittee(CommitteeId committeeId, String chair, LocalDateTime meetingDateTime) {
         this();
         this.setCommitteeId(committeeId);
         this.setChair(chair);
-        this.setMeetDateTime(meetDateTime);
+        this.setMeetingDateTime(meetingDateTime);
     }
 
     /** --- Functional Getters/Setters --- */
@@ -62,14 +62,19 @@ public class AgendaVoteCommittee implements Serializable
         final AgendaVoteCommittee other = (AgendaVoteCommittee) obj;
         return Objects.equals(this.committeeId, other.committeeId) &&
                Objects.equals(this.chair, other.chair) &&
-               Objects.equals(this.meetDateTime, other.meetDateTime) &&
+               Objects.equals(this.meetingDateTime, other.meetingDateTime) &&
                Objects.equals(this.attendance, other.attendance) &&
                Objects.equals(this.votedBills, other.votedBills);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(committeeId, chair, meetDateTime, attendance, votedBills);
+        return Objects.hash(committeeId, chair, meetingDateTime, attendance, votedBills);
+    }
+
+    @Override
+    public String toString () {
+        return committeeId + " meetingDateTime: " + meetingDateTime;
     }
 
     /** --- Basic Getters/Setters --- */
@@ -90,12 +95,12 @@ public class AgendaVoteCommittee implements Serializable
         this.chair = chair;
     }
 
-    public LocalDateTime getMeetDateTime() {
-        return meetDateTime;
+    public LocalDateTime getMeetingDateTime () {
+        return meetingDateTime;
     }
 
-    public void setMeetDateTime(LocalDateTime meetDateTime) {
-        this.meetDateTime = meetDateTime;
+    public void setMeetingDateTime (LocalDateTime meetingDateTime) {
+        this.meetingDateTime = meetingDateTime;
     }
 
     public Map<BillId, AgendaVoteBill> getVotedBills() {
