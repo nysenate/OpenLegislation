@@ -24,6 +24,26 @@ public class VetoId implements Serializable, Comparable<VetoId>
     /* --- Overrides --- */
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        VetoId vetoId = (VetoId) o;
+
+        if (vetoNumber != vetoId.vetoNumber) return false;
+        if (year != vetoId.year) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = year;
+        result = 31 * result + vetoNumber;
+        return result;
+    }
+
+    @Override
     public int compareTo(VetoId o) {
         return ComparisonChain.start()
             .compare(this.year, o.year)

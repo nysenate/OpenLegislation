@@ -3,8 +3,10 @@ package gov.nysenate.openleg.service.bill;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoId;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
 
 import java.util.List;
+import java.util.Map;
 
 public interface VetoDataService {
     /**
@@ -23,12 +25,13 @@ public interface VetoDataService {
      * @return List<VetoMessage>
      * @throws VetoNotFoundException if no vetoes are found
      */
-    public List<VetoMessage> getBillVetoes(BaseBillId baseBillId) throws VetoNotFoundException;
+    public Map<VetoId,VetoMessage> getBillVetoes(BaseBillId baseBillId) throws VetoNotFoundException;
 
     /**
      * Updates or inserts the given vetoMessage
      *
+     * @param sobiFragment
      * @param vetoMessage
      */
-    public void updateVetoMessage(VetoMessage vetoMessage);
+    public void updateVetoMessage(VetoMessage vetoMessage, SobiFragment sobiFragment);
 }

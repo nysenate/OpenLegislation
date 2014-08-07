@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoId;
 import gov.nysenate.openleg.model.bill.VetoType;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -16,7 +17,9 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class SqlVetoDao extends SqlBaseDao implements VetoDao
@@ -32,15 +35,22 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
 
     /** @inheritDoc */
     @Override
-    public List<VetoMessage> getBillVetoes(BaseBillId baseBillId) throws DataAccessException {
+    public Map<VetoId,VetoMessage> getBillVetoes(BaseBillId baseBillId) throws DataAccessException {
         MapSqlParameterSource params = getBaseBillIdParams(baseBillId);
-        return jdbcNamed.query(SqlVetoQuery.SELECT_BILL_VETOES_SQL.getSql(schema()), params, new VetoRowMapper());
+        List<VetoMessage> vetoMessageList =
+                jdbcNamed.query(SqlVetoQuery.SELECT_BILL_VETOES_SQL.getSql(schema()), params, new VetoRowMapper());
+        Map<VetoId,VetoMessage> vetoMap = new HashMap<>();
+        for(VetoMessage vetoMessage : vetoMessageList){
+            vetoMap.put(vetoMessage.getVetoId(), vetoMessage);
+        }
+
+        return vetoMap;
     }
 
     /** @inheritDoc */
     @Override
-    public void updateVetoMessage(VetoMessage vetoMessage) throws DataAccessException {
-        MapSqlParameterSource params = getVetoParams(vetoMessage);
+    public void updateVetoMessage(VetoMessage vetoMessage, SobiFragment sobiFragment) throws DataAccessException {
+        MapSqlParameterSource params = getVetoParams(vetoMessage, sobiFragment);
         if(jdbcNamed.update(SqlVetoQuery.UPDATE_VETO_MESSAGE_SQL.getSql(schema()), params) == 0){
            jdbcNamed.update(SqlVetoQuery.INSERT_VETO_MESSAGE_SQL.getSql(schema()), params);
         }
@@ -61,7 +71,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
             vetoMessage.setLineStart(rs.getInt("line_start"));
             vetoMessage.setLineEnd(rs.getInt("line_end"));
             vetoMessage.setSigner(rs.getString("signer"));
-            vetoMessage.setSignedDate(rs.getDate("date").toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            vetoMessage.setSignedDate(getLocalDate(rs.getTimestamp("date")));
             vetoMessage.setMemoText(rs.getString("memo_text"));
             setModPubDatesFromResultSet(vetoMessage, rs);
             return vetoMessage;
@@ -75,7 +85,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
         return params;
     }
 
-    private MapSqlParameterSource getVetoParams(VetoMessage vetoMessage){
+    private MapSqlParameterSource getVetoParams(VetoMessage vetoMessage, SobiFragment sobiFragment){
         MapSqlParameterSource params = getVetoIdParams(vetoMessage.getVetoId());
         params.addValue("printNum", vetoMessage.getBillId().getBasePrintNo());
         params.addValue("sessionYear", vetoMessage.getSession());
@@ -84,9 +94,10 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
         params.addValue("lineStart", vetoMessage.getLineStart());
         params.addValue("lineEnd", vetoMessage.getLineEnd());
         params.addValue("signer", vetoMessage.getSigner());
-        params.addValue("date", Date.from(vetoMessage.getSignedDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        params.addValue("date", toDate(vetoMessage.getSignedDate()));
         params.addValue("memoText", vetoMessage.getMemoText());
         params.addValue("type", vetoMessage.getType().toString().toLowerCase());
+        addLastFragmentParam(sobiFragment, params);
         addModPubDateParams(vetoMessage.getModifiedDateTime(), vetoMessage.getPublishedDateTime(), params);
         return params;
     }

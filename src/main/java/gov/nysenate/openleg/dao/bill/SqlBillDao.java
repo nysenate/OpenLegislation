@@ -8,6 +8,8 @@ import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.service.bill.VetoDataService;
+import gov.nysenate.openleg.service.bill.VetoNotFoundException;
 import gov.nysenate.openleg.service.entity.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private VetoDataService vetoDataService;
 
     /* --- Implemented Methods --- */
 
@@ -67,6 +71,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         bill.setPreviousVersions(getPrevVersions(params));
         // Get the associated bill committees
         bill.setPastCommittees(getBillCommittees(params));
+        // Get the associated veto memos
+        bill.setVetoMessages(getBillVetoMessages(bill.getBaseBillId()));
 
         return bill;
     }
@@ -110,6 +116,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         updatePreviousBillVersions(bill, sobiFragment, billParams);
         // Update associated committees
         updateBillCommittees(bill);
+        // Update veto messages
+        updateVetoMessages(bill, sobiFragment);
     }
 
     /** {@inheritDoc} */
@@ -208,6 +216,18 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     }
 
     /**
+     * Get veto memos for the bill
+     */
+    private Map<VetoId,VetoMessage> getBillVetoMessages(BaseBillId baseBillId){
+        try {
+            return vetoDataService.getBillVetoes(baseBillId);
+        }
+        catch(VetoNotFoundException ex){
+            return new HashMap<VetoId,VetoMessage>();
+        }
+    }
+
+    /**
      * Save the bill's same as list by replacing the existing records with the current records if they are not
      * the same.
      */
@@ -268,6 +288,15 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         for(CommitteeVersionId cvid : bill.getPastCommittees()){
             MapSqlParameterSource params = getBillCommitteeParams(bill, cvid);
             jdbcNamed.update(INSERT_BILL_COMMITTEE.getSql(schema()), params);
+        }
+    }
+
+    /**
+     * Update any veto messages through the veto data service
+     */
+    private void updateVetoMessages(Bill bill, SobiFragment sobiFragment){
+        for(VetoMessage vetoMessage : bill.getVetoMessages().values()){
+            vetoDataService.updateVetoMessage(vetoMessage, sobiFragment);
         }
     }
 

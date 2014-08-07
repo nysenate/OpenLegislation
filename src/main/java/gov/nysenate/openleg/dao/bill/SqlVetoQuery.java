@@ -9,17 +9,18 @@ public enum SqlVetoQuery implements BasicSqlQuery{
     ),
     UPDATE_VETO_MESSAGE_SQL(
         "UPDATE ${schema}." + SqlTable.BILL_VETO + "\n" +
-        "SET bill_print_no = :printNum, session_year = :sessionYear, type = CAST(:type AS veto_type), " + "\n" +
+        "SET bill_print_no = :printNum, session_year = :sessionYear, type = CAST(:type AS ${schema}.veto_type), " + "\n" +
             "chapter = :chapter, page = :page, line_start = :lineStart, line_end = :lineEnd, " + "\n" +
-            "date = :date, signer = :signer, memo_text = :memoText, modified_datetime = :modified" + "\n" +
+            "date = :date, signer = :signer, memo_text = :memoText, " + "\n" +
+            "modified_date_time = :modifiedDateTime, last_fragment_id = :lastFragmentId" + "\n" +
         "WHERE veto_number = :vetoNumber AND year = :year"
     ),
     INSERT_VETO_MESSAGE_SQL(
         "INSERT INTO ${schema}." + SqlTable.BILL_VETO + "\n" +
             "( veto_number, year, bill_print_no, session_year, chapter, page, line_start, line_end, signer, date," + "\n" +
-            " memo_text, type, modified_datetime, published_datetime )" +"\n" +
+            " memo_text, type, modified_date_time, published_date_time, last_fragment_id )" +"\n" +
         "VALUES (:vetoNumber, :year, :printNum, :sessionYear, :chapter, :page, :lineStart, :lineEnd, :signer, :date, " + "\n" +
-            " :memoText, CAST(:type AS veto_type), :modified, :published)"
+            " :memoText, CAST(:type AS ${schema}.veto_type), :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
     SELECT_BILL_VETOES_SQL(
         "SELECT * FROM ${schema}." + SqlTable.BILL_VETO + "\n" +
