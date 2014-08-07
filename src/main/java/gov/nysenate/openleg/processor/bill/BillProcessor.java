@@ -317,16 +317,11 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     stricken = true;
                 }
                 else if (committeeEventText.find()) {
-                    if (currentCommittee != null) {
-                        pastCommittees.add(currentCommittee);
-                    }
                     currentCommittee = new CommitteeVersionId(
                         currentChamber, committeeEventText.group(2), billId.getSession(), eventDate);
+                    pastCommittees.add(currentCommittee);
                 }
                 else if (floorEventText.find()) {
-                    if (currentCommittee != null) {
-                        pastCommittees.add(currentCommittee);
-                    }
                     currentCommittee = null;
                 }
                 else if (chamberSwitchEventText.find()) {
@@ -554,7 +549,6 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * @param billAmendment
      * @param date
      */
-
     private void applyText(String data, BillAmendment billAmendment, LocalDateTime date, SobiLineType lineType) throws ParseError{
         BillTextParser billTextParser = new BillTextParser(data, BillTextType.getTypeString(lineType), date);
         String fullText = billTextParser.extractText();
@@ -582,7 +576,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         vetoMessage.setModifiedDateTime(date);
         vetoMessage.setPublishedDateTime(date);
 
-        vetoDataService.updateVetoMessage(vetoMessage);
+        baseBill.getVetoMessages().put(vetoMessage.getVetoId(), vetoMessage);
     }
 
     /**

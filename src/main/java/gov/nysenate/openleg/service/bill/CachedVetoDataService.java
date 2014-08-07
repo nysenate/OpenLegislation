@@ -4,6 +4,7 @@ import gov.nysenate.openleg.dao.bill.VetoDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoId;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.base.CachingService;
 import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CachedVetoDataService implements VetoDataService, CachingService
@@ -64,7 +66,7 @@ public class CachedVetoDataService implements VetoDataService, CachingService
     /** {@inheritDoc} */
     @Override
     @Cacheable(value = vetoDataCache, key = "#getBillVetoesKey + '-' + #baseBillId.toString()")
-    public List<VetoMessage> getBillVetoes(BaseBillId baseBillId) throws VetoNotFoundException {
+    public Map<VetoId,VetoMessage> getBillVetoes(BaseBillId baseBillId) throws VetoNotFoundException {
         if(baseBillId==null){
             throw new IllegalArgumentException("baseBillId cannot be null!");
         }
@@ -82,7 +84,7 @@ public class CachedVetoDataService implements VetoDataService, CachingService
             @CacheEvict(value = vetoDataCache, key = "#getVetoKey + '-' + #vetoMessage.getVetoId().toString()"),
             @CacheEvict(value = vetoDataCache, key = "#getBillVetoesKey + '-' + #vetoMessage.getBillId().toString()")
     })
-    public void updateVetoMessage(VetoMessage vetoMessage) {
-        vetoDao.updateVetoMessage(vetoMessage);
+    public void updateVetoMessage(VetoMessage vetoMessage, SobiFragment sobiFragment) {
+        vetoDao.updateVetoMessage(vetoMessage, sobiFragment);
     }
 }

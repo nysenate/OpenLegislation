@@ -38,6 +38,9 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      *  This is a mapping of amendment versions to Amendment objects (includes base amendment). */
     protected Map<String, BillAmendment> amendmentMap = new TreeMap<>();
 
+    /** A list of veto messages for this bill */
+    protected Map<VetoId, VetoMessage> vetoMessages = new HashMap<>();
+
     /** Indicates the amendment version that is currently active for this bill. */
     protected String activeVersion = BillId.BASE_VERSION;
 
@@ -208,10 +211,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         pastCommittees.add(committeeVersionId);
     }
 
-    public void setPastCommittees(SortedSet<CommitteeVersionId> pastCommittees) {
-        this.pastCommittees.addAll(pastCommittees);
-    }
-
     /** --- Delegates --- */
 
     public String getFulltext() {
@@ -272,6 +271,14 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         return amendmentMap;
     }
 
+    public Map<VetoId,VetoMessage> getVetoMessages() {
+        return vetoMessages;
+    }
+
+    public void setVetoMessages(Map<VetoId,VetoMessage> vetoMessages) {
+        this.vetoMessages = vetoMessages;
+    }
+
     public Set<BillId> getPreviousVersions() {
         return previousVersions;
     }
@@ -298,6 +305,10 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     public SortedSet<CommitteeVersionId> getPastCommittees() {
         return pastCommittees;
+    }
+
+    public void setPastCommittees(SortedSet<CommitteeVersionId> pastCommittees) {
+        this.pastCommittees = pastCommittees;
     }
 
     public List<Member> getAdditionalSponsors() {
