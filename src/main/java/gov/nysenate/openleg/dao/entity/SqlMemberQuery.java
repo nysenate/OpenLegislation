@@ -14,13 +14,16 @@ public enum SqlMemberQuery implements BasicSqlQuery
         "JOIN " + SqlTable.PERSON + " p ON p.id = m.person_id\n"
     ),
     SELECT_MEMBER_BY_ID_SQL(
-        SELECT_MEMBER_FRAGMENT.sql + " WHERE sm.member_id = :memberId AND alternate = false"
+        SELECT_MEMBER_FRAGMENT.sql + " WHERE sm.member_id = :memberId AND sm.alternate = false"
     ),
     SELECT_MEMBER_BY_ID_SESSION_SQL(
-        SELECT_MEMBER_BY_ID_SQL.sql + " AND sm.session_year = :sessionYear AND alternate = false"
+        SELECT_MEMBER_BY_ID_SQL.sql + " AND sm.session_year = :sessionYear"
     ),
     SELECT_MEMBER_BY_SHORTNAME_SQL(
-        SELECT_MEMBER_FRAGMENT.sql + " WHERE sm.lbdc_short_name ILIKE :shortName AND m.chamber = :chamber::chamber "
+        SELECT_MEMBER_FRAGMENT.sql + "\n" +
+        //     We use the first 15 letters to compare due to how some of the source data is formatted.
+        "WHERE substr(sm.lbdc_short_name, 1, 15) ILIKE substr(:shortName, 1, 15) AND m.chamber = :chamber::chamber " +
+        "      AND sm.alternate = :alternate "
     ),
     SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL(
          SELECT_MEMBER_BY_SHORTNAME_SQL.sql + " AND sm.session_year = :sessionYear"

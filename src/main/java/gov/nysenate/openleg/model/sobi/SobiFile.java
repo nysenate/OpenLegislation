@@ -96,7 +96,7 @@ public class SobiFile
     public LocalDateTime getPublishedDateTime() {
         try {
             return LocalDateTime.ofInstant(
-                DateUtils.parseDateStrictly(getFileName(), sobiDateFullPattern, sobiDateNoSecsPattern).toInstant(),
+                DateUtils.parseDate(getFileName(), sobiDateFullPattern, sobiDateNoSecsPattern).toInstant(),
                 ZoneId.systemDefault());
         }
         catch (ParseException ex) {

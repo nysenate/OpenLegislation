@@ -70,9 +70,9 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     INSERT_CALENDAR_SUP_ENTRY(
         "INSERT INTO ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + "\n" +
         "(calendar_sup_id, section_code, bill_calendar_no, bill_print_no, bill_amend_version, bill_session_year, \n" +
-        " sub_bill_print_no, sub_bill_amend_version, sub_bill_session_year, high)\n" +
+        " sub_bill_print_no, sub_bill_amend_version, sub_bill_session_year, high, last_fragment_id)\n" +
         "SELECT id, :sectionCode, :billCalNo, :printNo, :amendVersion, :session, :subPrintNo, :subAmendVersion, " +
-        "       :subSession, :high \n" +
+        "       :subSession, :high, :lastFragmentId\n" +
         "FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + "\n" +
         "WHERE calendar_no = :calendarNo AND calendar_year = :year AND sup_version = :supVersion"
     ),
@@ -121,8 +121,8 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     ),
     INSERT_CALENDAR_ACTIVE_LIST_ENTRY(
         "INSERT INTO ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST_ENTRY + "\n" +
-        "(calendar_active_list_id, bill_calendar_no, bill_print_no, bill_amend_version, bill_session_year)\n" +
-        "SELECT id, :billCalendarNo, :printNo, :amendVersion, :session\n" +
+        "(calendar_active_list_id, bill_calendar_no, bill_print_no, bill_amend_version, bill_session_year, last_fragment_id)\n" +
+        "SELECT id, :billCalendarNo, :printNo, :amendVersion, :session, :lastFragmentId\n" +
         "FROM (" + SELECT_CALENDAR_ACTIVE_LIST_ID.sql + ") cal_act_list_id"
     ),
     DELETE_CALENDAR_ACTIVE_LIST_ENTRY(

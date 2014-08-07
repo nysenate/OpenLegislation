@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+/**
+ * Iterates through the result set of a bill vote query and returns a collection of BillVotes.
+ */
 public class BillVoteRowHandler extends SqlBaseDao implements RowCallbackHandler
 {
     private static final Logger logger = LoggerFactory.getLogger(BillVoteRowHandler.class);

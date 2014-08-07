@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.model.bill;
 
+import com.google.common.collect.Maps;
 import gov.nysenate.openleg.model.sobi.SobiLineType;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,16 +17,16 @@ public enum BillTextType
     private SobiLineType sobiLineType;
     private String typeString;
 
-    private static Map<SobiLineType, BillTextType> lineTypeMap = new HashMap<>();
-    static {
-        for (BillTextType fullTextType : BillTextType.values()) {
-            lineTypeMap.put(fullTextType.sobiLineType, fullTextType);
-        }
-    }
+    private static Map<SobiLineType, BillTextType> lineTypeMap =
+        Maps.uniqueIndex(Arrays.asList(values()), BillTextType::getSobiLineType);
 
     BillTextType (SobiLineType sobiLineType, String typeString) {
         this.sobiLineType = sobiLineType;
         this.typeString = typeString;
+    }
+
+    public SobiLineType getSobiLineType() {
+        return sobiLineType;
     }
 
     public static BillTextType getTypeString(SobiLineType sobiLineType) {

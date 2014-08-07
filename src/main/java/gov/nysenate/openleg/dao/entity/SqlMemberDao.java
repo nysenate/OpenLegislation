@@ -1,10 +1,12 @@
 package gov.nysenate.openleg.dao.entity;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -16,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Repository("sqlMember")
 public class SqlMemberDao extends SqlBaseDao implements MemberDao
@@ -45,24 +48,42 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
 
     /** {@inheritDoc} */
     @Override
-    public Map<Integer, Member> getMembersByLBDCName(String lbdcShortName, Chamber chamber) {
+    public Map<Integer, Member> getMembersByShortName(String lbdcShortName, Chamber chamber) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("shortName", lbdcShortName);
         params.addValue("chamber", chamber.name().toLowerCase());
+        params.addValue("alternate", false);
         List<Member> members =
             jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SQL.getSql(schema()), params, new MemberRowMapper());
         return getMemberSessionMap(members);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     *  Since the short names used in the source data can be inconsistent (the short name can get modified
+     *  during the middle of a session year) we have a notion of an alternate short name. A member can only
+     *  have one primary short name mapping during a session year but can have multiple 'alternate' short names
+     *  to deal with edge cases in the data. This method will attempt to match the primary short name first
+     *  and if that fails tries to check for an alternate form. If both attempts fail the calling method will
+     *  have to handle a DataAccessException.
+     */
     @Override
-    public Member getMemberByLBDCName(String lbdcShortName, int sessionYear, Chamber chamber) {
+    public Member getMemberByShortName(String lbdcShortName, int sessionYear, Chamber chamber) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("shortName", lbdcShortName.trim());
         params.addValue("sessionYear", (sessionYear % 2 == 0) ? sessionYear - 1 : sessionYear);
         params.addValue("chamber", chamber.name().toLowerCase());
+        params.addValue("alternate", false);
         logger.trace("Fetching member {} ({}) from database...", lbdcShortName, sessionYear);
-        return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
+        try {
+            return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()), params,
+                new MemberRowMapper());
+        }
+        catch (EmptyResultDataAccessException ex) {
+            params.addValue("alternate", true);
+            return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema(), LimitOffset.ONE),
+                params, new MemberRowMapper());
+        }
     }
 
     /** {@inheritDoc} */

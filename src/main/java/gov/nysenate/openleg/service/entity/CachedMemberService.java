@@ -38,7 +38,7 @@ public class CachedMemberService implements MemberService
      */
     @Override
     public MemberId getMemberId(String lbdcShortName, int sessionYear, Chamber chamber) throws MemberNotFoundEx {
-        Member member = getMemberByLBDCName(lbdcShortName, sessionYear, chamber);
+        Member member = getMemberByShortName(lbdcShortName, sessionYear, chamber);
         return new MemberId(member.getMemberId(), member.getSessionYear(), member.getLbdcShortName());
     }
 
@@ -58,12 +58,12 @@ public class CachedMemberService implements MemberService
 
     @Override
     @Cacheable("memberShortName")
-    public Member getMemberByLBDCName(String lbdcShortName, int sessionYear, Chamber chamber) throws MemberNotFoundEx {
+    public Member getMemberByShortName(String lbdcShortName, int sessionYear, Chamber chamber) throws MemberNotFoundEx {
         if (lbdcShortName == null || chamber == null) {
             throw new IllegalArgumentException("Shortname and/or chamber cannot be null.");
         }
         try {
-            return memberDao.getMemberByLBDCName(lbdcShortName, sessionYear, chamber);
+            return memberDao.getMemberByShortName(lbdcShortName, sessionYear, chamber);
         }
         catch (EmptyResultDataAccessException ex) {
             throw new MemberNotFoundEx(lbdcShortName, sessionYear, chamber);

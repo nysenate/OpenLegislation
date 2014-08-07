@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.agenda;
 
-import gov.nysenate.openleg.model.entity.MemberId;
+import gov.nysenate.openleg.model.entity.Member;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -9,8 +9,8 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
 {
     private static final long serialVersionUID = -4328021920936602603L;
 
-    /** Id of the member in the attendance list. */
-    private MemberId memberId;
+    /** Member in the attendance list. */
+    private Member member;
 
     /** The order in which this member is listed. */
     private int rank;
@@ -25,9 +25,9 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
 
     public AgendaVoteAttendance() {}
 
-    public AgendaVoteAttendance(MemberId memberId, int rank, String party, String attendStatus) {
+    public AgendaVoteAttendance(Member member, int rank, String party, String attendStatus) {
         this();
-        this.setMemberId(memberId);
+        this.setMember(member);
         this.setRank(rank);
         this.setParty(party);
         this.setAttendStatus(attendStatus);
@@ -40,7 +40,7 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         final AgendaVoteAttendance other = (AgendaVoteAttendance) obj;
-        return Objects.equals(this.memberId, other.memberId) &&
+        return Objects.equals(this.member, other.member) &&
                Objects.equals(this.rank, other.rank) &&
                Objects.equals(this.party, other.party) &&
                Objects.equals(this.attendStatus, other.attendStatus);
@@ -48,7 +48,7 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
 
     @Override
     public int hashCode() {
-        return Objects.hash(memberId, rank, party, attendStatus);
+        return Objects.hash(member, rank, party, attendStatus);
     }
 
     @Override
@@ -58,12 +58,12 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
 
     /** --- Basic Getters/Setters --- */
 
-    public MemberId getMemberId() {
-        return memberId;
+    public Member getMember() {
+        return member;
     }
 
-    public void setMemberId(MemberId memberId) {
-        this.memberId = memberId;
+    public void setMember(Member member) {
+        this.member = member;
     }
 
     public Integer getRank() {

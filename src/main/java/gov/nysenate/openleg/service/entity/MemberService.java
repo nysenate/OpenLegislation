@@ -20,7 +20,6 @@ public interface MemberService
 
     /**
      * Retrieves Member using a unique member id and session year.
-     * TODO: Replace this with a MemberId argument
      *
      * @param memberId int
      * @param sessionYear int
@@ -39,5 +38,5 @@ public interface MemberService
      * @return Member
      * @throws MemberNotFoundEx If no matching member was found.
      */
-    public Member getMemberByLBDCName(String lbdcShortName, int sessionYear, Chamber chamber) throws MemberNotFoundEx;
+    public Member getMemberByShortName(String lbdcShortName, int sessionYear, Chamber chamber) throws MemberNotFoundEx;
 }

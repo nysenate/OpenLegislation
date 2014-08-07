@@ -107,7 +107,7 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
                 String shortName = xml.getString("name/text()", memberNode);
                 Member sessionMember;
                 try {
-                    sessionMember = memberService.getMemberByLBDCName(shortName, committee.getSession(), committee.getChamber());
+                    sessionMember = memberService.getMemberByShortName(shortName, committee.getSession(), committee.getChamber());
                 }
                 catch (MemberNotFoundEx memberNotFoundEx) {
                     logger.error("Could not identify committee member " + shortName + " " + committee.getSession() + " " + committee.getChamber());

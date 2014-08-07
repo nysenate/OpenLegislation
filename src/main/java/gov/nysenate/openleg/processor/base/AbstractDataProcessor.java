@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * The AbstractDataProcessor class is intended to serve as a common base for all the
@@ -44,15 +43,15 @@ public abstract class AbstractDataProcessor
     /** --- Data Services --- */
 
     @Autowired
+    protected AgendaDataService agendaDataService;
+    @Autowired
     protected BillDataService billDataService;
     @Autowired
     protected CalendarDataService calendarDataService;
     @Autowired
-    protected AgendaDataService agendaDataService;
+    protected CommitteeService committeeService;
     @Autowired
     protected MemberService memberService;
-    @Autowired
-    protected CommitteeService committeeService;
     @Autowired
     protected VetoDataService vetoDataService;
 
@@ -162,38 +161,17 @@ public abstract class AbstractDataProcessor
     /**
      * Retrieves a member from the LBDC short name with special processing if the member was not found
      * and required is true. Returns null if required is false and member is not found.
-     *
-     * @param shortName String
-     * @param sessionYear int
-     * @param chamber Chamber
-     * @param required boolean
-     * @return Member
      */
     protected Member getMemberFromShortName(String shortName, int sessionYear, Chamber chamber, boolean required) {
         if (StringUtils.isNotBlank(shortName)) {
             try {
-                return memberService.getMemberByLBDCName(shortName, sessionYear, chamber);
+                return memberService.getMemberByShortName(shortName, sessionYear, chamber);
             }
             catch (MemberNotFoundEx memberNotFoundEx) {
                 logger.error("", memberNotFoundEx);
                 if (required) {
-                    System.exit(-1); /** FIXME */
-                }
-            }
-        }
-        return null;
-    }
-
-    /** FIXME: Need to think this through */
-    protected MemberId getMemberIdFromShortName(String shortName, int sessionYear, Chamber chamber, boolean required) {
-        if (StringUtils.isNotBlank(shortName)) {
-            try {
-                return memberService.getMemberId(shortName, sessionYear, chamber);
-            }
-            catch (MemberNotFoundEx memberNotFoundEx) {
-                logger.error("", memberNotFoundEx);
-                if (required) {
-                    System.exit(-1); /** FIXME */
+                    /** FIXME: Formulate strategy for dealing with missing member. */
+                    System.exit(-1);
                 }
             }
         }

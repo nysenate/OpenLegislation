@@ -109,7 +109,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         // Determine if the previous versions have changed and insert accordingly.
         updatePreviousBillVersions(bill, sobiFragment, billParams);
         // Update associated committees
-        updateBillCommittees(bill);
+        updateBillCommittees(bill, sobiFragment, billParams);
     }
 
     /** {@inheritDoc} */
@@ -261,13 +261,14 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Replace the bill's previous committee list with the current list
      */
-    private void updateBillCommittees(Bill bill){
-        MapSqlParameterSource deleteParams = new MapSqlParameterSource();
-        addBillIdParams(bill, deleteParams);
-        jdbcNamed.update(DELETE_BILL_COMMITTEES.getSql(schema()), deleteParams);
-        for(CommitteeVersionId cvid : bill.getPastCommittees()){
-            MapSqlParameterSource params = getBillCommitteeParams(bill, cvid);
-            jdbcNamed.update(INSERT_BILL_COMMITTEE.getSql(schema()), params);
+    private void updateBillCommittees(Bill bill, SobiFragment sobiFragment, MapSqlParameterSource billParams) {
+        Set<CommitteeVersionId> existingComms = getBillCommittees(billParams);
+        if (!existingComms.equals(bill.getPastCommittees())) {
+            jdbcNamed.update(DELETE_BILL_COMMITTEES.getSql(schema()), billParams);
+            for (CommitteeVersionId cvid : bill.getPastCommittees()) {
+                MapSqlParameterSource params = getBillCommitteeParams(bill, cvid, sobiFragment);
+                jdbcNamed.update(INSERT_BILL_COMMITTEE.getSql(schema()), params);
+            }
         }
     }
 
@@ -608,12 +609,14 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return params;
     }
 
-    private static MapSqlParameterSource getBillCommitteeParams(Bill bill, CommitteeVersionId committee){
+    private static MapSqlParameterSource getBillCommitteeParams(Bill bill, CommitteeVersionId committee,
+                                                                SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(bill, params);
         params.addValue("committeeName", committee.getName());
         params.addValue("committeeChamber", committee.getChamber().asSqlEnum());
         params.addValue("actionDate", toDate(committee.getReferenceDate()));
+        addLastFragmentParam(fragment, params);
         return params;
     }
 

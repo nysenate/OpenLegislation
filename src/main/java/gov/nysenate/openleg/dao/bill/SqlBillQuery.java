@@ -33,12 +33,13 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_SPONSOR(
         "INSERT INTO ${schema}." + SqlTable.BILL_SPONSOR + "\n" +
-        "(bill_print_no, bill_session_year, member_id, budget_bill, rules_sponsor) " +
-        "VALUES (:printNo, :sessionYear, :memberId, :budgetBill, :rulesSponsor)"
+        "(bill_print_no, bill_session_year, member_id, budget_bill, rules_sponsor, last_fragment_id) " +
+        "VALUES (:printNo, :sessionYear, :memberId, :budgetBill, :rulesSponsor, :lastFragmentId)"
     ),
     UPDATE_BILL_SPONSOR(
         "UPDATE ${schema}." + SqlTable.BILL_SPONSOR + "\n" +
-        "SET member_id = :memberId, budget_bill = :budgetBill, rules_sponsor = :rulesSponsor \n" +
+        "SET member_id = :memberId, budget_bill = :budgetBill, rules_sponsor = :rulesSponsor, " +
+        "last_fragment_id = :lastFragmentId\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
     DELETE_BILL_SPONSOR(
@@ -79,8 +80,8 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_COSPONSORS(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + " " +
-        "(bill_print_no, bill_session_year, bill_amend_version, member_id, sequence_no)\n" +
-        "VALUES (:printNo, :sessionYear, :version, :memberId, :sequenceNo)"
+        "(bill_print_no, bill_session_year, bill_amend_version, member_id, sequence_no, last_fragment_id)\n" +
+        "VALUES (:printNo, :sessionYear, :version, :memberId, :sequenceNo, :lastFragmentId)"
     ),
     DELETE_BILL_COSPONSORS(
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + "\n" +
@@ -96,8 +97,8 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_MULTISPONSORS(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + " " +
-        "(bill_print_no, bill_session_year, bill_amend_version, member_id, sequence_no)\n" +
-        "VALUES (:printNo, :sessionYear, :version, :memberId, :sequenceNo)"
+        "(bill_print_no, bill_session_year, bill_amend_version, member_id, sequence_no, last_fragment_id)\n" +
+        "VALUES (:printNo, :sessionYear, :version, :memberId, :sequenceNo, :lastFragmentId)"
     ),
     DELETE_BILL_MULTISPONSORS(
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + "\n" +
@@ -114,14 +115,14 @@ public enum SqlBillQuery implements BasicSqlQuery
     INSERT_BILL_VOTES_INFO(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + "\n" +
         "(bill_print_no, bill_session_year, bill_amend_version, vote_type, vote_date, sequence_no, " +
-        " modified_date_time, published_date_time) " +
+        " modified_date_time, published_date_time, last_fragment_id) " +
         "VALUES (:printNo, :sessionYear, :version, :voteType::${schema}.vote_type, :voteDate, :sequenceNo, " +
-        "        :modifiedDateTime, :publishedDateTime)"
+        "        :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
     INSERT_BILL_VOTES_ROLL(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_ROLL + "\n" +
-        "(vote_id, vote_code, member_id, member_short_name, session_year)\n" +
-        "SELECT id, :voteCode::${schema}.vote_code, :memberId, :memberShortName, :sessionYear " +
+        "(vote_id, vote_code, member_id, member_short_name, session_year, last_fragment_id)\n" +
+        "SELECT id, :voteCode::${schema}.vote_code, :memberId, :memberShortName, :sessionYear, :lastFragmentId " +
         "FROM ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
         "AND vote_date = :voteDate AND vote_type = :voteType::${schema}.vote_type AND sequence_no = :sequenceNo"
@@ -164,8 +165,9 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_SAME_AS(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_SAME_AS + "\n" +
-        "(bill_print_no, bill_session_year, bill_amend_version, same_as_bill_print_no, same_as_session_year, same_as_amend_version)\n" +
-        "VALUES (:printNo, :sessionYear, :version, :sameAsPrintNo, :sameAsSessionYear, :sameAsVersion)"
+        "(bill_print_no, bill_session_year, bill_amend_version, same_as_bill_print_no, same_as_session_year, " +
+        " same_as_amend_version, last_fragment_id)\n" +
+        "VALUES (:printNo, :sessionYear, :version, :sameAsPrintNo, :sameAsSessionYear, :sameAsVersion, :lastFragmentId)"
     ),
     DELETE_SAME_AS_FOR_BILL(
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_SAME_AS + "\n" +
@@ -180,8 +182,8 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_COMMITTEE(
         "INSERT INTO ${schema}." + SqlTable.BILL_COMMITTEE + "\n" +
-        "( bill_print_no, bill_session_year, committee_name, committee_chamber, action_date )" + "\n" +
-        "VALUES ( :printNo, :sessionYear, :committeeName, CAST(:committeeChamber as chamber), :actionDate )"
+        "(bill_print_no, bill_session_year, committee_name, committee_chamber, action_date, last_fragment_id)" + "\n" +
+        "VALUES ( :printNo, :sessionYear, :committeeName, CAST(:committeeChamber as chamber), :actionDate, :lastFragmentId)"
     ),
     DELETE_BILL_COMMITTEES(
         "DELETE FROM ${schema}." + SqlTable.BILL_COMMITTEE + "\n" +
@@ -196,8 +198,9 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_PREVIOUS_VERSION(
         "INSERT INTO ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +
-        "(bill_print_no, bill_session_year, prev_bill_print_no, prev_bill_session_year, prev_amend_version)\n" +
-        "VALUES (:printNo, :sessionYear, :prevPrintNo, :prevSessionYear, :prevVersion)"
+        "(bill_print_no, bill_session_year, prev_bill_print_no, prev_bill_session_year, prev_amend_version, " +
+        " last_fragment_id)\n" +
+        "VALUES (:printNo, :sessionYear, :prevPrintNo, :prevSessionYear, :prevVersion, :lastFragmentId)"
     ),
     DELETE_BILL_PREVIOUS_VERSIONS(
         "DELETE FROM ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +

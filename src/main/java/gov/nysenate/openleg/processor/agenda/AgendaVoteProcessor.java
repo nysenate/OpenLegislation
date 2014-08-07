@@ -91,11 +91,11 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                     for (int k = 0; k < xmlMembers.getLength(); k++) {
                         Node xmlMember = xmlMembers.item(k);
                         String memberName = xml.getString("name/text()", xmlMember);
-                        MemberId memberId = getMemberIdFromShortName(memberName, session, Chamber.SENATE, true);
+                        Member member = getMemberFromShortName(memberName, session, Chamber.SENATE, true);
                         Integer rank = xml.getInteger("rank/text()", xmlMember);
                         String party = xml.getString("party/text()", xmlMember);
                         String attendance = xml.getString("attendance", xmlMember);
-                        AgendaVoteAttendance memberAttendance = new AgendaVoteAttendance(memberId, rank, party, attendance);
+                        AgendaVoteAttendance memberAttendance = new AgendaVoteAttendance(member, rank, party, attendance);
                         voteCommittee.addAttendance(memberAttendance);
                     }
 

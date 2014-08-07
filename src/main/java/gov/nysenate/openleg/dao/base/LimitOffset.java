@@ -13,6 +13,7 @@ public class LimitOffset
     public static final LimitOffset ALL = new LimitOffset(0,0);
 
     /** Some references for convenience. */
+    public static final LimitOffset ONE = new LimitOffset(1);
     public static final LimitOffset TEN = new LimitOffset(10);
     public static final LimitOffset TWENTY_FIVE = new LimitOffset(25);
     public static final LimitOffset FIFTY = new LimitOffset(50);

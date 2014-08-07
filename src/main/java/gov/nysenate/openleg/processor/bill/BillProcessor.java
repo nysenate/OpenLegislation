@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.processor.bill;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
@@ -59,10 +61,6 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     /** The expected format for Bill Info [1] block data. */
     public static final Pattern billInfoPattern =
         Pattern.compile("(.{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])(.{8})(.*)");
-
-    /** The expected format for header lines inside bill [T] and memo [M] text data. */
-    public static final Pattern textHeaderPattern =
-        Pattern.compile("00000\\.SO DOC ([ASC]) ([0-9R/A-Z ]{13}) ([A-Z* ]{24}) ([A-Z ]{20}) ([0-9]{4}).*");
 
     /** Pattern for extracting the committee from matching bill events. */
     public static final Pattern committeeEventTextPattern =
@@ -207,8 +205,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             String sponsor = billData.group(1).trim();
             if (!StringUtils.isEmpty(sponsor) && baseBill.getSponsor() == null) {
                 // Apply the sponsor from bill info when the sponsor has not yet been set.
-                baseBill.setSponsor(getBillSponsorFromSponsorLine(sponsor, baseBill.getSession(),
-                                                                  baseBill.getBillType().getChamber()));
+                setBillSponsorFromSponsorLine(baseBill, sponsor, baseBill.getSession());
                 baseBill.setModifiedDateTime(date);
             }
             String prevPrintNo = billData.group(4).trim();
@@ -420,7 +417,6 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     private void applySponsor(String data, Bill baseBill, BillAmendment specifiedAmendment, LocalDateTime date) {
         // Apply the lines in order given as each represents its own "block"
         int sessionYear = baseBill.getSession();
-        Chamber chamber = baseBill.getBillType().getChamber();
 
         for(String line : data.split("\n")) {
             line = line.toUpperCase().trim();
@@ -431,7 +427,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                 specifiedAmendment.setModifiedDateTime(date);
             }
             else {
-                baseBill.setSponsor(getBillSponsorFromSponsorLine(line, sessionYear, chamber));
+                setBillSponsorFromSponsorLine(baseBill, line, sessionYear);
             }
         }
         baseBill.setModifiedDateTime(date);
@@ -449,10 +445,10 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * -------------------------------------------
      */
     private void applyCosponsors(String data, BillAmendment activeAmendment, LocalDateTime date) {
-        ArrayList<Member> coSponsors = new ArrayList<>();
+        LinkedHashSet<Member> coSponsors = new LinkedHashSet<>();
         int session = activeAmendment.getSession();
         Chamber chamber = activeAmendment.getBillType().getChamber();
-        for(String coSponsor : data.replace("\n", " ").split(",")) {
+        for (String coSponsor : data.replace("\n", " ").split(",")) {
             coSponsor = coSponsor.trim();
             if (!coSponsor.isEmpty()) {
                 coSponsors.add(getMemberFromShortName(coSponsor, session, chamber, true));
@@ -460,7 +456,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         }
         // The cosponsor info is always sent for the base bill version.
         // We can use the currently active amendment instead.
-        activeAmendment.setCoSponsors(coSponsors);
+        activeAmendment.setCoSponsors(Lists.newArrayList(coSponsors));
         activeAmendment.setModifiedDateTime(date);
     }
 
@@ -476,7 +472,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * ----------------------------------------------
      */
     private void applyMultisponsors(String data, BillAmendment activeAmendment, LocalDateTime date) {
-        ArrayList<Member> multiSponsors = new ArrayList<>();
+        LinkedHashSet<Member> multiSponsors = new LinkedHashSet<>();
         int session = activeAmendment.getSession();
         Chamber chamber = activeAmendment.getBillType().getChamber();
         for (String multiSponsor : data.replace("\n", " ").split(",")) {
@@ -485,7 +481,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                 multiSponsors.add(getMemberFromShortName(multiSponsor, session, chamber, false));
             }
         }
-        activeAmendment.setMultiSponsors(multiSponsors);
+        activeAmendment.setMultiSponsors(Lists.newArrayList(multiSponsors));
         activeAmendment.setModifiedDateTime(date);
     }
 
@@ -761,9 +757,12 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     }
 
     /**
-     * Constructs a BillSponsor via the sponsorLine string.
+     * Constructs a BillSponsor via the sponsorLine string and applies it to the bill.
      */
-    protected BillSponsor getBillSponsorFromSponsorLine(String sponsorLine, int sessionYear, Chamber chamber) {
+    protected void setBillSponsorFromSponsorLine(Bill baseBill, String sponsorLine, int sessionYear) {
+        // Get the chamber from the Bill
+        Chamber chamber = baseBill.getBillType().getChamber();
+        // New Sponsor instance
         BillSponsor billSponsor = new BillSponsor();
         // Format the sponsor line
         sponsorLine = sponsorLine.replace("(MS)", "").toUpperCase().trim();
@@ -782,8 +781,20 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         }
         // Apply the sponsor by looking up the member
         else {
+            // In rare cases multiple sponsors can be listed on a single line. We can handle this
+            // by setting the first contact as the sponsor, and subsequent ones as additional sponsors.
+            if (sponsorLine.contains(",")) {
+                List<String> sponsors = Lists.newArrayList(
+                        Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsorLine));
+                if (!sponsors.isEmpty()) {
+                    sponsorLine = sponsors.remove(0);
+                    sponsors.forEach(s ->
+                        baseBill.getAdditionalSponsors().add(getMemberFromShortName(s, sessionYear, chamber, true)));
+                }
+            }
+            // Set the member into the sponsor instance
             billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber, true));
         }
-        return billSponsor;
+        baseBill.setSponsor(billSponsor);
     }
 }

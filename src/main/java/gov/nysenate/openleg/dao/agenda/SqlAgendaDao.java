@@ -3,6 +3,7 @@ package gov.nysenate.openleg.dao.agenda;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.dao.common.BillVoteIdRowMapper;
@@ -14,6 +15,7 @@ import gov.nysenate.openleg.model.bill.BillVoteId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.MemberId;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.entity.MemberService;
 import org.slf4j.Logger;
@@ -24,6 +26,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -59,7 +62,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     /** {@inheritDoc} */
     @Override
     public List<AgendaId> getAgendaIds(int year, SortOrder idOrder) {
-        return null;
+        throw new NotImplementedException();
     }
 
     /** {@inheritDoc} */
@@ -158,7 +161,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
             agendaVoteParams.addValue("committeeChamber", voteComm.getCommitteeId().getChamber().asSqlEnum());
             // Set the attendance list for each vote committee
             voteComm.setAttendance(
-                jdbcNamed.query(SELECT_AGENDA_VOTE_ATTENDANCE.getSql(schema()), agendaVoteParams, agendaVoteAttendRowMapper));
+                jdbcNamed.query(SELECT_AGENDA_VOTE_ATTENDANCE.getSql(schema()), agendaVoteParams,
+                    new AgendaVoteAttendanceRowMapper(memberService)));
             // Set the bills that were voted on
             AgendaCommVoteHandler agendaVoteHandler = new AgendaCommVoteHandler(memberService);
             jdbcNamed.query(SELECT_AGENDA_COMM_VOTES.getSql(schema()), agendaVoteParams, agendaVoteHandler);
@@ -326,16 +330,29 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         return voteComm;
     };
 
-    static RowMapper<AgendaVoteAttendance> agendaVoteAttendRowMapper = (rs, rowNum) -> {
-        AgendaVoteAttendance attendance = new AgendaVoteAttendance();
-        attendance.setMemberId(
-            new MemberId(rs.getInt("member_id"), rs.getInt("session_year"), rs.getString("lbdc_short_name"))
-        );
-        attendance.setParty(rs.getString("party"));
-        attendance.setRank(rs.getInt("rank"));
-        attendance.setAttendStatus(rs.getString("attend_status"));
-        return attendance;
-    };
+    static class AgendaVoteAttendanceRowMapper implements RowMapper<AgendaVoteAttendance>
+    {
+        private final MemberService memberService;
+
+        AgendaVoteAttendanceRowMapper(MemberService memberService) {
+            this.memberService = memberService;
+        }
+
+        @Override
+        public AgendaVoteAttendance mapRow(ResultSet rs, int rowNum) throws SQLException {
+            AgendaVoteAttendance attendance = new AgendaVoteAttendance();
+            try {
+                attendance.setMember(memberService.getMemberById(rs.getInt("member_id"), rs.getInt("session_year")));
+            }
+            catch (MemberNotFoundEx memberNotFoundEx) {
+                logger.info("Failed to map member for attendance listing.");
+            }
+            attendance.setParty(rs.getString("party"));
+            attendance.setRank(rs.getInt("rank"));
+            attendance.setAttendStatus(rs.getString("attend_status"));
+            return attendance;
+        }
+    }
 
     static class AgendaCommVoteHandler implements RowCallbackHandler
     {
@@ -463,9 +480,9 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
      * query will reference several columns that are already mapped via {@link #getAgendaVoteCommParams}.
      */
     static void addAgendaVoteAttendParams(AgendaVoteAttendance attendance, MapSqlParameterSource voteCommParams) {
-        voteCommParams.addValue("memberId", attendance.getMemberId().getId());
-        voteCommParams.addValue("sessionYear", attendance.getMemberId().getSessionYear());
-        voteCommParams.addValue("lbdcShortName", attendance.getMemberId().getLbdcShortName());
+        voteCommParams.addValue("memberId", attendance.getMember().getMemberId());
+        voteCommParams.addValue("sessionYear", attendance.getMember().getSessionYear());
+        voteCommParams.addValue("lbdcShortName", attendance.getMember().getLbdcShortName());
         voteCommParams.addValue("rank", attendance.getRank());
         voteCommParams.addValue("party", attendance.getParty());
         voteCommParams.addValue("attendStatus", attendance.getAttendStatus());

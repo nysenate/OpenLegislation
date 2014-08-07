@@ -127,7 +127,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
             jdbcNamed.update(INSERT_CALENDAR_SUP.getSql(schema()), supParams);
             // Insert the calendar entries
             for (CalendarSupplementalEntry entry : sup.getSectionEntries().values()) {
-                MapSqlParameterSource entryParams = getCalSupEntryParams(sup, entry);
+                MapSqlParameterSource entryParams = getCalSupEntryParams(sup, entry, fragment);
                 jdbcNamed.update(INSERT_CALENDAR_SUP_ENTRY.getSql(schema()), entryParams);
             }
         }
@@ -179,7 +179,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
             jdbcNamed.update(INSERT_CALENDAR_ACTIVE_LIST.getSql(schema()), actListParams);
             // Insert the active list entries
             for (CalendarActiveListEntry entry : actList.getEntries()) {
-                MapSqlParameterSource entryParams = getCalActiveListEntryParams(actList, entry);
+                MapSqlParameterSource entryParams = getCalActiveListEntryParams(actList, entry, fragment);
                 jdbcNamed.update(INSERT_CALENDAR_ACTIVE_LIST_ENTRY.getSql(schema()), entryParams);
             }
         }
@@ -276,7 +276,8 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         return params;
     }
 
-    protected static MapSqlParameterSource getCalSupEntryParams(CalendarSupplemental sup, CalendarSupplementalEntry entry) {
+    protected static MapSqlParameterSource getCalSupEntryParams(CalendarSupplemental sup, CalendarSupplementalEntry entry,
+                                                                SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(sup.getCalendarId(), params);
         params.addValue("supVersion", sup.getVersion());
@@ -288,6 +289,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         params.addValue("subSession", (subBillId != null) ? subBillId.getSession() : null);
         params.addValue("subAmendVersion", (subBillId != null) ? subBillId.getVersion() : null);
         params.addValue("high", entry.getBillHigh());
+        addLastFragmentParam(fragment, params);
         return params;
     }
 
@@ -304,12 +306,13 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     }
 
     protected static MapSqlParameterSource getCalActiveListEntryParams(CalendarActiveList actList,
-                                                                       CalendarActiveListEntry entry) {
+                                                                       CalendarActiveListEntry entry, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(actList.getCalendarId(), params);
         params.addValue("sequenceNo", actList.getSequenceNo());
         params.addValue("billCalendarNo", entry.getBillCalNo());
         addBillIdParams(entry.getBillId(), params);
+        addLastFragmentParam(fragment, params);
         return params;
     }
 

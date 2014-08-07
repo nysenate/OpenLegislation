@@ -9,6 +9,7 @@ public interface MemberDao
 {
     /**
      * Retrieve member by id.
+     *
      * @param id int
      * @param session int
      * @return Member
@@ -31,7 +32,7 @@ public interface MemberDao
      * @param chamber Chamber
      * @return Map<Integer,Member>
      */
-    public Map<Integer, Member> getMembersByLBDCName(String lbdcShortName, Chamber chamber);
+    public Map<Integer, Member> getMembersByShortName(String lbdcShortName, Chamber chamber);
 
     /**
      * Retrieve the Member instance via the LBDC shortName and the session year.
@@ -41,7 +42,7 @@ public interface MemberDao
      * @param chamber Chamber
      * @return Member
      */
-    public Member getMemberByLBDCName(String lbdcShortName, int sessionYear, Chamber chamber);
+    public Member getMemberByShortName(String lbdcShortName, int sessionYear, Chamber chamber);
 
     public void updateMember(Member member);
 

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Member extends Person implements Serializable
 {
@@ -45,29 +46,26 @@ public class Member extends Person implements Serializable
      * Ignores LBDC Shortname since there can be multiple variations.
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Member)) return false;
-        if (!super.equals(o)) return false;
-        Member member = (Member) o;
-        if (incumbent != member.incumbent) return false;
-        if (memberId != member.memberId) return false;
-        if (sessionYear != member.sessionYear) return false;
-        if (chamber != member.chamber) return false;
-        if (districtCode != null ? !districtCode.equals(member.districtCode) : member.districtCode != null)
-            return false;
-        return true;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        final Member other = (Member) obj;
+        return Objects.equals(this.memberId, other.memberId) &&
+               Objects.equals(this.sessionYear, other.sessionYear) &&
+               Objects.equals(this.chamber, other.chamber) &&
+               Objects.equals(this.incumbent, other.incumbent) &&
+               Objects.equals(this.districtCode, other.districtCode);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + memberId;
-        result = 31 * result + sessionYear;
-        result = 31 * result + (chamber != null ? chamber.hashCode() : 0);
-        result = 31 * result + (incumbent ? 1 : 0);
-        result = 31 * result + (districtCode != null ? districtCode.hashCode() : 0);
-        return result;
+        return 31 * super.hashCode() + Objects.hash(memberId, sessionYear, chamber, incumbent, districtCode);
+    }
+
+    @Override
+    public String toString() {
+        return lbdcShortName + " (year: " + sessionYear + ", id: " + memberId + ")";
     }
 
     /** --- Basic Getters/Setters --- */
