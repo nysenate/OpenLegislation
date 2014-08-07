@@ -133,49 +133,73 @@ ALTER TYPE public.committee_member_title OWNER TO postgres;
 SET search_path = master, pg_catalog;
 
 --
--- Name: data_updated(); Type: FUNCTION; Schema: master; Owner: postgres
+-- Name: log_sobi_updates(); Type: FUNCTION; Schema: master; Owner: postgres
 --
 
-CREATE FUNCTION data_updated() RETURNS trigger
+CREATE FUNCTION log_sobi_updates() RETURNS trigger
     LANGUAGE plpgsql
-    AS $$
-BEGIN
- IF tg_op = 'UPDATE' THEN
-   INSERT INTO master.sobi_change_log(table_name, action, key, data, modified_date_time, sobi_fragment_id)
-   VALUES (tg_table_name::text, 'u', hstore(ARRAY['print_no', NEW.print_no, 'session_year', NEW.session_year::character varying]), hstore(new.*) - hstore(old.*), current_timestamp, NEW.last_fragment_file_name	);
-   RETURN NEW;
- ELSIF tg_op = 'DELETE' THEN
-   INSERT INTO master.sobi_change_log(table_name, action, key, data, modified_date_time)
-   VALUES (tg_table_name::text, 'd', hstore(ARRAY['print_no', OLD.print_no, 'session_year', OLD.session_year::character varying]), hstore(old.*), current_timestamp);
-   RETURN OLD;			
- ELSIF tg_op = 'INSERT' THEN
-   INSERT INTO master.sobi_change_log(table_name, action,key, data, modified_date_time, sobi_fragment_id)
-   VALUES (tg_table_name::text, 'i', hstore(ARRAY['print_no', NEW.print_no, 'session_year', NEW.session_year::character varying]), hstore(new.*), current_timestamp, NEW.last_fragment_file_name);
-   RETURN NEW;			
- END IF;
-END;
-$$;
+    AS $$DECLARE  
+  primary_keys text[];         -- The primary key column names
+  old_primary_key_val hstore;  -- Previous primary key/value pairs
+  primary_key_val hstore;      -- Primary key/value pairs
+  old_values hstore;           -- Old record key/value pairs
+  new_values hstore;           -- New record key/value pairs
+  data_diff hstore;            -- The data values that have been updated
+  ignored_columns text[];      -- Column names to exclude from data_diff
+  fragment_id text := NULL;    -- The fragment id that caused the insert/update
+    
+BEGIN  
+  primary_keys := TG_ARGV;
+  ignored_columns := array_cat(ARRAY['modified_date_time', 'last_fragment_id'],
+                               primary_keys);
+
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+    primary_key_val := slice(hstore(NEW.*), primary_keys);
+    new_values := delete(hstore(NEW.*), ignored_columns);
+    fragment_id := NEW.last_fragment_id;
+    
+    -- Handle case where the primary key is modified
+    IF TG_OP = 'UPDATE' THEN
+       old_primary_key_val := slice(hstore(OLD.*), primary_keys);
+       IF primary_key_val != old_primary_key_val THEN
+         INSERT INTO master.sobi_change_log (table_name, action, key, data, sobi_fragment_id)
+         VALUES (TG_TABLE_NAME, 'MODIFIED_PKEY', old_primary_key_val, ''::hstore, fragment_id); 
+         TG_OP := 'INSERT';
+       END IF;
+    END IF;
+  ELSE 
+    primary_key_val := slice(hstore(OLD.*), primary_keys);    
+  END IF;
+
+  IF TG_OP IN ('UPDATE', 'DELETE') THEN
+    old_values := delete(hstore(OLD.*), ignored_columns);
+  END IF;
+  
+  IF TG_OP = 'INSERT' THEN
+    data_diff := new_values;
+  ELSIF TG_OP = 'UPDATE' THEN    
+    data_diff := new_values - old_values;
+  ELSE 
+    data_diff := old_values;
+  END IF;
+  
+  -- Add the sobi change record only for inserts, deletes, and updates where the 
+  -- non-ignored values were actually changed.
+  IF TG_OP IN ('INSERT','DELETE') OR data_diff != ''::hstore THEN
+    INSERT INTO master.sobi_change_log (table_name, action, key, data, sobi_fragment_id)
+    VALUES (TG_TABLE_NAME, TG_OP, primary_key_val, data_diff, fragment_id);
+  END IF;
+
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN 
+    RETURN NEW;
+  ELSE 
+    RETURN OLD;
+  END IF;
+
+END;$$;
 
 
-ALTER FUNCTION master.data_updated() OWNER TO postgres;
-
-SET search_path = public, pg_catalog;
-
---
--- Name: write_muwhahah(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION write_muwhahah() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$BEGIN
-  NEW.text := 'muwhahahahha';
-  RETURN NEW;
-END$$;
-
-
-ALTER FUNCTION public.write_muwhahah() OWNER TO postgres;
-
-SET search_path = master, pg_catalog;
+ALTER FUNCTION master.log_sobi_updates() OWNER TO postgres;
 
 --
 -- Name: openleg_fts_config; Type: TEXT SEARCH CONFIGURATION; Schema: master; Owner: postgres
@@ -717,7 +741,8 @@ CREATE TABLE bill_amendment_action (
     published_date_time timestamp without time zone,
     last_fragment_id text,
     sequence_no smallint NOT NULL,
-    chamber public.chamber NOT NULL
+    chamber public.chamber NOT NULL,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -739,7 +764,9 @@ CREATE TABLE bill_amendment_cosponsor (
     bill_session_year smallint NOT NULL,
     bill_amend_version character(1) NOT NULL,
     member_id integer NOT NULL,
-    sequence_no smallint NOT NULL
+    sequence_no smallint NOT NULL,
+    last_fragment_id text,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -761,7 +788,9 @@ CREATE TABLE bill_amendment_multi_sponsor (
     bill_session_year smallint NOT NULL,
     bill_amend_version character(1) NOT NULL,
     member_id integer NOT NULL,
-    sequence_no smallint NOT NULL
+    sequence_no smallint NOT NULL,
+    last_fragment_id text,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -779,12 +808,14 @@ COMMENT ON TABLE bill_amendment_multi_sponsor IS 'Listing of multi-sponsors for 
 --
 
 CREATE TABLE bill_amendment_same_as (
-    bill_print_no text,
-    bill_session_year smallint,
-    bill_amend_version character(1),
-    same_as_bill_print_no text,
-    same_as_session_year smallint,
-    same_as_amend_version character(1)
+    bill_print_no text NOT NULL,
+    bill_session_year smallint NOT NULL,
+    bill_amend_version character(1) NOT NULL,
+    same_as_bill_print_no text NOT NULL,
+    same_as_session_year smallint NOT NULL,
+    same_as_amend_version character(1) NOT NULL,
+    last_fragment_id text,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -810,7 +841,9 @@ CREATE TABLE bill_amendment_vote_info (
     id integer NOT NULL,
     published_date_time timestamp without time zone,
     modified_date_time timestamp without time zone,
-    vote_type vote_type NOT NULL
+    vote_type vote_type NOT NULL,
+    last_fragment_id text,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -874,7 +907,9 @@ CREATE TABLE bill_amendment_vote_roll (
     member_id integer NOT NULL,
     member_short_name text NOT NULL,
     session_year smallint NOT NULL,
-    vote_code vote_code NOT NULL
+    vote_code vote_code NOT NULL,
+    last_fragment_id text,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -896,7 +931,9 @@ CREATE TABLE bill_committee (
     bill_session_year smallint NOT NULL,
     committee_name public.citext NOT NULL,
     committee_chamber public.chamber NOT NULL,
-    action_date timestamp without time zone NOT NULL
+    action_date timestamp without time zone NOT NULL,
+    last_fragment_id text,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -923,9 +960,11 @@ COMMENT ON COLUMN bill_committee.action_date IS 'The date that the committee act
 CREATE TABLE bill_previous_version (
     bill_print_no text NOT NULL,
     bill_session_year smallint NOT NULL,
-    prev_bill_print_no text,
-    prev_bill_session_year smallint,
-    prev_amend_version text
+    prev_bill_print_no text NOT NULL,
+    prev_bill_session_year smallint NOT NULL,
+    prev_amend_version text NOT NULL,
+    last_fragment_id text,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -947,7 +986,9 @@ CREATE TABLE bill_sponsor (
     bill_session_year smallint NOT NULL,
     member_id integer,
     budget_bill boolean DEFAULT false,
-    rules_sponsor boolean DEFAULT false
+    rules_sponsor boolean DEFAULT false,
+    last_fragment_id text,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -968,7 +1009,8 @@ CREATE TABLE bill_sponsor_additional (
     bill_print_no text NOT NULL,
     bill_session_year smallint NOT NULL,
     member_id integer NOT NULL,
-    sequence_no smallint
+    sequence_no smallint,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -1096,7 +1138,8 @@ CREATE TABLE calendar_active_list_entry (
     bill_print_no text,
     bill_amend_version character(1),
     bill_session_year smallint,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -1173,7 +1216,8 @@ CREATE TABLE calendar_supplemental_entry (
     sub_bill_amend_version character(1),
     sub_bill_session_year smallint,
     high boolean,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -1578,9 +1622,9 @@ CREATE TABLE sobi_change_log (
     id integer NOT NULL,
     table_name text NOT NULL,
     action text NOT NULL,
-    key public.hstore,
-    data public.hstore,
-    modified_date_time timestamp without time zone NOT NULL,
+    key public.hstore NOT NULL,
+    data public.hstore NOT NULL,
+    action_date_time timestamp without time zone DEFAULT now() NOT NULL,
     sobi_fragment_id text
 );
 
@@ -2185,6 +2229,14 @@ ALTER TABLE ONLY agenda_vote_committee_vote
 
 
 --
+-- Name: bill_amendment_action_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY bill_amendment_action
+    ADD CONSTRAINT bill_amendment_action_pkey PRIMARY KEY (bill_print_no, bill_session_year, sequence_no);
+
+
+--
 -- Name: bill_amendment_cosponsor_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -2206,6 +2258,14 @@ ALTER TABLE ONLY bill_amendment_multi_sponsor
 
 ALTER TABLE ONLY bill_amendment
     ADD CONSTRAINT bill_amendment_pkey PRIMARY KEY (bill_print_no, bill_session_year, version);
+
+
+--
+-- Name: bill_amendment_same_as_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY bill_amendment_same_as
+    ADD CONSTRAINT bill_amendment_same_as_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version, same_as_bill_print_no, same_as_session_year, same_as_amend_version);
 
 
 --
@@ -2249,6 +2309,14 @@ ALTER TABLE ONLY bill
 
 
 --
+-- Name: bill_previous_version_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY bill_previous_version
+    ADD CONSTRAINT bill_previous_version_pkey PRIMARY KEY (bill_print_no, bill_session_year, prev_bill_print_no, prev_bill_session_year, prev_amend_version);
+
+
+--
 -- Name: bill_sponsor_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -2270,6 +2338,14 @@ ALTER TABLE ONLY bill_sponsor_additional
 
 ALTER TABLE ONLY bill_veto
     ADD CONSTRAINT bill_veto_pkey PRIMARY KEY (veto_number, year);
+
+
+--
+-- Name: calendar_active_list_calendar_no_calendar_year_sequence_no_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY calendar_active_list
+    ADD CONSTRAINT calendar_active_list_calendar_no_calendar_year_sequence_no_key UNIQUE (calendar_no, calendar_year, sequence_no);
 
 
 --
@@ -2444,12 +2520,185 @@ CREATE INDEX sobi_change_log_keygin ON sobi_change_log USING gin (key);
 
 
 --
--- Name: log_bill_changes; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: sobi_change_log_table_name_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
-CREATE TRIGGER log_bill_changes BEFORE INSERT OR DELETE OR UPDATE ON bill FOR EACH ROW EXECUTE PROCEDURE data_updated();
+CREATE INDEX sobi_change_log_table_name_idx ON sobi_change_log USING btree (table_name);
 
-ALTER TABLE bill DISABLE TRIGGER log_bill_changes;
+
+--
+-- Name: log_agenda_info_addendum_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_agenda_info_addendum_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_info_addendum FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id');
+
+
+--
+-- Name: log_agenda_info_committee_item_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_agenda_info_committee_item_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_info_committee_item FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('id');
+
+
+--
+-- Name: log_agenda_info_committee_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_agenda_info_committee_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_info_committee FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id', 'committee_name', 'committee_chamber');
+
+
+--
+-- Name: log_agenda_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_agenda_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year');
+
+
+--
+-- Name: log_agenda_vote_addendum_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_agenda_vote_addendum_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_addendum FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id');
+
+
+--
+-- Name: log_agenda_vote_committee_attend_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_agenda_vote_committee_attend_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_committee_attend FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('id');
+
+
+--
+-- Name: log_agenda_vote_committee_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_agenda_vote_committee_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_committee FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id', 'committee_name', 'committee_chamber');
+
+
+--
+-- Name: log_agenda_vote_committee_vote_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_agenda_vote_committee_vote_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_committee_vote FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('id');
+
+
+--
+-- Name: log_bill_amendment_action_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_amendment_action_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_action FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'sequence_no');
+
+
+--
+-- Name: log_bill_amendment_cosponsor_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_amendment_cosponsor_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_cosponsor FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'bill_amend_version', 'member_id');
+
+
+--
+-- Name: log_bill_amendment_multisponsor_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_amendment_multisponsor_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_multi_sponsor FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'bill_amend_version', 'member_id');
+
+
+--
+-- Name: log_bill_amendment_same_as_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_amendment_same_as_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_same_as FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'bill_amend_version');
+
+
+--
+-- Name: log_bill_amendment_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_amendment_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'version');
+
+
+--
+-- Name: log_bill_amendment_vote_info_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_amendment_vote_info_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_vote_info FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'bill_amend_version');
+
+
+--
+-- Name: log_bill_amendment_vote_roll_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_amendment_vote_roll_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_vote_roll FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('vote_id', 'member_id', 'session_year', 'vote_code');
+
+
+--
+-- Name: log_bill_committee_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_committee_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_committee FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'committee_name', 'committee_chamber', 'action_date');
+
+
+--
+-- Name: log_bill_previous_version_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_previous_version_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_previous_version FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year');
+
+
+--
+-- Name: log_bill_sponsor_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_sponsor_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_sponsor FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year');
+
+
+--
+-- Name: log_bill_update; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_update BEFORE INSERT OR DELETE OR UPDATE ON bill FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('print_no', 'session_year');
+
+
+--
+-- Name: log_bill_veto_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_veto_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_veto FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'session_year', 'veto_number');
+
+
+--
+-- Name: log_calendar_active_list_entry_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_calendar_active_list_entry_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar_active_list_entry FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('calendar_active_list_id', 'bill_calendar_no');
+
+
+--
+-- Name: log_calendar_active_list_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_calendar_active_list_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar_active_list FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('id', 'calendar_no', 'calendar_year', 'sequence_no');
+
+
+--
+-- Name: log_calendar_supplemental_entry_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_calendar_supplemental_entry_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar_supplemental_entry FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('id', 'calendar_sup_id');
+
+
+--
+-- Name: log_calendar_supplemental_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_calendar_supplemental_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar_supplemental FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('id', 'calendar_no', 'calendar_year', 'sup_version');
+
+
+--
+-- Name: log_calendar_updates; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_calendar_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('calendar_no', 'year');
 
 
 --
@@ -2474,14 +2723,6 @@ ALTER TABLE ONLY agenda_info_addendum
 
 ALTER TABLE ONLY agenda_info_committee
     ADD CONSTRAINT agenda_info_committee_agenda_no_fkey FOREIGN KEY (agenda_no, year, addendum_id) REFERENCES agenda_info_addendum(agenda_no, year, addendum_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: agenda_info_committee_committee_name_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY agenda_info_committee
-    ADD CONSTRAINT agenda_info_committee_committee_name_fkey FOREIGN KEY (committee_name, committee_chamber) REFERENCES committee(name, chamber) ON UPDATE CASCADE;
 
 
 --
@@ -2565,14 +2806,6 @@ ALTER TABLE ONLY agenda_vote_committee_attend
 
 
 --
--- Name: agenda_vote_committee_committee_name_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY agenda_vote_committee
-    ADD CONSTRAINT agenda_vote_committee_committee_name_fkey FOREIGN KEY (committee_name, committee_chamber) REFERENCES committee(name, chamber) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: agenda_vote_committee_last_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
@@ -2645,6 +2878,14 @@ ALTER TABLE ONLY bill_amendment_cosponsor
 
 
 --
+-- Name: bill_amendment_cosponsor_last_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_amendment_cosponsor
+    ADD CONSTRAINT bill_amendment_cosponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: bill_amendment_cosponsor_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
@@ -2669,6 +2910,14 @@ ALTER TABLE ONLY bill_amendment_multi_sponsor
 
 
 --
+-- Name: bill_amendment_multi_sponsor_last_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_amendment_multi_sponsor
+    ADD CONSTRAINT bill_amendment_multi_sponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: bill_amendment_multi_sponsor_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
@@ -2685,11 +2934,35 @@ ALTER TABLE ONLY bill_amendment_same_as
 
 
 --
+-- Name: bill_amendment_same_as_last_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_amendment_same_as
+    ADD CONSTRAINT bill_amendment_same_as_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: bill_amendment_vote_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_amendment_vote_info
     ADD CONSTRAINT bill_amendment_vote_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bill_amendment_vote_info_last_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_amendment_vote_info
+    ADD CONSTRAINT bill_amendment_vote_info_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bill_amendment_vote_roll_last_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_amendment_vote_roll
+    ADD CONSTRAINT bill_amendment_vote_roll_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2717,11 +2990,11 @@ ALTER TABLE ONLY bill_committee
 
 
 --
--- Name: bill_committee_committee_name_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+-- Name: bill_committee_last_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_committee
-    ADD CONSTRAINT bill_committee_committee_name_fkey FOREIGN KEY (committee_name, committee_chamber) REFERENCES committee(name, chamber) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2741,11 +3014,27 @@ ALTER TABLE ONLY bill_previous_version
 
 
 --
+-- Name: bill_previous_version_last_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_previous_version
+    ADD CONSTRAINT bill_previous_version_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: bill_sponsor_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_sponsor
     ADD CONSTRAINT bill_sponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bill_sponsor_last_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_sponsor
+    ADD CONSTRAINT bill_sponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2762,6 +3051,14 @@ ALTER TABLE ONLY bill_sponsor
 
 ALTER TABLE ONLY bill_veto
     ADD CONSTRAINT bill_veto_bill_print_no_fkey FOREIGN KEY (bill_print_no, session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bill_veto_last_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_veto
+    ADD CONSTRAINT bill_veto_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
