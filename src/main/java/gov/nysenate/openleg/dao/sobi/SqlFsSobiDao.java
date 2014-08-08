@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.sobi.SqlSobiQuery.*;
-import static gov.nysenate.openleg.util.FileHelper.getSortedFiles;
+import static gov.nysenate.openleg.util.FileIOUtils.getSortedFiles;
 
 /**
  * Sobi files are stored in the file system to preserve their original formatting but metadata

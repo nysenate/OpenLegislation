@@ -1,10 +1,7 @@
 package gov.nysenate.openleg.dao.calendar;
 
 import com.google.common.collect.*;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -21,8 +18,11 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static com.google.common.collect.ImmutableMap.of;
 import static gov.nysenate.openleg.dao.calendar.SqlCalendarQuery.*;
+import static java.util.stream.Collectors.toList;
 
 @Repository
 public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
@@ -32,14 +32,14 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     /** {@inheritDoc} */
     @Override
     public Calendar getCalendar(CalendarId calendarId) throws DataAccessException {
-        MapSqlParameterSource calParams = new MapSqlParameterSource();
-        addCalendarIdParams(calendarId, calParams);
+        ImmutableParams calParams = ImmutableParams.from(getCalendarIdParams(calendarId));
         // Get the base calendar
         Calendar calendar = jdbcNamed.queryForObject(SELECT_CALENDAR.getSql(schema()), calParams, new CalendarRowMapper());
         // Get the supplementals
         calendar.setSupplementalMap(getCalSupplementals(calParams));
         // Get the active lists
         calendar.setActiveListMap(getActiveListMap(calParams));
+        // Calendar is fully constructed
         return calendar;
     }
 
@@ -47,21 +47,18 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     @Override
     public List<CalendarId> getCalendarIds(int year, SortOrder calOrder) {
         OrderBy orderBy = new OrderBy("calendarNo", calOrder);
-        MapSqlParameterSource params = new MapSqlParameterSource("year", year);
+        ImmutableParams yearParam = ImmutableParams.from(new MapSqlParameterSource("year", year));
         List<Calendar> calendars =
-            jdbcNamed.query(SELECT_CALENDAR.getSql(schema(), orderBy, LimitOffset.ALL), params, new CalendarRowMapper());
-        List<CalendarId> calendarIds = new ArrayList<>();
-        for (Calendar calendar : calendars) {
-            calendarIds.add(calendar.getId());
-        }
-        return calendarIds;
+            jdbcNamed.query(SELECT_CALENDAR.getSql(schema(), orderBy, LimitOffset.ALL), yearParam, new CalendarRowMapper());
+        // Return just the calendar ids in a list
+        return calendars.stream().map(Calendar::getId).collect(toList());
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateCalendar(Calendar calendar, SobiFragment fragment) throws DataAccessException {
         logger.trace("Updating calendar {} in database...", calendar);
-        MapSqlParameterSource calParams = getCalendarParams(calendar, fragment);
+        ImmutableParams calParams = ImmutableParams.from(getCalendarParams(calendar, fragment));
         // Update base calendar
         if (jdbcNamed.update(UPDATE_CALENDAR.getSql(schema()), calParams) == 0) {
             jdbcNamed.update(INSERT_CALENDAR.getSql(schema()), calParams);
@@ -77,14 +74,14 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     /**
      * Retrieves all the supplementals for a particular calendar.
      */
-    private TreeMap<String, CalendarSupplemental> getCalSupplementals(MapSqlParameterSource calParams) {
+    private TreeMap<String, CalendarSupplemental> getCalSupplementals(ImmutableParams calParams) {
         List<CalendarSupplemental> calSupList =
                 jdbcNamed.query(SELECT_CALENDAR_SUPS.getSql(schema()), calParams, new CalendarSupRowMapper());
         TreeMap<String, CalendarSupplemental> supMap = new TreeMap<>();
         for (CalendarSupplemental calSup : calSupList) {
-            calParams.addValue("supVersion", calSup.getVersion());
+            ImmutableParams calSupParams = calParams.add(of("supVersion", calSup.getVersion()));
             // Add the supplemental entries
-            calSup.setSectionEntries(getCalSupEntries(calParams));
+            calSup.setSectionEntries(getCalSupEntries(calSupParams));
             supMap.put(calSup.getVersion(), calSup);
         }
         return supMap;
@@ -93,8 +90,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     /**
      * Retrieves the supplemental entries for a particular supplemental.
      */
-    private LinkedListMultimap<CalendarSectionType, CalendarSupplementalEntry> getCalSupEntries(
-            MapSqlParameterSource supParams) {
+    private LinkedListMultimap<CalendarSectionType, CalendarSupplementalEntry> getCalSupEntries(ImmutableParams supParams) {
         List<CalendarSupplementalEntry> entries =
             jdbcNamed.query(SELECT_CALENDAR_SUP_ENTRIES.getSql(schema()), supParams, new CalendarSupEntryRowMapper());
         LinkedListMultimap<CalendarSectionType, CalendarSupplementalEntry> sectionEntries = LinkedListMultimap.create();
@@ -108,7 +104,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
      * Updates the calendar supplementals. Entries belonging to supplementals that have not changed will not
      * be affected.
      */
-    private void updateCalSupplementals(Calendar calendar, SobiFragment fragment, MapSqlParameterSource calParams) {
+    private void updateCalSupplementals(Calendar calendar, SobiFragment fragment, ImmutableParams calParams) {
         Map<String, CalendarSupplemental> existingCalSupMap = getCalSupplementals(calParams);
         // Get the difference between the existing and current supplemental mappings
         MapDifference<String, CalendarSupplemental> diff =
@@ -116,18 +112,18 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         // Delete any supplementals that were not found in the current map or were different.
         Set<String> deleteSupVersions = Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnLeft().keySet());
         for (String supVersion : deleteSupVersions) {
-            calParams.addValue("supVersion", supVersion);
-            jdbcNamed.update(DELETE_CALENDAR_SUP.getSql(schema()), calParams);
+            ImmutableParams calSupParams = calParams.add(of("supVersion", supVersion));
+            jdbcNamed.update(DELETE_CALENDAR_SUP.getSql(schema()), calSupParams);
         }
         // Insert any new or differing supplementals
         Set<String> updateSupVersions = Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnRight().keySet());
         for (String supVersion : updateSupVersions) {
             CalendarSupplemental sup = calendar.getSupplemental(supVersion);
-            MapSqlParameterSource supParams = getCalSupplementalParams(sup, fragment);
+            ImmutableParams supParams = ImmutableParams.from(getCalSupplementalParams(sup, fragment));
             jdbcNamed.update(INSERT_CALENDAR_SUP.getSql(schema()), supParams);
             // Insert the calendar entries
             for (CalendarSupplementalEntry entry : sup.getSectionEntries().values()) {
-                MapSqlParameterSource entryParams = getCalSupEntryParams(sup, entry, fragment);
+                ImmutableParams entryParams = ImmutableParams.from(getCalSupEntryParams(sup, entry, fragment));
                 jdbcNamed.update(INSERT_CALENDAR_SUP_ENTRY.getSql(schema()), entryParams);
             }
         }
@@ -136,13 +132,13 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     /**
      * Retrieve the active list mappings for a specific calendar.
      */
-    private TreeMap<Integer, CalendarActiveList> getActiveListMap(MapSqlParameterSource calParams) {
+    private TreeMap<Integer, CalendarActiveList> getActiveListMap(ImmutableParams calParams) {
         List<CalendarActiveList> activeLists =
             jdbcNamed.query(SELECT_CALENDAR_ACTIVE_LISTS.getSql(schema()), calParams, new CalendarActiveListRowMapper());
         TreeMap<Integer, CalendarActiveList> activeListMap = new TreeMap<>();
         for (CalendarActiveList activeList : activeLists) {
-            calParams.addValue("sequenceNo", activeList.getSequenceNo());
-            activeList.setEntries(getActiveListEntries(calParams));
+            ImmutableParams activeListParams = calParams.add(of("sequenceNo", activeList.getSequenceNo()));
+            activeList.setEntries(getActiveListEntries(activeListParams));
             activeListMap.put(activeList.getSequenceNo(), activeList);
         }
         return activeListMap;
@@ -151,7 +147,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     /**
      * Retrieve entries for a specific active list.
      */
-    private List<CalendarActiveListEntry> getActiveListEntries(MapSqlParameterSource activeListParams) {
+    private List<CalendarActiveListEntry> getActiveListEntries(ImmutableParams activeListParams) {
         return jdbcNamed.query(SELECT_CALENDAR_ACTIVE_LIST_ENTRIES.getSql(schema()), activeListParams,
                                new CalendarActiveListEntryRowMapper());
     }
@@ -160,7 +156,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
      * Updates the calendar active lists. Entries belonging to active lists that have not changed will not
      * be affected.
      */
-    private void updateCalActiveLists(Calendar calendar, SobiFragment fragment, MapSqlParameterSource calParams) {
+    private void updateCalActiveLists(Calendar calendar, SobiFragment fragment, ImmutableParams calParams) {
         Map<Integer, CalendarActiveList> existingActiveListMap = getActiveListMap(calParams);
         // Get the difference between the existing and current active list mappings.
         MapDifference<Integer, CalendarActiveList> diff =
@@ -168,18 +164,18 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         // Delete any active lists that were not found in the current map or were different.
         Set<Integer> deleteActListSeqs = Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnLeft().keySet());
         for (Integer actListSeq : deleteActListSeqs) {
-            calParams.addValue("sequenceNo", actListSeq);
-            jdbcNamed.update(DELETE_CALENDAR_ACTIVE_LIST.getSql(schema()), calParams);
+            ImmutableParams activeListParams = calParams.add(of("sequenceNo", actListSeq));
+            jdbcNamed.update(DELETE_CALENDAR_ACTIVE_LIST.getSql(schema()), activeListParams);
         }
         // Insert any new or differing active lists
         Set<Integer> updateActListSeqs = Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnRight().keySet());
         for (Integer actListSeq : updateActListSeqs) {
             CalendarActiveList actList = calendar.getActiveList(actListSeq);
-            MapSqlParameterSource actListParams = getCalActiveListParams(actList, fragment);
+            ImmutableParams actListParams = ImmutableParams.from(getCalActiveListParams(actList, fragment));
             jdbcNamed.update(INSERT_CALENDAR_ACTIVE_LIST.getSql(schema()), actListParams);
             // Insert the active list entries
             for (CalendarActiveListEntry entry : actList.getEntries()) {
-                MapSqlParameterSource entryParams = getCalActiveListEntryParams(actList, entry, fragment);
+                ImmutableParams entryParams = ImmutableParams.from(getCalActiveListEntryParams(actList, entry, fragment));
                 jdbcNamed.update(INSERT_CALENDAR_ACTIVE_LIST_ENTRY.getSql(schema()), entryParams);
             }
         }
@@ -256,6 +252,12 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     }
 
     /** --- Param Source Methods --- */
+
+    protected static MapSqlParameterSource getCalendarIdParams(CalendarId calendarId) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        addCalendarIdParams(calendarId, params);
+        return params;
+    }
 
     protected static MapSqlParameterSource getCalendarParams(Calendar calendar, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();

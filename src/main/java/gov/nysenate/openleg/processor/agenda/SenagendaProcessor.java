@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -42,7 +41,7 @@ public class SenagendaProcessor
     public void processSenagenda(File file, Storage storage) throws XPathExpressionException, SAXException, IOException
     {
         // TODO: We need a better default here
-//        LocalDateTime modifiedDate = DateHelper.getSobiFileDate(file.getName());
+//        LocalDateTime modifiedDate = DateUtils.getSobiFileDate(file.getName());
 //        ChangeLogger.setContext(file, modifiedDate);
         XmlHelper xml = null;//Application.getXmlHelper();
 
@@ -80,8 +79,8 @@ public class SenagendaProcessor
             for (int i=0; i < xmlAddendums.getLength(); i++) {
                 Node xmlAddendum = xmlAddendums.item(i);
                 String id = xml.getString("@id", xmlAddendum);
-//                Date weekOf = DateHelper.getLrsDate(xml.getString("weekof/text()", xmlAddendum));
-                LocalDateTime pubDateTime = DateHelper.getLrsDateTime(xml.getString("pubdate/text()", xmlAddendum) + xml.getString("pubtime/text()", xmlAddendum));
+//                Date weekOf = DateUtils.getLrsDate(xml.getString("weekof/text()", xmlAddendum));
+                LocalDateTime pubDateTime = DateUtils.getLrsDateTime(xml.getString("pubdate/text()", xmlAddendum) + xml.getString("pubtime/text()", xmlAddendum));
                 AgendaInfoAddendum addendum = new AgendaInfoAddendum();//null, id, weekOf, pubDateTime);
 
                 NodeList xmlCommittees = xml.getNodeList("committees/committee", xmlAddendum);
@@ -92,7 +91,7 @@ public class SenagendaProcessor
                     String location = xml.getString("location/text()", xmlCommittee);
                     String meetDay = xml.getString("meetday/text()", xmlCommittee);
                     String notes = xml.getString("notes/text()", xmlCommittee);
-                    LocalDateTime meetDateTime = DateHelper.getLrsDateTime(xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
+                    LocalDateTime meetDateTime = DateUtils.getLrsDateTime(xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
                     AgendaInfoCommittee committee = new AgendaInfoCommittee();//new AgendaInfoCommittee(name, chair, location, notes, meetDay, meetDateTime);
 
                     NodeList xmlBills = xml.getNodeList("bills/bill", xmlCommittee);
@@ -126,7 +125,7 @@ public class SenagendaProcessor
     public void processSenagendaVote(File file, Storage storage) throws SAXException, IOException, XPathExpressionException, ParseException
     {
         // TODO: We need a better default here
-//        LocalDateTime modifiedDate = DateHelper.getSobiFileDate(file.getName());
+//        LocalDateTime modifiedDate = DateUtils.getSobiFileDate(file.getName());
 //        ChangeLogger.setContext(file, modifiedDate);
 
         XmlHelper xml = null;//Application.getXmlHelper();
@@ -164,7 +163,7 @@ public class SenagendaProcessor
                 String action = xml.getString("@action", xmlCommittee);
                 String name = xml.getString("name/text()", xmlCommittee);
                 String chair = xml.getString("chair/text()", xmlCommittee);
-                LocalDateTime meetDateTime = DateHelper.getLrsDateTime(xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
+                LocalDateTime meetDateTime = DateUtils.getLrsDateTime(xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
 
                 // If the action is remove, then discard the committee and move on
                 if (action.equals("remove")) {

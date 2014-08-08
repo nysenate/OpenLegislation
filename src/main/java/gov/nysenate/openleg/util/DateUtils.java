@@ -10,9 +10,9 @@ import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-public class DateHelper
+public abstract class DateUtils
 {
-    private static final Logger logger = LoggerFactory.getLogger(DateHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(DateUtils.class);
 
     /** --- Date Formats --- */
 

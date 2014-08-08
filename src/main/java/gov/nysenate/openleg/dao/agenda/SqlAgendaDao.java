@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.agenda;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import gov.nysenate.openleg.dao.base.OrderBy;
+import gov.nysenate.openleg.dao.base.ImmutableParams;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.dao.common.BillVoteIdRowMapper;
@@ -14,7 +14,6 @@ import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
-import gov.nysenate.openleg.model.entity.MemberId;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.entity.MemberService;
@@ -30,13 +29,12 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static com.google.common.collect.ImmutableMap.of;
 import static gov.nysenate.openleg.dao.agenda.SqlAgendaQuery.*;
-import static java.util.stream.Collectors.toMap;
 
 @Repository
 public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
@@ -49,7 +47,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     /** {@inheritDoc} */
     @Override
     public Agenda getAgenda(AgendaId agendaId) throws DataAccessException {
-        MapSqlParameterSource agendaIdParams = getAgendaIdParams(agendaId);
+        ImmutableParams agendaIdParams = ImmutableParams.from(getAgendaIdParams(agendaId));
         Agenda agenda =
             jdbcNamed.queryForObject(SELECT_AGENDA_BY_ID.getSql(schema()), agendaIdParams, agendaRowMapper);
         // Set the info addenda
@@ -93,7 +91,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     /**
      * Returns a map of agenda info addenda, keyed by addendum id, based on the agenda id parameters.
      */
-    private Map<String, AgendaInfoAddendum> getAgendaInfoAddenda(MapSqlParameterSource agendaParams) {
+    private Map<String, AgendaInfoAddendum> getAgendaInfoAddenda(ImmutableParams agendaParams) {
         List<AgendaInfoAddendum> infoAddenda =
             jdbcNamed.query(SELECT_AGENDA_INFO_ADDENDA.getSql(schema()), agendaParams, agendaInfoRowMapper);
         // Create a new map where the addenda are grouped by their id.
@@ -101,8 +99,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
             new TreeMap<>(Maps.uniqueIndex(infoAddenda, AgendaInfoAddendum::getId));
         // Set the info committees for each addendum
         infoAddendaMap.forEach((id,addendum) -> {
-            agendaParams.addValue("addendumId", id);
-            addendum.setCommitteeInfoMap(getAgendaInfoCommittees(agendaParams));
+            ImmutableParams agendaInfoParams = agendaParams.add(of("addendumId", id));
+            addendum.setCommitteeInfoMap(getAgendaInfoCommittees(agendaInfoParams));
         });
         return infoAddendaMap;
     }
@@ -111,14 +109,15 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
      * Returns a map of the agenda info committees with their associated items via the parameters
      * for an AgendaInfoAddendum.
      */
-    private Map<CommitteeId, AgendaInfoCommittee> getAgendaInfoCommittees(MapSqlParameterSource agendaInfoParams) {
+    private Map<CommitteeId, AgendaInfoCommittee> getAgendaInfoCommittees(ImmutableParams agendaInfoParams) {
         List<AgendaInfoCommittee> infoComms =
             jdbcNamed.query(SELECT_AGENDA_INFO_COMMITTEES.getSql(schema()), agendaInfoParams, agendaInfoCommRowMapper);
         // Set the items for each info committee
         infoComms.forEach((infoComm) -> {
-            agendaInfoParams.addValue("committeeName", infoComm.getCommitteeId().getName());
-            agendaInfoParams.addValue("committeeChamber", infoComm.getCommitteeId().getChamber().asSqlEnum());
-            infoComm.setItems(getAgendaInfoCommItems(agendaInfoParams));
+            CommitteeId cid = infoComm.getCommitteeId();
+            ImmutableParams infoCommParams = agendaInfoParams.add(
+                of("committeeName", cid.getName(), "committeeChamber", cid.getChamber().asSqlEnum()));
+            infoComm.setItems(getAgendaInfoCommItems(infoCommParams));
         });
         return new TreeMap<>(Maps.uniqueIndex(infoComms, AgendaInfoCommittee::getCommitteeId));
     }
@@ -126,7 +125,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     /**
      * Returns all the committee items via the info committee parameters.
      */
-    private List<AgendaInfoCommitteeItem> getAgendaInfoCommItems(MapSqlParameterSource infoCommParams) {
+    private List<AgendaInfoCommitteeItem> getAgendaInfoCommItems(ImmutableParams infoCommParams) {
         return jdbcNamed.query(
             SELECT_AGENDA_INFO_COMM_ITEMS.getSql(schema()), infoCommParams, agendaInfoCommItemRowMapper);
     }
@@ -134,7 +133,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     /**
      * Returns a map of agenda vote addenda, keyed by addendum id, based on the agenda id parameters.
      */
-    private Map<String, AgendaVoteAddendum> getAgendaVoteAddenda(MapSqlParameterSource agendaParams) {
+    private Map<String, AgendaVoteAddendum> getAgendaVoteAddenda(ImmutableParams agendaParams) {
         List<AgendaVoteAddendum> voteAddenda =
                 jdbcNamed.query(SELECT_AGENDA_VOTE_ADDENDA.getSql(schema()), agendaParams, agendaVoteRowMapper);
         // Create a new map where the addenda are grouped by their id.
@@ -142,8 +141,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
             new TreeMap<>(Maps.uniqueIndex(voteAddenda, AgendaVoteAddendum::getId));
         // Set the info committees for each addendum
         voteAddendaMap.forEach((id,addendum) -> {
-            agendaParams.addValue("addendumId", id);
-            addendum.setCommitteeVoteMap(getAgendaVoteCommitteeMap(agendaParams));
+            ImmutableParams agendaVoteParams = agendaParams.add(of("addendumId", id));
+            addendum.setCommitteeVoteMap(getAgendaVoteCommitteeMap(agendaVoteParams));
         });
         return voteAddendaMap;
     }
@@ -152,20 +151,21 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
      * Returns a map of the agenda vote committees with their associated items via the parameters
      * for an AgendaVoteAddendum.
      */
-    private Map<CommitteeId, AgendaVoteCommittee> getAgendaVoteCommitteeMap(MapSqlParameterSource agendaVoteParams) {
+    private Map<CommitteeId, AgendaVoteCommittee> getAgendaVoteCommitteeMap(ImmutableParams agendaVoteParams) {
         List<AgendaVoteCommittee> voteComms =
             jdbcNamed.query(SELECT_AGENDA_VOTE_COMMITTEES.getSql(schema()), agendaVoteParams, agendaVoteCommRowMapper);
 
         voteComms.forEach((voteComm) -> {
-            agendaVoteParams.addValue("committeeName", voteComm.getCommitteeId().getName());
-            agendaVoteParams.addValue("committeeChamber", voteComm.getCommitteeId().getChamber().asSqlEnum());
+            CommitteeId cid = voteComm.getCommitteeId();
+            ImmutableParams voteCommParams = agendaVoteParams.add(
+                of("committeeName", cid.getName(), "committeeChamber", cid.getChamber().asSqlEnum()));
             // Set the attendance list for each vote committee
             voteComm.setAttendance(
-                jdbcNamed.query(SELECT_AGENDA_VOTE_ATTENDANCE.getSql(schema()), agendaVoteParams,
+                jdbcNamed.query(SELECT_AGENDA_VOTE_ATTENDANCE.getSql(schema()), voteCommParams,
                     new AgendaVoteAttendanceRowMapper(memberService)));
             // Set the bills that were voted on
             AgendaCommVoteHandler agendaVoteHandler = new AgendaCommVoteHandler(memberService);
-            jdbcNamed.query(SELECT_AGENDA_COMM_VOTES.getSql(schema()), agendaVoteParams, agendaVoteHandler);
+            jdbcNamed.query(SELECT_AGENDA_COMM_VOTES.getSql(schema()), voteCommParams, agendaVoteHandler);
             voteComm.setVotedBills(agendaVoteHandler.getAgendaVoteBills());
         });
         return new TreeMap<>(Maps.uniqueIndex(voteComms, AgendaVoteCommittee::getCommitteeId));
@@ -175,16 +175,16 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
      * Delete any existing info addenda that have been modified and insert any new or modified info addenda.
      */
     private void updateAgendaInfoAddenda(Agenda agenda, SobiFragment sobiFragment) {
-        MapSqlParameterSource params = getAgendaIdParams(agenda.getId());
+        ImmutableParams agendaIdParams = ImmutableParams.from(getAgendaIdParams(agenda.getId()));
         // Compute the differences between the new and existing addenda
-        Map<String, AgendaInfoAddendum> existingAddenda = getAgendaInfoAddenda(params);
+        Map<String, AgendaInfoAddendum> existingAddenda = getAgendaInfoAddenda(agendaIdParams);
         Map<String, AgendaInfoAddendum> currentAddenda = agenda.getAgendaInfoAddenda();
         MapDifference<String, AgendaInfoAddendum> diff = Maps.difference(existingAddenda, currentAddenda);
         // Delete any removed or modified addenda. This will cascade to all items stored within the addenda.
         Sets.union(diff.entriesOnlyOnLeft().keySet(), diff.entriesDiffering().keySet())
             .forEach(id -> {
-                params.addValue("addendumId", id);
-                jdbcNamed.update(DELETE_AGENDA_INFO_ADDENDUM.getSql(schema()), params);
+                ImmutableParams addendumParams = agendaIdParams.add(of("addendumId", id));
+                jdbcNamed.update(DELETE_AGENDA_INFO_ADDENDUM.getSql(schema()), addendumParams);
             });
         // Update/insert any modified or new addenda
         Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnRight().keySet()).stream()
@@ -220,16 +220,16 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
      * Delete any existing vote addenda that have been modified and insert any new or modified vote addenda.
      */
     private void updateAgendaVoteAddenda(Agenda agenda, SobiFragment sobiFragment) {
-        MapSqlParameterSource params = getAgendaIdParams(agenda.getId());
+        ImmutableParams agendaIdParams = ImmutableParams.from(getAgendaIdParams(agenda.getId()));
         // Compute the differences between the new and existing addenda
-        Map<String, AgendaVoteAddendum> existingAddenda = getAgendaVoteAddenda(params);
+        Map<String, AgendaVoteAddendum> existingAddenda = getAgendaVoteAddenda(agendaIdParams);
         Map<String, AgendaVoteAddendum> currentAddenda = agenda.getAgendaVoteAddenda();
         MapDifference<String, AgendaVoteAddendum> diff = Maps.difference(existingAddenda, currentAddenda);
         // Delete any removed or modified addenda. This will cascade to all items stored within the addenda.
         Sets.union(diff.entriesOnlyOnLeft().keySet(), diff.entriesDiffering().keySet())
             .forEach(id -> {
-                params.addValue("addendumId", id);
-                jdbcNamed.update(DELETE_AGENDA_VOTE_ADDENDUM.getSql(schema()), params);
+                ImmutableParams addendumParams = agendaIdParams.add(of("addendumId", id));
+                jdbcNamed.update(DELETE_AGENDA_VOTE_ADDENDUM.getSql(schema()), addendumParams);
             });
         // Update/insert any modified or new addenda
         Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnRight().keySet()).stream()

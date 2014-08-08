@@ -5,12 +5,11 @@ import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.entity.MemberId;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.SobiProcessor;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.util.DateHelper;
+import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,6 @@ import org.xml.sax.SAXException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Service
 public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiProcessor
@@ -83,7 +81,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                     }
                     // Otherwise, the committee is completely replaced
                     String chair = xml.getString("chair/text()", xmlCommittee);
-                    LocalDateTime meetDateTime = DateHelper.getLrsDateTime(
+                    LocalDateTime meetDateTime = DateUtils.getLrsDateTime(
                             xml.getString("meetdate/text()", xmlCommittee) + xml.getString("meettime/text()", xmlCommittee));
                     AgendaVoteCommittee voteCommittee = new AgendaVoteCommittee(committeeId, chair, meetDateTime);
 

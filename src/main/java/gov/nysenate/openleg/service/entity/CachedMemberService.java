@@ -33,15 +33,6 @@ public class CachedMemberService implements MemberService
         cacheManager.addCache("memberId");
     }
 
-    /** {@inheritDoc}
-     *  We can just delegate to the member retrieval method because that's going to be cached.
-     */
-    @Override
-    public MemberId getMemberId(String lbdcShortName, int sessionYear, Chamber chamber) throws MemberNotFoundEx {
-        Member member = getMemberByShortName(lbdcShortName, sessionYear, chamber);
-        return new MemberId(member.getMemberId(), member.getSessionYear(), member.getLbdcShortName());
-    }
-
     /** {@inheritDoc} */
     @Cacheable("memberId")
     public Member getMemberById(int memberId, int sessionYear) throws MemberNotFoundEx {

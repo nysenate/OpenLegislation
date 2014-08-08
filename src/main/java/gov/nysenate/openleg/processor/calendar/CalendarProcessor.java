@@ -7,7 +7,7 @@ import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.SobiProcessor;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.util.DateHelper;
+import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,6 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Service
 public class CalendarProcessor extends AbstractDataProcessor implements SobiProcessor
@@ -63,8 +62,8 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
                 }
                 else {
                     // Replace this supplemental
-                    LocalDate calDate = DateHelper.getLrsLocalDate(xml.getString("caldate/text()", xmlSupplemental));
-                    LocalDateTime releaseDateTime = DateHelper.getLrsDateTime(xml.getString("releasedate/text()", xmlSupplemental)
+                    LocalDate calDate = DateUtils.getLrsLocalDate(xml.getString("caldate/text()", xmlSupplemental));
+                    LocalDateTime releaseDateTime = DateUtils.getLrsDateTime(xml.getString("releasedate/text()", xmlSupplemental)
                             + xml.getString("releasetime/text()", xmlSupplemental));
 
                     CalendarSupplemental supplemental = new CalendarSupplemental(calendarId, supId, calDate, releaseDateTime);

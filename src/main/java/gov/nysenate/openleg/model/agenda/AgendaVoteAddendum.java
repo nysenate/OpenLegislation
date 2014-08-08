@@ -2,7 +2,7 @@ package gov.nysenate.openleg.model.agenda;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.CommitteeId;
-import gov.nysenate.openleg.util.DateHelper;
+import gov.nysenate.openleg.util.DateUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ public class AgendaVoteAddendum extends BaseLegislativeContent implements Serial
         this.setAgendaId(agendaId);
         this.setId(addendumId);
         this.setYear(agendaId.getYear());
-        this.setSession(DateHelper.resolveSession(this.getYear()));
+        this.setSession(DateUtils.resolveSession(this.getYear()));
         this.setModifiedDateTime(pubDate);
         this.setPublishedDateTime(pubDate);
     }

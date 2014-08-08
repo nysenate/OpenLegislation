@@ -3,10 +3,8 @@ package gov.nysenate.openleg.model.bill;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.util.DateHelper;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 

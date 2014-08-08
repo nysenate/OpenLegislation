@@ -2,7 +2,7 @@ package gov.nysenate.openleg.model.bill;
 
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.util.DateHelper;
+import gov.nysenate.openleg.util.DateUtils;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -79,7 +79,7 @@ public class BillId implements Serializable, Comparable<BillId>
             throw new IllegalArgumentException("basePrintNo must be numerical after the letter designator!");
         }
         this.version = (version != null) ? version.trim().toUpperCase() : "";
-        this.session = DateHelper.resolveSession(session);
+        this.session = DateUtils.resolveSession(session);
     }
 
     /** --- Methods --- */

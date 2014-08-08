@@ -473,7 +473,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         for (String multiSponsor : data.replace("\n", " ").split(",")) {
             multiSponsor = multiSponsor.trim();
             if (!multiSponsor.isEmpty()) {
-                multiSponsors.add(getMemberFromShortName(multiSponsor, session, chamber, false));
+                multiSponsors.add(getMemberFromShortName(multiSponsor, session, chamber, true));
             }
         }
         activeAmendment.setMultiSponsors(Lists.newArrayList(multiSponsors));

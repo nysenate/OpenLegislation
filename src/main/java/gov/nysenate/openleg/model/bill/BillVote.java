@@ -4,12 +4,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.util.DateHelper;
+import gov.nysenate.openleg.util.DateUtils;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -59,7 +58,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable
         this.billId = billId;
         this.voteDate = voteDate;
         this.setYear(voteDate.getYear());
-        this.setSession(DateHelper.resolveSession(this.getYear()));
+        this.setSession(DateUtils.resolveSession(this.getYear()));
         this.voteType = type;
         this.sequenceNo = sequenceNo;
     }

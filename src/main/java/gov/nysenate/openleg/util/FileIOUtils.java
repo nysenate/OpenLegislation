@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class FileHelper
+public class FileIOUtils
 {
     /**
      * Returns a collection of files sorted by file name (not file path!)
@@ -39,8 +39,8 @@ public class FileHelper
      * @throws IOException
      */
     public static Collection<File> safeListFiles(File directory, String[] extensions, boolean recursive) throws IOException {
-        FileUtils.forceMkdir(directory);
-        return FileUtils.listFiles(directory, extensions, recursive);
+        org.apache.commons.io.FileUtils.forceMkdir(directory);
+        return org.apache.commons.io.FileUtils.listFiles(directory, extensions, recursive);
     }
 
     /**
@@ -55,7 +55,7 @@ public class FileHelper
      * @throws IOException
      */
     public static Collection<File> safeListFiles(File directory, boolean recursive, String[] excludeDirs) throws IOException {
-        FileUtils.forceMkdir(directory);
+        org.apache.commons.io.FileUtils.forceMkdir(directory);
         IOFileFilter dirFileFilter;
         if (excludeDirs != null && excludeDirs.length > 0) {
             List<IOFileFilter> excludeDirFilters = new ArrayList<>();
@@ -67,7 +67,7 @@ public class FileHelper
         else {
             dirFileFilter = (recursive) ? TrueFileFilter.TRUE : FalseFileFilter.FALSE;
         }
-        return FileUtils.listFiles(directory, TrueFileFilter.TRUE, dirFileFilter);
+        return org.apache.commons.io.FileUtils.listFiles(directory, TrueFileFilter.TRUE, dirFileFilter);
     }
 
     /**
@@ -80,7 +80,7 @@ public class FileHelper
      */
     public static File safeGetFolder(File parent, String folderName) throws IOException {
         File directory = new File(parent, folderName);
-        FileUtils.forceMkdir(directory);
+        org.apache.commons.io.FileUtils.forceMkdir(directory);
         return directory;
     }
 
@@ -96,6 +96,6 @@ public class FileHelper
         if (newFile.exists()) {
             newFile.delete();
         }
-        FileUtils.moveFileToDirectory(file, directory, true);
+        org.apache.commons.io.FileUtils.moveFileToDirectory(file, directory, true);
     }
 }

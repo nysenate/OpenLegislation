@@ -2,18 +2,15 @@ package gov.nysenate.openleg.model.sobi;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
-import gov.nysenate.openleg.util.DateHelper;
+import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
 
 /**
  * The SobiFile class wraps the sobi files sent from LBDC and retains some basic meta data.
@@ -96,12 +93,12 @@ public class SobiFile
     public LocalDateTime getPublishedDateTime() {
         try {
             return LocalDateTime.ofInstant(
-                DateUtils.parseDate(getFileName(), sobiDateFullPattern, sobiDateNoSecsPattern).toInstant(),
+                org.apache.commons.lang3.time.DateUtils.parseDate(getFileName(), sobiDateFullPattern, sobiDateNoSecsPattern).toInstant(),
                 ZoneId.systemDefault());
         }
         catch (ParseException ex) {
             ex.printStackTrace();
-            return DateHelper.getLocalDateTimeFromMillis(file.lastModified());
+            return DateUtils.getLocalDateTimeFromMillis(file.lastModified());
         }
     }
 

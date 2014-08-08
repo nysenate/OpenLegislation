@@ -9,12 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OutputHelper serves as a simple utility class to convert Objects to string representations.
+ * OutputUtils serves as a simple utility class to convert Objects to string representations.
  * This is primarily useful during development and debugging.
  */
-public class OutputHelper
+public abstract class OutputUtils
 {
-    private static final Logger logger = LoggerFactory.getLogger(OutputHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(OutputUtils.class);
 
     private static ObjectMapper jsonMapper = new ObjectMapper();
     static {

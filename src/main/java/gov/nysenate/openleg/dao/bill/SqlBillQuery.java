@@ -78,14 +78,23 @@ public enum SqlBillQuery implements BasicSqlQuery
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
         "ORDER BY sequence_no ASC"
     ),
-    INSERT_BILL_COSPONSORS(
+    INSERT_BILL_COSPONSOR(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + " " +
         "(bill_print_no, bill_session_year, bill_amend_version, member_id, sequence_no, last_fragment_id)\n" +
         "VALUES (:printNo, :sessionYear, :version, :memberId, :sequenceNo, :lastFragmentId)"
     ),
+    UPDATE_BILL_COSPONSOR(
+        "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + " " +
+        "SET sequence_no = :sequenceNo, last_fragment_id = :lastFragmentId\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
+        "      AND member_id = :memberId"
+    ),
     DELETE_BILL_COSPONSORS(
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
+    ),
+    DELETE_BILL_COSPONSOR(
+        DELETE_BILL_COSPONSORS.sql + " AND member_id = :memberId"
     ),
 
     /** --- Bill Amendment Multi-sponsors --- */
@@ -95,14 +104,23 @@ public enum SqlBillQuery implements BasicSqlQuery
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
         "ORDER BY sequence_no ASC"
     ),
-    INSERT_BILL_MULTISPONSORS(
+    INSERT_BILL_MULTISPONSOR(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + " " +
         "(bill_print_no, bill_session_year, bill_amend_version, member_id, sequence_no, last_fragment_id)\n" +
         "VALUES (:printNo, :sessionYear, :version, :memberId, :sequenceNo, :lastFragmentId)"
     ),
+    UPDATE_BILL_MULTISPONSOR(
+        "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + " " +
+        "SET sequence_no = :sequenceNo, last_fragment_id = :lastFragmentId\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
+        "      AND member_id = :memberId"
+    ),
     DELETE_BILL_MULTISPONSORS(
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
+    ),
+    DELETE_BILL_MULTISPONSOR(
+        DELETE_BILL_MULTISPONSORS.sql + " AND member_id = :memberId"
     ),
 
     /** --- Bill Amendment Votes --- */
@@ -173,6 +191,10 @@ public enum SqlBillQuery implements BasicSqlQuery
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_SAME_AS + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
+    DELETE_SAME_AS(
+        DELETE_SAME_AS_FOR_BILL.sql + " AND same_as_bill_print_no = :sameAsPrintNo AND " +
+        "same_as_session_year = :sameAsSessionYear AND same_as_amend_version = :sameAsVersion"
+    ),
 
     /** --- Bill Committee --- */
 
@@ -183,11 +205,15 @@ public enum SqlBillQuery implements BasicSqlQuery
     INSERT_BILL_COMMITTEE(
         "INSERT INTO ${schema}." + SqlTable.BILL_COMMITTEE + "\n" +
         "(bill_print_no, bill_session_year, committee_name, committee_chamber, action_date, last_fragment_id)" + "\n" +
-        "VALUES ( :printNo, :sessionYear, :committeeName, CAST(:committeeChamber as chamber), :actionDate, :lastFragmentId)"
+        "VALUES ( :printNo, :sessionYear, :committeeName, :committeeChamber::chamber, :actionDate, :lastFragmentId)"
     ),
     DELETE_BILL_COMMITTEES(
         "DELETE FROM ${schema}." + SqlTable.BILL_COMMITTEE + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
+    DELETE_BILL_COMMITTEE(
+        DELETE_BILL_COMMITTEES.sql + " AND committee_name = :committeeName AND \n" +
+        "committee_chamber = :committeeChamber::chamber AND action_date = :actionDate"
     ),
 
     /** --- Bill Previous Version --- */
@@ -205,6 +231,10 @@ public enum SqlBillQuery implements BasicSqlQuery
     DELETE_BILL_PREVIOUS_VERSIONS(
         "DELETE FROM ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
+    DELETE_BILL_PREVIOUS_VERSION(
+        DELETE_BILL_PREVIOUS_VERSIONS.sql + " AND prev_bill_print_no = :prevPrintNo AND " +
+        "prev_bill_session_year = :prevSessionYear AND prev_amend_version = :prevVersion"
     );
 
     private String sql;

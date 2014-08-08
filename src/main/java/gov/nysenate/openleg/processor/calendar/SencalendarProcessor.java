@@ -38,7 +38,7 @@ public class SencalendarProcessor
     public void processSencalendar(File file, Storage storage) throws SAXException, IOException, XPathExpressionException
     {
         // TODO: We need a better default here
-//        LocalDateTime modifiedDate = DateHelper.getSobiFileDate(file.getName());
+//        LocalDateTime modifiedDate = DateUtils.getSobiFileDate(file.getName());
 //        ChangeLogger.setContext(file, modifiedDate);
 
         XmlHelper xml = null;//Application.getXmlHelper();
@@ -64,8 +64,8 @@ public class SencalendarProcessor
             }
             else {
                 // Replace this supplemental
-//                Date calDate = DateHelper.getLrsDate(xml.getString("caldate/text()", xmlSupplemental));
-//                LocalDateTime releaseDateTime = DateHelper.getLrsDateTime(xml.getString("releasedate/text()", xmlSupplemental) + xml.getString("releasetime/text()", xmlSupplemental));
+//                Date calDate = DateUtils.getLrsDate(xml.getString("caldate/text()", xmlSupplemental));
+//                LocalDateTime releaseDateTime = DateUtils.getLrsDateTime(xml.getString("releasedate/text()", xmlSupplemental) + xml.getString("releasetime/text()", xmlSupplemental));
 
           //      CalendarSupplemental supplemental = new CalendarSupplemental(id, calDate, releaseDateTime);
                 NodeList xmlSections = xml.getNodeList("sections/section", xmlCalendar);
@@ -106,7 +106,7 @@ public class SencalendarProcessor
     public void processSencalendarActive(File file, Storage storage) throws SAXException, IOException, XPathExpressionException
     {
         // TODO: We need a better default here
-//        LocalDateTime modifiedDate = DateHelper.getSobiFileDate(file.getName());
+//        LocalDateTime modifiedDate = DateUtils.getSobiFileDate(file.getName());
 //        ChangeLogger.setContext(file, modifiedDate);
 
         XmlHelper xml = null;//Application.getXmlHelper();
@@ -131,8 +131,8 @@ public class SencalendarProcessor
 //                calendar.removeActiveList(id);
             }
             else {
-//                Date calDate = DateHelper.getLrsDate(xml.getString("actcaldate/text()", xmlSequence));
-//                Date releaseDateTime = DateHelper.getLrsDate(xml.getString("releasedate/text()", xmlSequence) + xml.getString("releasetime/text()", xmlSequence));
+//                Date calDate = DateUtils.getLrsDate(xml.getString("actcaldate/text()", xmlSequence));
+//                Date releaseDateTime = DateUtils.getLrsDate(xml.getString("releasedate/text()", xmlSequence) + xml.getString("releasetime/text()", xmlSequence));
                 String notes = xml.getString("notes/text()", xmlSequence);
 
               //  CalendarActiveList activeList = new CalendarActiveList(id, notes, calDate, releaseDateTime);

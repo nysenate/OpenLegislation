@@ -10,7 +10,7 @@ import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.SobiProcessor;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.util.DateHelper;
+import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,6 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Service
 public class ActiveListProcessor extends AbstractDataProcessor implements SobiProcessor
@@ -65,9 +64,9 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
                     calendar.removeActiveList(id);
                 }
                 else {
-                    LocalDate calDate = DateHelper.getLrsLocalDate(xml.getString("actcaldate/text()", xmlSequence));
-                    LocalDateTime releaseDateTime = DateHelper.getLrsDateTime(
-                        xml.getString("releasedate/text()", xmlSequence) + xml.getString("releasetime/text()", xmlSequence));
+                    LocalDate calDate = DateUtils.getLrsLocalDate(xml.getString("actcaldate/text()", xmlSequence));
+                    LocalDateTime releaseDateTime = DateUtils.getLrsDateTime(
+                            xml.getString("releasedate/text()", xmlSequence) + xml.getString("releasetime/text()", xmlSequence));
                     String notes = xml.getString("notes/text()", xmlSequence);
                     CalendarActiveList activeList = new CalendarActiveList(calendarId, id, notes, calDate, releaseDateTime);
                     activeList.setModifiedDateTime(modifiedDate);

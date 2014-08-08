@@ -8,17 +8,6 @@ import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 public interface MemberService
 {
     /**
-     * Retrieves a MemberId instance.
-     *
-     * @param lbdcShortName String - The short name of the member as represented in the source data.
-     * @param sessionYear int - The session year in which this member was active.
-     * @param chamber Chamber - The legislative chamber this member belonged to during the given session year.
-     * @return MemberId
-     * @throws MemberNotFoundEx - If no matching member was found
-     */
-    public MemberId getMemberId(String lbdcShortName, int sessionYear, Chamber chamber) throws MemberNotFoundEx;
-
-    /**
      * Retrieves Member using a unique member id and session year.
      *
      * @param memberId int

@@ -1,12 +1,11 @@
 package gov.nysenate.openleg.model.calendar;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
-import gov.nysenate.openleg.util.DateHelper;
+import gov.nysenate.openleg.util.DateUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,7 +41,7 @@ public class CalendarActiveList extends BaseLegislativeContent
         this();
         this.setCalendarId(calId);
         this.setYear(calId.getYear());
-        this.setSession(DateHelper.resolveSession(getYear()));
+        this.setSession(DateUtils.resolveSession(getYear()));
         this.setSequenceNo(sequenceNo);
         this.setNotes(notes);
         this.setCalDate(calDate);
