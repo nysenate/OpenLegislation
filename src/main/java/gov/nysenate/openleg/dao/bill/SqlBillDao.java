@@ -6,8 +6,8 @@ import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.bill.VetoDataService;
 import gov.nysenate.openleg.service.bill.VetoNotFoundException;
 import gov.nysenate.openleg.service.entity.MemberService;
@@ -218,12 +218,12 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Get veto memos for the bill
      */
-    private Map<VetoId,VetoMessage> getBillVetoMessages(BaseBillId baseBillId){
+    private Map<VetoId,VetoMessage> getBillVetoMessages(BaseBillId baseBillId) {
         try {
             return vetoDataService.getBillVetoes(baseBillId);
         }
-        catch(VetoNotFoundException ex){
-            return new HashMap<VetoId,VetoMessage>();
+        catch (VetoNotFoundException ex) {
+            return new HashMap<>();
         }
     }
 
