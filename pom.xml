@@ -146,18 +146,6 @@
             <version>${woodstox.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>1.4.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-
         <!-- TODO: Cleanup Misc deps -->
 
         <dependency>
@@ -182,18 +170,6 @@
             <groupId>org.apache.abdera</groupId>
             <artifactId>abdera-core</artifactId>
             <version>1.1.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.abdera</groupId>
-            <artifactId>abdera-parser</artifactId>
-            <version>1.1.2</version>
-            <exclusions>
-            	<exclusion>
-            		<artifactId>geronimo-javamail_1.4_spec</artifactId>
-            		<groupId>org.apache.geronimo.specs</groupId>
-            	</exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
