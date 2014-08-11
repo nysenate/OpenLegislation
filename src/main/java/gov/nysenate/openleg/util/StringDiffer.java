@@ -1,17 +1,9 @@
 package gov.nysenate.openleg.util;
 
 import java.io.UnsupportedEncodingException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Stack;
+import java.net.URLEncoder;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,11 +25,10 @@ import java.util.regex.Pattern;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-public class DiffPatch
+public class StringDiffer
 {
     // Defaults.
-    // Set these on your DiffPatch instance to override the defaults.
+    // Set these on your StringDiffer instance to override the defaults.
 
     /**
      * Number of seconds to map a diff before giving up (0 for infinity).

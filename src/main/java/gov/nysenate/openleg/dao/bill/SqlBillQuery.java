@@ -155,13 +155,7 @@ public enum SqlBillQuery implements BasicSqlQuery
 
     SELECT_BILL_ACTIONS(
         "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_ACTION + "\n" +
-        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear\n" +
-        "ORDER BY sequence_no ASC"
-    ),
-    SELECT_BILL_AMENDMENT_ACTIONS(
-        "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_ACTION + "\n" +
-        "WHERE print_no = :printNo AND session_year = :sessionYear AND version = :version\n" +
-        "ORDER BY sequence_no DESC"
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear "
     ),
     INSERT_BILL_ACTION(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_ACTION + "\n" +

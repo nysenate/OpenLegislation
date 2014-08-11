@@ -1,8 +1,7 @@
 package gov.nysenate.openleg.dao.bill;
 
 import com.google.common.collect.MapDifference;
-import gov.nysenate.openleg.dao.base.ImmutableParams;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.dao.common.BillVoteRowHandler;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -151,7 +150,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * Get a list of all the bill actions for the base bill id in the params.
      */
     private List<BillAction> getBillActions(ImmutableParams baseParams) {
-        return jdbcNamed.query(SELECT_BILL_ACTIONS.getSql(schema()), baseParams, new BillActionRowMapper());
+        OrderBy orderBy = new OrderBy("sequence_no", SortOrder.ASC);
+        LimitOffset limOff = LimitOffset.ALL;
+        return jdbcNamed.query(SELECT_BILL_ACTIONS.getSql(schema(), orderBy, limOff), baseParams, new BillActionRowMapper());
     }
 
     /**

@@ -8,7 +8,8 @@ import gov.nysenate.openleg.model.sobi.SobiFragment;
 import java.util.List;
 import java.util.Map;
 
-public interface VetoDataService {
+public interface VetoDataService
+{
     /**
      * Get a specific veto via its veto number
      *
