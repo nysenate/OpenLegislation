@@ -9,17 +9,19 @@ import java.util.Objects;
  */
 abstract public class BaseLegislativeContent
 {
-    /** The date the object was most recently modified. */
-    protected LocalDateTime modifiedDateTime;
-
-    /** The date the object was most recently published. */
-    protected LocalDateTime publishedDateTime;
-
     /** The session this object was created in. */
     protected int session;
 
     /** The calendar year this object was active in. */
     protected int year;
+
+    /** The date the object was most recently modified. */
+    protected LocalDateTime modifiedDateTime;
+
+    /** The date the object was most recently published. This date can be used as a simple
+     *  mechanism to indicate if a legislative item is 'available' simply by having a non-null
+     *  value set. */
+    protected LocalDateTime publishedDateTime;
 
     /** --- Constructors --- */
 
@@ -50,6 +52,12 @@ abstract public class BaseLegislativeContent
         return Objects.hash(modifiedDateTime, publishedDateTime, session, year);
     }
 
+    /** --- Functional Getters/Setters --- */
+
+    public boolean isPublished() {
+        return this.getPublishedDateTime() != null;
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public LocalDateTime getPublishedDateTime() {
@@ -58,10 +66,6 @@ abstract public class BaseLegislativeContent
 
     public void setPublishedDateTime(LocalDateTime publishedDateTime) {
         this.publishedDateTime = publishedDateTime;
-    }
-
-    public boolean isPublished() {
-        return this.getPublishedDateTime() != null;
     }
 
     public LocalDateTime getModifiedDateTime() {
