@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.entity;
 
+import com.google.common.collect.ComparisonChain;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
@@ -53,12 +55,12 @@ public class CommitteeVersionId extends CommitteeId implements Serializable
 
     @Override
     public int compareTo(CommitteeId o) {
-        int res = super.compareTo(o);
-        if (res == 0) {
-            CommitteeVersionId cvId = (CommitteeVersionId) o;
-            res = this.referenceDate.compareTo(cvId.referenceDate);
-        }
-        return res;
+        CommitteeVersionId cvId = (CommitteeVersionId) o;
+        return ComparisonChain.start()
+           .compare(this.referenceDate, cvId.referenceDate)
+           .compare(super.getName(), o.getName())
+           .compare(super.getChamber(), o.getChamber())
+           .result();
     }
 
     /** --- Basic Getters/Setters --- */
