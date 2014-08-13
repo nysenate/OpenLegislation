@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.entity.CommitteeId;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 

@@ -1,25 +1,31 @@
 package gov.nysenate.openleg;
 
-import com.google.common.base.*;
-import com.google.common.base.Objects;
-import com.google.common.collect.*;
-import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import com.google.common.collect.ImmutableList;
+import com.google.common.io.Files;
+import gov.nysenate.openleg.dao.agenda.SqlAgendaQuery;
+import gov.nysenate.openleg.dao.base.SqlTable;
+import gov.nysenate.openleg.dao.bill.BillDao;
+import gov.nysenate.openleg.service.base.CachingService;
 import gov.nysenate.openleg.service.entity.MemberService;
+import gov.nysenate.openleg.util.StringDiffer;
+import gov.nysenate.openleg.util.OutputUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
-
-import java.time.*;
+import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 
 public class SillyTests //extends BaseTests
@@ -46,148 +52,108 @@ public class SillyTests //extends BaseTests
     //@Autowired
     private MemberService memberService;
 
+
+    @Autowired
+    private BillDao billDao;
+
     @Test
-    public void testName() throws Exception {
-//        LocalDate date = new LocalDate();
-//        Member member = new Member();
-//        member.setLbdcShortName("MOOSE");
-//        Member member2 = new Member();
-//        member2.setLbdcShortName("MOOSE");
-//        BillVote b1 = new BillVote(new BillId("S1234", 2011), date.toDate(), BillVoteType.FLOOR, 1);
-//        b1.addMemberVote(BillVoteCode.ABS, member);
-//        BillVote b2 = new BillVote(new BillId("S1234", 2011), date.toDate(), BillVoteType.FLOOR, 1);
-//        b2.addMemberVote(BillVoteCode.ABS, member2);
-//        b2.addMemberVote(BillVoteCode.ABD, member);
-//        assertTrue(b1.equals(b2));
+    public void testPrint() throws Exception {
+        logger.info("SELECT cv.vote_action, cv.refer_committee_name, cv.refer_committee_chamber, cv.with_amendment," +
+                "       vi.bill_print_no, vi.bill_session_year, vi.bill_amend_version, vi.vote_date, vi.vote_type," +
+                "       vi.sequence_no, vi.published_date_time, vi.modified_date_time," +
+                "       vr.member_id, vr.session_year, vr.vote_code\n" +
+                "FROM ${schema}." + SqlTable.AGENDA_VOTE_COMMITTEE_VOTE + " cv\n" +
+                "JOIN ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + " vi ON cv.vote_info_id = vi.id\n" +
+                "JOIN ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_ROLL + " vr ON vi.id = vr.vote_id\n" +
+                "WHERE vote_committee_id IN (" + SqlAgendaQuery.SELECT_AGENDA_VOTE_COMMITTEE_ID.getSql("master") + ")");
+
     }
 
-    private void varArgsTest(int a, Object... args) {
-        logger.info("IN METHOD");
+    @Test
+    public void testDateParse() throws Exception {
+        logger.info("{}", LocalDateTime.ofInstant(
+                DateUtils.parseDateStrictly("SOBI.D110313.T090312.TXT", "'SOBI.D'yyMMdd'.T'HHmmss'.TXT'").toInstant(),
+                ZoneId.systemDefault()));
     }
 
-    class GREATER_THAN_FOUR implements Predicate<String>{
-        @Override
-        public boolean apply(String input) {
-            return input.length() > 4;
+    @Test
+    public void testLinkedHashSet() throws Exception {
+        List<String> mooo = new LinkedList<>();
+        mooo.add("ghjk");
+        mooo.add("moo");
+        mooo.add("ghjk");
+        mooo.add("asdf");
+
+        ImmutableList<String> immutableMoo = ImmutableList.copyOf(mooo);
+
+        mooo.add(2, "cow");
+
+        mooo.forEach(System.out::println);
+        logger.info("=========");
+        immutableMoo.forEach(System.out::println);
+    }
+
+    @Test
+    public void testDiff() throws Exception {
+//        Bill a6357 = billDao.getBill(new BillId("A6357", 2013));
+        String s1 = "mew moew mewtwo moo";
+        String s2 = "mew moew pew mewtwo moo";
+        StringDiffer diff = new StringDiffer();
+        LinkedList<StringDiffer.Diff> diffs = diff.diff_main(s1, s2);
+        logger.info(diff.diff_prettyHtml(diffs));
+        logger.info("{}", OutputUtils.toJson(diffs));
+//        logger.info(StringUtils.difference("mew moew mewtwo moo", "mew moew pew mewtwo moo"));
+    }
+
+    @Test
+    public void testNavigableSet() throws Exception {
+        TreeSet<BigInteger> numberSet = new TreeSet<>();
+        Resource input = new FileSystemResource("/home/ash/Desktop/mill_lines.txt");
+        StopWatch sw = new StopWatch();
+        Map<BigInteger, Boolean> bigIntegers = new HashMap<>();
+        Files.readLines(input.getFile(), Charset.defaultCharset()).forEach(str -> {
+            BigInteger bd = new BigInteger(str);
+            bigIntegers.put(bd, false);
+            numberSet.add(bd);
+        });
+        sw.start();
+        HashSet<BigInteger> tSet = new HashSet<>();
+        bigIntegers.keySet().forEach(i -> {
+            NavigableSet<BigInteger> subset = numberSet.subSet(new BigInteger("-10000").subtract(i), true, new BigInteger("10000").subtract(i), true);
+            for (BigInteger b : subset) {
+                if (!bigIntegers.get(b)) {
+                    tSet.add(b.add(i));
+                }
+            }
+        });
+        sw.stop();
+        logger.info("{}", sw.getTime());
+    }
+
+    @Test
+    public void testMedian() throws Exception {
+        Resource input = new FileSystemResource("/home/ash/Desktop/Median.txt");
+        PriorityQueue<Integer> medianQueue = new PriorityQueue<>();
+        int rollingMedian = 0;
+        for (String line : Files.readLines(input.getFile(), Charset.defaultCharset())) {
+            Integer x = Integer.valueOf(line);
+            medianQueue.add(x);
+            Object[] arr = medianQueue.toArray();
+            Arrays.sort(arr);
+            int medianIndex = (arr.length % 2 == 0) ? (arr.length / 2) - 1 : (arr.length / 2);
+            if (medianIndex >= 0) {
+                rollingMedian += (Integer) arr[medianIndex];
+            }
         }
+        logger.info("{}", rollingMedian % 10000);
     }
 
     @Test
-    public void testSometingElse() throws Exception {
-        String s = "<senagendavote  ";
-        logger.info("{}", Arrays.asList(SobiFragmentType.values()).stream()
-                .filter(f -> s.matches(f.getStartPattern())).reduce(null, (a, b) -> a));
-    }
+    public void testMapSomethign() throws Exception {
+        TreeMap<String, Boolean> map = new TreeMap<>();
+        map.put("A", false);
+        map.put("B", true);
+        logger.info("{}", map.descendingKeySet().stream().filter(map::get).findFirst());
 
-    @Test
-    public void testMapRetains() throws Exception {
-        LinkedListMultimap<Integer, String> mm = LinkedListMultimap.create();
-        mm.put(1, "e");
-        mm.put(2, "d");
-        logger.info("{}", LinkedListMultimap.create(mm).keySet().retainAll(Sets.newHashSet(2)));
-        logger.info("{}", mm);
-        Range<Date> dateRange = Range.atMost(new Date());
-    }
-
-    @Test
-    public void testLocalDateTime() throws Exception {
-        LocalDateTime date = LocalDateTime.now();
-        logger.info("{}", date);
-    }
-
-    @Test
-    public void testOutput() throws Exception {
-        class TestObject {
-            private String s;
-            private int i;
-
-            TestObject(String s, int i) {
-                this.s = s;
-                this.i = i;
-            }
-
-            public String getS() {
-                return s;
-            }
-
-            public void setS(String s) {
-                this.s = s;
-            }
-
-            public int getI() {
-                return i;
-            }
-
-            public void setI(int i) {
-                this.i = i;
-            }
-
-            @Override
-            public String toString() {
-                return Objects.toStringHelper(this)
-                        .add("s", s)
-                        .add("i", i)
-                        .toString();
-            }
-        }
-
-        List<TestObject> ss = Arrays.asList(new TestObject("S23", 2009));
-        Map<Integer, TestObject> sMap = Maps.newHashMap(Maps.uniqueIndex(ss, TestObject::getI));
-        sMap.put(2010, new TestObject("A", 2));
-        logger.info("{}", sMap);
-    }
-
-    @Test
-    public void testMaxMap() throws Exception {
-        Map<String, Integer> map = new HashMap<>();
-        map.put("moose",42);
-        map.put("dog", 9);
-        map.put("cow", 299);
-        map.put("sheep", 42);
-        map.put("lamb", 420);
-        map.keySet().retainAll(
-            map.entrySet().stream()
-                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
-                .limit(2).map(f -> f.getKey()).collect(Collectors.toSet()));
-        logger.info("{}", map);
-//        }
-//        List<Double> maxValues = new ArrayList<>(map.values());
-//        Collections.sort(maxValues, Collections.reverseOrder());
-//        logger.info("{}", maxValues);
-//        for (Double value : maxValues.subList(3, map.size())) {
-//            map.remove(inverseMap.get(value));
-//        }
-//        logger.info("{}", map);
-    }
-
-    public void retainMaxNValues(Map<String, Integer> map, int n) {
-        List<Map.Entry<String, Integer>> kv = new LinkedList<>(map.entrySet());
-
-        Collections.sort(kv, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
-
-        for (Map.Entry<String,Integer> e: kv.subList(kv.size()-3, kv.size())) {
-            System.out.println("e:" + e);
-        }
-    }
-
-    @Test
-    public void testForEach() throws Exception {
-        Map<String, Integer> map = new TreeMap<>();
-        map.put("moose",42);
-        map.put("dog", 9);
-        map.put("cow", 299);
-        map.put("sheep", 42);
-        map.put("lamb", 420);
-        map.keySet().stream().forEach(
-            f -> { logger.info("{}", f); }
-        );
-        map.keySet().parallelStream().forEach(
-            f -> logger.info("{}", f)
-        );
-    }
-
-    @Test
-    public void testDates() throws Exception {
-        logger.info("{}", Date.from(LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
     }
 }

@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.dao.app;
 
-import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.model.base.Environment;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Map;

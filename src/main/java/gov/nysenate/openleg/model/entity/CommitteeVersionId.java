@@ -1,24 +1,25 @@
 package gov.nysenate.openleg.model.entity;
 
 import com.google.common.collect.ComparisonChain;
+import gov.nysenate.openleg.model.base.SessionYear;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.Objects;
 
 public class CommitteeVersionId extends CommitteeId implements Serializable
 {
     private static final long serialVersionUID = 2679527346305021089L;
 
     /** The session year this committee is referenced in. */
-    private int session;
+    private SessionYear session;
 
     /** Refers to the date this committee was referenced. */
     private LocalDate referenceDate;
 
     /** --- Constructors --- */
 
-    public CommitteeVersionId(Chamber chamber, String name, int session, LocalDate referenceDate) {
+    public CommitteeVersionId(Chamber chamber, String name, SessionYear session, LocalDate referenceDate) {
         super(chamber, name);
         if (referenceDate == null) {
             throw new IllegalArgumentException("referenceDate cannot be null!");
@@ -35,22 +36,18 @@ public class CommitteeVersionId extends CommitteeId implements Serializable
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CommitteeVersionId)) return false;
-        if (!super.equals(o)) return false;
-        CommitteeVersionId that = (CommitteeVersionId) o;
-        if (session != that.session) return false;
-        if (!referenceDate.equals(that.referenceDate)) return false;
-        return true;
+    public int hashCode() {
+        return 31 * super.hashCode() + Objects.hash(session, referenceDate);
     }
 
     @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + session;
-        result = 31 * result + referenceDate.hashCode();
-        return result;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        final CommitteeVersionId other = (CommitteeVersionId) obj;
+        return Objects.equals(this.session, other.session) &&
+               Objects.equals(this.referenceDate, other.referenceDate);
     }
 
     @Override
@@ -65,7 +62,7 @@ public class CommitteeVersionId extends CommitteeId implements Serializable
 
     /** --- Basic Getters/Setters --- */
 
-    public int getSession() {
+    public SessionYear getSession() {
         return session;
     }
 

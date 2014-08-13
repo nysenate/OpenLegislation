@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.processor.bill;
 
+import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.bill.BillTextType;
 import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoType;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.model.bill.BillTextType;
-import gov.nysenate.openleg.util.SessionYear;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -73,7 +73,7 @@ public class VetoMemoParser extends BillTextParser
             if (headerMatcher.find()) {
                 vetoMessage.setVetoNumber(Integer.parseInt(headerMatcher.group(1)));
                 vetoMessage.setYear(Integer.parseInt(headerMatcher.group(3)));
-                vetoMessage.setSession(SessionYear.getSessionYear(vetoMessage.getYear()));
+                vetoMessage.setSession(new SessionYear(vetoMessage.getYear()));
             }
         }
         else if (lineNum == 4) {
@@ -127,7 +127,7 @@ public class VetoMemoParser extends BillTextParser
         boolean completeVetoMessage =
             vetoMessage.getVetoNumber()!=0 &&
                 vetoMessage.getYear()!=0 &&
-                vetoMessage.getSession()!=0 &&
+                vetoMessage.getSession()!=null &&
                 vetoMessage.getSigner()!=null &&
                 vetoMessage.getMemoText()!=null;
 

@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.service.entity;
 
 import gov.nysenate.openleg.dao.entity.MemberDao;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.entity.MemberId;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class CachedMemberService implements MemberService
 
     /** {@inheritDoc} */
     @Cacheable("memberId")
-    public Member getMemberById(int memberId, int sessionYear) throws MemberNotFoundEx {
+    public Member getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
         if (memberId <= 0) {
             throw new IllegalArgumentException("Member Id cannot be less than or equal to 0.");
         }
@@ -49,7 +49,7 @@ public class CachedMemberService implements MemberService
 
     @Override
     @Cacheable("memberShortName")
-    public Member getMemberByShortName(String lbdcShortName, int sessionYear, Chamber chamber) throws MemberNotFoundEx {
+    public Member getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
         if (lbdcShortName == null || chamber == null) {
             throw new IllegalArgumentException("Shortname and/or chamber cannot be null.");
         }

@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.entity.Chamber;
-import static gov.nysenate.openleg.model.entity.Chamber.*;
+
+import static gov.nysenate.openleg.model.entity.Chamber.ASSEMBLY;
+import static gov.nysenate.openleg.model.entity.Chamber.SENATE;
 
 public enum BillType
 {

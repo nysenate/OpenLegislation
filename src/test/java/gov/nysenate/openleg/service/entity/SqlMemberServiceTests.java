@@ -1,14 +1,13 @@
 package gov.nysenate.openleg.service.entity;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.util.OutputHelper;
+import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.annotation.Resource;
 
 public class SqlMemberServiceTests extends BaseTests
 {
@@ -19,7 +18,7 @@ public class SqlMemberServiceTests extends BaseTests
 
     @Test
     public void testGetMemberByShortName_UsesCache() throws Exception {
-        logger.info(OutputHelper.toJson(sqlMemberService.getMemberByLBDCName("MARTINS", 2013, Chamber.SENATE)));
-        logger.info(OutputHelper.toJson(sqlMemberService.getMemberByLBDCName("MARTINS", 2013, Chamber.SENATE)));
+        logger.info(OutputUtils.toJson(sqlMemberService.getMemberByShortName("MARTINS", SessionYear.current(), Chamber.SENATE)));
+        logger.info(OutputUtils.toJson(sqlMemberService.getMemberByShortName("MARTINS", SessionYear.current(), Chamber.SENATE)));
     }
 }

@@ -6,7 +6,10 @@ import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import java.io.Serializable;
 import java.sql.Time;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 public class Committee extends BaseLegislativeContent implements Serializable
 {

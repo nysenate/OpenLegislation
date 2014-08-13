@@ -5,10 +5,7 @@ import gov.nysenate.openleg.util.Storage;
 import org.apache.log4j.Logger;
 
 import java.io.*;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Deprecated
 public class OldTranscriptProcessor {

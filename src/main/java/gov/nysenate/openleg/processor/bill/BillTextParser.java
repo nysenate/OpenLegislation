@@ -1,11 +1,10 @@
 package gov.nysenate.openleg.processor.bill;
 
-import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.model.bill.BillTextType;
+import gov.nysenate.openleg.processor.base.ParseError;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

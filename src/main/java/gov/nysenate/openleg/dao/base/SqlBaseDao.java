@@ -2,7 +2,7 @@ package gov.nysenate.openleg.dao.base;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.Environment;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +17,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Base class for SQL data access layer classes to inherit common functionality from.
@@ -130,5 +126,12 @@ public abstract class SqlBaseDao
      */
     public static LocalDate getLocalDate(ResultSet rs, String column) throws SQLException {
         return rs.getDate(column).toLocalDate();
+    }
+
+    /**
+     * Read the 'column' int value from the result set and return a new SessionYear instance.
+     */
+    public static SessionYear getSessionYear(ResultSet rs, String column) throws SQLException {
+        return new SessionYear(rs.getInt(column));
     }
 }

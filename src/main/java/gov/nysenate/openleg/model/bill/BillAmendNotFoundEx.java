@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.bill.BillId;
-
 public class BillAmendNotFoundEx extends RuntimeException
 {
     protected BillId billId;

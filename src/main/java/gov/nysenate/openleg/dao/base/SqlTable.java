@@ -26,6 +26,7 @@ public enum SqlTable
     BILL_AMENDMENT_COSPONSOR     ("bill_amendment_cosponsor"),
     BILL_AMENDMENT_MULTISPONSOR  ("bill_amendment_multi_sponsor"),
     BILL_AMENDMENT_SAME_AS       ("bill_amendment_same_as"),
+    BILL_AMENDMENT_PUBLISH_STATUS("bill_amendment_publish_status"),
     BILL_AMENDMENT_VOTE_INFO     ("bill_amendment_vote_info"),
     BILL_AMENDMENT_VOTE_ROLL     ("bill_amendment_vote_roll"),
     BILL_MULTI_SPONSOR           ("bill_multi_sponsor"),

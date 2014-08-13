@@ -57,18 +57,34 @@ public enum SqlBillQuery implements BasicSqlQuery
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "SET sponsor_memo = :sponsorMemo, act_clause = :actClause, full_text = :fullText, stricken = :stricken, " +
         "    current_committee_name = :currentCommitteeName, current_committee_action = :currentCommitteeAction, " +
-        "    uni_bill = :uniBill, modified_date_time = :modifiedDateTime, " +
-        "    published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId \n" +
+        "    uni_bill = :uniBill, last_fragment_id = :lastFragmentId \n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND version = :version"
     ),
     INSERT_BILL_AMENDMENT(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "(bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, stricken, " +
-        " current_committee_name, current_committee_action, uni_bill, modified_date_time, " +
-        " published_date_time, last_fragment_id)\n" +
+        " current_committee_name, current_committee_action, uni_bill, last_fragment_id)\n" +
         "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, " +
-        "       :currentCommitteeName, :currentCommitteeAction, :uniBill, :modifiedDateTime, " +
-        "       :publishedDateTime, :lastFragmentId)"
+        "       :currentCommitteeName, :currentCommitteeAction, :uniBill, :lastFragmentId)"
+    ),
+
+    /** --- Bill Amendment Publish Status --- */
+
+    SELECT_BILL_AMEND_PUBLISH_STATUSES(
+        "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT_PUBLISH_STATUS + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
+    UPDATE_BILL_AMEND_PUBLISH_STATUS(
+        "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT_PUBLISH_STATUS + "\n" +
+        "SET published = :published, effect_date_time = :effectDateTime, override = :override, notes = :notes," +
+        "    last_fragment_id = :lastFragmentId\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
+    ),
+    INSERT_BILL_AMEND_PUBLISH_STATUS(
+        "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_PUBLISH_STATUS + "\n" +
+        "(bill_print_no, bill_session_year, bill_amend_version, published, effect_date_time, override, notes, " +
+        " last_fragment_id) \n" +
+        "VALUES (:printNo, :sessionYear, :version, :published, :effectDateTime, :override, :notes, :lastFragmentId)"
     ),
 
     /** --- Bill Amendment Cosponsors --- */
@@ -160,9 +176,9 @@ public enum SqlBillQuery implements BasicSqlQuery
     INSERT_BILL_ACTION(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_ACTION + "\n" +
         "(bill_print_no, bill_session_year, bill_amend_version, effect_date, chamber, text, sequence_no, " +
-        " modified_date_time, published_date_time, last_fragment_id) \n" +
+        " last_fragment_id) \n" +
         "VALUES (:printNo, :sessionYear, :version, :effectDate, CAST(:chamber as chamber), :text, :sequenceNo, " +
-        "        :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
+        "        :lastFragmentId)"
     ),
     DELETE_BILL_ACTION("" +
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_ACTION + "\n" +

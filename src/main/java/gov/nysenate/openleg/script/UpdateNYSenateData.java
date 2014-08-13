@@ -2,7 +2,7 @@ package gov.nysenate.openleg.script;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import gov.nysenate.openleg.util.SessionYear;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.services.MemoryCachedNYSenateClient;
 import gov.nysenate.services.NYSenateClient;
 import gov.nysenate.services.model.Committee;
@@ -50,7 +50,7 @@ public class UpdateNYSenateData extends BaseScript
 
 
         File baseDir = new File("/home/graylinkim/projects/nysenate/OpenLegislation/src/main/resources/data/");
-        String sessionYear = String.valueOf(SessionYear.getSessionYear());
+        String sessionYear = String.valueOf(new SessionYear().getYear());
 
 
         if (opts.hasOption("committees") || opts.hasOption("all")) {

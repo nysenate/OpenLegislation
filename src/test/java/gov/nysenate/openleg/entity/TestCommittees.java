@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.entity;
 
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.service.entity.MemberService;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class TestCommittees {
     private CommitteeMember committeeMemberFromTriple(Object[] triple){
         try {
             CommitteeMember cm = new CommitteeMember();
-            Member m = memberService.getMemberById((int)triple[1], (int)triple[2]);
+            Member m = memberService.getMemberById((int)triple[1], new SessionYear((int)triple[2]));
             cm.setMember(m);
             cm.setMajority(m.getMemberId()%2==0);
             cm.setTitle(CommitteeMemberTitle.MEMBER);
@@ -53,7 +54,7 @@ public class TestCommittees {
         test1.setMeetDay("every day");
         test1.setMeetAltWeek(false);
         test1.setMeetAltWeekText("dont do it");
-        test1.setSession(2009);
+        test1.setSession(SessionYear.of(2009));
 //        test1.setPublishDate(dateFormat.parseDateTime("2009-01-01").toDate());
         test1.setMembers(new ArrayList<CommitteeMember>());
         for(int n=0; n<2; n++){

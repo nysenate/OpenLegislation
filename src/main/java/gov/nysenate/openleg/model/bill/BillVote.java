@@ -3,13 +3,14 @@ package gov.nysenate.openleg.model.bill;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.util.DateUtils;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * The BillVote class is used to store vote information pertaining to a specific bill.
@@ -58,7 +59,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable
         this.billId = billId;
         this.voteDate = voteDate;
         this.setYear(voteDate.getYear());
-        this.setSession(DateUtils.resolveSession(this.getYear()));
+        this.setSession(new SessionYear(this.getYear()));
         this.voteType = type;
         this.sequenceNo = sequenceNo;
     }

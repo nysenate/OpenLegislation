@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.entity.TestCommittees;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.entity.CommitteeId;
@@ -60,7 +61,7 @@ public class CommitteeServiceTests extends BaseTests{
         MethodTimer.Method getCommitteeAtTime = new MethodTimer.Method() {
             @Override
             public void run() throws Exception{
-                committeeService.getCommittee(new CommitteeVersionId(Chamber.SENATE, "test committee 1", 2009, LocalDate.now()));
+                committeeService.getCommittee(new CommitteeVersionId(Chamber.SENATE, "test committee 1", SessionYear.of(2009), LocalDate.now()));
             }
         };
         MethodTimer.Method getCommitteeList = new MethodTimer.Method() {

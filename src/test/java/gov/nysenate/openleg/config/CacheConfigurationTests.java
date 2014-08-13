@@ -4,25 +4,18 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.service.bill.BillDataService;
-import gov.nysenate.openleg.util.OutputHelper;
+import gov.nysenate.openleg.util.OutputUtils;
 import net.sf.ehcache.Cache;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.MemoryUnit;
 import net.sf.ehcache.statistics.StatisticsGateway;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -73,7 +66,7 @@ public class CacheConfigurationTests extends BaseTests
                 Cache cache = cacheManager.getCache(name);
                 StatisticsGateway stats = cache.getStatistics();
 
-                logger.debug(OutputHelper.toJson(stats));
+                logger.debug(OutputUtils.toJson(stats));
             }
         }
     }

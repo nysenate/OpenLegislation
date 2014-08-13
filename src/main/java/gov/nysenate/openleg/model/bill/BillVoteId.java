@@ -1,12 +1,9 @@
 package gov.nysenate.openleg.model.bill;
 
 import com.google.common.collect.ComparisonChain;
-import sun.security.krb5.internal.crypto.crc32;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.Objects;
 
 /**

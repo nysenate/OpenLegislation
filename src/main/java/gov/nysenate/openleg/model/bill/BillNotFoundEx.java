@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.bill.BillId;
-
 public class BillNotFoundEx extends RuntimeException
 {
     private static final long serialVersionUID = 5754817749566075113L;

@@ -1,24 +1,26 @@
 package gov.nysenate.openleg.model.entity;
 
-import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.base.SessionYear;
 
 public class MemberNotFoundEx extends Exception
 {
+    private static final long serialVersionUID = 1963594118700545358L;
+
     protected String lbdcName;
     protected int memberId;
-    protected int session;
+    protected SessionYear session;
     protected Chamber chamber;
 
     public MemberNotFoundEx() {
         super();
     }
 
-    public MemberNotFoundEx(int memberId, int session) {
+    public MemberNotFoundEx(int memberId, SessionYear session) {
         super("Member with id: " + memberId + " during session year: " + session + " was not found!");
         this.memberId = memberId;
     }
 
-    public MemberNotFoundEx(String lbdcName, int session, Chamber chamber) {
+    public MemberNotFoundEx(String lbdcName, SessionYear session, Chamber chamber) {
         super(chamber.name() + " member with given LBDC name: " + lbdcName + " for " + session + " was not found!");
         this.lbdcName = lbdcName;
         this.session = session;
@@ -29,7 +31,7 @@ public class MemberNotFoundEx extends Exception
         return lbdcName;
     }
 
-    public int getSession() {
+    public SessionYear getSession() {
         return session;
     }
 

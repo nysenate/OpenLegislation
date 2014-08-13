@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.util;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
 
 import java.io.File;

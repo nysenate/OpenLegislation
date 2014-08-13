@@ -342,7 +342,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         public AgendaVoteAttendance mapRow(ResultSet rs, int rowNum) throws SQLException {
             AgendaVoteAttendance attendance = new AgendaVoteAttendance();
             try {
-                attendance.setMember(memberService.getMemberById(rs.getInt("member_id"), rs.getInt("session_year")));
+                attendance.setMember(memberService.getMemberById(rs.getInt("member_id"),
+                                                                 getSessionYear(rs, "session_year")));
             }
             catch (MemberNotFoundEx memberNotFoundEx) {
                 logger.info("Failed to map member for attendance listing.");
@@ -470,8 +471,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     static void addAgendaInfoCommItemParams(AgendaInfoCommitteeItem item, MapSqlParameterSource infoCommParams) {
         BillId billId = item.getBillId();
         infoCommParams.addValue("printNo", billId.getBasePrintNo());
-        infoCommParams.addValue("session", billId.getSession());
-        infoCommParams.addValue("amendVersion", billId.getVersion());
+        infoCommParams.addValue("session", billId.getSession().getYear());
+        infoCommParams.addValue("amendVersion", billId.getVersion().getValue());
         infoCommParams.addValue("message", item.getMessage());
     }
 
@@ -481,7 +482,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
      */
     static void addAgendaVoteAttendParams(AgendaVoteAttendance attendance, MapSqlParameterSource voteCommParams) {
         voteCommParams.addValue("memberId", attendance.getMember().getMemberId());
-        voteCommParams.addValue("sessionYear", attendance.getMember().getSessionYear());
+        voteCommParams.addValue("sessionYear", attendance.getMember().getSessionYear().getYear());
         voteCommParams.addValue("lbdcShortName", attendance.getMember().getLbdcShortName());
         voteCommParams.addValue("rank", attendance.getRank());
         voteCommParams.addValue("party", attendance.getParty());
@@ -503,8 +504,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
 
         BillVote billVote = voteBill.getBillVote();
         voteCommParams.addValue("billPrintNo", billVote.getBillId().getBasePrintNo());
-        voteCommParams.addValue("sessionYear", billVote.getBillId().getSession());
-        voteCommParams.addValue("amendVersion", billVote.getBillId().getVersion());
+        voteCommParams.addValue("sessionYear", billVote.getBillId().getSession().getYear());
+        voteCommParams.addValue("amendVersion", billVote.getBillId().getVersion().getValue());
         voteCommParams.addValue("voteDate", toDate(billVote.getVoteDate()));
         voteCommParams.addValue("sequenceNo", billVote.getSequenceNo());
         voteCommParams.addValue("voteType", billVote.getVoteType().name().toLowerCase());

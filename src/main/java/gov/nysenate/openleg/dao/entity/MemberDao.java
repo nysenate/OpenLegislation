@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.entity;
 
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 
@@ -11,10 +12,10 @@ public interface MemberDao
      * Retrieve member by id.
      *
      * @param id int
-     * @param session int
+     * @param session SessionYear
      * @return Member
      */
-    public Member getMemberById(int id, int session);
+    public Member getMemberById(int id, SessionYear session);
 
     /**
      * Retrieves map of session year -> Member for a given member id. The member references
@@ -23,7 +24,7 @@ public interface MemberDao
      * @param id int
      * @return Map<Integer, Member>
      */
-    public Map<Integer, Member> getMemberById(int id);
+    public Map<SessionYear, Member> getMemberById(int id);
 
     /**
      * Retrieve a map of session year -> Member given the LBDC short name.
@@ -32,17 +33,17 @@ public interface MemberDao
      * @param chamber Chamber
      * @return Map<Integer,Member>
      */
-    public Map<Integer, Member> getMembersByShortName(String lbdcShortName, Chamber chamber);
+    public Map<SessionYear, Member> getMembersByShortName(String lbdcShortName, Chamber chamber);
 
     /**
      * Retrieve the Member instance via the LBDC shortName and the session year.
      *
      * @param lbdcShortName String
-     * @param sessionYear int
+     * @param sessionYear SessionYear
      * @param chamber Chamber
      * @return Member
      */
-    public Member getMemberByShortName(String lbdcShortName, int sessionYear, Chamber chamber);
+    public Member getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber);
 
     public void updateMember(Member member);
 

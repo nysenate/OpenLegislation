@@ -1,10 +1,12 @@
 package gov.nysenate.openleg.dao.calendar;
 
-import com.google.common.collect.*;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
-import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +19,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static gov.nysenate.openleg.dao.calendar.SqlCalendarQuery.*;
@@ -288,7 +292,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         addBillIdParams(entry.getBillId(), params);
         BillId subBillId = entry.getSubBillId();
         params.addValue("subPrintNo", (subBillId != null) ? subBillId.getPrintNo() : null);
-        params.addValue("subSession", (subBillId != null) ? subBillId.getSession() : null);
+        params.addValue("subSession", (subBillId != null) ? subBillId.getSession().getYear() : null);
         params.addValue("subAmendVersion", (subBillId != null) ? subBillId.getVersion() : null);
         params.addValue("high", entry.getBillHigh());
         addLastFragmentParam(fragment, params);
@@ -325,7 +329,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
 
     protected static void addBillIdParams(BillId billId, MapSqlParameterSource params) {
         params.addValue("printNo", billId.getBasePrintNo());
-        params.addValue("session", billId.getSession());
-        params.addValue("amendVersion", billId.getVersion());
+        params.addValue("session", billId.getSession().getYear());
+        params.addValue("amendVersion", billId.getVersion().getValue());
     }
 }

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.script.admin;
 import gov.nysenate.openleg.model.admin.report.Report;
 import gov.nysenate.openleg.model.admin.report.ReportObservation;
 import gov.nysenate.openleg.model.admin.report.SpotCheckBill;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.entity.Member;
@@ -13,8 +14,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -81,10 +82,10 @@ public class SpotCheck extends BaseScript
         runner.update("delete from report_observation where reportId = ?", report.getId());
 
         for(String printNo : spotCheckBills.keySet()) {
-            String billAmendment = "";
+            Version billAmendment = Version.of("");
             String billNo = printNo+"-2013";
             if (printNo.matches(".*[A-Z]$")) {
-                billAmendment = printNo.substring(printNo.length()-1);
+                billAmendment = Version.of(printNo.substring(printNo.length() - 1));
                 billNo = printNo.substring(0, printNo.length()-1)+"-2013";
             }
 
@@ -200,7 +201,7 @@ public class SpotCheck extends BaseScript
             int lbdcPages = spotCheckBills.get(printNo).pages;
             int jsonPages = 0;
             Pattern pagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d*(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s{11,}\\d{1,4}(--\\w)?$)");
-            for (String line : bill.getAmendment(billAmendment).getFulltext().split("\n")) {
+            for (String line : bill.getAmendment(billAmendment).getFullText().split("\n")) {
                 if (pagePattern.matcher(line).find()) {
                     // logger.info(billNo+": "+line);
                     jsonPages++;

@@ -1,22 +1,27 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.base.BaseLegislativeContent;
+import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.*;
 
-public class BillAmendment extends BaseLegislativeContent implements Serializable
+/**
+ * A BillAmendment contains all that data that is unique to amendments of a bill. Data
+ * that is common to amendments of the same bill will be exposed through the
+ * {@link gov.nysenate.openleg.model.bill.Bill} object.
+ */
+public class BillAmendment implements Serializable
 {
     private static final long serialVersionUID = -2020934234685630361L;
 
-    /** Print number of the base bill. */
-    protected String baseBillPrintNo = "";
+    /** The parent base bill id. */
+    protected BaseBillId baseBillId;
 
-    /** Amendment version, (e.g "A"). */
-    protected String version = "";
+    /** Amendment version (e.g DEFAULT, A, B, C, etc). */
+    protected Version version = BillId.DEFAULT_VERSION;
 
     /** The "sameAs" bill in the other chamber that matches this version.
         There can be multiple same as bills in some cases, typically just 0 or 1 though. */
@@ -30,7 +35,7 @@ public class BillAmendment extends BaseLegislativeContent implements Serializabl
     protected String actClause = "";
 
     /** The full text of the amendment. */
-    protected String fulltext = "";
+    protected String fullText = "";
 
     /** The committee the bill is currently referred to, if any. */
     protected CommitteeVersionId currentCommittee = null;
@@ -54,16 +59,12 @@ public class BillAmendment extends BaseLegislativeContent implements Serializabl
 
     /** --- Constructors --- */
 
-    public BillAmendment() {
-        super();
-    }
-
-    public BillAmendment(BillId baseBillId, String version) {
-        this();
-        this.setBaseBillPrintNo(baseBillId.getPrintNo());
-        this.setSession(baseBillId.getSession());
-        this.setYear(this.getSession());
-        this.setVersion(version);
+    public BillAmendment(BaseBillId baseBillId, Version version) {
+        if (version == null) {
+            throw new IllegalArgumentException("Cannot create BillAmendment with null version");
+        }
+        this.baseBillId = baseBillId;
+        this.version = version;
     }
 
     /** --- Overrides --- */
@@ -75,16 +76,20 @@ public class BillAmendment extends BaseLegislativeContent implements Serializabl
 
     /** --- Functional Getters/Setters --- */
 
+    public String getBasePrintNo() {
+        return baseBillId.getBasePrintNo();
+    }
+
+    public SessionYear getSession() {
+        return baseBillId.getSession();
+    }
+
     public BillId getBillId() {
-        return new BillId(this.baseBillPrintNo, this.session, this.version);
+        return baseBillId.withVersion(this.version);
     }
 
     public BillType getBillType() {
         return this.getBillId().getBillType();
-    }
-
-    public void setVersion(String version) {
-        this.version = version.trim().toUpperCase();
     }
 
     public void updateVote(BillVote vote) {
@@ -97,15 +102,11 @@ public class BillAmendment extends BaseLegislativeContent implements Serializabl
 
     /** --- Basic Getters/Setters --- */
 
-    public String getBaseBillPrintNo() {
-        return baseBillPrintNo;
+    public BaseBillId getBaseBillId() {
+        return baseBillId;
     }
 
-    public void setBaseBillPrintNo(String baseBillPrintNo) {
-        this.baseBillPrintNo = baseBillPrintNo;
-    }
-
-    public String getVersion() {
+    public Version getVersion() {
         return version;
     }
 
@@ -133,12 +134,12 @@ public class BillAmendment extends BaseLegislativeContent implements Serializabl
         this.actClause = actClause;
     }
 
-    public String getFulltext() {
-        return fulltext;
+    public String getFullText() {
+        return fullText;
     }
 
-    public void setFulltext(String fulltext) {
-        this.fulltext = fulltext;
+    public void setFullText(String fullText) {
+        this.fullText = fullText;
     }
 
     public CommitteeVersionId getCurrentCommittee() {

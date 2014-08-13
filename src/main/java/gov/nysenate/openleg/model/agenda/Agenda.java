@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.model.agenda;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
-import gov.nysenate.openleg.util.DateUtils;
+import gov.nysenate.openleg.model.base.SessionYear;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class Agenda extends BaseLegislativeContent implements Serializable
         this();
         this.setId(id);
         this.setYear(id.getYear());
-        this.setSession(DateUtils.resolveSession(this.getYear()));
+        this.setSession(SessionYear.of(this.getYear()));
     }
 
     /** --- Overrides --- */

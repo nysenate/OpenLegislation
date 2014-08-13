@@ -1,12 +1,11 @@
 package gov.nysenate.openleg.dao.bill;
 
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoId;
+import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
 
-import java.util.List;
 import java.util.Map;
 
 public interface VetoDao

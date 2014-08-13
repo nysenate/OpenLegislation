@@ -2,26 +2,20 @@ package gov.nysenate.openleg.processor.base;
 
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
+import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.entity.MemberId;
-import gov.nysenate.openleg.model.sobi.SobiBlock;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.agenda.AgendaDataService;
-import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.service.bill.BillDataService;
-import gov.nysenate.openleg.model.bill.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.VetoDataService;
 import gov.nysenate.openleg.service.calendar.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.CalendarNotFoundEx;
 import gov.nysenate.openleg.service.entity.CommitteeService;
-import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.MemberService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -69,18 +63,6 @@ public abstract class AbstractDataProcessor
     }
 
     /**
-     * Retrieves/creates the Bill using the print no in the SobiBlock.
-     *
-     * @param fragment SobiFragment
-     * @param block SobiBlock
-     * @param billIngestCache IngestCache<Bill>
-     * @return Bill
-     */
-    protected Bill getOrCreateBaseBill(SobiFragment fragment, SobiBlock block, IngestCache<BaseBillId, Bill> billIngestCache) {
-        return getOrCreateBaseBill(fragment.getPublishedDateTime(), block.getBillId(), billIngestCache);
-    }
-
-    /**
      * Retrieves the base Bill container using the given billId from either the cache or the service layer.
      * If this base bill does not exist, it will be created. The amendment instance will also be created
      * if it does not exist.
@@ -112,23 +94,28 @@ public abstract class AbstractDataProcessor
         }
         if (!baseBill.hasAmendment(billId.getVersion())) {
             BillAmendment billAmendment = new BillAmendment(baseBillId, billId.getVersion());
-            billAmendment.setModifiedDateTime(publishDate);
             // If an active amendment exists, apply its ACT TO clause to this amendment
             if (baseBill.hasActiveAmendment()) {
                 billAmendment.setActClause(baseBill.getActiveAmendment().getActClause());
             }
             // Create the base version if an amendment was received before the base version
             if (!isBaseVersion) {
-                if (!baseBill.hasAmendment(BillId.BASE_VERSION)) {
-                    BillAmendment baseAmendment = new BillAmendment(baseBillId, BillId.BASE_VERSION);
-                    baseAmendment.setModifiedDateTime(publishDate);
+                if (!baseBill.hasAmendment(BillId.DEFAULT_VERSION)) {
+                    BillAmendment baseAmendment = new BillAmendment(baseBillId, BillId.DEFAULT_VERSION);
                     baseBill.addAmendment(baseAmendment);
-                    baseBill.setActiveVersion(BillId.BASE_VERSION);
+                    baseBill.setActiveVersion(BillId.DEFAULT_VERSION);
                 }
-                // Pull 'shared' data from the currently active amendment
-                BillAmendment activeAmendment = baseBill.getAmendment(baseBill.getActiveVersion());
-                billAmendment.setCoSponsors(activeAmendment.getCoSponsors());
-                billAmendment.setMultiSponsors(activeAmendment.getMultiSponsors());
+                // If the active amendment does not exist, create it
+                if (!baseBill.hasActiveAmendment()) {
+                    BillAmendment activeAmendment = new BillAmendment(baseBillId, baseBill.getActiveVersion());
+                    baseBill.addAmendment(activeAmendment);
+                }
+                // Otherwise pull 'initially shared' data from the currently active amendment
+                else {
+                    BillAmendment activeAmendment = baseBill.getActiveAmendment();
+                    billAmendment.setCoSponsors(activeAmendment.getCoSponsors());
+                    billAmendment.setMultiSponsors(activeAmendment.getMultiSponsors());
+                }
             }
             logger.trace("Adding bill amendment: " + billAmendment);
             baseBill.addAmendment(billAmendment);
@@ -162,7 +149,7 @@ public abstract class AbstractDataProcessor
      * Retrieves a member from the LBDC short name with special processing if the member was not found
      * and required is true. Returns null if required is false and member is not found.
      */
-    protected Member getMemberFromShortName(String shortName, int sessionYear, Chamber chamber, boolean required) {
+    protected Member getMemberFromShortName(String shortName, SessionYear sessionYear, Chamber chamber, boolean required) {
         if (StringUtils.isNotBlank(shortName)) {
             try {
                 return memberService.getMemberByShortName(shortName, sessionYear, chamber);

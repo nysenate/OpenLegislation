@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import gov.nysenate.openleg.model.sobi.SobiLineType;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 public enum BillTextType

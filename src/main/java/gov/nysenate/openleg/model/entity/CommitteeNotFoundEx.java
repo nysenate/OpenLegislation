@@ -1,10 +1,5 @@
 package gov.nysenate.openleg.model.entity;
 
-import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.CommitteeId;
-
-import java.util.Date;
-
 public class CommitteeNotFoundEx extends Exception{
     protected CommitteeId committeeId;
 

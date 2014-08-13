@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
+import gov.nysenate.openleg.model.base.PublishStatus;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 
@@ -11,7 +13,7 @@ import java.util.*;
 /**
  * The Bill class serves as a container for all the entities that can be classified under a print number
  * and session year. It contains a collection of amendments (including the base amendment) as well as
- * shared information such as the sponsor or actions.
+ * shared information such as the sponsor, actions, etc.
  */
 public class Bill extends BaseLegislativeContent implements Serializable, Comparable<Bill>
 {
@@ -32,15 +34,17 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** An overview of a bill that list's specific sections of NYS law to be amended by the bill. */
     protected String summary = "";
 
-    /** A letter at the end of the printNo indicates the amendment version.
-     *  This is a mapping of amendment versions to Amendment objects (includes base amendment). */
-    protected Map<String, BillAmendment> amendmentMap = new TreeMap<>();
+    /** A mapping of amendment versions to BillAmendment instances (includes base amendment). */
+    protected Map<Version, BillAmendment> amendmentMap = new TreeMap<>();
+
+    /** Publish status mapped by amendment versions. */
+    protected Map<Version, PublishStatus> amendPublishStatusMap = new TreeMap<>();
 
     /** A list of veto messages for this bill */
     protected Map<VetoId, VetoMessage> vetoMessages = new HashMap<>();
 
     /** Indicates the amendment version that is currently active for this bill. */
-    protected String activeVersion = BillId.BASE_VERSION;
+    protected Version activeVersion = BillId.DEFAULT_VERSION;
 
     /** The Legislator who formally introduced the bill. */
     protected BillSponsor sponsor;
@@ -84,10 +88,10 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         super.setPublishedDateTime(publishDateTime);
         if (super.publishedDateTime != null) {
             // Sometimes bills are pre-filed before the session actually starts so we account for this.
-            super.setYear(Integer.max(this.session, publishDateTime.getYear()));
+            super.setYear(Integer.max(this.session.getYear(), publishDateTime.getYear()));
         }
         else {
-            super.setYear(this.session);
+            super.setYear(this.session.getYear());
         }
     }
 
@@ -126,9 +130,9 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      * @return BillAmendment
      * @throws BillAmendNotFoundEx if the bill amendment does not exist
      */
-    public BillAmendment getAmendment(String version) throws BillAmendNotFoundEx {
+    public BillAmendment getAmendment(Version version) throws BillAmendNotFoundEx {
         if (this.hasAmendment(version)) {
-            return this.amendmentMap.get(version.toUpperCase());
+            return this.amendmentMap.get(version);
         }
         throw new BillAmendNotFoundEx(baseBillId.withVersion(version));
     }
@@ -141,12 +145,17 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     /**
-     * Associate an amendment with this bill.
+     * Associate an amendment with this bill. Replaces existing instance of the same version.
      *
-     * @param billAmendment - Amendment to add to this bill.
+     * @param billAmendment - Amendment to add to this bill. Cannot be null.
      */
     public void addAmendment(BillAmendment billAmendment) {
-        this.amendmentMap.put(billAmendment.getVersion().toUpperCase(), billAmendment);
+        if (billAmendment != null) {
+            this.amendmentMap.put(billAmendment.getVersion(), billAmendment);
+        }
+        else {
+            throw new IllegalArgumentException("Supplied BillAmendment cannot be null.");
+        }
     }
 
     /**
@@ -155,8 +164,51 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      * @param billAmendments - List<Amendment> - Amendments to add to this bill
      */
     public void addAmendments(List<BillAmendment> billAmendments) {
-        for (BillAmendment billAmendment : billAmendments) {
-            this.addAmendment(billAmendment);
+        billAmendments.forEach(this::addAmendment);
+    }
+
+    /**
+     * Retrieve a PublishStatus for a specific amendment version.
+     *
+     * @param version String - Amendment version
+     * @return Optional<PublishStatus> - Value will be set if mapping exists.
+     */
+    public Optional<PublishStatus> getPublishStatus(Version version) {
+        if (this.amendPublishStatusMap.containsKey(version)) {
+            return Optional.of(this.amendPublishStatusMap.get(version));
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Associate the publish status to a particular bill amendment. The bill amendment
+     * instance does not necessarily have to exist prior to updating its publish status.
+     *
+     * @param version Version - Amendment version
+     * @param publishStatus PublishStatus - The publish status of the bill amendment
+     */
+    public void updatePublishStatus(Version version, PublishStatus publishStatus) {
+        if (publishStatus != null) {
+            this.amendPublishStatusMap.put(version, publishStatus);
+        }
+        else {
+            throw new IllegalArgumentException("Supplied PublishStatus cannot be null.");
+        }
+    }
+
+    /**
+     * Clears the existing publishStatusMap and then delegates each entry to
+     * {@link #updatePublishStatus(Version, PublishStatus)}
+     *
+     * @param publishStatusMap Map<String, PublishStatus>
+     */
+    public void setPublishStatuses(Map<Version, PublishStatus> publishStatusMap) {
+        this.amendPublishStatusMap.clear();
+        if (publishStatusMap != null) {
+            publishStatusMap.forEach(this::updatePublishStatus);
+        }
+        else {
+            throw new IllegalArgumentException("Supplied PublishStatusMap cannot be null.");
         }
     }
 
@@ -166,9 +218,9 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      * @param version String - Amendment version
      * @return boolean - true if amendment exists, false otherwise
      */
-    public boolean hasAmendment(String version) {
-        return this.amendmentMap.containsKey(version.toUpperCase()) &&
-               this.amendmentMap.get(version.toUpperCase()) != null;
+    public boolean hasAmendment(Version version) {
+        return this.amendmentMap.containsKey(version) &&
+               this.amendmentMap.get(version) != null;
     }
 
     /**
@@ -212,7 +264,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** --- Delegates --- */
 
     public String getFulltext() {
-        return this.getActiveAmendment().getFulltext();
+        return this.getActiveAmendment().getFullText();
     }
 
     /** --- Basic Getters/Setters --- */
@@ -257,16 +309,20 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.summary = summary;
     }
 
-    public String getActiveVersion() {
+    public Version getActiveVersion() {
         return activeVersion;
     }
 
-    public void setActiveVersion(String activeVersion) {
+    public void setActiveVersion(Version activeVersion) {
         this.activeVersion = activeVersion;
     }
 
-    public Map<String, BillAmendment> getAmendmentMap() {
+    public Map<Version, BillAmendment> getAmendmentMap() {
         return amendmentMap;
+    }
+
+    public Map<Version, PublishStatus> getAmendPublishStatusMap() {
+        return amendPublishStatusMap;
     }
 
     public Map<VetoId,VetoMessage> getVetoMessages() {

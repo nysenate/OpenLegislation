@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.entity;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import org.slf4j.Logger;
@@ -14,11 +15,9 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 @Repository("sqlMember")
 public class SqlMemberDao extends SqlBaseDao implements MemberDao
@@ -29,7 +28,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
 
     /** {@inheritDoc} */
     @Override
-    public Map<Integer, Member> getMemberById(int id) {
+    public Map<SessionYear, Member> getMemberById(int id) {
         MapSqlParameterSource params = new MapSqlParameterSource("memberId", id);
         List<Member> memberList =
             jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
@@ -38,17 +37,17 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
 
     /** {@inheritDoc} */
     @Override
-    public Member getMemberById(int id, int session) {
+    public Member getMemberById(int id, SessionYear session) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("memberId", id);
-        params.addValue("sessionYear", session);
+        params.addValue("sessionYear", session.getYear());
         return jdbcNamed.queryForObject(
             SqlMemberQuery.SELECT_MEMBER_BY_ID_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
     }
 
     /** {@inheritDoc} */
     @Override
-    public Map<Integer, Member> getMembersByShortName(String lbdcShortName, Chamber chamber) {
+    public Map<SessionYear, Member> getMembersByShortName(String lbdcShortName, Chamber chamber) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("shortName", lbdcShortName);
         params.addValue("chamber", chamber.name().toLowerCase());
@@ -68,10 +67,10 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
      *  have to handle a DataAccessException.
      */
     @Override
-    public Member getMemberByShortName(String lbdcShortName, int sessionYear, Chamber chamber) {
+    public Member getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("shortName", lbdcShortName.trim());
-        params.addValue("sessionYear", (sessionYear % 2 == 0) ? sessionYear - 1 : sessionYear);
+        params.addValue("sessionYear", sessionYear.getYear());
         params.addValue("chamber", chamber.name().toLowerCase());
         params.addValue("alternate", false);
         logger.trace("Fetching member {} ({}) from database...", lbdcShortName, sessionYear);
@@ -107,7 +106,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             Member member = new Member();
             member.setMemberId(rs.getInt("member_id"));
             member.setLbdcShortName(rs.getString("lbdc_short_name"));
-            member.setSessionYear(rs.getInt("session_year"));
+            member.setSessionYear(getSessionYear(rs, "session_year"));
             member.setDistrictCode(rs.getInt("district_code"));
             member.setChamber(Chamber.valueOf(rs.getString("chamber").toUpperCase()));
             member.setIncumbent(rs.getBoolean("incumbent"));
@@ -126,14 +125,13 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     /**
      * Converts a list of member objects referring to multiple session years into a
      * map keyed by the session year.
+     *
      * @param members List<Member>
-     * @return Map<Integer, Member>
+     * @return Map<SessionYear, Member>
      */
-    private Map<Integer, Member> getMemberSessionMap(List<Member> members) {
-        TreeMap<Integer, Member> memberMap = new TreeMap<>();
-        for (Member member : members) {
-            memberMap.put(member.getSessionYear(), member);
-        }
+    private Map<SessionYear, Member> getMemberSessionMap(List<Member> members) {
+        TreeMap<SessionYear, Member> memberMap = new TreeMap<>();
+        members.forEach(m -> memberMap.put(m.getSessionYear(), m));
         return memberMap;
     }
 }

@@ -1,14 +1,15 @@
 package gov.nysenate.openleg.processor.agenda;
 
 import gov.nysenate.openleg.model.agenda.*;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
-import gov.nysenate.openleg.processor.base.SobiProcessor;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.SobiProcessor;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
             Document doc = xml.parse(sobiFragment.getText());
             Node xmlAgendaVote = xml.getNode("SENATEDATA/senagendavote", doc);
             Integer agendaNo = xml.getInteger("@no", xmlAgendaVote);
-            Integer session = xml.getInteger("@sessyr", xmlAgendaVote);
+            SessionYear session = new SessionYear(xml.getInteger("@sessyr", xmlAgendaVote));
             Integer year = xml.getInteger("@year", xmlAgendaVote);
             AgendaId agendaId = new AgendaId(agendaNo, year);
             Agenda agenda = getOrCreateAgenda(agendaId, modifiedDate);

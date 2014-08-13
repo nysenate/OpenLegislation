@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.entity;
 
+import gov.nysenate.openleg.model.base.SessionYear;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -15,7 +17,7 @@ public class Member extends Person implements Serializable
     private String lbdcShortName;
 
     /** The session year the member is active in. */
-    private int sessionYear;
+    private SessionYear sessionYear;
 
     /** The legislative chamber this member is associated with. */
     private Chamber chamber;
@@ -102,11 +104,11 @@ public class Member extends Person implements Serializable
         this.lbdcShortName = lbdcShortName;
     }
 
-    public int getSessionYear() {
+    public SessionYear getSessionYear() {
         return sessionYear;
     }
 
-    public void setSessionYear(int sessionYear) {
+    public void setSessionYear(SessionYear sessionYear) {
         this.sessionYear = sessionYear;
     }
 

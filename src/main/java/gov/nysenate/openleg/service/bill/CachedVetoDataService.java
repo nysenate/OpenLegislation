@@ -2,8 +2,8 @@ package gov.nysenate.openleg.service.bill;
 
 import gov.nysenate.openleg.dao.bill.VetoDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoId;
+import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.base.CachingService;
 import net.sf.ehcache.CacheManager;
@@ -17,7 +17,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 import java.util.Map;
 
 @Service

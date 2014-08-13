@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.model.bill;
 
+import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.base.Version;
+
 import java.io.Serializable;
 
 /**
@@ -11,13 +14,17 @@ public class BaseBillId extends BillId implements Serializable
 {
     private static final long serialVersionUID = -7708296547127325102L;
 
+    public BaseBillId(String printNo, int session) {
+        this(printNo, SessionYear.of(session));
+    }
+
     /**
      * The BaseBillId constructor will set the version to a default value regardless
      * of the supplied print no string.
      */
-    public BaseBillId(String printNo, int session) {
+    public BaseBillId(String printNo, SessionYear session) {
         super(printNo, session);
-        super.version = BASE_VERSION;
+        super.version = DEFAULT_VERSION;
     }
 
     /**
@@ -25,15 +32,15 @@ public class BaseBillId extends BillId implements Serializable
      * This can be useful when moving from a non-version context (such as a Bill container)
      * to a version specific context (BillAmendment).
      */
-    public BillId withVersion(String version) {
-        return new BillId(this.basePrintNo, this.session, this.version);
+    public BillId withVersion(Version version) {
+        return new BillId(this.basePrintNo, this.session, version);
     }
 
     /**
      * Return the base version by default since version info is to be ignored.
      */
     @Override
-    public String getVersion() {
-        return BASE_VERSION;
+    public Version getVersion() {
+        return DEFAULT_VERSION;
     }
 }

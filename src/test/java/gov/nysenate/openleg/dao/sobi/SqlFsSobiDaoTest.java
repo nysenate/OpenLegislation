@@ -7,15 +7,12 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.sobi.SobiFile;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
-import gov.nysenate.openleg.util.OutputHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SqlFsSobiDaoTest extends BaseTests
 {
@@ -50,7 +47,7 @@ public class SqlFsSobiDaoTest extends BaseTests
     public void testGetSobiFilesDuring() throws Exception {
 //        List<SobiFile> sobiFiles = sobiDao.getSobiFilesDuring(LocalDate.of(2013, 1, 1), LocalDate.of(2013, 2, 1),
 //                SortOrder.ASC, LimitOffset.ALL);
-//        logger.info("{}", OutputHelper.toJson(sobiFiles));
+//        logger.info("{}", OutputUtils.toJson(sobiFiles));
     }
 
     @Test

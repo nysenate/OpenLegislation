@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.dao.entity;
 
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -356,7 +356,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
             committee.setMeetTime(rs.getTime("meettime"));
             committee.setMeetAltWeek(rs.getBoolean("meetaltweek"));
             committee.setMeetAltWeekText(rs.getString("meetaltweektext"));
-            committee.setSession(rs.getInt("session_year"));
+            committee.setSession(getSessionYear(rs, "session_year"));
             return committee;
         }
     }
@@ -368,7 +368,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
             CommitteeMember committeeMember = new CommitteeMember();
             committeeMember.setSequenceNo(rs.getInt("sequence_no"));
             int memberId = rs.getInt("member_id");
-            int sessionYear = rs.getInt("session_year");
+            SessionYear sessionYear = getSessionYear(rs, "session_year");
             try {
                 committeeMember.setMember(memberService.getMemberById(memberId, sessionYear));
             }
@@ -392,7 +392,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
 
     private MapSqlParameterSource getCommitteeVersionIdParams(CommitteeVersionId cvid) {
         MapSqlParameterSource params = getCommitteeIdParams(cvid);
-        params.addValue("sessionYear", cvid.getSession());
+        params.addValue("sessionYear", cvid.getSession().getYear());
         params.addValue("referenceDate", cvid.getReferenceDate());
         return params;
     }

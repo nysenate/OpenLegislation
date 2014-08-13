@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.model.calendar;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
-import gov.nysenate.openleg.util.DateUtils;
+import gov.nysenate.openleg.model.base.SessionYear;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -35,7 +35,7 @@ public class Calendar extends BaseLegislativeContent
         this();
         this.setId(calendarId);
         this.setYear(calendarId.getYear());
-        this.setSession(DateUtils.resolveSession(getYear()));
+        this.setSession(new SessionYear(getYear()));
     }
 
     /** --- Functional Getters/Setters --- */

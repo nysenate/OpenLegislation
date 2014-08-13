@@ -2,8 +2,8 @@ package gov.nysenate.openleg.dao.bill;
 
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoId;
+import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoType;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import org.slf4j.Logger;
@@ -13,10 +13,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +62,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
             vetoMessage.setYear(rs.getInt("year"));
             vetoMessage.setVetoNumber(rs.getInt("veto_number"));
             vetoMessage.setBillId(new BaseBillId(rs.getString("bill_print_no"), rs.getInt("session_year")));
-            vetoMessage.setSession(rs.getInt("session_year"));
+            vetoMessage.setSession(getSessionYear(rs, "session_year"));
             vetoMessage.setType(VetoType.valueOf(rs.getString("type").toUpperCase()));
             vetoMessage.setChapter(rs.getInt("chapter"));
             vetoMessage.setBillPage(rs.getInt("page"));
@@ -88,7 +86,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
     private MapSqlParameterSource getVetoParams(VetoMessage vetoMessage, SobiFragment sobiFragment){
         MapSqlParameterSource params = getVetoIdParams(vetoMessage.getVetoId());
         params.addValue("printNum", vetoMessage.getBillId().getBasePrintNo());
-        params.addValue("sessionYear", vetoMessage.getSession());
+        params.addValue("sessionYear", vetoMessage.getSession().getYear());
         params.addValue("chapter", vetoMessage.getChapter());
         params.addValue("page", vetoMessage.getBillPage());
         params.addValue("lineStart", vetoMessage.getLineStart());
@@ -105,7 +103,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
     private MapSqlParameterSource getBaseBillIdParams(BaseBillId baseBillId){
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("printNum", baseBillId.getBasePrintNo());
-        params.addValue("sessionYear", baseBillId.getSession());
+        params.addValue("sessionYear", baseBillId.getSession().getYear());
         return params;
     }
 }

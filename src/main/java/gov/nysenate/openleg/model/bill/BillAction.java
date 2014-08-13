@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.base.BaseLegislativeContent;
+import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.entity.Chamber;
 
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import java.util.Objects;
 /**
  * Represents a single action on a single bill. E.g. REFERRED TO RULES.
  */
-public class BillAction extends BaseLegislativeContent implements Serializable
+public class BillAction implements Serializable, Comparable<BillAction>
 {
     private static final long serialVersionUID = -508975280380827827L;
 
@@ -19,7 +19,7 @@ public class BillAction extends BaseLegislativeContent implements Serializable
     private BillId billId;
 
     /** The date this action was performed. Has no time component. */
-    private LocalDate date = null;
+    private LocalDate date;
 
     /** The chamber in which this action occurred */
     private Chamber chamber;
@@ -52,20 +52,13 @@ public class BillAction extends BaseLegislativeContent implements Serializable
         this.setBillId(billId);
         this.setChamber(chamber);
         this.setSequenceNo(sequenceNo);
-        this.setSession(billId.getSession());
-        this.setYear(date.getYear());
     }
 
     /** --- Overrides --- */
 
     @Override
-    public int getYear() {
-        return this.getDate().getYear();
-    }
-
-    @Override
     public String toString() {
-        return date.toString() + " " + text;
+        return date.toString() + " (" + chamber + ") " + text;
     }
 
     /**
@@ -73,7 +66,7 @@ public class BillAction extends BaseLegislativeContent implements Serializable
      * the base version. For the sake of equality checking, we will use the base version of the
      * bill id since the actions are stored on the base bill anyways. Seq no, date, and text will
      * also be checked. NOTE: published/modified date are ignored since an individual action
-     * is never updated.
+     * is never updated, only replaced.
      */
     @Override
     public boolean equals(Object obj) {
@@ -91,15 +84,22 @@ public class BillAction extends BaseLegislativeContent implements Serializable
         return 31 * billId.hashCodeBase() + Objects.hash(date, sequenceNo, text);
     }
 
+    @Override
+    public int compareTo(BillAction o) {
+        return ComparisonChain.start().compare(this.sequenceNo, o.sequenceNo).result();
+    }
+
     /** --- Helper classes --- */
 
-    public static class ByEventSequenceAsc implements Comparator<BillAction> {
+    public static class ByEventSequenceAsc implements Comparator<BillAction>
+    {
         @Override
         public int compare(BillAction o1, BillAction o2) {
             return Integer.compare(o1.getSequenceNo(), o2.getSequenceNo());
         }
     }
 
+    @SuppressWarnings("serial")
     public static class ByEventSequenceDesc implements Comparator<BillAction> {
         @Override
         public int compare(BillAction o1, BillAction o2) {

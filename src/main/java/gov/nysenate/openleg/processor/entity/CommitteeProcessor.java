@@ -1,12 +1,12 @@
 package gov.nysenate.openleg.processor.entity;
 
 import gov.nysenate.openleg.dao.entity.CommitteeDao;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
-import gov.nysenate.openleg.processor.base.SobiProcessor;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.processor.base.SobiProcessor;
 import gov.nysenate.openleg.service.entity.MemberService;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.apache.log4j.Logger;
@@ -54,11 +54,11 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
             Document doc = xml.parse(xmlString);
             Node dataRoot = xml.getNode("SENATEDATA",doc);
             Node committeeRoot = xml.getNode("sencommmem", dataRoot);
-            int sessionYear = Integer.parseInt(xml.getString("@sessyr", committeeRoot));
+            SessionYear sessionYear = new SessionYear(Integer.parseInt(xml.getString("@sessyr", committeeRoot)));
             int year = Integer.parseInt(xml.getString("@year", committeeRoot));
             Chamber chamber = Chamber.SENATE;
-            logger.info("Processing " + chamber + "committees for s" + sessionYear + " y" + year + "\t" + sobiFragment.getPublishedDateTime());
-
+            logger.info("Processing " + chamber + "committees for s" + sessionYear + " y" + year + "\t" +
+                        sobiFragment.getPublishedDateTime());
             committeeRoot = xml.getNode("committees", committeeRoot);
             NodeList committeeNodes = committeeRoot.getChildNodes();
             for(int i = 0; i < committeeNodes.getLength() ; i++){
@@ -85,7 +85,8 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
 
     /** --- Internal Methods --- */
 
-    private Committee processCommittee(Node committeeNode, Committee committee) throws XPathExpressionException, ParseException {
+    private Committee processCommittee(Node committeeNode, Committee committee) throws XPathExpressionException,
+                                                                                       ParseException {
         committee.setName(xml.getString("name/text()", committeeNode));
         committee.setLocation(xml.getString("location/text()", committeeNode));
         committee.setMeetDay(xml.getString("meetday/text()", committeeNode));
@@ -98,7 +99,8 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
         return committee;
     }
 
-    private List<CommitteeMember> processCommitteeMembers(Node committeeMembership, Committee committee) throws XPathExpressionException {
+    private List<CommitteeMember> processCommitteeMembers(Node committeeMembership, Committee committee)
+                                                          throws XPathExpressionException {
         List<CommitteeMember> committeeMembers = new ArrayList<CommitteeMember>();
         NodeList committeeMembersNodes = committeeMembership.getChildNodes();
         for(int i = 0; i < committeeMembersNodes.getLength(); i++){
@@ -107,16 +109,19 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
                 String shortName = xml.getString("name/text()", memberNode);
                 Member sessionMember;
                 try {
-                    sessionMember = memberService.getMemberByShortName(shortName, committee.getSession(), committee.getChamber());
+                    sessionMember = memberService.getMemberByShortName(shortName, committee.getSession(),
+                                                                       committee.getChamber());
                 }
                 catch (MemberNotFoundEx memberNotFoundEx) {
-                    logger.error("Could not identify committee member " + shortName + " " + committee.getSession() + " " + committee.getChamber());
+                    logger.error("Could not identify committee member " + shortName + " " + committee.getSession() +
+                                 " " + committee.getChamber());
                     continue;
                 }
                 CommitteeMember committeeMember = new CommitteeMember();
                 committeeMember.setSequenceNo(Integer.parseInt(xml.getString("@seqno", memberNode)));
                 committeeMember.setMember(sessionMember);
-                committeeMember.setMajority(xml.getString("memberlist/text()", memberNode).trim().equalsIgnoreCase("Majority"));
+                committeeMember.setMajority(
+                    xml.getString("memberlist/text()", memberNode).trim().equalsIgnoreCase("Majority"));
                 String title = xml.getString("title/text()", memberNode).trim();
                 if (title.equalsIgnoreCase("Chairperson")) {
                     committeeMember.setTitle(CommitteeMemberTitle.CHAIR_PERSON);

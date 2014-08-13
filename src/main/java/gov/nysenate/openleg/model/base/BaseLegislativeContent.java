@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.model.base;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -10,7 +9,7 @@ import java.util.Objects;
 abstract public class BaseLegislativeContent
 {
     /** The session this object was created in. */
-    protected int session;
+    protected SessionYear session;
 
     /** The calendar year this object was active in. */
     protected int year;
@@ -76,11 +75,11 @@ abstract public class BaseLegislativeContent
         this.modifiedDateTime = modifiedDateTime;
     }
 
-    public int getSession() {
+    public SessionYear getSession() {
         return this.session;
     }
 
-    public void setSession(int session) {
+    public void setSession(SessionYear session) {
         this.session = session;
     }
 

@@ -1,8 +1,10 @@
 package gov.nysenate.openleg.model.bill;
 
 import com.google.common.collect.ComparisonChain;
+import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.util.DateUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -21,7 +23,7 @@ public class BillId implements Serializable, Comparable<BillId>
     public static Pattern printNumberPattern = Pattern.compile("([ASLREJKBC])([0-9]{1,5})([A-Z]?)");
 
     /** The default amendment version letter. */
-    public static final String BASE_VERSION = "";
+    public static final Version DEFAULT_VERSION = Version.DEFAULT;
 
     /** A number assigned to a bill when it's introduced in the Legislature. Each printNo begins with a
      *  letter (A for Assembly, S for Senate) followed by 1 to 5 digits. This printNo is valid only for the
@@ -29,58 +31,71 @@ public class BillId implements Serializable, Comparable<BillId>
     protected String basePrintNo;
 
     /** The session year of the bill. */
-    protected int session;
+    protected SessionYear session;
 
-    /** The amendment version of the bill. Its either a blank string or a single character from A-Z. */
-    protected String version = BASE_VERSION;
+    /** The amendment version of the bill. */
+    protected Version version = DEFAULT_VERSION;
 
     /* --- Constructors --- */
 
-    /**
-     * Use this constructor when the version is not known/applicable.
-     *
-     * @param printNo String
-     * @param session int
-     */
     public BillId(String printNo, int session) {
-        this(printNo, session, null);
+        this(printNo, new SessionYear(session));
+    }
+
+    /**
+     * Use this constructor when the version is not known or when the version may
+     * be attached to the print no and needs to be parsed out.
+     *
+     * @param printNo String - e.g. 'S1234' or 'S1234A'
+     * @param session int - e.g. 2013
+     */
+    public BillId(String printNo, SessionYear session) {
+        printNo = normalizePrintNo(printNo);
+        // Strip out the version from the print no if it exists.
+        if (printNo.matches(".*[A-Z]$")) {
+            this.version = Version.of(printNo.substring(printNo.length() - 1));
+            printNo = printNo.substring(0, printNo.length() - 1);
+        }
+        checkBasePrintHasNoVersion(printNo);
+        this.basePrintNo = printNo;
+        checkSessionYear(session);
+        this.session = session;
     }
 
     /**
      * Performs strict checks on the basePrintNo when constructing BillId. If you have a bill id
-     * as S02134A-2013, you should pass it in as ("S02134", 2013, "A"). However you can also
-     * pass it in as ("S02134A", 2013, null|"") and the constructor will parse out the version.
+     * as S02134A-2013, you should pass it in as ("S02134", 2013, "A"). If you do not have the
+     * parsed representation of the printNo, use the {@link BillId(String, int)} constructor instead.
      *
-     * @param basePrintNo String
+     * @param basePrintNo String - e.g. S1234 -> GOOD,  S1234A -> INVALID
      * @param session int
      * @param version String
      */
     public BillId(String basePrintNo, int session, String version) {
-        if (basePrintNo == null) {
-            throw new IllegalArgumentException("basePrintNo when constructing BillId cannot be null!");
-        }
-        // Remove all non-alphanumeric characters from the print no.
-        basePrintNo = basePrintNo.trim().toUpperCase().replaceAll("[^0-9A-Z]", "");
-        if (!basePrintNo.matches("[A-Z].*")) {
-            throw new IllegalArgumentException("basePrintNo must begin with the letter designator!");
-        }
-        // Strip out the version from the print no if it exists.
-        if (basePrintNo.matches(".*[A-Z]$")) {
-            String strippedPrintNo = basePrintNo.substring(0, basePrintNo.length() - 1);
-            version = (version == null || version.isEmpty()) ? basePrintNo.substring(basePrintNo.length() - 1)
-                                                             : version;
-            basePrintNo = strippedPrintNo;
-        }
-        try {
-            // Remove any leading zeros from the print no.
-            this.basePrintNo = basePrintNo.substring(0, 1) + Integer.parseInt(basePrintNo.substring(1, basePrintNo.length()));
-        }
-        catch (NumberFormatException ex) {
-            throw new IllegalArgumentException("basePrintNo must be numerical after the letter designator!");
-        }
-        this.version = (version != null) ? version.trim().toUpperCase() : "";
-        this.session = DateUtils.resolveSession(session);
+        this(basePrintNo, new SessionYear(session), Version.of(version));
     }
+
+    /**
+     * Performs strict checks on the basePrintNo when constructing BillId. If you have a bill id
+     * as S02134A-2013, you should pass it in as ("S02134", 2013, "A"). If you do not have the
+     * parsed representation of the printNo, use the {@link BillId(String, int)} constructor instead.
+     *
+     * @param basePrintNo String - e.g. S1234 -> GOOD,  S1234A -> INVALID
+     * @param session int
+     * @param version String
+     */
+    public BillId(String basePrintNo, SessionYear session, Version version) {
+        basePrintNo = normalizePrintNo(basePrintNo);
+        checkBasePrintHasNoVersion(basePrintNo);
+        this.basePrintNo = basePrintNo;
+        checkSessionYear(session);
+        this.session = session;
+        if (version == null) {
+            version = DEFAULT_VERSION;
+        }
+        this.version = version;
+    }
+
 
     /** --- Methods --- */
 
@@ -119,8 +134,8 @@ public class BillId implements Serializable, Comparable<BillId>
      * @param version The bill version
      * @return Returns true if the version will be represented as a base bill
      */
-    public static boolean isBaseVersion(String version) {
-        return version == null || version.equals(BillId.BASE_VERSION);
+    public static boolean isBaseVersion(Version version) {
+        return version == null || version.equals(BillId.DEFAULT_VERSION);
     }
 
     /**
@@ -203,17 +218,71 @@ public class BillId implements Serializable, Comparable<BillId>
             .result();
     }
 
+    /** --- Internal --- */
+
+    /**
+     * Converts the printNo into a normalized form (no whitespace, all caps, all alphanumeric) and performs
+     * basic checks to ensure that the printNo starts with the correct BillType designator. The normalized
+     * printNo will be returned or an IllegalArgumentException thrown if printNo is invalid.
+     *
+     * @param printNo String - Input printNo
+     * @return String - Normalized printNo
+     */
+    private String normalizePrintNo(String printNo) {
+        // Basic Null Check
+        if (printNo == null || printNo.trim().isEmpty()) {
+            throw new IllegalArgumentException("PrintNo when constructing BillId cannot be null/empty.");
+        }
+        // Remove all non-alphanumeric characters from the printNo.
+        printNo = printNo.trim().toUpperCase().replaceAll("[^0-9A-Z]", "");
+        // Check that printNo starts with a valid bill type designator
+        try {
+            BillType.valueOf(String.valueOf(printNo.charAt(0)));
+        }
+        catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("PrintNo (" + printNo + ") must begin with a valid letter designator.");
+        }
+        // Trim leading 0's after the first character
+        printNo = printNo.substring(0, 1) + StringUtils.trimLeadingCharacter(printNo.substring(1), '0');
+        return printNo;
+    }
+
+    /**
+     * Check that base print no has no version character at the end. Throw an IllegalArgumentException if
+     * there is.
+     *
+     * @param basePrintNo String
+     * @throws java.lang.IllegalArgumentException - If basePrintNo has a character appended at the end
+     */
+    private void checkBasePrintHasNoVersion(String basePrintNo) {
+        if (basePrintNo.matches(".*[A-Z]$")) {
+            throw new IllegalArgumentException("BasePrintNo cannot have a version appended to it. (" + basePrintNo + ")");
+        }
+    }
+
+    /**
+     * Basic checks on the supplied SessionYear.
+     *
+     * @param session SessionYear
+     */
+    private void checkSessionYear(SessionYear session) {
+        if (session == null) {
+            throw new IllegalArgumentException("Supplied SessionYear cannot be null");
+        }
+    }
+
+
     /** --- Basic Getters/Setters --- */
 
     public String getBasePrintNo() {
         return basePrintNo;
     }
 
-    public int getSession() {
+    public SessionYear getSession() {
         return session;
     }
 
-    public String getVersion() {
+    public Version getVersion() {
         return version;
     }
 }

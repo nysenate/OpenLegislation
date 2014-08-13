@@ -150,35 +150,12 @@ public class SobiBlock
     }
 
     /**
-     * Returns the session year of the bill.
-     */
-    public int getSession() {
-        return (this.billId != null) ? this.billId.getSession() : -1;
-    }
-
-    /**
-     * Returns the print no of the base bill.
-     */
-    public String getBasePrintNo() {
-        return (this.billId != null) ? this.billId.getBasePrintNo() : null;
-    }
-
-    /**
-     * Returns the amendment version.
-     */
-    public String getAmendment() {
-        return (this.billId != null) ? this.billId.getVersion() : null;
-    }
-
-    /**
      * Sets the BillId for this block.
      *
      * @throws NumberFormatException on malformed print numbers
      */
     public void setBillId(String printNo, String version, int session) {
-        // Integer conversion removes leading zeros in the print number.
-        this.billId = new BillId(printNo.substring(0,1) + Integer.parseInt(printNo.substring(1)),
-                                 session, version.trim());
+        this.billId = new BillId(printNo, session, version);
     }
 
     /**

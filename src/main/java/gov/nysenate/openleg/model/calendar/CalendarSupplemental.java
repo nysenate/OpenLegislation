@@ -2,7 +2,7 @@ package gov.nysenate.openleg.model.calendar;
 
 import com.google.common.collect.LinkedListMultimap;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
-import gov.nysenate.openleg.util.DateUtils;
+import gov.nysenate.openleg.model.base.SessionYear;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,7 +32,7 @@ public class CalendarSupplemental extends BaseLegislativeContent
         this.sectionEntries = LinkedListMultimap.create();
         this.setCalendarId(calId);
         this.setYear(calId.getYear());
-        this.setSession(DateUtils.resolveSession(getYear()));
+        this.setSession(new SessionYear(getYear()));
         this.setVersion(version);
         this.setCalDate(calDate);
         this.setReleaseDateTime(releaseDateTime);

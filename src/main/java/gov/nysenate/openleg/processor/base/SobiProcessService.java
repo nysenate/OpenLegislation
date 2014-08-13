@@ -3,8 +3,8 @@ package gov.nysenate.openleg.processor.base;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
 import gov.nysenate.openleg.model.sobi.SobiFragmentNotFoundEx;
+import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
 
 import java.util.List;
 
