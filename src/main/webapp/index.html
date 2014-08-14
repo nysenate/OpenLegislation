@@ -1,0 +1,358 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Legislation 2.0</title>
+    <link rel="stylesheet" href="css/app.css" />
+    <script src="bower_components/modernizr/modernizr.js"></script>
+  </head>
+  <body>
+    <div class="fixed">
+        <nav class="top-bar" data-topbar>
+            <ul class="title-area">
+                <li class="name">
+                    <h1>
+                        <img style="vertical-align:text-bottom" src="static/img/book.png"/>
+                        <a style="display:inline-block" href="#">OPEN | 2.0</a>
+                    </h1>
+                </li>
+            </ul>
+            <section class="top-bar-section">
+                <!-- Left Nav Section -->
+                <ul class="left">
+                    <li class="active"><a href="#">Data</a></li>
+                    <li><a href="#">Reports</a></li>
+                    <li><a href="#">Updates</a></li>
+                </ul>
+            </section>
+        </nav>
+    </div>
+
+    <div class="row collapsed" style="margin-top:1.5em">
+        <div class="large-3 columns side-menu-bg">
+            <nav>
+                <ul class="side-nav">
+                    <li class="heading">OpenLeg Content</li>
+                    <li><a href="#">Agendas</a></li>
+                    <li><a href="#">Active Lists</a></li>
+                    <li class="active"><a href="#">Bills and Resolutions</a></li>
+                    <li><a href="#">Calendars</a></li>
+                    <li><a href="#">Committees</a></li>
+                    <li><a href="#">Members</a></li>
+                    <li><a href="#">Laws of NY</a></li>
+                    <li><a href="#">Transcripts</a></li>
+                    <li class="divider"></li>
+                    <li class="heading">LBDC Source Data</li>
+                    <li><a href="#">Bill Sobi Files</a></li>
+                    <li><a href="#">Calendar Sobi Files</a></li>
+                    <li><a href="#">Law Documents</a></li>
+                </ul>
+            </nav>
+        </div>
+        <section id="browse-bills" style="padding:1.2em;" class="large-9 columns main-content-bg">
+            <form>
+                <div class="row collapse">
+                    <div class="large-11 columns">
+                        <input class="no-bottom-margin" type="text" placeholder="Search by Print No"/>
+                    </div>
+                    <div class="large-1 columns">
+                        <a href="#" class="button postfix no-bottom-margin">Search</a>
+                    </div>
+                </div>
+                <ul class="breadcrumbs">
+                    <li><a href="#">Bills</a></li>
+                    <li><a href="#">Search Results</a></li>
+                    <li class="unavailable"><a href="#">S1234</a></li>
+                </ul>
+            </form>
+            <div data-magellan-expedition="fixed" data-options="fixed_top:45;destination_threshold:100">
+                <dl class="sub-nav">
+                    <dd class="def"><a>Navigate</a></dd>
+                    <dd data-magellan-arrival="bill-info"><a href="#bill-info">Bill Info</a></dd>
+                    <dd data-magellan-arrival="bill-actions"><a href="#bill-actions">Actions</a></dd>
+                    <dd data-magellan-arrival="bill-sponsor-memo"><a href="#bill-sponsor-memo">Memo</a></dd>
+                    <dd data-magellan-arrival="bill-fulltext"><a href="#bill-full-text">Full Text</a></dd>
+                </dl>
+            </div>
+            <div>
+                <a name="bill-info"></a>
+                <div class="row">
+                    <h2 class="large-4 columns" data-magellan-destination="bill-info" title="Print Number">S1234 / <span style="color:teal">2013</span></h2>
+                    <dl style="top:17px;" class="large-8 columns sub-nav">
+                        <dt>Versions:</dt>
+                        <dd class="active"><a href="#">Default</a></dd>
+                        <dd><a href="#">A</a></dd>
+                        <dd><a href="#">B</a></dd>
+                    </dl>
+                </div>
+                <h3 title="Title">Creates the office of the taxpayer advocate</h3>
+                <hr/>
+                <p title="Summary">Creates the office of the taxpayer advocate; directs such office be in the control of the department of taxation and finance; outlines functions and duties of such office; creates mandatory reporting to the governor and legislative leaders.</p>
+                <hr/>
+                <div class="row">
+                    <div class="large-2 columns">
+                        <label>Sponsor</label>
+                        <p><a>Perkins</a></p>
+                    </div>
+                    <div class="large-3 columns">
+                        <label>Multi-Sponsors</label>
+                        <p>None</p>
+                    </div>
+                    <div class="large-7 columns">
+                        <label>Co-Sponsors</label>
+                        <p><a>Hassel-Thompson</a>, <a>Krueger</a>, <a>Serrano</a></p>
+                    </div>
+                    <div class="columns"></div>
+                </div>
+                <div class="row">
+                    <div class="large-4 columns">
+                        <label>Committee</label>
+                        <p>Investigations and Government Operations</p>
+                    </div>
+                    <div class="large-3 columns">
+                        <label>Law Section</label>
+                        <p>Tax Law</p>
+                    </div>
+                    <div class="large-5 columns">
+                        <label>Law Code</label>
+                        <p>Add §§3014 & 3015, amd §170, Tax L</p>
+                    </div>
+                </div>
+                <hr/>
+                <!-- Bill Actions -->
+                <a data-magellan-destination="bill-actions" name="bill-actions"></a>
+                <div class="row">
+                    <table class="large-12 columns">
+                        <thead>
+                        <tr>
+                            <th>Chamber</th>
+                            <th>Date</th>
+                            <th>Print No</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Senate</td>
+                            <td>Jan 9, 2013</td>
+                            <td>S1234</td>
+                            <td>REFERRED TO INVESTIGATIONS AND GOVERNMENT OPERATIONS</td>
+                        </tr>
+                        <tr>
+                            <td>Senate</td>
+                            <td>Jan 8, 2014</td>
+                            <td>S1234A</td>
+                            <td>REFERRED TO INVESTIGATIONS AND GOVERNMENT OPERATIONS</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr/>
+
+                <!-- Bill Sponsor Memo -->
+                <div class="row">
+                    <section class="large-11 columns">
+                        <label data-magellan-destination="bill-sponsor-memo" class="label secondary block-label">
+                            <a href="#bill-sponsor-memo" name="bill-sponsor-memo">Sponsor Memo</a>
+                        </label>
+                        <div class="text-block">
+                            BILL NUMBER:S1234<br><br>TITLE  OF BILL:   An act to amend the tax law, in relation to creating the office of the taxpayer advocate<br><br>PURPOSE: To create within the Department of Taxation and Finance the Office  of Taxpayer  Advocate,  which will assist taxpayers in resolving problems with the department, identify areas in which taxpayers have  problems, and   propose  solutions  to  the  practices  and  procedures  of  the department.<br><br>SUMMARY OF PROVISIONS: The tax law is amended by adding two new sections 3014 and 3015.<br><br>Section 3014 creates an office to be  known  as  the  "office  of  the taxpayer  advocate"  which will assist taxpayers in resolving problems with the office, identify areas in which taxpayers  have  problems  in dealing  with  the  department, recommend legislative action as may be appropriate to resolve  problems  encountered  by  taxpayers,  and  to preserve  and  promote  the  rights  of  the  taxpayer.  This taxpayer advocate shall be appointed by the governor for a term of  four  years and will report directly to the commissioner.<br><br>Section 3015 creates taxpayer assistance orders. The taxpayer advocate may with or without a formal request from a taxpayer, issue a taxpayer assistance  order if the taxpayer is suffering or is about to suffer a significant hardship as a result of the manner in which the department administers the tax laws.<br><br>JUSTIFICATION: This legislation will help ensure that  state  taxpayers  are  treated professionally  and  fairly by the Department of Tax and Finance. This office will assist taxpayers to resolve problems in a neutral fashion. There are many difficulties that taxpayers endure in relation  to  the tax process and getting their taxes filed. This legislation provides a venue  through which taxpayers can report their problems and have them dealt with fairly and efficiently.<br><br>LEGISLATIVE HISTORY: 2011-12: S.1529 - Referred to Investigations &amp; Government Op. 2010-11: S.1529 - Referred to Investigations &amp; Government Op. 2009-10: S.1168 - Referred to Investigations &amp; Government Op. 2007-08: S.2914 - Referred to Investigations &amp; Government Op. 2005-06: S.1570 - Referred to Investigations &amp; Government Op.<br><br>FISCAL IMPLICATIONS: To be determined.<br><br>EFFECTIVE DATE: Immediately, but no later than April 1 of the year following enactment of this legislation.
+                        </div>
+                    </section>
+
+                </div>
+
+
+                <hr/>
+                <!-- Bill Full Text -->
+
+                <label data-magellan-destination="bill-fulltext" class="label secondary block-label">
+                    <a href="#bill-full-text" name="bill-full-text">Full Text</a>
+                </label>
+
+                <pre>
+        STATE OF NEW YORK
+        ________________________________________________________________________
+
+        1234
+
+        2013-2014 Regular Sessions
+
+        IN SENATE
+
+        (PREFILED)
+
+        January 9, 2013
+        ___________
+
+        Introduced by Sens. PERKINS, HASSELL-THOMPSON, KRUEGER -- read twice and
+        ordered  printed, and when printed to be committed to the Committee on
+        Investigations and Government Operations
+
+        AN ACT to amend the tax law, in relation to creating the office  of  the
+        taxpayer advocate
+
+        THE  PEOPLE OF THE STATE OF NEW YORK, REPRESENTED IN SENATE AND ASSEM-
+        BLY, DO ENACT AS FOLLOWS:
+
+        Section 1. The tax law is amended by adding two new sections 3014  and
+        3015 to read as follows:
+        S  3014.  OFFICE  OF  THE TAXPAYER ADVOCATE. (A) THERE SHALL BE IN THE
+        DEPARTMENT AN OFFICE TO BE KNOWN AS THE "OFFICE OF  THE  TAXPAYER  ADVO-
+        CATE".  SUCH  OFFICE  SHALL BE UNDER THE SUPERVISION AND DIRECTION OF AN
+        OFFICIAL KNOWN AS THE "COMMISSIONER OF THE OFFICE OF THE TAXPAYER  ADVO-
+        CATE".  THE COMMISSIONER OF THE OFFICE OF THE TAXPAYER ADVOCATE SHALL BE
+        APPOINTED BY THE GOVERNOR AND SHALL REPORT DIRECTLY TO THE COMMISSIONER.
+        THE COMMISSIONER OF THE OFFICE OF THE TAXPAYER ADVOCATE SHALL DEVOTE HIS
+        OR HER ENTIRE TIME TO THE DUTIES OF SUCH OFFICE.
+        (B) NO PERSON SHALL BE APPOINTED AS THE COMMISSIONER OF THE OFFICE  OF
+        THE  TAXPAYER  ADVOCATE  UNLESS AT THE TIME OF SUCH PERSON'S APPOINTMENT
+        SUCH PERSON IS A RESIDENT OF THE  STATE  AND  IS  KNOWLEDGEABLE  ON  THE
+        SUBJECT  OF TAXATION AND IS SKILLFUL IN MATTERS PERTAINING THERETO. ONCE
+        APPOINTED, THE COMMISSIONER OF THE OFFICE OF THE TAXPAYER ADVOCATE SHALL
+        CONTINUE IN OFFICE UNTIL THE GOVERNOR'S  TERM  EXPIRES  AND  UNTIL  SUCH
+        GOVERNOR'S  SUCCESSOR  HAS BEEN APPOINTED AND HAS QUALIFIED. THE TERM OF
+        OFFICE SHALL BE AT THE PLEASURE OF THE GOVERNOR.
+        (C) IN THE EVENT OF  A  VACANCY  CAUSED  BY  THE  DEATH,  RESIGNATION,
+        REMOVAL  OR DISABILITY OF THE COMMISSIONER OF THE OFFICE OF THE TAXPAYER
+        ADVOCATE, THE VACANCY SHALL BE FILLED BY THE GOVERNOR.
+        (D) (1) THE OFFICE OF THE TAXPAYER ADVOCATE SHALL HAVE  THE  FOLLOWING
+        FUNCTIONS, POWERS, AND DUTIES:
+        (I) TO ASSIST TAXPAYERS IN RESOLVING PROBLEMS WITH THE DEPARTMENT;
+        (II)  TO  IDENTIFY  AREAS IN WHICH TAXPAYERS HAVE PROBLEMS IN DEALINGS
+        WITH THE DEPARTMENT;
+        (III) TO PROPOSE SOLUTIONS, INCLUDING ADMINISTRATIVE CHANGES TO  PRAC-
+        TICES AND PROCEDURES OF THE DEPARTMENT;
+        (IV)  TO RECOMMEND LEGISLATIVE ACTION AS MAY BE APPROPRIATE TO RESOLVE
+        PROBLEMS ENCOUNTERED BY TAXPAYERS;
+        (V) TO PRESERVE AND PROMOTE THE RIGHTS OF THE TAXPAYER;
+        (VI) TO PROMOTE OPEN AND DIRECT COMMUNICATIONS; AND
+        (VII) TO APPOINT SUCH OFFICERS AND EMPLOYEES AS IT MAY REQUIRE FOR THE
+        PERFORMANCE OF ITS DUTIES.
+        (2) THE COMMISSIONER OF THE OFFICE  OF  THE  TAXPAYER  ADVOCATE  SHALL
+        PREPARE  AN ANNUAL REPORT AS TO HIS OR HER ACTIVITIES. SUCH REPORT SHALL
+        BE SUBMITTED TO THE GOVERNOR, THE TEMPORARY PRESIDENT OF THE SENATE, THE
+        SPEAKER OF THE ASSEMBLY, AND THE COMMISSIONER NO LATER THAN THE  THIRTY-
+        FIRST OF DECEMBER NEXT SUCCEEDING THE EFFECTIVE DATE OF THIS SECTION AND
+        EVERY  DECEMBER  THIRTY-FIRST  THEREAFTER. ANY SUCH REPORT SHALL CONTAIN
+        FULL AND SUBSTANTIVE ANALYSIS, IN ADDITION TO  STATISTICAL  INFORMATION,
+        AND SHALL
+        (I)  IDENTIFY  THE  INITIATIVES  THE COMMISSIONER OF THE OFFICE OF THE
+        TAXPAYER ADVOCATE HAS TAKEN  ON  IMPROVING  TAXPAYER  SERVICES  AND  THE
+        DEPARTMENT'S RESPONSIVENESS;
+        (II)  CONTAIN  A SUMMARY OF AT LEAST FIFTEEN OF THE MOST SERIOUS PROB-
+        LEMS ENCOUNTERED BY TAXPAYERS, INCLUDING A DESCRIPTION OF THE NATURE  OF
+        SUCH PROBLEMS;
+        (III) CONTAIN AN INVENTORY OF THE ITEMS DESCRIBED IN SUBPARAGRAPHS (I)
+        AND  (II)  OF  THIS  PARAGRAPH  FOR  WHICH ACTION HAS BEEN TAKEN AND THE
+        RESULT OF SUCH ACTION; AN INVENTORY  FOR  WHICH  ACTION  REMAINS  TO  BE
+        COMPLETED;  AND AN INVENTORY FOR WHICH NO ACTION HAS BEEN TAKEN, AND THE
+        REASONS FOR THE INACTION;
+        (IV) IDENTIFY ANY TAXPAYER ASSISTANCE ORDER WHICH WAS NOT  HONORED  BY
+        THE  DEPARTMENT IN A TIMELY MANNER AS SPECIFIED UNDER SUBDIVISION (A) OF
+        SECTION THREE THOUSAND FIFTEEN OF THIS ARTICLE;
+        (V) CONTAIN RECOMMENDATIONS FOR SUCH  ADMINISTRATIVE  AND  LEGISLATIVE
+        ACTION  AS MAY BE APPROPRIATE TO RESOLVE PROBLEMS ENCOUNTERED BY TAXPAY-
+        ERS; AND
+        (VI) INCLUDE SUCH OTHER INFORMATION AS THE COMMISSIONER OF THE  OFFICE
+        OF THE TAXPAYER ADVOCATE MAY DEEM ADVISABLE.
+        S 3015. TAXPAYER ASSISTANCE ORDERS. (A) THE COMMISSIONER OF THE OFFICE
+        OF  THE  TAXPAYER  ADVOCATE MAY, WITH OR WITHOUT A FORMAL REQUEST FROM A
+        TAXPAYER, ISSUE A TAXPAYER ASSISTANCE ORDER THAT SUSPENDS  OR  STAYS  AN
+        ACTION  OR PROPOSED ACTION BY THE DEPARTMENT IF, IN THE DETERMINATION OF
+        SUCH COMMISSIONER, THE TAXPAYER IS SUFFERING OR IS  ABOUT  TO  SUFFER  A
+        SIGNIFICANT  HARDSHIP  AS A RESULT OF THE MANNER IN WHICH THE DEPARTMENT
+        ADMINISTERS THE TAX LAWS.  A DETERMINATION BY  SUCH  COMMISSIONER  UNDER
+        THIS  SECTION  TO  ISSUE  OR TO NOT ISSUE A TAXPAYER ASSISTANCE ORDER IS
+        FINAL AND CANNOT BE APPEALED TO ANY COURT.
+        (B) A TAXPAYER ASSISTANCE ORDER MAY REQUIRE THE DEPARTMENT TO  RELEASE
+        PROPERTY  OF  THE  TAXPAYER  LEVIED ON, CEASE ANY ACTION OR REFRAIN FROM
+        TAKING ANY ACTION TO ENFORCE THE STATE TAX  LAWS  AGAINST  THE  TAXPAYER
+        UNTIL THE  ISSUE OR ISSUES GIVING RISE TO THE ORDER HAVE BEEN RESOLVED.
+        (C)  THE  RUNNING  OF  THE  APPLICABLE  PERIOD OF LIMITATIONS FOR SUCH
+        DEPARTMENT ACTION SHALL BE SUSPENDED FROM THE  DATE  OF  THE  TAXPAYER'S
+        REQUEST FOR A TAXPAYER ASSISTANCE ORDER OR THE DATE THE ORDER IS ISSUED,
+        WHICHEVER IS EARLIER, UNTIL ONE OF THE FOLLOWING SHALL OCCUR:
+        (1) THE EXPIRATION DATE OF THE ORDER.
+        (2)  IF  AN ORDER IS MODIFIED, THE EXPIRATION DATE OF THE MODIFICATION
+        ORDER.
+        (3) IF AN ORDER IS RESCINDED, THE DATE OF THE RESCISSION ORDER.
+        (D)  A  TAXPAYER  ASSISTANCE  ORDER  SHALL  NOT BE USED TO CONTEST THE
+        MERITS OF A TAX LIABILITY OR AS A SUBSTITUTE FOR INFORMAL PROTEST PROCE-
+        DURES OR ADMINISTRATIVE OR JUDICIAL PROCEEDINGS FOR THE REVIEW OF A  TAX
+        ASSESSMENT OR COLLECTION ACTION OR DENIAL OF REFUND.
+        S  2.  Subdivisions 1, 3 and 4 of section 170 of the tax law, subdivi-
+        sions 1 and 3 as amended by chapter 282 of the laws of 1986 and subdivi-
+        sion 4 as amended by chapter 283 of the laws of  1986,  are  amended  to
+        read as follows:
+        1.  The  existing  department  of taxation and finance and its present
+        functions are continued. The head of  the  department  of  taxation  and
+        finance shall be the commissioner of taxation and finance who shall have
+        sole  charge of the administration of such department except with regard
+        to the administration of the division of tax appeals which shall be  the
+        sole  charge  of the tax appeals tribunal authorized by article forty of
+        this chapter AND THE OFFICE  OF  THE  TAXPAYER  ADVOCATE  AUTHORIZED  BY
+        SECTIONS  THREE  THOUSAND  FOURTEEN  AND  THREE THOUSAND FIFTEEN OF THIS
+        CHAPTER.  The commissioner of taxation and finance shall be appointed by
+        the governor by and with the advice and consent of the senate and  shall
+        hold office as commissioner of taxation and finance until the end of the
+        term  of  the  governor by whom he was appointed and until his successor
+        has been appointed and has qualified.
+        3. The commissioner of taxation and finance may establish  such  addi-
+        tional  divisions  and  bureaus as he may deem necessary. He may appoint
+        the heads of such divisions and bureaus and fix their duties and he  may
+        consolidate, alter or abolish any divisions or bureaus, except that such
+        commissioner  shall  have  no such authority or power with regard to the
+        division of tax appeals AND THE OFFICE OF THE TAXPAYER ADVOCATE.
+        4. The commissioner of taxation and finance  may  appoint  and  remove
+        such  officers,  assistants and other employees as he may deem necessary
+        for the exercise of the powers and duties of the department, all of whom
+        shall be in the classified civil service unless  otherwise  provided  by
+        law; and he may prescribe their duties, and fix their compensation with-
+        in  the  amounts appropriated therefor. The commissioner of taxation and
+        finance may transfer officers or employees from their positions to other
+        positions in the department, or abolish or consolidate  such  positions.
+        He  shall have all powers necessary to perform the duties conferred upon
+        him regarding the state lottery authorized  by  article  thirty-four  of
+        this  chapter.  However,  the commissioner of taxation and finance shall
+        have no power to appoint or remove any personnel of the division of  tax
+        appeals OR OF THE OFFICE OF THE TAXPAYER ADVOCATE nor shall such commis-
+        sioner  have  any  power  or  authority with regard to the operation and
+        administration of such division OR OFFICE including any power or author-
+        ity over such division's OR  OFFICE'S  budget.  The  commissioner  shall
+        furnish to the director of the division of the budget the itemized esti-
+        mates  of  the  financial  needs  of the division of tax appeals AND THE
+        OFFICE OF THE TAXPAYER ADVOCATE prepared by the tax appeals tribunal AND
+        THE OFFICE OF THE TAXPAYER ADVOCATE. Such itemized estimates may not  be
+        revised or altered in any manner by the commissioner.
+        S  3.  This act shall take effect immediately; provided, however, that
+        section 3015 of the tax law, as added by section one of this  act  shall
+        not  take effect until the later of April first next succeeding the date
+        on which it shall have become a law, or the latest  date  on  which  any
+        state  appropriations  relating  to  the operations of the department of
+        taxation and finance for the state fiscal year commencing on such  April
+        first, becomes law; provided, however, that the commissioner of taxation
+        and finance shall take all steps necessary to promulgate rules and regu-
+        lations  necessary to achieve the intent and purposes of this act and to
+        implement this act prior to such April first  so  that  such  rules  and
+        regulations  shall  be  effective  on the effective date of such section
+        3015 of the tax law; provided, further, that the commissioner  of  taxa-
+        tion  and  finance shall notify the legislative bill drafting commission
+        upon the occurrence of the enactment of the legislation provided for  in
+        section  one  of  this  act in order that the commission may maintain an
+        accurate and timely effective data base of the official text of the laws
+        of the state of New York in furtherance of effectuating  the  provisions
+        of  section  44  of  the  legislative law and section 70-b of the public
+        officers law.
+                </pre>
+            </div>
+        </section>
+    </div>
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/foundation/js/foundation.min.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

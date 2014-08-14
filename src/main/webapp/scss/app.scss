@@ -1,0 +1,83 @@
+@import "settings";
+@import "foundation";
+@import "compass";
+@import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+$nice-dark-blue: #204056;
+
+/** Foundation Overrides */
+
+body {
+  font-family: 'Open Sans' sans-serif;
+}
+
+table {
+  border-spacing: 0;
+  thead {
+    tr {
+      th {
+        border-bottom: 1px solid #ccc;
+      }
+    }
+  }
+}
+
+.side-nav li.heading {
+  border-bottom: 2px solid $nice-dark-blue;
+}
+
+.top-bar .name {
+  margin: 0 3em;
+}
+
+[data-magellan-expedition], [data-magellan-expedition-clone] {
+  background: #fafafa;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
+  .def {
+    font-weight: bold;
+    text-transform: none;
+    a {
+      color: #333;
+    }
+  }
+}
+
+/** Custom */
+
+.side-menu-bg {
+  background: #f5f5f5;
+  @include box-shadow(-5px 2px 20px -5px #ccc);
+}
+
+.main-content-bg {
+  background: #fafafa;
+  @include box-shadow(5px 0 10px -5px #ccc);
+}
+
+.no-bottom-margin {
+  margin-bottom: 0 !important;
+}
+
+fieldset {
+  &.no-margin {
+    margin: 0;
+  }
+  border: 1px solid #f1f1f1;
+  padding: .7rem;
+}
+
+.text-block {
+  padding: 0 1rem 0 .1rem
+}
+
+label.block-label {
+  font-size: .8rem;
+  margin-bottom: 10px;
+  cursor: none;
+}
+
+pre {
+  font-family: 'Ubuntu Mono';
+}
