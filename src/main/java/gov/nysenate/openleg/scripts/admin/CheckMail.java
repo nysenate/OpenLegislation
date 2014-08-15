@@ -38,16 +38,18 @@ public class CheckMail extends BaseScript
         Options options = super.getOptions();
         options.addOption("d","debug", false, "Runs the CheckMail script but does not continue with a spot check");
         options.addOption("s", "save-emails", false, "Prevents expungement of daybreak emails, allowing them to be detected again");
+        options.addOption("a", "run-all", false, "Causes all detected daybreak reports to be spot checked, as opposed to just the most recent report");
         return options;
     }
 
     @Override
     protected void execute(CommandLine opts) throws Exception
     {
-        lock();
+        lock(); // Prevents another instance of this script running until unlock
 
-        boolean debug = opts.hasOption("debug");
-        boolean saveEmails = opts.hasOption("save-emails");
+        final boolean debug = opts.hasOption("debug");
+        final boolean saveEmails = opts.hasOption("save-emails");
+        final boolean runAll = opts.hasOption("run-all");
 
         Properties props = System.getProperties();
         props.setProperty("mail.store.protocol", "imaps");
@@ -56,9 +58,7 @@ public class CheckMail extends BaseScript
         //session.setDebug(true);
         Store store = session.getStore("imaps");
         Config config = Application.getConfig();
-//        logger.info(config.getValue("checkmail.host"));
-//        logger.info(config.getValue("checkmail.user"));
-//        logger.info(config.getValue("checkmail.pass"));
+
         store.connect(
             config.getValue("checkmail.host"),
             config.getValue("checkmail.user"),
@@ -68,100 +68,93 @@ public class CheckMail extends BaseScript
         String receivingFolder = config.getValue("checkmail.receiving");
         String processedFolder = config.getValue("checkmail.processed");
 
-        Folder source = navigateToFolder(receivingFolder, store);
-        Folder destination = navigateToFolder(processedFolder, store);
-        source.open(Folder.READ_WRITE);
+        Folder sourceFolder = navigateToFolder(receivingFolder, store);
+        Folder archiveFolder = navigateToFolder(processedFolder, store);
+        sourceFolder.open(Folder.READ_WRITE);
 
-        Date prefixDate = null;
-        boolean runSpotCheck;
-        boolean senateHigh, senateLow, assemblyHigh, assemblyLow, pageFile;
-        senateHigh = senateLow = assemblyHigh = assemblyLow = pageFile = false;
-        Map<String, Message> validMessages = new HashMap<String, Message>();   // Stores filename, message
+        // stores all daybreak emails in a set for each report
+        DaybreakSetContainer daybreakSetContainer = new DaybreakSetContainer();
 
-        for(Message message : source.getMessages()) {
-            String filename;
-            if (message.getSubject().contains("Sen Act Title Sum Spon Law 4001-9999")) {
-                filename = ".senate.high.html";
-                senateHigh = true;
-            } else if (message.getSubject().contains("Sen Act Title Sum Spon Law 1-4000")) {
-                filename = ".senate.low.html";
-                senateLow = true;
-            } else if (message.getSubject().contains("Asm Act Title Sum Spon Law 4001-99999")) {
-                filename = ".assembly.high.html";
-                assemblyHigh = true;
-            } else if (message.getSubject().contains("Asm Act Title Sum Spon Law 1-4000")) {
-                filename = ".assembly.low.html";
-                assemblyLow = true;
-            } else if (message.getSubject().contains("Job ABPSDD - LBDC all Bills")) {
-                filename = ".page_file.txt";
-                pageFile = true;
-            } else {
-                logger.error("Unknown subject line: " + message.getSubject());
-                continue;
-            }
-            Date messageDate = message.getSentDate();
-            if(prefixDate==null || prefixDate.before(messageDate)){
-                prefixDate = messageDate;
-            }
-            validMessages.put(filename, message);
+        // Add all emails
+        for(Message message : sourceFolder.getMessages()) {
+            daybreakSetContainer.addMessage(message);
         }
 
-        runSpotCheck = senateHigh && senateLow && assemblyHigh && assemblyLow && pageFile;
+        List<DaybreakSet> completeSets = daybreakSetContainer.getCompleteSets();
+        if(completeSets.size()>0) {
+            logger.info("Detected " + completeSets.size() + " complete daybreak reports");
 
-        if (runSpotCheck) {
-            String prefix = new SimpleDateFormat("yyyyMMdd").format(prefixDate);
+            for(DaybreakSet daybreakSet : completeSets){
 
-            // Download the messages
-            for(Map.Entry<String, Message> messageEntry : validMessages.entrySet()) {
-                String filename = prefix + messageEntry.getKey();
-                Message message = messageEntry.getValue();
+                logger.info("Saving report " + daybreakSet.getPrefix() + ":");
+                for(DaybreakMessageType messageType : DaybreakMessageType.values()){
+                    Message message = daybreakSet.getMessage(messageType);
+                    String filename = daybreakSet.getPrefix() + messageType.getLocalFileExt();
 
-                if (message.isMimeType("multipart/*")) {
-                    Multipart content = (Multipart) message.getContent();
-                    for (int i = 0; i < content.getCount(); i++) {
-                        Part part = content.getBodyPart(i);
-                        if (Part.ATTACHMENT.equals(part.getDisposition())) {
-                            logger.info("Saving " + part.getFileName() + " to " + filename);
-                            String attachment = IOUtils.toString(part.getInputStream());
-                            String lrsFileDir = config.getValue("checkmail.lrsFileDir");
-                            FileUtils.write(new File(lrsFileDir, filename), attachment);
+                    if (message.isMimeType("multipart/*")) {
+                        Multipart content = (Multipart) message.getContent();
+                        for (int i = 0; i < content.getCount(); i++) {
+                            Part part = content.getBodyPart(i);
+                            if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                                logger.info("\tSaving " + part.getFileName() + " to " + filename);
+                                String attachment = IOUtils.toString(part.getInputStream());
+                                String lrsFileDir = config.getValue("checkmail.lrsFileDir");
+                                FileUtils.write(new File(lrsFileDir, filename), attachment);
+                            }
                         }
                     }
-                }
 
-                if(!saveEmails) {
-                    source.copyMessages(new Message[]{message}, destination);
-                    message.setFlag(Flags.Flag.DELETED, true);
+                    if(!saveEmails) {   //Copy the message to the archiving folder and mark it for deletion
+                        sourceFolder.copyMessages(new Message[]{message}, archiveFolder);
+                        message.setFlag(Flags.Flag.DELETED, true);
+                    }
                 }
             }
 
-            if(!saveEmails) {
-                // Finalize the message deletion from the source folder
-                source.expunge();
+            if(!saveEmails) {   // Finalize the message deletion from the source folder
+                sourceFolder.expunge();
             }
+        }
 
-            if(!debug) {
-                // Run the new report and regenerate our errors.
-                opts.getArgList().add(0, prefix);
+        List<DaybreakSet> partialReports = daybreakSetContainer.getPartialSets();
+        if(partialReports.size()>0){
+            logger.info("Detected " + partialReports.size() + " incomplete daybreak reports");
+            for(DaybreakSet partialSet : partialReports){
+                logger.info("Partial report " + partialSet.getPrefix() + " contains:");
+                for(DaybreakMessageType messageType : DaybreakMessageType.values()){
+                    Message message = partialSet.getMessage(messageType);
+                    if(message!=null){
+                        logger.info("\t" + message.getSubject());
+                    }
+                }
+            }
+        }
+
+        if(!debug && completeSets.size()>0) {
+            if(!runAll) {   // Run just the newest report
+                Collections.sort(completeSets, Collections.reverseOrder());
+                DaybreakSet newestSet = completeSets.get(0);
+                opts.getArgList().add(0, newestSet.getPrefix());
                 new SpotCheck().execute(opts);
                 new CreateErrors().execute(opts);
             }
+            else{   // Run all reports in chronological order
+                Collections.sort(completeSets);
+                for(DaybreakSet daybreakSet : completeSets){
+                    opts.getArgList().add(0, daybreakSet.getPrefix());
+                    new SpotCheck().execute(opts);
+                    new CreateErrors().execute(opts);
+                }
+            }
         }
-        else{
-            if(senateHigh || senateLow || assemblyHigh || assemblyLow || pageFile)
-                logger.info("Spot check email(s) detected, one or more MISSING");
-            else
-                logger.info("No relevant emails detected");
-        }
-
-        //unlock();
     }
 
     private Folder navigateToFolder(String path, Store store) throws Exception{
         String[] splitPath = path.split("/");
         Folder folder = store.getFolder(splitPath[0]);
-        for(int i=1; i<splitPath.length; i++)
+        for(int i=1; i<splitPath.length; i++) {
             folder = folder.getFolder(splitPath[i]);
+        }
         return folder;
     }
 
