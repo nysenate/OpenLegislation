@@ -9,7 +9,6 @@ import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.script.BaseScript;
-import gov.nysenate.openleg.util.Storage;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
