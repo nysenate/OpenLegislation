@@ -177,7 +177,7 @@ public class BillId implements Serializable, Comparable<BillId>
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null) return false;
         if (!equalsBase(o)) return false;
         BillId oBillId = (BillId) o;
         return Objects.equals(this.version, oBillId.version);
@@ -195,7 +195,7 @@ public class BillId implements Serializable, Comparable<BillId>
      */
     public boolean equalsBase(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null) return false;
         BillId oBillId = (BillId) o;
         return Objects.equals(this.session, oBillId.session) &&
                Objects.equals(this.basePrintNo, oBillId.basePrintNo);
