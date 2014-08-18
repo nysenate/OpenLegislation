@@ -5,8 +5,6 @@ import gov.nysenate.openleg.model.admin.report.ReportError;
 import gov.nysenate.openleg.model.admin.report.ReportObservation;
 import gov.nysenate.openleg.script.BaseScript;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -23,7 +21,7 @@ public class CreateErrors extends BaseScript
 
     protected void execute(CommandLine opts) throws Exception
     {
-        BeanListHandler<Report> reportHandler = new BeanListHandler<Report>(Report.class);
+       /* BeanListHandler<Report> reportHandler = new BeanListHandler<Report>(Report.class);
         BeanListHandler<ReportError> reportErrorHandler = new BeanListHandler<ReportError>(ReportError.class);
         BeanListHandler<ReportObservation> reportObservationHandler = new BeanListHandler<ReportObservation>(ReportObservation.class);
 
@@ -64,6 +62,6 @@ public class CreateErrors extends BaseScript
             }
         }
 
-        conn.close();
+        conn.close();   */
     }
 }

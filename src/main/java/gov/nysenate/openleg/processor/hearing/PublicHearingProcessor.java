@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processor.hearing;
 
 import gov.nysenate.openleg.model.transcript.PublicHearing;
-import gov.nysenate.openleg.util.Storage;
 import gov.nysenate.openleg.util.TextFormatter;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -70,7 +69,7 @@ public class PublicHearingProcessor {
         logger = Logger.getLogger(this.getClass());
     }
 
-    public void process(File file, Storage storage) throws NumberFormatException, IOException {
+    public void process(File file) throws NumberFormatException, IOException {
         ArrayList<String> lineList = new ArrayList<String>();
 
         int pageNumber = -1;
@@ -106,7 +105,7 @@ public class PublicHearingProcessor {
 
         // TODO: Generate unique id's for public hearings
         String id = "";
-        storage.set(publicHearing);
+//        storage.set(publicHearing);
     }
 
     private String trimLine(String line) {

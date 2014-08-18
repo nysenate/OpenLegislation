@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processor.transcript;
 
 import gov.nysenate.openleg.model.transcript.Transcript;
-import gov.nysenate.openleg.util.Storage;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -17,7 +16,7 @@ public class OldTranscriptProcessor {
         this.logger = Logger.getLogger(this.getClass());
     }
 
-    public void process(File file, Storage storage) throws IOException {
+    public void process(File file) throws IOException {
         Transcript transcript = new Transcript();
         StringBuffer fullText = new StringBuffer();
         StringBuffer fullTextProcessed = new StringBuffer();
@@ -107,6 +106,6 @@ public class OldTranscriptProcessor {
 
         // Save the transcript
         String key = transcript.getYear()+"/transcript/"+transcript.getId();
-        storage.set(transcript);
+//        storage.set(transcript);
     }
 }

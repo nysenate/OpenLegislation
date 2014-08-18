@@ -11,8 +11,6 @@ import gov.nysenate.openleg.model.entity.Person;
 import gov.nysenate.openleg.script.BaseScript;
 import gov.nysenate.openleg.util.Storage;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +53,7 @@ public class SpotCheck extends BaseScript
 
     public void execute(CommandLine opts) throws IOException, ParseException, SQLException
     {
-        QueryRunner runner = new QueryRunner();//Application.getDB().getDataSource());
+      /*  QueryRunner runner = new QueryRunner();//Application.getDB().getDataSource());
 
         String[] args = opts.getArgs();
         Storage storage = null;// FIXME Application.getStorage();
@@ -146,7 +144,7 @@ public class SpotCheck extends BaseScript
             String jsonSponsor = "";
             if (bill.getSponsor() != null) {
                 /** FIXME jsonSponsor = unescapeHTML(bill.getSponsor().getFullName()).toUpperCase().replace(" (MS)","").replace("BILL", "").replace("COM", ""); */
-            }
+          /*  }
             String lbdcSponsor = spotCheckBills.get(printNo).getSponsor().toUpperCase().replace("BILL", "").replace("COM", "");
             if (!lbdcSponsor.isEmpty() && !jsonSponsor.replace(" ","").equals(lbdcSponsor.replace(" ", "")) ) {
                 if (!printNo.startsWith("D")) {
@@ -238,7 +236,7 @@ public class SpotCheck extends BaseScript
         }
         System.out.println("Estimated Total: "+total);
 
-        System.out.println(spotCheckBills.size());
+        System.out.println(spotCheckBills.size());        */
     }
 
     public void loadPageFile(File dataFile, HashMap<String, SpotCheckBill> bills) throws IOException
