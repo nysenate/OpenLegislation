@@ -80,6 +80,18 @@ public class BillId implements Serializable, Comparable<BillId>
      * as S02134A-2013, you should pass it in as ("S02134", 2013, "A"). If you do not have the
      * parsed representation of the printNo, use the {@link BillId(String, int)} constructor instead.
      *
+     * @param baseBillId
+     * @param version
+     */
+    public BillId(BaseBillId baseBillId, Version version){
+        this(baseBillId.getBasePrintNo(),baseBillId.getSession(), version );
+    }
+
+    /**
+     * Performs strict checks on the basePrintNo when constructing BillId. If you have a bill id
+     * as S02134A-2013, you should pass it in as ("S02134", 2013, "A"). If you do not have the
+     * parsed representation of the printNo, use the {@link BillId(String, int)} constructor instead.
+     *
      * @param basePrintNo String - e.g. S1234 -> GOOD,  S1234A -> INVALID
      * @param session int
      * @param version String

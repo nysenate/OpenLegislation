@@ -43,6 +43,10 @@ public enum SqlTable
     COMMITTEE_VERSION            ("committee_version"),
     COMMITTEE_MEMBER             ("committee_member"),
 
+    DAYBREAK_FILE                ("daybreak_file"),
+    DAYBREAK_FRAGMENT            ("daybreak_fragment"),
+    DAYBREAK_PAGE_FILE_ENTRY     ("daybreak_page_file_entry"),
+
     MEMBER                       ("member"),
     PERSON                       ("person"),
     SESSION_MEMBER               ("session_member"),
