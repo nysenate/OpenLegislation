@@ -1,23 +1,29 @@
 package gov.nysenate.openleg.model.daybreak;
 
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.BillAction;
+import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillSponsor;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.util.BillTextUtils;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReference;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * A DaybreakBill serves as a model to perform comparisons between the bill data extracted
- * from the DaybreakFragments and our own processed bill data.
+ * A DaybreakBill serves as a model to store extracted bill content from the DaybreakFragments.
  */
-public class DaybreakBill
+public class DaybreakBill implements SpotCheckReference
 {
-    /** Below are a subset of the fields in {@link gov.nysenate.openleg.model.bill.Bill} */
+    /** Id of the fragment that created this instance. */
+    protected DaybreakFragmentId daybreakFragmentId;
+
+    /** Below are a subset of fields similarly found in {@link gov.nysenate.openleg.model.bill.Bill} */
 
     protected BaseBillId baseBillId;
     protected Version activeVersion;
@@ -41,43 +47,37 @@ public class DaybreakBill
 
     public DaybreakBill() {}
 
-    /**
-     * Creates a new DaybreakBill instance from the given Bill. The Bill
-     * cannot be null or an IllegalArgumentException will be thrown.
-     */
-    public static DaybreakBill from(Bill bill) {
-        if (bill != null) {
-            DaybreakBill dBill = new DaybreakBill();
-            dBill.baseBillId = bill.getBaseBillId();
-            dBill.activeVersion = bill.getActiveVersion();
-            dBill.title = bill.getTitle();
-            dBill.sponsor = bill.getSponsor();
-            if (bill.hasActiveAmendment()) {
-                BillAmendment amend = bill.getActiveAmendment();
-                dBill.cosponsors = amend.getCoSponsors();
-                dBill.multiSponsors = amend.getMultiSponsors();
-                dBill.sameAs = amend.getSameAs();
-            }
-            dBill.summary = bill.getSummary();
-            dBill.lawSection = bill.getLawSection();
-            dBill.lawCode = bill.getLaw();
-            dBill.actions = bill.getActions();
-            dBill.pageCounts = new HashMap<>();
-            bill.getAmendmentMap().forEach((k,v) -> {
-                dBill.pageCounts.put(k, BillTextUtils.getPageCount(v.getFullText()));
-            });
-            dBill.publishDates = new HashMap<>();
-            bill.getAmendPublishStatusMap().forEach((k,v) -> {
-                if (v.isPublished()) dBill.publishDates.put(k, v.getEffectDateTime().toLocalDate());
-            });
-            return dBill;
-        }
-        else {
-            throw new IllegalArgumentException("Supplied Bill cannot be null");
-        }
+    public DaybreakBill(DaybreakFragmentId daybreakFragmentId, BaseBillId baseBillId) {
+        this.daybreakFragmentId = daybreakFragmentId;
+        this.baseBillId = baseBillId;
+    }
+
+    /** --- Implemented Methods --- */
+
+    @Override
+    public SpotCheckRefType getRefType() {
+        return SpotCheckRefType.LBDC_DAYBREAK;
+    }
+
+    @Override
+    public String getRefId() {
+        return daybreakFragmentId + ":" + baseBillId;
+    }
+
+    @Override
+    public LocalDateTime getRefActiveDate() {
+        return daybreakFragmentId.getReportDate().atStartOfDay();
     }
 
     /** --- Basic Getters/Setters --- */
+
+    public DaybreakFragmentId getDaybreakFragmentId() {
+        return daybreakFragmentId;
+    }
+
+    public void setDaybreakFragmentId(DaybreakFragmentId daybreakFragmentId) {
+        this.daybreakFragmentId = daybreakFragmentId;
+    }
 
     public BaseBillId getBaseBillId() {
         return baseBillId;

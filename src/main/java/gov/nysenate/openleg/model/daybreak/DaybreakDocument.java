@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.model.daybreak;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /** Defines a Daybreak document that can be categorized by DaybreakDocType*/
