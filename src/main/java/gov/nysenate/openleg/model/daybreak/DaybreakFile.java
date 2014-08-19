@@ -2,7 +2,6 @@ package gov.nysenate.openleg.model.daybreak;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -41,13 +40,13 @@ public class DaybreakFile implements DaybreakDocument{
 
     /** --- Constructors --- */
 
-    public DaybreakFile(File daybreakFile) throws IOException, InvalidArgumentException {
+    public DaybreakFile(File daybreakFile) throws IOException, IllegalArgumentException {
         if (daybreakFile.exists()) {
             this.file = daybreakFile;
             this.daybreakDocType = DaybreakDocType.getFileDocType(this.getFileName());
             if(this.daybreakDocType==null){
-                String[] message = {"File " + daybreakFile + " does not match a daybreak file type"};
-                throw new InvalidArgumentException(message);
+                String message = "File " + daybreakFile + " does not match a daybreak file type";
+                throw new IllegalArgumentException(message);
             }
             this.reportDate = this.getReportDateFromFileName();
             this.archived = false;
@@ -57,7 +56,8 @@ public class DaybreakFile implements DaybreakDocument{
         }
     }
 
-    public DaybreakFile(File daybreakFile, LocalDateTime staged, boolean archived) throws IOException, InvalidArgumentException{
+    public DaybreakFile(File daybreakFile, LocalDateTime staged, boolean archived) throws IOException,
+                                                                                          IllegalArgumentException {
         this(daybreakFile);
         this.staged = staged;
         this.archived = archived;

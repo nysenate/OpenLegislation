@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.dao.daybreak;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
@@ -99,7 +98,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
                 DaybreakFile daybreakFile = new DaybreakFile(file);
                 reportSet.insertDaybreakDocument(daybreakFile);
             }
-            catch(InvalidArgumentException ex){
+            catch(IllegalArgumentException ex){
                 logger.error(ex.getMessage());
             }
         }
@@ -195,7 +194,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
             try {
                 return new DaybreakFile(file, stagedDateTime, archived);
             }
-            catch ( IOException | InvalidArgumentException ex ){
+            catch ( IOException | IllegalArgumentException ex ){
                 logger.error(ex.getMessage());
                 return null;
             }
