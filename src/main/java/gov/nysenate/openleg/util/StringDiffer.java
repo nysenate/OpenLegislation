@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.util;
 
+import org.springframework.stereotype.Service;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;

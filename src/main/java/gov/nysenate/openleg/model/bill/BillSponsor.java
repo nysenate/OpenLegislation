@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.bill;
 import gov.nysenate.openleg.model.entity.Member;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Represents the bill's sponsor. Typically this would just be a reference to a Member
@@ -34,6 +35,36 @@ public class BillSponsor implements Serializable
 
     public boolean hasMember() {
         return (member != null);
+    }
+
+    /** --- Overrides --- */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final BillSponsor other = (BillSponsor) obj;
+        return Objects.equals(this.member, other.member) &&
+               Objects.equals(this.budgetBill, other.budgetBill) &&
+               Objects.equals(this.rulesSponsor, other.rulesSponsor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(member, budgetBill, rulesSponsor);
+    }
+
+    @Override
+    public String toString() {
+        return (((rulesSponsor)
+                    ? "RULES " : "")
+                + ((budgetBill)
+                    ? "BUDGET BILL " : "") +
+                ((hasMember())
+                    ? ((rulesSponsor)
+                       ? "(" + member.getLbdcShortName() + ")"
+                       : member.getLbdcShortName())
+                    : "")).trim();
     }
 
     /** --- Basic Getters/Setters --- */
