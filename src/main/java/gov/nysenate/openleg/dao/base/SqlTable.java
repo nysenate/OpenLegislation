@@ -46,6 +46,10 @@ public enum SqlTable
     DAYBREAK_FILE                ("daybreak_file"),
     DAYBREAK_FRAGMENT            ("daybreak_fragment"),
     DAYBREAK_PAGE_FILE_ENTRY     ("daybreak_page_file_entry"),
+    DAYBREAK_BILL                ("daybreak_bill"),
+    DAYBREAK_BILL_ACTION         ("daybreak_bill_action"),
+    DAYBREAK_BILL_AMENDMENT      ("daybreak_bill_amendment"),
+    DAYBREAK_BILL_SPONSOR        ("daybreak_bill_sponsor"),
 
     MEMBER                       ("member"),
     PERSON                       ("person"),
