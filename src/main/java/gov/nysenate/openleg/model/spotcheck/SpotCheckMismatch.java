@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.spotcheck;
 
 import gov.nysenate.openleg.util.StringDiffer;
 
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 
 /**

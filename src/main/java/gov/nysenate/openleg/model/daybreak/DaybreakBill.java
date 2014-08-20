@@ -3,7 +3,6 @@ package gov.nysenate.openleg.model.daybreak;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillAction;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReference;
 

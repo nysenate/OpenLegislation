@@ -125,7 +125,7 @@ public interface SobiDao
     public void archiveSobiFile(SobiFile sobiFile) throws IOException;
 
     /**
-     * Updates an existing SobiFile in the backing store with the given instanceor inserts it if
+     * Updates an existing SobiFile in the backing store with the given instance or inserts it if
      * the record doesn't already exist.
      *
      * @param sobiFile SobiFile - The SobiFile instance to be updated.
