@@ -65,8 +65,7 @@ public class BillAction implements Serializable, Comparable<BillAction>
      * Every BillAction is assigned a BillId which may contain an amendment version other than
      * the base version. For the sake of equality checking, we will use the base version of the
      * bill id since the actions are stored on the base bill anyways. Seq no, date, and text will
-     * also be checked. NOTE: published/modified date are ignored since an individual action
-     * is never updated, only replaced.
+     * also be checked.
      */
     @Override
     public boolean equals(Object obj) {
