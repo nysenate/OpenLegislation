@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.bill;
 
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.entity.Chamber;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -75,7 +76,7 @@ public class BillAction implements Serializable, Comparable<BillAction>
         return this.billId.equalsBase(other.billId) &&
                Objects.equals(this.date, other.date) &&
                Objects.equals(this.sequenceNo, other.sequenceNo) &&
-               Objects.equals(this.text, other.text);
+               StringUtils.equalsIgnoreCase(this.text, other.text);
     }
 
     @Override
