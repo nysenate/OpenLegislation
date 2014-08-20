@@ -53,10 +53,10 @@ public interface DaybreakDao
     /**
      * Retrieves a DaybreakFragment for the given BillId from the report on the given date
      *
-     * @param daybreakFragmentId - The id for the desired fragment
+     * @param daybreakBillId - The id for the desired fragment
      * @return DaybreakFragment
      */
-    public DaybreakFragment getDaybreakFragment(DaybreakFragmentId daybreakFragmentId);
+    public DaybreakFragment getDaybreakFragment(DaybreakBillId daybreakBillId);
 
     /**
      * Retrieves al DaybreakFragments for the report on the given date
@@ -74,10 +74,10 @@ public interface DaybreakDao
 
     /**
      * Retrieves all pagefile entries that would correspond do a single daybreak fragment
-     * @param daybreakFragmentId
+     * @param daybreakBillId
      * @return List<PageFileEntry>
      */
-    public Map<BillId, PageFileEntry> getPageFileEntries(DaybreakFragmentId daybreakFragmentId);
+    public Map<BillId, PageFileEntry> getPageFileEntries(DaybreakBillId daybreakBillId);
 
     /**
      * Retrieves all pagefile entries for a single report
@@ -85,6 +85,20 @@ public interface DaybreakDao
      * @return
      */
     public Map<BaseBillId, Map<BillId, PageFileEntry>> getAllPageFileEntries(LocalDate reportDate);
+
+    /**
+     * Retrieves a Daybreak Bill corresponding to the given daybreak bill id
+     * @param daybreakBillId
+     * @return
+     */
+    public DaybreakBill getDaybreakBill(DaybreakBillId daybreakBillId);
+
+    /**
+     * Retrieves all Daybreak Bills from the daybreak report on the given date
+     * @param reportDate
+     * @return
+     */
+    public List<DaybreakBill> getDaybreakBills(LocalDate reportDate);
 
     /** --- Update/Insert Methods --- */
 
@@ -109,16 +123,26 @@ public interface DaybreakDao
     public void updateDaybreakFragment(DaybreakFragment daybreakFragment);
 
     /**
+     * Sets the daybreak fragment designated by the given daybreak fragment id as pending processing
+     * @param daybreakBillId
+     */
+    public void setPendingProcessing(DaybreakBillId daybreakBillId);
+
+    /**
+     * Sets the daybreak fragment designated by the given daybreak fragment id as processed
+     * @param daybreakBillId
+     */
+    public void setProcessed(DaybreakBillId daybreakBillId);
+
+    /**
      * Updates or inserts the given PageFileEntry
      * @param pageFileEntry
      */
     public void updatePageFileEntry(PageFileEntry pageFileEntry);
 
-    /** --- Delete Methods --- */
-
     /**
-     * Deletes all page file entries for the report on the given date
-     * @param reportDate
+     * Updates or inserts the given daybreak bill
+     * @param daybreakBill
      */
-    public void deletePageFileEntries(LocalDate reportDate);
+    public void updateDaybreakBill(DaybreakBill daybreakBill);
 }

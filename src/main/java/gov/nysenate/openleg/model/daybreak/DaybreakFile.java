@@ -38,9 +38,11 @@ public class DaybreakFile implements DaybreakDocument{
     /** True iff the file has been archived */
     private boolean archived;
 
+    private static String reportDateMatchPattern = "yyyyMMdd";
+
     /** --- Constructors --- */
 
-    public DaybreakFile(File daybreakFile) throws IOException, IllegalArgumentException {
+    public DaybreakFile(File daybreakFile) throws FileNotFoundException, IllegalArgumentException {
         if (daybreakFile.exists()) {
             this.file = daybreakFile;
             this.daybreakDocType = DaybreakDocType.getFileDocType(this.getFileName());
@@ -56,8 +58,7 @@ public class DaybreakFile implements DaybreakDocument{
         }
     }
 
-    public DaybreakFile(File daybreakFile, LocalDateTime staged, boolean archived) throws IOException,
-                                                                                          IllegalArgumentException {
+    public DaybreakFile(File daybreakFile, LocalDateTime staged, boolean archived) throws FileNotFoundException, IllegalArgumentException {
         this(daybreakFile);
         this.staged = staged;
         this.archived = archived;
@@ -68,17 +69,13 @@ public class DaybreakFile implements DaybreakDocument{
     private LocalDate getReportDateFromFileName() {
         try {
             return LocalDateTime.ofInstant(
-                    DateUtils.parseDateStrictly(getFileName(), getDaybreakReportDatePattern()).toInstant(),
+                    DateUtils.parseDateStrictly(getFileName().split("\\.")[0], reportDateMatchPattern ).toInstant(),
                     ZoneId.systemDefault()).toLocalDate();
         }
         catch (ParseException ex) {
             ex.printStackTrace();
             return null;
         }
-    }
-
-    private String getDaybreakReportDatePattern() {
-        return "(\\d+)"+ daybreakDocType.getLocalFileExt();
     }
 
     /** --- Functional getters/setters --- */

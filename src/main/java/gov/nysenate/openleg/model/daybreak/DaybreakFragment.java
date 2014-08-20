@@ -47,6 +47,12 @@ public class DaybreakFragment {
                 .toString();
     }
 
+    /** --- Functional Getters/Setters --- */
+
+    public DaybreakBillId getDaybreakBillId(){
+        return new DaybreakBillId(BillId.getBaseId(billId), reportDate);
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public BillId getBillId() {

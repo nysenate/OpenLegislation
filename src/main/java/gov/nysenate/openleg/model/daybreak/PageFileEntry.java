@@ -1,10 +1,13 @@
 package gov.nysenate.openleg.model.daybreak;
 
 import com.google.common.base.Objects;
+import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Represents a line from a daybreak page file for a single bill version.
@@ -54,6 +57,23 @@ public class PageFileEntry {
                 .add("publishedDate", publishedDate)
                 .add("pageCount", pageCount)
                 .toString();
+    }
+
+    /** --- Functional Getters/Setters --- */
+
+    /**
+     * Returns Senate and/or Assembly bill ids as a list.  Omits null ids
+     * @return
+     */
+    public List<BillId> getBillIds(){
+        List<BillId> billIds = new LinkedList<>();
+        if(senateBillId!=null){
+            billIds.add(senateBillId);
+        }
+        if(assemblyBillId!=null){
+            billIds.add(assemblyBillId);
+        }
+        return billIds;
     }
 
     /** --- Getters/Setters --- */

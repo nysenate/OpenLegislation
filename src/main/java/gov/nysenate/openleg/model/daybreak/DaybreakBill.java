@@ -4,8 +4,6 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.bill.BillSponsor;
-import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReference;
 
@@ -13,43 +11,37 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A DaybreakBill serves as a model to store extracted bill content from the DaybreakFragments.
  */
 public class DaybreakBill implements SpotCheckReference
 {
-    /** Id of the fragment that created this instance. */
-    protected DaybreakFragmentId daybreakFragmentId;
+    /** Date of the report that created this instance. */
+    protected LocalDate reportDate;
 
     /** Below are a subset of fields similarly found in {@link gov.nysenate.openleg.model.bill.Bill} */
 
     protected BaseBillId baseBillId;
     protected Version activeVersion;
     protected String title;
-    protected BillSponsor sponsor;
-    protected List<Member> cosponsors;
-    protected List<Member> multiSponsors;
-    protected String summary;
+    protected String sponsor;
+    protected List<String> cosponsors;
+    protected List<String> multiSponsors;
+    protected String lawCodeSummary;
     protected String lawSection;
-    protected String lawCode;
     protected List<BillAction> actions;
-    protected Set<BillId> sameAs;
 
-    /** Mapping of amendment versions to the number of pages in the full text. */
-    protected Map<Version, Integer> pageCounts;
-
-    /** Mapping of amendment versions to the publish date of that amendment. */
-    protected Map<Version, LocalDate> publishDates;
+    /** Mapping of amendments to their version id. */
+    protected Map<Version, DaybreakBillAmendment> amendments;
 
     /** --- Constructors --- */
 
     public DaybreakBill() {}
 
-    public DaybreakBill(DaybreakFragmentId daybreakFragmentId, BaseBillId baseBillId) {
-        this.daybreakFragmentId = daybreakFragmentId;
-        this.baseBillId = baseBillId;
+    public DaybreakBill(DaybreakBillId daybreakBillId) {
+        this.baseBillId = daybreakBillId.getBaseBillId();
+        this.reportDate = daybreakBillId.getReportDate();
     }
 
     /** --- Implemented Methods --- */
@@ -61,22 +53,28 @@ public class DaybreakBill implements SpotCheckReference
 
     @Override
     public String getRefId() {
-        return daybreakFragmentId + ":" + baseBillId;
+        return this.getDaybreakBillId().toString();
     }
 
     @Override
     public LocalDateTime getRefActiveDate() {
-        return daybreakFragmentId.getReportDate().atStartOfDay();
+        return this.reportDate.atStartOfDay();
+    }
+
+    /** --- Functional Getters/Setters --- */
+
+    public DaybreakBillId getDaybreakBillId(){
+        return new DaybreakBillId(baseBillId, reportDate);
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public DaybreakFragmentId getDaybreakFragmentId() {
-        return daybreakFragmentId;
+    public LocalDate getReportDate() {
+        return reportDate;
     }
 
-    public void setDaybreakFragmentId(DaybreakFragmentId daybreakFragmentId) {
-        this.daybreakFragmentId = daybreakFragmentId;
+    public void setReportDate(LocalDate reportDate) {
+        this.reportDate = reportDate;
     }
 
     public BaseBillId getBaseBillId() {
@@ -95,44 +93,36 @@ public class DaybreakBill implements SpotCheckReference
         this.activeVersion = activeVersion;
     }
 
-    public BillSponsor getSponsor() {
+    public String getSponsor() {
         return sponsor;
     }
 
-    public void setSponsor(BillSponsor sponsor) {
+    public void setSponsor(String sponsor) {
         this.sponsor = sponsor;
     }
 
-    public List<Member> getCosponsors() {
+    public List<String> getCosponsors() {
         return cosponsors;
     }
 
-    public void setCosponsors(List<Member> cosponsors) {
+    public void setCosponsors(List<String> cosponsors) {
         this.cosponsors = cosponsors;
     }
 
-    public List<Member> getMultiSponsors() {
+    public List<String> getMultiSponsors() {
         return multiSponsors;
     }
 
-    public void setMultiSponsors(List<Member> multiSponsors) {
+    public void setMultiSponsors(List<String> multiSponsors) {
         this.multiSponsors = multiSponsors;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getLawCodeSummary() {
+        return lawCodeSummary;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    public String getLawCode() {
-        return lawCode;
-    }
-
-    public void setLawCode(String lawCode) {
-        this.lawCode = lawCode;
+    public void setLawCodeSummary(String lawCodeSummary) {
+        this.lawCodeSummary = lawCodeSummary;
     }
 
     public String getLawSection() {
@@ -159,27 +149,11 @@ public class DaybreakBill implements SpotCheckReference
         this.actions = actions;
     }
 
-    public Set<BillId> getSameAs() {
-        return sameAs;
+    public Map<Version, DaybreakBillAmendment> getAmendments() {
+        return amendments;
     }
 
-    public void setSameAs(Set<BillId> sameAs) {
-        this.sameAs = sameAs;
-    }
-
-    public Map<Version, Integer> getPageCounts() {
-        return pageCounts;
-    }
-
-    public void setPageCounts(Map<Version, Integer> pageCounts) {
-        this.pageCounts = pageCounts;
-    }
-
-    public Map<Version, LocalDate> getPublishDates() {
-        return publishDates;
-    }
-
-    public void setPublishDates(Map<Version, LocalDate> publishDates) {
-        this.publishDates = publishDates;
+    public void setAmendments(Map<Version, DaybreakBillAmendment> amendments) {
+        this.amendments = amendments;
     }
 }
