@@ -65,8 +65,7 @@ public class BillAction implements Serializable, Comparable<BillAction>
     /**
      * Every BillAction is assigned a BillId which may contain an amendment version other than
      * the base version. For the sake of equality checking, we will use the base version of the
-     * bill id since the actions are stored on the base bill anyways. Seq no, date, and text will
-     * also be checked.
+     * bill id since the actions are stored on the base bill anyways.
      */
     @Override
     public boolean equals(Object obj) {
@@ -76,12 +75,13 @@ public class BillAction implements Serializable, Comparable<BillAction>
         return this.billId.equalsBase(other.billId) &&
                Objects.equals(this.date, other.date) &&
                Objects.equals(this.sequenceNo, other.sequenceNo) &&
+               Objects.equals(this.chamber, other.chamber) &&
                StringUtils.equalsIgnoreCase(this.text, other.text);
     }
 
     @Override
     public int hashCode() {
-        return 31 * billId.hashCodeBase() + Objects.hash(date, sequenceNo, text);
+        return 31 * billId.hashCodeBase() + Objects.hash(date, sequenceNo, chamber, text);
     }
 
     @Override
@@ -99,7 +99,6 @@ public class BillAction implements Serializable, Comparable<BillAction>
         }
     }
 
-    @SuppressWarnings("serial")
     public static class ByEventSequenceDesc implements Comparator<BillAction> {
         @Override
         public int compare(BillAction o1, BillAction o2) {

@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.spotcheck;
 
 import com.google.common.base.Strings;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
+import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -18,10 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 import static java.util.stream.Collectors.joining;
@@ -93,10 +91,10 @@ public class DaybreakCheckService implements SpotCheckBillService
         }
 
         // Compare the actions lists
-        String billActions = actionsListString(bill.getActions());
-        String daybreakActions = actionsListString(daybreakBill.getActions());
-        if (!daybreakActions.equals(billActions)) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, daybreakActions, billActions));
+        if (!daybreakBill.getActions().equals(bill.getActions())) {
+            String daybreakActionsStr = actionsListString(daybreakBill.getActions());
+            String billActionsStr = actionsListString(bill.getActions());
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, daybreakActionsStr, billActionsStr));
         }
 
         // Check the page counts for each amendment version
@@ -105,6 +103,20 @@ public class DaybreakCheckService implements SpotCheckBillService
         if (!daybreakBill.getPageCounts().equals(billPageCounts)) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_FULLTEXT_PAGE_COUNT, daybreakBill.getPageCounts().toString(),
                                                                               billPageCounts.toString()));
+        }
+
+        // Check that the active amendment version matches
+        Version daybreakActiveVersion = daybreakBill.getActiveVersion();
+        if (!daybreakActiveVersion.equals(bill.getActiveVersion())) {
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT, daybreakActiveVersion.name(),
+                                                                           bill.getActiveVersion().name()));
+        }
+
+        // All amendments prior to and including the active amendment should be published and those after should not
+        String daybreakPubVersions = publishedVersionsString(daybreakActiveVersion);
+        String billPubVersions = publishedVersionsString(bill);
+        if (!daybreakPubVersions.equals(billPubVersions)) {
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_AMENDMENT_PUBLISH, daybreakPubVersions, billPubVersions));
         }
 
         return obsrv;
@@ -122,7 +134,7 @@ public class DaybreakCheckService implements SpotCheckBillService
     /**
      * Compare two strings a and b with the option to ignore case and extra whitespace.
      */
-    private boolean stringEquals(String a, String b, boolean ignoreCase, boolean normalizeSpaces) {
+    protected boolean stringEquals(String a, String b, boolean ignoreCase, boolean normalizeSpaces) {
         if (normalizeSpaces) {
             a = a.replaceAll("\\s+", " ");
             b = b.replaceAll("\\s+", " ");
@@ -133,7 +145,7 @@ public class DaybreakCheckService implements SpotCheckBillService
     /**
      * Convert a member list into a string containing the short names, delimited by a space.
      */
-    private String memberListString(List<Member> members) {
+    protected String memberListString(List<Member> members) {
         String membersStr = "";
         if (members != null) {
             membersStr = members.stream().map(Member::getLbdcShortName).collect(joining(" "));
@@ -142,15 +154,37 @@ public class DaybreakCheckService implements SpotCheckBillService
     }
 
     /**
-     * Convert the actions list into a string with each line as MM/DD/YY THE_ACTION_TEXT\n.
+     * Convert the actions list into a string with each line e.g SENATE - 12/16/13 PRINT NUMBER 1234A\n.
      */
-    private String actionsListString(List<BillAction> actions) {
+    protected String actionsListString(List<BillAction> actions) {
         String actionsStr = "";
         if (actions != null) {
-            actionsStr = actions.stream().map(a -> DateUtils.LRS_ACTIONS_DATE.format(a.getDate()) + " " + a.getText())
-                                         .collect(joining("\n"));
-
+            actionsStr = actions.stream()
+                .map(a -> a.getChamber() + " - " + DateUtils.LRS_ACTIONS_DATE.format(a.getDate()) + " " + a.getText())
+                .collect(joining("\n"));
         }
         return actionsStr.toUpperCase();
+    }
+
+    /**
+     * Given the bill return a single string that has the name of each published version,
+     * e.g. 'DEFAULT A B C' if the base and amendments A, B, and C are all published. If
+     * the amendment is missing from the bill but is in the publish map, tack on a [MISSING_DATA]
+     * like B[MISSING_DATA]
+     */
+    protected String publishedVersionsString(Bill bill) {
+        return bill.getAmendPublishStatusMap().entrySet().stream()
+            .filter(e -> e.getValue().isPublished())
+            .map(e -> e.getKey().name() + ((!bill.hasAmendment(e.getKey())) ? "[MISSING_DATA]" : ""))
+            .collect(joining(" "));
+    }
+
+    /**
+     * Given an active amendment version, return a string that has the names of every version before
+     * and including the active version.
+     */
+    protected String publishedVersionsString(Version activeVersion) {
+        return Arrays.asList(Version.values()).stream()
+            .filter(v -> v.compareTo(activeVersion) <= 0).map(v -> v.name()).collect(joining(" "));
     }
 }
