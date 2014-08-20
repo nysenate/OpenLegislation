@@ -116,7 +116,10 @@ public class BillActionParser
      */
     public void parseActions() throws ParseError {
         this.billActions = new ArrayList<>();
-        // Each action typically originates from a specific chamber
+        // Each action typically originates from a specific chamber.
+        // NOTE: The chamber can also be derived based on formatting by LBDC, where assembly actions are
+        // all lowercase and senate actions are all uppercase. However we attempt to figure this out via
+        // the content of the actions instead to avoid reliance on a formatting detail.
         Chamber currentChamber = billId.getChamber();
         // The current bill amendment can change throughout the course of the actions list.
         activeVersion = BillId.DEFAULT_VERSION;
@@ -135,8 +138,10 @@ public class BillActionParser
                 }
                 // Normalize the bill event text to facilitate pattern matching.
                 String eventText = billEvent.group(2).trim().toUpperCase();
+                // Check if the action is a chamber recall, otherwise the current chamber can be used.
+                Chamber actionChamber = chamberRecall(eventText).orElse(currentChamber);
                 // Construct and append bill action to list.
-                BillAction action = new BillAction(eventDate, eventText, currentChamber, ++sequenceNo, billId);
+                BillAction action = new BillAction(eventDate, eventText, actionChamber, ++sequenceNo, billId);
                 billActions.add(action);
                 // Set stricken status if this action has a stricken clause
                 updateStrickenStatus(action);
@@ -149,12 +154,30 @@ public class BillActionParser
                 // Update the committee info if the action indicates a committee referral
                 updateCommitteeStatus(action);
                 // Identify the target chamber for the next action
-                currentChamber = extractTargerChamber(action).orElse(currentChamber);
+                currentChamber = chamberSwitch(action).orElse(currentChamber);
             }
             else {
                 throw new ParseError("billEventPattern not matched: " + line);
             }
         }
+    }
+
+    /**
+     * When a bill is recalled from a chamber, it is requested by the opposite chamber.
+     * This method will return the chamber that requested the recall or nothing otherwise.
+     * Note: This doesn't trigger a chamber switch in that only the recall action will
+     * have the different chamber.
+     *
+     * @param eventText String
+     * @return Optional<Chamber>
+     */
+    protected Optional<Chamber> chamberRecall(String eventText) {
+        Matcher matcher = chamberRecallPattern.matcher(eventText);
+        Chamber recallChamber = null;
+        if (matcher.find()) {
+            recallChamber = Chamber.valueOf(matcher.group(1)).opposite();
+        }
+        return Optional.ofNullable(recallChamber);
     }
 
     /**
@@ -164,7 +187,7 @@ public class BillActionParser
      * @param action BillAction
      * @return Optional<Chamber>
      */
-    protected Optional<Chamber> extractTargerChamber(BillAction action) {
+    protected Optional<Chamber> chamberSwitch(BillAction action) {
         Chamber currentChamber = null;
         Matcher matcher = chamberDeliverPattern.matcher(action.getText());
         if (matcher.find()) {
@@ -252,6 +275,8 @@ public class BillActionParser
     }
 
     /**
+     * Sets the current committee and adds to the list of past committees based on the
+     * action if applicable.
      *
      * @param action BillAction
      */
