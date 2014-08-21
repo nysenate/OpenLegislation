@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processor.hearing;
 
 import gov.nysenate.openleg.model.transcript.PublicHearing;
-import gov.nysenate.openleg.util.TextFormatter;
+import gov.nysenate.openleg.util.BillTextUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -117,7 +117,8 @@ public class PublicHearingProcessor {
 
         if(line.matches(EMPTY_LINE))
             return "";
-        return TextFormatter.append(line, sep);
+//        return BillTextUtils.append(line, sep);
+        return null; /** FIXME ^ */
     }
 
     private void parsePage(ArrayList<String> lineList, int pageNumber) {
