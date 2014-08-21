@@ -23,6 +23,13 @@ public class DaybreakBillAmendment {
     public DaybreakBillAmendment() {
     }
 
+    public DaybreakBillAmendment(BillId billId, BillId sameAs, int pageCount, LocalDate publishDate) {
+        this.billId = billId;
+        this.sameAs = sameAs;
+        this.pageCount = pageCount;
+        this.publishDate = publishDate;
+    }
+
     /** --- Getters/Setters --- */
 
     public BillId getBillId() {

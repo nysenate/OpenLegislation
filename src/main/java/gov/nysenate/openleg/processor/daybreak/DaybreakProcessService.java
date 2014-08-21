@@ -2,7 +2,7 @@ package gov.nysenate.openleg.processor.daybreak;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.daybreak.DaybreakFragment;
-import gov.nysenate.openleg.model.daybreak.DaybreakFragmentId;
+import gov.nysenate.openleg.model.daybreak.DaybreakBillId;
 
 import java.util.List;
 
@@ -20,15 +20,14 @@ public interface DaybreakProcessService {
      *
      * @return int - the number of collated daybreak sets
      */
-    public int collateDaybreakFiles();
+    public int collateDaybreakReports();
 
     /**
      * Retrieves DaybreakFragments that are pending processing.
      *
-     * @param limitOffset - Specifies a range of fragments to prevent loading all of them to memory
      * @return
      */
-    public List<DaybreakFragment> getPendingDaybreakFragments(LimitOffset limitOffset);
+    public List<DaybreakFragment> getPendingDaybreakFragments();
 
     /**
      * Parses the given DaybreakFragments and stores them as DaybreakBills
@@ -43,8 +42,8 @@ public interface DaybreakProcessService {
     public void processPendingFragments();
 
     /**
-     * Sets the pending processing flag for the given fragment id in the store
+     * Sets the pending processing flag for the given fragment id in the store to the given boolean
      * @param fragmentId
      */
-    public void updatePendingProcessing(DaybreakFragmentId fragmentId);
+    public void updatePendingProcessing(DaybreakBillId fragmentId, boolean pendingProcessing);
 }

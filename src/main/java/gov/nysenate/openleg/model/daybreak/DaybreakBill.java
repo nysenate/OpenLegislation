@@ -8,6 +8,8 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +29,7 @@ public class DaybreakBill implements SpotCheckReferenceId
     protected String sponsor;
     protected List<String> cosponsors;
     protected List<String> multiSponsors;
-    protected String lawCodeSummary;
+    protected String lawCodeAndSummary;
     protected String lawSection;
     protected List<BillAction> actions;
 
@@ -36,9 +38,15 @@ public class DaybreakBill implements SpotCheckReferenceId
 
     /** --- Constructors --- */
 
-    public DaybreakBill() {}
+    public DaybreakBill() {
+        cosponsors = new ArrayList<>();
+        multiSponsors = new ArrayList<>();
+        actions = new ArrayList<>();
+        amendments = new HashMap<>();
+    }
 
     public DaybreakBill(DaybreakBillId daybreakBillId) {
+        this();
         this.baseBillId = daybreakBillId.getBaseBillId();
         this.reportDate = daybreakBillId.getReportDate();
     }
@@ -111,12 +119,12 @@ public class DaybreakBill implements SpotCheckReferenceId
         this.multiSponsors = multiSponsors;
     }
 
-    public String getLawCodeSummary() {
-        return lawCodeSummary;
+    public String getLawCodeAndSummary() {
+        return lawCodeAndSummary;
     }
 
-    public void setLawCodeSummary(String lawCodeSummary) {
-        this.lawCodeSummary = lawCodeSummary;
+    public void setLawCodeAndSummary(String lawCodeAndSummary) {
+        this.lawCodeAndSummary = lawCodeAndSummary;
     }
 
     public String getLawSection() {

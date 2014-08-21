@@ -46,7 +46,7 @@ public enum SqlDaybreakQuery implements BasicSqlQuery{
     ),
     SELECT_PENDING_DAYBREAK_FRAGMENTS(
         "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_FRAGMENT + "\n" +
-        "WHERE pending_processing = false"
+        "WHERE pending_processing = true"
     ),
     INSERT_DAYBREAK_FRAGMENT(
         "INSERT INTO ${schema}." + SqlTable.DAYBREAK_FRAGMENT + "\n" +
@@ -96,7 +96,8 @@ public enum SqlDaybreakQuery implements BasicSqlQuery{
         "       senate_bill_print_no = :senateBillPrintNo, senate_bill_version = :senateBillVersion, " +
         "       assembly_bill_print_no = :assemblyBillPrintNo, assembly_bill_version = :assemblyBillVersion" + "\n" +
         "WHERE report_date = :reportDate AND bill_session_year = :billSessionYear " +
-        "   AND ( senate_bill_print_no = :billPrintNo OR assembly_bill_print_no = :billPrintNo )"
+        "   AND ( senate_bill_print_no = :senateBillPrintNo AND senate_bill_version = :senateBillVersion " +
+        "       OR assembly_bill_print_no = :assemblyBillPrintNo AND assembly_bill_version = :assemblyBillVersion )"
     ),
     DELETE_PAGE_FILE_ENTRIES(
         "DELETE FROM ${schema}." + SqlTable.DAYBREAK_PAGE_FILE_ENTRY + "\n" +
@@ -117,14 +118,14 @@ public enum SqlDaybreakQuery implements BasicSqlQuery{
     INSERT_DAYBREAK_BILL(
         "INSERT INTO ${schema}." + SqlTable.DAYBREAK_BILL + "\n" +
         "   (      report_date, bill_print_no, bill_session_year, " +
-        "       active_version, title,  lawAndSummary,  sponsor,  law_section, law_code )" + "\n" +
+        "       active_version, title,  summary,        sponsor,  law_section )" + "\n" +
         "VALUES ( :reportDate, :billPrintNo,  :billSessionYear, " +
-        "      :activeVersion, :title, :lawAndSummary, :sponsor, :lawSection, :lawCode )"
+        "      :activeVersion, :title, :lawAndSummary, :sponsor, :lawSection )"
     ),
     UPDATE_DAYBREAK_BILL(
         "UPDATE ${schema}." + SqlTable.DAYBREAK_BILL + "\n" +
-        "SET active_version = :activeVersion, title = :title,  lawAndSummary = :lawAndSummary,  " +
-        "       sponsor = :sponsor,  law_section = :lawSection, law_code = :lawCode" + "\n" +
+        "SET active_version = :activeVersion, title = :title,  summary = :lawAndSummary,  " +
+        "       sponsor = :sponsor,  law_section = :lawSection" + "\n" +
         "WHERE bill_print_no = :billPrintNo AND bill_session_year = :billSessionYear " +
         "   AND report_date = :reportDate"
     ),
@@ -138,8 +139,8 @@ public enum SqlDaybreakQuery implements BasicSqlQuery{
     ),
     INSERT_DAYBREAK_BILL_ACTION(
         "INSERT INTO ${schema}." + SqlTable.DAYBREAK_BILL_ACTION + "\n" +
-        "       (  report_date, bill_print_no, bill_session_year, action_date, chamber,  text,  sequence_no)" + "\n" +
-        "VALUES ( :reportDate, :billPrintNo,  :billSessionYear,  :actionDate, :chamber, :text, :sequenceNo )"
+        "       (  report_date, bill_print_no, bill_session_year, action_date, text,  sequence_no, chamber )" + "\n" +
+        "VALUES ( :reportDate, :billPrintNo,  :billSessionYear,  :actionDate, :text, :sequenceNo, CAST(:chamber as chamber) )"
     ),
     DELETE_DAYBREAK_BILL_ACTIONS(
         "DELETE FROM ${schema}." + SqlTable.DAYBREAK_BILL_ACTION + "\n" +
@@ -155,9 +156,9 @@ public enum SqlDaybreakQuery implements BasicSqlQuery{
         "   AND report_date = :reportDate"
     ),
     INSERT_DAYBREAK_BILL_AMENDMENT(
-        "INSERT INTO ${schema}." + SqlTable.DAYBREAK_BILL_ACTION + "\n" +
-        "       (  report_date, bill_print_no, bill_session_year, version,  publish_date, page_count, same_as" + "\n" +
-        "VALUES ( :reportDate, :billPrintNo,  :billSessionYear,  :version, :publishDate, :pageCount, :sameAs"
+        "INSERT INTO ${schema}." + SqlTable.DAYBREAK_BILL_AMENDMENT + "\n" +
+        "       (  report_date, bill_print_no, bill_session_year, version,  publish_date, page_count, same_as )" + "\n" +
+        "VALUES ( :reportDate, :billPrintNo,  :billSessionYear,  :version, :publishDate, :pageCount, :sameAs )"
     ),
     DELETE_DAYBREAK_BILL_AMENDMENTS(
         "DELETE FROM ${schema}." + SqlTable.DAYBREAK_BILL_AMENDMENT + "\n" +
@@ -171,35 +172,35 @@ public enum SqlDaybreakQuery implements BasicSqlQuery{
         "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_BILL_SPONSOR + "\n" +
         "WHERE bill_print_no = :billPrintNo AND bill_session_year = :billSessionYear " +
         "   AND report_date = :reportDate " +
-        "   AND type = CAST('cosponsor' AS sponsor_type) "
+        "   AND type = CAST('cosponsor' AS ${schema}.sponsor_type) "
     ),
     SELECT_DAYBREAK_BILL_MULTISPONSORS(
         "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_BILL_SPONSOR + "\n" +
         "WHERE bill_print_no = :billPrintNo AND bill_session_year = :billSessionYear " +
         "   AND report_date = :reportDate " +
-        "   AND type = CAST('multisponsor' AS sponsor_type) "
+        "   AND type = CAST('multisponsor' AS ${schema}.sponsor_type) "
     ),
     INSERT_DAYBREAK_BILL_COSPONSOR(
         "INSERT INTO ${schema}." + SqlTable.DAYBREAK_BILL_SPONSOR + "\n" +
         "       (  report_date, bill_print_no, bill_session_year, member_short_name, type )" + "\n" +
-        "VALUES ( :reportDate, :billPrintNo,  :billSessionYear,  :memberShortName,   CAST('cosponsor' AS sponsor_type) )"
+        "VALUES ( :reportDate, :billPrintNo,  :billSessionYear,  :memberShortName,   CAST('cosponsor' AS ${schema}.sponsor_type) )"
     ),
     INSERT_DAYBREAK_BILL_MULTISPONSOR(
         "INSERT INTO ${schema}." + SqlTable.DAYBREAK_BILL_SPONSOR + "\n" +
         "       (  report_date, bill_print_no, bill_session_year, member_short_name, type )" + "\n" +
-        "VALUES ( :reportDate, :billPrintNo,  :billSessionYear,  :memberShortName,   CAST('multisponsor' AS sponsor_type)"
+        "VALUES ( :reportDate, :billPrintNo,  :billSessionYear,  :memberShortName,   CAST('multisponsor' AS ${schema}.sponsor_type) )"
     ),
     DELETE_DAYBREAK_BILL_COSPONSORS(
         "DELETE FROM ${schema}." + SqlTable.DAYBREAK_BILL_SPONSOR + "\n" +
         "WHERE bill_print_no = :billPrintNo AND bill_session_year = :billSessionYear " +
-        "   AND report_date = :reportDate" +
-        "   AND type = CAST('cosponsor' AS sponsor_type) "
+        "   AND report_date = :reportDate " +
+        "   AND type = CAST('cosponsor' AS ${schema}.sponsor_type)"
     ),
     DELETE_DAYBREAK_BILL_MULTISPONSORS(
         "DELETE FROM ${schema}." + SqlTable.DAYBREAK_BILL_SPONSOR + "\n" +
         "WHERE bill_print_no = :billPrintNo AND bill_session_year = :billSessionYear " +
-        "   AND report_date = :reportDate" +
-        "   AND type = CAST('multisponsor' AS sponsor_type) "
+        "   AND report_date = :reportDate " +
+        "   AND type = CAST('multisponsor' AS ${schema}.sponsor_type )"
     )
 
     ;

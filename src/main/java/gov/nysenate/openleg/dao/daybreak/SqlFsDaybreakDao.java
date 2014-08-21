@@ -275,14 +275,16 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
 
     @Override
     public void updateDaybreakBill(DaybreakBill daybreakBill) {
+        // Update the bill table
+        MapSqlParameterSource params = getDaybreakBillParams(daybreakBill);
+        if(jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_BILL.getSql(schema()), params) ==0){
+            jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_BILL.getSql(schema()), params);
+        }
         // Update the bill's associated tables
         updateDaybreakBillActions(daybreakBill.getDaybreakBillId(), daybreakBill.getActions());
         updateDaybreakBillAmendments(daybreakBill.getDaybreakBillId(), daybreakBill.getAmendments());
         updateDaybreakBillCoSponsors(daybreakBill.getDaybreakBillId(), daybreakBill.getCosponsors());
         updateDaybreakBillMultiSponsors(daybreakBill.getDaybreakBillId(), daybreakBill.getMultiSponsors());
-        // Update the bill table
-        MapSqlParameterSource params = getDaybreakBillParams(daybreakBill);
-        jdbcNamed.update(SqlDaybreakQuery.INSERT_DAYBREAK_BILL.getSql(schema()), params);
     }
 
     /** --- Internal Methods --- */
@@ -529,7 +531,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
             daybreakBill.setActiveVersion(Version.of(rs.getString("active_version")));
             daybreakBill.setTitle(rs.getString("title"));
             daybreakBill.setSponsor( rs.getString("sponsor"));
-            daybreakBill.setLawCodeSummary(rs.getString("summary"));
+            daybreakBill.setLawCodeAndSummary(rs.getString("summary"));
             daybreakBill.setLawSection(rs.getString("law_section"));
             return daybreakBill;
         }
@@ -553,7 +555,9 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
             DaybreakBillAmendment daybreakBillAmendment = new DaybreakBillAmendment();
             daybreakBillAmendment.setBillId(new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"),
                     rs.getString("version")));
-            daybreakBillAmendment.setSameAs(new BillId(rs.getString("same_as"), rs.getInt("bill_session_year")));
+            if(rs.getString("same_as")!=null) {
+                daybreakBillAmendment.setSameAs(new BillId(rs.getString("same_as"), rs.getInt("bill_session_year")));
+            }
             daybreakBillAmendment.setPageCount(rs.getInt("page_count"));
             daybreakBillAmendment.setPublishDate(getLocalDate(rs, "publish_date"));
             return daybreakBillAmendment;
@@ -621,7 +625,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         params.addValue("activeVersion", daybreakBill.getActiveVersion().getValue());
         params.addValue("title", daybreakBill.getTitle());
         params.addValue("sponsor", daybreakBill.getSponsor());
-        params.addValue("summary", daybreakBill.getLawCodeSummary());
+        params.addValue("lawAndSummary", daybreakBill.getLawCodeAndSummary());
         params.addValue("lawSection", daybreakBill.getLawSection());
         return params;
     }
@@ -639,7 +643,9 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
                                                                  DaybreakBillAmendment daybreakBillAmendment){
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
         params.addValue("version", daybreakBillAmendment.getBillId().getVersion().getValue());
-        params.addValue("sameAs", daybreakBillAmendment.getSameAs().getPrintNo());
+        params.addValue("sameAs", daybreakBillAmendment.getSameAs() != null ?
+                                    daybreakBillAmendment.getSameAs().getPrintNo() :
+                                    null );
         params.addValue("publishDate", toDate(daybreakBillAmendment.getPublishDate()));
         params.addValue("pageCount", daybreakBillAmendment.getPageCount());
         return params;
