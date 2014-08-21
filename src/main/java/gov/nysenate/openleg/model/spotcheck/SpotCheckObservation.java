@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A SpotCheckObservation is the result of performing a SpotCheck against any sort of data. It contains
- * any mismatches that were detected between the reference content and the target content.
+ * A SpotCheckObservation is the result of performing a SpotCheck against some reference data. It contains
+ * any mismatches that were detected between the reference content and the observed content.
  *
  * @param <ContentKey> Class that is used as a key for identifying the specific piece of
  *                     content that is being compared during the spot check.
@@ -14,7 +14,7 @@ import java.util.Map;
 public class SpotCheckObservation<ContentKey>
 {
     /** The source used to compare our data against. */
-    protected SpotCheckReference source;
+    protected SpotCheckReferenceId referenceId;
 
     /** A key that identifies the content being checked. */
     protected ContentKey key;
@@ -29,8 +29,8 @@ public class SpotCheckObservation<ContentKey>
 
     public SpotCheckObservation() {}
 
-    public SpotCheckObservation(SpotCheckReference source, ContentKey key) {
-        this.source = source;
+    public SpotCheckObservation(SpotCheckReferenceId referenceId, ContentKey key) {
+        this.referenceId = referenceId;
         this.key = key;
         this.observedDateTime = LocalDateTime.now();
     }
@@ -49,12 +49,12 @@ public class SpotCheckObservation<ContentKey>
 
     /** --- Basic Getters/Setters --- */
 
-    public SpotCheckReference getSource() {
-        return source;
+    public SpotCheckReferenceId getReferenceId() {
+        return referenceId;
     }
 
-    public void setSource(SpotCheckReference source) {
-        this.source = source;
+    public void setReferenceId(SpotCheckReferenceId referenceId) {
+        this.referenceId = referenceId;
     }
 
     public ContentKey getKey() {

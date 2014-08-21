@@ -5,6 +5,11 @@ package gov.nysenate.openleg.model.spotcheck;
  */
 public enum SpotCheckMismatchType
 {
+    /** --- General --- */
+
+    REFERENCE_DATA_MISSING,
+    OBSERVE_DATA_MISSING,
+
     /** --- Bill data mismatches --- */
 
     BILL_ACTION,
@@ -15,6 +20,7 @@ public enum SpotCheckMismatchType
     BILL_LAW_CODE,
     BILL_LAW_CODE_SUMMARY,
     BILL_LAW_SECTION,
+    BILL_MEMO,
     BILL_MULTISPONSOR,
     BILL_SPONSOR,
     BILL_SPONSOR_MEMO,

@@ -2,7 +2,6 @@ package gov.nysenate.openleg.model.spotcheck;
 
 import gov.nysenate.openleg.util.StringDiffer;
 
-import java.time.LocalDateTime;
 import java.util.LinkedList;
 
 /**
@@ -13,25 +12,28 @@ public class SpotCheckMismatch
     /** The type of mismatch that occurred. */
     protected SpotCheckMismatchType mismatchType;
 
-    /** String representation of the reference data (their data) */
-    protected String theirs;
+    /** The status of the mismatch (new, existing, etc.) */
+    protected SpotCheckMismatchStatus status = SpotCheckMismatchStatus.NEW;
 
-    /** String representation of the target data (our data) */
-    protected String ours;
+    /** String representation of the reference data. (e.g. lbdc daybreak content) */
+    protected String referenceData;
+
+    /** String representation of the observed data (typically openleg processed content) */
+    protected String observedData;
 
     /** Any details about this mismatch. (Optional) */
     protected String notes;
 
     /** --- Constructor --- */
 
-    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String theirs, String ours) {
-        this(mismatchType, theirs, ours, "");
+    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String referenceData, String observedData) {
+        this(mismatchType, referenceData, observedData, "");
     }
 
-    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String theirs, String ours, String notes) {
+    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String referenceData, String observedData, String notes) {
         this.mismatchType = mismatchType;
-        this.theirs = (theirs == null) ? "" : theirs;
-        this.ours = (ours == null) ? "" : ours;
+        this.referenceData = (referenceData == null) ? "" : referenceData;
+        this.observedData = (observedData == null) ? "" : observedData;
         this.notes = notes;
     }
 
@@ -45,11 +47,15 @@ public class SpotCheckMismatch
      */
     public LinkedList<StringDiffer.Diff> getDiff(boolean simple) {
         StringDiffer stringDiffer = new StringDiffer();
-        LinkedList<StringDiffer.Diff> diffs = stringDiffer.diff_main(theirs, ours);
+        LinkedList<StringDiffer.Diff> diffs = stringDiffer.diff_main(referenceData, observedData);
         if (simple) {
             stringDiffer.diff_cleanupSemantic(diffs);
         }
         return diffs;
+    }
+
+    public void setStatus(SpotCheckMismatchStatus status) {
+        this.status = status;
     }
 
     /** --- Basic Getters --- */
@@ -58,12 +64,16 @@ public class SpotCheckMismatch
         return mismatchType;
     }
 
-    public String getTheirs() {
-        return theirs;
+    public SpotCheckMismatchStatus getStatus() {
+        return status;
     }
 
-    public String getOurs() {
-        return ours;
+    public String getReferenceData() {
+        return referenceData;
+    }
+
+    public String getObservedData() {
+        return observedData;
     }
 
     public String getNotes() {
