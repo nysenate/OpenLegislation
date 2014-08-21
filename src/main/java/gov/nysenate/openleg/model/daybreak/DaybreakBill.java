@@ -4,7 +4,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReference;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * A DaybreakBill serves as a model to store extracted bill content from the DaybreakFragments.
  */
-public class DaybreakBill implements SpotCheckReference
+public class DaybreakBill implements SpotCheckReferenceId
 {
     /** Date of the report that created this instance. */
     protected LocalDate reportDate;
@@ -48,11 +48,6 @@ public class DaybreakBill implements SpotCheckReference
     @Override
     public SpotCheckRefType getRefType() {
         return SpotCheckRefType.LBDC_DAYBREAK;
-    }
-
-    @Override
-    public String getRefId() {
-        return this.getDaybreakBillId().toString();
     }
 
     @Override
