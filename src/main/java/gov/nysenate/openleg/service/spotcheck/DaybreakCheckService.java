@@ -28,7 +28,7 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 import static java.util.stream.Collectors.joining;
 
 @Service("daybreak")
-public class DaybreakCheckService implements SpotCheckBillService
+public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, DaybreakBill>
 {
     @Autowired
     protected DaybreakDao daybreakDao;
@@ -71,6 +71,11 @@ public class DaybreakCheckService implements SpotCheckBillService
         checkActiveVersions(bill, daybreakBill, observation);
 
         return observation;
+    }
+
+    @Override
+    public SpotCheckObservation<BaseBillId> check(Bill content, DaybreakBill reference) {
+        return null;
     }
 
     /** --- Methods --- */

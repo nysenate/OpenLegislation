@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * @param <ContentKey> - The class that can uniquely identify an instance of ContentType (e.g AgendaId)
  * @param <ContentType> - The class to perform data verification on (e.g. Bill, Agenda, etc).
  */
-public interface SpotCheckService<ContentKey, ContentType>
+public interface SpotCheckService<ContentKey, ContentType, ReferenceType>
 {
     /**
      * Perform a check on 'content' against the latest reference data available. If no
@@ -42,4 +42,6 @@ public interface SpotCheckService<ContentKey, ContentType>
      */
     public SpotCheckObservation<ContentKey> check(ContentType content, LocalDateTime latestDateTime)
                                                   throws ReferenceDataNotFoundEx;
+
+    public SpotCheckObservation<ContentKey> check(ContentType content, ReferenceType reference);
 }

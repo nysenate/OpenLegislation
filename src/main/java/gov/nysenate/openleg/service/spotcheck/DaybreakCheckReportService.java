@@ -2,7 +2,10 @@ package gov.nysenate.openleg.service.spotcheck;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.daybreak.DaybreakBill;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +19,7 @@ public class DaybreakCheckReportService implements SpotCheckReportService<BillId
     private static final Logger logger = LoggerFactory.getLogger(DaybreakCheckReportService.class);
 
     @Resource(name = "daybreak")
-    private SpotCheckBillService daybreakCheckService;
+    private SpotCheckService<BaseBillId, Bill, DaybreakBill> daybreakSpotCheckService;
 
     /** --- Implemented Methods --- */
 
