@@ -48,18 +48,16 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
         if (bill == null) {
             throw new IllegalArgumentException("Supplied bill cannot be null");
         }
+        return null;
+    }
+
+    @Override
+    public SpotCheckObservation<BaseBillId> check(Bill bill, DaybreakBill daybreakBill) {
+        if (daybreakBill == null) {
+            throw new IllegalArgumentException("DaybreakBill cannot be null when performing spot check");
+        }
         BaseBillId baseBillId = bill.getBaseBillId();
-        final DaybreakBill daybreakBill;
-//        try {
-            daybreakBill = new DaybreakBill(); // TODO: Use dao here.. Get the latest matching DaybreakBill
-//        }
-//        catch (ReferenceDataNotFoundEx ex) {
-//
-//        }
-
-
         final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<>(daybreakBill, baseBillId);
-
         // Perform the checks
         checkBillTitle(bill, daybreakBill, observation);
         checkBillLawAndSummary(bill, daybreakBill, observation);
@@ -69,13 +67,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
         checkBillActions(bill, daybreakBill, observation);
         checkFullTextPageCounts(bill, daybreakBill, observation);
         checkActiveVersions(bill, daybreakBill, observation);
-
         return observation;
-    }
-
-    @Override
-    public SpotCheckObservation<BaseBillId> check(Bill content, DaybreakBill reference) {
-        return null;
     }
 
     /** --- Methods --- */
