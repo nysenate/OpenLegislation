@@ -119,7 +119,7 @@ th, .title-cell {
     	     ArrayList<Report> reports = (ArrayList<Report>)request.getAttribute("reportList");
     	     
     	     for(Report report : reports) {
-    	         int total = report.getObservations().size();
+                 int total = report.getObservations().size() - report.getClosedErrors().size();
     	         int summaryTotal = 0;
     	         int titleTotal = 0;
     	         int actionTotal = 0;

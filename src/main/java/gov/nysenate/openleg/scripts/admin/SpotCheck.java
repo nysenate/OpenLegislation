@@ -36,6 +36,8 @@ public class SpotCheck extends BaseScript
     public static Logger logger = Logger.getLogger(SpotCheck.class);
 
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+    private String SESSION_YEAR = "2013";
+    public Pattern spotcheckBillId = Pattern.compile("([A-Z])(\\d+)([A-Z]?)");
 
     public static void main(String[] args) throws Exception
     {
@@ -340,112 +342,178 @@ public class SpotCheck extends BaseScript
         }
     }
 
-    private String SESSION_YEAR = "2013";
-    public Pattern spotcheckBillId = Pattern.compile("([A-Z])(\\d+)([A-Z]?)");
-    public Pattern row = Pattern.compile("<tr.*?>(.+?)</tr>");
-    public Pattern stripParts = Pattern.compile(
-                "<b>(.*?)</b>|"+                    // Remove bold text
-                "<(a|/a|td).*?>|"+                  // Remove a, /a, and td tags. Leave /td for later
-                "<br>\\s*Criminal Sanction Impact." // Remove criminal impact text if present
-        );
+    private HashMap<String, SpotCheckBill> readDaybreak(File daybreak) throws IOException {
+        String html = FileUtils.readFileToString(daybreak, "latin1").replaceAll("\\r?\\n", " ");
 
-    public HashMap<String, SpotCheckBill> readDaybreak(File dataFile) throws IOException
-    {
-        HashMap<String,SpotCheckBill> bills = new HashMap<String,SpotCheckBill>();
-        // Open the daybreak file and remove new lines for the regular expressions
-        String daybreak = FileUtils.readFileToString(dataFile, "latin1").replaceAll("\\r?\\n", " ");
+        Pattern billDataPattern = Pattern.compile("<tr.*?>(.+?)</tr>");
+        Pattern stripHtmlTags = Pattern.compile("<b>(.*?)</b>|<(a|/a|td).*?>|<br>\\s*Criminal Sanction Impact.");
 
-        Matcher rowMatcher = row.matcher(daybreak);
-        rowMatcher.find(); // Throw the first two rows away
-        rowMatcher.find(); // They are just headers for the table
-        while(rowMatcher.find()) {
-            // Each table row corresponds to a single bill
-            SpotCheckBill bill = new SpotCheckBill();
-            bill.setCurrentAmendment(true);
-            String row = rowMatcher.group(1);
+        Matcher billDataMatcher = billDataPattern.matcher(html);
+        billDataMatcher.find(); // Throw the first two rows away
+        billDataMatcher.find(); // They are just headers for the table
 
-            String parts[] = stripParts.matcher(row)	// Match all non <br> and </td> tags
-                    .replaceAll("")				// Remove them
-                    .replace("</td>", "<br>")	// convert </td> to <br> as a special case
-                    .split("<br>");				// Split the delimited row into parts
+        HashMap<String, SpotCheckBill> bills = new HashMap<String, SpotCheckBill>();
+        while(billDataMatcher.find()) {
+            String rawBillHtml = billDataMatcher.group(1);
+            String billParts[] = stripHtmlTags.matcher(rawBillHtml).replaceAll("").replace("</td>", "<br>").split("<br>");
 
-            addAmendments(bill, parts);
-
-            bill.setTitle(parts[2].trim());
-            bill.law = parts[3].trim();
-            bill.setSummary(parts[4].trim());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
-            for( int i=5; i< parts.length; i++ ) {
-                String event = parts[i].trim();
-                try {
-                    dateFormat.parse(event.split(" ")[0]);
-                    bill.getActions().add(event);
-                } catch (ParseException e) {
-                    //pass
-                }
-            }
-
-            if (bill.id.startsWith("A")) {
-                parts[1] = parts[1].replaceAll("([A-Z])\\.[¦ ]([A-Z'-]+)", "$2 $1");
-                String[] all_sponsors = parts[1].split("; M-S:");
-                String[] sponsors = all_sponsors[0].split(",");
-
-                String sponsor = sponsors[0].trim();
-                if (sponsor.contains("LOPEZ")) {
-                    sponsor = "LOPEZ P";
-                }
-                bill.setSponsor(sponsor);
-
-                for(int i=1; i<sponsors.length; i++) {
-                    String coSponsor = sponsors[i].trim();
-                    if (coSponsor.contains("LOPEZ")) {
-                        coSponsor = "LOPEZ P";
-                    }
-                    bill.getCosponsors().add(coSponsor);
-                }
-
-                if(all_sponsors.length == 2)
-                    for(String multisponsor : all_sponsors[1].split(","))
-                        bill.multisponsors.add(multisponsor.trim());
-            } else {
-                String[] sponsors = parts[1].split("CO:");
-                bill.setSponsor(sponsors[0].trim());
-                if(sponsors.length == 2)
-                    for(String cosponsor : sponsors[1].split(","))
-                        bill.getCosponsors().add(cosponsor.trim());
-            }
-
-            if (bills.get(bill.id) != null) {
-                System.out.println(bill.id+bill.amendments);
-            } else {
-                bills.put(bill.id, bill);
-            }
+            SpotCheckBill bill = extractBill(billParts);
+            bills.put(bill.id, bill);
         }
 
         return bills;
     }
 
-    private void addAmendments(SpotCheckBill bill, String[] parts) {
-        bill.id = parts[0].trim();
-        Matcher idMatcher = spotcheckBillId.matcher(bill.id);
+    private SpotCheckBill extractBill(String[] billParts) {
+        SpotCheckBill bill = new SpotCheckBill();
 
+        bill.setCurrentAmendment(true);
+        bill.id = billParts[0].trim();
+        bill.setTitle(billParts[2].trim());
+        bill.law = billParts[3].trim();
+        bill.setSummary(billParts[4].trim());
+        bill.setActions(extractBillActions(billParts));
+        bill.setSponsor(extractSponsor(billParts[1]));
+        bill.setAmendments(extractAmendments(bill));
+
+        if (isSenateBill(bill)) {
+            bill.setCosponsors(extractSenateCosponsors(billParts[1]));
+        } else { // is assembly bill
+            bill.setCosponsors(extractAssemblyCosponsors(billParts[1]));
+            bill.setMultisponsors(extractMultisponsors(billParts[1]));
+        }
+
+        return bill;
+    }
+
+    private ArrayList<String> extractBillActions(String[] billParts) {
+        ArrayList<String> actions = new ArrayList<String>();
+        for (int i = 5; i < billParts.length; i++) {
+            String action = billParts[i].trim();
+            try {
+                SimpleDateFormat actionDateFormat = new SimpleDateFormat("MM/dd/yy");
+                // Valid actions must start with date
+                actionDateFormat.parse(action.split(" ")[0]);
+                actions.add(action);
+            } catch (ParseException e) {
+                // Skip this action
+            }
+
+        }
+        return actions;
+    }
+
+    // Used in old code for parsing all types of assembly sponsors:
+    // parts[1] = parts[1].replaceAll("([A-Z])\\.[¦ ]([A-Z'-]+)", "$2 $1");
+
+    /**
+     * Extract the sponsor from a text field containing sponsor, cosponsors, and multisponsors.
+     * <pre>Examples:
+     * Senate: "DIAZ CO: ESPAILLAT, SAMPSON". returns DIAZ.
+     * Assembly: "MONTESANO, GOODELL, NOJAY; M-S: Barclay, Hawley, Oaks, Tenney, Thiele". returns MONTESANO.
+     * Assembly: "RULES COM (Request of Farrell, Wright)". returns itself unchanged.
+     * </pre>
+     * @param billPart string containing all sponsor, cosponsor, and multisponsor information.
+     * @return sponsor of bill.
+     */
+    private String extractSponsor(String billPart) {
+        String sponsor = billPart.split("CO:|; M-S:")[0].split(",")[0].trim();
+        return formatInitials(sponsor);
+    }
+
+    private ArrayList<String> extractAmendments(SpotCheckBill bill) {
+        ArrayList<String> amendments = new ArrayList<String>();
+
+        Matcher idMatcher = spotcheckBillId.matcher(bill.id);
         if(anAmendmentExists(idMatcher)) {
             String billNo = idMatcher.group(2).trim();
             String billId = idMatcher.group(1).trim() + billNo;
             char amendment = idMatcher.group(3).charAt(0);
             for (int i = amendment-1; i >= 'A'; i--) {
-                bill.amendments.add(billId + String.valueOf((char)i) + "-" + SESSION_YEAR);
+                amendments.add(billId + String.valueOf((char)i) + "-" + SESSION_YEAR);
             }
             // Also add the base bill
-            bill.amendments.add(billId + "-" + SESSION_YEAR);
+            amendments.add(billId + "-" + SESSION_YEAR);
         }
 
         // Add bill itself as an amendment.
-        bill.amendments.add(bill.id + "-" + SESSION_YEAR);
+        amendments.add(bill.id + "-" + SESSION_YEAR);
+
+        return amendments;
     }
 
     private boolean anAmendmentExists(Matcher idMatcher) {
         return idMatcher.find() && !idMatcher.group(3).isEmpty();
     }
 
+    /**
+     * In senate html files, 'CO:' separates sponsor from cosponsors.
+     * i.e. PERALTA CO: ADDABBO, ESPAILLAT
+     */
+    private ArrayList<String> extractSenateCosponsors(String billPart) {
+        ArrayList<String> cosponsors = new ArrayList<String>();
+
+        String[] split = billPart.split("CO:");
+        if (split.length >= 2) {
+            for (String cosponsor : split[1].split(",")) {
+                cosponsor = cosponsor.trim();
+                cosponsor = formatInitials(cosponsor);
+                cosponsors.add(cosponsor);
+            }
+        }
+        return cosponsors;
+    }
+
+    /**
+     * In assembly html files, '; M-S:' separates sponsor and cosponsors from multisponsors
+     * i.e. KAVANAGH, PEOPLES-STOKES, JAFFEE, ROBINSON; M-S: Arroyo, Brook-Krasny, Gottfried, Lifton
+     */
+    private ArrayList<String> extractAssemblyCosponsors(String billPart) {
+        ArrayList<String> cosponsors = new ArrayList<String>();
+
+        String[] sponsorAndCosponsors = billPart.split("; M-S:")[0].split(",");
+        // The first element is the sponsor, skip him.
+        for (int i = 1; i < sponsorAndCosponsors.length; i++) {
+            String cosponsor = sponsorAndCosponsors[i].trim();
+            cosponsor = formatInitials(cosponsor);
+            cosponsors.add(cosponsor);
+        }
+        return cosponsors;
+    }
+
+    private ArrayList<String> extractMultisponsors(String billPart) {
+        ArrayList<String> multisponsors = new ArrayList<String>();
+
+        String[] split = billPart.split("; M-S:");
+        if (split.length >= 2) {
+            for (String multisponsor : split[1].split(",")) {
+                multisponsor = multisponsor.trim();
+                multisponsor = formatInitials(multisponsor);
+                multisponsors.add(multisponsor);
+            }
+        }
+        return multisponsors;
+    }
+
+    /**
+     * Changes a name to its uniquely identifying value if not already in that form.
+     * i.e. change 'P. Lopez' to 'LOPEZ P'
+     * @param name Name to format if in incorrect format.
+     * @return Name formatted to match the uniquely identifying name found in sobi files.
+     */
+    private String formatInitials(String name) {
+        String[] parts = name.split("[^\\x00-\\x7F]+"); // Split on non ascii characters.
+        if (parts.length > 1) {
+            String firstInitial = parts[0].replace(".", "");
+            String lastName = parts[1];
+            name = lastName + " " + firstInitial;
+            name = name.toUpperCase();
+        }
+
+        return name;
+    }
+
+    private boolean isSenateBill(SpotCheckBill bill) {
+        return bill.id.startsWith("S");
+    }
 }
