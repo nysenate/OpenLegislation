@@ -1,14 +1,14 @@
 package gov.nysenate.openleg.scripts.admin;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.log4j.Logger;
 
 import javax.mail.Message;
 import java.util.LinkedList;
 import java.util.List;
 
 public class DaybreakSetContainer {
-    public static final Logger logger = LoggerFactory.getLogger(DaybreakSetContainer.class);
+    public static final Logger logger = Logger.getLogger(DaybreakSetContainer.class);
 
     /** List containing sets of daybreak emails */
     List<DaybreakSet> daybreakSetList;

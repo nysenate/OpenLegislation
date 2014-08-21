@@ -5,7 +5,6 @@ import gov.nysenate.openleg.util.Application;
 import gov.nysenate.util.Config;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.mail.Flags;
@@ -87,7 +86,7 @@ public class CheckMail extends BaseScript
             for(DaybreakSet daybreakSet : completeSets){
 
                 logger.info("Saving report " + daybreakSet.getPrefix() + ":");
-                for(DaybreakMessageType messageType : DaybreakMessageType.values()){
+                for(DaybreakDocType messageType : DaybreakDocType.values()){
                     Message message = daybreakSet.getMessage(messageType);
                     String filename = daybreakSet.getPrefix() + messageType.getLocalFileExt();
 
@@ -121,7 +120,7 @@ public class CheckMail extends BaseScript
             logger.info("Detected " + partialReports.size() + " incomplete daybreak reports");
             for(DaybreakSet partialSet : partialReports){
                 logger.info("Partial report " + partialSet.getPrefix() + " contains:");
-                for(DaybreakMessageType messageType : DaybreakMessageType.values()){
+                for(DaybreakDocType messageType : DaybreakDocType.values()){
                     Message message = partialSet.getMessage(messageType);
                     if(message!=null){
                         logger.info("\t" + message.getSubject());

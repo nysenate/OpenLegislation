@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import gov.nysenate.openleg.util.UnpublishListManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -106,6 +107,11 @@ public class BillProcessor
      * Pattern for extracting the substituting bill printNo from matching bill events.
      */
     public static Pattern substituteEventTextPattern = Pattern.compile("SUBSTITUTED (FOR|BY) (.*)");
+
+    /**
+     * Used to check if a bill is unpublished before storing it
+     */
+    private static UnpublishListManager unpublishListManager = new UnpublishListManager();
 
 
     @SuppressWarnings("serial")
@@ -398,6 +404,12 @@ public class BillProcessor
         }
         else if (bill.getBillId().equals("J5165-2013")) {
             bill.setOtherSponsors(Arrays.asList(new Person("KLEIN")));
+        }
+
+        // Check if the bill is on the unpublished list
+        if (unpublishListManager.getUnpublishedBills().contains(bill.getBillId())){
+            // If so set the publish date to null
+            bill.setPublishDate(null);
         }
 
         if (bill.isPublished()) {

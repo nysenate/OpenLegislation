@@ -11,17 +11,17 @@ import java.util.Map;
 
 public class DaybreakSet implements Comparable<DaybreakSet>{
 
-    private Map<DaybreakMessageType, Message> reportMessages;
+    private Map<DaybreakDocType, Message> reportMessages;
     private DateTime reportDate;
     private DateTime anchorDate;
     private String prefix;
 
     DaybreakSet(Message firstMessage) throws IllegalArgumentException, MessagingException{
-        DaybreakMessageType messageType = DaybreakMessageType.getMessageType(firstMessage.getSubject());
+        DaybreakDocType messageType = DaybreakDocType.getMessageType(firstMessage.getSubject());
         if(messageType==null){
             throw new IllegalArgumentException("Attempt to create report group from invalid message");
         }
-        reportMessages = new HashMap<DaybreakMessageType, Message>();
+        reportMessages = new HashMap<DaybreakDocType, Message>();
         reportMessages.put(messageType, firstMessage);
         reportDate = new DateTime(firstMessage.getSentDate());
         anchorDate = reportDate;
@@ -35,7 +35,7 @@ public class DaybreakSet implements Comparable<DaybreakSet>{
      * @throws Exception
      */
     public boolean addToGroup(Message message) throws MessagingException{
-        DaybreakMessageType messageType = DaybreakMessageType.getMessageType(message.getSubject());
+        DaybreakDocType messageType = DaybreakDocType.getMessageType(message.getSubject());
         if(messageType==null || reportMessages.keySet().contains(messageType)){
             return false;
         }
@@ -58,7 +58,7 @@ public class DaybreakSet implements Comparable<DaybreakSet>{
      * @return
      */
     public boolean completeSet(){
-        return DaybreakMessageType.containsAllMessages(reportMessages.keySet());
+        return DaybreakDocType.containsAllMessages(reportMessages.keySet());
     }
 
     /**
@@ -72,7 +72,7 @@ public class DaybreakSet implements Comparable<DaybreakSet>{
         return prefix;
     }
 
-    public Message getMessage(DaybreakMessageType messageType){
+    public Message getMessage(DaybreakDocType messageType){
         return reportMessages.get(messageType);
     }
 
