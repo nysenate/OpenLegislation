@@ -46,7 +46,9 @@ public class DaybreakPageFileParser {
         lines.remove(0); // Remove the header line
 
         // Extract a PageFileEntry from each line
-        lines.forEach(line -> pageFileEntries.add(getPageFileEntryFromLine(line, daybreakFile)));
+        lines.stream()
+                .filter(line -> !line.trim().isEmpty())
+                .forEach(line -> pageFileEntries.add(getPageFileEntryFromLine(line, daybreakFile)));
 
         return pageFileEntries;
     }
@@ -62,7 +64,13 @@ public class DaybreakPageFileParser {
         // Page file line format
         // SESSYR,SEN_HSE,SEN_NO,SEN_AMD,ASM_HSE,ASM_NO,ASM_AMD,OUT_DATE,PAGES
 
-        SessionYear sessionYear = SessionYear.of(Integer.parseInt(parts[0]));
+        SessionYear sessionYear = null;
+        try {
+            sessionYear = SessionYear.of(Integer.parseInt(parts[0]));
+        }
+        catch(NumberFormatException ex){
+            logger.error(ex.getMessage());
+        }
         LocalDate publishDate = null;
         try{
             publishDate = LocalDateTime.ofInstant(
