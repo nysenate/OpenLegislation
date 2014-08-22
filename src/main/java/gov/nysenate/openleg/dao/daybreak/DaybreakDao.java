@@ -3,6 +3,7 @@ package gov.nysenate.openleg.dao.daybreak;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.daybreak.*;
+import org.springframework.dao.DataAccessException;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -23,7 +24,7 @@ public interface DaybreakDao
      * @param fileName - the name of the daybreak file
      * @return DaybreakFile
      */
-    public DaybreakFile getDaybreakFile(LocalDate reportDate, String fileName);
+    public DaybreakFile getDaybreakFile(LocalDate reportDate, String fileName) throws DataAccessException;
 
     /**
      * Retrieves an archived Daybreak File object of the given file type, from the given report
@@ -32,7 +33,7 @@ public interface DaybreakDao
      * @param fileType - the desired daybreak file type
      * @return DaybreakFile
      */
-    public DaybreakFile getDaybreakFile(LocalDate reportDate, DaybreakDocType fileType);
+    public DaybreakFile getDaybreakFile(LocalDate reportDate, DaybreakDocType fileType) throws DataAccessException;
 
     /**
      * Retrieves a set of archived daybreak files from the given report date
@@ -40,7 +41,7 @@ public interface DaybreakDao
      * @param reportDate - The date of the report that contains the desired daybreak files
      * @return Map<DaybreakFileType, DaybreakFile>
      */
-    public DaybreakReport<DaybreakFile> getDaybreakReport(LocalDate reportDate);
+    public DaybreakReport<DaybreakFile> getDaybreakReport(LocalDate reportDate) throws DataAccessException;
 
     /**
      * Gets all DaybreakFiles from the incoming directory
@@ -56,14 +57,14 @@ public interface DaybreakDao
      * @param daybreakBillId - The id for the desired fragment
      * @return DaybreakFragment
      */
-    public DaybreakFragment getDaybreakFragment(DaybreakBillId daybreakBillId);
+    public DaybreakFragment getDaybreakFragment(DaybreakBillId daybreakBillId) throws DataAccessException;
 
     /**
      * Retrieves al DaybreakFragments for the report on the given date
      * @param reportDate - The date of the report that contains the desired daybreak fragments
      * @return List<DaybreakFragment>
      */
-    public List<DaybreakFragment> getDaybreakFragments(LocalDate reportDate);
+    public List<DaybreakFragment> getDaybreakFragments(LocalDate reportDate) throws DataAccessException;
 
     /**
      * Retrieves all DaybreakFragments that have not yet been processed
@@ -77,28 +78,58 @@ public interface DaybreakDao
      * @param daybreakBillId
      * @return List<PageFileEntry>
      */
-    public Map<BillId, PageFileEntry> getPageFileEntries(DaybreakBillId daybreakBillId);
+    public Map<BillId, PageFileEntry> getPageFileEntries(DaybreakBillId daybreakBillId) throws DataAccessException;
 
     /**
      * Retrieves all pagefile entries for a single report
      * @param reportDate
      * @return
      */
-    public Map<BaseBillId, Map<BillId, PageFileEntry>> getAllPageFileEntries(LocalDate reportDate);
+    public Map<BaseBillId, Map<BillId, PageFileEntry>> getAllPageFileEntries(LocalDate reportDate) throws DataAccessException;
 
     /**
      * Retrieves a Daybreak Bill corresponding to the given daybreak bill id
      * @param daybreakBillId
      * @return
      */
-    public DaybreakBill getDaybreakBill(DaybreakBillId daybreakBillId);
+    public DaybreakBill getDaybreakBill(DaybreakBillId daybreakBillId) throws DataAccessException;
+
+    /**
+     * Gets the daybreak bill from the most recent report
+     * @param baseBillId
+     * @return
+     * @throws DataAccessException
+     */
+    public DaybreakBill getCurrentDaybreakBill(BaseBillId baseBillId) throws DataAccessException;
 
     /**
      * Retrieves all Daybreak Bills from the daybreak report on the given date
      * @param reportDate
      * @return
+     * @throws DataAccessException
      */
-    public List<DaybreakBill> getDaybreakBills(LocalDate reportDate);
+    public List<DaybreakBill> getDaybreakBills(LocalDate reportDate) throws DataAccessException;
+
+    /**
+     * Retrieves all Daybreak Bills from the most recent daybreak report
+     * @return
+     * @throws DataAccessException
+     */
+    public List<DaybreakBill> getCurrentDaybreakBills() throws DataAccessException;
+
+    /**
+     * Retrieves the date of the most recent report
+     * @return
+     * @throws DataAccessException
+     */
+    public LocalDate getCurrentReportDate() throws DataAccessException;
+
+    /**
+     * Retrieves the date of the most recent report that has not yet been spot checked
+     * @return
+     * @throws DataAccessException
+     */
+    public LocalDate getCurrentUncheckedReportDate() throws DataAccessException;
 
     /** --- Update/Insert Methods --- */
 
@@ -129,10 +160,22 @@ public interface DaybreakDao
     public void setPendingProcessing(DaybreakBillId daybreakBillId);
 
     /**
+     * Sets the daybreak fragments designated by the given report date as pending processing
+     * @param reportDate
+     */
+    public void setPendingProcessing(LocalDate reportDate);
+
+    /**
      * Sets the daybreak fragment designated by the given daybreak fragment id as processed
      * @param daybreakBillId
      */
     public void setProcessed(DaybreakBillId daybreakBillId);
+
+    /**
+     * Labels the report designaterd by the given report date as processed
+     * @param reportDate
+     */
+    public void setProcessed(LocalDate reportDate);
 
     /**
      * Updates or inserts the given PageFileEntry
@@ -145,4 +188,17 @@ public interface DaybreakDao
      * @param daybreakBill
      */
     public void updateDaybreakBill(DaybreakBill daybreakBill);
+
+    /**
+     * Updates or inserts a new daybreak report entry.
+     * @param reportDate
+     */
+    public void updateDaybreakReport(LocalDate reportDate);
+
+    /**
+     * Sets the status of the checked flag for the given daybreak report
+     * @param reportDate
+     * @param checked
+     */
+    public void updateDaybreakReportSetChecked(LocalDate reportDate, boolean checked);
 }

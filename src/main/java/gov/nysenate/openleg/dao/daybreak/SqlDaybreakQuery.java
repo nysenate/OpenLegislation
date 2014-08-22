@@ -71,6 +71,11 @@ public enum SqlDaybreakQuery implements BasicSqlQuery{
         "WHERE bill_print_no = :billPrintNo AND bill_session_year = :billSessionYear" +
         "   AND report_date = :reportDate"
     ),
+    UPDATE_DAYBREAK_FRAGMENT_PENDING_PROCESSING_REPORT(
+        "UPDATE ${schema}." + SqlTable.DAYBREAK_FRAGMENT + "\n" +
+        "SET pending_processing = true" + "\n" +
+        "WHERE report_date = :reportDate"
+    ),
 
     /** --- Page File Entry --- */
 
@@ -201,7 +206,27 @@ public enum SqlDaybreakQuery implements BasicSqlQuery{
         "WHERE bill_print_no = :billPrintNo AND bill_session_year = :billSessionYear " +
         "   AND report_date = :reportDate " +
         "   AND type = CAST('multisponsor' AS ${schema}.sponsor_type )"
-    )
+    ),
+
+    /** --- Report --- */
+
+    SELECT_REPORTS(
+        "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_REPORT
+    ),
+    SELECT_UNCHECKED_REPORTS(
+        "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_REPORT + "\n" +
+        "WHERE processed = 'true' AND checked = 'false'"
+    ),
+    INSERT_DAYBREAK_REPORT(
+        "INSERT INTO ${schema}." + SqlTable.DAYBREAK_REPORT + "\n" +
+        "       (  report_date, processed,  checked ) " + "\n" +
+        "VALUES ( :reportDate, :processed, :checked ) "
+    ),
+    UPDATE_DAYBREAK_REPORT(
+        "UPDATE ${schema}." + SqlTable.DAYBREAK_REPORT + "\n" +
+        "SET processed = :processed, checked = :checked " + "\n" +
+        "WHERE report_date = :reportDate"
+    ),
 
     ;
 

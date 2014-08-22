@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.stupid;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 /**
@@ -13,7 +14,6 @@ public class StupidTests {
             System.out.println(s.isEmpty());
         }
     }
-
 
     private class A{}
     private class B extends A{}
@@ -29,5 +29,13 @@ public class StupidTests {
         B b=null;
         justAFunc(a);
         justAFunc(b);
+    }
+
+    @Test
+    public void allCapsCheckTest(){
+        String text = "REFERRED TO INVESTIGATIONS AND GOVERNMENT OPERATIONS1234329038789)@#$&#$@).<>";
+        String text2 = "assembly action 1234329038789)@#$&#$@).<>";
+        assert(StringUtils.isAllUpperCase(text.replaceAll("[^a-zA-Z]+", "")));
+        assert(!StringUtils.isAllUpperCase(text2.replaceAll("[^a-zA-Z]+", "")));
     }
 }

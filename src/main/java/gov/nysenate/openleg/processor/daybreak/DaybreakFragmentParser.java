@@ -135,7 +135,7 @@ public class DaybreakFragmentParser {
                     LocalDate actionDate = billActionDateFormat.parse(billActionMatcher.group(1))
                             .toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                     String actionText = billActionMatcher.group(2);
-                    Chamber actionChamber = StringUtils.isAllUpperCase(actionText) ?
+                    Chamber actionChamber = StringUtils.isAllUpperCase(actionText.replaceAll("[^a-zA-Z]+", "")) ?
                                                 Chamber.SENATE :
                                                 Chamber.ASSEMBLY ;
                     billActions.add(
