@@ -12,7 +12,7 @@ public enum SqlDaybreakQuery implements BasicSqlQuery{
     ),
     SELECT_DAYBREAK_FILE_BY_TYPE(
         "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_FILE + "\n" +
-        "WHERE report_date = :reportDate AND type = CAST(:fileType AS daybreak_file_type)"
+        "WHERE report_date = :reportDate AND type = CAST(:fileType AS ${schema}.daybreak_file_type)"
     ),
     SELECT_DAYBREAK_FILES_FROM_REPORT(
         "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_FILE + "\n" +
@@ -20,11 +20,11 @@ public enum SqlDaybreakQuery implements BasicSqlQuery{
     ),
     INSERT_DAYBREAK_FILE(
         "INSERT INTO ${schema}." + SqlTable.DAYBREAK_FILE + "( report_date, filename, type, is_archived )" + "\n" +
-        "VALUES ( :reportDate, :fileName, CAST(:fileType AS daybreak_file_type), :isArchived )"
+        "VALUES ( :reportDate, :fileName, CAST(:fileType AS ${schema}.daybreak_file_type), :isArchived )"
     ),
     UPDATE_DAYBREAK_FILE(
         "UPDATE ${schema}." + SqlTable.DAYBREAK_FILE + "\n" +
-        "SET is_archived = :isArchived, type = CAST(:fileType AS daybreak_file_type)" + "\n" +
+        "SET is_archived = :isArchived, type = CAST(:fileType AS ${schema}.daybreak_file_type)" + "\n" +
         "WHERE report_date = :reportDate AND filename = :fileName"
     ),
     UPDATE_DAYBREAK_FILE_ARCHIVED(
