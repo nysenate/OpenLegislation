@@ -27,7 +27,7 @@ public class PropertyConfig
      */
     @Bean
     public static PropertySourcesPlaceholderConfigurer properties() {
-        logger.info("Loaded prod properties urgh");
+        logger.info("Loading prod properties");
         PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
         Resource[] resources = new ClassPathResource[] { new ClassPathResource(PROPERTY_FILENAME) };
         pspc.setLocations(resources);

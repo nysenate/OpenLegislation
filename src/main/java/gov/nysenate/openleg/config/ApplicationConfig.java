@@ -12,15 +12,17 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
 @EnableCaching
+@EnableScheduling
 public class ApplicationConfig implements CachingConfigurer
 {
     @Value("${env.directory}")
     private String envDirectory;
 
-    @Value("${cache.max.heap.size:2G}")
+    @Value("${cache.max.heap.size:4G}")
     private String cacheMaxHeapSize;
 
     @Bean

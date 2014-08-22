@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.model.base;
 
-import gov.nysenate.util.Config;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -33,15 +32,6 @@ public class Environment
 
     public Environment(String directoryPath) {
         this(new File(directoryPath));
-    }
-
-    public Environment(Config config, String prefix, String schema) {
-        this.schema = schema;
-        this.active = true;
-        this.baseDirectory = new File(config.getValue(prefix+".directory"));
-        this.stagingDirectory = new File(config.getValue(prefix+".data"));
-        this.workingDirectory = new File(config.getValue(prefix+".work"));
-        this.archiveDirectory = new File(config.getValue(prefix+".archive"));
     }
 
     public Environment(File baseDirectory) {
@@ -85,24 +75,5 @@ public class Environment
 
     public Date getModifiedDateTime() {
         return modifiedDateTime;
-    }
-
-    /** TODO: Move this to the DAO */
-    public void create() throws IOException {
-        FileUtils.forceMkdir(baseDirectory);
-        FileUtils.forceMkdir(stagingDirectory);
-        FileUtils.forceMkdir(workingDirectory);
-        FileUtils.forceMkdir(archiveDirectory);
-    }
-
-    /** TODO: Move this to the DAO */
-    public void delete() throws IOException {
-        FileUtils.deleteQuietly(baseDirectory);
-    }
-
-    /** TODO: Move this to the DAO */
-    public void reset() throws IOException {
-        delete();
-        create();
     }
 }

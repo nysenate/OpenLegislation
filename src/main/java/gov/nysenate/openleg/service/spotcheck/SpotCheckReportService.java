@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.spotcheck;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,7 +35,7 @@ public interface SpotCheckReportService<ContentKey>
      * @param reportId
      * @return
      */
-    public SpotCheckReport<ContentKey> getReport(int reportId);
+    public SpotCheckReport<ContentKey> getReport(SpotCheckReportId reportId);
 
     /**
      *

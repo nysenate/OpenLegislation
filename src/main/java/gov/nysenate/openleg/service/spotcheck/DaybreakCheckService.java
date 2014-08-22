@@ -51,6 +51,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public SpotCheckObservation<BaseBillId> check(Bill bill, DaybreakBill daybreakBill) {
         if (daybreakBill == null) {

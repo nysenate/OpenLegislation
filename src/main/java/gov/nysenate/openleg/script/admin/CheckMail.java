@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+@Deprecated
 public class CheckMail extends BaseScript
 {
     private static final Logger logger = Logger.getLogger(CheckMail.class);

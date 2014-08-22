@@ -124,13 +124,13 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             billIngestCache.set(baseBill.getBaseBillId(), baseBill);
         }
 
-        // Save all the bills worked on for this sobi file
-        for (Bill bill : billIngestCache.getCurrentCache()) {
-            logger.trace("Saving bill " + bill);
-            // TODO: Move this uni-bill sync somewhere else, like the dao?
-            applyUniBillText(bill, billIngestCache, sobiFragment);
-            billDataService.saveBill(bill, sobiFragment);
-        }
+        billIngestCache.getCurrentCache().parallelStream()
+            .forEach(bill -> {
+                logger.trace("Saving bill " + bill);
+                // TODO: Move this uni-bill sync somewhere else, like the dao?
+                applyUniBillText(bill, billIngestCache, sobiFragment);
+                billDataService.saveBill(bill, sobiFragment);
+            });
     }
 
     /** --- Processing Methods --- */

@@ -36,7 +36,7 @@ public class SpotCheckReport<ContentKey>
     public Map<SpotCheckMismatchStatus, Long> getMismatchStatusCounts() {
         if (observations != null) {
             Map<SpotCheckMismatchStatus, Long> counts = new HashMap<>();
-            for (SpotCheckObservation obs : observations.values()) {
+            for (SpotCheckObservation<ContentKey> obs : observations.values()) {
                 Map<SpotCheckMismatchStatus, Long> obsCount = obs.getMismatchStatusCounts();
                 for (SpotCheckMismatchStatus status : obsCount.keySet()) {
                     if (!counts.containsKey(status)) {

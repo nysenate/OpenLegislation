@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class SpotCheck extends BaseScript
 {
     public static Logger logger = Logger.getLogger(SpotCheck.class);

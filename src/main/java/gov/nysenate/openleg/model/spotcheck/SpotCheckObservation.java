@@ -111,11 +111,5 @@ public class SpotCheckObservation<ContentKey>
         this.mismatches = mismatches;
     }
 
-    public LinkedListMultimap<SpotCheckMismatchType, SpotCheckPriorMismatch> getPriorMismatches() {
-        return priorMismatches;
-    }
 
-    public void setPriorMismatches(LinkedListMultimap<SpotCheckMismatchType, SpotCheckPriorMismatch> priorMismatches) {
-        this.priorMismatches = priorMismatches;
-    }
 }

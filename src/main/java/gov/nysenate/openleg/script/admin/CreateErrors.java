@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import java.sql.Connection;
 import java.util.Collection;
 
+@Deprecated
 public class CreateErrors extends BaseScript
 {
     public static Logger logger = Logger.getLogger(CreateErrors.class);

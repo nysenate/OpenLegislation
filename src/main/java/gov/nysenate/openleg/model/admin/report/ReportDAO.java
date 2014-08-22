@@ -1,8 +1,5 @@
 package gov.nysenate.openleg.model.admin.report;
 
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.ResultSetHandler;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,9 +7,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+@Deprecated
 public class ReportDAO
 {
-    private static class JoinedReportHandler implements ResultSetHandler<ArrayList<Report>> {
+    /*private static class JoinedReportHandler implements ResultSetHandler<ArrayList<Report>> {
 
         @Override
         public ArrayList<Report> handle(ResultSet results) throws SQLException
@@ -142,5 +140,5 @@ public class ReportDAO
         catch (IndexOutOfBoundsException e) {
             return null;
         }
-    }
+    }      */
 }
