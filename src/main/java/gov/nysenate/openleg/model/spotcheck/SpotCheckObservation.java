@@ -1,8 +1,11 @@
 package gov.nysenate.openleg.model.spotcheck;
 
+import com.google.common.collect.LinkedListMultimap;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A SpotCheckObservation is the result of performing a SpotCheck against some reference data. It contains
@@ -25,6 +28,10 @@ public class SpotCheckObservation<ContentKey>
     /** Mapping of mismatches that exist between the reference content and our content. */
     protected Map<SpotCheckMismatchType, SpotCheckMismatch> mismatches = new HashMap<>();
 
+    /** Mapping of prior mismatches keyed by the mismatch type. This is only populated if the observation
+     * is made within the content of previously saved reports and the mismatch is one that has appeared before. */
+    protected LinkedListMultimap<SpotCheckMismatchType, SpotCheckPriorMismatch> priorMismatches = LinkedListMultimap.create();
+
     /** --- Constructors --- */
 
     public SpotCheckObservation() {}
@@ -44,6 +51,29 @@ public class SpotCheckObservation<ContentKey>
     public void addMismatch(SpotCheckMismatch mismatch) {
         if (mismatch != null) {
             mismatches.put(mismatch.getMismatchType(), mismatch);
+        }
+    }
+
+    public void addPriorMismatch(SpotCheckPriorMismatch priorMismatch) {
+        if (priorMismatch != null) {
+            priorMismatches.put(priorMismatch.getMismatchType(), priorMismatch);
+        }
+    }
+
+    /**
+     * Returns the number of mismatches grouped by mismatch status. So for example:
+     * {NEW=4, EXISTING=2} would be returned if there were four new mismatches and two
+     * existing mismatches.
+     *
+     * @return Map<SpotCheckMismatchStatus, Long>
+     */
+    public Map<SpotCheckMismatchStatus, Long> getMismatchStatusCounts() {
+        if (mismatches != null) {
+            return mismatches.values().stream()
+                .collect(Collectors.groupingBy(SpotCheckMismatch::getStatus, Collectors.counting()));
+        }
+        else {
+            throw new IllegalStateException("Collection of mismatches is null");
         }
     }
 
@@ -79,5 +109,13 @@ public class SpotCheckObservation<ContentKey>
 
     public void setMismatches(Map<SpotCheckMismatchType, SpotCheckMismatch> mismatches) {
         this.mismatches = mismatches;
+    }
+
+    public LinkedListMultimap<SpotCheckMismatchType, SpotCheckPriorMismatch> getPriorMismatches() {
+        return priorMismatches;
+    }
+
+    public void setPriorMismatches(LinkedListMultimap<SpotCheckMismatchType, SpotCheckPriorMismatch> priorMismatches) {
+        this.priorMismatches = priorMismatches;
     }
 }

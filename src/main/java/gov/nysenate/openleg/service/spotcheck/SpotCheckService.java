@@ -43,5 +43,13 @@ public interface SpotCheckService<ContentKey, ContentType, ReferenceType>
     public SpotCheckObservation<ContentKey> check(ContentType content, LocalDateTime latestDateTime)
                                                   throws ReferenceDataNotFoundEx;
 
+    /**
+     * Perform a check on 'content' against the supplied reference data 'reference'. A SpotCheckObservation
+     * will be returned which will contain a list of any mismatches.
+     *
+     * @param content ContentType - The content to check
+     * @param reference ReferenceType - The reference content to use for comparison
+     * @return
+     */
     public SpotCheckObservation<ContentKey> check(ContentType content, ReferenceType reference);
 }
