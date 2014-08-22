@@ -291,9 +291,9 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         params.addValue("billCalNo", entry.getBillCalNo());
         addBillIdParams(entry.getBillId(), params);
         BillId subBillId = entry.getSubBillId();
-        params.addValue("subPrintNo", (subBillId != null) ? subBillId.getPrintNo() : null);
+        params.addValue("subPrintNo", (subBillId != null) ? subBillId.getBasePrintNo() : null);
         params.addValue("subSession", (subBillId != null) ? subBillId.getSession().getYear() : null);
-        params.addValue("subAmendVersion", (subBillId != null) ? subBillId.getVersion() : null);
+        params.addValue("subAmendVersion", (subBillId != null) ? subBillId.getVersion().getValue() : null);
         params.addValue("high", entry.getBillHigh());
         addLastFragmentParam(fragment, params);
         return params;

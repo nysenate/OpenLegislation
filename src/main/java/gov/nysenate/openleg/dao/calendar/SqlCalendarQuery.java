@@ -137,17 +137,7 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     }
 
     @Override
-    public String getSql(String envSchema) {
-        return SqlQueryUtils.getSqlWithSchema(this.sql, envSchema);
-    }
-
-    @Override
-    public String getSql(String envSchema, LimitOffset limitOffset) {
-        return SqlQueryUtils.getSqlWithSchema(sql, envSchema, limitOffset);
-    }
-
-    @Override
-    public String getSql(String envSchema, OrderBy orderBy, LimitOffset limitOffset) {
-        return SqlQueryUtils.getSqlWithSchema(this.sql, envSchema, orderBy, limitOffset);
+    public String getSql() {
+        return this.sql;
     }
 }

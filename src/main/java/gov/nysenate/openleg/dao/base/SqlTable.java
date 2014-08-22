@@ -57,7 +57,11 @@ public enum SqlTable
 
     SOBI_FILE                    ("sobi_file"),
     SOBI_FRAGMENT                ("sobi_fragment"),
-    SOBI_CHANGE_LOG              ("sobi_change_log");
+    SOBI_CHANGE_LOG              ("sobi_change_log"),
+
+    SPOTCHECK_REPORT             ("spotcheck_report"),
+    SPOTCHECK_OBSERVATION        ("spotcheck_observation"),
+    SPOTCHECK_MISMATCH           ("spotcheck_mismatch");
 
     String tableName;
 

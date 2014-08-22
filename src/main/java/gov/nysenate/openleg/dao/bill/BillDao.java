@@ -1,9 +1,14 @@
 package gov.nysenate.openleg.dao.bill;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
+
+import java.util.List;
 
 /**
  * DAO interface for retrieving and persisting Bill data.
@@ -18,6 +23,12 @@ public interface BillDao
      * @throws DataAccessException - If there was an error while retrieving the Bill.
      */
     public Bill getBill(BillId billId) throws DataAccessException;
+
+    public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff) throws DataAccessException;
+
+    public int getBillCount() throws DataAccessException;
+
+    public int getBillCount(SessionYear sessionYear) throws DataAccessException;
 
     /**
      * Updates the bill or inserts it if it does not yet exist. Associates

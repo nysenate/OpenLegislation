@@ -10,6 +10,16 @@ public enum SqlBillQuery implements BasicSqlQuery
         "SELECT * FROM ${schema}." + SqlTable.BILL + "\n" +
         "WHERE print_no = :printNo AND session_year = :sessionYear"
     ),
+    SELECT_BILL_IDS_BY_SESSION(
+        "SELECT print_no, session_year FROM ${schema}." + SqlTable.BILL + "\n" +
+        "WHERE session_year = :sessionYear"
+    ),
+    SELECT_COUNT_ALL_BILLS(
+        "SELECT count(*) AS total FROM ${schema}." + SqlTable.BILL
+    ),
+    SELECT_COUNT_ALL_BILLS_IN_SESSION(
+        SELECT_COUNT_ALL_BILLS.sql + " WHERE session_year = :sessionYear"
+    ),
     UPDATE_BILL(
         "UPDATE ${schema}." + SqlTable.BILL + "\n" +
         "SET title = :title, law_section = :lawSection, law_code = :lawCode, summary = :summary, active_version = :activeVersion, " +
@@ -254,17 +264,7 @@ public enum SqlBillQuery implements BasicSqlQuery
     }
 
     @Override
-    public String getSql(String envSchema) {
-        return SqlQueryUtils.getSqlWithSchema(sql, envSchema);
-    }
-
-    @Override
-    public String getSql(String envSchema, LimitOffset limitOffset) {
-        return SqlQueryUtils.getSqlWithSchema(sql, envSchema, limitOffset);
-    }
-
-    @Override
-    public String getSql(String envSchema, OrderBy orderBy, LimitOffset limitOffset) {
-        return SqlQueryUtils.getSqlWithSchema(sql, envSchema, orderBy, limitOffset);
+    public String getSql() {
+        return this.sql;
     }
 }

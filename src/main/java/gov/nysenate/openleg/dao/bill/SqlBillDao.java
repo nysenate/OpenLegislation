@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.bill;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import gov.nysenate.openleg.dao.base.*;
@@ -16,9 +17,11 @@ import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.bill.VetoDataService;
 import gov.nysenate.openleg.service.bill.VetoNotFoundException;
 import gov.nysenate.openleg.service.entity.MemberService;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -130,6 +133,28 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         updateBillCommittees(bill, sobiFragment, billParams);
         // Update veto messages
         updateVetoMessages(bill, sobiFragment);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff) throws DataAccessException {
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.getYear()));
+        return jdbcNamed.query(SELECT_BILL_IDS_BY_SESSION.getSql(schema(), limOff), params, (rs, row) ->
+                new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int getBillCount() throws DataAccessException {
+        return jdbc.queryForObject(SELECT_COUNT_ALL_BILLS.getSql(schema()), (rs, row) -> rs.getInt("total"));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int getBillCount(SessionYear sessionYear) throws DataAccessException {
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.getYear()));
+        return jdbcNamed.queryForObject(SELECT_COUNT_ALL_BILLS_IN_SESSION.getSql(schema()), params,
+            (rs,row) -> rs.getInt("total"));
     }
 
     /** {@inheritDoc} */

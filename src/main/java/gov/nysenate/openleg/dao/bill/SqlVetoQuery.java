@@ -2,7 +2,8 @@ package gov.nysenate.openleg.dao.bill;
 
 import gov.nysenate.openleg.dao.base.*;
 
-public enum SqlVetoQuery implements BasicSqlQuery{
+public enum SqlVetoQuery implements BasicSqlQuery
+{
     SELECT_VETO_MESSAGE_SQL(
         "SELECT * FROM ${schema}." + SqlTable.BILL_VETO + "\n" +
         "WHERE veto_number = :vetoNumber AND year = :year"
@@ -26,8 +27,7 @@ public enum SqlVetoQuery implements BasicSqlQuery{
         "SELECT * FROM ${schema}." + SqlTable.BILL_VETO + "\n" +
         "WHERE bill_print_no = :printNum AND session_year = :sessionYear" + "\n" +
         "ORDER BY year, veto_number"
-    )
-    ;
+    );
 
     private String sql;
 
@@ -36,17 +36,7 @@ public enum SqlVetoQuery implements BasicSqlQuery{
     }
 
     @Override
-    public String getSql(String envSchema) {
-        return SqlQueryUtils.getSqlWithSchema(sql, envSchema);
-    }
-
-    @Override
-    public String getSql(String envSchema, LimitOffset limitOffset) {
-        return SqlQueryUtils.getSqlWithSchema(sql, envSchema, limitOffset);
-    }
-
-    @Override
-    public String getSql(String envSchema, OrderBy orderBy, LimitOffset limitOffset) {
-        return SqlQueryUtils.getSqlWithSchema(this.sql, envSchema, orderBy, limitOffset);
+    public String getSql() {
+        return this.sql;
     }
 }

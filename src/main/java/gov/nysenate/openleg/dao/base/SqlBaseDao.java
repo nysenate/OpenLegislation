@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Base class for SQL data access layer classes to inherit common functionality from.
@@ -81,6 +83,26 @@ public abstract class SqlBaseDao
     }
 
     /** --- Static Helper Methods --- */
+
+    /**
+     * Converts the output of hstore_to_array(column) to a mapping of the hstore key/val pairs.
+     * For example if you have an hstore value 'a=>1, b=>2', to retrieve a Map {a=1, b=2} have the
+     * sql query return hstore_to_array(column) and feed the result set to this method.
+     */
+    public static Map<String, String> getHstore(ResultSet rs, String column) throws SQLException {
+        String[] hstoreArr = (String[]) rs.getArray(column).getArray();
+        Map<String, String> hstoreMap = new HashMap<>();
+        String key = "";
+        for (int i = 0; i < hstoreArr.length; i++) {
+            if (i % 2 == 0) {
+                key = hstoreArr[i];
+            }
+            else {
+                hstoreMap.put(key, hstoreArr[i]);
+            }
+        }
+        return hstoreMap;
+    }
 
     /**
      * Convert a LocalDateTime to a Date.
