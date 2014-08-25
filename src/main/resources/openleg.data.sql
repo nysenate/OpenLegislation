@@ -12,38 +12,6 @@ SET client_min_messages = warning;
 SET search_path = master, pg_catalog;
 
 --
--- Data for Name: sobi_file; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY sobi_file (file_name, published_date_time, staged_date_time, encoding, archived) FROM stdin;
-\.
-
-
---
--- Data for Name: sobi_fragment; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY sobi_fragment (sobi_file_name, fragment_id, published_date_time, fragment_type, text, sequence_no, processed_count, processed_date_time, staged_date_time, pending_processing) FROM stdin;
-\.
-
-
---
--- Data for Name: agenda; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda (agenda_no, year, published_date_time, modified_date_time, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Data for Name: agenda_info_addendum; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda_info_addendum (agenda_no, year, addendum_id, modified_date_time, published_date_time, created_date_time, last_fragment_id, week_of) FROM stdin;
-\.
-
-
---
 -- Data for Name: committee; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
@@ -125,55 +93,75 @@ Veterans	1721	-infinity	assembly	0	\N
 
 
 --
--- Data for Name: agenda_info_committee; Type: TABLE DATA; Schema: master; Owner: postgres
+-- Name: committee_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
-COPY agenda_info_committee (id, agenda_no, year, addendum_id, committee_name, committee_chamber, chair, location, meeting_date_time, notes, last_fragment_id, created_date_time) FROM stdin;
-\.
-
-
---
--- Name: agenda_info_committee_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('agenda_info_committee_id_seq', 13866, true);
+SELECT pg_catalog.setval('committee_id_seq', 2141, true);
 
 
 --
--- Data for Name: agenda_info_committee_item; Type: TABLE DATA; Schema: master; Owner: postgres
+-- Data for Name: committee_version; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY agenda_info_committee_item (id, info_committee_id, bill_print_no, bill_session_year, bill_amend_version, message, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: agenda_info_committee_item_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('agenda_info_committee_item_id_seq', 137212, true);
-
-
---
--- Data for Name: agenda_vote_addendum; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda_vote_addendum (agenda_no, year, addendum_id, modified_date_time, published_date_time, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: agenda_vote_commitee_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('agenda_vote_commitee_id_seq', 8487, true);
-
-
---
--- Data for Name: agenda_vote_committee; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda_vote_committee (id, agenda_no, year, addendum_id, committee_name, committee_chamber, chair, meeting_date_time, last_fragment_id, created_date_time) FROM stdin;
+COPY committee_version (id, location, meetday, meetaltweek, meetaltweektext, meettime, session_year, created, reformed, committee_name, chamber) FROM stdin;
+546			f		\N	2013	2014-02-28 11:25:44	infinity	Ethics	senate
+532	Room 611 LOB	Wednesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Banks	senate
+535	Room 410 LOB	Monday	f		13:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Civil Service and Pensions	senate
+536	Room 124 CAP	Tuesday	f		09:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Codes	senate
+537	Room 511 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Commerce, Economic Development and Small Business	senate
+538	Room 801 LOB	Monday	f		13:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Consumer Protection	senate
+542	Room 124 CAP	Tuesday	f		10:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Education	senate
+544	Room 709 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Energy and Telecommunications	senate
+533	Room 944 LOB	Monday	f		13:00:00	2013	2014-02-28 11:25:44	infinity	Children and Families	senate
+534	Room 916 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Cities	senate
+539	Room 801 LOB	Monday	f		13:30:00	2013	2014-02-28 11:25:44	infinity	Corporations, Authorities and Commissions	senate
+549	Room 807 LOB	Tuesday	f		12:30:00	2013	2014-02-28 11:25:44	infinity	Higher Education	senate
+529	Room 816 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Aging	senate
+572	Room 611 LOB	Wednesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-13 14:48:16	infinity	Banks	senate
+564	Room 611 LOB	Wednesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Banks	senate
+565	Room 410 LOB	Monday	f		13:30:00	2013	2014-03-03 17:09:09	infinity	Civil Service and Pensions	senate
+576	Room 511 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-17 18:43:42	infinity	Commerce, Economic Development and Small Business	senate
+540	Room 123 CAP	Wednesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-02-28 11:25:44	infinity	Crime Victims, Crime and Correction	senate
+541	Room 309 LOB	Wednesday	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate
+574	Room 124 CAP	Tuesday	f		10:00:00	2013	2014-03-13 14:48:16	infinity	Education	senate
+543	Room 813 LOB	Monday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:00:00	2013	2014-02-28 11:25:44	infinity	Elections	senate
+569	Room 124 CAP	Tuesday	f		10:00:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Education	senate
+575	Room 901 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-03-13 14:48:16	infinity	Environmental Conservation	senate
+545	Room 901 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Environmental Conservation	senate
+547	Room 124 CAP	Tuesday	f		11:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Finance	senate
+548	Room 124 CAP	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Health	senate
+553	Room 810 LOB	Tuesday	f		12:30:00	2013	2014-02-28 11:25:44	infinity	Investigations and Government Operations	senate
+550	Room 308 LOB	Monday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Housing, Construction and Community Development	senate
+555	Room 511 LOB	Monday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-02-28 11:25:44	infinity	Labor	senate
+552	Room 124 CAP	Monday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Insurance	senate
+556	Room 945 LOB	Tuesday	f		13:00:00	2013	2014-02-28 11:25:44	infinity	Local Government	senate
+554	Room 123 CAP	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Judiciary	senate
+560	Room 946A LOB	Tuesday	f		10:00:00	2013	2014-02-28 11:25:44	infinity	Social Services	senate
+558	Room 510 LOB	Tuesday	f		09:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Racing, Gaming and Wagering	senate
+559			f		\N	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Rules	senate
+562	Room 816 LOB	Tuesday	f		13:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Veterans, Homeland Security and Military Affairs	senate
+561	Room 124 CAP	Tuesday	f		13:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Transportation	senate
+571	Room 816 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-03-13 14:48:16	infinity	Aging	senate
+563			f		\N	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	New York City Education Subcommittee	senate
+530	Room 411 LOB	Tuesday	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Agriculture	senate
+531	Room 813 LOB	Tuesday	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Alcoholism and Drug Abuse	senate
+573	Room 916 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-13 14:48:16	infinity	Cities	senate
+566	Room 124 CAP	Tuesday	f		09:00:00	2013	2014-03-03 17:09:09	infinity	Codes	senate
+570	Room 709 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-03-03 17:09:09	infinity	Energy and Telecommunications	senate
+551	Room 804 LOB	Tuesday	f		12:00:00	2013	2014-02-28 11:25:44	infinity	Infrastructure and Capital Investment	senate
+568	Room 801 LOB	Monday	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Consumer Protection	senate
+582			f		\N	2013	2014-03-03 17:09:09	infinity	Rules	senate
+584			f		\N	2013	2014-03-03 17:09:09	infinity	New York City Education Subcommittee	senate
+567	Room 511 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-03 17:09:09	2014-03-17 18:43:42	Commerce, Economic Development and Small Business	senate
+577	Room 124 CAP	Tuesday	f		11:00:00	2013	2014-03-03 17:09:09	infinity	Finance	senate
+578	Room 124 CAP	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-03-03 17:09:09	infinity	Health	senate
+579	Room 308 LOB	Monday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Housing, Construction and Community Development	senate
+580	Room 124 CAP	Monday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-03 17:09:09	infinity	Insurance	senate
+581	Room 123 CAP	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Judiciary	senate
+557	Room 816 LOB	Wednesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-02-28 11:25:44	infinity	Mental Health and Developmental Disabilities	senate
+585	Room 510 LOB	Tuesday	f		09:30:00	2013	2014-03-13 14:48:16	infinity	Racing, Gaming and Wagering	senate
+583	Room 124 CAP	Tuesday	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Transportation	senate
+586	Room 816 LOB	Tuesday	f		13:30:00	2013	2014-03-13 14:48:16	infinity	Veterans, Homeland Security and Military Affairs	senate
 \.
 
 
@@ -382,7 +370,6 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 394	Addie Jenne Russell	Addie	\N	Russell	\N	Assembly Member	\N	t
 395	Joan Christensen 	Joan	\N	Christensen	\N	Assembly Member	\N	t
 396	William Magnarelli	William	\N	Magnarelli	\N	Assembly Member	\N	t
-397	"Albert A. Stirpe	"Albert	A.	Stirpe	\N	Assembly Member	\N	t
 398	Dierdre Scozzafava 	Dierdre	\N	Scozzafava	\N	Assembly Member	\N	t
 399	Gary Finch	Gary	\N	Finch	\N	Assembly Member	\N	t
 400	William A. Barclay	William	A.	Barclay	\N	Assembly Member	\N	t
@@ -485,6 +472,7 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 497	Phil Steck	Phil		Steck	\N	Assemblymember		t
 498	Greene							f
 499	Edward Hennessey	Edward	\N	Hennessey	\N	\N	\N	t
+397	Albert A. Stirpe	Albert	A.	Stirpe	\N	Assembly Member	\N	t
 \.
 
 
@@ -501,29 +489,29 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 460	312	assembly	f	Jeffrion Aubry
 461	299	assembly	f	Grace Meng
 462	286	assembly	f	Andrew Raia
-463	278	assembly	f	Marc Alessi 
+463	278	assembly	f	Marc Alessi
 464	279	assembly	f	Fred Thiele
 465	280	assembly	f	L. Dean Murray
 466	281	assembly	f	Steven Englebright
-467	282	assembly	f	Ginny Fields 
+467	282	assembly	f	Ginny Fields
 468	283	assembly	f	Philip Ramos
 469	284	assembly	f	Michael J. Fitzpatrick
 471	287	assembly	f	James Conte
 472	288	assembly	f	Robert Sweeney
 473	289	assembly	f	Joseph Saladino
 474	290	assembly	f	Charles Lavine
-475	291	assembly	f	Robert Barra 
+475	291	assembly	f	Robert Barra
 476	292	assembly	f	Michael Montesano
 477	293	assembly	f	Michelle Schimel
 478	294	assembly	f	Thomas McKevitt
 479	295	assembly	f	Earlene Hooper
 480	296	assembly	f	David McDonough
 481	297	assembly	f	Harvey Weisenberg
-482	298	assembly	f	Thomas Alfano 
+482	298	assembly	f	Thomas Alfano
 483	300	assembly	f	Audrey Pheffer
 484	301	assembly	f	David Weprin
 485	302	assembly	f	Rory Lancman
-486	303	assembly	f	Ann-Margaret Carrozza 
+486	303	assembly	f	Ann-Margaret Carrozza
 487	304	assembly	f	Nettie Mayersohn
 488	305	assembly	f	Andrew Hevesi
 489	306	assembly	f	William Scarborough
@@ -550,7 +538,7 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 510	333	assembly	f	Hakeem Jeffries
 511	334	assembly	f	N. Nick Perry
 512	335	assembly	f	Alan Maisel
-513	336	assembly	f	Janele Hyer-Spencer 
+513	336	assembly	f	Janele Hyer-Spencer
 514	337	assembly	f	Matthew Titone
 515	338	assembly	f	Louis Tobacco
 516	339	assembly	f	Michael Cusick
@@ -558,7 +546,7 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 518	341	assembly	f	Micah Kellner
 519	342	assembly	f	Deborah Glick
 520	343	assembly	f	Linda Rosenthal
-521	344	assembly	f	Adam Clayton Powell IV 
+521	344	assembly	f	Adam Clayton Powell IV
 522	345	assembly	f	Daniel O'Donnell
 524	347	assembly	f	Herman D. Farrell
 525	349	assembly	f	Jonathan Bing
@@ -567,7 +555,7 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 528	352	assembly	f	Peter Rivera
 529	353	assembly	f	Vanessa Gibson
 530	354	assembly	f	Jose Rivera
-531	355	assembly	f	Michael Benjamin 
+531	355	assembly	f	Michael Benjamin
 532	356	assembly	f	Naomi Rivera
 533	357	assembly	f	Jeffrey Dinowitz
 534	358	assembly	f	Michael Benedetto
@@ -578,14 +566,14 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 539	363	assembly	f	J. Gary Pretlow
 540	364	assembly	f	Amy Paulin
 541	365	assembly	f	Robert Castelli
-543	368	assembly	f	Richard Brodsky 
+543	368	assembly	f	Richard Brodsky
 544	369	assembly	f	Mike Spano
 545	370	assembly	f	"Kenneth Zebrowski
 546	371	assembly	f	Ellen C. Jaffee
 547	372	assembly	f	Nancy Calhoun
 548	373	assembly	f	Ann Rabbitt
 549	374	assembly	f	Aileen Gunther
-550	376	assembly	f	Frank Skartados 
+550	376	assembly	f	Frank Skartados
 551	377	assembly	f	Kevin Cahill
 552	378	assembly	f	Joel Miller
 553	379	assembly	f	Marcus Molinaro
@@ -593,21 +581,21 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 555	381	assembly	f	George Amedore
 556	382	assembly	f	Ronald Canestrari
 557	383	assembly	f	Clifford Crouch
-558	384	assembly	f	Timothy P. Gordon 
+558	384	assembly	f	Timothy P. Gordon
 559	385	assembly	f	Robert Reilly
 560	386	assembly	f	James Tedisco
 561	387	assembly	f	William Magee
 562	388	assembly	f	Tony Jordan
 563	389	assembly	f	Teresa Sayward
 564	390	assembly	f	Janet Duprey
-565	391	assembly	f	David Townsend 
+565	391	assembly	f	David Townsend
 566	392	assembly	f	RoAnn Destito
 567	393	assembly	f	Marc Butler
 568	394	assembly	f	Addie Jenne Russell
-569	395	assembly	f	Joan Christensen 
+569	395	assembly	f	Joan Christensen
 570	396	assembly	f	William Magnarelli
 571	397	assembly	f	"Albert A. Stirpe
-572	398	assembly	f	Dierdre Scozzafava 
+572	398	assembly	f	Dierdre Scozzafava
 573	399	assembly	f	Gary Finch
 574	400	assembly	f	William A. Barclay
 575	401	assembly	f	Barbara Lifton
@@ -615,15 +603,15 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 577	403	assembly	f	Peter Lopez
 578	404	assembly	f	Robert Oaks
 579	405	assembly	f	Brian Kolb
-580	406	assembly	f	Joseph Errigo 
-581	407	assembly	f	Susan John 
+580	406	assembly	f	Joseph Errigo
+581	407	assembly	f	Susan John
 582	408	assembly	f	Joseph Morelle
 583	409	assembly	f	David Gantt
 584	410	assembly	f	Bill Reilich
-585	411	assembly	f	David Koon 
-586	412	assembly	f	James Bacalles 
-587	413	assembly	f	Tom O'Mara 
-588	414	assembly	f	Francine DelMonte 
+585	411	assembly	f	David Koon
+586	412	assembly	f	James Bacalles
+587	413	assembly	f	Tom O'Mara
+588	414	assembly	f	Francine DelMonte
 589	415	assembly	f	Stephen Hawley
 590	416	assembly	f	Robin Schimminger
 369	188	senate	t	John L. Sampson
@@ -716,11 +704,11 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 593	419	assembly	f	Dennis H. Gabryszak
 594	420	assembly	f	Sam Hoyt
 595	421	assembly	f	Mark J.F. Schroeder
-596	422	assembly	f	Jack Quinn III 
+596	422	assembly	f	Jack Quinn III
 597	423	assembly	f	Daniel Burling
 598	424	assembly	f	James Hayes
 599	425	assembly	f	Joseph Giglio
-600	426	assembly	f	William Parment 
+600	426	assembly	f	William Parment
 601	227	assembly	f	Greg Ball
 602	204	assembly	f	Adriano Espaillat
 603	202	assembly	f	Michael Gianaris
@@ -801,964 +789,7 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 \.
 
 
---
--- Data for Name: session_member; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY session_member (id, member_id, lbdc_short_name, session_year, district_code, alternate) FROM stdin;
-1	369	SAMPSON	2009	19	f
-2	441	MORAHAN	2009	38	f
-3	371	SEWARD	2009	51	f
-4	372	BRESLIN	2009	46	f
-5	373	SERRANO	2009	28	f
-6	374	LARKIN	2009	39	f
-7	375	PERKINS	2009	30	f
-8	376	DEFRANCISCO	2009	50	f
-9	442	ESPADA	2009	33	f
-10	378	HUNTLEY	2009	10	f
-11	379	LITTLE	2009	45	f
-12	380	HASSELL-THOMPSON	2009	36	f
-13	381	MONTGOMERY	2009	18	f
-14	382	ADAMS	2009	20	f
-15	443	ONORATO	2009	12	f
-16	384	ADDABBO	2009	15	f
-17	444	SCHNEIDERMAN	2009	31	f
-18	387	DUANE	2009	29	f
-19	388	OPPENHEIMER	2009	37	f
-20	389	MCDONALD	2009	43	f
-21	390	KLEIN	2009	34	f
-22	445	PADAVAN	2009	11	f
-23	392	ALESI	2009	55	f
-24	393	GRIFFO	2009	47	f
-25	394	NOZZOLIO	2009	54	f
-26	395	VALESKY	2009	49	f
-27	396	STEWART-COUSINS	2009	35	f
-28	447	THOMPSON	2009	60	f
-29	399	FLANAGAN	2009	2	f
-30	400	STAVISKY	2009	16	f
-31	401	KRUEGER	2009	26	f
-32	402	SALAND	2009	41	f
-33	403	SAVINO	2009	23	f
-34	448	FOLEY	2009	3	f
-35	405	SMITH	2009	14	f
-36	406	RANZENHOFER	2009	61	f
-37	407	MARCELLINO	2009	5	f
-38	449	LEIBELL	2009	40	f
-39	409	LANZA	2009	24	f
-40	410	LIBOUS	2009	52	f
-41	411	MAZIARZ	2009	62	f
-42	412	SQUADRON	2009	25	f
-43	413	BONACIC	2009	42	f
-44	414	YOUNG	2009	57	f
-45	450	WINNER	2009	53	f
-46	416	PARKER	2009	21	f
-47	417	ROBACH	2009	56	f
-48	418	FARLEY	2009	44	f
-49	419	LAVALLE	2009	1	f
-50	420	KRUGER	2009	27	f
-51	421	DIAZ	2009	32	f
-52	422	GOLDEN	2009	22	f
-53	451	AUBERTINE	2009	48	f
-54	424	HANNON	2009	6	f
-55	425	FUSCHILLO	2009	8	f
-56	426	DILAN	2009	17	f
-57	452	VOLKER	2009	59	f
-58	428	PERALTA	2009	13	f
-59	453	STACHOWSKI	2009	58	f
-60	430	SKELOS	2009	9	f
-61	386	JOHNSON O	2009	4	f
-62	446	JOHNSON C	2009	7	f
-63	369	SAMPSON	2011	19	f
-64	370	CARLUCCI	2011	38	f
-65	371	SEWARD	2011	51	f
-66	372	BRESLIN	2011	46	f
-67	373	SERRANO	2011	28	f
-68	374	LARKIN	2011	39	f
-69	375	PERKINS	2011	30	f
-70	376	DEFRANCISCO	2011	50	f
-71	377	RIVERA	2011	33	f
-72	378	HUNTLEY	2011	10	f
-73	379	LITTLE	2011	45	f
-74	380	HASSELL-THOMPSON	2011	36	f
-75	381	MONTGOMERY	2011	18	f
-76	382	ADAMS	2011	20	f
-77	383	GIANARIS	2011	12	f
-78	384	ADDABBO	2011	15	f
-79	385	ESPAILLAT	2011	31	f
-80	386	JOHNSON	2011	4	f
-81	387	DUANE	2011	29	f
-82	388	OPPENHEIMER	2011	37	f
-83	389	MCDONALD	2011	43	f
-84	390	KLEIN	2011	34	f
-85	391	AVELLA	2011	11	f
-86	392	ALESI	2011	55	f
-87	393	GRIFFO	2011	47	f
-88	394	NOZZOLIO	2011	54	f
-89	395	VALESKY	2011	49	f
-90	396	STEWART-COUSINS	2011	35	f
-91	397	MARTINS	2011	7	f
-92	398	GRISANTI	2011	60	f
-93	399	FLANAGAN	2011	2	f
-94	400	STAVISKY	2011	16	f
-95	401	KRUEGER	2011	26	f
-96	402	SALAND	2011	41	f
-97	403	SAVINO	2011	23	f
-98	404	ZELDIN	2011	3	f
-99	405	SMITH	2011	14	f
-100	406	RANZENHOFER	2011	61	f
-101	407	MARCELLINO	2011	5	f
-102	408	BALL	2011	40	f
-103	409	LANZA	2011	24	f
-104	410	LIBOUS	2011	52	f
-105	411	MAZIARZ	2011	62	f
-106	412	SQUADRON	2011	25	f
-107	413	BONACIC	2011	42	f
-108	414	YOUNG	2011	57	f
-109	415	O'MARA	2011	53	f
-110	416	PARKER	2011	21	f
-111	417	ROBACH	2011	56	f
-112	418	FARLEY	2011	44	f
-113	419	LAVALLE	2011	1	f
-114	420	KRUGER	2011	27	f
-115	421	DIAZ	2011	32	f
-116	422	GOLDEN	2011	22	f
-117	423	RITCHIE	2011	48	f
-118	424	HANNON	2011	6	f
-119	425	FUSCHILLO	2011	8	f
-120	426	DILAN	2011	17	f
-121	427	GALLIVAN	2011	59	f
-122	428	PERALTA	2011	13	f
-123	429	KENNEDY	2011	58	f
-124	430	SKELOS	2011	9	f
-125	369	SAMPSON	2013	19	f
-126	370	CARLUCCI	2013	38	f
-127	371	SEWARD	2013	51	f
-128	431	TKACZYK	2013	46	f
-129	401	KRUEGER	2013	28	f
-130	374	LARKIN	2013	39	f
-131	375	PERKINS	2013	30	f
-132	376	DEFRANCISCO	2013	50	f
-133	377	RIVERA	2013	33	f
-134	432	SANDERS	2013	10	f
-135	379	LITTLE	2013	45	f
-136	380	HASSELL-THOMPSON	2013	36	f
-137	426	DILAN	2013	18	f
-138	383	GIANARIS	2013	12	f
-139	384	ADDABBO	2013	15	f
-140	385	ESPAILLAT	2013	31	f
-141	433	BOYLE	2013	4	f
-142	373	SERRANO	2013	29	f
-143	434	LATIMER	2013	37	f
-144	435	MARCHIONE	2013	43	f
-145	390	KLEIN	2013	34	f
-146	429	KENNEDY	2013	63	f
-147	391	AVELLA	2013	11	f
-148	436	O'BRIEN	2013	55	f
-149	393	GRIFFO	2013	47	f
-150	394	NOZZOLIO	2013	54	f
-151	418	FARLEY	2013	49	f
-152	396	STEWART-COUSINS	2013	35	f
-153	397	MARTINS	2013	7	f
-154	398	GRISANTI	2013	60	f
-155	399	FLANAGAN	2013	2	f
-156	400	STAVISKY	2013	16	f
-157	412	SQUADRON	2013	26	f
-158	437	GIPSON	2013	41	f
-159	403	SAVINO	2013	23	f
-160	404	ZELDIN	2013	3	f
-161	405	SMITH	2013	14	f
-162	406	RANZENHOFER	2013	61	f
-163	407	MARCELLINO	2013	5	f
-164	408	BALL	2013	40	f
-165	409	LANZA	2013	24	f
-166	410	LIBOUS	2013	52	f
-167	411	MAZIARZ	2013	62	f
-168	381	MONTGOMERY	2013	25	f
-169	413	BONACIC	2013	42	f
-170	414	YOUNG	2013	57	f
-171	395	VALESKY	2013	53	f
-172	416	PARKER	2013	21	f
-173	417	ROBACH	2013	56	f
-174	372	BRESLIN	2013	44	f
-175	419	LAVALLE	2013	1	f
-176	438	HOYLMAN	2013	27	f
-177	421	DIAZ	2013	32	f
-178	422	GOLDEN	2013	22	f
-179	423	RITCHIE	2013	48	f
-180	424	HANNON	2013	6	f
-181	439	FELDER	2013	17	f
-182	427	GALLIVAN	2013	59	f
-183	415	O'MARA	2013	58	f
-184	430	SKELOS	2013	9	f
-185	425	FUSCHILLO	2013	8	f
-186	382	ADAMS	2013	20	f
-187	428	PERALTA	2013	13	f
-188	454	MONSERRATE	2009	13	f
-189	455	STOROBIN	2011	27	f
-190	463	ALESSI	2009	1	f
-191	536	ARROYO	2009	84	f
-192	518	KELLNER	2009	65	f
-193	508	BOYLAND	2009	55	f
-194	603	GIANARIS	2009	36	f
-195	543	BRODSKY	2009	92	f
-196	571	STIRPE	2009	121	f
-197	479	HOOPER	2009	18	f
-198	544	SPANO	2009	93	f
-199	495	JACOBS	2009	42	f
-200	553	MOLINARO	2009	103	f
-201	513	HYER-SPENCER	2009	60	f
-202	574	BARCLAY	2009	124	f
-203	511	PERRY	2009	58	f
-204	537	CRESPO	2009	85	f
-205	510	JEFFRIES	2009	57	f
-206	599	GIGLIO	2009	149	f
-207	456	TITUS	2009	31	f
-211	459	DENDEKKER	2009	34	f
-212	520	ROSENTHAL	2009	67	f
-213	477	SCHIMEL	2009	16	f
-214	526	KAVANAGH	2009	74	f
-215	473	SALADINO	2009	12	f
-216	481	WEISENBERG	2009	20	f
-217	535	HEASTIE	2009	83	f
-218	516	CUSICK	2009	63	f
-219	569	CHRISTENSEN	2009	119	f
-220	525	BING	2009	73	f
-221	579	KOLB	2009	129	f
-222	533	DINOWITZ	2009	81	f
-223	472	SWEENEY	2009	11	f
-224	524	FARRELL	2009	71	f
-225	457	COOK	2009	32	f
-226	484	WEPRIN	2009	24	f
-230	517	SILVER	2009	64	f
-231	559	REILLY	2009	109	f
-232	512	MAISEL	2009	59	f
-233	499	BROOK-KRASNY	2009	46	f
-234	578	OAKS	2009	128	f
-235	471	CONTE	2009	10	f
-236	505	MILLMAN	2009	52	f
-237	500	COLTON	2009	47	f
-238	507	TOWNS	2009	54	f
-239	469	FITZPATRICK	2009	7	f
-241	519	GLICK	2009	66	f
-242	501	HIKIND	2009	48	f
-243	458	CLARK	2009	33	f
-244	589	HAWLEY	2009	139	f
-245	540	PAULIN	2009	88	f
-246	550	SKARTADOS	2009	100	f
-247	573	FINCH	2009	123	f
-248	487	MAYERSOHN	2009	27	f
-249	521	POWELL	2009	68	f
-250	482	ALFANO	2009	21	f
-251	465	MURRAY	2009	3	f
-252	555	AMEDORE	2009	105	f
-253	467	FIELDS	2009	5	f
-255	462	RAIA	2009	9	f
-256	460	AUBRY	2009	35	f
-257	597	BURLING	2009	147	f
-258	593	GABRYSZAK	2009	143	f
-259	529	GIBSON	2009	77	f
-260	556	CANESTRARI	2009	106	f
-263	489	SCARBOROUGH	2009	29	f
-264	575	LIFTON	2009	125	f
-265	567	BUTLER	2009	117	f
-266	480	MCDONOUGH	2009	19	f
-267	587	O'MARA	2009	137	f
-268	590	SCHIMMINGER	2009	140	f
-269	478	MCKEVITT	2009	17	f
-270	538	CASTRO	2009	86	f
-271	565	TOWNSEND	2009	115	f
-272	490	MARKEY	2009	30	f
-273	464	THIELE	2009	2	f
-274	497	BRENNAN	2009	44	f
-275	581	JOHN	2009	131	f
-276	483	PHEFFER	2009	23	f
-277	596	QUINN	2009	146	f
-278	585	KOON	2009	135	f
-279	583	GANTT	2009	133	f
-280	534	BENEDETTO	2009	82	f
-281	588	DELMONTE	2009	138	f
-282	562	JORDAN	2009	112	f
-283	547	CALHOUN	2009	96	f
-284	563	SAYWARD	2009	113	f
-285	592	CORWIN	2009	142	f
-286	584	REILICH	2009	134	f
-287	461	MENG	2009	22	f
-288	498	CYMBROWITZ	2009	45	f
-289	493	BARRON	2009	40	f
-290	601	BALL	2009	99	f
-291	514	TITONE	2009	61	f
-292	576	LUPARDO	2009	126	f
-293	595	SCHROEDER	2009	145	f
-295	548	RABBITT	2009	97	f
-296	503	LENTOL	2009	50	f
-297	474	LAVINE	2009	13	f
-298	509	ROBINSON	2009	56	f
-299	486	CARROZZA	2009	26	f
-300	568	RUSSELL	2009	118	f
-301	539	PRETLOW	2009	87	f
-302	604	LATIMER	2009	91	f
-303	522	O'DONNELL	2009	69	f
-304	580	ERRIGO	2009	130	f
-305	488	HEVESI	2009	28	f
-306	591	PEOPLES-STOKES	2009	141	f
-307	570	MAGNARELLI	2009	120	f
-308	475	BARRA	2009	14	f
-309	560	TEDISCO	2009	110	f
-310	476	MONTESANO	2009	15	f
-311	485	LANCMAN	2009	25	f
-312	602	ESPAILLAT	2009	72	f
-262	577	LOPEZ P	2009	127	f
-227	492	MILLER M	2009	38	f
-228	552	MILLER J	2009	102	f
-208	528	RIVERA P	2009	76	f
-209	530	RIVERA J	2009	78	f
-210	532	RIVERA N	2009	80	f
-240	644	BRADLEY	2009	89	f
-254	645	EDDINGTON	2009	3	f
-294	646	WRIGHT	2009	70	f
-313	582	MORELLE	2009	132	f
-315	496	CAMARA	2009	43	f
-317	549	GUNTHER	2009	98	f
-319	515	TOBACCO	2009	62	f
-321	527	GOTTFRIED	2009	75	f
-323	466	ENGLEBRIGHT	2009	4	f
-325	557	CROUCH	2009	107	f
-327	470	BOYLE	2009	8	f
-329	600	PARMENT	2009	150	f
-331	504	ORTIZ	2009	51	f
-333	494	WEINSTEIN	2009	41	f
-335	531	BENJAMIN	2009	79	f
-338	566	DESTITO	2009	116	f
-339	468	RAMOS	2009	6	f
-340	586	BACALLES	2009	136	f
-342	554	MCENENY	2009	104	f
-344	594	HOYT	2009	144	f
-316	551	CAHILL	2009	101	f
-318	546	JAFFEE	2009	95	f
-320	545	ZEBROWSKI	2009	94	f
-322	541	CASTELLI	2009	89	f
-324	491	NOLAN	2009	37	f
-326	564	DUPREY	2009	114	f
-328	558	GORDON	2009	108	f
-330	572	SCOZZAFAVA	2009	122	f
-337	621	GALEF	2009	90	f
-341	502	ABBATE	2009	49	f
-343	598	HAYES	2009	148	f
-345	561	MAGEE	2009	111	f
-261	506	LOPEZ V	2009	53	f
-332	643	PERALTA	2009	39	f
-334	648	SEMINERIO	2009	38	f
-314	647	WALKER	2009	15	f
-346	650	DIAZ	2009	85	f
-347	536	ARROYO	2011	84	f
-348	518	KELLNER	2011	65	f
-349	508	BOYLAND	2011	55	f
-350	625	BARRETT	2011	103	f
-351	627	TENNEY	2011	115	f
-352	642	GOODELL	2011	150	f
-353	479	HOOPER	2011	18	f
-355	495	JACOBS	2011	42	f
-357	632	HANNA	2011	130	f
-358	574	BARCLAY	2011	124	f
-359	537	CRESPO	2011	85	f
-360	510	JEFFRIES	2011	57	f
-361	511	PERRY	2011	58	f
-362	599	GIGLIO	2011	149	f
-363	456	TITUS	2011	31	f
-364	607	CURRAN	2011	14	f
-365	605	LOSQUADRO	2011	1	f
-366	459	DENDEKKER	2011	34	f
-367	526	KAVANAGH	2011	74	f
-368	477	SCHIMEL	2011	16	f
-369	520	ROSENTHAL	2011	67	f
-370	473	SALADINO	2011	12	f
-371	481	WEISENBERG	2011	20	f
-372	535	HEASTIE	2011	83	f
-373	516	CUSICK	2011	63	f
-374	626	MCLAUGHLIN	2011	108	f
-376	635	PALMESANO	2011	136	f
-377	579	KOLB	2011	129	f
-378	638	RYAN	2011	144	f
-379	533	DINOWITZ	2011	81	f
-380	472	SWEENEY	2011	11	f
-381	524	FARRELL	2011	71	f
-382	457	COOK	2011	32	f
-383	517	SILVER	2011	64	f
-384	484	WEPRIN	2011	24	f
-385	628	BRINDISI	2011	116	f
-386	559	REILLY	2011	109	f
-387	512	MAISEL	2011	59	f
-388	499	BROOK-KRASNY	2011	46	f
-389	614	ESPINAL	2011	54	f
-390	613	MOYA	2011	39	f
-391	578	OAKS	2011	128	f
-392	471	CONTE	2011	10	f
-393	505	MILLMAN	2011	52	f
-394	500	COLTON	2011	47	f
-396	469	FITZPATRICK	2011	7	f
-397	616	RODRIGUEZ	2011	68	f
-398	519	GLICK	2011	66	f
-399	501	HIKIND	2011	48	f
-400	458	CLARK	2011	33	f
-401	550	SKARTADOS	2011	100	f
-402	633	BRONSON	2011	131	f
-403	540	PAULIN	2011	88	f
-404	589	HAWLEY	2011	139	f
-405	573	FINCH	2011	123	f
-407	637	CERETTO	2011	138	f
-408	631	BLANKENBUSH	2011	122	f
-409	641	WALTER	2011	148	f
-410	465	MURRAY	2011	3	f
-411	555	AMEDORE	2011	105	f
-412	624	KATZ	2011	99	f
-413	462	RAIA	2011	9	f
-414	636	FRIEND	2011	137	f
-415	460	AUBRY	2011	35	f
-416	617	LINARES	2011	72	f
-417	610	BRAUNSTEIN	2011	26	f
-418	597	BURLING	2011	147	f
-419	529	GIBSON	2011	77	f
-420	593	GABRYSZAK	2011	143	f
-421	609	GOLDFEDER	2011	23	f
-422	556	CANESTRARI	2011	106	f
-423	575	LIFTON	2011	125	f
-424	489	SCARBOROUGH	2011	29	f
-425	612	SIMOTAS	2011	36	f
-426	567	BUTLER	2011	117	f
-427	480	MCDONOUGH	2011	19	f
-428	590	SCHIMMINGER	2011	140	f
-429	478	MCKEVITT	2011	17	f
-430	538	CASTRO	2011	86	f
-431	618	QUART	2011	73	f
-432	639	KEARNS	2011	145	f
-433	490	MARKEY	2011	30	f
-434	464	THIELE	2011	2	f
-435	623	MAYER	2011	93	f
-436	497	BRENNAN	2011	44	f
-438	583	GANTT	2011	133	f
-439	534	BENEDETTO	2011	82	f
-440	562	JORDAN	2011	112	f
-441	563	SAYWARD	2011	113	f
-442	547	CALHOUN	2011	96	f
-443	592	CORWIN	2011	142	f
-444	584	REILICH	2011	134	f
-445	461	MENG	2011	22	f
-446	493	BARRON	2011	40	f
-447	498	CYMBROWITZ	2011	45	f
-448	514	TITONE	2011	61	f
-449	576	LUPARDO	2011	126	f
-452	634	JOHNS	2011	135	f
-453	503	LENTOL	2011	50	f
-454	548	RABBITT	2011	97	f
-455	474	LAVINE	2011	13	f
-456	509	ROBINSON	2011	56	f
-457	629	ROBERTS	2011	119	f
-458	615	MALLIOTAKIS	2011	60	f
-459	568	RUSSELL	2011	118	f
-460	539	PRETLOW	2011	87	f
-461	604	LATIMER	2011	91	f
-462	622	ABINANTI	2011	92	f
-463	522	O'DONNELL	2011	69	f
-464	488	HEVESI	2011	28	f
-465	591	PEOPLES-STOKES	2011	141	f
-466	570	MAGNARELLI	2011	120	f
-467	560	TEDISCO	2011	110	f
-468	485	LANCMAN	2011	25	f
-469	476	MONTESANO	2011	15	f
-470	582	MORELLE	2011	132	f
-471	496	CAMARA	2011	43	f
-472	551	CAHILL	2011	101	f
-473	549	GUNTHER	2011	98	f
-474	546	JAFFEE	2011	95	f
-475	515	TOBACCO	2011	62	f
-476	527	GOTTFRIED	2011	75	f
-477	545	ZEBROWSKI	2011	94	f
-478	466	ENGLEBRIGHT	2011	4	f
-479	541	CASTELLI	2011	89	f
-480	491	NOLAN	2011	37	f
-481	564	DUPREY	2011	114	f
-482	557	CROUCH	2011	107	f
-375	525	BING	2011	73	f
-450	646	WRIGHT	2011	70	f
-395	507	TOWNS	2011	54	f
-406	487	MAYERSOHN	2011	27	f
-356	553	MOLINARO	2011	103	f
-437	483	PHEFFER	2011	23	f
-451	595	SCHROEDER	2011	145	f
-354	544	SPANO	2011	93	f
-483	470	BOYLE	2011	8	f
-484	611	SIMANOWITZ	2011	27	f
-485	504	ORTIZ	2011	51	f
-486	640	SMARDZ	2011	146	f
-487	494	WEINSTEIN	2011	41	f
-489	621	GALEF	2011	90	f
-490	468	RAMOS	2011	6	f
-491	619	STEVENSON	2011	79	f
-492	502	ABBATE	2011	49	f
-494	554	MCENENY	2011	104	f
-496	561	MAGEE	2011	111	f
-497	608	RA	2011	21	f
-498	506	LOPEZ V	2011	53	f
-499	577	LOPEZ P	2011	127	f
-500	492	MILLER M	2011	38	f
-501	630	MILLER D	2011	121	f
-502	552	MILLER J	2011	102	f
-503	528	RIVERA P	2011	76	f
-504	532	RIVERA N	2011	80	f
-505	530	RIVERA J	2011	78	f
-506	652	KIRWAN	2011	100	f
-488	566	DESTITO	2011	116	f
-493	598	HAYES	2011	148	f
-495	594	HOYT	2011	144	f
-507	528	RIVERA	2013	76	f
-508	492	MILLER	2013	38	f
-509	502	ABBATE	2013	49	f
-510	622	ABINANTI	2013	92	f
-511	536	ARROYO	2013	84	f
-512	460	AUBRY	2013	35	f
-513	574	BARCLAY	2013	124	f
-514	625	BARRETT	2013	103	f
-515	493	BARRON	2013	40	f
-516	534	BENEDETTO	2013	82	f
-517	631	BLANKENBUSH	2013	122	f
-518	508	BOYLAND	2013	55	f
-519	610	BRAUNSTEIN	2013	26	f
-520	497	BRENNAN	2013	44	f
-521	628	BRINDISI	2013	116	f
-522	633	BRONSON	2013	131	f
-523	499	BROOK-KRASNY	2013	46	f
-524	567	BUTLER	2013	117	f
-525	551	CAHILL	2013	101	f
-526	496	CAMARA	2013	43	f
-527	538	CASTRO	2013	86	f
-528	637	CERETTO	2013	138	f
-529	458	CLARK	2013	33	f
-530	500	COLTON	2013	47	f
-531	457	COOK	2013	32	f
-532	592	CORWIN	2013	142	f
-533	537	CRESPO	2013	85	f
-534	557	CROUCH	2013	107	f
-535	607	CURRAN	2013	14	f
-536	516	CUSICK	2013	63	f
-537	498	CYMBROWITZ	2013	45	f
-538	459	DENDEKKER	2013	34	f
-539	533	DINOWITZ	2013	81	f
-540	564	DUPREY	2013	114	f
-541	466	ENGLEBRIGHT	2013	4	f
-542	614	ESPINAL	2013	54	f
-543	524	FARRELL	2013	71	f
-544	573	FINCH	2013	123	f
-545	469	FITZPATRICK	2013	7	f
-546	636	FRIEND	2013	137	f
-547	593	GABRYSZAK	2013	143	f
-548	621	GALEF	2013	90	f
-549	583	GANTT	2013	133	f
-550	529	GIBSON	2013	77	f
-551	599	GIGLIO	2013	149	f
-552	620	GJONAJ	2013	80	f
-553	519	GLICK	2013	66	f
-554	609	GOLDFEDER	2013	23	f
-555	642	GOODELL	2013	150	f
-556	527	GOTTFRIED	2013	75	f
-558	549	GUNTHER	2013	98	f
-559	589	HAWLEY	2013	139	f
-560	535	HEASTIE	2013	83	f
-561	488	HEVESI	2013	28	f
-562	501	HIKIND	2013	48	f
-563	479	HOOPER	2013	18	f
-564	495	JACOBS	2013	42	f
-565	546	JAFFEE	2013	95	f
-566	634	JOHNS	2013	135	f
-567	562	JORDAN	2013	112	f
-568	624	KATZ	2013	99	f
-569	526	KAVANAGH	2013	74	f
-570	639	KEARNS	2013	145	f
-571	518	KELLNER	2013	65	f
-572	579	KOLB	2013	129	f
-573	474	LAVINE	2013	13	f
-574	503	LENTOL	2013	50	f
-575	575	LIFTON	2013	125	f
-576	605	LOSQUADRO	2013	1	f
-577	576	LUPARDO	2013	126	f
-578	561	MAGEE	2013	111	f
-579	570	MAGNARELLI	2013	120	f
-580	512	MAISEL	2013	59	f
-581	615	MALLIOTAKIS	2013	60	f
-582	490	MARKEY	2013	30	f
-583	623	MAYER	2013	93	f
-584	480	MCDONOUGH	2013	19	f
-585	478	MCKEVITT	2013	17	f
-586	626	MCLAUGHLIN	2013	108	f
-587	505	MILLMAN	2013	52	f
-588	476	MONTESANO	2013	15	f
-589	582	MORELLE	2013	132	f
-590	613	MOYA	2013	39	f
-591	491	NOLAN	2013	37	f
-592	522	O'DONNELL	2013	69	f
-593	578	OAKS	2013	128	f
-594	504	ORTIZ	2013	51	f
-595	635	PALMESANO	2013	136	f
-596	540	PAULIN	2013	88	f
-597	591	PEOPLES-STOKES	2013	141	f
-598	511	PERRY	2013	58	f
-599	539	PRETLOW	2013	87	f
-600	618	QUART	2013	73	f
-601	608	RA	2013	21	f
-602	548	RABBITT	2013	97	f
-603	462	RAIA	2013	9	f
-604	468	RAMOS	2013	6	f
-605	584	REILICH	2013	134	f
-606	629	ROBERTS	2013	119	f
-607	509	ROBINSON	2013	56	f
-608	616	RODRIGUEZ	2013	68	f
-609	520	ROSENTHAL	2013	67	f
-610	568	RUSSELL	2013	118	f
-611	638	RYAN	2013	144	f
-612	473	SALADINO	2013	12	f
-613	489	SCARBOROUGH	2013	29	f
-614	477	SCHIMEL	2013	16	f
-615	590	SCHIMMINGER	2013	140	f
-616	517	SILVER	2013	64	f
-617	611	SIMANOWITZ	2013	27	f
-618	612	SIMOTAS	2013	36	f
-619	550	SKARTADOS	2013	100	f
-620	619	STEVENSON	2013	79	f
-622	472	SWEENEY	2013	11	f
-623	560	TEDISCO	2013	110	f
-624	627	TENNEY	2013	115	f
-625	464	THIELE	2013	2	f
-626	514	TITONE	2013	61	f
-627	456	TITUS	2013	31	f
-628	641	WALTER	2013	148	f
-629	494	WEINSTEIN	2013	41	f
-630	481	WEISENBERG	2013	20	f
-631	484	WEPRIN	2013	24	f
-633	545	ZEBROWSKI	2013	94	f
-634	653	BORELLI	2013	62	f
-635	654	BUCHWALD	2013	93	f
-636	655	DAVILA	2013	53	f
-637	656	DIPIETRO	2013	147	f
-638	657	FAHY	2013	109	f
-639	658	GARBARINO	2013	7	f
-621	571	STIRPE	2013	127	f
-641	660	LALOR	2013	105	f
-642	661	LUPINACCI	2013	10	f
-643	662	MCDONALD	2013	108	f
-644	663	MOSLEY	2013	57	f
-645	664	NOJAY	2013	133	f
-646	665	OTIS	2013	91	f
-647	666	PALUMBO	2013	2	f
-648	667	PICHARDO	2013	86	f
-649	668	ROSA	2013	72	f
-650	669	ROZIC	2013	25	f
-651	670	SANTABARBARA	2013	111	f
-652	671	SEPULVEDA	2013	87	f
-653	672	SKOUFIS	2013	99	f
-654	673	SOLAGES	2013	22	f
-655	674	STEC	2013	114	f
-656	675	STECK	2013	110	f
-640	659	KIM	2013	40	f
-632	646	WRIGHT	2013	70	f
-557	651	GRAF	2013	5	f
-657	506	LOPEZ V	2013	53	f
-658	577	LOPEZ P	2013	127	f
-659	651	GRAF	2011	5	f
-662	552	MILLER	2009	102	t
-661	591	PEOPLES	2009	141	t
-663	551	CAHILL	2007	101	f
-664	676	GREENE	2009	0	f
-665	484	WEPRIN D	2009	24	t
-666	677	HENNESSEY	2013	3	f
-667	677	HENNESSY	2013	3	t
-668	380	HASSEL_THOMPSO	2009	36	t
-669	380	HASSELL-THOMPSO	2011	36	t
-670	380	HASSELL-THOMPSO	2013	36	t
-\.
-
-
 SET search_path = master, pg_catalog;
-
---
--- Data for Name: agenda_vote_committee_attend; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda_vote_committee_attend (id, vote_committee_id, member_id, session_year, lbdc_short_name, rank, party, attend_status, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: agenda_vote_committee_attend_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('agenda_vote_committee_attend_id_seq', 113143, true);
-
-
---
--- Data for Name: bill; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill (print_no, session_year, title, law_section, summary, active_version, active_year, modified_date_time, published_date_time, last_fragment_id, law_code, created_date_time, program_info) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_amendment; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment (bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, stricken, uni_bill, modified_date_time, published_date_time, last_fragment_id, current_committee_name, current_committee_action) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_amendment_vote_info; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_vote_info (bill_print_no, bill_session_year, bill_amend_version, vote_date, sequence_no, id, published_date_time, modified_date_time, vote_type) FROM stdin;
-\.
-
-
---
--- Data for Name: agenda_vote_committee_vote; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda_vote_committee_vote (id, vote_committee_id, vote_action, vote_info_id, refer_committee_name, refer_committee_chamber, with_amendment, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: agenda_vote_committee_vote_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('agenda_vote_committee_vote_id_seq', 38371, true);
-
-
---
--- Data for Name: bill_amendment_action; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_action (bill_print_no, bill_session_year, bill_amend_version, effect_date, text, modified_date_time, published_date_time, last_fragment_id, sequence_no, chamber) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_amendment_cosponsor; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_cosponsor (bill_print_no, bill_session_year, bill_amend_version, member_id, sequence_no) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_amendment_multi_sponsor; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_multi_sponsor (bill_print_no, bill_session_year, bill_amend_version, member_id, sequence_no) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_amendment_same_as; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_same_as (bill_print_no, bill_session_year, bill_amend_version, same_as_bill_print_no, same_as_session_year, same_as_amend_version) FROM stdin;
-\.
-
-
---
--- Name: bill_amendment_vote_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('bill_amendment_vote_id_seq', 7663, true);
-
-
---
--- Data for Name: bill_amendment_vote_roll; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_vote_roll (vote_id, member_id, member_short_name, session_year, vote_code) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_committee; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_committee (bill_print_no, bill_session_year, committee_name, committee_chamber, action_date) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_previous_version; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_previous_version (bill_print_no, bill_session_year, prev_bill_print_no, prev_bill_session_year, prev_amend_version) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_sponsor; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_sponsor (bill_print_no, bill_session_year, member_id, budget_bill, rules_sponsor) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_sponsor_additional; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_sponsor_additional (bill_print_no, bill_session_year, member_id, sequence_no) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_veto; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_veto (veto_number, year, bill_print_no, session_year, page, line_start, line_end, chapter, signer, date, memo_text, type, modified_date_time, published_date_time, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: bill_veto_year_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('bill_veto_year_seq', 1, false);
-
-
---
--- Data for Name: calendar; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY calendar (calendar_no, year, last_fragment_id, modified_date_time, published_date_time, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: calendar_active_list; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY calendar_active_list (id, sequence_no, calendar_no, calendar_year, calendar_date, release_date_time, last_fragment_id, created_date_time, modified_date_time, published_date_time, notes) FROM stdin;
-\.
-
-
---
--- Data for Name: calendar_active_list_entry; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY calendar_active_list_entry (calendar_active_list_id, bill_calendar_no, bill_print_no, bill_amend_version, bill_session_year, created_date_time) FROM stdin;
-\.
-
-
---
--- Name: calendar_active_list_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('calendar_active_list_id_seq', 561, true);
-
-
---
--- Data for Name: calendar_supplemental; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY calendar_supplemental (id, calendar_no, calendar_year, sup_version, calendar_date, release_date_time, last_fragment_id, modified_date_time, published_date_time, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: calendar_supplemental_entry; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY calendar_supplemental_entry (id, calendar_sup_id, section_code, bill_calendar_no, bill_print_no, bill_amend_version, bill_session_year, sub_bill_print_no, sub_bill_amend_version, sub_bill_session_year, high, created_date_time) FROM stdin;
-\.
-
-
---
--- Name: calendar_supplemental_entry_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('calendar_supplemental_entry_id_seq', 98856, true);
-
-
---
--- Name: calendar_supplemental_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('calendar_supplemental_id_seq', 561, true);
-
-
---
--- Name: committee_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('committee_id_seq', 1721, true);
-
-
---
--- Data for Name: committee_version; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY committee_version (id, location, meetday, meetaltweek, meetaltweektext, meettime, session_year, created, reformed, committee_name, chamber) FROM stdin;
-546			f		\N	2013	2014-02-28 11:25:44	infinity	Ethics	senate
-532	Room 611 LOB	Wednesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Banks	senate
-535	Room 410 LOB	Monday	f		13:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Civil Service and Pensions	senate
-536	Room 124 CAP	Tuesday	f		09:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Codes	senate
-537	Room 511 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Commerce, Economic Development and Small Business	senate
-538	Room 801 LOB	Monday	f		13:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Consumer Protection	senate
-542	Room 124 CAP	Tuesday	f		10:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Education	senate
-544	Room 709 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Energy and Telecommunications	senate
-533	Room 944 LOB	Monday	f		13:00:00	2013	2014-02-28 11:25:44	infinity	Children and Families	senate
-534	Room 916 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Cities	senate
-539	Room 801 LOB	Monday	f		13:30:00	2013	2014-02-28 11:25:44	infinity	Corporations, Authorities and Commissions	senate
-549	Room 807 LOB	Tuesday	f		12:30:00	2013	2014-02-28 11:25:44	infinity	Higher Education	senate
-529	Room 816 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Aging	senate
-572	Room 611 LOB	Wednesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-13 14:48:16	infinity	Banks	senate
-564	Room 611 LOB	Wednesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Banks	senate
-565	Room 410 LOB	Monday	f		13:30:00	2013	2014-03-03 17:09:09	infinity	Civil Service and Pensions	senate
-576	Room 511 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-17 18:43:42	infinity	Commerce, Economic Development and Small Business	senate
-540	Room 123 CAP	Wednesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-02-28 11:25:44	infinity	Crime Victims, Crime and Correction	senate
-541	Room 309 LOB	Wednesday	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate
-574	Room 124 CAP	Tuesday	f		10:00:00	2013	2014-03-13 14:48:16	infinity	Education	senate
-543	Room 813 LOB	Monday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:00:00	2013	2014-02-28 11:25:44	infinity	Elections	senate
-569	Room 124 CAP	Tuesday	f		10:00:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Education	senate
-575	Room 901 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-03-13 14:48:16	infinity	Environmental Conservation	senate
-545	Room 901 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Environmental Conservation	senate
-547	Room 124 CAP	Tuesday	f		11:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Finance	senate
-548	Room 124 CAP	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Health	senate
-553	Room 810 LOB	Tuesday	f		12:30:00	2013	2014-02-28 11:25:44	infinity	Investigations and Government Operations	senate
-550	Room 308 LOB	Monday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Housing, Construction and Community Development	senate
-555	Room 511 LOB	Monday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-02-28 11:25:44	infinity	Labor	senate
-552	Room 124 CAP	Monday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Insurance	senate
-556	Room 945 LOB	Tuesday	f		13:00:00	2013	2014-02-28 11:25:44	infinity	Local Government	senate
-554	Room 123 CAP	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Judiciary	senate
-560	Room 946A LOB	Tuesday	f		10:00:00	2013	2014-02-28 11:25:44	infinity	Social Services	senate
-558	Room 510 LOB	Tuesday	f		09:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Racing, Gaming and Wagering	senate
-559			f		\N	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Rules	senate
-562	Room 816 LOB	Tuesday	f		13:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Veterans, Homeland Security and Military Affairs	senate
-561	Room 124 CAP	Tuesday	f		13:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Transportation	senate
-571	Room 816 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-03-13 14:48:16	infinity	Aging	senate
-563			f		\N	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	New York City Education Subcommittee	senate
-530	Room 411 LOB	Tuesday	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Agriculture	senate
-531	Room 813 LOB	Tuesday	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Alcoholism and Drug Abuse	senate
-573	Room 916 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-13 14:48:16	infinity	Cities	senate
-566	Room 124 CAP	Tuesday	f		09:00:00	2013	2014-03-03 17:09:09	infinity	Codes	senate
-570	Room 709 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-03-03 17:09:09	infinity	Energy and Telecommunications	senate
-551	Room 804 LOB	Tuesday	f		12:00:00	2013	2014-02-28 11:25:44	infinity	Infrastructure and Capital Investment	senate
-568	Room 801 LOB	Monday	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Consumer Protection	senate
-582			f		\N	2013	2014-03-03 17:09:09	infinity	Rules	senate
-584			f		\N	2013	2014-03-03 17:09:09	infinity	New York City Education Subcommittee	senate
-567	Room 511 LOB	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-03 17:09:09	2014-03-17 18:43:42	Commerce, Economic Development and Small Business	senate
-577	Room 124 CAP	Tuesday	f		11:00:00	2013	2014-03-03 17:09:09	infinity	Finance	senate
-578	Room 124 CAP	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-03-03 17:09:09	infinity	Health	senate
-579	Room 308 LOB	Monday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Housing, Construction and Community Development	senate
-580	Room 124 CAP	Monday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-03 17:09:09	infinity	Insurance	senate
-581	Room 123 CAP	Tuesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Judiciary	senate
-557	Room 816 LOB	Wednesday	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-02-28 11:25:44	infinity	Mental Health and Developmental Disabilities	senate
-585	Room 510 LOB	Tuesday	f		09:30:00	2013	2014-03-13 14:48:16	infinity	Racing, Gaming and Wagering	senate
-583	Room 124 CAP	Tuesday	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Transportation	senate
-586	Room 816 LOB	Tuesday	f		13:30:00	2013	2014-03-13 14:48:16	infinity	Veterans, Homeland Security and Military Affairs	senate
-\.
-
 
 --
 -- Data for Name: committee_member; Type: TABLE DATA; Schema: master; Owner: postgres
@@ -2580,36 +1611,6 @@ SELECT pg_catalog.setval('committee_version_id_seq', 586, true);
 SELECT pg_catalog.setval('committee_version_session_year_seq', 1, false);
 
 
---
--- Data for Name: sobi_change_log; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY sobi_change_log (id, table_name, action, key, data, modified_date_time, sobi_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: sobi_change_log_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('sobi_change_log_id_seq', 364567, true);
-
-
---
--- Data for Name: sobi_fragment_process; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY sobi_fragment_process (id, fragment_id) FROM stdin;
-\.
-
-
---
--- Name: sobi_fragment_process_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('sobi_fragment_process_id_seq', 1, false);
-
-
 SET search_path = public, pg_catalog;
 
 --
@@ -2650,10 +1651,686 @@ SELECT pg_catalog.setval('person_id_seq', 499, true);
 
 
 --
+-- Data for Name: session_member; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY session_member (id, member_id, lbdc_short_name, session_year, district_code, alternate) FROM stdin;
+1	369	SAMPSON	2009	19	f
+2	441	MORAHAN	2009	38	f
+3	371	SEWARD	2009	51	f
+4	372	BRESLIN	2009	46	f
+5	373	SERRANO	2009	28	f
+6	374	LARKIN	2009	39	f
+7	375	PERKINS	2009	30	f
+8	376	DEFRANCISCO	2009	50	f
+9	442	ESPADA	2009	33	f
+10	378	HUNTLEY	2009	10	f
+11	379	LITTLE	2009	45	f
+12	380	HASSELL-THOMPSON	2009	36	f
+13	381	MONTGOMERY	2009	18	f
+14	382	ADAMS	2009	20	f
+15	443	ONORATO	2009	12	f
+16	384	ADDABBO	2009	15	f
+17	444	SCHNEIDERMAN	2009	31	f
+18	387	DUANE	2009	29	f
+19	388	OPPENHEIMER	2009	37	f
+20	389	MCDONALD	2009	43	f
+21	390	KLEIN	2009	34	f
+22	445	PADAVAN	2009	11	f
+23	392	ALESI	2009	55	f
+24	393	GRIFFO	2009	47	f
+25	394	NOZZOLIO	2009	54	f
+26	395	VALESKY	2009	49	f
+27	396	STEWART-COUSINS	2009	35	f
+28	447	THOMPSON	2009	60	f
+29	399	FLANAGAN	2009	2	f
+30	400	STAVISKY	2009	16	f
+31	401	KRUEGER	2009	26	f
+32	402	SALAND	2009	41	f
+33	403	SAVINO	2009	23	f
+34	448	FOLEY	2009	3	f
+35	405	SMITH	2009	14	f
+36	406	RANZENHOFER	2009	61	f
+37	407	MARCELLINO	2009	5	f
+38	449	LEIBELL	2009	40	f
+39	409	LANZA	2009	24	f
+40	410	LIBOUS	2009	52	f
+41	411	MAZIARZ	2009	62	f
+42	412	SQUADRON	2009	25	f
+43	413	BONACIC	2009	42	f
+44	414	YOUNG	2009	57	f
+45	450	WINNER	2009	53	f
+46	416	PARKER	2009	21	f
+47	417	ROBACH	2009	56	f
+48	418	FARLEY	2009	44	f
+49	419	LAVALLE	2009	1	f
+50	420	KRUGER	2009	27	f
+51	421	DIAZ	2009	32	f
+52	422	GOLDEN	2009	22	f
+53	451	AUBERTINE	2009	48	f
+54	424	HANNON	2009	6	f
+55	425	FUSCHILLO	2009	8	f
+56	426	DILAN	2009	17	f
+57	452	VOLKER	2009	59	f
+58	428	PERALTA	2009	13	f
+59	453	STACHOWSKI	2009	58	f
+60	430	SKELOS	2009	9	f
+61	386	JOHNSON O	2009	4	f
+62	446	JOHNSON C	2009	7	f
+63	369	SAMPSON	2011	19	f
+64	370	CARLUCCI	2011	38	f
+65	371	SEWARD	2011	51	f
+66	372	BRESLIN	2011	46	f
+67	373	SERRANO	2011	28	f
+68	374	LARKIN	2011	39	f
+69	375	PERKINS	2011	30	f
+70	376	DEFRANCISCO	2011	50	f
+71	377	RIVERA	2011	33	f
+72	378	HUNTLEY	2011	10	f
+73	379	LITTLE	2011	45	f
+74	380	HASSELL-THOMPSON	2011	36	f
+75	381	MONTGOMERY	2011	18	f
+76	382	ADAMS	2011	20	f
+77	383	GIANARIS	2011	12	f
+78	384	ADDABBO	2011	15	f
+79	385	ESPAILLAT	2011	31	f
+80	386	JOHNSON	2011	4	f
+81	387	DUANE	2011	29	f
+82	388	OPPENHEIMER	2011	37	f
+83	389	MCDONALD	2011	43	f
+84	390	KLEIN	2011	34	f
+85	391	AVELLA	2011	11	f
+86	392	ALESI	2011	55	f
+87	393	GRIFFO	2011	47	f
+88	394	NOZZOLIO	2011	54	f
+89	395	VALESKY	2011	49	f
+90	396	STEWART-COUSINS	2011	35	f
+91	397	MARTINS	2011	7	f
+92	398	GRISANTI	2011	60	f
+93	399	FLANAGAN	2011	2	f
+94	400	STAVISKY	2011	16	f
+95	401	KRUEGER	2011	26	f
+96	402	SALAND	2011	41	f
+97	403	SAVINO	2011	23	f
+98	404	ZELDIN	2011	3	f
+99	405	SMITH	2011	14	f
+100	406	RANZENHOFER	2011	61	f
+101	407	MARCELLINO	2011	5	f
+102	408	BALL	2011	40	f
+103	409	LANZA	2011	24	f
+104	410	LIBOUS	2011	52	f
+105	411	MAZIARZ	2011	62	f
+106	412	SQUADRON	2011	25	f
+107	413	BONACIC	2011	42	f
+108	414	YOUNG	2011	57	f
+109	415	O'MARA	2011	53	f
+110	416	PARKER	2011	21	f
+111	417	ROBACH	2011	56	f
+112	418	FARLEY	2011	44	f
+113	419	LAVALLE	2011	1	f
+114	420	KRUGER	2011	27	f
+115	421	DIAZ	2011	32	f
+116	422	GOLDEN	2011	22	f
+117	423	RITCHIE	2011	48	f
+118	424	HANNON	2011	6	f
+119	425	FUSCHILLO	2011	8	f
+120	426	DILAN	2011	17	f
+121	427	GALLIVAN	2011	59	f
+122	428	PERALTA	2011	13	f
+123	429	KENNEDY	2011	58	f
+124	430	SKELOS	2011	9	f
+125	369	SAMPSON	2013	19	f
+126	370	CARLUCCI	2013	38	f
+127	371	SEWARD	2013	51	f
+128	431	TKACZYK	2013	46	f
+129	401	KRUEGER	2013	28	f
+130	374	LARKIN	2013	39	f
+131	375	PERKINS	2013	30	f
+132	376	DEFRANCISCO	2013	50	f
+133	377	RIVERA	2013	33	f
+134	432	SANDERS	2013	10	f
+135	379	LITTLE	2013	45	f
+136	380	HASSELL-THOMPSON	2013	36	f
+137	426	DILAN	2013	18	f
+138	383	GIANARIS	2013	12	f
+139	384	ADDABBO	2013	15	f
+140	385	ESPAILLAT	2013	31	f
+141	433	BOYLE	2013	4	f
+142	373	SERRANO	2013	29	f
+143	434	LATIMER	2013	37	f
+144	435	MARCHIONE	2013	43	f
+145	390	KLEIN	2013	34	f
+146	429	KENNEDY	2013	63	f
+147	391	AVELLA	2013	11	f
+148	436	O'BRIEN	2013	55	f
+149	393	GRIFFO	2013	47	f
+150	394	NOZZOLIO	2013	54	f
+151	418	FARLEY	2013	49	f
+152	396	STEWART-COUSINS	2013	35	f
+153	397	MARTINS	2013	7	f
+154	398	GRISANTI	2013	60	f
+155	399	FLANAGAN	2013	2	f
+156	400	STAVISKY	2013	16	f
+157	412	SQUADRON	2013	26	f
+158	437	GIPSON	2013	41	f
+159	403	SAVINO	2013	23	f
+160	404	ZELDIN	2013	3	f
+161	405	SMITH	2013	14	f
+162	406	RANZENHOFER	2013	61	f
+163	407	MARCELLINO	2013	5	f
+164	408	BALL	2013	40	f
+165	409	LANZA	2013	24	f
+166	410	LIBOUS	2013	52	f
+167	411	MAZIARZ	2013	62	f
+168	381	MONTGOMERY	2013	25	f
+169	413	BONACIC	2013	42	f
+170	414	YOUNG	2013	57	f
+171	395	VALESKY	2013	53	f
+172	416	PARKER	2013	21	f
+173	417	ROBACH	2013	56	f
+174	372	BRESLIN	2013	44	f
+175	419	LAVALLE	2013	1	f
+176	438	HOYLMAN	2013	27	f
+177	421	DIAZ	2013	32	f
+178	422	GOLDEN	2013	22	f
+179	423	RITCHIE	2013	48	f
+180	424	HANNON	2013	6	f
+181	439	FELDER	2013	17	f
+182	427	GALLIVAN	2013	59	f
+183	415	O'MARA	2013	58	f
+184	430	SKELOS	2013	9	f
+185	425	FUSCHILLO	2013	8	f
+186	382	ADAMS	2013	20	f
+187	428	PERALTA	2013	13	f
+188	454	MONSERRATE	2009	13	f
+189	455	STOROBIN	2011	27	f
+190	463	ALESSI	2009	1	f
+191	536	ARROYO	2009	84	f
+192	518	KELLNER	2009	65	f
+193	508	BOYLAND	2009	55	f
+194	603	GIANARIS	2009	36	f
+195	543	BRODSKY	2009	92	f
+196	571	STIRPE	2009	121	f
+197	479	HOOPER	2009	18	f
+198	544	SPANO	2009	93	f
+199	495	JACOBS	2009	42	f
+200	553	MOLINARO	2009	103	f
+201	513	HYER-SPENCER	2009	60	f
+202	574	BARCLAY	2009	124	f
+203	511	PERRY	2009	58	f
+204	537	CRESPO	2009	85	f
+205	510	JEFFRIES	2009	57	f
+206	599	GIGLIO	2009	149	f
+207	456	TITUS	2009	31	f
+211	459	DENDEKKER	2009	34	f
+212	520	ROSENTHAL	2009	67	f
+213	477	SCHIMEL	2009	16	f
+214	526	KAVANAGH	2009	74	f
+215	473	SALADINO	2009	12	f
+216	481	WEISENBERG	2009	20	f
+217	535	HEASTIE	2009	83	f
+218	516	CUSICK	2009	63	f
+219	569	CHRISTENSEN	2009	119	f
+220	525	BING	2009	73	f
+221	579	KOLB	2009	129	f
+222	533	DINOWITZ	2009	81	f
+223	472	SWEENEY	2009	11	f
+224	524	FARRELL	2009	71	f
+225	457	COOK	2009	32	f
+226	484	WEPRIN	2009	24	f
+230	517	SILVER	2009	64	f
+231	559	REILLY	2009	109	f
+232	512	MAISEL	2009	59	f
+233	499	BROOK-KRASNY	2009	46	f
+234	578	OAKS	2009	128	f
+235	471	CONTE	2009	10	f
+236	505	MILLMAN	2009	52	f
+237	500	COLTON	2009	47	f
+238	507	TOWNS	2009	54	f
+239	469	FITZPATRICK	2009	7	f
+241	519	GLICK	2009	66	f
+242	501	HIKIND	2009	48	f
+243	458	CLARK	2009	33	f
+244	589	HAWLEY	2009	139	f
+245	540	PAULIN	2009	88	f
+246	550	SKARTADOS	2009	100	f
+247	573	FINCH	2009	123	f
+248	487	MAYERSOHN	2009	27	f
+249	521	POWELL	2009	68	f
+250	482	ALFANO	2009	21	f
+251	465	MURRAY	2009	3	f
+252	555	AMEDORE	2009	105	f
+253	467	FIELDS	2009	5	f
+255	462	RAIA	2009	9	f
+256	460	AUBRY	2009	35	f
+257	597	BURLING	2009	147	f
+258	593	GABRYSZAK	2009	143	f
+259	529	GIBSON	2009	77	f
+260	556	CANESTRARI	2009	106	f
+263	489	SCARBOROUGH	2009	29	f
+264	575	LIFTON	2009	125	f
+265	567	BUTLER	2009	117	f
+266	480	MCDONOUGH	2009	19	f
+267	587	O'MARA	2009	137	f
+268	590	SCHIMMINGER	2009	140	f
+269	478	MCKEVITT	2009	17	f
+270	538	CASTRO	2009	86	f
+271	565	TOWNSEND	2009	115	f
+272	490	MARKEY	2009	30	f
+273	464	THIELE	2009	2	f
+274	497	BRENNAN	2009	44	f
+275	581	JOHN	2009	131	f
+276	483	PHEFFER	2009	23	f
+277	596	QUINN	2009	146	f
+278	585	KOON	2009	135	f
+279	583	GANTT	2009	133	f
+280	534	BENEDETTO	2009	82	f
+281	588	DELMONTE	2009	138	f
+282	562	JORDAN	2009	112	f
+283	547	CALHOUN	2009	96	f
+284	563	SAYWARD	2009	113	f
+285	592	CORWIN	2009	142	f
+286	584	REILICH	2009	134	f
+287	461	MENG	2009	22	f
+288	498	CYMBROWITZ	2009	45	f
+289	493	BARRON	2009	40	f
+290	601	BALL	2009	99	f
+291	514	TITONE	2009	61	f
+292	576	LUPARDO	2009	126	f
+293	595	SCHROEDER	2009	145	f
+295	548	RABBITT	2009	97	f
+296	503	LENTOL	2009	50	f
+297	474	LAVINE	2009	13	f
+298	509	ROBINSON	2009	56	f
+299	486	CARROZZA	2009	26	f
+300	568	RUSSELL	2009	118	f
+301	539	PRETLOW	2009	87	f
+302	604	LATIMER	2009	91	f
+303	522	O'DONNELL	2009	69	f
+304	580	ERRIGO	2009	130	f
+305	488	HEVESI	2009	28	f
+306	591	PEOPLES-STOKES	2009	141	f
+307	570	MAGNARELLI	2009	120	f
+308	475	BARRA	2009	14	f
+309	560	TEDISCO	2009	110	f
+310	476	MONTESANO	2009	15	f
+311	485	LANCMAN	2009	25	f
+312	602	ESPAILLAT	2009	72	f
+262	577	LOPEZ P	2009	127	f
+227	492	MILLER M	2009	38	f
+228	552	MILLER J	2009	102	f
+208	528	RIVERA P	2009	76	f
+209	530	RIVERA J	2009	78	f
+210	532	RIVERA N	2009	80	f
+240	644	BRADLEY	2009	89	f
+254	645	EDDINGTON	2009	3	f
+294	646	WRIGHT	2009	70	f
+313	582	MORELLE	2009	132	f
+315	496	CAMARA	2009	43	f
+317	549	GUNTHER	2009	98	f
+319	515	TOBACCO	2009	62	f
+321	527	GOTTFRIED	2009	75	f
+323	466	ENGLEBRIGHT	2009	4	f
+325	557	CROUCH	2009	107	f
+327	470	BOYLE	2009	8	f
+329	600	PARMENT	2009	150	f
+331	504	ORTIZ	2009	51	f
+333	494	WEINSTEIN	2009	41	f
+335	531	BENJAMIN	2009	79	f
+338	566	DESTITO	2009	116	f
+339	468	RAMOS	2009	6	f
+340	586	BACALLES	2009	136	f
+342	554	MCENENY	2009	104	f
+344	594	HOYT	2009	144	f
+316	551	CAHILL	2009	101	f
+318	546	JAFFEE	2009	95	f
+320	545	ZEBROWSKI	2009	94	f
+322	541	CASTELLI	2009	89	f
+324	491	NOLAN	2009	37	f
+326	564	DUPREY	2009	114	f
+328	558	GORDON	2009	108	f
+330	572	SCOZZAFAVA	2009	122	f
+337	621	GALEF	2009	90	f
+341	502	ABBATE	2009	49	f
+343	598	HAYES	2009	148	f
+345	561	MAGEE	2009	111	f
+261	506	LOPEZ V	2009	53	f
+332	643	PERALTA	2009	39	f
+334	648	SEMINERIO	2009	38	f
+314	647	WALKER	2009	15	f
+346	650	DIAZ	2009	85	f
+347	536	ARROYO	2011	84	f
+348	518	KELLNER	2011	65	f
+349	508	BOYLAND	2011	55	f
+350	625	BARRETT	2011	103	f
+351	627	TENNEY	2011	115	f
+352	642	GOODELL	2011	150	f
+353	479	HOOPER	2011	18	f
+355	495	JACOBS	2011	42	f
+357	632	HANNA	2011	130	f
+358	574	BARCLAY	2011	124	f
+359	537	CRESPO	2011	85	f
+360	510	JEFFRIES	2011	57	f
+361	511	PERRY	2011	58	f
+362	599	GIGLIO	2011	149	f
+363	456	TITUS	2011	31	f
+364	607	CURRAN	2011	14	f
+365	605	LOSQUADRO	2011	1	f
+366	459	DENDEKKER	2011	34	f
+367	526	KAVANAGH	2011	74	f
+368	477	SCHIMEL	2011	16	f
+369	520	ROSENTHAL	2011	67	f
+370	473	SALADINO	2011	12	f
+371	481	WEISENBERG	2011	20	f
+372	535	HEASTIE	2011	83	f
+373	516	CUSICK	2011	63	f
+374	626	MCLAUGHLIN	2011	108	f
+376	635	PALMESANO	2011	136	f
+377	579	KOLB	2011	129	f
+378	638	RYAN	2011	144	f
+379	533	DINOWITZ	2011	81	f
+380	472	SWEENEY	2011	11	f
+381	524	FARRELL	2011	71	f
+382	457	COOK	2011	32	f
+383	517	SILVER	2011	64	f
+384	484	WEPRIN	2011	24	f
+385	628	BRINDISI	2011	116	f
+386	559	REILLY	2011	109	f
+387	512	MAISEL	2011	59	f
+388	499	BROOK-KRASNY	2011	46	f
+389	614	ESPINAL	2011	54	f
+390	613	MOYA	2011	39	f
+391	578	OAKS	2011	128	f
+392	471	CONTE	2011	10	f
+393	505	MILLMAN	2011	52	f
+394	500	COLTON	2011	47	f
+396	469	FITZPATRICK	2011	7	f
+397	616	RODRIGUEZ	2011	68	f
+398	519	GLICK	2011	66	f
+399	501	HIKIND	2011	48	f
+400	458	CLARK	2011	33	f
+401	550	SKARTADOS	2011	100	f
+402	633	BRONSON	2011	131	f
+403	540	PAULIN	2011	88	f
+404	589	HAWLEY	2011	139	f
+405	573	FINCH	2011	123	f
+407	637	CERETTO	2011	138	f
+408	631	BLANKENBUSH	2011	122	f
+409	641	WALTER	2011	148	f
+410	465	MURRAY	2011	3	f
+411	555	AMEDORE	2011	105	f
+412	624	KATZ	2011	99	f
+413	462	RAIA	2011	9	f
+414	636	FRIEND	2011	137	f
+415	460	AUBRY	2011	35	f
+416	617	LINARES	2011	72	f
+417	610	BRAUNSTEIN	2011	26	f
+418	597	BURLING	2011	147	f
+419	529	GIBSON	2011	77	f
+420	593	GABRYSZAK	2011	143	f
+421	609	GOLDFEDER	2011	23	f
+422	556	CANESTRARI	2011	106	f
+423	575	LIFTON	2011	125	f
+424	489	SCARBOROUGH	2011	29	f
+425	612	SIMOTAS	2011	36	f
+426	567	BUTLER	2011	117	f
+427	480	MCDONOUGH	2011	19	f
+428	590	SCHIMMINGER	2011	140	f
+429	478	MCKEVITT	2011	17	f
+430	538	CASTRO	2011	86	f
+431	618	QUART	2011	73	f
+432	639	KEARNS	2011	145	f
+433	490	MARKEY	2011	30	f
+434	464	THIELE	2011	2	f
+435	623	MAYER	2011	93	f
+436	497	BRENNAN	2011	44	f
+438	583	GANTT	2011	133	f
+439	534	BENEDETTO	2011	82	f
+440	562	JORDAN	2011	112	f
+441	563	SAYWARD	2011	113	f
+442	547	CALHOUN	2011	96	f
+443	592	CORWIN	2011	142	f
+444	584	REILICH	2011	134	f
+445	461	MENG	2011	22	f
+446	493	BARRON	2011	40	f
+447	498	CYMBROWITZ	2011	45	f
+448	514	TITONE	2011	61	f
+449	576	LUPARDO	2011	126	f
+452	634	JOHNS	2011	135	f
+453	503	LENTOL	2011	50	f
+454	548	RABBITT	2011	97	f
+455	474	LAVINE	2011	13	f
+456	509	ROBINSON	2011	56	f
+457	629	ROBERTS	2011	119	f
+458	615	MALLIOTAKIS	2011	60	f
+459	568	RUSSELL	2011	118	f
+460	539	PRETLOW	2011	87	f
+461	604	LATIMER	2011	91	f
+462	622	ABINANTI	2011	92	f
+463	522	O'DONNELL	2011	69	f
+464	488	HEVESI	2011	28	f
+465	591	PEOPLES-STOKES	2011	141	f
+466	570	MAGNARELLI	2011	120	f
+467	560	TEDISCO	2011	110	f
+468	485	LANCMAN	2011	25	f
+469	476	MONTESANO	2011	15	f
+470	582	MORELLE	2011	132	f
+471	496	CAMARA	2011	43	f
+472	551	CAHILL	2011	101	f
+473	549	GUNTHER	2011	98	f
+474	546	JAFFEE	2011	95	f
+475	515	TOBACCO	2011	62	f
+476	527	GOTTFRIED	2011	75	f
+477	545	ZEBROWSKI	2011	94	f
+478	466	ENGLEBRIGHT	2011	4	f
+479	541	CASTELLI	2011	89	f
+480	491	NOLAN	2011	37	f
+481	564	DUPREY	2011	114	f
+482	557	CROUCH	2011	107	f
+375	525	BING	2011	73	f
+450	646	WRIGHT	2011	70	f
+395	507	TOWNS	2011	54	f
+406	487	MAYERSOHN	2011	27	f
+356	553	MOLINARO	2011	103	f
+437	483	PHEFFER	2011	23	f
+451	595	SCHROEDER	2011	145	f
+354	544	SPANO	2011	93	f
+483	470	BOYLE	2011	8	f
+484	611	SIMANOWITZ	2011	27	f
+485	504	ORTIZ	2011	51	f
+486	640	SMARDZ	2011	146	f
+487	494	WEINSTEIN	2011	41	f
+489	621	GALEF	2011	90	f
+490	468	RAMOS	2011	6	f
+491	619	STEVENSON	2011	79	f
+492	502	ABBATE	2011	49	f
+494	554	MCENENY	2011	104	f
+496	561	MAGEE	2011	111	f
+497	608	RA	2011	21	f
+498	506	LOPEZ V	2011	53	f
+499	577	LOPEZ P	2011	127	f
+500	492	MILLER M	2011	38	f
+501	630	MILLER D	2011	121	f
+502	552	MILLER J	2011	102	f
+503	528	RIVERA P	2011	76	f
+504	532	RIVERA N	2011	80	f
+505	530	RIVERA J	2011	78	f
+506	652	KIRWAN	2011	100	f
+488	566	DESTITO	2011	116	f
+493	598	HAYES	2011	148	f
+495	594	HOYT	2011	144	f
+507	528	RIVERA	2013	76	f
+508	492	MILLER	2013	38	f
+509	502	ABBATE	2013	49	f
+510	622	ABINANTI	2013	92	f
+511	536	ARROYO	2013	84	f
+512	460	AUBRY	2013	35	f
+513	574	BARCLAY	2013	124	f
+514	625	BARRETT	2013	103	f
+515	493	BARRON	2013	40	f
+516	534	BENEDETTO	2013	82	f
+517	631	BLANKENBUSH	2013	122	f
+518	508	BOYLAND	2013	55	f
+519	610	BRAUNSTEIN	2013	26	f
+520	497	BRENNAN	2013	44	f
+521	628	BRINDISI	2013	116	f
+522	633	BRONSON	2013	131	f
+523	499	BROOK-KRASNY	2013	46	f
+524	567	BUTLER	2013	117	f
+525	551	CAHILL	2013	101	f
+526	496	CAMARA	2013	43	f
+527	538	CASTRO	2013	86	f
+528	637	CERETTO	2013	138	f
+529	458	CLARK	2013	33	f
+530	500	COLTON	2013	47	f
+531	457	COOK	2013	32	f
+532	592	CORWIN	2013	142	f
+533	537	CRESPO	2013	85	f
+534	557	CROUCH	2013	107	f
+535	607	CURRAN	2013	14	f
+536	516	CUSICK	2013	63	f
+537	498	CYMBROWITZ	2013	45	f
+538	459	DENDEKKER	2013	34	f
+539	533	DINOWITZ	2013	81	f
+540	564	DUPREY	2013	114	f
+541	466	ENGLEBRIGHT	2013	4	f
+542	614	ESPINAL	2013	54	f
+543	524	FARRELL	2013	71	f
+544	573	FINCH	2013	123	f
+545	469	FITZPATRICK	2013	7	f
+546	636	FRIEND	2013	137	f
+547	593	GABRYSZAK	2013	143	f
+548	621	GALEF	2013	90	f
+549	583	GANTT	2013	133	f
+550	529	GIBSON	2013	77	f
+551	599	GIGLIO	2013	149	f
+552	620	GJONAJ	2013	80	f
+553	519	GLICK	2013	66	f
+554	609	GOLDFEDER	2013	23	f
+555	642	GOODELL	2013	150	f
+556	527	GOTTFRIED	2013	75	f
+558	549	GUNTHER	2013	98	f
+559	589	HAWLEY	2013	139	f
+560	535	HEASTIE	2013	83	f
+561	488	HEVESI	2013	28	f
+562	501	HIKIND	2013	48	f
+563	479	HOOPER	2013	18	f
+564	495	JACOBS	2013	42	f
+565	546	JAFFEE	2013	95	f
+566	634	JOHNS	2013	135	f
+567	562	JORDAN	2013	112	f
+568	624	KATZ	2013	99	f
+569	526	KAVANAGH	2013	74	f
+570	639	KEARNS	2013	145	f
+571	518	KELLNER	2013	65	f
+572	579	KOLB	2013	129	f
+573	474	LAVINE	2013	13	f
+574	503	LENTOL	2013	50	f
+575	575	LIFTON	2013	125	f
+576	605	LOSQUADRO	2013	1	f
+577	576	LUPARDO	2013	126	f
+578	561	MAGEE	2013	111	f
+579	570	MAGNARELLI	2013	120	f
+580	512	MAISEL	2013	59	f
+581	615	MALLIOTAKIS	2013	60	f
+582	490	MARKEY	2013	30	f
+583	623	MAYER	2013	93	f
+584	480	MCDONOUGH	2013	19	f
+585	478	MCKEVITT	2013	17	f
+586	626	MCLAUGHLIN	2013	108	f
+587	505	MILLMAN	2013	52	f
+588	476	MONTESANO	2013	15	f
+589	582	MORELLE	2013	132	f
+590	613	MOYA	2013	39	f
+591	491	NOLAN	2013	37	f
+592	522	O'DONNELL	2013	69	f
+593	578	OAKS	2013	128	f
+594	504	ORTIZ	2013	51	f
+595	635	PALMESANO	2013	136	f
+596	540	PAULIN	2013	88	f
+597	591	PEOPLES-STOKES	2013	141	f
+598	511	PERRY	2013	58	f
+599	539	PRETLOW	2013	87	f
+600	618	QUART	2013	73	f
+601	608	RA	2013	21	f
+602	548	RABBITT	2013	97	f
+603	462	RAIA	2013	9	f
+604	468	RAMOS	2013	6	f
+605	584	REILICH	2013	134	f
+606	629	ROBERTS	2013	119	f
+607	509	ROBINSON	2013	56	f
+608	616	RODRIGUEZ	2013	68	f
+609	520	ROSENTHAL	2013	67	f
+610	568	RUSSELL	2013	118	f
+611	638	RYAN	2013	144	f
+612	473	SALADINO	2013	12	f
+613	489	SCARBOROUGH	2013	29	f
+614	477	SCHIMEL	2013	16	f
+615	590	SCHIMMINGER	2013	140	f
+616	517	SILVER	2013	64	f
+617	611	SIMANOWITZ	2013	27	f
+618	612	SIMOTAS	2013	36	f
+619	550	SKARTADOS	2013	100	f
+620	619	STEVENSON	2013	79	f
+622	472	SWEENEY	2013	11	f
+623	560	TEDISCO	2013	110	f
+624	627	TENNEY	2013	115	f
+625	464	THIELE	2013	2	f
+626	514	TITONE	2013	61	f
+627	456	TITUS	2013	31	f
+628	641	WALTER	2013	148	f
+629	494	WEINSTEIN	2013	41	f
+630	481	WEISENBERG	2013	20	f
+631	484	WEPRIN	2013	24	f
+633	545	ZEBROWSKI	2013	94	f
+634	653	BORELLI	2013	62	f
+635	654	BUCHWALD	2013	93	f
+636	655	DAVILA	2013	53	f
+637	656	DIPIETRO	2013	147	f
+638	657	FAHY	2013	109	f
+639	658	GARBARINO	2013	7	f
+621	571	STIRPE	2013	127	f
+641	660	LALOR	2013	105	f
+642	661	LUPINACCI	2013	10	f
+643	662	MCDONALD	2013	108	f
+644	663	MOSLEY	2013	57	f
+645	664	NOJAY	2013	133	f
+646	665	OTIS	2013	91	f
+647	666	PALUMBO	2013	2	f
+648	667	PICHARDO	2013	86	f
+649	668	ROSA	2013	72	f
+650	669	ROZIC	2013	25	f
+651	670	SANTABARBARA	2013	111	f
+652	671	SEPULVEDA	2013	87	f
+653	672	SKOUFIS	2013	99	f
+654	673	SOLAGES	2013	22	f
+655	674	STEC	2013	114	f
+656	675	STECK	2013	110	f
+640	659	KIM	2013	40	f
+632	646	WRIGHT	2013	70	f
+557	651	GRAF	2013	5	f
+657	506	LOPEZ V	2013	53	f
+658	577	LOPEZ P	2013	127	f
+659	651	GRAF	2011	5	f
+662	552	MILLER	2009	102	t
+661	591	PEOPLES	2009	141	t
+663	551	CAHILL	2007	101	f
+664	676	GREENE	2009	0	f
+665	484	WEPRIN D	2009	24	t
+666	677	HENNESSEY	2013	3	f
+667	677	HENNESSY	2013	3	t
+668	380	HASSEL_THOMPSO	2009	36	t
+669	380	HASSELL-THOMPSO	2011	36	t
+670	380	HASSELL-THOMPSO	2013	36	t
+671	386	JOHNSON	2009	4	t
+\.
+
+
+--
 -- Name: session_member_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('session_member_id_seq', 670, true);
+SELECT pg_catalog.setval('session_member_id_seq', 671, true);
 
 
 --
