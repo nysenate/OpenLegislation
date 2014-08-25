@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -49,5 +51,19 @@ public class DaybreakProcessServiceTests extends BaseTests {
     @Test
     public void setPending(){
         daybreakDao.setPendingProcessing(testReportdate);
+    }
+
+    @Test
+    public void getReportDate(){
+        logger.info("Current report date: " + daybreakDao.getCurrentReportDate());
+        logger.info("Current report date for day of test report " + testReportdate + ": "
+                       + daybreakDao.getPreviousCurrentReportDate(testReportdate));
+        try {
+            logger.info("Current report date for day before test report " + testReportdate + ": "
+                    + daybreakDao.getPreviousCurrentReportDate(testReportdate.minusDays(1)));
+        }
+        catch(EmptyResultDataAccessException ex){
+            logger.info("No report found before " + testReportdate);
+        }
     }
 }

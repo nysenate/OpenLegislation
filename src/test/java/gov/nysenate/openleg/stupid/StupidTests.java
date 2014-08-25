@@ -1,7 +1,8 @@
 package gov.nysenate.openleg.stupid;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+import org.apache.commons.lang3.StringUtils;
+
 
 /**
  * Created by kinbote on 7/3/14.

@@ -211,7 +211,8 @@ public enum SqlDaybreakQuery implements BasicSqlQuery
     /** --- Report --- */
 
     SELECT_REPORTS(
-        "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_REPORT
+        "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_REPORT + "\n" +
+        "WHERE report_date <= :reportDate "
     ),
     SELECT_UNCHECKED_REPORTS(
         "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_REPORT + "\n" +

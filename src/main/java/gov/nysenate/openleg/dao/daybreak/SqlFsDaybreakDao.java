@@ -210,6 +210,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return reportPageFileEntries;
     }
 
+    /** {@InheritDoc } */
     @Override
     public DaybreakBill getDaybreakBill(DaybreakBillId daybreakBillId)  throws DataAccessException{
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
@@ -220,11 +221,19 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return daybreakBill;
     }
 
+    /** {@InheritDoc } */
     @Override
     public DaybreakBill getCurrentDaybreakBill(BaseBillId baseBillId) throws DataAccessException {
-        return getDaybreakBill(new DaybreakBillId(baseBillId, getCurrentReportDate()));
+        return getDaybreakBillAtDate(baseBillId, LocalDate.now());
     }
 
+    /** {@InheritDoc } */
+    @Override
+    public DaybreakBill getDaybreakBillAtDate(BaseBillId baseBillId, LocalDate referenceDate) {
+        return getDaybreakBill(new DaybreakBillId(baseBillId, getPreviousCurrentReportDate(referenceDate)));
+    }
+
+    /** {@InheritDoc } */
     @Override
     public List<DaybreakBill> getDaybreakBills(LocalDate reportDate)  throws DataAccessException{
         MapSqlParameterSource params = getReportDateParams(reportDate);
@@ -235,30 +244,41 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return daybreakBills;
     }
 
+    /** {@InheritDoc } */
     @Override
     public List<DaybreakBill> getCurrentDaybreakBills() throws DataAccessException {
         return getDaybreakBills(getCurrentReportDate());
     }
 
+    /** {@InheritDoc } */
     @Override
     public LocalDate getCurrentReportDate() throws DataAccessException {
-        return jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_REPORTS.getSql(
-                        schema(),
-                        new OrderBy("report_date", SortOrder.DESC),
-                        new LimitOffset(1)),
-                new MapSqlParameterSource(),
-                new DaybreakReportDateRowMapper()
-        );
+        return getPreviousCurrentReportDate(LocalDate.now());
     }
 
+    /** {@InheritDoc } */
     @Override
     public LocalDate getCurrentUncheckedReportDate() throws DataAccessException {
+        MapSqlParameterSource params = getReportDateParams(LocalDate.now());
         return jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_UNCHECKED_REPORTS.getSql(
                                                                     schema(),
                                                                     new OrderBy("report_date", SortOrder.DESC),
                                                                     new LimitOffset(1)),
-                                        new MapSqlParameterSource(),
+                                        params,
                                         new DaybreakReportDateRowMapper()
+        );
+    }
+
+    /** {@InheritDoc } */
+    @Override
+    public LocalDate getPreviousCurrentReportDate(LocalDate referenceDate) {
+        MapSqlParameterSource params = getReportDateParams(referenceDate);
+        return jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_REPORTS.getSql(
+                        schema(),
+                        new OrderBy("report_date", SortOrder.DESC),
+                        new LimitOffset(1)),
+                params,
+                new DaybreakReportDateRowMapper()
         );
     }
 
@@ -314,6 +334,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PROCESSED.getSql(schema()), params);
     }
 
+    /** {@InheritDoc } */
     @Override
     public void setProcessed(LocalDate reportDate) {
         MapSqlParameterSource params = getDaybreakReportParams(reportDate, true, false);
@@ -329,6 +350,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
+    /** {@InheritDoc } */
     @Override
     public void updateDaybreakBill(DaybreakBill daybreakBill) {
         // Update the bill table
@@ -343,6 +365,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         updateDaybreakBillMultiSponsors(daybreakBill.getDaybreakBillId(), daybreakBill.getMultiSponsors());
     }
 
+    /** {@InheritDoc } */
     @Override
     public void updateDaybreakReport(LocalDate reportDate) {
         MapSqlParameterSource params = getDaybreakReportParams(reportDate, false, false);
@@ -351,6 +374,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
+    /** {@InheritDoc } */
     @Override
     public void updateDaybreakReportSetChecked(LocalDate reportDate, boolean checked) {
         MapSqlParameterSource params = getDaybreakReportParams(reportDate, true, true);

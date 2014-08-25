@@ -103,6 +103,14 @@ public interface DaybreakDao
     public DaybreakBill getCurrentDaybreakBill(BaseBillId baseBillId) throws DataAccessException;
 
     /**
+     * Gets the current daybreak bill from before the reference date for the specified base bill
+     * @param baseBillId
+     * @param referenceDate
+     * @return
+     */
+    public DaybreakBill getDaybreakBillAtDate(BaseBillId baseBillId, LocalDate referenceDate);
+
+    /**
      * Retrieves all Daybreak Bills from the daybreak report on the given date
      * @param reportDate
      * @return
@@ -130,6 +138,13 @@ public interface DaybreakDao
      * @throws DataAccessException
      */
     public LocalDate getCurrentUncheckedReportDate() throws DataAccessException;
+
+    /**
+     * Returns the latest report date that is before or matching the reference date
+     * @param referenceDate
+     * @return
+     */
+    public LocalDate getPreviousCurrentReportDate(LocalDate referenceDate);
 
     /** --- Update/Insert Methods --- */
 
