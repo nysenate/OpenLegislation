@@ -124,7 +124,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             billIngestCache.set(baseBill.getBaseBillId(), baseBill);
         }
 
-        billIngestCache.getCurrentCache().parallelStream()
+        billIngestCache.getCurrentCache().stream()
             .forEach(bill -> {
                 logger.trace("Saving bill " + bill);
                 // TODO: Move this uni-bill sync somewhere else, like the dao?
