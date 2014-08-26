@@ -5,6 +5,7 @@ import com.google.common.collect.LinkedListMultimap;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +49,10 @@ public class SpotCheckObservation<ContentKey>
         return !mismatches.isEmpty();
     }
 
+    public boolean hasMismatch(SpotCheckMismatchType type) {
+        return mismatches.containsKey(type);
+    }
+
     public void addMismatch(SpotCheckMismatch mismatch) {
         if (mismatch != null) {
             mismatches.put(mismatch.getMismatchType(), mismatch);
@@ -71,6 +76,20 @@ public class SpotCheckObservation<ContentKey>
         if (mismatches != null) {
             return mismatches.values().stream()
                 .collect(Collectors.groupingBy(SpotCheckMismatch::getStatus, Collectors.counting()));
+        }
+        else {
+            throw new IllegalStateException("Collection of mismatches is null");
+        }
+    }
+
+    /**
+     * Returns the set of mismatch types that there are mismatches for.
+     *
+     * @return Set<SpotCheckMismatchType>
+     */
+    public Set<SpotCheckMismatchType> getMismatchTypes() {
+        if (mismatches != null) {
+            return mismatches.keySet();
         }
         else {
             throw new IllegalStateException("Collection of mismatches is null");
@@ -111,5 +130,7 @@ public class SpotCheckObservation<ContentKey>
         this.mismatches = mismatches;
     }
 
-
+    public LinkedListMultimap<SpotCheckMismatchType, SpotCheckPriorMismatch> getPriorMismatches() {
+        return priorMismatches;
+    }
 }

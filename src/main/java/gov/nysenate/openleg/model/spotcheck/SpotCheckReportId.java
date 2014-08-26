@@ -17,6 +17,13 @@ public class SpotCheckReportId
         this.reportDateTime = reportDateTime;
     }
 
+    /** --- Overrides --- */
+
+    @Override
+    public String toString() {
+        return "SpotCheckReportId{" + "referenceType=" + referenceType + ", reportDateTime=" + reportDateTime + '}';
+    }
+
     /** --- Basic Getters --- */
 
     public SpotCheckRefType getReferenceType() {

@@ -20,6 +20,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Base class for SQL data access layer classes to inherit common functionality from.
@@ -82,14 +83,12 @@ public abstract class SqlBaseDao
         obj.setPublishedDateTime(getLocalDateTime(rs.getTimestamp("published_date_time")));
     }
 
-    /** --- Static Helper Methods --- */
-
     /**
      * Converts the output of hstore_to_array(column) to a mapping of the hstore key/val pairs.
      * For example if you have an hstore value 'a=>1, b=>2', to retrieve a Map {a=1, b=2} have the
      * sql query return hstore_to_array(column) and feed the result set to this method.
      */
-    public static Map<String, String> getHstore(ResultSet rs, String column) throws SQLException {
+    public static Map<String, String> getHstoreMap(ResultSet rs, String column) throws SQLException {
         String[] hstoreArr = (String[]) rs.getArray(column).getArray();
         Map<String, String> hstoreMap = new HashMap<>();
         String key = "";
@@ -102,6 +101,15 @@ public abstract class SqlBaseDao
             }
         }
         return hstoreMap;
+    }
+
+    /**
+     * Converts the given map into the hstore string format (i.e. 'key1=>val1, key2=>val2, etc')
+     */
+    public static String toHstoreString(Map<String, String> hstoreMap) {
+        return hstoreMap.entrySet().stream()
+            .map(kv -> kv.getKey() + "=>" + kv.getValue())
+            .collect(Collectors.joining(","));
     }
 
     /**

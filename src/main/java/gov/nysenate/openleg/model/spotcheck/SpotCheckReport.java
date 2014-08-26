@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.model.spotcheck;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,17 +19,22 @@ public class SpotCheckReport<ContentKey>
     protected SpotCheckReportId reportId;
 
     /** All observations associated with this report. */
-    protected Map<ContentKey, SpotCheckObservation<ContentKey>> observations;
+    protected Map<ContentKey, SpotCheckObservation<ContentKey>> observations = new HashMap<>();
+
+    /** All observations/mismatches that have been resolved since prior report of same type. */
 
     /** --- Constructors --- */
 
     public SpotCheckReport() {}
 
+    public SpotCheckReport(SpotCheckReportId reportId) {
+        this.reportId = reportId;
+    }
+
     /** --- Methods --- */
 
     /**
-     * Get the number of mismatches grouped by the mismatch status. This count is
-     * computed over all the observations contained in this report.
+     * Get the number of mismatches across all observations grouped by the mismatch status.
      *
      * @return Map<SpotCheckMismatchStatus, Long>
      */
@@ -50,6 +55,48 @@ public class SpotCheckReport<ContentKey>
             return counts;
         }
         throw new IllegalStateException("The observations on this report have not yet been set.");
+    }
+
+    /**
+     * Get the number of mismatches across all observations grouped by the mismatch type.
+     *
+     * @return Map<SpotCheckMismatchType, Integer>
+     */
+    public Map<SpotCheckMismatchType, Integer> getMismatchTypeCounts() {
+        if (observations != null) {
+            Map<SpotCheckMismatchType, Integer> counts = new HashMap<>();
+            for (SpotCheckObservation<ContentKey> obs : observations.values()) {
+                obs.getMismatchTypes().forEach(t -> {
+                    if (!counts.containsKey(t)) {
+                        counts.put(t, 0);
+                    }
+                    counts.put(t, counts.get(t) + 1);
+                });
+            }
+            return counts;
+        }
+        throw new IllegalStateException("The observations on this report have not yet been set.");
+    }
+
+    /**
+     * Add the observation to the map.
+     */
+    public void addObservation(SpotCheckObservation<ContentKey> observation) {
+        if (observation == null) {
+            throw new IllegalArgumentException("Supplied observation cannot be null");
+        }
+        this.observations.put(observation.getKey(), observation);
+
+    }
+
+    /**
+     * Add the collection of observations to the map.
+     */
+    public void addObservations(Collection<SpotCheckObservation<ContentKey>> observations) {
+        if (observations == null) {
+            throw new IllegalArgumentException("Supplied observation collection cannot be null");
+        }
+        observations.forEach(this::addObservation);
     }
 
     /** --- Delegates --- */

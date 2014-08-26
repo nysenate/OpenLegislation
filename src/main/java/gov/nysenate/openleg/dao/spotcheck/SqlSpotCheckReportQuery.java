@@ -29,10 +29,10 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "VALUES (:reportDateTime, :referenceType)"
     ),
     DELETE_REPORT(
-        "DELETE ${schema}." + SqlTable.SPOTCHECK_REPORT + "\n" + WHERE_REPORT_CLAUSE.sql
+        "DELETE FROM ${schema}." + SqlTable.SPOTCHECK_REPORT + "\n" + WHERE_REPORT_CLAUSE.sql
     ),
 
-    /** --- Observations --- */
+    /** --- Observations / Mismatches --- */
 
     SELECT_OBSERVATIONS(
         "SELECT * FROM ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + "\n" +
@@ -41,22 +41,50 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     INSERT_OBSERVATION_AND_RETURN_ID(
         "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + "\n" +
         "(report_id, reference_type, reference_active_date, key, observed_date_time)\n" +
-        "SELECT r.id, :referenceType, :referenceActiveDate, :key, :observedDateTime\n" +
-        "FROM (" + SELECT_REPORT_ID.sql + ") r" +
+        "SELECT r.id, :obsReferenceType, :referenceActiveDate, :key::hstore, :observedDateTime\n" +
+        "FROM (" + SELECT_REPORT_ID.sql + ") r\n" +
         "RETURNING id"
     ),
-
-    /** --- Mismatches --- */
-
-    SELECT_OBSERVATIONS_MISMATCHES(
-        "SELECT m.type, m.status, m.reference_data, m.observed_data, m.notes, \n" +
-        "       o.report_id, o.reference_type, o.reference_active_date, o.key, o.observed_date_time\n" +
-        "FROM ${schema}." + SqlTable.SPOTCHECK_MISMATCH + "m " +
-        "JOIN ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " o ON m.observation_id = o.id\n" +
-        "WHERE o.report_id IN (" + SELECT_REPORT_ID.sql + ")"
-    )
-
-    ;
+    OBS_MISMATCHES_SELECT_CLAUSE(
+        "SELECT m.type, m.status, m.reference_data, m.observed_data, m.notes,\n" +
+        "       o.report_id, o.reference_type, o.reference_active_date, o.key, o.observed_date_time, " +
+        "       r.report_date_time, r.reference_type AS report_reference_type\n"
+    ),
+    OBS_MISMATCHES_FROM_CLAUSE(
+        "FROM ${schema}." + SqlTable.SPOTCHECK_REPORT + " r\n" +
+        "JOIN ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " o ON o.report_id = r.id\n" +
+        "JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " m ON m.observation_id = o.id\n"
+    ),
+    SELECT_OBS_MISMATCHES_BY_REPORT(
+        // Have to use 'hstore_to_array' to parse the hstore key
+        "SELECT q.*, hstore_to_array(q.key) AS key_arr FROM (\n" +
+            // Select a specific report
+            "WITH report_obs AS (\n" +
+                OBS_MISMATCHES_SELECT_CLAUSE.sql + OBS_MISMATCHES_FROM_CLAUSE.sql +
+                "WHERE r.report_date_time = :reportDateTime AND r.reference_type = :referenceType\n" +
+            ")\n" +
+            "SELECT report_obs.*, true AS current FROM report_obs\n" +
+            // ..and also fetch mismatch records that have the same type but occurred on an earlier report
+            "UNION\n" +
+            OBS_MISMATCHES_SELECT_CLAUSE.sql + ", false AS current\n" +
+            "FROM report_obs\n" +
+            "JOIN ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " o ON report_obs.key = o.key " +
+            "   AND report_obs.reference_type = o.reference_type\n" +
+            "JOIN ${schema}." + SqlTable.SPOTCHECK_REPORT + " r ON o.report_id = r.id AND report_obs.report_id != r.id\n" +
+            "   AND r.report_date_time < report_obs.report_date_time\n" +
+            "JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " m ON report_obs.type = m.type\n" +
+            "   AND m.observation_id = o.id" +
+        ") q"
+    ),
+    SELECT_OBS_MISMATCHES_BY_TYPE(
+        OBS_MISMATCHES_SELECT_CLAUSE.sql + OBS_MISMATCHES_FROM_CLAUSE.sql +
+        "WHERE o.key = :key::hstore AND m.type = :type AND o.reference_type = :obsReferenceType"
+    ),
+    INSERT_MISMATCH(
+        "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_MISMATCH + "\n" +
+        "(observation_id, type, status, reference_data, observed_data, notes)\n" +
+        "VALUES (:observationId, :type, :status, :referenceData, :observedData, :notes)"
+    );
 
     private String sql;
 

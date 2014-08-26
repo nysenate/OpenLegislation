@@ -3,18 +3,31 @@ package gov.nysenate.openleg.model.spotcheck;
 import java.time.LocalDateTime;
 
 /**
- * A simple interface that identifies reference data that is compared against when
+ * A simple model that identifies reference data that is compared against when
  * performing spot checks.
  */
-public interface SpotCheckReferenceId
+public class SpotCheckReferenceId
 {
-    /**
-     * Indicate the type of reference that is being used when performing QA.
-     */
-    public SpotCheckRefType getRefType();
+    /** Indicate the type of reference that is being used when performing QA. */
+    protected SpotCheckRefType referenceType;
 
-    /**
-     * The date (and time) in which the reference data is valid from.
-     */
-    public LocalDateTime getRefActiveDate();
+    /** The date (and time) in which the reference data is valid from. */
+    protected LocalDateTime refActiveDateTime;
+
+    /** --- Constructors --- */
+
+    public SpotCheckReferenceId(SpotCheckRefType referenceType, LocalDateTime refActiveDateTime) {
+        this.referenceType = referenceType;
+        this.refActiveDateTime = refActiveDateTime;
+    }
+
+    /** --- Basic Getters --- */
+
+    public SpotCheckRefType getReferenceType() {
+        return referenceType;
+    }
+
+    public LocalDateTime getRefActiveDateTime() {
+        return refActiveDateTime;
+    }
 }

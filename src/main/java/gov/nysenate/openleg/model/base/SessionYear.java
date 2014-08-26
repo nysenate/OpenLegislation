@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ComparisonChain;
 
 import java.io.Serializable;
@@ -70,6 +71,7 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
     /**
      * Same as {@link #getYear()}
      */
+    @JsonIgnore
     public int getSessionStartYear() {
         return this.year;
     }
@@ -78,6 +80,7 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
      * The year when the current session will end.
      * Always the year after the starting year.
      */
+    @JsonIgnore
     public int getSessionEndYear() {
         return this.year + 1;
     }

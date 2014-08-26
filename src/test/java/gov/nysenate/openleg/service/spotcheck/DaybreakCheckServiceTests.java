@@ -1,25 +1,29 @@
 package gov.nysenate.openleg.service.spotcheck;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
-import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.dao.spotcheck.BaseBillIdSpotCheckReportDao;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAction;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.daybreak.DaybreakBill;
 import gov.nysenate.openleg.model.daybreak.DaybreakBillId;
-import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.service.bill.BillDataService;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -31,12 +35,17 @@ public class DaybreakCheckServiceTests extends BaseTests
     @Autowired
     SpotCheckService<BaseBillId, Bill, DaybreakBill> billSpotCheck;
 
+    @Autowired
+    DaybreakCheckReportService daybreakReport;
 
     @Autowired
     BillDataService billData;
 
     @Autowired
     DaybreakDao daybreakDao;
+
+    @Autowired
+    private BaseBillIdSpotCheckReportDao reportDao;
 
     @Test
     public void testAutowired() throws Exception {
@@ -45,27 +54,23 @@ public class DaybreakCheckServiceTests extends BaseTests
 
     @Test
     public void testCheck() throws Exception {
-//        DaybreakBill daybreakBill = new DaybreakBill();
-//        BaseBillId S1234 = new BaseBillId("S1234", 2013);
-//        daybreakBill.setBaseBillId(S1234);
-//        daybreakBill.setReportDate(LocalDate.now());
-//        daybreakBill.setActiveVersion(Version.DEFAULT);
-//        daybreakBill.setSponsor("PERKINS");
-//        daybreakBill.setCosponsors(Arrays.asList("HASSELL-THOMPSON", "KRUEGER", "SERRANO"));
-//        daybreakBill.setTitle("Creates the office of the taxpayer advocate");
-//        daybreakBill.setLawSection("Tax Law");
-//        daybreakBill.setLawCodeAndSummary("Add SS3014 & 3015, amd S170, Tax L Creates the office of the taxpayer advocate; directs such office be in the control of the department of taxation and finance; outlines functions and duties of such office; creates mandatory reporting to the governor and legislative leaders.");
-//        List<BillAction> actions = Arrays.asList(
-//            new BillAction(LocalDate.of(2013, 1, 9), "REFERRED TO INVESTIGATIONS AND GOVERNMENT OPERATIONS", Chamber.SENATE, 1, S1234),
-//            new BillAction(LocalDate.of(2014, 1, 8), "REFERRED TO INVESTIGATIONS AND GOVERNMENT OPERATIONS", Chamber.SENATE, 2, S1234));
+        List<BaseBillId> billIds = billData.getBillIds(SessionYear.current(), LimitOffset.FIFTY);
+        SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
+        report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, LocalDateTime.of(2014,8,25,12,0,0)));
+        Map<BaseBillId, SpotCheckObservation<BaseBillId>> obsMap = new HashMap<>();
+        for (BaseBillId billId : billIds) {
+            DaybreakBillId daybreakId = new DaybreakBillId(billId, LocalDate.of(2014, 8, 22));
+            DaybreakBill daybreakBill = daybreakDao.getDaybreakBill(daybreakId);
+            Bill bill = billData.getBill(billId);
+            SpotCheckObservation<BaseBillId> obs = billSpotCheck.check(bill, daybreakBill);
+            obsMap.put(obs.getKey(), obs);
+        }
+        report.setObservations(obsMap);
 
+//        report.setObservations();
+        reportDao.saveReport(report);
 
-        BaseBillId S1234 = new BaseBillId("A1234", 2013);
-        DaybreakBillId daybreakId = new DaybreakBillId(S1234, LocalDate.of(2014, 7, 18));
-        DaybreakBill daybreakBill = daybreakDao.getDaybreakBill(daybreakId);
-        Bill billS1234 = billData.getBill(S1234);
-        logger.info("{}", OutputUtils.toJson(billSpotCheck.check(billS1234, daybreakBill).getMismatches()));
-
+//        logger.info("{}", bill.getActiveAmendment().getCoSponsors());
     }
 
     @Test

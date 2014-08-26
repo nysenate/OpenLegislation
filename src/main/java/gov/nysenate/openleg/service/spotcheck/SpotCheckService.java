@@ -30,17 +30,17 @@ public interface SpotCheckService<ContentKey, ContentType, ReferenceType>
                                                   throws ReferenceDataNotFoundEx;
 
     /**
-     * Overload of {@link #check(Object)} with an option to specify the latest datetime for
-     * which reference data should be retrieved for. Since reference data can typically
-     * be stored as a snapshot, perform the check such that the reference data was active
-     * prior to the 'latestDateTime'
+     * Overload of {@link #check(Object)} with an option to specify the active date range in
+     * which reference data should be retrieved for. The latest reference data within that date range
+     * will be used, or a ReferenceDataNotFoundEx will be thrown if none exist.
      *
      * @param content ContentType - The content to check
-     * @param latestDateTime LocalDateTime - Reference data must be active before this datetime
+     * @param start LocalDateTime - Reference data must be active after/on this datetime
+     * @param end LocalDateTime - Reference data must be active before/on this datetime
      * @return SpotCheckObservation<ContentKey>
      * @throws ReferenceDataNotFoundEx
      */
-    public SpotCheckObservation<ContentKey> check(ContentType content, LocalDateTime latestDateTime)
+    public SpotCheckObservation<ContentKey> check(ContentType content, LocalDateTime start, LocalDateTime end)
                                                   throws ReferenceDataNotFoundEx;
 
     /**
@@ -49,7 +49,7 @@ public interface SpotCheckService<ContentKey, ContentType, ReferenceType>
      *
      * @param content ContentType - The content to check
      * @param reference ReferenceType - The reference content to use for comparison
-     * @return
+     * @return SpotCheckObservation<ContentKey>
      */
     public SpotCheckObservation<ContentKey> check(ContentType content, ReferenceType reference);
 }

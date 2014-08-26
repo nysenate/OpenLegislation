@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processor.daybreak;
 
-import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
 import gov.nysenate.openleg.model.daybreak.*;
 import org.slf4j.Logger;
@@ -10,12 +9,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -85,6 +80,7 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
         }
         executorService.shutdown();
         try {
+            // Allow maximum of 30 minutes before un-blocking
             executorService.awaitTermination(30, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             e.printStackTrace();
