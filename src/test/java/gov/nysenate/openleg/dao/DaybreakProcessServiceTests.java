@@ -24,7 +24,7 @@ public class DaybreakProcessServiceTests extends BaseTests {
     @Autowired
     private DaybreakDao daybreakDao;
 
-    private static final LocalDate testReportdate = LocalDate.of(2014, 7, 18);
+    private static final LocalDate testReportdate = LocalDate.of(2014, 8, 15);
 
     @Test
     public void stageDaybreakFileTest(){

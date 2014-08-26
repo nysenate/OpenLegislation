@@ -54,6 +54,20 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
         }
     }
 
+    /** @inheritDoc */
+    @Override
+    public void deleteVetoMessage(VetoId vetoId) {
+        MapSqlParameterSource params = getVetoIdParams(vetoId);
+        jdbcNamed.update(SqlVetoQuery.DELETE_VETO_MESSAGE.getSql(schema()), params);
+    }
+
+    /** @inheritDoc */
+    @Override
+    public void deleteBillVetoes(BaseBillId baseBillId) {
+        MapSqlParameterSource params = getBaseBillIdParams(baseBillId);
+        jdbcNamed.update(SqlVetoQuery.DELETE_BILL_VETOES.getSql(schema()), params);
+    }
+
     private class VetoRowMapper implements RowMapper<VetoMessage>
     {
         @Override

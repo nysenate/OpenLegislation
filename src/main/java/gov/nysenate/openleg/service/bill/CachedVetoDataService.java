@@ -86,4 +86,18 @@ public class CachedVetoDataService implements VetoDataService, CachingService
     public void updateVetoMessage(VetoMessage vetoMessage, SobiFragment sobiFragment) {
         vetoDao.updateVetoMessage(vetoMessage, sobiFragment);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    @CacheEvict(value = vetoDataCache, allEntries = true)
+    public void deleteVetoMessage(VetoId vetoId) {
+        vetoDao.deleteVetoMessage(vetoId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @CacheEvict(value = vetoDataCache, allEntries = true)
+    public void deleteBillVetoes(BaseBillId baseBillId) {
+        vetoDao.deleteBillVetoes(baseBillId);
+    }
 }

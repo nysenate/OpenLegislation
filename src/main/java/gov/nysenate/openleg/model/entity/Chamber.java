@@ -5,8 +5,18 @@ package gov.nysenate.openleg.model.entity;
  */
 public enum Chamber
 {
-    SENATE,
-    ASSEMBLY;
+    SENATE  ('S'),
+    ASSEMBLY('A');
+
+    private char abbreviation;
+
+    private Chamber(char abbreviation){
+        this.abbreviation = abbreviation;
+    }
+
+    public char getAbbreviation(){
+        return abbreviation;
+    }
 
     public String asSqlEnum() {
         return this.toString().toLowerCase();

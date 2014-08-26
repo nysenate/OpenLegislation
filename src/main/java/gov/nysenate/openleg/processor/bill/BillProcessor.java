@@ -113,7 +113,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     case SPONSOR_MEMO:
                     case RESOLUTION_TEXT:
                     case TEXT: applyText(data, specifiedAmendment, date, block.getType()); break;
-                    case VETO_APPROVE_MEMO: applyVetoMessageText(data, baseBill, date); break;
+                    case VETO_APPROVE_MEMO: applyVetoApprovalMessage(data, baseBill, date); break;
                     case VOTE_MEMO: applyVoteMemo(data, specifiedAmendment, date); break;
                     default: throw new ParseError("Invalid Line Code " + block.getType());
                 }
@@ -264,7 +264,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         specifiedAmendment.setCurrentCommittee(actionParser.getCurrentCommittee());
         baseBill.setPastCommittees(actionParser.getPastCommittees());
         actionParser.getPublishStatusMap().forEach(baseBill::updatePublishStatus);
-        actionParser.getSameAsMap().forEach((k,v) -> {
+        actionParser.getSameAsMap().forEach((k, v) -> {
             if (baseBill.hasAmendment(k)) {
                 baseBill.getAmendment(k).setSameAs(Sets.newHashSet(v));
             }
@@ -477,6 +477,25 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     }
 
     /**
+     * Parses a memo into either a veto or approval message
+     * @param data
+     * @param baseBill
+     * @param date
+     * @throws ParseError
+     */
+    private void applyVetoApprovalMessage(String data, Bill baseBill, LocalDateTime date) throws ParseError{
+        if(data.startsWith("00000.SO DOC APPR")) {       // Approval message header
+            applyApprovalMessageText(data, baseBill, date);
+        }
+        else if(data.startsWith("00000.SO DOC VETO")) {  // Veto message header
+            applyVetoMessageText(data, baseBill, date);
+        }
+        else{
+            throw new ParseError("Unrecognized veto/approval memo header");
+        }
+    }
+
+    /**
      * Constructs a veto message object by parsing the memo
      * @throws ParseError
      */
@@ -490,6 +509,23 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         vetoMessage.setPublishedDateTime(date);
 
         baseBill.getVetoMessages().put(vetoMessage.getVetoId(), vetoMessage);
+    }
+
+    /**
+     * Constructs an approval message object by parsing a memo
+     * @param data
+     * @param baseBill
+     * @param date
+     * @throws ParseError
+     */
+    private void applyApprovalMessageText(String data, Bill baseBill, LocalDateTime date) throws ParseError{
+        ApprovalMessageParser approvalMessageParser = new ApprovalMessageParser(data, date);
+        approvalMessageParser.extractText();
+        ApprovalMessage approvalMessage = approvalMessageParser.getApprovalMessage();
+        approvalMessage.setModifiedDateTime(date);
+        approvalMessage.setPublishedDateTime(date);
+
+        baseBill.setApprovalMessage(approvalMessage);
     }
 
     /**

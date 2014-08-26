@@ -19,9 +19,6 @@ public class VetoMemoParser extends BillTextParser
     private static final Pattern vetoHeaderPattern =
         Pattern.compile("00000\\.SO DOC VETO(\\d{4})\\s{8}([*A-Z ]{9})[A-Z0-9 ]{16}VETO\\s*(\\d{4})");
 
-    private static final String vetoHeaderReplacement =
-        "00000.SO DOC VETO$1        $2                VETO                 $4";
-
     private static final Pattern datePattern =
         Pattern.compile("\\d{5}TO THE (SENATE|ASSEMBLY):\\s*([a-zA-Z]+ \\d+, \\d+)?");
 
@@ -32,15 +29,15 @@ public class VetoMemoParser extends BillTextParser
         Pattern.compile( "\\d{5}Bill Page (\\d+), Line (\\d+)( through Line (\\d+))?.*");
 
     private static final Pattern signerPattern =
-        Pattern.compile( "\\d{5}\\s(The bill is disapproved.)?\\s*\\(signed\\) ([a-zA-Z.'\\- ]*[a-zA-Z.])$");
-
-    /** --- Constructors --- */
+        Pattern.compile( "\\d{5}\\s(The bill is disapproved.)?\\s*\\(signed\\) ([a-zA-Z.'\\- ]*[a-zA-Z.])");
 
     /** A veto message object that is constructed while parsing the veto memo */
     private VetoMessage vetoMessage;
 
+    /** --- Constructors --- */
+
     public VetoMemoParser (String data, LocalDateTime date) {
-        super(data, BillTextType.VETO , date);
+        super(data, BillTextType.VETO_APPROVAL , date);
         vetoMessage = new VetoMessage();
         vetoMessage.setType(VetoType.STANDARD);
     }

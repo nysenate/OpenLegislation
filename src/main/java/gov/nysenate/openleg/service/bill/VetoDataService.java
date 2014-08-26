@@ -34,4 +34,16 @@ public interface VetoDataService
      * @param vetoMessage
      */
     public void updateVetoMessage(VetoMessage vetoMessage, SobiFragment sobiFragment);
+
+    /**
+     * Deletes a veto message specified by the given veto id
+     * @param vetoId
+     */
+    public void deleteVetoMessage(VetoId vetoId);
+
+    /**
+     * Deletes all veto messages for the bill designated by the given base bill id
+     * @param baseBillId
+     */
+    public void deleteBillVetoes(BaseBillId baseBillId);
 }

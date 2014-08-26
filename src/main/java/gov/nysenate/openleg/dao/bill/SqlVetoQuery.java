@@ -8,6 +8,11 @@ public enum SqlVetoQuery implements BasicSqlQuery
         "SELECT * FROM ${schema}." + SqlTable.BILL_VETO + "\n" +
         "WHERE veto_number = :vetoNumber AND year = :year"
     ),
+    SELECT_BILL_VETOES_SQL(
+            "SELECT * FROM ${schema}." + SqlTable.BILL_VETO + "\n" +
+                    "WHERE bill_print_no = :printNum AND session_year = :sessionYear" + "\n" +
+                    "ORDER BY year, veto_number"
+    ),
     UPDATE_VETO_MESSAGE_SQL(
         "UPDATE ${schema}." + SqlTable.BILL_VETO + "\n" +
         "SET bill_print_no = :printNum, session_year = :sessionYear, type = CAST(:type AS ${schema}.veto_type), " + "\n" +
@@ -23,11 +28,15 @@ public enum SqlVetoQuery implements BasicSqlQuery
         "VALUES (:vetoNumber, :year, :printNum, :sessionYear, :chapter, :page, :lineStart, :lineEnd, :signer, :date, " + "\n" +
             " :memoText, CAST(:type AS ${schema}.veto_type), :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
-    SELECT_BILL_VETOES_SQL(
-        "SELECT * FROM ${schema}." + SqlTable.BILL_VETO + "\n" +
-        "WHERE bill_print_no = :printNum AND session_year = :sessionYear" + "\n" +
-        "ORDER BY year, veto_number"
-    );
+    DELETE_VETO_MESSAGE(
+        "DELETE FROM ${schema}." + SqlTable.BILL_VETO + "\n" +
+        "WHERE veto_number = :vetoNumber AND year = :year"
+    ),
+    DELETE_BILL_VETOES(
+        "DELETE FROM ${schema}." + SqlTable.BILL_VETO + "\n" +
+        "WHERE bill_print_no = :printNum AND session_year = :sessionYear"
+    )
+    ;
 
     private String sql;
 

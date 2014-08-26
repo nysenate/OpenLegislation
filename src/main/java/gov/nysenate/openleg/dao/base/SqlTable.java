@@ -32,6 +32,7 @@ public enum SqlTable
     BILL_MULTI_SPONSOR           ("bill_multi_sponsor"),
     BILL_PREVIOUS_VERSION        ("bill_previous_version"),
     BILL_VETO                    ("bill_veto"),
+    BILL_APPROVAL                ("bill_approval"),
 
     CALENDAR                     ("calendar"),
     CALENDAR_ACTIVE_LIST         ("calendar_active_list"),

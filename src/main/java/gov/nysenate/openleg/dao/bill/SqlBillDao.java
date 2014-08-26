@@ -14,6 +14,8 @@ import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.service.bill.ApprovalDataService;
+import gov.nysenate.openleg.service.bill.ApprovalNotFoundException;
 import gov.nysenate.openleg.service.bill.VetoDataService;
 import gov.nysenate.openleg.service.bill.VetoNotFoundException;
 import gov.nysenate.openleg.service.entity.MemberService;
@@ -46,6 +48,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     private MemberService memberService;
     @Autowired
     private VetoDataService vetoDataService;
+    @Autowired
+    private ApprovalDataService approvalDataService;
 
     /* --- Implemented Methods --- */
 
@@ -86,6 +90,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         bill.setPastCommittees(getBillCommittees(baseParams));
         // Get the associated veto memos
         bill.setVetoMessages(getBillVetoMessages(bill.getBaseBillId()));
+        // Get the approval message
+        bill.setApprovalMessage(getBillApprovalMessage(bill.getBaseBillId()));
         // Bill has been fully constructed
         return bill;
     }
@@ -133,6 +139,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         updateBillCommittees(bill, sobiFragment, billParams);
         // Update veto messages
         updateVetoMessages(bill, sobiFragment);
+        // Update approval message
+        updateApprovalMessage(bill, sobiFragment);
     }
 
     /** {@inheritDoc} */
@@ -275,6 +283,15 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         }
     }
 
+    private ApprovalMessage getBillApprovalMessage(BaseBillId baseBillId){
+        try{
+            return approvalDataService.getApprovalMessage(baseBillId);
+        }
+        catch(ApprovalNotFoundException ex){
+            return null;
+        }
+    }
+
     /**
      * Updates the bill's same as set.
      */
@@ -359,8 +376,16 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * Update any veto messages through the veto data service
      */
     private void updateVetoMessages(Bill bill, SobiFragment sobiFragment){
+        vetoDataService.deleteBillVetoes(bill.getBaseBillId());
         for(VetoMessage vetoMessage : bill.getVetoMessages().values()){
             vetoDataService.updateVetoMessage(vetoMessage, sobiFragment);
+        }
+    }
+
+    private void updateApprovalMessage(Bill bill, SobiFragment sobiFragment){
+        approvalDataService.deleteApprovalMessage(bill.getBaseBillId());
+        if(bill.getApprovalMessage() != null){
+            approvalDataService.updateApprovalMessage(bill.getApprovalMessage(), sobiFragment);
         }
     }
 

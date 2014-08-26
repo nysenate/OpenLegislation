@@ -8,10 +8,11 @@ import java.util.Map;
 
 public enum BillTextType
 {
-    RESOLUTION    (SobiLineType.RESOLUTION_TEXT, "RESO TEXT"),
-    BILL          (SobiLineType.TEXT, "BTXT"),
-    SPONSOR_MEMO  (SobiLineType.SPONSOR_MEMO, "MTXT"),
-    VETO          (SobiLineType.VETO_APPROVE_MEMO, "VETO");
+    RESOLUTION    (SobiLineType.RESOLUTION_TEXT,    "RESO TEXT"),
+    BILL          (SobiLineType.TEXT,               "BTXT"),
+    SPONSOR_MEMO  (SobiLineType.SPONSOR_MEMO,       "MTXT"),
+    VETO_APPROVAL (SobiLineType.VETO_APPROVE_MEMO,  "VETO|APPROVAL")
+    ;
 
     private SobiLineType sobiLineType;
     private String typeString;

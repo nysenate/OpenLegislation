@@ -43,6 +43,9 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** A list of veto messages for this bill */
     protected Map<VetoId, VetoMessage> vetoMessages = new HashMap<>();
 
+    /** An approval message for the bill, null if non existent */
+    protected ApprovalMessage approvalMessage = null;
+
     /** Indicates the amendment version that is currently active for this bill. */
     protected Version activeVersion = BillId.DEFAULT_VERSION;
 
@@ -343,6 +346,14 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     public void setVetoMessages(Map<VetoId,VetoMessage> vetoMessages) {
         this.vetoMessages = vetoMessages;
+    }
+
+    public ApprovalMessage getApprovalMessage() {
+        return approvalMessage;
+    }
+
+    public void setApprovalMessage(ApprovalMessage approvalMessage) {
+        this.approvalMessage = approvalMessage;
     }
 
     public Set<BillId> getPreviousVersions() {

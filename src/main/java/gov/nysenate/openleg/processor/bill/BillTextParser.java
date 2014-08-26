@@ -88,7 +88,7 @@ public class BillTextParser
         if (line.startsWith("00000") && header.find()) {
             String action = header.group(1).trim();
             String type = header.group(2).trim();
-            if (!type.equals(billTextType.getTypeString())) {
+            if (!type.matches(billTextType.getTypeString())) {
                 throw new ParseError("Unknown text type found: " + type);
             }
             switch (action) {
