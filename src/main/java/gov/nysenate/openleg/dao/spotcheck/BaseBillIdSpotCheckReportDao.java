@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Repository
-public class DaybreakSpotCheckReportDao extends AbstractSpotCheckReportDao<BaseBillId>
+public class BaseBillIdSpotCheckReportDao extends AbstractSpotCheckReportDao<BaseBillId>
 {
     /** --- Override Methods --- */
 

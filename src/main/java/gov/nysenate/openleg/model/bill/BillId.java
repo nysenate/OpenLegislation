@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
@@ -115,6 +116,7 @@ public class BillId implements Serializable, Comparable<BillId>
      * Returns a BaseBillId instance from the given bill id which ensures that no amendment
      * version info will be stored.
      */
+    @JsonIgnore
     public static BaseBillId getBaseId(BillId billId) {
         return new BaseBillId(billId.basePrintNo, billId.session);
     }
@@ -129,6 +131,7 @@ public class BillId implements Serializable, Comparable<BillId>
     /**
      * Retrieves the type of bill based on the first letter designator.
      */
+    @JsonIgnore
     public BillType getBillType() {
         return BillType.valueOf(this.basePrintNo.substring(0, 1));
     }
@@ -136,6 +139,7 @@ public class BillId implements Serializable, Comparable<BillId>
     /**
      * Indicates the chamber of the bill based on the letter designator.
      */
+    @JsonIgnore
     public Chamber getChamber() {
         return getBillType().getChamber();
     }
@@ -155,6 +159,7 @@ public class BillId implements Serializable, Comparable<BillId>
      *
      * @return - The billId padded to 5 digits with zeros.
      */
+    @JsonIgnore
     public String getPaddedBillIdString() {
         return this.getPaddedPrintNumber() + "-" + this.getSession();
     }
@@ -165,6 +170,7 @@ public class BillId implements Serializable, Comparable<BillId>
      *
      * @return - The print number padded to 5 digits with zeros.
      */
+    @JsonIgnore
     public String getPaddedPrintNumber() {
         Matcher billIdMatcher = printNumberPattern.matcher(this.getPrintNo());
         if (billIdMatcher.find()) {

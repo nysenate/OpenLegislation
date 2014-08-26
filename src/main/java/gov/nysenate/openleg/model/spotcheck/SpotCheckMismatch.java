@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.spotcheck;
 import gov.nysenate.openleg.util.StringDiffer;
 
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * Encapsulates basic information about a mismatch between the reference and target content.
@@ -54,8 +55,23 @@ public class SpotCheckMismatch
         return diffs;
     }
 
-    public void setStatus(SpotCheckMismatchStatus status) {
-        this.status = status;
+    /** --- Implemented Methods --- */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        final SpotCheckMismatch other = (SpotCheckMismatch) obj;
+        return Objects.equals(this.mismatchType, other.mismatchType) &&
+               Objects.equals(this.status, other.status) &&
+               Objects.equals(this.referenceData, other.referenceData) &&
+               Objects.equals(this.observedData, other.observedData) &&
+               Objects.equals(this.notes, other.notes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mismatchType, status, referenceData, observedData, notes);
     }
 
     /** --- Basic Getters --- */
@@ -66,6 +82,10 @@ public class SpotCheckMismatch
 
     public SpotCheckMismatchStatus getStatus() {
         return status;
+    }
+
+    public void setStatus(SpotCheckMismatchStatus status) {
+        this.status = status;
     }
 
     public String getReferenceData() {

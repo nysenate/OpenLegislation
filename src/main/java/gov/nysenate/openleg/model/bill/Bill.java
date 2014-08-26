@@ -213,6 +213,15 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     /**
+     * Indicates if the base amendment is published.
+     * @return boolean
+     */
+    public boolean isBaseVersionPublished() {
+        return (this.amendPublishStatusMap.containsKey(Version.DEFAULT) &&
+                this.amendPublishStatusMap.get(Version.DEFAULT).isPublished());
+    }
+
+    /**
      * Indicate whether the bill has a reference to a given amendment version.
      *
      * @param version String - Amendment version

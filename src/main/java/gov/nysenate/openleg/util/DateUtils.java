@@ -30,7 +30,7 @@ public abstract class DateUtils
     }
 
     /**
-     * Shorthand method to return a LocalDateTime from 'millis since epoch'.
+     * Shorthand method to return a LocalDateTime from 'millis since longAgo'.
      */
     public static LocalDateTime getLocalDateTimeFromMillis(long millis) {
         return LocalDateTime.from(Instant.ofEpochMilli(millis));
@@ -58,5 +58,13 @@ public abstract class DateUtils
      */
     public static LocalDateTime getLrsDateTime(String lbdcDateTime) {
         return LocalDateTime.from(LRS_DATETIME_FORMAT.parse(lbdcDateTime));
+    }
+
+    /**
+     * Return a LocalDateTime that represents the epoch date.
+     * @return LocalDateTime
+     */
+    public static LocalDateTime longAgo() {
+        return LocalDate.ofEpochDay(0).atStartOfDay();
     }
 }

@@ -15,6 +15,11 @@ public class SpotCheckPriorMismatch extends SpotCheckMismatch
         super(mismatchType, referenceData, observedData);
     }
 
+    public SpotCheckPriorMismatch(SpotCheckMismatchType mismatchType, String referenceData, String observedData,
+                                  String notes) {
+        super(mismatchType, referenceData, observedData, notes);
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public SpotCheckReportId getReportId() {

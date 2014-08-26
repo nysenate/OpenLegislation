@@ -16,8 +16,10 @@ import java.util.Map;
 /**
  * A DaybreakBill serves as a model to store extracted bill content from the DaybreakFragments.
  */
-public class DaybreakBill implements SpotCheckReferenceId
+public class DaybreakBill
 {
+    protected SpotCheckReferenceId referenceId;
+
     /** Date of the report that created this instance. */
     protected LocalDate reportDate;
 
@@ -51,22 +53,14 @@ public class DaybreakBill implements SpotCheckReferenceId
         this.reportDate = daybreakBillId.getReportDate();
     }
 
-    /** --- Implemented Methods --- */
-
-    @Override
-    public SpotCheckRefType getRefType() {
-        return SpotCheckRefType.LBDC_DAYBREAK;
-    }
-
-    @Override
-    public LocalDateTime getRefActiveDate() {
-        return this.reportDate.atStartOfDay();
-    }
-
     /** --- Functional Getters/Setters --- */
 
     public DaybreakBillId getDaybreakBillId(){
         return new DaybreakBillId(baseBillId, reportDate);
+    }
+
+    public SpotCheckReferenceId getReferenceId() {
+        return new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, this.reportDate.atStartOfDay());
     }
 
     /** --- Basic Getters/Setters --- */
