@@ -212,7 +212,7 @@ public enum SqlDaybreakQuery implements BasicSqlQuery
 
     SELECT_REPORTS(
         "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_REPORT + "\n" +
-        "WHERE report_date <= :reportDate "
+        "WHERE report_date BETWEEN :rangeStart AND :rangeEnd "
     ),
     SELECT_UNCHECKED_REPORTS(
         "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_REPORT + "\n" +

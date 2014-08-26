@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.daybreak;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
@@ -122,7 +123,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         // Get the main fragment data
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
         DaybreakFragment daybreakFragment = jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_DAYBREAK_FRAGMENT.getSql(schema()),
-                                                                    params, new DaybreakFragmentRowMapper());
+                params, new DaybreakFragmentRowMapper());
         // Add page file entries
         daybreakFragment.setPageFileEntries(getPageFileEntries(daybreakBillId));
 
@@ -183,7 +184,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     public Map<BillId, PageFileEntry> getPageFileEntries(DaybreakBillId daybreakBillId) throws DataAccessException {
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
         List<PageFileEntry> pageFileEntries = jdbcNamed.query(
-            SqlDaybreakQuery.SELECT_PAGE_FILE_ENTRIES_BY_BILL.getSql(schema()), params, new PageFileEntryRowMapper());
+                SqlDaybreakQuery.SELECT_PAGE_FILE_ENTRIES_BY_BILL.getSql(schema()), params, new PageFileEntryRowMapper());
         return Maps.uniqueIndex(pageFileEntries, daybreakBillId.getBaseBillId().getChamber() == Chamber.SENATE ?
                 PageFileEntry::getSenateBillId : PageFileEntry::getAssemblyBillId);
     }
@@ -227,10 +228,15 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return getDaybreakBillAtDate(baseBillId, LocalDate.now());
     }
 
+    @Override
+    public DaybreakBill getCurrentDaybreakBill(BaseBillId baseBillId, Range<LocalDate> dateRange) throws DataAccessException {
+        return getDaybreakBillAtDate(baseBillId, getCurrentReportDate(dateRange));
+    }
+
     /** {@InheritDoc } */
     @Override
     public DaybreakBill getDaybreakBillAtDate(BaseBillId baseBillId, LocalDate referenceDate) {
-        return getDaybreakBill(new DaybreakBillId(baseBillId, getPreviousCurrentReportDate(referenceDate)));
+        return getDaybreakBill(new DaybreakBillId(baseBillId, getCurrentReportDate()));
     }
 
     /** {@InheritDoc } */
@@ -240,7 +246,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         List<DaybreakBill> daybreakBills = jdbcNamed.query(
                                                 SqlDaybreakQuery.SELECT_DAYBREAK_BILL_BY_REPORT.getSql(schema()),
                                                 params, new DaybreakBillRowMapper());
-        daybreakBills.forEach(this::addAdditionalFields);
+        daybreakBills.parallelStream().forEach(this::addAdditionalFields);
         return daybreakBills;
     }
 
@@ -250,29 +256,21 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return getDaybreakBills(getCurrentReportDate());
     }
 
+    @Override
+    public List<DaybreakBill> getCurrentDaybreakBills(Range<LocalDate> dateRange) {
+        return getDaybreakBills(getCurrentReportDate(dateRange));
+    }
+
     /** {@InheritDoc } */
     @Override
     public LocalDate getCurrentReportDate() throws DataAccessException {
-        return getPreviousCurrentReportDate(LocalDate.now());
+        return getCurrentReportDate(Range.all());
     }
 
-    /** {@InheritDoc } */
+    /** {@InheritDoc }  */
     @Override
-    public LocalDate getCurrentUncheckedReportDate() throws DataAccessException {
-        MapSqlParameterSource params = getReportDateParams(LocalDate.now());
-        return jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_UNCHECKED_REPORTS.getSql(
-                                                                    schema(),
-                                                                    new OrderBy("report_date", SortOrder.DESC),
-                                                                    new LimitOffset(1)),
-                                        params,
-                                        new DaybreakReportDateRowMapper()
-        );
-    }
-
-    /** {@InheritDoc } */
-    @Override
-    public LocalDate getPreviousCurrentReportDate(LocalDate referenceDate) {
-        MapSqlParameterSource params = getReportDateParams(referenceDate);
+    public LocalDate getCurrentReportDate(Range<LocalDate> dateRange) {
+        MapSqlParameterSource params = getReportDateRangeParams(dateRange);
         return jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_REPORTS.getSql(
                         schema(),
                         new OrderBy("report_date", SortOrder.DESC),
@@ -678,6 +676,13 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     private MapSqlParameterSource getReportDateParams(LocalDate reportDate){
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("reportDate", toDate(reportDate));
+        return params;
+    }
+
+    private MapSqlParameterSource getReportDateRangeParams(Range<LocalDate> dateRange){
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("rangeStart", toDate(dateRange.lowerEndpoint()));
+        params.addValue("rangeEnd", toDate(dateRange.upperEndpoint()));
         return params;
     }
 

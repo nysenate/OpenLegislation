@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.daybreak;
 
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.daybreak.*;
@@ -103,6 +104,15 @@ public interface DaybreakDao
     public DaybreakBill getCurrentDaybreakBill(BaseBillId baseBillId) throws DataAccessException;
 
     /**
+     * Gets the current daybreak bill for the specified bill id from within the given date range
+     * @param baseBillId
+     * @param dateRange
+     * @return
+     * @throws DataAccessException
+     */
+    public DaybreakBill getCurrentDaybreakBill(BaseBillId baseBillId, Range<LocalDate> dateRange) throws DataAccessException;
+
+    /**
      * Gets the current daybreak bill from before the reference date for the specified base bill
      * @param baseBillId
      * @param referenceDate
@@ -126,6 +136,13 @@ public interface DaybreakDao
     public List<DaybreakBill> getCurrentDaybreakBills() throws DataAccessException;
 
     /**
+     * Gets all daybreak bills for the latest report date within the specified range
+     * @param dateRange
+     * @return
+     */
+    public List<DaybreakBill> getCurrentDaybreakBills(Range<LocalDate> dateRange);
+
+    /**
      * Retrieves the date of the most recent report
      * @return
      * @throws DataAccessException
@@ -133,18 +150,10 @@ public interface DaybreakDao
     public LocalDate getCurrentReportDate() throws DataAccessException;
 
     /**
-     * Retrieves the date of the most recent report that has not yet been spot checked
-     * @return
-     * @throws DataAccessException
-     */
-    public LocalDate getCurrentUncheckedReportDate() throws DataAccessException;
-
-    /**
      * Returns the latest report date that is before or matching the reference date
-     * @param referenceDate
      * @return
      */
-    public LocalDate getPreviousCurrentReportDate(LocalDate referenceDate);
+    public LocalDate getCurrentReportDate(Range<LocalDate> dateRange);
 
     /** --- Update/Insert Methods --- */
 

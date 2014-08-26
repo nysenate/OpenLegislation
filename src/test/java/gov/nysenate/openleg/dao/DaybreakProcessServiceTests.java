@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao;
 
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
 import gov.nysenate.openleg.model.daybreak.*;
@@ -8,7 +9,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDate;
@@ -44,7 +44,8 @@ public class DaybreakProcessServiceTests extends BaseTests {
 
     @Test
     public void getCurrentDaybreakBills(){
-        List<DaybreakBill> daybreakBills = daybreakDao.getCurrentDaybreakBills();
+        Range<LocalDate> dateRange = Range.closed(LocalDate.of(2014, 8, 6), LocalDate.of(2014, 8, 8));
+        List<DaybreakBill> daybreakBills = daybreakDao.getCurrentDaybreakBills(dateRange);
         logger.info("got " + daybreakBills.size() + " daybreak bills");
     }
 
@@ -57,10 +58,10 @@ public class DaybreakProcessServiceTests extends BaseTests {
     public void getReportDate(){
         logger.info("Current report date: " + daybreakDao.getCurrentReportDate());
         logger.info("Current report date for day of test report " + testReportdate + ": "
-                       + daybreakDao.getPreviousCurrentReportDate(testReportdate));
+                       + daybreakDao.getCurrentReportDate());
         try {
             logger.info("Current report date for day before test report " + testReportdate + ": "
-                    + daybreakDao.getPreviousCurrentReportDate(testReportdate.minusDays(1)));
+                    + daybreakDao.getCurrentReportDate());
         }
         catch(EmptyResultDataAccessException ex){
             logger.info("No report found before " + testReportdate);

@@ -127,14 +127,8 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
         List<PageFileEntry> pageFileEntries = new ArrayList<>();
 
         for (DaybreakFile daybreakFile : daybreakReport.getReportDocs().values()) {
-            // Add each file reference to the store and archive the actual file
+            // Add each file reference to the store
             daybreakDao.updateDaybreakFile(daybreakFile);
-            try {
-                daybreakDao.archiveDaybreakFile(daybreakFile);
-            }
-            catch (IOException ex){
-                logger.error("An error occurred while archiving " + daybreakFile.getFileName());
-            }
 
             logger.debug("Parsing " + daybreakFile.getFileName());
             // Get daybreak fragments or page file entries from the daybreak file depending on the type
@@ -155,9 +149,19 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
         daybreakDao.updateDaybreakReport(daybreakReport.getReportDate());
         // Add all fragments and entries to the store
         logger.debug("Inserting daybreak fragments");
-        daybreakFragments.forEach(daybreakDao::updateDaybreakFragment);
+        daybreakFragments.parallelStream().forEach(daybreakDao::updateDaybreakFragment);
         logger.debug("Inserting page file entries");
-        pageFileEntries.forEach(daybreakDao::updatePageFileEntry);
+        pageFileEntries.parallelStream().forEach(daybreakDao::updatePageFileEntry);
+
+        // Archive the report files
+        daybreakReport.getReportDocs().values().forEach(daybreakFile ->{
+            try {
+                daybreakDao.archiveDaybreakFile(daybreakFile);
+            }
+            catch (IOException ex){
+                logger.error("An error occurred while archiving " + daybreakFile.getFileName());
+            }
+        });
     }
 
     /**
