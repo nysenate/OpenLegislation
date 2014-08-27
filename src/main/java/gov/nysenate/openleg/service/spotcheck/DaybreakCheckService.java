@@ -114,8 +114,12 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     protected void checkFullTextPageCounts(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
         Map<Version, Integer> billPageCounts = new HashMap<>();
         Map<Version, Integer> daybreakPageCounts = new HashMap<>();
-        bill.getAmendmentMap().forEach((k,v) -> billPageCounts.put(k, BillTextUtils.getPageCount(v.getFullText())));
         daybreakBill.getAmendments().forEach((k, v) -> daybreakPageCounts.put(k, v.getPageCount()));
+        bill.getAmendmentMap().forEach((k,v) -> {
+            if (daybreakPageCounts.containsKey(k)) {
+                billPageCounts.put(k, BillTextUtils.getPageCount(v.getFullText()));
+            }
+        });
         if (!daybreakPageCounts.equals(billPageCounts)) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_FULLTEXT_PAGE_COUNT, daybreakPageCounts.toString(),
                                                                               billPageCounts.toString()));
