@@ -182,7 +182,7 @@ public class DaybreakFragmentParser {
                     logger.error(ex.getMessage());
                 }
             }
-            else{   // Stop once an invalid line has been reached
+            else if (billActions.size() > 0) {  // If an invalid line is detected after actions have been read, stop
                 break;
             }
         }
