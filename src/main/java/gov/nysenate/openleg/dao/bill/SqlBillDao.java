@@ -34,6 +34,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static gov.nysenate.openleg.dao.bill.SqlBillQuery.*;
@@ -411,6 +412,16 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         Map<Version, PublishStatus> existingPubStatus = getBillAmendPublishStatuses(billParams);
         Map<Version, PublishStatus> newPubStatus = bill.getAmendPublishStatusMap();
         MapDifference<Version, PublishStatus> diff = Maps.difference(existingPubStatus, newPubStatus);
+        // Old entries that do not show up in the new one should be marked as unpublished
+        diff.entriesOnlyOnLeft().forEach((version,pubStatus) -> {
+            if (!pubStatus.isOverride() && pubStatus.isPublished()) {
+                LocalDateTime dateTime = (sobiFragment != null) ? sobiFragment.getPublishedDateTime()
+                                                                : LocalDateTime.now();
+                PublishStatus unPubStatus = new PublishStatus(false, dateTime, false, "No longer referenced");
+                MapSqlParameterSource params = getBillPublishStatusParams(bill, version, unPubStatus, sobiFragment);
+                jdbcNamed.update(UPDATE_BILL_AMEND_PUBLISH_STATUS.getSql(schema()), params);
+            }
+        });
         // Update changed publish statuses if the existing is not an override
         diff.entriesDiffering().forEach((version,pubStatus) -> {
             if (!pubStatus.leftValue().isOverride()) {

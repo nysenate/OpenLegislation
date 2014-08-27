@@ -61,7 +61,7 @@ public class BillActionParser
         Pattern.compile("AMEND(?:ED)? ON THIRD READING " + simpleBillRegex),
         Pattern.compile("AMEND(?:ED)? " + simpleBillRegex),
         Pattern.compile("AMEND(?:ED)? ON THIRD READING \\(T\\) " + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? AND RECOMMIT(?:TED) TO RULES " + simpleBillRegex)
+        Pattern.compile("AMEND(?:ED)? AND RECOMMIT(?:TED)? TO RULES " + simpleBillRegex)
     );
 
     /** Patterns for bill actions that indicate that the specified bill amendment should be unpublished. */
@@ -147,8 +147,6 @@ public class BillActionParser
                 updateStrickenStatus(action);
                 // Update the publish status map via content from this action (if applicable)
                 updatePublishStatus(action);
-                // The latest active amendment version so far
-                updateActiveAmendVersion();
                 // Update the same as map if a substitution event was detected
                 updateSameAs(action);
                 // Update the committee info if the action indicates a committee referral
@@ -201,21 +199,25 @@ public class BillActionParser
      * There are certain actions that indicate a version should be published (e.g print number 1234a) and other
      * actions that indicate that the versions should be reverted (e.g. amend by restoring to original print 1234).
      * This method will iterate through the actions list in chronological order and determine the publish status
-     * for each non-base amendment and return them in as a map of version -> PublishStatus.
+     * for each non-base amendment and update the publish status map accordingly.
+     *
+     * This method will also set the active amendment, which is either the default version or the last published
+     * version.
      *
      * @param action BillAction
      */
     protected void updatePublishStatus(BillAction action) {
         boolean foundPublishPattern = false;
+        Version publishVersion = Version.DEFAULT;
         // Check if the action matches a publish event
         for (Pattern pattern : publishBillEventPatterns) {
             Matcher matcher = pattern.matcher(action.getText());
             if (matcher.find()) {
                 foundPublishPattern = true;
-                Version version = Version.of(matcher.group(2));
+                publishVersion = Version.of(matcher.group(2));
                 PublishStatus status =
                     new PublishStatus(true, action.getDate().atStartOfDay(), false, action.getText());
-                publishStatusMap.put(version, status);
+                publishStatusMap.put(publishVersion, status);
                 break;
             }
         }
@@ -224,29 +226,20 @@ public class BillActionParser
             for (Pattern pattern : unpublishBillEventPatterns) {
                 Matcher matcher = pattern.matcher(action.getText());
                 if (matcher.find()) {
-                    // The version matched here refers to the latest version that should be published.
-                    // In other words, all versions after this one should be marked as unpublished.
-                    Version version = Version.of(matcher.group(2));
-                    publishStatusMap.forEach((k,v) -> {
-                        if (k.compareTo(version) > 0) {
-                            publishStatusMap.put(k, new PublishStatus(false, action.getDate().atStartOfDay(),
+                    // The version matched here refers to the latest version that should be published after the revert.
+                    publishVersion = Version.of(matcher.group(2));
+                    // All versions after this one should be marked as unpublished.
+                    for (Version v : publishStatusMap.keySet()) {
+                        if (v.compareTo(publishVersion) > 0) {
+                            publishStatusMap.put(v, new PublishStatus(false, action.getDate().atStartOfDay(),
                                                                       false, action.getText()));
                         }
-                    });
+                    }
                     break;
                 }
             }
         }
-    }
-
-    /**
-     * Sets the active amendment version as the latest version that is published or
-     * the base version otherwise.
-     */
-    protected void updateActiveAmendVersion() {
-        this.activeVersion = this.publishStatusMap.descendingKeySet().stream()
-                                 .filter(k -> publishStatusMap.get(k).isPublished())
-                                 .findFirst().orElse(BillId.DEFAULT_VERSION);
+        this.activeVersion = publishVersion;
     }
 
     /**
