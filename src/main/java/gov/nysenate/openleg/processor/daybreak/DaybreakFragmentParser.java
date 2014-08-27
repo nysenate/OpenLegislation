@@ -175,7 +175,7 @@ public class DaybreakFragmentParser {
                     Chamber actionChamber = StringUtils.isAllUpperCase(actionText.replaceAll("[^a-zA-Z]+", "")) ?
                                                 Chamber.SENATE : Chamber.ASSEMBLY ;
                     billActions.add(
-                            new BillAction(actionDate, actionText, actionChamber, sequenceNo++, daybreakBill.getBaseBillId())
+                            new BillAction(actionDate, actionText, actionChamber, ++sequenceNo, daybreakBill.getBaseBillId())
                     );
                 } catch (DateTimeParseException ex) {
                     logger.error("Could not parse date " + billActionMatcher.group(1) + " for " + daybreakBill.getDaybreakBillId());
