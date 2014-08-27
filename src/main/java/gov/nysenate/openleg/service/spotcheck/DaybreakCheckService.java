@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
 import gov.nysenate.openleg.model.base.PublishStatus;
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -48,7 +50,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      *  Just use the latest daybreak files we have. */
     @Override
     public SpotCheckObservation<BaseBillId> check(Bill bill) throws ReferenceDataNotFoundEx {
-        return check(bill, LocalDate.ofEpochDay(0).atStartOfDay(), LocalDateTime.now());
+        return check(bill, DateUtils.longAgo(), LocalDateTime.now());
     }
 
     /** {@inheritDoc} */
@@ -58,7 +60,14 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
         if (bill == null) {
             throw new IllegalArgumentException("Supplied bill cannot be null");
         }
-        return null;
+        Range<LocalDate> dateRange = Range.closed(start.toLocalDate(), end.toLocalDate());
+        try {
+            DaybreakBill daybreakBill = daybreakDao.getCurrentDaybreakBill(bill.getBaseBillId(), dateRange);
+            return check(bill, daybreakBill);
+        }
+        catch (DataAccessException ex) {
+            throw new ReferenceDataNotFoundEx();
+        }
     }
 
     /** {@inheritDoc} */

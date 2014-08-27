@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
 import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -21,6 +22,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +65,8 @@ public class DaybreakCheckReportService implements SpotCheckReportService<BaseBi
         report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, LocalDateTime.now()));
         // Fetch the daybreak bills that are within the given date range
         logger.info("Fetching daybreak bills...");
-        List<DaybreakBill> daybreakBills = daybreakDao.getCurrentDaybreakBills();  // FIXME SAM! use date here
+        Range<LocalDate> dateRange = Range.closed(start.toLocalDate(), end.toLocalDate());
+        List<DaybreakBill> daybreakBills = daybreakDao.getCurrentDaybreakBills(dateRange);
         // All daybreak bills should have the same reference date.
         SpotCheckReferenceId refId = daybreakBills.get(0).getReferenceId();
         logger.info("Using Daybreak {} to generate report", refId);

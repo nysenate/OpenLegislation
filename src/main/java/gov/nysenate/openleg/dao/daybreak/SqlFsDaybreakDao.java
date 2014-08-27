@@ -257,6 +257,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return getDaybreakBills(getCurrentReportDate());
     }
 
+    /** {@InheritDoc } */
     @Override
     public List<DaybreakBill> getCurrentDaybreakBills(Range<LocalDate> dateRange) {
         return getDaybreakBills(getCurrentReportDate(dateRange));
@@ -265,7 +266,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     /** {@InheritDoc } */
     @Override
     public LocalDate getCurrentReportDate() throws DataAccessException {
-        return getCurrentReportDate(Range.all());
+        return getCurrentReportDate(Range.closed(DateUtils.longAgo().toLocalDate(), LocalDate.now()));
     }
 
     /** {@InheritDoc }  */
