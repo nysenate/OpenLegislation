@@ -115,6 +115,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
         Map<Version, Integer> billPageCounts = new HashMap<>();
         Map<Version, Integer> daybreakPageCounts = new HashMap<>();
         daybreakBill.getAmendments().forEach((k, v) -> daybreakPageCounts.put(k, v.getPageCount()));
+        // Just count the pages for versions that also appear in the daybreak
         bill.getAmendmentMap().forEach((k,v) -> {
             if (daybreakPageCounts.containsKey(k)) {
                 billPageCounts.put(k, BillTextUtils.getPageCount(v.getFullText()));
@@ -149,8 +150,9 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
                 .collect(toSet());
         // The bill multi sponsor set will just have the short names as-is (they should already be uppercased)
         Set<String> billMuSponsorSet = billMuSponsors.stream().map(Member::getLbdcShortName).collect(toSet());
-        // Check for mismatch and add if so
-        if (daybreakMuSponsorSet.size() != billMuSponsorSet.size() || !daybreakMuSponsorSet.containsAll(billMuSponsorSet)) {
+        // Only check for mismatch if a daybreak multisponsor is set. Sometimes the daybreaks omit the multisponsor.
+        if (!daybreakMuSponsorSet.isEmpty() && (daybreakMuSponsorSet.size() != billMuSponsorSet.size() ||
+                                               !daybreakMuSponsorSet.containsAll(billMuSponsorSet))) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_MULTISPONSOR, StringUtils.join(daybreakMuSponsorSet, " "),
                                                                        StringUtils.join(billMuSponsorSet, " ")));
         }
@@ -168,8 +170,9 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
                 .collect(toSet());
         // The bill co sponsor set will just have the short names as-is (they should already be uppercased)
         Set<String> billCoSponsorSet = billCoSponsors.stream().map(Member::getLbdcShortName).collect(toSet());
-        // Check for mismatch and add if so
-        if (daybreakCoSponsorSet.size() != billCoSponsorSet.size() || !daybreakCoSponsorSet.containsAll(billCoSponsorSet)) {
+        // Only check for mismatch if a daybreak cosponsor is set. Sometimes the daybreaks omit the cosponsor.
+        if (!daybreakCoSponsorSet.isEmpty() && (daybreakCoSponsorSet.size() != billCoSponsorSet.size() ||
+                                               !daybreakCoSponsorSet.containsAll(billCoSponsorSet))) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_COSPONSOR, StringUtils.join(daybreakCoSponsorSet, " "),
                                                                     StringUtils.join(billCoSponsorSet, " ")));
         }
