@@ -64,7 +64,8 @@ public class BillSponsor implements Serializable
                     ? ((rulesSponsor)
                        ? "(" + member.getLbdcShortName() + ")"
                        : member.getLbdcShortName())
-                    : "")).trim();
+                    : "")
+        ).trim();
     }
 
     /** --- Basic Getters/Setters --- */

@@ -43,7 +43,7 @@ public class DaybreakFileParser {
         }
         List<DaybreakFragment> daybreakFragments = new ArrayList<>();
 
-        String fullText = FileUtils.readFileToString(daybreakFile.getFile(), "latin1").replaceAll("\\r?\\n", " ");
+        String fullText = FileUtils.readFileToString(daybreakFile.getFile(), "UTF-8").replaceAll("\\r?\\n", " ");
 
         Matcher rowMatcher = rowPattern.matcher(fullText);
         rowMatcher.find(); // Throw the first two rows away
@@ -52,7 +52,9 @@ public class DaybreakFileParser {
             String text = stripParts.matcher(rowMatcher.group(1))	// Match all non <br> and </td> tags
                     .replaceAll("")				// Remove them
                     .replace("</td>", "\n") 	// convert </td> and <br> to newlines
-                    .replace("<br>", "\n");
+                    .replace("<br>", "\n")
+                    .replace("�", " ")          // Replace all instances of � with space
+                    ;
 
             // Here we are going through each line and trimming excess whitespace
             String[] lines = text.split("\\n");

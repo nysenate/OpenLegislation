@@ -39,4 +39,10 @@ public class StupidTests {
         assert(StringUtils.isAllUpperCase(text.replaceAll("[^a-zA-Z]+", "")));
         assert(!StringUtils.isAllUpperCase(text2.replaceAll("[^a-zA-Z]+", "")));
     }
+
+    @Test
+    public void pLopezTest(){
+        String regex = "([A-Z])\\. ([A-Za-z\\-' ]*)";
+        System.out.println(" P. Lopez".trim().replaceAll(regex, "$2 $1"));
+    }
 }

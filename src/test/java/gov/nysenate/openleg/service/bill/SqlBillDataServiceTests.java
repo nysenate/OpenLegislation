@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.service.bill;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
@@ -23,5 +25,10 @@ public class SqlBillDataServiceTests extends BaseTests
 //
 //        sqlBillDataService.saveBill(bill, null);
 //        sqlBillDataService.getBill(new BillId("A2180", 2013));
+        Bill bill = sqlBillDataService.getBill(new BillId("A9558", 2013));
+        logger.info(bill.getSponsor().toString());
+        for(BillAmendment amendment : bill.getAmendmentList()){
+            amendment.getCoSponsors().forEach(sponsor -> logger.info(sponsor.toString()));
+        }
     }
 }

@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.daybreak.*;
 import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +34,12 @@ public class DaybreakFragmentParser {
     /** Patterns for extracting metadata from bill actions */
     private static Pattern billActionPattern = Pattern.compile("(\\d{2}/\\d{2}/\\d{2}) (.*)");
     private static SimpleDateFormat billActionDateFormat = new SimpleDateFormat("MM/dd/yy");
+
+    /** Pattern for detecting short names that contain the member's first initial */
+    private static String shortNameInitialRegex = "([A-Z])\\. ([A-Za-z\\-' ]*)";
+
+    /** Pattern for extracting sponsors from Rules sponsors */
+    private static Pattern rulesSponsorPattern = Pattern.compile("RULES COM \\(Request of ([A-Za-z\\-\\.', ]*)\\)");
 
     /**
      * Parses the text of a daybreak fragment into the fields of a daybreak bill
@@ -65,11 +73,16 @@ public class DaybreakFragmentParser {
      * @param sponsorLine
      */
     private static void parseSponsors(DaybreakBill daybreakBill, String sponsorLine){
-        switch(daybreakBill.getBaseBillId().getChamber()){
-            case SENATE:
-                parseSenateSponsors(daybreakBill, sponsorLine); break;
-            case ASSEMBLY:
-                parseAssemblySponsors(daybreakBill, sponsorLine); break;
+        if(sponsorLine.startsWith("RULES")){
+            parseRulesSponsors(daybreakBill, sponsorLine);
+        }
+        else {
+            switch (daybreakBill.getBaseBillId().getChamber()) {
+                case SENATE:
+                    parseSenateSponsors(daybreakBill, sponsorLine); break;
+                case ASSEMBLY:
+                    parseAssemblySponsors(daybreakBill, sponsorLine); break;
+            }
         }
     }
 
@@ -81,9 +94,9 @@ public class DaybreakFragmentParser {
     private static void parseSenateSponsors(DaybreakBill daybreakBill, String sponsorLine) {
         String[] sponsorsByType = sponsorLine.split("CO:");
 
-        daybreakBill.setSponsor(sponsorsByType[0].trim());
+        daybreakBill.setSponsor(formatShortName(sponsorsByType[0]));
         if(sponsorsByType.length > 1) {
-            daybreakBill.setCosponsors(parseCSV(sponsorsByType[1]));
+            daybreakBill.setCosponsors(parseCSVSponsors(sponsorsByType[1]));
         }
     }
 
@@ -93,18 +106,43 @@ public class DaybreakFragmentParser {
      * @param sponsorLine
      */
     private static void parseAssemblySponsors(DaybreakBill daybreakBill, String sponsorLine){
-        sponsorLine = sponsorLine.replaceAll("([A-Z])\\.[¦ ]([A-Z'-]+)", "$2 $1");
         String[] sponsorsByType = sponsorLine.split("; M-S:");
 
         // Get the primary sponsor and co sponsors as one list
-        List<String> sponsors = parseCSV(sponsorsByType[0]);
+        List<String> sponsors = parseCSVSponsors(sponsorsByType[0]);
 
-        daybreakBill.setSponsor(sponsors.remove(0));    // remove the primary sponsor
+        daybreakBill.setSponsor(sponsors.remove(0));    // remove the primary sponsor and set it as the daybreak bill sponsor
         daybreakBill.setCosponsors(sponsors);
 
         if(sponsorsByType.length > 1){
-            daybreakBill.setMultiSponsors(parseCSV(sponsorsByType[1]));
+            daybreakBill.setMultiSponsors(parseCSVSponsors(sponsorsByType[1]));
         }
+    }
+
+    /**
+     * Parses sponsors when the sponsor is a Rules committee
+     * @param daybreakBill
+     * @param sponsorLine
+     */
+    private static void parseRulesSponsors(DaybreakBill daybreakBill, String sponsorLine){
+        Matcher rulesSponsorMatcher = rulesSponsorPattern.matcher(sponsorLine);
+        if(rulesSponsorMatcher.matches()){
+            List<String> sponsors = parseCSVSponsors(rulesSponsorMatcher.group(1));
+            daybreakBill.setSponsor("RULES (" + sponsors.remove(0) + ")");  //Set the first sponsor as the main sponsor
+            daybreakBill.setCosponsors(sponsors);
+        }
+        else {
+            daybreakBill.setSponsor("RULES");
+        }
+    }
+
+    /**
+     * Ensures that certain sponsors' shortnames are stored in the proper format.  Im looking at you P.�Lopez
+     * @param rawShortName
+     * @return
+     */
+    private static String formatShortName(String rawShortName){
+        return rawShortName.trim().replaceAll(shortNameInitialRegex, "$2 $1");
     }
 
     /**
@@ -112,9 +150,9 @@ public class DaybreakFragmentParser {
      * @param csvString
      * @return
      */
-    private static List<String> parseCSV(String csvString){
+    private static List<String> parseCSVSponsors(String csvString){
         return Arrays.asList(csvString.split(",")).stream()
-                .map(String::trim)
+                .map(DaybreakFragmentParser::formatShortName)
                 .collect(Collectors.toList());
     }
 
@@ -132,17 +170,16 @@ public class DaybreakFragmentParser {
             if(billActionMatcher.matches()) {
                 try {
                     // Get BillAction fields from the match
-                    LocalDate actionDate = billActionDateFormat.parse(billActionMatcher.group(1))
-                            .toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate actionDate = LocalDate.from(DateUtils.LRS_ACTIONS_DATE.parse(billActionMatcher.group(1)));
                     String actionText = billActionMatcher.group(2);
                     Chamber actionChamber = StringUtils.isAllUpperCase(actionText.replaceAll("[^a-zA-Z]+", "")) ?
-                                                Chamber.SENATE :
-                                                Chamber.ASSEMBLY ;
+                                                Chamber.SENATE : Chamber.ASSEMBLY ;
                     billActions.add(
                             new BillAction(actionDate, actionText, actionChamber, i+1, daybreakBill.getBaseBillId())
                     );
-                } catch (ParseException ex) {
+                } catch (DateTimeParseException ex) {
                     logger.error("Could not parse date " + billActionMatcher.group(1) + " for " + daybreakBill.getDaybreakBillId());
+                    logger.error(ex.getMessage());
                 }
             }
             else{   // Stop once an invalid line has been reached

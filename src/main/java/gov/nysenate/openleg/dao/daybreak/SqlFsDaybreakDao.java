@@ -13,6 +13,7 @@ import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.daybreak.*;
 import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -269,7 +270,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
 
     /** {@InheritDoc }  */
     @Override
-    public LocalDate getCurrentReportDate(Range<LocalDate> dateRange) {
+    public LocalDate getCurrentReportDate(Range<LocalDate> dateRange) throws DataAccessException {
         MapSqlParameterSource params = getReportDateRangeParams(dateRange);
         return jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_REPORTS.getSql(
                         schema(),
@@ -278,6 +279,13 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
                 params,
                 new DaybreakReportDateRowMapper()
         );
+    }
+
+    @Override
+    public List<LocalDate> getAllReportDates() throws DataAccessException {
+    Range<LocalDate> allDates = Range.closed(DateUtils.longAgo().toLocalDate(), LocalDate.now());
+        MapSqlParameterSource params = getReportDateRangeParams(allDates);
+        return jdbcNamed.query(SqlDaybreakQuery.SELECT_REPORTS.getSql(schema()), params, new DaybreakReportDateRowMapper());
     }
 
     /** {@InheritDoc } */
@@ -337,6 +345,8 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     public void setProcessed(LocalDate reportDate) {
         MapSqlParameterSource params = getDaybreakReportParams(reportDate, true, false);
         jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_REPORT.getSql(schema()), params);
+        // Set all fragments as processed too
+        jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PROCESSED_REPORT.getSql(schema()), params);
     }
 
     /** {@InheritDoc } */

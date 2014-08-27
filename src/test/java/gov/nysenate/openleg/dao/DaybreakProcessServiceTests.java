@@ -24,7 +24,7 @@ public class DaybreakProcessServiceTests extends BaseTests {
     @Autowired
     private DaybreakDao daybreakDao;
 
-    private static final LocalDate testReportdate = LocalDate.of(2014, 8, 15);
+    private static final LocalDate testReportdate = LocalDate.of(2014, 8, 8);
 
     @Test
     public void stageDaybreakFileTest(){
@@ -52,6 +52,16 @@ public class DaybreakProcessServiceTests extends BaseTests {
     @Test
     public void setPending(){
         daybreakDao.setPendingProcessing(testReportdate);
+    }
+
+    @Test
+    public void setAllNotPending(){
+        daybreakDao.getAllReportDates().forEach(daybreakDao::setProcessed);
+    }
+
+    @Test
+    public void setAllPending(){
+        daybreakDao.getAllReportDates().forEach(daybreakDao::setPendingProcessing);
     }
 
     @Test

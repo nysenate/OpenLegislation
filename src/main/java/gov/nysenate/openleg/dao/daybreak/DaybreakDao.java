@@ -153,7 +153,13 @@ public interface DaybreakDao
      * Returns the latest report date that is before or matching the reference date
      * @return
      */
-    public LocalDate getCurrentReportDate(Range<LocalDate> dateRange);
+    public LocalDate getCurrentReportDate(Range<LocalDate> dateRange) throws DataAccessException;
+
+    /**
+     * Returns the date of all existing reports
+     * @return
+     */
+    public List<LocalDate> getAllReportDates() throws DataAccessException;
 
     /** --- Update/Insert Methods --- */
 
@@ -196,7 +202,7 @@ public interface DaybreakDao
     public void setProcessed(DaybreakBillId daybreakBillId);
 
     /**
-     * Labels the report designaterd by the given report date as processed
+     * Labels the report designaterd by the given report date as processed, sets all fragments as well
      * @param reportDate
      */
     public void setProcessed(LocalDate reportDate);

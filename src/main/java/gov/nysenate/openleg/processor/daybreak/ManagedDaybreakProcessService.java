@@ -75,7 +75,7 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
     @Override
     public void processFragments(List<DaybreakFragment> fragments) {
         logger.info("Processing " + fragments.size() + " daybreak fragments");
-        for(DaybreakFragment daybreakFragment : fragments){
+        for(DaybreakFragment daybreakFragment : fragments) {
             executorService.submit(() -> processFragment(daybreakFragment));
         }
         executorService.shutdown();
