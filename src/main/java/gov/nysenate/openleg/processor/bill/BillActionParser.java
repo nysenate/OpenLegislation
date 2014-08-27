@@ -122,7 +122,7 @@ public class BillActionParser
         // the content of the actions instead to avoid reliance on a formatting detail.
         Chamber currentChamber = billId.getChamber();
         // The current bill amendment can change throughout the course of the actions list.
-        activeVersion = BillId.DEFAULT_VERSION;
+        this.activeVersion = BillId.DEFAULT_VERSION;
         // Impose a strict order to the actions.
         int sequenceNo = 0;
         // Each action should be on its own line
@@ -208,7 +208,7 @@ public class BillActionParser
      */
     protected void updatePublishStatus(BillAction action) {
         boolean foundPublishPattern = false;
-        Version publishVersion = Version.DEFAULT;
+        Version publishVersion = this.activeVersion;
         // Check if the action matches a publish event
         for (Pattern pattern : publishBillEventPatterns) {
             Matcher matcher = pattern.matcher(action.getText());
