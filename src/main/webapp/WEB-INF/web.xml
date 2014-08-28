@@ -4,14 +4,6 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	version="2.4">
 
-    <listener>
-       <listener-class>gov.nysenate.util.listener.NYSenateContextListener</listener-class>
-    </listener>
-    <context-param>
-	   <param-name>Application</param-name>
-	   <param-value>gov.nysenate.openleg.util.Application</param-value>
-	</context-param>
-
     <context-param>
         <param-name>spring.profiles.active</param-name>
         <param-value>dev</param-value>
@@ -25,6 +17,5 @@
 		<error-code>500</error-code>
 		<location>/500.jsp</location>
 	</error-page>
-
 
 </web-app>

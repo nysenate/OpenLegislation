@@ -1,6 +1,6 @@
 {
-  "name": "foundation-compass-app",
-  "version": "0.0.1",
+  "name": "gov-nysenate-openleg",
+  "version": "2.0-alpha",
   "private": "true",
   "dependencies": {
     "foundation": "zurb/bower-foundation"
