@@ -5,8 +5,9 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
 $nice-dark-blue: #204056;
+$nice-blue: #008cba;
 
-/** Foundation Overrides */
+/** --- Foundation Overrides --- */
 
 body {
   font-family: 'Open Sans' sans-serif;
@@ -24,12 +25,25 @@ table {
 }
 
 .side-nav li.heading {
-  border-bottom: 2px solid $nice-dark-blue;
+  font-size: .9em;
+  color: $nice-blue;  
 }
 
-.top-bar .name {
-  margin: 0 3em;
+.top-bar {
+  border-bottom: 1px solid #ddd;
+  height: 60px;
+  padding-top: 7px;
+  .name {
+    margin: 0 3em;
+    img {
+      height: 42px;
+      position: relative;
+      top: -3px;
+    }
+  }
 }
+
+/** --- Magellan Nav --- */
 
 [data-magellan-expedition], [data-magellan-expedition-clone] {
   background: #fafafa;
@@ -44,16 +58,16 @@ table {
   }
 }
 
+.sub-nav dd.active a {
+  border-radius: 0;
+}
+
 /** Custom */
 
 .side-menu-bg {
-  background: #f5f5f5;
-  @include box-shadow(-5px 2px 20px -5px #ccc);
 }
 
 .main-content-bg {
-  background: #fafafa;
-  @include box-shadow(5px 0 10px -5px #ccc);
 }
 
 .no-bottom-margin {

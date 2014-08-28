@@ -7,7 +7,7 @@
 //
 
 // This is the default html and body font-size for the base rem value.
-$rem-base: 16px;
+$rem-base: 17px;
 
 // Allows the use of rem-calc() or lower-bound() in your settings
 @import "foundation/functions";
@@ -43,7 +43,7 @@ $row-width: rem-calc(1200);
 // $font-weight-bold: bold !default;
 
 // We use these to control various global styles
-$body-bg: #f0f0f0;
+$body-bg: #fff;
 // $body-font-color: #222;
 $body-font-family: "Open Sans", sans-serif;
 $font-weight-normal:normal;
@@ -982,7 +982,7 @@ $side-nav-link-color-hover: teal;
 // $side-nav-link-bg-hover: hsla(0, 0, 0, 0.025);
 // $side-nav-link-margin: 0;
 $side-nav-link-padding: rem-calc(5 2);
-$side-nav-font-size: rem-calc(13);
+$side-nav-font-size: rem-calc(14);
 // $side-nav-font-weight: $font-weight-normal;
 $side-nav-font-weight-active: bold;
 // $side-nav-font-family: $body-font-family;
@@ -997,7 +997,7 @@ $side-nav-heading-font-size: rem-calc(14);
 // We use these to control border styles
 // $side-nav-divider-size: 1px;
 // $side-nav-divider-style: solid;
-// $side-nav-divider-color: scale-color(#fff, $lightness: 10%);
+$side-nav-divider-color: scale-color(#999, $lightness: 10%);
 
 // Split Buttons
 
@@ -1209,11 +1209,11 @@ $table-border-style: none;
 $include-html-top-bar-classes: $include-html-classes;
 
 // Background color for the top bar
-$topbar-bg-color: #ddd;
+$topbar-bg-color: #fff;
 $topbar-bg: $topbar-bg-color;
 
 // Height and margin
-// $topbar-height: 45px;
+// $topbar-height: 46px;
 // $topbar-margin-bottom: 0;
 
 // Controlling the styles for the title in the top bar
@@ -1230,16 +1230,16 @@ $topbar-title-font-size: rem-calc(22);
 // $topbar-dropdown-toggle-alpha: 0.4;
 
 // Set the link colors and styles for top-level nav
-$topbar-link-color: #204056;
-// $topbar-link-color-hover: #fff;
+$topbar-link-color: #737777;
+$topbar-link-color-hover: #378f98;
 // $topbar-link-color-active: #fff;
 // $topbar-link-color-active-hover: #fff;
 // $topbar-link-weight: $font-weight-normal;
 $topbar-link-font-size: rem-calc(15);
 $topbar-link-hover-lightness: -20%; // Darken by 10%
 $topbar-link-bg: $topbar-bg;
-$topbar-link-bg-color-hover: #aaa;
-$topbar-link-bg-hover: #aaa;
+$topbar-link-bg-color-hover: #f5f5f5;
+$topbar-link-bg-hover: #f5f5f5;
 // $topbar-link-bg-active: $primary-color;
 // $topbar-link-bg-active-hover: scale-color($primary-color, $lightness: -14%);
 // $topbar-link-font-family: $body-font-family;
