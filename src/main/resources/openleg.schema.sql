@@ -165,7 +165,7 @@ SET search_path = master, pg_catalog;
 
 CREATE FUNCTION log_sobi_updates() RETURNS trigger
     LANGUAGE plpgsql
-    AS $$DECLARE  
+    AS $$DECLARE
   primary_keys text[];         -- The primary key column names
   old_primary_key_val hstore;  -- Previous primary key/value pairs
   primary_key_val hstore;      -- Primary key/value pairs
@@ -174,8 +174,8 @@ CREATE FUNCTION log_sobi_updates() RETURNS trigger
   data_diff hstore;            -- The data values that have been updated
   ignored_columns text[];      -- Column names to exclude from data_diff
   fragment_id text := NULL;    -- The fragment id that caused the insert/update
-    
-BEGIN  
+
+BEGIN
   primary_keys := TG_ARGV;
   ignored_columns := array_cat(ARRAY['modified_date_time', 'last_fragment_id'],
                                primary_keys);
@@ -184,42 +184,42 @@ BEGIN
     primary_key_val := slice(hstore(NEW.*), primary_keys);
     new_values := delete(hstore(NEW.*), ignored_columns);
     fragment_id := NEW.last_fragment_id;
-    
+
     -- Handle case where the primary key is modified
     IF TG_OP = 'UPDATE' THEN
        old_primary_key_val := slice(hstore(OLD.*), primary_keys);
        IF primary_key_val != old_primary_key_val THEN
          INSERT INTO master.sobi_change_log (table_name, action, key, data, sobi_fragment_id)
-         VALUES (TG_TABLE_NAME, 'MODIFIED_PKEY', old_primary_key_val, ''::hstore, fragment_id); 
+         VALUES (TG_TABLE_NAME, 'MODIFIED_PKEY', old_primary_key_val, ''::hstore, fragment_id);
          TG_OP := 'INSERT';
        END IF;
     END IF;
-  ELSE 
-    primary_key_val := slice(hstore(OLD.*), primary_keys);    
+  ELSE
+    primary_key_val := slice(hstore(OLD.*), primary_keys);
   END IF;
 
   IF TG_OP IN ('UPDATE', 'DELETE') THEN
     old_values := delete(hstore(OLD.*), ignored_columns);
   END IF;
-  
+
   IF TG_OP = 'INSERT' THEN
     data_diff := new_values;
-  ELSIF TG_OP = 'UPDATE' THEN    
+  ELSIF TG_OP = 'UPDATE' THEN
     data_diff := new_values - old_values;
-  ELSE 
+  ELSE
     data_diff := old_values;
   END IF;
-  
-  -- Add the sobi change record only for inserts, deletes, and updates where the 
+
+  -- Add the sobi change record only for inserts, deletes, and updates where the
   -- non-ignored values were actually changed.
   IF TG_OP IN ('INSERT','DELETE') OR data_diff != ''::hstore THEN
     INSERT INTO master.sobi_change_log (table_name, action, key, data, sobi_fragment_id)
     VALUES (TG_TABLE_NAME, TG_OP, primary_key_val, data_diff, fragment_id);
   END IF;
 
-  IF TG_OP IN ('INSERT', 'UPDATE') THEN 
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
     RETURN NEW;
-  ELSE 
+  ELSE
     RETURN OLD;
   END IF;
 
@@ -1775,7 +1775,8 @@ CREATE TABLE daybreak_fragment (
     processed_count integer DEFAULT 0 NOT NULL,
     pending_processing boolean DEFAULT true NOT NULL,
     bill_active_version character(1),
-    fragment_text text NOT NULL
+    fragment_text text NOT NULL,
+    modified_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -2101,7 +2102,8 @@ CREATE TABLE spotcheck_mismatch (
     status text NOT NULL,
     reference_data text NOT NULL,
     observed_data text NOT NULL,
-    notes text
+    notes text,
+    ref_mismatch_id integer
 );
 
 
@@ -2992,6 +2994,14 @@ ALTER TABLE ONLY daybreak_bill_amendment
 
 ALTER TABLE ONLY daybreak_bill
     ADD CONSTRAINT daybreak_bill_report_date_bill_print_no_bill_session_year_key UNIQUE (report_date, bill_print_no, bill_session_year);
+
+
+--
+-- Name: daybreak_bill_sponsor_report_date_bill_print_no_bill_sessio_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY daybreak_bill_sponsor
+    ADD CONSTRAINT daybreak_bill_sponsor_report_date_bill_print_no_bill_sessio_key UNIQUE (report_date, bill_print_no, bill_session_year, member_short_name, type);
 
 
 --
@@ -3918,6 +3928,14 @@ ALTER TABLE ONLY sobi_fragment
 
 ALTER TABLE ONLY spotcheck_mismatch
     ADD CONSTRAINT spotcheck_mismatch_observation_id_fkey FOREIGN KEY (observation_id) REFERENCES spotcheck_observation(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spotcheck_mismatch_ref_mismatch_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY spotcheck_mismatch
+    ADD CONSTRAINT spotcheck_mismatch_ref_mismatch_id_fkey FOREIGN KEY (ref_mismatch_id) REFERENCES spotcheck_mismatch(id) ON UPDATE SET NULL ON DELETE SET NULL;
 
 
 --
