@@ -8358,7 +8358,7 @@ table {
 }
 /* line 20, ../../WEB-INF/scss/app.scss */
 table thead tr th {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #ddd;
 }
 
 /* line 27, ../../WEB-INF/scss/app.scss */
@@ -8367,17 +8367,17 @@ table thead tr th {
   color: #008cba;
 }
 
-/* line 33, ../../WEB-INF/scss/app.scss */
+/* line 32, ../../WEB-INF/scss/app.scss */
 .top-bar {
   border-bottom: 1px solid #ddd;
   height: 60px;
   padding-top: 7px;
 }
-/* line 37, ../../WEB-INF/scss/app.scss */
+/* line 36, ../../WEB-INF/scss/app.scss */
 .top-bar .name {
   margin: 0 3em;
 }
-/* line 39, ../../WEB-INF/scss/app.scss */
+/* line 38, ../../WEB-INF/scss/app.scss */
 .top-bar .name img {
   height: 42px;
   position: relative;
@@ -8385,56 +8385,56 @@ table thead tr th {
 }
 
 /** --- Magellan Nav --- */
-/* line 49, ../../WEB-INF/scss/app.scss */
+/* line 48, ../../WEB-INF/scss/app.scss */
 [data-magellan-expedition], [data-magellan-expedition-clone] {
   background: #fafafa;
   border-bottom: 1px solid #ddd;
   margin-bottom: 10px;
 }
-/* line 53, ../../WEB-INF/scss/app.scss */
+/* line 52, ../../WEB-INF/scss/app.scss */
 [data-magellan-expedition] .def, [data-magellan-expedition-clone] .def {
   font-weight: bold;
   text-transform: none;
 }
-/* line 56, ../../WEB-INF/scss/app.scss */
+/* line 55, ../../WEB-INF/scss/app.scss */
 [data-magellan-expedition] .def a, [data-magellan-expedition-clone] .def a {
   color: #333;
 }
 
-/* line 62, ../../WEB-INF/scss/app.scss */
+/* line 61, ../../WEB-INF/scss/app.scss */
 .sub-nav dd.active a {
   border-radius: 0;
 }
 
 /** Custom */
-/* line 74, ../../WEB-INF/scss/app.scss */
+/* line 73, ../../WEB-INF/scss/app.scss */
 .no-bottom-margin {
   margin-bottom: 0 !important;
 }
 
-/* line 78, ../../WEB-INF/scss/app.scss */
+/* line 77, ../../WEB-INF/scss/app.scss */
 fieldset {
   border: 1px solid #f1f1f1;
   padding: .7rem;
 }
-/* line 79, ../../WEB-INF/scss/app.scss */
+/* line 78, ../../WEB-INF/scss/app.scss */
 fieldset.no-margin {
   margin: 0;
 }
 
-/* line 86, ../../WEB-INF/scss/app.scss */
+/* line 85, ../../WEB-INF/scss/app.scss */
 .text-block {
   padding: 0 1rem 0 0.1rem;
 }
 
-/* line 90, ../../WEB-INF/scss/app.scss */
+/* line 89, ../../WEB-INF/scss/app.scss */
 label.block-label {
   font-size: .8rem;
   margin-bottom: 10px;
   cursor: none;
 }
 
-/* line 96, ../../WEB-INF/scss/app.scss */
+/* line 95, ../../WEB-INF/scss/app.scss */
 pre {
   font-family: 'Ubuntu Mono';
 }

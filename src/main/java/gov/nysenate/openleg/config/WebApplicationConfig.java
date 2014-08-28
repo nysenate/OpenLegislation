@@ -32,8 +32,8 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter
 {
     private static final Logger logger = LoggerFactory.getLogger(WebApplicationConfig.class);
 
-    private static final String resourcePath = "/assets/**";
-    private static final String resourceLocation = "/assets/";
+    private static final String resourcePath = "/static/**";
+    private static final String resourceLocation = "/static/";
 
     /** Sets paths that should not be intercepted by a controller (e.g css/ js/). */
     @Override
