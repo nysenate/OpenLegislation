@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.processor.base.ParseError;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,11 +117,6 @@ public class BillActionParser
      */
     public void parseActions() throws ParseError {
         this.billActions = new ArrayList<>();
-        // Each action typically originates from a specific chamber.
-        // NOTE: The chamber can also be derived based on formatting by LBDC, where assembly actions are
-        // all lowercase and senate actions are all uppercase. However we attempt to figure this out via
-        // the content of the actions instead to avoid reliance on a formatting detail.
-        Chamber currentChamber = billId.getChamber();
         // The current bill amendment can change throughout the course of the actions list.
         this.activeVersion = BillId.DEFAULT_VERSION;
         // Impose a strict order to the actions.
@@ -137,11 +133,13 @@ public class BillActionParser
                     throw new ParseError("eventDateFormat parse failure: " + billEvent.group(1));
                 }
                 // Normalize the bill event text to facilitate pattern matching.
-                String eventText = billEvent.group(2).trim().toUpperCase();
-                // Check if the action is a chamber recall, otherwise the current chamber can be used.
-                Chamber actionChamber = chamberRecall(eventText).orElse(currentChamber);
+                String eventText = billEvent.group(2).trim();
+                // Each action is designated to a specific chamber. The actions belonging to the assembly will be
+                // all lowercase and the senate will be all uppercase.
+                Chamber eventChamber = StringUtils.isAllUpperCase(eventText.replaceAll("[^a-zA-Z]+", ""))
+                    ? Chamber.SENATE : Chamber.ASSEMBLY;
                 // Construct and append bill action to list.
-                BillAction action = new BillAction(eventDate, eventText, actionChamber, ++sequenceNo, billId);
+                BillAction action = new BillAction(eventDate, eventText, eventChamber, ++sequenceNo, billId);
                 billActions.add(action);
                 // Set stricken status if this action has a stricken clause
                 updateStrickenStatus(action);
@@ -151,47 +149,11 @@ public class BillActionParser
                 updateSameAs(action);
                 // Update the committee info if the action indicates a committee referral
                 updateCommitteeStatus(action);
-                // Identify the target chamber for the next action
-                currentChamber = chamberSwitch(action).orElse(currentChamber);
             }
             else {
                 throw new ParseError("billEventPattern not matched: " + line);
             }
         }
-    }
-
-    /**
-     * When a bill is recalled from a chamber, it is requested by the opposite chamber.
-     * This method will return the chamber that requested the recall or nothing otherwise.
-     * Note: This doesn't trigger a chamber switch in that only the recall action will
-     * have the different chamber.
-     *
-     * @param eventText String
-     * @return Optional<Chamber>
-     */
-    protected Optional<Chamber> chamberRecall(String eventText) {
-        Matcher matcher = chamberRecallPattern.matcher(eventText);
-        Chamber recallChamber = null;
-        if (matcher.find()) {
-            recallChamber = Chamber.valueOf(matcher.group(1)).opposite();
-        }
-        return Optional.ofNullable(recallChamber);
-    }
-
-    /**
-     * Determines if the chamber is to be switched via a deliver/return action.
-     * If the chamber is not switched via this action, an empty Optional will be returned instead.
-     *
-     * @param action BillAction
-     * @return Optional<Chamber>
-     */
-    protected Optional<Chamber> chamberSwitch(BillAction action) {
-        Chamber currentChamber = null;
-        Matcher matcher = chamberDeliverPattern.matcher(action.getText());
-        if (matcher.find()) {
-            currentChamber = Chamber.valueOf(matcher.group(2));
-        }
-        return Optional.ofNullable(currentChamber);
     }
 
     /**
@@ -214,10 +176,17 @@ public class BillActionParser
             Matcher matcher = pattern.matcher(action.getText());
             if (matcher.find()) {
                 foundPublishPattern = true;
+                // Mark this version as published
                 publishVersion = Version.of(matcher.group(2));
                 PublishStatus status =
                     new PublishStatus(true, action.getDate().atStartOfDay(), false, action.getText());
                 publishStatusMap.put(publishVersion, status);
+                // Also make sure that all previous versions are also published
+                for (Version v : Version.before(publishVersion)) {
+                    if (!publishStatusMap.containsKey(v) || !publishStatusMap.get(v).isPublished()) {
+                        publishStatusMap.put(v, status);
+                    }
+                }
                 break;
             }
         }

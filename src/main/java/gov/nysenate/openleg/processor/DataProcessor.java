@@ -2,11 +2,10 @@ package gov.nysenate.openleg.processor;
 
 import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
 import gov.nysenate.openleg.processor.base.SobiProcessService;
+import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,6 +20,9 @@ public class DataProcessor
     @Autowired
     private SobiProcessService sobiProcessService;
 
+    @Autowired
+    private DaybreakProcessService daybreakProcessService;
+
     /** --- Main --- */
 
     public void run() throws Exception {
@@ -34,16 +36,16 @@ public class DataProcessor
 
     public void collate() {
         sobiProcessService.collateSobiFiles();
+        daybreakProcessService.collateDaybreakReports();
         // TODO: Collate Transcripts / Public Hearings
         // TODO: Collate Laws Of NY
-        // TODO: Collate Daybreak files
         // TODO: Handle CMS.TEXT (Rules file)
     }
 
     public void ingest() throws IOException {
         sobiProcessService.processPendingFragments(SobiProcessOptions.builder().build());
+        daybreakProcessService.processPendingFragments();
         // TODO: Process Transcripts / Public Hearings
         // TODO: Process Laws of NY
-        // TODO: Process Daybreak files, run SpotCheck Reports
     }
 }

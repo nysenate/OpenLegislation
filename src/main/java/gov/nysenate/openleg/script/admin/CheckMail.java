@@ -19,7 +19,7 @@ public class CheckMail extends BaseScript
 
     public static void main(String[] args) throws Exception
     {
-        new CheckMail().run(args);
+//        new CheckMail().run(args);
     }
 
     @Override
@@ -86,11 +86,5 @@ public class CheckMail extends BaseScript
 
         // Finalize the message deletion from the source folder
         source.expunge();
-
-        // Run the new report and regenerate our errors.
-        if (runSpotCheck) {
-            new SpotCheck().execute(opts);
-            new CreateErrors().execute(opts);
-        }
     }
 }

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.entity;
 
-import gov.nysenate.openleg.dao.base.*;
+import gov.nysenate.openleg.dao.base.BasicSqlQuery;
+import gov.nysenate.openleg.dao.base.SqlTable;
 
 public enum SqlCommitteeQuery implements BasicSqlQuery
 {

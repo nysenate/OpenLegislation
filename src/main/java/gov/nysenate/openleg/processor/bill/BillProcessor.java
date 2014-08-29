@@ -263,7 +263,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         specifiedAmendment.setStricken(actionParser.isStricken());
         specifiedAmendment.setCurrentCommittee(actionParser.getCurrentCommittee());
         baseBill.setPastCommittees(actionParser.getPastCommittees());
-        actionParser.getPublishStatusMap().forEach(baseBill::updatePublishStatus);
+        baseBill.setPublishStatuses(actionParser.getPublishStatusMap());
         actionParser.getSameAsMap().forEach((k, v) -> {
             if (baseBill.hasAmendment(k)) {
                 baseBill.getAmendment(k).setSameAs(Sets.newHashSet(v));

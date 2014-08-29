@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.calendar;
 
-import gov.nysenate.openleg.dao.base.*;
+import gov.nysenate.openleg.dao.base.BasicSqlQuery;
+import gov.nysenate.openleg.dao.base.SqlTable;
 
 /**
  * Queries related to the retrieval and persistence of senate calendars.

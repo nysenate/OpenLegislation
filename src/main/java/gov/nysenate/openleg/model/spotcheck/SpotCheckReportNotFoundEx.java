@@ -5,6 +5,8 @@ package gov.nysenate.openleg.model.spotcheck;
  */
 public class SpotCheckReportNotFoundEx extends RuntimeException
 {
+    private static final long serialVersionUID = -1310645141053503942L;
+
     protected SpotCheckReportId reportId;
 
     public SpotCheckReportNotFoundEx(SpotCheckReportId reportId) {

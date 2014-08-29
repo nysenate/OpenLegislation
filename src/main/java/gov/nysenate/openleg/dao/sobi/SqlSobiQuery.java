@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.sobi;
 
-import gov.nysenate.openleg.dao.base.*;
+import gov.nysenate.openleg.dao.base.BasicSqlQuery;
+import gov.nysenate.openleg.dao.base.SqlTable;
 
 public enum SqlSobiQuery implements BasicSqlQuery
 {

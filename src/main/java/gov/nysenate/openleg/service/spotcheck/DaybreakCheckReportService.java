@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
-import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
@@ -11,7 +9,6 @@ import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.daybreak.DaybreakBill;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.bill.BillDataService;
@@ -21,17 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFERENCE_DATA_MISSING;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -67,6 +60,9 @@ public class DaybreakCheckReportService implements SpotCheckReportService<BaseBi
         logger.info("Fetching daybreak bills...");
         Range<LocalDate> dateRange = Range.closed(start.toLocalDate(), end.toLocalDate());
         List<DaybreakBill> daybreakBills = daybreakDao.getCurrentDaybreakBills(dateRange);
+        if (daybreakBills.isEmpty()) {
+            throw new ReferenceDataNotFoundEx("No matching reference data");
+        }
         // All daybreak bills should have the same reference date.
         SpotCheckReferenceId refId = daybreakBills.get(0).getReferenceId();
         logger.info("Using Daybreak {} to generate report", refId);

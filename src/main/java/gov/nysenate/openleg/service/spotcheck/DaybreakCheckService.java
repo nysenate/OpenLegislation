@@ -2,9 +2,7 @@ package gov.nysenate.openleg.service.spotcheck;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Range;
-import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
-import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -20,7 +18,6 @@ import gov.nysenate.openleg.util.BillTextUtils;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +27,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 import static java.util.stream.Collectors.joining;

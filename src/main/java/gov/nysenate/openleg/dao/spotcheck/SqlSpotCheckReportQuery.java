@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
-import gov.nysenate.openleg.dao.base.*;
+import gov.nysenate.openleg.dao.base.BasicSqlQuery;
+import gov.nysenate.openleg.dao.base.SqlTable;
 
 public enum SqlSpotCheckReportQuery implements BasicSqlQuery
 {

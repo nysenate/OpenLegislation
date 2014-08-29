@@ -20,7 +20,7 @@ public class LRSScraper extends BaseScript
 
     public static void main(String[] args) throws Exception
     {
-        new LRSScraper().run(args);
+//        new LRSScraper().run(args);
     }
 
     String allCalendars = "http://leginfo.state.ny.us/ASMSEN/menugetl.cgi?COMMONQUERY=CALENDAR";

@@ -10,7 +10,6 @@ import gov.nysenate.openleg.model.bill.BillNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.base.CachingService;
 import net.sf.ehcache.CacheManager;
-import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CachedBillDataService implements BillDataService, CachingService

@@ -2,7 +2,6 @@ package gov.nysenate.openleg.model.daybreak;
 
 import com.google.common.base.Objects;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.BillId;
 
 import java.time.LocalDate;
 

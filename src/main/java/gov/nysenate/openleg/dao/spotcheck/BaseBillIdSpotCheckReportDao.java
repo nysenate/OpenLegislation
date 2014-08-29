@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -27,7 +27,7 @@ public class UpdateNYSenateData extends BaseScript
 
     public static void main(String[] args) throws Exception
     {
-        new UpdateNYSenateData().run(args);
+//        new UpdateNYSenateData().run(args);
     }
 
     public Options getOptions()

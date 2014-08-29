@@ -1,5 +1,10 @@
 package gov.nysenate.openleg.model.base;
 
+import com.google.common.collect.Lists;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Enumeration of all possible character based versions which includes an entry for a default version.
  * Using this enumeration instead of a string will address issues pertaining to normalizing
@@ -33,5 +38,30 @@ public enum Version
             return DEFAULT;
         }
         return valueOf(cleanVersion);
+    }
+
+    /**
+     * Get a list containing the versions that occur before the given version 'v'.
+     *
+     * @param v Version
+     * @return List<Version>
+     */
+    public static List<Version> before(Version v) {
+        return Lists.newArrayList(values()).stream()
+            .filter(p -> p.compareTo(v) < 0)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Get a list containing the versions that occur before the given version 'v' as well as the
+     * given version.
+     *
+     * @param v Version
+     * @return List<Version>
+     */
+    public static List<Version> beforeIncluding(Version v) {
+        return Lists.newArrayList(values()).stream()
+                .filter(p -> p.compareTo(v) < 0)
+                .collect(Collectors.toList());
     }
 }

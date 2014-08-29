@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.script;
 
+import gov.nysenate.openleg.config.ConsoleApplicationConfig;
+import gov.nysenate.openleg.processor.DataProcessor;
 import org.apache.commons.cli.*;
-import org.apache.log4j.Logger;
-
-import java.io.File;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * Provides a base wrapping layer for scripts that logs all uncaught exceptions
@@ -11,67 +13,47 @@ import java.io.File;
  */
 abstract public class BaseScript
 {
-    protected static Logger logger = Logger.getLogger(BaseScript.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseScript.class);
+
+    /** Used as the script name when printing help. */
+    protected static String SCRIPT_NAME = "BaseScript";
+
+    /** Used instead of default usage string when non-empty. */
+    protected static String USAGE = "";
 
     /**
-     * Used as the script name when printing help.
+     * Boots up the Spring Application and returns the context.
+     * @return AnnotationConfigApplicationContext
      */
-    protected String SCRIPT_NAME = "BaseScript";
+    public static AnnotationConfigApplicationContext init() {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        String profile = System.getProperty("spring.profiles.active");
+        logger.info("Using spring profile: {}", profile);
+        ctx.getEnvironment().setActiveProfiles(profile);
+        ctx.register(ConsoleApplicationConfig.class);
+        ctx.refresh();
+        ctx.start();
+        return ctx;
+    }
 
     /**
-     * Used instead of default usage string when non-empty.
+     * Shutdown the given application context.
+     * @param ctx
      */
-    protected String USAGE = "";
+    public static void shutdown(AnnotationConfigApplicationContext ctx) {
+        ctx.stop();
+    }
 
     /**
-     * Initial entry point for all scripts.
-     * <p>
-     * Wraps calls in a try/catch that logs all uncaught exceptions before re-throwing. Useful
-     * for making sure that log4j also reports uncaught exceptions for automated mailing.
+     * Returns the command line options given the spec 'opts' and the actual command line args 'args'
      *
-     * @param args
+     * @param opts Options - The specification for the options
+     * @param args String[] - Args from the main method
+     * @return CommandLine
+     * @throws ParseException
      */
-    public void run(String[] args) throws Exception {
-        Options options = getOptions();
-        options.addOption("h", "help", false, "Print this message");
-        Option environment = new Option("e", "environment", true, "Path to a configuration file for this environment");
-        environment.setRequired(true);
-        options.addOption(environment);
-
-        try {
-            CommandLine opts = new PosixParser().parse(options, args);
-            if(opts.hasOption("-h")) {
-                printUsage(options);
-                System.exit(0);
-            } else {
-                File propertiesFile = new File(opts.getOptionValue("environment"));
-                if (!propertiesFile.canRead()) {
-                    logger.fatal("Cannot read: "+propertiesFile);
-                    System.exit(1);
-                }
-                else {
-                    /** TODO: Initialize Spring */
-                }
-
-                execute(opts);
-            }
-        }
-        catch (MissingOptionException e) {
-            logger.fatal(e.getMessage());
-            printUsage(options);
-            System.exit(1);
-        }
-        catch (ParseException e) {
-            logger.fatal("Error parsing arguments: ", e);
-            System.exit(1);
-        }
-        catch (Exception e) {
-            logger.fatal("Unexpected Exception.",e);
-            throw e;
-        }
-        finally {
-            /** TODO: Shutdown Spring */
-        }
+    public static CommandLine getCommandLine(Options opts, String[] args) throws ParseException {
+        return new PosixParser().parse(opts, args);
     }
 
     /**
@@ -79,7 +61,7 @@ abstract public class BaseScript
      *
      * @param opts
      */
-    protected void printUsage(CommandLine opts) {
+    protected static void printUsage(CommandLine opts) {
         Options options = new Options();
         for (Option option : opts.getOptions()) {
             options.addOption(option);
@@ -93,7 +75,7 @@ abstract public class BaseScript
      *
      * @param options
      */
-    protected void printUsage(Options options) {
+    protected static void printUsage(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(SCRIPT_NAME, options, USAGE.isEmpty());
     }

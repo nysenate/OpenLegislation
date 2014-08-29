@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.service.bill;
 
 
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.ApprovalId;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 
 public class ApprovalNotFoundException extends RuntimeException {
 

@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.dao.bill;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import gov.nysenate.openleg.dao.base.*;
@@ -19,7 +18,6 @@ import gov.nysenate.openleg.service.bill.ApprovalNotFoundException;
 import gov.nysenate.openleg.service.bill.VetoDataService;
 import gov.nysenate.openleg.service.bill.VetoNotFoundException;
 import gov.nysenate.openleg.service.entity.MemberService;
-import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

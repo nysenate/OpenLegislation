@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.model.daybreak;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Designates the file type of a daybreak document
