@@ -4,5 +4,9 @@
   "private": "true",
   "dependencies": {
     "foundation": "zurb/bower-foundation"
+  },
+  "devDependencies": {
+    "angular": "~1.2.23",
+    "highcharts": "~4.0.3"
   }
 }

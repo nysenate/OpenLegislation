@@ -95,3 +95,31 @@ label.block-label {
 pre {
   font-family: 'Ubuntu Mono';
 }
+
+/** --- Styles for Report page --- */
+
+.reportChartForm {
+  float: left;
+  clear: none;
+}
+
+label.reportChartForm {
+  display: block;
+  padding: 2px 1em 0 0;
+}
+
+input.reportChartForm[type=radio] {
+  margin: 2px 0 0 2px;
+}
+
+.ng-binding.reportEntryDiffHidden {
+  visibility: hidden;
+}
+
+.ng-binding.reportEntryDiffPositive {
+  color: red;
+}
+
+.ng-binding.reportEntryDiffNegative {
+  color: green;
+}
