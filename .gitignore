@@ -5,5 +5,7 @@
 .classpath
 .project
 .settings/*
+src/main/webapp/.sass-cache/*
+src/main/webapp/static/bower_components/**
 target
 build

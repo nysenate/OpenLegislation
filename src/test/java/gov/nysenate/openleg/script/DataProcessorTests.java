@@ -16,7 +16,6 @@ public class DataProcessorTests extends BaseTests
     @Test
     public void completeTest() throws Exception {
         /** TODO update for Spring */
-        //sobiFileDao.deleteAll();
         dataProcessor.collate();
         dataProcessor.ingest();
     }

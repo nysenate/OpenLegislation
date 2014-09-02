@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.bill;
 
+import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -110,9 +112,34 @@ public class BillActionParserTests
             "2011S03778D406/18/12 AMENDED ON THIRD READING 3778E\n" +
             "2011S03778D406/20/12 ENACTING CLAUSE STRICKEN";
 
+    private static BillId A5060 = new BillId("A5060", 2013);
+    private static String A5060_actions =
+        "2013A05060E402/15/13 referred to energy\n" +
+        "2013A05060E405/13/13 amend (t) and recommit to energy\n" +
+        "2013A05060E405/13/13 print number 5060a\n" +
+        "2013A05060E405/16/13 amend (t) and recommit to energy\n" +
+        "2013A05060E405/16/13 print number 5060b\n" +
+        "2013A05060E405/30/13 reported referred to ways and means\n" +
+        "2013A05060E406/04/13 reported referred to rules\n" +
+        "2013A05060E406/06/13 amend and recommit to rules 5060c\n" +
+        "2013A05060E406/11/13 reported\n" +
+        "2013A05060E406/11/13 rules report cal.193\n" +
+        "2013A05060E406/11/13 ordered to third reading rules cal.193\n" +
+        "2013A05060E406/17/13 amended on third reading 5060d\n" +
+        "2013A05060E406/20/13 passed assembly\n" +
+        "2013A05060E406/20/13 delivered to senate\n" +
+        "2013A05060E406/20/13 REFERRED TO RULES\n" +
+        "2013A05060E401/08/14 DIED IN SENATE\n" +
+        "2013A05060E401/08/14 RETURNED TO ASSEMBLY\n" +
+        "2013A05060E401/08/14 ordered to third reading cal.224\n" +
+        "2013A05060E402/03/14 amended on third reading 5060e\n" +
+        "2013A05060E406/10/14 passed assembly\n" +
+        "2013A05060E406/10/14 delivered to senate\n" +
+        "2013A05060E406/10/14 REFERRED TO ENERGY AND TELECOMMUNICATIONS";
+
     @Test
     public void testBasicParse() throws Exception {
-        BillActionParser parser = new BillActionParser(S3778D, S3778D_actions);
+        BillActionParser parser = new BillActionParser(A5060, A5060_actions, Optional.of(new PublishStatus(true, LocalDateTime.now())));
         parser.parseActions();
         parser.getBillActions().forEach(a -> logger.info("{}", a.toString()));
         logger.info("Current Committee {}", parser.getCurrentCommittee());
@@ -121,6 +148,10 @@ public class BillActionParserTests
         logger.info("Publish Status Map {}", parser.getPublishStatusMap());
         logger.info("Same As Map {}", parser.getSameAsMap());
         logger.info("Stricken {}", parser.isStricken());
+    }
+
+    @Test
+    public void testUnPublish() throws Exception {
 
     }
 }

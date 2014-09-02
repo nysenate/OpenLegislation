@@ -7,7 +7,7 @@
         <ul class="title-area">
             <li class="name">
                 <h1>
-                    <img src="./static/img/NYSS_seal.jpg"/>
+                    <img src="<%= request.getContextPath() %>/static/img/NYSS_seal.jpg"/>
                     <a style="display:inline-block" href="#">OPEN | <span style='color:#008cba'>2.0</span></a>
                 </h1>
             </li>
@@ -16,12 +16,13 @@
             <!-- Left Nav Section -->
             <ul class="left">
                 <li class="<c:if test="${activeLink == 'content'}"><c:out value="active"/></c:if>">
-                    <a href="<%= request.getContextPath() %>/content">Content</a></li>
+                    <a target="_self" href="<%= request.getContextPath() %>/content">Content</a></li>
                 <li class="<c:if test="${activeLink == 'report'}"><c:out value="active"/></c:if>">
-                    <a href="<%= request.getContextPath() %>/report">Reports</a></li>
-                <li><a class="" href="#">Updates</a></li>
-                <li><a class="" href="#">Analytics</a></li>
-                <li><a class="" href="#">Tools</a></li>
+                    <a target="_self" href="<%= request.getContextPath() %>/report">Reports</a></li>
+                <li class="<c:if test="${activeLink == 'updates'}"><c:out value="active"/></c:if>">
+                    <a target="_self" href="<%= request.getContextPath() %>/updates">Updates</a></li>
+                <li class="<c:if test="${activeLink == 'analytics'}"><c:out value="active"/></c:if>">
+                    <a target="_self" href="<%= request.getContextPath() %>/analytics">Analytics</a></li>
             </ul>
         </section>
     </nav>

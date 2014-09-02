@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck;
 
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
@@ -14,6 +15,8 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.service.bill.BillDataService;
+import gov.nysenate.openleg.util.DateUtils;
+import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,23 +57,12 @@ public class DaybreakCheckServiceTests extends BaseTests
 
     @Test
     public void testCheck() throws Exception {
-        List<BaseBillId> billIds = billData.getBillIds(SessionYear.current(), LimitOffset.FIFTY);
-        SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
-        report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, LocalDateTime.of(2014,8,25,12,0,0)));
-        Map<BaseBillId, SpotCheckObservation<BaseBillId>> obsMap = new HashMap<>();
-        for (BaseBillId billId : billIds) {
-            DaybreakBillId daybreakId = new DaybreakBillId(billId, LocalDate.of(2014, 8, 22));
-            DaybreakBill daybreakBill = daybreakDao.getDaybreakBill(daybreakId);
-            Bill bill = billData.getBill(billId);
-            SpotCheckObservation<BaseBillId> obs = billSpotCheck.check(bill, daybreakBill);
-            obsMap.put(obs.getKey(), obs);
-        }
-        report.setObservations(obsMap);
+        Range<LocalDate> dateRange = Range.closed(DateUtils.longAgo().toLocalDate(), LocalDate.now());
+        logger.info("{}", dateRange.lowerEndpoint());
+        logger.info("{}", dateRange.upperEndpoint());
 
-//        report.setObservations();
-        reportDao.saveReport(report);
-
-//        logger.info("{}", bill.getActiveAmendment().getCoSponsors());
+        Bill bill = billData.getBill(new BaseBillId("S5220", 2013));
+        logger.info("{}", OutputUtils.toJson(billSpotCheck.check(bill)));
     }
 
     @Test

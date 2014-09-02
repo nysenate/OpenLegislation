@@ -33,7 +33,7 @@
     </build>
 
     <properties>
-        <spring.version>4.0.2.RELEASE</spring.version>
+        <spring.version>4.0.6.RELEASE</spring.version>
         <jackson.version>2.3.0</jackson.version>
         <woodstox.version>4.2.0</woodstox.version>
         <slf4j.version>1.7.5</slf4j.version>
@@ -41,6 +41,7 @@
         <tomcat.servlet.version>7.0.47</tomcat.servlet.version>
         <guava.version>17.0</guava.version>
         <guava.jackson.version>2.4.0</guava.jackson.version>
+        <jstl.version>1.2</jstl.version>
     </properties>
 
     <dependencies>
@@ -85,6 +86,14 @@
             <artifactId>tomcat-servlet-api</artifactId>
             <version>${tomcat.servlet.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- JSTL -->
+
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
         </dependency>
 
         <!-- Log4J | Logging -->
@@ -174,6 +183,12 @@
             <version>3.2.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.2</version>
+        </dependency>
+
         <!-- Unit Testing -->
 
         <dependency>
@@ -236,6 +251,7 @@
             <version>2.8.3</version>
         </dependency>
 
+
         <!-- TODO: Cleanup Misc deps -->
 
         <dependency>
@@ -250,11 +266,6 @@
             <version>2.4</version>
         </dependency>
 
-        <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-            <version>1.2</version>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.abdera</groupId>

@@ -17,5 +17,6 @@ public class BillDaoTests extends BaseTests{
         BillId billi = new BillId("S3382",2013);
         Bill testBill = billDao.getBill(billi);
 
+
     }
 }

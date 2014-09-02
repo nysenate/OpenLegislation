@@ -64,4 +64,9 @@ public class BillVersionTests
         List<Version> sorted = Arrays.asList(Version.DEFAULT, Version.B, Version.D, Version.Z);
         assertEquals(sorted, versions);
     }
+
+    @Test
+    public void testGetVersionsBefore() throws Exception {
+        logger.info("{}", Version.before(Version.A).get(0).name());
+    }
 }

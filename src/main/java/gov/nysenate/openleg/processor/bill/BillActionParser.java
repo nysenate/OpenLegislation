@@ -59,9 +59,8 @@ public class BillActionParser
     /** Patterns for bill actions that indicate that the specified bill amendment should be published. */
     protected static final List<Pattern> publishBillEventPatterns = Arrays.asList(
         Pattern.compile("PRINT NUMBER " + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? ON THIRD READING " + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? " + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? ON THIRD READING \\(T\\) " + simpleBillRegex),
+        Pattern.compile("AMEND(?:ED)? ON THIRD READING (?:\\(T\\) )?" + simpleBillRegex),
+        Pattern.compile("AMEND(?:ED)? (?:\\(T\\) )?" + simpleBillRegex),
         Pattern.compile("AMEND(?:ED)? AND RECOMMIT(?:TED)? TO RULES " + simpleBillRegex)
     );
 
@@ -102,9 +101,20 @@ public class BillActionParser
 
     /** --- Constructors --- */
 
-    public BillActionParser(BillId specifiedBillId, String data) {
+    /**
+     * Construct the BillActionParser
+     *
+     * @param specifiedBillId BillId - The bill id of the bill these actions belong to
+     * @param data String - String containing the actions, delimited by newlines
+     * @param defaultPubStatus Optional<PublishStatus> - Set the publish map on the action parser to include
+     *                                                   existing default amendment publish status if it exists
+     */
+    public BillActionParser(BillId specifiedBillId, String data, Optional<PublishStatus> defaultPubStatus) {
         this.billId = specifiedBillId;
         this.data = data;
+        if (defaultPubStatus.isPresent()) {
+            this.publishStatusMap.put(Version.DEFAULT, defaultPubStatus.get());
+        }
     }
 
     /** --- Methods --- */
@@ -138,6 +148,8 @@ public class BillActionParser
                 // all lowercase and the senate will be all uppercase.
                 Chamber eventChamber = StringUtils.isAllUpperCase(eventText.replaceAll("[^a-zA-Z]+", ""))
                     ? Chamber.SENATE : Chamber.ASSEMBLY;
+                // Uppercase the action to aid with regex matching
+                eventText = eventText.toUpperCase();
                 // Construct and append bill action to list.
                 BillAction action = new BillAction(eventDate, eventText, eventChamber, ++sequenceNo, billId);
                 billActions.add(action);

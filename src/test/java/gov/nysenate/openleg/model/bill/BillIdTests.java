@@ -38,12 +38,9 @@ public class BillIdTests
 
     @Test
     public void testEquals() throws Exception {
-        BillId id = new BillId("S1234a", 2013);
-        BillId id2 = new BillId("S1234A", 2013);
-        BillId id3 = new BillId("s1234", 2013);
-
-        assertEquals(id, id2);
-        assertTrue(id.equalsBase(id2));
-        assertTrue(id.equalsBase(id3));
+        BillId id = new BillId("S1234A", 2013);
+        BaseBillId id2 = new BaseBillId("S1234", 2013);
+        BaseBillId id3 = new BaseBillId("S1234", 2013);
+        assertEquals(id3.hashCode(), id2.hashCode());
     }
 }

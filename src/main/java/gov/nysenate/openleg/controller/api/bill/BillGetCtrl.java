@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.controller.api.bill;
 
 import gov.nysenate.openleg.client.view.bill.SimpleBillView;
+import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
@@ -15,16 +16,18 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
+
 @RestController
-@RequestMapping(value = "/api/3/bills/{sessionYear:[\\d]{4}}", method = RequestMethod.GET)
-public class BillGetCtrl
+@RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET)
+public class BillGetCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(BillGetCtrl.class);
 
     @Autowired
     private BillDataService billDataService;
 
-    @RequestMapping(value = "")
+    @RequestMapping(value = "/{sessionYear:[\\d]{4}}")
     public List<SimpleBillView> getBills(@PathVariable int sessionYear,
                                          @RequestParam(defaultValue = "50") int limit,
                                          @RequestParam(defaultValue = "1") int offset) {
@@ -34,10 +37,8 @@ public class BillGetCtrl
             .collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/{printNo}")
+    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
     public Bill getBill(@PathVariable String sessionYear, @PathVariable String printNo, HttpServletRequest req) {
         return billDataService.getBill(new BaseBillId(printNo, Integer.parseInt(sessionYear)));
     }
 }
-
-

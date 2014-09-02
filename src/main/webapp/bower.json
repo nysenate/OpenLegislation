@@ -3,10 +3,10 @@
   "version": "2.0-alpha",
   "private": "true",
   "dependencies": {
-    "foundation": "zurb/bower-foundation"
-  },
-  "devDependencies": {
+    "foundation": "zurb/bower-foundation",
     "angular": "~1.2.23",
+    "angular-route": "~1.2.23",
+    "angular-animate": "~1.2.23",
     "highcharts": "~4.0.3"
   }
 }

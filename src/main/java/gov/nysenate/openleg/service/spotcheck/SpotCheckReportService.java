@@ -22,8 +22,7 @@ public interface SpotCheckReportService<ContentKey>
 {
     /**
      * Generate a SpotCheckReport across all available data. The reference data used for
-     * comparison will be the most recent data prior to 'latestRefDateTime'. Note that
-     * this report will not have knowledge of prior reports.
+     * comparison will be the most recent data between the given start and end range.
      *
      * @param start LocalDateTime - The reference data will be active after (or on) this date/time.
      * @param end LocalDateTime - The reference data will be active prior to (or on) this date/time.

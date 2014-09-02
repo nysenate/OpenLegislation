@@ -255,7 +255,8 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     private void applyBillEvent(String data, Bill baseBill, BillAmendment specifiedAmendment)
                                 throws ParseError {
         // Use the BillActionParser to handle all the parsing details
-        BillActionParser actionParser = new BillActionParser(specifiedAmendment.getBillId(), data);
+        Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.DEFAULT);
+        BillActionParser actionParser = new BillActionParser(specifiedAmendment.getBillId(), data, defaultPubStatus);
         actionParser.parseActions();
         // Apply the results to the bill
         baseBill.setActions(actionParser.getBillActions());
@@ -263,7 +264,9 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         specifiedAmendment.setStricken(actionParser.isStricken());
         specifiedAmendment.setCurrentCommittee(actionParser.getCurrentCommittee());
         baseBill.setPastCommittees(actionParser.getPastCommittees());
+        // Apply the publish statuses derived from the actions parser
         baseBill.setPublishStatuses(actionParser.getPublishStatusMap());
+        // Apply same as bill ids which can be inferred from the actions
         actionParser.getSameAsMap().forEach((k, v) -> {
             if (baseBill.hasAmendment(k)) {
                 baseBill.getAmendment(k).setSameAs(Sets.newHashSet(v));

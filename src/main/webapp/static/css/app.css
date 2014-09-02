@@ -8406,35 +8406,47 @@ table thead tr th {
   border-radius: 0;
 }
 
-/** Custom */
-/* line 73, ../../WEB-INF/scss/app.scss */
+/** --- Custom --- */
+/* line 67, ../../WEB-INF/scss/app.scss */
+#wrapper {
+  margin-top: 80px;
+}
+
+/* line 71, ../../WEB-INF/scss/app.scss */
+.content-column {
+  padding-left: 35px;
+}
+
+/* line 75, ../../WEB-INF/scss/app.scss */
 .no-bottom-margin {
   margin-bottom: 0 !important;
 }
 
-/* line 77, ../../WEB-INF/scss/app.scss */
+/* line 79, ../../WEB-INF/scss/app.scss */
 fieldset {
   border: 1px solid #f1f1f1;
   padding: .7rem;
 }
-/* line 78, ../../WEB-INF/scss/app.scss */
+/* line 80, ../../WEB-INF/scss/app.scss */
 fieldset.no-margin {
   margin: 0;
 }
 
-/* line 85, ../../WEB-INF/scss/app.scss */
+/* line 87, ../../WEB-INF/scss/app.scss */
 .text-block {
   padding: 0 1rem 0 0.1rem;
 }
 
-/* line 89, ../../WEB-INF/scss/app.scss */
+/* line 91, ../../WEB-INF/scss/app.scss */
 label.block-label {
   font-size: .8rem;
   margin-bottom: 10px;
   cursor: none;
 }
 
-/* line 95, ../../WEB-INF/scss/app.scss */
+/* line 97, ../../WEB-INF/scss/app.scss */
 pre {
   font-family: 'Ubuntu Mono';
 }
+
+/** --- Styles for report page --- */

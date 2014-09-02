@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.bill;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -15,20 +16,12 @@ public class SqlBillDataServiceTests extends BaseTests
     private static final Logger logger = LoggerFactory.getLogger(SqlBillDataServiceTests.class);
 
     @Autowired
-    BillDataService sqlBillDataService;
+    BillDataService billData;
 
     @Test
     public void testGetBill() throws Exception {
-//        logger.info("{}", OutputUtils.toJson()));
-        logger.info(OutputUtils.toJson(sqlBillDataService.getBill(new BillId("A837", 2013))));
-//        logger.info("{}", OutputUtils.toJson(sqlBillDataService.getBill(new BillId("A2180", 2013))));
-//
-//        sqlBillDataService.saveBill(bill, null);
-//        sqlBillDataService.getBill(new BillId("A2180", 2013));
-        Bill bill = sqlBillDataService.getBill(new BillId("A9558", 2013));
-        logger.info(bill.getSponsor().toString());
-        for(BillAmendment amendment : bill.getAmendmentList()){
-            amendment.getCoSponsors().forEach(sponsor -> logger.info(sponsor.toString()));
-        }
+        Bill S7273 = billData.getBill(new BaseBillId("S7273", 2013));
+        logger.info("{}", S7273.getAmendPublishStatusMap());
+
     }
 }

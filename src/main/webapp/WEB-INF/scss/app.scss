@@ -62,12 +62,14 @@ table {
   border-radius: 0;
 }
 
-/** Custom */
+/** --- Custom --- */
 
-.side-menu-bg {
+#wrapper {
+  margin-top:80px;
 }
 
-.main-content-bg {
+.content-column {
+  padding-left: 35px;
 }
 
 .no-bottom-margin {

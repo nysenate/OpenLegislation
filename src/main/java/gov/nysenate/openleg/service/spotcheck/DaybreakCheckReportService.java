@@ -59,9 +59,15 @@ public class DaybreakCheckReportService implements SpotCheckReportService<BaseBi
         // Fetch the daybreak bills that are within the given date range
         logger.info("Fetching daybreak bills...");
         Range<LocalDate> dateRange = Range.closed(start.toLocalDate(), end.toLocalDate());
-        List<DaybreakBill> daybreakBills = daybreakDao.getCurrentDaybreakBills(dateRange);
+        List<DaybreakBill> daybreakBills;
+        try {
+            daybreakBills = daybreakDao.getCurrentDaybreakBills(dateRange);
+        }
+        catch (DataAccessException ex) {
+            throw new ReferenceDataNotFoundEx("Failed to retrieve daybreak bills within the given date range.");
+        }
         if (daybreakBills.isEmpty()) {
-            throw new ReferenceDataNotFoundEx("No matching reference data");
+            throw new ReferenceDataNotFoundEx("The collection of daybreak bills within the given date range is empty.");
         }
         // All daybreak bills should have the same reference date.
         SpotCheckReferenceId refId = daybreakBills.get(0).getReferenceId();
