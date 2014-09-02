@@ -9,6 +9,7 @@ import gov.nysenate.openleg.services.Varnish;
 import gov.nysenate.openleg.util.Application;
 import gov.nysenate.openleg.util.ChangeLogger;
 import gov.nysenate.openleg.util.Storage;
+import gov.nysenate.openleg.util.UnpublishListManager;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
@@ -64,5 +65,9 @@ public class RemoveAmendment extends BaseScript
 
         DataProcessor process = new DataProcessor();
         process.push(Application.getStorage(), ChangeLogger.getEntries(), services);
+
+        // Add the bill to the unpublished bill list
+        UnpublishListManager unpublishListManager = new UnpublishListManager();
+        unpublishListManager.addUnpublishedBill(billId + '-' + sessionYear);
     }
 }
