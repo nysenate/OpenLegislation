@@ -1,0 +1,104 @@
+<div class="row">
+    <div class="large-4 columns">
+        <h4>{{title}}</h4>
+    </div>
+    <div class="large-offset-4 large-4 columns">
+        <div class="row">
+            <form>
+                <select class="columns large-3">
+                    <option selected>Mar</option>
+                </select>
+                <select class="columns large-3"></select>
+                <select class="columns large-3">
+                    <option selected>Dec</option>
+                </select>
+                <select class="columns large-3"></select>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <!-- Chart Thing -->
+    <section style="height:300px;width:100%;background:#ddd;">
+        <div id="report-chart-area" class="reportChart" style="display:block"></div>
+    </section>
+    <form class="reportChartForm">
+        <header class="reportChartForm">Chart View:&nbsp;&nbsp;</header>
+        <label for="openClosed" class="reportChartForm">Open/Closed/Existing </label>
+        <input type="radio" name="Chart" id="openClosed" value="openClosed" class="reportChartForm"
+               ng-click="drawOpenClosedChart()" checked="checked"/>
+        <label class="reportChartForm">&nbsp;&nbsp;&nbsp;&nbsp;</label>
+        <label for="errorType" class="reportChartForm">Error Type:  </label>
+        <input type="radio" name="Chart" id="errorType" value="errorType" class="reportChartForm"
+               ng-click="drawErrorTypeChart()"/>
+    </form>
+</div>
+<br/>
+<div class="row">
+    <table class="columns large-12" style="padding:0;">
+        <thead>
+        <tr>
+            <th>Report Date/Time</th>
+            <th>Total</th>
+            <th>Existing</th>
+            <th>New</th>
+            <th>Resolved</th>
+            <th>Sponsor</th>
+            <th>Co/Mulit-sponsor</th>
+            <th>Title</th>
+            <th>Law/ Summary</th>
+            <th>Action</th>
+            <th>Page</th>
+            <th>Versions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="report in reports">
+            <td>{{ report.reportDate | date:'short'}}</td>
+            <td>{{ report.totalErrors }}
+                        <span ng-class="getEntryDiffClass(report.totalErrors, reports[$index+1].totalErrors)">
+                            ({{ getEntryDiff(report.totalErrors, reports[$index+1].totalErrors) }})
+                        </span>
+            </td>
+            <td>{{ report.existingErrors }}</td>
+            <td>{{ report.newErrors }}</td>
+            <td>{{ report.resolvedErrors }}</td>
+            <td>{{ report.sponsorErrors }}
+                        <span ng-class="getEntryDiffClass(report.sponsorErrors, reports[$index+1].sponsorErrors)">
+                            ({{ getEntryDiff(report.sponsorErrors, reports[$index+1].sponsorErrors) }})
+                        </span>
+            </td>
+            <td>{{ report.coSponsorErrors }}
+                        <span ng-class="getEntryDiffClass(report.coSponsorErrors, reports[$index+1].coSponsorErrors)">
+                            ({{ getEntryDiff(report.coSponsorErrors, reports[$index+1].coSponsorErrors) }})
+                        </span>
+            </td>
+            <td>{{ report.titleErrors }}
+                        <span ng-class="getEntryDiffClass(report.titleErrors, reports[$index+1].titleErrors)">
+                            ({{ getEntryDiff(report.titleErrors, reports[$index+1].titleErrors) }})
+                        </span>
+            </td>
+            <td>{{ report.lawSummaryErrors }}
+                        <span ng-class="getEntryDiffClass(report.lawSummaryErrors, reports[$index+1].lawSummaryErrors)">
+                            ({{ getEntryDiff(report.lawSummaryErrors, reports[$index+1].lawSummaryErrors) }})
+                        </span>
+            </td>
+            <td>{{ report.actionErrors }}
+                        <span ng-class="getEntryDiffClass(report.actionErrors, reports[$index+1].actionErrors)">
+                            ({{ getEntryDiff(report.actionErrors, reports[$index+1].actionErrors) }})
+                        </span>
+            </td>
+            <td>{{ report.pageErrors }}
+                        <span ng-class="getEntryDiffClass(report.pageErrors, reports[$index+1].pageErrors)">
+                            ({{ getEntryDiff(report.pageErrors, reports[$index+1].pageErrors) }})
+                        </span>
+            </td>
+            <td>{{ report.versionErrors }}
+                        <span ng-class="getEntryDiffClass(report.versionErrors, reports[$index+1].versionErrors)">
+                            ({{ getEntryDiff(report.versionErrors, reports[$index+1].versionErrors) }})
+                        </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
