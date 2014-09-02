@@ -86,7 +86,7 @@ public class BillProcessor
     /**
      * The expected format for Bill Info [1] block data.
      */
-    public static Pattern billInfoPattern = Pattern.compile("(.{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])(.{8}).*");
+    public static Pattern billInfoPattern = Pattern.compile("(.{20})([0-9]{5}[ A-Z])(.{33})([ A-Z][0-9]{5}[ `\\-A-Z0-9])(.{8})(.*)");
 
     /**
      * The expected format for header lines inside bill [T] and memo [M] text data.
@@ -747,13 +747,14 @@ public class BillProcessor
             // sponsor, reprint billno/amd, blurb, old bill house/billno/amd, LBD Number, ??, year, ??
             String sponsor = billData.group(1).trim();
             String oldbill = billData.group(4).trim().replaceAll("[0-9`-]$", "");
+            String oldYear = billData.group(6).trim();
 
             if (!sponsor.isEmpty() && (bill.getSponsor() == null || bill.getSponsor().getFullname().isEmpty())) {
                 bill.setSponsor(new Person(sponsor));
             }
-            //if (oldbill.trim().startsWith("0") == false) {
-            //    bill.setPreviousVersions(Arrays.asList(oldbill+"-"+oldyear));
-            //}
+            if (!oldbill.trim().startsWith("0")) {
+                bill.setPreviousVersions(Arrays.asList(oldbill + "-" + oldYear));
+            }
         } else {
             throw new ParseError("billDataPattern not matched by "+data);
         }
