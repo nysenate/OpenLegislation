@@ -1,12 +1,24 @@
 var reportModule = angular.module('report');
 
+var dateOutputFormat = "M/DD/YYYY H:mm";
+
 reportModule.controller('DaybreakReportsCtrl', ['$scope', '$filter', '$http', function($scope, $filter, $http) {
     $scope.title = 'LBDC Daybreak Reports';
+    $scope.reports = [];
+    $scope.errorCounts = getErrorCounts([]);
+    $scope.reportChartStatus = "openClosed";
+    $scope.validYears = getValidYears();
+    $scope.months = getMonths();
+    $scope.endDate = getDefaultEndDate();
+    $scope.startDate = getDefaultStartDate();
 
-    $scope.updateReports = function(startDate, endDate){
-        $scope.reports = getReports(startDate, endDate);
-        $scope.errorCounts = getErrorCounts($scope.reports, $filter);
+    $scope.updateReports = function(){
+        $scope.reports = getReports($scope.startDate.date, $scope.endDate.date);
+        $scope.errorCounts = getErrorCounts($scope.reports);
+        $scope.updateReportChart();
     };
+
+    $scope.updateReportChart = function(){ updateReportChart($scope.reportChartStatus, $scope.errorCounts); };
 
     $scope.getEntryDiff = function(currentCount, previousCount){
         return getEntryDiff(currentCount, previousCount);
@@ -16,17 +28,20 @@ reportModule.controller('DaybreakReportsCtrl', ['$scope', '$filter', '$http', fu
         return getEntryDiffClass(currentCount, previousCount);
     };
 
-    $scope.drawOpenClosedChart = function() { drawOpenClosedChart($scope.errorCounts); };
-    $scope.drawErrorTypeChart = function() { drawErrorTypeChart($scope.errorCounts); };
-    $scope.updateReports(new Date(-8640000000000000), new Date());
-    $scope.drawOpenClosedChart();
+    $scope.$watch('reportChartStatus', $scope.updateReportChart );
+
+    $scope.$watch('startDate.month', function() { updateStartDate($scope.startDate); $scope.updateReports(); }, true);
+    $scope.$watch('endDate', function() { updateEndDate($scope.endDate); $scope.updateReports(); }, true);
+
+    $scope.updateReports();
 
 }]);
 
 function getReports(startDate, endDate){
+    var dateFormat = "YYYY-MM-DD-HH";
     var stockReports = [
         {
-            reportDate: new Date(2014, 7, 23, 12, 0, 0),
+            reportDate: moment("2014-8-23-12", dateFormat),
             totalErrors: 200,
             newErrors: 108,
             existingErrors: 100,
@@ -40,7 +55,7 @@ function getReports(startDate, endDate){
             versionErrors: 80
         },
         {
-            reportDate: new Date(2014, 7, 16, 12, 0, 0, 0),
+            reportDate: moment("2014-8-16-12", dateFormat),
             totalErrors: 100,
             newErrors: 0,
             existingErrors: 101,
@@ -54,7 +69,7 @@ function getReports(startDate, endDate){
             versionErrors: 79
         },
         {
-            reportDate: new Date(2014, 7, 11, 12, 0, 0, 0),
+            reportDate: moment("2014-8-11-12", dateFormat),
             totalErrors: 101,
             newErrors: 58,
             existingErrors: 49,
@@ -68,7 +83,7 @@ function getReports(startDate, endDate){
             versionErrors: 81
         },
         {
-            reportDate: new Date(2014, 6, 28, 12, 0, 0, 0),
+            reportDate: moment("2014-7-28-12", dateFormat),
             totalErrors: 49,
             newErrors: 4,
             existingErrors: 95,
@@ -83,15 +98,17 @@ function getReports(startDate, endDate){
         }
     ];
 
+    var validReports = [];
+
     stockReports.forEach( function(report){
-        if(report.reportDate.getTime() < startDate.getTime() || report.reportDate.getTime() > endDate.getTime() ){
-            stockReports.pop(report);
+        if( !report.reportDate.isBefore(startDate) && !report.reportDate.isAfter(endDate) ){
+            validReports.push(report);
         }
     });
-    return stockReports;
+    return validReports;
 }
 
-function getErrorCounts(reportContainer, $filter){
+function getErrorCounts(reportContainer){
     var errorCounts = {
         reportDates: [],
         totalErrorCounts: [],
@@ -108,7 +125,7 @@ function getErrorCounts(reportContainer, $filter){
     };
 
     reportContainer.reverse().forEach( function(report) {
-        errorCounts.reportDates.push($filter('date')(report.reportDate, 'short'));
+        errorCounts.reportDates.push(report.reportDate.format(dateOutputFormat));
         errorCounts.totalErrorCounts.push(report.totalErrors);
         errorCounts.newErrorCounts.push(report.newErrors);
         errorCounts.existingErrorCounts.push(report.existingErrors);
@@ -124,6 +141,23 @@ function getErrorCounts(reportContainer, $filter){
     reportContainer.reverse();
 
     return errorCounts;
+}
+
+function updateReportChart(status, errorCounts){
+    if(status === 'openClosed'){
+        unHideReportChart();
+        drawOpenClosedChart(errorCounts);
+    }
+    else if(status === 'errorType'){
+        unHideReportChart();
+        drawErrorTypeChart(errorCounts);
+    }
+    else if(status === 'hidden'){
+        hideReportChart();
+    }
+    else{
+        console.log("Invalid chart view option: " + status);
+    }
 }
 
 function drawOpenClosedChart(errorCounts){
@@ -263,6 +297,18 @@ function drawErrorTypeChart(errorCounts){
     });
 }
 
+function unHideReportChart(){
+    $(".reportChart").css("height", "300px")
+        .css("width", "100%")
+        .css("visibility", "visible");
+}
+
+function hideReportChart(){
+    $(".reportChart").css("height", "0px")
+        .css("width", "0%")
+        .css("visibility", "hidden");
+}
+
 function getEntryDiff(currentCount, previousCount) {
     var difference = currentCount - previousCount;
     var numberSign = "";
@@ -278,11 +324,64 @@ function getEntryDiff(currentCount, previousCount) {
 function getEntryDiffClass(currentCount, previousCount) {
     var difference = currentCount - previousCount;
     var elementClass = "";
-    if(difference==0 || isNaN(difference)) {
+    if(difference === 0 || isNaN(difference)) {
         return "reportEntryDiffHidden";
     }
     else if(difference>0){
         return "reportEntryDiffPositive";
     }
     return "reportEntryDiffNegative";
+}
+
+function getValidYears(){
+    var years = [];
+    var currentYear = new Date().getFullYear();
+    for(var year = 2014; year <= currentYear; year++){
+        years.push(year);
+        console.log(year);
+    }
+    return years
+}
+
+function getMonths(){
+    return [
+        {value: "1", name: "Jan"},
+        {value: "2", name: "Feb"},
+        {value: "3", name: "Mar"},
+        {value: "4", name: "Apr"},
+        {value: "5", name: "May"},
+        {value: "6", name: "Jun"},
+        {value: "7", name: "Jul"},
+        {value: "8", name: "Aug"},
+        {value: "9", name: "Sep"},
+        {value: "10", name: "Oct"},
+        {value: "11", name: "Nov"},
+        {value: "12", name: "Dec"}
+    ]
+}
+
+function sortByIntValue(input){
+
+}
+
+function getDefaultEndDate(){
+    var now = moment();
+    return { date: now, month: (now.month()+1), year: now.year() };
+}
+
+function getDefaultStartDate(startDate){
+    var offsetDate = moment(startDate).subtract('2', 'months');
+    return { date: offsetDate, month: (offsetDate.month()+1), year: offsetDate.year() };
+}
+
+function updateStartDate(startDate){
+    var dateString = startDate.year + "-" + startDate.month;
+    startDate.date = moment(dateString, "YYYY-MM");
+    console.log("updated start date object: " + startDate.date.format(dateOutputFormat));
+}
+
+function updateEndDate(endDate){
+    var dateString = endDate.year + "-" + endDate.month;
+    endDate.date = moment(dateString, "YYYY-MM").endOf('month');
+    console.log("updated end date object: " + endDate.date.format(dateOutputFormat));
 }

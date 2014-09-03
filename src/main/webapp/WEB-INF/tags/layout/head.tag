@@ -20,10 +20,13 @@
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/angular/angular.min.js"></script>
     <!-- Angular Routes -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/angular-route/angular-route.min.js"></script>
+    <!-- Moment -->
+    <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/moment/min/moment.min.js"></script>
 
     <script>
         window.ctxPath = "<%= request.getContextPath() %>";
         $(document).foundation();
+        moment().format();
     </script>
 
     <!-- Page specific css and pre-load js can be added below by the consumer -->
