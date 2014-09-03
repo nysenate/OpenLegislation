@@ -7,9 +7,7 @@
     "angular": "~1.2.23",
     "angular-route": "~1.2.23",
     "angular-animate": "~1.2.23",
-    "highcharts": "~4.0.3"
-  },
-  "devDependencies": {
+    "highcharts": "~4.0.3",
     "moment": "~2.8.2"
   }
 }

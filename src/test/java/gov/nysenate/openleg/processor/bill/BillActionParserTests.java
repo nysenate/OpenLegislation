@@ -137,9 +137,22 @@ public class BillActionParserTests
         "2013A05060E406/10/14 delivered to senate\n" +
         "2013A05060E406/10/14 REFERRED TO ENERGY AND TELECOMMUNICATIONS";
 
+    private static BillId S5052 = new BillId("S5052", 2013);
+    private static String S5052_actions = "2013S05052A405/07/13 REFERRED TO HOUSING, CONSTRUCTION AND COMMUNITY DEVELOPMENT\n" +
+            "2013S05052A406/04/13 1ST REPORT CAL.1025\n" +
+            "2013S05052A406/05/13 AMENDED (T) 5052A\n" +
+            "2013S05052A406/05/13 2ND REPORT CAL.\n" +
+            "2013S05052A406/10/13 ADVANCED TO THIRD READING\n" +
+            "2013S05052A406/21/13 PASSED SENATE\n" +
+            "2013S05052A406/21/13 DELIVERED TO ASSEMBLY\n" +
+            "2013S05052A406/21/13 referred to real property taxation\n" +
+            "2013S05052A401/08/14 died in assembly\n" +
+            "2013S05052A401/08/14 returned to senate\n" +
+            "2013S05052A401/08/14 REFERRED TO HOUSING, CONSTRUCTION AND COMMUNITY DEVELOPMENT\n";
+
     @Test
     public void testBasicParse() throws Exception {
-        BillActionParser parser = new BillActionParser(A5060, A5060_actions, Optional.of(new PublishStatus(true, LocalDateTime.now())));
+        BillActionParser parser = new BillActionParser(S5052, S5052_actions, Optional.of(new PublishStatus(true, LocalDateTime.now())));
         parser.parseActions();
         parser.getBillActions().forEach(a -> logger.info("{}", a.toString()));
         logger.info("Current Committee {}", parser.getCurrentCommittee());

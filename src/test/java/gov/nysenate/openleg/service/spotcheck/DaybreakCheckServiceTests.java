@@ -61,7 +61,7 @@ public class DaybreakCheckServiceTests extends BaseTests
         logger.info("{}", dateRange.lowerEndpoint());
         logger.info("{}", dateRange.upperEndpoint());
 
-        Bill bill = billData.getBill(new BaseBillId("S5220", 2013));
+        Bill bill = billData.getBill(new BaseBillId("S6671", 2013));
         logger.info("{}", OutputUtils.toJson(billSpotCheck.check(bill)));
     }
 

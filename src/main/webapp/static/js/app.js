@@ -12,7 +12,7 @@ openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 
     /** --- Reports --- */
 
-    $routeProvider.when(ctxPath +'/report', {
+    $routeProvider.when(ctxPath + '/report', {
         redirectTo: ctxPath + '/report/daybreak'
     });
 

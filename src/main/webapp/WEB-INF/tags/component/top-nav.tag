@@ -7,7 +7,7 @@
         <ul class="title-area">
             <li class="name">
                 <h1>
-                    <img src="<%= request.getContextPath() %>/static/img/NYSS_seal.jpg"/>
+                    <img src="<%= request.getContextPath() %>/static/img/NYSS_seal_transp.png"/>
                     <a style="display:inline-block" href="#">OPEN | <span style='color:#008cba'>2.0</span></a>
                 </h1>
             </li>

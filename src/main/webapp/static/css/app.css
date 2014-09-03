@@ -6816,7 +6816,7 @@ meta.foundation-mq-topbar {
 /* line 110, ../bower_components/foundation/scss/foundation/components/_top-bar.scss */
 .contain-to-grid {
   width: 100%;
-  background: white;
+  background: #eff1f5;
 }
 /* line 114, ../bower_components/foundation/scss/foundation/components/_top-bar.scss */
 .contain-to-grid .top-bar {
@@ -6856,7 +6856,7 @@ meta.foundation-mq-topbar {
   height: 45px;
   line-height: 45px;
   position: relative;
-  background: white;
+  background: #eff1f5;
   margin-bottom: 0;
 }
 /* line 153, ../bower_components/foundation/scss/foundation/components/_top-bar.scss */
@@ -6966,7 +6966,7 @@ meta.foundation-mq-topbar {
 }
 /* line 256, ../bower_components/foundation/scss/foundation/components/_top-bar.scss */
 .top-bar.expanded .title-area {
-  background: white;
+  background: #eff1f5;
 }
 /* line 259, ../bower_components/foundation/scss/foundation/components/_top-bar.scss */
 .top-bar.expanded .toggle-topbar a {
@@ -6996,7 +6996,7 @@ meta.foundation-mq-topbar {
 /* line 288, ../bower_components/foundation/scss/foundation/components/_top-bar.scss */
 .top-bar-section .divider,
 .top-bar-section [role="separator"] {
-  border-top: solid 1px gray;
+  border-top: solid 1px #5d7095;
   clear: both;
   height: 1px;
   width: 100%;
@@ -7262,7 +7262,7 @@ meta.foundation-mq-topbar {
 @media only screen and (min-width: 40.063em) {
   /* line 434, ../bower_components/foundation/scss/foundation/components/_top-bar.scss */
   .top-bar {
-    background: white;
+    background: #eff1f5;
     overflow: visible;
   }
   /* line 168, ../bower_components/foundation/scss/foundation/components/_global.scss */
@@ -7296,7 +7296,7 @@ meta.foundation-mq-topbar {
   }
   /* line 452, ../bower_components/foundation/scss/foundation/components/_top-bar.scss */
   .top-bar.expanded {
-    background: white;
+    background: #eff1f5;
   }
 
   /* line 455, ../bower_components/foundation/scss/foundation/components/_top-bar.scss */
@@ -7335,7 +7335,7 @@ meta.foundation-mq-topbar {
   .top-bar-section li:not(.has-form) a:not(.button) {
     padding: 0 15px;
     line-height: 45px;
-    background: white;
+    background: #eff1f5;
   }
   /* line 491, ../bower_components/foundation/scss/foundation/components/_top-bar.scss */
   .top-bar-section li:not(.has-form) a:not(.button):hover {
@@ -7442,14 +7442,14 @@ meta.foundation-mq-topbar {
   .top-bar-section > ul > .divider, .top-bar-section > ul > [role="separator"] {
     border-bottom: none;
     border-top: none;
-    border-right: solid 1px white;
+    border-right: solid 1px #f1f3f6;
     clear: none;
     height: 45px;
     width: 0;
   }
   /* line 605, ../bower_components/foundation/scss/foundation/components/_top-bar.scss */
   .top-bar-section .has-form {
-    background: white;
+    background: #eff1f5;
     padding: 0 15px;
     height: 45px;
   }
@@ -8449,4 +8449,35 @@ pre {
   font-family: 'Ubuntu Mono';
 }
 
-/** --- Styles for report page --- */
+/** --- Styles for Report page --- */
+/* line 103, ../../WEB-INF/scss/app.scss */
+.reportChartForm {
+  float: left;
+  clear: none;
+}
+
+/* line 108, ../../WEB-INF/scss/app.scss */
+label.reportChartForm {
+  display: block;
+  padding: 2px 1em 0 0;
+}
+
+/* line 113, ../../WEB-INF/scss/app.scss */
+input.reportChartForm[type=radio] {
+  margin: 2px 0 0 2px;
+}
+
+/* line 117, ../../WEB-INF/scss/app.scss */
+.ng-binding.reportEntryDiffHidden {
+  visibility: hidden;
+}
+
+/* line 121, ../../WEB-INF/scss/app.scss */
+.ng-binding.reportEntryDiffPositive {
+  color: red;
+}
+
+/* line 125, ../../WEB-INF/scss/app.scss */
+.ng-binding.reportEntryDiffNegative {
+  color: green;
+}

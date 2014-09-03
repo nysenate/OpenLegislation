@@ -3,6 +3,7 @@ package gov.nysenate.openleg;
 import gov.nysenate.openleg.dao.bill.BillDao;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.service.entity.MemberService;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,11 +38,9 @@ public class SillyTests extends BaseTests
 
     @Test
     public void testMapSomethign() throws Exception {
-        TreeMap<String, Boolean> map = new TreeMap<>();
-        map.put("A", false);
-        map.put("B", true);
-        logger.info("{}", map);
-        logger.error("{}", Chamber.SENATE.opposite());
+        String s = "SUBSTITUTED BY A1234";
+//        logger.info("{}", StringUtils.containsIgnoreCase());
+
     }
 
     @Test
