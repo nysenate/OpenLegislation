@@ -1,0 +1,13 @@
+log4j.rootCategory=INFO, stdout
+
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %5p %t %c{2}:%L - %m%n
+
+log4j.logger.org.springframework=WARN
+
+# Set this to TRACE to log any executing SQL queries.
+log4j.logger.org.springframework.jdbc=WARN
+log4j.logger.com.mchange.v2 = WARN
+log4j.logger.org.apache.shiro=WARN
+org.apache.jasper=DEBUG
