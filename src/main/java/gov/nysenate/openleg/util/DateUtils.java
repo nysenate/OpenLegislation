@@ -45,6 +45,13 @@ public abstract class DateUtils
     }
 
     /**
+     * Returns a LocalDateTime that represents the time just before the start of the next day.
+     */
+    public static LocalDateTime atEndOfDay(LocalDate date) {
+        return date.atTime(23, 59, 59, 999999999);
+    }
+
+    /**
      * Extract the LocalDate value from the LRS formatted date string.
      * @throws java.time.format.DateTimeParseException if unable to parse the requested result.
      */

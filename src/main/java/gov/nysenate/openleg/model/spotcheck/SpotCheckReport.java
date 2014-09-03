@@ -35,19 +35,19 @@ public class SpotCheckReport<ContentKey>
     /**
      * Get the number of mismatches across all observations grouped by the mismatch status.
      *
-     * @return Map<SpotCheckMismatchStatus, Long>
+     * @return Map<SpotCheckMismatchStatus, Integer>
      */
-    public Map<SpotCheckMismatchStatus, Long> getMismatchStatusCounts() {
+    public Map<SpotCheckMismatchStatus, Integer> getMismatchStatusCounts() {
         if (observations != null) {
-            Map<SpotCheckMismatchStatus, Long> counts = new HashMap<>();
+            Map<SpotCheckMismatchStatus, Integer> counts = new HashMap<>();
             for (SpotCheckObservation<ContentKey> obs : observations.values()) {
                 Map<SpotCheckMismatchStatus, Long> obsCount = obs.getMismatchStatusCounts();
                 for (SpotCheckMismatchStatus status : obsCount.keySet()) {
                     if (!counts.containsKey(status)) {
-                        counts.put(status, obsCount.get(status));
+                        counts.put(status, obsCount.get(status).intValue());
                     }
                     else {
-                        counts.put(status, counts.get(status) + obsCount.get(status));
+                        counts.put(status, counts.get(status) + obsCount.get(status).intValue());
                     }
                 }
             }

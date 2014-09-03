@@ -21,6 +21,13 @@ public class SpotCheckReferenceId
         this.refActiveDateTime = refActiveDateTime;
     }
 
+    /** --- Overrides --- */
+
+    @Override
+    public String toString() {
+        return "referenceType = " + referenceType +", refActiveDateTime = " + refActiveDateTime + '}';
+    }
+
     /** --- Basic Getters --- */
 
     public SpotCheckRefType getReferenceType() {

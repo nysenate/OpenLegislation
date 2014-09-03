@@ -59,9 +59,8 @@ public class BillActionParser
     /** Patterns for bill actions that indicate that the specified bill amendment should be published. */
     protected static final List<Pattern> publishBillEventPatterns = Arrays.asList(
         Pattern.compile("PRINT NUMBER " + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? ON THIRD READING (?:\\(T\\) )?" + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? (?:\\(T\\) )?" + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? AND RECOMMIT(?:TED)? TO RULES " + simpleBillRegex)
+        Pattern.compile("AMEND(?:ED)? (?:ON THIRD READING )?(?:\\(T\\) )?" + simpleBillRegex),
+        Pattern.compile("AMEND(?:ED)? (?:\\(T\\) )?AND RECOMMIT(?:TED)? TO RULES " + simpleBillRegex)
     );
 
     /** Patterns for bill actions that indicate that the specified bill amendment should be unpublished. */

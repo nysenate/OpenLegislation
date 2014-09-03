@@ -20,8 +20,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
@@ -55,7 +58,9 @@ public class DaybreakCheckReportService implements SpotCheckReportService<BaseBi
     public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
         // Create a new report instance
         SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
-        report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, LocalDateTime.now()));
+        // The report date/time should be truncated to the second to make it easier to query
+        report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK,
+                                                 LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
         // Fetch the daybreak bills that are within the given date range
         logger.info("Fetching daybreak bills...");
         Range<LocalDate> dateRange = Range.closed(start.toLocalDate(), end.toLocalDate());
