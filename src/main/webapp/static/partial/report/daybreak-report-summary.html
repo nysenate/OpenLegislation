@@ -11,10 +11,10 @@
                     </div>
                     <div class="columns small-4">
                         <div class="row collapse">
-                            <select class="columns small-6" ng-model="startDate.month"
-                                    ng-options="month.value as month.name for month in months"></select>
-                            <select class="columns small-6" ng-model="startDate.year"
-                                    ng-options="year for year in validYears"></select>
+                            <select style="border-right:none;" name="from-month" class="columns small-6" ng-model="dateRange.startMonth"
+                                    ng-options="month.name for month in monthList"></select>
+                            <select name="from-year" class="columns small-6" ng-model="dateRange.startYear"
+                                    ng-options="year.value for (key, year) in yearList"></select>
                         </div>
                     </div>
                     <div class="columns small-1 small-offset-2">
@@ -22,10 +22,10 @@
                     </div>
                     <div class="columns small-4">
                         <div class="row collapse">
-                            <select class="columns small-6" ng-model="endDate.month"
-                                    ng-options="month.value as month.name for month in months"></select>
-                            <select class="columns small-6" ng-model="endDate.year"
-                                    ng-options="year for year in validYears"></select>
+                            <select style="border-right:none;" name="to-month" class="columns small-6" ng-model="dateRange.endMonth"
+                                    ng-options="month.name for month in monthList"></select>
+                            <select name="to-year" class="columns small-6" ng-model="dateRange.endYear"
+                                    ng-options="year.value for (key, year) in yearList"></select>
                         </div>
                     </div>
                 </div>
@@ -56,70 +56,52 @@
 </div>
 <br/>
 <div class="row">
-    <table class="columns large-12" style="padding:0;">
+    <table id="daybreakSummaryTable" class="columns small-12" style="padding:0;">
         <thead>
-        <tr>
-            <th>Report Date/Time</th>
-            <th>Total</th>
-            <th>Existing</th>
-            <th>New</th>
-            <th>Resolved</th>
-            <th>Sponsor</th>
-            <th>Co/Mulit-sponsor</th>
-            <th>Title</th>
-            <th>Law/ Summary</th>
-            <th>Action</th>
-            <th>Page</th>
-            <th>Versions</th>
-        </tr>
+            <tr>
+                <th>Report Date/Time</th>
+                <th>Total</th>
+                <th>New / Regression</th>
+                <th>Existing</th>
+                <th>Resolved</th>
+                <th>Sponsor</th>
+                <th>Co-sp</th>
+                <th>Multi-sp</th>
+                <th>Title</th>
+                <th>Law/ Summary</th>
+                <th>Action</th>
+                <th>Page</th>
+                <th>Publish</th>
+            </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="report in reports">
-            <td>{{ report.reportDate.format("M/DD/YYYY H:mm") }}</td>
-            <td>{{ report.totalErrors }}
-                        <span ng-class="getEntryDiffClass(report.totalErrors, reports[$index+1].totalErrors)">
-                            ({{ getEntryDiff(report.totalErrors, reports[$index+1].totalErrors) }})
-                        </span>
-            </td>
-            <td>{{ report.existingErrors }}</td>
-            <td>{{ report.newErrors }}</td>
-            <td>{{ report.resolvedErrors }}</td>
-            <td>{{ report.sponsorErrors }}
-                        <span ng-class="getEntryDiffClass(report.sponsorErrors, reports[$index+1].sponsorErrors)">
-                            ({{ getEntryDiff(report.sponsorErrors, reports[$index+1].sponsorErrors) }})
-                        </span>
-            </td>
-            <td>{{ report.coSponsorErrors }}
-                        <span ng-class="getEntryDiffClass(report.coSponsorErrors, reports[$index+1].coSponsorErrors)">
-                            ({{ getEntryDiff(report.coSponsorErrors, reports[$index+1].coSponsorErrors) }})
-                        </span>
-            </td>
-            <td>{{ report.titleErrors }}
-                        <span ng-class="getEntryDiffClass(report.titleErrors, reports[$index+1].titleErrors)">
-                            ({{ getEntryDiff(report.titleErrors, reports[$index+1].titleErrors) }})
-                        </span>
-            </td>
-            <td>{{ report.lawSummaryErrors }}
-                        <span ng-class="getEntryDiffClass(report.lawSummaryErrors, reports[$index+1].lawSummaryErrors)">
-                            ({{ getEntryDiff(report.lawSummaryErrors, reports[$index+1].lawSummaryErrors) }})
-                        </span>
-            </td>
-            <td>{{ report.actionErrors }}
-                        <span ng-class="getEntryDiffClass(report.actionErrors, reports[$index+1].actionErrors)">
-                            ({{ getEntryDiff(report.actionErrors, reports[$index+1].actionErrors) }})
-                        </span>
-            </td>
-            <td>{{ report.pageErrors }}
-                        <span ng-class="getEntryDiffClass(report.pageErrors, reports[$index+1].pageErrors)">
-                            ({{ getEntryDiff(report.pageErrors, reports[$index+1].pageErrors) }})
-                        </span>
-            </td>
-            <td>{{ report.versionErrors }}
-                        <span ng-class="getEntryDiffClass(report.versionErrors, reports[$index+1].versionErrors)">
-                            ({{ getEntryDiff(report.versionErrors, reports[$index+1].versionErrors) }})
-                        </span>
-            </td>
-        </tr>
+            <tr ng-repeat="r in summaries.reports.items">
+                <td>{{ r.reportDateTime | moment:'lll' }}</td>
+                <td style="font-weight:bold">{{ r.totalMismatches }}</td>
+                <td><span class="prefix-icon icon-arrow-up2 new-error"></span>{{ r.mismatchStatuses['NEW'] | default:0 }}</td>
+                <td><span class="prefix-icon icon-cycle existing-error"></span>{{ r.mismatchStatuses['EXISTING'] | default:0 }}</td>
+                <td><span class="prefix-icon icon-arrow-down2 closed-error"></span>{{ r.mismatchStatuses['RESOLVED'] | default:0 }}</td>
+                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_SPONSOR')"></span>
+                    {{ computeMismatchCount(r, 'BILL_SPONSOR') }}</td>
+                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_COSPONSOR')"></span>
+                    {{ computeMismatchCount(r, 'BILL_COSPONSOR') }}</td>
+                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_MULTISPONSOR')"></span>
+                    {{ computeMismatchCount(r, 'BILL_MULTISPONSOR') }}</td>
+                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_TITLE')"></span>
+                    {{ computeMismatchCount(r, 'BILL_TITLE') }}</td>
+                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_LAW_CODE_SUMMARY')"></span>
+                    {{ computeMismatchCount(r, 'BILL_LAW_CODE_SUMMARY') }}</td>
+                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_ACTION')"></span>
+                    {{ computeMismatchCount(r, 'BILL_ACTION') }}</td>
+                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_FULLTEXT_PAGE_COUNT')"></span>
+                    {{ computeMismatchCount(r, 'BILL_FULLTEXT_PAGE_COUNT') }}</td>
+                <td>
+                    {{ computeMismatchCount(r, 'BILL_AMENDMENT_PUBLISH') }}
+                    <span ng-class="mismatchDiffClass(r,'BILL_AMENDMENT_PUBLISH')">
+                        {{ computeMismatchDiff(r, 'BILL_AMENDMENT_PUBLISH', true) }}
+                    </span>
+                </td>
+            </tr>
         </tbody>
     </table>
 </div>

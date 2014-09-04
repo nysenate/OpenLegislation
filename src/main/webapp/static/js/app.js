@@ -2,13 +2,12 @@
 
 var reportModule = angular.module('report', []);
 
-var openApp = angular.module('open', ['ngRoute', reportModule.name]);
+var openApp = angular.module('open', ['ngRoute', 'ngResource', reportModule.name]);
 openApp.constant('appProps', {
     ctxPath: window.ctxPath
 });
 
 openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
-    var ctxPath = window.ctxPath;
 
     /** --- Reports --- */
 
@@ -18,7 +17,7 @@ openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 
     $routeProvider.when(ctxPath + '/report/daybreak', {
         templateUrl: ctxPath + '/static/partial/report/daybreak-report-summary.html',
-        controller: 'DaybreakReportsCtrl'
+        controller: 'DaybreakSummaryCtrl'
     });
 
     $locationProvider.html5Mode(true);

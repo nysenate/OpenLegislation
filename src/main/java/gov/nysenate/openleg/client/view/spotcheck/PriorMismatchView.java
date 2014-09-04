@@ -2,20 +2,21 @@ package gov.nysenate.openleg.client.view.spotcheck;
 
 import gov.nysenate.openleg.model.spotcheck.SpotCheckPriorMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
+import gov.nysenate.openleg.util.StringDiffer;
+
+import java.util.LinkedList;
 
 public class PriorMismatchView
 {
     protected SpotCheckReportId reportId;
     protected String status;
-    protected String referenceData;
-    protected String observedData;
+    protected LinkedList<StringDiffer.Diff> diff;
 
     public PriorMismatchView(SpotCheckPriorMismatch priorMismatch) {
         if (priorMismatch != null) {
             this.reportId = priorMismatch.getReportId();
             this.status = priorMismatch.getStatus().name();
-            this.referenceData = priorMismatch.getReferenceData();
-            this.observedData = priorMismatch.getObservedData();
+            this.diff = priorMismatch.getDiff(true);
         }
     }
 
@@ -27,11 +28,7 @@ public class PriorMismatchView
         return status;
     }
 
-    public String getReferenceData() {
-        return referenceData;
-    }
-
-    public String getObservedData() {
-        return observedData;
+    public LinkedList<StringDiffer.Diff> getDiff() {
+        return diff;
     }
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A SpotCheckReport is basically a collection of observations that have 1 or more mismatches associated
@@ -35,22 +36,38 @@ public class SpotCheckReport<ContentKey>
     /**
      * Get the number of mismatches across all observations grouped by the mismatch status.
      *
-     * @return Map<SpotCheckMismatchStatus, Integer>
+     * @return Map<SpotCheckMismatchStatus, Long>
      */
-    public Map<SpotCheckMismatchStatus, Integer> getMismatchStatusCounts() {
+    public Map<SpotCheckMismatchStatus, Long> getMismatchStatusCounts() {
         if (observations != null) {
-            Map<SpotCheckMismatchStatus, Integer> counts = new HashMap<>();
-            for (SpotCheckObservation<ContentKey> obs : observations.values()) {
-                Map<SpotCheckMismatchStatus, Long> obsCount = obs.getMismatchStatusCounts();
-                for (SpotCheckMismatchStatus status : obsCount.keySet()) {
-                    if (!counts.containsKey(status)) {
-                        counts.put(status, obsCount.get(status).intValue());
-                    }
-                    else {
-                        counts.put(status, counts.get(status) + obsCount.get(status).intValue());
-                    }
-                }
+            Map<SpotCheckMismatchStatus, Long> counts = new HashMap<>();
+            for (SpotCheckMismatchStatus status : SpotCheckMismatchStatus.values()) {
+                counts.put(status, 0L);
             }
+            observations.values().stream()
+                .flatMap(e -> e.getMismatchStatusCounts().entrySet().stream())
+                .forEach(e -> counts.merge(e.getKey(), e.getValue(), Long::sum));
+            return counts;
+        }
+        throw new IllegalStateException("The observations on this report have not yet been set.");
+    }
+
+    /**
+     * Gets a count of mismatch types grouped by statuses across all observations.
+     *
+     * @return Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>>
+     */
+    public Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> getMismatchTypeStatusCounts() {
+        if (observations != null) {
+            Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> counts = new HashMap<>();
+            observations.values().stream()
+                .flatMap(e -> e.getMismatchStatusTypes().entrySet().stream())
+                .forEach(e -> {
+                    if (!counts.containsKey(e.getKey())) {
+                        counts.put(e.getKey(), new HashMap<>());
+                    }
+                    counts.get(e.getKey()).merge(e.getValue(), 1L, (a,b) -> a + 1L);
+                });
             return counts;
         }
         throw new IllegalStateException("The observations on this report have not yet been set.");
@@ -59,19 +76,14 @@ public class SpotCheckReport<ContentKey>
     /**
      * Get the number of mismatches across all observations grouped by the mismatch type.
      *
-     * @return Map<SpotCheckMismatchType, Integer>
+     * @return Map<SpotCheckMismatchType, Long>
      */
-    public Map<SpotCheckMismatchType, Integer> getMismatchTypeCounts() {
+    public Map<SpotCheckMismatchType, Long> getMismatchTypeCounts() {
         if (observations != null) {
-            Map<SpotCheckMismatchType, Integer> counts = new HashMap<>();
-            for (SpotCheckObservation<ContentKey> obs : observations.values()) {
-                obs.getMismatchTypes().forEach(t -> {
-                    if (!counts.containsKey(t)) {
-                        counts.put(t, 0);
-                    }
-                    counts.put(t, counts.get(t) + 1);
-                });
-            }
+            Map<SpotCheckMismatchType, Long> counts = new HashMap<>();
+            observations.values().stream()
+                .flatMap(e -> e.getMismatchTypes().stream())
+                .forEach(e -> counts.merge(e, 1L, (a,b) -> a + 1L));
             return counts;
         }
         throw new IllegalStateException("The observations on this report have not yet been set.");

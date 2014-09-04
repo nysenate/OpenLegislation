@@ -100,6 +100,38 @@ pre {
 
 /** --- Styles for Report page --- */
 
+#daybreakSummaryTable {
+  th {
+    &:first-child {
+      width: 160px;
+    }
+    width: 50px;
+  }
+  td:not(:last-child) {
+    border-right: 1px solid #ddd;
+  }
+}
+
+.prefix-icon {
+  margin-right: 5px;
+}
+
+.postfix-icon {
+  margin-left: 5px;
+}
+
+.new-error {
+  color:red;
+}
+
+.closed-error {
+  color:green;
+}
+
+.existing-error {
+  color:#aaa;
+}
+
 .reportChartForm {
   float: left;
   clear: none;

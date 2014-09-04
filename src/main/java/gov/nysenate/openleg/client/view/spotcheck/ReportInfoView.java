@@ -12,15 +12,15 @@ public class ReportInfoView<ContentKey>
 {
     protected String referenceType;
     protected LocalDateTime reportDateTime;
-    protected Map<SpotCheckMismatchStatus, Integer> mismatchStatuses;
-    protected Map<SpotCheckMismatchType, Integer> mismatchTypes;
+    protected Map<SpotCheckMismatchStatus, Long> mismatchStatuses;
+    protected Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> mismatchTypes;
 
     public ReportInfoView(SpotCheckReport<ContentKey> report) {
         if (report != null) {
             this.referenceType = report.getReferenceType().name();
             this.reportDateTime = report.getReportDateTime();
             this.mismatchStatuses = report.getMismatchStatusCounts();
-            this.mismatchTypes = report.getMismatchTypeCounts();
+            this.mismatchTypes = report.getMismatchTypeStatusCounts();
         }
     }
 
@@ -32,11 +32,15 @@ public class ReportInfoView<ContentKey>
         return reportDateTime;
     }
 
-    public Map<SpotCheckMismatchStatus, Integer> getMismatchStatuses() {
+    public Map<SpotCheckMismatchStatus, Long> getMismatchStatuses() {
         return mismatchStatuses;
     }
 
-    public Map<SpotCheckMismatchType, Integer> getMismatchTypes() {
+    public Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> getMismatchTypes() {
         return mismatchTypes;
+    }
+
+    public Long getTotalMismatches() {
+        return mismatchStatuses.values().stream().reduce(Long::sum).orElse(0L);
     }
 }

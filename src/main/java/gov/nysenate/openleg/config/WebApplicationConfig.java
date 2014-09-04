@@ -80,6 +80,7 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.registerModule(new GuavaModule());
         objectMapper.registerModule(new JSR310Module());
         return objectMapper;

@@ -83,6 +83,21 @@ public class SpotCheckObservation<ContentKey>
     }
 
     /**
+     * Returns a mapping of mismatch type to status.
+     *
+     * @return Map<SpotCheckMismatchType, SpotCheckMismatchStatus>
+     */
+    public Map<SpotCheckMismatchType, SpotCheckMismatchStatus> getMismatchStatusTypes() {
+        if (mismatches != null) {
+            return mismatches.values().stream()
+                .collect(Collectors.toMap(SpotCheckMismatch::getMismatchType, SpotCheckMismatch::getStatus));
+        }
+        else {
+            throw new IllegalStateException("Collection of mismatches is null");
+        }
+    }
+
+    /**
      * Returns the set of mismatch types that there are mismatches for.
      *
      * @return Set<SpotCheckMismatchType>

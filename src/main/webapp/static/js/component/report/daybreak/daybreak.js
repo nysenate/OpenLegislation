@@ -1,166 +1,180 @@
 var reportModule = angular.module('report');
 
 var dateOutputFormat = "M/DD/YYYY H:mm";
+var ISODateFormat = "YYYY-MM-DD";
 
-reportModule.controller('DaybreakReportsCtrl', ['$scope', '$filter', '$http', function($scope, $filter, $http) {
+reportModule.filter('default', ['$filter', function($filter) {
+    return function(input, defaultVal) {
+        return (!input) ? defaultVal : input;
+    };
+}]);
+
+reportModule.filter('moment', ['$filter', function($filter) {
+    return function(input, format) {
+        return moment(input).format(format);
+    };
+}]);
+
+/** --- REST resource for retrieving daybreak summaries within a date range --- */
+
+reportModule.factory('DaybreakSummary', ['$resource', function($resource) {
+    return $resource(apiPath + "/spotcheck/daybreaks/:startDate/:endDate", {
+        startDate: '@startDate', endDate: '@endDate'
+    });
+}]);
+
+/** --- REST resource for retrieving a single daybreak report --- */
+
+reportModule.factory('DaybreakDetail', ['$resource', function($resource) {
+    return $resource(apiPath + "/spotcheck/daybreaks/:reportDateTime", {
+        reportDateTime: '@reportDateTime'
+    });
+}]);
+
+/** --- Controller that handles report summary page --- */
+
+reportModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', 'DaybreakSummary',
+                        function($scope, $filter, DaybreakSummary) {
     $scope.title = 'LBDC Daybreak Reports';
-    $scope.reports = [];
-    $scope.errorCounts = getErrorCounts([]);
-    $scope.reportChartStatus = "openClosed";
-    $scope.validYears = getValidYears();
-    $scope.months = getMonths();
-    $scope.endDate = getDefaultEndDate();
-    $scope.startDate = getDefaultStartDate();
 
-    $scope.updateReports = function(){
-        $scope.reports = getReports($scope.startDate.date, $scope.endDate.date);
-        $scope.errorCounts = getErrorCounts($scope.reports);
-        $scope.updateReportChart();
+    // Date filter properties
+    $scope.startDate = moment().subtract(6, 'months').startOf('month');
+    $scope.endDate = moment().endOf('month');
+    $scope.yearList = getValidYears();
+    $scope.monthList = getMonths();
+
+    // Used for binding to the select menus
+    $scope.dateRange = {
+        startMonth: $scope.monthList[$scope.startDate.get('month')],
+        startYear: $scope.yearList[$scope.startDate.get('year')],
+        endMonth: $scope.monthList[$scope.endDate.get('month')],
+        endYear: $scope.yearList[$scope.endDate.get('year')]
     };
 
-    $scope.updateReportChart = function(){ updateReportChart($scope.reportChartStatus, $scope.errorCounts); };
+    $scope.reportChartStatus = "openClosed";
 
-    $scope.getEntryDiff = function(currentCount, previousCount){
-        return getEntryDiff(currentCount, previousCount);
+    $scope.$watch('dateRange', function() {
+        // Adjust the start and end month/years accordingly such that they represent a valid range
+        if ($scope.dateRange.endMonth.value < $scope.dateRange.startMonth.value) {
+            $scope.dateRange.startMonth = $scope.dateRange.endMonth;
+        }
+        else if ($scope.dateRange.startMonth.value > $scope.dateRange.endMonth.value) {
+            $scope.dateRange.endMonth = $scope.dateRange.startMonth;
+        }
+        if ($scope.dateRange.endYear.value < $scope.dateRange.startYear.value) {
+            $scope.dateRange.startYear = $scope.dateRange.endYear;
+        }
+        else if ($scope.dateRange.startYear.value > $scope.dateRange.endYear.value) {
+            $scope.dateRange.endYear = $scope.dateRange.startYear;
+        }
+        // Update the start and end moments as well
+        $scope.startDate.set('month', $scope.dateRange.startMonth.value).set('year', $scope.dateRange.startYear.value);
+        $scope.endDate.set('month', $scope.dateRange.endMonth.value).set('year', $scope.dateRange.endYear.value);
+    }, true);
+
+    // Obtain the initial summaries
+    $scope.summaries = DaybreakSummary.get({startDate: $scope.startDate.format(ISODateFormat),
+                                          endDate: $scope.endDate.format(ISODateFormat)}, function() {
+        console.log($scope.getMismatchStatusSeries());
+        console.log($scope.getReportDateSeries());
+        drawMismatchStatusGraph($scope.getReportDateSeries(), $scope.getMismatchStatusSeries());
+    });
+
+    // Compute the total number of mismatches for a given type.
+    $scope.computeMismatchCount = function(summaryItem, type) {
+        var defaultFilter = $filter('default');
+        var mismatchType = summaryItem['mismatchTypes'][type];
+        if (!mismatchType) return 0;
+        return (defaultFilter(mismatchType['NEW'], 0) +
+            defaultFilter(mismatchType['EXISTING'], 0) +
+            defaultFilter(mismatchType['REGRESSION'], 0));
+    };
+
+    $scope.computeMismatchDiff = function(summaryItem, type, abs) {
+        var defaultFilter = $filter('default');
+        var mismatchType = summaryItem['mismatchTypes'][type];
+        var diff = (defaultFilter(mismatchType['NEW'], 0) +
+                defaultFilter(mismatchType['REGRESSION'], 0) -
+                defaultFilter(mismatchType['RESOLVED'], 0));
+        return (abs) ? Math.abs(diff) : diff;
+    };
+
+    // Return a css class based on whether the mismatch count is positive or negative
+    $scope.mismatchDiffClass = function(summaryItem, type) {
+        var val = $scope.computeMismatchDiff(summaryItem, type, false);
+        if (val > 0) {
+            return "postfix-icon icon-arrow-up2 new-error";
+        }
+        else if (val < 0) {
+            return "postfix-icon icon-arrow-down2 closed-error";
+        }
+        return "postfix-icon icon-minus3 existing-error";
+    };
+
+    // Obtains an array containing mismatch status series to be consumed by the chart
+    $scope.getMismatchStatusSeries = function() {
+        if ($scope.summaries && $scope.summaries.reports.size > 0) {
+            var existing = [], newRegr = [], resolved = [];
+            angular.forEach($scope.summaries.reports.items, function(value, key) {
+                existing.push(value.mismatchStatuses['EXISTING']);
+                newRegr.push(value.mismatchStatuses['NEW'] + value.mismatchStatuses['REGRESSION']);
+                resolved.push(value.mismatchStatuses['RESOLVED']);
+            });
+            return [{ name: 'Resolved', data: resolved.reverse()},
+                    { name: 'New/Regression', data: newRegr.reverse()},
+                    { name: 'Existing', data: existing.reverse()}];
+        }
+        return [];
+    };
+
+    // Obtains an array containing nicely formatted report dates to be used in the x-axis of the chart
+    $scope.getReportDateSeries = function() {
+        var reportDates = [];
+        if ($scope.summaries && $scope.summaries.reports.size > 0) {
+            angular.forEach($scope.summaries.reports.items, function(value, key) {
+                reportDates.push(moment(value.reportDateTime).format('lll'));
+            });
+        }
+        return reportDates.reverse();
+    };
+//    $scope.updateReports = function() {
+//        console.log("Updating reports...");
+//        $scope.reports = getReports($scope.startDate.date, $scope.endDate.date);
+//        $scope.errorCounts = getErrorCounts($scope.reports);
+//        $scope.updateReportChart();
+//    };
+
+    $scope.updateReportChart = function() {
+        if ($scope.reportChartStatus === 'openClosed'){
+            unHideReportChart();
+            drawMismatchStatusGraph();
+        }
+//        else if($scope.reportChartStatus === 'errorType'){
+//            unHideReportChart();
+//            drawErrorTypeChart($scope.errorCounts);
+//        }
+//        else if($scope.reportChartStatus === 'hidden'){
+//            hideReportChart();
+//        }
+        else {
+            console.log("Invalid chart view option: " + $scope.reportChartStatus);
+        }
     };
 
     $scope.getEntryDiffClass = function(currentCount, previousCount){
         return getEntryDiffClass(currentCount, previousCount);
     };
 
-    $scope.$watch('reportChartStatus', $scope.updateReportChart );
+//    $scope.$watch('reportChartStatus', $scope.updateReportChart );
+//
+//    $scope.$watch('startDate.month', function() { updateStartDate($scope.startDate); $scope.updateReports(); }, true);
+//    $scope.$watch('endDate', function() { updateEndDate($scope.endDate); $scope.updateReports(); }, true);
 
-    $scope.$watch('startDate.month', function() { updateStartDate($scope.startDate); $scope.updateReports(); }, true);
-    $scope.$watch('endDate', function() { updateEndDate($scope.endDate); $scope.updateReports(); }, true);
-
-    $scope.updateReports();
+//    $scope.updateReports();
 
 }]);
 
-function getReports(startDate, endDate){
-    var dateFormat = "YYYY-MM-DD-HH";
-    var stockReports = [
-        {
-            reportDate: moment("2014-8-23-12", dateFormat),
-            totalErrors: 200,
-            newErrors: 108,
-            existingErrors: 100,
-            resolvedErrors: 8,
-            sponsorErrors: 1,
-            coSponsorErrors: 19,
-            titleErrors: 0,
-            lawSummaryErrors: 11,
-            actionErrors: 87,
-            pageErrors: 10,
-            versionErrors: 80
-        },
-        {
-            reportDate: moment("2014-8-16-12", dateFormat),
-            totalErrors: 100,
-            newErrors: 0,
-            existingErrors: 101,
-            resolvedErrors: 1,
-            sponsorErrors: 1,
-            coSponsorErrors: 7,
-            titleErrors: 0,
-            lawSummaryErrors: 3,
-            actionErrors: 1,
-            pageErrors: 10,
-            versionErrors: 79
-        },
-        {
-            reportDate: moment("2014-8-11-12", dateFormat),
-            totalErrors: 101,
-            newErrors: 58,
-            existingErrors: 49,
-            resolvedErrors: 6,
-            sponsorErrors: 1,
-            coSponsorErrors: 11,
-            titleErrors: 0,
-            lawSummaryErrors: 3,
-            actionErrors: 1,
-            pageErrors: 10,
-            versionErrors: 81
-        },
-        {
-            reportDate: moment("2014-7-28-12", dateFormat),
-            totalErrors: 49,
-            newErrors: 4,
-            existingErrors: 95,
-            resolvedErrors: 42,
-            sponsorErrors: 1,
-            coSponsorErrors: 38,
-            titleErrors: 1,
-            lawSummaryErrors: 9,
-            actionErrors: 6,
-            pageErrors: 12,
-            versionErrors: 24
-        }
-    ];
-
-    var validReports = [];
-
-    stockReports.forEach( function(report){
-        if( !report.reportDate.isBefore(startDate) && !report.reportDate.isAfter(endDate) ){
-            validReports.push(report);
-        }
-    });
-    return validReports;
-}
-
-function getErrorCounts(reportContainer){
-    var errorCounts = {
-        reportDates: [],
-        totalErrorCounts: [],
-        newErrorCounts: [],
-        existingErrorCounts: [],
-        resolvedErrorCounts: [],
-        sponsorErrorCounts: [],
-        coSponsorErrorCounts: [],
-        titleErrorCounts: [],
-        lawSummaryErrorCounts: [],
-        actionErrorCounts: [],
-        pageErrorCounts: [],
-        versionErrorCounts: []
-    };
-
-    reportContainer.reverse().forEach( function(report) {
-        errorCounts.reportDates.push(report.reportDate.format(dateOutputFormat));
-        errorCounts.totalErrorCounts.push(report.totalErrors);
-        errorCounts.newErrorCounts.push(report.newErrors);
-        errorCounts.existingErrorCounts.push(report.existingErrors);
-        errorCounts.resolvedErrorCounts.push(report.resolvedErrors);
-        errorCounts.sponsorErrorCounts.push(report.sponsorErrors);
-        errorCounts.coSponsorErrorCounts.push(report.coSponsorErrors);
-        errorCounts.titleErrorCounts.push(report.titleErrors);
-        errorCounts.lawSummaryErrorCounts.push(report.lawSummaryErrors);
-        errorCounts.actionErrorCounts.push(report.actionErrors);
-        errorCounts.pageErrorCounts.push(report.pageErrors);
-        errorCounts.versionErrorCounts.push(report.versionErrors);
-    });
-    reportContainer.reverse();
-
-    return errorCounts;
-}
-
-function updateReportChart(status, errorCounts){
-    if(status === 'openClosed'){
-        unHideReportChart();
-        drawOpenClosedChart(errorCounts);
-    }
-    else if(status === 'errorType'){
-        unHideReportChart();
-        drawErrorTypeChart(errorCounts);
-    }
-    else if(status === 'hidden'){
-        hideReportChart();
-    }
-    else{
-        console.log("Invalid chart view option: " + status);
-    }
-}
-
-function drawOpenClosedChart(errorCounts){
+function drawMismatchStatusGraph(reportDates, dataSeries) {
     $('#report-chart-area').highcharts({
         chart: {
             type: 'area',
@@ -170,7 +184,7 @@ function drawOpenClosedChart(errorCounts){
             text: ''
         },
         xAxis: {
-            categories: errorCounts.reportDates,
+            categories: reportDates,
             title: {
                 text: 'Report Date'
             }
@@ -210,16 +224,7 @@ function drawOpenClosedChart(errorCounts){
             }
         },
         colors: ['#6BFFF5', '#FF6B75', '#FFB44A'],
-        series: [{
-            name: 'Closed',
-            data: errorCounts.resolvedErrorCounts
-        }, {
-            name: 'Opened',
-            data: errorCounts.newErrorCounts
-        }, {
-            name: 'Existing',
-            data: errorCounts.existingErrorCounts
-        }]
+        series: dataSeries
     });
 }
 
@@ -333,31 +338,19 @@ function getEntryDiffClass(currentCount, previousCount) {
     return "reportEntryDiffNegative";
 }
 
-function getValidYears(){
-    var years = [];
-    var currentYear = new Date().getFullYear();
-    for(var year = 2014; year <= currentYear; year++){
-        years.push(year);
-        console.log(year);
+function getValidYears() {
+    var years = {};
+    var currentYear = moment().get('year');
+    for (var year = 2014; year <= currentYear; year++) {
+        years[year] = {value: year};
     }
     return years
 }
 
-function getMonths(){
-    return [
-        {value: "1", name: "Jan"},
-        {value: "2", name: "Feb"},
-        {value: "3", name: "Mar"},
-        {value: "4", name: "Apr"},
-        {value: "5", name: "May"},
-        {value: "6", name: "Jun"},
-        {value: "7", name: "Jul"},
-        {value: "8", name: "Aug"},
-        {value: "9", name: "Sep"},
-        {value: "10", name: "Oct"},
-        {value: "11", name: "Nov"},
-        {value: "12", name: "Dec"}
-    ]
+function getMonths() {
+    return [{value: 0, name: "Jan"}, {value: 1, name: "Feb"}, {value: 2, name: "Mar"}, {value: 3, name: "Apr"},
+            {value: 4, name: "May"}, {value: 5, name: "Jun"}, {value: 6, name: "Jul"}, {value: 7, name: "Aug"},
+            {value: 8, name: "Sep"}, {value: 9, name: "Oct"}, {value: 10, name: "Nov"}, {value: 11, name: "Dec"}];
 }
 
 function sortByIntValue(input){

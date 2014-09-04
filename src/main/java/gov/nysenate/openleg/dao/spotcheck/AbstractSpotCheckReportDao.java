@@ -161,7 +161,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
 
     /**
      * Find all the mismatches from the most prior report (if it exists) and if they do not appear
-     * as mismatches in the current report, add them as resovled mismatches to the current report.
+     * as mismatches in the current report, add them as resolved mismatches to the current report.
      */
     private void setResolvedMismatchesFromPrior(SpotCheckReport<ContentKey> report) {
         LocalDateTime minPriorTime = LocalDate.ofEpochDay(0).atStartOfDay(); // Way back
@@ -204,12 +204,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             if (!obsMap.containsKey(key)) {
                 // Set the observation
                 SpotCheckObservation<ContentKey> obs = new SpotCheckObservation<>();
-                SpotCheckReferenceId refId = new SpotCheckReferenceId(
-                    SpotCheckRefType.valueOf(rs.getString("reference_type")),
-                    getLocalDateTime(rs, "reference_active_date"));
-                obs.setReferenceId(refId);
                 obs.setKey(key);
-                obs.setObservedDateTime(getLocalDateTime(rs, "observed_date_time"));
                 obsMap.put(key, obs);
             }
             SpotCheckObservation<ContentKey> obs = obsMap.get(key);
@@ -221,6 +216,14 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             String notes = rs.getString("notes");
             // Add the current mismatch
             if (current) {
+                // Set observation details if not already set
+                if (obs.getReferenceId() == null) {
+                    SpotCheckReferenceId refId = new SpotCheckReferenceId(
+                            SpotCheckRefType.valueOf(rs.getString("reference_type")),
+                            getLocalDateTime(rs, "reference_active_date"));
+                    obs.setReferenceId(refId);
+                    obs.setObservedDateTime(getLocalDateTime(rs, "observed_date_time"));
+                }
                 SpotCheckMismatch mismatch = new SpotCheckMismatch(type, refData, obsData, notes);
                 mismatch.setStatus(status);
                 obs.addMismatch(mismatch);

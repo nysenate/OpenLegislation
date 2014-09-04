@@ -7,19 +7,13 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 
 public class ReportDetailResponse<ContentKey> extends BaseResponse
 {
-    protected ReportInfoView<ContentKey> reportInfo;
     protected ReportDetailView<ContentKey> details;
 
     public ReportDetailResponse(SpotCheckReport<ContentKey> report) {
         if (report != null) {
-            this.reportInfo = new ReportInfoView<>(report);
             this.details = new ReportDetailView<>(report);
             this.success = true;
         }
-    }
-
-    public ReportInfoView<ContentKey> getReportInfo() {
-        return reportInfo;
     }
 
     public ReportDetailView<ContentKey> getDetails() {

@@ -20,11 +20,14 @@
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/angular/angular.min.js"></script>
     <!-- Angular Routes -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/angular-route/angular-route.min.js"></script>
+    <!-- Angular Resource -->
+    <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/angular-resource/angular-resource.min.js"></script>
     <!-- Moment -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/moment/min/moment.min.js"></script>
 
     <script>
         window.ctxPath = "<%= request.getContextPath() %>";
+        window.apiPath = window.ctxPath + "/api/3";
         $(document).foundation();
         moment().format();
     </script>

@@ -22,6 +22,7 @@ public abstract class OutputUtils
         jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
         jsonMapper.registerModule(new GuavaModule());
         jsonMapper.registerModule(new JSR310Module());
+        jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     /**
