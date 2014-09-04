@@ -8,21 +8,17 @@
     <script src="${ctxPath}/static/bower_components/highcharts/highcharts.js"></script>
     <script src="${ctxPath}/static/js/app.js"></script>
     <script src="${ctxPath}/static/js/component/report/daybreak/daybreak.js"></script>
+    <link rel="stylesheet" href="http://i.icomoon.io/public/temp/1a0a31f12c/UntitledProject1/style.css">
 </open-layout:head>
 <open-layout:body pageId="report">
     <jsp:body>
         <div class="row" style="margin-top:1.5em">
-            <div class="large-2 columns side-menu-bg">
-                <nav>
-                    <ul class="side-nav">
-                        <li class='heading'>Report Types</li>
-                        <li class="active"><a href="${ctxPath}/report/daybreak">LBDC Daybreak</a></li>
-                        <li><a href="${ctxPath}/report/agenda-cal">Agenda/Calendar Check</a></li>
-                        <li><a href="${ctxPath}/report/memo">Memo Dump</a></li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="large-10 columns content-column">
+            <div class="large-12 columns content-column">
+                <dl style="margin-bottom:0;" class="sub-nav">
+                    <dt>Select Report</dt>
+                    <dd class="active"><a href="#">LBDC Daybreak</a></dd>
+                </dl>
+                <hr style="margin-top:0;"/>
                 <div ng-view></div>
             </div>
         </div>
