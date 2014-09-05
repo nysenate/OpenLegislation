@@ -11,14 +11,21 @@
 
         String TRANSCRIPT_INDENT = "             ";
         String BIG_TRANSCRIPT_INDENT = "                   ";
-        String TRANSCRIPT_INDENT_REPLACE = "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+        String TRANSCRIPT_INDENT_REPLACE = "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+        String LINE_NUM_INDENT = "<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp";
 
         for (String aLine: fullText.split("\n")) {
             gov.nysenate.openleg.util.TranscriptLine line = new TranscriptLine(aLine);
             String tmp = line.fullText();
 
-            if (line.isTranscriptNumber())
+            if (line.isTranscriptNumber()) {
+                tmp = line.removeInvalidCharacters();
+                htmlText += LINE_NUM_INDENT + " " + tmp.trim() + "<br/><br/>";
                 continue;
+            }
 			if (tmp.trim().contains("Transcription Service, Inc."))
 				continue;
 			if (tmp.trim().contains("(518)"))
