@@ -10,14 +10,6 @@ reportModule.factory('DaybreakSummary', ['$resource', function($resource) {
     });
 }]);
 
-/** --- REST resource for retrieving a single daybreak report --- */
-
-reportModule.factory('DaybreakDetail', ['$resource', function($resource) {
-    return $resource(apiPath + "/spotcheck/daybreaks/:reportDateTime", {
-        reportDateTime: '@reportDateTime'
-    });
-}]);
-
 /** --- Controller that handles report summary page --- */
 
 reportModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', '$routeParams', '$location', 'DaybreakSummary',
@@ -207,6 +199,9 @@ function drawMismatchStatusGraph(reportDates, dataSeries) {
             }
         },
         plotOptions: {
+            series: {
+                animation: false
+            },
             area: { stacking: 'normal'},
             column: {
                 stacking: 'normal',

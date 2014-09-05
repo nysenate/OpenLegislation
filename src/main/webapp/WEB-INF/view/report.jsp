@@ -15,12 +15,12 @@
     <jsp:body>
         <div class="row" style="margin-top:1.5em">
             <div class="large-12 columns content-column">
-                <dl style="margin-bottom:0;" class="sub-nav">
+                <!--<dl style="margin-bottom:0;" class="sub-nav">
                     <dt>Select Report</dt>
                     <dd class="active"><a href="#">LBDC Daybreak</a></dd>
                 </dl>
-                <hr style="margin-top:0;"/>
-                <div ng-view></div>
+                <hr style="margin-top:0;"/>-->
+                <div ng-view autoscroll="true"></div>
             </div>
         </div>
     </jsp:body>
