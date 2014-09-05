@@ -19,6 +19,11 @@ openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
         controller: 'DaybreakSummaryCtrl'
     });
 
+    $routeProvider.when(ctxPath + '/report/daybreak/:reportDateTime', {
+        templateUrl: ctxPath + '/static/partial/report/daybreak-report-error.html',
+        controller: 'DaybreakReportErrorCtrl'
+    });
+
     $locationProvider.html5Mode(true);
     $locationProvider.hashPrefix('!');
 }]);

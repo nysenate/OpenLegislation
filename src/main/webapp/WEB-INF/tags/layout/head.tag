@@ -15,6 +15,7 @@
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/modernizr/modernizr.js"></script>
     <!-- JQuery -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/jquery-ui/jquery-ui.min.js"></script>
     <!-- Foundation -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/foundation/js/foundation.min.js"></script>
     <!-- Angular JS -->

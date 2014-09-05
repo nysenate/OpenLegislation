@@ -1,0 +1,50 @@
+<!--Title-->
+<div class="row">
+    <div class="small-4 columns">
+        <h4>{{title}}</h4>
+    </div>
+</div>
+
+<!--Error summary/filter-->
+<form>
+    <div class="row">
+        <div class="small-9 columns checkbox-buttons">
+            <label>
+                Total: {{totals.total}}
+                <input type="checkbox" id="allErrorsFilter"/>
+            </label>
+            <label ng-repeat="(status, total) in totals.statuses">
+                {{getLabel('statuses', status)}}: {{totals.statuses[status]}}
+                <input type="checkbox" id="{{status}}Filter" ng-bind="errorFilter[{{status}}]"/>
+            </label>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 columnts checkbox-buttons">
+            <label ng-repeat="(type, total) in filteredTypeTotals">
+                {{getLabel('types', type)}}: {{total}}
+                <input type="checkbox" id="{{type}}Filter"/>
+            </label>
+        </div>
+        <button class="small-1 columns" ng-repeat="(type, total) in filteredTypeTotals">
+            {{getLabel('types', type)}}: {{total}}
+        </button>
+    </div>
+</form>
+
+<!--Observation Table-->
+<div class="row">
+    <table class="columns small-12">
+        <thead>
+        <tr>
+            <th>Bill Id</th>
+            <th>Error Type</th>
+            <th>Status</th>
+            <th>Opened</th>
+            <th>Snippet</th>
+            <th>Details</th>
+        </tr>
+        </thead>
+    </table>
+</div>
