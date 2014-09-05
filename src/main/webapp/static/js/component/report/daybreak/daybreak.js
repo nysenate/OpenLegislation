@@ -19,6 +19,8 @@ reportModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', '$routePara
     // Indicates whether or not to show the summary data or an error message
     $scope.showSummaries = true;
 
+    $scope.showChart = false;
+
     // Initialize the date range
     (function() {
         $scope.startDate = ($routeParams.startDate && moment($routeParams.startDate).isValid())
@@ -68,10 +70,17 @@ reportModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', '$routePara
             endDate: $scope.endDate.format(ISODateFormat)}, function() {
             if ($scope.summaries && $scope.summaries.success && $scope.summaries.reports.size > 0) {
                 $scope.showSummaries = true;
+                if ($scope.summaries.reports.size > 1) {
+                    $scope.showChart = true;
+                }
+                else {
+                    $scope.showChart = false;
+                }
                 drawMismatchStatusGraph($scope.getReportDateSeries(), $scope.getMismatchStatusSeries());
             }
             else {
                 $scope.showSummaries = false;
+                $scope.showChart = false;
             }
 
             // Update the url params with the current start and end dates
@@ -213,18 +222,6 @@ function drawMismatchStatusGraph(reportDates, dataSeries) {
         colors: ['#FF4E50','#FC913A', '#B3CC57'],
         series: dataSeries
     });
-}
-
-function unHideReportChart(){
-    $(".reportChart").css("height", "300px")
-        .css("width", "100%")
-        .css("visibility", "visible");
-}
-
-function hideReportChart(){
-    $(".reportChart").css("height", "0px")
-        .css("width", "0%")
-        .css("visibility", "hidden");
 }
 
 function getValidYears() {
