@@ -138,13 +138,16 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     protected void checkBillActions(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
         if (daybreakBill.getActions() != null && !daybreakBill.getActions().equals(bill.getActions())) {
             // There are cases when the daybreak actions list stops upon substitution of the bill. Ignore those cases
-            BillAction lastAction = new LinkedList<>(daybreakBill.getActions()).getLast();
-            if (!(StringUtils.containsIgnoreCase(lastAction.getText(), "SUBSTITUTED BY")
-                  && bill.getActions().containsAll(daybreakBill.getActions()))) {
-                String daybreakActionsStr = actionsListString(daybreakBill.getActions());
-                String billActionsStr = actionsListString(bill.getActions());
-                obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, daybreakActionsStr, billActionsStr));
+            if (!daybreakBill.getActions().isEmpty()) {
+                BillAction lastAction = new LinkedList<>(daybreakBill.getActions()).getLast();
+                if (StringUtils.containsIgnoreCase(lastAction.getText(), "SUBSTITUTED BY") &&
+                    bill.getActions().containsAll(daybreakBill.getActions())) {
+                    return;
+                }
             }
+            String daybreakActionsStr = actionsListString(daybreakBill.getActions());
+            String billActionsStr = actionsListString(bill.getActions());
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, daybreakActionsStr, billActionsStr));
         }
     }
 
