@@ -1,7 +1,6 @@
 @import "settings";
 @import "foundation";
 @import "compass";
-@import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono);
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
 $nice-dark-blue: #204056;
@@ -76,6 +75,10 @@ table {
   margin-bottom: 0 !important;
 }
 
+.minopacity {
+  opacity: .1;
+}
+
 fieldset {
   &.no-margin {
     margin: 0;
@@ -101,14 +104,32 @@ pre {
 /** --- Styles for Report page --- */
 
 #daybreakSummaryTable {
+  border: 1px solid #ccc;
   th {
     &:first-child {
       width: 160px;
     }
-    width: 50px;
+    width: 10px;
+    text-align: center;
   }
-  td:not(:last-child) {
-    border-right: 1px solid #ddd;
+  .th-section {
+    border-width: 1px;
+    border-color: #ccc;
+    border-style: none none none solid;
+    text-align: center;
+    background: #ededed;
+  }
+  .delta-column {
+    padding: 0 5px 0 0;
+    border-right: 1px solid #ccc;
+    font-size: .7em;
+  }
+}
+
+#noDataAvailable {
+  h3 {
+    text-align: center;
+    color: #aaa;
   }
 }
 
@@ -130,30 +151,4 @@ pre {
 
 .existing-error {
   color:#aaa;
-}
-
-.reportChartForm {
-  float: left;
-  clear: none;
-}
-
-label.reportChartForm{
-  display: block;
-  padding: 2px 1em 0 0;
-}
-
-input.reportChartForm[type=radio] {
-  margin: 2px 0 0 2px;
-}
-
-.ng-binding.reportEntryDiffHidden {
-  visibility: hidden;
-}
-
-.ng-binding.reportEntryDiffPositive {
-  color: red;
-}
-
-.ng-binding.reportEntryDiffNegative {
-  color: green;
 }

@@ -40,7 +40,9 @@ public class ReportInfoView<ContentKey>
         return mismatchTypes;
     }
 
-    public Long getTotalMismatches() {
-        return mismatchStatuses.values().stream().reduce(Long::sum).orElse(0L);
+    public Long getOpenMismatches() {
+        return mismatchStatuses.entrySet().stream()
+            .filter(e -> !e.getKey().equals(SpotCheckMismatchStatus.RESOLVED))
+            .map(e -> e.getValue()).reduce(Long::sum).orElse(0L);
     }
 }

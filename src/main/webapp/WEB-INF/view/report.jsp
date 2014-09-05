@@ -8,7 +8,6 @@
     <script src="${ctxPath}/static/bower_components/highcharts/highcharts.js"></script>
     <script src="${ctxPath}/static/js/app.js"></script>
     <script src="${ctxPath}/static/js/component/report/daybreak/daybreak.js"></script>
-    <link rel="stylesheet" href="http://i.icomoon.io/public/temp/1a0a31f12c/UntitledProject1/style.css">
 </open-layout:head>
 <open-layout:body pageId="report">
     <jsp:body>

@@ -6,10 +6,10 @@
         <div class="row">
             <form novalidate>
                 <div class="row collapse">
-                    <div class="columns small-1">
+                    <div class="columns small-1 small-offset-1">
                         <span class="prefix">From</span>
                     </div>
-                    <div class="columns small-4">
+                    <div class="columns small-3">
                         <div class="row collapse">
                             <select style="border-right:none;" name="from-month" class="columns small-6" ng-model="dateRange.startMonth"
                                     ng-options="month.name for month in monthList"></select>
@@ -17,10 +17,10 @@
                                     ng-options="year.value for (key, year) in yearList"></select>
                         </div>
                     </div>
-                    <div class="columns small-1 small-offset-2">
+                    <div class="columns small-1" style="margin-left:25px;">
                         <span class="prefix">To</span>
                     </div>
-                    <div class="columns small-4">
+                    <div class="columns small-3">
                         <div class="row collapse">
                             <select style="border-right:none;" name="to-month" class="columns small-6" ng-model="dateRange.endMonth"
                                     ng-options="month.name for month in monthList"></select>
@@ -28,80 +28,133 @@
                                     ng-options="year.value for (key, year) in yearList"></select>
                         </div>
                     </div>
+                    <div class="columns small-2">
+                        <a ng-click="updateSummaries()" href="#" class="button tiny">Update</a>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
-<div class="row">
+<section class="row" ng-show="!showSummaries">
+    <div id="noDataAvailable" class="panel">
+        <h3>No report data available within this range.</h3>
+    </div>
+</section>
+<section class="row" ng-class="{minopacity: !showSummaries}">
     <!-- Chart Thing -->
-    <section class="reportChart">
-        <div id="report-chart-area" class="reportChart" style="display:block"></div>
-    </section>
-    <form class="reportChartForm">
-        <header class="reportChartForm">Chart View:&nbsp;&nbsp;</header>
-        <label for="reportChartOpenClosed" class="reportChartForm">Open/Closed/Existing </label>
-        <input type="radio" name="Chart"  class="reportChartForm" id="reportChartOpenClosed"
-               ng-Model="reportChartStatus"  value="openClosed"/>
-        <label class="reportChartForm">&nbsp;&nbsp;&nbsp;&nbsp;</label>
-        <label for="reportChartErrorType" class="reportChartForm">Error Type  </label>
-        <input type="radio" name="Chart"  class="reportChartForm" id="reportChartErrorType"
-               ng-Model="reportChartStatus" value="errorType"/>
-        <label class="reportChartForm">&nbsp;&nbsp;&nbsp;&nbsp;</label>
-        <label for="reportChartHidden" class="reportChartForm">Hidden  </label>
-        <input type="radio" name="Chart"  class="reportChartForm" id="reportChartHidden"
-               ng-Model="reportChartStatus" value="hidden"/>
-    </form>
-
-</div>
-<br/>
-<div class="row">
-    <table id="daybreakSummaryTable" class="columns small-12" style="padding:0;">
-        <thead>
+    <div class="row">
+        <section class="columns small-12 reportChart">
+            <div id="report-chart-area" class="reportChart" style="display:block"></div>
+        </section>
+    </div>
+    <br/>
+    <div class="row">
+        <table id="daybreakSummaryTable" class="columns small-12" style="padding:0;">
+            <thead>
+            <tr>
+                <th style="background:white"></th>
+                <th class="th-section"  colspan="4">Mismatch Statuses</th>
+                <th class="th-section" colspan="16">Mismatch Types</th>
+            </tr>
             <tr>
                 <th>Report Date/Time</th>
-                <th>Total</th>
+                <th style="border-left:1px solid #ccc;">Total Open</th>
                 <th>New / Regression</th>
                 <th>Existing</th>
                 <th>Resolved</th>
-                <th>Sponsor</th>
-                <th>Co-sp</th>
-                <th>Multi-sp</th>
-                <th>Title</th>
-                <th>Law/ Summary</th>
-                <th>Action</th>
-                <th>Page</th>
-                <th>Publish</th>
+                <th style="border-left:1px solid #ccc;" colspan="2">Sponsor</th>
+                <th colspan="2">Co-sp</th>
+                <th colspan="2">Multi-sp</th>
+                <th colspan="2">Title</th>
+                <th colspan="2">Law/ Summary</th>
+                <th colspan="2">Action</th>
+                <th colspan="2">Page</th>
+                <th colspan="2">Publish</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             <tr ng-repeat="r in summaries.reports.items">
                 <td>{{ r.reportDateTime | moment:'lll' }}</td>
-                <td style="font-weight:bold">{{ r.totalMismatches }}</td>
-                <td><span class="prefix-icon icon-arrow-up2 new-error"></span>{{ r.mismatchStatuses['NEW'] | default:0 }}</td>
-                <td><span class="prefix-icon icon-cycle existing-error"></span>{{ r.mismatchStatuses['EXISTING'] | default:0 }}</td>
-                <td><span class="prefix-icon icon-arrow-down2 closed-error"></span>{{ r.mismatchStatuses['RESOLVED'] | default:0 }}</td>
-                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_SPONSOR')"></span>
-                    {{ computeMismatchCount(r, 'BILL_SPONSOR') }}</td>
-                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_COSPONSOR')"></span>
-                    {{ computeMismatchCount(r, 'BILL_COSPONSOR') }}</td>
-                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_MULTISPONSOR')"></span>
-                    {{ computeMismatchCount(r, 'BILL_MULTISPONSOR') }}</td>
-                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_TITLE')"></span>
-                    {{ computeMismatchCount(r, 'BILL_TITLE') }}</td>
-                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_LAW_CODE_SUMMARY')"></span>
-                    {{ computeMismatchCount(r, 'BILL_LAW_CODE_SUMMARY') }}</td>
-                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_ACTION')"></span>
-                    {{ computeMismatchCount(r, 'BILL_ACTION') }}</td>
-                <td><span class="prefix-icon" ng-class="mismatchCountClass(r,'BILL_FULLTEXT_PAGE_COUNT')"></span>
-                    {{ computeMismatchCount(r, 'BILL_FULLTEXT_PAGE_COUNT') }}</td>
+                <td style="border-left:1px solid #ccc; font-weight:bold">{{ r.openMismatches }}</td>
                 <td>
-                    {{ computeMismatchCount(r, 'BILL_AMENDMENT_PUBLISH') }}
-                    <span ng-class="mismatchDiffClass(r,'BILL_AMENDMENT_PUBLISH')">
-                        {{ computeMismatchDiff(r, 'BILL_AMENDMENT_PUBLISH', true) }}
+                    <span class="prefix-icon icon-arrow-up2 new-error"></span>
+                    {{ (r.mismatchStatuses['NEW'] | default:0) + (r.mismatchStatuses['REGRESSION'] | default:0) }}
+                </td>
+                <td>
+                    <span class="prefix-icon icon-cycle existing-error"></span>
+                    {{ r.mismatchStatuses['EXISTING'] | default:0 }}
+                </td>
+                <td>
+                    <span class="prefix-icon icon-arrow-down2 closed-error"></span>
+                    {{ r.mismatchStatuses['RESOLVED'] | default:0 }}
+                </td>
+                <td style="border-left:1px solid #ccc;">
+                    {{ computeMismatchCount(r, 'BILL_SPONSOR') }}
+                </td>
+                <td class="delta-column">
+                    <span ng-class="mismatchDiffClass(r,'BILL_SPONSOR')">
+                     {{ computeMismatchDiff(r, 'BILL_SPONSOR', true) }}
+                   </span>
+                </td>
+                <td>
+                    {{ computeMismatchCount(r, 'BILL_COSPONSOR') }}
+                </td>
+                <td class="delta-column">
+                    <span ng-class="mismatchDiffClass(r,'BILL_COSPONSOR')">
+                     {{ computeMismatchDiff(r, 'BILL_COSPONSOR', true) }}
+                   </span>
+                </td>
+                <td>
+                    {{ computeMismatchCount(r, 'BILL_MULTISPONSOR') }}
+                </td>
+                <td class="delta-column">
+                    <span ng-class="mismatchDiffClass(r,'BILL_MULTISPONSOR')">
+                     {{ computeMismatchDiff(r, 'BILL_MULTISPONSOR', true) }}
+                   </span>
+                </td>
+                <td>
+                    {{ computeMismatchCount(r, 'BILL_TITLE') }}
+                </td>
+                <td class="delta-column">
+                    <span ng-class="mismatchDiffClass(r,'BILL_TITLE')">
+                     {{ computeMismatchDiff(r, 'BILL_TITLE', true) }}
+                   </span>
+                </td>
+                <td>
+                    {{ computeMismatchCount(r, 'BILL_LAW_CODE_SUMMARY') }}
+                </td>
+                <td class="delta-column">
+                    <span ng-class="mismatchDiffClass(r,'BILL_LAW_CODE_SUMMARY')">
+                     {{ computeMismatchDiff(r, 'BILL_LAW_CODE_SUMMARY', true) }}
+                   </span>
+                </td>
+                <td>
+                    {{ computeMismatchCount(r, 'BILL_ACTION') }}
+                </td>
+                <td class="delta-column">
+                    <span ng-class="mismatchDiffClass(r,'BILL_ACTION')">
+                     {{ computeMismatchDiff(r, 'BILL_ACTION', true) }}
                     </span>
                 </td>
+                <td>
+                    {{ computeMismatchCount(r, 'BILL_FULLTEXT_PAGE_COUNT') }}
+                </td>
+                <td class="delta-column">
+                    <span ng-class="mismatchDiffClass(r,'BILL_FULLTEXT_PAGE_COUNT')">
+                     {{ computeMismatchDiff(r, 'BILL_FULLTEXT_PAGE_COUNT', true) }}
+                    </span>
+                </td>
+                <td>
+                    {{ computeMismatchCount(r, 'BILL_AMENDMENT_PUBLISH') }}
+                </td>
+                <td class="delta-column" style="border-right:none;">
+                   <span ng-class="mismatchDiffClass(r,'BILL_AMENDMENT_PUBLISH')">
+                     {{ computeMismatchDiff(r, 'BILL_AMENDMENT_PUBLISH', true) }}
+                   </span>
+                </td>
             </tr>
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
+</section>

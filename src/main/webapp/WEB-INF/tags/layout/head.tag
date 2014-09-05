@@ -10,6 +10,7 @@
     <title>${title}</title>
     <!-- Main CSS -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/app.css"/>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/icons.css"/>
     <!-- Modernizr -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/modernizr/modernizr.js"></script>
     <!-- JQuery -->
