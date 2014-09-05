@@ -3,7 +3,7 @@
   "version": "2.0-alpha",
   "private": "true",
   "dependencies": {
-    "foundation": "zurb/bower-foundation",
+    "foundation": "5.4.3",
     "angular": "~1.2.23",
     "angular-route": "~1.2.23",
     "angular-animate": "~1.2.23",

@@ -104,12 +104,12 @@ pre {
 /** --- Styles for Report page --- */
 
 #daybreakSummaryTable {
+  table-layout: auto;
   border: 1px solid #ccc;
   th {
     &:first-child {
       width: 160px;
     }
-    width: 10px;
     text-align: center;
   }
   .th-section {
