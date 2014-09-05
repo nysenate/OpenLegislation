@@ -1,19 +1,6 @@
 var reportModule = angular.module('report');
 
-var dateOutputFormat = "M/DD/YYYY H:mm";
 var ISODateFormat = "YYYY-MM-DD";
-
-reportModule.filter('default', ['$filter', function($filter) {
-    return function(input, defaultVal) {
-        return (!input) ? defaultVal : input;
-    };
-}]);
-
-reportModule.filter('moment', ['$filter', function($filter) {
-    return function(input, format) {
-        return moment(input).format(format);
-    };
-}]);
 
 /** --- REST resource for retrieving daybreak summaries within a date range --- */
 
@@ -33,16 +20,24 @@ reportModule.factory('DaybreakDetail', ['$resource', function($resource) {
 
 /** --- Controller that handles report summary page --- */
 
-reportModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', 'DaybreakSummary',
-                        function($scope, $filter, DaybreakSummary) {
+reportModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', '$routeParams', '$location', 'DaybreakSummary',
+                        function($scope, $filter, $routeParams, $location, DaybreakSummary) {
     $scope.title = 'LBDC Daybreak Reports';
 
     // Indicates whether or not to show the summary data or an error message
     $scope.showSummaries = true;
 
+    // Initialize the date range
+    (function() {
+        $scope.startDate = ($routeParams.startDate && moment($routeParams.startDate).isValid())
+            ? moment($routeParams.startDate).startOf('month')
+            : moment().subtract(6, 'months').startOf('month');
+        $scope.endDate = ($routeParams.endDate && moment($routeParams.endDate).isValid())
+            ? moment($routeParams.endDate).endOf('month')
+            : moment().endOf('month');
+    })();
+
     // Date filter properties
-    $scope.startDate = moment().subtract(6, 'months').startOf('month');
-    $scope.endDate = moment().endOf('month');
     $scope.yearList = getValidYears();
     $scope.monthList = getMonths();
 
@@ -86,6 +81,10 @@ reportModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', 'DaybreakSu
             else {
                 $scope.showSummaries = false;
             }
+
+            // Update the url params with the current start and end dates
+            $location.search('startDate', $scope.startDate.format(ISODateFormat));
+            $location.search('endDate', $scope.endDate.format(ISODateFormat));
         });
     };
 
@@ -163,7 +162,6 @@ reportModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', 'DaybreakSu
 
     // Obtain the initial summaries
     $scope.updateSummaries();
-
 }]);
 
 /** --- Internal Methods --- */

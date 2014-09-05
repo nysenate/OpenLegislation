@@ -1,6 +1,7 @@
 /** --- Main configuration --- */
 
-var reportModule = angular.module('report', []);
+var commonModule = angular.module('common', []);
+var reportModule = angular.module('report', ['ngRoute', commonModule.name]);
 
 var openApp = angular.module('open', ['ngRoute', 'ngResource', reportModule.name]);
 openApp.constant('appProps', {
@@ -8,9 +9,7 @@ openApp.constant('appProps', {
 });
 
 openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
-
     /** --- Reports --- */
-
     $routeProvider.when(ctxPath + '/report', {
         redirectTo: ctxPath + '/report/daybreak'
     });

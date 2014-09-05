@@ -30,7 +30,6 @@
         window.ctxPath = "<%= request.getContextPath() %>";
         window.apiPath = window.ctxPath + "/api/3";
         $(document).foundation();
-        moment().format();
     </script>
 
     <!-- Page specific css and pre-load js can be added below by the consumer -->
