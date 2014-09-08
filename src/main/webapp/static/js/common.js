@@ -19,7 +19,9 @@ commonModule.directive('datatable', function() {
         scope: {
             options: '=',
             columns: '=',
-            tabledata: '='
+            tabledata: '=',
+            filterfn: '=',
+            labelrow: '='
         },
         link: function(scope, element, attrs) {
             // Apply DataTable options, use defaults if none specified by user
@@ -43,20 +45,30 @@ commonModule.directive('datatable', function() {
                 options.data = scope.tabledata;
             }
 
-            // apply the plugin
-            var thisTable = $(element).dataTable(options);
+            function rebuildTable(){
+                if(thisTable && scope.tabledata && scope.filterfn) {
+                    console.log("building table...");
+                    var val = scope.tabledata || null;
+                    if (val) {
+                        thisTable.api().clear();
+                        angular.forEach(scope.tabledata, function (row) {
+                            if (scope.filterfn(row)) {
+                                scope.labelrow(row);
+                                thisTable.api().row.add(row);
+                            }
+                        });
+                        thisTable.api().draw();
+                    }
+                    console.log("table built");
+                }
+            }
 
             // watch for any changes to our data, rebuild the DataTable
-            scope.$watch('tabledata', function(value) {
-                var val = value || null;
-                if (val) {
-                    thisTable.api().clear();
-                    angular.forEach(value, function(row) {
-                        thisTable.api().row.add(row);
-                    });
-                    thisTable.api().draw();
-                }
-            });
+            scope.$watch('tabledata', rebuildTable);
+            scope.$watch('filterfn', rebuildTable);
+
+            // apply the plugin
+            var thisTable = $(element).dataTable(options);
         }
     }
 });

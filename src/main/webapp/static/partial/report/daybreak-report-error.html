@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
 <!--Title-->
 <div class="row">
     <div class="small-4 columns">
@@ -9,36 +10,36 @@
 <hr style="margin-top:0;"/>
 
 <!--Error summary/filter-->
-<form class="hide">
+<form>
     <div class="row">
-        <div class="small-9 columns checkbox-buttons">
-            <label>
-                Total: {{totals.total}}
-                <input type="checkbox" id="allErrorsFilter"/>
+        <div class="checkbox-buttons">
+            <label class="small-1 columns">
+                <span>Total:<br/>{{ totals.total }}</span><br/>
+                <input type="checkbox" id="allErrorsFilter" ng-model="errorFilter.all"/>
             </label>
-            <label ng-repeat="(status, total) in totals.statuses">
-                {{getLabel('statuses', status)}}: {{totals.statuses[status]}}
-                <input type="checkbox" id="{{status}}Filter" ng-bind="errorFilter[{{status}}]"/>
+            <label ng-repeat="(status, total) in totals.statuses" class="small-1 columns">
+                <span>{{getLabel('statuses', status)}}:<br/>{{totals.statuses[status]}}</span>
+                <input type="checkbox" id="{{status}}Filter" ng-model="errorFilter.statuses[status]"/>
             </label>
-
+            <label class="small-1 columns">
+                None:<br/>
+                <input type="checkbox" ng-model="errorFilter.none">
+            </label>
+            <div class="columns small-{{12-statusCount}}"/>
         </div>
     </div>
-    <div class="row">
-        <div class="small-12 columnts checkbox-buttons">
-            <label ng-repeat="(type, total) in filteredTypeTotals">
-                {{getLabel('types', type)}}: {{total}}
-                <input type="checkbox" id="{{type}}Filter"/>
+    <div class="row collapse">
+            <label  ng-repeat="(type, total) in filteredTypeTotals" class="small-1 columns">
+                {{getLabel('types', type)}}:<br/>{{total}}
+                <input type="checkbox" id="{{type}}Filter" ng-model="errorFilter.types[type]"/>
             </label>
-        </div>
-        <button class="small-1 columns" ng-repeat="(type, total) in filteredTypeTotals">
-            {{getLabel('types', type)}}: {{total}}
-        </button>
+            <div class="columns small-{{12-typeCount}}"/>
     </div>
 </form>
 
 <!--Observation Table-->
 <div class="row">
-    <table id="reportMismatchTable" datatable tabledata="tableData" class="columns small-12">
+    <table id="reportMismatchTable" datatable tabledata="tableData" filterfn="filterMethod" labelrow="labelRow" class="columns small-12">
         <thead>
         <tr>
             <th>Bill Print No</th>
