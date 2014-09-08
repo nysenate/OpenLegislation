@@ -14,7 +14,7 @@
     <div class="row">
         <div class="checkbox-buttons">
             <label class="small-1 columns">
-                <span>Total:<br/>{{ totals.total }}</span><br/>
+                <span>Total:<br/>{{ totals.total }}</span>
                 <input type="checkbox" id="allErrorsFilter" ng-model="errorFilter.all"/>
             </label>
             <label ng-repeat="(status, total) in totals.statuses" class="small-1 columns">
