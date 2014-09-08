@@ -11,6 +11,9 @@
     <!-- Main CSS -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/app.css"/>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/icons.css"/>
+    <!-- DataTable CSS -->
+    <link rel="stylesheet" href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/foundation/dataTables.foundation.css"/>
+
     <!-- Modernizr -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/modernizr/modernizr.js"></script>
     <!-- JQuery -->
@@ -26,6 +29,10 @@
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/angular-resource/angular-resource.min.js"></script>
     <!-- Moment -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/moment/min/moment.min.js"></script>
+    <!-- DataTables -->
+    <script type="application/javascript" src="<%= request.getContextPath()%>/static/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+    <script type="application/javascript" src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/foundation/dataTables.foundation.js"></script>
+
 
     <script>
         window.ctxPath = "<%= request.getContextPath() %>";

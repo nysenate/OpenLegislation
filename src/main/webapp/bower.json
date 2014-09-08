@@ -10,6 +10,7 @@
     "highcharts": "~4.0.3",
     "moment": "~2.8.2",
     "angular-resource": "~1.2.23",
-    "jquery-ui": "~1.11.1"
+    "jquery-ui": "~1.11.1",
+    "DataTables": "~1.10.2"
   }
 }

@@ -1,6 +1,6 @@
 <div class="row">
     <div class="small-4 columns">
-        <h4>{{title}}</h4>
+        <h4><span id="reportIcon" class="icon-statistics"></span>{{title}}</h4>
     </div>
     <div class="small-offset-1 small-7 columns">
         <div class="row">
@@ -53,12 +53,11 @@
         <table id="daybreakSummaryTable" class="columns small-12" style="padding:0;">
             <thead>
             <tr>
-                <th style="background:white"></th>
+                <th rowspan="2">Report Date/Time</th>
                 <th class="th-section"  colspan="4">Mismatch Statuses</th>
                 <th class="th-section" colspan="16">Mismatch Types</th>
             </tr>
             <tr>
-                <th>Report Date/Time</th>
                 <th style="border-left:1px solid #ccc;">Total Open</th>
                 <th>New / Regression</th>
                 <th>Existing</th>

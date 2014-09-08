@@ -5,8 +5,11 @@
     </div>
 </div>
 
+<a href="../daybreak"><span class="prefix-icon icon-arrow-left2"></span>Back to summary</a>
+<hr style="margin-top:0;"/>
+
 <!--Error summary/filter-->
-<form>
+<form class="hide">
     <div class="row">
         <div class="small-9 columns checkbox-buttons">
             <label>
@@ -35,13 +38,12 @@
 
 <!--Observation Table-->
 <div class="row">
-    <table class="columns small-12">
+    <table id="reportMismatchTable" datatable tabledata="tableData" class="columns small-12">
         <thead>
         <tr>
-            <th>Bill Id</th>
-            <th>Error Type</th>
+            <th>Bill Print No</th>
+            <th>Mismatch Type</th>
             <th>Status</th>
-            <th>Opened</th>
             <th>Snippet</th>
             <th>Details</th>
         </tr>
