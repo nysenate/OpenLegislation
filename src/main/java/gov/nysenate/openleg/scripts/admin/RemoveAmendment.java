@@ -58,6 +58,8 @@ public class RemoveAmendment extends BaseScript
             ChangeLogger.delete(storage.key(bill), storage);
         }
 
+        storage.flush();
+
         // push changes to lucene and varnish
         ArrayList<ServiceBase> services = new ArrayList<ServiceBase>();
         services.add(new Lucene());
