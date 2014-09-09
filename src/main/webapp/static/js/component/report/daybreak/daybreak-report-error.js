@@ -10,14 +10,20 @@ reportModule.factory('DaybreakDetail', ['$resource', function($resource) {
 
 /** --- Controller that handles report detail page --- */
 
-reportModule.controller('DaybreakReportErrorCtrl', ['$scope', '$filter', '$routeParams', 'DaybreakDetail',
-                         function($scope, $filter, $routeParams, DaybreakDetail) {
+reportModule.controller('DaybreakReportErrorCtrl', ['$scope', '$filter', '$timeout', '$routeParams', 'DaybreakDetail',
+                         function($scope, $filter, $timeout, $routeParams, DaybreakDetail) {
     $scope.$watch('filterMethod', function(){console.log("filterMethod Changed");}, true);
     $scope.report = null;
     $scope.totals = null;
     $scope.labels = getLabels();
     $scope.errorFilter = null;
     $scope.filteredTypeTotals = null;
+
+    // For testing buttons set directive
+    $scope.labels = {'All': true, 'Existing': false, 'New' : false};
+    $scope.filterChangeTest = function() {
+        console.log('blah');
+    };
 
     // Fetch the report by parsing the url for the report date/time
     $scope.getReportDetails = function() {
@@ -124,6 +130,7 @@ reportModule.controller('DaybreakReportErrorCtrl', ['$scope', '$filter', '$route
         $scope.statusCount=Object.keys($scope.filteredTypeTotals.statuses).length + 2;
         $scope.typeCount=Object.keys($scope.filteredTypeTotals.types).length;
     };
+
 }]);
 
 function getTotals(reportData){
