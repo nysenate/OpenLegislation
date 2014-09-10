@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
 
@@ -15,14 +16,9 @@ import java.util.List;
  */
 public interface BillDao
 {
-    /**
-     * Retrieve a Bill via a BillId.
-     *
-     * @param billId BillId
-     * @return Bill
-     * @throws DataAccessException - If there was an error while retrieving the Bill.
-     */
     public Bill getBill(BillId billId) throws DataAccessException;
+
+    public BillInfo getBillInfo(BillId billId) throws DataAccessException;
 
     public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff) throws DataAccessException;
 

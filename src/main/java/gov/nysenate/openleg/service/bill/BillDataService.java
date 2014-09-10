@@ -2,10 +2,7 @@ package gov.nysenate.openleg.service.bill;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.bill.BillNotFoundEx;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 
 import java.util.List;
@@ -28,11 +25,21 @@ public interface BillDataService
     public Bill getBill(BillId billId) throws BillNotFoundEx;
 
     /**
+     * Retrieve a BillInfo instance for the matching BillId. This contains
+     * less information that the Bill for purposes of displaying in listings.
      *
+     * @param billId BillId
+     * @return BillInfo
+     * @throws BillNotFoundEx - If no Bill matching the BillId was found.
+     */
+    public BillInfo getBillInfo(BillId billId) throws BillNotFoundEx;
+
+    /**
+     * Retrieve a list of BaseBillIds within the specified session year.
      *
      * @param sessionYear The session year to retrieve bills for
      * @param limitOffset Restrict the result set
-     * @return List<Bill>
+     * @return List<BaseBillId>
      */
     public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limitOffset);
 

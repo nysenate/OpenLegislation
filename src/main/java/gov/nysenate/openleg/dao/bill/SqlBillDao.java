@@ -95,6 +95,26 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return bill;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public BillInfo getBillInfo(BillId billId) throws DataAccessException {
+        logger.trace("Fetching BillInfo {} from database...", billId);
+        final ImmutableParams baseParams = ImmutableParams.from(new MapSqlParameterSource()
+                .addValue("printNo", billId.getBasePrintNo())
+                .addValue("sessionYear", billId.getSession().getYear()));
+        // Retrieve base bill object
+        Bill bill = getBaseBill(baseParams);
+        BillInfo billInfo = new BillInfo();
+        billInfo.setBillId(bill.getBaseBillId());
+        billInfo.setActiveVersion(bill.getActiveVersion());
+        billInfo.setTitle(bill.getTitle());
+        billInfo.setSummary(bill.getSummary());
+        billInfo.setStatus(bill.getStatus());
+        // Get the sponsor
+        billInfo.setSponsor(getBillSponsor(baseParams));
+        return billInfo;
+    }
+
     /**
      * {@inheritDoc}
      *
