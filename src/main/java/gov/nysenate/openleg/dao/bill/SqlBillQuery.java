@@ -23,17 +23,17 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     UPDATE_BILL(
         "UPDATE ${schema}." + SqlTable.BILL + "\n" +
-        "SET title = :title, law_section = :lawSection, law_code = :lawCode, summary = :summary, active_version = :activeVersion, " +
-        "    active_year = :activeYear, program_info = :programInfo, modified_date_time = :modifiedDateTime, " +
-        "    published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId \n" +
+        "SET title = :title, law_section = :lawSection, law_code = :lawCode, summary = :summary, active_version = :activeVersion,\n" +
+        "    active_year = :activeYear, program_info = :programInfo, status = :status, status_date = :statusDate,\n" +
+        "    modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId\n" +
         "WHERE print_no = :printNo AND session_year = :sessionYear"
     ),
     INSERT_BILL(
         "INSERT INTO ${schema}." + SqlTable.BILL + "\n" +
         "(print_no, session_year, title, law_section, law_code, summary, active_version, active_year, " +
-        " program_info, modified_date_time, published_date_time, last_fragment_id) \n" +
+        " program_info, status, status_date, modified_date_time, published_date_time, last_fragment_id) \n" +
         "VALUES (:printNo, :sessionYear, :title, :lawSection, :lawCode, :summary, :activeVersion, :activeYear, " +
-        "        :programInfo, :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
+        "        :programInfo, :status, :statusDate, :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
 
     /** --- Bill Sponsor --- */

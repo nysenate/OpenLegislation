@@ -61,6 +61,9 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** A list of actions that have been made on this bill. */
     protected List<BillAction> actions = new ArrayList<>();
 
+    /** The status of the bill which is derived via the actions list. */
+    protected BillStatus status;
+
     /** A list of ids for versions of this legislation in previous sessions. */
     protected Set<BillId> previousVersions = new HashSet<>();
 
@@ -338,6 +341,14 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     public Map<Version, PublishStatus> getAmendPublishStatusMap() {
         return amendPublishStatusMap;
+    }
+
+    public BillStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BillStatus status) {
+        this.status = status;
     }
 
     public Map<VetoId,VetoMessage> getVetoMessages() {

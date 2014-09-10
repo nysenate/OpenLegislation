@@ -101,7 +101,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date); break;
                     case LAW_SECTION: applyLawSection(data, baseBill, date); break;
                     case TITLE: applyTitle(data, baseBill, date); break;
-                    case BILL_EVENT: applyBillEvent(data, baseBill, specifiedAmendment); break;
+                    case BILL_EVENT: applyBillActions(data, baseBill, specifiedAmendment); break;
                     case SAME_AS: applySameAs(data, specifiedAmendment); break;
                     case SPONSOR: applySponsor(data, baseBill, specifiedAmendment, date); break;
                     case CO_SPONSOR: applyCosponsors(data, activeAmendment); break;
@@ -252,7 +252,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * @see gov.nysenate.openleg.processor.bill.BillActionParser
      * @throws ParseError
      */
-    private void applyBillEvent(String data, Bill baseBill, BillAmendment specifiedAmendment)
+    private void applyBillActions(String data, Bill baseBill, BillAmendment specifiedAmendment)
                                 throws ParseError {
         // Use the BillActionParser to handle all the parsing details
         Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.DEFAULT);
@@ -261,6 +261,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         // Apply the results to the bill
         baseBill.setActions(actionParser.getBillActions());
         baseBill.setActiveVersion(actionParser.getActiveVersion());
+        baseBill.setStatus(actionParser.getBillStatus());
         specifiedAmendment.setStricken(actionParser.isStricken());
         specifiedAmendment.setCurrentCommittee(actionParser.getCurrentCommittee());
         baseBill.setPastCommittees(actionParser.getPastCommittees());

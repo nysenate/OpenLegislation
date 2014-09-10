@@ -4,6 +4,7 @@ import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillStatus;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.processor.base.ParseError;
@@ -17,6 +18,8 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static gov.nysenate.openleg.model.bill.BillStatusType.*;
 
 /**
  * Performs parsing of bill action source data and outputs several derived properties that can be
@@ -41,8 +44,20 @@ public class BillActionParser
     protected static final Pattern committeeEventTextPattern =
         Pattern.compile("(REFERRED|COMMITTED|RECOMMIT) TO ([A-Z, ]*[A-Z]+)\\s?([0-9]+[A-Z]?)?");
 
+    /** Pattern that indicates that the bill has passed a certain house. */
+    protected static final Pattern passedHousePattern = Pattern.compile("PASSED (ASSEMBLY|SENATE)");
+
     /** Pattern for detecting calendar events in bill action lists. */
     protected static final Pattern floorEventTextPattern = Pattern.compile("(REPORT CAL|THIRD READING|RULES REPORT)");
+
+    /** Pattern that indicates that bill has been delivered to the governor. */
+    protected static final Pattern deliveredGovPattern = Pattern.compile("DELIVERED TO GOVERNOR");
+
+    /** Pattern for when bill has been signed into law by the governor. */
+    protected static final Pattern signedPattern = Pattern.compile("SIGNED CHAP");
+
+    /** Pattern for when the bill is vetoed. */
+    protected static final Pattern vetoedPattern = Pattern.compile("VETO(?:ED)? MEMO");
 
     /** Pattern to detect a bill being delivered/returned from one chamber to another */
     protected static final Pattern chamberDeliverPattern = Pattern.compile("(DELIVERED|RETURNED) TO (SENATE|ASSEMBLY)");
@@ -82,6 +97,9 @@ public class BillActionParser
     /** The last published amendment version found via the billActions list. */
     private Version activeVersion;
 
+    /** The bill status is determined by identifying certain actions. */
+    private BillStatus billStatus;
+
     /** PublishStatus associated with each non-base amendment version listed in the actions. */
     private TreeMap<Version, PublishStatus> publishStatusMap = new TreeMap<>();
 
@@ -113,6 +131,7 @@ public class BillActionParser
         this.data = data;
         if (defaultPubStatus.isPresent()) {
             this.publishStatusMap.put(Version.DEFAULT, defaultPubStatus.get());
+            this.billStatus = new BillStatus(INTRODUCED, defaultPubStatus.get().getEffectDateTime().toLocalDate());
         }
     }
 
@@ -160,6 +179,8 @@ public class BillActionParser
                 updateSameAs(action);
                 // Update the committee info if the action indicates a committee referral
                 updateCommitteeStatus(action);
+                // Update the bill status by checking if this action triggered a milestone
+                updateBillStatus(action);
             }
             else {
                 throw new ParseError("billEventPattern not matched: " + line);
@@ -233,6 +254,41 @@ public class BillActionParser
     }
 
     /**
+     * Determine the status of the bill.
+     *
+     * @param action BillAction
+     */
+    protected void updateBillStatus(BillAction action) {
+        String text = action.getText();
+        Matcher passedHouseMatcher = passedHousePattern.matcher(text);
+        if (committeeEventTextPattern.matcher(text).find()) {
+            this.billStatus = new BillStatus(
+                (action.getChamber().equals(Chamber.SENATE)) ? IN_SENATE_COMM : IN_ASSEMBLY_COMM, action.getDate());
+        }
+        else if (floorEventTextPattern.matcher(text).find()) {
+            this.billStatus = new BillStatus(
+                (action.getChamber().equals(Chamber.SENATE)) ? SENATE_FLOOR : ASSEMBLY_FLOOR, action.getDate());
+        }
+        else if (passedHouseMatcher.find()) {
+            Chamber chamber = Chamber.getValue(passedHouseMatcher.group(1));
+            this.billStatus = new BillStatus(
+                (chamber.equals(Chamber.SENATE)) ? PASSED_SENATE : PASSED_ASSEMBLY, action.getDate());
+        }
+        else if (deliveredGovPattern.matcher(text).find()) {
+            this.billStatus = new BillStatus(DELIVERED_TO_GOV, action.getDate());
+        }
+        else if (signedPattern.matcher(text).find()) {
+            this.billStatus = new BillStatus(SIGNED_BY_GOV, action.getDate());
+        }
+        else if (vetoedPattern.matcher(text).find()) {
+            this.billStatus = new BillStatus(VETOED, action.getDate());
+        }
+        else if (text.contains("ENACTING CLAUSE STRICKEN")) {
+            this.billStatus = new BillStatus(STRICKEN, action.getDate());
+        }
+    }
+
+    /**
      * The bill actions can contain substitution events which indicate that a same-as bill
      * linkage should be applied. We take care here to make sure we set same as references
      * only for the currently active amendment.
@@ -281,6 +337,10 @@ public class BillActionParser
 
     public TreeMap<Version, PublishStatus> getPublishStatusMap() {
         return publishStatusMap;
+    }
+
+    public BillStatus getBillStatus() {
+        return billStatus;
     }
 
     public boolean isStricken() {
