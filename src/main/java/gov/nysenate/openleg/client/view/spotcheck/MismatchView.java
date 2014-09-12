@@ -28,7 +28,9 @@ public class MismatchView
             this.notes = mismatch.getNotes();
             this.diff = mismatch.getDiff(true);
             this.prior = new ViewList<>(
-                priorMismatches.stream().map(pm -> new PriorMismatchView(pm)).collect(Collectors.toList()));
+                priorMismatches.stream().map(pm -> new PriorMismatchView(pm))
+                               .sorted((a,b) -> b.getReportId().compareTo(a.getReportId()))
+                               .collect(Collectors.toList()));
         }
     }
 

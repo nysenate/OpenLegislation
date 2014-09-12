@@ -1,8 +1,10 @@
 package gov.nysenate.openleg.model.spotcheck;
 
+import com.google.common.collect.ComparisonChain;
+
 import java.time.LocalDateTime;
 
-public class SpotCheckReportId
+public class SpotCheckReportId implements Comparable<SpotCheckReportId>
 {
     /** The reference type used to validate data against. */
     protected SpotCheckRefType referenceType;
@@ -46,5 +48,12 @@ public class SpotCheckReportId
 
     public LocalDateTime getReportDateTime() {
         return reportDateTime;
+    }
+
+    @Override
+    public int compareTo(SpotCheckReportId o) {
+        return ComparisonChain.start()
+            .compare(this.reportDateTime, o.reportDateTime)
+            .result();
     }
 }
