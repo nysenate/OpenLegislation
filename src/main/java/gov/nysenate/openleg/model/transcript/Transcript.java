@@ -1,123 +1,53 @@
 package gov.nysenate.openleg.model.transcript;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
-import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.base.SessionYear;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
- *
- * @author GraylinKim
+ * A Transcript is a written record of Senate sessions.
  */
 public class Transcript extends BaseLegislativeContent
 {
-    /**
-     *
-     */
-    protected String id;
+    /** The transcript id. */
+    private TranscriptId id;
 
-    /**
-     *
-     */
-    protected LocalDateTime timeStamp;
+    /** Location of meeting recorded in transcript. */
+    private String location;
 
-    /**
-     *
-     */
-    protected String location;
+    /** The raw text of the transcript. */
+    private String transcriptText;
 
-    /**
-     *
-     */
-    protected String type;
+    /** --- Constructors --- */
 
-    /**
-     *
-     */
-    protected String transcriptText;
-
-    /**
-     *
-     */
-    protected String transcriptTextProcessed;
-
-    /**
-     *
-     */
-    protected List<Bill> relatedBills;
-
-
-    public Transcript() {
-        relatedBills = new ArrayList<>();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * The object type of the transcript.
-     */
-    public String getOtype() {
-        return "transcript";
-    }
-
-    public String getOid() {
-        return this.getId();
-    }
-
-    public LocalDateTime getTimeStamp() {
-        return timeStamp;
+    public Transcript(TranscriptId transcriptId) {
+        this.id = transcriptId;
+        this.year = transcriptId.getYear();
+        this.session = SessionYear.of(this.getYear());
     }
 
     public String getLocation() {
         return location;
     }
 
-    public String getType() {
-        return type;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getTranscriptText() {
         return transcriptText;
     }
 
-    public String getTranscriptTextProcessed() {
-        return transcriptTextProcessed;
-    }
-
-    public List<Bill> getRelatedBills() {
-        return relatedBills;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setTimeStamp(LocalDateTime timeStamp) {
-        this.timeStamp = timeStamp;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public void setTranscriptText(String transcriptText) {
         this.transcriptText = transcriptText;
     }
 
-    public void setTranscriptTextProcessed(String transcriptTextProcessed) {
-        this.transcriptTextProcessed = transcriptTextProcessed;
+    public String getSessionType() {
+        return id.getSessionType();
     }
 
-    public void setRelatedBills(List<Bill> relatedBills) {
-        this.relatedBills = relatedBills;
+    public LocalDateTime getDateTime() {
+        return id.getDateTime();
     }
 }
