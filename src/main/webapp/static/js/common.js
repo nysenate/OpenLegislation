@@ -1,4 +1,4 @@
-var commonModule = angular.module('common');
+var commonModule = angular.module('common', ['ngTable', 'mm.foundation']);
 
 commonModule.filter('default', ['$filter', function($filter) {
     return function(input, defaultVal) {
@@ -12,86 +12,35 @@ commonModule.filter('moment', ['$filter', function($filter) {
     };
 }]);
 
-/** --- Datatables directive --- */
+/** --- CheckButton --- */
 
-commonModule.directive('datatable', function() {
+commonModule.directive('checkButton', function(){
     return {
+        restrict: 'E',
         scope: {
-            options: '=',
-            columns: '=',
-            tabledata: '=',
-            filterfn: '=',
-            labelrow: '='
+            btnclass: '@btnClass',
+            btnmodel: '=ngModel'
         },
-        link: function(scope, element, attrs) {
-            // Apply DataTable options, use defaults if none specified by user
-            var options;
-            if (scope.options) {
-                options = scope.options;
-            }
-            else {
-                options = {
-                    lengthChange: false,
-                    pageLength: 100,
-                    searching: false
-                };
-            }
-
-            if (scope.columns) {
-                options.columns = scope.columns;
-            }
-
-            if (scope.tabledata) {
-                options.data = scope.tabledata;
-            }
-
-            function rebuildTable(){
-                if(thisTable && scope.tabledata && scope.filterfn) {
-                    console.log("building table...");
-                    var tabledata = scope.tabledata || null;
-                    if (tabledata) {
-                        thisTable.api().clear();
-                        angular.forEach(tabledata, function (row) {
-                            if (scope.filterfn(row)) {
-                                scope.labelrow(row);
-                                thisTable.api().row.add(row);
-                            }
-                        });
-                        thisTable.api().draw();
-                    }
-                    console.log("table built");
-                }
-            }
-
-            // watch for any changes to our data, rebuild the DataTable
-            scope.$watch('tabledata', rebuildTable);
-            scope.$watch('filterfn', rebuildTable);
-
-            // apply the plugin
-            var thisTable = $(element).dataTable(options);
-        }
-    }
+        transclude: true,
+        template:
+            "<button type='button' class='{{btnclass}}' ng-class='{success: btnmodel, disabled: !btnmodel }' " +
+                "btn-checkbox ng-model='btnmodel' ng-transclude>" +
+            "</button>"
+    };
 });
 
-/** --- Jquery UI Buttonset --- */
+/** --- Spotcheck Diff --- */
 
-commonModule.directive('buttonset', ['$timeout', function($timeout){
+commonModule.directive('mismatchDiff', function(){
     return {
+        restrict: 'E',
         scope: {
-            labels: '=',
-            fn: '='
-        },
-        link: function($scope, element, attrs) {
-            $timeout(function() {
-                element.buttonset();
-            }, 0);
-
-            $scope.$watch('labels', $scope.fn, true);
+            diff: '='
         },
         template:
-            "<input ng-repeat-start='(label, enabled) in labels' id='{{label}}' type='checkbox' ng-model='labels[label]'>" +
-            "<label ng-repeat-end for='{{label}}'> {{label}} </label>"
-    }
-}]);
-
-
+            "<span ng-repeat='segment in diff' ng-class=\"{'mismatch-diff-equal': segment.operation=='EQUAL', " +
+            "'mismatch-diff-insert': segment.operation=='INSERT', 'mismatch-diff-delete': segment.operation=='DELETE'}\" >" +
+                "{{segment.text}}" +
+            "</span>"
+    };
+});

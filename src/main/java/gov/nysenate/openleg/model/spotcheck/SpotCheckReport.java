@@ -116,6 +116,10 @@ public class SpotCheckReport<ContentKey>
         return reportId.getReportDateTime();
     }
 
+    public LocalDateTime getReferenceDateTime() {
+        return reportId.getReferenceDateTime();
+    }
+
     public SpotCheckRefType getReferenceType() {
         return reportId.getReferenceType();
     }

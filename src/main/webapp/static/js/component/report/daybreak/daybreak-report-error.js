@@ -10,44 +10,174 @@ reportModule.factory('DaybreakDetail', ['$resource', function($resource) {
 
 /** --- Controller that handles report detail page --- */
 
-reportModule.controller('DaybreakReportErrorCtrl', ['$scope', '$filter', '$timeout', '$routeParams', 'DaybreakDetail',
-                         function($scope, $filter, $timeout, $routeParams, DaybreakDetail) {
-    $scope.$watch('filterMethod', function(){console.log("filterMethod Changed");}, true);
-    $scope.report = null;
+reportModule.controller('DaybreakReportErrorCtrl',
+        ['$scope', '$filter', '$timeout', '$routeParams', '$modal', 'DaybreakDetail', 'ngTableParams',
+         function($scope, $filter, $timeout, $routeParams, $modal, DaybreakDetail, ngTableParams) {
+    $(document).foundation(); $scope.report = null;
     $scope.totals = null;
     $scope.labels = getLabels();
     $scope.errorFilter = null;
     $scope.filteredTypeTotals = null;
-
-    // For testing buttons set directive
-    $scope.labels = {'All': true, 'Existing': false, 'New' : false};
-    $scope.filterChangeTest = function() {
-        console.log('blah');
-    };
+    $scope.dataDetails = {};
+    $scope.filterWatchersInitialized = false;
 
     // Fetch the report by parsing the url for the report date/time
     $scope.getReportDetails = function() {
-        var reportDateTime = $routeParams.reportDateTime;
-        $scope.report = DaybreakDetail.get({reportDateTime: reportDateTime}, function() {
+        $scope.reportDateTime = $routeParams.reportDateTime;
+        $scope.report = DaybreakDetail.get({reportDateTime: $scope.reportDateTime}, function() {
             $scope.tableData = $scope.extractTableData();
+            $scope.setDefaultNgTableParams();
             $scope.filterInit();
+            $scope.setTitleDates();
         });
     };
 
     // Get the reports immediately
     $scope.getReportDetails();
 
+    // Extracts an array of table rows from the report data
     $scope.extractTableData = function() {
         var tableData = [];
         if ($scope.report && $scope.report.success) {
             angular.forEach($scope.report.details.observations, function(obs) {
                 angular.forEach(obs.mismatches.items, function(m) {
-                    var rowData = [obs.key.printNo, m.mismatchType, m.status, '<div style="height:20px;overflow:hidden;">' + m.observedData + '</div>', 'Insert Diff here...'];
+                    var mismatchId = $scope.getMismatchId(obs, m);
+                    var firstOpened = $scope.findFirstOpenedDates(m).reportDateTime;
+                    var rowData = {
+                        printNo: obs.key.printNo,
+                        type: m.mismatchType,
+                        status: m.status,
+                        firstOpened: firstOpened,
+                        diff: m.diff,
+                        mismatchId: mismatchId
+                    };
+                    $scope.dataDetails[mismatchId] = {
+                        observation: obs,
+                        mismatch: m
+                    };
                     tableData.push(rowData);
                 });
             });
         }
         return tableData;
+    };
+
+    // Searches through the prior mismatches of a mismatch to find the date that it was first opened
+    $scope.findFirstOpenedDates = function(currentMismatch){
+        if(currentMismatch.status == "NEW") {
+            return {reportDateTime: $scope.reportDateTime, referenceDateTime: $scope.report.details.referenceDateTime};
+        }
+        for (index in currentMismatch.prior.items) {
+            if(currentMismatch.prior.items[index].status == "NEW") {
+                return {
+                    reportDateTime: currentMismatch.prior.items[index].reportId.reportDateTime,
+                    referenceDateTime: currentMismatch.prior.items[index].reportId.referenceDateTime
+                };
+            }
+        }
+        return {reportDateTime: "Unknown", referenceDateTime: "Unknown"};
+    };
+
+    // Generates a mismatch id
+    $scope.getMismatchId = function (observation, mismatch) {
+        return observation.key.printNo + '-' + observation.key.session.year + '-' + mismatch.mismatchType;
+    };
+
+    // Sets the default properties for the data table
+    $scope.setDefaultNgTableParams = function(){
+        $scope.tableParams = new ngTableParams({
+                page: 1,
+                count: 10,
+                sorting: {
+                    printNo: 'asc'
+                }
+            }, {
+                total: $scope.tableData.length,
+                getData: function($defer, params){
+                    // Sort data
+                    $scope.tableData = params.sorting() ? $filter('orderBy')($scope.tableData, params.orderBy()) : $scope.tableData;
+
+                    // Filter data
+                    var filteredData = $scope.filterData($scope.tableData);
+                    params.total(filteredData.length);
+
+                    // Calculate page offset
+                    if(params.count()>0) {
+                        var start = (params.page() - 1) * params.count();
+                        var end = start + params.count();
+                    }
+                    else {  // Dont paginate if count is zero or less
+                        var start = 0;
+                        var end = params.total();
+                    }
+
+                    $defer.resolve(filteredData.slice(start, end));
+                    $scope.activateFilterWatchers();
+                }
+        });
+    };
+
+    // Triggers a detail modal popup for the mismatch designated by mismatchId
+    $scope.showDetailModal = function(mismatchId, activeTab) {
+        $modal.open({
+            templateUrl: 'detailsModal.html',
+            controller: $scope.detailModalCtrl,
+            resolve: {
+                activeTab: function() { return activeTab; },
+                details: function() { return $scope.dataDetails[mismatchId]; },
+                parentFunctions: function() { return {
+                    getLabel: $scope.getLabel,
+                    showDetailModal: $scope.showDetailModal,
+                    findFirstOpenedDates: $scope.findFirstOpenedDates,
+                    getMismatchId: $scope.getMismatchId
+                };}
+            }
+        });
+    };
+
+    // The controller for detail modals
+    $scope.detailModalCtrl = function($scope, $modalInstance, details, activeTab, parentFunctions) {
+        $scope.getLabel = parentFunctions.getLabel;
+        $scope.getMismatchId = parentFunctions.getMismatchId;
+        $scope.findFirstOpenedDates = parentFunctions.findFirstOpenedDates;
+
+        $scope.formatReportDate = formatReportDate;
+        $scope.formatReferenceDate = formatReferenceDate;
+        $scope.printNo = details.observation.key.printNo;
+        $scope.observation = details.observation;
+        $scope.currentMismatch = details.mismatch;
+        $scope.allMismatches = details.observation.mismatches.items;
+
+        $scope.firstOpened = $scope.findFirstOpenedDates($scope.currentMismatch);
+
+        $scope.tabs = { diff: false, lbdc: false, openleg: false, prior: false, other: false };
+        $scope.tabs[activeTab] = true;
+
+
+        $scope.openNewModal = function(mismatchId, activeTab) {
+            $scope.cancel();
+            parentFunctions.showDetailModal(mismatchId, activeTab);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('close');
+        };
+    };
+
+    // given an array of rows, returns an array of rows that pass the filter
+    $scope.filterData = function(data){
+        var filteredData = [];
+        for(index in data){
+            if($scope.filterSelector(data[index])){
+                filteredData.push(data[index]);
+            }
+        }
+        return filteredData;
+    };
+
+    // Given a row, returns true if it passes the filter
+    $scope.filterSelector = function(row){
+        return $scope.errorFilter.statuses[row.status] && $scope.errorFilter.types[row.type];
     };
 
     // Binds each filter entry such that if it is unset, the 'all' filter entry is unset
@@ -74,12 +204,12 @@ reportModule.controller('DaybreakReportErrorCtrl', ['$scope', '$filter', '$timeo
         };
     };
 
+    // These two methods handle the select all or select none filter options
     $scope.onFilterAllUpdate = function(){
         if($scope.errorFilter.all){
             $scope.errorFilter = getDefaultFilter($scope.totals);
         }
     };
-
     $scope.onFilterNoneUpdate = function() {
         if($scope.errorFilter.none){
             $scope.errorFilter = getNoneFilter($scope.totals);
@@ -88,13 +218,8 @@ reportModule.controller('DaybreakReportErrorCtrl', ['$scope', '$filter', '$timeo
 
     // Updates the visible data based on the filter configuration
     $scope.onFilterUpdate = function(){
-        $scope.filterMethod = function(row){
-            var status = row[2];
-            var type = row[1];
-            if($scope.errorFilter.statuses[status] && $scope.errorFilter.types[type]){
-                return true;
-            }
-            return false;
+        if($scope.tableParams.data) {
+            $scope.tableParams.reload();
         }
     };
 
@@ -111,25 +236,35 @@ reportModule.controller('DaybreakReportErrorCtrl', ['$scope', '$filter', '$timeo
         }
         return field;
     };
+    // Formats dates for display purposes
+    $scope.formatReportDate = formatReportDate;
+    $scope.formatReferenceDate = formatReferenceDate;
 
-    $scope.labelRow = function(row){
-//        var status = row[2];
-//        var type = row[1];
-//        row[1] = $scope.getLabel('types', type);
-//        row[2] = $scope.getLabel('statuses', status);
-    };
-
+    // Initialize the filter model
     $scope.filterInit = function() {
         $scope.totals = getTotals($scope.report);
         $scope.errorFilter = getDefaultFilter($scope.totals);
-        $scope.$watch('errorFilter.all', $scope.onFilterAllUpdate);
-        $scope.$watch('errorFilter.none', $scope.onFilterNoneUpdate);
-        $scope.$watch('errorFilter.statuses', $scope.onStatusFilterUpdate, true);
-        $scope.$watch('errorFilter.types', $scope.onFilterUpdate, true);
-        $scope.bindUpdateFilterAll();
-        $scope.statusCount=Object.keys($scope.filteredTypeTotals.statuses).length + 2;
-        $scope.typeCount=Object.keys($scope.filteredTypeTotals.types).length;
+        $scope.statusCount=Object.keys($scope.totals.statuses).length + 2;
+        $scope.typeCount=Object.keys($scope.totals.types).length;
     };
+
+    // Activate filter watchers
+    $scope.activateFilterWatchers = function(){
+        if(!$scope.filterWatchersInitialized) {
+            $scope.$watch('errorFilter.all', $scope.onFilterAllUpdate);
+            $scope.$watch('errorFilter.none', $scope.onFilterNoneUpdate);
+            $scope.$watch('errorFilter.statuses', $scope.onStatusFilterUpdate, true);
+            $scope.$watch('errorFilter.types', $scope.onFilterUpdate, true);
+            $scope.bindUpdateFilterAll();
+            $scope.filterWatchersInitialized = true;
+        }
+    };
+
+    // Sets the variables that display the report and reference dates in the title
+    $scope.setTitleDates = function() {
+        $scope.titleReportDate = formatReportDate($scope.reportDateTime);
+        $scope.titleReferenceDate = formatReferenceDate($scope.report.details.referenceDateTime);
+    }
 
 }]);
 
@@ -189,6 +324,26 @@ function getFilteredTypeTotals(errorFilter, totals){
     return filteredTypeTotals;
 }
 
+function formatReportDate(rawReportDate) {
+    var reportDate =  moment(rawReportDate, "YYYY-MM-DDTHH:mm:ss");
+    if(reportDate.isValid()){
+        return reportDate.format("M/D/YYYY h:mm:ss A");
+    }
+    else{
+        return rawReportDate;
+    }
+}
+
+function formatReferenceDate(rawReferenceDate) {
+    var referenceDate = moment(rawReferenceDate, "YYYY-MM-DDTHH:mm");
+    if(referenceDate.isValid()){
+        return referenceDate.format("M/D/YYYY");
+    }
+    else {
+        return rawReferenceDate;
+    }
+}
+
 function getLabels(){
     return {
         statuses: {
@@ -201,13 +356,13 @@ function getLabels(){
         types: {
             BILL_ACTIVE_AMENDMENT: "Amendment",
             BILL_SPONSOR: "Sponsor",
-            BILL_MULTISPONSOR: "Mul.Sponsor",
+            BILL_MULTISPONSOR: "Multi Sponsor",
             BILL_ACTION: "Action",
             BILL_COSPONSOR: "Co Sponsor",
             BILL_AMENDMENT_PUBLISH: "Publish",
             BILL_FULLTEXT_PAGE_COUNT: "Page Count",
             BILL_LAW_CODE: "Law Code",
-            BILL_LAW_CODE_SUMMARY: "Law/Summ.",
+            BILL_LAW_CODE_SUMMARY: "Law/Summary",
             BILL_SPONSOR_MEMO: "Sponsor Memo",
             BILL_SAMEAS: "Same As",
             BILL_SUMMARY: "Summary",

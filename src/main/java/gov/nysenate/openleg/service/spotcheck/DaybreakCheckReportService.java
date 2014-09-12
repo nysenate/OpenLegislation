@@ -58,9 +58,6 @@ public class DaybreakCheckReportService implements SpotCheckReportService<BaseBi
     public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
         // Create a new report instance
         SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
-        // The report date/time should be truncated to the second to make it easier to query
-        report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK,
-                                                 LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
         // Fetch the daybreak bills that are within the given date range
         logger.info("Fetching daybreak bills...");
         Range<LocalDate> dateRange = Range.closed(start.toLocalDate(), end.toLocalDate());
@@ -76,6 +73,12 @@ public class DaybreakCheckReportService implements SpotCheckReportService<BaseBi
         }
         // All daybreak bills should have the same reference date.
         SpotCheckReferenceId refId = daybreakBills.get(0).getReferenceId();
+
+        // The report date/time should be truncated to the second to make it easier to query
+        report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK,
+                refId.getRefActiveDateTime().truncatedTo(ChronoUnit.SECONDS),
+                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
+
         logger.info("Using Daybreak {} to generate report", refId);
         // Create a set of the base bill ids from the daybreak bills
         Set<BaseBillId> daybreakBillIds = daybreakBills.stream()

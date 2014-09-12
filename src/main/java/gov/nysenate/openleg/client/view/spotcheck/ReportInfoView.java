@@ -11,6 +11,7 @@ import java.util.Map;
 public class ReportInfoView<ContentKey>
 {
     protected String referenceType;
+    protected LocalDateTime referenceDateTime;
     protected LocalDateTime reportDateTime;
     protected Map<SpotCheckMismatchStatus, Long> mismatchStatuses;
     protected Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> mismatchTypes;
@@ -18,6 +19,7 @@ public class ReportInfoView<ContentKey>
     public ReportInfoView(SpotCheckReport<ContentKey> report) {
         if (report != null) {
             this.referenceType = report.getReferenceType().name();
+            this.referenceDateTime = report.getReferenceDateTime();
             this.reportDateTime = report.getReportDateTime();
             this.mismatchStatuses = report.getMismatchStatusCounts();
             this.mismatchTypes = report.getMismatchTypeStatusCounts();
@@ -26,6 +28,10 @@ public class ReportInfoView<ContentKey>
 
     public String getReferenceType() {
         return referenceType;
+    }
+
+    public LocalDateTime getReferenceDateTime() {
+        return referenceDateTime;
     }
 
     public LocalDateTime getReportDateTime() {

@@ -11,14 +11,12 @@
     <!-- Main CSS -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/app.css"/>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/icons.css"/>
-    <!-- DataTable CSS -->
-    <link rel="stylesheet" href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/foundation/dataTables.foundation.css"/>
-
+    <!-- Bootstrap -->
+    <%--<link rel="stylesheet" href="<%= request.getContextPath() %>/static/bower_components/bootstrap/dist/css/bootstrap.min.css"/>--%>
     <!-- Modernizr -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/modernizr/modernizr.js"></script>
     <!-- JQuery -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/jquery/dist/jquery.min.js"></script>
-    <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/jquery-ui/jquery-ui.min.js"></script>
     <!-- Foundation -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/foundation/js/foundation.min.js"></script>
     <!-- Angular JS -->
@@ -27,11 +25,13 @@
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/angular-route/angular-route.min.js"></script>
     <!-- Angular Resource -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/angular-resource/angular-resource.min.js"></script>
+    <!-- Angular Foundation -->
+    <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/angular-foundation/mm-foundation-tpls.min.js"></script>
+    <!-- ngTable -->
+    <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/ng-table/ng-table.js/"></script>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/static/bower_components/ng-table/ng-table.min.css"/>
     <!-- Moment -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/moment/min/moment.min.js"></script>
-    <!-- DataTables -->
-    <script type="application/javascript" src="<%= request.getContextPath()%>/static/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
-    <script type="application/javascript" src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/foundation/dataTables.foundation.js"></script>
 
 
     <script>

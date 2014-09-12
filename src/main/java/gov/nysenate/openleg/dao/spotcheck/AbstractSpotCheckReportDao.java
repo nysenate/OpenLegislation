@@ -63,7 +63,12 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("reportDateTime", toDate(id.getReportDateTime())));
         // Check for the report record or throw a DataAccessException if not present
         SpotCheckReport<ContentKey> report =
-            jdbcNamed.queryForObject(SELECT_REPORT.getSql(schema()), reportIdParams, (rs,row) -> new SpotCheckReport<>(id)
+            jdbcNamed.queryForObject(SELECT_REPORT.getSql(schema()), reportIdParams, (rs,row) ->
+                            new SpotCheckReport<>(
+                                    new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
+                                            getLocalDateTime(rs, "reference_date_time"),
+                                            getLocalDateTime(rs, "report_date_time"))
+                            )
         );
         // Obtain all the current and prior observations/mismatches
         Map<ContentKey, SpotCheckObservation<ContentKey>> obsMap = new HashMap<>();
@@ -83,6 +88,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         OrderBy orderBy = new OrderBy("report_date_time", dateOrder);
         return jdbcNamed.query(SELECT_REPORTS_BY_DATE.getSql(schema(), orderBy, limOff), params, (rs,row) ->
             new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
+                                  getLocalDateTime(rs, "reference_date_time"),
                                   getLocalDateTime(rs, "report_date_time"))
         );
     }
@@ -232,6 +238,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             else {
                 SpotCheckReportId reportId = new SpotCheckReportId(
                     SpotCheckRefType.valueOf(rs.getString("report_reference_type")),
+                    getLocalDateTime(rs, "reference_active_date"),
                     getLocalDateTime(rs, "report_date_time")
                 );
                 SpotCheckPriorMismatch priorMismatch = new SpotCheckPriorMismatch(type, refData, obsData, notes);
@@ -251,7 +258,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     private MapSqlParameterSource getReportIdParams(SpotCheckReport<ContentKey> report) {
         return new MapSqlParameterSource()
             .addValue("referenceType", report.getReferenceType().name())
-            .addValue("reportDateTime", toDate(report.getReportDateTime()));
+            .addValue("reportDateTime", toDate(report.getReportDateTime()))
+            .addValue("referenceDateTime", toDate(report.getReferenceDateTime()));
     }
 
     private MapSqlParameterSource getObservationParams(ImmutableParams reportParams,

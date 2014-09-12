@@ -26,8 +26,8 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "SELECT id FROM ${schema}." + SqlTable.SPOTCHECK_REPORT + "\n" + WHERE_REPORT_CLAUSE.sql
     ),
     INSERT_REPORT(
-        "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_REPORT + " (report_date_time, reference_type)\n" +
-        "VALUES (:reportDateTime, :referenceType)"
+        "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_REPORT + " (report_date_time, reference_date_time, reference_type)\n" +
+        "VALUES (:reportDateTime, :referenceDateTime, :referenceType)"
     ),
     DELETE_REPORT(
         "DELETE FROM ${schema}." + SqlTable.SPOTCHECK_REPORT + "\n" + WHERE_REPORT_CLAUSE.sql
