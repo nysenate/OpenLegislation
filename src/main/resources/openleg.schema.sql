@@ -3944,6 +3944,150 @@ ALTER TABLE ONLY spotcheck_observation
     ADD CONSTRAINT spotcheck_observation_spotcheck_report_id_fkey FOREIGN KEY (report_id) REFERENCES spotcheck_report(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
+
+--
+-- Name: transcript; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE transcript (
+    session_type text NOT NULL,
+    date_time timestamp without time zone NOT NULL,
+    location text NOT NULL,
+    text text NOT NULL,
+    transcript_file text NOT NULL,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    published_date_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE master.transcript OWNER TO postgres;
+
+--
+-- Name: COLUMN transcript.session_type; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript.session_type IS 'The active session type when this transcript was recorded.';
+
+
+--
+-- Name: COLUMN transcript.date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript.date_time IS 'The date and time the session represented by this transcript was held.';
+
+
+--
+-- Name: COLUMN transcript.location; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript.location IS 'Location of the session represented by this transcript.';
+
+
+--
+-- Name: COLUMN transcript.text; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript.text IS 'The text of the transcript.';
+
+
+--
+-- Name: COLUMN transcript.transcript_file; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript.transcript_file IS 'This transcripts original file.';
+
+
+--
+-- Name: COLUMN transcript.created_date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript.created_date_time IS 'The date time this transcript was inserted.';
+
+
+--
+-- Name: transcript_file; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE transcript_file (
+    file_name text NOT NULL,
+    processed_date_time timestamp without time zone,
+    processed_count smallint DEFAULT 0 NOT NULL,
+    staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    pending_processing boolean DEFAULT true NOT NULL,
+    archived boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE master.transcript_file OWNER TO postgres;
+
+--
+-- Name: COLUMN transcript_file.file_name; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript_file.file_name IS 'The name of the transcript file.';
+
+
+--
+-- Name: COLUMN transcript_file.processed_date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript_file.processed_date_time IS 'The last date/time this transcript file was processed.';
+
+
+--
+-- Name: COLUMN transcript_file.processed_count; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript_file.processed_count IS 'The number of time this transcript file has been processed.';
+
+
+--
+-- Name: COLUMN transcript_file.staged_date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript_file.staged_date_time IS 'The date/time this transcript file was recorded into the database';
+
+
+--
+-- Name: COLUMN transcript_file.pending_processing; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript_file.pending_processing IS 'Indicates if this transcript file is waiting to be processed.';
+
+
+--
+-- Name: COLUMN transcript_file.archived; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript_file.archived IS 'Indicates if this transcript file has been moved to the archive directory.';
+
+
+--
+-- Name: transcript_file_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY transcript_file
+    ADD CONSTRAINT transcript_file_pkey PRIMARY KEY (file_name);
+
+
+--
+-- Name: transcript_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY transcript
+    ADD CONSTRAINT transcript_pkey PRIMARY KEY (session_type, date_time);
+
+
+--
+-- Name: transcript_file_fk; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY transcript
+    ADD CONSTRAINT transcript_file_fk FOREIGN KEY (transcript_file) REFERENCES transcript_file(file_name);
+
+
+
 SET search_path = public, pg_catalog;
 
 --
