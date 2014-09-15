@@ -13,7 +13,7 @@ reportModule.factory('DaybreakDetail', ['$resource', function($resource) {
 reportModule.controller('DaybreakReportErrorCtrl',
         ['$scope', '$filter', '$timeout', '$routeParams', '$modal', 'DaybreakDetail', 'ngTableParams',
          function($scope, $filter, $timeout, $routeParams, $modal, DaybreakDetail, ngTableParams) {
-    $(document).foundation(); $scope.report = null;
+    $scope.report = null;
     $scope.totals = null;
     $scope.labels = getLabels();
     $scope.errorFilter = null;
