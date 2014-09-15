@@ -18,6 +18,29 @@ CREATE SCHEMA master;
 
 ALTER SCHEMA master OWNER TO postgres;
 
+--
+-- Name: SCHEMA master; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON SCHEMA master IS 'Processed legislative data';
+
+
+--
+-- Name: master_search; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA master_search;
+
+
+ALTER SCHEMA master_search OWNER TO postgres;
+
+--
+-- Name: SCHEMA master_search; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON SCHEMA master_search IS 'Search index';
+
+
 SET search_path = master, pg_catalog;
 
 --
@@ -160,12 +183,471 @@ ALTER TYPE public.committee_member_title OWNER TO postgres;
 SET search_path = master, pg_catalog;
 
 --
+-- Name: bill_action_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
+--
+
+CREATE FUNCTION bill_action_search_push() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+  actions_str text;
+  print_no text;
+  session_year smallint;
+  frag_id text;
+BEGIN
+  
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+    print_no := NEW.bill_print_no;
+    session_year := NEW.bill_session_year;
+    frag_id := NEW.last_fragment_id;
+  
+  ELSE 
+    print_no := OLD.bill_print_no;
+    session_year := OLD.bill_session_year;
+    frag_id := OLD.last_fragment_id;
+
+  END IF;
+  
+  -- Convert the list of all current actions into a space separated string  
+  SELECT string_agg(date_to_search_str(effect_date) || ' ' || text, ' ')
+  FROM master.bill_amendment_action
+  WHERE bill_print_no = print_no AND bill_session_year = session_year
+  INTO actions_str;
+
+  IF NOT EXISTS 
+   (SELECT 1 FROM master_search.bill_action_search 
+    WHERE bill_print_no = print_no AND bill_session_year = session_year) THEN
+  
+    -- Insert a new record 
+    INSERT INTO master_search.bill_action_search
+      (bill_print_no, bill_session_year, actions, last_fragment_id) 
+    VALUES (print_no, session_year, to_tsvector(COALESCE(actions_str, '')), frag_id);
+   
+  ELSE
+
+    -- Otherwise perform an update 
+    UPDATE master_search.bill_action_search 
+    SET actions = to_tsvector(COALESCE(actions_str, '')),
+        last_fragment_id = frag_id,
+        modified_date_time = now()
+    WHERE bill_print_no = print_no AND bill_session_year = session_year;
+    
+  END IF;
+
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+      RETURN NEW;
+  ELSE
+      RETURN OLD;
+  END IF;
+END$$;
+
+
+ALTER FUNCTION master.bill_action_search_push() OWNER TO postgres;
+
+--
+-- Name: FUNCTION bill_action_search_push(); Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON FUNCTION bill_action_search_push() IS 'Pushes actions list data as a single string to the search table.';
+
+
+--
+-- Name: bill_amendment_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
+--
+
+CREATE FUNCTION bill_amendment_search_push() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+  search_columns text[]; 
+BEGIN
+  search_columns := ARRAY['sponsor_memo', 'act_clause', 'full_text', 'current_committee_name'];
+  
+  IF TG_OP IN ('INSERT') THEN
+    INSERT INTO master_search.bill_amendment_search(
+      bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, 
+      current_committee_name, last_fragment_id) 
+    VALUES (NEW.bill_print_no, NEW.bill_session_year, NEW.version,  
+           to_tsvector(COALESCE(NEW.sponsor_memo, '')),
+           to_tsvector(COALESCE(NEW.act_clause, '')),
+           to_tsvector(COALESCE(NEW.full_text, '')),
+           to_tsvector(COALESCE(NEW.current_committee_name, '')),  
+           NEW.last_fragment_id);
+    RETURN NEW;
+   
+  ELSIF TG_OP IN ('UPDATE') THEN
+    -- Update only if there was a change in the search columns
+    IF slice(hstore(NEW.*), search_columns) - slice(hstore(OLD.*), search_columns) != ''::hstore THEN
+      UPDATE master_search.bill_amendment_search 
+      SET sponsor_memo = to_tsvector(COALESCE(NEW.sponsor_memo, '')),
+          act_clause = to_tsvector(COALESCE(NEW.act_clause, '')),
+          full_text = to_tsvector(COALESCE(NEW.full_text, '')),
+          current_committee_name = to_tsvector(COALESCE(NEW.current_committee_name, '')),
+          last_fragment_id = NEW.last_fragment_id,
+          modified_date_time = now()
+      WHERE bill_print_no = NEW.bill_print_no AND bill_session_year = NEW.bill_session_year
+            AND version = NEW.version;
+    END IF;
+    RETURN NEW;
+  
+  ELSE 
+    DELETE FROM master_search.bill_amendment_search 
+    WHERE bill_print_no = OLD.bill_print_no AND bill_session_year = OLD.bill_session_year
+          AND version = OLD.version;
+    RETURN OLD;    
+
+  END IF;
+END$$;
+
+
+ALTER FUNCTION master.bill_amendment_search_push() OWNER TO postgres;
+
+--
+-- Name: FUNCTION bill_amendment_search_push(); Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON FUNCTION bill_amendment_search_push() IS 'Pushes bill amendment specific data to the search table.';
+
+
+--
+-- Name: bill_co_sponsor_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
+--
+
+CREATE FUNCTION bill_co_sponsor_search_push() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+  co_sponsors text;
+  print_no text;
+  session_year smallint;
+  version character(1);
+  frag_id text;
+BEGIN
+  
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+    print_no := NEW.bill_print_no;
+    session_year := NEW.bill_session_year;
+    version := NEW.bill_amend_version;
+    frag_id := NEW.last_fragment_id;
+  
+  ELSE 
+    print_no := OLD.bill_print_no;
+    session_year := OLD.bill_session_year;
+    version := OLD.bill_amend_version;
+    frag_id := OLD.last_fragment_id;
+
+  END IF;
+  
+  -- Convert the list of all current co sponsors into a space separated string  
+  SELECT string_agg(COALESCE(p.last_name, ''), ' ')
+  FROM master.bill_amendment_cosponsor csp  
+  JOIN member m ON csp.member_id = m.id JOIN person p on m.person_id = p.id 
+  WHERE csp.bill_print_no = print_no AND csp.bill_session_year = session_year
+  AND csp.bill_amend_version = version
+  INTO co_sponsors;  
+  
+  IF NOT EXISTS 
+   (SELECT 1 FROM master_search.bill_amendment_cosponsor_search 
+    WHERE bill_print_no = print_no AND bill_session_year = session_year AND bill_amend_version = version) THEN
+  
+    -- Insert a new record 
+    INSERT INTO master_search.bill_amendment_cosponsor_search 
+      (bill_print_no, bill_session_year, bill_amend_version, cosponsors, last_fragment_id) 
+    VALUES (print_no, session_year, version, to_tsvector(COALESCE(co_sponsors, '')), frag_id);
+   
+  ELSE
+    
+    -- Otherwise perform an update 
+    UPDATE master_search.bill_amendment_cosponsor_search 
+    SET cosponsors = to_tsvector(COALESCE(co_sponsors, '')),
+        last_fragment_id = frag_id,
+        modified_date_time = now()
+    WHERE bill_print_no = print_no AND bill_session_year = session_year AND bill_amend_version = version;
+    
+  END IF;
+
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+      RETURN NEW;
+  ELSE
+      RETURN OLD;
+  END IF;
+END$$;
+
+
+ALTER FUNCTION master.bill_co_sponsor_search_push() OWNER TO postgres;
+
+--
+-- Name: FUNCTION bill_co_sponsor_search_push(); Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON FUNCTION bill_co_sponsor_search_push() IS 'Pushes bill amendment co sponsor data to the search table.';
+
+
+--
+-- Name: bill_info_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
+--
+
+CREATE FUNCTION bill_info_search_push() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+  search_columns text[]; 
+BEGIN
+  search_columns := ARRAY['title', 'law_section', 'summary', 'law_code', 'program_info'];
+  
+  IF TG_OP IN ('INSERT') THEN
+    INSERT INTO master_search.bill_info_search (print_no, session_year, title, law_section, summary, 
+                                                law_code, program_info, last_fragment_id) 
+    VALUES (NEW.print_no, NEW.session_year,  
+           to_tsvector(COALESCE(NEW.title, '')),
+           to_tsvector(COALESCE(NEW.law_section, '')),
+           to_tsvector(COALESCE(NEW.summary, '')),
+           to_tsvector(COALESCE(NEW.law_code, '')),  
+           to_tsvector(COALESCE(NEW.program_info, '')),
+           NEW.last_fragment_id);
+    RETURN NEW;
+   
+  ELSIF TG_OP IN ('UPDATE') THEN
+    -- Update only if there was a change in the search columns
+    IF slice(hstore(NEW.*), search_columns) - slice(hstore(OLD.*), search_columns) != ''::hstore THEN
+      UPDATE master_search.bill_info_search 
+      SET title = to_tsvector(COALESCE(NEW.title, '')),
+          law_section = to_tsvector(COALESCE(NEW.law_section, '')),
+          summary = to_tsvector(COALESCE(NEW.summary, '')),
+          law_code = to_tsvector(COALESCE(NEW.law_code, '')),
+          program_info = to_tsvector(COALESCE(NEW.program_info, '')), 
+          last_fragment_id = NEW.last_fragment_id,
+          modified_date_time = now()
+      WHERE print_no = NEW.print_no AND session_year = NEW.session_year;
+    END IF;
+    RETURN NEW;
+  
+  ELSE 
+    DELETE FROM master_search.bill_info_search 
+    WHERE print_no = OLD.print_no AND session_year = OLD.session_year;
+    RETURN OLD;    
+
+  END IF;
+END$$;
+
+
+ALTER FUNCTION master.bill_info_search_push() OWNER TO postgres;
+
+--
+-- Name: FUNCTION bill_info_search_push(); Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON FUNCTION bill_info_search_push() IS 'Pushes any new bill info data to the search table. ';
+
+
+--
+-- Name: bill_multi_sponsor_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
+--
+
+CREATE FUNCTION bill_multi_sponsor_search_push() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+  multi_sponsors text;
+  print_no text;
+  session_year smallint;
+  version character(1);
+  frag_id text;
+BEGIN
+  
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+    print_no := NEW.bill_print_no;
+    session_year := NEW.bill_session_year;
+    version := NEW.bill_amend_version;
+    frag_id := NEW.last_fragment_id;
+  
+  ELSE 
+    print_no := OLD.bill_print_no;
+    session_year := OLD.bill_session_year;
+    version := OLD.bill_amend_version;
+    frag_id := OLD.last_fragment_id;
+
+  END IF;
+  
+  -- Convert the list of all current multi sponsors into a space separated string  
+  SELECT string_agg(COALESCE(p.last_name, ''), ' ')
+  FROM master.bill_amendment_multi_sponsor msp  
+  JOIN member m ON msp.member_id = m.id JOIN person p on m.person_id = p.id 
+  WHERE msp.bill_print_no = print_no AND msp.bill_session_year = session_year
+  AND msp.bill_amend_version = version
+  INTO multi_sponsors;  
+  
+  IF NOT EXISTS 
+   (SELECT 1 FROM master_search.bill_amendment_multi_sponsor_search 
+    WHERE bill_print_no = print_no AND bill_session_year = session_year AND bill_amend_version = version) THEN
+  
+    -- Insert a new record 
+    INSERT INTO master_search.bill_amendment_multi_sponsor_search 
+      (bill_print_no, bill_session_year, bill_amend_version, multisponsors, last_fragment_id) 
+    VALUES (print_no, session_year, version, to_tsvector(COALESCE(multi_sponsors, '')), frag_id);
+   
+  ELSE
+    
+    -- Otherwise perform an update 
+    UPDATE master_search.bill_amendment_multi_sponsor_search 
+    SET multisponsors = to_tsvector(COALESCE(multi_sponsors, '')),
+        last_fragment_id = frag_id,
+        modified_date_time = now()
+    WHERE bill_print_no = print_no AND bill_session_year = session_year AND bill_amend_version = version;
+    
+  END IF;
+
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+      RETURN NEW;
+  ELSE
+      RETURN OLD;
+  END IF;
+END$$;
+
+
+ALTER FUNCTION master.bill_multi_sponsor_search_push() OWNER TO postgres;
+
+--
+-- Name: FUNCTION bill_multi_sponsor_search_push(); Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON FUNCTION bill_multi_sponsor_search_push() IS 'Pushes bill amendment multi sponsor data to the search table.';
+
+
+--
+-- Name: bill_sponsor_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
+--
+
+CREATE FUNCTION bill_sponsor_search_push() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+  search_columns text[]; 
+  sponsor_name text; 
+  sponsor_vector tsvector;
+BEGIN
+  search_columns := ARRAY['member_id', 'budget_bill', 'rules_sponsor'];
+  
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+    -- Get the sponsor name --
+    SELECT p.last_name
+    FROM member m LEFT JOIN person p ON m.person_id = p.id
+    WHERE m.id = NEW.member_id
+    INTO sponsor_name;
+
+    -- Get the sponsor search vector --
+    SELECT to_tsvector(CASE NEW.rules_sponsor WHEN true then 'Rules ' ELSE '' END || 
+                       CASE NEW.budget_bill WHEN true then 'Budget ' ELSE '' END || 
+                       COALESCE(sponsor_name, ''))
+    INTO sponsor_vector;
+
+  END IF;  
+
+  IF TG_OP IN ('INSERT') THEN
+    INSERT INTO master_search.bill_sponsor_search (bill_print_no, bill_session_year, sponsor, last_fragment_id)
+    VALUES (NEW.bill_print_no, NEW.bill_session_year, sponsor_vector, NEW.last_fragment_id);
+    RETURN NEW;  
+ 
+  ELSIF TG_OP IN ('UPDATE') THEN
+    -- Update only if there was a change in the search columns
+    IF slice(hstore(NEW.*), search_columns) - slice(hstore(OLD.*), search_columns) != ''::hstore THEN
+      UPDATE master_search.bill_sponsor_search 
+      SET sponsor = sponsor_vector, modified_date_time = now(), last_fragment_id = NEW.last_fragment_id
+      WHERE bill_print_no = NEW.bill_print_no AND bill_session_year = NEW.bill_session_year;
+    END IF;
+    RETURN NEW;
+  
+  ELSE 
+    DELETE FROM master_search.bill_sponsor_search 
+    WHERE bill_print_no = OLD.bill_print_no AND bill_session_year = OLD.bill_session_year;
+    RETURN OLD;    
+
+  END IF;
+END$$;
+
+
+ALTER FUNCTION master.bill_sponsor_search_push() OWNER TO postgres;
+
+--
+-- Name: FUNCTION bill_sponsor_search_push(); Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON FUNCTION bill_sponsor_search_push() IS 'Pushes sponsor information to the search table.';
+
+
+--
+-- Name: bill_vote_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
+--
+
+CREATE FUNCTION bill_vote_search_push() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+  votes_str text;
+  print_no text;
+  session_year smallint;
+  version character(1);
+  frag_id text;
+BEGIN
+  
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+    print_no := NEW.bill_print_no;
+    session_year := NEW.bill_session_year;
+    version := NEW.bill_amend_version;
+    frag_id := NEW.last_fragment_id;
+  
+  ELSE 
+    print_no := OLD.bill_print_no;
+    session_year := OLD.bill_session_year;
+    version := OLD.bill_amend_version;
+    frag_id := OLD.last_fragment_id;
+
+  END IF;
+  
+  -- Convert the list of all current votes into a space separated string  
+  SELECT string_agg(date_to_search_str(vote_date::date)|| ' ' || vote_type || ' vote', ' ')
+  FROM master.bill_amendment_vote_info
+  WHERE bill_print_no = print_no AND bill_session_year = session_year AND 
+        bill_amend_version = version
+  INTO votes_str;
+
+  IF NOT EXISTS 
+   (SELECT 1 FROM master_search.bill_amendment_vote_search 
+    WHERE bill_print_no = print_no AND bill_session_year = session_year AND bill_amend_version = version) THEN
+  
+    -- Insert a new record 
+    INSERT INTO master_search.bill_amendment_vote_search
+      (bill_print_no, bill_session_year, bill_amend_version, vote_info, last_fragment_id) 
+    VALUES (print_no, session_year, version, to_tsvector(COALESCE(votes_str, '')), frag_id);
+   
+  ELSE
+
+    -- Otherwise perform an update 
+    UPDATE master_search.bill_amendment_vote_search 
+    SET vote_info = to_tsvector(COALESCE(votes_str, '')),
+        last_fragment_id = frag_id,
+        modified_date_time = now()
+    WHERE bill_print_no = print_no AND bill_session_year = session_year AND bill_amend_version = version;
+    
+  END IF;
+
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+      RETURN NEW;
+  ELSE
+      RETURN OLD;
+  END IF;
+END$$;
+
+
+ALTER FUNCTION master.bill_vote_search_push() OWNER TO postgres;
+
+--
+-- Name: FUNCTION bill_vote_search_push(); Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON FUNCTION bill_vote_search_push() IS 'Pushes bill amendment vote info to the search table.';
+
+
+--
 -- Name: log_sobi_updates(); Type: FUNCTION; Schema: master; Owner: postgres
 --
 
 CREATE FUNCTION log_sobi_updates() RETURNS trigger
     LANGUAGE plpgsql
-    AS $$DECLARE
+    AS $$DECLARE  
   primary_keys text[];         -- The primary key column names
   old_primary_key_val hstore;  -- Previous primary key/value pairs
   primary_key_val hstore;      -- Primary key/value pairs
@@ -174,8 +656,8 @@ CREATE FUNCTION log_sobi_updates() RETURNS trigger
   data_diff hstore;            -- The data values that have been updated
   ignored_columns text[];      -- Column names to exclude from data_diff
   fragment_id text := NULL;    -- The fragment id that caused the insert/update
-
-BEGIN
+    
+BEGIN  
   primary_keys := TG_ARGV;
   ignored_columns := array_cat(ARRAY['modified_date_time', 'last_fragment_id'],
                                primary_keys);
@@ -184,42 +666,42 @@ BEGIN
     primary_key_val := slice(hstore(NEW.*), primary_keys);
     new_values := delete(hstore(NEW.*), ignored_columns);
     fragment_id := NEW.last_fragment_id;
-
+    
     -- Handle case where the primary key is modified
     IF TG_OP = 'UPDATE' THEN
        old_primary_key_val := slice(hstore(OLD.*), primary_keys);
        IF primary_key_val != old_primary_key_val THEN
          INSERT INTO master.sobi_change_log (table_name, action, key, data, sobi_fragment_id)
-         VALUES (TG_TABLE_NAME, 'MODIFIED_PKEY', old_primary_key_val, ''::hstore, fragment_id);
+         VALUES (TG_TABLE_NAME, 'MODIFIED_PKEY', old_primary_key_val, ''::hstore, fragment_id); 
          TG_OP := 'INSERT';
        END IF;
     END IF;
-  ELSE
-    primary_key_val := slice(hstore(OLD.*), primary_keys);
+  ELSE 
+    primary_key_val := slice(hstore(OLD.*), primary_keys);    
   END IF;
 
   IF TG_OP IN ('UPDATE', 'DELETE') THEN
     old_values := delete(hstore(OLD.*), ignored_columns);
   END IF;
-
+  
   IF TG_OP = 'INSERT' THEN
     data_diff := new_values;
-  ELSIF TG_OP = 'UPDATE' THEN
+  ELSIF TG_OP = 'UPDATE' THEN    
     data_diff := new_values - old_values;
-  ELSE
+  ELSE 
     data_diff := old_values;
   END IF;
-
-  -- Add the sobi change record only for inserts, deletes, and updates where the
+  
+  -- Add the sobi change record only for inserts, deletes, and updates where the 
   -- non-ignored values were actually changed.
   IF TG_OP IN ('INSERT','DELETE') OR data_diff != ''::hstore THEN
     INSERT INTO master.sobi_change_log (table_name, action, key, data, sobi_fragment_id)
     VALUES (TG_TABLE_NAME, TG_OP, primary_key_val, data_diff, fragment_id);
   END IF;
 
-  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN 
     RETURN NEW;
-  ELSE
+  ELSE 
     RETURN OLD;
   END IF;
 
@@ -227,6 +709,98 @@ END;$$;
 
 
 ALTER FUNCTION master.log_sobi_updates() OWNER TO postgres;
+
+--
+-- Name: FUNCTION log_sobi_updates(); Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON FUNCTION log_sobi_updates() IS 'Logs any additions, modifications, or deletions made to the data in this table.';
+
+
+SET search_path = master_search, pg_catalog;
+
+--
+-- Name: refresh_bill_search(text, smallint); Type: FUNCTION; Schema: master_search; Owner: postgres
+--
+
+CREATE FUNCTION refresh_bill_search(in_print_no text, in_session_year smallint) RETURNS void
+    LANGUAGE plpgsql
+    AS $$BEGIN
+
+DELETE FROM master_search.bill_full_search 
+WHERE print_no = in_print_no AND session_year = in_session_year;
+
+INSERT INTO master_search.bill_full_search
+SELECT print_no, session_year, bas.version, 
+setweight(to_tsvector(print_no), 'A') || 
+setweight(to_tsvector(session_year::text), 'A') ||
+setweight(to_tsvector(print_no || version), 'A') || 
+setweight(COALESCE(title, ''), 'A') || 
+setweight(COALESCE(ss.sponsor, ''), 'A') ||
+setweight(COALESCE(act_clause, ''), 'B') ||
+setweight(COALESCE(law_section, ''), 'B') || 
+setweight(COALESCE(summary, ''), 'B') || 
+setweight(COALESCE(program_info, ''), 'B') || 
+setweight(COALESCE(aa.actions, ''), 'B') ||
+setweight(COALESCE(cs.cosponsors, ''), 'B') ||
+setweight(COALESCE(ms.multisponsors, ''), 'B') ||
+setweight(COALESCE(sponsor_memo, ''), 'C') || 
+setweight(COALESCE(law_code, ''), 'C') || 
+setweight(COALESCE(current_committee_name, ''), 'C') ||
+setweight(COALESCE(vs.vote_info, ''), 'C') ||
+setweight(COALESCE(full_text, ''), 'D')
+FROM master_search.bill_info_search bs 
+JOIN master_search.bill_amendment_search bas 
+    ON bs.print_no = bas.bill_print_no AND bs.session_year = bas.bill_session_year 
+LEFT JOIN master_search.bill_sponsor_search ss 
+    ON bs.print_no = ss.bill_print_no and bs.session_year = ss.bill_session_year
+LEFT JOIN master_search.bill_action_search aa 
+    ON bs.print_no = aa.bill_print_no and bs.session_year = aa.bill_session_year
+LEFT JOIN master_search.bill_amendment_cosponsor_search cs
+    ON bas.bill_print_no = cs.bill_print_no and bas.bill_session_year = cs.bill_session_year
+    and bas.version = cs.bill_amend_version
+LEFT JOIN master_search.bill_amendment_multi_sponsor_search ms
+    ON bas.bill_print_no = ms.bill_print_no and bas.bill_session_year = ms.bill_session_year
+    and bas.version = ms.bill_amend_version
+LEFT JOIN master_search.bill_amendment_vote_search vs
+    ON bas.bill_print_no = vs.bill_print_no and bas.bill_session_year = vs.bill_session_year
+    and bas.version = vs.bill_amend_version
+WHERE bs.print_no = in_print_no AND bs.session_year = in_session_year;
+
+END
+$$;
+
+
+ALTER FUNCTION master_search.refresh_bill_search(in_print_no text, in_session_year smallint) OWNER TO postgres;
+
+--
+-- Name: FUNCTION refresh_bill_search(in_print_no text, in_session_year smallint); Type: COMMENT; Schema: master_search; Owner: postgres
+--
+
+COMMENT ON FUNCTION refresh_bill_search(in_print_no text, in_session_year smallint) IS 'Consolidates all the various bill search vectors into a single search vector with various weightings.';
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- Name: date_to_search_str(date); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION date_to_search_str(d date) RETURNS text
+    LANGUAGE sql
+    AS $$SELECT to_char(d, 'YYYY MM DD FMMM MON MONTH FMDD');$$;
+
+
+ALTER FUNCTION public.date_to_search_str(d date) OWNER TO postgres;
+
+--
+-- Name: FUNCTION date_to_search_str(d date); Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON FUNCTION date_to_search_str(d date) IS 'Converts a date to a string that provides adequate representations of the month and days for use in full text search queries. ';
+
+
+SET search_path = master, pg_catalog;
 
 --
 -- Name: openleg_fts_config; Type: TEXT SEARCH CONFIGURATION; Schema: master; Owner: postgres
@@ -300,7 +874,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: agenda; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda (
@@ -323,7 +897,7 @@ COMMENT ON TABLE agenda IS 'Listing of all senate agendas';
 
 
 --
--- Name: agenda_info_addendum; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_info_addendum; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_info_addendum (
@@ -348,7 +922,7 @@ COMMENT ON TABLE agenda_info_addendum IS 'Info addendum listings for agendas ';
 
 
 --
--- Name: agenda_info_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_info_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_info_committee (
@@ -398,7 +972,7 @@ ALTER SEQUENCE agenda_info_committee_id_seq OWNED BY agenda_info_committee.id;
 
 
 --
--- Name: agenda_info_committee_item; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_info_committee_item; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_info_committee_item (
@@ -444,7 +1018,7 @@ ALTER SEQUENCE agenda_info_committee_item_id_seq OWNED BY agenda_info_committee_
 
 
 --
--- Name: agenda_vote_addendum; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_vote_addendum; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_vote_addendum (
@@ -482,7 +1056,7 @@ CREATE SEQUENCE agenda_vote_commitee_id_seq
 ALTER TABLE master.agenda_vote_commitee_id_seq OWNER TO postgres;
 
 --
--- Name: agenda_vote_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_vote_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_vote_committee (
@@ -509,7 +1083,7 @@ COMMENT ON TABLE agenda_vote_committee IS 'Committee info sent via the vote adde
 
 
 --
--- Name: agenda_vote_committee_attend; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_vote_committee_attend; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_vote_committee_attend (
@@ -557,7 +1131,7 @@ ALTER SEQUENCE agenda_vote_committee_attend_id_seq OWNED BY agenda_vote_committe
 
 
 --
--- Name: agenda_vote_committee_vote; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_vote_committee_vote; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE agenda_vote_committee_vote (
@@ -604,7 +1178,7 @@ ALTER SEQUENCE agenda_vote_committee_vote_id_seq OWNED BY agenda_vote_committee_
 
 
 --
--- Name: bill; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill (
@@ -620,7 +1194,9 @@ CREATE TABLE bill (
     last_fragment_id text,
     law_code text,
     created_date_time timestamp without time zone DEFAULT now(),
-    program_info text
+    program_info text,
+    status text,
+    status_date date
 );
 
 
@@ -725,7 +1301,21 @@ COMMENT ON COLUMN bill.program_info IS 'The program this bill was introduced for
 
 
 --
--- Name: bill_amendment; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: COLUMN bill.status; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill.status IS 'The status of the bill currently';
+
+
+--
+-- Name: COLUMN bill.status_date; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill.status_date IS 'The date of the action that updated the status';
+
+
+--
+-- Name: bill_amendment; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment (
@@ -754,7 +1344,7 @@ COMMENT ON TABLE bill_amendment IS 'Information specific to a bill amendment';
 
 
 --
--- Name: bill_amendment_action; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_action; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment_action (
@@ -780,7 +1370,7 @@ COMMENT ON TABLE bill_amendment_action IS 'Actions that have been taken on an am
 
 
 --
--- Name: bill_amendment_cosponsor; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_cosponsor; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment_cosponsor (
@@ -804,7 +1394,7 @@ COMMENT ON TABLE bill_amendment_cosponsor IS 'Listing of co-sponsors for an amen
 
 
 --
--- Name: bill_amendment_multi_sponsor; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_multi_sponsor; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment_multi_sponsor (
@@ -828,7 +1418,7 @@ COMMENT ON TABLE bill_amendment_multi_sponsor IS 'Listing of multi-sponsors for 
 
 
 --
--- Name: bill_amendment_publish_status; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_publish_status; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment_publish_status (
@@ -917,7 +1507,7 @@ COMMENT ON COLUMN bill_amendment_publish_status.last_fragment_id IS 'The fragmen
 
 
 --
--- Name: bill_amendment_same_as; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_same_as; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment_same_as (
@@ -942,7 +1532,7 @@ COMMENT ON TABLE bill_amendment_same_as IS 'Same as bills for an amendment';
 
 
 --
--- Name: bill_amendment_vote_info; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_vote_info; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment_vote_info (
@@ -1012,7 +1602,7 @@ ALTER SEQUENCE bill_amendment_vote_id_seq OWNED BY bill_amendment_vote_info.id;
 
 
 --
--- Name: bill_amendment_vote_roll; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_vote_roll; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_amendment_vote_roll (
@@ -1036,7 +1626,7 @@ COMMENT ON TABLE bill_amendment_vote_roll IS 'Contains a list of member votes';
 
 
 --
--- Name: bill_approval; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_approval; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_approval (
@@ -1064,7 +1654,7 @@ COMMENT ON TABLE bill_approval IS 'Approval Messages from the governor';
 
 
 --
--- Name: bill_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_committee (
@@ -1095,7 +1685,7 @@ COMMENT ON COLUMN bill_committee.action_date IS 'The date that the committee act
 
 
 --
--- Name: bill_previous_version; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_previous_version; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_previous_version (
@@ -1119,7 +1709,7 @@ COMMENT ON TABLE bill_previous_version IS 'Listing of this bill in previous sess
 
 
 --
--- Name: bill_sponsor; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_sponsor; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_sponsor (
@@ -1143,7 +1733,7 @@ COMMENT ON TABLE bill_sponsor IS 'Mapping of bill to sponsor';
 
 
 --
--- Name: bill_sponsor_additional; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_sponsor_additional; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_sponsor_additional (
@@ -1165,27 +1755,7 @@ COMMENT ON TABLE bill_sponsor_additional IS 'Contains additional sponsor mapping
 
 
 --
--- Name: bill_status; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
---
-
-CREATE TABLE bill_status (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    status smallint
-);
-
-
-ALTER TABLE master.bill_status OWNER TO postgres;
-
---
--- Name: TABLE bill_status; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON TABLE bill_status IS 'Contains bill status information derived from the actions list';
-
-
---
--- Name: bill_veto; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_veto; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE bill_veto (
@@ -1232,7 +1802,7 @@ CREATE SEQUENCE bill_veto_year_seq
 ALTER TABLE master.bill_veto_year_seq OWNER TO postgres;
 
 --
--- Name: calendar; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: calendar; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE calendar (
@@ -1269,7 +1839,7 @@ COMMENT ON COLUMN calendar.year IS 'The year for this calendar';
 
 
 --
--- Name: calendar_active_list; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: calendar_active_list; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE calendar_active_list (
@@ -1297,7 +1867,7 @@ COMMENT ON TABLE calendar_active_list IS 'Listing of all calendar active lists';
 
 
 --
--- Name: calendar_active_list_entry; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: calendar_active_list_entry; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE calendar_active_list_entry (
@@ -1342,7 +1912,7 @@ ALTER SEQUENCE calendar_active_list_id_seq OWNED BY calendar_active_list.id;
 
 
 --
--- Name: calendar_supplemental; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: calendar_supplemental; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE calendar_supplemental (
@@ -1369,7 +1939,7 @@ COMMENT ON TABLE calendar_supplemental IS 'Calendar entries are published throug
 
 
 --
--- Name: calendar_supplemental_entry; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: calendar_supplemental_entry; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE calendar_supplemental_entry (
@@ -1469,7 +2039,7 @@ ALTER SEQUENCE calendar_supplemental_id_seq OWNED BY calendar_supplemental.id;
 
 
 --
--- Name: committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE committee (
@@ -1520,7 +2090,7 @@ ALTER SEQUENCE committee_id_seq OWNED BY committee.id;
 
 
 --
--- Name: committee_member; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: committee_member; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE committee_member (
@@ -1574,7 +2144,7 @@ ALTER SEQUENCE committee_member_id_seq OWNED BY committee_member.id;
 
 
 --
--- Name: committee_version; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: committee_version; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE committee_version (
@@ -1658,7 +2228,7 @@ ALTER SEQUENCE committee_version_session_year_seq OWNED BY committee_version.ses
 
 
 --
--- Name: daybreak_bill; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: daybreak_bill; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE daybreak_bill (
@@ -1677,7 +2247,14 @@ CREATE TABLE daybreak_bill (
 ALTER TABLE master.daybreak_bill OWNER TO postgres;
 
 --
--- Name: daybreak_bill_action; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: TABLE daybreak_bill; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE daybreak_bill IS 'General bill information sent via the daybreaks';
+
+
+--
+-- Name: daybreak_bill_action; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE daybreak_bill_action (
@@ -1692,6 +2269,13 @@ CREATE TABLE daybreak_bill_action (
 
 
 ALTER TABLE master.daybreak_bill_action OWNER TO postgres;
+
+--
+-- Name: TABLE daybreak_bill_action; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE daybreak_bill_action IS 'Bill actions sent via the daybreaks';
+
 
 --
 -- Name: daybreak_bill_action_sequence_no_seq; Type: SEQUENCE; Schema: master; Owner: postgres
@@ -1715,7 +2299,7 @@ ALTER SEQUENCE daybreak_bill_action_sequence_no_seq OWNED BY daybreak_bill_actio
 
 
 --
--- Name: daybreak_bill_amendment; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: daybreak_bill_amendment; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE daybreak_bill_amendment (
@@ -1732,7 +2316,14 @@ CREATE TABLE daybreak_bill_amendment (
 ALTER TABLE master.daybreak_bill_amendment OWNER TO postgres;
 
 --
--- Name: daybreak_bill_sponsor; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: TABLE daybreak_bill_amendment; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE daybreak_bill_amendment IS 'Bill amendment details such as page counts, sent via daybreaks';
+
+
+--
+-- Name: daybreak_bill_sponsor; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE daybreak_bill_sponsor (
@@ -1747,7 +2338,14 @@ CREATE TABLE daybreak_bill_sponsor (
 ALTER TABLE master.daybreak_bill_sponsor OWNER TO postgres;
 
 --
--- Name: daybreak_file; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: TABLE daybreak_bill_sponsor; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE daybreak_bill_sponsor IS 'The sponsor for each daybreak bill';
+
+
+--
+-- Name: daybreak_file; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE daybreak_file (
@@ -1762,7 +2360,14 @@ CREATE TABLE daybreak_file (
 ALTER TABLE master.daybreak_file OWNER TO postgres;
 
 --
--- Name: daybreak_fragment; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: TABLE daybreak_file; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE daybreak_file IS 'Listing of all daybreak files';
+
+
+--
+-- Name: daybreak_fragment; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE daybreak_fragment (
@@ -1783,7 +2388,14 @@ CREATE TABLE daybreak_fragment (
 ALTER TABLE master.daybreak_fragment OWNER TO postgres;
 
 --
--- Name: daybreak_page_file_entry; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: TABLE daybreak_fragment; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE daybreak_fragment IS 'A daybreak fragment is the content from a daybreak file for a single bill';
+
+
+--
+-- Name: daybreak_page_file_entry; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE daybreak_page_file_entry (
@@ -1803,7 +2415,14 @@ CREATE TABLE daybreak_page_file_entry (
 ALTER TABLE master.daybreak_page_file_entry OWNER TO postgres;
 
 --
--- Name: daybreak_report; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: TABLE daybreak_page_file_entry; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE daybreak_page_file_entry IS 'The daybreak page file';
+
+
+--
+-- Name: daybreak_report; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE daybreak_report (
@@ -1816,7 +2435,14 @@ CREATE TABLE daybreak_report (
 ALTER TABLE master.daybreak_report OWNER TO postgres;
 
 --
--- Name: sobi_fragment; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: TABLE daybreak_report; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE daybreak_report IS 'Indicates which set of daybreaks reports have been generated for';
+
+
+--
+-- Name: sobi_fragment; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE sobi_fragment (
@@ -1957,7 +2583,7 @@ COMMENT ON VIEW psf IS 'Pending Sobi Fragments';
 
 
 --
--- Name: sobi_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: sobi_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE sobi_change_log (
@@ -2002,7 +2628,7 @@ ALTER SEQUENCE sobi_change_log_id_seq OWNED BY sobi_change_log.id;
 
 
 --
--- Name: sobi_file; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: sobi_file; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE sobi_file (
@@ -2059,7 +2685,7 @@ COMMENT ON COLUMN sobi_file.archived IS 'Indicates if the file has been moved in
 
 
 --
--- Name: sobi_fragment_process; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: sobi_fragment_process; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE sobi_fragment_process (
@@ -2092,7 +2718,7 @@ ALTER SEQUENCE sobi_fragment_process_id_seq OWNED BY sobi_fragment_process.id;
 
 
 --
--- Name: spotcheck_mismatch; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: spotcheck_mismatch; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE spotcheck_mismatch (
@@ -2137,7 +2763,7 @@ ALTER SEQUENCE spotcheck_mismatch_id_seq OWNED BY spotcheck_mismatch.id;
 
 
 --
--- Name: spotcheck_observation; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: spotcheck_observation; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE spotcheck_observation (
@@ -2182,14 +2808,15 @@ ALTER SEQUENCE spotcheck_observation_id_seq OWNED BY spotcheck_observation.id;
 
 
 --
--- Name: spotcheck_report; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: spotcheck_report; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE spotcheck_report (
     id integer NOT NULL,
     report_date_time timestamp without time zone NOT NULL,
     reference_type text NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    reference_date_time timestamp without time zone
 );
 
 
@@ -2223,10 +2850,338 @@ ALTER TABLE master.spotcheck_report_id_seq OWNER TO postgres;
 ALTER SEQUENCE spotcheck_report_id_seq OWNED BY spotcheck_report.id;
 
 
+--
+-- Name: transcript; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE transcript (
+    session_type text NOT NULL,
+    date_time timestamp without time zone NOT NULL,
+    location text NOT NULL,
+    text text NOT NULL,
+    transcript_file text NOT NULL,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    published_date_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE master.transcript OWNER TO postgres;
+
+--
+-- Name: TABLE transcript; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE transcript IS 'Content and meta data of transcripts';
+
+
+--
+-- Name: COLUMN transcript.session_type; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript.session_type IS 'The active session type when this transcript was recorded.';
+
+
+--
+-- Name: COLUMN transcript.date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript.date_time IS 'The date and time the session represented by this transcript was held.';
+
+
+--
+-- Name: COLUMN transcript.location; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript.location IS 'Location of the session represented by this transcript.';
+
+
+--
+-- Name: COLUMN transcript.text; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript.text IS 'The text of the transcript.';
+
+
+--
+-- Name: COLUMN transcript.transcript_file; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript.transcript_file IS 'This transcripts original file.';
+
+
+--
+-- Name: COLUMN transcript.created_date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript.created_date_time IS 'The date time this transcript was inserted.';
+
+
+--
+-- Name: transcript_file; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE transcript_file (
+    file_name text NOT NULL,
+    processed_date_time timestamp without time zone,
+    processed_count smallint DEFAULT 0 NOT NULL,
+    staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    pending_processing boolean DEFAULT true NOT NULL,
+    archived boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE master.transcript_file OWNER TO postgres;
+
+--
+-- Name: TABLE transcript_file; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE transcript_file IS 'Listing of all transcript files';
+
+
+--
+-- Name: COLUMN transcript_file.file_name; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript_file.file_name IS 'The name of the transcript file.';
+
+
+--
+-- Name: COLUMN transcript_file.processed_date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript_file.processed_date_time IS 'The last date/time this transcript file was processed.';
+
+
+--
+-- Name: COLUMN transcript_file.processed_count; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript_file.processed_count IS 'The number of time this transcript file has been processed.';
+
+
+--
+-- Name: COLUMN transcript_file.staged_date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript_file.staged_date_time IS 'The date/time this transcript file was recorded into the database';
+
+
+--
+-- Name: COLUMN transcript_file.pending_processing; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript_file.pending_processing IS 'Indicates if this transcript file is waiting to be processed.';
+
+
+--
+-- Name: COLUMN transcript_file.archived; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN transcript_file.archived IS 'Indicates if this transcript file has been moved to the archive directory.';
+
+
+SET search_path = master_search, pg_catalog;
+
+--
+-- Name: bill_action_search; Type: TABLE; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE bill_action_search (
+    bill_print_no text NOT NULL,
+    bill_session_year smallint NOT NULL,
+    actions tsvector,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
+);
+
+
+ALTER TABLE master_search.bill_action_search OWNER TO postgres;
+
+--
+-- Name: TABLE bill_action_search; Type: COMMENT; Schema: master_search; Owner: postgres
+--
+
+COMMENT ON TABLE bill_action_search IS 'Search for bill actions';
+
+
+--
+-- Name: bill_amendment_cosponsor_search; Type: TABLE; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE bill_amendment_cosponsor_search (
+    bill_print_no text NOT NULL,
+    bill_session_year smallint NOT NULL,
+    bill_amend_version character(1) NOT NULL,
+    cosponsors tsvector,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
+);
+
+
+ALTER TABLE master_search.bill_amendment_cosponsor_search OWNER TO postgres;
+
+--
+-- Name: TABLE bill_amendment_cosponsor_search; Type: COMMENT; Schema: master_search; Owner: postgres
+--
+
+COMMENT ON TABLE bill_amendment_cosponsor_search IS 'Search for bill cosponsors';
+
+
+--
+-- Name: bill_amendment_multi_sponsor_search; Type: TABLE; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE bill_amendment_multi_sponsor_search (
+    bill_print_no text NOT NULL,
+    bill_session_year smallint NOT NULL,
+    bill_amend_version character(1) NOT NULL,
+    multisponsors tsvector,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
+);
+
+
+ALTER TABLE master_search.bill_amendment_multi_sponsor_search OWNER TO postgres;
+
+--
+-- Name: TABLE bill_amendment_multi_sponsor_search; Type: COMMENT; Schema: master_search; Owner: postgres
+--
+
+COMMENT ON TABLE bill_amendment_multi_sponsor_search IS 'Search for bill multisponsors';
+
+
+--
+-- Name: bill_amendment_search; Type: TABLE; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE bill_amendment_search (
+    bill_print_no text NOT NULL,
+    bill_session_year smallint NOT NULL,
+    version character(1) NOT NULL,
+    sponsor_memo tsvector,
+    act_clause tsvector,
+    full_text tsvector,
+    current_committee_name tsvector,
+    created_date_time timestamp with time zone DEFAULT now() NOT NULL,
+    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
+);
+
+
+ALTER TABLE master_search.bill_amendment_search OWNER TO postgres;
+
+--
+-- Name: TABLE bill_amendment_search; Type: COMMENT; Schema: master_search; Owner: postgres
+--
+
+COMMENT ON TABLE bill_amendment_search IS 'Search for bill amendment specific details (e.g fulltext)';
+
+
+--
+-- Name: bill_amendment_vote_search; Type: TABLE; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE bill_amendment_vote_search (
+    bill_print_no text NOT NULL,
+    bill_session_year smallint NOT NULL,
+    bill_amend_version character(1) NOT NULL,
+    vote_info tsvector,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
+);
+
+
+ALTER TABLE master_search.bill_amendment_vote_search OWNER TO postgres;
+
+--
+-- Name: TABLE bill_amendment_vote_search; Type: COMMENT; Schema: master_search; Owner: postgres
+--
+
+COMMENT ON TABLE bill_amendment_vote_search IS 'Search for bill vote dates';
+
+
+--
+-- Name: bill_full_search; Type: TABLE; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE bill_full_search (
+    print_no text NOT NULL,
+    session_year smallint NOT NULL,
+    version character(1) NOT NULL,
+    search tsvector,
+    modified_date_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE master_search.bill_full_search OWNER TO postgres;
+
+--
+-- Name: TABLE bill_full_search; Type: COMMENT; Schema: master_search; Owner: postgres
+--
+
+COMMENT ON TABLE bill_full_search IS 'General bill search (combines all available bill search fields)';
+
+
+--
+-- Name: bill_info_search; Type: TABLE; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE bill_info_search (
+    print_no text NOT NULL,
+    session_year smallint NOT NULL,
+    title tsvector,
+    law_section tsvector,
+    summary tsvector,
+    law_code tsvector,
+    program_info tsvector,
+    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE master_search.bill_info_search OWNER TO postgres;
+
+--
+-- Name: TABLE bill_info_search; Type: COMMENT; Schema: master_search; Owner: postgres
+--
+
+COMMENT ON TABLE bill_info_search IS 'Base bill info search';
+
+
+--
+-- Name: bill_sponsor_search; Type: TABLE; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE bill_sponsor_search (
+    bill_print_no text NOT NULL,
+    bill_session_year smallint NOT NULL,
+    sponsor tsvector,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
+);
+
+
+ALTER TABLE master_search.bill_sponsor_search OWNER TO postgres;
+
+--
+-- Name: TABLE bill_sponsor_search; Type: COMMENT; Schema: master_search; Owner: postgres
+--
+
+COMMENT ON TABLE bill_sponsor_search IS 'Search for bill sponsor';
+
+
 SET search_path = public, pg_catalog;
 
 --
--- Name: environment; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+-- Name: environment; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE environment (
@@ -2266,7 +3221,7 @@ ALTER SEQUENCE environment_id_seq OWNED BY environment.id;
 
 
 --
--- Name: member; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+-- Name: member; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE member (
@@ -2358,7 +3313,7 @@ ALTER SEQUENCE member_person_id_seq OWNED BY member.person_id;
 
 
 --
--- Name: person; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+-- Name: person; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE person (
@@ -2454,7 +3409,7 @@ ALTER SEQUENCE person_id_seq OWNED BY person.id;
 
 
 --
--- Name: session_member; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+-- Name: session_member; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE session_member (
@@ -2644,7 +3599,7 @@ ALTER TABLE ONLY session_member ALTER COLUMN id SET DEFAULT nextval('session_mem
 SET search_path = master, pg_catalog;
 
 --
--- Name: agenda_info_addendum_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_info_addendum_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_info_addendum
@@ -2652,7 +3607,7 @@ ALTER TABLE ONLY agenda_info_addendum
 
 
 --
--- Name: agenda_info_committee_agenda_no_year_addendum_id_committee__key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_info_committee_agenda_no_year_addendum_id_committee__key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_info_committee
@@ -2660,7 +3615,7 @@ ALTER TABLE ONLY agenda_info_committee
 
 
 --
--- Name: agenda_info_committee_item_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_info_committee_item_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_info_committee_item
@@ -2668,7 +3623,7 @@ ALTER TABLE ONLY agenda_info_committee_item
 
 
 --
--- Name: agenda_info_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_info_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_info_committee
@@ -2676,7 +3631,7 @@ ALTER TABLE ONLY agenda_info_committee
 
 
 --
--- Name: agenda_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda
@@ -2684,7 +3639,7 @@ ALTER TABLE ONLY agenda
 
 
 --
--- Name: agenda_vote_addendum_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_vote_addendum_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_vote_addendum
@@ -2692,7 +3647,7 @@ ALTER TABLE ONLY agenda_vote_addendum
 
 
 --
--- Name: agenda_vote_committee_agenda_no_year_addendum_id_committee__key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_vote_committee_agenda_no_year_addendum_id_committee__key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_vote_committee
@@ -2700,7 +3655,7 @@ ALTER TABLE ONLY agenda_vote_committee
 
 
 --
--- Name: agenda_vote_committee_attend_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_vote_committee_attend_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_vote_committee_attend
@@ -2708,7 +3663,7 @@ ALTER TABLE ONLY agenda_vote_committee_attend
 
 
 --
--- Name: agenda_vote_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_vote_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_vote_committee
@@ -2716,7 +3671,7 @@ ALTER TABLE ONLY agenda_vote_committee
 
 
 --
--- Name: agenda_vote_committee_vote_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_vote_committee_vote_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY agenda_vote_committee_vote
@@ -2724,7 +3679,7 @@ ALTER TABLE ONLY agenda_vote_committee_vote
 
 
 --
--- Name: bill_amendment_action_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_action_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_amendment_action
@@ -2732,7 +3687,7 @@ ALTER TABLE ONLY bill_amendment_action
 
 
 --
--- Name: bill_amendment_cosponsor_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_cosponsor_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_amendment_cosponsor
@@ -2740,7 +3695,7 @@ ALTER TABLE ONLY bill_amendment_cosponsor
 
 
 --
--- Name: bill_amendment_multi_sponsor_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_multi_sponsor_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_amendment_multi_sponsor
@@ -2748,7 +3703,7 @@ ALTER TABLE ONLY bill_amendment_multi_sponsor
 
 
 --
--- Name: bill_amendment_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_amendment
@@ -2756,7 +3711,7 @@ ALTER TABLE ONLY bill_amendment
 
 
 --
--- Name: bill_amendment_publish_status_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_publish_status_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_amendment_publish_status
@@ -2764,7 +3719,7 @@ ALTER TABLE ONLY bill_amendment_publish_status
 
 
 --
--- Name: bill_amendment_same_as_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_same_as_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_amendment_same_as
@@ -2772,7 +3727,7 @@ ALTER TABLE ONLY bill_amendment_same_as
 
 
 --
--- Name: bill_amendment_vote_info_bill_print_no_bill_session_year_bi_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_vote_info_bill_print_no_bill_session_year_bi_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_amendment_vote_info
@@ -2780,7 +3735,7 @@ ALTER TABLE ONLY bill_amendment_vote_info
 
 
 --
--- Name: bill_amendment_vote_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_vote_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_amendment_vote_info
@@ -2788,7 +3743,7 @@ ALTER TABLE ONLY bill_amendment_vote_info
 
 
 --
--- Name: bill_amendment_vote_roll_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_amendment_vote_roll_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_amendment_vote_roll
@@ -2796,7 +3751,7 @@ ALTER TABLE ONLY bill_amendment_vote_roll
 
 
 --
--- Name: bill_approval_approval_number_year_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_approval_approval_number_year_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_approval
@@ -2804,7 +3759,7 @@ ALTER TABLE ONLY bill_approval
 
 
 --
--- Name: bill_approval_bill_print_no_session_year_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_approval_bill_print_no_session_year_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_approval
@@ -2812,7 +3767,7 @@ ALTER TABLE ONLY bill_approval
 
 
 --
--- Name: bill_approval_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_approval_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_approval
@@ -2820,7 +3775,7 @@ ALTER TABLE ONLY bill_approval
 
 
 --
--- Name: bill_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_committee
@@ -2828,7 +3783,7 @@ ALTER TABLE ONLY bill_committee
 
 
 --
--- Name: bill_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill
@@ -2836,7 +3791,7 @@ ALTER TABLE ONLY bill
 
 
 --
--- Name: bill_previous_version_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_previous_version_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_previous_version
@@ -2844,7 +3799,7 @@ ALTER TABLE ONLY bill_previous_version
 
 
 --
--- Name: bill_sponsor_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_sponsor_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_sponsor
@@ -2852,7 +3807,7 @@ ALTER TABLE ONLY bill_sponsor
 
 
 --
--- Name: bill_sponsor_special_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_sponsor_special_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_sponsor_additional
@@ -2860,15 +3815,7 @@ ALTER TABLE ONLY bill_sponsor_additional
 
 
 --
--- Name: bill_status_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
---
-
-ALTER TABLE ONLY bill_status
-    ADD CONSTRAINT bill_status_pkey PRIMARY KEY (bill_print_no, bill_session_year);
-
-
---
--- Name: bill_veto_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_veto_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY bill_veto
@@ -2876,7 +3823,7 @@ ALTER TABLE ONLY bill_veto
 
 
 --
--- Name: calendar_active_list_calendar_no_calendar_year_sequence_no_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: calendar_active_list_calendar_no_calendar_year_sequence_no_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY calendar_active_list
@@ -2884,7 +3831,7 @@ ALTER TABLE ONLY calendar_active_list
 
 
 --
--- Name: calendar_active_list_entry_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: calendar_active_list_entry_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY calendar_active_list_entry
@@ -2892,7 +3839,7 @@ ALTER TABLE ONLY calendar_active_list_entry
 
 
 --
--- Name: calendar_active_list_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: calendar_active_list_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY calendar_active_list
@@ -2900,7 +3847,7 @@ ALTER TABLE ONLY calendar_active_list
 
 
 --
--- Name: calendar_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: calendar_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY calendar
@@ -2908,7 +3855,7 @@ ALTER TABLE ONLY calendar
 
 
 --
--- Name: calendar_supplemental_calendar_no_calendar_year_sup_version_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: calendar_supplemental_calendar_no_calendar_year_sup_version_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY calendar_supplemental
@@ -2916,7 +3863,7 @@ ALTER TABLE ONLY calendar_supplemental
 
 
 --
--- Name: calendar_supplemental_entry_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: calendar_supplemental_entry_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY calendar_supplemental_entry
@@ -2924,7 +3871,7 @@ ALTER TABLE ONLY calendar_supplemental_entry
 
 
 --
--- Name: calendar_supplemental_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: calendar_supplemental_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY calendar_supplemental
@@ -2932,7 +3879,7 @@ ALTER TABLE ONLY calendar_supplemental
 
 
 --
--- Name: committee_member_committee_name_version_created_sequence_no_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: committee_member_committee_name_version_created_sequence_no_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY committee_member
@@ -2940,7 +3887,7 @@ ALTER TABLE ONLY committee_member
 
 
 --
--- Name: committee_member_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: committee_member_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY committee_member
@@ -2948,7 +3895,7 @@ ALTER TABLE ONLY committee_member
 
 
 --
--- Name: committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY committee
@@ -2956,7 +3903,7 @@ ALTER TABLE ONLY committee
 
 
 --
--- Name: committee_version_committee_name_chamber_session_year_creat_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: committee_version_committee_name_chamber_session_year_creat_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY committee_version
@@ -2964,7 +3911,7 @@ ALTER TABLE ONLY committee_version
 
 
 --
--- Name: committee_version_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: committee_version_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY committee_version
@@ -2972,7 +3919,7 @@ ALTER TABLE ONLY committee_version
 
 
 --
--- Name: daybreak_bill_action_report_date_bill_print_no_bill_session_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: daybreak_bill_action_report_date_bill_print_no_bill_session_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY daybreak_bill_action
@@ -2980,7 +3927,7 @@ ALTER TABLE ONLY daybreak_bill_action
 
 
 --
--- Name: daybreak_bill_amendment_report_date_bill_print_no_bill_sess_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: daybreak_bill_amendment_report_date_bill_print_no_bill_sess_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY daybreak_bill_amendment
@@ -2988,7 +3935,7 @@ ALTER TABLE ONLY daybreak_bill_amendment
 
 
 --
--- Name: daybreak_bill_report_date_bill_print_no_bill_session_year_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: daybreak_bill_report_date_bill_print_no_bill_session_year_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY daybreak_bill
@@ -2996,7 +3943,7 @@ ALTER TABLE ONLY daybreak_bill
 
 
 --
--- Name: daybreak_bill_sponsor_report_date_bill_print_no_bill_sessio_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: daybreak_bill_sponsor_report_date_bill_print_no_bill_sessio_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY daybreak_bill_sponsor
@@ -3004,7 +3951,7 @@ ALTER TABLE ONLY daybreak_bill_sponsor
 
 
 --
--- Name: daybreak_file_report_date_filename_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: daybreak_file_report_date_filename_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY daybreak_file
@@ -3012,7 +3959,7 @@ ALTER TABLE ONLY daybreak_file
 
 
 --
--- Name: daybreak_fragment_bill_print_no_bill_session_year_report_da_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: daybreak_fragment_bill_print_no_bill_session_year_report_da_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY daybreak_fragment
@@ -3020,7 +3967,7 @@ ALTER TABLE ONLY daybreak_fragment
 
 
 --
--- Name: daybreak_page_file_entry_report_date_bill_session_year_asse_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: daybreak_page_file_entry_report_date_bill_session_year_asse_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY daybreak_page_file_entry
@@ -3028,7 +3975,7 @@ ALTER TABLE ONLY daybreak_page_file_entry
 
 
 --
--- Name: daybreak_page_file_entry_report_date_bill_session_year_sena_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: daybreak_page_file_entry_report_date_bill_session_year_sena_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY daybreak_page_file_entry
@@ -3036,7 +3983,7 @@ ALTER TABLE ONLY daybreak_page_file_entry
 
 
 --
--- Name: daybreak_report_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: daybreak_report_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY daybreak_report
@@ -3044,7 +3991,7 @@ ALTER TABLE ONLY daybreak_report
 
 
 --
--- Name: sobi_fragment_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: sobi_fragment_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY sobi_fragment
@@ -3052,7 +3999,7 @@ ALTER TABLE ONLY sobi_fragment
 
 
 --
--- Name: sobi_fragment_process_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: sobi_fragment_process_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY sobi_fragment_process
@@ -3060,7 +4007,7 @@ ALTER TABLE ONLY sobi_fragment_process
 
 
 --
--- Name: sobi_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: sobi_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY sobi_file
@@ -3068,7 +4015,7 @@ ALTER TABLE ONLY sobi_file
 
 
 --
--- Name: spotcheck_mismatch_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: spotcheck_mismatch_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY spotcheck_mismatch
@@ -3076,7 +4023,7 @@ ALTER TABLE ONLY spotcheck_mismatch
 
 
 --
--- Name: spotcheck_observation_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: spotcheck_observation_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY spotcheck_observation
@@ -3084,7 +4031,7 @@ ALTER TABLE ONLY spotcheck_observation
 
 
 --
--- Name: spotcheck_observation_report_id_reference_type_key_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: spotcheck_observation_report_id_reference_type_key_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY spotcheck_observation
@@ -3092,7 +4039,7 @@ ALTER TABLE ONLY spotcheck_observation
 
 
 --
--- Name: spotcheck_report_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: spotcheck_report_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY spotcheck_report
@@ -3100,17 +4047,99 @@ ALTER TABLE ONLY spotcheck_report
 
 
 --
--- Name: spotcheck_report_report_date_time_reference_type_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: spotcheck_report_report_date_time_reference_type_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY spotcheck_report
     ADD CONSTRAINT spotcheck_report_report_date_time_reference_type_key UNIQUE (report_date_time, reference_type);
 
 
+--
+-- Name: transcript_file_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY transcript_file
+    ADD CONSTRAINT transcript_file_pkey PRIMARY KEY (file_name);
+
+
+--
+-- Name: transcript_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY transcript
+    ADD CONSTRAINT transcript_pkey PRIMARY KEY (session_type, date_time);
+
+
+SET search_path = master_search, pg_catalog;
+
+--
+-- Name: bill_action_search_pkey; Type: CONSTRAINT; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY bill_action_search
+    ADD CONSTRAINT bill_action_search_pkey PRIMARY KEY (bill_print_no, bill_session_year);
+
+
+--
+-- Name: bill_amendment_search_pkey; Type: CONSTRAINT; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY bill_amendment_search
+    ADD CONSTRAINT bill_amendment_search_pkey PRIMARY KEY (bill_print_no, bill_session_year, version);
+
+
+--
+-- Name: bill_amendment_vote_search_pkey; Type: CONSTRAINT; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY bill_amendment_vote_search
+    ADD CONSTRAINT bill_amendment_vote_search_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version);
+
+
+--
+-- Name: bill_cosponsor_search_pkey; Type: CONSTRAINT; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY bill_amendment_cosponsor_search
+    ADD CONSTRAINT bill_cosponsor_search_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version);
+
+
+--
+-- Name: bill_multisponsor_search_pkey; Type: CONSTRAINT; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY bill_amendment_multi_sponsor_search
+    ADD CONSTRAINT bill_multisponsor_search_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version);
+
+
+--
+-- Name: bill_search_pkey; Type: CONSTRAINT; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY bill_info_search
+    ADD CONSTRAINT bill_search_pkey PRIMARY KEY (print_no, session_year);
+
+
+--
+-- Name: bill_sponsor_search_pkey; Type: CONSTRAINT; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY bill_sponsor_search
+    ADD CONSTRAINT bill_sponsor_search_pkey PRIMARY KEY (bill_print_no, bill_session_year);
+
+
+--
+-- Name: full_bill_search_pkey; Type: CONSTRAINT; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY bill_full_search
+    ADD CONSTRAINT full_bill_search_pkey PRIMARY KEY (print_no, session_year, version);
+
+
 SET search_path = public, pg_catalog;
 
 --
--- Name: environment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+-- Name: environment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY environment
@@ -3118,7 +4147,7 @@ ALTER TABLE ONLY environment
 
 
 --
--- Name: environment_schema_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+-- Name: environment_schema_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY environment
@@ -3126,7 +4155,7 @@ ALTER TABLE ONLY environment
 
 
 --
--- Name: member_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+-- Name: member_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY member
@@ -3134,7 +4163,7 @@ ALTER TABLE ONLY member
 
 
 --
--- Name: person_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+-- Name: person_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY person
@@ -3142,7 +4171,7 @@ ALTER TABLE ONLY person
 
 
 --
--- Name: session_member_member_id_lbdc_short_name_session_year_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+-- Name: session_member_member_id_lbdc_short_name_session_year_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY session_member
@@ -3150,7 +4179,7 @@ ALTER TABLE ONLY session_member
 
 
 --
--- Name: session_member_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+-- Name: session_member_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY session_member
@@ -3160,38 +4189,196 @@ ALTER TABLE ONLY session_member
 SET search_path = master, pg_catalog;
 
 --
--- Name: bill_session_year_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
+-- Name: bill_session_year_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX bill_session_year_idx ON bill USING btree (session_year);
 
 
 --
--- Name: daybreak_sponsor_pkey; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
+-- Name: daybreak_sponsor_pkey; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX daybreak_sponsor_pkey ON daybreak_bill_sponsor USING btree (report_date, bill_print_no, bill_session_year, type, member_short_name);
 
 
 --
--- Name: sobi_change_log_fragment_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
+-- Name: sobi_change_log_fragment_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX sobi_change_log_fragment_id_idx ON sobi_change_log USING btree (sobi_fragment_id);
 
 
 --
--- Name: sobi_change_log_keygin; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
+-- Name: sobi_change_log_keygin; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX sobi_change_log_keygin ON sobi_change_log USING gin (key);
 
 
 --
--- Name: sobi_change_log_table_name_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
+-- Name: sobi_change_log_table_name_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX sobi_change_log_table_name_idx ON sobi_change_log USING btree (table_name);
+
+
+SET search_path = master_search, pg_catalog;
+
+--
+-- Name: bill_action_search_action_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_action_search_action_gin ON bill_action_search USING gin (actions);
+
+
+--
+-- Name: bill_amendment_search_act_clause_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_amendment_search_act_clause_gin ON bill_amendment_search USING gin (act_clause);
+
+
+--
+-- Name: bill_amendment_search_committee_name_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_amendment_search_committee_name_gin ON bill_amendment_search USING gin (current_committee_name);
+
+
+--
+-- Name: bill_amendment_search_full_text_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_amendment_search_full_text_gin ON bill_amendment_search USING gin (full_text);
+
+
+--
+-- Name: bill_amendment_search_sponsor_memo_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_amendment_search_sponsor_memo_gin ON bill_amendment_search USING gin (sponsor_memo);
+
+
+--
+-- Name: bill_amendment_vote_search_vote_info_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_amendment_vote_search_vote_info_gin ON bill_amendment_vote_search USING gin (vote_info);
+
+
+--
+-- Name: bill_cosponsor_search_cosponsors_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_cosponsor_search_cosponsors_gin ON bill_amendment_cosponsor_search USING gin (cosponsors);
+
+
+--
+-- Name: bill_multisponsor_search_multisponsors_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_multisponsor_search_multisponsors_gin ON bill_amendment_multi_sponsor_search USING gin (multisponsors);
+
+
+--
+-- Name: bill_search_law_code_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_search_law_code_gin ON bill_info_search USING gin (law_code);
+
+
+--
+-- Name: bill_search_law_section_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_search_law_section_gin ON bill_info_search USING gin (law_section);
+
+
+--
+-- Name: bill_search_program_info_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_search_program_info_gin ON bill_info_search USING gin (program_info);
+
+
+--
+-- Name: bill_search_summary_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_search_summary_gin ON bill_info_search USING gin (summary);
+
+
+--
+-- Name: bill_search_title_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_search_title_gin ON bill_info_search USING gin (title);
+
+
+--
+-- Name: bill_sponsor_search_sponsor_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_sponsor_search_sponsor_gin ON bill_sponsor_search USING gin (sponsor);
+
+
+--
+-- Name: full_bill_search_gin; Type: INDEX; Schema: master_search; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX full_bill_search_gin ON bill_full_search USING gin (search);
+
+
+SET search_path = master, pg_catalog;
+
+--
+-- Name: bill_action_search_push_trigger; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER bill_action_search_push_trigger AFTER INSERT OR DELETE OR UPDATE ON bill_amendment_action FOR EACH ROW EXECUTE PROCEDURE bill_action_search_push();
+
+
+--
+-- Name: bill_amendment_search_push_trigger; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER bill_amendment_search_push_trigger AFTER INSERT OR DELETE OR UPDATE ON bill_amendment FOR EACH ROW EXECUTE PROCEDURE bill_amendment_search_push();
+
+
+--
+-- Name: bill_co_sponsor_search_push_trigger; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER bill_co_sponsor_search_push_trigger AFTER INSERT OR DELETE OR UPDATE ON bill_amendment_cosponsor FOR EACH ROW EXECUTE PROCEDURE bill_co_sponsor_search_push();
+
+
+--
+-- Name: bill_info_search_push_trigger; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER bill_info_search_push_trigger AFTER INSERT OR DELETE OR UPDATE ON bill FOR EACH ROW EXECUTE PROCEDURE bill_info_search_push();
+
+
+--
+-- Name: bill_multi_sponsor_search_push_trigger; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER bill_multi_sponsor_search_push_trigger AFTER INSERT OR DELETE OR UPDATE ON bill_amendment_multi_sponsor FOR EACH ROW EXECUTE PROCEDURE bill_multi_sponsor_search_push();
+
+
+--
+-- Name: bill_sponsor_search_push_trigger; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER bill_sponsor_search_push_trigger AFTER INSERT OR UPDATE ON bill_sponsor FOR EACH ROW EXECUTE PROCEDURE bill_sponsor_search_push();
+
+
+--
+-- Name: bill_vote_search_push_trigger; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER bill_vote_search_push_trigger AFTER INSERT OR DELETE OR UPDATE ON bill_amendment_vote_info FOR EACH ROW EXECUTE PROCEDURE bill_vote_search_push();
 
 
 --
@@ -3944,141 +5131,6 @@ ALTER TABLE ONLY spotcheck_observation
     ADD CONSTRAINT spotcheck_observation_spotcheck_report_id_fkey FOREIGN KEY (report_id) REFERENCES spotcheck_report(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
-
---
--- Name: transcript; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE transcript (
-    session_type text NOT NULL,
-    date_time timestamp without time zone NOT NULL,
-    location text NOT NULL,
-    text text NOT NULL,
-    transcript_file text NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    published_date_time timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
-ALTER TABLE master.transcript OWNER TO postgres;
-
---
--- Name: COLUMN transcript.session_type; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN transcript.session_type IS 'The active session type when this transcript was recorded.';
-
-
---
--- Name: COLUMN transcript.date_time; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN transcript.date_time IS 'The date and time the session represented by this transcript was held.';
-
-
---
--- Name: COLUMN transcript.location; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN transcript.location IS 'Location of the session represented by this transcript.';
-
-
---
--- Name: COLUMN transcript.text; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN transcript.text IS 'The text of the transcript.';
-
-
---
--- Name: COLUMN transcript.transcript_file; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN transcript.transcript_file IS 'This transcripts original file.';
-
-
---
--- Name: COLUMN transcript.created_date_time; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN transcript.created_date_time IS 'The date time this transcript was inserted.';
-
-
---
--- Name: transcript_file; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE transcript_file (
-    file_name text NOT NULL,
-    processed_date_time timestamp without time zone,
-    processed_count smallint DEFAULT 0 NOT NULL,
-    staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    pending_processing boolean DEFAULT true NOT NULL,
-    archived boolean DEFAULT false NOT NULL
-);
-
-
-ALTER TABLE master.transcript_file OWNER TO postgres;
-
---
--- Name: COLUMN transcript_file.file_name; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN transcript_file.file_name IS 'The name of the transcript file.';
-
-
---
--- Name: COLUMN transcript_file.processed_date_time; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN transcript_file.processed_date_time IS 'The last date/time this transcript file was processed.';
-
-
---
--- Name: COLUMN transcript_file.processed_count; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN transcript_file.processed_count IS 'The number of time this transcript file has been processed.';
-
-
---
--- Name: COLUMN transcript_file.staged_date_time; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN transcript_file.staged_date_time IS 'The date/time this transcript file was recorded into the database';
-
-
---
--- Name: COLUMN transcript_file.pending_processing; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN transcript_file.pending_processing IS 'Indicates if this transcript file is waiting to be processed.';
-
-
---
--- Name: COLUMN transcript_file.archived; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN transcript_file.archived IS 'Indicates if this transcript file has been moved to the archive directory.';
-
-
---
--- Name: transcript_file_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY transcript_file
-    ADD CONSTRAINT transcript_file_pkey PRIMARY KEY (file_name);
-
-
---
--- Name: transcript_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY transcript
-    ADD CONSTRAINT transcript_pkey PRIMARY KEY (session_type, date_time);
-
-
 --
 -- Name: transcript_file_fk; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
@@ -4086,6 +5138,71 @@ ALTER TABLE ONLY transcript
 ALTER TABLE ONLY transcript
     ADD CONSTRAINT transcript_file_fk FOREIGN KEY (transcript_file) REFERENCES transcript_file(file_name);
 
+
+SET search_path = master_search, pg_catalog;
+
+--
+-- Name: bill_action_search_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master_search; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_action_search
+    ADD CONSTRAINT bill_action_search_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES master.bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bill_amendment_cosponsor_search_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master_search; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_amendment_cosponsor_search
+    ADD CONSTRAINT bill_amendment_cosponsor_search_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES master.bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bill_amendment_multi_sponsor_search_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master_search; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_amendment_multi_sponsor_search
+    ADD CONSTRAINT bill_amendment_multi_sponsor_search_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES master.bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bill_amendment_search_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master_search; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_amendment_search
+    ADD CONSTRAINT bill_amendment_search_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, version) REFERENCES master.bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bill_amendment_vote_search_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master_search; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_amendment_vote_search
+    ADD CONSTRAINT bill_amendment_vote_search_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES master.bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bill_full_search_print_no_fkey; Type: FK CONSTRAINT; Schema: master_search; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_full_search
+    ADD CONSTRAINT bill_full_search_print_no_fkey FOREIGN KEY (print_no, session_year, version) REFERENCES master.bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bill_info_search_print_no_fkey; Type: FK CONSTRAINT; Schema: master_search; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_info_search
+    ADD CONSTRAINT bill_info_search_print_no_fkey FOREIGN KEY (print_no, session_year) REFERENCES master.bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bill_sponsor_search_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master_search; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_sponsor_search
+    ADD CONSTRAINT bill_sponsor_search_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES master.bill_sponsor(bill_print_no, bill_session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 SET search_path = public, pg_catalog;
