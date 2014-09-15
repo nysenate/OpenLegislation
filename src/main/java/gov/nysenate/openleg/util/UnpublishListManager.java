@@ -17,10 +17,10 @@ public class UnpublishListManager {
     private File unpublishFile;
     private Set<String> unpublishedBills;
 
-    public UnpublishListManager(String parentDirectory){
+    public UnpublishListManager(String pathToFile) {
         Config config = Application.getConfig();
-        unpublishFile = new File(parentDirectory, "unpublished_bills.txt");
-        if(!unpublishFile.exists()){
+        unpublishFile = new File(pathToFile);
+        if(!unpublishFile.exists()) {
             try {
                 unpublishFile.createNewFile();
             } catch (IOException e) {
@@ -30,8 +30,8 @@ public class UnpublishListManager {
         unpublishedBills = null;
     }
 
-    public UnpublishListManager(){
-        this(Application.getConfig().getValue("env.directory"));
+    public UnpublishListManager() {
+        this(Application.getConfig().getValue("env.unpublished"));
     }
 
     public Set<String> getUnpublishedBills(){
