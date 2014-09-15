@@ -307,6 +307,7 @@ public class SpotCheck extends BaseScript
             }
         }
     }
+
     private void updateBillFromPageFile(HashMap<String, SpotCheckBill> bills, String bill_id, int pages){
         if (bills.containsKey(bill_id)) {
             bills.get(bill_id).pages = pages;
@@ -318,13 +319,9 @@ public class SpotCheck extends BaseScript
             bill.id = bill_id;
             bill.pages = pages;
             bills.put(bill_id, bill);
-
-            Matcher billMatcher = spotcheckBillId.matcher(bill_id);
-            if(anAmendmentExists(billMatcher)){
-                updateAmendmentsFromPageFile(bills, bill_id + "-" + SESSION_YEAR, billMatcher);
-            }
         }
     }
+
     private void updateAmendmentsFromPageFile(HashMap<String, SpotCheckBill> bills, String billId, Matcher billMatcher){
         String baseBill = billMatcher.group(1).trim() + billMatcher.group(2).trim();
         char amendment = billMatcher.group(3).charAt(0);
