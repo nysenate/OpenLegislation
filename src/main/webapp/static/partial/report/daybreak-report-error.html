@@ -1,12 +1,12 @@
+<a href="../daybreak"><span class="prefix-icon icon-arrow-left2"></span>Back to summary</a>
+<hr style="margin-top:0;"/>
+
 <!--Title-->
 <div class="row">
     <div class="small-12 columns">
-        <h4>Spotcheck Report: <span ng-bind="titleReportDate"></span> for Daybreak: <span ng-bind="titleReferenceDate"></span></h4>
+        <h4>Report Details: <span ng-bind="titleReportDate"></span> for Daybreak: <span ng-bind="titleReferenceDate"></span></h4>
     </div>
 </div>
-
-<a href="../daybreak"><span class="prefix-icon icon-arrow-left2"></span>Back to summary</a>
-<hr style="margin-top:0;"/>
 
 <!--Error summary/filter-->
 <form>
@@ -23,6 +23,7 @@
                 {{getLabel('statuses', status)}}<br/>{{totals.statuses[status]}}
             </check-button>
         </div>
+
         <div class="button-group">
             <check-button btn-class="button small" ng-model="errorFilter.allTypes">
                 All<br/>Types

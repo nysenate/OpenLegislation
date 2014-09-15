@@ -157,8 +157,36 @@ pre {
 
 /** --- Styles for Report Error page --- */
 
-check-button button.check-button {
-  padding: 10px 15px 10px 15px;
+button.check-button {
+  padding-top: 10px !important;
+  padding-right: 15px !important;
+  padding-bottom: 10px !important;
+  padding-left: 15px !important;
+  font-weight: bold;
+
+  &.disabled {
+    border-bottom: 3px solid #ccc;
+    background-color: #fafafa;
+    color: #777;
+
+    &:hover, &:focus {
+      background-color: #fafafa;
+      color: #111;
+    }
+  }
+  outline: none;
+
+  &.success {
+    background-color: #fafafa;
+    color: #111;
+    border-bottom: 3px solid #008cba;
+
+    &:hover, &:focus {
+      background-color: #fafafa;
+      border-bottom: 3px solid #008cba;
+      color: #111;
+    }
+  }
 }
 
 .report-table-snippet {
