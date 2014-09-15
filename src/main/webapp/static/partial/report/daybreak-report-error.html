@@ -15,15 +15,21 @@
             <check-button btn-class="button small" ng-model="errorFilter.all">
                 Total<br/>{{ totals.total }}
             </check-button>
+            <check-button btn-class="button small" ng-model="errorFilter.none">
+                None<br/>&nbsp;
+            </check-button>
             <check-button btn-class="button small" ng-model="errorFilter.statuses[status]"
                    ng-repeat="(status, total) in totals.statuses">
                 {{getLabel('statuses', status)}}<br/>{{totals.statuses[status]}}
             </check-button>
-            <check-button btn-class="button small" ng-model="errorFilter.none">
-                None<br/>&nbsp;
-            </check-button>
         </div>
         <div class="button-group">
+            <check-button btn-class="button small" ng-model="errorFilter.allTypes">
+                All<br/>Types
+            </check-button>
+            <check-button btn-class="button small" ng-model="errorFilter.noTypes">
+                No<br/>Types
+            </check-button>
             <check-button btn-class="button small" ng-model="errorFilter.types[type]"
                           ng-repeat="(type, total) in filteredTypeTotals">
                 {{getLabel('types', type)}}<br/>{{total}}
@@ -37,9 +43,9 @@
 <!--Observation Table-->
 <div class="row" id="report-detail-container">
     <!-- Table -->
-    <table ng-table="tableParams" template-pagination="custom/pager" class="table">
+    <table ng-table="tableParams" id="report-detail-table" template-pagination="custom/pager" class="table">
         <tr ng-repeat="row in $data">
-            <td data-title="'Bill Print No'" sortable="'printNo'" style="width: 100px;">{{row.printNo}}</td>
+            <td data-title="'Bill Id'" sortable="'printNo'" style="width: 100px;">{{row.printNo}}</td>
             <td data-title="'Mismatch Type'" sortable="'type'">{{getLabel('types', row.type)}}</td>
             <td data-title="'Status'" sortable="'status'">{{getLabel('statuses', row.status)}}</td>
             <td data-title="'Opened At'" sortable="'firstOpened'">

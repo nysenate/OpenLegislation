@@ -23,7 +23,7 @@ commonModule.directive('checkButton', function(){
         },
         transclude: true,
         template:
-            "<button type='button' class='{{btnclass}}' ng-class='{success: btnmodel, disabled: !btnmodel }' " +
+            "<button type='button' class='check-button {{btnclass}}' ng-class='{success: btnmodel, disabled: !btnmodel }' " +
                 "btn-checkbox ng-model='btnmodel' ng-transclude>" +
             "</button>"
     };

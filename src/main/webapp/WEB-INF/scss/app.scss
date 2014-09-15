@@ -157,6 +157,10 @@ pre {
 
 /** --- Styles for Report Error page --- */
 
+check-button button.check-button {
+  padding: 10px 15px 10px 15px;
+}
+
 .report-table-snippet {
   height:20px;
   overflow:hidden;
@@ -164,6 +168,42 @@ pre {
 
 #report-detail-container {
   padding: 10px !important;
+}
+
+// -- Table Column headers --
+
+// Bill Id
+#report-detail-table thead th:first-child {
+  width: 6em;
+}
+
+// Mismatch Type
+#report-detail-table thead th:nth-child(2) {
+  width: 10em;
+}
+
+// Status
+#report-detail-table thead th:nth-child(3) {
+  width: 6em;
+}
+
+// Opened At
+#report-detail-table thead th:nth-child(4) {
+  width: 12em;
+}
+
+// Snippet
+#report-detail-table thead th:nth-child(5) {
+  width: 35em;
+}
+
+// Details
+#report-detail-table thead th:nth-child(6) {
+  width: 5em;
+}
+
+#report-detail-table tbody tr td {
+  border: 1px solid #eee;
 }
 
 .current-page{
@@ -185,3 +225,4 @@ pre {
 #pagination-button-group{
   float: right;
 }
+

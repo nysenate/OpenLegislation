@@ -193,19 +193,28 @@ reportModule.controller('DaybreakReportErrorCtrl',
     };
 
     // A function tailored for a single filter value that sets the 'all' filter value to false if the single value is false
-    $scope.getFilterUpdateProcedure = function(filterClass, filterAttribute){
+    $scope.getFilterUpdateProcedure = function(filterClass, filterAttribute) {
         return function(){
-            if($scope.errorFilter[filterClass][filterAttribute]){
+            if($scope.errorFilter[filterClass][filterAttribute]) {
                 $scope.errorFilter.none = false;
             }
             else{
                 $scope.errorFilter.all = false;
             }
+
+            if(filterClass == 'types') {
+                if($scope.errorFilter[filterClass][filterAttribute]) {
+                    $scope.errorFilter.noTypes = false;
+                }
+                else {
+                    $scope.errorFilter.allTypes = false;
+                }
+            }
         };
     };
 
-    // These two methods handle the select all or select none filter options
-    $scope.onFilterAllUpdate = function(){
+    // These methods handle the select all or select none filter options
+    $scope.onFilterAllUpdate = function() {
         if($scope.errorFilter.all){
             $scope.errorFilter = getDefaultFilter($scope.totals);
         }
@@ -213,6 +222,18 @@ reportModule.controller('DaybreakReportErrorCtrl',
     $scope.onFilterNoneUpdate = function() {
         if($scope.errorFilter.none){
             $scope.errorFilter = getNoneFilter($scope.totals);
+        }
+    };
+    $scope.onFilterAllTypesUpdate = function() {
+        if($scope.errorFilter.allTypes) {
+            $scope.errorFilter.types = getAllTypesFilter($scope.totals);
+            $scope.errorFilter.noTypes = false;
+        }
+    };
+    $scope.onFilterNoTypesUpdate = function() {
+        if($scope.errorFilter.noTypes) {
+            $scope.errorFilter.types = getNoTypesFilter($scope.totals);
+            $scope.errorFilter.allTypes = false;
         }
     };
 
@@ -253,6 +274,8 @@ reportModule.controller('DaybreakReportErrorCtrl',
         if(!$scope.filterWatchersInitialized) {
             $scope.$watch('errorFilter.all', $scope.onFilterAllUpdate);
             $scope.$watch('errorFilter.none', $scope.onFilterNoneUpdate);
+            $scope.$watch('errorFilter.allTypes', $scope.onFilterAllTypesUpdate);
+            $scope.$watch('errorFilter.noTypes', $scope.onFilterNoTypesUpdate);
             $scope.$watch('errorFilter.statuses', $scope.onStatusFilterUpdate, true);
             $scope.$watch('errorFilter.types', $scope.onFilterUpdate, true);
             $scope.bindUpdateFilterAll();
@@ -274,43 +297,51 @@ function getTotals(reportData){
         statuses: reportData.details.mismatchStatuses,
         types: reportData.details.mismatchTypes
     };
-    for(status in totals.statuses){
-        totals.total += totals.statuses[status];
+    for(status in reportData.details.mismatchStatuses) {
+        totals.total += reportData.details.mismatchStatuses[status];
     }
     return totals;
 }
 
-function getDefaultFilter(totals){
-    errorFilter = { statuses: {}, types: {}, all: true, none: false};
-    for(status in totals.statuses){
-        if(!errorFilter.statuses[status]) {
-            errorFilter.statuses[status] = true;
-        }
-    }
-    for(type in totals.types){
-        if(!errorFilter.types[type]) {
-            errorFilter.types[type] = true;
-        }
-    }
-    return errorFilter;
+function getDefaultFilter(totals) {
+    return {
+        statuses: getFilterCategory(totals, 'statuses', true),
+        types: getFilterCategory(totals, 'types', true),
+        all: true,
+        none: false,
+        allTypes: true,
+        noTypes: false
+    };
 }
 
-function getNoneFilter(totals){
-    errorFilter = { statuses: {}, types: {}, all: false, none: true};
-    for(status in totals.statuses){
-        if(!errorFilter.statuses[status]) {
-            errorFilter.statuses[status] = false;
-        }
-    }
-    for(type in totals.types){
-        if(!errorFilter.types[type]) {
-            errorFilter.types[type] = false;
-        }
-    }
-    return errorFilter;
+function getNoneFilter(totals) {
+    return {
+        statuses: getFilterCategory(totals, 'statuses', false),
+        types: getFilterCategory(totals, 'types', false),
+        all: false,
+        none: true,
+        allTypes: false,
+        noTypes: true
+    };
 }
 
-function getFilteredTypeTotals(errorFilter, totals){
+function getAllTypesFilter(totals) {
+    return getFilterCategory(totals, 'types', true);
+}
+
+function getNoTypesFilter(totals) {
+    return getFilterCategory(totals, 'types', false);
+}
+
+function getFilterCategory(totals, category, initialSetting){
+    var filterCategory = {}
+    for(item in totals[category]) {
+        filterCategory[item] = initialSetting;
+    }
+    return filterCategory;
+}
+
+function getFilteredTypeTotals(errorFilter, totals) {
     var filteredTypeTotals = {};
     for(type in totals.types){
         var runningTotal = 0;
