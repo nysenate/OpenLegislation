@@ -4,14 +4,15 @@
 <!--Title-->
 <div class="row">
     <div class="small-12 columns">
-        <h4>Report Details: <span ng-bind="titleReportDate"></span> for Daybreak: <span ng-bind="titleReferenceDate"></span></h4>
+        <h4><span class="icon-graph blue-title-icon"></span>LBDC <span ng-bind="titleReferenceDate"></span> | Report Date: <span ng-bind="titleReportDate"></span></h4>
     </div>
 </div>
 
 <!--Error summary/filter-->
 <form>
-    <div class="button-bar">
-        <div class="button-group">
+    <div class="button-bar" style="margin-left: 10px;">
+        <div class="row button-group">
+            <label>Filter By Status</label>
             <check-button btn-class="button small" ng-model="errorFilter.all">
                 Total<br/>{{ totals.total }}
             </check-button>
@@ -24,7 +25,8 @@
             </check-button>
         </div>
 
-        <div class="button-group">
+        <div class="row button-group">
+            <label>Filter By Type</label>
             <check-button btn-class="button small" ng-model="errorFilter.allTypes">
                 All<br/>Types
             </check-button>
