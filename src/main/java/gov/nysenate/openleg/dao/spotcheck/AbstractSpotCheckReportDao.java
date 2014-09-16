@@ -40,7 +40,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      * database.
      *
      * @param keyMap Map<String, String>
-     * @return ContentKey
+     * @return ContentillKey
      */
     public abstract ContentKey getKeyFromMap(Map<String, String> keyMap);
 
@@ -59,16 +59,16 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     @Override
     public SpotCheckReport<ContentKey> getReport(SpotCheckReportId id) throws DataAccessException {
         ImmutableParams reportIdParams = ImmutableParams.from(new MapSqlParameterSource()
-                .addValue("referenceType", id.getReferenceType().name())
-                .addValue("reportDateTime", toDate(id.getReportDateTime())));
+            .addValue("referenceType", id.getReferenceType().name())
+            .addValue("reportDateTime", toDate(id.getReportDateTime())));
         // Check for the report record or throw a DataAccessException if not present
         SpotCheckReport<ContentKey> report =
             jdbcNamed.queryForObject(SELECT_REPORT.getSql(schema()), reportIdParams, (rs,row) ->
-                            new SpotCheckReport<>(
-                                    new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
-                                            getLocalDateTime(rs, "reference_date_time"),
-                                            getLocalDateTime(rs, "report_date_time"))
-                            )
+                new SpotCheckReport<>(
+                    new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
+                        getLocalDateTime(rs, "reference_date_time"),
+                        getLocalDateTime(rs, "report_date_time"))
+                )
         );
         // Obtain all the current and prior observations/mismatches
         Map<ContentKey, SpotCheckObservation<ContentKey>> obsMap = new HashMap<>();

@@ -34,6 +34,8 @@ public enum SqlTable
     BILL_VETO                    ("bill_veto"),
     BILL_APPROVAL                ("bill_approval"),
 
+    BILL_FULL_SEARCH             ("bill_full_search"),
+
     CALENDAR                     ("calendar"),
     CALENDAR_ACTIVE_LIST         ("calendar_active_list"),
     CALENDAR_ACTIVE_LIST_ENTRY   ("calendar_active_list_entry"),
