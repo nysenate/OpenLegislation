@@ -4,7 +4,6 @@ public enum BillSearchField
 {
     PRINT_NO,
     SESSION,
-    VERSION,
     SPONSOR,
     COSPONSOR,
     TITLE,

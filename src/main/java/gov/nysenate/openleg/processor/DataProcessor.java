@@ -3,6 +3,7 @@ package gov.nysenate.openleg.processor;
 import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
 import gov.nysenate.openleg.processor.base.SobiProcessService;
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
+import gov.nysenate.openleg.processor.transcript.TranscriptProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class DataProcessor
     @Autowired
     private DaybreakProcessService daybreakProcessService;
 
+    @Autowired
+    private TranscriptProcessService transcriptProcessService;
+
     /** --- Main --- */
 
     public void run() throws Exception {
@@ -38,7 +42,8 @@ public class DataProcessor
         logger.info("Collating data");
         sobiProcessService.collateSobiFiles();
         daybreakProcessService.collateDaybreakReports();
-        // TODO: Collate Transcripts / Public Hearings
+        transcriptProcessService.collateTranscriptFiles();
+        // TODO: Collate Public Hearings
         // TODO: Collate Laws Of NY
         // TODO: Handle CMS.TEXT (Rules file)
         logger.info("finished collate");
@@ -48,6 +53,7 @@ public class DataProcessor
         logger.info("ingesting data");
         sobiProcessService.processPendingFragments(SobiProcessOptions.builder().build());
         daybreakProcessService.processPendingFragments();
+        transcriptProcessService.processPendingTranscriptFiles();
         // TODO: Process Transcripts / Public Hearings
         // TODO: Process Laws of NY
         logger.info("finished ingest");

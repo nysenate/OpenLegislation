@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.bill;
+package gov.nysenate.openleg.service.bill.data;
 
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.VetoId;

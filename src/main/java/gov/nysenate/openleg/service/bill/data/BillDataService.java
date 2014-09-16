@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.bill;
+package gov.nysenate.openleg.service.bill.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -11,7 +11,7 @@ import java.util.List;
  * Service interface for retrieving and saving Bill data. Retrieval is based
  * solely on the BillId value and does not expose any search functionality.
  *
- * @see gov.nysenate.openleg.service.bill.BillSearchService For search functions.
+ * @see gov.nysenate.openleg.service.bill.search.BillSearchService For search functions.
  */
 public interface BillDataService
 {
