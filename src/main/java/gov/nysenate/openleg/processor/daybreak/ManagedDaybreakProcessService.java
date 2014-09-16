@@ -122,6 +122,8 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
         List<DaybreakFragment> daybreakFragments = new ArrayList<>();
         List<PageFileEntry> pageFileEntries = new ArrayList<>();
 
+        logger.info("Collating " + daybreakReport.getReportDate());
+
         for (DaybreakFile daybreakFile : daybreakReport.getReportDocs().values()) {
             // Add each file reference to the store
             daybreakDao.updateDaybreakFile(daybreakFile);
@@ -144,9 +146,9 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
         // Add a new report entry
         daybreakDao.updateDaybreakReport(daybreakReport.getReportDate());
         // Add all fragments and entries to the store
-        logger.debug("Inserting daybreak fragments");
+        logger.info("Saving daybreak fragments");
         daybreakFragments.parallelStream().forEach(daybreakDao::updateDaybreakFragment);
-        logger.debug("Inserting page file entries");
+        logger.info("Saving page file entries");
         pageFileEntries.parallelStream().forEach(daybreakDao::updatePageFileEntry);
 
         // Archive the report files

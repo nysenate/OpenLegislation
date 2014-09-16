@@ -35,17 +35,21 @@ public class DataProcessor
     /** --- Processing methods --- */
 
     public void collate() {
+        logger.info("Collating data");
         sobiProcessService.collateSobiFiles();
         daybreakProcessService.collateDaybreakReports();
         // TODO: Collate Transcripts / Public Hearings
         // TODO: Collate Laws Of NY
         // TODO: Handle CMS.TEXT (Rules file)
+        logger.info("finished collate");
     }
 
     public void ingest() throws IOException {
+        logger.info("ingesting data");
         sobiProcessService.processPendingFragments(SobiProcessOptions.builder().build());
         daybreakProcessService.processPendingFragments();
         // TODO: Process Transcripts / Public Hearings
         // TODO: Process Laws of NY
+        logger.info("finished ingest");
     }
 }
