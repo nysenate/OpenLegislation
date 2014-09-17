@@ -11,17 +11,18 @@ public interface BillSearchService
     /**
      * Performs a search across all bill data.
      *
-     * @param query
-     * @param limOff
-     * @return
+     * @param query String - General search term
+     * @param limOff LimitOffset - Restrict the result set.
+     * @return SearchResults<BillId>
      */
     public SearchResults<BillId> searchAll(String query, LimitOffset limOff);
 
     /**
+     * Perform an advanced search across all bill data.
      *
-     * @param criteria
-     * @param limOff
-     * @return
+     * @param criteria Map<BillSearchField, String> - Match the strings against their associated attribute.
+     * @param limOff LimitOffset - Restrict the result set.
+     * @return SearchResults<BillId>
      */
     public SearchResults<BillId> searchAdvanced(Map<BillSearchField, String> criteria, LimitOffset limOff);
 }

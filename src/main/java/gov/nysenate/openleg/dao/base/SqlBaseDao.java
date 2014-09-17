@@ -57,6 +57,14 @@ public abstract class SqlBaseDao
         return environment.getSchema();
     }
 
+    protected String searchSchema() {
+        if (environment != null) {
+           /** TODO ADD SEARCH SCHEMA TO ENVIRONMENT */
+            return "master_search";
+        }
+        throw new IllegalStateException("The env has not been initialized.");
+    }
+
     /**
      * Applies the 'last SobiFragment id' column value. Useful for tracking which sobiFragment
      * serves as the source data for the update.

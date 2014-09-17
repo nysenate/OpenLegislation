@@ -35,6 +35,13 @@ public enum SqlTable
     BILL_APPROVAL                ("bill_approval"),
 
     BILL_FULL_SEARCH             ("bill_full_search"),
+    BILL_INFO_SEARCH             ("bill_info_search"),
+    BILL_AMENDMENT_SEARCH        ("bill_amendment_search"),
+    BILL_SPONSOR_SEARCH          ("bill_sponsor_search"),
+    BILL_ACTION_SEARCH           ("bill_action_search"),
+    BILL_COSPONSOR_SEARCH        ("bill_amendment_cosponsor_search"),
+    BILL_MULTISPONSOR_SEARCH     ("bill_amendment_multi_sponsor_search"),
+    BILL_AMEND_VOTE_SEARCH       ("bill_amendment_vote_search"),
 
     CALENDAR                     ("calendar"),
     CALENDAR_ACTIVE_LIST         ("calendar_active_list"),
@@ -82,6 +89,10 @@ public enum SqlTable
 
     @Override
     public String toString() {
+        return tableName;
+    }
+
+    public String getTableName() {
         return tableName;
     }
 }

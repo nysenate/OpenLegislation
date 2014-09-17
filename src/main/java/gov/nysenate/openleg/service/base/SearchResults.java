@@ -36,6 +36,13 @@ public class SearchResults<ResultType>
         return (resultCount > 0);
     }
 
+    /** --- Overrides --- */
+
+    @Override
+    public String toString() {
+        return "SearchResults{" + "resultCount=" + resultCount + ", results=" + results + ", limitOffset=" + limitOffset + '}';
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public int getResultCount() {
