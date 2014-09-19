@@ -8,11 +8,13 @@
     </div>
 </div>
 
+<hr style="margin-top:.5em;"/>
+
 <!--Error summary/filter-->
 <form>
     <div class="button-bar" style="margin-left: 10px;">
-        <div class="row button-group">
-            <label>Filter By Status</label>
+        <div class="row button-group" style="margin-right:40px;">
+            <label class="label secondary filter-label">Filter By Status</label>
             <check-button btn-class="button small" ng-model="errorFilter.all">
                 Total<br/>{{ totals.total }}
             </check-button>
@@ -26,7 +28,7 @@
         </div>
 
         <div class="row button-group">
-            <label>Filter By Type</label>
+            <label class="label secondary filter-label">Filter By Type</label>
             <check-button btn-class="button small" ng-model="errorFilter.allTypes">
                 All<br/>Types
             </check-button>

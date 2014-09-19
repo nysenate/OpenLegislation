@@ -155,7 +155,7 @@ pre {
   color:#aaa;
 }
 
-/** --- Styles for Report Error page --- */
+/** --- Styles for Report Error Page --- */
 
 .panel {
   &.minimal {
@@ -163,11 +163,18 @@ pre {
   }
 }
 
+.filter-label {
+  display: block;
+  font-size: .8em;
+  font-weight: bold;
+}
+
 button.check-button {
   padding-top: 10px !important;
-  padding-right: 15px !important;
+  padding-right: 10px !important;
   padding-bottom: 10px !important;
-  padding-left: 15px !important;
+  padding-left: 10px !important;
+  margin-bottom: 0;
   font-weight: bold;
 
   &.disabled {
@@ -240,23 +247,23 @@ button.check-button {
   border: 1px solid #eee;
 }
 
-.current-page{
+.current-page {
   color: #006b80;
 }
 
-.mismatch-diff-equal{
+.mismatch-diff-equal {
 
 }
 
-.mismatch-diff-insert{
+.mismatch-diff-insert {
   color: green;
 }
 
-.mismatch-diff-delete{
+.mismatch-diff-delete {
   color: red;
 }
 
-#pagination-button-group{
+#pagination-button-group {
   float: right;
 }
 
