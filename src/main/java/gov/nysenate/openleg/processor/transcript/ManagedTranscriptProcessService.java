@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processor.transcript;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.transcript.TranscriptFileDao;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
@@ -9,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -90,6 +88,6 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
     /** {@inheritDoc} */
     @Override
     public void updatePendingProcessing(TranscriptId transcriptId, boolean pendingProcessing) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented");
     }
 }

@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.processor.base;
+package gov.nysenate.openleg.processor.sobi;
 
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 

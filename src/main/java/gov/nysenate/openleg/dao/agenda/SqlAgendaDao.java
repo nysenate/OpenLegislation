@@ -25,7 +25,6 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -58,9 +57,10 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     }
 
     /** {@inheritDoc} */
+    /** TODO */
     @Override
     public List<AgendaId> getAgendaIds(int year, SortOrder idOrder) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     /** {@inheritDoc} */

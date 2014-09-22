@@ -27,7 +27,6 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -191,13 +190,13 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /** {@inheritDoc} */
     @Override
     public void publishBill(Bill bill) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     /** {@inheritDoc} */
     @Override
     public void unPublishBill(Bill bill) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     /** --- Internal Methods --- */

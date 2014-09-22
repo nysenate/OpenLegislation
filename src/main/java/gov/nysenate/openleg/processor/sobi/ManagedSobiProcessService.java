@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.processor.base;
+package gov.nysenate.openleg.processor.sobi;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;

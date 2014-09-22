@@ -130,7 +130,7 @@ public class SqlBillSearchDao extends SqlBaseDao implements BillSearchDao
     }
 
     /**
-     *
+     * Construct the components of the dynamic search query based on what is being searched.
      *
      * @param addtlSearchTables Set<SqlTable>
      * @param columnQueries Map<String, String>

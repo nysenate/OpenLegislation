@@ -10,12 +10,10 @@ import gov.nysenate.openleg.model.transcript.TranscriptNotFoundEx;
 import gov.nysenate.openleg.service.base.CachingService;
 import net.sf.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -59,7 +57,7 @@ public class CachedTranscriptDataService implements TranscriptDataService, Cachi
     /** {@inheritDoc} */
     @Override
     public List<TranscriptId> getTranscriptIds(SessionYear sessionYear, LimitOffset limitOffset) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     /** {@inheritDoc} */

@@ -2,7 +2,7 @@ package gov.nysenate.openleg.service.sobi;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
-import gov.nysenate.openleg.processor.base.SobiProcessService;
+import gov.nysenate.openleg.processor.sobi.SobiProcessService;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

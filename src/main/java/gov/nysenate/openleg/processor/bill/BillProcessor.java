@@ -16,7 +16,7 @@ import gov.nysenate.openleg.model.sobi.SobiLineType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.IngestCache;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.base.SobiProcessor;
+import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

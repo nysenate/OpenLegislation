@@ -31,7 +31,7 @@ public class SqlBillSearchDaoTests extends BaseTests
         billSearch.searchAll("moose", LimitOffset.TEN);
         StopWatch sw = new StopWatch();
         sw.start();
-        billSearch.searchAll("prostitutes", LimitOffset.TEN);
+        billSearch.searchAll("moose", LimitOffset.TEN);
         sw.stop();
         logger.info("{} ms", sw.getTime());
     }

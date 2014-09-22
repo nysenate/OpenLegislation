@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processor;
 
 import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
-import gov.nysenate.openleg.processor.base.SobiProcessService;
+import gov.nysenate.openleg.processor.sobi.SobiProcessService;
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
 import gov.nysenate.openleg.processor.transcript.TranscriptProcessService;
 import org.slf4j.Logger;
@@ -27,8 +27,12 @@ public class DataProcessor
     @Autowired
     private TranscriptProcessService transcriptProcessService;
 
-    /** --- Main --- */
+    /** --- Main Method --- */
 
+    /**
+     * Simple entry point to process new data for all supported data types.
+     * @throws Exception
+     */
     public void run() throws Exception {
         logger.info("Starting data processor...");
         collate();
@@ -39,23 +43,23 @@ public class DataProcessor
     /** --- Processing methods --- */
 
     public void collate() {
-        logger.info("Collating data");
+        logger.info("Begin collating data");
         sobiProcessService.collateSobiFiles();
         daybreakProcessService.collateDaybreakReports();
         transcriptProcessService.collateTranscriptFiles();
         // TODO: Collate Public Hearings
         // TODO: Collate Laws Of NY
         // TODO: Handle CMS.TEXT (Rules file)
-        logger.info("finished collate");
+        logger.info("Completed collations.");
     }
 
     public void ingest() throws IOException {
-        logger.info("ingesting data");
+        logger.info("Being ingesting data");
         sobiProcessService.processPendingFragments(SobiProcessOptions.builder().build());
         daybreakProcessService.processPendingFragments();
         transcriptProcessService.processPendingTranscriptFiles();
-        // TODO: Process Transcripts / Public Hearings
+        // TODO: Process Public Hearings
         // TODO: Process Laws of NY
-        logger.info("finished ingest");
+        logger.info("Completed ingest.");
     }
 }
