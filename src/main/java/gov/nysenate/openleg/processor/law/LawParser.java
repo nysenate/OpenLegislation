@@ -1,8 +1,9 @@
 package gov.nysenate.openleg.processor.law;
 
-/**
- * Created by ash on 9/22/14.
- */
+import org.springframework.stereotype.Service;
+
+@Service
 public class LawParser
 {
+
 }
