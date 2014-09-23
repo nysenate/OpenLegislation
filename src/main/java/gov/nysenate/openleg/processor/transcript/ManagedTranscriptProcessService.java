@@ -30,6 +30,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
     /** {@inheritDoc} */
     @Override
     public int collateTranscriptFiles() {
+        logger.info("Collating transcript files...");
         int numCollated = 0;
         try {
             List<TranscriptFile> transcriptFiles;
@@ -47,7 +48,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
         catch (IOException ex) {
             logger.error("Error retrieving transcript files during collation", ex);
         }
-
+        logger.info("Collated {} transcript files.", numCollated);
         return numCollated;
     }
 
@@ -62,6 +63,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
     public void processTranscriptFiles(List<TranscriptFile> transcriptFiles) {
         for (TranscriptFile file : transcriptFiles) {
             try {
+                logger.info("Processing transcript file {}", file.getFileName());
                 transcriptParser.process(file);
                 file.setProcessedCount(file.getProcessedCount() + 1);
                 file.setPendingProcessing(false);

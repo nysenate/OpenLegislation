@@ -17,6 +17,7 @@ import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.entity.MemberService;
+import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import java.util.TreeMap;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static gov.nysenate.openleg.dao.agenda.SqlAgendaQuery.*;
+import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository
 public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
@@ -279,8 +281,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     static RowMapper<Agenda> agendaRowMapper = (rs, rowNum) -> {
         Agenda agenda = new Agenda();
         agenda.setId(agendaIdRowMapper.mapRow(rs, rowNum));
-        agenda.setPublishedDateTime(getLocalDateTime(rs, "published_date_time"));
-        agenda.setModifiedDateTime(getLocalDateTime(rs, "modified_date_time"));
+        agenda.setPublishedDateTime(getLocalDateTimeFromRs(rs, "published_date_time"));
+        agenda.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));
         return agenda;
     };
 
@@ -288,9 +290,9 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         AgendaInfoAddendum addendum = new AgendaInfoAddendum();
         addendum.setAgendaId(agendaIdRowMapper.mapRow(rs, rowNum));
         addendum.setId(rs.getString("addendum_id"));
-        addendum.setWeekOf(getLocalDate(rs, "week_of"));
-        addendum.setModifiedDateTime(getLocalDateTime(rs, "modified_date_time"));
-        addendum.setPublishedDateTime(getLocalDateTime(rs.getTimestamp("published_date_time")));
+        addendum.setWeekOf(getLocalDateFromRs(rs, "week_of"));
+        addendum.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));
+        addendum.setPublishedDateTime(DateUtils.getLocalDateTime(rs.getTimestamp("published_date_time")));
         return addendum;
     };
 
@@ -300,7 +302,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
             new CommitteeId(Chamber.getValue(rs.getString("committee_chamber")), rs.getString("committee_name")));
         infoComm.setChair(rs.getString("chair"));
         infoComm.setLocation(rs.getString("location"));
-        infoComm.setMeetingDateTime(getLocalDateTime(rs, "meeting_date_time"));
+        infoComm.setMeetingDateTime(getLocalDateTimeFromRs(rs, "meeting_date_time"));
         infoComm.setNotes(rs.getString("notes"));
         return infoComm;
     };
@@ -325,7 +327,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         AgendaVoteCommittee voteComm = new AgendaVoteCommittee();
         voteComm.setCommitteeId(
             new CommitteeId(Chamber.getValue(rs.getString("committee_chamber")), rs.getString("committee_name")));
-        voteComm.setMeetingDateTime(getLocalDateTime(rs, "meeting_date_time"));
+        voteComm.setMeetingDateTime(getLocalDateTimeFromRs(rs, "meeting_date_time"));
         voteComm.setChair(rs.getString("chair"));
         return voteComm;
     };
@@ -343,7 +345,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
             AgendaVoteAttendance attendance = new AgendaVoteAttendance();
             try {
                 attendance.setMember(memberService.getMemberById(rs.getInt("member_id"),
-                                                                 getSessionYear(rs, "session_year")));
+                                                                 getSessionYearFromRs(rs, "session_year")));
             }
             catch (MemberNotFoundEx memberNotFoundEx) {
                 logger.info("Failed to map member for attendance listing.");

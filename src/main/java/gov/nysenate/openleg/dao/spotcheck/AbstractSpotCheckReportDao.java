@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gov.nysenate.openleg.dao.spotcheck.SqlSpotCheckReportQuery.*;
+import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 /**
  * The AbstractSpotCheckReportDao implements all the functionality required by SpotCheckReportDao
@@ -66,8 +67,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             jdbcNamed.queryForObject(SELECT_REPORT.getSql(schema()), reportIdParams, (rs,row) ->
                 new SpotCheckReport<>(
                     new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
-                        getLocalDateTime(rs, "reference_date_time"),
-                        getLocalDateTime(rs, "report_date_time"))
+                        getLocalDateTimeFromRs(rs, "reference_date_time"),
+                        getLocalDateTimeFromRs(rs, "report_date_time"))
                 )
         );
         // Obtain all the current and prior observations/mismatches
@@ -88,8 +89,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         OrderBy orderBy = new OrderBy("report_date_time", dateOrder);
         return jdbcNamed.query(SELECT_REPORTS_BY_DATE.getSql(schema(), orderBy, limOff), params, (rs,row) ->
             new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
-                                  getLocalDateTime(rs, "reference_date_time"),
-                                  getLocalDateTime(rs, "report_date_time"))
+                                  getLocalDateTimeFromRs(rs, "reference_date_time"),
+                                  getLocalDateTimeFromRs(rs, "report_date_time"))
         );
     }
 
@@ -226,9 +227,9 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 if (obs.getReferenceId() == null) {
                     SpotCheckReferenceId refId = new SpotCheckReferenceId(
                             SpotCheckRefType.valueOf(rs.getString("reference_type")),
-                            getLocalDateTime(rs, "reference_active_date"));
+                            getLocalDateTimeFromRs(rs, "reference_active_date"));
                     obs.setReferenceId(refId);
-                    obs.setObservedDateTime(getLocalDateTime(rs, "observed_date_time"));
+                    obs.setObservedDateTime(getLocalDateTimeFromRs(rs, "observed_date_time"));
                 }
                 SpotCheckMismatch mismatch = new SpotCheckMismatch(type, refData, obsData, notes);
                 mismatch.setStatus(status);
@@ -238,8 +239,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             else {
                 SpotCheckReportId reportId = new SpotCheckReportId(
                     SpotCheckRefType.valueOf(rs.getString("report_reference_type")),
-                    getLocalDateTime(rs, "reference_active_date"),
-                    getLocalDateTime(rs, "report_date_time")
+                    getLocalDateTimeFromRs(rs, "reference_active_date"),
+                    getLocalDateTimeFromRs(rs, "report_date_time")
                 );
                 SpotCheckPriorMismatch priorMismatch = new SpotCheckPriorMismatch(type, refData, obsData, notes);
                 priorMismatch.setReportId(reportId);

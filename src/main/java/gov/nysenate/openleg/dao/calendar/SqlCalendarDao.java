@@ -26,6 +26,7 @@ import java.util.TreeMap;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static gov.nysenate.openleg.dao.calendar.SqlCalendarQuery.*;
+import static gov.nysenate.openleg.util.DateUtils.toDate;
 import static java.util.stream.Collectors.toList;
 
 @Repository
@@ -203,8 +204,8 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         public CalendarSupplemental mapRow(ResultSet rs, int rowNum) throws SQLException {
             CalendarId calendarId = new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year"));
             String version = rs.getString("sup_version");
-            LocalDate calDate = getLocalDate(rs, "calendar_date");
-            LocalDateTime releaseDateTime = getLocalDateTime(rs, "release_date_time");
+            LocalDate calDate = getLocalDateFromRs(rs, "calendar_date");
+            LocalDateTime releaseDateTime = getLocalDateTimeFromRs(rs, "release_date_time");
             CalendarSupplemental calSup = new CalendarSupplemental(calendarId, version, calDate, releaseDateTime);
             setModPubDatesFromResultSet(calSup, rs);
             return calSup;
@@ -236,8 +237,8 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
             CalendarActiveList activeList = new CalendarActiveList();
             activeList.setSequenceNo(rs.getInt("sequence_no"));
             activeList.setCalendarId(new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")));
-            activeList.setCalDate(getLocalDate(rs, "calendar_date"));
-            activeList.setReleaseDateTime(getLocalDateTime(rs, "release_date_time"));
+            activeList.setCalDate(getLocalDateFromRs(rs, "calendar_date"));
+            activeList.setReleaseDateTime(getLocalDateTimeFromRs(rs, "release_date_time"));
             setModPubDatesFromResultSet(activeList, rs);
             return activeList;
         }

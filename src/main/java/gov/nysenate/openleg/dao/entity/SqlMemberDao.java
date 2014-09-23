@@ -105,7 +105,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             Member member = new Member();
             member.setMemberId(rs.getInt("member_id"));
             member.setLbdcShortName(rs.getString("lbdc_short_name"));
-            member.setSessionYear(getSessionYear(rs, "session_year"));
+            member.setSessionYear(getSessionYearFromRs(rs, "session_year"));
             member.setDistrictCode(rs.getInt("district_code"));
             member.setChamber(Chamber.valueOf(rs.getString("chamber").toUpperCase()));
             member.setIncumbent(rs.getBoolean("incumbent"));

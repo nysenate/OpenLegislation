@@ -15,7 +15,6 @@ import gov.nysenate.openleg.model.daybreak.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.FileIOUtils;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -36,6 +35,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 /**
  * Implements a daybreak dao by retieving incoming files from the local filesystem
@@ -557,16 +558,6 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
-    /**
-     * Moves the file into the destination quietly.
-     */
-    private void moveFile(File sourceFile, File destFile) throws IOException {
-        if (destFile.exists()) {
-            FileUtils.deleteQuietly(destFile);
-        }
-        FileUtils.moveFile(sourceFile, destFile);
-    }
-
     /** --- Row Mappers --- */
 
     private class DaybreakFileRowMapper implements RowMapper<DaybreakFile>{
@@ -574,7 +565,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         @Override
         public DaybreakFile mapRow(ResultSet rs, int rowNum) throws SQLException {
             String fileName = rs.getString("file_name");
-            LocalDateTime stagedDateTime = getLocalDateTime(rs, "staged_date_time");
+            LocalDateTime stagedDateTime = getLocalDateTimeFromRs(rs, "staged_date_time");
             boolean archived = rs.getBoolean("is_archived");
 
             File file = archived ? getFileInArchiveDir(fileName) : getFileInIncomingDir(fileName);
@@ -619,7 +610,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
                 assemblyBillId = new BillId(assemblyPrintNo, billSessionYear, assemblyBillVersion);
             }
 
-            LocalDate billPublishDate = getLocalDate(rs, "bill_publish_date");
+            LocalDate billPublishDate = getLocalDateFromRs(rs, "bill_publish_date");
             int pageCount = rs.getInt("page_count");
 
             DaybreakFile pageFile = findDaybreakFile(rs.getString("filename"));
@@ -632,7 +623,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         @Override
         public DaybreakBill mapRow(ResultSet rs, int rowNum) throws SQLException {
             DaybreakBill daybreakBill = new DaybreakBill();
-            daybreakBill.setReportDate(getLocalDate(rs, "report_date"));
+            daybreakBill.setReportDate(getLocalDateFromRs(rs, "report_date"));
             daybreakBill.setBaseBillId(new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")));
             daybreakBill.setActiveVersion(Version.of(rs.getString("active_version")));
             daybreakBill.setTitle(rs.getString("title"));
@@ -648,7 +639,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         public BillAction mapRow(ResultSet rs, int rowNum) throws SQLException {
             BillAction billAction = new BillAction();
             billAction.setBillId(new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")));
-            billAction.setDate(getLocalDate(rs, "action_date"));
+            billAction.setDate(getLocalDateFromRs(rs, "action_date"));
             billAction.setChamber(Chamber.getValue(rs.getString("chamber")));
             billAction.setText(rs.getString("text"));
             billAction.setSequenceNo(rs.getInt("sequence_no"));
@@ -666,7 +657,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
                 daybreakBillAmendment.setSameAs(new BillId(rs.getString("same_as"), rs.getInt("bill_session_year")));
             }
             daybreakBillAmendment.setPageCount(rs.getInt("page_count"));
-            daybreakBillAmendment.setPublishDate(getLocalDate(rs, "publish_date"));
+            daybreakBillAmendment.setPublishDate(getLocalDateFromRs(rs, "publish_date"));
             return daybreakBillAmendment;
         }
     }
@@ -681,7 +672,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     private class DaybreakReportDateRowMapper implements RowMapper<LocalDate>{
         @Override
         public LocalDate mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return getLocalDate(rs, "report_date");
+            return getLocalDateFromRs(rs, "report_date");
         }
     }
 

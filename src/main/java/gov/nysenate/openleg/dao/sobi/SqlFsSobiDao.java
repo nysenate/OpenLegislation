@@ -8,7 +8,6 @@ import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.sobi.SobiFile;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -27,6 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.sobi.SqlSobiQuery.*;
+import static gov.nysenate.openleg.util.DateUtils.toDate;
 import static gov.nysenate.openleg.util.FileIOUtils.getSortedFiles;
 
 /**
@@ -199,7 +199,7 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
         @Override
         public SobiFile mapRow(ResultSet rs, int rowNum) throws SQLException {
             String fileName = rs.getString("file_name");
-            LocalDateTime publishedDateTime = getLocalDateTime(rs, "published_date_time");
+            LocalDateTime publishedDateTime = getLocalDateTimeFromRs(rs, "published_date_time");
             boolean archived = rs.getBoolean("archived");
             File file = (archived) ? getFileInArchiveDir(fileName, publishedDateTime)
                                    : getFileInIncomingDir(fileName);
@@ -207,7 +207,7 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
             try {
                 SobiFile sobiFile = new SobiFile(file, encoding);
                 sobiFile.setArchived(archived);
-                sobiFile.setStagedDateTime(getLocalDateTime(rs, "staged_date_time"));
+                sobiFile.setStagedDateTime(getLocalDateTimeFromRs(rs, "staged_date_time"));
                 return sobiFile;
             }
             catch (FileNotFoundException ex) {
@@ -259,10 +259,10 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
             int sequenceNo = rs.getInt(pfx + "sequence_no");
             String text = rs.getString(pfx + "text");
             SobiFragment fragment = new SobiFragment(sobiFile, type, text, sequenceNo);
-            fragment.setStagedDateTime(getLocalDateTime(rs, "staged_date_time"));
+            fragment.setStagedDateTime(getLocalDateTimeFromRs(rs, "staged_date_time"));
             fragment.setPendingProcessing(rs.getBoolean("pending_processing"));
             fragment.setProcessedCount(rs.getInt("processed_count"));
-            fragment.setProcessedDateTime(getLocalDateTime(rs, "processed_date_time"));
+            fragment.setProcessedDateTime(getLocalDateTimeFromRs(rs, "processed_date_time"));
             return fragment;
         }
     }
@@ -283,16 +283,6 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
         String year = Integer.toString(publishedDateTime.getYear());
         File dir = new File(this.archiveSobiDir, year);
         return new File(dir, fileName);
-    }
-
-    /**
-     * Moves the file into the destination quietly.
-     */
-    private void moveFile(File sourceFile, File destFile) throws IOException {
-        if (destFile.exists()) {
-            FileUtils.deleteQuietly(destFile);
-        }
-        FileUtils.moveFile(sourceFile, destFile);
     }
 
     /** --- Param Source Methods --- */

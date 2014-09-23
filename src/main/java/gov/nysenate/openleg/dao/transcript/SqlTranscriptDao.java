@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static gov.nysenate.openleg.dao.transcript.SqlTranscriptQuery.*;
+import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository
 public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
@@ -71,16 +72,16 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
     /** --- Row Mapper Instances --- */
 
     static RowMapper<Transcript> transcriptRowMapper = (rs, rowNum) -> {
-        TranscriptId id = new TranscriptId(rs.getString("session_type"), getLocalDateTime(rs, "date_time"));
+        TranscriptId id = new TranscriptId(rs.getString("session_type"), getLocalDateTimeFromRs(rs, "date_time"));
         Transcript transcript = new Transcript(id);
         transcript.setLocation(rs.getString("location"));
         transcript.setTranscriptText(rs.getString("text"));
-        transcript.setModifiedDateTime(getLocalDateTime(rs, "modified_date_time"));
-        transcript.setPublishedDateTime(getLocalDateTime(rs, "published_date_time"));
+        transcript.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));
+        transcript.setPublishedDateTime(getLocalDateTimeFromRs(rs, "published_date_time"));
         return transcript;
     };
 
     static RowMapper<TranscriptId> transcriptIdRowMapper = (rs, rowNum) ->
-        new TranscriptId(rs.getString("session_type"), getLocalDateTime(rs, "date_time"));
+        new TranscriptId(rs.getString("session_type"), getLocalDateTimeFromRs(rs, "date_time"));
 
 }

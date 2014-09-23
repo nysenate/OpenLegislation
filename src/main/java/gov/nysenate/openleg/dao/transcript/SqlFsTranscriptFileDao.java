@@ -4,7 +4,6 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.util.FileIOUtils;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gov.nysenate.openleg.dao.transcript.SqlTranscriptFileQuery.*;
+import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository
 public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFileDao
@@ -87,16 +87,6 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
 
     /** --- Internal Methods --- */
 
-    /**
-     * Moves the file into the destination quietly.
-     */
-    private void moveFile(File sourceFile, File destFile) throws IOException {
-        if (destFile.exists()) {
-            FileUtils.deleteQuietly(destFile);
-        }
-        FileUtils.moveFile(sourceFile, destFile);
-    }
-
     private File getFileInArchiveDir(String fileName) {
         return new File(archiveTranscriptDir, fileName);
     }
@@ -118,9 +108,9 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
             TranscriptFile transcriptFile = null;
             try {
                 transcriptFile = new TranscriptFile(file);
-                transcriptFile.setProcessedDateTime(getLocalDateTime(rs, "processed_date_time"));
+                transcriptFile.setProcessedDateTime(getLocalDateTimeFromRs(rs, "processed_date_time"));
                 transcriptFile.setProcessedCount(rs.getInt("processed_count"));
-                transcriptFile.setStagedDateTime(getLocalDateTime(rs, "staged_date_time"));
+                transcriptFile.setStagedDateTime(getLocalDateTimeFromRs(rs, "staged_date_time"));
                 transcriptFile.setPendingProcessing(rs.getBoolean("pending_processing"));
                 transcriptFile.setArchived(archived);
             } catch (FileNotFoundException ex) {
