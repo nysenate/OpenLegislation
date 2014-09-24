@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
 
-public class PublicHearing extends BaseLegislativeContent
+public class OldPublicHearing extends BaseLegislativeContent
 {
     public ArrayList<String> committees;
     public String title;
@@ -21,7 +21,7 @@ public class PublicHearing extends BaseLegislativeContent
 
     public TreeMap<Integer, String> pages;
 
-    public PublicHearing() {
+    public OldPublicHearing() {
         committees = new ArrayList<String>();
         presidingSenators = new ArrayList<Person>();
         presentSenators = new ArrayList<Person>();

@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.processor.hearing;
 
-import gov.nysenate.openleg.model.transcript.PublicHearing;
+import gov.nysenate.openleg.model.transcript.OldPublicHearing;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -25,7 +25,7 @@ public class PublicHearingProcessor {
     private final String LAST_LINE = "^\\s*25.*$";
     private final String LINE_SEP = "^\\s*(\\d+)?\\s*\\-+\\s*$";
 
-    PublicHearing publicHearing = new PublicHearing();
+    OldPublicHearing publicHearing = new OldPublicHearing();
 
     boolean head = true;
 
@@ -279,7 +279,7 @@ public class PublicHearingProcessor {
             String[] tuple = presiding.toString().replaceAll(", $", "").split("\\|");
 
             if(tuple.length  >= 2) {
-                PublicHearing.Person person = new PublicHearing.Person(
+                OldPublicHearing.Person person = new OldPublicHearing.Person(
                         tuple[0].trim().replace("Senator ", ""),
                         tuple[1].trim(),
                         null,
@@ -295,9 +295,9 @@ public class PublicHearingProcessor {
         }
     }
 
-    private void doPresent(String line, ArrayList<PublicHearing.Person> persons, String remove) {
+    private void doPresent(String line, ArrayList<OldPublicHearing.Person> persons, String remove) {
         publicHearing.addPerson(
-                new PublicHearing.Person(
+                new OldPublicHearing.Person(
                         trimLine(line,"").replace(remove,""),
                         null,
                         null,
@@ -319,7 +319,7 @@ public class PublicHearingProcessor {
                 //TODO log issue
             }
             else {
-                PublicHearing.Person person = new PublicHearing.Person();
+                OldPublicHearing.Person person = new OldPublicHearing.Person();
 
                 matcher = speakerPattern.matcher(tuple[0]);
 
@@ -331,7 +331,7 @@ public class PublicHearingProcessor {
                 organization = tuple[tuple.length - 1];
 
                 for(int i = 0; i < (tuple.length - 2); i++) {
-                    person = new PublicHearing.Person(tuple[i].trim(), tuple[++i], null, organization);
+                    person = new OldPublicHearing.Person(tuple[i].trim(), tuple[++i], null, organization);
                     person.setPage(page);
                     person.setQuestions(questions);
                     publicHearing.addPerson(person, publicHearing.speakers);

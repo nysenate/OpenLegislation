@@ -3,12 +3,15 @@ package gov.nysenate.openleg.processor;
 import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
 import gov.nysenate.openleg.processor.base.SobiProcessService;
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
+import gov.nysenate.openleg.processor.hearing.PublicHearingProcessService;
+import gov.nysenate.openleg.processor.transcript.TranscriptProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 @Service
 public class DataProcessor
@@ -23,6 +26,12 @@ public class DataProcessor
     @Autowired
     private DaybreakProcessService daybreakProcessService;
 
+    @Autowired
+    private TranscriptProcessService transcriptProcessService;
+
+    @Autowired
+    private PublicHearingProcessService publicHearingProcessService;
+
     /** --- Main --- */
 
     public void run() throws Exception {
@@ -35,16 +44,18 @@ public class DataProcessor
     /** --- Processing methods --- */
 
     public void collate() {
-        sobiProcessService.collateSobiFiles();
-        daybreakProcessService.collateDaybreakReports();
+        publicHearingProcessService.collatePublicHearingFiles();
+//        sobiProcessService.collateSobiFiles();
+//        daybreakProcessService.collateDaybreakReports();
         // TODO: Collate Transcripts / Public Hearings
         // TODO: Collate Laws Of NY
         // TODO: Handle CMS.TEXT (Rules file)
     }
 
-    public void ingest() throws IOException {
-        sobiProcessService.processPendingFragments(SobiProcessOptions.builder().build());
-        daybreakProcessService.processPendingFragments();
+    public void ingest() throws IOException, ParseException { // TODO: Parse Exception???
+        publicHearingProcessService.processPendingPublicHearingFiles();
+//        sobiProcessService.processPendingFragments(SobiProcessOptions.builder().build());
+//        daybreakProcessService.processPendingFragments();
         // TODO: Process Transcripts / Public Hearings
         // TODO: Process Laws of NY
     }

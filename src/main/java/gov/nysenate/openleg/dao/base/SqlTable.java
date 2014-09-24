@@ -66,7 +66,12 @@ public enum SqlTable
     SPOTCHECK_MISMATCH           ("spotcheck_mismatch"),
 
     TRANSCRIPT                   ("transcript"),
-    TRANSCRIPT_FILE              ("transcript_file");
+    TRANSCRIPT_FILE              ("transcript_file"),
+
+    PUBLIC_HEARING               ("public_hearing"),
+    PUBLIC_HEARING_ATTENDANCE    ("public_hearing_attendance"),
+    PUBLIC_HEARING_COMMITTEE     ("public_hearing_committee"),
+    PUBLIC_HEARING_FILE          ("public_hearing_file");
 
     String tableName;
 
