@@ -21,6 +21,15 @@ public interface LawFileDao
     public List<LawFile> getIncomingLawFiles(SortOrder sortByDate, LimitOffset limitOffset) throws IOException;
 
     /**
+     * Retrieves a list of LawFiles that are awaiting processing.
+     * i.e {@link LawFile#isPendingProcessing()} is true.
+     *
+     * @param limitOffset LimitOffset - Limit the result set.
+     * @return List<LawFile>
+     */
+    public List<LawFile> getPendingLawFiles(LimitOffset limitOffset);
+
+    /**
      * Updates an existing LawFile in the backing store with the given instance or inserts it if
      * the record doesn't already exist.
      *

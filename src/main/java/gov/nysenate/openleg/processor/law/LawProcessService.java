@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.processor.law;
 
-import gov.nysenate.openleg.model.law.LawFragment;
+import gov.nysenate.openleg.model.law.LawFile;
 
 import java.util.List;
 
@@ -14,26 +14,24 @@ public interface LawProcessService
      *
      * @return int - Number of law files collated
      */
-    public int collateLaws();
+    public int collateLawFiles();
 
     /**
-     * Retrieve a list of the fragments that are awaiting processing.
+     * Retrieve a list of the files that are awaiting processing.
      *
-     * @return List<LawFragment>
+     * @return List<LawFile>
      */
-    public List<LawFragment> getPendingLawFragments();
+    public List<LawFile> getPendingLawFiles();
 
     /**
-     * Processes the given law fragments and updates the backing store as necessary.
+     * Processes the given law files and updates the backing store as necessary.
      *
-     * @param fragments List<LawFragment>
+     * @param lawFiles List<LawFile>
      */
-    public void processLawFragments(List<LawFragment> fragments);
+    public void processLawFiles(List<LawFile> lawFiles);
 
     /**
-     * Processes all the law fragments that are set to await processing. This method will perform batching
-     * of the fragments to reduce the chances of memory getting saturated if there are a lot of fragments to
-     * process.
+     * Processes all the law files that are set to await processing.
      */
-    public void processPendingLawFragments();
+    public void processPendingLawFiles();
 }

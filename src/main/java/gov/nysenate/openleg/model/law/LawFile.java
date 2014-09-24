@@ -82,6 +82,11 @@ public class LawFile extends BaseSourceData implements Comparable<LawFile>
             .result();
     }
 
+    @Override
+    public String toString() {
+        return "LawFile: " + getFileName() + " (" + getPublishedDate() + ")";
+    }
+
     /** --- Basic Getters/Setters */
 
     public File getFile() {

@@ -64,7 +64,7 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
 
     /** {@inheritDoc} */
     @Override
-    public void archiveTranscriptFile(TranscriptFile transcriptFile) throws IOException {
+    public void archiveAndUpdateTranscriptFile(TranscriptFile transcriptFile) throws IOException {
         File stagedFile = transcriptFile.getFile();
         if (stagedFile.getParentFile().compareTo(incomingTranscriptDir) == 0) {
             File archiveFile = new File(archiveTranscriptDir, transcriptFile.getFileName());

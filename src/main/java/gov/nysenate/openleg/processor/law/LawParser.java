@@ -1,11 +1,8 @@
 package gov.nysenate.openleg.processor.law;
 
 import com.google.common.collect.Sets;
-import gov.nysenate.openleg.model.law.LawFragment;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -28,9 +25,4 @@ public class LawParser
 
     /** --- Methods --- */
 
-    public List<LawFragment> extractLawFragments(String text) {
-        List<LawFragment> fragments = new ArrayList<>();
-        return fragments;
-
-    }
 }

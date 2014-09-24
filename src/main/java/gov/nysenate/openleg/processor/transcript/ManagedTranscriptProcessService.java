@@ -40,7 +40,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
                     file.setPendingProcessing(true);
                     file.setArchived(false);
                     transcriptFileDao.updateTranscriptFile(file);
-                    transcriptFileDao.archiveTranscriptFile(file);
+                    transcriptFileDao.archiveAndUpdateTranscriptFile(file);
                 }
             }
             while (!transcriptFiles.isEmpty());

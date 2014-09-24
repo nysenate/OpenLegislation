@@ -17,7 +17,7 @@ public enum SqlLawFileQuery implements BasicSqlQuery
     UPDATE_LAW_FILE(
         "UPDATE ${schema}." + SqlTable.LAW_FILE + "\n" +
         "SET published_date_time = :publishedDateTime, processed_date_time = :processedDateTime, " +
-        "    processed_count = :processedCount, pending_processing = :pendingProcessing, archived = :archived" +
+        "    processed_count = :processedCount, pending_processing = :pendingProcessing, archived = :archived\n" +
         "WHERE file_name = :fileName"
     )
     ;

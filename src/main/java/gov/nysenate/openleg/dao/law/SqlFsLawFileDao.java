@@ -1,11 +1,14 @@
 package gov.nysenate.openleg.dao.law;
 
+import gov.nysenate.openleg.dao.base.ImmutableParams;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.law.LawFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -16,7 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static gov.nysenate.openleg.util.FileIOUtils.getSortedFiles;
+import static gov.nysenate.openleg.dao.law.SqlLawFileQuery.*;
+import static gov.nysenate.openleg.util.DateUtils.toDate;
+import static gov.nysenate.openleg.util.FileIOUtils.safeListFiles;
 
 @Repository
 public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
@@ -37,9 +42,10 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
 
     /** --- Implemented Methods --- */
 
+    /** {@inheritDoc} */
     @Override
     public List<LawFile> getIncomingLawFiles(SortOrder sortByDate, LimitOffset limitOffset) throws IOException {
-        List<File> files = new ArrayList<>(getSortedFiles(this.incomingLawDir, false, null));
+        List<File> files = new ArrayList<>(safeListFiles(this.incomingLawDir, false, null));
         List<LawFile> lawFiles = new ArrayList<>();
         for (File file : files) {
             lawFiles.add(new LawFile(file));
@@ -55,9 +61,20 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
         return lawFiles;
     }
 
+    @Override
+    public List<LawFile> getPendingLawFiles(LimitOffset limitOffset) {
+        List<LawFile> lawFiles = jdbcNamed.query(GET_PENDING_LAW_FILES.getSql(schema()), lawFileRowMapper);
+        Collections.sort(lawFiles);
+        return lawFiles;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void updateLawFile(LawFile lawFile) throws IOException {
+        ImmutableParams lawParams = ImmutableParams.from(getLawFileParameters(lawFile));
+        if (jdbcNamed.update(UPDATE_LAW_FILE.getSql(schema()), lawParams) == 0) {
+            jdbcNamed.update(INSERT_LAW_FILE.getSql(schema()), lawParams);
+        }
     }
 
     /** {@inheritDoc} */
@@ -81,10 +98,44 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
     /** --- Internal Methods --- */
 
     /**
-     * Get file handle from the sobi archive directory.
+     * Get file handle from the incoming law directory.
+     */
+    private File getFileInIncomingDir(String fileName) {
+        return new File(this.incomingLawDir, fileName);
+    }
+
+    /**
+     * Get file handle from the law archive directory.
      */
     private File getFileInArchiveDir(String fileName) {
-        File dir = new File(this.archiveLawDir, fileName);
-        return new File(dir, fileName);
+        return new File(this.archiveLawDir, fileName);
     }
+
+    /** --- Param Source Methods --- */
+
+    private MapSqlParameterSource getLawFileParameters(LawFile lawFile) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("fileName", lawFile.getFileName())
+              .addValue("publishedDateTime", toDate(lawFile.getPublishedDate()))
+              .addValue("processedDateTime", toDate(lawFile.getProcessedDateTime()))
+              .addValue("processedCount", lawFile.getProcessedCount())
+              .addValue("pendingProcessing", lawFile.isPendingProcessing())
+              .addValue("archived", lawFile.isArchived());
+        return params;
+    }
+
+    /** --- Row Mapper Instances --- */
+
+    private RowMapper<LawFile> lawFileRowMapper = (rs, rowNum) -> {
+        String fileName = rs.getString("file_name");
+        boolean isArchived = rs.getBoolean("archived");
+        File file = (isArchived) ? getFileInArchiveDir(fileName) : getFileInIncomingDir(fileName);
+        LawFile lawFile = new LawFile(file);
+        lawFile.setArchived(isArchived);
+        lawFile.setPendingProcessing(rs.getBoolean("pending_processing"));
+        lawFile.setStagedDateTime(getLocalDateTimeFromRs(rs, "staged_date_time"));
+        lawFile.setProcessedDateTime(getLocalDateTimeFromRs(rs, "processed_date_time"));
+        lawFile.setProcessedCount(rs.getInt("processed_count"));
+        return lawFile;
+    };
 }
