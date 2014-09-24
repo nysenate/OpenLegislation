@@ -155,7 +155,7 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
 
     /** {@inheritDoc} */
     @Override
-    public void archiveSobiFile(SobiFile sobiFile) throws IOException {
+    public void archiveAndUpdateSobiFile(SobiFile sobiFile) throws IOException {
         File stageFile = sobiFile.getFile();
         // Archive the file only if the current one is residing in the incoming sobis directory.
         if (stageFile.getParentFile().compareTo(incomingSobiDir) == 0) {

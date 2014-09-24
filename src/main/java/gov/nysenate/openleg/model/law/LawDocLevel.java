@@ -15,6 +15,7 @@ public enum LawDocLevel
     SUBTITLE,
     PART,
     SUB_PART,
+    INDEX,
 
     // The section is the primary level in which law data is contained within.
 

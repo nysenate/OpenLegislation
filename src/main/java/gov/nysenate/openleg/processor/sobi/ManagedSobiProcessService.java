@@ -93,7 +93,7 @@ public class ManagedSobiProcessService implements SobiProcessService
                         sobiDao.updateSobiFragment(fragment);
                     }
                     // Done with this sobi file so let's archive it.
-                    sobiDao.archiveSobiFile(sobiFile);
+                    sobiDao.archiveAndUpdateSobiFile(sobiFile);
                     totalCollated++;
                 }
             }

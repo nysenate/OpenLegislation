@@ -63,14 +63,14 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
 
     @Override
     public List<LawFile> getPendingLawFiles(LimitOffset limitOffset) {
-        List<LawFile> lawFiles = jdbcNamed.query(GET_PENDING_LAW_FILES.getSql(schema()), lawFileRowMapper);
+        List<LawFile> lawFiles = jdbcNamed.query(GET_PENDING_LAW_FILES.getSql(schema(), limitOffset), lawFileRowMapper);
         Collections.sort(lawFiles);
         return lawFiles;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void updateLawFile(LawFile lawFile) throws IOException {
+    public void updateLawFile(LawFile lawFile) {
         ImmutableParams lawParams = ImmutableParams.from(getLawFileParameters(lawFile));
         if (jdbcNamed.update(UPDATE_LAW_FILE.getSql(schema()), lawParams) == 0) {
             jdbcNamed.update(INSERT_LAW_FILE.getSql(schema()), lawParams);

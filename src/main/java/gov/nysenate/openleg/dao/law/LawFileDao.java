@@ -34,9 +34,8 @@ public interface LawFileDao
      * the record doesn't already exist.
      *
      * @param lawFile LawFile - The LawFile instance to be updated.
-     * @throws IOException
      */
-    public void updateLawFile(LawFile lawFile) throws IOException;
+    public void updateLawFile(LawFile lawFile);
 
     /**
      * Moves the underlying file in the LawFile instance into the archive directory. This will

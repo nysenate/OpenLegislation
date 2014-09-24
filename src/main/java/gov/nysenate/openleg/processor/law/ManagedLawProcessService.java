@@ -1,10 +1,16 @@
 package gov.nysenate.openleg.processor.law;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.dao.law.LawFileDao;
 import gov.nysenate.openleg.model.law.LawFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -12,22 +18,47 @@ public class ManagedLawProcessService implements LawProcessService
 {
     private static final Logger logger = LoggerFactory.getLogger(ManagedLawProcessService.class);
 
+    @Autowired
+    private LawFileDao lawFileDao;
+
+    @Autowired
+    private LawProcessor lawProcessor;
+
     /** {@inheritDoc} */
     @Override
     public int collateLawFiles() {
-        return 0;
+        int numCollated = 0;
+        try {
+            List<LawFile> lawFiles = lawFileDao.getIncomingLawFiles(SortOrder.ASC, LimitOffset.ALL);
+            for (LawFile lf : lawFiles) {
+                lf.setPendingProcessing(true);
+                lawFileDao.archiveAndUpdateLawFile(lf);
+                numCollated++;
+            }
+        }
+        catch (IOException ex) {
+            logger.error("Failed to retrieve incoming laws from the file system.", ex);
+        }
+        logger.info("Collated {} law files.", numCollated);
+        return numCollated;
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<LawFile> getPendingLawFiles() {
-        return null;
+    public List<LawFile> getPendingLawFiles(LimitOffset limitOffset) {
+        return lawFileDao.getPendingLawFiles(limitOffset);
     }
 
     /** {@inheritDoc} */
     @Override
     public void processLawFiles(List<LawFile> lawFiles) {
-
+        for (LawFile lawFile : lawFiles) {
+            // Process the law file
+            lawFile.setProcessedCount(lawFile.getProcessedCount() + 1);
+            lawFile.setPendingProcessing(false);
+            lawFile.setProcessedDateTime(LocalDateTime.now());
+            lawFileDao.updateLawFile(lawFile);
+        }
     }
 
     /** {@inheritDoc} */

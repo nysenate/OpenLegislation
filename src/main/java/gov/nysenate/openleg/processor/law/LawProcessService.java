@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.law;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.law.LawFile;
 
 import java.util.List;
@@ -7,10 +8,8 @@ import java.util.List;
 public interface LawProcessService
 {
     /**
-     * Identifies all incoming law files and breaks them down into fragments. The fragments are determined
-     * based on the document id header that is used to delineate the law files. Each doc header from each file
-     * is associated with a single law fragment. These extracted fragments, as well as the file references, are
-     * stored in the database and set to await processing.
+     * Identifies all incoming law files and saves a record of them into the database. The files
+     * are set as pending processing so that they are queued for ingestion.
      *
      * @return int - Number of law files collated
      */
@@ -19,9 +18,10 @@ public interface LawProcessService
     /**
      * Retrieve a list of the files that are awaiting processing.
      *
+     * @param limitOffset LimitOffset - Restrict the result set.
      * @return List<LawFile>
      */
-    public List<LawFile> getPendingLawFiles();
+    public List<LawFile> getPendingLawFiles(LimitOffset limitOffset);
 
     /**
      * Processes the given law files and updates the backing store as necessary.
@@ -31,7 +31,7 @@ public interface LawProcessService
     public void processLawFiles(List<LawFile> lawFiles);
 
     /**
-     * Processes all the law files that are set to await processing.
+     * Processes all the law files that are set as pending processing.
      */
     public void processPendingLawFiles();
 }

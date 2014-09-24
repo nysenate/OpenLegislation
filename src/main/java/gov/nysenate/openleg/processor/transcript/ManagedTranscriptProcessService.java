@@ -38,9 +38,8 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
                 transcriptFiles = transcriptFileDao.getIncomingTranscriptFiles(LimitOffset.FIFTY);
                 for (TranscriptFile file : transcriptFiles) {
                     file.setPendingProcessing(true);
-                    file.setArchived(false);
-                    transcriptFileDao.updateTranscriptFile(file);
                     transcriptFileDao.archiveAndUpdateTranscriptFile(file);
+                    numCollated++;
                 }
             }
             while (!transcriptFiles.isEmpty());

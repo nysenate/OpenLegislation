@@ -122,7 +122,7 @@ public interface SobiDao
      * @param sobiFile SobiFile - The SobiFile instance to be archived.
      * @throws java.io.IOException - If there was a problem in moving the underlying file.
      */
-    public void archiveSobiFile(SobiFile sobiFile) throws IOException;
+    public void archiveAndUpdateSobiFile(SobiFile sobiFile) throws IOException;
 
     /**
      * Updates an existing SobiFile in the backing store with the given instance or inserts it if
