@@ -62,6 +62,9 @@ public enum SqlTable
     DAYBREAK_BILL_AMENDMENT      ("daybreak_bill_amendment"),
     DAYBREAK_BILL_SPONSOR        ("daybreak_bill_sponsor"),
 
+    LAW_FILE                     ("law_file"),
+    LAW_DOCUMENT                 ("law_document"),
+
     MEMBER                       ("member"),
     PERSON                       ("person"),
     SESSION_MEMBER               ("session_member"),

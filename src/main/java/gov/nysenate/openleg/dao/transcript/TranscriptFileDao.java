@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.dao.transcript;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 
 import java.io.IOException;

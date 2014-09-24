@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.law;
 
 import com.google.common.collect.ComparisonChain;
+import gov.nysenate.openleg.model.base.BaseSourceData;
 import gov.nysenate.openleg.util.DateUtils;
 
 import java.io.File;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LawFile implements Comparable<LawFile>
+public class LawFile extends BaseSourceData implements Comparable<LawFile>
 {
     /** Pattern for the file names of the initial dumps. */
     private static Pattern initialFilePattern = Pattern.compile("DATABASE\\.LAW.+");
@@ -28,9 +29,6 @@ public class LawFile implements Comparable<LawFile>
 
     /** The date when this law source file was published/sent to openleg. */
     protected LocalDate publishedDate;
-
-    /** The datetime when the LawFile was recorded into the backing store. */
-    private LocalDateTime stagedDateTime;
 
     /** Indicates if the underlying 'file' reference has been moved into an archive directory. */
     private boolean archived;
@@ -104,14 +102,6 @@ public class LawFile implements Comparable<LawFile>
 
     public void setPublishedDate(LocalDate publishedDate) {
         this.publishedDate = publishedDate;
-    }
-
-    public LocalDateTime getStagedDateTime() {
-        return stagedDateTime;
-    }
-
-    public void setStagedDateTime(LocalDateTime stagedDateTime) {
-        this.stagedDateTime = stagedDateTime;
     }
 
     public boolean isArchived() {

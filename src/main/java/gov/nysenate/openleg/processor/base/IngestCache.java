@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processor.base;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

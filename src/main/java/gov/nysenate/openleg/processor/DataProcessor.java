@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.processor;
 
 import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
-import gov.nysenate.openleg.processor.sobi.SobiProcessService;
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
+import gov.nysenate.openleg.processor.sobi.SobiProcessService;
 import gov.nysenate.openleg.processor.transcript.TranscriptProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

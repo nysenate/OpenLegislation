@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.sobi;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import gov.nysenate.openleg.model.base.BaseSourceData;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.regex.Matcher;
  * into two SOBIFragments, one containing the portion for just the bill data and the other with
  * just the agenda data.
  */
-public class SobiFragment
+public class SobiFragment extends BaseSourceData
 {
     /** Reference to the original SobiFile object that created this fragment. */
     private SobiFile parentSobiFile;
@@ -33,18 +34,6 @@ public class SobiFragment
 
     /** The actual text body of the fragment. */
     private String text;
-
-    /** The date/time when the fragment was recorded into the backing store. */
-    private LocalDateTime stagedDateTime;
-
-    /** If true, this SobiFragment is awaiting processing. */
-    private boolean pendingProcessing;
-
-    /** The number of times this file has been processed. */
-    private int processedCount;
-
-    /** The datetime when the SOBI file was last processed. */
-    private LocalDateTime processedDateTime;
 
     /** --- Constructors --- */
 
@@ -168,37 +157,5 @@ public class SobiFragment
 
     public int getSequenceNo() {
         return sequenceNo;
-    }
-
-    public LocalDateTime getStagedDateTime() {
-        return stagedDateTime;
-    }
-
-    public void setStagedDateTime(LocalDateTime stagedDateTime) {
-        this.stagedDateTime = stagedDateTime;
-    }
-
-    public boolean isPendingProcessing() {
-        return pendingProcessing;
-    }
-
-    public void setPendingProcessing(boolean pendingProcessing) {
-        this.pendingProcessing = pendingProcessing;
-    }
-
-    public int getProcessedCount() {
-        return processedCount;
-    }
-
-    public void setProcessedCount(int processedCount) {
-        this.processedCount = processedCount;
-    }
-
-    public LocalDateTime getProcessedDateTime() {
-        return processedDateTime;
-    }
-
-    public void setProcessedDateTime(LocalDateTime processedDateTime) {
-        this.processedDateTime = processedDateTime;
     }
 }

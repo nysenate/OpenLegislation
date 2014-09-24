@@ -14,5 +14,9 @@ public class LawDocument
     /** */
     protected String text;
 
+    /** --- Constructors --- */
+
+    /** --- Basic Getters/Setters --- */
+
 
 }

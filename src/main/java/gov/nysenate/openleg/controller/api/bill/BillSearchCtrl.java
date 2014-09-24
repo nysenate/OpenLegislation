@@ -3,11 +3,9 @@ package gov.nysenate.openleg.controller.api.bill;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.service.base.SearchResult;
 import gov.nysenate.openleg.service.base.SearchResults;
 import gov.nysenate.openleg.service.bill.search.BillSearchField;
 import gov.nysenate.openleg.service.bill.search.BillSearchService;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +15,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;

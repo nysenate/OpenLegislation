@@ -7,7 +7,7 @@ import gov.nysenate.openleg.model.law.LawFile;
 import java.io.IOException;
 import java.util.List;
 
-public interface LawDao
+public interface LawFileDao
 {
     /**
      * Returns LawFile instances for the source files in the incoming laws directory.

@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ReportInfoView<ContentKey>

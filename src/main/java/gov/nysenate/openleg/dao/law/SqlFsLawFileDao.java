@@ -19,9 +19,9 @@ import java.util.List;
 import static gov.nysenate.openleg.util.FileIOUtils.getSortedFiles;
 
 @Repository
-public class SqlFsLawDao extends SqlBaseDao implements LawDao
+public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
 {
-    private static final Logger logger = LoggerFactory.getLogger(SqlFsLawDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(SqlFsLawFileDao.class);
 
     /** Directory where new law files come in. */
     private File incomingLawDir;
@@ -44,6 +44,7 @@ public class SqlFsLawDao extends SqlBaseDao implements LawDao
         for (File file : files) {
             lawFiles.add(new LawFile(file));
         }
+        // Use the comparator defined in LawFile to do the sorting
         if (sortByDate.equals(SortOrder.ASC)) {
             Collections.sort(lawFiles);
         }
@@ -54,10 +55,12 @@ public class SqlFsLawDao extends SqlBaseDao implements LawDao
         return lawFiles;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void updateLawFile(LawFile lawFile) throws IOException {
     }
 
+    /** {@inheritDoc} */
     @Override
     public void archiveAndUpdateLawFile(LawFile lawFile) throws IOException {
         // Archive the file only if it's currently in the incoming directory.
