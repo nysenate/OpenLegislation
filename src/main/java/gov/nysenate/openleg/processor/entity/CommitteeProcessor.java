@@ -6,7 +6,7 @@ import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.processor.base.SobiProcessor;
+import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.entity.MemberService;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.apache.log4j.Logger;

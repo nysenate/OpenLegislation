@@ -117,19 +117,18 @@ public interface SobiDao
     /**
      * Moves the underlying file in the SobiFile instance into the archive directory. This will
      * ensure that subsequent calls to getIncomingSobiFiles will not return this sobiFile. The
-     * updateSobiFile(sobiFile) method is invoked as part of this process to ensure consistency.
+     * {@link #updateSobiFile(SobiFile)} method is invoked as part of this process to ensure consistency.
      *
      * @param sobiFile SobiFile - The SobiFile instance to be archived.
      * @throws java.io.IOException - If there was a problem in moving the underlying file.
      */
-    public void archiveSobiFile(SobiFile sobiFile) throws IOException;
+    public void archiveAndUpdateSobiFile(SobiFile sobiFile) throws IOException;
 
     /**
      * Updates an existing SobiFile in the backing store with the given instance or inserts it if
      * the record doesn't already exist.
      *
      * @param sobiFile SobiFile - The SobiFile instance to be updated.
-     * @return boolean - true if record was updated, false if nothing was updated
      */
     public void updateSobiFile(SobiFile sobiFile);
 

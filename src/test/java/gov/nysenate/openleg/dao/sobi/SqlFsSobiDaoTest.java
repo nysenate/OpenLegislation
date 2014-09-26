@@ -25,7 +25,7 @@ public class SqlFsSobiDaoTest extends BaseTests
     public void testMisc() throws Exception {
 //        List<SobiFile> sobiFiles = sobiDao.getIncomingSobiFiles(SortOrder.ASC, LimitOffset.ALL);
 //        for (SobiFile sobiFile : sobiFiles) {
-//            sobiDao.archiveSobiFile(sobiFile);
+//            sobiDao.archiveAndUpdateSobiFile(sobiFile);
 //            sobiDao.updateSobiFile(sobiFile);
 //            logger.info("{}", sobiFile);
 //        }

@@ -1,6 +1,6 @@
 <div class="row">
     <div class="small-4 columns">
-        <h4><span id="reportIcon" class="icon-statistics"></span>{{title}}</h4>
+        <h4><span class="icon-statistics blue-title-icon"></span>{{title}}</h4>
     </div>
     <div class="small-offset-1 small-7 columns">
         <div class="row">
@@ -38,7 +38,7 @@
 </div>
 <section class="row" ng-show="!showSummaries">
     <div id="noDataAvailable" class="panel">
-        <h3>No report data available within this range.</h3>
+        <h3><span class="icon-warning prefix-icon"></span>No report data available within this range.</h3>
     </div>
 </section>
 <section class="row" ng-class="{minopacity: !showSummaries}">

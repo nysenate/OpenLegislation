@@ -2,19 +2,12 @@ package gov.nysenate.openleg.service.spotcheck;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
 import gov.nysenate.openleg.dao.spotcheck.BaseBillIdSpotCheckReportDao;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.daybreak.DaybreakBill;
-import gov.nysenate.openleg.model.daybreak.DaybreakBillId;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
-import gov.nysenate.openleg.service.bill.BillDataService;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
@@ -23,10 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

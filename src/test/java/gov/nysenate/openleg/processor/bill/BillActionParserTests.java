@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.processor.bill;
 
 import gov.nysenate.openleg.model.base.PublishStatus;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
@@ -164,7 +162,10 @@ public class BillActionParserTests
     }
 
     @Test
-    public void testUnPublish() throws Exception {
+    public void testStatus() throws Exception {
+        BillActionParser parser = new BillActionParser(S5052, actionsList1, Optional.of(new PublishStatus(true, LocalDateTime.now())));
+        parser.parseActions();
+        logger.info("{}", OutputUtils.toJson(parser.getBillStatus()));
 
     }
 }

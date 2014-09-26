@@ -3,7 +3,7 @@ package gov.nysenate.openleg.config;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.service.bill.BillDataService;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.OutputUtils;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.statistics.StatisticsGateway;

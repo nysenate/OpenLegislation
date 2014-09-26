@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.client.view.spotcheck;
 
 import gov.nysenate.openleg.client.view.base.ViewList;
+import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckPriorMismatch;
 import gov.nysenate.openleg.util.StringDiffer;
@@ -9,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MismatchView
+public class MismatchView implements ViewObject
 {
     protected String mismatchType;
     protected String status;

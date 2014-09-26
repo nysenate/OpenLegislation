@@ -1,22 +1,21 @@
 package gov.nysenate.openleg.processor.base;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * A generic key-value pair cache to map objects that are being generated during the ingest
- * processing step to the SobiFragments that serve as the data source. The purpose of this
- * cache is to queue updates to the persistence layer so that they can be committed to the
- * file system at a later time in the processing stage.
+ * A generic key-value pair cache to queue updates to the persistence layer so that they can be committed
+ * to the file system at a later time in the processing stage.
  */
 public class IngestCache<K,V>
 {
-    private Map<K, V> cache = new HashMap<>();
+    private Map<K, V> cache = new LinkedHashMap<>();
 
     /**
      * Retrieve the object from cache using a unique id key. Returns null
      * on a cache miss.
+     *
      * @param key String - Unique Id
      * @return V
      */
@@ -26,6 +25,7 @@ public class IngestCache<K,V>
 
     /**
      * Checks if the key is set in the cache.
+     *
      * @param key String - Unique Id
      * @return boolean - true if key is found, false otherwise.
      */
@@ -34,6 +34,7 @@ public class IngestCache<K,V>
     }
 
     /**
+     * Sets the value to the associated key.
      *
      * @param key String - Unique Id
      * @param obj T

@@ -13,10 +13,10 @@ import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.service.bill.ApprovalDataService;
-import gov.nysenate.openleg.service.bill.ApprovalNotFoundException;
-import gov.nysenate.openleg.service.bill.VetoDataService;
-import gov.nysenate.openleg.service.bill.VetoNotFoundException;
+import gov.nysenate.openleg.service.bill.data.ApprovalDataService;
+import gov.nysenate.openleg.service.bill.data.ApprovalNotFoundException;
+import gov.nysenate.openleg.service.bill.data.VetoDataService;
+import gov.nysenate.openleg.service.bill.data.VetoNotFoundException;
 import gov.nysenate.openleg.service.entity.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,6 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,6 +36,7 @@ import java.util.*;
 
 import static gov.nysenate.openleg.dao.bill.SqlBillQuery.*;
 import static gov.nysenate.openleg.util.CollectionUtils.difference;
+import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository
 public class SqlBillDao extends SqlBaseDao implements BillDao
@@ -191,13 +191,13 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /** {@inheritDoc} */
     @Override
     public void publishBill(Bill bill) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     /** {@inheritDoc} */
     @Override
     public void unPublishBill(Bill bill) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     /** --- Internal Methods --- */
@@ -575,7 +575,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
                 amend.setCurrentCommittee(
                     new CommitteeVersionId(
                         amend.getBillId().getChamber(), rs.getString("current_committee_name"),
-                        amend.getSession(), getLocalDate(rs, "current_committee_action")
+                        amend.getSession(), getLocalDateFromRs(rs, "current_committee_action")
                     )
                 );
             }
@@ -593,7 +593,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         @Override
         public void processRow(ResultSet rs) throws SQLException {
             PublishStatus pubStatus = new PublishStatus(
-                rs.getBoolean("published"), getLocalDateTime(rs, "effect_date_time"),
+                rs.getBoolean("published"), getLocalDateTimeFromRs(rs, "effect_date_time"),
                 rs.getBoolean("override"), rs.getString("notes"));
             publishStatusMap.put(Version.of(rs.getString("bill_amend_version")), pubStatus);
         }
@@ -612,7 +612,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
                     rs.getString("bill_amend_version")));
             billAction.setChamber(Chamber.valueOf(rs.getString("chamber").toUpperCase()));
             billAction.setSequenceNo(rs.getInt("sequence_no"));
-            billAction.setDate(getLocalDate(rs, "effect_date"));
+            billAction.setDate(getLocalDateFromRs(rs, "effect_date"));
             billAction.setText(rs.getString("text"));
             return billAction;
         }
@@ -648,7 +648,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         public BillSponsor mapRow(ResultSet rs, int rowNum) throws SQLException {
             BillSponsor sponsor = new BillSponsor();
             int memberId = rs.getInt("member_id");
-            SessionYear sessionYear = getSessionYear(rs, "bill_session_year");
+            SessionYear sessionYear = getSessionYearFromRs(rs, "bill_session_year");
             sponsor.setBudgetBill(rs.getBoolean("budget_bill"));
             sponsor.setRulesSponsor(rs.getBoolean("rules_sponsor"));
             if (memberId > 0) {
@@ -674,7 +674,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         @Override
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
             int memberId = rs.getInt("member_id");
-            SessionYear sessionYear = getSessionYear(rs, "bill_session_year");
+            SessionYear sessionYear = getSessionYearFromRs(rs, "bill_session_year");
             try {
                 return memberService.getMemberById(memberId, sessionYear);
             }
@@ -691,8 +691,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         public CommitteeVersionId mapRow(ResultSet rs, int rowNum) throws SQLException {
             String committeeName = rs.getString("committee_name");
             Chamber committeeChamber = Chamber.getValue(rs.getString("committee_chamber"));
-            SessionYear session = getSessionYear(rs, "bill_session_year");
-            LocalDate actionDate = getLocalDate(rs, "action_date");
+            SessionYear session = getSessionYearFromRs(rs, "bill_session_year");
+            LocalDate actionDate = getLocalDateFromRs(rs, "action_date");
             return new CommitteeVersionId(committeeChamber, committeeName, session, actionDate);
         }
     }

@@ -1,14 +1,14 @@
 package gov.nysenate.openleg.client.view.spotcheck;
 
+import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchStatus;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
-public class ReportInfoView<ContentKey>
+public class ReportInfoView<ContentKey> implements ViewObject
 {
     protected String referenceType;
     protected LocalDateTime referenceDateTime;

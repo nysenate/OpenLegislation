@@ -27,12 +27,26 @@ public class ProcessData extends BaseScript
 
     protected Options getOptions() {
         Options options = new Options();
-        // Fill in options here
+        options.addOption("c", "collate", false, "Will collate sobi files without ingesting afterwards unless --ingest is set");
+        options.addOption("i", "ingest", false, "Will ingest pending sobi fragments without collating first unless --collate is set");
         return options;
     }
 
     @Override
     protected void execute(CommandLine opts) throws Exception {
-        dataProcessor.run();
+        boolean collate = opts.hasOption("collate");
+        boolean ingest = opts.hasOption("ingest");
+
+        if(!collate && !ingest) {
+            dataProcessor.run();
+        }
+        else {
+            if(collate) {
+                dataProcessor.collate();
+            }
+            if(ingest) {
+                dataProcessor.ingest();
+            }
+        }
     }
 }

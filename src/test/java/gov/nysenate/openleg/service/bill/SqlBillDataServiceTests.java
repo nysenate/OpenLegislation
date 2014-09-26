@@ -1,11 +1,10 @@
 package gov.nysenate.openleg.service.bill;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.OutputUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +19,16 @@ public class SqlBillDataServiceTests extends BaseTests
 
     @Test
     public void testGetBill() throws Exception {
-        Bill S7273 = billData.getBill(new BaseBillId("S7273", 2013));
-        logger.info("{}", S7273.getAmendPublishStatusMap());
-
+        StopWatch sw = new StopWatch();
+        billData.getBillInfo(new BillId("S1234", 2013));
+        sw.start();
+        BillInfo billInfo = billData.getBillInfo(new BillId("A1234B", 2013));
+        billData.getBillInfo(new BillId("A1234", 2013));
+        billData.getBillInfo(new BillId("A1234", 2013));
+        billData.getBillInfo(new BillId("A1234", 2013));
+        billData.getBillInfo(new BillId("A1234", 2013));
+        sw.stop();
+        logger.info("{}", sw.getTime());
+        logger.info("{}", OutputUtils.toJson(billInfo));
     }
 }

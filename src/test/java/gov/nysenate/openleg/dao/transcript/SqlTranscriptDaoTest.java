@@ -17,7 +17,7 @@ public class SqlTranscriptDaoTest extends BaseTests
 
     @Test
     public void selectingIdsByYearWorks() {
-        int year = 2014;
+        int year = 2012;
         List<TranscriptId> ids = dao.getTranscriptIds(year);
         System.out.println(ids.size());
     }

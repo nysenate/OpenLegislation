@@ -349,14 +349,14 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
             Committee committee = new Committee();
             committee.setName(rs.getString("committee_name"));
             committee.setChamber(Chamber.getValue(rs.getString("chamber")));
-            committee.setPublishedDateTime(getLocalDateTime(rs, "created"));
-            committee.setReformed(getLocalDateTime(rs, "reformed"));
+            committee.setPublishedDateTime(getLocalDateTimeFromRs(rs, "created"));
+            committee.setReformed(getLocalDateTimeFromRs(rs, "reformed"));
             committee.setLocation(rs.getString("location"));
             committee.setMeetDay(rs.getString("meetday"));
             committee.setMeetTime(rs.getTime("meettime"));
             committee.setMeetAltWeek(rs.getBoolean("meetaltweek"));
             committee.setMeetAltWeekText(rs.getString("meetaltweektext"));
-            committee.setSession(getSessionYear(rs, "session_year"));
+            committee.setSession(getSessionYearFromRs(rs, "session_year"));
             return committee;
         }
     }
@@ -368,7 +368,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
             CommitteeMember committeeMember = new CommitteeMember();
             committeeMember.setSequenceNo(rs.getInt("sequence_no"));
             int memberId = rs.getInt("member_id");
-            SessionYear sessionYear = getSessionYear(rs, "session_year");
+            SessionYear sessionYear = getSessionYearFromRs(rs, "session_year");
             try {
                 committeeMember.setMember(memberService.getMemberById(memberId, sessionYear));
             }

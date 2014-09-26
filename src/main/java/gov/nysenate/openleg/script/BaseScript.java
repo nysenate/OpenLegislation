@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.script;
 
 import gov.nysenate.openleg.config.ConsoleApplicationConfig;
-import gov.nysenate.openleg.processor.DataProcessor;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

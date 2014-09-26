@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.bill.VetoId;
 import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoType;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -18,6 +19,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository
 public class SqlVetoDao extends SqlBaseDao implements VetoDao
@@ -76,14 +79,14 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
             vetoMessage.setYear(rs.getInt("year"));
             vetoMessage.setVetoNumber(rs.getInt("veto_number"));
             vetoMessage.setBillId(new BaseBillId(rs.getString("bill_print_no"), rs.getInt("session_year")));
-            vetoMessage.setSession(getSessionYear(rs, "session_year"));
+            vetoMessage.setSession(getSessionYearFromRs(rs, "session_year"));
             vetoMessage.setType(VetoType.valueOf(rs.getString("type").toUpperCase()));
             vetoMessage.setChapter(rs.getInt("chapter"));
             vetoMessage.setBillPage(rs.getInt("page"));
             vetoMessage.setLineStart(rs.getInt("line_start"));
             vetoMessage.setLineEnd(rs.getInt("line_end"));
             vetoMessage.setSigner(rs.getString("signer"));
-            vetoMessage.setSignedDate(getLocalDate(rs.getTimestamp("date")));
+            vetoMessage.setSignedDate(DateUtils.getLocalDate(rs.getTimestamp("date")));
             vetoMessage.setMemoText(rs.getString("memo_text"));
             setModPubDatesFromResultSet(vetoMessage, rs);
             return vetoMessage;

@@ -45,4 +45,10 @@ public class StupidTests {
         String regex = "([A-Z])\\. ([A-Za-z\\-' ]*)";
         System.out.println(" P. Lopez".trim().replaceAll(regex, "$2 $1"));
     }
+
+    @Test
+    public void StringReplaceTest() {
+        String str = "--- %1$d - %1$d ---";
+        System.out.println(String.format(str, new Integer("1234")));
+    }
 }

@@ -28,4 +28,3 @@ openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
     $locationProvider.hashPrefix('!');
 }]);
 
-

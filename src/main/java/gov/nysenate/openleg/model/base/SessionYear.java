@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.base;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Range;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -83,6 +84,12 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
     @JsonIgnore
     public int getSessionEndYear() {
         return this.year + 1;
+    }
+
+    /** Returns a date range encompassing this session */
+    @JsonIgnore
+    public Range<LocalDate> asDateRange() {
+        return Range.closed(LocalDate.of(getSessionStartYear(), 1, 1), LocalDate.of(getSessionEndYear(), 12, 31));
     }
 
     /** --- Overrides --- */

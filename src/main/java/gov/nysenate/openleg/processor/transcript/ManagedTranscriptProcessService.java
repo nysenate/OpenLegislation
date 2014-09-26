@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processor.transcript;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.transcript.TranscriptFileDao;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
@@ -9,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -32,6 +30,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
     /** {@inheritDoc} */
     @Override
     public int collateTranscriptFiles() {
+        logger.info("Collating transcript files...");
         int numCollated = 0;
         try {
             List<TranscriptFile> transcriptFiles;
@@ -39,9 +38,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
                 transcriptFiles = transcriptFileDao.getIncomingTranscriptFiles(LimitOffset.FIFTY);
                 for (TranscriptFile file : transcriptFiles) {
                     file.setPendingProcessing(true);
-                    file.setArchived(false);
-                    transcriptFileDao.updateTranscriptFile(file);
-                    transcriptFileDao.archiveTranscriptFile(file);
+                    transcriptFileDao.archiveAndUpdateTranscriptFile(file);
                     numCollated++;
                 }
             }
@@ -50,7 +47,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
         catch (IOException ex) {
             logger.error("Error retrieving transcript files during collation", ex);
         }
-
+        logger.info("Collated {} transcript files.", numCollated);
         return numCollated;
     }
 
@@ -65,6 +62,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
     public void processTranscriptFiles(List<TranscriptFile> transcriptFiles) {
         for (TranscriptFile file : transcriptFiles) {
             try {
+                logger.info("Processing transcript file {}", file.getFileName());
                 transcriptParser.process(file);
                 file.setProcessedCount(file.getProcessedCount() + 1);
                 file.setPendingProcessing(false);
@@ -91,6 +89,6 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
     /** {@inheritDoc} */
     @Override
     public void updatePendingProcessing(TranscriptId transcriptId, boolean pendingProcessing) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented");
     }
 }

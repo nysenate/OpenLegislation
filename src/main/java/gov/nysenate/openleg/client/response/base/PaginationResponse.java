@@ -5,7 +5,14 @@ public class PaginationResponse extends BaseResponse
     protected int total;
     protected int offsetStart;
     protected int offsetEnd;
-    protected int count;
+    protected int limit;
+
+    public PaginationResponse(int total, int offsetStart, int offsetEnd, int limit) {
+        this.total = total;
+        this.offsetStart = offsetStart;
+        this.offsetEnd = offsetEnd;
+        this.limit = limit;
+    }
 
     public int getTotal() {
         return total;
@@ -19,7 +26,7 @@ public class PaginationResponse extends BaseResponse
         return offsetEnd;
     }
 
-    public int getCount() {
-        return count;
+    public int getLimit() {
+        return limit;
     }
 }

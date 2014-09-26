@@ -3,7 +3,6 @@ package gov.nysenate.openleg.dao.transcript;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
-import org.springframework.dao.DataAccessException;
 
 import java.util.List;
 

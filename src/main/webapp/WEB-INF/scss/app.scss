@@ -64,7 +64,7 @@ table {
 /** --- Custom --- */
 
 #wrapper {
-  margin-top:10px;
+  margin-top: 80px;
 }
 
 .content-column {
@@ -123,7 +123,7 @@ pre {
   }
 }
 
-#reportIcon {
+.blue-title-icon {
   color: #006b80;
   margin-right: 20px;
 }
@@ -155,10 +155,51 @@ pre {
   color:#aaa;
 }
 
-/** --- Styles for Report Error page --- */
+/** --- Styles for Report Error Page --- */
 
-check-button button.check-button {
-  padding: 10px 15px 10px 15px;
+.panel {
+  &.minimal {
+    padding: 10px;
+  }
+}
+
+.filter-label {
+  display: block;
+  font-size: .8em;
+  font-weight: bold;
+}
+
+button.check-button {
+  padding-top: 10px !important;
+  padding-right: 10px !important;
+  padding-bottom: 10px !important;
+  padding-left: 10px !important;
+  margin-bottom: 0;
+  font-weight: bold;
+
+  &.disabled {
+    border-bottom: 3px solid #ccc;
+    background-color: #fafafa;
+    color: #777;
+
+    &:hover, &:focus {
+      background-color: #fafafa;
+      color: #111;
+    }
+  }
+  outline: none;
+
+  &.success {
+    background-color: #fafafa;
+    color: #111;
+    border-bottom: 3px solid #008cba;
+
+    &:hover, &:focus {
+      background-color: #fafafa;
+      border-bottom: 3px solid #008cba;
+      color: #111;
+    }
+  }
 }
 
 .report-table-snippet {
@@ -206,23 +247,23 @@ check-button button.check-button {
   border: 1px solid #eee;
 }
 
-.current-page{
+.current-page {
   color: #006b80;
 }
 
-.mismatch-diff-equal{
+.mismatch-diff-equal {
 
 }
 
-.mismatch-diff-insert{
+.mismatch-diff-insert {
   color: green;
 }
 
-.mismatch-diff-delete{
+.mismatch-diff-delete {
   color: red;
 }
 
-#pagination-button-group{
+#pagination-button-group {
   float: right;
 }
 

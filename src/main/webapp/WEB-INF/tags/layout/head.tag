@@ -11,8 +11,6 @@
     <!-- Main CSS -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/app.css"/>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/icons.css"/>
-    <!-- Bootstrap -->
-    <%--<link rel="stylesheet" href="<%= request.getContextPath() %>/static/bower_components/bootstrap/dist/css/bootstrap.min.css"/>--%>
     <!-- Modernizr -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/modernizr/modernizr.js"></script>
     <!-- JQuery -->
@@ -32,7 +30,6 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/bower_components/ng-table/ng-table.min.css"/>
     <!-- Moment -->
     <script type="application/javascript" src="<%= request.getContextPath() %>/static/bower_components/moment/min/moment.min.js"></script>
-
 
     <script>
         window.ctxPath = "<%= request.getContextPath() %>";

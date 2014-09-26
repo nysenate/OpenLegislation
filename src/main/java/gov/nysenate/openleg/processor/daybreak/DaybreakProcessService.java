@@ -10,8 +10,8 @@ import java.util.List;
  * During the collate step, the daybreak files are parsed into stored daybreak fragments and archived.
  * In the process step, further parsing is done on daybreak fragments producing daybreak bills, which are subsequently stored
  */
-public interface DaybreakProcessService {
-
+public interface DaybreakProcessService
+{
     /**
      * Identifies daybreak files in the incoming daybreak directory, groups them into sets, and parses complete
      * sets into DaybreakFragments and PageFileEntries.  The files are then stored in the archive directory
@@ -24,14 +24,14 @@ public interface DaybreakProcessService {
     /**
      * Retrieves DaybreakFragments that are pending processing.
      *
-     * @return
+     * @return List<DaybreakFragment>
      */
     public List<DaybreakFragment> getPendingDaybreakFragments();
 
     /**
      * Parses the given DaybreakFragments and stores them as DaybreakBills
      *
-     * @param fragments
+     * @param fragments List<DaybreakFragment>
      */
     public void processFragments(List<DaybreakFragment> fragments);
 
@@ -42,7 +42,9 @@ public interface DaybreakProcessService {
 
     /**
      * Sets the pending processing flag for the given fragment id in the store to the given boolean
-     * @param fragmentId
+     *
+     * @param fragmentId DaybreakBillId
+     * @param pendingProcessing boolean
      */
     public void updatePendingProcessing(DaybreakBillId fragmentId, boolean pendingProcessing);
 }

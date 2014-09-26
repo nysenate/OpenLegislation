@@ -3,7 +3,7 @@ package gov.nysenate.openleg.client.view.base;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewList<ViewType>
+public class ViewList<ViewType extends ViewObject> implements ViewObject
 {
     protected List<ViewType> items;
 

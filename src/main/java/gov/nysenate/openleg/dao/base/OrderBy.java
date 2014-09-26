@@ -27,7 +27,6 @@ public class OrderBy
     }
 
     public OrderBy(String k1, SortOrder v1, String k2, SortOrder v2) {
-
         this.sortColumns = ImmutableSortedMap.of(k1, v1, k2, v2);
     }
 
