@@ -1,8 +1,9 @@
 package gov.nysenate.openleg.client.view.bill;
 
+import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.entity.Person;
 
-public class PersonView
+public class PersonView implements ViewObject
 {
     protected String fullName;
     protected String prefix;

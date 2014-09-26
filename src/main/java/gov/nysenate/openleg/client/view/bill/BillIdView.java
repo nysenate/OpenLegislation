@@ -1,8 +1,9 @@
 package gov.nysenate.openleg.client.view.bill;
 
+import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.bill.BillId;
 
-public class BillIdView
+public class BillIdView implements ViewObject
 {
     protected String basePrintNo;
     protected String version;

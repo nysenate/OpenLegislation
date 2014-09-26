@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.client.view.bill;
 
+import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.bill.Bill;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * Just the essentials for displaying a Bill in a search result for example.
  */
-public class SimpleBillView
+public class SimpleBillView implements ViewObject
 {
     protected BillIdView billId;
     protected String title;

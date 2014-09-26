@@ -18,6 +18,9 @@ public enum SqlCalendarQuery implements BasicSqlQuery
         "SELECT * FROM ${schema}." + SqlTable.CALENDAR + "\n" +
         "WHERE year = :year"
     ),
+    SELECT_CALENDARS_COUNT(
+        SELECT_CALENDARS.sql.replace("*", "COUNT(*)")
+    ),
     UPDATE_CALENDAR(
         "UPDATE ${schema}." + SqlTable.CALENDAR + "\n" +
         "SET modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, " +
@@ -36,9 +39,15 @@ public enum SqlCalendarQuery implements BasicSqlQuery
 
     /** --- Calendar Supplemental --- */
 
-    SELECT_CALENDAR_SUPS(
+    SELECT_CALENDAR_SUPS_BY_YEAR(
         "SELECT * FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + "\n" +
-        "WHERE calendar_no = :calendarNo AND calendar_year = :year"
+        "WHERE calendar_year = :year"
+    ),
+    SELECT_CALENDAR_SUPS_BY_YEAR_COUNT(
+        SELECT_CALENDAR_SUPS_BY_YEAR.sql.replace("*", "COUNT(*)")
+    ),
+    SELECT_CALENDAR_SUPS(
+        SELECT_CALENDAR_SUPS_BY_YEAR.sql + " AND calendar_no = :calendarNo"
     ),
     SELECT_CALENDAR_SUP(
         SELECT_CALENDAR_SUPS.sql + " AND sup_version = :supVersion"
@@ -84,12 +93,18 @@ public enum SqlCalendarQuery implements BasicSqlQuery
 
     /** --- Calendar Active List --- */
 
-    SELECT_CALENDAR_ACTIVE_LISTS(
+    SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR(
         "SELECT * FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + "\n" +
-        "WHERE calendar_no = :calendarNo AND calendar_year = :year"
+        "WHERE calendar_year = :year"
+    ),
+    SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR_COUNT(
+        SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR.sql.replace("*", "COUNT(*)")
+    ),
+    SELECT_CALENDAR_ACTIVE_LISTS(
+        SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR.sql + " AND calendar_no = :calendarNo"
     ),
     SELECT_CALENDAR_ACTIVE_LIST(
-        SELECT_CALENDAR_ACTIVE_LISTS + " AND sequence_no = :sequenceNo"
+        SELECT_CALENDAR_ACTIVE_LISTS.sql + " AND sequence_no = :sequenceNo"
     ),
     SELECT_CALENDAR_ACTIVE_LIST_ID(
         "SELECT id FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + "\n" +

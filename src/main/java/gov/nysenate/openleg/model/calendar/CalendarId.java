@@ -13,17 +13,21 @@ public class CalendarId implements Serializable, Comparable<CalendarId>
     private static final long serialVersionUID = -3781478188305754813L;
 
     /** The calendar id which is scoped to a single year. */
-    private int calNo;
+    protected int calNo;
 
     /** The year in which this calendar belongs to.
      *  Does not have to be the session year. */
-    private int year;
+    protected int year;
 
     /** --- Constructors --- */
 
     public CalendarId(int calNo, int year) {
         this.calNo = calNo;
         this.year = year;
+    }
+
+    public CalendarId(CalendarId calendarId) {
+        this(calendarId.getCalNo(), calendarId.getYear());
     }
 
     /** --- Overrides --- */
@@ -36,7 +40,7 @@ public class CalendarId implements Serializable, Comparable<CalendarId>
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (obj == null || !(obj instanceof CalendarId)) return false;
         final CalendarId other = (CalendarId) obj;
         return Objects.equals(this.calNo, other.calNo) &&
                Objects.equals(this.year, other.year);

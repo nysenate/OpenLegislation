@@ -1,12 +1,13 @@
 package gov.nysenate.openleg.client.view.spotcheck;
 
+import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckPriorMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.util.StringDiffer;
 
 import java.util.LinkedList;
 
-public class PriorMismatchView
+public class PriorMismatchView implements ViewObject
 {
     protected SpotCheckReportId reportId;
     protected String status;

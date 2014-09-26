@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.calendar;
 import com.google.common.collect.LinkedListMultimap;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.base.Version;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ import java.util.Objects;
 public class CalendarSupplemental extends BaseLegislativeContent
 {
     /** The identifier for this calendar supplemental. Typically a single character. */
-    private String version;
+    private Version version;
 
     /** Reference to the parent Calendar's id. */
     private CalendarId calendarId;
@@ -28,7 +29,7 @@ public class CalendarSupplemental extends BaseLegislativeContent
 
     /** --- Constructors --- */
 
-    public CalendarSupplemental(CalendarId calId, String version, LocalDate calDate, LocalDateTime releaseDateTime) {
+    public CalendarSupplemental(CalendarId calId, Version version, LocalDate calDate, LocalDateTime releaseDateTime) {
         this.sectionEntries = LinkedListMultimap.create();
         this.setCalendarId(calId);
         this.setYear(calId.getYear());
@@ -88,13 +89,19 @@ public class CalendarSupplemental extends BaseLegislativeContent
         return Objects.hash(version, calendarId, calDate, releaseDateTime, sectionEntries);
     }
 
+    /** --- Functional Getters/Setters --- */
+
+    public CalendarSupplementalId getCalendarSupplementalId() {
+        return new CalendarSupplementalId(calendarId, version);
+    }
+
     /** --- Basic Getters/Setters --- */
 
-    public String getVersion() {
+    public Version getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(Version version) {
         this.version = version;
     }
 

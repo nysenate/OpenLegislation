@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.calendar;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.base.Version;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -18,7 +19,7 @@ public class Calendar extends BaseLegislativeContent
     private CalendarId id;
 
     /** Map of all the supplementals associated with this calendar. */
-    private TreeMap<String, CalendarSupplemental> supplementalMap;
+    private TreeMap<Version, CalendarSupplemental> supplementalMap;
 
     /** Map of all the active lists associated with this calendar. */
     private TreeMap<Integer, CalendarActiveList> activeListMap;
@@ -52,7 +53,7 @@ public class Calendar extends BaseLegislativeContent
         this.activeListMap.remove(id);
     }
 
-    public CalendarSupplemental getSupplemental(String id) {
+    public CalendarSupplemental getSupplemental(Version id) {
         return this.supplementalMap.get(id);
     }
 
@@ -60,7 +61,7 @@ public class Calendar extends BaseLegislativeContent
         this.supplementalMap.put(supplemental.getVersion(), supplemental);
     }
 
-    public void removeSupplemental(String id) {
+    public void removeSupplemental(Version id) {
         this.supplementalMap.remove(id);
     }
 
@@ -109,11 +110,11 @@ public class Calendar extends BaseLegislativeContent
         this.id = id;
     }
 
-    public TreeMap<String, CalendarSupplemental> getSupplementalMap() {
+    public TreeMap<Version, CalendarSupplemental> getSupplementalMap() {
         return supplementalMap;
     }
 
-    public void setSupplementalMap(TreeMap<String, CalendarSupplemental> supplementalMap) {
+    public void setSupplementalMap(TreeMap<Version, CalendarSupplemental> supplementalMap) {
         this.supplementalMap = supplementalMap;
     }
 

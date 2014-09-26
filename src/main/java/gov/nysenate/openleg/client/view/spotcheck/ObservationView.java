@@ -1,12 +1,13 @@
 package gov.nysenate.openleg.client.view.spotcheck;
 
 import gov.nysenate.openleg.client.view.base.ViewList;
+import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
-public class ObservationView<ContentKey>
+public class ObservationView<ContentKey> implements ViewObject
 {
     protected LocalDateTime refDateTime;
     protected ContentKey key;

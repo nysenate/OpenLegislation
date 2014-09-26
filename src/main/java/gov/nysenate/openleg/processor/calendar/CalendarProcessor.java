@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.processor.calendar;
 
 import com.google.common.base.Strings;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
@@ -56,9 +57,9 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
             NodeList xmlSupplementals = xml.getNodeList("supplemental", xmlCalendar);
             for (int i = 0; i < xmlSupplementals.getLength(); i++) {
                 Node xmlSupplemental = xmlSupplementals.item(i);
-                String supId = xml.getString("@id", xmlSupplemental);
+                Version supVersion = Version.of(xml.getString("@id", xmlSupplemental));
                 if (action.equalsIgnoreCase("remove")) {
-                    calendar.removeSupplemental(supId);
+                    calendar.removeSupplemental(supVersion);
                 }
                 else {
                     // Replace this supplemental
@@ -66,7 +67,7 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
                     LocalDateTime releaseDateTime = DateUtils.getLrsDateTime(xml.getString("releasedate/text()", xmlSupplemental)
                             + xml.getString("releasetime/text()", xmlSupplemental));
 
-                    CalendarSupplemental supplemental = new CalendarSupplemental(calendarId, supId, calDate, releaseDateTime);
+                    CalendarSupplemental supplemental = new CalendarSupplemental(calendarId, supVersion, calDate, releaseDateTime);
                     supplemental.setModifiedDateTime(modifiedDate);
                     supplemental.setPublishedDateTime(modifiedDate);
 
