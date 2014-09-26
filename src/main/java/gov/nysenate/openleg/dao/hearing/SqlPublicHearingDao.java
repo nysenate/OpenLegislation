@@ -22,6 +22,8 @@ import java.util.List;
 
 import static gov.nysenate.openleg.dao.hearing.SqlPublicHearingQuery.*;
 import static gov.nysenate.openleg.util.CollectionUtils.difference;
+import static gov.nysenate.openleg.util.DateUtils.getLocalDateTime;
+import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository
 public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
@@ -181,20 +183,20 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
     /** --- Row Mapper Instances --- */
 
     static RowMapper<PublicHearing> publicHearingRowMapper = (rs, rowNum) -> {
-        PublicHearingId id = new PublicHearingId(rs.getString("title"), getLocalDateTime(rs, "date_time"));
+        PublicHearingId id = new PublicHearingId(rs.getString("title"), getLocalDateTimeFromRs(rs, "date_time"));
         PublicHearing publicHearing = new PublicHearing(id, rs.getString("address"), rs.getString("text"));
-        publicHearing.setModifiedDateTime(getLocalDateTime(rs, "modified_date_time"));
-        publicHearing.setPublishedDateTime(getLocalDateTime(rs, "published_date_time"));
+        publicHearing.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));
+        publicHearing.setPublishedDateTime(getLocalDateTimeFromRs(rs, "published_date_time"));
         return publicHearing;
     };
 
     static RowMapper<PublicHearingId> publicHearingIdRowMapper = (rs, rowNum) ->
-            new PublicHearingId(rs.getString("title"), getLocalDateTime(rs, "date_time"));
+            new PublicHearingId(rs.getString("title"), getLocalDateTimeFromRs(rs, "date_time"));
 
     static RowMapper<Member> attendanceMemberIdRowMapper = (rs, rowNum) -> {
         Member member = new Member();
         member.setMemberId(rs.getInt("member_id"));
-        member.setSessionYear(SessionYear.of(getLocalDateTime(rs, "date_time").getYear()));
+        member.setSessionYear(SessionYear.of(getLocalDateTimeFromRs(rs, "date_time").getYear()));
         return member;
     };
 

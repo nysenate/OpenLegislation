@@ -59,7 +59,7 @@ public class DataProcessor
         logger.info("Completed collations.");
     }
 
-    public void ingest() throws IOException, ParseException {
+    public void ingest() throws IOException {
         logger.info("Being ingesting data");
         sobiProcessService.processPendingFragments(SobiProcessOptions.builder().build());
         daybreakProcessService.processPendingFragments();

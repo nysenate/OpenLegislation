@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gov.nysenate.openleg.dao.hearing.SqlPublicHearingFileQuery.*;
+import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository
 public class SqlFsPublicHearingFileDao extends SqlBaseDao implements PublicHearingFileDao
@@ -89,13 +90,6 @@ public class SqlFsPublicHearingFileDao extends SqlBaseDao implements PublicHeari
 
     /** --- Internal Methods --- */
 
-    private void moveFile(File sourceFile, File destFile) throws IOException {
-        if (destFile.exists()) {
-            FileUtils.deleteQuietly(destFile);
-        }
-        FileUtils.moveFile(sourceFile, destFile);
-    }
-
     private File getFileInArchiveDir(String fileName) {
         return new File(archivePublicHearingDir, fileName);
     }
@@ -117,9 +111,9 @@ public class SqlFsPublicHearingFileDao extends SqlBaseDao implements PublicHeari
             PublicHearingFile publicHearingFile = null;
             try {
                 publicHearingFile = new PublicHearingFile(file);
-                publicHearingFile.setProcessedDateTime(getLocalDateTime(rs, "processed_date_time"));
+                publicHearingFile.setProcessedDateTime(getLocalDateTimeFromRs(rs, "processed_date_time"));
                 publicHearingFile.setProcessedCount(rs.getInt("processed_count"));
-                publicHearingFile.setStagedDateTime(getLocalDateTime(rs, "staged_date_time"));
+                publicHearingFile.setStagedDateTime(getLocalDateTimeFromRs(rs, "staged_date_time"));
                 publicHearingFile.setPendingProcessing(rs.getBoolean("pending_processing"));
                 publicHearingFile.setArchived(rs.getBoolean("archived"));
             }

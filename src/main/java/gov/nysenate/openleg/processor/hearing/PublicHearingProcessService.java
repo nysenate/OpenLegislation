@@ -31,14 +31,14 @@ public interface PublicHearingProcessService
      * @param publicHearingFiles The PublicHearingFile to process.
      * @see gov.nysenate.openleg.model.hearing.PublicHearing
      */
-    public void processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles) throws ParseException;
+    public void processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles);
 
     /**
      * Processes all the Public Hearing Files via calls to
      * {@link #getPendingPublicHearingFiles(gov.nysenate.openleg.dao.base.LimitOffset)}
      * and {@link #processPublicHearingFiles(java.util.List)}.
      */
-    public void processPendingPublicHearingFiles() throws ParseException;
+    public void processPendingPublicHearingFiles();
 
     /**
      * Toggle the pending processing status of a Public Hearing File.

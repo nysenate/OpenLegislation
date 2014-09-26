@@ -63,7 +63,7 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
 
     /** {@inheritDoc} */
     @Override
-    public void processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles) throws ParseException {
+    public void processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles) {
         for (PublicHearingFile file : publicHearingFiles) {
             try {
                 System.out.println("Working on File: " + file.getFileName());
@@ -73,15 +73,19 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
                 file.setProcessedDateTime(LocalDateTime.now());
                 publicHearingFileDao.updatePublicHearingFile(file);
             }
+            // TODO: fix these exceptions
             catch (IOException e) {
                 e.printStackTrace();
+            }
+            catch (ParseException e) {
+
             }
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public void processPendingPublicHearingFiles() throws ParseException {
+    public void processPendingPublicHearingFiles() {
         List<PublicHearingFile> publicHearingFiles;
         do {
             publicHearingFiles = getPendingPublicHearingFiles(LimitOffset.FIFTY);
