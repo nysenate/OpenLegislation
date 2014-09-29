@@ -21,13 +21,13 @@ import java.util.List;
 public class PublicHearingParser
 {
     @Autowired
+    private PublicHearingDataService dataService;
+
+    @Autowired
     private PublicHearingFileParser fileParser;
 
     @Autowired
     private PublicHearingTextParser textParser;
-
-    @Autowired
-    private PublicHearingDataService dataService;
 
     @Autowired
     private PublicHearingTitleParser titleParser;
@@ -50,7 +50,7 @@ public class PublicHearingParser
      * @param publicHearingFile
      * @throws IOException
      */
-    public void process(PublicHearingFile publicHearingFile) throws IOException, ParseException, DateTimeParseException {
+    public void process(PublicHearingFile publicHearingFile) throws IOException {
         final List<List<String>> pages = fileParser.getPublicHearingPages(publicHearingFile);
         final List<String> firstPage = pages.get(0);
 

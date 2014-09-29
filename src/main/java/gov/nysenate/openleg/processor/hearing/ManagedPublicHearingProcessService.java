@@ -66,19 +66,15 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
     public void processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles) {
         for (PublicHearingFile file : publicHearingFiles) {
             try {
-                System.out.println("Working on File: " + file.getFileName());
+                logger.info("Processing PublicHearingFile: " + file.getFileName());
                 publicHearingParser.process(file);
                 file.setProcessedCount(file.getProcessedCount() + 1);
                 file.setPendingProcessing(false);
                 file.setProcessedDateTime(LocalDateTime.now());
                 publicHearingFileDao.updatePublicHearingFile(file);
             }
-            // TODO: fix these exceptions
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            catch (ParseException e) {
-
+            catch (IOException ex) {
+                logger.error("Error reading from PublicHearingFile: " + file.getFileName(), ex);
             }
         }
     }

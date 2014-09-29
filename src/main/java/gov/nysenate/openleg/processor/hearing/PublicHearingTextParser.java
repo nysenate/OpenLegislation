@@ -8,6 +8,7 @@ import java.util.List;
 public class PublicHearingTextParser
 {
 
+    /** Extracts the text of a PublicHearing. */
     public String parse(List<List<String>> pages) {
         StringBuffer text = new StringBuffer();
 

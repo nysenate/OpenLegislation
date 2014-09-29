@@ -30,8 +30,11 @@ public class PublicHearingDateParser extends BasePublicHearingParser
      * @param firstPage list of Strings containg the first page of text.
      * @return LocalDateTime representing the start time of this PublicHearing.
      */
-    public LocalDateTime parse(List<String> firstPage) throws ParseException, DateTimeParseException {
+    public LocalDateTime parse(List<String> firstPage) {
         String dateTime = getDateTimeString(firstPage);
+        if (dateTime == null) {
+            return null;
+        }
         dateTime = removeEndTime(dateTime);
         dateTime = formatAmPm(dateTime);
 
@@ -45,9 +48,8 @@ public class PublicHearingDateParser extends BasePublicHearingParser
      * @param firstPage
      * @return A String containing date time information in a specific format.
      * e.g: January 15, 2014 9:30 a.m.
-     * @throws ParseException if date time data cannot be found
      */
-    private String getDateTimeString(List<String> firstPage) throws ParseException {
+    private String getDateTimeString(List<String> firstPage) {
         for (int i = 0; i < firstPage.size(); i++) {
             String line = formatLine(firstPage.get(i));
             if (matchesDateFormat(line)) {
@@ -63,8 +65,7 @@ public class PublicHearingDateParser extends BasePublicHearingParser
                 return line.replaceFirst(", at", "");
             }
         }
-
-        throw new ParseException("Unable to find Date Time.", 0);
+        return null;
     }
 
     /** Returns the String containing time information.

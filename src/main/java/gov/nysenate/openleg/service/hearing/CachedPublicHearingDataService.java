@@ -38,6 +38,7 @@ public class CachedPublicHearingDataService implements PublicHearingDataService,
     @CacheEvict(value = publicHearingCache, allEntries = true)
     public void evictCaches() {}
 
+    /** {@inheritDoc */
     @Override
     @Cacheable(value = publicHearingCache, key = "#publicHearingId")
     public PublicHearing getPublicHearing(PublicHearingId publicHearingId) {
@@ -48,11 +49,13 @@ public class CachedPublicHearingDataService implements PublicHearingDataService,
         return publicHearingDao.getPublicHearing(publicHearingId);
     }
 
+    /** {@inheritDoc */
     @Override
     public List<PublicHearingId> getPublicHearingIds(SessionYear sessionYear, LimitOffset limitOffset) {
         throw new NotImplementedException();
     }
 
+    /** {@inheritDoc */
     @Override
     public void savePublicHearing(PublicHearing publicHearing, PublicHearingFile publicHearingFile) {
         if (publicHearing == null) {

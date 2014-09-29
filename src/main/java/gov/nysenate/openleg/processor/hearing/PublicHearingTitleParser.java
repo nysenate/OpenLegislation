@@ -26,11 +26,11 @@ public class PublicHearingTitleParser extends BasePublicHearingParser
      * @param firstPage
      * @return
      */
-    public String parse(List<String> firstPage) throws ParseException {
+    public String parse(List<String> firstPage) {
         String pageText = turnPageIntoString(firstPage);
         Matcher matchTitle = TITLE.matcher(pageText);
         if (!matchTitle.find()) {
-            throw new ParseException("Title not found in Public Hearing", 0);
+            return null;
         }
         return matchTitle.group("title");
     }

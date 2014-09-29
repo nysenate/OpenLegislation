@@ -20,7 +20,6 @@ public class PublicHearingAddressParser extends BasePublicHearingParser
      * Extract the Address information from the first page of a PublicHearing.
      * @param firstPage
      * @return
-     * @throws ParseException if it cannot extract the Address.
      */
     public String parse(List<String> firstPage) {
         String address = null;
