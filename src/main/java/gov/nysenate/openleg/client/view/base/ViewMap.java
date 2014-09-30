@@ -5,23 +5,23 @@ import java.util.Map;
 
 public class ViewMap<KeyType, ViewType extends ViewObject> implements ViewObject
 {
-    protected Map<KeyType, ViewType> viewMap;
+    protected Map<KeyType, ViewType> items;
 
     public ViewMap(Map<KeyType, ViewType> map) {
         if (map != null) {
-            viewMap = map;
+            items = map;
         }
         else {
-            viewMap = new HashMap<>();
+            items = new HashMap<>();
         }
     }
 
-    public Map<KeyType, ViewType> getViewMap() {
-        return viewMap;
+    public Map<KeyType, ViewType> getItems() {
+        return items;
     }
 
     public int getSize() {
-        return viewMap.size();
+        return items.size();
     }
 }
 

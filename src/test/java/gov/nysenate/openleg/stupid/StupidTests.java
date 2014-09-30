@@ -2,6 +2,8 @@ package gov.nysenate.openleg.stupid;
 
 import org.junit.Test;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 
 /**
@@ -50,5 +52,15 @@ public class StupidTests {
     public void StringReplaceTest() {
         String str = "--- %1$d - %1$d ---";
         System.out.println(String.format(str, new Integer("1234")));
+    }
+
+    private enum DumbEnum {
+        HERP,
+        DERP
+    }
+    @Test
+    public void enumParseTest() {
+        assert(DumbEnum.valueOf("DERP") == DumbEnum.DERP);
+        System.out.println(DumbEnum.valueOf("GLERP"));
     }
 }

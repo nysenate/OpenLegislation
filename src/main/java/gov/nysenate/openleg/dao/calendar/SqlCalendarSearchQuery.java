@@ -56,28 +56,31 @@ public enum SqlCalendarSearchQuery implements BasicSqlQuery {
     CALTYPE_SUBQUERY_BASE_SELECT(
             "\tSELECT %1$s.calendar_year AS cal_year, %1$s.calendar_no AS cal_num"
     ),
+    ACTIVE_LIST_BASE_SELECT(String.format(CALTYPE_SUBQUERY_BASE_SELECT.getSql(), ACTIVE_LIST_PREFIX.getSql())),
+    SUPPLEMENTAL_BASE_SELECT(String.format(CALTYPE_SUBQUERY_BASE_SELECT.getSql(), SUPPLEMENTAL_PREFIX.getSql())),
+
     CALTYPE_SUBQUERY_DATE_SELECTOR(
             ", %1$s.calendar_date AS cal_date"
     ),
+    ACTIVE_LIST_DATE_SELECTOR(String.format(CALTYPE_SUBQUERY_DATE_SELECTOR.getSql(), ACTIVE_LIST_PREFIX.getSql())),
+    SUPPLEMENTAL_DATE_SELECTOR(String.format(CALTYPE_SUBQUERY_DATE_SELECTOR.getSql(), SUPPLEMENTAL_PREFIX.getSql())),
+
     CALTYPE_SUBQUERY_PRINT_NO_SELECTOR(
             ", %1$s_bills AS bills"
     ),
+    ACTIVE_LIST_PRINT_NO_SELECTOR(String.format(CALTYPE_SUBQUERY_PRINT_NO_SELECTOR.getSql(), ACTIVE_LIST_PREFIX.getSql())),
+    SUPPLEMENTAL_PRINT_NO_SELECTOR(String.format(CALTYPE_SUBQUERY_PRINT_NO_SELECTOR.getSql(), SUPPLEMENTAL_PREFIX.getSql())),
+
     CALTYPE_SUBQUERY_BILL_CALENDAR_NO_SELECTOR(
             ", %1$s_bcns AS bcns"
     ),
-
-    ACTIVE_LIST_BASE_SELECT(String.format(CALTYPE_SUBQUERY_BASE_SELECT.getSql(), ACTIVE_LIST_PREFIX.getSql())),
-    ACTIVE_LIST_DATE_SELECTOR(String.format(CALTYPE_SUBQUERY_DATE_SELECTOR.getSql(), ACTIVE_LIST_PREFIX.getSql())),
-    ACTIVE_LIST_PRINT_NO_SELECTOR(String.format(CALTYPE_SUBQUERY_PRINT_NO_SELECTOR.getSql(), ACTIVE_LIST_PREFIX.getSql())),
     ACTIVE_LIST_BILL_CALENDAR_NO_SELECTOR(String.format(CALTYPE_SUBQUERY_BILL_CALENDAR_NO_SELECTOR.getSql(), ACTIVE_LIST_PREFIX.getSql())),
+    SUPPLEMENTAL_BILL_CALENDAR_NO_SELECTOR(String.format(CALTYPE_SUBQUERY_BILL_CALENDAR_NO_SELECTOR.getSql(), SUPPLEMENTAL_PREFIX.getSql())),
+
     ACTIVE_LIST_SEQUENCE_NO_SELECTOR(
             ", al.sequence_no AS al_sequence_no"
     ),
 
-    SUPPLEMENTAL_BASE_SELECT(String.format(CALTYPE_SUBQUERY_BASE_SELECT.getSql(), SUPPLEMENTAL_PREFIX.getSql())),
-    SUPPLEMENTAL_DATE_SELECTOR(String.format(CALTYPE_SUBQUERY_DATE_SELECTOR.getSql(), SUPPLEMENTAL_PREFIX.getSql())),
-    SUPPLEMENTAL_PRINT_NO_SELECTOR(String.format(CALTYPE_SUBQUERY_PRINT_NO_SELECTOR.getSql(), SUPPLEMENTAL_PREFIX.getSql())),
-    SUPPLEMENTAL_BILL_CALENDAR_NO_SELECTOR(String.format(CALTYPE_SUBQUERY_BILL_CALENDAR_NO_SELECTOR.getSql(), SUPPLEMENTAL_PREFIX.getSql())),
     SUPPLEMENTAL_VERSION_SELECTOR(
             ", sup.sup_version AS sup_version"
     ),
@@ -85,7 +88,7 @@ public enum SqlCalendarSearchQuery implements BasicSqlQuery {
             ", sup_codes"
     ),
 
-    /** --- Calendar Type Subquery Table Sources --- */
+    /** --- Calendar Type Sub Query Table Sources --- */
 
     CALTYPE_SUBQUERY_FROM(
             "\n\t" + "FROM ${schema}.%1$s AS %2$s"
@@ -114,7 +117,7 @@ public enum SqlCalendarSearchQuery implements BasicSqlQuery {
             SELECT_BASE.getSql() + ", sup_version"
     ),
     SELECT_COUNT(
-            "SELECT DISTINCT COUNT(*)"
+            "SELECT COUNT(*) FROM (%s) as sq"
     ),
 
     /** --- Table sources --- */

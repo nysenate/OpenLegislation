@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.service.calendar.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.calendar.CalendarSearchDao;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
@@ -44,13 +44,13 @@ public class DbCalendarSearchService implements CalendarSearchService {
     /** {@inheritDoc} */
     @Override
     public List<CalendarId> searchForCalendars(CalendarSearchParameters searchParams,
-                                               OrderBy orderBy, LimitOffset limitOffset)
+                                               SortOrder sortOrder, LimitOffset limitOffset)
             throws InvalidParametersSearchException, NoResultsSearchException {
         if (searchParams == null || !searchParams.isValid()) {
             throw new InvalidParametersSearchException(searchParams);
         }
         try {
-            return calendarSearchDao.getCalendars(searchParams, orderBy, limitOffset);
+            return calendarSearchDao.getCalendars(searchParams, sortOrder, limitOffset);
         }
         catch (DataAccessException ex) {
             logger.error("Error retrieving calendar search results: \n" + ex.getMessage());
@@ -61,13 +61,13 @@ public class DbCalendarSearchService implements CalendarSearchService {
     /** {@inheritDoc} */
     @Override
     public List<CalendarActiveListId> searchForActiveLists(CalendarSearchParameters searchParams,
-                                                           OrderBy orderBy, LimitOffset limitOffset)
+                                                           SortOrder sortOrder, LimitOffset limitOffset)
             throws InvalidParametersSearchException, NoResultsSearchException {
         if (searchParams == null || !searchParams.isValid() || searchParams.getCalendarType() != CalendarType.ACTIVE_LIST) {
             throw new InvalidParametersSearchException(searchParams);
         }
         try {
-            return calendarSearchDao.getActiveLists(searchParams, orderBy, limitOffset);
+            return calendarSearchDao.getActiveLists(searchParams, sortOrder, limitOffset);
         }
         catch (DataAccessException ex) {
             logger.error("Error retrieving active list calendar search results: \n" + ex.getMessage());
@@ -78,13 +78,13 @@ public class DbCalendarSearchService implements CalendarSearchService {
     /** {@inheritDoc} */
     @Override
     public List<CalendarSupplementalId> searchForFloorCalendars(CalendarSearchParameters searchParams,
-                                                                OrderBy orderBy, LimitOffset limitOffset)
+                                                                SortOrder sortOrder, LimitOffset limitOffset)
             throws InvalidParametersSearchException, NoResultsSearchException {
         if (searchParams == null || !searchParams.isValid() || searchParams.getCalendarType() != CalendarType.FLOOR) {
             throw new InvalidParametersSearchException(searchParams);
         }
         try {
-            return calendarSearchDao.getFloorCalendars(searchParams, orderBy, limitOffset);
+            return calendarSearchDao.getFloorCalendars(searchParams, sortOrder, limitOffset);
         }
         catch (DataAccessException ex) {
             logger.error("Error retrieving floor calendar search results: \n" + ex.getMessage());

@@ -13,7 +13,7 @@ public class ViewListResponse<ViewType extends ViewObject> extends PaginationRes
     public ViewListResponse(ViewList<ViewType> result, int total, int offsetStart, int offsetEnd, int count) {
         super(total, offsetStart, offsetEnd, count);
         this.result = result;
-        if (total > 0 && result != null) {
+        if (result != null) {
             success = true;
         }
     }

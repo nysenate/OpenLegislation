@@ -1,9 +1,6 @@
 package gov.nysenate.openleg.dao.calendar;
 
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
-import gov.nysenate.openleg.dao.base.SqlQueryUtils;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
@@ -36,48 +33,48 @@ public class SqlCalendarSearchDao extends SqlBaseDao implements CalendarSearchDa
     /** {@inheritDoc} */
     @Override
     public int getCalendarCountforQuery(CalendarSearchParameters calendarSearchParameters) throws DataAccessException{
-        String query = getSqlSearchQuery(calendarSearchParameters, true);
-        query = SqlQueryUtils.getSqlWithSchema(query, schema());
+        // Add count selector to the search query
+        String countQuery = String.format(SELECT_COUNT.getSql(), getSqlSearchQuery(calendarSearchParameters));
+        countQuery = SqlQueryUtils.getSqlWithSchema(countQuery, schema());
         MapSqlParameterSource params = getCalendarSearchParamMap(calendarSearchParameters);
-        return jdbcNamed.queryForObject(query, params, Integer.class);
+        return jdbcNamed.queryForObject(countQuery, params, Integer.class);
     }
 
     /** {@inheritDoc} */
     @Override
     public List<CalendarId> getCalendars(CalendarSearchParameters calendarSearchParameters,
-                                         OrderBy orderBy, LimitOffset limitOffset)
+                                         SortOrder sortOrder, LimitOffset limitOffset)
                                                      throws DataAccessException {
         String query = getSqlSearchQuery(calendarSearchParameters);
-        query = SqlQueryUtils.getSqlWithSchema(query, schema(), orderBy, limitOffset);
+        query = SqlQueryUtils.getSqlWithSchema(query, schema(),
+                new OrderBy("year", sortOrder, "calendar_no", sortOrder), limitOffset);
         MapSqlParameterSource params = getCalendarSearchParamMap(calendarSearchParameters);
         return jdbcNamed.query(query, params, new CalendarIdRowMapper());
     }
 
     @Override
     public List<CalendarSupplementalId> getFloorCalendars(CalendarSearchParameters calendarSearchParameters,
-                                                          OrderBy orderBy, LimitOffset limitOffset)
+                                                          SortOrder sortOrder, LimitOffset limitOffset)
                                                                        throws DataAccessException {
         String query = getSqlSearchQuery(calendarSearchParameters);
-        query = SqlQueryUtils.getSqlWithSchema(query, schema(), orderBy, limitOffset);
+        query = SqlQueryUtils.getSqlWithSchema(query, schema(),
+                new OrderBy("year", sortOrder, "calendar_no", sortOrder, "sup_version", sortOrder), limitOffset);
         MapSqlParameterSource params = getCalendarSearchParamMap(calendarSearchParameters);
         return jdbcNamed.query(query, params, new CalendarSupplementalIdRowMapper());
     }
 
     @Override
     public List<CalendarActiveListId> getActiveLists(CalendarSearchParameters calendarSearchParameters,
-                                                     OrderBy orderBy, LimitOffset limitOffset)
+                                                     SortOrder sortOrder, LimitOffset limitOffset)
                                                                         throws DataAccessException {
         String query = getSqlSearchQuery(calendarSearchParameters);
-        query = SqlQueryUtils.getSqlWithSchema(query, schema(), orderBy, limitOffset);
+        query = SqlQueryUtils.getSqlWithSchema(query, schema(),
+                new OrderBy("year", sortOrder, "calendar_no", sortOrder, "al_sequence_no", sortOrder), limitOffset);
         MapSqlParameterSource params = getCalendarSearchParamMap(calendarSearchParameters);
         return jdbcNamed.query(query, params, new CalendarActiveListIdRowMapper());
     }
 
-    private String getSqlSearchQuery(CalendarSearchParameters searchParams) throws IllegalArgumentException {
-        return getSqlSearchQuery(searchParams, false);
-    }
-
-    private String getSqlSearchQuery(CalendarSearchParameters searchParams, boolean getCount) throws InvalidDataAccessApiUsageException {
+    private String getSqlSearchQuery(CalendarSearchParameters searchParams) throws InvalidDataAccessApiUsageException {
 
         // If the params are invalid, throw an exception
         if (!searchParams.isValid()) {
@@ -133,15 +130,10 @@ public class SqlCalendarSearchDao extends SqlBaseDao implements CalendarSearchDa
         }
 
         // Select a SELECT statement
-        if(getCount) {
-            queryBuilder.append(SELECT_COUNT);
-        }
-        else {
-            switch (calendarType) {
-                case ALL: queryBuilder.append(SELECT_BASE); break;
-                case ACTIVE_LIST: queryBuilder.append(SELECT_ACTIVE_LIST); break;
-                case FLOOR: queryBuilder.append(SELECT_SUPPLEMENTAL); break;
-            }
+        switch (calendarType) {
+            case ALL: queryBuilder.append(SELECT_BASE); break;
+            case ACTIVE_LIST: queryBuilder.append(SELECT_ACTIVE_LIST); break;
+            case FLOOR: queryBuilder.append(SELECT_SUPPLEMENTAL); break;
         }
 
         // Add table sources
@@ -293,21 +285,21 @@ public class SqlCalendarSearchDao extends SqlBaseDao implements CalendarSearchDa
     private class CalendarIdRowMapper implements RowMapper<CalendarId> {
         @Override
         public CalendarId mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new CalendarId(rs.getInt("year"), rs.getInt("calendar_no"));
+            return new CalendarId(rs.getInt("calendar_no"), rs.getInt("year"));
         }
     }
 
     private class CalendarActiveListIdRowMapper implements RowMapper<CalendarActiveListId> {
         @Override
         public CalendarActiveListId mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new CalendarActiveListId(rs.getInt("year"), rs.getInt("calendar_no"), rs.getInt("al_sequence_no"));
+            return new CalendarActiveListId(rs.getInt("calendar_no"), rs.getInt("year"), rs.getInt("al_sequence_no"));
         }
     }
 
     private class CalendarSupplementalIdRowMapper implements RowMapper<CalendarSupplementalId> {
         @Override
         public CalendarSupplementalId mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new CalendarSupplementalId(rs.getInt("year"), rs.getInt("calendar_no"), Version.of(rs.getString("sup_version")));
+            return new CalendarSupplementalId(rs.getInt("calendar_no"), rs.getInt("year"), Version.of(rs.getString("sup_version")));
         }
     }
 

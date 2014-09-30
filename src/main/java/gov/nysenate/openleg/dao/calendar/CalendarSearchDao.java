@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.dao.calendar;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
@@ -23,36 +23,36 @@ public interface CalendarSearchDao {
      * Returns a list of calendars that conform to the given search query
      *
      * @param calendarSearchParameters
-     * @param orderBy
+     * @param sortOrder
      * @param limitOffset
      * @return
      * @throws DataAccessException
      */
     public List<CalendarId> getCalendars(CalendarSearchParameters calendarSearchParameters,
-                                         OrderBy orderBy, LimitOffset limitOffset)
+                                         SortOrder sortOrder, LimitOffset limitOffset)
                                                        throws DataAccessException;
 
     /**
      * Returns a list of floor calendars that conform to the given search query
      * @param calendarSearchParameters
-     * @param orderBy
+     * @param sortOrder
      * @param limitOffset
      * @return
      * @throws DataAccessException
      */
     public List<CalendarSupplementalId> getFloorCalendars(CalendarSearchParameters calendarSearchParameters,
-                                                                 OrderBy orderBy, LimitOffset limitOffset)
+                                                                 SortOrder sortOrder, LimitOffset limitOffset)
                                                                                  throws DataAccessException;
 
     /**
      * Returns a list of active list calendars that conform to the given search query
      * @param calendarSearchParameters
-     * @param orderBy
+     * @param sortOrder
      * @param limitOffset
      * @return
      * @throws DataAccessException
      */
     public List<CalendarActiveListId> getActiveLists(CalendarSearchParameters calendarSearchParameters,
-                                                     OrderBy orderBy, LimitOffset limitOffset)
+                                                     SortOrder sortOrder, LimitOffset limitOffset)
                                                                     throws DataAccessException;
 }

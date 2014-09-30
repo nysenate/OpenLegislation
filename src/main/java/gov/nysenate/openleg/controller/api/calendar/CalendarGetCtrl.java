@@ -35,13 +35,13 @@ public class CalendarGetCtrl extends BaseCtrl
     @RequestMapping(value = "/{year:\\d{4}}")
     public BaseResponse getCalendarIds(@PathVariable int year,
                                      @RequestParam(defaultValue = "ASC") String order,
-                                     @RequestParam(defaultValue = "50") int limit,
+                                     @RequestParam(defaultValue = "100") int limit,
                                      @RequestParam(defaultValue = "1") int offset) {
         SortOrder sortOrder = SortOrder.valueOf(order);
         LimitOffset limitOffset = new LimitOffset(limit, offset);
         try {
             return new ViewListResponse<>(
-                    calendarDataService.getCalendarIds(year, sortOrder, limitOffset).parallelStream()
+                    calendarDataService.getCalendarIds(year, sortOrder, limitOffset).stream()
                             .map(CalendarIdView::new)
                             .collect(Collectors.toList()),
                     calendarDataService.getCalendarCount(year),
@@ -53,16 +53,16 @@ public class CalendarGetCtrl extends BaseCtrl
         }
     }
 
-    @RequestMapping(value = "/{year:\\d{4}}/activelist")
+    @RequestMapping(value = "/{year:\\d{4}}/activelists")
     public BaseResponse getActiveListIds(@PathVariable int year,
                                          @RequestParam(defaultValue = "ASC") String order,
-                                         @RequestParam(defaultValue = "50") int limit,
+                                         @RequestParam(defaultValue = "100") int limit,
                                          @RequestParam(defaultValue = "1") int offset) {
         SortOrder sortOrder = SortOrder.valueOf(order);
         LimitOffset limitOffset = new LimitOffset(limit, offset);
         try {
             return new ViewListResponse<>(
-                    calendarDataService.getActiveListIds(year, sortOrder, limitOffset).parallelStream()
+                    calendarDataService.getActiveListIds(year, sortOrder, limitOffset).stream()
                             .map(CalendarActiveListIdView::new)
                             .collect(Collectors.toList()),
                     calendarDataService.getActiveListCount(year),
@@ -77,13 +77,13 @@ public class CalendarGetCtrl extends BaseCtrl
     @RequestMapping(value = "/{year:\\d{4}}/floor")
     public BaseResponse getFloorCalendarIds(@PathVariable int year,
                                             @RequestParam(defaultValue = "ASC") String order,
-                                            @RequestParam(defaultValue = "50") int limit,
+                                            @RequestParam(defaultValue = "100") int limit,
                                             @RequestParam(defaultValue = "1") int offset) {
         SortOrder sortOrder = SortOrder.valueOf(order);
         LimitOffset limitOffset = new LimitOffset(limit, offset);
         try {
             return new ViewListResponse<>(
-                    calendarDataService.getFloorCalendarIds(year, sortOrder, limitOffset).parallelStream()
+                    calendarDataService.getFloorCalendarIds(year, sortOrder, limitOffset).stream()
                             .map(CalendarSupIdView::new)
                             .collect(Collectors.toList()),
                     calendarDataService.getFloorCalendarCount(year),
@@ -120,7 +120,7 @@ public class CalendarGetCtrl extends BaseCtrl
         }
     }
 
-    @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}/{version:[A-z]*}")
+    @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}/{version:[A-z]+}")
     public BaseResponse getFloorCalendar(@PathVariable int year, @PathVariable int calNo, @PathVariable String version) {
         try {
             return new ViewObjectResponse<>(

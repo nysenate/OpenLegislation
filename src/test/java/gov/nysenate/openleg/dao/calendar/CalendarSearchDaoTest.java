@@ -52,12 +52,13 @@ public class CalendarSearchDaoTest extends BaseTests {
         testParams2.setYear(2014);
         testParams2.setDateRange(Range.closed(LocalDate.of(2014, 6, 5), LocalDate.of(2014, 9, 23)));
         SetMultimap<Integer, Integer> sCodeFilter = HashMultimap.create();
-        sCodeFilter.put(1, 400);
+        sCodeFilter.put(1, 150);
+        testParams2.setSectionCode(sCodeFilter);
     }
 
     @Test
     public void queryBothTest() {
-        List<CalendarId> calIds = calendarSearchDao.getCalendars(testParams, new OrderBy("calendar_no", SortOrder.ASC), null);
+        List<CalendarId> calIds = calendarSearchDao.getCalendars(testParams, SortOrder.ASC, null);
         logger.info("Results: ");
         calIds.forEach(calId -> logger.info(calId.toString()));
     }
@@ -65,20 +66,20 @@ public class CalendarSearchDaoTest extends BaseTests {
     @Test
     public void queryActiveListTest() {
         testParams.setCalendarType(CalendarType.ACTIVE_LIST);
-        List<CalendarActiveListId> calIds = calendarSearchDao.getActiveLists(testParams, new OrderBy("calendar_no", SortOrder.ASC), null);
+        List<CalendarActiveListId> calIds = calendarSearchDao.getActiveLists(testParams, SortOrder.DESC, null);
         logger.info("Results: ");
         calIds.forEach(calId -> logger.info(calId.toString()));
     }
 
     @Test
     public void queryFloorTest() {
-        List<CalendarSupplementalId> calIds = calendarSearchDao.getFloorCalendars(testParams2, new OrderBy("calendar_no", SortOrder.ASC), null);
+        List<CalendarSupplementalId> calIds = calendarSearchDao.getFloorCalendars(testParams2, SortOrder.ASC, null);
         logger.info("Results: " + calIds.size());
         calIds.forEach(calId -> logger.info(calId.toString()));
     }
 
     @Test
     public void getQueryCountTest() {
-        logger.info("Count: " + calendarSearchDao.getCalendarCountforQuery(testParams2));
+        logger.info("Count: " + calendarSearchDao.getCalendarCountforQuery(testParams));
     }
 }

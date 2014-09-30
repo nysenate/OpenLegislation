@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.calendar.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.OrderBy;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
@@ -22,28 +23,31 @@ public interface CalendarSearchService {
 
     /**
      * @param searchParams
+     * @param sortOrder
      * @return List<CalendarId> A list of calendar ids that match the given search parameters
      * @throws gov.nysenate.openleg.service.base.InvalidParametersSearchException When the given search parameters are invalid
      * @throws CalendarNotFoundEx When no calendars were retrieved from the search
      */
-    public List<CalendarId> searchForCalendars(CalendarSearchParameters searchParams, OrderBy orderBy, LimitOffset limitOffset)
+    public List<CalendarId> searchForCalendars(CalendarSearchParameters searchParams, SortOrder sortOrder, LimitOffset limitOffset)
             throws InvalidParametersSearchException, NoResultsSearchException;
 
     /**
      * @param searchParams
+     * @param sortOrder
      * @return List<CalendarActiveListId> a list of active list calendar ids that match the given search parameters
      * @throws gov.nysenate.openleg.service.base.InvalidParametersSearchException When the given search parameters are invalid
      * @throws CalendarNotFoundEx When no calendars were retrieved from the search
      */
-    public List<CalendarActiveListId> searchForActiveLists(CalendarSearchParameters searchParams, OrderBy orderBy, LimitOffset limitOffset)
+    public List<CalendarActiveListId> searchForActiveLists(CalendarSearchParameters searchParams, SortOrder sortOrder, LimitOffset limitOffset)
             throws InvalidParametersSearchException, NoResultsSearchException;
 
     /**
      * @param searchParams
+     * @param sortOrder
      * @return List<CalendarSupplementalId> a list of supplemental calendar ids that match the given search parameters
      * @throws gov.nysenate.openleg.service.base.InvalidParametersSearchException When the given search parameters are invalid
      * @throws CalendarNotFoundEx When no calendars were retrieved from the search
      */
-    public List<CalendarSupplementalId> searchForFloorCalendars(CalendarSearchParameters searchParams, OrderBy orderBy, LimitOffset limitOffset)
+    public List<CalendarSupplementalId> searchForFloorCalendars(CalendarSearchParameters searchParams, SortOrder sortOrder, LimitOffset limitOffset)
             throws InvalidParametersSearchException, NoResultsSearchException;
 }
