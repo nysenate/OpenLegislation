@@ -10,7 +10,7 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
-import gov.nysenate.openleg.service.agenda.AgendaDataService;
+import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;

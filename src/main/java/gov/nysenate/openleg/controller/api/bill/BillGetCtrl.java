@@ -6,6 +6,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +29,12 @@ public class BillGetCtrl extends BaseCtrl
     private BillDataService billDataService;
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}")
-    public List<SimpleBillView> getBills(@PathVariable int sessionYear,
+    public List<BillInfo> getBills(@PathVariable int sessionYear,
                                          @RequestParam(defaultValue = "50") int limit,
                                          @RequestParam(defaultValue = "1") int offset) {
         LimitOffset limOff = new LimitOffset(limit, offset);
         return billDataService.getBillIds(SessionYear.of(sessionYear), limOff).parallelStream()
-            .map(billId -> new SimpleBillView(billDataService.getBill(billId)))
+            .map(billId -> billDataService.getBillInfo(billId))
             .collect(Collectors.toList());
     }
 

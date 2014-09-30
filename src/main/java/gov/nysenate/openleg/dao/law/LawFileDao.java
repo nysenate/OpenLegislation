@@ -24,10 +24,11 @@ public interface LawFileDao
      * Retrieves a list of LawFiles that are awaiting processing.
      * i.e {@link LawFile#isPendingProcessing()} is true.
      *
+     * @param sortByDate SortOrder - Order by the published date or the filename if there is a tie.
      * @param limitOffset LimitOffset - Limit the result set.
      * @return List<LawFile>
      */
-    public List<LawFile> getPendingLawFiles(LimitOffset limitOffset);
+    public List<LawFile> getPendingLawFiles(SortOrder sortByDate, LimitOffset limitOffset);
 
     /**
      * Updates an existing LawFile in the backing store with the given instance or inserts it if

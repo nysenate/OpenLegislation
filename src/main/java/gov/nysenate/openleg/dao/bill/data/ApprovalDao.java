@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.bill;
+package gov.nysenate.openleg.dao.bill.data;
 
 import gov.nysenate.openleg.model.bill.ApprovalId;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;

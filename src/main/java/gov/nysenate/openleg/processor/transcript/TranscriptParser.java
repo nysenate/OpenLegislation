@@ -3,7 +3,7 @@ package gov.nysenate.openleg.processor.transcript;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
-import gov.nysenate.openleg.service.transcript.TranscriptDataService;
+import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,8 @@ public class TranscriptParser
 {
     private static final Logger logger = LoggerFactory.getLogger(TranscriptParser.class);
 
+    private static final String TRANSCRIPT_ENCODING = "latin1";
+
     @Autowired
     private TranscriptDataService transcriptDataService;
 
@@ -31,15 +33,15 @@ public class TranscriptParser
         String time = null;
         int numSkipped = 0;
 
-
-        StringBuffer transcriptText = new StringBuffer();
+        StringBuilder transcriptText = new StringBuilder();
 
         boolean firstPageParsed = false;
         boolean firstLineParsed = false;
         boolean skipFirstThreeLines = false;
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(transcriptFile.getFile()), "latin1"));
         String lineText;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+            new FileInputStream(transcriptFile.getFile()), TRANSCRIPT_ENCODING));
 
         while ((lineText = reader.readLine()) != null) {
             TranscriptLine line = new TranscriptLine(lineText);
@@ -53,7 +55,7 @@ public class TranscriptParser
                         continue;
                     }
                 }
-                if (skipFirstThreeLines == true && numSkipped <= 3) {
+                if (skipFirstThreeLines && numSkipped <= 3) {
                     numSkipped++;
                     continue;
                 }
@@ -93,5 +95,4 @@ public class TranscriptParser
     private boolean areWeDoneWithFirstPage(String sessionType, String location, String date, String time) {
         return sessionType != null && location != null && date != null && time !=null;
     }
-
 }

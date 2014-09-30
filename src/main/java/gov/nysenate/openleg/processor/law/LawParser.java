@@ -3,7 +3,9 @@ package gov.nysenate.openleg.processor.law;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
-import gov.nysenate.openleg.model.law.LawDocLevel;
+import gov.nysenate.openleg.model.law.LawChapter;
+import gov.nysenate.openleg.model.law.LawDocumentType;
+import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,15 +32,17 @@ public class LawParser
 
     /** Pattern for law doc headers.  */
     protected static Pattern lawHeader =
-        Pattern.compile("\\.\\.SO DOC (\\w{3})(.{13})(.{8}) (.{15}) (?:LAWS\\(((?:UN)?CONSOLIDATED)\\))");
+        Pattern.compile("\\.\\.SO DOC ((\\w{3})(.{13}))(.{8}) (.{15}) (?:LAWS\\(((?:UN)?CONSOLIDATED)\\))");
 
-    protected static BiMap<String, LawDocLevel> lawLevelCodes = HashBiMap.create();
+    protected static BiMap<String, LawDocumentType> lawLevelCodes = HashBiMap.create();
     static {
-        lawLevelCodes.put("A", LawDocLevel.ARTICLE);
-        lawLevelCodes.put("T", LawDocLevel.TITLE);
-        lawLevelCodes.put("ST", LawDocLevel.SUBTITLE);
-        lawLevelCodes.put("P", LawDocLevel.PART);
-        lawLevelCodes.put("SP", LawDocLevel.SUB_PART);
+        lawLevelCodes.put("A", LawDocumentType.ARTICLE);
+        lawLevelCodes.put("T", LawDocumentType.TITLE);
+        lawLevelCodes.put("ST", LawDocumentType.SUBTITLE);
+        lawLevelCodes.put("P", LawDocumentType.PART);
+        lawLevelCodes.put("SP", LawDocumentType.SUB_PART);
+        lawLevelCodes.put("INDEX", LawDocumentType.INDEX);
+        lawLevelCodes.put("S", LawDocumentType.SECTION);
     }
 
     /** --- Instance Variables --- */
@@ -55,46 +59,38 @@ public class LawParser
 
     /** --- Methods --- */
 
+    public List<LawDocument> getLawDocuments() throws IOException {
+        return null;
+    }
+
+    /**
+     *
+     *
+     * @return
+     * @throws IOException
+     */
+
+
+    public LawDocumentType parseLawLevelFromLocationId(String lawId, String locationId) {
+        Set<LawDocumentType> pathLevels = new HashSet<>();
+        // Try to match given law against our known law ids
+        LawChapter lawChapter = null;
+        try {
+            lawChapter = LawChapter.valueOf(lawId);
+        }
+        catch (IllegalArgumentException ex) {
+            logger.warn("Failed to map {} to a LawChapter! This may indicate a new law chapter.", lawId);
+        }
+
+        LawDocumentType level = LawDocumentType.SECTION;
+        if (!locationId.matches("^[0-9].*")) {
+//            logger.info("{}", locationId);
+        }
+
+        logger.info("{} {}", locationId, level);
+        return level;
+    }
+
     /** --- Internal Methods --- */
 
-    protected List<LawBlock> getRawDocuments() throws IOException {
-        List<LawBlock> rawDocList = new ArrayList<>();
-        logger.debug("Extracting law blocks...");
-        LawBlock doc = null;
-        while (fileItr.hasNext()) {
-            String line = fileItr.next();
-            if (lawHeader.matcher(line).matches()) {
-                if (doc != null) {
-                    rawDocList.add(doc);
-                }
-                doc = new LawBlock();
-                doc.header = line;
-            }
-            else {
-                if (doc == null) throw new LawParseException("No doc header received prior to line: " + line);
-                doc.getText().append(line);
-            }
-        }
-        return rawDocList;
-    }
-
-    /** --- Internal Classes --- */
-
-    protected static class LawBlock
-    {
-        private String header = "";
-        private StringBuilder text = new StringBuilder();
-
-        public String getHeader() {
-            return header;
-        }
-
-        public void setHeader(String header) {
-            this.header = header;
-        }
-
-        public StringBuilder getText() {
-            return text;
-        }
-    }
 }

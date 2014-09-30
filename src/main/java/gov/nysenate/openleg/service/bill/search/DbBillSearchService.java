@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.service.bill.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.bill.BillSearchDao;
+import gov.nysenate.openleg.dao.bill.search.BillSearchDao;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.service.base.SearchResults;
 import org.slf4j.Logger;

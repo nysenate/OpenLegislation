@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.service.bill.data;
 
-import gov.nysenate.openleg.dao.bill.VetoDao;
+import gov.nysenate.openleg.dao.bill.data.VetoDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.VetoId;
 import gov.nysenate.openleg.model.bill.VetoMessage;

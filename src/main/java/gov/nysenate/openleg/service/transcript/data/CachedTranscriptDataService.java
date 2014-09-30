@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.transcript;
+package gov.nysenate.openleg.service.transcript.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.transcript.TranscriptDao;

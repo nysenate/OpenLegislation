@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.agenda;
+package gov.nysenate.openleg.service.agenda.data;
 
 import gov.nysenate.openleg.dao.agenda.AgendaDao;
 import gov.nysenate.openleg.model.agenda.Agenda;

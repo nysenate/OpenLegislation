@@ -5,5 +5,6 @@ public enum LawType
     CONSOLIDATED,
     UNCONSOLIDATED,
     COURT_ACTS,
-    RULES
+    RULES,
+    MISC
 }

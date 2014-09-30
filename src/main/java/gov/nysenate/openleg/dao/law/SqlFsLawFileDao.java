@@ -18,10 +18,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.law.SqlLawFileQuery.*;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 import static gov.nysenate.openleg.util.FileIOUtils.safeListFiles;
+import static java.util.stream.Collectors.toList;
 
 @Repository
 public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
@@ -46,25 +48,18 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
     @Override
     public List<LawFile> getIncomingLawFiles(SortOrder sortByDate, LimitOffset limitOffset) throws IOException {
         List<File> files = new ArrayList<>(safeListFiles(this.incomingLawDir, false, null));
-        List<LawFile> lawFiles = new ArrayList<>();
-        for (File file : files) {
-            lawFiles.add(new LawFile(file));
-        }
+        List<LawFile> lawFiles = files.stream().map(LawFile::new).collect(toList());
+
         // Use the comparator defined in LawFile to do the sorting
-        if (sortByDate.equals(SortOrder.ASC)) {
-            Collections.sort(lawFiles);
-        }
-        else {
-            Collections.sort(lawFiles, Collections.reverseOrder());
-        }
+        sortLaws(sortByDate, lawFiles);
         lawFiles = LimitOffset.limitList(lawFiles, limitOffset);
         return lawFiles;
     }
 
     @Override
-    public List<LawFile> getPendingLawFiles(LimitOffset limitOffset) {
+    public List<LawFile> getPendingLawFiles(SortOrder sortByDate, LimitOffset limitOffset) {
         List<LawFile> lawFiles = jdbcNamed.query(GET_PENDING_LAW_FILES.getSql(schema(), limitOffset), lawFileRowMapper);
-        Collections.sort(lawFiles);
+        sortLaws(sortByDate, lawFiles);
         return lawFiles;
     }
 
@@ -96,6 +91,19 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
     }
 
     /** --- Internal Methods --- */
+
+    /**
+     * Use the comparator defined in LawFile to do the sorting, using the reverse comparator
+     * if indicated by the sortByDate param.
+     */
+    private void sortLaws(SortOrder sortByDate, List<LawFile> lawFiles) {
+        if (sortByDate.equals(SortOrder.ASC)) {
+            Collections.sort(lawFiles);
+        }
+        else {
+            Collections.sort(lawFiles, Collections.reverseOrder());
+        }
+    }
 
     /**
      * Get file handle from the incoming law directory.

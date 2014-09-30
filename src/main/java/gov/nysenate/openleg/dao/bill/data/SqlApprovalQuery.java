@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.bill;
+package gov.nysenate.openleg.dao.bill.data;
 
 import gov.nysenate.openleg.dao.base.BasicSqlQuery;
 import gov.nysenate.openleg.dao.base.SqlTable;

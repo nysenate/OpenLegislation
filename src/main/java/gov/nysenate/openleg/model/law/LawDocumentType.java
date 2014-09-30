@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.law;
 
-public enum LawDocLevel
+public enum LawDocumentType
 {
     // The chapter is the main container for a body of law.
 
@@ -16,6 +16,7 @@ public enum LawDocLevel
     PART,
     SUB_PART,
     INDEX,
+    CONTENTS,
 
     // The section is the primary level in which law data is contained within.
 

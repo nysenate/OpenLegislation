@@ -46,7 +46,7 @@ public class ManagedLawProcessService implements LawProcessService
     /** {@inheritDoc} */
     @Override
     public List<LawFile> getPendingLawFiles(LimitOffset limitOffset) {
-        return lawFileDao.getPendingLawFiles(limitOffset);
+        return lawFileDao.getPendingLawFiles(SortOrder.ASC, limitOffset);
     }
 
     /** {@inheritDoc} */
@@ -54,10 +54,11 @@ public class ManagedLawProcessService implements LawProcessService
     public void processLawFiles(List<LawFile> lawFiles) {
         for (LawFile lawFile : lawFiles) {
             // Process the law file
+            lawProcessor.process(lawFile);
             lawFile.setProcessedCount(lawFile.getProcessedCount() + 1);
             lawFile.setPendingProcessing(false);
             lawFile.setProcessedDateTime(LocalDateTime.now());
-            lawFileDao.updateLawFile(lawFile);
+            //lawFileDao.updateLawFile(lawFile);
         }
     }
 

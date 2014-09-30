@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.service.bill.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.bill.BillDao;
+import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;

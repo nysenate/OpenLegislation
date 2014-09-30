@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.bill;
+package gov.nysenate.openleg.dao.bill.search;
 
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.*;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
-import static gov.nysenate.openleg.dao.bill.SqlBillSearchQuery.*;
 import static gov.nysenate.openleg.service.bill.search.BillSearchField.*;
 
 /**
@@ -60,11 +59,15 @@ public class SqlBillSearchDao extends SqlBaseDao implements BillSearchDao
     public SearchResults<BillId> searchAll(String query, LimitOffset limOff) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("query", query));
         OrderBy orderByRank = new OrderBy("rank", SortOrder.DESC);
+
+        // Get a count of the matches
         Integer resultCount = jdbcNamed.queryForObject(
-                COUNT_GLOBAL_BASE_BILL.getSql(schema(), searchSchema()), params, Integer.class);
+                SqlBillSearchQuery.COUNT_GLOBAL_BASE_BILL.getSql(schema(), searchSchema()), params, Integer.class);
+
+        // If there were matches, return a collection of those matches in ranked order
         List<SearchResult<BillId>> resultList = new ArrayList<>();
         if (resultCount > 0) {
-            resultList = jdbcNamed.query(SEARCH_GLOBAL_BASE_BILL.getSql(schema(), searchSchema(), orderByRank, limOff), params,
+            resultList = jdbcNamed.query(SqlBillSearchQuery.SEARCH_GLOBAL_BASE_BILL.getSql(schema(), searchSchema(), orderByRank, limOff), params,
                                          billIdSearchResultMapper);
         }
         return new SearchResults<>(resultCount, resultList, limOff);
@@ -91,13 +94,15 @@ public class SqlBillSearchDao extends SqlBaseDao implements BillSearchDao
         // Dynamically construct the search query
         Map<String, String> replacementMap = generateQueryMap(addtlSearchTables, columnQueries);
 
-        String advSearchCount = StrSubstitutor.replace(COUNT_ADVANCED_BASE_BILL.getSql(), replacementMap);
+        // Query for the number of matches
+        String advSearchCount = StrSubstitutor.replace(SqlBillSearchQuery.COUNT_ADVANCED_BASE_BILL.getSql(), replacementMap);
         Integer resultCount = jdbc.queryForObject(SqlQueryUtils.getSqlWithSchema(advSearchCount, schema(), searchSchema()),
             columnQueries.values().toArray(), Integer.class);
 
+        // If there were matches, return a collection of those matches in ranked order
         List<SearchResult<BillId>> resultList = new ArrayList<>();
         if (resultCount > 0) {
-            String advancedSearch = StrSubstitutor.replace(SEARCH_ADVANCED_BASE_BILL.getSql(), replacementMap);
+            String advancedSearch = StrSubstitutor.replace(SqlBillSearchQuery.SEARCH_ADVANCED_BASE_BILL.getSql(), replacementMap);
             OrderBy orderBy = new OrderBy("rank", SortOrder.DESC);
             resultList = jdbc.query(SqlQueryUtils.getSqlWithSchema(advancedSearch, schema(), searchSchema(), orderBy, limOff),
                     columnQueries.values().toArray(), billIdSearchResultMapper);
