@@ -26,6 +26,9 @@ public class RemoveAmendment extends BaseScript
         Options options = new Options();
         options.addOption("y", true, "Year of bill session");
         options.addOption("b", true, "Bill id");
+
+        // Use -r option if the amendment your removing was restored to a previous version.
+        options.addOption("r", false, "Was this restored to a previous version?");
         return options;
     }
 
@@ -34,27 +37,22 @@ public class RemoveAmendment extends BaseScript
         Storage storage = Application.getStorage();
         String billId = opts.getOptionValue("b");
         int sessionYear = Integer.valueOf(opts.getOptionValue("y"));
+        boolean wasRestored = opts.hasOption("r"); // true if amendment was restored to a previous version.
+
+        System.out.println("was restored? = " + String.valueOf(wasRestored));
 
         Bill bill = storage.getBill(billId, sessionYear);
-        List<String> amendments = bill.getAmendments();
-        if (amendments.size() > 0) {
-            String newActiveBill = amendments.get(amendments.size() - 1);
+        removeAmendmentFromOtherVersions(storage, bill);
 
-            // Remove all references to the unpublished bill from other versions.
-            for (String versionKey : bill.getAmendments()) {
-                Bill billVersion = storage.getBill(versionKey);
-                billVersion.removeAmendment(bill.getBillId());
-                if (bill.isActive() && versionKey.equals(newActiveBill)) {
-                    billVersion.setActive(true);
-                }
-                storage.set(billVersion);
-                ChangeLogger.record(storage.key(billVersion), storage);
-            }
-        }
         // Deactivate ourselves.
         bill.setActive(false);
         storage.set(bill);
-        if (!bill.isBrandNew()) {
+
+        if (wasRestored) {
+            ChangeLogger.record(storage.key(bill), storage);
+        }
+        else {
+            bill.setPublishDate(null); // un publish.
             ChangeLogger.delete(storage.key(bill), storage);
         }
 
@@ -66,10 +64,31 @@ public class RemoveAmendment extends BaseScript
         services.add(new Varnish("127.0.0.1", 80));
 
         DataProcessor process = new DataProcessor();
-        process.push(Application.getStorage(), ChangeLogger.getEntries(), services);
+        process.push(storage, ChangeLogger.getEntries(), services);
 
         // Add the bill to the unpublished bill list
         UnpublishListManager unpublishListManager = new UnpublishListManager();
         unpublishListManager.addUnpublishedBill(billId + '-' + sessionYear);
+    }
+
+    private void removeAmendmentFromOtherVersions(Storage storage, Bill bill) {
+        List<String> amendments = bill.getAmendments();
+        if (amendments.size() > 0) {
+            String newActiveBill = amendments.get(amendments.size() - 1);
+
+            // Remove all references to the unpublished bill from other versions.
+            for (String versionKey : bill.getAmendments()) {
+                Bill billVersion = storage.getBill(versionKey);
+                billVersion.removeAmendment(bill.getBillId());
+                System.out.println("versionKey = :" + versionKey);
+                System.out.println("removingAmendment = :" + bill.getBillId());
+
+                if (bill.isActive() && versionKey.equals(newActiveBill)) {
+                    billVersion.setActive(true);
+                }
+                storage.set(billVersion);
+                ChangeLogger.record(storage.key(billVersion), storage);
+            }
+        }
     }
 }
