@@ -31,6 +31,16 @@ jQuery(function($) {
 });
 </script>
 
+<%!
+    public boolean isErrorObservation(Report report, ReportObservation obs) {
+        for (ReportError closedError : report.getClosedErrors()) {
+            if (obs.getErrorId() == closedError.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+%>
 <style>
 
 .clicky {
@@ -126,18 +136,35 @@ th, .title-cell {
     	         int sponsorTotal = 0;
     	         int cosponsorTotal = 0;
     	         int pagesTotal = 0;
-    	         int amendmentsTotal = 0;
-    	         for (ReportObservation error : report.getObservations()) {
-    	             switch(ReportError.FIELD.valueOf(error.getField())) {
-    	             case BILL_SUMMARY: summaryTotal++; break;
-    	             case BILL_TITLE: titleTotal++; break;
-    	             case BILL_ACTION: actionTotal++; break;
-    	             case BILL_SPONSOR: sponsorTotal++; break;
-    	             case BILL_COSPONSOR: cosponsorTotal++; break;
-    	             case BILL_TEXT_PAGE: pagesTotal++; break;
-    	             case BILL_AMENDMENT: amendmentsTotal++; break;
-    	             }
-    	         }
+                 int amendmentsTotal = 0;
+                 for (ReportObservation error : report.getObservations()) {
+                     if (!isErrorObservation(report, error)) {
+                         switch (ReportError.FIELD.valueOf(error.getField())) {
+                             case BILL_SUMMARY:
+                                 summaryTotal++;
+                                 break;
+                             case BILL_TITLE:
+                                 titleTotal++;
+                                 break;
+                             case BILL_ACTION:
+                                 actionTotal++;
+                                 break;
+                             case BILL_SPONSOR:
+                                 sponsorTotal++;
+                                 break;
+                             case BILL_COSPONSOR:
+                                 cosponsorTotal++;
+                                 break;
+                             case BILL_TEXT_PAGE:
+                                 pagesTotal++;
+                                 break;
+                             case BILL_AMENDMENT:
+                                 amendmentsTotal++;
+                                 break;
+                         }
+                     }
+
+                 }
 	     %>
             <tr>
 	            <td class="report-column">
