@@ -22,6 +22,10 @@ public enum LawDocumentType
 
     SECTION,
 
+    // For the ones we don't know how to classify
+
+    MISC,
+
     // Granularity beyond this point is not supported by the data source
     // and will have to be derived through some form of language parsing.
 

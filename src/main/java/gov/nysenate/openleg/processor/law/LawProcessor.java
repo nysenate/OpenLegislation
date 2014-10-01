@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.*;
 import gov.nysenate.openleg.service.law.data.LawDataService;
+import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +31,10 @@ public class LawProcessor
         Pattern.compile("\\.\\.SO DOC ((\\w{3})(.{13}))(.{8}) (.{15}) (?:LAWS\\(((?:UN)?CONSOLIDATED)\\))");
 
     /** Pattern used for parsing the location ids to extract the document type and doc type id. */
-    protected static Pattern locationPattern =
-        Pattern.compile("^(ST|SP|A|T|P|S|INDEX)(.*)");
+    protected static Pattern locationPattern = Pattern.compile("^(ST|SP|A|T|P|S|INDEX)(.*)");
+
+    /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
+    protected static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
 
     protected static Map<String, LawDocumentType> lawLevelCodes = new HashMap<>();
     static {
@@ -61,6 +64,9 @@ public class LawProcessor
             if (isInitial) {
                 processInitialLaws(lawFile, lawBlocks);
             }
+            else {
+                processLawUpdates(lawFile, lawBlocks);
+            }
         }
         catch (IOException e) {
             logger.error("Failed to ", e);
@@ -82,6 +88,7 @@ public class LawProcessor
 
         Stack<LawTreeNode> parentStack = new Stack<>();
         LawTreeNode currParent = null;
+        int sequenceNo = 0;
 
         for (LawBlock block : lawBlocks) {
             LawChapter chapter = null;
@@ -92,31 +99,43 @@ public class LawProcessor
                 logger.warn("Unmapped law chapter {}", block.getLawId());
             }
 
-//            if (chapter != null && (chapter.getType().equals(LawType.MISC) || chapter.getType().equals(LawType.RULES)))
-//                return;
-
             logger.info("Processing block {}", block.getDocumentId());
-            LawDocument lawDoc = new LawDocument();
-            lawDoc.setDocumentId(block.getDocumentId());
-            lawDoc.setLawId(block.getLawId());
-            lawDoc.setLocationId(block.getLocationId());
-            lawDoc.setText(block.getText().toString());
+            LawDocument lawDoc = new LawDocument(block);
             lawDoc.setPublishDate(lawFile.getPublishedDate());
 
-            // A block with a new law id indicates the top level document for a consolidated law,
-            // but not necessarily the case for un-consolidated laws.
+            boolean isRootDoc = false;
+
+            // A block with a new law id should indicate the top level document for that law id.
             if (!rootNodeMap.containsKey(block.getLawId())) {
-                logger.info(" Found chapter node {}", block.getDocumentId());
-                lawDoc.setDocType(LawDocumentType.CHAPTER);
-                lawDoc.setDocTypeId(block.getLocationId().replaceAll("-CH", ""));
-                LawTreeNode chapterNode = new LawTreeNode(lawDoc);
+                logger.debug("Chapter node {}", block.getDocumentId());
+                LawDocument chapterDoc;
+                // Consolidated laws should typically start with a -CH document header, but unconsolidated laws have
+                // no such guarantee. We can assume that this document is a chapter node if it doesn't resemble
+                // either a section 1 or any of the article, title, part, etc headers.
+                if ((!block.getLocationId().equals("1") && !locationPattern.matcher(block.getLocationId()).matches()) ||
+                      specialChapterPattern.matcher(block.getLocationId()).matches()) {
+                    lawDoc.setDocType(LawDocumentType.CHAPTER);
+                    lawDoc.setDocTypeId(block.getLocationId().replaceFirst("-CH", ""));
+                    chapterDoc = lawDoc;
+                    isRootDoc = true;
+                }
+                // Otherwise we have to create a dummy chapter node and process the current document as a child of it.
+                else {
+                    chapterDoc = createDummyChapter(lawFile, block);
+                }
+
+                sequenceNo = 0;
+                LawTreeNode chapterNode = new LawTreeNode(chapterDoc, ++sequenceNo);
                 rootNodeMap.put(block.getLawId(), chapterNode);
                 lawDocMap.put(block.getDocumentId(), lawDoc);
                 parentStack.push(chapterNode);
                 currParent = chapterNode;
-                logger.info(" Chapter node doc type id: {}", lawDoc.getDocTypeId());
+                logger.debug("Chapter node doc type id: {}", chapterDoc.getDocTypeId());
+
+                //lawDataService.saveLawDocument(lawFile, chapterDoc);
             }
-            else {
+
+            if (!isRootDoc) {
                 // If the location id starts with a number, we'll assume it's a section and add it as a child
                 // of the current parent node.
                 if (Character.isDigit(block.getLocationId().charAt(0))) {
@@ -127,7 +146,7 @@ public class LawProcessor
                     if (currParent == null) {
                         throw new LawParseException("Received a section document before an initial chapter document!");
                     }
-                    currParent.addChild(new LawTreeNode(lawDoc));
+                    currParent.addChild(new LawTreeNode(lawDoc, ++sequenceNo));
                 }
                 // Otherwise determine the current parent node by comparing the location ids, popping the parent node
                 // stack until we have matching prefixes or we arrive at a chapter (root) node.
@@ -151,30 +170,59 @@ public class LawProcessor
                     if (locMatcher.matches()) {
                         lawDoc.setDocType(lawLevelCodes.get(locMatcher.group(1)));
                         lawDoc.setDocTypeId(locMatcher.group(2));
-                        lawDocMap.put(block.getDocumentId(), lawDoc);
-                        logger.info(" Location id for {} reduced to {}, doc type: {}, type id {} with parent {}",
-                                block.getLocationId(), locationId, lawDoc.getDocType(), lawDoc.getDocTypeId(), currParent.getDocumentId());
-                        LawTreeNode node = new LawTreeNode(lawDoc);
-                        currParent.addChild(node);
-                        parentStack.push(node);
-                        currParent = node;
                     }
-                    // Throw a meaningful exception because we should be able to parse out the locations.
                     else {
-                        throw new LawParseException("Failed to parse the following location " + locationId + " for " +
-                                "document id: " + block.getDocumentId() + " in file: " + lawFile.getFileName());
+                        logger.warn("Failed to parse the following location {} in file {}",
+                            block.getDocumentId(), lawFile.getFileName());
+                        lawDoc.setDocType(LawDocumentType.MISC);
+                        lawDoc.setDocTypeId(block.getLocationId());
                     }
+                    lawDocMap.put(block.getDocumentId(), lawDoc);
+                    logger.debug(" Location id for {} reduced to {}, doc type: {}, type id {} with parent {}",
+                            block.getLocationId(), locationId, lawDoc.getDocType(), lawDoc.getDocTypeId(), currParent.getDocumentId());
+                    LawTreeNode node = new LawTreeNode(lawDoc, ++sequenceNo);
+                    currParent.addChild(node);
+                    parentStack.push(node);
+                    currParent = node;
                 }
-            }
 
-            lawDataService.saveLawDocument(lawFile, lawDoc);
+                //lawDataService.saveLawDocument(lawFile, lawDoc);
+            }
         }
+
+        rootNodeMap.values().forEach(n -> logger.info(n.printTree()));
+        System.exit(0);
+    }
+
+    private void processLawUpdates(LawFile lawFile, List<LawBlock> lawBlocks) {
+
     }
 
     /**
-     *
+     * Create out own Chapter law doc to serve as the root document in the event that we don't receive a top level
+     * doc from the dumps. This is common for unconsolidated laws.
      *
      * @param lawFile LawFile
+     * @param block LawBlock
+     */
+    protected LawDocument createDummyChapter(LawFile lawFile, LawBlock block) {
+        LawDocument dummyParent = new LawDocument();
+        dummyParent.setLawId(block.getLawId());
+        dummyParent.setDocumentId(block.getLawId() + "-ROOT");
+        dummyParent.setLocationId("-ROOT");
+        dummyParent.setDocType(LawDocumentType.CHAPTER);
+        dummyParent.setDocTypeId("ROOT");
+        dummyParent.setPublishDate(lawFile.getPublishedDate());
+        dummyParent.setText("");
+        return dummyParent;
+    }
+
+    /**
+     * Extracts a collection of LawBlocks from the given LawFile. Each block is represents all the meta data and
+     * text for each document section in the law file (delineated by the ..SO DOC header). The LawBlock is just
+     * a helper object that should be used to construct LawDocuments.
+     *
+     * @param lawFile LawFile - The LawFile to extract the blocks from.
      * @return List<ListBlock>
      * @throws IOException
      */

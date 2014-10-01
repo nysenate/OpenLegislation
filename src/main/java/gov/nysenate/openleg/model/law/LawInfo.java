@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.law;
 
+import gov.nysenate.openleg.processor.law.LawBlock;
+
 import java.time.LocalDate;
 
 public class LawInfo
@@ -40,6 +42,19 @@ public class LawInfo
         this.docType = docType;
         this.docTypeId = docTypeId;
         this.publishDate = publishDate;
+    }
+
+    public LawInfo(LawBlock lawBlock) {
+        this.setDocumentId(lawBlock.getDocumentId());
+        this.setLawId(lawBlock.getLawId());
+        this.setLocationId(lawBlock.getLocationId());
+    }
+
+    /** --- Overrides --- */
+
+    @Override
+    public String toString() {
+        return documentId + " (" + docType + ") " + publishDate;
     }
 
     /** --- Basic Getters/Setters --- */

@@ -64,6 +64,7 @@ public enum SqlTable
 
     LAW_FILE                     ("law_file"),
     LAW_DOCUMENT                 ("law_document"),
+    LAW_TREE                     ("law_tree"),
 
     MEMBER                       ("member"),
     PERSON                       ("person"),

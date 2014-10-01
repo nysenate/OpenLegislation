@@ -40,6 +40,12 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void updateLawTree(LawFile lawFile, LawTree lawTree) {
+
+    }
+
     /** --- Param Source Methods --- */
 
     private MapSqlParameterSource getLawDocumentParams(LawFile lawFile, LawDocument lawDocument) {

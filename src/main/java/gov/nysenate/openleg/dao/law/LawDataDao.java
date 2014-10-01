@@ -7,6 +7,9 @@ import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDate;
 
+/**
+ * Data interface to retrieve and persist laws documents and their associated document trees.
+ */
 public interface LawDataDao
 {
     /**
@@ -34,7 +37,7 @@ public interface LawDataDao
      * @return LawDocument
      * @throws DataAccessException - If there was an error while trying to retrieve the law document.
      */
-    public LawDocument getLawDocument(String documentId, LocalDate endPublishDate);
+    public LawDocument getLawDocument(String documentId, LocalDate endPublishDate) throws DataAccessException;
 
     /**
      * Updates or inserts a LawDocument into the database, using the document id and published date as the
@@ -45,4 +48,12 @@ public interface LawDataDao
      */
     public void updateLawDocument(LawFile lawFile, LawDocument lawDocument);
 
+    /**
+     * Updates or inserts the tree structure for the laws via the given LawTree. The law id and the published date
+     * in the LawTree will be used as the unique identifiers for the tree.
+     *
+     * @param lawFile LawFile - The law file source that triggered the update.
+     * @param lawTree LawTree - The law tree to persist.
+     */
+    public void updateLawTree(LawFile lawFile, LawTree lawTree);
 }

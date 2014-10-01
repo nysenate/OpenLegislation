@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.law;
 
+import gov.nysenate.openleg.processor.law.LawBlock;
+
 public class LawDocument extends LawInfo
 {
     protected String text;
@@ -7,6 +9,11 @@ public class LawDocument extends LawInfo
     /** --- Constructors --- */
 
     public LawDocument() {}
+
+    public LawDocument(LawBlock lawBlock) {
+        super(lawBlock);
+        this.setText(lawBlock.getText().toString());
+    }
 
     /** --- Basic Getters/Setters --- */
 
