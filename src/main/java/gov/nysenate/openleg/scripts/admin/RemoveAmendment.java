@@ -27,8 +27,9 @@ public class RemoveAmendment extends BaseScript
         options.addOption("y", true, "Year of bill session");
         options.addOption("b", true, "Bill id");
 
-        // Use -r option if the amendment your removing was restored to a previous version.
-        options.addOption("r", false, "Was this restored to a previous version?");
+        // Not currently used, Removes this bill from the list of amendments in its related bills
+        // while not deleting it so it can still be referenced if needed.... Doesn't work with current lucene search implementation.
+//        options.addOption("r", false, "Was this restored to a previous version?");
         return options;
     }
 
@@ -37,9 +38,7 @@ public class RemoveAmendment extends BaseScript
         Storage storage = Application.getStorage();
         String billId = opts.getOptionValue("b");
         int sessionYear = Integer.valueOf(opts.getOptionValue("y"));
-        boolean wasRestored = opts.hasOption("r"); // true if amendment was restored to a previous version.
-
-        System.out.println("was restored? = " + String.valueOf(wasRestored));
+        boolean wasRestored = opts.hasOption("r");
 
         Bill bill = storage.getBill(billId, sessionYear);
         removeAmendmentFromOtherVersions(storage, bill);
@@ -80,8 +79,6 @@ public class RemoveAmendment extends BaseScript
             for (String versionKey : bill.getAmendments()) {
                 Bill billVersion = storage.getBill(versionKey);
                 billVersion.removeAmendment(bill.getBillId());
-                System.out.println("versionKey = :" + versionKey);
-                System.out.println("removingAmendment = :" + bill.getBillId());
 
                 if (bill.isActive() && versionKey.equals(newActiveBill)) {
                     billVersion.setActive(true);

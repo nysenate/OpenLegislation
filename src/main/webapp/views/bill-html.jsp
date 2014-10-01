@@ -6,6 +6,15 @@
             return new ArrayList<T>();
         return list;
     }
+
+    public boolean eventsContainRestoredAmendment(ArrayList<Action> events) {
+        for (Action event : events) {
+            if (event.getText().matches("^AMEND(ED)? BY RESTORING.*") || event.getText().matches("^amend(ed)? by restoring.*")) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     public String formatBillEvent(String bill, String event, String appPath) {
         if(event.matches("(?i).*(amended|print number).*")) {
@@ -250,10 +259,18 @@
 	                <div class="section-list"><ul>
 		                <%
 		                    ArrayList<Action> events = sortBillEvents(rActions);
-		                		                for (Action be : events) {
+                            if (eventsContainRestoredAmendment(events)) {
+                                for (Action be : events) {
+                        %>
+                        <li><%=df.format(be.getDate().getTime())%>: <%=be.getText()%></li>
+                        <% }
+                            }
+                            else {
+		                        for (Action be : events) {
 		                %>
 		                    <li><%=df.format(be.getDate().getTime())%>: <%=formatBillEvent(bill.getBillId(), be.getText(), appPath)%></li>
-		                <% } %>
+		                <% }
+                        }%>
 		            </ul></div>
 	            <% } %>
 
