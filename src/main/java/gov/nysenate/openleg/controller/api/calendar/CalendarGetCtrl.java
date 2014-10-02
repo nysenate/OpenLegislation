@@ -2,7 +2,7 @@ package gov.nysenate.openleg.controller.api.calendar;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.SimpleErrorResponse;
-import gov.nysenate.openleg.client.response.base.ViewListResponse;
+import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.view.calendar.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
@@ -17,6 +17,7 @@ import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
@@ -33,16 +34,14 @@ public class CalendarGetCtrl extends BaseCtrl
     private CalendarDataService calendarDataService;
 
     @RequestMapping(value = "/{year:\\d{4}}")
-    public BaseResponse getCalendarIds(@PathVariable int year,
-                                     @RequestParam(defaultValue = "ASC") String order,
-                                     @RequestParam(defaultValue = "100") int limit,
-                                     @RequestParam(defaultValue = "1") int offset) {
-        SortOrder sortOrder = SortOrder.valueOf(order);
-        LimitOffset limitOffset = new LimitOffset(limit, offset);
+    public BaseResponse getCalendars(@PathVariable int year,
+                                       @RequestParam MultiValueMap<String, String> parameters) {
+        SortOrder sortOrder = getSortOrder(parameters, SortOrder.ASC);
+        LimitOffset limitOffset = getLimitOffset(parameters, LimitOffset.HUNDRED);
         try {
-            return new ViewListResponse<>(
-                    calendarDataService.getCalendarIds(year, sortOrder, limitOffset).stream()
-                            .map(CalendarIdView::new)
+            return ListViewResponse.of(
+                    calendarDataService.getCalendars(year, sortOrder, limitOffset).stream()
+                            .map(SimpleCalendarView::new)
                             .collect(Collectors.toList()),
                     calendarDataService.getCalendarCount(year),
                     limitOffset
@@ -51,19 +50,20 @@ public class CalendarGetCtrl extends BaseCtrl
         catch (CalendarNotFoundEx ex) {
             return new SimpleErrorResponse("No calendars exist under the year: " + year);
         }
+        catch (Exception ex) {
+            return handleRequestException(logger, ex, "get calendars by year");
+        }
     }
 
-    @RequestMapping(value = "/{year:\\d{4}}/activelists")
-    public BaseResponse getActiveListIds(@PathVariable int year,
-                                         @RequestParam(defaultValue = "ASC") String order,
-                                         @RequestParam(defaultValue = "100") int limit,
-                                         @RequestParam(defaultValue = "1") int offset) {
-        SortOrder sortOrder = SortOrder.valueOf(order);
-        LimitOffset limitOffset = new LimitOffset(limit, offset);
+    @RequestMapping(value = "/{year:\\d{4}}/activelist")
+    public BaseResponse getActiveLists(@PathVariable int year,
+                                         @RequestParam MultiValueMap<String, String> parameters) {
+        SortOrder sortOrder = getSortOrder(parameters, SortOrder.ASC);
+        LimitOffset limitOffset = getLimitOffset(parameters, LimitOffset.HUNDRED);
         try {
-            return new ViewListResponse<>(
-                    calendarDataService.getActiveListIds(year, sortOrder, limitOffset).stream()
-                            .map(CalendarActiveListIdView::new)
+            return ListViewResponse.of(
+                    calendarDataService.getActiveLists(year, sortOrder, limitOffset).stream()
+                            .map(SimpleActiveListView::new)
                             .collect(Collectors.toList()),
                     calendarDataService.getActiveListCount(year),
                     limitOffset
@@ -72,19 +72,20 @@ public class CalendarGetCtrl extends BaseCtrl
         catch (CalendarNotFoundEx ex) {
             return new SimpleErrorResponse("No active lists exist under the year: " + year);
         }
+        catch (Exception ex) {
+            return handleRequestException(logger, ex, "get calendar active lists by year");
+        }
     }
 
     @RequestMapping(value = "/{year:\\d{4}}/floor")
-    public BaseResponse getFloorCalendarIds(@PathVariable int year,
-                                            @RequestParam(defaultValue = "ASC") String order,
-                                            @RequestParam(defaultValue = "100") int limit,
-                                            @RequestParam(defaultValue = "1") int offset) {
-        SortOrder sortOrder = SortOrder.valueOf(order);
-        LimitOffset limitOffset = new LimitOffset(limit, offset);
+    public BaseResponse getFloorCalendars(@PathVariable int year,
+                                            @RequestParam MultiValueMap<String, String> parameters) {
+        SortOrder sortOrder = getSortOrder(parameters, SortOrder.ASC);
+        LimitOffset limitOffset = getLimitOffset(parameters, LimitOffset.HUNDRED);
         try {
-            return new ViewListResponse<>(
-                    calendarDataService.getFloorCalendarIds(year, sortOrder, limitOffset).stream()
-                            .map(CalendarSupIdView::new)
+            return ListViewResponse.of(
+                    calendarDataService.getFloorCalendars(year, sortOrder, limitOffset).stream()
+                            .map(SimpleCalendarSupView::new)
                             .collect(Collectors.toList()),
                     calendarDataService.getFloorCalendarCount(year),
                     limitOffset
@@ -93,17 +94,22 @@ public class CalendarGetCtrl extends BaseCtrl
         catch (CalendarNotFoundEx ex) {
             return new SimpleErrorResponse("No floor calendars exist under the year: " + year);
         }
+        catch (Exception ex) {
+            return handleRequestException(logger, ex, "get floor calendars by year");
+        }
     }
 
     @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}")
     public BaseResponse getCalendar(@PathVariable int year, @PathVariable int calNo) {
         try {
             return new ViewObjectResponse<>(
-                    new SimpleCalendarView(
-                            calendarDataService.getCalendar(new CalendarId(calNo, year)) ) );
+                    new CalendarView(calendarDataService.getCalendar(new CalendarId(calNo, year)) ) );
         }
         catch (CalendarNotFoundEx ex) {
             return new SimpleErrorResponse("No calendar exists with the given year and calendar number: " + year + ", " + calNo);
+        }
+        catch (Exception ex) {
+            return handleRequestException(logger, ex, "get calendar");
         }
     }
 
@@ -118,6 +124,9 @@ public class CalendarGetCtrl extends BaseCtrl
             return new SimpleErrorResponse("No active list exists with the given year, calendar number, " +
                     "and sequence number: " + year + ", " + calNo + ", " + sequenceNo);
         }
+        catch (Exception ex) {
+            return handleRequestException(logger, ex, "get calendar active list");
+        }
     }
 
     @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}/{version:[A-z]+}")
@@ -130,6 +139,9 @@ public class CalendarGetCtrl extends BaseCtrl
         catch (CalendarNotFoundEx ex) {
             return new SimpleErrorResponse("No floor calendar exists with the given year, calendar number, " +
                     "and version: " + year + ", " + calNo + ", " + version);
+        }
+        catch (Exception ex) {
+            return handleRequestException(logger, ex, "get floor calendar");
         }
     }
 }

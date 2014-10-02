@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.client.view.spotcheck;
 
-import gov.nysenate.openleg.client.view.base.ViewList;
+import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckPriorMismatch;
@@ -18,7 +18,7 @@ public class MismatchView implements ViewObject
     protected String observedData;
     protected String notes;
     protected LinkedList<StringDiffer.Diff> diff;
-    protected ViewList<PriorMismatchView> prior;
+    protected ListView<PriorMismatchView> prior;
 
     public MismatchView(SpotCheckMismatch mismatch, List<SpotCheckPriorMismatch> priorMismatches) {
         if (mismatch != null) {
@@ -28,10 +28,10 @@ public class MismatchView implements ViewObject
             this.observedData = mismatch.getObservedData();
             this.notes = mismatch.getNotes();
             this.diff = mismatch.getDiff(true);
-            this.prior = new ViewList<>(
-                priorMismatches.stream().map(pm -> new PriorMismatchView(pm))
-                               .sorted((a,b) -> b.getReportId().compareTo(a.getReportId()))
-                               .collect(Collectors.toList()));
+            this.prior = ListView.of(
+                    priorMismatches.stream().map(pm -> new PriorMismatchView(pm))
+                            .sorted((a, b) -> b.getReportId().compareTo(a.getReportId()))
+                            .collect(Collectors.toList()));
         }
     }
 
@@ -59,9 +59,12 @@ public class MismatchView implements ViewObject
         return notes;
     }
 
-    public ViewList<PriorMismatchView> getPrior() {
+    public ListView<PriorMismatchView> getPrior() {
         return prior;
     }
 
-
+    @Override
+    public String getViewType() {
+        return "mismatch";
+    }
 }

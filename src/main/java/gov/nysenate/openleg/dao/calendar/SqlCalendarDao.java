@@ -1,9 +1,6 @@
 package gov.nysenate.openleg.dao.calendar;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -24,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static gov.nysenate.openleg.dao.calendar.SqlCalendarQuery.*;
@@ -89,28 +88,39 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
 
     /** {@inheritDoc} */
     @Override
-    public List<CalendarId> getCalendarIds(int year, SortOrder calOrder, LimitOffset limitOffset) {
+    public List<Calendar> getCalendars(int year, SortOrder calOrder, LimitOffset limitOffset) {
         OrderBy orderBy = new OrderBy("calendar_no", calOrder);
         ImmutableParams yearParam = ImmutableParams.from(new MapSqlParameterSource("year", year));
-        return jdbcNamed.query(SELECT_CALENDARS.getSql(schema(), orderBy, limitOffset), yearParam, new CalendarIdRowMapper());
+        List<Calendar> calendars = jdbcNamed.query(SELECT_CALENDARS.getSql(schema(), orderBy, limitOffset), yearParam, new CalendarRowMapper());
+        ListMultimap<CalendarId, CalendarActiveList> activeLists =
+                Multimaps.index(getActiveLists(year, calOrder, LimitOffset.ALL), CalendarActiveList::getCalendarId);
+        ListMultimap<CalendarId, CalendarSupplemental> calSups =
+                Multimaps.index(getFloorCalendars(year, calOrder, LimitOffset.ALL), CalendarSupplemental::getCalendarId);
+        for (Calendar calendar : calendars) {
+            calendar.setActiveListMap(activeLists.get(calendar.getId()).stream()
+                    .collect(Collectors.toMap(CalendarActiveList::getSequenceNo, Function.identity(), (a,b) -> b, TreeMap::new)));
+            calendar.setSupplementalMap(calSups.get(calendar.getId()).stream()
+                    .collect(Collectors.toMap(CalendarSupplemental::getVersion, Function.identity(), (a, b) -> b, TreeMap::new)));
+        }
+        return calendars;
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<CalendarActiveListId> getActiveListIds(int year, SortOrder sortOrder, LimitOffset limitOffset) throws DataAccessException {
+    public List<CalendarActiveList> getActiveLists(int year, SortOrder sortOrder, LimitOffset limitOffset) throws DataAccessException {
         OrderBy orderBy = new OrderBy("calendar_no", sortOrder, "sequence_no", sortOrder);
         ImmutableParams yearParam = ImmutableParams.from(new MapSqlParameterSource("year", year));
         return jdbcNamed.query(SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR.getSql(schema(), orderBy, limitOffset),
-                yearParam, new CalendarActiveListIdRowMapper());
+                yearParam, new CalendarActiveListRowMapper());
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<CalendarSupplementalId> getFloorCalendarIds(int year, SortOrder sortOrder, LimitOffset limitOffset) throws DataAccessException {
+    public List<CalendarSupplemental> getFloorCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) throws DataAccessException {
         OrderBy orderBy = new OrderBy("calendar_no", sortOrder, "sup_version", sortOrder);
         ImmutableParams yearParam = ImmutableParams.from(new MapSqlParameterSource("year", year));
         return jdbcNamed.query(SELECT_CALENDAR_SUPS_BY_YEAR.getSql(schema(), orderBy, limitOffset),
-                yearParam, new CalendarSupIdRowMapper());
+                yearParam, new CalendarSupRowMapper());
     }
 
     /** {@inheritDoc} */

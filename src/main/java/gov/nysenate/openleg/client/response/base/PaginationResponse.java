@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.client.response.base;
 
-public class PaginationResponse extends BaseResponse
+public abstract class PaginationResponse extends BaseResponse
 {
     protected int total;
     protected int offsetStart;

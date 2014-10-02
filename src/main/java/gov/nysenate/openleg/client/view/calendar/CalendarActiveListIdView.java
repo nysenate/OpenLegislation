@@ -14,4 +14,9 @@ public class CalendarActiveListIdView extends CalendarIdView{
     public int getSequenceNumber() {
         return sequenceNumber;
     }
+
+    @Override
+    public String getViewType() {
+        return "calendar-activelist-id";
+    }
 }

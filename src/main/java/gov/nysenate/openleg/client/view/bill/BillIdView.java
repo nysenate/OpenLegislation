@@ -28,4 +28,9 @@ public class BillIdView implements ViewObject
     public int getSession() {
         return session;
     }
+
+    @Override
+    public String getViewType() {
+        return "bill-id";
+    }
 }

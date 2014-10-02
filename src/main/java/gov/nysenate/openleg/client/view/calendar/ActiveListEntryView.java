@@ -1,5 +1,6 @@
-package gov.nysenate.openleg.client.view.bill;
+package gov.nysenate.openleg.client.view.calendar;
 
+import gov.nysenate.openleg.client.view.bill.BillIdView;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
 
@@ -14,5 +15,10 @@ public class ActiveListEntryView extends BillIdView {
 
     public int getBillCalNo() {
         return billCalNo;
+    }
+
+    @Override
+    public String getViewType() {
+        return "calendar-activelist-entry";
     }
 }

@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.client.view.bill;
+package gov.nysenate.openleg.client.view.entity;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.entity.Person;
@@ -45,5 +45,10 @@ public class PersonView implements ViewObject
 
     public String getSuffix() {
         return suffix;
+    }
+
+    @Override
+    public String getViewType() {
+        return "person";
     }
 }

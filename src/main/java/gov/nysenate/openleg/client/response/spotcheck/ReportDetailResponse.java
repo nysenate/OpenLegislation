@@ -12,6 +12,7 @@ public class ReportDetailResponse<ContentKey> extends BaseResponse
         if (report != null) {
             this.details = new ReportDetailView<>(report);
             this.success = true;
+            this.responseType = details.getViewType();
         }
     }
 

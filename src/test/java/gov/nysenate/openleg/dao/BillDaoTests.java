@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.dao;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.bill.BillDao;
+import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import org.junit.Test;

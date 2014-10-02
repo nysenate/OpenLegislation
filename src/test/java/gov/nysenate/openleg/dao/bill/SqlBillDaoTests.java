@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.bill;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.util.OutputUtils;

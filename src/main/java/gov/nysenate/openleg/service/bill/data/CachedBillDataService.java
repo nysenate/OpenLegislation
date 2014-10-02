@@ -95,6 +95,15 @@ public class CachedBillDataService implements BillDataService, CachingService
 
     /** {@inheritDoc} */
     @Override
+    public int getBillCount(SessionYear sessionYear) {
+        if (sessionYear == null) {
+            throw new IllegalArgumentException("SessionYear cannot be null");
+        }
+        return billDao.getBillCount(sessionYear);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     @CacheEvict(value = billDataCache, key = "#bill.getBaseBillId()")
     public void saveBill(Bill bill, SobiFragment fragment) {
         logger.debug("Persisting bill {}", bill);

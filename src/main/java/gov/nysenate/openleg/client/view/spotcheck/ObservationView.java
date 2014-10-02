@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.client.view.spotcheck;
 
-import gov.nysenate.openleg.client.view.base.ViewList;
+import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 
@@ -12,14 +12,14 @@ public class ObservationView<ContentKey> implements ViewObject
     protected LocalDateTime refDateTime;
     protected ContentKey key;
     protected LocalDateTime observedDateTime;
-    protected ViewList<MismatchView> mismatches;
+    protected ListView<MismatchView> mismatches;
 
     public ObservationView(SpotCheckObservation<ContentKey> observation) {
         if (observation != null) {
             this.refDateTime = observation.getReferenceId().getRefActiveDateTime();
             this.key = observation.getKey();
             this.observedDateTime = observation.getObservedDateTime();
-            this.mismatches = new ViewList<>(
+            this.mismatches = ListView.of(
                 observation.getMismatches().values().stream()
                     .map(m -> new MismatchView(m, observation.getPriorMismatches().get(m.getMismatchType())))
                     .collect(Collectors.toList()));
@@ -38,7 +38,12 @@ public class ObservationView<ContentKey> implements ViewObject
         return observedDateTime;
     }
 
-    public ViewList<MismatchView> getMismatches() {
+    public ListView<MismatchView> getMismatches() {
         return mismatches;
+    }
+
+    @Override
+    public String getViewType() {
+        return "observation";
     }
 }

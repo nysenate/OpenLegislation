@@ -25,12 +25,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** Starting with the terms "An act", it's a short description about the topic of the bill. */
     protected String title = "";
 
-    /** The section of the law the bill affects. e.g (Vehicle And Traffic) */
-    protected String lawSection = "";
-
-    /** The law code of the bill. e.g (Amd §1373, Pub Health L) */
-    protected String law = "";
-
     /** An overview of a bill that list's specific sections of NYS law to be amended by the bill. */
     protected String summary = "";
 
@@ -68,7 +62,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected Set<BillId> previousVersions = new HashSet<>();
 
     /** Designates the type of program bill, if applicable. */
-    protected String programInfo = "";
+    protected ProgramInfo programInfo;
 
     /** --- Constructors --- */
 
@@ -107,6 +101,20 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     /** --- Functional Getters/Setters --- */
+
+    /**
+     * Return a bill info object for this bill
+     */
+    public BillInfo getBillInfo() {
+        BillInfo billInfo = new BillInfo();
+        billInfo.setBillId(this.baseBillId);
+        billInfo.setStatus(this.status);
+        billInfo.setActiveVersion(this.activeVersion);
+        billInfo.setSponsor(this.sponsor);
+        billInfo.setTitle(this.title);
+        billInfo.setSummary(this.summary);
+        return billInfo;
+    }
 
     /**
      * Delegate to retrieve print no.
@@ -303,22 +311,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.title = title;
     }
 
-    public String getLawSection() {
-        return lawSection;
-    }
-
-    public void setLawSection(String lawSection) {
-        this.lawSection = lawSection;
-    }
-
-    public String getLaw() {
-        return law;
-    }
-
-    public void setLaw(String law) {
-        this.law = law;
-    }
-
     public String getSummary() {
         return summary;
     }
@@ -407,11 +399,11 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.additionalSponsors = additionalSponsors;
     }
 
-    public String getProgramInfo() {
+    public ProgramInfo getProgramInfo() {
         return programInfo;
     }
 
-    public void setProgramInfo(String programInfo) {
+    public void setProgramInfo(ProgramInfo programInfo) {
         this.programInfo = programInfo;
     }
 }

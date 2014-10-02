@@ -10,6 +10,7 @@ public class ViewObjectResponse<ViewType extends ViewObject> extends BaseRespons
         this.result = result;
         if(result != null) {
             success = true;
+            responseType = result.getViewType();
         }
     }
 

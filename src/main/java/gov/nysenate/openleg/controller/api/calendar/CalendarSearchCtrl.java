@@ -2,20 +2,23 @@ package gov.nysenate.openleg.controller.api.calendar;
 
 import com.google.common.collect.*;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleErrorResponse;
-import gov.nysenate.openleg.client.response.base.ViewListResponse;
-import gov.nysenate.openleg.client.view.calendar.CalendarActiveListIdView;
-import gov.nysenate.openleg.client.view.calendar.CalendarIdView;
-import gov.nysenate.openleg.client.view.calendar.CalendarSupIdView;
+import gov.nysenate.openleg.client.view.calendar.SimpleActiveListView;
+import gov.nysenate.openleg.client.view.calendar.SimpleCalendarSupView;
+import gov.nysenate.openleg.client.view.calendar.SimpleCalendarView;
+import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.service.base.InvalidParametersSearchException;
 import gov.nysenate.openleg.service.base.NoResultsSearchException;
+import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.search.CalendarSearchParameters;
 import gov.nysenate.openleg.service.calendar.search.CalendarSearchService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,21 +34,26 @@ import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/calendars", method = RequestMethod.GET)
-public class CalendarSearchCtrl {
+public class CalendarSearchCtrl extends BaseCtrl{
+
+    private static final Logger logger = LoggerFactory.getLogger(CalendarSearchCtrl.class);
 
     @Autowired
     private CalendarSearchService calendarSearchService;
+
+    @Autowired
+    private CalendarDataService calendarDataService;
 
     @RequestMapping(value = "/search")
     public BaseResponse searchAllCalendars(@RequestParam MultiValueMap<String, String> parameters) {
         CalendarSearchParameters searchParams = getSearchParameters(parameters);
         searchParams.setCalendarType(CalendarType.ALL);
         SortOrder sortOrder = getSortOrder(parameters, SortOrder.ASC);
-        LimitOffset limitOffset = getLimitOffset(parameters, new LimitOffset(100,1));
+        LimitOffset limitOffset = getLimitOffset(parameters, LimitOffset.HUNDRED);
         try {
-            return new ViewListResponse<>(
+            return ListViewResponse.of(
                     calendarSearchService.searchForCalendars(searchParams, sortOrder, limitOffset).stream()
-                            .map(CalendarIdView::new)
+                            .map(calId -> new SimpleCalendarView(calendarDataService.getCalendar(calId)))
                             .collect(Collectors.toList()),
                     calendarSearchService.getCalenderSearchResultCount(searchParams),
                     limitOffset
@@ -56,6 +64,9 @@ public class CalendarSearchCtrl {
         }
         catch (NoResultsSearchException ex) {
             return new SimpleErrorResponse("Received no results for search query");
+        }
+        catch (Exception ex) {
+            return handleRequestException(logger, ex, "calendar search");
         }
     }
 
@@ -64,11 +75,11 @@ public class CalendarSearchCtrl {
         CalendarSearchParameters searchParams = getSearchParameters(parameters);
         searchParams.setCalendarType(CalendarType.ACTIVE_LIST);
         SortOrder sortOrder = getSortOrder(parameters, SortOrder.ASC);
-        LimitOffset limitOffset = getLimitOffset(parameters, new LimitOffset(100,1));
+        LimitOffset limitOffset = getLimitOffset(parameters, LimitOffset.HUNDRED);
         try {
-            return new ViewListResponse<>(
+            return ListViewResponse.of(
                     calendarSearchService.searchForActiveLists(searchParams, sortOrder, limitOffset).stream()
-                            .map(CalendarActiveListIdView::new)
+                            .map(alId -> new SimpleActiveListView(calendarDataService.getActiveList(alId)))
                             .collect(Collectors.toList()),
                     calendarSearchService.getCalenderSearchResultCount(searchParams),
                     limitOffset
@@ -79,6 +90,9 @@ public class CalendarSearchCtrl {
         }
         catch (NoResultsSearchException ex) {
             return new SimpleErrorResponse("Received no results for search query");
+        }
+        catch (Exception ex) {
+            return handleRequestException(logger, ex, "calendar active list search");
         }
     }
 
@@ -87,11 +101,11 @@ public class CalendarSearchCtrl {
         CalendarSearchParameters searchParams = getSearchParameters(parameters);
         searchParams.setCalendarType(CalendarType.FLOOR);
         SortOrder sortOrder = getSortOrder(parameters, SortOrder.ASC);
-        LimitOffset limitOffset = getLimitOffset(parameters, new LimitOffset(100,1));
+        LimitOffset limitOffset = getLimitOffset(parameters, LimitOffset.HUNDRED);
         try {
-            return new ViewListResponse<>(
+            return ListViewResponse.of(
                     calendarSearchService.searchForFloorCalendars(searchParams, sortOrder, limitOffset).stream()
-                            .map(CalendarSupIdView::new)
+                            .map(supId -> new SimpleCalendarSupView(calendarDataService.getFloorCalendar(supId)))
                             .collect(Collectors.toList()),
                     calendarSearchService.getCalenderSearchResultCount(searchParams),
                     limitOffset
@@ -103,9 +117,12 @@ public class CalendarSearchCtrl {
         catch (NoResultsSearchException ex) {
             return new SimpleErrorResponse("Received no results for search query");
         }
+        catch (Exception ex) {
+            return handleRequestException(logger, ex, "floor calendar search");
+        }
     }
 
-    public CalendarSearchParameters getSearchParameters(MultiValueMap<String, String> parameters) {
+    private CalendarSearchParameters getSearchParameters(MultiValueMap<String, String> parameters) {
         CalendarSearchParameters searchParams = new CalendarSearchParameters();
         if (parameters.containsKey("year")) {
             searchParams.setYear(Integer.parseInt(parameters.getFirst("year")));
@@ -148,24 +165,5 @@ public class CalendarSearchCtrl {
             searchParams.setSectionCode(sectionCodeMap);
         }
         return searchParams;
-    }
-
-    public SortOrder getSortOrder(MultiValueMap<String, String> parameters, SortOrder defaultSortOrder) {
-        try {
-            return SortOrder.valueOf(parameters.getFirst("order"));
-        }
-        catch (Exception ex) {
-            return defaultSortOrder;
-        }
-    }
-
-    public LimitOffset getLimitOffset(MultiValueMap<String, String> parameters, LimitOffset defaultLimitOffset) {
-        try {
-            return new LimitOffset(Integer.parseInt(parameters.getFirst("limit")),
-                                   Integer.parseInt(parameters.getFirst("offset")));
-        }
-        catch (Exception ex) {
-            return defaultLimitOffset;
-        }
     }
 }

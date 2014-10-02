@@ -62,7 +62,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
 
     /** THe format for program info lines. We just care about the text portion. */
-    protected static final Pattern programInfoPattern = Pattern.compile("\\d+\\s+(.+)");
+    protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
 
     /** --- Constructors --- */
 
@@ -99,7 +99,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             try {
                 switch (block.getType()) {
                     case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date); break;
-                    case LAW_SECTION: applyLawSection(data, baseBill, date); break;
+                    case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
                     case TITLE: applyTitle(data, baseBill, date); break;
                     case BILL_EVENT: applyBillActions(data, baseBill, specifiedAmendment); break;
                     case SAME_AS: applySameAs(data, specifiedAmendment); break;
@@ -108,7 +108,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     case MULTI_SPONSOR: applyMultisponsors(data, activeAmendment); break;
                     case PROGRAM_INFO: applyProgramInfo(data, baseBill, date); break;
                     case ACT_CLAUSE: applyActClause(data, specifiedAmendment); break;
-                    case LAW: applyLaw(data, baseBill, date); break;
+                    case LAW: applyLaw(data, baseBill, specifiedAmendment, date); break;
                     case SUMMARY: applySummary(data, baseBill, date); break;
                     case SPONSOR_MEMO:
                     case RESOLUTION_TEXT:
@@ -207,8 +207,8 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *
      * @throws ParseError
      */
-    private void applyLawSection(String data, Bill baseBill, LocalDateTime date) {
-        baseBill.setLawSection(data.trim());
+    private void applyLawSection(String data, Bill baseBill, BillAmendment specifiedAmendment, LocalDateTime date) {
+        specifiedAmendment.setLawSection(data.trim());
         baseBill.setModifiedDateTime(date);
     }
 
@@ -432,16 +432,16 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * Delete  | BDELETE
      * -------------------------------------
      */
-    private void applyLaw(String data, Bill baseBill, LocalDateTime date) {
+    private void applyLaw(String data, Bill baseBill, BillAmendment specifiedAmendment, LocalDateTime date) {
         // This is theoretically not safe because a law line *could* start with DELETE
         // We can't do an exact match because B can be multi-line
         if (data.trim().startsWith("DELETE")) {
-            baseBill.setLaw("");
+            specifiedAmendment.setLaw("");
             baseBill.setSummary("");
             baseBill.setModifiedDateTime(date);
         }
         else {
-            baseBill.setLaw(data.replace("\n", " ").trim());
+            specifiedAmendment.setLaw(data.replace("\n", " ").trim());
         }
         baseBill.setModifiedDateTime(date);
     }
@@ -544,7 +544,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         if (!data.isEmpty()) {
             Matcher programMatcher = programInfoPattern.matcher(data);
             if (programMatcher.find()) {
-                baseBill.setProgramInfo(programMatcher.group(1));
+                baseBill.setProgramInfo(new ProgramInfo(programMatcher.group(2), Integer.parseInt(programMatcher.group(1))));
                 baseBill.setModifiedDateTime(date);
             }
         }

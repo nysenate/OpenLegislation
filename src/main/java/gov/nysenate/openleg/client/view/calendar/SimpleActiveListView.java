@@ -31,4 +31,9 @@ public class SimpleActiveListView extends CalendarActiveListIdView{
     public String getNotes() {
         return notes;
     }
+
+    @Override
+    public String getViewType() {
+        return "calendar-activelist-simple";
+    }
 }

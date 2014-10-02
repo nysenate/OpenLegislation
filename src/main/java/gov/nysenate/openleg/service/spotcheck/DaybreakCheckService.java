@@ -207,7 +207,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      * concatenate our own law and summary and just compare the strings.
      */
     protected void checkBillLawAndSummary(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
-        String billLawSummary = (Strings.nullToEmpty(bill.getLaw()) + " " +
+        String billLawSummary = (Strings.nullToEmpty(bill.getAmendment(bill.getActiveVersion()).getLaw()) + " " +
                                  Strings.nullToEmpty(bill.getSummary())).trim();
         billLawSummary = billLawSummary.replace('§', 'S').replace('¶', 'P');
         String dayBreakLawSummary = daybreakBill.getLawCodeAndSummary();

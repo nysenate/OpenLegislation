@@ -1,6 +1,6 @@
 package gov.nysenate.openleg;
 
-import gov.nysenate.openleg.dao.bill.BillDao;
+import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.service.entity.MemberService;
 import org.apache.commons.lang3.StringUtils;

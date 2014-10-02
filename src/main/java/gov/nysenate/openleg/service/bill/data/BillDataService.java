@@ -44,6 +44,13 @@ public interface BillDataService
     public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limitOffset);
 
     /**
+     * Get the total number of bills for the given session year
+     * @param sessionYear
+     * @return
+     */
+    public int getBillCount(SessionYear sessionYear);
+
+    /**
      * Saves the Bill in the persistence layer. If a new Bill reference is
      * being saved, the appropriate data will be inserted. Otherwise, existing
      * data will be updated with the changed values.

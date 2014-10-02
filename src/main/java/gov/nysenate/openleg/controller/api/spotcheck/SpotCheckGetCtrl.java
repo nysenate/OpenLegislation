@@ -3,7 +3,7 @@ package gov.nysenate.openleg.controller.api.spotcheck;
 import gov.nysenate.openleg.client.response.base.SimpleErrorResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportDetailResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportSummaryResponse;
-import gov.nysenate.openleg.client.view.base.ViewList;
+import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -62,7 +62,7 @@ public class SpotCheckGetCtrl extends BaseCtrl
                     .map(daybreakService::getReport).collect(toList());
         // Construct the client response
         return new ReportSummaryResponse<BaseBillId>(
-            new ViewList<>(reports.stream().map(r -> new ReportInfoView<BaseBillId>(r)).collect(Collectors.toList())),
+            ListView.of(reports.stream().map(r -> new ReportInfoView<BaseBillId>(r)).collect(Collectors.toList())),
             from, to);
     }
 

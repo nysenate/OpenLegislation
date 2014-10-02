@@ -27,6 +27,6 @@ public class SqlFsLawFileDaoTests extends BaseTests
 
     @Test
     public void testGetPendingLawFiles() throws Exception {
-        logger.info("{}", lawDao.getPendingLawFiles(LimitOffset.ALL));
+        logger.info("{}", lawDao.getPendingLawFiles(SortOrder.ASC, LimitOffset.ALL));
     }
 }

@@ -547,11 +547,11 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         public Bill mapRow(ResultSet rs, int rowNum) throws SQLException {
             Bill bill = new Bill(new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
             bill.setTitle(rs.getString("title"));
-            bill.setLawSection(rs.getString("law_section"));
-            bill.setLaw(rs.getString("law_code"));
             bill.setSummary(rs.getString("summary"));
             bill.setActiveVersion(Version.of(rs.getString("active_version")));
-            bill.setProgramInfo(rs.getString("program_info"));
+            if (rs.getString("program_info") != null) {
+                bill.setProgramInfo(new ProgramInfo(rs.getString("program_info"), rs.getInt("program_info_num")));
+            }
             bill.setYear(rs.getInt("active_year"));
             setModPubDatesFromResultSet(bill, rs);
             return bill;
@@ -569,6 +569,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             amend.setFullText(rs.getString("full_text"));
             amend.setStricken(rs.getBoolean("stricken"));
             amend.setUniBill(rs.getBoolean("uni_bill"));
+            amend.setLawSection(rs.getString("law_section"));
+            amend.setLaw(rs.getString("law_code"));
             String currentCommitteeName = rs.getString("current_committee_name");
             if (currentCommitteeName != null) {
                 amend.setCurrentCommittee(
@@ -706,12 +708,11 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(bill, params);
         params.addValue("title", bill.getTitle())
-              .addValue("lawSection", bill.getLawSection())
-              .addValue("lawCode", bill.getLaw())
               .addValue("summary", bill.getSummary())
               .addValue("activeVersion", bill.getActiveVersion().getValue())
               .addValue("activeYear", bill.getYear())
-              .addValue("programInfo", bill.getProgramInfo())
+              .addValue("programInfo", bill.getProgramInfo()!=null ? bill.getProgramInfo().getInfo() : null)
+              .addValue("programInfoNum", bill.getProgramInfo()!=null ? bill.getProgramInfo().getNumber() : null)
               .addValue("status", bill.getStatus() != null ? bill.getStatus().getStatusType().name() : null)
               .addValue("statusDate", bill.getStatus() != null ? toDate(bill.getStatus().getActionDate()) : null);
         addModPubDateParams(bill.getModifiedDateTime(), bill.getPublishedDateTime(), params);
@@ -730,6 +731,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
               .addValue("actClause", amendment.getActClause())
               .addValue("fullText", amendment.getFullText())
               .addValue("stricken", amendment.isStricken())
+              .addValue("lawSection", amendment.getLawSection())
+              .addValue("lawCode", amendment.getLaw())
               .addValue("currentCommitteeName", amendment.getCurrentCommittee() != null ?
                       amendment.getCurrentCommittee().getName() : null)
               .addValue("currentCommitteeAction", amendment.getCurrentCommittee() != null ?

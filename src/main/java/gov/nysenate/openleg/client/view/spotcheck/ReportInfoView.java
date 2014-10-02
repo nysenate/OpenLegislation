@@ -51,4 +51,9 @@ public class ReportInfoView<ContentKey> implements ViewObject
             .filter(e -> !e.getKey().equals(SpotCheckMismatchStatus.RESOLVED))
             .map(e -> e.getValue()).reduce(Long::sum).orElse(0L);
     }
+
+    @Override
+    public String getViewType() {
+        return referenceType + " report-info";
+    }
 }

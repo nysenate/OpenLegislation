@@ -4,6 +4,7 @@ public class SimpleErrorResponse extends BaseResponse
 {
     public SimpleErrorResponse(String message) {
         this.message = message;
+        this.responseType = "error";
     }
 
     @Override

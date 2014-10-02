@@ -1,11 +1,9 @@
 package gov.nysenate.openleg.view;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.client.view.bill.CalendarSupEntryView;
 import gov.nysenate.openleg.client.view.calendar.CalendarSupView;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.CalendarSupplemental;
-import gov.nysenate.openleg.model.calendar.CalendarSupplementalEntry;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import org.junit.Test;

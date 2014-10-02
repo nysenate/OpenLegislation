@@ -31,6 +31,12 @@ public class BillAmendment implements Serializable
      * a law. Usually it's written in more easily understandable language. */
     protected String memo = "";
 
+    /** The section of the law the bill affects. e.g (Vehicle And Traffic) */
+    protected String lawSection = "";
+
+    /** The law code of the bill. e.g (Amd §1373, Pub Health L) */
+    protected String law = "";
+
     /** The AN ACT TO... clause which describes the bill's intent. */
     protected String actClause = "";
 
@@ -194,5 +200,21 @@ public class BillAmendment implements Serializable
 
     public void setUniBill(Boolean uniBill) {
         this.uniBill = uniBill;
+    }
+
+    public String getLawSection() {
+        return lawSection;
+    }
+
+    public void setLawSection(String lawSection) {
+        this.lawSection = lawSection;
+    }
+
+    public String getLaw() {
+        return law;
+    }
+
+    public void setLaw(String law) {
+        this.law = law;
     }
 }

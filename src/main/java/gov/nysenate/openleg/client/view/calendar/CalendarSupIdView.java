@@ -15,4 +15,9 @@ public class CalendarSupIdView extends CalendarIdView {
     public String getVersion() {
         return version;
     }
+
+    @Override
+    public String getViewType() {
+        return "calendar-floor-id";
+    }
 }

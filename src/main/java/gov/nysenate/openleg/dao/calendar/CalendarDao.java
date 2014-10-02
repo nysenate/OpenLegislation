@@ -62,17 +62,17 @@ public interface CalendarDao
     public int getFloorCalendarCount(int year);
 
     /**
-     * Returns a list of all the calendar ids for the given year, sorted by the calendar no.
+     * Returns a list of all the calendars for the given year, sorted by the calendar no.
      *
      * @param year int - The year to retrieve calendar ids for.
      * @param calOrder SortOrder - Order by the calendar no.
      * @param limitOffset
      * @return List<CalendarId>
      */
-    public List<CalendarId> getCalendarIds(int year, SortOrder calOrder, LimitOffset limitOffset);
+    public List<Calendar> getCalendars(int year, SortOrder calOrder, LimitOffset limitOffset);
 
     /**
-     * Returns a list of all the active list ids for the given year, sorted by calendar number and sequence number.
+     * Returns a list of all the active lists for the given year, sorted by calendar number and sequence number.
      *
      * @param year
      * @param sortOrder
@@ -80,7 +80,7 @@ public interface CalendarDao
      * @return
      * @throws DataAccessException
      */
-    public List<CalendarActiveListId> getActiveListIds(int year, SortOrder sortOrder, LimitOffset limitOffset) throws DataAccessException;
+    public List<CalendarActiveList> getActiveLists(int year, SortOrder sortOrder, LimitOffset limitOffset) throws DataAccessException;
 
     /**
      * Returns a list of all the floor calendars for a given year, sorted by calendar number and supplemental id.
@@ -91,7 +91,7 @@ public interface CalendarDao
      * @return
      * @throws DataAccessException
      */
-    public List<CalendarSupplementalId> getFloorCalendarIds(int year, SortOrder sortOrder, LimitOffset limitOffset) throws DataAccessException;
+    public List<CalendarSupplemental> getFloorCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) throws DataAccessException;
 
     /**
      * Updates the calendar or inserts it if it does not yet exist. Associates the

@@ -23,17 +23,17 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     UPDATE_BILL(
         "UPDATE ${schema}." + SqlTable.BILL + "\n" +
-        "SET title = :title, law_section = :lawSection, law_code = :lawCode, summary = :summary, active_version = :activeVersion,\n" +
-        "    active_year = :activeYear, program_info = :programInfo, status = :status, status_date = :statusDate,\n" +
+        "SET title = :title, summary = :summary, active_version = :activeVersion,\n" +
+        "    active_year = :activeYear, program_info = :programInfo, program_info_num = :programInfoNum, status = :status, status_date = :statusDate,\n" +
         "    modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId\n" +
         "WHERE print_no = :printNo AND session_year = :sessionYear"
     ),
     INSERT_BILL(
         "INSERT INTO ${schema}." + SqlTable.BILL + "\n" +
-        "(print_no, session_year, title, law_section, law_code, summary, active_version, active_year, " +
-        " program_info, status, status_date, modified_date_time, published_date_time, last_fragment_id) \n" +
-        "VALUES (:printNo, :sessionYear, :title, :lawSection, :lawCode, :summary, :activeVersion, :activeYear, " +
-        "        :programInfo, :status, :statusDate, :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
+        "(print_no, session_year, title, summary, active_version, active_year, " +
+        " program_info, program_info_num, status, status_date, modified_date_time, published_date_time, last_fragment_id) \n" +
+        "VALUES (:printNo, :sessionYear, :title, :summary, :activeVersion, :activeYear, " +
+        "        :programInfo, :programInfoNum, :status, :statusDate, :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
 
     /** --- Bill Sponsor --- */
@@ -68,15 +68,15 @@ public enum SqlBillQuery implements BasicSqlQuery
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "SET sponsor_memo = :sponsorMemo, act_clause = :actClause, full_text = :fullText, stricken = :stricken, " +
         "    current_committee_name = :currentCommitteeName, current_committee_action = :currentCommitteeAction, " +
-        "    uni_bill = :uniBill, last_fragment_id = :lastFragmentId \n" +
+        "    uni_bill = :uniBill, last_fragment_id = :lastFragmentId, law_section = :lawSection, law_code = :lawCode\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND version = :version"
     ),
     INSERT_BILL_AMENDMENT(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "(bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, stricken, " +
-        " current_committee_name, current_committee_action, uni_bill, last_fragment_id)\n" +
+        " current_committee_name, current_committee_action, uni_bill, last_fragment_id, law_section, law_code)\n" +
         "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, " +
-        "       :currentCommitteeName, :currentCommitteeAction, :uniBill, :lastFragmentId)"
+        "       :currentCommitteeName, :currentCommitteeAction, :uniBill, :lastFragmentId, :lawSection, :lawCode)"
     ),
 
     /** --- Bill Amendment Publish Status --- */

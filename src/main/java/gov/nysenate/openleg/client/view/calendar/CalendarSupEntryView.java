@@ -1,5 +1,6 @@
-package gov.nysenate.openleg.client.view.bill;
+package gov.nysenate.openleg.client.view.calendar;
 
+import gov.nysenate.openleg.client.view.bill.BillIdView;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalEntry;
 
@@ -36,5 +37,10 @@ public class CalendarSupEntryView extends BillIdView {
 
     public boolean isBillHigh() {
         return billHigh;
+    }
+
+    @Override
+    public String getViewType() {
+        return "calendar-floor-entry";
     }
 }

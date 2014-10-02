@@ -24,4 +24,9 @@ public class SimpleCalendarSupView extends CalendarSupIdView{
     public LocalDateTime getReleaseDateTime() {
         return releaseDateTime;
     }
+
+    @Override
+    public String getViewType() {
+        return "calendar-floor-simple";
+    }
 }

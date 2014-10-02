@@ -1,20 +1,25 @@
 package gov.nysenate.openleg.controller.api.bill;
 
-import gov.nysenate.openleg.client.view.bill.SimpleBillView;
+import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.ListViewResponse;
+import gov.nysenate.openleg.client.response.base.SimpleErrorResponse;
+import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
+import gov.nysenate.openleg.client.view.bill.BillInfoView;
+import gov.nysenate.openleg.client.view.bill.BillView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillInfo;
+import gov.nysenate.openleg.model.bill.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
@@ -29,17 +34,35 @@ public class BillGetCtrl extends BaseCtrl
     private BillDataService billDataService;
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}")
-    public List<BillInfo> getBills(@PathVariable int sessionYear,
-                                         @RequestParam(defaultValue = "50") int limit,
-                                         @RequestParam(defaultValue = "1") int offset) {
-        LimitOffset limOff = new LimitOffset(limit, offset);
-        return billDataService.getBillIds(SessionYear.of(sessionYear), limOff).parallelStream()
-            .map(billId -> billDataService.getBillInfo(billId))
-            .collect(Collectors.toList());
+    public BaseResponse getBills(@PathVariable int sessionYear,
+                                 @RequestParam MultiValueMap<String, String> parameters) {
+        LimitOffset limOff = getLimitOffset(parameters, LimitOffset.FIFTY);
+        try {
+            return ListViewResponse.of(
+                    billDataService.getBillIds(SessionYear.of(sessionYear), limOff).parallelStream()
+                        .map(billId -> new BillInfoView(billDataService.getBillInfo(billId)))
+                        .collect(Collectors.toList()),
+                    billDataService.getBillCount(SessionYear.of(sessionYear)),
+                    limOff
+            );
+        }
+        catch (Exception ex) {
+            return handleRequestException(logger, ex, "get bills by session");
+        }
     }
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
-    public Bill getBill(@PathVariable String sessionYear, @PathVariable String printNo, HttpServletRequest req) {
-        return billDataService.getBill(new BaseBillId(printNo, Integer.parseInt(sessionYear)));
+    public BaseResponse getBill(@PathVariable String sessionYear, @PathVariable String printNo) {
+        try {
+            return new ViewObjectResponse<>( new BillView(
+                    billDataService.getBill(new BaseBillId(printNo, Integer.parseInt(sessionYear)))));
+        }
+        catch (BillNotFoundEx ex) {
+            return new SimpleErrorResponse(
+                    String.format("Could find a bill with printNo: %s for session year: %s", printNo, sessionYear));
+        }
+        catch (Exception ex) {
+            return handleRequestException(logger, ex, "get bill");
+        }
     }
 }

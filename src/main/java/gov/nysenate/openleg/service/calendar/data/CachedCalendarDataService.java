@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -129,9 +128,9 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
 
     @Override
     @Cacheable(value = calendarDataCache, key = "#root.methodName + '-' + #year + '-' + #sortOrder + '-' + #limitOffset")
-    public List<CalendarId> getCalendarIds(int year, SortOrder sortOrder, LimitOffset limitOffset) throws CalendarNotFoundEx {
+    public List<Calendar> getCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) throws CalendarNotFoundEx {
         try {
-            return calendarDao.getCalendarIds(year, sortOrder, limitOffset);
+            return calendarDao.getCalendars(year, sortOrder, limitOffset);
         }
         catch (DataAccessException ex) {
             logger.warn("Error retrieving calendar ids for " + year + ":\n" + ex.getMessage());
@@ -141,9 +140,9 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
 
     @Override
     @Cacheable(value = calendarDataCache, key = "#root.methodName + '-' + #year + '-' + #sortOrder + '-' + #limitOffset")
-    public List<CalendarActiveListId> getActiveListIds(int year, SortOrder sortOrder, LimitOffset limitOffset) throws CalendarNotFoundEx {
+    public List<CalendarActiveList> getActiveLists(int year, SortOrder sortOrder, LimitOffset limitOffset) throws CalendarNotFoundEx {
         try {
-            return calendarDao.getActiveListIds(year, sortOrder, limitOffset);
+            return calendarDao.getActiveLists(year, sortOrder, limitOffset);
         }
         catch (DataAccessException ex) {
             logger.warn("Error retrieving active list ids for " + year + ":\n" + ex.getMessage());
@@ -153,9 +152,9 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
 
     @Override
     @Cacheable(value = calendarDataCache, key = "#root.methodName + '-' + #year + '-' + #sortOrder + '-' + #limitOffset")
-    public List<CalendarSupplementalId> getFloorCalendarIds(int year, SortOrder sortOrder, LimitOffset limitOffset) throws CalendarNotFoundEx {
+    public List<CalendarSupplemental> getFloorCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) throws CalendarNotFoundEx {
         try {
-            return calendarDao.getFloorCalendarIds(year, sortOrder, limitOffset);
+            return calendarDao.getFloorCalendars(year, sortOrder, limitOffset);
         }
         catch (DataAccessException ex) {
             logger.warn("Error retrieving floor calendar ids for " + year + ":\n" + ex.getMessage());

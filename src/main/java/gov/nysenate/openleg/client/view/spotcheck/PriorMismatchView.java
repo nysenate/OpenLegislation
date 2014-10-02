@@ -32,4 +32,9 @@ public class PriorMismatchView implements ViewObject
     public LinkedList<StringDiffer.Diff> getDiff() {
         return diff;
     }
+
+    @Override
+    public String getViewType() {
+        return "prior-mismatch";
+    }
 }

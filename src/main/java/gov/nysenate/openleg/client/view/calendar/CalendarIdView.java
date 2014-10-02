@@ -19,4 +19,9 @@ public class CalendarIdView implements ViewObject {
     public int getCalendarNumber() {
         return calendarNumber;
     }
+
+    @Override
+    public String getViewType() {
+        return "calendar-id";
+    }
 }
