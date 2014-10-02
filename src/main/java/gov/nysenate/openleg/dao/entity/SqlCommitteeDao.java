@@ -4,6 +4,7 @@ import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.service.entity.MemberService;
+import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -393,7 +394,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
     private MapSqlParameterSource getCommitteeVersionIdParams(CommitteeVersionId cvid) {
         MapSqlParameterSource params = getCommitteeIdParams(cvid);
         params.addValue("sessionYear", cvid.getSession().getYear());
-        params.addValue("referenceDate", cvid.getReferenceDate());
+        params.addValue("referenceDate", DateUtils.toDate(cvid.getReferenceDate()));
         return params;
     }
 
