@@ -2,7 +2,7 @@ package gov.nysenate.openleg.model.law;
 
 import gov.nysenate.openleg.processor.law.LawBlock;
 
-public class LawDocument extends LawInfo
+public class LawDocument extends LawDocInfo
 {
     protected String text;
 
@@ -10,9 +10,21 @@ public class LawDocument extends LawInfo
 
     public LawDocument() {}
 
+    public LawDocument(LawDocInfo info, String text) {
+        super(info.documentId, info.lawId, info.locationId, info.title, info.docType, info.docTypeId, info.publishedDate);
+        this.text = text;
+    }
+
     public LawDocument(LawBlock lawBlock) {
         super(lawBlock);
         this.setText(lawBlock.getText().toString());
+    }
+
+    /** --- Overrides --- */
+
+    @Override
+    public String toString() {
+        return super.toString() + "\n" + getText();
     }
 
     /** --- Basic Getters/Setters --- */

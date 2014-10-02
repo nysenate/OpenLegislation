@@ -16,6 +16,9 @@ public class LawTree
     /** --- Constructors --- */
 
     public LawTree(String lawId, LocalDate publishedDate, LawTreeNode rootNode) {
+        if (lawId == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null lawId");
+        if (publishedDate == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null publishedDate");
+        if (rootNode == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null rootNode");
         this.lawId = lawId;
         this.publishedDate = publishedDate;
         this.rootNode = rootNode;

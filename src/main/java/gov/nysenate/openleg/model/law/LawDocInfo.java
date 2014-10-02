@@ -4,7 +4,7 @@ import gov.nysenate.openleg.processor.law.LawBlock;
 
 import java.time.LocalDate;
 
-public class LawInfo
+public class LawDocInfo
 {
     /** A unique document identifier specified by LBDC.
      *  For example 'EDNA1' indicates article 1 of education law while 'EDN100' indicates section 100. */
@@ -27,24 +27,24 @@ public class LawInfo
     protected String docTypeId;
 
     /** The date on which this portion of law was published via LBDC. */
-    protected LocalDate publishDate;
+    protected LocalDate publishedDate;
 
     /** --- Constructors --- */
 
-    public LawInfo() {}
+    public LawDocInfo() {}
 
-    public LawInfo(String documentId, String lawId, String locationId, String title, LawDocumentType docType,
-                   String docTypeId, LocalDate publishDate) {
+    public LawDocInfo(String documentId, String lawId, String locationId, String title, LawDocumentType docType,
+                      String docTypeId, LocalDate publishedDate) {
         this.documentId = documentId;
         this.lawId = lawId;
         this.locationId = locationId;
         this.title = title;
         this.docType = docType;
         this.docTypeId = docTypeId;
-        this.publishDate = publishDate;
+        this.publishedDate = publishedDate;
     }
 
-    public LawInfo(LawBlock lawBlock) {
+    public LawDocInfo(LawBlock lawBlock) {
         this.setDocumentId(lawBlock.getDocumentId());
         this.setLawId(lawBlock.getLawId());
         this.setLocationId(lawBlock.getLocationId());
@@ -54,7 +54,7 @@ public class LawInfo
 
     @Override
     public String toString() {
-        return documentId + " (" + docType + ") " + publishDate;
+        return documentId + " (" + docType + ") " + publishedDate;
     }
 
     /** --- Basic Getters/Setters --- */
@@ -107,11 +107,11 @@ public class LawInfo
         this.docTypeId = docTypeId;
     }
 
-    public LocalDate getPublishDate() {
-        return publishDate;
+    public LocalDate getPublishedDate() {
+        return publishedDate;
     }
 
-    public void setPublishDate(LocalDate publishDate) {
-        this.publishDate = publishDate;
+    public void setPublishedDate(LocalDate publishedDate) {
+        this.publishedDate = publishedDate;
     }
 }

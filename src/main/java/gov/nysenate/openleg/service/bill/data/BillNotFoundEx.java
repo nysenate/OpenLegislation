@@ -1,4 +1,6 @@
-package gov.nysenate.openleg.model.bill;
+package gov.nysenate.openleg.service.bill.data;
+
+import gov.nysenate.openleg.model.bill.BillId;
 
 public class BillNotFoundEx extends RuntimeException
 {

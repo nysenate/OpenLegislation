@@ -3,11 +3,7 @@ package gov.nysenate.openleg.model.law;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -17,7 +13,7 @@ public class LawTreeNode implements Comparable<LawTreeNode>
     protected int sequenceNo;
 
     /** Reference to the law info which contains details about this node. */
-    protected LawInfo lawInfo;
+    protected LawDocInfo lawDocInfo;
 
     /** Reference to the parent node, null if this is the chapter node. */
     protected LawTreeNode parent;
@@ -28,24 +24,24 @@ public class LawTreeNode implements Comparable<LawTreeNode>
 
     /** --- Constructors --- */
 
-    public LawTreeNode(LawInfo lawInfo, int sequenceNo) {
-        if (lawInfo == null) {
-            throw new IllegalArgumentException("Cannot instantiate LawTreeNode with a null LawInfo");
+    public LawTreeNode(LawDocInfo lawDocInfo, int sequenceNo) {
+        if (lawDocInfo == null) {
+            throw new IllegalArgumentException("Cannot instantiate LawTreeNode with a null LawDocInfo");
         }
-        this.lawInfo = lawInfo;
+        this.lawDocInfo = lawDocInfo;
         this.sequenceNo = sequenceNo;
     }
 
     /** --- Methods --- */
 
     public boolean isRootNode() {
-        return this.lawInfo.getDocType().equals(LawDocumentType.CHAPTER);
+        return this.lawDocInfo.getDocType().equals(LawDocumentType.CHAPTER);
     }
 
     public void addChild(LawTreeNode node) {
         if (node == null) throw new IllegalArgumentException("Cannot add a null child node ");
         node.setParent(this);
-        children.put(node.lawInfo.documentId, node);
+        children.put(node.lawDocInfo.documentId, node);
     }
 
     /**
@@ -53,8 +49,34 @@ public class LawTreeNode implements Comparable<LawTreeNode>
      *
      * @return List<LawTreeNode>
      */
-    public List<LawTreeNode> getOrderedNodeList() {
+    public List<LawTreeNode> getChildNodeList() {
         return this.children.values().stream().sorted().collect(toList());
+    }
+
+    /**
+     * Returns this node as well as all the descendants of this node in an ordered list.
+     * This is a convenience method that creates the initial accumulator list before running
+     * the recursive method.
+     *
+     * @return List<LawTreeNode>
+     */
+    public List<LawTreeNode> getAllNodes() {
+        return getAllNodes(new ArrayList<>());
+    }
+
+    /**
+     * Returns this node as well as all the descendants of this node in an ordered list.
+     *
+     * @param descNodes List<LawTreeNode> - Used to append nodes recursively.
+     * @return List<LawTreeNode>
+     */
+    public List<LawTreeNode> getAllNodes(List<LawTreeNode> descNodes) {
+        if (descNodes == null) throw new IllegalStateException("Node list is null");
+        descNodes.add(this);
+        getChildNodeList().forEach(n -> {
+            n.getAllNodes(descNodes);
+        });
+        return descNodes;
     }
 
     /**
@@ -74,14 +96,19 @@ public class LawTreeNode implements Comparable<LawTreeNode>
      */
     public String printTree(int level) {
         StringBuilder sb = new StringBuilder();
-        sb.append(this.lawInfo.toString());
-        getOrderedNodeList().forEach(n -> {
+        sb.append(this.lawDocInfo.toString());
+        getChildNodeList().forEach(n -> {
             sb.append("\n").append(StringUtils.repeat("  |  ", level)).append(n.printTree(level + 1));
         });
         return sb.toString();
     }
 
     /** --- Overrides --- */
+
+    @Override
+    public String toString() {
+        return "Law Tree Node [" + this.sequenceNo + "] " + this.lawDocInfo;
+    }
 
     /** Compare the nodes simply by using the sequence number. */
     @Override
@@ -92,27 +119,27 @@ public class LawTreeNode implements Comparable<LawTreeNode>
     /** --- Delegates --- */
 
     public String getLawId() {
-        return lawInfo.getLawId();
+        return lawDocInfo.getLawId();
     }
 
     public LawDocumentType getDocType() {
-        return lawInfo.getDocType();
+        return lawDocInfo.getDocType();
     }
 
     public String getDocTypeId() {
-        return lawInfo.getDocTypeId();
+        return lawDocInfo.getDocTypeId();
     }
 
     public LocalDate getPublishDate() {
-        return lawInfo.getPublishDate();
+        return lawDocInfo.getPublishedDate();
     }
 
     public String getDocumentId() {
-        return lawInfo.getDocumentId();
+        return lawDocInfo.getDocumentId();
     }
 
     public String getLocationId() {
-        return lawInfo.getLocationId();
+        return lawDocInfo.getLocationId();
     }
 
     /** --- Basic Getters/Setters --- */
@@ -125,8 +152,8 @@ public class LawTreeNode implements Comparable<LawTreeNode>
         this.sequenceNo = sequenceNo;
     }
 
-    public LawInfo getLawInfo() {
-        return lawInfo;
+    public LawDocInfo getLawDocInfo() {
+        return lawDocInfo;
     }
 
     public LawTreeNode getParent() {
