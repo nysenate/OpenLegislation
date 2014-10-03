@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.daybreak;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import gov.nysenate.openleg.model.bill.BillId;
 
 import java.time.LocalDate;
@@ -47,7 +47,7 @@ public class PageFileEntry {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("senateBillId", senateBillId)
                 .add("assemblyBillId", assemblyBillId)
                 .add("reportDate", reportDate)

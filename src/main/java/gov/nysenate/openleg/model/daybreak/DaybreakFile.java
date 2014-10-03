@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.model.daybreak;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -95,7 +95,7 @@ public class DaybreakFile implements DaybreakDocument{
     /** --- Override Methods --- */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("reportDate", reportDate)
                 .add("daybreakDocType", daybreakDocType)
                 .add("file", file)

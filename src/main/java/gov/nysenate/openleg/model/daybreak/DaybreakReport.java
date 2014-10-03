@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.model.daybreak;
 
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -110,14 +110,17 @@ public class DaybreakReport <DaybreakDoc extends DaybreakDocument> {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("reportDate", reportDate)
                 .toString();
     }
 
     /** --- Exceptions --- */
 
-    public static class DaybreakReportInsertException extends RuntimeException{
+    public static class DaybreakReportInsertException extends RuntimeException
+    {
+        private static final long serialVersionUID = -8868019141371691834L;
+
         private LocalDate reportDate;
         private DaybreakDocument document;
         private InsertExceptionReason insertExceptionReason;

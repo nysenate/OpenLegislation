@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.daybreak;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 
 import java.time.LocalDate;
@@ -26,7 +26,7 @@ public class DaybreakBillId {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("baseBillId", baseBillId)
                 .add("reportDate", reportDate)
                 .toString();

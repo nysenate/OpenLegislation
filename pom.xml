@@ -39,7 +39,7 @@
         <slf4j.version>1.7.5</slf4j.version>
         <c3p0.version>0.9.1.2</c3p0.version>
         <tomcat.servlet.version>7.0.47</tomcat.servlet.version>
-        <guava.version>17.0</guava.version>
+        <guava.version>18.0</guava.version>
         <guava.jackson.version>2.4.0</guava.jackson.version>
         <jstl.version>1.2</jstl.version>
     </properties>

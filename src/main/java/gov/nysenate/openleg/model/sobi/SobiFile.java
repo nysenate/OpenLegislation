@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.model.sobi;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.io.FileUtils;
 
@@ -106,7 +106,7 @@ public class SobiFile
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
             .add("file", file)
             .add("encoding", encoding)
             .add("stagedDateTime", stagedDateTime)
