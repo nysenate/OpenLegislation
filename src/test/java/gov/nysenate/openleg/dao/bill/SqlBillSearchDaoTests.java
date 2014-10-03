@@ -7,14 +7,12 @@ import gov.nysenate.openleg.dao.bill.search.BillSearchDao;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.service.base.SearchResults;
 import gov.nysenate.openleg.service.bill.search.BillSearchField;
-import org.apache.abdera.model.DateTime;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 

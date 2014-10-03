@@ -2,7 +2,7 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.*;
 import gov.nysenate.openleg.service.law.data.LawDataService;
-import gov.nysenate.openleg.util.OutputUtils;
+import gov.nysenate.openleg.service.law.data.LawDocumentNotFoundEx;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +18,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Works with the {@link LawBuilder} class to process the initial law dumps and updates and perform any
+ * necessary persistence.
+ */
 @Service
 public class LawProcessor
 {
@@ -85,6 +89,7 @@ public class LawProcessor
     protected void processInitialLaws(LawFile lawFile, List<LawBlock> lawBlocks) {
         Map<String, LawTreeNode> rootNodeMap = new HashMap<>();
         Map<String, LawDocument> lawDocMap = new HashMap<>();
+        Map<String, LawBuilder> lawBuilders = new HashMap<>();
 
         Stack<LawTreeNode> parentStack = new Stack<>();
         LawTreeNode currParent = null;
@@ -101,19 +106,20 @@ public class LawProcessor
 
             logger.info("Processing block {}", block.getDocumentId());
             LawDocument lawDoc = new LawDocument(block);
-            lawDoc.setPublishDate(lawFile.getPublishedDate());
+            lawDoc.setPublishedDate(lawFile.getPublishedDate());
 
             boolean isRootDoc = false;
 
-            // A block with a new law id should indicate the top level document for that law id.
+            if (!lawBuilders.containsKey(block.getLawId())) {
+                LawBuilder lawBuilder = new LawBuilder(block.getLawId(), lawFile.getPublishedDate());
+                lawBuilders.put(block.getLawId(), lawBuilder);
+            }
+
+            // A block with a new law id needs to have a chapter doc to serve as the root node.
             if (!rootNodeMap.containsKey(block.getLawId())) {
                 logger.debug("Chapter node {}", block.getDocumentId());
                 LawDocument chapterDoc;
-                // Consolidated laws should typically start with a -CH document header, but unconsolidated laws have
-                // no such guarantee. We can assume that this document is a chapter node if it doesn't resemble
-                // either a section 1 or any of the article, title, part, etc headers.
-                if ((!block.getLocationId().equals("1") && !locationPattern.matcher(block.getLocationId()).matches()) ||
-                      specialChapterPattern.matcher(block.getLocationId()).matches()) {
+                if (isLikelyChapterNode(block)) {
                     lawDoc.setDocType(LawDocumentType.CHAPTER);
                     lawDoc.setDocTypeId(block.getLocationId().replaceFirst("-CH", ""));
                     chapterDoc = lawDoc;
@@ -132,14 +138,12 @@ public class LawProcessor
                 currParent = chapterNode;
                 logger.debug("Chapter node doc type id: {}", chapterDoc.getDocTypeId());
 
-                //lawDataService.saveLawDocument(lawFile, chapterDoc);
+                lawDataService.saveLawDocument(lawFile, chapterDoc);
             }
 
             if (!isRootDoc) {
-                // If the location id starts with a number, we'll assume it's a section and add it as a child
-                // of the current parent node.
-                if (Character.isDigit(block.getLocationId().charAt(0))) {
-                    logger.info(" Found section {}", block.getDocumentId());
+                if (isLikelySectionDoc(block)) {
+                    logger.debug("Found section {}", block.getDocumentId());
                     lawDoc.setDocType(LawDocumentType.SECTION);
                     lawDoc.setDocTypeId(block.getLocationId());
                     lawDocMap.put(block.getDocumentId(), lawDoc);
@@ -186,16 +190,71 @@ public class LawProcessor
                     currParent = node;
                 }
 
-                //lawDataService.saveLawDocument(lawFile, lawDoc);
+                lawDataService.saveLawDocument(lawFile, lawDoc);
             }
         }
-
-        rootNodeMap.values().forEach(n -> logger.info(n.printTree()));
-        System.exit(0);
+        rootNodeMap.forEach((k,v) -> {
+            lawDataService.saveLawTree(lawFile, new LawTree(k, lawFile.getPublishedDate(), v));
+        });
     }
 
-    private void processLawUpdates(LawFile lawFile, List<LawBlock> lawBlocks) {
+    protected void processLawUpdates(LawFile lawFile, List<LawBlock> lawBlocks) {
+        Set<String> masterDocsReceived = new HashSet<>();
+        Map<String, LawTree> lawTrees = new HashMap<>();
 
+        for (LawBlock block : lawBlocks) {
+            String method = block.getMethod();
+
+            if (!lawTrees.containsKey(block.getLawId())) {
+                lawTrees.put(block.getLawId(), lawDataService.getLawTree(block.getLawId(), lawFile.getPublishedDate()));
+            }
+
+            // Rebuild the law tree
+            if (method.trim().equals("*MASTER*")) {
+                logger.info("FOUND MASTER DOCUMENT FOR {}", block.getLawId());
+                masterDocsReceived.add(block.getLawId());
+            }
+            // Otherwise add/update the document
+            else if (method.isEmpty()) {
+                LawTree tree = lawTrees.get(block.getLawId());
+
+                if (tree.getRootNode().find(block.getDocumentId()).isPresent()) {
+                    // Find the law document info from the law tree and use that to build a new law doc
+
+                    logger.info("GOT UPDATE DOC ! {}", block.getDocumentId());
+                }
+                else {
+                    logger.info("GOT NEW DOC {}", block.getDocumentId());
+                }
+            }
+            else {
+                logger.warn("GOT UNKNOWN METHOD: " + block.getMethod());
+            }
+        }
+    }
+
+    /**
+     * Section documents typically just have a location id with the number of the section (except in the constitution).
+     * All other document types start with a character or symbol.
+     *
+     * @param block LawBlock
+     * @return boolean - true if this block is most likely a section
+     */
+    protected boolean isLikelySectionDoc(LawBlock block) {
+        return Character.isDigit(block.getLocationId().charAt(0));
+    }
+
+    /**
+     * Indicates if the block is potentially a chapter node. Consolidated laws will typically begin with a -CH
+     * which is not a problem, but some unconsolidated laws have the year or in some cases start right with the
+     * section or article. We're checking to make sure those cases do not exist for this block.
+     *
+     * @param block LawBlock
+     * @return boolean
+     */
+    protected boolean isLikelyChapterNode(LawBlock block) {
+        return ( block.getLocationId().startsWith("-CH") || specialChapterPattern.matcher(block.getLocationId()).matches() ||
+                 (!block.getLocationId().equals("1") && !locationPattern.matcher(block.getLocationId()).matches()));
     }
 
     /**
@@ -212,7 +271,7 @@ public class LawProcessor
         dummyParent.setLocationId("-ROOT");
         dummyParent.setDocType(LawDocumentType.CHAPTER);
         dummyParent.setDocTypeId("ROOT");
-        dummyParent.setPublishDate(lawFile.getPublishedDate());
+        dummyParent.setPublishedDate(lawFile.getPublishedDate());
         dummyParent.setText("");
         return dummyParent;
     }

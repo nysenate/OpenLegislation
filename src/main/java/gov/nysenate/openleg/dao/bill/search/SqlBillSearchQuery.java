@@ -5,6 +5,8 @@ import gov.nysenate.openleg.dao.base.SqlTable;
 
 public enum SqlBillSearchQuery implements SearchSqlQuery
 {
+    /** FIXME: http://dev.nysenate.gov/issues/8154 */
+
     /** Refreshes the data on the bill search aggregate table for the specified bill */
     REFRESH_BILL_SEARCH("SELECT ${search_schema}.refresh_bill_search(:printNo::text, :sessionYear::smallint)"),
 
@@ -31,12 +33,12 @@ public enum SqlBillSearchQuery implements SearchSqlQuery
      *  bill amendment. */
     SEARCH_GLOBAL_AMEND_VERSION(
         String.format(SELECT_GLOBAL.sql,
-            "print_no AS bill_print_no, session_year AS bill_session_year, version, ts_rank_cd(search, query) AS rank")
+            "print_no AS bill_print_no, session_year AS bill_session_year, version, 1 AS rank") //ts_rank(search, query) AS rank")
     ),
 
     /** Count the total number of global matches, counting each matched bill just once, regardless of amendment count. */
     COUNT_GLOBAL_BASE_BILL(
-        String.format(SELECT_GLOBAL.sql, "COUNT (DISTINCT (print_no, session_year))")
+        String.format(SELECT_GLOBAL.sql, "COUNT (*)")
     ),
 
     /** Perform a ranked search across all bills, returning a single row for any matched base bill. */

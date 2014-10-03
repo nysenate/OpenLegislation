@@ -80,6 +80,29 @@ public class LawTreeNode implements Comparable<LawTreeNode>
     }
 
     /**
+     * Recursively searches for a node that matches the given documentId.
+     *
+     * @param documentId
+     * @return Optional<LawDocInfo> - Matched node or empty if it could not be found.
+     */
+    public Optional<LawDocInfo> find(String documentId) {
+        Optional<LawDocInfo> docInfo = Optional.empty();
+        if (this.getDocumentId().equals(documentId)) {
+            docInfo = Optional.of(this.getLawDocInfo());
+        }
+        else if (children.containsKey(documentId)) {
+            docInfo = Optional.of(children.get(documentId).getLawDocInfo());
+        }
+        else {
+            for (LawTreeNode node : children.values()) {
+                docInfo = node.find(documentId);
+                if (docInfo.isPresent()) break;
+            }
+        }
+        return docInfo;
+    }
+
+    /**
      * Prints out this tree with formatting to show the hierarchy.
      *
      * @return String

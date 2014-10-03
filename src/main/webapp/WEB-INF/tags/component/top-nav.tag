@@ -8,7 +8,7 @@
             <li class="name">
                 <h1>
                     <img src="<%= request.getContextPath() %>/static/img/NYSS_seal_transp.png"/>
-                    <a style="display:inline-block" href="#">OPEN | <span style='color:#008cba'>2.0</span></a>
+                    <a style="display:inline-block" href="#"><span style='color:#008cba'>Open </span> Legislation</a>
                 </h1>
             </li>
         </ul>
@@ -23,6 +23,9 @@
                     <a target="_self" href="<%= request.getContextPath() %>/updates">Updates</a></li>
                 <li class="<c:if test="${activeLink == 'analytics'}"><c:out value="active"/></c:if>">
                     <a target="_self" href="<%= request.getContextPath() %>/analytics">Analytics</a></li>
+                <li class="<c:if test="${activeLink == 'documentation'}"><c:out value="active"/></c:if>">
+                    <a target="_self" href="<%= request.getContextPath() %>/documentation">Documentation</a></li>
+
             </ul>
         </section>
     </nav>

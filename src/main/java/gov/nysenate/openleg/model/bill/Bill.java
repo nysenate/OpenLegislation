@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
