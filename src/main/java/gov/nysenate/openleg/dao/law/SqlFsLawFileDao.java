@@ -1,9 +1,6 @@
 package gov.nysenate.openleg.dao.law;
 
-import gov.nysenate.openleg.dao.base.ImmutableParams;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.law.LawFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +55,8 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
 
     @Override
     public List<LawFile> getPendingLawFiles(SortOrder sortByDate, LimitOffset limitOffset) {
-        List<LawFile> lawFiles = jdbcNamed.query(GET_PENDING_LAW_FILES.getSql(schema(), limitOffset), lawFileRowMapper);
-        sortLaws(sortByDate, lawFiles);
-        return lawFiles;
+        OrderBy orderBy = new OrderBy("published_date_time", sortByDate, "file_name", sortByDate);
+        return jdbcNamed.query(GET_PENDING_LAW_FILES.getSql(schema(), orderBy, limitOffset), lawFileRowMapper);
     }
 
     /** {@inheritDoc} */

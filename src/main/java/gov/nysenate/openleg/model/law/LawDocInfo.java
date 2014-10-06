@@ -48,6 +48,7 @@ public class LawDocInfo
         this.setDocumentId(lawBlock.getDocumentId());
         this.setLawId(lawBlock.getLawId());
         this.setLocationId(lawBlock.getLocationId());
+        this.setPublishedDate(lawBlock.getPublishedDate());
     }
 
     /** --- Overrides --- */

@@ -1,74 +1,287 @@
 package gov.nysenate.openleg.processor.law;
 
-import gov.nysenate.openleg.model.law.LawDocument;
-import gov.nysenate.openleg.model.law.LawTreeNode;
-import gov.nysenate.openleg.processor.law.LawBlock;
+import gov.nysenate.openleg.model.law.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.toList;
 
 public class LawBuilder
 {
     private static final Logger logger = LoggerFactory.getLogger(LawBuilder.class);
 
-    protected String lawId;
+    /** Pattern used for parsing the location ids to extract the document type and doc type id. */
+    protected static Pattern locationPattern = Pattern.compile("^(ST|SP|A|T|P|S|INDEX)(.*)");
 
-    protected LocalDate publishedDate;
+    /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
+    protected static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
 
+    /** The location ids portions are prefixed with a code to indicate the different document types. */
+    protected static Map<String, LawDocumentType> lawLevelCodes = new HashMap<>();
+    static {
+        lawLevelCodes.put("A", LawDocumentType.ARTICLE);
+        lawLevelCodes.put("T", LawDocumentType.TITLE);
+        lawLevelCodes.put("ST", LawDocumentType.SUBTITLE);
+        lawLevelCodes.put("P", LawDocumentType.PART);
+        lawLevelCodes.put("SP", LawDocumentType.SUB_PART);
+        lawLevelCodes.put("S", LawDocumentType.SECTION);
+        lawLevelCodes.put("INDEX", LawDocumentType.INDEX);
+    }
+
+    /** */
+    protected LawVersionId lawVersionId;
+
+    /**  */
     protected LawTreeNode rootNode = null;
 
+    /**  */
     protected Map<String, LawDocument> lawDocMap = new HashMap<>();
 
-    protected Stack<LawTreeNode> parentNodeStack = new Stack<>();
+    /**  */
+    protected Stack<LawTreeNode> parentNodes = new Stack<>();
 
+    /** */
     protected int sequenceNo = 0;
 
     /** --- Constructors --- */
 
-    public LawBuilder(String lawId, LocalDate publishedDate) {
-        this.lawId = lawId;
-        this.publishedDate = publishedDate;
+    public LawBuilder(LawVersionId lawVersionId) {
+        this.lawVersionId = lawVersionId;
+    }
+
+    public LawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
+        this(lawVersionId);
+        if (previousTree != null) {
+            this.rootNode = previousTree.getRootNode();
+        }
     }
 
     /** --- Methods --- */
 
     /**
+     * Adds a LawDocument to the law tree and document map.
      *
-     *
-     * @param rootDoc
+     * @param block LawBlock - The LawBlock to convert into a document and store within the tree
+     * @param isNewDoc boolean - Set to true if this is a new document and should be persisted.
      */
-    public void addRootDocument(LawDocument rootDoc) {
-        if (rootDoc == null) throw new IllegalArgumentException("Root document cannot be null!");
-        rootNode = new LawTreeNode(rootDoc, ++sequenceNo);
-        lawDocMap.put(rootDoc.getDocumentId(), rootDoc);
-        parentNodeStack.push(this.rootNode);
-    }
+    public void addInitialBlock(LawBlock block, boolean isNewDoc) {
+        LawDocument lawDoc = new LawDocument(block);
+        boolean isRootDoc = false;
 
-    /**
-     *
-     *
-     * @param lawDoc
-     */
-    public void addNode(LawDocument lawDoc) {
-        if (parentNodeStack.empty()) {
-            throw new IllegalStateException("Failed to add node because it's parent node was not added!");
+        // For the initial law dumps, the first block that is processed for a law (usually) becomes the root node.
+        if (rootNode == null) {
+            logger.info("Processing root doc: {} for {} law.", lawDoc.getDocumentId(), lawDoc.getLawId());
+            LawDocument chapterDoc;
+            // If the block seems to be a chapter node, we'll treat this document as the root.
+            if (isLikelyChapterDoc(lawDoc)) {
+                lawDoc.setDocType(LawDocumentType.CHAPTER);
+                lawDoc.setDocTypeId(lawDoc.getLocationId().replaceFirst("-CH", ""));
+                chapterDoc = lawDoc;
+                isRootDoc = true;
+            }
+            // Otherwise we have to create our own root node and process the current document as a child of it.
+            else {
+                chapterDoc = createRootDocument(block);
+            }
+            addRootDocument(chapterDoc, isNewDoc);
         }
-        lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
-        parentNodeStack.peek().addChild(new LawTreeNode(lawDoc, ++sequenceNo));
+
+        // If this block is not a root doc,
+        if (!isRootDoc) {
+            // Section docs are easy, since their location ids are simply numbers and they do not have any children.
+            if (isLikelySectionDoc(lawDoc)) {
+                logger.debug("Processing section {}", lawDoc.getDocumentId());
+                lawDoc.setDocType(LawDocumentType.SECTION);
+                lawDoc.setDocTypeId(lawDoc.getLocationId());
+                if (isNewDoc) {
+                    lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
+                }
+                currParent().addChild(new LawTreeNode(lawDoc, ++sequenceNo));
+            }
+            else {
+                String specificLocId = locateDocument(block, lawDoc);
+                Matcher locMatcher = locationPattern.matcher(specificLocId);
+                if (locMatcher.matches()) {
+                    lawDoc.setDocType(lawLevelCodes.get(locMatcher.group(1)));
+                    lawDoc.setDocTypeId(locMatcher.group(2));
+                }
+                else {
+                    logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
+                    lawDoc.setDocType(LawDocumentType.MISC);
+                    lawDoc.setDocTypeId(block.getLocationId());
+                }
+                addDocument(lawDoc, isNewDoc);
+            }
+        }
     }
 
     /**
+     * Updates a LawDocument within an existing tree or creates a new one if a master doc is received.
      *
-     * @param masterDoc
+     * @param block LawBlock - The LawBlock to convert into a document and store within the tree
+     */
+    public void addUpdateBlock(LawBlock block) {
+        // Rebuild the law tree
+        if (block.getMethod().equals("*MASTER*")) {
+            rebuildTree(block.getText().toString());
+        }
+        // Update the document
+        else if (block.getMethod().isEmpty()) {
+            if (rootNode != null) {
+                Optional<LawDocInfo> existingDocInfo = rootNode.find(block.getDocumentId());
+                if (existingDocInfo.isPresent()) {
+                    existingDocInfo.get().setPublishedDate(block.getPublishedDate());
+                    LawDocument lawDoc = new LawDocument(existingDocInfo.get(), block.getText().toString());
+                    lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
+                    logger.info("Updated {}", lawDoc.getDocumentId());
+                }
+                else {
+                    throw new LawParseException("Can't add law document " + block.getDocumentId() +
+                                                " without a prior law tree structure including it.");
+                }
+            }
+            else {
+                throw new LawParseException("Can't add law document " + block.getDocumentId() + " without a prior law tree.");
+            }
+        }
+        else {
+            throw new LawParseException("Don't know how to handle law block updates with method: " + block.getMethod());
+        }
+    }
+
+    /**
+     * The master document has a line for each document id and indicates that the law tree needs to be restructured
+     * accordingly. If an update was received for a particular doc id or a node existed in the previous law tree, we
+     * will reuse those. Otherwise we have to create a blank law doc with the current published date.
+     *
+     * @param masterDoc String
      */
     public void rebuildTree(String masterDoc) {
-        for (String docId : masterDoc.split("\\r?\\n")) {
-
+        LawTreeNode priorRootNode = this.rootNode;
+        this.rootNode = null;
+        logger.info("Rebuilding tree for {} with master document.", this.lawVersionId.getLawId());
+        for (String docId : StringUtils.split(masterDoc, "\\n")) {
+            LawBlock block = new LawBlock();
+            block.setDocumentId(docId);
+            block.setLawId(docId.substring(0, 3));
+            block.setLocationId(docId.substring(3));
+            // Use published date from existing law doc if present
+            if (lawDocMap.containsKey(docId)) {
+                block.setPublishedDate(lawDocMap.get(docId).getPublishedDate());
+                addInitialBlock(block, false);
+                continue;
+            }
+            // Or from the previous tree node if set
+            else if (priorRootNode != null) {
+                Optional<LawDocInfo> existingDocInfo = priorRootNode.find(docId);
+                if (existingDocInfo.isPresent()) {
+                    block.setPublishedDate(existingDocInfo.get().getPublishedDate());
+                    addInitialBlock(block, false);
+                    continue;
+                }
+            }
+            logger.info("New document id found in master document: {}", docId);
+            block.setPublishedDate(this.lawVersionId.getPublishedDate());
+            addInitialBlock(block, true);
         }
+    }
+
+    /**
+     * Constructs a new LawTree with the documents processed for this law.
+     *
+     * @return LawTree
+     */
+    public LawTree getProcessedLawTree() {
+        return new LawTree(lawVersionId, rootNode);
+    }
+
+    /**
+     * Return all the processed law documents as a list in NO particular order.
+     *
+     * @return List<LawDocument>
+     */
+    public List<LawDocument> getProcessedLawDocuments() {
+        return lawDocMap.values().stream().collect(toList());
+    }
+
+    /**
+     * We determine the position of a node based on whether any of the nodes in the parent stack has a location id
+     * that prefixes the current document's location id. The specific location id (the matched prefix from the parent
+     * document removed) is returned.
+     *
+     * For example given the locationId 'A2P1SP3', we will pop the parent stack until we find it's parent 'A2P1'
+     * or reach the root node. The new portion 'SP3' would be the returned value which serves as the docTypeId.
+     *
+     * @param block LawBlock
+     * @param lawDoc LawDocument
+     * @return String
+     */
+    private String locateDocument(LawBlock block, LawDocument lawDoc) {
+        String docTypeId = lawDoc.getLocationId();
+        while (!currParent().isRootNode()) {
+            if (StringUtils.startsWith(block.getLocationId(), currParent().getLocationId())) {
+                String trimLocId = StringUtils.removeStart(block.getLocationId(), currParent().getLocationId());
+                if (locationPattern.matcher(trimLocId).matches()) {
+                    docTypeId = trimLocId;
+                    break;
+                }
+            }
+            parentNodes.pop();
+        }
+        return docTypeId;
+    }
+
+    /**
+     * Add the root document which does not have to be associated with a parent.
+     *
+     * @param rootDoc LawDocument
+     * @param isNewDoc boolean - Set to true if this is a new document and should be persisted.
+     */
+    private void addRootDocument(LawDocument rootDoc, boolean isNewDoc) {
+        if (rootDoc == null) throw new IllegalArgumentException("Root document cannot be null!");
+        sequenceNo = 0;
+        rootNode = new LawTreeNode(rootDoc, ++sequenceNo);
+        if (isNewDoc) {
+            lawDocMap.put(rootDoc.getDocumentId(), rootDoc);
+        }
+        parentNodes.push(this.rootNode);
+    }
+
+    /**
+     * Add the document by associating it as a child of the current parent node and subsequently setting the
+     * current parent node to point to this document.
+     *
+     * @param lawDoc LawDocument
+     * @param isNewDoc boolean - Set to true if this is a new document and should be persisted.
+     */
+    private void addDocument(LawDocument lawDoc, boolean isNewDoc) {
+        if (parentNodes.empty()) {
+            throw new IllegalStateException("Failed to add node because it's parent node was not added!");
+        }
+        if (isNewDoc) {
+            lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
+        }
+        LawTreeNode node = new LawTreeNode(lawDoc, ++sequenceNo);
+        currParent().addChild(node);
+        parentNodes.push(node);
+    }
+
+    /**
+     * Indicates if the document is potentially a chapter node. Consolidated laws will typically begin with a -CH
+     * which is not a problem, but some unconsolidated laws have the year or in some cases start right with the
+     * section or article. We're checking to make sure those cases do not exist for this block.
+     *
+     * @param doc LawDocument
+     * @return boolean
+     */
+    private boolean isLikelyChapterDoc(LawDocument doc) {
+        return (doc.getLocationId().startsWith("-CH") || specialChapterPattern.matcher(doc.getLocationId()).matches() ||
+                (!doc.getLocationId().equals("1") && !locationPattern.matcher(doc.getLocationId()).matches()));
     }
 
     /**
@@ -78,10 +291,30 @@ public class LawBuilder
      * @param lawDoc LawDocument
      * @return boolean - true if this block is most likely a section
      */
-    protected boolean isLikelySectionDoc(LawDocument lawDoc) {
+    private boolean isLikelySectionDoc(LawDocument lawDoc) {
         return Character.isDigit(lawDoc.getLocationId().charAt(0));
     }
 
+    /** Convenience method to peek at the parent node stack which holds the current parent. */
+    private LawTreeNode currParent() {
+        return parentNodes.peek();
+    }
 
-
+    /**
+     * Create our own root law doc to serve as the root document in the event that we don't receive a top level doc
+     * from the dumps. This is common for unconsolidated laws where they just start with the first section or article.
+     *
+     * @param block LawBlock
+     */
+    private LawDocument createRootDocument(LawBlock block) {
+        LawDocument dummyParent = new LawDocument();
+        dummyParent.setLawId(block.getLawId());
+        dummyParent.setDocumentId(block.getLawId() + "-ROOT");
+        dummyParent.setLocationId("-ROOT");
+        dummyParent.setDocType(LawDocumentType.CHAPTER);
+        dummyParent.setDocTypeId("ROOT");
+        dummyParent.setPublishedDate(block.getPublishedDate());
+        dummyParent.setText("");
+        return dummyParent;
+    }
 }

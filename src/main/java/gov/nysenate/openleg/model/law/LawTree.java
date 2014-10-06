@@ -2,36 +2,42 @@ package gov.nysenate.openleg.model.law;
 
 import java.time.LocalDate;
 
+/**
+ * Container for the root node that comprises the hierarchy of components within a law. Tree traversal methods
+ * should be implemented on the LawTreeNode, so this class serves more as a container to represent a tree for a given
+ * law at a given time.
+ */
 public class LawTree
 {
-    /** The 3 letter law id, e.g ABC, EDN, etc. */
-    protected String lawId;
-
-    /** The date on which this tree is valid. */
-    protected LocalDate publishedDate;
+    /** The identifier for this tree. */
+    LawVersionId lawVersionId;
 
     /** Reference to the root tree node (should be the chapter node) */
     protected LawTreeNode rootNode;
 
     /** --- Constructors --- */
 
-    public LawTree(String lawId, LocalDate publishedDate, LawTreeNode rootNode) {
-        if (lawId == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null lawId");
-        if (publishedDate == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null publishedDate");
+    public LawTree(LawVersionId lawVersionId, LawTreeNode rootNode) {
+        if (lawVersionId == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null lawVersionId");
         if (rootNode == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null rootNode");
-        this.lawId = lawId;
-        this.publishedDate = publishedDate;
+        this.lawVersionId = lawVersionId;
         this.rootNode = rootNode;
+    }
+
+    /** --- Delegates --- */
+
+    public String getLawId() {
+        return lawVersionId.getLawId();
+    }
+
+    public LocalDate getPublishedDate() {
+        return lawVersionId.getPublishedDate();
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public String getLawId() {
-        return lawId;
-    }
-
-    public LocalDate getPublishedDate() {
-        return publishedDate;
+    public LawVersionId getLawVersionId() {
+        return lawVersionId;
     }
 
     public LawTreeNode getRootNode() {

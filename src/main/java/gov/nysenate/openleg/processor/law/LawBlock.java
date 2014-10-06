@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.processor.law;
 
+import java.time.LocalDate;
+
 /**
  * This class is to be used internally by the law parsers to aid in building up LawDocument instances.
  */
@@ -16,6 +18,9 @@ public class LawBlock
 
     /** The 3 letter law id, e.g ABC, EDN, etc. */
     private String lawId = "";
+
+    /** The published date of this block. */
+    private LocalDate publishedDate;
 
     /** The document location, which is just the document id without the law id. */
     private String locationId = "";
@@ -62,6 +67,14 @@ public class LawBlock
 
     public void setLawId(String lawId) {
         this.lawId = lawId;
+    }
+
+    public LocalDate getPublishedDate() {
+        return publishedDate;
+    }
+
+    public void setPublishedDate(LocalDate publishedDate) {
+        this.publishedDate = publishedDate;
     }
 
     public String getLocationId() {

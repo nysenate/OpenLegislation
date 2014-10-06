@@ -15,6 +15,12 @@ public class LawDocument extends LawDocInfo
         this.text = text;
     }
 
+    /**
+     * Constructs using the data within the LawBlock. Extracted fields such as title, document type,
+     * and other such fields not present in the LawBlock need to be set afterwards.
+     *
+     * @param lawBlock LawBlock
+     */
     public LawDocument(LawBlock lawBlock) {
         super(lawBlock);
         this.setText(lawBlock.getText().toString());
@@ -22,8 +28,7 @@ public class LawDocument extends LawDocInfo
 
     /** --- Overrides --- */
 
-    @Override
-    public String toString() {
+    public String toDocString() {
         return super.toString() + "\n" + getText();
     }
 
