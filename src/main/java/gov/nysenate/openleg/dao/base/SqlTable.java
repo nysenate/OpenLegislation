@@ -63,6 +63,7 @@ public enum SqlTable
     DAYBREAK_BILL_SPONSOR        ("daybreak_bill_sponsor"),
 
     LAW_FILE                     ("law_file"),
+    LAW_INFO                     ("law_info"),
     LAW_DOCUMENT                 ("law_document"),
     LAW_TREE                     ("law_tree"),
 

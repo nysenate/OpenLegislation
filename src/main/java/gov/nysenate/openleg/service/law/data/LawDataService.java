@@ -2,13 +2,22 @@ package gov.nysenate.openleg.service.law.data;
 
 import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawFile;
+import gov.nysenate.openleg.model.law.LawInfo;
 import gov.nysenate.openleg.model.law.LawTree;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 public interface LawDataService
 {
+    /**
+     * Retrieves a listing of all basic law info order alphabetically by law id.
+     *
+     * @return List<LawTree>
+     */
+    public List<LawInfo> getLawInfos();
+
     /**
      * Retrieves the LawTree from the backing store given the law id and an endPublishedDate. The most recent law tree
      * with a published date prior to or on 'endPublishedDate' will be returned. Otherwise a LawTreeNotFoundEx will
@@ -19,7 +28,7 @@ public interface LawDataService
      * @return LawTree
      * @throws LawTreeNotFoundEx - If there is no law tree that meets the given criteria.
      */
-    public LawTree getLawTree(String lawId, LocalDate endPublishedDate);
+    public LawTree getLawTree(String lawId, LocalDate endPublishedDate) throws LawTreeNotFoundEx;
 
     /**
      * Retrieves the LawDocument from the backing store given the document id and an endPublishedDate. The most recent

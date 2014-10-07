@@ -8,7 +8,12 @@ public enum SqlLawDataQuery implements BasicSqlQuery
     /** --- Law Documents --- */
 
     SELECT_LAW_DOCUMENT(
-        "SELECT * FROM ${schema}." + SqlTable.LAW_DOCUMENT + " WHERE document_id = :docId AND published_date = :publishedDate"
+        "WITH max_date AS (\n" +
+        "    SELECT max(published_date) AS pub_date FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
+        "    WHERE document_id = :docId AND published_date <= :endPublishedDate" +
+        ")\n" +
+        "SELECT * FROM max_date, ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
+        "WHERE document_id = :docId AND published_date = max_date.pub_date"
     ),
     INSERT_LAW_DOCUMENT(
         "INSERT INTO ${schema}." + SqlTable.LAW_DOCUMENT +
@@ -53,8 +58,28 @@ public enum SqlLawDataQuery implements BasicSqlQuery
     DELETE_TREE(
         "DELETE FROM ${schema}." + SqlTable.LAW_TREE + "\n" +
         "WHERE law_id = :lawId AND published_date = :publishedDate"
-    )
+    ),
 
+    /** --- Law Chapters --- */
+
+    SELECT_LAW_INFO(
+        "SELECT * FROM ${schema}." + SqlTable.LAW_INFO
+    ),
+    SELECT_LAW_INFO_BY_ID(
+        SELECT_LAW_INFO.sql + " WHERE law_id = :lawId"
+    ),
+    SELECT_LAW_INFO_BY_TYPE(
+        SELECT_LAW_INFO.sql + " WHERE law_type = :lawType"
+    ),
+    UPDATE_LAW_INFO(
+        "UPDATE ${schema}." + SqlTable.LAW_INFO + "\n" +
+        "SET chapter_id = :chapterId, law_type = :lawType, name = :name\n" +
+        "WHERE law_id = :lawId"
+    ),
+    INSERT_LAW_INFO(
+        "INSERT INTO ${schema}." + SqlTable.LAW_INFO + " (law_id, chapter_id, law_Type, name)\n" +
+        "VALUES (:lawId, :chapterId, :lawType, :name)\n"
+    )
     ;
 
     private String sql;

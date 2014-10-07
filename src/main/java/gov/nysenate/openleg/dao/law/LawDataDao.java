@@ -2,16 +2,34 @@ package gov.nysenate.openleg.dao.law;
 
 import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawFile;
+import gov.nysenate.openleg.model.law.LawInfo;
 import gov.nysenate.openleg.model.law.LawTree;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Data interface to retrieve and persist laws documents and their associated document trees.
  */
 public interface LawDataDao
 {
+    /**
+     * Retrieves basic law info for a given law id.
+     *
+     * @param lawId String - The three letter law id. (Case insensitive)
+     * @return LawInfo
+     * @throws DataAccessException - If no matching law id was found
+     */
+    public LawInfo getLawInfo(String lawId) throws DataAccessException;
+
+    /**
+     * Returns a list of all LawInfo stored in the backing store in no particular order.
+     *
+     * @return List<LawInfo>
+     */
+    public List<LawInfo> getLawInfos();
+
     /**
      * Retrieves and constructs a LawTree given the lawId and an ending publish date. This LawTree
      * can be used to determine the structure of a given law including the placement of its articles

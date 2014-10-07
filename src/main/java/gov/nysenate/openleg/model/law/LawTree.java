@@ -10,18 +10,23 @@ import java.time.LocalDate;
 public class LawTree
 {
     /** The identifier for this tree. */
-    LawVersionId lawVersionId;
+    protected LawVersionId lawVersionId;
+
+    /** Information about the law. */
+    protected LawInfo lawInfo;
 
     /** Reference to the root tree node (should be the chapter node) */
     protected LawTreeNode rootNode;
 
     /** --- Constructors --- */
 
-    public LawTree(LawVersionId lawVersionId, LawTreeNode rootNode) {
+    public LawTree(LawVersionId lawVersionId, LawTreeNode rootNode, LawInfo lawInfo) {
         if (lawVersionId == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null lawVersionId");
         if (rootNode == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null rootNode");
+        if (lawInfo == null) throw new IllegalArgumentException("Cannot construct a LawTree with a null lawInfo");
         this.lawVersionId = lawVersionId;
         this.rootNode = rootNode;
+        this.lawInfo = lawInfo;
     }
 
     /** --- Delegates --- */
@@ -42,5 +47,9 @@ public class LawTree
 
     public LawTreeNode getRootNode() {
         return rootNode;
+    }
+
+    public LawInfo getLawInfo() {
+        return lawInfo;
     }
 }

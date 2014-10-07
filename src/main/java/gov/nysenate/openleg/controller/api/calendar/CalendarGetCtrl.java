@@ -35,7 +35,7 @@ public class CalendarGetCtrl extends BaseCtrl
 
     @RequestMapping(value = "/{year:\\d{4}}")
     public BaseResponse getCalendars(@PathVariable int year,
-                                       @RequestParam MultiValueMap<String, String> parameters) {
+                                     @RequestParam MultiValueMap<String, String> parameters) {
         SortOrder sortOrder = getSortOrder(parameters, SortOrder.ASC);
         LimitOffset limitOffset = getLimitOffset(parameters, LimitOffset.HUNDRED);
         try {

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.law.data;
 import gov.nysenate.openleg.dao.law.LawDataDao;
 import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawFile;
+import gov.nysenate.openleg.model.law.LawInfo;
 import gov.nysenate.openleg.model.law.LawTree;
 import gov.nysenate.openleg.service.base.CachingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Service interface for retrieving and saving NYS Law data.
@@ -29,6 +34,12 @@ public class CachedLawDataService implements LawDataService, CachingService
     @Override
     public void evictCaches() {
         /** TODO */
+    }
+
+    @Override
+    public List<LawInfo> getLawInfos() {
+        List<LawInfo> infos = lawDataDao.getLawInfos();
+        return infos.stream().sorted().collect(toList());
     }
 
     /** {@inheritDoc} */

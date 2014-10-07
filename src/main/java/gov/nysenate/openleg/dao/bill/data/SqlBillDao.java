@@ -553,8 +553,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
                 bill.setProgramInfo(new ProgramInfo(rs.getString("program_info"), rs.getInt("program_info_num")));
             }
             bill.setYear(rs.getInt("active_year"));
-            bill.setStatus(new BillStatus(BillStatusType.valueOf(rs.getString("status")),
-                                          rs.getDate("status_date").toLocalDate()));
+            if (rs.getString("status") != null) {
+                bill.setStatus(new BillStatus(BillStatusType.valueOf(rs.getString("status")),
+                               rs.getDate("status_date").toLocalDate()));
+            }
             setModPubDatesFromResultSet(bill, rs);
             return bill;
         }

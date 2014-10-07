@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.law;
 
+import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.law.*;
 import gov.nysenate.openleg.service.law.data.LawDataService;
 import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
@@ -31,6 +32,9 @@ public class LawProcessor
     /** Pattern for law doc headers.  */
     protected static Pattern lawHeader =
         Pattern.compile("\\.\\.SO DOC ((\\w{3})(.{13}))(.{8}) (.{15}) (?:LAWS\\(((?:UN)?CONSOLIDATED)\\))");
+
+    /** Set of law ids to ignore during processing. */
+    protected static Set<String> ignoreLaws = Sets.newHashSet("CNS");
 
     @Autowired
     private LawDataService lawDataService;
@@ -69,6 +73,7 @@ public class LawProcessor
     protected void processInitialLaws(LawFile lawFile, List<LawBlock> lawBlocks) {
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         for (LawBlock block : lawBlocks) {
+            if (ignoreLaws.contains(block.getLawId())) continue;
             // Create the law builder for the law id if it doesn't already exist.
             if (!lawBuilders.containsKey(block.getLawId())) {
                 LawBuilder lawBuilder = new LawBuilder(new LawVersionId(block.getLawId(), block.getPublishedDate()));
@@ -93,6 +98,7 @@ public class LawProcessor
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         Map<String, LawTree> lawTrees = new HashMap<>();
         for (LawBlock block : lawBlocks) {
+            if (ignoreLaws.contains(block.getLawId())) continue;
             LawVersionId lawVersionId = new LawVersionId(block.getLawId(), block.getPublishedDate());
             // Retrieve the existing law tree if it exists.
             if (!lawTrees.containsKey(block.getLawId())) {

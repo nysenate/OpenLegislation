@@ -1,18 +1,14 @@
 package gov.nysenate.openleg.processor.law;
 
-import com.google.common.collect.Sets;
-import gov.nysenate.openleg.model.law.LawChapter;
-import gov.nysenate.openleg.model.law.LawDocumentType;
-import gov.nysenate.openleg.model.law.LawDocument;
-import gov.nysenate.openleg.model.law.LawFile;
+import gov.nysenate.openleg.model.law.LawDocInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.util.*;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LawTitleParser
 {
@@ -21,56 +17,38 @@ public class LawTitleParser
     /** The law files are most likely sent in CP850 encoding. */
     protected static Charset LAWFILE_CHARSET = Charset.forName("CP850");
 
-    /** Set of all law sections that are designated as Court Act laws. */
-    private static Set<String> courtActLawSections = Sets.newHashSet("CTC", "FCT", "CCA", "CRC", "SCP", "UCT", "UDC", "UJC");
-
-    /** Set of all law sections that are designated as Rules laws. */
-    private static Set<String> rulesLawSections = Sets.newHashSet("CMA", "CMS");
+    protected static String sectionTitlePattern = "(?i)((?:Section|§)\\s*%s).?\\s(.+?)\\.(.*)";
 
     /** --- Instance Variables --- */
 
-    protected File file;
-    protected Iterator<String> fileItr;
-
     /** --- Constructors --- */
 
-    public LawTitleParser(LawFile lawFile) throws IOException {
-        this.file = lawFile.getFile();
-        this.fileItr = Files.lines(file.toPath(), LAWFILE_CHARSET).iterator();
-    }
-
     /** --- Methods --- */
-
-    public List<LawDocument> getLawDocuments() throws IOException {
-        return null;
-    }
 
     /**
      *
      *
+     * @param text
      * @return
-     * @throws IOException
      */
-
-
-    public LawDocumentType parseLawLevelFromLocationId(String lawId, String locationId) {
-        Set<LawDocumentType> pathLevels = new HashSet<>();
-        // Try to match given law against our known law ids
-        LawChapter lawChapter = null;
-        try {
-            lawChapter = LawChapter.valueOf(lawId);
+    public static String extractTitleFromSection(LawDocInfo docInfo, String text) {
+        String title = "";
+        if (text != null && !text.isEmpty()) {
+            int asteriskLoc = docInfo.getLocationId().indexOf("*");
+            String locationId = (asteriskLoc != -1)
+                                ? docInfo.getLocationId().substring(0, asteriskLoc) : docInfo.getLocationId();
+            Pattern titlePattern = Pattern.compile(String.format(sectionTitlePattern, locationId.toLowerCase()));
+            int sectionIdx = text.indexOf("§");
+            String trimText = (sectionIdx != -1) ? text.substring(sectionIdx).trim() : text.trim();
+            Matcher titleMatcher = titlePattern.matcher(trimText);
+            if (titleMatcher.matches()) {
+                title = titleMatcher.group(2).replaceAll("-\\\\n\\s*", "").replaceAll("\\\\n?\\s*", " ");
+            }
+            else {
+                logger.warn("Section title pattern mismatch for {} with locId {} against {}",docInfo.getDocumentId(), locationId, trimText);
+            }
         }
-        catch (IllegalArgumentException ex) {
-            logger.warn("Failed to map {} to a LawChapter! This may indicate a new law chapter.", lawId);
-        }
-
-        LawDocumentType level = LawDocumentType.SECTION;
-        if (!locationId.matches("^[0-9].*")) {
-//            logger.info("{}", locationId);
-        }
-
-        logger.info("{} {}", locationId, level);
-        return level;
+        return StringUtils.abbreviate(title, 140);
     }
 
     /** --- Internal Methods --- */

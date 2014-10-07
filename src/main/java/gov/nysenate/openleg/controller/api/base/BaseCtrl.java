@@ -11,6 +11,13 @@ public abstract class BaseCtrl
 {
     public static final String BASE_API_PATH = "/api/3";
 
+    /**
+     *
+     *
+     * @param parameters
+     * @param defaultSortOrder
+     * @return
+     */
     protected SortOrder getSortOrder(MultiValueMap<String, String> parameters, SortOrder defaultSortOrder) {
         try {
             return SortOrder.valueOf(parameters.getFirst("order"));
@@ -20,6 +27,13 @@ public abstract class BaseCtrl
         }
     }
 
+    /**
+     *
+     *
+     * @param parameters
+     * @param defaultLimitOffset
+     * @return
+     */
     protected LimitOffset getLimitOffset(MultiValueMap<String, String> parameters, LimitOffset defaultLimitOffset) {
         try {
             if (parameters.getFirst("limit").equalsIgnoreCase("all")) {
@@ -36,6 +50,14 @@ public abstract class BaseCtrl
         }
     }
 
+    /**
+     *
+     *
+     * @param logger
+     * @param ex
+     * @param requestType
+     * @return
+     */
     protected BaseResponse handleRequestException(Logger logger, Exception ex, String requestType) {
         logger.error(String.format("Caught unhandled exception for request %s:", requestType));
         logger.error(ex.toString());

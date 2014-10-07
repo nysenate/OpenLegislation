@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.calendar.search;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.google.common.collect.Range;
 import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -11,6 +12,7 @@ import gov.nysenate.openleg.service.base.SearchParameters;
 import gov.nysenate.openleg.util.DateUtils;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 /** A class that contains values that are used to search for calendars */
 public class CalendarSearchParameters implements SearchParameters

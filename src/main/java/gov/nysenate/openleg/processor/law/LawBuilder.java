@@ -33,19 +33,22 @@ public class LawBuilder
         lawLevelCodes.put("INDEX", LawDocumentType.INDEX);
     }
 
-    /** */
+    /** A law version id that is obtained from the law blocks. */
     protected LawVersionId lawVersionId;
 
-    /**  */
+    /** The root node in the law tree. */
     protected LawTreeNode rootNode = null;
 
-    /**  */
+    /** Basic Chapter info. */
+    protected LawInfo lawInfo;
+
+    /** Map of all the documents that need to be persisted. */
     protected Map<String, LawDocument> lawDocMap = new HashMap<>();
 
-    /**  */
+    /** Stack of the current parent nodes, used to determine hierarchy. */
     protected Stack<LawTreeNode> parentNodes = new Stack<>();
 
-    /** */
+    /** A sequence number is used to maintain the order of the nodes. */
     protected int sequenceNo = 0;
 
     /** --- Constructors --- */
@@ -58,6 +61,7 @@ public class LawBuilder
         this(lawVersionId);
         if (previousTree != null) {
             this.rootNode = previousTree.getRootNode();
+            this.lawInfo = previousTree.getLawInfo();
         }
     }
 
@@ -88,6 +92,7 @@ public class LawBuilder
             else {
                 chapterDoc = createRootDocument(block);
             }
+            lawInfo = deriveLawInfo(chapterDoc.getLawId(), (isRootDoc) ? chapterDoc.getDocTypeId() : "");
             addRootDocument(chapterDoc, isNewDoc);
         }
 
@@ -98,6 +103,7 @@ public class LawBuilder
                 logger.debug("Processing section {}", lawDoc.getDocumentId());
                 lawDoc.setDocType(LawDocumentType.SECTION);
                 lawDoc.setDocTypeId(lawDoc.getLocationId());
+                lawDoc.setTitle(LawTitleParser.extractTitleFromSection(lawDoc, block.getText().toString()));
                 if (isNewDoc) {
                     lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
                 }
@@ -197,7 +203,7 @@ public class LawBuilder
      * @return LawTree
      */
     public LawTree getProcessedLawTree() {
-        return new LawTree(lawVersionId, rootNode);
+        return new LawTree(lawVersionId, rootNode, lawInfo);
     }
 
     /**
@@ -269,6 +275,29 @@ public class LawBuilder
         LawTreeNode node = new LawTreeNode(lawDoc, ++sequenceNo);
         currParent().addChild(node);
         parentNodes.push(node);
+    }
+
+    /**
+     * Constructs the LawInfo based on the LawChapterType mapping.
+     *
+     * @param lawId String
+     * @param chapterId String
+     * @return LawInfo
+     */
+    private LawInfo deriveLawInfo(String lawId, String chapterId) {
+        LawInfo chapter = new LawInfo();
+        chapter.setLawId(lawId);
+        chapter.setChapterId(chapterId);
+        try {
+            LawChapterType chapterType = LawChapterType.valueOf(lawId);
+            chapter.setName(chapterType.getName());
+            chapter.setType(chapterType.getType());
+        }
+        catch (IllegalArgumentException ex) {
+            chapter.setName("");
+            chapter.setType(LawType.MISC);
+        }
+        return chapter;
     }
 
     /**

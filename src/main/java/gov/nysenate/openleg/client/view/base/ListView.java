@@ -4,7 +4,8 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
-public class ListView<ViewType> implements ViewObject{
+public class ListView<ViewType> implements ViewObject
+{
     protected ImmutableList<ViewType> items;
 
     public static <ViewType extends ViewObject> ListView<ViewType> of(List<ViewType> items) {
