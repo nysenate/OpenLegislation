@@ -3,6 +3,7 @@ package gov.nysenate.openleg.processor;
 import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
 import gov.nysenate.openleg.processor.hearing.PublicHearingProcessService;
+import gov.nysenate.openleg.processor.law.LawProcessService;
 import gov.nysenate.openleg.processor.sobi.SobiProcessService;
 import gov.nysenate.openleg.processor.transcript.TranscriptProcessService;
 import org.slf4j.Logger;
@@ -32,6 +33,9 @@ public class DataProcessor
     @Autowired
     private PublicHearingProcessService publicHearingProcessService;
 
+    @Autowired
+    private LawProcessService lawProcessService;
+
     /** --- Main Method --- */
 
     /**
@@ -53,8 +57,7 @@ public class DataProcessor
         daybreakProcessService.collateDaybreakReports();
         transcriptProcessService.collateTranscriptFiles();
         publicHearingProcessService.collatePublicHearingFiles();
-        // TODO: Collate Public Hearings
-        // TODO: Collate Laws Of NY
+        lawProcessService.collateLawFiles();
         // TODO: Handle CMS.TEXT (Rules file)
         logger.info("Completed collations.");
     }
@@ -65,8 +68,7 @@ public class DataProcessor
         daybreakProcessService.processPendingFragments();
         transcriptProcessService.processPendingTranscriptFiles();
         publicHearingProcessService.processPendingPublicHearingFiles();
-        // TODO: Process Public Hearings
-        // TODO: Process Laws of NY
+        lawProcessService.processPendingLawFiles();
         logger.info("Completed ingest.");
     }
 }

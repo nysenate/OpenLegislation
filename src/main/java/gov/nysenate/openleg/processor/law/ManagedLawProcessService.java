@@ -58,13 +58,13 @@ public class ManagedLawProcessService implements LawProcessService
             lawFile.setProcessedCount(lawFile.getProcessedCount() + 1);
             lawFile.setPendingProcessing(false);
             lawFile.setProcessedDateTime(LocalDateTime.now());
-            //lawFileDao.updateLawFile(lawFile);
+            lawFileDao.updateLawFile(lawFile);
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public void processPendingLawFiles() {
-
+        processLawFiles(getPendingLawFiles(LimitOffset.ALL));
     }
 }
