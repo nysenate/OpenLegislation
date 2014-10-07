@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.entity.Member;
 
@@ -16,8 +17,8 @@ public class BillAmendmentView extends BillIdView {
     protected String fullText;
     protected String currentCommittee;
     protected String currentCommitteeDate;
-    protected ListView<String> coSponsors;
-    protected ListView<String> multiSponsors;
+    protected ListView<SimpleMemberView> coSponsors;
+    protected ListView<SimpleMemberView> multiSponsors;
     protected ListView<BillVoteView> votes;
     protected boolean uniBill;
     protected boolean isStricken;
@@ -37,11 +38,11 @@ public class BillAmendmentView extends BillIdView {
                     billAmendment.getCurrentCommittee().getName() : null;
             this.currentCommitteeDate = billAmendment.getCurrentCommittee() != null ?
                     billAmendment.getCurrentCommittee().getReferenceDate().toString() : null;
-            this.coSponsors = ListView.ofStringList(billAmendment.getCoSponsors().stream()
-                    .map(Member::getLbdcShortName)
+            this.coSponsors = ListView.of(billAmendment.getCoSponsors().stream()
+                    .map(SimpleMemberView::new)
                     .collect(Collectors.toList()));
-            this.multiSponsors = ListView.ofStringList(billAmendment.getMultiSponsors().stream()
-                    .map(Member::getLbdcShortName)
+            this.multiSponsors = ListView.of(billAmendment.getMultiSponsors().stream()
+                    .map(SimpleMemberView::new)
                     .collect(Collectors.toList()));
             this.votes = ListView.of(billAmendment.getVotesList().stream()
                     .map(BillVoteView::new)
@@ -88,11 +89,11 @@ public class BillAmendmentView extends BillIdView {
         return currentCommitteeDate;
     }
 
-    public ListView<String> getCoSponsors() {
+    public ListView<SimpleMemberView> getCoSponsors() {
         return coSponsors;
     }
 
-    public ListView<String> getMultiSponsors() {
+    public ListView<SimpleMemberView> getMultiSponsors() {
         return multiSponsors;
     }
 

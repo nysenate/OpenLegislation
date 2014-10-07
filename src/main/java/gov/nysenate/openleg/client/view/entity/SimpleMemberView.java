@@ -7,11 +7,13 @@ public class SimpleMemberView implements ViewObject
 {
     protected int memberId;
     protected String shortName;
+    protected int sessionYear;
 
     public SimpleMemberView(Member member) {
         if (member != null) {
             this.memberId = member.getMemberId();
             this.shortName = member.getLbdcShortName();
+            this.sessionYear = member.getSessionYear().getYear();
         }
     }
 
@@ -21,6 +23,10 @@ public class SimpleMemberView implements ViewObject
 
     public String getShortName() {
         return shortName;
+    }
+
+    public int getSessionYear() {
+        return sessionYear;
     }
 
     @Override

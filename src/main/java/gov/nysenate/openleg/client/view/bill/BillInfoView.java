@@ -41,8 +41,8 @@ public class BillInfoView extends BillIdView implements ViewObject
         return status;
     }
 
-    public String getSponsor() {
-        return sponsor.toString();
+    public SponsorView getSponsor() {
+        return sponsor;
     }
 
     @Override

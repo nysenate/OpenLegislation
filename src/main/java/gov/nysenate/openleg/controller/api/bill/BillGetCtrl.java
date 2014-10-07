@@ -50,14 +50,18 @@ public class BillGetCtrl extends BaseCtrl
     }
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
-    public BaseResponse getBill(@PathVariable String sessionYear, @PathVariable String printNo) {
+    public BaseResponse getBill(@PathVariable int sessionYear, @PathVariable String printNo) {
         try {
             return new ViewObjectResponse<>( new BillView(
-                    billDataService.getBill(new BaseBillId(printNo, Integer.parseInt(sessionYear)))));
+                    billDataService.getBill(new BaseBillId(printNo, sessionYear))));
         }
         catch (BillNotFoundEx ex) {
             return new SimpleErrorResponse(
-                    String.format("Could find a bill with printNo: %s for session year: %s", printNo, sessionYear));
+                    String.format("Could not find a bill with printNo: %s for session year: %s", printNo, sessionYear));
+        }
+        catch (IllegalArgumentException ex) {
+            return new SimpleErrorResponse(
+                    String.format("Illegal print no %s", printNo));
         }
         catch (Exception ex) {
             return handleRequestException(logger, ex, "get bill");

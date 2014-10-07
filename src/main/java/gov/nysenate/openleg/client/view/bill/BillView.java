@@ -4,6 +4,7 @@ import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
+import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.model.bill.Bill;
 
@@ -26,7 +27,7 @@ public class BillView extends BillInfoView implements ViewObject
     protected ListView<VetoMessageView> vetoMessages;
     protected ApprovalMessageView approvalMessage;
     protected String activeVersion;
-    protected ListView<SimpleMemberView> additionalSponsors;
+    protected ListView<MemberView> additionalSponsors;
     protected ListView<CommitteeVersionIdView> pastCommittees;
     protected ListView<BillActionView> actions;
     protected ListView<BillIdView> previousVersions;
@@ -48,7 +49,7 @@ public class BillView extends BillInfoView implements ViewObject
                     new ApprovalMessageView(bill.getApprovalMessage()) : null;
             this.activeVersion = bill.getActiveVersion().getValue();
             this.additionalSponsors = ListView.of(bill.getAdditionalSponsors().stream()
-                    .map(SimpleMemberView::new)
+                    .map(MemberView::new)
                     .collect(Collectors.toList()));
             this.pastCommittees = ListView.of(bill.getPastCommittees().stream()
                     .map(CommitteeVersionIdView::new)
@@ -88,7 +89,7 @@ public class BillView extends BillInfoView implements ViewObject
         return activeVersion;
     }
 
-    public ListView<SimpleMemberView> getAdditionalSponsors() {
+    public ListView<MemberView> getAdditionalSponsors() {
         return additionalSponsors;
     }
 
