@@ -6,7 +6,7 @@ import static gov.nysenate.openleg.model.law.LawType.*;
  * Current enumeration of all law chapters. It is possible that new laws chapters may come
  * in as part of an update so this listing should be maintained accordingly.
  */
-public enum LawChapter
+public enum LawChapterType
 {
     /** --- Consolidated Laws --- */
 
@@ -167,7 +167,7 @@ public enum LawChapter
 
     /** --- Constructor --- */
 
-    LawChapter(String name, LawType type) {
+    LawChapterType(String name, LawType type) {
         this.name = name;
         this.type = type;
     }

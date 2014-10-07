@@ -42,6 +42,7 @@
         <guava.version>18.0</guava.version>
         <guava.jackson.version>2.4.0</guava.jackson.version>
         <jstl.version>1.2</jstl.version>
+        <elastic-search.version>1.4.0.Beta1</elastic-search.version>
     </properties>
 
     <dependencies>
@@ -127,6 +128,14 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-guava</artifactId>
             <version>${guava.jackson.version}</version>
+        </dependency>
+
+        <!-- Elastic Search -->
+
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${elastic-search.version}</version>
         </dependency>
 
         <!-- Serializers/Deserializers -->
