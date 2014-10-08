@@ -128,38 +128,20 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
 
     @Override
     @Cacheable(value = calendarDataCache, key = "#root.methodName + '-' + #year + '-' + #sortOrder + '-' + #limitOffset")
-    public List<Calendar> getCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) throws CalendarNotFoundEx {
-        try {
+    public List<Calendar> getCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) {
             return calendarDao.getCalendars(year, sortOrder, limitOffset);
-        }
-        catch (DataAccessException ex) {
-            logger.warn("Error retrieving calendar ids for " + year + ":\n" + ex.getMessage());
-            throw new CalendarNotFoundEx(year);
-        }
     }
 
     @Override
     @Cacheable(value = calendarDataCache, key = "#root.methodName + '-' + #year + '-' + #sortOrder + '-' + #limitOffset")
-    public List<CalendarActiveList> getActiveLists(int year, SortOrder sortOrder, LimitOffset limitOffset) throws CalendarNotFoundEx {
-        try {
-            return calendarDao.getActiveLists(year, sortOrder, limitOffset);
-        }
-        catch (DataAccessException ex) {
-            logger.warn("Error retrieving active list ids for " + year + ":\n" + ex.getMessage());
-            throw new CalendarNotFoundEx(year);
-        }
+    public List<CalendarActiveList> getActiveLists(int year, SortOrder sortOrder, LimitOffset limitOffset) {
+        return calendarDao.getActiveLists(year, sortOrder, limitOffset);
     }
 
     @Override
     @Cacheable(value = calendarDataCache, key = "#root.methodName + '-' + #year + '-' + #sortOrder + '-' + #limitOffset")
-    public List<CalendarSupplemental> getFloorCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) throws CalendarNotFoundEx {
-        try {
-            return calendarDao.getFloorCalendars(year, sortOrder, limitOffset);
-        }
-        catch (DataAccessException ex) {
-            logger.warn("Error retrieving floor calendar ids for " + year + ":\n" + ex.getMessage());
-            throw new CalendarNotFoundEx(year);
-        }
+    public List<CalendarSupplemental> getFloorCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) {
+        return calendarDao.getFloorCalendars(year, sortOrder, limitOffset);
     }
 
     /** {@inheritDoc} */

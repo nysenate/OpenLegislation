@@ -31,10 +31,8 @@ public class BillSearchCtrl extends BaseCtrl
     /** --- Request Handlers --- */
 
     @RequestMapping(value = "")
-    public SearchResults<BillId> advancedSearch(WebRequest webRequest,
-                                                @RequestParam(defaultValue = "25") int limit,
-                                                @RequestParam(defaultValue = "1") int offset) {
-        LimitOffset limOff = new LimitOffset(limit, offset);
+    public SearchResults<BillId> advancedSearch(WebRequest webRequest) {
+        LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.TWENTY_FIVE);
         Map<BillSearchField, String> queryMap = getAdvancedSearchQueryMap(webRequest);
         logger.info("{}", queryMap);
         SearchResults<BillId> results = billSearch.searchAdvanced(queryMap, limOff);
@@ -43,11 +41,9 @@ public class BillSearchCtrl extends BaseCtrl
     }
 
     @RequestMapping(value = "/{term}")
-    public SearchResults<BillId> globalSearch(@PathVariable String term,
-                                             @RequestParam(defaultValue = "25") int limit,
-                                             @RequestParam(defaultValue = "1") int offset) {
+    public SearchResults<BillId> globalSearch(@PathVariable String term, WebRequest webRequest) {
         logger.debug("Bill Search Request: {}", term);
-        LimitOffset limOff = new LimitOffset(limit, offset);
+        LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.TWENTY_FIVE);
         return billSearch.searchAll(term, limOff);
     }
 

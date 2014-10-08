@@ -21,7 +21,7 @@ public class LawParserTests extends BaseTests
     @Test
     public void testExtractDocuments() throws Exception {
         LawFile lawFile = lawFileDao.getPendingLawFiles(SortOrder.ASC, LimitOffset.TEN).get(6);
-        LawParser parser = new LawParser(lawFile);
+        //LawParser parser = new LawParser(lawFile);
         logger.info("{}", lawFile);
 //        parser.getLawBlocks().stream().filter(l -> !l.isConsolidated()).
 //                forEach(r -> logger.info(r.getLawId() + " : " + r.getLocationId() + " : " + r.isConsolidated()));

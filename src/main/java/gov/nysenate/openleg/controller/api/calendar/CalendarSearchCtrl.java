@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.controller.api.calendar;
 
 import com.google.common.collect.*;
-import gov.nysenate.openleg.client.response.base.BaseResponse;
-import gov.nysenate.openleg.client.response.base.ListViewResponse;
-import gov.nysenate.openleg.client.response.base.SimpleErrorResponse;
+import gov.nysenate.openleg.client.response.base.*;
+import gov.nysenate.openleg.client.response.error.*;
+import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.calendar.SimpleActiveListView;
 import gov.nysenate.openleg.client.view.calendar.SimpleCalendarSupView;
 import gov.nysenate.openleg.client.view.calendar.SimpleCalendarView;
@@ -20,14 +20,13 @@ import gov.nysenate.openleg.service.calendar.search.CalendarSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
@@ -44,123 +43,125 @@ public class CalendarSearchCtrl extends BaseCtrl{
     @Autowired
     private CalendarDataService calendarDataService;
 
+    /** --- Request Handlers --- */
+
+    /**
+     * Performs a search on all types of calendars based on parameters in the given web request
+     * @param webRequest
+     * @return
+     */
     @RequestMapping(value = "/search")
-    public BaseResponse searchAllCalendars(@RequestParam MultiValueMap<String, String> parameters) {
-        CalendarSearchParameters searchParams = getSearchParameters(parameters);
+    public BaseResponse searchAllCalendars(WebRequest webRequest) {
+        CalendarSearchParameters searchParams = getSearchParameters(webRequest);
         searchParams.setCalendarType(CalendarType.ALL);
-        SortOrder sortOrder = getSortOrder(parameters, SortOrder.ASC);
-        LimitOffset limitOffset = getLimitOffset(parameters, LimitOffset.HUNDRED);
-        try {
-            return ListViewResponse.of(
-                    calendarSearchService.searchForCalendars(searchParams, sortOrder, limitOffset).stream()
-                            .map(calId -> new SimpleCalendarView(calendarDataService.getCalendar(calId)))
-                            .collect(Collectors.toList()),
-                    calendarSearchService.getCalenderSearchResultCount(searchParams),
-                    limitOffset
-            );
-        }
-        catch (InvalidParametersSearchException ex) {
-            return new SimpleErrorResponse("Conflicting search parameters :\n" + searchParams);
-        }
-        catch (NoResultsSearchException ex) {
-            return new SimpleErrorResponse("Received no results for search query");
-        }
-        catch (Exception ex) {
-            return handleRequestException(logger, ex, "calendar search");
-        }
+        SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
+        LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
+        return ListViewResponse.of(
+                calendarSearchService.searchForCalendars(searchParams, sortOrder, limitOffset).stream()
+                        .map(calId -> new SimpleCalendarView(calendarDataService.getCalendar(calId)))
+                        .collect(Collectors.toList()),
+                calendarSearchService.getCalenderSearchResultCount(searchParams),
+                limitOffset
+        );
     }
 
+    /**
+     * Performs a search on all active list calendars based on parameters in the given web request
+     * @param webRequest
+     * @return
+     */
     @RequestMapping(value = "/activelists/search")
-    public BaseResponse searchActiveListCalendars(@RequestParam MultiValueMap<String, String> parameters) {
-        CalendarSearchParameters searchParams = getSearchParameters(parameters);
+    public BaseResponse searchActiveListCalendars(WebRequest webRequest) {
+        CalendarSearchParameters searchParams = getSearchParameters(webRequest);
         searchParams.setCalendarType(CalendarType.ACTIVE_LIST);
-        SortOrder sortOrder = getSortOrder(parameters, SortOrder.ASC);
-        LimitOffset limitOffset = getLimitOffset(parameters, LimitOffset.HUNDRED);
-        try {
-            return ListViewResponse.of(
-                    calendarSearchService.searchForActiveLists(searchParams, sortOrder, limitOffset).stream()
-                            .map(alId -> new SimpleActiveListView(calendarDataService.getActiveList(alId)))
-                            .collect(Collectors.toList()),
-                    calendarSearchService.getCalenderSearchResultCount(searchParams),
-                    limitOffset
-            );
-        }
-        catch (InvalidParametersSearchException ex) {
-            return new SimpleErrorResponse("Conflicting search parameters :\n" + searchParams);
-        }
-        catch (NoResultsSearchException ex) {
-            return new SimpleErrorResponse("Received no results for search query");
-        }
-        catch (Exception ex) {
-            return handleRequestException(logger, ex, "calendar active list search");
-        }
+        SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
+        LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
+        return ListViewResponse.of(
+                calendarSearchService.searchForActiveLists(searchParams, sortOrder, limitOffset).stream()
+                        .map(alId -> new SimpleActiveListView(calendarDataService.getActiveList(alId)))
+                        .collect(Collectors.toList()),
+                calendarSearchService.getCalenderSearchResultCount(searchParams),
+                limitOffset
+        );
     }
 
+    /**
+     * Performs a search on all floor calendars based on parameters in the given web request
+     * @param webRequest
+     * @return
+     */
     @RequestMapping(value = "/floor/search")
-    public BaseResponse searchFloorCalendars(@RequestParam MultiValueMap<String, String> parameters) {
-        CalendarSearchParameters searchParams = getSearchParameters(parameters);
+    public BaseResponse searchFloorCalendars(WebRequest webRequest) {
+        CalendarSearchParameters searchParams = getSearchParameters(webRequest);
         searchParams.setCalendarType(CalendarType.FLOOR);
-        SortOrder sortOrder = getSortOrder(parameters, SortOrder.ASC);
-        LimitOffset limitOffset = getLimitOffset(parameters, LimitOffset.HUNDRED);
-        try {
-            return ListViewResponse.of(
-                    calendarSearchService.searchForFloorCalendars(searchParams, sortOrder, limitOffset).stream()
-                            .map(supId -> new SimpleCalendarSupView(calendarDataService.getFloorCalendar(supId)))
-                            .collect(Collectors.toList()),
-                    calendarSearchService.getCalenderSearchResultCount(searchParams),
-                    limitOffset
-            );
-        }
-        catch (InvalidParametersSearchException ex) {
-            return new SimpleErrorResponse("Conflicting search parameters :\n" + searchParams);
-        }
-        catch (NoResultsSearchException ex) {
-            return new SimpleErrorResponse("Received no results for search query");
-        }
-        catch (Exception ex) {
-            return handleRequestException(logger, ex, "floor calendar search");
-        }
+        SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
+        LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
+        return ListViewResponse.of(
+                calendarSearchService.searchForFloorCalendars(searchParams, sortOrder, limitOffset).stream()
+                        .map(supId -> new SimpleCalendarSupView(calendarDataService.getFloorCalendar(supId)))
+                        .collect(Collectors.toList()),
+                calendarSearchService.getCalenderSearchResultCount(searchParams),
+                limitOffset
+        );
     }
 
-    private CalendarSearchParameters getSearchParameters(MultiValueMap<String, String> parameters) {
+    /** --- Exception Handlers --- */
+
+    /**
+     * Handles an invalid search parameters exception by returning an error response
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(InvalidParametersSearchException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidParamsSearchEx(InvalidParametersSearchException ex) {
+        return new ViewObjectErrorResponse(ErrorCode.INVALID_CAL_SEARCH_PARAMS,
+                                           ListView.ofStringList(new LinkedList<>(ex.getInvalidParams())));
+    }
+
+    /** --- Internal Methods --- */
+
+    /**
+     * Extracts calendar search parameters from the web request params
+     * @param webRequest
+     * @return
+     */
+    private CalendarSearchParameters getSearchParameters(WebRequest webRequest) {
         CalendarSearchParameters searchParams = new CalendarSearchParameters();
-        if (parameters.containsKey("year")) {
-            searchParams.setYear(Integer.parseInt(parameters.getFirst("year")));
+        if (webRequest.getParameter("year") != null) {
+            searchParams.setYear(Integer.parseInt(webRequest.getParameter("year")));
         }
-        if (parameters.containsKey("startDate") && parameters.containsKey("endDate")) {
+        if (webRequest.getParameter("startDate") != null && webRequest.getParameter("endDate") != null) {
             searchParams.setDateRange(Range.closed(
-                    LocalDate.parse(parameters.getFirst("startDate"), DateTimeFormatter.BASIC_ISO_DATE),
-                    LocalDate.parse(parameters.getFirst("endDate"), DateTimeFormatter.BASIC_ISO_DATE)
+                    LocalDate.parse(webRequest.getParameter("startDate"), DateTimeFormatter.BASIC_ISO_DATE),
+                    LocalDate.parse(webRequest.getParameter("endDate"), DateTimeFormatter.BASIC_ISO_DATE)
             ));
         }
-        if (parameters.containsKey("sessionYear")) {
-            int sessionYear = Integer.parseInt(parameters.getFirst("sessionYear"));
+        if (webRequest.getParameter("sessionYear") != null && webRequest.getParameter("printNoSet1") != null) {
+            int sessionYear = Integer.parseInt(webRequest.getParameter("sessionYear"));
             SetMultimap<Integer, BillId> printNoMap = HashMultimap.create();
-            for (int n=1; parameters.containsKey("printNoSet" + n); n++) {
-                Integer setNum = n;
-                parameters.get("printNoSet" + setNum).stream()
-                        .map(printNo -> new BillId(printNo, sessionYear))
-                        .forEach(billId -> printNoMap.put(setNum, billId));
+            for (int setNum=1; webRequest.getParameter("printNoSet" + setNum) != null; setNum++) {
+                for (String printNo : webRequest.getParameterValues("printNoSet" + setNum)) {
+                    printNoMap.put(setNum, new BillId(printNo, sessionYear));
+                }
             }
             searchParams.setBillPrintNo(printNoMap);
         }
-        if (parameters.containsKey("calNoSet1")) {
+        if (webRequest.getParameter("calNoSet1") != null) {
             SetMultimap<Integer, Integer> calNoMap = HashMultimap.create();
-            for (int n=1; parameters.containsKey("calNoSet" + n); n++) {
-                Integer setNum = n;
-                parameters.get("calNoSet" + setNum).stream()
-                        .map(Integer::parseInt)
-                        .forEach(calNo -> calNoMap.put(setNum, calNo));
+            for (int setNum=1; webRequest.getParameter("calNoSet" + setNum) != null; setNum++) {
+                for (String calNo : webRequest.getParameterValues("calNoSet" + setNum)) {
+                    calNoMap.put(setNum, Integer.parseInt(calNo));
+                }
             }
             searchParams.setBillCalendarNo(calNoMap);
         }
-        if (parameters.containsKey("sectionCodeSet1")) {
+        if (webRequest.getParameter("sectionCodeSet1") != null) {
             SetMultimap<Integer, Integer> sectionCodeMap = HashMultimap.create();
-            for (int n=1; parameters.containsKey("sectionCodeSet" + n); n++) {
-                Integer setNum = n;
-                parameters.get("sectionCodeSet" + setNum).stream()
-                        .map(Integer::parseInt)
-                        .forEach(sectionCode -> sectionCodeMap.put(setNum, sectionCode));
+            for (int setNum=1; webRequest.getParameter("sectionCodeSet" + setNum) != null; setNum++) {
+                for (String sectionCode : webRequest.getParameterValues("sectionCodeSet" + setNum)) {
+                    sectionCodeMap.put(setNum, Integer.parseInt(sectionCode));
+                }
             }
             searchParams.setSectionCode(sectionCodeMap);
         }

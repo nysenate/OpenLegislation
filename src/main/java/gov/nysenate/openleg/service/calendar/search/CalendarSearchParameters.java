@@ -2,7 +2,6 @@ package gov.nysenate.openleg.service.calendar.search;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.common.collect.Range;
 import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -12,6 +11,7 @@ import gov.nysenate.openleg.service.base.SearchParameters;
 import gov.nysenate.openleg.util.DateUtils;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 /** A class that contains values that are used to search for calendars */
@@ -35,6 +35,9 @@ public class CalendarSearchParameters implements SearchParameters
     /** Get calendars for a specific set of section codes. */
     private SetMultimap<Integer, Integer> sectionCode;
 
+    /** A set of names of parameters that are invalid.  Is not populated until getInvalidParams is called */
+    private Set<String> invalidParams;
+
     /** --- Constructors --- */
 
     public CalendarSearchParameters() {
@@ -44,35 +47,50 @@ public class CalendarSearchParameters implements SearchParameters
         this.billPrintNo = null;
         this.billCalendarNo = null;
         this.sectionCode = null;
+        this.invalidParams = null;
     }
 
     /** --- Interface Methods --- */
 
-    /** Returns false if there are any conflicts within the parameters, otherwise returns true */
     @Override
     public boolean isValid() {
+        return getInvalidParams().size()==0;
+    }
+
+    /** Returns a set of names for parameters that are invalid */
+    @Override
+    public Set<String> getInvalidParams() {
+        if (invalidParams != null) {
+            return invalidParams;
+        }
+
+        invalidParams = new HashSet<>();
+
         // There needs to be a return type for the query
         if (this.calendarType == null) {
-            return false;
+            invalidParams.add("calendar type");
         }
 
         // Active list calendars do not contain section codes
         if (sectionCode != null && calendarType==CalendarType.ACTIVE_LIST) {
-            return false;
+            invalidParams.add("calendar type");
+            invalidParams.add("section codes");
         }
 
         // The specified year must fit inside the specified date range
         if (dateRange != null && year != null) {
             if (year < DateUtils.startOfDateRange(dateRange).getYear() ||
                 year > DateUtils.endOfDateRange(dateRange).getYear() ) {
-                return false;
+                invalidParams.add("year");
+                invalidParams.add("date range");
             }
         }
 
         // The session year for the print numbers must fit into the date range
         if (billPrintNo != null && dateRange != null) {
             if (!getBillPrintNoSession().asDateRange().isConnected(dateRange)) {
-                return false;
+                invalidParams.add("session year");
+                invalidParams.add("date range");
             }
         }
 
@@ -80,7 +98,8 @@ public class CalendarSearchParameters implements SearchParameters
         if (year != null && billPrintNo != null) {
             if (year < getBillPrintNoSession().getSessionStartYear() ||
                 year > getBillPrintNoSession().getSessionEndYear()) {
-                return false;
+                invalidParams.add("session year");
+                invalidParams.add("year");
             }
         }
 
@@ -92,12 +111,12 @@ public class CalendarSearchParameters implements SearchParameters
                     sessionYear = billId.getSession();
                 }
                 else if (!sessionYear.equals(billId.getSession())) {
-                    return false;
+                    invalidParams.add("session year");
                 }
             }
         }
 
-        return true;
+        return invalidParams;
     }
 
     /** Returns the number of set parameters */

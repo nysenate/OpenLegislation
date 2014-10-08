@@ -65,7 +65,7 @@ public interface CalendarDataService
      * @return List<CalendarId>
      * @throws CalendarNotFoundEx - If no calendars exist for the given year
      */
-    public List<Calendar> getCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) throws CalendarNotFoundEx;
+    public List<Calendar> getCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset);
 
     /**
      * Gets all active lists for the given year
@@ -74,7 +74,7 @@ public interface CalendarDataService
      * @param limitOffset @return List<CalendarActiveListId>
      * @throws CalendarNotFoundEx - if no active lists exist for the given year
      */
-    public List<CalendarActiveList> getActiveLists(int year, SortOrder sortOrder, LimitOffset limitOffset) throws CalendarNotFoundEx;
+    public List<CalendarActiveList> getActiveLists(int year, SortOrder sortOrder, LimitOffset limitOffset);
 
     /**
      * Gets all floor calendars for the given year
@@ -83,7 +83,7 @@ public interface CalendarDataService
      * @param limitOffset @return List<CalendarSupplementalId>
      * @throws CalendarNotFoundEx - if no floor calendars exist for the given year
      */
-    public List<CalendarSupplemental> getFloorCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) throws CalendarNotFoundEx;
+    public List<CalendarSupplemental> getFloorCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset);
 
     /**
      * Saves the Calendar into the persistence layer. If a new Calendar reference is

@@ -1,26 +1,36 @@
 package gov.nysenate.openleg.controller.api.base;
 
-import gov.nysenate.openleg.client.response.base.BaseResponse;
-import gov.nysenate.openleg.client.response.base.SimpleErrorResponse;
+import com.sun.javaws.exceptions.InvalidArgumentException;
+import gov.nysenate.openleg.client.response.error.ErrorCode;
+import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import org.slf4j.Logger;
-import org.springframework.util.MultiValueMap;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.WebRequest;
 
 public abstract class BaseCtrl
 {
+    private static final Logger logger = LoggerFactory.getLogger(BaseCtrl.class);
+
     public static final String BASE_API_PATH = "/api/3";
 
+    /** --- Param grabbers --- */
+
     /**
-     *
-     *
-     * @param parameters
+     * Returns a sort order extracted from the given web request parameters
+     * Returns the given default sort order if no such parameter exists
+     * @param webRequest
      * @param defaultSortOrder
      * @return
      */
-    protected SortOrder getSortOrder(MultiValueMap<String, String> parameters, SortOrder defaultSortOrder) {
+    protected SortOrder getSortOrder(WebRequest webRequest, SortOrder defaultSortOrder) {
         try {
-            return SortOrder.valueOf(parameters.getFirst("order"));
+            return SortOrder.valueOf(webRequest.getParameter("order"));
         }
         catch (Exception ex) {
             return defaultSortOrder;
@@ -28,43 +38,45 @@ public abstract class BaseCtrl
     }
 
     /**
-     *
-     *
-     * @param parameters
+     * Returns a limit + offset extracted from the given web request parameters
+     * Returns the given default limit offset if no such parameters exist
+     * @param webRequest
      * @param defaultLimitOffset
      * @return
      */
-    protected LimitOffset getLimitOffset(MultiValueMap<String, String> parameters, LimitOffset defaultLimitOffset) {
+    protected LimitOffset getLimitOffset(WebRequest webRequest, LimitOffset defaultLimitOffset) {
         try {
-            if (parameters.getFirst("limit").equalsIgnoreCase("all")) {
+            if (webRequest.getParameter("limit").equalsIgnoreCase("all")) {
                 return LimitOffset.ALL;
             }
-            if (!parameters.containsKey("offset")) {
-                return new LimitOffset(Integer.parseInt(parameters.getFirst("limit")));
+            if (!webRequest.getParameterMap().containsKey("offset")) {
+                return new LimitOffset(Integer.parseInt(webRequest.getParameter("limit")));
             }
-            return new LimitOffset(Integer.parseInt(parameters.getFirst("limit")),
-                    Integer.parseInt(parameters.getFirst("offset")));
+            return new LimitOffset(Integer.parseInt(webRequest.getParameter("limit")),
+                    Integer.parseInt(webRequest.getParameter("offset")));
         }
         catch (Exception ex) {
             return defaultLimitOffset;
         }
     }
 
-    /**
-     *
-     *
-     * @param logger
-     * @param ex
-     * @param requestType
-     * @return
-     */
-    protected BaseResponse handleRequestException(Logger logger, Exception ex, String requestType) {
-        logger.error(String.format("Caught unhandled exception for request %s:", requestType));
+    /** --- Generic Exception Handlers --- */
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    protected ErrorResponse handleInvalidArgumentEx(IllegalArgumentException ex) {
+        return new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    protected ErrorResponse handleUnknownError(Exception ex) {
+        logger.error("Caught unhandled servlet exception:");
         logger.error(ex.toString());
         // Print first 5 lines of stack trace
         for(int i=0; i<5 && i<ex.getStackTrace().length; i++) {
             logger.error("    " + ex.getStackTrace()[i].toString());
         }
-        return new SimpleErrorResponse(String.format("Could not process %s request", requestType));
+        return new ErrorResponse(ErrorCode.UNKNOWN_ERROR);
     }
 }

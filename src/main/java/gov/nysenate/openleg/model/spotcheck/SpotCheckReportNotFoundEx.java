@@ -11,5 +11,10 @@ public class SpotCheckReportNotFoundEx extends RuntimeException
 
     public SpotCheckReportNotFoundEx(SpotCheckReportId reportId) {
         super("No matching spot check report with id " + reportId + " could be found.");
+        this.reportId = reportId;
+    }
+
+    public SpotCheckReportId getReportId() {
+        return reportId;
     }
 }

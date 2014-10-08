@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.service.base;
 
+import java.util.Set;
+
 public interface SearchParameters {
 
     /**
@@ -7,6 +9,11 @@ public interface SearchParameters {
      * @return
      */
     public boolean isValid();
+
+    /**
+     * Gets a set of parameter names that are invalid
+     */
+    public Set<String> getInvalidParams();
 
     /**
      * Returns the number of set parameters

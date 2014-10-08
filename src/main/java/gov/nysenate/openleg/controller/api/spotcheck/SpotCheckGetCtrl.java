@@ -1,9 +1,12 @@
 package gov.nysenate.openleg.controller.api.spotcheck;
 
-import gov.nysenate.openleg.client.response.base.SimpleErrorResponse;
+import gov.nysenate.openleg.client.response.error.ErrorCode;
+import gov.nysenate.openleg.client.response.error.ErrorResponse;
+import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportDetailResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportSummaryResponse;
 import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.spotcheck.ReportIdView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -18,10 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -70,13 +71,13 @@ public class SpotCheckGetCtrl extends BaseCtrl
     public Object getDaybreakReport(
            @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime reportDateTime) {
         logger.info("Retrieving daybreak report {}", reportDateTime);
-        try {
-            return new ReportDetailResponse<>(
-                daybreakService.getReport(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, reportDateTime)));
-        }
-        catch (SpotCheckReportNotFoundEx ex) {
-            logger.warn("{}", ex.getMessage());
-            return new SimpleErrorResponse("No report matching the given date/time exists.");
-        }
+        return new ReportDetailResponse<>(
+            daybreakService.getReport(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, reportDateTime)));
+    }
+
+    @ExceptionHandler(SpotCheckReportNotFoundEx.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ErrorResponse handleSpotCheckReportNotFoundEx(SpotCheckReportNotFoundEx ex) {
+        return new ViewObjectErrorResponse(ErrorCode.SPOTCHECK_REPORT_NOT_FOUND, new ReportIdView(ex.getReportId()));
     }
 }

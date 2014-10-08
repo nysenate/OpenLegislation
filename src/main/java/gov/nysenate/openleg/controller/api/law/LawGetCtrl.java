@@ -2,11 +2,11 @@ package gov.nysenate.openleg.controller.api.law;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
-import gov.nysenate.openleg.client.response.base.SimpleErrorResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
-import gov.nysenate.openleg.client.view.law.LawDocView;
-import gov.nysenate.openleg.client.view.law.LawInfoView;
-import gov.nysenate.openleg.client.view.law.LawTreeView;
+import gov.nysenate.openleg.client.response.error.ErrorCode;
+import gov.nysenate.openleg.client.response.error.ErrorResponse;
+import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
+import gov.nysenate.openleg.client.view.law.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.law.LawDocument;
@@ -19,8 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.util.MultiValueMap;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,9 +38,11 @@ public class LawGetCtrl extends BaseCtrl
     @Autowired
     private LawDataService lawDataService;
 
+    /** --- Request Handlers --- */
+
     @RequestMapping("")
-    public BaseResponse getLaws(@RequestParam MultiValueMap<String, String> parameters) {
-        LimitOffset limOff = getLimitOffset(parameters, LimitOffset.ALL);
+    public BaseResponse getLaws(WebRequest webRequest) {
+        LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.ALL);
         List<LawInfo> lawInfoList = lawDataService.getLawInfos();
         ListViewResponse<LawInfoView> response = ListViewResponse.of(
             LimitOffset.limitList(lawInfoList.stream().map(li -> new LawInfoView(li)).collect(toList()), limOff),
@@ -55,16 +58,10 @@ public class LawGetCtrl extends BaseCtrl
         if (date == null) {
             date = LocalDate.now();
         }
-        try {
-            LawTree lawTree = lawDataService.getLawTree(lawId, date);
-            ViewObjectResponse<LawTreeView> response = new ViewObjectResponse<>(new LawTreeView(lawTree));
-            response.setMessage("The document structure for " + lawId + " law");
-            return response;
-        }
-        catch (LawTreeNotFoundEx ex) {
-            return new SimpleErrorResponse("No law match was found for law id " + lawId);
-        }
-
+        LawTree lawTree = lawDataService.getLawTree(lawId, date);
+        ViewObjectResponse<LawTreeView> response = new ViewObjectResponse<>(new LawTreeView(lawTree));
+        response.setMessage("The document structure for " + lawId + " law");
+        return response;
     }
 
     @RequestMapping("/{lawId}/{locationId}")
@@ -74,15 +71,23 @@ public class LawGetCtrl extends BaseCtrl
         if (date == null) {
             date = LocalDate.now();
         }
-        try {
-            LawDocument doc = lawDataService.getLawDocument(lawId + locationId, date);
-            ViewObjectResponse<LawDocView> response = new ViewObjectResponse<>(new LawDocView(doc));
-            response.setMessage("Law document for location " + locationId + " in " + lawId + " law ");
-            return response;
-        }
-        catch (LawDocumentNotFoundEx ex) {
-            return new SimpleErrorResponse("No " + lawId + " law document with location id " + locationId + " and " +
-                                           "active date " + date + " exists.");
-        }
+        LawDocument doc = lawDataService.getLawDocument(lawId + locationId, date);
+        ViewObjectResponse<LawDocView> response = new ViewObjectResponse<>(new LawDocView(doc));
+        response.setMessage("Law document for location " + locationId + " in " + lawId + " law ");
+        return response;
+    }
+
+    /** --- Exception Handlers --- */
+
+    @ExceptionHandler(LawTreeNotFoundEx.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ErrorResponse handleLawTreeNotFoundEx(LawTreeNotFoundEx ex) {
+        return new ViewObjectErrorResponse(ErrorCode.LAW_DOC_NOT_FOUND, new LawIdQueryView(ex.getLawId(), ex.getEndPubDate()));
+    }
+
+    @ExceptionHandler(LawDocumentNotFoundEx.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ErrorResponse handleLawDocNotFoundEx(LawDocumentNotFoundEx ex) {
+        return new ViewObjectErrorResponse(ErrorCode.LAW_DOC_NOT_FOUND, new LawDocQueryView(ex.getDocId(), ex.getEndPublishedDate()));
     }
 }
