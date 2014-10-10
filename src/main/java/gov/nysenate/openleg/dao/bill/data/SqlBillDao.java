@@ -159,10 +159,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         updateVetoMessages(bill, sobiFragment);
         // Update approval message
         updateApprovalMessage(bill, sobiFragment);
-
-        // Update the aggregate search index
-        Object[] args = new Object[] {bill.getBasePrintNo(), bill.getSession().getYear()};
-        jdbc.query("SELECT master_search.refresh_bill_search(?::text, ?::smallint)", args, (rs,row) -> row);
     }
 
     /** {@inheritDoc} */

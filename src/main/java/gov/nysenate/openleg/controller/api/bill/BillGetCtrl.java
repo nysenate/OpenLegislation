@@ -33,22 +33,19 @@ public class BillGetCtrl extends BaseCtrl
     private BillDataService billDataService;
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}")
-    public BaseResponse getBills(@PathVariable int sessionYear,
-                                 WebRequest webRequest) {
+    public BaseResponse getBills(@PathVariable int sessionYear, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.FIFTY);
         return ListViewResponse.of(
-                billDataService.getBillIds(SessionYear.of(sessionYear), limOff).parallelStream()
-                    .map(billId -> new BillInfoView(billDataService.getBillInfo(billId)))
-                    .collect(Collectors.toList()),
-                billDataService.getBillCount(SessionYear.of(sessionYear)),
-                limOff
+            billDataService.getBillIds(SessionYear.of(sessionYear), limOff).parallelStream()
+                .map(billId -> new BillInfoView(billDataService.getBillInfo(billId)))
+                .collect(Collectors.toList()), billDataService.getBillCount(SessionYear.of(sessionYear)), limOff
         );
     }
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
     public BaseResponse getBill(@PathVariable int sessionYear, @PathVariable String printNo) {
-        return new ViewObjectResponse<>( new BillView(
-                billDataService.getBill(new BaseBillId(printNo, sessionYear))));
+        return new ViewObjectResponse<>(new BillView(
+            billDataService.getBill(new BaseBillId(printNo, sessionYear))));
     }
 
     @ExceptionHandler(BillNotFoundEx.class)
@@ -56,6 +53,4 @@ public class BillGetCtrl extends BaseCtrl
     public ViewObjectErrorResponse billNotFoundHandler(BillNotFoundEx ex) {
         return new ViewObjectErrorResponse(ErrorCode.BILL_NOT_FOUND, new BillIdView(ex.getBillId()));
     }
-
-
 }

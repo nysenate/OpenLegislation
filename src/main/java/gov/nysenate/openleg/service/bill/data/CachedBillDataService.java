@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +54,6 @@ public class CachedBillDataService implements BillDataService, CachingService
     /** {@inheritDoc} */
     @Override
     /** FIXME: Cache key should use the base bill id. */
-    @Cacheable(value = billDataCache)
     public Bill getBill(BillId billId) throws BillNotFoundEx {
         logger.debug("Fetching bill {}..", billId);
         if (billId == null) {
@@ -104,7 +104,6 @@ public class CachedBillDataService implements BillDataService, CachingService
 
     /** {@inheritDoc} */
     @Override
-    @CacheEvict(value = billDataCache, key = "#bill.getBaseBillId()")
     public void saveBill(Bill bill, SobiFragment fragment) {
         logger.debug("Persisting bill {}", bill);
         billDao.updateBill(bill, fragment);

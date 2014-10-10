@@ -2,8 +2,8 @@ package gov.nysenate.openleg.service.base;
 
 import java.util.Set;
 
-public interface SearchParameters {
-
+public interface SearchParameters
+{
     /**
      * A validation function that returns false if the given parameters are not valid
      * @return

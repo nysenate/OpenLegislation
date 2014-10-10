@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.service.base;
 
-public class NoResultsSearchException extends RuntimeException {
-
+public class NoResultsSearchException extends SearchException
+{
     private static final long serialVersionUID = -5154933846565304528L;
 
     private SearchParameters searchParams;

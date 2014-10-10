@@ -3,8 +3,8 @@ package gov.nysenate.openleg.service.base;
 import java.util.Set;
 
 /** An exception thrown from a search service when a given SearchParameters object is found to be invalid */
-public class InvalidParametersSearchException extends RuntimeException {
-
+public class InvalidParametersSearchException extends SearchException
+{
     private static final long serialVersionUID = 2497556335879753721L;
 
     private SearchParameters searchParams;

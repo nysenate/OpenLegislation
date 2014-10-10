@@ -12,5 +12,8 @@
     "angular-resource": "~1.2.23",
     "ng-table": "~0.3.3",
     "angular-foundation": "~0.3.1"
+  },
+  "devDependencies": {
+    "pace": "~1.0.1"
   }
 }

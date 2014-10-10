@@ -2,19 +2,15 @@ package gov.nysenate.openleg.processor.hearing;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.hearing.PublicHearingFileDao;
-import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Service
@@ -93,6 +89,6 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
     /** {@inheritDoc} */
     @Override
     public void updatePendingProcessing(PublicHearingId publicHearingId, boolean pendingProcessing) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }

@@ -1,15 +1,15 @@
 package gov.nysenate.openleg.controller.api.base;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
+import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.service.base.SearchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
@@ -78,5 +78,11 @@ public abstract class BaseCtrl
             logger.error("    " + ex.getStackTrace()[i].toString());
         }
         return new ErrorResponse(ErrorCode.UNKNOWN_ERROR);
+    }
+
+    @ExceptionHandler(SearchException.class)
+    @ResponseStatus(value = HttpStatus.I_AM_A_TEAPOT)
+    public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
+        return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
     }
 }

@@ -12,6 +12,15 @@ commonModule.filter('moment', ['$filter', function($filter) {
     };
 }]);
 
+/** --- Top Navigation --- */
+
+/**
+ * Controller to handle the top navigation component.
+ */
+commonModule.controller('TopNavCtrl', ['$scope', function($scope) {
+    $scope.showMobileMenu = false;
+}]);
+
 /** --- CheckButton --- */
 
 commonModule.directive('checkButton', function(){

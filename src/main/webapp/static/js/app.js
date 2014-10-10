@@ -1,15 +1,25 @@
 /** --- Main configuration --- */
 
 var commonModule = angular.module('common', []);
+var contentModule = angular.module('content', [commonModule.name]);
 var reportModule = angular.module('report', ['ngRoute', commonModule.name]);
 
-var openApp = angular.module('open', ['ngRoute', 'ngResource', reportModule.name]);
+var openApp = angular.module('open', ['ngRoute', 'ngResource', contentModule.name, reportModule.name]);
 openApp.constant('appProps', {
     ctxPath: window.ctxPath
 });
 
 openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+
+    /** --- Content --- */
+
+    $routeProvider.when(ctxPath + '/content/bills', {
+        templateUrl: ctxPath + '/static/partial/content/bills-home.html',
+        controller: 'BillHomeCtrl'
+    });
+
     /** --- Reports --- */
+
     $routeProvider.when(ctxPath + '/report', {
         redirectTo: ctxPath + '/report/daybreak'
     });

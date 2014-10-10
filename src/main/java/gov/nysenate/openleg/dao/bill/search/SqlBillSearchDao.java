@@ -31,7 +31,7 @@ import static gov.nysenate.openleg.service.bill.search.BillSearchField.*;
  * perform full text searches.
  */
 @Repository(value = "dbBillSearch")
-public class SqlBillSearchDao extends SqlBaseDao implements BillSearchDao
+public class SqlBillSearchDao extends SqlBaseDao
 {
     private static final Logger logger = LoggerFactory.getLogger(SqlBillSearchDao.class);
 
@@ -55,8 +55,8 @@ public class SqlBillSearchDao extends SqlBaseDao implements BillSearchDao
     /** --- Implemented Methods --- */
 
     /** {@inheritDoc} */
-    @Override
-    public SearchResults<BillId> searchAll(String query, LimitOffset limOff) {
+//    @Override
+    public SearchResults<BillId> searchBills(String query, LimitOffset limOff) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("query", query));
         OrderBy orderByRank = new OrderBy("rank", SortOrder.DESC);
 
@@ -74,7 +74,7 @@ public class SqlBillSearchDao extends SqlBaseDao implements BillSearchDao
     }
 
     /** {@inheritDoc} */
-    @Override
+//    @Override
     public SearchResults<BillId> searchAdvanced(Map<BillSearchField, String> query, LimitOffset limOff) {
         // Maintain a list of the tables that are involved in the query.
         Set<SqlTable> defaultSearchTables = Sets.newHashSet(SqlTable.BILL_INFO_SEARCH, SqlTable.BILL_AMENDMENT_SEARCH);
