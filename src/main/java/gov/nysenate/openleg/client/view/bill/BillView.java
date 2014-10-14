@@ -5,17 +5,16 @@ import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
-import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
 
-import java.util.AbstractMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.Map.*;
-import static java.util.AbstractMap.*;
+import static java.util.AbstractMap.SimpleEntry;
+import static java.util.Map.Entry;
 
 /**
  * A complete representation of a bill including it's amendments.
@@ -23,7 +22,8 @@ import static java.util.AbstractMap.*;
 public class BillView extends BillInfoView implements ViewObject
 {
     protected MapView<String, BillAmendmentView> amendments;
-    protected MapView<String, PublishStatusView> amendmentPublishStatuses;
+    protected MapView<String, PublishStatusView> publishStatuses;
+    protected ListView<BillVoteView> votes;
     protected ListView<VetoMessageView> vetoMessages;
     protected ApprovalMessageView approvalMessage;
     protected String activeVersion;
@@ -31,36 +31,51 @@ public class BillView extends BillInfoView implements ViewObject
     protected ListView<CommitteeVersionIdView> pastCommittees;
     protected ListView<BillActionView> actions;
     protected ListView<BillIdView> previousVersions;
-    protected ProgramInfoView programInfo;
+    protected ProgramInfoView program;
 
     public BillView(Bill bill) {
         super(bill != null ? bill.getBillInfo() : null);
         if (bill != null) {
             this.amendments = MapView.of(bill.getAmendmentList().stream()
-                    .map(BillAmendmentView::new)
-                    .collect(Collectors.toMap(BillAmendmentView::getVersion, Function.identity(), (a, b) -> b, TreeMap::new)));
-            this.amendmentPublishStatuses = MapView.of(bill.getAmendPublishStatusMap().entrySet().stream()
-                    .map(entry -> new SimpleEntry<>(entry.getKey().toString(), new PublishStatusView(entry.getValue())))
-                    .collect(Collectors.toMap(Entry::getKey, Entry::getValue)));
+                .map(BillAmendmentView::new)
+                .collect(Collectors.toMap(BillAmendmentView::getVersion, Function.identity(), (a, b) -> b, TreeMap::new)));
+
+            this.publishStatuses = MapView.of(bill.getAmendPublishStatusMap().entrySet().stream()
+                .map(entry -> new SimpleEntry<>(entry.getKey().toString(),
+                        new PublishStatusView(entry.getKey().getValue(), entry.getValue())))
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue)));
+
+            votes = ListView.of(bill.getAmendmentList().stream()
+                .flatMap(a -> a.getVotesList().stream())
+                .map(v -> new BillVoteView(v))
+                .collect(Collectors.toList()));
+
             this.vetoMessages = ListView.of(bill.getVetoMessages().values().stream()
-                    .map(VetoMessageView::new)
-                    .collect(Collectors.toList()));
+                .map(VetoMessageView::new)
+                .collect(Collectors.toList()));
+
             this.approvalMessage = bill.getApprovalMessage() != null ?
-                    new ApprovalMessageView(bill.getApprovalMessage()) : null;
+                new ApprovalMessageView(bill.getApprovalMessage()) : null;
+
             this.activeVersion = bill.getActiveVersion().getValue();
+
             this.additionalSponsors = ListView.of(bill.getAdditionalSponsors().stream()
-                    .map(MemberView::new)
-                    .collect(Collectors.toList()));
+                .map(MemberView::new)
+                .collect(Collectors.toList()));
+
             this.pastCommittees = ListView.of(bill.getPastCommittees().stream()
-                    .map(CommitteeVersionIdView::new)
-                    .collect(Collectors.toList()));
+                .map(CommitteeVersionIdView::new)
+                .collect(Collectors.toList()));
+
             this.actions = ListView.of(bill.getActions().stream()
-                    .map(BillActionView::new)
-                    .collect(Collectors.toList()));
+                .map(BillActionView::new)
+                .collect(Collectors.toList()));
+
             this.previousVersions = ListView.of(bill.getPreviousVersions().stream()
-                    .map(BillIdView::new)
-                    .collect(Collectors.toList()));
-            this.programInfo = new ProgramInfoView(bill.getProgramInfo());
+                .map(BillIdView::new)
+                .collect(Collectors.toList()));
+
+            this.program = bill.getProgramInfo() != null ? new ProgramInfoView(bill.getProgramInfo()) : null;
         }
     }
 
@@ -73,8 +88,12 @@ public class BillView extends BillInfoView implements ViewObject
         return amendments;
     }
 
-    public MapView<String, PublishStatusView> getAmendmentPublishStatuses() {
-        return amendmentPublishStatuses;
+    public MapView<String, PublishStatusView> getPublishStatuses() {
+        return publishStatuses;
+    }
+
+    public ListView<BillVoteView> getVotes() {
+        return votes;
     }
 
     public ListView<VetoMessageView> getVetoMessages() {
@@ -105,7 +124,7 @@ public class BillView extends BillInfoView implements ViewObject
         return previousVersions;
     }
 
-    public ProgramInfoView getProgramInfo() {
-        return programInfo;
+    public ProgramInfoView getProgram() {
+        return program;
     }
 }

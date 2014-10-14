@@ -6,8 +6,10 @@ import gov.nysenate.openleg.model.bill.BillInfo;
 /**
  * Just the essentials for displaying a Bill in a search result for example.
  */
-public class BillInfoView extends BillIdView implements ViewObject
+public class BillInfoView extends BaseBillIdView implements ViewObject
 {
+    protected String printNo;
+    protected String billType;
     protected String title;
     protected String activeVersion;
     protected String summary;
@@ -18,15 +20,25 @@ public class BillInfoView extends BillIdView implements ViewObject
         super(billInfo != null ? billInfo.getBillId() : null);
         if (billInfo != null) {
             title = billInfo.getTitle();
+            billType = billInfo.getBillId().getBillType().getName();
             activeVersion = billInfo.getActiveVersion() != null ? billInfo.getActiveVersion().getValue() : null;
+            printNo = basePrintNo + activeVersion;
             summary = billInfo.getSummary();
             status = new BillStatusView(billInfo.getStatus());
             sponsor = new SponsorView(billInfo.getSponsor());
         }
     }
 
+    public String getPrintNo() {
+        return printNo;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public String getBillType() {
+        return billType;
     }
 
     public String getActiveVersion() {

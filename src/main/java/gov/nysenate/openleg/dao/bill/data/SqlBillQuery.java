@@ -160,9 +160,9 @@ public enum SqlBillQuery implements BasicSqlQuery
     INSERT_BILL_VOTES_INFO(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + "\n" +
         "(bill_print_no, bill_session_year, bill_amend_version, vote_type, vote_date, sequence_no, " +
-        " modified_date_time, published_date_time, last_fragment_id) " +
+        " committee_name, committee_chamber, modified_date_time, published_date_time, last_fragment_id) " +
         "VALUES (:printNo, :sessionYear, :version, :voteType::${schema}.vote_type, :voteDate, :sequenceNo, " +
-        "        :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
+        "        :committeeName, :committeeChamber::chamber, :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
     INSERT_BILL_VOTES_ROLL(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_ROLL + "\n" +

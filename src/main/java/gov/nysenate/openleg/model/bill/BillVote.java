@@ -5,6 +5,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.entity.CommitteeId;
+import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 
 import java.io.Serializable;
@@ -33,6 +35,8 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
     /** Date the vote was taken on. */
     private LocalDate voteDate;
 
+    private CommitteeId committeeId;
+
     /** Sets of members grouped based upon how they voted. */
     @SuppressWarnings("serial")
     private SetMultimap<BillVoteCode, Member> memberVotes = HashMultimap.create();
@@ -49,6 +53,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
 
     public BillVote(BillVoteId billVoteId) {
         this(billVoteId.getBillId(), billVoteId.getVoteDate(), billVoteId.getVoteType(), billVoteId.getSequenceNo());
+        this.committeeId = billVoteId.getCommitteeId();
     }
 
     public BillVote(BillId billId, LocalDate voteDate, BillVoteType type) {
@@ -71,7 +76,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
      * Creates and returns a unique id for the BillVote.
      */
     public BillVoteId getVoteId() {
-        return new BillVoteId(this.billId, this.voteDate, this.voteType, this.sequenceNo);
+        return new BillVoteId(this.billId, this.voteDate, this.voteType, this.sequenceNo, this.committeeId);
     }
 
     /**
@@ -114,7 +119,8 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
                Objects.equals(this.voteType, other.voteType) &&
                Objects.equals(this.voteDate, other.voteDate) &&
                Objects.equals(this.memberVotes, other.memberVotes) &&
-               Objects.equals(this.sequenceNo, other.sequenceNo);
+               Objects.equals(this.sequenceNo, other.sequenceNo) &&
+               Objects.equals(this.committeeId, other.committeeId);
     }
 
     @Override
@@ -178,5 +184,13 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
 
     public void setSequenceNo(int sequenceNo) {
         this.sequenceNo = sequenceNo;
+    }
+
+    public CommitteeId getCommitteeId() {
+        return committeeId;
+    }
+
+    public void setCommitteeId(CommitteeId committeeId) {
+        this.committeeId = committeeId;
     }
 }

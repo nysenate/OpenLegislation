@@ -5,22 +5,22 @@ import gov.nysenate.openleg.model.bill.ProgramInfo;
 
 public class ProgramInfoView implements ViewObject {
 
-    protected String info;
-    protected int infoNum;
+    protected String name;
+    protected int num;
 
     public ProgramInfoView(ProgramInfo programInfo) {
         if (programInfo != null) {
-            this.info = programInfo.getInfo();
-            this.infoNum = programInfo.getNumber();
+            this.name = programInfo.getInfo();
+            this.num = programInfo.getNumber();
         }
     }
 
-    public String getInfo() {
-        return info;
+    public String getName() {
+        return name;
     }
 
-    public int getInfoNum() {
-        return infoNum;
+    public int getNum() {
+        return num;
     }
 
     @Override

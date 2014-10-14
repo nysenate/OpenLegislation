@@ -225,7 +225,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Get a set of the committee ids which represent the committees the bill was previously referred to.
      */
-    private SortedSet<CommitteeVersionId> getBillCommittees(ImmutableParams baseParams){
+    private TreeSet<CommitteeVersionId> getBillCommittees(ImmutableParams baseParams){
         return new TreeSet<>(jdbcNamed.query(SqlBillQuery.SELECT_BILL_COMMITTEES.getSql(schema()), baseParams, new BillCommitteeRowMapper()));
     }
 
@@ -820,7 +820,11 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         addBillIdParams(billAmendment, params);
         params.addValue("voteDate", toDate(billVote.getVoteDate()))
               .addValue("voteType", billVote.getVoteType().name().toLowerCase())
-              .addValue("sequenceNo", billVote.getSequenceNo());
+              .addValue("sequenceNo", billVote.getSequenceNo())
+              .addValue("committeeName", (billVote.getCommitteeId() != null)
+                                         ? billVote.getCommitteeId().getName() : null)
+              .addValue("committeeChamber", (billVote.getCommitteeId() != null)
+                                            ? billVote.getCommitteeId().getChamber().asSqlEnum() : null);
         addModPubDateParams(billVote.getModifiedDateTime(), billVote.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;
