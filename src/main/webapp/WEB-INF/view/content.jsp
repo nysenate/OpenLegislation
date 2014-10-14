@@ -9,12 +9,10 @@
     <script src="${ctxPath}/static/js/component/content/bill/bill-home.js"></script>
 </open-layout:head>
 <open-layout:body pageId="content">
-    <div ng-controller="ContentCtrl" class="row collapsed" style="margin-top:1.5em">
-        {{title}}
-        <div class="large-2 columns side-menu-bg">
+    <div ng-controller="ContentCtrl" class="row" style="margin-top:1.5em">
+        <div class="large-2 columns side-nav-container">
             <nav>
                 <ul class="side-nav">
-                    <li class='heading'>Content Types</li>
                     <li ng-class="{active : selectedContent == 'agendas'}">
                         <a ng-click="selectedContent='agendas'" href="${ctxPath}/content/agendas">
                             <span class="icon-clipboard prefix-icon2"></span>Agendas</a>
@@ -47,12 +45,6 @@
                         <a ng-click="selectedContent='vetos'" href="${ctxPath}/content/vetos">
                             <span class="icon-thumbsup prefix-icon2"></span>Vetos / Approvals</a>
                     </li>
-                    <li>
-                        <a href="#"></a>
-                    </li>
-                    <li class='heading'>Raw Data</li>
-                    <li><a href="#">Sobi Documents</a></li>
-                    <li><a href="#">Law Documents</a></li>
                 </ul>
             </nav>
         </div>

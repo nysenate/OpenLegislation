@@ -1,1 +1,18 @@
-<h1>{{title}}</h1>
+<div class="row collapsed content-row">
+    <form>
+        <div class="columns small-12">
+            <label>Search for bills and resolutions
+                <input ng-model="searchTerm" ng-model-options="{debounce: {default: 500}}" type="text"
+                       placeholder="Print No (e.g. S1234) or a term (e.g. Senate Rules)"/>
+            </label>
+        </div>
+    </form>
+</div>
+
+<div class="row content-row">
+    <p>Search results for: {{searchTerm}}</p>
+</div>
+
+<div class="row content-row" ng-repeat="item in billResults.result.items">
+    <p>{{item.result.basePrintNo}} - {{item.result.session}} | {{item.result.title}}</p>
+</div>

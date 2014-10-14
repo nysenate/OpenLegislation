@@ -33,9 +33,8 @@ table {
   }
 }
 
-.side-nav li.heading {
-  font-size: .9em;
-  color: $nice-blue;
+.light-background {
+  background: #fafafa;
 }
 
 /** --- Header --- */
@@ -91,6 +90,55 @@ table {
   li {
     font-size: 1rem;
   }
+}
+
+/** --- Side Nav Menu --- */
+
+@media #{$small-up} {
+  .side-nav-container {
+    background: transparent;
+    nav {
+      background: #fafafa;
+      width: 50%;
+      margin: auto;
+    }
+  }
+}
+
+@media #{$large-up} {
+  .side-nav-container {
+    background: #fafafa;
+    nav {
+      width: auto;
+    }
+  }
+}
+
+.side-nav-container {
+  padding: 0;
+}
+
+.side-nav li {
+  padding: 0 1rem;
+  &.active {
+    background: $nice-blue;
+    a:first-child:not(.button) {
+      color: white;
+    }
+  }
+  a:not(.button):hover {
+    background: none;
+    color: $nice-blue;
+  }
+}
+
+/** --- Result Listings --- */
+
+.content-row {
+  background: #fafafa;
+  padding: 10px;
+  margin-left: 15px !important;
+  margin-bottom: 10px !important;
 }
 
 /** --- Magellan Nav --- */

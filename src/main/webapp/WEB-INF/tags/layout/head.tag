@@ -8,6 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>${title}</title>
+    <base href="<%= request.getContextPath() %>">
     <!-- Main CSS -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/app.css"/>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/icons.css"/>
