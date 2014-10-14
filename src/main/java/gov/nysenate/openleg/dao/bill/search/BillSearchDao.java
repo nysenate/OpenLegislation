@@ -16,9 +16,10 @@ public interface BillSearchDao
     /**
      *
      *
-     * @param query String -
+     * @param query String
+     * @param sort String
      * @param limOff LimitOffset
      * @return SearchResults<BillId>
      */
-    public SearchResults<BaseBillId> searchBills(String query, LimitOffset limOff);
+    public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff);
 }

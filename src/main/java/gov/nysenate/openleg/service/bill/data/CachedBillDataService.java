@@ -68,6 +68,7 @@ public class CachedBillDataService implements BillDataService, CachingService
     }
 
     @Override
+    @Cacheable(value = billDataCache)
     public BillInfo getBillInfo(BillId billId) throws BillNotFoundEx {
         logger.debug("Fetching bill info {}..", billId);
         if (billId == null) {

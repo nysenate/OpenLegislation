@@ -37,16 +37,14 @@ public class ElasticBillSearchService implements BillSearchService
         eventBus.register(this);
     }
 
-    @Value("${my.awesome.string}")
-    protected String myValue;
-
+    /** {@inheritDoc} */
     @Override
-    public SearchResults<BaseBillId> searchBills(String query, LimitOffset limOff) throws SearchException {
+    public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException {
         if (limOff == null) {
             limOff = LimitOffset.TEN;
         }
         try {
-            return billSearchDao.searchBills(query, limOff);
+            return billSearchDao.searchBills(query, sort, limOff);
         }
         catch (SearchParseException ex) {
             throw new SearchException("There was a problem parsing the supplied query string.", ex);

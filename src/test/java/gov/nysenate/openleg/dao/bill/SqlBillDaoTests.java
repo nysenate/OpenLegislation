@@ -23,15 +23,7 @@ public class SqlBillDaoTests extends BaseTests
 
     @Test
     public void testGetBill() throws Exception {
-        StopWatch sw = new StopWatch();
-        logger.info("{}", billDao.getBill(new BaseBillId("S1235", 2013)));
-        sw.start();
-        logger.info("{}", billDao.getBill(new BaseBillId("S1234", 2013)));
-        logger.info("{}", billDao.getBill(new BaseBillId("S1234", 2013)));
-        logger.info("{}", billDao.getBill(new BaseBillId("S1234", 2013)));
-        logger.info("{}", billDao.getBill(new BaseBillId("S1234", 2013)));
-        sw.stop();
-        logger.info("Time elapsed: {}", sw.getTime());
+        logger.info("{}", OutputUtils.toJson(billDao.getBill(new BaseBillId("S1051", 2013))));
     }
 
     @Test

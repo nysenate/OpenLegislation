@@ -28,10 +28,9 @@ public class SqlBillSearchDaoTests extends BaseTests
 
     @Test
     public void testSearchAll() throws Exception {
-        billSearch.searchAll("moose", LimitOffset.TEN);
         StopWatch sw = new StopWatch();
         sw.start();
-        billSearch.searchAll("moose", LimitOffset.TEN);
+        logger.info("{}", billSearch.searchBills("S1234", "", LimitOffset.TEN).getResults());
         sw.stop();
         logger.info("{} ms", sw.getTime());
     }
@@ -41,10 +40,10 @@ public class SqlBillSearchDaoTests extends BaseTests
         Map<BillSearchField, String> query = new HashMap<>();
         query.put(BillSearchField.SPONSOR, "MARCHIONE");
 
-        SearchResults<BillId> results = billSearch.searchAdvanced(query, LimitOffset.TEN);
-        results.getResults().stream()
-            .map(r -> billDao.getBillInfo(r.getResult()))
-            .forEach(i -> logger.info("{} - {}", i.getBillId(), i.getTitle()));
+//        SearchResults<BillId> results = billSearch.searchAdvanced(query, LimitOffset.TEN);
+//        results.getResults().stream()
+//            .map(r -> billDao.getBillInfo(r.getResult()))
+//            .forEach(i -> logger.info("{} - {}", i.getBillId(), i.getTitle()));
 
     }
 }

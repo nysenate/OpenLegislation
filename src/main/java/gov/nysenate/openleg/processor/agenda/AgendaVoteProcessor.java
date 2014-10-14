@@ -119,6 +119,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
 
                         // Create the committee bill vote.
                         BillVote vote = new BillVote(billId, meetDateTime.toLocalDate(), BillVoteType.COMMITTEE);
+                        vote.setCommitteeId(committeeId);
                         vote.setModifiedDateTime(modifiedDate);
                         vote.setPublishedDateTime(modifiedDate);
 

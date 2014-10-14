@@ -33,11 +33,13 @@ public class BillGetCtrl extends BaseCtrl
     private BillDataService billDataService;
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}")
-    public BaseResponse getBills(@PathVariable int sessionYear, WebRequest webRequest) {
+    public BaseResponse getBills(@PathVariable int sessionYear,
+                                 @RequestParam(defaultValue = "false") boolean full, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.FIFTY);
         return ListViewResponse.of(
             billDataService.getBillIds(SessionYear.of(sessionYear), limOff).parallelStream()
-                .map(billId -> new BillInfoView(billDataService.getBillInfo(billId)))
+                .map(billId -> (full) ? new BillView(billDataService.getBill(billId))
+                                      : new BillInfoView(billDataService.getBillInfo(billId)))
                 .collect(Collectors.toList()), billDataService.getBillCount(SessionYear.of(sessionYear)), limOff
         );
     }

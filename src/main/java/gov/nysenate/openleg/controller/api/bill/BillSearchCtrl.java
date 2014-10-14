@@ -49,9 +49,10 @@ public class BillSearchCtrl extends BaseCtrl
 
     @RequestMapping(value = "")
     public BaseResponse globalSearch(@RequestParam(required = true) String term,
+                                     @RequestParam(defaultValue = "") String sort,
                                      @RequestParam(defaultValue = "false") boolean full, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.TWENTY_FIVE);
-        SearchResults<BaseBillId> results = billSearch.searchBills(term, limOff);
+        SearchResults<BaseBillId> results = billSearch.searchBills(term, sort, limOff);
         return ListViewResponse.of(
             results.getResults().parallelStream()
                 .map(r -> new SearchResultView(

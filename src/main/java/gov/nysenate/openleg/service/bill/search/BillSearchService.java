@@ -14,10 +14,10 @@ public interface BillSearchService
      * Performs a search across all bill data.
      *
      * @param query String - General search term
+     * @param sort String - Sort by field(s)
      * @param limOff LimitOffset - Restrict the result set.
      * @return SearchResults<BaseBillId>
      */
-    public SearchResults<BaseBillId> searchBills(String query, LimitOffset limOff) throws SearchException;
-
+    public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException;
 
 }
