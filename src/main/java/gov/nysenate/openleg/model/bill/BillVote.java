@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
@@ -17,7 +18,7 @@ import java.util.Set;
  * This model can be used for representing both floor and committee votes although
  * committee votes will have some extra metadata that should be tracked elsewhere.
  */
-public class BillVote extends BaseLegislativeContent implements Serializable
+public class BillVote extends BaseLegislativeContent implements Serializable, Comparable<BillVote>
 {
     private static final long serialVersionUID = -5265803060674818213L;
 
@@ -114,6 +115,14 @@ public class BillVote extends BaseLegislativeContent implements Serializable
                Objects.equals(this.voteDate, other.voteDate) &&
                Objects.equals(this.memberVotes, other.memberVotes) &&
                Objects.equals(this.sequenceNo, other.sequenceNo);
+    }
+
+    @Override
+    public int compareTo(BillVote o) {
+        return ComparisonChain.start()
+            .compare(this.getVoteDate(), o.getVoteDate())
+            .compare(this.getVoteType().code, o.getVoteType().code)
+            .result();
     }
 
     @Override

@@ -58,7 +58,7 @@ public class BillAmendment implements Serializable
 
     /** A list of votes that have been made on this bill. Maps the vote id -> BillVote to make it
      *  easy to update votes. */
-    protected Map<BillVoteId, BillVote> votesMap = new HashMap<>();
+    protected Map<BillVoteId, BillVote> votesMap = new TreeMap<>();
 
     /** A flag marking this bill as introduced in unison in both houses */
     protected Boolean uniBill = false;

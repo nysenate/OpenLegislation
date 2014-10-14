@@ -81,7 +81,7 @@ public abstract class BaseCtrl
     }
 
     @ExceptionHandler(SearchException.class)
-    @ResponseStatus(value = HttpStatus.I_AM_A_TEAPOT)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
         return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
     }

@@ -47,10 +47,11 @@ public class BillSearchCtrl extends BaseCtrl
 
     /** --- Request Handlers --- */
 
-    @RequestMapping(value = "/{query}")
-    public BaseResponse globalSearch(@PathVariable String query, WebRequest webRequest) {
+    @RequestMapping(value = "")
+    public BaseResponse globalSearch(@RequestParam(required = true) String term,
+                                     @RequestParam(defaultValue = "false") boolean full, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.TWENTY_FIVE);
-        SearchResults<BaseBillId> results = billSearch.searchBills(query, limOff);
+        SearchResults<BaseBillId> results = billSearch.searchBills(term, limOff);
         return ListViewResponse.of(
             results.getResults().parallelStream()
                 .map(r -> new SearchResultView(

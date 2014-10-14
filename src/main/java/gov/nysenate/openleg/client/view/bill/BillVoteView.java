@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.client.view.base.*;
+import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
 import gov.nysenate.openleg.model.entity.Member;
@@ -13,7 +14,7 @@ public class BillVoteView implements ViewObject
     protected String voteType;
     protected String voteDate;
     protected int sequenceNo;
-    protected MapView<String, ListView<String>> memberVotes;
+    protected MapView<String, ListView<SimpleMemberView>> memberVotes;
 
     public BillVoteView(BillVote billVote) {
         if(billVote!=null) {
@@ -22,11 +23,12 @@ public class BillVoteView implements ViewObject
             this.voteDate = billVote.getVoteDate().toString();
             this.sequenceNo = billVote.getSequenceNo();
             this.memberVotes = MapView.of(
-                    billVote.getMemberVotes().keySet().stream()
-                        .collect(Collectors.toMap(BillVoteCode::name,
-                                voteCode -> ListView.ofStringList(billVote.getMembersByVote(voteCode).stream()
-                                                                    .map(Member::getLbdcShortName)
-                                                                    .collect(Collectors.toList()))))
+                billVote.getMemberVotes().keySet().stream()
+                    .collect(Collectors.toMap(BillVoteCode::name,
+                        voteCode -> ListView.of(
+                            billVote.getMembersByVote(voteCode).stream()
+                                .map(m -> new SimpleMemberView(m))
+                                .collect(Collectors.toList()))))
             );
         }
     }
@@ -47,7 +49,7 @@ public class BillVoteView implements ViewObject
         return sequenceNo;
     }
 
-    public MapView<String, ListView<String>> getMemberVotes() {
+    public MapView<String, ListView<SimpleMemberView>> getMemberVotes() {
         return memberVotes;
     }
 
