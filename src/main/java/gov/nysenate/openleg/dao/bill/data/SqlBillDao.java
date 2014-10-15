@@ -159,6 +159,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         updateVetoMessages(bill, sobiFragment);
         // Update approval message
         updateApprovalMessage(bill, sobiFragment);
+
     }
 
     /** {@inheritDoc} */
@@ -463,7 +464,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             MapDifference<Member, Integer> diff = difference(existingCoSponsors, billAmendment.getCoSponsors(), 1);
             // Delete old cosponsors
             diff.entriesOnlyOnLeft().forEach((member,ordinal) -> {
-                ImmutableParams cspParams = amendParams.add(new MapSqlParameterSource("memberId", member.getMemberId()));
+                ImmutableParams cspParams = amendParams.add(new MapSqlParameterSource("sessionMemberId", member.getSessionMemberId()));
                 jdbcNamed.update(SqlBillQuery.DELETE_BILL_COSPONSOR.getSql(schema()), cspParams);
             });
             // Update re-ordered cosponsors
@@ -490,7 +491,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             MapDifference<Member, Integer> diff = difference(existingMultiSponsors, billAmendment.getMultiSponsors(), 1);
             // Delete old multisponsors
             diff.entriesOnlyOnLeft().forEach((member,ordinal) -> {
-                ImmutableParams mspParams = amendParams.add(new MapSqlParameterSource("memberId", member.getMemberId()));
+                ImmutableParams mspParams = amendParams.add(new MapSqlParameterSource("sessionMemberId", member.getSessionMemberId()));
                 jdbcNamed.update(SqlBillQuery.DELETE_BILL_MULTISPONSOR.getSql(schema()), mspParams);
             });
             // Update re-ordered multisponsors
@@ -528,7 +529,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             for (BillVoteCode voteCode : billVote.getMemberVotes().keySet()) {
                 voteParams.addValue("voteCode", voteCode.name().toLowerCase());
                 for (Member member : billVote.getMembersByVote(voteCode)) {
-                    voteParams.addValue("memberId", member.getMemberId());
+                    voteParams.addValue("sessionMemberId", member.getSessionMemberId());
                     voteParams.addValue("memberShortName", member.getLbdcShortName());
                     jdbcNamed.update(SqlBillQuery.INSERT_BILL_VOTES_ROLL.getSql(schema()), voteParams);
                 }
@@ -649,13 +650,13 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         @Override
         public BillSponsor mapRow(ResultSet rs, int rowNum) throws SQLException {
             BillSponsor sponsor = new BillSponsor();
-            int memberId = rs.getInt("member_id");
+            int sessionMemberId = rs.getInt("session_member_id");
             SessionYear sessionYear = getSessionYearFromRs(rs, "bill_session_year");
             sponsor.setBudgetBill(rs.getBoolean("budget_bill"));
             sponsor.setRulesSponsor(rs.getBoolean("rules_sponsor"));
-            if (memberId > 0) {
+            if (sessionMemberId > 0) {
                 try {
-                    sponsor.setMember(memberService.getMemberById(memberId, sessionYear));
+                    sponsor.setMember(memberService.getMemberBySessionId(sessionMemberId));
                 }
                 catch (MemberNotFoundEx memberNotFoundEx) {
                     logger.warn("Bill referenced a sponsor that does not exist. {}", memberNotFoundEx.getMessage());
@@ -675,10 +676,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
         @Override
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
-            int memberId = rs.getInt("member_id");
+            int sessionMemberId = rs.getInt("session_member_id");
             SessionYear sessionYear = getSessionYearFromRs(rs, "bill_session_year");
             try {
-                return memberService.getMemberById(memberId, sessionYear);
+                return memberService.getMemberBySessionId(sessionMemberId);
             }
             catch (MemberNotFoundEx memberNotFoundEx) {
                 logger.warn("Bill referenced a member that does not exist: {}", memberNotFoundEx.getMessage());
@@ -798,7 +799,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         BillSponsor billSponsor = bill.getSponsor();
         boolean hasMember = billSponsor != null && billSponsor.hasMember();
         addBillIdParams(bill, params);
-        params.addValue("memberId", (hasMember) ? billSponsor.getMember().getMemberId() : null)
+        params.addValue("sessionMemberId", (hasMember) ? billSponsor.getMember().getSessionMemberId() : null)
               .addValue("budgetBill", (billSponsor != null && billSponsor.isBudgetBill()))
               .addValue("rulesSponsor", (billSponsor != null && billSponsor.isRulesSponsor()));
         addLastFragmentParam(fragment, params);
@@ -809,7 +810,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
                                                                  int sequenceNo, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(billAmendment, params);
-        params.addValue("memberId", member.getMemberId())
+        params.addValue("sessionMemberId", member.getSessionMemberId())
               .addValue("sequenceNo", sequenceNo);
         addLastFragmentParam(fragment, params);
         return params;

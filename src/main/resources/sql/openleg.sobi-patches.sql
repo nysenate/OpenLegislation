@@ -88,3 +88,59 @@ SET text = '2013K00606 1                    00000 Daughters of Africa-visit     
 manual_fix = true,
 manual_fix_notes = 'removed bad data'
 WHERE fragment_id = 'SOBI.D130612.T101644.TXT-0-BILL';
+
+UPDATE master.sobi_fragment
+SET text = '
+2013A07638 1                    00000                                   00000              0000
+2013A07638 BAmd §185, Gen Bus L
+2013A07638 CRelates to fees charged by employment agencies for class 3A-14 employment; provides that
+2013A07638 Cemployment agencies shall not charge fees for class "A" and "A-1" employment and that certain
+2013A07638 Cfees charged shall be refunded.
+2013A07633 1                    00000                                   00000              0000
+2013A07633 BAdd §711-a, Exec L
+2013A07633 CRequires the division of homeland security and emergency services to provide recommendations on
+2013A07633 Cthe implementation of tornado warning systems in the state; installation of tornado sirens; use
+2013A07633 Cof firehouse sirens; other technology available for notification of impeding tornado.
+2013A07636 1                    00000                                  S03912A             2013
+2013A07631 1                    00000                                   00000              0000
+2013A07631 BAmd §§85-a, 85-b & 85-c, Civ Rts L
+2013A07631 CProvides additional credits allowed to the children of police, firefighters, emergency medical
+2013A07631 Ctechnicians and paramedics having died in the performance of duty as the natural and proximate
+2013A07631 Cresult of the World Trade Center attack on September eleventh, two thousand one or as the natural
+2013A07631 Cand proximate result of participation in the rescue effort that was conducted in response to such
+2013A07631 Cattack.
+2013A07636 1                    00000                                  S03912A             2013
+2013S05585 1                    00000                                   00000              0000
+2013S05585 BAmd §§85-a, 85-b & 85-c, Civ Rts L
+2013S05585 CProvides additional credits allowed to the children of police, firefighters, emergency medical
+2013S05585 Ctechnicians and paramedics having died in the performance of duty as the natural and proximate
+2013S05585 Cresult of the World Trade Center attack on September eleventh, two thousand one or as the natural
+2013S05585 Cand proximate result of participation in the rescue effort that was conducted in response to such
+2013S05585 Cattack.
+2013S03137A1KRUEGER             00000 Pub Heal. perinatal depression    00000
+2013S03137A2Public Health Law
+2013S03137A3Defines perinatal depression, requires the provision of perinatal depression education, and the
+2013S03137A3provision of a screening and data reporting plan for the state
+2013S03137A401/30/13 REFERRED TO HEALTH
+2013S03137A405/29/13 AMEND (T) AND RECOMMIT TO HEALTH
+2013S03137A405/29/13 PRINT NUMBER 3137A
+2013A07636 BDELETE
+2013A07636 1                    00000                                  S07773              2012
+2013A07636 BAmd §4403-f, Pub Health L
+2013A07636 CDirects the department of health to provide oversight of the transitioning of individuals to
+2013A07636 Cmanaged long term care plans operated by health maintenance organizations.
+2013A07636 1                    00000                                   00000              0000
+2013A07636 BAmd §4403-f, Pub Health L
+2013A07636 CDirects the department of health to provide oversight of the transitioning of individuals to
+2013A07636 Cmanaged long term care plans operated by health maintenance organizations.
+2013J01708 5DELETE
+2013J01708 ADELETE
+2013J01708 5DELETE
+2013J01708 ALEGISLATIVE RESOLUTION congratulating the Saratoga Rowing Association''s Girls Eight upon the
+2013J01708 Aoccasion of capturing a gold medal in the Australian World Open Rowing Championships
+2013A07641 1                    00000                                   00000              0000
+2013A07641 BAdd §231-a, RP L
+2013A07641 CRelates to sprinkler system notice in residential leases.',
+manual_fix = true,
+manual_fix_notes = 'removed bad data'
+WHERE fragment_id = 'SOBI.D130529.T110958.TXT-0-BILL';

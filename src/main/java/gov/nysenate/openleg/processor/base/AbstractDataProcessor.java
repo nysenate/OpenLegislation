@@ -147,21 +147,11 @@ public abstract class AbstractDataProcessor
     /** --- Member Methods --- */
 
     /**
-     * Retrieves a member from the LBDC short name with special processing if the member was not found
-     * and required is true. Returns null if required is false and member is not found.
+     * Retrieves a member from the LBDC short name.  Creates a new unverified session member entry if no member can be retrieved.
      */
-    protected Member getMemberFromShortName(String shortName, SessionYear sessionYear, Chamber chamber, boolean required) {
+    protected Member getMemberFromShortName(String shortName, SessionYear sessionYear, Chamber chamber) {
         if (StringUtils.isNotBlank(shortName)) {
-            try {
-                return memberService.getMemberByShortName(shortName, sessionYear, chamber);
-            }
-            catch (MemberNotFoundEx memberNotFoundEx) {
-                logger.error("", memberNotFoundEx);
-                if (required) {
-                    /** FIXME: Formulate strategy for dealing with missing member. */
-                    System.exit(-1);
-                }
-            }
+            return memberService.getMemberByShortNameEnsured(shortName, sessionYear, chamber);
         }
         return null;
     }

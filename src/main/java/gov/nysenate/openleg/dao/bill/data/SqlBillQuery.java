@@ -44,12 +44,12 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_SPONSOR(
         "INSERT INTO ${schema}." + SqlTable.BILL_SPONSOR + "\n" +
-        "(bill_print_no, bill_session_year, member_id, budget_bill, rules_sponsor, last_fragment_id) " +
-        "VALUES (:printNo, :sessionYear, :memberId, :budgetBill, :rulesSponsor, :lastFragmentId)"
+        "(bill_print_no, bill_session_year, session_member_id, budget_bill, rules_sponsor, last_fragment_id) " +
+        "VALUES (:printNo, :sessionYear, :sessionMemberId, :budgetBill, :rulesSponsor, :lastFragmentId)"
     ),
     UPDATE_BILL_SPONSOR(
         "UPDATE ${schema}." + SqlTable.BILL_SPONSOR + "\n" +
-        "SET member_id = :memberId, budget_bill = :budgetBill, rules_sponsor = :rulesSponsor, " +
+        "SET session_member_id = :sessionMemberId, budget_bill = :budgetBill, rules_sponsor = :rulesSponsor, " +
         "last_fragment_id = :lastFragmentId\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
@@ -107,21 +107,21 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_COSPONSOR(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + " " +
-        "(bill_print_no, bill_session_year, bill_amend_version, member_id, sequence_no, last_fragment_id)\n" +
-        "VALUES (:printNo, :sessionYear, :version, :memberId, :sequenceNo, :lastFragmentId)"
+        "(bill_print_no, bill_session_year, bill_amend_version, session_member_id, sequence_no, last_fragment_id)\n" +
+        "VALUES (:printNo, :sessionYear, :version, :sessionMemberId, :sequenceNo, :lastFragmentId)"
     ),
     UPDATE_BILL_COSPONSOR(
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + " " +
         "SET sequence_no = :sequenceNo, last_fragment_id = :lastFragmentId\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
-        "      AND member_id = :memberId"
+        "      AND session_member_id = :sessionMemberId"
     ),
     DELETE_BILL_COSPONSORS(
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_COSPONSOR + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
     DELETE_BILL_COSPONSOR(
-        DELETE_BILL_COSPONSORS.sql + " AND member_id = :memberId"
+        DELETE_BILL_COSPONSORS.sql + " AND session_member_id = :sessionMemberId"
     ),
 
     /** --- Bill Amendment Multi-sponsors --- */
@@ -133,21 +133,21 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_MULTISPONSOR(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + " " +
-        "(bill_print_no, bill_session_year, bill_amend_version, member_id, sequence_no, last_fragment_id)\n" +
-        "VALUES (:printNo, :sessionYear, :version, :memberId, :sequenceNo, :lastFragmentId)"
+        "(bill_print_no, bill_session_year, bill_amend_version, session_member_id, sequence_no, last_fragment_id)\n" +
+        "VALUES (:printNo, :sessionYear, :version, :sessionMemberId, :sequenceNo, :lastFragmentId)"
     ),
     UPDATE_BILL_MULTISPONSOR(
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + " " +
         "SET sequence_no = :sequenceNo, last_fragment_id = :lastFragmentId\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
-        "      AND member_id = :memberId"
+        "      AND session_member_id = :sessionMemberId"
     ),
     DELETE_BILL_MULTISPONSORS(
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_MULTISPONSOR + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
     DELETE_BILL_MULTISPONSOR(
-        DELETE_BILL_MULTISPONSORS.sql + " AND member_id = :memberId"
+        DELETE_BILL_MULTISPONSORS.sql + " AND session_member_id = :sessionMemberId"
     ),
 
     /** --- Bill Amendment Votes --- */
@@ -166,8 +166,8 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     INSERT_BILL_VOTES_ROLL(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_ROLL + "\n" +
-        "(vote_id, vote_code, member_id, member_short_name, session_year, last_fragment_id)\n" +
-        "SELECT id, :voteCode::${schema}.vote_code, :memberId, :memberShortName, :sessionYear, :lastFragmentId " +
+        "(vote_id, vote_code, session_member_id, member_short_name, session_year, last_fragment_id)\n" +
+        "SELECT id, :voteCode::${schema}.vote_code, :sessionMemberId, :memberShortName, :sessionYear, :lastFragmentId " +
         "FROM ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
         "AND vote_date = :voteDate AND vote_type = :voteType::${schema}.vote_type AND sequence_no = :sequenceNo"

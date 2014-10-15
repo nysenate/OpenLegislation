@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.entity;
 
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
+import gov.nysenate.openleg.util.DateUtils;
 
 import java.io.Serializable;
 import java.sql.Time;
@@ -118,7 +119,7 @@ public class Committee extends BaseLegislativeContent implements Serializable
 
     public boolean isCurrent() {
         // The current Committee should have a reformed date of 'infinity'
-        return reformed.isAfter(LocalDateTime.now());
+        return reformed == null || reformed.isAfter(LocalDateTime.now());
     }
 
     public void updateMeetingInfo(Committee updatedCommittee) {

@@ -5,7 +5,9 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.processor.base.ParseError;
 import net.sf.ehcache.CacheManager;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,18 @@ public class CachedMemberService implements MemberService
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Member getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
+        try {
+            return memberDao.getMemberBySessionId(sessionMemberId);
+        }
+        catch (EmptyResultDataAccessException ex) {
+            throw new MemberNotFoundEx(sessionMemberId);
+        }
+    }
+
+    /** {@inheritDoc} */
     @Override
     @Cacheable("memberShortName")
     public Member getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
@@ -58,6 +72,25 @@ public class CachedMemberService implements MemberService
         }
         catch (EmptyResultDataAccessException ex) {
             throw new MemberNotFoundEx(lbdcShortName, sessionYear, chamber);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Member getMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) {
+        try {
+            return getMemberByShortName(lbdcShortName, sessionYear, chamber);
+        }
+        catch (MemberNotFoundEx ex) {
+            try {
+                Member member = Member.getMakeshiftMember(lbdcShortName, sessionYear, chamber);
+                memberDao.insertUnverifiedSessionMember(member);
+                return member;
+            }
+            catch (ParseError pe) {
+                logger.error(pe.getMessage());
+                return null;
+            }
         }
     }
 }

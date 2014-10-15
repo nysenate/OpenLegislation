@@ -25,6 +25,48 @@ ALTER SCHEMA master OWNER TO postgres;
 COMMENT ON SCHEMA master IS 'Processed legislative data';
 
 
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
+-- Name: hstore; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
+
+
 SET search_path = master, pg_catalog;
 
 --
@@ -165,465 +207,6 @@ CREATE TYPE committee_member_title AS ENUM (
 ALTER TYPE public.committee_member_title OWNER TO postgres;
 
 SET search_path = master, pg_catalog;
-
---
--- Name: bill_action_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
---
-
-CREATE FUNCTION bill_action_search_push() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$DECLARE
-  actions_str text;
-  print_no text;
-  session_year smallint;
-  frag_id text;
-BEGIN
-  
-  IF TG_OP IN ('INSERT', 'UPDATE') THEN
-    print_no := NEW.bill_print_no;
-    session_year := NEW.bill_session_year;
-    frag_id := NEW.last_fragment_id;
-  
-  ELSE 
-    print_no := OLD.bill_print_no;
-    session_year := OLD.bill_session_year;
-    frag_id := OLD.last_fragment_id;
-
-  END IF;
-  
-  -- Convert the list of all current actions into a space separated string  
-  SELECT string_agg(date_to_search_str(effect_date) || ' ' || text, ' ')
-  FROM master.bill_amendment_action
-  WHERE bill_print_no = print_no AND bill_session_year = session_year
-  INTO actions_str;
-
-  IF NOT EXISTS 
-   (SELECT 1 FROM master_search.bill_action_search 
-    WHERE bill_print_no = print_no AND bill_session_year = session_year) THEN
-  
-    -- Insert a new record 
-    INSERT INTO master_search.bill_action_search
-      (bill_print_no, bill_session_year, actions, last_fragment_id) 
-    VALUES (print_no, session_year, to_tsvector(COALESCE(actions_str, '')), frag_id);
-   
-  ELSE
-
-    -- Otherwise perform an update 
-    UPDATE master_search.bill_action_search 
-    SET actions = to_tsvector(COALESCE(actions_str, '')),
-        last_fragment_id = frag_id,
-        modified_date_time = now()
-    WHERE bill_print_no = print_no AND bill_session_year = session_year;
-    
-  END IF;
-
-  IF TG_OP IN ('INSERT', 'UPDATE') THEN
-      RETURN NEW;
-  ELSE
-      RETURN OLD;
-  END IF;
-END$$;
-
-
-ALTER FUNCTION master.bill_action_search_push() OWNER TO postgres;
-
---
--- Name: FUNCTION bill_action_search_push(); Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON FUNCTION bill_action_search_push() IS 'Pushes actions list data as a single string to the search table.';
-
-
---
--- Name: bill_amendment_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
---
-
-CREATE FUNCTION bill_amendment_search_push() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$DECLARE
-  search_columns text[]; 
-BEGIN
-  search_columns := ARRAY['sponsor_memo', 'act_clause', 'full_text', 'current_committee_name'];
-  
-  IF TG_OP IN ('INSERT') THEN
-    INSERT INTO master_search.bill_amendment_search(
-      bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, 
-      current_committee_name, last_fragment_id) 
-    VALUES (NEW.bill_print_no, NEW.bill_session_year, NEW.version,  
-           to_tsvector(COALESCE(NEW.sponsor_memo, '')),
-           to_tsvector(COALESCE(NEW.act_clause, '')),
-           to_tsvector(COALESCE(NEW.full_text, '')),
-           to_tsvector(COALESCE(NEW.current_committee_name, '')),  
-           NEW.last_fragment_id);
-    RETURN NEW;
-   
-  ELSIF TG_OP IN ('UPDATE') THEN
-    -- Update only if there was a change in the search columns
-    IF slice(hstore(NEW.*), search_columns) - slice(hstore(OLD.*), search_columns) != ''::hstore THEN
-      UPDATE master_search.bill_amendment_search 
-      SET sponsor_memo = to_tsvector(COALESCE(NEW.sponsor_memo, '')),
-          act_clause = to_tsvector(COALESCE(NEW.act_clause, '')),
-          full_text = to_tsvector(COALESCE(NEW.full_text, '')),
-          current_committee_name = to_tsvector(COALESCE(NEW.current_committee_name, '')),
-          last_fragment_id = NEW.last_fragment_id,
-          modified_date_time = now()
-      WHERE bill_print_no = NEW.bill_print_no AND bill_session_year = NEW.bill_session_year
-            AND version = NEW.version;
-    END IF;
-    RETURN NEW;
-  
-  ELSE 
-    DELETE FROM master_search.bill_amendment_search 
-    WHERE bill_print_no = OLD.bill_print_no AND bill_session_year = OLD.bill_session_year
-          AND version = OLD.version;
-    RETURN OLD;    
-
-  END IF;
-END$$;
-
-
-ALTER FUNCTION master.bill_amendment_search_push() OWNER TO postgres;
-
---
--- Name: FUNCTION bill_amendment_search_push(); Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON FUNCTION bill_amendment_search_push() IS 'Pushes bill amendment specific data to the search table.';
-
-
---
--- Name: bill_co_sponsor_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
---
-
-CREATE FUNCTION bill_co_sponsor_search_push() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$DECLARE
-  co_sponsors text;
-  print_no text;
-  session_year smallint;
-  version character(1);
-  frag_id text;
-BEGIN
-  
-  IF TG_OP IN ('INSERT', 'UPDATE') THEN
-    print_no := NEW.bill_print_no;
-    session_year := NEW.bill_session_year;
-    version := NEW.bill_amend_version;
-    frag_id := NEW.last_fragment_id;
-  
-  ELSE 
-    print_no := OLD.bill_print_no;
-    session_year := OLD.bill_session_year;
-    version := OLD.bill_amend_version;
-    frag_id := OLD.last_fragment_id;
-
-  END IF;
-  
-  -- Convert the list of all current co sponsors into a space separated string  
-  SELECT string_agg(COALESCE(p.last_name, ''), ' ')
-  FROM master.bill_amendment_cosponsor csp  
-  JOIN member m ON csp.member_id = m.id JOIN person p on m.person_id = p.id 
-  WHERE csp.bill_print_no = print_no AND csp.bill_session_year = session_year
-  AND csp.bill_amend_version = version
-  INTO co_sponsors;  
-  
-  IF NOT EXISTS 
-   (SELECT 1 FROM master_search.bill_amendment_cosponsor_search 
-    WHERE bill_print_no = print_no AND bill_session_year = session_year AND bill_amend_version = version) THEN
-  
-    -- Insert a new record 
-    INSERT INTO master_search.bill_amendment_cosponsor_search 
-      (bill_print_no, bill_session_year, bill_amend_version, cosponsors, last_fragment_id) 
-    VALUES (print_no, session_year, version, to_tsvector(COALESCE(co_sponsors, '')), frag_id);
-   
-  ELSE
-    
-    -- Otherwise perform an update 
-    UPDATE master_search.bill_amendment_cosponsor_search 
-    SET cosponsors = to_tsvector(COALESCE(co_sponsors, '')),
-        last_fragment_id = frag_id,
-        modified_date_time = now()
-    WHERE bill_print_no = print_no AND bill_session_year = session_year AND bill_amend_version = version;
-    
-  END IF;
-
-  IF TG_OP IN ('INSERT', 'UPDATE') THEN
-      RETURN NEW;
-  ELSE
-      RETURN OLD;
-  END IF;
-END$$;
-
-
-ALTER FUNCTION master.bill_co_sponsor_search_push() OWNER TO postgres;
-
---
--- Name: FUNCTION bill_co_sponsor_search_push(); Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON FUNCTION bill_co_sponsor_search_push() IS 'Pushes bill amendment co sponsor data to the search table.';
-
-
---
--- Name: bill_info_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
---
-
-CREATE FUNCTION bill_info_search_push() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$DECLARE
-  search_columns text[]; 
-BEGIN
-  search_columns := ARRAY['title', 'law_section', 'summary', 'law_code', 'program_info'];
-  
-  IF TG_OP IN ('INSERT') THEN
-    INSERT INTO master_search.bill_info_search (print_no, session_year, title, law_section, summary, 
-                                                law_code, program_info, last_fragment_id) 
-    VALUES (NEW.print_no, NEW.session_year,  
-           to_tsvector(COALESCE(NEW.title, '')),
-           to_tsvector(COALESCE(NEW.law_section, '')),
-           to_tsvector(COALESCE(NEW.summary, '')),
-           to_tsvector(COALESCE(NEW.law_code, '')),  
-           to_tsvector(COALESCE(NEW.program_info, '')),
-           NEW.last_fragment_id);
-    RETURN NEW;
-   
-  ELSIF TG_OP IN ('UPDATE') THEN
-    -- Update only if there was a change in the search columns
-    IF slice(hstore(NEW.*), search_columns) - slice(hstore(OLD.*), search_columns) != ''::hstore THEN
-      UPDATE master_search.bill_info_search 
-      SET title = to_tsvector(COALESCE(NEW.title, '')),
-          law_section = to_tsvector(COALESCE(NEW.law_section, '')),
-          summary = to_tsvector(COALESCE(NEW.summary, '')),
-          law_code = to_tsvector(COALESCE(NEW.law_code, '')),
-          program_info = to_tsvector(COALESCE(NEW.program_info, '')), 
-          last_fragment_id = NEW.last_fragment_id,
-          modified_date_time = now()
-      WHERE print_no = NEW.print_no AND session_year = NEW.session_year;
-    END IF;
-    RETURN NEW;
-  
-  ELSE 
-    DELETE FROM master_search.bill_info_search 
-    WHERE print_no = OLD.print_no AND session_year = OLD.session_year;
-    RETURN OLD;    
-
-  END IF;
-END$$;
-
-
-ALTER FUNCTION master.bill_info_search_push() OWNER TO postgres;
-
---
--- Name: FUNCTION bill_info_search_push(); Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON FUNCTION bill_info_search_push() IS 'Pushes any new bill info data to the search table. ';
-
-
---
--- Name: bill_multi_sponsor_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
---
-
-CREATE FUNCTION bill_multi_sponsor_search_push() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$DECLARE
-  multi_sponsors text;
-  print_no text;
-  session_year smallint;
-  version character(1);
-  frag_id text;
-BEGIN
-  
-  IF TG_OP IN ('INSERT', 'UPDATE') THEN
-    print_no := NEW.bill_print_no;
-    session_year := NEW.bill_session_year;
-    version := NEW.bill_amend_version;
-    frag_id := NEW.last_fragment_id;
-  
-  ELSE 
-    print_no := OLD.bill_print_no;
-    session_year := OLD.bill_session_year;
-    version := OLD.bill_amend_version;
-    frag_id := OLD.last_fragment_id;
-
-  END IF;
-  
-  -- Convert the list of all current multi sponsors into a space separated string  
-  SELECT string_agg(COALESCE(p.last_name, ''), ' ')
-  FROM master.bill_amendment_multi_sponsor msp  
-  JOIN member m ON msp.member_id = m.id JOIN person p on m.person_id = p.id 
-  WHERE msp.bill_print_no = print_no AND msp.bill_session_year = session_year
-  AND msp.bill_amend_version = version
-  INTO multi_sponsors;  
-  
-  IF NOT EXISTS 
-   (SELECT 1 FROM master_search.bill_amendment_multi_sponsor_search 
-    WHERE bill_print_no = print_no AND bill_session_year = session_year AND bill_amend_version = version) THEN
-  
-    -- Insert a new record 
-    INSERT INTO master_search.bill_amendment_multi_sponsor_search 
-      (bill_print_no, bill_session_year, bill_amend_version, multisponsors, last_fragment_id) 
-    VALUES (print_no, session_year, version, to_tsvector(COALESCE(multi_sponsors, '')), frag_id);
-   
-  ELSE
-    
-    -- Otherwise perform an update 
-    UPDATE master_search.bill_amendment_multi_sponsor_search 
-    SET multisponsors = to_tsvector(COALESCE(multi_sponsors, '')),
-        last_fragment_id = frag_id,
-        modified_date_time = now()
-    WHERE bill_print_no = print_no AND bill_session_year = session_year AND bill_amend_version = version;
-    
-  END IF;
-
-  IF TG_OP IN ('INSERT', 'UPDATE') THEN
-      RETURN NEW;
-  ELSE
-      RETURN OLD;
-  END IF;
-END$$;
-
-
-ALTER FUNCTION master.bill_multi_sponsor_search_push() OWNER TO postgres;
-
---
--- Name: FUNCTION bill_multi_sponsor_search_push(); Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON FUNCTION bill_multi_sponsor_search_push() IS 'Pushes bill amendment multi sponsor data to the search table.';
-
-
---
--- Name: bill_sponsor_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
---
-
-CREATE FUNCTION bill_sponsor_search_push() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$DECLARE
-  search_columns text[]; 
-  sponsor_name text; 
-  sponsor_vector tsvector;
-BEGIN
-  search_columns := ARRAY['member_id', 'budget_bill', 'rules_sponsor'];
-  
-  IF TG_OP IN ('INSERT', 'UPDATE') THEN
-    -- Get the sponsor name --
-    SELECT p.last_name
-    FROM member m LEFT JOIN person p ON m.person_id = p.id
-    WHERE m.id = NEW.member_id
-    INTO sponsor_name;
-
-    -- Get the sponsor search vector --
-    SELECT to_tsvector(CASE NEW.rules_sponsor WHEN true then 'Rules ' ELSE '' END || 
-                       CASE NEW.budget_bill WHEN true then 'Budget ' ELSE '' END || 
-                       COALESCE(sponsor_name, ''))
-    INTO sponsor_vector;
-
-  END IF;  
-
-  IF TG_OP IN ('INSERT') THEN
-    INSERT INTO master_search.bill_sponsor_search (bill_print_no, bill_session_year, sponsor, last_fragment_id)
-    VALUES (NEW.bill_print_no, NEW.bill_session_year, sponsor_vector, NEW.last_fragment_id);
-    RETURN NEW;  
- 
-  ELSIF TG_OP IN ('UPDATE') THEN
-    -- Update only if there was a change in the search columns
-    IF slice(hstore(NEW.*), search_columns) - slice(hstore(OLD.*), search_columns) != ''::hstore THEN
-      UPDATE master_search.bill_sponsor_search 
-      SET sponsor = sponsor_vector, modified_date_time = now(), last_fragment_id = NEW.last_fragment_id
-      WHERE bill_print_no = NEW.bill_print_no AND bill_session_year = NEW.bill_session_year;
-    END IF;
-    RETURN NEW;
-  
-  ELSE 
-    DELETE FROM master_search.bill_sponsor_search 
-    WHERE bill_print_no = OLD.bill_print_no AND bill_session_year = OLD.bill_session_year;
-    RETURN OLD;    
-
-  END IF;
-END$$;
-
-
-ALTER FUNCTION master.bill_sponsor_search_push() OWNER TO postgres;
-
---
--- Name: FUNCTION bill_sponsor_search_push(); Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON FUNCTION bill_sponsor_search_push() IS 'Pushes sponsor information to the search table.';
-
-
---
--- Name: bill_vote_search_push(); Type: FUNCTION; Schema: master; Owner: postgres
---
-
-CREATE FUNCTION bill_vote_search_push() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$DECLARE
-  votes_str text;
-  print_no text;
-  session_year smallint;
-  version character(1);
-  frag_id text;
-BEGIN
-  
-  IF TG_OP IN ('INSERT', 'UPDATE') THEN
-    print_no := NEW.bill_print_no;
-    session_year := NEW.bill_session_year;
-    version := NEW.bill_amend_version;
-    frag_id := NEW.last_fragment_id;
-  
-  ELSE 
-    print_no := OLD.bill_print_no;
-    session_year := OLD.bill_session_year;
-    version := OLD.bill_amend_version;
-    frag_id := OLD.last_fragment_id;
-
-  END IF;
-  
-  -- Convert the list of all current votes into a space separated string  
-  SELECT string_agg(date_to_search_str(vote_date::date)|| ' ' || vote_type || ' vote', ' ')
-  FROM master.bill_amendment_vote_info
-  WHERE bill_print_no = print_no AND bill_session_year = session_year AND 
-        bill_amend_version = version
-  INTO votes_str;
-
-  IF NOT EXISTS 
-   (SELECT 1 FROM master_search.bill_amendment_vote_search 
-    WHERE bill_print_no = print_no AND bill_session_year = session_year AND bill_amend_version = version) THEN
-  
-    -- Insert a new record 
-    INSERT INTO master_search.bill_amendment_vote_search
-      (bill_print_no, bill_session_year, bill_amend_version, vote_info, last_fragment_id) 
-    VALUES (print_no, session_year, version, to_tsvector(COALESCE(votes_str, '')), frag_id);
-   
-  ELSE
-
-    -- Otherwise perform an update 
-    UPDATE master_search.bill_amendment_vote_search 
-    SET vote_info = to_tsvector(COALESCE(votes_str, '')),
-        last_fragment_id = frag_id,
-        modified_date_time = now()
-    WHERE bill_print_no = print_no AND bill_session_year = session_year AND bill_amend_version = version;
-    
-  END IF;
-
-  IF TG_OP IN ('INSERT', 'UPDATE') THEN
-      RETURN NEW;
-  ELSE
-      RETURN OLD;
-  END IF;
-END$$;
-
-
-ALTER FUNCTION master.bill_vote_search_push() OWNER TO postgres;
-
---
--- Name: FUNCTION bill_vote_search_push(); Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON FUNCTION bill_vote_search_push() IS 'Pushes bill amendment vote info to the search table.';
-
 
 --
 -- Name: log_sobi_updates(); Type: FUNCTION; Schema: master; Owner: postgres
@@ -1010,7 +593,7 @@ COMMENT ON TABLE agenda_vote_committee IS 'Committee info sent via the vote adde
 CREATE TABLE agenda_vote_committee_attend (
     id integer NOT NULL,
     vote_committee_id integer,
-    member_id integer NOT NULL,
+    session_member_id integer NOT NULL,
     session_year smallint NOT NULL,
     lbdc_short_name text NOT NULL,
     rank smallint NOT NULL,
@@ -1322,7 +905,7 @@ CREATE TABLE bill_amendment_cosponsor (
     bill_print_no text NOT NULL,
     bill_session_year smallint NOT NULL,
     bill_amend_version character(1) NOT NULL,
-    member_id integer NOT NULL,
+    session_member_id integer NOT NULL,
     sequence_no smallint NOT NULL,
     last_fragment_id text,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL
@@ -1346,7 +929,7 @@ CREATE TABLE bill_amendment_multi_sponsor (
     bill_print_no text NOT NULL,
     bill_session_year smallint NOT NULL,
     bill_amend_version character(1) NOT NULL,
-    member_id integer NOT NULL,
+    session_member_id integer NOT NULL,
     sequence_no smallint NOT NULL,
     last_fragment_id text,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL
@@ -1552,7 +1135,7 @@ ALTER SEQUENCE bill_amendment_vote_id_seq OWNED BY bill_amendment_vote_info.id;
 
 CREATE TABLE bill_amendment_vote_roll (
     vote_id integer NOT NULL,
-    member_id integer NOT NULL,
+    session_member_id integer NOT NULL,
     member_short_name text NOT NULL,
     session_year smallint NOT NULL,
     vote_code vote_code NOT NULL,
@@ -1660,7 +1243,7 @@ COMMENT ON TABLE bill_previous_version IS 'Listing of this bill in previous sess
 CREATE TABLE bill_sponsor (
     bill_print_no text NOT NULL,
     bill_session_year smallint NOT NULL,
-    member_id integer,
+    session_member_id integer,
     budget_bill boolean DEFAULT false,
     rules_sponsor boolean DEFAULT false,
     last_fragment_id text,
@@ -1684,7 +1267,7 @@ COMMENT ON TABLE bill_sponsor IS 'Mapping of bill to sponsor';
 CREATE TABLE bill_sponsor_additional (
     bill_print_no text NOT NULL,
     bill_session_year smallint NOT NULL,
-    member_id integer NOT NULL,
+    session_member_id integer NOT NULL,
     sequence_no smallint,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
@@ -2046,7 +1629,7 @@ CREATE TABLE committee_member (
     committee_name public.citext NOT NULL,
     version_created timestamp without time zone NOT NULL,
     session_year integer NOT NULL,
-    member_id integer NOT NULL,
+    session_member_id integer NOT NULL,
     chamber public.chamber NOT NULL
 );
 
@@ -2149,27 +1732,6 @@ ALTER TABLE master.committee_version_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE committee_version_id_seq OWNED BY committee_version.id;
-
-
---
--- Name: committee_version_session_year_seq; Type: SEQUENCE; Schema: master; Owner: postgres
---
-
-CREATE SEQUENCE committee_version_session_year_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE master.committee_version_session_year_seq OWNER TO postgres;
-
---
--- Name: committee_version_session_year_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
---
-
-ALTER SEQUENCE committee_version_session_year_seq OWNED BY committee_version.session_year;
 
 
 --
@@ -2883,7 +2445,7 @@ COMMENT ON COLUMN public_hearing.text IS 'The raw text of this public hearing.';
 CREATE TABLE public_hearing_attendance (
     title text NOT NULL,
     date_time timestamp without time zone NOT NULL,
-    member_id integer NOT NULL
+    session_member_id integer NOT NULL
 );
 
 
@@ -3895,7 +3457,7 @@ ALTER TABLE ONLY bill_amendment_action
 --
 
 ALTER TABLE ONLY bill_amendment_cosponsor
-    ADD CONSTRAINT bill_amendment_cosponsor_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version, member_id);
+    ADD CONSTRAINT bill_amendment_cosponsor_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version, session_member_id);
 
 
 --
@@ -3903,7 +3465,7 @@ ALTER TABLE ONLY bill_amendment_cosponsor
 --
 
 ALTER TABLE ONLY bill_amendment_multi_sponsor
-    ADD CONSTRAINT bill_amendment_multi_sponsor_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version, member_id);
+    ADD CONSTRAINT bill_amendment_multi_sponsor_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version, session_member_id);
 
 
 --
@@ -3951,7 +3513,7 @@ ALTER TABLE ONLY bill_amendment_vote_info
 --
 
 ALTER TABLE ONLY bill_amendment_vote_roll
-    ADD CONSTRAINT bill_amendment_vote_roll_pkey PRIMARY KEY (vote_id, member_id, session_year, vote_code);
+    ADD CONSTRAINT bill_amendment_vote_roll_pkey PRIMARY KEY (vote_id, session_member_id, session_year, vote_code);
 
 
 --
@@ -4015,7 +3577,7 @@ ALTER TABLE ONLY bill_sponsor
 --
 
 ALTER TABLE ONLY bill_sponsor_additional
-    ADD CONSTRAINT bill_sponsor_special_pkey PRIMARY KEY (bill_print_no, bill_session_year, member_id);
+    ADD CONSTRAINT bill_sponsor_special_pkey PRIMARY KEY (bill_print_no, bill_session_year, session_member_id);
 
 
 --
@@ -4080,6 +3642,14 @@ ALTER TABLE ONLY calendar_supplemental_entry
 
 ALTER TABLE ONLY calendar_supplemental
     ADD CONSTRAINT calendar_supplemental_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: committee_member_committee_name_session_member_id_version_c_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY committee_member
+    ADD CONSTRAINT committee_member_committee_name_session_member_id_version_c_key UNIQUE (committee_name, session_member_id, version_created);
 
 
 --
@@ -4231,7 +3801,7 @@ ALTER TABLE ONLY law_tree
 --
 
 ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_pkey PRIMARY KEY (title, date_time, member_id);
+    ADD CONSTRAINT public_hearing_attendance_pkey PRIMARY KEY (title, date_time, session_member_id);
 
 
 --
@@ -4703,11 +4273,11 @@ ALTER TABLE ONLY agenda_vote_committee_attend
 
 
 --
--- Name: agenda_vote_committee_attend_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+-- Name: agenda_vote_committee_attend_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY agenda_vote_committee_attend
-    ADD CONSTRAINT agenda_vote_committee_attend_member_id_fkey FOREIGN KEY (member_id, session_year, lbdc_short_name) REFERENCES public.session_member(member_id, session_year, lbdc_short_name) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT agenda_vote_committee_attend_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4799,11 +4369,11 @@ ALTER TABLE ONLY bill_amendment_cosponsor
 
 
 --
--- Name: bill_amendment_cosponsor_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+-- Name: bill_amendment_cosponsor_session_member_id_fkey1; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_amendment_cosponsor
-    ADD CONSTRAINT bill_amendment_cosponsor_member_id_fkey FOREIGN KEY (member_id) REFERENCES public.member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_cosponsor_session_member_id_fkey1 FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4835,7 +4405,7 @@ ALTER TABLE ONLY bill_amendment_multi_sponsor
 --
 
 ALTER TABLE ONLY bill_amendment_multi_sponsor
-    ADD CONSTRAINT bill_amendment_multi_sponsor_member_id_fkey FOREIGN KEY (member_id) REFERENCES public.member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_multi_sponsor_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4895,11 +4465,11 @@ ALTER TABLE ONLY bill_amendment_vote_roll
 
 
 --
--- Name: bill_amendment_vote_roll_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+-- Name: bill_amendment_vote_roll_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_amendment_vote_roll
-    ADD CONSTRAINT bill_amendment_vote_roll_member_id_fkey FOREIGN KEY (member_id, member_short_name, session_year) REFERENCES public.session_member(member_id, lbdc_short_name, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_vote_roll_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4975,6 +4545,22 @@ ALTER TABLE ONLY bill_previous_version
 
 
 --
+-- Name: bill_sponsor_additional_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_sponsor_additional
+    ADD CONSTRAINT bill_sponsor_additional_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bill_sponsor_additional_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_sponsor_additional
+    ADD CONSTRAINT bill_sponsor_additional_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: bill_sponsor_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
@@ -4991,11 +4577,11 @@ ALTER TABLE ONLY bill_sponsor
 
 
 --
--- Name: bill_sponsor_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+-- Name: bill_sponsor_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY bill_sponsor
-    ADD CONSTRAINT bill_sponsor_member_id_fkey FOREIGN KEY (member_id) REFERENCES public.member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_sponsor_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -5095,11 +4681,11 @@ ALTER TABLE ONLY committee_member
 
 
 --
--- Name: committee_member_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+-- Name: committee_member_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY committee_member
-    ADD CONSTRAINT committee_member_member_id_fkey FOREIGN KEY (member_id) REFERENCES public.member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT committee_member_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -5199,11 +4785,11 @@ ALTER TABLE ONLY law_tree
 
 
 --
--- Name: public_hearing_attendance_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+-- Name: public_hearing_attendance_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_member_id_fkey FOREIGN KEY (member_id) REFERENCES public.member(id);
+    ADD CONSTRAINT public_hearing_attendance_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -5289,6 +4875,16 @@ ALTER TABLE ONLY session_member
 
 
 --
+-- Name: master; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA master FROM PUBLIC;
+REVOKE ALL ON SCHEMA master FROM postgres;
+GRANT ALL ON SCHEMA master TO postgres;
+GRANT ALL ON SCHEMA master TO sam;
+
+
+--
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
 
@@ -5296,6 +4892,7 @@ REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
 GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
+GRANT ALL ON SCHEMA public TO sam;
 
 
 --

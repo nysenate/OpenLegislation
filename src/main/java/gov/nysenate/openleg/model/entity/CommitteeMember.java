@@ -18,6 +18,7 @@ public class CommitteeMember implements Serializable, Comparable<CommitteeMember
     protected CommitteeMemberTitle title;
 
     /** True if the member is part of the current majority */
+    // TODO Add party data to members before expressing this in the view
     protected boolean majority;
 
     /** --- Overrides --- */

@@ -50,7 +50,7 @@ public class BillVoteRowHandler extends SqlBaseDao implements RowCallbackHandler
         }
         BillVote billVote = billVoteMap.get(billVoteId);
         try {
-            Member voter = memberService.getMemberById(rs.getInt("member_id"), getSessionYearFromRs(rs, "session_year"));
+            Member voter = memberService.getMemberBySessionId(rs.getInt("session_member_id"));
             BillVoteCode voteCode = BillVoteCode.getValue(rs.getString("vote_code"));
             billVote.addMemberVote(voteCode, voter);
         }
