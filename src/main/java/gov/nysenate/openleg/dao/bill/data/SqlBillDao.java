@@ -163,10 +163,11 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     /** {@inheritDoc} */
     @Override
-    public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff) throws DataAccessException {
+    public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff, SortOrder billIdSort) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.getYear()));
-        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_IDS_BY_SESSION.getSql(schema(), limOff), params, (rs, row) ->
-                new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
+        OrderBy orderBy = new OrderBy("print_no", billIdSort, "session_year", billIdSort);
+        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_IDS_BY_SESSION.getSql(schema(), orderBy, limOff), params, (rs, row) ->
+            new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
     }
 
     /** {@inheritDoc} */
