@@ -96,13 +96,20 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
     public void updateCommittee(Committee committee) {
         logger.info("Updating committee " + committee.getChamber() + " " + committee.getName());
         // Try to create a new committee
-        if (insertCommittee(committee.getId())) {
+        if (insertCommittee(committee.getVersionId())) {
             insertCommitteeVersion(committee);
             updateCommitteeCurrentVersion(committee.getVersionId());
         }
         else {  // if that fails perform updates to an existing committee
-            Committee existingCommittee = getCommittee(committee.getVersionId());
-            updateExistingCommittee(committee, existingCommittee);
+            try {
+                Committee existingCommittee = getCommittee(committee.getVersionId());
+                updateExistingCommittee(committee, existingCommittee);
+            }
+            catch (EmptyResultDataAccessException ex) { // No committee version exists for this session
+                // Insert this committee as the first version of the session
+                insertCommitteeVersion(committee);
+                updateCommitteeCurrentVersion(committee.getVersionId());
+            }
         }
     }
 
@@ -126,19 +133,19 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
 
     /**
      * Tries to insert a new committee into the database from the given parameter
-     * @param committeeId
+     * @param committeeVersionId
      * @return true if a new committee was created, false if the committee already exists
      */
-    private boolean insertCommittee(CommitteeId committeeId) {
-        logger.debug("Creating new committee " + committeeId);
+    private boolean insertCommittee(CommitteeVersionId committeeVersionId) {
+        logger.debug("Creating new committee " + committeeVersionId);
         // Create the committee
-        MapSqlParameterSource params = getCommitteeIdParams(committeeId);
+        MapSqlParameterSource params = getCommitteeVersionIdParams(committeeVersionId);
         try {
             jdbcNamed.update(SqlCommitteeQuery.INSERT_COMMITTEE.getSql(schema()), params);
-            logger.info("Created new committee " + committeeId);
+            logger.info("Created new committee " + committeeVersionId);
         }
         catch(DuplicateKeyException e) {
-            logger.debug("\tCommittee " + committeeId + " already exists");
+            logger.debug("\tCommittee " + committeeVersionId + " already exists");
             return false;
         }
         return true;
@@ -368,10 +375,10 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
         public CommitteeMember mapRow(ResultSet rs, int i) throws SQLException {
             CommitteeMember committeeMember = new CommitteeMember();
             committeeMember.setSequenceNo(rs.getInt("sequence_no"));
-            int memberId = rs.getInt("member_id");
+            int sessionMemberId = rs.getInt("session_member_id");
             SessionYear sessionYear = getSessionYearFromRs(rs, "session_year");
             try {
-                committeeMember.setMember(memberService.getMemberById(memberId, sessionYear));
+                committeeMember.setMember(memberService.getMemberBySessionId(sessionMemberId));
             }
             catch (MemberNotFoundEx memberNotFoundEx) {
                 logger.error(String.valueOf(memberNotFoundEx));
@@ -410,7 +417,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
 
     private MapSqlParameterSource getCommitteeMemberParams(CommitteeMember committeeMember, CommitteeVersionId cvid) {
         MapSqlParameterSource params = getCommitteeVersionIdParams(cvid);
-        params.addValue("member_id", committeeMember.getMember().getMemberId());
+        params.addValue("session_member_id", committeeMember.getMember().getSessionMemberId());
         params.addValue("sequence_no", committeeMember.getSequenceNo());
         params.addValue("title", committeeMember.getTitle().asSqlEnum());
         params.addValue("majority", committeeMember.isMajority());

@@ -17,8 +17,6 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
 {
     private static final long serialVersionUID = 4084929981265208671L;
 
-    private static final SessionYear CURRENT = new SessionYear();
-
     private int year;
 
     /** Constructs SessionYear as current session year. */
@@ -51,7 +49,7 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
     }
 
     public static SessionYear current() {
-        return CURRENT;
+        return new SessionYear();
     }
 
     /**

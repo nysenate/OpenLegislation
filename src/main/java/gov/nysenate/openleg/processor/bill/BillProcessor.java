@@ -370,7 +370,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         for (String coSponsor : data.replace("\n", " ").split(",")) {
             coSponsor = coSponsor.trim();
             if (!coSponsor.isEmpty()) {
-                coSponsors.add(getMemberFromShortName(coSponsor, session, chamber, true));
+                coSponsors.add(getMemberFromShortName(coSponsor, session, chamber));
             }
         }
         // The cosponsor info is always sent for the base bill version.
@@ -396,7 +396,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         for (String multiSponsor : data.replace("\n", " ").split(",")) {
             multiSponsor = multiSponsor.trim();
             if (!multiSponsor.isEmpty()) {
-                multiSponsors.add(getMemberFromShortName(multiSponsor, session, chamber, true));
+                multiSponsors.add(getMemberFromShortName(multiSponsor, session, chamber));
             }
         }
         activeAmendment.setMultiSponsors(Lists.newArrayList(multiSponsors));
@@ -609,7 +609,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     }
                     String shortName = voteLine.group(2).trim();
                     // Only senator votes are received. A valid member mapping is required.
-                    Member voter = getMemberFromShortName(shortName, billId.getSession(), Chamber.SENATE, true);
+                    Member voter = getMemberFromShortName(shortName, billId.getSession(), Chamber.SENATE);
                     vote.addMemberVote(voteCode, voter);
                 }
             }
@@ -669,7 +669,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
             if (!sponsorLine.equals("RULES COM") && rules.matches()) {
                 sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
-                billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber, false));
+                billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
             }
         }
         // Budget bills don't have a specific sponsor
@@ -686,11 +686,11 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                 if (!sponsors.isEmpty()) {
                     sponsorLine = sponsors.remove(0);
                     sponsors.forEach(s ->
-                        baseBill.getAdditionalSponsors().add(getMemberFromShortName(s, sessionYear, chamber, true)));
+                        baseBill.getAdditionalSponsors().add(getMemberFromShortName(s, sessionYear, chamber)));
                 }
             }
             // Set the member into the sponsor instance
-            billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber, true));
+            billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
         }
         baseBill.setSponsor(billSponsor);
     }

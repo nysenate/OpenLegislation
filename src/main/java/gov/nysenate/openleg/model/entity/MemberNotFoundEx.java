@@ -8,11 +8,17 @@ public class MemberNotFoundEx extends Exception
 
     protected String lbdcName;
     protected int memberId;
+    protected int sessionMemberId;
     protected SessionYear session;
     protected Chamber chamber;
 
     public MemberNotFoundEx() {
         super();
+    }
+
+    public MemberNotFoundEx(int sessionMemberId) {
+        super("Member with session member id of " + sessionMemberId + " was not found.");
+        this.sessionMemberId = sessionMemberId;
     }
 
     public MemberNotFoundEx(int memberId, SessionYear session) {
@@ -25,6 +31,14 @@ public class MemberNotFoundEx extends Exception
         this.lbdcName = lbdcName;
         this.session = session;
         this.chamber = chamber;
+    }
+
+    public int getMemberId() {
+        return memberId;
+    }
+
+    public int getSessionMemberId() {
+        return sessionMemberId;
     }
 
     public String getLbdcName() {

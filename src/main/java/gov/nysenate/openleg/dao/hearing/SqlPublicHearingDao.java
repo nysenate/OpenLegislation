@@ -91,10 +91,10 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
     private List<Member> getPublicHearingAttendance(PublicHearingId publicHearingId) {
         MapSqlParameterSource params = getPublicHearingIdParams(publicHearingId);
         List<Member> members = new ArrayList<>();
-        List<Member> memberIds = jdbcNamed.query(SELECT_PUBLIC_HEARING_ATTENDANCE.getSql(schema()), params, attendanceMemberIdRowMapper);
-        for (Member member : memberIds) {
+        List<Member> sessionMemberIds = jdbcNamed.query(SELECT_PUBLIC_HEARING_ATTENDANCE.getSql(schema()), params, attendanceMemberIdRowMapper);
+        for (Member member : sessionMemberIds) {
             try {
-                members.add(memberService.getMemberById(member.getMemberId(), member.getSessionYear()));
+                members.add(memberService.getMemberBySessionId(member.getSessionMemberId()));
             } catch (MemberNotFoundEx ex) {
                 logger.error("Error getting Public Hearing Member.", ex);
             }
@@ -166,7 +166,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("title", id.getTitle());
         params.addValue("dateTime", toDate(id.getDateTime()));
-        params.addValue("memberId", member.getMemberId());
+        params.addValue("sessionMemberId", member.getSessionMemberId());
         return params;
     }
 
@@ -195,7 +195,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
 
     static RowMapper<Member> attendanceMemberIdRowMapper = (rs, rowNum) -> {
         Member member = new Member();
-        member.setMemberId(rs.getInt("member_id"));
+        member.setSessionMemberId(rs.getInt("session_member_id"));
         member.setSessionYear(SessionYear.of(getLocalDateTimeFromRs(rs, "date_time").getYear()));
         return member;
     };

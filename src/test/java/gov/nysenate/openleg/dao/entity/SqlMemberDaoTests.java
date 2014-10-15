@@ -3,6 +3,7 @@ package gov.nysenate.openleg.dao.entity;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -24,5 +25,13 @@ public class SqlMemberDaoTests extends BaseTests
     @Test
     public void testGetMemberById() throws Exception {
         logger.info(OutputUtils.toJson(memberDao.getMemberById(459, SessionYear.of(2013))));
+    }
+
+    @Test
+    public void testGetMemberBySessionMemberId() throws Exception {
+        Member member = memberDao.getMemberBySessionId(661);
+        logger.info(OutputUtils.toJson(member));
+        assert(member.getSessionMemberId()==306);
+        assert(member.getLbdcShortName().equals("PEOPLES-STOKES"));
     }
 }

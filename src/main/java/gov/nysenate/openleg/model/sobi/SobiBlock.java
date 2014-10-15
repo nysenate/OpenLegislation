@@ -39,6 +39,9 @@ public class SobiBlock
     /** A pattern to verify that a string is in the SOBI line format. */
     public static final Pattern blockPattern = Pattern.compile("^[0-9]{4}[A-Z][0-9]{5}[ A-Z][1-9A-Z]");
 
+    /** The number of characters in the data segment of the block */
+    public static final int blockDataLength = 98;
+
     /** The file name of the fragment that generated this block. */
     private String fragmentFileName;
 
@@ -139,6 +142,7 @@ public class SobiBlock
      * Gets the string representation of the block's data.
      */
     public String getData() {
+        ensureDataLength();
         return dataBuffer.toString();
     }
 
@@ -166,6 +170,20 @@ public class SobiBlock
             endLineNo = 0;
         }
         this.endLineNo = endLineNo;
+    }
+
+    /** --- Internal Methods --- */
+
+    /**
+     * Ensures that the data segment of the block extends to the full 98 characters by appending spaces as needed
+     * This is only applied to bill info blocks
+     */
+    private void ensureDataLength() {
+        if (type == SobiLineType.BILL_INFO) {
+            for (int i = 0; i < blockDataLength - dataBuffer.length(); i++) {
+                dataBuffer.append(" ");
+            }
+        }
     }
 
     /** --- Basic Getters/Setters */

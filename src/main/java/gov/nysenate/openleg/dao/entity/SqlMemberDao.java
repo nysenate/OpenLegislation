@@ -1,15 +1,19 @@
 package gov.nysenate.openleg.dao.entity;
 
+import gov.nysenate.openleg.dao.base.ImmutableParams;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.Person;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -17,6 +21,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import static gov.nysenate.openleg.dao.entity.SqlMemberQuery.*;
 
 @Repository("sqlMember")
 public class SqlMemberDao extends SqlBaseDao implements MemberDao
@@ -30,7 +36,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     public Map<SessionYear, Member> getMemberById(int id) {
         MapSqlParameterSource params = new MapSqlParameterSource("memberId", id);
         List<Member> memberList =
-            jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
+            jdbcNamed.query(SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
         return getMemberSessionMap(memberList);
     }
 
@@ -40,8 +46,14 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("memberId", id);
         params.addValue("sessionYear", session.getYear());
-        return jdbcNamed.queryForObject(
-            SqlMemberQuery.SELECT_MEMBER_BY_ID_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
+        return jdbcNamed.queryForObject(SELECT_MEMBER_BY_ID_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
+    }
+
+    @Override
+    public Member getMemberBySessionId(int sessionMemberId) {
+        ImmutableParams params = ImmutableParams.from(
+                new MapSqlParameterSource().addValue("sessionMemberId", sessionMemberId));
+        return jdbcNamed.queryForObject(SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL.getSql(schema()), params, new MemberRowMapper());
     }
 
     /** {@inheritDoc} */
@@ -52,7 +64,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         params.addValue("chamber", chamber.name().toLowerCase());
         params.addValue("alternate", false);
         List<Member> members =
-            jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SQL.getSql(schema()), params, new MemberRowMapper());
+            jdbcNamed.query(SELECT_MEMBER_BY_SHORTNAME_SQL.getSql(schema()), params, new MemberRowMapper());
         return getMemberSessionMap(members);
     }
 
@@ -74,14 +86,26 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         params.addValue("alternate", false);
         logger.trace("Fetching member {} ({}) from database...", lbdcShortName, sessionYear);
         try {
-            return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()), params,
-                new MemberRowMapper());
+            return jdbcNamed.queryForObject(SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
         }
         catch (EmptyResultDataAccessException ex) {
             params.addValue("alternate", true);
-            return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema(), LimitOffset.ONE),
+            return jdbcNamed.queryForObject(SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema(), LimitOffset.ONE),
                 params, new MemberRowMapper());
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void insertUnverifiedSessionMember(Member member) {
+        insertUnverifiedMember(member);
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
+                .addValue("memberId", member.getMemberId())
+                .addValue("lbdcShortName", member.getLbdcShortName())
+                .addValue("sessionYear", member.getSessionYear().getYear()));
+        KeyHolder sessionMemberIdHolder = new GeneratedKeyHolder();
+        jdbcNamed.update(INSERT_UNVERIFIED_SESSION_MEMBER_SQL.getSql(schema()), params, sessionMemberIdHolder);
+        member.setSessionMemberId(sessionMemberIdHolder.getKey().intValue());
     }
 
     /** {@inheritDoc} */
@@ -104,6 +128,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
             Member member = new Member();
             member.setMemberId(rs.getInt("member_id"));
+            member.setSessionMemberId(rs.getInt("session_member_id"));
             member.setLbdcShortName(rs.getString("lbdc_short_name"));
             member.setSessionYear(getSessionYearFromRs(rs, "session_year"));
             member.setDistrictCode(rs.getInt("district_code"));
@@ -132,5 +157,38 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         TreeMap<SessionYear, Member> memberMap = new TreeMap<>();
         members.forEach(m -> memberMap.put(m.getSessionYear(), m));
         return memberMap;
+    }
+
+    /**
+     * Inserts a new, unverified person into the database
+     * Sets the person id value of the passed in Person to the database id of the new person entry
+     * @param person
+     */
+    private void insertUnverifiedPerson(Person person) {
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
+                .addValue("fullName", person.getFullName())
+                .addValue("firstName", person.getFirstName())
+                .addValue("lastName", person.getLastName()));
+        KeyHolder personIdHolder = new GeneratedKeyHolder();
+        jdbcNamed.update(SqlMemberQuery.INSERT_UNVERIFIED_PERSON_SQL.getSql(schema()), params, personIdHolder);
+        person.setId(personIdHolder.getKey().intValue());
+    }
+
+    /**
+     * Inserts a new, unverified member into the database
+     * Sets the member id value of the passed in Member to the database id of the new member entry
+     * @param member
+     * @return
+     */
+    private void insertUnverifiedMember(Member member) {
+        insertUnverifiedPerson(member);
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
+                .addValue("personId", member.getId())
+                .addValue("chamber", member.getChamber().asSqlEnum())
+                .addValue("incumbent", member.isIncumbent())
+                .addValue("fullName", member.getFullName()));
+        KeyHolder memberIdHolder = new GeneratedKeyHolder();
+        jdbcNamed.update(SqlMemberQuery.INSERT_UNVERIFIED_MEMBER_SQL.getSql(schema()), params, memberIdHolder);
+        member.setMemberId(memberIdHolder.getKey().intValue());
     }
 }

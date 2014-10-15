@@ -57,6 +57,11 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
         "INSERT INTO ${schema}." + SqlTable.COMMITTEE + " (name, chamber)" + "\n" +
         "VALUES (:committeeName, CAST(:chamber AS chamber))"
     ),
+    INSERT_DEFAULT_COMMITTEE_VERSION(
+        "INSERT INTO ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
+        "       ( committee_name, chamber,  session_year, created)" + "\n" +
+        "VALUES (:committeeName, CAST(:chamber AS chamber), :sessionYear, CAST('-infinity' as timestamp without time zone))"
+    ),
     INSERT_COMMITTEE_VERSION(
         "INSERT INTO ${schema}." + SqlTable.COMMITTEE_VERSION +
         " (committee_name, chamber, session_year, location, meetday, meettime, meetaltweek, meetaltweektext, created)" + "\n" +
@@ -64,8 +69,8 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
     ),
     INSERT_COMMITTEE_MEMBER(
         "INSERT INTO ${schema}." + SqlTable.COMMITTEE_MEMBER +
-        " (committee_name, chamber, version_created, member_id, session_year, sequence_no, title, majority)" + "\n" +
-        "VALUES (:committeeName, CAST(:chamber AS chamber), :referenceDate, :member_id, :sessionYear, :sequence_no, CAST(:title AS committee_member_title), :majority)"
+        " (committee_name, chamber, version_created, session_member_id, session_year, sequence_no, title, majority)" + "\n" +
+        "VALUES (:committeeName, CAST(:chamber AS chamber), :referenceDate, :session_member_id, :sessionYear, :sequence_no, CAST(:title AS committee_member_title), :majority)"
     ),
     UPDATE_COMMITTEE_MEETING_INFO(
         "UPDATE ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +

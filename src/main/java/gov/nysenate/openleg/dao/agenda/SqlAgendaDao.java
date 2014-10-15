@@ -344,8 +344,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         public AgendaVoteAttendance mapRow(ResultSet rs, int rowNum) throws SQLException {
             AgendaVoteAttendance attendance = new AgendaVoteAttendance();
             try {
-                attendance.setMember(memberService.getMemberById(rs.getInt("member_id"),
-                                                                 getSessionYearFromRs(rs, "session_year")));
+                attendance.setMember(memberService.getMemberBySessionId(rs.getInt("session_member_id")));
             }
             catch (MemberNotFoundEx memberNotFoundEx) {
                 logger.info("Failed to map member for attendance listing.");
@@ -483,7 +482,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
      * query will reference several columns that are already mapped via {@link #getAgendaVoteCommParams}.
      */
     static void addAgendaVoteAttendParams(AgendaVoteAttendance attendance, MapSqlParameterSource voteCommParams) {
-        voteCommParams.addValue("memberId", attendance.getMember().getMemberId());
+        voteCommParams.addValue("sessionMemberId", attendance.getMember().getSessionMemberId());
         voteCommParams.addValue("sessionYear", attendance.getMember().getSessionYear().getYear());
         voteCommParams.addValue("lbdcShortName", attendance.getMember().getLbdcShortName());
         voteCommParams.addValue("rank", attendance.getRank());
