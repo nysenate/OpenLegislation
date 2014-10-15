@@ -3,9 +3,11 @@ package gov.nysenate.openleg.controller.api.base;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
+import gov.nysenate.openleg.client.view.bill.BillIdView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.service.base.SearchException;
+import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -83,6 +85,13 @@ public abstract class BaseCtrl
     @ExceptionHandler(SearchException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
+        logger.warn("Search Exception", ex);
         return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler(BillNotFoundEx.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ViewObjectErrorResponse billNotFoundHandler(BillNotFoundEx ex) {
+        return new ViewObjectErrorResponse(ErrorCode.BILL_NOT_FOUND, new BillIdView(ex.getBillId()));
     }
 }

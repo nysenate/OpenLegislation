@@ -10,8 +10,10 @@ import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.service.base.SearchResults;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
+import gov.nysenate.openleg.service.bill.search.BillSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,27 +34,26 @@ public class BillGetCtrl extends BaseCtrl
     @Autowired
     private BillDataService billDataService;
 
+    @Autowired
+    private BillSearchService billSearchService;
+
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}")
     public BaseResponse getBills(@PathVariable int sessionYear,
+                                 @RequestParam(defaultValue = "printNo:asc") String sort,
                                  @RequestParam(defaultValue = "false") boolean full, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.FIFTY);
+        SearchResults<BaseBillId> results =
+            billSearchService.searchBills("session:" + SessionYear.of(sessionYear).toString(), sort, limOff);
         return ListViewResponse.of(
-            billDataService.getBillIds(SessionYear.of(sessionYear), limOff).parallelStream()
-                .map(billId -> (full) ? new BillView(billDataService.getBill(billId))
-                                      : new BillInfoView(billDataService.getBillInfo(billId)))
-                .collect(Collectors.toList()), billDataService.getBillCount(SessionYear.of(sessionYear)), limOff
-        );
+            results.getResults().parallelStream()
+                .map(r -> (full) ? new BillView(billDataService.getBill(r.getResult()))
+                                 : new BillInfoView(billDataService.getBillInfo(r.getResult())))
+                .collect(Collectors.toList()), results.getTotalResults(), limOff);
     }
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
     public BaseResponse getBill(@PathVariable int sessionYear, @PathVariable String printNo) {
         return new ViewObjectResponse<>(new BillView(
             billDataService.getBill(new BaseBillId(printNo, sessionYear))));
-    }
-
-    @ExceptionHandler(BillNotFoundEx.class)
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public ViewObjectErrorResponse billNotFoundHandler(BillNotFoundEx ex) {
-        return new ViewObjectErrorResponse(ErrorCode.BILL_NOT_FOUND, new BillIdView(ex.getBillId()));
     }
 }

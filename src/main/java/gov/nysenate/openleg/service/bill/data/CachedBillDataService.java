@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.bill.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.*;
@@ -91,7 +92,7 @@ public class CachedBillDataService implements BillDataService, CachingService
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;
         }
-        return billDao.getBillIds(sessionYear, limitOffset);
+        return billDao.getBillIds(sessionYear, limitOffset, SortOrder.ASC);
     }
 
     /** {@inheritDoc} */

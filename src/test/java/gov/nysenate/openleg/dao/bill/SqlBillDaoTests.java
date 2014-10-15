@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.bill;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
@@ -29,10 +30,10 @@ public class SqlBillDaoTests extends BaseTests
     @Test
     public void testGetBillIdsBySession() throws Exception {
         StopWatch sw = new StopWatch();
-        List<BaseBillId> baseBillIds = billDao.getBillIds(SessionYear.current(), LimitOffset.FIFTY);
+        List<BaseBillId> baseBillIds = billDao.getBillIds(SessionYear.current(), LimitOffset.FIFTY, SortOrder.ASC);
 
         sw.start();
-        baseBillIds = billDao.getBillIds(SessionYear.current(), LimitOffset.THOUSAND);
+        baseBillIds = billDao.getBillIds(SessionYear.current(), LimitOffset.THOUSAND, SortOrder.ASC);
         logger.info("{}", OutputUtils.toJson(baseBillIds.size()));
         sw.stop();
         logger.info("{}", sw.getTime());
