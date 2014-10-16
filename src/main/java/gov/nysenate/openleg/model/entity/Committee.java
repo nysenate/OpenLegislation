@@ -2,11 +2,11 @@ package gov.nysenate.openleg.model.entity;
 
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
-import gov.nysenate.openleg.util.DateUtils;
 
 import java.io.Serializable;
-import java.sql.Time;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -29,10 +29,10 @@ public class Committee extends BaseLegislativeContent implements Serializable
     protected String location;
 
     /** The day of the week when this committee normally meets. */
-    protected String meetDay;
+    protected DayOfWeek meetDay;
 
     /** The time of the day when the committee normally meets. */
-    protected Time meetTime;
+    protected LocalTime meetTime;
 
     /** True if the committee normally meets on alternate weeks. */
     protected boolean meetAltWeek;
@@ -174,19 +174,19 @@ public class Committee extends BaseLegislativeContent implements Serializable
         this.location = location;
     }
 
-    public String getMeetDay() {
+    public DayOfWeek getMeetDay() {
         return meetDay;
     }
 
-    public void setMeetDay(String meetDay) {
+    public void setMeetDay(DayOfWeek meetDay) {
         this.meetDay = meetDay;
     }
 
-    public Time getMeetTime() {
+    public LocalTime getMeetTime() {
         return meetTime;
     }
 
-    public void setMeetTime(Time meetTime) {
+    public void setMeetTime(LocalTime meetTime) {
         this.meetTime = meetTime;
     }
 

@@ -5,6 +5,8 @@ import com.google.common.collect.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -25,7 +27,7 @@ public abstract class DateUtils
     /**
      * Retrieve the year of the given date.
      */
-    public static Integer getYear(Date date) {
+    public static Integer getYear(java.util.Date date) {
         return Year.from(date.toInstant()).getValue();
     }
 
@@ -78,15 +80,26 @@ public abstract class DateUtils
     /**
      * Convert a Date to a LocalDate at the system's default time zone. Returns null on null input.
      */
-    public static LocalDate getLocalDate(Date date) {
+    public static LocalDate getLocalDate(java.util.Date date) {
         if (date == null) return null;
         return getLocalDateTime(date).toLocalDate();
     }
 
     /**
+     * Convert a Date to a LocalTime at the system's default time zone.  Returns null on null input.
+     *
+     * @param date
+     * @return
+     */
+    public static LocalTime getLocalTime(Date date) {
+        if (date == null) return null;
+        return getLocalDateTime(date).toLocalTime();
+    }
+
+    /**
      * Convert a Date to a LocalDateTime at the system's default time zone. Returns null on null input.
      */
-    public static LocalDateTime getLocalDateTime(Date date) {
+    public static LocalDateTime getLocalDateTime(java.util.Date date) {
         if (date == null) return null;
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
@@ -94,17 +107,22 @@ public abstract class DateUtils
     /**
      * Convert a LocalDate to a Date. Returns null on null input.
      */
-    public static Date toDate(LocalDate localDate) {
+    public static java.sql.Date toDate(LocalDate localDate) {
         if (localDate == null) return null;
-        return toDate(localDate.atStartOfDay());
+        return java.sql.Date.valueOf(localDate);
     }
 
     /**
      * Convert a LocalDateTime to a Date. Returns null on null input.
      */
-    public static Date toDate(LocalDateTime localDateTime) {
+    public static Timestamp toDate(LocalDateTime localDateTime) {
         if (localDateTime == null) return null;
-        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        return Timestamp.valueOf(localDateTime);
+    }
+
+    public static Time toTime(LocalTime localTime) {
+        if (localTime == null) return null;
+        return Time.valueOf(localTime);
     }
 
     /**

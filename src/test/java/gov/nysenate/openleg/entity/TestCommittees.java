@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -51,7 +52,7 @@ public class TestCommittees {
         test1.setChamber(Chamber.SENATE);
 //        test1.setMeetTime(new Time(LocalTime.parse("09:00").toDateTimeToday().toDate().getTime()));
         test1.setLocation("my house");
-        test1.setMeetDay("every day");
+        test1.setMeetDay(DayOfWeek.FRIDAY);
         test1.setMeetAltWeek(false);
         test1.setMeetAltWeekText("dont do it");
         test1.setSession(SessionYear.of(2009));

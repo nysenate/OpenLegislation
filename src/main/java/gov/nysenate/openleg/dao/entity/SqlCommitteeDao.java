@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.service.entity.MemberService;
 import gov.nysenate.openleg.util.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.util.Collections;
 import java.util.List;
 
@@ -300,7 +302,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
     private void updateCommitteeReformed(Committee committee){
         logger.debug("updating reformed date for" + committee.getVersionId() + " to " + committee.getReformed());
         MapSqlParameterSource params = getCommitteeVersionIdParams(committee.getVersionId());
-        params.addValue("reformed", committee.getReformed());
+        params.addValue("reformed", DateUtils.toDate(committee.getReformed()));
         jdbcNamed.update(SqlCommitteeQuery.UPDATE_COMMITTEE_VERSION_REFORMED.getSql(schema()), params);
     }
 
@@ -360,8 +362,8 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
             committee.setPublishedDateTime(getLocalDateTimeFromRs(rs, "created"));
             committee.setReformed(getLocalDateTimeFromRs(rs, "reformed"));
             committee.setLocation(rs.getString("location"));
-            committee.setMeetDay(rs.getString("meetday"));
-            committee.setMeetTime(rs.getTime("meettime"));
+            committee.setMeetDay(StringUtils.isNotEmpty(rs.getString("meetday")) ? DayOfWeek.valueOf(rs.getString("meetday")) : null);
+            committee.setMeetTime(rs.getTime("meettime") != null ? rs.getTime("meettime").toLocalTime() : null);
             committee.setMeetAltWeek(rs.getBoolean("meetaltweek"));
             committee.setMeetAltWeekText(rs.getString("meetaltweektext"));
             committee.setSession(getSessionYearFromRs(rs, "session_year"));
@@ -376,7 +378,6 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
             CommitteeMember committeeMember = new CommitteeMember();
             committeeMember.setSequenceNo(rs.getInt("sequence_no"));
             int sessionMemberId = rs.getInt("session_member_id");
-            SessionYear sessionYear = getSessionYearFromRs(rs, "session_year");
             try {
                 committeeMember.setMember(memberService.getMemberBySessionId(sessionMemberId));
             }
@@ -408,8 +409,8 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
     private MapSqlParameterSource getCommitteeVersionParams(Committee committee) {
         MapSqlParameterSource params = getCommitteeVersionIdParams(committee.getVersionId());
         params.addValue("location", committee.getLocation());
-        params.addValue("meetday", committee.getMeetDay());
-        params.addValue("meettime", committee.getMeetTime());
+        params.addValue("meetday", committee.getMeetDay() != null ? committee.getMeetDay().toString() : null);
+        params.addValue("meettime", DateUtils.toTime(committee.getMeetTime()));
         params.addValue("meetaltweek", committee.isMeetAltWeek());
         params.addValue("meetaltweektext", committee.getMeetAltWeekText());
         return params;
