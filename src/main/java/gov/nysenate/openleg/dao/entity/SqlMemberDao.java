@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -103,9 +104,9 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
                 .addValue("memberId", member.getMemberId())
                 .addValue("lbdcShortName", member.getLbdcShortName())
                 .addValue("sessionYear", member.getSessionYear().getYear()));
-        KeyHolder sessionMemberIdHolder = new GeneratedKeyHolder();
-        jdbcNamed.update(INSERT_UNVERIFIED_SESSION_MEMBER_SQL.getSql(schema()), params, sessionMemberIdHolder);
-        member.setSessionMemberId(sessionMemberIdHolder.getKey().intValue());
+        int sessionMemberId = jdbcNamed.queryForObject(
+            INSERT_UNVERIFIED_SESSION_MEMBER_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
+        member.setSessionMemberId(sessionMemberId);
     }
 
     /** {@inheritDoc} */
@@ -167,11 +168,11 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     private void insertUnverifiedPerson(Person person) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
                 .addValue("fullName", person.getFullName())
-                .addValue("firstName", person.getFirstName())
+                .addValue("firstInitial", person.getFirstName())
                 .addValue("lastName", person.getLastName()));
-        KeyHolder personIdHolder = new GeneratedKeyHolder();
-        jdbcNamed.update(SqlMemberQuery.INSERT_UNVERIFIED_PERSON_SQL.getSql(schema()), params, personIdHolder);
-        person.setId(personIdHolder.getKey().intValue());
+        int personId = jdbcNamed.queryForObject(
+            SqlMemberQuery.INSERT_UNVERIFIED_PERSON_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
+        person.setId(personId);
     }
 
     /**
@@ -187,8 +188,8 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
                 .addValue("chamber", member.getChamber().asSqlEnum())
                 .addValue("incumbent", member.isIncumbent())
                 .addValue("fullName", member.getFullName()));
-        KeyHolder memberIdHolder = new GeneratedKeyHolder();
-        jdbcNamed.update(SqlMemberQuery.INSERT_UNVERIFIED_MEMBER_SQL.getSql(schema()), params, memberIdHolder);
-        member.setMemberId(memberIdHolder.getKey().intValue());
+        int memberId = jdbcNamed.queryForObject(
+            SqlMemberQuery.INSERT_UNVERIFIED_MEMBER_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
+        member.setMemberId(memberId);
     }
 }

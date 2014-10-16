@@ -689,19 +689,17 @@ CREATE TABLE bill (
     print_no text NOT NULL,
     session_year smallint NOT NULL,
     title text,
-    law_section text,
     summary text,
     active_version character(1) NOT NULL,
     active_year integer,
-    modified_date_time timestamp without time zone,
-    published_date_time timestamp without time zone,
-    last_fragment_id text,
-    law_code text,
-    created_date_time timestamp without time zone DEFAULT now(),
-    program_info text,
     status text,
     status_date date,
-    program_info_num integer
+    program_info text,
+    program_info_num integer,
+    created_date_time timestamp without time zone DEFAULT now(),
+    modified_date_time timestamp without time zone,
+    published_date_time timestamp without time zone,
+    last_fragment_id text
 );
 
 
@@ -733,13 +731,6 @@ COMMENT ON COLUMN bill.session_year IS 'The session year this bill was active in
 --
 
 COMMENT ON COLUMN bill.title IS 'The title of the bill';
-
-
---
--- Name: COLUMN bill.law_section; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN bill.law_section IS 'The section of law this bill affects';
 
 
 --
@@ -782,13 +773,6 @@ COMMENT ON COLUMN bill.published_date_time IS 'Date/time when this bill became p
 --
 
 COMMENT ON COLUMN bill.last_fragment_id IS 'Reference to the last sobi fragment that caused an update';
-
-
---
--- Name: COLUMN bill.law_code; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN bill.law_code IS 'Specifies the sections/chapters of laws that are affected';
 
 
 --
@@ -839,12 +823,12 @@ CREATE TABLE bill_amendment (
     full_text text,
     stricken boolean DEFAULT false,
     uni_bill boolean DEFAULT false,
-    last_fragment_id text,
+    law_code text,
+    law_section text,
     current_committee_name text,
     current_committee_action timestamp without time zone,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    law_code text,
-    law_section text
+    last_fragment_id text
 );
 
 
@@ -881,10 +865,10 @@ CREATE TABLE bill_amendment_action (
     bill_amend_version character(1) NOT NULL,
     effect_date date,
     text text,
-    last_fragment_id text,
     sequence_no smallint NOT NULL,
     chamber public.chamber NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -907,8 +891,8 @@ CREATE TABLE bill_amendment_cosponsor (
     bill_amend_version character(1) NOT NULL,
     session_member_id integer NOT NULL,
     sequence_no smallint NOT NULL,
-    last_fragment_id text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -931,8 +915,8 @@ CREATE TABLE bill_amendment_multi_sponsor (
     bill_amend_version character(1) NOT NULL,
     session_member_id integer NOT NULL,
     sequence_no smallint NOT NULL,
-    last_fragment_id text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -1045,8 +1029,8 @@ CREATE TABLE bill_amendment_same_as (
     same_as_bill_print_no text NOT NULL,
     same_as_session_year smallint NOT NULL,
     same_as_amend_version character(1) NOT NULL,
-    last_fragment_id text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -1070,11 +1054,13 @@ CREATE TABLE bill_amendment_vote_info (
     vote_date timestamp without time zone NOT NULL,
     sequence_no smallint,
     id integer NOT NULL,
+    vote_type vote_type NOT NULL,
+    committee_name text,
+    committee_chamber public.chamber,
     published_date_time timestamp without time zone,
     modified_date_time timestamp without time zone,
-    vote_type vote_type NOT NULL,
-    last_fragment_id text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -1100,13 +1086,22 @@ COMMENT ON COLUMN bill_amendment_vote_info.bill_print_no IS 'The print no of the
 
 COMMENT ON COLUMN bill_amendment_vote_info.bill_session_year IS 'The session year of the bill that was voted on';
 
-
 --
 -- Name: COLUMN bill_amendment_vote_info.bill_amend_version; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON COLUMN bill_amendment_vote_info.bill_amend_version IS 'The amendment version of the bill that was voted on';
 
+-- Name: COLUMN bill_amendment_vote_info.committee_name; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill_amendment_vote_info.committee_name IS 'If this is a committee vote, the name of the committee that voted';
+
+--
+-- Name: COLUMN bill_amendment_vote_info.committee_chamber; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill_amendment_vote_info.committee_chamber IS 'If this is a committee vote, the chamber of the committee that voted';
 
 --
 -- Name: bill_amendment_vote_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
@@ -1139,8 +1134,8 @@ CREATE TABLE bill_amendment_vote_roll (
     member_short_name text NOT NULL,
     session_year smallint NOT NULL,
     vote_code vote_code NOT NULL,
-    last_fragment_id text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -1162,13 +1157,13 @@ CREATE TABLE bill_approval (
     year integer NOT NULL,
     bill_print_no text NOT NULL,
     session_year integer NOT NULL,
+    bill_version character(1) NOT NULL,
     chapter integer,
     signer text,
     memo_text text NOT NULL,
     modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text,
-    bill_version character(1) NOT NULL
+    last_fragment_id text
 );
 
 
@@ -1191,8 +1186,8 @@ CREATE TABLE bill_committee (
     committee_name public.citext NOT NULL,
     committee_chamber public.chamber NOT NULL,
     action_date timestamp without time zone NOT NULL,
-    last_fragment_id text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -1222,8 +1217,8 @@ CREATE TABLE bill_previous_version (
     prev_bill_print_no text NOT NULL,
     prev_bill_session_year smallint NOT NULL,
     prev_amend_version text NOT NULL,
-    last_fragment_id text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -1246,8 +1241,8 @@ CREATE TABLE bill_sponsor (
     session_member_id integer,
     budget_bill boolean DEFAULT false,
     rules_sponsor boolean DEFAULT false,
-    last_fragment_id text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -1336,10 +1331,10 @@ ALTER TABLE master.bill_veto_year_seq OWNER TO postgres;
 CREATE TABLE calendar (
     calendar_no integer NOT NULL,
     year smallint NOT NULL,
-    last_fragment_id text,
     modified_date_time timestamp without time zone,
     published_date_time timestamp without time zone,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -1377,11 +1372,11 @@ CREATE TABLE calendar_active_list (
     calendar_year smallint,
     calendar_date date,
     release_date_time timestamp without time zone,
-    last_fragment_id text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    notes text,
     modified_date_time timestamp without time zone,
     published_date_time timestamp without time zone,
-    notes text
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -1450,10 +1445,10 @@ CREATE TABLE calendar_supplemental (
     sup_version text NOT NULL,
     calendar_date date,
     release_date_time timestamp without time zone,
-    last_fragment_id text,
     modified_date_time timestamp without time zone,
     published_date_time timestamp without time zone,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id text
 );
 
 
@@ -1741,13 +1736,13 @@ ALTER SEQUENCE committee_version_id_seq OWNED BY committee_version.id;
 CREATE TABLE daybreak_bill (
     report_date date NOT NULL,
     bill_print_no text NOT NULL,
+    bill_session_year integer NOT NULL,
     active_version character(1) NOT NULL,
     title text,
     sponsor text,
     summary text,
     law_section text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    bill_session_year integer NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -1955,14 +1950,14 @@ COMMENT ON TABLE daybreak_report IS 'Indicates which set of daybreaks reports ha
 CREATE TABLE law_document (
     document_id text NOT NULL,
     published_date date NOT NULL,
-    document_type text NOT NULL,
-    location_id text NOT NULL,
-    text text NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    law_file_name text,
-    title text,
     law_id text NOT NULL,
-    document_type_id text NOT NULL
+    location_id text NOT NULL,
+    document_type text NOT NULL,
+    document_type_id text NOT NULL,
+    text text NOT NULL,
+    title text,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    law_file_name text
 );
 
 
@@ -2152,9 +2147,9 @@ CREATE TABLE law_tree (
     parent_doc_id text,
     parent_doc_published_date date,
     is_root boolean DEFAULT false NOT NULL,
+    sequence_no smallint NOT NULL,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    law_file text,
-    sequence_no smallint NOT NULL
+    law_file text
 );
 
 
@@ -2388,9 +2383,9 @@ CREATE TABLE public_hearing (
     public_hearing_file text NOT NULL,
     address text NOT NULL,
     text text NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
     modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    published_date_time timestamp without time zone DEFAULT now() NOT NULL
+    published_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -2821,10 +2816,10 @@ CREATE TABLE transcript (
     date_time timestamp without time zone NOT NULL,
     location text NOT NULL,
     text text NOT NULL,
-    transcript_file text NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
     modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    published_date_time timestamp without time zone DEFAULT now() NOT NULL
+    published_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    transcript_file text NOT NULL
 );
 
 
@@ -4881,8 +4876,6 @@ ALTER TABLE ONLY session_member
 REVOKE ALL ON SCHEMA master FROM PUBLIC;
 REVOKE ALL ON SCHEMA master FROM postgres;
 GRANT ALL ON SCHEMA master TO postgres;
-GRANT ALL ON SCHEMA master TO sam;
-
 
 --
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
@@ -4892,8 +4885,6 @@ REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
 GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
-GRANT ALL ON SCHEMA public TO sam;
-
 
 --
 -- PostgreSQL database dump complete

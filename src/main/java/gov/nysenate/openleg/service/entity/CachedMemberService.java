@@ -7,7 +7,6 @@ import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.processor.base.ParseError;
 import net.sf.ehcache.CacheManager;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +82,7 @@ public class CachedMemberService implements MemberService
         }
         catch (MemberNotFoundEx ex) {
             try {
-                Member member = Member.getMakeshiftMember(lbdcShortName, sessionYear, chamber);
+                Member member = Member.newMakeshiftMember(lbdcShortName, sessionYear, chamber);
                 memberDao.insertUnverifiedSessionMember(member);
                 return member;
             }

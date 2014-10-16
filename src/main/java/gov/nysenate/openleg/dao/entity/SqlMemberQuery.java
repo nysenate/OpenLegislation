@@ -43,19 +43,22 @@ public enum SqlMemberQuery implements BasicSqlQuery
     ),
 
     INSERT_UNVERIFIED_PERSON_SQL(
-        "INSERT INTO " + SqlTable.PERSON +
-               "( full_name, first_name,   middle_name, last_name, email, prefix, suffix, verified)" +
-        "VALUES (:fullName, :firstInitial, NULL,       :lastName,  NULL,  NULL,   NULL,   FALSE)"
+        "INSERT INTO " + SqlTable.PERSON + "\n" +
+               "( full_name, first_name,   middle_name, last_name, email, prefix, suffix, verified)\n" +
+        "VALUES (:fullName, :firstInitial, NULL,       :lastName,  NULL,  NULL,   NULL,   FALSE)\n" +
+        "RETURNING id"
     ),
     INSERT_UNVERIFIED_MEMBER_SQL(
-        "INSERT INTO " + SqlTable.MEMBER +
-               "( person_id,      chamber,              incumbent,  full_name)" +
-        "VALUES (:personId, CAST(:chamber AS chamber), :incumbent, :fullName"
+        "INSERT INTO " + SqlTable.MEMBER + "\n" +
+               "( person_id,      chamber,              incumbent,  full_name)\n" +
+        "VALUES (:personId, CAST(:chamber AS chamber), :incumbent, :fullName)\n" +
+        "RETURNING id"
     ),
     INSERT_UNVERIFIED_SESSION_MEMBER_SQL(
-        "INSERT INTO " + SqlTable.SESSION_MEMBER +
-               "( member_id, lbdc_short_name, session_year, district_code )" +
-        "VALUES (:memberId, :lbdcShortName,  :sessionYear,  NULL )"
+        "INSERT INTO " + SqlTable.SESSION_MEMBER + "\n" +
+               "( member_id, lbdc_short_name, session_year, district_code )\n" +
+        "VALUES (:memberId, :lbdcShortName,  :sessionYear,  NULL )\n" +
+        "RETURNING id"
     )
     ;
 
