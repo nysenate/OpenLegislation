@@ -26,8 +26,12 @@ public class AgendaCommAddendumView implements ViewObject
             this.meeting = new AgendaMeetingView(infoComm.getChair(), infoComm.getLocation(),
                                                  infoComm.getMeetingDateTime(), infoComm.getNotes());
             this.bills = ListView.of(infoComm.getItems().stream()
-                    .map(i -> new AgendaItemView(i))
-                    .collect(toList()));
+                .map(i -> new AgendaItemView(i))
+                .collect(toList()));
+            this.hasVotes = voteComm != null;
+            if (this.hasVotes) {
+                this.voteInfo = new AgendaVoteView(voteComm);
+            }
         }
     }
 
