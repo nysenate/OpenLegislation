@@ -109,18 +109,6 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         member.setSessionMemberId(sessionMemberId);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void updateMember(Member member) {
-        throw new UnsupportedOperationException("Not implemented yet!");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void deleteMember(Member member) {
-        throw new UnsupportedOperationException("Not implemented yet!");
-    }
-
     /** --- Helper classes --- */
 
     private static class MemberRowMapper implements RowMapper<Member>

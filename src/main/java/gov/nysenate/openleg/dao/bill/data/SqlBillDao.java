@@ -114,6 +114,21 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return billInfo;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void applyText(Bill bill) throws DataAccessException {
+        if (bill == null) {
+            throw new IllegalArgumentException("Cannot apply bill text on a null bill");
+        }
+        MapSqlParameterSource billParams = new MapSqlParameterSource();
+        addBillIdParams(bill, billParams);
+        jdbcNamed.query(SqlBillQuery.SELECT_BILL_TEXT.getSql(schema()), billParams, (RowCallbackHandler) (ResultSet rs) -> {
+            BillAmendment ba = bill.getAmendment(Version.of(rs.getString("version")));
+            ba.setMemo(rs.getString("sponsor_memo"));
+            ba.setFullText(rs.getString("full_text"));
+        });
+    }
+
     /**
      * {@inheritDoc}
      *

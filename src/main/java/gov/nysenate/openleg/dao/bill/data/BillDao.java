@@ -21,6 +21,8 @@ public interface BillDao
 
     public BillInfo getBillInfo(BillId billId) throws DataAccessException;
 
+    public void applyText(Bill bill) throws DataAccessException;
+
     public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff, SortOrder billIdSort) throws DataAccessException;
 
     public int getBillCount() throws DataAccessException;

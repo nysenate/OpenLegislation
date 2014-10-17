@@ -18,21 +18,21 @@ public interface BillDataService
     /**
      * Retrieve a Bill instance for the matching BillId.
      *
-     * @param billId BillId
+     * @param billId BaseBillId
      * @return Bill
      * @throws BillNotFoundEx - If no Bill matching the BillId was found.
      */
-    public Bill getBill(BillId billId) throws BillNotFoundEx;
+    public Bill getBill(BaseBillId billId) throws BillNotFoundEx;
 
     /**
      * Retrieve a BillInfo instance for the matching BillId. This contains
      * less information that the Bill for purposes of displaying in listings.
      *
-     * @param billId BillId
+     * @param billId BaseBillId
      * @return BillInfo
      * @throws BillNotFoundEx - If no Bill matching the BillId was found.
      */
-    public BillInfo getBillInfo(BillId billId) throws BillNotFoundEx;
+    public BillInfo getBillInfo(BaseBillId billId) throws BillNotFoundEx;
 
     /**
      * Retrieve a list of BaseBillIds within the specified session year.

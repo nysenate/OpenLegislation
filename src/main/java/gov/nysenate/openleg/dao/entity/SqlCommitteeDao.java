@@ -362,7 +362,8 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
             committee.setPublishedDateTime(getLocalDateTimeFromRs(rs, "created"));
             committee.setReformed(getLocalDateTimeFromRs(rs, "reformed"));
             committee.setLocation(rs.getString("location"));
-            committee.setMeetDay(StringUtils.isNotEmpty(rs.getString("meetday")) ? DayOfWeek.valueOf(rs.getString("meetday")) : null);
+            committee.setMeetDay(StringUtils.isNotEmpty(rs.getString("meetday"))
+                ? DayOfWeek.valueOf(rs.getString("meetday").toUpperCase()) : null);
             committee.setMeetTime(rs.getTime("meettime") != null ? rs.getTime("meettime").toLocalTime() : null);
             committee.setMeetAltWeek(rs.getBoolean("meetaltweek"));
             committee.setMeetAltWeekText(rs.getString("meetaltweektext"));

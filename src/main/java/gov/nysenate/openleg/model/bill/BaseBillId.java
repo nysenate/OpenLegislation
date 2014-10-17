@@ -27,6 +27,10 @@ public class BaseBillId extends BillId implements Serializable
         super.version = DEFAULT_VERSION;
     }
 
+    public static BaseBillId of(BillId billId) {
+        return new BaseBillId(billId.getBasePrintNo(), billId.getSession());
+    }
+
     /**
      * Return a new BillId instance with the version set as the supplied 'version'.
      * This can be useful when moving from a non-version context (such as a Bill container)
