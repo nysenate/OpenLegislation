@@ -1,38 +1,42 @@
 package gov.nysenate.openleg.client.view.bill;
 
-import gov.nysenate.openleg.client.view.base.*;
+import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.base.MapView;
+import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
+import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
-import gov.nysenate.openleg.model.entity.Member;
 
 import java.util.stream.Collectors;
 
 public class BillVoteView implements ViewObject
 {
-    protected BillIdView billId;
+    protected String version;
     protected String voteType;
     protected String voteDate;
-    protected int sequenceNo;
-    protected MapView<String, ListView<String>> memberVotes;
+    protected CommitteeIdView committee;
+    protected MapView<String, ListView<SimpleMemberView>> memberVotes;
 
     public BillVoteView(BillVote billVote) {
-        if(billVote!=null) {
-            this.billId = new BillIdView(billVote.getBillId());
+        if(billVote != null) {
+            this.version = new BillIdView(billVote.getBillId()).getVersion();
             this.voteType = billVote.getVoteType().name();
             this.voteDate = billVote.getVoteDate().toString();
-            this.sequenceNo = billVote.getSequenceNo();
+            this.committee = billVote.getCommitteeId() != null ? new CommitteeIdView(billVote.getCommitteeId()) : null;
             this.memberVotes = MapView.of(
-                    billVote.getMemberVotes().keySet().stream()
-                        .collect(Collectors.toMap(BillVoteCode::name,
-                                voteCode -> ListView.ofStringList(billVote.getMembersByVote(voteCode).stream()
-                                                                    .map(Member::getLbdcShortName)
-                                                                    .collect(Collectors.toList()))))
+                billVote.getMemberVotes().keySet().stream()
+                    .collect(Collectors.toMap(BillVoteCode::name,
+                        voteCode -> ListView.of(
+                            billVote.getMembersByVote(voteCode).stream()
+                                .map(m -> new SimpleMemberView(m))
+                                .collect(Collectors.toList()))))
             );
         }
     }
 
-    public BillIdView getBillId() {
-        return billId;
+    public String getVersion() {
+        return version;
     }
 
     public String getVoteType() {
@@ -43,11 +47,11 @@ public class BillVoteView implements ViewObject
         return voteDate;
     }
 
-    public int getSequenceNo() {
-        return sequenceNo;
+    public CommitteeIdView getCommittee() {
+        return committee;
     }
 
-    public MapView<String, ListView<String>> getMemberVotes() {
+    public MapView<String, ListView<SimpleMemberView>> getMemberVotes() {
         return memberVotes;
     }
 

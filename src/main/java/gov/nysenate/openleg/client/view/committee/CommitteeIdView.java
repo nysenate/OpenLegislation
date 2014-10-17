@@ -6,12 +6,12 @@ import gov.nysenate.openleg.model.entity.CommitteeId;
 public class CommitteeIdView implements ViewObject {
 
     protected String chamber;
-    protected String committeeName;
+    protected String name;
 
     public CommitteeIdView(CommitteeId committeeId) {
         if (committeeId != null) {
             this.chamber = committeeId.getChamber().name();
-            this.committeeName = committeeId.getName();
+            this.name = committeeId.getName();
         }
     }
 
@@ -19,8 +19,8 @@ public class CommitteeIdView implements ViewObject {
         return chamber;
     }
 
-    public String getCommitteeName() {
-        return committeeName;
+    public String getName() {
+        return name;
     }
 
     @Override

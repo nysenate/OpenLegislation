@@ -1,32 +1,28 @@
 package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
 
-public class BillIdView implements ViewObject
+public class BillIdView extends BaseBillIdView implements ViewObject
 {
-    protected String basePrintNo;
+    protected String printNo;
     protected String version;
-    protected int session;
 
     public BillIdView(BillId billId) {
+        super(billId);
         if (billId != null) {
-            this.basePrintNo = billId.getBasePrintNo();
+            this.printNo = billId.getPrintNo();
             this.version = billId.getVersion().getValue();
-            this.session = billId.getSession().getYear();
         }
     }
 
-    public String getBasePrintNo() {
-        return basePrintNo;
+    public String getPrintNo() {
+        return printNo;
     }
 
     public String getVersion() {
         return version;
-    }
-
-    public int getSession() {
-        return session;
     }
 
     @Override

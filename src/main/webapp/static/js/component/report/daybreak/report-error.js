@@ -87,7 +87,7 @@ reportModule.controller('DaybreakReportErrorCtrl',
     $scope.setDefaultNgTableParams = function(){
         $scope.tableParams = new ngTableParams({
                 page: 1,
-                count: 10,
+                count: 25,
                 sorting: {
                     printNo: 'asc'
                 }

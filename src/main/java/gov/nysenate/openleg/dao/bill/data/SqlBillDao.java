@@ -114,6 +114,21 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return billInfo;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void applyText(Bill bill) throws DataAccessException {
+        if (bill == null) {
+            throw new IllegalArgumentException("Cannot apply bill text on a null bill");
+        }
+        MapSqlParameterSource billParams = new MapSqlParameterSource();
+        addBillIdParams(bill, billParams);
+        jdbcNamed.query(SqlBillQuery.SELECT_BILL_TEXT.getSql(schema()), billParams, (RowCallbackHandler) (ResultSet rs) -> {
+            BillAmendment ba = bill.getAmendment(Version.of(rs.getString("version")));
+            ba.setMemo(rs.getString("sponsor_memo"));
+            ba.setFullText(rs.getString("full_text"));
+        });
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -160,17 +175,15 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         // Update approval message
         updateApprovalMessage(bill, sobiFragment);
 
-        // Update the aggregate search index
-        Object[] args = new Object[] {bill.getBasePrintNo(), bill.getSession().getYear()};
-        jdbc.query("SELECT master_search.refresh_bill_search(?::text, ?::smallint)", args, (rs,row) -> row);
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff) throws DataAccessException {
+    public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff, SortOrder billIdSort) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.getYear()));
-        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_IDS_BY_SESSION.getSql(schema(), limOff), params, (rs, row) ->
-                new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
+        OrderBy orderBy = new OrderBy("print_no", billIdSort, "session_year", billIdSort);
+        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_IDS_BY_SESSION.getSql(schema(), orderBy, limOff), params, (rs, row) ->
+            new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
     }
 
     /** {@inheritDoc} */
@@ -229,7 +242,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Get a set of the committee ids which represent the committees the bill was previously referred to.
      */
-    private SortedSet<CommitteeVersionId> getBillCommittees(ImmutableParams baseParams){
+    private TreeSet<CommitteeVersionId> getBillCommittees(ImmutableParams baseParams){
         return new TreeSet<>(jdbcNamed.query(SqlBillQuery.SELECT_BILL_COMMITTEES.getSql(schema()), baseParams, new BillCommitteeRowMapper()));
     }
 
@@ -466,7 +479,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             MapDifference<Member, Integer> diff = difference(existingCoSponsors, billAmendment.getCoSponsors(), 1);
             // Delete old cosponsors
             diff.entriesOnlyOnLeft().forEach((member,ordinal) -> {
-                ImmutableParams cspParams = amendParams.add(new MapSqlParameterSource("memberId", member.getMemberId()));
+                ImmutableParams cspParams = amendParams.add(new MapSqlParameterSource("sessionMemberId", member.getSessionMemberId()));
                 jdbcNamed.update(SqlBillQuery.DELETE_BILL_COSPONSOR.getSql(schema()), cspParams);
             });
             // Update re-ordered cosponsors
@@ -493,7 +506,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             MapDifference<Member, Integer> diff = difference(existingMultiSponsors, billAmendment.getMultiSponsors(), 1);
             // Delete old multisponsors
             diff.entriesOnlyOnLeft().forEach((member,ordinal) -> {
-                ImmutableParams mspParams = amendParams.add(new MapSqlParameterSource("memberId", member.getMemberId()));
+                ImmutableParams mspParams = amendParams.add(new MapSqlParameterSource("sessionMemberId", member.getSessionMemberId()));
                 jdbcNamed.update(SqlBillQuery.DELETE_BILL_MULTISPONSOR.getSql(schema()), mspParams);
             });
             // Update re-ordered multisponsors
@@ -531,7 +544,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             for (BillVoteCode voteCode : billVote.getMemberVotes().keySet()) {
                 voteParams.addValue("voteCode", voteCode.name().toLowerCase());
                 for (Member member : billVote.getMembersByVote(voteCode)) {
-                    voteParams.addValue("memberId", member.getMemberId());
+                    voteParams.addValue("sessionMemberId", member.getSessionMemberId());
                     voteParams.addValue("memberShortName", member.getLbdcShortName());
                     jdbcNamed.update(SqlBillQuery.INSERT_BILL_VOTES_ROLL.getSql(schema()), voteParams);
                 }
@@ -652,13 +665,13 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         @Override
         public BillSponsor mapRow(ResultSet rs, int rowNum) throws SQLException {
             BillSponsor sponsor = new BillSponsor();
-            int memberId = rs.getInt("member_id");
+            int sessionMemberId = rs.getInt("session_member_id");
             SessionYear sessionYear = getSessionYearFromRs(rs, "bill_session_year");
             sponsor.setBudgetBill(rs.getBoolean("budget_bill"));
             sponsor.setRulesSponsor(rs.getBoolean("rules_sponsor"));
-            if (memberId > 0) {
+            if (sessionMemberId > 0) {
                 try {
-                    sponsor.setMember(memberService.getMemberById(memberId, sessionYear));
+                    sponsor.setMember(memberService.getMemberBySessionId(sessionMemberId));
                 }
                 catch (MemberNotFoundEx memberNotFoundEx) {
                     logger.warn("Bill referenced a sponsor that does not exist. {}", memberNotFoundEx.getMessage());
@@ -678,10 +691,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
         @Override
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
-            int memberId = rs.getInt("member_id");
+            int sessionMemberId = rs.getInt("session_member_id");
             SessionYear sessionYear = getSessionYearFromRs(rs, "bill_session_year");
             try {
-                return memberService.getMemberById(memberId, sessionYear);
+                return memberService.getMemberBySessionId(sessionMemberId);
             }
             catch (MemberNotFoundEx memberNotFoundEx) {
                 logger.warn("Bill referenced a member that does not exist: {}", memberNotFoundEx.getMessage());
@@ -801,7 +814,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         BillSponsor billSponsor = bill.getSponsor();
         boolean hasMember = billSponsor != null && billSponsor.hasMember();
         addBillIdParams(bill, params);
-        params.addValue("memberId", (hasMember) ? billSponsor.getMember().getMemberId() : null)
+        params.addValue("sessionMemberId", (hasMember) ? billSponsor.getMember().getSessionMemberId() : null)
               .addValue("budgetBill", (billSponsor != null && billSponsor.isBudgetBill()))
               .addValue("rulesSponsor", (billSponsor != null && billSponsor.isRulesSponsor()));
         addLastFragmentParam(fragment, params);
@@ -812,7 +825,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
                                                                  int sequenceNo, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(billAmendment, params);
-        params.addValue("memberId", member.getMemberId())
+        params.addValue("sessionMemberId", member.getSessionMemberId())
               .addValue("sequenceNo", sequenceNo);
         addLastFragmentParam(fragment, params);
         return params;
@@ -824,7 +837,11 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         addBillIdParams(billAmendment, params);
         params.addValue("voteDate", toDate(billVote.getVoteDate()))
               .addValue("voteType", billVote.getVoteType().name().toLowerCase())
-              .addValue("sequenceNo", billVote.getSequenceNo());
+              .addValue("sequenceNo", billVote.getSequenceNo())
+              .addValue("committeeName", (billVote.getCommitteeId() != null)
+                                         ? billVote.getCommitteeId().getName() : null)
+              .addValue("committeeChamber", (billVote.getCommitteeId() != null)
+                                            ? billVote.getCommitteeId().getChamber().asSqlEnum() : null);
         addModPubDateParams(billVote.getModifiedDateTime(), billVote.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;

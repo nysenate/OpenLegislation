@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/content/**")
 public class ContentPageCtrl
 {
-    @RequestMapping(value = "content", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public String index() {
         return "content";
     }

@@ -6,8 +6,6 @@
 
 <open-layout:head title="Open 2.0 | Reports">
     <script src="${ctxPath}/static/bower_components/highcharts/highcharts.js"></script>
-    <script src="${ctxPath}/static/js/app.js"></script>
-    <script src="${ctxPath}/static/js/common.js"></script>
     <script src="${ctxPath}/static/js/component/report/daybreak/report-summary.js"></script>
     <script src="${ctxPath}/static/js/component/report/daybreak/report-error.js"></script>
 </open-layout:head>

@@ -13,7 +13,7 @@ import java.util.*;
  * that is common to amendments of the same bill will be exposed through the
  * {@link gov.nysenate.openleg.model.bill.Bill} object.
  */
-public class BillAmendment implements Serializable
+public class BillAmendment implements Serializable, Cloneable
 {
     private static final long serialVersionUID = -2020934234685630361L;
 
@@ -58,7 +58,7 @@ public class BillAmendment implements Serializable
 
     /** A list of votes that have been made on this bill. Maps the vote id -> BillVote to make it
      *  easy to update votes. */
-    protected Map<BillVoteId, BillVote> votesMap = new HashMap<>();
+    protected Map<BillVoteId, BillVote> votesMap = new TreeMap<>();
 
     /** A flag marking this bill as introduced in unison in both houses */
     protected Boolean uniBill = false;
@@ -78,6 +78,19 @@ public class BillAmendment implements Serializable
     @Override
     public String toString() {
         return this.getBillId().toString();
+    }
+
+    /**
+     * Creates a shallow clone for this amendment. This should only be used for caching purposes.
+     * @return BillAmendment
+     */
+    public BillAmendment shallowClone() {
+        try {
+            return (BillAmendment) this.clone();
+        }
+        catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Failed to clone bill amendment!");
+        }
     }
 
     /** --- Functional Getters/Setters --- */

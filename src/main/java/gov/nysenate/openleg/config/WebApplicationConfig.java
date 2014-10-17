@@ -41,7 +41,7 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         logger.info("Registering resource path {} for files under {}", resourcePath, resourceLocation);
-        registry.addResourceHandler(resourcePath).addResourceLocations(resourceLocation);
+        registry.addResourceHandler(resourcePath).addResourceLocations(resourceLocation).setCachePeriod(64000);
     }
 
     /**

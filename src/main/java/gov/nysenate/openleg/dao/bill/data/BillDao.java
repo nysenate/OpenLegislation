@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.bill.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -20,7 +21,9 @@ public interface BillDao
 
     public BillInfo getBillInfo(BillId billId) throws DataAccessException;
 
-    public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff) throws DataAccessException;
+    public void applyText(Bill bill) throws DataAccessException;
+
+    public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff, SortOrder billIdSort) throws DataAccessException;
 
     public int getBillCount() throws DataAccessException;
 

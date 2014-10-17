@@ -1,15 +1,28 @@
 package gov.nysenate.openleg.controller.api.bill;
 
+import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.ListViewResponse;
+import gov.nysenate.openleg.client.response.error.ErrorCode;
+import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
+import gov.nysenate.openleg.client.view.base.SearchResultView;
+import gov.nysenate.openleg.client.view.bill.BillIdView;
+import gov.nysenate.openleg.client.view.bill.BillInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.dao.bill.search.BillSearchDao;
+import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.service.base.SearchException;
+import gov.nysenate.openleg.service.base.SearchResult;
 import gov.nysenate.openleg.service.base.SearchResults;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
+import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.search.BillSearchField;
 import gov.nysenate.openleg.service.bill.search.BillSearchService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -18,6 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/bills/search", method = RequestMethod.GET)
@@ -26,42 +40,23 @@ public class BillSearchCtrl extends BaseCtrl
     private static final Logger logger = LoggerFactory.getLogger(BillSearchCtrl.class);
 
     @Autowired
+    private BillDataService billData;
+
+    @Autowired
     private BillSearchService billSearch;
 
     /** --- Request Handlers --- */
 
     @RequestMapping(value = "")
-    public SearchResults<BillId> advancedSearch(WebRequest webRequest) {
+    public BaseResponse globalSearch(@RequestParam(required = true) String term,
+                                     @RequestParam(defaultValue = "") String sort,
+                                     @RequestParam(defaultValue = "false") boolean full, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.TWENTY_FIVE);
-        Map<BillSearchField, String> queryMap = getAdvancedSearchQueryMap(webRequest);
-        logger.info("{}", queryMap);
-        SearchResults<BillId> results = billSearch.searchAdvanced(queryMap, limOff);
-        logger.info("{}", results);
-        return results;
-    }
-
-    @RequestMapping(value = "/{term}")
-    public SearchResults<BillId> globalSearch(@PathVariable String term, WebRequest webRequest) {
-        logger.debug("Bill Search Request: {}", term);
-        LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.TWENTY_FIVE);
-        return billSearch.searchAll(term, limOff);
-    }
-
-    /** --- Internal Methods --- */
-
-    /**
-     * From the collection of query parameters derive a query map which associates a valid
-     * BillSearchField to a search term.
-     *
-     * @param webRequest
-     * @return Map<BillSearchField, String>
-     */
-    private Map<BillSearchField, String> getAdvancedSearchQueryMap(WebRequest webRequest) {
-        return webRequest.getParameterMap().entrySet().stream()
-            // Look for request parameters that have a valid bill search field mapping
-            .filter(e -> BillSearchField.isValidParam(e.getKey()))
-            // Flatten the entries into a map, with the request param value arrays converted into strings
-            .collect(Collectors.toMap(p -> BillSearchField.valueOfParam(p.getKey()),
-                    p -> StringUtils.join(Arrays.asList(p.getValue()), " ")));
+        SearchResults<BaseBillId> results = billSearch.searchBills(term, sort, limOff);
+        return ListViewResponse.of(
+            results.getResults().parallelStream()
+                .map(r -> new SearchResultView(
+                    new BillInfoView(billData.getBillInfo(r.getResult())), r.getRank()))
+                .collect(toList()), results.getTotalResults(), limOff);
     }
 }

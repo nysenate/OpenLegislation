@@ -1,0 +1,62 @@
+package gov.nysenate.openleg.client.view.agenda;
+
+import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
+import gov.nysenate.openleg.model.agenda.AgendaInfoCommittee;
+import gov.nysenate.openleg.model.agenda.AgendaVoteCommittee;
+import gov.nysenate.openleg.model.entity.CommitteeId;
+
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+
+public class AgendaCommAddendumView implements ViewObject
+{
+    private String addendumId;
+    private boolean hasVotes = false;
+    private AgendaMeetingView meeting;
+    private ListView<AgendaItemView> bills;
+    private AgendaVoteView voteInfo;
+
+    public AgendaCommAddendumView(String addendumId, AgendaInfoCommittee infoComm, AgendaVoteCommittee voteComm) {
+        this.addendumId = addendumId;
+        if (infoComm != null) {
+            this.meeting = new AgendaMeetingView(infoComm.getChair(), infoComm.getLocation(),
+                                                 infoComm.getMeetingDateTime(), infoComm.getNotes());
+            this.bills = ListView.of(infoComm.getItems().stream()
+                .map(i -> new AgendaItemView(i))
+                .collect(toList()));
+            this.hasVotes = voteComm != null;
+            if (this.hasVotes) {
+                this.voteInfo = new AgendaVoteView(voteComm);
+            }
+        }
+    }
+
+    public String getAddendumId() {
+        return addendumId;
+    }
+
+    public boolean isHasVotes() {
+        return hasVotes;
+    }
+
+    public AgendaMeetingView getMeeting() {
+        return meeting;
+    }
+
+    public ListView<AgendaItemView> getBills() {
+        return bills;
+    }
+
+    public AgendaVoteView getVoteInfo() {
+        return voteInfo;
+    }
+
+    @Override
+    public String getViewType() {
+        return "agenda-addendum";
+    }
+}

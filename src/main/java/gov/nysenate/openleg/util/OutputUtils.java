@@ -25,6 +25,10 @@ public abstract class OutputUtils
         jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
+    public static ObjectMapper getJsonMapper() {
+        return jsonMapper;
+    }
+
     /**
      * Given an object, this method will attempt to serialize it into JSON.
      * @param object Object

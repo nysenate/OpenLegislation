@@ -147,8 +147,8 @@ public enum SqlAgendaQuery implements BasicSqlQuery
     ),
     INSERT_AGENDA_VOTE_ATTENDANCE(
         "INSERT INTO ${schema}." + SqlTable.AGENDA_VOTE_COMMITTEE_ATTEND + "\n" +
-        "(vote_committee_id, member_id, session_year, lbdc_short_name, rank, party, attend_status, last_fragment_id)\n" +
-        "SELECT c.id, :memberId, :sessionYear, :lbdcShortName, :rank, :party, :attendStatus, :lastFragmentId\n" +
+        "(vote_committee_id, session_member_id, session_year, lbdc_short_name, rank, party, attend_status, last_fragment_id)\n" +
+        "SELECT c.id, :sessionMemberId, :sessionYear, :lbdcShortName, :rank, :party, :attendStatus, :lastFragmentId\n" +
         "FROM (" + SELECT_AGENDA_VOTE_COMMITTEE_ID.sql + ") c"
     ),
 
@@ -158,7 +158,8 @@ public enum SqlAgendaQuery implements BasicSqlQuery
         "SELECT cv.id, cv.vote_action, cv.refer_committee_name, cv.refer_committee_chamber, cv.with_amendment," +
         "       vi.bill_print_no, vi.bill_session_year, vi.bill_amend_version, vi.vote_date, vi.vote_type," +
         "       vi.sequence_no, vi.published_date_time, vi.modified_date_time," +
-        "       vr.member_id, vr.session_year, vr.vote_code\n" +
+        "       vi.committee_name, vi.committee_chamber," +
+        "       vr.session_member_id, vr.session_year, vr.vote_code\n" +
         "FROM ${schema}." + SqlTable.AGENDA_VOTE_COMMITTEE_VOTE + " cv\n" +
         "JOIN ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + " vi ON cv.vote_info_id = vi.id\n" +
         "JOIN ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_ROLL + " vr ON vi.id = vr.vote_id\n" +

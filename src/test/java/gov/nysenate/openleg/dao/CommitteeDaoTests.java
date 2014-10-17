@@ -3,12 +3,15 @@ package gov.nysenate.openleg.dao;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.entity.CommitteeDao;
 import gov.nysenate.openleg.entity.TestCommittees;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -183,5 +186,10 @@ public class CommitteeDaoTests extends BaseTests{
                 }
             }
         }
+    }
+
+    @Test
+    public void anotherCommitteeTest() {
+        committeeDao.getCommittee(new CommitteeVersionId(Chamber.SENATE, "Ethics", SessionYear.of(2011), LocalDate.now()));
     }
 }

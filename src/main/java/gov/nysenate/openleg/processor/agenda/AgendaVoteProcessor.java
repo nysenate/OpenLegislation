@@ -90,7 +90,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                     for (int k = 0; k < xmlMembers.getLength(); k++) {
                         Node xmlMember = xmlMembers.item(k);
                         String memberName = xml.getString("name/text()", xmlMember);
-                        Member member = getMemberFromShortName(memberName, session, Chamber.SENATE, true);
+                        Member member = getMemberFromShortName(memberName, session, Chamber.SENATE);
                         Integer rank = xml.getInteger("rank/text()", xmlMember);
                         String party = xml.getString("party/text()", xmlMember);
                         String attendance = xml.getString("attendance", xmlMember);
@@ -119,6 +119,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
 
                         // Create the committee bill vote.
                         BillVote vote = new BillVote(billId, meetDateTime.toLocalDate(), BillVoteType.COMMITTEE);
+                        vote.setCommitteeId(committeeId);
                         vote.setModifiedDateTime(modifiedDate);
                         vote.setPublishedDateTime(modifiedDate);
 
@@ -127,7 +128,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                         for (int v = 0; v < xmlVotes.getLength(); v++) {
                             Node xmlVote = xmlVotes.item(v);
                             String voterName = xml.getString("name/text()", xmlVote);
-                            Member voterMember = getMemberFromShortName(voterName, session, Chamber.SENATE, true);
+                            Member voterMember = getMemberFromShortName(voterName, session, Chamber.SENATE);
                             String voteCodeStr = xml.getString("vote/text()", xmlVote).replace(" ", "").replace("/", "");
                             BillVoteCode voteCode = BillVoteCode.getValue(voteCodeStr);
                             vote.addMemberVote(voteCode, voterMember);

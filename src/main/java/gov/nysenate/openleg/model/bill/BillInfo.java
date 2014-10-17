@@ -20,6 +20,15 @@ public class BillInfo
 
     public BillInfo() {}
 
+    public BillInfo(Bill bill) {
+        this.billId = bill.getBaseBillId();
+        this.activeVersion = bill.getActiveVersion();
+        this.title = bill.getTitle();
+        this.summary = bill.getSummary();
+        this.status = bill.getStatus();
+        this.sponsor = bill.getSponsor();
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public BillId getBillId() {

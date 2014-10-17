@@ -1,9 +1,12 @@
 package gov.nysenate.openleg.model.bill;
 
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.entity.CommitteeId;
+import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 
 import java.io.Serializable;
@@ -17,7 +20,7 @@ import java.util.Set;
  * This model can be used for representing both floor and committee votes although
  * committee votes will have some extra metadata that should be tracked elsewhere.
  */
-public class BillVote extends BaseLegislativeContent implements Serializable
+public class BillVote extends BaseLegislativeContent implements Serializable, Comparable<BillVote>
 {
     private static final long serialVersionUID = -5265803060674818213L;
 
@@ -31,6 +34,8 @@ public class BillVote extends BaseLegislativeContent implements Serializable
 
     /** Date the vote was taken on. */
     private LocalDate voteDate;
+
+    private CommitteeId committeeId;
 
     /** Sets of members grouped based upon how they voted. */
     @SuppressWarnings("serial")
@@ -48,6 +53,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable
 
     public BillVote(BillVoteId billVoteId) {
         this(billVoteId.getBillId(), billVoteId.getVoteDate(), billVoteId.getVoteType(), billVoteId.getSequenceNo());
+        this.committeeId = billVoteId.getCommitteeId();
     }
 
     public BillVote(BillId billId, LocalDate voteDate, BillVoteType type) {
@@ -70,7 +76,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable
      * Creates and returns a unique id for the BillVote.
      */
     public BillVoteId getVoteId() {
-        return new BillVoteId(this.billId, this.voteDate, this.voteType, this.sequenceNo);
+        return new BillVoteId(this.billId, this.voteDate, this.voteType, this.sequenceNo, this.committeeId);
     }
 
     /**
@@ -113,7 +119,16 @@ public class BillVote extends BaseLegislativeContent implements Serializable
                Objects.equals(this.voteType, other.voteType) &&
                Objects.equals(this.voteDate, other.voteDate) &&
                Objects.equals(this.memberVotes, other.memberVotes) &&
-               Objects.equals(this.sequenceNo, other.sequenceNo);
+               Objects.equals(this.sequenceNo, other.sequenceNo) &&
+               Objects.equals(this.committeeId, other.committeeId);
+    }
+
+    @Override
+    public int compareTo(BillVote o) {
+        return ComparisonChain.start()
+            .compare(this.getVoteDate(), o.getVoteDate())
+            .compare(this.getVoteType().code, o.getVoteType().code)
+            .result();
     }
 
     @Override
@@ -169,5 +184,13 @@ public class BillVote extends BaseLegislativeContent implements Serializable
 
     public void setSequenceNo(int sequenceNo) {
         this.sequenceNo = sequenceNo;
+    }
+
+    public CommitteeId getCommitteeId() {
+        return committeeId;
+    }
+
+    public void setCommitteeId(CommitteeId committeeId) {
+        this.committeeId = committeeId;
     }
 }

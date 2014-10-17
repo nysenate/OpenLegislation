@@ -9,29 +9,38 @@ import java.util.Map;
  */
 public enum ErrorCode
 {
-
     /** --- Base --- */
+
     UNKNOWN_ERROR(-1, "There was an unexpected error while handling your request. " +
-            "Please notify Senate Tech if you received this error."),
+                      "Please notify Senate Tech if you received this error."),
+
     INVALID_ARGUMENTS(1, "The specified request parameters were not valid"),
 
     /** --- Bill --- */
+
     BILL_NOT_FOUND(11, "The requested bill was not found"),
 
     /** --- Law --- */
+
     LAW_DOC_NOT_FOUND(21, "The requested law document was not found"),
     LAW_TREE_NOT_FOUND(22, "The requested law tree was not found"),
 
     /** --- Spotcheck --- */
+
     SPOTCHECK_REPORT_NOT_FOUND(31, "The requested spotcheck report was not found"),
 
     /** --- Calendar --- */
     CALENDAR_NOT_FOUND(51, "The requested calendar was not found"),
-    INVALID_CAL_SEARCH_PARAMS(52, "The given calendar search parameters are invalid/conflicting")
+    INVALID_CAL_SEARCH_PARAMS(52, "The given calendar search parameters are invalid/conflicting"),
+
+    /** --- General --- */
+
+    SEARCH_ERROR(100, "There was error retrieving your search results. Make sure that the query is valid.")
+
     ;
 
-
     /** Used for lookups by code. */
+
     private static final Map<Integer, String> codeMap = new HashMap<>();
     static {
         for (ErrorCode rc : ErrorCode.values()) {

@@ -8,12 +8,14 @@ public class SimpleMemberView implements ViewObject
     protected int memberId;
     protected String shortName;
     protected int sessionYear;
+    protected String chamber;
 
     public SimpleMemberView(Member member) {
         if (member != null) {
             this.memberId = member.getMemberId();
             this.shortName = member.getLbdcShortName();
             this.sessionYear = member.getSessionYear().getYear();
+            this.chamber = member.getChamber().name();
         }
     }
 

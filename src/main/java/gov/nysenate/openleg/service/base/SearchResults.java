@@ -14,7 +14,7 @@ import java.util.List;
 public class SearchResults<ResultType>
 {
     /** The total number of results available. */
-    private int resultCount;
+    private int totalResults;
 
     /** A list of the selected results. */
     private List<SearchResult<ResultType>> results;
@@ -24,8 +24,8 @@ public class SearchResults<ResultType>
 
     /** --- Constructors --- */
 
-    public SearchResults(int resultCount, List<SearchResult<ResultType>> results, LimitOffset limitOffset) {
-        this.resultCount = resultCount;
+    public SearchResults(int totalResults, List<SearchResult<ResultType>> results, LimitOffset limitOffset) {
+        this.totalResults = totalResults;
         this.results = results;
         this.limitOffset = limitOffset;
     }
@@ -33,20 +33,20 @@ public class SearchResults<ResultType>
     /** --- Methods --- */
 
     public boolean hasResults() {
-        return (resultCount > 0);
+        return (totalResults > 0);
     }
 
     /** --- Overrides --- */
 
     @Override
     public String toString() {
-        return "SearchResults{" + "resultCount=" + resultCount + ", results=" + results + ", limitOffset=" + limitOffset + '}';
+        return "SearchResults{" + "resultCount=" + totalResults + ", results=" + results + ", limitOffset=" + limitOffset + '}';
     }
 
     /** --- Basic Getters/Setters --- */
 
-    public int getResultCount() {
-        return resultCount;
+    public int getTotalResults() {
+        return totalResults;
     }
 
     public List<SearchResult<ResultType>> getResults() {

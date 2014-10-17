@@ -18,6 +18,16 @@ public interface MemberDao
     public Member getMemberById(int id, SessionYear session);
 
     /**
+     * Retrieve a member by session member id
+     * If the specified session member id points to an alternate alias,
+     *  then the primary session member will be returned instead
+     *
+     * @param sessionMemberId
+     * @return Member
+     */
+    public Member getMemberBySessionId(int sessionMemberId);
+
+    /**
      * Retrieves map of session year -> Member for a given member id. The member references
      * will point to the same person but will represent
      *
@@ -45,7 +55,5 @@ public interface MemberDao
      */
     public Member getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber);
 
-    public void updateMember(Member member);
-
-    public void deleteMember(Member member);
+    public void insertUnverifiedSessionMember(Member member);
 }

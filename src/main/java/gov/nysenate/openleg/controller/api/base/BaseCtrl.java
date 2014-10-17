@@ -1,15 +1,17 @@
 package gov.nysenate.openleg.controller.api.base;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
+import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
+import gov.nysenate.openleg.client.view.bill.BillIdView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.service.base.SearchException;
+import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
@@ -78,5 +80,18 @@ public abstract class BaseCtrl
             logger.error("    " + ex.getStackTrace()[i].toString());
         }
         return new ErrorResponse(ErrorCode.UNKNOWN_ERROR);
+    }
+
+    @ExceptionHandler(SearchException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
+        logger.warn("Search Exception", ex);
+        return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler(BillNotFoundEx.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ViewObjectErrorResponse billNotFoundHandler(BillNotFoundEx ex) {
+        return new ViewObjectErrorResponse(ErrorCode.BILL_NOT_FOUND, new BillIdView(ex.getBillId()));
     }
 }

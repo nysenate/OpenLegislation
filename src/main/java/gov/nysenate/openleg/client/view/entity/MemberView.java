@@ -2,28 +2,21 @@ package gov.nysenate.openleg.client.view.entity;
 
 import gov.nysenate.openleg.model.entity.Member;
 
-public class MemberView extends SimpleMemberView {
-
-    protected String chamber;
-    protected boolean incumbent;
+public class MemberView extends SimpleMemberView
+{
+    protected String fullName;
     protected int districtCode;
 
     public MemberView(Member member) {
         super(member);
         if (member != null) {
-            this.chamber = member.getChamber().name();
-            this.incumbent = member.isIncumbent();
+            this.fullName = member.getFullName();
             this.districtCode = member.getDistrictCode();
         }
     }
 
-
-    public String getChamber() {
-        return chamber;
-    }
-
-    public boolean isIncumbent() {
-        return incumbent;
+    public String getFullName() {
+        return fullName;
     }
 
     public int getDistrictCode() {

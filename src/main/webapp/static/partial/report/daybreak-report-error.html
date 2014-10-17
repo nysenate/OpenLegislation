@@ -12,9 +12,13 @@
 
 <!--Error summary/filter-->
 <form>
-    <div class="button-bar" style="margin-left: 10px;">
-        <div class="row button-group" style="margin-right:40px;">
-            <label class="label secondary filter-label">Filter By Status</label>
+    <a ng-init="showMismatchFilter=false" ng-click="showMismatchFilter=!showMismatchFilter" ng-switch on="showMismatchFilter">
+        <span ng-switch-when="false"><span class="icon-arrow-right prefix-icon"/>Filter mismatches</span>
+        <span ng-switch-when="true"><span class="icon-arrow-up prefix-icon"/>Hide filter</span>
+    </a>
+    <br/>
+    <div ng-show="showMismatchFilter">
+        <div class="row button-group panel minimal" style="margin-bottom:10px;">
             <check-button btn-class="button small" ng-model="errorFilter.all">
                 Total<br/>{{ totals.total }}
             </check-button>
@@ -22,13 +26,12 @@
                 None<br/>&nbsp;
             </check-button>
             <check-button btn-class="button small" ng-model="errorFilter.statuses[status]"
-                   ng-repeat="(status, total) in totals.statuses">
+                          ng-repeat="(status, total) in totals.statuses">
                 {{getLabel('statuses', status)}}<br/>{{totals.statuses[status]}}
             </check-button>
         </div>
 
-        <div class="row button-group">
-            <label class="label secondary filter-label">Filter By Type</label>
+        <div class="row button-group panel minimal">
             <check-button btn-class="button small" ng-model="errorFilter.allTypes">
                 All<br/>Types
             </check-button>
@@ -41,8 +44,8 @@
             </check-button>
         </div>
     </div>
-    <div class="row collapse">
-    </div>
+
+    <div class="row collapse"></div>
 </form>
 
 <!--Observation Table-->

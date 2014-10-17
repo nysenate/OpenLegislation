@@ -1,8 +1,19 @@
 package gov.nysenate.openleg.config;
 
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.model.base.Environment;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
+import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurer;
@@ -22,15 +33,24 @@ public class ApplicationConfig implements CachingConfigurer
     @Value("${env.directory}")
     private String envDirectory;
 
-    @Value("${cache.max.heap.size:4G}")
+    @Value("${cache.max.heap.size:100M}")
     private String cacheMaxHeapSize;
+
+    @Value("${elastic.search.cluster.name:elasticsearch}")
+    private String elasticSearchCluster;
+
+    @Value("${elastic.search.host:localhost}")
+    private String elasticSearchHost;
+
+    @Value("${elastic.search.port:9300}")
+    private int elasticSearchPort;
 
     @Bean
     public Environment defaultEnvironment() {
         return new Environment(envDirectory);
     }
 
-    /** --- Caching Configuration --- */
+    /** --- Eh Cache Configuration --- */
 
     @Bean(destroyMethod = "shutdown")
     public net.sf.ehcache.CacheManager pooledCacheManger() {
@@ -64,5 +84,29 @@ public class ApplicationConfig implements CachingConfigurer
     @Bean
     public KeyGenerator keyGenerator() {
         return new SimpleKeyGenerator();
+    }
+
+    /** --- Elastic Search Configuration --- */
+
+    @Bean
+    public Client elasticSearchNode() {
+        try {
+            Settings settings = ImmutableSettings.settingsBuilder()
+                .put("cluster.name", elasticSearchCluster).build();
+
+            return new TransportClient(settings).addTransportAddress(
+                new InetSocketTransportAddress(elasticSearchHost, elasticSearchPort));
+        }
+        catch (ElasticsearchException ex) {
+            System.err.println("Failed to join Elastic Search cluster!\n" + ex.getMessage());
+        }
+        return NodeBuilder.nodeBuilder().build().client();
+    }
+
+    /** --- Guava Event Bus Configuration --- */
+
+    @Bean
+    public EventBus eventBus() {
+        return new EventBus("openleg");
     }
 }

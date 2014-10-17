@@ -9,6 +9,7 @@ import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.entity.MemberService;
 import gov.nysenate.openleg.util.XmlHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ import javax.xml.xpath.XPathExpressionException;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,16 +32,14 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
 {
     private static final Logger logger = Logger.getLogger(CommitteeProcessor.class);
 
-    private SimpleDateFormat meetTimeSDF = new SimpleDateFormat("hh:mm aa");
-
-    @Autowired
-    protected CommitteeDao committeeDao;
+    private static final DateTimeFormatter meetTimeSDF = DateTimeFormatter.ofPattern("hh:mm a");
 
     @Autowired
     protected MemberService memberService;
 
     @Autowired
     protected XmlHelper xml;
+
 
     /** {@inheritDoc  */
     @Override
@@ -70,7 +72,7 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
                         committee.setPublishedDateTime(sobiFragment.getPublishedDateTime());
                         committee.setChamber(chamber);
                         processCommittee(committeeNode, committee);
-                        committeeDao.updateCommittee(committee);
+                        committeeService.updateCommittee(committee);
                     }
                     catch (Exception e){
                         logger.error(e);
@@ -89,9 +91,10 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
                                                                                        ParseException {
         committee.setName(xml.getString("name/text()", committeeNode));
         committee.setLocation(xml.getString("location/text()", committeeNode));
-        committee.setMeetDay(xml.getString("meetday/text()", committeeNode));
+        String meetDay = xml.getString("meetday/text()", committeeNode);
+        committee.setMeetDay(StringUtils.isNotEmpty(meetDay) ? DayOfWeek.valueOf(meetDay.toUpperCase()) : null);
         String meetTimeStr = xml.getString("meettime/text()", committeeNode);
-        committee.setMeetTime(meetTimeStr.isEmpty() ? null : new Time(meetTimeSDF.parse(meetTimeStr).getTime()));
+        committee.setMeetTime(StringUtils.isNotEmpty(meetTimeStr) ? LocalTime.parse(meetTimeStr, meetTimeSDF) : null);
         committee.setMeetAltWeek(xml.getString("meetaltweek/text()", committeeNode).trim().equalsIgnoreCase("Yes"));
         committee.setMeetAltWeekText(xml.getString("meetaltweektext/text()", committeeNode));
         Node committeeMembership = xml.getNode("membership", committeeNode);

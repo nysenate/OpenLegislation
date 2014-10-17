@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.service.bill.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.service.base.SearchException;
 import gov.nysenate.openleg.service.base.SearchResults;
 
 import java.util.Map;
@@ -12,17 +14,10 @@ public interface BillSearchService
      * Performs a search across all bill data.
      *
      * @param query String - General search term
+     * @param sort String - Sort by field(s)
      * @param limOff LimitOffset - Restrict the result set.
-     * @return SearchResults<BillId>
+     * @return SearchResults<BaseBillId>
      */
-    public SearchResults<BillId> searchAll(String query, LimitOffset limOff);
+    public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException;
 
-    /**
-     * Perform an advanced search across all bill data.
-     *
-     * @param criteria Map<BillSearchField, String> - Match the strings against their associated attribute.
-     * @param limOff LimitOffset - Restrict the result set.
-     * @return SearchResults<BillId>
-     */
-    public SearchResults<BillId> searchAdvanced(Map<BillSearchField, String> criteria, LimitOffset limOff);
 }

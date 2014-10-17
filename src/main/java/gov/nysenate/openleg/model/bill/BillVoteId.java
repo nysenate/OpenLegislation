@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.bill;
 
 import com.google.common.collect.ComparisonChain;
+import gov.nysenate.openleg.model.entity.CommitteeId;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -18,12 +19,14 @@ public class BillVoteId implements Serializable, Comparable<BillVoteId>
     private LocalDate voteDate;
     private BillVoteType voteType;
     private int sequenceNo;
+    private CommitteeId committeeId;
 
-    public BillVoteId(BillId billId, LocalDate voteDate, BillVoteType voteType, int sequenceNo) {
+    public BillVoteId(BillId billId, LocalDate voteDate, BillVoteType voteType, int sequenceNo, CommitteeId committeeId) {
         this.billId = billId;
         this.voteDate = voteDate;
         this.voteType = voteType;
         this.sequenceNo = sequenceNo;
+        this.committeeId = committeeId;
     }
 
     @Override
@@ -34,7 +37,8 @@ public class BillVoteId implements Serializable, Comparable<BillVoteId>
         return Objects.equals(this.billId, other.billId) &&
                Objects.equals(this.voteDate, other.voteDate) &&
                Objects.equals(this.voteType, other.voteType) &&
-               Objects.equals(this.sequenceNo, other.sequenceNo);
+               Objects.equals(this.sequenceNo, other.sequenceNo) &&
+               Objects.equals(this.committeeId, other.committeeId);
     }
 
     @Override
@@ -66,5 +70,9 @@ public class BillVoteId implements Serializable, Comparable<BillVoteId>
 
     public int getSequenceNo() {
         return sequenceNo;
+    }
+
+    public CommitteeId getCommitteeId() {
+        return committeeId;
     }
 }

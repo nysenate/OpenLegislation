@@ -26,7 +26,7 @@ public interface CalendarDao
      * Gets an active list calendar corresponding to the given active list id
      *
      * @param calendarActiveListId
-     * @return
+     * @return CalendarActiveList
      * @throws DataAccessException
      */
     public CalendarActiveList getActiveList(CalendarActiveListId calendarActiveListId) throws DataAccessException;
@@ -35,7 +35,7 @@ public interface CalendarDao
      * Returns a floor calendar corresponding to the given calendar supplemental id.
      *
      * @param calendarSupplementalId
-     * @return
+     * @return CalendarSupplemental
      * @throws DataAccessException
      */
     public CalendarSupplemental getFloorCalendar(CalendarSupplementalId calendarSupplementalId) throws DataAccessException;
@@ -43,21 +43,21 @@ public interface CalendarDao
     /**
      * Gets the number of calendars that exist for the given year
      * @param year
-     * @return
+     * @return int
      */
     public int getCalendarCount(int year);
 
     /**
      * Gets the number of active lists that exist for the given year
      * @param year
-     * @return
+     * @return int
      */
     public int getActiveListCount(int year);
 
     /**
      * Gets the number of floor calendars that exist for the given year
      * @param year
-     * @return
+     * @return int
      */
     public int getFloorCalendarCount(int year);
 
@@ -77,7 +77,7 @@ public interface CalendarDao
      * @param year
      * @param sortOrder
      * @param limitOffset
-     * @return
+     * @return List<CalendarActiveList>
      * @throws DataAccessException
      */
     public List<CalendarActiveList> getActiveLists(int year, SortOrder sortOrder, LimitOffset limitOffset) throws DataAccessException;
@@ -88,7 +88,7 @@ public interface CalendarDao
      * @param year
      * @param sortOrder
      * @param limitOffset
-     * @return
+     * @return List<CalendarSupplemental>
      * @throws DataAccessException
      */
     public List<CalendarSupplemental> getFloorCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset) throws DataAccessException;
