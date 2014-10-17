@@ -66,21 +66,13 @@ public class CachedBillDataService implements BillDataService, CachingService
         try {
             Bill bill;
             if (billCache.isKeyInCache(billId)) {
-                // Cached bills need to have their fulltext and memos filled in.
-                bill = (Bill) billCache.get(billId).getObjectValue();
-                bill = bill.shallowClone();
-                billDao.applyText(bill);
+                bill = getBillFromCache(billId);
             }
             else {
                 bill = billDao.getBill(billId);
                 // When caching the retrieved bill, we use a shallow copy with no fulltext or memos.
                 // This is to optimize the number of bills we can cache into memory.
-                Bill cacheBill = bill.shallowClone();
-                cacheBill.getAmendmentList().stream().forEach(ba -> {
-                    ba.setMemo("");
-                    ba.setFullText("");
-                });
-                this.billCache.put(new Element(billId, cacheBill));
+                putBillInCache(bill);
             }
             return bill;
         }
@@ -135,6 +127,42 @@ public class CachedBillDataService implements BillDataService, CachingService
     public void saveBill(Bill bill, SobiFragment fragment) {
         logger.debug("Persisting bill {}", bill);
         billDao.updateBill(bill, fragment);
-        billCache.put(new Element(bill.getBaseBillId(), bill));
+        putBillInCache(bill);
+    }
+
+    /**
+     * Retrieves the bill from the cache. You must check that the bill exists prior to calling this
+     * method. The fulltext and memo are put back into a copy of the cached bill.
+     *
+     * @param billId BaseBillId
+     * @return Bill
+     * @throws CloneNotSupportedException
+     */
+    private Bill getBillFromCache(BaseBillId billId) throws CloneNotSupportedException {
+        Bill cachedBill = (Bill) billCache.get(billId).getObjectValue();
+        cachedBill = cachedBill.shallowClone();
+        billDao.applyText(cachedBill);
+        return cachedBill;
+    }
+
+    /**
+     * In order to cache bills effectively, we strip out the memos and full text from the bill first
+     * to save some heap space.
+     * @param bill Bill
+     */
+    private void putBillInCache(final Bill bill) {
+        if (bill != null) {
+            try {
+                Bill cacheBill = bill.shallowClone();
+                cacheBill.getAmendmentList().stream().forEach(ba -> {
+                    ba.setMemo("");
+                    ba.setFullText("");
+                });
+                this.billCache.put(new Element(cacheBill.getBaseBillId(), cacheBill));
+            }
+            catch (CloneNotSupportedException e) {
+                logger.error("Failed to cache bill!", e);
+            }
+        }
     }
 }
