@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.transcript.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.transcript.TranscriptDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.transcript.Transcript;
@@ -19,7 +20,7 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
-public class CachedTranscriptDataService implements TranscriptDataService, CachingService
+public class SqlTranscriptDataService implements TranscriptDataService, CachingService
 {
     private static final String transcriptCache = "transcriptCache";
 
@@ -56,8 +57,8 @@ public class CachedTranscriptDataService implements TranscriptDataService, Cachi
 
     /** {@inheritDoc} */
     @Override
-    public List<TranscriptId> getTranscriptIds(SessionYear sessionYear, LimitOffset limitOffset) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public List<TranscriptId> getTranscriptIds(SessionYear sessionYear, SortOrder dateOrder, LimitOffset limitOffset) {
+        return transcriptDao.getTranscriptIds(sessionYear.getSessionStartYear(), dateOrder, limitOffset);
     }
 
     /** {@inheritDoc} */
