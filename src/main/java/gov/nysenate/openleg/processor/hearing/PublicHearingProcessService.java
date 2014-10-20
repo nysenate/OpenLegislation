@@ -4,7 +4,6 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 
-import java.text.ParseException;
 import java.util.List;
 
 public interface PublicHearingProcessService

@@ -29,13 +29,13 @@ public class DaybreakSpotCheckReportServiceTests extends BaseTests
     @Test
     public void testGenerateReport() throws Exception {
         SpotCheckReport<BaseBillId> report =
-            daybreakReportService.generateReport(DateUtils.longAgo(), LocalDateTime.now());
+            daybreakReportService.generateReport(DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now());
         daybreakReportService.saveReport(report);
     }
 
     @Test
     public void testGetReport() throws Exception {
-        SpotCheckReportId reportId = daybreakReportService.getReportIds(DateUtils.longAgo(), LocalDateTime.now(),
+        SpotCheckReportId reportId = daybreakReportService.getReportIds(DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now(),
                                                                         SortOrder.DESC, LimitOffset.ALL).get(0);
         SpotCheckReport<BaseBillId> report = daybreakReportService.getReport(reportId);
         logger.info("{}", report.getMismatchStatusCounts());

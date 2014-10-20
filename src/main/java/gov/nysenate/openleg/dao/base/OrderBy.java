@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.dao.base;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSortedMap;
 
 /**
  * OrderBy associates column names with a sort order. This should be used within

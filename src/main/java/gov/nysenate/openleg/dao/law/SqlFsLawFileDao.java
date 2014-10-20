@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.law.SqlLawFileQuery.*;
 import static gov.nysenate.openleg.util.DateUtils.toDate;

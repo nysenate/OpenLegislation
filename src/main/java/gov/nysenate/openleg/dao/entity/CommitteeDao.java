@@ -1,11 +1,16 @@
+
 package gov.nysenate.openleg.dao.entity;
 
+import com.google.common.collect.Range;
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import org.springframework.dao.DataAccessException;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface CommitteeDao
@@ -30,17 +35,38 @@ public interface CommitteeDao
      * Retrieves a list containing the most recent version of each committee
      *
      * @param chamber
+     * @param limitOffset
      * @return List<Committee>
      */
-    public List<Committee> getCommitteeList(Chamber chamber) throws DataAccessException;
+    public List<Committee> getCommitteeList(Chamber chamber, LimitOffset limitOffset) throws DataAccessException;
 
     /**
-     * Retrieves a list of committee versions for a given committee, ordered from first version to most recent
+     * Gets the total number of committees for the given chamber
+     * @param chamber
+     * @return
+     */
+    public int getCommitteeListCount(Chamber chamber);
+
+    /**
+     * Retrieves a list of committee versions for a given committee that occur within the given date range
+     * ordered by session year and creation date
      *
      * @param committeeId
+     * @param dateRange
+     * @param limitOffset
+     * @param order
      * @return List<Committee>
      */
-    public List<Committee> getCommitteeHistory(CommitteeId committeeId) throws DataAccessException;
+    public List<Committee> getCommitteeHistory(CommitteeId committeeId, Range<LocalDate> dateRange,
+                                               LimitOffset limitOffset, SortOrder order) throws DataAccessException;
+
+    /**
+     * Gets the total number of committee versions for the given committee id
+     * @param committeeId
+     * @param dateRange
+     * @return
+     */
+    public int getCommitteeHistoryCount(CommitteeId committeeId, Range<LocalDate> dateRange);
 
     /**
      * Retrieves a list of committee versions for a given committee, ordered from first version to most recent

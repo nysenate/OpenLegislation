@@ -2,7 +2,6 @@ package gov.nysenate.openleg.client.view.base;
 
 import com.google.common.collect.ImmutableMap;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class MapView<KeyType, ViewType> implements ViewObject

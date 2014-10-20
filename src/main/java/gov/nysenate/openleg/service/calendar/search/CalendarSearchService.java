@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.service.calendar.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.service.base.InvalidParametersSearchException;
-import gov.nysenate.openleg.service.base.NoResultsSearchException;
-import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
 
 import java.util.List;
 

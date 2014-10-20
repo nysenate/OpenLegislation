@@ -73,9 +73,9 @@ public class CacheConfigurationTests extends BaseTests
 
     @Test
     public void testCacheTester_usesCacheProperly() throws Exception {
-        List<BillId> ids = Arrays.asList(new BillId("S123", 2013), new BillId("S1234", 2013));
-        List<Bill> bills = ids.stream().map(billDataService::getBill).collect(toList());
-        bills.forEach(f -> logger.info("{}", f.getTitle()));
+//        List<BillId> ids = Arrays.asList(new BillId("S123", 2013), new BillId("S1234", 2013));
+//        List<Bill> bills = ids.stream().map(billDataService::getBill).collect(toList());
+//        bills.forEach(f -> logger.info("{}", f.getTitle()));
 //        logger.info("{}", bills);
 
 //        logger.info(cacheTester.method("a"));

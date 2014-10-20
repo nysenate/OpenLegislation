@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.service.law.data;
 
-import gov.nysenate.openleg.model.law.LawVersionId;
-
 import java.time.LocalDate;
 
 public class LawTreeNotFoundEx extends RuntimeException

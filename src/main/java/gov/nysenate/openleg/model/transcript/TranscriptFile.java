@@ -4,7 +4,6 @@ import gov.nysenate.openleg.model.base.BaseSourceData;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.time.LocalDateTime;
 
 /**
  * File containing the raw transcript text

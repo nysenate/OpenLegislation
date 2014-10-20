@@ -22,6 +22,16 @@ public abstract class DateUtils
     public final static DateTimeFormatter LRS_DATE_ONLY_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public final static DateTimeFormatter LRS_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH.mm.ss'Z'");
 
+    /** --- Reference Dates --- */
+
+    public static final LocalDate LONG_AGO = LocalDate.of(1970, 1, 1);
+
+    public static final LocalDate THE_FUTURE = LocalDate.of(2999, 12, 31);
+
+    public static final Range<LocalDate> ALL_DATES = Range.closed(LONG_AGO, THE_FUTURE);
+
+    public static final Range<LocalDateTime> ALL_DATE_TIMES = Range.closed(LONG_AGO.atStartOfDay(), atEndOfDay(THE_FUTURE));
+
     /** --- Static Methods --- */
 
     /**
@@ -67,14 +77,6 @@ public abstract class DateUtils
      */
     public static LocalDateTime getLrsDateTime(String lbdcDateTime) {
         return LocalDateTime.from(LRS_DATETIME_FORMAT.parse(lbdcDateTime));
-    }
-
-    /**
-     * Return a LocalDateTime that represents the epoch date.
-     * @return LocalDateTime
-     */
-    public static LocalDateTime longAgo() {
-        return LocalDate.ofEpochDay(0).atStartOfDay();
     }
 
     /**
@@ -141,7 +143,7 @@ public abstract class DateUtils
                         ? localDateRange.lowerEndpoint() : localDateRange.lowerEndpoint().plusDays(1);
             }
             else {
-                lower = LocalDate.ofYearDay(1, 1);
+                lower = LONG_AGO;
             }
             return lower;
         }
@@ -164,7 +166,7 @@ public abstract class DateUtils
                         ? localDateRange.upperEndpoint() : localDateRange.upperEndpoint().minusDays(1);
             }
             else {
-                upper = LocalDate.ofYearDay(2999, 1);
+                upper = THE_FUTURE;
             }
             return upper;
         }

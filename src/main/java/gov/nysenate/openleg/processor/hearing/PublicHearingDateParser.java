@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.processor.hearing;
 
-import org.apache.abdera.model.DateTime;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;

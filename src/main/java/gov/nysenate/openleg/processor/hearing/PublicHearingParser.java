@@ -1,20 +1,15 @@
 package gov.nysenate.openleg.processor.hearing;
 
-import gov.nysenate.openleg.dao.hearing.PublicHearingDao;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingCommittee;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.service.hearing.PublicHearingDataService;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

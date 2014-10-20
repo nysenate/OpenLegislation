@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.client.view.calendar;
 
 import gov.nysenate.openleg.client.view.bill.BillIdView;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalEntry;
 
 public class CalendarSupEntryView extends BillIdView {

@@ -29,7 +29,13 @@ public enum ErrorCode
 
     SPOTCHECK_REPORT_NOT_FOUND(31, "The requested spotcheck report was not found"),
 
+    /** --- Committee --- */
+
+    COMMITTEE_NOT_FOUND(41, "The requested committee was not found"),
+    COMMITTEE_VERSION_NOT_FOUND(42, "The requested committee version was not found"),
+
     /** --- Calendar --- */
+
     CALENDAR_NOT_FOUND(51, "The requested calendar was not found"),
     INVALID_CAL_SEARCH_PARAMS(52, "The given calendar search parameters are invalid/conflicting"),
 

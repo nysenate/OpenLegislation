@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.processor.law;
 
 import com.google.common.collect.Sets;
-import gov.nysenate.openleg.model.law.*;
+import gov.nysenate.openleg.model.law.LawFile;
+import gov.nysenate.openleg.model.law.LawTree;
+import gov.nysenate.openleg.model.law.LawVersionId;
 import gov.nysenate.openleg.service.law.data.LawDataService;
 import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
 import org.slf4j.Logger;

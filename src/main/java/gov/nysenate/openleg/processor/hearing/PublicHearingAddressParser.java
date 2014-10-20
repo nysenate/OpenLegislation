@@ -2,7 +2,6 @@ package gov.nysenate.openleg.processor.hearing;
 
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

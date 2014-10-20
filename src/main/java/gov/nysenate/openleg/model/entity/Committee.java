@@ -140,6 +140,13 @@ public class Committee extends BaseLegislativeContent implements Serializable
         return new CommitteeVersionId(this.chamber, this.name, this.session, this.publishedDateTime.toLocalDate());
     }
 
+    public void setReformed(LocalDateTime reformed) {
+        if (reformed.isAfter(LocalDateTime.now())) {
+            this.reformed = null;
+        }
+        this.reformed = reformed;
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public String getName() {
@@ -160,10 +167,6 @@ public class Committee extends BaseLegislativeContent implements Serializable
 
     public LocalDateTime getReformed() {
         return reformed;
-    }
-
-    public void setReformed(LocalDateTime reformed) {
-        this.reformed = reformed;
     }
 
     public String getLocation() {

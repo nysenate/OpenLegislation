@@ -270,7 +270,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     /** {@InheritDoc } */
     @Override
     public LocalDate getCurrentReportDate() throws DataAccessException {
-        return getCurrentReportDate(Range.closed(DateUtils.longAgo().toLocalDate(), LocalDate.now()));
+        return getCurrentReportDate(Range.closed(DateUtils.LONG_AGO, LocalDate.now()));
     }
 
     /** {@InheritDoc }  */
@@ -288,7 +288,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
 
     @Override
     public List<LocalDate> getAllReportDates() throws DataAccessException {
-    Range<LocalDate> allDates = Range.closed(DateUtils.longAgo().toLocalDate(), LocalDate.now());
+    Range<LocalDate> allDates = Range.closed(DateUtils.LONG_AGO, LocalDate.now());
         MapSqlParameterSource params = getReportDateRangeParams(allDates);
         return jdbcNamed.query(SqlDaybreakQuery.SELECT_REPORTS.getSql(schema()), params, new DaybreakReportDateRowMapper());
     }

@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.client.view.law;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.model.law.LawVersionId;
 
 import java.time.LocalDate;
 
