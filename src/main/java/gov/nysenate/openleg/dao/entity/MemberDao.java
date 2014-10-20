@@ -56,8 +56,4 @@ public interface MemberDao
     public Member getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber);
 
     public void insertUnverifiedSessionMember(Member member);
-
-    public void updateMember(Member member);
-
-    public void deleteMember(Member member);
 }

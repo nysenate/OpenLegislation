@@ -16,7 +16,7 @@ import java.util.*;
  * and session year. It contains a collection of amendments (including the base amendment) as well as
  * shared information such as the sponsor, actions, etc.
  */
-public class Bill extends BaseLegislativeContent implements Serializable, Comparable<Bill>
+public class Bill extends BaseLegislativeContent implements Serializable, Comparable<Bill>, Cloneable
 {
     private static final long serialVersionUID = 2925424993477789289L;
 
@@ -99,6 +99,19 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     @Override
     public String toString() {
         return this.getBaseBillId().toString();
+    }
+
+    /**
+     * Creates a shallow clone for caching purposes. This is not a true clone so references will stay
+     * intact except for the amendment list.
+     * @return Bill
+     * @throws CloneNotSupportedException
+     */
+    public Bill shallowClone() throws CloneNotSupportedException {
+        Bill cloneBill = (Bill) this.clone();
+        cloneBill.amendmentMap = new TreeMap<>();
+        this.getAmendmentList().stream().forEach(a -> cloneBill.addAmendment(a.shallowClone()));
+        return cloneBill;
     }
 
     /** --- Functional Getters/Setters --- */

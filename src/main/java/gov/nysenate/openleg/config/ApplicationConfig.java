@@ -7,6 +7,8 @@ import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
@@ -33,6 +35,9 @@ public class ApplicationConfig implements CachingConfigurer
 
     @Value("${cache.max.heap.size:100M}")
     private String cacheMaxHeapSize;
+
+    @Value("${elastic.search.cluster.name:elasticsearch}")
+    private String elasticSearchCluster;
 
     @Value("${elastic.search.host:localhost}")
     private String elasticSearchHost;
@@ -86,7 +91,10 @@ public class ApplicationConfig implements CachingConfigurer
     @Bean
     public Client elasticSearchNode() {
         try {
-            return new TransportClient().addTransportAddress(
+            Settings settings = ImmutableSettings.settingsBuilder()
+                .put("cluster.name", elasticSearchCluster).build();
+
+            return new TransportClient(settings).addTransportAddress(
                 new InetSocketTransportAddress(elasticSearchHost, elasticSearchPort));
         }
         catch (ElasticsearchException ex) {

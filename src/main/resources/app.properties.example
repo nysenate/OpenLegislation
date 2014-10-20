@@ -1,20 +1,42 @@
-# Full paths to all of the data directories.
-env.directory = /data/openleg/
-env.work = {{env.directory}}/work
-env.data = {{env.directory}}/data
-env.storage = {{env.directory}}/json
-env.archive = {{env.directory}}/processed
-lucene.directory = {{env.directory}}/lucene
+# --- Data Directory Configuration --- #
 
-# Used to update senator/committee information from nysenate.gov
-nysenate.apiKey=
-nysenate.apiDomain=
+env.directory = /data/test_workspace
+env.data = {{env.directory}}/data
+env.archive = {{env.directory}}/processed
+
+# --- Elastic Search Configuration --- #
+
+# The host address where the elastic search node is running
+# (Default: localhost)
+elastic.search.host = localhost
+
+# The transport client port used to communicate with elastic search from java land
+# Typically this is configured to 9300 while the REST API uses 9200.
+# (Default: 9300)
+elastic.search.port = 9300
+
+# If the elastic search cluster has a name, it must be specified here.
+# (Default: elasticsearch)
+elastic.search.cluster.name = openleg-dev
+
+# The name of the index to store bill data
+# (Default: bills)
+elastic.search.index.bill.name = bills
+
+# --- Eh Cache Configuration --- #
+
+# The amount of memory to allocate to Eh Cache for all heap based caches.
+# This value cannot exceed the maximum jvm heap size or the application will fail to startup.
+# (Default: 100M)
+cache.max.heap.size = 100M
+
+# --- Postgres Database Configuration --- #
 
 postgresdb.type = postgresql:
 postgresdb.driver = org.postgresql.Driver
 postgresdb.host = localhost
-postgresdb.user = ash
-postgresdb.pass = admin
+postgresdb.user =
+postgresdb.pass =
 postgresdb.name = openleg
 
 # Mailer information
@@ -24,9 +46,3 @@ mailer.pass=
 mailer.port=465
 mailer.active=0
 mailer.debug=0
-
-# Disqus Keys...
-disqus.secret_key = 
-disqus.public_key = 
-disqus.access_token =
-

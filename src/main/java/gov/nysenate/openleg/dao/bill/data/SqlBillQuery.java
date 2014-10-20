@@ -58,6 +58,14 @@ public enum SqlBillQuery implements BasicSqlQuery
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
 
+    /** --- Bill Text --- */
+
+    SELECT_BILL_TEXT(
+        "SELECT bill_print_no, bill_session_year, version, sponsor_memo, full_text \n" +
+        "FROM ${schema}.bill_amendment \n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
+
     /** --- Bill Amendment --- */
 
     SELECT_BILL_AMENDMENTS(
