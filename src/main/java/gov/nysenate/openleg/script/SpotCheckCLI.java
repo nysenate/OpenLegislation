@@ -42,7 +42,7 @@ public class SpotCheckCLI extends BaseScript
     protected void execute(CommandLine opts) throws Exception {
         String startDateArg = opts.getOptionValue("s");
         String endDateArg = opts.getOptionValue("e");
-        LocalDateTime startDate = (startDateArg != null) ? LocalDateTime.parse(startDateArg) : DateUtils.longAgo();
+        LocalDateTime startDate = (startDateArg != null) ? LocalDateTime.parse(startDateArg) : DateUtils.LONG_AGO.atStartOfDay();
         LocalDateTime endDate = (endDateArg != null) ? LocalDateTime.parse(endDateArg) : LocalDateTime.now();
         SpotCheckReport<BaseBillId> daybreakReport =
             daybreakService.generateReport(startDate, endDate);

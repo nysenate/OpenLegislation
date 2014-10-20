@@ -9,7 +9,6 @@ import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.service.calendar.search.CalendarSearchParameters;
 import gov.nysenate.openleg.util.DateUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -20,7 +19,9 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.calendar.SqlCalendarSearchQuery.*;

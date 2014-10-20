@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.service;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.entity.TestCommittees;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -8,7 +10,7 @@ import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.service.entity.CommitteeService;
-import org.junit.After;
+import gov.nysenate.openleg.util.DateUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Locale;
 
 public class CommitteeServiceTests extends BaseTests{
@@ -67,13 +68,14 @@ public class CommitteeServiceTests extends BaseTests{
         MethodTimer.Method getCommitteeList = new MethodTimer.Method() {
             @Override
             public void run() throws Exception {
-                committeeService.getCommitteeList(Chamber.SENATE);
+                committeeService.getCommitteeList(Chamber.SENATE, LimitOffset.ALL);
             }
         };
         MethodTimer.Method getCommitteeHistory = new MethodTimer.Method() {
             @Override
             public void run() throws Exception {
-                committeeService.getCommitteeHistory(new CommitteeId(Chamber.SENATE, "test committee 1"));
+                committeeService.getCommitteeHistory(new CommitteeId(Chamber.SENATE, "test committee 1"),
+                                                        DateUtils.ALL_DATES, LimitOffset.ALL, SortOrder.NONE);
             }
         };
 

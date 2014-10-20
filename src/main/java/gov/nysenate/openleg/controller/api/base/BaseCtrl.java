@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.controller.api.base;
 
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
@@ -8,12 +9,16 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.service.base.SearchException;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
+import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public abstract class BaseCtrl
 {
@@ -62,6 +67,26 @@ public abstract class BaseCtrl
         }
     }
 
+    protected Range<LocalDate> getDateRange(WebRequest webRequest, Range<LocalDate> defaultRange) {
+        try {
+            LocalDate startDate = null;
+            LocalDate endDate = null;
+            if (webRequest.getParameterMap().containsKey("startDate")) {
+                startDate = LocalDate.from(DateTimeFormatter.ISO_DATE.parse(webRequest.getParameter("startDate")));
+            }
+            if (webRequest.getParameterMap().containsKey("endDate")) {
+                endDate = LocalDate.from(DateTimeFormatter.ISO_DATE.parse(webRequest.getParameter("endDate")));
+            }
+            return (startDate == null && endDate == null)
+                        ? defaultRange
+                        : Range.closed(startDate != null ? startDate : DateUtils.LONG_AGO,
+                                         endDate != null ? endDate   : DateUtils.THE_FUTURE);
+        }
+        catch (Exception ex) {
+            return defaultRange;
+        }
+    }
+
     /** --- Generic Exception Handlers --- */
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -74,11 +99,7 @@ public abstract class BaseCtrl
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     protected ErrorResponse handleUnknownError(Exception ex) {
         logger.error("Caught unhandled servlet exception:");
-        logger.error(ex.toString());
-        // Print first 5 lines of stack trace
-        for(int i=0; i<5 && i<ex.getStackTrace().length; i++) {
-            logger.error("    " + ex.getStackTrace()[i].toString());
-        }
+        ex.printStackTrace();
         return new ErrorResponse(ErrorCode.UNKNOWN_ERROR);
     }
 

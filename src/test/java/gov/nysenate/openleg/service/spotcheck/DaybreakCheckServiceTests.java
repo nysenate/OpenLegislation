@@ -46,7 +46,7 @@ public class DaybreakCheckServiceTests extends BaseTests
 
     @Test
     public void testCheck() throws Exception {
-        Range<LocalDate> dateRange = Range.closed(DateUtils.longAgo().toLocalDate(), LocalDate.now());
+        Range<LocalDate> dateRange = Range.closed(DateUtils.LONG_AGO, LocalDate.now());
         logger.info("{}", dateRange.lowerEndpoint());
         logger.info("{}", dateRange.upperEndpoint());
 

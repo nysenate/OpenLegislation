@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.model.entity;
 
-public class CommitteeNotFoundEx extends Exception{
+public class CommitteeNotFoundEx extends Exception {
+
+    private static final long serialVersionUID = -1117480470668390088L;
+
     protected CommitteeId committeeId;
 
     public CommitteeNotFoundEx(CommitteeId committeeId, Throwable cause) {

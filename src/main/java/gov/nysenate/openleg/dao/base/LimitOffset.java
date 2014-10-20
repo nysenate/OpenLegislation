@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.dao.base;
 
+import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,6 +105,14 @@ public class LimitOffset
         int result = limit;
         result = 31 * result + offset;
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("limit", limit)
+                .append("offset", offset)
+                .toString();
     }
 
     /** --- Basic Getters/Setters --- */

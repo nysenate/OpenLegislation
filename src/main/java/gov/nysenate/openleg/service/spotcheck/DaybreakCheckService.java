@@ -46,7 +46,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      *  Just use the latest daybreak files we have. */
     @Override
     public SpotCheckObservation<BaseBillId> check(Bill bill) throws ReferenceDataNotFoundEx {
-        return check(bill, DateUtils.longAgo(), LocalDateTime.now());
+        return check(bill, DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now());
     }
 
     /** {@inheritDoc} */

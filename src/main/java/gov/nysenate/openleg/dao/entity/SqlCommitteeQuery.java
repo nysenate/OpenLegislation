@@ -29,7 +29,7 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
         "SELECT current_version FROM ${schema}." + SqlTable.COMMITTEE + "\n" +
         "WHERE name=:committeeName AND chamber=CAST(:chamber AS chamber)"
     ),
-    SELECT_ALL_COMMITTEES(
+    SELECT_COMMITTEES_BY_CHAMBER(
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE + " JOIN ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
         "ON " + SqlTable.COMMITTEE + ".name=" + SqlTable.COMMITTEE_VERSION + ".committee_name" + "\n" +
             "AND " + SqlTable.COMMITTEE + ".chamber=" + SqlTable.COMMITTEE_VERSION + ".chamber" + "\n" +
@@ -37,9 +37,18 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
             "AND " + SqlTable.COMMITTEE + ".current_session=" + SqlTable.COMMITTEE_VERSION + ".session_year" + "\n" +
         "WHERE " + SqlTable.COMMITTEE + ".chamber=CAST(:chamber AS chamber)"
     ),
-    SELECT_ALL_COMMITTEE_VERSIONS(
+    SELECT_COMMITTEES_BY_CHAMBER_COUNT(
+        SELECT_COMMITTEES_BY_CHAMBER.sql.replaceFirst("SELECT \\*", "SELECT COUNT(*)")
+    ),
+    SELECT_COMMITTEE_VERSION_HISTORY(
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +
-        "WHERE committee_name=:committeeName AND chamber=CAST(:chamber AS chamber)"
+        "WHERE committee_name=:committeeName AND chamber=CAST(:chamber AS chamber)" + "\n" +
+        "   AND session_year BETWEEN :sessionYearBegin AND :sessionYearEnd" + "\n" +
+        "   AND (created BETWEEN :dateRangeBegin AND :dateRangeEnd" + "\n" +
+        "       OR reformed BETWEEN :dateRangeBegin AND :dateRangeEnd)"
+    ),
+    SELECT_COMMITTEE_VERSION_HISTORY_COUNT(
+        SELECT_COMMITTEE_VERSION_HISTORY.sql.replaceFirst("SELECT \\*", "SELECT COUNT(*)")
     ),
     SELECT_PREVIOUS_COMMITTEE_VERSION(
         "SELECT * FROM ${schema}." + SqlTable.COMMITTEE_VERSION + "\n" +

@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.client.view.calendar;
 
-import com.google.common.base.Functions;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.model.calendar.CalendarSupplemental;

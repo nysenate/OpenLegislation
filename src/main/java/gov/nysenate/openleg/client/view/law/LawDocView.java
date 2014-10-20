@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.client.view.law;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.model.law.LawDocInfo;
 import gov.nysenate.openleg.model.law.LawDocument;
 
 public class LawDocView extends LawDocInfoView implements ViewObject

@@ -1,10 +1,13 @@
 package gov.nysenate.openleg.dao;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.entity.CommitteeDao;
 import gov.nysenate.openleg.entity.TestCommittees;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
+import gov.nysenate.openleg.util.DateUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,10 +171,10 @@ public class CommitteeDaoTests extends BaseTests{
 
     @Test
     public void committeeHistoryTest(){
-        List<Committee> allCommittees = committeeDao.getCommitteeList(Chamber.SENATE);
+        List<Committee> allCommittees = committeeDao.getCommitteeList(Chamber.SENATE, LimitOffset.ALL);
         List<List<Committee>> allCommitteeHistories = new ArrayList<List<Committee>>();
         for(Committee committee : allCommittees){
-            allCommitteeHistories.add(committeeDao.getCommitteeHistory(committee.getId()));
+            allCommitteeHistories.add(committeeDao.getCommitteeHistory(committee.getId(), DateUtils.ALL_DATES, LimitOffset.ALL, SortOrder.NONE));
         }
         for(List<Committee> committeeHistory : allCommitteeHistories){
             for(int i=0; i<committeeHistory.size(); i++){

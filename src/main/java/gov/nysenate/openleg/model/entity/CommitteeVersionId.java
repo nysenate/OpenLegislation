@@ -28,6 +28,10 @@ public class CommitteeVersionId extends CommitteeId implements Serializable
         this.referenceDate = referenceDate;
     }
 
+    public CommitteeVersionId(CommitteeId committeeId, SessionYear session, LocalDate referenceDate) {
+        this(committeeId.getChamber(), committeeId.getName(), session, referenceDate);
+    }
+
     /** --- Overrides --- */
 
     @Override

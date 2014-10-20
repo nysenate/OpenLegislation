@@ -128,14 +128,9 @@ public class CalendarSearchCtrl extends BaseCtrl{
      */
     private CalendarSearchParameters getSearchParameters(WebRequest webRequest) {
         CalendarSearchParameters searchParams = new CalendarSearchParameters();
+        searchParams.setDateRange(getDateRange(webRequest, null));
         if (webRequest.getParameter("year") != null) {
             searchParams.setYear(Integer.parseInt(webRequest.getParameter("year")));
-        }
-        if (webRequest.getParameter("startDate") != null && webRequest.getParameter("endDate") != null) {
-            searchParams.setDateRange(Range.closed(
-                    LocalDate.parse(webRequest.getParameter("startDate"), DateTimeFormatter.BASIC_ISO_DATE),
-                    LocalDate.parse(webRequest.getParameter("endDate"), DateTimeFormatter.BASIC_ISO_DATE)
-            ));
         }
         if (webRequest.getParameter("sessionYear") != null && webRequest.getParameter("printNoSet1") != null) {
             int sessionYear = Integer.parseInt(webRequest.getParameter("sessionYear"));
