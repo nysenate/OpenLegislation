@@ -40,11 +40,14 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     /** --- Calendar Supplemental --- */
 
     SELECT_CALENDAR_SUPS_BY_YEAR(
-        "SELECT * FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + "\n" +
+        "SELECT * FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + " sup" + "\n" +
+        "   JOIN ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + " ent" + "\n" +
+        "       ON sup.id = ent.calendar_sup_id" + "\n" +
         "WHERE calendar_year = :year"
     ),
     SELECT_CALENDAR_SUPS_BY_YEAR_COUNT(
-        SELECT_CALENDAR_SUPS_BY_YEAR.sql.replace("*", "COUNT(*)")
+        "SELECT COUNT(*) FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + " sup" + "\n" +
+        "WHERE calendar_year = :year"
     ),
     SELECT_CALENDAR_SUPS(
         SELECT_CALENDAR_SUPS_BY_YEAR.sql + " AND calendar_no = :calendarNo"
@@ -94,11 +97,14 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     /** --- Calendar Active List --- */
 
     SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR(
-        "SELECT * FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + "\n" +
+        "SELECT * FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + " al" + "\n" +
+        "   JOIN ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST_ENTRY + " ent" + "\n" +
+        "       ON al.id = ent.calendar_active_list_id" + "\n" +
         "WHERE calendar_year = :year"
     ),
     SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR_COUNT(
-        SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR.sql.replace("*", "COUNT(*)")
+        "SELECT COUNT(*) FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + " al" + "\n" +
+        "WHERE calendar_year = :year"
     ),
     SELECT_CALENDAR_ACTIVE_LISTS(
         SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR.sql + " AND calendar_no = :calendarNo"
@@ -129,7 +135,7 @@ public enum SqlCalendarQuery implements BasicSqlQuery
         "WHERE calendar_no = :calendarNo AND calendar_year = :year AND sequence_no = :sequenceNo"
     ),
 
-    /** --- Calendar Active List --- */
+    /** --- Calendar Active List Entry --- */
 
     SELECT_CALENDAR_ACTIVE_LIST_ENTRIES(
         "SELECT * FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST_ENTRY + "\n" +

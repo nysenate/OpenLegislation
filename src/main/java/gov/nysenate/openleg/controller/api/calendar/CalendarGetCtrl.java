@@ -42,12 +42,14 @@ public class CalendarGetCtrl extends BaseCtrl
      * @return
      */
     @RequestMapping(value = "/{year:\\d{4}}")
-    public BaseResponse getCalendars(@PathVariable int year, WebRequest webRequest) {
+    public BaseResponse getCalendars(@PathVariable int year,
+                                     @RequestParam(defaultValue = "false") boolean full,
+                                     WebRequest webRequest) {
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
         LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
         return ListViewResponse.of(
                 calendarDataService.getCalendars(year, sortOrder, limitOffset).stream()
-                        .map(SimpleCalendarView::new)
+                        .map(full ? CalendarView::new : SimpleCalendarView::new)
                         .collect(Collectors.toList()),
                 calendarDataService.getCalendarCount(year),
                 limitOffset
@@ -61,12 +63,14 @@ public class CalendarGetCtrl extends BaseCtrl
      * @return
      */
     @RequestMapping(value = "/{year:\\d{4}}/activelist")
-    public BaseResponse getActiveLists(@PathVariable int year, WebRequest webRequest) {
+    public BaseResponse getActiveLists(@PathVariable int year,
+                                       @RequestParam(defaultValue = "false") boolean full,
+                                       WebRequest webRequest) {
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
         LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
         return ListViewResponse.of(
                 calendarDataService.getActiveLists(year, sortOrder, limitOffset).stream()
-                        .map(SimpleActiveListView::new)
+                        .map(full ? ActiveListView::new : SimpleActiveListView::new)
                         .collect(Collectors.toList()),
                 calendarDataService.getActiveListCount(year),
                 limitOffset
@@ -80,12 +84,14 @@ public class CalendarGetCtrl extends BaseCtrl
      * @return
      */
     @RequestMapping(value = "/{year:\\d{4}}/floor")
-    public BaseResponse getFloorCalendars(@PathVariable int year, WebRequest webRequest) {
+    public BaseResponse getFloorCalendars(@PathVariable int year,
+                                          @RequestParam(defaultValue = "false") boolean full,
+                                          WebRequest webRequest) {
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
         LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
         return ListViewResponse.of(
                 calendarDataService.getFloorCalendars(year, sortOrder, limitOffset).stream()
-                        .map(SimpleCalendarSupView::new)
+                        .map(full ? CalendarSupView::new : SimpleCalendarSupView::new)
                         .collect(Collectors.toList()),
                 calendarDataService.getFloorCalendarCount(year),
                 limitOffset
@@ -99,7 +105,8 @@ public class CalendarGetCtrl extends BaseCtrl
      * @return
      */
     @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}")
-    public BaseResponse getCalendar(@PathVariable int year, @PathVariable int calNo) {
+    public BaseResponse getCalendar(@PathVariable int year,
+                                    @PathVariable int calNo) {
         return new ViewObjectResponse<>(
             new CalendarView(calendarDataService.getCalendar(new CalendarId(calNo, year)) ) );
     }
@@ -112,7 +119,9 @@ public class CalendarGetCtrl extends BaseCtrl
      * @return
      */
     @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}/{sequenceNo:\\d+}")
-    public BaseResponse getActiveList(@PathVariable int year, @PathVariable int calNo, @PathVariable int sequenceNo) {
+    public BaseResponse getActiveList(@PathVariable int year,
+                                      @PathVariable int calNo,
+                                      @PathVariable int sequenceNo) {
         return new ViewObjectResponse<>(
             new ActiveListView(
                 calendarDataService.getActiveList(new CalendarActiveListId(calNo, year, sequenceNo)) ) );
@@ -126,7 +135,9 @@ public class CalendarGetCtrl extends BaseCtrl
      * @return
      */
     @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}/{version:[A-z]+}")
-    public BaseResponse getFloorCalendar(@PathVariable int year, @PathVariable int calNo, @PathVariable String version) {
+    public BaseResponse getFloorCalendar(@PathVariable int year,
+                                         @PathVariable int calNo,
+                                         @PathVariable String version) {
         return new ViewObjectResponse<>(
             new CalendarSupView(
                 calendarDataService.getFloorCalendar(new CalendarSupplementalId(calNo, year, Version.of(version))) ) );
