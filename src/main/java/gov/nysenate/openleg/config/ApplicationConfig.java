@@ -27,7 +27,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
 @EnableCaching
-@EnableScheduling
 public class ApplicationConfig implements CachingConfigurer
 {
     @Value("${env.directory}")
@@ -88,7 +87,7 @@ public class ApplicationConfig implements CachingConfigurer
 
     /** --- Elastic Search Configuration --- */
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public Client elasticSearchNode() {
         try {
             Settings settings = ImmutableSettings.settingsBuilder()

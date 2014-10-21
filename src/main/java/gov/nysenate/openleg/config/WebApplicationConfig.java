@@ -18,6 +18,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -28,6 +29,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebMvc
+@EnableScheduling
 @ComponentScan("gov.nysenate.openleg")
 @Import({DatabaseConfig.class, ApplicationConfig.class})
 public class WebApplicationConfig extends WebMvcConfigurerAdapter
