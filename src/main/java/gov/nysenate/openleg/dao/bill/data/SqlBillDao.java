@@ -109,6 +109,13 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         billInfo.setTitle(bill.getTitle());
         billInfo.setSummary(bill.getSummary());
         billInfo.setStatus(bill.getStatus());
+        List<BillAmendment> amendments = getBillAmendments(baseParams);
+        Optional<BillAmendment> activeAmendment = amendments.stream()
+            .filter(a -> a.getVersion().equals(bill.getActiveVersion()))
+            .findFirst();
+        if (activeAmendment.isPresent()) {
+            billInfo.setCurrentCommittee(activeAmendment.get().getCurrentCommittee());
+        }
         // Get the sponsor
         billInfo.setSponsor(getBillSponsor(baseParams));
         return billInfo;

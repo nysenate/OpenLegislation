@@ -6,6 +6,8 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
@@ -42,5 +44,21 @@ public class SqlBillDaoTests extends BaseTests
     @Test
     public void testCountAllBills() throws Exception {
         logger.info("{}", billDao.getBillCount(SessionYear.current()));
+    }
+
+    @Test
+    public void testFastBill() throws Exception {
+        Bill bill = billDao.getBill(new BillId("S3059", 2013));
+        bill.getAmendmentList().forEach(ba -> {
+            ba.setMemo("");
+            ba.setFullText("");
+        });
+        StopWatch sw = new StopWatch();
+        sw.start();
+        billDao.applyText(bill);
+        sw.stop();
+        logger.info("Time {} ms",sw.getTime());
+        logger.info("{}", OutputUtils.toJson(bill));
+
     }
 }

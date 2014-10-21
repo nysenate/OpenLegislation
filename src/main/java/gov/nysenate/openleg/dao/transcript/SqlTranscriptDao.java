@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.dao.transcript;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.OrderBy;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
@@ -17,21 +20,19 @@ import static gov.nysenate.openleg.util.DateUtils.toDate;
 @Repository
 public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
 {
-
     /** {@inheritDoc} */
     @Override
-    public List<TranscriptId> getTranscriptIds(int year) {
+    public List<TranscriptId> getTranscriptIds(int year, SortOrder dateOrder, LimitOffset limOff) {
         MapSqlParameterSource params = getTranscriptIdYearParams(year);
-        List<TranscriptId> transcriptIds = jdbcNamed.query(SELECT_TRANSCRIPT_IDS_BY_YEAR.getSql(schema()), params, transcriptIdRowMapper);
-        return transcriptIds;
+        OrderBy orderBy = new OrderBy("date_time", dateOrder);
+        return jdbcNamed.query(SELECT_TRANSCRIPT_IDS_BY_YEAR.getSql(schema(), orderBy, limOff), params, transcriptIdRowMapper);
     }
 
     /** {@inheritDoc} */
     @Override
     public Transcript getTranscript(TranscriptId transcriptId) throws DataAccessException {
         MapSqlParameterSource params = getTranscriptIdParams(transcriptId);
-        Transcript transcript = jdbcNamed.queryForObject(SELECT_TRANSCRIPT_BY_ID.getSql(schema()), params, transcriptRowMapper);
-        return transcript;
+        return jdbcNamed.queryForObject(SELECT_TRANSCRIPT_BY_ID.getSql(schema()), params, transcriptRowMapper);
     }
 
     /** {@inheritDoc} */

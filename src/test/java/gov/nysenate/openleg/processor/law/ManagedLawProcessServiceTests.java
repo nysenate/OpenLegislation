@@ -20,8 +20,13 @@ public class ManagedLawProcessServiceTests extends BaseTests
     private ManagedLawProcessService lawProcessService;
 
     @Test
+    public void testCollate() throws Exception {
+        lawProcessService.collateLawFiles();
+    }
+
+    @Test
     public void testProcessLawFiles() throws Exception {
-        List<LawFile> lawFiles = lawProcessService.getPendingLawFiles(LimitOffset.TEN);
+        List<LawFile> lawFiles = lawProcessService.getPendingLawFiles(LimitOffset.ALL);
         lawProcessService.processLawFiles(lawFiles);
     }
 }

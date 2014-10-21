@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.transcript.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.transcript.TranscriptDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.transcript.Transcript;
@@ -19,29 +20,13 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
-public class CachedTranscriptDataService implements TranscriptDataService, CachingService
+public class SqlTranscriptDataService implements TranscriptDataService
 {
-    private static final String transcriptCache = "transcriptCache";
-
-    @Autowired
-    private CacheManager cacheManager;
-
     @Autowired
     private TranscriptDao transcriptDao;
 
-    @Override
-    @PostConstruct
-    public void setupCaches() {
-        cacheManager.addCache(transcriptCache);
-    }
-
-    @Override
-    @CacheEvict(value = transcriptCache, allEntries = true)
-    public void evictCaches() {}
-
     /** {@inheritDoc} */
     @Override
-    @Cacheable(value = transcriptCache, key = "#transcriptId")
     public Transcript getTranscript(TranscriptId transcriptId) {
         if (transcriptId == null) {
             throw new IllegalArgumentException("TranscriptId cannot be null");
@@ -56,13 +41,12 @@ public class CachedTranscriptDataService implements TranscriptDataService, Cachi
 
     /** {@inheritDoc} */
     @Override
-    public List<TranscriptId> getTranscriptIds(SessionYear sessionYear, LimitOffset limitOffset) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public List<TranscriptId> getTranscriptIds(int year, SortOrder dateOrder, LimitOffset limitOffset) {
+        return transcriptDao.getTranscriptIds(year, dateOrder, limitOffset);
     }
 
     /** {@inheritDoc} */
     @Override
-    @CacheEvict(value = transcriptCache, key = "#transcriptId")
     public void saveTranscript(Transcript transcript, TranscriptFile transcriptFile) {
         if (transcript == null) {
             throw new IllegalArgumentException("transcript cannot be null");

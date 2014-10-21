@@ -20,4 +20,5 @@ public interface BillSearchService
      */
     public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException;
 
+
 }

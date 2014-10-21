@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.entity.CommitteeId;
 
 /**
  * Contains a sample of the fields in {@link gov.nysenate.openleg.model.bill.Bill}.
@@ -15,6 +16,7 @@ public class BillInfo
     protected String summary;
     protected BillStatus status;
     protected BillSponsor sponsor;
+    protected CommitteeId currentCommittee;
 
     /** --- Constructors --- */
 
@@ -27,6 +29,9 @@ public class BillInfo
         this.summary = bill.getSummary();
         this.status = bill.getStatus();
         this.sponsor = bill.getSponsor();
+        if (bill.hasActiveAmendment()) {
+            this.currentCommittee = bill.getActiveAmendment().getCurrentCommittee();
+        }
     }
 
     /** --- Basic Getters/Setters --- */
@@ -77,5 +82,13 @@ public class BillInfo
 
     public void setSponsor(BillSponsor sponsor) {
         this.sponsor = sponsor;
+    }
+
+    public CommitteeId getCurrentCommittee() {
+        return currentCommittee;
+    }
+
+    public void setCurrentCommittee(CommitteeId currentCommittee) {
+        this.currentCommittee = currentCommittee;
     }
 }

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
 import gov.nysenate.openleg.model.bill.BillInfo;
 
 /**
@@ -15,6 +16,7 @@ public class BillInfoView extends BaseBillIdView implements ViewObject
     protected String summary;
     protected BillStatusView status;
     protected SponsorView sponsor;
+    protected CommitteeIdView committee;
 
     public BillInfoView(BillInfo billInfo) {
         super(billInfo != null ? billInfo.getBillId() : null);
@@ -26,6 +28,8 @@ public class BillInfoView extends BaseBillIdView implements ViewObject
             summary = billInfo.getSummary();
             status = new BillStatusView(billInfo.getStatus());
             sponsor = new SponsorView(billInfo.getSponsor());
+            committee = (billInfo.getCurrentCommittee() != null)
+                    ? new CommitteeIdView(billInfo.getCurrentCommittee()) : null;
         }
     }
 
@@ -55,6 +59,10 @@ public class BillInfoView extends BaseBillIdView implements ViewObject
 
     public SponsorView getSponsor() {
         return sponsor;
+    }
+
+    public CommitteeIdView getCommittee() {
+        return committee;
     }
 
     @Override

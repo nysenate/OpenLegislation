@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.transcript.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
@@ -8,24 +9,31 @@ import gov.nysenate.openleg.model.transcript.TranscriptId;
 
 import java.util.List;
 
+/**
+ * Data service layer for retrieval and persistence of transcripts.
+ */
 public interface TranscriptDataService
 {
     /**
+     * Fetch a transcript given an id.
      *
-     * @param transcriptId
+     * @param transcriptId TranscriptId
      * @return Transcript
      */
     public Transcript getTranscript(TranscriptId transcriptId);
 
     /**
+     * Get a list of transcript ids for a given session year.
      *
-     * @param sessionYear SessionYear
+     * @param year int
+     * @param dateOrder SortOrder
      * @param limitOffset LimitOffset
      * @return List<TranscriptId>
      */
-    public List<TranscriptId> getTranscriptIds(SessionYear sessionYear, LimitOffset limitOffset);
+    public List<TranscriptId> getTranscriptIds(int year, SortOrder dateOrder, LimitOffset limitOffset);
 
     /**
+     * Saves the transcript.
      *
      * @param transcript Transcript
      * @param transcriptFile TranscriptFile

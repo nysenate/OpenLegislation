@@ -19,16 +19,18 @@ public class SqlBillDataServiceTests extends BaseTests
 
     @Test
     public void testGetBill() throws Exception {
-//        StopWatch sw = new StopWatch();
-//        billData.getBillInfo(new BillId("S1234", 2013));
-//        sw.start();
-//        BillInfo billInfo = billData.getBillInfo(new BillId("A1234B", 2013));
-//        billData.getBillInfo(new BillId("A1234", 2013));
-//        billData.getBillInfo(new BillId("A1234", 2013));
-//        billData.getBillInfo(new BillId("A1234", 2013));
-//        billData.getBillInfo(new BillId("A1234", 2013));
-//        sw.stop();
-//        logger.info("{}", sw.getTime());
-//        logger.info("{}", OutputUtils.toJson(billInfo));
+        StopWatch sw = new StopWatch();
+        billData.getBill(new BaseBillId("S1236", 2013));
+        sw.start();
+        billData.getBill(new BaseBillId("S1234", 2013));
+        sw.stop();
+        logger.info("{}", sw.getTime());
+        sw.reset();
+        sw.start();
+        billData.getBill(new BaseBillId("S1234", 2013));;
+        sw.stop();
+        logger.info("{}", sw.getTime());
+
+
     }
 }

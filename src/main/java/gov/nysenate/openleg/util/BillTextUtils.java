@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.util;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class BillTextUtils
 
     protected static Pattern textLinePattern = Pattern.compile("^ {1,5}[0-9]+ ");
 
-    protected static Pattern billTextPageStartPatern =
+    protected static Pattern billTextPageStartPattern =
         Pattern.compile("^(\\s+\\w.\\s\\d+(--\\w)?)?\\s{10,}(\\d+)(\\s{10,}(\\w.\\s\\d+(--\\w)?)?(\\d+-\\d+-\\d(--\\w)?)?)?$");
 
     /**
@@ -28,10 +29,32 @@ public class BillTextUtils
      * @return List<Integer>
      */
     public static List<Integer> getNewPageLines(String fullText) {
+        List<String> lines = Splitter.on("\n").splitToList(fullText);
+        return getNewPageLines(lines);
+    }
+
+    /**
+     * Uses the new page lines to generate a list of pages from the bill text.
+     *
+     * @param fullText String - String - Bill full text
+     * @return List<List<String>>
+     */
+    public static List<List<String>> getPages(String fullText) {
+        List<List<String>> pages = new ArrayList<>();
+        List<String> lines = Splitter.on("\n").splitToList(fullText);
+        int startLine = 0;
+        for (int newPageLine : getNewPageLines(lines)) {
+            pages.add(lines.subList(startLine, newPageLine));
+            startLine = newPageLine;
+        }
+        pages.add(lines.subList(startLine, lines.size()));
+        return pages;
+    }
+
+    private static List<Integer> getNewPageLines(List<String> lines) {
         List<Integer> pageLines = new ArrayList<>();
-        String[] lines = fullText.split("\n");
-        for (int i = 0; i < lines.length; i++) {
-            if (isFirstLineOfNextPage(lines[i], i)) {
+        for (int i = 0; i < lines.size(); i++) {
+            if (isFirstLineOfNextPage(lines.get(i), i)) {
                 pageLines.add(i);
             }
         }
@@ -54,7 +77,7 @@ public class BillTextUtils
         // looking for the last page number (e.g. A. 7461--A           2 ...)
         String[] lines = fullText.split("\n");
         for (int i = lines.length - 1; i > 10; i--) {
-            Matcher billTextPageMatcher = billTextPageStartPatern.matcher(lines[i]);
+            Matcher billTextPageMatcher = billTextPageStartPattern.matcher(lines[i]);
             if (billTextPageMatcher.find()) {
                 return Integer.parseInt(billTextPageMatcher.group(3));
             }
@@ -67,7 +90,7 @@ public class BillTextUtils
      * Checks if the given line matches the new page pattern.
      */
     private static boolean isFirstLineOfNextPage(String line, int lineNum) {
-        Matcher billTextPageMatcher = billTextPageStartPatern.matcher(line);
+        Matcher billTextPageMatcher = billTextPageStartPattern.matcher(line);
         // Ignore erroneous result in first 10 lines.
         return lineNum > 10 && billTextPageMatcher.find();
     }
