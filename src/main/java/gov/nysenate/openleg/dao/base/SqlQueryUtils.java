@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Common utility methods to be used by enums/classes that store sql queries.
@@ -98,12 +99,10 @@ public abstract class SqlQueryUtils
         String clause = "";
         if (orderBy != null) {
             ImmutableMap<String, SortOrder> sortColumns = orderBy.getSortColumns();
-            List<String> orderClauses = new ArrayList<>();
-            for (String column : sortColumns.keySet()) {
-                if (!sortColumns.get(column).equals(SortOrder.NONE)) {
-                    orderClauses.add(column + " " + sortColumns.get(column).name());
-                }
-            }
+            List<String> orderClauses = sortColumns.keySet().stream()
+                .filter(column -> !sortColumns.get(column).equals(SortOrder.NONE))
+                .map(column -> column + " " + sortColumns.get(column).name())
+                .collect(Collectors.toList());
             if (!orderClauses.isEmpty()) {
                 clause += " ORDER BY " + StringUtils.join(orderClauses, ", ");
             }

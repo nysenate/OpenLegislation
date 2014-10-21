@@ -88,7 +88,7 @@ public class ManagedSobiProcessService implements SobiProcessService
                     sobiDao.updateSobiFile(sobiFile);
                     // Save the extracted fragments. They will be marked as pending processing.
                     for (SobiFragment fragment : fragments) {
-                        logger.debug("Saving fragment {}", fragment);
+                        logger.info("Saving fragment {}", fragment.getFragmentId());
                         fragment.setPendingProcessing(true);
                         sobiDao.updateSobiFragment(fragment);
                     }

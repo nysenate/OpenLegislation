@@ -1,299 +1,310 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>gov.nysenate</groupId>
-  <artifactId>legislation</artifactId>
-  <version>2.0alpha</version>
-  <packaging>war</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <!-- NY Senate Maven Repository -->
+    <groupId>gov.nysenate</groupId>
+    <artifactId>legislation</artifactId>
+    <packaging>war</packaging>
+    <version>2.0-alpha</version>
+    <!-- NY Senate Maven Repository -->
 
-  <repositories>
-    <repository>
-      <id>gov.nysenate</id>
-      <name>NY Senate Maven Repository</name>
-      <url>http://dev.nysenate.gov/maven/repo</url>
-    </repository>
-  </repositories>
+    <repositories>
+        <repository>
+            <id>gov.nysenate</id>
+            <name>NY Senate Maven Repository</name>
+            <url>http://dev.nysenate.gov/maven/repo</url>
+        </repository>
+    </repositories>
 
-  <build>
-    <finalName>${project.artifactId}##${project.version}</finalName>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-          <!-- avoid possible encoding issues -->
-          <encoding>utf-8</encoding>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <!-- avoid possible encoding issues -->
+                    <encoding>utf-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-  <properties>
-    <c3p0.version>0.9.1.2</c3p0.version>
-    <elastic-search.version>1.4.0.Beta1</elastic-search.version>
-    <guava.version>18.0</guava.version>
-    <guava.jackson.version>2.4.0</guava.jackson.version>
-    <jackson.version>2.3.0</jackson.version>
-    <jstl.version>1.2</jstl.version>
-    <slf4j.version>1.7.5</slf4j.version>
-    <spring.version>4.0.6.RELEASE</spring.version>
-    <tomcat.servlet.version>7.0.47</tomcat.servlet.version>
-    <woodstox.version>4.2.0</woodstox.version>
-  </properties>
+    <properties>
+        <spring.version>4.0.6.RELEASE</spring.version>
+        <jackson.version>2.4.0</jackson.version>
+        <woodstox.version>4.2.0</woodstox.version>
+        <slf4j.version>1.7.5</slf4j.version>
+        <c3p0.version>0.9.1.2</c3p0.version>
+        <tomcat.servlet.version>7.0.47</tomcat.servlet.version>
+        <guava.version>18.0</guava.version>
+        <guava.jackson.version>2.4.0</guava.jackson.version>
+        <jstl.version>1.2</jstl.version>
+        <elastic-search.version>1.4.0.Beta1</elastic-search.version>
+        <pdfbox.version>1.8.7</pdfbox.version>
+    </properties>
 
-  <dependencies>
-    <!-- Spring -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>${spring.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>commons-logging</artifactId>
-          <groupId>commons-logging</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+    <dependencies>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-    <!-- Spring MVC | REST Apis and JSP rendering. -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
-    <!-- Spring context support -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
+        <!-- Spring MVC | REST Apis and JSP rendering. -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
-    <!-- Servlet -->
+        <!-- Spring context support -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-servlet-api</artifactId>
-      <version>${tomcat.servlet.version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <!-- Servlet -->
 
-    <!-- JSTL -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <version>${tomcat.servlet.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>jstl</groupId>
-      <artifactId>jstl</artifactId>
-      <version>${jstl.version}</version>
-    </dependency>
+        <!-- JSTL -->
 
-    <!-- Log4J | Logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
+        <!-- Log4J | Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
-    <!-- Guava -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${guava.version}</version>
-    </dependency>
+        <!-- Guava -->
 
-    <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-guava</artifactId>
-      <version>${guava.jackson.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
 
-    <!-- Elastic Search -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-guava</artifactId>
+            <version>${guava.jackson.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.elasticsearch</groupId>
-      <artifactId>elasticsearch</artifactId>
-      <version>${elastic-search.version}</version>
-    </dependency>
+        <!-- Elastic Search -->
 
-    <!-- Serializers/Deserializers -->
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${elastic-search.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
+        <!-- Serializers/Deserializers -->
 
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-xml</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>2.4.0</version>
-    </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.codehaus.woodstox</groupId>
-      <artifactId>woodstox-core-asl</artifactId>
-      <version>${woodstox.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
 
-    <!-- NY Senate Java libraries -->
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>${woodstox.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>gov.nysenate</groupId>
-      <artifactId>nysenate-java-client</artifactId>
-      <version>1.0.2</version>
-    </dependency>
+        <!-- NY Senate Java libraries -->
 
-    <!-- Apache commons -->
+        <dependency>
+            <groupId>gov.nysenate</groupId>
+            <artifactId>nysenate-java-client</artifactId>
+            <version>1.0.2</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.1</version>
-    </dependency>
+        <!-- Apache commons -->
 
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <version>3.2.1</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.1</version>
+        </dependency>
 
-    <dependency>
-      <groupId>commons-cli</groupId>
-      <artifactId>commons-cli</artifactId>
-      <version>1.2</version>
-    </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+        </dependency>
 
-    <!-- Unit Testing -->
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.2</version>
+        </dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-    </dependency>
+        <!-- Unit Testing -->
 
-    <!-- Spring Test | Spring based test runners. -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>${spring.version}</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-all</artifactId>
-      <version>1.3</version>
-    </dependency>
+        <!-- Spring Test | Spring based test runners. -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-      <version>1.4.7</version>
-    </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
+        </dependency>
 
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-      <version>1.2</version>
-    </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+        </dependency>
 
-    <!-- Database -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-      <version>4.0.5.RELEASE</version>
-    </dependency>
+        <!-- Database -->
 
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>9.3-1101-jdbc4</version>
-    </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>4.0.5.RELEASE</version>
+        </dependency>
 
-    <dependency>
-      <groupId>c3p0</groupId>
-      <artifactId>c3p0</artifactId>
-      <version>${c3p0.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.3-1101-jdbc4</version>
+        </dependency>
 
-    <!-- Caching -->
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>${c3p0.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-      <version>2.8.3</version>
-    </dependency>
+        <!-- Caching -->
 
-    <!-- TODO: Cleanup Misc deps -->
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>2.8.3</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.2.2</version>
-    </dependency>
+        <!-- PDF -->
 
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.4</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.abdera</groupId>
-      <artifactId>abdera-core</artifactId>
-      <version>1.1.2</version>
-    </dependency>
+        <!-- TODO: Cleanup Misc deps -->
 
-    <dependency>
-      <groupId>xmlrpc</groupId>
-      <artifactId>xmlrpc-client</artifactId>
-      <version>3.0</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.2.2</version>
+        </dependency>
 
-  <pluginRepositories>
-    <!-- Repository for the External Dependency Plugin -->
-    <pluginRepository>
-      <id>ossrh</id>
-      <name>Sonatype OSS Repository</name>
-      <url>http://oss.sonatype.org/content/groups/public</url>
-      <layout>default</layout>
-    </pluginRepository>
-  </pluginRepositories>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.abdera</groupId>
+            <artifactId>abdera-core</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>xmlrpc</groupId>
+            <artifactId>xmlrpc-client</artifactId>
+            <version>3.0</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+    <pluginRepositories>
+        <!-- Repository for the External Dependency Plugin -->
+        <pluginRepository>
+            <id>ossrh</id>
+            <name>Sonatype OSS Repository</name>
+            <url>http://oss.sonatype.org/content/groups/public</url>
+            <layout>default</layout>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

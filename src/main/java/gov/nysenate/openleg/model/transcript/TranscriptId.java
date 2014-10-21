@@ -54,6 +54,11 @@ public class TranscriptId implements Serializable, Comparable<TranscriptId>
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "Transcript: " + sessionType + " (" + dateTime + ")";
+    }
+
     /** --- Basic Getters/Setters --- */
 
     protected int getYear() {

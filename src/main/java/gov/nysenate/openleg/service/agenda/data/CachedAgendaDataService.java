@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.agenda.data;
 
 import gov.nysenate.openleg.dao.agenda.AgendaDao;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
@@ -14,6 +15,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Service
 public class CachedAgendaDataService implements AgendaDataService, CachingService
@@ -49,6 +51,11 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
         catch (EmptyResultDataAccessException ex) {
             throw new AgendaNotFoundEx(agendaId);
         }
+    }
+
+    @Override
+    public List<AgendaId> getAgendaIds(int year, SortOrder idOrder) {
+        return agendaDao.getAgendaIds(year, idOrder);
     }
 
     /** {@inheritDoc} */

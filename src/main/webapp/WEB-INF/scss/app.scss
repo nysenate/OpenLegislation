@@ -41,6 +41,7 @@ table {
 
 .top-bar-wrapper {
   background: #fafafa;
+  box-shadow: 0px -15px 40px #999;
 }
 
 @media #{$small-up} {
@@ -55,8 +56,10 @@ table {
 
 @media #{$large-up} {
   .top-bar {
+    width: 56.534em;
+    margin: auto;
     .name {
-      margin: 0 3em;
+      margin: 0 3em 0 0;
       h1 a {
         width: auto;
       }
@@ -137,8 +140,6 @@ table {
 .content-row {
   background: #fafafa;
   padding: 10px;
-  margin-left: 15px !important;
-  margin-bottom: 10px !important;
 }
 
 /** --- Magellan Nav --- */
@@ -164,7 +165,6 @@ table {
 
 #wrapper {
   padding-top: 80px;
-  padding-left: 20px;
 }
 
 .content-column {

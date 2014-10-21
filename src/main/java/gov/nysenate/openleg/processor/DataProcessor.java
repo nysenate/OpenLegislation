@@ -57,7 +57,6 @@ public class DataProcessor
         transcriptProcessService.collateTranscriptFiles();
         publicHearingProcessService.collatePublicHearingFiles();
         lawProcessService.collateLawFiles();
-        // TODO: Handle CMS.TEXT (Rules file)
         logger.info("Completed collations.");
     }
 

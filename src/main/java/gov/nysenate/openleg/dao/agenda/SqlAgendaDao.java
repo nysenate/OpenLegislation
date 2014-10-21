@@ -3,9 +3,7 @@ package gov.nysenate.openleg.dao.agenda;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import gov.nysenate.openleg.dao.base.ImmutableParams;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.dao.common.BillVoteIdRowMapper;
 import gov.nysenate.openleg.dao.common.BillVoteRowHandler;
 import gov.nysenate.openleg.model.agenda.*;
@@ -59,10 +57,12 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     }
 
     /** {@inheritDoc} */
-    /** TODO */
     @Override
     public List<AgendaId> getAgendaIds(int year, SortOrder idOrder) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        MapSqlParameterSource params = new MapSqlParameterSource("year", year);
+        OrderBy orderBy = new OrderBy("agenda_no", idOrder);
+        return jdbcNamed.query(SELECT_AGENDAS_BY_YEAR.getSql(schema(), orderBy, LimitOffset.ALL), params,
+            (rs, rowNum) -> new AgendaId(rs.getInt("agenda_no"), rs.getInt("year")));
     }
 
     /** {@inheritDoc} */

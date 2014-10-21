@@ -89,24 +89,23 @@ public abstract class BaseCtrl
 
     /** --- Generic Exception Handlers --- */
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    protected ErrorResponse handleUnknownError(Exception ex) {
+        logger.error("Caught unhandled servlet exception: {}", ex.getMessage());
+        return new ErrorResponse(ErrorCode.UNKNOWN_ERROR);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ErrorResponse handleInvalidArgumentEx(IllegalArgumentException ex) {
         return new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);
     }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    protected ErrorResponse handleUnknownError(Exception ex) {
-        logger.error("Caught unhandled servlet exception:");
-        ex.printStackTrace();
-        return new ErrorResponse(ErrorCode.UNKNOWN_ERROR);
-    }
-
     @ExceptionHandler(SearchException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
-        logger.warn("Search Exception", ex);
+        logger.warn("Search Exception: {}", ex.getMessage());
         return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
     }
 

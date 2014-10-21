@@ -18,7 +18,6 @@ public class SqlMemberServiceTests extends BaseTests
 
     @Test
     public void testGetMemberByShortName_UsesCache() throws Exception {
-        logger.info(OutputUtils.toJson(sqlMemberService.getMemberByShortName("MARTINS", SessionYear.current(), Chamber.SENATE)));
-        logger.info(OutputUtils.toJson(sqlMemberService.getMemberByShortName("MARTINS", SessionYear.current(), Chamber.SENATE)));
+        logger.info(OutputUtils.toJson(sqlMemberService.getMemberBySessionId(667)));
     }
 }

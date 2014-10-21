@@ -64,7 +64,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     protected static final Pattern rulesSponsorPattern =
             Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
 
-    /** THe format for program info lines. We just care about the text portion. */
+    /** THe format for program info lines. */
     protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
 
     /** --- Constructors --- */

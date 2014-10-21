@@ -10,8 +10,8 @@
 </open-layout:head>
 <open-layout:body pageId="content">
     <div ng-controller="ContentCtrl" class="row" style="margin-top:1.5em">
-        <div class="large-2 columns side-nav-container">
-            <nav>
+        <div class="large-2 columns side-nav-container hide-for-medium-down">
+            <nav class="">
                 <ul class="side-nav">
                     <li ng-class="{active : selectedContent == 'agendas'}">
                         <a ng-click="selectedContent='agendas'" href="${ctxPath}/content/agendas">

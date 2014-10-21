@@ -19,11 +19,21 @@ contentModule.controller('BillHomeCtrl', ['$scope', '$filter', 'BillListing', 'B
     $scope.title = 'Bills and Resolutions';
     $scope.searchTerm = '';
     $scope.billResults = {};
+    $scope.totalResults = 0;
     $scope.limit = 10;
     $scope.offset = 1;
+    $scope.page = 1;
 
-    $scope.$watch('searchTerm', function(term) {
-        if (term && term.trim() != '') {
+    $scope.$watch('searchTerm', function(newTerm, oldTerm) {
+        if (newTerm && newTerm != oldTerm && newTerm.trim() != '') {
+            $scope.page = 1;
+            $scope.search();
+        }
+    });
+
+    $scope.$watch('page', function(newPage, oldPage) {
+        if (newPage != oldPage) {
+            $scope.offset = $scope.limit * newPage;
             $scope.search();
         }
     });
@@ -32,8 +42,10 @@ contentModule.controller('BillHomeCtrl', ['$scope', '$filter', 'BillListing', 'B
         if ($scope.searchTerm != null && $scope.searchTerm.trim() != '') {
             $scope.billResults = BillSearch.get({term: $scope.searchTerm, limit: $scope.limit, offset: $scope.offset},
                 function() {
-                console.log($scope.billResults);
-            });
+                    if ($scope.billResults.total != $scope.totalResults) {
+                        $scope.totalResults = $scope.billResults.total;
+                    }
+                });
         }
     }
 

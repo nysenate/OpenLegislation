@@ -6,6 +6,7 @@ public enum CommitteeMemberTitle
     VICE_CHAIR,
     MEMBER
     ;
+
     public String asSqlEnum(){
         return this.toString().toLowerCase();
     }
