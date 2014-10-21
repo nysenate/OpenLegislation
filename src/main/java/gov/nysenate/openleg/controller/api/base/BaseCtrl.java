@@ -109,12 +109,6 @@ public abstract class BaseCtrl
         return new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    protected ErrorResponse handleInvalidArgumentEx(IllegalArgumentException ex) {
-        return new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);
-    }
-
     @ExceptionHandler(SearchException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
