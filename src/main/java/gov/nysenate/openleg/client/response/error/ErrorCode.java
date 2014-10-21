@@ -14,7 +14,7 @@ public enum ErrorCode
     UNKNOWN_ERROR(-1, "There was an unexpected error while handling your request. " +
                       "Please notify Senate Tech if you received this error."),
 
-    INVALID_ARGUMENTS(1, "The specified request parameters were not valid"),
+    INVALID_ARGUMENTS(1, "One or more of the provided request parameters was not valid"),
 
     /** --- Bill --- */
 

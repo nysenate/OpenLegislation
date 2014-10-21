@@ -70,7 +70,7 @@ public class CommitteeGetCtrl extends BaseCtrl
      * @return
      * @throws CommitteeNotFoundEx
      */
-    @RequestMapping(value = "/{chamber:senate|assembly}/{committeeName}/{sessionYear:\\d\\d\\d\\d}/{referenceDate:\\d\\d\\d\\d-\\d\\d-\\d\\d}")
+    @RequestMapping(value = "/{chamber:senate|assembly}/{committeeName}/{sessionYear:[\\d]{4}}/{referenceDate}")
     public BaseResponse getCommitteeAtTime(@PathVariable String chamber,
                                            @PathVariable String committeeName,
                                            @PathVariable int sessionYear,

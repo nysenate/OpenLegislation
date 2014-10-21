@@ -12,6 +12,7 @@ import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -94,6 +95,18 @@ public abstract class BaseCtrl
     protected ErrorResponse handleUnknownError(Exception ex) {
         logger.error("Caught unhandled servlet exception: {}", ex.getMessage());
         return new ErrorResponse(ErrorCode.UNKNOWN_ERROR);
+    }
+
+    @ExceptionHandler(TypeMismatchException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    protected ErrorResponse handleTypeMismatchException(TypeMismatchException ex) {
+        return new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    protected ErrorResponse handleInvalidArgumentEx(IllegalArgumentException ex) {
+        return new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
