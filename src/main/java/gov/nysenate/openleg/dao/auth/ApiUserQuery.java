@@ -15,6 +15,9 @@ public enum ApiUserQuery implements BasicSqlQuery
     ),
     SELECT_BY_KEY(
         "SELECT * FROM public." +SqlTable.API_USER+ " WHERE apikey = :apikey"
+    ),
+    DELETE_USER(
+        "DELETE FROM public." +SqlTable.API_USER+ " WHERE email_addr = :email"
     );
 
     private String sql;

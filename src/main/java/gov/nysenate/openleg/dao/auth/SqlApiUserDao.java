@@ -21,9 +21,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @param user The new apiuser
      * @throws org.springframework.dao.DataAccessException
      */
-    public void insertUser (ApiUser user) throws DataAccessException
-    {
-      ImmutableParams userParams = ImmutableParams.from(getUserParams(user));
+    public void insertUser (ApiUser user) throws DataAccessException {
         if (jdbcNamed.update(ApiUserQuery.INSERT_API_USER.getSql(schema()), getUserParams(user)) == 0)
             jdbcNamed.update(ApiUserQuery.INSERT_API_USER.getSql(schema()), getUserParams(user));
     }
@@ -49,11 +47,10 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
 
     /**
      * Get the email address associated with a specfic key.
-     * @param key
+     * @param key The apikey
      * @return the email address
      */
-    public String getEmailFromKey(String key)
-    {
+    public String getEmailFromKey(String key) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("apikey", key));
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_KEY.getSql(schema()), params,
                 (rs,row) -> rs.getString("email_addr"));
@@ -73,7 +70,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
 
     /**
      * Get a user's Apikey
-     * @param user
+     * @param user The ApiUser
      * @return the key
      */
     public String getApiKey (ApiUser user) {
@@ -82,8 +79,8 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
 
     /**
      * Get the ApiKey associated with the provided email address
-     * @param email_addr
-     * @return
+     * @param email_addr The email address of the user you are looking for
+     * @return The API key of the user, if their email is in the database
      */
     public String getApiKeyFromEmail (String email_addr) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email_addr));
@@ -93,7 +90,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
 
     /**
      * Finds the user with the specified email address
-     * @param email_addr
+     * @param email_addr The email address of the user you are looking for
      * @return The ApiUser
      */
     public ApiUser getApiUserFromEmail(String email_addr) throws DataAccessException {
@@ -110,12 +107,16 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
 
     /**
      * Finds the user with the specfied key
-     * @param key
+     * @param key The User's API key
      * @return The ApiUser
      */
     public ApiUser getApiUserFromKey(String key) {
         final long requestCount = getNumRequests(key);
         final String email = getEmailFromKey(key);
+
+        if (email.length() == 0)
+            return null;
+
         ApiUser user = new ApiUser(email);
         user.setNumRequests(requestCount);
 
@@ -124,5 +125,15 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
 
         user.setApiKey(key);
         return user;
+    }
+
+    /**
+     * Remove an ApiUser from the database
+     * @param user The apiuser to be deleted
+     */
+    public void deleteApiUser(ApiUser user)
+    {
+        if (jdbcNamed.update(ApiUserQuery.DELETE_USER.getSql(schema()), getUserParams(user)) == 0)
+            jdbcNamed.update(ApiUserQuery.DELETE_USER.getSql(schema()), getUserParams(user));
     }
 }

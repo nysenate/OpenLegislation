@@ -1,42 +1,44 @@
 package gov.nysenate.openleg.model.auth;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 /**
  * This class will model an administrator.
  */
 
 public class AdminUser
 {
-    /** The Admin's role */
-    private AdminRole role;
+    /** For Testing: 0 = Read Only, 1 = Write Only, 2 = Read and Write */
+    private int privilegeLevel;
 
     /** The Admin's username */
-    private String userName;
+    private String username;
 
     /** The admin's password */
     private String password;
 
 
     /** Constructor */
-   public AdminUser(String name, String pass, String role) {
-        this.userName = name;
+   public AdminUser(String name, String pass, int priv) {
+        this.username = name;
         this.password = pass;
-        this.role = AdminRole.createRole(role);
+        this.privilegeLevel = priv;
         encryptPass();
     }
 
     /**
      * Encrypt passwords before they are stored in the database.
-     * To be completed?
+     * This method uses the BCrypt library.
      */
     public void encryptPass() {
-
+        this.password = BCrypt.hashpw(this.password, BCrypt.gensalt());
     }
 
 
     /** Getters and Setters */
-    public AdminRole getRole() { return this.role; }
+    public int getPrivileges() { return this.privilegeLevel; }
 
-    public String getUserName() { return this.userName; }
+    public String getUsername() { return this.username; }
 
     public String getPassword() { return this.password; }
 

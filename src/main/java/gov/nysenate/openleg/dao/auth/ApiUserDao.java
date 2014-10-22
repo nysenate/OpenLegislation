@@ -15,8 +15,12 @@ public interface ApiUserDao
 
        public long getNumRequests(String email) throws DataAccessException;
 
+       public long getNumRequestFromEmail(String email) throws DataAccessException;
+
        public void insertUser(ApiUser user) throws DataAccessException;
 
        public String getApiKeyFromEmail (String email) throws DataAccessException;
+
+       public void deleteApiUser (ApiUser apiuser) throws DataAccessException;
 
 }
