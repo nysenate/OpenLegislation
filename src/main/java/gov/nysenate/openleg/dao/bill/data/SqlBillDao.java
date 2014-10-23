@@ -600,7 +600,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
                 amend.setCurrentCommittee(
                     new CommitteeVersionId(
                         amend.getBillId().getChamber(), rs.getString("current_committee_name"),
-                        amend.getSession(), getLocalDateFromRs(rs, "current_committee_action")
+                        amend.getSession(), getLocalDateFromRs(rs, "current_committee_action").atStartOfDay()
                     )
                 );
             }
@@ -718,7 +718,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             Chamber committeeChamber = Chamber.getValue(rs.getString("committee_chamber"));
             SessionYear session = getSessionYearFromRs(rs, "bill_session_year");
             LocalDate actionDate = getLocalDateFromRs(rs, "action_date");
-            return new CommitteeVersionId(committeeChamber, committeeName, session, actionDate);
+            return new CommitteeVersionId(committeeChamber, committeeName, session, actionDate.atStartOfDay());
         }
     }
 

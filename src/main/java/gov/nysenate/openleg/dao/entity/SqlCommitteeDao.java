@@ -23,7 +23,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static gov.nysenate.openleg.dao.entity.SqlCommitteeQuery.*;
@@ -98,7 +98,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
      * {@inheritDoc}
      */
     @Override
-    public List<Committee> getCommitteeHistory(CommitteeId committeeId, Range<LocalDate> dateRange,
+    public List<Committee> getCommitteeHistory(CommitteeId committeeId, Range<LocalDateTime> dateRange,
                                                LimitOffset limitOffset, SortOrder order) throws DataAccessException {
         List<Committee> committeeHistory = selectCommitteeVersionHistory(committeeId, dateRange, limitOffset, order);
         for (Committee committee : committeeHistory) {
@@ -114,7 +114,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
      * {@inheritDoc}
      */
     @Override
-    public int getCommitteeHistoryCount(CommitteeId committeeId, Range<LocalDate> dateRange) {
+    public int getCommitteeHistoryCount(CommitteeId committeeId, Range<LocalDateTime> dateRange) {
         MapSqlParameterSource params = getCommitteeHistoryParams(committeeId, dateRange);
         return jdbcNamed.queryForObject(SELECT_COMMITTEES_BY_CHAMBER_COUNT.getSql(schema()), params, Integer.class);
     }
@@ -220,7 +220,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
      * @param committeeId
      * @return
      */
-    private List<Committee> selectCommitteeVersionHistory(CommitteeId committeeId, Range<LocalDate> dateRange,
+    private List<Committee> selectCommitteeVersionHistory(CommitteeId committeeId, Range<LocalDateTime> dateRange,
                                                           LimitOffset limitOffset, SortOrder order){
         MapSqlParameterSource params = getCommitteeHistoryParams(committeeId, dateRange);
         return jdbcNamed.query(SELECT_COMMITTEE_VERSION_HISTORY.getSql(
@@ -234,7 +234,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
      * @return
      */
     private List<Committee> selectAllCommitteeVersions(CommitteeId committeeId) {
-        return selectCommitteeVersionHistory(committeeId, DateUtils.ALL_DATES, LimitOffset.ALL, SortOrder.NONE);
+        return selectCommitteeVersionHistory(committeeId, DateUtils.ALL_DATE_TIMES, LimitOffset.ALL, SortOrder.NONE);
     }
 
     /**
@@ -457,13 +457,13 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
         return params;
     }
 
-    private MapSqlParameterSource getCommitteeHistoryParams(CommitteeId committeeId, Range<LocalDate> dateRange) {
+    private MapSqlParameterSource getCommitteeHistoryParams(CommitteeId committeeId, Range<LocalDateTime> dateRange) {
         MapSqlParameterSource params = getCommitteeIdParams(committeeId);
         if (dateRange == null) {
-            dateRange = DateUtils.ALL_DATES;
+            dateRange = DateUtils.ALL_DATE_TIMES;
         }
-        LocalDate startDate = DateUtils.startOfDateRange(dateRange);
-        LocalDate endDate = DateUtils.endOfDateRange(dateRange);
+        LocalDateTime startDate = DateUtils.startOfDateTimeRange(dateRange);
+        LocalDateTime endDate = DateUtils.endOfDateTimeRange(dateRange);
         params.addValue("sessionYearBegin", SessionYear.of(startDate.getYear()).getYear());
         params.addValue("sessionYearEnd", SessionYear.of(endDate.getYear()).getYear());
         params.addValue("dateRangeBegin", DateUtils.toDate(startDate));
