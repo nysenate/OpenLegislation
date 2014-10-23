@@ -7,6 +7,13 @@ import org.apache.commons.cli.CommandLine;
 
 public class LucenePurge extends BaseScript
 {
+
+    /**{@inheritDoc}*/
+    @Override
+    protected boolean luceneReadOnly() {
+        return false;
+    }
+
     @Override
     protected void execute(CommandLine opts) throws Exception
     {

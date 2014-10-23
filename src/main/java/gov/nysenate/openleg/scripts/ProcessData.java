@@ -39,6 +39,12 @@ public class ProcessData extends BaseScript
         return options;
     }
 
+    /**{@inheritDoc}*/
+    @Override
+    protected boolean luceneReadOnly() {
+        return false;
+    }
+
     @Override
     protected void execute(CommandLine opts) throws Exception
     {

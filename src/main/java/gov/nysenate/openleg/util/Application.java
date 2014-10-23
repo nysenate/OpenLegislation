@@ -7,6 +7,7 @@ import gov.nysenate.util.DB;
 import gov.nysenate.util.Mailer;
 import gov.nysenate.util.listener.NYSenateConfigurationListener;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -38,10 +39,10 @@ public class Application
      */
     public static boolean bootstrap()
     {
-        return bootstrap(prodPropertyFileName);
+        return bootstrap(prodPropertyFileName, true);
     }
 
-    public static boolean bootstrap(String propertyFileName)
+    public static boolean bootstrap(String propertyFileName, boolean luceneReadOnly)
     {
         try
         {
@@ -49,7 +50,7 @@ public class Application
             appInstance.db = new DB(appInstance.config, "mysqldb");
             appInstance.mailer = new Mailer(appInstance.config, "mailer");
             appInstance.environment = new Environment(appInstance.config, "env");
-            appInstance.lucene = new Lucene(appInstance.config, "lucene");
+            appInstance.lucene = new Lucene(new File(appInstance.config.getValue("lucene.directory")), luceneReadOnly);
             appInstance.storage = new Storage(appInstance.environment.getStorageDirectory());
             return true;
         }

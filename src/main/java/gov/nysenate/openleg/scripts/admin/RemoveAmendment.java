@@ -22,6 +22,12 @@ public class RemoveAmendment extends BaseScript
         new RemoveAmendment().run(args);
     }
 
+    /**{@inheritDoc}*/
+    @Override
+    protected boolean luceneReadOnly() {
+        return false;
+    }
+
     protected Options getOptions() {
         Options options = new Options();
         options.addOption("y", true, "Year of bill session");

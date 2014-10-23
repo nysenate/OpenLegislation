@@ -44,7 +44,6 @@ abstract public class BaseScript
      */
     public void run(String[] args) throws Exception
     {
-
         Options options = getOptions();
         options.addOption("h", "help", false, "Print this message");
         Option environment = new Option("e", "environment", true, "Path to a configuration file for this environment");
@@ -63,7 +62,7 @@ abstract public class BaseScript
                     System.exit(1);
                 }
                 else {
-                    Application.bootstrap(propertiesFile.getAbsolutePath());
+                    Application.bootstrap(propertiesFile.getAbsolutePath(), luceneReadOnly());
                 }
 
                 execute(opts);
@@ -133,4 +132,14 @@ abstract public class BaseScript
      * @throws Exception
      */
     abstract protected void execute(CommandLine opts) throws Exception;
+
+    /**
+     * Returns true if the implementing script should not attempt to obtain a lucene write lock
+     * Defaults to true unless overridden
+     *
+     * @return
+     */
+    protected boolean luceneReadOnly() {
+        return true;
+    }
 }
