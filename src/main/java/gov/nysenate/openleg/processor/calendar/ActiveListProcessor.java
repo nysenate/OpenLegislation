@@ -50,7 +50,7 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
             Integer sessionYear = xml.getInteger("@sessyr", xmlCalendarActive);
             Integer year = xml.getInteger("@year", xmlCalendarActive);
             CalendarId calendarId = new CalendarId(calendarNo, year);
-            Calendar calendar = getOrCreateCalendar(calendarId, modifiedDate);
+            final Calendar calendar = getOrCreateCalendar(calendarId, sobiFragment);
             calendar.setModifiedDateTime(modifiedDate);
 
             String action = xml.getString("@action", xmlCalendarActive);
@@ -86,11 +86,18 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
                     calendar.putActiveList(activeList);
                 }
             }
-            logger.debug("Saving {}", calendar);
-            calendarDataService.saveCalendar(calendar, sobiFragment);
         }
         catch (IOException | SAXException | XPathExpressionException ex) {
             logger.error("Failed to parse active list sobi", ex);
         }
+
+        if (env.isIncrementalUpdates() || calendarIngestCache.exceedsCapacity()) {
+            flushCalendarCache();
+        }
+    }
+
+    @Override
+    public void postProcess() {
+        flushCalendarCache();
     }
 }

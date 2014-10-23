@@ -9,8 +9,10 @@ public class BaseBillIdView implements ViewObject
     protected int session;
 
     public BaseBillIdView(BillId billId) {
-        this.basePrintNo = billId.getBasePrintNo();
-        this.session = billId.getSession().getYear();
+        if (billId != null) {
+            this.basePrintNo = billId.getBasePrintNo();
+            this.session = billId.getSession().getYear();
+        }
     }
 
     @Override

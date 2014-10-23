@@ -49,7 +49,7 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
             Integer agendaNo = xml.getInteger("@no", xmlAgenda);
             Integer year = xml.getInteger("@year", xmlAgenda);
             AgendaId agendaId = new AgendaId(agendaNo, year);
-            Agenda agenda = getOrCreateAgenda(agendaId, modifiedDate);
+            Agenda agenda = getOrCreateAgenda(agendaId, sobiFragment);
             agenda.setModifiedDateTime(modifiedDate);
             String action = xml.getString("@action", xmlAgenda);
             // Remove the Agenda if the action = 'remove'
@@ -107,12 +107,19 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
                     }
                     agenda.putAgendaInfoAddendum(addendum);
                 }
-                logger.info("Saving {}", agenda);
-                agendaDataService.saveAgenda(agenda, sobiFragment);
             }
         }
         catch (IOException | SAXException | XPathExpressionException ex) {
             logger.error("Failed to parse agenda fragment {}", sobiFragment.getFragmentId(), ex);
         }
+
+        if (env.isIncrementalUpdates() || agendaIngestCache.exceedsCapacity()) {
+            flushAllCaches();
+        }
+    }
+
+    @Override
+    public void postProcess() {
+        flushAllCaches();
     }
 }

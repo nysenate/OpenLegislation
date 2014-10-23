@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.bill.data;
 
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillDao;
@@ -21,6 +22,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -36,9 +38,13 @@ public class CachedBillDataService implements BillDataService, CachingService
     @Autowired
     private BillDao billDao;
 
+    @Autowired
+    private EventBus eventBus;
+
     @PostConstruct
     private void init() {
         setupCaches();
+        eventBus.register(this);
     }
 
     /** --- CachingService implementation --- */
@@ -128,6 +134,7 @@ public class CachedBillDataService implements BillDataService, CachingService
         logger.debug("Persisting bill {}", bill);
         billDao.updateBill(bill, fragment);
         putBillInCache(bill);
+        eventBus.post(new BillUpdateEvent(bill, LocalDateTime.now()));
     }
 
     /**

@@ -1,7 +1,10 @@
 package gov.nysenate.openleg.script;
 
+import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.processor.DataProcessor;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +18,13 @@ public class ProcessData extends BaseScript
     private static final Logger logger = LoggerFactory.getLogger(ProcessData.class);
 
     @Autowired
+    private Environment env;
+
+    @Autowired
     private DataProcessor dataProcessor;
 
     public static void main(String[] args) throws Exception {
+        SCRIPT_NAME = "ProcessData";
         AnnotationConfigApplicationContext ctx = init();
         ProcessData processData = ctx.getBean(ProcessData.class);
         CommandLine cmd = getCommandLine(processData.getOptions(), args);
@@ -27,15 +34,33 @@ public class ProcessData extends BaseScript
 
     protected Options getOptions() {
         Options options = new Options();
-        options.addOption("c", "collate", false, "Will collate sobi files without ingesting afterwards unless --ingest is set");
-        options.addOption("i", "ingest", false, "Will ingest pending sobi fragments without collating first unless --collate is set");
+        options.addOption("c", "collate", false, "Will collate sobi files from the incoming data directories.");
+        options.addOption("i", "ingest", false, "Will process all pending files.");
+        options.addOption("x", "index", false, "Will update search indices during ingest if set.");
+        options.addOption("l", "incremental", false, "Performs updates to the persistence layer with greater frequency");
+        options.addOption("h", "help", false, "Display help");
         return options;
     }
 
     @Override
     protected void execute(CommandLine opts) throws Exception {
+        if (opts.hasOption("help")) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp(SCRIPT_NAME, "\nThis CLI is used for collating and processing incoming data. " +
+                            "By default, any incoming files will be collated and then ingested. " +
+                            "To speed up sobi processing any database operations will be queued and " +
+                            "performed in batches which will make the change log less granular. " +
+                            "Use the incremental option if you want to have a full change log of updates.\n",
+                    getOptions(), "", true);
+            return;
+        }
         boolean collate = opts.hasOption("collate");
         boolean ingest = opts.hasOption("ingest");
+        boolean allowIndex = opts.hasOption("index");
+        boolean incremental = opts.hasOption("incremental");
+
+        env.setElasticIndexing(allowIndex);
+        env.setIncrementalUpdates(incremental);
 
         if(!collate && !ingest) {
             dataProcessor.run();

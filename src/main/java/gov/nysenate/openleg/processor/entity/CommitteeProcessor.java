@@ -85,6 +85,9 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
         }
     }
 
+    @Override
+    public void postProcess() {}
+
     /** --- Internal Methods --- */
 
     private Committee processCommittee(Node committeeNode, Committee committee) throws XPathExpressionException,

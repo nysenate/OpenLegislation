@@ -337,8 +337,12 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         return activeVersion;
     }
 
+    /** TODO: Think about this some more.. */
     public void setActiveVersion(Version activeVersion) {
         this.activeVersion = activeVersion;
+        if (!this.amendmentMap.containsKey(activeVersion)) {
+            this.amendmentMap.put(activeVersion, new BillAmendment(this.baseBillId, activeVersion));
+        }
     }
 
     public Map<Version, BillAmendment> getAmendmentMap() {

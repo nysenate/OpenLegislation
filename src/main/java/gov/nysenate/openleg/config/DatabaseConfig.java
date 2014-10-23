@@ -54,7 +54,7 @@ public class DatabaseConfig
             logger.error("Error when setting the database driver " + dbDriver + "{}", ex.getMessage());
         }
         pool.setJdbcUrl(String.format(jdbcUrlTemplate, dbType, dbHost, dbName));
-        logger.info("Setting jdbc url: " + pool.getJdbcUrl());
+        logger.info("Connecting to Postgres: " + pool.getJdbcUrl());
         pool.setUser(dbUser);
         pool.setPassword(dbPass);
         pool.setMinPoolSize(3);

@@ -5,18 +5,16 @@ import gov.nysenate.openleg.model.calendar.CalendarActiveList;
 
 import java.util.stream.Collectors;
 
-
-public class ActiveListView extends SimpleActiveListView {
-
+public class ActiveListView extends SimpleActiveListView
+{
     ListView<ActiveListEntryView> entries;
 
     public ActiveListView(CalendarActiveList activeList) {
         super(activeList);
-
         this.entries = ListView.of(
-                activeList.getEntries().parallelStream()
-                        .map(ActiveListEntryView::new)
-                        .collect(Collectors.toList())
+            activeList.getEntries().parallelStream()
+                .map(ActiveListEntryView::new)
+                .collect(Collectors.toList())
         );
     }
 
@@ -24,10 +22,8 @@ public class ActiveListView extends SimpleActiveListView {
         return entries;
     }
 
-
     @Override
     public String getViewType() {
         return "calendar-activelist";
     }
-
 }

@@ -11,8 +11,7 @@ public enum ErrorCode
 {
     /** --- Base --- */
 
-    UNKNOWN_ERROR(-1, "There was an unexpected error while handling your request. " +
-                      "Please notify Senate Tech if you received this error."),
+    UNKNOWN_ERROR(-1, "There was an unexpected error while handling your request."),
 
     INVALID_ARGUMENTS(1, "One or more of the provided request parameters was not valid"),
 

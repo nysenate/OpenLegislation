@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.dao.base;
 
-import com.google.common.base.Objects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.ArrayList;

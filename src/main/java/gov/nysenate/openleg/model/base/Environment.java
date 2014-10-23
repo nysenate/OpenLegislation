@@ -1,76 +1,107 @@
 package gov.nysenate.openleg.model.base;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 import java.io.File;
-import java.util.Date;
 
 /**
- * The Environment class is essentially a configuration for an OpenLeg workspace.
- * Each workspace contains its own set of directories to store the source data files
- * as well as an associated database schema to store the data.
- *
- * Only one environment can be active at a given time but having multiple available
- * can be beneficial for testing new features on a subset of bills for example.
+ * The Environment class contains various configuration options to be used throughout the application.
+ * This class is mutable during runtime so that hot config changes can be made to the fields here whereas
+ * the property file is only checked during initialization.
  */
+@Component
 public class Environment
 {
-    public final static String DEFAULT_SCHEMA = "master";
+    @Value("${env.schema:master}") private String schema;
 
-    private int id;
-    private String schema = DEFAULT_SCHEMA;
+    /** --- File system configuration --- */
+
+    @Value("${env.directory}") private String envDirPath;
+    @Value("${env.staging}") private String stagingDirPath;
+    @Value("${env.archive}") private String archiveDirPath;
+
     private File baseDirectory;
     private File stagingDirectory;
-    private File workingDirectory;
     private File archiveDirectory;
-    private boolean active;
-    private Date createdDateTime;
-    private Date modifiedDateTime;
+
+    /** --- Search Index settings --- */
+
+    @Value("${elastic.indexing.enabled:true}")
+    private boolean elasticIndexing = true;
+
+    /** --- Processing settings --- */
+
+    @Value("${incremental.update:true}") private boolean incrementalUpdates;
+    @Value("${sobi.batch.size:100}") private int sobiBatchSize;
+
+    /** --- Constructors --- */
 
     public Environment() {}
 
-    public Environment(String directoryPath) {
-        this(new File(directoryPath));
+    @PostConstruct
+    private void init() {
+        this.baseDirectory = new File(envDirPath);
+        this.stagingDirectory = new File(stagingDirPath);
+        this.archiveDirectory = new File(archiveDirPath);
     }
 
-    public Environment(File baseDirectory) {
-        this.baseDirectory = baseDirectory;
-        this.stagingDirectory = new File(baseDirectory,"data");
-        this.workingDirectory = new File(baseDirectory,"work");
-        this.archiveDirectory = new File(baseDirectory,"archive");
+    /** --- Basic Getters/Setters --- */
+
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
     }
 
     public File getBaseDirectory() {
         return baseDirectory;
     }
 
+    public void setBaseDirectory(File baseDirectory) {
+        this.baseDirectory = baseDirectory;
+    }
+
     public File getStagingDirectory() {
         return stagingDirectory;
     }
 
-    public File getWorkingDirectory() {
-        return workingDirectory;
+    public void setStagingDirectory(File stagingDirectory) {
+        this.stagingDirectory = stagingDirectory;
     }
 
     public File getArchiveDirectory() {
         return archiveDirectory;
     }
 
-    public int getId() {
-        return id;
+    public void setArchiveDirectory(File archiveDirectory) {
+        this.archiveDirectory = archiveDirectory;
     }
 
-    public String getSchema() {
-        return schema;
+    public boolean isElasticIndexing() {
+        return elasticIndexing;
     }
 
-    public boolean isActive() {
-        return active;
+    public void setElasticIndexing(boolean elasticIndexing) {
+        this.elasticIndexing = elasticIndexing;
     }
 
-    public Date getCreatedDateTime() {
-        return createdDateTime;
+    public boolean isIncrementalUpdates() {
+        return incrementalUpdates;
     }
 
-    public Date getModifiedDateTime() {
-        return modifiedDateTime;
+    public void setIncrementalUpdates(boolean incrementalUpdates) {
+        this.incrementalUpdates = incrementalUpdates;
+    }
+
+    public int getSobiBatchSize() {
+        return sobiBatchSize;
+    }
+
+    public void setSobiBatchSize(int sobiBatchSize) {
+        this.sobiBatchSize = sobiBatchSize;
     }
 }

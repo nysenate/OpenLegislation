@@ -24,7 +24,7 @@ public class DbCalendarSearchService implements CalendarSearchService {
     private CalendarSearchDao calendarSearchDao;
 
     /** {@inheritDoc} */
-    @Override
+//    @Override
     public int getCalenderSearchResultCount(CalendarSearchParameters searchParams) throws InvalidParametersSearchException {
         if (!searchParams.isValid()) {
             throw new InvalidParametersSearchException(searchParams);
@@ -33,7 +33,7 @@ public class DbCalendarSearchService implements CalendarSearchService {
     }
 
     /** {@inheritDoc} */
-    @Override
+//    @Override
     public List<CalendarId> searchForCalendars(CalendarSearchParameters searchParams,
                                                SortOrder sortOrder, LimitOffset limitOffset)
                                                 throws InvalidParametersSearchException {
@@ -44,7 +44,7 @@ public class DbCalendarSearchService implements CalendarSearchService {
     }
 
     /** {@inheritDoc} */
-    @Override
+//    @Override
     public List<CalendarActiveListId> searchForActiveLists(CalendarSearchParameters searchParams,
                                                            SortOrder sortOrder, LimitOffset limitOffset)
                                                             throws InvalidParametersSearchException {
@@ -55,7 +55,7 @@ public class DbCalendarSearchService implements CalendarSearchService {
     }
 
     /** {@inheritDoc} */
-    @Override
+//    @Override
     public List<CalendarSupplementalId> searchForFloorCalendars(CalendarSearchParameters searchParams,
                                                                 SortOrder sortOrder, LimitOffset limitOffset)
                                                                 throws InvalidParametersSearchException {

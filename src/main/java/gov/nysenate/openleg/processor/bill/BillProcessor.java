@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.bill;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -14,13 +15,9 @@ import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sobi.SobiLineType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.processor.base.IngestCache;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
-import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
-import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,8 +27,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * The BillProcessor parses bill sobi fragments, applies bill updates, and persists into the backing
@@ -42,6 +41,8 @@ import java.util.regex.Pattern;
 public class BillProcessor extends AbstractDataProcessor implements SobiProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(BillProcessor.class);
+
+    /** --- Patterns --- */
 
     /** Date format found in SobiBlock[V] vote memo blocks. e.g. 02/05/2013 */
     protected static final DateTimeFormatter voteDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -62,9 +63,9 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
 
     /** RULES Sponsors are formatted as RULES COM followed by the name of the sponsor that requested passage. */
     protected static final Pattern rulesSponsorPattern =
-            Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
+        Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
 
-    /** THe format for program info lines. */
+    /** The format for program info lines. */
     protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
 
     /** --- Constructors --- */
@@ -79,21 +80,26 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     }
 
     /**
-     * Performs processing of the SOBI bill fragments with the option to limit to a collection of
-     * bills using the restrictToBillIds set (for testing/development purposes only).
+     * Performs processing of the SOBI bill fragments.
      *
      * @param sobiFragment SobiFragment
      */
     @Override
     public void process(SobiFragment sobiFragment) {
-        IngestCache<BaseBillId, Bill> billIngestCache = new IngestCache<>();
         LocalDateTime date = sobiFragment.getPublishedDateTime();
         List<SobiBlock> blocks = sobiFragment.getSobiBlocks();
+
+        // Retrieve the bills in parallel so that they are cached when we iterate.
+        blocks.parallelStream()
+            .map(block -> block.getBillId())
+            .distinct()
+            .map(billId -> getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), billId, sobiFragment));
+
         logger.info("Processing " + sobiFragment.getFragmentId() + " with (" + blocks.size() + ") blocks.");
         for (SobiBlock block : blocks) {
             String data = block.getData();
             BillId billId = block.getBillId();
-            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), billId, billIngestCache);
+            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), billId, sobiFragment);
             Version specifiedVersion = billId.getVersion();
             BillAmendment specifiedAmendment = baseBill.getAmendment(specifiedVersion);
             BillAmendment activeAmendment = baseBill.getActiveAmendment();
@@ -105,7 +111,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
                     case TITLE: applyTitle(data, baseBill, date); break;
                     case BILL_EVENT: applyBillActions(data, baseBill, specifiedAmendment); break;
-                    case SAME_AS: applySameAs(data, specifiedAmendment); break;
+                    case SAME_AS: applySameAs(data, specifiedAmendment, sobiFragment); break;
                     case SPONSOR: applySponsor(data, baseBill, specifiedAmendment, date); break;
                     case CO_SPONSOR: applyCosponsors(data, activeAmendment); break;
                     case MULTI_SPONSOR: applyMultisponsors(data, activeAmendment); break;
@@ -115,7 +121,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     case SUMMARY: applySummary(data, baseBill, date); break;
                     case SPONSOR_MEMO:
                     case RESOLUTION_TEXT:
-                    case TEXT: applyText(data, specifiedAmendment, date, block.getType()); break;
+                    case TEXT: applyText(data, specifiedAmendment, date, block.getType(), sobiFragment); break;
                     case VETO_APPROVE_MEMO: applyVetoApprovalMessage(data, baseBill, date); break;
                     case VOTE_MEMO: applyVoteMemo(data, specifiedAmendment, date); break;
                     default: throw new ParseError("Invalid Line Code " + block.getType());
@@ -124,16 +130,28 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             catch (ParseError ex) {
                 logger.error("Parse Error: {}", ex);
             }
-            billIngestCache.set(baseBill.getBaseBillId(), baseBill);
+            billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
+
+            if (billIngestCache.exceedsCapacity()) {
+                logger.info("Flushing bill ingest cache with {} bills!", billIngestCache.getSize());
+                flushBillCache();
+            }
         }
 
-        billIngestCache.getCurrentCache().stream()
-            .forEach(bill -> {
-                logger.trace("Saving bill " + bill);
-                // TODO: Move this uni-bill sync somewhere else, like the dao?
-                applyUniBillText(bill, billIngestCache, sobiFragment);
-                billDataService.saveBill(bill, sobiFragment);
-            });
+        // Flush cache after each fragment when doing incremental updates
+        if (env.isIncrementalUpdates()) {
+            flushBillCache();
+        }
+    }
+
+    /**
+     * If updates are batched, we need to make sure that the global ingest cache is purged.
+     */
+    @Override
+    public void postProcess() {
+        if (!env.isIncrementalUpdates()) {
+            flushBillCache();
+        }
     }
 
     /** --- Processing Methods --- */
@@ -294,7 +312,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *                              | 2009S51106 5No same as
      * ----------------------------------------------------------------------
      */
-    private void applySameAs(String data, BillAmendment specifiedAmendment) {
+    private void applySameAs(String data, BillAmendment specifiedAmendment, SobiFragment fragment) {
         if (data.trim().equalsIgnoreCase("No same as") || data.trim().equalsIgnoreCase("DELETE")) {
             specifiedAmendment.getSameAs().clear();
             specifiedAmendment.setUniBill(false);
@@ -305,6 +323,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                 specifiedAmendment.getSameAs().clear();
                 if (sameAsMatcher.group(1) != null && !sameAsMatcher.group(1).isEmpty()) {
                     specifiedAmendment.setUniBill(true);
+                    syncUniBillText(specifiedAmendment, fragment);
                 }
                 List<String> sameAsMatches = new ArrayList<>(Arrays.asList(sameAsMatcher.group(2).split(", ")));
                 for (String sameAs : sameAsMatches) {
@@ -470,15 +489,19 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * @param billAmendment
      * @param date
      */
-    private void applyText(String data, BillAmendment billAmendment, LocalDateTime date, SobiLineType lineType) throws ParseError{
+    private void applyText(String data, BillAmendment billAmendment, LocalDateTime date, SobiLineType lineType,
+                           SobiFragment fragment) throws ParseError {
         BillTextParser billTextParser = new BillTextParser(data, BillTextType.getTypeString(lineType), date);
         String fullText = billTextParser.extractText();
         if (fullText != null) {
             if (lineType == SobiLineType.SPONSOR_MEMO) {
                 billAmendment.setMemo(fullText);
             }
-            else if (lineType == SobiLineType.RESOLUTION_TEXT || lineType == SobiLineType.TEXT){
+            else if (lineType == SobiLineType.RESOLUTION_TEXT || lineType == SobiLineType.TEXT) {
                 billAmendment.setFullText(fullText);
+                if (billAmendment.isUniBill()) {
+                    syncUniBillText(billAmendment, fragment);
+                }
             }
         }
     }
@@ -626,31 +649,19 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * Uni-bills share text with their counterpart house. Ensure that the full text of bill amendments that
      * have a uni-bill designator are kept in sync.
      */
-    protected void applyUniBillText(Bill baseBill, IngestCache<BaseBillId, Bill> ingestCache, SobiFragment sobiFragment) {
-        for (BillAmendment billAmendment : baseBill.getAmendmentList()) {
-            if (billAmendment.isUniBill()) {
-                for (BillId uniBillId : billAmendment.getSameAs()) {
-                    try {
-                        Bill uniBill = getBaseBillFromCacheOrService(uniBillId, ingestCache);
-                        BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
-                        String fullText = (billAmendment.getFullText() != null) ? billAmendment.getFullText() : "";
-                        String uniFullText = (uniBillAmend.getFullText() != null) ? uniBillAmend.getFullText() : "";
-                        if (fullText.isEmpty() && !uniFullText.isEmpty()) {
-                            billAmendment.setFullText(uniFullText);
-                        }
-                        else if (!fullText.isEmpty() && !fullText.equals(uniFullText)) {
-                            // Perform an update of the same as bill that is receiving the text.
-                            uniBillAmend.setFullText(fullText);
-                            billDataService.saveBill(uniBill, sobiFragment);
-                        }
-                    }
-                    catch (BillNotFoundEx | BillAmendNotFoundEx ex) {
-                        logger.warn("Failed to synchronize full text of {} with same as bill {}. Reason: {}",
-                            billAmendment, uniBillId, ex.getMessage());
-                    }
-                }
+    protected void syncUniBillText(BillAmendment billAmendment, SobiFragment sobiFragment) {
+        billAmendment.getSameAs().forEach(uniBillId -> {
+            Bill uniBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), uniBillId, sobiFragment);
+            BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
+            // If this is the senate bill amendment, copy text to the assembly bill amendment
+            if (billAmendment.getBillType().getChamber().equals(Chamber.SENATE)) {
+                uniBillAmend.setFullText(billAmendment.getFullText());
             }
-        }
+            // Otherwise copy the text to this assembly bill amendment
+            else if (!uniBillAmend.getFullText().isEmpty()) {
+                billAmendment.setFullText(uniBillAmend.getFullText());
+            }
+        });
     }
 
     /**

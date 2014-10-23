@@ -35,10 +35,8 @@ public abstract class ElasticBaseDao
         else {
             Map<String, String> sortMap =
                 Splitter.on(",").omitEmptyStrings().trimResults().withKeyValueSeparator(":").split(sort);
-            sortMap.forEach((k,v) -> {
-                sortBuilders.add(
-                    SortBuilders.fieldSort(k).order(org.elasticsearch.search.sort.SortOrder.valueOf(v.toUpperCase())));
-            });
+            sortMap.forEach((k,v) -> sortBuilders.add(
+                SortBuilders.fieldSort(k).order(org.elasticsearch.search.sort.SortOrder.valueOf(v.toUpperCase()))));
         }
         return sortBuilders;
     }

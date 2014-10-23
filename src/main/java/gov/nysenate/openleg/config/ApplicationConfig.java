@@ -1,17 +1,20 @@
 package gov.nysenate.openleg.config;
 
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.model.agenda.Agenda;
+import gov.nysenate.openleg.model.agenda.AgendaId;
+import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.processor.base.IngestCache;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
-import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,33 +26,18 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
+
+import java.util.Calendar;
 
 @Configuration
 @EnableCaching
 public class ApplicationConfig implements CachingConfigurer
 {
-    @Value("${env.directory}")
-    private String envDirectory;
-
-    @Value("${cache.max.heap.size:100M}")
-    private String cacheMaxHeapSize;
-
-    @Value("${elastic.search.cluster.name:elasticsearch}")
-    private String elasticSearchCluster;
-
-    @Value("${elastic.search.host:localhost}")
-    private String elasticSearchHost;
-
-    @Value("${elastic.search.port:9300}")
-    private int elasticSearchPort;
-
-    @Bean
-    public Environment defaultEnvironment() {
-        return new Environment(envDirectory);
-    }
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
 
     /** --- Eh Cache Configuration --- */
+
+    @Value("${cache.max.heap.size:100M}") private String cacheMaxHeapSize;
 
     @Bean(destroyMethod = "shutdown")
     public net.sf.ehcache.CacheManager pooledCacheManger() {
@@ -87,19 +75,17 @@ public class ApplicationConfig implements CachingConfigurer
 
     /** --- Elastic Search Configuration --- */
 
+    @Value("${elastic.search.cluster.name:elasticsearch}") private String elasticSearchCluster;
+    @Value("${elastic.search.host:localhost}") private String elasticSearchHost;
+    @Value("${elastic.search.port:9300}") private int elasticSearchPort;
+
     @Bean(destroyMethod = "close")
     public Client elasticSearchNode() {
-        try {
-            Settings settings = ImmutableSettings.settingsBuilder()
-                .put("cluster.name", elasticSearchCluster).build();
-
-            return new TransportClient(settings).addTransportAddress(
+        logger.info("Connecting to elastic search cluster {}", elasticSearchCluster);
+        Settings settings = ImmutableSettings.settingsBuilder()
+            .put("cluster.name", elasticSearchCluster).build();
+        return new TransportClient(settings).addTransportAddress(
                 new InetSocketTransportAddress(elasticSearchHost, elasticSearchPort));
-        }
-        catch (ElasticsearchException ex) {
-            System.err.println("Failed to join Elastic Search cluster!\n" + ex.getMessage());
-        }
-        return NodeBuilder.nodeBuilder().build().client();
     }
 
     /** --- Guava Event Bus Configuration --- */
@@ -107,5 +93,25 @@ public class ApplicationConfig implements CachingConfigurer
     @Bean
     public EventBus eventBus() {
         return new EventBus("openleg");
+    }
+
+    /** --- Processing Instances --- */
+
+    @Value("${sobi.batch.size:1000}")
+    private int sobiBatchSize;
+
+    @Bean(name = "billIngestCache")
+    public IngestCache<BaseBillId, Bill, SobiFragment> billIngestCache() {
+        return new IngestCache<>(sobiBatchSize);
+    }
+
+    @Bean(name = "agendaIngestCache")
+    public IngestCache<AgendaId, Agenda, SobiFragment> agendaIngestCache() {
+        return new IngestCache<>(100);
+    }
+
+    @Bean(name = "calendarIngestCache")
+    public IngestCache<CalendarId, Calendar, SobiFragment> calendarIngestCache() {
+        return new IngestCache<>(100);
     }
 }

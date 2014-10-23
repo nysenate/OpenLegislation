@@ -2,10 +2,13 @@ package gov.nysenate.openleg.dao.bill.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.service.base.SearchResults;
 import gov.nysenate.openleg.service.bill.search.BillSearchField;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,4 +25,10 @@ public interface BillSearchDao
      * @return SearchResults<BillId>
      */
     public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff);
+
+    /**
+     *
+     * @param bills
+     */
+    public void updateBillIndices(Collection<Bill> bills);
 }

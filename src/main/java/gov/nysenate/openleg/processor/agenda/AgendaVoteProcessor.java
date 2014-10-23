@@ -48,7 +48,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
             SessionYear session = new SessionYear(xml.getInteger("@sessyr", xmlAgendaVote));
             Integer year = xml.getInteger("@year", xmlAgendaVote);
             AgendaId agendaId = new AgendaId(agendaNo, year);
-            Agenda agenda = getOrCreateAgenda(agendaId, modifiedDate);
+            Agenda agenda = getOrCreateAgenda(agendaId, sobiFragment);
             agenda.setModifiedDateTime(modifiedDate);
 
             logger.info("Processing Votes for {} - {}", agendaId, sobiFragment);
@@ -137,9 +137,8 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                         voteCommittee.addVoteBill(voteBill);
 
                         // Update the actual Bill with the vote information and persist it.
-                        Bill bill = getOrCreateBaseBill(modifiedDate, billId);
+                        Bill bill = getOrCreateBaseBill(modifiedDate, billId, sobiFragment);
                         bill.getAmendment(billId.getVersion()).updateVote(vote);
-                        billDataService.saveBill(bill, sobiFragment);
                     }
                     addendum.putCommittee(voteCommittee);
                 }
@@ -151,5 +150,14 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
         catch (SAXException | XPathExpressionException | IOException ex) {
             logger.error("Failed to parse Agenda Vote.", ex);
         }
+
+        if (env.isIncrementalUpdates() || agendaIngestCache.exceedsCapacity()) {
+            flushAllCaches();
+        }
+    }
+
+    @Override
+    public void postProcess() {
+        flushAllCaches();
     }
 }

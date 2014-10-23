@@ -25,4 +25,9 @@ public interface SobiProcessor
      * @param fragment SobiFragment - The fragment to be processed.
      */
     public void process(final SobiFragment fragment);
+
+    /**
+     * Perform any additional tasks that must be run prior to finishing processing.
+     */
+    public void postProcess();
 }

@@ -48,7 +48,7 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
             Integer sessionYear = xml.getInteger("@sessyr", xmlCalendar);
             Integer year = xml.getInteger("@year", xmlCalendar);
             CalendarId calendarId = new CalendarId(calendarNo, year);
-            Calendar calendar = getOrCreateCalendar(calendarId, modifiedDate);
+            Calendar calendar = getOrCreateCalendar(calendarId, sobiFragment);
             calendar.setModifiedDateTime(modifiedDate);
 
             // Actions apply to supplemental and not the whole calendar
@@ -95,11 +95,18 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
                     calendar.putSupplemental(supplemental);
                 }
             }
-            logger.debug("Saving {}", calendar);
-            calendarDataService.saveCalendar(calendar, sobiFragment);
         }
         catch (IOException | SAXException | XPathExpressionException ex) {
             logger.error("Failed to parse calendar sobi {}", sobiFragment.getFragmentId(), ex);
         }
+
+        if (env.isIncrementalUpdates() || calendarIngestCache.exceedsCapacity()) {
+            flushCalendarCache();
+        }
+    }
+
+    @Override
+    public void postProcess() {
+        flushCalendarCache();
     }
 }

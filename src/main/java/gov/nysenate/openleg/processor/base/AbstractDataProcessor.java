@@ -3,6 +3,7 @@ package gov.nysenate.openleg.processor.base;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
+import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -10,6 +11,7 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
@@ -23,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 
 /**
@@ -35,33 +38,34 @@ public abstract class AbstractDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(AbstractDataProcessor.class);
 
+    @Autowired protected Environment env;
+
     /** --- Data Services --- */
 
-    @Autowired
-    protected AgendaDataService agendaDataService;
-    @Autowired
-    protected BillDataService billDataService;
-    @Autowired
-    protected CalendarDataService calendarDataService;
-    @Autowired
-    protected CommitteeService committeeService;
-    @Autowired
-    protected MemberService memberService;
-    @Autowired
-    protected VetoDataService vetoDataService;
+    @Autowired protected AgendaDataService agendaDataService;
+
+    @Autowired protected BillDataService billDataService;
+
+    @Autowired protected CalendarDataService calendarDataService;
+
+    @Autowired protected CommitteeService committeeService;
+
+    @Autowired protected MemberService memberService;
+
+    @Autowired protected VetoDataService vetoDataService;
+
+    /** --- Caches --- */
+
+    @Resource(name = "agendaIngestCache")
+    protected IngestCache<AgendaId, Agenda, SobiFragment> agendaIngestCache;
+
+    @Resource(name = "billIngestCache")
+    protected IngestCache<BaseBillId, Bill, SobiFragment> billIngestCache;
+
+    @Resource(name = "calendarIngestCache")
+    protected IngestCache<CalendarId, Calendar, SobiFragment> calendarIngestCache;
 
     /** --- Bill Methods --- */
-
-    /**
-     * Retrieves/creates the Bill without checking a cache.
-     *
-     * @param publishDate Date
-     * @param billId BillId
-     * @return Bill
-     */
-    protected Bill getOrCreateBaseBill(LocalDateTime publishDate, BillId billId) {
-        return getOrCreateBaseBill(publishDate, billId, null);
-    }
 
     /**
      * Retrieves the base Bill container using the given billId from either the cache or the service layer.
@@ -71,28 +75,33 @@ public abstract class AbstractDataProcessor
      * @param publishDate Date - Typically the date of the source data file. Only used when bill information
      *                           does not already exist and must be created.
      * @param billId BillId - The BillId to find a matching Bill for.
-     * @param billIngestCache IngestCache<BillId, Bill> - Optional cache used to speed up processing.
      * @return Bill
      */
-    protected Bill getOrCreateBaseBill(LocalDateTime publishDate, BillId billId, IngestCache<BaseBillId, Bill> billIngestCache) {
+    protected final Bill getOrCreateBaseBill(LocalDateTime publishDate, BillId billId, SobiFragment fragment) {
         boolean isBaseVersion = BillId.isBaseVersion(billId.getVersion());
         BaseBillId baseBillId = BillId.getBaseId(billId);
         Bill baseBill;
-        try {
-            baseBill = getBaseBillFromCacheOrService(baseBillId, billIngestCache);
+        // Check the cache, or hit the data service otherwise
+        if (billIngestCache.has(baseBillId)) {
+            baseBill = billIngestCache.get(baseBillId).getLeft();
         }
-        catch (BillNotFoundEx ex) {
-            // Create the bill since it does not exist and add it to the ingest cache.
-            if (!isBaseVersion) {
-                logger.warn("Bill Amendment {} filed without initial bill.", billId);
+        else {
+            try {
+                baseBill = billDataService.getBill(baseBillId);
             }
-            baseBill = new Bill(baseBillId);
-            baseBill.setModifiedDateTime(publishDate);
-            baseBill.setPublishedDateTime(publishDate);
-            if (billIngestCache != null) {
-                billIngestCache.set(baseBillId, baseBill);
+            catch (BillNotFoundEx ex) {
+                // Create the bill since it does not exist and add it to the ingest cache.
+                if (!isBaseVersion) {
+                    logger.warn("Bill Amendment {} filed without initial bill.", billId);
+                }
+                baseBill = new Bill(baseBillId);
+                baseBill.setModifiedDateTime(publishDate);
+                baseBill.setPublishedDateTime(publishDate);
+                billIngestCache.set(baseBillId, baseBill, fragment);
             }
+            billIngestCache.set(baseBillId, baseBill, fragment);
         }
+
         if (!baseBill.hasAmendment(billId.getVersion())) {
             BillAmendment billAmendment = new BillAmendment(baseBillId, billId.getVersion());
             // If an active amendment exists, apply its ACT TO clause to this amendment
@@ -125,23 +134,15 @@ public abstract class AbstractDataProcessor
     }
 
     /**
-     * Helper method to retrieve Bill references from either the cache or the BillDataService.
-     *
-     * @param billId BillId
-     * @param billIngestCache IngestCache<BillId, Bill> (can be null)
-     * @return Bill
-     * @throws BillNotFoundEx - If the bill was not found by the service.
+     * Flushes all bills stored in the cache to the persistence layer and clears the cache.
      */
-    protected Bill getBaseBillFromCacheOrService(BillId billId, IngestCache<BaseBillId, Bill> billIngestCache) throws BillNotFoundEx {
-        if (billId == null) {
-            throw new IllegalArgumentException("Bill Id cannot be null!");
+    protected void flushBillCache() {
+        if (billIngestCache.getSize() > 0) {
+            logger.info("Flushing {} bills", billIngestCache.getSize());
+            billIngestCache.getCurrentCache().forEach(entry ->
+                billDataService.saveBill(entry.getLeft(), entry.getRight()));
+            billIngestCache.clearCache();
         }
-        // Ensure bill id references the base bill id since the cache will not distinguish.
-        BaseBillId baseBillId = BillId.getBaseId(billId);
-        // Try the cache, otherwise use the service which can throw the BillNotFoundEx exception.
-        boolean isCached = (billIngestCache != null) && billIngestCache.has(baseBillId);
-        logger.trace("Bill ingest cache " + ((isCached) ? "HIT" : "MISS") + " for bill id " + baseBillId);
-        return (isCached) ? billIngestCache.get(baseBillId) : billDataService.getBill(baseBillId);
     }
 
     /** --- Member Methods --- */
@@ -159,44 +160,86 @@ public abstract class AbstractDataProcessor
     /** --- Agenda Methods --- */
 
     /**
-     * Retrieve an Agenda instance from the backing store or create it if it does not exist.
+     * Retrieve an Agenda instance from the cache/backing store or create it if it does not exist.
      *
      * @param agendaId AgendaId - Retrieve Agenda via this agendaId.
-     * @param date Date - The published date of the requesting sobi fragment.
+     * @param fragment SobiFragment
      * @return Agenda
      */
-    protected Agenda getOrCreateAgenda(AgendaId agendaId, LocalDateTime date) {
+    protected final Agenda getOrCreateAgenda(AgendaId agendaId, SobiFragment fragment) {
         Agenda agenda;
         try {
-            agenda = agendaDataService.getAgenda(agendaId);
+            if (agendaIngestCache.has(agendaId)) {
+                return agendaIngestCache.get(agendaId).getLeft();
+            }
+            else {
+                agenda = agendaDataService.getAgenda(agendaId);
+            }
         }
         catch (AgendaNotFoundEx ex) {
             agenda = new Agenda(agendaId);
-            agenda.setModifiedDateTime(date);
-            agenda.setPublishedDateTime(date);
+            agenda.setModifiedDateTime(fragment.getPublishedDateTime());
+            agenda.setPublishedDateTime(fragment.getPublishedDateTime());
         }
+        agendaIngestCache.set(agendaId, agenda, fragment);
         return agenda;
+    }
+
+    /**
+     * Flushes all agendas stored in the cache to the persistence layer and clears the cache.
+     */
+    protected void flushAgendaCache() {
+        if (agendaIngestCache.getSize() > 0) {
+            logger.info("Flushing {} agendas", agendaIngestCache.getSize());
+            agendaIngestCache.getCurrentCache().forEach(
+                entry -> agendaDataService.saveAgenda(entry.getLeft(), entry.getRight()));
+            agendaIngestCache.clearCache();
+        }
     }
 
     /** --- Calendar Methods --- */
 
     /**
-     * Retrieve a Calendar from the backing store or create it if it does not exist.
+     * Retrieve a Calendar from the cache/backing store or create it if it does not exist.
      *
      * @param calendarId CalendarId - Retrieve Calendar via this calendarId.
-     * @param date Date - The published date of the requesting sobi fragment.
+     * @param fragment SobiFragment
      * @return Calendar
      */
-    protected Calendar getOrCreateCalendar(CalendarId calendarId, LocalDateTime date) {
+    protected final Calendar getOrCreateCalendar(CalendarId calendarId, SobiFragment fragment) {
         Calendar calendar;
         try {
-            calendar = calendarDataService.getCalendar(calendarId);
+            if (calendarIngestCache.has(calendarId)) {
+                return calendarIngestCache.get(calendarId).getLeft();
+            }
+            else {
+                calendar = calendarDataService.getCalendar(calendarId);
+            }
         }
         catch (CalendarNotFoundEx ex) {
             calendar = new Calendar(calendarId);
-            calendar.setModifiedDateTime(date);
-            calendar.setPublishedDateTime(date);
+            calendar.setModifiedDateTime(fragment.getPublishedDateTime());
+            calendar.setPublishedDateTime(fragment.getPublishedDateTime());
         }
+        calendarIngestCache.set(calendarId, calendar, fragment);
         return calendar;
+    }
+
+    /**
+     * Flushes all calendars stored in the cache to the persistence layer and clears the cache.
+     */
+    protected void flushCalendarCache() {
+        if (calendarIngestCache.getSize() > 0) {
+            logger.info("Flushing {} calendars", calendarIngestCache.getSize());
+            calendarIngestCache.getCurrentCache().forEach(
+                entry -> calendarDataService.saveCalendar(entry.getLeft(), entry.getRight()));
+            calendarIngestCache.clearCache();
+        }
+    }
+
+    protected void flushAllCaches() {
+        flushBillCache();
+        flushAgendaCache();
+        flushCalendarCache();
     }
 }

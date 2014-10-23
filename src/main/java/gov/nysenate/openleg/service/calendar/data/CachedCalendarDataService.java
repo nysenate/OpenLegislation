@@ -55,7 +55,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
             return calendarDao.getCalendar(calendarId);
         }
         catch (DataAccessException ex) {
-            logger.warn("Error retrieving calendar " + calendarId + ":\n" + ex.getMessage());
+            logger.debug("Error retrieving calendar " + calendarId + ":\n" + ex.getMessage());
             throw new CalendarNotFoundEx(calendarId);
         }
     }

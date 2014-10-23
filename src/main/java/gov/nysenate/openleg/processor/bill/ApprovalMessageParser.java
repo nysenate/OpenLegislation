@@ -82,13 +82,13 @@ public class ApprovalMessageParser extends BillTextParser {
                 approvalMessage.setSession(new SessionYear(approvalMessage.getYear()));
             }
         }
-        else if(lineNum == 2) {
+        else if (lineNum == 2) {
             Matcher titleMatcher = approvalTitlePattern.matcher(line);
             if(titleMatcher.matches()){
                 approvalMessage.setChapter(Integer.parseInt(titleMatcher.group(1)));
             }
         }
-        else if(lineNum == 4) {
+        else if (lineNum == 4) {
             Matcher billIdMatcher = approvalBillIdPattern.matcher(line);
             if(billIdMatcher.matches()){
                 Chamber chamber = Chamber.getValue(billIdMatcher.group(1));
@@ -98,7 +98,7 @@ public class ApprovalMessageParser extends BillTextParser {
                                           version));
             }
         }
-        else if(lineNum > 11 && approvalMessage.getSigner()==null){
+        else if (lineNum > 11 && approvalMessage.getSigner()==null){
             Matcher signerMatcher = approvalSignerPattern.matcher(line);
             if(signerMatcher.matches()) {
                 approvalMessage.setSigner(signerMatcher.group(1));
@@ -113,15 +113,15 @@ public class ApprovalMessageParser extends BillTextParser {
      * Checks that all necessary fields are present for the approval message
      * @throws ParseError if fields are missing
      */
-    private void verifyApprovalMessage() throws ParseError{
+    private void verifyApprovalMessage() throws ParseError {
         boolean completeApprovalMessage =
-                        approvalMessage.getApprovalNumber()!=0 &&
-                        approvalMessage.getYear()!=0 &&
-                        approvalMessage.getSession()!=null &&
-                        approvalMessage.getBillId()!=null &&
-                        approvalMessage.getChapter()!=0 &&
-                        approvalMessage.getSigner()!=null;
-        if(!completeApprovalMessage){
+            approvalMessage.getApprovalNumber()!=0 &&
+            approvalMessage.getYear()!=0 &&
+            approvalMessage.getSession()!=null &&
+            approvalMessage.getBillId()!=null &&
+            approvalMessage.getChapter()!=0 &&
+            approvalMessage.getSigner()!=null;
+        if (!completeApprovalMessage) {
             throw new ParseError("Incomplete approval message");
         }
     }

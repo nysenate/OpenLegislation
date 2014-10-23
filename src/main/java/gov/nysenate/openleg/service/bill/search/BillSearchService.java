@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.service.base.SearchException;
 import gov.nysenate.openleg.service.base.SearchResults;
+import gov.nysenate.openleg.service.bill.data.BillUpdateEvent;
 
 import java.util.Map;
 
@@ -20,5 +21,5 @@ public interface BillSearchService
      */
     public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException;
 
-
+    public void handleUpdate(BillUpdateEvent billUpdateEvent);
 }

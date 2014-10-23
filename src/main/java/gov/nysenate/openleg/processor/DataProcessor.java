@@ -1,16 +1,19 @@
 package gov.nysenate.openleg.processor;
 
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
 import gov.nysenate.openleg.processor.hearing.PublicHearingProcessService;
 import gov.nysenate.openleg.processor.law.LawProcessService;
 import gov.nysenate.openleg.processor.sobi.SobiProcessService;
 import gov.nysenate.openleg.processor.transcript.TranscriptProcessService;
+import gov.nysenate.openleg.service.base.SearchIndexFlushEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 @Service
@@ -34,6 +37,16 @@ public class DataProcessor
 
     @Autowired
     private LawProcessService lawProcessService;
+
+    /** --- Events --- */
+
+    @Autowired
+    private EventBus eventBus;
+
+    @PostConstruct
+    public void init() {
+        eventBus.register(this);
+    }
 
     /** --- Main Method --- */
 
@@ -68,5 +81,7 @@ public class DataProcessor
         publicHearingProcessService.processPendingPublicHearingFiles();
         lawProcessService.processPendingLawFiles();
         logger.info("Completed ingest.");
+
+        eventBus.post(new SearchIndexFlushEvent());
     }
 }

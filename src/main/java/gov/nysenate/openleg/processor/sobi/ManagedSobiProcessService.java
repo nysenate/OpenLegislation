@@ -15,6 +15,7 @@ import gov.nysenate.openleg.processor.entity.CommitteeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -36,23 +37,20 @@ public class ManagedSobiProcessService implements SobiProcessService
 {
     private static final Logger logger = LoggerFactory.getLogger(ManagedSobiProcessService.class);
 
+    @Value("${sobi.batch.size:1000}")
+    private int sobiBatchSize;
+
     @Autowired
     private SobiDao sobiDao;
 
     /** --- Processor Dependencies --- */
 
-    @Autowired
-    private AgendaProcessor agendaProcessor;
-    @Autowired
-    private AgendaVoteProcessor agendaVoteProcessor;
-    @Autowired
-    private BillProcessor billProcessor;
-    @Autowired
-    private CalendarProcessor calendarProcessor;
-    @Autowired
-    private ActiveListProcessor activeListProcessor;
-    @Autowired
-    private CommitteeProcessor committeeProcessor;
+    @Autowired private AgendaProcessor agendaProcessor;
+    @Autowired private AgendaVoteProcessor agendaVoteProcessor;
+    @Autowired private BillProcessor billProcessor;
+    @Autowired private CalendarProcessor calendarProcessor;
+    @Autowired private ActiveListProcessor activeListProcessor;
+    @Autowired private CommitteeProcessor committeeProcessor;
 
     /** Register processors to handle a specific SobiFragment via this mapping. */
     private ImmutableMap<SobiFragmentType, SobiProcessor> processorMap;
@@ -79,7 +77,7 @@ public class ManagedSobiProcessService implements SobiProcessService
             List<SobiFile> newSobis;
             do {
                 // Iterate through all the new sobi files in small batches to avoid saturating memory.
-                newSobis = sobiDao.getIncomingSobiFiles(SortOrder.ASC, LimitOffset.HUNDRED);
+                newSobis = sobiDao.getIncomingSobiFiles(SortOrder.ASC, new LimitOffset(sobiBatchSize));
                 logger.debug((newSobis.isEmpty()) ? "No more sobi files to collate."
                                                   : "Collating {} sobi files.", newSobis.size());
                 for (SobiFile sobiFile : newSobis) {
@@ -124,14 +122,17 @@ public class ManagedSobiProcessService implements SobiProcessService
             }
             else {
                 logger.error("No processors have been registered to handle: " + fragment);
-                // TODO: Figure out what to do here.
             }
             fragment.setProcessedCount(fragment.getProcessedCount() + 1);
             fragment.setProcessedDateTime(LocalDateTime.now());
-            fragment.setPendingProcessing(false);
-            // Update fragment status in the backing store.
-            sobiDao.updateSobiFragment(fragment);
         }
+        // Perform any necessary post-processing/cleanup
+        processorMap.values().forEach(p -> p.postProcess());
+        // Set the fragments as processed and update
+        fragments.forEach(f -> {
+            f.setPendingProcessing(false);
+            sobiDao.updateSobiFragment(f);
+        });
     }
 
     /** {@inheritDoc}
