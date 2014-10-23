@@ -1,10 +1,20 @@
 # --- Data Directory Configuration --- #
 
-env.directory = /data/test_workspace
-env.data = {{env.directory}}/data
-env.archive = {{env.directory}}/processed
+env.directory = /data/openleg
+env.staging = /data/openleg/staging
+env.archive = /data/openleg/archive
+env.schema = master
+
+# --- Processing Configuration --- #
+
+incremental.update = true
+sobi.batch.size = 5000
 
 # --- Elastic Search Configuration --- #
+
+# Set to true to allow the application to index processed data into elastic search.
+# (Default: true)
+elastic.indexing.enabled = true
 
 # The host address where the elastic search node is running
 # (Default: localhost)
@@ -23,6 +33,8 @@ elastic.search.cluster.name = openleg-dev
 # (Default: bills)
 elastic.search.index.bill.name = bills
 
+elastic.search.index.bill.buffersize = 100
+
 # --- Eh Cache Configuration --- #
 
 # The amount of memory to allocate to Eh Cache for all heap based caches.
@@ -38,11 +50,3 @@ postgresdb.host = localhost
 postgresdb.user =
 postgresdb.pass =
 postgresdb.name = openleg
-
-# Mailer information
-mailer.host=
-mailer.user=
-mailer.pass=
-mailer.port=465
-mailer.active=0
-mailer.debug=0
