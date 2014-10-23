@@ -144,7 +144,7 @@ public class ManagedSobiProcessService implements SobiProcessService
         List<SobiFragment> fragments;
         do {
             ImmutableSet<SobiFragmentType> allowedTypes = options.getAllowedFragmentTypes();
-            fragments = sobiDao.getPendingSobiFragments(allowedTypes, SortOrder.ASC, LimitOffset.THOUSAND);
+            fragments = sobiDao.getPendingSobiFragments(allowedTypes, SortOrder.ASC, new LimitOffset(sobiBatchSize));
             processFragments(fragments, options);
         }
         while (!fragments.isEmpty());
