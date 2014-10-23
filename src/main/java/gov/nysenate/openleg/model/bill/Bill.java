@@ -120,14 +120,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      * Return a bill info object for this bill
      */
     public BillInfo getBillInfo() {
-        BillInfo billInfo = new BillInfo();
-        billInfo.setBillId(this.baseBillId);
-        billInfo.setStatus(this.status);
-        billInfo.setActiveVersion(this.activeVersion);
-        billInfo.setSponsor(this.sponsor);
-        billInfo.setTitle(this.title);
-        billInfo.setSummary(this.summary);
-        return billInfo;
+        return new BillInfo(this);
     }
 
     /**

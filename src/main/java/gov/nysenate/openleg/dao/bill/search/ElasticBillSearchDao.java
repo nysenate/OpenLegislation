@@ -89,10 +89,12 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     /** {@inheritDoc} */
     @Override
     public void deleteBillFromIndex(BaseBillId baseBillId) {
-        DeleteRequestBuilder request = new DeleteRequestBuilder(searchClient, billIndexName);
-        request.setType(baseBillId.getSession().toString());
-        request.setId(baseBillId.getPrintNo());
-        request.execute().actionGet();
+        if (baseBillId != null) {
+            DeleteRequestBuilder request = new DeleteRequestBuilder(searchClient, billIndexName);
+            request.setType(baseBillId.getSession().toString());
+            request.setId(baseBillId.getPrintNo());
+            request.execute().actionGet();
+        }
     }
 
     protected boolean billIndexExists() {
