@@ -17,7 +17,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -87,7 +87,7 @@ public class CachedCommitteeService implements CommitteeService{
     @Override
 //    TODO figure out date range caching
 //    @Cacheable(value = "committee", key = "#root.methodName + '-' + #committeeId.toString().toLowerCase() + '-' + #limitOffset.toString() + '-' + #order.name()")
-    public List<Committee> getCommitteeHistory(CommitteeId committeeId, Range<LocalDate> dateRange,
+    public List<Committee> getCommitteeHistory(CommitteeId committeeId, Range<LocalDateTime> dateRange,
                                                LimitOffset limitOffset, SortOrder order) throws CommitteeNotFoundEx {
         if(committeeId==null) {
             throw new IllegalArgumentException("CommitteeId cannot be null!");
@@ -97,7 +97,7 @@ public class CachedCommitteeService implements CommitteeService{
             return committeeDao.getCommitteeHistory(committeeId, dateRange, limitOffset, order);
         }
         catch(EmptyResultDataAccessException ex){
-            LocalDate refDate = DateUtils.startOfDateRange(dateRange);
+            LocalDateTime refDate = DateUtils.startOfDateTimeRange(dateRange);
             throw new CommitteeNotFoundEx(new CommitteeVersionId(committeeId, SessionYear.of(refDate.getYear()), refDate), ex);
         }
     }
@@ -106,7 +106,7 @@ public class CachedCommitteeService implements CommitteeService{
     @Override
 //    TODO figure out date range caching
 //    @Cacheable(value = "committee", key = "#root.methodName + '-' + #committeeId.toString().toLowerCase()")
-    public int getCommitteeHistoryCount(CommitteeId committeeId, Range<LocalDate> dateRange) {
+    public int getCommitteeHistoryCount(CommitteeId committeeId, Range<LocalDateTime> dateRange) {
         return committeeDao.getCommitteeHistoryCount(committeeId, dateRange);
     }
 

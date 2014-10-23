@@ -313,7 +313,7 @@ public class BillActionParser
         Matcher matcher = committeeEventTextPattern.matcher(action.getText());
         if (matcher.find()) {
             this.currentCommittee = new CommitteeVersionId(action.getChamber(),
-               matcher.group(2), this.billId.getSession(), action.getDate());
+               matcher.group(2), this.billId.getSession(), action.getDate().atStartOfDay());
             pastCommittees.add(this.currentCommittee);
         }
         else {

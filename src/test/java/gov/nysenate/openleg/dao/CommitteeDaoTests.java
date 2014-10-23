@@ -174,7 +174,7 @@ public class CommitteeDaoTests extends BaseTests{
         List<Committee> allCommittees = committeeDao.getCommitteeList(Chamber.SENATE, LimitOffset.ALL);
         List<List<Committee>> allCommitteeHistories = new ArrayList<List<Committee>>();
         for(Committee committee : allCommittees){
-            allCommitteeHistories.add(committeeDao.getCommitteeHistory(committee.getId(), DateUtils.ALL_DATES, LimitOffset.ALL, SortOrder.NONE));
+            allCommitteeHistories.add(committeeDao.getCommitteeHistory(committee.getId(), DateUtils.ALL_DATE_TIMES, LimitOffset.ALL, SortOrder.NONE));
         }
         for(List<Committee> committeeHistory : allCommitteeHistories){
             for(int i=0; i<committeeHistory.size(); i++){
@@ -193,6 +193,6 @@ public class CommitteeDaoTests extends BaseTests{
 
     @Test
     public void anotherCommitteeTest() {
-        committeeDao.getCommittee(new CommitteeVersionId(Chamber.SENATE, "Ethics", SessionYear.of(2011), LocalDate.now()));
+        committeeDao.getCommittee(new CommitteeVersionId(Chamber.SENATE, "Ethics", SessionYear.of(2011), LocalDateTime.now()));
     }
 }

@@ -11,6 +11,7 @@ import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CommitteeDao
@@ -57,7 +58,7 @@ public interface CommitteeDao
      * @param order
      * @return List<Committee>
      */
-    public List<Committee> getCommitteeHistory(CommitteeId committeeId, Range<LocalDate> dateRange,
+    public List<Committee> getCommitteeHistory(CommitteeId committeeId, Range<LocalDateTime> dateRange,
                                                LimitOffset limitOffset, SortOrder order) throws DataAccessException;
 
     /**
@@ -66,7 +67,7 @@ public interface CommitteeDao
      * @param dateRange
      * @return
      */
-    public int getCommitteeHistoryCount(CommitteeId committeeId, Range<LocalDate> dateRange);
+    public int getCommitteeHistoryCount(CommitteeId committeeId, Range<LocalDateTime> dateRange);
 
     /**
      * Retrieves a list of committee versions for a given committee, ordered from first version to most recent

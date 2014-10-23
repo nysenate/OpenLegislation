@@ -137,7 +137,7 @@ public class Committee extends BaseLegislativeContent implements Serializable
     }
 
     public CommitteeVersionId getVersionId() {
-        return new CommitteeVersionId(this.chamber, this.name, this.session, this.publishedDateTime.toLocalDate());
+        return new CommitteeVersionId(this.chamber, this.name, this.session, this.publishedDateTime);
     }
 
     public void setReformed(LocalDateTime reformed) {

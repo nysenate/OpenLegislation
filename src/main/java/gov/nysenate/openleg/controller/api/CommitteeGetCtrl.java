@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
@@ -74,7 +75,7 @@ public class CommitteeGetCtrl extends BaseCtrl
     public BaseResponse getCommitteeAtTime(@PathVariable String chamber,
                                            @PathVariable String committeeName,
                                            @PathVariable int sessionYear,
-                                           @PathVariable @DateTimeFormat(iso = DATE) LocalDate referenceDate)
+                                           @PathVariable @DateTimeFormat(iso = DATE_TIME) LocalDateTime referenceDate)
         throws CommitteeNotFoundEx {
         return new ViewObjectResponse<>( new CommitteeView(
                 committeeService.getCommittee(new CommitteeVersionId(Chamber.getValue(chamber), committeeName,
@@ -118,14 +119,14 @@ public class CommitteeGetCtrl extends BaseCtrl
                                             WebRequest webRequest) throws CommitteeNotFoundEx {
         LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.FIFTY);
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.DESC);
-        Range<LocalDate> dateRange = getDateRange(webRequest, DateUtils.ALL_DATES);
+        Range<LocalDateTime> dateTimeRange = DateUtils.toDateTimeRange(getDateRange(webRequest, DateUtils.ALL_DATES));
         CommitteeId committeeId = new CommitteeId(Chamber.getValue(chamber), committeeName);
         return ListViewResponse.of(
-                committeeService.getCommitteeHistory(committeeId, dateRange, limitOffset, sortOrder).stream()
+                committeeService.getCommitteeHistory(committeeId, dateTimeRange, limitOffset, sortOrder).stream()
                         .map(committee -> full ? new CommitteeView(committee)
                                                : new CommitteeVersionIdView(committee.getVersionId()) )
                         .collect(Collectors.toList()),
-                committeeService.getCommitteeHistoryCount(committeeId, dateRange), limitOffset);
+                committeeService.getCommitteeHistoryCount(committeeId, dateTimeRange), limitOffset);
     }
 
     /** --- Exception Handlers --- */

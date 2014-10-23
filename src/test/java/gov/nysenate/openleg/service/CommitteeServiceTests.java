@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 public class CommitteeServiceTests extends BaseTests{
@@ -62,7 +63,7 @@ public class CommitteeServiceTests extends BaseTests{
         MethodTimer.Method getCommitteeAtTime = new MethodTimer.Method() {
             @Override
             public void run() throws Exception{
-                committeeService.getCommittee(new CommitteeVersionId(Chamber.SENATE, "test committee 1", SessionYear.of(2009), LocalDate.now()));
+                committeeService.getCommittee(new CommitteeVersionId(Chamber.SENATE, "test committee 1", SessionYear.of(2009), LocalDateTime.now()));
             }
         };
         MethodTimer.Method getCommitteeList = new MethodTimer.Method() {
@@ -75,7 +76,7 @@ public class CommitteeServiceTests extends BaseTests{
             @Override
             public void run() throws Exception {
                 committeeService.getCommitteeHistory(new CommitteeId(Chamber.SENATE, "test committee 1"),
-                                                        DateUtils.ALL_DATES, LimitOffset.ALL, SortOrder.NONE);
+                                                        DateUtils.ALL_DATE_TIMES, LimitOffset.ALL, SortOrder.NONE);
             }
         };
 

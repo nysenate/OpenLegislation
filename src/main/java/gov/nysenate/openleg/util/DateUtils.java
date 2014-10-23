@@ -127,6 +127,36 @@ public abstract class DateUtils
         return Time.valueOf(localTime);
     }
 
+    /** --- Date Range methods --- */
+
+    /**
+     * Converts a LocalDateTime range to a closed LocalDate range
+     * The resulting LocalDate range includes all Dates that contain times that occurred within the given range
+     *
+     * @param dateTimeRange
+     * @return
+     */
+    public static Range<LocalDate> toDateRange(Range<LocalDateTime> dateTimeRange) {
+        return Range.closed(
+                startOfDateTimeRange(dateTimeRange).toLocalDate(),
+                endOfDateTimeRange(dateTimeRange).toLocalDate()
+        );
+    }
+
+    /**
+     * Converts a LocalDate range to a closed LocalDateTime range
+     * The LocalDateTimeRange includes all times that occur within the included LocalDates
+     *
+     * @param dateTimeRange
+     * @return
+     */
+    public static Range<LocalDateTime> toDateTimeRange(Range<LocalDate> dateTimeRange) {
+        return Range.closed(
+                startOfDateRange(dateTimeRange).atStartOfDay(),
+                atEndOfDay(endOfDateRange(dateTimeRange))
+        );
+    }
+
     /**
      * Given the LocalDate range, extract the lower bound LocalDate. If the lower bound is not set,
      * a really early date will be returned. If the bound is open, a single day will be added to the
@@ -151,9 +181,9 @@ public abstract class DateUtils
     }
 
     /**
-     * Given the LocalDate range, extract the upper bound LocalDate. If the upper bound is not set, a
+     * Given the LocalDateTime range, extract the upper bound LocalDateTime. If the upper bound is not set, a
      * date far in the future will be returned. If the bound is open, a single day will be subtracted
-     * from the LocalDate. If its closed, the date will remain as is.
+     * from the LocalDateTime. If its closed, the date will remain as is.
      *
      * @param localDateRange Range<LocalDate>
      * @return LocalDate - Upper bound in the date range
@@ -171,5 +201,51 @@ public abstract class DateUtils
             return upper;
         }
         throw new IllegalArgumentException("Supplied localDateRange is null.");
+    }
+
+    /**
+     * Given the LocalDateTime range, extract the lower bound LocalDateTime. If the lower bound is not set,
+     * a really early date will be returned. If the bound is open, a single nanosecond will be added to the
+     * LocalDateTime. If its closed, the dateTime will remain as is.
+     *
+     * @param dateTimeRange Range<LocalDateTime>
+     * @return LocalDateTime - Lower bound in the dateTime range
+     */
+    public static LocalDateTime startOfDateTimeRange(Range<LocalDateTime> dateTimeRange) {
+        if (dateTimeRange != null) {
+            LocalDateTime lower;
+            if (dateTimeRange.hasLowerBound()) {
+                lower = (dateTimeRange.lowerBoundType().equals(BoundType.CLOSED))
+                        ? dateTimeRange.lowerEndpoint() : dateTimeRange.lowerEndpoint().plusNanos(1);
+            }
+            else {
+                lower = LONG_AGO.atStartOfDay();
+            }
+            return lower;
+        }
+        throw new IllegalArgumentException("Supplied localDateTimeRange is null.");
+    }
+
+    /**
+     * Given the LocalDateTime range, extract the upper bound LocalDateTime. If the upper bound is not set, a
+     * date far in the future will be returned. If the bound is open, a single nanosecond will be subtracted
+     * from the LocalDateTime. If its closed, the date will remain as is.
+     *
+     * @param dateTimeRange Range<LocalDateTime>
+     * @return LocalDateTime - Upper bound in the dateTime range
+     */
+    public static LocalDateTime endOfDateTimeRange(Range<LocalDateTime> dateTimeRange) {
+        if (dateTimeRange != null) {
+            LocalDateTime upper;
+            if (dateTimeRange.hasUpperBound()) {
+                upper = (dateTimeRange.upperBoundType().equals(BoundType.CLOSED))
+                        ? dateTimeRange.upperEndpoint() : dateTimeRange.upperEndpoint().minusNanos(1);
+            }
+            else {
+                upper = atEndOfDay(THE_FUTURE);
+            }
+            return upper;
+        }
+        throw new IllegalArgumentException("Supplied localDateTimeRange is null.");
     }
 }
