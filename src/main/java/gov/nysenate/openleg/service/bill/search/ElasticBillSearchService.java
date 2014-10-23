@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -83,9 +84,15 @@ public class ElasticBillSearchService implements BillSearchService
     /** {@inheritDoc} */
     @Override
     public void updateBillIndex(Bill bill) {
-        if (env.isElasticIndexing() && isBillIndexable(bill)) {
-            logger.info("Indexing bill {} into elastic search.", bill.getBaseBillId());
-            billSearchDao.updateBillIndex(bill);
+        if (env.isElasticIndexing()) {
+            if (isBillIndexable(bill)) {
+                logger.info("Indexing bill {} into elastic search.", bill.getBaseBillId());
+                billSearchDao.updateBillIndex(bill);
+            }
+            else if (bill != null) {
+                logger.info("Deleting {} from index.", bill.getBaseBillId());
+                billSearchDao.deleteBillFromIndex(bill.getBaseBillId());
+            }
         }
     }
 
@@ -93,11 +100,21 @@ public class ElasticBillSearchService implements BillSearchService
     @Override
     public void updateBillIndices(Collection<Bill> bills) {
         if (env.isElasticIndexing()) {
-            logger.info("Indexing {} bills into elastic search.", bills.size());
-            billSearchDao.updateBulkBillIndices(
+            List<Bill> indexableBills = bills.stream()
+                .filter(b -> isBillIndexable(b))
+                .collect(Collectors.toList());
+            logger.info("Indexing {} bills into elastic search.", indexableBills.size());
+            billSearchDao.updateBulkBillIndices(indexableBills);
+
+            // Ensure any bills that currently don't meet the criteria are not in the index.
+            if (indexableBills.size() != bills.size()) {
                 bills.stream()
-                    .filter(b -> isBillIndexable(b))
-                    .collect(Collectors.toList()));
+                    .filter(b -> !isBillIndexable(b) && b != null)
+                    .forEach(b -> {
+                        logger.info("Deleting {} from index.", b.getBaseBillId());
+                        billSearchDao.deleteBillFromIndex(b.getBaseBillId());
+                    });
+            }
         }
     }
 
