@@ -18,6 +18,7 @@
     </repositories>
 
     <build>
+        <finalName>${project.artifactId}##${project.version}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -44,6 +45,7 @@
         <jstl.version>1.2</jstl.version>
         <elastic-search.version>1.4.0.Beta1</elastic-search.version>
         <pdfbox.version>1.8.7</pdfbox.version>
+        <jbcrypt.version>0.3m</jbcrypt.version>
     </properties>
 
     <dependencies>
@@ -268,6 +270,15 @@
             <artifactId>pdfbox</artifactId>
             <version>${pdfbox.version}</version>
         </dependency>
+
+        <!-- Crypto -->
+
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>${jbcrypt.version}</version>
+        </dependency>
+
 
         <!-- TODO: Cleanup Misc deps -->
 
