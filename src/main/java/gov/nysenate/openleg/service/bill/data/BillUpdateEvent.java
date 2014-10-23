@@ -8,22 +8,17 @@ import java.time.LocalDateTime;
 public class BillUpdateEvent extends ContentUpdateEvent
 {
     protected Bill bill;
-    protected LocalDateTime updateDateTime;
 
     /** --- Constructors --- */
 
     public BillUpdateEvent(Bill bill, LocalDateTime updateDateTime) {
+        super(updateDateTime);
         this.bill = bill;
-        this.updateDateTime = updateDateTime;
     }
 
     /** --- Basic Getters/Setters --- */
 
     public Bill getBill() {
         return bill;
-    }
-
-    public LocalDateTime getUpdateDateTime() {
-        return updateDateTime;
     }
 }

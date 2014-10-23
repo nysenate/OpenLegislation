@@ -19,6 +19,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.annotation.PostConstruct;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -31,6 +32,11 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
 
     @Autowired
     private XmlHelper xml;
+
+    @PostConstruct
+    public void init() {
+        initBase();
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -114,12 +120,12 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
         }
 
         if (env.isIncrementalUpdates() || agendaIngestCache.exceedsCapacity()) {
-            flushAllCaches();
+            flushAllUpdates();
         }
     }
 
     @Override
     public void postProcess() {
-        flushAllCaches();
+        flushAllUpdates();
     }
 }

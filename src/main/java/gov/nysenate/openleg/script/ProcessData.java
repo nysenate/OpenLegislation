@@ -36,8 +36,9 @@ public class ProcessData extends BaseScript
         Options options = new Options();
         options.addOption("c", "collate", false, "Will collate sobi files from the incoming data directories.");
         options.addOption("i", "ingest", false, "Will process all pending files.");
-        options.addOption("x", "index", false, "Will update search indices during ingest if set.");
-        options.addOption("l", "incremental", false, "Performs updates to the persistence layer with greater frequency");
+        options.addOption("l", "incremental", false, "Performs updates to the persistence layer with greater frequency. " +
+                                                     "This will be disabled by default regardless of the property file settings.");
+        options.addOption(null, "disable-indexing", false, "Disables updates to search indices during ingest if set.");
         options.addOption("h", "help", false, "Display help");
         return options;
     }
@@ -56,11 +57,16 @@ public class ProcessData extends BaseScript
         }
         boolean collate = opts.hasOption("collate");
         boolean ingest = opts.hasOption("ingest");
-        boolean allowIndex = opts.hasOption("index");
+        boolean disableIndexing = opts.hasOption("disable-indexing");
         boolean incremental = opts.hasOption("incremental");
 
-        env.setElasticIndexing(allowIndex);
+        if (disableIndexing) {
+            env.setElasticIndexing(false);
+        }
         env.setIncrementalUpdates(incremental);
+
+        logger.info("Data processing settings: Incremental updates: {}, Allow search indexing: {}\n",
+                     env.isIncrementalUpdates(), env.isElasticIndexing());
 
         if(!collate && !ingest) {
             dataProcessor.run();

@@ -17,18 +17,28 @@ import java.util.Map;
 public interface BillSearchDao
 {
     /**
+     * Performs a free-form search across all the bills using the query string syntax.
      *
-     *
-     * @param query String
-     * @param sort String
-     * @param limOff LimitOffset
+     * @param query String - Query String
+     * @param sort String - Sort String
+     * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<BillId>
      */
     public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff);
 
+    public void updateBillIndex(Bill bill);
+
     /**
+     * Updates the bill index with the content of the supplied Bills.
      *
-     * @param bills
+     * @param bills Collection<Bill>
      */
-    public void updateBillIndices(Collection<Bill> bills);
+    public void updateBulkBillIndices(Collection<Bill> bills);
+
+    /**
+     * Removes the bill from the search index with the given id.
+     *
+     * @param baseBillId BaseBillId
+     */
+    public void deleteBillFromIndex(BaseBillId baseBillId);
 }

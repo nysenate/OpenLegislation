@@ -9,7 +9,6 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.service.base.SearchResult;
 import gov.nysenate.openleg.service.base.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -17,13 +16,11 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,8 +32,15 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchDao.class);
 
-    @Value("${elastic.search.index.bill.name:bills}")
-    protected String billIndexName;
+    protected static final String billIndexName = "bills";
+
+    @PostConstruct
+    public void init() {
+        if (!billIndexExists()) {
+            logger.warn("ElasticSearch Bill index doesn't exist. Creating it now.");
+            createBillIndex();
+        }
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -64,9 +68,17 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 
     /** {@inheritDoc} */
     @Override
-    public void updateBillIndices(Collection<Bill> bills) {
+    public void updateBillIndex(Bill bill) {
+        searchClient.prepareIndex(billIndexName, bill.getSession().toString(), bill.getBasePrintNo())
+                    .setSource(OutputUtils.toJson(new BillView(bill)))
+                    .execute().actionGet();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateBulkBillIndices(Collection<Bill> bills) {
         BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
-        List<BillView> billViewList = bills.parallelStream().map(b -> new BillView(b)).collect(Collectors.toList());
+        List<BillView> billViewList = bills.stream().map(b -> new BillView(b)).collect(Collectors.toList());
         billViewList.forEach(b ->
             bulkRequest.add(searchClient.prepareIndex(billIndexName, Integer.toString(b.getSession()), b.getBasePrintNo())
                        .setSource(OutputUtils.toJson(b)))
@@ -74,6 +86,8 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
         bulkRequest.execute().actionGet();
     }
 
+    /** {@inheritDoc} */
+    @Override
     public void deleteBillFromIndex(BaseBillId baseBillId) {
         DeleteRequestBuilder request = new DeleteRequestBuilder(searchClient, billIndexName);
         request.setType(baseBillId.getSession().toString());
@@ -81,8 +95,15 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
         request.execute().actionGet();
     }
 
-    public void deleteBillIndex() {
-        DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(billIndexName);
-        searchClient.admin().indices().delete(deleteIndexRequest);
+    protected boolean billIndexExists() {
+        return indicesExist(billIndexName);
+    }
+
+    protected void createBillIndex() {
+        createIndex(billIndexName);
+    }
+
+    protected void deleteBillIndex() {
+        deleteIndex(billIndexName);
     }
 }

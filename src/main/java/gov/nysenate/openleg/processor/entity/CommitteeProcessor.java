@@ -17,6 +17,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.annotation.PostConstruct;
 import javax.xml.xpath.XPathExpressionException;
 import java.sql.Time;
 import java.text.ParseException;
@@ -40,6 +41,10 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
     @Autowired
     protected XmlHelper xml;
 
+    @PostConstruct
+    public void init() {
+        initBase();
+    }
 
     /** {@inheritDoc  */
     @Override

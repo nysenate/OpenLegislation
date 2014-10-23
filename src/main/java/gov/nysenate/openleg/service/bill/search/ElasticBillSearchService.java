@@ -11,6 +11,7 @@ import gov.nysenate.openleg.service.base.SearchException;
 import gov.nysenate.openleg.service.base.SearchIndexFlushEvent;
 import gov.nysenate.openleg.service.base.SearchResults;
 import gov.nysenate.openleg.service.bill.data.BillUpdateEvent;
+import gov.nysenate.openleg.service.bill.data.BulkBillUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
@@ -21,17 +22,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class ElasticBillSearchService implements BillSearchService
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchService.class);
-
-    private ConcurrentHashMap<BaseBillId, Bill> updateCache = new ConcurrentHashMap<>();
-
-    @Value("${elastic.search.index.bill.buffersize:100}")
-    private int maxCacheSize;
 
     @Autowired
     protected Environment env;
@@ -64,44 +62,52 @@ public class ElasticBillSearchService implements BillSearchService
         }
     }
 
+    /** {@inheritDoc} */
     @Subscribe
-    public void handleUpdate(BillUpdateEvent billUpdateEvent) {
-        if (env.isElasticIndexing()) {
-            Bill bill = billUpdateEvent.getBill();
-            if (bill != null) {
-                updateCache.put(bill.getBaseBillId(), bill);
-            }
-            checkIndexBuffer();
+    @Override
+    public void handleBillUpdate(BillUpdateEvent billUpdateEvent) {
+        if (billUpdateEvent.getBill() != null) {
+            updateBillIndex(billUpdateEvent.getBill());
         }
     }
 
-    @Scheduled(fixedDelay = 120000)
-    public synchronized void checkIndexBuffer() {
-        if (env.isElasticIndexing() && updateCache.size() >= maxCacheSize) {
-            pushUpdatesToIndex();
-        }
-    }
-
+    /** {@inheritDoc} */
     @Subscribe
-    public void handleFlushEvent(SearchIndexFlushEvent flushEvent) {
-        if (env.isElasticIndexing()) {
-            pushUpdatesToIndex();
+    @Override
+    public void handeBulkBillUpdate(BulkBillUpdateEvent bulkBillUpdateEvent) {
+        if (bulkBillUpdateEvent.getBills() != null) {
+            updateBillIndices(bulkBillUpdateEvent.getBills());
         }
     }
 
-    public synchronized void pushUpdatesToIndex() {
-      if (env.isElasticIndexing()) {
-          if (!updateCache.isEmpty()) {
-              try {
-                  billSearchDao.updateBillIndices(updateCache.values());
-              }
-              catch (ElasticsearchException ex) {
-                  logger.info("{}", ex);
-                  System.exit(-1);
-              }
-              logger.debug("Updated bill search index with {} bills", updateCache.size());
-              updateCache.clear();
-          }
-       }
+    /** {@inheritDoc} */
+    @Override
+    public void updateBillIndex(Bill bill) {
+        if (env.isElasticIndexing() && isBillIndexable(bill)) {
+            logger.info("Indexing bill {} into elastic search.", bill.getBaseBillId());
+            billSearchDao.updateBillIndex(bill);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateBillIndices(Collection<Bill> bills) {
+        if (env.isElasticIndexing()) {
+            logger.info("Indexing {} bills into elastic search.", bills.size());
+            billSearchDao.updateBulkBillIndices(
+                bills.stream()
+                    .filter(b -> isBillIndexable(b))
+                    .collect(Collectors.toList()));
+        }
+    }
+
+    /**
+     * Returns true if the given bill meets the criteria for being indexed in the search layer.
+     *
+     * @param bill Bill
+     * @return boolean
+     */
+    protected boolean isBillIndexable(Bill bill) {
+        return bill != null && bill.isBaseVersionPublished();
     }
 }

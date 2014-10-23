@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.base;
 
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
@@ -10,11 +11,11 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
+import gov.nysenate.openleg.service.bill.data.BulkBillUpdateEvent;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
@@ -27,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The AbstractDataProcessor class is intended to serve as a common base for all the
@@ -54,6 +57,10 @@ public abstract class AbstractDataProcessor
 
     @Autowired protected VetoDataService vetoDataService;
 
+    /** --- Events --- */
+
+    @Autowired protected EventBus eventBus;
+
     /** --- Caches --- */
 
     @Resource(name = "agendaIngestCache")
@@ -64,6 +71,12 @@ public abstract class AbstractDataProcessor
 
     @Resource(name = "calendarIngestCache")
     protected IngestCache<CalendarId, Calendar, SobiFragment> calendarIngestCache;
+
+    public abstract void init();
+
+    public void initBase() {
+        eventBus.register(this);
+    }
 
     /** --- Bill Methods --- */
 
@@ -136,11 +149,15 @@ public abstract class AbstractDataProcessor
     /**
      * Flushes all bills stored in the cache to the persistence layer and clears the cache.
      */
-    protected void flushBillCache() {
+    protected void flushBillUpdates() {
         if (billIngestCache.getSize() > 0) {
             logger.info("Flushing {} bills", billIngestCache.getSize());
             billIngestCache.getCurrentCache().forEach(entry ->
-                billDataService.saveBill(entry.getLeft(), entry.getRight()));
+                billDataService.saveBill(entry.getLeft(), entry.getRight(), false));
+            logger.debug("Broadcasting bill updates...");
+            List<Bill> bills =
+                billIngestCache.getCurrentCache().stream().map(entry -> entry.getLeft()).collect(Collectors.toList());
+            eventBus.post(new BulkBillUpdateEvent(bills, LocalDateTime.now()));
             billIngestCache.clearCache();
         }
     }
@@ -188,7 +205,7 @@ public abstract class AbstractDataProcessor
     /**
      * Flushes all agendas stored in the cache to the persistence layer and clears the cache.
      */
-    protected void flushAgendaCache() {
+    protected void flushAgendaUpdates() {
         if (agendaIngestCache.getSize() > 0) {
             logger.info("Flushing {} agendas", agendaIngestCache.getSize());
             agendaIngestCache.getCurrentCache().forEach(
@@ -228,7 +245,7 @@ public abstract class AbstractDataProcessor
     /**
      * Flushes all calendars stored in the cache to the persistence layer and clears the cache.
      */
-    protected void flushCalendarCache() {
+    protected void flushCalendarUpdates() {
         if (calendarIngestCache.getSize() > 0) {
             logger.info("Flushing {} calendars", calendarIngestCache.getSize());
             calendarIngestCache.getCurrentCache().forEach(
@@ -237,9 +254,12 @@ public abstract class AbstractDataProcessor
         }
     }
 
-    protected void flushAllCaches() {
-        flushBillCache();
-        flushAgendaCache();
-        flushCalendarCache();
+    /**
+     * Flushes all updates.
+     */
+    protected void flushAllUpdates() {
+        flushBillUpdates();
+        flushAgendaUpdates();
+        flushCalendarUpdates();
     }
 }

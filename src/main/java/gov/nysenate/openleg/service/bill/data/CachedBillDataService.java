@@ -130,11 +130,13 @@ public class CachedBillDataService implements BillDataService, CachingService
 
     /** {@inheritDoc} */
     @Override
-    public void saveBill(Bill bill, SobiFragment fragment) {
+    public void saveBill(Bill bill, SobiFragment fragment, boolean postUpdateEvent) {
         logger.debug("Persisting bill {}", bill);
         billDao.updateBill(bill, fragment);
         putBillInCache(bill);
-        eventBus.post(new BillUpdateEvent(bill, LocalDateTime.now()));
+        if (postUpdateEvent) {
+            eventBus.post(new BillUpdateEvent(bill, LocalDateTime.now()));
+        }
     }
 
     /**

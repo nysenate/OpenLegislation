@@ -60,6 +60,8 @@ public interface BillDataService
      *
      * @param bill Bill
      * @param fragment SobiFragment
+     * @param postUpdateEvent boolean - Set to true if this method should post a BillUpdateEvent
+     *                                  to the event bus indicating to subscribers that the bill may have changed.
      */
-    public void saveBill(Bill bill, SobiFragment fragment);
+    public void saveBill(Bill bill, SobiFragment fragment, boolean postUpdateEvent);
 }

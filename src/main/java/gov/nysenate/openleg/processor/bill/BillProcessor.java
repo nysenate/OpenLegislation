@@ -2,7 +2,6 @@ package gov.nysenate.openleg.processor.bill;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -22,15 +21,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * The BillProcessor parses bill sobi fragments, applies bill updates, and persists into the backing
@@ -72,6 +70,11 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
 
     public BillProcessor() {}
 
+    @PostConstruct
+    public void init() {
+        initBase();
+    }
+
     /** --- Implementation methods --- */
 
     @Override
@@ -88,13 +91,6 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     public void process(SobiFragment sobiFragment) {
         LocalDateTime date = sobiFragment.getPublishedDateTime();
         List<SobiBlock> blocks = sobiFragment.getSobiBlocks();
-
-        // Retrieve the bills in parallel so that they are cached when we iterate.
-        blocks.parallelStream()
-            .map(block -> block.getBillId())
-            .distinct()
-            .map(billId -> getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), billId, sobiFragment));
-
         logger.info("Processing " + sobiFragment.getFragmentId() + " with (" + blocks.size() + ") blocks.");
         for (SobiBlock block : blocks) {
             String data = block.getData();
@@ -134,13 +130,13 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
 
             if (billIngestCache.exceedsCapacity()) {
                 logger.info("Flushing bill ingest cache with {} bills!", billIngestCache.getSize());
-                flushBillCache();
+                flushBillUpdates();
             }
         }
 
         // Flush cache after each fragment when doing incremental updates
         if (env.isIncrementalUpdates()) {
-            flushBillCache();
+            flushBillUpdates();
         }
     }
 
@@ -150,7 +146,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     @Override
     public void postProcess() {
         if (!env.isIncrementalUpdates()) {
-            flushBillCache();
+            flushBillUpdates();
         }
     }
 

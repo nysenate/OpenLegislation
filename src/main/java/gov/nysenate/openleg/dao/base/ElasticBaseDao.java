@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.dao.base;
 
 import com.google.common.base.Splitter;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.search.sort.*;
 import org.slf4j.Logger;
@@ -39,5 +42,17 @@ public abstract class ElasticBaseDao
                 SortBuilders.fieldSort(k).order(org.elasticsearch.search.sort.SortOrder.valueOf(v.toUpperCase()))));
         }
         return sortBuilders;
+    }
+
+    public boolean indicesExist(String... indices) {
+        return searchClient.admin().indices().exists(new IndicesExistsRequest(indices)).actionGet().isExists();
+    }
+
+    public void createIndex(String indexName) {
+        searchClient.admin().indices().prepareCreate(indexName).execute().actionGet();
+    }
+
+    public void deleteIndex(String index) {
+        searchClient.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
     }
 }

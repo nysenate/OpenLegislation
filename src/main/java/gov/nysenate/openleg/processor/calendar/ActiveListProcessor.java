@@ -21,6 +21,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.annotation.PostConstruct;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -33,6 +34,11 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
 
     @Autowired
     protected XmlHelper xml;
+
+    @PostConstruct
+    public void init() {
+        initBase();
+    }
 
     @Override
     public SobiFragmentType getSupportedType() {
@@ -92,12 +98,12 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
         }
 
         if (env.isIncrementalUpdates() || calendarIngestCache.exceedsCapacity()) {
-            flushCalendarCache();
+            flushCalendarUpdates();
         }
     }
 
     @Override
     public void postProcess() {
-        flushCalendarCache();
+        flushCalendarUpdates();
     }
 }
