@@ -530,15 +530,17 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * @throws ParseError
      */
     private void applyVetoMessageText(String data, Bill baseBill, LocalDateTime date) throws ParseError{
-        VetoMemoParser vetoMemoParser = new VetoMemoParser(data, date);
-        vetoMemoParser.extractText();
-        VetoMessage vetoMessage = vetoMemoParser.getVetoMessage();
-        vetoMessage.setSession(baseBill.getSession());
-        vetoMessage.setBillId(baseBill.getBaseBillId());
-        vetoMessage.setModifiedDateTime(date);
-        vetoMessage.setPublishedDateTime(date);
+        for (String vetoChunk : data.split("(?<=00000.SO DOC VETO\\d{4}        \\*END\\*.{45})\n")) {
+            VetoMemoParser vetoMemoParser = new VetoMemoParser(vetoChunk, date);
+            vetoMemoParser.extractText();
+            VetoMessage vetoMessage = vetoMemoParser.getVetoMessage();
+            vetoMessage.setSession(baseBill.getSession());
+            vetoMessage.setBillId(baseBill.getBaseBillId());
+            vetoMessage.setModifiedDateTime(date);
+            vetoMessage.setPublishedDateTime(date);
 
-        baseBill.getVetoMessages().put(vetoMessage.getVetoId(), vetoMessage);
+            baseBill.getVetoMessages().put(vetoMessage.getVetoId(), vetoMessage);
+        }
     }
 
     /**
