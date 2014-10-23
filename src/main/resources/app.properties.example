@@ -8,7 +8,7 @@ env.schema = master
 # --- Processing Configuration --- #
 
 incremental.update = true
-sobi.batch.size = 5000
+sobi.batch.size = 500
 
 # --- Elastic Search Configuration --- #
 
