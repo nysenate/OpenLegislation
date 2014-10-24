@@ -6,6 +6,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 
 
 /**
@@ -74,6 +75,12 @@ public class StupidTests {
             System.out.println("jalalalalalalal");
         }
         System.out.println(strings.length);
+    }
+
+    @Test
+    public void optionalTest() {
+        Optional<String> opt = Optional.of(null);
+        opt.get().toUpperCase();
     }
 
     private static String str = "00000.SO DOC VETO0002                                 VETO                 2014\n" +

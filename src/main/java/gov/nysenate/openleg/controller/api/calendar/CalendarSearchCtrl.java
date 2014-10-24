@@ -14,6 +14,7 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.service.base.InvalidParametersSearchException;
+import gov.nysenate.openleg.service.base.SearchException;
 import gov.nysenate.openleg.service.base.SearchResults;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.search.CalendarSearchParameters;
@@ -53,7 +54,7 @@ public class CalendarSearchCtrl extends BaseCtrl{
     public BaseResponse searchAllCalendars(@RequestParam(required = true) String term,
                                            @RequestParam(defaultValue = "") String sort,
                                            @RequestParam(defaultValue = "false") boolean full,
-                                           WebRequest webRequest) {
+                                           WebRequest webRequest) throws SearchException {
         LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
         SearchResults<CalendarId> results = calendarSearchService.searchForCalendars(term, sort, limitOffset);
         return ListViewResponse.of(
@@ -73,7 +74,7 @@ public class CalendarSearchCtrl extends BaseCtrl{
     public BaseResponse searchActiveListCalendars(@RequestParam(required = true) String term,
                                                   @RequestParam(defaultValue = "") String sort,
                                                   @RequestParam(defaultValue = "false") boolean full,
-                                                  WebRequest webRequest) {
+                                                  WebRequest webRequest) throws SearchException {
         LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
         SearchResults<CalendarActiveListId> results = calendarSearchService.searchForActiveLists(term, sort, limitOffset);
         return ListViewResponse.of(
@@ -93,7 +94,7 @@ public class CalendarSearchCtrl extends BaseCtrl{
     public BaseResponse searchFloorCalendars(@RequestParam(required = true) String term,
                                              @RequestParam(defaultValue = "") String sort,
                                              @RequestParam(defaultValue = "false") boolean full,
-                                             WebRequest webRequest) {
+                                             WebRequest webRequest) throws SearchException {
         LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
         SearchResults<CalendarSupplementalId> results = calendarSearchService.searchForFloorCalendars(term, sort, limitOffset);
         return ListViewResponse.of(
@@ -105,16 +106,4 @@ public class CalendarSearchCtrl extends BaseCtrl{
     }
 
     /** --- Exception Handlers --- */
-
-    /**
-     * Handles an invalid search parameters exception by returning an error response
-     * @param ex
-     * @return
-     */
-    @ExceptionHandler(InvalidParametersSearchException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidParamsSearchEx(InvalidParametersSearchException ex) {
-        return new ViewObjectErrorResponse(ErrorCode.INVALID_CAL_SEARCH_PARAMS,
-                                           ListView.ofStringList(new LinkedList<>(ex.getInvalidParams())));
-    }
 }

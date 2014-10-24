@@ -27,7 +27,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticCalendarSearchDao.class);
 
-    @Value("${elastic.search.index.calendar.name:calendars")
+    @Value("${elastic.search.index.calendar.name:calendars}")
     protected String calIndexName;
 
     /**{@inheritDoc}*/

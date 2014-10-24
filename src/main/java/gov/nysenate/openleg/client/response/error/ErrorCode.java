@@ -14,6 +14,7 @@ public enum ErrorCode
     UNKNOWN_ERROR(-1, "There was an unexpected error while handling your request."),
 
     INVALID_ARGUMENTS(1, "One or more of the provided request parameters was not valid"),
+    MISSING_PARAMETERS(2, "A required parameter was missing from the request"),
 
     /** --- Bill --- */
 

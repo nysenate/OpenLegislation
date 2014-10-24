@@ -13,6 +13,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.service.base.SearchException;
 import gov.nysenate.openleg.service.base.SearchResults;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
@@ -60,7 +61,8 @@ public class BillGetCtrl extends BaseCtrl
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}")
     public BaseResponse getBills(@PathVariable int sessionYear,
                                  @RequestParam(defaultValue = "printNo:asc") String sort,
-                                 @RequestParam(defaultValue = "false") boolean full, WebRequest webRequest) {
+                                 @RequestParam(defaultValue = "false") boolean full,
+                                 WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.FIFTY);
         // We're using the search service to get the listing to take advantage of the sorting features.
         SearchResults<BaseBillId> results =

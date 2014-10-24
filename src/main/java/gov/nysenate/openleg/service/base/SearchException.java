@@ -3,7 +3,7 @@ package gov.nysenate.openleg.service.base;
 /**
  * General search exception
  */
-public class SearchException extends RuntimeException
+public class SearchException extends Exception
 {
     private static final long serialVersionUID = 1973429629373205362L;
 
