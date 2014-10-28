@@ -60,7 +60,7 @@ public class WebServlet extends HttpServlet implements OpenLegConstants {
      * 		/legislation/api/[view type]
      * 		/legislation/api/1.0/[view type]
      */
-    public static final String BASE_START = "^(?i)/legislation/(?:(?:api/)(?:(?<=api/)1\\.0/)?(?:(";
+    public static final String BASE_START = "^(?i)/(?:legislation/)?(?:(?:api/)(?:(?<=api/)1\\.0/)?(?:(";
 
     /*
      * Ends base start, surrounds possible formats associated with a view
@@ -230,6 +230,7 @@ public class WebServlet extends HttpServlet implements OpenLegConstants {
          *
          *		ex. /legislation/api/committee/finance
          */
+
         if(apiRequest == null && (m = KEY_VALUE_PATTERN.matcher(uri)) != null && m.find()) {
             logger.info(TextFormatter.append("Key value request: ", uri));
             apiRequest = new KeyValueViewRequest(	request,
