@@ -5,41 +5,57 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.base.CachingService;
+import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
+import gov.nysenate.openleg.util.OutputUtils;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.MemoryUnit;
+import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
+import static net.sf.ehcache.config.SizeOfPolicyConfiguration.MaxDepthExceededBehavior.ABORT;
 
 @Service
 public class CachedBillDataService implements BillDataService, CachingService
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedBillDataService.class);
 
+    /** Bill cache will store partial bills for performance. */
+    @Autowired private CacheManager cacheManager;
     private Cache billCache;
 
-    @Autowired
-    private CacheManager cacheManager;
+    /** The maximum heap size the bill cache can consume. */
+    @Value("${cache.bill.heap.size}") private long billCacheSizeMb;
 
-    @Autowired
-    private BillDao billDao;
+    /** Backing store for bill data. */
+    @Autowired private BillDao billDao;
 
-    @Autowired
-    private EventBus eventBus;
+    /** Used to subscribe and post events. */
+    @Autowired private EventBus eventBus;
 
     @PostConstruct
     private void init() {
@@ -47,12 +63,22 @@ public class CachedBillDataService implements BillDataService, CachingService
         eventBus.register(this);
     }
 
+    @PreDestroy
+    private void cleanUp() {
+        evictCaches();
+        cacheManager.removeCache("bills");
+    }
+
     /** --- CachingService implementation --- */
 
     @Override
     public void setupCaches() {
-        cacheManager.addCache("bills");
-        this.billCache = cacheManager.getCache("bills");
+        this.billCache = new Cache(new CacheConfiguration().name("bills")
+            .eternal(true)
+            .maxBytesLocalHeap(billCacheSizeMb, MemoryUnit.MEGABYTES)
+            .sizeOfPolicy(new SizeOfPolicyConfiguration().maxDepth(50000).maxDepthExceededBehavior(ABORT)));
+        cacheManager.addCache(this.billCache);
+        this.billCache.setMemoryStoreEvictionPolicy(new BillCacheEvictionPolicy());
     }
 
     @Override
@@ -73,11 +99,10 @@ public class CachedBillDataService implements BillDataService, CachingService
             Bill bill;
             if (billCache.isKeyInCache(billId)) {
                 bill = getBillFromCache(billId);
+                logger.debug("Cache hit for bill {}", bill);
             }
             else {
                 bill = billDao.getBill(billId);
-                // When caching the retrieved bill, we use a shallow copy with no fulltext or memos.
-                // This is to optimize the number of bills we can cache into memory.
                 putBillInCache(bill);
             }
             return bill;
@@ -90,6 +115,7 @@ public class CachedBillDataService implements BillDataService, CachingService
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public BillInfo getBillInfo(BaseBillId billId) throws BillNotFoundEx {
         logger.debug("Fetching bill info {}..", billId);

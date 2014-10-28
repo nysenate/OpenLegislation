@@ -17,6 +17,5 @@ public class ElasticBillSearchServiceTests extends BaseTests
 
     @Test
     public void testSearch() throws Exception {
-        logger.info("{}", billSearch.searchBills("Moose", "basePrintNo:DESC", LimitOffset.ALL).getResults());
     }
 }

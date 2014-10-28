@@ -3,13 +3,11 @@ package gov.nysenate.openleg.dao.bill.search;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.service.base.SearchResults;
-import gov.nysenate.openleg.service.bill.search.BillSearchField;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * DAO interface for searching Bill data.
@@ -17,15 +15,27 @@ import java.util.Map;
 public interface BillSearchDao
 {
     /**
-     * Performs a free-form search across all the bills using the query string syntax.
+     * Performs a search on all bills without filtering on session year.
+     * @see #searchBills(QueryBuilder, FilterBuilder, String, LimitOffset)
+     */
+    public SearchResults<BaseBillId> searchBills(QueryBuilder query, String sort, LimitOffset limOff);
+
+    /**
+     * Performs a free-form search across all the bills using the query string syntax and a filter.
      *
-     * @param query String - Query String
+     * @param query String - Query Builder
+     * @param filter FilterBuilder - Filter result set
      * @param sort String - Sort String
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<BillId>
      */
-    public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff);
+    public SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limOff);
 
+    /**
+     * Update the bill index with the content of the supplied bill.
+     *
+     * @param bill Bill
+     */
     public void updateBillIndex(Bill bill);
 
     /**
@@ -33,7 +43,7 @@ public interface BillSearchDao
      *
      * @param bills Collection<Bill>
      */
-    public void updateBulkBillIndices(Collection<Bill> bills);
+    public void updateBillIndex(Collection<Bill> bills);
 
     /**
      * Removes the bill from the search index with the given id.

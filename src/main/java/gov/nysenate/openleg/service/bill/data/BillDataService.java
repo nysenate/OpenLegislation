@@ -47,9 +47,11 @@ public interface BillDataService
     public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limitOffset);
 
     /**
-     * Get the total number of bills for the given session year
-     * @param sessionYear
-     * @return
+     * Get the total number of bills for the given session year. This count includes
+     * all bills, including those that have been unpublished.
+     *
+     * @param sessionYear SessionYear
+     * @return int
      */
     public int getBillCount(SessionYear sessionYear);
 

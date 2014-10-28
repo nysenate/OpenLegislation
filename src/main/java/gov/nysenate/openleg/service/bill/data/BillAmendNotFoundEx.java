@@ -4,6 +4,8 @@ import gov.nysenate.openleg.model.bill.BillId;
 
 public class BillAmendNotFoundEx extends RuntimeException
 {
+    private static final long serialVersionUID = 4921161551020029429L;
+
     protected BillId billId;
 
     public BillAmendNotFoundEx(BillId billId) {

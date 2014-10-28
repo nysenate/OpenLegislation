@@ -4,9 +4,6 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.dao.bill.search.BillSearchDao;
-import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.service.base.SearchResults;
-import gov.nysenate.openleg.service.bill.search.BillSearchField;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -37,8 +34,6 @@ public class SqlBillSearchDaoTests extends BaseTests
 
     @Test
     public void testAdvancedBillSearch() throws Exception {
-        Map<BillSearchField, String> query = new HashMap<>();
-        query.put(BillSearchField.SPONSOR, "MARCHIONE");
 
 //        SearchResults<BillId> results = billSearch.searchAdvanced(query, LimitOffset.TEN);
 //        results.getResults().stream()

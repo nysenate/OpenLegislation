@@ -51,9 +51,10 @@ public abstract class BaseCtrl
     /**
      * Returns a limit + offset extracted from the given web request parameters
      * Returns the given default limit offset if no such parameters exist
+     *
      * @param webRequest
      * @param defaultLimitOffset
-     * @return
+     * @return LimitOffset
      */
     protected LimitOffset getLimitOffset(WebRequest webRequest, LimitOffset defaultLimitOffset) {
         try {
@@ -71,6 +72,13 @@ public abstract class BaseCtrl
         }
     }
 
+    /**
+     * Extracts a date range from the query parameters 'startDate' and 'endDate'.
+     *
+     * @param webRequest
+     * @param defaultRange
+     * @return Range<LocalDate>
+     */
     protected Range<LocalDate> getDateRange(WebRequest webRequest, Range<LocalDate> defaultRange) {
         try {
             LocalDate startDate = null;
@@ -82,9 +90,9 @@ public abstract class BaseCtrl
                 endDate = LocalDate.from(DateTimeFormatter.ISO_DATE.parse(webRequest.getParameter("endDate")));
             }
             return (startDate == null && endDate == null)
-                        ? defaultRange
-                        : Range.closed(startDate != null ? startDate : DateUtils.LONG_AGO,
-                                         endDate != null ? endDate   : DateUtils.THE_FUTURE);
+                ? defaultRange
+                : Range.closed(startDate != null ? startDate : DateUtils.LONG_AGO,
+                                 endDate != null ? endDate   : DateUtils.THE_FUTURE);
         }
         catch (Exception ex) {
             return defaultRange;
@@ -116,7 +124,7 @@ public abstract class BaseCtrl
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ErrorResponse handleMissingParameterException(MissingServletRequestParameterException ex) {
         return new ViewObjectErrorResponse(ErrorCode.MISSING_PARAMETERS,
-                new ParameterView(ex.getParameterName(), ex.getParameterType()));
+            new ParameterView(ex.getParameterName(), ex.getParameterType()));
     }
 
     @ExceptionHandler(SearchException.class)
@@ -124,11 +132,5 @@ public abstract class BaseCtrl
     public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
         logger.warn("Search Exception: {}\n{}", ex.getMessage(), ExceptionUtils.getStackTrace(ex.getCause()));
         return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
-    }
-
-    @ExceptionHandler(BillNotFoundEx.class)
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public ViewObjectErrorResponse billNotFoundHandler(BillNotFoundEx ex) {
-        return new ViewObjectErrorResponse(ErrorCode.BILL_NOT_FOUND, new BillIdView(ex.getBillId()));
     }
 }

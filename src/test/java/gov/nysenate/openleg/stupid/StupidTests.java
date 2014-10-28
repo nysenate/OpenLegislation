@@ -9,10 +9,8 @@ import java.sql.Timestamp;
 import java.util.Optional;
 
 
-/**
- * Created by kinbote on 7/3/14.
- */
-public class StupidTests {
+public class StupidTests
+{
     @Test
     public void stupid(){
         String a[] = {"0000001", "", null};

@@ -1,11 +1,18 @@
 package gov.nysenate.openleg.config;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.OutputUtils;
 import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.MemoryUnit;
 import net.sf.ehcache.statistics.StatisticsGateway;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -16,8 +23,10 @@ import org.springframework.cache.annotation.Cacheable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertEquals;
 
 public class CacheConfigurationTests extends BaseTests
 {
@@ -28,6 +37,9 @@ public class CacheConfigurationTests extends BaseTests
 
     @Autowired
     BillDataService billDataService;
+
+    @Autowired
+    CacheManager cacheManager;
 
     public static class CacheTester
     {
@@ -83,5 +95,28 @@ public class CacheConfigurationTests extends BaseTests
 //        logger.info(cacheTester.method2("a"));
     }
 
+    @Test
+    public void testCopyOnReadWrite() throws Exception {
+//        cacheManager.addCache(new Cache(new CacheConfiguration().name("testCache").copyOnWrite(true)));
+//        billDataService.getBillIds(SessionYear.of(2011), LimitOffset.ALL).parallelStream().forEach(b -> {
+//            billDataService.getBill(b);
+//            logger.info("{}", b);
+//        });
+//        billDataService.getBillIds(SessionYear.of(2013), LimitOffset.ALL).parallelStream().forEach(b -> {
+//            billDataService.getBill(b);
+//            logger.info("{}", b);
+//        });
+//        Bill S1234 = billDataService.getBill(new BaseBillId("S1234", 2013));
+//        cacheManager.getCache("testCache").put(new Element(new BaseBillId("S1234", 2013), S1234));
+//        S1234.getActiveAmendment().setFullText("MUWAHHAHA");
+//        assertEquals(S1234.getFullText(),
+//                ((Bill) cacheManager.getCache("testCache").get(new BaseBillId("S1234", 2013)).getObjectValue()).getFullText());
+//        logger.info("Bill Cache {}", cacheManager.getCache("bills").getStatistics().getSize());
+//        logger.info("Pool Size {}", cacheManager.getOnHeapPool().getSize());
+//        logger.info("Pool Max Size {}", cacheManager.getOnHeapPool().getMaxSize());
+//        List<BaseBillId> billIds = (List<BaseBillId>) cacheManager.getCache("bills").getKeys();
+//        logger.info("2011 count {}", billIds    .stream().filter(b -> b.getSession().getYear() == 2011).count());
+//        logger.info("2013 count {}", billIds.stream().filter(b -> b.getSession().getYear() == 2013).count());
 
+    }
 }

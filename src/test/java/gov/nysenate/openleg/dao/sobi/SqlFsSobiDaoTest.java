@@ -29,8 +29,7 @@ public class SqlFsSobiDaoTest extends BaseTests
 //            sobiDao.updateSobiFile(sobiFile);
 //            logger.info("{}", sobiFile);
 //        }
-        SobiFile sobiFile = sobiDao.getSobiFile("SOBI.D130102.T104813.TXT");
-
+        SobiFile sobiFile = sobiDao.getSobiFile("SOBI.D090609.T040500.TXT");
     }
 
     @Test

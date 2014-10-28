@@ -10,7 +10,7 @@ import gov.nysenate.openleg.model.bill.BillInfo;
 public class BillInfoView extends BaseBillIdView implements ViewObject
 {
     protected String printNo;
-    protected String billType;
+    protected BillTypeView billType;
     protected String title;
     protected String activeVersion;
     protected String summary;
@@ -22,7 +22,7 @@ public class BillInfoView extends BaseBillIdView implements ViewObject
         super(billInfo != null ? billInfo.getBillId() : null);
         if (billInfo != null) {
             title = billInfo.getTitle();
-            billType = billInfo.getBillId().getBillType().getName();
+            billType = new BillTypeView(billInfo.getBillId().getBillType());
             activeVersion = billInfo.getActiveVersion() != null ? billInfo.getActiveVersion().getValue() : null;
             printNo = basePrintNo + activeVersion;
             summary = billInfo.getSummary();
@@ -41,7 +41,7 @@ public class BillInfoView extends BaseBillIdView implements ViewObject
         return title;
     }
 
-    public String getBillType() {
+    public BillTypeView getBillType() {
         return billType;
     }
 

@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.bill.data;
+package gov.nysenate.openleg.service.bill.event;
 
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.service.base.ContentUpdateEvent;

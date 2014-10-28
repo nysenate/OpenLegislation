@@ -74,7 +74,7 @@
             </thead>
             <tbody>
             <tr ng-repeat="r in summaries.reports.items">
-                <td><a ng-href="daybreak/{{ r.reportDateTime | moment }}">{{ r.reportDateTime | moment:'lll' }}</a></td>
+                <td><a ng-href="/legislation/report/daybreak/{{ r.reportDateTime | moment }}">{{ r.reportDateTime | moment:'lll' }}</a></td>
                 <td style="border-left:1px solid #ccc; font-weight:bold">{{ r.openMismatches }}</td>
                 <td>
                     <span class="prefix-icon icon-arrow-up2 new-error"></span>

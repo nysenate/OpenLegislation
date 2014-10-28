@@ -8,23 +8,20 @@ import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.service.base.SearchException;
-import gov.nysenate.openleg.service.base.SearchIndexFlushEvent;
 import gov.nysenate.openleg.service.base.SearchResults;
-import gov.nysenate.openleg.service.bill.data.BillUpdateEvent;
-import gov.nysenate.openleg.service.bill.data.BulkBillUpdateEvent;
+import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
+import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,15 +45,36 @@ public class ElasticBillSearchService implements BillSearchService
 
     /** {@inheritDoc} */
     @Override
+    public SearchResults<BaseBillId> searchBills(Integer session, String sort, LimitOffset limOff) throws SearchException {
+        return searchBills(
+            QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), FilterBuilders.termFilter("session", session)),
+            null, sort, limOff);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException {
-        if (limOff == null) {
-            limOff = LimitOffset.TEN;
-        }
+        return searchBills(QueryBuilders.queryString(query), null, sort, limOff);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SearchResults<BaseBillId> searchBills(String query, Integer session, String sort, LimitOffset limOff) throws SearchException {
+        TermFilterBuilder sessionFilter = FilterBuilders.termFilter("session", session);
+        return searchBills(QueryBuilders.filteredQuery(QueryBuilders.queryString(query), sessionFilter), null, sort, limOff);
+    }
+
+    /**
+     * Delegates to the underlying bill search dao.
+     */
+    private SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff)
+        throws SearchException {
+        if (limOff == null) limOff = LimitOffset.TEN;
         try {
-            return billSearchDao.searchBills(query, sort, limOff);
+            return billSearchDao.searchBills(query, postFilter, sort, limOff);
         }
         catch (SearchParseException ex) {
-            throw new SearchException("There was a problem parsing the supplied query string.", ex);
+            throw new SearchException("Invalid query string", ex);
         }
         catch (ElasticsearchException ex) {
             throw new SearchException("Unexpected search exception!", ex);
@@ -104,7 +122,7 @@ public class ElasticBillSearchService implements BillSearchService
                 .filter(b -> isBillIndexable(b))
                 .collect(Collectors.toList());
             logger.info("Indexing {} bills into elastic search.", indexableBills.size());
-            billSearchDao.updateBulkBillIndices(indexableBills);
+            billSearchDao.updateBillIndex(indexableBills);
 
             // Ensure any bills that currently don't meet the criteria are not in the index.
             if (indexableBills.size() != bills.size()) {

@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.controller.api.spotcheck;
+package gov.nysenate.openleg.controller.api.admin.spotcheck;
 
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;

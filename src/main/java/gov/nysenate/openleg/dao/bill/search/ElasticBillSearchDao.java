@@ -4,6 +4,7 @@ import com.google.common.primitives.Ints;
 import gov.nysenate.openleg.client.view.bill.BillView;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.service.base.SearchResult;
@@ -14,6 +15,9 @@ import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.FilterBuilders;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
@@ -32,7 +36,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchDao.class);
 
-    protected static final String billIndexName = "bills";
+    protected static final String billIndexName = SearchIndex.BILL.getIndexName();
 
     @PostConstruct
     public void init() {
@@ -44,22 +48,31 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) {
+    public SearchResults<BaseBillId> searchBills(QueryBuilder query, String sort, LimitOffset limOff) {
+        return searchBills(query, null, sort, limOff);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = searchClient.prepareSearch(billIndexName)
-            .setSearchType(SearchType.QUERY_THEN_FETCH)
-            .setQuery(QueryBuilders.queryString(query))
-            .setFrom(limOff.getOffsetStart() - 1)
-            .setSize((limOff.hasLimit()) ? limOff.getLimit() : -1)
-            .setFetchSource(false);
-
+                .setSearchType(SearchType.QUERY_THEN_FETCH)
+                .setQuery(query)
+                .setFrom(limOff.getOffsetStart() - 1)
+                .setSize((limOff.hasLimit()) ? limOff.getLimit() : -1)
+                .setFetchSource(false);
+        if (postFilter != null) {
+            searchBuilder.setPostFilter(postFilter);
+        }
+        // Add the sort by fields
         extractSortFilters(sort).forEach(searchBuilder::addSort);
-
+        // Perform the search request
         SearchResponse response = searchBuilder.execute().actionGet();
         logger.debug("Bill search result with query {} took {} ms", query, response.getTookInMillis());
         List<SearchResult<BaseBillId>> resultList = new ArrayList<>();
         for (SearchHit hit : response.getHits().hits()) {
             SearchResult<BaseBillId> result = new SearchResult<>(
-                new BaseBillId(hit.getId(), Integer.parseInt(hit.getType())),
+                    new BaseBillId(hit.getId(), Integer.parseInt(hit.getType())),
                     (!Float.isNaN(hit.getScore())) ? BigDecimal.valueOf(hit.getScore()) : BigDecimal.ONE);
             resultList.add(result);
         }
@@ -76,7 +89,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 
     /** {@inheritDoc} */
     @Override
-    public void updateBulkBillIndices(Collection<Bill> bills) {
+    public void updateBillIndex(Collection<Bill> bills) {
         BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
         List<BillView> billViewList = bills.stream().map(b -> new BillView(b)).collect(Collectors.toList());
         billViewList.forEach(b ->

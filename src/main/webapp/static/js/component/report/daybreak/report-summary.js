@@ -171,7 +171,8 @@ function drawMismatchStatusGraph(reportDates, dataSeries) {
     $('#report-chart-area').highcharts({
         chart: {
             type: 'area',
-            height: 300
+            height: 300,
+            backgroundColor: '#f5f5f5'
         },
         title: {
             text: ''

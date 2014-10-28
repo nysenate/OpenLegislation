@@ -25,7 +25,14 @@ border-bottom: 1px solid rgb(180, 204, 235);"  ng-model="searchTerm" ng-model-op
     </div>
 
     <div class="row content-row" style="background:#005C7A;color:white;margin-bottom:20px;">
-        <span><strong>{{billResults.total}}</strong> search results for "{{searchTerm | limitTo:50}}"</span>
+        <div class="columns large-6">
+            <span><strong>{{billResults.total}}</strong> search results for "{{searchTerm | limitTo:50}}"</span>
+        </div>
+        <div class="columns large-6">
+            <pagination total-items="totalResults" items-per-page="limit" page="page" max-size="2" class="right pagination-sm"
+                        boundary-links="true" rotate="false"></pagination>
+        </div>
+
     </div>
 
     <div class="row content-row" ng-repeat="item in billResults.result.items" style="margin-bottom:5px;border-bottom:1px solid #ddd;">

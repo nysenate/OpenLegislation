@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.service.bill;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.client.view.bill.BillView;
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.OutputUtils;
@@ -10,27 +13,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class SqlBillDataServiceTests extends BaseTests
+public class CachedBillDataServiceTests extends BaseTests
 {
-    private static final Logger logger = LoggerFactory.getLogger(SqlBillDataServiceTests.class);
+    private static final Logger logger = LoggerFactory.getLogger(CachedBillDataServiceTests.class);
 
     @Autowired
     BillDataService billData;
 
     @Test
     public void testGetBill() throws Exception {
-        StopWatch sw = new StopWatch();
-        billData.getBill(new BaseBillId("S1236", 2013));
-        sw.start();
         billData.getBill(new BaseBillId("S1234", 2013));
+        StopWatch sw = new StopWatch();
+        sw.start();
+        Bill bill = billData.getBill(new BaseBillId("S2180", 2013));
         sw.stop();
+        logger.info("{}", OutputUtils.toJson(bill));
         logger.info("{}", sw.getTime());
         sw.reset();
         sw.start();
-        billData.getBill(new BaseBillId("S1234", 2013));;
+        billData.getBill(new BaseBillId("S2180", 2013));
         sw.stop();
         logger.info("{}", sw.getTime());
+    }
 
-
+    @Test
+    public void testGetBillInfo() throws Exception {
+        StopWatch sw = new StopWatch();
+        sw.start();
+        sw.stop();
+        logger.info("time {}", sw.getTime());
     }
 }
