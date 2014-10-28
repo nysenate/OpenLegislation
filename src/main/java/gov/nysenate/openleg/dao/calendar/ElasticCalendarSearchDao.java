@@ -13,6 +13,7 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
@@ -53,22 +54,22 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
 
     /**{@inheritDoc}*/
     @Override
-    public SearchResults<CalendarId> searchCalendars(String query, String sort, LimitOffset limitOffset) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(calIndexName, query, , sort, limitOffset);
+    public SearchResults<CalendarId> searchCalendars(QueryBuilder query, String sort, LimitOffset limitOffset) {
+        SearchRequestBuilder searchBuilder = getSearchRequest(calIndexName, query, null, sort, limitOffset);
         return getSearchResults(searchBuilder.execute().actionGet(), limitOffset, this::getCalendarId);
     }
 
     /**{@inheritDoc}*/
     @Override
-    public SearchResults<CalendarSupplementalId> searchFloorCalendars(String query, String sort, LimitOffset limitOffset) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(floorCalIndexName, query, , sort, limitOffset);
+    public SearchResults<CalendarSupplementalId> searchFloorCalendars(QueryBuilder query, String sort, LimitOffset limitOffset) {
+        SearchRequestBuilder searchBuilder = getSearchRequest(floorCalIndexName, query, null, sort, limitOffset);
         return getSearchResults(searchBuilder.execute().actionGet(), limitOffset, this::getCalSupId);
     }
 
     /**{@inheritDoc}*/
     @Override
-    public SearchResults<CalendarActiveListId> searchActiveLists(String query, String sort, LimitOffset limitOffset) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(activeListIndexName, query, , sort, limitOffset);
+    public SearchResults<CalendarActiveListId> searchActiveLists(QueryBuilder query, String sort, LimitOffset limitOffset) {
+        SearchRequestBuilder searchBuilder = getSearchRequest(activeListIndexName, query, null, sort, limitOffset);
         return getSearchResults(searchBuilder.execute().actionGet(), limitOffset, this::getActiveListId);
     }
 

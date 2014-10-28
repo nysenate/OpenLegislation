@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.service.base.SearchException;
 import gov.nysenate.openleg.service.base.SearchResults;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
             limitOffset = defaultLimitOffset;
         }
         try {
-            return calendarSearchDao.searchCalendars(query, sort, limitOffset);
+            return calendarSearchDao.searchCalendars(QueryBuilders.queryString(query), sort, limitOffset);
         }
         catch (SearchParseException ex) {
             throw new SearchException("There was a problem parsing the supplied query string.", ex);
@@ -50,7 +51,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
             limitOffset = defaultLimitOffset;
         }
         try {
-            return calendarSearchDao.searchActiveLists(query, sort, limitOffset);
+            return calendarSearchDao.searchActiveLists(QueryBuilders.queryString(query), sort, limitOffset);
         }
         catch (SearchParseException ex) {
             throw new SearchException("There was a problem parsing the supplied query string.", ex);
@@ -69,7 +70,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
             limitOffset = defaultLimitOffset;
         }
         try {
-            return calendarSearchDao.searchFloorCalendars(query, sort, limitOffset);
+            return calendarSearchDao.searchFloorCalendars(QueryBuilders.queryString(query), sort, limitOffset);
         }
         catch (SearchParseException ex) {
             throw new SearchException("There was a problem parsing the supplied query string.", ex);

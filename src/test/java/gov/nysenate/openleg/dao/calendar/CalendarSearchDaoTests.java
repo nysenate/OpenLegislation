@@ -46,8 +46,8 @@ public class CalendarSearchDaoTests extends BaseTests
 
     @Test
     public void calendarSearchTest() {
-        SearchResults<CalendarId> results = calendarSearchDao.searchCalendars("\\*.basePrintNo: S2107", "", LimitOffset.ALL);
-        logger.info("results");
-        results.getResults().stream().map(r -> r.getResult().toString()).forEach(logger::info);
+//        SearchResults<CalendarId> results = calendarSearchDao.searchCalendars("\\*.basePrintNo: S2107", "", LimitOffset.ALL);
+//        logger.info("results");
+//        results.getResults().stream().map(r -> r.getResult().toString()).forEach(logger::info);
     }
 }
