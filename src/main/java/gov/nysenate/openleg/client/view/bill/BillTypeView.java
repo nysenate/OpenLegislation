@@ -8,8 +8,6 @@ public class BillTypeView implements ViewObject
     protected String chamber;
     protected String desc;
     protected boolean resolution;
-    protected boolean budget;
-    protected String specialBudget = "";
 
     public BillTypeView(BillType billType) {
         if (billType != null) {
@@ -29,14 +27,6 @@ public class BillTypeView implements ViewObject
 
     public boolean isResolution() {
         return resolution;
-    }
-
-    public boolean isBudget() {
-        return budget;
-    }
-
-    public String getSpecialBudget() {
-        return specialBudget;
     }
 
     @Override

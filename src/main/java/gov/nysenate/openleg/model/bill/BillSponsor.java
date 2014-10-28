@@ -18,10 +18,10 @@ public class BillSponsor implements Serializable
     private Member member;
 
     /** Indicates if bill is a budget bill (no member). */
-    private boolean budgetBill = false;
+    private boolean budget = false;
 
     /** Indicates if bill is introduced through RULES. (no member). */
-    private boolean rulesSponsor = false;
+    private boolean rules = false;
 
     /** --- Constructors --- */
 
@@ -45,23 +45,23 @@ public class BillSponsor implements Serializable
         if (obj == null || getClass() != obj.getClass()) return false;
         final BillSponsor other = (BillSponsor) obj;
         return Objects.equals(this.member, other.member) &&
-               Objects.equals(this.budgetBill, other.budgetBill) &&
-               Objects.equals(this.rulesSponsor, other.rulesSponsor);
+               Objects.equals(this.budget, other.budget) &&
+               Objects.equals(this.rules, other.rules);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(member, budgetBill, rulesSponsor);
+        return Objects.hash(member, budget, rules);
     }
 
     @Override
     public String toString() {
-        return (((rulesSponsor)
+        return (((rules)
                     ? "RULES " : "")
-                + ((budgetBill)
+                + ((budget)
                     ? "BUDGET BILL " : "") +
                 ((hasMember())
-                    ? ((rulesSponsor)
+                    ? ((rules)
                        ? "(" + member.getLbdcShortName() + ")"
                        : member.getLbdcShortName())
                     : "")
@@ -78,19 +78,19 @@ public class BillSponsor implements Serializable
         this.member = member;
     }
 
-    public boolean isBudgetBill() {
-        return budgetBill;
+    public boolean isBudget() {
+        return budget;
     }
 
-    public void setBudgetBill(boolean budgetBill) {
-        this.budgetBill = budgetBill;
+    public void setBudget(boolean budget) {
+        this.budget = budget;
     }
 
-    public boolean isRulesSponsor() {
-        return rulesSponsor;
+    public boolean isRules() {
+        return rules;
     }
 
-    public void setRulesSponsor(boolean rulesSponsor) {
-        this.rulesSponsor = rulesSponsor;
+    public void setRules(boolean rules) {
+        this.rules = rules;
     }
 }

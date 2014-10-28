@@ -674,7 +674,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         sponsorLine = sponsorLine.replace("(MS)", "").toUpperCase().trim();
         // Check for RULES sponsors
         if (sponsorLine.startsWith("RULES")) {
-            billSponsor.setRulesSponsor(true);
+            billSponsor.setRules(true);
             Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
             if (!sponsorLine.equals("RULES COM") && rules.matches()) {
                 sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
@@ -683,7 +683,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         }
         // Budget bills don't have a specific sponsor
         else if (sponsorLine.startsWith("BUDGET")) {
-            billSponsor.setBudgetBill(true);
+            billSponsor.setBudget(true);
         }
         // Apply the sponsor by looking up the member
         else {

@@ -674,8 +674,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             BillSponsor sponsor = new BillSponsor();
             int sessionMemberId = rs.getInt("session_member_id");
             SessionYear sessionYear = getSessionYearFromRs(rs, "bill_session_year");
-            sponsor.setBudgetBill(rs.getBoolean("budget_bill"));
-            sponsor.setRulesSponsor(rs.getBoolean("rules_sponsor"));
+            sponsor.setBudget(rs.getBoolean("budget_bill"));
+            sponsor.setRules(rs.getBoolean("rules_sponsor"));
             if (sessionMemberId > 0) {
                 try {
                     sponsor.setMember(memberService.getMemberBySessionId(sessionMemberId));
@@ -822,8 +822,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         boolean hasMember = billSponsor != null && billSponsor.hasMember();
         addBillIdParams(bill, params);
         params.addValue("sessionMemberId", (hasMember) ? billSponsor.getMember().getSessionMemberId() : null)
-              .addValue("budgetBill", (billSponsor != null && billSponsor.isBudgetBill()))
-              .addValue("rulesSponsor", (billSponsor != null && billSponsor.isRulesSponsor()));
+              .addValue("budgetBill", (billSponsor != null && billSponsor.isBudget()))
+              .addValue("rulesSponsor", (billSponsor != null && billSponsor.isRules()));
         addLastFragmentParam(fragment, params);
         return params;
     }

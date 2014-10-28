@@ -22,12 +22,12 @@ public class BillInfoView extends BaseBillIdView implements ViewObject
         super(billInfo != null ? billInfo.getBillId() : null);
         if (billInfo != null) {
             title = billInfo.getTitle();
-            billType = new BillTypeView(billInfo.getBillId().getBillType());
             activeVersion = billInfo.getActiveVersion() != null ? billInfo.getActiveVersion().getValue() : null;
             printNo = basePrintNo + activeVersion;
             summary = billInfo.getSummary();
             status = new BillStatusView(billInfo.getStatus());
             sponsor = new SponsorView(billInfo.getSponsor());
+            billType = new BillTypeView(billInfo.getBillId().getBillType());
             committee = (billInfo.getCurrentCommittee() != null)
                     ? new CommitteeIdView(billInfo.getCurrentCommittee()) : null;
         }

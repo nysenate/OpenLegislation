@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.bill.search.ElasticBillSearchDao;
 import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.service.base.SearchException;
@@ -45,9 +46,9 @@ public class ElasticBillSearchService implements BillSearchService
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<BaseBillId> searchBills(Integer session, String sort, LimitOffset limOff) throws SearchException {
+    public SearchResults<BaseBillId> searchBills(SessionYear session, String sort, LimitOffset limOff) throws SearchException {
         return searchBills(
-            QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), FilterBuilders.termFilter("session", session)),
+            QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), FilterBuilders.termFilter("session", session.getYear())),
             null, sort, limOff);
     }
 
@@ -59,8 +60,8 @@ public class ElasticBillSearchService implements BillSearchService
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<BaseBillId> searchBills(String query, Integer session, String sort, LimitOffset limOff) throws SearchException {
-        TermFilterBuilder sessionFilter = FilterBuilders.termFilter("session", session);
+    public SearchResults<BaseBillId> searchBills(String query, SessionYear session, String sort, LimitOffset limOff) throws SearchException {
+        TermFilterBuilder sessionFilter = FilterBuilders.termFilter("session", session.getYear());
         return searchBills(QueryBuilders.filteredQuery(QueryBuilders.queryString(query), sessionFilter), null, sort, limOff);
     }
 

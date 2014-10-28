@@ -7,16 +7,14 @@ import gov.nysenate.openleg.model.bill.BillSponsor;
 public class SponsorView implements ViewObject
 {
     protected MemberView member;
-
-    protected boolean budgetBill;
-
-    protected boolean rulesSponsor;
+    protected boolean budget;
+    protected boolean sponsor;
 
     public SponsorView(BillSponsor billSponsor) {
         if (billSponsor != null) {
             this.member = billSponsor.getMember()!=null ? new MemberView(billSponsor.getMember()) : null;
-            this.budgetBill = billSponsor.isBudgetBill();
-            this.rulesSponsor = billSponsor.isRulesSponsor();
+            this.budget = billSponsor.isBudget();
+            this.sponsor = billSponsor.isRules();
         }
     }
 
@@ -29,11 +27,11 @@ public class SponsorView implements ViewObject
         return member;
     }
 
-    public boolean isBudgetBill() {
-        return budgetBill;
+    public boolean isBudget() {
+        return budget;
     }
 
-    public boolean isRulesSponsor() {
-        return rulesSponsor;
+    public boolean isSponsor() {
+        return sponsor;
     }
 }
