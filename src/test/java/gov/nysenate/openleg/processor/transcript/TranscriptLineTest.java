@@ -1,12 +1,10 @@
 package gov.nysenate.openleg.processor.transcript;
 
 import org.apache.commons.lang3.text.WordUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 import static org.junit.Assert.*;
 

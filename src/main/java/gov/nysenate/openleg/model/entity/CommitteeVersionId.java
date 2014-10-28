@@ -4,7 +4,6 @@ import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.base.SessionYear;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 

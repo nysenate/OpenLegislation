@@ -22,7 +22,6 @@ import java.util.List;
 
 import static gov.nysenate.openleg.dao.hearing.SqlPublicHearingQuery.*;
 import static gov.nysenate.openleg.util.CollectionUtils.difference;
-import static gov.nysenate.openleg.util.DateUtils.getLocalDateTime;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository

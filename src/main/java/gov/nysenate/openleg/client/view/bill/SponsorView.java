@@ -2,7 +2,6 @@ package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.entity.MemberView;
-import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.model.bill.BillSponsor;
 
 public class SponsorView implements ViewObject

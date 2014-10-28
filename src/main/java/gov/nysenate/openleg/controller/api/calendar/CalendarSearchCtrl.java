@@ -1,32 +1,26 @@
 package gov.nysenate.openleg.controller.api.calendar;
 
-import com.google.common.collect.*;
-import gov.nysenate.openleg.client.response.base.*;
-import gov.nysenate.openleg.client.response.error.*;
-import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.calendar.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
-import gov.nysenate.openleg.model.calendar.CalendarType;
-import gov.nysenate.openleg.service.base.InvalidParametersSearchException;
 import gov.nysenate.openleg.service.base.SearchException;
 import gov.nysenate.openleg.service.base.SearchResults;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
-import gov.nysenate.openleg.service.calendar.search.CalendarSearchParameters;
 import gov.nysenate.openleg.service.calendar.search.CalendarSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;

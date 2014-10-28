@@ -1,18 +1,10 @@
 package gov.nysenate.openleg.config;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.OutputUtils;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.MemoryUnit;
 import net.sf.ehcache.statistics.StatisticsGateway;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -23,10 +15,6 @@ import org.springframework.cache.annotation.Cacheable;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
-import static org.junit.Assert.assertEquals;
 
 public class CacheConfigurationTests extends BaseTests
 {

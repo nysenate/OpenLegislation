@@ -4,7 +4,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static gov.nysenate.openleg.dao.base.SqlQueryUtils.*;
+import static gov.nysenate.openleg.dao.base.SqlQueryUtils.getOrderByClause;
+import static gov.nysenate.openleg.dao.base.SqlQueryUtils.getSqlWithSchema;
 import static org.junit.Assert.assertEquals;
 
 public class SqlQueryUtilsTest

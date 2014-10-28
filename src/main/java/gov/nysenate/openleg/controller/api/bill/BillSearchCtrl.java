@@ -2,33 +2,17 @@ package gov.nysenate.openleg.controller.api.bill;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
-import gov.nysenate.openleg.client.response.error.ErrorCode;
-import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.base.SearchResultView;
-import gov.nysenate.openleg.client.view.bill.BillIdView;
 import gov.nysenate.openleg.client.view.bill.BillInfoView;
 import gov.nysenate.openleg.client.view.bill.BillView;
-import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.bill.search.BillSearchDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.service.base.SearchException;
-import gov.nysenate.openleg.service.base.SearchResult;
 import gov.nysenate.openleg.service.base.SearchResults;
-import gov.nysenate.openleg.service.bill.data.BillDataService;
-import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
-import gov.nysenate.openleg.service.bill.search.BillSearchService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
-
-import java.util.Arrays;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
 import static java.util.stream.Collectors.toList;

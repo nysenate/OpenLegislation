@@ -4,7 +4,6 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 

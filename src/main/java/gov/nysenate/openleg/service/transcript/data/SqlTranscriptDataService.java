@@ -3,20 +3,14 @@ package gov.nysenate.openleg.service.transcript.data;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.transcript.TranscriptDao;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.model.transcript.TranscriptNotFoundEx;
-import gov.nysenate.openleg.service.base.CachingService;
-import net.sf.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service

@@ -4,7 +4,6 @@ import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.entity.Member;
 
 import java.util.stream.Collectors;
 

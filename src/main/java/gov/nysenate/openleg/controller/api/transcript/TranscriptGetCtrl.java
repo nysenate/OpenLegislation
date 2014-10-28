@@ -3,7 +3,6 @@ package gov.nysenate.openleg.controller.api.transcript;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
-import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptIdView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;

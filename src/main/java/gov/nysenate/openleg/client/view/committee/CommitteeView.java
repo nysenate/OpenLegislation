@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.client.view.committee;
 
 import gov.nysenate.openleg.client.view.base.ListView;
-import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.entity.Committee;
 
 import java.util.stream.Collectors;

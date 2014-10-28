@@ -2,7 +2,6 @@ package gov.nysenate.openleg.service.transcript.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;

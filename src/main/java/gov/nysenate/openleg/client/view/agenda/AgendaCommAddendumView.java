@@ -2,13 +2,8 @@ package gov.nysenate.openleg.client.view.agenda;
 
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommittee;
 import gov.nysenate.openleg.model.agenda.AgendaVoteCommittee;
-import gov.nysenate.openleg.model.entity.CommitteeId;
-
-import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 

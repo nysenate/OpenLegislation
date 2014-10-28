@@ -6,7 +6,6 @@ import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.CommitteeId;
-import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 
 import java.io.Serializable;

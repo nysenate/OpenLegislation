@@ -4,7 +4,6 @@ import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.processor.DataProcessor;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

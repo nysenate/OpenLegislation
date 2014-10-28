@@ -1,6 +1,5 @@
 package gov.nysenate.openleg;
 
-import gov.nysenate.openleg.config.ApplicationConfig;
 import gov.nysenate.openleg.config.CacheConfigurationTests;
 import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;

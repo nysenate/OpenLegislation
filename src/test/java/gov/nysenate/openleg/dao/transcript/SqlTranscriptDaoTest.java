@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 public class SqlTranscriptDaoTest extends BaseTests
 {
     private static final Logger logger = LoggerFactory.getLogger(SqlTranscriptDaoTest.class);

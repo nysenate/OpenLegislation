@@ -3,11 +3,7 @@ package gov.nysenate.openleg.client.view.agenda;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.agenda.Agenda;
-import gov.nysenate.openleg.model.entity.CommitteeId;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AgendaView extends AgendaSummaryView implements ViewObject

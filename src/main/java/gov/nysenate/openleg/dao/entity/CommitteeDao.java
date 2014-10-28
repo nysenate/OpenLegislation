@@ -10,7 +10,6 @@ import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import org.springframework.dao.DataAccessException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

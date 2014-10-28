@@ -1,21 +1,17 @@
 package gov.nysenate.openleg.processor.hearing;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.model.hearing.PublicHearing;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class PublicHearingDateParserTest extends BaseTests {
 

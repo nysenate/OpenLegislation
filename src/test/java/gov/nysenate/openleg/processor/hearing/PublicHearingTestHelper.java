@@ -3,7 +3,6 @@ package gov.nysenate.openleg.processor.hearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;

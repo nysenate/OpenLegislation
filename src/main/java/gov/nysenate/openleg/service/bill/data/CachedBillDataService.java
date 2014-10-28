@@ -11,7 +11,6 @@ import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.base.CachingService;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
-import gov.nysenate.openleg.util.OutputUtils;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
@@ -29,13 +28,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 import static net.sf.ehcache.config.SizeOfPolicyConfiguration.MaxDepthExceededBehavior.ABORT;
 

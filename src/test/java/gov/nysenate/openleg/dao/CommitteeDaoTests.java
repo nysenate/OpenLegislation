@@ -6,17 +6,19 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.entity.CommitteeDao;
 import gov.nysenate.openleg.entity.TestCommittees;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.entity.*;
+import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.Committee;
+import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.util.DateUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class CommitteeDaoTests extends BaseTests{

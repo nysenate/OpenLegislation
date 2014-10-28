@@ -1,15 +1,12 @@
 package gov.nysenate.openleg.dao.daybreak;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.daybreak.DaybreakBill;
-import gov.nysenate.openleg.model.daybreak.DaybreakBillId;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class SqlFsDaybreakDaoTests extends BaseTests

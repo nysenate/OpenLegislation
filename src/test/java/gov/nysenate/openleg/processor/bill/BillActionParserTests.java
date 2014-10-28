@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 public class BillActionParserTests
 {
     private static final Logger logger = LoggerFactory.getLogger(BillActionParserTests.class);

@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.service.bill.search;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.bill.search.ElasticBillSearchDao;
 import org.junit.Test;
 import org.slf4j.Logger;

@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.client.view.agenda;
 
-import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.agenda.Agenda;
 

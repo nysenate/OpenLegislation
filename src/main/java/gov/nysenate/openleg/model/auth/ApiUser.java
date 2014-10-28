@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.auth;
 
 import org.apache.commons.lang3.RandomStringUtils;
+
 import java.io.Serializable;
 
 /**

@@ -9,11 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.TreeMap;
 
-import static gov.nysenate.openleg.model.calendar.CalendarSectionType.*;
-import static org.junit.Assert.assertEquals;
+import static gov.nysenate.openleg.model.calendar.CalendarSectionType.ORDER_OF_THE_FIRST_REPORT;
+import static gov.nysenate.openleg.model.calendar.CalendarSectionType.ORDER_OF_THE_SECOND_REPORT;
 
 public class CalendarSupplementalTests
 {

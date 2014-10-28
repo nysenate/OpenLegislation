@@ -2,7 +2,6 @@ package gov.nysenate.openleg.client.view.agenda;
 
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.client.view.bill.BillVoteView;
 import gov.nysenate.openleg.model.agenda.AgendaVoteCommittee;
 
 import java.util.stream.Collectors;

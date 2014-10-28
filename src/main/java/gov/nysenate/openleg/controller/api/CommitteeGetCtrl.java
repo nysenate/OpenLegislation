@@ -5,9 +5,7 @@ import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
-import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
 import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.committee.CommitteeView;
@@ -29,12 +27,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
-import static org.springframework.format.annotation.DateTimeFormat.ISO.*;
+import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/committees", method = RequestMethod.GET)

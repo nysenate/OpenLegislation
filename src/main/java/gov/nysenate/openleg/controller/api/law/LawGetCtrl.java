@@ -15,7 +15,6 @@ import gov.nysenate.openleg.model.law.LawTree;
 import gov.nysenate.openleg.service.law.data.LawDataService;
 import gov.nysenate.openleg.service.law.data.LawDocumentNotFoundEx;
 import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

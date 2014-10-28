@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.service.bill;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.client.view.bill.BillView;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.time.StopWatch;

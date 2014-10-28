@@ -1,8 +1,7 @@
 package gov.nysenate.openleg.dao.auth;
+
 import gov.nysenate.openleg.model.auth.AdminUser;
 import org.springframework.dao.DataAccessException;
-
-import javax.xml.crypto.Data;
 
 /** DAO interface for connecting to and modifying AdminUser data. */
 

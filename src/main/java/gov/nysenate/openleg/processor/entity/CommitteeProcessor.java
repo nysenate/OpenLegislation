@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processor.entity;
 
-import gov.nysenate.openleg.dao.entity.CommitteeDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
@@ -19,9 +18,7 @@ import org.w3c.dom.NodeList;
 
 import javax.annotation.PostConstruct;
 import javax.xml.xpath.XPathExpressionException;
-import java.sql.Time;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;

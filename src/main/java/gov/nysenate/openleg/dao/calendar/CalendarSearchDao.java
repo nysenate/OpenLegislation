@@ -1,17 +1,13 @@
 package gov.nysenate.openleg.dao.calendar;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
-import gov.nysenate.openleg.service.base.SearchResult;
 import gov.nysenate.openleg.service.base.SearchResults;
-import gov.nysenate.openleg.service.calendar.search.CalendarSearchParameters;
-import org.springframework.dao.DataAccessException;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface CalendarSearchDao {
 
@@ -47,4 +43,30 @@ public interface CalendarSearchDao {
      * @return
      */
     public SearchResults<CalendarSupplementalId> searchFloorCalendars(String query, String sort, LimitOffset limitOffset);
+
+    /**
+     * Updates or inserts a single calendar into the index
+     *
+     * @param calendar
+     */
+    public void updateCalendarIndex(Calendar calendar);
+
+    /**
+     * Performs a bulk update/insert into the index for a collection of calendars
+     *
+     * @param calendars
+     */
+    public void updateCalendarIndexBulk(Collection<Calendar> calendars);
+
+    /**
+     * Deletes a calendar in the index corresponding to the given calendar id
+     *
+     * @param calId
+     */
+    public void deleteCalendarFromIndex(CalendarId calId);
+
+    /**
+     * Removes the calendar index and all indexed documents
+     */
+    public void deleteCalendarIndex();
 }

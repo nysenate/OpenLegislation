@@ -7,8 +7,6 @@ import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.service.base.SearchException;
 import gov.nysenate.openleg.service.base.SearchResults;
 
-import java.util.List;
-
 public interface CalendarSearchService {
 
     /**

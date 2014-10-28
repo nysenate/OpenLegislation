@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.config;
 
 import gov.nysenate.openleg.BaseTests;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,22 +1,15 @@
 package gov.nysenate.openleg.processor.hearing;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class PublicHearingAddressParserTest extends BaseTests
 {

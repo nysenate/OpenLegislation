@@ -26,7 +26,7 @@ public class CalendarSupplementalEntry
 
     public CalendarSupplementalEntry() {}
 
-    public CalendarSupplementalEntry(Integer billCalNo, CalendarSectionType sectionType,
+    public  CalendarSupplementalEntry(Integer billCalNo, CalendarSectionType sectionType,
                                      BillId billId, BillId subBillId, Boolean billHigh) {
         this.billCalNo = billCalNo;
         this.sectionType = sectionType;

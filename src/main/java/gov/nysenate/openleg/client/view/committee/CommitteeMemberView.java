@@ -2,7 +2,6 @@ package gov.nysenate.openleg.client.view.committee;
 
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.entity.CommitteeMember;
-import gov.nysenate.openleg.model.entity.Member;
 
 public class CommitteeMemberView extends MemberView {
 
