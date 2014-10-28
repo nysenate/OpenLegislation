@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.service.base.SearchResults;
+import org.elasticsearch.index.query.QueryBuilder;
 
 import java.util.Collection;
 
@@ -20,7 +21,7 @@ public interface CalendarSearchDao {
      * @param limitOffset
      * @return
      */
-    public SearchResults<CalendarId> searchCalendars(String query, String sort, LimitOffset limitOffset);
+    public SearchResults<CalendarId> searchCalendars(QueryBuilder query, String sort, LimitOffset limitOffset);
 
     /**
      * Performs a calendar active list search based on the given query string.
@@ -31,7 +32,7 @@ public interface CalendarSearchDao {
      * @param limitOffset
      * @return
      */
-    public SearchResults<CalendarActiveListId> searchActiveLists(String query, String sort, LimitOffset limitOffset);
+    public SearchResults<CalendarActiveListId> searchActiveLists(QueryBuilder query, String sort, LimitOffset limitOffset);
 
     /**
      * Performs a floor calendar search based on the given query string.
@@ -42,7 +43,7 @@ public interface CalendarSearchDao {
      * @param limitOffset
      * @return
      */
-    public SearchResults<CalendarSupplementalId> searchFloorCalendars(String query, String sort, LimitOffset limitOffset);
+    public SearchResults<CalendarSupplementalId> searchFloorCalendars(QueryBuilder query, String sort, LimitOffset limitOffset);
 
     /**
      * Updates or inserts a single calendar into the index
