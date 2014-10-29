@@ -17,6 +17,7 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
     /**
      * Add a new Admin account from an admin in the model
      * @param admin The admin to be added to the Database
+     * @throws org.springframework.dao.DataAccessException
      */
     @Override
     public void addAdmin(AdminUser admin) throws DataAccessException {
@@ -24,6 +25,11 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
             jdbcNamed.update(AdminUserQuery.INSERT_ADMIN.getSql(schema()), userParams(admin));
     }
 
+    /**
+     * Deletes the admin account with the given username
+     * @param username The username of the account that is being deleted
+     * @throws DataAccessException
+     */
     @Override
     public void deleteAdmin(String username) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource().addValue("username", username));
@@ -31,6 +37,20 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
             jdbcNamed.update(AdminUserQuery.DELETE_BY_NAME.getSql(schema()), params);
     }
 
+    /**
+     * Update an admin
+     * @param admin The administrator account
+     * @throws DataAccessException
+     */
+    public void updateAdmin(AdminUser admin) throws DataAccessException {
+        jdbcNamed.update(AdminUserQuery.UPDATE_ADMIN.getSql(schema()), userParams(admin));
+    }
+
+    /**
+     * Deletes every admin with a certain permissions level.
+     * @param level The permission level to delete
+     * @throws DataAccessException
+     */
     @Override
     public void deleteAdminByLevel(int level ) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource().addValue("privilegeLevel", level));
@@ -45,6 +65,11 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
                 .addValue("privilegeLevel", admin.getPrivileges());
     }
 
+    /**
+     * Create an AdminUser object from the given username
+     * @param username The username of the admin
+     * @return The new admin user object associated with this username
+     */
     @Override
     public AdminUser getAdmin(String username) {
         String pass = getPasswordFromUser(username);
@@ -57,6 +82,7 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
      * From a given username, find the permissions level of that account
      * @param user The username
      * @return The user's permissions level
+     * @throws org.springframework.dao.DataAccessException
      */
     @Override
     public int getLevelFromUser(String user) throws DataAccessException {
@@ -69,6 +95,7 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
      * From a given username, check the database to find their password.
      * @param user The username
      * @return The user's password
+     * @throws org.springframework.dao.DataAccessException
      */
     @Override
     public String getPasswordFromUser(String user) throws DataAccessException {

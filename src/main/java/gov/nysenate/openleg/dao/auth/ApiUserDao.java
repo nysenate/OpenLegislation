@@ -23,4 +23,6 @@ public interface ApiUserDao
 
        public void deleteApiUser (ApiUser apiuser) throws DataAccessException;
 
+       public void deleteApiUserByEmail (String email) throws DataAccessException;
+
 }

@@ -4,11 +4,15 @@
 
 <% request.setAttribute("ctxPath", request.getContextPath()); %>
 
-<open-layout:head title="About"/>
-<open-layout:body pageId="about">
-    <div class="row">
-        <div class="columns small-12">
-            <h1>About Openleg 2.0</h1>
-        </div>
+<open-layout:head title="Admin Menu"/>
+<open-layout:body pageId="adminMenu">
+    <div>
+        <p>
+            Welcome to the admin menu! <br>
+            <form action="" method="POST">
+                <input type="submit" value="Logout?">
+            </form>
+        </p>
+
     </div>
 </open-layout:body>
