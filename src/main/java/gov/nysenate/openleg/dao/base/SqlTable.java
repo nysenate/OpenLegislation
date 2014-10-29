@@ -64,6 +64,9 @@ public enum SqlTable
     DAYBREAK_BILL_AMENDMENT      ("daybreak_bill_amendment"),
     DAYBREAK_BILL_SPONSOR        ("daybreak_bill_sponsor"),
 
+    FLOOR_CALENDAR_REFERENCE   ("floor_calendar_reference"),
+    FLOOR_CALENDAR_REFERENCE_ENTRY   ("floor_calendar_reference_entry"),
+
     LAW_FILE                     ("law_file"),
     LAW_INFO                     ("law_info"),
     LAW_DOCUMENT                 ("law_document"),

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.script;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -16,11 +17,13 @@ import java.util.regex.Pattern;
 
 public class LRSScraper extends BaseScript
 {
-    private final Logger logger = Logger.getLogger(LRSScraper.class);
+    private static final Logger logger = Logger.getLogger(LRSScraper.class);
 
     public static void main(String[] args) throws Exception
     {
-//        new LRSScraper().run(args);
+        logger.info("running");
+        CommandLine cmd = getCommandLine(new Options(), args);
+        new LRSScraper().execute(cmd);
     }
 
     String allCalendars = "http://leginfo.state.ny.us/ASMSEN/menugetl.cgi?COMMONQUERY=CALENDAR";
