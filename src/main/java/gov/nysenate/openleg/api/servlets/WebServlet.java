@@ -16,7 +16,9 @@ import gov.nysenate.openleg.util.TextFormatter;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.lang3.text.StrSubstitutor;
 
 /*
  * a cleaner and [hopefully] more intelligent catch all for generated views
@@ -56,11 +59,11 @@ public class WebServlet extends HttpServlet implements OpenLegConstants {
 
     /*
      * Used to match the start of a single, multi or key value view..
-     * 		/legislation/[view type]
-     * 		/legislation/api/[view type]
-     * 		/legislation/api/1.0/[view type]
+     * 		${context_path}/[view type]
+     * 		${context_path}/api/[view type]
+     * 		${context_path}/api/1.0/[view type]
      */
-    public static final String BASE_START = "^(?i)/(?:legislation/)?(?:(?:api/)(?:(?<=api/)1\\.0/)?(?:(";
+    public static final String BASE_START = "^(?i)${context_path}/(?:(?:api/)(?:(?<=api/)1\\.0/)?(?:(";
 
     /*
      * Ends base start, surrounds possible formats associated with a view
@@ -94,10 +97,10 @@ public class WebServlet extends HttpServlet implements OpenLegConstants {
      */
     public static final String SEARCH_END = ")(?:/)?(?:(.+?)/?+)?";
 
-    public final Pattern SINGLE_PATTERN;
-    public final Pattern MULTI_PATTERN;
-    public final Pattern KEY_VALUE_PATTERN;
-    public final Pattern SEARCH_PATTERN;
+    public Pattern SINGLE_PATTERN;
+    public Pattern MULTI_PATTERN;
+    public Pattern KEY_VALUE_PATTERN;
+    public Pattern SEARCH_PATTERN;
 
     private final Logger logger = Logger.getLogger(WebServlet.class);
 
@@ -105,8 +108,8 @@ public class WebServlet extends HttpServlet implements OpenLegConstants {
      * Generates patterns based on views listed
      * in SingleView, MultiView and KeyValueView enums
      */
-    public WebServlet() throws ServletException {
-        super();
+    @Override
+    public void init() throws ServletException {
 
         String singleViews = new Join<SingleView>() {
             @Override
@@ -164,25 +167,31 @@ public class WebServlet extends HttpServlet implements OpenLegConstants {
             }
         }.join(AbstractApiRequest.getUniqueFormats(SearchView.values()), "|");
 
+        // Formats the base api regex to include the context path
+        Map<String, String> subMap = new HashMap<>();
+        subMap.put("context_path", this.getServletContext().getContextPath());
+        String formattedBaseStart = StrSubstitutor.replace(BASE_START, subMap);
+
         SINGLE_PATTERN = Pattern.compile(
                 TextFormatter.append(
-                        BASE_START,singleFormats,BASE_MIDDLE,singleViews,SINGLE_END,BASE_END)
-                );
+
+                        formattedBaseStart, singleFormats, BASE_MIDDLE, singleViews, SINGLE_END, BASE_END)
+        );
 
         MULTI_PATTERN = Pattern.compile(
                 TextFormatter.append(
-                        BASE_START,multiFormats,BASE_MIDDLE,multiViews,MULTI_END,PAGING,BASE_END)
-                );
+                        formattedBaseStart, multiFormats, BASE_MIDDLE, multiViews, MULTI_END, PAGING, BASE_END)
+        );
 
         KEY_VALUE_PATTERN = Pattern.compile(
                 TextFormatter.append(
-                        BASE_START,keyValueFormats,BASE_MIDDLE,keyValueViews,KEY_VALUE_END,PAGING,BASE_END)
-                );
+                        formattedBaseStart, keyValueFormats, BASE_MIDDLE, keyValueViews, KEY_VALUE_END, PAGING, BASE_END)
+        );
 
         SEARCH_PATTERN = Pattern.compile(
                 TextFormatter.append(
-                        BASE_START,searchFormats,BASE_MIDDLE,searchViews,SEARCH_END,PAGING,BASE_END)
-                );
+                        formattedBaseStart, searchFormats, BASE_MIDDLE, searchViews, SEARCH_END, PAGING, BASE_END)
+        );
     }
 
     /**
