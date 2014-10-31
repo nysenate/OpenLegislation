@@ -37,9 +37,15 @@ public class AdminUser
 
     /** Getters and Setters */
     public int getPrivileges() { return this.privilegeLevel; }
+    public void setPrivilegeLevel(int newLevel) { this.privilegeLevel = newLevel; }
 
     public String getUsername() { return this.username; }
+    public void setUsername(String newName) { this.username = newName; }
 
     public String getPassword() { return this.password; }
 
+    public void setPassword(String newPass) {
+        this.password = newPass;
+        encryptPass();
+    }
 }

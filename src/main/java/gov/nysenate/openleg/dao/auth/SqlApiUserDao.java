@@ -9,7 +9,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
 public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
 {
@@ -38,8 +37,9 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * Get the number of requests made by a user from their key
      * @param key The user's api key
      * @return The number of requests
+     * @throws org.springframework.dao.DataAccessException
      */
-    public long getNumRequests(String key) {
+    public long getNumRequests(String key) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("apikey", key));
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_KEY.getSql(schema()), params,
                 (rs,row) -> rs.getLong("num_requests"));
@@ -49,8 +49,9 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * Get the email address associated with a specfic key.
      * @param key The apikey
      * @return the email address
+     * @throws org.springframework.dao.DataAccessException
      */
-    public String getEmailFromKey(String key) {
+    public String getEmailFromKey(String key) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("apikey", key));
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_KEY.getSql(schema()), params,
                 (rs,row) -> rs.getString("email_addr"));
@@ -81,8 +82,9 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * Get the ApiKey associated with the provided email address
      * @param email_addr The email address of the user you are looking for
      * @return The API key of the user, if their email is in the database
+     * @throws org.springframework.dao.DataAccessException
      */
-    public String getApiKeyFromEmail (String email_addr) {
+    public String getApiKeyFromEmail (String email_addr) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email_addr));
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params,
                 (rs,row) -> rs.getString("apikey"));
@@ -92,6 +94,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * Finds the user with the specified email address
      * @param email_addr The email address of the user you are looking for
      * @return The ApiUser
+     * @throws org.springframework.dao.DataAccessException
      */
     public ApiUser getApiUserFromEmail(String email_addr) throws DataAccessException {
         final long requestCount = getNumRequestFromEmail(email_addr);
@@ -131,9 +134,20 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * Remove an ApiUser from the database
      * @param user The apiuser to be deleted
      */
-    public void deleteApiUser(ApiUser user)
-    {
+    public void deleteApiUser(ApiUser user) throws DataAccessException {
         if (jdbcNamed.update(ApiUserQuery.DELETE_USER.getSql(schema()), getUserParams(user)) == 0)
             jdbcNamed.update(ApiUserQuery.DELETE_USER.getSql(schema()), getUserParams(user));
+    }
+
+
+    /**
+     * Delete the ApiUser with the given email address from the database
+     * @param email The user's email address
+     * @throws DataAccessException
+     */
+    public void deleteApiUserByEmail(String email) throws DataAccessException {
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource().addValue("email", email));
+        if (jdbcNamed.update(ApiUserQuery.DELETE_USER.getSql(schema()), params) == 0)
+            jdbcNamed.update(ApiUserQuery.DELETE_USER.getSql(schema()), params);
     }
 }

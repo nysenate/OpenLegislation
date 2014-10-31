@@ -16,6 +16,10 @@ public enum AdminUserQuery implements BasicSqlQuery
     ),
     DELETE_BY_LEVEL(
             "DELETE FROM public." +SqlTable.ADMIN + " WHERE permissions_level = :privilegeLevel"
+    ),
+    UPDATE_ADMIN(
+            "UPDATE public." +SqlTable.ADMIN+ " SET password = :password, permissions_level = :privilegeLevel" +"\n"+
+                "WHERE username = :username"
     );
 
     @Override

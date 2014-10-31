@@ -13,6 +13,8 @@ public interface AdminUserDao
 
     public void addAdmin(AdminUser admin) throws DataAccessException;
 
+    public void updateAdmin(AdminUser admin) throws DataAccessException;
+
     public AdminUser getAdmin(String username) throws DataAccessException;
 
     public int getLevelFromUser(String user) throws DataAccessException;
