@@ -21,26 +21,25 @@ public enum CalendarSectionType
 
     /** This code is used in the source sobi data to identify the section. */
     int code;
+
+    /** The way this section type is displayed on LRS */
     String lrsRepresentation;
 
     static Map<Integer, CalendarSectionType> codeMap = new HashMap<>();
-    static Map<String, CalendarSectionType>lrsMap = new HashMap<>();
+    static Map<String, CalendarSectionType> lrsMap = new HashMap<>();
     static {
         for (CalendarSectionType cst : CalendarSectionType.values()) {
             codeMap.put(cst.code, cst);
             lrsMap.put(cst.lrsRepresentation, cst);
 
         }
-
-
     }
-
-
 
     CalendarSectionType(int code) {
         this.code = code;
     }
     CalendarSectionType(int code, String lrsRepresentation) {
+        this(code);
         this.lrsRepresentation = lrsRepresentation;
     }
 
