@@ -2,7 +2,7 @@ package gov.nysenate.openleg.service.calendar.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.calendar.CalendarDao;
+import gov.nysenate.openleg.dao.calendar.data.CalendarDao;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;

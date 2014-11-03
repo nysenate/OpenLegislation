@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.calendar;
+package gov.nysenate.openleg.dao.calendar.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;

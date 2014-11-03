@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.calendar;
+package gov.nysenate.openleg.dao.calendar.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.model.search.SearchResults;
+import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import java.util.Collection;
@@ -17,33 +18,37 @@ public interface CalendarSearchDao {
      * Results are sorted and curtailed according to the given sort string and limit offset.
      *
      * @param query
-     * @param sort
-     * @param limitOffset
-     * @return
+     * @param postFilter
+     *@param sort
+     * @param limitOffset   @return
      */
-    public SearchResults<CalendarId> searchCalendars(QueryBuilder query, String sort, LimitOffset limitOffset);
+    public SearchResults<CalendarId> searchCalendars(QueryBuilder query, FilterBuilder postFilter,
+                                                     String sort, LimitOffset limitOffset);
 
     /**
      * Performs a calendar active list search based on the given query string.
      * Results are sorted and curtailed according to the given sort string and limit offset.
      *
      * @param query
-     * @param sort
-     * @param limitOffset
-     * @return
+     * @param postFilter
+     *@param sort
+     * @param limitOffset   @return
      */
-    public SearchResults<CalendarActiveListId> searchActiveLists(QueryBuilder query, String sort, LimitOffset limitOffset);
+    public SearchResults<CalendarActiveListId> searchActiveLists(QueryBuilder query, FilterBuilder postFilter,
+                                                                 String sort, LimitOffset limitOffset);
 
     /**
      * Performs a floor calendar search based on the given query string.
      * Results are sorted and curtailed according to the given sort string and limit offset.
      *
      * @param query
+     * @param postFilter
      * @param sort
      * @param limitOffset
      * @return
      */
-    public SearchResults<CalendarSupplementalId> searchFloorCalendars(QueryBuilder query, String sort, LimitOffset limitOffset);
+    public SearchResults<CalendarSupplementalId> searchFloorCalendars(QueryBuilder query, FilterBuilder postFilter, String sort,
+                                                                      LimitOffset limitOffset);
 
     /**
      * Updates or inserts a single calendar into the index

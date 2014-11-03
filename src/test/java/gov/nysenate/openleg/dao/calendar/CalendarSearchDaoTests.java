@@ -3,6 +3,7 @@ package gov.nysenate.openleg.dao.calendar;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.dao.calendar.search.CalendarSearchDao;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import org.junit.Test;

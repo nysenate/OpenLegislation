@@ -4,6 +4,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
+import gov.nysenate.openleg.client.view.error.InvalidParameterView;
 import gov.nysenate.openleg.client.view.request.ParameterView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
@@ -109,18 +111,21 @@ public abstract class BaseCtrl
     @ExceptionHandler(TypeMismatchException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ErrorResponse handleTypeMismatchException(TypeMismatchException ex) {
+        logger.warn(ExceptionUtils.getStackTrace(ex));
         return new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(InvalidRequestParameterException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    protected ErrorResponse handleInvalidArgumentEx(IllegalArgumentException ex) {
-        return new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);
+    protected ErrorResponse handleInvalidRequestParameterException(InvalidRequestParameterException ex) {
+        logger.warn(ExceptionUtils.getStackTrace(ex));
+        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, new InvalidParameterView(ex));
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ErrorResponse handleMissingParameterException(MissingServletRequestParameterException ex) {
+        logger.warn(ExceptionUtils.getStackTrace(ex));
         return new ViewObjectErrorResponse(ErrorCode.MISSING_PARAMETERS,
             new ParameterView(ex.getParameterName(), ex.getParameterType()));
     }

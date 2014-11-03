@@ -1,29 +1,14 @@
 package gov.nysenate.openleg.dao.calendar;
 
-import gov.nysenate.openleg.dao.base.ImmutableParams;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
-import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import gov.nysenate.openleg.model.spotcheck.calendar.FloorCalendarSpotcheckReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-
-import static gov.nysenate.openleg.dao.calendar.SqlCalendarQuery.SELECT_CALENDAR_SUP;
 
 /**
  * Created by kyle on 10/24/14.

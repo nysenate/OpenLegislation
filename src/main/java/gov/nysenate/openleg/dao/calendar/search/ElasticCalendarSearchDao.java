@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.calendar;
+package gov.nysenate.openleg.dao.calendar.search;
 
 import gov.nysenate.openleg.client.view.calendar.*;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
@@ -13,6 +13,8 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -54,23 +56,26 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
 
     /**{@inheritDoc}*/
     @Override
-    public SearchResults<CalendarId> searchCalendars(QueryBuilder query, String sort, LimitOffset limitOffset) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(calIndexName, query, null, sort, limitOffset);
-        return getSearchResults(searchBuilder.execute().actionGet(), limitOffset, this::getCalendarId);
+    public SearchResults<CalendarId> searchCalendars(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limitOffset) {
+        SearchRequestBuilder searchBuilder = getSearchRequest(calIndexName, query, postFilter, sort, limitOffset);
+        SearchResponse response = searchBuilder.execute().actionGet();
+        return getSearchResults(response, limitOffset, this::getCalendarId);
     }
 
     /**{@inheritDoc}*/
     @Override
-    public SearchResults<CalendarSupplementalId> searchFloorCalendars(QueryBuilder query, String sort, LimitOffset limitOffset) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(floorCalIndexName, query, null, sort, limitOffset);
-        return getSearchResults(searchBuilder.execute().actionGet(), limitOffset, this::getCalSupId);
+    public SearchResults<CalendarSupplementalId> searchFloorCalendars(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limitOffset) {
+        SearchRequestBuilder searchBuilder = getSearchRequest(floorCalIndexName, query, postFilter, sort, limitOffset);
+        SearchResponse response = searchBuilder.execute().actionGet();
+        return getSearchResults(response, limitOffset, this::getCalSupId);
     }
 
     /**{@inheritDoc}*/
     @Override
-    public SearchResults<CalendarActiveListId> searchActiveLists(QueryBuilder query, String sort, LimitOffset limitOffset) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(activeListIndexName, query, null, sort, limitOffset);
-        return getSearchResults(searchBuilder.execute().actionGet(), limitOffset, this::getActiveListId);
+    public SearchResults<CalendarActiveListId> searchActiveLists(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limitOffset) {
+        SearchRequestBuilder searchBuilder = getSearchRequest(activeListIndexName, query, postFilter, sort, limitOffset);
+        SearchResponse response = searchBuilder.execute().actionGet();
+        return getSearchResults(response, limitOffset, this::getActiveListId);
     }
 
     /**{@inheritDoc}*/
