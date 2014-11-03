@@ -153,7 +153,7 @@ public abstract class DateUtils
     public static Range<LocalDateTime> toDateTimeRange(Range<LocalDate> dateTimeRange) {
         return Range.closed(
                 startOfDateRange(dateTimeRange).atStartOfDay(),
-                atEndOfDay(endOfDateRange(dateTimeRange))
+                endOfDateRange(dateTimeRange).plusDays(1).atStartOfDay()
         );
     }
 

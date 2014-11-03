@@ -89,16 +89,15 @@ public class CachedCommitteeService implements CommitteeService{
 //    @Cacheable(value = "committee", key = "#root.methodName + '-' + #committeeId.toString().toLowerCase() + '-' + #limitOffset.toString() + '-' + #order.name()")
     public List<Committee> getCommitteeHistory(CommitteeId committeeId, Range<LocalDateTime> dateRange,
                                                LimitOffset limitOffset, SortOrder order) throws CommitteeNotFoundEx {
-        if(committeeId==null) {
+        if (committeeId==null) {
             throw new IllegalArgumentException("CommitteeId cannot be null!");
         }
 
         try {
             return committeeDao.getCommitteeHistory(committeeId, dateRange, limitOffset, order);
         }
-        catch(EmptyResultDataAccessException ex){
-            LocalDateTime refDate = DateUtils.startOfDateTimeRange(dateRange);
-            throw new CommitteeNotFoundEx(new CommitteeVersionId(committeeId, SessionYear.of(refDate.getYear()), refDate), ex);
+        catch (EmptyResultDataAccessException ex){
+            throw new CommitteeNotFoundEx(committeeId, dateRange, ex);
         }
     }
 
