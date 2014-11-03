@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.bill.data;
 
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
@@ -8,6 +9,7 @@ import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service interface for retrieving and saving Bill data. Retrieval is based
@@ -37,7 +39,9 @@ public interface BillDataService
     public BillInfo getBillInfo(BaseBillId billId) throws BillNotFoundEx;
 
     /**
-     * Retrieve a list of BaseBillIds within the specified session year.
+     * Retrieve a list of BaseBillIds within the specified session year in ascending order.
+     * This can be useful for functions that need to iterate over the entire collection of
+     * bills such as cache warming and search indexing.
      *
      * @param sessionYear The session year to retrieve bills for
      * @param limitOffset Restrict the result set
@@ -65,4 +69,12 @@ public interface BillDataService
      *                                  to the event bus indicating to subscribers that the bill may have changed.
      */
     public void saveBill(Bill bill, SobiFragment fragment, boolean postUpdateEvent);
+
+    /**
+     * Returns a closed Range containing the session years for which bill data exists.
+     * If there are no bills in the database, an empty Optional will be returned instead.
+     *
+     * @return Optional<Range<SessionYear>>
+     */
+    public Optional<Range<SessionYear>> activeSessionRange();
 }

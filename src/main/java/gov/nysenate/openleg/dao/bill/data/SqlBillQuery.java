@@ -35,6 +35,10 @@ public enum SqlBillQuery implements BasicSqlQuery
         "VALUES (:printNo, :sessionYear, :title, :summary, :activeVersion, :activeYear, " +
         "        :programInfo, :programInfoNum, :status, :statusDate, :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
+    ACTIVE_SESSION_YEARS(
+        "SELECT min(session_year) as min, max(session_year) as max\n" +
+        "FROM ${schema}." + SqlTable.BILL
+    ),
 
     /** --- Bill Sponsor --- */
 

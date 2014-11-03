@@ -27,6 +27,7 @@ import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import java.util.Calendar;
 
 @Configuration
@@ -35,9 +36,14 @@ public class ApplicationConfig implements CachingConfigurer
 {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
 
+    @PostConstruct
+    public void init() {
+        logger.info("{}", logo());
+    }
+
     /** --- Eh Cache Configuration --- */
 
-    @Value("${cache.max.heap.size:100M}") private String cacheMaxHeapSize;
+    @Value("${cache.max.heap.size}") private String cacheMaxHeapSize;
 
     @Bean(destroyMethod = "shutdown")
     public net.sf.ehcache.CacheManager pooledCacheManger() {
@@ -57,6 +63,7 @@ public class ApplicationConfig implements CachingConfigurer
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
         config.setMaxBytesLocalHeap(cacheMaxHeapSize);
         config.addDefaultCache(cacheConfiguration);
+        config.setUpdateCheck(false);
 
         return net.sf.ehcache.CacheManager.newInstance(config);
     }
@@ -113,5 +120,22 @@ public class ApplicationConfig implements CachingConfigurer
     @Bean(name = "calendarIngestCache")
     public IngestCache<CalendarId, Calendar, SobiFragment> calendarIngestCache() {
         return new IngestCache<>(100);
+    }
+
+    /** --- Misc --- */
+
+    private String logo() {
+        return
+            "\n=============================================================================\n" +
+            "  .oooooo.                                          .oooo.         .oooo.   \n" +
+            " d8P'  `Y8b                                       .dP\"\"Y88b       d8P'`Y8b  \n" +
+            "888      888 oo.ooooo.   .ooooo.  ooo. .oo.             ]8P'     888    888 \n" +
+            "888      888  888' `88b d88' `88b `888P\"Y88b          .d8P'      888    888 \n" +
+            "888      888  888   888 888ooo888  888   888        .dP'         888    888 \n" +
+            "`88b    d88'  888   888 888    .o  888   888      .oP     .o .o. `88b  d88' \n" +
+            " `Y8bood8P'   888bod8P' `Y8bod8P' o888o o888o     8888888888 Y8P  `Y8bd8P'  \n" +
+            "              888                                                           \n" +
+            "             o888o                                                          \n" +
+            "=============================================================================\n";
     }
 }

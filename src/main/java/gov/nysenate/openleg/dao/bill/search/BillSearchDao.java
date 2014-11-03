@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.bill.search;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.service.base.SearchResults;
+import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 

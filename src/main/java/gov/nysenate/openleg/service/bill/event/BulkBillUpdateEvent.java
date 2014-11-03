@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.service.bill.event;
 
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.service.base.ContentUpdateEvent;
+import gov.nysenate.openleg.service.base.data.ContentUpdateEvent;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

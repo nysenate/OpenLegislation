@@ -6,7 +6,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
-import gov.nysenate.openleg.service.base.CachingService;
+import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import net.sf.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -17,7 +17,7 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
-public class CachedPublicHearingDataService implements PublicHearingDataService, CachingService
+public class CachedPublicHearingDataService implements PublicHearingDataService
 {
     private static final String publicHearingCache = "publicHearingCache";
 
@@ -27,15 +27,20 @@ public class CachedPublicHearingDataService implements PublicHearingDataService,
     @Autowired
     private PublicHearingDao publicHearingDao;
 
-    @Override
+//    @Override
     @PostConstruct
     public void setupCaches() {
         cacheManager.addCache(publicHearingCache);
     }
 
-    @Override
+//    @Override
     @CacheEvict(value = publicHearingCache, allEntries = true)
     public void evictCaches() {}
+
+//    @Override
+    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
+
+    }
 
     /** {@inheritDoc */
     @Override

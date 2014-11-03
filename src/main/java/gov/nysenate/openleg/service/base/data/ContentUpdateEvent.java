@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.base;
+package gov.nysenate.openleg.service.base.data;
 
 import java.time.LocalDateTime;
 

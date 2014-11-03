@@ -6,7 +6,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.service.base.SearchResults;
+import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
@@ -86,15 +86,15 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
         }
     }
 
-    protected boolean billIndexExists() {
+    public boolean billIndexExists() {
         return indicesExist(billIndexName);
     }
 
-    protected void createBillIndex() {
+    public void createBillIndex() {
         createIndex(billIndexName);
     }
 
-    protected void deleteBillIndex() {
+    public void deleteBillIndex() {
         deleteIndex(billIndexName);
     }
 

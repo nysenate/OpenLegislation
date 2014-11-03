@@ -1,14 +1,14 @@
 # --- Data Directory Configuration --- #
 
 env.directory = /data/openleg
-env.staging = /data/openleg/staging
+env.staging = /data/openleg/data
 env.archive = /data/openleg/archive
 env.schema = master
 
 # --- Processing Configuration --- #
 
 incremental.update = true
-sobi.batch.size = 500
+sobi.batch.size = 1000
 
 # --- Elastic Search Configuration --- #
 
@@ -27,26 +27,50 @@ elastic.search.port = 9300
 
 # If the elastic search cluster has a name, it must be specified here.
 # (Default: elasticsearch)
-elastic.search.cluster.name = openleg-dev
-
-# The name of the index to store bill data
-# (Default: bills)
-elastic.search.index.bill.name = bills
-
-elastic.search.index.bill.buffersize = 100
+elastic.search.cluster.name = openleg
 
 # --- Eh Cache Configuration --- #
 
 # The amount of memory to allocate to Eh Cache for all heap based caches.
 # This value cannot exceed the maximum jvm heap size or the application will fail to startup.
-# (Default: 100M)
-cache.max.heap.size = 100M
+# (Recommended: 500M)
+cache.max.heap.size = 500M
+
+# Agenda Cache Size (in MB) (Recommended: 25)
+cache.agenda.heap.size = 25
+
+# Bill Cache Size (in MB) (Recommended: 300)
+cache.bill.heap.size = 300
+
+# Calendar Cache Size (in MB) (Recommended: 40)
+cache.calendar.heap.size = 40
+
+# Law Cache Size (in MB) (Recommended: 10)
+cache.law.heap.size = 10
 
 # --- Postgres Database Configuration --- #
 
+# Database identifier for JDBC.
+# (Default: postgresql:)
 postgresdb.type = postgresql:
+
+# The class that contains the jdbc driver.
+# (Default: org.postgresql.Driver)
 postgresdb.driver = org.postgresql.Driver
+
+# The host address for the database.
+# (Default: localhost)
 postgresdb.host = localhost
-postgresdb.user =
-postgresdb.pass =
+
+# The name of the database used for this app.
+# (Default: openleg)
 postgresdb.name = openleg
+
+# The username for the user that has access to the database named above.
+postgresdb.user =
+
+# And the password..
+postgresdb.pass =
+
+
+

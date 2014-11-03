@@ -4,8 +4,8 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
-import gov.nysenate.openleg.service.base.SearchException;
-import gov.nysenate.openleg.service.base.SearchResults;
+import gov.nysenate.openleg.model.search.SearchException;
+import gov.nysenate.openleg.model.search.SearchResults;
 
 public interface CalendarSearchService {
 

@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.controller.api.admin.spotcheck;
+package gov.nysenate.openleg.controller.api.report;
 
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
@@ -62,9 +62,8 @@ public class SpotCheckGetCtrl extends BaseCtrl
                     .parallelStream()
                     .map(daybreakService::getReport).collect(toList());
         // Construct the client response
-        return new ReportSummaryResponse<BaseBillId>(
-            ListView.of(reports.stream().map(r -> new ReportInfoView<BaseBillId>(r)).collect(Collectors.toList())),
-            from, to);
+        return new ReportSummaryResponse<>(
+            ListView.of(reports.stream().map(r -> new ReportInfoView<>(r)).collect(Collectors.toList())), from, to);
     }
 
     @RequestMapping(value = "/daybreaks/{reportDateTime}", produces = APPLICATION_JSON_VALUE)

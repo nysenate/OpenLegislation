@@ -1,11 +1,15 @@
 package gov.nysenate.openleg.service.law.data;
 
+import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.law.LawDataDao;
 import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawFile;
 import gov.nysenate.openleg.model.law.LawInfo;
 import gov.nysenate.openleg.model.law.LawTree;
-import gov.nysenate.openleg.service.base.CachingService;
+import gov.nysenate.openleg.model.cache.CacheEvictEvent;
+import gov.nysenate.openleg.model.cache.ContentCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -20,19 +24,30 @@ import static java.util.stream.Collectors.toList;
  * Service interface for retrieving and saving NYS Law data.
  */
 @Service
-public class CachedLawDataService implements LawDataService, CachingService
+public class CachedLawDataService implements LawDataService
 {
+    private static final Logger logger = LoggerFactory.getLogger(CachedLawDataService.class);
+
     @Autowired
     private LawDataDao lawDataDao;
 
-    @Override
+//    @Override
     public void setupCaches() {
         /** TODO */
     }
 
-    @Override
+//    @Override
     public void evictCaches() {
         /** TODO */
+    }
+
+//    @Override
+    @Subscribe
+    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
+        if (evictEvent.affects(ContentCache.LAW)) {
+            logger.info("Clearing the law cache.");
+            evictCaches();
+        }
     }
 
     @Override

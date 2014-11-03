@@ -4,14 +4,13 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.service.base.SearchException;
-import gov.nysenate.openleg.service.base.SearchResults;
+import gov.nysenate.openleg.service.base.search.IndexedSearchService;
+import gov.nysenate.openleg.model.search.SearchException;
+import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
 import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
 
-import java.util.Collection;
-
-public interface BillSearchService
+public interface BillSearchService extends IndexedSearchService<Bill>
 {
     /**
      * Performs a search across all bill data.
@@ -40,11 +39,17 @@ public interface BillSearchService
     public SearchResults<BaseBillId> searchBills(String query, SessionYear session, String sort, LimitOffset limOff)
         throws SearchException;
 
+    /**
+     * Handle a bill update event by indexing the supplied bill in the update.
+     *
+     * @param billUpdateEvent BillUpdateEvent
+     */
     public void handleBillUpdate(BillUpdateEvent billUpdateEvent);
 
-    public void handeBulkBillUpdate(BulkBillUpdateEvent bulkBillUpdateEvent);
-
-    public void updateBillIndex(Bill bill);
-
-    public void updateBillIndices(Collection<Bill> bills);
+    /**
+     * Handle a batch bill update event by indexing the supplied bills in the update.
+     *
+     * @param bulkBillUpdateEvent BulkBillUpdateEvent
+     */
+    public void handleBulkBillUpdate(BulkBillUpdateEvent bulkBillUpdateEvent);
 }

@@ -5,8 +5,11 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.calendar.CalendarDao;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.service.base.CachingService;
+import gov.nysenate.openleg.model.cache.CacheEvictEvent;
+import gov.nysenate.openleg.model.cache.CacheWarmEvent;
+import gov.nysenate.openleg.service.base.data.CachingService;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,13 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
         setupCaches();
     }
 
+    /** --- CachingService implementation --- */
+
+    @Override
+    public Ehcache getCache() {
+        return null;
+    }
+
     @Override
     public void setupCaches() {
         cacheManager.addCache(calendarDataCache);
@@ -44,6 +54,21 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     @Override
     @CacheEvict(value = calendarDataCache, allEntries = true)
     public void evictCaches() {}
+
+    @Override
+    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
+
+    }
+
+    @Override
+    public void warmCaches() {
+
+    }
+
+    @Override
+    public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
+
+    }
 
     @Override
     @Cacheable(value = calendarDataCache, key = "#root.methodName + '-' + #calendarId")

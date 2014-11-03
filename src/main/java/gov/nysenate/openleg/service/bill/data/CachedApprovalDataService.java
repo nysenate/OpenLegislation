@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.bill.ApprovalId;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.service.base.CachingService;
+import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +19,8 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
-public class CachedApprovalDataService implements ApprovalDataService, CachingService {
-
+public class CachedApprovalDataService implements ApprovalDataService
+{
     public static final Logger logger = LoggerFactory.getLogger(CachedApprovalDataService.class);
 
     public static final String approvalDataCache = "approvalData";
@@ -41,15 +41,20 @@ public class CachedApprovalDataService implements ApprovalDataService, CachingSe
     }
 
     /**{@inheritDoc}*/
-    @Override
+//    @Override
     public void setupCaches() {
         cacheManager.addCache(approvalDataCache);
     }
 
     /**{@inheritDoc}*/
-    @Override
+//    @Override
     @CacheEvict(value = approvalDataCache, allEntries = true)
     public void evictCaches() {}
+
+//    @Override
+    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
+
+    }
 
     /**{@inheritDoc}*/
     @Override

@@ -42,6 +42,20 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
         setYear(localDateTime.getYear());
     }
 
+    /**
+     * Return a new SessionYear representing the previous session.
+     */
+    public SessionYear prev() {
+        return new SessionYear(getSessionStartYear() - 1);
+    }
+
+    /**
+     * Return a new SessionYear representing the next session.
+     */
+    public SessionYear next() {
+        return new SessionYear(getSessionEndYear() + 1);
+    }
+
     /** Static constructors for personal preference. */
 
     public static SessionYear of(int year) {

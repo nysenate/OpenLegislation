@@ -2,8 +2,8 @@ package gov.nysenate.openleg.dao.base;
 
 import com.google.common.base.Splitter;
 import com.google.common.primitives.Ints;
-import gov.nysenate.openleg.service.base.SearchResult;
-import gov.nysenate.openleg.service.base.SearchResults;
+import gov.nysenate.openleg.model.search.SearchResult;
+import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Base class for Elastic Search layer classes  to inherit common functionality from.
+ * Base class for Elastic Search layer classes to inherit common functionality from.
  */
 public abstract class ElasticBaseDao
 {
@@ -41,7 +41,6 @@ public abstract class ElasticBaseDao
 
     /** --- Common Elastic Search methods --- */
 
-
     /**
      * Generates a typical search request that involves a query, filter, sort string, and a limit + offset
      *
@@ -49,22 +48,23 @@ public abstract class ElasticBaseDao
      * @param query an elastic search Query DSL
      * @param postFilter
      * @param sort
-     * @param limitOffset   @return          */
+     * @param limitOffset
+     * @return SearchRequestBuilder
+     */
     protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, FilterBuilder postFilter,
                                                     String sort, LimitOffset limitOffset) {
         SearchRequestBuilder searchBuilder = searchClient.prepareSearch(indexName)
-                .setSearchType(SearchType.QUERY_THEN_FETCH)
-                .setQuery(query)
-                .setFrom(limitOffset.getOffsetStart() - 1)
-                .setSize((limitOffset.hasLimit()) ? limitOffset.getLimit() : -1)
-                .setFetchSource(false);
+            .setSearchType(SearchType.QUERY_THEN_FETCH)
+            .setQuery(query)
+            .setFrom(limitOffset.getOffsetStart() - 1)
+            .setSize((limitOffset.hasLimit()) ? limitOffset.getLimit() : -1)
+            .setFetchSource(false);
+        // Post filters take effect after the search is completed
         if (postFilter != null) {
             searchBuilder.setPostFilter(postFilter);
         }
-
         // Add the sort by fields
         extractSortFilters(sort).forEach(searchBuilder::addSort);
-
         return searchBuilder;
     }
 

@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.bill.data;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.dao.common.BillVoteRowHandler;
 import gov.nysenate.openleg.model.base.PublishStatus;
@@ -123,14 +124,14 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     /** {@inheritDoc} */
     @Override
-    public void applyText(Bill bill) throws DataAccessException {
-        if (bill == null) {
+    public void applyText(Bill strippedBill) throws DataAccessException {
+        if (strippedBill == null) {
             throw new IllegalArgumentException("Cannot apply bill text on a null bill");
         }
         MapSqlParameterSource billParams = new MapSqlParameterSource();
-        addBillIdParams(bill, billParams);
+        addBillIdParams(strippedBill, billParams);
         jdbcNamed.query(SqlBillQuery.SELECT_BILL_TEXT.getSql(schema()), billParams, (RowCallbackHandler) (ResultSet rs) -> {
-            BillAmendment ba = bill.getAmendment(Version.of(rs.getString("version")));
+            BillAmendment ba = strippedBill.getAmendment(Version.of(rs.getString("version")));
             ba.setMemo(rs.getString("sponsor_memo"));
             ba.setFullText(rs.getString("full_text"));
         });
@@ -190,7 +191,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.getYear()));
         OrderBy orderBy = new OrderBy("print_no", billIdSort, "session_year", billIdSort);
         return jdbcNamed.query(SqlBillQuery.SELECT_BILL_IDS_BY_SESSION.getSql(schema(), orderBy, limOff), params, (rs, row) ->
-            new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
+                new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
     }
 
     /** {@inheritDoc} */
@@ -209,18 +210,17 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     /** {@inheritDoc} */
     @Override
-    public void publishBill(Bill bill) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void unPublishBill(Bill bill) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public Range<SessionYear> activeSessionRange() {
+        if (getBillCount() == 0) {
+            throw new EmptyResultDataAccessException("No active session range since there are " +
+                                                     "no bills in the database!", 1);
+        }
+        return jdbc.queryForObject(SqlBillQuery.ACTIVE_SESSION_YEARS.getSql(schema()), (rs, row) ->
+            Range.closed(SessionYear.of(rs.getInt("min")), SessionYear.of(rs.getInt("max")))
+        );
     }
 
     /** --- Internal Methods --- */
-
 
     /**
      * Get the base bill instance for the base bill id in the params.

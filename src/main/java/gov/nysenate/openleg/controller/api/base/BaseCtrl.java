@@ -7,7 +7,7 @@ import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.request.ParameterView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.service.base.SearchException;
+import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -128,7 +128,7 @@ public abstract class BaseCtrl
     @ExceptionHandler(SearchException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
-        logger.warn("Search Exception: {}\n{}", ex.getMessage(), ExceptionUtils.getStackTrace(ex.getCause()));
+        logger.debug("Search Exception!", ex);
         return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
     }
 }

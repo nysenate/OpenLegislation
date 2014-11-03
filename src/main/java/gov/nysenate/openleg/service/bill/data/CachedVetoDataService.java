@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.VetoId;
 import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.service.base.CachingService;
+import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ import javax.annotation.PostConstruct;
 import java.util.Map;
 
 @Service
-public class CachedVetoDataService implements VetoDataService, CachingService
+public class CachedVetoDataService implements VetoDataService
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedVetoDataService.class);
 
@@ -38,14 +38,19 @@ public class CachedVetoDataService implements VetoDataService, CachingService
     @PostConstruct
     private void init(){ setupCaches(); }
 
-    @Override
+//    @Override
     public void setupCaches() {
         cacheManager.addCache(vetoDataCache);
     }
 
-    @Override
+//    @Override
     @CacheEvict(value = vetoDataCache, allEntries = true)
     public void evictCaches() {}
+
+//    @Override
+    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
+
+    }
 
     /** {@inheritDoc} */
     @Override

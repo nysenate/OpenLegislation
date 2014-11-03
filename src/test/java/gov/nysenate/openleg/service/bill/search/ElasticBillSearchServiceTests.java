@@ -12,9 +12,10 @@ public class ElasticBillSearchServiceTests extends BaseTests
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchServiceTests.class);
 
     @Autowired
-    private ElasticBillSearchDao billSearch;
+    private ElasticBillSearchService billSearch;
 
     @Test
-    public void testSearch() throws Exception {
+    public void testRebuildIndex() throws Exception {
+        billSearch.rebuildIndex();
     }
 }

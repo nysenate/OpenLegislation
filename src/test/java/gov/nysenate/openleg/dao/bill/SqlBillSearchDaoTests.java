@@ -21,14 +21,6 @@ public class SqlBillSearchDaoTests extends BaseTests
 
     @Test
     public void testSearchAll() throws Exception {
-<<<<<<< Updated upstream
-        StopWatch sw = new StopWatch();
-        sw.start();
-//        logger.info("{}", billSearch.searchBills("S1234", "", LimitOffset.TEN).getResults());
-        sw.stop();
-        logger.info("{} ms", sw.getTime());
-=======
->>>>>>> Stashed changes
     }
 
     @Test
