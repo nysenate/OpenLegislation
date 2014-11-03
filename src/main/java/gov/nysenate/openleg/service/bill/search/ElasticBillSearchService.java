@@ -38,14 +38,8 @@ public class ElasticBillSearchService implements BillSearchService
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchService.class);
 
     @Autowired protected Environment env;
-
-    /** Used to subscribe and post search index events. */
     @Autowired protected EventBus eventBus;
-
-    /** Underlying bill search implementation. */
     @Autowired protected ElasticBillSearchDao billSearchDao;
-
-    /** The underlying bill data store service is needed when recreating the index. */
     @Autowired protected BillDataService billDataService;
 
     @PostConstruct

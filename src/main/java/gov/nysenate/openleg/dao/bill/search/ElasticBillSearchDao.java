@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,18 +50,15 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     @Override
     public SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(billIndexName, query, postFilter, sort, limOff);
-        // Perform the search request
         SearchResponse response = searchBuilder.execute().actionGet();
         logger.debug("Bill search result with query {} took {} ms", query, response.getTookInMillis());
-        return getSearchResults(response, limOff, this::getBaseBillId);
+        return getSearchResults(response, limOff, this::getBaseBillIdFromHit);
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateBillIndex(Bill bill) {
-        searchClient.prepareIndex(billIndexName, bill.getSession().toString(), bill.getBasePrintNo())
-                    .setSource(OutputUtils.toJson(new BillView(bill)))
-                    .execute().actionGet();
+        updateBillIndex(Arrays.asList(bill));
     }
 
     /** {@inheritDoc} */
@@ -79,10 +77,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     @Override
     public void deleteBillFromIndex(BaseBillId baseBillId) {
         if (baseBillId != null) {
-            DeleteRequestBuilder request = new DeleteRequestBuilder(searchClient, billIndexName);
-            request.setType(baseBillId.getSession().toString());
-            request.setId(baseBillId.getPrintNo());
-            request.execute().actionGet();
+            deleteEntry(billIndexName, Integer.toString(baseBillId.getSession().getYear()), baseBillId.getBasePrintNo());
         }
     }
 
@@ -98,7 +93,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
         deleteIndex(billIndexName);
     }
 
-    protected BaseBillId getBaseBillId(SearchHit hit) {
+    protected BaseBillId getBaseBillIdFromHit(SearchHit hit) {
         return new BaseBillId(hit.getId(), Integer.parseInt(hit.getType()));
     }
 }

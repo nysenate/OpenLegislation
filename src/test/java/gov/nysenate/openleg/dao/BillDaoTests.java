@@ -18,10 +18,7 @@ public class BillDaoTests extends BaseTests
     private BillDao billDao;
 
     @Test
-    public void billCommitteeTest(){
-        BillId billi = new BillId("A1000",2013);
-        BillInfo testBill = billDao.getBillInfo(billi);
-        logger.info("{}", OutputUtils.toJson(testBill));
-
+    public void testActiveSessionRange() throws Exception {
+        logger.info("{}", billDao.activeSessionRange());
     }
 }
