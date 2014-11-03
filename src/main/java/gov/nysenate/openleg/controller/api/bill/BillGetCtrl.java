@@ -98,9 +98,8 @@ public class BillGetCtrl extends BillBaseCtrl
         response.setContentType("application/pdf");
     }
 
-    /**
-     * Bill not found exception handler
-     */
+    /** --- Exception Handlers --- */
+
     @ExceptionHandler(BillNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ViewObjectErrorResponse billNotFoundHandler(BillNotFoundEx ex) {

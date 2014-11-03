@@ -39,6 +39,10 @@ public enum ErrorCode
     CALENDAR_NOT_FOUND(51, "The requested calendar was not found"),
     INVALID_CAL_SEARCH_PARAMS(52, "The given calendar search parameters are invalid/conflicting"),
 
+    /** --- Agenda --- */
+
+    AGENDA_NOT_FOUND(61, "The requested agenda was not found"),
+
     /** --- General --- */
 
     SEARCH_ERROR(100, "There was error retrieving your search results. Make sure that the query is valid.")

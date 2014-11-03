@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.agenda;
+package gov.nysenate.openleg.dao.agenda.data;
 
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.agenda.Agenda;

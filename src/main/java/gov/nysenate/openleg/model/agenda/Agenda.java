@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.agenda;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.entity.CommitteeId;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -82,6 +83,16 @@ public class Agenda extends BaseLegislativeContent implements Serializable
 
     public void putAgendaVoteAddendum(AgendaVoteAddendum addendum) {
         this.agendaVoteAddenda.put(addendum.getId(), addendum);
+    }
+
+    /**
+     * Returns true if there is data contained in this agenda for the given committee.
+     */
+    public boolean hasCommittee(CommitteeId committeeId) {
+        return agendaInfoAddenda.values().stream()
+            .map(a -> a.getCommitteeInfoMap().keySet())
+            .filter(a -> a.contains(committeeId))
+            .findAny().isPresent();
     }
 
     /** --- Basic Getters/Setters --- */
