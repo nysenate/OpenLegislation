@@ -7,14 +7,14 @@ import java.util.Objects;
 /**
  * Identifies a specific committee within an agenda.
  */
-public class AgendaCommitteeId
+public class CommitteeAgendaId
 {
     private AgendaId agendaId;
     private CommitteeId committeeId;
 
     /** --- Constructors --- */
 
-    public AgendaCommitteeId(AgendaId agendaId, CommitteeId committeeId) {
+    public CommitteeAgendaId(AgendaId agendaId, CommitteeId committeeId) {
         this.agendaId = agendaId;
         this.committeeId = committeeId;
     }
@@ -28,7 +28,7 @@ public class AgendaCommitteeId
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        final AgendaCommitteeId other = (AgendaCommitteeId) obj;
+        final CommitteeAgendaId other = (CommitteeAgendaId) obj;
         return Objects.equals(this.agendaId, other.agendaId) && Objects.equals(this.committeeId, other.committeeId);
     }
 
