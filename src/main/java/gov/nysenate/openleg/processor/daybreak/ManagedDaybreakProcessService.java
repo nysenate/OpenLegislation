@@ -27,7 +27,7 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
     private ExecutorService executorService = Executors.newFixedThreadPool(8);
 
     @PreDestroy
-    public void destroy(){
+    public void destroy() {
         executorService.shutdown();
     }
 

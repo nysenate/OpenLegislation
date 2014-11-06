@@ -390,7 +390,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     /** {@InheritDoc } */
     @Override
     public void updateDaybreakReportSetChecked(LocalDate reportDate, boolean checked) {
-        MapSqlParameterSource params = getDaybreakReportParams(reportDate, true, true);
+        MapSqlParameterSource params = getDaybreakReportParams(reportDate, true, checked);
         jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_REPORT.getSql(schema()), params);
     }
 
