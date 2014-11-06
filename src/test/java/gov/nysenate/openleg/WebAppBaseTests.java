@@ -1,6 +1,6 @@
 package gov.nysenate.openleg;
 
-import gov.nysenate.openleg.config.ConsoleApplicationConfig;
+import gov.nysenate.openleg.TestConfig;
 import gov.nysenate.openleg.config.WebApplicationConfig;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -15,10 +15,19 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TestConfig.class, ConsoleApplicationConfig.class})
+@WebAppConfiguration
+@ContextConfiguration(classes = {TestConfig.class, WebApplicationConfig.class})
 @ActiveProfiles("test")
-public abstract class BaseTests
+public abstract class WebAppBaseTests
 {
+    protected MockMvc mockMvc;
+
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
+    protected WebApplicationContext wac;
+
     @Before
-    public void setup() {}
+    public void setup() {
+        this.mockMvc = webAppContextSetup(this.wac).build();
+    }
 }
