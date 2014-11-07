@@ -31,7 +31,7 @@ import java.util.List;
 @EnableWebMvc
 @EnableScheduling
 @ComponentScan("gov.nysenate.openleg")
-@Import({DatabaseConfig.class, ApplicationConfig.class})
+@Import({DatabaseConfig.class, SecurityConfig.class, ApplicationConfig.class})
 public class WebApplicationConfig extends WebMvcConfigurerAdapter
 {
     private static final Logger logger = LoggerFactory.getLogger(WebApplicationConfig.class);

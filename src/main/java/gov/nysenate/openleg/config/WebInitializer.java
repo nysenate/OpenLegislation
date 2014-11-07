@@ -3,11 +3,16 @@ package gov.nysenate.openleg.config;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+import java.util.EnumSet;
+
+import static javax.servlet.DispatcherType.*;
 
 /**
  * Basically the web.xml in programmatic form.
@@ -42,5 +47,12 @@ public class WebInitializer implements WebApplicationInitializer
         dispatcher = servletContext.addServlet(DISPATCHER_SERVLET_NAME, new DispatcherServlet(dispatcherContext));
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
+
+        /** Register Apache Shiro */
+        DelegatingFilterProxy shiroFilter = new DelegatingFilterProxy("shiroFilter", dispatcherContext);
+        shiroFilter.setTargetFilterLifecycle(true);
+        EnumSet<DispatcherType> dispatcherTypes = EnumSet.of(REQUEST, FORWARD, INCLUDE);
+        servletContext.addFilter("shiroFilter", shiroFilter)
+                .addMappingForUrlPatterns(dispatcherTypes, false, "/*");
     }
 }
