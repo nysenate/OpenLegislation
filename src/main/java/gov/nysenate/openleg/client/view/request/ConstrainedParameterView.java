@@ -10,7 +10,7 @@ public class ConstrainedParameterView extends ParameterView {
     }
 
     @Override
-    public String getType() {
+    public String getViewType() {
         return "parameter-constrained";
     }
 

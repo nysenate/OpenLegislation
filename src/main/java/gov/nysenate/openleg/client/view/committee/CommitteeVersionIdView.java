@@ -2,21 +2,15 @@ package gov.nysenate.openleg.client.view.committee;
 
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 
-public class CommitteeVersionIdView extends CommitteeIdView implements Comparable<CommitteeVersionIdView>
+public class CommitteeVersionIdView extends CommitteeSessionIdView implements Comparable<CommitteeVersionIdView>
 {
-    protected int sessionYear;
     protected String referenceDate;
 
     public CommitteeVersionIdView(CommitteeVersionId committeeVersionId) {
         super(committeeVersionId);
         if (committeeVersionId != null) {
-            this.sessionYear = committeeVersionId.getSession().getYear();
             this.referenceDate = committeeVersionId.getReferenceDate().toString();
         }
-    }
-
-    public int getSessionYear() {
-        return sessionYear;
     }
 
     public String getReferenceDate() {

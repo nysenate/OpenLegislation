@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public abstract class BaseCtrl
 {
@@ -99,6 +101,25 @@ public abstract class BaseCtrl
         }
     }
 
+    /**
+     * Attempts to parse a date time request parameter
+     * Throws an InvalidRequestParameterException if the parsing went wrong
+     * @param dateTimeString The parameter value to be parsed
+     * @param parameterName The name of the parameter.  Used to generate the exception
+     * @return
+     * @throws InvalidRequestParameterException
+     */
+    protected LocalDateTime parseISODateTimeParameter(String dateTimeString, String parameterName)
+            throws InvalidRequestParameterException {
+        try {
+            return LocalDateTime.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateTimeString));
+        }
+        catch (DateTimeParseException ex) {
+            throw new InvalidRequestParameterException(dateTimeString, parameterName,
+                    "date-time", "ISO 8601 date and time formatted string e.g. 2014-10-27T09:44:55");
+        }
+    }
+
     /** --- Generic Exception Handlers --- */
 
     @ExceptionHandler(Exception.class)
@@ -106,13 +127,6 @@ public abstract class BaseCtrl
     protected ErrorResponse handleUnknownError(Exception ex) {
         logger.error("Caught unhandled servlet exception:\n{}", ExceptionUtils.getStackTrace(ex));
         return new ErrorResponse(ErrorCode.UNKNOWN_ERROR);
-    }
-
-    @ExceptionHandler(TypeMismatchException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    protected ErrorResponse handleTypeMismatchException(TypeMismatchException ex) {
-        logger.warn(ExceptionUtils.getStackTrace(ex));
-        return new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);
     }
 
     @ExceptionHandler(InvalidRequestParameterException.class)

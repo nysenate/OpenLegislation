@@ -17,6 +17,7 @@ public class BillInfo
     protected BillStatus status;
     protected BillSponsor sponsor;
     protected CommitteeId currentCommittee;
+    protected ProgramInfo programInfo;
 
     /** --- Constructors --- */
 
@@ -29,6 +30,7 @@ public class BillInfo
         this.summary = bill.getSummary();
         this.status = bill.getStatus();
         this.sponsor = bill.getSponsor();
+        this.programInfo = bill.getProgramInfo();
         if (bill.hasActiveAmendment()) {
             this.currentCommittee = bill.getActiveAmendment().getCurrentCommittee();
         }
@@ -90,5 +92,13 @@ public class BillInfo
 
     public void setCurrentCommittee(CommitteeId currentCommittee) {
         this.currentCommittee = currentCommittee;
+    }
+
+    public ProgramInfo getProgramInfo() {
+        return programInfo;
+    }
+
+    public void setProgramInfo(ProgramInfo programInfo) {
+        this.programInfo = programInfo;
     }
 }

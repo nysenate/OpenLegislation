@@ -49,7 +49,7 @@ public class BillSearchCtrl extends BillBaseCtrl
     /**
      * Bill Search By Session API
      *
-     * Search all bills in a given session year: (GET) /api/3/bills/{sessionYear}/search
+     * Search all bills in a given session year: (GET) /api/3/bills/{session}/search
      * @see #globalSearch for request params
      */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/search")

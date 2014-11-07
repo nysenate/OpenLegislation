@@ -29,7 +29,6 @@ public class BillView extends BillInfoView implements ViewObject
     protected ListView<CommitteeVersionIdView> pastCommittees;
     protected ListView<BillActionView> actions;
     protected ListView<BillIdView> previousVersions;
-    protected ProgramInfoView program;
 
     public BillView(Bill bill) {
         super(bill != null ? bill.getBillInfo() : null);
@@ -72,8 +71,6 @@ public class BillView extends BillInfoView implements ViewObject
             this.previousVersions = ListView.of(bill.getPreviousVersions().stream()
                 .map(BillIdView::new)
                 .collect(Collectors.toList()));
-
-            this.program = bill.getProgramInfo() != null ? new ProgramInfoView(bill.getProgramInfo()) : null;
         }
     }
 
@@ -120,9 +117,5 @@ public class BillView extends BillInfoView implements ViewObject
 
     public ListView<BillIdView> getPreviousVersions() {
         return previousVersions;
-    }
-
-    public ProgramInfoView getProgram() {
-        return program;
     }
 }

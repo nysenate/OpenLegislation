@@ -1,15 +1,11 @@
-package gov.nysenate.openleg.dao;
+package gov.nysenate.openleg.dao.entity.committee;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.entity.CommitteeDao;
-import gov.nysenate.openleg.entity.TestCommittees;
+import gov.nysenate.openleg.dao.entity.committee.data.CommitteeDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
-import gov.nysenate.openleg.util.DateUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class CommitteeDaoTests extends BaseTests{
@@ -42,14 +36,14 @@ public class CommitteeDaoTests extends BaseTests{
 
     @Test
     public void insertCommitteeTest(){
-        committeeDao.updateCommittee(testCommittees.getCommittee("test1"));
+        committeeDao.updateCommittee(testCommittees.getCommittee("test1"), null);
     }
 
     @Test
     public void getCommitteeTest(){
         deleteCommittees();
         Committee test1 = testCommittees.getCommittee("test1");
-        committeeDao.updateCommittee(test1);
+        committeeDao.updateCommittee(test1, null);
         Committee committee = committeeDao.getCommittee(test1.getId());
         assert(committee.equals(testCommittees.getCommittee("test1")));
     }
@@ -59,8 +53,8 @@ public class CommitteeDaoTests extends BaseTests{
         deleteCommittees();
         Committee test1 = testCommittees.getCommittee("test1");
         Committee test1v2 = testCommittees.getCommittee("test1v2");
-        committeeDao.updateCommittee(test1);
-        committeeDao.updateCommittee(test1v2);
+        committeeDao.updateCommittee(test1, null);
+        committeeDao.updateCommittee(test1v2, null);
         Committee committee1 = committeeDao.getCommittee(test1.getVersionId());
         Committee committee2 = committeeDao.getCommittee(test1v2.getVersionId());
         assert(!committee1.equals(committee2));
@@ -73,8 +67,8 @@ public class CommitteeDaoTests extends BaseTests{
         deleteCommittees();
         Committee test1 = testCommittees.getCommittee("test1");
         Committee test1nomod = testCommittees.getCommittee("test1nomod");
-        committeeDao.updateCommittee(test1);
-        committeeDao.updateCommittee(test1nomod);
+        committeeDao.updateCommittee(test1, null);
+        committeeDao.updateCommittee(test1nomod, null);
         Committee committee = committeeDao.getCommittee(test1.getId());
         assert(committee.equals(test1));
         assert(!committee.equals(test1nomod));
@@ -85,8 +79,8 @@ public class CommitteeDaoTests extends BaseTests{
         deleteCommittees();
         Committee test1 = testCommittees.getCommittee("test1");
         Committee test1replace = testCommittees.getCommittee("test1replace");
-        committeeDao.updateCommittee(test1);
-        committeeDao.updateCommittee(test1replace);
+        committeeDao.updateCommittee(test1, null);
+        committeeDao.updateCommittee(test1replace, null);
         Committee committee = committeeDao.getCommittee(test1.getVersionId());
         assert(!committee.equals(test1));
         assert(committee.equals(test1replace));
@@ -159,38 +153,16 @@ public class CommitteeDaoTests extends BaseTests{
         deleteCommittees();
         Committee test1 = testCommittees.getCommittee("test1");
         Committee test1MeetChange = testCommittees.getCommittee("test1MeetChange");
-        committeeDao.updateCommittee(test1);
+        committeeDao.updateCommittee(test1, null);
         Committee committee = committeeDao.getCommittee(test1.getId());
         assert(committee.equals(test1));
-        committeeDao.updateCommittee(test1MeetChange);
+        committeeDao.updateCommittee(test1MeetChange, null);
         committee = committeeDao.getCommittee(test1.getId());
         assert(!committee.equals(test1));
         assert(!committee.meetingEquals(test1));
         assert(committee.membersEquals(test1));
         assert(committee.meetingEquals(test1MeetChange));
         assert(committee.membersEquals(test1MeetChange));
-    }
-
-    @Test
-    public void committeeHistoryTest(){
-        List<Committee> allCommittees = committeeDao.getCommitteeList(Chamber.SENATE, LimitOffset.ALL);
-        List<List<Committee>> allCommitteeHistories = new ArrayList<List<Committee>>();
-        for(Committee committee : allCommittees){
-            allCommitteeHistories.add(committeeDao.getCommitteeHistory(committee.getId(), DateUtils.ALL_DATE_TIMES, LimitOffset.ALL, SortOrder.NONE));
-        }
-        for(List<Committee> committeeHistory : allCommitteeHistories){
-            for(int i=0; i<committeeHistory.size(); i++){
-                if(i+1<committeeHistory.size()){
-                    Committee leftCommittee = committeeHistory.get(i);
-                    Committee rightCommittee = committeeHistory.get(i+1);
-                    assert(leftCommittee.getYear()<=rightCommittee.getYear());
-                    assert(leftCommittee.getPublishedDateTime().isBefore(rightCommittee.getPublishedDateTime()));
-                    if(leftCommittee.getYear()==rightCommittee.getYear()){
-                        assert(leftCommittee.getReformed().equals(rightCommittee.getPublishedDateTime()));
-                    }
-                }
-            }
-        }
     }
 
     @Test

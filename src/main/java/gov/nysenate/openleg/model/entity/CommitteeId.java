@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.entity;
 
 import com.google.common.collect.ComparisonChain;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -27,6 +28,10 @@ public class CommitteeId implements Serializable, Comparable<CommitteeId>
         this.chamber = chamber;
         this.name = name;
     }
+    
+    public CommitteeId(CommitteeId committeeId) {
+        this (committeeId.getChamber(), committeeId.getName());
+    }
 
     /* --- Overrides --- */
 
@@ -41,20 +46,20 @@ public class CommitteeId implements Serializable, Comparable<CommitteeId>
         if (obj == null || getClass() != obj.getClass()) return false;
         final CommitteeId other = (CommitteeId) obj;
         return Objects.equals(this.chamber, other.chamber) &&
-               Objects.equals(this.name, other.name);
+                Objects.equals(StringUtils.lowerCase(this.name), StringUtils.lowerCase(other.name));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(chamber, name);
+        return Objects.hash(chamber, StringUtils.lowerCase(name));
     }
 
     @Override
     public int compareTo(CommitteeId o) {
         return ComparisonChain.start()
-            .compare(this.getChamber().name(), o.getChamber().name())
-            .compare(this.getName(), o.getName())
-            .result();
+                .compare(this.getChamber().name(), o.getChamber().name())
+                .compare(StringUtils.lowerCase(this.getName()), StringUtils.lowerCase(o.getName()))
+                .result();
     }
 
     /* --- Basic Getters/Setters --- */

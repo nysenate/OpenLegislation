@@ -7,12 +7,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class CommitteeVersionId extends CommitteeId implements Serializable
+public class CommitteeVersionId extends CommitteeSessionId implements Serializable
 {
     private static final long serialVersionUID = 2679527346305021089L;
-
-    /** The session year this committee is referenced in. */
-    private SessionYear session;
 
     /** Refers to the date this committee was referenced. */
     private LocalDateTime referenceDate;
@@ -20,11 +17,10 @@ public class CommitteeVersionId extends CommitteeId implements Serializable
     /** --- Constructors --- */
 
     public CommitteeVersionId(Chamber chamber, String name, SessionYear session, LocalDateTime referenceDate) {
-        super(chamber, name);
+        super(chamber, name, session);
         if (referenceDate == null) {
             throw new IllegalArgumentException("referenceDate cannot be null!");
         }
-        this.session = session;
         this.referenceDate = referenceDate;
     }
 
@@ -32,43 +28,48 @@ public class CommitteeVersionId extends CommitteeId implements Serializable
         this(committeeId.getChamber(), committeeId.getName(), session, referenceDate);
     }
 
+    public CommitteeVersionId(CommitteeSessionId committeeSessionId, LocalDateTime referenceDate) {
+        this(committeeSessionId.getChamber(), committeeSessionId.getName(), committeeSessionId.getSession(), referenceDate);
+    }
+
     /** --- Overrides --- */
 
     @Override
     public String toString() {
-        return super.toString() + '-' + session + '-' + referenceDate.toString();
+        return super.toString() + "-" + referenceDate.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CommitteeVersionId)) return false;
+        if (!super.equals(o)) return false;
+
+        CommitteeVersionId versionId = (CommitteeVersionId) o;
+
+        if (referenceDate != null ? !referenceDate.equals(versionId.referenceDate) : versionId.referenceDate != null)
+            return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return 31 * super.hashCode() + Objects.hash(session, referenceDate);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (!super.equals(obj)) return false;
-        final CommitteeVersionId other = (CommitteeVersionId) obj;
-        return Objects.equals(this.session, other.session) &&
-               Objects.equals(this.referenceDate, other.referenceDate);
+        int result = super.hashCode();
+        result = 31 * result + (referenceDate != null ? referenceDate.hashCode() : 0);
+        return result;
     }
 
     @Override
     public int compareTo(CommitteeId o) {
-        CommitteeVersionId cvId = (CommitteeVersionId) o;
-        return ComparisonChain.start()
-           .compare(this.referenceDate, cvId.referenceDate)
-           .compare(super.getName(), o.getName())
-           .compare(super.getChamber(), o.getChamber())
-           .result();
+        int superResult = super.compareTo(o);
+        if (superResult == 0 && o instanceof CommitteeVersionId) {
+            return this.referenceDate.compareTo(((CommitteeVersionId) o).getReferenceDate());
+        }
+        return superResult;
     }
 
     /** --- Basic Getters/Setters --- */
-
-    public SessionYear getSession() {
-        return session;
-    }
 
     public LocalDateTime getReferenceDate() {
         return referenceDate;

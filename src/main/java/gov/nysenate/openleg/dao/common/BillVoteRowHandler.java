@@ -6,7 +6,7 @@ import gov.nysenate.openleg.model.bill.BillVoteCode;
 import gov.nysenate.openleg.model.bill.BillVoteId;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
-import gov.nysenate.openleg.service.entity.MemberService;
+import gov.nysenate.openleg.service.entity.member.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowCallbackHandler;

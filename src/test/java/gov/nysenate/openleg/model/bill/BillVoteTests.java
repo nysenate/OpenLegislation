@@ -3,7 +3,7 @@ package gov.nysenate.openleg.model.bill;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.service.entity.MemberService;
+import gov.nysenate.openleg.service.entity.member.MemberService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

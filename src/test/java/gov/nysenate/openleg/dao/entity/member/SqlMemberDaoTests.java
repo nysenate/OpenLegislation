@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.entity;
+package gov.nysenate.openleg.dao.entity.member;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.base.SessionYear;

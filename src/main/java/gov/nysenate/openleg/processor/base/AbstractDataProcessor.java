@@ -22,8 +22,8 @@ import gov.nysenate.openleg.service.bill.data.VetoDataService;
 import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
-import gov.nysenate.openleg.service.entity.CommitteeService;
-import gov.nysenate.openleg.service.entity.MemberService;
+import gov.nysenate.openleg.service.entity.committee.data.CommitteeDataService;
+import gov.nysenate.openleg.service.entity.member.MemberService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public abstract class AbstractDataProcessor
 
     @Autowired protected CalendarDataService calendarDataService;
 
-    @Autowired protected CommitteeService committeeService;
+    @Autowired protected CommitteeDataService committeeDataService;
 
     @Autowired protected MemberService memberService;
 

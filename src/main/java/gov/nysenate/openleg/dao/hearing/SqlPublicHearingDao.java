@@ -9,7 +9,7 @@ import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingCommittee;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
-import gov.nysenate.openleg.service.entity.MemberService;
+import gov.nysenate.openleg.service.entity.member.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

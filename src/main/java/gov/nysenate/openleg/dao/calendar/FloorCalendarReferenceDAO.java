@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.dao.calendar;
 
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import gov.nysenate.openleg.model.spotcheck.calendar.FloorCalendarSpotcheckReference;

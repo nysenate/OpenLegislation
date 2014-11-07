@@ -18,7 +18,7 @@ import gov.nysenate.openleg.service.bill.data.ApprovalDataService;
 import gov.nysenate.openleg.service.bill.data.ApprovalNotFoundException;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
 import gov.nysenate.openleg.service.bill.data.VetoNotFoundException;
-import gov.nysenate.openleg.service.entity.MemberService;
+import gov.nysenate.openleg.service.entity.member.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +110,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         billInfo.setTitle(bill.getTitle());
         billInfo.setSummary(bill.getSummary());
         billInfo.setStatus(bill.getStatus());
+        billInfo.setProgramInfo(bill.getProgramInfo());
         List<BillAmendment> amendments = getBillAmendments(baseParams);
         Optional<BillAmendment> activeAmendment = amendments.stream()
             .filter(a -> a.getVersion().equals(bill.getActiveVersion()))

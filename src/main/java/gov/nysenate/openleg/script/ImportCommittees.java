@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.service.entity.CommitteeService;
-import gov.nysenate.openleg.service.entity.MemberService;
+import gov.nysenate.openleg.service.entity.committee.data.CommitteeDataService;
+import gov.nysenate.openleg.service.entity.member.MemberService;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -32,7 +32,7 @@ public class ImportCommittees extends BaseScript {
     private static FilenameFilter jsonFileNameFilter = (File dir, String name) -> name.endsWith(".json");
 
     @Autowired
-    CommitteeService committeeService;
+    CommitteeDataService committeeDataService;
 
     @Autowired
     MemberService memberService;
@@ -66,7 +66,7 @@ public class ImportCommittees extends BaseScript {
                         try {
                             logger.info("importing " + year + "/" + jsonFile.getName());
                             Committee committee = getCommitteeFromJson(jsonFile, year, Chamber.SENATE);
-                            committeeService.updateCommittee(committee);
+                            committeeDataService.saveCommittee(committee, null);
                             logger.info("inserted committee: " + committee.getVersionId());
                         }
                         catch (DataAccessException ex) {

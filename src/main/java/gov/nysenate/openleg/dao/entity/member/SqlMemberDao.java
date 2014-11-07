@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.entity;
+package gov.nysenate.openleg.dao.entity.member;
 
 import gov.nysenate.openleg.dao.base.ImmutableParams;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static gov.nysenate.openleg.dao.entity.SqlMemberQuery.*;
+import static gov.nysenate.openleg.dao.entity.member.SqlMemberQuery.*;
 
 @Repository("sqlMember")
 public class SqlMemberDao extends SqlBaseDao implements MemberDao

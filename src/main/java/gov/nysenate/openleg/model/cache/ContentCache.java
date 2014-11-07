@@ -10,5 +10,6 @@ public enum ContentCache
     BILL,
     AGENDA,
     CALENDAR,
-    LAW
+    LAW,
+    COMMITTEE
 }

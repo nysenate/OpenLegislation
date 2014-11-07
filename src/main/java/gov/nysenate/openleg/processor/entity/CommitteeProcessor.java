@@ -6,7 +6,7 @@ import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
-import gov.nysenate.openleg.service.entity.MemberService;
+import gov.nysenate.openleg.service.entity.member.MemberService;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -74,7 +74,7 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
                         committee.setPublishedDateTime(sobiFragment.getPublishedDateTime());
                         committee.setChamber(chamber);
                         processCommittee(committeeNode, committee);
-                        committeeService.updateCommittee(committee);
+                        committeeDataService.saveCommittee(committee, sobiFragment);
                     }
                     catch (Exception e){
                         logger.error(e);

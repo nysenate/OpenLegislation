@@ -1,16 +1,17 @@
 package gov.nysenate.openleg.model.entity;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.TreeMultiset;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
+import javafx.collections.transformation.SortedList;
 
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Committee extends BaseLegislativeContent implements Serializable
 {
@@ -41,7 +42,7 @@ public class Committee extends BaseLegislativeContent implements Serializable
     protected String meetAltWeekText;
 
     /** List of all the committee members. */
-    protected List<CommitteeMember> members;
+    protected TreeMultiset<CommitteeMember> members = TreeMultiset.create();
 
     /** --- Constructors --- */
 
@@ -59,10 +60,8 @@ public class Committee extends BaseLegislativeContent implements Serializable
         this.meetTime = other.meetTime;
         this.meetAltWeek = other.meetAltWeek;
         this.meetAltWeekText = other.meetAltWeekText;
-        this.members = new ArrayList<CommitteeMember>();
-        for (CommitteeMember cm : other.members) {
-            members.add(new CommitteeMember(cm));
-        }
+        this.members = TreeMultiset.create();
+        other.members.forEach((member) -> this.members.add(new CommitteeMember(member)));
     }
 
     public Committee(String name, Chamber chamber){
@@ -136,15 +135,23 @@ public class Committee extends BaseLegislativeContent implements Serializable
         return new CommitteeId(this.chamber, this.name);
     }
 
+    public CommitteeSessionId getSessionId() {
+        return new CommitteeSessionId(this.chamber, this.name, this.session);
+    }
+
     public CommitteeVersionId getVersionId() {
         return new CommitteeVersionId(this.chamber, this.name, this.session, this.publishedDateTime);
     }
 
-    public void setReformed(LocalDateTime reformed) {
-        if (reformed.isAfter(LocalDateTime.now())) {
-            this.reformed = null;
-        }
-        this.reformed = reformed;
+    /**
+     * --- Functional Getters/Setters ---
+     */
+    public void addMember(CommitteeMember member) {
+        this.members.add(member);
+    }
+
+    public LocalDateTime getCreated() {
+        return this.publishedDateTime;
     }
 
     /** --- Basic Getters/Setters --- */
@@ -167,6 +174,10 @@ public class Committee extends BaseLegislativeContent implements Serializable
 
     public LocalDateTime getReformed() {
         return reformed;
+    }
+
+    public void setReformed(LocalDateTime reformed) {
+        this.reformed = reformed;
     }
 
     public String getLocation() {
@@ -210,10 +221,10 @@ public class Committee extends BaseLegislativeContent implements Serializable
     }
 
     public List<CommitteeMember> getMembers() {
-        return members;
+        return members.stream().collect(Collectors.toList());
     }
 
-    public void setMembers(List<CommitteeMember> members) {
-        this.members = members;
+    public void setMembers(Collection<CommitteeMember> members) {
+        this.members = TreeMultiset.create(members);
     }
 }

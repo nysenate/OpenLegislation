@@ -17,6 +17,7 @@ public class BillInfoView extends BaseBillIdView implements ViewObject
     protected BillStatusView status;
     protected SponsorView sponsor;
     protected CommitteeIdView committee;
+    protected ProgramInfoView programInfo;
 
     public BillInfoView(BillInfo billInfo) {
         super(billInfo != null ? billInfo.getBillId() : null);
@@ -30,6 +31,7 @@ public class BillInfoView extends BaseBillIdView implements ViewObject
             billType = new BillTypeView(billInfo.getBillId().getBillType());
             committee = (billInfo.getCurrentCommittee() != null)
                     ? new CommitteeIdView(billInfo.getCurrentCommittee()) : null;
+            programInfo = billInfo.getProgramInfo() != null ? new ProgramInfoView(billInfo.getProgramInfo()) : null;
         }
     }
 
@@ -63,6 +65,10 @@ public class BillInfoView extends BaseBillIdView implements ViewObject
 
     public CommitteeIdView getCommittee() {
         return committee;
+    }
+
+    public ProgramInfoView getProgramInfo() {
+        return programInfo;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.entity;
+package gov.nysenate.openleg.service.entity.member;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.util.OutputUtils;

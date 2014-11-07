@@ -40,7 +40,7 @@ public class BillGetCtrl extends BillBaseCtrl
     /**
      * Bill listing API
      *
-     * Retrieve bills for session year: (GET) /api/3/bills/{sessionYear}
+     * Retrieve bills for session year: (GET) /api/3/bills/{session}
      * Request Parameters: sort - Lucene syntax for sorting by any field from the bill response.
      *                     full - If true, the full bill view should be returned. Otherwise just the info.
      *                     limit - Limit the number of results.
@@ -67,7 +67,7 @@ public class BillGetCtrl extends BillBaseCtrl
     /**
      * Single Bill retrieval API
      *
-     * Retrieve a single bill via printNo and sessionYear: (GET) /api/3/bills/{sessionYear}/{printNo}/
+     * Retrieve a single bill via printNo and session: (GET) /api/3/bills/{session}/{printNo}/
      * The version on the printNo is not needed since bills are returned with all amendments.
      *
      * Request Parameters: None
@@ -83,7 +83,7 @@ public class BillGetCtrl extends BillBaseCtrl
     /**
      * Single Bill PDF retrieval API
      *
-     * Retrieve a single bill amendment full text: (GET) /api/3/bills/{sessionYear}/{printNo}.pdf
+     * Retrieve a single bill amendment full text: (GET) /api/3/bills/{session}/{printNo}.pdf
      * The version on the printNo will dictate which full text to output.
      *
      * Request Parameters: None

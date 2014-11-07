@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.entity;
 import com.google.common.collect.ComparisonChain;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 public class CommitteeMember implements Serializable, Comparable<CommitteeMember>
 {
@@ -63,6 +64,12 @@ public class CommitteeMember implements Serializable, Comparable<CommitteeMember
         this.member = new Member(other.member);
         this.title = other.title;
         this.majority = other.majority;
+    }
+
+    /** --- Functional Getters/Setters --- */
+
+    public static Comparator<CommitteeMember> getComparator() {
+        return (l,r) -> l.compareTo(r);
     }
 
     /** --- Basic Getters/Setters --- */
