@@ -42,7 +42,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     private Cache committeeCache;
 
     /** A string that is used as a cache key for the master list of all committee ids */
-    private static final String committeeIdListKey = "committee id list";
+    public static final String committeeIdListKey = "committee id list";
 
     /** The maximum heap size (in MB) the committee cache can consume. */
     @Value("${cache.committee.heap.size}")
@@ -86,6 +86,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
                 .maxBytesLocalHeap(committeeCacheSizeMb, MemoryUnit.MEGABYTES)
                 .sizeOfPolicy(defaultSizeOfPolicy()));
         cacheManager.addCache(committeeCache);
+        committeeCache.setMemoryStoreEvictionPolicy(new CommitteeCacheEvictionPolicy());
     }
 
     /**
@@ -165,6 +166,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public List<CommitteeId> getCommitteeIds(LimitOffset limitOffset) {
         List<CommitteeId> committeeIdList;
@@ -206,6 +208,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
     public List<Committee> getCommitteeHistory(CommitteeSessionId committeeSessionId,
                                                LimitOffset limitOffset, SortOrder order) throws CommitteeNotFoundEx {

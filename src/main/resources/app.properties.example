@@ -48,6 +48,9 @@ cache.calendar.heap.size = 40
 # Law Cache Size (in MB) (Recommended: 10)
 cache.law.heap.size = 10
 
+# Law Committee Size (in MB) (Recommended: 10)
+cache.committee.heap.size = 10
+
 # --- Postgres Database Configuration --- #
 
 # Database identifier for JDBC.
