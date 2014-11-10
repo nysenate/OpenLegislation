@@ -11,9 +11,14 @@ openApp.constant('appProps', {
 
 openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 
-    /** --- Content --- */
+    /** --- Bills --- */
 
-    $routeProvider.when(ctxPath + '/content/bills', {
+    $routeProvider.when(ctxPath + '/bills', {
+        templateUrl: ctxPath + '/static/partial/content/bills-home.html',
+        controller: 'BillHomeCtrl'
+    });
+
+    $routeProvider.when(ctxPath + '/bills/:session/:printNo', {
         templateUrl: ctxPath + '/static/partial/content/bills-home.html',
         controller: 'BillHomeCtrl'
     });
@@ -37,4 +42,3 @@ openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
     $locationProvider.html5Mode(true);
     $locationProvider.hashPrefix('!');
 }]);
-

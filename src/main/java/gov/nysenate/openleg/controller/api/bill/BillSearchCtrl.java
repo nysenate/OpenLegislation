@@ -5,13 +5,17 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.base.SearchResultView;
 import gov.nysenate.openleg.client.view.bill.BillInfoView;
 import gov.nysenate.openleg.client.view.bill.BillView;
+import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
+import gov.nysenate.openleg.service.bill.search.BillSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -20,11 +24,17 @@ import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET)
-public class BillSearchCtrl extends BillBaseCtrl
+public class BillSearchCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(BillSearchCtrl.class);
 
     /** --- Request Handlers --- */
+
+    @Autowired
+    protected BillDataService billData;
+
+    @Autowired
+    protected BillSearchService billSearch;
 
     /**
      * Bill Search API

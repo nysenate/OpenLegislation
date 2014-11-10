@@ -1,8 +1,10 @@
 package gov.nysenate.openleg.model.bill;
 
+import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
@@ -28,6 +30,12 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /** An overview of a bill that list's specific sections of NYS law to be amended by the bill. */
     protected String summary = "";
+
+    /** The status of the bill which is derived via the actions list. */
+    protected BillStatus status;
+
+    /** A set of statuses that are considered milestones. */
+    protected LinkedList<BillStatus> milestones =  new LinkedList<>();
 
     /** A mapping of amendment versions to BillAmendment instances (includes base amendment). */
     protected Map<Version, BillAmendment> amendmentMap = new TreeMap<>();
@@ -56,14 +64,20 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** A list of actions that have been made on this bill. */
     protected List<BillAction> actions = new ArrayList<>();
 
-    /** The status of the bill which is derived via the actions list. */
-    protected BillStatus status;
+    /** If the bill has been substituted by another, store the reference of that bill's id. */
+    protected BaseBillId substitutedBy;
 
     /** A list of ids for versions of this legislation in previous sessions. */
     protected Set<BillId> previousVersions = new HashSet<>();
 
     /** Designates the type of program bill, if applicable. */
     protected ProgramInfo programInfo;
+
+    /** Links to committee agendas that involve this bill. */
+    protected List<CommitteeAgendaId> committeeAgendas = new ArrayList<>();
+
+    /** Associated floor calendar ids. */
+    protected List<CalendarId> calendars = new ArrayList<>();
 
     /** --- Constructors --- */
 
@@ -261,6 +275,19 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     /**
+     * Sets the active version, creating a new BillAmendment instance if the reference does
+     * not exist.
+     *
+     * @param activeVersion Version
+     */
+    public void setActiveVersion(Version activeVersion) {
+        this.activeVersion = activeVersion;
+        if (!this.amendmentMap.containsKey(activeVersion)) {
+            this.amendmentMap.put(activeVersion, new BillAmendment(this.baseBillId, activeVersion));
+        }
+    }
+
+    /**
      * Convenience method to retrieve the currently active Amendment object.
      *
      * @return BillAmendment
@@ -330,14 +357,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         return activeVersion;
     }
 
-    /** TODO: Think about this some more.. */
-    public void setActiveVersion(Version activeVersion) {
-        this.activeVersion = activeVersion;
-        if (!this.amendmentMap.containsKey(activeVersion)) {
-            this.amendmentMap.put(activeVersion, new BillAmendment(this.baseBillId, activeVersion));
-        }
-    }
-
     public Map<Version, BillAmendment> getAmendmentMap() {
         return amendmentMap;
     }
@@ -352,6 +371,14 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     public void setStatus(BillStatus status) {
         this.status = status;
+    }
+
+    public LinkedList<BillStatus> getMilestones() {
+        return milestones;
+    }
+
+    public void setMilestones(LinkedList<BillStatus> milestones) {
+        this.milestones = milestones;
     }
 
     public Map<VetoId,VetoMessage> getVetoMessages() {
@@ -376,6 +403,14 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     public void setPreviousVersions(Set<BillId> previousVersions) {
         this.previousVersions = previousVersions;
+    }
+
+    public BaseBillId getSubstitutedBy() {
+        return substitutedBy;
+    }
+
+    public void setSubstitutedBy(BaseBillId substitutedBy) {
+        this.substitutedBy = substitutedBy;
     }
 
     public List<BillAction> getActions() {
@@ -416,5 +451,21 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     public void setProgramInfo(ProgramInfo programInfo) {
         this.programInfo = programInfo;
+    }
+
+    public List<CommitteeAgendaId> getCommitteeAgendas() {
+        return committeeAgendas;
+    }
+
+    public void setCommitteeAgendas(List<CommitteeAgendaId> committeeAgendas) {
+        this.committeeAgendas = committeeAgendas;
+    }
+
+    public List<CalendarId> getCalendars() {
+        return calendars;
+    }
+
+    public void setCalendars(List<CalendarId> calendars) {
+        this.calendars = calendars;
     }
 }

@@ -23,17 +23,21 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     UPDATE_BILL(
         "UPDATE ${schema}." + SqlTable.BILL + "\n" +
-        "SET title = :title, summary = :summary, active_version = :activeVersion,\n" +
-        "    active_year = :activeYear, program_info = :programInfo, program_info_num = :programInfoNum, status = :status, status_date = :statusDate,\n" +
+        "SET title = :title, summary = :summary, active_version = :activeVersion, sub_bill_print_no = :subPrintNo,\n" +
+        "    active_year = :activeYear, program_info = :programInfo, program_info_num = :programInfoNum, " +
+        "    status = :status, status_date = :statusDate, committee_name = :committeeName, " +
+        "    committee_chamber = :committeeChamber::chamber, bill_cal_no = :billCalNo, " +
         "    modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId\n" +
         "WHERE print_no = :printNo AND session_year = :sessionYear"
     ),
     INSERT_BILL(
         "INSERT INTO ${schema}." + SqlTable.BILL + "\n" +
-        "(print_no, session_year, title, summary, active_version, active_year, " +
-        " program_info, program_info_num, status, status_date, modified_date_time, published_date_time, last_fragment_id) \n" +
-        "VALUES (:printNo, :sessionYear, :title, :summary, :activeVersion, :activeYear, " +
-        "        :programInfo, :programInfoNum, :status, :statusDate, :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
+        "(print_no, session_year, title, summary, active_version, active_year, sub_bill_print_no, " +
+        " program_info, program_info_num, status, status_date, committee_name, committee_chamber, bill_cal_no, " +
+        " modified_date_time, published_date_time, last_fragment_id) \n" +
+        "VALUES (:printNo, :sessionYear, :title, :summary, :activeVersion, :activeYear, :subPrintNo, " +
+        "        :programInfo, :programInfoNum, :status, :statusDate, :committeeName, :committeeChamber::chamber, :billCalNo, " +
+        "        :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
     ACTIVE_SESSION_YEARS(
         "SELECT min(session_year) as min, max(session_year) as max\n" +
@@ -79,16 +83,15 @@ public enum SqlBillQuery implements BasicSqlQuery
     UPDATE_BILL_AMENDMENT(
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "SET sponsor_memo = :sponsorMemo, act_clause = :actClause, full_text = :fullText, stricken = :stricken, " +
-        "    current_committee_name = :currentCommitteeName, current_committee_action = :currentCommitteeAction, " +
         "    uni_bill = :uniBill, last_fragment_id = :lastFragmentId, law_section = :lawSection, law_code = :lawCode\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND version = :version"
     ),
     INSERT_BILL_AMENDMENT(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "(bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, stricken, " +
-        " current_committee_name, current_committee_action, uni_bill, last_fragment_id, law_section, law_code)\n" +
+        " uni_bill, last_fragment_id, law_section, law_code)\n" +
         "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, " +
-        "       :currentCommitteeName, :currentCommitteeAction, :uniBill, :lastFragmentId, :lawSection, :lawCode)"
+        "       :uniBill, :lastFragmentId, :lawSection, :lawCode)"
     ),
 
     /** --- Bill Amendment Publish Status --- */
@@ -268,6 +271,42 @@ public enum SqlBillQuery implements BasicSqlQuery
     DELETE_BILL_PREVIOUS_VERSION(
         DELETE_BILL_PREVIOUS_VERSIONS.sql + " AND prev_bill_print_no = :prevPrintNo AND " +
         "prev_bill_session_year = :prevSessionYear AND prev_amend_version = :prevVersion"
+    ),
+
+    /** --- Bill Milestones --- */
+
+    GET_BILL_MILESTONES(
+        "SELECT * FROM ${schema}." + SqlTable.BILL_MILESTONE + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
+    INSERT_BILL_MILESTONE("" +
+        "INSERT INTO ${schema}." + SqlTable.BILL_MILESTONE + "\n" +
+        "(bill_print_no, bill_session_year, status, rank, action_sequence_no, date, committee_name, committee_chamber," +
+        " cal_no, last_fragment_id)\n" +
+        "VALUES (:printNo, :sessionYear, :status, :rank, :actionSequenceNo, :date, :committeeName, :committeeChamber::chamber," +
+        "        :calNo, :lastFragmentId)"
+    ),
+    DELETE_BILL_MILESTONES("" +
+        "DELETE FROM ${schema}." + SqlTable.BILL_MILESTONE + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
+
+    /** --- Associated Committee Agenda Ids --- */
+
+    SELECT_COMM_AGENDA_IDS(
+        "SELECT aic.agenda_no, aic.year, aic.committee_name \n" +
+        "FROM ${schema}." + SqlTable.AGENDA_INFO_COMMITTEE_ITEM + " aici\n" +
+        "JOIN ${schema}." + SqlTable.AGENDA_INFO_COMMITTEE + " aic ON aici.info_committee_id = aic.id\n" +
+        "WHERE aici.bill_print_no = :printNo AND aici.bill_session_year = :sessionYear"
+    ),
+
+    /** --- Associated Calendar Ids -- */
+
+    SELECT_CALENDAR_IDS(
+        "SELECT cs.calendar_no, cs.calendar_year \n" +
+        "FROM ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + " cse\n" +
+        "JOIN ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + " cs ON cse.calendar_sup_id = cs.id\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     );
 
     private String sql;

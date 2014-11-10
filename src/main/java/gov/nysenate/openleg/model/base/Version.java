@@ -2,8 +2,12 @@ package gov.nysenate.openleg.model.base;
 
 import com.google.common.collect.Lists;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Enumeration of all possible character based versions which includes an entry for a default version.
@@ -47,21 +51,16 @@ public enum Version
      * @return List<Version>
      */
     public static List<Version> before(Version v) {
-        return Lists.newArrayList(values()).stream()
-            .filter(p -> p.compareTo(v) < 0)
-            .collect(Collectors.toList());
+        return Arrays.stream(values()).filter(p -> p.compareTo(v) < 0).collect(toList());
     }
 
     /**
-     * Get a list containing the versions that occur before the given version 'v' as well as the
-     * given version.
+     * Get a list containing the versions that occur after the given version 'v'.
      *
      * @param v Version
      * @return List<Version>
      */
-    public static List<Version> beforeIncluding(Version v) {
-        return Lists.newArrayList(values()).stream()
-                .filter(p -> p.compareTo(v) < 0)
-                .collect(Collectors.toList());
+    public static List<Version> after(Version v) {
+        return Arrays.stream(values()).filter(p -> p.compareTo(v) > 0).collect(toList());
     }
 }

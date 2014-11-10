@@ -1,0 +1,55 @@
+package gov.nysenate.openleg.dao.agenda.search;
+
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.model.agenda.Agenda;
+import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
+import gov.nysenate.openleg.model.agenda.AgendaId;
+import gov.nysenate.openleg.model.search.SearchResults;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+
+import java.util.Collection;
+
+/**
+ * DAO interface for searching agenda data.
+ */
+public interface AgendaSearchDao
+{
+    /**
+     * Performs a search on all agendas without filtering on session year.
+     * @see #searchAgendas(QueryBuilder, FilterBuilder, String, LimitOffset)
+     */
+    public SearchResults<AgendaId> searchAgendas(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff);
+
+    /**
+     * Performs a free-form search across all the agendas using the query string syntax and a filter.
+     *
+     * @param query String - Query Builder
+     * @param postFilter FilterBuilder - Filter result set
+     * @param sort String - Sort String
+     * @param limOff LimitOffset - Limit the result set
+     * @return SearchResults<AgendaCommitteeId>
+     */
+    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff);
+
+    /**
+     * Update the agenda index with the content of the supplied agenda.
+     *
+     * @param agenda Agenda
+     */
+    public void updateAgendaIndex(Agenda agenda);
+
+    /**
+     * Update the agenda index with the contents of the supplied agendas.
+     *
+     * @param agendas Collection<Agenda>
+     */
+    public void updateAgendaIndex(Collection<Agenda> agendas);
+
+    /**
+     * Removes the agenda from the index with the given AgendaId.
+     *
+     * @param agendaId AgendaId
+     */
+    public void deleteAgendaFromIndex(AgendaId agendaId);
+}

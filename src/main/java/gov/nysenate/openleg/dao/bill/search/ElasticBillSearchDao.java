@@ -64,13 +64,16 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     /** {@inheritDoc} */
     @Override
     public void updateBillIndex(Collection<Bill> bills) {
-        BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
-        List<BillView> billViewList = bills.stream().map(BillView::new).collect(Collectors.toList());
-        billViewList.forEach(b ->
-            bulkRequest.add(searchClient.prepareIndex(billIndexName, Integer.toString(b.getSession()), b.getBasePrintNo())
-                       .setSource(OutputUtils.toJson(b)))
-        );
-        bulkRequest.execute().actionGet();
+        if (!bills.isEmpty()) {
+            BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
+            List<BillView> billViewList = bills.stream().map(BillView::new).collect(Collectors.toList());
+            billViewList.forEach(b ->
+                bulkRequest.add(
+                    searchClient.prepareIndex(billIndexName, Integer.toString(b.getSession()), b.getBasePrintNo())
+                                .setSource(OutputUtils.toJson(b)))
+            );
+            safeBulkRequestExecute(bulkRequest);
+        }
     }
 
     /** {@inheritDoc} */

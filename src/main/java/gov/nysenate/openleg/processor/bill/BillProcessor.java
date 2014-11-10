@@ -266,30 +266,32 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *
      * Bill events cannot be deleted, only replaced.
      *
-     * @see gov.nysenate.openleg.processor.bill.BillActionParser
+     * @see BillActionParser
      * @throws ParseError
      */
     private void applyBillActions(String data, Bill baseBill, BillAmendment specifiedAmendment)
                                 throws ParseError {
-        // Use the BillActionParser to handle all the parsing details
+        // Use the BillActionParser to convert the actions string into objects.
+        List<BillAction> billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
+        baseBill.setActions(billActions);
+        // Use the BillActionAnalyzer to derive other data from the actions list.
         Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.DEFAULT);
-        BillActionParser actionParser = new BillActionParser(specifiedAmendment.getBillId(), data, defaultPubStatus);
-        actionParser.parseActions();
+        BillActionAnalyzer analyzer = new BillActionAnalyzer(billActions, defaultPubStatus);
+        analyzer.analyze();
+
         // Apply the results to the bill
-        baseBill.setActions(actionParser.getBillActions());
-        baseBill.setActiveVersion(actionParser.getActiveVersion());
-        baseBill.setStatus(actionParser.getBillStatus());
-        specifiedAmendment.setStricken(actionParser.isStricken());
-        specifiedAmendment.setCurrentCommittee(actionParser.getCurrentCommittee());
-        baseBill.setPastCommittees(actionParser.getPastCommittees());
-        // Apply the publish statuses derived from the actions parser
-        baseBill.setPublishStatuses(actionParser.getPublishStatusMap());
-        // Apply same as bill ids which can be inferred from the actions
-        actionParser.getSameAsMap().forEach((k, v) -> {
+        baseBill.setSubstitutedBy(analyzer.getSubstitutedBy().orElse(null));
+        baseBill.setActiveVersion(analyzer.getActiveVersion());
+        baseBill.setStatus(analyzer.getBillStatus());
+        baseBill.setMilestones(analyzer.getMilestones());
+        baseBill.setPastCommittees(analyzer.getPastCommittees());
+        baseBill.setPublishStatuses(analyzer.getPublishStatusMap());
+        analyzer.getSameAsMap().forEach((k, v) -> {
             if (baseBill.hasAmendment(k)) {
                 baseBill.getAmendment(k).setSameAs(Sets.newHashSet(v));
             }
         });
+        specifiedAmendment.setStricken(analyzer.isStricken());
     }
 
     /**

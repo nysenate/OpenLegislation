@@ -49,7 +49,7 @@ public class AgendaGetCtrl extends BaseCtrl
     public BaseResponse getAgendas(@PathVariable int year) {
         List<AgendaId> agendaIds = agendaDataService.getAgendaIds(year, SortOrder.ASC);
         return ListViewResponse.of(
-            agendaIds.parallelStream()
+            agendaIds.stream()
                     .map(aid -> new AgendaSummaryView(agendaDataService.getAgenda(aid)))
                     .collect(Collectors.toList()), agendaIds.size(), LimitOffset.ALL);
     }
@@ -83,7 +83,7 @@ public class AgendaGetCtrl extends BaseCtrl
         }
         else {
             return new ViewObjectErrorResponse(
-                ErrorCode.INVALID_ARGUMENTS, commName + " has no data for agenda " + agendaNo + " (" + year + ")");
+                ErrorCode.INVALID_ARGUMENTS, commName + " is not contained within agenda " + agendaNo + " (" + year + ")");
         }
     }
 

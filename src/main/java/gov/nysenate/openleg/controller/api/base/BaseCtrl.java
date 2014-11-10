@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -132,14 +134,14 @@ public abstract class BaseCtrl
     @ExceptionHandler(InvalidRequestParameterException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ErrorResponse handleInvalidRequestParameterException(InvalidRequestParameterException ex) {
-        logger.warn(ExceptionUtils.getStackTrace(ex));
+        logger.debug(ExceptionUtils.getStackTrace(ex));
         return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, new InvalidParameterView(ex));
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ErrorResponse handleMissingParameterException(MissingServletRequestParameterException ex) {
-        logger.warn(ExceptionUtils.getStackTrace(ex));
+        logger.debug(ExceptionUtils.getStackTrace(ex));
         return new ViewObjectErrorResponse(ErrorCode.MISSING_PARAMETERS,
             new ParameterView(ex.getParameterName(), ex.getParameterType()));
     }

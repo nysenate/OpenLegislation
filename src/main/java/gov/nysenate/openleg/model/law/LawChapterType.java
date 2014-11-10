@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.model.law;
 
 import com.google.common.collect.Sets;
-import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -178,7 +177,7 @@ public enum LawChapterType
     static {
         Arrays.stream(values())
             .forEach(law -> law.getCitations()
-                .forEach(citation -> citationMap.put(citation.toUpperCase(), law)));
+                    .forEach(citation -> citationMap.put(citation.toUpperCase(), law)));
     }
 
     /** --- Constructor --- */

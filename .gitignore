@@ -14,3 +14,5 @@ src/main/webapp/META-INF/**
 node_modules/**
 target
 build
+
+src/test/java/gov/nysenate/openleg/SillyTests.java

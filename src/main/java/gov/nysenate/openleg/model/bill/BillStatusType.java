@@ -18,7 +18,9 @@ public enum BillStatusType
     DELIVERED_TO_GOV("Delivered to Governor"),
     SIGNED_BY_GOV("Signed by Governor"),
     VETOED("Vetoed"),
-    STRICKEN("Stricken");
+    STRICKEN("Stricken"),
+    SUBSTITUTED("Substituted"),
+    ADOPTED("Adopted");
 
     String desc;
 

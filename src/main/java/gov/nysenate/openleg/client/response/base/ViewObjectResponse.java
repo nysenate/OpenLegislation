@@ -7,11 +7,16 @@ public class ViewObjectResponse<ViewType extends ViewObject> extends BaseRespons
     private ViewType result;
 
     public ViewObjectResponse(ViewType result) {
+        this(result, "");
+    }
+
+    public ViewObjectResponse(ViewType result, String message) {
         this.result = result;
-        if(result != null) {
+        if (result != null) {
             success = true;
             responseType = result.getViewType();
         }
+        this.message = message;
     }
 
     public ViewType getResult() {

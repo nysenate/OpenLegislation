@@ -9,6 +9,7 @@ import gov.nysenate.openleg.client.view.bill.BillIdView;
 import gov.nysenate.openleg.client.view.bill.BillInfoView;
 import gov.nysenate.openleg.client.view.bill.BillPdfView;
 import gov.nysenate.openleg.client.view.bill.BillView;
+import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
@@ -16,9 +17,12 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
+import gov.nysenate.openleg.service.bill.search.BillSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -33,9 +37,15 @@ import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET)
-public class BillGetCtrl extends BillBaseCtrl
+public class BillGetCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(BillGetCtrl.class);
+
+    @Autowired
+    protected BillDataService billData;
+
+    @Autowired
+    protected BillSearchService billSearch;
 
     /**
      * Bill listing API
@@ -50,7 +60,7 @@ public class BillGetCtrl extends BillBaseCtrl
      */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}")
     public BaseResponse getBills(@PathVariable int sessionYear,
-                                 @RequestParam(defaultValue = "status.actionDate:desc") String sort,
+                                 @RequestParam(defaultValue = "actionDate:desc") String sort,
                                  @RequestParam(defaultValue = "false") boolean full,
                                  WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.FIFTY);
@@ -60,7 +70,7 @@ public class BillGetCtrl extends BillBaseCtrl
         return ListViewResponse.of(
             results.getResults().stream()
                 .map(r -> (full) ? new BillView(billData.getBill(r.getResult()))
-                                 : new BillInfoView(billData.getBillInfo(r.getResult())))
+                        : new BillInfoView(billData.getBillInfo(r.getResult())))
                 .collect(Collectors.toList()), results.getTotalResults(), limOff);
     }
 
@@ -76,8 +86,8 @@ public class BillGetCtrl extends BillBaseCtrl
      */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
     public BaseResponse getBill(@PathVariable int sessionYear, @PathVariable String printNo) {
-        return new ViewObjectResponse<>(new BillView(
-            billData.getBill(new BaseBillId(printNo, sessionYear))));
+        BaseBillId baseBillId = new BaseBillId(printNo, sessionYear);
+        return new ViewObjectResponse<>(new BillView(billData.getBill(baseBillId)), "Data for bill " + baseBillId);
     }
 
     /**

@@ -180,7 +180,12 @@ public class ElasticBillSearchService implements BillSearchService
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.BILL)) {
             logger.info("Handling bill re-index event!");
-            rebuildIndex();
+            try {
+                rebuildIndex();
+            }
+            catch (Exception ex) {
+                logger.error("", ex);
+            }
         }
     }
 

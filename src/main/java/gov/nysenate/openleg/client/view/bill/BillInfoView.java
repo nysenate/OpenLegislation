@@ -1,70 +1,59 @@
 package gov.nysenate.openleg.client.view.bill;
 
+import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
 import gov.nysenate.openleg.model.bill.BillInfo;
+import gov.nysenate.openleg.model.bill.BillStatusType;
+
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Just the essentials for displaying a Bill in a search result for example.
  */
-public class BillInfoView extends BaseBillIdView implements ViewObject
+public class BillInfoView extends SimpleBillInfoView implements ViewObject
 {
-    protected String printNo;
-    protected BillTypeView billType;
-    protected String title;
-    protected String activeVersion;
     protected String summary;
-    protected BillStatusView status;
+    protected boolean passed;
     protected SponsorView sponsor;
-    protected CommitteeIdView committee;
+    protected BillStatusView status;
+    protected ListView<BillStatusView> milestones;
     protected ProgramInfoView programInfo;
 
     public BillInfoView(BillInfo billInfo) {
-        super(billInfo != null ? billInfo.getBillId() : null);
+        super(billInfo);
         if (billInfo != null) {
-            title = billInfo.getTitle();
-            activeVersion = billInfo.getActiveVersion() != null ? billInfo.getActiveVersion().getValue() : null;
-            printNo = basePrintNo + activeVersion;
             summary = billInfo.getSummary();
-            status = new BillStatusView(billInfo.getStatus());
+            passed = !billInfo.getMilestones().isEmpty() &&
+                billInfo.getMilestones().getLast().getStatusType().equals(BillStatusType.SIGNED_BY_GOV);
             sponsor = new SponsorView(billInfo.getSponsor());
             billType = new BillTypeView(billInfo.getBillId().getBillType());
-            committee = (billInfo.getCurrentCommittee() != null)
-                    ? new CommitteeIdView(billInfo.getCurrentCommittee()) : null;
             programInfo = billInfo.getProgramInfo() != null ? new ProgramInfoView(billInfo.getProgramInfo()) : null;
+            status = new BillStatusView(billInfo.getStatus());
+            milestones = ListView.of(billInfo.getMilestones().stream().map(BillStatusView::new).collect(toList()));
         }
-    }
-
-    public String getPrintNo() {
-        return printNo;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public BillTypeView getBillType() {
-        return billType;
-    }
-
-    public String getActiveVersion() {
-        return activeVersion;
     }
 
     public String getSummary() {
         return summary;
     }
 
-    public BillStatusView getStatus() {
-        return status;
+    public boolean isPassed() {
+        return passed;
     }
 
     public SponsorView getSponsor() {
         return sponsor;
     }
 
-    public CommitteeIdView getCommittee() {
-        return committee;
+    public BillStatusView getStatus() {
+        return status;
+    }
+
+    public ListView<BillStatusView> getMilestones() {
+        return milestones;
     }
 
     public ProgramInfoView getProgramInfo() {

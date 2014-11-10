@@ -115,10 +115,10 @@ reportModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', '$routePara
     $scope.mismatchDiffClass = function(summaryItem, type) {
         var val = $scope.computeMismatchDiff(summaryItem, type, false);
         if (val > 0) {
-            return "postfix-icon icon-arrow-up2 new-error";
+            return "postfix-icon icon-arrow-up4 new-error";
         }
         else if (val < 0) {
-            return "postfix-icon icon-arrow-down2 closed-error";
+            return "postfix-icon icon-arrow-down5 closed-error";
         }
         return "postfix-icon icon-minus3 existing-error";
     };

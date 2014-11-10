@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.entity.CommitteeId;
+
+import java.time.LocalDateTime;
+import java.util.LinkedList;
 
 /**
  * Contains a sample of the fields in {@link gov.nysenate.openleg.model.bill.Bill}.
@@ -12,11 +14,14 @@ public class BillInfo
 {
     protected BillId billId;
     protected Version activeVersion;
+    protected int year;
+    protected LocalDateTime publishedDateTime;
     protected String title;
     protected String summary;
     protected BillStatus status;
     protected BillSponsor sponsor;
-    protected CommitteeId currentCommittee;
+    protected LinkedList<BillStatus> milestones;
+    protected BillId substitutedBy;
     protected ProgramInfo programInfo;
 
     /** --- Constructors --- */
@@ -26,14 +31,15 @@ public class BillInfo
     public BillInfo(Bill bill) {
         this.billId = bill.getBaseBillId();
         this.activeVersion = bill.getActiveVersion();
+        this.year = bill.getYear();
+        this.publishedDateTime = bill.getPublishedDateTime();
         this.title = bill.getTitle();
         this.summary = bill.getSummary();
         this.status = bill.getStatus();
         this.sponsor = bill.getSponsor();
+        this.substitutedBy = bill.getSubstitutedBy();
         this.programInfo = bill.getProgramInfo();
-        if (bill.hasActiveAmendment()) {
-            this.currentCommittee = bill.getActiveAmendment().getCurrentCommittee();
-        }
+        this.milestones = bill.getMilestones();
     }
 
     /** --- Basic Getters/Setters --- */
@@ -52,6 +58,14 @@ public class BillInfo
 
     public void setActiveVersion(Version activeVersion) {
         this.activeVersion = activeVersion;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public LocalDateTime getPublishedDateTime() {
+        return publishedDateTime;
     }
 
     public String getTitle() {
@@ -86,12 +100,12 @@ public class BillInfo
         this.sponsor = sponsor;
     }
 
-    public CommitteeId getCurrentCommittee() {
-        return currentCommittee;
+    public LinkedList<BillStatus> getMilestones() {
+        return milestones;
     }
 
-    public void setCurrentCommittee(CommitteeId currentCommittee) {
-        this.currentCommittee = currentCommittee;
+    public void setMilestones(LinkedList<BillStatus> milestones) {
+        this.milestones = milestones;
     }
 
     public ProgramInfo getProgramInfo() {
@@ -100,5 +114,13 @@ public class BillInfo
 
     public void setProgramInfo(ProgramInfo programInfo) {
         this.programInfo = programInfo;
+    }
+
+    public BillId getSubstitutedBy() {
+        return substitutedBy;
+    }
+
+    public void setSubstitutedBy(BillId substitutedBy) {
+        this.substitutedBy = substitutedBy;
     }
 }

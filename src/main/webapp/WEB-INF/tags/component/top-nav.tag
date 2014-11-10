@@ -3,7 +3,7 @@
 <%@ taglib prefix="components" tagdir="/WEB-INF/tags/component" %>
 <%@ attribute name="activeLink" required="true" %>
 
-<div class="fixed top-bar-wrapper" ng-controller="TopNavCtrl">
+<header class="top-bar-wrapper" ng-controller="TopNavCtrl">
     <nav class="top-bar" data-topbar role="navigation">
         <section class="show-for-large-up">
             <ul class="title-area">
@@ -35,4 +35,4 @@
             <components:top-nav-links activeLink="${activeLink}" ulClass="mobile-menu-list side-nav"/>
         </div>
     </div>
-</div>
+</header>

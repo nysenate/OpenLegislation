@@ -3,27 +3,30 @@ package gov.nysenate.openleg.client.view.bill;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
+import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 
+import java.time.LocalDate;
 import java.util.stream.Collectors;
 
-public class BillAmendmentView extends BillIdView {
-
+public class BillAmendmentView extends BillIdView
+{
+    protected LocalDate publishDate;
     protected ListView<BillIdView> sameAs;
     protected String memo;
     protected String lawSection;
     protected String lawCode;
     protected String actClause;
     protected String fullText;
-    protected CommitteeVersionIdView currentCommittee;
     protected ListView<SimpleMemberView> coSponsors;
     protected ListView<SimpleMemberView> multiSponsors;
     protected boolean uniBill;
     protected boolean isStricken;
 
-    public BillAmendmentView(BillAmendment billAmendment) {
+    public BillAmendmentView(BillAmendment billAmendment, PublishStatus publishStatus) {
         super(billAmendment != null ? billAmendment.getBillId() : null);
         if (billAmendment != null) {
+            this.publishDate = publishStatus.getEffectDateTime().toLocalDate();
             this.sameAs = ListView.of(billAmendment.getSameAs().stream()
                 .map(BillIdView::new)
                 .collect(Collectors.toList()));
@@ -32,8 +35,6 @@ public class BillAmendmentView extends BillIdView {
             this.lawCode = billAmendment.getLaw();
             this.actClause = billAmendment.getActClause();
             this.fullText = billAmendment.getFullText();
-            this.currentCommittee = billAmendment.getCurrentCommittee() != null ?
-                                    new CommitteeVersionIdView(billAmendment.getCurrentCommittee()) : null;
             this.coSponsors = ListView.of(billAmendment.getCoSponsors().stream()
                 .map(SimpleMemberView::new)
                 .collect(Collectors.toList()));
@@ -48,6 +49,10 @@ public class BillAmendmentView extends BillIdView {
     @Override
     public String getViewType() {
         return "bill-amendment";
+    }
+
+    public LocalDate getPublishDate() {
+        return publishDate;
     }
 
     public ListView<BillIdView> getSameAs() {
@@ -72,10 +77,6 @@ public class BillAmendmentView extends BillIdView {
 
     public String getFullText() {
         return fullText;
-    }
-
-    public CommitteeVersionIdView getCurrentCommittee() {
-        return currentCommittee;
     }
 
     public ListView<SimpleMemberView> getCoSponsors() {

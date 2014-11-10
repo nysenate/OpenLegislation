@@ -7,7 +7,9 @@ import gov.nysenate.openleg.model.entity.CommitteeId;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * An Agenda is essentially a list of items (bills) that are brought up for discussion in
@@ -93,6 +95,14 @@ public class Agenda extends BaseLegislativeContent implements Serializable
             .map(a -> a.getCommitteeInfoMap().keySet())
             .filter(a -> a.contains(committeeId))
             .findAny().isPresent();
+    }
+
+    /**
+     * Returns a set of committees that have agenda info addenda.
+     */
+    public Set<CommitteeId> getCommittees() {
+        return agendaInfoAddenda.values().stream().flatMap(a -> a.getCommitteeInfoMap().keySet().stream())
+            .collect(Collectors.toSet());
     }
 
     /** --- Basic Getters/Setters --- */

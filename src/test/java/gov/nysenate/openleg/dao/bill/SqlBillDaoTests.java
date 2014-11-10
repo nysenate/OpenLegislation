@@ -48,17 +48,13 @@ public class SqlBillDaoTests extends BaseTests
 
     @Test
     public void testFastBill() throws Exception {
-        Bill bill = billDao.getBill(new BillId("S3059", 2013));
-        bill.getAmendmentList().forEach(ba -> {
-            ba.setMemo("");
-            ba.setFullText("");
-        });
+        Bill bill = billDao.getBill(new BillId("S5922", 2013));
+
         StopWatch sw = new StopWatch();
         sw.start();
-        billDao.applyText(bill);
+            bill = billDao.getBill(new BillId("S5922", 2013));
         sw.stop();
         logger.info("Time {} ms",sw.getTime());
-        logger.info("{}", OutputUtils.toJson(bill));
-
+//        logger.info("{}", OutputUtils.toJson(bill));
     }
 }

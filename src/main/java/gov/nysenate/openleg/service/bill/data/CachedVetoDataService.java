@@ -71,10 +71,10 @@ public class CachedVetoDataService implements VetoDataService
     @Override
     @Cacheable(value = vetoDataCache, key = "#getBillVetoesKey + '-' + #baseBillId.toString()")
     public Map<VetoId,VetoMessage> getBillVetoes(BaseBillId baseBillId) throws VetoNotFoundException {
-        if(baseBillId==null){
+        if (baseBillId == null) {
             throw new IllegalArgumentException("baseBillId cannot be null!");
         }
-        try{
+        try {
             return vetoDao.getBillVetoes(baseBillId);
         }
         catch(EmptyResultDataAccessException ex){

@@ -18,7 +18,7 @@ $nice-blue: #008cba;
 /** --- Foundation Overrides --- */
 
 body {
-  font-family: 'Open Sans' sans-serif;
+  font-family: 'Open Sans', sans-serif;
   background: #f5f5f5;
 }
 
@@ -35,6 +35,51 @@ table {
 
 .light-background {
   background: #fafafa;
+}
+
+
+ul.pagination {
+  margin-bottom:0;
+}
+
+/** --- Layout --- */
+
+#wrapper {
+  min-height: 100%;
+  position: relative;
+  #content {
+    padding-bottom: 110px;
+  }
+  #footer {
+    height: 100px;
+    position:absolute;
+    bottom:0;
+    left:0;
+    background:#555;
+    color: white;
+    width: 100%   ;
+  }
+}
+
+/** --- Common --- */
+
+span.xsmall {
+  font-size: 0.7em;
+}
+
+span.small {
+  font-size: 0.8em;
+}
+
+span.medium {
+  font-size: 0.9em;
+}
+
+.vertical-align {
+  display: table; height: 70px; overflow: hidden;
+  span, div {
+    display: table-cell; vertical-align: middle;
+  }
 }
 
 /** --- Header --- */
@@ -95,51 +140,35 @@ table {
   }
 }
 
-/** --- Side Nav Menu --- */
-
-@media #{$small-up} {
-  .side-nav-container {
-    background: transparent;
-    nav {
-      background: #fafafa;
-      width: 50%;
-      margin: auto;
-    }
-  }
-}
-
-@media #{$large-up} {
-  .side-nav-container {
-    background: #fafafa;
-    nav {
-      width: auto;
-    }
-  }
-}
-
-.side-nav-container {
-  padding: 0;
-}
-
-.side-nav li {
-  padding: 0 1rem;
-  &.active {
-    background: $nice-blue;
-    a:first-child:not(.button) {
-      color: white;
-    }
-  }
-  a:not(.button):hover {
-    background: none;
-    color: $nice-blue;
-  }
-}
-
 /** --- Result Listings --- */
 
 .content-row {
   background: #fafafa;
   padding: 10px;
+}
+
+/** --- Bill Page --- */
+
+.bill-result {
+  &:hover {
+    background: #eee;
+    cursor: pointer;
+  }
+}
+
+.bill-milestone-list {
+  border: 1px solid #ccc;
+  height: 10px;
+  overflow: hidden;
+  li {
+    background:#ddd;
+    border-right: 1px solid #ccc;
+    height: 100%;
+    &.met {
+      background: #D5F587;
+      border-right: none;
+    }
+  }
 }
 
 /** --- Magellan Nav --- */
@@ -162,10 +191,6 @@ table {
 }
 
 /** --- Custom --- */
-
-#wrapper {
-  padding-top: 80px;
-}
 
 .content-column {
   padding-left: 35px;
@@ -366,3 +391,17 @@ button.check-button {
   float: right;
 }
 
+/** --- Bill Page --- */
+
+#sponsorName {
+  margin-top: 10px;
+  margin-left: 70px;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.margin-top-10 {
+  margin-top: 10px;
+}

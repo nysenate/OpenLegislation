@@ -5,11 +5,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("/content/**")
 public class ContentPageCtrl
 {
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public String index() {
-        return "content";
+    @RequestMapping(value = "/bills", method = RequestMethod.GET)
+    public String bills() {
+        return "bills";
+    }
+
+    @RequestMapping(value = "/calendars", method = RequestMethod.GET)
+    public String calendars() {
+        return "calendars";
     }
 }

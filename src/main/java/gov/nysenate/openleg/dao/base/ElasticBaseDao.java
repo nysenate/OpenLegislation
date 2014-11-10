@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -59,6 +60,7 @@ public abstract class ElasticBaseDao
             .setQuery(query)
             .setFrom(limitOffset.getOffsetStart() - 1)
             .setSize((limitOffset.hasLimit()) ? limitOffset.getLimit() : -1)
+            .setMinScore(0.05f)
             .setFetchSource(false);
         // Post filters take effect after the search is completed
         if (postFilter != null) {
@@ -110,6 +112,17 @@ public abstract class ElasticBaseDao
                 SortBuilders.fieldSort(k).order(org.elasticsearch.search.sort.SortOrder.valueOf(v.toUpperCase()))));
         }
         return sortBuilders;
+    }
+
+    /**
+     * Performs a bulk request execution while making sure that the bulk request is actually valid to
+     * prevent exceptions.
+     * @param bulkRequest BulkRequestBuilder
+     */
+    protected void safeBulkRequestExecute(BulkRequestBuilder bulkRequest) {
+        if (bulkRequest != null && bulkRequest.numberOfActions() > 0) {
+            bulkRequest.execute().actionGet();
+        }
     }
 
     protected void deleteEntry(String indexName, String type, String id) {

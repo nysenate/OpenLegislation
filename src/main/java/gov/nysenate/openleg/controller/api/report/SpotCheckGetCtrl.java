@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.controller.api.report;
 
+import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
@@ -44,15 +45,23 @@ public class SpotCheckGetCtrl extends BaseCtrl
     @Autowired
     DaybreakCheckReportService daybreakService;
 
+    /**
+     *
+     *
+     */
     @RequestMapping(value = "/daybreaks", produces = APPLICATION_JSON_VALUE)
-    public Object getDaybreakReport() {
+    public BaseResponse getDaybreakReport() {
         LocalDate today = LocalDate.now();
         LocalDate sixMonthsAgo = today.minusMonths(6);
         return getDaybreakReportLimOff(sixMonthsAgo, today);
     }
 
+    /**
+     *
+     *
+     */
     @RequestMapping(value = "/daybreaks/{from}/{to}", produces = APPLICATION_JSON_VALUE)
-    public Object getDaybreakReportLimOff(
+    public BaseResponse getDaybreakReportLimOff(
            @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate from,
            @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
         logger.info("Retrieving daybreak reports from {} to {}", from , to);
@@ -66,13 +75,18 @@ public class SpotCheckGetCtrl extends BaseCtrl
             ListView.of(reports.stream().map(r -> new ReportInfoView<>(r)).collect(Collectors.toList())), from, to);
     }
 
+    /**
+     *
+     */
     @RequestMapping(value = "/daybreaks/{reportDateTime}", produces = APPLICATION_JSON_VALUE)
-    public Object getDaybreakReport(
+    public BaseResponse getDaybreakReport(
            @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime reportDateTime) {
         logger.info("Retrieving daybreak report {}", reportDateTime);
         return new ReportDetailResponse<>(
             daybreakService.getReport(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, reportDateTime)));
     }
+
+    /** --- Exception Handlers --- */
 
     @ExceptionHandler(SpotCheckReportNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)

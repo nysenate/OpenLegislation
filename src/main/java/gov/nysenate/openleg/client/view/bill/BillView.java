@@ -1,18 +1,16 @@
 package gov.nysenate.openleg.client.view.bill;
 
+import gov.nysenate.openleg.client.view.agenda.CommitteeAgendaIdView;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.client.view.calendar.CalendarIdView;
 import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.bill.Bill;
 
 import java.util.TreeMap;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static java.util.AbstractMap.SimpleEntry;
-import static java.util.Map.Entry;
 
 /**
  * A complete representation of a bill including it's amendments.
@@ -20,7 +18,6 @@ import static java.util.Map.Entry;
 public class BillView extends BillInfoView implements ViewObject
 {
     protected MapView<String, BillAmendmentView> amendments;
-    protected MapView<String, PublishStatusView> publishStatuses;
     protected ListView<BillVoteView> votes;
     protected ListView<VetoMessageView> vetoMessages;
     protected ApprovalMessageView approvalMessage;
@@ -29,20 +26,24 @@ public class BillView extends BillInfoView implements ViewObject
     protected ListView<CommitteeVersionIdView> pastCommittees;
     protected ListView<BillActionView> actions;
     protected ListView<BillIdView> previousVersions;
+    protected ListView<CommitteeAgendaIdView> committeeAgendas;
+    protected ListView<CalendarIdView> calendars;
+    protected ProgramInfoView program;
 
     public BillView(Bill bill) {
         super(bill != null ? bill.getBillInfo() : null);
         if (bill != null) {
-            this.amendments = MapView.of(bill.getAmendmentList().stream()
-                .map(BillAmendmentView::new)
-                .collect(Collectors.toMap(BillAmendmentView::getVersion, Function.identity(), (a, b) -> b, TreeMap::new)));
 
-            this.publishStatuses = MapView.of(bill.getAmendPublishStatusMap().entrySet().stream()
-                .map(entry -> new SimpleEntry<>(entry.getKey().toString(),
-                        new PublishStatusView(entry.getKey().getValue(), entry.getValue())))
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue)));
+            // Only output amendments that are currently published
+            TreeMap<String, BillAmendmentView> amendmentMap = new TreeMap<>();
+            bill.getAmendPublishStatusMap().forEach((k,v) -> {
+                if (v.isPublished() && bill.hasAmendment(k)) {
+                    amendmentMap.put(k.getValue(), new BillAmendmentView(bill.getAmendment(k), v));
+                }
+            });
+            this.amendments = MapView.of(amendmentMap);
 
-            votes = ListView.of(bill.getAmendmentList().stream()
+            this.votes = ListView.of(bill.getAmendmentList().stream()
                 .flatMap(a -> a.getVotesList().stream())
                 .map(v -> new BillVoteView(v))
                 .collect(Collectors.toList()));
@@ -71,6 +72,16 @@ public class BillView extends BillInfoView implements ViewObject
             this.previousVersions = ListView.of(bill.getPreviousVersions().stream()
                 .map(BillIdView::new)
                 .collect(Collectors.toList()));
+
+            this.committeeAgendas = ListView.of(bill.getCommitteeAgendas().stream()
+                .map(CommitteeAgendaIdView::new)
+                .collect(Collectors.toList()));
+
+            this.calendars = ListView.of(bill.getCalendars().stream()
+                .map(CalendarIdView::new)
+                .collect(Collectors.toList()));
+
+            this.program = bill.getProgramInfo() != null ? new ProgramInfoView(bill.getProgramInfo()) : null;
         }
     }
 
@@ -79,12 +90,10 @@ public class BillView extends BillInfoView implements ViewObject
         return "bill";
     }
 
+
+
     public MapView<String, BillAmendmentView> getAmendments() {
         return amendments;
-    }
-
-    public MapView<String, PublishStatusView> getPublishStatuses() {
-        return publishStatuses;
     }
 
     public ListView<BillVoteView> getVotes() {
@@ -117,5 +126,17 @@ public class BillView extends BillInfoView implements ViewObject
 
     public ListView<BillIdView> getPreviousVersions() {
         return previousVersions;
+    }
+
+    public ListView<CommitteeAgendaIdView> getCommitteeAgendas() {
+        return committeeAgendas;
+    }
+
+    public ListView<CalendarIdView> getCalendars() {
+        return calendars;
+    }
+
+    public ProgramInfoView getProgram() {
+        return program;
     }
 }
