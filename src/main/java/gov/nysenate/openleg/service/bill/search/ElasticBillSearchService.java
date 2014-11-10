@@ -13,6 +13,7 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
 import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
@@ -33,7 +34,7 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 @Service
-public class ElasticBillSearchService implements BillSearchService
+public class ElasticBillSearchService implements BillSearchService, IndexedSearchService<Bill>
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchService.class);
 
@@ -184,7 +185,7 @@ public class ElasticBillSearchService implements BillSearchService
                 rebuildIndex();
             }
             catch (Exception ex) {
-                logger.error("", ex);
+                logger.error("Unexpected exception during handling of Bill RebuildIndexEvent!", ex);
             }
         }
     }

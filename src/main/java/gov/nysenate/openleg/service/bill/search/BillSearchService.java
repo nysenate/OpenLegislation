@@ -10,7 +10,7 @@ import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
 import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
 
-public interface BillSearchService extends IndexedSearchService<Bill>
+public interface BillSearchService
 {
     /**
      * Performs a search across all bill data.
