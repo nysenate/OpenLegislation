@@ -12,87 +12,186 @@ SET client_min_messages = warning;
 SET search_path = master, pg_catalog;
 
 --
--- Data for Name: sobi_file; Type: TABLE DATA; Schema: master; Owner: postgres
+-- Data for Name: committee; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY sobi_file (file_name, published_date_time, staged_date_time, encoding, archived) FROM stdin;
+COPY committee (name, id, current_version, chamber, current_session, full_name) FROM stdin;
+Aging	24	2014-03-13 14:48:16	senate	2013	\N
+Agriculture	14	2014-02-28 11:25:44	senate	2013	\N
+Alcoholism and Drug Abuse	12	2014-02-28 11:25:44	senate	2013	\N
+Banks	30	2014-03-13 14:48:16	senate	2013	\N
+Children and Families	27	2014-02-28 11:25:44	senate	2013	\N
+Cities	25	2014-03-13 14:48:16	senate	2013	\N
+Corporations, Authorities and Commissions	3	2014-02-28 11:25:44	senate	2013	\N
+Crime Victims, Crime and Correction	33	2014-02-28 11:25:44	senate	2013	\N
+Education	9	2014-03-13 14:48:16	senate	2013	\N
+Cultural Affairs, Tourism, Parks and Recreation	20	2014-02-28 11:25:44	senate	2013	\N
+Elections	32	2014-02-28 11:25:44	senate	2013	\N
+Environmental Conservation	17	2014-03-13 14:48:16	senate	2013	\N
+Ethics	4	2014-02-28 11:25:44	senate	2013	\N
+Higher Education	23	2014-02-28 11:25:44	senate	2013	\N
+Infrastructure and Capital Investment	58	2014-02-28 11:25:44	senate	2013	\N
+Racing, Gaming and Wagering	7	2014-03-13 14:48:16	senate	2013	\N
+Investigations and Government Operations	2	2014-02-28 11:25:44	senate	2013	\N
+Labor	11	2014-02-28 11:25:44	senate	2013	\N
+Local Government	22	2014-02-28 11:25:44	senate	2013	\N
+Veterans, Homeland Security and Military Affairs	8	2014-03-13 14:48:16	senate	2013	\N
+Mental Health and Developmental Disabilities	26	2014-02-28 11:25:44	senate	2013	\N
+Social Services	13	2014-02-28 11:25:44	senate	2013	\N
+Commerce, Economic Development and Small Business	19	2014-03-17 18:43:42	senate	2013	\N
+Civil Service and Pensions	15	2014-03-03 17:09:09	senate	2013	\N
+Codes	29	2014-03-03 17:09:09	senate	2013	\N
+Consumer Protection	16	2014-03-03 17:09:09	senate	2013	\N
+Energy and Telecommunications	31	2014-03-03 17:09:09	senate	2013	\N
+Finance	21	2014-03-03 17:09:09	senate	2013	\N
+Health	6	2014-03-03 17:09:09	senate	2013	\N
+Housing, Construction and Community Development	28	2014-03-03 17:09:09	senate	2013	\N
+Insurance	34	2014-03-03 17:09:09	senate	2013	\N
+Judiciary	5	2014-03-03 17:09:09	senate	2013	\N
+Rules	18	2014-03-03 17:09:09	senate	2013	\N
+Transportation	10	2014-03-03 17:09:09	senate	2013	\N
+New York City Education Subcommittee	63	2014-03-03 17:09:09	senate	2013	\N
 \.
 
 
 --
--- Data for Name: sobi_fragment; Type: TABLE DATA; Schema: master; Owner: postgres
+-- Name: committee_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
-COPY sobi_fragment (sobi_file_name, fragment_id, published_date_time, fragment_type, text, sequence_no, processed_count, processed_date_time, staged_date_time, pending_processing, manual_fix, manual_fix_notes) FROM stdin;
-\.
-
-
---
--- Data for Name: agenda; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda (agenda_no, year, published_date_time, modified_date_time, created_date_time, last_fragment_id) FROM stdin;
-\.
+SELECT pg_catalog.setval('committee_id_seq', 349, true);
 
 
 --
--- Data for Name: agenda_info_addendum; Type: TABLE DATA; Schema: master; Owner: postgres
+-- Data for Name: committee_version; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY agenda_info_addendum (agenda_no, year, addendum_id, modified_date_time, published_date_time, created_date_time, last_fragment_id, week_of) FROM stdin;
-\.
-
-
---
--- Data for Name: agenda_info_committee; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda_info_committee (id, agenda_no, year, addendum_id, committee_name, committee_chamber, chair, location, meeting_date_time, notes, last_fragment_id, created_date_time) FROM stdin;
-\.
-
-
---
--- Name: agenda_info_committee_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('agenda_info_committee_id_seq', 1, false);
-
-
---
--- Data for Name: agenda_info_committee_item; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda_info_committee_item (id, info_committee_id, bill_print_no, bill_session_year, bill_amend_version, message, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: agenda_info_committee_item_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('agenda_info_committee_item_id_seq', 1, false);
-
-
---
--- Data for Name: agenda_vote_addendum; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda_vote_addendum (agenda_no, year, addendum_id, modified_date_time, published_date_time, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: agenda_vote_commitee_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('agenda_vote_commitee_id_seq', 1, false);
-
-
---
--- Data for Name: agenda_vote_committee; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda_vote_committee (id, agenda_no, year, addendum_id, committee_name, committee_chamber, chair, meeting_date_time, last_fragment_id, created_date_time) FROM stdin;
+COPY committee_version (id, location, meetday, meetaltweek, meetaltweektext, meettime, session_year, created, reformed, committee_name, chamber, last_fragment_id) FROM stdin;
+2	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Investigations and Government Operations	senate	\N
+3	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Corporations, Authorities and Commissions	senate	\N
+4	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Ethics	senate	\N
+5	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Judiciary	senate	\N
+6	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Health	senate	\N
+7	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Racing, Gaming and Wagering	senate	\N
+8	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Veterans, Homeland Security and Military Affairs	senate	\N
+9	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Education	senate	\N
+10	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Transportation	senate	\N
+11	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Labor	senate	\N
+12	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Alcoholism and Drug Abuse	senate	\N
+13	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Social Services	senate	\N
+14	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Agriculture	senate	\N
+15	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Civil Service and Pensions	senate	\N
+16	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Consumer Protection	senate	\N
+17	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Environmental Conservation	senate	\N
+18	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Rules	senate	\N
+19	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Commerce, Economic Development and Small Business	senate	\N
+20	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	\N
+21	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Finance	senate	\N
+22	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Local Government	senate	\N
+23	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Higher Education	senate	\N
+24	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Aging	senate	\N
+25	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Cities	senate	\N
+26	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Mental Health and Developmental Disabilities	senate	\N
+27	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Children and Families	senate	\N
+28	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Housing, Construction and Community Development	senate	\N
+29	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Codes	senate	\N
+30	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Banks	senate	\N
+31	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Energy and Telecommunications	senate	\N
+32	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Elections	senate	\N
+33	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Crime Victims, Crime and Correction	senate	\N
+34	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Insurance	senate	\N
+57	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Aging	senate	\N
+71	Room 411 LOB	TUESDAY	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Agriculture	senate	\N
+47	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Agriculture	senate	\N
+72	Room 813 LOB	TUESDAY	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Alcoholism and Drug Abuse	senate	\N
+45	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Alcoholism and Drug Abuse	senate	\N
+65	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Banks	senate	\N
+74	Room 944 LOB	MONDAY	f		13:00:00	2013	2014-02-28 11:25:44	infinity	Children and Families	senate	\N
+61	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Children and Families	senate	\N
+59	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Cities	senate	\N
+73	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Banks	senate	\N
+70	Room 816 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Aging	senate	\N
+75	Room 916 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Cities	senate	\N
+48	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Civil Service and Pensions	senate	\N
+64	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Codes	senate	\N
+52	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Commerce, Economic Development and Small Business	senate	\N
+49	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Consumer Protection	senate	\N
+80	Room 801 LOB	MONDAY	f		13:30:00	2013	2014-02-28 11:25:44	infinity	Corporations, Authorities and Commissions	senate	\N
+36	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Corporations, Authorities and Commissions	senate	\N
+81	Room 123 CAP	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-02-28 11:25:44	infinity	Crime Victims, Crime and Correction	senate	\N
+68	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Crime Victims, Crime and Correction	senate	\N
+82	Room 309 LOB	WEDNESDAY	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	\N
+53	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Cultural Affairs, Tourism, Parks and Recreation	senate	\N
+42	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Education	senate	\N
+84	Room 813 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:00:00	2013	2014-02-28 11:25:44	infinity	Elections	senate	\N
+67	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Elections	senate	\N
+66	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Energy and Telecommunications	senate	\N
+50	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Environmental Conservation	senate	\N
+87		\N	f		\N	2013	2014-02-28 11:25:44	infinity	Ethics	senate	\N
+37	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Ethics	senate	\N
+54	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Finance	senate	\N
+39	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Health	senate	\N
+90	Room 807 LOB	TUESDAY	f		12:30:00	2013	2014-02-28 11:25:44	infinity	Higher Education	senate	\N
+56	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Higher Education	senate	\N
+62	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Housing, Construction and Community Development	senate	\N
+92	Room 804 LOB	TUESDAY	f		12:00:00	2013	2014-02-28 11:25:44	infinity	Infrastructure and Capital Investment	senate	\N
+58	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Infrastructure and Capital Investment	senate	\N
+69	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Insurance	senate	\N
+94	Room 810 LOB	TUESDAY	f		12:30:00	2013	2014-02-28 11:25:44	infinity	Investigations and Government Operations	senate	\N
+35	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Investigations and Government Operations	senate	\N
+38	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Judiciary	senate	\N
+96	Room 511 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-02-28 11:25:44	infinity	Labor	senate	\N
+44	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Labor	senate	\N
+97	Room 945 LOB	TUESDAY	f		13:00:00	2013	2014-02-28 11:25:44	infinity	Local Government	senate	\N
+55	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Local Government	senate	\N
+98	Room 816 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-02-28 11:25:44	infinity	Mental Health and Developmental Disabilities	senate	\N
+60	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Mental Health and Developmental Disabilities	senate	\N
+40	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Racing, Gaming and Wagering	senate	\N
+51	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Rules	senate	\N
+101	Room 946A LOB	TUESDAY	f		10:00:00	2013	2014-02-28 11:25:44	infinity	Social Services	senate	\N
+46	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Social Services	senate	\N
+43	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Transportation	senate	\N
+41	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Veterans, Homeland Security and Military Affairs	senate	\N
+63	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	New York City Education Subcommittee	senate	\N
+106	Room 410 LOB	MONDAY	f		13:30:00	2013	2014-03-03 17:09:09	infinity	Civil Service and Pensions	senate	\N
+76	Room 410 LOB	MONDAY	f		13:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Civil Service and Pensions	senate	\N
+107	Room 124 CAP	TUESDAY	f		09:00:00	2013	2014-03-03 17:09:09	infinity	Codes	senate	\N
+77	Room 124 CAP	TUESDAY	f		09:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Codes	senate	\N
+79	Room 801 LOB	MONDAY	f		13:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Consumer Protection	senate	\N
+105	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Banks	senate	\N
+86	Room 901 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Environmental Conservation	senate	\N
+99	Room 510 LOB	TUESDAY	f		09:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Racing, Gaming and Wagering	senate	\N
+103	Room 816 LOB	TUESDAY	f		13:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Veterans, Homeland Security and Military Affairs	senate	\N
+78	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Commerce, Economic Development and Small Business	senate	\N
+109	Room 801 LOB	MONDAY	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Consumer Protection	senate	\N
+83	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Education	senate	\N
+111	Room 709 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-03-03 17:09:09	infinity	Energy and Telecommunications	senate	\N
+95	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Judiciary	senate	\N
+102	Room 124 CAP	TUESDAY	f		13:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Transportation	senate	\N
+119		\N	f		\N	2013	2014-03-03 17:09:09	infinity	New York City Education Subcommittee	senate	\N
+104		\N	f		\N	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	New York City Education Subcommittee	senate	\N
+110	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Education	senate	\N
+108	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-03 17:09:09	2014-03-17 18:43:42	Commerce, Economic Development and Small Business	senate	\N
+85	Room 709 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Energy and Telecommunications	senate	\N
+112	Room 124 CAP	TUESDAY	f		11:00:00	2013	2014-03-03 17:09:09	infinity	Finance	senate	\N
+88	Room 124 CAP	TUESDAY	f		11:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Finance	senate	\N
+113	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-03-03 17:09:09	infinity	Health	senate	\N
+89	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Health	senate	\N
+114	Room 308 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Housing, Construction and Community Development	senate	\N
+91	Room 308 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Housing, Construction and Community Development	senate	\N
+115	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-03 17:09:09	infinity	Insurance	senate	\N
+93	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Insurance	senate	\N
+116	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Judiciary	senate	\N
+117		\N	f		\N	2013	2014-03-03 17:09:09	infinity	Rules	senate	\N
+100		\N	f		\N	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Rules	senate	\N
+118	Room 124 CAP	TUESDAY	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Transportation	senate	\N
+120	Room 816 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-03-13 14:48:16	infinity	Aging	senate	\N
+121	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-13 14:48:16	infinity	Banks	senate	\N
+122	Room 916 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-13 14:48:16	infinity	Cities	senate	\N
+123	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-03-13 14:48:16	infinity	Education	senate	\N
+124	Room 901 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-03-13 14:48:16	infinity	Environmental Conservation	senate	\N
+125	Room 510 LOB	TUESDAY	f		09:30:00	2013	2014-03-13 14:48:16	infinity	Racing, Gaming and Wagering	senate	\N
+126	Room 816 LOB	TUESDAY	f		13:30:00	2013	2014-03-13 14:48:16	infinity	Veterans, Homeland Security and Military Affairs	senate	\N
+127	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-17 18:43:42	infinity	Commerce, Economic Development and Small Business	senate	\N
 \.
 
 
@@ -404,6 +503,27 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 498	Greene							f
 499	Edward Hennessey	Edward	\N	Hennessey	\N	\N	\N	t
 397	Albert A. Stirpe	Albert	A.	Stirpe	\N	Assembly Member	\N	t
+500	WEISENBERGT	\N	\N	WEISENBERGT	\N	\N	\N	f
+501	RIVERA	\N	\N	RIVERA	\N	\N	\N	f
+502	PEOPLES-STOKE	\N	\N	PEOPLES-STOKE	\N	\N	\N	f
+503	B GOTTFRIED	B	\N	GOTTFRIED	\N	\N	\N	f
+504	RULES	\N	\N	RULES	\N	\N	\N	f
+505	MAGNARELLIS	\N	\N	MAGNARELLIS	\N	\N	\N	f
+506	PEOPLES-STOKE	\N	\N	PEOPLES-STOKE	\N	\N	\N	f
+507	M WEINSTEIN	M	\N	WEINSTEIN	\N	\N	\N	f
+508	CYMBROWITZSNY	\N	\N	CYMBROWITZSNY	\N	\N	\N	f
+509	I ZEBROWSKI	I	\N	ZEBROWSKI	\N	\N	\N	f
+510	E WEINSTEIN	E	\N	WEINSTEIN	\N	\N	\N	f
+511	BRAUNSTEINWITZ	\N	\N	BRAUNSTEINWITZ	\N	\N	\N	f
+512	BRAUNSTEINZ	\N	\N	BRAUNSTEINZ	\N	\N	\N	f
+513	STRIPE	\N	\N	STRIPE	\N	\N	\N	f
+514	PEOPLES-STOKE	\N	\N	PEOPLES-STOKE	\N	\N	\N	f
+515	S O'DONNELL	S	\N	O'DONNELL	\N	\N	\N	f
+516	T WEINSTEIN	T	\N	WEINSTEIN	\N	\N	\N	f
+517	B O'DONNELL	B	\N	O'DONNELL	\N	\N	\N	f
+518	O BENEDETTO	O	\N	BENEDETTO	\N	\N	\N	f
+519	R BENEDETTO	R	\N	BENEDETTO	\N	\N	\N	f
+520	L O'DONNELL	L	\N	O'DONNELL	\N	\N	\N	f
 \.
 
 
@@ -717,6 +837,27 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 675	497	assembly	f	Phil Steck
 676	498	assembly	f	Greene
 677	499	assembly	t	Edward Hennessey
+678	500	assembly	f	WEISENBERGT
+679	501	assembly	f	RIVERA
+680	502	assembly	f	PEOPLES-STOKE
+681	503	assembly	f	B GOTTFRIED
+682	504	assembly	f	RULES
+683	505	assembly	f	MAGNARELLIS
+684	506	assembly	f	PEOPLES-STOKE
+685	507	assembly	f	M WEINSTEIN
+686	508	assembly	f	CYMBROWITZSNY
+687	509	assembly	f	I ZEBROWSKI
+688	510	assembly	f	E WEINSTEIN
+689	511	assembly	f	BRAUNSTEINWITZ
+690	512	assembly	f	BRAUNSTEINZ
+691	513	assembly	t	STRIPE
+692	514	assembly	t	PEOPLES-STOKE
+693	515	assembly	t	S O'DONNELL
+694	516	assembly	t	T WEINSTEIN
+695	517	assembly	t	B O'DONNELL
+696	518	assembly	t	O BENEDETTO
+697	519	assembly	t	R BENEDETTO
+698	520	assembly	t	L O'DONNELL
 \.
 
 
@@ -1393,361 +1534,31 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 669	380	HASSELL-THOMPSO	2011	36	t
 670	380	HASSELL-THOMPSO	2013	36	t
 671	386	JOHNSON	2009	4	t
+672	678	WEISENBERGT	2009	\N	f
+673	679	RIVERA	2009	\N	f
+674	680	PEOPLES-STOKE	2009	\N	f
+675	681	GOTTFRIED B	2009	\N	f
+676	682	RULES	2009	\N	f
+677	683	MAGNARELLIS	2011	\N	f
+678	684	PEOPLES-STOKE	2011	\N	f
+679	685	WEINSTEIN M	2011	\N	f
+680	686	CYMBROWITZSNY	2011	\N	f
+681	687	ZEBROWSKI I	2011	\N	f
+682	688	WEINSTEIN E	2011	\N	f
+683	689	BRAUNSTEINWITZ	2011	\N	f
+684	690	BRAUNSTEINZ	2011	\N	f
+685	691	STRIPE	2013	\N	f
+686	692	PEOPLES-STOKE	2013	\N	f
+687	693	O'DONNELL S	2013	\N	f
+688	694	WEINSTEIN T	2013	\N	f
+689	695	O'DONNELL B	2013	\N	f
+690	696	BENEDETTO O	2013	\N	f
+691	697	BENEDETTO R	2013	\N	f
+692	698	O'DONNELL L	2013	\N	f
 \.
 
 
 SET search_path = master, pg_catalog;
-
---
--- Data for Name: agenda_vote_committee_attend; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda_vote_committee_attend (id, vote_committee_id, session_member_id, session_year, lbdc_short_name, rank, party, attend_status, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: agenda_vote_committee_attend_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('agenda_vote_committee_attend_id_seq', 1, false);
-
-
---
--- Data for Name: bill; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill (print_no, session_year, title, law_section, summary, active_version, active_year, modified_date_time, published_date_time, last_fragment_id, law_code, created_date_time, program_info, status, status_date, program_info_num) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_amendment; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment (bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, stricken, uni_bill, last_fragment_id, current_committee_name, current_committee_action, created_date_time, law_code, law_section) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_amendment_vote_info; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_vote_info (bill_print_no, bill_session_year, bill_amend_version, vote_date, sequence_no, id, published_date_time, modified_date_time, vote_type, last_fragment_id, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: committee; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY committee (name, id, current_version, chamber, current_session, full_name) FROM stdin;
-Banks	30	2013-01-01 00:00:00	senate	2013	\N
-Investigations and Government Operations	2	2013-01-01 00:00:00	senate	2013	\N
-Energy and Telecommunications	31	2013-01-01 00:00:00	senate	2013	\N
-Corporations, Authorities and Commissions	3	2013-01-01 00:00:00	senate	2013	\N
-Ethics	4	2013-01-01 00:00:00	senate	2013	\N
-Elections	32	2013-01-01 00:00:00	senate	2013	\N
-Crime Victims, Crime and Correction	33	2013-01-01 00:00:00	senate	2013	\N
-Insurance	34	2013-01-01 00:00:00	senate	2013	\N
-Judiciary	5	2013-01-01 00:00:00	senate	2013	\N
-Health	6	2013-01-01 00:00:00	senate	2013	\N
-Racing, Gaming and Wagering	7	2013-01-01 00:00:00	senate	2013	\N
-Veterans, Homeland Security and Military Affairs	8	2013-01-01 00:00:00	senate	2013	\N
-Education	9	2013-01-01 00:00:00	senate	2013	\N
-Transportation	10	2013-01-01 00:00:00	senate	2013	\N
-Labor	11	2013-01-01 00:00:00	senate	2013	\N
-Alcoholism and Drug Abuse	12	2013-01-01 00:00:00	senate	2013	\N
-Social Services	13	2013-01-01 00:00:00	senate	2013	\N
-Agriculture	14	2013-01-01 00:00:00	senate	2013	\N
-Civil Service and Pensions	15	2013-01-01 00:00:00	senate	2013	\N
-Consumer Protection	16	2013-01-01 00:00:00	senate	2013	\N
-Environmental Conservation	17	2013-01-01 00:00:00	senate	2013	\N
-Rules	18	2013-01-01 00:00:00	senate	2013	\N
-Commerce, Economic Development and Small Business	19	2013-01-01 00:00:00	senate	2013	\N
-Cultural Affairs, Tourism, Parks and Recreation	20	2013-01-01 00:00:00	senate	2013	\N
-Finance	21	2013-01-01 00:00:00	senate	2013	\N
-Local Government	22	2013-01-01 00:00:00	senate	2013	\N
-Higher Education	23	2013-01-01 00:00:00	senate	2013	\N
-Aging	24	2013-01-01 00:00:00	senate	2013	\N
-Infrastructure and Capital Investment	58	2013-01-01 00:00:00	senate	2013	\N
-Cities	25	2013-01-01 00:00:00	senate	2013	\N
-Mental Health and Developmental Disabilities	26	2013-01-01 00:00:00	senate	2013	\N
-Children and Families	27	2013-01-01 00:00:00	senate	2013	\N
-Housing, Construction and Community Development	28	2013-01-01 00:00:00	senate	2013	\N
-New York City Education Subcommittee	63	2013-01-01 00:00:00	senate	2013	\N
-Codes	29	2013-01-01 00:00:00	senate	2013	\N
-\.
-
-
---
--- Data for Name: agenda_vote_committee_vote; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY agenda_vote_committee_vote (id, vote_committee_id, vote_action, vote_info_id, refer_committee_name, refer_committee_chamber, with_amendment, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: agenda_vote_committee_vote_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('agenda_vote_committee_vote_id_seq', 1, false);
-
-
---
--- Data for Name: bill_amendment_action; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_action (bill_print_no, bill_session_year, bill_amend_version, effect_date, text, last_fragment_id, sequence_no, chamber, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_amendment_cosponsor; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_cosponsor (bill_print_no, bill_session_year, bill_amend_version, session_member_id, sequence_no, last_fragment_id, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_amendment_multi_sponsor; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_multi_sponsor (bill_print_no, bill_session_year, bill_amend_version, session_member_id, sequence_no, last_fragment_id, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_amendment_publish_status; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_publish_status (bill_print_no, bill_session_year, bill_amend_version, published, effect_date_time, override, notes, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_amendment_same_as; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_same_as (bill_print_no, bill_session_year, bill_amend_version, same_as_bill_print_no, same_as_session_year, same_as_amend_version, last_fragment_id, created_date_time) FROM stdin;
-\.
-
-
---
--- Name: bill_amendment_vote_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('bill_amendment_vote_id_seq', 1, false);
-
-
---
--- Data for Name: bill_amendment_vote_roll; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_amendment_vote_roll (vote_id, session_member_id, member_short_name, session_year, vote_code, last_fragment_id, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_approval; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_approval (approval_number, year, bill_print_no, session_year, chapter, signer, memo_text, modified_date_time, created_date_time, last_fragment_id, bill_version) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_committee; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_committee (bill_print_no, bill_session_year, committee_name, committee_chamber, action_date, last_fragment_id, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_previous_version; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_previous_version (bill_print_no, bill_session_year, prev_bill_print_no, prev_bill_session_year, prev_amend_version, last_fragment_id, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_sponsor; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_sponsor (bill_print_no, bill_session_year, session_member_id, budget_bill, rules_sponsor, last_fragment_id, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_sponsor_additional; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_sponsor_additional (bill_print_no, bill_session_year, session_member_id, sequence_no, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: bill_veto; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_veto (veto_number, year, bill_print_no, session_year, page, line_start, line_end, chapter, signer, date, memo_text, type, modified_date_time, published_date_time, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: bill_veto_year_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('bill_veto_year_seq', 1, false);
-
-
---
--- Data for Name: calendar; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY calendar (calendar_no, year, last_fragment_id, modified_date_time, published_date_time, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: calendar_active_list; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY calendar_active_list (id, sequence_no, calendar_no, calendar_year, calendar_date, release_date_time, last_fragment_id, created_date_time, modified_date_time, published_date_time, notes) FROM stdin;
-\.
-
-
---
--- Data for Name: calendar_active_list_entry; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY calendar_active_list_entry (calendar_active_list_id, bill_calendar_no, bill_print_no, bill_amend_version, bill_session_year, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: calendar_active_list_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('calendar_active_list_id_seq', 1, false);
-
-
---
--- Data for Name: calendar_supplemental; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY calendar_supplemental (id, calendar_no, calendar_year, sup_version, calendar_date, release_date_time, last_fragment_id, modified_date_time, published_date_time, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: calendar_supplemental_entry; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY calendar_supplemental_entry (id, calendar_sup_id, section_code, bill_calendar_no, bill_print_no, bill_amend_version, bill_session_year, sub_bill_print_no, sub_bill_amend_version, sub_bill_session_year, high, created_date_time, last_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: calendar_supplemental_entry_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('calendar_supplemental_entry_id_seq', 1, false);
-
-
---
--- Name: calendar_supplemental_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('calendar_supplemental_id_seq', 1, false);
-
-
---
--- Name: committee_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('committee_id_seq', 69, true);
-
-
---
--- Data for Name: committee_version; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY committee_version (id, location, meetday, meetaltweek, meetaltweektext, meettime, session_year, created, reformed, committee_name, chamber) FROM stdin;
-2	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Investigations and Government Operations	senate
-3	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Corporations, Authorities and Commissions	senate
-4	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Ethics	senate
-5	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Judiciary	senate
-6	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Health	senate
-7	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Racing, Gaming and Wagering	senate
-8	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Veterans, Homeland Security and Military Affairs	senate
-9	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Education	senate
-10	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Transportation	senate
-11	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Labor	senate
-12	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Alcoholism and Drug Abuse	senate
-13	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Social Services	senate
-14	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Agriculture	senate
-15	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Civil Service and Pensions	senate
-16	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Consumer Protection	senate
-17	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Environmental Conservation	senate
-18	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Rules	senate
-19	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Commerce, Economic Development and Small Business	senate
-20	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate
-21	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Finance	senate
-22	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Local Government	senate
-23	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Higher Education	senate
-24	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Aging	senate
-25	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Cities	senate
-26	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Mental Health and Developmental Disabilities	senate
-27	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Children and Families	senate
-28	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Housing, Construction and Community Development	senate
-29	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Codes	senate
-30	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Banks	senate
-31	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Energy and Telecommunications	senate
-32	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Elections	senate
-33	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Crime Victims, Crime and Correction	senate
-34	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Insurance	senate
-35	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Investigations and Government Operations	senate
-36	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Corporations, Authorities and Commissions	senate
-37	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Ethics	senate
-38	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Judiciary	senate
-39	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Health	senate
-40	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Racing, Gaming and Wagering	senate
-41	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Veterans, Homeland Security and Military Affairs	senate
-42	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Education	senate
-43	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Transportation	senate
-44	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Labor	senate
-45	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Alcoholism and Drug Abuse	senate
-46	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Social Services	senate
-47	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Agriculture	senate
-48	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Civil Service and Pensions	senate
-49	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Consumer Protection	senate
-50	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Environmental Conservation	senate
-51	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Rules	senate
-52	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Commerce, Economic Development and Small Business	senate
-53	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate
-54	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Finance	senate
-55	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Local Government	senate
-56	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Higher Education	senate
-57	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Aging	senate
-58	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Infrastructure and Capital Investment	senate
-59	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Cities	senate
-60	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Mental Health and Developmental Disabilities	senate
-61	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Children and Families	senate
-62	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Housing, Construction and Community Development	senate
-63	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	New York City Education Subcommittee	senate
-64	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Codes	senate
-65	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Banks	senate
-66	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Energy and Telecommunications	senate
-67	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Elections	senate
-68	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Crime Victims, Crime and Correction	senate
-69	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Insurance	senate
-\.
-
 
 --
 -- Data for Name: committee_member; Type: TABLE DATA; Schema: master; Owner: postgres
@@ -2643,6 +2454,797 @@ f	884	13	member	Insurance	2013-01-01 00:00:00	2013	140	senate
 f	885	14	member	Insurance	2013-01-01 00:00:00	2013	146	senate
 f	888	17	member	Insurance	2013-01-01 00:00:00	2013	148	senate
 f	889	18	member	Insurance	2013-01-01 00:00:00	2013	187	senate
+t	891	1	chair_person	Aging	2014-02-28 11:25:44	2013	171	senate
+t	892	2	member	Aging	2014-02-28 11:25:44	2013	178	senate
+t	893	3	member	Aging	2014-02-28 11:25:44	2013	181	senate
+t	894	4	member	Aging	2014-02-28 11:25:44	2013	175	senate
+t	895	5	member	Aging	2014-02-28 11:25:44	2013	144	senate
+t	896	6	member	Aging	2014-02-28 11:25:44	2013	160	senate
+f	897	7	member	Aging	2014-02-28 11:25:44	2013	177	senate
+f	898	8	member	Aging	2014-02-28 11:25:44	2013	139	senate
+f	899	9	member	Aging	2014-02-28 11:25:44	2013	156	senate
+t	900	1	chair_person	Agriculture	2014-02-28 11:25:44	2013	179	senate
+t	901	2	member	Agriculture	2014-02-28 11:25:44	2013	182	senate
+t	902	3	member	Agriculture	2014-02-28 11:25:44	2013	183	senate
+t	903	4	member	Agriculture	2014-02-28 11:25:44	2013	162	senate
+t	904	5	member	Agriculture	2014-02-28 11:25:44	2013	127	senate
+t	905	6	member	Agriculture	2014-02-28 11:25:44	2013	171	senate
+t	906	7	member	Agriculture	2014-02-28 11:25:44	2013	170	senate
+f	907	8	member	Agriculture	2014-02-28 11:25:44	2013	158	senate
+f	908	9	member	Agriculture	2014-02-28 11:25:44	2013	168	senate
+f	909	10	member	Agriculture	2014-02-28 11:25:44	2013	142	senate
+f	910	11	member	Agriculture	2014-02-28 11:25:44	2013	128	senate
+t	911	1	chair_person	Alcoholism and Drug Abuse	2014-02-28 11:25:44	2013	141	senate
+t	912	2	member	Alcoholism and Drug Abuse	2014-02-28 11:25:44	2013	169	senate
+t	913	3	member	Alcoholism and Drug Abuse	2014-02-28 11:25:44	2013	126	senate
+t	914	4	member	Alcoholism and Drug Abuse	2014-02-28 11:25:44	2013	179	senate
+f	915	5	member	Alcoholism and Drug Abuse	2014-02-28 11:25:44	2013	172	senate
+f	916	6	member	Alcoholism and Drug Abuse	2014-02-28 11:25:44	2013	134	senate
+t	917	1	chair_person	Banks	2014-02-28 11:25:44	2013	149	senate
+t	918	2	vice_chair	Banks	2014-02-28 11:25:44	2013	151	senate
+t	919	3	member	Banks	2014-02-28 11:25:44	2013	169	senate
+t	920	4	member	Banks	2014-02-28 11:25:44	2013	132	senate
+t	921	5	member	Banks	2014-02-28 11:25:44	2013	178	senate
+t	922	6	member	Banks	2014-02-28 11:25:44	2013	144	senate
+t	923	7	member	Banks	2014-02-28 11:25:44	2013	153	senate
+t	924	8	member	Banks	2014-02-28 11:25:44	2013	163	senate
+t	925	9	member	Banks	2014-02-28 11:25:44	2013	183	senate
+t	926	10	member	Banks	2014-02-28 11:25:44	2013	162	senate
+t	927	11	member	Banks	2014-02-28 11:25:44	2013	159	senate
+t	928	12	member	Banks	2014-02-28 11:25:44	2013	171	senate
+f	929	13	member	Banks	2014-02-28 11:25:44	2013	148	senate
+f	930	14	member	Banks	2014-02-28 11:25:44	2013	174	senate
+f	931	15	member	Banks	2014-02-28 11:25:44	2013	177	senate
+f	932	16	member	Banks	2014-02-28 11:25:44	2013	172	senate
+f	933	17	member	Banks	2014-02-28 11:25:44	2013	134	senate
+f	934	18	member	Banks	2014-02-28 11:25:44	2013	158	senate
+t	935	1	chair_person	Children and Families	2014-02-28 11:25:44	2013	181	senate
+t	936	2	member	Children and Families	2014-02-28 11:25:44	2013	169	senate
+t	937	3	member	Children and Families	2014-02-28 11:25:44	2013	159	senate
+t	938	4	member	Children and Families	2014-02-28 11:25:44	2013	170	senate
+f	939	5	member	Children and Families	2014-02-28 11:25:44	2013	168	senate
+f	940	6	member	Children and Families	2014-02-28 11:25:44	2013	128	senate
+t	941	1	chair_person	Cities	2014-02-28 11:25:44	2013	165	senate
+t	942	2	member	Cities	2014-02-28 11:25:44	2013	164	senate
+t	943	3	member	Cities	2014-02-28 11:25:44	2013	132	senate
+t	944	4	member	Cities	2014-02-28 11:25:44	2013	154	senate
+f	945	5	member	Cities	2014-02-28 11:25:44	2013	174	senate
+t	946	1	chair_person	Civil Service and Pensions	2014-02-28 11:25:44	2013	178	senate
+t	947	2	member	Civil Service and Pensions	2014-02-28 11:25:44	2013	180	senate
+t	948	3	member	Civil Service and Pensions	2014-02-28 11:25:44	2013	165	senate
+t	949	4	member	Civil Service and Pensions	2014-02-28 11:25:44	2013	153	senate
+t	950	5	member	Civil Service and Pensions	2014-02-28 11:25:44	2013	179	senate
+t	951	6	member	Civil Service and Pensions	2014-02-28 11:25:44	2013	159	senate
+f	952	7	member	Civil Service and Pensions	2014-02-28 11:25:44	2013	134	senate
+f	953	8	member	Civil Service and Pensions	2014-02-28 11:25:44	2013	139	senate
+f	954	9	member	Civil Service and Pensions	2014-02-28 11:25:44	2013	137	senate
+f	955	10	member	Civil Service and Pensions	2014-02-28 11:25:44	2013	131	senate
+t	956	1	chair_person	Codes	2014-02-28 11:25:44	2013	150	senate
+t	957	2	member	Codes	2014-02-28 11:25:44	2013	141	senate
+t	958	3	member	Codes	2014-02-28 11:25:44	2013	132	senate
+t	959	4	member	Codes	2014-02-28 11:25:44	2013	155	senate
+t	960	5	member	Codes	2014-02-28 11:25:44	2013	182	senate
+t	961	6	member	Codes	2014-02-28 11:25:44	2013	178	senate
+t	962	7	member	Codes	2014-02-28 11:25:44	2013	165	senate
+t	963	8	member	Codes	2014-02-28 11:25:44	2013	183	senate
+f	964	9	member	Codes	2014-02-28 11:25:44	2013	157	senate
+f	965	10	member	Codes	2014-02-28 11:25:44	2013	131	senate
+f	966	11	member	Codes	2014-02-28 11:25:44	2013	140	senate
+f	967	12	member	Codes	2014-02-28 11:25:44	2013	176	senate
+f	968	13	member	Codes	2014-02-28 11:25:44	2013	148	senate
+f	969	14	member	Codes	2014-02-28 11:25:44	2013	129	senate
+t	970	1	member	Commerce, Economic Development and Small Business	2014-02-28 11:25:44	2013	171	senate
+t	971	2	member	Commerce, Economic Development and Small Business	2014-02-28 11:25:44	2013	141	senate
+t	972	3	member	Commerce, Economic Development and Small Business	2014-02-28 11:25:44	2013	182	senate
+t	973	4	member	Commerce, Economic Development and Small Business	2014-02-28 11:25:44	2013	181	senate
+t	974	5	member	Commerce, Economic Development and Small Business	2014-02-28 11:25:44	2013	149	senate
+t	975	6	member	Commerce, Economic Development and Small Business	2014-02-28 11:25:44	2013	173	senate
+f	976	7	member	Commerce, Economic Development and Small Business	2014-02-28 11:25:44	2013	146	senate
+f	977	8	member	Commerce, Economic Development and Small Business	2014-02-28 11:25:44	2013	136	senate
+f	978	9	member	Commerce, Economic Development and Small Business	2014-02-28 11:25:44	2013	134	senate
+f	979	10	member	Commerce, Economic Development and Small Business	2014-02-28 11:25:44	2013	148	senate
+t	980	1	chair_person	Consumer Protection	2014-02-28 11:25:44	2013	160	senate
+t	981	2	member	Consumer Protection	2014-02-28 11:25:44	2013	141	senate
+t	982	3	member	Consumer Protection	2014-02-28 11:25:44	2013	135	senate
+t	983	4	member	Consumer Protection	2014-02-28 11:25:44	2013	144	senate
+t	984	5	member	Consumer Protection	2014-02-28 11:25:44	2013	167	senate
+t	985	6	member	Consumer Protection	2014-02-28 11:25:44	2013	159	senate
+f	986	7	member	Consumer Protection	2014-02-28 11:25:44	2013	176	senate
+f	987	8	member	Consumer Protection	2014-02-28 11:25:44	2013	142	senate
+f	988	9	member	Consumer Protection	2014-02-28 11:25:44	2013	158	senate
+f	989	10	member	Consumer Protection	2014-02-28 11:25:44	2013	143	senate
+t	990	1	chair_person	Corporations, Authorities and Commissions	2014-02-28 11:25:44	2013	162	senate
+t	991	2	member	Corporations, Authorities and Commissions	2014-02-28 11:25:44	2013	155	senate
+t	992	3	member	Corporations, Authorities and Commissions	2014-02-28 11:25:44	2013	130	senate
+t	993	4	member	Corporations, Authorities and Commissions	2014-02-28 11:25:44	2013	153	senate
+f	994	5	member	Corporations, Authorities and Commissions	2014-02-28 11:25:44	2013	131	senate
+f	995	6	member	Corporations, Authorities and Commissions	2014-02-28 11:25:44	2013	157	senate
+t	996	1	chair_person	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	182	senate
+t	997	2	member	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	126	senate
+t	998	3	member	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	132	senate
+t	999	4	member	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	149	senate
+t	1000	5	member	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	135	senate
+t	1001	6	member	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	167	senate
+t	1002	7	member	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	150	senate
+t	1003	8	member	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	179	senate
+f	1004	9	member	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	136	senate
+f	1005	10	member	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	168	senate
+f	1006	11	member	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	176	senate
+f	1007	12	member	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	187	senate
+f	1008	13	member	Crime Victims, Crime and Correction	2014-02-28 11:25:44	2013	133	senate
+t	1009	1	chair_person	Cultural Affairs, Tourism, Parks and Recreation	2014-02-28 11:25:44	2013	135	senate
+t	1010	2	member	Cultural Affairs, Tourism, Parks and Recreation	2014-02-28 11:25:44	2013	169	senate
+t	1011	3	member	Cultural Affairs, Tourism, Parks and Recreation	2014-02-28 11:25:44	2013	149	senate
+t	1012	4	member	Cultural Affairs, Tourism, Parks and Recreation	2014-02-28 11:25:44	2013	154	senate
+t	1013	5	member	Cultural Affairs, Tourism, Parks and Recreation	2014-02-28 11:25:44	2013	163	senate
+t	1014	6	member	Cultural Affairs, Tourism, Parks and Recreation	2014-02-28 11:25:44	2013	144	senate
+t	1015	7	member	Cultural Affairs, Tourism, Parks and Recreation	2014-02-28 11:25:44	2013	179	senate
+f	1016	8	member	Cultural Affairs, Tourism, Parks and Recreation	2014-02-28 11:25:44	2013	142	senate
+f	1017	9	member	Cultural Affairs, Tourism, Parks and Recreation	2014-02-28 11:25:44	2013	146	senate
+f	1018	10	member	Cultural Affairs, Tourism, Parks and Recreation	2014-02-28 11:25:44	2013	176	senate
+f	1019	11	member	Cultural Affairs, Tourism, Parks and Recreation	2014-02-28 11:25:44	2013	158	senate
+f	1020	12	member	Cultural Affairs, Tourism, Parks and Recreation	2014-02-28 11:25:44	2013	148	senate
+t	1021	1	chair_person	Education	2014-02-28 11:25:44	2013	155	senate
+t	1022	2	member	Education	2014-02-28 11:25:44	2013	151	senate
+t	1023	3	member	Education	2014-02-28 11:25:44	2013	165	senate
+t	1024	4	member	Education	2014-02-28 11:25:44	2013	175	senate
+t	1025	5	member	Education	2014-02-28 11:25:44	2013	135	senate
+t	1026	6	member	Education	2014-02-28 11:25:44	2013	163	senate
+t	1027	7	member	Education	2014-02-28 11:25:44	2013	167	senate
+t	1028	8	member	Education	2014-02-28 11:25:44	2013	162	senate
+t	1029	9	member	Education	2014-02-28 11:25:44	2013	173	senate
+t	1030	10	member	Education	2014-02-28 11:25:44	2013	127	senate
+t	1031	11	member	Education	2014-02-28 11:25:44	2013	171	senate
+t	1032	12	member	Education	2014-02-28 11:25:44	2013	153	senate
+f	1033	13	member	Education	2014-02-28 11:25:44	2013	143	senate
+f	1034	14	member	Education	2014-02-28 11:25:44	2013	139	senate
+f	1035	15	member	Education	2014-02-28 11:25:44	2013	174	senate
+f	1036	16	member	Education	2014-02-28 11:25:44	2013	168	senate
+f	1037	17	member	Education	2014-02-28 11:25:44	2013	156	senate
+f	1038	18	member	Education	2014-02-28 11:25:44	2013	128	senate
+t	1039	1	chair_person	Elections	2014-02-28 11:25:44	2013	183	senate
+t	1040	2	member	Elections	2014-02-28 11:25:44	2013	164	senate
+t	1041	3	member	Elections	2014-02-28 11:25:44	2013	182	senate
+t	1042	4	member	Elections	2014-02-28 11:25:44	2013	144	senate
+t	1043	5	member	Elections	2014-02-28 11:25:44	2013	150	senate
+t	1044	6	member	Elections	2014-02-28 11:25:44	2013	159	senate
+f	1045	7	member	Elections	2014-02-28 11:25:44	2013	128	senate
+f	1046	8	member	Elections	2014-02-28 11:25:44	2013	137	senate
+f	1047	9	member	Elections	2014-02-28 11:25:44	2013	129	senate
+t	1048	1	chair_person	Energy and Telecommunications	2014-02-28 11:25:44	2013	167	senate
+t	1049	2	member	Energy and Telecommunications	2014-02-28 11:25:44	2013	126	senate
+t	1050	3	member	Energy and Telecommunications	2014-02-28 11:25:44	2013	149	senate
+t	1051	4	member	Energy and Telecommunications	2014-02-28 11:25:44	2013	183	senate
+t	1052	5	member	Energy and Telecommunications	2014-02-28 11:25:44	2013	179	senate
+t	1053	6	member	Energy and Telecommunications	2014-02-28 11:25:44	2013	173	senate
+f	1054	7	member	Energy and Telecommunications	2014-02-28 11:25:44	2013	172	senate
+f	1055	8	member	Energy and Telecommunications	2014-02-28 11:25:44	2013	146	senate
+f	1056	9	member	Energy and Telecommunications	2014-02-28 11:25:44	2013	137	senate
+f	1057	10	member	Energy and Telecommunications	2014-02-28 11:25:44	2013	187	senate
+t	1058	1	chair_person	Environmental Conservation	2014-02-28 11:25:44	2013	154	senate
+t	1059	2	vice_chair	Environmental Conservation	2014-02-28 11:25:44	2013	147	senate
+t	1060	3	member	Environmental Conservation	2014-02-28 11:25:44	2013	175	senate
+t	1061	4	member	Environmental Conservation	2014-02-28 11:25:44	2013	135	senate
+t	1062	5	member	Environmental Conservation	2014-02-28 11:25:44	2013	163	senate
+t	1063	6	member	Environmental Conservation	2014-02-28 11:25:44	2013	167	senate
+t	1064	7	member	Environmental Conservation	2014-02-28 11:25:44	2013	183	senate
+t	1065	8	member	Environmental Conservation	2014-02-28 11:25:44	2013	170	senate
+f	1066	9	member	Environmental Conservation	2014-02-28 11:25:44	2013	140	senate
+f	1067	10	member	Environmental Conservation	2014-02-28 11:25:44	2013	142	senate
+f	1068	11	member	Environmental Conservation	2014-02-28 11:25:44	2013	143	senate
+f	1069	12	member	Environmental Conservation	2014-02-28 11:25:44	2013	128	senate
+t	1112	1	chair_person	Health	2014-02-28 11:25:44	2013	180	senate
+t	1113	2	member	Health	2014-02-28 11:25:44	2013	164	senate
+t	1070	1	chair_person	Ethics	2014-02-28 11:25:44	2013	141	senate
+t	1071	2	member	Ethics	2014-02-28 11:25:44	2013	165	senate
+t	1072	3	member	Ethics	2014-02-28 11:25:44	2013	151	senate
+f	1073	4	member	Ethics	2014-02-28 11:25:44	2013	138	senate
+f	1074	5	member	Ethics	2014-02-28 11:25:44	2013	133	senate
+f	1075	6	member	Ethics	2014-02-28 11:25:44	2013	174	senate
+t	1076	1	chair_person	Finance	2014-02-28 11:25:44	2013	132	senate
+t	1077	2	member	Finance	2014-02-28 11:25:44	2013	169	senate
+t	1078	3	member	Finance	2014-02-28 11:25:44	2013	151	senate
+t	1079	4	member	Finance	2014-02-28 11:25:44	2013	155	senate
+t	1080	5	member	Finance	2014-02-28 11:25:44	2013	178	senate
+t	1081	6	member	Finance	2014-02-28 11:25:44	2013	149	senate
+t	1082	7	member	Finance	2014-02-28 11:25:44	2013	154	senate
+t	1083	8	member	Finance	2014-02-28 11:25:44	2013	180	senate
+t	1084	9	member	Finance	2014-02-28 11:25:44	2013	165	senate
+t	1085	10	member	Finance	2014-02-28 11:25:44	2013	130	senate
+t	1086	11	member	Finance	2014-02-28 11:25:44	2013	175	senate
+t	1087	12	member	Finance	2014-02-28 11:25:44	2013	135	senate
+t	1088	13	member	Finance	2014-02-28 11:25:44	2013	163	senate
+t	1089	14	member	Finance	2014-02-28 11:25:44	2013	150	senate
+t	1090	15	member	Finance	2014-02-28 11:25:44	2013	183	senate
+t	1091	16	member	Finance	2014-02-28 11:25:44	2013	162	senate
+t	1092	17	member	Finance	2014-02-28 11:25:44	2013	173	senate
+t	1093	18	member	Finance	2014-02-28 11:25:44	2013	159	senate
+t	1094	19	member	Finance	2014-02-28 11:25:44	2013	127	senate
+t	1095	20	member	Finance	2014-02-28 11:25:44	2013	170	senate
+t	1096	21	member	Finance	2014-02-28 11:25:44	2013	171	senate
+f	1097	22	member	Finance	2014-02-28 11:25:44	2013	129	senate
+f	1098	23	member	Finance	2014-02-28 11:25:44	2013	177	senate
+f	1099	24	member	Finance	2014-02-28 11:25:44	2013	137	senate
+f	1100	25	member	Finance	2014-02-28 11:25:44	2013	133	senate
+f	1101	26	member	Finance	2014-02-28 11:25:44	2013	138	senate
+f	1102	27	member	Finance	2014-02-28 11:25:44	2013	174	senate
+f	1103	28	member	Finance	2014-02-28 11:25:44	2013	168	senate
+f	1104	29	member	Finance	2014-02-28 11:25:44	2013	172	senate
+f	1105	30	member	Finance	2014-02-28 11:25:44	2013	187	senate
+f	1106	31	member	Finance	2014-02-28 11:25:44	2013	131	senate
+f	1107	32	member	Finance	2014-02-28 11:25:44	2013	156	senate
+f	1108	33	member	Finance	2014-02-28 11:25:44	2013	157	senate
+f	1109	34	member	Finance	2014-02-28 11:25:44	2013	146	senate
+f	1110	35	member	Finance	2014-02-28 11:25:44	2013	140	senate
+f	1111	36	member	Finance	2014-02-28 11:25:44	2013	136	senate
+t	1128	1	chair_person	Higher Education	2014-02-28 11:25:44	2013	175	senate
+t	1129	2	member	Higher Education	2014-02-28 11:25:44	2013	155	senate
+t	1130	3	member	Higher Education	2014-02-28 11:25:44	2013	182	senate
+t	1131	4	member	Higher Education	2014-02-28 11:25:44	2013	149	senate
+t	1132	5	member	Higher Education	2014-02-28 11:25:44	2013	154	senate
+t	1133	6	member	Higher Education	2014-02-28 11:25:44	2013	167	senate
+t	1134	7	member	Higher Education	2014-02-28 11:25:44	2013	179	senate
+t	1135	8	member	Higher Education	2014-02-28 11:25:44	2013	173	senate
+t	1136	9	member	Higher Education	2014-02-28 11:25:44	2013	159	senate
+t	1137	10	member	Higher Education	2014-02-28 11:25:44	2013	127	senate
+t	1138	11	member	Higher Education	2014-02-28 11:25:44	2013	171	senate
+t	1139	12	member	Higher Education	2014-02-28 11:25:44	2013	160	senate
+f	1140	13	member	Higher Education	2014-02-28 11:25:44	2013	156	senate
+f	1141	14	member	Higher Education	2014-02-28 11:25:44	2013	146	senate
+f	1142	15	member	Higher Education	2014-02-28 11:25:44	2013	129	senate
+f	1143	16	member	Higher Education	2014-02-28 11:25:44	2013	172	senate
+f	1144	17	member	Higher Education	2014-02-28 11:25:44	2013	133	senate
+f	1145	18	member	Higher Education	2014-02-28 11:25:44	2013	142	senate
+f	1146	19	member	Higher Education	2014-02-28 11:25:44	2013	140	senate
+t	1147	1	chair_person	Housing, Construction and Community Development	2014-02-28 11:25:44	2013	170	senate
+t	1165	1	chair_person	Insurance	2014-02-28 11:25:44	2013	127	senate
+t	1166	2	member	Insurance	2014-02-28 11:25:44	2013	126	senate
+t	1167	3	member	Insurance	2014-02-28 11:25:44	2013	155	senate
+t	1168	4	member	Insurance	2014-02-28 11:25:44	2013	178	senate
+t	1169	5	member	Insurance	2014-02-28 11:25:44	2013	154	senate
+t	1170	6	member	Insurance	2014-02-28 11:25:44	2013	165	senate
+t	1171	7	member	Insurance	2014-02-28 11:25:44	2013	130	senate
+t	1172	8	member	Insurance	2014-02-28 11:25:44	2013	175	senate
+t	1173	9	member	Insurance	2014-02-28 11:25:44	2013	153	senate
+t	1174	10	member	Insurance	2014-02-28 11:25:44	2013	183	senate
+t	1175	11	member	Insurance	2014-02-28 11:25:44	2013	171	senate
+t	1176	12	member	Insurance	2014-02-28 11:25:44	2013	170	senate
+f	1177	13	member	Insurance	2014-02-28 11:25:44	2013	174	senate
+f	1178	14	member	Insurance	2014-02-28 11:25:44	2013	140	senate
+f	1179	15	member	Insurance	2014-02-28 11:25:44	2013	146	senate
+f	1180	16	member	Insurance	2014-02-28 11:25:44	2013	172	senate
+f	1181	17	member	Insurance	2014-02-28 11:25:44	2013	156	senate
+f	1182	18	member	Insurance	2014-02-28 11:25:44	2013	148	senate
+f	1183	19	member	Insurance	2014-02-28 11:25:44	2013	187	senate
+t	1186	3	member	Investigations and Government Operations	2014-02-28 11:25:44	2013	178	senate
+t	1187	4	member	Investigations and Government Operations	2014-02-28 11:25:44	2013	150	senate
+t	1188	5	member	Investigations and Government Operations	2014-02-28 11:25:44	2013	183	senate
+t	1189	6	member	Investigations and Government Operations	2014-02-28 11:25:44	2013	160	senate
+f	1190	7	member	Investigations and Government Operations	2014-02-28 11:25:44	2013	176	senate
+f	1191	8	member	Investigations and Government Operations	2014-02-28 11:25:44	2013	177	senate
+f	1192	9	member	Investigations and Government Operations	2014-02-28 11:25:44	2013	157	senate
+t	1196	4	member	Judiciary	2014-02-28 11:25:44	2013	180	senate
+t	1197	5	member	Judiciary	2014-02-28 11:25:44	2013	165	senate
+t	1198	6	member	Judiciary	2014-02-28 11:25:44	2013	175	senate
+t	1199	7	member	Judiciary	2014-02-28 11:25:44	2013	135	senate
+t	1200	8	member	Judiciary	2014-02-28 11:25:44	2013	150	senate
+t	1201	9	member	Judiciary	2014-02-28 11:25:44	2013	183	senate
+t	1202	10	member	Judiciary	2014-02-28 11:25:44	2013	159	senate
+t	1203	11	member	Judiciary	2014-02-28 11:25:44	2013	162	senate
+t	1114	3	member	Health	2014-02-28 11:25:44	2013	151	senate
+t	1115	4	member	Health	2014-02-28 11:25:44	2013	181	senate
+t	1116	5	member	Health	2014-02-28 11:25:44	2013	178	senate
+t	1117	6	member	Health	2014-02-28 11:25:44	2013	130	senate
+t	1118	7	member	Health	2014-02-28 11:25:44	2013	159	senate
+t	1119	8	member	Health	2014-02-28 11:25:44	2013	127	senate
+t	1120	9	member	Health	2014-02-28 11:25:44	2013	170	senate
+f	1121	10	member	Health	2014-02-28 11:25:44	2013	133	senate
+f	1122	11	member	Health	2014-02-28 11:25:44	2013	168	senate
+f	1123	12	member	Health	2014-02-28 11:25:44	2013	136	senate
+f	1124	13	member	Health	2014-02-28 11:25:44	2013	187	senate
+f	1125	14	member	Health	2014-02-28 11:25:44	2013	148	senate
+f	1126	15	member	Health	2014-02-28 11:25:44	2013	176	senate
+f	1127	16	member	Health	2014-02-28 11:25:44	2013	142	senate
+t	1148	2	member	Housing, Construction and Community Development	2014-02-28 11:25:44	2013	169	senate
+t	1149	3	member	Housing, Construction and Community Development	2014-02-28 11:25:44	2013	141	senate
+t	1150	4	member	Housing, Construction and Community Development	2014-02-28 11:25:44	2013	182	senate
+t	1151	5	member	Housing, Construction and Community Development	2014-02-28 11:25:44	2013	150	senate
+t	1152	6	member	Housing, Construction and Community Development	2014-02-28 11:25:44	2013	153	senate
+f	1153	7	member	Housing, Construction and Community Development	2014-02-28 11:25:44	2013	140	senate
+f	1154	8	member	Housing, Construction and Community Development	2014-02-28 11:25:44	2013	177	senate
+f	1155	9	member	Housing, Construction and Community Development	2014-02-28 11:25:44	2013	129	senate
+t	1156	1	chair_person	Infrastructure and Capital Investment	2014-02-28 11:25:44	2013	163	senate
+t	1157	2	member	Infrastructure and Capital Investment	2014-02-28 11:25:44	2013	173	senate
+t	1158	3	member	Infrastructure and Capital Investment	2014-02-28 11:25:44	2013	182	senate
+t	1159	4	member	Infrastructure and Capital Investment	2014-02-28 11:25:44	2013	149	senate
+t	1160	5	member	Infrastructure and Capital Investment	2014-02-28 11:25:44	2013	154	senate
+t	1161	6	member	Infrastructure and Capital Investment	2014-02-28 11:25:44	2013	126	senate
+f	1162	7	member	Infrastructure and Capital Investment	2014-02-28 11:25:44	2013	146	senate
+f	1163	8	member	Infrastructure and Capital Investment	2014-02-28 11:25:44	2013	176	senate
+f	1164	9	member	Infrastructure and Capital Investment	2014-02-28 11:25:44	2013	143	senate
+t	1184	1	chair_person	Investigations and Government Operations	2014-02-28 11:25:44	2013	163	senate
+t	1185	2	member	Investigations and Government Operations	2014-02-28 11:25:44	2013	126	senate
+t	1193	1	chair_person	Judiciary	2014-02-28 11:25:44	2013	169	senate
+t	1194	2	member	Judiciary	2014-02-28 11:25:44	2013	132	senate
+t	1195	3	member	Judiciary	2014-02-28 11:25:44	2013	155	senate
+f	1211	19	member	Judiciary	2014-02-28 11:25:44	2013	156	senate
+f	1213	21	member	Judiciary	2014-02-28 11:25:44	2013	139	senate
+f	1214	22	member	Judiciary	2014-02-28 11:25:44	2013	157	senate
+t	1215	1	chair_person	Labor	2014-02-28 11:25:44	2013	159	senate
+t	1216	2	member	Labor	2014-02-28 11:25:44	2013	164	senate
+t	1217	3	member	Labor	2014-02-28 11:25:44	2013	132	senate
+t	1218	4	member	Labor	2014-02-28 11:25:44	2013	182	senate
+t	1219	5	member	Labor	2014-02-28 11:25:44	2013	154	senate
+t	1220	6	member	Labor	2014-02-28 11:25:44	2013	180	senate
+t	1221	7	member	Labor	2014-02-28 11:25:44	2013	163	senate
+t	1222	8	member	Labor	2014-02-28 11:25:44	2013	144	senate
+t	1223	9	member	Labor	2014-02-28 11:25:44	2013	153	senate
+t	1224	10	member	Labor	2014-02-28 11:25:44	2013	173	senate
+f	1225	11	member	Labor	2014-02-28 11:25:44	2013	187	senate
+f	1226	12	member	Labor	2014-02-28 11:25:44	2013	139	senate
+f	1227	13	member	Labor	2014-02-28 11:25:44	2013	137	senate
+f	1228	14	member	Labor	2014-02-28 11:25:44	2013	131	senate
+f	1229	15	member	Labor	2014-02-28 11:25:44	2013	133	senate
+f	1230	16	member	Labor	2014-02-28 11:25:44	2013	134	senate
+t	1253	3	member	Racing, Gaming and Wagering	2014-02-28 11:25:44	2013	126	senate
+t	1254	4	member	Racing, Gaming and Wagering	2014-02-28 11:25:44	2013	149	senate
+t	1255	5	member	Racing, Gaming and Wagering	2014-02-28 11:25:44	2013	144	senate
+t	1256	6	member	Racing, Gaming and Wagering	2014-02-28 11:25:44	2013	150	senate
+t	1257	7	member	Racing, Gaming and Wagering	2014-02-28 11:25:44	2013	162	senate
+f	1258	8	member	Racing, Gaming and Wagering	2014-02-28 11:25:44	2013	139	senate
+f	1259	9	member	Racing, Gaming and Wagering	2014-02-28 11:25:44	2013	143	senate
+f	1260	10	member	Racing, Gaming and Wagering	2014-02-28 11:25:44	2013	134	senate
+t	1266	6	member	Rules	2014-02-28 11:25:44	2013	155	senate
+t	1267	7	member	Rules	2014-02-28 11:25:44	2013	180	senate
+t	1268	8	member	Rules	2014-02-28 11:25:44	2013	130	senate
+t	1269	9	member	Rules	2014-02-28 11:25:44	2013	175	senate
+t	1270	10	member	Rules	2014-02-28 11:25:44	2013	163	senate
+t	1271	11	member	Rules	2014-02-28 11:25:44	2013	167	senate
+t	1272	12	member	Rules	2014-02-28 11:25:44	2013	150	senate
+t	1273	13	member	Rules	2014-02-28 11:25:44	2013	127	senate
+t	1274	14	member	Rules	2014-02-28 11:25:44	2013	171	senate
+f	1275	15	member	Rules	2014-02-28 11:25:44	2013	152	senate
+f	1276	16	member	Rules	2014-02-28 11:25:44	2013	174	senate
+f	1277	17	member	Rules	2014-02-28 11:25:44	2013	137	senate
+f	1278	18	member	Rules	2014-02-28 11:25:44	2013	136	senate
+f	1279	19	member	Rules	2014-02-28 11:25:44	2013	129	senate
+f	1280	20	member	Rules	2014-02-28 11:25:44	2013	168	senate
+f	1281	21	member	Rules	2014-02-28 11:25:44	2013	172	senate
+f	1282	22	member	Rules	2014-02-28 11:25:44	2013	131	senate
+f	1283	23	member	Rules	2014-02-28 11:25:44	2013	140	senate
+f	1284	24	member	Rules	2014-02-28 11:25:44	2013	138	senate
+t	1285	1	chair_person	Social Services	2014-02-28 11:25:44	2013	147	senate
+t	1297	7	member	Transportation	2014-02-28 11:25:44	2013	150	senate
+t	1298	8	member	Transportation	2014-02-28 11:25:44	2013	183	senate
+t	1299	9	member	Transportation	2014-02-28 11:25:44	2013	162	senate
+t	1300	10	member	Transportation	2014-02-28 11:25:44	2013	170	senate
+t	1301	11	member	Transportation	2014-02-28 11:25:44	2013	160	senate
+t	1302	12	member	Transportation	2014-02-28 11:25:44	2013	153	senate
+f	1303	13	member	Transportation	2014-02-28 11:25:44	2013	137	senate
+f	1304	14	member	Transportation	2014-02-28 11:25:44	2013	177	senate
+f	1305	15	member	Transportation	2014-02-28 11:25:44	2013	146	senate
+f	1306	16	member	Transportation	2014-02-28 11:25:44	2013	131	senate
+f	1307	17	member	Transportation	2014-02-28 11:25:44	2013	157	senate
+t	1204	12	member	Judiciary	2014-02-28 11:25:44	2013	160	senate
+t	1205	13	member	Judiciary	2014-02-28 11:25:44	2013	126	senate
+f	1206	14	member	Judiciary	2014-02-28 11:25:44	2013	136	senate
+f	1207	15	member	Judiciary	2014-02-28 11:25:44	2013	174	senate
+f	1208	16	member	Judiciary	2014-02-28 11:25:44	2013	137	senate
+f	1209	17	member	Judiciary	2014-02-28 11:25:44	2013	140	senate
+f	1210	18	member	Judiciary	2014-02-28 11:25:44	2013	131	senate
+f	1212	20	member	Judiciary	2014-02-28 11:25:44	2013	176	senate
+t	1231	1	chair_person	Local Government	2014-02-28 11:25:44	2013	153	senate
+t	1232	2	member	Local Government	2014-02-28 11:25:44	2013	164	senate
+t	1233	3	member	Local Government	2014-02-28 11:25:44	2013	141	senate
+t	1234	4	member	Local Government	2014-02-28 11:25:44	2013	144	senate
+t	1235	5	member	Local Government	2014-02-28 11:25:44	2013	179	senate
+t	1236	6	member	Local Government	2014-02-28 11:25:44	2013	171	senate
+f	1237	7	member	Local Government	2014-02-28 11:25:44	2013	158	senate
+f	1238	8	member	Local Government	2014-02-28 11:25:44	2013	143	senate
+f	1239	9	member	Local Government	2014-02-28 11:25:44	2013	148	senate
+t	1240	1	chair_person	Mental Health and Developmental Disabilities	2014-02-28 11:25:44	2013	126	senate
+t	1241	2	member	Mental Health and Developmental Disabilities	2014-02-28 11:25:44	2013	164	senate
+t	1242	3	member	Mental Health and Developmental Disabilities	2014-02-28 11:25:44	2013	169	senate
+t	1243	4	member	Mental Health and Developmental Disabilities	2014-02-28 11:25:44	2013	181	senate
+t	1244	5	member	Mental Health and Developmental Disabilities	2014-02-28 11:25:44	2013	180	senate
+t	1245	6	member	Mental Health and Developmental Disabilities	2014-02-28 11:25:44	2013	127	senate
+t	1246	7	member	Mental Health and Developmental Disabilities	2014-02-28 11:25:44	2013	160	senate
+f	1247	8	member	Mental Health and Developmental Disabilities	2014-02-28 11:25:44	2013	128	senate
+f	1248	9	member	Mental Health and Developmental Disabilities	2014-02-28 11:25:44	2013	129	senate
+f	1249	10	member	Mental Health and Developmental Disabilities	2014-02-28 11:25:44	2013	143	senate
+f	1250	11	member	Mental Health and Developmental Disabilities	2014-02-28 11:25:44	2013	133	senate
+t	1251	1	chair_person	Racing, Gaming and Wagering	2014-02-28 11:25:44	2013	169	senate
+t	1252	2	member	Racing, Gaming and Wagering	2014-02-28 11:25:44	2013	141	senate
+t	1261	1	chair_person	Rules	2014-02-28 11:25:44	2013	184	senate
+t	1262	2	vice_chair	Rules	2014-02-28 11:25:44	2013	166	senate
+t	1263	3	member	Rules	2014-02-28 11:25:44	2013	169	senate
+t	1264	4	member	Rules	2014-02-28 11:25:44	2013	126	senate
+t	1265	5	member	Rules	2014-02-28 11:25:44	2013	151	senate
+t	1286	2	member	Social Services	2014-02-28 11:25:44	2013	164	senate
+t	1287	3	member	Social Services	2014-02-28 11:25:44	2013	151	senate
+t	1288	4	member	Social Services	2014-02-28 11:25:44	2013	153	senate
+f	1289	5	member	Social Services	2014-02-28 11:25:44	2013	134	senate
+f	1290	6	member	Social Services	2014-02-28 11:25:44	2013	157	senate
+t	1291	1	chair_person	Transportation	2014-02-28 11:25:44	2013	173	senate
+t	1292	2	vice_chair	Transportation	2014-02-28 11:25:44	2013	163	senate
+t	1293	3	member	Transportation	2014-02-28 11:25:44	2013	126	senate
+t	1294	4	member	Transportation	2014-02-28 11:25:44	2013	182	senate
+t	1295	5	member	Transportation	2014-02-28 11:25:44	2013	130	senate
+t	1296	6	member	Transportation	2014-02-28 11:25:44	2013	167	senate
+t	1414	2	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	126	senate
+t	1415	3	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	149	senate
+t	1416	4	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	183	senate
+t	1417	5	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	179	senate
+t	1418	6	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	173	senate
+t	1419	7	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	155	senate
+f	1420	8	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	172	senate
+f	1421	9	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	146	senate
+f	1422	10	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	137	senate
+f	1423	11	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	187	senate
+t	1424	1	chair_person	Finance	2014-03-03 17:09:09	2013	132	senate
+t	1425	2	member	Finance	2014-03-03 17:09:09	2013	169	senate
+t	1426	3	member	Finance	2014-03-03 17:09:09	2013	151	senate
+t	1427	4	member	Finance	2014-03-03 17:09:09	2013	155	senate
+t	1428	5	member	Finance	2014-03-03 17:09:09	2013	178	senate
+t	1429	6	member	Finance	2014-03-03 17:09:09	2013	149	senate
+t	1430	7	member	Finance	2014-03-03 17:09:09	2013	154	senate
+t	1431	8	member	Finance	2014-03-03 17:09:09	2013	180	senate
+t	1432	9	member	Finance	2014-03-03 17:09:09	2013	165	senate
+t	1433	10	member	Finance	2014-03-03 17:09:09	2013	130	senate
+t	1434	11	member	Finance	2014-03-03 17:09:09	2013	175	senate
+t	1435	12	member	Finance	2014-03-03 17:09:09	2013	135	senate
+t	1436	13	member	Finance	2014-03-03 17:09:09	2013	163	senate
+t	1437	14	member	Finance	2014-03-03 17:09:09	2013	150	senate
+t	1438	15	member	Finance	2014-03-03 17:09:09	2013	183	senate
+t	1439	16	member	Finance	2014-03-03 17:09:09	2013	162	senate
+t	1440	17	member	Finance	2014-03-03 17:09:09	2013	173	senate
+t	1441	18	member	Finance	2014-03-03 17:09:09	2013	159	senate
+t	1442	19	member	Finance	2014-03-03 17:09:09	2013	127	senate
+t	1443	20	member	Finance	2014-03-03 17:09:09	2013	170	senate
+t	1444	21	member	Finance	2014-03-03 17:09:09	2013	171	senate
+t	1445	22	member	Finance	2014-03-03 17:09:09	2013	153	senate
+f	1446	23	member	Finance	2014-03-03 17:09:09	2013	129	senate
+f	1447	24	member	Finance	2014-03-03 17:09:09	2013	177	senate
+f	1448	25	member	Finance	2014-03-03 17:09:09	2013	137	senate
+f	1449	26	member	Finance	2014-03-03 17:09:09	2013	133	senate
+f	1450	27	member	Finance	2014-03-03 17:09:09	2013	138	senate
+f	1451	28	member	Finance	2014-03-03 17:09:09	2013	174	senate
+f	1452	29	member	Finance	2014-03-03 17:09:09	2013	168	senate
+f	1453	30	member	Finance	2014-03-03 17:09:09	2013	172	senate
+f	1454	31	member	Finance	2014-03-03 17:09:09	2013	187	senate
+f	1455	32	member	Finance	2014-03-03 17:09:09	2013	131	senate
+f	1456	33	member	Finance	2014-03-03 17:09:09	2013	156	senate
+f	1457	34	member	Finance	2014-03-03 17:09:09	2013	157	senate
+f	1458	35	member	Finance	2014-03-03 17:09:09	2013	146	senate
+f	1459	36	member	Finance	2014-03-03 17:09:09	2013	140	senate
+f	1460	37	member	Finance	2014-03-03 17:09:09	2013	136	senate
+t	1461	1	chair_person	Health	2014-03-03 17:09:09	2013	180	senate
+f	1308	18	member	Transportation	2014-02-28 11:25:44	2013	156	senate
+f	1309	19	member	Transportation	2014-02-28 11:25:44	2013	158	senate
+t	1310	1	chair_person	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	164	senate
+t	1311	2	member	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	126	senate
+t	1312	3	member	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	155	senate
+t	1313	4	member	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	178	senate
+t	1314	5	member	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	149	senate
+t	1315	6	member	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	154	senate
+t	1316	7	member	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	130	senate
+t	1317	8	member	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	160	senate
+f	1318	9	member	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	139	senate
+f	1319	10	member	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	158	senate
+f	1320	11	member	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	134	senate
+f	1321	12	member	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	128	senate
+t	1322	1	chair_person	New York City Education Subcommittee	2014-02-28 11:25:44	2013	181	senate
+t	1323	2	member	New York City Education Subcommittee	2014-02-28 11:25:44	2013	165	senate
+t	1324	3	member	New York City Education Subcommittee	2014-02-28 11:25:44	2013	178	senate
+t	1325	4	member	New York City Education Subcommittee	2014-02-28 11:25:44	2013	159	senate
+f	1326	5	member	New York City Education Subcommittee	2014-02-28 11:25:44	2013	131	senate
+f	1327	6	member	New York City Education Subcommittee	2014-02-28 11:25:44	2013	156	senate
+t	1328	1	chair_person	Banks	2014-03-03 17:09:09	2013	149	senate
+t	1329	2	vice_chair	Banks	2014-03-03 17:09:09	2013	151	senate
+t	1330	3	member	Banks	2014-03-03 17:09:09	2013	169	senate
+t	1331	4	member	Banks	2014-03-03 17:09:09	2013	132	senate
+t	1332	5	member	Banks	2014-03-03 17:09:09	2013	178	senate
+t	1333	6	member	Banks	2014-03-03 17:09:09	2013	144	senate
+t	1334	7	member	Banks	2014-03-03 17:09:09	2013	153	senate
+t	1335	8	member	Banks	2014-03-03 17:09:09	2013	163	senate
+t	1336	9	member	Banks	2014-03-03 17:09:09	2013	183	senate
+t	1337	10	member	Banks	2014-03-03 17:09:09	2013	162	senate
+t	1338	11	member	Banks	2014-03-03 17:09:09	2013	171	senate
+t	1339	12	member	Banks	2014-03-03 17:09:09	2013	147	senate
+f	1340	13	member	Banks	2014-03-03 17:09:09	2013	148	senate
+f	1341	14	member	Banks	2014-03-03 17:09:09	2013	174	senate
+f	1342	15	member	Banks	2014-03-03 17:09:09	2013	177	senate
+f	1343	16	member	Banks	2014-03-03 17:09:09	2013	172	senate
+f	1344	17	member	Banks	2014-03-03 17:09:09	2013	134	senate
+f	1345	18	member	Banks	2014-03-03 17:09:09	2013	158	senate
+t	1346	1	chair_person	Civil Service and Pensions	2014-03-03 17:09:09	2013	178	senate
+t	1347	2	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	180	senate
+t	1348	3	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	165	senate
+t	1349	4	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	153	senate
+t	1350	5	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	179	senate
+t	1351	6	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	159	senate
+t	1352	7	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	167	senate
+f	1353	8	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	134	senate
+f	1354	9	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	139	senate
+f	1355	10	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	137	senate
+f	1356	11	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	131	senate
+t	1357	1	chair_person	Codes	2014-03-03 17:09:09	2013	150	senate
+t	1358	2	member	Codes	2014-03-03 17:09:09	2013	141	senate
+t	1359	3	member	Codes	2014-03-03 17:09:09	2013	132	senate
+t	1360	4	member	Codes	2014-03-03 17:09:09	2013	155	senate
+t	1361	5	member	Codes	2014-03-03 17:09:09	2013	182	senate
+t	1362	6	member	Codes	2014-03-03 17:09:09	2013	178	senate
+t	1363	7	member	Codes	2014-03-03 17:09:09	2013	165	senate
+t	1364	8	member	Codes	2014-03-03 17:09:09	2013	183	senate
+t	1365	9	member	Codes	2014-03-03 17:09:09	2013	149	senate
+t	1366	10	member	Codes	2014-03-03 17:09:09	2013	147	senate
+f	1367	11	member	Codes	2014-03-03 17:09:09	2013	157	senate
+f	1368	12	member	Codes	2014-03-03 17:09:09	2013	131	senate
+f	1369	13	member	Codes	2014-03-03 17:09:09	2013	140	senate
+f	1370	14	member	Codes	2014-03-03 17:09:09	2013	176	senate
+f	1371	15	member	Codes	2014-03-03 17:09:09	2013	148	senate
+f	1372	16	member	Codes	2014-03-03 17:09:09	2013	129	senate
+t	1373	1	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	171	senate
+t	1374	2	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	141	senate
+t	1375	3	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	182	senate
+t	1376	4	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	181	senate
+t	1377	5	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	149	senate
+t	1378	6	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	173	senate
+t	1379	7	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	135	senate
+f	1380	8	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	146	senate
+f	1381	9	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	136	senate
+f	1382	10	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	134	senate
+f	1383	11	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	148	senate
+t	1384	1	chair_person	Consumer Protection	2014-03-03 17:09:09	2013	160	senate
+t	1385	2	member	Consumer Protection	2014-03-03 17:09:09	2013	141	senate
+t	1386	3	member	Consumer Protection	2014-03-03 17:09:09	2013	135	senate
+t	1387	4	member	Consumer Protection	2014-03-03 17:09:09	2013	144	senate
+t	1388	5	member	Consumer Protection	2014-03-03 17:09:09	2013	167	senate
+t	1389	6	member	Consumer Protection	2014-03-03 17:09:09	2013	159	senate
+t	1390	7	member	Consumer Protection	2014-03-03 17:09:09	2013	173	senate
+f	1391	8	member	Consumer Protection	2014-03-03 17:09:09	2013	176	senate
+f	1392	9	member	Consumer Protection	2014-03-03 17:09:09	2013	142	senate
+f	1393	10	member	Consumer Protection	2014-03-03 17:09:09	2013	158	senate
+f	1394	11	member	Consumer Protection	2014-03-03 17:09:09	2013	143	senate
+t	1395	1	chair_person	Education	2014-03-03 17:09:09	2013	155	senate
+t	1396	2	member	Education	2014-03-03 17:09:09	2013	151	senate
+t	1397	3	member	Education	2014-03-03 17:09:09	2013	165	senate
+t	1398	4	member	Education	2014-03-03 17:09:09	2013	175	senate
+t	1399	5	member	Education	2014-03-03 17:09:09	2013	135	senate
+t	1400	6	member	Education	2014-03-03 17:09:09	2013	163	senate
+t	1401	7	member	Education	2014-03-03 17:09:09	2013	167	senate
+t	1402	8	member	Education	2014-03-03 17:09:09	2013	162	senate
+t	1403	9	member	Education	2014-03-03 17:09:09	2013	173	senate
+t	1404	10	member	Education	2014-03-03 17:09:09	2013	127	senate
+t	1405	11	member	Education	2014-03-03 17:09:09	2013	171	senate
+t	1406	12	member	Education	2014-03-03 17:09:09	2013	147	senate
+f	1407	13	member	Education	2014-03-03 17:09:09	2013	143	senate
+f	1409	15	member	Education	2014-03-03 17:09:09	2013	174	senate
+f	1410	16	member	Education	2014-03-03 17:09:09	2013	168	senate
+f	1411	17	member	Education	2014-03-03 17:09:09	2013	156	senate
+f	1412	18	member	Education	2014-03-03 17:09:09	2013	128	senate
+f	1408	14	member	Education	2014-03-03 17:09:09	2013	139	senate
+t	1413	1	chair_person	Energy and Telecommunications	2014-03-03 17:09:09	2013	167	senate
+t	1519	14	member	Judiciary	2014-03-03 17:09:09	2013	147	senate
+f	1520	15	member	Judiciary	2014-03-03 17:09:09	2013	136	senate
+f	1521	16	member	Judiciary	2014-03-03 17:09:09	2013	174	senate
+f	1522	17	member	Judiciary	2014-03-03 17:09:09	2013	137	senate
+f	1523	18	member	Judiciary	2014-03-03 17:09:09	2013	140	senate
+f	1524	19	member	Judiciary	2014-03-03 17:09:09	2013	131	senate
+f	1525	20	member	Judiciary	2014-03-03 17:09:09	2013	156	senate
+f	1526	21	member	Judiciary	2014-03-03 17:09:09	2013	176	senate
+f	1527	22	member	Judiciary	2014-03-03 17:09:09	2013	139	senate
+f	1528	23	member	Judiciary	2014-03-03 17:09:09	2013	157	senate
+t	1555	2	vice_chair	Transportation	2014-03-03 17:09:09	2013	163	senate
+t	1557	4	member	Transportation	2014-03-03 17:09:09	2013	182	senate
+t	1558	5	member	Transportation	2014-03-03 17:09:09	2013	130	senate
+t	1559	6	member	Transportation	2014-03-03 17:09:09	2013	167	senate
+t	1560	7	member	Transportation	2014-03-03 17:09:09	2013	150	senate
+t	1561	8	member	Transportation	2014-03-03 17:09:09	2013	183	senate
+t	1562	9	member	Transportation	2014-03-03 17:09:09	2013	162	senate
+t	1563	10	member	Transportation	2014-03-03 17:09:09	2013	170	senate
+t	1564	11	member	Transportation	2014-03-03 17:09:09	2013	160	senate
+t	1565	12	member	Transportation	2014-03-03 17:09:09	2013	147	senate
+f	1566	13	member	Transportation	2014-03-03 17:09:09	2013	137	senate
+f	1567	14	member	Transportation	2014-03-03 17:09:09	2013	177	senate
+f	1568	15	member	Transportation	2014-03-03 17:09:09	2013	146	senate
+f	1569	16	member	Transportation	2014-03-03 17:09:09	2013	131	senate
+f	1570	17	member	Transportation	2014-03-03 17:09:09	2013	157	senate
+f	1571	18	member	Transportation	2014-03-03 17:09:09	2013	156	senate
+f	1572	19	member	Transportation	2014-03-03 17:09:09	2013	158	senate
+t	1573	1	chair_person	New York City Education Subcommittee	2014-03-03 17:09:09	2013	181	senate
+t	1574	2	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	165	senate
+t	1575	3	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	178	senate
+t	1576	4	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	147	senate
+f	1577	5	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	131	senate
+f	1578	6	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	156	senate
+t	1462	2	member	Health	2014-03-03 17:09:09	2013	164	senate
+t	1463	3	member	Health	2014-03-03 17:09:09	2013	151	senate
+t	1464	4	member	Health	2014-03-03 17:09:09	2013	181	senate
+t	1465	5	member	Health	2014-03-03 17:09:09	2013	178	senate
+t	1466	6	member	Health	2014-03-03 17:09:09	2013	130	senate
+t	1467	7	member	Health	2014-03-03 17:09:09	2013	159	senate
+t	1468	8	member	Health	2014-03-03 17:09:09	2013	127	senate
+t	1469	9	member	Health	2014-03-03 17:09:09	2013	170	senate
+t	1470	10	member	Health	2014-03-03 17:09:09	2013	153	senate
+f	1471	11	member	Health	2014-03-03 17:09:09	2013	133	senate
+f	1472	12	member	Health	2014-03-03 17:09:09	2013	168	senate
+f	1473	13	member	Health	2014-03-03 17:09:09	2013	136	senate
+f	1474	14	member	Health	2014-03-03 17:09:09	2013	187	senate
+f	1475	15	member	Health	2014-03-03 17:09:09	2013	148	senate
+f	1476	16	member	Health	2014-03-03 17:09:09	2013	176	senate
+f	1477	17	member	Health	2014-03-03 17:09:09	2013	142	senate
+t	1478	1	chair_person	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	170	senate
+t	1479	2	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	169	senate
+t	1480	3	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	141	senate
+t	1481	4	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	182	senate
+t	1482	5	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	150	senate
+t	1483	6	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	147	senate
+f	1484	7	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	140	senate
+f	1485	8	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	177	senate
+f	1486	9	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	129	senate
+t	1487	1	chair_person	Insurance	2014-03-03 17:09:09	2013	127	senate
+t	1488	2	member	Insurance	2014-03-03 17:09:09	2013	126	senate
+t	1489	3	member	Insurance	2014-03-03 17:09:09	2013	155	senate
+t	1490	4	member	Insurance	2014-03-03 17:09:09	2013	178	senate
+t	1491	5	member	Insurance	2014-03-03 17:09:09	2013	154	senate
+t	1492	6	member	Insurance	2014-03-03 17:09:09	2013	165	senate
+t	1493	7	member	Insurance	2014-03-03 17:09:09	2013	130	senate
+t	1494	8	member	Insurance	2014-03-03 17:09:09	2013	175	senate
+t	1495	9	member	Insurance	2014-03-03 17:09:09	2013	153	senate
+t	1496	10	member	Insurance	2014-03-03 17:09:09	2013	183	senate
+t	1497	11	member	Insurance	2014-03-03 17:09:09	2013	170	senate
+t	1498	12	member	Insurance	2014-03-03 17:09:09	2013	147	senate
+f	1499	13	member	Insurance	2014-03-03 17:09:09	2013	174	senate
+f	1500	14	member	Insurance	2014-03-03 17:09:09	2013	140	senate
+f	1501	15	member	Insurance	2014-03-03 17:09:09	2013	146	senate
+f	1502	16	member	Insurance	2014-03-03 17:09:09	2013	172	senate
+f	1503	17	member	Insurance	2014-03-03 17:09:09	2013	156	senate
+f	1504	18	member	Insurance	2014-03-03 17:09:09	2013	148	senate
+f	1505	19	member	Insurance	2014-03-03 17:09:09	2013	187	senate
+t	1506	1	chair_person	Judiciary	2014-03-03 17:09:09	2013	169	senate
+t	1507	2	member	Judiciary	2014-03-03 17:09:09	2013	132	senate
+t	1508	3	member	Judiciary	2014-03-03 17:09:09	2013	155	senate
+t	1509	4	member	Judiciary	2014-03-03 17:09:09	2013	180	senate
+t	1510	5	member	Judiciary	2014-03-03 17:09:09	2013	165	senate
+t	1511	6	member	Judiciary	2014-03-03 17:09:09	2013	175	senate
+t	1512	7	member	Judiciary	2014-03-03 17:09:09	2013	135	senate
+t	1513	8	member	Judiciary	2014-03-03 17:09:09	2013	150	senate
+t	1514	9	member	Judiciary	2014-03-03 17:09:09	2013	183	senate
+t	1515	10	member	Judiciary	2014-03-03 17:09:09	2013	159	senate
+t	1516	11	member	Judiciary	2014-03-03 17:09:09	2013	162	senate
+t	1517	12	member	Judiciary	2014-03-03 17:09:09	2013	160	senate
+t	1518	13	member	Judiciary	2014-03-03 17:09:09	2013	154	senate
+t	1529	1	chair_person	Rules	2014-03-03 17:09:09	2013	184	senate
+t	1530	2	vice_chair	Rules	2014-03-03 17:09:09	2013	166	senate
+t	1531	3	member	Rules	2014-03-03 17:09:09	2013	169	senate
+t	1532	4	member	Rules	2014-03-03 17:09:09	2013	126	senate
+t	1533	5	member	Rules	2014-03-03 17:09:09	2013	151	senate
+t	1534	6	member	Rules	2014-03-03 17:09:09	2013	155	senate
+t	1535	7	member	Rules	2014-03-03 17:09:09	2013	180	senate
+t	1536	8	member	Rules	2014-03-03 17:09:09	2013	130	senate
+t	1537	9	member	Rules	2014-03-03 17:09:09	2013	175	senate
+t	1538	10	member	Rules	2014-03-03 17:09:09	2013	163	senate
+t	1539	11	member	Rules	2014-03-03 17:09:09	2013	167	senate
+t	1540	12	member	Rules	2014-03-03 17:09:09	2013	150	senate
+t	1541	13	member	Rules	2014-03-03 17:09:09	2013	127	senate
+t	1542	14	member	Rules	2014-03-03 17:09:09	2013	171	senate
+t	1543	15	member	Rules	2014-03-03 17:09:09	2013	135	senate
+f	1544	16	member	Rules	2014-03-03 17:09:09	2013	152	senate
+f	1545	17	member	Rules	2014-03-03 17:09:09	2013	174	senate
+f	1546	18	member	Rules	2014-03-03 17:09:09	2013	137	senate
+f	1547	19	member	Rules	2014-03-03 17:09:09	2013	136	senate
+f	1548	20	member	Rules	2014-03-03 17:09:09	2013	129	senate
+f	1549	21	member	Rules	2014-03-03 17:09:09	2013	168	senate
+f	1550	22	member	Rules	2014-03-03 17:09:09	2013	172	senate
+f	1551	23	member	Rules	2014-03-03 17:09:09	2013	131	senate
+f	1552	24	member	Rules	2014-03-03 17:09:09	2013	140	senate
+f	1553	25	member	Rules	2014-03-03 17:09:09	2013	138	senate
+t	1554	1	chair_person	Transportation	2014-03-03 17:09:09	2013	173	senate
+t	1556	3	member	Transportation	2014-03-03 17:09:09	2013	126	senate
+t	1579	1	chair_person	Aging	2014-03-13 14:48:16	2013	171	senate
+t	1580	2	member	Aging	2014-03-13 14:48:16	2013	178	senate
+t	1581	3	member	Aging	2014-03-13 14:48:16	2013	181	senate
+t	1582	4	member	Aging	2014-03-13 14:48:16	2013	175	senate
+t	1583	5	member	Aging	2014-03-13 14:48:16	2013	144	senate
+t	1584	6	member	Aging	2014-03-13 14:48:16	2013	160	senate
+f	1585	7	member	Aging	2014-03-13 14:48:16	2013	177	senate
+f	1586	8	member	Aging	2014-03-13 14:48:16	2013	139	senate
+f	1587	9	member	Aging	2014-03-13 14:48:16	2013	156	senate
+f	1588	10	member	Aging	2014-03-13 14:48:16	2013	134	senate
+t	1589	1	chair_person	Banks	2014-03-13 14:48:16	2013	149	senate
+t	1590	2	vice_chair	Banks	2014-03-13 14:48:16	2013	151	senate
+t	1591	3	member	Banks	2014-03-13 14:48:16	2013	169	senate
+t	1592	4	member	Banks	2014-03-13 14:48:16	2013	132	senate
+t	1593	5	member	Banks	2014-03-13 14:48:16	2013	178	senate
+t	1594	6	member	Banks	2014-03-13 14:48:16	2013	144	senate
+t	1595	7	member	Banks	2014-03-13 14:48:16	2013	153	senate
+t	1596	8	member	Banks	2014-03-13 14:48:16	2013	163	senate
+t	1597	9	member	Banks	2014-03-13 14:48:16	2013	183	senate
+t	1598	10	member	Banks	2014-03-13 14:48:16	2013	162	senate
+t	1599	11	member	Banks	2014-03-13 14:48:16	2013	171	senate
+t	1600	12	member	Banks	2014-03-13 14:48:16	2013	147	senate
+f	1601	13	member	Banks	2014-03-13 14:48:16	2013	148	senate
+f	1602	14	member	Banks	2014-03-13 14:48:16	2013	174	senate
+f	1603	15	member	Banks	2014-03-13 14:48:16	2013	177	senate
+f	1604	16	member	Banks	2014-03-13 14:48:16	2013	172	senate
+f	1605	17	member	Banks	2014-03-13 14:48:16	2013	134	senate
+f	1606	18	member	Banks	2014-03-13 14:48:16	2013	158	senate
+f	1607	19	member	Banks	2014-03-13 14:48:16	2013	146	senate
+t	1608	1	chair_person	Cities	2014-03-13 14:48:16	2013	165	senate
+t	1609	2	member	Cities	2014-03-13 14:48:16	2013	164	senate
+t	1610	3	member	Cities	2014-03-13 14:48:16	2013	132	senate
+t	1611	4	member	Cities	2014-03-13 14:48:16	2013	154	senate
+f	1612	5	member	Cities	2014-03-13 14:48:16	2013	157	senate
+t	1646	1	chair_person	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	169	senate
+t	1647	2	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	141	senate
+t	1651	6	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	150	senate
+t	1652	7	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	162	senate
+f	1653	8	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	139	senate
+f	1654	9	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	143	senate
+f	1655	10	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	134	senate
+f	1656	11	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	128	senate
+t	1657	1	chair_person	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	164	senate
+t	1658	2	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	126	senate
+t	1659	3	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	155	senate
+t	1660	4	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	178	senate
+t	1661	5	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	149	senate
+t	1662	6	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	154	senate
+t	1663	7	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	130	senate
+t	1664	8	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	160	senate
+f	1665	9	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	139	senate
+f	1666	10	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	158	senate
+f	1667	11	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	134	senate
+f	1668	12	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	128	senate
+f	1669	13	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	143	senate
+t	1670	1	chair_person	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	153	senate
+t	1671	2	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	171	senate
+t	1672	3	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	141	senate
+f	1613	6	member	Cities	2014-03-13 14:48:16	2013	174	senate
+t	1614	1	chair_person	Education	2014-03-13 14:48:16	2013	155	senate
+t	1615	2	member	Education	2014-03-13 14:48:16	2013	151	senate
+t	1616	3	member	Education	2014-03-13 14:48:16	2013	165	senate
+t	1617	4	member	Education	2014-03-13 14:48:16	2013	175	senate
+t	1618	5	member	Education	2014-03-13 14:48:16	2013	135	senate
+t	1619	6	member	Education	2014-03-13 14:48:16	2013	163	senate
+t	1620	7	member	Education	2014-03-13 14:48:16	2013	167	senate
+t	1621	8	member	Education	2014-03-13 14:48:16	2013	162	senate
+t	1622	9	member	Education	2014-03-13 14:48:16	2013	173	senate
+t	1623	10	member	Education	2014-03-13 14:48:16	2013	127	senate
+t	1624	11	member	Education	2014-03-13 14:48:16	2013	171	senate
+t	1625	12	member	Education	2014-03-13 14:48:16	2013	147	senate
+f	1626	13	member	Education	2014-03-13 14:48:16	2013	143	senate
+f	1627	14	member	Education	2014-03-13 14:48:16	2013	139	senate
+f	1628	15	member	Education	2014-03-13 14:48:16	2013	174	senate
+f	1629	16	member	Education	2014-03-13 14:48:16	2013	168	senate
+f	1630	17	member	Education	2014-03-13 14:48:16	2013	156	senate
+f	1631	18	member	Education	2014-03-13 14:48:16	2013	128	senate
+f	1632	19	member	Education	2014-03-13 14:48:16	2013	187	senate
+t	1633	1	chair_person	Environmental Conservation	2014-03-13 14:48:16	2013	154	senate
+t	1634	2	vice_chair	Environmental Conservation	2014-03-13 14:48:16	2013	147	senate
+t	1635	3	member	Environmental Conservation	2014-03-13 14:48:16	2013	175	senate
+t	1636	4	member	Environmental Conservation	2014-03-13 14:48:16	2013	135	senate
+t	1637	5	member	Environmental Conservation	2014-03-13 14:48:16	2013	163	senate
+t	1638	6	member	Environmental Conservation	2014-03-13 14:48:16	2013	167	senate
+t	1639	7	member	Environmental Conservation	2014-03-13 14:48:16	2013	183	senate
+t	1640	8	member	Environmental Conservation	2014-03-13 14:48:16	2013	170	senate
+f	1641	9	member	Environmental Conservation	2014-03-13 14:48:16	2013	148	senate
+f	1642	10	member	Environmental Conservation	2014-03-13 14:48:16	2013	140	senate
+f	1643	11	member	Environmental Conservation	2014-03-13 14:48:16	2013	142	senate
+f	1644	12	member	Environmental Conservation	2014-03-13 14:48:16	2013	143	senate
+f	1645	13	member	Environmental Conservation	2014-03-13 14:48:16	2013	128	senate
+t	1648	3	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	126	senate
+t	1649	4	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	149	senate
+t	1650	5	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	144	senate
+t	1673	4	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	182	senate
+t	1674	5	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	181	senate
+t	1675	6	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	149	senate
+t	1676	7	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	173	senate
+t	1677	8	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	135	senate
+f	1678	9	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	146	senate
+f	1679	10	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	136	senate
+f	1680	11	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	134	senate
+f	1681	12	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	148	senate
 \.
 
 
@@ -2650,265 +3252,23 @@ f	889	18	member	Insurance	2013-01-01 00:00:00	2013	187	senate
 -- Name: committee_member_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
-SELECT pg_catalog.setval('committee_member_id_seq', 890, true);
+SELECT pg_catalog.setval('committee_member_id_seq', 1681, true);
 
 
 --
 -- Name: committee_version_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
-SELECT pg_catalog.setval('committee_version_id_seq', 69, true);
-
-
---
--- Data for Name: daybreak_file; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY daybreak_file (report_date, filename, is_archived, staged_date_time, type) FROM stdin;
-\.
-
-
---
--- Data for Name: daybreak_fragment; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY daybreak_fragment (bill_print_no, bill_session_year, report_date, filename, created_date_time, processed_date_time, processed_count, pending_processing, bill_active_version, fragment_text, modified_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: daybreak_bill; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY daybreak_bill (report_date, bill_print_no, active_version, title, sponsor, summary, law_section, created_date_time, bill_session_year) FROM stdin;
-\.
-
-
---
--- Data for Name: daybreak_bill_action; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY daybreak_bill_action (report_date, bill_print_no, bill_session_year, action_date, chamber, text, sequence_no) FROM stdin;
-\.
-
-
---
--- Name: daybreak_bill_action_sequence_no_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('daybreak_bill_action_sequence_no_seq', 1, false);
-
-
---
--- Data for Name: daybreak_bill_amendment; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY daybreak_bill_amendment (report_date, bill_print_no, bill_session_year, version, publish_date, page_count, same_as) FROM stdin;
-\.
-
-
---
--- Data for Name: daybreak_bill_sponsor; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY daybreak_bill_sponsor (report_date, bill_print_no, bill_session_year, type, member_short_name) FROM stdin;
-\.
-
-
---
--- Data for Name: daybreak_page_file_entry; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY daybreak_page_file_entry (report_date, bill_session_year, senate_bill_print_no, senate_bill_version, assembly_bill_print_no, assembly_bill_version, bill_publish_date, page_count, created_date_time, filename) FROM stdin;
-\.
-
-
---
--- Data for Name: daybreak_report; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY daybreak_report (report_date, processed, checked) FROM stdin;
-\.
-
-
---
--- Data for Name: law_file; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY law_file (file_name, published_date_time, processed_date_time, processed_count, staged_date_time, pending_processing, archived) FROM stdin;
-\.
-
-
---
--- Data for Name: law_document; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY law_document (document_id, published_date, document_type, location_id, text, created_date_time, law_file_name, title, law_id, document_type_id) FROM stdin;
-\.
-
-
---
--- Data for Name: law_info; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY law_info (law_id, chapter_id, law_type, name, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: law_tree; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY law_tree (law_id, published_date, doc_id, doc_published_date, parent_doc_id, parent_doc_published_date, is_root, created_date_time, law_file, sequence_no) FROM stdin;
-\.
-
-
---
--- Data for Name: public_hearing_file; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY public_hearing_file (file_name, staged_date_time, processed_date_time, processed_count, pending_processing, archived) FROM stdin;
-\.
-
-
---
--- Data for Name: public_hearing; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY public_hearing (title, date_time, public_hearing_file, address, text, created_date_time, modified_date_time, published_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: public_hearing_attendance; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY public_hearing_attendance (title, date_time, session_member_id) FROM stdin;
-\.
-
-
---
--- Data for Name: public_hearing_committee; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY public_hearing_committee (title, date_time, committee_name, committee_chamber) FROM stdin;
-\.
-
-
---
--- Data for Name: sobi_change_log; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY sobi_change_log (id, table_name, action, key, data, action_date_time, sobi_fragment_id) FROM stdin;
-\.
-
-
---
--- Name: sobi_change_log_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('sobi_change_log_id_seq', 1, false);
-
-
---
--- Data for Name: sobi_fragment_process; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY sobi_fragment_process (id, fragment_id) FROM stdin;
-\.
-
-
---
--- Name: sobi_fragment_process_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('sobi_fragment_process_id_seq', 1, false);
-
-
---
--- Data for Name: spotcheck_report; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY spotcheck_report (id, report_date_time, reference_type, created_date_time, reference_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: spotcheck_observation; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY spotcheck_observation (id, report_id, reference_type, reference_active_date, key, observed_date_time, created_date_time) FROM stdin;
-\.
-
-
---
--- Data for Name: spotcheck_mismatch; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY spotcheck_mismatch (id, observation_id, type, status, reference_data, observed_data, notes) FROM stdin;
-\.
-
-
---
--- Name: spotcheck_mismatch_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('spotcheck_mismatch_id_seq', 1, false);
-
-
---
--- Name: spotcheck_observation_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('spotcheck_observation_id_seq', 1, false);
-
-
---
--- Name: spotcheck_report_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('spotcheck_report_id_seq', 1, false);
-
-
---
--- Data for Name: transcript_file; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY transcript_file (file_name, processed_date_time, processed_count, staged_date_time, pending_processing, archived) FROM stdin;
-\.
-
-
---
--- Data for Name: transcript; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY transcript (session_type, date_time, location, text, transcript_file, created_date_time, modified_date_time, published_date_time) FROM stdin;
-\.
+SELECT pg_catalog.setval('committee_version_id_seq', 127, true);
 
 
 SET search_path = public, pg_catalog;
 
 --
--- Data for Name: environment; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY environment (id, schema, base_directory, staging_directory, working_directory, archive_directory, created_date_time, modified_date_time, active) FROM stdin;
-1	master	/home/ash/Web/nysenate/data/openleg/latest_session_master	/home/ash/Web/nysenate/data/openleg/latest_session_master/work	/home/ash/Web/nysenate/data/openleg/latest_session_master/data	/home/ash/Web/nysenate/data/openleg/latest_session_master/processed	2014-05-27 16:49:46.014498	2014-05-27 16:49:46.014498	t
-\.
-
-
---
--- Name: environment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('environment_id_seq', 1, true);
-
-
---
 -- Name: member_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('member_id_seq', 677, true);
+SELECT pg_catalog.setval('member_id_seq', 698, true);
 
 
 --
@@ -2922,14 +3282,14 @@ SELECT pg_catalog.setval('member_person_id_seq', 1, false);
 -- Name: person_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('person_id_seq', 499, true);
+SELECT pg_catalog.setval('person_id_seq', 520, true);
 
 
 --
 -- Name: session_member_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('session_member_id_seq', 671, true);
+SELECT pg_catalog.setval('session_member_id_seq', 692, true);
 
 
 --
