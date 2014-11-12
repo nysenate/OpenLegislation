@@ -89,7 +89,6 @@
                 Sorry, no matching bills were found.</span>
         </section>
 
-
         <section ng-show="view == VIEWS.BILL">
             <div class="row">
                 <div class="columns large-4">

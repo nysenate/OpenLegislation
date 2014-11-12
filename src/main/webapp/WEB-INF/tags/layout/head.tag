@@ -2,6 +2,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ attribute name="title" required="true" description="The title of the page" %>
 
+<% request.setAttribute("ctxPath", request.getContextPath()); %>
+
 <!doctype html>
 <html id="ng-app" ng-app="open" class="no-js" lang="en">
 <head>

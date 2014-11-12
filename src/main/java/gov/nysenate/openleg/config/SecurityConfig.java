@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.config;
 
-import gov.nysenate.openleg.service.auth.AdminLoginAuthRealm;
 import org.apache.shiro.realm.AuthenticatingRealm;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.SimpleAccountRealm;
@@ -17,12 +16,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 
 @Configuration
 public class SecurityConfig {
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-
 
     /**
      * Shiro Filter factory that sets up the url authentication mechanism and applies the security
@@ -68,7 +67,7 @@ public class SecurityConfig {
     @Bean(name = "securityManager")
     public WebSecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealm(getAdminRealm());
+//        securityManager.setRealm(getAdminRealm());
         return securityManager;
     }
 
@@ -80,12 +79,6 @@ public class SecurityConfig {
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
-
-
-    public AuthorizingRealm getAdminRealm() {
-        return new AdminLoginAuthRealm();
-    }
-
 
     @Bean
     public AuthenticatingRealm simple() {

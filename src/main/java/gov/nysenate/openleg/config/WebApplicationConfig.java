@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import gov.nysenate.openleg.dao.bill.data.BillDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import javax.annotation.PostConstruct;
 import javax.xml.transform.Source;
 import java.util.List;
 
@@ -38,6 +41,11 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter
 
     private static final String resourcePath = "/static/**";
     private static final String resourceLocation = "/static/";
+
+    @PostConstruct
+    public void init() {
+        logger.info("Initialized WebApplication Config");
+    }
 
     /** Sets paths that should not be intercepted by a controller (e.g css/ js/). */
     @Override
