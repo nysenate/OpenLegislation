@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.controller.api.report;
 
-import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
@@ -18,6 +17,8 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.DaybreakCheckReportService;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,23 +46,16 @@ public class SpotCheckGetCtrl extends BaseCtrl
     @Autowired
     DaybreakCheckReportService daybreakService;
 
-    /**
-     *
-     *
-     */
+    @RequiresAuthentication
     @RequestMapping(value = "/daybreaks", produces = APPLICATION_JSON_VALUE)
-    public BaseResponse getDaybreakReport() {
+    public Object getDaybreakReport() {
         LocalDate today = LocalDate.now();
         LocalDate sixMonthsAgo = today.minusMonths(6);
         return getDaybreakReportLimOff(sixMonthsAgo, today);
     }
 
-    /**
-     *
-     *
-     */
     @RequestMapping(value = "/daybreaks/{from}/{to}", produces = APPLICATION_JSON_VALUE)
-    public BaseResponse getDaybreakReportLimOff(
+    public Object getDaybreakReportLimOff(
            @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate from,
            @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
         logger.info("Retrieving daybreak reports from {} to {}", from , to);
@@ -75,18 +69,13 @@ public class SpotCheckGetCtrl extends BaseCtrl
             ListView.of(reports.stream().map(r -> new ReportInfoView<>(r)).collect(Collectors.toList())), from, to);
     }
 
-    /**
-     *
-     */
     @RequestMapping(value = "/daybreaks/{reportDateTime}", produces = APPLICATION_JSON_VALUE)
-    public BaseResponse getDaybreakReport(
+    public Object getDaybreakReport(
            @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime reportDateTime) {
         logger.info("Retrieving daybreak report {}", reportDateTime);
         return new ReportDetailResponse<>(
             daybreakService.getReport(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, reportDateTime)));
     }
-
-    /** --- Exception Handlers --- */
 
     @ExceptionHandler(SpotCheckReportNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)

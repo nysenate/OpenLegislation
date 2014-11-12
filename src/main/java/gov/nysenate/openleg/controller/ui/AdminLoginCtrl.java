@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.controller.ui;
 
 import gov.nysenate.openleg.service.auth.AdminUserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,8 +48,10 @@ public class AdminLoginCtrl
     public String login(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws ServletException, IOException {
         if (session.getAttribute("user") != null)
         {
+            System.out.println("Logging out user: " +session.getAttribute("user") + " from system.");
             session.invalidate();
-            return "redirect:/admin";
+
+            return "adminlogin";
         }
 
         String user = request.getParameter("user");

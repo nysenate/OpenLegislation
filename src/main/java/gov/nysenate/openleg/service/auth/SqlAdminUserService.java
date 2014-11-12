@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.auth;
 
+import gov.nysenate.openleg.dao.auth.AdminUserDao;
 import gov.nysenate.openleg.dao.auth.SqlAdminUserDao;
 import gov.nysenate.openleg.model.auth.AdminUser;
 import org.mindrot.jbcrypt.BCrypt;
@@ -7,13 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import gov.nysenate.openleg.service.auth.AuthenticationEx;
+import org.springframework.stereotype.Service;
 
-@Repository
+@Service
 public class SqlAdminUserService implements AdminUserService
 {
 
     @Autowired
-    protected SqlAdminUserDao adminDao;
+    protected AdminUserDao adminDao;
 
     /**
      * Log the user in if they have proper account credentials.
@@ -25,6 +27,7 @@ public class SqlAdminUserService implements AdminUserService
      */
     @Override
     public int login(String username, String password)  {
+        System.out.printf("LoginU: %s LoginP: %s", username, password);
         if ((username == null) || (password == null))
             throw new IllegalArgumentException("Username or password cannot be null!");
 
