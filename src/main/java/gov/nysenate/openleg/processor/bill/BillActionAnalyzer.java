@@ -31,6 +31,9 @@ public class BillActionAnalyzer
     /** Pattern that indicates that the bill has passed a certain house. */
     private static final Pattern passedHousePattern = Pattern.compile("PASSED (ASSEMBLY|SENATE)");
 
+    /** Pattern that indicates that the resolution has been adopted. */
+    private static final Pattern adoptedPattern = Pattern.compile("ADOPTED");
+
     /** Pattern for detecting calendar events in bill action lists. */
     private static final Pattern floorEventPattern = Pattern.compile("(REPORT CAL|THIRD READING|3RD READING|RULES REPORT)");
 
@@ -90,6 +93,8 @@ public class BillActionAnalyzer
 
     /** --- Derived properties --- */
 
+    private BillId billId;
+
     /** The last published amendment version found via the billActions list. */
     private Version activeVersion = BillId.DEFAULT_VERSION;
 
@@ -133,6 +138,9 @@ public class BillActionAnalyzer
      */
     public BillActionAnalyzer(List<BillAction> actions, Optional<PublishStatus> defaultPubStatus) {
         this.actions = actions;
+        if (!actions.isEmpty()) {
+            this.billId = actions.get(0).getBillId();
+        }
         if (defaultPubStatus.isPresent()) {
             this.publishStatusMap.put(Version.DEFAULT, defaultPubStatus.get());
             this.billStatus = new BillStatus(INTRODUCED, defaultPubStatus.get().getEffectDateTime().toLocalDate());
@@ -215,7 +223,10 @@ public class BillActionAnalyzer
         int year = action.getDate().getYear();
         Matcher committeeMatcher = committeeEventTextPattern.matcher(text);
         Matcher passedHouseMatcher = passedHousePattern.matcher(text);
-        if (committeeMatcher.find()) {
+        if (billId.getBillType().isResolution() && adoptedPattern.matcher(text).find()) {
+            currStatus = new BillStatus(ADOPTED, action.getDate());
+        }
+        else if (committeeMatcher.find()) {
             this.currentCommittee = new CommitteeVersionId(action.getChamber(),
                 committeeMatcher.group(2), action.getBillId().getSession(), action.getDate().atStartOfDay());
             this.pastCommittees.add(this.currentCommittee);
@@ -297,10 +308,17 @@ public class BillActionAnalyzer
     public LinkedList<BillStatus> getMilestones() {
         LinkedList<BillStatus> milestones = new LinkedList<>();
         if (!this.actions.isEmpty()) {
-            List<BillStatusType> milestoneTypes = (this.actions.get(0).getChamber().equals(Chamber.SENATE)) ?
+            List<BillStatusType> milestoneTypes;
+            if (billId.getBillType().isResolution()) {
+                milestoneTypes = Arrays.asList(ADOPTED);
+            }
+            else {
+                milestoneTypes = (this.actions.get(0).getChamber().equals(Chamber.SENATE)) ?
                     senateMilestones : assemblyMilestones;
+            }
             int lastSequenceNo = 0;
             List<BillStatus> statusList = new ArrayList<>(this.statuses);
+            // Search through the actions list from most recent to oldest.
             statusList.sort((a, b) -> Integer.compare(b.getActionSequenceNo(), a.getActionSequenceNo()));
             for (BillStatusType milestoneType : milestoneTypes) {
                 for (BillStatus status : statusList) {
