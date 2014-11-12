@@ -5,8 +5,8 @@
 <% request.setAttribute("ctxPath", request.getContextPath()); %>
 
 <open-layout:head title="Content">
-    <script src="${ctxPath}/static/js/component/content/content.js"></script>
-    <script src="${ctxPath}/static/js/component/content/bill/bill-home.js"></script>
+    <script src="${ctxPath}/static/js/src/component/content/content.js"></script>
+    <script src="${ctxPath}/static/js/src/component/content/bill/bill-home.js"></script>
 </open-layout:head>
 <open-layout:body pageId="bills">
     <div ng-controller="BillHomeCtrl" class="row" style="margin-top:1.5em">
