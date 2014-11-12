@@ -90,10 +90,9 @@ public class BillActionAnalyzer
     /** --- Input --- */
 
     private final List<BillAction> actions;
+    private BillId billId;
 
     /** --- Derived properties --- */
-
-    private BillId billId;
 
     /** The last published amendment version found via the billActions list. */
     private Version activeVersion = BillId.DEFAULT_VERSION;
@@ -136,11 +135,9 @@ public class BillActionAnalyzer
      * @param defaultPubStatus Optional<PublishStatus> - Set the publish map on the action parser to include
      *                                                   existing default amendment publish status if it exists
      */
-    public BillActionAnalyzer(List<BillAction> actions, Optional<PublishStatus> defaultPubStatus) {
+    public BillActionAnalyzer(BillId billId, List<BillAction> actions, Optional<PublishStatus> defaultPubStatus) {
         this.actions = actions;
-        if (!actions.isEmpty()) {
-            this.billId = actions.get(0).getBillId();
-        }
+        this.billId = billId;
         if (defaultPubStatus.isPresent()) {
             this.publishStatusMap.put(Version.DEFAULT, defaultPubStatus.get());
             this.billStatus = new BillStatus(INTRODUCED, defaultPubStatus.get().getEffectDateTime().toLocalDate());
@@ -313,8 +310,7 @@ public class BillActionAnalyzer
                 milestoneTypes = Arrays.asList(ADOPTED);
             }
             else {
-                milestoneTypes = (this.actions.get(0).getChamber().equals(Chamber.SENATE)) ?
-                    senateMilestones : assemblyMilestones;
+                milestoneTypes = (billId.getChamber().equals(Chamber.SENATE)) ? senateMilestones : assemblyMilestones;
             }
             int lastSequenceNo = 0;
             List<BillStatus> statusList = new ArrayList<>(this.statuses);
