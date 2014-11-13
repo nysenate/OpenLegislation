@@ -38,7 +38,7 @@ public interface CalendarSearchDao {
                                                                  String sort, LimitOffset limitOffset);
 
     /**
-     * Performs a floor calendar search based on the given query string.
+     * Performs a calendar supplemental search based on the given query string.
      * Results are sorted and curtailed according to the given sort string and limit offset.
      *
      * @param query
@@ -47,8 +47,8 @@ public interface CalendarSearchDao {
      * @param limitOffset
      * @return
      */
-    public SearchResults<CalendarSupplementalId> searchFloorCalendars(QueryBuilder query, FilterBuilder postFilter, String sort,
-                                                                      LimitOffset limitOffset);
+    public SearchResults<CalendarSupplementalId> searchCalendarSupplementals(QueryBuilder query, FilterBuilder postFilter, String sort,
+                                                                             LimitOffset limitOffset);
 
     /**
      * Updates or inserts a single calendar into the index
