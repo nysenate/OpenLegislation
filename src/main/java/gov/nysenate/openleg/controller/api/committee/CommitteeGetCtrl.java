@@ -28,6 +28,8 @@ import org.springframework.web.context.request.WebRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
@@ -45,20 +47,20 @@ public class CommitteeGetCtrl extends BaseCtrl
     /** --- Request Handlers --- */
 
     /**
-     * Returns the latest committee version with the given name for the specified chamber during the given session year
-     * @param chamberName
-     * @param committeeName
-     * @return
+     * Current Committee API
+     *
+     * Retrieve the latest version of a single committee for the specified session year:
+     *      (GET) /api/3/committees/{sessionYear}
      */
     @RequestMapping(value = "/{sessionYear:\\d{4}}/{chamberName:(?i)senate|assembly}/{committeeName}")
     public BaseResponse getLatestCommitteeForSession(@PathVariable String chamberName,
                                                      @PathVariable String committeeName,
                                                      @PathVariable int sessionYear)
             throws CommitteeNotFoundEx {
-        return new ViewObjectResponse<>(new CommitteeView(
-                committeeDataService.getCommittee(new CommitteeSessionId(Chamber.getValue(chamberName),
-                                                                            committeeName, SessionYear.of(sessionYear)))
-        ));
+        return getCommitteeResponse(
+                committeeDataService.getCommittee( new CommitteeSessionId(
+                                Chamber.getValue(chamberName), committeeName, SessionYear.of(sessionYear)))
+        );
     }
 
     /**
@@ -78,10 +80,11 @@ public class CommitteeGetCtrl extends BaseCtrl
                                            @PathVariable String referenceDateTime)
         throws CommitteeNotFoundEx, InvalidRequestParameterException {
         LocalDateTime parsedReferenceDateTime = parseISODateTimeParameter(referenceDateTime, "referenceDateTime");
-        return new ViewObjectResponse<>(new CommitteeView(
-                committeeDataService.getCommittee(new CommitteeVersionId(Chamber.getValue(chamberName), committeeName,
+        return getCommitteeResponse(
+                committeeDataService.getCommittee(new CommitteeVersionId(
+                        Chamber.getValue(chamberName), committeeName,
                         SessionYear.of(sessionYear), parsedReferenceDateTime))
-        ));
+        );
     }
 
     /**
@@ -126,12 +129,9 @@ public class CommitteeGetCtrl extends BaseCtrl
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.DESC);
         CommitteeSessionId committeeSessionId =
                 new CommitteeSessionId(Chamber.getValue(chamberName), committeeName, SessionYear.of(sessionYear));
-        return ListViewResponse.of(
-                committeeDataService.getCommitteeHistory(committeeSessionId, limitOffset, sortOrder).stream()
-                        .map(committee -> full ? new CommitteeView(committee)
-                                               : new CommitteeVersionIdView(committee.getVersionId()) )
-                        .collect(Collectors.toList()),
-                committeeDataService.getCommitteeHistoryCount(committeeSessionId), limitOffset);
+        List<Committee> history = committeeDataService.getCommitteeHistory(committeeSessionId, limitOffset, sortOrder);
+        int totalCount = committeeDataService.getCommitteeHistoryCount(committeeSessionId);
+        return getCommitteeListResponse(history, totalCount, limitOffset, full);
     }
 
     /** --- Exception Handlers --- */
@@ -149,5 +149,24 @@ public class CommitteeGetCtrl extends BaseCtrl
         } else {
             return new ViewObjectErrorResponse(ErrorCode.COMMITTEE_NOT_FOUND, new CommitteeIdView(ex.getCommitteeId()));
         }
+    }
+
+    /**
+     * --- Internal Methods ---
+     */
+
+    protected BaseResponse getCommitteeResponse(Committee committee) {
+        return new ViewObjectResponse<>(new CommitteeView(committee));
+    }
+
+    protected BaseResponse getCommitteeListResponse(Collection<Committee> committeeCollection, int totalCount,
+                                                    LimitOffset limitOffset, boolean full) {
+        return ListViewResponse.of(
+                committeeCollection.stream()
+                        .map(committee -> full ? new CommitteeView(committee)
+                                : new CommitteeVersionIdView(committee.getVersionId()) )
+                        .collect(Collectors.toList()),
+                totalCount, limitOffset
+        );
     }
 }

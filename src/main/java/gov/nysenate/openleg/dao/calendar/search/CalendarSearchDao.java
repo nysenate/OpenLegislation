@@ -70,9 +70,4 @@ public interface CalendarSearchDao {
      * @param calId
      */
     public void deleteCalendarFromIndex(CalendarId calId);
-
-    /**
-     * Removes the calendar index and all indexed documents
-     */
-    public void deleteCalendarIndex();
 }

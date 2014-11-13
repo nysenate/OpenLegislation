@@ -6,7 +6,7 @@ import gov.nysenate.openleg.util.DateUtils;
 
 import java.time.LocalDateTime;
 
-public class CommitteeNotFoundEx extends Exception {
+public class CommitteeNotFoundEx extends RuntimeException {
 
     private static final long serialVersionUID = -1117480470668390088L;
 

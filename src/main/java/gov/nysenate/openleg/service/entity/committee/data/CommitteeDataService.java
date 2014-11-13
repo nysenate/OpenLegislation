@@ -37,10 +37,22 @@ public interface CommitteeDataService
 
     /**
      * Retrieves a list containing all committee ids
-     * @param limitOffset
      * @return
      */
-    public List<CommitteeId> getCommitteeIds(LimitOffset limitOffset);
+    public List<CommitteeId> getCommitteeIds();
+
+    /**
+     * Gets all session years that contain committee data
+     * @return
+     */
+    public List<SessionYear> getEligibleYears();
+
+    /**
+     * Returns a list of committee session ids for every committee and all sessions that contain data
+     *
+     * @return
+     */
+    public List<CommitteeSessionId> getAllCommitteeSessionIds();
 
     /**
      * Retrieves a list containing the most recent version of each committee for the given session year
