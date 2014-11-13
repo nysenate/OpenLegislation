@@ -50,7 +50,7 @@ public class CommitteeGetCtrl extends BaseCtrl
      * Current Committee API
      *
      * Retrieve the latest version of a single committee for the specified session year:
-     *      (GET) /api/3/committees/{sessionYear}
+     *                          (GET) /api/3/committees/{sessionYear}/{chamber}/{committeeName}
      */
     @RequestMapping(value = "/{sessionYear:\\d{4}}/{chamberName:(?i)senate|assembly}/{committeeName}")
     public BaseResponse getLatestCommitteeForSession(@PathVariable String chamberName,
@@ -64,14 +64,10 @@ public class CommitteeGetCtrl extends BaseCtrl
     }
 
     /**
-     * Returns the committee version corresponding to the given committee version id
-     *      consisting of chamber, committee name, session year and reference date
-     * @param chamberName
-     * @param committeeName
-     * @param sessionYear
-     * @param referenceDateTime
-     * @return
-     * @throws CommitteeNotFoundEx
+     * Committee Version API
+     *
+     * Gets the state of a committee as it existed at a given reference date/time:
+     *                          (GET) /api/3/committees/{sessionYear}/{chamber}/{committeeName}/{referenceDateTime}
      */
     @RequestMapping(value = "/{sessionYear:\\d{4}}/{chamberName:(?i)senate|assembly}/{committeeName}/{referenceDateTime}")
     public BaseResponse getCommitteeAtTime(@PathVariable String chamberName,
@@ -88,11 +84,10 @@ public class CommitteeGetCtrl extends BaseCtrl
     }
 
     /**
-     * Returns the current committee version for each committee in the given chamber
-     * @param chamberName
-     * @param full
-     * @param webRequest
-     * @return
+     * Current Committee API
+     *
+     * Retrieve the latest versions of all committees for a given chamber for a given session year:
+     *                          (GET) /api/3/committees/{sessionYear}/{chamber}
      */
     @RequestMapping(value = "/{sessionYear:\\d{4}}/{chamberName:(?i)senate|assembly}")
     public BaseResponse getCommitteesForChamber(@PathVariable String chamberName,
@@ -111,13 +106,15 @@ public class CommitteeGetCtrl extends BaseCtrl
     }
 
     /**
-     * Returns all of the previous committee versions for the given committee id ordered by session year and creation date
-     * @param chamberName
-     * @param committeeName
-     * @param full
-     * @param webRequest
-     * @return
-     * @throws CommitteeNotFoundEx
+     * Committee History API
+     *
+     * Get all versions of the given committee for the given session year:
+     *                          (GET) /api/3/committees/{sessionYear}/{chamber}/{committeeName}
+     *
+     * Request Parameters:      full - Set to true to retrieve full committee responses (false by default)
+     *                          limit - Limit the number of results (default 50)
+     *                          offset - Start results from offset (default 1)
+     *                          order - Determines the creation date sort order of the versions (default DESC)
      */
     @RequestMapping(value = "/{sessionYear:\\d{4}}/{chamberName:(?i)senate|assembly}/{committeeName}/history")
     public BaseResponse getCommitteeHistory(@PathVariable String chamberName,

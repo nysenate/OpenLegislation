@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.service.calendar.event.CalendarUpdateEvent;
 
 public interface CalendarSearchService {
 
@@ -56,18 +57,18 @@ public interface CalendarSearchService {
             throws SearchException;
 
     /**
-     * Performs a search on floor calendars, returning a list of matching floor calendar ids.
+     * Performs a search on supplemental calendars, returning a list of matching floor calendar ids.
      *
      * @param query
      * @param sort
      * @return SearchResults<CalendarSupplementalId> a list of supplemental calendar ids that match the given search parameters
      * @throws SearchException When there is a search related error
      */
-    public SearchResults<CalendarSupplementalId> searchForFloorCalendars(String query, String sort, LimitOffset limitOffset)
+    public SearchResults<CalendarSupplementalId> searchForSupplementalCalendars(String query, String sort, LimitOffset limitOffset)
             throws SearchException;
 
     /**
-     * Performs a search on floor calendars that match that were published on the given year, returning a list of matching floor calendar ids.
+     * Performs a search on supplemental calendars that match that were published on the given year, returning a list of matching floor calendar ids.
      *
      * @param year
      * @param query
@@ -75,6 +76,13 @@ public interface CalendarSearchService {
      * @return SearchResults<CalendarSupplementalId> a list of supplemental calendar ids that match the given search parameters
      * @throws SearchException When there is a search related error
      */
-    public SearchResults<CalendarSupplementalId> searchForFloorCalendarsByYear(Integer year, String query, String sort, LimitOffset limitOffset)
+    public SearchResults<CalendarSupplementalId> searchForSupplementalCalendarsByYear(Integer year, String query, String sort, LimitOffset limitOffset)
             throws SearchException;
+
+    /**
+     * Handles a calendar update event by indexing the updated calendar into the search index
+     *
+     * @param calendarUpdateEvent
+     */
+    public void handleCalendarUpdateEvent(CalendarUpdateEvent calendarUpdateEvent);
 }

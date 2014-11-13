@@ -14,12 +14,12 @@ public enum SqlCalendarQuery implements BasicSqlQuery
         "SELECT * FROM ${schema}." + SqlTable.CALENDAR + "\n" +
         "WHERE calendar_no = :calendarNo AND year = :year"
     ),
-    SELECT_CALENDARS(
-        "SELECT * FROM ${schema}." + SqlTable.CALENDAR + "\n" +
+    SELECT_CALENDAR_IDS(
+        "SELECT calendar_no, year FROM ${schema}." + SqlTable.CALENDAR + "\n" +
         "WHERE year = :year"
     ),
     SELECT_CALENDARS_COUNT(
-        SELECT_CALENDARS.sql.replace("*", "COUNT(*)")
+        SELECT_CALENDAR_IDS.sql.replace("*", "COUNT(*)")
     ),
     UPDATE_CALENDAR(
         "UPDATE ${schema}." + SqlTable.CALENDAR + "\n" +
@@ -45,9 +45,12 @@ public enum SqlCalendarQuery implements BasicSqlQuery
         "       ON sup.id = ent.calendar_sup_id" + "\n" +
         "WHERE calendar_year = :year"
     ),
-    SELECT_CALENDAR_SUPS_BY_YEAR_COUNT(
-        "SELECT COUNT(*) FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + " sup" + "\n" +
+    SELECT_CALENDAR_SUP_IDS(
+        "SELECT calendar_no, calendar_year, sup_version FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + "\n" +
         "WHERE calendar_year = :year"
+    ),
+    SELECT_CALENDAR_SUP_ID_COUNT(
+        SELECT_CALENDAR_SUP_IDS.sql.replace("*", "COUNT(*)")
     ),
     SELECT_CALENDAR_SUPS(
         SELECT_CALENDAR_SUPS_BY_YEAR.sql + " AND calendar_no = :calendarNo"
@@ -105,6 +108,13 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR_COUNT(
         "SELECT COUNT(*) FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + " al" + "\n" +
         "WHERE calendar_year = :year"
+    ),
+    SELECT_CALENDAR_ACTIVE_LIST_IDS(
+        "SELECT calendar_no, calendar_year, sequence_no FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + "\n" +
+        "WHERE calendar_year = :year"
+    ),
+    SELECT_CALENDAR_ACTIVE_LIST_ID_COUNT(
+        SELECT_CALENDAR_ACTIVE_LIST_IDS.sql.replace("*", "COUNT(*)")
     ),
     SELECT_CALENDAR_ACTIVE_LISTS(
         SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR.sql + " AND calendar_no = :calendarNo"

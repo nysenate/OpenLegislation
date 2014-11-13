@@ -20,7 +20,7 @@ public class ViewTests extends BaseTests {
 
     @Test
     public void calSupEntryViewTest() {
-        CalendarSupplemental calSup = calendarDataService.getFloorCalendar(new CalendarSupplementalId(45, 2014, Version.of("")));
+        CalendarSupplemental calSup = calendarDataService.getCalendarSupplemental(new CalendarSupplementalId(45, 2014, Version.of("")));
         CalendarSupView calSupView = new CalendarSupView(calSup);
     }
 }

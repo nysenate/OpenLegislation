@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.service.calendar.search;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.calendar.search.CalendarSearchDao;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
@@ -7,6 +9,7 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.service.calendar.event.CalendarUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchParseException;
@@ -14,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 @Service
 public class ElasticCalendarSearchService implements CalendarSearchService {
@@ -24,6 +29,14 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
 
     @Autowired
     CalendarSearchDao calendarSearchDao;
+
+    @Autowired
+    EventBus eventBus;
+
+    @PostConstruct
+    private void init() {
+        eventBus.register(this);
+    }
 
     /**
      * {@inheritDoc}
@@ -64,7 +77,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
      * {@inheritDoc}
      */
     @Override
-    public SearchResults<CalendarSupplementalId> searchForFloorCalendars(String query, String sort, LimitOffset limitOffset)
+    public SearchResults<CalendarSupplementalId> searchForSupplementalCalendars(String query, String sort, LimitOffset limitOffset)
             throws SearchException {
         return searchFloorCalendars(QueryBuilders.queryString(query), null, sort, limitOffset);
     }
@@ -73,10 +86,19 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
      * {@inheritDoc}
      */
     @Override
-    public SearchResults<CalendarSupplementalId> searchForFloorCalendarsByYear(Integer year, String query, String sort,
-                                                                               LimitOffset limitOffset)
+    public SearchResults<CalendarSupplementalId> searchForSupplementalCalendarsByYear(Integer year, String query, String sort,
+                                                                                      LimitOffset limitOffset)
             throws SearchException {
         return searchFloorCalendars(getCalendarYearQuery(year, query), null, sort, limitOffset);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Subscribe
+    @Override
+    public synchronized void handleCalendarUpdateEvent(CalendarUpdateEvent calendarUpdateEvent) {
+        calendarSearchDao.updateCalendarIndex(calendarUpdateEvent.getCalendar());
     }
 
     /**
@@ -162,7 +184,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
             limitOffset = defaultLimitOffset;
         }
         try {
-            return calendarSearchDao.searchFloorCalendars(query, postFilter, sort, limitOffset);
+            return calendarSearchDao.searchCalendarSupplementals(query, postFilter, sort, limitOffset);
         }
         catch (SearchParseException ex) {
             throw new SearchException("There was a problem parsing the supplied query string.", ex);

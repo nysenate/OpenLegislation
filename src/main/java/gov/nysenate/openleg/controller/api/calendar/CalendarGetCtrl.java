@@ -5,6 +5,7 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
+import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.calendar.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -38,10 +39,15 @@ public class CalendarGetCtrl extends BaseCtrl
     /** --- Request Handlers --- */
 
     /**
-     * Returns a simplified calendar view for all calendars in the given year
-     * @param year
-     * @param webRequest
-     * @return
+     * Calendar Year API
+     *
+     * Get all calendars for one year:  (GET) /api/3/calendars/{year}
+     * Request Parameters:  full - If true, full calendars will be returned including
+     *                              active list and supplemental entries (default false)
+     *                      order - Determines if the returned calendars are in ascending(ASC) or descending(DESC)
+     *                              order (default ASC)
+     *                      limit - Limit the number of results (default 100)
+     *                      offset - Start results from offset (default 1)
      */
     @RequestMapping(value = "/{year:\\d{4}}")
     public BaseResponse getCalendars(@PathVariable int year,
@@ -59,10 +65,14 @@ public class CalendarGetCtrl extends BaseCtrl
     }
 
     /**
-     * Returns a simplified calendar view for all active list calendars in the given year
-     * @param year
-     * @param webRequest
-     * @return
+     * Active List Year API
+     *
+     * Get all active list calendars for one year:  (GET) /api/3/calendars/{year}/activelist
+     * Request Parameters:  full - If true, full active lists will be returned including all entries (default false)
+     *                      order - Determines if the returned calendars are in ascending(ASC) or descending(DESC)
+     *                              order (default ASC)
+     *                      limit - Limit the number of results (default 100)
+     *                      offset - Start results from offset (default 1)
      */
     @RequestMapping(value = "/{year:\\d{4}}/activelist")
     public BaseResponse getActiveLists(@PathVariable int year,
@@ -80,31 +90,35 @@ public class CalendarGetCtrl extends BaseCtrl
     }
 
     /**
-     * Returns a simplified calendar view for all floor calendars in the given year
-     * @param year
-     * @param webRequest
-     * @return
+     * Active List Year API
+     *
+     * Get all supplemental calendars for one year:  (GET) /api/3/calendars/{year}/supplemental
+     * Request Parameters:  full - If true, full active lists will be returned including all entries (default false)
+     *                      order - Determines if the returned calendars are in ascending(ASC) or descending(DESC)
+     *                              order (default ASC)
+     *                      limit - Limit the number of results (default 100)
+     *                      offset - Start results from offset (default 1)
      */
-    @RequestMapping(value = "/{year:\\d{4}}/floor")
-    public BaseResponse getFloorCalendars(@PathVariable int year,
-                                          @RequestParam(defaultValue = "false") boolean full,
-                                          WebRequest webRequest) {
+    @RequestMapping(value = "/{year:\\d{4}}/supplemental")
+    public BaseResponse getCalendarSupplementals(@PathVariable int year,
+                                                 @RequestParam(defaultValue = "false") boolean full,
+                                                 WebRequest webRequest) {
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
         LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
         return ListViewResponse.of(
-                calendarDataService.getFloorCalendars(year, sortOrder, limitOffset).stream()
+                calendarDataService.getCalendarSupplementals(year, sortOrder, limitOffset).stream()
                         .map(full ? CalendarSupView::new : SimpleCalendarSupView::new)
                         .collect(Collectors.toList()),
-                calendarDataService.getFloorCalendarCount(year),
+                calendarDataService.getSupplementalCount(year),
                 limitOffset
         );
     }
 
     /**
-     * Returns a calendar view response for the calendar matching the given id parameters
-     * @param year
-     * @param calNo
-     * @return
+     * Calendar Get API
+     *
+     * Gets a single calendar via year and calendar number:
+     *      (GET) /api/3/calendars/{year}/{calendarNumber}
      */
     @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}")
     public BaseResponse getCalendar(@PathVariable int year,
@@ -114,11 +128,10 @@ public class CalendarGetCtrl extends BaseCtrl
     }
 
     /**
-     * Returns an active list calendar view response for the active list calendar matching the given id parameters
-     * @param year
-     * @param calNo
-     * @param sequenceNo
-     * @return
+     * Active List Calendar Get API
+     *
+     * Gets a single active list via year, calendar number, and sequence number:
+     *      (GET) /api/3/calendars/{year}/{calendarNumber}/{sequenceNumber}
      */
     @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}/{sequenceNo:\\d+}")
     public BaseResponse getActiveList(@PathVariable int year,
@@ -130,19 +143,18 @@ public class CalendarGetCtrl extends BaseCtrl
     }
 
     /**
-     * Returns a floor calendar view response for the floor calendar matching the given id parameters
-     * @param year
-     * @param calNo
-     * @param version
-     * @return
+     * Supplemental Calendar Get API
+     *
+     * Gets a single supplemental via year, calendar number, and supplemental version:
+     *      (GET) /api/3/calendars/{year}/{calendarNumber}/{version}
      */
     @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}/{version:[A-z]+}")
-    public BaseResponse getFloorCalendar(@PathVariable int year,
-                                         @PathVariable int calNo,
-                                         @PathVariable String version) {
+    public BaseResponse getCalendarSupplemental(@PathVariable int year,
+                                                @PathVariable int calNo,
+                                                @PathVariable String version) {
         return new ViewObjectResponse<>(
             new CalendarSupView(
-                calendarDataService.getFloorCalendar(new CalendarSupplementalId(calNo, year, Version.of(version))) ) );
+                calendarDataService.getCalendarSupplemental(new CalendarSupplementalId(calNo, year, Version.of(version))) ) );
     }
 
     /** --- Exception Handlers --- */
@@ -155,6 +167,17 @@ public class CalendarGetCtrl extends BaseCtrl
     @ExceptionHandler(CalendarNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ViewObjectErrorResponse handleCalNotFoundEx(CalendarNotFoundEx ex) {
-        return new ViewObjectErrorResponse(ErrorCode.CALENDAR_NOT_FOUND, new CalendarIdView(ex.getCalendarId()));
+        CalendarId calId = ex.getCalendarId();
+        ViewObject calendarIdView;
+        if (calId instanceof CalendarSupplementalId) {
+            calendarIdView = new CalendarSupIdView((CalendarSupplementalId) calId);
+        }
+        else if (calId instanceof CalendarActiveListId) {
+            calendarIdView = new CalendarActiveListIdView((CalendarActiveListId) calId);
+        }
+        else {
+            calendarIdView = new CalendarIdView(calId);
+        }
+        return new ViewObjectErrorResponse(ErrorCode.CALENDAR_NOT_FOUND, calendarIdView);
     }
 }
