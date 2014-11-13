@@ -26,10 +26,10 @@ public class VetoMemoParser extends BillTextParser
         Pattern.compile("\\d{5}CHAPTER (\\d+)");
 
     private static final Pattern lineReferencePattern =
-        Pattern.compile( "\\d{5}Bill Page (\\d+), Line (\\d+)( through Line (\\d+))?.*");
+        Pattern.compile("\\d{5}Bill Page (\\d+), Line (\\d+)( through Line (\\d+))?.*");
 
     private static final Pattern signerPattern =
-        Pattern.compile( "\\d{5}\\s(The bill is disapproved.)?\\s*\\(signed\\) ([a-zA-Z.'\\- ]*[a-zA-Z.])");
+        Pattern.compile("\\d{5}\\s*(?:The bill is disapproved.)?\\s*\\(signed\\) ([a-zA-Z.'\\- ]*[a-zA-Z.])");
 
     /** A veto message object that is constructed while parsing the veto memo */
     private VetoMessage vetoMessage;
@@ -107,7 +107,7 @@ public class VetoMemoParser extends BillTextParser
         else if (lineNum > 29 || lineNum > 14 && vetoMessage.getType() == VetoType.STANDARD) {
             Matcher signerMatcher = signerPattern.matcher(line);
             if (signerMatcher.find()) {
-                vetoMessage.setSigner(signerMatcher.group(2));
+                vetoMessage.setSigner(signerMatcher.group(1));
             }
         }
         return super.parseLine(line, text, fullText);
