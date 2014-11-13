@@ -336,7 +336,7 @@ public class BillActionAnalyzer
                     }
                     else if (status.getStatusType().equals(milestoneType)) {
                         if (!skippedMilestones.isEmpty()) {
-                            skippedMilestones.forEach(s -> milestones.add(new BillStatus(s, null)));
+                            skippedMilestones.forEach(s -> milestones.add(new BillStatus(s, status.getActionDate())));
                             skippedMilestones.clear();
                         }
                         milestones.add(status);
