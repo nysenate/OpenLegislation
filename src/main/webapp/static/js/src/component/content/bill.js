@@ -22,7 +22,15 @@ contentModule.factory('BillView', ['$resource', function($resource) {
     });
 }]);
 
-contentModule.controller('BillHomeCtrl', ['$scope', '$filter', '$location', 'BillListing', 'BillSearch', 'BillView',
+/** --- Parent Bill Controller --- */
+
+contentModule.controller('BillCtrl', ['$scope', function($scope) {
+
+}]);
+
+/** --- Bill Search Controller --- */
+
+contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$location', 'BillListing', 'BillSearch', 'BillView',
     function($scope, $filter, $location, BillListing, BillSearch, BillView) {
     $scope.searchTerm = '';
     $scope.sort = '';
@@ -74,7 +82,7 @@ contentModule.controller('BillHomeCtrl', ['$scope', '$filter', '$location', 'Bil
      * @param milestones
      * @returns {string}
      */
-    $scope.getMilestoneStatus = function(milestones) {
+    $scope.getMilestoneDesc = function(milestones) {
         if (milestones && milestones.size > 0) {
             var milestone = milestones.items.slice(-1)[0];
             var desc = "";
@@ -99,6 +107,13 @@ contentModule.controller('BillHomeCtrl', ['$scope', '$filter', '$location', 'Bil
         return "Introduced";
     };
 
+    $scope.getMilestoneDate = function(milestones) {
+        if (milestones && milestones.size > 0) {
+            var milestone = milestones.items.slice(-1)[0];
+            return moment(milestone.actionDate).format("MMMM DD, YYYY");
+        }
+    };
+
     /**
      * Gets the full bill view for a specified printNo and session year.
      * @param printNo {string}
@@ -118,6 +133,12 @@ contentModule.controller('BillHomeCtrl', ['$scope', '$filter', '$location', 'Bil
     $scope.clearSearch = function() {
         $scope.billResults = null;
     }
+}]);
+
+/** --- Bill View Controller --- */
+
+contentModule.controller('BillCtrl', ['$scope', function($scope) {
 
 }]);
+
 

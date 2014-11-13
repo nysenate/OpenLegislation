@@ -11,6 +11,10 @@ module.exports = function(grunt) {
         jsRoot: 'static/js',
         jsSource: '<%= jsRoot %>/src',
         jsDest: '<%= jsRoot %>/dest',
+        jspSource: 'WEB-INF/view',
+        tagSource: 'WEB-INF/tag',
+        tomcatWeb: '/usr/share/tomcat7/webapps/legislation',
+
 
         /** Compile SCSS files into css and place them into the css source directory */
         compass: {
@@ -66,11 +70,30 @@ module.exports = function(grunt) {
             }
         },
 
+        copy: {
+            css: {
+                files: [{
+                    expand:true, cwd: '<%= cssDest %>/', src: ['**'], filter: 'isFile',
+                    dest: '<%= tomcatWeb %>/static/css/dest/'
+                }]
+            },
+            jsp : {
+                files: [{
+                    expand:true, src: ['<%= jspSource %>/**', '<%= tagSource %>/**'], filter: 'isFile',
+                    dest: '<%= tomcatWeb %>'
+                }]
+            }
+        },
+
         /** Automatically run certain tasks based on file changes */
         watch: {
             css: {
                 files: ['<%= scssRoot %>/*.scss'],
-                tasks: ['compass', 'concat', 'cssmin']
+                tasks: ['compass', 'concat', 'cssmin', 'copy:css']
+            },
+            jsp: {
+                files: ['<%= jspSource %>/*.jsp', '<%= tagSource %>/.tag*'],
+                tasks: ['copy:jsp']
             }
         }
     });
