@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.agenda.search;
 
+import com.google.common.collect.Lists;
 import gov.nysenate.openleg.client.view.agenda.AgendaCommFlatView;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSearchDao
@@ -31,14 +33,6 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
     private static final Logger logger = LoggerFactory.getLogger(ElasticAgendaSearchDao.class);
 
     protected static final String agendaIndexName = SearchIndex.AGENDA.getIndexName();
-
-    @PostConstruct
-    public void init() {
-        if (!agendaIndexExists()) {
-            logger.warn("ElasticSearch Agenda index doesn't exist. Creating it now.");
-            createAgendaIndex();
-        }
-    }
 
     /** {@inheritDoc} */
     @Override
@@ -99,15 +93,8 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
         }
     }
 
-    public boolean agendaIndexExists() {
-        return indicesExist(agendaIndexName);
-    }
-
-    public void createAgendaIndex() {
-        createIndex(agendaIndexName);
-    }
-
-    public void deleteAgendaIndex() {
-        deleteIndex(agendaIndexName);
+    @Override
+    protected List<String> getIndices() {
+        return Arrays.asList(agendaIndexName);
     }
 }

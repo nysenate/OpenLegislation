@@ -99,6 +99,16 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
 
     /**
      * {@inheritDoc}
+     */
+    @Override
+    public List<CommitteeSessionId> getAllSessionIds() throws DataAccessException {
+        return jdbcNamed.query(SELECT_COMMITTEE_SESSION_IDS.getSql(schema(),
+                new OrderBy("session_year", SortOrder.ASC), LimitOffset.ALL),
+                new CommitteeSessionIdRowMapper());
+    }
+
+    /**
+     * {@inheritDoc}
      * @param committeeSessionId
      */
     @Override
@@ -357,14 +367,26 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
         }
     }
 
+    protected class CommitteeSessionIdRowMapper implements RowMapper<CommitteeSessionId>
+    {
+        @Override
+        public CommitteeSessionId mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new CommitteeSessionId(
+                    Chamber.getValue(rs.getString("chamber")),
+                    rs.getString("committee_name"),
+                    getSessionYearFromRs(rs, "session_year")
+            );
+        }
+    }
+
     protected class CommitteeVersionIdRowMapper implements RowMapper<CommitteeVersionId>
     {
+        protected CommitteeSessionIdRowMapper sessionIdRowMapper = new CommitteeSessionIdRowMapper();
+
         @Override
         public CommitteeVersionId mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new CommitteeVersionId(
-                    Chamber.getValue(rs.getString("chamber")),
-                    rs.getString("committee_name"),
-                    getSessionYearFromRs(rs, "session_year"),
+                    sessionIdRowMapper.mapRow(rs, rowNum),
                     getLocalDateTimeFromRs(rs, "created")
             );
         }

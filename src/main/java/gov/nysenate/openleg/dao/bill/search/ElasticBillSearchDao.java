@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.bill.search;
 
+import com.google.common.collect.Lists;
 import gov.nysenate.openleg.client.view.bill.BillView;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -31,14 +32,6 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchDao.class);
 
     protected static final String billIndexName = SearchIndex.BILL.getIndexName();
-
-    @PostConstruct
-    public void init() {
-        if (!billIndexExists()) {
-            logger.warn("ElasticSearch Bill index doesn't exist. Creating it now.");
-            createBillIndex();
-        }
-    }
 
     /** {@inheritDoc} */
     @Override
@@ -84,16 +77,12 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
         }
     }
 
-    public boolean billIndexExists() {
-        return indicesExist(billIndexName);
-    }
-
-    public void createBillIndex() {
-        createIndex(billIndexName);
-    }
-
-    public void deleteBillIndex() {
-        deleteIndex(billIndexName);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected List<String> getIndices() {
+        return Lists.newArrayList(billIndexName);
     }
 
     protected BaseBillId getBaseBillIdFromHit(SearchHit hit) {
