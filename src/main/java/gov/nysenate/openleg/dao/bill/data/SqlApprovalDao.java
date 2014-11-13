@@ -113,7 +113,7 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao {
         params.addValue("chapter", approvalMessage.getChapter());
         params.addValue("signer", approvalMessage.getSigner());
         params.addValue("memoText", approvalMessage.getMemoText());
-        params.addValue("lastFragmentId", sobiFragment.getFragmentId());
+        addLastFragmentParam(sobiFragment, params);
         return params;
     }
 }
