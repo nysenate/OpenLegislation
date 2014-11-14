@@ -42,7 +42,8 @@ public class SenatorsServlet extends HttpServlet
         }
 
         ObjectMapper mapper = new ObjectMapper();
-        File senatorsBase = new File(SenatorsServlet.class.getClassLoader().getResource("data/senators/").getPath());
+
+        File senatorsBase = new File(java.net.URLDecoder.decode(SenatorsServlet.class.getClassLoader().getResource("data/senators/").getPath()));
         File senatorsDir = new File(senatorsBase, String.valueOf(sessionYear));
         if (!senatorsDir.exists()) senatorsDir.mkdirs();
 
