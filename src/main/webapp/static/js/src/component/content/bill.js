@@ -24,14 +24,19 @@ contentModule.factory('BillView', ['$resource', function($resource) {
 
 /** --- Parent Bill Controller --- */
 
-contentModule.controller('BillCtrl', ['$scope', function($scope) {
+contentModule.controller('BillCtrl', ['$scope', '$route', function($scope, $route) {
+    $scope.route = 'hey';
 
+    this.init = function() {
+        console.log("SUP");
+    }();
 }]);
 
 /** --- Bill Search Controller --- */
 
-contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$location', 'BillListing', 'BillSearch', 'BillView',
-    function($scope, $filter, $location, BillListing, BillSearch, BillView) {
+contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location',
+                                            'BillListing', 'BillSearch', 'BillView',
+    function($scope, $filter, $routeParams, $location, BillListing, BillSearch, BillView) {
     $scope.searchTerm = '';
     $scope.sort = '';
     $scope.billResults = {};
@@ -40,38 +45,37 @@ contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$location', 'B
     $scope.totalResults = 0;
     $scope.limit = 10;
     $scope.offset = 1;
-    $scope.page = 1;
+    $scope.currentPage = 1;
+    $scope.performedSearch = false;
 
-    $scope.VIEWS = {SEARCH: 'search', BILL: 'bill'};
-    $scope.view = $scope.VIEWS.BILL;
+    $scope.init = function() {
+        $scope.searchTerm = $routeParams.search;
+        //$scope.offset = $scope.computeOffset($routeParams.page);
+        $scope.doSearch();
+    };
 
-    /**
-     * Watch for changes to the query in the search bar and perform the search when a new term is detected.
-     */
-    $scope.$watch('searchTerm', function(newTerm, oldTerm) {
-        if (newTerm && newTerm != oldTerm && newTerm.trim() != '') {
-            $scope.page = 1;
-            $scope.search();
-        }
-    });
+    $scope.pageChange = function(page) {
+        console.log("page change " + page);
+    };
 
-    $scope.$watch('page', function(newPage, oldPage) {
-        if (newPage != oldPage) {
-            $scope.offset = $scope.limit * newPage;
-            $scope.search();
-        }
-    });
+    $scope.isValidSearchTerm = function() {
+        return $scope.searchTerm != null && $scope.searchTerm.trim() != '';
+    };
 
     $scope.search = function() {
-        if ($scope.searchTerm != null && $scope.searchTerm.trim() != '') {
+        $location.search("search", $scope.searchTerm);
+    };
+
+    $scope.doSearch = function() {
+        if ($scope.isValidSearchTerm()) {
             $scope.billResults = BillSearch.get(
                 {term: $scope.searchTerm, sort: $scope.sort, limit: $scope.limit, offset: $scope.offset},
                 function() {
-                    $location.search("search", $scope.searchTerm);
                     if ($scope.billResults.total != $scope.totalResults) {
                         $scope.totalResults = $scope.billResults.total;
                     }
-                    $scope.view = $scope.VIEWS.SEARCH;
+                    $scope.currentPage = $routeParams.page;
+                    $scope.performedSearch = true;
                 });
         }
     };
@@ -124,7 +128,6 @@ contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$location', 'B
             $scope.billViewResult = BillView.get({printNo: printNo, session: session}, function() {
                 if ($scope.billViewResult.success) {
                     $scope.billView = $scope.billViewResult.result;
-                    $scope.view = $scope.VIEWS.BILL;
                 }
             });
         }
@@ -132,7 +135,13 @@ contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$location', 'B
 
     $scope.clearSearch = function() {
         $scope.billResults = null;
-    }
+    };
+
+    $scope.computeOffset = function(page) {
+        return ((page - 1) * $scope.limit) + 1;
+    };
+
+    $scope.init();
 }]);
 
 /** --- Bill View Controller --- */

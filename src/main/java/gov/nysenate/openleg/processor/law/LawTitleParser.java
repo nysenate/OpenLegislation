@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.law;
 
+import gov.nysenate.openleg.model.law.LawChapterType;
 import gov.nysenate.openleg.model.law.LawDocInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -13,24 +14,70 @@ public class LawTitleParser
 {
     private static final Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
 
-    /** The law files are most likely sent in CP850 encoding. */
-    protected static Charset LAWFILE_CHARSET = Charset.forName("CP850");
-
     protected static String sectionTitlePattern = "(?i)((?:Section|§)\\s*%s).?\\s(.+?)\\.(.*)";
-
-    /** --- Instance Variables --- */
-
-    /** --- Constructors --- */
+    protected static Pattern articleTitlePattern = Pattern.compile("(ARTICLE.+?\\\\n)([ A-Z-.:;,\\\\n]+)");
 
     /** --- Methods --- */
 
+    public static String extractTitle(LawDocInfo lawDocInfo, String bodyText) {
+        String title = "";
+        if (lawDocInfo != null) {
+            switch (lawDocInfo.getDocType()) {
+                case CHAPTER:
+                    title = extractTitleFromChapter(lawDocInfo);
+                    break;
+                case ARTICLE:
+                    title = extractTitleFromArticle(lawDocInfo, bodyText);
+                    break;
+                case TITLE:
+                case SUBTITLE:
+                case PART:
+                case SUB_PART:
+                    break;
+                case SECTION:
+                    title = extractTitleFromSection(lawDocInfo, bodyText);
+                    break;
+                case INDEX:
+                    break;
+                case CONTENTS:
+                    break;
+                default: break;
+            }
+        }
+        return title;
+    }
+
     /**
-     *
-     *
-     * @param text
-     * @return
+     * Extract the chapter title using the mapping of law id to LawChapterType if possible.
      */
-    public static String extractTitleFromSection(LawDocInfo docInfo, String text) {
+    protected static String extractTitleFromChapter(LawDocInfo docInfo) {
+        try {
+            LawChapterType chapterType = LawChapterType.valueOf(docInfo.getLawId());
+            return chapterType.getName();
+        }
+        catch (IllegalArgumentException ex) {
+            return docInfo.getLawId() + " Law";
+        }
+    }
+
+    /**
+     * Parses the title for an article by assuming that most article titles are presented in all caps.
+     */
+    protected static String extractTitleFromArticle(LawDocInfo lawDocInfo, String bodyText) {
+        Matcher articleTitleMatcher = articleTitlePattern.matcher(bodyText);
+        if (articleTitleMatcher.find()) {
+            String title = articleTitleMatcher.group(2).replaceAll("\\\\n", "").replaceAll("\\s{2,}", " ");
+            // Chop the last character off
+            return title.substring(0, title.length() - 1).trim();
+        }
+        return "";
+    }
+
+    /**
+     * Extract the title from the section document using a common pattern if applicable or just getting the
+     * first line or so.
+     */
+    protected static String extractTitleFromSection(LawDocInfo docInfo, String text) {
         String title = "";
         if (text != null && !text.isEmpty()) {
             int asteriskLoc = docInfo.getLocationId().indexOf("*");
@@ -44,12 +91,10 @@ public class LawTitleParser
                 title = titleMatcher.group(2).replaceAll("-\\\\n\\s*", "").replaceAll("\\\\n?\\s*", " ");
             }
             else {
-                logger.warn("Section title pattern mismatch for {} with locId {} against {}",docInfo.getDocumentId(), locationId, trimText);
+                logger.warn("Section title pattern mismatch for document id {}", docInfo.getDocumentId());
+                title = trimText;
             }
         }
         return StringUtils.abbreviate(title, 140);
     }
-
-    /** --- Internal Methods --- */
-
 }

@@ -74,7 +74,7 @@ public class LawBuilder
      * @param isNewDoc boolean - Set to true if this is a new document and should be persisted.
      */
     public void addInitialBlock(LawBlock block, boolean isNewDoc) {
-        LawDocument lawDoc = new LawDocument(block);
+        final LawDocument lawDoc = new LawDocument(block);
         boolean isRootDoc = false;
 
         // For the initial law dumps, the first block that is processed for a law (usually) becomes the root node.
@@ -103,7 +103,6 @@ public class LawBuilder
                 logger.debug("Processing section {}", lawDoc.getDocumentId());
                 lawDoc.setDocType(LawDocumentType.SECTION);
                 lawDoc.setDocTypeId(lawDoc.getLocationId());
-                lawDoc.setTitle(LawTitleParser.extractTitleFromSection(lawDoc, block.getText().toString()));
                 if (isNewDoc) {
                     lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
                 }
@@ -124,6 +123,9 @@ public class LawBuilder
                 addDocument(lawDoc, isNewDoc);
             }
         }
+
+        // Set the title for the document
+        lawDoc.setTitle(LawTitleParser.extractTitle(lawDoc, lawDoc.getText()));
     }
 
     /**
@@ -143,6 +145,8 @@ public class LawBuilder
                 if (existingDocInfo.isPresent()) {
                     existingDocInfo.get().setPublishedDate(block.getPublishedDate());
                     LawDocument lawDoc = new LawDocument(existingDocInfo.get(), block.getText().toString());
+                    // Re-parse the titles
+                    lawDoc.setTitle(LawTitleParser.extractTitle(lawDoc, block.getText().toString()));
                     lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
                     logger.info("Updated {}", lawDoc.getDocumentId());
                 }
@@ -344,6 +348,7 @@ public class LawBuilder
         dummyParent.setDocTypeId("ROOT");
         dummyParent.setPublishedDate(block.getPublishedDate());
         dummyParent.setText("");
+        dummyParent.setTitle(LawTitleParser.extractTitleFromChapter(dummyParent));
         return dummyParent;
     }
 }
