@@ -57,7 +57,7 @@ public class CalendarSearchCtrl extends BaseCtrl{
                                         @RequestParam(defaultValue = "full") String calendarType,
                                         @RequestParam(defaultValue = "false") boolean full,
                                         WebRequest webRequest) throws SearchException, InvalidRequestParameterException {
-        LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
+        LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return getCalendarSearchResponse(term, sort, calendarType, full, limitOffset, null);
     }
 
@@ -81,7 +81,7 @@ public class CalendarSearchCtrl extends BaseCtrl{
                                               @RequestParam(defaultValue = "full") String calendarType,
                                               @RequestParam(defaultValue = "false") boolean full,
                                       WebRequest webRequest) throws SearchException, InvalidRequestParameterException {
-        LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
+        LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return getCalendarSearchResponse(term, sort, calendarType, full, limitOffset, year);
     }
 

@@ -94,7 +94,7 @@ public class CommitteeGetCtrl extends BaseCtrl
                                                 @PathVariable int sessionYear,
                                                 @RequestParam(defaultValue = "false") boolean full,
                                                 WebRequest webRequest) {
-        LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.FIFTY);
+        LimitOffset limitOffset = getLimitOffset(webRequest, 50);
         Chamber chamber = Chamber.getValue(chamberName);
         SessionYear session = SessionYear.of(sessionYear);
         return ListViewResponse.of(
@@ -122,7 +122,7 @@ public class CommitteeGetCtrl extends BaseCtrl
                                             @PathVariable int sessionYear,
                                             @RequestParam(defaultValue = "false") boolean full,
                                             WebRequest webRequest) throws CommitteeNotFoundEx {
-        LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.FIFTY);
+        LimitOffset limitOffset = getLimitOffset(webRequest, 50);
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.DESC);
         CommitteeSessionId committeeSessionId =
                 new CommitteeSessionId(Chamber.getValue(chamberName), committeeName, SessionYear.of(sessionYear));

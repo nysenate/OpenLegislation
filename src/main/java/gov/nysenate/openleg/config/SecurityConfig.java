@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.config;
 
 import org.apache.shiro.realm.AuthenticatingRealm;
-import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.SimpleAccountRealm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
@@ -11,12 +10,10 @@ import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 
 @Configuration
@@ -31,8 +28,9 @@ public class SecurityConfig {
     public ShiroFilterFactoryBean shiroFilter() {
         ShiroFilterFactoryBean shiroFilter = new ShiroFilterFactoryBean();
         shiroFilter.setSecurityManager(securityManager());
-        shiroFilter.setLoginUrl("/admin/**");
-        shiroFilter.setSuccessUrl("/content");
+        shiroFilter.setLoginUrl("/login");
+        shiroFilter.setSuccessUrl("/");
+        shiroFilter.setUnauthorizedUrl("/unauthorized");
 
         HashMap <String, String> properties = new HashMap<>();
         properties.put("/admin/**", "authcBasic");
@@ -44,12 +42,11 @@ public class SecurityConfig {
 
     /**
      *
-     * @return
+     * @return DefaultAdvisorAutoProxyCreator
      */
     @Bean
     @DependsOn ("lifecycleBeanPostProcessor")
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator()
-    {
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
         return new DefaultAdvisorAutoProxyCreator();
     }
 
@@ -65,15 +62,13 @@ public class SecurityConfig {
      * Configures the shiro security manager with the instance of the active realm.
      */
     @Bean(name = "securityManager")
-    public WebSecurityManager securityManager() {
-        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-//        securityManager.setRealm(getAdminRealm());
-        return securityManager;
+    public DefaultWebSecurityManager securityManager() {
+        return new DefaultWebSecurityManager(simple());
     }
 
     /**
-     *
-     * @return
+     * Required for using Shiro annotations.
+     * @return LifecycleBeanPostProcessor
      */
     @Bean
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {

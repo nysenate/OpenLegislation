@@ -35,7 +35,7 @@ public class TranscriptGetCtrl extends BaseCtrl
                                              @RequestParam(defaultValue = "desc") String sort,
                                              @RequestParam(defaultValue = "false") boolean full,
                                              WebRequest webRequest) {
-        LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.FIFTY);
+        LimitOffset limOff = getLimitOffset(webRequest, 50);
         return ListViewResponse.of(
             transcriptDataService.getTranscriptIds(year, SortOrder.DESC, limOff).stream()
                 .map(tid -> new TranscriptIdView(tid))

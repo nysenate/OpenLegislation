@@ -53,9 +53,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     @Override
     public Bill getBill(BillId billId) {
         logger.trace("Fetching Bill {} from database...", billId);
-        final ImmutableParams baseParams = ImmutableParams.from(new MapSqlParameterSource()
-            .addValue("printNo", billId.getBasePrintNo())
-            .addValue("sessionYear", billId.getSession().getYear()));
+        final ImmutableParams baseParams = getBaseParams(billId);
         // Retrieve base Bill object
         Bill bill = getBaseBill(baseParams);
         // Fetch the amendments
@@ -102,9 +100,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     @Override
     public BillInfo getBillInfo(BillId billId) throws DataAccessException {
         logger.trace("Fetching BillInfo {} from database...", billId);
-        final ImmutableParams baseParams = ImmutableParams.from(new MapSqlParameterSource()
-                .addValue("printNo", billId.getBasePrintNo())
-                .addValue("sessionYear", billId.getSession().getYear()));
+        final ImmutableParams baseParams = getBaseParams(billId);
         // Retrieve base bill object
         Bill bill = getBaseBill(baseParams);
         bill.setSponsor(getBillSponsor(baseParams));
@@ -211,19 +207,19 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         );
     }
 
-    /** --- Internal Methods --- */
+    /** --- Methods --- */
 
     /**
      * Get the base bill instance for the base bill id in the params.
      */
-    private Bill getBaseBill(ImmutableParams baseParams) {
+    public Bill getBaseBill(ImmutableParams baseParams) {
         return jdbcNamed.queryForObject(SqlBillQuery.SELECT_BILL.getSql(schema()), baseParams, new BillRowMapper());
     }
 
     /**
      * Get a list of all the bill actions for the base bill id in the params.
      */
-    private List<BillAction> getBillActions(ImmutableParams baseParams) {
+    public List<BillAction> getBillActions(ImmutableParams baseParams) {
         OrderBy orderBy = new OrderBy("sequence_no", SortOrder.ASC);
         LimitOffset limOff = LimitOffset.ALL;
         return jdbcNamed.query(SqlBillQuery.SELECT_BILL_ACTIONS.getSql(schema(), orderBy, limOff), baseParams, new BillActionRowMapper());
@@ -232,7 +228,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Get previous session year bill ids for the base bill id in the params.
      */
-    private Set<BillId> getPrevVersions(ImmutableParams baseParams) {
+    public Set<BillId> getPrevVersions(ImmutableParams baseParams) {
         return new HashSet<>(jdbcNamed.query(SqlBillQuery.SELECT_BILL_PREVIOUS_VERSIONS.getSql(schema()), baseParams,
                              new BillPreviousVersionRowMapper()));
     }
@@ -240,21 +236,21 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Get a set of the committee ids which represent the committees the bill was previously referred to.
      */
-    private TreeSet<CommitteeVersionId> getBillCommittees(ImmutableParams baseParams){
+    public TreeSet<CommitteeVersionId> getBillCommittees(ImmutableParams baseParams){
         return new TreeSet<>(jdbcNamed.query(SqlBillQuery.SELECT_BILL_COMMITTEES.getSql(schema()), baseParams, new BillCommitteeRowMapper()));
     }
 
     /**
      * Get the same as bill ids for the bill id in the params.
      */
-    private Set<BillId> getSameAsBills(ImmutableParams amendParams) {
+    public Set<BillId> getSameAsBills(ImmutableParams amendParams) {
         return new HashSet<>(jdbcNamed.query(SqlBillQuery.SELECT_BILL_SAME_AS.getSql(schema()), amendParams, new BillSameAsRowMapper()));
     }
 
     /**
      * Get the bill sponsor for the bill id in the params. Return null if the sponsor has not been set yet.
      */
-    private BillSponsor getBillSponsor(ImmutableParams baseParams) {
+    public BillSponsor getBillSponsor(ImmutableParams baseParams) {
         try {
             return jdbcNamed.queryForObject(
                 SqlBillQuery.SELECT_BILL_SPONSOR.getSql(schema()), baseParams, new BillSponsorRowMapper(memberService));
@@ -267,7 +263,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Get the bill's milestone list.
      */
-    private LinkedList<BillStatus> getBillMilestones(ImmutableParams baseParams) {
+    public LinkedList<BillStatus> getBillMilestones(ImmutableParams baseParams) {
         OrderBy orderBy = new OrderBy("rank", SortOrder.ASC);
         return new LinkedList<>(jdbcNamed.query(SqlBillQuery.GET_BILL_MILESTONES.getSql(schema(), orderBy, LimitOffset.ALL), baseParams,
             (rs, rowNum) -> {
@@ -282,14 +278,14 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Fetch the collection of bill amendment references for the base bill id in the params.
      */
-    private List<BillAmendment> getBillAmendments(ImmutableParams baseParams) {
+    public List<BillAmendment> getBillAmendments(ImmutableParams baseParams) {
         return jdbcNamed.query(SqlBillQuery.SELECT_BILL_AMENDMENTS.getSql(schema()), baseParams, new BillAmendmentRowMapper());
     }
 
     /**
      * Get a map of the publish statuses for each amendment version.
      */
-    private TreeMap<Version, PublishStatus> getBillAmendPublishStatuses(ImmutableParams baseParams) {
+    public TreeMap<Version, PublishStatus> getBillAmendPublishStatuses(ImmutableParams baseParams) {
         BillAmendPublishStatusHandler handler = new BillAmendPublishStatusHandler();
         jdbcNamed.query(SqlBillQuery.SELECT_BILL_AMEND_PUBLISH_STATUSES.getSql(schema()), baseParams, handler);
         return handler.getPublishStatusMap();
@@ -298,21 +294,21 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Get the co sponsors listing for the bill id in the params.
      */
-    private List<Member> getCoSponsors(ImmutableParams amendParams) {
+    public List<Member> getCoSponsors(ImmutableParams amendParams) {
         return jdbcNamed.query(SqlBillQuery.SELECT_BILL_COSPONSORS.getSql(schema()), amendParams, new BillMemberRowMapper(memberService));
     }
 
     /**
      * Get the multi sponsors listing for the bill id in the params.
      */
-    private List<Member> getMultiSponsors(ImmutableParams amendParams) {
+    public List<Member> getMultiSponsors(ImmutableParams amendParams) {
         return jdbcNamed.query(SqlBillQuery.SELECT_BILL_MULTISPONSORS.getSql(schema()), amendParams, new BillMemberRowMapper(memberService));
     }
 
     /**
      * Get the votes for the bill id in the params.
      */
-    private List<BillVote> getBillVotes(ImmutableParams baseParams) {
+    public List<BillVote> getBillVotes(ImmutableParams baseParams) {
         BillVoteRowHandler voteHandler = new BillVoteRowHandler(memberService);
         jdbcNamed.query(SqlBillQuery.SELECT_BILL_VOTES.getSql(schema()), baseParams, voteHandler);
         return voteHandler.getBillVotes();
@@ -321,7 +317,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Get veto memos for the bill
      */
-    private Map<VetoId,VetoMessage> getBillVetoMessages(BaseBillId baseBillId) {
+    public Map<VetoId,VetoMessage> getBillVetoMessages(BaseBillId baseBillId) {
         try {
             return vetoDataService.getBillVetoes(baseBillId);
         }
@@ -330,7 +326,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         }
     }
 
-    private ApprovalMessage getBillApprovalMessage(BaseBillId baseBillId){
+    public ApprovalMessage getBillApprovalMessage(BaseBillId baseBillId){
         try{
             return approvalDataService.getApprovalMessage(baseBillId);
         }
@@ -342,7 +338,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Get a list of the associated committee agenda ids.
      */
-    private List<CommitteeAgendaId> getCommitteeAgendas(ImmutableParams baseParams) {
+    public List<CommitteeAgendaId> getCommitteeAgendas(ImmutableParams baseParams) {
         OrderBy orderBy = new OrderBy("aic.meeting_date_time", SortOrder.ASC);
         return jdbcNamed.query(SqlBillQuery.SELECT_COMM_AGENDA_IDS.getSql(schema(), orderBy, LimitOffset.ALL), baseParams,
             (rs, rowNum) ->
@@ -354,7 +350,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Get a list of the associated calendar ids.
      */
-    private List<CalendarId> getCalendars(ImmutableParams baseParams) {
+    public List<CalendarId> getCalendars(ImmutableParams baseParams) {
         OrderBy orderBy = new OrderBy("cs.calendar_year", SortOrder.ASC, "cs.calendar_no", SortOrder.ASC);
         return jdbcNamed.query(SqlBillQuery.SELECT_CALENDAR_IDS.getSql(schema(), orderBy, LimitOffset.ALL), baseParams,
             (rs, rowNum) -> {
@@ -365,7 +361,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Updates the bill's same as set.
      */
-    private void updateBillSameAs(BillAmendment amendment, SobiFragment sobiFragment, ImmutableParams amendParams) {
+    protected void updateBillSameAs(BillAmendment amendment, SobiFragment sobiFragment, ImmutableParams amendParams) {
         Set<BillId> existingSameAs = getSameAsBills(amendParams);
         if (!existingSameAs.equals(amendment.getSameAs())) {
             Set<BillId> newSameAs = new HashSet<>(amendment.getSameAs());
@@ -385,7 +381,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Updates the bill's action list into the database.
      */
-    private void updateActions(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
+    protected void updateActions(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
         List<BillAction> existingBillActions = getBillActions(billParams);
         List<BillAction> newBillActions = new ArrayList<>(bill.getActions());
         newBillActions.removeAll(existingBillActions);    // New actions to insert
@@ -405,7 +401,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update the bill's previous version set.
      */
-    private void updatePreviousBillVersions(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
+    protected void updatePreviousBillVersions(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
         Set<BillId> existingPrevBills = getPrevVersions(billParams);
         if (!existingPrevBills.equals(bill.getPreviousVersions())) {
             Set<BillId> newPrevBills = new HashSet<>(bill.getPreviousVersions());
@@ -425,7 +421,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update the bill's previous committee set.
      */
-    private void updateBillCommittees(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
+    protected void updateBillCommittees(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
         Set<CommitteeVersionId> existingComms = getBillCommittees(billParams);
         if (!existingComms.equals(bill.getPastCommittees())) {
             Set<CommitteeVersionId> newComms = new HashSet<>(bill.getPastCommittees());
@@ -445,14 +441,14 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update any veto messages through the veto data service
      */
-    private void updateVetoMessages(Bill bill, SobiFragment sobiFragment){
+    protected void updateVetoMessages(Bill bill, SobiFragment sobiFragment){
         vetoDataService.deleteBillVetoes(bill.getBaseBillId());
         for(VetoMessage vetoMessage : bill.getVetoMessages().values()){
             vetoDataService.updateVetoMessage(vetoMessage, sobiFragment);
         }
     }
 
-    private void updateApprovalMessage(Bill bill, SobiFragment sobiFragment){
+    protected void updateApprovalMessage(Bill bill, SobiFragment sobiFragment){
         approvalDataService.deleteApprovalMessage(bill.getBaseBillId());
         if(bill.getApprovalMessage() != null){
             approvalDataService.updateApprovalMessage(bill.getApprovalMessage(), sobiFragment);
@@ -462,7 +458,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update the bill's sponsor information.
      */
-    private void updateBillSponsor(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
+    protected void updateBillSponsor(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
         if (bill.getSponsor() != null) {
             MapSqlParameterSource params = getBillSponsorParams(bill, sobiFragment);
             if (jdbcNamed.update(SqlBillQuery.UPDATE_BILL_SPONSOR.getSql(schema()), params) == 0) {
@@ -477,7 +473,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update the bill milestones list.
      */
-    private void updateBillMilestones(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
+    protected void updateBillMilestones(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
         List<BillStatus> existingMilestones = getBillMilestones(billParams);
         List<BillStatus> newMilestones = bill.getMilestones();
         // If old list is not the same as the new list, wipe the old and insert the new. We won't
@@ -495,7 +491,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update the bill's amendment publish statuses.
      */
-    private void updateBillAmendPublishStatus(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
+    protected void updateBillAmendPublishStatus(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
         Map<Version, PublishStatus> existingPubStatus = getBillAmendPublishStatuses(billParams);
         Map<Version, PublishStatus> newPubStatus = bill.getAmendPublishStatusMap();
         MapDifference<Version, PublishStatus> diff = Maps.difference(existingPubStatus, newPubStatus);
@@ -526,7 +522,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update the bill's co sponsor list by deleting, inserting, and updating as needed.
      */
-    private void updateBillCosponsor(BillAmendment billAmendment, SobiFragment sobiFragment, ImmutableParams amendParams) {
+    protected void updateBillCosponsor(BillAmendment billAmendment, SobiFragment sobiFragment, ImmutableParams amendParams) {
         List<Member> existingCoSponsors = getCoSponsors(amendParams);
         if (!existingCoSponsors.equals(billAmendment.getCoSponsors())) {
             MapDifference<Member, Integer> diff = difference(existingCoSponsors, billAmendment.getCoSponsors(), 1);
@@ -553,7 +549,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update the bill's multi-sponsor list by deleting, inserting, and updating as needed.
      */
-    private void updateBillMultiSponsor(BillAmendment billAmendment, SobiFragment sobiFragment, ImmutableParams amendParams) {
+    protected void updateBillMultiSponsor(BillAmendment billAmendment, SobiFragment sobiFragment, ImmutableParams amendParams) {
         List<Member> existingMultiSponsors = getMultiSponsors(amendParams);
         if (!existingMultiSponsors.equals(billAmendment.getMultiSponsors())) {
             MapDifference<Member, Integer> diff = difference(existingMultiSponsors, billAmendment.getMultiSponsors(), 1);
@@ -580,7 +576,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Update the bill amendment's list of votes.
      */
-    private void updateBillVotes(BillAmendment billAmendment, SobiFragment sobiFragment, ImmutableParams amendParams) {
+    protected void updateBillVotes(BillAmendment billAmendment, SobiFragment sobiFragment, ImmutableParams amendParams) {
         List<BillVote> existingBillVotes = getBillVotes(amendParams);
         List<BillVote> newBillVotes = new ArrayList<>(billAmendment.getVotesList());
         newBillVotes.removeAll(existingBillVotes);                 // New votes to insert/update
@@ -763,6 +759,12 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     }
 
     /** --- Param Source Methods --- */
+
+    public ImmutableParams getBaseParams(BillId billId) {
+        return ImmutableParams.from(new MapSqlParameterSource()
+                .addValue("printNo", billId.getBasePrintNo())
+                .addValue("sessionYear", billId.getSession().getYear()));
+    }
 
     /**
      * Returns a MapSqlParameterSource with columns mapped to Bill values for use in update/insert queries on

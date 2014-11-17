@@ -2,11 +2,8 @@ package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
 import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.model.bill.BillStatusType;
-
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -16,7 +13,7 @@ import static java.util.stream.Collectors.toList;
 public class BillInfoView extends SimpleBillInfoView implements ViewObject
 {
     protected String summary;
-    protected boolean passed;
+    protected boolean signed;
     protected SponsorView sponsor;
     protected BillStatusView status;
     protected ListView<BillStatusView> milestones;
@@ -26,7 +23,7 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
         super(billInfo);
         if (billInfo != null) {
             summary = billInfo.getSummary();
-            passed = !billInfo.getMilestones().isEmpty() &&
+            signed = !billInfo.getMilestones().isEmpty() &&
                 billInfo.getMilestones().getLast().getStatusType().equals(BillStatusType.SIGNED_BY_GOV);
             sponsor = new SponsorView(billInfo.getSponsor());
             billType = new BillTypeView(billInfo.getBillId().getBillType());
@@ -40,8 +37,8 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
         return summary;
     }
 
-    public boolean isPassed() {
-        return passed;
+    public boolean isSigned() {
+        return signed;
     }
 
     public SponsorView getSponsor() {

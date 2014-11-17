@@ -54,7 +54,7 @@ public class CalendarGetCtrl extends BaseCtrl
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) {
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
-        LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
+        LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return ListViewResponse.of(
                 calendarDataService.getCalendars(year, sortOrder, limitOffset).stream()
                         .map(full ? CalendarView::new : SimpleCalendarView::new)
@@ -79,7 +79,7 @@ public class CalendarGetCtrl extends BaseCtrl
                                        @RequestParam(defaultValue = "false") boolean full,
                                        WebRequest webRequest) {
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
-        LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
+        LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return ListViewResponse.of(
                 calendarDataService.getActiveLists(year, sortOrder, limitOffset).stream()
                         .map(full ? ActiveListView::new : SimpleActiveListView::new)
@@ -104,7 +104,7 @@ public class CalendarGetCtrl extends BaseCtrl
                                                  @RequestParam(defaultValue = "false") boolean full,
                                                  WebRequest webRequest) {
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.ASC);
-        LimitOffset limitOffset = getLimitOffset(webRequest, LimitOffset.HUNDRED);
+        LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return ListViewResponse.of(
                 calendarDataService.getCalendarSupplementals(year, sortOrder, limitOffset).stream()
                         .map(full ? CalendarSupView::new : SimpleCalendarSupView::new)

@@ -1,3 +1,7 @@
+# --- Api --- #
+
+default.api.secret =
+
 # --- Data Directory Configuration --- #
 
 env.directory = /data/openleg

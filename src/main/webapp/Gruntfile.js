@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         jsSource: '<%= jsRoot %>/src',
         jsDest: '<%= jsRoot %>/dest',
         jspSource: 'WEB-INF/view',
-        tagSource: 'WEB-INF/tag',
+        tagSource: 'WEB-INF/tags',
         tomcatWeb: '/usr/share/tomcat7/webapps/legislation',
 
 
@@ -54,7 +54,6 @@ module.exports = function(grunt) {
                 },
                 files: {
                     '<%= jsDest %>/vendor.min.js': [
-                        '<%= bowerRoot %>/modernizr/modernizr.js',
                         '<%= bowerRoot %>/jquery/dist/jquery.min.js',
                         '<%= bowerRoot %>/foundation/js/foundation.min.js',
                         '<%= bowerRoot %>/angular/angular.min.js',
@@ -77,6 +76,11 @@ module.exports = function(grunt) {
                     dest: '<%= tomcatWeb %>/static/css/dest/'
                 }]
             },
+            js: {
+                files: [{
+                    expand:true, src: ['<%= jsSource %>/**', '<%= jsDest %>/**'], filter: 'isFile',
+                    dest: '<%= tomcatWeb %>'}]
+            },
             jsp : {
                 files: [{
                     expand:true, src: ['<%= jspSource %>/**', '<%= tagSource %>/**'], filter: 'isFile',
@@ -92,8 +96,12 @@ module.exports = function(grunt) {
                 tasks: ['compass', 'concat', 'cssmin', 'copy:css']
             },
             jsp: {
-                files: ['<%= jspSource %>/*.jsp', '<%= tagSource %>/.tag*'],
+                files: ['<%= jspSource %>/**/*.jsp', '<%= tagSource %>/**/*.tag'],
                 tasks: ['copy:jsp']
+            },
+            js: {
+                files: ['<%= jsSource %>/**/*.js'],
+                tasks: ['copy:js']
             }
         }
     });
@@ -106,5 +114,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('default', ['compass', 'concat', 'cssmin', 'uglify']);
+    grunt.registerTask('default', ['compass', 'concat', 'cssmin', 'uglify', 'copy']);
 };

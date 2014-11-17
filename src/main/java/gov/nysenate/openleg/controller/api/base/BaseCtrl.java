@@ -11,6 +11,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
@@ -57,23 +58,24 @@ public abstract class BaseCtrl
      * Returns the given default limit offset if no such parameters exist
      *
      * @param webRequest
-     * @param defaultLimitOffset
+     * @param defaultLimit - The default limit to use, 0 for no limit
      * @return LimitOffset
      */
-    protected LimitOffset getLimitOffset(WebRequest webRequest, LimitOffset defaultLimitOffset) {
-        try {
+    protected LimitOffset getLimitOffset(WebRequest webRequest, int defaultLimit) {
+        int limit = defaultLimit;
+        int offset = 0;
+        if (webRequest.getParameter("limit") != null) {
             if (webRequest.getParameter("limit").equalsIgnoreCase("all")) {
-                return LimitOffset.ALL;
+                limit = 0;
             }
-            if (!webRequest.getParameterMap().containsKey("offset")) {
-                return new LimitOffset(Integer.parseInt(webRequest.getParameter("limit")));
+            else {
+                limit = NumberUtils.toInt(webRequest.getParameter("limit"), defaultLimit);
             }
-            return new LimitOffset(Integer.parseInt(webRequest.getParameter("limit")),
-                    Integer.parseInt(webRequest.getParameter("offset")));
         }
-        catch (Exception ex) {
-            return defaultLimitOffset;
+        if (webRequest.getParameter("offset") != null) {
+            offset = NumberUtils.toInt(webRequest.getParameter("offset"), 0);
         }
+        return new LimitOffset(limit, offset);
     }
 
     /**

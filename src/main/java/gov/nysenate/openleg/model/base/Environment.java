@@ -26,6 +26,11 @@ public class Environment
     private File stagingDirectory;
     private File archiveDirectory;
 
+    /** --- Auth Stuff --- */
+
+    @Value("${default.api.secret}")
+    private String defaultApiSecret;
+
     /** --- Search Index settings --- */
 
     @Value("${elastic.indexing.enabled:true}")
@@ -103,5 +108,9 @@ public class Environment
 
     public void setSobiBatchSize(int sobiBatchSize) {
         this.sobiBatchSize = sobiBatchSize;
+    }
+
+    public String getDefaultApiSecret() {
+        return defaultApiSecret;
     }
 }

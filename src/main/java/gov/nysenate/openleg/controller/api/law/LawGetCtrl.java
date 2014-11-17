@@ -42,7 +42,7 @@ public class LawGetCtrl extends BaseCtrl
 
     @RequestMapping("")
     public BaseResponse getLaws(WebRequest webRequest) {
-        LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.ALL);
+        LimitOffset limOff = getLimitOffset(webRequest, 0);
         List<LawInfo> lawInfoList = lawDataService.getLawInfos();
         ListViewResponse<LawInfoView> response = ListViewResponse.of(
             LimitOffset.limitList(lawInfoList.stream().map(li -> new LawInfoView(li)).collect(toList()), limOff),
