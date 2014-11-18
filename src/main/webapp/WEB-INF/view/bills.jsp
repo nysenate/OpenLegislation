@@ -4,7 +4,7 @@
 
 <% request.setAttribute("ctxPath", request.getContextPath()); %>
 
-<open-layout:head title="Content">
+<open-layout:head title="OpenLegislation 2.0">
     <script src="${ctxPath}/static/js/src/component/content/content.js"></script>
     <script src="${ctxPath}/static/js/src/component/content/bill/bill-home.js"></script>
 </open-layout:head>
@@ -17,7 +17,7 @@
                     <i style="font-size:1.5em;color:white;" class="icon-search"></i>
                 </div>
                 <label>
-                    <input ng-model="searchTerm" ng-model-options="{debounce: 1000}" placeholder="Search for NYS Bills and Resolutions"
+                    <input ng-model="searchTerm" ng-model-options="{debounce: 500}" placeholder="Search for NYS Bills and Resolutions"
                            type="text" style="width:100%;font-size:1.3em;margin-bottom:0;text-indent: 60px;height:42px;"/>
                 </label>
             </div>
@@ -62,7 +62,7 @@
                     </div>
                     <div class="columns large-3 hide-for-medium-down" style="height: 70px; padding-right:25px;text-align: center;">
                         <div>
-                            <ul class="large-block-grid-8 bill-milestone-list">
+                            <ul ng-show="bill.billType.resolution == false" class="large-block-grid-8 bill-milestone-list">
                                 <li ng-class="{'met': (bill.milestones.size > 0)}"></li>
                                 <li ng-class="{'met': (bill.milestones.size > 1)}"></li>
                                 <li ng-class="{'met': (bill.milestones.size > 2)}"></li>
@@ -72,7 +72,12 @@
                                 <li ng-class="{'met': (bill.milestones.size > 6)}"></li>
                                 <li ng-class="{'met': (bill.milestones.size > 7)}"></li>
                             </ul>
-                            <span class="small" style="text-transform: capitalize;font-weight:600;color:#444;">{{getMilestoneStatus(bill.milestones)}}</span>
+                            <ul ng-show="bill.billType.resolution == true" class="large-block-grid-2 bill-milestone-list">
+                                <li class="met"></li>
+                                <li ng-class="{'met': (bill.milestones.size > 0)}"></li>
+                            </ul>
+                            <span class="text-small" style="text-transform: capitalize;font-weight:600;color:#444;">{{getMilestoneDesc(bill.milestones)}}</span><br/>
+                            <span class="text-small" style="color:#444;">{{getMilestoneDate(bill.milestones)}}</span>
                         </div>
                     </div>
                 </div>

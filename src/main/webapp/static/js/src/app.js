@@ -24,6 +24,22 @@ openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
     $routeProvider.when(ctxPath + '/bills/:session/:printNo', {
         templateUrl: ctxPath + '/partial/content/bill-view'
     });
+    /** --- Agendas --- */
+    $routeProvider.when(ctxPath + '/agendas', {
+        templateUrl: ctxPath + '/partial/content/..'
+    });
+    /** --- Calendars --- */
+    $routeProvider.when(ctxPath + '/calendars', {
+        templateUrl: ctxPath + '/partial/content/..'
+    });
+    /** --- Laws --- */
+    $routeProvider.when(ctxPath + '/laws', {
+        templateUrl: ctxPath + '/partial/content/..'
+    });
+    /** --- Transcripts --- */
+    $routeProvider.when(ctxPath + '/transcripts', {
+        templateUrl: ctxPath + '/partial/content/..'
+    });
     /** --- Admin Reports --- */
     $routeProvider.when(ctxPath + '/admin/report', {
         redirectTo: ctxPath + '/admin/report/daybreak'
@@ -39,4 +55,17 @@ openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 
     $locationProvider.html5Mode(true);
     $locationProvider.hashPrefix('!');
+}]);
+
+openApp.controller('TopNavCtrl', ['$scope', '$route', function($scope, $route) {
+
+    $scope.currActiveLink;
+
+    $scope.$on('$routeChangeSuccess', function(event, r) {
+        if ($scope.currActiveLink != r.$$route.originalPath) {
+            $("nav a").parent().removeClass("active");
+            $("nav a[href='" + r.$$route.originalPath + "']").parent().addClass("active");
+            $scope.currActiveLink = r.$$route.originalPath;
+        }
+    });
 }]);

@@ -5,7 +5,7 @@
 <% request.setAttribute("ctxPath", request.getContextPath()); %>
 
 <!doctype html>
-<html id="ng-app" ng-app="open" class="no-js" lang="en">
+<html id="ng-app" class="no-js" lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

@@ -1,12 +1,12 @@
 var contentModule = angular.module('content');
 
-contentModule.factory('BillListing', ['$resource', function($resource) {
+contentModule.factory('BillListingApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/:sessionYear', {
         sessionYear: '@sessionYear'
     });
 }]);
 
-contentModule.factory('BillSearch', ['$resource', function($resource) {
+contentModule.factory('BillSearchApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/search/?term=:term&sort=:sort&limit=:limit&offset=:offset', {
         term: '@term',
         sort: '@sort',
@@ -15,7 +15,7 @@ contentModule.factory('BillSearch', ['$resource', function($resource) {
     });
 }]);
 
-contentModule.factory('BillView', ['$resource', function($resource) {
+contentModule.factory('BillViewApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/:session/:printNo', {
         session: '@session',
         printNo: '@printNo'
@@ -25,18 +25,14 @@ contentModule.factory('BillView', ['$resource', function($resource) {
 /** --- Parent Bill Controller --- */
 
 contentModule.controller('BillCtrl', ['$scope', '$route', function($scope, $route) {
-    $scope.route = 'hey';
 
-    this.init = function() {
-        console.log("SUP");
-    }();
 }]);
 
 /** --- Bill Search Controller --- */
 
 contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location',
-                                            'BillListing', 'BillSearch', 'BillView',
-    function($scope, $filter, $routeParams, $location, BillListing, BillSearch, BillView) {
+                                            'BillListingApi', 'BillSearchApi',
+    function($scope, $filter, $routeParams, $location, BillListing, BillSearch) {
     $scope.searchTerm = '';
     $scope.sort = '';
     $scope.billResults = {};
@@ -54,9 +50,11 @@ contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams',
         $scope.doSearch();
     };
 
-    $scope.pageChange = function(page) {
-        console.log("page change " + page);
-    };
+    $scope.$watch('currentPage', function(newPage, oldPage) {
+        if (newPage != oldPage) {
+            $scope.doSearch();
+        }
+    });
 
     $scope.isValidSearchTerm = function() {
         return $scope.searchTerm != null && $scope.searchTerm.trim() != '';
@@ -68,14 +66,12 @@ contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams',
 
     $scope.doSearch = function() {
         if ($scope.isValidSearchTerm()) {
-            $scope.billResults = BillSearch.get(
-                {term: $scope.searchTerm, sort: $scope.sort, limit: $scope.limit, offset: $scope.offset},
+            $scope.billResults = BillSearch.get({
+                term: $scope.searchTerm, sort: $scope.sort, limit: $scope.limit, offset: $scope.computeOffset($scope.currentPage)},
                 function() {
-                    if ($scope.billResults.total != $scope.totalResults) {
-                        $scope.totalResults = $scope.billResults.total;
-                    }
-                    $scope.currentPage = $routeParams.page;
+                    $scope.totalResults = $scope.billResults.total;
                     $scope.performedSearch = true;
+                    setTimeout(function() {$(".bill-result-anim").addClass("show")}, 0);
                 });
         }
     };
@@ -146,8 +142,14 @@ contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams',
 
 /** --- Bill View Controller --- */
 
-contentModule.controller('BillCtrl', ['$scope', function($scope) {
+contentModule.controller('BillViewCtrl', ['$scope', '$location', 'BillViewApi',
+    function($scope, BillViewApi) {
+    $scope.basePrintNo;
+    $scope.session;
 
+    $scope.init = function() {
+
+    }
 }]);
 
 
