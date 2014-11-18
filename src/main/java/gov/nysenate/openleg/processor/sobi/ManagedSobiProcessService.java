@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,6 +68,28 @@ public class ManagedSobiProcessService implements SobiProcessService
 
     /** {@inheritDoc} */
     @Override
+    public int collate() {
+        return collateSobiFiles();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int ingest() {
+        return processPendingFragments(SobiProcessOptions.builder().build());
+    }
+
+    @Override
+    public String getCollateType() {
+        return "sobi file";
+    }
+
+    @Override
+    public String getIngestType() {
+        return "sobi fragment";
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public int collateSobiFiles() {
         try {
             int totalCollated = 0;
@@ -112,8 +131,8 @@ public class ManagedSobiProcessService implements SobiProcessService
 
     /** {@inheritDoc} */
     @Override
-    public void processFragments(List<SobiFragment> fragments, SobiProcessOptions options) {
-        logger.info((fragments.isEmpty()) ? "No more fragments to process"
+    public int processFragments(List<SobiFragment> fragments, SobiProcessOptions options) {
+        logger.debug((fragments.isEmpty()) ? "No more fragments to process"
                                           : "Iterating through {} fragments", fragments.size());
         for (SobiFragment fragment : fragments) {
             // Hand off processing to specific implementations based on fragment type.
@@ -133,6 +152,8 @@ public class ManagedSobiProcessService implements SobiProcessService
             f.setPendingProcessing(false);
             sobiDao.updateSobiFragment(f);
         });
+
+        return fragments.size();
     }
 
     /** {@inheritDoc}
@@ -140,14 +161,17 @@ public class ManagedSobiProcessService implements SobiProcessService
      *  Perform the operation in small batches so memory is not saturated.
      */
     @Override
-    public void processPendingFragments(SobiProcessOptions options) {
+    public int processPendingFragments(SobiProcessOptions options) {
         List<SobiFragment> fragments;
+        int processCount = 0;
         do {
             ImmutableSet<SobiFragmentType> allowedTypes = options.getAllowedFragmentTypes();
             fragments = sobiDao.getPendingSobiFragments(allowedTypes, SortOrder.ASC, new LimitOffset(sobiBatchSize));
-            processFragments(fragments, options);
+            processCount += processFragments(fragments, options);
         }
         while (!fragments.isEmpty());
+
+        return processCount;
     }
 
     /** {@inheritDoc} */

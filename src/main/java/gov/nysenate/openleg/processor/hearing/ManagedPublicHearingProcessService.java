@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Service
 public class ManagedPublicHearingProcessService implements PublicHearingProcessService
@@ -25,6 +27,24 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
     private PublicHearingParser publicHearingParser;
 
     /** --- Implemented Methods --- */
+
+    /** {@inheritDoc} */
+    @Override
+    public int collate() {
+        return collatePublicHearingFiles();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int ingest() {
+        return processPendingPublicHearingFiles();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getCollateType() {
+        return "public hearing file";
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -59,7 +79,8 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
 
     /** {@inheritDoc} */
     @Override
-    public void processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles) {
+    public int processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles) {
+        int processCount = 0;
         for (PublicHearingFile file : publicHearingFiles) {
             try {
                 logger.info("Processing PublicHearingFile: " + file.getFileName());
@@ -68,22 +89,26 @@ public class ManagedPublicHearingProcessService implements PublicHearingProcessS
                 file.setPendingProcessing(false);
                 file.setProcessedDateTime(LocalDateTime.now());
                 publicHearingFileDao.updatePublicHearingFile(file);
+                processCount++;
             }
             catch (IOException ex) {
                 logger.error("Error reading from PublicHearingFile: " + file.getFileName(), ex);
             }
         }
+        return processCount;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void processPendingPublicHearingFiles() {
+    public int processPendingPublicHearingFiles() {
         List<PublicHearingFile> publicHearingFiles;
+        int processCount = 0;
         do {
             publicHearingFiles = getPendingPublicHearingFiles(LimitOffset.FIFTY);
-            processPublicHearingFiles(publicHearingFiles);
+            processCount += processPublicHearingFiles(publicHearingFiles);
         }
         while (!publicHearingFiles.isEmpty());
+        return processCount;
     }
 
     /** {@inheritDoc} */

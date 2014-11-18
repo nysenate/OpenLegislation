@@ -156,6 +156,15 @@ public interface DaybreakDao
     public LocalDate getCurrentReportDate(Range<LocalDate> dateRange) throws DataAccessException;
 
     /**
+     * Returns true if the given report date has been used in a spotcheck
+     *
+     * @param reportDate
+     * @return
+     * @throws DataAccessException
+     */
+    public boolean isChecked(LocalDate reportDate) throws DataAccessException;
+
+    /**
      * Returns the date of all existing reports
      * @return
      */

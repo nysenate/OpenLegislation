@@ -78,3 +78,30 @@ postgresdb.user =
 
 # And the password..
 postgresdb.pass =
+
+# --- Scheduling Configuration --- #
+
+# Booleans that determine scheduled status for various services
+# Set to true to enable scheduling for a service
+scheduler.process.scheduled = true
+scheduler.checkmail.scheduled = true
+scheduler.spotcheck.scheduled = true
+
+# Cron expressions that dictate scheduling for scheduled services
+# Format "{second} {minute} {hour} {day of month} {month} {day of week}"
+scheduler.process.cron = 0 */5 * * * *
+scheduler.checkmail.cron = 0 2-59/5 * * * FRI-SAT
+scheduler.spotcheck.cron = 0 */2 * * * FRI-SAT
+
+# --- CheckMail Configuration --- #
+
+# Connection information for the mail account that receives daybreak emails
+checkmail.host = imap.gmail.com
+checkmail.user = nysenatedev
+checkmail.pass =
+mail.store.protocol = imaps
+mail.imaps.ssl.protocols = SSLv3
+
+# Mail directory paths where daybreak emails are stored
+checkmail.receiving = OpenLegislationDev/LRSAutomated
+checkmail.processed = OpenLegislationDev/LRSProcessed

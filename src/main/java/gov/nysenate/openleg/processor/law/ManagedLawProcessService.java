@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Service
 public class ManagedLawProcessService implements LawProcessService
@@ -23,6 +25,24 @@ public class ManagedLawProcessService implements LawProcessService
 
     @Autowired
     private LawProcessor lawProcessor;
+
+    /** {@inheritDoc}*/
+    @Override
+    public int collate() {
+        return collateLawFiles();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int ingest() {
+        return processPendingLawFiles();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getCollateType() {
+        return "law file";
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -39,7 +59,7 @@ public class ManagedLawProcessService implements LawProcessService
         catch (IOException ex) {
             logger.error("Failed to retrieve incoming laws from the file system.", ex);
         }
-        logger.info("Collated {} law files.", numCollated);
+        logger.debug("Collated {} law files.", numCollated);
         return numCollated;
     }
 
@@ -64,7 +84,9 @@ public class ManagedLawProcessService implements LawProcessService
 
     /** {@inheritDoc} */
     @Override
-    public void processPendingLawFiles() {
-        processLawFiles(getPendingLawFiles(LimitOffset.ALL));
+    public int processPendingLawFiles() {
+        List<LawFile> lawFiles = getPendingLawFiles(LimitOffset.ALL);
+        processLawFiles(lawFiles);
+        return lawFiles.size();
     }
 }

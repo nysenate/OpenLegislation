@@ -29,8 +29,25 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
 
     /** {@inheritDoc} */
     @Override
+    public int collate() {
+        return collateTranscriptFiles();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int ingest() {
+        return processPendingTranscriptFiles();
+    }
+
+    @Override
+    public String getCollateType() {
+        return "transcript file";
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public int collateTranscriptFiles() {
-        logger.info("Collating transcript files...");
+        logger.debug("Collating transcript files...");
         int numCollated = 0;
         try {
             List<TranscriptFile> transcriptFiles;
@@ -47,7 +64,7 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
         catch (IOException ex) {
             logger.error("Error retrieving transcript files during collation", ex);
         }
-        logger.info("Collated {} transcript files.", numCollated);
+        logger.debug("Collated {} transcript files.", numCollated);
         return numCollated;
     }
 
@@ -59,7 +76,8 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
 
     /** {@inheritDoc} */
     @Override
-    public void processTranscriptFiles(List<TranscriptFile> transcriptFiles) {
+    public int processTranscriptFiles(List<TranscriptFile> transcriptFiles) {
+        int processCount = 0;
         for (TranscriptFile file : transcriptFiles) {
             try {
                 logger.info("Processing transcript file {}", file.getFileName());
@@ -68,22 +86,26 @@ public class ManagedTranscriptProcessService implements TranscriptProcessService
                 file.setPendingProcessing(false);
                 file.setProcessedDateTime(LocalDateTime.now());
                 transcriptFileDao.updateTranscriptFile(file);
+                processCount++;
             }
             catch (IOException ex) {
                 logger.error("Error processing TranscriptFile " + file.getFileName() + ".", ex);
             }
         }
+        return processCount;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void processPendingTranscriptFiles() {
+    public int processPendingTranscriptFiles() {
         List<TranscriptFile> transcriptFiles;
+        int processCount = 0;
         do {
             transcriptFiles = getPendingTranscriptFiles(LimitOffset.FIFTY);
-            processTranscriptFiles(transcriptFiles);
+            processCount += processTranscriptFiles(transcriptFiles);
         }
         while (!transcriptFiles.isEmpty());
+        return processCount;
     }
 
     /** {@inheritDoc} */

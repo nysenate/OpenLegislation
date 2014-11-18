@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 /**
  * The DaybreakFile class contains a reference to a local daybreak file along with some of the file's metadata
@@ -38,7 +39,7 @@ public class DaybreakFile implements DaybreakDocument{
     /** True iff the file has been archived */
     private boolean archived;
 
-    private static String reportDateMatchPattern = "yyyyMMdd";
+    public static String reportDateMatchPattern = "yyyyMMdd";
 
     /** --- Constructors --- */
 
@@ -105,7 +106,7 @@ public class DaybreakFile implements DaybreakDocument{
     }
 
     @Override
-    public DaybreakDocType getDayBreakDocType() {
+    public DaybreakDocType getDaybreakDocType() {
         return daybreakDocType;
     }
 

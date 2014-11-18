@@ -3,10 +3,11 @@ package gov.nysenate.openleg.processor.transcript;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
+import gov.nysenate.openleg.processor.base.ProcessService;
 
 import java.util.List;
 
-public interface TranscriptProcessService
+public interface TranscriptProcessService extends ProcessService
 {
     /**
      * Looks for Transcript files in the incoming directory, moves them into
@@ -33,14 +34,14 @@ public interface TranscriptProcessService
      * @see gov.nysenate.openleg.model.transcript.Transcript
      * @see gov.nysenate.openleg.model.transcript.TranscriptFile
      */
-    public void processTranscriptFiles(List<TranscriptFile> transcriptFiles);
+    public int processTranscriptFiles(List<TranscriptFile> transcriptFiles);
 
     /**
      * Processes all pending TranscriptFiles via calls to
      * {@link #getPendingTranscriptFiles(gov.nysenate.openleg.dao.base.LimitOffset)}
      * and {@link #processTranscriptFiles(java.util.List)}
      */
-    public void processPendingTranscriptFiles();
+    public int processPendingTranscriptFiles();
 
     /**
      * Toggle the pending processing status of a TranscriptFile.

@@ -34,7 +34,7 @@ public class DaybreakFileParser {
      * @return
      */
     public static List<DaybreakFragment> extractDaybreakFragments(DaybreakFile daybreakFile) throws IOException{
-        if(daybreakFile.getDayBreakDocType()== DaybreakDocType.PAGE_FILE){
+        if(daybreakFile.getDaybreakDocType()== DaybreakDocType.PAGE_FILE){
             // This parser isn't for page files
             /** @see gov.nysenate.openleg.processor.daybreak.DaybreakPageFileParser */
             logger.error("Daybreak page file " + daybreakFile.getFileName() + " was passed to an html parser");

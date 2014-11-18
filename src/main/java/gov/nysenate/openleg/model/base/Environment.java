@@ -12,15 +12,20 @@ import java.io.File;
  * the property file is only checked during initialization.
  */
 @Component
-public class Environment
-{
-    @Value("${env.schema:master}") private String schema;
+public class Environment {
+    @Value("${env.schema:master}")
+    private String schema;
 
-    /** --- File system configuration --- */
+    /**
+     * --- File system configuration ---
+     */
 
-    @Value("${env.directory}") private String envDirPath;
-    @Value("${env.staging}") private String stagingDirPath;
-    @Value("${env.archive}") private String archiveDirPath;
+    @Value("${env.directory}")
+    private String envDirPath;
+    @Value("${env.staging}")
+    private String stagingDirPath;
+    @Value("${env.archive}")
+    private String archiveDirPath;
 
     private File baseDirectory;
     private File stagingDirectory;
@@ -36,14 +41,32 @@ public class Environment
     @Value("${elastic.indexing.enabled:true}")
     private boolean elasticIndexing = true;
 
-    /** --- Processing settings --- */
+    /**
+     * --- Processing settings ---
+     */
 
-    @Value("${incremental.update:true}") private boolean incrementalUpdates;
-    @Value("${sobi.batch.size:100}") private int sobiBatchSize;
+    @Value("${incremental.update:true}")
+    private boolean incrementalUpdates;
+    @Value("${sobi.batch.size:100}")
+    private int sobiBatchSize;
 
-    /** --- Constructors --- */
+    /**
+     * --- Scheduling Settings ---
+     */
 
-    public Environment() {}
+    @Value("${scheduler.process.scheduled}")
+    private boolean processingScheduled;
+    @Value("${scheduler.checkmail.scheduled}")
+    private boolean checkMailScheduled;
+    @Value("${scheduler.spotcheck.scheduled}")
+    private boolean spotcheckScheduled;
+
+    /**
+     * --- Constructors ---
+     */
+
+    public Environment() {
+    }
 
     @PostConstruct
     private void init() {
@@ -52,7 +75,9 @@ public class Environment
         this.archiveDirectory = new File(archiveDirPath);
     }
 
-    /** --- Basic Getters/Setters --- */
+    /**
+     * --- Basic Getters/Setters ---
+     */
 
     public String getSchema() {
         return schema;
@@ -112,5 +137,29 @@ public class Environment
 
     public String getDefaultApiSecret() {
         return defaultApiSecret;
+    }
+
+    public boolean isProcessingScheduled() {
+        return processingScheduled;
+    }
+
+    public void setProcessingScheduled(boolean processingScheduled) {
+        this.processingScheduled = processingScheduled;
+    }
+
+    public boolean isCheckMailScheduled() {
+        return checkMailScheduled;
+    }
+
+    public void setCheckMailScheduled(boolean checkMailScheduled) {
+        this.checkMailScheduled = checkMailScheduled;
+    }
+
+    public boolean isSpotcheckScheduled() {
+        return spotcheckScheduled;
+    }
+
+    public void setSpotcheckScheduled(boolean spotcheckScheduled) {
+        this.spotcheckScheduled = spotcheckScheduled;
     }
 }

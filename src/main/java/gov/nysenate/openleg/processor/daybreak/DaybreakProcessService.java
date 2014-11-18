@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.processor.daybreak;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.daybreak.DaybreakBillId;
 import gov.nysenate.openleg.model.daybreak.DaybreakFragment;
+import gov.nysenate.openleg.processor.base.ProcessService;
 
 import java.util.List;
 
@@ -10,7 +12,7 @@ import java.util.List;
  * During the collate step, the daybreak files are parsed into stored daybreak fragments and archived.
  * In the process step, further parsing is done on daybreak fragments producing daybreak bills, which are subsequently stored
  */
-public interface DaybreakProcessService
+public interface DaybreakProcessService extends ProcessService
 {
     /**
      * Identifies daybreak files in the incoming daybreak directory, groups them into sets, and parses complete
@@ -32,13 +34,15 @@ public interface DaybreakProcessService
      * Parses the given DaybreakFragments and stores them as DaybreakBills
      *
      * @param fragments List<DaybreakFragment>
+     * @return the number of processed fragments
      */
-    public void processFragments(List<DaybreakFragment> fragments);
+    public int processFragments(List<DaybreakFragment> fragments);
 
     /**
      * Retrieves and processes all DaybreakFragments marked as pending processing
+     * @return the number of processd fragments
      */
-    public void processPendingFragments();
+    public int processPendingFragments();
 
     /**
      * Sets the pending processing flag for the given fragment id in the store to the given boolean

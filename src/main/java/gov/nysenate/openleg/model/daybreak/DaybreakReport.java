@@ -40,7 +40,7 @@ public class DaybreakReport <DaybreakDoc extends DaybreakDocument> {
 
     public DaybreakReport(DaybreakDoc daybreakDoc){
         reportDocs = new HashMap<>();
-        reportDocs.put(daybreakDoc.getDayBreakDocType(), daybreakDoc);
+        reportDocs.put(daybreakDoc.getDaybreakDocType(), daybreakDoc);
         anchorDate = daybreakDoc.getReportDateTime();
         reportDate = anchorDate.toLocalDate();
     }
@@ -64,7 +64,7 @@ public class DaybreakReport <DaybreakDoc extends DaybreakDocument> {
      */
     public void insertDaybreakDoc(DaybreakDoc daybreakDoc) throws DaybreakReportInsertException{
         if (anchorDate==null){
-            reportDocs.put(daybreakDoc.getDayBreakDocType(), daybreakDoc);
+            reportDocs.put(daybreakDoc.getDaybreakDocType(), daybreakDoc);
             anchorDate = daybreakDoc.getReportDateTime();
             reportDate = anchorDate.toLocalDate();
         }
@@ -72,15 +72,15 @@ public class DaybreakReport <DaybreakDoc extends DaybreakDocument> {
             throw new DaybreakReportInsertException("date out of range" + daybreakDoc.getReportDateTime(),
                     DaybreakReportInsertException.InsertExceptionReason.DATE_OUT_OF_RANGE, daybreakDoc, this.reportDate);
         }
-        else if (reportDocs.keySet().contains(daybreakDoc.getDayBreakDocType())){
-            throw new DaybreakReportInsertException("report already contains " + daybreakDoc.getDayBreakDocType(),
+        else if (reportDocs.keySet().contains(daybreakDoc.getDaybreakDocType())){
+            throw new DaybreakReportInsertException("report already contains " + daybreakDoc.getDaybreakDocType(),
                     DaybreakReportInsertException.InsertExceptionReason.REPORT_CONTAINS_TYPE, daybreakDoc, this.reportDate);
         }
         else {
             if(daybreakDoc.getReportDateTime().toLocalDate().isAfter(this.reportDate)){
                 reportDate = daybreakDoc.getReportDateTime().toLocalDate();
             }
-            reportDocs.put(daybreakDoc.getDayBreakDocType(), daybreakDoc);
+            reportDocs.put(daybreakDoc.getDaybreakDocType(), daybreakDoc);
         }
     }
 
