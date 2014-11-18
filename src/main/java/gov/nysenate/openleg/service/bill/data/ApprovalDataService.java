@@ -7,8 +7,8 @@ import gov.nysenate.openleg.model.sobi.SobiFragment;
 
 import java.util.List;
 
-public interface ApprovalDataService {
-
+public interface ApprovalDataService
+{
     /**
      * Retrieves a approval message with the given approval id
      * @param approvalId
