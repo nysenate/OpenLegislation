@@ -74,9 +74,9 @@ SET search_path = master, pg_catalog;
 --
 
 CREATE TYPE cmt AS ENUM (
-    'chair_person',
-    'vicechair',
-    'member'
+  'chair_person',
+  'vicechair',
+  'member'
 );
 
 
@@ -87,9 +87,9 @@ ALTER TYPE master.cmt OWNER TO postgres;
 --
 
 CREATE TYPE committee_member_title AS ENUM (
-    'chair_person',
-    'vice_chair',
-    'member'
+  'chair_person',
+  'vice_chair',
+  'member'
 );
 
 
@@ -100,11 +100,11 @@ ALTER TYPE master.committee_member_title OWNER TO postgres;
 --
 
 CREATE TYPE daybreak_file_type AS ENUM (
-    'page_file',
-    'senate_low',
-    'assembly_low',
-    'senate_high',
-    'assembly_high'
+  'page_file',
+  'senate_low',
+  'assembly_low',
+  'senate_high',
+  'assembly_high'
 );
 
 
@@ -115,13 +115,13 @@ ALTER TYPE master.daybreak_file_type OWNER TO postgres;
 --
 
 CREATE TYPE sobi_fragment_type AS ENUM (
-    'bill',
-    'agenda',
-    'agenda_vote',
-    'calendar',
-    'calendar_active',
-    'committee',
-    'annotation'
+  'bill',
+  'agenda',
+  'agenda_vote',
+  'calendar',
+  'calendar_active',
+  'committee',
+  'annotation'
 );
 
 
@@ -132,8 +132,8 @@ ALTER TYPE master.sobi_fragment_type OWNER TO postgres;
 --
 
 CREATE TYPE sponsor_type AS ENUM (
-    'cosponsor',
-    'multisponsor'
+  'cosponsor',
+  'multisponsor'
 );
 
 
@@ -144,8 +144,8 @@ ALTER TYPE master.sponsor_type OWNER TO postgres;
 --
 
 CREATE TYPE veto_type AS ENUM (
-    'standard',
-    'line_item'
+  'standard',
+  'line_item'
 );
 
 
@@ -156,12 +156,12 @@ ALTER TYPE master.veto_type OWNER TO postgres;
 --
 
 CREATE TYPE vote_code AS ENUM (
-    'aye',
-    'nay',
-    'exc',
-    'abs',
-    'abd',
-    'ayewr'
+  'aye',
+  'nay',
+  'exc',
+  'abs',
+  'abd',
+  'ayewr'
 );
 
 
@@ -172,8 +172,8 @@ ALTER TYPE master.vote_code OWNER TO postgres;
 --
 
 CREATE TYPE vote_type AS ENUM (
-    'floor',
-    'committee'
+  'floor',
+  'committee'
 );
 
 
@@ -186,8 +186,8 @@ SET search_path = public, pg_catalog;
 --
 
 CREATE TYPE chamber AS ENUM (
-    'assembly',
-    'senate'
+  'assembly',
+  'senate'
 );
 
 
@@ -198,9 +198,9 @@ ALTER TYPE public.chamber OWNER TO postgres;
 --
 
 CREATE TYPE committee_member_title AS ENUM (
-    'chair_person',
-    'vice_chair',
-    'member'
+  'chair_person',
+  'vice_chair',
+  'member'
 );
 
 
@@ -213,8 +213,8 @@ SET search_path = master, pg_catalog;
 --
 
 CREATE FUNCTION log_sobi_updates() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$DECLARE
+LANGUAGE plpgsql
+AS $$DECLARE
   primary_keys text[];         -- The primary key column names
   old_primary_key_val hstore;  -- Previous primary key/value pairs
   primary_key_val hstore;      -- Primary key/value pairs
@@ -291,8 +291,8 @@ SET search_path = public, pg_catalog;
 --
 
 CREATE FUNCTION date_to_search_str(d date) RETURNS text
-    LANGUAGE sql
-    AS $$SELECT to_char(d, 'YYYY MM DD FMMM MON MONTH FMDD');$$;
+LANGUAGE sql
+AS $$SELECT to_char(d, 'YYYY MM DD FMMM MON MONTH FMDD');$$;
 
 
 ALTER FUNCTION public.date_to_search_str(d date) OWNER TO postgres;
@@ -311,64 +311,64 @@ SET search_path = master, pg_catalog;
 --
 
 CREATE TEXT SEARCH CONFIGURATION openleg_fts_config (
-    PARSER = pg_catalog."default" );
+PARSER = pg_catalog."default" );
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR asciiword WITH english_stem;
+ADD MAPPING FOR asciiword WITH english_stem;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR word WITH english_stem;
+ADD MAPPING FOR word WITH english_stem;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR numword WITH simple;
+ADD MAPPING FOR numword WITH simple;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR email WITH simple;
+ADD MAPPING FOR email WITH simple;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR url WITH simple;
+ADD MAPPING FOR url WITH simple;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR host WITH simple;
+ADD MAPPING FOR host WITH simple;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR sfloat WITH simple;
+ADD MAPPING FOR sfloat WITH simple;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR version WITH simple;
+ADD MAPPING FOR version WITH simple;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR hword_numpart WITH simple;
+ADD MAPPING FOR hword_numpart WITH simple;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR hword_part WITH english_stem;
+ADD MAPPING FOR hword_part WITH english_stem;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR hword_asciipart WITH english_stem;
+ADD MAPPING FOR hword_asciipart WITH english_stem;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR numhword WITH simple;
+ADD MAPPING FOR numhword WITH simple;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR asciihword WITH english_stem;
+ADD MAPPING FOR asciihword WITH english_stem;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR hword WITH english_stem;
+ADD MAPPING FOR hword WITH english_stem;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR url_path WITH simple;
+ADD MAPPING FOR url_path WITH simple;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR file WITH simple;
+ADD MAPPING FOR file WITH simple;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR "float" WITH simple;
+ADD MAPPING FOR "float" WITH simple;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR "int" WITH simple;
+ADD MAPPING FOR "int" WITH simple;
 
 ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
-    ADD MAPPING FOR uint WITH simple;
+ADD MAPPING FOR uint WITH simple;
 
 
 ALTER TEXT SEARCH CONFIGURATION master.openleg_fts_config OWNER TO postgres;
@@ -382,12 +382,12 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE agenda (
-    agenda_no smallint NOT NULL,
-    year smallint NOT NULL,
-    published_date_time timestamp without time zone,
-    modified_date_time timestamp without time zone,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  agenda_no smallint NOT NULL,
+  year smallint NOT NULL,
+  published_date_time timestamp without time zone,
+  modified_date_time timestamp without time zone,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -405,14 +405,14 @@ COMMENT ON TABLE agenda IS 'Listing of all senate agendas';
 --
 
 CREATE TABLE agenda_info_addendum (
-    agenda_no smallint NOT NULL,
-    year smallint NOT NULL,
-    addendum_id text NOT NULL,
-    modified_date_time timestamp without time zone,
-    published_date_time timestamp without time zone,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text,
-    week_of date
+  agenda_no smallint NOT NULL,
+  year smallint NOT NULL,
+  addendum_id text NOT NULL,
+  modified_date_time timestamp without time zone,
+  published_date_time timestamp without time zone,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text,
+  week_of date
 );
 
 
@@ -430,18 +430,18 @@ COMMENT ON TABLE agenda_info_addendum IS 'Info addendum listings for agendas ';
 --
 
 CREATE TABLE agenda_info_committee (
-    id integer NOT NULL,
-    agenda_no smallint NOT NULL,
-    year smallint NOT NULL,
-    addendum_id text NOT NULL,
-    committee_name public.citext NOT NULL,
-    committee_chamber public.chamber NOT NULL,
-    chair text,
-    location text,
-    meeting_date_time timestamp without time zone NOT NULL,
-    notes text,
-    last_fragment_id text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+  id integer NOT NULL,
+  agenda_no smallint NOT NULL,
+  year smallint NOT NULL,
+  addendum_id text NOT NULL,
+  committee_name public.citext NOT NULL,
+  committee_chamber public.chamber NOT NULL,
+  chair text,
+  location text,
+  meeting_date_time timestamp without time zone NOT NULL,
+  notes text,
+  last_fragment_id text,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -459,11 +459,11 @@ COMMENT ON TABLE agenda_info_committee IS 'Committee info sent via the info adde
 --
 
 CREATE SEQUENCE agenda_info_committee_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.agenda_info_committee_id_seq OWNER TO postgres;
@@ -480,14 +480,14 @@ ALTER SEQUENCE agenda_info_committee_id_seq OWNED BY agenda_info_committee.id;
 --
 
 CREATE TABLE agenda_info_committee_item (
-    id integer NOT NULL,
-    info_committee_id integer NOT NULL,
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    bill_amend_version character(1) NOT NULL,
-    message text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  id integer NOT NULL,
+  info_committee_id integer NOT NULL,
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  bill_amend_version character(1) NOT NULL,
+  message text,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -505,11 +505,11 @@ COMMENT ON TABLE agenda_info_committee_item IS 'Bills on the agenda for a given 
 --
 
 CREATE SEQUENCE agenda_info_committee_item_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.agenda_info_committee_item_id_seq OWNER TO postgres;
@@ -526,13 +526,13 @@ ALTER SEQUENCE agenda_info_committee_item_id_seq OWNED BY agenda_info_committee_
 --
 
 CREATE TABLE agenda_vote_addendum (
-    agenda_no smallint NOT NULL,
-    year smallint NOT NULL,
-    addendum_id character varying NOT NULL,
-    modified_date_time timestamp without time zone,
-    published_date_time timestamp without time zone,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  agenda_no smallint NOT NULL,
+  year smallint NOT NULL,
+  addendum_id character varying NOT NULL,
+  modified_date_time timestamp without time zone,
+  published_date_time timestamp without time zone,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -550,11 +550,11 @@ COMMENT ON TABLE agenda_vote_addendum IS 'Vote addendum listings for agendas';
 --
 
 CREATE SEQUENCE agenda_vote_commitee_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.agenda_vote_commitee_id_seq OWNER TO postgres;
@@ -564,16 +564,16 @@ ALTER TABLE master.agenda_vote_commitee_id_seq OWNER TO postgres;
 --
 
 CREATE TABLE agenda_vote_committee (
-    id integer DEFAULT nextval('agenda_vote_commitee_id_seq'::regclass) NOT NULL,
-    agenda_no smallint NOT NULL,
-    year smallint NOT NULL,
-    addendum_id text NOT NULL,
-    committee_name public.citext NOT NULL,
-    committee_chamber public.chamber NOT NULL,
-    chair text,
-    meeting_date_time timestamp without time zone,
-    last_fragment_id text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+  id integer DEFAULT nextval('agenda_vote_commitee_id_seq'::regclass) NOT NULL,
+  agenda_no smallint NOT NULL,
+  year smallint NOT NULL,
+  addendum_id text NOT NULL,
+  committee_name public.citext NOT NULL,
+  committee_chamber public.chamber NOT NULL,
+  chair text,
+  meeting_date_time timestamp without time zone,
+  last_fragment_id text,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -591,16 +591,16 @@ COMMENT ON TABLE agenda_vote_committee IS 'Committee info sent via the vote adde
 --
 
 CREATE TABLE agenda_vote_committee_attend (
-    id integer NOT NULL,
-    vote_committee_id integer,
-    session_member_id integer NOT NULL,
-    session_year smallint NOT NULL,
-    lbdc_short_name text NOT NULL,
-    rank smallint NOT NULL,
-    party text,
-    attend_status text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  id integer NOT NULL,
+  vote_committee_id integer,
+  session_member_id integer NOT NULL,
+  session_year smallint NOT NULL,
+  lbdc_short_name text NOT NULL,
+  rank smallint NOT NULL,
+  party text,
+  attend_status text,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -618,11 +618,11 @@ COMMENT ON TABLE agenda_vote_committee_attend IS 'Attendance roll for committee 
 --
 
 CREATE SEQUENCE agenda_vote_committee_attend_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.agenda_vote_committee_attend_id_seq OWNER TO postgres;
@@ -639,15 +639,15 @@ ALTER SEQUENCE agenda_vote_committee_attend_id_seq OWNED BY agenda_vote_committe
 --
 
 CREATE TABLE agenda_vote_committee_vote (
-    id integer NOT NULL,
-    vote_committee_id integer,
-    vote_action text NOT NULL,
-    vote_info_id integer,
-    refer_committee_name public.citext,
-    refer_committee_chamber public.chamber,
-    with_amendment boolean DEFAULT false NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  id integer NOT NULL,
+  vote_committee_id integer,
+  vote_action text NOT NULL,
+  vote_info_id integer,
+  refer_committee_name public.citext,
+  refer_committee_chamber public.chamber,
+  with_amendment boolean DEFAULT false NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -665,11 +665,11 @@ COMMENT ON TABLE agenda_vote_committee_vote IS 'List of committee vote details';
 --
 
 CREATE SEQUENCE agenda_vote_committee_vote_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.agenda_vote_committee_vote_id_seq OWNER TO postgres;
@@ -686,24 +686,24 @@ ALTER SEQUENCE agenda_vote_committee_vote_id_seq OWNED BY agenda_vote_committee_
 --
 
 CREATE TABLE bill (
-    print_no text NOT NULL,
-    session_year smallint NOT NULL,
-    title text,
-    summary text,
-    active_version character(1) NOT NULL,
-    active_year integer,
-    status text,
-    status_date date,
-    program_info text,
-    program_info_num integer,
-    sub_bill_print_no text,
-    committee_name public.citext,
-    bill_cal_no smallint,
-    committee_chamber public.chamber,
-    created_date_time timestamp without time zone DEFAULT now(),
-    modified_date_time timestamp without time zone,
-    published_date_time timestamp without time zone,
-    last_fragment_id text
+  print_no text NOT NULL,
+  session_year smallint NOT NULL,
+  title text,
+  summary text,
+  active_version character(1) NOT NULL,
+  active_year integer,
+  status text,
+  status_date date,
+  program_info text,
+  program_info_num integer,
+  sub_bill_print_no text,
+  committee_name public.citext,
+  bill_cal_no smallint,
+  committee_chamber public.chamber,
+  created_date_time timestamp without time zone DEFAULT now(),
+  modified_date_time timestamp without time zone,
+  published_date_time timestamp without time zone,
+  last_fragment_id text
 );
 
 
@@ -787,34 +787,6 @@ COMMENT ON COLUMN bill.program_info_num IS 'An integer provided along with the p
 
 
 --
--- Name: COLUMN bill.created_date_time; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN bill.created_date_time IS 'The date/time when this bill record was inserted';
-
-
---
--- Name: COLUMN bill.modified_date_time; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN bill.modified_date_time IS 'Last date/time when this bill was modified';
-
-
---
--- Name: COLUMN bill.published_date_time; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN bill.published_date_time IS 'Date/time when this bill became published';
-
-
---
--- Name: COLUMN bill.last_fragment_id; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN bill.last_fragment_id IS 'Reference to the last sobi fragment that caused an update';
-
-
---
 -- Name: COLUMN bill.sub_bill_print_no; Type: COMMENT; Schema: master; Owner: postgres
 --
 
@@ -843,22 +815,50 @@ COMMENT ON COLUMN bill.committee_chamber IS 'Current committee''s chamber';
 
 
 --
+-- Name: COLUMN bill.created_date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill.created_date_time IS 'The date/time when this bill record was inserted';
+
+
+--
+-- Name: COLUMN bill.modified_date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill.modified_date_time IS 'Last date/time when this bill was modified';
+
+
+--
+-- Name: COLUMN bill.published_date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill.published_date_time IS 'Date/time when this bill became published';
+
+
+--
+-- Name: COLUMN bill.last_fragment_id; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill.last_fragment_id IS 'Reference to the last sobi fragment that caused an update';
+
+
+--
 -- Name: bill_amendment; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE bill_amendment (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    version character(1) NOT NULL,
-    sponsor_memo text,
-    act_clause text,
-    full_text text,
-    stricken boolean DEFAULT false,
-    uni_bill boolean DEFAULT false,
-    law_code text,
-    law_section text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  version character(1) NOT NULL,
+  sponsor_memo text,
+  act_clause text,
+  full_text text,
+  stricken boolean DEFAULT false,
+  uni_bill boolean DEFAULT false,
+  law_code text,
+  law_section text,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -890,15 +890,15 @@ COMMENT ON COLUMN bill_amendment.law_section IS 'The primary section of law this
 --
 
 CREATE TABLE bill_amendment_action (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    bill_amend_version character(1) NOT NULL,
-    effect_date date,
-    text text,
-    sequence_no smallint NOT NULL,
-    chamber public.chamber NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  bill_amend_version character(1) NOT NULL,
+  effect_date date,
+  text text,
+  sequence_no smallint NOT NULL,
+  chamber public.chamber NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -916,13 +916,13 @@ COMMENT ON TABLE bill_amendment_action IS 'Actions that have been taken on an am
 --
 
 CREATE TABLE bill_amendment_cosponsor (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    bill_amend_version character(1) NOT NULL,
-    session_member_id integer NOT NULL,
-    sequence_no smallint NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  bill_amend_version character(1) NOT NULL,
+  session_member_id integer NOT NULL,
+  sequence_no smallint NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -940,13 +940,13 @@ COMMENT ON TABLE bill_amendment_cosponsor IS 'Listing of co-sponsors for an amen
 --
 
 CREATE TABLE bill_amendment_multi_sponsor (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    bill_amend_version character(1) NOT NULL,
-    session_member_id integer NOT NULL,
-    sequence_no smallint NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  bill_amend_version character(1) NOT NULL,
+  session_member_id integer NOT NULL,
+  sequence_no smallint NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -964,15 +964,15 @@ COMMENT ON TABLE bill_amendment_multi_sponsor IS 'Listing of multi-sponsors for 
 --
 
 CREATE TABLE bill_amendment_publish_status (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    bill_amend_version character(1) NOT NULL,
-    published boolean NOT NULL,
-    effect_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    override boolean DEFAULT false NOT NULL,
-    notes text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  bill_amend_version character(1) NOT NULL,
+  published boolean NOT NULL,
+  effect_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  override boolean DEFAULT false NOT NULL,
+  notes text,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1053,14 +1053,14 @@ COMMENT ON COLUMN bill_amendment_publish_status.last_fragment_id IS 'The fragmen
 --
 
 CREATE TABLE bill_amendment_same_as (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    bill_amend_version character(1) NOT NULL,
-    same_as_bill_print_no text NOT NULL,
-    same_as_session_year smallint NOT NULL,
-    same_as_amend_version character(1) NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  bill_amend_version character(1) NOT NULL,
+  same_as_bill_print_no text NOT NULL,
+  same_as_session_year smallint NOT NULL,
+  same_as_amend_version character(1) NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1078,19 +1078,19 @@ COMMENT ON TABLE bill_amendment_same_as IS 'Same as bills for an amendment';
 --
 
 CREATE TABLE bill_amendment_vote_info (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    bill_amend_version character(1) NOT NULL,
-    vote_date timestamp without time zone NOT NULL,
-    sequence_no smallint,
-    id integer NOT NULL,
-    vote_type vote_type NOT NULL,
-    committee_name text,
-    committee_chamber public.chamber,
-    published_date_time timestamp without time zone,
-    modified_date_time timestamp without time zone,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  bill_amend_version character(1) NOT NULL,
+  vote_date timestamp without time zone NOT NULL,
+  sequence_no smallint,
+  id integer NOT NULL,
+  vote_type vote_type NOT NULL,
+  committee_name text,
+  committee_chamber public.chamber,
+  published_date_time timestamp without time zone,
+  modified_date_time timestamp without time zone,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1143,11 +1143,11 @@ COMMENT ON COLUMN bill_amendment_vote_info.committee_chamber IS 'If this is a co
 --
 
 CREATE SEQUENCE bill_amendment_vote_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.bill_amendment_vote_id_seq OWNER TO postgres;
@@ -1164,13 +1164,13 @@ ALTER SEQUENCE bill_amendment_vote_id_seq OWNED BY bill_amendment_vote_info.id;
 --
 
 CREATE TABLE bill_amendment_vote_roll (
-    vote_id integer NOT NULL,
-    session_member_id integer NOT NULL,
-    member_short_name text NOT NULL,
-    session_year smallint NOT NULL,
-    vote_code vote_code NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  vote_id integer NOT NULL,
+  session_member_id integer NOT NULL,
+  member_short_name text NOT NULL,
+  session_year smallint NOT NULL,
+  vote_code vote_code NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1188,17 +1188,17 @@ COMMENT ON TABLE bill_amendment_vote_roll IS 'Contains a list of member votes';
 --
 
 CREATE TABLE bill_approval (
-    approval_number integer NOT NULL,
-    year integer NOT NULL,
-    bill_print_no text NOT NULL,
-    session_year integer NOT NULL,
-    bill_version character(1) NOT NULL,
-    chapter integer,
-    signer text,
-    memo_text text NOT NULL,
-    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  approval_number integer NOT NULL,
+  year integer NOT NULL,
+  bill_print_no text NOT NULL,
+  session_year integer NOT NULL,
+  bill_version character(1) NOT NULL,
+  chapter integer,
+  signer text,
+  memo_text text NOT NULL,
+  modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1216,13 +1216,13 @@ COMMENT ON TABLE bill_approval IS 'Approval Messages from the governor';
 --
 
 CREATE TABLE bill_committee (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    committee_name public.citext NOT NULL,
-    committee_chamber public.chamber NOT NULL,
-    action_date timestamp without time zone NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  committee_name public.citext NOT NULL,
+  committee_chamber public.chamber NOT NULL,
+  action_date timestamp without time zone NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1247,17 +1247,17 @@ COMMENT ON COLUMN bill_committee.action_date IS 'The date that the committee act
 --
 
 CREATE TABLE bill_milestone (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    status public.citext NOT NULL,
-    rank smallint NOT NULL,
-    action_sequence_no smallint NOT NULL,
-    date date NOT NULL,
-    committee_name public.citext,
-    committee_chamber public.chamber,
-    cal_no smallint,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  status public.citext NOT NULL,
+  rank smallint NOT NULL,
+  action_sequence_no smallint NOT NULL,
+  date date NOT NULL,
+  committee_name public.citext,
+  committee_chamber public.chamber,
+  cal_no smallint,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1275,13 +1275,13 @@ COMMENT ON TABLE bill_milestone IS 'Listing of legislative milestones';
 --
 
 CREATE TABLE bill_previous_version (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    prev_bill_print_no text NOT NULL,
-    prev_bill_session_year smallint NOT NULL,
-    prev_amend_version text NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  prev_bill_print_no text NOT NULL,
+  prev_bill_session_year smallint NOT NULL,
+  prev_amend_version text NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1299,13 +1299,13 @@ COMMENT ON TABLE bill_previous_version IS 'Listing of this bill in previous sess
 --
 
 CREATE TABLE bill_sponsor (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    session_member_id integer,
-    budget_bill boolean DEFAULT false,
-    rules_sponsor boolean DEFAULT false,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  session_member_id integer,
+  budget_bill boolean DEFAULT false,
+  rules_sponsor boolean DEFAULT false,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1323,11 +1323,11 @@ COMMENT ON TABLE bill_sponsor IS 'Mapping of bill to sponsor';
 --
 
 CREATE TABLE bill_sponsor_additional (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    session_member_id integer NOT NULL,
-    sequence_no smallint,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+  bill_print_no text NOT NULL,
+  bill_session_year smallint NOT NULL,
+  session_member_id integer NOT NULL,
+  sequence_no smallint,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -1345,22 +1345,22 @@ COMMENT ON TABLE bill_sponsor_additional IS 'Contains additional sponsor mapping
 --
 
 CREATE TABLE bill_veto (
-    veto_number integer NOT NULL,
-    year integer NOT NULL,
-    bill_print_no text NOT NULL,
-    session_year integer NOT NULL,
-    page integer,
-    line_start integer,
-    line_end integer,
-    chapter integer,
-    signer text,
-    date date,
-    memo_text text NOT NULL,
-    type veto_type NOT NULL,
-    modified_date_time timestamp without time zone NOT NULL,
-    published_date_time timestamp without time zone NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  veto_number integer NOT NULL,
+  year integer NOT NULL,
+  bill_print_no text NOT NULL,
+  session_year integer NOT NULL,
+  page integer,
+  line_start integer,
+  line_end integer,
+  chapter integer,
+  signer text,
+  date date,
+  memo_text text NOT NULL,
+  type veto_type NOT NULL,
+  modified_date_time timestamp without time zone NOT NULL,
+  published_date_time timestamp without time zone NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1378,11 +1378,11 @@ COMMENT ON TABLE bill_veto IS 'Veto Messages from the governor';
 --
 
 CREATE SEQUENCE bill_veto_year_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.bill_veto_year_seq OWNER TO postgres;
@@ -1392,12 +1392,12 @@ ALTER TABLE master.bill_veto_year_seq OWNER TO postgres;
 --
 
 CREATE TABLE calendar (
-    calendar_no integer NOT NULL,
-    year smallint NOT NULL,
-    modified_date_time timestamp without time zone,
-    published_date_time timestamp without time zone,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  calendar_no integer NOT NULL,
+  year smallint NOT NULL,
+  modified_date_time timestamp without time zone,
+  published_date_time timestamp without time zone,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1429,17 +1429,17 @@ COMMENT ON COLUMN calendar.year IS 'The year for this calendar';
 --
 
 CREATE TABLE calendar_active_list (
-    id integer NOT NULL,
-    sequence_no smallint,
-    calendar_no smallint,
-    calendar_year smallint,
-    calendar_date date,
-    release_date_time timestamp without time zone,
-    notes text,
-    modified_date_time timestamp without time zone,
-    published_date_time timestamp without time zone,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  id integer NOT NULL,
+  sequence_no smallint,
+  calendar_no smallint,
+  calendar_year smallint,
+  calendar_date date,
+  release_date_time timestamp without time zone,
+  notes text,
+  modified_date_time timestamp without time zone,
+  published_date_time timestamp without time zone,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1457,13 +1457,13 @@ COMMENT ON TABLE calendar_active_list IS 'Listing of all calendar active lists';
 --
 
 CREATE TABLE calendar_active_list_entry (
-    calendar_active_list_id smallint NOT NULL,
-    bill_calendar_no smallint NOT NULL,
-    bill_print_no text,
-    bill_amend_version character(1),
-    bill_session_year smallint,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  calendar_active_list_id smallint NOT NULL,
+  bill_calendar_no smallint NOT NULL,
+  bill_print_no text,
+  bill_amend_version character(1),
+  bill_session_year smallint,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1481,11 +1481,11 @@ COMMENT ON TABLE calendar_active_list_entry IS 'Entries for each calendar active
 --
 
 CREATE SEQUENCE calendar_active_list_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.calendar_active_list_id_seq OWNER TO postgres;
@@ -1502,16 +1502,16 @@ ALTER SEQUENCE calendar_active_list_id_seq OWNED BY calendar_active_list.id;
 --
 
 CREATE TABLE calendar_supplemental (
-    id integer NOT NULL,
-    calendar_no smallint NOT NULL,
-    calendar_year smallint NOT NULL,
-    sup_version text NOT NULL,
-    calendar_date date,
-    release_date_time timestamp without time zone,
-    modified_date_time timestamp without time zone,
-    published_date_time timestamp without time zone,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  id integer NOT NULL,
+  calendar_no smallint NOT NULL,
+  calendar_year smallint NOT NULL,
+  sup_version text NOT NULL,
+  calendar_date date,
+  release_date_time timestamp without time zone,
+  modified_date_time timestamp without time zone,
+  published_date_time timestamp without time zone,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1529,19 +1529,19 @@ COMMENT ON TABLE calendar_supplemental IS 'Calendar entries are published throug
 --
 
 CREATE TABLE calendar_supplemental_entry (
-    id integer NOT NULL,
-    calendar_sup_id integer,
-    section_code smallint,
-    bill_calendar_no smallint,
-    bill_print_no text,
-    bill_amend_version character(1),
-    bill_session_year smallint,
-    sub_bill_print_no text,
-    sub_bill_amend_version character(1),
-    sub_bill_session_year smallint,
-    high boolean,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+  id integer NOT NULL,
+  calendar_sup_id integer,
+  section_code smallint,
+  bill_calendar_no smallint,
+  bill_print_no text,
+  bill_amend_version character(1),
+  bill_session_year smallint,
+  sub_bill_print_no text,
+  sub_bill_amend_version character(1),
+  sub_bill_session_year smallint,
+  high boolean,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1587,11 +1587,11 @@ COMMENT ON COLUMN calendar_supplemental_entry.high IS 'True if bill has not yet 
 --
 
 CREATE SEQUENCE calendar_supplemental_entry_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.calendar_supplemental_entry_id_seq OWNER TO postgres;
@@ -1608,11 +1608,11 @@ ALTER SEQUENCE calendar_supplemental_entry_id_seq OWNED BY calendar_supplemental
 --
 
 CREATE SEQUENCE calendar_supplemental_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.calendar_supplemental_id_seq OWNER TO postgres;
@@ -1629,12 +1629,12 @@ ALTER SEQUENCE calendar_supplemental_id_seq OWNED BY calendar_supplemental.id;
 --
 
 CREATE TABLE committee (
-    name public.citext NOT NULL,
-    id integer NOT NULL,
-    current_version timestamp without time zone DEFAULT '-infinity'::timestamp without time zone NOT NULL,
-    chamber public.chamber NOT NULL,
-    current_session integer DEFAULT 0 NOT NULL,
-    full_name text
+  name public.citext NOT NULL,
+  id integer NOT NULL,
+  current_version timestamp without time zone DEFAULT '-infinity'::timestamp without time zone NOT NULL,
+  chamber public.chamber NOT NULL,
+  current_session integer DEFAULT 0 NOT NULL,
+  full_name text
 );
 
 
@@ -1659,11 +1659,11 @@ COMMENT ON COLUMN committee.full_name IS 'The full name of the committee, may be
 --
 
 CREATE SEQUENCE committee_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.committee_id_seq OWNER TO postgres;
@@ -1680,15 +1680,15 @@ ALTER SEQUENCE committee_id_seq OWNED BY committee.id;
 --
 
 CREATE TABLE committee_member (
-    majority boolean NOT NULL,
-    id integer NOT NULL,
-    sequence_no integer NOT NULL,
-    title public.committee_member_title DEFAULT 'member'::public.committee_member_title NOT NULL,
-    committee_name public.citext NOT NULL,
-    version_created timestamp without time zone NOT NULL,
-    session_year integer NOT NULL,
-    session_member_id integer NOT NULL,
-    chamber public.chamber NOT NULL
+  majority boolean NOT NULL,
+  id integer NOT NULL,
+  sequence_no integer NOT NULL,
+  title public.committee_member_title DEFAULT 'member'::public.committee_member_title NOT NULL,
+  committee_name public.citext NOT NULL,
+  version_created timestamp without time zone NOT NULL,
+  session_year integer NOT NULL,
+  session_member_id integer NOT NULL,
+  chamber public.chamber NOT NULL
 );
 
 
@@ -1713,11 +1713,11 @@ COMMENT ON COLUMN committee_member.majority IS 'true = Majority, false = Minorit
 --
 
 CREATE SEQUENCE committee_member_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.committee_member_id_seq OWNER TO postgres;
@@ -1734,18 +1734,18 @@ ALTER SEQUENCE committee_member_id_seq OWNED BY committee_member.id;
 --
 
 CREATE TABLE committee_version (
-    id integer NOT NULL,
-    location text,
-    meetday text,
-    meetaltweek boolean,
-    meetaltweektext text,
-    meettime time without time zone,
-    session_year integer NOT NULL,
-    created timestamp without time zone NOT NULL,
-    reformed timestamp without time zone DEFAULT 'infinity'::timestamp without time zone NOT NULL,
-    committee_name public.citext NOT NULL,
-    chamber public.chamber NOT NULL,
-    last_fragment_id text
+  id integer NOT NULL,
+  location text,
+  meetday text,
+  meetaltweek boolean,
+  meetaltweektext text,
+  meettime time without time zone,
+  session_year integer NOT NULL,
+  created timestamp without time zone NOT NULL,
+  reformed timestamp without time zone DEFAULT 'infinity'::timestamp without time zone NOT NULL,
+  committee_name public.citext NOT NULL,
+  chamber public.chamber NOT NULL,
+  last_fragment_id text
 );
 
 
@@ -1784,11 +1784,11 @@ COMMENT ON COLUMN committee_version.last_fragment_id IS 'Reference to the sobi f
 --
 
 CREATE SEQUENCE committee_version_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.committee_version_id_seq OWNER TO postgres;
@@ -1805,15 +1805,15 @@ ALTER SEQUENCE committee_version_id_seq OWNED BY committee_version.id;
 --
 
 CREATE TABLE daybreak_bill (
-    report_date date NOT NULL,
-    bill_print_no text NOT NULL,
-    bill_session_year integer NOT NULL,
-    active_version character(1) NOT NULL,
-    title text,
-    sponsor text,
-    summary text,
-    law_section text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+  report_date date NOT NULL,
+  bill_print_no text NOT NULL,
+  bill_session_year integer NOT NULL,
+  active_version character(1) NOT NULL,
+  title text,
+  sponsor text,
+  summary text,
+  law_section text,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -1831,13 +1831,13 @@ COMMENT ON TABLE daybreak_bill IS 'General bill information sent via the daybrea
 --
 
 CREATE TABLE daybreak_bill_action (
-    report_date date NOT NULL,
-    bill_print_no text NOT NULL,
-    bill_session_year integer NOT NULL,
-    action_date date NOT NULL,
-    chamber public.chamber NOT NULL,
-    text text NOT NULL,
-    sequence_no integer NOT NULL
+  report_date date NOT NULL,
+  bill_print_no text NOT NULL,
+  bill_session_year integer NOT NULL,
+  action_date date NOT NULL,
+  chamber public.chamber NOT NULL,
+  text text NOT NULL,
+  sequence_no integer NOT NULL
 );
 
 
@@ -1855,11 +1855,11 @@ COMMENT ON TABLE daybreak_bill_action IS 'Bill actions sent via the daybreaks';
 --
 
 CREATE SEQUENCE daybreak_bill_action_sequence_no_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.daybreak_bill_action_sequence_no_seq OWNER TO postgres;
@@ -1876,13 +1876,13 @@ ALTER SEQUENCE daybreak_bill_action_sequence_no_seq OWNED BY daybreak_bill_actio
 --
 
 CREATE TABLE daybreak_bill_amendment (
-    report_date date NOT NULL,
-    bill_print_no text NOT NULL,
-    bill_session_year integer NOT NULL,
-    version character(1) NOT NULL,
-    publish_date date,
-    page_count integer,
-    same_as text
+  report_date date NOT NULL,
+  bill_print_no text NOT NULL,
+  bill_session_year integer NOT NULL,
+  version character(1) NOT NULL,
+  publish_date date,
+  page_count integer,
+  same_as text
 );
 
 
@@ -1900,11 +1900,11 @@ COMMENT ON TABLE daybreak_bill_amendment IS 'Bill amendment details such as page
 --
 
 CREATE TABLE daybreak_bill_sponsor (
-    report_date date NOT NULL,
-    bill_print_no text NOT NULL,
-    bill_session_year integer NOT NULL,
-    type sponsor_type NOT NULL,
-    member_short_name text NOT NULL
+  report_date date NOT NULL,
+  bill_print_no text NOT NULL,
+  bill_session_year integer NOT NULL,
+  type sponsor_type NOT NULL,
+  member_short_name text NOT NULL
 );
 
 
@@ -1922,11 +1922,11 @@ COMMENT ON TABLE daybreak_bill_sponsor IS 'The sponsor for each daybreak bill';
 --
 
 CREATE TABLE daybreak_file (
-    report_date date NOT NULL,
-    filename text NOT NULL,
-    is_archived boolean DEFAULT false NOT NULL,
-    staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    type daybreak_file_type NOT NULL
+  report_date date NOT NULL,
+  filename text NOT NULL,
+  is_archived boolean DEFAULT false NOT NULL,
+  staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  type daybreak_file_type NOT NULL
 );
 
 
@@ -1944,17 +1944,17 @@ COMMENT ON TABLE daybreak_file IS 'Listing of all daybreak files';
 --
 
 CREATE TABLE daybreak_fragment (
-    bill_print_no text NOT NULL,
-    bill_session_year integer NOT NULL,
-    report_date date NOT NULL,
-    filename text NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    processed_date_time timestamp without time zone,
-    processed_count integer DEFAULT 0 NOT NULL,
-    pending_processing boolean DEFAULT true NOT NULL,
-    bill_active_version character(1),
-    fragment_text text NOT NULL,
-    modified_date_time timestamp without time zone DEFAULT now() NOT NULL
+  bill_print_no text NOT NULL,
+  bill_session_year integer NOT NULL,
+  report_date date NOT NULL,
+  filename text NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  processed_date_time timestamp without time zone,
+  processed_count integer DEFAULT 0 NOT NULL,
+  pending_processing boolean DEFAULT true NOT NULL,
+  bill_active_version character(1),
+  fragment_text text NOT NULL,
+  modified_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -1972,16 +1972,16 @@ COMMENT ON TABLE daybreak_fragment IS 'A daybreak fragment is the content from a
 --
 
 CREATE TABLE daybreak_page_file_entry (
-    report_date date NOT NULL,
-    bill_session_year integer NOT NULL,
-    senate_bill_print_no text,
-    senate_bill_version character(1),
-    assembly_bill_print_no text,
-    assembly_bill_version character(1),
-    bill_publish_date date NOT NULL,
-    page_count integer NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    filename text NOT NULL
+  report_date date NOT NULL,
+  bill_session_year integer NOT NULL,
+  senate_bill_print_no text,
+  senate_bill_version character(1),
+  assembly_bill_print_no text,
+  assembly_bill_version character(1),
+  bill_publish_date date NOT NULL,
+  page_count integer NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  filename text NOT NULL
 );
 
 
@@ -1999,9 +1999,9 @@ COMMENT ON TABLE daybreak_page_file_entry IS 'The daybreak page file';
 --
 
 CREATE TABLE daybreak_report (
-    report_date date NOT NULL,
-    processed boolean DEFAULT false NOT NULL,
-    checked boolean DEFAULT false NOT NULL
+  report_date date NOT NULL,
+  processed boolean DEFAULT false NOT NULL,
+  checked boolean DEFAULT false NOT NULL
 );
 
 
@@ -2019,16 +2019,16 @@ COMMENT ON TABLE daybreak_report IS 'Indicates which set of daybreaks reports ha
 --
 
 CREATE TABLE law_document (
-    document_id text NOT NULL,
-    published_date date NOT NULL,
-    law_id text NOT NULL,
-    location_id text NOT NULL,
-    document_type text NOT NULL,
-    document_type_id text NOT NULL,
-    text text NOT NULL,
-    title text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    law_file_name text
+  document_id text NOT NULL,
+  published_date date NOT NULL,
+  law_id text NOT NULL,
+  location_id text NOT NULL,
+  document_type text NOT NULL,
+  document_type_id text NOT NULL,
+  text text NOT NULL,
+  title text,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  law_file_name text
 );
 
 
@@ -2116,13 +2116,13 @@ COMMENT ON COLUMN law_document.law_file_name IS 'Reference to the originating la
 --
 
 CREATE TABLE law_file (
-    file_name text NOT NULL,
-    published_date_time timestamp without time zone,
-    processed_date_time timestamp without time zone,
-    processed_count smallint DEFAULT 0 NOT NULL,
-    staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    pending_processing boolean DEFAULT true NOT NULL,
-    archived boolean DEFAULT false NOT NULL
+  file_name text NOT NULL,
+  published_date_time timestamp without time zone,
+  processed_date_time timestamp without time zone,
+  processed_count smallint DEFAULT 0 NOT NULL,
+  staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  pending_processing boolean DEFAULT true NOT NULL,
+  archived boolean DEFAULT false NOT NULL
 );
 
 
@@ -2189,11 +2189,11 @@ COMMENT ON COLUMN law_file.archived IS 'Indicates if this law file has been move
 --
 
 CREATE TABLE law_info (
-    law_id text NOT NULL,
-    chapter_id text NOT NULL,
-    law_type public.citext NOT NULL,
-    name text,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+  law_id text NOT NULL,
+  chapter_id text NOT NULL,
+  law_type public.citext NOT NULL,
+  name text,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -2211,16 +2211,16 @@ COMMENT ON TABLE law_info IS 'Basic information about the law chapters';
 --
 
 CREATE TABLE law_tree (
-    law_id text NOT NULL,
-    published_date date NOT NULL,
-    doc_id text NOT NULL,
-    doc_published_date date NOT NULL,
-    parent_doc_id text,
-    parent_doc_published_date date,
-    is_root boolean DEFAULT false NOT NULL,
-    sequence_no smallint NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    law_file text
+  law_id text NOT NULL,
+  published_date date NOT NULL,
+  doc_id text NOT NULL,
+  doc_published_date date NOT NULL,
+  parent_doc_id text,
+  parent_doc_published_date date,
+  is_root boolean DEFAULT false NOT NULL,
+  sequence_no smallint NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  law_file text
 );
 
 
@@ -2308,18 +2308,18 @@ COMMENT ON COLUMN law_tree.law_file IS 'Reference to the source law file';
 --
 
 CREATE TABLE sobi_fragment (
-    sobi_file_name text NOT NULL,
-    fragment_id text NOT NULL,
-    published_date_time timestamp without time zone,
-    fragment_type public.citext NOT NULL,
-    text text,
-    sequence_no smallint NOT NULL,
-    processed_count smallint DEFAULT 0 NOT NULL,
-    processed_date_time timestamp without time zone,
-    staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    pending_processing boolean NOT NULL,
-    manual_fix boolean DEFAULT false NOT NULL,
-    manual_fix_notes text
+  sobi_file_name text NOT NULL,
+  fragment_id text NOT NULL,
+  published_date_time timestamp without time zone,
+  fragment_type public.citext NOT NULL,
+  text text,
+  sequence_no smallint NOT NULL,
+  processed_count smallint DEFAULT 0 NOT NULL,
+  processed_date_time timestamp without time zone,
+  staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  pending_processing boolean NOT NULL,
+  manual_fix boolean DEFAULT false NOT NULL,
+  manual_fix_notes text
 );
 
 
@@ -2421,7 +2421,7 @@ COMMENT ON COLUMN sobi_fragment.manual_fix_notes IS 'Description of any manual c
 --
 
 CREATE VIEW psf AS
- SELECT sobi_fragment.sobi_file_name,
+  SELECT sobi_fragment.sobi_file_name,
     sobi_fragment.fragment_id,
     sobi_fragment.published_date_time,
     sobi_fragment.fragment_type,
@@ -2431,7 +2431,7 @@ CREATE VIEW psf AS
     sobi_fragment.processed_date_time,
     sobi_fragment.staged_date_time,
     sobi_fragment.pending_processing
-   FROM sobi_fragment
+  FROM sobi_fragment
   WHERE (sobi_fragment.pending_processing = true);
 
 
@@ -2449,14 +2449,14 @@ COMMENT ON VIEW psf IS 'Pending Sobi Fragments';
 --
 
 CREATE TABLE public_hearing (
-    title text NOT NULL,
-    date_time timestamp without time zone NOT NULL,
-    public_hearing_file text NOT NULL,
-    address text NOT NULL,
-    text text NOT NULL,
-    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    published_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+  title text NOT NULL,
+  date_time timestamp without time zone NOT NULL,
+  public_hearing_file text NOT NULL,
+  address text NOT NULL,
+  text text NOT NULL,
+  modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  published_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -2509,9 +2509,9 @@ COMMENT ON COLUMN public_hearing.text IS 'The raw text of this public hearing.';
 --
 
 CREATE TABLE public_hearing_attendance (
-    title text NOT NULL,
-    date_time timestamp without time zone NOT NULL,
-    session_member_id integer NOT NULL
+  title text NOT NULL,
+  date_time timestamp without time zone NOT NULL,
+  session_member_id integer NOT NULL
 );
 
 
@@ -2522,10 +2522,10 @@ ALTER TABLE master.public_hearing_attendance OWNER TO postgres;
 --
 
 CREATE TABLE public_hearing_committee (
-    title text NOT NULL,
-    date_time timestamp without time zone NOT NULL,
-    committee_name text NOT NULL,
-    committee_chamber text NOT NULL
+  title text NOT NULL,
+  date_time timestamp without time zone NOT NULL,
+  committee_name text NOT NULL,
+  committee_chamber text NOT NULL
 );
 
 
@@ -2550,12 +2550,12 @@ COMMENT ON COLUMN public_hearing_committee.committee_chamber IS 'The chamber of 
 --
 
 CREATE TABLE public_hearing_file (
-    file_name text NOT NULL,
-    staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    processed_date_time timestamp without time zone,
-    processed_count smallint DEFAULT 0 NOT NULL,
-    pending_processing boolean DEFAULT true NOT NULL,
-    archived boolean DEFAULT false NOT NULL
+  file_name text NOT NULL,
+  staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  processed_date_time timestamp without time zone,
+  processed_count smallint DEFAULT 0 NOT NULL,
+  pending_processing boolean DEFAULT true NOT NULL,
+  archived boolean DEFAULT false NOT NULL
 );
 
 
@@ -2615,13 +2615,13 @@ COMMENT ON COLUMN public_hearing_file.archived IS 'Indicates if this public hear
 --
 
 CREATE TABLE sobi_change_log (
-    id integer NOT NULL,
-    table_name text NOT NULL,
-    action text NOT NULL,
-    key public.hstore NOT NULL,
-    data public.hstore NOT NULL,
-    action_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    sobi_fragment_id text
+  id integer NOT NULL,
+  table_name text NOT NULL,
+  action text NOT NULL,
+  key public.hstore NOT NULL,
+  data public.hstore NOT NULL,
+  action_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  sobi_fragment_id text
 );
 
 
@@ -2639,11 +2639,11 @@ COMMENT ON TABLE sobi_change_log IS 'Change log for all entities that utilize So
 --
 
 CREATE SEQUENCE sobi_change_log_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.sobi_change_log_id_seq OWNER TO postgres;
@@ -2660,11 +2660,11 @@ ALTER SEQUENCE sobi_change_log_id_seq OWNED BY sobi_change_log.id;
 --
 
 CREATE TABLE sobi_file (
-    file_name text NOT NULL,
-    published_date_time timestamp without time zone NOT NULL,
-    staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    encoding text,
-    archived boolean DEFAULT false NOT NULL
+  file_name text NOT NULL,
+  published_date_time timestamp without time zone NOT NULL,
+  staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  encoding text,
+  archived boolean DEFAULT false NOT NULL
 );
 
 
@@ -2717,8 +2717,8 @@ COMMENT ON COLUMN sobi_file.archived IS 'Indicates if the file has been moved in
 --
 
 CREATE TABLE sobi_fragment_process (
-    id integer NOT NULL,
-    fragment_id text NOT NULL
+  id integer NOT NULL,
+  fragment_id text NOT NULL
 );
 
 
@@ -2729,11 +2729,11 @@ ALTER TABLE master.sobi_fragment_process OWNER TO postgres;
 --
 
 CREATE SEQUENCE sobi_fragment_process_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.sobi_fragment_process_id_seq OWNER TO postgres;
@@ -2750,13 +2750,13 @@ ALTER SEQUENCE sobi_fragment_process_id_seq OWNED BY sobi_fragment_process.id;
 --
 
 CREATE TABLE spotcheck_mismatch (
-    id integer NOT NULL,
-    observation_id integer NOT NULL,
-    type text NOT NULL,
-    status text NOT NULL,
-    reference_data text NOT NULL,
-    observed_data text NOT NULL,
-    notes text
+  id integer NOT NULL,
+  observation_id integer NOT NULL,
+  type text NOT NULL,
+  status text NOT NULL,
+  reference_data text NOT NULL,
+  observed_data text NOT NULL,
+  notes text
 );
 
 
@@ -2774,11 +2774,11 @@ COMMENT ON TABLE spotcheck_mismatch IS 'Listing of all spot check mismatches ';
 --
 
 CREATE SEQUENCE spotcheck_mismatch_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.spotcheck_mismatch_id_seq OWNER TO postgres;
@@ -2795,13 +2795,13 @@ ALTER SEQUENCE spotcheck_mismatch_id_seq OWNED BY spotcheck_mismatch.id;
 --
 
 CREATE TABLE spotcheck_observation (
-    id integer NOT NULL,
-    report_id integer NOT NULL,
-    reference_type text NOT NULL,
-    reference_active_date timestamp without time zone NOT NULL,
-    key public.hstore NOT NULL,
-    observed_date_time timestamp without time zone NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+  id integer NOT NULL,
+  report_id integer NOT NULL,
+  reference_type text NOT NULL,
+  reference_active_date timestamp without time zone NOT NULL,
+  key public.hstore NOT NULL,
+  observed_date_time timestamp without time zone NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -2819,11 +2819,11 @@ COMMENT ON TABLE spotcheck_observation IS 'Spot check observations associate a r
 --
 
 CREATE SEQUENCE spotcheck_observation_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.spotcheck_observation_id_seq OWNER TO postgres;
@@ -2840,11 +2840,11 @@ ALTER SEQUENCE spotcheck_observation_id_seq OWNED BY spotcheck_observation.id;
 --
 
 CREATE TABLE spotcheck_report (
-    id integer NOT NULL,
-    report_date_time timestamp without time zone NOT NULL,
-    reference_type text NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    reference_date_time timestamp without time zone
+  id integer NOT NULL,
+  report_date_time timestamp without time zone NOT NULL,
+  reference_type text NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  reference_date_time timestamp without time zone
 );
 
 
@@ -2862,11 +2862,11 @@ COMMENT ON TABLE spotcheck_report IS 'Listing of all spot check reports that hav
 --
 
 CREATE SEQUENCE spotcheck_report_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE master.spotcheck_report_id_seq OWNER TO postgres;
@@ -2883,14 +2883,14 @@ ALTER SEQUENCE spotcheck_report_id_seq OWNED BY spotcheck_report.id;
 --
 
 CREATE TABLE transcript (
-    session_type text NOT NULL,
-    date_time timestamp without time zone NOT NULL,
-    location text NOT NULL,
-    text text NOT NULL,
-    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    published_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    transcript_file text NOT NULL
+  session_type text NOT NULL,
+  date_time timestamp without time zone NOT NULL,
+  location text NOT NULL,
+  text text NOT NULL,
+  modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  published_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  transcript_file text NOT NULL
 );
 
 
@@ -2950,12 +2950,12 @@ COMMENT ON COLUMN transcript.transcript_file IS 'This transcripts original file.
 --
 
 CREATE TABLE transcript_file (
-    file_name text NOT NULL,
-    processed_date_time timestamp without time zone,
-    processed_count smallint DEFAULT 0 NOT NULL,
-    staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    pending_processing boolean DEFAULT true NOT NULL,
-    archived boolean DEFAULT false NOT NULL
+  file_name text NOT NULL,
+  processed_date_time timestamp without time zone,
+  processed_count smallint DEFAULT 0 NOT NULL,
+  staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  pending_processing boolean DEFAULT true NOT NULL,
+  archived boolean DEFAULT false NOT NULL
 );
 
 
@@ -3013,15 +3013,105 @@ COMMENT ON COLUMN transcript_file.archived IS 'Indicates if this transcript file
 SET search_path = public, pg_catalog;
 
 --
+-- Name: adminuser; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE adminuser (
+  username text NOT NULL,
+  password text NOT NULL,
+  permissions_level integer NOT NULL
+);
+
+
+ALTER TABLE public.adminuser OWNER TO postgres;
+
+--
+-- Name: TABLE adminuser; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE adminuser IS 'This table will contain all administrators. ';
+
+
+--
+-- Name: COLUMN adminuser.username; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN adminuser.username IS 'Username';
+
+
+--
+-- Name: COLUMN adminuser.password; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN adminuser.password IS 'Encrypted form of the admin''s password';
+
+
+--
+-- Name: COLUMN adminuser.permissions_level; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN adminuser.permissions_level IS 'Read only, Write only, or Read + Write Only';
+
+
+--
+-- Name: apiuser; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE apiuser (
+  apikey character varying(32) NOT NULL,
+  authenticated boolean DEFAULT false,
+  num_requests numeric,
+  email_addr text NOT NULL
+);
+
+
+ALTER TABLE public.apiuser OWNER TO postgres;
+
+--
+-- Name: TABLE apiuser; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE apiuser IS 'The table will store all users of the API.';
+
+
+--
+-- Name: COLUMN apiuser.apikey; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN apiuser.apikey IS 'The user''s API Key, 32 Characters in length';
+
+
+--
+-- Name: COLUMN apiuser.authenticated; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN apiuser.authenticated IS 'Whether or not the user has authenticated their email';
+
+
+--
+-- Name: COLUMN apiuser.num_requests; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN apiuser.num_requests IS 'The total number of requests made by this user';
+
+
+--
+-- Name: COLUMN apiuser.email_addr; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN apiuser.email_addr IS 'The email address that the user registered with';
+
+
+--
 -- Name: member; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE member (
-    id integer NOT NULL,
-    person_id integer NOT NULL,
-    chamber chamber NOT NULL,
-    incumbent boolean DEFAULT false,
-    full_name character varying
+  id integer NOT NULL,
+  person_id integer NOT NULL,
+  chamber chamber NOT NULL,
+  incumbent boolean DEFAULT false,
+  full_name character varying
 );
 
 
@@ -3067,11 +3157,11 @@ COMMENT ON COLUMN member.full_name IS 'Full name of member listed for convenienc
 --
 
 CREATE SEQUENCE member_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE public.member_id_seq OWNER TO postgres;
@@ -3088,11 +3178,11 @@ ALTER SEQUENCE member_id_seq OWNED BY member.id;
 --
 
 CREATE SEQUENCE member_person_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE public.member_person_id_seq OWNER TO postgres;
@@ -3109,15 +3199,15 @@ ALTER SEQUENCE member_person_id_seq OWNED BY member.person_id;
 --
 
 CREATE TABLE person (
-    id integer NOT NULL,
-    full_name character varying,
-    first_name character varying,
-    middle_name character varying,
-    last_name character varying,
-    email character varying,
-    prefix character varying,
-    suffix character varying,
-    verified boolean DEFAULT true
+  id integer NOT NULL,
+  full_name character varying,
+  first_name character varying,
+  middle_name character varying,
+  last_name character varying,
+  email character varying,
+  prefix character varying,
+  suffix character varying,
+  verified boolean DEFAULT true
 );
 
 
@@ -3184,11 +3274,11 @@ COMMENT ON COLUMN person.suffix IS 'Suffix (Jr, Sr, etc)';
 --
 
 CREATE SEQUENCE person_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE public.person_id_seq OWNER TO postgres;
@@ -3205,12 +3295,12 @@ ALTER SEQUENCE person_id_seq OWNED BY person.id;
 --
 
 CREATE TABLE session_member (
-    id integer NOT NULL,
-    member_id integer NOT NULL,
-    lbdc_short_name character varying NOT NULL,
-    session_year smallint NOT NULL,
-    district_code smallint,
-    alternate boolean DEFAULT false
+  id integer NOT NULL,
+  member_id integer NOT NULL,
+  lbdc_short_name character varying NOT NULL,
+  session_year smallint NOT NULL,
+  district_code smallint,
+  alternate boolean DEFAULT false
 );
 
 
@@ -3221,11 +3311,11 @@ ALTER TABLE public.session_member OWNER TO postgres;
 --
 
 CREATE SEQUENCE session_member_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE public.session_member_id_seq OWNER TO postgres;
@@ -3388,7 +3478,7 @@ SET search_path = master, pg_catalog;
 --
 
 ALTER TABLE ONLY agenda_info_addendum
-    ADD CONSTRAINT agenda_info_addendum_pkey PRIMARY KEY (agenda_no, year, addendum_id);
+ADD CONSTRAINT agenda_info_addendum_pkey PRIMARY KEY (agenda_no, year, addendum_id);
 
 
 --
@@ -3396,7 +3486,7 @@ ALTER TABLE ONLY agenda_info_addendum
 --
 
 ALTER TABLE ONLY agenda_info_committee
-    ADD CONSTRAINT agenda_info_committee_agenda_no_year_addendum_id_committee__key UNIQUE (agenda_no, year, addendum_id, committee_name, committee_chamber);
+ADD CONSTRAINT agenda_info_committee_agenda_no_year_addendum_id_committee__key UNIQUE (agenda_no, year, addendum_id, committee_name, committee_chamber);
 
 
 --
@@ -3404,7 +3494,7 @@ ALTER TABLE ONLY agenda_info_committee
 --
 
 ALTER TABLE ONLY agenda_info_committee_item
-    ADD CONSTRAINT agenda_info_committee_item_pkey PRIMARY KEY (id);
+ADD CONSTRAINT agenda_info_committee_item_pkey PRIMARY KEY (id);
 
 
 --
@@ -3412,7 +3502,7 @@ ALTER TABLE ONLY agenda_info_committee_item
 --
 
 ALTER TABLE ONLY agenda_info_committee
-    ADD CONSTRAINT agenda_info_committee_pkey PRIMARY KEY (id);
+ADD CONSTRAINT agenda_info_committee_pkey PRIMARY KEY (id);
 
 
 --
@@ -3420,7 +3510,7 @@ ALTER TABLE ONLY agenda_info_committee
 --
 
 ALTER TABLE ONLY agenda
-    ADD CONSTRAINT agenda_pkey PRIMARY KEY (agenda_no, year);
+ADD CONSTRAINT agenda_pkey PRIMARY KEY (agenda_no, year);
 
 
 --
@@ -3428,7 +3518,7 @@ ALTER TABLE ONLY agenda
 --
 
 ALTER TABLE ONLY agenda_vote_addendum
-    ADD CONSTRAINT agenda_vote_addendum_pkey PRIMARY KEY (agenda_no, year, addendum_id);
+ADD CONSTRAINT agenda_vote_addendum_pkey PRIMARY KEY (agenda_no, year, addendum_id);
 
 
 --
@@ -3436,7 +3526,7 @@ ALTER TABLE ONLY agenda_vote_addendum
 --
 
 ALTER TABLE ONLY agenda_vote_committee
-    ADD CONSTRAINT agenda_vote_committee_agenda_no_year_addendum_id_committee__key UNIQUE (agenda_no, year, addendum_id, committee_name, committee_chamber);
+ADD CONSTRAINT agenda_vote_committee_agenda_no_year_addendum_id_committee__key UNIQUE (agenda_no, year, addendum_id, committee_name, committee_chamber);
 
 
 --
@@ -3444,7 +3534,7 @@ ALTER TABLE ONLY agenda_vote_committee
 --
 
 ALTER TABLE ONLY agenda_vote_committee_attend
-    ADD CONSTRAINT agenda_vote_committee_attend_pkey PRIMARY KEY (id);
+ADD CONSTRAINT agenda_vote_committee_attend_pkey PRIMARY KEY (id);
 
 
 --
@@ -3452,7 +3542,7 @@ ALTER TABLE ONLY agenda_vote_committee_attend
 --
 
 ALTER TABLE ONLY agenda_vote_committee
-    ADD CONSTRAINT agenda_vote_committee_pkey PRIMARY KEY (id);
+ADD CONSTRAINT agenda_vote_committee_pkey PRIMARY KEY (id);
 
 
 --
@@ -3460,7 +3550,7 @@ ALTER TABLE ONLY agenda_vote_committee
 --
 
 ALTER TABLE ONLY agenda_vote_committee_vote
-    ADD CONSTRAINT agenda_vote_committee_vote_pkey PRIMARY KEY (id);
+ADD CONSTRAINT agenda_vote_committee_vote_pkey PRIMARY KEY (id);
 
 
 --
@@ -3468,7 +3558,7 @@ ALTER TABLE ONLY agenda_vote_committee_vote
 --
 
 ALTER TABLE ONLY bill_amendment_action
-    ADD CONSTRAINT bill_amendment_action_pkey PRIMARY KEY (bill_print_no, bill_session_year, sequence_no);
+ADD CONSTRAINT bill_amendment_action_pkey PRIMARY KEY (bill_print_no, bill_session_year, sequence_no);
 
 
 --
@@ -3476,7 +3566,7 @@ ALTER TABLE ONLY bill_amendment_action
 --
 
 ALTER TABLE ONLY bill_amendment_cosponsor
-    ADD CONSTRAINT bill_amendment_cosponsor_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version, session_member_id);
+ADD CONSTRAINT bill_amendment_cosponsor_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version, session_member_id);
 
 
 --
@@ -3484,7 +3574,7 @@ ALTER TABLE ONLY bill_amendment_cosponsor
 --
 
 ALTER TABLE ONLY bill_amendment_multi_sponsor
-    ADD CONSTRAINT bill_amendment_multi_sponsor_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version, session_member_id);
+ADD CONSTRAINT bill_amendment_multi_sponsor_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version, session_member_id);
 
 
 --
@@ -3492,7 +3582,7 @@ ALTER TABLE ONLY bill_amendment_multi_sponsor
 --
 
 ALTER TABLE ONLY bill_amendment
-    ADD CONSTRAINT bill_amendment_pkey PRIMARY KEY (bill_print_no, bill_session_year, version);
+ADD CONSTRAINT bill_amendment_pkey PRIMARY KEY (bill_print_no, bill_session_year, version);
 
 
 --
@@ -3500,7 +3590,7 @@ ALTER TABLE ONLY bill_amendment
 --
 
 ALTER TABLE ONLY bill_amendment_publish_status
-    ADD CONSTRAINT bill_amendment_publish_status_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version);
+ADD CONSTRAINT bill_amendment_publish_status_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version);
 
 
 --
@@ -3508,7 +3598,7 @@ ALTER TABLE ONLY bill_amendment_publish_status
 --
 
 ALTER TABLE ONLY bill_amendment_same_as
-    ADD CONSTRAINT bill_amendment_same_as_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version, same_as_bill_print_no, same_as_session_year, same_as_amend_version);
+ADD CONSTRAINT bill_amendment_same_as_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version, same_as_bill_print_no, same_as_session_year, same_as_amend_version);
 
 
 --
@@ -3516,7 +3606,7 @@ ALTER TABLE ONLY bill_amendment_same_as
 --
 
 ALTER TABLE ONLY bill_amendment_vote_info
-    ADD CONSTRAINT bill_amendment_vote_info_bill_print_no_bill_session_year_bi_key UNIQUE (bill_print_no, bill_session_year, bill_amend_version, vote_date, vote_type, sequence_no);
+ADD CONSTRAINT bill_amendment_vote_info_bill_print_no_bill_session_year_bi_key UNIQUE (bill_print_no, bill_session_year, bill_amend_version, vote_date, vote_type, sequence_no);
 
 
 --
@@ -3524,7 +3614,7 @@ ALTER TABLE ONLY bill_amendment_vote_info
 --
 
 ALTER TABLE ONLY bill_amendment_vote_info
-    ADD CONSTRAINT bill_amendment_vote_pkey PRIMARY KEY (id);
+ADD CONSTRAINT bill_amendment_vote_pkey PRIMARY KEY (id);
 
 
 --
@@ -3532,7 +3622,7 @@ ALTER TABLE ONLY bill_amendment_vote_info
 --
 
 ALTER TABLE ONLY bill_amendment_vote_roll
-    ADD CONSTRAINT bill_amendment_vote_roll_pkey PRIMARY KEY (vote_id, session_member_id, session_year, vote_code);
+ADD CONSTRAINT bill_amendment_vote_roll_pkey PRIMARY KEY (vote_id, session_member_id, session_year, vote_code);
 
 
 --
@@ -3540,7 +3630,7 @@ ALTER TABLE ONLY bill_amendment_vote_roll
 --
 
 ALTER TABLE ONLY bill_approval
-    ADD CONSTRAINT bill_approval_approval_number_year_key UNIQUE (approval_number, year);
+ADD CONSTRAINT bill_approval_approval_number_year_key UNIQUE (approval_number, year);
 
 
 --
@@ -3548,7 +3638,7 @@ ALTER TABLE ONLY bill_approval
 --
 
 ALTER TABLE ONLY bill_approval
-    ADD CONSTRAINT bill_approval_bill_print_no_session_year_key UNIQUE (bill_print_no, session_year);
+ADD CONSTRAINT bill_approval_bill_print_no_session_year_key UNIQUE (bill_print_no, session_year);
 
 
 --
@@ -3556,7 +3646,7 @@ ALTER TABLE ONLY bill_approval
 --
 
 ALTER TABLE ONLY bill_approval
-    ADD CONSTRAINT bill_approval_pkey PRIMARY KEY (year, approval_number);
+ADD CONSTRAINT bill_approval_pkey PRIMARY KEY (year, approval_number);
 
 
 --
@@ -3564,7 +3654,7 @@ ALTER TABLE ONLY bill_approval
 --
 
 ALTER TABLE ONLY bill_committee
-    ADD CONSTRAINT bill_committee_pkey PRIMARY KEY (bill_print_no, bill_session_year, committee_name, committee_chamber, action_date);
+ADD CONSTRAINT bill_committee_pkey PRIMARY KEY (bill_print_no, bill_session_year, committee_name, committee_chamber, action_date);
 
 
 --
@@ -3572,7 +3662,7 @@ ALTER TABLE ONLY bill_committee
 --
 
 ALTER TABLE ONLY bill_milestone
-    ADD CONSTRAINT bill_milestone_pkey PRIMARY KEY (bill_print_no, bill_session_year, status);
+ADD CONSTRAINT bill_milestone_pkey PRIMARY KEY (bill_print_no, bill_session_year, status);
 
 
 --
@@ -3580,7 +3670,7 @@ ALTER TABLE ONLY bill_milestone
 --
 
 ALTER TABLE ONLY bill
-    ADD CONSTRAINT bill_pkey PRIMARY KEY (print_no, session_year);
+ADD CONSTRAINT bill_pkey PRIMARY KEY (print_no, session_year);
 
 
 --
@@ -3588,7 +3678,7 @@ ALTER TABLE ONLY bill
 --
 
 ALTER TABLE ONLY bill_previous_version
-    ADD CONSTRAINT bill_previous_version_pkey PRIMARY KEY (bill_print_no, bill_session_year, prev_bill_print_no, prev_bill_session_year, prev_amend_version);
+ADD CONSTRAINT bill_previous_version_pkey PRIMARY KEY (bill_print_no, bill_session_year, prev_bill_print_no, prev_bill_session_year, prev_amend_version);
 
 
 --
@@ -3596,7 +3686,7 @@ ALTER TABLE ONLY bill_previous_version
 --
 
 ALTER TABLE ONLY bill_sponsor
-    ADD CONSTRAINT bill_sponsor_pkey PRIMARY KEY (bill_print_no, bill_session_year);
+ADD CONSTRAINT bill_sponsor_pkey PRIMARY KEY (bill_print_no, bill_session_year);
 
 
 --
@@ -3604,7 +3694,7 @@ ALTER TABLE ONLY bill_sponsor
 --
 
 ALTER TABLE ONLY bill_sponsor_additional
-    ADD CONSTRAINT bill_sponsor_special_pkey PRIMARY KEY (bill_print_no, bill_session_year, session_member_id);
+ADD CONSTRAINT bill_sponsor_special_pkey PRIMARY KEY (bill_print_no, bill_session_year, session_member_id);
 
 
 --
@@ -3612,7 +3702,7 @@ ALTER TABLE ONLY bill_sponsor_additional
 --
 
 ALTER TABLE ONLY bill_veto
-    ADD CONSTRAINT bill_veto_pkey PRIMARY KEY (veto_number, year);
+ADD CONSTRAINT bill_veto_pkey PRIMARY KEY (veto_number, year);
 
 
 --
@@ -3620,7 +3710,7 @@ ALTER TABLE ONLY bill_veto
 --
 
 ALTER TABLE ONLY calendar_active_list
-    ADD CONSTRAINT calendar_active_list_calendar_no_calendar_year_sequence_no_key UNIQUE (calendar_no, calendar_year, sequence_no);
+ADD CONSTRAINT calendar_active_list_calendar_no_calendar_year_sequence_no_key UNIQUE (calendar_no, calendar_year, sequence_no);
 
 
 --
@@ -3628,7 +3718,7 @@ ALTER TABLE ONLY calendar_active_list
 --
 
 ALTER TABLE ONLY calendar_active_list_entry
-    ADD CONSTRAINT calendar_active_list_entry_pkey PRIMARY KEY (calendar_active_list_id, bill_calendar_no);
+ADD CONSTRAINT calendar_active_list_entry_pkey PRIMARY KEY (calendar_active_list_id, bill_calendar_no);
 
 
 --
@@ -3636,7 +3726,7 @@ ALTER TABLE ONLY calendar_active_list_entry
 --
 
 ALTER TABLE ONLY calendar_active_list
-    ADD CONSTRAINT calendar_active_list_pkey PRIMARY KEY (id);
+ADD CONSTRAINT calendar_active_list_pkey PRIMARY KEY (id);
 
 
 --
@@ -3644,7 +3734,7 @@ ALTER TABLE ONLY calendar_active_list
 --
 
 ALTER TABLE ONLY calendar
-    ADD CONSTRAINT calendar_pkey PRIMARY KEY (calendar_no, year);
+ADD CONSTRAINT calendar_pkey PRIMARY KEY (calendar_no, year);
 
 
 --
@@ -3652,7 +3742,7 @@ ALTER TABLE ONLY calendar
 --
 
 ALTER TABLE ONLY calendar_supplemental
-    ADD CONSTRAINT calendar_supplemental_calendar_no_calendar_year_sup_version_key UNIQUE (calendar_no, calendar_year, sup_version);
+ADD CONSTRAINT calendar_supplemental_calendar_no_calendar_year_sup_version_key UNIQUE (calendar_no, calendar_year, sup_version);
 
 
 --
@@ -3660,7 +3750,7 @@ ALTER TABLE ONLY calendar_supplemental
 --
 
 ALTER TABLE ONLY calendar_supplemental_entry
-    ADD CONSTRAINT calendar_supplemental_entry_pkey PRIMARY KEY (id);
+ADD CONSTRAINT calendar_supplemental_entry_pkey PRIMARY KEY (id);
 
 
 --
@@ -3668,7 +3758,7 @@ ALTER TABLE ONLY calendar_supplemental_entry
 --
 
 ALTER TABLE ONLY calendar_supplemental
-    ADD CONSTRAINT calendar_supplemental_pkey PRIMARY KEY (id);
+ADD CONSTRAINT calendar_supplemental_pkey PRIMARY KEY (id);
 
 
 --
@@ -3676,7 +3766,7 @@ ALTER TABLE ONLY calendar_supplemental
 --
 
 ALTER TABLE ONLY committee_member
-    ADD CONSTRAINT committee_member_chamber_committee_name_version_created_seq_key UNIQUE (chamber, committee_name, version_created, sequence_no);
+ADD CONSTRAINT committee_member_chamber_committee_name_version_created_seq_key UNIQUE (chamber, committee_name, version_created, sequence_no);
 
 
 --
@@ -3684,7 +3774,7 @@ ALTER TABLE ONLY committee_member
 --
 
 ALTER TABLE ONLY committee_member
-    ADD CONSTRAINT committee_member_chamber_committee_name_version_created_ses_key UNIQUE (chamber, committee_name, version_created, session_member_id);
+ADD CONSTRAINT committee_member_chamber_committee_name_version_created_ses_key UNIQUE (chamber, committee_name, version_created, session_member_id);
 
 
 --
@@ -3692,7 +3782,7 @@ ALTER TABLE ONLY committee_member
 --
 
 ALTER TABLE ONLY committee_member
-    ADD CONSTRAINT committee_member_pkey PRIMARY KEY (id);
+ADD CONSTRAINT committee_member_pkey PRIMARY KEY (id);
 
 
 --
@@ -3700,7 +3790,7 @@ ALTER TABLE ONLY committee_member
 --
 
 ALTER TABLE ONLY committee
-    ADD CONSTRAINT committee_pkey PRIMARY KEY (name, chamber);
+ADD CONSTRAINT committee_pkey PRIMARY KEY (name, chamber);
 
 
 --
@@ -3708,7 +3798,7 @@ ALTER TABLE ONLY committee
 --
 
 ALTER TABLE ONLY committee_version
-    ADD CONSTRAINT committee_version_committee_name_chamber_session_year_creat_key UNIQUE (committee_name, chamber, session_year, created);
+ADD CONSTRAINT committee_version_committee_name_chamber_session_year_creat_key UNIQUE (committee_name, chamber, session_year, created);
 
 
 --
@@ -3716,7 +3806,7 @@ ALTER TABLE ONLY committee_version
 --
 
 ALTER TABLE ONLY committee_version
-    ADD CONSTRAINT committee_version_pkey PRIMARY KEY (id);
+ADD CONSTRAINT committee_version_pkey PRIMARY KEY (id);
 
 
 --
@@ -3724,7 +3814,7 @@ ALTER TABLE ONLY committee_version
 --
 
 ALTER TABLE ONLY daybreak_bill_action
-    ADD CONSTRAINT daybreak_bill_action_report_date_bill_print_no_bill_session_key UNIQUE (report_date, bill_print_no, bill_session_year, sequence_no);
+ADD CONSTRAINT daybreak_bill_action_report_date_bill_print_no_bill_session_key UNIQUE (report_date, bill_print_no, bill_session_year, sequence_no);
 
 
 --
@@ -3732,7 +3822,7 @@ ALTER TABLE ONLY daybreak_bill_action
 --
 
 ALTER TABLE ONLY daybreak_bill_amendment
-    ADD CONSTRAINT daybreak_bill_amendment_report_date_bill_print_no_bill_sess_key UNIQUE (report_date, bill_print_no, bill_session_year, version);
+ADD CONSTRAINT daybreak_bill_amendment_report_date_bill_print_no_bill_sess_key UNIQUE (report_date, bill_print_no, bill_session_year, version);
 
 
 --
@@ -3740,7 +3830,7 @@ ALTER TABLE ONLY daybreak_bill_amendment
 --
 
 ALTER TABLE ONLY daybreak_bill
-    ADD CONSTRAINT daybreak_bill_report_date_bill_print_no_bill_session_year_key UNIQUE (report_date, bill_print_no, bill_session_year);
+ADD CONSTRAINT daybreak_bill_report_date_bill_print_no_bill_session_year_key UNIQUE (report_date, bill_print_no, bill_session_year);
 
 
 --
@@ -3748,7 +3838,7 @@ ALTER TABLE ONLY daybreak_bill
 --
 
 ALTER TABLE ONLY daybreak_bill_sponsor
-    ADD CONSTRAINT daybreak_bill_sponsor_report_date_bill_print_no_bill_sessio_key UNIQUE (report_date, bill_print_no, bill_session_year, member_short_name, type);
+ADD CONSTRAINT daybreak_bill_sponsor_report_date_bill_print_no_bill_sessio_key UNIQUE (report_date, bill_print_no, bill_session_year, member_short_name, type);
 
 
 --
@@ -3756,7 +3846,7 @@ ALTER TABLE ONLY daybreak_bill_sponsor
 --
 
 ALTER TABLE ONLY daybreak_file
-    ADD CONSTRAINT daybreak_file_report_date_filename_key UNIQUE (report_date, filename);
+ADD CONSTRAINT daybreak_file_report_date_filename_key UNIQUE (report_date, filename);
 
 
 --
@@ -3764,7 +3854,7 @@ ALTER TABLE ONLY daybreak_file
 --
 
 ALTER TABLE ONLY daybreak_fragment
-    ADD CONSTRAINT daybreak_fragment_bill_print_no_bill_session_year_report_da_key UNIQUE (bill_print_no, bill_session_year, report_date);
+ADD CONSTRAINT daybreak_fragment_bill_print_no_bill_session_year_report_da_key UNIQUE (bill_print_no, bill_session_year, report_date);
 
 
 --
@@ -3772,7 +3862,7 @@ ALTER TABLE ONLY daybreak_fragment
 --
 
 ALTER TABLE ONLY daybreak_page_file_entry
-    ADD CONSTRAINT daybreak_page_file_entry_report_date_bill_session_year_asse_key UNIQUE (report_date, bill_session_year, assembly_bill_print_no, assembly_bill_version);
+ADD CONSTRAINT daybreak_page_file_entry_report_date_bill_session_year_asse_key UNIQUE (report_date, bill_session_year, assembly_bill_print_no, assembly_bill_version);
 
 
 --
@@ -3780,7 +3870,7 @@ ALTER TABLE ONLY daybreak_page_file_entry
 --
 
 ALTER TABLE ONLY daybreak_page_file_entry
-    ADD CONSTRAINT daybreak_page_file_entry_report_date_bill_session_year_sena_key UNIQUE (report_date, bill_session_year, senate_bill_print_no, senate_bill_version);
+ADD CONSTRAINT daybreak_page_file_entry_report_date_bill_session_year_sena_key UNIQUE (report_date, bill_session_year, senate_bill_print_no, senate_bill_version);
 
 
 --
@@ -3788,7 +3878,7 @@ ALTER TABLE ONLY daybreak_page_file_entry
 --
 
 ALTER TABLE ONLY daybreak_report
-    ADD CONSTRAINT daybreak_report_pkey PRIMARY KEY (report_date);
+ADD CONSTRAINT daybreak_report_pkey PRIMARY KEY (report_date);
 
 
 --
@@ -3796,7 +3886,7 @@ ALTER TABLE ONLY daybreak_report
 --
 
 ALTER TABLE ONLY law_info
-    ADD CONSTRAINT law_chapter_pkey PRIMARY KEY (law_id);
+ADD CONSTRAINT law_chapter_pkey PRIMARY KEY (law_id);
 
 
 --
@@ -3804,7 +3894,7 @@ ALTER TABLE ONLY law_info
 --
 
 ALTER TABLE ONLY law_document
-    ADD CONSTRAINT law_document_pkey PRIMARY KEY (document_id, published_date);
+ADD CONSTRAINT law_document_pkey PRIMARY KEY (document_id, published_date);
 
 
 --
@@ -3812,7 +3902,7 @@ ALTER TABLE ONLY law_document
 --
 
 ALTER TABLE ONLY law_file
-    ADD CONSTRAINT law_file_pkey PRIMARY KEY (file_name);
+ADD CONSTRAINT law_file_pkey PRIMARY KEY (file_name);
 
 
 --
@@ -3820,7 +3910,7 @@ ALTER TABLE ONLY law_file
 --
 
 ALTER TABLE ONLY law_tree
-    ADD CONSTRAINT law_tree_pkey PRIMARY KEY (law_id, published_date, doc_id, doc_published_date);
+ADD CONSTRAINT law_tree_pkey PRIMARY KEY (law_id, published_date, doc_id, doc_published_date);
 
 
 --
@@ -3828,7 +3918,7 @@ ALTER TABLE ONLY law_tree
 --
 
 ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_pkey PRIMARY KEY (title, date_time, session_member_id);
+ADD CONSTRAINT public_hearing_attendance_pkey PRIMARY KEY (title, date_time, session_member_id);
 
 
 --
@@ -3836,7 +3926,7 @@ ALTER TABLE ONLY public_hearing_attendance
 --
 
 ALTER TABLE ONLY public_hearing_committee
-    ADD CONSTRAINT public_hearing_committee_pkey PRIMARY KEY (title, date_time, committee_name, committee_chamber);
+ADD CONSTRAINT public_hearing_committee_pkey PRIMARY KEY (title, date_time, committee_name, committee_chamber);
 
 
 --
@@ -3844,7 +3934,7 @@ ALTER TABLE ONLY public_hearing_committee
 --
 
 ALTER TABLE ONLY public_hearing_file
-    ADD CONSTRAINT public_hearing_file_pkey PRIMARY KEY (file_name);
+ADD CONSTRAINT public_hearing_file_pkey PRIMARY KEY (file_name);
 
 
 --
@@ -3852,7 +3942,7 @@ ALTER TABLE ONLY public_hearing_file
 --
 
 ALTER TABLE ONLY public_hearing
-    ADD CONSTRAINT public_hearing_pkey PRIMARY KEY (title, date_time);
+ADD CONSTRAINT public_hearing_pkey PRIMARY KEY (title, date_time);
 
 
 --
@@ -3860,7 +3950,7 @@ ALTER TABLE ONLY public_hearing
 --
 
 ALTER TABLE ONLY sobi_fragment
-    ADD CONSTRAINT sobi_fragment_pkey PRIMARY KEY (fragment_id);
+ADD CONSTRAINT sobi_fragment_pkey PRIMARY KEY (fragment_id);
 
 
 --
@@ -3868,7 +3958,7 @@ ALTER TABLE ONLY sobi_fragment
 --
 
 ALTER TABLE ONLY sobi_fragment_process
-    ADD CONSTRAINT sobi_fragment_process_pkey PRIMARY KEY (id);
+ADD CONSTRAINT sobi_fragment_process_pkey PRIMARY KEY (id);
 
 
 --
@@ -3876,7 +3966,7 @@ ALTER TABLE ONLY sobi_fragment_process
 --
 
 ALTER TABLE ONLY sobi_file
-    ADD CONSTRAINT sobi_pkey PRIMARY KEY (file_name);
+ADD CONSTRAINT sobi_pkey PRIMARY KEY (file_name);
 
 
 --
@@ -3884,7 +3974,7 @@ ALTER TABLE ONLY sobi_file
 --
 
 ALTER TABLE ONLY spotcheck_mismatch
-    ADD CONSTRAINT spotcheck_mismatch_pkey PRIMARY KEY (id);
+ADD CONSTRAINT spotcheck_mismatch_pkey PRIMARY KEY (id);
 
 
 --
@@ -3892,7 +3982,7 @@ ALTER TABLE ONLY spotcheck_mismatch
 --
 
 ALTER TABLE ONLY spotcheck_observation
-    ADD CONSTRAINT spotcheck_observation_pkey PRIMARY KEY (id);
+ADD CONSTRAINT spotcheck_observation_pkey PRIMARY KEY (id);
 
 
 --
@@ -3900,7 +3990,7 @@ ALTER TABLE ONLY spotcheck_observation
 --
 
 ALTER TABLE ONLY spotcheck_observation
-    ADD CONSTRAINT spotcheck_observation_report_id_reference_type_key_key UNIQUE (report_id, reference_type, key);
+ADD CONSTRAINT spotcheck_observation_report_id_reference_type_key_key UNIQUE (report_id, reference_type, key);
 
 
 --
@@ -3908,7 +3998,7 @@ ALTER TABLE ONLY spotcheck_observation
 --
 
 ALTER TABLE ONLY spotcheck_report
-    ADD CONSTRAINT spotcheck_report_pkey PRIMARY KEY (id);
+ADD CONSTRAINT spotcheck_report_pkey PRIMARY KEY (id);
 
 
 --
@@ -3916,7 +4006,7 @@ ALTER TABLE ONLY spotcheck_report
 --
 
 ALTER TABLE ONLY spotcheck_report
-    ADD CONSTRAINT spotcheck_report_report_date_time_reference_type_key UNIQUE (report_date_time, reference_type);
+ADD CONSTRAINT spotcheck_report_report_date_time_reference_type_key UNIQUE (report_date_time, reference_type);
 
 
 --
@@ -3924,7 +4014,7 @@ ALTER TABLE ONLY spotcheck_report
 --
 
 ALTER TABLE ONLY transcript_file
-    ADD CONSTRAINT transcript_file_pkey PRIMARY KEY (file_name);
+ADD CONSTRAINT transcript_file_pkey PRIMARY KEY (file_name);
 
 
 --
@@ -3932,17 +4022,41 @@ ALTER TABLE ONLY transcript_file
 --
 
 ALTER TABLE ONLY transcript
-    ADD CONSTRAINT transcript_pkey PRIMARY KEY (session_type, date_time);
+ADD CONSTRAINT transcript_pkey PRIMARY KEY (session_type, date_time);
 
 
 SET search_path = public, pg_catalog;
+
+--
+-- Name: adminuser_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY adminuser
+ADD CONSTRAINT adminuser_pkey PRIMARY KEY (username);
+
+
+--
+-- Name: apiuser_email_addr_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY apiuser
+ADD CONSTRAINT apiuser_email_addr_key UNIQUE (email_addr);
+
+
+--
+-- Name: apiuser_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY apiuser
+ADD CONSTRAINT apiuser_pkey PRIMARY KEY (apikey);
+
 
 --
 -- Name: member_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY member
-    ADD CONSTRAINT member_pkey PRIMARY KEY (id);
+ADD CONSTRAINT member_pkey PRIMARY KEY (id);
 
 
 --
@@ -3950,7 +4064,7 @@ ALTER TABLE ONLY member
 --
 
 ALTER TABLE ONLY person
-    ADD CONSTRAINT person_pkey PRIMARY KEY (id);
+ADD CONSTRAINT person_pkey PRIMARY KEY (id);
 
 
 --
@@ -3958,7 +4072,7 @@ ALTER TABLE ONLY person
 --
 
 ALTER TABLE ONLY session_member
-    ADD CONSTRAINT session_member_member_id_lbdc_short_name_session_year_key UNIQUE (member_id, lbdc_short_name, session_year);
+ADD CONSTRAINT session_member_member_id_lbdc_short_name_session_year_key UNIQUE (member_id, lbdc_short_name, session_year);
 
 
 --
@@ -3966,7 +4080,7 @@ ALTER TABLE ONLY session_member
 --
 
 ALTER TABLE ONLY session_member
-    ADD CONSTRAINT session_member_pkey PRIMARY KEY (id);
+ADD CONSTRAINT session_member_pkey PRIMARY KEY (id);
 
 
 SET search_path = master, pg_catalog;
@@ -4214,7 +4328,7 @@ CREATE TRIGGER log_calendar_updates BEFORE INSERT OR DELETE OR UPDATE ON calenda
 --
 
 ALTER TABLE ONLY agenda_info_addendum
-    ADD CONSTRAINT agenda_info_addendum_agenda_no_fkey FOREIGN KEY (agenda_no, year) REFERENCES agenda(agenda_no, year) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_info_addendum_agenda_no_fkey FOREIGN KEY (agenda_no, year) REFERENCES agenda(agenda_no, year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4222,7 +4336,7 @@ ALTER TABLE ONLY agenda_info_addendum
 --
 
 ALTER TABLE ONLY agenda_info_addendum
-    ADD CONSTRAINT agenda_info_addendum_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_info_addendum_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4230,7 +4344,7 @@ ALTER TABLE ONLY agenda_info_addendum
 --
 
 ALTER TABLE ONLY agenda_info_committee
-    ADD CONSTRAINT agenda_info_committee_agenda_no_fkey FOREIGN KEY (agenda_no, year, addendum_id) REFERENCES agenda_info_addendum(agenda_no, year, addendum_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_info_committee_agenda_no_fkey FOREIGN KEY (agenda_no, year, addendum_id) REFERENCES agenda_info_addendum(agenda_no, year, addendum_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4238,7 +4352,7 @@ ALTER TABLE ONLY agenda_info_committee
 --
 
 ALTER TABLE ONLY agenda_info_committee_item
-    ADD CONSTRAINT agenda_info_committee_item_info_committee_id_fkey FOREIGN KEY (info_committee_id) REFERENCES agenda_info_committee(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_info_committee_item_info_committee_id_fkey FOREIGN KEY (info_committee_id) REFERENCES agenda_info_committee(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4246,7 +4360,7 @@ ALTER TABLE ONLY agenda_info_committee_item
 --
 
 ALTER TABLE ONLY agenda_info_committee_item
-    ADD CONSTRAINT agenda_info_committee_item_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_info_committee_item_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4254,7 +4368,7 @@ ALTER TABLE ONLY agenda_info_committee_item
 --
 
 ALTER TABLE ONLY agenda_info_committee
-    ADD CONSTRAINT agenda_info_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_info_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4262,7 +4376,7 @@ ALTER TABLE ONLY agenda_info_committee
 --
 
 ALTER TABLE ONLY agenda
-    ADD CONSTRAINT agenda_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4270,7 +4384,7 @@ ALTER TABLE ONLY agenda
 --
 
 ALTER TABLE ONLY agenda_vote_addendum
-    ADD CONSTRAINT agenda_vote_addendum_agenda_no_fkey FOREIGN KEY (agenda_no, year) REFERENCES agenda(agenda_no, year) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_vote_addendum_agenda_no_fkey FOREIGN KEY (agenda_no, year) REFERENCES agenda(agenda_no, year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4278,7 +4392,7 @@ ALTER TABLE ONLY agenda_vote_addendum
 --
 
 ALTER TABLE ONLY agenda_vote_addendum
-    ADD CONSTRAINT agenda_vote_addendum_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_vote_addendum_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4286,7 +4400,7 @@ ALTER TABLE ONLY agenda_vote_addendum
 --
 
 ALTER TABLE ONLY agenda_vote_committee
-    ADD CONSTRAINT agenda_vote_committee_agenda_no_fkey FOREIGN KEY (agenda_no, year, addendum_id) REFERENCES agenda_vote_addendum(agenda_no, year, addendum_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_vote_committee_agenda_no_fkey FOREIGN KEY (agenda_no, year, addendum_id) REFERENCES agenda_vote_addendum(agenda_no, year, addendum_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4294,7 +4408,7 @@ ALTER TABLE ONLY agenda_vote_committee
 --
 
 ALTER TABLE ONLY agenda_vote_committee_attend
-    ADD CONSTRAINT agenda_vote_committee_attend_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_vote_committee_attend_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4302,7 +4416,7 @@ ALTER TABLE ONLY agenda_vote_committee_attend
 --
 
 ALTER TABLE ONLY agenda_vote_committee_attend
-    ADD CONSTRAINT agenda_vote_committee_attend_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_vote_committee_attend_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4310,7 +4424,7 @@ ALTER TABLE ONLY agenda_vote_committee_attend
 --
 
 ALTER TABLE ONLY agenda_vote_committee_attend
-    ADD CONSTRAINT agenda_vote_committee_attend_vote_committee_id_fkey FOREIGN KEY (vote_committee_id) REFERENCES agenda_vote_committee(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_vote_committee_attend_vote_committee_id_fkey FOREIGN KEY (vote_committee_id) REFERENCES agenda_vote_committee(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4318,7 +4432,7 @@ ALTER TABLE ONLY agenda_vote_committee_attend
 --
 
 ALTER TABLE ONLY agenda_vote_committee
-    ADD CONSTRAINT agenda_vote_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_vote_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4326,7 +4440,7 @@ ALTER TABLE ONLY agenda_vote_committee
 --
 
 ALTER TABLE ONLY agenda_vote_committee_vote
-    ADD CONSTRAINT agenda_vote_committee_vote_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_vote_committee_vote_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4334,7 +4448,7 @@ ALTER TABLE ONLY agenda_vote_committee_vote
 --
 
 ALTER TABLE ONLY agenda_vote_committee_vote
-    ADD CONSTRAINT agenda_vote_committee_vote_refer_committee_name_fkey FOREIGN KEY (refer_committee_name, refer_committee_chamber) REFERENCES committee(name, chamber) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_vote_committee_vote_refer_committee_name_fkey FOREIGN KEY (refer_committee_name, refer_committee_chamber) REFERENCES committee(name, chamber) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4342,7 +4456,7 @@ ALTER TABLE ONLY agenda_vote_committee_vote
 --
 
 ALTER TABLE ONLY agenda_vote_committee_vote
-    ADD CONSTRAINT agenda_vote_committee_vote_vote_committee_id_fkey FOREIGN KEY (vote_committee_id) REFERENCES agenda_vote_committee(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_vote_committee_vote_vote_committee_id_fkey FOREIGN KEY (vote_committee_id) REFERENCES agenda_vote_committee(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4350,7 +4464,7 @@ ALTER TABLE ONLY agenda_vote_committee_vote
 --
 
 ALTER TABLE ONLY agenda_vote_committee_vote
-    ADD CONSTRAINT agenda_vote_committee_vote_vote_info_id_fkey FOREIGN KEY (vote_info_id) REFERENCES bill_amendment_vote_info(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT agenda_vote_committee_vote_vote_info_id_fkey FOREIGN KEY (vote_info_id) REFERENCES bill_amendment_vote_info(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4358,7 +4472,7 @@ ALTER TABLE ONLY agenda_vote_committee_vote
 --
 
 ALTER TABLE ONLY bill_amendment_action
-    ADD CONSTRAINT bill_amendment_action_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_action_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4366,7 +4480,7 @@ ALTER TABLE ONLY bill_amendment_action
 --
 
 ALTER TABLE ONLY bill_amendment_action
-    ADD CONSTRAINT bill_amendment_action_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_action_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4374,7 +4488,7 @@ ALTER TABLE ONLY bill_amendment_action
 --
 
 ALTER TABLE ONLY bill_amendment
-    ADD CONSTRAINT bill_amendment_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4382,7 +4496,7 @@ ALTER TABLE ONLY bill_amendment
 --
 
 ALTER TABLE ONLY bill_amendment_cosponsor
-    ADD CONSTRAINT bill_amendment_cosponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_cosponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4390,7 +4504,7 @@ ALTER TABLE ONLY bill_amendment_cosponsor
 --
 
 ALTER TABLE ONLY bill_amendment_cosponsor
-    ADD CONSTRAINT bill_amendment_cosponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_cosponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4398,7 +4512,7 @@ ALTER TABLE ONLY bill_amendment_cosponsor
 --
 
 ALTER TABLE ONLY bill_amendment_cosponsor
-    ADD CONSTRAINT bill_amendment_cosponsor_session_member_id_fkey1 FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_cosponsor_session_member_id_fkey1 FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4406,7 +4520,7 @@ ALTER TABLE ONLY bill_amendment_cosponsor
 --
 
 ALTER TABLE ONLY bill_amendment
-    ADD CONSTRAINT bill_amendment_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4414,7 +4528,7 @@ ALTER TABLE ONLY bill_amendment
 --
 
 ALTER TABLE ONLY bill_amendment_multi_sponsor
-    ADD CONSTRAINT bill_amendment_multi_sponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_multi_sponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4422,7 +4536,7 @@ ALTER TABLE ONLY bill_amendment_multi_sponsor
 --
 
 ALTER TABLE ONLY bill_amendment_multi_sponsor
-    ADD CONSTRAINT bill_amendment_multi_sponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_multi_sponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4430,7 +4544,7 @@ ALTER TABLE ONLY bill_amendment_multi_sponsor
 --
 
 ALTER TABLE ONLY bill_amendment_multi_sponsor
-    ADD CONSTRAINT bill_amendment_multi_sponsor_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_multi_sponsor_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4438,7 +4552,7 @@ ALTER TABLE ONLY bill_amendment_multi_sponsor
 --
 
 ALTER TABLE ONLY bill_amendment_publish_status
-    ADD CONSTRAINT bill_amendment_publish_status_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_publish_status_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4446,7 +4560,7 @@ ALTER TABLE ONLY bill_amendment_publish_status
 --
 
 ALTER TABLE ONLY bill_amendment_publish_status
-    ADD CONSTRAINT bill_amendment_publish_status_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_publish_status_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4454,7 +4568,7 @@ ALTER TABLE ONLY bill_amendment_publish_status
 --
 
 ALTER TABLE ONLY bill_amendment_same_as
-    ADD CONSTRAINT bill_amendment_same_as_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_same_as_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4462,7 +4576,7 @@ ALTER TABLE ONLY bill_amendment_same_as
 --
 
 ALTER TABLE ONLY bill_amendment_same_as
-    ADD CONSTRAINT bill_amendment_same_as_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_same_as_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4470,7 +4584,7 @@ ALTER TABLE ONLY bill_amendment_same_as
 --
 
 ALTER TABLE ONLY bill_amendment_vote_info
-    ADD CONSTRAINT bill_amendment_vote_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_vote_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4478,7 +4592,7 @@ ALTER TABLE ONLY bill_amendment_vote_info
 --
 
 ALTER TABLE ONLY bill_amendment_vote_info
-    ADD CONSTRAINT bill_amendment_vote_info_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_vote_info_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4486,7 +4600,7 @@ ALTER TABLE ONLY bill_amendment_vote_info
 --
 
 ALTER TABLE ONLY bill_amendment_vote_roll
-    ADD CONSTRAINT bill_amendment_vote_roll_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_vote_roll_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4494,7 +4608,7 @@ ALTER TABLE ONLY bill_amendment_vote_roll
 --
 
 ALTER TABLE ONLY bill_amendment_vote_roll
-    ADD CONSTRAINT bill_amendment_vote_roll_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_vote_roll_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4502,7 +4616,7 @@ ALTER TABLE ONLY bill_amendment_vote_roll
 --
 
 ALTER TABLE ONLY bill_amendment_vote_roll
-    ADD CONSTRAINT bill_amendment_vote_roll_vote_id_fkey FOREIGN KEY (vote_id) REFERENCES bill_amendment_vote_info(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_amendment_vote_roll_vote_id_fkey FOREIGN KEY (vote_id) REFERENCES bill_amendment_vote_info(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4510,7 +4624,7 @@ ALTER TABLE ONLY bill_amendment_vote_roll
 --
 
 ALTER TABLE ONLY bill_approval
-    ADD CONSTRAINT bill_approval_bill_print_no_fkey FOREIGN KEY (bill_print_no, session_year) REFERENCES bill(print_no, session_year);
+ADD CONSTRAINT bill_approval_bill_print_no_fkey FOREIGN KEY (bill_print_no, session_year) REFERENCES bill(print_no, session_year);
 
 
 --
@@ -4518,7 +4632,7 @@ ALTER TABLE ONLY bill_approval
 --
 
 ALTER TABLE ONLY bill_approval
-    ADD CONSTRAINT bill_approval_bill_print_no_fkey1 FOREIGN KEY (bill_print_no, session_year, bill_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version);
+ADD CONSTRAINT bill_approval_bill_print_no_fkey1 FOREIGN KEY (bill_print_no, session_year, bill_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version);
 
 
 --
@@ -4526,7 +4640,7 @@ ALTER TABLE ONLY bill_approval
 --
 
 ALTER TABLE ONLY bill_approval
-    ADD CONSTRAINT bill_approval_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
+ADD CONSTRAINT bill_approval_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -4534,7 +4648,7 @@ ALTER TABLE ONLY bill_approval
 --
 
 ALTER TABLE ONLY bill_committee
-    ADD CONSTRAINT bill_committee_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_committee_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4542,7 +4656,7 @@ ALTER TABLE ONLY bill_committee
 --
 
 ALTER TABLE ONLY bill_committee
-    ADD CONSTRAINT bill_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4550,7 +4664,7 @@ ALTER TABLE ONLY bill_committee
 --
 
 ALTER TABLE ONLY bill
-    ADD CONSTRAINT bill_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4558,7 +4672,7 @@ ALTER TABLE ONLY bill
 --
 
 ALTER TABLE ONLY bill_milestone
-    ADD CONSTRAINT bill_milestone_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_milestone_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4566,7 +4680,7 @@ ALTER TABLE ONLY bill_milestone
 --
 
 ALTER TABLE ONLY bill_previous_version
-    ADD CONSTRAINT bill_previous_version_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_previous_version_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4574,7 +4688,7 @@ ALTER TABLE ONLY bill_previous_version
 --
 
 ALTER TABLE ONLY bill_previous_version
-    ADD CONSTRAINT bill_previous_version_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_previous_version_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4582,7 +4696,7 @@ ALTER TABLE ONLY bill_previous_version
 --
 
 ALTER TABLE ONLY bill_sponsor_additional
-    ADD CONSTRAINT bill_sponsor_additional_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_sponsor_additional_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4590,7 +4704,7 @@ ALTER TABLE ONLY bill_sponsor_additional
 --
 
 ALTER TABLE ONLY bill_sponsor_additional
-    ADD CONSTRAINT bill_sponsor_additional_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_sponsor_additional_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4598,7 +4712,7 @@ ALTER TABLE ONLY bill_sponsor_additional
 --
 
 ALTER TABLE ONLY bill_sponsor
-    ADD CONSTRAINT bill_sponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_sponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4606,7 +4720,7 @@ ALTER TABLE ONLY bill_sponsor
 --
 
 ALTER TABLE ONLY bill_sponsor
-    ADD CONSTRAINT bill_sponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_sponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4614,7 +4728,7 @@ ALTER TABLE ONLY bill_sponsor
 --
 
 ALTER TABLE ONLY bill_sponsor
-    ADD CONSTRAINT bill_sponsor_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_sponsor_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4622,7 +4736,7 @@ ALTER TABLE ONLY bill_sponsor
 --
 
 ALTER TABLE ONLY bill_veto
-    ADD CONSTRAINT bill_veto_bill_print_no_fkey FOREIGN KEY (bill_print_no, session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_veto_bill_print_no_fkey FOREIGN KEY (bill_print_no, session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4630,7 +4744,7 @@ ALTER TABLE ONLY bill_veto
 --
 
 ALTER TABLE ONLY bill_veto
-    ADD CONSTRAINT bill_veto_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT bill_veto_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4638,7 +4752,7 @@ ALTER TABLE ONLY bill_veto
 --
 
 ALTER TABLE ONLY calendar_active_list
-    ADD CONSTRAINT calendar_active_list_calendar_number_fkey FOREIGN KEY (calendar_no, calendar_year) REFERENCES calendar(calendar_no, year);
+ADD CONSTRAINT calendar_active_list_calendar_number_fkey FOREIGN KEY (calendar_no, calendar_year) REFERENCES calendar(calendar_no, year);
 
 
 --
@@ -4646,7 +4760,7 @@ ALTER TABLE ONLY calendar_active_list
 --
 
 ALTER TABLE ONLY calendar_active_list_entry
-    ADD CONSTRAINT calendar_active_list_entry_calendar_active_list_id_fkey FOREIGN KEY (calendar_active_list_id) REFERENCES calendar_active_list(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT calendar_active_list_entry_calendar_active_list_id_fkey FOREIGN KEY (calendar_active_list_id) REFERENCES calendar_active_list(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4654,7 +4768,7 @@ ALTER TABLE ONLY calendar_active_list_entry
 --
 
 ALTER TABLE ONLY calendar_active_list
-    ADD CONSTRAINT calendar_active_list_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT calendar_active_list_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4662,7 +4776,7 @@ ALTER TABLE ONLY calendar_active_list
 --
 
 ALTER TABLE ONLY calendar
-    ADD CONSTRAINT calendar_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT calendar_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4670,7 +4784,7 @@ ALTER TABLE ONLY calendar
 --
 
 ALTER TABLE ONLY calendar_supplemental
-    ADD CONSTRAINT calendar_supplemental_calendar_no_fkey FOREIGN KEY (calendar_no, calendar_year) REFERENCES calendar(calendar_no, year);
+ADD CONSTRAINT calendar_supplemental_calendar_no_fkey FOREIGN KEY (calendar_no, calendar_year) REFERENCES calendar(calendar_no, year);
 
 
 --
@@ -4678,7 +4792,7 @@ ALTER TABLE ONLY calendar_supplemental
 --
 
 ALTER TABLE ONLY calendar_supplemental_entry
-    ADD CONSTRAINT calendar_supplemental_entry_calendar_sup_id_fkey FOREIGN KEY (calendar_sup_id) REFERENCES calendar_supplemental(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT calendar_supplemental_entry_calendar_sup_id_fkey FOREIGN KEY (calendar_sup_id) REFERENCES calendar_supplemental(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4686,7 +4800,7 @@ ALTER TABLE ONLY calendar_supplemental_entry
 --
 
 ALTER TABLE ONLY calendar_supplemental_entry
-    ADD CONSTRAINT calendar_supplemental_entry_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT calendar_supplemental_entry_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4694,7 +4808,7 @@ ALTER TABLE ONLY calendar_supplemental_entry
 --
 
 ALTER TABLE ONLY calendar_supplemental
-    ADD CONSTRAINT calendar_supplemental_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT calendar_supplemental_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4702,7 +4816,7 @@ ALTER TABLE ONLY calendar_supplemental
 --
 
 ALTER TABLE ONLY committee_member
-    ADD CONSTRAINT committee_member_chamber_fkey FOREIGN KEY (chamber, committee_name, session_year, version_created) REFERENCES committee_version(chamber, committee_name, session_year, created) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT committee_member_chamber_fkey FOREIGN KEY (chamber, committee_name, session_year, version_created) REFERENCES committee_version(chamber, committee_name, session_year, created) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4710,7 +4824,7 @@ ALTER TABLE ONLY committee_member
 --
 
 ALTER TABLE ONLY committee_member
-    ADD CONSTRAINT committee_member_chamber_fkey1 FOREIGN KEY (chamber, committee_name) REFERENCES committee(chamber, name) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT committee_member_chamber_fkey1 FOREIGN KEY (chamber, committee_name) REFERENCES committee(chamber, name) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4718,7 +4832,7 @@ ALTER TABLE ONLY committee_member
 --
 
 ALTER TABLE ONLY committee_member
-    ADD CONSTRAINT committee_member_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT committee_member_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4726,7 +4840,7 @@ ALTER TABLE ONLY committee_member
 --
 
 ALTER TABLE ONLY committee_version
-    ADD CONSTRAINT committee_version_chamber_fkey FOREIGN KEY (chamber, committee_name) REFERENCES committee(chamber, name) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT committee_version_chamber_fkey FOREIGN KEY (chamber, committee_name) REFERENCES committee(chamber, name) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4734,7 +4848,7 @@ ALTER TABLE ONLY committee_version
 --
 
 ALTER TABLE ONLY daybreak_bill_action
-    ADD CONSTRAINT daybreak_bill_action_report_date_fkey FOREIGN KEY (report_date, bill_print_no, bill_session_year) REFERENCES daybreak_bill(report_date, bill_print_no, bill_session_year);
+ADD CONSTRAINT daybreak_bill_action_report_date_fkey FOREIGN KEY (report_date, bill_print_no, bill_session_year) REFERENCES daybreak_bill(report_date, bill_print_no, bill_session_year);
 
 
 --
@@ -4742,7 +4856,7 @@ ALTER TABLE ONLY daybreak_bill_action
 --
 
 ALTER TABLE ONLY daybreak_bill_amendment
-    ADD CONSTRAINT daybreak_bill_amendment_report_date_fkey FOREIGN KEY (report_date, bill_print_no, bill_session_year) REFERENCES daybreak_bill(report_date, bill_print_no, bill_session_year);
+ADD CONSTRAINT daybreak_bill_amendment_report_date_fkey FOREIGN KEY (report_date, bill_print_no, bill_session_year) REFERENCES daybreak_bill(report_date, bill_print_no, bill_session_year);
 
 
 --
@@ -4750,7 +4864,7 @@ ALTER TABLE ONLY daybreak_bill_amendment
 --
 
 ALTER TABLE ONLY daybreak_bill
-    ADD CONSTRAINT daybreak_bill_report_date_fkey FOREIGN KEY (report_date, bill_print_no, bill_session_year) REFERENCES daybreak_fragment(report_date, bill_print_no, bill_session_year);
+ADD CONSTRAINT daybreak_bill_report_date_fkey FOREIGN KEY (report_date, bill_print_no, bill_session_year) REFERENCES daybreak_fragment(report_date, bill_print_no, bill_session_year);
 
 
 --
@@ -4758,7 +4872,7 @@ ALTER TABLE ONLY daybreak_bill
 --
 
 ALTER TABLE ONLY daybreak_bill_sponsor
-    ADD CONSTRAINT daybreak_bill_sponsors_report_date_fkey FOREIGN KEY (report_date, bill_print_no, bill_session_year) REFERENCES daybreak_bill(report_date, bill_print_no, bill_session_year);
+ADD CONSTRAINT daybreak_bill_sponsors_report_date_fkey FOREIGN KEY (report_date, bill_print_no, bill_session_year) REFERENCES daybreak_bill(report_date, bill_print_no, bill_session_year);
 
 
 --
@@ -4766,7 +4880,7 @@ ALTER TABLE ONLY daybreak_bill_sponsor
 --
 
 ALTER TABLE ONLY daybreak_fragment
-    ADD CONSTRAINT daybreak_fragment_report_date_fkey FOREIGN KEY (report_date, filename) REFERENCES daybreak_file(report_date, filename);
+ADD CONSTRAINT daybreak_fragment_report_date_fkey FOREIGN KEY (report_date, filename) REFERENCES daybreak_file(report_date, filename);
 
 
 --
@@ -4774,7 +4888,7 @@ ALTER TABLE ONLY daybreak_fragment
 --
 
 ALTER TABLE ONLY daybreak_page_file_entry
-    ADD CONSTRAINT daybreak_page_file_entry_report_date_fkey FOREIGN KEY (report_date, filename) REFERENCES daybreak_file(report_date, filename);
+ADD CONSTRAINT daybreak_page_file_entry_report_date_fkey FOREIGN KEY (report_date, filename) REFERENCES daybreak_file(report_date, filename);
 
 
 --
@@ -4782,7 +4896,7 @@ ALTER TABLE ONLY daybreak_page_file_entry
 --
 
 ALTER TABLE ONLY law_document
-    ADD CONSTRAINT law_document_law_file_id_fkey FOREIGN KEY (law_file_name) REFERENCES law_file(file_name) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT law_document_law_file_id_fkey FOREIGN KEY (law_file_name) REFERENCES law_file(file_name) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4790,7 +4904,7 @@ ALTER TABLE ONLY law_document
 --
 
 ALTER TABLE ONLY law_tree
-    ADD CONSTRAINT law_tree_doc_id_fkey FOREIGN KEY (doc_id, doc_published_date) REFERENCES law_document(document_id, published_date) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT law_tree_doc_id_fkey FOREIGN KEY (doc_id, doc_published_date) REFERENCES law_document(document_id, published_date) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4798,7 +4912,7 @@ ALTER TABLE ONLY law_tree
 --
 
 ALTER TABLE ONLY law_tree
-    ADD CONSTRAINT law_tree_law_file_fkey FOREIGN KEY (law_file) REFERENCES law_file(file_name) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT law_tree_law_file_fkey FOREIGN KEY (law_file) REFERENCES law_file(file_name) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4806,7 +4920,7 @@ ALTER TABLE ONLY law_tree
 --
 
 ALTER TABLE ONLY law_tree
-    ADD CONSTRAINT law_tree_law_id_fkey FOREIGN KEY (law_id) REFERENCES law_info(law_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT law_tree_law_id_fkey FOREIGN KEY (law_id) REFERENCES law_info(law_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4814,7 +4928,7 @@ ALTER TABLE ONLY law_tree
 --
 
 ALTER TABLE ONLY law_tree
-    ADD CONSTRAINT law_tree_parent_doc_id_fkey FOREIGN KEY (parent_doc_id, parent_doc_published_date) REFERENCES law_document(document_id, published_date) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT law_tree_parent_doc_id_fkey FOREIGN KEY (parent_doc_id, parent_doc_published_date) REFERENCES law_document(document_id, published_date) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4822,7 +4936,7 @@ ALTER TABLE ONLY law_tree
 --
 
 ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT public_hearing_attendance_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4830,7 +4944,7 @@ ALTER TABLE ONLY public_hearing_attendance
 --
 
 ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_title_fkey FOREIGN KEY (title, date_time) REFERENCES public_hearing(title, date_time);
+ADD CONSTRAINT public_hearing_attendance_title_fkey FOREIGN KEY (title, date_time) REFERENCES public_hearing(title, date_time);
 
 
 --
@@ -4838,7 +4952,7 @@ ALTER TABLE ONLY public_hearing_attendance
 --
 
 ALTER TABLE ONLY public_hearing_committee
-    ADD CONSTRAINT public_hearing_committee_title_fkey FOREIGN KEY (title, date_time) REFERENCES public_hearing(title, date_time) ON DELETE CASCADE;
+ADD CONSTRAINT public_hearing_committee_title_fkey FOREIGN KEY (title, date_time) REFERENCES public_hearing(title, date_time) ON DELETE CASCADE;
 
 
 --
@@ -4846,7 +4960,7 @@ ALTER TABLE ONLY public_hearing_committee
 --
 
 ALTER TABLE ONLY public_hearing
-    ADD CONSTRAINT public_hearing_public_hearing_file_fkey FOREIGN KEY (public_hearing_file) REFERENCES public_hearing_file(file_name);
+ADD CONSTRAINT public_hearing_public_hearing_file_fkey FOREIGN KEY (public_hearing_file) REFERENCES public_hearing_file(file_name);
 
 
 --
@@ -4854,7 +4968,7 @@ ALTER TABLE ONLY public_hearing
 --
 
 ALTER TABLE ONLY sobi_change_log
-    ADD CONSTRAINT sobi_change_log_sobi_fragment_id_fkey FOREIGN KEY (sobi_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT sobi_change_log_sobi_fragment_id_fkey FOREIGN KEY (sobi_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4862,7 +4976,7 @@ ALTER TABLE ONLY sobi_change_log
 --
 
 ALTER TABLE ONLY sobi_fragment
-    ADD CONSTRAINT sobi_fragment_sobi_file_name_fkey FOREIGN KEY (sobi_file_name) REFERENCES sobi_file(file_name) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT sobi_fragment_sobi_file_name_fkey FOREIGN KEY (sobi_file_name) REFERENCES sobi_file(file_name) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4870,7 +4984,7 @@ ALTER TABLE ONLY sobi_fragment
 --
 
 ALTER TABLE ONLY spotcheck_mismatch
-    ADD CONSTRAINT spotcheck_mismatch_observation_id_fkey FOREIGN KEY (observation_id) REFERENCES spotcheck_observation(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT spotcheck_mismatch_observation_id_fkey FOREIGN KEY (observation_id) REFERENCES spotcheck_observation(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4878,7 +4992,7 @@ ALTER TABLE ONLY spotcheck_mismatch
 --
 
 ALTER TABLE ONLY spotcheck_observation
-    ADD CONSTRAINT spotcheck_observation_spotcheck_report_id_fkey FOREIGN KEY (report_id) REFERENCES spotcheck_report(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT spotcheck_observation_spotcheck_report_id_fkey FOREIGN KEY (report_id) REFERENCES spotcheck_report(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4886,7 +5000,7 @@ ALTER TABLE ONLY spotcheck_observation
 --
 
 ALTER TABLE ONLY transcript
-    ADD CONSTRAINT transcript_file_fk FOREIGN KEY (transcript_file) REFERENCES transcript_file(file_name);
+ADD CONSTRAINT transcript_file_fk FOREIGN KEY (transcript_file) REFERENCES transcript_file(file_name);
 
 
 SET search_path = public, pg_catalog;
@@ -4896,7 +5010,7 @@ SET search_path = public, pg_catalog;
 --
 
 ALTER TABLE ONLY member
-    ADD CONSTRAINT member_person_id_fkey FOREIGN KEY (person_id) REFERENCES person(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT member_person_id_fkey FOREIGN KEY (person_id) REFERENCES person(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4904,7 +5018,7 @@ ALTER TABLE ONLY member
 --
 
 ALTER TABLE ONLY session_member
-    ADD CONSTRAINT session_member_member_id_fkey FOREIGN KEY (member_id) REFERENCES member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT session_member_member_id_fkey FOREIGN KEY (member_id) REFERENCES member(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
