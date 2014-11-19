@@ -5,23 +5,25 @@
     <section ng-controller="BillSearchCtrl">
         <open-component:bill-search-bar/>
 
-        <div id="billSearchInfoBar" ng-show="performedSearch && totalResults > 0" class="columns large-12">
-            <span class="bold-span-1">
-                Showing Results 1-20 out of {{totalResults}}
-            </span>
+        <div ng-show="performedSearch && totalResults > 0" class="">
+            <h3 style="color:#444;margin:20px;"><i class="icon-docs prefix-icon2"></i>
+                <span class="blue2">{{totalResults}}</span> bills were found that match <span class="gray6">{{::searchTerm}}</span></h3>
         </div>
 
-        <div id="billPaginationTop" ng-show="totalResults > 0">
+        <div class="bill-result-pagination" ng-show="totalResults > 0">
             <div class="row">
-                <div class="columns large-6">
-                    <pagination ng-show="totalResults > limit" page="currentPage" total-items="totalResults"
-                                max-size="5" boundary-links="true"></pagination>
+                <div class="columns large-6 hide-for-medium-down text-medium text-left">
+                    <span class="margin-left-20 margin-right-20 bold-span-1">Sort Results By</span>
+                    <a class="margin-right-20 bold-span-1">Relevance</a>
+                    <a class="margin-right-20 text-small">Most Activity</a>
+                    <a class="margin-right-20 text-small">Recent Updates</a>
                 </div>
-                <div class="columns large-6 hide-for-medium-down text-medium text-right">
-                    <span class="margin-right-20">Sort Results By</span>
-                    <a class="margin-right-20">Relevance</a>
-                    <a class="margin-right-20">Most Activity</a>
-                    <a class="margin-right-20">Recent Updates</a>
+                <div class="columns large-6" ng-show="totalResults > limit">
+                    <div class="right" style="width:300px;">
+                        <pagination page="currentPage" total-items="totalResults"
+                                    previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"
+                                    max-size="5" boundary-links="true"></pagination>
+                    </div>
                 </div>
             </div>
         </div>
@@ -29,7 +31,7 @@
         <div class="columns large-12 bill-result bill-result-anim" ng-repeat="r in billResults.result.items" >
             <a ng-init="bill = r.result" ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.printNo}}" style="color:inherit;">
                 <div class="columns small-4 large-3">
-                    <span class="bold bill-result-printno">{{bill.printNo}} - {{bill.session}}</span>
+                    <span class="bill-result-printno bold">{{bill.printNo}} - {{bill.session}}</span>
                     <span class="bold blue2">
                         <span ng-show="bill.sponsor.budget">Budget Bill</span>
                         <span ng-show="bill.sponsor.rules">Rules</span>
@@ -44,31 +46,32 @@
                     </div>
                     <div style="display: block;" class="">
                             <span class="label text-small secondary">{{bill.billType.desc}}</span>
-                            <span ng-show="bill.substitutedBy" class="label alert text-small">Substituted By: {{bill.substitutedBy.basePrintNo}} - {{bill.substitutedBy.session}}</span>
+                            <span ng-show="bill.substitutedBy" class="label bold alert text-small">
+                                <i class="icon-switch prefix-icon"></i>Substituted By: {{bill.substitutedBy.basePrintNo}} - {{bill.substitutedBy.session}}</span>
                             </span>
-                            <span ng-show="bill.programInfo" class="label secondary text-small margin-right-20">
-                                {{bill.programInfo.name}} #{{bill.programInfo.sequenceNo}}</span>
+                            <span ng-show="bill.programInfo" class="label bold secondary text-small margin-right-20">
+                                <i class="icon-tag prefix-icon"></i>{{bill.programInfo.name}} #{{bill.programInfo.sequenceNo}}</span>
                     </div>
                 </div>
                 <div class="columns large-3 hide-for-medium-down bill-milestone-container">
                     <div>
                         <!-- Bill milestone plot -->
                         <ul ng-show="bill.billType.resolution == false" class="large-block-grid-8 bill-milestone-list">
-                            <li ng-class="{'met': (bill.milestones.size > 0)}"></li>
-                            <li ng-class="{'met': (bill.milestones.size > 1)}"></li>
-                            <li ng-class="{'met': (bill.milestones.size > 2)}"></li>
-                            <li ng-class="{'met': (bill.milestones.size > 3)}"></li>
-                            <li ng-class="{'met': (bill.milestones.size > 4)}"></li>
-                            <li ng-class="{'met': (bill.milestones.size > 5)}"></li>
-                            <li ng-class="{'met': (bill.milestones.size > 6)}"></li>
-                            <li ng-class="{'met': (bill.milestones.size > 7)}"></li>
+                            <li><div ng-class="{'met': (bill.milestones.size > 0)}" class="milestone">&nbsp;</div></li>
+                            <li><div ng-class="{'met': (bill.milestones.size > 1)}" class="milestone">&nbsp;</div></li>
+                            <li><div ng-class="{'met': (bill.milestones.size > 2)}" class="milestone">&nbsp;</div></li>
+                            <li><div ng-class="{'met': (bill.milestones.size > 3)}" class="milestone">&nbsp;</div></li>
+                            <li><div ng-class="{'met': (bill.milestones.size > 4)}" class="milestone">&nbsp;</div></li>
+                            <li><div ng-class="{'met': (bill.milestones.size > 5)}" class="milestone">&nbsp;</div></li>
+                            <li><div ng-class="{'met': (bill.milestones.size > 6)}" class="milestone">&nbsp;</div></li>
+                            <li><div ng-class="{'met': (bill.milestones.size > 7)}" class="milestone">&nbsp;</div></li>
                         </ul>
                         <!-- Resolution milestone plot -->
                         <ul ng-show="bill.billType.resolution == true" class="large-block-grid-2 bill-milestone-list">
-                            <li class="met"></li>
-                            <li ng-class="{'met': (bill.milestones.size > 0)}"></li>
+                            <li><div class="milestone met">&nbsp;</div></li>
+                            <li><div ng-class="{'met': (bill.milestones.size > 0)}" class="milestone">&nbsp;</div></li>
                         </ul>
-                        <span class="text-small bold milestone-text">{{getMilestoneDesc(bill.milestones)}}</span><br/>
+                        <span class="text-small milestone-text bold">{{getMilestoneDesc(bill.milestones)}}</span><br/>
                         <span class="text-small" style="color:#666;">{{getMilestoneDate(bill.milestones)}}</span>
                     </div>
                 </div>
@@ -76,7 +79,7 @@
         </div>
 
         <section class="margin-top-20" ng-show="performedSearch && totalResults == 0">
-            <h3 style="color:#777;">Sorry, no matching bills were found for: {{::searchTerm}}</h3>
+            <h3 style="color:#777;"><i class="icon-warning prefix-icon2"></i>Sorry, no matching bills were found for: {{::searchTerm}}</h3>
             <hr/>
             <p class="bold">How to search for a bill</p>
             <span>Insert bill search tips here...</span>
@@ -118,8 +121,12 @@
         </section>
 
         <!-- Lower Pagination -->
-        <div id="billPaginationBottom" class="columns large-12" ng-show="totalResults > 10">
-            <pagination page="currentPage" total-items="totalResults" max-size="10" boundary-links="true"></pagination>
+        <div class="columns large-12 center bill-result-pagination" ng-show="totalResults > 10">
+            <div class="large-offset-4">
+                <pagination ng-show="totalResults > limit" page="currentPage" total-items="totalResults"
+                            previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"
+                            max-size="8" boundary-links="true"></pagination>
+            </div>
         </div>
     </section>
 </section>

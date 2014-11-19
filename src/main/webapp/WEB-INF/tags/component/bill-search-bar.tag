@@ -7,7 +7,7 @@
         <div id="searchBarIcon">
             <i class="icon-search"></i>
         </div>
-        <div class="columns large-10 no-padding" style="padding-left:50px;">
+        <div class="columns large-11 no-padding" style="padding-left:50px;">
             <div class="columns small-4 medium-2 no-padding">
                 <select class="no-bottom-margin" style="height: 42px;">
                     <option>All Sessions</option>
@@ -20,7 +20,7 @@
                 <input id="billSearchBar" type="text" ng-model="searchTerm" placeholder="Search for NYS Bills and Resolutions."/>
             </div>
         </div>
-        <div id="billAdvancedSearchToggle" ng-click="search()" class="columns large-2 hide-for-medium-down noselect">
+        <div id="billSearchBarSubmit" ng-click="search()" class="columns large-1 hide-for-medium-down noselect">
             <span class="bold-span-1">Search</span>
         </div>
     </div>

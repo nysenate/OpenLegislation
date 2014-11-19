@@ -11,7 +11,7 @@
   width: 50px;
   line-height: 50px;
   text-align: center;
-  background: #2B6A90;
+  background: $blue3;
   position: absolute;
   top: 0;
   left: 0;
@@ -23,7 +23,7 @@
   }
 }
 
-#billSearchBar, #billAdvancedSearchToggle {
+#billSearchBar, #billSearchBarSubmit {
   height: 42px;
 }
 
@@ -35,7 +35,7 @@
   @include box-shadow(none);
 }
 
-#billAdvancedSearchToggle {
+#billSearchBarSubmit {
   background: #004D71;
   text-align: center;
   color: white;
@@ -52,23 +52,22 @@
   line-height: 35px;
 }
 
-#billSearchInfoBar {
-  background: #175B81;
-  margin-bottom: 20px;
-}
-
-#billPaginationTop {
+.bill-result-pagination {
   margin-bottom: 10px;
-  background: #fafafa;
+  border: 1px solid $gray4;
+  background: #fff;
   padding: 5px;
 }
 
 .bill-result {
   &:hover {
-    background: #eee;
+    background: $gray3;
     cursor: pointer;
+    border-left: 2px solid $blue3;
+
   }
-  background: #fafafa;
+  background: #fff;
+  border-left: 2px solid white;
   margin-bottom: 5px;
   padding:10px 5px;
   border-bottom:1px solid #ddd;
@@ -84,7 +83,7 @@
 
 .bill-result-printno {
   color: #555;
-  font-size: 1.5em;
+  font-size: 1.3rem;
   display: block;
 }
 
@@ -95,17 +94,19 @@
 }
 
 .bill-milestone-list {
-  border: 1px solid #ccc;
   height: 10px;
   overflow: hidden;
   li {
-    background:#ddd;
-    border-right: 1px solid #ccc;
-    height: 100%;
-    &.met {
-      background: #D5F587;
-      border-right: none;
+    padding: 0 2px;
+    .milestone {
+      background:#ddd;
+      height: 100%;
+      &.met {
+        background: #6CB0CA;
+        border-right: none;
+      }
     }
+
   }
 }
 
@@ -113,10 +114,3 @@
   text-transform: capitalize;
   color: #444;
 }
-
-#billPaginationBottom {
-  margin-top: 10px;
-  background: white;
-  padding: 5px;
-}
-

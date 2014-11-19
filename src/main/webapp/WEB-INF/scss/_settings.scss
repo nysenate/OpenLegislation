@@ -802,19 +802,19 @@ $magellan-padding: 0 !important;
 // $include-pagination-classes: $include-html-classes;
 
 // We use these to control the pagination container
-// $pagination-height: rem-calc(24);
+$pagination-height: rem-calc(22);
 // $pagination-margin: rem-calc(-5);
 
 // We use these to set the list-item properties
 // $pagination-li-float: $default-float;
-// $pagination-li-height: rem-calc(24);
+$pagination-li-height: rem-calc(22);
 // $pagination-li-font-color: #222;
-// $pagination-li-font-size: rem-calc(14);
+ $pagination-li-font-size: rem-calc(13);
 // $pagination-li-margin: rem-calc(5);
 
 // We use these for the pagination anchor links
 // $pagination-link-pad: rem-calc(1 10 1);
-// $pagination-link-font-color: #999;
+ $pagination-link-font-color: #666;
 // $pagination-link-active-bg: scale-color(#fff, $lightness: -10%);
 
 // We use these for disabled anchor links
