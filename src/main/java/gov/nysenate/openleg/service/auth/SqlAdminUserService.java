@@ -22,12 +22,11 @@ public class SqlAdminUserService implements AdminUserService
      *
      * @param username The given username
      * @param password The given password
-     * @return A Login Code
+     * @return A Login Code representing the outcome of the login attempt
      * @throws AuthenticationEx
      */
     @Override
     public int login(String username, String password)  {
-        System.out.printf("LoginU: %s LoginP: %s", username, password);
         if ((username == null) || (password == null))
             throw new IllegalArgumentException("Username or password cannot be null!");
 
@@ -54,9 +53,9 @@ public class SqlAdminUserService implements AdminUserService
     }
 
     /**
-     * Create a user from the web form.
-     * @param username
-     * @param password
+     * Create a new admin user
+     * @param username The name of the admin
+     * @param password Their password
      */
     @Override
     public void createUser(String username, String password) {
@@ -69,7 +68,7 @@ public class SqlAdminUserService implements AdminUserService
     }
 
     /**
-     * Change a user's password.
+     * Change an user's password.
      * @param username Their username
      * @param passNew Their password
      */
@@ -86,5 +85,18 @@ public class SqlAdminUserService implements AdminUserService
         } finally {
 
         }
+    }
+
+    /**
+     * This method will return true if the given admin username is located within
+     * the database.
+     * @param username The adminusername
+     * @return True if the admin is in the Database.
+     */
+    public boolean adminInDb(String username) {
+        if (adminDao.getAdmin(username) != null)
+            return true;
+        else
+            return false;
     }
 }

@@ -1,6 +1,10 @@
 package gov.nysenate.openleg.config;
 
+
+import gov.nysenate.openleg.service.auth.AdminLoginAuthRealm;
+import org.apache.shiro.config.Ini;
 import org.apache.shiro.realm.AuthenticatingRealm;
+import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.SimpleAccountRealm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
@@ -10,6 +14,7 @@ import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -17,7 +22,8 @@ import org.springframework.context.annotation.DependsOn;
 import java.util.HashMap;
 
 @Configuration
-public class SecurityConfig {
+public class SecurityConfig
+{
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     /**
@@ -28,31 +34,39 @@ public class SecurityConfig {
     public ShiroFilterFactoryBean shiroFilter() {
         ShiroFilterFactoryBean shiroFilter = new ShiroFilterFactoryBean();
         shiroFilter.setSecurityManager(securityManager());
-        shiroFilter.setLoginUrl("/login");
-        shiroFilter.setSuccessUrl("/");
-        shiroFilter.setUnauthorizedUrl("/unauthorized");
+
+        shiroFilter.setLoginUrl("/admin/**");
+        shiroFilter.setSuccessUrl("/bob");
 
         HashMap <String, String> properties = new HashMap<>();
         properties.put("/admin/**", "authcBasic");
-        properties.put("/logout", "logout");
+        //properties.put("/logout", "logout");
 
         shiroFilter.setFilterChainDefinitionMap(properties);
         return shiroFilter;
     }
 
     /**
-     *
+     * Integrates Apache Shiro with Spring
+     * @return LifecycleBeanPostProcessor
+     */
+    @Bean
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
+    }
+
+    /**
+     * This is needed for Shiro annotations to work.
      * @return DefaultAdvisorAutoProxyCreator
      */
     @Bean
-    @DependsOn ("lifecycleBeanPostProcessor")
+    @DependsOn("lifecycleBeanPostProcessor")
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
         return new DefaultAdvisorAutoProxyCreator();
     }
 
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor()
-    {
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
        advisor.setSecurityManager(securityManager());
        return advisor;
@@ -63,22 +77,15 @@ public class SecurityConfig {
      */
     @Bean(name = "securityManager")
     public DefaultWebSecurityManager securityManager() {
-        return new DefaultWebSecurityManager(simple());
+        return new DefaultWebSecurityManager();
     }
 
     /**
-     * Required for using Shiro annotations.
-     * @return LifecycleBeanPostProcessor
+     * Exposes the shiro.ini configuration file as an Ini instance that is consumed by the
+     * security filter manager when setting up the filter chains.
      */
-    @Bean
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
-        return new LifecycleBeanPostProcessor();
+    public Ini shiroIniConfig() {
+        return Ini.fromResourcePath("classpath:shiro.ini");
     }
 
-    @Bean
-    public AuthenticatingRealm simple() {
-        SimpleAccountRealm simpleAccountRealm = new SimpleAccountRealm();
-        simpleAccountRealm.addAccount("Admin", "test");
-        return simpleAccountRealm;
-    }
 }

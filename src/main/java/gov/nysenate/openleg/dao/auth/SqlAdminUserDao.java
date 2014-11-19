@@ -21,7 +21,7 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
      */
     @Override
     public void addAdmin(AdminUser admin) throws DataAccessException {
-        if (jdbcNamed.update(AdminUserQuery.INSERT_ADMIN.getSql(schema()), userParams(admin)) == 0)
+        if (jdbcNamed.update(AdminUserQuery.UPDATE_ADMIN.getSql(schema()), userParams(admin)) == 0)
             jdbcNamed.update(AdminUserQuery.INSERT_ADMIN.getSql(schema()), userParams(admin));
     }
 
@@ -33,8 +33,7 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
     @Override
     public void deleteAdmin(String username) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource().addValue("username", username));
-        if (jdbcNamed.update(AdminUserQuery.DELETE_BY_NAME.getSql(schema()), params) == 0)
-            jdbcNamed.update(AdminUserQuery.DELETE_BY_NAME.getSql(schema()), params);
+        jdbcNamed.update(AdminUserQuery.DELETE_BY_NAME.getSql(schema()), params);
     }
 
     /**
@@ -54,8 +53,7 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
     @Override
     public void deleteAdminByLevel(int level ) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource().addValue("privilegeLevel", level));
-        if (jdbcNamed.update(AdminUserQuery.DELETE_BY_LEVEL.getSql(schema()), params) == 0)
-            jdbcNamed.update(AdminUserQuery.DELETE_BY_LEVEL.getSql(schema()), params);
+        jdbcNamed.update(AdminUserQuery.DELETE_BY_LEVEL.getSql(schema()), params);
     }
 
     protected MapSqlParameterSource userParams(AdminUser admin) {
@@ -72,10 +70,21 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
      */
     @Override
     public AdminUser getAdmin(String username) {
-        String pass = getPasswordFromUser(username);
-        int level = getLevelFromUser(username);
+        String pass = "";
+        int level = -1;
 
-        return new AdminUser(username, pass, level);
+        try {
+            pass = getPasswordFromUser(username);
+            level = getLevelFromUser(username);
+
+        } catch (DataAccessException dae) {
+
+        } finally {
+            if (pass != null && level != -1)
+                return new AdminUser(username, pass, level);
+        }
+
+        return null;
     }
 
     /**
