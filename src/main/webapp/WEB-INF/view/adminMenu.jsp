@@ -9,10 +9,7 @@
     <div>
         <p>
             Welcome to the admin menu! <br>
-            <form action="" method="POST">
-                <input type="submit" value="Logout?">
-            </form>
+            <a href="./legislation/logout"> Logout </a>
         </p>
-
     </div>
 </open-layout:body>

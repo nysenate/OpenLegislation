@@ -7,4 +7,6 @@ public interface AdminUserService
     public void createUser (String username, String password);
 
     public void changePass (String username, String passNew);
+
+    public boolean adminInDb(String username);
 }
