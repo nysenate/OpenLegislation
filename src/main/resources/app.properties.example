@@ -1,6 +1,15 @@
-# --- Api --- #
+# --- Api Auth --- #
 
+# A secret key that is used for validating api requests sent via the UI. Set this to something random.
 default.api.secret =
+
+# --- Admin Auth --- #
+
+# The default admin user name
+default.admin.user =
+
+# The default admin password
+default.admin.password =
 
 # --- Data Directory Configuration --- #
 
