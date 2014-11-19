@@ -11,6 +11,9 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
     SELECT_SESSION_YEARS(
             "SELECT DISTINCT session_year FROM ${schema}." + SqlTable.COMMITTEE_VERSION
     ),
+    SELECT_COMMITTEE_SESSION_IDS(
+            "SELECT DISTINCT chamber, committee_name, session_year FROM ${schema}." + SqlTable.COMMITTEE_VERSION
+    ),
     SELECT_COMMITTEE_VERSION_BASE(
             "SELECT * FROM ${schema}." + SqlTable.COMMITTEE_VERSION + " cv" + "\n" +
             "   JOIN ${schema}." + SqlTable.COMMITTEE_MEMBER + " cm" + "\n" +

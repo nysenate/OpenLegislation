@@ -10,6 +10,7 @@ public class ApprovalMessageView implements ViewObject {
     protected int approvalNumber;
     protected int chapter;
     protected String signer;
+    protected String text;
 
     public ApprovalMessageView(ApprovalMessage approvalMessage) {
         if (approvalMessage != null) {
@@ -18,6 +19,7 @@ public class ApprovalMessageView implements ViewObject {
             this.approvalNumber = approvalMessage.getApprovalNumber();
             this.chapter = approvalMessage.getChapter();
             this.signer = approvalMessage.getSigner();
+            this.text = approvalMessage.getMemoText();
         }
     }
 
@@ -44,5 +46,9 @@ public class ApprovalMessageView implements ViewObject {
 
     public String getSigner() {
         return signer;
+    }
+
+    public String getText() {
+        return text;
     }
 }

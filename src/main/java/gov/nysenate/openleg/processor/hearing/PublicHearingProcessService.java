@@ -3,10 +3,11 @@ package gov.nysenate.openleg.processor.hearing;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
+import gov.nysenate.openleg.processor.base.ProcessService;
 
 import java.util.List;
 
-public interface PublicHearingProcessService
+public interface PublicHearingProcessService extends ProcessService
 {
 
     /**
@@ -30,14 +31,14 @@ public interface PublicHearingProcessService
      * @param publicHearingFiles The PublicHearingFile to process.
      * @see gov.nysenate.openleg.model.hearing.PublicHearing
      */
-    public void processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles);
+    public int processPublicHearingFiles(List<PublicHearingFile> publicHearingFiles);
 
     /**
      * Processes all the Public Hearing Files via calls to
      * {@link #getPendingPublicHearingFiles(gov.nysenate.openleg.dao.base.LimitOffset)}
      * and {@link #processPublicHearingFiles(java.util.List)}.
      */
-    public void processPendingPublicHearingFiles();
+    public int processPendingPublicHearingFiles();
 
     /**
      * Toggle the pending processing status of a Public Hearing File.

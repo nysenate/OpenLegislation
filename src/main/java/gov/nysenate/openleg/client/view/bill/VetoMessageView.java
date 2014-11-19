@@ -3,8 +3,10 @@ package gov.nysenate.openleg.client.view.bill;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.bill.VetoMessage;
 
-public class VetoMessageView implements ViewObject {
+import java.time.LocalDate;
 
+public class VetoMessageView implements ViewObject
+{
     protected BillIdView billId;
     protected int year;
     protected int vetoNumber;
@@ -15,7 +17,7 @@ public class VetoMessageView implements ViewObject {
     protected int lineStart;
     protected int lineEnd;
     protected String signer;
-    protected String signedDate;
+    protected LocalDate signedDate;
 
     public VetoMessageView(VetoMessage vetoMessage) {
         if (vetoMessage != null) {
@@ -29,7 +31,7 @@ public class VetoMessageView implements ViewObject {
             this.lineStart = vetoMessage.getLineStart();
             this.lineEnd = vetoMessage.getLineEnd();
             this.signer = vetoMessage.getSigner();
-            this.signedDate = vetoMessage.getSignedDate().toString();
+            this.signedDate = vetoMessage.getSignedDate();
         }
     }
 
@@ -73,7 +75,7 @@ public class VetoMessageView implements ViewObject {
         return signer;
     }
 
-    public String getSignedDate() {
+    public LocalDate getSignedDate() {
         return signedDate;
     }
 

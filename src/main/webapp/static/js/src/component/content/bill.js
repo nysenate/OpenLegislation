@@ -1,12 +1,12 @@
 var contentModule = angular.module('content');
 
-contentModule.factory('BillListing', ['$resource', function($resource) {
+contentModule.factory('BillListingApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/:sessionYear', {
         sessionYear: '@sessionYear'
     });
 }]);
 
-contentModule.factory('BillSearch', ['$resource', function($resource) {
+contentModule.factory('BillSearchApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/search/?term=:term&sort=:sort&limit=:limit&offset=:offset', {
         term: '@term',
         sort: '@sort',
@@ -15,15 +15,24 @@ contentModule.factory('BillSearch', ['$resource', function($resource) {
     });
 }]);
 
-contentModule.factory('BillView', ['$resource', function($resource) {
+contentModule.factory('BillViewApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/:session/:printNo', {
         session: '@session',
         printNo: '@printNo'
     });
 }]);
 
-contentModule.controller('BillHomeCtrl', ['$scope', '$filter', '$location', 'BillListing', 'BillSearch', 'BillView',
-    function($scope, $filter, $location, BillListing, BillSearch, BillView) {
+/** --- Parent Bill Controller --- */
+
+contentModule.controller('BillCtrl', ['$scope', '$route', function($scope, $route) {
+
+}]);
+
+/** --- Bill Search Controller --- */
+
+contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location',
+                                            'BillListingApi', 'BillSearchApi',
+    function($scope, $filter, $routeParams, $location, BillListing, BillSearch) {
     $scope.searchTerm = '';
     $scope.sort = '';
     $scope.billResults = {};
@@ -32,38 +41,37 @@ contentModule.controller('BillHomeCtrl', ['$scope', '$filter', '$location', 'Bil
     $scope.totalResults = 0;
     $scope.limit = 10;
     $scope.offset = 1;
-    $scope.page = 1;
+    $scope.currentPage = 1;
+    $scope.performedSearch = false;
 
-    $scope.VIEWS = {SEARCH: 'search', BILL: 'bill'};
-    $scope.view = $scope.VIEWS.BILL;
+    $scope.init = function() {
+        $scope.searchTerm = $routeParams.search;
+        //$scope.offset = $scope.computeOffset($routeParams.page);
+        $scope.doSearch();
+    };
 
-    /**
-     * Watch for changes to the query in the search bar and perform the search when a new term is detected.
-     */
-    $scope.$watch('searchTerm', function(newTerm, oldTerm) {
-        if (newTerm && newTerm != oldTerm && newTerm.trim() != '') {
-            $scope.page = 1;
-            $scope.search();
-        }
-    });
-
-    $scope.$watch('page', function(newPage, oldPage) {
+    $scope.$watch('currentPage', function(newPage, oldPage) {
         if (newPage != oldPage) {
-            $scope.offset = $scope.limit * newPage;
-            $scope.search();
+            $scope.doSearch();
         }
     });
+
+    $scope.isValidSearchTerm = function() {
+        return $scope.searchTerm != null && $scope.searchTerm.trim() != '';
+    };
 
     $scope.search = function() {
-        if ($scope.searchTerm != null && $scope.searchTerm.trim() != '') {
-            $scope.billResults = BillSearch.get(
-                {term: $scope.searchTerm, sort: $scope.sort, limit: $scope.limit, offset: $scope.offset},
+        $location.search("search", $scope.searchTerm);
+    };
+
+    $scope.doSearch = function() {
+        if ($scope.isValidSearchTerm()) {
+            $scope.billResults = BillSearch.get({
+                term: $scope.searchTerm, sort: $scope.sort, limit: $scope.limit, offset: $scope.computeOffset($scope.currentPage)},
                 function() {
-                    $location.search("search", $scope.searchTerm);
-                    if ($scope.billResults.total != $scope.totalResults) {
-                        $scope.totalResults = $scope.billResults.total;
-                    }
-                    $scope.view = $scope.VIEWS.SEARCH;
+                    $scope.totalResults = $scope.billResults.total;
+                    $scope.performedSearch = true;
+                    setTimeout(function() {$(".bill-result-anim").addClass("show")}, 0);
                 });
         }
     };
@@ -74,7 +82,7 @@ contentModule.controller('BillHomeCtrl', ['$scope', '$filter', '$location', 'Bil
      * @param milestones
      * @returns {string}
      */
-    $scope.getMilestoneStatus = function(milestones) {
+    $scope.getMilestoneDesc = function(milestones) {
         if (milestones && milestones.size > 0) {
             var milestone = milestones.items.slice(-1)[0];
             var desc = "";
@@ -99,6 +107,13 @@ contentModule.controller('BillHomeCtrl', ['$scope', '$filter', '$location', 'Bil
         return "Introduced";
     };
 
+    $scope.getMilestoneDate = function(milestones) {
+        if (milestones && milestones.size > 0) {
+            var milestone = milestones.items.slice(-1)[0];
+            return moment(milestone.actionDate).format("MMMM DD, YYYY");
+        }
+    };
+
     /**
      * Gets the full bill view for a specified printNo and session year.
      * @param printNo {string}
@@ -109,7 +124,6 @@ contentModule.controller('BillHomeCtrl', ['$scope', '$filter', '$location', 'Bil
             $scope.billViewResult = BillView.get({printNo: printNo, session: session}, function() {
                 if ($scope.billViewResult.success) {
                     $scope.billView = $scope.billViewResult.result;
-                    $scope.view = $scope.VIEWS.BILL;
                 }
             });
         }
@@ -117,7 +131,25 @@ contentModule.controller('BillHomeCtrl', ['$scope', '$filter', '$location', 'Bil
 
     $scope.clearSearch = function() {
         $scope.billResults = null;
-    }
+    };
 
+    $scope.computeOffset = function(page) {
+        return ((page - 1) * $scope.limit) + 1;
+    };
+
+    $scope.init();
 }]);
+
+/** --- Bill View Controller --- */
+
+contentModule.controller('BillViewCtrl', ['$scope', '$location', 'BillViewApi',
+    function($scope, BillViewApi) {
+    $scope.basePrintNo;
+    $scope.session;
+
+    $scope.init = function() {
+
+    }
+}]);
+
 

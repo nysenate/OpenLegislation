@@ -252,7 +252,7 @@ public abstract class AbstractDataProcessor
         if (calendarIngestCache.getSize() > 0) {
             logger.info("Flushing {} calendars", calendarIngestCache.getSize());
             calendarIngestCache.getCurrentCache().forEach(
-                entry -> calendarDataService.saveCalendar(entry.getLeft(), entry.getRight()));
+                entry -> calendarDataService.saveCalendar(entry.getLeft(), entry.getRight(), true));
             calendarIngestCache.clearCache();
         }
     }

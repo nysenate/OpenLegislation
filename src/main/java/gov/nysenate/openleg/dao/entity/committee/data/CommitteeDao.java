@@ -41,6 +41,13 @@ public interface CommitteeDao
     public List<SessionYear> getEligibleYears() throws DataAccessException;
 
     /**
+     * Retrieves a list of all valid committee session ids
+     * @return
+     * @throws DataAccessException
+     */
+    public List<CommitteeSessionId> getAllSessionIds() throws DataAccessException;
+
+    /**
      * Retrieves a list of committee versions for a given committee that occur within the given date range
      * ordered by session year and creation date
      *

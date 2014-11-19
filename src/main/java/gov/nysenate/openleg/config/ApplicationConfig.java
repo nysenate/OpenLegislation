@@ -10,6 +10,7 @@ import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.base.IngestCache;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -26,6 +27,7 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.PostConstruct;
 import java.util.Calendar;
@@ -91,8 +93,20 @@ public class ApplicationConfig implements CachingConfigurer
         logger.info("Connecting to elastic search cluster {}", elasticSearchCluster);
         Settings settings = ImmutableSettings.settingsBuilder()
             .put("cluster.name", elasticSearchCluster).build();
-        return new TransportClient(settings).addTransportAddress(
-                new InetSocketTransportAddress(elasticSearchHost, elasticSearchPort));
+        try {
+            TransportClient tc =  new TransportClient(settings).addTransportAddress(
+                    new InetSocketTransportAddress(elasticSearchHost, elasticSearchPort));
+            if (tc.connectedNodes().size() == 0) {
+                tc.close();
+                throw new ElasticsearchException("Failed to connect to elastic search node!");
+            }
+            return tc;
+        }
+        catch (ElasticsearchException ex) {
+            logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
+                    elasticSearchCluster, elasticSearchHost, elasticSearchPort);
+            throw ex;
+        }
     }
 
     /** --- Guava Event Bus Configuration --- */

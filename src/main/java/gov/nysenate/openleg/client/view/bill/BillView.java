@@ -28,7 +28,6 @@ public class BillView extends BillInfoView implements ViewObject
     protected ListView<BillIdView> previousVersions;
     protected ListView<CommitteeAgendaIdView> committeeAgendas;
     protected ListView<CalendarIdView> calendars;
-    protected ProgramInfoView program;
 
     public BillView(Bill bill) {
         super(bill != null ? bill.getBillInfo() : null);
@@ -80,8 +79,6 @@ public class BillView extends BillInfoView implements ViewObject
             this.calendars = ListView.of(bill.getCalendars().stream()
                 .map(CalendarIdView::new)
                 .collect(Collectors.toList()));
-
-            this.program = bill.getProgramInfo() != null ? new ProgramInfoView(bill.getProgramInfo()) : null;
         }
     }
 
@@ -134,9 +131,5 @@ public class BillView extends BillInfoView implements ViewObject
 
     public ListView<CalendarIdView> getCalendars() {
         return calendars;
-    }
-
-    public ProgramInfoView getProgram() {
-        return program;
     }
 }

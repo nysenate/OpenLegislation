@@ -32,6 +32,7 @@ import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CachedCommitteeDataService implements CommitteeDataService, CachingService {
@@ -40,9 +41,6 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
 
     private static final String committeeCacheName = "committee";
     private Cache committeeCache;
-
-    /** A string that is used as a cache key for the master list of all committee ids */
-    public static final String committeeIdListKey = "committee id list";
 
     /** The maximum heap size (in MB) the committee cache can consume. */
     @Value("${cache.committee.heap.size}")
@@ -166,18 +164,19 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public List<CommitteeId> getCommitteeIds(LimitOffset limitOffset) {
-        List<CommitteeId> committeeIdList;
-        Element element = committeeCache.get(committeeIdListKey);
-        if (element != null) {
-            committeeIdList = (List<CommitteeId>) element.getObjectValue();
-        } else {
-            committeeIdList = committeeDao.getCommitteeList();
-            committeeCache.put(new Element(committeeIdListKey, committeeIdList));
-        }
-        return LimitOffset.limitList(committeeIdList, limitOffset != null ? limitOffset : LimitOffset.ALL);
+    public List<CommitteeId> getCommitteeIds() {
+        return committeeDao.getCommitteeList();
+    }
+
+    @Override
+    public List<SessionYear> getEligibleYears() {
+        return committeeDao.getEligibleYears();
+    }
+
+    @Override
+    public List<CommitteeSessionId> getAllCommitteeSessionIds() {
+        return committeeDao.getAllSessionIds();
     }
 
     /** {@inheritDoc} */
@@ -188,14 +187,13 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
         }
 
         List<Committee> committeeList = new ArrayList<>();
-        getCommitteeIds(LimitOffset.ALL).stream()
+        getCommitteeIds().stream()
                 .filter(committeeId -> committeeId.getChamber().equals(chamber))
                 .map(committeeId -> new CommitteeSessionId(committeeId, sessionYear))
                 .forEach(committeeSessionId -> {
                     try {
                         committeeList.add(getCommittee(committeeSessionId));
-                    } catch (CommitteeNotFoundEx ex) {
-                    }
+                    } catch (CommitteeNotFoundEx ignored) {}
                 });
 
         return LimitOffset.limitList(committeeList, limitOffset != null ? limitOffset : LimitOffset.ALL);

@@ -30,12 +30,12 @@ public interface CalendarDataService
     public CalendarActiveList getActiveList(CalendarActiveListId activeListId) throws CalendarNotFoundEx;
 
     /**
-     * Retrieves a floor calendar corresponding to the given calendar supplemental id
+     * Retrieves a calendar supplemental corresponding to the given calendar supplemental id
      * @param supplementalId
      * @return CalendarSupplemental
-     * @throws CalendarNotFoundEx - if no floor calendar exists for the given id
+     * @throws CalendarNotFoundEx - if no calendar supplemental exists for the given id
      */
-    public CalendarSupplemental getFloorCalendar(CalendarSupplementalId supplementalId) throws CalendarNotFoundEx;
+    public CalendarSupplemental getCalendarSupplemental(CalendarSupplementalId supplementalId) throws CalendarNotFoundEx;
 
     /**
      * Gets the number of calendars that exist for the given year
@@ -51,11 +51,11 @@ public interface CalendarDataService
     public int getActiveListCount(int year);
 
     /**
-     * Gets the number of active lists that exist for the given year
+     * Gets the number of calendar supplementals that exist for the given year
      * @param year
      * @return
      */
-    public int getFloorCalendarCount(int year);
+    public int getSupplementalCount(int year);
 
     /**
      * Gets all calendars for the given year
@@ -77,21 +77,22 @@ public interface CalendarDataService
     public List<CalendarActiveList> getActiveLists(int year, SortOrder sortOrder, LimitOffset limitOffset);
 
     /**
-     * Gets all floor calendars for the given year
+     * Gets all calendar supplementals for the given year
      * @param year
      * @param sortOrder
-     * @param limitOffset @return List<CalendarSupplementalId>
-     * @throws CalendarNotFoundEx - if no floor calendars exist for the given year
+     * @param limitOffset
+     * @return List<CalendarSupplementalId>
+     * @throws CalendarNotFoundEx - if no calendar supplemental exist for the given year
      */
-    public List<CalendarSupplemental> getFloorCalendars(int year, SortOrder sortOrder, LimitOffset limitOffset);
+    public List<CalendarSupplemental> getCalendarSupplementals(int year, SortOrder sortOrder, LimitOffset limitOffset);
 
     /**
      * Saves the Calendar into the persistence layer. If a new Calendar reference is
      * being saved, the appropriate data will be inserted. Otherwise, existing
      * data will be updated with the changed values.
-     *
-     * @param calendar Calendar
+     *  @param calendar Calendar
      * @param sobiFragment SobiFragment
+     * @param postUpdateEvent
      */
-    public void saveCalendar(Calendar calendar, SobiFragment sobiFragment);
+    public void saveCalendar(Calendar calendar, SobiFragment sobiFragment, boolean postUpdateEvent);
 }

@@ -4,6 +4,7 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.calendar.search.CalendarSearchDao;
+import gov.nysenate.openleg.dao.calendar.search.ElasticCalendarSearchDao;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import org.junit.Test;
@@ -17,7 +18,7 @@ public class CalendarSearchDaoTests extends BaseTests
     private static final Logger logger = LoggerFactory.getLogger(CalendarSearchDaoTests.class);
 
     @Autowired
-    CalendarSearchDao calendarSearchDao;
+    ElasticCalendarSearchDao calendarSearchDao;
 
     @Autowired
     CalendarDataService calendarDataService;
@@ -41,7 +42,7 @@ public class CalendarSearchDaoTests extends BaseTests
 
     @Test
     public void purgeIndexTest() {
-        calendarSearchDao.deleteCalendarIndex();
+        calendarSearchDao.purgeIndices();
     }
 
     @Test

@@ -1,0 +1,122 @@
+@import "compass";
+@import "colors";
+
+#billSearchForm {
+  height: 50px;
+  margin-top: 20px;
+}
+
+#searchBarIcon {
+  height: 42px;
+  width: 50px;
+  line-height: 50px;
+  text-align: center;
+  background: #2B6A90;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+
+  i {
+    font-size:1.5em;
+    color:white;
+  }
+}
+
+#billSearchBar, #billAdvancedSearchToggle {
+  height: 42px;
+}
+
+#billSearchBar {
+  width: 100%;
+  font-size: 1em;
+  margin-bottom: 0;
+  border-left: none;
+  @include box-shadow(none);
+}
+
+#billAdvancedSearchToggle {
+  background: #004D71;
+  text-align: center;
+  color: white;
+  line-height: 42px;
+  cursor: pointer;
+  &:hover {
+    background: #00618f;
+  }
+}
+
+#billSearchInfoBar {
+  color: white;
+  height: 35px;
+  line-height: 35px;
+}
+
+#billSearchInfoBar {
+  background: #175B81;
+  margin-bottom: 20px;
+}
+
+#billPaginationTop {
+  margin-bottom: 10px;
+  background: #fafafa;
+  padding: 5px;
+}
+
+.bill-result {
+  &:hover {
+    background: #eee;
+    cursor: pointer;
+  }
+  background: #fafafa;
+  margin-bottom: 5px;
+  padding:10px 5px;
+  border-bottom:1px solid #ddd;
+}
+
+.bill-result-anim {
+  @include transition(all .1s ease);
+  opacity: 0;
+  &.show {
+    opacity: 1;
+  }
+}
+
+.bill-result-printno {
+  color: #555;
+  font-size: 1.5em;
+  display: block;
+}
+
+.bill-milestone-container {
+  height: 75px;
+  padding-right: 25px;
+  text-align: center;
+}
+
+.bill-milestone-list {
+  border: 1px solid #ccc;
+  height: 10px;
+  overflow: hidden;
+  li {
+    background:#ddd;
+    border-right: 1px solid #ccc;
+    height: 100%;
+    &.met {
+      background: #D5F587;
+      border-right: none;
+    }
+  }
+}
+
+.milestone-text {
+  text-transform: capitalize;
+  color: #444;
+}
+
+#billPaginationBottom {
+  margin-top: 10px;
+  background: white;
+  padding: 5px;
+}
+

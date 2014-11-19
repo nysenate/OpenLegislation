@@ -5,6 +5,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
+import gov.nysenate.openleg.processor.base.ProcessService;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * and processing sobi files. These methods should typically be used via a
  * process intended to parse new sobi files.
  */
-public interface SobiProcessService
+public interface SobiProcessService extends ProcessService
 {
     /**
      * Looks for sobi files that have been placed in the incoming directory and
@@ -36,12 +37,10 @@ public interface SobiProcessService
 
     /**
      * Process the list of supplied SobiFragments.
-     *
-     * @param fragments List<SobiFragment> - List of fragments to process.
+     *  @param fragments List<SobiFragment> - List of fragments to process.
      * @param options - SobiProcessOptions - Provide custom processing options or
-     *                                       set to null to use the default options.
      */
-    public void processFragments(List<SobiFragment> fragments, SobiProcessOptions options);
+    public int processFragments(List<SobiFragment> fragments, SobiProcessOptions options);
 
     /**
      * Retrieves all pending fragments and processes them. This is essentially a shorthand
@@ -51,7 +50,7 @@ public interface SobiProcessService
      * @param options - SobiProcessOptions - Provide custom processing options or
      *                                       set to null to use the default options. TODO
      */
-    public void processPendingFragments(SobiProcessOptions options);
+    public int processPendingFragments(SobiProcessOptions options);
 
     /**
      * Toggle the pending processing status of a SobiFragment via it's fragmentId.

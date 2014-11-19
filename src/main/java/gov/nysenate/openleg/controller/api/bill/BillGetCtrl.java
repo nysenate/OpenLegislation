@@ -63,7 +63,7 @@ public class BillGetCtrl extends BaseCtrl
                                  @RequestParam(defaultValue = "actionDate:desc") String sort,
                                  @RequestParam(defaultValue = "false") boolean full,
                                  WebRequest webRequest) throws SearchException {
-        LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.FIFTY);
+        LimitOffset limOff = getLimitOffset(webRequest, 50);
         SearchResults<BaseBillId> results =
             billSearch.searchBills(SessionYear.of(sessionYear), sort, limOff);
         // The bill data is retrieved from the data service so the data is always fresh.

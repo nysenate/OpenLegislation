@@ -9,6 +9,7 @@ import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,7 @@ public class SearchIndexCtrl extends BaseCtrl
      * using data pulled from the backing store. Probably don't want to do this while a data processing
      * job is running.
      */
+    @RequiresAuthentication
     @RequestMapping(value = "/{indexType}", method = RequestMethod.PUT)
     public BaseResponse rebuildIndex(@PathVariable String indexType) {
         BaseResponse response;

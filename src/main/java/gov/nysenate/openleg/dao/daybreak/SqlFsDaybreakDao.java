@@ -286,6 +286,15 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isChecked(LocalDate reportDate) throws DataAccessException {
+        MapSqlParameterSource params = getReportDateParams(reportDate);
+        return jdbcNamed.queryForObject(SqlDaybreakQuery.SELECT_REPORT_CHECKED.getSql(schema()), params, Boolean.class);
+    }
+
     @Override
     public List<LocalDate> getAllReportDates() throws DataAccessException {
     Range<LocalDate> allDates = Range.closed(DateUtils.LONG_AGO, LocalDate.now());
@@ -701,7 +710,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     private MapSqlParameterSource getDaybreakFileParams(DaybreakFile daybreakFile){
         MapSqlParameterSource params = getReportDateParams(daybreakFile.getReportDate());
         params.addValue("fileName", daybreakFile.getFileName());
-        params.addValue("fileType", daybreakFile.getDayBreakDocType().toString().toLowerCase());
+        params.addValue("fileType", daybreakFile.getDaybreakDocType().toString().toLowerCase());
         params.addValue("isArchived", daybreakFile.isArchived());
         return params;
     }

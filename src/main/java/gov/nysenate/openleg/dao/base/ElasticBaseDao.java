@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -39,7 +40,30 @@ public abstract class ElasticBaseDao
     protected Client searchClient;
 
     @PostConstruct
-    private void init() {}
+    private void init() {
+        createIndices();
+    }
+
+    /** --- Public methods --- */
+
+    public void createIndices() {
+        getIndices().stream()
+                .filter(index -> !indicesExist(index))
+                .forEach(this::createIndex);
+    }
+
+    public void purgeIndices() {
+        getIndices().forEach(this::deleteIndex);
+    }
+
+    /** --- Abstract methods --- */
+
+    /**
+     * Returns a list containing the names of all indices used by the inheriting Dao
+     *
+     * @return
+     */
+    protected abstract List<String> getIndices();
 
     /** --- Common Elastic Search methods --- */
 

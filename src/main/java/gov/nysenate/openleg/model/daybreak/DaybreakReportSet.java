@@ -1,10 +1,12 @@
 package gov.nysenate.openleg.model.daybreak;
 
+import com.google.common.base.Functions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class encapsulates a set of daybreak documents that have not yet been grouped into reports
@@ -46,7 +48,7 @@ public class DaybreakReportSet<DaybreakDoc extends DaybreakDocument> {
                 if(ex.getInsertExceptionReason() ==
                         DaybreakReport.DaybreakReportInsertException.InsertExceptionReason.REPORT_CONTAINS_TYPE){
                     logger.error("Duplicate document detected for report-" + daybreakReport + " type-" +
-                            daybreakDoc.getDayBreakDocType() + "" + daybreakDoc);
+                            daybreakDoc.getDaybreakDocType() + "" + daybreakDoc);
                     duplicateDocuments.add(daybreakDoc);
                     return;
                 }

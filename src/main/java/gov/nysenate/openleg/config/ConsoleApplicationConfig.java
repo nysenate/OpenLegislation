@@ -1,9 +1,15 @@
 package gov.nysenate.openleg.config;
 
+import gov.nysenate.openleg.dao.bill.data.BillDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
+
+import javax.annotation.PostConstruct;
 
 @Configuration
 @Import({PropertyConfig.class, DatabaseConfig.class, ApplicationConfig.class})

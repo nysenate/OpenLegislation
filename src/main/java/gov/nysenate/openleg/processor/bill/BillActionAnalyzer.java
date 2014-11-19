@@ -259,7 +259,10 @@ public class BillActionAnalyzer
             currStatus = new BillStatus(SIGNED_BY_GOV, action.getDate());
         }
         else if (vetoedPattern.matcher(text).find()) {
-            currStatus = new BillStatus(VETOED, action.getDate());
+            // Ignore line item vetoes, since the bill would still have been signed.
+            if (!text.contains("LINE")) {
+                currStatus = new BillStatus(VETOED, action.getDate());
+            }
         }
         else if (text.contains("ENACTING CLAUSE STRICKEN")) {
             currStatus = new BillStatus(STRICKEN, action.getDate());
@@ -306,14 +309,18 @@ public class BillActionAnalyzer
         LinkedList<BillStatus> milestones = new LinkedList<>();
         if (!this.actions.isEmpty()) {
             List<BillStatusType> milestoneTypes;
+            // Resolutions have a different set of milestones.
             if (billId.getBillType().isResolution()) {
                 milestoneTypes = Arrays.asList(ADOPTED);
             }
+            // Assembly and senate bills have their milestones ordered accordingly.
             else {
                 milestoneTypes = (billId.getChamber().equals(Chamber.SENATE)) ? senateMilestones : assemblyMilestones;
             }
             int lastSequenceNo = 0;
             List<BillStatus> statusList = new ArrayList<>(this.statuses);
+            // Keep track of milestones that didn't match so they can be back-filled if a later milestone is detected.
+            Set<BillStatusType> skippedMilestones = new LinkedHashSet<>();
             // Search through the actions list from most recent to oldest.
             statusList.sort((a, b) -> Integer.compare(b.getActionSequenceNo(), a.getActionSequenceNo()));
             for (BillStatusType milestoneType : milestoneTypes) {
@@ -323,9 +330,15 @@ public class BillActionAnalyzer
                         if (milestoneType.equals(SIGNED_BY_GOV)) {
                             break;
                         }
-                        return milestones;
+                        if (!skippedMilestones.contains(milestoneType)) {
+                            skippedMilestones.add(milestoneType);
+                        }
                     }
                     else if (status.getStatusType().equals(milestoneType)) {
+                        if (!skippedMilestones.isEmpty()) {
+                            skippedMilestones.forEach(s -> milestones.add(new BillStatus(s, status.getActionDate())));
+                            skippedMilestones.clear();
+                        }
                         milestones.add(status);
                         lastSequenceNo = status.getActionSequenceNo();
                         break;

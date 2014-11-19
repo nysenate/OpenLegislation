@@ -3,8 +3,8 @@
 @import "compass";
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
-$nice-dark-blue: #204056;
-$nice-blue: #008cba;
+@import "colors";
+@import "bill";
 
 .noselect {
   -webkit-touch-callout: none;
@@ -16,6 +16,10 @@ $nice-blue: #008cba;
 }
 
 /** --- Foundation Overrides --- */
+
+html {
+  overflow-y: scroll;
+}
 
 body {
   font-family: 'Open Sans', sans-serif;
@@ -37,7 +41,6 @@ table {
   background: #fafafa;
 }
 
-
 ul.pagination {
   margin-bottom:0;
 }
@@ -48,14 +51,16 @@ ul.pagination {
   min-height: 100%;
   position: relative;
   #content {
-    padding-bottom: 110px;
+    padding: 10px 10px 110px 10px;
+    min-height: 105vh;
+    height: 100%;
   }
   #footer {
     height: 100px;
     position:absolute;
     bottom:0;
     left:0;
-    background:#555;
+    background:#2e2e2e;
     color: white;
     width: 100%   ;
   }
@@ -63,16 +68,20 @@ ul.pagination {
 
 /** --- Common --- */
 
-span.xsmall {
-  font-size: 0.7em;
+.text-xsmall {
+  font-size: 0.7rem;
 }
 
-span.small {
-  font-size: 0.8em;
+.text-small {
+  font-size: 0.8rem;
 }
 
-span.medium {
-  font-size: 0.9em;
+.text-medium {
+  font-size: 0.9rem;
+}
+
+.bold {
+  font-weight: 600;
 }
 
 .vertical-align {
@@ -82,11 +91,52 @@ span.medium {
   }
 }
 
+.margin-top-20 {
+  margin-top: 20px !important;
+}
+
+.margin-bottom-20 {
+  margin-bottom: 20px !important;
+}
+
+.margin-left-20 {
+  margin-left: 20px !important;
+}
+
+.margin-right-20 {
+  margin-right: 20px !important;
+}
+
+.relative {
+  position: relative;
+}
+
+.bold-span-1 {
+  font-size: .9em;
+  font-weight: 600;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.no-top-margin {
+  margin-top: 0;
+}
+
 /** --- Header --- */
 
 .top-bar-wrapper {
   background: #fafafa;
   box-shadow: 0px -15px 40px #999;
+}
+
+.top-bar {
+  .nyss-seal {
+    height: 42px;
+    position: relative;
+    top: -3px;
+  }
 }
 
 @media #{$small-up} {
@@ -104,14 +154,9 @@ span.medium {
     width: 56.534em;
     margin: auto;
     .name {
-      margin: 0 3em 0 0;
+      margin: 0 1.5em 0 0;
       h1 a {
         width: auto;
-      }
-      img {
-        height: 42px;
-        position: relative;
-        top: -3px;
       }
     }
     .top-bar-section ul {
@@ -147,29 +192,6 @@ span.medium {
   padding: 10px;
 }
 
-/** --- Bill Page --- */
-
-.bill-result {
-  &:hover {
-    background: #eee;
-    cursor: pointer;
-  }
-}
-
-.bill-milestone-list {
-  border: 1px solid #ccc;
-  height: 10px;
-  overflow: hidden;
-  li {
-    background:#ddd;
-    border-right: 1px solid #ccc;
-    height: 100%;
-    &.met {
-      background: #D5F587;
-      border-right: none;
-    }
-  }
-}
 
 /** --- Magellan Nav --- */
 
@@ -391,17 +413,27 @@ button.check-button {
   float: right;
 }
 
-/** --- Bill Page --- */
-
-#sponsorName {
-  margin-top: 10px;
-  margin-left: 70px;
+.margin-top-5 {
+  margin-top: 5px;
 }
 
-.bold {
+.stats-block-container {
+  margin-bottom: 10px;
+}
+
+.stats-block-title {
   font-weight: 600;
+  text-align: center;
+  padding: 5px;
+  background: $gray3;
+  margin-bottom: 0;
+  border-bottom: 1px solid #ddd;
 }
 
-.margin-top-10 {
-  margin-top: 10px;
+.stats-block-number {
+  font-weight: 600;
+  font-size: 1.5rem;
+  background: $gray1;
+  display: block;
+  padding: 5px;
 }

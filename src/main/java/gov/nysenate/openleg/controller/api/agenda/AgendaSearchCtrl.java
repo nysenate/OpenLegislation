@@ -46,7 +46,7 @@ public class AgendaSearchCtrl extends BaseCtrl
                                       @RequestParam(defaultValue = "") String sort,
                                       @RequestParam(defaultValue = "false") boolean full,
                                       WebRequest webRequest) throws SearchException {
-        LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.TWENTY_FIVE);
+        LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<CommitteeAgendaId> results = agendaSearchService.searchCommitteeAgendas(term, sort, limOff);
         return getAgendaSearchResponse(full, limOff, results);
     }
@@ -67,7 +67,7 @@ public class AgendaSearchCtrl extends BaseCtrl
                                       @RequestParam(defaultValue = "") String sort,
                                       @RequestParam(defaultValue = "false") boolean full,
                                       WebRequest webRequest) throws SearchException {
-        LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.TWENTY_FIVE);
+        LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<CommitteeAgendaId> results = agendaSearchService.searchCommitteeAgendas(term, year, sort, limOff);
         return getAgendaSearchResponse(full, limOff, results);
     }

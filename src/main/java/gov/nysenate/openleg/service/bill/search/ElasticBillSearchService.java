@@ -148,8 +148,8 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     /** {@inheritDoc} */
     @Override
     public void clearIndex() {
-        billSearchDao.deleteBillIndex();
-        billSearchDao.createBillIndex();
+        billSearchDao.purgeIndices();
+        billSearchDao.createIndices();
     }
 
     /** {@inheritDoc} */

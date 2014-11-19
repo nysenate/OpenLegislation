@@ -31,7 +31,7 @@ public class DaybreakPageFileParser {
      * @throws IOException
      */
     public static List<PageFileEntry> extractPageFileEntries(DaybreakFile daybreakFile) throws IOException{
-        if(daybreakFile.getDayBreakDocType()!= DaybreakDocType.PAGE_FILE){
+        if(daybreakFile.getDaybreakDocType()!= DaybreakDocType.PAGE_FILE){
             // This parser is only for page files
             /** @see gov.nysenate.openleg.processor.daybreak.DaybreakFileParser */
             logger.error("non page file " + daybreakFile.getFileName() + " was passed to a DaybreakPageFile parser");

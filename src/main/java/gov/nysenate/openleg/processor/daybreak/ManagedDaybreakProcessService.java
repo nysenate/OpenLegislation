@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 public class ManagedDaybreakProcessService implements DaybreakProcessService{
@@ -33,7 +32,29 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
 
     /** --- Interfaced Methods --- */
 
-    /**{@InheritDoc}*/
+    @Override
+    public int collate() {
+        return collateDaybreakReports();
+    }
+
+    @Override
+    public int ingest() {
+        return processPendingFragments();
+    }
+
+    /**{@inheritDoc}*/
+    @Override
+    public String getIngestType() {
+        return "daybreak fragment";
+    }
+
+    /**{@inheritDoc}*/
+    @Override
+    public String getCollateType() {
+        return "daybreak report";
+    }
+
+    /**{@inheritDoc}*/
     @Override
     public int collateDaybreakReports() {
         DaybreakReportSet<DaybreakFile> reportSet;
@@ -65,16 +86,18 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
         return reportSet.getCompleteReports().values().size();
     }
 
-    /**{@InheritDoc}*/
+    /**{@inheritDoc}  */
     @Override
     public List<DaybreakFragment> getPendingDaybreakFragments() {
         return daybreakDao.getPendingDaybreakFragments();
     }
 
-    /**{@InheritDoc}*/
+    /**{@inheritDoc}*/
     @Override
-    public void processFragments(List<DaybreakFragment> fragments) {
-        logger.info("Processing " + fragments.size() + " daybreak fragments");
+    public int processFragments(List<DaybreakFragment> fragments) {
+        if (fragments.size() > 0) {
+            logger.info("Processing " + fragments.size() + " daybreak fragments");
+        }
         for(DaybreakFragment daybreakFragment : fragments) {
             executorService.submit(() -> processFragment(daybreakFragment));
         }
@@ -85,21 +108,24 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return fragments.size();
     }
 
-    /**{@InheritDoc}*/
+    /**{@inheritDoc}*/
     @Override
-    public void processPendingFragments() {
+    public int processPendingFragments() {
         List<DaybreakFragment> daybreakFragments = getPendingDaybreakFragments();
-        processFragments(daybreakFragments);
+        int processedCount = processFragments(daybreakFragments);
         // Set associated reports as processed
         daybreakFragments.stream()
                 .map(DaybreakFragment::getReportDate)
-                .collect(Collectors.toSet())
+                .distinct()
                 .forEach(daybreakDao::setProcessed);
+
+        return processedCount;
     }
 
-    /**{@InheritDoc}*/
+    /**{@inheritDoc}*/
     @Override
     public void updatePendingProcessing(DaybreakBillId fragmentId, boolean pendingProcessing) {
         if(pendingProcessing){
@@ -109,6 +135,8 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
             daybreakDao.setProcessed(fragmentId);
         }
     }
+    
+    
 
     /** --- Helper methods --- */
 
@@ -131,7 +159,7 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
             logger.debug("Parsing " + daybreakFile.getFileName());
             // Get daybreak fragments or page file entries from the daybreak file depending on the type
             try {
-                if(daybreakFile.getDayBreakDocType()==DaybreakDocType.PAGE_FILE){
+                if(daybreakFile.getDaybreakDocType()==DaybreakDocType.PAGE_FILE){
                     pageFileEntries.addAll(DaybreakPageFileParser.extractPageFileEntries(daybreakFile));
                 }
                 else{

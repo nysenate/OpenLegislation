@@ -88,8 +88,8 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
     /** {@inheritDoc} */
     @Override
     public void clearIndex() {
-        agendaSearchDao.deleteAgendaIndex();
-        agendaSearchDao.createAgendaIndex();
+        agendaSearchDao.purgeIndices();
+        agendaSearchDao.createIndices();
     }
 
     /** {@inheritDoc} */

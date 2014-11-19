@@ -2,10 +2,11 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.law.LawFile;
+import gov.nysenate.openleg.processor.base.ProcessService;
 
 import java.util.List;
 
-public interface LawProcessService
+public interface LawProcessService extends ProcessService
 {
     /**
      * Identifies all incoming law files and saves a record of them into the database. The files
@@ -33,5 +34,5 @@ public interface LawProcessService
     /**
      * Processes all the law files that are set as pending processing.
      */
-    public void processPendingLawFiles();
+    public int processPendingLawFiles();
 }

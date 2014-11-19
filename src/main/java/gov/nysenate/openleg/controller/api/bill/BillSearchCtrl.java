@@ -51,7 +51,7 @@ public class BillSearchCtrl extends BaseCtrl
                                      @RequestParam(defaultValue = "") String sort,
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
-        LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.TWENTY_FIVE);
+        LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<BaseBillId> results = billSearch.searchBills(term, sort, limOff);
         return getBillSearchResponse(results, full, limOff);
     }
@@ -68,7 +68,7 @@ public class BillSearchCtrl extends BaseCtrl
                                       @RequestParam(defaultValue = "") String sort,
                                       @RequestParam(defaultValue = "false") boolean full,
                                       WebRequest webRequest) throws SearchException {
-        LimitOffset limOff = getLimitOffset(webRequest, LimitOffset.TWENTY_FIVE);
+        LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<BaseBillId> results = billSearch.searchBills(term, SessionYear.of(sessionYear), sort, limOff);
         return getBillSearchResponse(results, full, limOff);
     }

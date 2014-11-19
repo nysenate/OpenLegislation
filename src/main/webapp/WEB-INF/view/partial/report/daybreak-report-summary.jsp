@@ -1,4 +1,8 @@
-<div class="row">
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
+
+<shiro:authenticated>
+<div class="row margin-top-20">
     <div class="small-4 columns">
         <h4><span class="icon-statistics blue-title-icon"></span>{{title}}</h4>
     </div>
@@ -59,7 +63,7 @@
             </tr>
             <tr>
                 <th style="border-left:1px solid #ccc;">Total Open</th>
-                <th>New/Regr</th>
+                <th>New/Re-opened</th>
                 <th>Existing</th>
                 <th>Resolved</th>
                 <th style="border-left:1px solid #ccc;" colspan="2">Sponsor</th>
@@ -74,8 +78,8 @@
             </thead>
             <tbody>
             <tr ng-repeat="r in summaries.reports.items">
-                <td><a ng-href="/legislation/report/daybreak/{{ r.reportDateTime | moment }}">{{ r.reportDateTime | moment:'lll' }}</a></td>
-                <td style="border-left:1px solid #ccc; font-weight:bold">{{ r.openMismatches }}</td>
+                <td><a ng-href="${ctxPath}/admin/report/daybreak/{{r.reportDateTime | moment}}">{{r.reportDateTime | moment:'lll'}}</a></td>
+                <td style="border-left:1px solid #ccc; font-weight:bold">{{r.openMismatches}}</td>
                 <td>
                     <span class="prefix-icon icon-arrow-up4 new-error"></span>
                     {{ (r.mismatchStatuses['NEW'] | default:0) + (r.mismatchStatuses['REGRESSION'] | default:0) }}
@@ -141,3 +145,4 @@
         </table>
     </div>
 </section>
+</shiro:authenticated>

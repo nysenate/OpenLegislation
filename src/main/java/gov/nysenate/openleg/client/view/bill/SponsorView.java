@@ -8,13 +8,13 @@ public class SponsorView implements ViewObject
 {
     protected MemberView member;
     protected boolean budget;
-    protected boolean sponsor;
+    protected boolean rules;
 
     public SponsorView(BillSponsor billSponsor) {
         if (billSponsor != null) {
             this.member = billSponsor.getMember()!=null ? new MemberView(billSponsor.getMember()) : null;
             this.budget = billSponsor.isBudget();
-            this.sponsor = billSponsor.isRules();
+            this.rules = billSponsor.isRules();
         }
     }
 
@@ -31,7 +31,7 @@ public class SponsorView implements ViewObject
         return budget;
     }
 
-    public boolean isSponsor() {
-        return sponsor;
+    public boolean isRules() {
+        return rules;
     }
 }

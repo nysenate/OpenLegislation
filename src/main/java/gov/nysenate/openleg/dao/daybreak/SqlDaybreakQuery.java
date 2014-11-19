@@ -225,6 +225,10 @@ public enum SqlDaybreakQuery implements BasicSqlQuery
         "SELECT * FROM ${schema}." + SqlTable.DAYBREAK_REPORT + "\n" +
         "WHERE processed = 'true' AND checked = 'false'"
     ),
+    SELECT_REPORT_CHECKED(
+        "SELECT checked FROM ${schema}." + SqlTable.DAYBREAK_REPORT + "\n" +
+        "WHERE report_date = :reportDate AND processed = 'TRUE'"
+    ),
     INSERT_DAYBREAK_REPORT(
         "INSERT INTO ${schema}." + SqlTable.DAYBREAK_REPORT + "\n" +
         "       (  report_date, processed,  checked ) " + "\n" +

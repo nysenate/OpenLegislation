@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.calendar.search;
 
+import com.google.common.collect.Lists;
 import gov.nysenate.openleg.client.view.calendar.*;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -22,8 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public class ElasticCalendarSearchDao extends ElasticBaseDao implements CalendarSearchDao {
@@ -33,24 +34,8 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     /** --- Index Names --- */
 
     protected static final String calIndexName = "calendars";
-    protected static final String floorCalIndexName = "floor_calendars";
+    protected static final String calSupIndexName = "calendar_supplemental";
     protected static final String activeListIndexName = "active_lists";
-
-    @PostConstruct
-    public void init() {
-        if (!calIndexExists()) {
-            logger.warn("ElasticSearch Calendar index doesn't exist. Creating it now.");
-            createCalIndex();
-        }
-        if (!floorIndexExists()) {
-            logger.warn("ElasticSearch Floor Calendar index doesn't exist. Creating it now.");
-            createFloorIndex();
-        }
-        if (!activeListIndexExists()) {
-            logger.warn("ElasticSearch Active List index doesn't exist. Creating it now.");
-            createActiveListIndex();
-        }
-    }
 
     /** --- Implementations --- */
 
@@ -64,8 +49,8 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
 
     /**{@inheritDoc}*/
     @Override
-    public SearchResults<CalendarSupplementalId> searchFloorCalendars(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limitOffset) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(floorCalIndexName, query, postFilter, sort, limitOffset);
+    public SearchResults<CalendarSupplementalId> searchCalendarSupplementals(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limitOffset) {
+        SearchRequestBuilder searchBuilder = getSearchRequest(calSupIndexName, query, postFilter, sort, limitOffset);
         SearchResponse response = searchBuilder.execute().actionGet();
         return getSearchResults(response, limitOffset, this::getCalSupId);
     }
@@ -100,7 +85,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     @Override
     public void deleteCalendarFromIndex(CalendarId calId) {
         if (calId != null) {
-            searchClient.prepareDeleteByQuery(calIndexName, floorCalIndexName, activeListIndexName)
+            searchClient.prepareDeleteByQuery(calIndexName, calSupIndexName, activeListIndexName)
                     .setTypes(Integer.toString(calId.getYear()))
                     .setQuery(QueryBuilders.matchQuery("calendarNumber", Integer.toString(calId.getCalNo())))
                     .execute().actionGet();
@@ -111,10 +96,8 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
      * {@inheritDoc}
      */
     @Override
-    public void deleteCalendarIndex() {
-        deleteCalIndex();
-        deleteActiveListIndex();
-        deleteFloorIndex();
+    protected List<String> getIndices() {
+        return Lists.newArrayList(calIndexName, calSupIndexName, activeListIndexName);
     }
 
     /**
@@ -134,7 +117,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
                 .map(this::getActiveListIndexRequest)
                 .forEach(bulkRequest::add);
         calendarView.getFloorCalendars().getItems().values().stream()
-                .map(this::getFloorCalendarIndexRequest)
+                .map(this::getCalendarSupplementalIndexRequest)
                 .forEach(bulkRequest::add);
     }
 
@@ -155,8 +138,8 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
      *
      * @param calendarSupView
      */
-    protected IndexRequestBuilder getFloorCalendarIndexRequest(CalendarSupView calendarSupView) {
-        return searchClient.prepareIndex(floorCalIndexName,
+    protected IndexRequestBuilder getCalendarSupplementalIndexRequest(CalendarSupView calendarSupView) {
+        return searchClient.prepareIndex(calSupIndexName,
                 Integer.toString(calendarSupView.getYear()), generateSupSearchId(calendarSupView))
                 .setSource(OutputUtils.toJson(calendarSupView));
     }
@@ -225,43 +208,5 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     protected CalendarActiveListId getActiveListId(SearchHit hit) {
         String[] idParts = hit.id().split("-");
         return new CalendarActiveListId(Integer.parseInt(idParts[0]), Integer.parseInt(hit.type()), Integer.parseInt(idParts[1]));
-    }
-
-    /** --- Index creation/deletion --- */
-
-    protected boolean calIndexExists() {
-        return indicesExist(calIndexName);
-    }
-
-    protected boolean floorIndexExists() {
-        return indicesExist(floorCalIndexName);
-    }
-
-    protected boolean activeListIndexExists() {
-        return indicesExist(activeListIndexName);
-    }
-
-    protected void createCalIndex() {
-        createIndex(calIndexName);
-    }
-
-    protected void createFloorIndex() {
-        createIndex(floorCalIndexName);
-    }
-
-    protected void createActiveListIndex() {
-        createIndex(activeListIndexName);
-    }
-
-    protected void deleteCalIndex() {
-        deleteIndex(calIndexName);
-    }
-
-    protected void deleteFloorIndex() {
-        deleteIndex(floorCalIndexName);
-    }
-
-    protected void deleteActiveListIndex() {
-        deleteIndex(activeListIndexName);
     }
 }

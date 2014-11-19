@@ -1,5 +1,9 @@
-<!--<a href="daybreak"><span class="prefix-icon icon-arrow-left2"></span>Back to summary</a>
-<hr style="margin-top:0;"/>                                                                 -->
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
+
+<shiro:authenticated>
+<a href="${ctxPath}/admin/report/daybreak"><span class="prefix-icon icon-arrow-left2"></span>Summary List</a>
+<hr class="no-top-margin"/>
 
 <!--Title-->
 <div class="row">
@@ -144,3 +148,4 @@
     </tabset>
     <a class="close-reveal-modal" ng-click="cancel()">&#215;</a>
 </script>
+</shiro:authenticated>

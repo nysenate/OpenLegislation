@@ -52,6 +52,7 @@ public class MemoryCacheCtrl extends BaseCtrl
      *
      * Gets stats for all memory caches: (GET) /api/3/cache/
      */
+    @RequiresAuthentication
     @RequestMapping(value = "", method = RequestMethod.GET)
     public BaseResponse getCacheStats() {
         return ListViewResponse.of(Arrays.asList(cacheManager.getCacheNames()).stream()
@@ -69,6 +70,7 @@ public class MemoryCacheCtrl extends BaseCtrl
      * The cacheType can be either 'all' for all caches, or one of the values in the
      * {@link gov.nysenate.openleg.model.cache.ContentCache} enumeration.
      */
+    @RequiresAuthentication
     @RequestMapping(value = "/{cacheType}", method = RequestMethod.PUT)
     public BaseResponse warmCache(@PathVariable String cacheType) {
         BaseResponse response;
@@ -90,6 +92,7 @@ public class MemoryCacheCtrl extends BaseCtrl
      * Delete all entries in the specified cache(s): (DELETE) /api/3/cache/{cacheType}
      * @see #warmCache(String) for details about 'cacheType'
      */
+    @RequiresAuthentication
     @RequestMapping(value = "/{cacheType}", method = RequestMethod.DELETE)
     public BaseResponse deleteCache(@PathVariable String cacheType) {
         BaseResponse response;
