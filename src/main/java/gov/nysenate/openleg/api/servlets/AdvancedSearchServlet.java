@@ -30,8 +30,9 @@ public class AdvancedSearchServlet extends HttpServlet
         int sessionYear = SessionYear.getSessionYear();
 
         try {
-            File committeesBase = new File(SenatorsServlet.class.getClassLoader().getResource("data/committees/").getPath());
+            File committeesBase = new File(java.net.URLDecoder.decode(SenatorsServlet.class.getClassLoader().getResource("data/committees/").getPath()));
             File committeesDir = new File(committeesBase, String.valueOf(sessionYear));
+
             if (!committeesDir.exists()) committeesDir.mkdirs();
 
             this.committees = new ArrayList<Committee>();
