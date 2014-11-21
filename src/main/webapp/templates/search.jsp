@@ -1,4 +1,10 @@
-<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper, gov.nysenate.openleg.util.OpenLegConstants,gov.nysenate.openleg.model.SenateResponse,gov.nysenate.openleg.model.Result,java.text.SimpleDateFormat, java.util.Iterator"  contentType="text/html" pageEncoding="utf-8" %><%
+<%@ page language="java" import="gov.nysenate.openleg.util.JSPHelper,
+								 gov.nysenate.openleg.util.OpenLegConstants,
+								 gov.nysenate.openleg.model.SenateResponse,
+								 gov.nysenate.openleg.model.Result,
+								 java.text.SimpleDateFormat,
+								 java.util.Iterator"
+		 contentType="text/html" pageEncoding="utf-8" %><%
 
 String urlPath = (String)request.getAttribute("urlPath");
 String filter = (String) request.getAttribute("filter");
@@ -47,12 +53,13 @@ SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy");
 String prevUrl = null;
 if (pageIdx-1 > 0) {
 	if(urlPath != null) {
-		prevUrl = urlPath + (pageIdx-1) + (pageSize != 20 ? "/" + pageSize:"") + (filter != null ? "?filter=" + filter:"");
+		prevUrl = JSPHelper.getLink(request, urlPath + (pageIdx-1) + (pageSize != 20 ? "/" + pageSize:"") +
+				(filter != null ? "?filter=" + filter:""));
 	}
 	else {
-		prevUrl = "/legislation/search/" + term + "/" + (pageIdx - 1) + "/" + pageSize
+		prevUrl = JSPHelper.getLink(request, "/search/" + term + "/" + (pageIdx - 1) + "/" + pageSize
 			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
+			+ "&sortOrder=" + sortOrder);
 	}
 }
 	
@@ -60,10 +67,10 @@ String nextUrl = null;
 
 if (total > endIdx) {
 	if(urlPath != null) {
-		nextUrl = urlPath + (pageIdx+1) + (pageSize != 20 ? "/" + pageSize:"") + (filter != null ? "?filter=" + filter:"");
+		nextUrl = JSPHelper.getLink(request, urlPath + (pageIdx+1) + (pageSize != 20 ? "/" + pageSize:"") + (filter != null ? "?filter=" + filter:""));
 	}
 	else {
-		nextUrl = "/legislation/search/" + term + "/" + (pageIdx + 1) + "/" + pageSize + "?sort=" + sortField + "&sortOrder=" + sortOrder;
+		nextUrl = JSPHelper.getLink(request, "/search/" + term + "/" + (pageIdx + 1) + "/" + pageSize + "?sort=" + sortField + "&sortOrder=" + sortOrder);
 	}
 }
 	
@@ -98,9 +105,9 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 	int totalPages = (total+20-1)/20;
 	int currentPage = ((startIdx+20-1)/20)+1;
 	
-	String currentPageLink = "/legislation/search/" + term + "/" + (currentPage) + "/" + pageSize
+	String currentPageLink = JSPHelper.getLink(request, "/search/" + term + "/" + (currentPage) + "/" + pageSize
 			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
+			+ "&sortOrder=" + sortOrder);
 	
 	int back4 = (currentPage-4);
 	int back3 = (currentPage-3);
@@ -110,38 +117,38 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 	int forward2 = (currentPage+2);
 	int forward3 = (currentPage+3);
 	int forward4 = (currentPage+4);
-	String FirstPageLink = "/legislation/search/" + term + "/1/" + pageSize
+	String FirstPageLink = JSPHelper.getLink(request, "/search/" + term + "/1/" + pageSize
 			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
+			+ "&sortOrder=" + sortOrder);
 	
-	String totalPagesLink =  "/legislation/search/" + term + "/" + (totalPages) + "/" + pageSize
+	String totalPagesLink =  JSPHelper.getLink(request, "/search/" + term + "/" + (totalPages) + "/" + pageSize
 			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
+			+ "&sortOrder=" + sortOrder);
 	
-	String back4Link = "/legislation/search/" + term + "/" + (back4) + "/" + pageSize
+	String back4Link = JSPHelper.getLink(request, "/search/" + term + "/" + (back4) + "/" + pageSize
 			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
-	String back3Link = "/legislation/search/" + term + "/" + (back3) + "/" + pageSize
+			+ "&sortOrder=" + sortOrder);
+	String back3Link = JSPHelper.getLink(request, "/search/" + term + "/" + (back3) + "/" + pageSize
 			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
-	String back2Link = "/legislation/search/" + term + "/" + (back2) + "/" + pageSize
+			+ "&sortOrder=" + sortOrder);
+	String back2Link = JSPHelper.getLink(request, "/search/" + term + "/" + (back2) + "/" + pageSize
 			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
-	String back1Link = "/legislation/search/" + term + "/" + (back1) + "/" + pageSize
+			+ "&sortOrder=" + sortOrder);
+	String back1Link = JSPHelper.getLink(request, "/search/" + term + "/" + (back1) + "/" + pageSize
 			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
-	String forward1Link = "/legislation/search/" + term + "/" + (forward1) + "/" + pageSize
+			+ "&sortOrder=" + sortOrder);
+	String forward1Link = JSPHelper.getLink(request, "/search/" + term + "/" + (forward1) + "/" + pageSize
 			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
-	String forward2Link = "/legislation/search/" + term + "/" + (forward2) + "/" + pageSize
+			+ "&sortOrder=" + sortOrder);
+	String forward2Link = JSPHelper.getLink(request, "/search/" + term + "/" + (forward2) + "/" + pageSize
 			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
-	String forward3Link = "/legislation/search/" + term + "/" + (forward3) + "/" + pageSize
+			+ "&sortOrder=" + sortOrder);
+	String forward3Link = JSPHelper.getLink(request, "/search/" + term + "/" + (forward3) + "/" + pageSize
 			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
-	String forward4Link = "/legislation/search/" + term + "/" + (forward4) + "/" + pageSize
+			+ "&sortOrder=" + sortOrder);
+	String forward4Link = JSPHelper.getLink(request, "/search/" + term + "/" + (forward4) + "/" + pageSize
 			+ "?sort=" + sortField
-			+ "&sortOrder=" + sortOrder;
+			+ "&sortOrder=" + sortOrder);
 		
 	if (prevUrl!=null){%>
 		<li><a href="<%=prevUrl%>" title="Previous page">«</a></li>
@@ -201,17 +208,17 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
                 <% if (sortField.equals("modified") && sortOrder){%>
                     Recent Updates
                 <%} else{ %>
-                    <a href="/legislation/search/<%=term%>?sort=modified&sortOrder=true">Recent Updates</a>
+                    <a href="<%=JSPHelper.getLink(request, "/search/" + term + "?sort=modified&sortOrder=true")%>">Recent Updates</a>
                 <%}%>,
 
 				<%if (sortField.equals("modified") && (!sortOrder)){%>Oldest Updates<%}
-				else{ %><a href="/legislation/search/<%=term%>?sort=modified&sortOrder=false">Oldest Updates</a><%}%>,
+				else{ %><a href="<%=JSPHelper.getLink(request, "/search/" + term + "?sort=modified&sortOrder=false")%>">Oldest Updates</a><%}%>,
 				
 				<%if (sortField.equals("committee")){%>Committee<%}
-				else{ %><a href="/legislation/search/<%=term%>?sort=committee&sortOrder=false">Committee</a><%}%>,
+				else{ %><a href="<%=JSPHelper.getLink(request, "/search/" + term + "?sort=committee&sortOrder=false")%>">Committee</a><%}%>,
 				
 				<%if (sortField.equals("")){%>Best Match<%}
-				else{ %><a href="/legislation/search/<%=term%>?sort=oid&sortOrder=false">Best Match</a><%}%>
+				else{ %><a href="<%=JSPHelper.getLink(request, "/search/" + term + "?sort=oid&sortOrder=false")%>">Best Match</a><%}%>
 				</div>
             </div>
             <hr/>
@@ -332,9 +339,9 @@ Showing Results <%=startIdx+1%> - <%=endIdx%> of <%=total%>
 <%
 int totalPages = (total+20-1)/20;
 int currentPage = ((startIdx+20-1)/20)+1;
-String currentPageLink = "/legislation/search/" + term + "/" + (currentPage) + "/" + pageSize
+String currentPageLink = JSPHelper.getLink(request, "/search/" + term + "/" + (currentPage) + "/" + pageSize
 + "?sort=" + sortField
-+ "&sortOrder=" + sortOrder;
++ "&sortOrder=" + sortOrder);
 
 int back4 = (currentPage-4);
 int back3 = (currentPage-3);
@@ -344,38 +351,38 @@ int forward1 = (currentPage+1);
 int forward2 = (currentPage+2);
 int forward3 = (currentPage+3);
 int forward4 = (currentPage+4);
-String FirstPageLink = "/legislation/search/" + term + "/1/" + pageSize
+String FirstPageLink = JSPHelper.getLink(request, "/search/" + term + "/1/" + pageSize
 		+ "?sort=" + sortField
-		+ "&sortOrder=" + sortOrder;
+		+ "&sortOrder=" + sortOrder);
 
-String totalPagesLink = "/legislation/search/" + term + "/" + (totalPages) + "/" + pageSize
+String totalPagesLink = JSPHelper.getLink(request, "/search/" + term + "/" + (totalPages) + "/" + pageSize
 		+ "?sort=" + sortField
-		+ "&sortOrder=" + sortOrder;
+		+ "&sortOrder=" + sortOrder);
 
-String back4Link = "/legislation/search/" + term + "/" + (back4) + "/" + pageSize
+String back4Link = JSPHelper.getLink(request, "/search/" + term + "/" + (back4) + "/" + pageSize
 		+ "?sort=" + sortField
-		+ "&sortOrder=" + sortOrder;
-String back3Link = "/legislation/search/" + term + "/" + (back3) + "/" + pageSize
+		+ "&sortOrder=" + sortOrder);
+String back3Link = JSPHelper.getLink(request, "/search/" + term + "/" + (back3) + "/" + pageSize
 		+ "?sort=" + sortField
-		+ "&sortOrder=" + sortOrder;
-String back2Link = "/legislation/search/" + term + "/" + (back2) + "/" + pageSize
+		+ "&sortOrder=" + sortOrder);
+String back2Link = JSPHelper.getLink(request, "/search/" + term + "/" + (back2) + "/" + pageSize
 		+ "?sort=" + sortField
-		+ "&sortOrder=" + sortOrder;
-String back1Link = "/legislation/search/" + term + "/" + (back1) + "/" + pageSize
+		+ "&sortOrder=" + sortOrder);
+String back1Link = JSPHelper.getLink(request, "/search/" + term + "/" + (back1) + "/" + pageSize
 		+ "?sort=" + sortField
-		+ "&sortOrder=" + sortOrder;
-String forward1Link = "/legislation/search/" + term + "/" + (forward1) + "/" + pageSize
+		+ "&sortOrder=" + sortOrder);
+String forward1Link = JSPHelper.getLink(request, "/search/" + term + "/" + (forward1) + "/" + pageSize
 		+ "?sort=" + sortField
-		+ "&sortOrder=" + sortOrder;
-String forward2Link = "/legislation/search/" + term + "/" + (forward2) + "/" + pageSize
+		+ "&sortOrder=" + sortOrder);
+String forward2Link = JSPHelper.getLink(request, "/search/" + term + "/" + (forward2) + "/" + pageSize
 		+ "?sort=" + sortField
-		+ "&sortOrder=" + sortOrder;
-String forward3Link = "/legislation/search/" + term + "/" + (forward3) + "/" + pageSize
+		+ "&sortOrder=" + sortOrder);
+String forward3Link = JSPHelper.getLink(request, "/search/" + term + "/" + (forward3) + "/" + pageSize
 		+ "?sort=" + sortField
-		+ "&sortOrder=" + sortOrder;
-String forward4Link = "/legislation/search/" + term + "/" + (forward4) + "/" + pageSize
+		+ "&sortOrder=" + sortOrder);
+String forward4Link = JSPHelper.getLink(request, "/search/" + term + "/" + (forward4) + "/" + pageSize
 		+ "?sort=" + sortField
-		+ "&sortOrder=" + sortOrder;
+		+ "&sortOrder=" + sortOrder);
 	
 if (prevUrl!=null) {%>
 	<li><a href="<%=prevUrl%>" title="Previous page">«</a></li>
