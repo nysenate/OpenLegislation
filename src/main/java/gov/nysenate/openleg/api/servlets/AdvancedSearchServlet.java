@@ -6,6 +6,7 @@ import gov.nysenate.services.model.Senator;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,7 +31,7 @@ public class AdvancedSearchServlet extends HttpServlet
         int sessionYear = SessionYear.getSessionYear();
 
         try {
-            File committeesBase = new File(java.net.URLDecoder.decode(SenatorsServlet.class.getClassLoader().getResource("data/committees/").getPath()));
+            File committeesBase = new File(URLDecoder.decode(SenatorsServlet.class.getClassLoader().getResource("data/committees/").getPath()));
             File committeesDir = new File(committeesBase, String.valueOf(sessionYear));
 
             if (!committeesDir.exists()) committeesDir.mkdirs();
@@ -47,7 +48,7 @@ public class AdvancedSearchServlet extends HttpServlet
                 }
             });
 
-            File senatorsBase = new File(SenatorsServlet.class.getClassLoader().getResource("data/senators/").getPath());
+            File senatorsBase = new File(URLDecoder.decode(SenatorsServlet.class.getClassLoader().getResource("data/senators/").getPath()));
             File senatorsDir = new File(senatorsBase, String.valueOf(sessionYear));
             if (!senatorsDir.exists()) senatorsDir.mkdirs();
 
