@@ -65,7 +65,7 @@ public class TranscriptPdfView
             moveStreamToTopOfPage(contentStream);
 
             int lineCount = drawPageText(page, contentStream);
-            drawStenographer(transcript, page, contentStream, lineCount);
+            drawStenographer(transcript, contentStream, lineCount);
 
             contentStream.endText();
             contentStream.close();
@@ -77,10 +77,10 @@ public class TranscriptPdfView
 
     /**
      * Draw page text, correctly aligning page numbers, line numbers, and lines without line numbers.
-     * Also insert information the the Stenographer.
+     * Also insert information about the Stenographer.
      * <p>
-     *     Page numbers should be right aligned at the top of the page.
-     *     Line numbers should aligned left of the left vertical line.
+     *     Page numbers should be right aligned above the border.
+     *     Line numbers should aligned left of the left vertical border.
      *     Lines without line numbers should have their spacing between each vertical line similar
      *          to other transcripts.
      *     The stenographer should be centered at the bottom of the page
@@ -92,28 +92,30 @@ public class TranscriptPdfView
             TranscriptLine line = new TranscriptLine(ln);
 
             if (line.isPageNumber()) {
-                float offset = right - (line.fullText().trim().length() + 1) * fontWidth;
-                drawPageNumber(line.fullText().trim(), offset, contentStream);
+                drawPageNumber(line.fullText().trim(), contentStream);
             }
             else {
-                int indent;
-                String text;
-                if (line.hasLineNumber()) {
-                    indent = lineNumberLength(line) + 1;
-                    text = line.fullText().trim();
-                } else {
-                    indent = NO_LINE_NUM_INDENT;
-                    text = line.fullText();
-                }
-
-                float offset = left - indent * fontWidth;
-                drawLine(text, offset, contentStream);
-
+                drawText(contentStream, line);
                 lineCount++;
             }
         }
 
         return lineCount;
+    }
+
+    private static void drawText(PDPageContentStream contentStream, TranscriptLine line) throws IOException {
+        int indent;
+        String text;
+        if (line.hasLineNumber()) {
+            indent = lineNumberLength(line) + 1;
+            text = line.fullText().trim();
+        } else {
+            indent = NO_LINE_NUM_INDENT;
+            text = line.fullText();
+        }
+
+        float offset = left - indent * fontWidth;
+        drawLine(text, offset, contentStream);
     }
 
     private static void drawBorder(PDPageContentStream contentStream) throws IOException {
@@ -129,7 +131,8 @@ public class TranscriptPdfView
         contentStream.moveTextPositionByAmount(-offset, -fontSize);
     }
 
-    private static void drawPageNumber(String line, float offset, PDPageContentStream contentStream) throws IOException {
+    private static void drawPageNumber(String line, PDPageContentStream contentStream) throws IOException {
+        float offset = right - (line.length() + 1) * fontWidth;
         contentStream.moveTextPositionByAmount(offset, fontWidth * 2);
         contentStream.drawString(line);
         contentStream.moveTextPositionByAmount(-offset, -fontSize * 2);
@@ -143,7 +146,7 @@ public class TranscriptPdfView
         return line.fullText().trim().split("\\s")[0].length();
     }
 
-    private static void drawStenographer(Transcript transcript, List<String> page, PDPageContentStream contentStream, int lineCount) throws IOException {
+    private static void drawStenographer(Transcript transcript, PDPageContentStream contentStream, int lineCount) throws IOException {
         String stenographer = "";
         if (transcript.getDateTime().isAfter(KIRKLAND_START_TIME)) {
             stenographer = "Kirkland Reporting Service";
