@@ -80,14 +80,19 @@ public class BillGetCtrl extends BaseCtrl
      * Retrieve a single bill via printNo and session: (GET) /api/3/bills/{session}/{printNo}/
      * The version on the printNo is not needed since bills are returned with all amendments.
      *
-     * Request Parameters: None
+     * Request Parameters: summary - If true, then only the bill info will be returned.
      *
-     * Expected Output: BillView
+     * Expected Output: BillView or BillInfoView
      */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
-    public BaseResponse getBill(@PathVariable int sessionYear, @PathVariable String printNo) {
+    public BaseResponse getBill(@PathVariable int sessionYear, @PathVariable String printNo,
+                                @RequestParam(defaultValue = "false") boolean summary) {
         BaseBillId baseBillId = new BaseBillId(printNo, sessionYear);
-        return new ViewObjectResponse<>(new BillView(billData.getBill(baseBillId)), "Data for bill " + baseBillId);
+        return new ViewObjectResponse<>(
+            (summary)
+                ? new BillInfoView(billData.getBillInfo(baseBillId))
+                : new BillView(billData.getBill(baseBillId)),
+            "Data for bill " + baseBillId);
     }
 
     /**
