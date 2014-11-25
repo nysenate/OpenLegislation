@@ -1,6 +1,7 @@
-package gov.nysenate.openleg.service.hearing;
+package gov.nysenate.openleg.service.hearing.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
@@ -18,12 +19,12 @@ public interface PublicHearingDataService
     public PublicHearing getPublicHearing(PublicHearingId publicHearingId);
 
     /**
-     * Retrieves a List of {@link PublicHearingId} for a given session year.
-     * @param sessionYear Session year to retrieve PublicHearingId's for.
+     * Retrieves a List of {@link PublicHearingId} for a given year.
+     * @param year The year to retrieve PublicHearingId's for.
      * @param limitOffset Restrict the number of results.
      * @return
      */
-    public List<PublicHearingId> getPublicHearingIds(SessionYear sessionYear, LimitOffset limitOffset);
+    public List<PublicHearingId> getPublicHearingIds(int year, SortOrder dateOrder, LimitOffset limitOffset);
 
     /**
      * Saves a {@link PublicHearing} to the backing store.

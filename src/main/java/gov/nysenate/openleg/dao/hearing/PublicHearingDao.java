@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.dao.hearing;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
@@ -14,7 +16,7 @@ public interface PublicHearingDao
      * @param year
      * @return
      */
-    public List<PublicHearingId> getPublicHearingIds(int year);
+    public List<PublicHearingId> getPublicHearingIds(int year, SortOrder dateOrder, LimitOffset limOff);
 
     /**
      * Retrieves a {@link PublicHearing} via its {@link PublicHearingId}.

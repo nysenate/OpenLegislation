@@ -16,10 +16,7 @@ import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletResponse;
@@ -29,8 +26,11 @@ import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
 
+/**
+ * Transcript retrieval APIs.
+ */
 @RestController
-@RequestMapping(BASE_API_PATH + "/transcripts")
+@RequestMapping(value = BASE_API_PATH + "/transcripts", method = RequestMethod.GET)
 public class TranscriptGetCtrl extends BaseCtrl
 {
     @Autowired
@@ -42,8 +42,6 @@ public class TranscriptGetCtrl extends BaseCtrl
      * Retrieve transcripts for a year: (GET) /api/3/transcripts/{year}
      *
      */
-    // TODO: full not working, always gets full since we are pulling form sql.
-
     @RequestMapping("/{year:[\\d]{4}}")
     public BaseResponse getTranscriptsByYear(@PathVariable int year,
                                              @RequestParam(defaultValue = "desc") String sort,
