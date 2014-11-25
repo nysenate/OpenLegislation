@@ -5,10 +5,7 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.client.view.bill.BillIdView;
-import gov.nysenate.openleg.client.view.bill.BillInfoView;
-import gov.nysenate.openleg.client.view.bill.BillPdfView;
-import gov.nysenate.openleg.client.view.bill.BillView;
+import gov.nysenate.openleg.client.view.bill.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -80,18 +77,24 @@ public class BillGetCtrl extends BaseCtrl
      * Retrieve a single bill via printNo and session: (GET) /api/3/bills/{session}/{printNo}/
      * The version on the printNo is not needed since bills are returned with all amendments.
      *
-     * Request Parameters: summary - If true, then only the bill info will be returned.
+     * Request Parameters: summary - If true, then only a BillInfoView will be returned.
+     *                     detail - If true, then a DetailedBillView will be returned.
      *
-     * Expected Output: BillView or BillInfoView
+     * Can't use 'summary' and 'detail' at the same time. If 'summary' is true, it will disregard 'detail'.
+     *
+     * Expected Output: BillView, DetailedBillView, or BillInfoView
      */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
     public BaseResponse getBill(@PathVariable int sessionYear, @PathVariable String printNo,
-                                @RequestParam(defaultValue = "false") boolean summary) {
+                                @RequestParam(defaultValue = "false") boolean summary,
+                                @RequestParam(defaultValue = "false") boolean detail) {
         BaseBillId baseBillId = new BaseBillId(printNo, sessionYear);
         return new ViewObjectResponse<>(
             (summary)
                 ? new BillInfoView(billData.getBillInfo(baseBillId))
-                : new BillView(billData.getBill(baseBillId)),
+                : (detail)
+                    ? new DetailBillView(billData.getBill(baseBillId), billData)
+                    : new BillView(billData.getBill(baseBillId)),
             "Data for bill " + baseBillId);
     }
 
