@@ -11,20 +11,20 @@ import static org.junit.Assert.*;
 public class TranscriptLineTest {
 
     @Test
-    public void testTranscriptNumber() {
+    public void testPageNumber() {
         TranscriptLine line = new TranscriptLine("                                 1234");
-        assertTrue(line.isTranscriptNumber());
+        assertTrue(line.isPageNumber());
 
         line = new TranscriptLine("4321");
-        assertTrue(line.isTranscriptNumber());
+        assertTrue(line.isPageNumber());
 
-        // Sometimes transcript number starts the second line. e.g. 011299.v1, 020597.v1
+        // Sometimes page number starts the second line. e.g. 011299.v1, 020597.v1
         line = new TranscriptLine("55");
-        assertTrue(line.isTranscriptNumber());
+        assertTrue(line.isPageNumber());
 
         // Remove broken pipe character. e.g. 122099.v1
         line = new TranscriptLine("  �                               2301");
-        assertTrue(line.isTranscriptNumber());
+        assertTrue(line.isPageNumber());
     }
 
     @Test
@@ -146,7 +146,7 @@ public class TranscriptLineTest {
     @Test
     public void properlyIgnoresInvalidCharacters() {
         TranscriptLine line = new TranscriptLine("  �                               2301");
-        assertTrue(line.isTranscriptNumber());
+        assertTrue(line.isPageNumber());
     }
 
     @Test
