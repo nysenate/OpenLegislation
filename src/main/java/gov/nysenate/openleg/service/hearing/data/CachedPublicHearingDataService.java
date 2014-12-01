@@ -1,6 +1,7 @@
-package gov.nysenate.openleg.service.hearing;
+package gov.nysenate.openleg.service.hearing.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.hearing.PublicHearingDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
@@ -55,8 +56,8 @@ public class CachedPublicHearingDataService implements PublicHearingDataService
 
     /** {@inheritDoc */
     @Override
-    public List<PublicHearingId> getPublicHearingIds(SessionYear sessionYear, LimitOffset limitOffset) {
-        throw new UnsupportedOperationException();
+    public List<PublicHearingId> getPublicHearingIds(int year, SortOrder dateOrder, LimitOffset limitOffset) {
+        return publicHearingDao.getPublicHearingIds(year, dateOrder, limitOffset);
     }
 
     /** {@inheritDoc */
