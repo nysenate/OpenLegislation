@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class SqlAdminUserService implements AdminUserService
 {
-
     @Autowired
     protected AdminUserDao adminDao;
 

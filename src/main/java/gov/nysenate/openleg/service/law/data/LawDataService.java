@@ -11,7 +11,7 @@ import java.util.List;
 public interface LawDataService
 {
     /**
-     * Retrieves a listing of all basic law info order alphabetically by law id.
+     * Retrieves a listing of all basic law info ordered alphabetically by law id.
      *
      * @return List<LawTree>
      */

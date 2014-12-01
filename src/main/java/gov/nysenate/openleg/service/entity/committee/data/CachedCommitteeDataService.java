@@ -31,6 +31,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,18 +40,14 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
 
     private static final Logger logger = LoggerFactory.getLogger(CachedCommitteeDataService.class);
 
-    private static final String committeeCacheName = "committee";
-    private Cache committeeCache;
-
-    /** The maximum heap size (in MB) the committee cache can consume. */
-    @Value("${cache.committee.heap.size}")
-    private long committeeCacheSizeMb;
-
     @Autowired private CacheManager cacheManager;
     @Autowired private CommitteeDao committeeDao;
-
-    /** Used to subscribe and post events. */
     @Autowired private EventBus eventBus;
+
+    @Value("${cache.committee.heap.size}") private long committeeCacheSizeMb;
+
+    private static final String committeeCacheName = "committee";
+    private Cache committeeCache;
 
     @PostConstruct
     private void init() {
@@ -70,13 +67,11 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
      * {@inheritDoc}
      */
     @Override
-    public Ehcache getCache() {
-        return committeeCache;
+    public List<Ehcache> getCaches() {
+        return Arrays.asList(committeeCache);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setupCaches() {
         committeeCache = new Cache(new CacheConfiguration().name(committeeCacheName)
@@ -87,18 +82,14 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
         committeeCache.setMemoryStoreEvictionPolicy(new CommitteeCacheEvictionPolicy());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void evictCaches() {
         logger.info("clearing the committee cache.");
         committeeCache.removeAll();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     @Subscribe
     public synchronized void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
@@ -107,9 +98,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void warmCaches() {
         evictCaches();
@@ -118,9 +107,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
         getCommitteeList(Chamber.ASSEMBLY, LimitOffset.ALL);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
         if (warmEvent.affects(ContentCache.COMMITTEE)) {
@@ -130,8 +117,10 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
 
     /** --- Committee Data Services --- */
 
-    /** {@inheritDoc}
-     * @param committeeSessionId*/
+    /**
+     * {@inheritDoc}
+     * @param committeeSessionId
+     */
     @Override
     public Committee getCommittee(CommitteeSessionId committeeSessionId) throws CommitteeNotFoundEx {
         if (committeeSessionId == null) {

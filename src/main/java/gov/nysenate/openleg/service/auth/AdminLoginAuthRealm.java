@@ -29,7 +29,6 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
     @Autowired
     private DefaultWebSecurityManager defaultWebSecurityManager;
 
-
     @Value("${default.admin.user}") private String defaultAdminName;
     @Value("${default.admin.password}") private String defaultAdminPass;
 
@@ -38,7 +37,6 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
         defaultWebSecurityManager.setRealm(this);
         if (!adminUserService.adminInDb(defaultAdminName))
             adminUserService.createUser(defaultAdminName, defaultAdminPass);
-
     }
 
 

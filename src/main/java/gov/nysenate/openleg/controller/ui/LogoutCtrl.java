@@ -14,7 +14,6 @@ import java.io.IOException;
 @RequestMapping(value = "/logout/**")
 public class LogoutCtrl
 {
-
     private static final Logger logger = LoggerFactory.getLogger(LogoutCtrl.class);
 
     /**

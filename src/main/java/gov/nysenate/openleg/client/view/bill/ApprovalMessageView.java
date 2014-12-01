@@ -3,8 +3,8 @@ package gov.nysenate.openleg.client.view.bill;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
 
-public class ApprovalMessageView implements ViewObject {
-
+public class ApprovalMessageView implements ViewObject
+{
     protected BillIdView billId;
     protected int year;
     protected int approvalNumber;

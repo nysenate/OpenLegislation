@@ -45,8 +45,8 @@ public enum ErrorCode
 
     /** --- General --- */
 
-    SEARCH_ERROR(100, "There was error retrieving your search results. Make sure that the query is valid.")
-
+    SEARCH_ERROR(100, "There was error retrieving your search results. Make sure that the query is valid."),
+    UNAUTHORIZED(401, "Not authorized to perform this request.")
     ;
 
     /** Used for lookups by code. */

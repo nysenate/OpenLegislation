@@ -5,7 +5,7 @@
     <div class="row">
         <div class="columns large-6 hide-for-medium-down">
             <div style="margin-top:25px;">
-                <img height="50px" width="50px" src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"/>
+                <img height="50px" width="50px" src=""/>
                 <a class="text-small" style="color:white" href="http://www.github.com/nysenate/OpenLegislation">View Source Code at GitHub</a>
             </div>
         </div>

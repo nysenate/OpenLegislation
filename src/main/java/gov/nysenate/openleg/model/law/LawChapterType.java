@@ -173,7 +173,7 @@ public enum LawChapterType
     private Set<String> citations;
     private LawType type;
 
-    private static Map<String, LawChapterType> citationMap = new HashMap<>();
+    public static Map<String, LawChapterType> citationMap = new HashMap<>();
     static {
         Arrays.stream(values())
             .forEach(law -> law.getCitations()
@@ -192,7 +192,7 @@ public enum LawChapterType
         if (citation == null) {
             throw new IllegalArgumentException("Null citation supplied.");
         }
-        LawChapterType type = citationMap.get(citation.trim().replaceAll("(\\s{2,})", " "));
+        LawChapterType type = citationMap.get(citation.toUpperCase().trim().replaceAll("(\\s{2,})", " "));
         if (type == null) {
             throw new IllegalArgumentException("Supplied citation did not match any law chapters.");
         }

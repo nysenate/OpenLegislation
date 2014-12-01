@@ -39,7 +39,6 @@ public class MemoryCacheCtrl extends BaseCtrl
     private static final Logger logger = LoggerFactory.getLogger(MemoryCacheCtrl.class);
 
     @Autowired private EventBus eventBus;
-
     @Autowired private CacheManager cacheManager;
 
     @PostConstruct

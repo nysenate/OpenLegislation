@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,21 +35,14 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedCalendarDataService.class);
 
+    @Autowired private CacheManager cacheManager;
+    @Autowired private CalendarDao calendarDao;
+    @Autowired private EventBus eventBus;
+
+    @Value("${cache.calendar.heap.size}") private long calendarCacheSizeMb;
+
     private static final String calendarDataCache = "calendarData";
-
     private Cache calendarCache;
-
-    @Value("${cache.calendar.heap.size}")
-    private long calendarCacheSizeMb;
-
-    @Autowired
-    private CacheManager cacheManager;
-
-    @Autowired
-    private CalendarDao calendarDao;
-
-    @Autowired
-    private EventBus eventBus;
 
     @PostConstruct
     private void init() {
@@ -59,8 +53,8 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     /** --- CachingService implementation --- */
 
     @Override
-    public Ehcache getCache() {
-        return calendarCache;
+    public List<Ehcache> getCaches() {
+        return Arrays.asList(calendarCache);
     }
 
     @Override
@@ -97,6 +91,8 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
             warmCaches();
         }
     }
+
+    /** --- CalendarDataService implementation --- */
 
     @Override
     public Calendar getCalendar(CalendarId calendarId) throws CalendarNotFoundEx {

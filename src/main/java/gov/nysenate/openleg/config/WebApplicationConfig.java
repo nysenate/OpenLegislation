@@ -88,7 +88,7 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter implements Sch
     @Bean
     public MappingJackson2HttpMessageConverter jackson2Converter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setObjectMapper(objectMapper  ());
+        converter.setObjectMapper(objectMapper());
         return converter;
     }
 

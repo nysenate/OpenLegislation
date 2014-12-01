@@ -15,7 +15,7 @@ public class LawTitleParser
     private static final Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
 
     protected static String sectionTitlePattern = "(?i)((?:Section|§)\\s*%s).?\\s(.+?)\\.(.*)";
-    protected static Pattern articleTitlePattern = Pattern.compile("(ARTICLE.+?\\\\n)([ A-Z-.:;,\\\\n]+)");
+    protected static Pattern articleTitlePattern = Pattern.compile("((ARTICLE|TITLE).+?\\\\n)(.+?)\\\\nSection");
 
     /** --- Methods --- */
 
@@ -27,9 +27,9 @@ public class LawTitleParser
                     title = extractTitleFromChapter(lawDocInfo);
                     break;
                 case ARTICLE:
+                case TITLE:
                     title = extractTitleFromArticle(lawDocInfo, bodyText);
                     break;
-                case TITLE:
                 case SUBTITLE:
                 case PART:
                 case SUB_PART:
@@ -66,7 +66,7 @@ public class LawTitleParser
     protected static String extractTitleFromArticle(LawDocInfo lawDocInfo, String bodyText) {
         Matcher articleTitleMatcher = articleTitlePattern.matcher(bodyText);
         if (articleTitleMatcher.find()) {
-            String title = articleTitleMatcher.group(2).replaceAll("\\\\n", "").replaceAll("\\s{2,}", " ");
+            String title = articleTitleMatcher.group(3).replaceAll("\\\\n", "").replaceAll("\\s{2,}", " ");
             // Chop the last character off
             return title.substring(0, title.length() - 1).trim();
         }

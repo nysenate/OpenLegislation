@@ -1,26 +1,25 @@
 package gov.nysenate.openleg.client.view.law;
 
-import gov.nysenate.openleg.client.view.base.MapView;
+import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.law.LawTreeNode;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class LawNodeView extends LawDocInfoView implements ViewObject
 {
     protected int sequenceNo;
-    protected MapView<String, LawNodeView> documents;
+    protected ListView<LawNodeView> documents;
 
     public LawNodeView(LawTreeNode treeNode) {
         super((treeNode != null) ? treeNode.getLawDocInfo() : null);
         if (treeNode != null) {
             this.sequenceNo = treeNode.getSequenceNo();
             Map<String, LawNodeView> docMap = new LinkedHashMap<>();
-            for (LawTreeNode node : treeNode.getChildNodeList()) {
-                docMap.put(node.getLocationId(), new LawNodeView(node));
-            }
-            this.documents = MapView.of(docMap);
+            this.documents = ListView.of(
+                    treeNode.getChildNodeList().stream().map(LawNodeView::new).collect(Collectors.toList()));
         }
     }
 
@@ -33,7 +32,7 @@ public class LawNodeView extends LawDocInfoView implements ViewObject
         return sequenceNo;
     }
 
-    public MapView<String, LawNodeView> getDocuments() {
+    public ListView<LawNodeView> getDocuments() {
         return documents;
     }
 }

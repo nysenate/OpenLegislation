@@ -4,15 +4,16 @@ import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 import static net.sf.ehcache.config.SizeOfPolicyConfiguration.MaxDepthExceededBehavior.ABORT;
 
 public interface CachingService
 {
-    /**
-     * Returns the cache instance.
-     */
-    public Ehcache getCache();
+    static final Logger logger = LoggerFactory.getLogger(CachingService.class);
 
     /**
      * Performs cache creation and any pre-caching of data.
@@ -20,9 +21,22 @@ public interface CachingService
     public void setupCaches();
 
     /**
-     * Clears all the cache entries.
+     * Returns all cache instances.
      */
-    public void evictCaches();
+    public List<Ehcache> getCaches();
+
+    /**
+     * (Default Method)
+     * Clears all the cache entries from all caches.
+     */
+    public default void evictCaches() {
+        if (getCaches() != null && !getCaches().isEmpty()) {
+            getCaches().forEach(c -> {
+                logger.info("Clearing out {} cache", c.getName());
+                c.removeAll();
+            });
+        }
+    }
 
     /**
      * If a CacheEvictEvent is sent out on the event bus, the caching service
@@ -46,6 +60,7 @@ public interface CachingService
     public void handleCacheWarmEvent(CacheWarmEvent warmEvent);
 
     /**
+     * (Default Method)
      * Default 'size of' configuration which sets the maximum limit for how many nodes are traversed
      * when computing the heap size of an object before bailing out to minimize performance impact.
      *
