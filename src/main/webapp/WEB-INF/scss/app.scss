@@ -153,6 +153,10 @@ ul.pagination {
   margin-bottom: 0;
 }
 
+.capitalize {
+  text-transform: capitalize;
+}
+
 a.gray-2-blue {
   color: $gray10;
   @include transition(all .2s linear);
@@ -188,15 +192,6 @@ a.white-2-blue {
     font-weight: 600;
     &:hover {
       background:#ddd;
-    }
-  }
-
-  .panel-content {
-    @include transition(all .5s cubic-bezier(0,.99,0,1));
-    max-height: 10000px;
-    &.panel-content-hide {
-      overflow: hidden;
-      max-height: 0;
     }
   }
 }

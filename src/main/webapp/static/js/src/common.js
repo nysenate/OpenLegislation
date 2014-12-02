@@ -48,12 +48,17 @@ commonModule.directive('togglePanel', [function(){
                    '<span class="text-small margin-left-20" ng-show="!open">(Click to expand section)</span>' +
                    '<i class="right" ng-class="{\'icon-arrow-up4\': open, \'icon-arrow-down5\': !open}"></i>' +
                '</label>' +
-               '<div ng-class="{\'panel-content-hide\':(open === false)}" class="panel-content" ng-transclude></div>' +
+               '<div class="panel-content" ng-transclude></div>' +
             '</div>',
         link : function($scope, $element, $attrs) {
             $scope.panelId = Math.random().toString(36).substring(7);
+            // Convert attribute value to boolean using watch
             $scope.$watch($attrs.open, function(open) {
                 $scope.open = open;
+            });
+            $scope.$watch('open', function(newOpen, oldOpen){
+                var panelElem = $element.children(".panel-content");
+                (newOpen) ? panelElem.slideDown(200) : panelElem.slideUp(200);
             });
         }
     }

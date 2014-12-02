@@ -9,8 +9,9 @@
                 <div class="columns large-6">
                     <span class="text-medium bold">New York State {{bill.billType.desc}} {{bill.billType.resolution | resolutionOrBill}}</span>
                 </div>
-                <div class="columns large-6 hide-for-medium-down">
-
+                <div class="text-right columns large-6 hide-for-medium-down">
+                    <a target="_blank" ng-href="${ctxPath}/api/3/bills/{{bill.session}}/{{bill.basePrintNo}}"
+                       class="text-medium bold white-2-blue"><i class="icon-code prefix-icon"></i>View Source</a>
                 </div>
             </div>
             <div class="blue4-bg clearfix" style="color:white;">
@@ -145,7 +146,7 @@
         <toggle-panel label="Similar Legislation" open="true" extra-classes="columns large-12 white">
             <div class="margin-top-10 clearfix">
                 <!-- Same As Bills -->
-                <div class="columns large-6">
+                <div class="columns large-6 margin-bottom-10">
                     <span class="bold-span-1">Identical bills within the same legislative session</span>
                     <hr class="margin-top-5"/>
                     <table style="width:100%;" class="text-left" ng-show="bill.amendments.items[selectedVersion].sameAs.size > 0">
@@ -176,7 +177,7 @@
                     </div>
                 </div>
                 <!-- Prior Session Bills -->
-                <div class="columns large-6">
+                <div class="columns large-6 margin-bottom-10">
                     <span class="bold-span-1">Versions of this bill in prior legislative sessions.</span>
                     <hr class="margin-top-5"/>
                     <table style="width:100%;" class="text-left" ng-show="bill.previousVersions.size > 0">
@@ -211,14 +212,40 @@
 
         <!-- Bill Votes -->
         <div ng-if="bill.votes.size > 0">
-            <toggle-panel label="Votes" open="true" extra-classes="columns large-12 white">
-                <div ng-repeat="vote in bill.votes.items" class="panel">
-                    <h5 style="text-transform: capitalize">
-                        {{vote.voteType | lowercase}} Vote On {{vote.voteDate | moment:'MMMM DD, YYYY'}}
-                    </h5>
+            <toggle-panel label="Senate Votes" open="true" extra-classes="columns large-12 white">
+                <div class="padding-20 clearfix" ng-repeat="vote in bill.votes.items">
+                    <span class="bold-span-1 capitalize">
+                        {{vote.committee.name + ' ' + vote.voteType | lowercase}} Vote - {{vote.voteDate | moment:'MMMM DD, YYYY'}}
+                    </span>
+                    <br/>
+                    <span class="text-medium">
+                        {{bill.billType.resolution | resolutionOrBill}} Version: {{vote.version | defaultVersion}}
+                    </span>
                     <hr/>
-                    <vote-pie votes="vote.memberVotes.items" height="300" width="300" plot-bg="#f1f1f1"></vote-pie>
-                    {{vote}}
+                    <div class="columns large-3 center">
+                        <vote-pie votes="vote.memberVotes.items" height="200" width="250" plot-bg="#ffffff"></vote-pie>
+                    </div>
+                    <table class="columns large-9">
+                        <thead>
+                            <tr><th style="width:25%">Vote</th><th>Members</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="(k,v) in vote.memberVotes.items">
+                                <td>{{k | voteTypeFilter}}
+                                    <span class="label"
+                                          ng-class="{'alert': k == 'NAY', 'success': k == 'AYE' || k == 'AYEWR',
+                                                     'secondary': k == 'ABD' || k == 'ABS' || k == 'EXC'}">
+                                        {{v.size}}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a ng-repeat="m in v.items">
+                                        {{m.shortName + ($last ? '' : ',&nbsp;&nbsp;')}}
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </toggle-panel>
         </div>
@@ -268,15 +295,13 @@
         </div>
 
         <!-- Resolution Full Text -->
-        <div ng-init="_show_resText=true" ng-if="bill.billType.resolution && bill.amendments.items[selectedVersion].fullText"
-             class="columns large-12 panel no-padding white margin-bottom-10">
-            <label class="panel-label" id="resolutionText" ng-click="_show_resText=!_show_resText">
-                <a class="gray-2-blue" href="#resolutionText">Resolution Text</a>
-                <i class="right" ng-class="{'icon-arrow-up4': _show_resText, 'icon-arrow-down5': !_show_resText}"></i>
-            </label>
-            <div class="panel-content" ng-class="{'panel-content-hide': !_show_resText}">
-                <div class="text-medium padding-20" ng-bind-html="bill.amendments.items[selectedVersion].fullText | prettyResolutionText"></div>
-            </div>
+        <div ng-if="bill.billType.resolution">
+            <toggle-panel label="Resolution Text" open="true" extra-classes="columns large-12 white">
+                <div class="padding-20 text-medium"
+                     ng-bind-html="bill.amendments.items[selectedVersion].fullText | prettyResolutionText">
+                </div>
+            </toggle-panel>
         </div>
+
     </section>
 </section>
