@@ -1,12 +1,11 @@
 package gov.nysenate.openleg.processor.law;
 
-import gov.nysenate.openleg.model.law.LawChapterType;
+import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawDocInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,7 +51,7 @@ public class LawTitleParser
      */
     protected static String extractTitleFromChapter(LawDocInfo docInfo) {
         try {
-            LawChapterType chapterType = LawChapterType.valueOf(docInfo.getLawId());
+            LawChapterCode chapterType = LawChapterCode.valueOf(docInfo.getLawId());
             return chapterType.getName();
         }
         catch (IllegalArgumentException ex) {

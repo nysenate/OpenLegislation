@@ -293,7 +293,7 @@ public class LawBuilder
         chapter.setLawId(lawId);
         chapter.setChapterId(chapterId);
         try {
-            LawChapterType chapterType = LawChapterType.valueOf(lawId);
+            LawChapterCode chapterType = LawChapterCode.valueOf(lawId);
             chapter.setName(chapterType.getName());
             chapter.setType(chapterType.getType());
         }
