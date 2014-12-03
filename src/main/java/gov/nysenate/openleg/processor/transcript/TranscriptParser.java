@@ -89,7 +89,7 @@ public class TranscriptParser
         transcript.setLocation(location);
         transcript.setTranscriptText(transcriptText.toString());
 
-        transcriptDataService.saveTranscript(transcript, transcriptFile);
+        transcriptDataService.saveTranscript(transcript, transcriptFile, true);
     }
 
     private boolean areWeDoneWithFirstPage(String sessionType, String location, String date, String time) {

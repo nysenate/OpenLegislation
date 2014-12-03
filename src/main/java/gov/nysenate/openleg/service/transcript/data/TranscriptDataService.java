@@ -37,5 +37,5 @@ public interface TranscriptDataService
      * @param transcript Transcript
      * @param transcriptFile TranscriptFile
      */
-    public void saveTranscript(Transcript transcript, TranscriptFile transcriptFile);
+    public void saveTranscript(Transcript transcript, TranscriptFile transcriptFile, boolean postUpdateEvent);
 }

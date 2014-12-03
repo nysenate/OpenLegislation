@@ -7,16 +7,16 @@ import java.time.LocalDateTime;
 
 public class TranscriptIdView implements ViewObject
 {
-    private String type;
+    private String sessionType;
     private LocalDateTime dateTime;
 
     public TranscriptIdView(TranscriptId transId) {
-        this.type = transId.getSessionType();
+        this.sessionType = transId.getSessionType();
         this.dateTime = transId.getDateTime();
     }
 
-    public String getType() {
-        return type;
+    public String getSessionType() {
+        return sessionType;
     }
 
     public LocalDateTime getDateTime() {

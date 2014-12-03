@@ -31,7 +31,8 @@ public interface PublicHearingDataService
      * The PublicHearing is inserted if it is a new instance, Updated otherwise.
      * @param publicHearing
      * @param publicHearingFile
+     * @param postUpdateEvent
      */
-    public void savePublicHearing(PublicHearing publicHearing, PublicHearingFile publicHearingFile);
+    public void savePublicHearing(PublicHearing publicHearing, PublicHearingFile publicHearingFile, boolean postUpdateEvent);
 
 }

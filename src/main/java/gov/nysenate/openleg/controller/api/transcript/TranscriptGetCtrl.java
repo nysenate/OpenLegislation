@@ -9,9 +9,11 @@ import gov.nysenate.openleg.client.view.transcript.TranscriptView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
+import gov.nysenate.openleg.service.transcript.data.search.TranscriptSearchService;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,6 +37,9 @@ public class TranscriptGetCtrl extends BaseCtrl
 {
     @Autowired
     private TranscriptDataService transcriptDataService;
+
+    @Autowired
+    private TranscriptSearchService transcriptSearchService;
 
     /**
      * Transcript Listing API.

@@ -58,6 +58,6 @@ public class PublicHearingParser
         PublicHearing publicHearing = new PublicHearing(id, address, text);
         publicHearing.setCommittees(committees);
 
-        dataService.savePublicHearing(publicHearing, publicHearingFile);
+        dataService.savePublicHearing(publicHearing, publicHearingFile, true);
     }
 }
