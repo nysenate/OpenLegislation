@@ -21,6 +21,9 @@ public class BillTextParser
      *  and has not yet received a closing header */
     private boolean insideTextHeader;
 
+    /** A flag that is set to true when the parser detects a delete statement */
+    private boolean deleted = false;
+
     public BillTextParser(String data, BillTextType billTextType, LocalDateTime dateTime) {
         this.data = data;
         this.billTextType = billTextType;
@@ -95,9 +98,11 @@ public class BillTextParser
                 case "*DELETE*":
                     text.setLength(0);
                     insideTextHeader = false;
+                    this.deleted = true;
                     break;
                 case "*END*":
                     if (insideTextHeader) {
+                        this.deleted = false;
                         fullText = text.toString();
                         text.setLength(0);
                         insideTextHeader = false;
@@ -123,5 +128,11 @@ public class BillTextParser
             throw new ParseError("Text Body found before header: "+line);
         }
         return fullText;
+    }
+
+    /** Basic Getters / Setters **/
+
+    public boolean isDeleted() {
+        return deleted;
     }
 }
