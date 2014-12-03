@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.hearing.data.Event;
+package gov.nysenate.openleg.service.hearing.event;
 
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.service.base.data.ContentUpdateEvent;

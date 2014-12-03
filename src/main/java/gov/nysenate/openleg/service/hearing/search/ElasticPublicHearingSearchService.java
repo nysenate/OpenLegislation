@@ -1,11 +1,11 @@
-package gov.nysenate.openleg.service.hearing.data.search;
+package gov.nysenate.openleg.service.hearing.search;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.hearing.search.ElasticHearingSearchDao;
+import gov.nysenate.openleg.dao.hearing.search.ElasticPublicHearingSearchDao;
 import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
@@ -13,8 +13,8 @@ import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
-import gov.nysenate.openleg.service.hearing.data.Event.BulkPublicHearingUpdateEvent;
-import gov.nysenate.openleg.service.hearing.data.Event.PublicHearingUpdateEvent;
+import gov.nysenate.openleg.service.hearing.event.BulkPublicHearingUpdateEvent;
+import gov.nysenate.openleg.service.hearing.event.PublicHearingUpdateEvent;
 import gov.nysenate.openleg.service.hearing.data.PublicHearingDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +28,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ElasticHearingSearchService implements HearingSearchService, IndexedSearchService<PublicHearing>
+public class ElasticPublicHearingSearchService implements PublicHearingSearchService, IndexedSearchService<PublicHearing>
 {
-    private static final Logger logger = LoggerFactory.getLogger(ElasticHearingSearchService.class);
+    private static final Logger logger = LoggerFactory.getLogger(PublicHearingSearchService.class);
 
     @Autowired protected Environment env;
     @Autowired protected EventBus eventBus;
-    @Autowired protected ElasticHearingSearchDao publicHearingSearchDao;
+    @Autowired protected ElasticPublicHearingSearchDao publicHearingSearchDao;
     @Autowired protected PublicHearingDataService publicHearingDataService;
 
     @PostConstruct

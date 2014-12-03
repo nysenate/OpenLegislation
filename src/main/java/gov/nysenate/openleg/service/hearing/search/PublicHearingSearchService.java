@@ -1,13 +1,13 @@
-package gov.nysenate.openleg.service.hearing.data.search;
+package gov.nysenate.openleg.service.hearing.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
-import gov.nysenate.openleg.service.hearing.data.Event.BulkPublicHearingUpdateEvent;
-import gov.nysenate.openleg.service.hearing.data.Event.PublicHearingUpdateEvent;
+import gov.nysenate.openleg.service.hearing.event.PublicHearingUpdateEvent;
+import gov.nysenate.openleg.service.hearing.event.BulkPublicHearingUpdateEvent;
 
-public interface HearingSearchService
+public interface PublicHearingSearchService
 {
 
     /**

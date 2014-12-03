@@ -8,7 +8,7 @@ import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.model.transcript.TranscriptNotFoundEx;
-import gov.nysenate.openleg.service.transcript.data.event.TranscriptUpdateEvent;
+import gov.nysenate.openleg.service.transcript.event.TranscriptUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;

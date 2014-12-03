@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.transcript.data.search;
+package gov.nysenate.openleg.service.transcript.search;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -14,8 +14,8 @@ import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
-import gov.nysenate.openleg.service.transcript.data.event.BulkTranscriptUpdateEvent;
-import gov.nysenate.openleg.service.transcript.data.event.TranscriptUpdateEvent;
+import gov.nysenate.openleg.service.transcript.event.BulkTranscriptUpdateEvent;
+import gov.nysenate.openleg.service.transcript.event.TranscriptUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchParseException;

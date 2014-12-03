@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.transcript.data.event;
+package gov.nysenate.openleg.service.transcript.event;
 
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.service.base.data.ContentUpdateEvent;

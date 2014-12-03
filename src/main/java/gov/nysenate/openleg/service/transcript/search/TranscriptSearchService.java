@@ -1,11 +1,11 @@
-package gov.nysenate.openleg.service.transcript.data.search;
+package gov.nysenate.openleg.service.transcript.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
-import gov.nysenate.openleg.service.transcript.data.event.BulkTranscriptUpdateEvent;
-import gov.nysenate.openleg.service.transcript.data.event.TranscriptUpdateEvent;
+import gov.nysenate.openleg.service.transcript.event.BulkTranscriptUpdateEvent;
+import gov.nysenate.openleg.service.transcript.event.TranscriptUpdateEvent;
 
 public interface TranscriptSearchService
 {

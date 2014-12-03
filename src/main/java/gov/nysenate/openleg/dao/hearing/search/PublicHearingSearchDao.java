@@ -12,7 +12,7 @@ import java.util.Collection;
 /**
  * DAO interface for searching public hearings.
  */
-public interface HearingSearchDao
+public interface PublicHearingSearchDao
 {
 
     /**

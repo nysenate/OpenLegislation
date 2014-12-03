@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-public class ElasticHearingSearchDao extends ElasticBaseDao implements HearingSearchDao
+public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements PublicHearingSearchDao
 {
-    private static final Logger logger = LoggerFactory.getLogger(ElasticHearingSearchDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(ElasticPublicHearingSearchDao.class);
 
     protected static final String publicHearingIndexName = SearchIndex.HEARING.getIndexName();
 
