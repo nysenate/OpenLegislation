@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.bill;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.bill.ApprovalId;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillTextType;
@@ -43,8 +44,19 @@ public class ApprovalMessageParser extends BillTextParser {
      * @throws ParseError
      */
     public ApprovalMessage getApprovalMessage() throws ParseError{
+        if (isDeleted()) {
+            return null;
+        }
         verifyApprovalMessage();
         return approvalMessage;
+    }
+
+    public ApprovalId getApprovalId() {
+        if (approvalMessage != null) {
+            return approvalMessage.getApprovalId();
+        } else {
+            return null;
+        }
     }
 
     /** --- Overrides --- */
@@ -125,4 +137,6 @@ public class ApprovalMessageParser extends BillTextParser {
             throw new ParseError("Incomplete approval message");
         }
     }
+
+
 }
