@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.hearing;
 
+import gov.nysenate.openleg.util.PublicHearingTextUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class PublicHearingTitleParser extends BasePublicHearingParser
+public class PublicHearingTitleParser
 {
 
     private static final Pattern TITLE = Pattern.compile(
@@ -43,8 +44,8 @@ public class PublicHearingTitleParser extends BasePublicHearingParser
     private String turnPageIntoString(List<String> firstPage) {
         String pageText = "";
         for (String line : firstPage) {
-            if (hasContent(line)) {
-                pageText += " " + stripLineNumber(line);
+            if (PublicHearingTextUtils.hasContent(line)) {
+                pageText += " " + PublicHearingTextUtils.stripLineNumber(line);
             }
         }
         return pageText;

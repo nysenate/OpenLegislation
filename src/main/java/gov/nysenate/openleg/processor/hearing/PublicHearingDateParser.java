@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.hearing;
 
+import gov.nysenate.openleg.util.PublicHearingTextUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class PublicHearingDateParser extends BasePublicHearingParser
+public class PublicHearingDateParser
 {
     /** Matches time string e.g. 2:00 p.m. to 4:00 p.m. */
     private static Pattern TIME = Pattern.compile("(\\d+:\\d{2} [ap].m.) to \\d+:\\d{2} [ap].m.");
@@ -51,12 +52,12 @@ public class PublicHearingDateParser extends BasePublicHearingParser
         for (int i = 0; i < firstPage.size(); i++) {
             String line = formatLine(firstPage.get(i));
             if (matchesDateFormat(line)) {
-                return line + " " + getTimeString(firstPage, i + 1);
+                return line + " " + getTimeString(firstPage.get(i + 1));
             }
             if (matchesDayDateFormat(line)) {
                 // Remove the weekday.
                 line = line.replaceFirst("\\w+, ", "");
-                return line + " " + getTimeString(firstPage, i + 1);
+                return line + " " + getTimeString(firstPage.get(i + 1));
             }
             if (matchesSingleLineDateFormat(line)) {
                 //March 12, 2014, at 10:00 a.m.
@@ -68,8 +69,8 @@ public class PublicHearingDateParser extends BasePublicHearingParser
 
     /** Returns the String containing time information.
      * If no time exists, set it to 12:00 a.m.*/
-    private String getTimeString(List<String> firstPage, int i) {
-        String timeText = formatLine(firstPage.get(i));
+    private String getTimeString(String line) {
+        String timeText = formatLine(line);
         if (START_TIME.matcher(timeText).find()) {
             return timeText;
         }
@@ -124,8 +125,7 @@ public class PublicHearingDateParser extends BasePublicHearingParser
 
         return false;
     }
-
-
+    
     /** Remove the ending time from the date time information.<br>
      * i.e. Input of '2:00 p.m. to 4:00 p.m.'<br>
      * returns '2:00 p.m.' */
@@ -144,8 +144,8 @@ public class PublicHearingDateParser extends BasePublicHearingParser
 
     /** Removes Line numbers, excess whitespace, new line, and non text characters */
     private String formatLine(String line) {
-        String formatted = stripLineNumber(line).replaceAll("\\n", "");
-        formatted = formatted.replace(String.valueOf((char)150), "to");
+        String formatted = PublicHearingTextUtils.stripLineNumber(line).replaceAll("\\n", "");
+        formatted = formatted.replace(String.valueOf((char)65533), "to");
         formatted = formatted.replace("- ", "");
         return formatted;
     }

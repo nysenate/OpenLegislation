@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PublicHearingAttendanceParser extends BasePublicHearingParser
+public class PublicHearingAttendanceParser
 {
 
     // TODO: take first 2 pages??

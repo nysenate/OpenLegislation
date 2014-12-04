@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.processor.hearing;
 
 import gov.nysenate.openleg.model.hearing.PublicHearingCommittee;
+import gov.nysenate.openleg.util.PublicHearingTextUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -10,8 +11,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class PublicHearingCommitteeParser extends BasePublicHearingParser
+public class PublicHearingCommitteeParser
 {
+    /* matches lines only containing "-" character which divide up content. */
+    private static final Pattern SEPARATOR = Pattern.compile("^\\s*(\\d+)?\\s*-+$");
+
     private static final Pattern CHECK_FOR_COMMITTEES = Pattern.compile("BEFORE THE NEW YORK STATE (SENATE|ASSEMBLY)");
 
     private static final Pattern COMMITTEE_SPLIT = Pattern.compile("(, )?(?=AND(( THE)? SENATE|( THE)? ASSEMBLY))");
@@ -126,8 +130,8 @@ public class PublicHearingCommitteeParser extends BasePublicHearingParser
             if (endOfCommittee.matches()) {
                 break;
             }
-            if (hasContent(line)) {
-                committeeBlock += " " + stripLineNumber(line);
+            if (PublicHearingTextUtils.hasContent(line)) {
+                committeeBlock += " " + PublicHearingTextUtils.stripLineNumber(line);
             }
         }
         return committeeBlock;
