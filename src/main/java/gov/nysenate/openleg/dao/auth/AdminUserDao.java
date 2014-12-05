@@ -7,25 +7,9 @@ import org.springframework.dao.DataAccessException;
 
 public interface AdminUserDao
 {
-    public void deleteAdmin(String user) throws DataAccessException;
-
-    public void deleteAdminByLevel (int level) throws DataAccessException;
-
     public void addAdmin(AdminUser admin) throws DataAccessException;
-
+    public void deleteAdmin(String user) throws DataAccessException;
+    public void deleteAdminByLevel (int level) throws DataAccessException;
+    public AdminUser getAdminUser(String username) throws DataAccessException;
     public void updateAdmin(AdminUser admin) throws DataAccessException;
-
-    public AdminUser getAdmin(String username) throws DataAccessException;
-
-    public int getLevelFromUser(String user) throws DataAccessException;
-
-    public String getPasswordFromUser(String user) throws DataAccessException;
-
-    public String getUsername(AdminUser admin);
-
-    public String getPassword(AdminUser admin);
-
-    public int getPrivilegeLevel(AdminUser admin);
-
-
 }

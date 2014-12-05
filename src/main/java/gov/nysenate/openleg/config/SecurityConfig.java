@@ -1,16 +1,10 @@
 package gov.nysenate.openleg.config;
 
-
-import gov.nysenate.openleg.service.auth.AdminLoginAuthRealm;
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.realm.AuthenticatingRealm;
-import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.realm.SimpleAccountRealm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
@@ -36,11 +30,10 @@ public class SecurityConfig
         shiroFilter.setSecurityManager(securityManager());
 
         shiroFilter.setLoginUrl("/admin/**");
-        shiroFilter.setSuccessUrl("/bob");
 
         HashMap <String, String> properties = new HashMap<>();
         properties.put("/admin/**", "authcBasic");
-        //properties.put("/logout", "logout");
+        properties.put("/logout", "logout");
 
         shiroFilter.setFilterChainDefinitionMap(properties);
         return shiroFilter;

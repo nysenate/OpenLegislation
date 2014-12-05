@@ -3,9 +3,15 @@ package gov.nysenate.openleg.service.auth;
 import gov.nysenate.openleg.dao.auth.AdminUserDao;
 import gov.nysenate.openleg.dao.auth.SqlAdminUserDao;
 import gov.nysenate.openleg.model.auth.AdminUser;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 import gov.nysenate.openleg.service.auth.AuthenticationEx;
 import org.springframework.stereotype.Service;
@@ -17,38 +23,26 @@ public class SqlAdminUserService implements AdminUserService
     @Autowired
     protected AdminUserDao adminDao;
 
+
+    private static final Logger logger = LoggerFactory.getLogger(SqlAdminUserService.class);
+
     /**
      * Log the user in if they have proper account credentials.
      *
      * @param username The given username
-     * @param password The given password
      * @return A Login Code representing the outcome of the login attempt
      * @throws AuthenticationEx
      */
     @Override
-    public int login(String username, String password)  {
-        if ((username == null) || (password == null))
+    public AdminUser getAdminUser(String username)  {
+        if (username == null)
             throw new IllegalArgumentException("Username or password cannot be null!");
 
-        AdminUser admin = null;
         try {
-            admin = adminDao.getAdmin(username);
-
-        } catch (DataAccessException dae) {
-            throw new AuthenticationEx(username, password);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        } finally {
-            if (admin == null)
-                return -1; // -1 = Username not found in the database
-
-            boolean pwCheck = BCrypt.checkpw(password, admin.getPassword());
-            if (pwCheck)
-                return 0; // 0 = Everything checks out
-            else
-                return -2; // -2 = Invalid Password
+           return adminDao.getAdminUser(username);
+        }
+        catch (EmptyResultDataAccessException ex) {
+            throw new UnknownAccountException("Username: " + username+ " does not exist.");
         }
     }
 
@@ -58,32 +52,14 @@ public class SqlAdminUserService implements AdminUserService
      * @param password Their password
      */
     @Override
-    public void createUser(String username, String password) {
+    public void createUser(String username, String password, boolean active) {
         try {
-            adminDao.addAdmin(new AdminUser(username, password, 2));
+            AdminUser newAdmin = new AdminUser(username, password, 2);
+            newAdmin.setActive(true);
+            adminDao.addAdmin(newAdmin);
 
         } catch (DataAccessException dae) {
             dae.printStackTrace();
-        }
-    }
-
-    /**
-     * Change an user's password.
-     * @param username Their username
-     * @param passNew Their password
-     */
-    @Override
-    public void changePass(String username, String passNew) {
-        AdminUser admin = null;
-        try {
-            admin = adminDao.getAdmin(username);
-            admin.setPassword(passNew);
-            adminDao.updateAdmin(admin);
-
-        } catch (DataAccessException dae) {
-            dae.printStackTrace();
-        } finally {
-
         }
     }
 
@@ -94,9 +70,14 @@ public class SqlAdminUserService implements AdminUserService
      * @return True if the admin is in the Database.
      */
     public boolean adminInDb(String username) {
-        if (adminDao.getAdmin(username) != null)
-            return true;
-        else
-            return false;
+        try {
+            if (adminDao.getAdminUser(username) != null)
+                return true;
+            else
+                return false;
+        } catch (DataAccessException dae) {
+
+        }
+        return false;
     }
 }

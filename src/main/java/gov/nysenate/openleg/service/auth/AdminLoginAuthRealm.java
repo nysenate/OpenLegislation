@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.service.auth;
 
+import gov.nysenate.openleg.model.auth.AdminUser;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.pam.UnsupportedTokenException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -9,6 +11,7 @@ import org.apache.shiro.realm.AuthenticatingRealm;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +26,29 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
 {
     private static final Logger logger = LoggerFactory.getLogger(AdminLoginAuthRealm.class);
 
+    private static class BCryptCredentialsMatcher implements CredentialsMatcher {
+
+        /**
+         * Compare a hashed password from the Auth token to the stored hash.
+         * @param token The authentication credentials submitted by the user during a login attempt
+         * @param info The valid authenticaton info to compare the token to
+         * @return Whether or not the login credentials are valid
+         */
+        @Override
+        public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
+            UsernamePasswordToken userToken = (UsernamePasswordToken) token;
+            String newPass = new String(userToken.getPassword());
+            return (BCrypt.checkpw(newPass, info.getCredentials().toString()));
+        }
+    }
+
+    private static BCryptCredentialsMatcher credentialsMatcher = new BCryptCredentialsMatcher();
+
     @Autowired
     private AdminUserService adminUserService;
 
     @Autowired
     private DefaultWebSecurityManager defaultWebSecurityManager;
-
 
     @Value("${default.admin.user}") private String defaultAdminName;
     @Value("${default.admin.password}") private String defaultAdminPass;
@@ -37,8 +57,7 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
     public void setup() {
         defaultWebSecurityManager.setRealm(this);
         if (!adminUserService.adminInDb(defaultAdminName))
-            adminUserService.createUser(defaultAdminName, defaultAdminPass);
-
+            adminUserService.createUser(defaultAdminName, defaultAdminPass, true);
     }
 
 
@@ -67,16 +86,9 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
      */
     protected AuthenticationInfo queryForAuthenticationInfo(UsernamePasswordToken info) {
         String username = info.getUsername();
-        String password = new String(info.getPassword());
 
-        int response = adminUserService.login(username, password);
-        logger.info("Login attempt by " + username + " with given password: " +password+ " returned login"
-         + " code: " +response);
-
-        // Valid admin credentials
-        if (response == 0)
-            return new SimpleAuthenticationInfo(username, password, getName());
-        return null;
+        AdminUser admin = adminUserService.getAdminUser(username);
+        return new SimpleAuthenticationInfo(admin.getUsername(), admin.getPassword(), getName());
     }
 
     /**
@@ -87,5 +99,14 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         return new SimpleAuthorizationInfo();
+    }
+
+    /**
+     * Use the BCrypt credentials matcher.
+     * @return The BCrypt credentials matcher.
+     */
+    @Override
+    public CredentialsMatcher getCredentialsMatcher() {
+        return credentialsMatcher;
     }
 }

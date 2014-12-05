@@ -6,7 +6,7 @@ import gov.nysenate.openleg.dao.base.SqlTable;
 public enum AdminUserQuery implements BasicSqlQuery
 {
     INSERT_ADMIN(
-            "INSERT INTO public." + SqlTable.ADMIN + " VALUES (:username, :password, :privilegeLevel)"
+            "INSERT INTO public." + SqlTable.ADMIN + " VALUES (:username, :password, :privilegeLevel, :active)"
     ),
     SELECT_BY_NAME(
             "SELECT * FROM public." + SqlTable.ADMIN + " WHERE username = :username"
