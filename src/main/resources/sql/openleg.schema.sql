@@ -3019,7 +3019,10 @@ SET search_path = public, pg_catalog;
 CREATE TABLE adminuser (
   username text NOT NULL,
   password text NOT NULL,
-  permissions_level integer NOT NULL
+  permissions_level integer DEFAULT 0,
+  active boolean DEFAULT false,
+  created_date_time timestamp with time zone DEFAULT now(),
+  modified_date_time timestamp with time zone DEFAULT now()
 );
 
 
@@ -3052,6 +3055,34 @@ COMMENT ON COLUMN adminuser.password IS 'Encrypted form of the admin''s password
 
 COMMENT ON COLUMN adminuser.permissions_level IS 'Read only, Write only, or Read + Write Only';
 
+
+--
+-- Name: COLUMN adminuser.active; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN adminuser.active IS 'Whether or not this admin has activated their account.';
+
+
+--
+-- Name: COLUMN adminuser.created_date_time; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN adminuser.created_date_time IS 'The date that this admin account was created.';
+
+
+--
+-- Name: COLUMN adminuser.modified_date_time; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN adminuser.modified_date_time IS 'When this account was last modified.';
+
+
+--
+-- Name: adminuser_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY adminuser
+ADD CONSTRAINT adminuser_pkey PRIMARY KEY (username);
 
 --
 -- Name: apiuser; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
