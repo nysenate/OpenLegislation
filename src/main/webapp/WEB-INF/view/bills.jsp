@@ -8,7 +8,7 @@
     <script src="${ctxPath}/static/js/src/component/content/content.js"></script>
     <script src="${ctxPath}/static/js/src/component/content/bill/bill-home.js"></script>
 </open-layout:head>
-<open-layout:body pageId="bills">
+<open-layout:body>
     <div ng-controller="BillHomeCtrl" class="row" style="margin-top:1.5em">
         <!--<h3 ng-show="view == VIEWS.SEARCH" style="text-align: center;color: #555;">Browse NYS Bills and Resolutions</h3>-->
         <form style="margin-top:20px;">
@@ -62,7 +62,7 @@
                     </div>
                     <div class="columns large-3 hide-for-medium-down" style="height: 70px; padding-right:25px;text-align: center;">
                         <div>
-                            <ul ng-show="bill.billType.resolution == false" class="large-block-grid-8 bill-milestone-list">
+                            <ul ng-show="bill.billType.resolution == false" class="large-block-grid-8 bill-milestone-small">
                                 <li ng-class="{'met': (bill.milestones.size > 0)}"></li>
                                 <li ng-class="{'met': (bill.milestones.size > 1)}"></li>
                                 <li ng-class="{'met': (bill.milestones.size > 2)}"></li>
@@ -72,7 +72,7 @@
                                 <li ng-class="{'met': (bill.milestones.size > 6)}"></li>
                                 <li ng-class="{'met': (bill.milestones.size > 7)}"></li>
                             </ul>
-                            <ul ng-show="bill.billType.resolution == true" class="large-block-grid-2 bill-milestone-list">
+                            <ul ng-show="bill.billType.resolution == true" class="large-block-grid-2 bill-milestone-small">
                                 <li class="met"></li>
                                 <li ng-class="{'met': (bill.milestones.size > 0)}"></li>
                             </ul>

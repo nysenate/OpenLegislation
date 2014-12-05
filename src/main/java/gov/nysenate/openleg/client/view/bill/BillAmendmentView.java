@@ -2,6 +2,7 @@ package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
+import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BillAmendment;
@@ -18,8 +19,8 @@ public class BillAmendmentView extends BillIdView
     protected String lawCode;
     protected String actClause;
     protected String fullText;
-    protected ListView<SimpleMemberView> coSponsors;
-    protected ListView<SimpleMemberView> multiSponsors;
+    protected ListView<MemberView> coSponsors;
+    protected ListView<MemberView> multiSponsors;
     protected boolean uniBill;
     protected boolean isStricken;
 
@@ -36,10 +37,10 @@ public class BillAmendmentView extends BillIdView
             this.actClause = billAmendment.getActClause();
             this.fullText = billAmendment.getFullText();
             this.coSponsors = ListView.of(billAmendment.getCoSponsors().stream()
-                .map(SimpleMemberView::new)
+                .map(MemberView::new)
                 .collect(Collectors.toList()));
             this.multiSponsors = ListView.of(billAmendment.getMultiSponsors().stream()
-                .map(SimpleMemberView::new)
+                .map(MemberView::new)
                 .collect(Collectors.toList()));
             this.uniBill = billAmendment.isUniBill();
             this.isStricken = billAmendment.isStricken();
@@ -79,11 +80,11 @@ public class BillAmendmentView extends BillIdView
         return fullText;
     }
 
-    public ListView<SimpleMemberView> getCoSponsors() {
+    public ListView<MemberView> getCoSponsors() {
         return coSponsors;
     }
 
-    public ListView<SimpleMemberView> getMultiSponsors() {
+    public ListView<MemberView> getMultiSponsors() {
         return multiSponsors;
     }
 

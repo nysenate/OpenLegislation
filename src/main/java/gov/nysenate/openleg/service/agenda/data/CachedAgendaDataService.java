@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -35,20 +36,14 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedAgendaDataService.class);
 
-    /** Agenda cache will store full agendas. */
     @Autowired private CacheManager cacheManager;
+    @Autowired private AgendaDao agendaDao;
+    @Autowired private EventBus eventBus;
+
+    @Value("${cache.agenda.heap.size}") private long agendaCacheSizeMb;
+
     private static final String agendaCacheName = "agendas";
     private EhCacheCache agendaCache;
-
-    /** The maximum heap size (in MB) the agenda cache can consume. */
-    @Value("${cache.agenda.heap.size}")
-    private long agendaCacheSizeMb;
-
-    /** Backing store for the agenda data. */
-    @Autowired private AgendaDao agendaDao;
-
-    /** Used to subscribe and post events. */
-    @Autowired private EventBus eventBus;
 
     @PostConstruct
     private void init() {
@@ -65,8 +60,8 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
     /** --- CachingService implementation --- */
 
     @Override
-    public Ehcache getCache() {
-        return agendaCache.getNativeCache();
+    public List<Ehcache> getCaches() {
+        return Arrays.asList(agendaCache.getNativeCache());
     }
 
     /** {@inheritDoc} */
@@ -78,13 +73,6 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
             .sizeOfPolicy(defaultSizeOfPolicy()));
         cacheManager.addCache(cache);
         this.agendaCache = new EhCacheCache(cache);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void evictCaches() {
-        logger.info("Clearing the agenda cache.");
-        agendaCache.clear();
     }
 
     /** {@inheritDoc} */

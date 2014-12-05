@@ -50,7 +50,8 @@ module.exports = function(grunt) {
                 options: {
                     mangle: false,
                     preserveComments: 'some', // Preserve licensing comments
-                    banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %> */'
+                    banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %> */',
+                    beautify: false
                 },
                 files: {
                     '<%= jsDest %>/vendor.min.js': [
@@ -63,7 +64,9 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/ng-table/ng-table.js',
                         '<%= bowerRoot %>/moment/min/moment.min.js',
                         '<%= bowerRoot %>/pace/pace.min.js',
-                        '<%= bowerRoot %>/highcharts/highcharts.js'
+                        '<%= bowerRoot %>/highcharts/highcharts.js',
+                        '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js',
+                        '<%= bowerRoot %>/fullcalendar/fullcalendar.min.js'
                     ]//'<%= jsDest %>/main.min.js': ['<%= jsSource %>/**/*.js']
                 }
             }

@@ -20,7 +20,14 @@ env.schema = master
 
 # --- Processing Configuration --- #
 
+# When incremental updates is set to true, the data extracted from each sobi file is flushed to
+# the database immediately after processing it. When set to false, the updates are accumulated
+# and flushed depending on the sobi.batch.size as well as content specific limits. Set incremental.update
+# to false when processing performance is favored over an accurate sobi update history.
 incremental.update = true
+
+# The maximum number of sobis that can be processed without flushing to the database. However, the data
+# processors may flush before this limit if they need to.
 sobi.batch.size = 1000
 
 # --- Elastic Search Configuration --- #
@@ -46,14 +53,17 @@ elastic.search.cluster.name = openleg
 
 # The amount of memory to allocate to Eh Cache for all heap based caches.
 # This value cannot exceed the maximum jvm heap size or the application will fail to startup.
-# (Recommended: 500M)
-cache.max.heap.size = 500M
+# (Recommended: 600M)
+cache.max.heap.size = 600M
 
 # Agenda Cache Size (in MB) (Recommended: 25)
 cache.agenda.heap.size = 25
 
 # Bill Cache Size (in MB) (Recommended: 300)
 cache.bill.heap.size = 300
+
+# Bill Info Cache Size (in MB) (Recommended: 100)
+cache.bill.info.heap.size = 100
 
 # Calendar Cache Size (in MB) (Recommended: 40)
 cache.calendar.heap.size = 40

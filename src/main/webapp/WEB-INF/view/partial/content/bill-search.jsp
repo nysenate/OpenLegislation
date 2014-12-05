@@ -4,10 +4,9 @@
 <section ng-controller="BillCtrl">
     <section ng-controller="BillSearchCtrl">
         <open-component:bill-search-bar/>
-
         <div ng-show="performedSearch && totalResults > 0" class="">
-            <h3 style="color:#444;margin:20px;"><i class="icon-docs prefix-icon2"></i>
-                <span class="blue2">{{totalResults}}</span> bills were found that match <span class="gray6">{{::searchTerm}}</span></h3>
+            <h3 style="color:white;padding:20px;" class="blue4-bg no-bottom-margin" ><i class="icon-docs prefix-icon2"></i>
+                <span class="bold">{{totalResults}}</span> bills were found that match <span class="gray5">{{::searchTerm}}</span></h3>
         </div>
 
         <div class="bill-result-pagination" ng-show="totalResults > 0">
@@ -19,7 +18,7 @@
                     <a class="margin-right-20 text-small">Recent Updates</a>
                 </div>
                 <div class="columns large-6" ng-show="totalResults > limit">
-                    <div class="right" style="width:300px;">
+                    <div class="right" style="width:320px;">
                         <pagination page="currentPage" total-items="totalResults"
                                     previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"
                                     max-size="5" boundary-links="true"></pagination>
@@ -31,32 +30,34 @@
         <div class="columns large-12 bill-result bill-result-anim" ng-repeat="r in billResults.result.items" >
             <a ng-init="bill = r.result" ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.printNo}}" style="color:inherit;">
                 <div class="columns small-4 large-3">
-                    <span class="bill-result-printno bold">{{bill.printNo}} - {{bill.session}}</span>
+                    <span class="bill-result-id bold">
+                        <span class="bill-result-print-no">{{bill.printNo}}</span> - {{bill.session}}</span>
                     <span class="bold blue2">
                         <span ng-show="bill.sponsor.budget">Budget Bill</span>
                         <span ng-show="bill.sponsor.rules">Rules</span>
                         <span ng-show="bill.sponsor.rules && bill.sponsor.member"> via </span>
                         <span>{{bill.sponsor.member.fullName}}</span>
                     </span><br/>
-                    <span class="gray6 text-small">Published: {{bill.publishedDateTime | moment:'MMMM d, YYYY'}}</span>
+                    <span class="gray10 text-small">Published: {{bill.publishedDateTime | moment:'MMMM d, YYYY'}}</span>
                 </div>
                 <div class="columns small-8 large-6">
                     <div class="vertical-align" style="height: 60px">
-                        <span class="text-small">{{bill.title}}</span>
+                        <span class="text-medium">{{bill.title}}</span>
                     </div>
                     <div style="display: block;" class="">
-                            <span class="label text-small secondary">{{bill.billType.desc}}</span>
-                            <span ng-show="bill.substitutedBy" class="label bold alert text-small">
-                                <i class="icon-switch prefix-icon"></i>Substituted By: {{bill.substitutedBy.basePrintNo}} - {{bill.substitutedBy.session}}</span>
-                            </span>
-                            <span ng-show="bill.programInfo" class="label bold secondary text-small margin-right-20">
+                            <a ng-href="${ctxPath}/bills/{{bill.substitutedBy.session}}/{{bill.substitutedBy.basePrintNo}}"
+                               ng-show="bill.substitutedBy" class="bold gray-2-blue text-small margin-right-20">
+                                <i class="icon-switch prefix-icon"></i>
+                                Substituted By: {{bill.substitutedBy.basePrintNo}} - {{bill.substitutedBy.session}}</a>
+                            <span ng-show="bill.programInfo" class="bold text-small margin-right-20">
                                 <i class="icon-tag prefix-icon"></i>{{bill.programInfo.name}} #{{bill.programInfo.sequenceNo}}</span>
                     </div>
                 </div>
                 <div class="columns large-3 hide-for-medium-down bill-milestone-container">
                     <div>
+                        <!-- TODO: It would be nice to be able to use ng-repeat here... -->
                         <!-- Bill milestone plot -->
-                        <ul ng-show="bill.billType.resolution == false" class="large-block-grid-8 bill-milestone-list">
+                        <ul ng-show="bill.billType.resolution == false" class="large-block-grid-8 bill-milestone-small">
                             <li><div ng-class="{'met': (bill.milestones.size > 0)}" class="milestone">&nbsp;</div></li>
                             <li><div ng-class="{'met': (bill.milestones.size > 1)}" class="milestone">&nbsp;</div></li>
                             <li><div ng-class="{'met': (bill.milestones.size > 2)}" class="milestone">&nbsp;</div></li>
@@ -67,7 +68,7 @@
                             <li><div ng-class="{'met': (bill.milestones.size > 7)}" class="milestone">&nbsp;</div></li>
                         </ul>
                         <!-- Resolution milestone plot -->
-                        <ul ng-show="bill.billType.resolution == true" class="large-block-grid-2 bill-milestone-list">
+                        <ul ng-show="bill.billType.resolution == true" class="large-block-grid-2 bill-milestone-small">
                             <li><div class="milestone met">&nbsp;</div></li>
                             <li><div ng-class="{'met': (bill.milestones.size > 0)}" class="milestone">&nbsp;</div></li>
                         </ul>
@@ -94,7 +95,7 @@
             </div>
             <div class="stats-block-container text-center columns large-2 small-6">
                 <h6 class="stats-block-title">In Committees</h6>
-                <span class="blue1 stats-block-number"><i class="icon-users prefix-icon2"></i>125</span>
+                <span class="blue1 stats-block-number">125</span>
             </div>
             <div class="stats-block-container text-center columns large-2 small-6">
                 <h6 class="stats-block-title">On Floor Calendars</h6>

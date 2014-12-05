@@ -4,7 +4,9 @@ import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingCommittee;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
-import gov.nysenate.openleg.service.hearing.PublicHearingDataService;
+import gov.nysenate.openleg.service.hearing.data.PublicHearingDataService;
+import gov.nysenate.openleg.util.PublicHearingTextUtils;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,6 @@ public class PublicHearingParser
 {
     @Autowired
     private PublicHearingDataService dataService;
-
-    @Autowired
-    private PublicHearingFileParser fileParser;
 
     @Autowired
     private PublicHearingTextParser textParser;
@@ -46,7 +45,7 @@ public class PublicHearingParser
      * @throws IOException
      */
     public void process(PublicHearingFile publicHearingFile) throws IOException {
-        final List<List<String>> pages = fileParser.getPublicHearingPages(publicHearingFile);
+        final List<List<String>> pages = PublicHearingTextUtils.getPages(FileUtils.readFileToString(publicHearingFile.getFile()));
         final List<String> firstPage = pages.get(0);
 
         String title = titleParser.parse(firstPage);
@@ -59,6 +58,6 @@ public class PublicHearingParser
         PublicHearing publicHearing = new PublicHearing(id, address, text);
         publicHearing.setCommittees(committees);
 
-        dataService.savePublicHearing(publicHearing, publicHearingFile);
+        dataService.savePublicHearing(publicHearing, publicHearingFile, true);
     }
 }

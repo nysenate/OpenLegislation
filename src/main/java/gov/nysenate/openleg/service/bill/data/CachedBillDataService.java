@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,21 +43,18 @@ public class CachedBillDataService implements BillDataService, CachingService
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedBillDataService.class);
 
-    /** Bill cache will store partial bills for performance. */
     @Autowired private CacheManager cacheManager;
+    @Autowired private BillDao billDao;
+    @Autowired private EventBus eventBus;
+
+    @Value("${cache.bill.heap.size}") private long billCacheSizeMb;
+    @Value("${cache.bill.info.heap.size}") private long billInfoCacheSizeMb;
 
     private static final String billCacheName = "bills";
+    private static final String billInfoCacheName = "billInfos";
+
     private Cache billCache;
-
-    /** The maximum heap size (in MB) the bill cache can consume. */
-    @Value("${cache.bill.heap.size}")
-    private long billCacheSizeMb;
-
-    /** Backing store for bill data. */
-    @Autowired private BillDao billDao;
-
-    /** Used to subscribe and post events. */
-    @Autowired private EventBus eventBus;
+    private Cache billInfoCache;
 
     @PostConstruct
     private void init() {
@@ -68,42 +66,60 @@ public class CachedBillDataService implements BillDataService, CachingService
     private void cleanUp() {
         evictCaches();
         cacheManager.removeCache(billCacheName);
+        cacheManager.removeCache(billInfoCacheName);
     }
 
     /** --- CachingService implementation --- */
 
     /** {@inheritDoc} */
     @Override
-    public Ehcache getCache() {
-        return billCache;
+    public List<Ehcache> getCaches() {
+        return Arrays.asList(billCache, billInfoCache);
     }
 
     /** {@inheritDoc} */
     @Override
     public void setupCaches() {
+        // Partial bill cache will store Bill instances with the full text fields stripped to save space.
         this.billCache = new Cache(new CacheConfiguration().name(billCacheName)
             .eternal(true)
             .maxBytesLocalHeap(billCacheSizeMb, MemoryUnit.MEGABYTES)
             .sizeOfPolicy(defaultSizeOfPolicy()));
         cacheManager.addCache(this.billCache);
         this.billCache.setMemoryStoreEvictionPolicy(new BillCacheEvictionPolicy());
-    }
 
-    /** {@inheritDoc} */
-    @Override
-    public void evictCaches() {
-        logger.info("Clearing the bill cache.");
-        this.billCache.removeAll();
+        // Bill Info cache will store BillInfo instances to speed up search and listings.
+        // If a bill is already stored in the billCache, it's BillInfo does not need to be stored here.
+        this.billInfoCache = new Cache(new CacheConfiguration().name(billInfoCacheName)
+            .eternal(true)
+            .maxBytesLocalHeap(billInfoCacheSizeMb, MemoryUnit.MEGABYTES)
+            .sizeOfPolicy(defaultSizeOfPolicy()));
+        cacheManager.addCache(this.billInfoCache);
     }
 
     /**
-     * Pre-load the bill cache by first clearing its current contents and then requesting every bill in the
-     * current session year.
+     * Pre-load the bill caches by clearing out each of their contents and then loading:
+     * Bill Cache - Current session year bills only
+     * Bill Info Cache - Bill Infos from all available session years.
      */
     public void warmCaches() {
         evictCaches();
         logger.info("Warming up bill cache.");
-        getBillIds(SessionYear.current(), LimitOffset.ALL).forEach(id -> getBill(id));
+        Optional<Range<SessionYear>> sessionRange = activeSessionRange();
+        if (sessionRange.isPresent()) {
+            SessionYear sessionYear = sessionRange.get().lowerEndpoint();
+            while (sessionYear.compareTo(sessionRange.get().upperEndpoint()) <= 0) {
+                if (sessionYear.equals(SessionYear.current())) {
+                    logger.info("Caching Bill instances for current session year: {}", sessionYear);
+                    getBillIds(sessionYear, LimitOffset.ALL).forEach(id -> getBill(id));
+                }
+                else {
+                    logger.info("Caching Bill Info instances for session year: {}", sessionYear);
+                    getBillIds(sessionYear, LimitOffset.ALL).forEach(id -> getBillInfo(id));
+                }
+                sessionYear = sessionYear.next();
+            }
+        }
     }
 
     /** {@inheritDoc} */
@@ -162,8 +178,13 @@ public class CachedBillDataService implements BillDataService, CachingService
         if (billCache.get(billId) != null) {
             return new BillInfo((Bill) billCache.get(billId).getObjectValue());
         }
+        if (billInfoCache.get(billId) != null) {
+            return (BillInfo) billInfoCache.get(billId).getObjectValue();
+        }
         try {
-            return billDao.getBillInfo(billId);
+            BillInfo billInfo = billDao.getBillInfo(billId);
+            billInfoCache.put(new Element(billId, billInfo));
+            return billInfo;
         }
         catch (EmptyResultDataAccessException ex) {
             throw new BillNotFoundEx(billId, ex);
@@ -244,6 +265,8 @@ public class CachedBillDataService implements BillDataService, CachingService
                     ba.setFullText("");
                 });
                 this.billCache.put(new Element(cacheBill.getBaseBillId(), cacheBill));
+                // Remove entry from the bill info cache if it exists
+                this.billInfoCache.remove(cacheBill.getBaseBillId());
             }
             catch (CloneNotSupportedException e) {
                 logger.error("Failed to cache bill!", e);

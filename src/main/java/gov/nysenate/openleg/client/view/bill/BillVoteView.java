@@ -8,6 +8,7 @@ import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
 
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class BillVoteView implements ViewObject
@@ -26,11 +27,11 @@ public class BillVoteView implements ViewObject
             this.committee = billVote.getCommitteeId() != null ? new CommitteeIdView(billVote.getCommitteeId()) : null;
             this.memberVotes = MapView.of(
                 billVote.getMemberVotes().keySet().stream()
-                    .collect(Collectors.toMap(BillVoteCode::name,
-                        voteCode -> ListView.of(
-                            billVote.getMembersByVote(voteCode).stream()
-                                .map(m -> new SimpleMemberView(m))
-                                .collect(Collectors.toList()))))
+                    .collect(Collectors.toMap(BillVoteCode::name, voteCode ->
+                        ListView.of(billVote.getMembersByVote(voteCode).stream()
+                            .map(m -> new SimpleMemberView(m))
+                            .sorted((o1, o2) -> o1.getShortName().compareTo(o2.getShortName()))
+                            .collect(Collectors.toList()))))
             );
         }
     }

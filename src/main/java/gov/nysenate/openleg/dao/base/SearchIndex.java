@@ -9,6 +9,7 @@ public enum SearchIndex
     AGENDA("agendas"),
     CALENDAR("calendars"),
     TRANSCRIPT("transcripts"),
+    HEARING("hearings"),
     LAW("laws")
     ;
 

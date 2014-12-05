@@ -1,19 +1,19 @@
-package gov.nysenate.openleg.service.hearing;
+package gov.nysenate.openleg.service.hearing.data;
 
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.hearing.PublicHearingDao;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
-import gov.nysenate.openleg.model.cache.CacheEvictEvent;
-import net.sf.ehcache.CacheManager;
+import gov.nysenate.openleg.service.hearing.event.PublicHearingUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,29 +22,18 @@ public class CachedPublicHearingDataService implements PublicHearingDataService
     private static final String publicHearingCache = "publicHearingCache";
 
     @Autowired
-    private CacheManager cacheManager;
+    private EventBus eventBus;
 
     @Autowired
     private PublicHearingDao publicHearingDao;
 
-//    @Override
     @PostConstruct
-    public void setupCaches() {
-        cacheManager.addCache(publicHearingCache);
-    }
-
-//    @Override
-    @CacheEvict(value = publicHearingCache, allEntries = true)
-    public void evictCaches() {}
-
-//    @Override
-    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-
+    private void init() {
+        eventBus.register(this);
     }
 
     /** {@inheritDoc */
     @Override
-    @Cacheable(value = publicHearingCache, key = "#publicHearingId")
     public PublicHearing getPublicHearing(PublicHearingId publicHearingId) {
         if (publicHearingId == null) {
             throw new IllegalArgumentException("PublicHearingId cannot be null");
@@ -55,16 +44,19 @@ public class CachedPublicHearingDataService implements PublicHearingDataService
 
     /** {@inheritDoc */
     @Override
-    public List<PublicHearingId> getPublicHearingIds(SessionYear sessionYear, LimitOffset limitOffset) {
-        throw new UnsupportedOperationException();
+    public List<PublicHearingId> getPublicHearingIds(int year, SortOrder dateOrder, LimitOffset limitOffset) {
+        return publicHearingDao.getPublicHearingIds(year, dateOrder, limitOffset);
     }
 
     /** {@inheritDoc */
     @Override
-    public void savePublicHearing(PublicHearing publicHearing, PublicHearingFile publicHearingFile) {
+    public void savePublicHearing(PublicHearing publicHearing, PublicHearingFile publicHearingFile, boolean postUpdateEvent) {
         if (publicHearing == null) {
             throw new IllegalArgumentException("publicHearing cannot be null");
         }
         publicHearingDao.updatePublicHearing(publicHearing, publicHearingFile);
+        if (postUpdateEvent) {
+            eventBus.post(new PublicHearingUpdateEvent(publicHearing, LocalDateTime.now()));
+        }
     }
 }

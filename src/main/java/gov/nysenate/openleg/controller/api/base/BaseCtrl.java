@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.controller.api.base;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
@@ -12,6 +13,7 @@ import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
@@ -40,9 +42,10 @@ public abstract class BaseCtrl
     /**
      * Returns a sort order extracted from the given web request parameters
      * Returns the given default sort order if no such parameter exists
-     * @param webRequest
-     * @param defaultSortOrder
-     * @return
+     *
+     * @param webRequest WebRequest
+     * @param defaultSortOrder SortOrder
+     * @return SortOrder
      */
     protected SortOrder getSortOrder(WebRequest webRequest, SortOrder defaultSortOrder) {
         try {
@@ -57,8 +60,8 @@ public abstract class BaseCtrl
      * Returns a limit + offset extracted from the given web request parameters
      * Returns the given default limit offset if no such parameters exist
      *
-     * @param webRequest
-     * @param defaultLimit - The default limit to use, 0 for no limit
+     * @param webRequest WebRequest
+     * @param defaultLimit int - The default limit to use, 0 for no limit
      * @return LimitOffset
      */
     protected LimitOffset getLimitOffset(WebRequest webRequest, int defaultLimit) {
@@ -81,8 +84,8 @@ public abstract class BaseCtrl
     /**
      * Extracts a date range from the query parameters 'startDate' and 'endDate'.
      *
-     * @param webRequest
-     * @param defaultRange
+     * @param webRequest WebRequest
+     * @param defaultRange Range<LocalDate>
      * @return Range<LocalDate>
      */
     protected Range<LocalDate> getDateRange(WebRequest webRequest, Range<LocalDate> defaultRange) {
@@ -108,9 +111,10 @@ public abstract class BaseCtrl
     /**
      * Attempts to parse a date time request parameter
      * Throws an InvalidRequestParameterException if the parsing went wrong
+     *
      * @param dateTimeString The parameter value to be parsed
      * @param parameterName The name of the parameter.  Used to generate the exception
-     * @return
+     * @return LocalDateTime
      * @throws InvalidRequestParameterException
      */
     protected LocalDateTime parseISODateTimeParameter(String dateTimeString, String parameterName)
@@ -153,5 +157,12 @@ public abstract class BaseCtrl
     public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
         logger.debug("Search Exception!", ex);
         return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthenticatedException.class)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleUnauthenticatedException(UnauthenticatedException ex) {
+        logger.debug("Unauthenticated Exception! {}", ex.getMessage());
+        return new ErrorResponse(ErrorCode.UNAUTHORIZED);
     }
 }

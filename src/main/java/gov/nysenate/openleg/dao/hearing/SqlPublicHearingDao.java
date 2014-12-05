@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.dao.hearing;
 
 import com.google.common.collect.MapDifference;
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.OrderBy;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Member;
@@ -34,10 +37,11 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
 
     /** {@inheritDoc} */
     @Override
-    public List<PublicHearingId> getPublicHearingIds(int year) {
+    public List<PublicHearingId> getPublicHearingIds(int year, SortOrder dateOrder, LimitOffset limOff) {
         MapSqlParameterSource params = getPublicHearingIdYearParams(year);
+        OrderBy orderBy = new OrderBy("date_time", dateOrder);
         List<PublicHearingId> ids = jdbcNamed.query(
-                SELECT_PUBLIC_HEARING_IDS_BY_YEAR.getSql(schema()), params, publicHearingIdRowMapper);
+                SELECT_PUBLIC_HEARING_IDS_BY_YEAR.getSql(schema(), orderBy, limOff), params, publicHearingIdRowMapper);
         return ids;
     }
 

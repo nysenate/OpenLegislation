@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.bill;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillTextType;
+import gov.nysenate.openleg.model.bill.VetoId;
 import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoType;
 import gov.nysenate.openleg.processor.base.ParseError;
@@ -53,7 +54,6 @@ public class VetoMemoParser extends BillTextParser
     public String extractText() throws ParseError {
         String memoText = super.extractText();
         vetoMessage.setMemoText(memoText);
-        verifyVetoMessage();
         return memoText;
     }
 
@@ -141,9 +141,21 @@ public class VetoMemoParser extends BillTextParser
         }
     }
 
-    /** --- Basic Getters/Setters --- */
+    /** --- Functional Getters/Setters --- */
 
-    public VetoMessage getVetoMessage() {
+    public VetoMessage getVetoMessage() throws ParseError {
+        if (isDeleted()) {
+            return null;
+        }
+        verifyVetoMessage();
         return vetoMessage;
+    }
+
+    public VetoId getVetoId() {
+        if (vetoMessage != null) {
+            return vetoMessage.getVetoId();
+        } else {
+            return null;
+        }
     }
 }

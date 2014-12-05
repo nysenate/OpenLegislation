@@ -2,6 +2,7 @@
 @import "foundation";
 @import "compass";
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
+@import url(http://fonts.googleapis.com/css?family=Inconsolata);
 
 @import "colors";
 @import "bill";
@@ -35,6 +36,10 @@ table {
       }
     }
   }
+}
+
+pre {
+  font-family: 'Inconsolata', monospace;
 }
 
 .light-background {
@@ -80,6 +85,10 @@ ul.pagination {
   font-size: 0.9rem;
 }
 
+.text-large {
+  font-size: 1.1rem;
+}
+
 .bold {
   font-weight: 600;
 }
@@ -99,12 +108,28 @@ ul.pagination {
   margin-bottom: 20px !important;
 }
 
+.margin-top-10 {
+  margin-top: 10px !important;
+}
+
+.margin-bottom-10 {
+  margin-bottom: 10px !important;
+}
+
 .margin-left-20 {
   margin-left: 20px !important;
 }
 
+.margin-right-10 {
+  margin-right: 10px !important;
+}
+
 .margin-right-20 {
   margin-right: 20px !important;
+}
+
+.padding-20 {
+  padding: 20px;
 }
 
 .relative {
@@ -126,6 +151,53 @@ ul.pagination {
 
 .no-bottom-margin {
   margin-bottom: 0;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+a.gray-2-blue {
+  color: $gray10;
+  @include transition(all .2s linear);
+  &:hover {
+    color: $blue2;
+  }
+}
+
+a.white-2-blue {
+  color: white;
+  @include transition(all .2s linear);
+  &:hover {
+    background: transparentize(#fff, 0.9);
+  }
+}
+
+.panel {
+  &.minimal {
+    border-style: none;
+    padding: 10px;
+  }
+  &.less-padding {
+    padding: 10px !important;
+  }
+  &.white {
+    background: white;
+  }
+
+  .panel-label {
+    color: $gray10;
+    padding:10px;
+    background:$gray3;
+    font-weight: 600;
+    &:hover {
+      background:#ddd;
+    }
+  }
+}
+
+.no-height {
+  height: 0;
 }
 
 /** --- Header --- */
@@ -248,10 +320,6 @@ label.block-label {
   cursor: none;
 }
 
-pre {
-  font-family: 'Ubuntu Mono';
-}
-
 /** --- Styles for Report page --- */
 
 #daybreakSummaryTable {
@@ -311,13 +379,6 @@ pre {
 }
 
 /** --- Styles for Report Error Page --- */
-
-.panel {
-  &.minimal {
-    border-style: none;
-    padding: 10px;
-  }
-}
 
 button.check-button {
   padding-top: 10px !important;

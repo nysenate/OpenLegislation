@@ -34,13 +34,13 @@ public class TranscriptLine
     }
 
     /**
-     * Transcript number is usually right aligned at the top of each page.
+     * Page number is usually right aligned at the top of each page.
      * However, sometimes it's left aligned on the next line instead.
      * e.g. 082895.v1, 011299.v1
-     * @return <code>true</code> if line contains the transcript number;
+     * @return <code>true</code> if line contains a page number;
      *         <code>false</code> otherwise.
      */
-    public boolean isTranscriptNumber() {
+    public boolean isPageNumber() {
         String validText = stripInvalidCharacters().trim();
         if (isNumber(validText)) {
             if (isRightAligned(validText) || greaterThanMaxPageLineNum(validText)) {
@@ -57,7 +57,7 @@ public class TranscriptLine
      */
     public boolean hasLineNumber() {
         // split on two spaces so time typo's don't get treated as line numbers.
-        return isNumber(text.trim().split("  ")[0]) && !isTranscriptNumber();
+        return isNumber(text.trim().split("  ")[0]) && !isPageNumber();
     }
 
     /**
@@ -177,11 +177,15 @@ public class TranscriptLine
         return text.contains("Candyco Transcription Service, Inc.") || text.contains("(518) 371-8910");
     }
 
-    /** --- Internal Methods --- */
-
-    private String stripInvalidCharacters() {
+    /**
+     * Removes invalid characters from a line of text, such as broken pipe or binary.
+     * @return The line with invalid characters removed.
+     */
+    public String stripInvalidCharacters() {
         return text.replaceAll(invalidCharactersRegex,"");
     }
+
+    /** --- Internal Methods --- */
 
     private boolean isNumber(String text) {
         try {

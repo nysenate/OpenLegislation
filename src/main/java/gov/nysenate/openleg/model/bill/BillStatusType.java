@@ -19,6 +19,7 @@ public enum BillStatusType
     SIGNED_BY_GOV("Signed by Governor"),
     VETOED("Vetoed"),
     STRICKEN("Stricken"),
+    LOST("Lost"),
     SUBSTITUTED("Substituted"),
     ADOPTED("Adopted");
 

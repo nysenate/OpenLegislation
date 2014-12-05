@@ -2,10 +2,7 @@ package gov.nysenate.openleg.model.law;
 
 import com.google.common.collect.Sets;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static gov.nysenate.openleg.model.law.LawType.*;
 
@@ -13,7 +10,7 @@ import static gov.nysenate.openleg.model.law.LawType.*;
  * Current enumeration of all law chapters. It is possible that new laws chapters may come
  * in as part of an update so this listing should be maintained accordingly.
  */
-public enum LawChapterType
+public enum LawChapterCode
 {
     /** --- Consolidated Laws --- */
 
@@ -173,30 +170,38 @@ public enum LawChapterType
     private Set<String> citations;
     private LawType type;
 
-    private static Map<String, LawChapterType> citationMap = new HashMap<>();
+    public static Map<String, LawChapterCode> citationMap = new HashMap<>();
     static {
         Arrays.stream(values())
             .forEach(law -> law.getCitations()
-                    .forEach(citation -> citationMap.put(citation.toUpperCase(), law)));
+                .forEach(citation -> {
+                    if (citation != null && !citation.trim().isEmpty()) {
+                        citationMap.put(citation.toUpperCase().trim(), law);
+                    }
+                }));
     }
 
     /** --- Constructor --- */
 
-    LawChapterType(String name, Set<String> citations, LawType type) {
+    LawChapterCode(String name, Set<String> citations, LawType type) {
         this.name = name;
         this.citations = citations;
         this.type = type;
     }
 
-    public LawChapterType lookupCitation(String citation) {
+    /**
+     * Returns the LawChapterType that has a citation that matches the one provided.
+     *
+     * @param citation String
+     * @return Optional<LawChapterType> - Matching LawChapterType or empty optional otherwise..
+     * @throws java.lang.IllegalArgumentException - If the citation provided is null.
+     */
+    public static Optional<LawChapterCode> lookupCitation(String citation) {
         if (citation == null) {
             throw new IllegalArgumentException("Null citation supplied.");
         }
-        LawChapterType type = citationMap.get(citation.trim().replaceAll("(\\s{2,})", " "));
-        if (type == null) {
-            throw new IllegalArgumentException("Supplied citation did not match any law chapters.");
-        }
-        return type;
+        LawChapterCode type = citationMap.get(citation.toUpperCase().trim().replaceAll("(\\s{2,})", " "));
+        return Optional.ofNullable(type);
     }
 
     /** --- Basic Getters --- */

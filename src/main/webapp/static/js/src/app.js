@@ -62,6 +62,7 @@ openApp.controller('TopNavCtrl', ['$scope', '$route', function($scope, $route) {
     $scope.currActiveLink;
 
     $scope.$on('$routeChangeSuccess', function(event, r) {
+        /** FIXME: This is not working...*/
         if ($scope.currActiveLink != r.$$route.originalPath) {
             $("nav a").parent().removeClass("active");
             $("nav a[href='" + r.$$route.originalPath + "']").parent().addClass("active");

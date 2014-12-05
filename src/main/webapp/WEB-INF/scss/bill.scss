@@ -63,8 +63,10 @@
   &:hover {
     background: $gray3;
     cursor: pointer;
-    border-left: 2px solid $blue3;
-
+    border-left: 2px solid $blue4;
+    .bill-result-print-no {
+      color: $blue4;
+    }
   }
   background: #fff;
   border-left: 2px solid white;
@@ -81,7 +83,7 @@
   }
 }
 
-.bill-result-printno {
+.bill-result-id {
   color: #555;
   font-size: 1.3rem;
   display: block;
@@ -93,7 +95,7 @@
   text-align: center;
 }
 
-.bill-milestone-list {
+.bill-milestone-small {
   height: 10px;
   overflow: hidden;
   li {
@@ -113,4 +115,81 @@
 .milestone-text {
   text-transform: capitalize;
   color: #444;
+}
+
+ul.bill-milestone-large {
+  overflow: hidden;
+  margin: 0;
+
+  li {
+    padding: 0;
+    font-size: 0.8rem;
+    text-align: center;
+    color:white;
+    font-weight: 600;
+    .milestone-desc {
+      height: 90px;
+      padding: 5px 5px;
+      background: $gray4;
+      color: $gray7;
+      .milestone-icon {
+        background: transparentize(#fff, 0.9);
+        width: 25px;
+        height: 25px;
+        line-height: 25px;
+        @include border-radius(25px);
+        margin: 5px auto 5px auto;
+        font-size: 0.9rem;
+      }
+    }
+    .milestone-date {
+      padding: 5px;
+      color: $gray10;
+      background: $gray6;
+    }
+    &.met {
+      .milestone-desc {
+        background: none;
+        color: $blue4;
+      }
+      .milestone-date {
+        background: $blue5;
+        color: white;
+      }
+    }
+    &.active {
+      .milestone-desc {
+        background: $green2;
+        color: white;
+      }
+      .milestone-date {
+        background: $green1;
+        color: white;
+      }
+    }
+  }
+}
+
+.bill-memo-heading {
+  font-weight: 600;
+  display: block;
+  margin: 20px 0 10px 0;
+  color: #444;
+  border-bottom: 1px solid $gray4;
+}
+
+.resolution-heading {
+  background: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px;
+  margin: 10px 0;
+  &.whereas {
+    color: $gray10;
+    border: 1px none $gray6;
+    border-bottom-style: solid;
+  }
+  &.resolved {
+    border: 1px solid #43AC6A;
+  }
 }

@@ -4,11 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
-import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.util.OpenlegThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +19,11 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
+import org.springframework.scheduling.annotation.AsyncConfigurer;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -38,10 +39,12 @@ import java.util.concurrent.ScheduledExecutorService;
 
 @Configuration
 @EnableWebMvc
+@EnableAsync
 @EnableScheduling
 @ComponentScan("gov.nysenate.openleg")
 @Import({DatabaseConfig.class, SecurityConfig.class, ApplicationConfig.class})
-public class WebApplicationConfig extends WebMvcConfigurerAdapter implements SchedulingConfigurer
+public class WebApplicationConfig extends WebMvcConfigurerAdapter implements SchedulingConfigurer,
+                                                                             AsyncConfigurer
 {
     private static final Logger logger = LoggerFactory.getLogger(WebApplicationConfig.class);
 
@@ -88,7 +91,7 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter implements Sch
     @Bean
     public MappingJackson2HttpMessageConverter jackson2Converter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setObjectMapper(objectMapper  ());
+        converter.setObjectMapper(objectMapper());
         return converter;
     }
 
@@ -102,13 +105,23 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter implements Sch
         return objectMapper;
     }
 
-    @Bean(destroyMethod = "shutdownNow")
+    @Bean(name = "openlegScheduler", destroyMethod = "shutdownNow")
     public ScheduledExecutorService schedulerThreadPool() {
-        return Executors.newScheduledThreadPool(3, new OpenlegThreadFactory("scheduler"));
+        return Executors.newScheduledThreadPool(4, new OpenlegThreadFactory("scheduler"));
     }
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
         taskRegistrar.setScheduler(schedulerThreadPool());
+    }
+
+    @Override
+    @Bean(name = "openlegAsync", destroyMethod = "shutdown")
+    public Executor getAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setThreadFactory(new OpenlegThreadFactory("spring-async"));
+        executor.setCorePoolSize(4);
+        executor.initialize();
+        return executor;
     }
 }

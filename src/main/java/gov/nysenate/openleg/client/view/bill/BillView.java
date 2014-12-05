@@ -32,7 +32,6 @@ public class BillView extends BillInfoView implements ViewObject
     public BillView(Bill bill) {
         super(bill != null ? bill.getBillInfo() : null);
         if (bill != null) {
-
             // Only output amendments that are currently published
             TreeMap<String, BillAmendmentView> amendmentMap = new TreeMap<>();
             bill.getAmendPublishStatusMap().forEach((k,v) -> {
@@ -86,8 +85,6 @@ public class BillView extends BillInfoView implements ViewObject
     public String getViewType() {
         return "bill";
     }
-
-
 
     public MapView<String, BillAmendmentView> getAmendments() {
         return amendments;
