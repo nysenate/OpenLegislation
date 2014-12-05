@@ -34,7 +34,6 @@ public class CachedPublicHearingDataService implements PublicHearingDataService
 
     /** {@inheritDoc */
     @Override
-    @Cacheable(value = publicHearingCache, key = "#publicHearingId")
     public PublicHearing getPublicHearing(PublicHearingId publicHearingId) {
         if (publicHearingId == null) {
             throw new IllegalArgumentException("PublicHearingId cannot be null");

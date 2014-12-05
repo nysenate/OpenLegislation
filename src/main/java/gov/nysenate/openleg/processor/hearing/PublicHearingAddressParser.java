@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.hearing;
 
+import gov.nysenate.openleg.util.PublicHearingTextUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class PublicHearingAddressParser extends BasePublicHearingParser
+public class PublicHearingAddressParser
 {
 
     private static final Pattern LAST_ADDRESS_LINE = Pattern.compile(
@@ -23,7 +24,7 @@ public class PublicHearingAddressParser extends BasePublicHearingParser
     public String parse(List<String> firstPage) {
         String address = null;
         for (int i = 0; i < firstPage.size(); i++) {
-            String line = stripLineNumber(firstPage.get(i));
+            String line = PublicHearingTextUtils.stripLineNumber(firstPage.get(i));
             if (matchesLastAddressLine(line)) {
                 address = extractAddress(firstPage, i);
             }
@@ -39,7 +40,7 @@ public class PublicHearingAddressParser extends BasePublicHearingParser
 
         String address = "";
         for (int i = firstLineOfAddress; i <= lastLineOfAddress; i++) {
-            address += stripLineNumber(firstPage.get(i));
+            address += PublicHearingTextUtils.stripLineNumber(firstPage.get(i));
             // Keep address multiline format.
             if (i != lastLineOfAddress) {
                 address += "\n";
@@ -52,7 +53,7 @@ public class PublicHearingAddressParser extends BasePublicHearingParser
     private int getFirstLineOfAddress(List<String> firstPage, int lastLineOfAddress) {
         for (int i = lastLineOfAddress; i >= 0; i--) {
             String line = firstPage.get(i);
-            if (!hasContent(line)) {
+            if (!PublicHearingTextUtils.hasContent(line)) {
                 return ++i;
             }
         }
