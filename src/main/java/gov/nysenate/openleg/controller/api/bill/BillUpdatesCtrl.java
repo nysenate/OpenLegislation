@@ -3,6 +3,7 @@ package gov.nysenate.openleg.controller.api.bill;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
+import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.view.bill.BillUpdateDigestView;
 import gov.nysenate.openleg.client.view.bill.BillUpdateTokenDigestView;
 import gov.nysenate.openleg.client.view.bill.BillUpdateTokenView;
@@ -48,14 +49,16 @@ public class BillUpdatesCtrl extends BaseCtrl
      * Return a list of bill ids that have changed on or after the specified date.
      * Usage: (GET) /api/3/bills/updates/{from datetime}
      *
-     * Expected Output: List of BillUpdateTokenView
+     * Request Params: detail (boolean) - Show update digests within each token.
+     *
+     * Expected Output: List of BillUpdateTokenView or BillUpdateTokenDigestView if detail = true.
      *
      * @see #getUpdatesDuring(java.time.LocalDateTime, java.time.LocalDateTime, boolean, WebRequest)
      */
     @RequestMapping(value = "/updates/{from}")
     public BaseResponse getUpdatesDuring(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
-                                         @RequestParam(defaultValue = "false") boolean full, WebRequest request) {
-        return getUpdatesDuring(from, DateUtils.THE_FUTURE.atStartOfDay(), full, request);
+                                         @RequestParam(defaultValue = "false") boolean detail, WebRequest request) {
+        return getUpdatesDuring(from, DateUtils.THE_FUTURE.atStartOfDay(), detail, request);
     }
 
     /**
@@ -65,31 +68,53 @@ public class BillUpdatesCtrl extends BaseCtrl
      * Return a list of bill ids that have changed during a specified date/time range.
      * Usage: (GET) /api/3/bills/updates/{from datetime}/{to datetime}
      *
-     * Expected Output: List of BillUpdateTokenView
+     * Request Params: detail (boolean) - Show update digests within each token.
+     *
+     * Expected Output: List of BillUpdateTokenView or BillUpdateTokenDigestView if detail = true.
      */
     @RequestMapping(value = "/updates/{from}/{to}")
     public BaseResponse getUpdatesDuring(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
                                          @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
-                                         @RequestParam(defaultValue = "false") boolean full, WebRequest request) {
+                                         @RequestParam(defaultValue = "false") boolean detail, WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 100);
         Range<LocalDateTime> updateRange = Range.closedOpen(from, to);
         PaginatedList<BillUpdateToken> updateTokens = billUpdatesDao.billsUpdatedDuring(updateRange, SortOrder.ASC, limOff);
         return ListViewResponse.of(
             updateTokens.getResults().stream()
                 .map(token ->
-                        (full) ? new BillUpdateTokenDigestView(token, billUpdatesDao.getUpdateDigests(
+                        (detail) ? new BillUpdateTokenDigestView(token, billUpdatesDao.getUpdateDigests(
                                                                         token.getBillId(), updateRange, SortOrder.ASC))
                                : new BillUpdateTokenView(token))
                 .collect(Collectors.toList()), updateTokens.getTotal(), limOff);
     }
 
+    /**
+     * Bill Update Digests API
+     * ------------------------
+     *
+     * Return all the update digests for a given bill.
+     * Usage (GET) /api/3/bills/{sessionYear}/{printNo}/updates
+     *
+     * @see #getUpdatesForBillDuring(int, String, java.time.LocalDateTime, java.time.LocalDateTime)
+     */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates")
-    public Object getUpdatesForBill(@PathVariable int sessionYear, @PathVariable String printNo) {
+    public BaseResponse getUpdatesForBill(@PathVariable int sessionYear, @PathVariable String printNo) {
         return getUpdatesForBillDuring(sessionYear, printNo, DateUtils.LONG_AGO.atStartOfDay(), DateUtils.THE_FUTURE.atStartOfDay());
     }
 
+    /**
+     * Bill Update Digests API
+     * ------------------------
+     *
+     * Return update digests for a bill during a given date/time range
+     * Usage (GET) /api/3/bills/{sessionYear}/{printNo}/updates/{from}/{to}
+     *
+     * Note: 'from' and 'to' are ISO date times.
+     *
+     * Expected Output: List of BillUpdateDigestView
+     */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from}/{to}")
-    public Object getUpdatesForBillDuring(@PathVariable int sessionYear, @PathVariable String printNo,
+    public BaseResponse getUpdatesForBillDuring(@PathVariable int sessionYear, @PathVariable String printNo,
                                           @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
                                           @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
         List<BillUpdateDigestView> digests =

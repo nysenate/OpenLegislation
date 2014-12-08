@@ -205,13 +205,28 @@ contentModule.filter('prettyResolutionText', function($sce) {
     var resolvedPattern = /^ *RESOLVED[,; ]/gm;
     return function(text) {
         if (text)  {
-            text = text.replace(whereasPattern, "<div class='resolution-heading whereas'>WHEREAS</div>")
-                       .replace(resolvedPattern, "<div class='resolution-heading resolved'>RESOLVED</div>");
+            text = text.replace(/-\s+/gm, "")
+                .replace(whereasPattern, "<div class='resolution-heading whereas'>WHEREAS</div>")
+                .replace(resolvedPattern, "<div class='resolution-heading resolved'>RESOLVED</div>");
         }
         else {
             text = "";
         }
         return $sce.trustAsHtml(text);
+    }
+});
+
+contentModule.filter('voteTypeFilter', function() {
+    return function(voteType) {
+        switch (voteType) {
+            case 'AYE': return 'Aye';
+            case 'NAY': return 'Nay';
+            case 'AYEWR': return 'Aye with reservations';
+            case 'ABS': return 'Absent';
+            case 'ABD': return 'Abstained';
+            case 'EXC': return 'Excused';
+            default: return 'Unknown';
+        }
     }
 });
 
@@ -300,7 +315,7 @@ contentModule.controller('BillViewCtrl', ['$scope', '$location', '$routeParams',
 contentModule.directive('votePie', [function() {
     var convertVotesToSeries = function(votes) {
         var colors = {
-            'AYE': '#43ac6a', 'AYEWR': '#348853', 'NAY': '#b5002a', 'ABD': '#666', 'EXC': '#ccc', 'ABS': '#f1f1f1'
+            'AYE': '#43ac6a', 'AYEWR': '#348853', 'NAY': '#f04124', 'ABD': '#666', 'EXC': '#ccc', 'ABS': '#f1f1f1'
         };
         var series = [];
         for (var code in votes) {
@@ -311,7 +326,7 @@ contentModule.directive('votePie', [function() {
         return series;
     };
     return {
-        restrict: 'E',
+        restrict: 'AE',
         scope: {
             votes: '=',
             plotBg: '@',
@@ -319,32 +334,34 @@ contentModule.directive('votePie', [function() {
             width: '@'
         },
         replace: true,
-        template: '<div id="lololo"></div>',
         link: function($scope, $element, $attrs) {
-            $("#lololo").highcharts({
+            $element.highcharts({
+                credits: {
+                    enabled: false
+                },
                 chart: {
                     plotBackgroundColor: $scope.plotBg,
                     plotBorderWidth: 0,
-                    plotShadow: false,
+                    plotShadow: true,
                     height: eval($scope.height),
                     width: eval($scope.width),
-                    spacing: [0,0,0,0]
+                    spacing: [0, 0, 0, 0]
                 },
                 title: {
                     text: null
                 },
                 plotOptions: {
                     pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer'
+                        allowPointSelect: false,
+                        cursor: 'pointer',
+                        size: 90
                     }
                 },
                 series: [{
                     type: 'pie',
                     name: 'Votes',
                     data: convertVotesToSeries($scope.votes)
-                }],
-                colors: ['#43ac6a', '#FF4E50','#FC913A']
+                }]
             });
         }
     }
