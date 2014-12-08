@@ -27,12 +27,12 @@ public interface BillUpdatesDao
 
     /**
      * Returns a list of digests which contain all the information pertaining to a bill that have changed during the
-     * specfied date range.
+     * specified date range.
      *
      * @param billId BaseBillId
      * @param dateTimeRange Range<LocalDateTime>
      * @param dateOrder SortOrder
      * @return List<BillUpdateDigest>
      */
-    public List<BillUpdateDigest> getUpdateDigest(BaseBillId billId, Range<LocalDateTime> dateTimeRange, SortOrder dateOrder);
+    public List<BillUpdateDigest> getUpdateDigests(BaseBillId billId, Range<LocalDateTime> dateTimeRange, SortOrder dateOrder);
 }

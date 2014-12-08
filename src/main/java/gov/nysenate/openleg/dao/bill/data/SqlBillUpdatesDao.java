@@ -40,7 +40,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
 
     /** {@inheritDoc} */
     @Override
-    public List<BillUpdateDigest> getUpdateDigest(BaseBillId billId, Range<LocalDateTime> dateTimeRange, SortOrder dateOrder) {
+    public List<BillUpdateDigest> getUpdateDigests(BaseBillId billId, Range<LocalDateTime> dateTimeRange, SortOrder dateOrder) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("printNo", billId.getBasePrintNo())
               .addValue("session", billId.getSession().getYear());
