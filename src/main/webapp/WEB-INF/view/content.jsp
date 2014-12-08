@@ -7,6 +7,7 @@
 <open-layout:head title="Open 2.0">
     <script src="${ctxPath}/static/js/src/component/content/content.js"></script>
     <script src="${ctxPath}/static/js/src/component/content/bill.js"></script>
+    <script src="${ctxPath}/static/js/src/component/content/calendar.js"></script>
 </open-layout:head>
 <open-layout:body>
     <open-component:top-nav/>

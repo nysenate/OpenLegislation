@@ -1,7 +1,7 @@
 /** --- Module configuration --- */
 
 var commonModule = angular.module('common', []);
-var contentModule = angular.module('content', ['ngRoute', commonModule.name]);
+var contentModule = angular.module('content', ['ngRoute', commonModule.name, 'ui.calendar']);
 var reportModule = angular.module('report', ['ngRoute', commonModule.name]);
 
 var openApp = angular.module('open', ['ngRoute', 'ngResource', contentModule.name, reportModule.name]);
@@ -30,7 +30,10 @@ openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
     });
     /** --- Calendars --- */
     $routeProvider.when(ctxPath + '/calendars', {
-        templateUrl: ctxPath + '/partial/content/..'
+        templateUrl: ctxPath + '/partial/content/calendar/calendar-view'
+    });
+    $routeProvider.when(ctxPath + '/calendars/:year/:calNo', {
+        templateUrl: ctxPath + '/partial/content/calendar/calendar-view'
     });
     /** --- Laws --- */
     $routeProvider.when(ctxPath + '/laws', {
@@ -62,7 +65,6 @@ openApp.controller('TopNavCtrl', ['$scope', '$route', function($scope, $route) {
     $scope.currActiveLink;
 
     $scope.$on('$routeChangeSuccess', function(event, r) {
-        /** FIXME: This is not working...*/
         if ($scope.currActiveLink != r.$$route.originalPath) {
             $("nav a").parent().removeClass("active");
             $("nav a[href='" + r.$$route.originalPath + "']").parent().addClass("active");

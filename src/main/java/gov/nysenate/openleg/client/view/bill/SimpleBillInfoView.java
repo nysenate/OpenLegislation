@@ -17,6 +17,7 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
     protected int year;
     protected LocalDateTime publishedDateTime;
     protected BaseBillIdView substitutedBy;
+    protected SponsorView sponsor;
 
     public SimpleBillInfoView(BillInfo billInfo) {
         super(billInfo != null ? billInfo.getBillId() : null);
@@ -27,6 +28,7 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
             year = billInfo.getYear();
             publishedDateTime = billInfo.getPublishedDateTime();
             substitutedBy = (billInfo.getSubstitutedBy() != null) ? new BaseBillIdView(billInfo.getSubstitutedBy()) : null;
+            sponsor = (billInfo.getSponsor() != null) ? new SponsorView(billInfo.getSponsor()) : null;
         }
     }
 
@@ -56,6 +58,10 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
 
     public BaseBillIdView getSubstitutedBy() {
         return substitutedBy;
+    }
+
+    public SponsorView getSponsor() {
+        return sponsor;
     }
 
     @Override

@@ -19,7 +19,7 @@ public enum SqlCalendarQuery implements BasicSqlQuery
         "WHERE year = :year"
     ),
     SELECT_CALENDARS_COUNT(
-        SELECT_CALENDAR_IDS.sql.replace("*", "COUNT(*)")
+        SELECT_CALENDAR_IDS.sql.replace("calendar_no, year", "COUNT(*)")
     ),
     UPDATE_CALENDAR(
         "UPDATE ${schema}." + SqlTable.CALENDAR + "\n" +
@@ -50,7 +50,7 @@ public enum SqlCalendarQuery implements BasicSqlQuery
         "WHERE calendar_year = :year"
     ),
     SELECT_CALENDAR_SUP_ID_COUNT(
-        SELECT_CALENDAR_SUP_IDS.sql.replace("*", "COUNT(*)")
+        SELECT_CALENDAR_SUP_IDS.sql.replace("calendar_no, calendar_year, sup_version", "COUNT(*)")
     ),
     SELECT_CALENDAR_SUPS(
         SELECT_CALENDAR_SUPS_BY_YEAR.sql + " AND calendar_no = :calendarNo"
@@ -114,7 +114,7 @@ public enum SqlCalendarQuery implements BasicSqlQuery
         "WHERE calendar_year = :year"
     ),
     SELECT_CALENDAR_ACTIVE_LIST_ID_COUNT(
-        SELECT_CALENDAR_ACTIVE_LIST_IDS.sql.replace("*", "COUNT(*)")
+        SELECT_CALENDAR_ACTIVE_LIST_IDS.sql.replace("calendar_no, calendar_year, sequence_no", "COUNT(*)")
     ),
     SELECT_CALENDAR_ACTIVE_LISTS(
         SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR.sql + " AND calendar_no = :calendarNo"

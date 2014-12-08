@@ -36,6 +36,9 @@ public class CalendarSearchCtrl extends BaseCtrl{
     @Autowired
     private CalendarDataService calendarDataService;
 
+    @Autowired
+    private CalendarViewFactory calendarViewFactory;
+
     /** --- Request Handlers --- */
 
     /**
@@ -45,7 +48,7 @@ public class CalendarSearchCtrl extends BaseCtrl{
      * Request Parameters:      term - The lucene query string
      *                          sort - The lucene sort string (blank by default)
      *                          calendarType - The type of calendar to search (full, active_list, supplemental)
-     *                                  (default supplemental)
+     *                                  (default full)
      *                          full - If true, full calendars will be returned including
      *                                  active list and supplemental entries (default false)
      *                          limit - Limit the number of results (default 100)
@@ -68,7 +71,7 @@ public class CalendarSearchCtrl extends BaseCtrl{
      * Request Parameters:      term - The lucene query string
      *                          sort - The lucene sort string (blank by default)
      *                          calendarType - The type of calendar to search (full, active_list, supplemental)
-     *                                  (default supplemental)
+     *                                  (default full)
      *                          full - If true, full calendars will be returned including
      *                                  active list and supplemental entries (default false)
      *                          limit - Limit the number of results (default 100)
@@ -141,7 +144,8 @@ public class CalendarSearchCtrl extends BaseCtrl{
         return ListViewResponse.of(
                 results.getResults().stream()
                         .map(result -> new SearchResultView((full)
-                                ? new CalendarView(calendarDataService.getCalendar(result.getResult()))
+                                ? calendarViewFactory.getCalendarView(
+                                        calendarDataService.getCalendar(result.getResult()))
                                 : new SimpleCalendarView(calendarDataService.getCalendar(result.getResult())),
                                 result.getRank()))
                         .collect(Collectors.toList()),
@@ -157,8 +161,9 @@ public class CalendarSearchCtrl extends BaseCtrl{
     private BaseResponse getActiveListSearchResultResponse(SearchResults<CalendarActiveListId> results, boolean full) {
         return ListViewResponse.of(
                 results.getResults().stream()
-                        .map(result -> new SearchResultView(( full)
-                                ? new ActiveListView(calendarDataService.getActiveList(result.getResult()))
+                        .map(result -> new SearchResultView((full)
+                                ? calendarViewFactory.getActiveListView(
+                                        calendarDataService.getActiveList(result.getResult()))
                                 : new SimpleActiveListView(calendarDataService.getActiveList(result.getResult())),
                                 result.getRank()))
                         .collect(Collectors.toList()),
@@ -175,7 +180,8 @@ public class CalendarSearchCtrl extends BaseCtrl{
         return ListViewResponse.of(
                 results.getResults().stream()
                         .map(result -> new SearchResultView((full)
-                                ? new CalendarSupView(calendarDataService.getCalendarSupplemental(result.getResult()))
+                                ? calendarViewFactory.getCalendarSupView(
+                                        calendarDataService.getCalendarSupplemental(result.getResult()))
                                 : new SimpleCalendarSupView(calendarDataService.getCalendarSupplemental(result.getResult())),
                                 result.getRank()))
                         .collect(Collectors.toList()),

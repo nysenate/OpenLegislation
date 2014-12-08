@@ -18,6 +18,21 @@ commonModule.filter('moment', ['$filter', function($filter) {
 }]);
 
 /**
+* Appends an appropriate ordinal suffix to the input number
+*/
+commonModule.filter('ordinalSuffix', ['$filter', function ($filter) {
+    var suffixes = ["th", "st", "nd", "rd"];
+    return function(input) {
+        if (typeof input==='number' && (input%1)===0) {
+            var relevantDigits = (input < 20) ? input % 20 : input % 10;
+            return input.toString().concat((relevantDigits <= 3) ? suffixes[relevantDigits] : suffixes[0]);
+        } else {
+            return "D:"
+        }
+    };
+}]);
+
+/**
  * The toggle-panel directive wraps your content in expandable/collapsible container.
  *
  * Usage

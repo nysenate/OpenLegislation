@@ -2,6 +2,7 @@ package gov.nysenate.openleg.view;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.client.view.calendar.CalendarSupView;
+import gov.nysenate.openleg.client.view.calendar.CalendarViewFactory;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.CalendarSupplemental;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
@@ -18,9 +19,12 @@ public class ViewTests extends BaseTests {
     @Autowired
     CalendarDataService calendarDataService;
 
+    @Autowired
+    CalendarViewFactory calendarViewFactory;
+
     @Test
     public void calSupEntryViewTest() {
         CalendarSupplemental calSup = calendarDataService.getCalendarSupplemental(new CalendarSupplementalId(45, 2014, Version.of("")));
-        CalendarSupView calSupView = new CalendarSupView(calSup);
+        CalendarSupView calSupView = calendarViewFactory.getCalendarSupView(calSup);
     }
 }

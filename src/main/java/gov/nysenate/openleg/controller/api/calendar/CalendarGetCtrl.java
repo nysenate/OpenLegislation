@@ -11,6 +11,7 @@ import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
@@ -36,6 +37,9 @@ public class CalendarGetCtrl extends BaseCtrl
     @Autowired
     private CalendarDataService calendarDataService;
 
+    @Autowired
+    private CalendarViewFactory calendarViewFactory;
+
     /** --- Request Handlers --- */
 
     /**
@@ -57,7 +61,7 @@ public class CalendarGetCtrl extends BaseCtrl
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return ListViewResponse.of(
                 calendarDataService.getCalendars(year, sortOrder, limitOffset).stream()
-                        .map(full ? CalendarView::new : SimpleCalendarView::new)
+                        .map(full ? calendarViewFactory::getCalendarView : SimpleCalendarView::new)
                         .collect(Collectors.toList()),
                 calendarDataService.getCalendarCount(year),
                 limitOffset
@@ -82,7 +86,7 @@ public class CalendarGetCtrl extends BaseCtrl
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return ListViewResponse.of(
                 calendarDataService.getActiveLists(year, sortOrder, limitOffset).stream()
-                        .map(full ? ActiveListView::new : SimpleActiveListView::new)
+                        .map(full ? calendarViewFactory::getActiveListView : SimpleActiveListView::new)
                         .collect(Collectors.toList()),
                 calendarDataService.getActiveListCount(year),
                 limitOffset
@@ -107,7 +111,7 @@ public class CalendarGetCtrl extends BaseCtrl
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return ListViewResponse.of(
                 calendarDataService.getCalendarSupplementals(year, sortOrder, limitOffset).stream()
-                        .map(full ? CalendarSupView::new : SimpleCalendarSupView::new)
+                        .map(full ? calendarViewFactory::getCalendarSupView : SimpleCalendarSupView::new)
                         .collect(Collectors.toList()),
                 calendarDataService.getSupplementalCount(year),
                 limitOffset
@@ -124,7 +128,7 @@ public class CalendarGetCtrl extends BaseCtrl
     public BaseResponse getCalendar(@PathVariable int year,
                                     @PathVariable int calNo) {
         return new ViewObjectResponse<>(
-            new CalendarView(calendarDataService.getCalendar(new CalendarId(calNo, year)) ) );
+                calendarViewFactory.getCalendarView(calendarDataService.getCalendar(new CalendarId(calNo, year))) );
     }
 
     /**
@@ -138,8 +142,8 @@ public class CalendarGetCtrl extends BaseCtrl
                                       @PathVariable int calNo,
                                       @PathVariable int sequenceNo) {
         return new ViewObjectResponse<>(
-            new ActiveListView(
-                calendarDataService.getActiveList(new CalendarActiveListId(calNo, year, sequenceNo)) ) );
+                calendarViewFactory.getActiveListView(
+                        calendarDataService.getActiveList(new CalendarActiveListId(calNo, year, sequenceNo))) );
     }
 
     /**
@@ -153,7 +157,7 @@ public class CalendarGetCtrl extends BaseCtrl
                                                 @PathVariable int calNo,
                                                 @PathVariable String version) {
         return new ViewObjectResponse<>(
-            new CalendarSupView(
+                calendarViewFactory.getCalendarSupView(
                 calendarDataService.getCalendarSupplemental(new CalendarSupplementalId(calNo, year, Version.of(version))) ) );
     }
 

@@ -14,7 +14,6 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
 {
     protected String summary;
     protected boolean signed;
-    protected SponsorView sponsor;
     protected BillStatusView status;
     protected ListView<BillStatusView> milestones;
     protected ProgramInfoView programInfo;
@@ -25,7 +24,6 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
             summary = billInfo.getSummary();
             signed = !billInfo.getMilestones().isEmpty() &&
                 billInfo.getMilestones().getLast().getStatusType().equals(BillStatusType.SIGNED_BY_GOV);
-            sponsor = new SponsorView(billInfo.getSponsor());
             billType = new BillTypeView(billInfo.getBillId().getBillType());
             programInfo = billInfo.getProgramInfo() != null ? new ProgramInfoView(billInfo.getProgramInfo()) : null;
             status = new BillStatusView(billInfo.getStatus());
@@ -39,10 +37,6 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
 
     public boolean isSigned() {
         return signed;
-    }
-
-    public SponsorView getSponsor() {
-        return sponsor;
     }
 
     public BillStatusView getStatus() {

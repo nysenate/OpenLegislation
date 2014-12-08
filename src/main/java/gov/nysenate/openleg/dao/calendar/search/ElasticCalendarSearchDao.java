@@ -21,6 +21,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -30,6 +31,9 @@ import java.util.List;
 public class ElasticCalendarSearchDao extends ElasticBaseDao implements CalendarSearchDao {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticCalendarSearchDao.class);
+
+    @Autowired
+    CalendarViewFactory calendarViewFactory;
 
     /** --- Index Names --- */
 
@@ -111,12 +115,12 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
      * @param bulkRequest
      */
     protected void addCalToBulkRequest(Calendar calendar, BulkRequestBuilder bulkRequest) {
-        CalendarView calendarView = new CalendarView(calendar);
+        CalendarView calendarView = calendarViewFactory.getCalendarView(calendar);
         bulkRequest.add(getCalendarIndexRequest(calendarView));
         calendarView.getActiveLists().getItems().values().stream()
                 .map(this::getActiveListIndexRequest)
                 .forEach(bulkRequest::add);
-        calendarView.getFloorCalendars().getItems().values().stream()
+        calendarView.getSupplementalCalendars().getItems().values().stream()
                 .map(this::getCalendarSupplementalIndexRequest)
                 .forEach(bulkRequest::add);
     }

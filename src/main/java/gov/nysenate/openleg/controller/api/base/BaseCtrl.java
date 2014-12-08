@@ -49,7 +49,7 @@ public abstract class BaseCtrl
      */
     protected SortOrder getSortOrder(WebRequest webRequest, SortOrder defaultSortOrder) {
         try {
-            return SortOrder.valueOf(webRequest.getParameter("order"));
+            return SortOrder.valueOf(webRequest.getParameter("order").toUpperCase());
         }
         catch (Exception ex) {
             return defaultSortOrder;

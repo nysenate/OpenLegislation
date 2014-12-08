@@ -159,9 +159,9 @@ public class CalendarHTMLParser {
                 //section type is the reading number (bills on first reading)    bill id is print number put s
                 // before the number too unless it starts with a
                 //substituted bill id is number in parenthases with name still add s
-                // create different SalendarSupplementalEntry for if there is a subBillId
+                // create different SalendarSupplementalEntry for if there is a subBillInfo
                 CalendarSupplementalEntry calEntry;
-                if ((subBillNo != null) & (reading != null)) {                                                           //uses current calendar year for both billId and subBillId
+                if ((subBillNo != null) & (reading != null)) {                                                           //uses current calendar year for both billId and subBillInfo
                     calEntry = new CalendarSupplementalEntry(Integer.parseInt(billCalNo),
                             CalendarSectionType.valueOflrsRepresentation(reading), new BillId(printedNo, Integer.parseInt(yearString)),
                             new BillId(subBillNo, Integer.parseInt(yearString)), highBill);

@@ -3,6 +3,8 @@ package gov.nysenate.openleg.client.view.calendar;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 
+import java.time.LocalDate;
+
 public class CalendarIdView implements ViewObject {
     protected int year;
     protected int calendarNumber;
