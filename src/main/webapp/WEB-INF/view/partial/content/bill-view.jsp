@@ -16,8 +16,10 @@
             </div>
             <div class="blue4-bg clearfix" style="color:white;">
                 <div class="columns large-4">
-                    <h1 class="no-top-margin" style="color:white;font-size:2.5rem;line-height:80px;font-weight:600;margin-bottom:0;">
-                        <span>{{bill.basePrintNo}}{{selectedVersion}}</span ><span class=""> - {{bill.session}}</span></h1>
+                    <h1 class="no-top-margin"
+                        style="color:white;font-size:2.5rem;line-height:80px;font-weight:600;margin-bottom:0;">
+                        <span>{{bill.basePrintNo}}{{selectedVersion}}</span><span class=""> - {{bill.session}}</span>
+                    </h1>
                 </div>
                 <div class="columns large-8 vertical-align" style="height:80px;">
                 <span class="">
@@ -32,8 +34,10 @@
             <div class="margin-left-20">
                 <i class="icon-switch prefix-icon2"></i>
                 This {{bill.billType.resolution | resolutionOrBill}} has been substituted by
-                <a class="bold" ng-href="${ctxPath}/bills/{{bill.substitutedBy.session}}/{{bill.substitutedBy.basePrintNo}}">
-                    {{bill.substitutedBy.basePrintNo}}-{{bill.substitutedBy.session}}</a>. Future updates are made there.
+                <a class="bold"
+                   ng-href="${ctxPath}/bills/{{bill.substitutedBy.session}}/{{bill.substitutedBy.basePrintNo}}">
+                    {{bill.substitutedBy.basePrintNo}}-{{bill.substitutedBy.session}}</a>. Future updates are made
+                there.
             </div>
         </div>
 
@@ -51,18 +55,6 @@
                    class="margin-right-10" ng-class="{'bold': selectedVersion == amendment.version}">
                     {{amendment.version | defaultVersion}}
                 </a>
-            </div>
-            <div class="columns large-4">
-                <span class="bold">Same As - </span>
-                <a ng-repeat="sameAs in bill.amendments.items[selectedVersion].sameAs.items"
-                   ng-href="${ctxPath}/bills/{{sameAs.session}}/{{sameAs.printNo}}">{{sameAs.printNo}}-{{sameAs.session}}</a>
-                <span ng-if="bill.amendments.items[selectedVersion].sameAs.size == 0">No same as bill</span>
-            </div>
-            <div class="columns large-4">
-                <span class="bold">Previous Session - </span>
-                <a ng-repeat="prevVersion in bill.previousVersions.items"
-                   ng-href="${ctxPath}/bills/{{prevVersion.session}}/{{prevVersion.printNo}}">{{prevVersion.printNo}}-{{prevVersion.session}}</a>
-                <span ng-if="bill.previousVersions.size == 0">No prior identical bill</span>
             </div>
         </div>
 
@@ -84,7 +76,8 @@
 
         <!-- Bill Milestones -->
         <div ng-if="!bill.billType.resolution">
-            <toggle-panel open="false" label="Legislative Milestones" extra-classes="hide-for-medium-down columns large-12">
+            <toggle-panel open="false" label="Legislative Milestones"
+                          extra-classes="hide-for-medium-down columns large-12">
                 <ul class="bill-milestone-large small-block-grid-2 medium-block-grid-4 large-block-grid-8">
                     <li ng-class="{'met': milestone.actionDate != null, 'active': $last && milestone.actionDate != null}"
                         ng-repeat="milestone in paddedMilestones">
@@ -105,8 +98,9 @@
         <!-- Bill Sponsor Container -->
         <toggle-panel label="Sponsor Information" open="true" extra-classes="columns large-12 white">
             <div class="padding-20 clearfix">
-                <div class="columns large-4 no-padding margin-top-5">
-                    <img class="left margin-right-10" src="http://placekitten.com/g/37/50" style="height: 50px;"/>
+                <div class="columns large-4">
+                    <img class="left margin-right-10" src="http://placekitten.com/g/50/50"
+                         style="border-radius:50px;height: 50px;width:50px;"/>
                     <div id="sponsorName">
                         <span class="bold text-medium"
                               title="A Primary sponsor is the first member that is listed upon the introduction of a bill. A bill is allowed to have multiple prime sponsors in some cases.">Primary Sponsor</span><br/>
@@ -115,48 +109,48 @@
                         </span>
                     </div>
                 </div>
-                <div class="columns large-4 margin-top-5">
-                    <div class="margin-top-10">
-                        <span class="bold text-medium">Co-Sponsors</span><br/>
-                        <span ng-show="bill.amendments.items[selectedVersion].coSponsors.size > 0"
-                              ng-repeat="csp in bill.amendments.items[selectedVersion].coSponsors.items">
-                            <a>{{csp.fullName}}</a>{{$last ? '' : ', '}}
-                        </span>
-                        <span ng-show="bill.amendments.items[selectedVersion].coSponsors.size == 0">
-                            <span>No co-sponsors</span>
-                        </span>
-                    </div>
+                <div class="columns large-4">
+                    <hr class="show-for-medium-down"/>
+                    <span class="bold text-medium">Co-Sponsors</span><br/>
+                    <span ng-show="bill.amendments.items[selectedVersion].coSponsors.size > 0"
+                          ng-repeat="csp in bill.amendments.items[selectedVersion].coSponsors.items">
+                        <a>{{csp.fullName}}</a>{{$last ? '' : ', '}}
+                    </span>
+                    <span ng-show="bill.amendments.items[selectedVersion].coSponsors.size == 0">
+                        <span>No co-sponsors</span>
+                    </span>
                 </div>
-                <div class="columns large-4 margin-top-5">
-                    <div class="margin-top-10">
-                        <span class="bold text-medium">Multi-Sponsors</span><br/>
-                        <span ng-show="bill.amendments.items[selectedVersion].multiSponsors.size > 0"
-                              ng-repeat="msp in bill.amendments.items[selectedVersion].multiSponsors.items">
-                            <a>{{msp.fullName}}</a>{{$last ? '' : ', '}}
-                        </span>
-                        <span ng-show="bill.amendments.items[selectedVersion].multiSponsors.size == 0">
-                            <span>No multi-sponsors</span>
-                        </span>
-                    </div>
+                <div class="columns large-4">
+                    <hr class="show-for-medium-down"/>
+                    <span class="bold text-medium">Multi-Sponsors</span><br/>
+                    <span ng-show="bill.amendments.items[selectedVersion].multiSponsors.size > 0"
+                          ng-repeat="msp in bill.amendments.items[selectedVersion].multiSponsors.items">
+                        <a>{{msp.fullName}}</a>{{$last ? '' : ', '}}
+                    </span>
+                    <span ng-show="bill.amendments.items[selectedVersion].multiSponsors.size == 0">
+                        <span>No multi-sponsors</span>
+                    </span>
                 </div>
             </div>
         </toggle-panel>
 
-        <!-- Similar Bills -->
-        <toggle-panel label="Similar Legislation" open="true" extra-classes="columns large-12 white">
-            <div class="margin-top-10 clearfix">
-                <!-- Same As Bills -->
-                <div class="columns large-6 margin-bottom-10">
-                    <span class="bold-span-1">Identical bills within the same legislative session</span>
-                    <hr class="margin-top-5"/>
-                    <table style="width:100%;" class="text-left" ng-show="bill.amendments.items[selectedVersion].sameAs.size > 0">
-                        <thead>
+        <!-- Similar Bills TODO: Condense this into one table. Makes no sense to have two. -->
+        <div ng-if="bill.amendments.items[selectedVersion].sameAs.size > 0 || bill.previousVersions.size > 0">
+            <toggle-panel label="Similar Legislation" open="true" extra-classes="columns large-12 white">
+                <div class="margin-top-10 clearfix">
+                    <!-- Same As Bills -->
+                    <div class="columns large-6 margin-bottom-10">
+                        <span class="bold-span-1">Identical bills within the same legislative session</span>
+                        <hr class="margin-top-5"/>
+                        <table style="width:100%;" class="text-left"
+                               ng-show="bill.amendments.items[selectedVersion].sameAs.size > 0">
+                            <thead>
                             <tr>
                                 <td style="width: 30%">Bill Id</td>
                                 <td>Last Status</td>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             <tr ng-repeat="sameAs in bill.amendments.items[selectedVersion].sameAs.items">
                                 <td>
                                     <a ng-href="${ctxPath}/bills/{{sameAs.session}}/{{sameAs.printNo}}">
@@ -170,24 +164,24 @@
                                     </span>
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                    <div class="gray10 text-medium" ng-hide="bill.amendments.items[selectedVersion].sameAs.size > 0">
-                        No same-as bills currently.
+                            </tbody>
+                        </table>
+                        <div class="gray10 text-medium" ng-hide="bill.amendments.items[selectedVersion].sameAs.size > 0">
+                            No same-as bills currently.
+                        </div>
                     </div>
-                </div>
-                <!-- Prior Session Bills -->
-                <div class="columns large-6 margin-bottom-10">
-                    <span class="bold-span-1">Versions of this bill in prior legislative sessions.</span>
-                    <hr class="margin-top-5"/>
-                    <table style="width:100%;" class="text-left" ng-show="bill.previousVersions.size > 0">
-                        <thead>
+                    <!-- Prior Session Bills -->
+                    <div class="columns large-6 margin-bottom-10">
+                        <span class="bold-span-1">Versions of this bill in prior legislative sessions.</span>
+                        <hr class="margin-top-5"/>
+                        <table style="width:100%;" class="text-left" ng-show="bill.previousVersions.size > 0">
+                            <thead>
                             <tr>
                                 <td style="width: 30%">Bill Id</td>
                                 <td>Last Status</td>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             <tr ng-repeat="prevVersion in bill.previousVersions.items">
                                 <td>
                                     <a ng-href="${ctxPath}/bills/{{prevVersion.session}}/{{prevVersion.printNo}}">
@@ -201,14 +195,15 @@
                                     </span>
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                    <div class="gray10 text-medium" ng-hide="bill.previousVersions.size > 0">
-                        No prior bills.
+                            </tbody>
+                        </table>
+                        <div class="gray10 text-medium" ng-hide="bill.previousVersions.size > 0">
+                            No prior bills.
+                        </div>
                     </div>
                 </div>
-            </div>
-        </toggle-panel>
+            </toggle-panel>
+        </div>
 
         <!-- Bill Votes -->
         <div ng-if="bill.votes.size > 0">
@@ -227,23 +222,26 @@
                     </div>
                     <table class="columns large-9">
                         <thead>
-                            <tr><th style="width:25%">Vote</th><th>Members</th></tr>
+                        <tr>
+                            <th style="width:25%">Vote</th>
+                            <th>Members</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="(k,v) in vote.memberVotes.items">
-                                <td>{{k | voteTypeFilter}}
+                        <tr ng-repeat="(k,v) in vote.memberVotes.items">
+                            <td>{{k | voteTypeFilter}}
                                     <span class="label"
                                           ng-class="{'alert': k == 'NAY', 'success': k == 'AYE' || k == 'AYEWR',
                                                      'secondary': k == 'ABD' || k == 'ABS' || k == 'EXC'}">
                                         {{v.size}}
                                     </span>
-                                </td>
-                                <td>
-                                    <a ng-repeat="m in v.items">
-                                        {{m.shortName + ($last ? '' : ',&nbsp;&nbsp;')}}
-                                    </a>
-                                </td>
-                            </tr>
+                            </td>
+                            <td>
+                                <a ng-repeat="m in v.items">
+                                    {{m.shortName + ($last ? '' : ',&nbsp;&nbsp;')}}
+                                </a>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -255,22 +253,22 @@
             <div class="">
                 <table style="width:100%;">
                     <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Bill Id</th>
-                            <th>Date</th>
-                            <th>Chamber</th>
-                            <th>Text</th>
-                        </tr>
+                    <tr>
+                        <th>No</th>
+                        <th>Bill Id</th>
+                        <th>Date</th>
+                        <th>Chamber</th>
+                        <th>Text</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="action in bill.actions.items">
-                            <td>{{action.sequenceNo}}</td>
-                            <td>{{action.billId.printNo}}</td>
-                            <td>{{action.date | moment:'MMMM DD, YYYY'}}</td>
-                            <td>{{action.chamber}}</td>
-                            <td>{{action.text}}</td>
-                        </tr>
+                    <tr ng-repeat="action in bill.actions.items">
+                        <td>{{action.sequenceNo}}</td>
+                        <td>{{action.billId.printNo}}</td>
+                        <td>{{action.date | moment:'MMMM DD, YYYY'}}</td>
+                        <td>{{action.chamber}}</td>
+                        <td>{{action.text}}</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -280,7 +278,8 @@
         <div ng-if="bill.amendments.items[selectedVersion].memo">
             <toggle-panel label="Sponsor's Memorandum" open="true" extra-classes="columns large-12 white">
                 <div class="padding-20">
-                    <span class="text-medium" ng-bind-html="bill.amendments.items[selectedVersion].memo | prettySponsorMemo"></span>
+                    <span class="text-medium"
+                          ng-bind-html="bill.amendments.items[selectedVersion].memo | prettySponsorMemo"></span>
                 </div>
             </toggle-panel>
         </div>

@@ -34,7 +34,10 @@ openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
     });
     /** --- Laws --- */
     $routeProvider.when(ctxPath + '/laws', {
-        templateUrl: ctxPath + '/partial/content/..'
+        templateUrl: ctxPath + '/partial/content/law-search'
+    });
+    $routeProvider.when(ctxPath + '/laws/:lawId', {
+        templateUrl: ctxPath + '/partial/content/law-view'
     });
     /** --- Transcripts --- */
     $routeProvider.when(ctxPath + '/transcripts', {

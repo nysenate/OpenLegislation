@@ -47,7 +47,7 @@
 </section>
 <section class="row" ng-class="{minopacity: !showSummaries}">
     <!-- Chart Thing -->
-    <div class="row" ng-class="{minopacity: !showChart}">
+    <div class="row" ng-if="showChart">
         <section class="columns small-12 reportChart">
             <div id="report-chart-area" class="reportChart" style="display:block"></div>
         </section>

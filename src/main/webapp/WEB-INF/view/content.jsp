@@ -7,9 +7,10 @@
 <open-layout:head title="Open 2.0">
     <script src="${ctxPath}/static/js/src/component/content/content.js"></script>
     <script src="${ctxPath}/static/js/src/component/content/bill.js"></script>
+    <script src="${ctxPath}/static/js/src/component/content/law.js"></script>
 </open-layout:head>
 <open-layout:body>
     <open-component:top-nav/>
-    <div id="content" ng-view class="animate-repeat row" autoscroll="true"></div>
+    <div id="content" ng-view class="row" autoscroll="true"></div>
 </open-layout:body>
 <open-layout:footer/>
