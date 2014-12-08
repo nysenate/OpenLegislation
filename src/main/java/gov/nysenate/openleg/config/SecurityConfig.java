@@ -28,14 +28,7 @@ public class SecurityConfig
     public ShiroFilterFactoryBean shiroFilter() {
         ShiroFilterFactoryBean shiroFilter = new ShiroFilterFactoryBean();
         shiroFilter.setSecurityManager(securityManager());
-
-        shiroFilter.setLoginUrl("/admin/**");
-
-        HashMap <String, String> properties = new HashMap<>();
-        properties.put("/admin/**", "authcBasic");
-        properties.put("/logout", "logout");
-
-        shiroFilter.setFilterChainDefinitionMap(properties);
+        shiroFilter.setFilterChainDefinitionMap(shiroIniConfig().getSection("urls"));
         return shiroFilter;
     }
 
