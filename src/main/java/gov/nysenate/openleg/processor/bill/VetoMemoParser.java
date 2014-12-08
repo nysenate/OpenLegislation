@@ -30,7 +30,7 @@ public class VetoMemoParser extends BillTextParser
         Pattern.compile("\\d{5}Bill Page (\\d+), Line (\\d+)( through Line (\\d+))?.*");
 
     private static final Pattern signerPattern =
-        Pattern.compile("\\d{5}\\s*(?:The bill is disapproved.)?\\s*\\(signed\\) ([a-zA-Z.'\\- ]*[a-zA-Z.])");
+        Pattern.compile("\\d{5}\\s*(?:(?:The|These) bills? (?:is|are) disapproved\\.)?\\s*\\(signed\\) ([a-zA-Z.'\\- ]*[a-zA-Z.])");
 
     /** A veto message object that is constructed while parsing the veto memo */
     private VetoMessage vetoMessage;

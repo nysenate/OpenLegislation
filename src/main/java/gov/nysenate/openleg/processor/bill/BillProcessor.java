@@ -66,6 +66,10 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     /** The format for program info lines. */
     protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
 
+    /** Used to tokenize chunks of veto/approval messages by newlines that follow an end or delete line */
+    protected static final String vetoApprovalSplitter =
+            "(?<=00000.SO DOC (?:VETO\\d{4}|APPR\\d{3}\\s)\\s{8}(?:\\*END\\*.{3}|\\*DELETE\\*).{42})\\n";
+
     /** --- Constructors --- */
 
     public BillProcessor() {}
@@ -505,21 +509,21 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     }
 
     /**
-     * Parses a memo into either a veto or approval message
+     * Parses a chunk of memo into either veto or approval messages
      * @param data
      * @param baseBill
      * @param date
      * @throws ParseError
      */
-    private void applyVetoApprovalMessage(String data, Bill baseBill, LocalDateTime date) throws ParseError{
-        if(data.startsWith("00000.SO DOC APPR")) {       // Approval message header
-            applyApprovalMessageText(data, baseBill, date);
-        }
-        else if(data.startsWith("00000.SO DOC VETO")) {  // Veto message header
-            applyVetoMessageText(data, baseBill, date);
-        }
-        else{
-            throw new ParseError("Unrecognized veto/approval memo header");
+    private void applyVetoApprovalMessage(String data, Bill baseBill, LocalDateTime date) throws ParseError {
+        for (String vetoApprovalChunk : data.split(vetoApprovalSplitter)) {
+            if (vetoApprovalChunk.startsWith("00000.SO DOC APPR")) {       // Approval message header
+                applyApprovalMessageText(vetoApprovalChunk, baseBill, date);
+            } else if (vetoApprovalChunk.startsWith("00000.SO DOC VETO")) {  // Veto message header
+                applyVetoMessageText(vetoApprovalChunk, baseBill, date);
+            } else {
+                throw new ParseError("Unrecognized veto/approval memo header");
+            }
         }
     }
 
@@ -528,20 +532,18 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * @throws ParseError
      */
     private void applyVetoMessageText(String data, Bill baseBill, LocalDateTime date) throws ParseError{
-        for (String vetoChunk : data.split("(?<=00000.SO DOC VETO\\d{4}\\s{8}(?:\\*END\\*.{3}|\\*DELETE\\*).{42})\n")) {
-            VetoMemoParser vetoMemoParser = new VetoMemoParser(vetoChunk, date);
-            vetoMemoParser.extractText();
-            if (vetoMemoParser.isDeleted()) {
-                baseBill.getVetoMessages().remove(vetoMemoParser.getVetoId());
-            } else {
-                VetoMessage vetoMessage = vetoMemoParser.getVetoMessage();
-                vetoMessage.setSession(baseBill.getSession());
-                vetoMessage.setBillId(baseBill.getBaseBillId());
-                vetoMessage.setModifiedDateTime(date);
-                vetoMessage.setPublishedDateTime(date);
+        VetoMemoParser vetoMemoParser = new VetoMemoParser(data, date);
+        vetoMemoParser.extractText();
+        if (vetoMemoParser.isDeleted()) {
+            baseBill.getVetoMessages().remove(vetoMemoParser.getVetoId());
+        } else {
+            VetoMessage vetoMessage = vetoMemoParser.getVetoMessage();
+            vetoMessage.setSession(baseBill.getSession());
+            vetoMessage.setBillId(baseBill.getBaseBillId());
+            vetoMessage.setModifiedDateTime(date);
+            vetoMessage.setPublishedDateTime(date);
 
-                baseBill.getVetoMessages().put(vetoMessage.getVetoId(), vetoMessage);
-            }
+            baseBill.getVetoMessages().put(vetoMessage.getVetoId(), vetoMessage);
         }
     }
 
@@ -553,19 +555,16 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * @throws ParseError
      */
     private void applyApprovalMessageText(String data, Bill baseBill, LocalDateTime date) throws ParseError{
-        for (String approvalChunk :
-                data.split("(?<=00000.SO DOC VETO\\d{4}\\s{8}(?:\\*END\\*.{3}|\\*DELETE\\*).{42})\n")) {
-            ApprovalMessageParser approvalMessageParser = new ApprovalMessageParser(approvalChunk, date);
-            approvalMessageParser.extractText();
-            if (approvalMessageParser.isDeleted()) {
-                baseBill.setApprovalMessage(null);
-            } else {
-                ApprovalMessage approvalMessage = approvalMessageParser.getApprovalMessage();
-                approvalMessage.setModifiedDateTime(date);
-                approvalMessage.setPublishedDateTime(date);
+        ApprovalMessageParser approvalMessageParser = new ApprovalMessageParser(data, date);
+        approvalMessageParser.extractText();
+        if (approvalMessageParser.isDeleted()) {
+            baseBill.setApprovalMessage(null);
+        } else {
+            ApprovalMessage approvalMessage = approvalMessageParser.getApprovalMessage();
+            approvalMessage.setModifiedDateTime(date);
+            approvalMessage.setPublishedDateTime(date);
 
-                baseBill.setApprovalMessage(approvalMessage);
-            }
+            baseBill.setApprovalMessage(approvalMessage);
         }
     }
 
