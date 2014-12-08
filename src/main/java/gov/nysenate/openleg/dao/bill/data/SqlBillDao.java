@@ -117,7 +117,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         MapSqlParameterSource billParams = new MapSqlParameterSource();
         addBillIdParams(strippedBill, billParams);
         jdbcNamed.query(SqlBillQuery.SELECT_BILL_TEXT.getSql(schema()), billParams, (RowCallbackHandler) (ResultSet rs) -> {
-            BillAmendment ba = strippedBill.getAmendment(Version.of(rs.getString("version")));
+            BillAmendment ba = strippedBill.getAmendment(Version.of(rs.getString("bill_amend_version")));
             ba.setMemo(rs.getString("sponsor_memo"));
             ba.setFullText(rs.getString("full_text"));
         });
@@ -176,9 +176,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     @Override
     public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff, SortOrder billIdSort) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.getYear()));
-        OrderBy orderBy = new OrderBy("print_no", billIdSort, "session_year", billIdSort);
+        OrderBy orderBy = new OrderBy("bill_print_no", billIdSort, "bill_session_year", billIdSort);
         return jdbcNamed.query(SqlBillQuery.SELECT_BILL_IDS_BY_SESSION.getSql(schema(), orderBy, limOff), params, (rs, row) ->
-                new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
+                new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")));
     }
 
     /** {@inheritDoc} */
@@ -607,7 +607,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     {
         @Override
         public Bill mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Bill bill = new Bill(new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
+            Bill bill = new Bill(new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")));
             bill.setTitle(rs.getString("title"));
             bill.setSummary(rs.getString("summary"));
             bill.setActiveVersion(Version.of(rs.getString("active_version")));
@@ -635,7 +635,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         @Override
         public BillAmendment mapRow(ResultSet rs, int rowNum) throws SQLException {
             BaseBillId baseBillId = new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"));
-            BillAmendment amend = new BillAmendment(baseBillId, Version.of(rs.getString("version")));
+            BillAmendment amend = new BillAmendment(baseBillId, Version.of(rs.getString("bill_amend_version")));
             amend.setMemo(rs.getString("sponsor_memo"));
             amend.setActClause(rs.getString("act_clause"));
             amend.setFullText(rs.getString("full_text"));
@@ -726,7 +726,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     private static class BillMemberRowMapper implements RowMapper<Member>
     {
-        MemberService memberService;
+        private MemberService memberService;
 
         private BillMemberRowMapper(MemberService memberService) {
             this.memberService = memberService;
@@ -735,7 +735,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         @Override
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
             int sessionMemberId = rs.getInt("session_member_id");
-            SessionYear sessionYear = getSessionYearFromRs(rs, "bill_session_year");
             try {
                 return memberService.getMemberBySessionId(sessionMemberId);
             }

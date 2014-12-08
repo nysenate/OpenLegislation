@@ -21,23 +21,23 @@ import org.springframework.web.context.request.WebRequest;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * Bill Search API
+ */
 @RestController
-@RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET)
+@RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class BillSearchCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(BillSearchCtrl.class);
 
-    /** --- Request Handlers --- */
-
-    @Autowired
-    protected BillDataService billData;
-
-    @Autowired
-    protected BillSearchService billSearch;
+    @Autowired protected BillDataService billData;
+    @Autowired protected BillSearchService billSearch;
 
     /**
      * Bill Search API
+     * ---------------
      *
      * Search all bills:    (GET) /api/3/bills/search
      * Request Parameters:  term - The lucene query string
@@ -58,6 +58,7 @@ public class BillSearchCtrl extends BaseCtrl
 
     /**
      * Bill Search By Session API
+     * --------------------------
      *
      * Search all bills in a given session year: (GET) /api/3/bills/{session}/search
      * @see #globalSearch for request params

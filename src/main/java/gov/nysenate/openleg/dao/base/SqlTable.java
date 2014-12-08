@@ -8,6 +8,7 @@ package gov.nysenate.openleg.dao.base;
 public enum SqlTable
 {
     ADMIN                        ("adminuser"),
+
     AGENDA                       ("agenda"),
     AGENDA_INFO_ADDENDUM         ("agenda_info_addendum"),
     AGENDA_INFO_COMMITTEE        ("agenda_info_committee"),
@@ -18,6 +19,7 @@ public enum SqlTable
     AGENDA_VOTE_COMMITTEE_ATTEND ("agenda_vote_committee_attend"),
     AGENDA_VOTE_COMMITTEE_ITEM   ("agenda_vote_committee_item"),
     AGENDA_VOTE_COMMITTEE_VOTE   ("agenda_vote_committee_vote"),
+
     API_USER                     ("apiuser"),
 
     BILL                         ("bill"),
@@ -55,6 +57,9 @@ public enum SqlTable
     COMMITTEE                    ("committee"),
     COMMITTEE_VERSION            ("committee_version"),
     COMMITTEE_MEMBER             ("committee_member"),
+
+    DATA_PROCESS_RUN             ("data_process_run"),
+    DATA_PROCESS_LOG             ("data_process_log"),
 
     DAYBREAK_REPORT              ("daybreak_report"),
     DAYBREAK_FILE                ("daybreak_file"),

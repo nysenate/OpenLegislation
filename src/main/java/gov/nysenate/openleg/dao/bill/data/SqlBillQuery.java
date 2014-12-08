@@ -9,17 +9,17 @@ public enum SqlBillQuery implements BasicSqlQuery
 
     SELECT_BILL(
         "SELECT * FROM ${schema}." + SqlTable.BILL + "\n" +
-        "WHERE print_no = :printNo AND session_year = :sessionYear"
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
     SELECT_BILL_IDS_BY_SESSION(
-        "SELECT print_no, session_year FROM ${schema}." + SqlTable.BILL + "\n" +
-        "WHERE session_year = :sessionYear"
+        "SELECT bill_print_no, bill_session_year FROM ${schema}." + SqlTable.BILL + "\n" +
+        "WHERE bill_session_year = :sessionYear"
     ),
     SELECT_COUNT_ALL_BILLS(
         "SELECT count(*) AS total FROM ${schema}." + SqlTable.BILL
     ),
     SELECT_COUNT_ALL_BILLS_IN_SESSION(
-        SELECT_COUNT_ALL_BILLS.sql + " WHERE session_year = :sessionYear"
+        SELECT_COUNT_ALL_BILLS.sql + " WHERE bill_session_year = :sessionYear"
     ),
     UPDATE_BILL(
         "UPDATE ${schema}." + SqlTable.BILL + "\n" +
@@ -28,11 +28,11 @@ public enum SqlBillQuery implements BasicSqlQuery
         "    status = :status, status_date = :statusDate, committee_name = :committeeName, " +
         "    committee_chamber = :committeeChamber::chamber, bill_cal_no = :billCalNo, " +
         "    modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId\n" +
-        "WHERE print_no = :printNo AND session_year = :sessionYear"
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
     INSERT_BILL(
         "INSERT INTO ${schema}." + SqlTable.BILL + "\n" +
-        "(print_no, session_year, title, summary, active_version, active_year, sub_bill_print_no, " +
+        "(bill_print_no, bill_session_year, title, summary, active_version, active_year, sub_bill_print_no, " +
         " program_info, program_info_num, status, status_date, committee_name, committee_chamber, bill_cal_no, " +
         " modified_date_time, published_date_time, last_fragment_id) \n" +
         "VALUES (:printNo, :sessionYear, :title, :summary, :activeVersion, :activeYear, :subPrintNo, " +
@@ -40,7 +40,7 @@ public enum SqlBillQuery implements BasicSqlQuery
         "        :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
     ACTIVE_SESSION_YEARS(
-        "SELECT min(session_year) as min, max(session_year) as max\n" +
+        "SELECT min(bill_session_year) as min, max(bill_session_year) as max\n" +
         "FROM ${schema}." + SqlTable.BILL
     ),
 
@@ -69,7 +69,7 @@ public enum SqlBillQuery implements BasicSqlQuery
     /** --- Bill Text --- */
 
     SELECT_BILL_TEXT(
-        "SELECT bill_print_no, bill_session_year, version, sponsor_memo, full_text \n" +
+        "SELECT bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, full_text \n" +
         "FROM ${schema}.bill_amendment \n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
@@ -84,11 +84,11 @@ public enum SqlBillQuery implements BasicSqlQuery
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "SET sponsor_memo = :sponsorMemo, act_clause = :actClause, full_text = :fullText, stricken = :stricken, " +
         "    uni_bill = :uniBill, last_fragment_id = :lastFragmentId, law_section = :lawSection, law_code = :lawCode\n" +
-        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND version = :version"
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
     INSERT_BILL_AMENDMENT(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
-        "(bill_print_no, bill_session_year, version, sponsor_memo, act_clause, full_text, stricken, " +
+        "(bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, act_clause, full_text, stricken, " +
         " uni_bill, last_fragment_id, law_section, law_code)\n" +
         "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, " +
         "       :uniBill, :lastFragmentId, :lawSection, :lawCode)"

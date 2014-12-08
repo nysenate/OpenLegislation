@@ -34,16 +34,13 @@ public abstract class SqlBaseDao
     private static final Logger logger = LoggerFactory.getLogger(SqlBaseDao.class);
 
     /** JdbcTemplate reference for use by sub classes to execute SQL queries */
-    @Autowired
-    protected JdbcTemplate jdbc;
+    @Autowired protected JdbcTemplate jdbc;
 
     /** Similar to JdbcTemplate but forces the use of named query parameter for readability. */
-    @Autowired
-    protected NamedParameterJdbcTemplate jdbcNamed;
+    @Autowired protected NamedParameterJdbcTemplate jdbcNamed;
 
     /** Reference to the environment in which the data is stored */
-    @Autowired
-    protected Environment environment;
+    @Autowired protected Environment environment;
 
     @PostConstruct
     private void init() {}
@@ -59,14 +56,6 @@ public abstract class SqlBaseDao
                     "since we can't determine which database schema to operate on.");
         }
         return environment.getSchema();
-    }
-
-    protected String searchSchema() {
-        if (environment != null) {
-           /** TODO ADD SEARCH SCHEMA TO ENVIRONMENT */
-            return "master_search";
-        }
-        throw new IllegalStateException("The env has not been initialized.");
     }
 
     /**

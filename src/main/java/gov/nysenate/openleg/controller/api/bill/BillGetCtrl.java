@@ -28,24 +28,23 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * Bill retrieval APIs
  */
 @RestController
-@RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET)
+@RequestMapping(value = BASE_API_PATH + "/bills", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class BillGetCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(BillGetCtrl.class);
 
-    @Autowired
-    protected BillDataService billData;
-
-    @Autowired
-    protected BillSearchService billSearch;
+    @Autowired protected BillDataService billData;
+    @Autowired protected BillSearchService billSearch;
 
     /**
      * Bill listing API
+     * ----------------
      *
      * Retrieve bills for session year: (GET) /api/3/bills/{session}
      * Request Parameters: sort - Lucene syntax for sorting by any field from the bill response.
@@ -73,6 +72,7 @@ public class BillGetCtrl extends BaseCtrl
 
     /**
      * Single Bill retrieval API
+     * -------------------------
      *
      * Retrieve a single bill via printNo and session: (GET) /api/3/bills/{session}/{printNo}/
      * The version on the printNo is not needed since bills are returned with all amendments.
@@ -100,6 +100,7 @@ public class BillGetCtrl extends BaseCtrl
 
     /**
      * Single Bill PDF retrieval API
+     * -----------------------------
      *
      * Retrieve a single bill amendment full text: (GET) /api/3/bills/{session}/{printNo}.pdf
      * The version on the printNo will dictate which full text to output.

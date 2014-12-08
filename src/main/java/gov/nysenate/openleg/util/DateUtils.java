@@ -147,13 +147,13 @@ public abstract class DateUtils
      * Converts a LocalDate range to a closed LocalDateTime range
      * The LocalDateTimeRange includes all times that occur within the included LocalDates
      *
-     * @param dateTimeRange
+     * @param dateRange
      * @return
      */
-    public static Range<LocalDateTime> toDateTimeRange(Range<LocalDate> dateTimeRange) {
+    public static Range<LocalDateTime> toDateTimeRange(Range<LocalDate> dateRange) {
         return Range.closed(
-                startOfDateRange(dateTimeRange).atStartOfDay(),
-                endOfDateRange(dateTimeRange).plusDays(1).atStartOfDay()
+                startOfDateRange(dateRange).atStartOfDay(),
+                endOfDateRange(dateRange).plusDays(1).atStartOfDay()
         );
     }
 

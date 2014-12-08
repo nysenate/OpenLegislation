@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 
@@ -44,6 +45,7 @@ public class BaseBillId extends BillId implements Serializable
      * Return the base version by default since version info is to be ignored.
      */
     @Override
+    @JsonIgnore
     public Version getVersion() {
         return DEFAULT_VERSION;
     }
