@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.config;
 
+import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -51,8 +52,12 @@ public class WebInitializer implements WebApplicationInitializer
         /** Register Apache Shiro */
         DelegatingFilterProxy shiroFilter = new DelegatingFilterProxy("shiroFilter", dispatcherContext);
         shiroFilter.setTargetFilterLifecycle(true);
-        EnumSet<DispatcherType> dispatcherTypes = EnumSet.of(REQUEST, FORWARD, INCLUDE);
         servletContext.addFilter("shiroFilter", shiroFilter)
-                .addMappingForUrlPatterns(dispatcherTypes, false, "/*");
+            .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, "/*");
+
+        /** Cross Origin Resource Sharing Filter */
+        DelegatingFilterProxy corsFilter = new DelegatingFilterProxy("corsFilter", dispatcherContext);
+        servletContext.addFilter("corsFilter", corsFilter)
+            .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
     }
 }
