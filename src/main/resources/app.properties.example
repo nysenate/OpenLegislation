@@ -20,6 +20,14 @@ env.schema = master
 
 # --- Processing Configuration --- #
 
+# Allow persistent logging of all data processing runs
+# (Default: true)
+data.process.log.enabled = true
+
+# If process logging is enabled, allow runs with no activity to also be logged.
+# (Default: false)
+data.process.log.empty = false
+
 # When incremental updates is set to true, the data extracted from each sobi file is flushed to
 # the database immediately after processing it. When set to false, the updates are accumulated
 # and flushed depending on the sobi.batch.size as well as content specific limits. Set incremental.update
