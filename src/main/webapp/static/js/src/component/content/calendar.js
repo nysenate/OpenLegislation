@@ -130,13 +130,10 @@ function($scope, $routeParams, $location, $q, CalendarViewApi, CurrentCalendarId
         var calendarIdPromises = [];
         for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
             if (!$scope.calendarIds.hasOwnProperty(year)) {
-                console.log('getting events for ', year);
                 calendarIdPromises.push($scope.getCalendarIds(year));
             }
         }
-        console.log(calendarIdPromises);
         $q.all(calendarIdPromises).then(function() {
-            console.log($scope.calendarIds);
             for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
                 $scope.calendarIds[year]
                     .map($scope.getEvent)
@@ -144,7 +141,6 @@ function($scope, $routeParams, $location, $q, CalendarViewApi, CurrentCalendarId
                         events.push(event)
                     });
             }
-            console.log(events.z());
             callback(events);
         });
     };
