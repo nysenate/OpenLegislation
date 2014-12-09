@@ -14,6 +14,8 @@ module.exports = function(grunt) {
         jspSource: 'WEB-INF/view',
         tagSource: 'WEB-INF/tags',
         tomcatWeb: '/usr/share/tomcat7/webapps/legislation',
+        docsSourceRoot: '../../../docs',
+        docsDestRoot: 'static/docs',
 
 
         /** Compile SCSS files into css and place them into the css source directory */
@@ -60,6 +62,7 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/angular/angular.min.js',
                         '<%= bowerRoot %>/angular-route/angular-route.min.js',
                         '<%= bowerRoot %>/angular-resource/angular-resource.min.js',
+                        '<%= bowerRoot %>/angular-animate/angular-animate.min.js',
                         '<%= bowerRoot %>/angular-foundation/mm-foundation-tpls.min.js',
                         '<%= bowerRoot %>/ng-table/ng-table.js',
                         '<%= bowerRoot %>/moment/min/moment.min.js',
@@ -89,6 +92,24 @@ module.exports = function(grunt) {
                     expand:true, src: ['<%= jspSource %>/**', '<%= tagSource %>/**'], filter: 'isFile',
                     dest: '<%= tomcatWeb %>'
                 }]
+            },
+            docs : {
+                files: [{
+                    expand:true, cwd: '<%= docsDestRoot %>/', src: ['**'], filter: 'isFile',
+                    dest: '<%= tomcatWeb %>/static/docs/'
+                }]
+            }
+        },
+
+        shell: {
+            docs:  {
+                command: 'make html',
+                options: {
+                    stderr: false,
+                    execOptions: {
+                        cwd: '../../../docs'
+                    }
+                }
             }
         },
 
@@ -105,6 +126,10 @@ module.exports = function(grunt) {
             js: {
                 files: ['<%= jsSource %>/**/*.js'],
                 tasks: ['copy:js']
+            },
+            docs: {
+                files: ['<%= docsSourceRoot %>/index.rst'],
+                tasks: ['shell:docs', 'copy:docs']
             }
         }
     });
@@ -116,6 +141,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-shell');
 
     grunt.registerTask('default', ['compass', 'concat', 'cssmin', 'uglify', 'copy']);
 };
