@@ -128,7 +128,7 @@ module.exports = function(grunt) {
                 tasks: ['copy:js']
             },
             docs: {
-                files: ['<%= docsSourceRoot %>/index.rst'],
+                files: ['<%= docsSourceRoot %>/index.rst', '<%= docsSourceRoot %>/conf.py'],
                 tasks: ['shell:docs', 'copy:docs']
             }
         }

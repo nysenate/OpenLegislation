@@ -469,7 +469,7 @@ List of bills updated during the given date/time range
     /api/3/bills/updates/{fromDateTime}/{toDateTime}
 
 .. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format.
-          For example December 10, 2014, 1:30:02 PM should be inputted as 20141210T133002
+          For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02
 
 **Optional Params**
 
@@ -483,7 +483,7 @@ List of bills updated during the given date/time range
 
 Bills that were updated between December 1, 2014 and December 2, 2014
 ::
-    /api/3/bills/updates/20141201T00:00:00/20141202T00:00:00
+    /api/3/bills/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
 
 **Response (detail = false)**
 
@@ -540,7 +540,7 @@ Updates on a specific bil during a given date/time range.
 
 Updates for S1234-2013 between December 1, 2014 and December 2, 2014
 ::
-    /api/3/bills/2013/S1234/updates/20141201T00:00:00/20141202T00:00:00
+    /api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
 
 **Response**
 
