@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.client.view.calendar;
 
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 
 public class CalendarSupIdView extends CalendarIdView {
@@ -8,7 +9,16 @@ public class CalendarSupIdView extends CalendarIdView {
 
     public CalendarSupIdView(CalendarSupplementalId calendarSupplementalId) {
         super(calendarSupplementalId);
-        this.version = calendarSupplementalId.getVersion().getValue();
+        if (calendarSupplementalId != null) {
+            if (calendarSupplementalId.getVersion() != null) {
+                if (calendarSupplementalId.getVersion().equals(Version.DEFAULT)) {
+                    this.version = "floor";
+                }
+                else {
+                    this.version = calendarSupplementalId.getVersion().getValue();
+                }
+            }
+        }
     }
 
     public String getVersion() {
@@ -17,6 +27,9 @@ public class CalendarSupIdView extends CalendarIdView {
 
     @Override
     public String getViewType() {
-        return "calendar-floor-id";
+        if (this.version.equals("floor")) {
+            return "calendar-floor-id";
+        }
+        return "calendar-supplemental-id";
     }
 }

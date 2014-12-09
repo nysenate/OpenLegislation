@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.client.view.calendar;
 
 import gov.nysenate.openleg.client.view.base.MapView;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 
@@ -11,15 +12,20 @@ import java.util.stream.Collectors;
 
 public class CalendarView extends CalendarIdView {
 
-    private MapView<String, CalendarSupView> supplementalCalendars;
-    private MapView<Integer, ActiveListView> activeLists;
-    private LocalDate calDate;
+    protected CalendarSupView floorCalendar;
+    protected MapView<String, CalendarSupView> supplementalCalendars;
+    protected MapView<Integer, ActiveListView> activeLists;
+    protected LocalDate calDate;
 
     public CalendarView(Calendar calendar, BillDataService billDataService) {
         super(calendar !=null ? calendar.getId() : null);
         if (calendar != null) {
+            if (calendar.getSupplemental(Version.DEFAULT) != null) {
+                this.floorCalendar = new CalendarSupView(calendar.getSupplemental(Version.DEFAULT), billDataService);
+            }
             this.supplementalCalendars = MapView.of(
                     calendar.getSupplementalMap().values().stream()
+                            .filter((calSup) -> !calSup.getVersion().equals(Version.DEFAULT))
                             .map(calSup -> new CalendarSupView(calSup, billDataService))
                             .collect(Collectors.toMap(SimpleCalendarSupView::getVersion, Function.identity(),
                                     (a, b) -> b, TreeMap::new))
@@ -32,6 +38,10 @@ public class CalendarView extends CalendarIdView {
             );
             calDate = calendar.getCalDate();
         }
+    }
+
+    public CalendarSupView getFloorCalendar() {
+        return floorCalendar;
     }
 
     public MapView<String, CalendarSupView> getSupplementalCalendars() {

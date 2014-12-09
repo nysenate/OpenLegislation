@@ -68,6 +68,12 @@
 <li><a class="reference internal" href="#get-bill-updates"><strong>Get bill updates</strong></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#senate-calendar-api">Senate Calendar API</a><ul>
+<li><a class="reference internal" href="#get-a-single-calendar"><strong>Get a single calendar</strong></a></li>
+<li><a class="reference internal" href="#get-a-listing-of-calendars"><strong>Get a listing of calendars</strong></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#committee-api">Committee API</a></li>
 </ul>
 </div>
         
@@ -125,6 +131,7 @@ You will need to sign up for a <a class="reference external" href="http://openle
 <li>Senate Calendars</li>
 <li>NYS Laws</li>
 <li>Senate Floor and Public Hearing Transcripts</li>
+<li>Committees</li>
 </ul>
 </div></blockquote>
 </div>
@@ -140,6 +147,18 @@ You will need to sign up for a <a class="reference external" href="http://openle
 <tr class="field-even field"><th class="field-name">Bill:</th><td class="field-body">A bill is passed with the intention of amending or creating a specific portion of NYS Law.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Resolution:</th><td class="field-body">A resolution does not necessarily impact law and are often introduced to provide honorable mentions.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Calendar:</th><td class="field-body">A legislative calendar is a snapshot of the status of bills that are under discussion at a particular time.
+A calendar will typically contain a floor calendar and an active list, along with supplemental floor calendars and active lists.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Floor Calendar:</th><td class="field-body">The floor calendar is a listing of all bills that are under discussion (on the floor).  A bill must be read on the
+senate floor a minimum of three times to be eligible for a vote, and the floor calendar will indicate the number of
+readings for each bill at its time of publication.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Active List:</th><td class="field-body">An active list is a listing of bills that are scheduled for discussion during a single senate session.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Committee:</th><td class="field-body">Committees are groups of senators that are focused on particular areas of law.  Bills must be approved by a committee
+in order to be reported to the senate floor.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Uni-Bill:</th><td class="field-body">A uni bill is a bill that is sent through both chambers concurrently</td>
 </tr>
@@ -683,6 +702,103 @@ For example December 10, 2014, 1:30:02 PM should be inputted as 20141210T133002<
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
+</div>
+<div class="section" id="senate-calendar-api">
+<h1>Senate Calendar API<a class="headerlink" href="#senate-calendar-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="get-a-single-calendar">
+<h2><strong>Get a single calendar</strong><a class="headerlink" href="#get-a-single-calendar" title="Permalink to this headline">¶</a></h2>
+<p>Usage:</p>
+<div class="highlight-python"><pre>Full calendar:
+   /api/3/calendars/{year}/{calendarNumber}
+Floor calendar:
+   /api/3/calendars/{year}/{calendarNumber}/floor
+Supplemental calendar:
+   /api/3/calendars/{year}/{calendarNumber}/{versionCharacter}
+Active list:
+   /api/3/calendars/{year}/{calendarNumber}/{sequenceNumber}
+
+Optional Params:
+full (boolean) - Set to true to see the full calendar response instead of a summary.
+                  (default true)</pre>
+</div>
+<p>Examples:</p>
+<div class="highlight-python"><pre>/api/3/calendars/2014/54               (Get calendar 54 of 2014)
+/api/3/calendars/2014/54?&amp;full=false   (Get a summary of calendar 54)
+/api/3/calendars/2014/54/0             (Get the base active list for calendar 54)
+/api/3/calendars/2014/54/floor         (Get the floor calendar for calendar 54)
+/api/3/calendars/2014/54/B             (Get supplemental calendar B of calendar 54)</pre>
+</div>
+</div>
+<div class="section" id="get-a-listing-of-calendars">
+<h2><strong>Get a listing of calendars</strong><a class="headerlink" href="#get-a-listing-of-calendars" title="Permalink to this headline">¶</a></h2>
+<p>Usage:</p>
+<div class="highlight-python"><pre>Full calendars:
+   /api/3/calendars/{year}
+Supplemental/Floor calendars:
+   /api/3/calendars/{year}/supplemental
+Active lists:
+   /api/3/calendars/{year}/activelist
+
+Optional Params:
+full (boolean) - Set to true to see the full calendar responses instead of the summaries.
+      (default false)
+order ('ASC'|'DESC') - Determines the order the calendar responses.  Responses are ordered by
+      calendar number and then either sequenceNumber or version if they are active lists or
+      supplementals respectively.  (default 'ASC')
+limit (number) - Limit the number of results (default 100)
+offset (number) - Start results from offset (default 1)</pre>
+</div>
+<p>Examples:</p>
+<div class="highlight-python"><pre>/api/3/calendars/2014?full=true                       (Get all calendar data from 2014)
+/api/3/calendars/2014?limit=1&amp;order=DESC              (Get the latest calendar from 2014)
+/api/3/calendars/2014/activelist?limit=5              (Get the first 5 active lists of 2014)
+/api/3/calendars/2014/supplemental?limit=5&amp;offset=5   (Get the second 5 supplementals of 2014)</pre>
+</div>
+</div>
+</div>
+<div class="section" id="committee-api">
+<h1>Committee API<a class="headerlink" href="#committee-api" title="Permalink to this headline">¶</a></h1>
+<p><strong>Get the current version of a single committee for a given session year</strong></p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>/api/3/committees/{session}/{chamber}/{committeeName}</pre>
+</div>
+<p>Example:</p>
+<div class="highlight-python"><pre>/api/3/committees/2013/senate/Cultural%20Affairs,%20Tourism,%20Parks%20and%20Recreation</pre>
+</div>
+<p><strong>Get a committee version active at a given time for a given session year</strong></p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>/api/3/committees/{session}/{chamber}/{committeeName}/{ISODateTime}</pre>
+</div>
+<p>Example:</p>
+<div class="highlight-python"><pre>/api/3/committees/2013/senate/Codes/2014-03-01T09:30:00
+(Get the codes committee at 9:30 AM on March 1st, 2014)</pre>
+</div>
+<p><strong>Get the history for a single committee for a given session year</strong></p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>/api/3/committees/{session}/{chamber}/{committeeName}/history
+
+Optional Params:
+full (boolean) - Set to true to get full committee responses. (default false)
+order ('ASC'|'DESC') - Determines the order the committee responses.
+      Sorted by date.  (default 'DESC')
+limit (number) - Limit the number of results (default 50)
+offset (number) - Start results from offset (default 1)</pre>
+</div>
+<p>Example:</p>
+<div class="highlight-python"><pre>/api/3/committees/2013/senate/Aging/history  (Get 2013 history for the aging committee)
+/api/3/committees/2013/senate/Aging/history?limit=1&amp;order=ASC&amp;full=true
+(Get the first version of the Aging committee from 2013)</pre>
+</div>
+<p><strong>Get a listing of current committees for a given chamber</strong></p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>/api/3/committees/{session}/{chamber}
+
+Optional Params:
+full (boolean) - Set to true to see the full committee responses (default false)</pre>
+</div>
+<p>Example:</p>
+<div class="highlight-python"><pre>/api/3/committees/2013/senate?&amp;full=true  (Get full responses for all current senate committees for session 2013</pre>
 </div>
 </div>
 

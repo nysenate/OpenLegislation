@@ -11,10 +11,7 @@ import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
-import gov.nysenate.openleg.model.calendar.CalendarId;
-import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
+import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
 import org.slf4j.Logger;
@@ -126,9 +123,11 @@ public class CalendarGetCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}")
     public BaseResponse getCalendar(@PathVariable int year,
-                                    @PathVariable int calNo) {
-        return new ViewObjectResponse<>(
-                calendarViewFactory.getCalendarView(calendarDataService.getCalendar(new CalendarId(calNo, year))) );
+                                    @PathVariable int calNo,
+                                    @RequestParam(defaultValue = "true") boolean full) {
+        Calendar calendar = calendarDataService.getCalendar(new CalendarId(calNo, year));
+        return new ViewObjectResponse<>(full ? calendarViewFactory.getCalendarView(calendar)
+                                             : new SimpleCalendarView(calendar));
     }
 
     /**
@@ -140,10 +139,12 @@ public class CalendarGetCtrl extends BaseCtrl
     @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}/{sequenceNo:\\d+}")
     public BaseResponse getActiveList(@PathVariable int year,
                                       @PathVariable int calNo,
-                                      @PathVariable int sequenceNo) {
-        return new ViewObjectResponse<>(
-                calendarViewFactory.getActiveListView(
-                        calendarDataService.getActiveList(new CalendarActiveListId(calNo, year, sequenceNo))) );
+                                      @PathVariable int sequenceNo,
+                                      @RequestParam(defaultValue = "true") boolean full) {
+        CalendarActiveList activeList = calendarDataService.getActiveList(
+                                            new CalendarActiveListId(calNo, year, sequenceNo));
+        return new ViewObjectResponse<>(full ? calendarViewFactory.getActiveListView(activeList)
+                                             : new SimpleActiveListView(activeList));
     }
 
     /**
@@ -155,10 +156,15 @@ public class CalendarGetCtrl extends BaseCtrl
     @RequestMapping(value = "/{year:\\d{4}}/{calNo:\\d+}/{version:[A-z]+}")
     public BaseResponse getCalendarSupplemental(@PathVariable int year,
                                                 @PathVariable int calNo,
-                                                @PathVariable String version) {
-        return new ViewObjectResponse<>(
-                calendarViewFactory.getCalendarSupView(
-                calendarDataService.getCalendarSupplemental(new CalendarSupplementalId(calNo, year, Version.of(version))) ) );
+                                                @PathVariable String version,
+                                                @RequestParam(defaultValue = "true") boolean full) {
+        if (version.equalsIgnoreCase("floor")) {
+            version = Version.DEFAULT.getValue();
+        }
+        CalendarSupplemental calSup = calendarDataService.getCalendarSupplemental(
+                                            new CalendarSupplementalId(calNo, year, Version.of(version)));
+        return new ViewObjectResponse<>(full ? calendarViewFactory.getCalendarSupView(calSup)
+                                             : new SimpleCalendarSupView(calSup));
     }
 
     /** --- Exception Handlers --- */

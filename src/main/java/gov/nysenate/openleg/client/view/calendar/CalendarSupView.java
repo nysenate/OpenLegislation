@@ -32,6 +32,9 @@ public class CalendarSupView extends SimpleCalendarSupView {
 
     @Override
     public String getViewType() {
+        if (this.version.equals("floor")) {
+            return "calendar-floor";
+        }
         return "calendar-supplemental";
     }
 }

@@ -119,7 +119,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
             throws DataAccessException {
         OrderBy orderBy = new OrderBy("calendar_no", sortOrder, "sup_version", sortOrder);
         ImmutableParams yearParam = ImmutableParams.from(new MapSqlParameterSource("year", year));
-        return jdbcNamed.query(SqlCalendarQuery.SELECT_CALENDAR_SUPS_BY_YEAR.getSql(schema(), orderBy, limitOffset),
+        return jdbcNamed.query(SqlCalendarQuery.SELECT_CALENDAR_SUP_IDS.getSql(schema(), orderBy, limitOffset),
                 yearParam, new CalendarSupIdRowMapper());
     }
 

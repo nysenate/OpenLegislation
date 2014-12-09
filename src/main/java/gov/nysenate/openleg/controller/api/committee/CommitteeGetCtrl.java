@@ -84,7 +84,7 @@ public class CommitteeGetCtrl extends BaseCtrl
     }
 
     /**
-     * Current Committee API
+     * Current Committee List API
      *
      * Retrieve the latest versions of all committees for a given chamber for a given session year:
      *                          (GET) /api/3/committees/{sessionYear}/{chamber}
