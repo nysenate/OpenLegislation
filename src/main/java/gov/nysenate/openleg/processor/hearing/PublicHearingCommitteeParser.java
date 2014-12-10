@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.hearing;
 
+import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.hearing.PublicHearingCommittee;
 import gov.nysenate.openleg.util.PublicHearingTextUtils;
 import org.springframework.stereotype.Service;
@@ -102,7 +103,7 @@ public class PublicHearingCommitteeParser
         additionalCommitteeMatcher.find();
 
         committee.setName(additionalCommitteeMatcher.group(4));
-        committee.setChamber(additionalCommitteeMatcher.group(2));
+        committee.setChamber(Chamber.valueOf(additionalCommitteeMatcher.group(2).toUpperCase()));
         return committee;
     }
 
@@ -117,7 +118,7 @@ public class PublicHearingCommitteeParser
         matchFirstCommittee.find();
 
         committee.setName(matchFirstCommittee.group("name"));
-        committee.setChamber(matchFirstCommittee.group("chamber"));
+        committee.setChamber(Chamber.valueOf(matchFirstCommittee.group("chamber").toUpperCase()));
         return committee;
     }
 

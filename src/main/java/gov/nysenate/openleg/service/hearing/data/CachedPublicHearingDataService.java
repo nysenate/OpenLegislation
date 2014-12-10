@@ -44,8 +44,8 @@ public class CachedPublicHearingDataService implements PublicHearingDataService
 
     /** {@inheritDoc */
     @Override
-    public List<PublicHearingId> getPublicHearingIds(int year, SortOrder dateOrder, LimitOffset limitOffset) {
-        return publicHearingDao.getPublicHearingIds(year, dateOrder, limitOffset);
+    public List<PublicHearingId> getPublicHearingIds(SortOrder order, LimitOffset limitOffset) {
+        return publicHearingDao.getPublicHearingIds(order, limitOffset);
     }
 
     /** {@inheritDoc */

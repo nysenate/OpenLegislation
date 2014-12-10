@@ -11,7 +11,10 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
+import gov.nysenate.openleg.model.search.SearchException;
+import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.hearing.data.PublicHearingDataService;
+import gov.nysenate.openleg.service.hearing.search.PublicHearingSearchService;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,7 +35,19 @@ public class PublicHearingGetCtrl extends BaseCtrl
 {
 
     @Autowired
-    private PublicHearingDataService hearingDataService;
+    private PublicHearingDataService hearingData;
+
+    @Autowired
+    private PublicHearingSearchService hearingSearch;
+
+    @RequestMapping(value = "/")
+    public BaseResponse getAllHearings(@RequestParam(defaultValue = "") String sort,
+                                       WebRequest webRequest) throws SearchException {
+        LimitOffset limOff = getLimitOffset(webRequest, 10);
+        SearchResults<PublicHearingId> results = hearingSearch.searchPublicHearings(sort, limOff);
+        return ListViewResponse.of(results.getResults().stream().map(r -> new PublicHearingIdView(r.getResult()))
+                .collect(Collectors.toList()), 0, limOff);
+    }
 
     /**
      * Public Hearing Listing API.
@@ -40,16 +55,16 @@ public class PublicHearingGetCtrl extends BaseCtrl
      * Retrieve public hearings for a year: (GET) /api/3/hearings/{year}
      * Request Parameters : order - return results in ASC or DESC order
      *
-     */
+     */// TODO: add/document parameters, add full variable?
     @RequestMapping(value = "/{year:[\\d]{4}}")
     public BaseResponse getHearingsByYear(@PathVariable int year,
-                                          WebRequest webRequest) {
-        LimitOffset limOff = getLimitOffset(webRequest, 50);
-        SortOrder sortOrder = getSortOrder(webRequest, SortOrder.DESC);
+                                          WebRequest webRequest)
+                                          throws SearchException {
+        LimitOffset limOff = getLimitOffset(webRequest, 100);
+        SearchResults<PublicHearingId> results = hearingSearch.searchPublicHearings(year, null, limOff);
         return ListViewResponse.of(
-            hearingDataService.getPublicHearingIds(year, sortOrder, limOff).stream()
-                .map(hid -> new PublicHearingIdView(hid))
-                .collect(Collectors.toList()), 0, limOff);
+                results.getResults().stream().map(r -> new PublicHearingIdView(r.getResult()))
+                        .collect(Collectors.toList()), 0, limOff);
     }
 
     /**
@@ -61,12 +76,12 @@ public class PublicHearingGetCtrl extends BaseCtrl
      * i.e. /api/3/hearings/ROUNDTABLE DISCUSSION ON THE COMPASSIONATE CARE ACT/2014-03-12T10:00
      *
      */
-    @RequestMapping(value = "/{title}/{dateTime}")
-    public BaseResponse getHearing(@PathVariable String title,
-                                   @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime dateTime) {
-        return new ViewObjectResponse<>(
-                new PublicHearingView(hearingDataService.getPublicHearing(new PublicHearingId(title, dateTime))));
-    }
+//    @RequestMapping(value = "/{year}/{filename}")
+//    public BaseResponse getHearing(@PathVariable String title,
+//                                   @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime dateTime) {
+//        return new ViewObjectResponse<>(
+//                new PublicHearingView(hearingData.getPublicHearing(new PublicHearingId(title, dateTime))));
+//    }
 
     /**
      *  Single Public Hearing PDF retrieval API.
@@ -77,14 +92,14 @@ public class PublicHearingGetCtrl extends BaseCtrl
      *
      * Expected Output: PDF response.
      */
-    @RequestMapping(value = "/{title}/{dateTime}.pdf")
-    public void getHearingPdf(@PathVariable String title,
-                              @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime dateTime,
-                              HttpServletResponse response) throws IOException, COSVisitorException {
-
-        PublicHearingId hearingId = new PublicHearingId(title, dateTime);
-        PublicHearing hearing = hearingDataService.getPublicHearing(hearingId);
-        new PublicHearingPdfView(hearing, response.getOutputStream());
-        response.setContentType("application/pdf");
-    }
+//    @RequestMapping(value = "/{title}/{dateTime}.pdf")
+//    public void getHearingPdf(@PathVariable String title,
+//                              @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime dateTime,
+//                              HttpServletResponse response) throws IOException, COSVisitorException {
+//
+//        PublicHearingId hearingId = new PublicHearingId(title, dateTime);
+//        PublicHearing hearing = hearingData.getPublicHearing(hearingId);
+//        new PublicHearingPdfView(hearing, response.getOutputStream());
+//        response.setContentType("application/pdf");
+//    }
 }

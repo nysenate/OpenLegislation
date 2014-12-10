@@ -11,7 +11,7 @@ public enum SqlPublicHearingFileQuery implements BasicSqlQuery
     ),
     INSERT_PUBLIC_HEARING_FILE(
         "INSERT INTO ${schema}." + SqlTable.PUBLIC_HEARING_FILE + "\n" +
-        "(file_name,  processed_date_time, processed_count," +
+        "(filename,  processed_date_time, processed_count," +
         "pending_processing, archived)" +  "\n" +
         "VALUES (:fileName, :processedDateTime, :processedCount," +
         ":pendingProcessing, :archived)"
@@ -22,7 +22,7 @@ public enum SqlPublicHearingFileQuery implements BasicSqlQuery
         "    processed_count = :processedCount," +
         "    pending_processing = :pendingProcessing," +
         "    archived = :archived " +
-        "WHERE file_name = :fileName"
+        "WHERE filename = :fileName"
     );
 
     private String sql;

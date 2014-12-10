@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -143,6 +144,15 @@ public abstract class SqlBaseDao
     public static LocalDate getLocalDateFromRs(ResultSet rs, String column) throws SQLException {
         if (rs.getDate(column) == null) return null;
         return rs.getDate(column).toLocalDate();
+    }
+
+    /**
+     * Read the 'column' time value from the result set and cast it to a LocalTime.
+     * Return null if the column value is null.
+     */
+    public static LocalTime getLocalTimeFromRs(ResultSet rs, String column) throws SQLException {
+        if (rs.getTime(column) == null) return null;
+        return rs.getTime(column).toLocalTime();
     }
 
     /**

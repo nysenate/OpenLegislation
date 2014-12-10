@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.hearing.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -9,6 +10,16 @@ import gov.nysenate.openleg.service.hearing.event.BulkPublicHearingUpdateEvent;
 
 public interface PublicHearingSearchService
 {
+
+    /**
+     * Performs a search of all public hearing id's
+     */
+    public SearchResults<PublicHearingId> searchPublicHearings(String sort, LimitOffset limOff) throws SearchException;
+
+    /**
+     * Performs a search of public hearing id's by year.
+     */
+    public SearchResults<PublicHearingId> searchPublicHearings(int year, String sort, LimitOffset limOff) throws SearchException;
 
     /**
      * Performs a search across all public hearings.

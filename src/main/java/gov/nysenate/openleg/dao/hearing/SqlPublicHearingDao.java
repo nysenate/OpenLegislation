@@ -5,7 +5,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
-import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
@@ -26,6 +26,7 @@ import java.util.List;
 import static gov.nysenate.openleg.dao.hearing.SqlPublicHearingQuery.*;
 import static gov.nysenate.openleg.util.CollectionUtils.difference;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
+import static gov.nysenate.openleg.util.DateUtils.toTime;
 
 @Repository
 public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
@@ -37,11 +38,10 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
 
     /** {@inheritDoc} */
     @Override
-    public List<PublicHearingId> getPublicHearingIds(int year, SortOrder dateOrder, LimitOffset limOff) {
-        MapSqlParameterSource params = getPublicHearingIdYearParams(year);
-        OrderBy orderBy = new OrderBy("date_time", dateOrder);
+    public List<PublicHearingId> getPublicHearingIds(SortOrder order, LimitOffset limOff) {
+        OrderBy orderBy = new OrderBy("filename", order);
         List<PublicHearingId> ids = jdbcNamed.query(
-                SELECT_PUBLIC_HEARING_IDS_BY_YEAR.getSql(schema(), orderBy, limOff), params, publicHearingIdRowMapper);
+                SELECT_PUBLIC_HEARING_IDS.getSql(schema(), orderBy, limOff), publicHearingIdRowMapper);
         return ids;
     }
 
@@ -144,69 +144,71 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
 
     private MapSqlParameterSource getPublicHearingParams(PublicHearing publicHearing, PublicHearingFile publicHearingFile) {
         MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("filename", publicHearingFile.getFileName());
+        params.addValue("date", toDate(publicHearing.getDate()));
         params.addValue("title", publicHearing.getTitle());
-        params.addValue("dateTime", toDate(publicHearing.getDateTime()));
-        params.addValue("publicHearingFile", publicHearingFile.getFileName());
         params.addValue("address", publicHearing.getAddress());
         params.addValue("text", publicHearing.getText());
+        params.addValue("startTime", toTime(publicHearing.getStartTime()));
+        params.addValue("endTime", toTime(publicHearing.getEndTime()));
+        addModPubDateParams(publicHearing.getModifiedDateTime(), publicHearing.getPublishedDateTime(), params);
         return params;
     }
 
     private MapSqlParameterSource getPublicHearingIdParams(PublicHearingId publicHearingId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("title", publicHearingId.getTitle());
-        params.addValue("dateTime", toDate(publicHearingId.getDateTime()));
+        params.addValue("filename", publicHearingId.getFileName());
         return params;
     }
 
-    private MapSqlParameterSource getPublicHearingIdYearParams(int year) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("year", year);
-        return params;
-    }
+//    private MapSqlParameterSource getPublicHearingIdYearParams(int year) {
+//        MapSqlParameterSource params = new MapSqlParameterSource();
+//        params.addValue("year", year);
+//        return params;
+//    }
 
     private MapSqlParameterSource getAttendanceParams(PublicHearingId id, Member member) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("title", id.getTitle());
-        params.addValue("dateTime", toDate(id.getDateTime()));
+        params.addValue("filename", id.getFileName());
         params.addValue("sessionMemberId", member.getSessionMemberId());
         return params;
     }
 
     private MapSqlParameterSource getCommitteeParams(PublicHearingId id, PublicHearingCommittee committee) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("title", id.getTitle());
-        params.addValue("dateTime", toDate(id.getDateTime()));
+        params.addValue("filename", id.getFileName());
         params.addValue("committeeName", committee.getName());
-        params.addValue("committeeChamber", committee.getChamber());
+        params.addValue("committeeChamber", committee.getChamber().name().toLowerCase());
         return params;
     }
-
 
     /** --- Row Mapper Instances --- */
 
     static RowMapper<PublicHearing> publicHearingRowMapper = (rs, rowNum) -> {
-        PublicHearingId id = new PublicHearingId(rs.getString("title"), getLocalDateTimeFromRs(rs, "date_time"));
-        PublicHearing publicHearing = new PublicHearing(id, rs.getString("address"), rs.getString("text"));
+        PublicHearingId id = new PublicHearingId(rs.getString("filename"));
+        PublicHearing publicHearing = new PublicHearing(id, getLocalDateFromRs(rs, "date"), rs.getString("text"));
+        publicHearing.setTitle(rs.getString("title"));
+        publicHearing.setAddress(rs.getString("address"));
+        publicHearing.setStartTime(getLocalTimeFromRs(rs, "start_time"));
+        publicHearing.setEndTime(getLocalTimeFromRs(rs, "end_time"));
         publicHearing.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));
         publicHearing.setPublishedDateTime(getLocalDateTimeFromRs(rs, "published_date_time"));
         return publicHearing;
     };
 
     static RowMapper<PublicHearingId> publicHearingIdRowMapper = (rs, rowNum) ->
-            new PublicHearingId(rs.getString("title"), getLocalDateTimeFromRs(rs, "date_time"));
+            new PublicHearingId(rs.getString("filename"));
 
     static RowMapper<Member> attendanceMemberIdRowMapper = (rs, rowNum) -> {
         Member member = new Member();
         member.setSessionMemberId(rs.getInt("session_member_id"));
-        member.setSessionYear(SessionYear.of(getLocalDateTimeFromRs(rs, "date_time").getYear()));
         return member;
     };
 
     static RowMapper<PublicHearingCommittee> committeeRowMapper = (rs, rowNum) -> {
         PublicHearingCommittee committee = new PublicHearingCommittee();
         committee.setName(rs.getString("committee_name"));
-        committee.setChamber(rs.getString("committee_chamber"));
+        committee.setChamber(Chamber.valueOf(rs.getString("committee_chamber").toUpperCase()));
         return committee;
     };
 }

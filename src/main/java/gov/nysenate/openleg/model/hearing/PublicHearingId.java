@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.model.hearing;
 
+import com.google.common.collect.ComparisonChain;
+
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -11,55 +14,42 @@ public class PublicHearingId implements Serializable, Comparable<PublicHearingId
 
     private static final long serialVersionUID = -1772963995918679372L;
 
-    /** The title of the public hearing */
-    private String title;
-
-    /** The date time this public hearing was held */
-    private LocalDateTime dateTime;
+    /** The public hearing's file name */
+    private String fileName;
 
     /** --- Constructors --- */
 
-    public PublicHearingId(String title, LocalDateTime dateTime) {
-        this.title = title;
-        this.dateTime = dateTime;
+    public PublicHearingId(String fileName) {
+        this.fileName = fileName;
     }
 
     /** --- Overrides --- */
 
     @Override
     public int compareTo(PublicHearingId o) {
-        return 0;
+        return ComparisonChain.start()
+                .compare(this.fileName, o.getFileName())
+                .result();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PublicHearingId that = (PublicHearingId) o;
-        if (dateTime != null ? !dateTime.equals(that.dateTime) : that.dateTime != null) return false;
-        if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        PublicHearingId hearingId = (PublicHearingId) o;
+        if (fileName != null ? !fileName.equals(hearingId.fileName) : hearingId.fileName != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = title != null ? title.hashCode() : 0;
-        result = 31 * result + (dateTime != null ? dateTime.hashCode() : 0);
-        return result;
+        return fileName != null ? fileName.hashCode() : 0;
     }
 
     /** --- Basic Getters/Setters --- */
 
-    protected int getYear() {
-        return dateTime.getYear();
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public String getFileName() {
+        return fileName;
     }
 }

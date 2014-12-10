@@ -9,9 +9,12 @@ import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
-import org.apache.lucene.queryparser.xml.FilterBuilder;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -31,7 +34,10 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
     /** {@inheritDoc} */
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limOff) {
-        return null;
+        SearchRequestBuilder searchBuilder = getSearchRequest(publicHearingIndexName, query, filter, sort, limOff);
+        SearchResponse response = searchBuilder.execute().actionGet();
+        logger.debug("Public Hearing search result with query {} took {} ms", query, response.getTookInMillis());
+        return getSearchResults(response, limOff, this::getPublicHearingIdFromHit);
     }
 
     /** {@inheritDoc} */
@@ -47,7 +53,7 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
             BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
             List<PublicHearingView> publicHearingViews = publicHearings.stream().map(PublicHearingView::new).collect(Collectors.toList());
             publicHearingViews.forEach(ph ->
-                    bulkRequest.add(searchClient.prepareIndex(publicHearingIndexName, ph.getTitle(), ph.getDateTime().toString())
+                    bulkRequest.add(searchClient.prepareIndex(publicHearingIndexName, "hearings", ph.getFilename())
                             .setSource(OutputUtils.toJson(ph)))
             );
             safeBulkRequestExecute(bulkRequest);
@@ -58,7 +64,7 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
     @Override
     public void deletePublicHearingFromIndex(PublicHearingId publicHearingId) {
         if (publicHearingId != null) {
-            deleteEntry(publicHearingIndexName, publicHearingId.getTitle(), publicHearingId.getDateTime().toString());
+            deleteEntry(publicHearingIndexName, "hearings", publicHearingId.getFileName());
         }
     }
 
@@ -66,5 +72,9 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
     @Override
     protected List<String> getIndices() {
         return Lists.newArrayList(publicHearingIndexName);
+    }
+
+    private PublicHearingId getPublicHearingIdFromHit(SearchHit hit) {
+        return new PublicHearingId(hit.getId());
     }
 }
