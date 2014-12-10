@@ -392,7 +392,7 @@ CREATE TABLE active_list_reference (
 );
 
 
-ALTER TABLE master.active_list_reference OWNER TO kyle;
+ALTER TABLE master.active_list_reference OWNER TO postgres;
 
 --
 -- Name: TABLE active_list_reference; Type: COMMENT; Schema: master; Owner: kyle
@@ -415,7 +415,7 @@ CREATE TABLE active_list_reference_entry (
 );
 
 
-ALTER TABLE master.active_list_reference_entry OWNER TO kyle;
+ALTER TABLE master.active_list_reference_entry OWNER TO postgres;
 
 --
 -- Name: TABLE active_list_reference_entry; Type: COMMENT; Schema: master; Owner: kyle
@@ -436,7 +436,7 @@ CREATE SEQUENCE active_list_reference_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.active_list_reference_id_seq OWNER TO kyle;
+ALTER TABLE master.active_list_reference_id_seq OWNER TO postgres;
 
 --
 -- Name: active_list_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: kyle
@@ -2517,11 +2517,13 @@ COMMENT ON VIEW psf IS 'Pending Sobi Fragments';
 --
 
 CREATE TABLE public_hearing (
-    title text NOT NULL,
-    date_time timestamp without time zone NOT NULL,
-    public_hearing_file text NOT NULL,
-    address text NOT NULL,
+    filename text NOT NULL,
+    title text,
+    address text,
     text text NOT NULL,
+    date date NOT NULL,
+    start_time time without time zone,
+    end_time time without time zone,
     modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
     published_date_time timestamp without time zone DEFAULT now() NOT NULL,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL
@@ -2538,24 +2540,17 @@ COMMENT ON TABLE public_hearing IS 'Listing of all processed public hearings';
 
 
 --
+-- Name: COLUMN public_hearing.filename; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing.filename IS 'The name of the file containing this public hearing''s info.';
+
+
+--
 -- Name: COLUMN public_hearing.title; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON COLUMN public_hearing.title IS 'The title of the public hearing.';
-
-
---
--- Name: COLUMN public_hearing.date_time; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN public_hearing.date_time IS 'The date time of the public hearing.';
-
-
---
--- Name: COLUMN public_hearing.public_hearing_file; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN public_hearing.public_hearing_file IS 'The name of the file containing this public hearing''s info.';
 
 
 --
@@ -2573,27 +2568,53 @@ COMMENT ON COLUMN public_hearing.text IS 'The raw text of this public hearing.';
 
 
 --
+-- Name: COLUMN public_hearing.date; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing.date IS 'The date of the public hearing';
+
+
+--
+-- Name: COLUMN public_hearing.start_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing.start_time IS 'Time the public hearing started.';
+
+
+--
+-- Name: COLUMN public_hearing.end_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing.end_time IS 'Time the public hearing ended.';
+
+
+--
 -- Name: public_hearing_attendance; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE public_hearing_attendance (
-    title text NOT NULL,
-    date_time timestamp without time zone NOT NULL,
-    session_member_id integer NOT NULL
+    session_member_id integer NOT NULL,
+    filename text NOT NULL
 );
 
 
 ALTER TABLE master.public_hearing_attendance OWNER TO postgres;
 
 --
+-- Name: COLUMN public_hearing_attendance.filename; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing_attendance.filename IS 'Filename of the public hearing.';
+
+
+--
 -- Name: public_hearing_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE public_hearing_committee (
-    title text NOT NULL,
-    date_time timestamp without time zone NOT NULL,
-    committee_name text NOT NULL,
-    committee_chamber text NOT NULL
+    committee_name public.citext NOT NULL,
+    committee_chamber public.chamber NOT NULL,
+    filename text NOT NULL
 );
 
 
@@ -2610,7 +2631,14 @@ COMMENT ON COLUMN public_hearing_committee.committee_name IS 'The committee, Tas
 -- Name: COLUMN public_hearing_committee.committee_chamber; Type: COMMENT; Schema: master; Owner: postgres
 --
 
-COMMENT ON COLUMN public_hearing_committee.committee_chamber IS 'The chamber of the committee.';
+COMMENT ON COLUMN public_hearing_committee.committee_chamber IS 'The chamber of the committee';
+
+
+--
+-- Name: COLUMN public_hearing_committee.filename; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing_committee.filename IS 'The public hearing filename.';
 
 
 --
@@ -2618,7 +2646,7 @@ COMMENT ON COLUMN public_hearing_committee.committee_chamber IS 'The chamber of 
 --
 
 CREATE TABLE public_hearing_file (
-    file_name text NOT NULL,
+    filename text NOT NULL,
     staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
     processed_date_time timestamp without time zone,
     processed_count smallint DEFAULT 0 NOT NULL,
@@ -2637,10 +2665,10 @@ COMMENT ON TABLE public_hearing_file IS 'Listing of all public hearing files';
 
 
 --
--- Name: COLUMN public_hearing_file.file_name; Type: COMMENT; Schema: master; Owner: postgres
+-- Name: COLUMN public_hearing_file.filename; Type: COMMENT; Schema: master; Owner: postgres
 --
 
-COMMENT ON COLUMN public_hearing_file.file_name IS 'The name of the public hearing file.';
+COMMENT ON COLUMN public_hearing_file.filename IS 'The name of the public hearing file.';
 
 
 --
@@ -2676,6 +2704,59 @@ COMMENT ON COLUMN public_hearing_file.pending_processing IS 'Indicates if this p
 --
 
 COMMENT ON COLUMN public_hearing_file.archived IS 'Indicates if this public hearing file has been moved to the archive directory.';
+
+--
+-- Name: public_hearing_attendance_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_hearing_attendance
+    ADD CONSTRAINT public_hearing_attendance_pkey PRIMARY KEY (session_member_id, filename);
+
+--
+-- Name: public_hearing_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_hearing_committee
+    ADD CONSTRAINT public_hearing_committee_pkey PRIMARY KEY (committee_name, filename, committee_chamber);
+
+
+--
+-- Name: public_hearing_file_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_hearing_file
+    ADD CONSTRAINT public_hearing_file_pkey PRIMARY KEY (filename);
+
+
+--
+-- Name: public_hearing_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_hearing
+    ADD CONSTRAINT public_hearing_pkey PRIMARY KEY (filename);
+
+
+--
+-- Name: public_hearing_attendance_filename_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY public_hearing_attendance
+    ADD CONSTRAINT public_hearing_attendance_filename_fkey FOREIGN KEY (filename) REFERENCES public_hearing(filename);
+
+--
+-- Name: public_hearing_committee_filename_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY public_hearing_committee
+    ADD CONSTRAINT public_hearing_committee_filename_fkey FOREIGN KEY (filename) REFERENCES public_hearing(filename);
+
+
+--
+-- Name: public_hearing_filename_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY public_hearing
+    ADD CONSTRAINT public_hearing_filename_fkey FOREIGN KEY (filename) REFERENCES public_hearing_file(filename);
 
 
 --
@@ -3922,37 +4003,6 @@ ALTER TABLE ONLY law_tree
     ADD CONSTRAINT law_tree_pkey PRIMARY KEY (law_id, published_date, doc_id, doc_published_date);
 
 
---
--- Name: public_hearing_attendance_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_pkey PRIMARY KEY (title, date_time, session_member_id);
-
-
---
--- Name: public_hearing_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing_committee
-    ADD CONSTRAINT public_hearing_committee_pkey PRIMARY KEY (title, date_time, committee_name, committee_chamber);
-
-
---
--- Name: public_hearing_file_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing_file
-    ADD CONSTRAINT public_hearing_file_pkey PRIMARY KEY (file_name);
-
-
---
--- Name: public_hearing_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing
-    ADD CONSTRAINT public_hearing_pkey PRIMARY KEY (title, date_time);
-
 
 --
 -- Name: sobi_fragment_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
@@ -4069,6 +4119,14 @@ ALTER TABLE ONLY session_member
 
 
 SET search_path = master, pg_catalog;
+
+
+--
+-- Name: public_hearing_attendance_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY public_hearing_attendance
+    ADD CONSTRAINT public_hearing_attendance_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id);
 
 --
 -- Name: agenda_info_committee_item_bill_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
@@ -4922,38 +4980,6 @@ ALTER TABLE ONLY law_tree
 
 ALTER TABLE ONLY law_tree
     ADD CONSTRAINT law_tree_parent_doc_id_fkey FOREIGN KEY (parent_doc_id, parent_doc_published_date) REFERENCES law_document(document_id, published_date) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: public_hearing_attendance_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: public_hearing_attendance_title_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_title_fkey FOREIGN KEY (title, date_time) REFERENCES public_hearing(title, date_time);
-
-
---
--- Name: public_hearing_committee_title_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing_committee
-    ADD CONSTRAINT public_hearing_committee_title_fkey FOREIGN KEY (title, date_time) REFERENCES public_hearing(title, date_time) ON DELETE CASCADE;
-
-
---
--- Name: public_hearing_public_hearing_file_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing
-    ADD CONSTRAINT public_hearing_public_hearing_file_fkey FOREIGN KEY (public_hearing_file) REFERENCES public_hearing_file(file_name);
 
 
 --
