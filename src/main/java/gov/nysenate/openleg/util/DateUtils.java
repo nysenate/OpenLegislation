@@ -21,6 +21,7 @@ public abstract class DateUtils
     public final static DateTimeFormatter LRS_ACTIONS_DATE = DateTimeFormatter.ofPattern("MM/dd/yy");
     public final static DateTimeFormatter LRS_DATE_ONLY_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public final static DateTimeFormatter LRS_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH.mm.ss'Z'");
+    public final static DateTimeFormatter LRS_WEBSITE_DATETIME_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yy hh:mm a");
 
     /** --- Reference Dates --- */
 
@@ -77,6 +78,14 @@ public abstract class DateUtils
      */
     public static LocalDateTime getLrsDateTime(String lbdcDateTime) {
         return LocalDateTime.from(LRS_DATETIME_FORMAT.parse(lbdcDateTime));
+    }
+
+    /**
+     * Extract the Date (with time) from the LRS formatted date/time string.
+     * @throws java.time.format.DateTimeParseException if unable to parse the requested result.
+     */
+    public static LocalDateTime getLrsWebsiteDateTime(String lbdcDateTime) {
+        return LocalDateTime.from(LRS_WEBSITE_DATETIME_FORMAT.parse(lbdcDateTime));
     }
 
     /**

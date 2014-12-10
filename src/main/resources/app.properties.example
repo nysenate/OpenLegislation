@@ -16,6 +16,10 @@ default.admin.password =
 env.directory = /data/openleg
 env.staging = /data/openleg/data
 env.archive = /data/openleg/archive
+env.scraped = /data/openleg/scraped
+env.scraped.calendar = {{env.scraped}}/calendar
+env.scraped.assemblyagenda = /data/openleg/scraped/ASMAGEN
+env.scraped.senateagenda = /data/openleg/scraped/SENAGEN
 env.schema = master
 
 # --- Processing Configuration --- #

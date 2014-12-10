@@ -26,42 +26,42 @@ COMMENT ON SCHEMA master IS 'Processed legislative data';
 
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
--- Name: citext; Type: EXTENSION; Schema: -; Owner:
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: 
 --
 
 CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner:
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
 
 
 --
--- Name: hstore; Type: EXTENSION; Schema: -; Owner:
+-- Name: hstore; Type: EXTENSION; Schema: -; Owner: 
 --
 
 CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner:
+-- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
@@ -378,6 +378,74 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: active_list_reference; Type: TABLE; Schema: master; Owner: kyle; Tablespace: 
+--
+
+CREATE TABLE active_list_reference (
+    sequence_no smallint NOT NULL,
+    calendar_no smallint,
+    calendar_year smallint,
+    id integer NOT NULL,
+    calendar_date date,
+    release_date_time timestamp without time zone,
+    reference_date timestamp without time zone
+);
+
+
+ALTER TABLE master.active_list_reference OWNER TO kyle;
+
+--
+-- Name: TABLE active_list_reference; Type: COMMENT; Schema: master; Owner: kyle
+--
+
+COMMENT ON TABLE active_list_reference IS 'Table containing spotcheck report for active lists';
+
+
+--
+-- Name: active_list_reference_entry; Type: TABLE; Schema: master; Owner: kyle; Tablespace: 
+--
+
+CREATE TABLE active_list_reference_entry (
+    active_list_reference_id smallint NOT NULL,
+    bill_calendar_no smallint NOT NULL,
+    bill_print_no text,
+    bill_amend_version character(1),
+    bill_session_year smallint,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE master.active_list_reference_entry OWNER TO kyle;
+
+--
+-- Name: TABLE active_list_reference_entry; Type: COMMENT; Schema: master; Owner: kyle
+--
+
+COMMENT ON TABLE active_list_reference_entry IS 'Bill contained in an active list';
+
+
+--
+-- Name: active_list_reference_id_seq; Type: SEQUENCE; Schema: master; Owner: kyle
+--
+
+CREATE SEQUENCE active_list_reference_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE master.active_list_reference_id_seq OWNER TO kyle;
+
+--
+-- Name: active_list_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: kyle
+--
+
+ALTER SEQUENCE active_list_reference_id_seq OWNED BY active_list_reference.id;
+
+
+--
 -- Name: agenda; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -686,8 +754,8 @@ ALTER SEQUENCE agenda_vote_committee_vote_id_seq OWNED BY agenda_vote_committee_
 --
 
 CREATE TABLE bill (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
+    print_no text NOT NULL,
+    session_year smallint NOT NULL,
     title text,
     summary text,
     active_version character(1) NOT NULL,
@@ -717,17 +785,17 @@ COMMENT ON TABLE bill IS 'General information about a bill';
 
 
 --
--- Name: COLUMN bill.bill_print_no; Type: COMMENT; Schema: master; Owner: postgres
+-- Name: COLUMN bill.print_no; Type: COMMENT; Schema: master; Owner: postgres
 --
 
-COMMENT ON COLUMN bill.bill_print_no IS 'The base print no (e.g S1234)';
+COMMENT ON COLUMN bill.print_no IS 'The base print no (e.g S1234)';
 
 
 --
--- Name: COLUMN bill.bill_session_year; Type: COMMENT; Schema: master; Owner: postgres
+-- Name: COLUMN bill.session_year; Type: COMMENT; Schema: master; Owner: postgres
 --
 
-COMMENT ON COLUMN bill.bill_session_year IS 'The session year this bill was active in';
+COMMENT ON COLUMN bill.session_year IS 'The session year this bill was active in';
 
 
 --
@@ -849,7 +917,7 @@ COMMENT ON COLUMN bill.last_fragment_id IS 'Reference to the last sobi fragment 
 CREATE TABLE bill_amendment (
     bill_print_no text NOT NULL,
     bill_session_year smallint NOT NULL,
-    bill_amend_version character(1) NOT NULL,
+    version character(1) NOT NULL,
     sponsor_memo text,
     act_clause text,
     full_text text,
@@ -1801,75 +1869,6 @@ ALTER SEQUENCE committee_version_id_seq OWNED BY committee_version.id;
 
 
 --
--- Name: data_process_run_unit; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE data_process_run_unit (
-    process_id integer NOT NULL,
-    source_type text NOT NULL,
-    source_id text NOT NULL,
-    action text NOT NULL,
-    id integer NOT NULL,
-    start_date_time timestamp without time zone NOT NULL,
-    end_date_time timestamp without time zone,
-    messages text,
-    errors text
-);
-
-
-ALTER TABLE master.data_process_run_unit OWNER TO postgres;
-
---
--- Name: TABLE data_process_run_unit; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON TABLE data_process_run_unit IS 'Detailed logs pertaining to each data process';
-
-
---
--- Name: data_process_log_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
---
-
-CREATE SEQUENCE data_process_log_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE master.data_process_log_id_seq OWNER TO postgres;
-
---
--- Name: data_process_log_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
---
-
-ALTER SEQUENCE data_process_log_id_seq OWNED BY data_process_run_unit.id;
-
-
---
--- Name: data_process_run; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE data_process_run (
-    id integer NOT NULL,
-    process_start_date_time timestamp without time zone NOT NULL,
-    process_end_date_time timestamp without time zone,
-    invoked_by text NOT NULL,
-    exceptions text
-);
-
-
-ALTER TABLE master.data_process_run OWNER TO postgres;
-
---
--- Name: TABLE data_process_run; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON TABLE data_process_run IS 'Keeps track of data processing runs';
-
-
---
 -- Name: daybreak_bill; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -2082,17 +2081,6 @@ ALTER TABLE master.daybreak_report OWNER TO postgres;
 
 COMMENT ON TABLE daybreak_report IS 'Indicates which set of daybreaks reports have been generated for';
 
-
---
--- Name: law_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE law_change_log (
-    action text
-);
-
-
-ALTER TABLE master.law_change_log OWNER TO postgres;
 
 --
 -- Name: law_document; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
@@ -2524,19 +2512,16 @@ ALTER TABLE master.psf OWNER TO postgres;
 COMMENT ON VIEW psf IS 'Pending Sobi Fragments';
 
 
-
 --
 -- Name: public_hearing; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE public_hearing (
-    filename text NOT NULL,
-    title text,
-    address text,
+    title text NOT NULL,
+    date_time timestamp without time zone NOT NULL,
+    public_hearing_file text NOT NULL,
+    address text NOT NULL,
     text text NOT NULL,
-    date date NOT NULL,
-    start_time time without time zone,
-    end_time time without time zone,
     modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
     published_date_time timestamp without time zone DEFAULT now() NOT NULL,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL
@@ -2553,17 +2538,24 @@ COMMENT ON TABLE public_hearing IS 'Listing of all processed public hearings';
 
 
 --
--- Name: COLUMN public_hearing.filename; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN public_hearing.filename IS 'The name of the file containing this public hearing''s info.';
-
-
---
 -- Name: COLUMN public_hearing.title; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON COLUMN public_hearing.title IS 'The title of the public hearing.';
+
+
+--
+-- Name: COLUMN public_hearing.date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing.date_time IS 'The date time of the public hearing.';
+
+
+--
+-- Name: COLUMN public_hearing.public_hearing_file; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing.public_hearing_file IS 'The name of the file containing this public hearing''s info.';
 
 
 --
@@ -2581,53 +2573,27 @@ COMMENT ON COLUMN public_hearing.text IS 'The raw text of this public hearing.';
 
 
 --
--- Name: COLUMN public_hearing.date; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN public_hearing.date IS 'The date of the public hearing';
-
-
---
--- Name: COLUMN public_hearing.start_time; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN public_hearing.start_time IS 'Time the public hearing started.';
-
-
---
--- Name: COLUMN public_hearing.end_time; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN public_hearing.end_time IS 'Time the public hearing ended.';
-
-
---
 -- Name: public_hearing_attendance; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE public_hearing_attendance (
-    session_member_id integer NOT NULL,
-    filename text NOT NULL
+    title text NOT NULL,
+    date_time timestamp without time zone NOT NULL,
+    session_member_id integer NOT NULL
 );
 
 
 ALTER TABLE master.public_hearing_attendance OWNER TO postgres;
 
 --
--- Name: COLUMN public_hearing_attendance.filename; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN public_hearing_attendance.filename IS 'Filename of the public hearing.';
-
-
---
 -- Name: public_hearing_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE public_hearing_committee (
-    committee_name public.citext NOT NULL,
-    committee_chamber public.chamber NOT NULL,
-    filename text NOT NULL
+    title text NOT NULL,
+    date_time timestamp without time zone NOT NULL,
+    committee_name text NOT NULL,
+    committee_chamber text NOT NULL
 );
 
 
@@ -2644,14 +2610,7 @@ COMMENT ON COLUMN public_hearing_committee.committee_name IS 'The committee, Tas
 -- Name: COLUMN public_hearing_committee.committee_chamber; Type: COMMENT; Schema: master; Owner: postgres
 --
 
-COMMENT ON COLUMN public_hearing_committee.committee_chamber IS 'The chamber of the committee';
-
-
---
--- Name: COLUMN public_hearing_committee.filename; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN public_hearing_committee.filename IS 'The public hearing filename.';
+COMMENT ON COLUMN public_hearing_committee.committee_chamber IS 'The chamber of the committee.';
 
 
 --
@@ -2659,7 +2618,7 @@ COMMENT ON COLUMN public_hearing_committee.filename IS 'The public hearing filen
 --
 
 CREATE TABLE public_hearing_file (
-    filename text NOT NULL,
+    file_name text NOT NULL,
     staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
     processed_date_time timestamp without time zone,
     processed_count smallint DEFAULT 0 NOT NULL,
@@ -2678,10 +2637,10 @@ COMMENT ON TABLE public_hearing_file IS 'Listing of all public hearing files';
 
 
 --
--- Name: COLUMN public_hearing_file.filename; Type: COMMENT; Schema: master; Owner: postgres
+-- Name: COLUMN public_hearing_file.file_name; Type: COMMENT; Schema: master; Owner: postgres
 --
 
-COMMENT ON COLUMN public_hearing_file.filename IS 'The name of the public hearing file.';
+COMMENT ON COLUMN public_hearing_file.file_name IS 'The name of the public hearing file.';
 
 
 --
@@ -2720,63 +2679,7 @@ COMMENT ON COLUMN public_hearing_file.archived IS 'Indicates if this public hear
 
 
 --
--- Name: public_hearing_attendance_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_pkey PRIMARY KEY (session_member_id, filename);
-
-
---
--- Name: public_hearing_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing_committee
-    ADD CONSTRAINT public_hearing_committee_pkey PRIMARY KEY (committee_name, filename, committee_chamber);
-
-
---
--- Name: public_hearing_file_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing_file
-    ADD CONSTRAINT public_hearing_file_pkey PRIMARY KEY (filename);
-
-
---
--- Name: public_hearing_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing
-    ADD CONSTRAINT public_hearing_pkey PRIMARY KEY (filename);
-
-
---
--- Name: public_hearing_attendance_filename_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_filename_fkey FOREIGN KEY (filename) REFERENCES public_hearing(filename);
-
-
---
--- Name: public_hearing_committee_filename_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing_committee
-    ADD CONSTRAINT public_hearing_committee_filename_fkey FOREIGN KEY (filename) REFERENCES public_hearing(filename);
-
-
---
--- Name: public_hearing_filename_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing
-    ADD CONSTRAINT public_hearing_filename_fkey FOREIGN KEY (filename) REFERENCES public_hearing_file(filename);
-
-
---
--- Name: sobi_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: sobi_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE sobi_change_log (
@@ -2878,6 +2781,18 @@ COMMENT ON COLUMN sobi_file.archived IS 'Indicates if the file has been moved in
 
 
 --
+-- Name: sobi_fragment_process; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE sobi_fragment_process (
+    id integer NOT NULL,
+    fragment_id text NOT NULL
+);
+
+
+ALTER TABLE master.sobi_fragment_process OWNER TO postgres;
+
+--
 -- Name: sobi_fragment_process_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
@@ -2895,7 +2810,7 @@ ALTER TABLE master.sobi_fragment_process_id_seq OWNER TO postgres;
 -- Name: sobi_fragment_process_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
-ALTER SEQUENCE sobi_fragment_process_id_seq OWNED BY data_process_run.id;
+ALTER SEQUENCE sobi_fragment_process_id_seq OWNED BY sobi_fragment_process.id;
 
 
 --
@@ -3166,120 +3081,6 @@ COMMENT ON COLUMN transcript_file.archived IS 'Indicates if this transcript file
 SET search_path = public, pg_catalog;
 
 --
--- Name: adminuser; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE adminuser (
-    username text NOT NULL,
-    password text NOT NULL,
-    permissions_level integer DEFAULT 0,
-    active boolean DEFAULT false,
-    created_date_time timestamp with time zone DEFAULT now(),
-    modified_date_time timestamp with time zone DEFAULT now()
-);
-
-
-ALTER TABLE public.adminuser OWNER TO postgres;
-
---
--- Name: TABLE adminuser; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON TABLE adminuser IS 'This table will contain all administrators. ';
-
-
---
--- Name: COLUMN adminuser.username; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN adminuser.username IS 'Username';
-
-
---
--- Name: COLUMN adminuser.password; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN adminuser.password IS 'Encrypted form of the admin''s password';
-
-
---
--- Name: COLUMN adminuser.permissions_level; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN adminuser.permissions_level IS 'Read only, Write only, or Read + Write Only';
-
-
---
--- Name: COLUMN adminuser.active; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN adminuser.active IS 'Whether or not this admin has activated their account.';
-
-
---
--- Name: COLUMN adminuser.created_date_time; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN adminuser.created_date_time IS 'The date that this admin account was created.';
-
-
---
--- Name: COLUMN adminuser.modified_date_time; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN adminuser.modified_date_time IS 'When this account was last modified.';
-
-
---
--- Name: apiuser; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE apiuser (
-    apikey character varying(32) NOT NULL,
-    authenticated boolean DEFAULT false,
-    num_requests numeric,
-    email_addr text NOT NULL
-);
-
-
-ALTER TABLE public.apiuser OWNER TO postgres;
-
---
--- Name: TABLE apiuser; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON TABLE apiuser IS 'The table will store all users of the API.';
-
-
---
--- Name: COLUMN apiuser.apikey; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN apiuser.apikey IS 'The user''s API Key, 32 Characters in length';
-
-
---
--- Name: COLUMN apiuser.authenticated; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN apiuser.authenticated IS 'Whether or not the user has authenticated their email';
-
-
---
--- Name: COLUMN apiuser.num_requests; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN apiuser.num_requests IS 'The total number of requests made by this user';
-
-
---
--- Name: COLUMN apiuser.email_addr; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN apiuser.email_addr IS 'The email address that the user registered with';
-
-
---
 -- Name: member; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -3507,6 +3308,13 @@ ALTER SEQUENCE session_member_id_seq OWNED BY session_member.id;
 SET search_path = master, pg_catalog;
 
 --
+-- Name: id; Type: DEFAULT; Schema: master; Owner: kyle
+--
+
+ALTER TABLE ONLY active_list_reference ALTER COLUMN id SET DEFAULT nextval('active_list_reference_id_seq'::regclass);
+
+
+--
 -- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
@@ -3587,21 +3395,14 @@ ALTER TABLE ONLY committee_version ALTER COLUMN id SET DEFAULT nextval('committe
 -- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
-ALTER TABLE ONLY data_process_run ALTER COLUMN id SET DEFAULT nextval('sobi_fragment_process_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY data_process_run_unit ALTER COLUMN id SET DEFAULT nextval('data_process_log_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
---
-
 ALTER TABLE ONLY sobi_change_log ALTER COLUMN id SET DEFAULT nextval('sobi_change_log_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY sobi_fragment_process ALTER COLUMN id SET DEFAULT nextval('sobi_fragment_process_id_seq'::regclass);
 
 
 --
@@ -3656,6 +3457,30 @@ ALTER TABLE ONLY session_member ALTER COLUMN id SET DEFAULT nextval('session_mem
 
 
 SET search_path = master, pg_catalog;
+
+--
+-- Name: active_list_reference_entry_pkey; Type: CONSTRAINT; Schema: master; Owner: kyle; Tablespace: 
+--
+
+ALTER TABLE ONLY active_list_reference_entry
+    ADD CONSTRAINT active_list_reference_entry_pkey PRIMARY KEY (active_list_reference_id, bill_calendar_no);
+
+
+--
+-- Name: active_list_reference_pkey; Type: CONSTRAINT; Schema: master; Owner: kyle; Tablespace: 
+--
+
+ALTER TABLE ONLY active_list_reference
+    ADD CONSTRAINT active_list_reference_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: active_list_reference_sequence_no_calendar_no_calendar_year_key; Type: CONSTRAINT; Schema: master; Owner: kyle; Tablespace: 
+--
+
+ALTER TABLE ONLY active_list_reference
+    ADD CONSTRAINT active_list_reference_sequence_no_calendar_no_calendar_year_key UNIQUE (sequence_no, calendar_no, calendar_year, reference_date);
+
 
 --
 -- Name: agenda_info_addendum_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
@@ -3766,7 +3591,7 @@ ALTER TABLE ONLY bill_amendment_multi_sponsor
 --
 
 ALTER TABLE ONLY bill_amendment
-    ADD CONSTRAINT bill_amendment_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version);
+    ADD CONSTRAINT bill_amendment_pkey PRIMARY KEY (bill_print_no, bill_session_year, version);
 
 
 --
@@ -3854,7 +3679,7 @@ ALTER TABLE ONLY bill_milestone
 --
 
 ALTER TABLE ONLY bill
-    ADD CONSTRAINT bill_pkey PRIMARY KEY (bill_print_no, bill_session_year);
+    ADD CONSTRAINT bill_pkey PRIMARY KEY (print_no, session_year);
 
 
 --
@@ -3994,14 +3819,6 @@ ALTER TABLE ONLY committee_version
 
 
 --
--- Name: data_process_log_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY data_process_run_unit
-    ADD CONSTRAINT data_process_log_pkey PRIMARY KEY (id);
-
-
---
 -- Name: daybreak_bill_action_report_date_bill_print_no_bill_session_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -4104,6 +3921,39 @@ ALTER TABLE ONLY law_file
 ALTER TABLE ONLY law_tree
     ADD CONSTRAINT law_tree_pkey PRIMARY KEY (law_id, published_date, doc_id, doc_published_date);
 
+
+--
+-- Name: public_hearing_attendance_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_hearing_attendance
+    ADD CONSTRAINT public_hearing_attendance_pkey PRIMARY KEY (title, date_time, session_member_id);
+
+
+--
+-- Name: public_hearing_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_hearing_committee
+    ADD CONSTRAINT public_hearing_committee_pkey PRIMARY KEY (title, date_time, committee_name, committee_chamber);
+
+
+--
+-- Name: public_hearing_file_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_hearing_file
+    ADD CONSTRAINT public_hearing_file_pkey PRIMARY KEY (file_name);
+
+
+--
+-- Name: public_hearing_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_hearing
+    ADD CONSTRAINT public_hearing_pkey PRIMARY KEY (title, date_time);
+
+
 --
 -- Name: sobi_fragment_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
@@ -4116,7 +3966,7 @@ ALTER TABLE ONLY sobi_fragment
 -- Name: sobi_fragment_process_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
-ALTER TABLE ONLY data_process_run
+ALTER TABLE ONLY sobi_fragment_process
     ADD CONSTRAINT sobi_fragment_process_pkey PRIMARY KEY (id);
 
 
@@ -4187,30 +4037,6 @@ ALTER TABLE ONLY transcript
 SET search_path = public, pg_catalog;
 
 --
--- Name: adminuser_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY adminuser
-    ADD CONSTRAINT adminuser_pkey PRIMARY KEY (username);
-
-
---
--- Name: apiuser_email_addr_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY apiuser
-    ADD CONSTRAINT apiuser_email_addr_key UNIQUE (email_addr);
-
-
---
--- Name: apiuser_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY apiuser
-    ADD CONSTRAINT apiuser_pkey PRIMARY KEY (apikey);
-
-
---
 -- Name: member_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -4245,15 +4071,7 @@ ALTER TABLE ONLY session_member
 SET search_path = master, pg_catalog;
 
 --
--- Name: public_hearing_attendance_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing_attendance
-ADD CONSTRAINT public_hearing_attendance_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id);
-
-
---
--- Name: agenda_info_committee_item_bill_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
+-- Name: agenda_info_committee_item_bill_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX agenda_info_committee_item_bill_idx ON agenda_info_committee_item USING btree (bill_print_no, bill_session_year, bill_amend_version);
@@ -4263,7 +4081,7 @@ CREATE INDEX agenda_info_committee_item_bill_idx ON agenda_info_committee_item U
 -- Name: bill_session_year_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
-CREATE INDEX bill_session_year_idx ON bill USING btree (bill_session_year);
+CREATE INDEX bill_session_year_idx ON bill USING btree (session_year);
 
 
 --
@@ -4442,10 +4260,10 @@ CREATE TRIGGER log_bill_sponsor_updates BEFORE INSERT OR DELETE OR UPDATE ON bil
 
 
 --
--- Name: log_bill_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_bill_update; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_bill_updates BEFORE INSERT OR DELETE OR UPDATE ON bill FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year');
+CREATE TRIGGER log_bill_update BEFORE INSERT OR DELETE OR UPDATE ON bill FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('print_no', 'session_year');
 
 
 --
@@ -4488,6 +4306,14 @@ CREATE TRIGGER log_calendar_supplemental_updates BEFORE INSERT OR DELETE OR UPDA
 --
 
 CREATE TRIGGER log_calendar_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('calendar_no', 'year');
+
+
+--
+-- Name: active_list_reference_entry_calendar_active_list_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: kyle
+--
+
+ALTER TABLE ONLY active_list_reference_entry
+    ADD CONSTRAINT active_list_reference_entry_calendar_active_list_id_fkey FOREIGN KEY (active_list_reference_id) REFERENCES active_list_reference(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4639,7 +4465,7 @@ ALTER TABLE ONLY agenda_vote_committee_vote
 --
 
 ALTER TABLE ONLY bill_amendment_action
-    ADD CONSTRAINT bill_amendment_action_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, bill_amend_version) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_action_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4655,7 +4481,7 @@ ALTER TABLE ONLY bill_amendment_action
 --
 
 ALTER TABLE ONLY bill_amendment
-    ADD CONSTRAINT bill_amendment_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(bill_print_no, bill_session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4663,7 +4489,7 @@ ALTER TABLE ONLY bill_amendment
 --
 
 ALTER TABLE ONLY bill_amendment_cosponsor
-    ADD CONSTRAINT bill_amendment_cosponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, bill_amend_version) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_cosponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4695,7 +4521,7 @@ ALTER TABLE ONLY bill_amendment
 --
 
 ALTER TABLE ONLY bill_amendment_multi_sponsor
-    ADD CONSTRAINT bill_amendment_multi_sponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, bill_amend_version) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_multi_sponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4719,7 +4545,7 @@ ALTER TABLE ONLY bill_amendment_multi_sponsor
 --
 
 ALTER TABLE ONLY bill_amendment_publish_status
-    ADD CONSTRAINT bill_amendment_publish_status_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(bill_print_no, bill_session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_publish_status_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4735,7 +4561,7 @@ ALTER TABLE ONLY bill_amendment_publish_status
 --
 
 ALTER TABLE ONLY bill_amendment_same_as
-    ADD CONSTRAINT bill_amendment_same_as_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, bill_amend_version) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_same_as_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4751,7 +4577,7 @@ ALTER TABLE ONLY bill_amendment_same_as
 --
 
 ALTER TABLE ONLY bill_amendment_vote_info
-    ADD CONSTRAINT bill_amendment_vote_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, bill_amend_version) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_vote_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year, bill_amend_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4791,7 +4617,7 @@ ALTER TABLE ONLY bill_amendment_vote_roll
 --
 
 ALTER TABLE ONLY bill_approval
-    ADD CONSTRAINT bill_approval_bill_print_no_fkey FOREIGN KEY (bill_print_no, session_year) REFERENCES bill(bill_print_no, bill_session_year);
+    ADD CONSTRAINT bill_approval_bill_print_no_fkey FOREIGN KEY (bill_print_no, session_year) REFERENCES bill(print_no, session_year);
 
 
 --
@@ -4799,7 +4625,7 @@ ALTER TABLE ONLY bill_approval
 --
 
 ALTER TABLE ONLY bill_approval
-    ADD CONSTRAINT bill_approval_bill_print_no_fkey1 FOREIGN KEY (bill_print_no, session_year, bill_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, bill_amend_version);
+    ADD CONSTRAINT bill_approval_bill_print_no_fkey1 FOREIGN KEY (bill_print_no, session_year, bill_version) REFERENCES bill_amendment(bill_print_no, bill_session_year, version);
 
 
 --
@@ -4815,7 +4641,7 @@ ALTER TABLE ONLY bill_approval
 --
 
 ALTER TABLE ONLY bill_committee
-    ADD CONSTRAINT bill_committee_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(bill_print_no, bill_session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_committee_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4835,14 +4661,6 @@ ALTER TABLE ONLY bill
 
 
 --
--- Name: bill_milestone_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY bill_milestone
-    ADD CONSTRAINT bill_milestone_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(bill_print_no, bill_session_year) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: bill_milestone_last_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
@@ -4855,7 +4673,7 @@ ALTER TABLE ONLY bill_milestone
 --
 
 ALTER TABLE ONLY bill_previous_version
-    ADD CONSTRAINT bill_previous_version_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(bill_print_no, bill_session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_previous_version_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4871,7 +4689,7 @@ ALTER TABLE ONLY bill_previous_version
 --
 
 ALTER TABLE ONLY bill_sponsor_additional
-    ADD CONSTRAINT bill_sponsor_additional_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(bill_print_no, bill_session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_sponsor_additional_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4887,7 +4705,7 @@ ALTER TABLE ONLY bill_sponsor_additional
 --
 
 ALTER TABLE ONLY bill_sponsor
-    ADD CONSTRAINT bill_sponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(bill_print_no, bill_session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_sponsor_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4911,7 +4729,7 @@ ALTER TABLE ONLY bill_sponsor
 --
 
 ALTER TABLE ONLY bill_veto
-    ADD CONSTRAINT bill_veto_bill_print_no_fkey FOREIGN KEY (bill_print_no, session_year) REFERENCES bill(bill_print_no, bill_session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_veto_bill_print_no_fkey FOREIGN KEY (bill_print_no, session_year) REFERENCES bill(print_no, session_year) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -5019,14 +4837,6 @@ ALTER TABLE ONLY committee_version
 
 
 --
--- Name: data_process_log_process_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY data_process_run_unit
-    ADD CONSTRAINT data_process_log_process_id_fkey FOREIGN KEY (process_id) REFERENCES data_process_run(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: daybreak_bill_action_report_date_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
@@ -5112,6 +4922,38 @@ ALTER TABLE ONLY law_tree
 
 ALTER TABLE ONLY law_tree
     ADD CONSTRAINT law_tree_parent_doc_id_fkey FOREIGN KEY (parent_doc_id, parent_doc_published_date) REFERENCES law_document(document_id, published_date) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: public_hearing_attendance_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY public_hearing_attendance
+    ADD CONSTRAINT public_hearing_attendance_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: public_hearing_attendance_title_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY public_hearing_attendance
+    ADD CONSTRAINT public_hearing_attendance_title_fkey FOREIGN KEY (title, date_time) REFERENCES public_hearing(title, date_time);
+
+
+--
+-- Name: public_hearing_committee_title_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY public_hearing_committee
+    ADD CONSTRAINT public_hearing_committee_title_fkey FOREIGN KEY (title, date_time) REFERENCES public_hearing(title, date_time) ON DELETE CASCADE;
+
+
+--
+-- Name: public_hearing_public_hearing_file_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY public_hearing
+    ADD CONSTRAINT public_hearing_public_hearing_file_fkey FOREIGN KEY (public_hearing_file) REFERENCES public_hearing_file(file_name);
 
 
 --

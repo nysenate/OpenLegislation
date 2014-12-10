@@ -50,7 +50,8 @@ public class LRSScraper extends BaseScript
             Matcher linkMatcher = linkPattern.matcher(contentPage);
             while(linkMatcher.find()) {
                 URL linkURL = resolveLink(contentURL, linkMatcher.group(1));
-                String filename = dateFormat.format(currentTime)+"."+linkMatcher.group(2).trim().replace(".", "").replace(" ", "_").toLowerCase()+".html";
+                String filename = dateFormat.format(currentTime)+"."+linkMatcher.group(2).trim().replace(".", "")
+                        .replace(" ", "_").toLowerCase()+".html"; // add 0 for last active list and increment
                 File outfile = new File(directory, filename);
                 logger.info("Fetching "+linkMatcher.group(2).trim());
                 String contents = IOUtils.toString(linkURL);
@@ -69,6 +70,7 @@ public class LRSScraper extends BaseScript
         if (tokenMatcher.find()) {
             String link = tokenMatcher.group(1);
             URL contentURL = resolveLink(landingURL, link);
+        //calen
             logger.info("Fetching bottom half");
             String contentPage = IOUtils.toString(contentURL.openStream()).replace("\r\n", " ");
             Matcher linkMatcher = linkPattern.matcher(contentPage);

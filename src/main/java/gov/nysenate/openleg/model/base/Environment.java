@@ -20,16 +20,22 @@ public class Environment {
      * --- File system configuration ---
      */
 
-    @Value("${env.directory}")
-    private String envDirPath;
-    @Value("${env.staging}")
-    private String stagingDirPath;
-    @Value("${env.archive}")
-    private String archiveDirPath;
+    @Value("${env.directory}") private String envDirPath;
+    @Value("${env.staging}") private String stagingDirPath;
+    @Value("${env.archive}") private String archiveDirPath;
+    @Value("${env.scraped.calendar}") private String calendarDirPath;
+
+    @Value("${env.scraped.assemblyagenda}") private String assemblyAgendaDirPath;
+    @Value("${env.scraped.senateagenda}") private String senateAgendaDirPath;
+
 
     private File baseDirectory;
     private File stagingDirectory;
     private File archiveDirectory;
+    private File calendarDirectory;
+
+    private File assemblyAgendaDirectory;
+    private File senateAgendaDirectory;
 
     /** --- Auth Stuff --- */
 
@@ -73,6 +79,10 @@ public class Environment {
         this.baseDirectory = new File(envDirPath);
         this.stagingDirectory = new File(stagingDirPath);
         this.archiveDirectory = new File(archiveDirPath);
+        this.calendarDirectory = new File(calendarDirPath);
+
+        this.assemblyAgendaDirectory = new File(assemblyAgendaDirPath);
+        this.senateAgendaDirectory = new File(senateAgendaDirPath);
     }
 
     /**
@@ -162,4 +172,29 @@ public class Environment {
     public void setSpotcheckScheduled(boolean spotcheckScheduled) {
         this.spotcheckScheduled = spotcheckScheduled;
     }
+
+    public File getCalendarDirectory() {
+        return calendarDirectory;
+    }
+
+    public void setCalendarDirectory(File calendarDirectory) {
+        this.calendarDirectory = calendarDirectory;
+    }
+
+    public File getSenateAgendaDirectory() {
+        return senateAgendaDirectory;
+    }
+
+    public void setSenateAgendaDirectory(File senateAgendaDirectory) {
+        this.senateAgendaDirectory = senateAgendaDirectory;
+    }
+
+    public File getAssemblyAgendaDirectory() {
+        return assemblyAgendaDirectory;
+    }
+
+    public void setAssemblyAgendaDirectory(File assemblyAgendaDirectory) {
+        this.assemblyAgendaDirectory = assemblyAgendaDirectory;
+    }
+
 }
