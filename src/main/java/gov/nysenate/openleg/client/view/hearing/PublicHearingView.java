@@ -16,9 +16,9 @@ public class PublicHearingView extends PublicHearingIdView
     private String address;
     private List<PublicHearingCommittee> committees;
     private List<Member> attendance;
-    private String text;
     private LocalTime startTime;
     private LocalTime endTime;
+    private String text;
 
     public PublicHearingView(PublicHearing publicHearing) {
         super(new PublicHearingId(publicHearing.getId().getFileName()));
@@ -27,9 +27,9 @@ public class PublicHearingView extends PublicHearingIdView
         this.address = publicHearing.getAddress();
         this.committees = publicHearing.getCommittees();
         this.attendance = publicHearing.getAttendance();
-        this.text = publicHearing.getText();
         this.startTime = publicHearing.getStartTime();
         this.endTime = publicHearing.getEndTime();
+        this.text = publicHearing.getText();
     }
 
     public String getTitle() {
