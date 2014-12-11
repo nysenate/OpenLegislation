@@ -63,13 +63,17 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
     /** {@inheritDoc} */
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(String query, String sort, LimitOffset limOff) throws SearchException {
-        return null;
+        return search(QueryBuilders.queryString(query), null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(String query, int year, String sort, LimitOffset limOff) throws SearchException {
-        return null;
+        RangeFilterBuilder rangeFilter = FilterBuilders.rangeFilter("date")
+                .from(LocalDate.of(year, 1, 1))
+                .to(LocalDate.of(year, 12, 31))
+                .cache(false);
+        return search(QueryBuilders.queryString(query), rangeFilter, sort, limOff);
     }
 
     private SearchResults<PublicHearingId> search(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff)
