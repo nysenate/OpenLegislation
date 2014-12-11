@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.client.view.calendar;
 
-import gov.nysenate.openleg.client.view.bill.BillInfoView;
 import gov.nysenate.openleg.client.view.bill.SimpleBillInfoView;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalEntry;
@@ -14,7 +13,7 @@ public class CalendarSupEntryView extends SimpleBillInfoView {
 
     protected String sectionType;
 
-    protected BillInfoView subBillInfo;
+    protected SimpleBillInfoView subBillInfo;
 
     protected boolean billHigh;
 
@@ -25,7 +24,7 @@ public class CalendarSupEntryView extends SimpleBillInfoView {
             this.billCalNo = supEntry.getBillCalNo();
             this.sectionType = supEntry.getSectionType().toString();
             this.subBillInfo = supEntry.getSubBillId() != null
-                    ? new BillInfoView(billDataService.getBillInfo(BillId.getBaseId(supEntry.getSubBillId())))
+                    ? new SimpleBillInfoView(billDataService.getBillInfo(BillId.getBaseId(supEntry.getSubBillId())))
                     : null;
             this.billHigh = supEntry.getBillHigh();
         }
@@ -39,7 +38,7 @@ public class CalendarSupEntryView extends SimpleBillInfoView {
         return sectionType;
     }
 
-    public BillInfoView getSubBillInfo() {
+    public SimpleBillInfoView getSubBillInfo() {
         return subBillInfo;
     }
 
