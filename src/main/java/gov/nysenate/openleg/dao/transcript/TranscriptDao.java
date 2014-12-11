@@ -13,12 +13,11 @@ public interface TranscriptDao
     /**
      * Retrieves all TranscriptId's for a year.
      *
-     * @param year int
-     * @param dateOrder SortOrder
+     * @param sortOrder SortOrder
      * @param limOff LimitOffset
      * @return List<TranscriptId>
      */
-    public List<TranscriptId> getTranscriptIds(int year, SortOrder dateOrder, LimitOffset limOff);
+    public List<TranscriptId> getTranscriptIds(SortOrder sortOrder, LimitOffset limOff);
 
     /**
      * Retrieves a Transcript via its TranscriptId.

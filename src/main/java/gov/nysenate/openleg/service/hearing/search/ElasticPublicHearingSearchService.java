@@ -144,6 +144,7 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
             while (!publicHearingIds.isEmpty()) {
                 logger.info("Indexing {} public hearings starting from {}.", publicHearingIds.size(), year);
                 List<PublicHearing> publicHearings = publicHearingIds.stream().map(publicHearingDataService::getPublicHearing).collect(Collectors.toList());
+                updateIndex(publicHearings);
                 limitOffset = limitOffset.next();
                 publicHearingIds = publicHearingDataService.getPublicHearingIds(SortOrder.DESC, limitOffset);
             }

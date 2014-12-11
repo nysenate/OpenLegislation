@@ -46,17 +46,17 @@ public class TranscriptGetCtrl extends BaseCtrl
      * Retrieve transcripts for a year: (GET) /api/3/transcripts/{year}
      *
      */
-    @RequestMapping("/{year:[\\d]{4}}")
-    public BaseResponse getTranscriptsByYear(@PathVariable int year,
-                                             @RequestParam(defaultValue = "desc") String sort,
-                                             @RequestParam(defaultValue = "false") boolean full,
-                                             WebRequest webRequest) {
-        LimitOffset limOff = getLimitOffset(webRequest, 50);
-        return ListViewResponse.of(
-            transcriptDataService.getTranscriptIds(year, SortOrder.DESC, limOff).stream()
-                .map(tid -> new TranscriptIdView(tid))
-                .collect(Collectors.toList()), 0, limOff);
-    }
+//    @RequestMapping("/{year:[\\d]{4}}")
+//    public BaseResponse getTranscriptsByYear(@PathVariable int year,
+//                                             @RequestParam(defaultValue = "desc") String sort,
+//                                             @RequestParam(defaultValue = "false") boolean full,
+//                                             WebRequest webRequest) {
+//        LimitOffset limOff = getLimitOffset(webRequest, 50);
+//        return ListViewResponse.of(
+//            transcriptDataService.getTranscriptIds(year, SortOrder.DESC, limOff).stream()
+//                .map(tid -> new TranscriptIdView(tid))
+//                .collect(Collectors.toList()), 0, limOff);
+//    }
 
     /**
      * Single Transcript Retrieval API.
@@ -67,13 +67,13 @@ public class TranscriptGetCtrl extends BaseCtrl
      * <p>Request Parameters: None.</p>
      *
      */
-    @RequestMapping("/{type}/{dateTime}")
-    public BaseResponse getTranscript(@PathVariable String type,
-                                      @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) {
-        return new ViewObjectResponse<>(
-            new TranscriptView(transcriptDataService.getTranscript(new TranscriptId(type.toUpperCase(), dateTime)))
-        );
-    }
+//    @RequestMapping("/{type}/{dateTime}")
+//    public BaseResponse getTranscript(@PathVariable String type,
+//                                      @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) {
+//        return new ViewObjectResponse<>(
+//            new TranscriptView(transcriptDataService.getTranscript(new TranscriptId(type.toUpperCase(), dateTime)))
+//        );
+//    }
 
     /**
      * Single Transcript PDF retrieval API.
@@ -84,14 +84,14 @@ public class TranscriptGetCtrl extends BaseCtrl
      *
      * Expected Output: PDF response.
      */
-    @RequestMapping("/{type}/{dateTime}.pdf")
-    public void getTranscriptPdf(@PathVariable String type,
-                                 @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime dateTime,
-                                 HttpServletResponse response) throws IOException, COSVisitorException {
-
-        TranscriptId transcriptId = new TranscriptId(type.toUpperCase(), dateTime);
-        Transcript transcript = transcriptDataService.getTranscript(transcriptId);
-        new TranscriptPdfView(transcript, response.getOutputStream());
-        response.setContentType("application/pdf");
-    }
+//    @RequestMapping("/{type}/{dateTime}.pdf")
+//    public void getTranscriptPdf(@PathVariable String type,
+//                                 @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime dateTime,
+//                                 HttpServletResponse response) throws IOException, COSVisitorException {
+//
+//        TranscriptId transcriptId = new TranscriptId(type.toUpperCase(), dateTime);
+//        Transcript transcript = transcriptDataService.getTranscript(transcriptId);
+//        new TranscriptPdfView(transcript, response.getOutputStream());
+//        response.setContentType("application/pdf");
+//    }
 }

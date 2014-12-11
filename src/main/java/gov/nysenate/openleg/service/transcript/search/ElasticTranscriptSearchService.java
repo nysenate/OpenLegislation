@@ -122,12 +122,13 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
         clearIndex();
         for (int year = 1993; year <= LocalDate.now().getYear(); year++) {
             LimitOffset limOff = LimitOffset.TWENTY_FIVE;
-            List<TranscriptId> transcriptIds = transcriptDataService.getTranscriptIds(year, SortOrder.DESC, limOff);
+            List<TranscriptId> transcriptIds = transcriptDataService.getTranscriptIds(SortOrder.DESC, limOff);
             while (!transcriptIds.isEmpty()) {
                 logger.info("Indexing {} transcripts starting from {}", transcriptIds.size(), year);
                 List<Transcript> transcripts = transcriptIds.stream().map(transcriptDataService::getTranscript).collect(Collectors.toList());
+                updateIndex(transcripts);
                 limOff = limOff.next();
-                transcriptIds = transcriptDataService.getTranscriptIds(year, SortOrder.DESC, limOff);
+                transcriptIds = transcriptDataService.getTranscriptIds(SortOrder.DESC, limOff);
             }
         }
     }

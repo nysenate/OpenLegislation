@@ -53,7 +53,7 @@ public class TranscriptPdfView
         PDDocument doc = new PDDocument();
         PDFont font = PDType1Font.COURIER;
 
-        List<List<String>> pages = TranscriptTextUtils.getPdfFormattedPages(transcript.getTranscriptText());
+        List<List<String>> pages = TranscriptTextUtils.getPdfFormattedPages(transcript.getText());
         for (List<String> page : pages) {
             PDPage pg = new PDPage(PDPage.PAGE_SIZE_LETTER);
             PDPageContentStream contentStream = new PDPageContentStream(doc, pg);

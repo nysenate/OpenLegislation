@@ -29,7 +29,7 @@ public interface TranscriptDataService
      * @param limitOffset LimitOffset
      * @return List<TranscriptId>
      */
-    public List<TranscriptId> getTranscriptIds(int year, SortOrder dateOrder, LimitOffset limitOffset);
+    public List<TranscriptId> getTranscriptIds(SortOrder sortOrder, LimitOffset limitOffset);
 
     /**
      * Saves the transcript.
