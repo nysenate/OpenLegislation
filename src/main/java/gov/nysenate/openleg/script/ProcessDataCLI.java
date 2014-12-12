@@ -12,22 +12,19 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProcessData extends BaseScript
+public class ProcessDataCLI extends BaseScript
 {
-    private static final Logger logger = LoggerFactory.getLogger(ProcessData.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProcessDataCLI.class);
 
-    @Autowired
-    private Environment env;
-
-    @Autowired
-    private DataProcessor dataProcessor;
+    @Autowired private Environment env;
+    @Autowired private DataProcessor dataProcessor;
 
     public static void main(String[] args) throws Exception {
         SCRIPT_NAME = "ProcessData";
         AnnotationConfigApplicationContext ctx = init();
-        ProcessData processData = ctx.getBean(ProcessData.class);
-        CommandLine cmd = getCommandLine(processData.getOptions(), args);
-        processData.execute(cmd);
+        ProcessDataCLI processDataCLI = ctx.getBean(ProcessDataCLI.class);
+        CommandLine cmd = getCommandLine(processDataCLI.getOptions(), args);
+        processDataCLI.execute(cmd);
         shutdown(ctx);
     }
 
@@ -62,13 +59,13 @@ public class ProcessData extends BaseScript
         if (disableIndexing) {
             env.setElasticIndexing(false);
         }
-        env.setIncrementalUpdates(incremental);
+        env.setSobiBatchEnabled(incremental);
 
         logger.info("Data processing settings: Incremental updates: {}, Allow search indexing: {}\n",
-                     env.isIncrementalUpdates(), env.isElasticIndexing());
+                     env.isSobiBatchEnabled(), env.isElasticIndexing());
 
-        if(!collate && !ingest) {
-            dataProcessor.run();
+        if (!collate && !ingest) {
+            dataProcessor.run(this.getClass().getName() + " script");
         }
         else {
             if(collate) {

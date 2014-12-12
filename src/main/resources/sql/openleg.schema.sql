@@ -25,48 +25,6 @@ ALTER SCHEMA master OWNER TO postgres;
 COMMENT ON SCHEMA master IS 'Processed legislative data';
 
 
---
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
---
--- Name: citext; Type: EXTENSION; Schema: -; Owner:
---
-
-CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
-
-
---
--- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner:
---
-
-COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
-
-
---
--- Name: hstore; Type: EXTENSION; Schema: -; Owner:
---
-
-CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
-
-
---
--- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner:
---
-
-COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
-
-
 SET search_path = master, pg_catalog;
 
 --
@@ -1393,7 +1351,7 @@ ALTER TABLE master.bill_veto_year_seq OWNER TO postgres;
 
 CREATE TABLE calendar (
     calendar_no integer NOT NULL,
-    year smallint NOT NULL,
+    calendar_year smallint NOT NULL,
     modified_date_time timestamp without time zone,
     published_date_time timestamp without time zone,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL,
@@ -1418,10 +1376,10 @@ COMMENT ON COLUMN calendar.calendar_no IS 'Calendar number for a session day';
 
 
 --
--- Name: COLUMN calendar.year; Type: COMMENT; Schema: master; Owner: postgres
+-- Name: COLUMN calendar.calendar_year; Type: COMMENT; Schema: master; Owner: postgres
 --
 
-COMMENT ON COLUMN calendar.year IS 'The year for this calendar';
+COMMENT ON COLUMN calendar.calendar_year IS 'The year for this calendar';
 
 
 --
@@ -1812,8 +1770,8 @@ CREATE TABLE data_process_run_unit (
     id integer NOT NULL,
     start_date_time timestamp without time zone NOT NULL,
     end_date_time timestamp without time zone,
-    messages text,
-    errors text
+    errors text,
+    messages text
 );
 
 
@@ -3100,7 +3058,7 @@ ALTER TABLE public.adminuser OWNER TO postgres;
 -- Name: TABLE adminuser; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON TABLE adminuser IS 'This table will contain all administrators. ';
+COMMENT ON TABLE adminuser IS 'Registered admin users';
 
 
 --
@@ -3121,7 +3079,7 @@ COMMENT ON COLUMN adminuser.password IS 'Encrypted form of the admin''s password
 -- Name: COLUMN adminuser.permissions_level; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN adminuser.permissions_level IS 'Read only, Write only, or Read + Write Only';
+COMMENT ON COLUMN adminuser.permissions_level IS 'Permissions level';
 
 
 --
@@ -3163,7 +3121,7 @@ ALTER TABLE public.apiuser OWNER TO postgres;
 -- Name: TABLE apiuser; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON TABLE apiuser IS 'The table will store all users of the API.';
+COMMENT ON TABLE apiuser IS 'Registered API users';
 
 
 --
@@ -3208,6 +3166,13 @@ CREATE TABLE member (
 
 
 ALTER TABLE public.member OWNER TO postgres;
+
+--
+-- Name: TABLE member; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE member IS 'Listing of all NYS senate/assembly members';
+
 
 --
 -- Name: COLUMN member.id; Type: COMMENT; Schema: public; Owner: postgres
@@ -3306,6 +3271,13 @@ CREATE TABLE person (
 ALTER TABLE public.person OWNER TO postgres;
 
 --
+-- Name: TABLE person; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE person IS 'Basic personal data for all NYS senate/assembly members';
+
+
+--
 -- Name: COLUMN person.id; Type: COMMENT; Schema: public; Owner: postgres
 --
 
@@ -3397,6 +3369,13 @@ CREATE TABLE session_member (
 
 
 ALTER TABLE public.session_member OWNER TO postgres;
+
+--
+-- Name: TABLE session_member; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE session_member IS 'Links LBDC short names to members for each session';
+
 
 --
 -- Name: session_member_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -3833,7 +3812,7 @@ ALTER TABLE ONLY calendar_active_list
 --
 
 ALTER TABLE ONLY calendar
-    ADD CONSTRAINT calendar_pkey PRIMARY KEY (calendar_no, year);
+    ADD CONSTRAINT calendar_pkey PRIMARY KEY (calendar_no, calendar_year);
 
 
 --
@@ -4219,6 +4198,20 @@ CREATE INDEX bill_session_year_idx ON bill USING btree (bill_session_year);
 --
 
 CREATE INDEX calendar_supplemental_entry_bill_idx ON calendar_supplemental_entry USING btree (bill_print_no, bill_amend_version, bill_session_year);
+
+
+--
+-- Name: data_process_run_start_date_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX data_process_run_start_date_idx ON data_process_run USING btree (process_start_date_time);
+
+
+--
+-- Name: data_process_run_unit_start_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX data_process_run_unit_start_date_time_idx ON data_process_run_unit USING btree (start_date_time);
 
 
 --
@@ -4875,7 +4868,7 @@ ALTER TABLE ONLY bill_veto
 --
 
 ALTER TABLE ONLY calendar_active_list
-    ADD CONSTRAINT calendar_active_list_calendar_number_fkey FOREIGN KEY (calendar_no, calendar_year) REFERENCES calendar(calendar_no, year);
+    ADD CONSTRAINT calendar_active_list_calendar_number_fkey FOREIGN KEY (calendar_no, calendar_year) REFERENCES calendar(calendar_no, calendar_year);
 
 
 --
@@ -4907,7 +4900,7 @@ ALTER TABLE ONLY calendar
 --
 
 ALTER TABLE ONLY calendar_supplemental
-    ADD CONSTRAINT calendar_supplemental_calendar_no_fkey FOREIGN KEY (calendar_no, calendar_year) REFERENCES calendar(calendar_no, year);
+    ADD CONSTRAINT calendar_supplemental_calendar_no_fkey FOREIGN KEY (calendar_no, calendar_year) REFERENCES calendar(calendar_no, calendar_year);
 
 
 --
