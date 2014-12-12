@@ -26,6 +26,7 @@
     <script>
         window.ctxPath = "<%= request.getContextPath() %>";
         window.apiPath = window.ctxPath + "/api/3";
+        window.adminApiPath = window.apiPath + "/admin";
         $(document).foundation();
     </script>
 

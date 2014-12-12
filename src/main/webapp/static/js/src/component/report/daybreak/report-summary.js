@@ -5,7 +5,7 @@ var ISODateFormat = "YYYY-MM-DD";
 /** --- REST resource for retrieving daybreak summaries within a date range --- */
 
 reportModule.factory('DaybreakSummary', ['$resource', function($resource) {
-    return $resource(apiPath + "/spotcheck/daybreaks/:startDate/:endDate", {
+    return $resource(adminApiPath + "/spotcheck/daybreaks/:startDate/:endDate", {
         startDate: '@startDate', endDate: '@endDate'
     });
 }]);

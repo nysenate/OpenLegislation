@@ -32,9 +32,9 @@ import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_P
 
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/cache")
-public class MemoryCacheCtrl extends BaseCtrl
+public class CacheCtrl extends BaseCtrl
 {
-    private static final Logger logger = LoggerFactory.getLogger(MemoryCacheCtrl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CacheCtrl.class);
 
     @Autowired private EventBus eventBus;
     @Autowired private CacheManager cacheManager;

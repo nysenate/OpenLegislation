@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.controller.api.report;
+package gov.nysenate.openleg.controller.api.admin;
 
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
@@ -17,8 +17,6 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.DaybreakCheckReportService;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,54 +27,85 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
+import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 import static gov.nysenate.openleg.util.DateUtils.atEndOfDay;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.format.annotation.DateTimeFormat.ISO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping(value = BASE_API_PATH + "/spotcheck", method = RequestMethod.GET)
-public class SpotCheckGetCtrl extends BaseCtrl
+@RequestMapping(value = BASE_ADMIN_API_PATH + "/spotcheck", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+public class SpotCheckCtrl extends BaseCtrl
 {
-    private static final Logger logger = LoggerFactory.getLogger(SpotCheckGetCtrl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SpotCheckCtrl.class);
 
-    @Autowired
-    DaybreakCheckReportService daybreakService;
+    @Autowired DaybreakCheckReportService daybreakService;
 
-    @RequiresAuthentication
-    @RequestMapping(value = "/daybreaks", produces = APPLICATION_JSON_VALUE)
+    /**
+     * Daybreak Report Summary Retrieval API
+     *
+     * Get a list of daybreak reports that have been run in the past six months.
+     * Usage: (GET) /api/3/admin/spotcheck/daybreaks
+     *
+     * Expected Output: ReportSummaryResponse
+     */
+    @RequestMapping(value = "/daybreaks")
     public Object getDaybreakReport() {
         LocalDate today = LocalDate.now();
         LocalDate sixMonthsAgo = today.minusMonths(6);
         return getDaybreakReportLimOff(sixMonthsAgo, today);
     }
 
-    @RequestMapping(value = "/daybreaks/{from}/{to}", produces = APPLICATION_JSON_VALUE)
+    /**
+     * Daybreak Report Summary Retrieval API
+     *
+     * Get a list of daybreak reports that have been run during the given dates.
+     * Usage: (GET) /api/3/admin/spotcheck/daybreaks/{from}/{to}
+     *
+     * where 'from' and 'to' are ISO dates, e.g. 2014-12-01
+     *
+     * Expected Output: ReportSummaryResponse
+     */
+    @RequestMapping(value = "/daybreaks/{from}/{to}")
     public Object getDaybreakReportLimOff(
-           @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate from,
-           @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
+            @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+            @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
         logger.info("Retrieving daybreak reports from {} to {}", from , to);
         // Have to retrieve the reports in full, no 'summary' view available
         List<SpotCheckReport<BaseBillId>> reports =
                 daybreakService.getReportIds(from.atStartOfDay(), atEndOfDay(to), SortOrder.DESC, LimitOffset.ALL)
-                    .parallelStream()
-                    .map(daybreakService::getReport).collect(toList());
+                        .parallelStream()
+                        .map(daybreakService::getReport).collect(toList());
         // Construct the client response
         return new ReportSummaryResponse<>(
-            ListView.of(reports.stream().map(r -> new ReportInfoView<>(r)).collect(Collectors.toList())), from, to);
+                ListView.of(reports.stream()
+                        .map(r -> new ReportInfoView<>(r)).collect(toList())), from, to);
     }
 
-    @RequestMapping(value = "/daybreaks/{reportDateTime}", produces = APPLICATION_JSON_VALUE)
+    /**
+     * Daybreak Report Retrieval API
+     *
+     * Get a single daybreak report which is identified by the report's run date/time.
+     * Usage: (GET) /api/3/admin/spotcheck/daybreaks/{reportDateTime}
+     *
+     * where 'reportDateTime' is an ISO Date/time.
+     *
+     * Expected Output: ReportDetailResponse
+     */
+    @RequestMapping(value = "/daybreaks/{reportDateTime}")
     public Object getDaybreakReport(
-           @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime reportDateTime) {
+            @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime reportDateTime) {
         logger.info("Retrieving daybreak report {}", reportDateTime);
         return new ReportDetailResponse<>(
-            daybreakService.getReport(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, reportDateTime)));
+                daybreakService.getReport(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, reportDateTime)));
     }
 
+    /** --- Exception Handlers --- */
+
+    /**
+     * Handles cases where a query for a daybreak report that doesn't exist was made.
+     */
     @ExceptionHandler(SpotCheckReportNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorResponse handleSpotCheckReportNotFoundEx(SpotCheckReportNotFoundEx ex) {

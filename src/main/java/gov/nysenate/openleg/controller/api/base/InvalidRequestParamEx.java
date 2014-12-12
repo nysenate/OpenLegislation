@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.controller.api.base;
 
-public class InvalidRequestParameterException extends Exception {
-
+public class InvalidRequestParamEx extends Exception
+{
     private static final long serialVersionUID = -4090577171105617540L;
 
     protected String parameterName;
@@ -9,8 +9,8 @@ public class InvalidRequestParameterException extends Exception {
     protected String parameterValue;
     protected String parameterConstraint;
 
-    public InvalidRequestParameterException(String parameterValue, String parameterName,
-                                            String parameterType, String parameterConstraint) {
+    public InvalidRequestParamEx(String parameterValue, String parameterName,
+                                 String parameterType, String parameterConstraint) {
         super(String.format("The received value for a request parameter did not satisfy the parameter constraint" +
                 " value: %s, paramName: %s, paramType: %s, constraint: %s",
                 parameterValue, parameterName, parameterType, parameterConstraint));

@@ -8,11 +8,16 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Adds Access Control headers to the HTTP responses to allow for Cross Origin Resource Sharing.
+ * This will allow external sites to utilize the OpenLeg API on the client side without needing JSONP.
+ */
 @Component("corsFilter")
-public class CrossOriginFilter implements Filter
+public class CorsFilter implements Filter
 {
-    private static final Logger logger = LoggerFactory.getLogger(CrossOriginFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(CorsFilter.class);
 
+    @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -22,7 +27,9 @@ public class CrossOriginFilter implements Filter
         chain.doFilter(req, res);
     }
 
+    @Override
     public void init(FilterConfig filterConfig) {}
 
+    @Override
     public void destroy() {}
 }

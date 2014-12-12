@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.controller.api.base;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
@@ -16,16 +15,12 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -116,15 +111,15 @@ public abstract class BaseCtrl
      * @param dateTimeString The parameter value to be parsed
      * @param parameterName The name of the parameter.  Used to generate the exception
      * @return LocalDateTime
-     * @throws InvalidRequestParameterException
+     * @throws InvalidRequestParamEx
      */
     protected LocalDateTime parseISODateTimeParameter(String dateTimeString, String parameterName)
-            throws InvalidRequestParameterException {
+            throws InvalidRequestParamEx {
         try {
             return LocalDateTime.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateTimeString));
         }
         catch (DateTimeParseException ex) {
-            throw new InvalidRequestParameterException(dateTimeString, parameterName,
+            throw new InvalidRequestParamEx(dateTimeString, parameterName,
                     "date-time", "ISO 8601 date and time formatted string e.g. 2014-10-27T09:44:55");
         }
     }
@@ -138,9 +133,9 @@ public abstract class BaseCtrl
         return new ErrorResponse(ErrorCode.UNKNOWN_ERROR);
     }
 
-    @ExceptionHandler(InvalidRequestParameterException.class)
+    @ExceptionHandler(InvalidRequestParamEx.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    protected ErrorResponse handleInvalidRequestParameterException(InvalidRequestParameterException ex) {
+    protected ErrorResponse handleInvalidRequestParameterException(InvalidRequestParamEx ex) {
         logger.debug(ExceptionUtils.getStackTrace(ex));
         return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, new InvalidParameterView(ex));
     }

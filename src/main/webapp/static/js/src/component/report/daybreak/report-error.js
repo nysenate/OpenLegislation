@@ -3,7 +3,7 @@ var reportModule = angular.module('report');
 /** --- REST resource for retrieving a single daybreak report --- */
 
 reportModule.factory('DaybreakDetail', ['$resource', function($resource) {
-    return $resource(apiPath + "/spotcheck/daybreaks/:reportDateTime", {
+    return $resource(adminApiPath + "/spotcheck/daybreaks/:reportDateTime", {
         reportDateTime: '@reportDateTime'
     });
 }]);

@@ -61,7 +61,7 @@
             <td data-title="'Mismatch Type'" sortable="'type'">{{getLabel('types', row.type)}}</td>
             <td data-title="'Status'" sortable="'status'">{{getLabel('statuses', row.status)}}</td>
             <td data-title="'Opened At'" sortable="'firstOpened'">
-                <a ng-href="../daybreak/{{row.firstOpened}}"
+                <a ng-href="${ctxPath}/admin/report/daybreak/{{row.firstOpened}}"
                    ng-show="row.firstOpened!=reportDateTime && row.firstOpened!='Unknown'">
                     {{formatReportDate(row.firstOpened)}}
                 </a>
