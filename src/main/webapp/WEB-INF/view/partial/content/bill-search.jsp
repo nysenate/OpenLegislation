@@ -90,9 +90,6 @@
             <h3 style="color:white;" class="blue4-bg no-bottom-margin padding-20"><i class="icon-docs prefix-icon2"></i>
                 <span class="bold">NYS Bills and Resolutions</span>
             </h3>
-
-            <div class="panel">Bills by Sponsor...</div>
-            <div class="panel">Bills by Law Section...</div>
         </section>
 
         <!-- Lower Pagination -->

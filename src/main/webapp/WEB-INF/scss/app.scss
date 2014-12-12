@@ -2,6 +2,7 @@
 @import "foundation";
 @import "compass";
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
+@import url(http://fonts.googleapis.com/css?family=Roboto+Slab:400,700);
 @import url(http://fonts.googleapis.com/css?family=Inconsolata);
 
 @import "colors";
@@ -213,6 +214,10 @@ a.white-2-blue {
     position: relative;
     top: -3px;
   }
+  .name h1 a {
+    font-family: 'Roboto Slab', serif;
+    font-weight: normal;
+  }
 }
 
 @media #{$small-up} {
@@ -237,7 +242,13 @@ a.white-2-blue {
     }
     .top-bar-section ul {
       li {
+        a {
+          font-size: 0.8rem;
+        }
         &:not(.active) {
+          a {
+            color: $gray7;
+          }
           border-bottom: 2px solid #f1f1f1;
         }
         &.active:not(.has-form) a:not(.button) {

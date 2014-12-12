@@ -3,7 +3,7 @@
 
 <section ng-controller="LawCtrl">
     <section ng-controller="LawListingCtrl">
-        <h3 style="color:white;" class="green2-bg no-bottom-margin padding-20"><i class="icon-book prefix-icon2"></i>
+        <h3 style="color:white;" class="green1-bg no-bottom-margin padding-20"><i class="icon-book prefix-icon2"></i>
             <span class="bold">NYS Law Listing</span>
         </h3>
 

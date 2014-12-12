@@ -4,13 +4,9 @@
 <section style="padding: 100px; background: url('${ctxPath}/static/img/capitol_greens.jpg');
         background-position-y: 800px;">
   <div class="panel">
-    TODO: Landing Page
 
     <ul class="no-bullet">
-      <li>Describe what OpenLeg Is</li>
-      <li>Where we get our data from</li>
-      <li>How to get access to our API</li>
-      <li>Feedback</li>
+      <li><h3 class="text-center">This is still in development! Come back another time.</h3></li>
     </ul>
   </div>
 

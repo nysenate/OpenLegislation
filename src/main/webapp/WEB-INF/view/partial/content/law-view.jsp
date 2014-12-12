@@ -3,7 +3,7 @@
 
 <section ng-controller="LawCtrl">
   <section ng-controller="LawViewCtrl">
-    <h3 style="color:white;" class="blue4-bg no-bottom-margin padding-20">
+    <h3 style="color:white;" class="green1-bg no-bottom-margin padding-20">
       <span class="bold">{{lawTree.info.name}}</span>
     </h3>
 
@@ -21,12 +21,8 @@
       </div>
     </script>
 
-    <div class="panel padding-20 white">
-      <ul class="no-bullet">
-        <li ng-repeat="doc in lawTree.documents.documents.items" ng-include="'law-tree-snippet.html'"></li>
-      </ul>
-    </div>
-
+    <a ng-repeat="doc in lawTree.documents.documents.items" class="bold-span-1">{{doc.docType}} {{doc.docLevelId}}</a>
+    <hr/>
 
 
   </section>

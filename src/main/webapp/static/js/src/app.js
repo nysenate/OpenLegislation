@@ -4,7 +4,7 @@ var commonModule = angular.module('common', []);
 var contentModule = angular.module('content', ['ngRoute', commonModule.name, 'ui.calendar']);
 var reportModule = angular.module('report', ['ngRoute', commonModule.name]);
 
-var openApp = angular.module('open', ['ngRoute', 'ngResource', contentModule.name, reportModule.name]);
+var openApp = angular.module('open', ['ngRoute', 'ngResource', 'ngAnimate', contentModule.name, reportModule.name]);
 openApp.constant('appProps', {
     ctxPath: window.ctxPath
 });
@@ -51,11 +51,11 @@ openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
         redirectTo: ctxPath + '/admin/report/daybreak'
     });
     $routeProvider.when(ctxPath + '/admin/report/daybreak', {
-        templateUrl: ctxPath + '/partial/report/daybreak-report-summary.html',
+        templateUrl: ctxPath + '/partial/report/daybreak-report-summary',
         controller: 'DaybreakSummaryCtrl'
     });
     $routeProvider.when(ctxPath + '/admin/report/daybreak/:reportDateTime', {
-        templateUrl: ctxPath + '/partial/report/daybreak-report-error.html',
+        templateUrl: ctxPath + '/partial/report/daybreak-report-error',
         controller: 'DaybreakReportErrorCtrl'
     });
 
