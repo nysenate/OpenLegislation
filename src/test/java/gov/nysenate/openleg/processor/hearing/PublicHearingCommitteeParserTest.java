@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.processor.hearing;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.hearing.PublicHearingCommittee;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -30,7 +31,7 @@ public class PublicHearingCommitteeParserTest extends BaseTests
         List<PublicHearingCommittee> expected = new ArrayList<>();
         PublicHearingCommittee expectedCommittee = new PublicHearingCommittee();
         expectedCommittee.setName("LABOR");
-        expectedCommittee.setChamber("SENATE");
+        expectedCommittee.setChamber(Chamber.SENATE);
         expected.add(expectedCommittee);
 
         List<PublicHearingCommittee> actual = committeeParser.parse(pages.get(0));
@@ -45,7 +46,7 @@ public class PublicHearingCommitteeParserTest extends BaseTests
         List<PublicHearingCommittee> expected = new ArrayList<>();
         PublicHearingCommittee expectedCommittee = new PublicHearingCommittee();
         expectedCommittee.setName("HEROIN AND OPIOID ADDICTION");
-        expectedCommittee.setChamber("SENATE");
+        expectedCommittee.setChamber(Chamber.SENATE);
         expected.add(expectedCommittee);
 
         List<PublicHearingCommittee> actual = committeeParser.parse(pages.get(0));
@@ -59,15 +60,15 @@ public class PublicHearingCommitteeParserTest extends BaseTests
 
         PublicHearingCommittee expectedCommittee1 = new PublicHearingCommittee();
         expectedCommittee1.setName("MENTAL HEALTH AND ENVIRONMENTAL DISABILITIES");
-        expectedCommittee1.setChamber("ASSEMBLY");
+        expectedCommittee1.setChamber(Chamber.ASSEMBLY);
 
         PublicHearingCommittee expectedCommittee2 = new PublicHearingCommittee();
         expectedCommittee2.setName("MENTAL HEALTH AND ENVIRONMENTAL DISABILITIES");
-        expectedCommittee2.setChamber("SENATE");
+        expectedCommittee2.setChamber(Chamber.SENATE);
 
         PublicHearingCommittee expectedCommittee3 = new PublicHearingCommittee();
         expectedCommittee3.setName("HEALTH");
-        expectedCommittee3.setChamber("SENATE");
+        expectedCommittee3.setChamber(Chamber.SENATE);
 
         List<PublicHearingCommittee> expected = new ArrayList<>();
         expected.add(expectedCommittee1);
@@ -88,15 +89,15 @@ public class PublicHearingCommitteeParserTest extends BaseTests
 
         PublicHearingCommittee expectedCommittee1 = new PublicHearingCommittee();
         expectedCommittee1.setName("INVESTIGATIONS AND GOVERNMENT OPERATIONS");
-        expectedCommittee1.setChamber("SENATE");
+        expectedCommittee1.setChamber(Chamber.SENATE);
 
         PublicHearingCommittee expectedCommittee2 = new PublicHearingCommittee();
         expectedCommittee2.setName("CIVIL SERVICE AND PENSIONS");
-        expectedCommittee2.setChamber("SENATE");
+        expectedCommittee2.setChamber(Chamber.SENATE);
 
         PublicHearingCommittee expectedCommittee3 = new PublicHearingCommittee();
         expectedCommittee3.setName("RACING, GAMING, AND WAGERING");
-        expectedCommittee3.setChamber("SENATE");
+        expectedCommittee3.setChamber(Chamber.SENATE);
 
         List<PublicHearingCommittee> expected = new ArrayList<>();
         expected.add(expectedCommittee1);
@@ -115,7 +116,7 @@ public class PublicHearingCommitteeParserTest extends BaseTests
         List<PublicHearingCommittee> expected = new ArrayList<>();
         PublicHearingCommittee expectedCommittee = new PublicHearingCommittee();
         expectedCommittee.setName("");
-        expectedCommittee.setChamber("SENATE");
+        expectedCommittee.setChamber(Chamber.SENATE);
         expected.add(expectedCommittee);
 
         List<PublicHearingCommittee> actual = committeeParser.parse(pages.get(0));
@@ -139,7 +140,7 @@ public class PublicHearingCommitteeParserTest extends BaseTests
         List<PublicHearingCommittee> expected = new ArrayList<>();
         PublicHearingCommittee expectedCommittee = new PublicHearingCommittee();
         expectedCommittee.setName("MAJORITY COALITION");
-        expectedCommittee.setChamber("SENATE");
+        expectedCommittee.setChamber(Chamber.SENATE);
         expected.add(expectedCommittee);
 
         List<PublicHearingCommittee> actual = committeeParser.parse(pages.get(0));

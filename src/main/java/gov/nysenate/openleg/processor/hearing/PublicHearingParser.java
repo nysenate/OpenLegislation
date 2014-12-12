@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -50,13 +52,23 @@ public class PublicHearingParser
 
         String title = titleParser.parse(firstPage);
         String address = addressParser.parse(firstPage);
-        LocalDateTime dateTime = dateTimeParser.parse(firstPage);
+        LocalDate date = dateTimeParser.parseDate(firstPage);
+        LocalTime startTime = dateTimeParser.parseStartTime(firstPage);
+        LocalTime endTime = dateTimeParser.parseEndTime(firstPage);
         List<PublicHearingCommittee> committees = committeeParser.parse(firstPage);
         String text = textParser.parse(pages);
 
-        PublicHearingId id = new PublicHearingId(title, dateTime);
-        PublicHearing publicHearing = new PublicHearing(id, address, text);
+        PublicHearingId id = new PublicHearingId(publicHearingFile.getFileName());
+        PublicHearing publicHearing = new PublicHearing(id, date, text);
+        publicHearing.setTitle(title);
+        publicHearing.setAddress(address);
+        publicHearing.setStartTime(startTime);
+        publicHearing.setEndTime(endTime);
         publicHearing.setCommittees(committees);
+
+        LocalDateTime now = LocalDateTime.now();
+        publicHearing.setModifiedDateTime(now);
+        publicHearing.setPublishedDateTime(now);
 
         dataService.savePublicHearing(publicHearing, publicHearingFile, true);
     }

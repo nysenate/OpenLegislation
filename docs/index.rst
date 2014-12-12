@@ -4,11 +4,11 @@
    contain the root `toctree` directive.
 
 
-Open Legislation v2.0 API Docs
-==============================
+**Open Legislation v2.0 API Docs**
+==================================
 
-What is this?
-=============
+**What is this?**
+=================
 
 `Open Legislation`_ is a web service that delivers legislative information from the New York State Senate and Assembly
 to the public in near-real time. It is used to serve legislative data for `nysenate.gov`_ and other various services.
@@ -26,8 +26,8 @@ The code is open source and available on `Github`_.
 .. _nysenate.gov:    http://www.nysenate.gov
 .. _Github: http://github.com/nysenate/OpenLegislation
 
-Legislative Content Types
-=========================
+**Legislative Content Types**
+=============================
 
 We currently offer the following types of data:
 
@@ -38,8 +38,8 @@ We currently offer the following types of data:
    - Senate Floor and Public Hearing Transcripts
    - Committees
 
-Terminology
-===========
+**Terminology**
+===============
 
 First let's define some common legislative terminology
 
@@ -64,16 +64,16 @@ First let's define some common legislative terminology
 :Uni-Bill: A uni bill is a bill that is sent through both chambers concurrently
 
 
-Bills and Resolutions API
-=========================
+**Bills and Resolutions API**
+=============================
 
 .. note:: While bills and resolutions serve different purposes, in the context of these docs, the term 'bill' will include
           resolutions as well since the API requests and responses for both are identical.
 
 ----------
 
-**Get a single bill**
----------------------
+Get a single bill
+-----------------
 
 **Usage**
 
@@ -103,6 +103,8 @@ Request bill S2180 of session year 2013
 Request summary of bill A450 of session year 2013
 ::
    /api/3/bills/2013/A450?summary=true
+
+.. _`bill response`:
 
 **Response**
 
@@ -362,8 +364,8 @@ If **detail** is set to true, the following content will also be present in the 
 
 -----
 
-**Get a list of bills**
------------------------
+Get a list of bills
+-------------------
 
 **Usage**
 
@@ -422,8 +424,8 @@ Sort by increasing status action date, (default)
 
 --------
 
-**Search for bills**
---------------------
+Search for bills
+----------------
 
 Read this [insert link] for info on how to construct search terms. The bill search index is comprised of full bill responses
 (i.e. the json response returned when requesting a single bill) so query and sort strings will be based on that response
@@ -453,8 +455,8 @@ Search within a session year
 Same as the `bill listing params`_.
 
 
-**Get bill updates**
---------------------
+Get bill updates
+----------------
 
 To identify which bills have received updates within a given time period you can use the bill updates api.
 
@@ -585,13 +587,13 @@ Sample response:
         }
     }
 
-Senate Calendar API
-===================
+**Senate Calendar API**
+=======================
 
-**Get a single calendar**
--------------------------
+Get a single calendar
+---------------------
 
-Usage:
+**Usage**
 ::
    Full calendar:
       /api/3/calendars/{year}/{calendarNumber}
@@ -606,7 +608,7 @@ Usage:
    full (boolean) - Set to true to see the full calendar response instead of a summary.
                      (default true)
 
-Examples:
+**Examples**
 ::
    /api/3/calendars/2014/54               (Get calendar 54 of 2014)
    /api/3/calendars/2014/54?&full=false   (Get a summary of calendar 54)
@@ -614,10 +616,187 @@ Examples:
    /api/3/calendars/2014/54/floor         (Get the floor calendar for calendar 54)
    /api/3/calendars/2014/54/B             (Get supplemental calendar B of calendar 54)
 
-**Get a listing of calendars**
-------------------------------
+**Sample Responses**
 
-Usage:
+Full calendar:
+
+.. code-block:: javascript
+
+    {
+        success: true,
+        message: "",
+        responseType: "calendar",
+        result: {
+            year: 2014,                 // Year the calendar was published
+            calendarNumber: 54,         // Incremental identifier for calendars within a year
+            floorCalendar: {...},       // See supplemental/floor calendar response result
+            supplementalCalendars: {
+                items: {...},           // Map of supplemental version characters to
+                                        //  supplemental calendar response results
+                size: 2
+            },
+            activeLists: {
+                items: {...},           // Map of sequence numbers to active list response results
+                size: 3
+            },
+            calDate: "2014-06-20"       // The date this calendar was active for
+        }
+    }
+
+Supplemental/Floor calendar:
+
+.. code-block:: javascript
+
+    {
+      success: true,
+      message: "",
+      responseType: "calendar-floor",   // "calendar-supplemental" if the response is a supplemental
+      result: {
+        year: 2014,                             // The year the calendar was released
+        calendarNumber: 54,                     // Incremental identifier for calendars within a year
+        version: "floor",                       // The supplemental version, "floor" or
+                                                //  a single capital character
+        calDate: "2014-06-20",
+        releaseDateTime: "2014-06-20T02:01",    // The date this supplemental was released
+        entriesBySection: {                     // A listing of bills mapped to their floor status
+          items: {
+            THIRD_READING: {                    // List of bills on their third reading
+              items: [
+                {                               // Modified bill response (link below)
+                  basePrintNo: "A5625",
+                  session: 2013,
+                  printNo: "A5625A",
+                  billType: {
+                    chamber: "ASSEMBLY",
+                    desc: "Assembly",
+                    resolution: false
+                  },
+                  title: "Extends the expiration of the New York state French and Indian war 250th anniversary commemoration commission until December 31, 2015",
+                  activeVersion: "A",
+                  year: 2013,
+                  publishedDateTime: "2013-03-04T14:32:46",
+                  substitutedBy: null,
+                  sponsor: {
+                    member: {
+                      memberId: 466,
+                      shortName: "ENGLEBRIGHT",
+                      sessionYear: 2013,
+                      fullName: "Steven Englebright",
+                      districtCode: 4
+                    },
+                    budget: false,
+                    rules: false
+                  },
+                  billCalNo: 1090,              // The calendar number that ids this bill
+                                                //  within all calendars
+                  sectionType: "THIRD_READING", // The floor status of this bill
+                  subBillInfo: {                // Bill info response for a substituted bill
+                    basePrintNo: "S7605",
+                    session: 2013,
+                    printNo: "S7605",
+                    billType: {
+                      chamber: "SENATE",
+                      desc: "Senate",
+                      resolution: false
+                    },
+                    title: "Extends the expiration of the New York state French and Indian war 250th anniversary commemoration commission until December 31, 2015",
+                    activeVersion: "",
+                    year: 2014,
+                    publishedDateTime: "2014-05-15T18:17:31",
+                    substitutedBy: null,
+                    sponsor: {
+                      member: {
+                        memberId: 385,
+                        shortName: "ESPAILLAT",
+                        sessionYear: 2013,
+                        fullName: "Adriano Espaillat",
+                        districtCode: 31
+                      },
+                      budget: false,
+                      rules: false
+                    }
+                    },
+                  billHigh: false               // Set to true if this is a high priority bill
+                },
+                ...
+              ],
+                      size: 284
+            },
+            STARRED_ON_THIRD_READING: {     // Another floor status. All statuses include:
+                                        // ORDER_OF_THE_FIRST_REPORT, ORDER_OF_THE_SECOND_REPORT,
+                                        // ORDER_OF_THE_SPECIAL_REPORT, THIRD_READING,
+                                        // THIRD_READING_FROM_SPECIAL_REPORT,
+                                        // STARRED_ON_THIRD_READING
+              items: [...],
+              size: 3
+            }
+          },
+          size: 2
+        }
+      }
+    }
+
+`bill response`_
+
+Active List:
+
+.. code-block:: javascript
+
+    {
+      success: true,
+      message: "",
+      responseType: "calendar-activelist",
+      result: {
+        year: 2014,                             // The year the calendar was released
+        calendarNumber: 54,                     // Incremental identifier for calendars within a year
+        sequenceNumber: 0,                      // Indicates publish sequence of active lists
+        calDate: "2014-06-20",                  // The date this calendar was active
+        releaseDateTime: "2014-06-20T04:28:48", // The date and time this active list was released
+        notes: null,                            // Notes regarding the active list, pretty much always null
+        entries: {                              // List of bills on this active list
+          items: [
+            {                                   // Modified bill response (see above link)
+              basePrintNo: "S4779",
+              session: 2013,
+              printNo: "S4779B",
+              billType: {
+                chamber: "SENATE",
+                desc: "Senate",
+                resolution: false
+              },
+              title: "Relates to inheritance by children conceived after the death of a genetic parent",
+              activeVersion: "B",
+              year: 2013,
+              publishedDateTime: "2013-04-23T15:04:37",
+              substitutedBy: {
+                basePrintNo: "A7461",
+                session: 2013
+              },
+              sponsor: {
+                member: {
+                  memberId: 413,
+                  shortName: "BONACIC",
+                  sessionYear: 2013,
+                  fullName: "John J. Bonacic",
+                  districtCode: 42
+                },
+                budget: false,
+                rules: false
+              },
+              billCalNo: 192                    // The calendar number that ids this bill
+                                                //  within all calendars
+            },
+            ...
+          ],
+          size: 31
+        }
+      }
+    }
+
+Get a listing of calendars
+--------------------------
+
+**Usage**
 ::
    Full calendars:
       /api/3/calendars/{year}
@@ -635,38 +814,90 @@ Usage:
    limit (number) - Limit the number of results (default 100)
    offset (number) - Start results from offset (default 1)
 
-Examples:
+**Examples**
 ::
    /api/3/calendars/2014?full=true                       (Get all calendar data from 2014)
    /api/3/calendars/2014?limit=1&order=DESC              (Get the latest calendar from 2014)
    /api/3/calendars/2014/activelist?limit=5              (Get the first 5 active lists of 2014)
    /api/3/calendars/2014/supplemental?limit=5&offset=5   (Get the second 5 supplementals of 2014)
 
-Committee API
-=============
+**Committee API**
+=================
 
-**Get the current version of a single committee for a given session year**
+Get a current committee version
+===============================
 
-Usage:
+**Usage**
 ::
    /api/3/committees/{session}/{chamber}/{committeeName}
-Example:
+
+**Example**
 ::
    /api/3/committees/2013/senate/Cultural%20Affairs,%20Tourism,%20Parks%20and%20Recreation
+   (Get the current version of the Cultural Affairs, Tourism, Parks and Recreation committee)
 
-**Get a committee version active at a given time for a given session year**
+**Sample Response**
 
-Usage:
+See `committee version response`_
+
+Get a committee version at specific time
+========================================
+**Usage**
 ::
    /api/3/committees/{session}/{chamber}/{committeeName}/{ISODateTime}
-Example:
+**Example**
 ::
-   /api/3/committees/2013/senate/Codes/2014-03-01T09:30:00
+   /api/3/committees/2013/senate/Finance/2014-03-01T09:30:00
    (Get the codes committee at 9:30 AM on March 1st, 2014)
 
-**Get the history for a single committee for a given session year**
+.. _`committee version response`:
 
-Usage:
+**Sample Response**
+
+.. code-block:: javascript
+
+    {
+      success : true,
+      message : "",
+      responseType : "committee",
+      result : {
+        chamber : "SENATE",     // The chamber of this committee (SENATE or ASSEMBLY)
+        name : "Finance",       // The name of this committee
+        sessionYear : 2013,     // The session year of this committee version
+        referenceDate : "2014-02-28T11:25:44",  // The date and time that this configuration
+                                                //  of committee members was reported
+        reformed : "2014-03-03T17:09:09",       // The date and time that this configuration
+                                                //  of committee members was replaced
+                                                // If null, then this is the current committee version
+        location : "Room 124 CAP",  // The location where this committee meets
+        meetDay : "TUESDAY",        // The day of the week that this committee meets
+        meetTime : "11:00",         // The time of day that this committee meets
+        meetAltWeek : false,        // True if this committee meets on alternate weeks
+        meetAltWeekText : "",       // Describes the committee's alternate schedule if applicable
+        committeeMembers : {        // A listing of members in this committee
+          items : [
+            {
+              memberId : 376,                   // An arbitrary unique id used to identify members
+                                                //  in our database
+              shortName : "DEFRANCISCO",        // The committee member's lbdc shortname
+              sessionYear : 2013,               // The session year this member was active in
+              fullName : "John A. DeFrancisco", // The member's full name
+              districtCode : 50,                // A code designating the member's home district
+              sequenceNo : 1,                   // The member's position in the list of committee members
+              title : "CHAIR_PERSON"            // The member's role in the committee
+                                                //  Valid roles include:
+                                                //  "CHAIR_PERSON", "VICE_CHAIR", and "MEMBER"
+            },
+            ...
+          ],
+          size : 24
+        }
+      }
+    }
+
+Get committee history
+=====================
+**Usage**
 ::
    /api/3/committees/{session}/{chamber}/{committeeName}/history
 
@@ -676,28 +907,94 @@ Usage:
          Sorted by date.  (default 'DESC')
    limit (number) - Limit the number of results (default 50)
    offset (number) - Start results from offset (default 1)
-Example:
+**Example**
 ::
    /api/3/committees/2013/senate/Aging/history  (Get 2013 history for the aging committee)
    /api/3/committees/2013/senate/Aging/history?limit=1&order=ASC&full=true
    (Get the first version of the Aging committee from 2013)
 
-**Get a listing of current committees for a given chamber**
+Get all current committees
+==========================
 
-Usage:
+**Usage**
 ::
    /api/3/committees/{session}/{chamber}
 
    Optional Params:
    full (boolean) - Set to true to see the full committee responses (default false)
-Example:
+**Example**
 ::
    /api/3/committees/2013/senate?&full=true  (Get full responses for all current senate committees for session 2013
 
 
+**Search APIs**
+===============
 
+Most of the Open Legislation data APIs include search functionality.  We built our search layer using elasticsearch
+and we aim to provide as much elasticsearch functionality as possible through the APIs.
 
+Every search layer API will have a required request parameter "term" and an optional request param "sort".
 
+.. _`term`:
 
+term
+====
 
+.. _`elasticsearch query string`: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
 
+The term parameter takes in an `elasticsearch query string`_.
+
+The simplest way to search is to send a general search term.
+For example, to search for legislation pertaining to apples, the following query will do the job.
+::
+    /api/3/bills/search?term=apples
+
+In addition to a simple search term, there are a number of advanced features available.  Our search index is generated
+with data in the same JSON format as the API responses, so any response field that is nested under "result" is fair game
+for search.  Going back to the previous example, a number of resolutions appear in the results for the apples search query.
+Looking back at the `bill response`_, we see that resolutions are designated by the "resolution" boolean under "billType".
+In order to filter resolutions out of the search results, a field query can be chained to the original query using "AND".
+::
+    /api/3/bills/search?term=apples%20AND%20billType.resolution:false
+
+For a full enumeration of query features see the `elasticsearch query string`_ syntax.
+
+sort
+====
+
+Searches can be sorted by any number valid response fields.  This is accomplished using the sort request parameter,
+which takes a comma separated string of response fields, each designated with a sort order ("ASC" or "DESC") separated
+from the field with a colon.  For example, to get the 2013 governor's program bills in canonical order:
+::
+    /api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
+                            &sort=programInfo.sequenceNo:ASC
+
+Or, you may want to order them by their status and action date:
+::
+    /api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
+                            &sort=status.statusType:ASC,status.actionDate:DESC
+
+Search Response
+===============
+
+.. code-block:: javascript
+
+    {
+      success: true,
+      message: "",
+      responseType: "search-results list",
+      total: 7,
+      offsetStart: 1,
+      offsetEnd: 7,
+      limit: 10,
+      result: {
+        items: [
+          {
+            result: { ... },            // A search result
+            rank: 0.3587615191936493    // The ranking of the search result
+          },
+          ...                           // More search results
+        ],
+        size: 7
+      }
+    }

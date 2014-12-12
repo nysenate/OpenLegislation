@@ -37,7 +37,7 @@ public class CalendarHTMLParser {
 
     public static FloorCalendarSpotcheckReference getSpotcheckReference(File html) throws Exception{
         String billCalNo = null;
-        File input = new File("/home/kyle/Test");
+        File input = new File("/home/kyle/Tests/FloorCalendarTest");
         String monthString = null, dayString = null, yearString = null, monthNum = null, verCharacter = null;
         LinkedListMultimap<CalendarSectionType, CalendarSupplementalEntry> map = LinkedListMultimap.create();
 
@@ -60,7 +60,7 @@ public class CalendarHTMLParser {
 
             System.out.println("MonthString : "+ monthString);
 
-            switch (monthString) {
+            switch (monthString) {                              //could have just used a DateUtil
                 case "JANUARY":  monthNum = "01";
                     break;
                 case "FEBRUARY":  monthNum = "02";
@@ -106,7 +106,7 @@ public class CalendarHTMLParser {
             String reading = null;
             //parseException
             try {
-                reading = center.get(i + 1).text();           //WAS 1
+                reading = center.get(i + 1).text();
                 System.out.println("reading section:: " + i + "  : " + reading);
                 if (reading == null){
                     throw new ParseError("Cannot find bill reading type");
@@ -188,10 +188,9 @@ public class CalendarHTMLParser {
 
 
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-uuuu");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         //LocalDate reportDate = LocalDate.parse(sdf.format(cal.getTime()) ,formatter);
         LocalDateTime reportDate = LocalDateTime.now();
-        //System.out.println(cal.getTime());
         LocalDate calDate = LocalDate.parse(monthNum + "-" + dayString + "-" + yearString, formatter);
 
 

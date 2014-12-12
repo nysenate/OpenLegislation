@@ -336,6 +336,74 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: active_list_reference; Type: TABLE; Schema: master; Owner: kyle; Tablespace: 
+--
+
+CREATE TABLE active_list_reference (
+    sequence_no smallint NOT NULL,
+    calendar_no smallint,
+    calendar_year smallint,
+    id integer NOT NULL,
+    calendar_date date,
+    release_date_time timestamp without time zone,
+    reference_date timestamp without time zone
+);
+
+
+ALTER TABLE master.active_list_reference OWNER TO postgres;
+
+--
+-- Name: TABLE active_list_reference; Type: COMMENT; Schema: master; Owner: kyle
+--
+
+COMMENT ON TABLE active_list_reference IS 'Table containing spotcheck report for active lists';
+
+
+--
+-- Name: active_list_reference_entry; Type: TABLE; Schema: master; Owner: kyle; Tablespace: 
+--
+
+CREATE TABLE active_list_reference_entry (
+    active_list_reference_id smallint NOT NULL,
+    bill_calendar_no smallint NOT NULL,
+    bill_print_no text,
+    bill_amend_version character(1),
+    bill_session_year smallint,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE master.active_list_reference_entry OWNER TO postgres;
+
+--
+-- Name: TABLE active_list_reference_entry; Type: COMMENT; Schema: master; Owner: kyle
+--
+
+COMMENT ON TABLE active_list_reference_entry IS 'Bill contained in an active list';
+
+
+--
+-- Name: active_list_reference_id_seq; Type: SEQUENCE; Schema: master; Owner: kyle
+--
+
+CREATE SEQUENCE active_list_reference_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE master.active_list_reference_id_seq OWNER TO postgres;
+
+--
+-- Name: active_list_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: kyle
+--
+
+ALTER SEQUENCE active_list_reference_id_seq OWNED BY active_list_reference.id;
+
+
+--
 -- Name: agenda; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -2487,11 +2555,13 @@ COMMENT ON VIEW psf IS 'Pending Sobi Fragments';
 --
 
 CREATE TABLE public_hearing (
-    title text NOT NULL,
-    date_time timestamp without time zone NOT NULL,
-    public_hearing_file text NOT NULL,
-    address text NOT NULL,
+    filename text NOT NULL,
+    title text,
+    address text,
     text text NOT NULL,
+    date date NOT NULL,
+    start_time time without time zone,
+    end_time time without time zone,
     modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
     published_date_time timestamp without time zone DEFAULT now() NOT NULL,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL
@@ -2508,24 +2578,17 @@ COMMENT ON TABLE public_hearing IS 'Listing of all processed public hearings';
 
 
 --
+-- Name: COLUMN public_hearing.filename; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing.filename IS 'The name of the file containing this public hearing''s info.';
+
+
+--
 -- Name: COLUMN public_hearing.title; Type: COMMENT; Schema: master; Owner: postgres
 --
 
 COMMENT ON COLUMN public_hearing.title IS 'The title of the public hearing.';
-
-
---
--- Name: COLUMN public_hearing.date_time; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN public_hearing.date_time IS 'The date time of the public hearing.';
-
-
---
--- Name: COLUMN public_hearing.public_hearing_file; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN public_hearing.public_hearing_file IS 'The name of the file containing this public hearing''s info.';
 
 
 --
@@ -2543,27 +2606,53 @@ COMMENT ON COLUMN public_hearing.text IS 'The raw text of this public hearing.';
 
 
 --
+-- Name: COLUMN public_hearing.date; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing.date IS 'The date of the public hearing';
+
+
+--
+-- Name: COLUMN public_hearing.start_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing.start_time IS 'Time the public hearing started.';
+
+
+--
+-- Name: COLUMN public_hearing.end_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing.end_time IS 'Time the public hearing ended.';
+
+
+--
 -- Name: public_hearing_attendance; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE public_hearing_attendance (
-    title text NOT NULL,
-    date_time timestamp without time zone NOT NULL,
-    session_member_id integer NOT NULL
+    session_member_id integer NOT NULL,
+    filename text NOT NULL
 );
 
 
 ALTER TABLE master.public_hearing_attendance OWNER TO postgres;
 
 --
+-- Name: COLUMN public_hearing_attendance.filename; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing_attendance.filename IS 'Filename of the public hearing.';
+
+
+--
 -- Name: public_hearing_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE public_hearing_committee (
-    title text NOT NULL,
-    date_time timestamp without time zone NOT NULL,
-    committee_name text NOT NULL,
-    committee_chamber text NOT NULL
+    committee_name public.citext NOT NULL,
+    committee_chamber public.chamber NOT NULL,
+    filename text NOT NULL
 );
 
 
@@ -2580,7 +2669,14 @@ COMMENT ON COLUMN public_hearing_committee.committee_name IS 'The committee, Tas
 -- Name: COLUMN public_hearing_committee.committee_chamber; Type: COMMENT; Schema: master; Owner: postgres
 --
 
-COMMENT ON COLUMN public_hearing_committee.committee_chamber IS 'The chamber of the committee.';
+COMMENT ON COLUMN public_hearing_committee.committee_chamber IS 'The chamber of the committee';
+
+
+--
+-- Name: COLUMN public_hearing_committee.filename; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN public_hearing_committee.filename IS 'The public hearing filename.';
 
 
 --
@@ -2588,7 +2684,7 @@ COMMENT ON COLUMN public_hearing_committee.committee_chamber IS 'The chamber of 
 --
 
 CREATE TABLE public_hearing_file (
-    file_name text NOT NULL,
+    filename text NOT NULL,
     staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
     processed_date_time timestamp without time zone,
     processed_count smallint DEFAULT 0 NOT NULL,
@@ -2607,10 +2703,10 @@ COMMENT ON TABLE public_hearing_file IS 'Listing of all public hearing files';
 
 
 --
--- Name: COLUMN public_hearing_file.file_name; Type: COMMENT; Schema: master; Owner: postgres
+-- Name: COLUMN public_hearing_file.filename; Type: COMMENT; Schema: master; Owner: postgres
 --
 
-COMMENT ON COLUMN public_hearing_file.file_name IS 'The name of the public hearing file.';
+COMMENT ON COLUMN public_hearing_file.filename IS 'The name of the public hearing file.';
 
 
 --
@@ -2646,6 +2742,59 @@ COMMENT ON COLUMN public_hearing_file.pending_processing IS 'Indicates if this p
 --
 
 COMMENT ON COLUMN public_hearing_file.archived IS 'Indicates if this public hearing file has been moved to the archive directory.';
+
+--
+-- Name: public_hearing_attendance_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_hearing_attendance
+    ADD CONSTRAINT public_hearing_attendance_pkey PRIMARY KEY (session_member_id, filename);
+
+--
+-- Name: public_hearing_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_hearing_committee
+    ADD CONSTRAINT public_hearing_committee_pkey PRIMARY KEY (committee_name, filename, committee_chamber);
+
+
+--
+-- Name: public_hearing_file_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_hearing_file
+    ADD CONSTRAINT public_hearing_file_pkey PRIMARY KEY (filename);
+
+
+--
+-- Name: public_hearing_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_hearing
+    ADD CONSTRAINT public_hearing_pkey PRIMARY KEY (filename);
+
+
+--
+-- Name: public_hearing_attendance_filename_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY public_hearing_attendance
+    ADD CONSTRAINT public_hearing_attendance_filename_fkey FOREIGN KEY (filename) REFERENCES public_hearing(filename);
+
+--
+-- Name: public_hearing_committee_filename_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY public_hearing_committee
+    ADD CONSTRAINT public_hearing_committee_filename_fkey FOREIGN KEY (filename) REFERENCES public_hearing(filename);
+
+
+--
+-- Name: public_hearing_filename_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY public_hearing
+    ADD CONSTRAINT public_hearing_filename_fkey FOREIGN KEY (filename) REFERENCES public_hearing_file(filename);
 
 
 --
@@ -3104,7 +3253,7 @@ COMMENT ON COLUMN adminuser.modified_date_time IS 'When this account was last mo
 
 
 --
--- Name: apiuser; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: apiuser; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE apiuser (
@@ -3401,6 +3550,13 @@ ALTER SEQUENCE session_member_id_seq OWNED BY session_member.id;
 SET search_path = master, pg_catalog;
 
 --
+-- Name: id; Type: DEFAULT; Schema: master; Owner: kyle
+--
+
+ALTER TABLE ONLY active_list_reference ALTER COLUMN id SET DEFAULT nextval('active_list_reference_id_seq'::regclass);
+
+
+--
 -- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
@@ -3550,6 +3706,30 @@ ALTER TABLE ONLY session_member ALTER COLUMN id SET DEFAULT nextval('session_mem
 
 
 SET search_path = master, pg_catalog;
+
+--
+-- Name: active_list_reference_entry_pkey; Type: CONSTRAINT; Schema: master; Owner: kyle; Tablespace: 
+--
+
+ALTER TABLE ONLY active_list_reference_entry
+    ADD CONSTRAINT active_list_reference_entry_pkey PRIMARY KEY (active_list_reference_id, bill_calendar_no);
+
+
+--
+-- Name: active_list_reference_pkey; Type: CONSTRAINT; Schema: master; Owner: kyle; Tablespace: 
+--
+
+ALTER TABLE ONLY active_list_reference
+    ADD CONSTRAINT active_list_reference_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: active_list_reference_sequence_no_calendar_no_calendar_year_key; Type: CONSTRAINT; Schema: master; Owner: kyle; Tablespace: 
+--
+
+ALTER TABLE ONLY active_list_reference
+    ADD CONSTRAINT active_list_reference_sequence_no_calendar_no_calendar_year_key UNIQUE (sequence_no, calendar_no, calendar_year, reference_date);
+
 
 --
 -- Name: agenda_info_addendum_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
@@ -4179,6 +4359,14 @@ ALTER TABLE ONLY session_member
 
 SET search_path = master, pg_catalog;
 
+
+--
+-- Name: public_hearing_attendance_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY public_hearing_attendance
+    ADD CONSTRAINT public_hearing_attendance_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id);
+
 --
 -- Name: agenda_info_committee_item_bill_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
@@ -4201,21 +4389,21 @@ CREATE INDEX calendar_supplemental_entry_bill_idx ON calendar_supplemental_entry
 
 
 --
--- Name: data_process_run_start_date_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+-- Name: data_process_run_start_date_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
 --
 
 CREATE INDEX data_process_run_start_date_idx ON data_process_run USING btree (process_start_date_time);
 
 
 --
--- Name: data_process_run_unit_start_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+-- Name: data_process_run_unit_start_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
 --
 
 CREATE INDEX data_process_run_unit_start_date_time_idx ON data_process_run_unit USING btree (start_date_time);
 
 
 --
--- Name: daybreak_sponsor_pkey; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+-- Name: daybreak_sponsor_pkey; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
 --
 
 CREATE INDEX daybreak_sponsor_pkey ON daybreak_bill_sponsor USING btree (report_date, bill_print_no, bill_session_year, type, member_short_name);
@@ -4429,6 +4617,14 @@ CREATE TRIGGER log_calendar_supplemental_updates BEFORE INSERT OR DELETE OR UPDA
 --
 
 CREATE TRIGGER log_calendar_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('calendar_no', 'year');
+
+
+--
+-- Name: active_list_reference_entry_calendar_active_list_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: kyle
+--
+
+ALTER TABLE ONLY active_list_reference_entry
+    ADD CONSTRAINT active_list_reference_entry_calendar_active_list_id_fkey FOREIGN KEY (active_list_reference_id) REFERENCES active_list_reference(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

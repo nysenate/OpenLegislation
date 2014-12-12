@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.hearing;
 
+import gov.nysenate.openleg.model.entity.Chamber;
+
 /**
  * A Committee, Task Force, or other group
  * that can hold Public Hearings. Not necessarily a valid
@@ -11,16 +13,15 @@ public class PublicHearingCommittee
     private String name;
 
     /** The Chamber the PublicHearingCommittee belongs to */
-    private String chamber;
-
+    private Chamber chamber;
 
     /** --- Basic Getters/Setters --- */
 
-    public String getChamber() {
+    public Chamber getChamber() {
         return chamber;
     }
 
-    public void setChamber(String chamber) {
+    public void setChamber(Chamber chamber) {
         this.chamber = chamber;
     }
 

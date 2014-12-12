@@ -12,11 +12,10 @@ public interface PublicHearingDao
 {
 
     /**
-     * Retrieves all PublicHearingId's for a year.
-     * @param year
+     * Retrieves all PublicHearingId's.
      * @return
      */
-    public List<PublicHearingId> getPublicHearingIds(int year, SortOrder dateOrder, LimitOffset limOff);
+    public List<PublicHearingId> getPublicHearingIds(SortOrder dateOrder, LimitOffset limOff);
 
     /**
      * Retrieves a {@link PublicHearing} via its {@link PublicHearingId}.

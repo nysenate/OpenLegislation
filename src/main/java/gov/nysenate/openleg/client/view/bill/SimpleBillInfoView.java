@@ -29,6 +29,8 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
             publishedDateTime = billInfo.getPublishedDateTime();
             substitutedBy = (billInfo.getSubstitutedBy() != null) ? new BaseBillIdView(billInfo.getSubstitutedBy()) : null;
             sponsor = (billInfo.getSponsor() != null) ? new SponsorView(billInfo.getSponsor()) : null;
+            billType = (billInfo.getBillId() != null && billInfo.getBillId().getBillType() != null)
+                    ? new BillTypeView(billInfo.getBillId().getBillType()) : null;
         }
     }
 

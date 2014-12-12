@@ -16,6 +16,9 @@ import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.hearing.event.BulkPublicHearingUpdateEvent;
 import gov.nysenate.openleg.service.hearing.event.PublicHearingUpdateEvent;
 import gov.nysenate.openleg.service.hearing.data.PublicHearingDataService;
+import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.index.query.*;
+import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +45,49 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
         eventBus.register(this);
     }
 
+    @Override
+    public SearchResults<PublicHearingId> searchPublicHearings(String sort, LimitOffset limOff) throws SearchException {
+        return search(QueryBuilders.matchAllQuery(), null, sort, limOff);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SearchResults<PublicHearingId> searchPublicHearings(int year, String sort, LimitOffset limOff) throws SearchException {
+        RangeFilterBuilder rangeFilter = FilterBuilders.rangeFilter("date")
+                .from(LocalDate.of(year, 1, 1))
+                .to(LocalDate.of(year, 12, 31))
+                .cache(false);
+        return search(QueryBuilders.matchAllQuery(), rangeFilter, sort, limOff);
+    }
+
     /** {@inheritDoc} */
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(String query, String sort, LimitOffset limOff) throws SearchException {
-        return null;
+        return search(QueryBuilders.queryString(query), null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(String query, int year, String sort, LimitOffset limOff) throws SearchException {
-        return null;
+        RangeFilterBuilder rangeFilter = FilterBuilders.rangeFilter("date")
+                .from(LocalDate.of(year, 1, 1))
+                .to(LocalDate.of(year, 12, 31))
+                .cache(false);
+        return search(QueryBuilders.queryString(query), rangeFilter, sort, limOff);
+    }
+
+    private SearchResults<PublicHearingId> search(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff)
+            throws SearchException {
+        if (limOff == null) limOff = LimitOffset.TEN;
+        try {
+            return publicHearingSearchDao.searchPublicHearings(query, postFilter, sort, limOff);
+        }
+        catch (SearchParseException ex) {
+            throw new SearchException("Invalid query string", ex);
+        }
+        catch (ElasticsearchException ex) {
+            throw new SearchException("Unexpected search exception!", ex);
+        }
     }
 
     /** {@inheritDoc} */
@@ -104,12 +140,12 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
         clearIndex();
         for (int year = 2011; year <= LocalDate.now().getYear(); year++) {
             LimitOffset limitOffset = LimitOffset.TWENTY_FIVE;
-            List<PublicHearingId> publicHearingIds = publicHearingDataService.getPublicHearingIds(year, SortOrder.DESC, limitOffset);
+            List<PublicHearingId> publicHearingIds = publicHearingDataService.getPublicHearingIds(SortOrder.DESC, limitOffset);
             while (!publicHearingIds.isEmpty()) {
                 logger.info("Indexing {} public hearings starting from {}.", publicHearingIds.size(), year);
                 List<PublicHearing> publicHearings = publicHearingIds.stream().map(publicHearingDataService::getPublicHearing).collect(Collectors.toList());
                 limitOffset = limitOffset.next();
-                publicHearingIds = publicHearingDataService.getPublicHearingIds(year, SortOrder.DESC, limitOffset);
+                publicHearingIds = publicHearingDataService.getPublicHearingIds(SortOrder.DESC, limitOffset);
             }
         }
     }

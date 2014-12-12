@@ -19,12 +19,11 @@ public interface PublicHearingDataService
     public PublicHearing getPublicHearing(PublicHearingId publicHearingId);
 
     /**
-     * Retrieves a List of {@link PublicHearingId} for a given year.
-     * @param year The year to retrieve PublicHearingId's for.
+     * Retrieves a List of {@link PublicHearingId}.
      * @param limitOffset Restrict the number of results.
      * @return
      */
-    public List<PublicHearingId> getPublicHearingIds(int year, SortOrder dateOrder, LimitOffset limitOffset);
+    public List<PublicHearingId> getPublicHearingIds(SortOrder order, LimitOffset limitOffset);
 
     /**
      * Saves a {@link PublicHearing} to the backing store.

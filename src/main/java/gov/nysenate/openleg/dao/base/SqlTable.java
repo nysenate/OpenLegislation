@@ -7,6 +7,8 @@ package gov.nysenate.openleg.dao.base;
  */
 public enum SqlTable
 {
+    ACTIVE_LIST_REFERENCE        ("active_list_reference"),
+    ACTIVE_LIST_REFERENCE_ENTRY  ("active_list_reference_entry"),
     ADMIN                        ("adminuser"),
 
     AGENDA                       ("agenda"),

@@ -103,7 +103,7 @@ public class SqlFsPublicHearingFileDao extends SqlBaseDao implements PublicHeari
 
         @Override
         public PublicHearingFile mapRow(ResultSet rs, int i) throws SQLException {
-            String fileName = rs.getString("file_name");
+            String fileName = rs.getString("filename");
             boolean archived = rs.getBoolean("archived");
 
             File file = archived ? getFileInArchiveDir(fileName) : getFileInIncomingDir(fileName);

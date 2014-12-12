@@ -31,9 +31,18 @@ public class Environment
     /** The directory path where all archived data files are contained. */
     @Value("${env.archive}") private String archiveDirPath;
 
+    /** The directory path for scraped LBDC files. */
+    @Value("${env.scraped.calendar}") private String calendarDirPath;
+    @Value("${env.scraped.assemblyagenda}") private String assemblyAgendaDirPath;
+    @Value("${env.scraped.senateagenda}") private String senateAgendaDirPath;
+    
     private File baseDir;
     private File stagingDir;
     private File archiveDir;
+    
+    private File calendarDirectory;
+    private File assemblyAgendaDirectory;
+    private File senateAgendaDirectory;
 
     /** --- Api Auth --- */
 
@@ -76,6 +85,9 @@ public class Environment
         this.baseDir = new File(envDirPath);
         this.stagingDir = new File(stagingDirPath);
         this.archiveDir = new File(archiveDirPath);
+        this.calendarDirectory = new File(calendarDirPath);
+        this.assemblyAgendaDirectory = new File(assemblyAgendaDirPath);
+        this.senateAgendaDirectory = new File(senateAgendaDirPath);
     }
 
     /** --- Basic Getters/Setters --- */
@@ -159,4 +171,29 @@ public class Environment
     public void setSpotcheckScheduled(boolean spotcheckScheduled) {
         this.spotcheckScheduled = spotcheckScheduled;
     }
+
+    public File getCalendarDirectory() {
+        return calendarDirectory;
+    }
+
+    public void setCalendarDirectory(File calendarDirectory) {
+        this.calendarDirectory = calendarDirectory;
+    }
+
+    public File getSenateAgendaDirectory() {
+        return senateAgendaDirectory;
+    }
+
+    public void setSenateAgendaDirectory(File senateAgendaDirectory) {
+        this.senateAgendaDirectory = senateAgendaDirectory;
+    }
+
+    public File getAssemblyAgendaDirectory() {
+        return assemblyAgendaDirectory;
+    }
+
+    public void setAssemblyAgendaDirectory(File assemblyAgendaDirectory) {
+        this.assemblyAgendaDirectory = assemblyAgendaDirectory;
+    }
+
 }
