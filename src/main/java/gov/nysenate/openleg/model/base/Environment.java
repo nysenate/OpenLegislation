@@ -10,74 +10,75 @@ import java.io.File;
  * The Environment class contains various configuration options to be used throughout the application.
  * This class is mutable during runtime so that hot config changes can be made to the fields here whereas
  * the property file is only checked during initialization.
+ *
+ * The fields in this class are primarily wired directly to values in the property file. Many fields
+ * have setters to allow for changes while the application is running.
  */
 @Component
-public class Environment {
-    @Value("${env.schema:master}")
-    private String schema;
+public class Environment
+{
+    /** The database schema where the legislative data is stored. */
+    @Value("${env.schema:master}") private String schema;
 
-    /**
-     * --- File system configuration ---
-     */
+    /** --- File system configuration --- */
 
-    @Value("${env.directory}")
-    private String envDirPath;
-    @Value("${env.staging}")
-    private String stagingDirPath;
-    @Value("${env.archive}")
-    private String archiveDirPath;
+    /** The root directory path where all data files are contained within. */
+    @Value("${env.base}") private String envDirPath;
 
-    private File baseDirectory;
-    private File stagingDirectory;
-    private File archiveDirectory;
+    /** The directory path where all incoming data files are contained. */
+    @Value("${env.staging}") private String stagingDirPath;
 
-    /** --- Auth Stuff --- */
+    /** The directory path where all archived data files are contained. */
+    @Value("${env.archive}") private String archiveDirPath;
 
-    @Value("${default.api.secret}")
-    private String defaultApiSecret;
+    private File baseDir;
+    private File stagingDir;
+    private File archiveDir;
+
+    /** --- Api Auth --- */
+
+    /** A secret key used to allow access to the API through the front-end. */
+    @Value("${api.secret}") private String apiSecret;
 
     /** --- Search Index settings --- */
 
-    @Value("${elastic.indexing.enabled:true}")
-    private boolean elasticIndexing = true;
+    /** Allow elastic search to index documents. */
+    @Value("${elastic.search.enabled}") private boolean elasticIndexing;
 
-    /**
-     * --- Processing settings ---
-     */
+    /** --- Processing settings --- */
 
-    @Value("${incremental.update:true}")
-    private boolean incrementalUpdates;
-    @Value("${sobi.batch.size:100}")
-    private int sobiBatchSize;
+    /** Enable processing of data. */
+    @Value("${data.process.enabled}") private boolean processingEnabled;
 
-    /**
-     * --- Scheduling Settings ---
-     */
+    /** Enable batch processing of SOBI files. */
+    @Value("${sobi.batch.process.enabled}") private boolean sobiBatchEnabled;
 
-    @Value("${scheduler.process.scheduled}")
-    private boolean processingScheduled;
-    @Value("${scheduler.checkmail.scheduled}")
-    private boolean checkMailScheduled;
-    @Value("${scheduler.spotcheck.scheduled}")
-    private boolean spotcheckScheduled;
+    /** If SOBI batch is enabled, this specifies the maximum batch size. */
+    @Value("${sobi.batch.process.size}") private int sobiBatchSize;
 
-    /**
-     * --- Constructors ---
-     */
+    /** --- Scheduling Settings --- */
 
-    public Environment() {
-    }
+    /** Enable processing of data at scheduled intervals. */
+    @Value("${scheduler.process.enabled}") private boolean processingScheduled;
+
+    /** Enable checking of email at scheduled intervals. */
+    @Value("${scheduler.checkmail.enabled}") private boolean checkMailScheduled;
+
+    /** Enable spot-check report runs at scheduled intervals. */
+    @Value("${scheduler.spotcheck.enabled}") private boolean spotcheckScheduled;
+
+    /** --- Constructors --- */
+
+    public Environment() {}
 
     @PostConstruct
     private void init() {
-        this.baseDirectory = new File(envDirPath);
-        this.stagingDirectory = new File(stagingDirPath);
-        this.archiveDirectory = new File(archiveDirPath);
+        this.baseDir = new File(envDirPath);
+        this.stagingDir = new File(stagingDirPath);
+        this.archiveDir = new File(archiveDirPath);
     }
 
-    /**
-     * --- Basic Getters/Setters ---
-     */
+    /** --- Basic Getters/Setters --- */
 
     public String getSchema() {
         return schema;
@@ -87,28 +88,16 @@ public class Environment {
         this.schema = schema;
     }
 
-    public File getBaseDirectory() {
-        return baseDirectory;
+    public File getBaseDir() {
+        return baseDir;
     }
 
-    public void setBaseDirectory(File baseDirectory) {
-        this.baseDirectory = baseDirectory;
+    public File getStagingDir() {
+        return stagingDir;
     }
 
-    public File getStagingDirectory() {
-        return stagingDirectory;
-    }
-
-    public void setStagingDirectory(File stagingDirectory) {
-        this.stagingDirectory = stagingDirectory;
-    }
-
-    public File getArchiveDirectory() {
-        return archiveDirectory;
-    }
-
-    public void setArchiveDirectory(File archiveDirectory) {
-        this.archiveDirectory = archiveDirectory;
+    public File getArchiveDir() {
+        return archiveDir;
     }
 
     public boolean isElasticIndexing() {
@@ -119,12 +108,20 @@ public class Environment {
         this.elasticIndexing = elasticIndexing;
     }
 
-    public boolean isIncrementalUpdates() {
-        return incrementalUpdates;
+    public boolean isProcessingEnabled() {
+        return processingEnabled;
     }
 
-    public void setIncrementalUpdates(boolean incrementalUpdates) {
-        this.incrementalUpdates = incrementalUpdates;
+    public void setProcessingEnabled(boolean processingEnabled) {
+        this.processingEnabled = processingEnabled;
+    }
+
+    public boolean isSobiBatchEnabled() {
+        return sobiBatchEnabled;
+    }
+
+    public void setSobiBatchEnabled(boolean sobiBatchEnabled) {
+        this.sobiBatchEnabled = sobiBatchEnabled;
     }
 
     public int getSobiBatchSize() {
@@ -135,8 +132,8 @@ public class Environment {
         this.sobiBatchSize = sobiBatchSize;
     }
 
-    public String getDefaultApiSecret() {
-        return defaultApiSecret;
+    public String getApiSecret() {
+        return apiSecret;
     }
 
     public boolean isProcessingScheduled() {

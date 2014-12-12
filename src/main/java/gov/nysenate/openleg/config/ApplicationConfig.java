@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.base.IngestCache;
+import gov.nysenate.openleg.util.AsciiArt;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.elasticsearch.ElasticsearchException;
@@ -27,7 +28,6 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.PostConstruct;
 import java.util.Calendar;
@@ -40,12 +40,12 @@ public class ApplicationConfig implements CachingConfigurer
 
     @PostConstruct
     public void init() {
-        logger.info("{}", logo());
+        logger.info("{}", AsciiArt.OPENLEG_2_LOGO.getText());
     }
 
-    /** --- Eh Cache Configuration --- */
+    /** --- Eh Cache Spring Configuration --- */
 
-    @Value("${cache.max.heap.size}") private String cacheMaxHeapSize;
+    @Value("${cache.max.size}") private String cacheMaxHeapSize;
 
     @Bean(destroyMethod = "shutdown")
     public net.sf.ehcache.CacheManager pooledCacheManger() {
@@ -53,7 +53,7 @@ public class ApplicationConfig implements CachingConfigurer
         // it stops computing further. Some objects can contain many references so we set the limit
         // fairly high.
         SizeOfPolicyConfiguration sizeOfConfig = new SizeOfPolicyConfiguration();
-        sizeOfConfig.setMaxDepth(50000);
+        sizeOfConfig.setMaxDepth(100000);
         sizeOfConfig.setMaxDepthExceededBehavior("abort");
 
         // Configure the default cache to be used as a template for actual caches.
@@ -63,7 +63,7 @@ public class ApplicationConfig implements CachingConfigurer
 
         // Configure the cache manager.
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
-        config.setMaxBytesLocalHeap(cacheMaxHeapSize);
+        config.setMaxBytesLocalHeap(cacheMaxHeapSize + "M");
         config.addDefaultCache(cacheConfiguration);
         config.setUpdateCheck(false);
 
@@ -118,7 +118,7 @@ public class ApplicationConfig implements CachingConfigurer
 
     /** --- Processing Instances --- */
 
-    @Value("${sobi.batch.size:1000}")
+    @Value("${sobi.batch.process.size:100}")
     private int sobiBatchSize;
 
     @Bean(name = "billIngestCache")
@@ -134,22 +134,5 @@ public class ApplicationConfig implements CachingConfigurer
     @Bean(name = "calendarIngestCache")
     public IngestCache<CalendarId, Calendar, SobiFragment> calendarIngestCache() {
         return new IngestCache<>(100);
-    }
-
-    /** --- Misc --- */
-
-    private String logo() {
-        return
-            "\n=============================================================================\n" +
-            "  .oooooo.                                          .oooo.         .oooo.   \n" +
-            " d8P'  `Y8b                                       .dP\"\"Y88b       d8P'`Y8b  \n" +
-            "888      888 oo.ooooo.   .ooooo.  ooo. .oo.             ]8P'     888    888 \n" +
-            "888      888  888' `88b d88' `88b `888P\"Y88b          .d8P'      888    888 \n" +
-            "888      888  888   888 888ooo888  888   888        .dP'         888    888 \n" +
-            "`88b    d88'  888   888 888    .o  888   888      .oP     .o .o. `88b  d88' \n" +
-            " `Y8bood8P'   888bod8P' `Y8bod8P' o888o o888o     8888888888 Y8P  `Y8bd8P'  \n" +
-            "              888                                                           \n" +
-            "             o888o                                                          \n" +
-            "=============================================================================\n";
     }
 }
