@@ -35,8 +35,8 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
 
     @PostConstruct
     private void init() {
-        incomingTranscriptDir = new File(environment.getStagingDirectory(), "transcripts");
-        archiveTranscriptDir = new File(environment.getArchiveDirectory(), "transcripts");
+        incomingTranscriptDir = new File(environment.getStagingDir(), "transcripts");
+        archiveTranscriptDir = new File(environment.getArchiveDir(), "transcripts");
     }
 
     /** --- Implemented Methods --- */

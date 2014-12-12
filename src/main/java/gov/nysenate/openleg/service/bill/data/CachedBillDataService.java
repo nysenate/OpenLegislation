@@ -47,8 +47,8 @@ public class CachedBillDataService implements BillDataService, CachingService
     @Autowired private BillDao billDao;
     @Autowired private EventBus eventBus;
 
-    @Value("${cache.bill.heap.size}") private long billCacheSizeMb;
-    @Value("${cache.bill.info.heap.size}") private long billInfoCacheSizeMb;
+    @Value("${bill.cache.size}") private long billCacheSizeMb;
+    @Value("${bill-info.cache.size}") private long billInfoCacheSizeMb;
 
     private static final String billCacheName = "bills";
     private static final String billInfoCacheName = "billInfos";

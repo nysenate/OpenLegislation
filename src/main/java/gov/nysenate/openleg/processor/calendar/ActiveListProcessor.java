@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarActiveList;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
 import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
@@ -32,8 +33,7 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
 {
     private static final Logger logger = LoggerFactory.getLogger(ActiveListProcessor.class);
 
-    @Autowired
-    protected XmlHelper xml;
+    @Autowired protected XmlHelper xml;
 
     @PostConstruct
     public void init() {
@@ -49,6 +49,7 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
     public void process(SobiFragment sobiFragment) {
         logger.info("Processing Senate Calendar Active List... {}", sobiFragment.getFragmentId());
         LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
+        DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
             Document doc = xml.parse(sobiFragment.getText());
             Node xmlCalendarActive = xml.getNode("SENATEDATA/sencalendaractive", doc);
@@ -95,9 +96,12 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
         }
         catch (IOException | SAXException | XPathExpressionException ex) {
             logger.error("Failed to parse active list sobi", ex);
+            unit.addException("Failed to parse active list: " + ex.getMessage());
         }
+        // Notify the data processor that a calendar active list fragment has finished processing
+        postDataUnitEvent(unit);
 
-        if (env.isIncrementalUpdates() || calendarIngestCache.exceedsCapacity()) {
+        if (!env.isSobiBatchEnabled() || calendarIngestCache.exceedsCapacity()) {
             flushCalendarUpdates();
         }
     }

@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.client.view.bill;
 
-import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.bill.BillUpdateDigest;
 import org.apache.commons.lang3.text.WordUtils;
@@ -14,7 +13,8 @@ public class BillUpdateDigestView implements ViewObject
     private String scope;
     private Map<String, String> updates;
     private LocalDateTime updatedOn;
-    private String sourceDataId;
+    private String sourceId;
+    private LocalDateTime sourceDateTime;
 
     public BillUpdateDigestView(BillUpdateDigest updateDigest) {
         if (updateDigest != null) {
@@ -22,7 +22,8 @@ public class BillUpdateDigestView implements ViewObject
             this.scope = WordUtils.capitalizeFully(updateDigest.getTable().replaceAll("_", " "));
             this.updates = updateDigest.getUpdates();
             this.updatedOn = updateDigest.getUpdatedDateTime();
-            this.sourceDataId = updateDigest.getSourceDataId();
+            this.sourceId = updateDigest.getSourceDataId();
+            this.sourceDateTime = updateDigest.getSourceDataDateTime();
         }
     }
 
@@ -47,7 +48,11 @@ public class BillUpdateDigestView implements ViewObject
         return updatedOn;
     }
 
-    public String getSourceDataId() {
-        return sourceDataId;
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public LocalDateTime getSourceDateTime() {
+        return sourceDateTime;
     }
 }

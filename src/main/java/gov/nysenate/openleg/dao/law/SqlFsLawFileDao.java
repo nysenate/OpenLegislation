@@ -34,8 +34,8 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
 
     @PostConstruct
     protected void init() {
-        this.incomingLawDir = new File(environment.getStagingDirectory(), "laws");
-        this.archiveLawDir = new File(environment.getArchiveDirectory(), "laws");
+        this.incomingLawDir = new File(environment.getStagingDir(), "laws");
+        this.archiveLawDir = new File(environment.getArchiveDir(), "laws");
     }
 
     /** --- Implemented Methods --- */

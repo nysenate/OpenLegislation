@@ -2,9 +2,14 @@ package gov.nysenate.openleg.processor.sobi;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.sobi.SobiDao;
+import gov.nysenate.openleg.model.process.DataProcessAction;
+import gov.nysenate.openleg.model.process.DataProcessErrorEvent;
+import gov.nysenate.openleg.model.process.DataProcessUnit;
+import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
 import gov.nysenate.openleg.model.sobi.*;
 import gov.nysenate.openleg.processor.agenda.AgendaProcessor;
 import gov.nysenate.openleg.processor.agenda.AgendaVoteProcessor;
@@ -34,11 +39,10 @@ public class ManagedSobiProcessService implements SobiProcessService
 {
     private static final Logger logger = LoggerFactory.getLogger(ManagedSobiProcessService.class);
 
-    @Value("${sobi.batch.size:1000}")
-    private int sobiBatchSize;
+    @Autowired private SobiDao sobiDao;
+    @Autowired private EventBus eventBus;
 
-    @Autowired
-    private SobiDao sobiDao;
+    @Value("${sobi.batch.size:1000}") private int sobiBatchSize;
 
     /** --- Processor Dependencies --- */
 
@@ -54,6 +58,7 @@ public class ManagedSobiProcessService implements SobiProcessService
 
     @PostConstruct
     protected void init() {
+        eventBus.register(this);
         processorMap = ImmutableMap.<SobiFragmentType, SobiProcessor>builder()
             .put(SobiFragmentType.AGENDA, agendaProcessor)
             .put(SobiFragmentType.AGENDA_VOTE, agendaVoteProcessor)
@@ -100,6 +105,8 @@ public class ManagedSobiProcessService implements SobiProcessService
                 logger.debug((newSobis.isEmpty()) ? "No more sobi files to collate."
                                                   : "Collating {} sobi files.", newSobis.size());
                 for (SobiFile sobiFile : newSobis) {
+                    DataProcessUnit unit =
+                        new DataProcessUnit(getCollateType(), sobiFile.getFileName(), LocalDateTime.now(), DataProcessAction.COLLATE);
                     List<SobiFragment> fragments = createFragments(sobiFile);
                     // Record the sobi file in the backing store.
                     sobiDao.updateSobiFile(sobiFile);
@@ -108,17 +115,22 @@ public class ManagedSobiProcessService implements SobiProcessService
                         logger.info("Saving fragment {}", fragment.getFragmentId());
                         fragment.setPendingProcessing(true);
                         sobiDao.updateSobiFragment(fragment);
+                        unit.addMessage("Saved " + fragment.getFragmentId());
                     }
                     // Done with this sobi file so let's archive it.
                     sobiDao.archiveAndUpdateSobiFile(sobiFile);
                     totalCollated++;
+                    unit.setEndDateTime(LocalDateTime.now());
+                    eventBus.post(new DataProcessUnitEvent(unit));
                 }
             }
             while (!newSobis.isEmpty());
             return totalCollated;
         }
         catch (IOException ex) {
-            logger.error("Error while retrieving incoming sobi files during collation.", ex);
+            String errMessage = "Error while retrieving incoming sobi files during collation";
+            eventBus.post(new DataProcessErrorEvent(errMessage, ex));
+            logger.error(errMessage, ex);
         }
         return 0;
     }

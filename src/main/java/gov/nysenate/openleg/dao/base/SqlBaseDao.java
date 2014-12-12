@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.base;
 
+import com.google.common.base.Splitter;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -20,7 +21,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -125,6 +129,31 @@ public abstract class SqlBaseDao
         return hstoreMap.entrySet().stream()
             .map(kv -> kv.getKey() + "=>" + kv.getValue())
             .collect(Collectors.joining(","));
+    }
+
+    /** --- Date Methods -- */
+
+    /**
+     * Given a sobi fragment id, parse out the date/time. Returns null if the fragment id has a different pattern
+     * than usual..
+     *
+     * @param fragmentId String
+     * @return LocalDateTime
+     */
+    public static LocalDateTime getLocalDateTimeFromSobiFragmentId(String fragmentId) {
+        if (fragmentId != null && !fragmentId.isEmpty()) {
+            List<String> parts = Splitter.on(".").splitToList(fragmentId);
+            if (parts.size() == 4) {
+                try {
+                    return LocalDateTime.parse(parts.get(1).substring(1) + parts.get(2).substring(1),
+                            DateTimeFormatter.ofPattern("yyMMddHHmmss"));
+                }
+                catch (DateTimeParseException ex) {
+                    logger.warn("Failed to parse date time from sobi fragment {}", fragmentId, ex);
+                }
+            }
+        }
+        return null;
     }
 
     /**

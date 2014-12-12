@@ -9,6 +9,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
@@ -68,7 +69,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
 
     /** Used to tokenize chunks of veto/approval messages by newlines that follow an end or delete line */
     protected static final String vetoApprovalSplitter =
-            "(?<=00000.SO DOC (?:VETO\\d{4}|APPR\\d{3}\\s)\\s{8}(?:\\*END\\*.{3}|\\*DELETE\\*).{42})\\n";
+        "(?<=00000.SO DOC (?:VETO\\d{4}|APPR\\d{3}\\s)\\s{8}(?:\\*END\\*.{3}|\\*DELETE\\*).{42})\\n";
 
     /** --- Constructors --- */
 
@@ -96,6 +97,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         LocalDateTime date = sobiFragment.getPublishedDateTime();
         List<SobiBlock> blocks = sobiFragment.getSobiBlocks();
         logger.info("Processing " + sobiFragment.getFragmentId() + " with (" + blocks.size() + ") blocks.");
+        DataProcessUnit unit = createProcessUnit(sobiFragment);
         for (SobiBlock block : blocks) {
             String data = block.getData();
             BillId billId = block.getBillId();
@@ -107,11 +109,11 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                                                           block.getStartLineNo(), block.getEndLineNo());
             try {
                 switch (block.getType()) {
-                    case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date); break;
+                    case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date, unit); break;
                     case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
                     case TITLE: applyTitle(data, baseBill, date); break;
                     case BILL_EVENT: applyBillActions(data, baseBill, specifiedAmendment); break;
-                    case SAME_AS: applySameAs(data, specifiedAmendment, sobiFragment); break;
+                    case SAME_AS: applySameAs(data, specifiedAmendment, sobiFragment, unit); break;
                     case SPONSOR: applySponsor(data, baseBill, specifiedAmendment, date); break;
                     case CO_SPONSOR: applyCosponsors(data, activeAmendment); break;
                     case MULTI_SPONSOR: applyMultisponsors(data, activeAmendment); break;
@@ -124,11 +126,14 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     case TEXT: applyText(data, specifiedAmendment, date, block.getType(), sobiFragment); break;
                     case VETO_APPROVE_MEMO: applyVetoApprovalMessage(data, baseBill, date); break;
                     case VOTE_MEMO: applyVoteMemo(data, specifiedAmendment, date); break;
-                    default: throw new ParseError("Invalid Line Code " + block.getType());
+                    default: {
+                        throw new ParseError("Invalid Line Code " + block.getType());
+                    }
                 }
             }
             catch (ParseError ex) {
                 logger.error("Parse Error: {}", ex);
+                unit.addException("Parse Error: " + ex.getMessage());
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
 
@@ -137,21 +142,21 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                 flushBillUpdates();
             }
         }
+        // Notify the data processor that a bill fragment has finished processing
+        postDataUnitEvent(unit);
 
         // Flush cache after each fragment when doing incremental updates
-        if (env.isIncrementalUpdates()) {
+        if (!env.isSobiBatchEnabled()) {
             flushBillUpdates();
         }
     }
 
     /**
-     * If updates are batched, we need to make sure that the global ingest cache is purged.
+     * Make sure that the global ingest cache is purged.
      */
     @Override
     public void postProcess() {
-        if (!env.isIncrementalUpdates()) {
-            flushBillUpdates();
-        }
+        flushBillUpdates();
     }
 
     /** --- Processing Methods --- */
@@ -175,7 +180,8 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *
      * @throws ParseError
      */
-    private void applyBillInfo(String data, Bill baseBill, BillAmendment specifiedAmendment, LocalDateTime date) throws ParseError {
+    private void applyBillInfo(String data, Bill baseBill, BillAmendment specifiedAmendment, LocalDateTime date,
+                               DataProcessUnit unit) throws ParseError {
         Version version = specifiedAmendment.getVersion();
         if (data.startsWith("DELETE")) {
             // Un-publish the specified amendment.
@@ -208,7 +214,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     baseBill.setModifiedDateTime(date);
                 }
                 catch (NumberFormatException ex) {
-                    logger.debug("Failed to parse previous session year from Bill Info line: " + prevSessionYearStr);
+                    unit.addMessage("Failed to parse previous session year from Bill Info line: " + prevSessionYearStr);
                 }
             }
         }
@@ -314,7 +320,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *                              | 2009S51106 5No same as
      * ----------------------------------------------------------------------
      */
-    private void applySameAs(String data, BillAmendment specifiedAmendment, SobiFragment fragment) {
+    private void applySameAs(String data, BillAmendment specifiedAmendment, SobiFragment fragment, DataProcessUnit unit) {
         if (data.trim().equalsIgnoreCase("No same as") || data.trim().equalsIgnoreCase("DELETE")) {
             specifiedAmendment.getSameAs().clear();
             specifiedAmendment.setUniBill(false);
@@ -334,7 +340,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                 }
             }
             else {
-                logger.error("sameAsPattern not matched: " + data);
+                unit.addMessage("sameAsPattern not matched: " + data);
             }
         }
     }

@@ -39,7 +39,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     @Autowired private CalendarDao calendarDao;
     @Autowired private EventBus eventBus;
 
-    @Value("${cache.calendar.heap.size}") private long calendarCacheSizeMb;
+    @Value("${calendar.cache.size}") private long calendarCacheSizeMb;
 
     private static final String calendarDataCache = "calendarData";
     private Cache calendarCache;

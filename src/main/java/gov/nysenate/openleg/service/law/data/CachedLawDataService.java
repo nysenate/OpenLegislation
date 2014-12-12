@@ -42,7 +42,7 @@ public class CachedLawDataService implements LawDataService, CachingService
     @Autowired private CacheManager cacheManager;
     @Autowired EventBus eventBus;
 
-    @Value("${cache.law.heap.size}") private long lawTreeCacheHeapSize;
+    @Value("${law.cache.size}") private long lawTreeCacheHeapSize;
 
     private static final String lawTreeCacheName = "lawtree";
     private EhCacheCache lawTreeCache;
@@ -107,6 +107,8 @@ public class CachedLawDataService implements LawDataService, CachingService
             warmCaches();
         }
     }
+
+    /** --- LawDataService implementation --- */
 
     /** {@inheritDoc} */
     @Override

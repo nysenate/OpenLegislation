@@ -55,8 +55,8 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
 
     @PostConstruct
     protected void init() {
-        this.incomingDaybreakDir = new File(environment.getStagingDirectory(), "daybreak");
-        this.archiveDaybreakDir = new File(environment.getArchiveDirectory(), "daybreak");
+        this.incomingDaybreakDir = new File(environment.getStagingDir(), "daybreak");
+        this.archiveDaybreakDir = new File(environment.getArchiveDir(), "daybreak");
     }
 
     /** --- Interfaced Methods --- */

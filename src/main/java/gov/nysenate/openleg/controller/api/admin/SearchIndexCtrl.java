@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.PostConstruct;
 import java.util.Set;
 
-import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
+import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 
 @RestController
-@RequestMapping(value = BASE_API_PATH + "/index")
+@RequestMapping(value = BASE_ADMIN_API_PATH + "/index")
 public class SearchIndexCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(SearchIndexCtrl.class);

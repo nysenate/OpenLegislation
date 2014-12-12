@@ -73,9 +73,7 @@ public class LawTreeNode implements Comparable<LawTreeNode>
     public List<LawTreeNode> getAllNodes(List<LawTreeNode> descNodes) {
         if (descNodes == null) throw new IllegalStateException("Node list is null");
         descNodes.add(this);
-        getChildNodeList().forEach(n -> {
-            n.getAllNodes(descNodes);
-        });
+        getChildNodeList().forEach(n -> n.getAllNodes(descNodes));
         return descNodes;
     }
 

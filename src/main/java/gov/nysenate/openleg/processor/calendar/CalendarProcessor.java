@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
+import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
@@ -30,8 +31,7 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
 {
     private static final Logger logger = LoggerFactory.getLogger(CalendarProcessor.class);
 
-    @Autowired
-    protected XmlHelper xml;
+    @Autowired protected XmlHelper xml;
 
     @PostConstruct
     public void init() {
@@ -47,6 +47,7 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
     public void process(SobiFragment sobiFragment) {
         logger.info("Processing Senate Calendar... {}", sobiFragment.getFragmentId());
         LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
+        DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
             Document doc = xml.parse(sobiFragment.getText());
             Node xmlCalendar = xml.getNode("SENATEDATA/sencalendar", doc);
@@ -104,9 +105,12 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
         }
         catch (IOException | SAXException | XPathExpressionException ex) {
             logger.error("Failed to parse calendar sobi {}", sobiFragment.getFragmentId(), ex);
+            unit.addException("Failed to parse calendar: " + ex.getMessage());
         }
+        // Notify the data processor that a calendar fragment has finished processing
+        postDataUnitEvent(unit);
 
-        if (env.isIncrementalUpdates() || calendarIngestCache.exceedsCapacity()) {
+        if (!env.isSobiBatchEnabled() || calendarIngestCache.exceedsCapacity()) {
             flushCalendarUpdates();
         }
     }

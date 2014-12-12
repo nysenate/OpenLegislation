@@ -14,6 +14,9 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.process.DataProcessAction;
+import gov.nysenate.openleg.model.process.DataProcessUnit;
+import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
@@ -49,36 +52,38 @@ public abstract class AbstractDataProcessor
     /** --- Data Services --- */
 
     @Autowired protected AgendaDataService agendaDataService;
-
     @Autowired protected BillDataService billDataService;
-
     @Autowired protected CalendarDataService calendarDataService;
-
     @Autowired protected CommitteeDataService committeeDataService;
-
     @Autowired protected MemberService memberService;
-
     @Autowired protected VetoDataService vetoDataService;
 
     /** --- Events --- */
 
     @Autowired protected EventBus eventBus;
 
-    /** --- Caches --- */
+    /** --- Ingest Caches --- */
 
-    @Resource(name = "agendaIngestCache")
-    protected IngestCache<AgendaId, Agenda, SobiFragment> agendaIngestCache;
-
-    @Resource(name = "billIngestCache")
-    protected IngestCache<BaseBillId, Bill, SobiFragment> billIngestCache;
-
-    @Resource(name = "calendarIngestCache")
-    protected IngestCache<CalendarId, Calendar, SobiFragment> calendarIngestCache;
+    @Resource(name = "agendaIngestCache") protected IngestCache<AgendaId, Agenda, SobiFragment> agendaIngestCache;
+    @Resource(name = "billIngestCache") protected IngestCache<BaseBillId, Bill, SobiFragment> billIngestCache;
+    @Resource(name = "calendarIngestCache") protected IngestCache<CalendarId, Calendar, SobiFragment> calendarIngestCache;
 
     public abstract void init();
 
     public void initBase() {
         eventBus.register(this);
+    }
+
+    /** --- Common Methods --- */
+
+    protected DataProcessUnit createProcessUnit(SobiFragment sobiFragment) {
+        return new DataProcessUnit(sobiFragment.getType().name(), sobiFragment.getFragmentId(),
+            LocalDateTime.now(), DataProcessAction.INGEST);
+    }
+
+    protected void postDataUnitEvent(DataProcessUnit unit) {
+        unit.setEndDateTime(LocalDateTime.now());
+        eventBus.post(new DataProcessUnitEvent(unit));
     }
 
     /** --- Bill Methods --- */

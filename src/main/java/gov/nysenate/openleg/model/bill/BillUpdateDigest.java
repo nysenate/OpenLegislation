@@ -9,6 +9,7 @@ public class BillUpdateDigest extends BillUpdateToken
     private String table;
     private Map<String, String> updates;
     private String sourceDataId;
+    private LocalDateTime sourceDataDateTime;
 
     /** --- Constructors --- */
 
@@ -48,5 +49,13 @@ public class BillUpdateDigest extends BillUpdateToken
 
     public void setSourceDataId(String sourceDataId) {
         this.sourceDataId = sourceDataId;
+    }
+
+    public LocalDateTime getSourceDataDateTime() {
+        return sourceDataDateTime;
+    }
+
+    public void setSourceDataDateTime(LocalDateTime sourceDataDateTime) {
+        this.sourceDataDateTime = sourceDataDateTime;
     }
 }

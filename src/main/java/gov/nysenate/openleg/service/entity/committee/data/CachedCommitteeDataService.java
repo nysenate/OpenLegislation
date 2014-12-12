@@ -44,7 +44,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     @Autowired private CommitteeDao committeeDao;
     @Autowired private EventBus eventBus;
 
-    @Value("${cache.committee.heap.size}") private long committeeCacheSizeMb;
+    @Value("${committee.cache.size}") private long committeeCacheSizeMb;
 
     private static final String committeeCacheName = "committee";
     private Cache committeeCache;

@@ -15,8 +15,6 @@ import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +28,10 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
+import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 
 @RestController
-@RequestMapping(value = BASE_API_PATH + "/cache")
+@RequestMapping(value = BASE_ADMIN_API_PATH + "/cache")
 public class MemoryCacheCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(MemoryCacheCtrl.class);

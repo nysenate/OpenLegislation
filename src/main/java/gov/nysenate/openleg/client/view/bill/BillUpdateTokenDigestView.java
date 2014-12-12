@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.client.view.bill;
 
+import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.model.bill.BillUpdateDigest;
 import gov.nysenate.openleg.model.bill.BillUpdateToken;
 
@@ -8,13 +9,13 @@ import java.util.stream.Collectors;
 
 public class BillUpdateTokenDigestView extends BillUpdateTokenView
 {
-    protected List<BillUpdateDigestView> updates;
+    protected ListView<BillUpdateDigestView> updates;
 
     public BillUpdateTokenDigestView(BillUpdateToken token, List<BillUpdateDigest> digests) {
         super(token);
         if (digests != null) {
-            this.updates = digests.stream()
-                .map(digest -> new BillUpdateDigestView(digest)).collect(Collectors.toList());
+            this.updates = ListView.of(digests.stream()
+                .map(digest -> new BillUpdateDigestView(digest)).collect(Collectors.toList()));
         }
     }
 
@@ -23,7 +24,7 @@ public class BillUpdateTokenDigestView extends BillUpdateTokenView
         return "bill-update-token-digest";
     }
 
-    public List<BillUpdateDigestView> getUpdates() {
+    public ListView<BillUpdateDigestView> getUpdates() {
         return updates;
     }
 }

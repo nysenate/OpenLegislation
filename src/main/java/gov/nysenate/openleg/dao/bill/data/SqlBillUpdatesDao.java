@@ -57,7 +57,10 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
             data.putAll(key);
 
             digest.setAction(rs.getString("action"));
-            digest.setSourceDataId(rs.getString("sobi_fragment_id"));
+            String fragmentId = rs.getString("sobi_fragment_id");
+            digest.setSourceDataId(fragmentId);
+            // Parse the date from the id instead of doing a costly sql join
+            digest.setSourceDataDateTime(getLocalDateTimeFromSobiFragmentId(fragmentId));
             digest.setTable(rs.getString("table_name"));
             digest.setUpdates(data);
             return digest;
@@ -68,11 +71,11 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
 
     private static class UpdateTokenListHandler implements RowCallbackHandler {
         private List<BillUpdateToken> tokens = new ArrayList<>();
-        private Integer totalUpdated = null;
+        private int totalUpdated = 0;
 
         @Override
         public void processRow(ResultSet rs) throws SQLException {
-            if (totalUpdated == null) {
+            if (totalUpdated == 0) {
                 totalUpdated = rs.getInt("total_updated");
             }
             tokens.add(getBillUpdateTokenFromRs.mapRow(rs, 0));

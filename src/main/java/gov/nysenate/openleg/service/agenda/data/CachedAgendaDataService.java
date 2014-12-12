@@ -40,7 +40,7 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
     @Autowired private AgendaDao agendaDao;
     @Autowired private EventBus eventBus;
 
-    @Value("${cache.agenda.heap.size}") private long agendaCacheSizeMb;
+    @Value("${agenda.cache.size}") private long agendaCacheSizeMb;
 
     private static final String agendaCacheName = "agendas";
     private EhCacheCache agendaCache;

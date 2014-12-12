@@ -47,8 +47,8 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
 
     @PostConstruct
     protected void init() {
-        this.incomingSobiDir = new File(environment.getStagingDirectory(), "sobis");
-        this.archiveSobiDir = new File(environment.getArchiveDirectory(), "sobis");
+        this.incomingSobiDir = new File(environment.getStagingDir(), "sobis");
+        this.archiveSobiDir = new File(environment.getArchiveDir(), "sobis");
     }
 
     /** --- Implemented Methods --- */

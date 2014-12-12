@@ -59,7 +59,7 @@ public enum SqlTable
     COMMITTEE_MEMBER             ("committee_member"),
 
     DATA_PROCESS_RUN             ("data_process_run"),
-    DATA_PROCESS_LOG             ("data_process_log"),
+    DATA_PROCESS_UNIT            ("data_process_run_unit"),
 
     DAYBREAK_REPORT              ("daybreak_report"),
     DAYBREAK_FILE                ("daybreak_file"),

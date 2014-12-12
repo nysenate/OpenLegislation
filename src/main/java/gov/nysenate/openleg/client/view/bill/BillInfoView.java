@@ -23,7 +23,8 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
         if (billInfo != null) {
             summary = billInfo.getSummary();
             signed = !billInfo.getMilestones().isEmpty() &&
-                billInfo.getMilestones().getLast().getStatusType().equals(BillStatusType.SIGNED_BY_GOV);
+                (billInfo.getMilestones().getLast().getStatusType().equals(BillStatusType.SIGNED_BY_GOV) ||
+                billInfo.getMilestones().getLast().getStatusType().equals(BillStatusType.ADOPTED));
             billType = new BillTypeView(billInfo.getBillId().getBillType());
             programInfo = billInfo.getProgramInfo() != null ? new ProgramInfoView(billInfo.getProgramInfo()) : null;
             status = new BillStatusView(billInfo.getStatus());

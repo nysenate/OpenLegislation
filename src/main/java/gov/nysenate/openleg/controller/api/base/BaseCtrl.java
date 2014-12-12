@@ -36,6 +36,7 @@ public abstract class BaseCtrl
     private static final Logger logger = LoggerFactory.getLogger(BaseCtrl.class);
 
     public static final String BASE_API_PATH = "/api/3";
+    public static final String BASE_ADMIN_API_PATH = BASE_API_PATH + "/admin";
 
     /** --- Param grabbers --- */
 

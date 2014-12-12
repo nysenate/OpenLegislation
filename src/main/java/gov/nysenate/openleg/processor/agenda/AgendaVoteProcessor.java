@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
@@ -31,8 +32,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
 {
     private static final Logger logger = LoggerFactory.getLogger(AgendaVoteProcessor.class);
 
-    @Autowired
-    private XmlHelper xml;
+    @Autowired private XmlHelper xml;
 
     @PostConstruct
     public void init() {
@@ -47,6 +47,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
     @Override
     public void process(SobiFragment sobiFragment) {
         LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
+        DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
             Document doc = xml.parse(sobiFragment.getText());
             Node xmlAgendaVote = xml.getNode("SENATEDATA/senagendavote", doc);
@@ -155,9 +156,13 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
         }
         catch (SAXException | XPathExpressionException | IOException ex) {
             logger.error("Failed to parse Agenda Vote.", ex);
-        }
+            unit.addException("Failed to parse Agenda Vote: " + ex.getMessage());
 
-        if (env.isIncrementalUpdates() || agendaIngestCache.exceedsCapacity()) {
+        }
+        // Notify the data processor that an agenda vote fragment has finished processing
+        postDataUnitEvent(unit);
+
+        if (!env.isSobiBatchEnabled() || agendaIngestCache.exceedsCapacity()) {
             flushAllUpdates();
         }
     }
