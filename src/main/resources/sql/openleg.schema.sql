@@ -25,6 +25,48 @@ ALTER SCHEMA master OWNER TO postgres;
 COMMENT ON SCHEMA master IS 'Processed legislative data';
 
 
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: citext; Type: EXTENSION; Schema: -; Owner:
+--
+
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner:
+--
+
+COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
+-- Name: hstore; Type: EXTENSION; Schema: -; Owner:
+--
+
+CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner:
+--
+
+COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
+
+
 SET search_path = master, pg_catalog;
 
 --
@@ -4124,39 +4166,6 @@ ALTER TABLE ONLY law_file
 ALTER TABLE ONLY law_tree
     ADD CONSTRAINT law_tree_pkey PRIMARY KEY (law_id, published_date, doc_id, doc_published_date);
 
-
---
--- Name: public_hearing_attendance_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_pkey PRIMARY KEY (title, date_time, session_member_id);
-
-
---
--- Name: public_hearing_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing_committee
-    ADD CONSTRAINT public_hearing_committee_pkey PRIMARY KEY (title, date_time, committee_name, committee_chamber);
-
-
---
--- Name: public_hearing_file_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing_file
-    ADD CONSTRAINT public_hearing_file_pkey PRIMARY KEY (file_name);
-
-
---
--- Name: public_hearing_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing
-    ADD CONSTRAINT public_hearing_pkey PRIMARY KEY (title, date_time);
-
-
 --
 -- Name: sobi_change_log_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
@@ -5215,38 +5224,6 @@ ALTER TABLE ONLY law_tree
 
 ALTER TABLE ONLY law_tree
     ADD CONSTRAINT law_tree_parent_doc_id_fkey FOREIGN KEY (parent_doc_id, parent_doc_published_date) REFERENCES law_document(document_id, published_date) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: public_hearing_attendance_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: public_hearing_attendance_title_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_title_fkey FOREIGN KEY (title, date_time) REFERENCES public_hearing(title, date_time);
-
-
---
--- Name: public_hearing_committee_title_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing_committee
-    ADD CONSTRAINT public_hearing_committee_title_fkey FOREIGN KEY (title, date_time) REFERENCES public_hearing(title, date_time) ON DELETE CASCADE;
-
-
---
--- Name: public_hearing_public_hearing_file_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing
-    ADD CONSTRAINT public_hearing_public_hearing_file_fkey FOREIGN KEY (public_hearing_file) REFERENCES public_hearing_file(file_name);
 
 
 --
