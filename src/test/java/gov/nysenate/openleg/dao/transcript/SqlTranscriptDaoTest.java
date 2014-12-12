@@ -22,7 +22,7 @@ public class SqlTranscriptDaoTest extends BaseTests
     @Test
     public void selectingIdsByYearWorks() {
         int year = 2012;
-      List<TranscriptId> ids = dao.getTranscriptIds(year, SortOrder.DESC, LimitOffset.ALL);
+      List<TranscriptId> ids = dao.getTranscriptIds(SortOrder.DESC, LimitOffset.ALL);
       logger.info("{}", OutputUtils.toJson(ids));
     }
 

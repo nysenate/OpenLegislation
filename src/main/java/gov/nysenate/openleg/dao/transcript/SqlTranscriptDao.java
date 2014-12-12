@@ -22,10 +22,9 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
 {
     /** {@inheritDoc} */
     @Override
-    public List<TranscriptId> getTranscriptIds(int year, SortOrder dateOrder, LimitOffset limOff) {
-        MapSqlParameterSource params = getTranscriptIdYearParams(year);
-        OrderBy orderBy = new OrderBy("date_time", dateOrder);
-        return jdbcNamed.query(SELECT_TRANSCRIPT_IDS_BY_YEAR.getSql(schema(), orderBy, limOff), params, transcriptIdRowMapper);
+    public List<TranscriptId> getTranscriptIds(SortOrder sortOrder, LimitOffset limOff) {
+        OrderBy orderBy = new OrderBy("filename", sortOrder);
+        return jdbcNamed.query(SELECT_TRANSCRIPT_IDS_BY_YEAR.getSql(schema(), orderBy, limOff), transcriptIdRowMapper);
     }
 
     /** {@inheritDoc} */
@@ -48,41 +47,32 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
 
     private MapSqlParameterSource getTranscriptParams(Transcript transcript, TranscriptFile transcriptFile) {
         MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("transcriptFilename", transcriptFile.getFileName());
         params.addValue("sessionType", transcript.getSessionType());
         params.addValue("dateTime", toDate(transcript.getDateTime()));
         params.addValue("location", transcript.getLocation());
-        params.addValue("text", transcript.getTranscriptText());
-        params.addValue("transcriptFile", transcriptFile.getFileName());
+        params.addValue("text", transcript.getText());
         return params;
     }
 
     private MapSqlParameterSource getTranscriptIdParams(TranscriptId transcriptId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("sessionType", transcriptId.getSessionType());
-        params.addValue("dateTime", toDate(transcriptId.getDateTime()));
-        return params;
-    }
-
-
-    private MapSqlParameterSource getTranscriptIdYearParams(int year) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("year", year);
+        params.addValue("transcriptFilename", transcriptId.getFilename());
         return params;
     }
 
     /** --- Row Mapper Instances --- */
 
     static RowMapper<Transcript> transcriptRowMapper = (rs, rowNum) -> {
-        TranscriptId id = new TranscriptId(rs.getString("session_type"), getLocalDateTimeFromRs(rs, "date_time"));
-        Transcript transcript = new Transcript(id);
-        transcript.setLocation(rs.getString("location"));
-        transcript.setTranscriptText(rs.getString("text"));
+        TranscriptId id = new TranscriptId(rs.getString("transcript_filename"));
+        Transcript transcript = new Transcript(id, rs.getString("session_type"), getLocalDateTimeFromRs(rs, "date_time"),
+                rs.getString("location"), rs.getString("text"));
         transcript.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));
         transcript.setPublishedDateTime(getLocalDateTimeFromRs(rs, "published_date_time"));
         return transcript;
     };
 
     static RowMapper<TranscriptId> transcriptIdRowMapper = (rs, rowNum) ->
-        new TranscriptId(rs.getString("session_type"), getLocalDateTimeFromRs(rs, "date_time"));
+        new TranscriptId(rs.getString("filename"));
 
 }

@@ -84,10 +84,8 @@ public class TranscriptParser
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMMM d yyyy hmma");
         LocalDateTime dateTime = LocalDateTime.parse(date + " " + time, dtf);
 
-        TranscriptId transcriptId = new TranscriptId(sessionType, dateTime);
-        Transcript transcript = new Transcript(transcriptId);
-        transcript.setLocation(location);
-        transcript.setTranscriptText(transcriptText.toString());
+        TranscriptId transcriptId = new TranscriptId(transcriptFile.getFileName());
+        Transcript transcript = new Transcript(transcriptId, sessionType, dateTime, location, transcriptText.toString());
 
         transcriptDataService.saveTranscript(transcript, transcriptFile, true);
     }

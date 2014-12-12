@@ -47,8 +47,8 @@ public class SqlTranscriptDataService implements TranscriptDataService
 
     /** {@inheritDoc} */
     @Override
-    public List<TranscriptId> getTranscriptIds(int year, SortOrder dateOrder, LimitOffset limitOffset) {
-        return transcriptDao.getTranscriptIds(year, dateOrder, limitOffset);
+    public List<TranscriptId> getTranscriptIds(SortOrder sortOrder, LimitOffset limitOffset) {
+        return transcriptDao.getTranscriptIds(sortOrder, limitOffset);
     }
 
     /** {@inheritDoc} */

@@ -11,43 +11,49 @@ import java.time.LocalDateTime;
 public class Transcript extends BaseLegislativeContent
 {
     /** The transcript id. */
-    private TranscriptId id;
+    private TranscriptId transcriptId;
+
+    /** A transcripts session type. */
+    private String sessionType;
+
+    /** The date time of this transcript. */
+    private LocalDateTime dateTime;
 
     /** Location of meeting recorded in transcript. */
     private String location;
 
     /** The raw text of the transcript. */
-    private String transcriptText;
+    private String text;
 
     /** --- Constructors --- */
 
-    public Transcript(TranscriptId transcriptId) {
-        this.id = transcriptId;
-        this.year = transcriptId.getYear();
-        this.session = SessionYear.of(this.getYear());
+    public Transcript(TranscriptId transcriptId, String sessionType, LocalDateTime dateTime, String location, String text) {
+        this.transcriptId = transcriptId;
+        this.sessionType = sessionType;
+        this.dateTime = dateTime;
+        this.location = location;
+        this.text =  text;
+        this.year = this.dateTime.getYear();
+        this.session = SessionYear.of(this.year);
+    }
+
+    public TranscriptId getTranscriptId() {
+        return transcriptId;
+    }
+
+    public String getSessionType() {
+        return sessionType;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
     public String getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getTranscriptText() {
-        return transcriptText;
-    }
-
-    public void setTranscriptText(String transcriptText) {
-        this.transcriptText = transcriptText;
-    }
-
-    public String getSessionType() {
-        return id.getSessionType();
-    }
-
-    public LocalDateTime getDateTime() {
-        return id.getDateTime();
+    public String getText() {
+        return text;
     }
 }

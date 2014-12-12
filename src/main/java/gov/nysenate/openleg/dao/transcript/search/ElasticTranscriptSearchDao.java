@@ -48,7 +48,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
             List<TranscriptView> transcriptViewList = transcripts.stream().map(TranscriptView::new).collect(Collectors.toList());
             transcriptViewList.forEach(t ->
                             bulkRequest.add(
-                                    searchClient.prepareIndex(transcriptIndexName, t.getSessionType(), t.getDateTime().toString())
+                                    searchClient.prepareIndex(transcriptIndexName, "transcripts", t.getFilename())
                                             .setSource(OutputUtils.toJson(t)))
             );
             safeBulkRequestExecute(bulkRequest);
@@ -59,7 +59,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     @Override
     public void deleteTranscriptFromIndex(TranscriptId transcriptId) {
         if (transcriptId != null) {
-            deleteEntry(transcriptIndexName, transcriptId.getSessionType(), transcriptId.getDateTime().toString());
+            deleteEntry(transcriptIndexName, "transcripts", transcriptId.getFilename());
         }
     }
 

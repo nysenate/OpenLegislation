@@ -6,22 +6,21 @@ import gov.nysenate.openleg.dao.base.SqlTable;
 public enum SqlTranscriptQuery implements BasicSqlQuery
 {
     SELECT_TRANSCRIPT_IDS_BY_YEAR(
-        "SELECT session_type, date_time FROM ${schema}." + SqlTable.TRANSCRIPT + "\n" +
-        "WHERE EXTRACT(YEAR FROM date_time) = :year"
+        "SELECT transcript_filename FROM ${schema}." + SqlTable.TRANSCRIPT
     ),
     SELECT_TRANSCRIPT_BY_ID(
         "SELECT * FROM ${schema}." + SqlTable.TRANSCRIPT + "\n" +
-        "WHERE session_type = :sessionType AND date_time = :dateTime"
+        "WHERE transcript_filename = :transcriptFilename"
     ),
     UPDATE_TRANSCRIPT(
         "UPDATE ${schema}." + SqlTable.TRANSCRIPT + "\n" +
-        "SET location = :location, text = :text, transcript_file = :transcriptFile \n" +
-        "WHERE session_type = :sessionType AND date_time = :dateTime"
+        "SET session_type = :sessionType, date_time = :dateTime, location = :location, text = :text \n" +
+        "WHERE transcript_filename = :transcriptFilename"
     ),
     INSERT_TRANSCRIPT(
         "INSERT INTO ${schema}." + SqlTable.TRANSCRIPT + "\n" +
-        "(session_type, date_time, location, text, transcript_file)\n" +
-        "VALUES (:sessionType, :dateTime, :location, :text, :transcriptFile)"
+        "(transcript_filename, session_type, date_time, location, text)\n" +
+        "VALUES (:transcriptFilename, :sessionType, :dateTime, :location, :text)"
     );
 
     private String sql;
