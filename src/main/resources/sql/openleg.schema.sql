@@ -4591,7 +4591,7 @@ CREATE TRIGGER log_calendar_supplemental_updates BEFORE INSERT OR DELETE OR UPDA
 -- Name: log_calendar_updates; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_calendar_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('calendar_no', 'year');
+CREATE TRIGGER log_calendar_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('calendar_no', 'calendar_year');
 
 
 --
