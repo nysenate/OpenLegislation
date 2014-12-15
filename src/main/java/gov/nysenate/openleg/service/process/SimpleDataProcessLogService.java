@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,18 @@ import java.util.stream.Collectors;
 public class SimpleDataProcessLogService implements DataProcessLogService
 {
     @Autowired private Environment env;
-    @Autowired private SqlDataProcessLogDao processLogDao;
+    @Autowired private DataProcessLogDao processLogDao;
+
+    /** {@inheritDoc} */
+    @Override
+    public Optional<DataProcessRun> getRun(int processId) {
+        try {
+            return Optional.of(processLogDao.getRun(processId));
+        }
+        catch (EmptyResultDataAccessException ex) {
+            return Optional.empty();
+        }
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -33,9 +45,10 @@ public class SimpleDataProcessLogService implements DataProcessLogService
         return processLogDao.getRuns(dateTimeRange, showActivityOnly, SortOrder.DESC, limOff);
     }
 
+    /** {@inheritDoc} */
     @Override
     public PaginatedList<DataProcessUnit> getUnits(int processId, LimitOffset limOff) {
-
+        return processLogDao.getUnits(processId, SortOrder.DESC, limOff);
     }
 
     /** {@inheritDoc} */

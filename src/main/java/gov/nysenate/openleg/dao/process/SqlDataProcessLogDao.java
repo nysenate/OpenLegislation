@@ -5,6 +5,7 @@ import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessRun;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
+import org.apache.shiro.dao.DataAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,6 +25,14 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
     private static final Logger logger = LoggerFactory.getLogger(SqlDataProcessLogDao.class);
 
     /** {@inheritDoc} */
+    @Override
+    public DataProcessRun getRun(int processId) throws DataAccessException {
+        MapSqlParameterSource params = new MapSqlParameterSource("processId", processId);
+        return jdbcNamed.queryForObject(SELECT_DATA_PROCESS_RUN.getSql(schema()), params, processRunRowMapper);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public PaginatedList<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, boolean withActivityOnly,
                                         SortOrder dateOrder, LimitOffset limOff) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -34,6 +43,16 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
                                                              : SELECT_DATA_PROCESS_RUNS_DURING;
         PaginatedRowHandler<DataProcessRun> handler = new PaginatedRowHandler<>(limOff, "total_count", processRunRowMapper);
         jdbcNamed.query(sqlQuery.getSql(schema(), orderBy, limOff), params, handler);
+        return handler.getList();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PaginatedList<DataProcessUnit> getUnits(int processId, SortOrder dateOrder, LimitOffset limOff) {
+        MapSqlParameterSource params = new MapSqlParameterSource("processId", processId);
+        OrderBy orderBy = new OrderBy("start_date_time", dateOrder);
+        PaginatedRowHandler<DataProcessUnit> handler = new PaginatedRowHandler<>(limOff, "total_count", processUnitRowMapper);
+        jdbcNamed.query(SELECT_DATA_PROCESS_UNITS.getSql(schema(), orderBy, limOff), params, handler);
         return handler.getList();
     }
 

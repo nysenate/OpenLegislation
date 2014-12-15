@@ -8,9 +8,22 @@ import gov.nysenate.openleg.model.process.DataProcessUnit;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
+/**
+ * The DataProcessLogService is used to persist logging data to keep track of which pieces of source content
+ * have been processed and any exceptions that may have arisen.
+ */
 public interface DataProcessLogService
 {
+    /**
+     * Fetch the DataProcessRun with the given processId. Returns an empty optional if it doesn't exist.
+     *
+     * @param processId int
+     * @return Optional<DataProcessRun>
+     */
+    public Optional<DataProcessRun> getRun(int processId);
+
     /**
      * Returns a paginated list of DataProcessRuns that have been stored in the persistence layer.
      *

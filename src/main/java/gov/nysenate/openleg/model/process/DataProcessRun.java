@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents basic information about a single data processing run.
+ * Represents basic information about a single data processing job that was run.
  */
 public class DataProcessRun
 {
