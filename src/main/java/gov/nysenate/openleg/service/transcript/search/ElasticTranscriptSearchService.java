@@ -47,6 +47,22 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
 
     /** {@inheritDoc} */
     @Override
+    public SearchResults<TranscriptId> searchTranscripts(String sort, LimitOffset limOff) throws SearchException {
+        return search(QueryBuilders.matchAllQuery(), null, sort, limOff);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SearchResults<TranscriptId> searchTranscripts(int year, String sort, LimitOffset limOff) throws SearchException {
+        RangeFilterBuilder rangeFilter = new RangeFilterBuilder("dateTime")
+                .from(LocalDate.of(year, 1, 1))
+                .to(LocalDate.of(year, 12, 31))
+                .cache(false);
+        return search(QueryBuilders.matchAllQuery(), rangeFilter, sort, limOff);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public SearchResults<TranscriptId> searchTranscripts(String query, String sort, LimitOffset limOff) throws SearchException {
         return null;
     }
@@ -55,10 +71,10 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     @Override
     public SearchResults<TranscriptId> searchTranscripts(String query, int year, String sort, LimitOffset limOff) throws SearchException {
         PrefixFilterBuilder yearFilter = FilterBuilders.prefixFilter("dateTime", Integer.toString(year));
-        return searchTranscripts(QueryBuilders.filteredQuery(QueryBuilders.queryString(query), yearFilter), null, sort, limOff);
+        return search(QueryBuilders.filteredQuery(QueryBuilders.queryString(query), yearFilter), null, sort, limOff);
     }
 
-    private SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff)
+    private SearchResults<TranscriptId> search(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff)
         throws SearchException {
         if (limOff == null) limOff = LimitOffset.TEN;
         try {

@@ -52,7 +52,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
      * Expected Output: List of PublicHearingView or PublicHearingIdView.
      */
     @RequestMapping(value = "/")
-    public BaseResponse getAllHearings(@RequestParam(defaultValue = "") String sort,
+    public BaseResponse getAllHearings(@RequestParam(defaultValue = "date:desc") String sort,
                                        @RequestParam(defaultValue = "false") boolean full,
                                        WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
@@ -99,7 +99,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
      * Expected Output: PublicHearingView
      *
      */
-    @RequestMapping(value = "/{filename:[\\d]{2}-[\\d]{2}-[\\d]{2}.*}")
+    @RequestMapping(value = "/{filename:.*}")
     public BaseResponse getHearing(@PathVariable String filename) {
         return new ViewObjectResponse<>(
                 new PublicHearingView(hearingData.getPublicHearing(new PublicHearingId(filename))));

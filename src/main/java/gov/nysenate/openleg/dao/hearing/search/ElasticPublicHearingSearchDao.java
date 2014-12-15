@@ -36,7 +36,7 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
     public SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(publicHearingIndexName, query, filter, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
-        logger.debug("Public Hearing search result with query {} took {} ms", query, response.getTookInMillis());
+        logger.debug("Public Hearing search result with query {} and filter {} took {} ms", query, filter, response.getTookInMillis());
         return getSearchResults(response, limOff, this::getPublicHearingIdFromHit);
     }
 

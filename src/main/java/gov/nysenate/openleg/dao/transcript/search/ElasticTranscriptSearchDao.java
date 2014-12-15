@@ -10,8 +10,11 @@ import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -31,7 +34,10 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     /** {@inheritDoc} */
     @Override
     public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limOff) {
-        return null;
+        SearchRequestBuilder searchBuilder = getSearchRequest(transcriptIndexName, query, filter, sort, limOff);
+        SearchResponse response = searchBuilder.execute().actionGet();
+        logger.debug("Transcript search result with query {} and filter {} took {} ms", query, filter, response.getTookInMillis());
+        return getSearchResults(response, limOff, this::getTranscriptIdFromHit);
     }
 
     /** {@inheritDoc} */
@@ -67,5 +73,9 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     @Override
     protected List<String> getIndices() {
         return Lists.newArrayList(transcriptIndexName);
+    }
+
+    private TranscriptId getTranscriptIdFromHit(SearchHit hit) {
+        return new TranscriptId(hit.getId());
     }
 }

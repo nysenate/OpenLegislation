@@ -8,90 +8,115 @@ import gov.nysenate.openleg.client.view.transcript.TranscriptPdfView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.model.search.SearchException;
+import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
 import gov.nysenate.openleg.service.transcript.search.TranscriptSearchService;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * Transcript retrieval APIs.
  */
 @RestController
-@RequestMapping(value = BASE_API_PATH + "/transcripts", method = RequestMethod.GET)
+@RequestMapping(value = BASE_API_PATH + "/transcripts", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class TranscriptGetCtrl extends BaseCtrl
 {
     @Autowired
-    private TranscriptDataService transcriptDataService;
+    private TranscriptDataService transcriptData;
 
     @Autowired
-    private TranscriptSearchService transcriptSearchService;
+    private TranscriptSearchService transcriptSearch;
+
+    /**
+     * Transcript Listing API
+     *
+     * Retrieve all transcripts: (GET) /api/3/transcripts/
+     * Request Parameters : sort - Lucene syntax for sorting by any field of a transcript response.
+     *                      full - If true, the full transcript view is returned. Otherwise just its filename.
+     *                      limit - Limit the number of results
+     *                      offset - Start results from an offset.
+     *
+     * Expected Output: List of TranscriptView or TranscriptIdView.
+     */
+    @RequestMapping(value = "/")
+    public BaseResponse getAllTranscripts(@RequestParam(defaultValue = "dateTime:desc") String sort,
+                                       @RequestParam(defaultValue = "false") boolean full,
+                                       WebRequest webRequest) throws SearchException {
+        LimitOffset limOff = getLimitOffset(webRequest, 25);
+        SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(sort, limOff);
+        return ListViewResponse.of(results.getResults().stream().map(r ->
+                (full) ? new TranscriptView(transcriptData.getTranscript(r.getResult()))
+                        : new TranscriptIdView(r.getResult()))
+                .collect(Collectors.toList()), 0, limOff);
+    }
 
     /**
      * Transcript Listing API.
      *
      * Retrieve transcripts for a year: (GET) /api/3/transcripts/{year}
+     * Request Parameters : sort - Lucene syntax for sorting by any field of a transcript response.
+     *                      full - If true, the full transcript view is returned. Otherwise just its filename.
+     *                      limit - Limit the number of results
+     *                      offset - Start results from an offset.
      *
+     * Expected Output: List of TranscriptIdView or TranscriptView
      */
-//    @RequestMapping("/{year:[\\d]{4}}")
-//    public BaseResponse getTranscriptsByYear(@PathVariable int year,
-//                                             @RequestParam(defaultValue = "desc") String sort,
-//                                             @RequestParam(defaultValue = "false") boolean full,
-//                                             WebRequest webRequest) {
-//        LimitOffset limOff = getLimitOffset(webRequest, 50);
-//        return ListViewResponse.of(
-//            transcriptDataService.getTranscriptIds(year, SortOrder.DESC, limOff).stream()
-//                .map(tid -> new TranscriptIdView(tid))
-//                .collect(Collectors.toList()), 0, limOff);
-//    }
+    @RequestMapping("/{year:[\\d]{4}}")
+    public BaseResponse getTranscriptsByYear(@PathVariable int year,
+                                             @RequestParam(defaultValue = "dateTime:desc") String sort,
+                                             @RequestParam(defaultValue = "false") boolean full,
+                                             WebRequest webRequest) throws SearchException {
+        LimitOffset limOff = getLimitOffset(webRequest, 25);
+        SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(year, sort, limOff);
+        return ListViewResponse.of(results.getResults().stream().map(r ->
+                (full) ? new TranscriptView(transcriptData.getTranscript(r.getResult()))
+                        : new TranscriptIdView(r.getResult()))
+                .collect(Collectors.toList()), 0, limOff);
+    }
 
     /**
      * Single Transcript Retrieval API.
      *
-     * Retrieve a single transcripts by its type and dateTime: (GET) /api/3/transcripts/{type}/{dateTime} <p>
-     *              i.e. api/3/transcripts/REGULAR SESSION/2014-09-12T13:00</p>
+     * Retrieve a single transcripts by its filename (GET) /api/3/transcripts/{filename}
      *
      * <p>Request Parameters: None.</p>
      *
+     * Expected Output: TranscriptView
      */
-//    @RequestMapping("/{type}/{dateTime}")
-//    public BaseResponse getTranscript(@PathVariable String type,
-//                                      @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) {
-//        return new ViewObjectResponse<>(
-//            new TranscriptView(transcriptDataService.getTranscript(new TranscriptId(type.toUpperCase(), dateTime)))
-//        );
-//    }
+    @RequestMapping("/{filename:.*}")
+    public BaseResponse getTranscript(@PathVariable String filename) {
+        return new ViewObjectResponse<>(
+            new TranscriptView(transcriptData.getTranscript(new TranscriptId(filename)))
+        );
+    }
 
     /**
      * Single Transcript PDF retrieval API.
      *
-     * Retrieve a single transcript text pdf: (GET) /api/3/transcripts/{type}/{dateTime}.pdf
+     * Retrieve a single transcript text pdf: (GET) /api/3/transcripts/{filename}.pdf
      *
      * Request Parameters: None.
      *
      * Expected Output: PDF response.
      */
-//    @RequestMapping("/{type}/{dateTime}.pdf")
-//    public void getTranscriptPdf(@PathVariable String type,
-//                                 @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime dateTime,
-//                                 HttpServletResponse response) throws IOException, COSVisitorException {
-//
-//        TranscriptId transcriptId = new TranscriptId(type.toUpperCase(), dateTime);
-//        Transcript transcript = transcriptDataService.getTranscript(transcriptId);
-//        new TranscriptPdfView(transcript, response.getOutputStream());
-//        response.setContentType("application/pdf");
-//    }
+    @RequestMapping("/{filename}.pdf")
+    public void getTranscriptPdf(@PathVariable String filename,
+                                 HttpServletResponse response) throws IOException, COSVisitorException {
+        TranscriptId transcriptId = new TranscriptId(filename);
+        Transcript transcript = transcriptData.getTranscript(transcriptId);
+        new TranscriptPdfView(transcript, response.getOutputStream());
+        response.setContentType("application/pdf");
+    }
 }

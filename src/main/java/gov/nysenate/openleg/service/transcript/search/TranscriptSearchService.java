@@ -10,6 +10,18 @@ import gov.nysenate.openleg.service.transcript.event.TranscriptUpdateEvent;
 public interface TranscriptSearchService
 {
     /**
+     * Provides a listing of all transcripts.
+     * @see #searchTranscripts(String, int, String, gov.nysenate.openleg.dao.base.LimitOffset)
+     */
+    public SearchResults<TranscriptId> searchTranscripts(String sort, LimitOffset limOff) throws SearchException;
+
+    /**
+     * Provides a listing of transcripts which took place in a given year.
+     * @see #searchTranscripts(String, int, String, gov.nysenate.openleg.dao.base.LimitOffset)
+     */
+    public SearchResults<TranscriptId> searchTranscripts(int year, String sort, LimitOffset limOff) throws SearchException;
+
+    /**
      * Performs a search across all transcripts.
      * @see #searchTranscripts(String, int, String, gov.nysenate.openleg.dao.base.LimitOffset)
      */
@@ -38,4 +50,5 @@ public interface TranscriptSearchService
      * @param bulkTranscriptUpdateEvent
      */
     public void handleBulkTranscriptUpdate(BulkTranscriptUpdateEvent bulkTranscriptUpdateEvent);
+
 }

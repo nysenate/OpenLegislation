@@ -24,8 +24,7 @@ public interface TranscriptDataService
     /**
      * Get a list of transcript ids for a given session year.
      *
-     * @param year int
-     * @param dateOrder SortOrder
+     * @param sortOrder SortOrder
      * @param limitOffset LimitOffset
      * @return List<TranscriptId>
      */

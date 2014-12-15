@@ -3,14 +3,12 @@ package gov.nysenate.openleg.client.view.transcript;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 
-import java.time.LocalDateTime;
-
 public class TranscriptIdView implements ViewObject
 {
-    private String filename;
+    protected String filename;
 
-    public TranscriptIdView(TranscriptId transId) {
-        this.filename = filename;
+    public TranscriptIdView(TranscriptId transcriptId) {
+        this.filename = transcriptId.getFilename();
     }
 
     public String getFilename() {
