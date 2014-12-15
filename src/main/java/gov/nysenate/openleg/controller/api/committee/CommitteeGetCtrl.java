@@ -71,7 +71,7 @@ public class CommitteeGetCtrl extends BaseCtrl
                                            @PathVariable int sessionYear,
                                            @PathVariable String referenceDateTime)
         throws CommitteeNotFoundEx, InvalidRequestParamEx {
-        LocalDateTime parsedReferenceDateTime = parseISODateTimeParameter(referenceDateTime, "referenceDateTime");
+        LocalDateTime parsedReferenceDateTime = parseISODateTimeParam(referenceDateTime, "referenceDateTime");
         return getCommitteeResponse(
                 committeeDataService.getCommittee(new CommitteeVersionId(
                         Chamber.getValue(chamberName), committeeName,

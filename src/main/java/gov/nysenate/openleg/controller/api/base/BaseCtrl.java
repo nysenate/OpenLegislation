@@ -10,6 +10,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.util.DateUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -84,7 +85,7 @@ public abstract class BaseCtrl
      * @param defaultRange Range<LocalDate>
      * @return Range<LocalDate>
      */
-    protected Range<LocalDate> getDateRange(WebRequest webRequest, Range<LocalDate> defaultRange) {
+    protected Range<LocalDate> getDateRangeFromParams(WebRequest webRequest, Range<LocalDate> defaultRange) {
         try {
             LocalDate startDate = null;
             LocalDate endDate = null;
@@ -113,7 +114,7 @@ public abstract class BaseCtrl
      * @return LocalDateTime
      * @throws InvalidRequestParamEx
      */
-    protected LocalDateTime parseISODateTimeParameter(String dateTimeString, String parameterName)
+    protected LocalDateTime parseISODateTimeParam(String dateTimeString, String parameterName)
             throws InvalidRequestParamEx {
         try {
             return LocalDateTime.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateTimeString));
@@ -122,6 +123,17 @@ public abstract class BaseCtrl
             throw new InvalidRequestParamEx(dateTimeString, parameterName,
                     "date-time", "ISO 8601 date and time formatted string e.g. 2014-10-27T09:44:55");
         }
+    }
+
+    /**
+     * Parses the specified query param as a boolean or returns the default value if the param is not set.
+     *
+     * @param param WebRequest
+     * @param defaultVal boolean
+     * @return boolean
+     */
+    protected boolean getBooleanParam(WebRequest request, String param, boolean defaultVal) {
+        return (request.getParameter(param) != null) ? BooleanUtils.toBoolean(request.getParameter(param)) : defaultVal;
     }
 
     /** --- Generic Exception Handlers --- */

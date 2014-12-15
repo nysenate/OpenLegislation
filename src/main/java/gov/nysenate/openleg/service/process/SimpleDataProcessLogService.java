@@ -21,7 +21,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
-public class DbDataProcessLogService implements DataProcessLogService
+public class SimpleDataProcessLogService implements DataProcessLogService
 {
     @Autowired private Environment env;
     @Autowired private SqlDataProcessLogDao processLogDao;
@@ -35,7 +35,7 @@ public class DbDataProcessLogService implements DataProcessLogService
 
     @Override
     public PaginatedList<DataProcessUnit> getUnits(int processId, LimitOffset limOff) {
-        return null;
+
     }
 
     /** {@inheritDoc} */
