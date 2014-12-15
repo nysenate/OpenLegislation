@@ -14,6 +14,7 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.law.LawFile;
 import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
@@ -79,6 +80,10 @@ public abstract class AbstractDataProcessor
     protected DataProcessUnit createProcessUnit(SobiFragment sobiFragment) {
         return new DataProcessUnit(sobiFragment.getType().name(), sobiFragment.getFragmentId(),
             LocalDateTime.now(), DataProcessAction.INGEST);
+    }
+
+    protected DataProcessUnit createDataProcessUnit(LawFile lawFile) {
+        return new DataProcessUnit("lawfile", lawFile.getFileName(), LocalDateTime.now(), DataProcessAction.INGEST);
     }
 
     protected void postDataUnitEvent(DataProcessUnit unit) {

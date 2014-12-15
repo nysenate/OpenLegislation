@@ -4,6 +4,9 @@ import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.law.LawFile;
 import gov.nysenate.openleg.model.law.LawTree;
 import gov.nysenate.openleg.model.law.LawVersionId;
+import gov.nysenate.openleg.model.process.DataProcessAction;
+import gov.nysenate.openleg.model.process.DataProcessUnit;
+import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.service.law.data.LawDataService;
 import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
 import org.slf4j.Logger;
@@ -15,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +28,7 @@ import java.util.regex.Pattern;
  * necessary persistence.
  */
 @Service
-public class LawProcessor
+public class LawProcessor extends AbstractDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(LawProcessor.class);
 
@@ -38,8 +42,12 @@ public class LawProcessor
     /** Set of law ids to ignore during processing. */
     protected static Set<String> ignoreLaws = Sets.newHashSet("CNS");
 
-    @Autowired
-    private LawDataService lawDataService;
+    @Autowired private LawDataService lawDataService;
+
+    @Override
+    public void init() {
+        initBase();
+    }
 
     /**
      * Performs all the steps required to process and persist the supplied LawFile.
@@ -48,19 +56,25 @@ public class LawProcessor
      */
     public void process(final LawFile lawFile) {
         boolean isInitial = lawFile.isInitialDump();
+        DataProcessUnit unit = createDataProcessUnit(lawFile);
         try {
             logger.info("Processing law file {}", lawFile);
             List<LawBlock> lawBlocks = getLawBlocks(lawFile);
             if (isInitial) {
-                processInitialLaws(lawFile, lawBlocks);
+                processInitialLaws(lawFile, lawBlocks, unit);
             }
             else {
-                processLawUpdates(lawFile, lawBlocks);
+                processLawUpdates(lawFile, lawBlocks, unit);
             }
         }
-        catch (IOException e) {
-            logger.error("Failed to ", e);
+        catch (IOException ex) {
+            logger.error("Unexpected IOException during LawFile processing", ex);
+            unit.addException("Unexpected IOException: " + ex.getMessage());
         }
+        catch (LawParseException ex) {
+            unit.addException("Fatal law parsing error, processing has been halted! " + ex.getMessage(), logger);
+        }
+        postDataUnitEvent(unit);
     }
 
     /** --- Internal Methods --- */
@@ -72,7 +86,7 @@ public class LawProcessor
      * @param lawFile LawFile
      * @param lawBlocks List<LawBlock>
      */
-    protected void processInitialLaws(LawFile lawFile, List<LawBlock> lawBlocks) {
+    protected void processInitialLaws(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         for (LawBlock block : lawBlocks) {
             if (ignoreLaws.contains(block.getLawId())) continue;
@@ -80,6 +94,7 @@ public class LawProcessor
             if (!lawBuilders.containsKey(block.getLawId())) {
                 LawBuilder lawBuilder = new LawBuilder(new LawVersionId(block.getLawId(), block.getPublishedDate()));
                 lawBuilders.put(block.getLawId(), lawBuilder);
+                unit.addMessage("Processing initial docs for " + block.getLawId());
             }
             // Process the initial block
             lawBuilders.get(block.getLawId()).addInitialBlock(block, true);
@@ -96,7 +111,7 @@ public class LawProcessor
      * @param lawFile LawFile
      * @param lawBlocks List<LawBlock>
      */
-    protected void processLawUpdates(LawFile lawFile, List<LawBlock> lawBlocks) {
+    protected void processLawUpdates(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         Map<String, LawTree> lawTrees = new HashMap<>();
         for (LawBlock block : lawBlocks) {
@@ -110,7 +125,7 @@ public class LawProcessor
                 }
                 catch (LawTreeNotFoundEx ex) {
                     lawTrees.put(block.getLawId(), null);
-                    logger.warn("Update received for a law without an existing tree!");
+                    unit.addException("Update received for a law " + block.getLawId() + " without an existing tree!", logger);
                 }
             }
             // Create the law builder for the law id if it doesn't already exist.

@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.process;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.process.DataProcessRun;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
@@ -24,7 +25,7 @@ public interface DataProcessLogDao
      * @param limOff LimitOffset
      * @return List<DataProcessRun>
      */
-    public List<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, boolean withActivityOnly,
+    public PaginatedList<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, boolean withActivityOnly,
                                         SortOrder dateOrder, LimitOffset limOff);
 
     /**

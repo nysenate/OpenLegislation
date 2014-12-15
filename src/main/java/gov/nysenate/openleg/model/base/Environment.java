@@ -59,6 +59,9 @@ public class Environment
     /** Enable processing of data. */
     @Value("${data.process.enabled}") private boolean processingEnabled;
 
+    /** Allows for the option to enable/disable logging. */
+    @Value("${data.process.log.enabled}") private boolean processLoggingEnabled;
+
     /** Enable batch processing of SOBI files. */
     @Value("${sobi.batch.process.enabled}") private boolean sobiBatchEnabled;
 
@@ -126,6 +129,14 @@ public class Environment
 
     public void setProcessingEnabled(boolean processingEnabled) {
         this.processingEnabled = processingEnabled;
+    }
+
+    public boolean isProcessLoggingEnabled() {
+        return processLoggingEnabled;
+    }
+
+    public void setProcessLoggingEnabled(boolean processLoggingEnabled) {
+        this.processLoggingEnabled = processLoggingEnabled;
     }
 
     public boolean isSobiBatchEnabled() {

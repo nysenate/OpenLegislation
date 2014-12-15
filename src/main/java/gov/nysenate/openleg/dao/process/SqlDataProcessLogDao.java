@@ -1,10 +1,7 @@
 package gov.nysenate.openleg.dao.process;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessRun;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
@@ -27,7 +24,7 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
     private static final Logger logger = LoggerFactory.getLogger(SqlDataProcessLogDao.class);
 
     /** {@inheritDoc} */
-    public List<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, boolean withActivityOnly,
+    public PaginatedList<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, boolean withActivityOnly,
                                         SortOrder dateOrder, LimitOffset limOff) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("startDateTime", toDate(startOfDateTimeRange(dateTimeRange)))
@@ -35,7 +32,9 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
         OrderBy orderBy = new OrderBy("process_start_date_time", dateOrder);
         SqlDataProcessLogQuery sqlQuery = (withActivityOnly) ? SELECT_DATA_PROCESS_RUNS_WITH_ACTIVITY
                                                              : SELECT_DATA_PROCESS_RUNS_DURING;
-        return jdbcNamed.query(sqlQuery.getSql(schema(), orderBy, limOff), params, processRunRowMapper);
+        PaginatedRowHandler<DataProcessRun> handler = new PaginatedRowHandler<>(limOff, "total_count", processRunRowMapper);
+        jdbcNamed.query(sqlQuery.getSql(schema(), orderBy, limOff), params, handler);
+        return handler.getList();
     }
 
     /** {@inheritDoc} */
@@ -55,8 +54,6 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
     @Override
     public void updateRun(DataProcessRun run) {
         jdbcNamed.update(UPDATE_DATA_PROCESS_RUN.getSql(schema()), getDataProcessRunParams(run));
-        MapSqlParameterSource processIdParam = new MapSqlParameterSource("processId", run.getProcessId());
-        jdbcNamed.update(DELETE_PROCESS_UNITS.getSql(schema()), processIdParam);
     }
 
     /** --- Internal --- */
@@ -65,6 +62,7 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
         DataProcessRun run = new DataProcessRun(rs.getInt("id"), getLocalDateTimeFromRs(rs, "process_start_date_time"),
             rs.getString("invoked_by"));
         run.setEndDateTime(getLocalDateTimeFromRs(rs, "process_end_date_time"));
+        run.getExceptions().append(rs.getString("exceptions"));
         return run;
     };
 

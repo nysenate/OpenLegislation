@@ -2,18 +2,18 @@ package gov.nysenate.openleg.client.view.base;
 
 public class ModelView<T> implements ViewObject
 {
-    private T result;
+    private T item;
 
-    public ModelView(T result) {
-        this.result = result;
+    public ModelView(T item) {
+        this.item = item;
     }
 
     @Override
     public String getViewType() {
-        return result.getClass().getName() + "-view";
+        return item.getClass().getSimpleName() + "-view";
     }
 
-    public T getResult() {
-        return result;
+    public T getItem() {
+        return item;
     }
 }
