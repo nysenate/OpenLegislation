@@ -68,10 +68,10 @@ public class DataProcessCtrl extends BaseCtrl
         LimitOffset limOff = getLimitOffset(webRequest, 100);
         LocalDateTime fromDateTime = parseISODateTimeParam(from, "from");
         LocalDateTime toDateTime = parseISODateTimeParam(to, "to");
-        boolean full = getBooleanParam(webRequest, "full", true);
+        boolean full = getBooleanParam(webRequest, "full", false);
         boolean detail = getBooleanParam(webRequest, "detail", false);
 
-        PaginatedList<DataProcessRun> runs = processLogs.getRuns(Range.closedOpen(fromDateTime, toDateTime), limOff, full);
+        PaginatedList<DataProcessRun> runs = processLogs.getRuns(Range.closedOpen(fromDateTime, toDateTime), limOff, !full);
         return ListViewResponse.of(runs.getResults().stream()
             .map(run -> (detail)
                 ? new DataProcessRunDetailView(run, processLogs.getUnits(run.getProcessId(), LimitOffset.HUNDRED))
