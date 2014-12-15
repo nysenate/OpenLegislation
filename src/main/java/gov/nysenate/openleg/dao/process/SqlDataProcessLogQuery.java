@@ -5,17 +5,24 @@ import gov.nysenate.openleg.dao.base.SqlTable;
 
 public enum SqlDataProcessLogQuery implements BasicSqlQuery
 {
+    SELECT_DATA_PROCESS_RUN(
+        "SELECT id, process_start_date_time, process_end_date_time, invoked_by, exceptions\n" +
+        "FROM ${schema}." + SqlTable.DATA_PROCESS_RUN + "\n" +
+        "WHERE id = :processId"
+    ),
+
     SELECT_DATA_PROCESS_RUNS_DURING(
         "SELECT id, process_start_date_time, process_end_date_time, invoked_by, exceptions, " +
         "       COUNT(id) OVER () AS total_count\n" +
         "FROM ${schema}." + SqlTable.DATA_PROCESS_RUN + "\n" +
-        "WHERE process_start_date_time BETWEEN :startDateTime AND :endDateTime"
+        "WHERE (process_start_date_time BETWEEN :startDateTime AND :endDateTime)"
     ),
 
     SELECT_DATA_PROCESS_RUNS_WITH_ACTIVITY(
         SELECT_DATA_PROCESS_RUNS_DURING.sql + "\n" +
-        "AND id IN (SELECT DISTINCT process_id FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + ")\n" +
-        "OR (exceptions IS NOT NULL AND exceptions != '')"
+        "AND (id IN (SELECT DISTINCT process_id FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + ")\n" +
+        "     OR (exceptions IS NOT NULL AND exceptions != '')" +
+        ")"
     ),
 
     INSERT_DATA_PROCESS_RUN(
@@ -32,7 +39,9 @@ public enum SqlDataProcessLogQuery implements BasicSqlQuery
     ),
 
     SELECT_DATA_PROCESS_UNITS(
-        "SELECT * FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + "\n" +
+        "SELECT process_id, source_type, source_id, action, start_date_time, end_date_time, errors, messages,\n" +
+        "       COUNT(*) OVER () AS total_count\n" +
+        "FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + "\n" +
         "WHERE process_id = :processId"
     ),
 

@@ -4,14 +4,30 @@ import org.slf4j.Logger;
 
 import java.time.LocalDateTime;
 
+/**
+ * Encapsulates the processing status of a single source file, typically associated with a process run.
+ */
 public class DataProcessUnit
 {
+    /** Identifies what kind of source data was processed. */
     private String sourceType;
+
+    /** A source id that in conjunction with the 'sourceType' should uniquely identify the source data. */
     private String sourceId;
+
+    /** The type of processing action that was performed. */
     private DataProcessAction action;
+
+    /** When this source data began processing. */
     private LocalDateTime startDateTime;
+
+    /** When this source data finished processing. */
     private LocalDateTime endDateTime;
+
+    /** Any useful non-fatal messages will be appended here. */
     private StringBuilder messages = new StringBuilder();
+
+    /** Any processing exceptions (fatal and/or non-fatal) should be appended here. */
     private StringBuilder errors = new StringBuilder();
 
     /** --- Constructors --- */
@@ -33,6 +49,7 @@ public class DataProcessUnit
     public void addException(String exception) {
         this.errors.append(exception).append("\\n");
     }
+
     public void addException(String errorMessage, Logger logger) {
         this.errors.append(errorMessage).append("\\n");
         logger.error(errorMessage);

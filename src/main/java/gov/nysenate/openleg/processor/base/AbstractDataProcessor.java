@@ -78,12 +78,12 @@ public abstract class AbstractDataProcessor
     /** --- Common Methods --- */
 
     protected DataProcessUnit createProcessUnit(SobiFragment sobiFragment) {
-        return new DataProcessUnit(sobiFragment.getType().name(), sobiFragment.getFragmentId(),
+        return new DataProcessUnit("SOBI-" + sobiFragment.getType().name(), sobiFragment.getFragmentId(),
             LocalDateTime.now(), DataProcessAction.INGEST);
     }
 
     protected DataProcessUnit createDataProcessUnit(LawFile lawFile) {
-        return new DataProcessUnit("lawfile", lawFile.getFileName(), LocalDateTime.now(), DataProcessAction.INGEST);
+        return new DataProcessUnit("LAW_FILE", lawFile.getFileName(), LocalDateTime.now(), DataProcessAction.INGEST);
     }
 
     protected void postDataUnitEvent(DataProcessUnit unit) {
