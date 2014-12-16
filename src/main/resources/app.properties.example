@@ -93,25 +93,25 @@ elastic.search.cluster.name = openleg
 # The amount of memory to allocate to Eh Cache for all heap based caches (in MB).
 # This value cannot exceed the maximum jvm heap size or the application will fail to startup.
 # (Recommended: 600)
-cache.max.heap.size = 600
+cache.max.size = 600
 
 # Agenda Cache Size (in MB) (Recommended: 25)
-cache.agenda.heap.size = 25
+agenda.cache.size = 25
 
 # Bill Cache Size (in MB) (Recommended: 300)
-cache.bill.heap.size = 300
+bill.cache.size = 300
 
 # Bill Info Cache Size (in MB) (Recommended: 100)
-cache.bill.info.heap.size = 100
+bill-info.cache.size = 100
 
 # Calendar Cache Size (in MB) (Recommended: 40)
-cache.calendar.heap.size = 40
+calendar.cache.size = 40
 
 # Law Cache Size (in MB) (Recommended: 10)
-cache.law.heap.size = 10
+law.cache.size = 10
 
 # Committee Cache Size (in MB) (Recommended: 10)
-cache.committee.heap.size = 10
+committee.cache.size = 10
 
 # --- Postgres Database Configuration ----------------------------------------------------------------------------------
 
