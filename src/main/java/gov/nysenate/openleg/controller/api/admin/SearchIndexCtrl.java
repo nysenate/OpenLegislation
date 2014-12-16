@@ -29,8 +29,7 @@ public class SearchIndexCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(SearchIndexCtrl.class);
 
-    @Autowired
-    private EventBus eventBus;
+    @Autowired private EventBus eventBus;
 
     @PostConstruct
     private void init() {

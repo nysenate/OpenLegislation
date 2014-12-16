@@ -43,6 +43,10 @@ public enum ErrorCode
 
     AGENDA_NOT_FOUND(61, "The requested agenda was not found"),
 
+    /** -- Data Process -- */
+
+    PROCESS_RUN_NOT_FOUND(121, "The given data process run was not found"),
+
     /** --- General --- */
 
     SEARCH_ERROR(100, "There was error retrieving your search results. Make sure that the query is valid."),

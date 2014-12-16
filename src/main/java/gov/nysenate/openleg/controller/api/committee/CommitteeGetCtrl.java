@@ -10,7 +10,7 @@ import gov.nysenate.openleg.client.view.committee.CommitteeSessionIdView;
 import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.committee.CommitteeView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
-import gov.nysenate.openleg.controller.api.base.InvalidRequestParameterException;
+import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -20,20 +20,16 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
-import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/committees", method = RequestMethod.GET)
@@ -74,8 +70,8 @@ public class CommitteeGetCtrl extends BaseCtrl
                                            @PathVariable String committeeName,
                                            @PathVariable int sessionYear,
                                            @PathVariable String referenceDateTime)
-        throws CommitteeNotFoundEx, InvalidRequestParameterException {
-        LocalDateTime parsedReferenceDateTime = parseISODateTimeParameter(referenceDateTime, "referenceDateTime");
+        throws CommitteeNotFoundEx, InvalidRequestParamEx {
+        LocalDateTime parsedReferenceDateTime = parseISODateTimeParam(referenceDateTime, "referenceDateTime");
         return getCommitteeResponse(
                 committeeDataService.getCommittee(new CommitteeVersionId(
                         Chamber.getValue(chamberName), committeeName,

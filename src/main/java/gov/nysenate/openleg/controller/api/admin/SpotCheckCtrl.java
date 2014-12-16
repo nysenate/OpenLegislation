@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.controller.api.admin;
 
+import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
@@ -11,6 +13,7 @@ import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
@@ -35,12 +38,28 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping(value = BASE_ADMIN_API_PATH + "/spotcheck", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = BASE_ADMIN_API_PATH + "/spotcheck", produces = APPLICATION_JSON_VALUE)
 public class SpotCheckCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(SpotCheckCtrl.class);
 
-    @Autowired DaybreakCheckReportService daybreakService;
+    @Autowired private DaybreakCheckReportService daybreakService;
+    @Autowired private Environment env;
+
+    /**
+     * Toggle Scheduled SpotChecks API
+     *
+     * TODO
+     */
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public BaseResponse toggleScheduling(@RequestParam(required = true) boolean scheduledReports,
+                                         @RequestParam(required = true) boolean scheduledCheckMail) {
+        env.setSpotcheckScheduled(scheduledReports);
+        env.setCheckMailScheduled(scheduledCheckMail);
+        return new SimpleResponse(true,
+            "Scheduled reports: " + env.isSpotcheckScheduled() + ", Scheduled CheckMail: " + env.isCheckMailScheduled(),
+            "spotcheck-enable-response");
+    }
 
     /**
      * Daybreak Report Summary Retrieval API
@@ -50,8 +69,8 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Expected Output: ReportSummaryResponse
      */
-    @RequestMapping(value = "/daybreaks")
-    public Object getDaybreakReport() {
+    @RequestMapping(value = "/daybreaks", method = RequestMethod.GET)
+    public BaseResponse getDaybreakReport() {
         LocalDate today = LocalDate.now();
         LocalDate sixMonthsAgo = today.minusMonths(6);
         return getDaybreakReportLimOff(sixMonthsAgo, today);
@@ -67,8 +86,8 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Expected Output: ReportSummaryResponse
      */
-    @RequestMapping(value = "/daybreaks/{from}/{to}")
-    public Object getDaybreakReportLimOff(
+    @RequestMapping(value = "/daybreaks/{from}/{to}",method = RequestMethod.GET)
+    public BaseResponse getDaybreakReportLimOff(
             @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate from,
             @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
         logger.info("Retrieving daybreak reports from {} to {}", from , to);
@@ -80,7 +99,8 @@ public class SpotCheckCtrl extends BaseCtrl
         // Construct the client response
         return new ReportSummaryResponse<>(
                 ListView.of(reports.stream()
-                        .map(r -> new ReportInfoView<>(r)).collect(toList())), from, to);
+                        .map(r -> new ReportInfoView<>(r))
+                        .collect(toList())), from, to);
     }
 
     /**
@@ -93,8 +113,8 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Expected Output: ReportDetailResponse
      */
-    @RequestMapping(value = "/daybreaks/{reportDateTime}")
-    public Object getDaybreakReport(
+    @RequestMapping(value = "/daybreaks/{reportDateTime}", method = RequestMethod.GET)
+    public BaseResponse getDaybreakReport(
             @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime reportDateTime) {
         logger.info("Retrieving daybreak report {}", reportDateTime);
         return new ReportDetailResponse<>(

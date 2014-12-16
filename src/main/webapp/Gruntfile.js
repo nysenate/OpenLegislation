@@ -69,7 +69,8 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/pace/pace.min.js',
                         '<%= bowerRoot %>/highcharts/highcharts.js',
                         '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js',
-                        '<%= bowerRoot %>/fullcalendar/fullcalendar.min.js'
+                        '<%= bowerRoot %>/fullcalendar/fullcalendar.min.js',
+                        '<%= bowerRoot %>/modernizr/modernizr.js'
                     ]//'<%= jsDest %>/main.min.js': ['<%= jsSource %>/**/*.js']
                 }
             }

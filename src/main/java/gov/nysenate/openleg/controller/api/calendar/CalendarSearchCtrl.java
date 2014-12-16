@@ -5,7 +5,7 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.base.SearchResultView;
 import gov.nysenate.openleg.client.view.calendar.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
-import gov.nysenate.openleg.controller.api.base.InvalidRequestParameterException;
+import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
@@ -59,7 +59,7 @@ public class CalendarSearchCtrl extends BaseCtrl{
                                         @RequestParam(defaultValue = "") String sort,
                                         @RequestParam(defaultValue = "full") String calendarType,
                                         @RequestParam(defaultValue = "false") boolean full,
-                                        WebRequest webRequest) throws SearchException, InvalidRequestParameterException {
+                                        WebRequest webRequest) throws SearchException, InvalidRequestParamEx {
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return getCalendarSearchResponse(term, sort, calendarType, full, limitOffset, null);
     }
@@ -83,7 +83,7 @@ public class CalendarSearchCtrl extends BaseCtrl{
                                               @RequestParam(defaultValue = "") String sort,
                                               @RequestParam(defaultValue = "full") String calendarType,
                                               @RequestParam(defaultValue = "false") boolean full,
-                                      WebRequest webRequest) throws SearchException, InvalidRequestParameterException {
+                                      WebRequest webRequest) throws SearchException, InvalidRequestParamEx {
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         return getCalendarSearchResponse(term, sort, calendarType, full, limitOffset, year);
     }
@@ -103,11 +103,11 @@ public class CalendarSearchCtrl extends BaseCtrl{
      * @param year
      * @return
      * @throws SearchException
-     * @throws InvalidRequestParameterException
+     * @throws gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx
      */
     private BaseResponse getCalendarSearchResponse(String term, String sort, String calendarType, boolean full,
                                                    LimitOffset limitOffset, Integer year)
-            throws SearchException, InvalidRequestParameterException {
+            throws SearchException, InvalidRequestParamEx {
         BaseResponse response;
         switch (calendarType) {
             case "full":
@@ -129,7 +129,7 @@ public class CalendarSearchCtrl extends BaseCtrl{
                 response = getFloorCalendarSearchResultResponse(supplementalCalendarResults, full);
                 break;
             default:
-                throw new InvalidRequestParameterException(calendarType, "calendarType", "String", "full|active_list|floor");
+                throw new InvalidRequestParamEx(calendarType, "calendarType", "String", "full|active_list|floor");
         }
         return response;
     }

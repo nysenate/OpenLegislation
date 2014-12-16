@@ -2,9 +2,11 @@ package gov.nysenate.openleg.dao.process;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.process.DataProcessRun;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
+import org.apache.shiro.dao.DataAccessException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,16 +18,34 @@ import java.util.List;
 public interface DataProcessLogDao
 {
     /**
+     * Fetch the process run with the given id.
+     *
+     * @param processId int
+     * @return DataProcessRun
+     */
+    public DataProcessRun getRun(int processId) throws DataAccessException;
+
+    /**
      * Returns a list of DataProcessRun instances that began within the given date/time range.
      *
      * @param dateTimeRange Range<LocalDateTime>
      * @param withActivityOnly boolean - Set to true to only return runs that have units associated with them.
      * @param dateOrder SortOrder - Order the results by start date
-     * @param limOff LimitOffset
+     * @param limOff LimitOffset - Limit the result set
      * @return List<DataProcessRun>
      */
-    public List<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, boolean withActivityOnly,
+    public PaginatedList<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, boolean withActivityOnly,
                                         SortOrder dateOrder, LimitOffset limOff);
+
+    /**
+     * Returns a list of DataProcessUnit instances that are associated with the given process id.
+     *
+     * @param processId int - The id of the associated DataProcessRun
+     * @param dateOrder SortOrder - Order the results by process date
+     * @param limOff LimitOffset - Limit the result set
+     * @return PaginatedList<DataProcessUnit>
+     */
+    public PaginatedList<DataProcessUnit> getUnits(int processId, SortOrder dateOrder, LimitOffset limOff);
 
     /**
      * Insert a run into the persistence layer.

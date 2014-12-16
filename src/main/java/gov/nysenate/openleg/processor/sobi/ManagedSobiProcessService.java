@@ -106,7 +106,7 @@ public class ManagedSobiProcessService implements SobiProcessService
                                                   : "Collating {} sobi files.", newSobis.size());
                 for (SobiFile sobiFile : newSobis) {
                     DataProcessUnit unit =
-                        new DataProcessUnit(getCollateType(), sobiFile.getFileName(), LocalDateTime.now(), DataProcessAction.COLLATE);
+                        new DataProcessUnit("SOBI-FILE", sobiFile.getFileName(), LocalDateTime.now(), DataProcessAction.COLLATE);
                     List<SobiFragment> fragments = createFragments(sobiFile);
                     // Record the sobi file in the backing store.
                     sobiDao.updateSobiFile(sobiFile);

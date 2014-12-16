@@ -28,14 +28,16 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
 {
     private static final Logger logger = LoggerFactory.getLogger(SqlBillUpdatesDao.class);
 
+    /** {@inheritDoc} */
     @Override
-    public PaginatedList<BillUpdateToken> billsUpdatedDuring(Range<LocalDateTime> dateTimeRange, SortOrder dateOrder, LimitOffset limOff) {
+    public PaginatedList<BillUpdateToken> billsUpdatedDuring(Range<LocalDateTime> dateTimeRange, SortOrder dateOrder,
+                                                             LimitOffset limOff) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addDateTimeRangeParams(params, dateTimeRange);
         OrderBy orderBy = new OrderBy("last_update_date_time", dateOrder);
-        UpdateTokenListHandler handler = new UpdateTokenListHandler();
+        PaginatedRowHandler<BillUpdateToken> handler = new PaginatedRowHandler<>(limOff, "total_updated", getBillUpdateTokenFromRs);
         jdbcNamed.query(SELECT_BILLS_UPDATED_DURING.getSql(schema(), orderBy, limOff), params, handler);
-        return handler.getPaginatedList(limOff);
+        return handler.getList();
     }
 
     /** {@inheritDoc} */
@@ -68,23 +70,6 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
     }
 
     /** --- Internal --- */
-
-    private static class UpdateTokenListHandler implements RowCallbackHandler {
-        private List<BillUpdateToken> tokens = new ArrayList<>();
-        private int totalUpdated = 0;
-
-        @Override
-        public void processRow(ResultSet rs) throws SQLException {
-            if (totalUpdated == 0) {
-                totalUpdated = rs.getInt("total_updated");
-            }
-            tokens.add(getBillUpdateTokenFromRs.mapRow(rs, 0));
-        }
-
-        public PaginatedList<BillUpdateToken> getPaginatedList(LimitOffset limOff) {
-            return new PaginatedList<>(totalUpdated, limOff, tokens);
-        }
-    }
 
     private static final RowMapper<BillUpdateToken> getBillUpdateTokenFromRs = (rs, rowNum) ->
         new BillUpdateToken(new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")),
