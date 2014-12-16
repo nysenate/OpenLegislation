@@ -57,7 +57,7 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
                 .from(LocalDate.of(year, 1, 1))
                 .to(LocalDate.of(year, 12, 31))
                 .cache(false);
-        return search(QueryBuilders.matchAllQuery(), rangeFilter, sort, limOff);
+        return search(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), rangeFilter), null, sort, limOff);
     }
 
     /** {@inheritDoc} */
@@ -73,7 +73,7 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
                 .from(LocalDate.of(year, 1, 1))
                 .to(LocalDate.of(year, 12, 31))
                 .cache(false);
-        return search(QueryBuilders.queryString(query), rangeFilter, sort, limOff);
+        return search(QueryBuilders.filteredQuery(QueryBuilders.queryString(query), rangeFilter), null, sort, limOff);
     }
 
     private SearchResults<PublicHearingId> search(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff)

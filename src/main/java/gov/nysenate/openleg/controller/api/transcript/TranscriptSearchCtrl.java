@@ -1,19 +1,17 @@
-package gov.nysenate.openleg.controller.api.hearing;
+package gov.nysenate.openleg.controller.api.transcript;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.base.SearchResultView;
-import gov.nysenate.openleg.client.view.hearing.PublicHearingIdView;
-import gov.nysenate.openleg.client.view.hearing.PublicHearingView;
+import gov.nysenate.openleg.client.view.transcript.TranscriptIdView;
+import gov.nysenate.openleg.client.view.transcript.TranscriptView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
-import gov.nysenate.openleg.service.hearing.data.PublicHearingDataService;
-import gov.nysenate.openleg.service.hearing.search.PublicHearingSearchService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import gov.nysenate.openleg.model.transcript.TranscriptId;
+import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
+import gov.nysenate.openleg.service.transcript.search.TranscriptSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -23,23 +21,23 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
- * Public Hearing Search API.
+ * Transcript Search API.
  */
 @RestController
-@RequestMapping(value = BASE_API_PATH + "/hearings", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class PublicHearingSearchCtrl extends BaseCtrl
+@RequestMapping(value = BASE_API_PATH + "/transcripts", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+public class TranscriptSearchCtrl extends BaseCtrl
 {
-    @Autowired private PublicHearingDataService hearingData;
-    @Autowired private PublicHearingSearchService hearingSearch;
+    @Autowired private TranscriptDataService transcriptData;
+    @Autowired private TranscriptSearchService transcriptSearch;
 
     /**
-     * Public Hearing Search API.
+     * Transcript Search API.
      * ---------------
      *
-     * Search all public hearings:  (GET) /api/3/hearings/search
+     * Search all transcripts:  (GET) /api/3/transcripts/search
      * Request Parameters:  term - The lucene query string.
      *                      sort - The lucene sort string (blank by default)
-     *                      full - Set to true to retrieve full public hearing responses (false by default)
+     *                      full - Set to true to retrieve full transcript responses (false by default)
      *                      limit - Limit the number of results (default 25)
      *                      offset - Start results from offset
      */
@@ -49,15 +47,15 @@ public class PublicHearingSearchCtrl extends BaseCtrl
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
-        SearchResults<PublicHearingId> results = hearingSearch.searchPublicHearings(term, sort, limOff);
+        SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(term, sort, limOff);
         return getSearchResponse(full, limOff, results);
     }
 
     /**
-     * Public Hearing Search by Year.
+     * Transcript Search by Year.
      *  ---------------
      *
-     *  Search all Public Hearings in a given year: (GET) /api/3/hearings/{year}/search
+     *  Search all transcripts in a given year: (GET) /api/3/transcripts/{year}/search
      *  @see #globalSearch see globalSearch for request params.
      */
     @RequestMapping(value = "/{year:[\\d]{4}}/search")
@@ -67,15 +65,16 @@ public class PublicHearingSearchCtrl extends BaseCtrl
                                    @RequestParam(defaultValue = "false") boolean full,
                                    WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
-        SearchResults<PublicHearingId> results = hearingSearch.searchPublicHearings(term, year, sort, limOff);
+        SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(term, year, sort, limOff);
         return getSearchResponse(full, limOff, results);
     }
 
-    private BaseResponse getSearchResponse(boolean full, LimitOffset limOff, SearchResults<PublicHearingId> results) {
+    private BaseResponse getSearchResponse(boolean full, LimitOffset limOff, SearchResults<TranscriptId> results) {
         return ListViewResponse.of(results.getResults().stream()
                 .map(r -> new SearchResultView((full)
-                        ? new PublicHearingView(hearingData.getPublicHearing(r.getResult()))
-                        : new PublicHearingIdView(r.getResult()), r.getRank()))
+                        ? new TranscriptView(transcriptData.getTranscript(r.getResult()))
+                        : new TranscriptIdView(r.getResult()), r.getRank()))
                 .collect(toList()), results.getTotalResults(), limOff);
     }
+
 }
