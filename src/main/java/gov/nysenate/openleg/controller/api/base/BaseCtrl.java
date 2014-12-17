@@ -34,6 +34,9 @@ public abstract class BaseCtrl
     public static final String BASE_API_PATH = "/api/3";
     public static final String BASE_ADMIN_API_PATH = BASE_API_PATH + "/admin";
 
+    /** Maximum number of results that can be requested via the query params. */
+    private static final int MAX_LIMIT = 1000;
+
     /** --- Param grabbers --- */
 
     /**
@@ -65,11 +68,15 @@ public abstract class BaseCtrl
         int limit = defaultLimit;
         int offset = 0;
         if (webRequest.getParameter("limit") != null) {
-            if (webRequest.getParameter("limit").equalsIgnoreCase("all")) {
+            String limitStr = webRequest.getParameter("limit");
+            if (limitStr.equalsIgnoreCase("all")) {
                 limit = 0;
             }
             else {
-                limit = NumberUtils.toInt(webRequest.getParameter("limit"), defaultLimit);
+                limit = NumberUtils.toInt(limitStr, defaultLimit);
+                if (limit > MAX_LIMIT) {
+                    throw new InvalidRequestParamEx(limitStr, "limit", "int", "Must be <= " + MAX_LIMIT);
+                }
             }
         }
         if (webRequest.getParameter("offset") != null) {
@@ -114,14 +121,13 @@ public abstract class BaseCtrl
      * @return LocalDateTime
      * @throws InvalidRequestParamEx
      */
-    protected LocalDateTime parseISODateTimeParam(String dateTimeString, String parameterName)
-            throws InvalidRequestParamEx {
+    protected LocalDateTime parseISODateTime(String dateTimeString, String parameterName) {
         try {
             return LocalDateTime.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateTimeString));
         }
         catch (DateTimeParseException ex) {
             throw new InvalidRequestParamEx(dateTimeString, parameterName,
-                    "date-time", "ISO 8601 date and time formatted string e.g. 2014-10-27T09:44:55");
+                "date-time", "ISO 8601 date and time formatted string e.g. 2014-10-27T09:44:55");
         }
     }
 

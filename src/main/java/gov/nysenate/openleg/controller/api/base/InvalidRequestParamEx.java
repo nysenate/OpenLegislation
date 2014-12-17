@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.controller.api.base;
 
-public class InvalidRequestParamEx extends Exception
+public class InvalidRequestParamEx extends RuntimeException
 {
     private static final long serialVersionUID = -4090577171105617540L;
 

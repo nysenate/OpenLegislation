@@ -17,9 +17,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Repository
-public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao {
-
-    /**{@inheritDoc}*/
+public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao
+{
+    /** {@inheritDoc} */
     @Override
     public ApprovalMessage getApprovalMessage(ApprovalId approvalId) throws DataAccessException {
         MapSqlParameterSource params = getApprovalIdParams(approvalId);
@@ -27,15 +27,15 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao {
                                         params, new ApprovalMessageRowMapper());
     }
 
-    /**{@inheritDoc}*/
+    /** {@inheritDoc} */
     @Override
     public ApprovalMessage getApprovalMessage(BaseBillId baseBillId) throws DataAccessException {
         MapSqlParameterSource params = getBaseBillIdParams(baseBillId);
-        return jdbcNamed.queryForObject(SqlApprovalQuery.SELECT_APPROVAL_BY_BILL.getSql(schema()),
-                                        params, new ApprovalMessageRowMapper());
+        return jdbcNamed.queryForObject(
+            SqlApprovalQuery.SELECT_APPROVAL_BY_BILL.getSql(schema()), params, new ApprovalMessageRowMapper());
     }
 
-    /**{@inheritDoc}*/
+    /** {@inheritDoc} */
     @Override
     public List<ApprovalMessage> getApprovalMessages(int year) throws DataAccessException {
         MapSqlParameterSource params = getYearParams(year);
@@ -43,7 +43,7 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao {
                 params, new ApprovalMessageRowMapper());
     }
 
-    /**{@inheritDoc}*/
+    /** {@inheritDoc} */
     @Override
     public void updateApprovalMessage(ApprovalMessage approvalMessage, SobiFragment sobiFragment) {
         MapSqlParameterSource params = getApprovalMessageParams(approvalMessage, sobiFragment);
@@ -52,14 +52,14 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao {
         }
     }
 
-    /**{@inheritDoc}*/
+    /** {@inheritDoc} */
     @Override
     public void deleteApprovalMessage(ApprovalId approvalId) {
         MapSqlParameterSource params = getApprovalIdParams(approvalId);
         jdbcNamed.update(SqlApprovalQuery.DELETE_APPROVAL_BY_ID.getSql(schema()), params);
     }
 
-    /**{@inheritDoc}*/
+    /** {@inheritDoc} */
     @Override
     public void deleteApprovalMessage(BaseBillId baseBillId) {
         MapSqlParameterSource params = getBaseBillIdParams(baseBillId);
@@ -74,9 +74,9 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao {
             ApprovalMessage approvalMessage = new ApprovalMessage();
             approvalMessage.setApprovalNumber(rs.getInt("approval_number"));
             approvalMessage.setYear(rs.getInt("year"));
-            approvalMessage.setSession(new SessionYear(rs.getInt("session_year")));
+            approvalMessage.setSession(new SessionYear(rs.getInt("bill_session_year")));
             approvalMessage.setBillId(new BillId(
-                           rs.getString("bill_print_no"), rs.getInt("session_year"), rs.getString("bill_version")));
+               rs.getString("bill_print_no"), rs.getInt("bill_session_year"), rs.getString("bill_amend_version")));
             approvalMessage.setChapter(rs.getInt("chapter"));
             approvalMessage.setSigner(rs.getString("signer"));
             approvalMessage.setMemoText(rs.getString("memo_text"));

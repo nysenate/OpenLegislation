@@ -12,29 +12,29 @@ public enum SqlCalendarQuery implements BasicSqlQuery
 
     SELECT_CALENDAR(
         "SELECT * FROM ${schema}." + SqlTable.CALENDAR + "\n" +
-        "WHERE calendar_no = :calendarNo AND year = :year"
+        "WHERE calendar_no = :calendarNo AND calendar_year = :year"
     ),
     SELECT_CALENDAR_IDS(
-        "SELECT calendar_no, year FROM ${schema}." + SqlTable.CALENDAR + "\n" +
-        "WHERE year = :year"
+        "SELECT calendar_no, calendar_year FROM ${schema}." + SqlTable.CALENDAR + "\n" +
+        "WHERE calendar_year = :year"
     ),
     SELECT_CALENDARS_COUNT(
-        SELECT_CALENDAR_IDS.sql.replace("calendar_no, year", "COUNT(*)")
+        SELECT_CALENDAR_IDS.sql.replace("calendar_no, calendar_year", "COUNT(*)")
     ),
     UPDATE_CALENDAR(
         "UPDATE ${schema}." + SqlTable.CALENDAR + "\n" +
         "SET modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, " +
         "    last_fragment_id = :lastFragmentId\n" +
-        "WHERE calendar_no = :calendarNo AND year = :year"
+        "WHERE calendar_no = :calendarNo AND calendar_year = :year"
     ),
     INSERT_CALENDAR(
         "INSERT INTO ${schema}." + SqlTable.CALENDAR + "\n" +
-        "(calendar_no, year, modified_date_time, published_date_time, last_fragment_id) \n" +
+        "(calendar_no, calendar_year, modified_date_time, published_date_time, last_fragment_id) \n" +
         "VALUES (:calendarNo, :year, :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
     ),
     DELETE_CALENDAR(
         "DELETE FROM ${schema}." + SqlTable.CALENDAR + "\n" +
-        "WHERE calendar_no = :calendarNo AND year = :year"
+        "WHERE calendar_no = :calendarNo AND calendar_year = :year"
     ),
 
     /** --- Calendar Supplemental --- */

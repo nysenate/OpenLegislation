@@ -64,7 +64,7 @@ public class ProcessDataCLI extends BaseScript
         env.setSobiBatchEnabled(opts.hasOption("batch-sobis"));
 
         logger.info("Data processing settings: \n" +
-                    "Incremental updates: {}\n" +
+                    "Sobi Batch Processing: {}\n" +
                     "Search indexing: {}\n",
              env.isSobiBatchEnabled(), env.isElasticIndexing());
 

@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,16 @@ public abstract class SqlBaseDao
     protected static void setModPubDatesFromResultSet(BaseLegislativeContent obj, ResultSet rs) throws SQLException {
         obj.setModifiedDateTime(getLocalDateTimeFromRs(rs, "modified_date_time"));
         obj.setPublishedDateTime(DateUtils.getLocalDateTime(rs.getTimestamp("published_date_time")));
+    }
+
+    /**
+     * Returns a new string where the substitution key 'e.g. ${insertWhereClause}' is replaced with the
+     * given replacement string.
+     */
+    protected static String queryReplace(String originalQuery, String key, String replacement) {
+        Map<String, String> replaceMap = new HashMap<>();
+        replaceMap.put(key, replacement);
+        return new StrSubstitutor(replaceMap).replace(originalQuery);
     }
 
     /** --- File Handling Methods --- */

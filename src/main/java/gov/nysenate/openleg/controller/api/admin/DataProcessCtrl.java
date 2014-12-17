@@ -6,7 +6,6 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
-import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.process.DataProcessRunDetailView;
 import gov.nysenate.openleg.client.view.process.DataProcessRunView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
@@ -66,8 +64,8 @@ public class DataProcessCtrl extends BaseCtrl
     public BaseResponse getRunsDuring(@PathVariable String from, @PathVariable String to, WebRequest webRequest)
                                       throws InvalidRequestParamEx {
         LimitOffset limOff = getLimitOffset(webRequest, 100);
-        LocalDateTime fromDateTime = parseISODateTimeParam(from, "from");
-        LocalDateTime toDateTime = parseISODateTimeParam(to, "to");
+        LocalDateTime fromDateTime = parseISODateTime(from, "from");
+        LocalDateTime toDateTime = parseISODateTime(to, "to");
         boolean full = getBooleanParam(webRequest, "full", false);
         boolean detail = getBooleanParam(webRequest, "detail", false);
 

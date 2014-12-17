@@ -3,7 +3,7 @@ package gov.nysenate.openleg.model.bill;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-public class BillUpdateDigest extends BillUpdateToken
+public class BillUpdateDigest extends BillUpdateInfo
 {
     private String action;
     private String table;

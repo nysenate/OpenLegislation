@@ -105,7 +105,8 @@ public class ApplicationConfig implements CachingConfigurer
         catch (ElasticsearchException ex) {
             logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
                     elasticSearchCluster, elasticSearchHost, elasticSearchPort);
-            throw ex;
+            logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
+            return null;
         }
     }
 

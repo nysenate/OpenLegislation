@@ -249,10 +249,6 @@ a.white-2-blue {
           a {
             color: $gray7;
           }
-          border-bottom: 2px solid #f1f1f1;
-        }
-        &.active:not(.has-form) a:not(.button) {
-          border-bottom: 2px solid #008cba;
         }
       }
     }

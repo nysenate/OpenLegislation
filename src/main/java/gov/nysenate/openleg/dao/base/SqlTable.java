@@ -9,6 +9,7 @@ public enum SqlTable
 {
     ACTIVE_LIST_REFERENCE        ("active_list_reference"),
     ACTIVE_LIST_REFERENCE_ENTRY  ("active_list_reference_entry"),
+
     ADMIN                        ("adminuser"),
 
     AGENDA                       ("agenda"),
@@ -41,15 +42,6 @@ public enum SqlTable
     BILL_SPONSOR                 ("bill_sponsor"),
     BILL_VETO                    ("bill_veto"),
 
-    BILL_FULL_SEARCH             ("bill_full_search"),
-    BILL_INFO_SEARCH             ("bill_info_search"),
-    BILL_AMENDMENT_SEARCH        ("bill_amendment_search"),
-    BILL_SPONSOR_SEARCH          ("bill_sponsor_search"),
-    BILL_ACTION_SEARCH           ("bill_action_search"),
-    BILL_COSPONSOR_SEARCH        ("bill_amendment_cosponsor_search"),
-    BILL_MULTISPONSOR_SEARCH     ("bill_amendment_multi_sponsor_search"),
-    BILL_AMEND_VOTE_SEARCH       ("bill_amendment_vote_search"),
-
     CALENDAR                     ("calendar"),
     CALENDAR_ACTIVE_LIST         ("calendar_active_list"),
     CALENDAR_ACTIVE_LIST_ENTRY   ("calendar_active_list_entry"),
@@ -72,8 +64,8 @@ public enum SqlTable
     DAYBREAK_BILL_AMENDMENT      ("daybreak_bill_amendment"),
     DAYBREAK_BILL_SPONSOR        ("daybreak_bill_sponsor"),
 
-    FLOOR_CALENDAR_REFERENCE   ("floor_calendar_reference"),
-    FLOOR_CALENDAR_REFERENCE_ENTRY   ("floor_calendar_reference_entry"),
+    FLOOR_CALENDAR_REFERENCE       ("floor_calendar_reference"),
+    FLOOR_CALENDAR_REFERENCE_ENTRY ("floor_calendar_reference_entry"),
 
     LAW_FILE                     ("law_file"),
     LAW_INFO                     ("law_info"),

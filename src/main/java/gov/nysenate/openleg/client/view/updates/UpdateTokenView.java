@@ -5,10 +5,10 @@ import gov.nysenate.openleg.model.updates.UpdateToken;
 
 import java.time.LocalDateTime;
 
-public class UpdateTokenView implements ViewObject {
-
-    ViewObject id;
-    LocalDateTime updatedDateTime;
+public class UpdateTokenView implements ViewObject
+{
+    protected ViewObject id;
+    protected LocalDateTime updatedDateTime;
 
     public UpdateTokenView(UpdateToken updateToken, ViewObject idView) {
         id = idView;

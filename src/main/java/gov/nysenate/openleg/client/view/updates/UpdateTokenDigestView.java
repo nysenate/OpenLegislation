@@ -8,11 +8,11 @@ import gov.nysenate.openleg.model.updates.UpdateToken;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UpdateTokenDigestView<ContentId> extends UpdateTokenView {
+public class UpdateTokenDigestView<ContentId> extends UpdateTokenView
+{
+    protected ListView<UpdateDigestView> updates;
 
-    private ListView<UpdateDigestView> updates;
-
-    public UpdateTokenDigestView(UpdateToken updateToken, ViewObject idView, List<UpdateDigest<ContentId>> digests)  {
+    public UpdateTokenDigestView(UpdateToken<ContentId> updateToken, ViewObject idView, List<UpdateDigest<ContentId>> digests)  {
         super(updateToken, idView);
         this.updates = ListView.of(digests.stream().map(UpdateDigestView::new).collect(Collectors.toList()));
     }

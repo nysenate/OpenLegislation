@@ -2,7 +2,6 @@ package gov.nysenate.openleg.client.view.calendar;
 
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.MapView;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplemental;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 

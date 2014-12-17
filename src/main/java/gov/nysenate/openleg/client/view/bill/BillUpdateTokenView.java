@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.model.bill.BillUpdateToken;
+import gov.nysenate.openleg.model.bill.BillUpdateInfo;
 
 import java.time.LocalDateTime;
 
@@ -10,9 +10,9 @@ public class BillUpdateTokenView implements ViewObject
     private BaseBillIdView billId;
     private LocalDateTime lastUpdatedOn;
 
-    public BillUpdateTokenView(BillUpdateToken token) {
+    public BillUpdateTokenView(BillUpdateInfo token) {
         if (token != null) {
-            this.billId = new BaseBillIdView(token.getBillId());
+            this.billId = new BaseBillIdView(token.getId());
             this.lastUpdatedOn = token.getUpdatedDateTime();
         }
     }

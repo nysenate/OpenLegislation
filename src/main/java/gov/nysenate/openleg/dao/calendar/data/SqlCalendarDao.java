@@ -245,7 +245,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     {
         @Override
         public Calendar mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Calendar calendar = new Calendar(new CalendarId(rs.getInt("calendar_no"), rs.getInt("year")));
+            Calendar calendar = new Calendar(new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")));
             setModPubDatesFromResultSet(calendar, rs);
             return calendar;
         }
@@ -255,7 +255,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     {
         @Override
         public CalendarId mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new CalendarId(rs.getInt("calendar_no"), rs.getInt("year"));
+            return new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year"));
         }
     }
 

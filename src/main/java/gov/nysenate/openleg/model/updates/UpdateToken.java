@@ -2,9 +2,10 @@ package gov.nysenate.openleg.model.updates;
 
 import java.time.LocalDateTime;
 
-public class UpdateToken<ContentId> {
-    ContentId id;
-    LocalDateTime updatedDateTime;
+public class UpdateToken<ContentId>
+{
+    protected ContentId id;
+    protected LocalDateTime updatedDateTime;
 
     /** --- Constructors --- */
 

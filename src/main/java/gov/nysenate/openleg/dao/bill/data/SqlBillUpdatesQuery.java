@@ -11,6 +11,7 @@ public enum SqlBillUpdatesQuery implements BasicSqlQuery
         "FROM ${schema}." + SqlTable.SOBI_CHANGE_LOG + "\n" +
         "WHERE action_date_time BETWEEN :startDateTime AND :endDateTime\n" +
         "AND defined(key, 'bill_print_no') AND defined(key, 'bill_session_year')\n" +
+        "AND (${updateFieldFilter}) \n" +
         "GROUP BY key->'bill_print_no', key->'bill_session_year'"
     ),
 
@@ -19,14 +20,9 @@ public enum SqlBillUpdatesQuery implements BasicSqlQuery
         "       sobi_fragment_id \n" +
         "FROM ${schema}." + SqlTable.SOBI_CHANGE_LOG + "\n" +
         "WHERE action_date_time BETWEEN :startDateTime AND :endDateTime \n" +
-        "AND key @> hstore(ARRAY['bill_print_no', 'bill_session_year'], ARRAY[:printNo, :session::text])"
-    ),
-
-    SELECT_UPDATES_FOR_BILL_WITH_STATUS_UPDATES(
-        SELECT_UPDATES_FOR_BILL.sql + "\n" +
-        "AND table_name = bill AND defined(key, 'status')"
-    )
-    ;
+        "AND key @> hstore(ARRAY['bill_print_no', 'bill_session_year'], ARRAY[:printNo, :session::text])\n" +
+        "AND (${updateFieldFilter})"
+    );
 
     private String sql;
 
