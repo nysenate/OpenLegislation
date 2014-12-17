@@ -73,9 +73,6 @@ public class Environment
     /** Enable processing of data at scheduled intervals. */
     @Value("${scheduler.process.enabled}") private boolean processingScheduled;
 
-    /** Enable checking of email at scheduled intervals. */
-    @Value("${scheduler.checkmail.enabled}") private boolean checkMailScheduled;
-
     /** Enable spot-check report runs at scheduled intervals. */
     @Value("${scheduler.spotcheck.enabled}") private boolean spotcheckScheduled;
 
@@ -165,14 +162,6 @@ public class Environment
 
     public void setProcessingScheduled(boolean processingScheduled) {
         this.processingScheduled = processingScheduled;
-    }
-
-    public boolean isCheckMailScheduled() {
-        return checkMailScheduled;
-    }
-
-    public void setCheckMailScheduled(boolean checkMailScheduled) {
-        this.checkMailScheduled = checkMailScheduled;
     }
 
     public boolean isSpotcheckScheduled() {

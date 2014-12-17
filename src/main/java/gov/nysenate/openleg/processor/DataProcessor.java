@@ -38,7 +38,6 @@ public class DataProcessor
     @Autowired private DataProcessLogService processLogService;
 
     @Autowired private SobiProcessService sobiProcessService;
-    @Autowired private DaybreakProcessService daybreakProcessService;
     @Autowired private TranscriptProcessService transcriptProcessService;
     @Autowired private PublicHearingProcessService publicHearingProcessService;
     @Autowired private LawProcessService lawProcessService;
@@ -53,7 +52,6 @@ public class DataProcessor
         eventBus.register(this);
         processServices = ImmutableList.<ProcessService>builder()
             .add(sobiProcessService)
-            .add(daybreakProcessService)
             .add(transcriptProcessService)
             .add(publicHearingProcessService)
             .add(lawProcessService)

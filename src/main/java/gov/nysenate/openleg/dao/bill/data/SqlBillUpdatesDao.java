@@ -140,9 +140,4 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
         digest.setUpdates(data);
         return digest;
     };
-
-    private void addDateTimeRangeParams(MapSqlParameterSource params, Range<LocalDateTime> dateTimeRange) {
-        params.addValue("startDateTime", DateUtils.toDate(DateUtils.startOfDateTimeRange(dateTimeRange)))
-              .addValue("endDateTime", DateUtils.toDate(DateUtils.endOfDateTimeRange(dateTimeRange)));
-    }
 }

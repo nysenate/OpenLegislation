@@ -2,7 +2,11 @@ package gov.nysenate.openleg.script;
 
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
+import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
+import gov.nysenate.openleg.processor.daybreak.ManagedDaybreakProcessService;
+import gov.nysenate.openleg.service.spotcheck.CheckMailService;
 import gov.nysenate.openleg.service.spotcheck.DaybreakCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.DaybreakSpotcheckRunService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -20,7 +24,13 @@ public class SpotCheckCLI extends BaseScript
     private static final Logger logger = LoggerFactory.getLogger(SpotCheckCLI.class);
 
     @Autowired
-    protected DaybreakCheckReportService daybreakService;
+    protected DaybreakSpotcheckRunService spotcheckRunService;
+
+    @Autowired
+    protected CheckMailService checkMailService;
+
+    @Autowired
+    protected DaybreakProcessService daybreakProcessService;
 
     public static void main(String[] args) throws Exception {
         AnnotationConfigApplicationContext ctx = init();
@@ -33,22 +43,35 @@ public class SpotCheckCLI extends BaseScript
     @Override
     protected Options getOptions() {
         Options options = new Options();
-        options.addOption("s", "startDate", true, "Fetched reference data will be active after/on this date.");
-        options.addOption("e", "endDate", true, "Fetched reference data will be active prior/on this date.");
+        // If no action options are set then the full spotcheck process will execute
+        options.addOption("m", "check-mail", false, "Will check the email account for daybreak messages if set");
+        options.addOption("c", "collate", false, "Will collate all incoming daybreak files if set");
+        options.addOption("i", "ingest", false, "Will ingest all unprocessed daybreak fragments if set");
+        options.addOption("r", "report", false, "Will run a report for the latest unchecked daybreak references if set");
         return options;
     }
 
     @Override
     protected void execute(CommandLine opts) throws Exception {
-        String startDateArg = opts.getOptionValue("s");
-        String endDateArg = opts.getOptionValue("e");
-        LocalDateTime startDate = (startDateArg != null) ? LocalDateTime.parse(startDateArg) : DateUtils.LONG_AGO.atStartOfDay();
-        LocalDateTime endDate = (endDateArg != null) ? LocalDateTime.parse(endDateArg) : LocalDateTime.now();
-        SpotCheckReport<BaseBillId> daybreakReport =
-            daybreakService.generateReport(startDate, endDate);
-        logger.info("Mismatch statuses : {}", daybreakReport.getMismatchStatusCounts());
-        logger.info("Mismatch types : {}", daybreakReport.getMismatchTypeCounts());
-        daybreakService.saveReport(daybreakReport);
-        logger.info("Reporting actions complete.");
+        boolean checkMail = opts.hasOption("check-mail");
+        boolean collate = opts.hasOption("collate");
+        boolean ingest = opts.hasOption("ingest");
+        boolean report = opts.hasOption("report");
+        if (checkMail || collate || ingest || report) {
+            if (checkMail) {
+                checkMailService.checkMail();
+            }
+            if (collate) {
+                daybreakProcessService.collate();
+            }
+            if (ingest) {
+                daybreakProcessService.ingest();
+            }
+            if (report) {
+                spotcheckRunService.generateReport();
+            }
+        } else {
+            spotcheckRunService.runSpotcheck();
+        }
     }
 }

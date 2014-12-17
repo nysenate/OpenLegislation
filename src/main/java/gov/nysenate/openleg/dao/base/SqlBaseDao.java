@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.base;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -70,6 +71,14 @@ public abstract class SqlBaseDao
      */
     protected static void addLastFragmentParam(SobiFragment fragment, MapSqlParameterSource params) {
         params.addValue("lastFragmentId", (fragment != null) ? fragment.getFragmentId() : null);
+    }
+
+    /**
+     * Adds parameters for a date time range
+     */
+    protected static void addDateTimeRangeParams(MapSqlParameterSource params, Range<LocalDateTime> dateTimeRange) {
+        params.addValue("startDateTime", DateUtils.toDate(DateUtils.startOfDateTimeRange(dateTimeRange)));
+        params.addValue("endDateTime", DateUtils.toDate(DateUtils.endOfDateTimeRange(dateTimeRange)));
     }
 
     /**
