@@ -19,7 +19,7 @@ public enum SqlApprovalQuery implements BasicSqlQuery
     ),
     INSERT_APPROVAL(
         "INSERT INTO ${schema}." + SqlTable.BILL_APPROVAL + "\n" +
-        "   (approval_number, year,  bill_print_no, bill_session_yaer, bill_amend_version, " +
+        "   (approval_number, year,  bill_print_no, bill_session_year, bill_amend_version, " +
         "    chapter,  signer,  memo_text, last_fragment_id )" + "\n" +
         "VALUES ( :approvalNumber, :year, :billPrintNo,  :sessionYear, :billVersion, " +
         "           :chapter, :signer, :memoText, :lastFragmentId )"
