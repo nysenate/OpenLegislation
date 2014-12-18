@@ -52,13 +52,10 @@ public class SpotCheckCtrl extends BaseCtrl
      * TODO
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public BaseResponse toggleScheduling(@RequestParam(required = true) boolean scheduledReports,
-                                         @RequestParam(required = true) boolean scheduledCheckMail) {
+    public BaseResponse toggleScheduling(@RequestParam(required = true) boolean scheduledReports) {
         env.setSpotcheckScheduled(scheduledReports);
-        env.setCheckMailScheduled(scheduledCheckMail);
         return new SimpleResponse(true,
-            "Scheduled reports: " + env.isSpotcheckScheduled() + ", Scheduled CheckMail: " + env.isCheckMailScheduled(),
-            "spotcheck-enable-response");
+            "Scheduled reports: " + env.isSpotcheckScheduled(), "spotcheck-enable-response");
     }
 
     /**

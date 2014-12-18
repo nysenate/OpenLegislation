@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.hearing;
 
 import com.google.common.collect.MapDifference;
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
@@ -8,11 +9,9 @@ import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
-import gov.nysenate.openleg.model.hearing.PublicHearing;
-import gov.nysenate.openleg.model.hearing.PublicHearingCommittee;
-import gov.nysenate.openleg.model.hearing.PublicHearingFile;
-import gov.nysenate.openleg.model.hearing.PublicHearingId;
+import gov.nysenate.openleg.model.hearing.*;
 import gov.nysenate.openleg.service.entity.member.MemberService;
+import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +65,16 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
         }
         updatePublicHearingAttendance(publicHearing);
         updatePublicHearingCommittees(publicHearing);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<PublicHearingUpdateToken> publicHearingsUpdatedDuring(Range<LocalDateTime> dateRange, SortOrder dateOrder, LimitOffset limOff) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("startDateTime", DateUtils.toDate(DateUtils.startOfDateTimeRange(dateRange)));
+        params.addValue("endDateTime", DateUtils.toDate(DateUtils.endOfDateTimeRange(dateRange)));
+        OrderBy orderBy = new OrderBy("modified_date_time", dateOrder);
+        return jdbcNamed.query(SELECT_PUBLIC_HEARING_UPDATES.getSql(schema(), orderBy, limOff), params, publicHearingTokenRowMapper);
     }
 
     private void updatePublicHearingAttendance(PublicHearing publicHearing) {
@@ -211,4 +221,8 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
         committee.setChamber(Chamber.valueOf(rs.getString("committee_chamber").toUpperCase()));
         return committee;
     };
+
+    static RowMapper<PublicHearingUpdateToken> publicHearingTokenRowMapper = (rs, rowNum) ->
+        new PublicHearingUpdateToken(new PublicHearingId(rs.getString("filename")), getLocalDateTimeFromRs(rs, "modified_date_time"));
+
 }

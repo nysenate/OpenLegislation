@@ -50,6 +50,10 @@ public enum SqlPublicHearingQuery implements BasicSqlQuery
         "INSERT INTO ${schema}." + SqlTable.PUBLIC_HEARING_COMMITTEE + "\n" +
         "(filename, committee_name, committee_chamber) " +
         "VALUES (:filename, :committeeName, :committeeChamber::chamber)"
+    ),
+    SELECT_PUBLIC_HEARING_UPDATES(
+            "SELECT filename, modified_date_time FROM ${schema}." + SqlTable.PUBLIC_HEARING + "\n" +
+            "WHERE modified_date_time BETWEEN :startDateTime AND :endDateTime"
     );
 
     private String sql;

@@ -49,21 +49,13 @@ public class CheckMailService {
     }
 
     /**
-     * Schedules the checkmail method to be run according to the cron supplied in the properties file
-     */
-    @Scheduled(cron = "${scheduler.checkmail.cron}")
-    public void scheduledCheckMail() {
-        if (environment.isCheckMailScheduled()) {
-            checkMail();
-        }
-    }
-
-    /**
      * Checks an email server for incoming daybreak emails.
      * If a full set of daybreak emails is detected, the daybreak file attachments are saved as daybreak files
+     * @return true if daybreak reports were saved successfully
      */
-    public void checkMail() {
+    public boolean checkMail() {
         Store store = null;
+        boolean success = false;
         try {
             logger.info("checking for daybreak emails...");
             store = getMailConnection();
@@ -79,6 +71,7 @@ public class CheckMailService {
                 logger.info("{} complete daybreak reports found.  Saving...", completeReports.size());
                 saveCompleteReports(completeReports, sourceFolder, archiveFolder);
                 logger.info("Daybreak files saved.");
+                success = true;
             } else if (partialReports.size() > 0) {
                 logger.info("{} partial daybreak reports found.", partialReports.size());
             } else{
@@ -93,6 +86,7 @@ public class CheckMailService {
                 }
             } catch (MessagingException ignored) {}
         }
+        return success;
     }
 
     /**
