@@ -1,28 +1,24 @@
 package gov.nysenate.openleg.client.view.updates;
 
-import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-public class UpdateTokenDigestView<ContentId> extends UpdateTokenView
+public class UpdateTokenDigestView<ContentId> extends UpdateTokenView implements ViewObject
 {
-    protected ListView<UpdateDigestView> updates;
+    protected UpdateDigestView update;
 
-    public UpdateTokenDigestView(UpdateToken<ContentId> updateToken, ViewObject idView, List<UpdateDigest<ContentId>> digests)  {
+    public UpdateTokenDigestView(UpdateToken updateToken, ViewObject idView, UpdateDigest<ContentId> digest) {
         super(updateToken, idView);
-        this.updates = ListView.of(digests.stream().map(UpdateDigestView::new).collect(Collectors.toList()));
+        this.update = new UpdateDigestView(digest);
     }
 
     @Override
     public String getViewType() {
-        return id.getViewType() + "-update-token-digest";
+        return "update-token-digest-view";
     }
 
-    public ListView<UpdateDigestView> getUpdates() {
-        return updates;
+    public UpdateDigestView getUpdate() {
+        return update;
     }
 }

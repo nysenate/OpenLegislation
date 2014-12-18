@@ -5,6 +5,7 @@ import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.bill.BaseBillIdView;
 import gov.nysenate.openleg.client.view.updates.UpdateDigestView;
+import gov.nysenate.openleg.client.view.updates.UpdateTokenDigestGroupView;
 import gov.nysenate.openleg.client.view.updates.UpdateTokenDigestView;
 import gov.nysenate.openleg.client.view.updates.UpdateTokenView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
@@ -15,6 +16,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillUpdatesDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillUpdateField;
+import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.DateUtils;
@@ -28,10 +30,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -133,24 +138,30 @@ public class BillUpdatesCtrl extends BaseCtrl
         String filter = request.getParameter("filter");
         BillUpdateField fieldFilter = getUpdateFieldFromParam(filter);
 
-        PaginatedList<UpdateToken<BaseBillId>> updateTokens =
-            billUpdatesDao.getUpdateTokens(updateRange, fieldFilter, sortOrder, limOff);
-        return ListViewResponse.of(
-            updateTokens.getResults().stream()
-                .map(token -> (detail)
-                    ? new UpdateTokenDigestView<>(token, new BaseBillIdView(token.getId()),
-                        billUpdatesDao.getUpdateDigests(token.getId(), updateRange, fieldFilter, sortOrder))
-                    : new UpdateTokenView(token, new BaseBillIdView(token.getId())))
-                .collect(Collectors.toList()), updateTokens.getTotal(), limOff);
+        if (!detail) {
+            PaginatedList<UpdateToken<BaseBillId>> updateTokens =
+                billUpdatesDao.getUpdateTokens(updateRange, fieldFilter, sortOrder, limOff);
+            return ListViewResponse.of(updateTokens.getResults().stream()
+                .map(token -> new UpdateTokenView(token, new BaseBillIdView(token.getId())))
+                .collect(toList()), updateTokens.getTotal(), limOff);
+        }
+        else {
+            PaginatedList<UpdateDigest<BaseBillId>> updateDigests =
+                billUpdatesDao.getUpdateDigests(updateRange, fieldFilter, sortOrder, limOff);
+            return ListViewResponse.of(updateDigests.getResults().stream()
+                .map(digest -> new UpdateTokenDigestView<>(digest, new BaseBillIdView(digest.getId()), digest))
+                .collect(toList()), updateDigests.getTotal(), limOff);
+        }
     }
 
     private BaseResponse getUpdatesForBillDuring(int sessionYear, String printNo, LocalDateTime from, LocalDateTime to,
                                                  WebRequest request) {
         BillUpdateField filterField = getUpdateFieldFromParam(request.getParameter("filter"));
+        SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         List<UpdateDigestView> digests = billUpdatesDao.getUpdateDigests(
-                new BaseBillId(printNo, sessionYear), Range.openClosed(from, to), filterField, SortOrder.ASC)
+                new BaseBillId(printNo, sessionYear), Range.openClosed(from, to), filterField, sortOrder)
                 .stream().map(UpdateDigestView::new)
-                .collect(Collectors.toList());
+                .collect(toList());
         return ListViewResponse.of(digests, digests.size(), LimitOffset.ALL);
     }
 
@@ -161,8 +172,11 @@ public class BillUpdatesCtrl extends BaseCtrl
                 fieldFilter = BillUpdateField.valueOf(filter.toUpperCase());
             }
             catch (IllegalArgumentException ex) {
+                String validFields = Stream.of(BillUpdateField.values())
+                    .map(b -> b.name().toLowerCase())
+                    .collect(Collectors.joining(", "));
                 throw new InvalidRequestParamEx(filter, "filter", "string",
-                    "Filter must be one of the types specified in the documentation.");
+                    "Filter must be one of the following fields: " + validFields);
             }
         }
         return fieldFilter;

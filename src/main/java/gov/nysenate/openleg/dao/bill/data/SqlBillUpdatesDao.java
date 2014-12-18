@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.bill.data;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.client.view.updates.UpdateDigestView;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillUpdateDigest;
@@ -20,8 +21,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.dao.bill.data.SqlBillUpdatesQuery.SELECT_BILLS_UPDATED_DURING;
-import static gov.nysenate.openleg.dao.bill.data.SqlBillUpdatesQuery.SELECT_UPDATES_FOR_BILL;
+import static gov.nysenate.openleg.dao.bill.data.SqlBillUpdatesQuery.*;
 import static gov.nysenate.openleg.model.bill.BillUpdateField.*;
 
 @Repository
@@ -75,6 +75,23 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
 
         PaginatedRowHandler<UpdateToken<BaseBillId>> handler =
             new PaginatedRowHandler<>(limOff, "total_updated", getBillUpdateTokenFromRs);
+        jdbcNamed.query(sqlQuery, params, handler);
+        return handler.getList();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PaginatedList<UpdateDigest<BaseBillId>> getUpdateDigests(Range<LocalDateTime> dateTimeRange, BillUpdateField filter,
+                                                                    SortOrder dateOrder, LimitOffset limOff) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        addDateTimeRangeParams(params, dateTimeRange);
+        OrderBy orderBy = new OrderBy("action_date_time", dateOrder);
+
+        String sqlQuery = SELECT_BILLS_UPDATED_DETAILED_DURING.getSql(schema(), orderBy, limOff);
+        sqlQuery = queryReplace(sqlQuery, "updateFieldFilter", getUpdateFieldFilter(filter));
+
+        PaginatedRowHandler<UpdateDigest<BaseBillId>> handler =
+                new PaginatedRowHandler<>(limOff, "total_updated", getBillUpdateDigestFromRs);
         jdbcNamed.query(sqlQuery, params, handler);
         return handler.getList();
     }

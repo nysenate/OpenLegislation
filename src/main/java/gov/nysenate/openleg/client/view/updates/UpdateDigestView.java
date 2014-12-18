@@ -12,7 +12,7 @@ public class UpdateDigestView implements ViewObject
 {
     protected String action;
     protected String scope;
-    protected Map<String, String> updates;
+    protected Map<String, String> fields;
     protected LocalDateTime updatedOn;
     protected String sourceId;
     protected LocalDateTime sourceDateTime;
@@ -21,14 +21,14 @@ public class UpdateDigestView implements ViewObject
         if (updateDigest != null) {
             this.action = updateDigest.getAction();
             this.scope = WordUtils.capitalizeFully(updateDigest.getTable().replaceAll("_", " "));
-            this.updates = new HashMap<>();
+            this.fields = new HashMap<>();
             for (String key : updateDigest.getUpdates().keySet()) {
                 // Camel case the keys
-                this.updates.put(
-                    (key.contains("_"))
-                        ? key.substring(0, 1) + WordUtils.capitalizeFully(key, new char[]{'_'}).replace("_", "").substring(1)
-                        : key,
-                    updateDigest.getUpdates().get(key));
+                this.fields.put(
+                        (key.contains("_"))
+                                ? key.substring(0, 1) + WordUtils.capitalizeFully(key, new char[]{'_'}).replace("_", "").substring(1)
+                                : key,
+                        updateDigest.getUpdates().get(key));
             }
             this.updatedOn = updateDigest.getUpdatedDateTime();
             this.sourceId = updateDigest.getSourceDataId();
@@ -49,8 +49,8 @@ public class UpdateDigestView implements ViewObject
         return scope;
     }
 
-    public Map<String, String> getUpdates() {
-        return updates;
+    public Map<String, String> getFields() {
+        return fields;
     }
 
     public LocalDateTime getUpdatedOn() {

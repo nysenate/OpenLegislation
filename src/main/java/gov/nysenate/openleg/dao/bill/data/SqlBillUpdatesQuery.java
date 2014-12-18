@@ -15,13 +15,23 @@ public enum SqlBillUpdatesQuery implements BasicSqlQuery
         "GROUP BY key->'bill_print_no', key->'bill_session_year'"
     ),
 
+    SELECT_BILLS_UPDATED_DETAILED_DURING(
+        "SELECT key->'bill_print_no' AS bill_print_no, key->'bill_session_year' AS bill_session_year,\n" +
+        "       table_name, action, hstore_to_array(key) AS key, hstore_to_array(data) AS data, action_date_time,\n" +
+        "       sobi_fragment_id, COUNT(*) OVER () AS total_updated \n" +
+        "FROM ${schema}." + SqlTable.SOBI_CHANGE_LOG + "\n" +
+        "WHERE action_date_time BETWEEN :startDateTime AND :endDateTime\n" +
+        "AND defined(key, 'bill_print_no') AND defined(key, 'bill_session_year')\n" +
+        "AND (${updateFieldFilter}) \n"
+    ),
+
     SELECT_UPDATES_FOR_BILL(
         "SELECT table_name, action, hstore_to_array(key) AS key, hstore_to_array(data) AS data, action_date_time, \n" +
         "       sobi_fragment_id \n" +
         "FROM ${schema}." + SqlTable.SOBI_CHANGE_LOG + "\n" +
         "WHERE action_date_time BETWEEN :startDateTime AND :endDateTime \n" +
         "AND key @> hstore(ARRAY['bill_print_no', 'bill_session_year'], ARRAY[:printNo, :session::text])\n" +
-        "AND (${updateFieldFilter})"
+        "AND (${updateFieldFilter}) \n"
     );
 
     private String sql;

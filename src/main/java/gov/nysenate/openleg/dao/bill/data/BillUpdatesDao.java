@@ -29,6 +29,13 @@ public interface BillUpdatesDao
                                                                   SortOrder dateOrder, LimitOffset limOff);
 
     /**
+     * Retrieves update digests during a given date range with an optional filter.
+     * Same params as #getUpdateTokens
+     */
+    public PaginatedList<UpdateDigest<BaseBillId>> getUpdateDigests(Range<LocalDateTime> dateTimeRange, BillUpdateField filter,
+                                                                    SortOrder dateOrder, LimitOffset limOff);
+
+    /**
      * Returns a list of digests which contain all the information pertaining to a bill that have changed during the
      * specified date range.
      *

@@ -6,6 +6,7 @@ import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.sobi.SobiDao;
+import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessErrorEvent;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
@@ -41,8 +42,7 @@ public class ManagedSobiProcessService implements SobiProcessService
 
     @Autowired private SobiDao sobiDao;
     @Autowired private EventBus eventBus;
-
-    @Value("${sobi.batch.size:1000}") private int sobiBatchSize;
+    @Autowired private Environment env;
 
     /** --- Processor Dependencies --- */
 
@@ -101,7 +101,7 @@ public class ManagedSobiProcessService implements SobiProcessService
             List<SobiFile> newSobis;
             do {
                 // Iterate through all the new sobi files in small batches to avoid saturating memory.
-                newSobis = sobiDao.getIncomingSobiFiles(SortOrder.ASC, new LimitOffset(sobiBatchSize));
+                newSobis = sobiDao.getIncomingSobiFiles(SortOrder.ASC, new LimitOffset(env.getSobiBatchSize()));
                 logger.debug((newSobis.isEmpty()) ? "No more sobi files to collate."
                                                   : "Collating {} sobi files.", newSobis.size());
                 for (SobiFile sobiFile : newSobis) {
@@ -178,7 +178,8 @@ public class ManagedSobiProcessService implements SobiProcessService
         int processCount = 0;
         do {
             ImmutableSet<SobiFragmentType> allowedTypes = options.getAllowedFragmentTypes();
-            fragments = sobiDao.getPendingSobiFragments(allowedTypes, SortOrder.ASC, new LimitOffset(sobiBatchSize));
+            LimitOffset limOff = (env.isSobiBatchEnabled()) ? new LimitOffset(env.getSobiBatchSize()) : LimitOffset.ONE;
+            fragments = sobiDao.getPendingSobiFragments(allowedTypes, SortOrder.ASC, limOff);
             processCount += processFragments(fragments, options);
         }
         while (!fragments.isEmpty());
