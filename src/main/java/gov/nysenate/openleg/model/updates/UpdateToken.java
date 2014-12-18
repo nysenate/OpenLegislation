@@ -2,48 +2,37 @@ package gov.nysenate.openleg.model.updates;
 
 import java.time.LocalDateTime;
 
-public class UpdateToken<ContentId> {
-    
+public class UpdateToken<ContentId>
+{
     protected ContentId id;
-    protected LocalDateTime updatedDateTime;
+    protected String sourceId;
+    protected LocalDateTime sourceDateTime;
+    protected LocalDateTime processedDateTime;
 
     /** --- Constructors --- */
 
-    public UpdateToken(ContentId id, LocalDateTime updatedDateTime) {
+    public UpdateToken(ContentId id, String sourceId, LocalDateTime sourceDateTime, LocalDateTime processedDateTime) {
         this.id = id;
-        this.updatedDateTime = updatedDateTime;
+        this.sourceId = sourceId;
+        this.sourceDateTime = sourceDateTime;
+        this.processedDateTime = processedDateTime;
     }
 
     /** --- Overrides --- */
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UpdateToken)) return false;
-
-        UpdateToken that = (UpdateToken) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (updatedDateTime != null ? !updatedDateTime.equals(that.updatedDateTime) : that.updatedDateTime != null)
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (updatedDateTime != null ? updatedDateTime.hashCode() : 0);
-        return result;
-    }
-
-    /** --- Getters --- */
 
     public ContentId getId() {
         return id;
     }
 
-    public LocalDateTime getUpdatedDateTime() {
-        return updatedDateTime;
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public LocalDateTime getSourceDateTime() {
+        return sourceDateTime;
+    }
+
+    public LocalDateTime getProcessedDateTime() {
+        return processedDateTime;
     }
 }

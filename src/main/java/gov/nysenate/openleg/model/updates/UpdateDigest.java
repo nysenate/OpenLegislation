@@ -7,14 +7,16 @@ public class UpdateDigest<ContentId> extends UpdateToken<ContentId> {
 
     private String action;
     private String table;
-    private Map<String, String> updates;
-    private String sourceDataId;
-    private LocalDateTime sourceDataDateTime;
+    private Map<String, String> fields;
 
     /** --- Constructors --- */
 
-    public UpdateDigest(ContentId id, LocalDateTime updatedDateTime) {
-        super(id, updatedDateTime);
+    public UpdateDigest(UpdateToken<ContentId> token) {
+        super(token.id, token.sourceId, token.sourceDateTime, token.processedDateTime);
+    }
+
+    public UpdateDigest(ContentId id, String sourceId, LocalDateTime sourceDateTime, LocalDateTime processedDateTime) {
+        super(id, sourceId, sourceDateTime, processedDateTime);
     }
 
     /** --- Basic Getters / Setters */
@@ -35,27 +37,11 @@ public class UpdateDigest<ContentId> extends UpdateToken<ContentId> {
         this.table = table;
     }
 
-    public Map<String, String> getUpdates() {
-        return updates;
+    public Map<String, String> getFields() {
+        return fields;
     }
 
-    public void setUpdates(Map<String, String> updates) {
-        this.updates = updates;
-    }
-
-    public String getSourceDataId() {
-        return sourceDataId;
-    }
-
-    public void setSourceDataId(String sourceDataId) {
-        this.sourceDataId = sourceDataId;
-    }
-
-    public LocalDateTime getSourceDataDateTime() {
-        return sourceDataDateTime;
-    }
-
-    public void setSourceDataDateTime(LocalDateTime sourceDataDateTime) {
-        this.sourceDataDateTime = sourceDataDateTime;
+    public void setFields(Map<String, String> fields) {
+        this.fields = fields;
     }
 }

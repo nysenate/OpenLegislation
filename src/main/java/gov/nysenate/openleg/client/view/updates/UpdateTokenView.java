@@ -8,11 +8,17 @@ import java.time.LocalDateTime;
 public class UpdateTokenView implements ViewObject
 {
     protected ViewObject id;
-    protected LocalDateTime updatedDateTime;
+    protected String sourceId;
+    protected LocalDateTime sourceDateTime;
+    protected LocalDateTime processedDateTime;
 
     public UpdateTokenView(UpdateToken updateToken, ViewObject idView) {
         id = idView;
-        updatedDateTime = updateToken.getUpdatedDateTime();
+        if (updateToken != null) {
+            this.sourceId = updateToken.getSourceId();
+            this.sourceDateTime = updateToken.getSourceDateTime();
+            this.processedDateTime = updateToken.getProcessedDateTime();
+        }
     }
 
     @Override
@@ -24,7 +30,15 @@ public class UpdateTokenView implements ViewObject
         return id;
     }
 
-    public LocalDateTime getUpdatedDateTime() {
-        return updatedDateTime;
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public LocalDateTime getSourceDateTime() {
+        return sourceDateTime;
+    }
+
+    public LocalDateTime getProcessedDateTime() {
+        return processedDateTime;
     }
 }
