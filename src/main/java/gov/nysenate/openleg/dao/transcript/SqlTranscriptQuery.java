@@ -21,6 +21,10 @@ public enum SqlTranscriptQuery implements BasicSqlQuery
         "INSERT INTO ${schema}." + SqlTable.TRANSCRIPT + "\n" +
         "(transcript_filename, session_type, date_time, location, text)\n" +
         "VALUES (:transcriptFilename, :sessionType, :dateTime, :location, :text)"
+    ),
+    SELECT_TRANSCRIPTS_UPDATED_DURING(
+            "SELECT transcript_filename, modified_date_time FROM ${schema}." + SqlTable.TRANSCRIPT + "\n" +
+            "WHERE modified_date_time BETWEEN :startDateTime AND :endDateTime"
     );
 
     private String sql;

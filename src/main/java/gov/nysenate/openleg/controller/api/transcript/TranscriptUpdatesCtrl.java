@@ -7,9 +7,8 @@ import gov.nysenate.openleg.client.view.transcript.TranscriptUpdateTokenView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.transcript.TranscriptUpdatesDao;
+import gov.nysenate.openleg.dao.transcript.TranscriptDao;
 import gov.nysenate.openleg.model.transcript.TranscriptUpdateToken;
-import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +31,7 @@ public class TranscriptUpdatesCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(TranscriptUpdatesCtrl.class);
 
-    @Autowired private TranscriptDataService transcriptData;
-    @Autowired private TranscriptUpdatesDao transcriptUpdates;
+    @Autowired private TranscriptDao transcriptDao;
 
     /**
      * Transcript Updates API.
@@ -45,7 +43,7 @@ public class TranscriptUpdatesCtrl extends BaseCtrl
      * Request Params:  limit - Limit the number of results
      *                  offset - Start results from an offset.
      *
-     * Expected Output: List of TranscriptUpdateView
+     * Expected Output: List of TranscriptUpdateTokenView
      */
     @RequestMapping(value = "/updates/{from}")
     public BaseResponse getNewTranscriptsSince(@PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime from,
@@ -63,7 +61,7 @@ public class TranscriptUpdatesCtrl extends BaseCtrl
      * Request Params:  limit - Limit the number of results
      *                  offset - Start results from an offset.
      *
-     * Expected Output: List of TranscriptUpdateView
+     * Expected Output: List of TranscriptUpdateTokenView
      */
     @RequestMapping(value = "/updates/{from}/{to}")
     public BaseResponse getNewTranscriptsDuring(@PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime from,
@@ -71,7 +69,7 @@ public class TranscriptUpdatesCtrl extends BaseCtrl
                                                 WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 25);
         Range<LocalDateTime> range = Range.closedOpen(from, to);
-        List<TranscriptUpdateToken> updates = transcriptUpdates.transcriptsUpdatedDuring(range, SortOrder.ASC, limOff);
+        List<TranscriptUpdateToken> updates = transcriptDao.transcriptsUpdatedDuring(range, SortOrder.ASC, limOff);
         return ListViewResponse.of(updates.stream().map(token ->
                 new TranscriptUpdateTokenView(token)).collect(Collectors.toList()), updates.size(), limOff);
     }
