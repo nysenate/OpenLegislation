@@ -143,10 +143,6 @@ postgresdb.pass =
 # (Default: true)
 scheduler.process.enabled = true
 
-# Enable scheduled checking of email boxes for any auxiliary data.
-# (Default: true)
-scheduler.checkmail.enabled = true
-
 # Enable scheduled spot-check reporting.
 # (Default: true)
 scheduler.spotcheck.enabled = true
@@ -156,9 +152,6 @@ scheduler.spotcheck.enabled = true
 
 # When to process data. (Default: 0 */5 * * * *)
 scheduler.process.cron = 0 */5 * * * *
-
-# When to check the mail boxes. (Default: 0 2-59/5 * * * FRI-SAT)
-scheduler.checkmail.cron = 0 2-59/5 * * * FRI-SAT
 
 # When to run spot-check reports. (Default: 0 */2 * * * FRI-SAT)
 scheduler.spotcheck.cron = 0 */2 * * * FRI-SAT
@@ -173,5 +166,5 @@ mail.store.protocol = imaps
 mail.imaps.ssl.protocols = SSLv3
 
 # Mail directory paths where daybreak emails are stored
-checkmail.receiving = OpenLegislationDev/LRSAutomated
-checkmail.processed = OpenLegislationDev/LRSProcessed
+checkmail.receiving = OpenLegislationTest/LRSAutomated
+checkmail.processed = OpenLegislationTest/LRSProcessed
