@@ -14,7 +14,7 @@ public class UpdateDigestView implements ViewObject
     protected String scope;
     protected Map<String, String> fields;
 
-    public UpdateDigestView(UpdateDigest<?> updateDigest) {
+    public UpdateDigestView(UpdateDigest<?> updateDigest, ViewObject idView) {
         if (updateDigest != null) {
             this.action = updateDigest.getAction();
             this.scope = WordUtils.capitalizeFully(updateDigest.getTable().replaceAll("_", " "));
