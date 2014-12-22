@@ -83,7 +83,7 @@ public class TranscriptGetCtrl extends BaseCtrl
         return ListViewResponse.of(results.getResults().stream().map(r ->
                 (full) ? new TranscriptView(transcriptData.getTranscript(r.getResult()))
                         : new TranscriptIdView(r.getResult()))
-                .collect(Collectors.toList()), 0, limOff);
+                .collect(Collectors.toList()), results.getTotalResults(), limOff);
     }
 
     /**
@@ -98,8 +98,8 @@ public class TranscriptGetCtrl extends BaseCtrl
     @RequestMapping("/{filename:.*}")
     public BaseResponse getTranscript(@PathVariable String filename) {
         return new ViewObjectResponse<>(
-            new TranscriptView(transcriptData.getTranscript(new TranscriptId(filename)))
-        );
+            new TranscriptView(transcriptData.getTranscript(new TranscriptId(filename))),
+                "Data for transcript " + filename);
     }
 
     /**

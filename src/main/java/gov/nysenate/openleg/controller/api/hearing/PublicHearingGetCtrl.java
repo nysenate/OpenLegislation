@@ -60,7 +60,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
         return ListViewResponse.of(results.getResults().stream().map(r ->
                         (full) ? new PublicHearingView(hearingData.getPublicHearing(r.getResult()))
                                 : new PublicHearingIdView(r.getResult()))
-                        .collect(Collectors.toList()), 0, limOff);
+                        .collect(Collectors.toList()), results.getTotalResults(), limOff);
     }
 
     /**
@@ -85,7 +85,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
         return ListViewResponse.of(results.getResults().stream().map(r ->
                         (full) ? new PublicHearingView(hearingData.getPublicHearing(r.getResult()))
                                 : new PublicHearingIdView(r.getResult()))
-                        .collect(Collectors.toList()), 0, limOff);
+                        .collect(Collectors.toList()), results.getTotalResults(), limOff);
     }
 
     /**
@@ -102,7 +102,8 @@ public class PublicHearingGetCtrl extends BaseCtrl
     @RequestMapping(value = "/{filename:.*}")
     public BaseResponse getHearing(@PathVariable String filename) {
         return new ViewObjectResponse<>(
-                new PublicHearingView(hearingData.getPublicHearing(new PublicHearingId(filename))));
+                new PublicHearingView(hearingData.getPublicHearing(new PublicHearingId(filename))),
+        "Data for public hearing " + filename);
     }
 
     /**
