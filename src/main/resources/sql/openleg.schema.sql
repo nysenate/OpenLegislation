@@ -4380,14 +4380,6 @@ CREATE INDEX sobi_change_log_table_name_idx ON sobi_change_log USING btree (tabl
 
 CREATE TRIGGER log_agenda_info_addendum_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_info_addendum FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id');
 
-
---
--- Name: log_agenda_info_committee_item_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_agenda_info_committee_item_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_info_committee_item FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('id');
-
-
 --
 -- Name: log_agenda_info_committee_updates; Type: TRIGGER; Schema: master; Owner: postgres
 --
@@ -4408,26 +4400,11 @@ CREATE TRIGGER log_agenda_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda FO
 
 CREATE TRIGGER log_agenda_vote_addendum_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_addendum FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id');
 
-
---
--- Name: log_agenda_vote_committee_attend_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_agenda_vote_committee_attend_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_committee_attend FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('id');
-
-
 --
 -- Name: log_agenda_vote_committee_updates; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
 CREATE TRIGGER log_agenda_vote_committee_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_committee FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id', 'committee_name', 'committee_chamber');
-
-
---
--- Name: log_agenda_vote_committee_vote_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_agenda_vote_committee_vote_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_committee_vote FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('id');
 
 
 --
