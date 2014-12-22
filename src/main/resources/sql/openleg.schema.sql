@@ -4361,13 +4361,11 @@ CREATE INDEX sobi_change_log_action_date_time_idx ON sobi_change_log USING btree
 
 CREATE INDEX sobi_change_log_fragment_id_idx ON sobi_change_log USING btree (sobi_fragment_id);
 
-
 --
--- Name: sobi_change_log_keygin; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+-- Name: sobi_change_log_key_gist_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
 --
 
-CREATE INDEX sobi_change_log_keygin ON sobi_change_log USING gin (key);
-
+CREATE INDEX sobi_change_log_key_gist_idx ON sobi_change_log USING gist (key);
 
 --
 -- Name: sobi_change_log_table_name_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
@@ -4471,7 +4469,7 @@ CREATE TRIGGER log_bill_amendment_same_as_updates BEFORE INSERT OR DELETE OR UPD
 -- Name: log_bill_amendment_updates; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_bill_amendment_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'version');
+CREATE TRIGGER log_bill_amendment_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'bill_amend_version');
 
 
 --

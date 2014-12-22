@@ -13,11 +13,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.bill.data.SqlBillUpdatesQuery.SELECT_BILL_UPDATE_DIGESTS;
@@ -52,11 +51,12 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
         updateMappings.put(APPROVAL, new BillUpdateTable(SqlTable.BILL_APPROVAL));
         updateMappings.put(COSPONSOR, new BillUpdateTable(SqlTable.BILL_AMENDMENT_COSPONSOR));
         updateMappings.put(FULLTEXT, new BillUpdateTable(SqlTable.BILL_AMENDMENT, "full_text"));
-        updateMappings.put(LAW_CODE, new BillUpdateTable(SqlTable.BILL_AMENDMENT, "law_code"));
+        updateMappings.put(LAW, new BillUpdateTable(SqlTable.BILL_AMENDMENT, "law_code", "law_section"));
         updateMappings.put(MEMO, new BillUpdateTable(SqlTable.BILL_AMENDMENT, "sponsor_memo"));
         updateMappings.put(MULTISPONSOR, new BillUpdateTable(SqlTable.BILL_AMENDMENT_MULTISPONSOR));
         updateMappings.put(SPONSOR, new BillUpdateTable(SqlTable.BILL_SPONSOR));
-        updateMappings.put(STATUS, new BillUpdateTable(SqlTable.BILL, "status"));
+        updateMappings.put(STATUS, new BillUpdateTable(SqlTable.BILL, "status", "status_date", "bill_cal_no",
+                                                                      "committee_name", "committee_chamber"));
         updateMappings.put(SUMMARY, new BillUpdateTable(SqlTable.BILL, "summary"));
         updateMappings.put(TITLE, new BillUpdateTable(SqlTable.BILL, "title"));
         updateMappings.put(VETO, new BillUpdateTable(SqlTable.BILL_VETO));
@@ -86,7 +86,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
 
         String sqlQuery = getSqlQuery(true, null, type, filter, dateOrder, limOff);
         PaginatedRowHandler<UpdateDigest<BaseBillId>> handler =
-            new PaginatedRowHandler<>(limOff, "total_updated", getBillUpdateDigestFromRs);
+            new PaginatedRowHandler<>(limOff, "total_updated", new BillUpdateDigestMapper(filter));
         jdbcNamed.query(sqlQuery, params, handler);
         return handler.getList();
     }
@@ -102,7 +102,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
 
         String sqlQuery = getSqlQuery(true, billId, type, filter, dateOrder, limOff);
         PaginatedRowHandler<UpdateDigest<BaseBillId>> handler =
-                new PaginatedRowHandler<>(limOff, "total_updated", getBillUpdateDigestFromRs);
+                new PaginatedRowHandler<>(limOff, "total_updated", new BillUpdateDigestMapper(filter));
         jdbcNamed.query(sqlQuery, params, handler);
         return handler.getList();
     }
@@ -115,7 +115,6 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
     private String getSqlQuery(boolean detail, BaseBillId billId, UpdateType updateType, BillUpdateField fieldFilter,
                                SortOrder sortOrder, LimitOffset limOff) {
         String dateColumn;
-        String orderByColumn;
         // The UpdateType dictates which date columns we used to search by
         OrderBy orderBy;
         if (updateType.equals(UpdateType.PROCESSED_DATE)) {
@@ -156,7 +155,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
                 List<String> existKeys = updateTable.columns.stream()
                     .map(column -> "exist(data, '" + column + "')")
                     .collect(Collectors.toList());
-                whereClause.append(" AND ").append(String.join(" AND ", existKeys));
+                whereClause.append(" AND ").append("( ").append(String.join(" OR ", existKeys)).append(") ");
             }
             return whereClause.toString();
         }
@@ -171,24 +170,44 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
             rs.getString("last_fragment_id"), getLocalDateTimeFromRs(rs, "last_published_date_time"),
             getLocalDateTimeFromRs(rs, "last_processed_date_time"));
 
-    private static final RowMapper<UpdateDigest<BaseBillId>> getBillUpdateDigestFromRs = (rs, rowNum) -> {
-        // The 'key' holds the values for the primary key of the given table.
-        Map<String, String> key = getHstoreMap(rs, "key");
+    private static class BillUpdateDigestMapper implements RowMapper<UpdateDigest<BaseBillId>> {
 
-        // Construct the digest model
-        BaseBillId id = new BaseBillId(key.remove("bill_print_no"), Integer.parseInt(key.remove("bill_session_year")));
-        String sourceId = rs.getString("last_fragment_id");
-        LocalDateTime sourcePublishedDateTime = getLocalDateTimeFromRs(rs, "last_published_date_time");
-        LocalDateTime processedDateTime = getLocalDateTimeFromRs(rs, "last_processed_date_time");
-        UpdateDigest<BaseBillId> digest = new UpdateDigest<>(id, sourceId, sourcePublishedDateTime, processedDateTime);
+        private BillUpdateField fieldFilter;
 
-        //We want to move over the non-bill id values (which were just removed) over into the data map.
-        Map<String, String> data = getHstoreMap(rs, "data");
-        data.putAll(key);
+        public BillUpdateDigestMapper(BillUpdateField fieldFilter) {
+            this.fieldFilter = fieldFilter;
+        }
 
-        digest.setAction(rs.getString("action"));
-        digest.setTable(rs.getString("table_name"));
-        digest.setFields(data);
-        return digest;
+        @Override
+        public UpdateDigest<BaseBillId> mapRow(ResultSet rs, int rowNum) throws SQLException {
+            // The 'key' holds the values for the primary key of the given table.
+            Map<String, String> key = getHstoreMap(rs, "key");
+
+            // Construct the digest model
+            BaseBillId id = new BaseBillId(key.remove("bill_print_no"), Integer.parseInt(key.remove("bill_session_year")));
+            String sourceId = rs.getString("last_fragment_id");
+            LocalDateTime sourcePublishedDateTime = getLocalDateTimeFromRs(rs, "last_published_date_time");
+            LocalDateTime processedDateTime = getLocalDateTimeFromRs(rs, "last_processed_date_time");
+            UpdateDigest<BaseBillId> digest = new UpdateDigest<>(id, sourceId, sourcePublishedDateTime, processedDateTime);
+
+            // Filter out the data values depending on the filter
+            Map<String, String> data = getHstoreMap(rs, "data");
+            if (fieldFilter != null) {
+                BillUpdateTable updateTable = updateMappings.get(fieldFilter);
+                if (updateTable != null && !updateTable.columns.isEmpty()) {
+                    Set<String> columnSet = new HashSet<>(updateTable.columns);
+                    data.keySet().retainAll(
+                        data.keySet().stream().filter(col -> columnSet.contains(col)).collect(Collectors.toSet()));
+                }
+            }
+
+            //We want to move over the non-bill id values (which were just removed) over into the data map.
+            data.putAll(key);
+
+            digest.setAction(rs.getString("action"));
+            digest.setTable(rs.getString("table_name"));
+            digest.setFields(data);
+            return digest;
+        }
     };
 }

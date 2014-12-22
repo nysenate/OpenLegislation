@@ -11,7 +11,6 @@ import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public interface BillUpdatesDao
 {

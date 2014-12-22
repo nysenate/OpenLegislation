@@ -8,7 +8,7 @@ public enum BillUpdateField
     APPROVAL,
     COSPONSOR,
     FULLTEXT,
-    LAW_CODE,
+    LAW,
     MEMO,
     MULTISPONSOR,
     SPONSOR,
