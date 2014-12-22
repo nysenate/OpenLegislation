@@ -1,0 +1,522 @@
+**Bills and Resolutions API**
+=============================
+
+.. note:: While bills and resolutions serve different purposes, in the context of these docs, the term 'bill' will include
+resolutions as well since the API requests and responses for both are identical.
+
+----------
+
+Get a single bill
+-----------------
+
+**Usage**
+
+Retrieve bill by session year and print no
+::
+   (GET) /api/3/bills/{sessionYear}/{printNo}
+
+**Optional Params**
+
++-----------+--------------------+--------------------------------------------------------+
+| Parameter | Values             | Description                                            |
++===========+====================+========================================================+
+| summary   | boolean            | Show a summary of the bill instead of the full content |
++-----------+--------------------+--------------------------------------------------------+
+| detail    | boolean            | Show extra details (overrides 'summary')               |
++-----------+--------------------+--------------------------------------------------------+
+
+.. note:: Bills typically get amended and their print no gets suffixed with an amendment letter (e.g. S1234B)
+The bill API returns bill responses that contain every amendment version so you should just provide
+          the base print no (e.g. S1234).
+
+**Examples**
+
+Request bill S2180 of session year 2013
+::
+   /api/3/bills/2013/S2180
+
+Request summary of bill A450 of session year 2013
+::
+   /api/3/bills/2013/A450?summary=true
+
+.. _`bill response`:
+
+**Response**
+
+Full Bill Response
+
+.. code-block:: javascript
+
+   {
+      "success": true,                            // Indicates if bill was found
+      "message": "Data for bill S2180-2013",      // Response description
+      "responseType": "bill",                     // Response data type
+      "result":
+      {                                           // Actual data of bill contained in 'result'
+      "basePrintNo": "S2180",                     // Print no of bill (not including amendment version)
+      "session": 2013,                            // Session year bill is active in
+      "printNo": "S2180",                         // Print no of bill (may include amendment version)
+      "billType": {
+        "chamber": "SENATE",                      // Which chamber the bill was introduced (SENATE or ASSEMBLY)
+        "desc": "Senate",                         // Type of bill
+        "resolution": false                       // True if this is a resolution
+      },
+      "title": "Provides enhanced..",             // Title of the bill
+      "activeVersion": "",                        // Current amendment version ("" for initial version)
+      "year": 2013,                               // Year the bill was introduced on
+      "publishedDateTime": "2013-01-14T10:36:22", // Date/Time this bill was first published via LBDC
+      "substitutedBy": {                          // If the bill was substituted, the bill id will be contained
+        "basePrintNo": "A1989",                   // The base print no of the substituted bill
+        "session": 2013                           // Session year of the substituted bill
+      },
+      "sponsor": {                                // Contains sponsor information
+        "member": {                               // Contains sponsor member details (can be null)
+          "memberId": 422,                        // Id of the sponsor
+          "shortName": "GOLDEN",                  // Last name of sponsor (unique within a session year)
+          "sessionYear": 2013,                    // Session year this sponsor was active in
+          "fullName": "Martin J. Golden",         // Full name of sponsor
+          "districtCode": 22                      // Legislative district code of this sponsor
+        },
+        "budget": false,                          // True if this is a budget bill
+        "rules": false                            // True if this bill was sponsored by the rules committee
+      },
+      "summary": "Provides enhanced sentence...", // Summary of the bill
+      "signed": false,                            // True if this bill has been signed or adopted (if its a resolution)
+      "status": {                                 // Status Information of the bill
+        "statusType": "IN_SENATE_COMM",           // Status Code
+        "statusDesc": "In Senate Committee",      // Description of status code
+        "actionDate": "2014-06-20",               // Date when this status was updated
+        "committeeName": "RULES",                 // If the bill is in a committee, the committee name is shown here
+        "billCalNo": null                         // If the bill is on the floor, the calendar number of the bill is shown here.
+      },
+      "milestones": {                             // The milestones list contains a list of statuses (same structure
+        "items": [                                // as the 'status' object above.
+          {
+            "statusType": "IN_SENATE_COMM",
+            "statusDesc": "In Senate Committee",
+            "actionDate": "2014-06-20",
+            "committeeName": "RULES",
+            "billCalNo": null
+          }
+        ],
+        "size": 1
+      },
+      "programInfo": {                            // Some bills are introduced as part of a program by the governor or an agency
+        "name": "Department of Motor Vehicles",   // The name of the program/agency
+        "sequenceNo": 2                           // The position of this bill within that program/agency list
+      },
+      "amendments": {                              // Contains info specific to an amendment (base version is "")
+        "items": {
+          "": {                                   // Map of Amendment versions
+            "basePrintNo": "S2180",               // Bill print no/session details duplicated here
+            "session": 2013,
+            "printNo": "S2180",
+            "version": "",                        // Amendment version
+            "publishDate": "2013-01-14",          // Date this amendment was published
+            "sameAs": {                           // List of bill that are identical to this within the same session year
+               "items": [{
+                  "basePrintNo": "A2098",
+                  "session": 2013,
+                  "printNo": "A2098",
+                  "version": ""
+               }],
+               "size": 1
+            },
+            "memo": "BILL NUMBER:S2180",        // The sponsor's memo which explains the bill. Only available for senate bills.
+            "lawSection": "Penal Law",            // The primary section of law this bill impacts.
+            "lawCode": "Add Â§265.18, Pen L",     // A code that states the actions being taken on specific portions of law.
+            "actClause": "AN ACT to amend the..", // An Act to Clause
+            "fullText": "...",                    // Full text of the bill amendment
+            "coSponsors": {                       // List of co sponsors
+              "items": [
+               {
+                "memberId": 391,
+                "shortName": "AVELLA",
+                "sessionYear": 2013,
+                "fullName": "Tony Avella",
+                "districtCode": 11
+               }
+              ],
+              "size": 1
+            },
+            "multiSponsors": {                    // List of multi sponsors (only for assembly bills)
+              "items": [],
+              "size": 0
+            },
+            "uniBill": false,                     // Indicates if this is a uni bill
+            "stricken": false                     // Indicates if this amendment has been stricken
+          }
+        },
+        "size": 1
+      }
+      "votes": {                                  // Votes will be stored here if there are any
+         "items": [
+          {
+            "version": "",                        // Amendment version vote was taken on
+            "voteType": "COMMITTEE",              // Type of vote (COMMITTEE or FLOOR)
+            "voteDate": "2013-04-22",             // Date the vote was taken
+            "committee": {                        // If it was a committee vote, the committee will be shown here
+              "chamber": "SENATE",
+              "name": "Rules"
+            },
+            "memberVotes": {                      // The actual votes are shown here
+              "items": {
+                "EXC": {                          // Map by vote codes
+                   "items": [                     // List of members that voted with this code
+                     {
+                       "memberId": 424,
+                       "shortName": "HANNON",
+                       "sessionYear": 2013
+                     }
+                   ],
+                    "size": 1
+                },
+                "AYEWR": {..},                    // Other votes truncated here for brevity
+                "NAY": {..},
+                "AYE": {..}
+              },
+              "size": 4
+            }
+          },
+        ],
+        "size": 1
+      },
+      "vetoMessages" : {                          // If a veto memo from the governor was sent, it will show up here
+          "items" : [ {
+            "billId" : {                          // Bill id replicated here
+              "basePrintNo" : "A10049",
+              "session" : 2013,
+              "printNo" : "A10049",
+              "version" : ""
+            },
+            "year" : 2014,                        // Year this veto was sent
+            "vetoNumber" : 511,                   // Veto number (unique to a single year)
+            "memoText" : ".....",                 // The content of the veto memo
+            "vetoType" : "STANDARD",              // The type of veto
+            "chapter" : 0,                        // The chapter (if applicable)
+            "billPage" : 0,                       // For line vetos, a page number may be specified
+            "lineStart" : 0,
+            "lineEnd" : 0,
+            "signer" : "ANDREW M. CUOMO",         // Governor Name
+            "signedDate" : null                   // Date Signed (if present)
+          } ],
+          "size" : 1
+      },
+      "approvalMessage": {                        // Approval message from the governor (if present)
+         "billId": {                              // Bill id the approval message was sent for
+            "basePrintNo": "S6830",
+            "session": 2013,
+            "printNo": "S6830A",
+            "version": "A"
+         },
+         "year": 2014,                             // Year this approval message was sent
+         "approvalNumber": 11,                     // Approval number (unique to a single year)
+         "chapter": 476,                           // The chapter (if applicable)
+         "signer": "ANDREW M. CUOMO",              // Governor Name
+         "text": "...."                            // Text of the approval message
+      },
+      "additionalSponsors": {                      // If there are additional sponsors, the members will be listed here
+         "items": [],
+         "size": 0
+      },
+      "pastCommittees": {                          // Lists out all the committees this bill was in
+         "items": [
+            {
+            "chamber": "ASSEMBLY",                 // Committee Chamber
+            "name": "GOVERNMENTAL OPERATIONS",     // Name of committee
+            "sessionYear": 2013,                   // Session year it was referenced by the committee
+            "referenceDate": "2014-06-10T00:00"    // Date it was referenced by the committee
+            }],
+         "size": 1
+      },
+      "actions": {                                 // The actions that have occurred on a bill
+         "items": [
+         {
+            "billId": {
+               "basePrintNo": "S6830",
+               "session": 2013,
+               "printNo": "S6830",
+               "version": ""                       // Specifies which amendment version of the bill the action affects
+            },
+            "date": "2014-03-17",                  // Date of the action
+            "chamber": "SENATE",                   // Chamber this action occurred in
+            "sequenceNo": 1,                       // Number used to order the actions sequentially
+            "text": "REFERRED TO INVESTIGATIONS.." // The text describing the action
+         },
+         "size": 1
+      },
+      "previousVersions": {                        // Lists the previous versions of this bill from prior session years.
+         "items": [
+            {
+            "basePrintNo": "A1989",                // Bill id of the previous bill
+            "session": 2013,
+            "printNo": "A1989",
+            "version": ""
+            }
+         ],
+         "size": 1
+      },
+      "committeeAgendas": {                        // If this bill was on a committee agenda, they will be referenced here
+         "items": [
+         {
+           "agendaId": {                           // Id of the agenda
+             "number": 2,
+             "year": 2013
+           },
+           "committeeId": {                        // Id of the committee
+             "chamber": "SENATE",
+             "name": "Health"
+           }
+         }],
+         "size": 1
+      },
+      "calendars": {                               // If the bill was on a senate calendar, the calendars will be
+         "items": [                                // referenced here
+            {
+            "year": 2013,                          // Calendar year
+            "calendarNumber": 4                    // Calendar number
+            }
+         ],
+         "size": 1
+      }
+   }
+
+.. note:: If **summary** is set to true, the above response would be truncated after the 'programInfo' block.
+
+If **detail** is set to true, the following content will also be present in the response:
+
+.. code-block:: javascript
+
+   "billInfoRefs": {                               // Any bills that were referenced (e.g. same as, previous versions)
+     "items": {                                    // will be mapped here using the basePrintNo-sessionYear as the key.
+       "A2098-2013": {
+          // 'Summary' response for this bill
+          // hidden here for brevity
+       }
+      }
+     "size": 1
+   }
+
+Get a list of bills
+-------------------
+
+**Usage**
+
+List bills within a session year
+::
+   (GET) /api/3/bills/{sessionYear}
+
+.. _`bill listing params`:
+
+**Optional Params**
+
++-----------+--------------------+--------------------------------------------------------+
+| Parameter | Values             | Description                                            |
++===========+====================+========================================================+
+| limit     | 1 - 1000           | Number of results to return                            |
++-----------+--------------------+--------------------------------------------------------+
+| offset    | > 1                | Result number to start from                            |
++-----------+--------------------+--------------------------------------------------------+
+| full      | boolean            | Set to true to see the full bill responses.            |
++-----------+--------------------+--------------------------------------------------------+
+| sort      | string             | Sort by any field from the response.                   |
++-----------+--------------------+--------------------------------------------------------+
+
+**Examples**
+
+List 100 bills from 2013
+::
+   /api/3/bills/2013?limit=100
+
+List 100 complete bills starting from 101
+::
+   /api/3/bills/2013?limit=100&offset=101&full=true
+
+Sort by increasing published date
+::
+   /api/3/bills/2013?sort=publishedDateTime:ASC
+
+Sort by increasing status action date, (default)
+::
+   /api/3/bills/2013?sort=status.actionDate:ASC
+
+**Response**
+
+.. code-block:: javascript
+
+   {
+      "success": true,                     // True if the request was fine
+      "message": "",
+      "responseType": "bill-info list",
+      "total": 25568,                      // Total bills in the listing
+      "offsetStart": 1,                    // Offset value
+      "offsetEnd": 50,                     // To paginate, set query param offset={offsetEnd + 1}
+      "limit": 50,                         // Max number of results shown
+      "result": {
+        "items": [{ ... }],                // Array of bill responses (either summary or full view)
+        "size": 50
+      }
+   }
+
+Search for bills
+----------------
+
+Read this [insert link] for info on how to construct search terms. The bill search index is comprised of full bill responses
+(i.e. the json response returned when requesting a single bill) so query and sort strings will be based on that response
+structure.
+
+**Usage**
+
+Search across all session years
+::
+   (GET) /api/3/bills/search?term=YOUR_TERM
+
+Search within a session year
+::
+   (GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM
+
+
+**Required Params**
+
++-----------+--------------------+--------------------------------------------------------+
+| Parameter | Values             | Description                                            |
++===========+====================+========================================================+
+| term      | string             | ElasticSearch query string                             |
++-----------+--------------------+--------------------------------------------------------+
+
+**Optional Params**
+
+Same as the `bill listing params`_.
+
+
+Get bill updates
+----------------
+
+To identify which bills have received updates within a given time period you can use the bill updates api.
+
+**Usage**
+
+List of bills updated after the given date/time
+::
+    /api/3/bills/updates/{fromDateTime}/
+
+List of bills updated during the given date/time range
+::
+    /api/3/bills/updates/{fromDateTime}/{toDateTime}
+
+.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format.
+For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02
+
+**Optional Params**
+
++-----------+--------------------+--------------------------------------------------------+
+| Parameter | Values             | Description                                            |
++===========+====================+========================================================+
+| detail    | boolean            | Set to true to see `detailed update digests`_          |
++-----------+--------------------+--------------------------------------------------------+
+
+**Examples**
+
+Bills that were updated between December 1, 2014 and December 2, 2014
+::
+    /api/3/bills/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
+
+**Response (detail = false)**
+
+.. code-block:: javascript
+
+    {
+        "success": true,
+        "message": "",
+        "responseType": "bill-update-token list",
+        "total": 2423,
+        "offsetStart": 1,
+        "offsetEnd": 100,
+        "limit": 100,
+        "result": {
+        "items": [
+          {
+            "billId": {                                    // Bill Id for the bill that got updated
+                "basePrintNo": "S7867",
+                "session": 2011
+            },
+            "lastUpdatedOn": "2014-12-03T15:37:30.677921"  // When this bill was last updated
+                                                           // during the given date range
+          },
+          {
+            "billId": {
+                "basePrintNo": "S4530",
+                "session": 2011
+            },
+            "lastUpdatedOn": "2014-12-03T15:37:30.818888"
+          }
+        ],
+        "size": 2
+    }
+
+.. _`detailed update digests`:
+
+To view the actual updates that have occurred on a bill use the following API
+
+**Usage**
+
+All updates on a specific bill
+::
+    /api/3/bills/{sessionYear}/{printNo}/updates/
+
+Updates on a specific bill from a given date/time.
+::
+    /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/
+
+Updates on a specific bil during a given date/time range.
+::
+    /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}
+
+**Example**
+
+Updates for S1234-2013 between December 1, 2014 and December 2, 2014
+::
+    /api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
+
+**Response**
+
+Sample response:
+
+.. code-block:: javascript
+
+    {
+        "success": true,
+        "message": "",
+        "responseType": "bill-update-digest list",
+        "total": 19,
+        "offsetStart": 1,
+        "offsetEnd": 19,
+        "limit": 0,
+        "result": {
+            "items": [
+            {
+                "action": "INSERT",                      // Type of action (INSERT/UPDATE/DELETE)
+                "scope": "Bill",                         // Data type affected
+                "updates": {                             // Raw output of internal change log, varies depending on the
+                                                         // changes made
+                    "summary": "",
+                    "active_version": " ",
+                    "committee_chamber": "senate",
+                    "status_date": "2013-01-09",
+                    "program_info_num": null,
+                    "title": "Creates the office of the taxpayer advocate",
+                    "active_year": "2013",
+                    "sub_bill_print_no": null,
+                    "created_date_time": "2014-12-08 19:58:01.772303",
+                    "committee_name": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
+                    "program_info": null,
+                    "published_date_time": "2012-12-20 16:05:35",
+                    "bill_cal_no": null,
+                    "status": "IN_SENATE_COMM"
+                },
+                "updatedOn": "2014-12-08T19:58:01.772303",        // When this change was recorded
+                "sourceDataId": "SOBI.D121220.T160535.TXT-0-BILL" // Id of the originating source data file (internal)
+            },
+            ....
+        }
+    }

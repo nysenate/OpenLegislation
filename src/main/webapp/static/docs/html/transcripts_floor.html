@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Senate Floor Transcripts API &mdash; Open Legislation 2.0-alpha documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
+        <link rel="next" title="Public Hearing Transcripts API" href="transcripts_ph.html"/>
+        <link rel="prev" title="Committee API" href="committees.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="reference.html" class="fa fa-home"> Open Legislation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#what-is-this">What is this?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#legislative-content-types">Legislative Content Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#terminology">Terminology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#get-a-single-bill">Get a single bill</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#get-a-list-of-bills">Get a list of bills</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#search-for-bills">Search for bills</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#get-bill-updates">Get bill updates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-single-calendar">Get a single calendar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-listing-of-calendars">Get a listing of calendars</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Committee API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-current-committee-version">Get a current committee version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-committee-version-at-specific-time">Get a committee version at specific time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#get-committee-history">Get committee history</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#get-all-current-committees">Get all current committees</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href=""><strong>Senate Floor Transcripts API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#get-a-single-transcript">Get a single Transcript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-a-transcript-pdf">Get a transcript pdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-a-list-of-transcripts">Get a list of transcripts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_ph.html"><strong>Public Hearing Transcripts API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-single-public-hearing">Get a single Public Hearing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-public-hearing-pdf">Get a public hearing pdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-list-of-public-hearings">Get a list of public hearings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="search_api.html"><strong>Search APIs</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="search_api.html#term">term</a></li>
+<li class="toctree-l2"><a class="reference internal" href="search_api.html#sort">sort</a></li>
+<li class="toctree-l2"><a class="reference internal" href="search_api.html#search-response">Search Response</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="reference.html">Open Legislation</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="reference.html">Docs</a> &raquo;</li>
+      
+    <li><strong>Senate Floor Transcripts API</strong></li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/transcripts_floor.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="senate-floor-transcripts-api">
+<h1><strong>Senate Floor Transcripts API</strong><a class="headerlink" href="#senate-floor-transcripts-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="get-a-single-transcript">
+<h2>Get a single Transcript<a class="headerlink" href="#get-a-single-transcript" title="Permalink to this headline">¶</a></h2>
+<p><strong>Usage</strong></p>
+<p>Retrieve transcript by filename</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Examples</strong></p>
+<p>Request transcript 090314.txt</p>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/transcripts/090314.txt
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<p>Full Transcript Response</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                               <span class="c1">// Indicates if a transcript was found.</span>
+  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;Data for transcript 090314.txt&quot;</span><span class="p">,</span>   <span class="c1">// Response description.</span>
+  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;transcript&quot;</span><span class="p">,</span>                  <span class="c1">// Response data type.</span>
+  <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;filename&quot;</span> <span class="o">:</span> <span class="s2">&quot;090314.txt&quot;</span><span class="p">,</span>                    <span class="c1">// Filename of transcript.</span>
+    <span class="s2">&quot;sessionType&quot;</span> <span class="o">:</span> <span class="s2">&quot;REGULAR SESSION&quot;</span><span class="p">,</span>            <span class="c1">// Session type</span>
+    <span class="s2">&quot;dateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-09-03T09:00&quot;</span><span class="p">,</span>              <span class="c1">// Date Time of senate session.</span>
+    <span class="s2">&quot;location&quot;</span> <span class="o">:</span> <span class="s2">&quot;ALBANY, NEW YORK&quot;</span><span class="p">,</span>              <span class="c1">// Location of senate session.</span>
+    <span class="s2">&quot;text&quot;</span> <span class="o">:</span> <span class="s2">&quot;5100\n\n 1     NEW YORK STATE SE..&quot;</span> <span class="c1">// The text of the transcript.</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-a-transcript-pdf">
+<h2>Get a transcript pdf<a class="headerlink" href="#get-a-transcript-pdf" title="Permalink to this headline">¶</a></h2>
+<p><strong>Usage</strong></p>
+<p>Retrieve transcript pdf by filename</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
+</pre></div>
+</div>
+<p><strong>Examples</strong></p>
+<p>Request transcript 090314.txt</p>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/transcripts/090314.txt.pdf
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-a-list-of-transcripts">
+<h2>Get a list of transcripts<a class="headerlink" href="#get-a-list-of-transcripts" title="Permalink to this headline">¶</a></h2>
+<p><strong>Usage</strong></p>
+<p>List transcripts within a year</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">transcripts</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="23%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>limit</td>
+<td>1 - 1000</td>
+<td>Number of results to return</td>
+</tr>
+<tr class="row-odd"><td>offset</td>
+<td>&gt; 1</td>
+<td>Result number to start from</td>
+</tr>
+<tr class="row-even"><td>full</td>
+<td>boolean</td>
+<td>Set to true to see the full transcript responses.</td>
+</tr>
+<tr class="row-odd"><td>sort</td>
+<td>string</td>
+<td>Sort by any field from the response.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>List 50 transcripts from 2014</p>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/transcripts/2014?limit=50
+</pre></div>
+</div>
+<p>List 50 complete transcripts starting from 51</p>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/transcripts/2014?limit=50%offset=51&amp;full=true
+</pre></div>
+</div>
+<p>List 10 complete transcripts sorted by increasing date</p>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/transcripts/2014?limit=10&amp;full=true&amp;sort=dateTime:ASC
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                               <span class="c1">// True if request was fine.</span>
+  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;transcript list&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;total&quot;</span> <span class="o">:</span> <span class="mi">167</span><span class="p">,</span>                                  <span class="c1">// Total transcripts in the listing</span>
+  <span class="s2">&quot;offsetStart&quot;</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>                              <span class="c1">// Offset value</span>
+  <span class="s2">&quot;offsetEnd&quot;</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>                                <span class="c1">// To paginate, set query param offset = {offsetEnd + 1}</span>
+  <span class="s2">&quot;limit&quot;</span> <span class="o">:</span> <span class="mi">10</span><span class="p">,</span>                                   <span class="c1">// Max number of results to show</span>
+  <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[{</span> <span class="p">...</span> <span class="p">}],</span>                           <span class="c1">// Array of transcript responses</span>
+    <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">10</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="transcripts_ph.html" class="btn btn-neutral float-right" title="Public Hearing Transcripts API"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="committees.html" class="btn btn-neutral" title="Committee API"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, NY State Senate Technology Services.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0-alpha',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

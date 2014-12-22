@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Senate Calendar API &mdash; Open Legislation 2.0-alpha documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
+        <link rel="next" title="Committee API" href="committees.html"/>
+        <link rel="prev" title="Bills and Resolutions API" href="bills.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="reference.html" class="fa fa-home"> Open Legislation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#what-is-this">What is this?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#legislative-content-types">Legislative Content Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#terminology">Terminology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#get-a-single-bill">Get a single bill</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#get-a-list-of-bills">Get a list of bills</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#search-for-bills">Search for bills</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#get-bill-updates">Get bill updates</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href=""><strong>Senate Calendar API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#get-a-single-calendar">Get a single calendar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-a-listing-of-calendars">Get a listing of calendars</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Committee API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-current-committee-version">Get a current committee version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-committee-version-at-specific-time">Get a committee version at specific time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#get-committee-history">Get committee history</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#get-all-current-committees">Get all current committees</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-single-transcript">Get a single Transcript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-transcript-pdf">Get a transcript pdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-list-of-transcripts">Get a list of transcripts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_ph.html"><strong>Public Hearing Transcripts API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-single-public-hearing">Get a single Public Hearing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-public-hearing-pdf">Get a public hearing pdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-list-of-public-hearings">Get a list of public hearings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="search_api.html"><strong>Search APIs</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="search_api.html#term">term</a></li>
+<li class="toctree-l2"><a class="reference internal" href="search_api.html#sort">sort</a></li>
+<li class="toctree-l2"><a class="reference internal" href="search_api.html#search-response">Search Response</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="reference.html">Open Legislation</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="reference.html">Docs</a> &raquo;</li>
+      
+    <li><strong>Senate Calendar API</strong></li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/calendars.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="senate-calendar-api">
+<h1><strong>Senate Calendar API</strong><a class="headerlink" href="#senate-calendar-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="get-a-single-calendar">
+<h2>Get a single calendar<a class="headerlink" href="#get-a-single-calendar" title="Permalink to this headline">¶</a></h2>
+<p><strong>Usage</strong></p>
+<div class="highlight-python"><div class="highlight"><pre>Full calendar:
+   /api/3/calendars/{year}/{calendarNumber}
+Floor calendar:
+   /api/3/calendars/{year}/{calendarNumber}/floor
+Supplemental calendar:
+   /api/3/calendars/{year}/{calendarNumber}/{versionCharacter}
+Active list:
+   /api/3/calendars/{year}/{calendarNumber}/{sequenceNumber}
+
+Optional Params:
+full (boolean) - Set to true to see the full calendar response instead of a summary.
+                  (default true)
+</pre></div>
+</div>
+<p><strong>Examples</strong></p>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/calendars/2014/54               (Get calendar 54 of 2014)
+/api/3/calendars/2014/54?&amp;full=false   (Get a summary of calendar 54)
+/api/3/calendars/2014/54/0             (Get the base active list for calendar 54)
+/api/3/calendars/2014/54/floor         (Get the floor calendar for calendar 54)
+/api/3/calendars/2014/54/B             (Get supplemental calendar B of calendar 54)
+</pre></div>
+</div>
+<p><strong>Sample Responses</strong></p>
+<p>Full calendar:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+    <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;calendar&quot;</span><span class="p">,</span>
+    <span class="nx">result</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">year</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                 <span class="c1">// Year the calendar was published</span>
+        <span class="nx">calendarNumber</span><span class="o">:</span> <span class="mi">54</span><span class="p">,</span>         <span class="c1">// Incremental identifier for calendars within a year</span>
+        <span class="nx">floorCalendar</span><span class="o">:</span> <span class="p">{...},</span>       <span class="c1">// See supplemental/floor calendar response result</span>
+        <span class="nx">supplementalCalendars</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">items</span><span class="o">:</span> <span class="p">{...},</span>           <span class="c1">// Map of supplemental version characters to</span>
+                                    <span class="c1">//  supplemental calendar response results</span>
+            <span class="nx">size</span><span class="o">:</span> <span class="mi">2</span>
+        <span class="p">},</span>
+        <span class="nx">activeLists</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">items</span><span class="o">:</span> <span class="p">{...},</span>           <span class="c1">// Map of sequence numbers to active list response results</span>
+            <span class="nx">size</span><span class="o">:</span> <span class="mi">3</span>
+        <span class="p">},</span>
+        <span class="nx">calDate</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span>       <span class="c1">// The date this calendar was active for</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Supplemental/Floor calendar:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+  <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;calendar-floor&quot;</span><span class="p">,</span>   <span class="c1">// &quot;calendar-supplemental&quot; if the response is a supplemental</span>
+  <span class="nx">result</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">year</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                             <span class="c1">// The year the calendar was released</span>
+    <span class="nx">calendarNumber</span><span class="o">:</span> <span class="mi">54</span><span class="p">,</span>                     <span class="c1">// Incremental identifier for calendars within a year</span>
+    <span class="nx">version</span><span class="o">:</span> <span class="s2">&quot;floor&quot;</span><span class="p">,</span>                       <span class="c1">// The supplemental version, &quot;floor&quot; or</span>
+                                            <span class="c1">//  a single capital character</span>
+    <span class="nx">calDate</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>
+    <span class="nx">releaseDateTime</span><span class="o">:</span> <span class="s2">&quot;2014-06-20T02:01&quot;</span><span class="p">,</span>    <span class="c1">// The date this supplemental was released</span>
+    <span class="nx">entriesBySection</span><span class="o">:</span> <span class="p">{</span>                     <span class="c1">// A listing of bills mapped to their floor status</span>
+      <span class="nx">items</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">THIRD_READING</span><span class="o">:</span> <span class="p">{</span>                    <span class="c1">// List of bills on their third reading</span>
+          <span class="nx">items</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span>                               <span class="c1">// Modified bill response (link below)</span>
+              <span class="nx">basePrintNo</span><span class="o">:</span> <span class="s2">&quot;A5625&quot;</span><span class="p">,</span>
+              <span class="nx">session</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+              <span class="nx">printNo</span><span class="o">:</span> <span class="s2">&quot;A5625A&quot;</span><span class="p">,</span>
+              <span class="nx">billType</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">chamber</span><span class="o">:</span> <span class="s2">&quot;ASSEMBLY&quot;</span><span class="p">,</span>
+                <span class="nx">desc</span><span class="o">:</span> <span class="s2">&quot;Assembly&quot;</span><span class="p">,</span>
+                <span class="nx">resolution</span><span class="o">:</span> <span class="kc">false</span>
+              <span class="p">},</span>
+              <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Extends the expiration of the New York state French and Indian war 250th anniversary commemoration commission until December 31, 2015&quot;</span><span class="p">,</span>
+              <span class="nx">activeVersion</span><span class="o">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
+              <span class="nx">year</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+              <span class="nx">publishedDateTime</span><span class="o">:</span> <span class="s2">&quot;2013-03-04T14:32:46&quot;</span><span class="p">,</span>
+              <span class="nx">substitutedBy</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+              <span class="nx">sponsor</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">member</span><span class="o">:</span> <span class="p">{</span>
+                  <span class="nx">memberId</span><span class="o">:</span> <span class="mi">466</span><span class="p">,</span>
+                  <span class="nx">shortName</span><span class="o">:</span> <span class="s2">&quot;ENGLEBRIGHT&quot;</span><span class="p">,</span>
+                  <span class="nx">sessionYear</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+                  <span class="nx">fullName</span><span class="o">:</span> <span class="s2">&quot;Steven Englebright&quot;</span><span class="p">,</span>
+                  <span class="nx">districtCode</span><span class="o">:</span> <span class="mi">4</span>
+                <span class="p">},</span>
+                <span class="nx">budget</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="nx">rules</span><span class="o">:</span> <span class="kc">false</span>
+              <span class="p">},</span>
+              <span class="nx">billCalNo</span><span class="o">:</span> <span class="mi">1090</span><span class="p">,</span>              <span class="c1">// The calendar number that ids this bill</span>
+                                            <span class="c1">//  within all calendars</span>
+              <span class="nx">sectionType</span><span class="o">:</span> <span class="s2">&quot;THIRD_READING&quot;</span><span class="p">,</span> <span class="c1">// The floor status of this bill</span>
+              <span class="nx">subBillInfo</span><span class="o">:</span> <span class="p">{</span>                <span class="c1">// Bill info response for a substituted bill</span>
+                <span class="nx">basePrintNo</span><span class="o">:</span> <span class="s2">&quot;S7605&quot;</span><span class="p">,</span>
+                <span class="nx">session</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+                <span class="nx">printNo</span><span class="o">:</span> <span class="s2">&quot;S7605&quot;</span><span class="p">,</span>
+                <span class="nx">billType</span><span class="o">:</span> <span class="p">{</span>
+                  <span class="nx">chamber</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
+                  <span class="nx">desc</span><span class="o">:</span> <span class="s2">&quot;Senate&quot;</span><span class="p">,</span>
+                  <span class="nx">resolution</span><span class="o">:</span> <span class="kc">false</span>
+                <span class="p">},</span>
+                <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Extends the expiration of the New York state French and Indian war 250th anniversary commemoration commission until December 31, 2015&quot;</span><span class="p">,</span>
+                <span class="nx">activeVersion</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="nx">year</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>
+                <span class="nx">publishedDateTime</span><span class="o">:</span> <span class="s2">&quot;2014-05-15T18:17:31&quot;</span><span class="p">,</span>
+                <span class="nx">substitutedBy</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">sponsor</span><span class="o">:</span> <span class="p">{</span>
+                  <span class="nx">member</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">memberId</span><span class="o">:</span> <span class="mi">385</span><span class="p">,</span>
+                    <span class="nx">shortName</span><span class="o">:</span> <span class="s2">&quot;ESPAILLAT&quot;</span><span class="p">,</span>
+                    <span class="nx">sessionYear</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+                    <span class="nx">fullName</span><span class="o">:</span> <span class="s2">&quot;Adriano Espaillat&quot;</span><span class="p">,</span>
+                    <span class="nx">districtCode</span><span class="o">:</span> <span class="mi">31</span>
+                  <span class="p">},</span>
+                  <span class="nx">budget</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                  <span class="nx">rules</span><span class="o">:</span> <span class="kc">false</span>
+                <span class="p">}</span>
+                <span class="p">},</span>
+              <span class="nx">billHigh</span><span class="o">:</span> <span class="kc">false</span>               <span class="c1">// Set to true if this is a high priority bill</span>
+            <span class="p">},</span>
+            <span class="p">...</span>
+          <span class="p">],</span>
+                  <span class="nx">size</span><span class="o">:</span> <span class="mi">284</span>
+        <span class="p">},</span>
+        <span class="nx">STARRED_ON_THIRD_READING</span><span class="o">:</span> <span class="p">{</span>     <span class="c1">// Another floor status. All statuses include:</span>
+                                    <span class="c1">// ORDER_OF_THE_FIRST_REPORT, ORDER_OF_THE_SECOND_REPORT,</span>
+                                    <span class="c1">// ORDER_OF_THE_SPECIAL_REPORT, THIRD_READING,</span>
+                                    <span class="c1">// THIRD_READING_FROM_SPECIAL_REPORT,</span>
+                                    <span class="c1">// STARRED_ON_THIRD_READING</span>
+          <span class="nx">items</span><span class="o">:</span> <span class="p">[...],</span>
+          <span class="nx">size</span><span class="o">:</span> <span class="mi">3</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="nx">size</span><span class="o">:</span> <span class="mi">2</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Active List:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+  <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;calendar-activelist&quot;</span><span class="p">,</span>
+  <span class="nx">result</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">year</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                             <span class="c1">// The year the calendar was released</span>
+    <span class="nx">calendarNumber</span><span class="o">:</span> <span class="mi">54</span><span class="p">,</span>                     <span class="c1">// Incremental identifier for calendars within a year</span>
+    <span class="nx">sequenceNumber</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>                      <span class="c1">// Indicates publish sequence of active lists</span>
+    <span class="nx">calDate</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>                  <span class="c1">// The date this calendar was active</span>
+    <span class="nx">releaseDateTime</span><span class="o">:</span> <span class="s2">&quot;2014-06-20T04:28:48&quot;</span><span class="p">,</span> <span class="c1">// The date and time this active list was released</span>
+    <span class="nx">notes</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>                            <span class="c1">// Notes regarding the active list, pretty much always null</span>
+    <span class="nx">entries</span><span class="o">:</span> <span class="p">{</span>                              <span class="c1">// List of bills on this active list</span>
+      <span class="nx">items</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>                                   <span class="c1">// Modified bill response (see above link)</span>
+          <span class="nx">basePrintNo</span><span class="o">:</span> <span class="s2">&quot;S4779&quot;</span><span class="p">,</span>
+          <span class="nx">session</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+          <span class="nx">printNo</span><span class="o">:</span> <span class="s2">&quot;S4779B&quot;</span><span class="p">,</span>
+          <span class="nx">billType</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">chamber</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
+            <span class="nx">desc</span><span class="o">:</span> <span class="s2">&quot;Senate&quot;</span><span class="p">,</span>
+            <span class="nx">resolution</span><span class="o">:</span> <span class="kc">false</span>
+          <span class="p">},</span>
+          <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Relates to inheritance by children conceived after the death of a genetic parent&quot;</span><span class="p">,</span>
+          <span class="nx">activeVersion</span><span class="o">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span>
+          <span class="nx">year</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+          <span class="nx">publishedDateTime</span><span class="o">:</span> <span class="s2">&quot;2013-04-23T15:04:37&quot;</span><span class="p">,</span>
+          <span class="nx">substitutedBy</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">basePrintNo</span><span class="o">:</span> <span class="s2">&quot;A7461&quot;</span><span class="p">,</span>
+            <span class="nx">session</span><span class="o">:</span> <span class="mi">2013</span>
+          <span class="p">},</span>
+          <span class="nx">sponsor</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">member</span><span class="o">:</span> <span class="p">{</span>
+              <span class="nx">memberId</span><span class="o">:</span> <span class="mi">413</span><span class="p">,</span>
+              <span class="nx">shortName</span><span class="o">:</span> <span class="s2">&quot;BONACIC&quot;</span><span class="p">,</span>
+              <span class="nx">sessionYear</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+              <span class="nx">fullName</span><span class="o">:</span> <span class="s2">&quot;John J. Bonacic&quot;</span><span class="p">,</span>
+              <span class="nx">districtCode</span><span class="o">:</span> <span class="mi">42</span>
+            <span class="p">},</span>
+            <span class="nx">budget</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">rules</span><span class="o">:</span> <span class="kc">false</span>
+          <span class="p">},</span>
+          <span class="nx">billCalNo</span><span class="o">:</span> <span class="mi">192</span>                    <span class="c1">// The calendar number that ids this bill</span>
+                                            <span class="c1">//  within all calendars</span>
+        <span class="p">},</span>
+        <span class="p">...</span>
+      <span class="p">],</span>
+      <span class="nx">size</span><span class="o">:</span> <span class="mi">31</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-a-listing-of-calendars">
+<h2>Get a listing of calendars<a class="headerlink" href="#get-a-listing-of-calendars" title="Permalink to this headline">¶</a></h2>
+<p><strong>Usage</strong></p>
+<div class="highlight-python"><div class="highlight"><pre>Full calendars:
+   /api/3/calendars/{year}
+Supplemental/Floor calendars:
+   /api/3/calendars/{year}/supplemental
+Active lists:
+   /api/3/calendars/{year}/activelist
+
+Optional Params:
+full (boolean) - Set to true to see the full calendar responses instead of the summaries.
+      (default false)
+order (&#39;ASC&#39;|&#39;DESC&#39;) - Determines the order the calendar responses.  Responses are ordered by
+      calendar number and then either sequenceNumber or version if they are active lists or
+      supplementals respectively.  (default &#39;ASC&#39;)
+limit (number) - Limit the number of results (default 100)
+offset (number) - Start results from offset (default 1)
+</pre></div>
+</div>
+<p><strong>Examples</strong></p>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/calendars/2014?full=true                       (Get all calendar data from 2014)
+/api/3/calendars/2014?limit=1&amp;order=DESC              (Get the latest calendar from 2014)
+/api/3/calendars/2014/activelist?limit=5              (Get the first 5 active lists of 2014)
+/api/3/calendars/2014/supplemental?limit=5&amp;offset=5   (Get the second 5 supplementals of 2014)
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="committees.html" class="btn btn-neutral float-right" title="Committee API"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="bills.html" class="btn btn-neutral" title="Bills and Resolutions API"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, NY State Senate Technology Services.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0-alpha',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
