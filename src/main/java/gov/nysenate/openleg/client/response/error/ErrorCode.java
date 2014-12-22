@@ -47,6 +47,10 @@ public enum ErrorCode
 
     PROCESS_RUN_NOT_FOUND(121, "The given data process run was not found"),
 
+    /** --- Source File --- */
+
+    SOURCE_FILE_NOT_FOUND(131, "The source file was not found"),
+
     /** --- General --- */
 
     SEARCH_ERROR(100, "There was error retrieving your search results. Make sure that the query is valid."),

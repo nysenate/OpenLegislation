@@ -12,7 +12,8 @@ public enum SqlSobiQuery implements BasicSqlQuery
         "WHERE file_name IN (:fileNames)"
     ),
     GET_SOBI_FILES_DURING(
-        "SELECT * FROM ${schema}." + SqlTable.SOBI_FILE + "\n" +
+        "SELECT file_name, published_date_time, staged_date_time, encoding, archived, COUNT(*) OVER () AS total_count\n" +
+        "FROM ${schema}." + SqlTable.SOBI_FILE + "\n" +
         "WHERE (published_date_time BETWEEN :startDate AND :endDate)"
     ),
     INSERT_SOBI_FILE(

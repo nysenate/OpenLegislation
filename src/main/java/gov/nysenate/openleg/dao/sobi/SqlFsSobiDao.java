@@ -1,13 +1,12 @@
 package gov.nysenate.openleg.dao.sobi;
 
 import com.google.common.collect.ImmutableSet;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import com.google.common.collect.Range;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.sobi.SobiFile;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -76,14 +75,15 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
 
     /** {@inheritDoc} */
     @Override
-    public List<SobiFile> getSobiFilesDuring(LocalDate start, LocalDate end, SortOrder sortByPubDate,
+    public PaginatedList<SobiFile> getSobiFilesDuring(Range<LocalDateTime> dateTimeRange, SortOrder sortByPubDate,
                                              LimitOffset limitOffset) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("startDate", toDate(start));
-        params.addValue("endDate", toDate(end));
+        params.addValue("startDate", toDate(DateUtils.startOfDateTimeRange(dateTimeRange)));
+        params.addValue("endDate", toDate(DateUtils.endOfDateTimeRange(dateTimeRange)));
         OrderBy orderBy = new OrderBy("published_date_time", sortByPubDate);
-        return jdbcNamed.query(
-            GET_SOBI_FILES_DURING.getSql(schema(), orderBy, limitOffset), params, new SobiFileRowMapper());
+        PaginatedRowHandler<SobiFile> handler = new PaginatedRowHandler<>(limitOffset, "total_count", new SobiFileRowMapper());
+        jdbcNamed.query(GET_SOBI_FILES_DURING.getSql(schema(), orderBy, limitOffset), params, handler);
+        return handler.getList();
     }
 
     /** {@inheritDoc} */
