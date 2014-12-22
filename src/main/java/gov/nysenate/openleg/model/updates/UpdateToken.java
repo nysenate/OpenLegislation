@@ -2,6 +2,10 @@ package gov.nysenate.openleg.model.updates;
 
 import java.time.LocalDateTime;
 
+/**
+ * An UpdateToken indicates the
+ * @param <ContentId>
+ */
 public class UpdateToken<ContentId>
 {
     protected ContentId id;
@@ -24,15 +28,31 @@ public class UpdateToken<ContentId>
         return id;
     }
 
+    public void setId(ContentId id) {
+        this.id = id;
+    }
+
     public String getSourceId() {
         return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
     public LocalDateTime getSourceDateTime() {
         return sourceDateTime;
     }
 
+    public void setSourceDateTime(LocalDateTime sourceDateTime) {
+        this.sourceDateTime = sourceDateTime;
+    }
+
     public LocalDateTime getProcessedDateTime() {
         return processedDateTime;
+    }
+
+    public void setProcessedDateTime(LocalDateTime processedDateTime) {
+        this.processedDateTime = processedDateTime;
     }
 }

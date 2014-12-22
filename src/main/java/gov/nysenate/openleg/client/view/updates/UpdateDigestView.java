@@ -8,13 +8,14 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UpdateDigestView implements ViewObject
+public class UpdateDigestView extends UpdateTokenView implements ViewObject
 {
     protected String action;
     protected String scope;
     protected Map<String, String> fields;
 
     public UpdateDigestView(UpdateDigest<?> updateDigest, ViewObject idView) {
+        super(updateDigest, idView);
         if (updateDigest != null) {
             this.action = updateDigest.getAction();
             this.scope = WordUtils.capitalizeFully(updateDigest.getTable().replaceAll("_", " "));

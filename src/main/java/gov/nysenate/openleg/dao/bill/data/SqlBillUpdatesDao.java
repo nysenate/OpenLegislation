@@ -1,16 +1,12 @@
 package gov.nysenate.openleg.dao.bill.data;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.client.view.updates.UpdateDigestView;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.BillUpdateDigest;
 import gov.nysenate.openleg.model.bill.BillUpdateField;
-import gov.nysenate.openleg.model.bill.BillUpdateInfo;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
-import gov.nysenate.openleg.util.DateUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import gov.nysenate.openleg.model.updates.UpdateType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,10 +14,15 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.dao.bill.data.SqlBillUpdatesQuery.*;
+import static gov.nysenate.openleg.dao.bill.data.SqlBillUpdatesQuery.SELECT_BILL_UPDATE_DIGESTS;
+import static gov.nysenate.openleg.dao.bill.data.SqlBillUpdatesQuery.SELECT_BILL_UPDATE_TOKENS;
+import static gov.nysenate.openleg.dao.bill.data.SqlBillUpdatesQuery.SELECT_UPDATE_DIGESTS_FOR_SPECIFIC_BILL;
 import static gov.nysenate.openleg.model.bill.BillUpdateField.*;
 
 @Repository
@@ -64,15 +65,12 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
 
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<UpdateToken<BaseBillId>> getUpdateTokens(Range<LocalDateTime> dateTimeRange, BillUpdateField filter,
-                                                                  SortOrder dateOrder, LimitOffset limOff) {
+    public PaginatedList<UpdateToken<BaseBillId>> getUpdates(Range<LocalDateTime> dateTimeRange, UpdateType type,
+                                                             BillUpdateField filter, SortOrder dateOrder, LimitOffset limOff) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addDateTimeRangeParams(params, dateTimeRange);
-        OrderBy orderBy = new OrderBy("last_update_date_time", dateOrder);
 
-        String sqlQuery = SELECT_BILLS_UPDATED_DURING.getSql(schema(), orderBy, limOff);
-        sqlQuery = queryReplace(sqlQuery, "updateFieldFilter", getUpdateFieldFilter(filter));
-
+        String sqlQuery = getSqlQuery(false, null, type, filter, dateOrder, limOff);
         PaginatedRowHandler<UpdateToken<BaseBillId>> handler =
             new PaginatedRowHandler<>(limOff, "total_updated", getBillUpdateTokenFromRs);
         jdbcNamed.query(sqlQuery, params, handler);
@@ -81,37 +79,68 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
 
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<UpdateDigest<BaseBillId>> getUpdateDigests(Range<LocalDateTime> dateTimeRange, BillUpdateField filter,
-                                                                    SortOrder dateOrder, LimitOffset limOff) {
+    public PaginatedList<UpdateDigest<BaseBillId>> getDetailedUpdates(Range<LocalDateTime> dateTimeRange, UpdateType type,
+                                                                      BillUpdateField filter, SortOrder dateOrder, LimitOffset limOff) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addDateTimeRangeParams(params, dateTimeRange);
-        OrderBy orderBy = new OrderBy("action_date_time", dateOrder);
 
-        String sqlQuery = SELECT_BILLS_UPDATED_DETAILED_DURING.getSql(schema(), orderBy, limOff);
-        sqlQuery = queryReplace(sqlQuery, "updateFieldFilter", getUpdateFieldFilter(filter));
-
+        String sqlQuery = getSqlQuery(true, null, type, filter, dateOrder, limOff);
         PaginatedRowHandler<UpdateDigest<BaseBillId>> handler =
-                new PaginatedRowHandler<>(limOff, "total_updated", getBillUpdateDigestFromRs);
+            new PaginatedRowHandler<>(limOff, "total_updated", getBillUpdateDigestFromRs);
         jdbcNamed.query(sqlQuery, params, handler);
         return handler.getList();
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<UpdateDigest<BaseBillId>> getUpdateDigests(BaseBillId billId, Range<LocalDateTime> dateTimeRange,
-                                                           BillUpdateField filter, SortOrder dateOrder) {
+    public PaginatedList<UpdateDigest<BaseBillId>> getDetailedUpdatesForBill(
+            BaseBillId billId, Range<LocalDateTime> dateTimeRange, UpdateType type, BillUpdateField filter,
+            SortOrder dateOrder, LimitOffset limOff) {
         MapSqlParameterSource params = new MapSqlParameterSource("printNo", billId.getBasePrintNo())
-            .addValue("session", billId.getSession().getYear());
+                                                       .addValue("session", billId.getSession().getYear());
         addDateTimeRangeParams(params, dateTimeRange);
 
-        OrderBy orderBy = new OrderBy("action_date_time", dateOrder);
-        String sqlQuery =  SELECT_UPDATES_FOR_BILL.getSql(schema(), orderBy, LimitOffset.ALL);
-        sqlQuery = queryReplace(sqlQuery, "updateFieldFilter", getUpdateFieldFilter(filter));
-
-        return jdbcNamed.query(sqlQuery, params, getBillUpdateDigestFromRs);
+        String sqlQuery = getSqlQuery(true, billId, type, filter, dateOrder, limOff);
+        PaginatedRowHandler<UpdateDigest<BaseBillId>> handler =
+                new PaginatedRowHandler<>(limOff, "total_updated", getBillUpdateDigestFromRs);
+        jdbcNamed.query(sqlQuery, params, handler);
+        return handler.getList();
     }
 
     /** --- Internal --- */
+
+    /**
+     * Generates the appropriate sql query based on the args, to remove code duplication.
+     */
+    private String getSqlQuery(boolean detail, BaseBillId billId, UpdateType updateType, BillUpdateField fieldFilter,
+                               SortOrder sortOrder, LimitOffset limOff) {
+        String dateColumn;
+        String orderByColumn;
+        // The UpdateType dictates which date columns we used to search by
+        OrderBy orderBy;
+        if (updateType.equals(UpdateType.PROCESSED_DATE)) {
+            dateColumn = "log.action_date_time";
+            orderBy = new OrderBy("last_processed_date_time", sortOrder);
+        }
+        else if (updateType.equals(UpdateType.PUBLISHED_DATE)) {
+            dateColumn = "sobi.published_date_time";
+            orderBy = new OrderBy("last_published_date_time", sortOrder, "last_processed_date_time", sortOrder);
+        }
+        else {
+            throw new IllegalArgumentException("Bill Updates cannot provide updates of type: {}" + updateType);
+        }
+        String sqlQuery;
+        if (billId != null) {
+            sqlQuery = SELECT_UPDATE_DIGESTS_FOR_SPECIFIC_BILL.getSql(schema(), orderBy, limOff);
+        }
+        else {
+            sqlQuery = (detail) ? SELECT_BILL_UPDATE_DIGESTS.getSql(schema(), orderBy, limOff)
+                                : SELECT_BILL_UPDATE_TOKENS.getSql(schema(), orderBy, limOff);
+        }
+        sqlQuery = queryReplace(sqlQuery, "dateColumn", dateColumn);
+        sqlQuery = queryReplace(sqlQuery, "updateFieldFilter", getUpdateFieldFilter(fieldFilter));
+        return sqlQuery;
+    }
 
     /**
      * Generates a sql fragment to be used in the 'where clause' based on the BillUpdateField.
@@ -135,26 +164,31 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
         return "1 = 1";
     }
 
+    /** --- Row Mappers -- */
+
     private static final RowMapper<UpdateToken<BaseBillId>> getBillUpdateTokenFromRs = (rs, rowNum) ->
-        new BillUpdateInfo(new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")),
-                            getLocalDateTimeFromRs(rs, "last_update_date_time"));
+        new UpdateToken<>(new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")),
+            rs.getString("last_fragment_id"), getLocalDateTimeFromRs(rs, "last_published_date_time"),
+            getLocalDateTimeFromRs(rs, "last_processed_date_time"));
 
     private static final RowMapper<UpdateDigest<BaseBillId>> getBillUpdateDigestFromRs = (rs, rowNum) -> {
-        // The key is the primary key for that table.
+        // The 'key' holds the values for the primary key of the given table.
         Map<String, String> key = getHstoreMap(rs, "key");
+
+        // Construct the digest model
         BaseBillId id = new BaseBillId(key.remove("bill_print_no"), Integer.parseInt(key.remove("bill_session_year")));
-        UpdateDigest<BaseBillId> digest = new UpdateDigest<>(id, getLocalDateTimeFromRs(rs, "action_date_time"));
-        Map<String, String> data = getHstoreMap(rs, "data");
+        String sourceId = rs.getString("last_fragment_id");
+        LocalDateTime sourcePublishedDateTime = getLocalDateTimeFromRs(rs, "last_published_date_time");
+        LocalDateTime processedDateTime = getLocalDateTimeFromRs(rs, "last_processed_date_time");
+        UpdateDigest<BaseBillId> digest = new UpdateDigest<>(id, sourceId, sourcePublishedDateTime, processedDateTime);
+
         //We want to move over the non-bill id values (which were just removed) over into the data map.
+        Map<String, String> data = getHstoreMap(rs, "data");
         data.putAll(key);
 
         digest.setAction(rs.getString("action"));
-        String fragmentId = rs.getString("sobi_fragment_id");
-        digest.setSourceDataId(fragmentId);
-        // Parse the date from the id instead of doing a costly sql join
-        digest.setSourceDataDateTime(getLocalDateTimeFromSobiFragmentId(fragmentId));
         digest.setTable(rs.getString("table_name"));
-        digest.setUpdates(data);
+        digest.setFields(data);
         return digest;
     };
 }
