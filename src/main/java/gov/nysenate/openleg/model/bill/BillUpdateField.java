@@ -13,6 +13,7 @@ public enum BillUpdateField
     MULTISPONSOR,
     SPONSOR,
     STATUS,
+    STATUS_CODE,
     SUMMARY,
     TITLE,
     VETO,

@@ -57,6 +57,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
         updateMappings.put(SPONSOR, new BillUpdateTable(SqlTable.BILL_SPONSOR));
         updateMappings.put(STATUS, new BillUpdateTable(SqlTable.BILL, "status", "status_date", "bill_cal_no",
                                                                       "committee_name", "committee_chamber"));
+        updateMappings.put(STATUS_CODE, new BillUpdateTable(SqlTable.BILL, "status"));
         updateMappings.put(SUMMARY, new BillUpdateTable(SqlTable.BILL, "summary"));
         updateMappings.put(TITLE, new BillUpdateTable(SqlTable.BILL, "title"));
         updateMappings.put(VETO, new BillUpdateTable(SqlTable.BILL_VETO));
