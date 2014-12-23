@@ -39,7 +39,7 @@ Request summary of bill A450 of session year 2013
 ::
    /api/3/bills/2013/A450?summary=true
 
-.. _`bill response`:
+.. _bill-response:
 
 **Response**
 
@@ -361,7 +361,7 @@ Sort by increasing status action date, (default)
 Search for bills
 ----------------
 
-Read this [insert link] for info on how to construct search terms. The bill search index is comprised of full bill responses
+Read our :doc:`search API docs<search_api>` for info on how to construct search terms. The bill search index is comprised of full bill responses
 (i.e. the json response returned when requesting a single bill) so query and sort strings will be based on that response
 structure.
 

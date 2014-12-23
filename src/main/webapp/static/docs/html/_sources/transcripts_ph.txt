@@ -38,7 +38,7 @@ Full Public Hearing Response
         "attendance" : [ ],                           // Legislatures present at hearing. (Currently not used)
         "startTime" : "10:00",                        // Time the public hearing started
         "endTime" : "14:00",                          // Time the public hearing ended
-        "text" : "\n\n\n       1     BEFORE THE NE..  // The text of the public hearing
+        "text" : "\n\n\n       1     BEFORE THE NE.."  // The text of the public hearing
         }
     }
 

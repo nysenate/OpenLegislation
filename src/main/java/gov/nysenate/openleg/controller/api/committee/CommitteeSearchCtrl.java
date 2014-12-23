@@ -52,11 +52,11 @@ public class CommitteeSearchCtrl extends BaseCtrl {
     @RequestMapping(value = "/search")
     public BaseResponse searchAllCommittees(@RequestParam(required = true) String term,
                                             @RequestParam(defaultValue = "") String sort,
-                                            @RequestParam(defaultValue = "true") boolean latest,
+                                            @RequestParam(defaultValue = "true") boolean current,
                                             @RequestParam(defaultValue = "false") boolean full,
                                             WebRequest webRequest) throws SearchException, CommitteeNotFoundEx {
         LimitOffset limitOffset = getLimitOffset(webRequest, 50);
-        SearchResults<CommitteeVersionId> searchResults = latest
+        SearchResults<CommitteeVersionId> searchResults = current
                 ? committeeSearchService.searchAllCurrentCommittees(term, sort, limitOffset)
                 : committeeSearchService.searchAllCommittees(term, sort, limitOffset);
         return getCommitteeSearchResponse(searchResults, full);
@@ -72,12 +72,12 @@ public class CommitteeSearchCtrl extends BaseCtrl {
     public BaseResponse searchCommitteesForSession(@PathVariable int year,
                                                    @RequestParam(required = true) String term,
                                                    @RequestParam(defaultValue = "") String sort,
-                                                   @RequestParam(defaultValue = "true") boolean currentVersions,
+                                                   @RequestParam(defaultValue = "true") boolean current,
                                                    @RequestParam(defaultValue = "false") boolean full,
                                                    WebRequest webRequest) throws SearchException, CommitteeNotFoundEx {
         SessionYear sessionYear = SessionYear.of(year);
         LimitOffset limitOffset = getLimitOffset(webRequest, 50);
-        SearchResults<CommitteeVersionId> searchResults = currentVersions
+        SearchResults<CommitteeVersionId> searchResults = current
                 ? committeeSearchService.searchCurrentCommitteesForSession(sessionYear, term, sort, limitOffset)
                 : committeeSearchService.searchCommitteesForSession(sessionYear, term, sort, limitOffset);
         return getCommitteeSearchResponse(searchResults, full);

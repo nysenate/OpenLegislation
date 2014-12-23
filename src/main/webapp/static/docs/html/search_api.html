@@ -73,6 +73,7 @@
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-single-calendar">Get a single calendar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-listing-of-calendars">Get a listing of calendars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#search-for-calendars">Search for calendars</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Committee API</strong></a><ul>
@@ -80,6 +81,7 @@
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-committee-version-at-specific-time">Get a committee version at specific time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-committee-history">Get committee history</a></li>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-all-current-committees">Get all current committees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#search-for-committees">Search for committees</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
@@ -140,7 +142,7 @@
 and we aim to provide as much elasticsearch functionality as possible through the APIs.</p>
 <p>Every search layer API will have a required request parameter &#8220;term&#8221; and an optional request param &#8220;sort&#8221;.</p>
 <div class="section" id="term">
-<h2>term<a class="headerlink" href="#term" title="Permalink to this headline">¶</a></h2>
+<span id="search-term"></span><h2>term<a class="headerlink" href="#term" title="Permalink to this headline">¶</a></h2>
 <p>The term parameter takes in an <a class="reference external" href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax">elasticsearch query string</a>.</p>
 <p>The simplest way to search is to send a general search term.
 For example, to search for legislation pertaining to apples, the following query will do the job.</p>
@@ -150,7 +152,7 @@ For example, to search for legislation pertaining to apples, the following query
 <p>In addition to a simple search term, there are a number of advanced features available.  Our search index is generated
 with data in the same JSON format as the API responses, so any response field that is nested under &#8220;result&#8221; is fair game
 for search.  Going back to the previous example, a number of resolutions appear in the results for the apples search query.
-Looking back at the <a href="#id1"><span class="problematic" id="id2">`bill response`_</span></a>, we see that resolutions are designated by the &#8220;resolution&#8221; boolean under &#8220;billType&#8221;.
+Looking back at the <a class="reference internal" href="bills.html#bill-response"><em>bill response</em></a>, we see that resolutions are designated by the &#8220;resolution&#8221; boolean under &#8220;billType&#8221;.
 In order to filter resolutions out of the search results, a field query can be chained to the original query using &#8220;AND&#8221;.</p>
 <div class="highlight-python"><div class="highlight"><pre>/api/3/bills/search?term=apples%20AND%20billType.resolution:false
 </pre></div>
@@ -158,10 +160,11 @@ In order to filter resolutions out of the search results, a field query can be c
 <p>For a full enumeration of query features see the <a class="reference external" href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax">elasticsearch query string</a> syntax.</p>
 </div>
 <div class="section" id="sort">
-<h2>sort<a class="headerlink" href="#sort" title="Permalink to this headline">¶</a></h2>
+<span id="search-sort"></span><h2>sort<a class="headerlink" href="#sort" title="Permalink to this headline">¶</a></h2>
 <p>Searches can be sorted by any number valid response fields.  This is accomplished using the sort request parameter,
 which takes a comma separated string of response fields, each designated with a sort order (&#8220;ASC&#8221; or &#8220;DESC&#8221;) separated
-from the field with a colon.  For example, to get the 2013 governor&#8217;s program bills in canonical order:</p>
+from the field with a colon.</p>
+<p>For example, to get the 2013 governor&#8217;s program bills in canonical order:</p>
 <div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
                         &amp;sort=programInfo.sequenceNo:ASC
 </pre></div>
@@ -175,22 +178,22 @@ from the field with a colon.  For example, to get the 2013 governor&#8217;s prog
 <div class="section" id="search-response">
 <h2>Search Response<a class="headerlink" href="#search-response" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
-  <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;search-results list&quot;</span><span class="p">,</span>
-  <span class="nx">total</span><span class="o">:</span> <span class="mi">7</span><span class="p">,</span>
-  <span class="nx">offsetStart</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="nx">offsetEnd</span><span class="o">:</span> <span class="mi">7</span><span class="p">,</span>
-  <span class="nx">limit</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
-  <span class="nx">result</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">items</span><span class="o">:</span> <span class="p">[</span>
+  <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;search-results list&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;total&quot;</span><span class="o">:</span> <span class="mi">7</span><span class="p">,</span>
+  <span class="s2">&quot;offsetStart&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">&quot;offsetEnd&quot;</span><span class="o">:</span> <span class="mi">7</span><span class="p">,</span>
+  <span class="s2">&quot;limit&quot;</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
+  <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
       <span class="p">{</span>
-        <span class="nx">result</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>            <span class="c1">// A search result</span>
-        <span class="nx">rank</span><span class="o">:</span> <span class="mf">0.3587615191936493</span>    <span class="c1">// The ranking of the search result</span>
+        <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>            <span class="c1">// A search result</span>
+        <span class="s2">&quot;rank&quot;</span><span class="o">:</span> <span class="mf">0.3587615191936493</span>    <span class="c1">// The ranking of the search result</span>
       <span class="p">},</span>
       <span class="p">...</span>                           <span class="c1">// More search results</span>
     <span class="p">],</span>
-    <span class="nx">size</span><span class="o">:</span> <span class="mi">7</span>
+    <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">7</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
