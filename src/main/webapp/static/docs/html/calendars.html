@@ -140,7 +140,7 @@
 <div class="section" id="get-a-single-calendar">
 <h2>Get a single calendar<a class="headerlink" href="#get-a-single-calendar" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>Full calendar:
+<div class="highlight-python"><pre>Full calendar:
    /api/3/calendars/{year}/{calendarNumber}
 Floor calendar:
    /api/3/calendars/{year}/{calendarNumber}/floor
@@ -151,16 +151,14 @@ Active list:
 
 Optional Params:
 full (boolean) - Set to true to see the full calendar response instead of a summary.
-                  (default true)
-</pre></div>
+                  (default true)</pre>
 </div>
 <p><strong>Examples</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/calendars/2014/54               (Get calendar 54 of 2014)
+<div class="highlight-python"><pre>/api/3/calendars/2014/54               (Get calendar 54 of 2014)
 /api/3/calendars/2014/54?&amp;full=false   (Get a summary of calendar 54)
 /api/3/calendars/2014/54/0             (Get the base active list for calendar 54)
 /api/3/calendars/2014/54/floor         (Get the floor calendar for calendar 54)
-/api/3/calendars/2014/54/B             (Get supplemental calendar B of calendar 54)
-</pre></div>
+/api/3/calendars/2014/54/B             (Get supplemental calendar B of calendar 54)</pre>
 </div>
 <p><strong>Sample Responses</strong></p>
 <p>Full calendar:</p>
@@ -334,7 +332,7 @@ full (boolean) - Set to true to see the full calendar response instead of a summ
 <div class="section" id="get-a-listing-of-calendars">
 <h2>Get a listing of calendars<a class="headerlink" href="#get-a-listing-of-calendars" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>Full calendars:
+<div class="highlight-python"><pre>Full calendars:
    /api/3/calendars/{year}
 Supplemental/Floor calendars:
    /api/3/calendars/{year}/supplemental
@@ -344,19 +342,17 @@ Active lists:
 Optional Params:
 full (boolean) - Set to true to see the full calendar responses instead of the summaries.
       (default false)
-order (&#39;ASC&#39;|&#39;DESC&#39;) - Determines the order the calendar responses.  Responses are ordered by
+order ('ASC'|'DESC') - Determines the order the calendar responses.  Responses are ordered by
       calendar number and then either sequenceNumber or version if they are active lists or
-      supplementals respectively.  (default &#39;ASC&#39;)
+      supplementals respectively.  (default 'ASC')
 limit (number) - Limit the number of results (default 100)
-offset (number) - Start results from offset (default 1)
-</pre></div>
+offset (number) - Start results from offset (default 1)</pre>
 </div>
 <p><strong>Examples</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/calendars/2014?full=true                       (Get all calendar data from 2014)
+<div class="highlight-python"><pre>/api/3/calendars/2014?full=true                       (Get all calendar data from 2014)
 /api/3/calendars/2014?limit=1&amp;order=DESC              (Get the latest calendar from 2014)
 /api/3/calendars/2014/activelist?limit=5              (Get the first 5 active lists of 2014)
-/api/3/calendars/2014/supplemental?limit=5&amp;offset=5   (Get the second 5 supplementals of 2014)
-</pre></div>
+/api/3/calendars/2014/supplemental?limit=5&amp;offset=5   (Get the second 5 supplementals of 2014)</pre>
 </div>
 </div>
 </div>

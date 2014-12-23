@@ -146,31 +146,29 @@
 </div>
 <p><strong>Examples</strong></p>
 <p>Request public hearing &#8220;10-29-13 NYsenate_Flanagan_Education_FINAL.txt&#8221;</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/hearings/10-29-13 NYsenate_Flanagan_Education_FINAL.txt
-</pre></div>
+<div class="highlight-python"><pre>/api/3/hearings/10-29-13 NYsenate_Flanagan_Education_FINAL.txt</pre>
 </div>
 <p><strong>Response</strong></p>
 <p>Full Public Hearing Response</p>
-<div class="highlight-javascript"><div class="highlight"><pre>{
-  &quot;success&quot; : true,                               // Indicates if a public hearing was found.
-  &quot;message&quot; : &quot;Data for public hearing 10-29..&quot;,  // Response description
-  &quot;responseType&quot; : &quot;hearing&quot;,                     // Response data type
-  &quot;result&quot; : {
-    &quot;filename&quot; : &quot;10-29-13 NYsenate_Flanagan..&quot;,  // Filename of public hearing transcript
-    &quot;title&quot; : &quot;PUBLIC HEARING THE REGENTS RE..&quot;,  // Title of public hearing
-    &quot;date&quot; : &quot;2013-10-29&quot;,                        // Date of public hearing
-    &quot;address&quot; : &quot;Senate Hearing Room\n250 Br..&quot;,  // Address of public hearing
-    &quot;committees&quot; : [ {                            // List of committees/task forces/other groups holding the hearing
-      &quot;name&quot; : &quot;EDUCATION&quot;,                       // Name of committee/task force/other group
-      &quot;chamber&quot; : &quot;SENATE&quot;                        // Chamber of committee
+<div class="highlight-javascript"><pre>{
+  "success" : true,                               // Indicates if a public hearing was found.
+  "message" : "Data for public hearing 10-29..",  // Response description
+  "responseType" : "hearing",                     // Response data type
+  "result" : {
+    "filename" : "10-29-13 NYsenate_Flanagan..",  // Filename of public hearing transcript
+    "title" : "PUBLIC HEARING THE REGENTS RE..",  // Title of public hearing
+    "date" : "2013-10-29",                        // Date of public hearing
+    "address" : "Senate Hearing Room\n250 Br..",  // Address of public hearing
+    "committees" : [ {                            // List of committees/task forces/other groups holding the hearing
+      "name" : "EDUCATION",                       // Name of committee/task force/other group
+      "chamber" : "SENATE"                        // Chamber of committee
     } ],
-    &quot;attendance&quot; : [ ],                           // Legislatures present at hearing. (Currently not used)
-    &quot;startTime&quot; : &quot;10:00&quot;,                        // Time the public hearing started
-    &quot;endTime&quot; : &quot;14:00&quot;,                          // Time the public hearing ended
-    &quot;text&quot; : &quot;\n\n\n       1     BEFORE THE NE..  // The text of the public hearing
+    "attendance" : [ ],                           // Legislatures present at hearing. (Currently not used)
+    "startTime" : "10:00",                        // Time the public hearing started
+    "endTime" : "14:00",                          // Time the public hearing ended
+    "text" : "\n\n\n       1     BEFORE THE NE..  // The text of the public hearing
     }
-}
-</pre></div>
+}</pre>
 </div>
 </div>
 <div class="section" id="get-a-public-hearing-pdf">
@@ -182,8 +180,7 @@
 </div>
 <p><strong>Examples</strong></p>
 <p>Request public hearing 09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/hearings/09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt.pdf
-</pre></div>
+<div class="highlight-python"><pre>/api/3/hearings/09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt.pdf</pre>
 </div>
 </div>
 <hr class="docutils" />
@@ -228,16 +225,13 @@
 </table>
 <p><strong>Examples</strong></p>
 <p>List 50 public hearings from 2014</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/hearings/2014?limit=50
-</pre></div>
+<div class="highlight-python"><pre>/api/3/hearings/2014?limit=50</pre>
 </div>
 <p>List 50 complete public hearings starting from 51</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/hearings/2014?limit=50%offset=51&amp;full=true
-</pre></div>
+<div class="highlight-python"><pre>/api/3/hearings/2014?limit=50%offset=51&amp;full=true</pre>
 </div>
 <p>List 10 complete public hearings sorted by increasing date</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/hearings/2014?limit=10&amp;full=true&amp;sort=dateTime:ASC
-</pre></div>
+<div class="highlight-python"><pre>/api/3/hearings/2014?limit=10&amp;full=true&amp;sort=dateTime:ASC</pre>
 </div>
 <p><strong>Response</strong></p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>

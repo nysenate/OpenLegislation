@@ -1,0 +1,19 @@
+====
+MEOW
+====
+
+.. toctree::
+   :maxdepth: 2
+
+   Search
+   API
+
+Search
+======
+
+Some stuff here
+
+API
+===
+
+Other stuff here

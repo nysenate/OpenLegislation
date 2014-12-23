@@ -66,6 +66,7 @@
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href=""><strong>Bills and Resolutions API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#get-a-single-bill">Get a single bill</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-pdf-of-bill-text">Get PDF of bill text</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-a-list-of-bills">Get a list of bills</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#search-for-bills">Search for bills</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-bill-updates">Get bill updates</a></li>
@@ -139,9 +140,8 @@
 <h1><strong>Bills and Resolutions API</strong><a class="headerlink" href="#bills-and-resolutions-api" title="Permalink to this headline">¶</a></h1>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">While bills and resolutions serve different purposes, in the context of these docs, the term &#8216;bill&#8217; will include</p>
+<p class="last">While bills and resolutions serve different purposes, in the context of these docs, the term &#8216;bill&#8217; will include resolutions as well since the API request/response structure for both are identical.</p>
 </div>
-<p>resolutions as well since the API requests and responses for both are identical.</p>
 <hr class="docutils" />
 <div class="section" id="get-a-single-bill">
 <h2>Get a single bill<a class="headerlink" href="#get-a-single-bill" title="Permalink to this headline">¶</a></h2>
@@ -176,20 +176,15 @@
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Bills typically get amended and their print no gets suffixed with an amendment letter (e.g. S1234B)</p>
+<p class="last">Bills typically get amended and their print no gets suffixed with an amendment letter (e.g. S1234B). The bill API returns bill responses that contain every amendment version so you should just provide
+the base print no (e.g. S1234).</p>
 </div>
-<dl class="docutils">
-<dt>The bill API returns bill responses that contain every amendment version so you should just provide</dt>
-<dd>the base print no (e.g. S1234).</dd>
-</dl>
 <p><strong>Examples</strong></p>
 <p>Request bill S2180 of session year 2013</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/S2180
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013/S2180</pre>
 </div>
 <p>Request summary of bill A450 of session year 2013</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/A450?summary=true
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013/A450?summary=true</pre>
 </div>
 <p id="bill-response"><strong>Response</strong></p>
 <p>Full Bill Response</p>
@@ -251,6 +246,7 @@
      <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Department of Motor Vehicles&quot;</span><span class="p">,</span>   <span class="c1">// The name of the program/agency</span>
      <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mi">2</span>                           <span class="c1">// The position of this bill within that program/agency list</span>
    <span class="p">},</span>
+   <span class="c1">// ---- Bill summary view ends here --- //</span>
    <span class="s2">&quot;amendments&quot;</span><span class="o">:</span> <span class="p">{</span>                              <span class="c1">// Contains info specific to an amendment (base version is &quot;&quot;)</span>
      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{</span>
        <span class="s2">&quot;&quot;</span><span class="o">:</span> <span class="p">{</span>                                   <span class="c1">// Map of Amendment versions</span>
@@ -428,10 +424,7 @@
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If <strong>summary</strong> is set to true, the above response would be truncated after the &#8216;programInfo&#8217; block.</p>
-</div>
+<p>If <strong>summary</strong> is set to true, the above response would be truncated after the &#8216;programInfo&#8217; block.</p>
 <p>If <strong>detail</strong> is set to true, the following content will also be present in the response:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="s2">&quot;billInfoRefs&quot;</span><span class="o">:</span> <span class="p">{</span>                               <span class="c1">// Any bills that were referenced (e.g. same as, previous versions)</span>
   <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{</span>                                    <span class="c1">// will be mapped here using the basePrintNo-sessionYear as the key.</span>
@@ -445,6 +438,16 @@
 </pre></div>
 </div>
 </div>
+<hr class="docutils" />
+<div class="section" id="get-pdf-of-bill-text">
+<h2>Get PDF of bill text<a class="headerlink" href="#get-pdf-of-bill-text" title="Permalink to this headline">¶</a></h2>
+<p>If you just need a pdf of the latest full text of the bill, you can make the following request:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">bills</span><span class="o">/</span><span class="p">{</span><span class="n">sessionYear</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">printNo</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
+</pre></div>
+</div>
+<p>If the bill is found, a PDF will be generated with the full text of the bill.</p>
+</div>
+<hr class="docutils" />
 <div class="section" id="get-a-list-of-bills">
 <h2>Get a list of bills<a class="headerlink" href="#get-a-list-of-bills" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
@@ -471,7 +474,7 @@
 <td>Number of results to return</td>
 </tr>
 <tr class="row-odd"><td>offset</td>
-<td>&gt; 1</td>
+<td>&gt;= 1</td>
 <td>Result number to start from</td>
 </tr>
 <tr class="row-even"><td>full</td>
@@ -484,22 +487,20 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Default Sort Order</strong></p>
+<p>By default, (i.e. no sort param was included in the request) the results will be ordered by most recent status date (sort=status.actionDate:DESC)</p>
 <p><strong>Examples</strong></p>
 <p>List 100 bills from 2013</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013?limit=100
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013?limit=100</pre>
 </div>
 <p>List 100 complete bills starting from 101</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013?limit=100&amp;offset=101&amp;full=true
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013?limit=100&amp;offset=101&amp;full=true</pre>
 </div>
 <p>Sort by increasing published date</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013?sort=publishedDateTime:ASC
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013?sort=publishedDateTime:ASC</pre>
 </div>
 <p>Sort by increasing status action date, (default)</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013?sort=status.actionDate:ASC
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013?sort=status.actionDate:ASC</pre>
 </div>
 <p><strong>Response</strong></p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
@@ -518,19 +519,18 @@
 </pre></div>
 </div>
 </div>
+<hr class="docutils" />
 <div class="section" id="search-for-bills">
 <h2>Search for bills<a class="headerlink" href="#search-for-bills" title="Permalink to this headline">¶</a></h2>
-<p>Read this [insert link] for info on how to construct search terms. The bill search index is comprised of full bill responses
+<p>Read <a class="reference internal" href="search_api.html"><em>this</em></a> for info on how to construct search terms. The bill search index is comprised of full bill responses
 (i.e. the json response returned when requesting a single bill) so query and sort strings will be based on that response
 structure.</p>
 <p><strong>Usage</strong></p>
 <p>Search across all session years</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/bills/search?term=YOUR_TERM
-</pre></div>
+<div class="highlight-python"><pre>(GET) /api/3/bills/search?term=YOUR_TERM</pre>
 </div>
 <p>Search within a session year</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM
-</pre></div>
+<div class="highlight-python"><pre>(GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM</pre>
 </div>
 <p><strong>Required Params</strong></p>
 <table border="1" class="docutils">
@@ -554,24 +554,43 @@ structure.</p>
 </table>
 <p><strong>Optional Params</strong></p>
 <p>Same as the <a class="reference internal" href="#bill-listing-params">bill listing params</a>.</p>
+<p><strong>Examples</strong></p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If you are querying a field that is heavily nested (like the amendment specific fields), prefix the field with a \*. This is a wildcard expression. E.g   ?term=\*memo:&#8217;Some phrase&#8217;</p>
 </div>
+<p>Search for a general term (matches against any data field)</p>
+<div class="highlight-python"><pre>(GET) /api/3/bills/search?term=Gun Control</pre>
+</div>
+<p>Search for 2013 &#8216;resolutions&#8217;</p>
+<div class="highlight-python"><pre>(GET) /api/3/bills/2013/search?term=billType.resolution:true</pre>
+</div>
+<p>Search for all bills and resolutions sponsored by a Senator, ordered by most recent status update</p>
+<div class="highlight-python"><pre>(GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&amp;sort=status.actionDate:DESC</pre>
+</div>
+<p>Search for full text containing the phrase &#8216;Marriage Equality&#8217;. Note the use of the \* prefix to match full texts regardless of amendment version</p>
+<div class="highlight-python"><pre>(GET) /api/3/bills/search?term=\*.fullText:"Marriage Equality"</pre>
+</div>
+<p>Search for bills that were published between a certain date range, ordered by increasing published date</p>
+<div class="highlight-python"><pre>(GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&amp;sort=publishedDateTime:ASC</pre>
+</div>
+</div>
+<hr class="docutils" />
 <div class="section" id="get-bill-updates">
 <h2>Get bill updates<a class="headerlink" href="#get-bill-updates" title="Permalink to this headline">¶</a></h2>
 <p>To identify which bills have received updates within a given time period you can use the bill updates api.</p>
 <p><strong>Usage</strong></p>
-<p>List of bills updated after the given date/time</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/updates/{fromDateTime}/
-</pre></div>
-</div>
 <p>List of bills updated during the given date/time range</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/updates/{fromDateTime}/{toDateTime}
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/updates/{fromDateTime}/{toDateTime}</pre>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">The fromDateTime and toDateTime should be formatted as the ISO Date Time format.</p>
+<p class="last">The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02</p>
 </div>
-<p>For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Due to performance reasons, the days between fromDateTime and toDateTime must be &lt;= 100</p>
+</div>
 <p><strong>Optional Params</strong></p>
 <table border="1" class="docutils">
 <colgroup>
@@ -590,101 +609,167 @@ structure.</p>
 <td>boolean</td>
 <td>Set to true to see <a class="reference internal" href="#detailed-update-digests">detailed update digests</a></td>
 </tr>
+<tr class="row-odd"><td>filter</td>
+<td>string</td>
+<td>Filter by update type. See <a class="reference internal" href="#update-filters">update filters</a></td>
+</tr>
+<tr class="row-even"><td>order</td>
+<td>string (asc|desc)</td>
+<td>Order the results by update date/time</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<p>Bills that were updated between December 1, 2014 and December 2, 2014</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
-</pre></div>
+<p>Bills that were updated between November 1, 2014 and November 5, 2014</p>
+<div class="highlight-python"><pre>/api/3/bills/updates/2014-11-01T00:00:00/2014-11-05T00:00:00</pre>
 </div>
 <p><strong>Response (detail = false)</strong></p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;bill-update-token list&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;total&quot;</span><span class="o">:</span> <span class="mi">2423</span><span class="p">,</span>
+    <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;base-bill-id-update-token list&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;total&quot;</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
     <span class="s2">&quot;offsetStart&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;offsetEnd&quot;</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="s2">&quot;limit&quot;</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s2">&quot;offsetEnd&quot;</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s2">&quot;limit&quot;</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
     <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
-      <span class="p">{</span>
-        <span class="s2">&quot;billId&quot;</span><span class="o">:</span> <span class="p">{</span>                                    <span class="c1">// Bill Id for the bill that got updated</span>
-            <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S7867&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2011</span>
-        <span class="p">},</span>
-        <span class="s2">&quot;lastUpdatedOn&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-12-03T15:37:30.677921&quot;</span>  <span class="c1">// When this bill was last updated</span>
-                                                       <span class="c1">// during the given date range</span>
-      <span class="p">},</span>
-      <span class="p">{</span>
-        <span class="s2">&quot;billId&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S4530&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2011</span>
-        <span class="p">},</span>
-        <span class="s2">&quot;lastUpdatedOn&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-12-03T15:37:30.818888&quot;</span>
-      <span class="p">}</span>
-    <span class="p">],</span>
-    <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">2</span>
+        <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A242&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;sourceId&quot;</span><span class="o">:</span> <span class="s2">&quot;SOBI.D141103.T092258.TXT-0-BILL&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sourceDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-11-03T09:22:58&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;processedDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-12-17T16:54:24.065500&quot;</span>
+            <span class="p">},</span>
+            <span class="p">...</span> <span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
+</div>
+<p id="update-filters">You can filter the results of the API by specifying a specific type of update you are interested in. For example you
+may only want to know which bills have had status updates, or which bills had full text changes.</p>
+<p>Update Filters:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>ACT_CLAUSE</td>
+<td>The enacting clause</td>
+</tr>
+<tr class="row-odd"><td>ACTION</td>
+<td>Bill Actions</td>
+</tr>
+<tr class="row-even"><td>ACTIVE_VERSION</td>
+<td>Active amendment version</td>
+</tr>
+<tr class="row-odd"><td>APPROVAL</td>
+<td>Approval Memos</td>
+</tr>
+<tr class="row-even"><td>COSPONSOR</td>
+<td>Co/sponsor changes</td>
+</tr>
+<tr class="row-odd"><td>FULLTEXT</td>
+<td>Bill full text</td>
+</tr>
+<tr class="row-even"><td>LAW</td>
+<td>Law code and primary sections</td>
+</tr>
+<tr class="row-odd"><td>MEMO</td>
+<td>Sponsor memos</td>
+</tr>
+<tr class="row-even"><td>MULTISPONSOR</td>
+<td>Multi-sponsor changes</td>
+</tr>
+<tr class="row-odd"><td>SPONSOR</td>
+<td>Sponsor changes</td>
+</tr>
+<tr class="row-even"><td>STATUS</td>
+<td>Bill status updates</td>
+</tr>
+<tr class="row-odd"><td>STATUS_CODE</td>
+<td>Bill status &#8216;code&#8217; updates</td>
+</tr>
+<tr class="row-even"><td>SUMMARY</td>
+<td>Bill summary</td>
+</tr>
+<tr class="row-odd"><td>TITLE</td>
+<td>Bill title</td>
+</tr>
+<tr class="row-even"><td>VETO</td>
+<td>Veto messages</td>
+</tr>
+<tr class="row-odd"><td>VOTE</td>
+<td>Bill votes</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>Get a list of bills that have had status changes between January 1, 2014 12 AM and January 5, 2014 2 PM</p>
+<div class="highlight-python"><pre>(GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&amp;order=desc</pre>
 </div>
 <p id="detailed-update-digests">To view the actual updates that have occurred on a bill use the following API</p>
 <p><strong>Usage</strong></p>
 <p>All updates on a specific bill</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/</pre>
 </div>
 <p>Updates on a specific bill from a given date/time.</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/</pre>
 </div>
 <p>Updates on a specific bil during a given date/time range.</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}</pre>
 </div>
 <p><strong>Example</strong></p>
 <p>Updates for S1234-2013 between December 1, 2014 and December 2, 2014</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00</pre>
 </div>
 <p><strong>Response</strong></p>
 <p>Sample response:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;bill-update-digest list&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;total&quot;</span><span class="o">:</span> <span class="mi">19</span><span class="p">,</span>
+    <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;update-digest list&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;total&quot;</span><span class="o">:</span> <span class="mi">23</span><span class="p">,</span>
     <span class="s2">&quot;offsetStart&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;offsetEnd&quot;</span><span class="o">:</span> <span class="mi">19</span><span class="p">,</span>
-    <span class="s2">&quot;limit&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;offsetEnd&quot;</span><span class="o">:</span> <span class="mi">23</span><span class="p">,</span>
+    <span class="s2">&quot;limit&quot;</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
     <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
+    <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s2">&quot;action&quot;</span><span class="o">:</span> <span class="s2">&quot;INSERT&quot;</span><span class="p">,</span>                      <span class="c1">// Type of action (INSERT/UPDATE/DELETE)</span>
-            <span class="s2">&quot;scope&quot;</span><span class="o">:</span> <span class="s2">&quot;Bill&quot;</span><span class="p">,</span>                         <span class="c1">// Data type affected</span>
-            <span class="s2">&quot;updates&quot;</span><span class="o">:</span> <span class="p">{</span>                             <span class="c1">// Raw output of internal change log, varies depending on the</span>
-                                                     <span class="c1">// changes made</span>
-                <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;active_version&quot;</span><span class="o">:</span> <span class="s2">&quot; &quot;</span><span class="p">,</span>
-                <span class="s2">&quot;committee_chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;senate&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;status_date&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-01-09&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;program_info_num&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-                <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Creates the office of the taxpayer advocate&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;active_year&quot;</span><span class="o">:</span> <span class="s2">&quot;2013&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;sub_bill_print_no&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-                <span class="s2">&quot;created_date_time&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-12-08 19:58:01.772303&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;committee_name&quot;</span><span class="o">:</span> <span class="s2">&quot;INVESTIGATIONS AND GOVERNMENT OPERATIONS&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;program_info&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-                <span class="s2">&quot;published_date_time&quot;</span><span class="o">:</span> <span class="s2">&quot;2012-12-20 16:05:35&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;bill_cal_no&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-                <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="s2">&quot;IN_SENATE_COMM&quot;</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;updatedOn&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-12-08T19:58:01.772303&quot;</span><span class="p">,</span>        <span class="c1">// When this change was recorded</span>
-            <span class="s2">&quot;sourceDataId&quot;</span><span class="o">:</span> <span class="s2">&quot;SOBI.D121220.T160535.TXT-0-BILL&quot;</span> <span class="c1">// Id of the originating source data file (internal)</span>
+        <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S1234&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span>
         <span class="p">},</span>
-        <span class="p">....</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+        <span class="s2">&quot;sourceId&quot;</span><span class="o">:</span> <span class="s2">&quot;SOBI.D121220.T160535.TXT-0-BILL&quot;</span><span class="p">,</span>  <span class="c1">// The source file that made the change</span>
+        <span class="s2">&quot;sourceDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2012-12-20T16:05:35&quot;</span><span class="p">,</span>        <span class="c1">// The date of the source file</span>
+        <span class="s2">&quot;processedDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-12-13T13:40:08.564879&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action&quot;</span><span class="o">:</span> <span class="s2">&quot;INSERT&quot;</span><span class="p">,</span>                              <span class="c1">// Database operation</span>
+        <span class="s2">&quot;scope&quot;</span><span class="o">:</span> <span class="s2">&quot;Bill&quot;</span><span class="p">,</span>                                 <span class="c1">// Type of data modified</span>
+        <span class="s2">&quot;fields&quot;</span><span class="o">:</span> <span class="p">{</span>                                      <span class="c1">// Database fields that were updated</span>
+            <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;statusDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-01-09&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;publishedDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2012-12-20 16:05:35&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;committeeChamber&quot;</span><span class="o">:</span> <span class="s2">&quot;senate&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;programInfo&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="s2">&quot;subBillPrintNo&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="s2">&quot;createdDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-12-13 13:40:08.564879&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Creates the office of the taxpayer advocate&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;programInfoNum&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="s2">&quot;billCalNo&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="s2">&quot;activeYear&quot;</span><span class="o">:</span> <span class="s2">&quot;2013&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;committeeName&quot;</span><span class="o">:</span> <span class="s2">&quot;INVESTIGATIONS AND GOVERNMENT OPERATIONS&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;activeVersion&quot;</span><span class="o">:</span> <span class="s2">&quot; &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="s2">&quot;IN_SENATE_COMM&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">...</span> <span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

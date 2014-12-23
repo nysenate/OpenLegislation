@@ -140,13 +140,11 @@
 <div class="section" id="get-a-current-committee-version">
 <h2>Get a current committee version<a class="headerlink" href="#get-a-current-committee-version" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/{session}/{chamber}/{committeeName}
-</pre></div>
+<div class="highlight-python"><pre>/api/3/committees/{session}/{chamber}/{committeeName}</pre>
 </div>
 <p><strong>Example</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/2013/senate/Cultural%20Affairs,%20Tourism,%20Parks%20and%20Recreation
-(Get the current version of the Cultural Affairs, Tourism, Parks and Recreation committee)
-</pre></div>
+<div class="highlight-python"><pre>/api/3/committees/2013/senate/Cultural%20Affairs,%20Tourism,%20Parks%20and%20Recreation
+(Get the current version of the Cultural Affairs, Tourism, Parks and Recreation committee)</pre>
 </div>
 <p><strong>Sample Response</strong></p>
 <p>See <a class="reference internal" href="#committee-version-response">committee version response</a></p>
@@ -154,13 +152,11 @@
 <div class="section" id="get-a-committee-version-at-specific-time">
 <h2>Get a committee version at specific time<a class="headerlink" href="#get-a-committee-version-at-specific-time" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/{session}/{chamber}/{committeeName}/{ISODateTime}
-</pre></div>
+<div class="highlight-python"><pre>/api/3/committees/{session}/{chamber}/{committeeName}/{ISODateTime}</pre>
 </div>
 <p><strong>Example</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/2013/senate/Finance/2014-03-01T09:30:00
-(Get the codes committee at 9:30 AM on March 1st, 2014)
-</pre></div>
+<div class="highlight-python"><pre>/api/3/committees/2013/senate/Finance/2014-03-01T09:30:00
+(Get the codes committee at 9:30 AM on March 1st, 2014)</pre>
 </div>
 <p id="committee-version-response"><strong>Sample Response</strong></p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
@@ -207,35 +203,31 @@
 <div class="section" id="get-committee-history">
 <h2>Get committee history<a class="headerlink" href="#get-committee-history" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/{session}/{chamber}/{committeeName}/history
+<div class="highlight-python"><pre>/api/3/committees/{session}/{chamber}/{committeeName}/history
 
 Optional Params:
 full (boolean) - Set to true to get full committee responses. (default false)
-order (&#39;ASC&#39;|&#39;DESC&#39;) - Determines the order the committee responses.
-      Sorted by date.  (default &#39;DESC&#39;)
+order ('ASC'|'DESC') - Determines the order the committee responses.
+      Sorted by date.  (default 'DESC')
 limit (number) - Limit the number of results (default 50)
-offset (number) - Start results from offset (default 1)
-</pre></div>
+offset (number) - Start results from offset (default 1)</pre>
 </div>
 <p><strong>Example</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/2013/senate/Aging/history  (Get 2013 history for the aging committee)
+<div class="highlight-python"><pre>/api/3/committees/2013/senate/Aging/history  (Get 2013 history for the aging committee)
 /api/3/committees/2013/senate/Aging/history?limit=1&amp;order=ASC&amp;full=true
-(Get the first version of the Aging committee from 2013)
-</pre></div>
+(Get the first version of the Aging committee from 2013)</pre>
 </div>
 </div>
 <div class="section" id="get-all-current-committees">
 <h2>Get all current committees<a class="headerlink" href="#get-all-current-committees" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/{session}/{chamber}
+<div class="highlight-python"><pre>/api/3/committees/{session}/{chamber}
 
 Optional Params:
-full (boolean) - Set to true to see the full committee responses (default false)
-</pre></div>
+full (boolean) - Set to true to see the full committee responses (default false)</pre>
 </div>
 <p><strong>Example</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/2013/senate?&amp;full=true  (Get full responses for all current senate committees for session 2013
-</pre></div>
+<div class="highlight-python"><pre>/api/3/committees/2013/senate?&amp;full=true  (Get full responses for all current senate committees for session 2013</pre>
 </div>
 </div>
 </div>

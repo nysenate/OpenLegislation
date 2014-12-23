@@ -144,16 +144,14 @@ and we aim to provide as much elasticsearch functionality as possible through th
 <p>The term parameter takes in an <a class="reference external" href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax">elasticsearch query string</a>.</p>
 <p>The simplest way to search is to send a general search term.
 For example, to search for legislation pertaining to apples, the following query will do the job.</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/search?term=apples
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/search?term=apples</pre>
 </div>
 <p>In addition to a simple search term, there are a number of advanced features available.  Our search index is generated
 with data in the same JSON format as the API responses, so any response field that is nested under &#8220;result&#8221; is fair game
 for search.  Going back to the previous example, a number of resolutions appear in the results for the apples search query.
 Looking back at the <a href="#id1"><span class="problematic" id="id2">`bill response`_</span></a>, we see that resolutions are designated by the &#8220;resolution&#8221; boolean under &#8220;billType&#8221;.
 In order to filter resolutions out of the search results, a field query can be chained to the original query using &#8220;AND&#8221;.</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/search?term=apples%20AND%20billType.resolution:false
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/search?term=apples%20AND%20billType.resolution:false</pre>
 </div>
 <p>For a full enumeration of query features see the <a class="reference external" href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax">elasticsearch query string</a> syntax.</p>
 </div>
@@ -162,14 +160,12 @@ In order to filter resolutions out of the search results, a field query can be c
 <p>Searches can be sorted by any number valid response fields.  This is accomplished using the sort request parameter,
 which takes a comma separated string of response fields, each designated with a sort order (&#8220;ASC&#8221; or &#8220;DESC&#8221;) separated
 from the field with a colon.  For example, to get the 2013 governor&#8217;s program bills in canonical order:</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
-                        &amp;sort=programInfo.sequenceNo:ASC
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
+                        &amp;sort=programInfo.sequenceNo:ASC</pre>
 </div>
 <p>Or, you may want to order them by their status and action date:</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
-                        &amp;sort=status.statusType:ASC,status.actionDate:DESC
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
+                        &amp;sort=status.statusType:ASC,status.actionDate:DESC</pre>
 </div>
 </div>
 <div class="section" id="search-response">

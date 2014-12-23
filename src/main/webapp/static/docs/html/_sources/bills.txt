@@ -1,8 +1,7 @@
 **Bills and Resolutions API**
 =============================
 
-.. note:: While bills and resolutions serve different purposes, in the context of these docs, the term 'bill' will include
-resolutions as well since the API requests and responses for both are identical.
+.. note:: While bills and resolutions serve different purposes, in the context of these docs, the term 'bill' will include resolutions as well since the API request/response structure for both are identical.
 
 ----------
 
@@ -25,8 +24,7 @@ Retrieve bill by session year and print no
 | detail    | boolean            | Show extra details (overrides 'summary')               |
 +-----------+--------------------+--------------------------------------------------------+
 
-.. note:: Bills typically get amended and their print no gets suffixed with an amendment letter (e.g. S1234B)
-The bill API returns bill responses that contain every amendment version so you should just provide
+.. note:: Bills typically get amended and their print no gets suffixed with an amendment letter (e.g. S1234B). The bill API returns bill responses that contain every amendment version so you should just provide
           the base print no (e.g. S1234).
 
 **Examples**
@@ -105,6 +103,7 @@ Full Bill Response
         "name": "Department of Motor Vehicles",   // The name of the program/agency
         "sequenceNo": 2                           // The position of this bill within that program/agency list
       },
+      // ---- Bill summary view ends here --- //
       "amendments": {                              // Contains info specific to an amendment (base version is "")
         "items": {
           "": {                                   // Map of Amendment versions
@@ -281,7 +280,7 @@ Full Bill Response
       }
    }
 
-.. note:: If **summary** is set to true, the above response would be truncated after the 'programInfo' block.
+If **summary** is set to true, the above response would be truncated after the 'programInfo' block.
 
 If **detail** is set to true, the following content will also be present in the response:
 
@@ -296,6 +295,19 @@ If **detail** is set to true, the following content will also be present in the 
       }
      "size": 1
    }
+
+---------
+
+Get PDF of bill text
+--------------------
+
+If you just need a pdf of the latest full text of the bill, you can make the following request:
+::
+    (GET) /api/3/bills/{sessionYear}/{printNo}.pdf
+
+If the bill is found, a PDF will be generated with the full text of the bill.
+
+-------
 
 Get a list of bills
 -------------------
@@ -315,12 +327,16 @@ List bills within a session year
 +===========+====================+========================================================+
 | limit     | 1 - 1000           | Number of results to return                            |
 +-----------+--------------------+--------------------------------------------------------+
-| offset    | > 1                | Result number to start from                            |
+| offset    | >= 1               | Result number to start from                            |
 +-----------+--------------------+--------------------------------------------------------+
 | full      | boolean            | Set to true to see the full bill responses.            |
 +-----------+--------------------+--------------------------------------------------------+
 | sort      | string             | Sort by any field from the response.                   |
 +-----------+--------------------+--------------------------------------------------------+
+
+**Default Sort Order**
+
+By default, (i.e. no sort param was included in the request) the results will be ordered by most recent status date (sort=status.actionDate:DESC)
 
 **Examples**
 
@@ -358,12 +374,15 @@ Sort by increasing status action date, (default)
       }
    }
 
+-------
+
 Search for bills
 ----------------
 
-Read this [insert link] for info on how to construct search terms. The bill search index is comprised of full bill responses
+Read :doc:`this<search_api>` for info on how to construct search terms. The bill search index is comprised of full bill responses
 (i.e. the json response returned when requesting a single bill) so query and sort strings will be based on that response
 structure.
+
 
 **Usage**
 
@@ -388,6 +407,31 @@ Search within a session year
 
 Same as the `bill listing params`_.
 
+**Examples**
+
+.. warning:: If you are querying a field that is heavily nested (like the amendment specific fields), prefix the field with a \\*. This is a wildcard expression. E.g   ?term=\\*memo:'Some phrase'
+
+Search for a general term (matches against any data field)
+::
+    (GET) /api/3/bills/search?term=Gun Control
+
+Search for 2013 'resolutions'
+::
+    (GET) /api/3/bills/2013/search?term=billType.resolution:true
+
+Search for all bills and resolutions sponsored by a Senator, ordered by most recent status update
+::
+    (GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&sort=status.actionDate:DESC
+
+Search for full text containing the phrase 'Marriage Equality'. Note the use of the \\* prefix to match full texts regardless of amendment version
+::
+    (GET) /api/3/bills/search?term=\*.fullText:"Marriage Equality"
+
+Search for bills that were published between a certain date range, ordered by increasing published date
+::
+    (GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&sort=publishedDateTime:ASC
+
+-------
 
 Get bill updates
 ----------------
@@ -396,16 +440,13 @@ To identify which bills have received updates within a given time period you can
 
 **Usage**
 
-List of bills updated after the given date/time
-::
-    /api/3/bills/updates/{fromDateTime}/
-
 List of bills updated during the given date/time range
 ::
     /api/3/bills/updates/{fromDateTime}/{toDateTime}
 
-.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format.
-For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02
+.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02
+
+.. note:: Due to performance reasons, the days between fromDateTime and toDateTime must be <= 100
 
 **Optional Params**
 
@@ -414,12 +455,16 @@ For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30
 +===========+====================+========================================================+
 | detail    | boolean            | Set to true to see `detailed update digests`_          |
 +-----------+--------------------+--------------------------------------------------------+
+| filter    | string             | Filter by update type. See `update filters`_           |
++-----------+--------------------+--------------------------------------------------------+
+| order     | string (asc|desc)  | Order the results by update date/time                  |
++-----------+--------------------+--------------------------------------------------------+
 
 **Examples**
 
-Bills that were updated between December 1, 2014 and December 2, 2014
+Bills that were updated between November 1, 2014 and November 5, 2014
 ::
-    /api/3/bills/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
+    /api/3/bills/updates/2014-11-01T00:00:00/2014-11-05T00:00:00
 
 **Response (detail = false)**
 
@@ -428,31 +473,73 @@ Bills that were updated between December 1, 2014 and December 2, 2014
     {
         "success": true,
         "message": "",
-        "responseType": "bill-update-token list",
-        "total": 2423,
+        "responseType": "base-bill-id-update-token list",
+        "total": 4,
         "offsetStart": 1,
-        "offsetEnd": 100,
-        "limit": 100,
+        "offsetEnd": 4,
+        "limit": 50,
         "result": {
-        "items": [
-          {
-            "billId": {                                    // Bill Id for the bill that got updated
-                "basePrintNo": "S7867",
-                "session": 2011
-            },
-            "lastUpdatedOn": "2014-12-03T15:37:30.677921"  // When this bill was last updated
-                                                           // during the given date range
-          },
-          {
-            "billId": {
-                "basePrintNo": "S4530",
-                "session": 2011
-            },
-            "lastUpdatedOn": "2014-12-03T15:37:30.818888"
-          }
-        ],
-        "size": 2
+            "items": [
+                {
+                    "id": {
+                        "basePrintNo": "A242",
+                        "session": 2013
+                    },
+                    "sourceId": "SOBI.D141103.T092258.TXT-0-BILL",
+                    "sourceDateTime": "2014-11-03T09:22:58",
+                    "processedDateTime": "2014-12-17T16:54:24.065500"
+                },
+                ... (truncated)
     }
+
+.. _`update filters`:
+
+You can filter the results of the API by specifying a specific type of update you are interested in. For example you
+may only want to know which bills have had status updates, or which bills had full text changes.
+
+Update Filters:
+
++-----------------+----------------------------------+
+| Field           |  Description                     |
++=================+==================================+
+| ACT_CLAUSE      | The enacting clause              |
++-----------------+----------------------------------+
+| ACTION          | Bill Actions                     |
++-----------------+----------------------------------+
+| ACTIVE_VERSION  | Active amendment version         |
++-----------------+----------------------------------+
+| APPROVAL        | Approval Memos                   |
++-----------------+----------------------------------+
+| COSPONSOR       | Co/sponsor changes               |
++-----------------+----------------------------------+
+| FULLTEXT        | Bill full text                   |
++-----------------+----------------------------------+
+| LAW             | Law code and primary sections    |
++-----------------+----------------------------------+
+| MEMO            | Sponsor memos                    |
++-----------------+----------------------------------+
+| MULTISPONSOR    | Multi-sponsor changes            |
++-----------------+----------------------------------+
+| SPONSOR         | Sponsor changes                  |
++-----------------+----------------------------------+
+| STATUS          | Bill status updates              |
++-----------------+----------------------------------+
+| STATUS_CODE     | Bill status 'code' updates       |
++-----------------+----------------------------------+
+| SUMMARY         | Bill summary                     |
++-----------------+----------------------------------+
+| TITLE           | Bill title                       |
++-----------------+----------------------------------+
+| VETO            | Veto messages                    |
++-----------------+----------------------------------+
+| VOTE            | Bill votes                       |
++-----------------+----------------------------------+
+
+**Examples**
+
+Get a list of bills that have had status changes between January 1, 2014 12 AM and January 5, 2014 2 PM
+::
+    (GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&order=desc
 
 .. _`detailed update digests`:
 
@@ -487,36 +574,38 @@ Sample response:
     {
         "success": true,
         "message": "",
-        "responseType": "bill-update-digest list",
-        "total": 19,
+        "responseType": "update-digest list",
+        "total": 23,
         "offsetStart": 1,
-        "offsetEnd": 19,
-        "limit": 0,
+        "offsetEnd": 23,
+        "limit": 50,
         "result": {
-            "items": [
+        "items": [
             {
-                "action": "INSERT",                      // Type of action (INSERT/UPDATE/DELETE)
-                "scope": "Bill",                         // Data type affected
-                "updates": {                             // Raw output of internal change log, varies depending on the
-                                                         // changes made
-                    "summary": "",
-                    "active_version": " ",
-                    "committee_chamber": "senate",
-                    "status_date": "2013-01-09",
-                    "program_info_num": null,
-                    "title": "Creates the office of the taxpayer advocate",
-                    "active_year": "2013",
-                    "sub_bill_print_no": null,
-                    "created_date_time": "2014-12-08 19:58:01.772303",
-                    "committee_name": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
-                    "program_info": null,
-                    "published_date_time": "2012-12-20 16:05:35",
-                    "bill_cal_no": null,
-                    "status": "IN_SENATE_COMM"
-                },
-                "updatedOn": "2014-12-08T19:58:01.772303",        // When this change was recorded
-                "sourceDataId": "SOBI.D121220.T160535.TXT-0-BILL" // Id of the originating source data file (internal)
+            "id": {
+                "basePrintNo": "S1234",
+                "session": 2013
             },
-            ....
-        }
-    }
+            "sourceId": "SOBI.D121220.T160535.TXT-0-BILL",  // The source file that made the change
+            "sourceDateTime": "2012-12-20T16:05:35",        // The date of the source file
+            "processedDateTime": "2014-12-13T13:40:08.564879",
+            "action": "INSERT",                              // Database operation
+            "scope": "Bill",                                 // Type of data modified
+            "fields": {                                      // Database fields that were updated
+                "summary": "",
+                "statusDate": "2013-01-09",
+                "publishedDateTime": "2012-12-20 16:05:35",
+                "committeeChamber": "senate",
+                "programInfo": null,
+                "subBillPrintNo": null,
+                "createdDateTime": "2014-12-13 13:40:08.564879",
+                "title": "Creates the office of the taxpayer advocate",
+                "programInfoNum": null,
+                "billCalNo": null,
+                "activeYear": "2013",
+                "committeeName": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
+                "activeVersion": " ",
+                "status": "IN_SENATE_COMM"
+            }
+        },
+        ... (truncated)
