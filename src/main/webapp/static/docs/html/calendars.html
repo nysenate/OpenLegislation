@@ -75,6 +75,9 @@
 <li class="toctree-l1 current"><a class="current reference internal" href=""><strong>Senate Calendar API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#get-a-single-calendar">Get a single calendar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-a-listing-of-calendars">Get a listing of calendars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#search-for-calendars">Search for calendars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-calendar-updates">Get calendar updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-specific-calendar-updates">Get specific calendar updates</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Committee API</strong></a><ul>
@@ -82,6 +85,7 @@
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-committee-version-at-specific-time">Get a committee version at specific time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-committee-history">Get committee history</a></li>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-all-current-committees">Get all current committees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#search-for-committees">Search for committees</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
@@ -141,7 +145,7 @@
 <div class="section" id="get-a-single-calendar">
 <h2>Get a single calendar<a class="headerlink" href="#get-a-single-calendar" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><pre>Full calendar:
+<div class="highlight-python"><div class="highlight"><pre>Full calendar:
    /api/3/calendars/{year}/{calendarNumber}
 Floor calendar:
    /api/3/calendars/{year}/{calendarNumber}/floor
@@ -149,128 +153,146 @@ Supplemental calendar:
    /api/3/calendars/{year}/{calendarNumber}/{versionCharacter}
 Active list:
    /api/3/calendars/{year}/{calendarNumber}/{sequenceNumber}
-
-Optional Params:
-full (boolean) - Set to true to see the full calendar response instead of a summary.
-                  (default true)</pre>
+</pre></div>
 </div>
+<p><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="8%" />
+<col width="82%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>full</td>
+<td>boolean</td>
+<td>(default true) Set to true to get a full calendar response instead of a summary.</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Examples</strong></p>
-<div class="highlight-python"><pre>/api/3/calendars/2014/54               (Get calendar 54 of 2014)
+<div class="highlight-python"><div class="highlight"><pre>/api/3/calendars/2014/54               (Get calendar 54 of 2014)
 /api/3/calendars/2014/54?&amp;full=false   (Get a summary of calendar 54)
 /api/3/calendars/2014/54/0             (Get the base active list for calendar 54)
 /api/3/calendars/2014/54/floor         (Get the floor calendar for calendar 54)
-/api/3/calendars/2014/54/B             (Get supplemental calendar B of calendar 54)</pre>
+/api/3/calendars/2014/54/B             (Get supplemental calendar B of calendar 54)
+</pre></div>
 </div>
 <p><strong>Sample Responses</strong></p>
 <p>Full calendar:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
-    <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;calendar&quot;</span><span class="p">,</span>
-    <span class="nx">result</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">year</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                 <span class="c1">// Year the calendar was published</span>
-        <span class="nx">calendarNumber</span><span class="o">:</span> <span class="mi">54</span><span class="p">,</span>         <span class="c1">// Incremental identifier for calendars within a year</span>
-        <span class="nx">floorCalendar</span><span class="o">:</span> <span class="p">{...},</span>       <span class="c1">// See supplemental/floor calendar response result</span>
-        <span class="nx">supplementalCalendars</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">items</span><span class="o">:</span> <span class="p">{...},</span>           <span class="c1">// Map of supplemental version characters to</span>
+    <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;calendar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                 <span class="c1">// Year the calendar was published</span>
+        <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mi">54</span><span class="p">,</span>         <span class="c1">// Incremental identifier for calendars within a year</span>
+        <span class="s2">&quot;floorCalendar&quot;</span><span class="o">:</span> <span class="p">{...},</span>       <span class="c1">// See supplemental/floor calendar response result</span>
+        <span class="s2">&quot;supplementalCalendars&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{...},</span>           <span class="c1">// Map of supplemental version characters to</span>
                                     <span class="c1">//  supplemental calendar response results</span>
-            <span class="nx">size</span><span class="o">:</span> <span class="mi">2</span>
+            <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">2</span>
         <span class="p">},</span>
-        <span class="nx">activeLists</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">items</span><span class="o">:</span> <span class="p">{...},</span>           <span class="c1">// Map of sequence numbers to active list response results</span>
-            <span class="nx">size</span><span class="o">:</span> <span class="mi">3</span>
+        <span class="s2">&quot;activeLists&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{...},</span>           <span class="c1">// Map of sequence numbers to active list response results</span>
+            <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">3</span>
         <span class="p">},</span>
-        <span class="nx">calDate</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span>       <span class="c1">// The date this calendar was active for</span>
+        <span class="s2">&quot;calDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span>       <span class="c1">// The date this calendar was active for</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>Supplemental/Floor calendar:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
-  <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;calendar-floor&quot;</span><span class="p">,</span>   <span class="c1">// &quot;calendar-supplemental&quot; if the response is a supplemental</span>
-  <span class="nx">result</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">year</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                             <span class="c1">// The year the calendar was released</span>
-    <span class="nx">calendarNumber</span><span class="o">:</span> <span class="mi">54</span><span class="p">,</span>                     <span class="c1">// Incremental identifier for calendars within a year</span>
-    <span class="nx">version</span><span class="o">:</span> <span class="s2">&quot;floor&quot;</span><span class="p">,</span>                       <span class="c1">// The supplemental version, &quot;floor&quot; or</span>
-                                            <span class="c1">//  a single capital character</span>
-    <span class="nx">calDate</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>
-    <span class="nx">releaseDateTime</span><span class="o">:</span> <span class="s2">&quot;2014-06-20T02:01&quot;</span><span class="p">,</span>    <span class="c1">// The date this supplemental was released</span>
-    <span class="nx">entriesBySection</span><span class="o">:</span> <span class="p">{</span>                     <span class="c1">// A listing of bills mapped to their floor status</span>
-      <span class="nx">items</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">THIRD_READING</span><span class="o">:</span> <span class="p">{</span>                    <span class="c1">// List of bills on their third reading</span>
-          <span class="nx">items</span><span class="o">:</span> <span class="p">[</span>
-            <span class="p">{</span>                               <span class="c1">// Modified bill response (link below)</span>
-              <span class="nx">basePrintNo</span><span class="o">:</span> <span class="s2">&quot;A5625&quot;</span><span class="p">,</span>
-              <span class="nx">session</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
-              <span class="nx">printNo</span><span class="o">:</span> <span class="s2">&quot;A5625A&quot;</span><span class="p">,</span>
-              <span class="nx">billType</span><span class="o">:</span> <span class="p">{</span>
-                <span class="nx">chamber</span><span class="o">:</span> <span class="s2">&quot;ASSEMBLY&quot;</span><span class="p">,</span>
-                <span class="nx">desc</span><span class="o">:</span> <span class="s2">&quot;Assembly&quot;</span><span class="p">,</span>
-                <span class="nx">resolution</span><span class="o">:</span> <span class="kc">false</span>
+  <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;calendar-floor&quot;</span><span class="p">,</span>   <span class="c1">// &quot;calendar-supplemental&quot; if the response is a supplemental</span>
+  <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                             <span class="c1">// The year the calendar was released</span>
+    <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mi">54</span><span class="p">,</span>                     <span class="c1">// Incremental identifier for calendars within a year</span>
+    <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;floor&quot;</span><span class="p">,</span>                       <span class="c1">// The supplemental version, &quot;floor&quot; or</span>
+                                              <span class="c1">//  a single capital character</span>
+    <span class="s2">&quot;calDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;releaseDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20T02:01&quot;</span><span class="p">,</span>    <span class="c1">// The date this supplemental was released</span>
+    <span class="s2">&quot;entriesBySection&quot;</span><span class="o">:</span> <span class="p">{</span>                     <span class="c1">// A listing of bills mapped to their floor status</span>
+      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;THIRD_READING&quot;</span><span class="o">:</span> <span class="p">{</span>                    <span class="c1">// List of bills on their third reading</span>
+          <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span>                                 <span class="c1">// Modified bill response (link below)</span>
+              <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A5625&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+              <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A5625A&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;billType&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;ASSEMBLY&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;desc&quot;</span><span class="o">:</span> <span class="s2">&quot;Assembly&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;resolution&quot;</span><span class="o">:</span> <span class="kc">false</span>
               <span class="p">},</span>
-              <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Extends the expiration of the New York state French and Indian war 250th anniversary commemoration commission until December 31, 2015&quot;</span><span class="p">,</span>
-              <span class="nx">activeVersion</span><span class="o">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
-              <span class="nx">year</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
-              <span class="nx">publishedDateTime</span><span class="o">:</span> <span class="s2">&quot;2013-03-04T14:32:46&quot;</span><span class="p">,</span>
-              <span class="nx">substitutedBy</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-              <span class="nx">sponsor</span><span class="o">:</span> <span class="p">{</span>
-                <span class="nx">member</span><span class="o">:</span> <span class="p">{</span>
-                  <span class="nx">memberId</span><span class="o">:</span> <span class="mi">466</span><span class="p">,</span>
-                  <span class="nx">shortName</span><span class="o">:</span> <span class="s2">&quot;ENGLEBRIGHT&quot;</span><span class="p">,</span>
-                  <span class="nx">sessionYear</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
-                  <span class="nx">fullName</span><span class="o">:</span> <span class="s2">&quot;Steven Englebright&quot;</span><span class="p">,</span>
-                  <span class="nx">districtCode</span><span class="o">:</span> <span class="mi">4</span>
+              <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Extends the expiration of the New York state French and Indian war 250th anniversary commemoration commission until December 31, 2015&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;activeVersion&quot;</span><span class="o">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+              <span class="s2">&quot;publishedDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-03-04T14:32:46&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;substitutedBy&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+              <span class="s2">&quot;sponsor&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;member&quot;</span><span class="o">:</span> <span class="p">{</span>
+                  <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mi">466</span><span class="p">,</span>
+                  <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;ENGLEBRIGHT&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+                  <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;Steven Englebright&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mi">4</span>
                 <span class="p">},</span>
-                <span class="nx">budget</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-                <span class="nx">rules</span><span class="o">:</span> <span class="kc">false</span>
+                <span class="s2">&quot;budget&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="s2">&quot;rules&quot;</span><span class="o">:</span> <span class="kc">false</span>
               <span class="p">},</span>
-              <span class="nx">billCalNo</span><span class="o">:</span> <span class="mi">1090</span><span class="p">,</span>              <span class="c1">// The calendar number that ids this bill</span>
-                                            <span class="c1">//  within all calendars</span>
-              <span class="nx">sectionType</span><span class="o">:</span> <span class="s2">&quot;THIRD_READING&quot;</span><span class="p">,</span> <span class="c1">// The floor status of this bill</span>
-              <span class="nx">subBillInfo</span><span class="o">:</span> <span class="p">{</span>                <span class="c1">// Bill info response for a substituted bill</span>
-                <span class="nx">basePrintNo</span><span class="o">:</span> <span class="s2">&quot;S7605&quot;</span><span class="p">,</span>
-                <span class="nx">session</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
-                <span class="nx">printNo</span><span class="o">:</span> <span class="s2">&quot;S7605&quot;</span><span class="p">,</span>
-                <span class="nx">billType</span><span class="o">:</span> <span class="p">{</span>
-                  <span class="nx">chamber</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
-                  <span class="nx">desc</span><span class="o">:</span> <span class="s2">&quot;Senate&quot;</span><span class="p">,</span>
-                  <span class="nx">resolution</span><span class="o">:</span> <span class="kc">false</span>
+              <span class="s2">&quot;billCalNo&quot;</span><span class="o">:</span> <span class="mi">1090</span><span class="p">,</span>              <span class="c1">// The calendar number that ids this bill</span>
+                                              <span class="c1">//  within all calendars</span>
+              <span class="s2">&quot;sectionType&quot;</span><span class="o">:</span> <span class="s2">&quot;THIRD_READING&quot;</span><span class="p">,</span> <span class="c1">// The floor status of this bill</span>
+              <span class="s2">&quot;subBillInfo&quot;</span><span class="o">:</span> <span class="p">{</span>                <span class="c1">// Bill info response for a substituted bill</span>
+                <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S7605&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+                <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S7605&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;billType&quot;</span><span class="o">:</span> <span class="p">{</span>
+                  <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;desc&quot;</span><span class="o">:</span> <span class="s2">&quot;Senate&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;resolution&quot;</span><span class="o">:</span> <span class="kc">false</span>
                 <span class="p">},</span>
-                <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Extends the expiration of the New York state French and Indian war 250th anniversary commemoration commission until December 31, 2015&quot;</span><span class="p">,</span>
-                <span class="nx">activeVersion</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-                <span class="nx">year</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>
-                <span class="nx">publishedDateTime</span><span class="o">:</span> <span class="s2">&quot;2014-05-15T18:17:31&quot;</span><span class="p">,</span>
-                <span class="nx">substitutedBy</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-                <span class="nx">sponsor</span><span class="o">:</span> <span class="p">{</span>
-                  <span class="nx">member</span><span class="o">:</span> <span class="p">{</span>
-                    <span class="nx">memberId</span><span class="o">:</span> <span class="mi">385</span><span class="p">,</span>
-                    <span class="nx">shortName</span><span class="o">:</span> <span class="s2">&quot;ESPAILLAT&quot;</span><span class="p">,</span>
-                    <span class="nx">sessionYear</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
-                    <span class="nx">fullName</span><span class="o">:</span> <span class="s2">&quot;Adriano Espaillat&quot;</span><span class="p">,</span>
-                    <span class="nx">districtCode</span><span class="o">:</span> <span class="mi">31</span>
+                <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Extends the expiration of the New York state French and Indian war 250th anniversary commemoration commission until December 31, 2015&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;activeVersion&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>
+                <span class="s2">&quot;publishedDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-05-15T18:17:31&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;substitutedBy&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="s2">&quot;sponsor&quot;</span><span class="o">:</span> <span class="p">{</span>
+                  <span class="s2">&quot;member&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mi">385</span><span class="p">,</span>
+                    <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;ESPAILLAT&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+                    <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;Adriano Espaillat&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mi">31</span>
                   <span class="p">},</span>
-                  <span class="nx">budget</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-                  <span class="nx">rules</span><span class="o">:</span> <span class="kc">false</span>
+                  <span class="s2">&quot;budget&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                  <span class="s2">&quot;rules&quot;</span><span class="o">:</span> <span class="kc">false</span>
                 <span class="p">}</span>
-                <span class="p">},</span>
-              <span class="nx">billHigh</span><span class="o">:</span> <span class="kc">false</span>               <span class="c1">// Set to true if this is a high priority bill</span>
+              <span class="p">},</span>
+              <span class="s2">&quot;billHigh&quot;</span><span class="o">:</span> <span class="kc">false</span>               <span class="c1">// Set to true if this is a high priority bill</span>
             <span class="p">},</span>
             <span class="p">...</span>
           <span class="p">],</span>
-                  <span class="nx">size</span><span class="o">:</span> <span class="mi">284</span>
+          <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">284</span>
         <span class="p">},</span>
-        <span class="nx">STARRED_ON_THIRD_READING</span><span class="o">:</span> <span class="p">{</span>     <span class="c1">// Another floor status. All statuses include:</span>
+        <span class="s2">&quot;STARRED_ON_THIRD_READING&quot;</span><span class="o">:</span> <span class="p">{</span>     <span class="c1">// Another floor status. All statuses include:</span>
                                     <span class="c1">// ORDER_OF_THE_FIRST_REPORT, ORDER_OF_THE_SECOND_REPORT,</span>
                                     <span class="c1">// ORDER_OF_THE_SPECIAL_REPORT, THIRD_READING,</span>
                                     <span class="c1">// THIRD_READING_FROM_SPECIAL_REPORT,</span>
                                     <span class="c1">// STARRED_ON_THIRD_READING</span>
-          <span class="nx">items</span><span class="o">:</span> <span class="p">[...],</span>
-          <span class="nx">size</span><span class="o">:</span> <span class="mi">3</span>
+          <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[...],</span>
+          <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">3</span>
         <span class="p">}</span>
       <span class="p">},</span>
-      <span class="nx">size</span><span class="o">:</span> <span class="mi">2</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">2</span>
     <span class="p">}</span>
   <span class="p">}</span>
 <span class="p">}</span>
@@ -278,52 +300,52 @@ full (boolean) - Set to true to see the full calendar response instead of a summ
 </div>
 <p>Active List:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
-  <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;calendar-activelist&quot;</span><span class="p">,</span>
-  <span class="nx">result</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">year</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                             <span class="c1">// The year the calendar was released</span>
-    <span class="nx">calendarNumber</span><span class="o">:</span> <span class="mi">54</span><span class="p">,</span>                     <span class="c1">// Incremental identifier for calendars within a year</span>
-    <span class="nx">sequenceNumber</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>                      <span class="c1">// Indicates publish sequence of active lists</span>
-    <span class="nx">calDate</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>                  <span class="c1">// The date this calendar was active</span>
-    <span class="nx">releaseDateTime</span><span class="o">:</span> <span class="s2">&quot;2014-06-20T04:28:48&quot;</span><span class="p">,</span> <span class="c1">// The date and time this active list was released</span>
-    <span class="nx">notes</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>                            <span class="c1">// Notes regarding the active list, pretty much always null</span>
-    <span class="nx">entries</span><span class="o">:</span> <span class="p">{</span>                              <span class="c1">// List of bills on this active list</span>
-      <span class="nx">items</span><span class="o">:</span> <span class="p">[</span>
+  <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;calendar-activelist&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>                             <span class="c1">// The year the calendar was released</span>
+    <span class="s2">&quot;calendarNumber&quot;</span><span class="o">:</span> <span class="mi">54</span><span class="p">,</span>                     <span class="c1">// Incremental identifier for calendars within a year</span>
+    <span class="s2">&quot;sequenceNumber&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>                      <span class="c1">// Indicates publish sequence of active lists</span>
+    <span class="s2">&quot;calDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>                  <span class="c1">// The date this calendar was active</span>
+    <span class="s2">&quot;releaseDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-06-20T04:28:48&quot;</span><span class="p">,</span> <span class="c1">// The date and time this active list was released</span>
+    <span class="s2">&quot;notes&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>                            <span class="c1">// Notes regarding the active list, pretty much always null</span>
+    <span class="s2">&quot;entries&quot;</span><span class="o">:</span> <span class="p">{</span>                              <span class="c1">// List of bills on this active list</span>
+      <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
         <span class="p">{</span>                                   <span class="c1">// Modified bill response (see above link)</span>
-          <span class="nx">basePrintNo</span><span class="o">:</span> <span class="s2">&quot;S4779&quot;</span><span class="p">,</span>
-          <span class="nx">session</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
-          <span class="nx">printNo</span><span class="o">:</span> <span class="s2">&quot;S4779B&quot;</span><span class="p">,</span>
-          <span class="nx">billType</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">chamber</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
-            <span class="nx">desc</span><span class="o">:</span> <span class="s2">&quot;Senate&quot;</span><span class="p">,</span>
-            <span class="nx">resolution</span><span class="o">:</span> <span class="kc">false</span>
+          <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S4779&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+          <span class="s2">&quot;printNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S4779B&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;billType&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;chamber&quot;</span><span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;desc&quot;</span><span class="o">:</span> <span class="s2">&quot;Senate&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;resolution&quot;</span><span class="o">:</span> <span class="kc">false</span>
           <span class="p">},</span>
-          <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Relates to inheritance by children conceived after the death of a genetic parent&quot;</span><span class="p">,</span>
-          <span class="nx">activeVersion</span><span class="o">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span>
-          <span class="nx">year</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
-          <span class="nx">publishedDateTime</span><span class="o">:</span> <span class="s2">&quot;2013-04-23T15:04:37&quot;</span><span class="p">,</span>
-          <span class="nx">substitutedBy</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">basePrintNo</span><span class="o">:</span> <span class="s2">&quot;A7461&quot;</span><span class="p">,</span>
-            <span class="nx">session</span><span class="o">:</span> <span class="mi">2013</span>
+          <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Relates to inheritance by children conceived after the death of a genetic parent&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;activeVersion&quot;</span><span class="o">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+          <span class="s2">&quot;publishedDateTime&quot;</span><span class="o">:</span> <span class="s2">&quot;2013-04-23T15:04:37&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;substitutedBy&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;A7461&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2013</span>
           <span class="p">},</span>
-          <span class="nx">sponsor</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">member</span><span class="o">:</span> <span class="p">{</span>
-              <span class="nx">memberId</span><span class="o">:</span> <span class="mi">413</span><span class="p">,</span>
-              <span class="nx">shortName</span><span class="o">:</span> <span class="s2">&quot;BONACIC&quot;</span><span class="p">,</span>
-              <span class="nx">sessionYear</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
-              <span class="nx">fullName</span><span class="o">:</span> <span class="s2">&quot;John J. Bonacic&quot;</span><span class="p">,</span>
-              <span class="nx">districtCode</span><span class="o">:</span> <span class="mi">42</span>
+          <span class="s2">&quot;sponsor&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;member&quot;</span><span class="o">:</span> <span class="p">{</span>
+              <span class="s2">&quot;memberId&quot;</span><span class="o">:</span> <span class="mi">413</span><span class="p">,</span>
+              <span class="s2">&quot;shortName&quot;</span><span class="o">:</span> <span class="s2">&quot;BONACIC&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;sessionYear&quot;</span><span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>
+              <span class="s2">&quot;fullName&quot;</span><span class="o">:</span> <span class="s2">&quot;John J. Bonacic&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;districtCode&quot;</span><span class="o">:</span> <span class="mi">42</span>
             <span class="p">},</span>
-            <span class="nx">budget</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-            <span class="nx">rules</span><span class="o">:</span> <span class="kc">false</span>
+            <span class="s2">&quot;budget&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="s2">&quot;rules&quot;</span><span class="o">:</span> <span class="kc">false</span>
           <span class="p">},</span>
-          <span class="nx">billCalNo</span><span class="o">:</span> <span class="mi">192</span>                    <span class="c1">// The calendar number that ids this bill</span>
+          <span class="s2">&quot;billCalNo&quot;</span><span class="o">:</span> <span class="mi">192</span>                    <span class="c1">// The calendar number that ids this bill</span>
                                             <span class="c1">//  within all calendars</span>
         <span class="p">},</span>
         <span class="p">...</span>
       <span class="p">],</span>
-      <span class="nx">size</span><span class="o">:</span> <span class="mi">31</span>
+      <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">31</span>
     <span class="p">}</span>
   <span class="p">}</span>
 <span class="p">}</span>
@@ -333,27 +355,278 @@ full (boolean) - Set to true to see the full calendar response instead of a summ
 <div class="section" id="get-a-listing-of-calendars">
 <h2>Get a listing of calendars<a class="headerlink" href="#get-a-listing-of-calendars" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><pre>Full calendars:
+<div class="highlight-python"><div class="highlight"><pre>Full calendars:
    /api/3/calendars/{year}
 Supplemental/Floor calendars:
    /api/3/calendars/{year}/supplemental
 Active lists:
    /api/3/calendars/{year}/activelist
-
-Optional Params:
-full (boolean) - Set to true to see the full calendar responses instead of the summaries.
-      (default false)
-order ('ASC'|'DESC') - Determines the order the calendar responses.  Responses are ordered by
-      calendar number and then either sequenceNumber or version if they are active lists or
-      supplementals respectively.  (default 'ASC')
-limit (number) - Limit the number of results (default 100)
-offset (number) - Start results from offset (default 1)</pre>
+</pre></div>
 </div>
+<p id="cal-list-params"><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="8%" />
+<col width="82%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>full</td>
+<td>boolean</td>
+<td>(default false) Set to true to see the full calendar responses instead of the summaries.</td>
+</tr>
+<tr class="row-odd"><td>limit</td>
+<td>string</td>
+<td>(default 100) Limit the number of results</td>
+</tr>
+<tr class="row-even"><td>offset</td>
+<td>number</td>
+<td>(default 1) Start results from offset</td>
+</tr>
+<tr class="row-odd"><td>order</td>
+<td>string</td>
+<td>(default &#8216;ASC&#8217;) Determines the order the calendar responses.  Responses are ordered by
+calendar number and then either sequenceNumber or version if they are active lists or
+supplementals respectively.</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Examples</strong></p>
-<div class="highlight-python"><pre>/api/3/calendars/2014?full=true                       (Get all calendar data from 2014)
+<div class="highlight-python"><div class="highlight"><pre>/api/3/calendars/2014?full=true                       (Get all calendar data from 2014)
 /api/3/calendars/2014?limit=1&amp;order=DESC              (Get the latest calendar from 2014)
 /api/3/calendars/2014/activelist?limit=5              (Get the first 5 active lists of 2014)
-/api/3/calendars/2014/supplemental?limit=5&amp;offset=5   (Get the second 5 supplementals of 2014)</pre>
+/api/3/calendars/2014/supplemental?limit=5&amp;offset=5   (Get the second 5 supplementals of 2014)
+</pre></div>
+</div>
+</div>
+<div class="section" id="search-for-calendars">
+<h2>Search for calendars<a class="headerlink" href="#search-for-calendars" title="Permalink to this headline">¶</a></h2>
+<p>Read our <a class="reference internal" href="search_api.html"><em>search API docs</em></a> for info on how to construct search terms.
+The calendar search index is comprised of full calendar responses
+(i.e. the json response returned when requesting a single calendar) so query and sort strings will be based on that response
+structure.</p>
+<p><strong>Usage</strong></p>
+<p>Search across all session years</p>
+<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/calendars/search?term=YOUR_TERM
+</pre></div>
+</div>
+<p>Search within a session year</p>
+<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/calendars/{sessionYear}/search?term=YOUR_TERM
+</pre></div>
+</div>
+<p><strong>Required Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="23%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>term</td>
+<td>string</td>
+<td><a class="reference internal" href="search_api.html#search-term"><em>ElasticSearch query string</em></a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="17%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>sort</td>
+<td>string</td>
+<td><a class="reference internal" href="search_api.html#search-sort"><em>ElasticSearch sort string</em></a></td>
+</tr>
+<tr class="row-odd"><td>calendarType</td>
+<td>string</td>
+<td>(default full) The type of calendar to search (full, active_list, supplemental)</td>
+</tr>
+</tbody>
+</table>
+<p>Also takes all <a class="reference internal" href="#cal-list-params"><em>calendar listing optional params</em></a> with the exception of order</p>
+</div>
+<div class="section" id="get-calendar-updates">
+<h2>Get calendar updates<a class="headerlink" href="#get-calendar-updates" title="Permalink to this headline">¶</a></h2>
+<p>To identify which calendars have received updates within a given time period you can use the calendar updates api.</p>
+<p><strong>Usage</strong></p>
+<p>List of calendars updated within the past seven days</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="n">updates</span>
+</pre></div>
+</div>
+<p>List of calendars updated after the given date/time</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>List of calendars updated during the given date/time range</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The fromDateTime and toDateTime should be formatted as the ISO Date Time format.  For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02</p>
+</div>
+<p><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="23%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>detail</td>
+<td>boolean</td>
+<td>Set to true to see <a class="reference internal" href="#detailed-update-digests">detailed update digests</a></td>
+</tr>
+<tr class="row-odd"><td>order</td>
+<td>string (asc|desc)</td>
+<td>Order the results by update date/time</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>Calendars that were updated between June 15th and June 20th of 2014</p>
+<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/calendars/updates/2014-06-15T00:00:00/2014-06-20T00:00:00
+</pre></div>
+</div>
+<p><strong>Response (detail=false)</strong></p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;calendar-id-update-token list&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;total&quot;</span> <span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
+  <span class="s2">&quot;offsetStart&quot;</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">&quot;offsetEnd&quot;</span> <span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
+  <span class="s2">&quot;limit&quot;</span> <span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+  <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;items&quot;</span> <span class="o">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="p">{</span>        <span class="c1">// The year and calendar number of the updated calendar</span>
+          <span class="s2">&quot;year&quot;</span> <span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>
+          <span class="s2">&quot;calendarNumber&quot;</span> <span class="o">:</span> <span class="mi">53</span>
+        <span class="p">},</span>
+        <span class="c1">// The id of the reference that triggered the update</span>
+        <span class="s2">&quot;sourceId&quot;</span> <span class="o">:</span> <span class="s2">&quot;SOBI.D140619.T221836.TXT-2-CALENDAR&quot;</span><span class="p">,</span>
+        <span class="c1">// The publish date time of the reference source</span>
+        <span class="s2">&quot;sourceDateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-06-19T22:18:36&quot;</span><span class="p">,</span>
+        <span class="c1">// The date and time that the reference was processed</span>
+        <span class="s2">&quot;processedDateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-12-15T15:21:07.002331&quot;</span>
+      <span class="p">},</span>
+      <span class="p">...</span> <span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;size&quot;</span> <span class="o">:</span> <span class="mi">4</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-specific-calendar-updates">
+<h2>Get specific calendar updates<a class="headerlink" href="#get-specific-calendar-updates" title="Permalink to this headline">¶</a></h2>
+<p><strong>Usage</strong></p>
+<p>Get updates for a calendar within a datetime range</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">calendarNumber</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Get all updates for a calendar</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">calendars</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">calendarNumber</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
+</pre></div>
+</div>
+<p><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="23%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>order</td>
+<td>string (asc|desc)</td>
+<td>Order the results by update date/time</td>
+</tr>
+<tr class="row-odd"><td>limit</td>
+<td>string</td>
+<td>(default 100) Limit the number of results</td>
+</tr>
+<tr class="row-even"><td>offset</td>
+<td>number</td>
+<td>(default 1) Start results from offset</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>Get updates for calendar 54 of 2014 that occurred between 9 AM and 5 PM on June 20th, 2014</p>
+<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/calendars/2014/54/updates/2014-06-20T09:00:00/2014-06-20T17:00:00
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-javascript" id="detailed-update-digests"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;update-digest list&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;total&quot;</span> <span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="s2">&quot;offsetStart&quot;</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">&quot;offsetEnd&quot;</span> <span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="s2">&quot;limit&quot;</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;items&quot;</span> <span class="o">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="p">{</span>
+          <span class="s2">&quot;year&quot;</span> <span class="o">:</span> <span class="mi">2014</span><span class="p">,</span>
+          <span class="s2">&quot;calendarNumber&quot;</span> <span class="o">:</span> <span class="mi">54</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;sourceId&quot;</span> <span class="o">:</span> <span class="s2">&quot;SOBI.D140620.T153915.TXT-1-CALENDAR&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sourceDateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-06-20T15:39:15&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;processedDateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-12-15T15:21:34.786472&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action&quot;</span> <span class="o">:</span> <span class="s2">&quot;INSERT&quot;</span><span class="p">,</span>                <span class="c1">// The update action that was performed</span>
+        <span class="s2">&quot;scope&quot;</span> <span class="o">:</span> <span class="s2">&quot;Calendar Active List&quot;</span><span class="p">,</span>   <span class="c1">// The type of sub calendar that was updated</span>
+        <span class="s2">&quot;fields&quot;</span> <span class="o">:</span> <span class="p">{</span>                        <span class="c1">// Updated fields</span>
+          <span class="s2">&quot;publishedDateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-06-20 05:28:51&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;notes&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;sequenceNo&quot;</span> <span class="o">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;createdDateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-12-15 15:21:34.786472&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="s2">&quot;302&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;calendarDate&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-06-20&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;releaseDateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-06-20 04:28:48&quot;</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="p">...</span> <span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;size&quot;</span> <span class="o">:</span> <span class="mi">3</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
 </div>
 </div>
 </div>

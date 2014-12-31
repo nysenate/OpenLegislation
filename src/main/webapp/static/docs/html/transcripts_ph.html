@@ -75,6 +75,9 @@
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-single-calendar">Get a single calendar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-listing-of-calendars">Get a listing of calendars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#search-for-calendars">Search for calendars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-calendar-updates">Get calendar updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-specific-calendar-updates">Get specific calendar updates</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Committee API</strong></a><ul>
@@ -82,6 +85,7 @@
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-committee-version-at-specific-time">Get a committee version at specific time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-committee-history">Get committee history</a></li>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-all-current-committees">Get all current committees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#search-for-committees">Search for committees</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
@@ -147,29 +151,31 @@
 </div>
 <p><strong>Examples</strong></p>
 <p>Request public hearing &#8220;10-29-13 NYsenate_Flanagan_Education_FINAL.txt&#8221;</p>
-<div class="highlight-python"><pre>/api/3/hearings/10-29-13 NYsenate_Flanagan_Education_FINAL.txt</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/hearings/10-29-13 NYsenate_Flanagan_Education_FINAL.txt
+</pre></div>
 </div>
 <p><strong>Response</strong></p>
 <p>Full Public Hearing Response</p>
-<div class="highlight-javascript"><pre>{
-  "success" : true,                               // Indicates if a public hearing was found.
-  "message" : "Data for public hearing 10-29..",  // Response description
-  "responseType" : "hearing",                     // Response data type
-  "result" : {
-    "filename" : "10-29-13 NYsenate_Flanagan..",  // Filename of public hearing transcript
-    "title" : "PUBLIC HEARING THE REGENTS RE..",  // Title of public hearing
-    "date" : "2013-10-29",                        // Date of public hearing
-    "address" : "Senate Hearing Room\n250 Br..",  // Address of public hearing
-    "committees" : [ {                            // List of committees/task forces/other groups holding the hearing
-      "name" : "EDUCATION",                       // Name of committee/task force/other group
-      "chamber" : "SENATE"                        // Chamber of committee
-    } ],
-    "attendance" : [ ],                           // Legislatures present at hearing. (Currently not used)
-    "startTime" : "10:00",                        // Time the public hearing started
-    "endTime" : "14:00",                          // Time the public hearing ended
-    "text" : "\n\n\n       1     BEFORE THE NE..  // The text of the public hearing
-    }
-}</pre>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                               <span class="c1">// Indicates if a public hearing was found.</span>
+  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;Data for public hearing 10-29..&quot;</span><span class="p">,</span>  <span class="c1">// Response description</span>
+  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;hearing&quot;</span><span class="p">,</span>                     <span class="c1">// Response data type</span>
+  <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;filename&quot;</span> <span class="o">:</span> <span class="s2">&quot;10-29-13 NYsenate_Flanagan..&quot;</span><span class="p">,</span>  <span class="c1">// Filename of public hearing transcript</span>
+    <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;PUBLIC HEARING THE REGENTS RE..&quot;</span><span class="p">,</span>  <span class="c1">// Title of public hearing</span>
+    <span class="s2">&quot;date&quot;</span> <span class="o">:</span> <span class="s2">&quot;2013-10-29&quot;</span><span class="p">,</span>                        <span class="c1">// Date of public hearing</span>
+    <span class="s2">&quot;address&quot;</span> <span class="o">:</span> <span class="s2">&quot;Senate Hearing Room\n250 Br..&quot;</span><span class="p">,</span>  <span class="c1">// Address of public hearing</span>
+    <span class="s2">&quot;committees&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>                            <span class="c1">// List of committees/task forces/other groups holding the hearing</span>
+      <span class="s2">&quot;name&quot;</span> <span class="o">:</span> <span class="s2">&quot;EDUCATION&quot;</span><span class="p">,</span>                       <span class="c1">// Name of committee/task force/other group</span>
+      <span class="s2">&quot;chamber&quot;</span> <span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span>                        <span class="c1">// Chamber of committee</span>
+    <span class="p">}</span> <span class="p">],</span>
+    <span class="s2">&quot;attendance&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">],</span>                           <span class="c1">// Legislatures present at hearing. (Currently not used)</span>
+    <span class="s2">&quot;startTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;10:00&quot;</span><span class="p">,</span>                        <span class="c1">// Time the public hearing started</span>
+    <span class="s2">&quot;endTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;14:00&quot;</span><span class="p">,</span>                          <span class="c1">// Time the public hearing ended</span>
+    <span class="s2">&quot;text&quot;</span> <span class="o">:</span> <span class="s2">&quot;\n\n\n       1     BEFORE THE NE..&quot;</span> <span class="c1">// The text of the public hearing</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
 </div>
 </div>
 <div class="section" id="get-a-public-hearing-pdf">
@@ -181,7 +187,8 @@
 </div>
 <p><strong>Examples</strong></p>
 <p>Request public hearing 09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt</p>
-<div class="highlight-python"><pre>/api/3/hearings/09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt.pdf</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/hearings/09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt.pdf
+</pre></div>
 </div>
 </div>
 <hr class="docutils" />
@@ -226,13 +233,16 @@
 </table>
 <p><strong>Examples</strong></p>
 <p>List 50 public hearings from 2014</p>
-<div class="highlight-python"><pre>/api/3/hearings/2014?limit=50</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/hearings/2014?limit=50
+</pre></div>
 </div>
 <p>List 50 complete public hearings starting from 51</p>
-<div class="highlight-python"><pre>/api/3/hearings/2014?limit=50%offset=51&amp;full=true</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/hearings/2014?limit=50%offset=51&amp;full=true
+</pre></div>
 </div>
 <p>List 10 complete public hearings sorted by increasing date</p>
-<div class="highlight-python"><pre>/api/3/hearings/2014?limit=10&amp;full=true&amp;sort=dateTime:ASC</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/hearings/2014?limit=10&amp;full=true&amp;sort=dateTime:ASC
+</pre></div>
 </div>
 <p><strong>Response</strong></p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>

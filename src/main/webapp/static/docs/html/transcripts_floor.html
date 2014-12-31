@@ -75,6 +75,9 @@
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-single-calendar">Get a single calendar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-listing-of-calendars">Get a listing of calendars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#search-for-calendars">Search for calendars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-calendar-updates">Get calendar updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-specific-calendar-updates">Get specific calendar updates</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Committee API</strong></a><ul>
@@ -82,6 +85,7 @@
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-committee-version-at-specific-time">Get a committee version at specific time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-committee-history">Get committee history</a></li>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-all-current-committees">Get all current committees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#search-for-committees">Search for committees</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href=""><strong>Senate Floor Transcripts API</strong></a><ul>
@@ -147,7 +151,8 @@
 </div>
 <p><strong>Examples</strong></p>
 <p>Request transcript 090314.txt</p>
-<div class="highlight-python"><pre>/api/3/transcripts/090314.txt</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/transcripts/090314.txt
+</pre></div>
 </div>
 <p><strong>Response</strong></p>
 <p>Full Transcript Response</p>
@@ -175,7 +180,8 @@
 </div>
 <p><strong>Examples</strong></p>
 <p>Request transcript 090314.txt</p>
-<div class="highlight-python"><pre>/api/3/transcripts/090314.txt.pdf</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/transcripts/090314.txt.pdf
+</pre></div>
 </div>
 </div>
 <div class="section" id="get-a-list-of-transcripts">
@@ -219,13 +225,16 @@
 </table>
 <p><strong>Examples</strong></p>
 <p>List 50 transcripts from 2014</p>
-<div class="highlight-python"><pre>/api/3/transcripts/2014?limit=50</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/transcripts/2014?limit=50
+</pre></div>
 </div>
 <p>List 50 complete transcripts starting from 51</p>
-<div class="highlight-python"><pre>/api/3/transcripts/2014?limit=50%offset=51&amp;full=true</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/transcripts/2014?limit=50%offset=51&amp;full=true
+</pre></div>
 </div>
 <p>List 10 complete transcripts sorted by increasing date</p>
-<div class="highlight-python"><pre>/api/3/transcripts/2014?limit=10&amp;full=true&amp;sort=dateTime:ASC</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/transcripts/2014?limit=10&amp;full=true&amp;sort=dateTime:ASC
+</pre></div>
 </div>
 <p><strong>Response</strong></p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>

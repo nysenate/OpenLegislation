@@ -41,19 +41,13 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
     @Autowired
     CalendarDataService calendarDataService;
 
-    @RequestMapping(value = "/updates")
-    public BaseResponse getUpdatesDuring(@RequestParam(defaultValue = "false") boolean detail,
-                                         WebRequest webRequest) {
-        return getUpdatesDuring(LocalDateTime.now().minusDays(7).toString(), LocalDateTime.now().toString(), detail, webRequest);
-    }
 
-    @RequestMapping(value = "/updates/{from}")
-    public BaseResponse getUpdatesDuring(@PathVariable String from,
-                                         @RequestParam(defaultValue = "false") boolean detail,
-                                         WebRequest webRequest) {
-        return getUpdatesDuring(from, LocalDateTime.now().toString(), detail, webRequest);
-    }
-
+    /**
+     * Calendar updates API
+     *
+     * Get calendar updates:    (GET) /api/3/calendars/updates/{fromDateTime}/{toDateTime}
+     * Request Parameters:      detail - Returns detailed update responses if set to true
+     */
     @RequestMapping(value = "/updates/{from}/{to}")
     public BaseResponse getUpdatesDuring(@PathVariable String from, @PathVariable String to,
                                          @RequestParam(defaultValue = "false") boolean detail,
@@ -86,13 +80,39 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
         return response;
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates")
-    public BaseResponse getUpdatesForCalendar(@PathVariable int year, @PathVariable int calendarNo,
-                                              WebRequest webRequest) {
-        return getUpdatesForCalendarDuring(year, calendarNo,
-                DateUtils.LONG_AGO.atStartOfDay().toString(), DateUtils.THE_FUTURE.atStartOfDay().toString(), webRequest);
+    /**
+     * Calendar updates API
+     *
+     * Get calendar updates after date:    (GET) /api/3/calendars/updates/{fromDateTime}
+     * @see #getUpdatesDuring
+     */
+    @RequestMapping(value = "/updates/{from}")
+    public BaseResponse getUpdatesDuring(@PathVariable String from,
+                                         @RequestParam(defaultValue = "false") boolean detail,
+                                         WebRequest webRequest) {
+        return getUpdatesDuring(from, LocalDateTime.now().toString(), detail, webRequest);
     }
 
+    /**
+     * Calendar updates API
+     *
+     * Get calendar updates for last seven days:    (GET) /api/3/calendars/updates/
+     * @see #getUpdatesDuring
+     */
+    @RequestMapping(value = "/updates")
+    public BaseResponse getUpdatesDuring(@RequestParam(defaultValue = "false") boolean detail,
+                                         WebRequest webRequest) {
+        return getUpdatesDuring(LocalDateTime.now().minusDays(7).toString(), LocalDateTime.now().toString(), detail, webRequest);
+    }
+
+    /**
+     * Updates for calendar API
+     *
+     * Get updates for specific calendar:   (GET) /api/3/calendars/{year}/{calendarNo}/updates/{from}/{to}
+     * Request parameters:      order - The sort order of the update response (orderd by published date) (default DESC)
+     *                          limit - The maximum number of updates to return (default 100)
+     *                          offset - Return updates starting with offset (default 1)
+     */
     @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates/{from}/{to}")
     public BaseResponse getUpdatesForCalendarDuring(@PathVariable int year, @PathVariable int calendarNo,
                                                     @PathVariable String from, @PathVariable String to,
@@ -110,5 +130,18 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
                         .collect(Collectors.toList()),
                 updateDigests.getTotal(), LimitOffset.ALL
         );
+    }
+
+    /**
+     * All updates for calendar API
+     *
+     * Get all updates for a specific calendar:   (GET) /api/3/calendars/{year}/{calendarNo}/updates/{from}/{to}
+     * @see #getUpdatesForCalendarDuring
+     */
+    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates")
+    public BaseResponse getUpdatesForCalendar(@PathVariable int year, @PathVariable int calendarNo,
+                                              WebRequest webRequest) {
+        return getUpdatesForCalendarDuring(year, calendarNo,
+                DateUtils.LONG_AGO.atStartOfDay().toString(), DateUtils.THE_FUTURE.atStartOfDay().toString(), webRequest);
     }
 }

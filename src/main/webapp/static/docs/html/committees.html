@@ -75,6 +75,9 @@
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-single-calendar">Get a single calendar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-listing-of-calendars">Get a listing of calendars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#search-for-calendars">Search for calendars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-calendar-updates">Get calendar updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-specific-calendar-updates">Get specific calendar updates</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href=""><strong>Committee API</strong></a><ul>
@@ -82,6 +85,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#get-a-committee-version-at-specific-time">Get a committee version at specific time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-committee-history">Get committee history</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-all-current-committees">Get all current committees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#search-for-committees">Search for committees</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
@@ -138,63 +142,73 @@
             
   <div class="section" id="committee-api">
 <h1><strong>Committee API</strong><a class="headerlink" href="#committee-api" title="Permalink to this headline">¶</a></h1>
+<p>In OpenLegislation, committee data is processed in a way that tracks the membership of each committee over time.
+Committees are stored as committee versions, each of which represent a time period where there were no changes in
+committee membership for a specific committee.  Committee versions contain a list of members in the committee,
+information on where and when the committee meets, and the dates when the committee version began and was reformed.</p>
 <div class="section" id="get-a-current-committee-version">
 <h2>Get a current committee version<a class="headerlink" href="#get-a-current-committee-version" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><pre>/api/3/committees/{session}/{chamber}/{committeeName}</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/{session}/{chamber}/{committeeName}
+</pre></div>
 </div>
 <p><strong>Example</strong></p>
-<div class="highlight-python"><pre>/api/3/committees/2013/senate/Cultural%20Affairs,%20Tourism,%20Parks%20and%20Recreation
-(Get the current version of the Cultural Affairs, Tourism, Parks and Recreation committee)</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/2013/senate/Cultural%20Affairs,%20Tourism,%20Parks%20and%20Recreation
+(Get the current version of the Cultural Affairs, Tourism, Parks and Recreation committee)
+</pre></div>
 </div>
 <p><strong>Sample Response</strong></p>
 <p>See <a class="reference internal" href="#committee-version-response">committee version response</a></p>
 </div>
 <div class="section" id="get-a-committee-version-at-specific-time">
 <h2>Get a committee version at specific time<a class="headerlink" href="#get-a-committee-version-at-specific-time" title="Permalink to this headline">¶</a></h2>
+<p>This request will return a committee version (if one exists) corresponding to the given committee that was created
+before or on the given time and reformed after the given time.</p>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><pre>/api/3/committees/{session}/{chamber}/{committeeName}/{ISODateTime}</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/{session}/{chamber}/{committeeName}/{ISODateTime}
+</pre></div>
 </div>
 <p><strong>Example</strong></p>
-<div class="highlight-python"><pre>/api/3/committees/2013/senate/Finance/2014-03-01T09:30:00
-(Get the codes committee at 9:30 AM on March 1st, 2014)</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/2013/senate/Finance/2014-03-01T09:30:00
+(Get the codes committee at 9:30 AM on March 1st, 2014)
+</pre></div>
 </div>
 <p id="committee-version-response"><strong>Sample Response</strong></p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
-  <span class="nx">success</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="nx">message</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nx">responseType</span> <span class="o">:</span> <span class="s2">&quot;committee&quot;</span><span class="p">,</span>
-  <span class="nx">result</span> <span class="o">:</span> <span class="p">{</span>
-    <span class="nx">chamber</span> <span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>     <span class="c1">// The chamber of this committee (SENATE or ASSEMBLY)</span>
-    <span class="nx">name</span> <span class="o">:</span> <span class="s2">&quot;Finance&quot;</span><span class="p">,</span>       <span class="c1">// The name of this committee</span>
-    <span class="nx">sessionYear</span> <span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>     <span class="c1">// The session year of this committee version</span>
-    <span class="nx">referenceDate</span> <span class="o">:</span> <span class="s2">&quot;2014-02-28T11:25:44&quot;</span><span class="p">,</span>  <span class="c1">// The date and time that this configuration</span>
-                                            <span class="c1">//  of committee members was reported</span>
-    <span class="nx">reformed</span> <span class="o">:</span> <span class="s2">&quot;2014-03-03T17:09:09&quot;</span><span class="p">,</span>       <span class="c1">// The date and time that this configuration</span>
-                                            <span class="c1">//  of committee members was replaced</span>
-                                            <span class="c1">// If null, then this is the current committee version</span>
-    <span class="nx">location</span> <span class="o">:</span> <span class="s2">&quot;Room 124 CAP&quot;</span><span class="p">,</span>  <span class="c1">// The location where this committee meets</span>
-    <span class="nx">meetDay</span> <span class="o">:</span> <span class="s2">&quot;TUESDAY&quot;</span><span class="p">,</span>        <span class="c1">// The day of the week that this committee meets</span>
-    <span class="nx">meetTime</span> <span class="o">:</span> <span class="s2">&quot;11:00&quot;</span><span class="p">,</span>         <span class="c1">// The time of day that this committee meets</span>
-    <span class="nx">meetAltWeek</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>        <span class="c1">// True if this committee meets on alternate weeks</span>
-    <span class="nx">meetAltWeekText</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>       <span class="c1">// Describes the committee&#39;s alternate schedule if applicable</span>
-    <span class="nx">committeeMembers</span> <span class="o">:</span> <span class="p">{</span>        <span class="c1">// A listing of members in this committee</span>
-      <span class="nx">items</span> <span class="o">:</span> <span class="p">[</span>
+  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;committee&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;chamber&quot;</span> <span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span><span class="p">,</span>     <span class="c1">// The chamber of this committee (SENATE or ASSEMBLY)</span>
+    <span class="s2">&quot;name&quot;</span> <span class="o">:</span> <span class="s2">&quot;Finance&quot;</span><span class="p">,</span>       <span class="c1">// The name of this committee</span>
+    <span class="s2">&quot;sessionYear&quot;</span> <span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>     <span class="c1">// The session year of this committee version</span>
+    <span class="s2">&quot;referenceDate&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-02-28T11:25:44&quot;</span><span class="p">,</span>  <span class="c1">// The date and time that this configuration</span>
+                                              <span class="c1">//  of committee members was reported</span>
+    <span class="s2">&quot;reformed&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-03-03T17:09:09&quot;</span><span class="p">,</span>       <span class="c1">// The date and time that this configuration</span>
+                                              <span class="c1">//  of committee members was replaced</span>
+                                              <span class="c1">// If null, then this is the current committee version</span>
+    <span class="s2">&quot;location&quot;</span> <span class="o">:</span> <span class="s2">&quot;Room 124 CAP&quot;</span><span class="p">,</span>  <span class="c1">// The location where this committee meets</span>
+    <span class="s2">&quot;meetDay&quot;</span> <span class="o">:</span> <span class="s2">&quot;TUESDAY&quot;</span><span class="p">,</span>        <span class="c1">// The day of the week that this committee meets</span>
+    <span class="s2">&quot;meetTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;11:00&quot;</span><span class="p">,</span>         <span class="c1">// The time of day that this committee meets</span>
+    <span class="s2">&quot;meetAltWeek&quot;</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>        <span class="c1">// True if this committee meets on alternate weeks</span>
+    <span class="s2">&quot;meetAltWeekText&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>       <span class="c1">// Describes the committee&#39;s alternate schedule if applicable</span>
+    <span class="s2">&quot;committeeMembers&quot;</span> <span class="o">:</span> <span class="p">{</span>        <span class="c1">// A listing of members in this committee</span>
+      <span class="s2">&quot;items&quot;</span> <span class="o">:</span> <span class="p">[</span>
         <span class="p">{</span>
-          <span class="nx">memberId</span> <span class="o">:</span> <span class="mi">376</span><span class="p">,</span>                   <span class="c1">// An arbitrary unique id used to identify members</span>
-                                            <span class="c1">//  in our database</span>
-          <span class="nx">shortName</span> <span class="o">:</span> <span class="s2">&quot;DEFRANCISCO&quot;</span><span class="p">,</span>        <span class="c1">// The committee member&#39;s lbdc shortname</span>
-          <span class="nx">sessionYear</span> <span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>               <span class="c1">// The session year this member was active in</span>
-          <span class="nx">fullName</span> <span class="o">:</span> <span class="s2">&quot;John A. DeFrancisco&quot;</span><span class="p">,</span> <span class="c1">// The member&#39;s full name</span>
-          <span class="nx">districtCode</span> <span class="o">:</span> <span class="mi">50</span><span class="p">,</span>                <span class="c1">// A code designating the member&#39;s home district</span>
-          <span class="nx">sequenceNo</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>                   <span class="c1">// The member&#39;s position in the list of committee members</span>
-          <span class="nx">title</span> <span class="o">:</span> <span class="s2">&quot;CHAIR_PERSON&quot;</span>            <span class="c1">// The member&#39;s role in the committee</span>
+          <span class="s2">&quot;memberId&quot;</span> <span class="o">:</span> <span class="mi">376</span><span class="p">,</span>                   <span class="c1">// An arbitrary unique id used to identify members</span>
+                                              <span class="c1">//  in our database</span>
+          <span class="s2">&quot;shortName&quot;</span> <span class="o">:</span> <span class="s2">&quot;DEFRANCISCO&quot;</span><span class="p">,</span>        <span class="c1">// The committee member&#39;s lbdc shortname</span>
+          <span class="s2">&quot;sessionYear&quot;</span> <span class="o">:</span> <span class="mi">2013</span><span class="p">,</span>               <span class="c1">// The session year this member was active in</span>
+          <span class="s2">&quot;fullName&quot;</span> <span class="o">:</span> <span class="s2">&quot;John A. DeFrancisco&quot;</span><span class="p">,</span> <span class="c1">// The member&#39;s full name</span>
+          <span class="s2">&quot;districtCode&quot;</span> <span class="o">:</span> <span class="mi">50</span><span class="p">,</span>                <span class="c1">// A code designating the member&#39;s home district</span>
+          <span class="s2">&quot;sequenceNo&quot;</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>                   <span class="c1">// The member&#39;s position in the list of committee members</span>
+          <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;CHAIR_PERSON&quot;</span>            <span class="c1">// The member&#39;s role in the committee</span>
                                             <span class="c1">//  Valid roles include:</span>
                                             <span class="c1">//  &quot;CHAIR_PERSON&quot;, &quot;VICE_CHAIR&quot;, and &quot;MEMBER&quot;</span>
         <span class="p">},</span>
         <span class="p">...</span>
       <span class="p">],</span>
-      <span class="nx">size</span> <span class="o">:</span> <span class="mi">24</span>
+      <span class="s2">&quot;size&quot;</span> <span class="o">:</span> <span class="mi">24</span>
     <span class="p">}</span>
   <span class="p">}</span>
 <span class="p">}</span>
@@ -204,32 +218,140 @@
 <div class="section" id="get-committee-history">
 <h2>Get committee history<a class="headerlink" href="#get-committee-history" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><pre>/api/3/committees/{session}/{chamber}/{committeeName}/history
-
-Optional Params:
-full (boolean) - Set to true to get full committee responses. (default false)
-order ('ASC'|'DESC') - Determines the order the committee responses.
-      Sorted by date.  (default 'DESC')
-limit (number) - Limit the number of results (default 50)
-offset (number) - Start results from offset (default 1)</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/{session}/{chamber}/{committeeName}/history
+</pre></div>
 </div>
+<p id="comm-history-params"><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="8%" />
+<col width="82%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>full</td>
+<td>boolean</td>
+<td>(default false) Set to true to see the full committee responses instead of the summaries.</td>
+</tr>
+<tr class="row-odd"><td>limit</td>
+<td>string</td>
+<td>(default 50) Limit the number of results</td>
+</tr>
+<tr class="row-even"><td>offset</td>
+<td>number</td>
+<td>(default 1) Start results from offset</td>
+</tr>
+<tr class="row-odd"><td>order</td>
+<td>string</td>
+<td>(default &#8216;DESC&#8217;) Determines the order the committee responses.  Sorted by created date.</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Example</strong></p>
-<div class="highlight-python"><pre>/api/3/committees/2013/senate/Aging/history  (Get 2013 history for the aging committee)
+<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/2013/senate/Aging/history  (Get 2013 history for the aging committee)
 /api/3/committees/2013/senate/Aging/history?limit=1&amp;order=ASC&amp;full=true
-(Get the first version of the Aging committee from 2013)</pre>
+(Get the first version of the Aging committee from 2013)
+</pre></div>
 </div>
 </div>
 <div class="section" id="get-all-current-committees">
 <h2>Get all current committees<a class="headerlink" href="#get-all-current-committees" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><pre>/api/3/committees/{session}/{chamber}
-
-Optional Params:
-full (boolean) - Set to true to see the full committee responses (default false)</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/{session}/{chamber}
+</pre></div>
 </div>
+<p><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="8%" />
+<col width="82%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>full</td>
+<td>boolean</td>
+<td>(default false) Set to true to get full committee responses instead of summaries.</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Example</strong></p>
-<div class="highlight-python"><pre>/api/3/committees/2013/senate?&amp;full=true  (Get full responses for all current senate committees for session 2013</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/2013/senate?&amp;full=true
+(Get full responses for all current senate committees for session 2013)
+</pre></div>
 </div>
+</div>
+<div class="section" id="search-for-committees">
+<h2>Search for committees<a class="headerlink" href="#search-for-committees" title="Permalink to this headline">¶</a></h2>
+<p>Read our <a class="reference internal" href="search_api.html"><em>search API docs</em></a> for info on how to construct search terms.
+The committee search index is comprised of full committee responses
+(i.e. the json response returned when requesting a single committee)
+so query and sort strings will be based on that response structure.</p>
+<p><strong>Usage</strong></p>
+<p>Search across all session years</p>
+<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/committees/search?term=YOUR_TERM
+</pre></div>
+</div>
+<p>Search within a session year</p>
+<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/committees/{sessionYear}/search?term=YOUR_TERM
+</pre></div>
+</div>
+<p><strong>Required Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="23%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>term</td>
+<td>string</td>
+<td><a class="reference internal" href="search_api.html#search-term"><em>ElasticSearch query string</em></a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="17%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>sort</td>
+<td>string</td>
+<td><a class="reference internal" href="search_api.html#search-sort"><em>ElasticSearch sort string</em></a></td>
+</tr>
+<tr class="row-odd"><td>current</td>
+<td>boolean</td>
+<td>(default true) Searches only current committee versions if true</td>
+</tr>
+</tbody>
+</table>
+<p>Also takes all <a class="reference internal" href="#comm-history-params"><em>committee history optional params</em></a> with the exception of order</p>
 </div>
 </div>
 
