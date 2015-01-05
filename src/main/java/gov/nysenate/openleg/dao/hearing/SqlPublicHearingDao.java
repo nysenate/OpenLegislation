@@ -2,10 +2,7 @@ package gov.nysenate.openleg.dao.hearing;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
@@ -69,12 +66,13 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
 
     /** {@inheritDoc} */
     @Override
-    public List<PublicHearingUpdateToken> publicHearingsUpdatedDuring(Range<LocalDateTime> dateRange, SortOrder dateOrder, LimitOffset limOff) {
+    public PaginatedList<PublicHearingUpdateToken> publicHearingsUpdatedDuring(Range<LocalDateTime> dateRange, SortOrder dateOrder, LimitOffset limOff) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("startDateTime", DateUtils.toDate(DateUtils.startOfDateTimeRange(dateRange)));
-        params.addValue("endDateTime", DateUtils.toDate(DateUtils.endOfDateTimeRange(dateRange)));
+        addDateTimeRangeParams(params, dateRange);
         OrderBy orderBy = new OrderBy("modified_date_time", dateOrder);
-        return jdbcNamed.query(SELECT_PUBLIC_HEARING_UPDATES.getSql(schema(), orderBy, limOff), params, publicHearingTokenRowMapper);
+        PaginatedRowHandler<PublicHearingUpdateToken> handler = new PaginatedRowHandler<>(limOff, "total_updated", publicHearingTokenRowMapper);
+        jdbcNamed.query(SELECT_PUBLIC_HEARING_UPDATES.getSql(schema(), orderBy, limOff), params, handler);
+        return handler.getList();
     }
 
     private void updatePublicHearingAttendance(PublicHearing publicHearing) {

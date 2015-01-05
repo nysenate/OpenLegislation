@@ -6,6 +6,7 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.hearing.PublicHearingUpdateTokenView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.hearing.PublicHearingDao;
 import gov.nysenate.openleg.model.hearing.PublicHearingUpdateToken;
@@ -69,8 +70,8 @@ public class PublicHearingUpdatesCtrl extends BaseCtrl
                                                    WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 25);
         Range<LocalDateTime> dateRange = Range.closedOpen(from, to);
-        List<PublicHearingUpdateToken> tokens = publicHearingDao.publicHearingsUpdatedDuring(dateRange, SortOrder.ASC, limOff);
-        return ListViewResponse.of(tokens.stream().map(token ->
-                new PublicHearingUpdateTokenView(token)).collect(Collectors.toList()), tokens.size() , limOff);
+        PaginatedList<PublicHearingUpdateToken> updates = publicHearingDao.publicHearingsUpdatedDuring(dateRange, SortOrder.ASC, limOff);
+        return ListViewResponse.of(updates.getResults().stream().map(token ->
+                new PublicHearingUpdateTokenView(token)).collect(Collectors.toList()), updates.getTotal(), limOff);
     }
 }

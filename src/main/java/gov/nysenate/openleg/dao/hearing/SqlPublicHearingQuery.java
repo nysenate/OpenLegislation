@@ -52,7 +52,8 @@ public enum SqlPublicHearingQuery implements BasicSqlQuery
         "VALUES (:filename, :committeeName, :committeeChamber::chamber)"
     ),
     SELECT_PUBLIC_HEARING_UPDATES(
-            "SELECT filename, modified_date_time FROM ${schema}." + SqlTable.PUBLIC_HEARING + "\n" +
+            "SELECT filename, modified_date_time, COUNT(*) OVER() as total_updated " +
+            "FROM ${schema}." + SqlTable.PUBLIC_HEARING + "\n" +
             "WHERE modified_date_time BETWEEN :startDateTime AND :endDateTime"
     );
 

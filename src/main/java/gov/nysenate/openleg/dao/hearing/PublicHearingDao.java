@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.hearing;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
@@ -43,5 +44,5 @@ public interface PublicHearingDao
      * @param limOff LimitOffset - Restrict the result set.
      * @return List of PublicHearingUpdateToken
      */
-    public List<PublicHearingUpdateToken> publicHearingsUpdatedDuring(Range<LocalDateTime> dateRange, SortOrder dateOrder, LimitOffset limOff);
+    public PaginatedList<PublicHearingUpdateToken> publicHearingsUpdatedDuring(Range<LocalDateTime> dateRange, SortOrder dateOrder, LimitOffset limOff);
 }
