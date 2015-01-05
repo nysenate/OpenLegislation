@@ -48,7 +48,6 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
         MapSqlParameterSource params = getPublicHearingIdParams(publicHearingId);
         PublicHearing publicHearing = jdbcNamed.queryForObject(
                 SELECT_PUBLIC_HEARING_BY_ID.getSql(schema()), params, publicHearingRowMapper);
-        publicHearing.setAttendance(getPublicHearingAttendance(publicHearingId));
         publicHearing.setCommittees(getPublicHearingCommittees(publicHearingId));
         return publicHearing;
     }
@@ -60,7 +59,6 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
         if (jdbcNamed.update(UPDATE_PUBLIC_HEARING.getSql(schema()), params) == 0) {
             jdbcNamed.update(INSERT_PUBLIC_HEARING.getSql(schema()), params);
         }
-        updatePublicHearingAttendance(publicHearing);
         updatePublicHearingCommittees(publicHearing);
     }
 
@@ -73,45 +71,6 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
         PaginatedRowHandler<PublicHearingUpdateToken> handler = new PaginatedRowHandler<>(limOff, "total_updated", publicHearingTokenRowMapper);
         jdbcNamed.query(SELECT_PUBLIC_HEARING_UPDATES.getSql(schema(), orderBy, limOff), params, handler);
         return handler.getList();
-    }
-
-    private void updatePublicHearingAttendance(PublicHearing publicHearing) {
-        List<Member> existingAttendance = getPublicHearingAttendance(publicHearing.getId());
-
-        if (existingAttendance != null && publicHearing.getAttendance() != null) {
-            if (!existingAttendance.equals(publicHearing.getAttendance())) {
-                MapDifference<Member, Integer> diff = difference(existingAttendance, publicHearing.getAttendance(), 1);
-
-                diff.entriesOnlyOnLeft().forEach((member, ordinal) -> {
-                    jdbcNamed.update(DELETE_PUBLIC_HEARING_ATTENDANCE.getSql(schema()),
-                            getAttendanceParams(publicHearing.getId(), member));
-                });
-                diff.entriesOnlyOnRight().forEach((member, ordinal) -> {
-                    jdbcNamed.update(INSERT_PUBLIC_HEARING_ATTENDANCE.getSql(schema()),
-                            getAttendanceParams(publicHearing.getId(), member));
-                });
-            }
-        }
-    }
-
-    /**
-     * Get the list of members present at this PublicHearing.
-     * @param publicHearingId
-     * @return
-     */
-    private List<Member> getPublicHearingAttendance(PublicHearingId publicHearingId) {
-        MapSqlParameterSource params = getPublicHearingIdParams(publicHearingId);
-        List<Member> members = new ArrayList<>();
-        List<Member> sessionMemberIds = jdbcNamed.query(SELECT_PUBLIC_HEARING_ATTENDANCE.getSql(schema()), params, attendanceMemberIdRowMapper);
-        for (Member member : sessionMemberIds) {
-            try {
-                members.add(memberService.getMemberBySessionId(member.getSessionMemberId()));
-            } catch (MemberNotFoundEx ex) {
-                logger.error("Error getting Public Hearing Member.", ex);
-            }
-        }
-
-        return members;
     }
 
     /**
