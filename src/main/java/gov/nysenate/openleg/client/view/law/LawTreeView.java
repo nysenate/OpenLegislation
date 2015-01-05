@@ -5,9 +5,9 @@ import gov.nysenate.openleg.model.law.LawTree;
 
 public class LawTreeView implements ViewObject
 {
-    LawVersionView lawVersion;
-    LawInfoView info;
-    LawNodeView documents;
+    protected LawVersionView lawVersion;
+    protected LawInfoView info;
+    protected LawNodeView documents;
 
     public LawTreeView(LawTree lawTree) {
         if (lawTree != null) {

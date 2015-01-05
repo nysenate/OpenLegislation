@@ -40,7 +40,7 @@ public class CachedLawDataService implements LawDataService, CachingService
 
     @Autowired private LawDataDao lawDataDao;
     @Autowired private CacheManager cacheManager;
-    @Autowired EventBus eventBus;
+    @Autowired private EventBus eventBus;
 
     @Value("${law.cache.size}") private long lawTreeCacheHeapSize;
 

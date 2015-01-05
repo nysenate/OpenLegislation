@@ -138,6 +138,22 @@ public class LawBuilder
         if (block.getMethod().equals("*MASTER*")) {
             rebuildTree(block.getText().toString());
         }
+        // Repeal the document
+        else if (block.getMethod().equals("*REPEAL*")) {
+            Optional<LawTreeNode> node = rootNode.findNode(block.getDocumentId(), false);
+            if (node.isPresent()) {
+                logger.info("Repealing {}", block.getDocumentId());
+                node.get().setRepealedDate(block.getPublishedDate());
+            }
+            else {
+                logger.warn("Failed to repeal document {} because it could not be located within the law tree!");
+            }
+        }
+        // Delete the document
+        else if (block.getMethod().equals("*DELETE*")) {
+            logger.info("Deleting {}", block.getDocumentId());
+            rootNode.findNode(block.getDocumentId(), true);
+        }
         // Update the document
         else if (block.getMethod().isEmpty()) {
             if (rootNode != null) {

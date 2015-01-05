@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.law;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -21,6 +22,9 @@ public class LawTreeNode implements Comparable<LawTreeNode>
     /** Contains references to all the immediate children of this node. The key is the document id
      *  of the child node. */
     protected Map<String, LawTreeNode> children = new HashMap<>();
+
+    /** Date when this law node was repealed, null if not repealed. */
+    protected LocalDate repealedDate;
 
     /** --- Constructors --- */
 
@@ -78,27 +82,48 @@ public class LawTreeNode implements Comparable<LawTreeNode>
     }
 
     /**
-     * Recursively searches for a node that matches the given documentId.
+     * Recursively searches for a node that matches the given documentId and returns the law doc info.
      *
-     * @param documentId
+     * @param documentId String - Document id of the law document.
      * @return Optional<LawDocInfo> - Matched node or empty if it could not be found.
      */
     public Optional<LawDocInfo> find(String documentId) {
-        Optional<LawDocInfo> docInfo = Optional.empty();
+        Optional<LawTreeNode> lawTreeNode = findNode(documentId, false);
+        return (lawTreeNode.isPresent()) ? Optional.of(lawTreeNode.get().getLawDocInfo()) : Optional.empty();
+    }
+
+    /**
+     * Recursively searches for a child node that matches the given documentId or returns the current node
+     * if it happens to match the docId. The delete param can be set to true to delete this node from the tree
+     * by removing the reference from it's parent node.
+     *
+     * @param documentId String - Document id of the law document.
+     * @param delete boolean - Set to true to delete the node and it's descendants from the tree.
+     * @return Optional<LawDocInfo> - Matched node or empty if it could not be found.
+     */
+    public Optional<LawTreeNode> findNode(String documentId, boolean delete) {
+        Optional<LawTreeNode> lawTreeNode = Optional.empty();
         if (this.getDocumentId().equals(documentId)) {
-            docInfo = Optional.of(this.getLawDocInfo());
+            lawTreeNode = Optional.of(this);
         }
         else if (children.containsKey(documentId)) {
-            docInfo = Optional.of(children.get(documentId).getLawDocInfo());
+            lawTreeNode = Optional.of(children.get(documentId));
         }
         else {
             for (LawTreeNode node : children.values()) {
-                docInfo = node.find(documentId);
-                if (docInfo.isPresent()) break;
+                lawTreeNode = node.findNode(documentId, delete);
+                if (lawTreeNode.isPresent()) break;
             }
         }
-        return docInfo;
+        if (delete && lawTreeNode.isPresent()) {
+            LawTreeNode parentNode = lawTreeNode.get().getParent();
+            if (parentNode != null) {
+                parentNode.getChildren().remove(documentId);
+            }
+        }
+        return lawTreeNode;
     }
+
 
     /**
      * Prints out this tree with formatting to show the hierarchy.
@@ -191,5 +216,13 @@ public class LawTreeNode implements Comparable<LawTreeNode>
 
     public void setChildren(TreeMap<String, LawTreeNode> children) {
         this.children = children;
+    }
+
+    public LocalDate getRepealedDate() {
+        return repealedDate;
+    }
+
+    public void setRepealedDate(LocalDate repealedDate) {
+        this.repealedDate = repealedDate;
     }
 }

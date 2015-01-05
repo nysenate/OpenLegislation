@@ -113,6 +113,7 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
             String parentDocId = rs.getString("parent_doc_id");
 
             LawTreeNode node = new LawTreeNode(lawDocInfoRowMapper.mapRow(rs, 0), rs.getInt("sequence_no"));
+            node.setRepealedDate(getLocalDateFromRs(rs, "repealed_date"));
             treeNodeMap.put(docId, node);
             if (root == null) {
                 root = node;
@@ -207,6 +208,7 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
                                                  toDate(lawTreeNode.getParent().getPublishDate()) : null)
             .addValue("isRoot", lawTreeNode.isRootNode())
             .addValue("sequenceNo", lawTreeNode.getSequenceNo())
+            .addValue("repealedDate", toDate(lawTreeNode.getRepealedDate()))
             .addValue("lawFileName", lawFile.getFileName());
     }
 }

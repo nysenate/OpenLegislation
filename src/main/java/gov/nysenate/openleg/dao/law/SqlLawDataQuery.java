@@ -34,8 +34,9 @@ public enum SqlLawDataQuery implements BasicSqlQuery
         "    SELECT max(published_date) AS pub_date FROM ${schema}." + SqlTable.LAW_TREE + "\n" +
         "    WHERE law_id = :lawId AND published_date <= :endPublishedDate" +
         ")\n" +
-        "SELECT t.law_id, t.published_date AS tree_published_date, t.is_root, t.sequence_no, d1.document_id, d1.published_date," +
-        "       d1.document_type, d1.location_id, d1.title, d1.document_type_id, t.parent_doc_id\n" +
+        "SELECT t.law_id, t.published_date AS tree_published_date, t.is_root, t.sequence_no, t.repealed_date, " +
+        "       d1.document_id, d1.published_date, d1.document_type, d1.location_id, d1.title, d1.document_type_id, " +
+        "       t.parent_doc_id\n" +
         "FROM max_date, ${schema}." + SqlTable.LAW_TREE + " t\n" +
         "LEFT JOIN ${schema}." + SqlTable.LAW_DOCUMENT + " d1 \n" +
         "     ON t.doc_id = d1.document_id AND t.doc_published_date = d1.published_date\n" +
@@ -44,14 +45,14 @@ public enum SqlLawDataQuery implements BasicSqlQuery
     INSERT_LAW_TREE(
         "INSERT INTO ${schema}." + SqlTable.LAW_TREE + "\n" +
         "(law_id, published_date, doc_id, doc_published_date, parent_doc_id, parent_doc_published_date, is_root, " +
-        " sequence_no, law_file)\n" +
+        " sequence_no, repealed_date, law_file)\n" +
         "VALUES (:lawId, :publishedDate, :docId, :docPublishedDate, :parentDocId, :parentDocPublishedDate, :isRoot, " +
-        "        :sequenceNo, :lawFileName)"
+        "        :sequenceNo, :repealedDate, :lawFileName)"
     ),
     UPDATE_LAW_TREE(
         "UPDATE ${schema}." + SqlTable.LAW_TREE + "\n" +
         "SET parent_doc_id = :parentDocId, parent_doc_published_date = :parentDocPublishedDate, is_root = :isRoot, " +
-        "    sequence_no = :sequenceNo, law_file = :lawFileName \n" +
+        "    sequence_no = :sequenceNo, repealed_date = :repealedDate, law_file = :lawFileName \n" +
         "WHERE law_id = :lawId AND published_date = :publishedDate AND \n" +
         "      doc_id = :docId AND doc_published_date = :docPublishedDate"
     ),
