@@ -2627,24 +2627,6 @@ COMMENT ON COLUMN public_hearing.start_time IS 'Time the public hearing started.
 COMMENT ON COLUMN public_hearing.end_time IS 'Time the public hearing ended.';
 
 
---
--- Name: public_hearing_attendance; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE public_hearing_attendance (
-    session_member_id integer NOT NULL,
-    filename text NOT NULL
-);
-
-
-ALTER TABLE master.public_hearing_attendance OWNER TO postgres;
-
---
--- Name: COLUMN public_hearing_attendance.filename; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN public_hearing_attendance.filename IS 'Filename of the public hearing.';
-
 
 --
 -- Name: public_hearing_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
@@ -4128,14 +4110,6 @@ ALTER TABLE ONLY law_tree
 
 
 --
--- Name: public_hearing_attendance_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_pkey PRIMARY KEY (session_member_id, filename);
-
-
---
 -- Name: public_hearing_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -5179,21 +5153,6 @@ ALTER TABLE ONLY law_tree
 ALTER TABLE ONLY law_tree
     ADD CONSTRAINT law_tree_parent_doc_id_fkey FOREIGN KEY (parent_doc_id, parent_doc_published_date) REFERENCES law_document(document_id, published_date) ON UPDATE CASCADE ON DELETE CASCADE;
 
-
---
--- Name: public_hearing_attendance_filename_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_filename_fkey FOREIGN KEY (filename) REFERENCES public_hearing(filename);
-
-
---
--- Name: public_hearing_attendance_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY public_hearing_attendance
-    ADD CONSTRAINT public_hearing_attendance_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id);
 
 
 --

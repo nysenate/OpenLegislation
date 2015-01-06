@@ -6,6 +6,7 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.transcript.TranscriptUpdateTokenView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.transcript.TranscriptDao;
 import gov.nysenate.openleg.model.transcript.TranscriptUpdateToken;
@@ -69,8 +70,8 @@ public class TranscriptUpdatesCtrl extends BaseCtrl
                                                 WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 25);
         Range<LocalDateTime> range = Range.closedOpen(from, to);
-        List<TranscriptUpdateToken> updates = transcriptDao.transcriptsUpdatedDuring(range, SortOrder.ASC, limOff);
-        return ListViewResponse.of(updates.stream().map(token ->
-                new TranscriptUpdateTokenView(token)).collect(Collectors.toList()), updates.size(), limOff);
+        PaginatedList<TranscriptUpdateToken> updates = transcriptDao.transcriptsUpdatedDuring(range, SortOrder.ASC, limOff);
+        return ListViewResponse.of(updates.getResults().stream().map(token ->
+                new TranscriptUpdateTokenView(token)).collect(Collectors.toList()), updates.getTotal(), limOff);
     }
 }

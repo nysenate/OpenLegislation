@@ -28,9 +28,6 @@ public class PublicHearing extends BaseLegislativeContent
      * holding this PublicHearing. */
     private List<PublicHearingCommittee> committees;
 
-    /** List of legislators who attended the PublicHearing. */
-    private List<Member> attendance;
-
     /** The raw text of the Public Hearing. */
     private String text;
 
@@ -86,14 +83,6 @@ public class PublicHearing extends BaseLegislativeContent
 
     public void setCommittees(List<PublicHearingCommittee> committees) {
         this.committees = committees;
-    }
-
-    public List<Member> getAttendance() {
-        return attendance;
-    }
-
-    public void setAttendance(List<Member> attendance) {
-        this.attendance = attendance;
     }
 
     public LocalTime getStartTime() {

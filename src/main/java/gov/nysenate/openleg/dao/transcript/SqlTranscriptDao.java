@@ -1,10 +1,7 @@
 package gov.nysenate.openleg.dao.transcript;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
@@ -49,12 +46,13 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
 
     /** {@inheritDoc} */
     @Override
-    public List<TranscriptUpdateToken> transcriptsUpdatedDuring(Range<LocalDateTime> dateRange, SortOrder dateOrder, LimitOffset limOff) {
+    public PaginatedList<TranscriptUpdateToken> transcriptsUpdatedDuring(Range<LocalDateTime> dateRange, SortOrder dateOrder, LimitOffset limOff) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("startDateTime", DateUtils.toDate(DateUtils.startOfDateTimeRange(dateRange)));
-        params.addValue("endDateTime", DateUtils.toDate(DateUtils.endOfDateTimeRange(dateRange)));
+        addDateTimeRangeParams(params, dateRange);
         OrderBy orderBy = new OrderBy("modified_date_time", dateOrder);
-        return jdbcNamed.query(SELECT_TRANSCRIPTS_UPDATED_DURING.getSql(schema(), orderBy, limOff), params, transcriptUpdateRowMapper);
+        PaginatedRowHandler<TranscriptUpdateToken> handler = new PaginatedRowHandler<>(limOff, "total_updated", transcriptUpdateRowMapper);
+        jdbcNamed.query(SELECT_TRANSCRIPTS_UPDATED_DURING.getSql(schema(), orderBy, limOff), params, handler);
+        return handler.getList();
     }
 
     /** --- Param Source Methods --- */

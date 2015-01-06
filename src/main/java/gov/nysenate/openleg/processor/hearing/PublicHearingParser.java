@@ -37,9 +37,6 @@ public class PublicHearingParser
     @Autowired
     private PublicHearingCommitteeParser committeeParser;
 
-    @Autowired
-    private PublicHearingAttendanceParser attendanceParser; // TODO: Not yet implemented
-
     /**
      * Parses a {@link PublicHearingFile}, extracting a
      * {@link gov.nysenate.openleg.model.hearing.PublicHearing PublicHearing}.

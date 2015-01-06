@@ -2,10 +2,7 @@ package gov.nysenate.openleg.dao.hearing;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
@@ -51,7 +48,6 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
         MapSqlParameterSource params = getPublicHearingIdParams(publicHearingId);
         PublicHearing publicHearing = jdbcNamed.queryForObject(
                 SELECT_PUBLIC_HEARING_BY_ID.getSql(schema()), params, publicHearingRowMapper);
-        publicHearing.setAttendance(getPublicHearingAttendance(publicHearingId));
         publicHearing.setCommittees(getPublicHearingCommittees(publicHearingId));
         return publicHearing;
     }
@@ -63,57 +59,18 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
         if (jdbcNamed.update(UPDATE_PUBLIC_HEARING.getSql(schema()), params) == 0) {
             jdbcNamed.update(INSERT_PUBLIC_HEARING.getSql(schema()), params);
         }
-        updatePublicHearingAttendance(publicHearing);
         updatePublicHearingCommittees(publicHearing);
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<PublicHearingUpdateToken> publicHearingsUpdatedDuring(Range<LocalDateTime> dateRange, SortOrder dateOrder, LimitOffset limOff) {
+    public PaginatedList<PublicHearingUpdateToken> publicHearingsUpdatedDuring(Range<LocalDateTime> dateRange, SortOrder dateOrder, LimitOffset limOff) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("startDateTime", DateUtils.toDate(DateUtils.startOfDateTimeRange(dateRange)));
-        params.addValue("endDateTime", DateUtils.toDate(DateUtils.endOfDateTimeRange(dateRange)));
+        addDateTimeRangeParams(params, dateRange);
         OrderBy orderBy = new OrderBy("modified_date_time", dateOrder);
-        return jdbcNamed.query(SELECT_PUBLIC_HEARING_UPDATES.getSql(schema(), orderBy, limOff), params, publicHearingTokenRowMapper);
-    }
-
-    private void updatePublicHearingAttendance(PublicHearing publicHearing) {
-        List<Member> existingAttendance = getPublicHearingAttendance(publicHearing.getId());
-
-        if (existingAttendance != null && publicHearing.getAttendance() != null) {
-            if (!existingAttendance.equals(publicHearing.getAttendance())) {
-                MapDifference<Member, Integer> diff = difference(existingAttendance, publicHearing.getAttendance(), 1);
-
-                diff.entriesOnlyOnLeft().forEach((member, ordinal) -> {
-                    jdbcNamed.update(DELETE_PUBLIC_HEARING_ATTENDANCE.getSql(schema()),
-                            getAttendanceParams(publicHearing.getId(), member));
-                });
-                diff.entriesOnlyOnRight().forEach((member, ordinal) -> {
-                    jdbcNamed.update(INSERT_PUBLIC_HEARING_ATTENDANCE.getSql(schema()),
-                            getAttendanceParams(publicHearing.getId(), member));
-                });
-            }
-        }
-    }
-
-    /**
-     * Get the list of members present at this PublicHearing.
-     * @param publicHearingId
-     * @return
-     */
-    private List<Member> getPublicHearingAttendance(PublicHearingId publicHearingId) {
-        MapSqlParameterSource params = getPublicHearingIdParams(publicHearingId);
-        List<Member> members = new ArrayList<>();
-        List<Member> sessionMemberIds = jdbcNamed.query(SELECT_PUBLIC_HEARING_ATTENDANCE.getSql(schema()), params, attendanceMemberIdRowMapper);
-        for (Member member : sessionMemberIds) {
-            try {
-                members.add(memberService.getMemberBySessionId(member.getSessionMemberId()));
-            } catch (MemberNotFoundEx ex) {
-                logger.error("Error getting Public Hearing Member.", ex);
-            }
-        }
-
-        return members;
+        PaginatedRowHandler<PublicHearingUpdateToken> handler = new PaginatedRowHandler<>(limOff, "total_updated", publicHearingTokenRowMapper);
+        jdbcNamed.query(SELECT_PUBLIC_HEARING_UPDATES.getSql(schema(), orderBy, limOff), params, handler);
+        return handler.getList();
     }
 
     /**

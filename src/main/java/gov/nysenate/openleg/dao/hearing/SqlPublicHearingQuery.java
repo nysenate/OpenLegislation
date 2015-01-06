@@ -24,19 +24,6 @@ public enum SqlPublicHearingQuery implements BasicSqlQuery
         "(filename, date, title, address, text, start_time, end_time)" + "\n" +
         "VALUES (:filename, :date, :title, :address, :text, :startTime, :endTime)"
     ),
-    SELECT_PUBLIC_HEARING_ATTENDANCE(
-        "SELECT session_member_id FROM ${schema}." + SqlTable.PUBLIC_HEARING_ATTENDANCE + "\n" +
-        "WHERE filename = :filename"
-    ),
-    DELETE_PUBLIC_HEARING_ATTENDANCE(
-        "DELETE FROM ${schema}." + SqlTable.PUBLIC_HEARING_ATTENDANCE + "\n" +
-        "WHERE filename = :filename AND session_member_id = :sessionMemberId"
-    ),
-    INSERT_PUBLIC_HEARING_ATTENDANCE(
-        "INSERT INTO ${schema}." + SqlTable.PUBLIC_HEARING_ATTENDANCE + "\n" +
-        "(session_member_id, filename) " +
-        "VALUES (:sessionMemberId, :filename)"
-    ),
     SELECT_PUBLIC_HEARING_COMMITTEES(
         "SELECT * FROM ${schema}." + SqlTable.PUBLIC_HEARING_COMMITTEE + "\n" +
         "WHERE filename = :filename"
@@ -52,7 +39,8 @@ public enum SqlPublicHearingQuery implements BasicSqlQuery
         "VALUES (:filename, :committeeName, :committeeChamber::chamber)"
     ),
     SELECT_PUBLIC_HEARING_UPDATES(
-            "SELECT filename, modified_date_time FROM ${schema}." + SqlTable.PUBLIC_HEARING + "\n" +
+            "SELECT filename, modified_date_time, COUNT(*) OVER() as total_updated " +
+            "FROM ${schema}." + SqlTable.PUBLIC_HEARING + "\n" +
             "WHERE modified_date_time BETWEEN :startDateTime AND :endDateTime"
     );
 
