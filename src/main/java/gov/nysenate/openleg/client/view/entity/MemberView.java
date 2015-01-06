@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.entity.Member;
 public class MemberView extends SimpleMemberView
 {
     protected String fullName;
-    protected int districtCode;
+    protected Integer districtCode;
 
     public MemberView(Member member) {
         super(member);
@@ -19,7 +19,7 @@ public class MemberView extends SimpleMemberView
         return fullName;
     }
 
-    public int getDistrictCode() {
+    public Integer getDistrictCode() {
         return districtCode;
     }
 

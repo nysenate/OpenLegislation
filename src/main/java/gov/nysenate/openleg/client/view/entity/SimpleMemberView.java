@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.client.view.entity;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Member;
 
 public class SimpleMemberView implements ViewObject
@@ -15,7 +16,7 @@ public class SimpleMemberView implements ViewObject
             this.memberId = member.getMemberId();
             this.shortName = member.getLbdcShortName();
             this.sessionYear = member.getSessionYear().getYear();
-            this.chamber = member.getChamber().name();
+            this.chamber = (member.getChamber() != null) ? member.getChamber().name() : null;
         }
     }
 
