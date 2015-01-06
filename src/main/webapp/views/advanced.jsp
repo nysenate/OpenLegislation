@@ -191,9 +191,10 @@ $(document).ready(function() {
 			            <div class="searchinput">
 			                <select name="session">
 			                    <option value=""></option>
-			                    <option value="2009">2009-2010</option>
-			                    <option value="2011">2011-2012</option>
-			                    <option value="2013">2013-2014</option>
+								<option value="2013">2015-2016</option>
+								<option value="2013">2013-2014</option>
+								<option value="2011">2011-2012</option>
+								<option value="2009">2009-2010</option>
 			                </select>
 			            </div>
 			        </div>

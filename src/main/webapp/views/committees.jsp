@@ -44,7 +44,7 @@ td {
 </style>
 <div id="content">
     <div class='formats'>
-        <em>Committee Listings are available for: </em><a href="<%=appPath%>/committees/2013">2013</a> | <a href="<%=appPath%>/committees/2011">2011</a>
+        <em>Committee Listings are available for: </em><a href="<%=appPath%>/committees/2015">2015</a> | <a href="<%=appPath%>/committees/2013">2013</a> | <a href="<%=appPath%>/committees/2011">2011</a>
     </div>
 	<div class="content-bg">
         <h2 class='page-title'><%=request.getAttribute("sessionStart")%>-<%=request.getAttribute("sessionEnd")%> Standing Committees</h2>

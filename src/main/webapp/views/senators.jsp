@@ -45,7 +45,7 @@
 
 <div id="content">
 	<div class='formats'>
-	    Senator Listings are available for: <a href="/legislation/senators/2013">2013</a> | <a href="/legislation/senators/2011">2011</a> | <a href="/legislation/senators/2009">2009</a>
+	    Senator Listings are available for: <a href="/legislation/senators/2015">2015</a> | <a href="/legislation/senators/2013">2013</a> | <a href="/legislation/senators/2011">2011</a> | <a href="/legislation/senators/2009">2009</a>
 	</div>
     <div class="content-bg">
 		<h2 class='page-title'>

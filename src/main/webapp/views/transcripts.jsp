@@ -25,6 +25,7 @@ $(document).ready(function() {
 <div class="page-title">
     <div><form method="GET" action="" style="float:right; padding:0px; margin:0px;">
 	<select name="year">
+	<option value="2015">2015</option>
 	<option value="2014">2014</option>
 	<option value="2013">2013</option>
 	<option value="2012">2012</option>
