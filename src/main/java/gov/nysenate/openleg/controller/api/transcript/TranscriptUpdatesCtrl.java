@@ -35,35 +35,35 @@ public class TranscriptUpdatesCtrl extends BaseCtrl
     @Autowired private TranscriptDao transcriptDao;
 
     /**
-     * Transcript Updates API.
-     * -----------------
+     * Transcript Updates API
+     * ----------------------
      *
      * Returns a List of Transcript ids that have been inserted or updated on or after the supplied date.
-     * Usage: (GET) /api/3/transcripts/updates/{from datetime}
+     *
+     * Usages:
+     * (GET) /api/3/transcripts/updates/             (last 7 days)
+     * (GET) /api/3/transcripts/updates/{from}       (from date to now)
+     * (GET) /api/3/transcripts/updates/{from}/{to}
+     *
+     * Where 'from' and 'to' are ISO date times.
      *
      * Request Params:  limit - Limit the number of results
      *                  offset - Start results from an offset.
      *
      * Expected Output: List of TranscriptUpdateTokenView
      */
-    @RequestMapping(value = "/updates/{from}")
-    public BaseResponse getNewTranscriptsSince(@PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime from,
-                                               WebRequest request) {
-        return getNewTranscriptsDuring(from, DateUtils.THE_FUTURE.atStartOfDay(), request);
+
+    @RequestMapping(value = "/updates")
+    public BaseResponse getNewRecentTranscripts(WebRequest request) {
+        return getNewTranscriptsDuring(LocalDateTime.now().minusDays(7), DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
-    /**
-     * Transcript Updates API.
-     *  -----------------
-     *
-     * Returns a list of Transcript ids that have been inserted or updated during a supplied date time range.
-     * Usage: (GET) /api/3/transcripts/updates/{from datetime}/{to datetime}
-     *
-     * Request Params:  limit - Limit the number of results
-     *                  offset - Start results from an offset.
-     *
-     * Expected Output: List of TranscriptUpdateTokenView
-     */
+    @RequestMapping(value = "/updates/{from}")
+    public BaseResponse getNewTranscriptsSince(@PathVariable String from, WebRequest request) {
+        LocalDateTime fromDateTime = parseISODateTime(from, "from");
+        return getNewTranscriptsDuring(fromDateTime, DateUtils.THE_FUTURE.atStartOfDay(), request);
+    }
+
     @RequestMapping(value = "/updates/{from}/{to}")
     public BaseResponse getNewTranscriptsDuring(@PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime from,
                                                 @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime to,
