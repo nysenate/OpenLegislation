@@ -120,8 +120,7 @@ public class ApprovalMessageParser extends BillTextParser {
             approvalMessage.getApprovalNumber()!=0 &&
             approvalMessage.getYear()!=0 &&
             approvalMessage.getSession()!=null &&
-            approvalMessage.getChapter()!=0 &&
-            approvalMessage.getSigner()!=null;
+            approvalMessage.getChapter()!=0;
         if (!completeApprovalMessage) {
             throw new ParseError("Incomplete approval message");
         }

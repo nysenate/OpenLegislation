@@ -6,6 +6,9 @@ import gov.nysenate.openleg.model.bill.VetoId;
 import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoType;
 import gov.nysenate.openleg.processor.base.ParseError;
+import gov.nysenate.openleg.util.OutputUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,6 +18,8 @@ import java.util.regex.Pattern;
 
 public class VetoMemoParser extends BillTextParser
 {
+    private static final Logger logger = LoggerFactory.getLogger(VetoMemoParser.class);
+
     /** --- RegEx Patterns --- */
 
     private static final Pattern vetoHeaderPattern =
@@ -30,7 +35,7 @@ public class VetoMemoParser extends BillTextParser
         Pattern.compile("\\d{5}Bill Page (\\d+), Line (\\d+)( through Line (\\d+))?.*");
 
     private static final Pattern signerPattern =
-        Pattern.compile("\\d{5}\\s*(?:(?:The|These) bills? (?:is|are) disapproved\\.)?\\s*\\(signed\\) ([a-zA-Z.'\\- ]*[a-zA-Z.])");
+        Pattern.compile("\\d{5}\\s*(?:(?:The|This|These) bills? (?:is|are) disapproved\\.)?\\s*\\(signed\\) ([a-zA-Z.'\\- ]*[a-zA-Z.])");
 
     /** A veto message object that is constructed while parsing the veto memo */
     private VetoMessage vetoMessage;
@@ -125,7 +130,6 @@ public class VetoMemoParser extends BillTextParser
             vetoMessage.getVetoNumber()!=0 &&
                 vetoMessage.getYear()!=0 &&
                 vetoMessage.getSession()!=null &&
-                vetoMessage.getSigner()!=null &&
                 vetoMessage.getMemoText()!=null;
 
         if (vetoMessage.getType() == VetoType.LINE_ITEM) {
@@ -137,6 +141,7 @@ public class VetoMemoParser extends BillTextParser
                 vetoMessage.getLineEnd()!=0;
         }
         if (!completeVetoMessage) {
+            logger.warn("{}", OutputUtils.toJson(vetoMessage));
             throw new ParseError("End of message reached before all veto information could be extracted");
         }
     }
