@@ -30,9 +30,6 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
 {
     private static final Logger logger = LoggerFactory.getLogger(SqlPublicHearingDao.class);
 
-    @Autowired
-    private MemberService memberService;
-
     /** {@inheritDoc} */
     @Override
     public List<PublicHearingId> getPublicHearingIds(SortOrder order, LimitOffset limOff) {
@@ -128,19 +125,6 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
         return params;
     }
 
-//    private MapSqlParameterSource getPublicHearingIdYearParams(int year) {
-//        MapSqlParameterSource params = new MapSqlParameterSource();
-//        params.addValue("year", year);
-//        return params;
-//    }
-
-    private MapSqlParameterSource getAttendanceParams(PublicHearingId id, Member member) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("filename", id.getFileName());
-        params.addValue("sessionMemberId", member.getSessionMemberId());
-        return params;
-    }
-
     private MapSqlParameterSource getCommitteeParams(PublicHearingId id, PublicHearingCommittee committee) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("filename", id.getFileName());
@@ -166,11 +150,6 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
     static RowMapper<PublicHearingId> publicHearingIdRowMapper = (rs, rowNum) ->
             new PublicHearingId(rs.getString("filename"));
 
-    static RowMapper<Member> attendanceMemberIdRowMapper = (rs, rowNum) -> {
-        Member member = new Member();
-        member.setSessionMemberId(rs.getInt("session_member_id"));
-        return member;
-    };
 
     static RowMapper<PublicHearingCommittee> committeeRowMapper = (rs, rowNum) -> {
         PublicHearingCommittee committee = new PublicHearingCommittee();
