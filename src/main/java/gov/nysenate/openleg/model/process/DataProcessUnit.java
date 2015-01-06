@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.process;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 
 import java.time.LocalDateTime;
@@ -48,6 +49,16 @@ public class DataProcessUnit
 
     public void addException(String exception) {
         this.errors.append(exception).append("\\n");
+    }
+
+    public void addException(String prefixMessage, Exception ex) {
+        if (prefixMessage != null) {
+            this.errors.append(prefixMessage);
+        }
+        if (ex != null) {
+            this.errors.append("\nException: ").append(ex.getMessage())
+                       .append("\nStack Trace: ").append(ExceptionUtils.getStackTrace(ex));
+        }
     }
 
     public void addException(String errorMessage, Logger logger) {

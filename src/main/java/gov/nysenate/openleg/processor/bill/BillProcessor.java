@@ -132,8 +132,8 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                 }
             }
             catch (ParseError ex) {
-                logger.error("Parse Error: {}", ex);
-                unit.addException("Parse Error: " + ex.getMessage());
+                logger.error("Bill Processing Parse Error!", ex);
+                unit.addException("Bill Processing Parse Error",  ex);
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
 
