@@ -5,31 +5,13 @@ import gov.nysenate.openleg.model.transcript.TranscriptId;
 
 import java.time.LocalDateTime;
 
-public class TranscriptView extends TranscriptIdView
+public class TranscriptView extends TranscriptInfoView
 {
-    protected String sessionType;
-    protected LocalDateTime dateTime;
-    protected String location;
     protected String text;
 
     public TranscriptView(Transcript transcript) {
-        super(new TranscriptId(transcript.getTranscriptId().getFilename()));
-        this.sessionType = transcript.getSessionType();
-        this.dateTime = transcript.getDateTime();
-        this.location = transcript.getLocation();
+        super(transcript);
         this.text = transcript.getText();
-    }
-
-    public String getSessionType() {
-        return sessionType;
-    }
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public String getLocation() {
-        return location;
     }
 
     public String getText() {

@@ -4,6 +4,7 @@ import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.view.transcript.TranscriptIdView;
+import gov.nysenate.openleg.client.view.transcript.TranscriptInfoView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptPdfView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
@@ -41,9 +42,11 @@ public class TranscriptGetCtrl extends BaseCtrl
 
     /**
      * Transcript Listing API
+     * ----------------------
      *
      * Retrieve all transcripts: (GET) /api/3/transcripts/
      * Request Parameters : sort - Lucene syntax for sorting by any field of a transcript response.
+     *                      summary - If true, the transcript info is returned.
      *                      full - If true, the full transcript view is returned. Otherwise just its filename.
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
@@ -52,21 +55,21 @@ public class TranscriptGetCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/")
     public BaseResponse getAllTranscripts(@RequestParam(defaultValue = "dateTime:desc") String sort,
-                                       @RequestParam(defaultValue = "false") boolean full,
-                                       WebRequest webRequest) throws SearchException {
+                                          @RequestParam(defaultValue = "false") boolean summary,
+                                          @RequestParam(defaultValue = "false") boolean full,
+                                          WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(sort, limOff);
-        return ListViewResponse.of(results.getResults().stream().map(r ->
-                (full) ? new TranscriptView(transcriptData.getTranscript(r.getResult()))
-                        : new TranscriptIdView(r.getResult()))
-                .collect(Collectors.toList()), results.getTotalResults(), limOff);
+        return getTranscriptResponse(summary, full, limOff, results);
     }
 
     /**
-     * Transcript Listing API.
+     * Transcript Listing API
+     * ----------------------
      *
      * Retrieve transcripts for a year: (GET) /api/3/transcripts/{year}
      * Request Parameters : sort - Lucene syntax for sorting by any field of a transcript response.
+     *                      summary - If true, the transcript info is returned.
      *                      full - If true, the full transcript view is returned. Otherwise just its filename.
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
@@ -76,18 +79,17 @@ public class TranscriptGetCtrl extends BaseCtrl
     @RequestMapping("/{year:[\\d]{4}}")
     public BaseResponse getTranscriptsByYear(@PathVariable int year,
                                              @RequestParam(defaultValue = "dateTime:desc") String sort,
+                                             @RequestParam(defaultValue = "false") boolean summary,
                                              @RequestParam(defaultValue = "false") boolean full,
                                              WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<TranscriptId> results = transcriptSearch.searchTranscripts(year, sort, limOff);
-        return ListViewResponse.of(results.getResults().stream().map(r ->
-                (full) ? new TranscriptView(transcriptData.getTranscript(r.getResult()))
-                        : new TranscriptIdView(r.getResult()))
-                .collect(Collectors.toList()), results.getTotalResults(), limOff);
+        return getTranscriptResponse(summary, full, limOff, results);
     }
 
     /**
-     * Single Transcript Retrieval API.
+     * Single Transcript Retrieval API
+     * -------------------------------
      *
      * Retrieve a single transcripts by its filename (GET) /api/3/transcripts/{filename}
      *
@@ -103,7 +105,8 @@ public class TranscriptGetCtrl extends BaseCtrl
     }
 
     /**
-     * Single Transcript PDF retrieval API.
+     * Single Transcript PDF retrieval API
+     * -----------------------------------
      *
      * Retrieve a single transcript text pdf: (GET) /api/3/transcripts/{filename}.pdf
      *
@@ -118,5 +121,15 @@ public class TranscriptGetCtrl extends BaseCtrl
         Transcript transcript = transcriptData.getTranscript(transcriptId);
         new TranscriptPdfView(transcript, response.getOutputStream());
         response.setContentType("application/pdf");
+    }
+
+    /** --- Internal --- */
+
+    private BaseResponse getTranscriptResponse(boolean summary, boolean full, LimitOffset limOff, SearchResults<TranscriptId> results) {
+        return ListViewResponse.of(results.getResults().stream().map(r ->
+            (full) ? new TranscriptView(transcriptData.getTranscript(r.getResult()))
+                    : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.getResult()))
+                    : new TranscriptIdView(r.getResult()))
+            .collect(Collectors.toList()), results.getTotalResults(), limOff);
     }
 }
