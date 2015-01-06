@@ -2326,7 +2326,8 @@ CREATE TABLE law_tree (
     is_root boolean DEFAULT false NOT NULL,
     sequence_no smallint NOT NULL,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    law_file text
+    law_file text,
+    repealed_date date
 );
 
 
