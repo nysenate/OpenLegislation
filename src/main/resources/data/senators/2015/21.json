@@ -1,0 +1,56 @@
+{
+  "nid" : 109,
+  "name" : "Kevin S. Parker",
+  "lastName" : "Parker",
+  "shortName" : "Parker",
+  "email" : "parker@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Parker2007Biography.jpg",
+  "url" : "http://www.nysenate.gov/senator/kevin-s-parker",
+  "partyAffiliations" : [ "D", "WF" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "1300 Flatbush Avenue",
+    "city" : "Brooklyn",
+    "postalCode" : "11210",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 629-6401",
+    "fax" : "(718) 629-6420",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.638249,
+    "longitude" : -73.953696
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2580",
+    "fax" : "(518) 426-6843",
+    "otherPhone" : "",
+    "additional" : "Room 604, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
+  } ],
+  "district" : {
+    "number" : 21,
+    "url" : "http://www.nysenate.gov/district/21",
+    "imageUrl" : "http://www.nysenate.gov/files/sd21.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=21"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Senator-Kevin-Parker/24988756132?ref=sgm"
+  }
+}

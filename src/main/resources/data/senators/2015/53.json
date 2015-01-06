@@ -1,0 +1,56 @@
+{
+  "nid" : 211,
+  "name" : "David J. Valesky",
+  "lastName" : "Valesky",
+  "shortName" : "Valesky",
+  "email" : "valesky@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Valesky-HSmp.jpg",
+  "url" : "http://www.nysenate.gov/senator/david-j-valesky",
+  "partyAffiliations" : [ "D", "IP" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "333 East Washington Street",
+    "city" : "Syracuse",
+    "postalCode" : "13202",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(315)-478-8745",
+    "fax" : "(315)-474-3804",
+    "otherPhone" : "",
+    "additional" : "805 State Office Building",
+    "latitude" : 43.049535,
+    "longitude" : -76.148372
+  }, {
+    "name" : "Albany Office",
+    "street" : "172 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518)-455-2838",
+    "fax" : "(518)-426-6885",
+    "otherPhone" : "",
+    "additional" : "LOB Room 512",
+    "latitude" : 42.652228,
+    "longitude" : -73.757982
+  } ],
+  "district" : {
+    "number" : 53,
+    "url" : "http://www.nysenate.gov/district/53",
+    "imageUrl" : "http://www.nysenate.gov/files/district_53.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=53"
+  },
+  "social" : {
+    "twitter" : "https://twitter.com/SenDaveValesky",
+    "youtube" : "http://www.youtube.com/user/SenatorValesky",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

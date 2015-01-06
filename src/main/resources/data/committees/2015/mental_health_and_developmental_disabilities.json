@@ -1,0 +1,64 @@
+{
+  "nid" : 266,
+  "name" : "Mental Health and Developmental Disabilities",
+  "shortName" : "mentalhealth",
+  "url" : "http://www.nysenate.gov/committee/mental-health-and-developmental-disabilities",
+  "videoUrl" : "http://www.livestream.com/NYSenate_MentalHealth",
+  "chairs" : [ {
+    "nid" : 75566,
+    "name" : "David Carlucci",
+    "shortName" : "Carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  } ],
+  "members" : [ {
+    "nid" : 74991,
+    "name" : "Greg Ball",
+    "shortName" : "Ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "nid" : 220,
+    "name" : "John J. Bonacic",
+    "shortName" : "Bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "nid" : 170136,
+    "name" : "Simcha Felder",
+    "shortName" : "Felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  }, {
+    "nid" : 230,
+    "name" : "Kemp Hannon",
+    "shortName" : "Hannon",
+    "url" : "http://www.nysenate.gov/senator/kemp-hannon"
+  }, {
+    "nid" : 215,
+    "name" : "James L. Seward",
+    "shortName" : "Seward",
+    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  }, {
+    "nid" : 74981,
+    "name" : "Lee M. Zeldin",
+    "shortName" : "Zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  }, {
+    "nid" : 172641,
+    "name" : "Cecilia Tkaczyk",
+    "shortName" : "Tkaczyk",
+    "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
+  }, {
+    "nid" : 115,
+    "name" : "Liz Krueger",
+    "shortName" : "Krueger",
+    "url" : "http://www.nysenate.gov/senator/liz-krueger"
+  }, {
+    "nid" : 170116,
+    "name" : "George Latimer",
+    "shortName" : "Latimer",
+    "url" : "http://www.nysenate.gov/senator/george-s-latimer"
+  }, {
+    "nid" : 75571,
+    "name" : "Gustavo Rivera",
+    "shortName" : "Rivera",
+    "url" : "http://www.nysenate.gov/senator/gustavo-rivera"
+  } ]
+}

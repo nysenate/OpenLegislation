@@ -1,0 +1,56 @@
+{
+  "nid" : 105,
+  "name" : "John L. Sampson",
+  "lastName" : "Sampson",
+  "shortName" : "Sampson",
+  "email" : "sampson@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/webphoto1.jpg",
+  "url" : "http://www.nysenate.gov/senator/john-l-sampson",
+  "partyAffiliations" : [ "D", "WF" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "1222  East 96th Street",
+    "city" : "Brooklyn",
+    "postalCode" : "11236",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 649-7653",
+    "fax" : "(718) 649-7661",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.64166,
+    "longitude" : -73.900138
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2788",
+    "fax" : "(518) 426-6806",
+    "otherPhone" : "",
+    "additional" : "Room 808, Legislative Office Building",
+    "latitude" : 42.652894,
+    "longitude" : -73.759161
+  } ],
+  "district" : {
+    "number" : 19,
+    "url" : "http://www.nysenate.gov/district/19",
+    "imageUrl" : "http://www.nysenate.gov/files/sd19.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=19"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

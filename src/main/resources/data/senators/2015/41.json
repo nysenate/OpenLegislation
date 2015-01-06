@@ -1,0 +1,41 @@
+{
+  "nid" : 252736,
+  "name" : "Susan Serino",
+  "lastName" : "Serino",
+  "shortName" : "Serino",
+  "email" : "Serino@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/serino.jpg",
+  "url" : "http://www.nysenate.gov/senator/susan-serino",
+  "partyAffiliations" : [ "R" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-",
+    "fax" : "(518) 426-",
+    "otherPhone" : "",
+    "additional" : "Room 617",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  } ],
+  "district" : {
+    "number" : 41,
+    "url" : "http://www.nysenate.gov/district/41",
+    "imageUrl" : "http://www.nysenate.gov/files/district_41.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=41"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

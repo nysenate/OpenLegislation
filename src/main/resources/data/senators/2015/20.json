@@ -1,0 +1,41 @@
+{
+  "nid" : 252771,
+  "name" : "Jesse Hamilton",
+  "lastName" : "Hamilton",
+  "shortName" : "Hamilton",
+  "email" : "Hamilton@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/hamilton_jesse_Unofficial.jpg",
+  "url" : "http://www.nysenate.gov/senator/jesse-hamilton",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-",
+    "fax" : "(518) 426-",
+    "otherPhone" : "",
+    "additional" : "Room 608",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  } ],
+  "district" : {
+    "number" : 20,
+    "url" : "http://www.nysenate.gov/district/20",
+    "imageUrl" : "http://www.nysenate.gov/files/sd20.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=20"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "nid" : 248,
+  "name" : "Cities",
+  "shortName" : "cities",
+  "url" : "http://www.nysenate.gov/committee/cities",
+  "videoUrl" : "http://www.livestream.com/NYSenate_cities",
+  "chairs" : [ {
+    "nid" : 221,
+    "name" : "Andrew J Lanza",
+    "shortName" : "Lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  } ],
+  "members" : [ {
+    "nid" : 216,
+    "name" : "John A. DeFrancisco",
+    "shortName" : "DeFrancisco",
+    "url" : "http://www.nysenate.gov/senator/john-defrancisco"
+  }, {
+    "nid" : 75011,
+    "name" : "Mark Grisanti",
+    "shortName" : "Grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  }, {
+    "nid" : 74991,
+    "name" : "Greg Ball",
+    "shortName" : "Ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "nid" : 221,
+    "name" : "Andrew J Lanza",
+    "shortName" : "Lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  }, {
+    "nid" : 207,
+    "name" : "Neil D. Breslin",
+    "shortName" : "Breslin",
+    "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
+  }, {
+    "nid" : 113,
+    "name" : "Daniel L. Squadron",
+    "shortName" : "Squadron",
+    "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
+  } ]
+}

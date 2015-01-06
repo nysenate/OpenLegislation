@@ -1,0 +1,79 @@
+{
+  "nid" : 252,
+  "name" : "Environmental Conservation",
+  "shortName" : "environment",
+  "url" : "http://www.nysenate.gov/committee/environmental-conservation",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Environment",
+  "chairs" : [ {
+    "nid" : 75011,
+    "name" : "Mark Grisanti",
+    "shortName" : "Grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  } ],
+  "members" : [ {
+    "nid" : 231,
+    "name" : "Kenneth P. LaValle",
+    "shortName" : "LaValle",
+    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
+  }, {
+    "nid" : 218,
+    "name" : "Betty Little",
+    "shortName" : "Little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  }, {
+    "nid" : 222,
+    "name" : "Carl L Marcellino",
+    "shortName" : "Marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "nid" : 227,
+    "name" : "George D. Maziarz",
+    "shortName" : "Maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  }, {
+    "nid" : 75001,
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "O'Mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "nid" : 203,
+    "name" : "Catharine Young",
+    "shortName" : "Young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "nid" : 75011,
+    "name" : "Mark Grisanti",
+    "shortName" : "Grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  }, {
+    "nid" : 75556,
+    "name" : "Adriano Espaillat",
+    "shortName" : "Espaillat",
+    "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
+  }, {
+    "nid" : 119,
+    "name" : "José M. Serrano",
+    "shortName" : "Serrano",
+    "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
+  }, {
+    "nid" : 170116,
+    "name" : "George Latimer",
+    "shortName" : "Latimer",
+    "url" : "http://www.nysenate.gov/senator/george-s-latimer"
+  }, {
+    "nid" : 172641,
+    "name" : "Cecilia Tkaczyk",
+    "shortName" : "Tkaczyk",
+    "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
+  }, {
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
+  }, {
+    "nid" : 170161,
+    "name" : "Ted O'Brien",
+    "shortName" : "O'Brien",
+    "url" : "http://www.nysenate.gov/senator/ted-obrien"
+  } ]
+}

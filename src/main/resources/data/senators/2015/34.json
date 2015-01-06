@@ -1,0 +1,56 @@
+{
+  "nid" : 202,
+  "name" : "Jeffrey D. Klein",
+  "lastName" : "Klein",
+  "shortName" : "Klein",
+  "email" : "jdklein@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(02-04-13) Klein-HS-001.jpg",
+  "url" : "http://www.nysenate.gov/senator/jeffrey-d-klein",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "1250 Waters Place, Suite 1202",
+    "city" : "Bronx",
+    "postalCode" : "10461",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 822-2049",
+    "fax" : "(718) 822-2321",
+    "otherPhone" : "(800) 718-2039",
+    "additional" : "",
+    "latitude" : 40.846444,
+    "longitude" : -73.842866
+  }, {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building, Room 913",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3595",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
+  } ],
+  "district" : {
+    "number" : 34,
+    "url" : "http://www.nysenate.gov/district/34",
+    "imageUrl" : "http://www.nysenate.gov/files/Untitled-34.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=34"
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/JeffKleinNY",
+    "youtube" : "http://www.youtube.com/user/IndeDemConference",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/jeffrey.d.klein"
+  }
+}

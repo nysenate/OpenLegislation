@@ -1,0 +1,56 @@
+{
+  "nid" : 170136,
+  "name" : "Simcha Felder",
+  "lastName" : "Felder",
+  "shortName" : "Felder",
+  "email" : "felder@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Felder-HS-012_web.jpg",
+  "url" : "http://www.nysenate.gov/senator/simcha-felder",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "944 Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2754",
+    "fax" : "(518) 426-6931",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
+  }, {
+    "name" : "District Office",
+    "street" : "1412 Avenue J Suite 2E",
+    "city" : "Brooklyn",
+    "postalCode" : "11230",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 253-2015",
+    "fax" : "(718) 253-2030",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.625017,
+    "longitude" : -73.961914
+  } ],
+  "district" : {
+    "number" : 17,
+    "url" : "http://www.nysenate.gov/district/17",
+    "imageUrl" : "http://www.nysenate.gov/files/Screen Shot 2013-01-22 at 4.19.17 PM.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=17"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

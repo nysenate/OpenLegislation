@@ -1,0 +1,56 @@
+{
+  "nid" : 75571,
+  "name" : "Gustavo Rivera",
+  "lastName" : "Rivera",
+  "shortName" : "Rivera",
+  "email" : "grivera@nysenate.gov",
+  "additionalContact" : "<p>The Office s open Monday through Friday 10 a.m. to 6 p.m.</p> <p>Constituent Service hours are on Monday through Thursday from 12 pm to 4 pm</p>",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(01-29-14) Rivera-HS- 009.jpg",
+  "url" : "http://www.nysenate.gov/senator/gustavo-rivera",
+  "partyAffiliations" : [ "D", "WF" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "181 State Street,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3395",
+    "fax" : "518-426-6858",
+    "otherPhone" : "",
+    "additional" : "Room 408 LOB",
+    "latitude" : 42.652811,
+    "longitude" : -73.758947
+  }, {
+    "name" : "District Office",
+    "street" : "2432 Grand Concourse,",
+    "city" : "Bronx",
+    "postalCode" : "10458",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "718-933-2034",
+    "fax" : "718-933-2825",
+    "otherPhone" : "",
+    "additional" : "Suite 506",
+    "latitude" : 40.860504,
+    "longitude" : -73.897833
+  } ],
+  "district" : {
+    "number" : 33,
+    "url" : "http://www.nysenate.gov/district/33",
+    "imageUrl" : "http://www.nysenate.gov/files/Untitled-33_0.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=33"
+  },
+  "social" : {
+    "twitter" : "https://twitter.com/NYSenatorRivera",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Hon-Gustavo-Rivera/168425229855372"
+  }
+}

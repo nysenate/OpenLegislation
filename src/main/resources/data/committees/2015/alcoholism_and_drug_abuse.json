@@ -1,0 +1,44 @@
+{
+  "nid" : 79316,
+  "name" : "Alcoholism and Drug Abuse",
+  "shortName" : "",
+  "url" : "http://www.nysenate.gov/committee/alcoholism-and-drug-abuse",
+  "videoUrl" : "http://www.livestream.com/nysenate_alcoholism_drug_abuse",
+  "chairs" : [ {
+    "nid" : 170126,
+    "name" : "Phil Boyle",
+    "shortName" : "Boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-boyle"
+  } ],
+  "members" : [ {
+    "nid" : 220,
+    "name" : "John J. Bonacic",
+    "shortName" : "Bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "nid" : 170126,
+    "name" : "Phil Boyle",
+    "shortName" : "Boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-boyle"
+  }, {
+    "nid" : 74996,
+    "name" : "Patty Ritchie",
+    "shortName" : "Ritchie",
+    "url" : "http://www.nysenate.gov/senator/patty-ritchie"
+  }, {
+    "nid" : 75566,
+    "name" : "David Carlucci",
+    "shortName" : "Carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "nid" : 170131,
+    "name" : "James Sanders Jr.",
+    "shortName" : "Sanders",
+    "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
+  }, {
+    "nid" : 109,
+    "name" : "Kevin S. Parker",
+    "shortName" : "Parker",
+    "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
+  } ]
+}

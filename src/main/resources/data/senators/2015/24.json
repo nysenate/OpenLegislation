@@ -1,0 +1,56 @@
+{
+  "nid" : 221,
+  "name" : "Andrew J Lanza",
+  "lastName" : "Lanza",
+  "shortName" : "Lanza",
+  "email" : "lanza@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/headshotweb.jpg",
+  "url" : "http://www.nysenate.gov/senator/andrew-j-lanza",
+  "partyAffiliations" : [ "R" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "3845 Richmond Ave. Suite 2A",
+    "city" : "Staten Island",
+    "postalCode" : "10312",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 984-4073",
+    "fax" : "(718) 984-4455",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.544119,
+    "longitude" : -74.164874
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3215",
+    "fax" : "(518) 426-6852",
+    "otherPhone" : "",
+    "additional" : "Room 915, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
+  } ],
+  "district" : {
+    "number" : 24,
+    "url" : "http://www.nysenate.gov/district/24",
+    "imageUrl" : "http://www.nysenate.gov/files/sd24_0.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=24"
+  },
+  "social" : {
+    "twitter" : "https://twitter.com/SenatorLanza",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Andrew-J-Lanza/45298833298"
+  }
+}

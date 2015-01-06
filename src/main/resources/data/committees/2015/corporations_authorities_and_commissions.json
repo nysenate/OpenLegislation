@@ -1,0 +1,44 @@
+{
+  "nid" : 270,
+  "name" : "Corporations, Authorities and Commissions",
+  "shortName" : "corporations",
+  "url" : "http://www.nysenate.gov/committee/corporations-authorities-and-commissions",
+  "videoUrl" : "http://www.livestream.com/NYSenate_CorpAuthComm",
+  "chairs" : [ {
+    "nid" : 233,
+    "name" : "Michael H. Ranzenhofer",
+    "shortName" : "Ranzenhofer",
+    "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
+  } ],
+  "members" : [ {
+    "nid" : 229,
+    "name" : "John J. Flanagan",
+    "shortName" : "Flanagan",
+    "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  }, {
+    "nid" : 239,
+    "name" : "William J. Larkin Jr.",
+    "shortName" : "Larkin",
+    "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr"
+  }, {
+    "nid" : 74986,
+    "name" : "Jack M. Martins",
+    "shortName" : "Martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  }, {
+    "nid" : 233,
+    "name" : "Michael H. Ranzenhofer",
+    "shortName" : "Ranzenhofer",
+    "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
+  }, {
+    "nid" : 123,
+    "name" : "Bill Perkins",
+    "shortName" : "Perkins",
+    "url" : "http://www.nysenate.gov/senator/bill-perkins"
+  }, {
+    "nid" : 113,
+    "name" : "Daniel L. Squadron",
+    "shortName" : "Squadron",
+    "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
+  } ]
+}

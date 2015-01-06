@@ -1,0 +1,56 @@
+{
+  "nid" : 75581,
+  "name" : "Timothy M. Kennedy",
+  "lastName" : "Kennedy",
+  "shortName" : "Kennedy",
+  "email" : "kennedy@nysenate.gov",
+  "additionalContact" : "&nbsp; &nbsp;",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(05-08-13) Kennedy -HS-021.jpg",
+  "url" : "http://www.nysenate.gov/senator/timothy-kennedy",
+  "partyAffiliations" : [ "D", "IP", "WF" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building, Room 506",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2426",
+    "fax" : "518-426-6851",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
+  }, {
+    "name" : "District Office",
+    "street" : "2239 South Park Ave.",
+    "city" : "Buffalo",
+    "postalCode" : "14220",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "716-826-2683",
+    "fax" : "716-826-2793",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.837456,
+    "longitude" : -78.823839
+  } ],
+  "district" : {
+    "number" : 63,
+    "url" : "http://www.nysenate.gov/district/63",
+    "imageUrl" : "http://www.nysenate.gov/files/district_63.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=63"
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/senkennedy",
+    "youtube" : "http://www.youtube.com/senatortimkennedy",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Senator-Timothy-M-Kennedy/181461761878773?v=info"
+  }
+}

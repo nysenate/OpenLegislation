@@ -1,0 +1,139 @@
+{
+  "nid" : 277,
+  "name" : "Rules",
+  "shortName" : "",
+  "url" : "http://www.nysenate.gov/committee/rules",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Rules",
+  "chairs" : [ {
+    "nid" : 225,
+    "name" : "Dean G. Skelos",
+    "shortName" : "Skelos",
+    "url" : "http://www.nysenate.gov/senator/dean-g-skelos"
+  } ],
+  "members" : [ {
+    "nid" : 220,
+    "name" : "John J. Bonacic",
+    "shortName" : "Bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "nid" : 75566,
+    "name" : "David Carlucci",
+    "shortName" : "Carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "nid" : 228,
+    "name" : "Hugh T. Farley",
+    "shortName" : "Farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "nid" : 229,
+    "name" : "John J. Flanagan",
+    "shortName" : "Flanagan",
+    "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  }, {
+    "nid" : 230,
+    "name" : "Kemp Hannon",
+    "shortName" : "Hannon",
+    "url" : "http://www.nysenate.gov/senator/kemp-hannon"
+  }, {
+    "nid" : 239,
+    "name" : "William J. Larkin Jr.",
+    "shortName" : "Larkin",
+    "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr"
+  }, {
+    "nid" : 231,
+    "name" : "Kenneth P. LaValle",
+    "shortName" : "LaValle",
+    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
+  }, {
+    "nid" : 214,
+    "name" : "Tom Libous",
+    "shortName" : "Libous",
+    "url" : "http://www.nysenate.gov/senator/tom-libous"
+  }, {
+    "nid" : 222,
+    "name" : "Carl L Marcellino",
+    "shortName" : "Marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "nid" : 227,
+    "name" : "George D. Maziarz",
+    "shortName" : "Maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  }, {
+    "nid" : 208,
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "Nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "nid" : 225,
+    "name" : "Dean G. Skelos",
+    "shortName" : "Skelos",
+    "url" : "http://www.nysenate.gov/senator/dean-g-skelos"
+  }, {
+    "nid" : 215,
+    "name" : "James L. Seward",
+    "shortName" : "Seward",
+    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  }, {
+    "nid" : 211,
+    "name" : "David J. Valesky",
+    "shortName" : "Valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
+  }, {
+    "nid" : 147,
+    "name" : "Andrea Stewart-Cousins",
+    "shortName" : "Stewart-Cousins",
+    "url" : "http://www.nysenate.gov/senator/andrea-stewart-cousins"
+  }, {
+    "nid" : 207,
+    "name" : "Neil D. Breslin",
+    "shortName" : "Breslin",
+    "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
+  }, {
+    "nid" : 101,
+    "name" : "Martin Malavé Dilan",
+    "shortName" : "Dilan",
+    "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
+  }, {
+    "nid" : 201,
+    "name" : "Ruth Hassell-Thompson",
+    "shortName" : "Hassell-Thompson",
+    "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
+  }, {
+    "nid" : 115,
+    "name" : "Liz Krueger",
+    "shortName" : "Krueger",
+    "url" : "http://www.nysenate.gov/senator/liz-krueger"
+  }, {
+    "nid" : 103,
+    "name" : "Velmanette Montgomery",
+    "shortName" : "Montgomery",
+    "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
+  }, {
+    "nid" : 109,
+    "name" : "Kevin S. Parker",
+    "shortName" : "Parker",
+    "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
+  }, {
+    "nid" : 123,
+    "name" : "Bill Perkins",
+    "shortName" : "Perkins",
+    "url" : "http://www.nysenate.gov/senator/bill-perkins"
+  }, {
+    "nid" : 75556,
+    "name" : "Adriano Espaillat",
+    "shortName" : "Espaillat",
+    "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
+  }, {
+    "nid" : 75576,
+    "name" : "Michael Gianaris",
+    "shortName" : "Gianaris",
+    "url" : "http://www.nysenate.gov/senator/michael-gianaris"
+  }, {
+    "nid" : 218,
+    "name" : "Betty Little",
+    "shortName" : "Little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  } ]
+}

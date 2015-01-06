@@ -1,0 +1,64 @@
+{
+  "nid" : 245,
+  "name" : "Aging",
+  "shortName" : "aging",
+  "url" : "http://www.nysenate.gov/committee/aging",
+  "videoUrl" : "http://www.livestream.com/nysenate_aging",
+  "chairs" : [ {
+    "nid" : 211,
+    "name" : "David J. Valesky",
+    "shortName" : "Valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
+  } ],
+  "members" : [ {
+    "nid" : 170136,
+    "name" : "Simcha Felder",
+    "shortName" : "Felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  }, {
+    "nid" : 232,
+    "name" : "Martin J. Golden",
+    "shortName" : "Golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "nid" : 231,
+    "name" : "Kenneth P. LaValle",
+    "shortName" : "LaValle",
+    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
+  }, {
+    "nid" : 170156,
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "Marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "nid" : 211,
+    "name" : "David J. Valesky",
+    "shortName" : "Valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
+  }, {
+    "nid" : 74981,
+    "name" : "Lee M. Zeldin",
+    "shortName" : "Zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  }, {
+    "nid" : 198,
+    "name" : "Ruben Diaz",
+    "shortName" : "Diaz",
+    "url" : "http://www.nysenate.gov/senator/ruben-diaz"
+  }, {
+    "nid" : 97,
+    "name" : "Joseph P. Addabbo Jr",
+    "shortName" : "Addabbo",
+    "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
+  }, {
+    "nid" : 99,
+    "name" : "Toby Ann Stavisky",
+    "shortName" : "Stavisky",
+    "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
+  }, {
+    "nid" : 170131,
+    "name" : "James Sanders Jr.",
+    "shortName" : "Sanders",
+    "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
+  } ]
+}

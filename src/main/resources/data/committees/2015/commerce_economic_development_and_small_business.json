@@ -1,0 +1,74 @@
+{
+  "nid" : 268,
+  "name" : "Commerce, Economic Development and Small Business",
+  "shortName" : "commerce",
+  "url" : "http://www.nysenate.gov/committee/commerce-economic-development-and-small-business",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Commerce",
+  "chairs" : [ {
+    "nid" : 74986,
+    "name" : "Jack M. Martins",
+    "shortName" : "Martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  } ],
+  "members" : [ {
+    "nid" : 75006,
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "Gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "nid" : 217,
+    "name" : "Joseph A. Griffo",
+    "shortName" : "Griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "nid" : 204,
+    "name" : "Joseph E. Robach",
+    "shortName" : "Robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  }, {
+    "nid" : 170126,
+    "name" : "Phil Boyle",
+    "shortName" : "Boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-boyle"
+  }, {
+    "nid" : 170136,
+    "name" : "Simcha Felder",
+    "shortName" : "Felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  }, {
+    "nid" : 75581,
+    "name" : "Timothy M. Kennedy",
+    "shortName" : "Kennedy",
+    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
+  }, {
+    "nid" : 74986,
+    "name" : "Jack M. Martins",
+    "shortName" : "Martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  }, {
+    "nid" : 201,
+    "name" : "Ruth Hassell-Thompson",
+    "shortName" : "Hassell-Thompson",
+    "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
+  }, {
+    "nid" : 170131,
+    "name" : "James Sanders Jr.",
+    "shortName" : "Sanders",
+    "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
+  }, {
+    "nid" : 170161,
+    "name" : "Ted O'Brien",
+    "shortName" : "O'Brien",
+    "url" : "http://www.nysenate.gov/senator/ted-obrien"
+  }, {
+    "nid" : 211,
+    "name" : "David J. Valesky",
+    "shortName" : "Valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
+  }, {
+    "nid" : 218,
+    "name" : "Betty Little",
+    "shortName" : "Little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  } ]
+}

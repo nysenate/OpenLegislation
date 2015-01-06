@@ -1,0 +1,56 @@
+{
+  "nid" : 252721,
+  "name" : "Thomas D. Croci",
+  "lastName" : "Croci",
+  "shortName" : "Croci",
+  "email" : "Croci@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Tom-Croci-.jpg",
+  "url" : "http://www.nysenate.gov/senator/thomas-croci",
+  "partyAffiliations" : [ "R" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2500",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 802",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  }, {
+    "name" : "District Office",
+    "street" : "Veterans Memorial Highway",
+    "city" : "Hauppauge",
+    "postalCode" : "11788",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(631) 360-3356",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "NYS Office Building",
+    "latitude" : 40.823808,
+    "longitude" : -73.208634
+  } ],
+  "district" : {
+    "number" : 3,
+    "url" : "http://www.nysenate.gov/district/03",
+    "imageUrl" : "http://www.nysenate.gov/files/sd3.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=03"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

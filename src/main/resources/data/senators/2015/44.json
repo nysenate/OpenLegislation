@@ -1,0 +1,56 @@
+{
+  "nid" : 207,
+  "name" : "Neil D. Breslin",
+  "lastName" : "Breslin",
+  "shortName" : "Breslin",
+  "email" : "breslin@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Breslin202009.jpg",
+  "url" : "http://www.nysenate.gov/senator/neil-d-breslin",
+  "partyAffiliations" : [ "D", "IP", "WF" ],
+  "offices" : [ {
+    "name" : "",
+    "street" : "",
+    "city" : "",
+    "postalCode" : "",
+    "provinceName" : "",
+    "province" : "",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 0.0,
+    "longitude" : 0.0
+  }, {
+    "name" : "Albany Office",
+    "street" : "172 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2225",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 414, Capitol",
+    "latitude" : 42.652228,
+    "longitude" : -73.757982
+  } ],
+  "district" : {
+    "number" : 44,
+    "url" : "http://www.nysenate.gov/district/44",
+    "imageUrl" : "http://www.nysenate.gov/files/district_44.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=44"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Senator-Neil-D-Breslin/168918816484213"
+  }
+}

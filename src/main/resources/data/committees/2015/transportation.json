@@ -1,0 +1,109 @@
+{
+  "nid" : 276,
+  "name" : "Transportation",
+  "shortName" : "transportation",
+  "url" : "http://www.nysenate.gov/committee/transportation",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Transportation",
+  "chairs" : [ {
+    "nid" : 204,
+    "name" : "Joseph E. Robach",
+    "shortName" : "Robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  } ],
+  "members" : [ {
+    "nid" : 204,
+    "name" : "Joseph E. Robach",
+    "shortName" : "Robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  }, {
+    "nid" : 75566,
+    "name" : "David Carlucci",
+    "shortName" : "Carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "nid" : 75006,
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "Gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "nid" : 239,
+    "name" : "William J. Larkin Jr.",
+    "shortName" : "Larkin",
+    "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr"
+  }, {
+    "nid" : 227,
+    "name" : "George D. Maziarz",
+    "shortName" : "Maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  }, {
+    "nid" : 208,
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "Nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "nid" : 75001,
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "O'Mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "nid" : 233,
+    "name" : "Michael H. Ranzenhofer",
+    "shortName" : "Ranzenhofer",
+    "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
+  }, {
+    "nid" : 203,
+    "name" : "Catharine Young",
+    "shortName" : "Young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "nid" : 74981,
+    "name" : "Lee M. Zeldin",
+    "shortName" : "Zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  }, {
+    "nid" : 101,
+    "name" : "Martin Malavé Dilan",
+    "shortName" : "Dilan",
+    "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
+  }, {
+    "nid" : 198,
+    "name" : "Ruben Diaz",
+    "shortName" : "Diaz",
+    "url" : "http://www.nysenate.gov/senator/ruben-diaz"
+  }, {
+    "nid" : 75581,
+    "name" : "Timothy M. Kennedy",
+    "shortName" : "Kennedy",
+    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
+  }, {
+    "nid" : 123,
+    "name" : "Bill Perkins",
+    "shortName" : "Perkins",
+    "url" : "http://www.nysenate.gov/senator/bill-perkins"
+  }, {
+    "nid" : 113,
+    "name" : "Daniel L. Squadron",
+    "shortName" : "Squadron",
+    "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
+  }, {
+    "nid" : 99,
+    "name" : "Toby Ann Stavisky",
+    "shortName" : "Stavisky",
+    "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
+  }, {
+    "nid" : 170151,
+    "name" : "Terry Gipson",
+    "shortName" : "Gipson",
+    "url" : "http://www.nysenate.gov/senator/terry-gipson"
+  }, {
+    "nid" : 222,
+    "name" : "Carl L Marcellino",
+    "shortName" : "Marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
+  } ]
+}

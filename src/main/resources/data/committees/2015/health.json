@@ -1,0 +1,99 @@
+{
+  "nid" : 258,
+  "name" : "Health",
+  "shortName" : "health",
+  "url" : "http://www.nysenate.gov/committee/health",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Health",
+  "chairs" : [ {
+    "nid" : 230,
+    "name" : "Kemp Hannon",
+    "shortName" : "Hannon",
+    "url" : "http://www.nysenate.gov/senator/kemp-hannon"
+  } ],
+  "members" : [ {
+    "nid" : 74991,
+    "name" : "Greg Ball",
+    "shortName" : "Ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "nid" : 228,
+    "name" : "Hugh T. Farley",
+    "shortName" : "Farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "nid" : 170136,
+    "name" : "Simcha Felder",
+    "shortName" : "Felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  }, {
+    "nid" : 232,
+    "name" : "Martin J. Golden",
+    "shortName" : "Golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "nid" : 230,
+    "name" : "Kemp Hannon",
+    "shortName" : "Hannon",
+    "url" : "http://www.nysenate.gov/senator/kemp-hannon"
+  }, {
+    "nid" : 239,
+    "name" : "William J. Larkin Jr.",
+    "shortName" : "Larkin",
+    "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr"
+  }, {
+    "nid" : 111,
+    "name" : "Diane J. Savino",
+    "shortName" : "Savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  }, {
+    "nid" : 215,
+    "name" : "James L. Seward",
+    "shortName" : "Seward",
+    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  }, {
+    "nid" : 203,
+    "name" : "Catharine Young",
+    "shortName" : "Young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "nid" : 75571,
+    "name" : "Gustavo Rivera",
+    "shortName" : "Rivera",
+    "url" : "http://www.nysenate.gov/senator/gustavo-rivera"
+  }, {
+    "nid" : 103,
+    "name" : "Velmanette Montgomery",
+    "shortName" : "Montgomery",
+    "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
+  }, {
+    "nid" : 201,
+    "name" : "Ruth Hassell-Thompson",
+    "shortName" : "Hassell-Thompson",
+    "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
+  }, {
+    "nid" : 42181,
+    "name" : "Jose Peralta",
+    "shortName" : "Peralta",
+    "url" : "http://www.nysenate.gov/senator/jose-peralta"
+  }, {
+    "nid" : 170161,
+    "name" : "Ted O'Brien",
+    "shortName" : "O'Brien",
+    "url" : "http://www.nysenate.gov/senator/ted-obrien"
+  }, {
+    "nid" : 170141,
+    "name" : "Brad Hoylman",
+    "shortName" : "Hoylman",
+    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
+  }, {
+    "nid" : 119,
+    "name" : "José M. Serrano",
+    "shortName" : "Serrano",
+    "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
+  }, {
+    "nid" : 74986,
+    "name" : "Jack M. Martins",
+    "shortName" : "Martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  } ]
+}

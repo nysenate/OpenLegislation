@@ -1,0 +1,59 @@
+{
+  "nid" : 262,
+  "name" : "Investigations and Government Operations",
+  "shortName" : "",
+  "url" : "http://www.nysenate.gov/committee/investigations-and-government-operations",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Investigations_GovernmentOps",
+  "chairs" : [ {
+    "nid" : 222,
+    "name" : "Carl L Marcellino",
+    "shortName" : "Marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  } ],
+  "members" : [ {
+    "nid" : 222,
+    "name" : "Carl L Marcellino",
+    "shortName" : "Marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "nid" : 75566,
+    "name" : "David Carlucci",
+    "shortName" : "Carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "nid" : 232,
+    "name" : "Martin J. Golden",
+    "shortName" : "Golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "nid" : 208,
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "Nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "nid" : 75001,
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "O'Mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "nid" : 74981,
+    "name" : "Lee M. Zeldin",
+    "shortName" : "Zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  }, {
+    "nid" : 170141,
+    "name" : "Brad Hoylman",
+    "shortName" : "Hoylman",
+    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
+  }, {
+    "nid" : 198,
+    "name" : "Ruben Diaz",
+    "shortName" : "Diaz",
+    "url" : "http://www.nysenate.gov/senator/ruben-diaz"
+  }, {
+    "nid" : 113,
+    "name" : "Daniel L. Squadron",
+    "shortName" : "Squadron",
+    "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
+  } ]
+}

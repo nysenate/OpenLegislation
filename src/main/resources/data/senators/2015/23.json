@@ -1,0 +1,71 @@
+{
+  "nid" : 111,
+  "name" : "Diane J. Savino",
+  "lastName" : "Savino",
+  "shortName" : "Savino",
+  "email" : "savino@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(03-03-09) Savino-HS-019.jpg",
+  "url" : "http://www.nysenate.gov/senator/diane-j-savino",
+  "partyAffiliations" : [ "D", "IP", "WF" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "36 Richmond Terrace",
+    "city" : "Staten Island",
+    "postalCode" : "10301",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 727-9406",
+    "fax" : "(718) 727-9426",
+    "otherPhone" : "",
+    "additional" : "Suite 112",
+    "latitude" : 40.643568,
+    "longitude" : -74.076587
+  }, {
+    "name" : "District Office 2",
+    "street" : "2872 West 15th Street",
+    "city" : "Brooklyn",
+    "postalCode" : "11224-2602",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 333-0311",
+    "fax" : "(347) 492-3263",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.57742,
+    "longitude" : -73.982775
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2437",
+    "fax" : "(518) 426-6943",
+    "otherPhone" : "",
+    "additional" : "Room 315, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
+  } ],
+  "district" : {
+    "number" : 23,
+    "url" : "http://www.nysenate.gov/district/23",
+    "imageUrl" : "http://www.nysenate.gov/files/sd23.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=23"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "http://www.flickr.com/photos/senatorsavino/",
+    "facebook" : ""
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "nid" : 147,
+  "name" : "Andrea Stewart-Cousins",
+  "lastName" : "Stewart-Cousins",
+  "shortName" : "Stewart-Cousins",
+  "email" : "scousins@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(03-09-09) Stewart-Cousins HS-016.jpg",
+  "url" : "http://www.nysenate.gov/senator/andrea-stewart-cousins",
+  "partyAffiliations" : [ "D", "IP", "WF" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "28 Wells Avenue",
+    "city" : "Yonkers",
+    "postalCode" : "10701",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(914) 423-4031",
+    "fax" : "(914) 423-0979",
+    "otherPhone" : "",
+    "additional" : "Building 3",
+    "latitude" : 40.936519,
+    "longitude" : -73.899986
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2585",
+    "fax" : "(518) 426-6811",
+    "otherPhone" : "",
+    "additional" : "Room 907, Legislative Office Building",
+    "latitude" : 42.668971,
+    "longitude" : -73.78689
+  }, {
+    "name" : "",
+    "street" : "",
+    "city" : "",
+    "postalCode" : "",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 0.0,
+    "longitude" : 0.0
+  } ],
+  "district" : {
+    "number" : 35,
+    "url" : "http://www.nysenate.gov/district/35",
+    "imageUrl" : "http://www.nysenate.gov/files/Screen Shot 2013-01-02 at 4.00.56 PM.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=35"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

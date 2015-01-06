@@ -1,0 +1,56 @@
+{
+  "nid" : 216,
+  "name" : "John A. DeFrancisco",
+  "lastName" : "DeFrancisco",
+  "shortName" : "DeFrancisco",
+  "email" : "jdefranc@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/2014 Headshot.png",
+  "url" : "http://www.nysenate.gov/senator/john-defrancisco",
+  "partyAffiliations" : [ "R", "C", "I" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "333 East Washington Street",
+    "city" : "Syracuse",
+    "postalCode" : "13202",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(315) 428-7632",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "800 State Office Building",
+    "latitude" : 43.049535,
+    "longitude" : -76.148372
+  }, {
+    "name" : "Albany Office",
+    "street" : "416 Capitol",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3511",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.654507,
+    "longitude" : -73.780244
+  } ],
+  "district" : {
+    "number" : 50,
+    "url" : "http://www.nysenate.gov/district/50",
+    "imageUrl" : "http://www.nysenate.gov/files/district_50.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=50"
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/JohnDeFrancisco",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Senator-John-A-DeFrancisco/8776617150"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "nid" : 252726,
+  "name" : "Michael Venditto",
+  "lastName" : "Venditto",
+  "shortName" : "Venditto",
+  "email" : "Venditto@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Michael_Venditto.jpg",
+  "url" : "http://www.nysenate.gov/senator/michael-venditto",
+  "partyAffiliations" : [ "R" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-",
+    "fax" : "(518) 426-",
+    "otherPhone" : "",
+    "additional" : "Room 504",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  } ],
+  "district" : {
+    "number" : 8,
+    "url" : "http://www.nysenate.gov/district/08",
+    "imageUrl" : "http://www.nysenate.gov/files/SD8.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=08"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "nid" : 252766,
+  "name" : "Leroy Comrie",
+  "lastName" : "Comrie",
+  "shortName" : "Comrie",
+  "email" : "Comrie@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/comrie_SD14.jpg",
+  "url" : "http://www.nysenate.gov/senator/leroy-comrie",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-",
+    "fax" : "(518) 426-",
+    "otherPhone" : "",
+    "additional" : "Room 918",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  } ],
+  "district" : {
+    "number" : 14,
+    "url" : "http://www.nysenate.gov/district/14",
+    "imageUrl" : "http://www.nysenate.gov/files/sd14.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=14"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

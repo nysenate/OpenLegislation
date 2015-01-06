@@ -1,0 +1,71 @@
+{
+  "nid" : 232,
+  "name" : "Martin J. Golden",
+  "lastName" : "Golden",
+  "shortName" : "Golden",
+  "email" : "golden@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/SD22_Golden.jpg",
+  "url" : "http://www.nysenate.gov/senator/martin-j-golden",
+  "partyAffiliations" : [ "R", "C", "IP" ],
+  "offices" : [ {
+    "name" : "Satellite Office",
+    "street" : "3604 Quentin Road",
+    "city" : "Brooklyn",
+    "postalCode" : "11234",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.614592,
+    "longitude" : -73.936422
+  }, {
+    "name" : "District Office",
+    "street" : "7408 5th Avenue",
+    "city" : "Brooklyn",
+    "postalCode" : "11209",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 238-6044",
+    "fax" : "(718) 238-6170",
+    "otherPhone" : "",
+    "additional" : "1st Floor",
+    "latitude" : 40.630138,
+    "longitude" : -74.022734
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2730",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 409, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
+  } ],
+  "district" : {
+    "number" : 22,
+    "url" : "http://www.nysenate.gov/district/22",
+    "imageUrl" : "http://www.nysenate.gov/files/sd22.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=22"
+  },
+  "social" : {
+    "twitter" : "https://twitter.com/SenMartyGolden",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Martin-J-Golden/29214902523"
+  }
+}

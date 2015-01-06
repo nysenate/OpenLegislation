@@ -1,0 +1,109 @@
+{
+  "nid" : 261,
+  "name" : "Insurance",
+  "shortName" : "insurance",
+  "url" : "http://www.nysenate.gov/committee/insurance",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Insurance",
+  "chairs" : [ {
+    "nid" : 215,
+    "name" : "James L. Seward",
+    "shortName" : "Seward",
+    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  } ],
+  "members" : [ {
+    "nid" : 215,
+    "name" : "James L. Seward",
+    "shortName" : "Seward",
+    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  }, {
+    "nid" : 75566,
+    "name" : "David Carlucci",
+    "shortName" : "Carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "nid" : 229,
+    "name" : "John J. Flanagan",
+    "shortName" : "Flanagan",
+    "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  }, {
+    "nid" : 232,
+    "name" : "Martin J. Golden",
+    "shortName" : "Golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "nid" : 75011,
+    "name" : "Mark Grisanti",
+    "shortName" : "Grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  }, {
+    "nid" : 221,
+    "name" : "Andrew J Lanza",
+    "shortName" : "Lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  }, {
+    "nid" : 239,
+    "name" : "William J. Larkin Jr.",
+    "shortName" : "Larkin",
+    "url" : "http://www.nysenate.gov/senator/william-j-larkin-jr"
+  }, {
+    "nid" : 231,
+    "name" : "Kenneth P. LaValle",
+    "shortName" : "LaValle",
+    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
+  }, {
+    "nid" : 74986,
+    "name" : "Jack M. Martins",
+    "shortName" : "Martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  }, {
+    "nid" : 75001,
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "O'Mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "nid" : 203,
+    "name" : "Catharine Young",
+    "shortName" : "Young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "nid" : 207,
+    "name" : "Neil D. Breslin",
+    "shortName" : "Breslin",
+    "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
+  }, {
+    "nid" : 75556,
+    "name" : "Adriano Espaillat",
+    "shortName" : "Espaillat",
+    "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
+  }, {
+    "nid" : 75581,
+    "name" : "Timothy M. Kennedy",
+    "shortName" : "Kennedy",
+    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
+  }, {
+    "nid" : 109,
+    "name" : "Kevin S. Parker",
+    "shortName" : "Parker",
+    "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
+  }, {
+    "nid" : 99,
+    "name" : "Toby Ann Stavisky",
+    "shortName" : "Stavisky",
+    "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
+  }, {
+    "nid" : 170161,
+    "name" : "Ted O'Brien",
+    "shortName" : "O'Brien",
+    "url" : "http://www.nysenate.gov/senator/ted-obrien"
+  }, {
+    "nid" : 42181,
+    "name" : "Jose Peralta",
+    "shortName" : "Peralta",
+    "url" : "http://www.nysenate.gov/senator/jose-peralta"
+  }, {
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
+  } ]
+}

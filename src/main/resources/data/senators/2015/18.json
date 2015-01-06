@@ -1,0 +1,56 @@
+{
+  "nid" : 101,
+  "name" : "Martin Malavé Dilan",
+  "lastName" : "Dilan",
+  "shortName" : "Dilan",
+  "email" : "dilan@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(05-16-12) Dilan-HS-005.jpg",
+  "url" : "http://www.nysenate.gov/senator/martin-malave-dilan",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2177",
+    "fax" : "(518) 426-6947",
+    "otherPhone" : "",
+    "additional" : "Room 711B, Legislative Office Building",
+    "latitude" : 42.652894,
+    "longitude" : -73.759161
+  }, {
+    "name" : "District Office",
+    "street" : "718 Knickerbocker Avenue",
+    "city" : "Brooklyn",
+    "postalCode" : "11221",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 573-1726",
+    "fax" : "(718) 573-2407",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.694149,
+    "longitude" : -73.91017
+  } ],
+  "district" : {
+    "number" : 18,
+    "url" : "http://www.nysenate.gov/district/18",
+    "imageUrl" : "http://www.nysenate.gov/files/sd18.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=18"
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/SenatorDilan",
+    "youtube" : "http://www.youtube.com/user/SenMMDilan",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Martin-Malave-Dilan/80483802077"
+  }
+}

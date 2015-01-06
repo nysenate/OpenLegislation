@@ -1,0 +1,59 @@
+{
+  "nid" : 260,
+  "name" : "Housing, Construction and Community Development",
+  "shortName" : "housing",
+  "url" : "http://www.nysenate.gov/committee/housing-construction-and-community-development",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Housing",
+  "chairs" : [ {
+    "nid" : 203,
+    "name" : "Catharine Young",
+    "shortName" : "Young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  } ],
+  "members" : [ {
+    "nid" : 220,
+    "name" : "John J. Bonacic",
+    "shortName" : "Bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "nid" : 75006,
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "Gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "nid" : 203,
+    "name" : "Catharine Young",
+    "shortName" : "Young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "nid" : 170126,
+    "name" : "Phil Boyle",
+    "shortName" : "Boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-boyle"
+  }, {
+    "nid" : 208,
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "Nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "nid" : 75556,
+    "name" : "Adriano Espaillat",
+    "shortName" : "Espaillat",
+    "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
+  }, {
+    "nid" : 198,
+    "name" : "Ruben Diaz",
+    "shortName" : "Diaz",
+    "url" : "http://www.nysenate.gov/senator/ruben-diaz"
+  }, {
+    "nid" : 115,
+    "name" : "Liz Krueger",
+    "shortName" : "Krueger",
+    "url" : "http://www.nysenate.gov/senator/liz-krueger"
+  }, {
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
+  } ]
+}

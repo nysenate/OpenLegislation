@@ -1,0 +1,56 @@
+{
+  "nid" : 115,
+  "name" : "Liz Krueger",
+  "lastName" : "Krueger",
+  "shortName" : "Krueger",
+  "email" : "lkrueger@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Senate Headshot.jpg",
+  "url" : "http://www.nysenate.gov/senator/liz-krueger",
+  "partyAffiliations" : [ "D", "WF" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "172 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2297",
+    "fax" : "(518) 426-6874",
+    "otherPhone" : "",
+    "additional" : "Room 905 Legislative Office Building",
+    "latitude" : 42.652134,
+    "longitude" : -73.757823
+  }, {
+    "name" : "District Office",
+    "street" : "1850 Second Avenue",
+    "city" : "New York",
+    "postalCode" : "10128",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(212) 490-9535",
+    "fax" : "(212) 490-2151",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 0.0,
+    "longitude" : 0.0
+  } ],
+  "district" : {
+    "number" : 28,
+    "url" : "http://www.nysenate.gov/district/28",
+    "imageUrl" : "http://www.nysenate.gov/files/Untitled-28.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=28"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

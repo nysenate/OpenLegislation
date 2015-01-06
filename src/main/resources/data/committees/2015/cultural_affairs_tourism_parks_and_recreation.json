@@ -1,0 +1,74 @@
+{
+  "nid" : 272,
+  "name" : "Cultural Affairs, Tourism, Parks and Recreation",
+  "shortName" : "tourism",
+  "url" : "http://www.nysenate.gov/committee/cultural-affairs-tourism-parks-and-recreation",
+  "videoUrl" : "http://www.livestream.com/NYSenate_CulturalAffairs",
+  "chairs" : [ {
+    "nid" : 218,
+    "name" : "Betty Little",
+    "shortName" : "Little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  } ],
+  "members" : [ {
+    "nid" : 220,
+    "name" : "John J. Bonacic",
+    "shortName" : "Bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "nid" : 217,
+    "name" : "Joseph A. Griffo",
+    "shortName" : "Griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "nid" : 75011,
+    "name" : "Mark Grisanti",
+    "shortName" : "Grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  }, {
+    "nid" : 222,
+    "name" : "Carl L Marcellino",
+    "shortName" : "Marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  }, {
+    "nid" : 170156,
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "Marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "nid" : 74996,
+    "name" : "Patty Ritchie",
+    "shortName" : "Ritchie",
+    "url" : "http://www.nysenate.gov/senator/patty-ritchie"
+  }, {
+    "nid" : 218,
+    "name" : "Betty Little",
+    "shortName" : "Little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  }, {
+    "nid" : 119,
+    "name" : "José M. Serrano",
+    "shortName" : "Serrano",
+    "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
+  }, {
+    "nid" : 75581,
+    "name" : "Timothy M. Kennedy",
+    "shortName" : "Kennedy",
+    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
+  }, {
+    "nid" : 170141,
+    "name" : "Brad Hoylman",
+    "shortName" : "Hoylman",
+    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
+  }, {
+    "nid" : 170151,
+    "name" : "Terry Gipson",
+    "shortName" : "Gipson",
+    "url" : "http://www.nysenate.gov/senator/terry-gipson"
+  }, {
+    "nid" : 170161,
+    "name" : "Ted O'Brien",
+    "shortName" : "O'Brien",
+    "url" : "http://www.nysenate.gov/senator/ted-obrien"
+  } ]
+}

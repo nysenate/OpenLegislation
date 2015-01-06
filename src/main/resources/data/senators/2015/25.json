@@ -1,0 +1,56 @@
+{
+  "nid" : 103,
+  "name" : "Velmanette Montgomery",
+  "lastName" : "Montgomery",
+  "shortName" : "Montgomery",
+  "email" : "montgome@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/headshot.png",
+  "url" : "http://www.nysenate.gov/senator/velmanette-montgomery",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "30 Third Avenue",
+    "city" : "Brooklyn",
+    "postalCode" : "11217",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 643-6140",
+    "fax" : "(718) 237-4137",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.686028,
+    "longitude" : -73.980247
+  }, {
+    "name" : "Albany Office",
+    "street" : "903 Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3451",
+    "fax" : "(518) 426-6854",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
+  } ],
+  "district" : {
+    "number" : 25,
+    "url" : "http://www.nysenate.gov/district/25",
+    "imageUrl" : "http://www.nysenate.gov/files/Untitled-25.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=25"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/New-York-State-Senator-Velmanette-Montgomery/103064926679"
+  }
+}

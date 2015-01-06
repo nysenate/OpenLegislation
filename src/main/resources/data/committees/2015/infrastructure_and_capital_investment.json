@@ -1,0 +1,59 @@
+{
+  "nid" : 173646,
+  "name" : "Infrastructure and Capital Investment",
+  "shortName" : "capitalinvestments",
+  "url" : "http://www.nysenate.gov/committee/infrastructure-and-capital-investment",
+  "videoUrl" : "http://www.livestream.com/nysenate_infrastructure_capinvestment",
+  "chairs" : [ {
+    "nid" : 222,
+    "name" : "Carl L Marcellino",
+    "shortName" : "Marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  } ],
+  "members" : [ {
+    "nid" : 204,
+    "name" : "Joseph E. Robach",
+    "shortName" : "Robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  }, {
+    "nid" : 75006,
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "Gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "nid" : 217,
+    "name" : "Joseph A. Griffo",
+    "shortName" : "Griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "nid" : 75011,
+    "name" : "Mark Grisanti",
+    "shortName" : "Grisanti",
+    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+  }, {
+    "nid" : 75566,
+    "name" : "David Carlucci",
+    "shortName" : "Carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "nid" : 170141,
+    "name" : "Brad Hoylman",
+    "shortName" : "Hoylman",
+    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
+  }, {
+    "nid" : 75581,
+    "name" : "Timothy M. Kennedy",
+    "shortName" : "Kennedy",
+    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
+  }, {
+    "nid" : 170116,
+    "name" : "George Latimer",
+    "shortName" : "Latimer",
+    "url" : "http://www.nysenate.gov/senator/george-s-latimer"
+  }, {
+    "nid" : 222,
+    "name" : "Carl L Marcellino",
+    "shortName" : "Marcellino",
+    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
+  } ]
+}

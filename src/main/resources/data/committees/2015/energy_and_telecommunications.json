@@ -1,0 +1,69 @@
+{
+  "nid" : 251,
+  "name" : "Energy and Telecommunications",
+  "shortName" : "energy",
+  "url" : "http://www.nysenate.gov/committee/energy-and-telecommunications",
+  "videoUrl" : "http://www.livestream.com/NYSenate_EnergyTelcom",
+  "chairs" : [ {
+    "nid" : 227,
+    "name" : "George D. Maziarz",
+    "shortName" : "Maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  } ],
+  "members" : [ {
+    "nid" : 75566,
+    "name" : "David Carlucci",
+    "shortName" : "Carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "nid" : 227,
+    "name" : "George D. Maziarz",
+    "shortName" : "Maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  }, {
+    "nid" : 75001,
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "O'Mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "nid" : 217,
+    "name" : "Joseph A. Griffo",
+    "shortName" : "Griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "nid" : 74996,
+    "name" : "Patty Ritchie",
+    "shortName" : "Ritchie",
+    "url" : "http://www.nysenate.gov/senator/patty-ritchie"
+  }, {
+    "nid" : 204,
+    "name" : "Joseph E. Robach",
+    "shortName" : "Robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  }, {
+    "nid" : 109,
+    "name" : "Kevin S. Parker",
+    "shortName" : "Parker",
+    "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
+  }, {
+    "nid" : 75581,
+    "name" : "Timothy M. Kennedy",
+    "shortName" : "Kennedy",
+    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
+  }, {
+    "nid" : 101,
+    "name" : "Martin Malavé Dilan",
+    "shortName" : "Dilan",
+    "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
+  }, {
+    "nid" : 42181,
+    "name" : "Jose Peralta",
+    "shortName" : "Peralta",
+    "url" : "http://www.nysenate.gov/senator/jose-peralta"
+  }, {
+    "nid" : 229,
+    "name" : "John J. Flanagan",
+    "shortName" : "Flanagan",
+    "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  } ]
+}

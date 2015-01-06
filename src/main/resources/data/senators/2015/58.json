@@ -1,0 +1,71 @@
+{
+  "nid" : 75001,
+  "name" : "Thomas F. O'Mara",
+  "lastName" : "O'Mara",
+  "shortName" : "O'Mara",
+  "email" : "omara@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(01-11-11) O'Mara-011_0.jpg",
+  "url" : "http://www.nysenate.gov/senator/thomas-f-omara",
+  "partyAffiliations" : [ "R", "C" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2091",
+    "fax" : "518-426-6976",
+    "otherPhone" : "",
+    "additional" : "Room 812",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
+  }, {
+    "name" : "District Office",
+    "street" : "333 East Water Street",
+    "city" : "Elmira",
+    "postalCode" : "14901",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "607-735-9671",
+    "fax" : "607-735-9675",
+    "otherPhone" : "",
+    "additional" : "(3rd Floor, Suite 301)",
+    "latitude" : 42.088315,
+    "longitude" : -76.801676
+  }, {
+    "name" : "Satellite Office",
+    "street" : "105 East Steuben Street",
+    "city" : "Bath",
+    "postalCode" : "14810",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "607-776-3201",
+    "fax" : "607-776-5185",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.333904,
+    "longitude" : -77.3151
+  } ],
+  "district" : {
+    "number" : 58,
+    "url" : "http://www.nysenate.gov/district/58",
+    "imageUrl" : "http://www.nysenate.gov/files/district_58.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=58"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/New-York-State-Senator-Tom-OMara/151463428240765?"
+  }
+}

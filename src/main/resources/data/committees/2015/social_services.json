@@ -1,0 +1,44 @@
+{
+  "nid" : 278,
+  "name" : "Social Services",
+  "shortName" : "socialservices",
+  "url" : "http://www.nysenate.gov/committee/social-services",
+  "videoUrl" : "http://www.livestream.com/NYSenate_SocialServices",
+  "chairs" : [ {
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
+  } ],
+  "members" : [ {
+    "nid" : 74991,
+    "name" : "Greg Ball",
+    "shortName" : "Ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "nid" : 228,
+    "name" : "Hugh T. Farley",
+    "shortName" : "Farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "nid" : 74986,
+    "name" : "Jack M. Martins",
+    "shortName" : "Martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  }, {
+    "nid" : 170131,
+    "name" : "James Sanders Jr.",
+    "shortName" : "Sanders",
+    "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
+  }, {
+    "nid" : 113,
+    "name" : "Daniel L. Squadron",
+    "shortName" : "Squadron",
+    "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
+  }, {
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
+  } ]
+}

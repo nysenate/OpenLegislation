@@ -1,0 +1,56 @@
+{
+  "nid" : 170141,
+  "name" : "Brad Hoylman",
+  "lastName" : "Hoylman",
+  "shortName" : "Hoylman",
+  "email" : "hoylman@nysenate.gov",
+  "additionalContact" : "<p>Please direct media inquiries to Communications Director Julia Alschuler at <a href=\"mailto:julia@bradhoylman.com\">julia@bradhoylman.com</a>. Please send invitations to in-district events or requests for in-district meetings to <a href=\"mailto:schedule@bradhoylman.com\">schedule@bradhoylman.com</a>.Please send invitations to Albany events or requests for Albany meetings to <a href=\"mailto:hoylmanrequest@gmail.com\">hoylmanrequest@gmail.com</a>.&nbsp;</p>",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(12-10-12) Hoylman-HS-010 RE_0.jpg",
+  "url" : "http://www.nysenate.gov/senator/brad-hoylman",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "322 Eighth Avenue, Suite 1700",
+    "city" : "New York",
+    "postalCode" : "10001",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(212) 633-8052",
+    "fax" : "(212) 633-8096",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.747105,
+    "longitude" : -73.99664
+  }, {
+    "name" : "Albany Office",
+    "street" : "Room 413, Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2451",
+    "fax" : "(518) 426-6846",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
+  } ],
+  "district" : {
+    "number" : 27,
+    "url" : "http://www.nysenate.gov/district/27",
+    "imageUrl" : "http://www.nysenate.gov/files/Untitled-27.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=27"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/bradhoylman"
+  }
+}

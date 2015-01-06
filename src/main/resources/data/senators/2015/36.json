@@ -1,0 +1,71 @@
+{
+  "nid" : 201,
+  "name" : "Ruth Hassell-Thompson",
+  "lastName" : "Hassell-Thompson",
+  "shortName" : "Hassell-Thompson",
+  "email" : "hassellt@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/WebBio Hassell-ThompsonHS.jpg",
+  "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson",
+  "partyAffiliations" : [ "D", "WF" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "959 E. 233rd Street",
+    "city" : "Bronx",
+    "postalCode" : "10466",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(718) 547-8854",
+    "fax" : "(718) 515-2718",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.891138,
+    "longitude" : -73.849565
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2061",
+    "fax" : "(518) 426-6998",
+    "otherPhone" : "",
+    "additional" : "Room 707 Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
+  }, {
+    "name" : "",
+    "street" : "",
+    "city" : "",
+    "postalCode" : "",
+    "provinceName" : "",
+    "province" : "",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 37.09024,
+    "longitude" : -95.712891
+  } ],
+  "district" : {
+    "number" : 36,
+    "url" : "http://www.nysenate.gov/district/36",
+    "imageUrl" : "http://www.nysenate.gov/files/Screen Shot 2013-01-02 at 4.02.03 PM.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=36"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

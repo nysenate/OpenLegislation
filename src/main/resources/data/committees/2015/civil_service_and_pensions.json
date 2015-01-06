@@ -1,0 +1,69 @@
+{
+  "nid" : 249,
+  "name" : "Civil Service and Pensions",
+  "shortName" : "civilservice",
+  "url" : "http://www.nysenate.gov/committee/civil-service-and-pensions",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Civil_Service_Pensions",
+  "chairs" : [ {
+    "nid" : 232,
+    "name" : "Martin J. Golden",
+    "shortName" : "Golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  } ],
+  "members" : [ {
+    "nid" : 74996,
+    "name" : "Patty Ritchie",
+    "shortName" : "Ritchie",
+    "url" : "http://www.nysenate.gov/senator/patty-ritchie"
+  }, {
+    "nid" : 221,
+    "name" : "Andrew J Lanza",
+    "shortName" : "Lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+  }, {
+    "nid" : 230,
+    "name" : "Kemp Hannon",
+    "shortName" : "Hannon",
+    "url" : "http://www.nysenate.gov/senator/kemp-hannon"
+  }, {
+    "nid" : 74986,
+    "name" : "Jack M. Martins",
+    "shortName" : "Martins",
+    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+  }, {
+    "nid" : 111,
+    "name" : "Diane J. Savino",
+    "shortName" : "Savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  }, {
+    "nid" : 232,
+    "name" : "Martin J. Golden",
+    "shortName" : "Golden",
+    "url" : "http://www.nysenate.gov/senator/martin-j-golden"
+  }, {
+    "nid" : 170131,
+    "name" : "James Sanders Jr.",
+    "shortName" : "Sanders",
+    "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
+  }, {
+    "nid" : 97,
+    "name" : "Joseph P. Addabbo Jr",
+    "shortName" : "Addabbo",
+    "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
+  }, {
+    "nid" : 101,
+    "name" : "Martin Malavé Dilan",
+    "shortName" : "Dilan",
+    "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
+  }, {
+    "nid" : 123,
+    "name" : "Bill Perkins",
+    "shortName" : "Perkins",
+    "url" : "http://www.nysenate.gov/senator/bill-perkins"
+  }, {
+    "nid" : 227,
+    "name" : "George D. Maziarz",
+    "shortName" : "Maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  } ]
+}

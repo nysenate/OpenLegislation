@@ -1,0 +1,71 @@
+{
+  "nid" : 228,
+  "name" : "Hugh T. Farley",
+  "lastName" : "Farley",
+  "shortName" : "Farley",
+  "email" : "Farley@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/SD44_Farley.jpg",
+  "url" : "http://www.nysenate.gov/senator/hugh-t-farley",
+  "partyAffiliations" : [ "R" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2181",
+    "fax" : "(518) 455-2271",
+    "otherPhone" : "",
+    "additional" : "Room 711, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
+  }, {
+    "name" : "District Office 2",
+    "street" : "33-41 East Main Street",
+    "city" : "Johnstown",
+    "postalCode" : "12095",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 762-3733",
+    "fax" : "(518) 762-3721",
+    "otherPhone" : "",
+    "additional" : "City Hall",
+    "latitude" : 43.007144,
+    "longitude" : -74.37005
+  }, {
+    "name" : "District Office",
+    "street" : "199 Milton Avenue",
+    "city" : "Ballston Spa",
+    "postalCode" : "12020",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 885-1829",
+    "fax" : "(518) 885-1970",
+    "otherPhone" : "",
+    "additional" : "Suite 4",
+    "latitude" : 43.006458,
+    "longitude" : -73.849918
+  } ],
+  "district" : {
+    "number" : 49,
+    "url" : "http://www.nysenate.gov/district/49",
+    "imageUrl" : "http://www.nysenate.gov/files/district_49.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=49"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

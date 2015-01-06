@@ -1,0 +1,71 @@
+{
+  "nid" : 218,
+  "name" : "Betty Little",
+  "lastName" : "Little",
+  "shortName" : "Little",
+  "email" : "little@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/24x7@300dpi.jpg",
+  "url" : "http://www.nysenate.gov/senator/elizabeth-little",
+  "partyAffiliations" : [ "R", "C", "IP" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "5 Warren Street",
+    "city" : "Glens Falls",
+    "postalCode" : "12801",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 743-0968",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Suite 3",
+    "latitude" : 43.309494,
+    "longitude" : -73.64264
+  }, {
+    "name" : "District Office 2",
+    "street" : "137 Margaret Street",
+    "city" : "Plattsburgh",
+    "postalCode" : "12901",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 561-2430",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Suite 100",
+    "latitude" : 44.698907,
+    "longitude" : -73.454085
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2811",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 310, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
+  } ],
+  "district" : {
+    "number" : 45,
+    "url" : "http://www.nysenate.gov/district/45",
+    "imageUrl" : "http://www.nysenate.gov/files/district_45.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=45"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

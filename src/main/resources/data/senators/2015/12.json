@@ -1,0 +1,56 @@
+{
+  "nid" : 75576,
+  "name" : "Michael Gianaris",
+  "lastName" : "Gianaris",
+  "shortName" : "Gianaris",
+  "email" : "gianaris@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Giannaris.jpg",
+  "url" : "http://www.nysenate.gov/senator/michael-gianaris",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Senate Capitol Building,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3486",
+    "fax" : "518-426-6929",
+    "otherPhone" : "",
+    "additional" : "Room 413",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  }, {
+    "name" : "District Office",
+    "street" : "31-19 Newtown Avenue",
+    "city" : "Astoria",
+    "postalCode" : "11102",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "718-728-0960",
+    "fax" : "718-728-0963",
+    "otherPhone" : "",
+    "additional" : "Suite 402",
+    "latitude" : 40.767141,
+    "longitude" : -73.92044
+  } ],
+  "district" : {
+    "number" : 12,
+    "url" : "http://www.nysenate.gov/district/12",
+    "imageUrl" : "http://www.nysenate.gov/files/Screen Shot 2013-01-02 at 3.20.37 PM.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=12"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

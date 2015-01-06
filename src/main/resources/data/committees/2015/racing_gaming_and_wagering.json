@@ -1,0 +1,69 @@
+{
+  "nid" : 267,
+  "name" : "Racing, Gaming and Wagering",
+  "shortName" : "racing",
+  "url" : "http://www.nysenate.gov/committee/racing-gaming-and-wagering",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Gaming",
+  "chairs" : [ {
+    "nid" : 220,
+    "name" : "John J. Bonacic",
+    "shortName" : "Bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  } ],
+  "members" : [ {
+    "nid" : 220,
+    "name" : "John J. Bonacic",
+    "shortName" : "Bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "nid" : 170126,
+    "name" : "Phil Boyle",
+    "shortName" : "Boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-boyle"
+  }, {
+    "nid" : 217,
+    "name" : "Joseph A. Griffo",
+    "shortName" : "Griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
+  }, {
+    "nid" : 170156,
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "Marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "nid" : 208,
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "Nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "nid" : 233,
+    "name" : "Michael H. Ranzenhofer",
+    "shortName" : "Ranzenhofer",
+    "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
+  }, {
+    "nid" : 97,
+    "name" : "Joseph P. Addabbo Jr",
+    "shortName" : "Addabbo",
+    "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
+  }, {
+    "nid" : 170116,
+    "name" : "George Latimer",
+    "shortName" : "Latimer",
+    "url" : "http://www.nysenate.gov/senator/george-s-latimer"
+  }, {
+    "nid" : 170131,
+    "name" : "James Sanders Jr.",
+    "shortName" : "Sanders",
+    "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
+  }, {
+    "nid" : 75566,
+    "name" : "David Carlucci",
+    "shortName" : "Carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+  }, {
+    "nid" : 172641,
+    "name" : "Cecilia Tkaczyk",
+    "shortName" : "Tkaczyk",
+    "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
+  } ]
+}

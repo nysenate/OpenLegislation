@@ -1,0 +1,41 @@
+{
+  "nid" : 252776,
+  "name" : "Marc Panepinto",
+  "lastName" : "Panepinto",
+  "shortName" : "Panepinto",
+  "email" : "Panepinto@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Marc-Panepinto.jpg",
+  "url" : "http://www.nysenate.gov/senator/marc-panepinto",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-",
+    "fax" : "(518) 426-",
+    "otherPhone" : "",
+    "additional" : "Room 609",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  } ],
+  "district" : {
+    "number" : 60,
+    "url" : "http://www.nysenate.gov/district/60",
+    "imageUrl" : "http://www.nysenate.gov/files/district_60.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=60"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

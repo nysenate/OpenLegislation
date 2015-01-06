@@ -1,0 +1,71 @@
+{
+  "nid" : 170131,
+  "name" : "James Sanders Jr.",
+  "lastName" : "Sanders",
+  "shortName" : "Sanders",
+  "email" : "sanders@nysenate.gov",
+  "additionalContact" : "<p><strong>For legislative matters please contact our legislative office.<span style=\"font-size: 16.3636360168457px; line-height: 1;\">&nbsp;</span></strong></p><p><strong>For event invitations please contact Jkendall@nysenate.gov</strong></p>",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(12-10-12) Sanders-HS-010.jpg",
+  "url" : "http://www.nysenate.gov/senator/james-sanders-jr",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "142-01 Rockaway Blvd.,",
+    "city" : "South Ozone Park,",
+    "postalCode" : "11436",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "718-523-3069",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.674144,
+    "longitude" : -73.798334
+  }, {
+    "name" : "Satellite Office",
+    "street" : "1931 Mott Avenue,",
+    "city" : "Far Rockaway,",
+    "postalCode" : "11691",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "718-327-7017",
+    "fax" : "718-327-7970",
+    "otherPhone" : "",
+    "additional" : "Suite 305",
+    "latitude" : 40.604055,
+    "longitude" : -73.752681
+  }, {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3531",
+    "fax" : "718-523-3670",
+    "otherPhone" : "",
+    "additional" : "Room 508",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
+  } ],
+  "district" : {
+    "number" : 10,
+    "url" : "http://www.nysenate.gov/district/10",
+    "imageUrl" : "http://www.nysenate.gov/files/SD10_0.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=10"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

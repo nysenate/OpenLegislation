@@ -1,0 +1,69 @@
+{
+  "nid" : 269,
+  "name" : "Consumer Protection",
+  "shortName" : "consumers",
+  "url" : "http://www.nysenate.gov/committee/consumer-protection",
+  "videoUrl" : "http://www.livestream.com/NYSenate_consumerprotection",
+  "chairs" : [ {
+    "nid" : 74981,
+    "name" : "Lee M. Zeldin",
+    "shortName" : "Zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  } ],
+  "members" : [ {
+    "nid" : 170126,
+    "name" : "Phil Boyle",
+    "shortName" : "Boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-boyle"
+  }, {
+    "nid" : 218,
+    "name" : "Betty Little",
+    "shortName" : "Little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+  }, {
+    "nid" : 170156,
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "Marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "nid" : 227,
+    "name" : "George D. Maziarz",
+    "shortName" : "Maziarz",
+    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+  }, {
+    "nid" : 74981,
+    "name" : "Lee M. Zeldin",
+    "shortName" : "Zeldin",
+    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+  }, {
+    "nid" : 111,
+    "name" : "Diane J. Savino",
+    "shortName" : "Savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  }, {
+    "nid" : 170141,
+    "name" : "Brad Hoylman",
+    "shortName" : "Hoylman",
+    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
+  }, {
+    "nid" : 119,
+    "name" : "José M. Serrano",
+    "shortName" : "Serrano",
+    "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
+  }, {
+    "nid" : 170151,
+    "name" : "Terry Gipson",
+    "shortName" : "Gipson",
+    "url" : "http://www.nysenate.gov/senator/terry-gipson"
+  }, {
+    "nid" : 170116,
+    "name" : "George Latimer",
+    "shortName" : "Latimer",
+    "url" : "http://www.nysenate.gov/senator/george-s-latimer"
+  }, {
+    "nid" : 204,
+    "name" : "Joseph E. Robach",
+    "shortName" : "Robach",
+    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+  } ]
+}

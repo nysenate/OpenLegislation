@@ -1,0 +1,56 @@
+{
+  "nid" : 225,
+  "name" : "Dean G. Skelos",
+  "lastName" : "Skelos",
+  "shortName" : "Skelos",
+  "email" : "skelos@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/SD9_Skelos_4.jpg",
+  "url" : "http://www.nysenate.gov/senator/dean-g-skelos",
+  "partyAffiliations" : [ "R", "C", "IP" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "55 Front Street",
+    "city" : "Rockville Centre",
+    "postalCode" : "11570",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(516) 766-8383",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 40.658701,
+    "longitude" : -73.645298
+  }, {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building, Room 909",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3171",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
+  } ],
+  "district" : {
+    "number" : 9,
+    "url" : "http://www.nysenate.gov/district/09",
+    "imageUrl" : "http://www.nysenate.gov/files/SD9.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=09"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

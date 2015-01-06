@@ -1,0 +1,56 @@
+{
+  "nid" : 233,
+  "name" : "Michael H. Ranzenhofer",
+  "lastName" : "Ranzenhofer",
+  "shortName" : "Ranzenhofer",
+  "email" : "ranz@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/hs.jpg",
+  "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer",
+  "partyAffiliations" : [ "R", "C", "IP" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3161",
+    "fax" : "(518) 426-6963",
+    "otherPhone" : "",
+    "additional" : "Room 848, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
+  }, {
+    "name" : "District Office",
+    "street" : "8203 Main Street",
+    "city" : "Williamsville",
+    "postalCode" : "14221",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(716) 631-8695 / (585) 454-0322",
+    "fax" : "(716) 634-4321",
+    "otherPhone" : "",
+    "additional" : "Suite 4",
+    "latitude" : 42.962848,
+    "longitude" : -78.68881
+  } ],
+  "district" : {
+    "number" : 61,
+    "url" : "http://www.nysenate.gov/district/61",
+    "imageUrl" : "http://www.nysenate.gov/files/Screen Shot 2013-01-02 at 3.33.34 PM.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=61"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/people/Mike-Ranzenhofer/1477429982"
+  }
+}

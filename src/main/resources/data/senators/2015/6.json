@@ -1,0 +1,56 @@
+{
+  "nid" : 230,
+  "name" : "Kemp Hannon",
+  "lastName" : "Hannon",
+  "shortName" : "Hannon",
+  "email" : "hannon@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Kemp head shot 2.JPG",
+  "url" : "http://www.nysenate.gov/senator/kemp-hannon",
+  "partyAffiliations" : [ "R", "C", "IP" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "The Capitol",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2200",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Room 420",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  }, {
+    "name" : "District Office",
+    "street" : "595 Stewart Ave.",
+    "city" : "Garden City",
+    "postalCode" : "11530",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "516-739-1700",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Suite, 540",
+    "latitude" : 40.731445,
+    "longitude" : -73.611528
+  } ],
+  "district" : {
+    "number" : 6,
+    "url" : "http://www.nysenate.gov/district/06",
+    "imageUrl" : "http://www.nysenate.gov/files/sd6.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=06"
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/kemphannon",
+    "youtube" : "http://www.youtube.com/senatorhannon",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/kemp.hannon"
+  }
+}

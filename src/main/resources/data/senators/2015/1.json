@@ -1,0 +1,56 @@
+{
+  "nid" : 231,
+  "name" : "Kenneth P. LaValle",
+  "lastName" : "LaValle",
+  "shortName" : "LaValle",
+  "email" : "lavalle@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/NewHeadShotLavalle2.jpg",
+  "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle",
+  "partyAffiliations" : [ "R" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "28 North Country Rd",
+    "city" : "Mount Sinai",
+    "postalCode" : "11766",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(631) 473-1461",
+    "fax" : "(631) 473-1513",
+    "otherPhone" : "",
+    "additional" : "Suite 203",
+    "latitude" : 40.938617,
+    "longitude" : -73.035149
+  }, {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building, Room 806",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3121",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  } ],
+  "district" : {
+    "number" : 1,
+    "url" : "http://www.nysenate.gov/district/01",
+    "imageUrl" : "http://www.nysenate.gov/files/sd1_1.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=01"
+  },
+  "social" : {
+    "twitter" : "http://twitter.com/senatorlavalle",
+    "youtube" : "http://www.youtube.com/user/KPLSenate",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "https://www.facebook.com/kenneth.p.lavalle"
+  }
+}

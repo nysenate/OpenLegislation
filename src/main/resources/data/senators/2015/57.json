@@ -1,0 +1,71 @@
+{
+  "nid" : 203,
+  "name" : "Catharine Young",
+  "lastName" : "Young",
+  "shortName" : "Young",
+  "email" : "cyoung@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/young headshot-ret.jpg",
+  "url" : "http://www.nysenate.gov/senator/catharine-young",
+  "partyAffiliations" : [ "R", "C", "IP" ],
+  "offices" : [ {
+    "name" : "District Office",
+    "street" : "Westgate Plaza",
+    "city" : "Olean",
+    "postalCode" : "14760",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "716-372-4901",
+    "fax" : "716-372-5740",
+    "otherPhone" : "Toll free: 1-800-707-0058",
+    "additional" : "700 W. State Street",
+    "latitude" : 42.083639,
+    "longitude" : -78.429927
+  }, {
+    "name" : "Satellite Office",
+    "street" : "Fenton Building",
+    "city" : "Jamestown",
+    "postalCode" : "14701",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "716-664-4603",
+    "fax" : "716-664-2430",
+    "otherPhone" : "",
+    "additional" : "2-6 E. 2nd Street, Suite 302",
+    "latitude" : 42.016199,
+    "longitude" : -76.726671
+  }, {
+    "name" : "Albany Office",
+    "street" : "307 Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3563",
+    "fax" : "518-426-6905",
+    "otherPhone" : "",
+    "additional" : "188 State Street",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  } ],
+  "district" : {
+    "number" : 57,
+    "url" : "http://www.nysenate.gov/district/57",
+    "imageUrl" : "http://www.nysenate.gov/files/district_57.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=57"
+  },
+  "social" : {
+    "twitter" : "https://twitter.com/SenatorYoung",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "https://www.facebook.com/SenatorCathyYoung"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "nid" : 250971,
+  "name" : "George A. Amedore, Jr.",
+  "lastName" : "Amedore",
+  "shortName" : "Amedore,",
+  "email" : "Amedore@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/GeorgeAmedore_official.jpg",
+  "url" : "http://www.nysenate.gov/senator/george-amedore",
+  "partyAffiliations" : [ "R" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building,",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-",
+    "fax" : "(518) 426-",
+    "otherPhone" : "",
+    "additional" : "Room 311",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  } ],
+  "district" : {
+    "number" : 46,
+    "url" : "http://www.nysenate.gov/district/46",
+    "imageUrl" : "http://www.nysenate.gov/files/district_46.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=46"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

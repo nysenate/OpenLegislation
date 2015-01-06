@@ -1,0 +1,59 @@
+{
+  "nid" : 274,
+  "name" : "Elections",
+  "shortName" : "elections",
+  "url" : "http://www.nysenate.gov/committee/elections",
+  "videoUrl" : "http://www.livestream.com/NYSenate_elections",
+  "chairs" : [ {
+    "nid" : 75001,
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "O'Mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  } ],
+  "members" : [ {
+    "nid" : 74991,
+    "name" : "Greg Ball",
+    "shortName" : "Ball",
+    "url" : "http://www.nysenate.gov/senator/greg-ball"
+  }, {
+    "nid" : 75006,
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "Gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "nid" : 170156,
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "Marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+  }, {
+    "nid" : 208,
+    "name" : "Michael F. Nozzolio",
+    "shortName" : "Nozzolio",
+    "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
+  }, {
+    "nid" : 75001,
+    "name" : "Thomas F. O'Mara",
+    "shortName" : "O'Mara",
+    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+  }, {
+    "nid" : 172641,
+    "name" : "Cecilia Tkaczyk",
+    "shortName" : "Tkaczyk",
+    "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
+  }, {
+    "nid" : 101,
+    "name" : "Martin Malavé Dilan",
+    "shortName" : "Dilan",
+    "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
+  }, {
+    "nid" : 115,
+    "name" : "Liz Krueger",
+    "shortName" : "Krueger",
+    "url" : "http://www.nysenate.gov/senator/liz-krueger"
+  }, {
+    "nid" : 111,
+    "name" : "Diane J. Savino",
+    "shortName" : "Savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  } ]
+}

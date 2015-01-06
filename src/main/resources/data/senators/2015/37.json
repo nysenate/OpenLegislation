@@ -1,0 +1,56 @@
+{
+  "nid" : 170116,
+  "name" : "George Latimer",
+  "lastName" : "Latimer",
+  "shortName" : "Latimer",
+  "email" : "latimer@nysenate.gov",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/GL_2_0.jpg",
+  "url" : "http://www.nysenate.gov/senator/george-s-latimer",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "615 Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2031",
+    "fax" : "(518) 426-6860",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.652442,
+    "longitude" : -73.759332
+  }, {
+    "name" : "District Office",
+    "street" : "222 Grace Church Street",
+    "city" : "Port Chester",
+    "postalCode" : "10573",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(914) 934-5250",
+    "fax" : "(914) 934-5256",
+    "otherPhone" : "",
+    "additional" : "Suite 300",
+    "latitude" : 40.991677,
+    "longitude" : -73.663921
+  } ],
+  "district" : {
+    "number" : 37,
+    "url" : "http://www.nysenate.gov/district/37",
+    "imageUrl" : "http://www.nysenate.gov/files/district_37.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=37"
+  },
+  "social" : {
+    "twitter" : "https://twitter.com/GeorgeLatimer37",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

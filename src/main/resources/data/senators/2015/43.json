@@ -1,0 +1,71 @@
+{
+  "nid" : 170156,
+  "name" : "Kathleen A. Marchione",
+  "lastName" : "Marchione",
+  "shortName" : "Marchione",
+  "email" : "marchione@nysenate.gov",
+  "additionalContact" : "<p>Albany Office - Open M-F 9-5</p><p>District Office - Open Tues-Thurs 8-4</p><p>Satellite Office - Open&nbsp;<span style=\"font-size: 16.363636016845703px;\">Tues-Thurs&nbsp;</span><span style=\"font-size: 16.363636016845703px; line-height: 1;\">9-5</span></p><p>&nbsp;</p>",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Senator_Kathy_Marchione.jpg",
+  "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione",
+  "partyAffiliations" : [ "R", "C" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2381",
+    "fax" : "(518) 426-6985",
+    "otherPhone" : "",
+    "additional" : "Legislative Office Building - Room 306",
+    "latitude" : 42.652894,
+    "longitude" : -73.759161
+  }, {
+    "name" : "District Office",
+    "street" : "2 Halfmoon Town Plaza",
+    "city" : "Halfmoon",
+    "postalCode" : "12065",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518 371-2751",
+    "fax" : "518 371-2753",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.851244,
+    "longitude" : -73.699645
+  }, {
+    "name" : "Satellite Office",
+    "street" : "560 Warren St.",
+    "city" : "Hudson",
+    "postalCode" : "12534",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518 828-5947",
+    "fax" : "518 828-8973",
+    "otherPhone" : "",
+    "additional" : "2nd Floor",
+    "latitude" : 42.248137,
+    "longitude" : -73.784616
+  } ],
+  "district" : {
+    "number" : 43,
+    "url" : "http://www.nysenate.gov/district/43",
+    "imageUrl" : "http://www.nysenate.gov/files/district_43.png",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=43"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : ""
+  }
+}

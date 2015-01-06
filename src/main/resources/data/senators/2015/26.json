@@ -1,0 +1,71 @@
+{
+  "nid" : 113,
+  "name" : "Daniel L. Squadron",
+  "lastName" : "Squadron",
+  "shortName" : "Squadron",
+  "email" : "squadron@nysenate.gov",
+  "additionalContact" : "<p>Are you a member of the media?&nbsp;Click here to join Senator Squadron's press list.</p>",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(03-05-09) Squadron HS-040.jpg",
+  "url" : "http://www.nysenate.gov/senator/daniel-l-squadron",
+  "partyAffiliations" : [ "D" ],
+  "offices" : [ {
+    "name" : " Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2625",
+    "fax" : "518-426-6956",
+    "otherPhone" : "",
+    "additional" : "Room 515, Legislative Office Building",
+    "latitude" : 42.65,
+    "longitude" : -73.76
+  }, {
+    "name" : "District Office ",
+    "street" : "250 Broadway",
+    "city" : "New York",
+    "postalCode" : "10007",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "212-298-5565",
+    "fax" : "212-431-7836",
+    "otherPhone" : "",
+    "additional" : "Suite 2011",
+    "latitude" : 0.0,
+    "longitude" : 0.0
+  }, {
+    "name" : "District Office 2",
+    "street" : "209 Joralemon Street",
+    "city" : "Brooklyn",
+    "postalCode" : "11201",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "718-875-1517",
+    "fax" : "",
+    "otherPhone" : "",
+    "additional" : "Suite 300",
+    "latitude" : 40.692681,
+    "longitude" : -73.990215
+  } ],
+  "district" : {
+    "number" : 26,
+    "url" : "http://www.nysenate.gov/district/26",
+    "imageUrl" : "http://www.nysenate.gov/files/Untitled-26.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=26"
+  },
+  "social" : {
+    "twitter" : "http://www.twitter.com/danielsquadron",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "https://www.facebook.com/DanielSquadron"
+  }
+}

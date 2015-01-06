@@ -1,0 +1,44 @@
+{
+  "nid" : 247,
+  "name" : "Children and Families",
+  "shortName" : "children",
+  "url" : "http://www.nysenate.gov/committee/children-and-families",
+  "videoUrl" : "http://www.livestream.com/NYSenate_Children_Families",
+  "chairs" : [ {
+    "nid" : 170136,
+    "name" : "Simcha Felder",
+    "shortName" : "Felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  } ],
+  "members" : [ {
+    "nid" : 170136,
+    "name" : "Simcha Felder",
+    "shortName" : "Felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  }, {
+    "nid" : 220,
+    "name" : "John J. Bonacic",
+    "shortName" : "Bonacic",
+    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+  }, {
+    "nid" : 203,
+    "name" : "Catharine Young",
+    "shortName" : "Young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "nid" : 111,
+    "name" : "Diane J. Savino",
+    "shortName" : "Savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+  }, {
+    "nid" : 103,
+    "name" : "Velmanette Montgomery",
+    "shortName" : "Montgomery",
+    "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
+  }, {
+    "nid" : 172641,
+    "name" : "Cecilia Tkaczyk",
+    "shortName" : "Tkaczyk",
+    "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
+  } ]
+}

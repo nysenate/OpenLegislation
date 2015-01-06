@@ -1,0 +1,56 @@
+{
+  "nid" : 123,
+  "name" : "Bill Perkins",
+  "lastName" : "Perkins",
+  "shortName" : "Perkins",
+  "email" : "perkins@senate.state.ny.us",
+  "additionalContact" : "",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(02-05-09) Perkins-HS-004_0.jpg",
+  "url" : "http://www.nysenate.gov/senator/bill-perkins",
+  "partyAffiliations" : [ "D", "WF" ],
+  "offices" : [ {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2441",
+    "fax" : "518-426-6809",
+    "otherPhone" : "",
+    "additional" : "Room 517, Legislative Office Building",
+    "latitude" : 42.652855,
+    "longitude" : -73.759091
+  }, {
+    "name" : "District Office",
+    "street" : "163 West 125th Street",
+    "city" : "New York",
+    "postalCode" : "10027",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "212-222-7315",
+    "fax" : "212-678-0001",
+    "otherPhone" : "",
+    "additional" : "Harlem State Office Bldg., Suite 912",
+    "latitude" : 40.808488,
+    "longitude" : -73.947151
+  } ],
+  "district" : {
+    "number" : 30,
+    "url" : "http://www.nysenate.gov/district/30",
+    "imageUrl" : "http://www.nysenate.gov/files/Untitled-30.jpg",
+    "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=30"
+  },
+  "social" : {
+    "twitter" : "",
+    "youtube" : "",
+    "myspace" : "",
+    "picasa" : "",
+    "flickr" : "",
+    "facebook" : "http://www.facebook.com/pages/Senator-Bill-Perkins-Official/144810748868643?ref=ts"
+  }
+}
