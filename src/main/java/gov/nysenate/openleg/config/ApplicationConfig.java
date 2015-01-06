@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.config;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.SubscriberExceptionContext;
+import com.google.common.eventbus.SubscriberExceptionHandler;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.bill.BaseBillId;
@@ -11,6 +13,7 @@ import gov.nysenate.openleg.processor.base.IngestCache;
 import gov.nysenate.openleg.util.AsciiArt;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -54,7 +57,7 @@ public class ApplicationConfig implements CachingConfigurer
         // fairly high.
         SizeOfPolicyConfiguration sizeOfConfig = new SizeOfPolicyConfiguration();
         sizeOfConfig.setMaxDepth(100000);
-        sizeOfConfig.setMaxDepthExceededBehavior("abort");
+        sizeOfConfig.setMaxDepthExceededBehavior("continue");
 
         // Configure the default cache to be used as a template for actual caches.
         CacheConfiguration cacheConfiguration = new CacheConfiguration();
@@ -114,7 +117,11 @@ public class ApplicationConfig implements CachingConfigurer
 
     @Bean
     public EventBus eventBus() {
-        return new EventBus("openleg");
+        SubscriberExceptionHandler errorHandler = (exception, context) -> {
+            logger.error("Exception thrown during event handling within {}: {}, {}", context.getSubscriberMethod(),
+                exception, ExceptionUtils.getStackTrace(exception));
+        };
+        return new EventBus(errorHandler);
     }
 
     /** --- Processing Instances --- */
