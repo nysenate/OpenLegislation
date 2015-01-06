@@ -24,7 +24,7 @@ public class ApprovalMessageParser extends BillTextParser {
     private static final Pattern approvalBillIdPattern =
             Pattern.compile("(?i)\\d{5}\\s+MEMORANDUM filed with (Senate|Assembly) Bill Number (\\d+)\\-?([A-Z])?, entitled:");
     private static final Pattern approvalSignerPattern =
-            Pattern.compile("\\d{5}\\s+(:?This bill is|These bills are) approved\\.\\s*\\(signed\\)\\s*([a-zA-Z.'\\- ]*[a-zA-Z.])");
+            Pattern.compile("\\d{5}\\s+(?:(?:The|This) bill is|These bills are) approved\\.\\s*\\(signed\\)\\s*([a-zA-Z.'\\- ]*[a-zA-Z.])");
 
     /** An approval message object that is constructed while parsing the memo*/
     private ApprovalMessage approvalMessage;
@@ -100,16 +100,6 @@ public class ApprovalMessageParser extends BillTextParser {
                 approvalMessage.setChapter(Integer.parseInt(titleMatcher.group(1)));
             }
         }
-        else if (lineNum == 4) {
-            Matcher billIdMatcher = approvalBillIdPattern.matcher(line);
-            if(billIdMatcher.matches()){
-                Chamber chamber = Chamber.getValue(billIdMatcher.group(1));
-                Version version = billIdMatcher.groupCount()==3 ? Version.of(billIdMatcher.group(3)) : Version.DEFAULT;
-                approvalMessage.setBillId(new BillId(chamber.getAbbreviation() + billIdMatcher.group(2),
-                                          approvalMessage.getSession(),
-                                          version));
-            }
-        }
         else if (lineNum > 11 && approvalMessage.getSigner()==null){
             Matcher signerMatcher = approvalSignerPattern.matcher(line);
             if(signerMatcher.matches()) {
@@ -130,7 +120,6 @@ public class ApprovalMessageParser extends BillTextParser {
             approvalMessage.getApprovalNumber()!=0 &&
             approvalMessage.getYear()!=0 &&
             approvalMessage.getSession()!=null &&
-            approvalMessage.getBillId()!=null &&
             approvalMessage.getChapter()!=0 &&
             approvalMessage.getSigner()!=null;
         if (!completeApprovalMessage) {

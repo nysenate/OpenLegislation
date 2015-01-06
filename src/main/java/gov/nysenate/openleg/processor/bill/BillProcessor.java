@@ -567,6 +567,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             baseBill.setApprovalMessage(null);
         } else {
             ApprovalMessage approvalMessage = approvalMessageParser.getApprovalMessage();
+            approvalMessage.setBillId(baseBill.getActiveAmendment().getBillId());
             approvalMessage.setModifiedDateTime(date);
             approvalMessage.setPublishedDateTime(date);
 
