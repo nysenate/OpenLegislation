@@ -24,7 +24,7 @@ public class ApprovalMessageParser extends BillTextParser {
     private static final Pattern approvalBillIdPattern =
             Pattern.compile("(?i)\\d{5}\\s+MEMORANDUM filed with (Senate|Assembly) Bill Number (\\d+)\\-?([A-Z])?, entitled:");
     private static final Pattern approvalSignerPattern =
-            Pattern.compile("\\d{5}\\s+This bill is approved\\.\\s+\\(signed\\) ([a-zA-Z.'\\- ]*[a-zA-Z.])");
+            Pattern.compile("\\d{5}\\s+(:?This bill is|These bills are) approved\\.\\s*\\(signed\\)\\s*([a-zA-Z.'\\- ]*[a-zA-Z.])");
 
     /** An approval message object that is constructed while parsing the memo*/
     private ApprovalMessage approvalMessage;
