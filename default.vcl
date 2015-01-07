@@ -29,6 +29,7 @@
 			}
 			else if(req.url ~ "views") {
 				ban("req.url ~ bills");
+				ban("req.url ~ resolutions");
 				ban("req.url ~ calendars");
 				ban("req.url ~ meetings");
 				ban("req.url ~ actions");
