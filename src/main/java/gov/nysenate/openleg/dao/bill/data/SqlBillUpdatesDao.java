@@ -127,7 +127,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
             orderBy = new OrderBy("last_published_date_time", sortOrder, "last_processed_date_time", sortOrder);
         }
         else {
-            throw new IllegalArgumentException("Bill Updates cannot provide updates of type: {}" + updateType);
+            throw new IllegalArgumentException("Cannot provide bill updates of type: " + updateType);
         }
         String sqlQuery;
         if (billId != null) {

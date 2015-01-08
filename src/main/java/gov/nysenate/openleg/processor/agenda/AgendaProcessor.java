@@ -56,8 +56,6 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
             Integer agendaNo = xml.getInteger("@no", xmlAgenda);
             Integer year = xml.getInteger("@year", xmlAgenda);
             AgendaId agendaId = new AgendaId(agendaNo, year);
-            Agenda agenda = getOrCreateAgenda(agendaId, sobiFragment);
-            agenda.setModifiedDateTime(modifiedDate);
             String action = xml.getString("@action", xmlAgenda);
             // Remove the Agenda if the action = 'remove'
             if (action.equalsIgnoreCase("remove")) {
@@ -66,6 +64,8 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
             }
             // Otherwise update/insert any associated addenda.
             else if (action.equalsIgnoreCase("replace")) {
+                Agenda agenda = getOrCreateAgenda(agendaId, sobiFragment);
+                agenda.setModifiedDateTime(modifiedDate);
                 NodeList xmlAddendums = xml.getNodeList("addendum", xmlAgenda);
 
                 // The initial state as well as updates to an Agenda are sent via addenda which
