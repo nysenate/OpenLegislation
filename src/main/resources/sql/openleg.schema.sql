@@ -25,6 +25,48 @@ ALTER SCHEMA master OWNER TO postgres;
 COMMENT ON SCHEMA master IS 'Processed legislative data';
 
 
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
+-- Name: hstore; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
+
+
 SET search_path = master, pg_catalog;
 
 --
@@ -2411,6 +2453,148 @@ COMMENT ON COLUMN law_tree.law_file IS 'Reference to the source law file';
 
 
 --
+-- Name: notification; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notification (
+    id integer NOT NULL,
+    type text NOT NULL,
+    occurred timestamp without time zone NOT NULL,
+    summary text,
+    message text
+);
+
+
+ALTER TABLE master.notification OWNER TO postgres;
+
+--
+-- Name: TABLE notification; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE notification IS 'Contains records of sent notifications';
+
+
+--
+-- Name: COLUMN notification.type; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification.type IS 'Categorizes this notification';
+
+
+--
+-- Name: COLUMN notification.occurred; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification.occurred IS 'The date and time when the notification occurred';
+
+
+--
+-- Name: COLUMN notification.summary; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification.summary IS 'A brief summary of the notification';
+
+
+--
+-- Name: COLUMN notification.message; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification.message IS 'The full message of the notification';
+
+
+--
+-- Name: notification_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+--
+
+CREATE SEQUENCE notification_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE master.notification_id_seq OWNER TO postgres;
+
+--
+-- Name: notification_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
+--
+
+ALTER SEQUENCE notification_id_seq OWNED BY notification.id;
+
+
+--
+-- Name: notification_subscription; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notification_subscription (
+    id integer NOT NULL,
+    user_name text NOT NULL,
+    type text NOT NULL,
+    target text NOT NULL,
+    address text
+);
+
+
+ALTER TABLE master.notification_subscription OWNER TO postgres;
+
+--
+-- Name: TABLE notification_subscription; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE notification_subscription IS 'Contains mappings of admin users to notification types that they want to receive.';
+
+
+--
+-- Name: COLUMN notification_subscription.user_name; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification_subscription.user_name IS 'The username of the subscribed user';
+
+
+--
+-- Name: COLUMN notification_subscription.type; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification_subscription.type IS 'the type of notification that the user is subscribed to';
+
+
+--
+-- Name: COLUMN notification_subscription.target; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification_subscription.target IS 'The medium through which the notification is sent';
+
+
+--
+-- Name: COLUMN notification_subscription.address; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification_subscription.address IS 'The address for the specified target';
+
+
+--
+-- Name: notification_subscription_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+--
+
+CREATE SEQUENCE notification_subscription_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE master.notification_subscription_id_seq OWNER TO postgres;
+
+--
+-- Name: notification_subscription_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
+--
+
+ALTER SEQUENCE notification_subscription_id_seq OWNED BY notification_subscription.id;
+
+
+--
 -- Name: sobi_fragment; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -2625,7 +2809,6 @@ COMMENT ON COLUMN public_hearing.start_time IS 'Time the public hearing started.
 --
 
 COMMENT ON COLUMN public_hearing.end_time IS 'Time the public hearing ended.';
-
 
 
 --
@@ -3581,6 +3764,20 @@ ALTER TABLE ONLY data_process_run_unit ALTER COLUMN id SET DEFAULT nextval('data
 -- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
+ALTER TABLE ONLY notification ALTER COLUMN id SET DEFAULT nextval('notification_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY notification_subscription ALTER COLUMN id SET DEFAULT nextval('notification_subscription_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
+--
+
 ALTER TABLE ONLY sobi_change_log ALTER COLUMN id SET DEFAULT nextval('sobi_change_log_id_seq'::regclass);
 
 
@@ -4110,6 +4307,30 @@ ALTER TABLE ONLY law_tree
 
 
 --
+-- Name: notification_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notification
+    ADD CONSTRAINT notification_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: notification_subscription_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notification_subscription
+    ADD CONSTRAINT notification_subscription_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: notification_subscription_user_type_target_address_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notification_subscription
+    ADD CONSTRAINT notification_subscription_user_type_target_address_key UNIQUE (user_name, type, target, address);
+
+
+--
 -- Name: public_hearing_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -4336,11 +4557,13 @@ CREATE INDEX sobi_change_log_action_date_time_idx ON sobi_change_log USING btree
 
 CREATE INDEX sobi_change_log_fragment_id_idx ON sobi_change_log USING btree (sobi_fragment_id);
 
+
 --
--- Name: sobi_change_log_key_gist_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
+-- Name: sobi_change_log_key_gist_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX sobi_change_log_key_gist_idx ON sobi_change_log USING gist (key);
+
 
 --
 -- Name: sobi_change_log_table_name_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
@@ -4354,6 +4577,7 @@ CREATE INDEX sobi_change_log_table_name_idx ON sobi_change_log USING btree (tabl
 --
 
 CREATE TRIGGER log_agenda_info_addendum_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_info_addendum FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id');
+
 
 --
 -- Name: log_agenda_info_committee_updates; Type: TRIGGER; Schema: master; Owner: postgres
@@ -4374,6 +4598,7 @@ CREATE TRIGGER log_agenda_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda FO
 --
 
 CREATE TRIGGER log_agenda_vote_addendum_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_addendum FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id');
+
 
 --
 -- Name: log_agenda_vote_committee_updates; Type: TRIGGER; Schema: master; Owner: postgres
@@ -5153,6 +5378,13 @@ ALTER TABLE ONLY law_tree
 ALTER TABLE ONLY law_tree
     ADD CONSTRAINT law_tree_parent_doc_id_fkey FOREIGN KEY (parent_doc_id, parent_doc_published_date) REFERENCES law_document(document_id, published_date) ON UPDATE CASCADE ON DELETE CASCADE;
 
+
+--
+-- Name: notification_subscription_user_name_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY notification_subscription
+    ADD CONSTRAINT notification_subscription_user_name_fkey FOREIGN KEY (user_name) REFERENCES public.adminuser(username);
 
 
 --
