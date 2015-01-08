@@ -72,6 +72,9 @@ public enum SqlTable
     LAW_DOCUMENT                 ("law_document"),
     LAW_TREE                     ("law_tree"),
 
+    NOTIFICATION                 ("notification"),
+    NOTIFICATION_SUBSCRIPTION    ("notification_subscription"),
+
     MEMBER                       ("member"),
     PERSON                       ("person"),
     SESSION_MEMBER               ("session_member"),

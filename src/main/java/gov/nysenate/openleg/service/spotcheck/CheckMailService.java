@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.spotcheck;
 
 import gov.nysenate.openleg.model.base.Environment;
 import gov.nysenate.openleg.model.daybreak.*;
+import gov.nysenate.openleg.util.MailUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -9,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +28,9 @@ public class CheckMailService {
 
     @Autowired
     Environment environment;
+
+    @Autowired
+    MailUtils mailUtils;
 
     @Value("${checkmail.host}")
     private String host;
@@ -58,10 +61,10 @@ public class CheckMailService {
         boolean success = false;
         try {
             logger.info("checking for daybreak emails...");
-            store = getMailConnection();
+            store = mailUtils.getStore("imap", host, user, password);
 
-            Folder sourceFolder = navigateToFolder(receivingFolder, store);
-            Folder archiveFolder = navigateToFolder(processedFolder, store);
+            Folder sourceFolder = mailUtils.navigateToFolder(receivingFolder, store);
+            Folder archiveFolder = mailUtils.navigateToFolder(processedFolder, store);
             sourceFolder.open(Folder.READ_WRITE);
 
             DaybreakReportSet<DaybreakMessage> reports = getReports(sourceFolder);
@@ -72,9 +75,11 @@ public class CheckMailService {
                 saveCompleteReports(completeReports, sourceFolder, archiveFolder);
                 logger.info("Daybreak files saved.");
                 success = true;
-            } else if (partialReports.size() > 0) {
+            }
+            if (partialReports.size() > 0) {
                 logger.info("{} partial daybreak reports found.", partialReports.size());
-            } else{
+            }
+            if (completeReports.size() == 0 && partialReports.size() == 0) {
                 logger.info("No daybreak reports found");
             }
         } catch (MessagingException | IOException ex) {
@@ -92,23 +97,6 @@ public class CheckMailService {
     /**
      * --- Internal Methods ---
      */
-
-    /**
-     * Establishes a connection to the check mail imap server and returns the connection object
-     * @return
-     * @throws MessagingException
-     */
-    private Store getMailConnection() throws MessagingException {
-        Store store = Session.getDefaultInstance(System.getProperties()).getStore("imaps");
-        try {
-            store.connect(host, user, password);
-        }
-        catch (MessagingException ex) {
-            store.close();
-            throw ex;
-        }
-        return store;
-    }
 
     /**
      * Extracts all valid daybreak messages from the given source folder
@@ -160,21 +148,5 @@ public class CheckMailService {
                 }
             }
         }
-    }
-
-    /**
-     * Navigates through the given mail store to get the folder specified by the given path
-     * @param path
-     * @param store
-     * @return
-     * @throws MessagingException
-     */
-    private Folder navigateToFolder(String path, Store store) throws MessagingException {
-        String[] splitPath = path.split("/");
-        Folder folder = store.getFolder(splitPath[0]);
-        for(int i=1; i<splitPath.length; i++) {
-            folder = folder.getFolder(splitPath[i]);
-        }
-        return folder;
     }
 }

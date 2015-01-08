@@ -156,7 +156,7 @@ scheduler.process.cron = 0 */5 * * * *
 # When to run spot-check reports. (Default: 0 */2 * * * FRI-SAT)
 scheduler.spotcheck.cron = 0 */2 * * * FRI-SAT
 
-# --- CheckMail Configuration ------------------------------------------------------------------------------------------
+# --- Mail Configuration -----------------------------------------------------------------------------------------------
 
 # Connection information for the mail account that receives daybreak emails
 checkmail.host = imap.gmail.com
@@ -168,3 +168,17 @@ mail.imaps.ssl.protocols = SSLv3
 # Mail directory paths where daybreak emails are stored
 checkmail.receiving = OpenLegislationTest/LRSAutomated
 checkmail.processed = OpenLegislationTest/LRSProcessed
+
+# Connection information for sending emails
+mail.smtp.host = imap.gmail.com
+mail.smtp.port = 587
+mail.smtp.auth = true
+mail.smtp.starttls.enable = true
+mail.smtp.user = nysenatedev
+mail.smtp.password =
+mail.debug = false
+
+# --- Domain Configuration ---------------------------------------------------------------------------------------------
+
+# The domain url that openleg is hosted on (used for generating links)
+domain.url = http://localhost:8080

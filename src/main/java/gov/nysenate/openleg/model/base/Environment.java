@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.model.base;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 import java.io.File;
 
 /**
@@ -17,6 +19,10 @@ import java.io.File;
 @Component
 public class Environment
 {
+
+    @Autowired
+    ServletContext servletContext;
+
     /** The database schema where the legislative data is stored. */
     @Value("${env.schema:master}") private String schema;
 
@@ -76,6 +82,13 @@ public class Environment
     /** Enable spot-check report runs at scheduled intervals. */
     @Value("${scheduler.spotcheck.enabled}") private boolean spotcheckScheduled;
 
+    /** --- Domain Url --- */
+
+    @Value ("${domain.url}") private String domain;
+    private String contextPath;
+    private String fullPath;
+
+
     /** --- Constructors --- */
 
     public Environment() {}
@@ -88,6 +101,9 @@ public class Environment
         this.calendarDirectory = new File(calendarDirPath);
         this.assemblyAgendaDirectory = new File(assemblyAgendaDirPath);
         this.senateAgendaDirectory = new File(senateAgendaDirPath);
+
+        contextPath = servletContext.getContextPath();
+        fullPath = domain + contextPath;
     }
 
     /** --- Basic Getters/Setters --- */
@@ -196,4 +212,15 @@ public class Environment
         this.assemblyAgendaDirectory = assemblyAgendaDirectory;
     }
 
+    public String getDomain() {
+        return domain;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
 }
