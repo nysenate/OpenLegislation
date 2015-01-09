@@ -6,6 +6,7 @@
     bills
     calendars
     committees
+    laws
+    search_api
     transcripts_floor
     transcripts_ph
-    search_api
