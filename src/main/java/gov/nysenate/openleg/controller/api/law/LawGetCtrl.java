@@ -35,8 +35,7 @@ public class LawGetCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(LawGetCtrl.class);
 
-    @Autowired
-    private LawDataService lawDataService;
+    @Autowired private LawDataService lawDataService;
 
     /** --- Request Handlers --- */
 
@@ -52,14 +51,13 @@ public class LawGetCtrl extends BaseCtrl
     }
 
     @RequestMapping("/{lawId}")
-    public BaseResponse getLawTree(@PathVariable String lawId,
-                                   @RequestParam(required = false)
-                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        if (date == null) {
-            date = LocalDate.now();
-        }
-        LawTree lawTree = lawDataService.getLawTree(lawId, date);
-        ViewObjectResponse<LawTreeView> response = new ViewObjectResponse<>(new LawTreeView(lawTree));
+    public BaseResponse getLawTree(@PathVariable String lawId, @RequestParam(required = false) String date,
+                                   @RequestParam(defaultValue = "false") boolean full) {
+        LocalDate publishedDate = (date == null) ? LocalDate.now() : parseISODate(date, "date");
+        LawTree lawTree = lawDataService.getLawTree(lawId, publishedDate);
+        ViewObjectResponse<LawTreeView> response =
+            (full) ? new ViewObjectResponse<>(new LawTreeView(lawTree, lawDataService.getLawDocuments(lawId, publishedDate)))
+                   : new ViewObjectResponse<>(new LawTreeView(lawTree));
         response.setMessage("The document structure for " + lawId + " law");
         return response;
     }

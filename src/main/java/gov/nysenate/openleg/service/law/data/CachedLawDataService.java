@@ -27,6 +27,7 @@ import javax.annotation.PreDestroy;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -123,7 +124,7 @@ public class CachedLawDataService implements LawDataService, CachingService
         if (lawId == null) throw new IllegalArgumentException("Supplied lawId cannot be null");
         if (endPublishedDate == null) endPublishedDate = LocalDate.now();
         try {
-            LawVersionId lawVersionId = new LawVersionId(lawId, endPublishedDate);
+            LawVersionId lawVersionId = new LawVersionId(lawId.toUpperCase(), endPublishedDate);
             LawTree lawTree;
             if (lawTreeCache.get(lawVersionId) != null) {
                 lawTree = (LawTree) lawTreeCache.get(lawVersionId).get();
@@ -145,11 +146,19 @@ public class CachedLawDataService implements LawDataService, CachingService
         if (documentId == null) throw new IllegalArgumentException("Supplied documentId cannot be null");
         if (endPublishedDate == null) endPublishedDate = LocalDate.now();
         try {
-            return lawDataDao.getLawDocument(documentId, endPublishedDate);
+            return lawDataDao.getLawDocument(documentId.toUpperCase(), endPublishedDate);
         }
         catch (EmptyResultDataAccessException ex) {
             throw new LawDocumentNotFoundEx(documentId, endPublishedDate, "");
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Map<String, LawDocument> getLawDocuments(String lawId, LocalDate endPublishedDate) {
+        if (lawId == null) throw new IllegalArgumentException("Supplied lawId cannot be null");
+        if (endPublishedDate == null) endPublishedDate = LocalDate.now();
+        return lawDataDao.getLawDocuments(lawId.toUpperCase(), endPublishedDate);
     }
 
     /** {@inheritDoc} */

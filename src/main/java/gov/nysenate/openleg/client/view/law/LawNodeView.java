@@ -2,6 +2,7 @@ package gov.nysenate.openleg.client.view.law;
 
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawTreeNode;
 
 import java.time.LocalDate;
@@ -14,6 +15,8 @@ public class LawNodeView extends LawDocInfoView implements ViewObject
     protected int sequenceNo;
     protected boolean isRepealed;
     protected LocalDate repealedDate;
+    protected String text;  // Including the text here, can be null when just displaying structure.
+
     protected ListView<LawNodeView> documents;
 
     public LawNodeView(LawTreeNode treeNode) {
@@ -23,7 +26,20 @@ public class LawNodeView extends LawDocInfoView implements ViewObject
             this.repealedDate = treeNode.getRepealedDate();
             this.isRepealed = this.repealedDate != null;
             this.documents = ListView.of(
-                    treeNode.getChildNodeList().stream().map(LawNodeView::new).collect(Collectors.toList()));
+                treeNode.getChildNodeList().stream().map(LawNodeView::new).collect(Collectors.toList()));
+        }
+    }
+
+    public LawNodeView(LawTreeNode treeNode, Map<String, LawDocument> docMap) {
+        super((treeNode != null) ? treeNode.getLawDocInfo() : null);
+        if (treeNode != null) {
+            this.sequenceNo = treeNode.getSequenceNo();
+            this.repealedDate = treeNode.getRepealedDate();
+            this.isRepealed = this.repealedDate != null;
+            this.text = docMap.get(treeNode.getDocumentId()).getText();
+            this.documents = ListView.of(
+                treeNode.getChildNodeList().stream().map(n -> new LawNodeView(n, docMap))
+                        .collect(Collectors.toList()));
         }
     }
 
@@ -42,6 +58,10 @@ public class LawNodeView extends LawDocInfoView implements ViewObject
 
     public LocalDate getRepealedDate() {
         return repealedDate;
+    }
+
+    public String getText() {
+        return text;
     }
 
     public ListView<LawNodeView> getDocuments() {

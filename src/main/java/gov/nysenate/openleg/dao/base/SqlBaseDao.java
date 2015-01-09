@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.base;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.util.DateUtils;

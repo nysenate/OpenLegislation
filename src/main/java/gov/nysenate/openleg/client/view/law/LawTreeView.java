@@ -1,7 +1,10 @@
 package gov.nysenate.openleg.client.view.law;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawTree;
+
+import java.util.Map;
 
 public class LawTreeView implements ViewObject
 {
@@ -14,6 +17,14 @@ public class LawTreeView implements ViewObject
             lawVersion = new LawVersionView(lawTree.getLawVersionId());
             info = new LawInfoView(lawTree.getLawInfo());
             documents = new LawNodeView(lawTree.getRootNode());
+        }
+    }
+
+    public LawTreeView(LawTree lawTree, Map<String, LawDocument> docMap) {
+        if (lawTree != null) {
+            lawVersion = new LawVersionView(lawTree.getLawVersionId());
+            info = new LawInfoView(lawTree.getLawInfo());
+            documents = new LawNodeView(lawTree.getRootNode(), docMap);
         }
     }
 

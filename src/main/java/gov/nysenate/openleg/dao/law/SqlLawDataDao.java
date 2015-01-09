@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.law;
 
+import com.google.common.collect.Maps;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.law.*;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.law.SqlLawDataQuery.*;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
@@ -62,6 +64,16 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
             .addValue("docId", documentId)
             .addValue("endPublishedDate", toDate(endPublishDate)));
         return jdbcNamed.queryForObject(SELECT_LAW_DOCUMENT.getSql(schema()), lawDocParams, lawDocRowMapper);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Map<String, LawDocument> getLawDocuments(String lawId, LocalDate endPublishDate) throws DataAccessException {
+        ImmutableParams lawDocParams = ImmutableParams.from(new MapSqlParameterSource()
+            .addValue("lawId", lawId)
+            .addValue("endPublishedDate", toDate(endPublishDate)));
+        List<LawDocument> docs = jdbcNamed.query(SELECT_ALL_LAW_DOCUMENTS.getSql(schema()), lawDocParams, lawDocRowMapper);
+        return Maps.uniqueIndex(docs, LawDocument::getDocumentId);
     }
 
     /** {@inheritDoc} */

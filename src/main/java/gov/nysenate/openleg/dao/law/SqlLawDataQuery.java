@@ -15,6 +15,16 @@ public enum SqlLawDataQuery implements BasicSqlQuery
         "SELECT * FROM max_date, ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
         "WHERE document_id = :docId AND published_date = max_date.pub_date"
     ),
+    SELECT_ALL_LAW_DOCUMENTS(
+        "WITH latest_laws AS (\n" +
+        "    SELECT document_id, max(published_date) AS published_date " +
+        "    FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
+        "    WHERE law_id = :lawId AND published_date <= :endPublishedDate \n" +
+        "    GROUP BY document_id" +
+        ")\n" +
+        "SELECT * FROM ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
+        "JOIN latest_laws USING (document_id, published_date)"
+    ),
     INSERT_LAW_DOCUMENT(
         "INSERT INTO ${schema}." + SqlTable.LAW_DOCUMENT +
         "(document_id, published_date, document_type, law_id, location_id, document_type_id, title, text, law_file_name)\n" +

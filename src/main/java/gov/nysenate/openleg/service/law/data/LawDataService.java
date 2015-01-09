@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.law.LawTree;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface LawDataService
 {
@@ -23,7 +24,7 @@ public interface LawDataService
      * be thrown.
      *
      * @param lawId String - Three letter law id
-     * @param endPublishedDate - LocalDate - The ending published date
+     * @param endPublishedDate - LocalDate - The upper bound for published date
      * @return LawTree
      * @throws LawTreeNotFoundEx - If there is no law tree that meets the given criteria.
      */
@@ -35,11 +36,21 @@ public interface LawDataService
      * LawDocumentNotFoundEx will be thrown.
      *
      * @param documentId String - The law document id
-     * @param endPublishedDate LocalDate - The ending published date
+     * @param endPublishedDate LocalDate - The upper bound for published date
      * @return LawDocument
      * @throws LawDocumentNotFoundEx - If there is no law document that meets the given criteria.
      */
     public LawDocument getLawDocument(String documentId, LocalDate endPublishedDate) throws LawDocumentNotFoundEx;
+
+    /**
+     * Retrieves all the LawDocuments from the backing store that are associated with the given lawId
+     * and were published prior to or on 'endPublishedDate'.
+     *
+     * @param lawId String - Three letter law id
+     * @param endPublishedDate LocalDate - The upper bound for published date
+     * @return Map<String, LawDocument> Map of documentId -> LawDocument
+     */
+    public Map<String, LawDocument> getLawDocuments(String lawId, LocalDate endPublishedDate);
 
     /**
      * Persists the LawTree into the backing store with LawFile used as a reference to the source data.
