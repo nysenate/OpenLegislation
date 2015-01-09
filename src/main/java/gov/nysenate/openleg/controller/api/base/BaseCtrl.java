@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.controller.api.base;
 
 import com.google.common.collect.Range;
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
@@ -8,6 +9,7 @@ import gov.nysenate.openleg.client.view.error.InvalidParameterView;
 import gov.nysenate.openleg.client.view.request.ParameterView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.util.DateUtils;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +31,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+import static gov.nysenate.openleg.model.notification.NotificationType.REQUEST_EXCEPTION;
+
 public abstract class BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(BaseCtrl.class);
@@ -37,6 +42,9 @@ public abstract class BaseCtrl
 
     /** Maximum number of results that can be requested via the query params. */
     private static final int MAX_LIMIT = 1000;
+
+    @Autowired
+    private EventBus eventBus;
 
     /** --- Param grabbers --- */
 
@@ -161,6 +169,7 @@ public abstract class BaseCtrl
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     protected ErrorResponse handleUnknownError(Exception ex) {
         logger.error("Caught unhandled servlet exception:\n{}", ExceptionUtils.getStackTrace(ex));
+        pushExceptionNotification(ex);
         return new ErrorResponse(ErrorCode.UNKNOWN_ERROR);
     }
 
@@ -191,5 +200,15 @@ public abstract class BaseCtrl
     public ErrorResponse handleUnauthenticatedException(UnauthenticatedException ex) {
         logger.debug("Unauthenticated Exception! {}", ex.getMessage());
         return new ErrorResponse(ErrorCode.UNAUTHORIZED);
+    }
+
+    private void pushExceptionNotification(Exception ex) {
+        LocalDateTime occurred = LocalDateTime.now();
+        String summary = ex.getMessage();
+        String message = "The following exception was thrown while handling a request at " + occurred + "\n"
+                + ExceptionUtils.getStackTrace(ex);
+        Notification notification = new Notification(REQUEST_EXCEPTION, occurred, summary, message);
+
+        eventBus.post(notification);
     }
 }

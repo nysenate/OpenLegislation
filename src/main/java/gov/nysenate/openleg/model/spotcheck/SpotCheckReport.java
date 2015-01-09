@@ -72,6 +72,26 @@ public class SpotCheckReport<ContentKey>
         throw new IllegalStateException("The observations on this report have not yet been set.");
     }
 
+    public Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchType, Long>> getMismatchStatusTypeCounts() {
+        if (observations != null) {
+            Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchType, Long>> counts = new HashMap<>();
+            observations.values().stream()
+                    .flatMap(e -> e.getMismatchStatusTypes().entrySet().stream())
+                    .forEach(e -> {
+                        if (!counts.containsKey(e.getValue())) {
+                            counts.put(e.getValue(), new HashMap<>());
+                        }
+                        long currentCount = 0;
+                        if (counts.get(e.getValue()).containsKey(e.getKey())) {
+                            currentCount = counts.get(e.getValue()).get(e.getKey());
+                        }
+                        counts.get(e.getValue()).merge(e.getKey(), 1L, (a, b) -> a + 1L);
+                    });
+            return counts;
+        }
+        throw new IllegalStateException("The observations on this report have not yet been set.");
+    }
+
     /**
      * Get the number of mismatches across all observations grouped by the mismatch type.
      *

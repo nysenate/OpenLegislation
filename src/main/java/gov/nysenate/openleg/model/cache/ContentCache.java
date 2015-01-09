@@ -11,5 +11,6 @@ public enum ContentCache
     AGENDA,
     CALENDAR,
     LAW,
-    COMMITTEE
+    COMMITTEE,
+    NOTIFICATION_SUBSCRIPTION
 }
