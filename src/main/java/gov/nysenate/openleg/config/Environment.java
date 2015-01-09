@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model.base;
+package gov.nysenate.openleg.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,10 +19,6 @@ import java.io.File;
 @Component
 public class Environment
 {
-
-    @Autowired
-    ServletContext servletContext;
-
     /** The database schema where the legislative data is stored. */
     @Value("${env.schema:master}") private String schema;
 
@@ -88,7 +84,6 @@ public class Environment
     private String contextPath;
     private String fullPath;
 
-
     /** --- Constructors --- */
 
     public Environment() {}
@@ -101,9 +96,6 @@ public class Environment
         this.calendarDirectory = new File(calendarDirPath);
         this.assemblyAgendaDirectory = new File(assemblyAgendaDirPath);
         this.senateAgendaDirectory = new File(senateAgendaDirPath);
-
-        contextPath = servletContext.getContextPath();
-        fullPath = domain + contextPath;
     }
 
     /** --- Basic Getters/Setters --- */
@@ -214,10 +206,6 @@ public class Environment
 
     public String getDomain() {
         return domain;
-    }
-
-    public String getContextPath() {
-        return contextPath;
     }
 
     public String getFullPath() {
