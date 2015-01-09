@@ -51,6 +51,10 @@ public enum ErrorCode
 
     SOURCE_FILE_NOT_FOUND(131, "The source file was not found"),
 
+    /** --- Transcript --- */
+
+    TRANSCRIPT_NOT_FOUND(141, "The transcript was not found"),
+
     /** --- General --- */
 
     SEARCH_ERROR(100, "There was error retrieving your search results. Make sure that the query is valid."),

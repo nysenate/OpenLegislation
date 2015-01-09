@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -128,11 +129,9 @@ public class ManagedSobiProcessService implements SobiProcessService
             return totalCollated;
         }
         catch (IOException ex) {
-            String errMessage = "Error while retrieving incoming sobi files during collation";
-            eventBus.post(new DataProcessErrorEvent(errMessage, ex));
-            logger.error(errMessage, ex);
+            String errMessage = "Error encountered during collation of sobi files.";
+            throw new DataIntegrityViolationException(errMessage, ex);
         }
-        return 0;
     }
 
     /** {@inheritDoc} */

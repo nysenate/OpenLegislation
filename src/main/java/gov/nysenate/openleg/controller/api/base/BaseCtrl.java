@@ -9,6 +9,7 @@ import gov.nysenate.openleg.client.view.request.ParameterView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.search.SearchException;
+import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -140,6 +141,18 @@ public abstract class BaseCtrl
      */
     protected boolean getBooleanParam(WebRequest request, String param, boolean defaultVal) {
         return (request.getParameter(param) != null) ? BooleanUtils.toBoolean(request.getParameter(param)) : defaultVal;
+    }
+
+    /**
+     * Parses the update type from the request parameters.
+     *
+     * @param request WebRequest
+     * @return UpdateType
+     */
+    protected UpdateType getUpdateTypeFromParam(WebRequest request) {
+        String type = request.getParameter("type");
+        return (type != null && type.equalsIgnoreCase("processed"))
+                ? UpdateType.PROCESSED_DATE : UpdateType.PUBLISHED_DATE;
     }
 
     /** --- Generic Exception Handlers --- */

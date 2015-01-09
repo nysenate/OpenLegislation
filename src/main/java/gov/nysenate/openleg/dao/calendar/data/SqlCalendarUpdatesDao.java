@@ -21,13 +21,11 @@ import java.util.Map;
 import static gov.nysenate.openleg.dao.calendar.data.SqlCalendarUpdatesQuery.*;
 
 @Repository
-public class SqlCalendarUpdatesDao extends SqlBaseDao implements CalendarUpdatesDao {
-
+public class SqlCalendarUpdatesDao extends SqlBaseDao implements CalendarUpdatesDao
+{
     private static final Logger logger = LoggerFactory.getLogger(SqlCalendarUpdatesDao.class);
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public PaginatedList<UpdateToken<CalendarId>> calendarsUpdatedDuring(UpdateType updateType, Range<LocalDateTime> dateTimeRange,
                                                                          SortOrder dateOrder, LimitOffset limitOffset) {
@@ -41,9 +39,7 @@ public class SqlCalendarUpdatesDao extends SqlBaseDao implements CalendarUpdates
         return rowHandler.getList();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public PaginatedList<UpdateDigest<CalendarId>> getUpdateDigests(UpdateType updateType, CalendarId calendarId,
                                                                     Range<LocalDateTime> dateTimeRange,
@@ -58,9 +54,7 @@ public class SqlCalendarUpdatesDao extends SqlBaseDao implements CalendarUpdates
         return rowHandler.getList();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public PaginatedList<UpdateDigest<CalendarId>> getUpdateDigests(UpdateType updateType,
                                                                     Range<LocalDateTime> dateTimeRange,
@@ -78,15 +72,12 @@ public class SqlCalendarUpdatesDao extends SqlBaseDao implements CalendarUpdates
     /** --- Internal --- */
 
     private static RowMapper<UpdateToken<CalendarId>> calendarUpdateTokenRowMapper = (rs, rowNum) ->
-            new UpdateToken<>(
-                    new CalendarId(
-                            rs.getInt("calendar_no"),
-                            rs.getInt("calendar_year")
-                    ),
-                    rs.getString("fragment_id"),
-                    DateUtils.getLocalDateTime(rs.getTimestamp("published_date_time")),
-                    DateUtils.getLocalDateTime(rs.getTimestamp("action_date_time"))
-            );
+        new UpdateToken<>(
+            new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")),
+            rs.getString("fragment_id"),
+            DateUtils.getLocalDateTime(rs.getTimestamp("published_date_time")),
+            DateUtils.getLocalDateTime(rs.getTimestamp("action_date_time"))
+        );
 
     private static RowMapper<UpdateDigest<CalendarId>> calendarUpdateDigestRowMapper = (rs, rowNum) -> {
         Map<String, String> key = getHstoreMap(rs, "key");

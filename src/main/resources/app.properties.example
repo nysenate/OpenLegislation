@@ -1,12 +1,14 @@
-# --- Api Auth ---------------------------------------------------------------------------------------------------------
+# --- Api Auth ----------------------------------------------------------------
 
-# A secret key that is used for validating api requests sent via the UI. Set this to something random.
+# A secret key that is used for validating api requests sent via the UI.
+# Set this to something random.
 
 api.secret =
 
-# --- Admin Auth -------------------------------------------------------------------------------------------------------
+# --- Admin Auth --------------------------------------------------------------
 
-# The default admin user name. This admin user will be created automatically during deployment.
+# The default admin user name.
+# This admin user will be created automatically during deployment.
 
 default.admin.user =
 
@@ -14,7 +16,7 @@ default.admin.user =
 
 default.admin.password =
 
-# --- Data Directory Configuration -------------------------------------------------------------------------------------
+# --- Data Directory Configuration --------------------------------------------
 
 # The directory path that serves as the root of the data environment.
 # Omit any trailing slashes. (Default: /data/openleg)
@@ -41,7 +43,7 @@ env.scraped.senateagenda = /data/openleg/scraped/SENAGEN
 
 env.schema = master
 
-# --- Processing Configuration -----------------------------------------------------------------------------------------
+# --- Processing Configuration ------------------------------------------------
 
 # Allow for processing of data
 # (Default: true)
@@ -53,19 +55,21 @@ data.process.enabled = true
 
 data.process.log.enabled = true
 
-# Enable batch processing of SOBIs to improve performance. The updates to the SOBIs are stored into memory
-# and flushed at a later time to reduce the number of writes.
+# Enable batch processing of SOBIs to improve performance. The updates to the
+# SOBIs are stored into memory and flushed at a later time to reduce the number
+# of writes.
 # NOTE: Enabling this will make the change log inaccurate. (Default: false)
 
 sobi.batch.process.enabled = false
 
-# The maximum number of SOBIs that can be processed without flushing to the database. However, the data
-# processors may flush before this limit if they need to in order to maintain consistency.
+# The maximum number of SOBIs that can be processed without flushing to the
+# database. However, the data processors may flush before this limit if they need
+# to in order to maintain consistency.
 # NOTE: Don't set this too high if the machine doesn't have a lot of JVM memory! (Default: 100)
 
 sobi.batch.process.size = 100
 
-# --- Elastic Search Configuration -------------------------------------------------------------------------------------
+# --- Elastic Search Configuration --------------------------------------------
 
 # Set to true to allow the application to index processed data into elastic search.
 # (Default: true)
@@ -88,11 +92,11 @@ elastic.search.port = 9300
 
 elastic.search.cluster.name = openleg
 
-# --- Eh Cache Configuration -------------------------------------------------------------------------------------------
+# --- Eh Cache Configuration --------------------------------------------------
 
 # The amount of memory to allocate to Eh Cache for all heap based caches (in MB).
-# This value cannot exceed the maximum jvm heap size or the application will fail to startup.
-# (Recommended: 600)
+# This value cannot exceed the maximum jvm heap size or the application will fail
+# to startup. (Recommended: 600)
 cache.max.size = 600
 
 # Agenda Cache Size (in MB) (Recommended: 25)
@@ -113,7 +117,7 @@ law.cache.size = 10
 # Committee Cache Size (in MB) (Recommended: 10)
 committee.cache.size = 10
 
-# --- Postgres Database Configuration ----------------------------------------------------------------------------------
+# --- Postgres Database Configuration -----------------------------------------
 
 # Database identifier for JDBC.
 # (Default: postgresql:)
@@ -137,7 +141,7 @@ postgresdb.user =
 # And the password..
 postgresdb.pass =
 
-# --- Scheduling Configuration -----------------------------------------------------------------------------------------
+# --- Scheduling Configuration ------------------------------------------------
 
 # Enable scheduled processing of data.
 # (Default: true)
@@ -156,7 +160,7 @@ scheduler.process.cron = 0 */5 * * * *
 # When to run spot-check reports. (Default: 0 */2 * * * FRI-SAT)
 scheduler.spotcheck.cron = 0 */2 * * * FRI-SAT
 
-# --- CheckMail Configuration ------------------------------------------------------------------------------------------
+# --- CheckMail Configuration -------------------------------------------------
 
 # Connection information for the mail account that receives daybreak emails
 checkmail.host = imap.gmail.com

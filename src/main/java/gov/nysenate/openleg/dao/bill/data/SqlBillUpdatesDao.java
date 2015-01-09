@@ -185,11 +185,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
             Map<String, String> key = getHstoreMap(rs, "key");
 
             // Construct the digest model
-            BaseBillId id = new BaseBillId(key.remove("bill_print_no"), Integer.parseInt(key.remove("bill_session_year")));
-            String sourceId = rs.getString("last_fragment_id");
-            LocalDateTime sourcePublishedDateTime = getLocalDateTimeFromRs(rs, "last_published_date_time");
-            LocalDateTime processedDateTime = getLocalDateTimeFromRs(rs, "last_processed_date_time");
-            UpdateDigest<BaseBillId> digest = new UpdateDigest<>(id, sourceId, sourcePublishedDateTime, processedDateTime);
+            UpdateDigest<BaseBillId> digest = new UpdateDigest<>(getBillUpdateTokenFromRs.mapRow(rs, rowNum));
 
             // Filter out the data values depending on the filter
             Map<String, String> data = getHstoreMap(rs, "data");

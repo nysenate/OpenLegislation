@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.process;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,16 @@ public class DataProcessRun
 
     public void addException(String message) {
         this.exceptions.append(message).append("\\n");
+    }
+
+    public void addException(String prefixMessage, Exception ex) {
+        if (prefixMessage != null) {
+            this.exceptions.append(prefixMessage);
+        }
+        if (ex != null) {
+            this.exceptions.append("\nException: ").append(ex.getMessage())
+                .append("\nStack Trace: ").append(ExceptionUtils.getStackTrace(ex));
+        }
     }
 
     /** --- Basic Getters/Setters --- */

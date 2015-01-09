@@ -9,8 +9,10 @@ public class AgendaIdView implements ViewObject
     private int year;
 
     public AgendaIdView(AgendaId agendaId) {
-        this.number = agendaId.getNumber();
-        this.year = agendaId.getYear();
+        if (agendaId != null) {
+            this.number = agendaId.getNumber();
+            this.year = agendaId.getYear();
+        }
     }
 
     public int getNumber() {

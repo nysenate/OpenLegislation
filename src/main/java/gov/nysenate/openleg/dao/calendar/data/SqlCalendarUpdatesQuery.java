@@ -4,7 +4,8 @@ import gov.nysenate.openleg.dao.base.BasicSqlQuery;
 import gov.nysenate.openleg.dao.base.SqlTable;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 
-public enum SqlCalendarUpdatesQuery implements BasicSqlQuery {
+public enum SqlCalendarUpdatesQuery implements BasicSqlQuery
+{
     SELECT_CALENDAR_UPDATED_DURING(
         "SELECT key->'calendar_no' AS calendar_no, key->'calendar_year' AS calendar_year,\n" +
         "   MAX(action_date_time) AS action_date_time, MAX(sobi.fragment_id) AS fragment_id, " +

@@ -8,6 +8,7 @@ public class AgendaNotFoundEx extends RuntimeException
 
     public AgendaNotFoundEx(AgendaId agendaId) {
         super("The agenda with id " + agendaId + " could not be found.");
+        this.agendaId = agendaId;
     }
 
     public AgendaNotFoundEx(String message) {

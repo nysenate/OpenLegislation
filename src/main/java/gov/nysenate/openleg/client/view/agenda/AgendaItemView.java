@@ -10,8 +10,10 @@ public class AgendaItemView implements ViewObject
     private String message;
 
     public AgendaItemView(AgendaInfoCommitteeItem item) {
-        this.billId = new BillIdView(item.getBillId());
-        this.message = item.getMessage();
+        if (item != null) {
+            this.billId = new BillIdView(item.getBillId());
+            this.message = item.getMessage();
+        }
     }
 
     public BillIdView getBillId() {

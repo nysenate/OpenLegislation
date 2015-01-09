@@ -56,7 +56,7 @@ public class BillGetCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}")
     public BaseResponse getBills(@PathVariable int sessionYear,
-                                 @RequestParam(defaultValue = "actionDate:desc") String sort,
+                                 @RequestParam(defaultValue = "status.actionDate:desc") String sort,
                                  @RequestParam(defaultValue = "false") boolean full,
                                  WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 50);

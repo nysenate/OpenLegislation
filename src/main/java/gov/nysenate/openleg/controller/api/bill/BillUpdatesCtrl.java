@@ -17,7 +17,6 @@ import gov.nysenate.openleg.model.bill.BillUpdateField;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
-import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,6 @@ public class BillUpdatesCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(BillUpdatesCtrl.class);
 
-    @Autowired protected BillDataService billData;
     @Autowired protected BillUpdatesDao billUpdatesDao;
 
     /**
@@ -55,18 +53,19 @@ public class BillUpdatesCtrl extends BaseCtrl
      *
      * Return a list of bill ids that have changed during a specified date/time range.
      * Usages:
-     * (GET) /api/3/bills/updates/
-     * (GET) /api/3/bills/updates/{from}
+     * (GET) /api/3/bills/updates/             (last 7 days)
+     * (GET) /api/3/bills/updates/{from}       (from date to now)
      * (GET) /api/3/bills/updates/{from}/{to}
      *
      * Where 'from' and 'to' are ISO date times.
      *
      * Request Params: detail (boolean) - Show update digests within each token.
+     *                 type (string) - Update type (processed, published) Default: published
      *                 filter (string) - Filter updates by a BillUpdateField value
      *                 limit, offset (int) - Paginate
      *                 order (string) - Order by update date
      *
-     * Expected Output: List of BillUpdateTokenView or BillUpdateTokenDigestView if detail = true.
+     * Expected Output: List of UpdateTokenView<BaseBillId> or UpdateDigestView<BaseBillId> if detail = true.
      */
 
     @RequestMapping(value = "/updates")
@@ -75,9 +74,10 @@ public class BillUpdatesCtrl extends BaseCtrl
     }
 
     @RequestMapping(value = "/updates/{from}")
-    public BaseResponse getUpdatesFrom(@PathVariable String from) {
-        throw new InvalidRequestParamEx(
-            "empty", "to", "date-time", "Must specify 'to' datetime e.g /updates/{from}/{to}");
+    public BaseResponse getUpdatesFrom(@PathVariable String from, WebRequest request) {
+        LocalDateTime fromDateTime = parseISODateTime(from, "from");
+        LocalDateTime toDateTime = LocalDateTime.now();
+        return getUpdatesDuring(fromDateTime, toDateTime, request);
     }
 
     @RequestMapping(value = "/updates/{from}/{to}")
@@ -100,14 +100,15 @@ public class BillUpdatesCtrl extends BaseCtrl
      * Where 'from' and 'to' are ISO date times.
      *
      * Request Params: filter (string) - Filter updates by a BillUpdateField
+     *                 type (string) - Update type (processed, published) Default: published
      *
-     * Expected Output: List of UpdateDigestView
+     * Expected Output: List of UpdateDigestView<BaseBillId>
      */
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates")
     public BaseResponse getUpdatesForBill(@PathVariable int sessionYear, @PathVariable String printNo, WebRequest request) {
         return getUpdatesForBillDuring(sessionYear, printNo, DateUtils.LONG_AGO.atStartOfDay(),
-                DateUtils.THE_FUTURE.atStartOfDay(), request);
+                LocalDateTime.now(), request);
     }
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from}")
@@ -128,7 +129,7 @@ public class BillUpdatesCtrl extends BaseCtrl
     /** --- Internal --- */
 
     private BaseResponse getUpdatesDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
-        // Prevent update queries spanning more than 31 days due to performance reasons.
+        // Prevent update queries from spanning too many days due to performance reasons.
         long daysBetween = Duration.between(from, to).toDays();
         if (daysBetween > 100) {
             throw new InvalidRequestParamEx(Long.toString(daysBetween), "days between 'from' and 'to'", "date-time",
@@ -140,18 +141,19 @@ public class BillUpdatesCtrl extends BaseCtrl
         boolean detail = getBooleanParam(request, "detail", false);
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         String filter = request.getParameter("filter");
+        UpdateType updateType = getUpdateTypeFromParam(request);
         BillUpdateField fieldFilter = getUpdateFieldFromParam(filter);
 
         if (!detail) {
             PaginatedList<UpdateToken<BaseBillId>> updateTokens =
-                billUpdatesDao.getUpdates(updateRange, UpdateType.PUBLISHED_DATE, fieldFilter, sortOrder, limOff);
+                billUpdatesDao.getUpdates(updateRange, updateType, fieldFilter, sortOrder, limOff);
             return ListViewResponse.of(updateTokens.getResults().stream()
                 .map(token -> new UpdateTokenView(token, new BaseBillIdView(token.getId())))
                 .collect(toList()), updateTokens.getTotal(), limOff);
         }
         else {
             PaginatedList<UpdateDigest<BaseBillId>> updateDigests =
-                billUpdatesDao.getDetailedUpdates(updateRange, UpdateType.PUBLISHED_DATE, fieldFilter, sortOrder, limOff);
+                billUpdatesDao.getDetailedUpdates(updateRange, updateType, fieldFilter, sortOrder, limOff);
             return ListViewResponse.of(updateDigests.getResults().stream()
                 .map(digest -> new UpdateDigestView(digest, new BaseBillIdView(digest.getId())))
                 .collect(toList()), updateDigests.getTotal(), limOff);
@@ -163,9 +165,9 @@ public class BillUpdatesCtrl extends BaseCtrl
         BillUpdateField filterField = getUpdateFieldFromParam(request.getParameter("filter"));
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         LimitOffset limOff = getLimitOffset(request, 50);
+        UpdateType updateType = getUpdateTypeFromParam(request);
         PaginatedList<UpdateDigest<BaseBillId>> digests = billUpdatesDao.getDetailedUpdatesForBill(
-            new BaseBillId(printNo, sessionYear), Range.openClosed(from, to), UpdateType.PUBLISHED_DATE,
-            filterField, sortOrder, limOff);
+            new BaseBillId(printNo, sessionYear), Range.closedOpen(from, to), updateType, filterField, sortOrder, limOff);
         return ListViewResponse.of(digests.getResults().stream()
             .map(digest -> new UpdateDigestView(digest, new BaseBillIdView(digest.getId())))
             .collect(toList()), digests.getTotal(), limOff);

@@ -73,9 +73,9 @@ public class DataProcessor
                 ingest();
             }
             catch (Exception ex) {
-                String err = "Unexpected processing error! " + ex.getMessage();
-                logger.error(err, ex);
-                currentRun.addException(err);
+                String label = "Unexpected processing error!";
+                logger.error(label, ex);
+                currentRun.addException(label, ex);
             }
             processLogService.finishRun(currentRun);
             logger.info("Exiting data processor.");

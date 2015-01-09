@@ -36,11 +36,8 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
 
     private static final Logger logger = LoggerFactory.getLogger(CalendarUpdatesCtrl.class);
 
-    @Autowired
-    CalendarUpdatesDao calendarUpdatesDao;
-    @Autowired
-    CalendarDataService calendarDataService;
-
+    @Autowired protected CalendarUpdatesDao calendarUpdatesDao;
+    @Autowired protected CalendarDataService calendarDataService;
 
     /**
      * Calendar updates API
@@ -67,14 +64,15 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
                             .collect(Collectors.toList()),
                     updateTokenDigests.getTotal(), updateTokenDigests.getLimOff()
             );
-        } else {
+        }
+        else {
             PaginatedList<UpdateToken<CalendarId>> updateTokens =
-                    calendarUpdatesDao.calendarsUpdatedDuring(UpdateType.PUBLISHED_DATE, updateRange, dateOrder, limitOffset);
+                calendarUpdatesDao.calendarsUpdatedDuring(UpdateType.PUBLISHED_DATE, updateRange, dateOrder, limitOffset);
             response =  ListViewResponse.of(
-                    updateTokens.getResults().stream()
-                            .map(token ->  new UpdateTokenView(token, new CalendarIdView(token.getId())))
-                            .collect(Collectors.toList()),
-                    updateTokens.getTotal(), updateTokens.getLimOff()
+                updateTokens.getResults().stream()
+                    .map(token ->  new UpdateTokenView(token, new CalendarIdView(token.getId())))
+                    .collect(Collectors.toList()),
+                updateTokens.getTotal(), updateTokens.getLimOff()
             );
         }
         return response;

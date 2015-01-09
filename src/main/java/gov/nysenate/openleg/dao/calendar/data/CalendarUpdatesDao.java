@@ -11,8 +11,8 @@ import gov.nysenate.openleg.model.updates.UpdateType;
 
 import java.time.LocalDateTime;
 
-public interface CalendarUpdatesDao {
-
+public interface CalendarUpdatesDao
+{
     /**
      * Returns a list of ids for calendars that have been updated within the specified date time range
      *  @param updateType UpdateType - Determines whether to query by the time of the update or the time of the reference

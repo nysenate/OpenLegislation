@@ -3,6 +3,8 @@ package gov.nysenate.openleg.controller.api.transcript;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
+import gov.nysenate.openleg.client.response.error.ErrorCode;
+import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.view.transcript.TranscriptIdView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptInfoView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptPdfView;
@@ -13,10 +15,13 @@ import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
+import gov.nysenate.openleg.model.transcript.TranscriptNotFoundEx;
 import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
 import gov.nysenate.openleg.service.transcript.search.TranscriptSearchService;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -131,5 +136,11 @@ public class TranscriptGetCtrl extends BaseCtrl
                     : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.getResult()))
                     : new TranscriptIdView(r.getResult()))
             .collect(Collectors.toList()), results.getTotalResults(), limOff);
+    }
+
+    @ExceptionHandler(TranscriptNotFoundEx.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    protected ErrorResponse handleTranscriptNotFoundEx(TranscriptNotFoundEx ex) {
+        return new ErrorResponse(ErrorCode.TRANSCRIPT_NOT_FOUND);
     }
 }
