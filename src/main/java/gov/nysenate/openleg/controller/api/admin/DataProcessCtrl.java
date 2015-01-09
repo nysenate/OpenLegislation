@@ -37,20 +37,14 @@ public class DataProcessCtrl extends BaseCtrl
     @Autowired private DataProcessLogService processLogs;
 
     /**
-     * Gets the process runs from a given date time.
-     * @see #getRunsDuring(String, String, WebRequest)
-     */
-    @RequestMapping("/runs/{from}")
-    public BaseResponse getRunsFrom(@PathVariable String from, WebRequest webRequest) throws InvalidRequestParamEx {
-        return getRunsDuring(from, DateUtils.THE_FUTURE.atStartOfDay().toString(), webRequest);
-    }
-
-    /**
      * Data Process Runs API
-     * -------------------------
+     * ---------------------
      *
      * Get the process runs that occurred within a given data/time range.
-     * Usage; (GET) /api/3/admin/process/runs/{from}/{to}
+     * Usage;
+     * (GET) /api/3/admin/process/runs
+     * (GET) /api/3/admin/process/runs/{from}
+     * (GET) /api/3/admin/process/runs/{from}/{to}
      *
      * Where 'from' and 'to' are date times.
      *
@@ -60,22 +54,46 @@ public class DataProcessCtrl extends BaseCtrl
      *
      * Expected Output: DataProcessRunDetailView if 'detail' = true, DataProcessRunView otherwise.
      */
+
+    /**
+     * Gets the process runs from the past week.
+     * @see #getRunsDuring(String, String, WebRequest)
+     */
+    @RequestMapping("/runs")
+    public BaseResponse getRecentRuns(WebRequest request) throws InvalidRequestParamEx {
+        return getRunsDuring(LocalDateTime.now().minusDays(7), LocalDateTime.now(), request);
+    }
+
+    /**
+     * Gets the process runs from a given date time.
+     * @see #getRunsDuring(String, String, WebRequest)
+     */
+    @RequestMapping("/runs/{from}")
+    public BaseResponse getRunsFrom(@PathVariable String from, WebRequest request) throws InvalidRequestParamEx {
+        LocalDateTime fromDateTime = parseISODateTime(from, "from");
+        return getRunsDuring(fromDateTime, LocalDateTime.now(), request);
+    }
+
     @RequestMapping("/runs/{from}/{to}")
-    public BaseResponse getRunsDuring(@PathVariable String from, @PathVariable String to, WebRequest webRequest)
+    public BaseResponse getRunsDuring(@PathVariable String from, @PathVariable String to, WebRequest request)
                                       throws InvalidRequestParamEx {
-        LimitOffset limOff = getLimitOffset(webRequest, 100);
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
-        boolean full = getBooleanParam(webRequest, "full", false);
-        boolean detail = getBooleanParam(webRequest, "detail", false);
+        return getRunsDuring(fromDateTime, toDateTime, request);
+    }
+
+    private BaseResponse getRunsDuring(LocalDateTime fromDateTime, LocalDateTime toDateTime, WebRequest request) {
+        LimitOffset limOff = getLimitOffset(request, 100);
+        boolean full = getBooleanParam(request, "full", false);
+        boolean detail = getBooleanParam(request, "detail", false);
 
         PaginatedList<DataProcessRun> runs = processLogs.getRuns(Range.closedOpen(fromDateTime, toDateTime), limOff, !full);
         return ListViewResponse.of(runs.getResults().stream()
             .map(run -> (detail)
-                ? new DataProcessRunDetailView(run, processLogs.getUnits(run.getProcessId(), LimitOffset.HUNDRED))
-                : new DataProcessRunView(run))
+                    ? new DataProcessRunDetailView(run, processLogs.getUnits(run.getProcessId(), LimitOffset.HUNDRED))
+                    : new DataProcessRunView(run))
             .collect(toList()),
-                runs.getTotal(), runs.getLimOff());
+            runs.getTotal(), runs.getLimOff());
     }
 
     /**
@@ -89,7 +107,7 @@ public class DataProcessCtrl extends BaseCtrl
      *
      * Expected Output: DataProcessRunDetailView
      */
-    @RequestMapping("/runs/id/{id}")
+    @RequestMapping("/runs/{id:[0-9]+}")
     public BaseResponse getRuns(@PathVariable int id, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, 100);
         Optional<DataProcessRun> run = processLogs.getRun(id);
