@@ -446,19 +446,24 @@ List of bills updated during the given date/time range
 
 .. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02
 
-.. note:: Due to performance reasons, the days between fromDateTime and toDateTime must be <= 100
-
 **Optional Params**
 
-+-----------+--------------------+--------------------------------------------------------+
-| Parameter | Values             | Description                                            |
-+===========+====================+========================================================+
-| detail    | boolean            | Set to true to see `detailed update digests`_          |
-+-----------+--------------------+--------------------------------------------------------+
-| filter    | string             | Filter by update type. See `update filters`_           |
-+-----------+--------------------+--------------------------------------------------------+
-| order     | string (asc|desc)  | Order the results by update date/time                  |
-+-----------+--------------------+--------------------------------------------------------+
++-----------+----------------------+--------------------------------------------------------+
+| Parameter | Values               | Description                                            |
++===========+======================+========================================================+
+| type      | (processed|published)| The type of bill update (see below for explanation)    |
++-----------+----------------------+--------------------------------------------------------+
+| detail    | boolean              | Set to true to see `detailed update digests`_          |
++-----------+----------------------+--------------------------------------------------------+
+| filter    | string               | Filter by update type. See `update filters`_           |
++-----------+----------------------+--------------------------------------------------------+
+| order     | string (asc|desc)    | Order the results by update date/time                  |
++-----------+----------------------+--------------------------------------------------------+
+
+There are two types of updates, 'processed' and 'published'. Processed refers to the date that OpenLeg processed
+the data which is useful if you are trying to stay synchronized with OpenLeg. Published refers to the date during
+which data was intended to be published. This can differ from the processed date because OpenLeg can periodically
+reprocess it's data to fix issues. By default the type is set to published.
 
 **Examples**
 
