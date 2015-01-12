@@ -122,6 +122,25 @@ public abstract class BaseCtrl
     }
 
     /**
+     * Attempts to parse a date request parameter
+     * Throws an InvalidRequestParameterException if the parsing went wrong
+     *
+     * @param dateString The parameter value to be parsed
+     * @param parameterName The name of the parameter.  Used to generate the exception
+     * @return LocalDate
+     * @throws InvalidRequestParamEx
+     */
+    protected LocalDate parseISODate(String dateString, String parameterName) {
+        try {
+            return LocalDate.from(DateTimeFormatter.ISO_DATE.parse(dateString));
+        }
+        catch (DateTimeParseException ex) {
+            throw new InvalidRequestParamEx(dateString, parameterName,
+                "date", "ISO 8601 date formatted string e.g. 2014-10-27 for October 27, 2014");
+        }
+    }
+
+    /**
      * Attempts to parse a date time request parameter
      * Throws an InvalidRequestParameterException if the parsing went wrong
      *
@@ -136,7 +155,7 @@ public abstract class BaseCtrl
         }
         catch (DateTimeParseException ex) {
             throw new InvalidRequestParamEx(dateTimeString, parameterName,
-                "date-time", "ISO 8601 date and time formatted string e.g. 2014-10-27T09:44:55");
+                "date-time", "ISO 8601 date and time formatted string e.g. 2014-10-27T09:44:55 for October 27, 2014 9:44:55 AM");
         }
     }
 
