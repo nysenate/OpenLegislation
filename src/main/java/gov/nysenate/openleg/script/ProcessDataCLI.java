@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.script;
 
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.processor.DataProcessor;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;

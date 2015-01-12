@@ -6,7 +6,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.hearing.search.ElasticPublicHearingSearchDao;
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;

@@ -2,7 +2,7 @@ package gov.nysenate.openleg.service.spotcheck;
 
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;

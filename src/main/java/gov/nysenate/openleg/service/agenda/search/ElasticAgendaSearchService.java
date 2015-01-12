@@ -9,7 +9,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;

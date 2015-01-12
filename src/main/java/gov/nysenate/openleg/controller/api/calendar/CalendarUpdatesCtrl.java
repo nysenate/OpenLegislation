@@ -42,22 +42,32 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
     /**
      * Calendar updates API
      *
-     * Get calendar updates:    (GET) /api/3/calendars/updates/{fromDateTime}/{toDateTime}
-     * Request Parameters:      detail - Returns detailed update responses if set to true
+     * Get calendar updates:    (GET) /api/3/calendars/updates/{from}/{to}
+     *    (from date to now)    (GET) /api/3/calendars/updates/{from}
+     *         (past 7 days)    (GET) /api/3/calendars/updates/
+     *
+     * Where 'from' and 'to' are ISO date times.
+     *
+     * Request Parameters:      detail (boolean) - Returns detailed update responses if set to true
+     *                          type (string) - Update type (processed, published) Default: published
+     *                          limit, offset (int) - Paginate
+     *                          order (string) - Order by update date
+     *
      */
     @RequestMapping(value = "/updates/{from}/{to}")
     public BaseResponse getUpdatesDuring(@PathVariable String from, @PathVariable String to,
-                                         @RequestParam(defaultValue = "false") boolean detail,
                                          WebRequest webRequest) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
+        boolean detail = getBooleanParam(webRequest, "detail", false);
+        UpdateType updateType = getUpdateTypeFromParam(webRequest);
         Range<LocalDateTime> updateRange = Range.openClosed(fromDateTime, toDateTime);
         SortOrder dateOrder = getSortOrder(webRequest, SortOrder.DESC);
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         BaseResponse response = null;
         if (detail) {
             PaginatedList<UpdateDigest<CalendarId>> updateTokenDigests =
-                    calendarUpdatesDao.getUpdateDigests(UpdateType.PUBLISHED_DATE, updateRange, dateOrder, limitOffset);
+                    calendarUpdatesDao.getUpdateDigests(updateType, updateRange, dateOrder, limitOffset);
             response = ListViewResponse.of(
                     updateTokenDigests.getResults().stream()
                             .map(ud -> new UpdateDigestView(ud, new CalendarIdView(ud.getId())))
@@ -67,7 +77,7 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
         }
         else {
             PaginatedList<UpdateToken<CalendarId>> updateTokens =
-                calendarUpdatesDao.calendarsUpdatedDuring(UpdateType.PUBLISHED_DATE, updateRange, dateOrder, limitOffset);
+                calendarUpdatesDao.calendarsUpdatedDuring(updateType, updateRange, dateOrder, limitOffset);
             response =  ListViewResponse.of(
                 updateTokens.getResults().stream()
                     .map(token ->  new UpdateTokenView(token, new CalendarIdView(token.getId())))
@@ -78,35 +88,25 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
         return response;
     }
 
-    /**
-     * Calendar updates API
-     *
-     * Get calendar updates after date:    (GET) /api/3/calendars/updates/{fromDateTime}
-     * @see #getUpdatesDuring
-     */
     @RequestMapping(value = "/updates/{from}")
     public BaseResponse getUpdatesDuring(@PathVariable String from,
-                                         @RequestParam(defaultValue = "false") boolean detail,
                                          WebRequest webRequest) {
-        return getUpdatesDuring(from, LocalDateTime.now().toString(), detail, webRequest);
+        return getUpdatesDuring(from, LocalDateTime.now().toString(), webRequest);
     }
 
-    /**
-     * Calendar updates API
-     *
-     * Get calendar updates for last seven days:    (GET) /api/3/calendars/updates/
-     * @see #getUpdatesDuring
-     */
     @RequestMapping(value = "/updates")
-    public BaseResponse getUpdatesDuring(@RequestParam(defaultValue = "false") boolean detail,
-                                         WebRequest webRequest) {
-        return getUpdatesDuring(LocalDateTime.now().minusDays(7).toString(), LocalDateTime.now().toString(), detail, webRequest);
+    public BaseResponse getUpdatesDuring(WebRequest webRequest) {
+        return getUpdatesDuring(LocalDateTime.now().minusDays(7).toString(), LocalDateTime.now().toString(), webRequest);
     }
 
     /**
      * Updates for calendar API
      *
      * Get updates for specific calendar:   (GET) /api/3/calendars/{year}/{calendarNo}/updates/{from}/{to}
+     *                  (get all updates)   (GET) /api/3/calendars/{year}/{calendarNo}/updates/
+     *
+     * Where 'from' and 'to' are ISO date times.
+     *
      * Request parameters:      order - The sort order of the update response (orderd by published date) (default DESC)
      *                          limit - The maximum number of updates to return (default 100)
      *                          offset - Return updates starting with offset (default 1)
@@ -117,10 +117,11 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
                                                     WebRequest webRequest) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
+        UpdateType updateType = getUpdateTypeFromParam(webRequest);
         SortOrder dateOrder = getSortOrder(webRequest, SortOrder.DESC);
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         PaginatedList<UpdateDigest<CalendarId>> updateDigests =
-                calendarUpdatesDao.getUpdateDigests(UpdateType.PUBLISHED_DATE, new CalendarId(calendarNo, year),
+                calendarUpdatesDao.getUpdateDigests(updateType, new CalendarId(calendarNo, year),
                                                     Range.openClosed(fromDateTime, toDateTime), dateOrder, limitOffset);
         return ListViewResponse.of(
                 updateDigests.getResults().stream()
@@ -130,12 +131,6 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
         );
     }
 
-    /**
-     * All updates for calendar API
-     *
-     * Get all updates for a specific calendar:   (GET) /api/3/calendars/{year}/{calendarNo}/updates/{from}/{to}
-     * @see #getUpdatesForCalendarDuring
-     */
     @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates")
     public BaseResponse getUpdatesForCalendar(@PathVariable int year, @PathVariable int calendarNo,
                                               WebRequest webRequest) {
