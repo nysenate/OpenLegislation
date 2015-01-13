@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.notification.NotificationDao;
 import gov.nysenate.openleg.model.notification.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class NotificationDispatcher {
 
     @Autowired
     private EventBus eventBus;
+
+    @Autowired
+    private Environment environment;
 
     @Autowired
     private NotificationDao notificationDao;
@@ -43,17 +47,19 @@ public class NotificationDispatcher {
     }
 
     /**
-     * Registers and sends a new notification to all pertinent subscribers
+     * Sends a registered notification to all pertinent subscribers
      * @param notification NotificationBody
      */
     @Async
     public void dispatchNotification(RegisteredNotification notification) {
-        Multimap<NotificationTarget, NotificationSubscription> subscriptionMap = ArrayListMultimap.create();
-        subscriptionDataService.getSubscriptions(notification.getType()).forEach(subscription ->
-                subscriptionMap.put(subscription.getTarget(), subscription));
+        if (environment.isNotificationsEnabled()) {
+            Multimap<NotificationTarget, NotificationSubscription> subscriptionMap = ArrayListMultimap.create();
+            subscriptionDataService.getSubscriptions(notification.getType()).forEach(subscription ->
+                    subscriptionMap.put(subscription.getTarget(), subscription));
 
-        subscriptionMap.keySet().forEach(target ->
-                senderMap.get(target).sendNotification(notification, subscriptionMap.get(target)));
+            subscriptionMap.keySet().forEach(target ->
+                    senderMap.get(target).sendNotification(notification, subscriptionMap.get(target)));
+        }
     }
 
     @Subscribe

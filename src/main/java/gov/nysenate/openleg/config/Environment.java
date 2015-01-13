@@ -78,6 +78,10 @@ public class Environment
     /** Enable spot-check report runs at scheduled intervals. */
     @Value("${scheduler.spotcheck.enabled}") private boolean spotcheckScheduled;
 
+    /** --- Notifications --- */
+    @Value("${notifications.enabled}")
+    private boolean notificationsEnabled;
+
     /** --- Domain Url --- */
 
     @Value ("${domain.url}") private String domain;
@@ -202,6 +206,10 @@ public class Environment
 
     public void setAssemblyAgendaDirectory(File assemblyAgendaDirectory) {
         this.assemblyAgendaDirectory = assemblyAgendaDirectory;
+    }
+
+    public boolean isNotificationsEnabled() {
+        return notificationsEnabled;
     }
 
     public String getDomain() {
