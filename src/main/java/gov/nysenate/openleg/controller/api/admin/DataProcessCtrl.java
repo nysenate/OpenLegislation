@@ -12,7 +12,7 @@ import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.process.DataProcessRun;
 import gov.nysenate.openleg.service.process.DataProcessLogService;
 import gov.nysenate.openleg.util.DateUtils;

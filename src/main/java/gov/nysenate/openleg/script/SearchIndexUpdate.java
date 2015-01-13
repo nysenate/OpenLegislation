@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.script;
 
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.search.BillSearchService;
 import org.apache.commons.cli.*;

@@ -31,7 +31,7 @@ public class NotificationTests extends BaseTests {
         String message = "christmas sobis are here";
         Notification processExceptionNotification = new Notification(NotificationType.PROCESS_EXCEPTION,
                 LocalDateTime.of(2014, 12, 25, 0, 0), summary, message);
-        notificationDispatcher.dispatchNotification(processExceptionNotification);
+        notificationDispatcher.handleNotificationEvent(processExceptionNotification);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class NotificationTests extends BaseTests {
         String message = "spotcheck done. " + Math.random() * Integer.MAX_VALUE + " errors";
         Notification processExceptionNotification = new Notification(NotificationType.SPOTCHECK,
                 LocalDateTime.of(2014, 12, 25, 0, 0), summary, message);
-        notificationDispatcher.dispatchNotification(processExceptionNotification);
+        notificationDispatcher.handleNotificationEvent(processExceptionNotification);
     }
 
 }

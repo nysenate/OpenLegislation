@@ -95,6 +95,9 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
 
     /** --- CachingService Implementations --- */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setupCaches() {
         subCache = new Cache(new CacheConfiguration().name(subCacheName)
@@ -103,11 +106,17 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
         cacheManager.addCache(subCache);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Ehcache> getCaches() {
         return Arrays.asList(subCache);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(ContentCache.NOTIFICATION_SUBSCRIPTION)) {
@@ -115,11 +124,17 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void warmCaches() {
         getSubscriptions();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
         if (warmEvent.affects(ContentCache.NOTIFICATION_SUBSCRIPTION)) {

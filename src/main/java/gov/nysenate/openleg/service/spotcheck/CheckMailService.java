@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck;
 
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.daybreak.*;
 import gov.nysenate.openleg.util.MailUtils;
 import org.apache.commons.io.FileUtils;

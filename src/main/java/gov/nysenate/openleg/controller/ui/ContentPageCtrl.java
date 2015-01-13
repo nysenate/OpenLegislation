@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.controller.ui;
 
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

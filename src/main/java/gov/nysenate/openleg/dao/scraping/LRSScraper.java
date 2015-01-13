@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.dao.scraping;
 
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
