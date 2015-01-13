@@ -40,7 +40,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
     private static final Logger logger = LoggerFactory.getLogger(SqlAgendaDao.class);
 
     @Autowired
-    MemberService memberService;
+    private MemberService memberService;
 
     /** {@inheritDoc} */
     @Override

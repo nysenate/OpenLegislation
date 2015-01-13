@@ -6,32 +6,29 @@ import gov.nysenate.openleg.dao.base.SqlTable;
 public enum SqlBillUpdatesQuery implements BasicSqlQuery
 {
     SELECT_BILL_UPDATES_FRAGMENT(
-        "SELECT key->'bill_print_no' AS bill_print_no, key->'bill_session_year' AS bill_session_year,\n" +
+        "SELECT bill_print_no, bill_session_year,\n" +
         "       %s \n" + // Any additional columns are replaced here
-        "FROM ${schema}." + SqlTable.SOBI_CHANGE_LOG + " log\n" +
-        "LEFT JOIN ${schema}." + SqlTable.SOBI_FRAGMENT + " sobi\n" +
-        "     ON log.sobi_fragment_id = sobi.fragment_id\n" +
+        "FROM ${schema}." + SqlTable.BILL_CHANGE_LOG + " log\n" +
         "WHERE ${dateColumn} BETWEEN :startDateTime AND :endDateTime\n" +
-        "AND defined(key, 'bill_print_no') AND defined(key, 'bill_session_year')\n" +
         "%s\n" + // Additional WHERE clause
         "AND (${updateFieldFilter}) \n" + // Update field filter gets replaced based on method args
         "%s"),  // GROUP BY clause if necessary
 
     SELECT_COLUMNS_FOR_DIGEST_FRAGMENT(
-        "sobi.fragment_id AS last_fragment_id, log.action_date_time AS last_processed_date_time, \n" +
-        "sobi.published_date_time AS last_published_date_time, COUNT(*) OVER () AS total_updated,\n" +
-        "table_name, action, hstore_to_array(key) AS key, hstore_to_array(data) AS data\n"
+        "sobi_fragment_id AS last_fragment_id, action_date_time AS last_processed_date_time, \n" +
+        "published_date_time AS last_published_date_time, COUNT(*) OVER () AS total_updated,\n" +
+        "table_name, action, hstore_to_array(data) AS data\n"
     ),
 
     SELECT_BILL_UPDATE_TOKENS(
         String.format(SELECT_BILL_UPDATES_FRAGMENT.sql,
             // Select columns
-            "MAX(sobi.fragment_id) AS last_fragment_id, MAX(log.action_date_time) AS last_processed_date_time, \n" +
-            "MAX(sobi.published_date_time) AS last_published_date_time, COUNT(*) OVER () AS total_updated\n",
+            "MAX(sobi_fragment_id) AS last_fragment_id, MAX(action_date_time) AS last_processed_date_time, \n" +
+            "MAX(published_date_time) AS last_published_date_time, COUNT(*) OVER () AS total_updated\n",
             // No extra where clause
             "",
             // Group by bill ids for update tokens
-            "GROUP BY key->'bill_print_no', key->'bill_session_year'")
+            "GROUP BY bill_print_no, bill_session_year")
     ),
 
     SELECT_BILL_UPDATE_DIGESTS(
@@ -49,7 +46,7 @@ public enum SqlBillUpdatesQuery implements BasicSqlQuery
             // Select columns
             SELECT_COLUMNS_FOR_DIGEST_FRAGMENT.sql,
             // No extra where clause
-            "AND key @> hstore(ARRAY['bill_print_no', 'bill_session_year'], ARRAY[:printNo, :session::text])\n",
+            "AND bill_print_no = :printNo AND bill_session_year = :session\n",
             // No group by needed for digests due to pagination/performance issues
             "")
     );

@@ -23,6 +23,7 @@ public interface CalendarDataService
 
     /**
      * Retrieves an active list corresponding to the given active list id
+     *
      * @param activeListId
      * @return CalendarActiveList
      * @throws CalendarNotFoundEx - If no active list exists that matches the active list id
@@ -31,6 +32,7 @@ public interface CalendarDataService
 
     /**
      * Retrieves a calendar supplemental corresponding to the given calendar supplemental id
+     *
      * @param supplementalId
      * @return CalendarSupplemental
      * @throws CalendarNotFoundEx - if no calendar supplemental exists for the given id
@@ -39,6 +41,7 @@ public interface CalendarDataService
 
     /**
      * Gets the number of calendars that exist for the given year
+     *
      * @param year
      * @return
      */
@@ -46,12 +49,14 @@ public interface CalendarDataService
 
     /**
      * Gets the number of active lists that exist for the given year
+     *
      * @param year
      */
     public int getActiveListCount(int year);
 
     /**
      * Gets the number of calendar supplementals that exist for the given year
+     *
      * @param year
      * @return
      */
@@ -59,6 +64,7 @@ public interface CalendarDataService
 
     /**
      * Gets all calendars for the given year
+     *
      * @param year
      * @param sortOrder
      * @param limitOffset
@@ -69,6 +75,7 @@ public interface CalendarDataService
 
     /**
      * Gets all active lists for the given year
+     *
      * @param year
      * @param sortOrder
      * @param limitOffset @return List<CalendarActiveListId>
@@ -78,6 +85,7 @@ public interface CalendarDataService
 
     /**
      * Gets all calendar supplementals for the given year
+     *
      * @param year
      * @param sortOrder
      * @param limitOffset
@@ -90,7 +98,8 @@ public interface CalendarDataService
      * Saves the Calendar into the persistence layer. If a new Calendar reference is
      * being saved, the appropriate data will be inserted. Otherwise, existing
      * data will be updated with the changed values.
-     *  @param calendar Calendar
+     *
+     * @param calendar Calendar
      * @param sobiFragment SobiFragment
      * @param postUpdateEvent
      */

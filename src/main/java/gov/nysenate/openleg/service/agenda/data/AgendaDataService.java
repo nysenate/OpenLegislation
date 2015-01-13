@@ -39,8 +39,9 @@ public interface AgendaDataService
      *
      * @param agenda Agenda
      * @param sobiFragment SobiFragment
+     * @param postUpdateEvent boolean
      */
-    public void saveAgenda(Agenda agenda, SobiFragment sobiFragment);
+    public void saveAgenda(Agenda agenda, SobiFragment sobiFragment, boolean postUpdateEvent);
 
     /**
      * Deletes an Agenda from the persistence layer that matches the given agenda id.

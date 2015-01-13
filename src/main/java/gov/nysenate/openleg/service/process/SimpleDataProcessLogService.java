@@ -6,7 +6,7 @@ import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.process.DataProcessLogDao;
 import gov.nysenate.openleg.dao.process.SqlDataProcessLogDao;
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.process.DataProcessRun;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import org.apache.shiro.dao.DataAccessException;

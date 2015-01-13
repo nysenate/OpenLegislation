@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -20,12 +20,14 @@ import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
+import gov.nysenate.openleg.service.agenda.event.BulkAgendaUpdateEvent;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
 import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
+import gov.nysenate.openleg.service.calendar.event.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.service.entity.committee.data.CommitteeDataService;
 import gov.nysenate.openleg.service.entity.member.MemberService;
 import org.apache.commons.lang3.StringUtils;
@@ -222,7 +224,10 @@ public abstract class AbstractDataProcessor
         if (agendaIngestCache.getSize() > 0) {
             logger.info("Flushing {} agendas", agendaIngestCache.getSize());
             agendaIngestCache.getCurrentCache().forEach(
-                entry -> agendaDataService.saveAgenda(entry.getLeft(), entry.getRight()));
+                entry -> agendaDataService.saveAgenda(entry.getLeft(), entry.getRight(), false));
+            List<Agenda> agendas =
+                agendaIngestCache.getCurrentCache().stream().map(entry -> entry.getLeft()).collect(Collectors.toList());
+            eventBus.post(new BulkAgendaUpdateEvent(agendas, LocalDateTime.now()));
             agendaIngestCache.clearCache();
         }
     }
@@ -262,7 +267,10 @@ public abstract class AbstractDataProcessor
         if (calendarIngestCache.getSize() > 0) {
             logger.info("Flushing {} calendars", calendarIngestCache.getSize());
             calendarIngestCache.getCurrentCache().forEach(
-                entry -> calendarDataService.saveCalendar(entry.getLeft(), entry.getRight(), true));
+                entry -> calendarDataService.saveCalendar(entry.getLeft(), entry.getRight(), false));
+            List<Calendar> calendars =
+                calendarIngestCache.getCurrentCache().stream().map(entry -> entry.getLeft()).collect(Collectors.toList());
+            eventBus.post(new BulkCalendarUpdateEvent(calendars, LocalDateTime.now()));
             calendarIngestCache.clearCache();
         }
     }

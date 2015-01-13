@@ -23,6 +23,8 @@ public enum SqlTable
     AGENDA_VOTE_COMMITTEE_ITEM   ("agenda_vote_committee_item"),
     AGENDA_VOTE_COMMITTEE_VOTE   ("agenda_vote_committee_vote"),
 
+    AGENDA_CHANGE_LOG            ("agenda_change_log"),
+
     API_USER                     ("apiuser"),
 
     BILL                         ("bill"),
@@ -42,11 +44,15 @@ public enum SqlTable
     BILL_SPONSOR                 ("bill_sponsor"),
     BILL_VETO                    ("bill_veto"),
 
+    BILL_CHANGE_LOG              ("bill_change_log"),
+
     CALENDAR                     ("calendar"),
     CALENDAR_ACTIVE_LIST         ("calendar_active_list"),
     CALENDAR_ACTIVE_LIST_ENTRY   ("calendar_active_list_entry"),
     CALENDAR_SUPPLEMENTAL        ("calendar_supplemental"),
     CALENDAR_SUP_ENTRY           ("calendar_supplemental_entry"),
+
+    CALENDAR_CHANGE_LOG          ("calendar_change_log"),
 
     COMMITTEE                    ("committee"),
     COMMITTEE_VERSION            ("committee_version"),
@@ -81,7 +87,6 @@ public enum SqlTable
 
     SOBI_FILE                    ("sobi_file"),
     SOBI_FRAGMENT                ("sobi_fragment"),
-    SOBI_CHANGE_LOG              ("sobi_change_log"),
 
     SPOTCHECK_REPORT             ("spotcheck_report"),
     SPOTCHECK_OBSERVATION        ("spotcheck_observation"),

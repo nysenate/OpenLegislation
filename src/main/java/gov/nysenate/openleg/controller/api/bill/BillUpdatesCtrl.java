@@ -2,6 +2,7 @@ package gov.nysenate.openleg.controller.api.bill;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.DateRangeListViewResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.bill.BaseBillIdView;
 import gov.nysenate.openleg.client.view.updates.UpdateDigestView;
@@ -129,12 +130,6 @@ public class BillUpdatesCtrl extends BaseCtrl
     /** --- Internal --- */
 
     private BaseResponse getUpdatesDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
-        // Prevent update queries from spanning too many days due to performance reasons.
-        long daysBetween = Duration.between(from, to).toDays();
-        if (daysBetween > 100) {
-            throw new InvalidRequestParamEx(Long.toString(daysBetween), "days between 'from' and 'to'", "date-time",
-                "Days between the from and to date must be <= 100");
-        }
         // Fetch params
         LimitOffset limOff = getLimitOffset(request, 50);
         Range<LocalDateTime> updateRange = Range.closedOpen(from, to);
@@ -147,16 +142,16 @@ public class BillUpdatesCtrl extends BaseCtrl
         if (!detail) {
             PaginatedList<UpdateToken<BaseBillId>> updateTokens =
                 billUpdatesDao.getUpdates(updateRange, updateType, fieldFilter, sortOrder, limOff);
-            return ListViewResponse.of(updateTokens.getResults().stream()
+            return DateRangeListViewResponse.of(updateTokens.getResults().stream()
                 .map(token -> new UpdateTokenView(token, new BaseBillIdView(token.getId())))
-                .collect(toList()), updateTokens.getTotal(), limOff);
+                .collect(toList()), updateRange, updateTokens.getTotal(), limOff);
         }
         else {
             PaginatedList<UpdateDigest<BaseBillId>> updateDigests =
                 billUpdatesDao.getDetailedUpdates(updateRange, updateType, fieldFilter, sortOrder, limOff);
-            return ListViewResponse.of(updateDigests.getResults().stream()
+            return DateRangeListViewResponse.of(updateDigests.getResults().stream()
                 .map(digest -> new UpdateDigestView(digest, new BaseBillIdView(digest.getId())))
-                .collect(toList()), updateDigests.getTotal(), limOff);
+                .collect(toList()), updateRange, updateDigests.getTotal(), limOff);
         }
     }
 
@@ -165,12 +160,13 @@ public class BillUpdatesCtrl extends BaseCtrl
         BillUpdateField filterField = getUpdateFieldFromParam(request.getParameter("filter"));
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         LimitOffset limOff = getLimitOffset(request, 50);
+        Range<LocalDateTime> updateRange = Range.closedOpen(from, to);
         UpdateType updateType = getUpdateTypeFromParam(request);
         PaginatedList<UpdateDigest<BaseBillId>> digests = billUpdatesDao.getDetailedUpdatesForBill(
-            new BaseBillId(printNo, sessionYear), Range.closedOpen(from, to), updateType, filterField, sortOrder, limOff);
-        return ListViewResponse.of(digests.getResults().stream()
+            new BaseBillId(printNo, sessionYear), updateRange, updateType, filterField, sortOrder, limOff);
+        return DateRangeListViewResponse.of(digests.getResults().stream()
             .map(digest -> new UpdateDigestView(digest, new BaseBillIdView(digest.getId())))
-            .collect(toList()), digests.getTotal(), limOff);
+            .collect(toList()), updateRange, digests.getTotal(), limOff);
     }
 
     private BillUpdateField getUpdateFieldFromParam(String filter) {

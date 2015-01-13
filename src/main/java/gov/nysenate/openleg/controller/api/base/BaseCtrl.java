@@ -16,6 +16,7 @@ import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,7 +180,7 @@ public abstract class BaseCtrl
     protected UpdateType getUpdateTypeFromParam(WebRequest request) {
         String type = request.getParameter("type");
         return (type != null && type.equalsIgnoreCase("processed"))
-                ? UpdateType.PROCESSED_DATE : UpdateType.PUBLISHED_DATE;
+            ? UpdateType.PROCESSED_DATE : UpdateType.PUBLISHED_DATE;
     }
 
     /** --- Generic Exception Handlers --- */

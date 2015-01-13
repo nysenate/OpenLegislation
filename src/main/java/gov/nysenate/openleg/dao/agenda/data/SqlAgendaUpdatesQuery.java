@@ -11,31 +11,24 @@ import static gov.nysenate.openleg.dao.base.SqlTable.*;
 public enum SqlAgendaUpdatesQuery implements BasicSqlQuery
 {
     SELECT_AGENDA_UPDATES_FRAGMENT(
-        "SELECT key->'agenda_no' AS agenda_no, key->'year' AS year,\n" +
-        "       %s \n" + // Any additional columns are replaced here
-        "FROM ${schema}." + SqlTable.SOBI_CHANGE_LOG + " log\n" +
-        "LEFT JOIN ${schema}." + SqlTable.SOBI_FRAGMENT + " sobi\n" +
-        "     ON log.sobi_fragment_id = sobi.fragment_id\n" +
+        "SELECT agenda_no, year, %s\n" + // Any additional columns are replaced here
+        "FROM ${schema}." + SqlTable.AGENDA_CHANGE_LOG + "\n" +
         "WHERE ${dateColumn} BETWEEN :startDateTime AND :endDateTime\n" +
-        "AND table_name IN (" + // Using the table name here because it's slightly faster than a key search
-            Arrays.asList(AGENDA, AGENDA_INFO_ADDENDUM, AGENDA_INFO_COMMITTEE, AGENDA_VOTE_ADDENDUM, AGENDA_VOTE_COMMITTEE)
-                    .stream().map(table -> "'" + table + "'").collect(Collectors.joining(",")) +
-        ")\n" +
         "%s\n" + // Additional WHERE clause
         "%s" // GROUP BY clause if necessary
     ),
 
     SELECT_COLUMNS_FOR_DIGEST_FRAGMENT(
-        "sobi.fragment_id AS last_fragment_id, log.action_date_time AS last_processed_date_time, \n" +
-        "sobi.published_date_time AS last_published_date_time, COUNT(*) OVER () AS total_updated,\n" +
-        "table_name, action, hstore_to_array(key) AS key, hstore_to_array(data) AS data\n"
+        "sobi_fragment_id AS last_fragment_id, action_date_time AS last_processed_date_time, \n" +
+        "published_date_time AS last_published_date_time, COUNT(*) OVER () AS total_updated,\n" +
+        "table_name, action, hstore_to_array(data) AS data\n"
     ),
 
     SELECT_AGENDA_UPDATE_TOKENS(
         String.format(SELECT_AGENDA_UPDATES_FRAGMENT.sql,
             // Select columns
-            "       MAX(action_date_time) AS last_processed_date_time, MAX(sobi.fragment_id) AS last_fragment_id,\n" +
-            "       MAX(sobi.published_date_time) AS last_published_date_time, COUNT(*) OVER() AS total_updated\n",
+            "       MAX(action_date_time) AS last_processed_date_time, MAX(sobi_fragment_id) AS last_fragment_id,\n" +
+            "       MAX(published_date_time) AS last_published_date_time, COUNT(*) OVER() AS total_updated\n",
             // No extra where clause
             "",
             // Group by agenda id
@@ -57,7 +50,7 @@ public enum SqlAgendaUpdatesQuery implements BasicSqlQuery
             // Select columns
             SELECT_COLUMNS_FOR_DIGEST_FRAGMENT.sql,
             // No extra where clause
-            "AND key @> hstore(ARRAY['agenda_no', 'year'], ARRAY[:agendaNo, :year::text])\n",
+            "AND agenda_no = :agendaNo AND year = :year",
             // No group by needed for digests due to pagination/performance issues
             "")
     );

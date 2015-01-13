@@ -27,64 +27,49 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
 
     private static LimitOffset defaultLimitOffset = LimitOffset.HUNDRED;
 
-    @Autowired
-    CalendarSearchDao calendarSearchDao;
-
-    @Autowired
-    EventBus eventBus;
+    @Autowired private CalendarSearchDao calendarSearchDao;
+    @Autowired private EventBus eventBus;
 
     @PostConstruct
     private void init() {
         eventBus.register(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public SearchResults<CalendarId> searchForCalendars(String query, String sort, LimitOffset limitOffset) throws SearchException {
         return searchCalendars(QueryBuilders.queryString(query), null, sort, limitOffset);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public SearchResults<CalendarId> searchForCalendarsByYear(Integer year, String query, String sort, LimitOffset limitOffset)
             throws SearchException {
         return searchCalendars(getCalendarYearQuery(year, query), null, sort, limitOffset);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public SearchResults<CalendarActiveListId> searchForActiveLists(String query, String sort, LimitOffset limitOffset)
             throws SearchException {
         return searchActiveLists(QueryBuilders.queryString(query), null, sort, limitOffset);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public SearchResults<CalendarActiveListId> searchForActiveListsByYear(Integer year, String query, String sort, LimitOffset limitOffset)
             throws SearchException {
         return searchActiveLists(getCalendarYearQuery(year, query), null, sort, limitOffset);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public SearchResults<CalendarSupplementalId> searchForSupplementalCalendars(String query, String sort, LimitOffset limitOffset)
             throws SearchException {
         return searchFloorCalendars(QueryBuilders.queryString(query), null, sort, limitOffset);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public SearchResults<CalendarSupplementalId> searchForSupplementalCalendarsByYear(Integer year, String query, String sort,
                                                                                       LimitOffset limitOffset)
@@ -92,22 +77,19 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
         return searchFloorCalendars(getCalendarYearQuery(year, query), null, sort, limitOffset);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Subscribe
     @Override
     public synchronized void handleCalendarUpdateEvent(CalendarUpdateEvent calendarUpdateEvent) {
         calendarSearchDao.updateCalendarIndex(calendarUpdateEvent.getCalendar());
     }
 
-    /**
-     * --- Helper Methods ---
-     */
+    /** --- Helper Methods --- */
 
     /**
      * Returns a query that can be used for all calendar types that matches calendars for the given year
-     *  in addition to the criteria specified by the given query string
+     * in addition to the criteria specified by the given query string
+     *
      * @param year
      * @param query
      * @return

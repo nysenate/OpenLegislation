@@ -150,20 +150,16 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                     addendum.putCommittee(voteCommittee);
                 }
             }
-
-            logger.debug("Saving {}", agenda);
-            agendaDataService.saveAgenda(agenda, sobiFragment);
         }
         catch (SAXException | XPathExpressionException | IOException ex) {
             logger.error("Failed to parse Agenda Vote.", ex);
             unit.addException("Failed to parse Agenda Vote: " + ex.getMessage());
-
         }
         // Notify the data processor that an agenda vote fragment has finished processing
         postDataUnitEvent(unit);
 
         if (!env.isSobiBatchEnabled() || agendaIngestCache.exceedsCapacity()) {
-            flushAllUpdates();
+            flushAllUpdates(); // Flush all the things
         }
     }
 

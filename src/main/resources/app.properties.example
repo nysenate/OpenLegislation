@@ -160,7 +160,7 @@ scheduler.process.cron = 0 */5 * * * *
 # When to run spot-check reports. (Default: 0 */2 * * * FRI-SAT)
 scheduler.spotcheck.cron = 0 */2 * * * FRI-SAT
 
-# --- Mail Configuration -----------------------------------------------------------------------------------------------
+# --- Mail Configuration ------------------------------------------------------
 
 # Connection information for the mail account that receives daybreak emails
 checkmail.host = imap.gmail.com
@@ -182,7 +182,7 @@ mail.smtp.user = nysenatedev
 mail.smtp.password =
 mail.debug = false
 
-# --- Domain Configuration ---------------------------------------------------------------------------------------------
+# --- Domain Configuration ----------------------------------------------------
 
 # The domain url that openleg is hosted on (used for generating links)
 domain.url = http://localhost:8080

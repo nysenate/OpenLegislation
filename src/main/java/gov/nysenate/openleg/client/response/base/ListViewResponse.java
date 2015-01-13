@@ -10,7 +10,7 @@ public class ListViewResponse<ViewType> extends PaginationResponse
 {
     protected ListView<ViewType> result;
 
-    private ListViewResponse(ListView<ViewType> result, int total, LimitOffset limitOffset) {
+    protected ListViewResponse(ListView<ViewType> result, int total, LimitOffset limitOffset) {
         super(total, limitOffset.getOffsetStart(), Math.min(limitOffset.getOffsetEnd(), total), limitOffset.getLimit());
         this.result = result;
         if (result != null) {

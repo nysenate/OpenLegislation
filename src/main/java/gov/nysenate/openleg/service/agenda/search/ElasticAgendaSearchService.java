@@ -9,12 +9,14 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
-import gov.nysenate.openleg.model.base.Environment;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
+import gov.nysenate.openleg.service.agenda.event.AgendaUpdateEvent;
+import gov.nysenate.openleg.service.agenda.event.BulkAgendaUpdateEvent;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -116,6 +118,24 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
             catch (Exception ex) {
                 logger.error("Unexpected exception during handling of Agenda RebuildIndexEvent!", ex);
             }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public synchronized void handleAgendaUpdateEvent(AgendaUpdateEvent agendaUpdateEvent) {
+        if (agendaUpdateEvent != null && agendaUpdateEvent.getAgenda() != null) {
+            updateIndex(agendaUpdateEvent.getAgenda());
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public synchronized void handleBulkAgendaUpdateEvent(BulkAgendaUpdateEvent bulkAgendaUpdateEvent) {
+        if (bulkAgendaUpdateEvent != null && !bulkAgendaUpdateEvent.getAgendas().isEmpty()) {
+            updateIndex(bulkAgendaUpdateEvent.getAgendas());
         }
     }
 }

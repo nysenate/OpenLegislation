@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.bill.BillUpdateField;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -115,20 +116,8 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
      */
     private String getSqlQuery(boolean detail, BaseBillId billId, UpdateType updateType, BillUpdateField fieldFilter,
                                SortOrder sortOrder, LimitOffset limOff) {
-        String dateColumn;
-        // The UpdateType dictates which date columns we used to search by
-        OrderBy orderBy;
-        if (updateType.equals(UpdateType.PROCESSED_DATE)) {
-            dateColumn = "log.action_date_time";
-            orderBy = new OrderBy("last_processed_date_time", sortOrder);
-        }
-        else if (updateType.equals(UpdateType.PUBLISHED_DATE)) {
-            dateColumn = "sobi.published_date_time";
-            orderBy = new OrderBy("last_published_date_time", sortOrder, "last_processed_date_time", sortOrder);
-        }
-        else {
-            throw new IllegalArgumentException("Cannot provide bill updates of type: " + updateType);
-        }
+        String dateColumn = getDateColumnForUpdateType(updateType);
+        OrderBy orderBy = getOrderByForUpdateType(updateType, sortOrder);
         String sqlQuery;
         if (billId != null) {
             sqlQuery = SELECT_UPDATE_DIGESTS_FOR_SPECIFIC_BILL.getSql(schema(), orderBy, limOff);
@@ -181,12 +170,8 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
 
         @Override
         public UpdateDigest<BaseBillId> mapRow(ResultSet rs, int rowNum) throws SQLException {
-            // The 'key' holds the values for the primary key of the given table.
-            Map<String, String> key = getHstoreMap(rs, "key");
-
             // Construct the digest model
             UpdateDigest<BaseBillId> digest = new UpdateDigest<>(getBillUpdateTokenFromRs.mapRow(rs, rowNum));
-
             // Filter out the data values depending on the filter
             Map<String, String> data = getHstoreMap(rs, "data");
             if (fieldFilter != null) {
@@ -197,14 +182,10 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
                         data.keySet().stream().filter(col -> columnSet.contains(col)).collect(Collectors.toSet()));
                 }
             }
-
-            //We want to move over the non-bill id values (which were just removed) over into the data map.
-            data.putAll(key);
-
             digest.setAction(rs.getString("action"));
             digest.setTable(rs.getString("table_name"));
             digest.setFields(data);
             return digest;
         }
-    };
+    }
 }

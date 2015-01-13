@@ -2,7 +2,10 @@ package gov.nysenate.openleg.controller.api.agenda;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.DateRangeListViewResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
+import gov.nysenate.openleg.client.response.error.ErrorCode;
+import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.view.agenda.AgendaIdView;
 import gov.nysenate.openleg.client.view.bill.BaseBillIdView;
 import gov.nysenate.openleg.client.view.updates.UpdateDigestView;
@@ -95,6 +98,7 @@ public class AgendaUpdatesCtrl extends BaseCtrl
      * Where 'from' and 'to' are ISO date times.
      *
      * Request Params: type (string) - Update type (processed, published) Default: published
+     *                 limit, offset (int) - Paginate
      *
      * Expected Output: List of UpdateDigestView<BaseBillId>
      */
@@ -133,16 +137,16 @@ public class AgendaUpdatesCtrl extends BaseCtrl
         if (!detail) {
             PaginatedList<UpdateToken<AgendaId>> updateTokens =
                 agendaUpdatesDao.getUpdates(updateRange, updateType, sortOrder, limOff);
-            return ListViewResponse.of(updateTokens.getResults().stream()
+            return DateRangeListViewResponse.of(updateTokens.getResults().stream()
                 .map(token -> new UpdateTokenView(token, new AgendaIdView(token.getId())))
-                .collect(toList()), updateTokens.getTotal(), limOff);
+                .collect(toList()), updateRange, updateTokens.getTotal(), limOff);
         }
         else {
             PaginatedList<UpdateDigest<AgendaId>> updateDigests =
                 agendaUpdatesDao.getDetailedUpdates(updateRange, updateType, sortOrder, limOff);
-            return ListViewResponse.of(updateDigests.getResults().stream()
+            return DateRangeListViewResponse.of(updateDigests.getResults().stream()
                 .map(digest -> new UpdateDigestView(digest, new AgendaIdView(digest.getId())))
-                .collect(toList()), updateDigests.getTotal(), limOff);
+                .collect(toList()), updateRange, updateDigests.getTotal(), limOff);
         }
     }
 
@@ -153,9 +157,9 @@ public class AgendaUpdatesCtrl extends BaseCtrl
         UpdateType updateType = getUpdateTypeFromParam(request);
 
         PaginatedList<UpdateDigest<AgendaId>> digests = agendaUpdatesDao.getDetailedUpdatesForAgenda(
-            agendaId, Range.closedOpen(from, to), updateType, sortOrder, limOff);
-        return ListViewResponse.of(digests.getResults().stream()
+            agendaId, updateRange, updateType, sortOrder, limOff);
+        return DateRangeListViewResponse.of(digests.getResults().stream()
             .map(digest -> new UpdateDigestView(digest, new AgendaIdView(digest.getId())))
-            .collect(toList()), digests.getTotal(), limOff);
+            .collect(toList()), updateRange, digests.getTotal(), limOff);
     }
 }

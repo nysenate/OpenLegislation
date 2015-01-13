@@ -76,13 +76,8 @@ public class SqlAgendaUpdatesDao extends SqlBaseDao implements AgendaUpdatesDao
             getLocalDateTimeFromRs(rs, "last_processed_date_time"));
 
     private static RowMapper<UpdateDigest<AgendaId>> agendaUpdateDigestRowMapper = (rs, rowNum) -> {
-        Map<String, String> key = getHstoreMap(rs, "key");
-        AgendaId id = new AgendaId(Integer.parseInt(key.remove("agenda_no")), Integer.parseInt(key.remove("year")));
         UpdateDigest<AgendaId> digest = new UpdateDigest<>(agendaUpdateTokenRowMapper.mapRow(rs, rowNum));
-        Map<String, String> data = getHstoreMap(rs, "data");
-        data.putAll(key);
-
-        digest.setFields(data);
+        digest.setFields(getHstoreMap(rs, "data"));
         digest.setAction(rs.getString("action"));
         digest.setTable(rs.getString("table_name"));
         return digest;
@@ -93,20 +88,8 @@ public class SqlAgendaUpdatesDao extends SqlBaseDao implements AgendaUpdatesDao
      */
     private String getSqlQuery(boolean detail, boolean specificAgenda, UpdateType updateType, SortOrder sortOrder,
                                LimitOffset limOff) {
-        String dateColumn;
-        // The UpdateType dictates which date columns we used to search by
-        OrderBy orderBy;
-        if (updateType.equals(UpdateType.PROCESSED_DATE)) {
-            dateColumn = "log.action_date_time";
-            orderBy = new OrderBy("last_processed_date_time", sortOrder);
-        }
-        else if (updateType.equals(UpdateType.PUBLISHED_DATE)) {
-            dateColumn = "sobi.published_date_time";
-            orderBy = new OrderBy("last_published_date_time", sortOrder, "last_processed_date_time", sortOrder);
-        }
-        else {
-            throw new IllegalArgumentException("Cannot provide agenda updates of type: " + updateType);
-        }
+        String dateColumn = getDateColumnForUpdateType(updateType);
+        OrderBy orderBy = getOrderByForUpdateType(updateType, sortOrder);
         String sqlQuery;
         if (specificAgenda) {
             sqlQuery = SELECT_UPDATE_DIGESTS_FOR_SPECIFIC_AGENDA.getSql(schema(), orderBy, limOff);

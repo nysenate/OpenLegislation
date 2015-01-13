@@ -10,6 +10,7 @@ import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
+import gov.nysenate.openleg.service.agenda.event.AgendaUpdateEvent;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import net.sf.ehcache.Cache;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -136,12 +138,16 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
 
     /** {@inheritDoc} */
     @Override
-    public void saveAgenda(Agenda agenda, SobiFragment sobiFragment) {
+    public void saveAgenda(Agenda agenda, SobiFragment sobiFragment, boolean postUpdateEvent) {
         if (agenda == null) {
             throw new IllegalArgumentException("Agenda cannot be null when saving.");
         }
+        logger.debug("Persisting agenda {}", agenda.getId());
         agendaDao.updateAgenda(agenda, sobiFragment);
         agendaCache.put(agenda.getId(), agenda);
+        if (postUpdateEvent) {
+            eventBus.post(new AgendaUpdateEvent(agenda, LocalDateTime.now()));
+        }
     }
 
     /** {@inheritDoc} */

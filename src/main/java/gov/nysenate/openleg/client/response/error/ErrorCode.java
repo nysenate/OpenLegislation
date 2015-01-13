@@ -43,6 +43,10 @@ public enum ErrorCode
 
     AGENDA_NOT_FOUND(61, "The requested agenda was not found"),
 
+    /** --- General Search --- */
+
+    SEARCH_ERROR(100, "There was error retrieving your search results. Make sure that the query is valid."),
+
     /** -- Data Process -- */
 
     PROCESS_RUN_NOT_FOUND(121, "The given data process run was not found"),
@@ -57,9 +61,8 @@ public enum ErrorCode
 
     /** --- General --- */
 
-    SEARCH_ERROR(100, "There was error retrieving your search results. Make sure that the query is valid."),
-    UNAUTHORIZED(401, "Not authorized to perform this request.")
-    ;
+    UNAUTHORIZED(401, "Not authorized to perform this request."),
+    INVALID_DATE_RANGE(601, "The supplied date range is not valid.");
 
     /** Used for lookups by code. */
 

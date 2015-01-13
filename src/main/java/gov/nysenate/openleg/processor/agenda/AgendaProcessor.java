@@ -124,7 +124,7 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
         postDataUnitEvent(unit);
 
         if (!env.isSobiBatchEnabled() || agendaIngestCache.exceedsCapacity()) {
-            flushAllUpdates();
+            flushAllUpdates(); // Flush all the things
         }
     }
 

@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -150,6 +151,36 @@ public abstract class SqlBaseDao
         return hstoreMap.entrySet().stream()
             .map(kv -> kv.getKey() + "=>" + kv.getValue())
             .collect(Collectors.joining(","));
+    }
+
+    /** --- Update Dao Methods --- */
+
+    protected String getDateColumnForUpdateType(UpdateType updateType) {
+        String dateColumn;
+        if (updateType.equals(UpdateType.PROCESSED_DATE)) {
+            dateColumn = "action_date_time";
+        }
+        else if (updateType.equals(UpdateType.PUBLISHED_DATE)) {
+            dateColumn = "published_date_time";
+        }
+        else {
+            throw new IllegalArgumentException("Cannot provide bill updates of type: " + updateType);
+        }
+        return dateColumn;
+    }
+
+    protected OrderBy getOrderByForUpdateType(UpdateType updateType, SortOrder sortOrder) {
+        OrderBy orderBy;
+        if (updateType.equals(UpdateType.PROCESSED_DATE)) {
+            orderBy = new OrderBy("last_processed_date_time", sortOrder);
+        }
+        else if (updateType.equals(UpdateType.PUBLISHED_DATE)) {
+            orderBy = new OrderBy("last_published_date_time", sortOrder, "last_processed_date_time", sortOrder);
+        }
+        else {
+            throw new IllegalArgumentException("Cannot provide bill updates of type: " + updateType);
+        }
+        return orderBy;
     }
 
     /** --- Date Methods -- */
