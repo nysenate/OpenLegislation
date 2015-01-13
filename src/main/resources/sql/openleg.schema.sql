@@ -25,48 +25,6 @@ ALTER SCHEMA master OWNER TO postgres;
 COMMENT ON SCHEMA master IS 'Processed legislative data';
 
 
---
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
---
--- Name: citext; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
-
-
---
--- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
-
-
---
--- Name: hstore; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
-
-
---
--- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
-
-
 SET search_path = master, pg_catalog;
 
 --
@@ -209,42 +167,33 @@ ALTER TYPE public.committee_member_title OWNER TO postgres;
 SET search_path = master, pg_catalog;
 
 --
--- Name: log_sobi_updates(); Type: FUNCTION; Schema: master; Owner: postgres
+-- Name: log_agenda_updates(); Type: FUNCTION; Schema: master; Owner: postgres
 --
 
-CREATE FUNCTION log_sobi_updates() RETURNS trigger
+CREATE FUNCTION log_agenda_updates() RETURNS trigger
     LANGUAGE plpgsql
     AS $$DECLARE
-  primary_keys text[];         -- The primary key column names
-  old_primary_key_val hstore;  -- Previous primary key/value pairs
-  primary_key_val hstore;      -- Primary key/value pairs
+  agenda_no smallint;          -- Agenda no
+  year smallint;               -- Agenda year
   old_values hstore;           -- Old record key/value pairs
   new_values hstore;           -- New record key/value pairs
   data_diff hstore;            -- The data values that have been updated
   ignored_columns text[];      -- Column names to exclude from data_diff
   fragment_id text := NULL;    -- The fragment id that caused the insert/update
+  published_date_time timestamp without time zone := NULL; -- The published date derived from the fragment_id
 
 BEGIN
-  primary_keys := TG_ARGV;
-  ignored_columns := array_cat(ARRAY['modified_date_time', 'last_fragment_id'],
-                               primary_keys);
+  ignored_columns := ARRAY['agenda_no', 'year', 'modified_date_time', 'last_fragment_id'];
 
   IF TG_OP IN ('INSERT', 'UPDATE') THEN
-    primary_key_val := slice(hstore(NEW.*), primary_keys);
+    agenda_no := NEW.agenda_no;
+    year := NEW.year;
     new_values := delete(hstore(NEW.*), ignored_columns);
     fragment_id := NEW.last_fragment_id;
-
-    -- Handle case where the primary key is modified
-    IF TG_OP = 'UPDATE' THEN
-       old_primary_key_val := slice(hstore(OLD.*), primary_keys);
-       IF primary_key_val != old_primary_key_val THEN
-         INSERT INTO master.sobi_change_log (table_name, action, key, data, sobi_fragment_id)
-         VALUES (TG_TABLE_NAME, 'MODIFIED_PKEY', old_primary_key_val, ''::hstore, fragment_id);
-         TG_OP := 'INSERT';
-       END IF;
-    END IF;
+    published_date_time := (substring(fragment_id from 7 for 6) || substring(fragment_id from 14 for 7))::timestamp without time zone;
   ELSE
-    primary_key_val := slice(hstore(OLD.*), primary_keys);
+    agenda_no := OLD.agenda_no;
+    year := OLD.year;
   END IF;
 
   IF TG_OP IN ('UPDATE', 'DELETE') THEN
@@ -262,8 +211,8 @@ BEGIN
   -- Add the sobi change record only for inserts, deletes, and updates where the
   -- non-ignored values were actually changed.
   IF TG_OP IN ('INSERT','DELETE') OR data_diff != ''::hstore THEN
-    INSERT INTO master.sobi_change_log (table_name, action, key, data, sobi_fragment_id)
-    VALUES (TG_TABLE_NAME, TG_OP, primary_key_val, data_diff, fragment_id);
+    INSERT INTO master.agenda_change_log (agenda_no, year, table_name, action, data, sobi_fragment_id, published_date_time)
+    VALUES (agenda_no, year, TG_TABLE_NAME, TG_OP, data_diff, fragment_id, published_date_time);
   END IF;
 
   IF TG_OP IN ('INSERT', 'UPDATE') THEN
@@ -275,14 +224,127 @@ BEGIN
 END;$$;
 
 
-ALTER FUNCTION master.log_sobi_updates() OWNER TO postgres;
+ALTER FUNCTION master.log_agenda_updates() OWNER TO postgres;
 
 --
--- Name: FUNCTION log_sobi_updates(); Type: COMMENT; Schema: master; Owner: postgres
+-- Name: log_bill_updates(); Type: FUNCTION; Schema: master; Owner: postgres
 --
 
-COMMENT ON FUNCTION log_sobi_updates() IS 'Logs any additions, modifications, or deletions made to the data in this table.';
+CREATE FUNCTION log_bill_updates() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+  bill_print_no text;          -- Bill print no
+  bill_session_year smallint;  -- Bill session year
+  old_values hstore;           -- Old record key/value pairs
+  new_values hstore;           -- New record key/value pairs
+  data_diff hstore;            -- The data values that have been updated
+  ignored_columns text[];      -- Column names to exclude from data_diff
+  fragment_id text := NULL;    -- The fragment id that caused the insert/update
+  published_date_time timestamp without time zone := NULL; -- The published date derived from the fragment_id
 
+BEGIN
+  ignored_columns := ARRAY['bill_print_no', 'bill_session_year', 'modified_date_time', 'last_fragment_id'];
+
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+    bill_print_no := NEW.bill_print_no;
+    bill_session_year := NEW.bill_session_year;
+    new_values := delete(hstore(NEW.*), ignored_columns);
+    fragment_id := NEW.last_fragment_id;
+    published_date_time := (substring(fragment_id from 7 for 6) || substring(fragment_id from 14 for 7))::timestamp without time zone;
+  ELSE
+    bill_print_no := OLD.bill_print_no;
+    bill_session_year := OLD.bill_session_year;
+  END IF;
+
+  IF TG_OP IN ('UPDATE', 'DELETE') THEN
+    old_values := delete(hstore(OLD.*), ignored_columns);
+  END IF;
+
+  IF TG_OP = 'INSERT' THEN
+    data_diff := new_values;
+  ELSIF TG_OP = 'UPDATE' THEN
+    data_diff := new_values - old_values;
+  ELSE
+    data_diff := old_values;
+  END IF;
+
+  -- Add the sobi change record only for inserts, deletes, and updates where the
+  -- non-ignored values were actually changed.
+  IF TG_OP IN ('INSERT','DELETE') OR data_diff != ''::hstore THEN
+    INSERT INTO master.bill_change_log (bill_print_no, bill_session_year, table_name, action, data, sobi_fragment_id, published_date_time)
+    VALUES (bill_print_no, bill_session_year, TG_TABLE_NAME, TG_OP, data_diff, fragment_id, published_date_time);
+  END IF;
+
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+    RETURN NEW;
+  ELSE
+    RETURN OLD;
+  END IF;
+
+END;$$;
+
+
+ALTER FUNCTION master.log_bill_updates() OWNER TO postgres;
+
+--
+-- Name: log_calendar_updates(); Type: FUNCTION; Schema: master; Owner: postgres
+--
+
+CREATE FUNCTION log_calendar_updates() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+  calendar_no smallint;        -- Calendar no
+  calendar_year smallint;      -- Calendar year
+  old_values hstore;           -- Old record key/value pairs
+  new_values hstore;           -- New record key/value pairs
+  data_diff hstore;            -- The data values that have been updated
+  ignored_columns text[];      -- Column names to exclude from data_diff
+  fragment_id text := NULL;    -- The fragment id that caused the insert/update
+  published_date_time timestamp without time zone := NULL; -- The published date derived from the fragment_id
+
+BEGIN
+  ignored_columns := ARRAY['calendar_no', 'calendar_year', 'modified_date_time', 'last_fragment_id'];
+
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+    calendar_no := NEW.calendar_no;
+    calendar_year := NEW.calendar_year;
+    new_values := delete(hstore(NEW.*), ignored_columns);
+    fragment_id := NEW.last_fragment_id;
+    published_date_time := (substring(fragment_id from 7 for 6) || substring(fragment_id from 14 for 7))::timestamp without time zone;
+  ELSE
+    calendar_no := OLD.calendar_no;
+    calendar_year := OLD.calendar_year;
+  END IF;
+
+  IF TG_OP IN ('UPDATE', 'DELETE') THEN
+    old_values := delete(hstore(OLD.*), ignored_columns);
+  END IF;
+
+  IF TG_OP = 'INSERT' THEN
+    data_diff := new_values;
+  ELSIF TG_OP = 'UPDATE' THEN
+    data_diff := new_values - old_values;
+  ELSE
+    data_diff := old_values;
+  END IF;
+
+  -- Add the sobi change record only for inserts, deletes, and updates where the
+  -- non-ignored values were actually changed.
+  IF TG_OP IN ('INSERT','DELETE') OR data_diff != ''::hstore THEN
+    INSERT INTO master.calendar_change_log (calendar_no, calendar_year, table_name, action, data, sobi_fragment_id, published_date_time)
+    VALUES (calendar_no, calendar_year, TG_TABLE_NAME, TG_OP, data_diff, fragment_id, published_date_time);
+  END IF;
+
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+    RETURN NEW;
+  ELSE
+    RETURN OLD;
+  END IF;
+
+END;$$;
+
+
+ALTER FUNCTION master.log_calendar_updates() OWNER TO postgres;
 
 SET search_path = public, pg_catalog;
 
@@ -466,6 +528,46 @@ ALTER TABLE master.agenda OWNER TO postgres;
 --
 
 COMMENT ON TABLE agenda IS 'Listing of all senate agendas';
+
+
+--
+-- Name: agenda_change_log_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+--
+
+CREATE SEQUENCE agenda_change_log_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE master.agenda_change_log_seq OWNER TO postgres;
+
+--
+-- Name: agenda_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE agenda_change_log (
+    id integer DEFAULT nextval('agenda_change_log_seq'::regclass) NOT NULL,
+    agenda_no smallint NOT NULL,
+    year smallint NOT NULL,
+    table_name text NOT NULL,
+    action text NOT NULL,
+    data public.hstore NOT NULL,
+    action_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    sobi_fragment_id text,
+    published_date_time timestamp without time zone
+);
+
+
+ALTER TABLE master.agenda_change_log OWNER TO postgres;
+
+--
+-- Name: TABLE agenda_change_log; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE agenda_change_log IS 'Change log for agenda data';
 
 
 --
@@ -1280,6 +1382,46 @@ COMMENT ON TABLE bill_approval IS 'Approval Messages from the governor';
 
 
 --
+-- Name: bill_change_log_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+--
+
+CREATE SEQUENCE bill_change_log_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE master.bill_change_log_seq OWNER TO postgres;
+
+--
+-- Name: bill_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE bill_change_log (
+    id integer DEFAULT nextval('bill_change_log_seq'::regclass) NOT NULL,
+    bill_print_no text NOT NULL,
+    bill_session_year smallint NOT NULL,
+    table_name text NOT NULL,
+    action text NOT NULL,
+    data public.hstore NOT NULL,
+    action_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    sobi_fragment_id text,
+    published_date_time timestamp without time zone
+);
+
+
+ALTER TABLE master.bill_change_log OWNER TO postgres;
+
+--
+-- Name: TABLE bill_change_log; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE bill_change_log IS 'Change log for bill data';
+
+
+--
 -- Name: bill_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -1563,6 +1705,46 @@ ALTER TABLE master.calendar_active_list_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE calendar_active_list_id_seq OWNED BY calendar_active_list.id;
+
+
+--
+-- Name: calendar_change_log_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+--
+
+CREATE SEQUENCE calendar_change_log_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE master.calendar_change_log_seq OWNER TO postgres;
+
+--
+-- Name: calendar_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE calendar_change_log (
+    id integer DEFAULT nextval('calendar_change_log_seq'::regclass) NOT NULL,
+    calendar_no smallint NOT NULL,
+    calendar_year smallint NOT NULL,
+    table_name text NOT NULL,
+    action text NOT NULL,
+    data public.hstore NOT NULL,
+    action_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    sobi_fragment_id text,
+    published_date_time timestamp without time zone
+);
+
+
+ALTER TABLE master.calendar_change_log OWNER TO postgres;
+
+--
+-- Name: TABLE calendar_change_log; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE calendar_change_log IS 'Change for calendar data';
 
 
 --
@@ -2812,7 +2994,7 @@ COMMENT ON COLUMN public_hearing.end_time IS 'Time the public hearing ended.';
 
 
 --
--- Name: public_hearing_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+-- Name: public_hearing_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE public_hearing_committee (
@@ -2911,34 +3093,33 @@ COMMENT ON COLUMN public_hearing_file.archived IS 'Indicates if this public hear
 
 
 --
--- Name: sobi_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+-- Name: rules; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
-CREATE TABLE sobi_change_log (
+CREATE TABLE rules (
     id integer NOT NULL,
-    table_name text NOT NULL,
-    action text NOT NULL,
-    key public.hstore NOT NULL,
-    data public.hstore NOT NULL,
-    action_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    sobi_fragment_id text
+    session_year smallint NOT NULL,
+    text integer NOT NULL,
+    published_date_time timestamp without time zone,
+    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
-ALTER TABLE master.sobi_change_log OWNER TO postgres;
+ALTER TABLE master.rules OWNER TO postgres;
 
 --
--- Name: TABLE sobi_change_log; Type: COMMENT; Schema: master; Owner: postgres
+-- Name: TABLE rules; Type: COMMENT; Schema: master; Owner: postgres
 --
 
-COMMENT ON TABLE sobi_change_log IS 'Change log for all entities that utilize Sobi files as the primary data source';
+COMMENT ON TABLE rules IS 'Senate and Assembly Rules';
 
 
 --
--- Name: sobi_change_log_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+-- Name: rules_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
-CREATE SEQUENCE sobi_change_log_id_seq
+CREATE SEQUENCE rules_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -2946,13 +3127,34 @@ CREATE SEQUENCE sobi_change_log_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.sobi_change_log_id_seq OWNER TO postgres;
+ALTER TABLE master.rules_id_seq OWNER TO postgres;
 
 --
--- Name: sobi_change_log_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
+-- Name: rules_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
 
-ALTER SEQUENCE sobi_change_log_id_seq OWNED BY sobi_change_log.id;
+ALTER SEQUENCE rules_id_seq OWNED BY rules.id;
+
+
+--
+-- Name: rules_text_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+--
+
+CREATE SEQUENCE rules_text_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE master.rules_text_seq OWNER TO postgres;
+
+--
+-- Name: rules_text_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
+--
+
+ALTER SEQUENCE rules_text_seq OWNED BY rules.text;
 
 
 --
@@ -3778,7 +3980,14 @@ ALTER TABLE ONLY notification_subscription ALTER COLUMN id SET DEFAULT nextval('
 -- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
-ALTER TABLE ONLY sobi_change_log ALTER COLUMN id SET DEFAULT nextval('sobi_change_log_id_seq'::regclass);
+ALTER TABLE ONLY rules ALTER COLUMN id SET DEFAULT nextval('rules_id_seq'::regclass);
+
+
+--
+-- Name: text; Type: DEFAULT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY rules ALTER COLUMN text SET DEFAULT nextval('rules_text_seq'::regclass);
 
 
 --
@@ -3856,6 +4065,14 @@ ALTER TABLE ONLY active_list_reference
 
 ALTER TABLE ONLY active_list_reference
     ADD CONSTRAINT active_list_reference_sequence_no_calendar_no_calendar_year_key UNIQUE (sequence_no, calendar_no, calendar_year, reference_date);
+
+
+--
+-- Name: agenda_change_log_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY agenda_change_log
+    ADD CONSTRAINT agenda_change_log_pkey PRIMARY KEY (id);
 
 
 --
@@ -4035,6 +4252,14 @@ ALTER TABLE ONLY bill_approval
 
 
 --
+-- Name: bill_change_log_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY bill_change_log
+    ADD CONSTRAINT bill_change_log_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: bill_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -4112,6 +4337,14 @@ ALTER TABLE ONLY calendar_active_list_entry
 
 ALTER TABLE ONLY calendar_active_list
     ADD CONSTRAINT calendar_active_list_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: calendar_change_log_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY calendar_change_log
+    ADD CONSTRAINT calendar_change_log_pkey PRIMARY KEY (id);
 
 
 --
@@ -4331,7 +4564,7 @@ ALTER TABLE ONLY notification_subscription
 
 
 --
--- Name: public_hearing_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+-- Name: public_hearing_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY public_hearing_committee
@@ -4355,11 +4588,19 @@ ALTER TABLE ONLY public_hearing
 
 
 --
--- Name: sobi_change_log_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+-- Name: rules_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
-ALTER TABLE ONLY sobi_change_log
-    ADD CONSTRAINT sobi_change_log_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY rules
+    ADD CONSTRAINT rules_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rules_session_year_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY rules
+    ADD CONSTRAINT rules_session_year_key UNIQUE (session_year);
 
 
 --
@@ -4503,6 +4744,33 @@ ALTER TABLE ONLY session_member
 SET search_path = master, pg_catalog;
 
 --
+-- Name: agenda_change_log_action_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX agenda_change_log_action_date_time_idx ON agenda_change_log USING btree (action_date_time);
+
+
+--
+-- Name: agenda_change_log_published_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX agenda_change_log_published_date_time_idx ON agenda_change_log USING btree (published_date_time);
+
+
+--
+-- Name: agenda_change_log_sobi_fragment_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX agenda_change_log_sobi_fragment_id_idx ON agenda_change_log USING btree (sobi_fragment_id);
+
+--
+-- Name: agenda_change_log_agenda_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
+--
+
+CREATE INDEX agenda_change_log_agenda_id_idx ON agenda_change_log USING btree (agenda_no, year);
+
+
+--
 -- Name: agenda_info_committee_item_bill_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -4510,11 +4778,64 @@ CREATE INDEX agenda_info_committee_item_bill_idx ON agenda_info_committee_item U
 
 
 --
+-- Name: bill_change_log_action_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_change_log_action_date_time_idx ON bill_change_log USING btree (action_date_time);
+
+
+--
+-- Name: bill_change_log_published_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_change_log_published_date_time_idx ON bill_change_log USING btree (published_date_time);
+
+
+--
+-- Name: bill_change_log_sobi_fragment_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_change_log_sobi_fragment_id_idx ON bill_change_log USING btree (sobi_fragment_id);
+
+
+--
+-- Name: bill_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX bill_id_idx ON bill_change_log USING btree (bill_print_no, bill_session_year);
+
+--
 -- Name: bill_session_year_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX bill_session_year_idx ON bill USING btree (bill_session_year);
 
+
+--
+-- Name: calendar_change_log_action_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX calendar_change_log_action_date_time_idx ON calendar_change_log USING btree (action_date_time);
+
+
+--
+-- Name: calendar_change_log_published_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX calendar_change_log_published_date_time_idx ON calendar_change_log USING btree (published_date_time);
+
+
+--
+-- Name: calendar_change_log_sobi_fragment_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX calendar_change_log_sobi_fragment_id_idx ON calendar_change_log USING btree (sobi_fragment_id);
+
+--
+-- Name: calendar_change_log_calendar_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
+--
+
+CREATE INDEX calendar_change_log_calendar_id_idx ON calendar_change_log USING btree (calendar_no, calendar_year);
 
 --
 -- Name: calendar_supplemental_entry_bill_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
@@ -4545,206 +4866,157 @@ CREATE INDEX daybreak_sponsor_pkey ON daybreak_bill_sponsor USING btree (report_
 
 
 --
--- Name: sobi_change_log_action_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+-- Name: sobi_fragment_published_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
-CREATE INDEX sobi_change_log_action_date_time_idx ON sobi_change_log USING btree (action_date_time);
-
-
---
--- Name: sobi_change_log_fragment_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
---
-
-CREATE INDEX sobi_change_log_fragment_id_idx ON sobi_change_log USING btree (sobi_fragment_id);
+CREATE INDEX sobi_fragment_published_date_time_idx ON sobi_fragment USING btree (published_date_time);
 
 
 --
--- Name: sobi_change_log_key_gist_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+-- Name: log_agenda_info_addendum_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE INDEX sobi_change_log_key_gist_idx ON sobi_change_log USING gist (key);
-
-
---
--- Name: sobi_change_log_table_name_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
---
-
-CREATE INDEX sobi_change_log_table_name_idx ON sobi_change_log USING btree (table_name);
+CREATE TRIGGER log_agenda_info_addendum_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON agenda_info_addendum FOR EACH ROW EXECUTE PROCEDURE log_agenda_updates();
 
 
 --
--- Name: log_agenda_info_addendum_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_agenda_info_committee_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_agenda_info_addendum_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_info_addendum FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id');
-
-
---
--- Name: log_agenda_info_committee_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_agenda_info_committee_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_info_committee FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id', 'committee_name', 'committee_chamber');
+CREATE TRIGGER log_agenda_info_committee_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON agenda_info_committee FOR EACH ROW EXECUTE PROCEDURE log_agenda_updates();
 
 
 --
--- Name: log_agenda_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_agenda_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_agenda_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year');
-
-
---
--- Name: log_agenda_vote_addendum_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_agenda_vote_addendum_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_addendum FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id');
+CREATE TRIGGER log_agenda_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON agenda FOR EACH ROW EXECUTE PROCEDURE log_agenda_updates();
 
 
 --
--- Name: log_agenda_vote_committee_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_agenda_vote_addendum_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_agenda_vote_committee_updates BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_committee FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('agenda_no', 'year', 'addendum_id', 'committee_name', 'committee_chamber');
-
-
---
--- Name: log_bill_amendment_action_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_bill_amendment_action_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_action FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'sequence_no');
+CREATE TRIGGER log_agenda_vote_addendum_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_addendum FOR EACH ROW EXECUTE PROCEDURE log_agenda_updates();
 
 
 --
--- Name: log_bill_amendment_cosponsor_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_agenda_vote_committee_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_bill_amendment_cosponsor_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_cosponsor FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'bill_amend_version', 'member_id');
-
-
---
--- Name: log_bill_amendment_multisponsor_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_bill_amendment_multisponsor_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_multi_sponsor FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'bill_amend_version', 'member_id');
+CREATE TRIGGER log_agenda_vote_committee_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON agenda_vote_committee FOR EACH ROW EXECUTE PROCEDURE log_agenda_updates();
 
 
 --
--- Name: log_bill_amendment_publish_status_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_bill_amendment_action_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_bill_amendment_publish_status_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_publish_status FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'bill_amend_version');
-
-
---
--- Name: log_bill_amendment_same_as_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_bill_amendment_same_as_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_same_as FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'bill_amend_version');
+CREATE TRIGGER log_bill_amendment_action_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_action FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
 
 
 --
--- Name: log_bill_amendment_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_bill_amendment_cosponsor_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_bill_amendment_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'bill_amend_version');
-
-
---
--- Name: log_bill_amendment_vote_info_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_bill_amendment_vote_info_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_vote_info FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'bill_amend_version');
+CREATE TRIGGER log_bill_amendment_cosponsor_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_cosponsor FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
 
 
 --
--- Name: log_bill_amendment_vote_roll_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_bill_amendment_multisponsor_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_bill_amendment_vote_roll_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_vote_roll FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('vote_id', 'member_id', 'session_year', 'vote_code');
-
-
---
--- Name: log_bill_approval_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_bill_approval_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_approval FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'approval_number');
+CREATE TRIGGER log_bill_amendment_multisponsor_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_multi_sponsor FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
 
 
 --
--- Name: log_bill_committee_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_bill_amendment_publish_status_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_bill_committee_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_committee FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'committee_name', 'committee_chamber', 'action_date');
+CREATE TRIGGER log_bill_amendment_publish_status_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_publish_status FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
 
 
 --
--- Name: log_bill_previous_version_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_bill_amendment_same_as_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_bill_previous_version_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_previous_version FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year');
+CREATE TRIGGER log_bill_amendment_same_as_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_same_as FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
+
+
+--
+-- Name: log_bill_amendment_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_amendment_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
+
+
+--
+-- Name: log_bill_amendment_vote_info_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_amendment_vote_info_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment_vote_info FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
+
+
+--
+-- Name: log_bill_approval_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_approval_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_approval FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
+
+
+--
+-- Name: log_bill_previous_version_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_bill_previous_version_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_previous_version FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
 
 
 --
 -- Name: log_bill_sponsor_additional_updates; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_bill_sponsor_additional_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_sponsor_additional FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year');
+CREATE TRIGGER log_bill_sponsor_additional_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_sponsor_additional FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
 
 
 --
--- Name: log_bill_sponsor_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_bill_sponsor_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_bill_sponsor_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_sponsor FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year');
-
-
---
--- Name: log_bill_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_bill_updates BEFORE INSERT OR DELETE OR UPDATE ON bill FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year');
+CREATE TRIGGER log_bill_sponsor_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_sponsor FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
 
 
 --
--- Name: log_bill_veto_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_bill_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_bill_veto_updates BEFORE INSERT OR DELETE OR UPDATE ON bill_veto FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('bill_print_no', 'bill_session_year', 'veto_number');
-
-
---
--- Name: log_calendar_active_list_entry_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_calendar_active_list_entry_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar_active_list_entry FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('calendar_active_list_id', 'bill_calendar_no');
+CREATE TRIGGER log_bill_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
 
 
 --
--- Name: log_calendar_active_list_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_bill_veto_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_calendar_active_list_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar_active_list FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('id', 'calendar_no', 'calendar_year', 'sequence_no');
-
-
---
--- Name: log_calendar_supplemental_entry_updates; Type: TRIGGER; Schema: master; Owner: postgres
---
-
-CREATE TRIGGER log_calendar_supplemental_entry_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar_supplemental_entry FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('id', 'calendar_sup_id');
+CREATE TRIGGER log_bill_veto_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_veto FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
 
 
 --
--- Name: log_calendar_supplemental_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_calendar_active_list_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_calendar_supplemental_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar_supplemental FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('id', 'calendar_no', 'calendar_year', 'sup_version');
+CREATE TRIGGER log_calendar_active_list_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON calendar_active_list FOR EACH ROW EXECUTE PROCEDURE log_calendar_updates();
 
 
 --
--- Name: log_calendar_updates; Type: TRIGGER; Schema: master; Owner: postgres
+-- Name: log_calendar_supplemental_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_calendar_updates BEFORE INSERT OR DELETE OR UPDATE ON calendar FOR EACH ROW EXECUTE PROCEDURE log_sobi_updates('calendar_no', 'calendar_year');
+CREATE TRIGGER log_calendar_supplemental_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON calendar_supplemental FOR EACH ROW EXECUTE PROCEDURE log_calendar_updates();
+
+
+--
+-- Name: log_calendar_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_calendar_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON calendar FOR EACH ROW EXECUTE PROCEDURE log_calendar_updates();
 
 
 --
@@ -5386,7 +5658,6 @@ ALTER TABLE ONLY law_tree
 ALTER TABLE ONLY notification_subscription
     ADD CONSTRAINT notification_subscription_user_name_fkey FOREIGN KEY (user_name) REFERENCES public.adminuser(username);
 
-
 --
 -- Name: public_hearing_committee_filename_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
@@ -5401,14 +5672,6 @@ ALTER TABLE ONLY public_hearing_committee
 
 ALTER TABLE ONLY public_hearing
     ADD CONSTRAINT public_hearing_filename_fkey FOREIGN KEY (filename) REFERENCES public_hearing_file(filename);
-
-
---
--- Name: sobi_change_log_sobi_fragment_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY sobi_change_log
-    ADD CONSTRAINT sobi_change_log_sobi_fragment_id_fkey FOREIGN KEY (sobi_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
