@@ -110,7 +110,9 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService {
         String summary = "New spotcheck report: " + daybreakReport.getReportDateTime();
         StringBuilder messageBuilder = new StringBuilder();
 
-        messageBuilder.append(env.getFullPath())
+        messageBuilder.append(summary)
+                .append("\n\n")
+                .append(env.getFullPath())
                 .append("/admin/report/daybreak/")
                 .append(daybreakReport.getReportDateTime())
                 .append("\n\n");
@@ -122,8 +124,9 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService {
 
         daybreakReport.getMismatchStatusTypeCounts().forEach((status, typeCounts) -> {
             long totalTypeCounts = typeCounts.values().stream().reduce(0L, (a, b) -> a + b);
-            messageBuilder.append(String.format("%s: %d\n", status, totalTypeCounts));
-            typeCounts.forEach((type, count) -> messageBuilder.append(String.format("\t%s: %d\n", type, count)));
+            messageBuilder.append(status).append(": ").append(totalTypeCounts).append("\n");
+            typeCounts.forEach((type, count) ->
+                    messageBuilder.append("\t").append(type).append(": ").append(count).append("\n"));
         });
 
         Notification notification = new Notification(NotificationType.SPOTCHECK, daybreakReport.getReportDateTime(),

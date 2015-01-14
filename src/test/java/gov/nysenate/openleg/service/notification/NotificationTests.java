@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.notification;
 
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
@@ -16,7 +17,7 @@ public class NotificationTests extends BaseTests {
     private NotificationSubscriptionDataService subDataService;
 
     @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private EventBus eventBus;
 
     @Test
     public void subscribeTest() {
@@ -26,12 +27,19 @@ public class NotificationTests extends BaseTests {
     }
 
     @Test
+    public void slackSubscribeTest() {
+        NotificationSubscription subscription = new NotificationSubscription("sam", NotificationType.EXCEPTION,
+                NotificationTarget.SLACK, "samsto");
+        subDataService.insertSubscription(subscription);
+    }
+
+    @Test
     public void dispatchTest() {
         String summary = "uh oh";
-        String message = "christmas sobis are here";
+        String message = "uh oh, christmas sobis are here";
         Notification processExceptionNotification = new Notification(NotificationType.PROCESS_EXCEPTION,
                 LocalDateTime.of(2014, 12, 25, 0, 0), summary, message);
-        notificationDispatcher.handleNotificationEvent(processExceptionNotification);
+        eventBus.post(processExceptionNotification);
     }
 
     @Test
@@ -40,7 +48,7 @@ public class NotificationTests extends BaseTests {
         String message = "spotcheck done. " + Math.random() * Integer.MAX_VALUE + " errors";
         Notification processExceptionNotification = new Notification(NotificationType.SPOTCHECK,
                 LocalDateTime.of(2014, 12, 25, 0, 0), summary, message);
-        notificationDispatcher.handleNotificationEvent(processExceptionNotification);
+        eventBus.post(processExceptionNotification);
     }
 
 }
