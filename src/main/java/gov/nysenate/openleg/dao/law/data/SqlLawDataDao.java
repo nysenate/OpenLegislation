@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.law;
+package gov.nysenate.openleg.dao.law.data;
 
 import com.google.common.collect.Maps;
 import gov.nysenate.openleg.dao.base.*;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.dao.law.SqlLawDataQuery.*;
+import static gov.nysenate.openleg.dao.law.data.SqlLawDataQuery.*;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository
@@ -33,13 +33,13 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     @Override
     public LawInfo getLawInfo(String lawId) throws DataAccessException {
         ImmutableParams lawIdParam = ImmutableParams.from(new MapSqlParameterSource("lawId", lawId));
-        return jdbcNamed.queryForObject(SELECT_LAW_INFO_BY_ID.getSql(schema()), lawIdParam, lawInfoRowMapper);
+        return jdbcNamed.queryForObject(SqlLawDataQuery.SELECT_LAW_INFO_BY_ID.getSql(schema()), lawIdParam, lawInfoRowMapper);
     }
 
     /** {@inheritDoc} */
     @Override
     public List<LawInfo> getLawInfos() {
-        return jdbcNamed.query(SELECT_LAW_INFO.getSql(schema()), lawInfoRowMapper);
+        return jdbcNamed.query(SqlLawDataQuery.SELECT_LAW_INFO.getSql(schema()), lawInfoRowMapper);
     }
 
     /** {@inheritDoc} */
@@ -53,7 +53,7 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
         LawInfo lawInfo = getLawInfo(lawId);
         // Handle the tree retrieval
         LawTreeRowCallbackHandler lawTreeHandler = new LawTreeRowCallbackHandler(lawInfo);
-        jdbcNamed.query(SELECT_LAW_TREE.getSql(schema(), orderBy, LimitOffset.ALL), treeParams, lawTreeHandler);
+        jdbcNamed.query(SqlLawDataQuery.SELECT_LAW_TREE.getSql(schema(), orderBy, LimitOffset.ALL), treeParams, lawTreeHandler);
         return lawTreeHandler.getLawTree();
     }
 
@@ -63,7 +63,7 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
         ImmutableParams lawDocParams = ImmutableParams.from(new MapSqlParameterSource()
             .addValue("docId", documentId)
             .addValue("endPublishedDate", toDate(endPublishDate)));
-        return jdbcNamed.queryForObject(SELECT_LAW_DOCUMENT.getSql(schema()), lawDocParams, lawDocRowMapper);
+        return jdbcNamed.queryForObject(SqlLawDataQuery.SELECT_LAW_DOCUMENT.getSql(schema()), lawDocParams, lawDocRowMapper);
     }
 
     /** {@inheritDoc} */
@@ -72,7 +72,7 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
         ImmutableParams lawDocParams = ImmutableParams.from(new MapSqlParameterSource()
             .addValue("lawId", lawId)
             .addValue("endPublishedDate", toDate(endPublishDate)));
-        List<LawDocument> docs = jdbcNamed.query(SELECT_ALL_LAW_DOCUMENTS.getSql(schema()), lawDocParams, lawDocRowMapper);
+        List<LawDocument> docs = jdbcNamed.query(SqlLawDataQuery.SELECT_ALL_LAW_DOCUMENTS.getSql(schema()), lawDocParams, lawDocRowMapper);
         return Maps.uniqueIndex(docs, LawDocument::getDocumentId);
     }
 
@@ -80,8 +80,8 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     @Override
     public void updateLawDocument(LawFile lawFile, LawDocument lawDocument) {
         ImmutableParams lawDocParams = ImmutableParams.from(getLawDocumentParams(lawFile, lawDocument));
-        if (jdbcNamed.update(UPDATE_LAW_DOCUMENT.getSql(schema()), lawDocParams) == 0) {
-            jdbcNamed.update(INSERT_LAW_DOCUMENT.getSql(schema()), lawDocParams);
+        if (jdbcNamed.update(SqlLawDataQuery.UPDATE_LAW_DOCUMENT.getSql(schema()), lawDocParams) == 0) {
+            jdbcNamed.update(SqlLawDataQuery.INSERT_LAW_DOCUMENT.getSql(schema()), lawDocParams);
         }
     }
 
@@ -90,16 +90,16 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     public void updateLawTree(LawFile lawFile, LawTree lawTree) {
         ImmutableParams lawInfoParams = ImmutableParams.from(getLawInfoParams(lawTree.getLawInfo()));
         // Update the law info or insert it
-        if (jdbcNamed.update(UPDATE_LAW_INFO.getSql(schema()), lawInfoParams) == 0) {
-            jdbcNamed.update(INSERT_LAW_INFO.getSql(schema()), lawInfoParams);
+        if (jdbcNamed.update(SqlLawDataQuery.UPDATE_LAW_INFO.getSql(schema()), lawInfoParams) == 0) {
+            jdbcNamed.update(SqlLawDataQuery.INSERT_LAW_INFO.getSql(schema()), lawInfoParams);
         }
         ImmutableParams treeIdParams = ImmutableParams.from(getLawTreeParams(lawTree));
         // Delete the existing tree if it exists
-        jdbcNamed.update(DELETE_TREE.getSql(schema()), treeIdParams);
+        jdbcNamed.update(SqlLawDataQuery.DELETE_TREE.getSql(schema()), treeIdParams);
         // Insert all the nodes in the tree
         lawTree.getRootNode().getAllNodes().forEach(n -> {
             ImmutableParams treeNodeParams = ImmutableParams.from(getLawTreeNodeParams(lawFile, lawTree, n));
-            jdbcNamed.update(INSERT_LAW_TREE.getSql(schema()), treeNodeParams);
+            jdbcNamed.update(SqlLawDataQuery.INSERT_LAW_TREE.getSql(schema()), treeNodeParams);
         });
     }
 

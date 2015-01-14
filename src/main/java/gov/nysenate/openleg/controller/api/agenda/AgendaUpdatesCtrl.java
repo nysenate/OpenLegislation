@@ -3,11 +3,7 @@ package gov.nysenate.openleg.controller.api.agenda;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.DateRangeListViewResponse;
-import gov.nysenate.openleg.client.response.base.ListViewResponse;
-import gov.nysenate.openleg.client.response.error.ErrorCode;
-import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.view.agenda.AgendaIdView;
-import gov.nysenate.openleg.client.view.bill.BaseBillIdView;
 import gov.nysenate.openleg.client.view.updates.UpdateDigestView;
 import gov.nysenate.openleg.client.view.updates.UpdateTokenView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
@@ -16,11 +12,9 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.agenda.AgendaId;
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
-import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +41,6 @@ public class AgendaUpdatesCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(AgendaUpdatesCtrl.class);
 
-    @Autowired protected AgendaDataService agendaDataService;
     @Autowired protected AgendaUpdatesDao agendaUpdatesDao;
 
     /**

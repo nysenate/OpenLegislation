@@ -113,7 +113,8 @@ public class BillUpdatesCtrl extends BaseCtrl
     }
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from}")
-    public BaseResponse getUpdatesForBill(@PathVariable int sessionYear, @PathVariable String printNo, String from,
+    public BaseResponse getUpdatesForBill(@PathVariable int sessionYear, @PathVariable String printNo,
+                                          @PathVariable String from,
                                           WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         return getUpdatesForBillDuring(sessionYear, printNo, fromDateTime, LocalDateTime.now(), request);

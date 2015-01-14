@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.law;
+package gov.nysenate.openleg.dao.law.data;
 
 import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawFile;

@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.law;
+package gov.nysenate.openleg.dao.law.data;
 
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.law.LawFile;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static gov.nysenate.openleg.dao.law.SqlLawFileQuery.*;
+import static gov.nysenate.openleg.dao.law.data.SqlLawFileQuery.*;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 import static gov.nysenate.openleg.util.FileIOUtils.safeListFiles;
 import static java.util.stream.Collectors.toList;
@@ -55,15 +55,15 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
     @Override
     public List<LawFile> getPendingLawFiles(SortOrder sortByDate, LimitOffset limitOffset) {
         OrderBy orderBy = new OrderBy("published_date_time", sortByDate, "file_name", sortByDate);
-        return jdbcNamed.query(GET_PENDING_LAW_FILES.getSql(schema(), orderBy, limitOffset), lawFileRowMapper);
+        return jdbcNamed.query(SqlLawFileQuery.GET_PENDING_LAW_FILES.getSql(schema(), orderBy, limitOffset), lawFileRowMapper);
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateLawFile(LawFile lawFile) {
         ImmutableParams lawParams = ImmutableParams.from(getLawFileParameters(lawFile));
-        if (jdbcNamed.update(UPDATE_LAW_FILE.getSql(schema()), lawParams) == 0) {
-            jdbcNamed.update(INSERT_LAW_FILE.getSql(schema()), lawParams);
+        if (jdbcNamed.update(SqlLawFileQuery.UPDATE_LAW_FILE.getSql(schema()), lawParams) == 0) {
+            jdbcNamed.update(SqlLawFileQuery.INSERT_LAW_FILE.getSql(schema()), lawParams);
         }
     }
 
