@@ -10,6 +10,7 @@ import gov.nysenate.openleg.client.view.request.ParameterView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.notification.Notification;
+import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.util.DateUtils;
@@ -181,6 +182,17 @@ public abstract class BaseCtrl
         String type = request.getParameter("type");
         return (type != null && type.equalsIgnoreCase("processed"))
             ? UpdateType.PROCESSED_DATE : UpdateType.PUBLISHED_DATE;
+    }
+
+    protected NotificationType getNotificationTypeFromString(String text) {
+        try {
+            return NotificationType.getValue(text);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidRequestParamEx(text, "type", "String",
+                    NotificationType.getAllNotificationTypes().stream()
+                            .map(NotificationType::toString)
+                            .reduce("", (a, b) -> a + "|" + b));
+        }
     }
 
     /** --- Generic Exception Handlers --- */

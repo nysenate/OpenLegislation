@@ -20,9 +20,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -116,20 +114,14 @@ public class NotificationCtrl extends BaseCtrl
     }
 
     private Set<NotificationType> getNotificationTypes(WebRequest request) {
-        List<String> types = Arrays.asList(request.getParameterValues("type"));
+        String[] types = request.getParameterValues("type");
+        return types == null ? NotificationType.getAllNotificationTypes() : getTypesFromStrings(types);
+    }
+
+    private Set<NotificationType> getTypesFromStrings(String[] types) {
         Set<NotificationType> typeSet = new HashSet<>();
         for (String type : types) {
-            try {
-                typeSet.addAll(NotificationType.getCoverage(NotificationType.getValue(type)));
-            } catch (IllegalArgumentException e) {
-                throw new InvalidRequestParamEx(type, "type", "String",
-                        NotificationType.getAllNotificationTypes().stream()
-                                .map(NotificationType::toString)
-                                .reduce("", (a, b) -> a + "|" + b));
-            }
-        }
-        if (typeSet.size() == 0) {
-            typeSet = NotificationType.getAllNotificationTypes();
+            typeSet.addAll(NotificationType.getCoverage(getNotificationTypeFromString(type)));
         }
         return typeSet;
     }
