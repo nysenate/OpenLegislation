@@ -19,9 +19,6 @@ import java.io.File;
 @Component
 public class Environment
 {
-    @Autowired
-    ServletContext servletContext;
-
     /** The database schema where the legislative data is stored. */
     @Value("${env.schema:master}") private String schema;
 
