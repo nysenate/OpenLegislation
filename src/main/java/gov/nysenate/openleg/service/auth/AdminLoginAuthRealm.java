@@ -6,7 +6,6 @@ import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.pam.UnsupportedTokenException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
-import org.apache.shiro.realm.AuthenticatingRealm;
 
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 @Component
 public class AdminLoginAuthRealm extends AuthorizingRealm
@@ -57,7 +55,7 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
     public void setup() {
         defaultWebSecurityManager.setRealm(this);
         if (!adminUserService.adminInDb(defaultAdminName))
-            adminUserService.createUser(defaultAdminName, defaultAdminPass, true);
+            adminUserService.createUser(defaultAdminName, defaultAdminPass, true, true);
     }
 
 

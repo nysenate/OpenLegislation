@@ -13,9 +13,17 @@ public interface SendMailService {
      * @param from The from address for the email
      * @param subject Subject of the email
      * @param text The email body
-     * @throws MessagingException
      */
-    public void sendMessage(String to, String from, String subject, String text) throws MessagingException;
+    public void sendMessage(String to, String from, String subject, String text);
+
+    /**
+     * Sends an email message constructed from basic message parameters
+     *
+     * @param to The intended receiver of the email
+     * @param subject Subject of the email
+     * @param text The email body
+     */
+    public void sendMessage(String to, String subject, String text);
 
     /**
      * Sends one or more email messages constructed from the given SimpleMailMessages

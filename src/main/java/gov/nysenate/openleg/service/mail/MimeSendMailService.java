@@ -32,10 +32,20 @@ public class MimeSendMailService implements SendMailService {
      * {@inheritDoc}
      */
     @Override
-    public void sendMessage(String to, String from, String subject, String text) throws MessagingException {
+    public void sendMessage(String to, String from, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setFrom(from);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        mailSender.send(message);
+    }
+
+    @Override
+    public void sendMessage(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
@@ -48,13 +58,5 @@ public class MimeSendMailService implements SendMailService {
     @Override
     public void sendMessage(SimpleMailMessage... messages) {
         mailSender.send(messages);
-    }
-
-    private MessageBuilder basicMessageBuilder(Address to, Address from, String subject, String text) throws MessagingException {
-        return MessageBuilder.newMessage(mailUtils.getSmtpSession())
-                .to(to)
-                .from(from)
-                .subject(subject)
-                .text(text);
     }
 }

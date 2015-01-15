@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.service.slack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,8 @@ import java.util.List;
 @Service
 public class SlackChatService {
 
+    private static final Logger logger = LoggerFactory.getLogger(SlackChatService.class);
+
     @Value("${slack.webhook.url}")
     private String webhookUrl;
 
@@ -19,7 +23,12 @@ public class SlackChatService {
 
     @PostConstruct
     public void init() {
-        slackApi = new SlackApi(webhookUrl);
+        try {
+            slackApi = new SlackApi(webhookUrl);
+        } catch (IllegalArgumentException ex) {
+            slackApi = null;
+            logger.error("Invalid Slack webhook URL!  Slack messages will NOT be sent:\n" + ex.getMessage());
+        }
     }
 
     /**
@@ -45,7 +54,9 @@ public class SlackChatService {
      * @param message SlackMessage
      */
     public void sendMessage(SlackMessage message) {
-        slackApi.call(message);
+        if (slackApi != null) {
+            slackApi.call(message);
+        }
     }
 
     /**
@@ -55,8 +66,7 @@ public class SlackChatService {
      * @return String - the message with mentions added
      */
     public String addMentions(String message, Collection<String> mentions) {
-        List<String> mentionList = new ArrayList<>(mentions);
-        Collections.reverse(mentionList);
-        return mentionList.stream().reduce(message, (a, b) -> "<@" + b + "> " + a);
+        String mentionString = mentions.stream().reduce("", (a, b) -> a + "<@" + b + "> ");
+        return mentionString + message;
     }
 }

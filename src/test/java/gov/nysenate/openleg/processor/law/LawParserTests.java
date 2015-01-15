@@ -3,7 +3,7 @@ package gov.nysenate.openleg.processor.law;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.law.LawFileDao;
+import gov.nysenate.openleg.dao.law.data.LawFileDao;
 import gov.nysenate.openleg.model.law.LawFile;
 import org.junit.Test;
 import org.slf4j.Logger;

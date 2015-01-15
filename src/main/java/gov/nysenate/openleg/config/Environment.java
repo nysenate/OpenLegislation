@@ -19,21 +19,24 @@ import java.io.File;
 @Component
 public class Environment
 {
+    @Autowired
+    ServletContext servletContext;
+
     /** The database schema where the legislative data is stored. */
     @Value("${env.schema:master}") private String schema;
 
     /** --- File system configuration --- */
 
-    /** The root directory path where all data files are contained within. */
+    /** The root directory url where all data files are contained within. */
     @Value("${env.base}") private String envDirPath;
 
-    /** The directory path where all incoming data files are contained. */
+    /** The directory url where all incoming data files are contained. */
     @Value("${env.staging}") private String stagingDirPath;
 
-    /** The directory path where all archived data files are contained. */
+    /** The directory url where all archived data files are contained. */
     @Value("${env.archive}") private String archiveDirPath;
 
-    /** The directory path for scraped LBDC files. */
+    /** The directory url for scraped LBDC files. */
     @Value("${env.scraped.calendar}") private String calendarDirPath;
     @Value("${env.scraped.assemblyagenda}") private String assemblyAgendaDirPath;
     @Value("${env.scraped.senateagenda}") private String senateAgendaDirPath;
@@ -84,9 +87,8 @@ public class Environment
 
     /** --- Domain Url --- */
 
-    @Value ("${domain.url}") private String domain;
-    private String contextPath;
-    private String fullPath;
+    /** The domain and the context path of the application */
+    @Value ("${domain.url}") private String url;
 
     /** --- Constructors --- */
 
@@ -212,11 +214,11 @@ public class Environment
         return notificationsEnabled;
     }
 
-    public String getDomain() {
-        return domain;
+    public String getUrl() {
+        return url;
     }
 
-    public String getFullPath() {
-        return fullPath;
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

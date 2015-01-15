@@ -2,7 +2,7 @@ package gov.nysenate.openleg.service.law.data;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.dao.law.LawDataDao;
+import gov.nysenate.openleg.dao.law.data.LawDataDao;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.law.*;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;

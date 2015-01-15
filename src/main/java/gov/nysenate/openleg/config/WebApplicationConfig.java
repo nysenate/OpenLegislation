@@ -66,7 +66,7 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter implements Sch
 
     /**
      * This view resolver will map view names returned from the controllers to jsp files stored in the
-     * configured 'prefix' path.
+     * configured 'prefix' url.
      */
     @Bean(name = "viewResolver")
     public InternalResourceViewResolver viewResolver() {

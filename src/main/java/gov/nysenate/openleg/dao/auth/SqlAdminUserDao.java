@@ -62,8 +62,8 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
         return new MapSqlParameterSource()
                 .addValue("username", admin.getUsername())
                 .addValue("password", BCrypt.hashpw(admin.getPassword(), BCrypt.gensalt()))
-                .addValue("privilegeLevel", admin.getPrivileges())
-                .addValue("active", admin.isActive());
+                .addValue("active", admin.isActive())
+                .addValue("master", admin.isMaster());
     }
 
     /**
@@ -75,7 +75,8 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
     public AdminUser getAdminUser(String user) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource().addValue("username", user));
         return jdbcNamed.queryForObject(AdminUserQuery.SELECT_BY_NAME.getSql(schema()), params,
-                (rs,row) -> new AdminUser(rs.getString("username"), rs.getString("password"), rs.getInt("permissions_level")));
+                (rs,row) -> new AdminUser(rs.getString("username"), rs.getString("password"),
+                                          rs.getBoolean("active"), rs.getBoolean("master")));
 
     }
 }

@@ -112,7 +112,7 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService {
 
         messageBuilder.append(summary)
                 .append("\n\n")
-                .append(env.getFullPath())
+                .append(env.getUrl())
                 .append("/admin/report/daybreak/")
                 .append(daybreakReport.getReportDateTime())
                 .append("\n\n");

@@ -37,7 +37,6 @@ public enum ErrorCode
     /** --- Calendar --- */
 
     CALENDAR_NOT_FOUND(51, "The requested calendar was not found"),
-    INVALID_CAL_SEARCH_PARAMS(52, "The given calendar search parameters are invalid/conflicting"),
 
     /** --- Agenda --- */
 
@@ -59,10 +58,17 @@ public enum ErrorCode
 
     TRANSCRIPT_NOT_FOUND(141, "The transcript was not found"),
 
+    /** --- Admin --- */
+
+    USER_ALREADY_EXISTS(191, "The entered username already exists"),
+    USER_DOES_NOT_EXIST(192, "The entered username is not currently registered as a user"),
+    SAME_PASSWORD(193, "The new password cannot match the existing password"),
+
     /** --- General --- */
 
     UNAUTHORIZED(401, "Not authorized to perform this request."),
-    INVALID_DATE_RANGE(601, "The supplied date range is not valid.");
+    INVALID_DATE_RANGE(601, "The supplied date range is not valid."),
+    ;
 
     /** Used for lookups by code. */
 
