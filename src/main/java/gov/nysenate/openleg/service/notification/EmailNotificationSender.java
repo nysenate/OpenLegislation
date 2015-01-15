@@ -1,39 +1,29 @@
 package gov.nysenate.openleg.service.notification;
 
-import gov.nysenate.openleg.model.notification.RegisteredNotification;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
-import gov.nysenate.openleg.model.notification.NotificationTarget;
 import gov.nysenate.openleg.service.mail.SendMailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
-@Service
-public class EmailNotificationSender implements NotificationSender {
+public abstract class EmailNotificationSender implements NotificationSender {
 
-    @Autowired private SendMailService sendMailService;
+    @Autowired
+    private SendMailService sendMailService;
 
-    @Override
-    public NotificationTarget getTargetType() {
-        return NotificationTarget.EMAIL;
-    }
-
-    @Override
-    public void sendNotification(RegisteredNotification registeredNotification, Collection<NotificationSubscription> subscriptions) {
-        SimpleMailMessage templateEmail = new SimpleMailMessage();
-        templateEmail.setSubject(registeredNotification.getSummary());
-        templateEmail.setText(registeredNotification.getMessage());
-
-        SimpleMailMessage[] messages = new SimpleMailMessage[subscriptions.size()];
-        int index = 0;
-        subscriptions.forEach(subscription -> {
-            SimpleMailMessage message = new SimpleMailMessage(templateEmail);
-            message.setTo(subscription.getTargetAddress());
-            messages[index] = message;
-        } );
-
-        sendMailService.sendMessage(messages);
+    /**
+     * Does the work of addressing and sending a mail message to a number of notification subscribers
+     * @param message A message to send
+     * @param subscriptions A collection of notification subscribers that will receive the message
+     */
+    protected void sendNotificationEmail(SimpleMailMessage message, Collection<NotificationSubscription> subscriptions) {
+        String[] addresses = subscriptions.stream()
+                .map(NotificationSubscription::getTargetAddress)
+                .collect(Collectors.toList())
+                .toArray(new String[subscriptions.size()]);
+        message.setTo(addresses);
+        sendMailService.sendMessage(message);
     }
 }

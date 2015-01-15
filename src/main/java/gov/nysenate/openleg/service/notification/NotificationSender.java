@@ -14,9 +14,9 @@ public interface NotificationSender {
     public NotificationTarget getTargetType();
 
     /**
-     * Sends a notification to all of the given addresses
+     * Sends a notification to all of the given subscriptions
      * @param registeredNotification Notification
-     * @param addresses Collection<String>
+     * @param subscriptions Collection<NotificationSubscription>
      */
-    public void sendNotification(RegisteredNotification registeredNotification, Collection<NotificationSubscription> addresses);
+    public void sendNotification(RegisteredNotification registeredNotification, Collection<NotificationSubscription> subscriptions);
 }

@@ -21,7 +21,7 @@ public class NotificationTests extends BaseTests {
 
     @Test
     public void subscribeTest() {
-        NotificationSubscription subscription = new NotificationSubscription("sam", NotificationType.EXCEPTION,
+        NotificationSubscription subscription = new NotificationSubscription("stouffer@nysenate.gov", NotificationType.EXCEPTION,
                 NotificationTarget.EMAIL, "stouffer@nysenate.gov");
         subDataService.insertSubscription(subscription);
     }
