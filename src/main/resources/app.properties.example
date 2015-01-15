@@ -16,6 +16,10 @@ default.admin.user =
 
 default.admin.password =
 
+# A regex that all admin user names must adhere to.  (default ^[A-z0-9._%+-]+@nysenate.gov$)
+
+admin.email.regex = ^[A-z0-9._%+-]+@nysenate.gov$
+
 # --- Data Directory Configuration --------------------------------------------
 
 # The directory path that serves as the root of the data environment.
@@ -194,5 +198,5 @@ slack.webhook.url =
 
 # --- Domain Configuration ---------------------------------------------------------------------------------------------
 
-# The domain url that openleg is hosted on (used for generating links)
-domain.url = http://localhost:8080
+# The domain url and context path that openleg is hosted on (used for generating links)
+domain.url = http://localhost:8080/legislation

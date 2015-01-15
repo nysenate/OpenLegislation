@@ -25,6 +25,48 @@ ALTER SCHEMA master OWNER TO postgres;
 COMMENT ON SCHEMA master IS 'Processed legislative data';
 
 
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
+-- Name: hstore; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
+
+
 SET search_path = master, pg_catalog;
 
 --
@@ -2994,7 +3036,7 @@ COMMENT ON COLUMN public_hearing.end_time IS 'Time the public hearing ended.';
 
 
 --
--- Name: public_hearing_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+-- Name: public_hearing_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE public_hearing_committee (
@@ -3509,10 +3551,10 @@ SET search_path = public, pg_catalog;
 CREATE TABLE adminuser (
     username text NOT NULL,
     password text NOT NULL,
-    permissions_level integer DEFAULT 0,
     active boolean DEFAULT false,
     created_date_time timestamp with time zone DEFAULT now(),
-    modified_date_time timestamp with time zone DEFAULT now()
+    modified_date_time timestamp with time zone DEFAULT now(),
+    master boolean DEFAULT false
 );
 
 
@@ -3529,7 +3571,7 @@ COMMENT ON TABLE adminuser IS 'Registered admin users';
 -- Name: COLUMN adminuser.username; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN adminuser.username IS 'Username';
+COMMENT ON COLUMN adminuser.username IS 'Username.  Should be an email address';
 
 
 --
@@ -3537,13 +3579,6 @@ COMMENT ON COLUMN adminuser.username IS 'Username';
 --
 
 COMMENT ON COLUMN adminuser.password IS 'Encrypted form of the admin''s password';
-
-
---
--- Name: COLUMN adminuser.permissions_level; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN adminuser.permissions_level IS 'Permissions level';
 
 
 --
@@ -3565,6 +3600,13 @@ COMMENT ON COLUMN adminuser.created_date_time IS 'The date that this admin accou
 --
 
 COMMENT ON COLUMN adminuser.modified_date_time IS 'When this account was last modified.';
+
+
+--
+-- Name: COLUMN adminuser.master; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN adminuser.master IS 'true if the user is a master admin';
 
 
 --
@@ -4564,7 +4606,7 @@ ALTER TABLE ONLY notification_subscription
 
 
 --
--- Name: public_hearing_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+-- Name: public_hearing_committee_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY public_hearing_committee
@@ -4751,6 +4793,13 @@ CREATE INDEX agenda_change_log_action_date_time_idx ON agenda_change_log USING b
 
 
 --
+-- Name: agenda_change_log_agenda_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX agenda_change_log_agenda_id_idx ON agenda_change_log USING btree (agenda_no, year);
+
+
+--
 -- Name: agenda_change_log_published_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -4762,12 +4811,6 @@ CREATE INDEX agenda_change_log_published_date_time_idx ON agenda_change_log USIN
 --
 
 CREATE INDEX agenda_change_log_sobi_fragment_id_idx ON agenda_change_log USING btree (sobi_fragment_id);
-
---
--- Name: agenda_change_log_agenda_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
---
-
-CREATE INDEX agenda_change_log_agenda_id_idx ON agenda_change_log USING btree (agenda_no, year);
 
 
 --
@@ -4804,6 +4847,7 @@ CREATE INDEX bill_change_log_sobi_fragment_id_idx ON bill_change_log USING btree
 
 CREATE INDEX bill_id_idx ON bill_change_log USING btree (bill_print_no, bill_session_year);
 
+
 --
 -- Name: bill_session_year_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
@@ -4819,6 +4863,13 @@ CREATE INDEX calendar_change_log_action_date_time_idx ON calendar_change_log USI
 
 
 --
+-- Name: calendar_change_log_calendar_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX calendar_change_log_calendar_id_idx ON calendar_change_log USING btree (calendar_no, calendar_year);
+
+
+--
 -- Name: calendar_change_log_published_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -4831,11 +4882,6 @@ CREATE INDEX calendar_change_log_published_date_time_idx ON calendar_change_log 
 
 CREATE INDEX calendar_change_log_sobi_fragment_id_idx ON calendar_change_log USING btree (sobi_fragment_id);
 
---
--- Name: calendar_change_log_calendar_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace:
---
-
-CREATE INDEX calendar_change_log_calendar_id_idx ON calendar_change_log USING btree (calendar_no, calendar_year);
 
 --
 -- Name: calendar_supplemental_entry_bill_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
@@ -5657,6 +5703,7 @@ ALTER TABLE ONLY law_tree
 
 ALTER TABLE ONLY notification_subscription
     ADD CONSTRAINT notification_subscription_user_name_fkey FOREIGN KEY (user_name) REFERENCES public.adminuser(username);
+
 
 --
 -- Name: public_hearing_committee_filename_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
