@@ -77,9 +77,9 @@ public class MailUtils {
      * @return Store
      * @throws MessagingException if a connection cannot be established
      */
-    public Store getStore(String protocol, String host, String user, String password)
+    public Store getStore(String host, String user, String password)
             throws MessagingException {
-        Store store = getImapsSession().getStore(protocol);
+        Store store = getImapsSession().getStore(storeProtocol);
         try {
             store.connect(host, user, password);
         }
