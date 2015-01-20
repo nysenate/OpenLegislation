@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html" pageEncoding="utf-8"%>
 <jsp:include page="/header.jsp">
-	<jsp:param name="title" value="Rules of the Senate 2013-2014 - NY Senate Open Legislation"/>
+	<jsp:param name="title" value="Rules of the Senate 2015-2016 - NY Senate Open Legislation"/>
 </jsp:include>
 <br/>
 <div id="content">

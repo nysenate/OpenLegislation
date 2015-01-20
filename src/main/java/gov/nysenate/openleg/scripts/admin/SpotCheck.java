@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.admin.ReportObservation;
 import gov.nysenate.openleg.model.admin.SpotCheckBill;
 import gov.nysenate.openleg.scripts.BaseScript;
 import gov.nysenate.openleg.util.Application;
+import gov.nysenate.openleg.util.SessionYear;
 import gov.nysenate.openleg.util.Storage;
 
 import gov.nysenate.openleg.util.TextFormatter;
@@ -36,7 +37,7 @@ public class SpotCheck extends BaseScript
     public static Logger logger = Logger.getLogger(SpotCheck.class);
 
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-    private String SESSION_YEAR = "2013";
+    private String SESSION_YEAR = Integer.toString(SessionYear.getSessionYear());
     public Pattern spotcheckBillId = Pattern.compile("([A-Z])(\\d+)([A-Z]?)");
 
     public static void main(String[] args) throws Exception
@@ -98,11 +99,11 @@ public class SpotCheck extends BaseScript
 
         for(String id : bills.keySet()) {
             //logger.info("checking bill "+id);
-            String billNo = id+"-2013";
-            Bill jsonBill = (Bill)storage.get("2013/bill/"+billNo, Bill.class);
+            String billNo = id+"-" + SESSION_YEAR;
+            Bill jsonBill = (Bill)storage.get(SESSION_YEAR + "/bill/"+billNo, Bill.class);
 
             if (jsonBill == null) {
-                logger.error("Missing bill "+"2013/bill/"+billNo);
+                logger.error("Missing bill "+ SESSION_YEAR + "/bill/"+billNo);
                 continue;
             }
 
