@@ -14,6 +14,7 @@
     <base href="<%= (request.getContextPath().isEmpty()) ? "/" : request.getContextPath() %>">
 
     <!-- Main CSS -->
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/dest/angular-material.min.css"/>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/dest/main.min.css"/>
 
     <!-- Third Party JS -->
@@ -21,13 +22,13 @@
 
     <!-- Application Scripts -->
     <script type="application/javascript" src="${ctxPath}/static/js/src/app.js"></script>
-    <script type="application/javascript" src="${ctxPath}/static/js/src/common.js"></script>
+    <script type="application/javascript" src="${ctxPath}/static/js/src/routes.js"></script>
+    <!--<script type="application/javascript" src="${ctxPath}/static/js/src/common.js"></script> -->
 
     <script>
         window.ctxPath = "<%= request.getContextPath() %>";
         window.apiPath = window.ctxPath + "/api/3";
         window.adminApiPath = window.apiPath + "/admin";
-        $(document).foundation();
     </script>
 
     <!-- Page specific css and pre-load js can be added below by the consumer -->
