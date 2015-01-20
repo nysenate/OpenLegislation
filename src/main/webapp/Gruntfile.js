@@ -13,10 +13,9 @@ module.exports = function(grunt) {
         jsDest: '<%= jsRoot %>/dest',
         jspSource: 'WEB-INF/view',
         tagSource: 'WEB-INF/tags',
-        tomcatWeb: '/usr/share/tomcat7/webapps/legislation',
+        tomcatWeb: '/usr/share/tomcat7/webapps/legislation',  // <-- CHANGE THIS AS NEEDED
         docsSourceRoot: '../../../docs',
         docsDestRoot: 'static/docs',
-
 
         /** Compile SCSS files into css and place them into the css source directory */
         compass: {
@@ -57,20 +56,23 @@ module.exports = function(grunt) {
                 },
                 files: {
                     '<%= jsDest %>/vendor.min.js': [
+                        // Much dependencies
+                        '<%= bowerRoot %>/modernizr/modernizr.js',
                         '<%= bowerRoot %>/jquery/dist/jquery.min.js',
-                        '<%= bowerRoot %>/foundation/js/foundation.min.js',
                         '<%= bowerRoot %>/angular/angular.min.js',
                         '<%= bowerRoot %>/angular-route/angular-route.min.js',
                         '<%= bowerRoot %>/angular-resource/angular-resource.min.js',
                         '<%= bowerRoot %>/angular-animate/angular-animate.min.js',
-                        '<%= bowerRoot %>/angular-foundation/mm-foundation-tpls.min.js',
+                        '<%= bowerRoot %>/angular-aria/angular-aria.min.js',
+                        '<%= bowerRoot %>/hammerjs/hammer.min.js',
+                        '<%= bowerRoot %>/angular-material/angular-material.min.js',
                         '<%= bowerRoot %>/ng-table/ng-table.js',
                         '<%= bowerRoot %>/moment/min/moment.min.js',
-                        '<%= bowerRoot %>/pace/pace.min.js',
-                        '<%= bowerRoot %>/highcharts/highcharts.js',
-                        '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js',
-                        '<%= bowerRoot %>/fullcalendar/fullcalendar.min.js',
-                        '<%= bowerRoot %>/modernizr/modernizr.js'
+                        '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js'
+                        //     '<%= bowerRoot %>/fullcalendar/fullcalendar.min.js'
+                        //     '<%= bowerRoot %>/foundation/js/foundation.min.js',
+                        //     '<%= bowerRoot %>/angular-foundation/mm-foundation-tpls.min.js',
+                        //     '<%= bowerRoot %>/pace/pace.min.js',
                     ]//'<%= jsDest %>/main.min.js': ['<%= jsSource %>/**/*.js']
                 }
             }
