@@ -79,6 +79,27 @@ public class PublicHearingCommitteeParserTest extends BaseTests
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void noWhiteSpaceInCommitteeName() throws IOException, URISyntaxException {
+        List<List<String>> pages = PublicHearingTestHelper.getPagesFromFileName(
+                "02-09-12 ChildCareHearing_Final.txt");
+
+        PublicHearingCommittee expectedCommittee1 = new PublicHearingCommittee();
+        expectedCommittee1.setName("SOCIAL SERVICES");
+        expectedCommittee1.setChamber(Chamber.SENATE);
+
+        PublicHearingCommittee expectedCommittee2 = new PublicHearingCommittee();
+        expectedCommittee2.setName("CHILDREN AND FAMILIES");
+        expectedCommittee2.setChamber(Chamber.SENATE);
+
+        List<PublicHearingCommittee> expected = new ArrayList<>();
+        expected.add(expectedCommittee1);
+        expected.add(expectedCommittee2);
+
+        List<PublicHearingCommittee> actual = committeeParser.parse(pages.get(0));
+        assertEquals(expected, actual);
+    }
+
     // TODO: This test fails, file: 03-01-12 NYS Joint 3-Committee Hearing_Final.txt
     // This files committees are not correct!
     @Ignore

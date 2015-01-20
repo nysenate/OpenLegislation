@@ -117,7 +117,7 @@ public class PublicHearingCommitteeParser
         Matcher matchFirstCommittee = FIRST_COMMITTEE.matcher(committeeBlock);
         matchFirstCommittee.find();
 
-        committee.setName(matchFirstCommittee.group("name"));
+        committee.setName(matchFirstCommittee.group("name").trim());
         committee.setChamber(Chamber.valueOf(matchFirstCommittee.group("chamber").toUpperCase()));
         return committee;
     }
