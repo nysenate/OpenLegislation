@@ -1,66 +1,88 @@
 /** --- Module configuration --- */
 
-var commonModule = angular.module('common', []);
-var contentModule = angular.module('content', ['ngRoute', commonModule.name, 'ui.calendar']);
-var reportModule = angular.module('report', ['ngRoute', commonModule.name]);
+var coreModule = angular.module('open.core', ['ngRoute']);
+//var reportModule = angular.module('report', ['ngRoute', commonModule.name]);
 
-var openApp = angular.module('open', ['ngRoute', 'ngResource', 'ngAnimate', contentModule.name, reportModule.name]);
-openApp.constant('appProps', {
-    ctxPath: window.ctxPath
+var openApp = angular.module('open',
+    // External modules
+    ['ngRoute', 'ngResource', 'ngMaterial',
+    // Internal modules
+     'open.bill']);
+
+// Configure the material themes
+openApp.config(function($mdThemingProvider) {
+    $mdThemingProvider.theme('default').primaryColor('blue-grey');
+    $mdThemingProvider.theme('dark').primaryColor('grey');
 });
 
-/** Routing Configuration --- */
+/**
+ * App Controller
+ */
+openApp.controller('AppCtrl', ['$scope', '$mdSidenav', function($scope, $mdSidenav) {
+    $scope.header = {text: ''};
 
-openApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+    $scope.toggleLeftNav = function() {
+        $mdSidenav('left').toggle();
+    };
 
-    /** --- Home --- */
-    $routeProvider.when(ctxPath, {
-        templateUrl: ctxPath + '/partial/home/landing'
-    });
-    /** --- Bills --- */
-    $routeProvider.when(ctxPath + '/bills', {
-        templateUrl: ctxPath + '/partial/content/bill-search'
-    });
-    $routeProvider.when(ctxPath + '/bills/:session/:printNo', {
-        templateUrl: ctxPath + '/partial/content/bill-view'
-    });
-    /** --- Agendas --- */
-    $routeProvider.when(ctxPath + '/agendas', {
-        templateUrl: ctxPath + '/partial/content/..'
-    });
-    /** --- Calendars --- */
-    $routeProvider.when(ctxPath + '/calendars', {
-        templateUrl: ctxPath + '/partial/content/calendar/calendar-view'
-    });
-    $routeProvider.when(ctxPath + '/calendars/:year/:calNo', {
-        templateUrl: ctxPath + '/partial/content/calendar/calendar-view'
-    });
-    /** --- Laws --- */
-    $routeProvider.when(ctxPath + '/laws', {
-        templateUrl: ctxPath + '/partial/content/law-search'
-    });
-    $routeProvider.when(ctxPath + '/laws/:lawId', {
-        templateUrl: ctxPath + '/partial/content/law-view'
-    });
-    /** --- Transcripts --- */
-    $routeProvider.when(ctxPath + '/transcripts', {
-        templateUrl: ctxPath + '/partial/content/..'
-    });
-    /** --- Admin Reports --- */
-    $routeProvider.when(ctxPath + '/admin/report', {
-        redirectTo: ctxPath + '/admin/report/daybreak'
-    });
-    $routeProvider.when(ctxPath + '/admin/report/daybreak', {
-        templateUrl: ctxPath + '/partial/report/daybreak-report-summary',
-        controller: 'DaybreakSummaryCtrl'
-    });
-    $routeProvider.when(ctxPath + '/admin/report/daybreak/:reportDateTime', {
-        templateUrl: ctxPath + '/partial/report/daybreak-report-error',
-        controller: 'DaybreakReportErrorCtrl'
-    });
+    $scope.setHeaderText = function(text) {
+        $scope.header.text = text;
+    };
+}]);
 
-    $locationProvider.html5Mode(true);
-    $locationProvider.hashPrefix('!');
+openApp.controller('LandingCtrl', ['$scope', function($scope) {
+    $scope.setHeaderText('Explore legislative information from the NYS Senate');
+}]);
+
+/**
+ * Main Menu Directive
+ */
+openApp.directive('materialMenu', ['$compile', '$location', function($compile, $location) {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {},
+        template:
+            '<nav>' +
+            '  <div ng-repeat="section in menu.sections">' +
+            '    <a ng-class="{active: isSectionSelected(section)}" ng-href="{{section.url}}"' +
+            '       class="menu-item menu-title md-menu-item" md-ink-ripple="#bbb" ' +
+            '       ng-click="selectSection(section)">{{section.title}}' +
+            '    </a>' +
+            '    <a class="menu-item menu-sub-item md-menu-item" md-ink-ripple="#bbb" ' +
+            '       ng-show="isSectionSelected(section)" ' +
+            '       ng-repeat="item in section.items"' +
+            '       ng-href="{{item.url}}">' +
+            '      <span ng-bind="item.title"></span>' +
+            '    </a>' +
+            '  </div>' +
+            '</nav>',
+        controller : function($scope) {
+            $scope.isSectionSelected = function(section) {
+                return section.active;
+            };
+            $scope.selectSection = function(section) {
+                $scope.menu.sections.forEach(function(s) {s.active = false;});
+                section.active = true;
+            }
+        },
+        compile: function compile($elem, attrs, transclude) {
+            return {
+                pre: function preLink(scope, $elem, attrs) {
+                    scope.menu = {sections: []};
+                    var $sections = $($elem.context).children('menu-section');
+                    angular.forEach($sections, function(_s) {
+                        var section = {title: _s.title, url: $(_s).attr('url'), items: []};
+                        angular.forEach($(_s).children('menu-item'), function(_i) {
+                            var item = {url: $(_i).attr('url'), title: $(_i).text()};
+                            section.items.push(item);
+                        });
+                        scope.menu.sections.push(section);
+                    });
+                }
+            }
+        }
+    }
 }]);
 
 openApp.controller('TopNavCtrl', ['$scope', '$route', function($scope, $route) {

@@ -1,12 +1,12 @@
-var contentModule = angular.module('content');
+var billModule = angular.module('open.bill', ['open.core']);
 
-contentModule.factory('BillListingApi', ['$resource', function($resource) {
+billModule.factory('BillListingApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/:sessionYear', {
         sessionYear: '@sessionYear'
     });
 }]);
 
-contentModule.factory('BillSearchApi', ['$resource', function($resource) {
+billModule.factory('BillSearchApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/search/?term=:term&sort=:sort&limit=:limit&offset=:offset', {
         term: '@term',
         sort: '@sort',
@@ -15,7 +15,7 @@ contentModule.factory('BillSearchApi', ['$resource', function($resource) {
     });
 }]);
 
-contentModule.factory('BillGetApi', ['$resource', function($resource) {
+billModule.factory('BillGetApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/:session/:printNo?detail=true', {
         session: '@session',
         printNo: '@printNo'
@@ -24,10 +24,12 @@ contentModule.factory('BillGetApi', ['$resource', function($resource) {
 
 /** --- Parent Bill Controller --- */
 
-contentModule.controller('BillCtrl', ['$scope', '$location', '$route', function($scope, $location, $route) {
-    $scope.searchTerm = '';
-    $scope.sort = '';
-    $scope.performedSearch = false;
+billModule.controller('BillCtrl', ['$scope', '$location', '$route', function($scope, $location, $route) {
+
+    console.log($location);
+    console.log($route);
+
+    $scope.selectedView = parseInt($route.current.params.view, 10) || 0;
 
     $scope.getStatusDesc = function(status) {
         var desc = "";
@@ -55,9 +57,11 @@ contentModule.controller('BillCtrl', ['$scope', '$location', '$route', function(
 
 /** --- Bill Search Controller --- */
 
-contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location',
-                                            'BillListingApi', 'BillSearchApi',
-    function($scope, $filter, $routeParams, $location, BillListing, BillSearch) {
+billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location','BillListingApi', 'BillSearchApi',
+                      function($scope, $filter, $routeParams, $location, BillListing, BillSearch) {
+    $scope.setHeaderText('Browse NYS Bills and Resolutions');
+
+    $scope.searchTerm = 'Meow';
     $scope.billResults = {};
     $scope.billViewResult = null;
     $scope.billView = null;
@@ -68,7 +72,6 @@ contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams',
 
     $scope.init = function() {
         $scope.searchTerm = $routeParams.search;
-        //$scope.offset = $scope.computeOffset($routeParams.page);
         $scope.doSearch();
     };
 
@@ -148,19 +151,19 @@ contentModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams',
 
 /** --- Bill View Controller --- */
 
-contentModule.filter('resolutionOrBill', function() {
+billModule.filter('resolutionOrBill', function() {
     return function(input) {
         return (input) ? "Resolution" : "Bill";
     }
 });
 
-contentModule.filter('defaultVersion', function() {
+billModule.filter('defaultVersion', function() {
     return function(input) {
         return (input) ? input : "Initial";
     }
 });
 
-contentModule.filter('prettySponsorMemo', function($sce){
+billModule.filter('prettySponsorMemo', function($sce){
     var headingPattern = /(([A-Z][A-Za-z ]+)+:)/g;
     return function(memo) {
         if (memo) {
@@ -171,7 +174,7 @@ contentModule.filter('prettySponsorMemo', function($sce){
     }
 });
 
-contentModule.filter('prettyFullText', function($sce) {
+billModule.filter('prettyFullText', function($sce) {
     var lineNumberPattern = /^\s{1,5}[0-9]+/gm;
     return function(text) {
         if (text) {
@@ -200,7 +203,7 @@ contentModule.filter('prettyFullText', function($sce) {
     }
 });
 
-contentModule.filter('prettyResolutionText', function($sce) {
+billModule.filter('prettyResolutionText', function($sce) {
     var whereasPattern = /^ *WHEREAS[,; ]/gm;
     var resolvedPattern = /^ *RESOLVED[,; ]/gm;
     return function(text) {
@@ -216,7 +219,7 @@ contentModule.filter('prettyResolutionText', function($sce) {
     }
 });
 
-contentModule.filter('voteTypeFilter', function() {
+billModule.filter('voteTypeFilter', function() {
     return function(voteType) {
         switch (voteType) {
             case 'AYE': return 'Aye';
@@ -230,7 +233,7 @@ contentModule.filter('voteTypeFilter', function() {
     }
 });
 
-contentModule.controller('BillViewCtrl', ['$scope', '$location', '$routeParams', 'BillGetApi',
+billModule.controller('BillViewCtrl', ['$scope', '$location', '$routeParams', 'BillGetApi',
     function($scope, $location, $routeParams, BillGetApi) {
     $scope.billResult = null;
     $scope.bill = null;
@@ -312,7 +315,7 @@ contentModule.controller('BillViewCtrl', ['$scope', '$location', '$routeParams',
     }
 }]);
 
-contentModule.directive('votePie', [function() {
+billModule.directive('votePie', [function() {
     var convertVotesToSeries = function(votes) {
         var colors = {
             'AYE': '#43ac6a', 'AYEWR': '#348853', 'NAY': '#f04124', 'ABD': '#666', 'EXC': '#ccc', 'ABS': '#f1f1f1'
