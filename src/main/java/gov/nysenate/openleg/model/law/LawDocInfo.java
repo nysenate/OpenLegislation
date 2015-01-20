@@ -4,18 +4,8 @@ import gov.nysenate.openleg.processor.law.LawBlock;
 
 import java.time.LocalDate;
 
-public class LawDocInfo
+public class LawDocInfo extends LawDocId
 {
-    /** A unique document identifier specified by LBDC.
-     *  For example 'EDNA1' indicates article 1 of education law while 'EDN100' indicates section 100. */
-    protected String documentId;
-
-    /** The 3 letter law id, e.g ABC, EDN, etc. */
-    protected String lawId;
-
-    /** The portion of the document id after the three letter law id. */
-    protected String locationId;
-
     /** The title of the document which is derived by parsing the body text. */
     protected String title;
 
@@ -25,9 +15,6 @@ public class LawDocInfo
     /** The last portion of the location id. For example, if locationId = 'A2T1ST2-B' then the
      *  docType will be 'SUBTITLE' and this docTypeId will be '2-B'. */
     protected String docTypeId;
-
-    /** The date on which this portion of law was published via LBDC. */
-    protected LocalDate publishedDate;
 
     /** --- Constructors --- */
 
@@ -60,30 +47,6 @@ public class LawDocInfo
 
     /** --- Basic Getters/Setters --- */
 
-    public String getDocumentId() {
-        return documentId;
-    }
-
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
-    }
-
-    public String getLawId() {
-        return lawId;
-    }
-
-    public void setLawId(String lawId) {
-        this.lawId = lawId;
-    }
-
-    public String getLocationId() {
-        return locationId;
-    }
-
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -106,13 +69,5 @@ public class LawDocInfo
 
     public void setDocTypeId(String docTypeId) {
         this.docTypeId = docTypeId;
-    }
-
-    public LocalDate getPublishedDate() {
-        return publishedDate;
-    }
-
-    public void setPublishedDate(LocalDate publishedDate) {
-        this.publishedDate = publishedDate;
     }
 }
