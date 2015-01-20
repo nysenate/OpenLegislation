@@ -61,7 +61,7 @@ public class CheckMailService {
         boolean success = false;
         try {
             logger.info("checking for daybreak emails...");
-            store = mailUtils.getStore("imap", host, user, password);
+            store = mailUtils.getStore(host, user, password);
 
             Folder sourceFolder = mailUtils.navigateToFolder(receivingFolder, store);
             Folder archiveFolder = mailUtils.navigateToFolder(processedFolder, store);
