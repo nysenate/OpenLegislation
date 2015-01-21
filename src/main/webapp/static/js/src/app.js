@@ -11,7 +11,17 @@ var openApp = angular.module('open',
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {
-    $mdThemingProvider.theme('default').primaryColor('blue-grey');
+    $mdThemingProvider.theme('default')
+        .primaryColor('blue-grey', {
+            'hue-1': '50',
+            'hue-2': '400',
+            'hue-3': '800'
+        })
+        .accentColor('light-green', {
+            'hue-1': '300',
+            'hue-2': '400',
+            'hue-3': '600'
+        });
     $mdThemingProvider.theme('dark').primaryColor('grey');
 });
 

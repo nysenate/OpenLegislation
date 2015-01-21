@@ -26,80 +26,7 @@ billModule.factory('BillGetApi', ['$resource', function($resource) {
 
 billModule.controller('BillCtrl', ['$scope', '$location', '$route', function($scope, $location, $route) {
 
-    console.log($location);
-    console.log($route);
-
     $scope.selectedView = parseInt($route.current.params.view, 10) || 0;
-
-    $scope.getStatusDesc = function(status) {
-        var desc = "";
-        if (status) {
-            switch (status.statusType) {
-                case "IN_SENATE_COMM":
-                    desc = "In Senate " + status.committeeName + " Committee";
-                    break;
-                case "IN_ASSEMBLY_COMM":
-                    desc = "In Assembly " + status.committeeName + " Committee";
-                    break;
-                case "SENATE_FLOOR":
-                    desc = "On Senate Floor as Calendar No: " + status.billCalNo;
-                    break;
-                case "ASSEMBLY_FLOOR":
-                    desc = "On Assembly Floor as Calendar No: " + status.billCalNo;
-                    break;
-                default:
-                    desc = status.statusDesc;
-            }
-        }
-        return desc;
-    }
-}]);
-
-/** --- Bill Search Controller --- */
-
-billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location','BillListingApi', 'BillSearchApi',
-                      function($scope, $filter, $routeParams, $location, BillListing, BillSearch) {
-    $scope.setHeaderText('Browse NYS Bills and Resolutions');
-
-    $scope.searchTerm = 'Meow';
-    $scope.billResults = {};
-    $scope.billViewResult = null;
-    $scope.billView = null;
-    $scope.totalResults = 0;
-    $scope.limit = 10;
-    $scope.offset = 1;
-    $scope.currentPage = 1;
-
-    $scope.init = function() {
-        $scope.searchTerm = $routeParams.search;
-        $scope.doSearch();
-    };
-
-    $scope.$watch('currentPage', function(newPage, oldPage) {
-        if (newPage != oldPage) {
-            $scope.doSearch();
-        }
-    });
-
-    $scope.isValidSearchTerm = function() {
-        return $scope.searchTerm != null && $scope.searchTerm.trim() != '';
-    };
-
-    $scope.search = function() {
-        $location.search("search", $scope.searchTerm);
-    };
-
-    $scope.doSearch = function() {
-        if ($scope.isValidSearchTerm()) {
-            $scope.billResults = BillSearch.get({
-                term: $scope.searchTerm, sort: $scope.sort, limit: $scope.limit, offset: $scope.computeOffset($scope.currentPage)},
-                function() {
-                    $scope.totalResults = $scope.billResults.total;
-                    $scope.performedSearch = true;
-                    setTimeout(function() {$(".bill-result-anim").addClass("show")}, 0);
-                });
-        }
-    };
 
     /**
      * Returns a formatted, all lower case string representing the latest milestone status.
@@ -123,6 +50,67 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         }
     };
 
+    $scope.getStatusDesc = function(status) {
+        var desc = "";
+        if (status) {
+            switch (status.statusType) {
+                case "IN_SENATE_COMM":
+                    desc = "In Senate " + status.committeeName + " Committee"; break;
+                case "IN_ASSEMBLY_COMM":
+                    desc = "In Assembly " + status.committeeName + " Committee"; break;
+                case "SENATE_FLOOR":
+                    desc = "On Senate Floor as Calendar No: " + status.billCalNo; break;
+                case "ASSEMBLY_FLOOR":
+                    desc = "On Assembly Floor as Calendar No: " + status.billCalNo; break;
+                default:
+                    desc = status.statusDesc;
+            }
+        }
+        return desc;
+    }
+}]);
+
+/** --- Bill Search Controller --- */
+
+billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location','BillListingApi', 'BillSearchApi',
+                      function($scope, $filter, $routeParams, $location, BillListing, BillSearch) {
+    $scope.setHeaderText('Browse NYS Bills and Resolutions');
+
+    $scope.billSearch = {
+        searched: false,
+        term: $routeParams.search || '',
+        response: {},
+        results: [],
+        totalResultCount: 0,
+        limit: 6,
+        offset: 1,
+        page: 1
+    };
+
+    $scope.init = function() {
+        if ($scope.billSearch.term != '') {
+            $scope.simpleSearch();
+        }
+    };
+
+    $scope.simpleSearch = function() {
+        var term = $scope.billSearch.term;
+        if (term) {
+            $location.search("search", $scope.billSearch.term);
+            $scope.billSearch.response = BillSearch.get({
+                term: term, sort: $scope.billSearch.sort, limit: $scope.billSearch.limit, offset: $scope.billSearch.offset},
+                function() {
+                    $scope.billSearch.results = $scope.billSearch.response.result.items || [];
+                    $scope.billSearch.totalResultCount = $scope.billSearch.response.total;
+                    $scope.billSearch.searched = true;
+                });
+        }
+        else {
+            $scope.billSearch.results = [];
+            $scope.billSearch.totalResultCount = 0;
+        }
+    };
+
     /**
      * Gets the full bill view for a specified printNo and session year.
      * @param printNo {string}
@@ -138,8 +126,13 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         }
     };
 
-    $scope.clearSearch = function() {
-        $scope.billResults = null;
+    $scope.nextPage = function() {
+        if ($scope.billSearch.totalResultCount > ($scope.billSearch.offset + $scope.billSearch.limit - 1)) {
+            $scope.billSearch.page += 1;
+            $scope.billSearch.offset += $scope.billSearch.limit;
+            $location.search('page', $scope.billSearch.page);
+            $scope.simpleSearch();
+        }
     };
 
     $scope.computeOffset = function(page) {
@@ -157,9 +150,9 @@ billModule.filter('resolutionOrBill', function() {
     }
 });
 
-billModule.filter('defaultVersion', function() {
+billModule.filter('prettyAmendVersion', function() {
     return function(input) {
-        return (input) ? input : "Initial";
+        return (input) ? input : "Original";
     }
 });
 
@@ -233,28 +226,25 @@ billModule.filter('voteTypeFilter', function() {
     }
 });
 
-billModule.controller('BillViewCtrl', ['$scope', '$location', '$routeParams', 'BillGetApi',
-    function($scope, $location, $routeParams, BillGetApi) {
-    $scope.billResult = null;
+billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$routeParams', 'BillGetApi',
+    function($scope, $filter, $location, $routeParams, BillGetApi) {
+
+    $scope.response = null;
     $scope.bill = null;
-    $scope.paddedMilestones = [];
-    $scope.selectedVersion = "";
+    $scope.amdVersion = "";
 
     $scope.init = function() {
         $scope.session = $routeParams.session;
         $scope.printNo = $routeParams.printNo;
-        $scope.billResult = BillGetApi.get({printNo: $scope.printNo, session: $scope.session}, function() {
-            if ($scope.billResult.success) {
-                $scope.bill = $scope.billResult.result;
-                $scope.selectedVersion = $scope.bill.activeVersion;
-                $scope.paddedMilestones = $scope.getPaddedMilestones();
+        $scope.response = BillGetApi.get({printNo: $scope.printNo, session: $scope.session}, function() {
+            if ($scope.response.success) {
+                $scope.bill = $scope.response.result;
+                $scope.setHeaderText('NYS ' + $filter('resolutionOrBill')($scope.bill.billType.resolution) + ' ' +
+                                     $scope.bill.basePrintNo + '-' + $scope.bill.session);
+                $scope.amdVersion = $scope.bill.activeVersion;
             }
         });
     }();
-
-    $scope.search = function() {
-        $location.search("search", $scope.searchTerm);
-    };
 
     $scope.getCurrentVersion = function() {
         if ($scope.bill) {

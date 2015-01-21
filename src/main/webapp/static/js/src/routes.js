@@ -8,7 +8,8 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
     });
     /** --- Bills --- */
     $routeProvider.when(ctxPath + '/bills', {
-        templateUrl: ctxPath + '/partial/content/bill-search'
+        templateUrl: ctxPath + '/partial/content/bill-search',
+        reloadOnSearch: false
     });
     $routeProvider.when(ctxPath + '/bills/:session/:printNo', {
         templateUrl: ctxPath + '/partial/content/bill-view'
