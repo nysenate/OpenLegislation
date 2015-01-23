@@ -27,7 +27,7 @@
         <%-- Left Nav Menu Items --%>
         <div class="left-nav-menu">
           <material-menu>
-            <menu-section title="Welcome" url="${ctxPath}/">
+            <menu-section title="Welcome" url="${ctxPath}">
               <menu-item url="${ctxPath}/#about">About</menu-item>
               <menu-item url="${ctxPath}/#api-keys">Obtain API Key</menu-item>
               <menu-item url="${ctxPath}/#contact">Questions/Feedback</menu-item>
@@ -40,14 +40,14 @@
               <menu-item url="${ctxPath}/members">Senate Membership</menu-item>
               <menu-item url="${ctxPath}/transcripts">Floor/Hearing Transcripts</menu-item>
             </menu-section>
-            <menu-section title="Manage">
-              <menu-item url="${ctxPath}/">Data Processes</menu-item>
-              <menu-item url="${ctxPath}/">ElasticSearch/Cache Tools</menu-item>
-              <menu-item url="${ctxPath}/">Notification Settings</menu-item>
+            <menu-section title="Manage" url="${ctxPath}/manage">
+              <menu-item url="${ctxPath}/manage/processes">Data Processes</menu-item>
+              <menu-item url="${ctxPath}/manage/tools">ElasticSearch/Cache Tools</menu-item>
+              <menu-item url="${ctxPath}/manage/notifications">Notification Settings</menu-item>
             </menu-section>
-            <menu-section title="Reports">
+            <menu-section title="Reports" url="${ctxPath}/reports">
             </menu-section>
-            <menu-section url="${ctxPath}/docs" title="API Documentation">
+            <menu-section title="API Documentation" url="${ctxPath}/docs">
             </menu-section>
           </material-menu>
         </div>

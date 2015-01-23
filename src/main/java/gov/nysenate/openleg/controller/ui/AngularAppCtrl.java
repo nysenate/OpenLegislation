@@ -11,9 +11,17 @@ public class AngularAppCtrl
     private static final Logger logger = LoggerFactory.getLogger(AngularAppCtrl.class);
 
     @RequestMapping({"/",
+                     "/data/**",
                      "/bills/**",
                      "/calendars/**",
-                     "/laws/**"})
+                     "/agendas/**",
+                     "/transcripts/**",
+                     "/members/**",
+                     "/laws/**",
+                     "/sources/**",
+                     "/reports/**",
+                     "/manage/**",
+                     "/admin/**"})
     public String home() {
         return "home";
     }

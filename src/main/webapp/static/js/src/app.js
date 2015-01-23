@@ -1,8 +1,5 @@
 /** --- Module configuration --- */
 
-var coreModule = angular.module('open.core', ['ngRoute']);
-//var reportModule = angular.module('report', ['ngRoute', commonModule.name]);
-
 var openApp = angular.module('open',
     // External modules
     ['ngRoute', 'ngResource', 'ngMaterial',
@@ -46,39 +43,84 @@ openApp.controller('LandingCtrl', ['$scope', function($scope) {
 
 /**
  * Main Menu Directive
+ * -------------------
+ * Constructs the left navigation menu with collapsible sections. Check out the fancy ink ripples!
+ * Usage:
+ * <material-menu>
+ *     <menu-section title="Title of the section" url="Optional Section URL">
+ *         <menu-item url="URL of the section item">Title of the menu item</menu-item>
+*          ...
+ *     </menu-section>
+ * </material-menu>
  */
-openApp.directive('materialMenu', ['$compile', '$location', function($compile, $location) {
+openApp.directive('materialMenu', ['$compile', '$rootScope', '$log', '$location',
+                  function($compile, $rootScope, $log, $location) {
     return {
+        scope: {},    // Isolated scope
+        template:
+        '<nav>' +
+        '  <div ng-repeat="section in menu.sections">' +
+        '    <a ng-class="{active: isSectionSelected(section)}" ng-href="{{section.url}}"' +
+        '       class="menu-item menu-title md-menu-item" md-ink-ripple="#bbb" ' +
+        '       >{{section.title}}' +
+        '    </a>' +
+        '    <div ng-if="section.items" ng-repeat="item in section.items">' +
+        '      <a ng-class="{active: isItemSelected(item)}"' +
+        '         class="menu-item menu-sub-item md-menu-item" md-ink-ripple="#bbb" ' +
+        '         ng-show="isSectionSelected(section)" ' +
+        '         ng-href="{{item.url}}">' +
+        '         <span ng-bind="item.title"></span>' +
+        '      </a>' +
+        '    </div>' +
+        '  </div>' +
+        '</nav>',
         restrict: 'E',
         replace: true,
-        scope: {},
-        template:
-            '<nav>' +
-            '  <div ng-repeat="section in menu.sections">' +
-            '    <a ng-class="{active: isSectionSelected(section)}" ng-href="{{section.url}}"' +
-            '       class="menu-item menu-title md-menu-item" md-ink-ripple="#bbb" ' +
-            '       ng-click="selectSection(section)">{{section.title}}' +
-            '    </a>' +
-            '    <a class="menu-item menu-sub-item md-menu-item" md-ink-ripple="#bbb" ' +
-            '       ng-show="isSectionSelected(section)" ' +
-            '       ng-repeat="item in section.items"' +
-            '       ng-href="{{item.url}}">' +
-            '      <span ng-bind="item.title"></span>' +
-            '    </a>' +
-            '  </div>' +
-            '</nav>',
         controller : function($scope) {
             $scope.isSectionSelected = function(section) {
                 return section.active;
             };
+            $scope.isItemSelected = function(item) {
+                return item.active;
+            };
             $scope.selectSection = function(section) {
-                $scope.menu.sections.forEach(function(s) {s.active = false;});
+                deselectMenu();
                 section.active = true;
+            };
+            $scope.selectItem = function(item) {
+                deselectMenu(true);
+                item.active = true;
+            };
+
+            function deselectMenu(itemsOnly) {
+                angular.forEach($scope.urlMap, function(s) {
+                    if (!itemsOnly || !s.isSection) {
+                        s.ref.active = false;
+                    }
+                });
             }
+
+            $rootScope.$on('$routeChangeSuccess', function() {
+                console.log("Route update!" + $location.path());
+                $scope.urlMap.some(function(secItem) {
+                    if (secItem.re.test($location.path())) {
+                        if (secItem.isSection) {
+                            $scope.selectSection(secItem.ref);
+                        }
+                        else {
+                            $scope.selectSection(secItem.secRef);
+                            $scope.selectItem(secItem.ref);
+                        }
+                        return true;
+                    }
+                    return false;
+                });
+            });
         },
         compile: function compile($elem, attrs, transclude) {
             return {
                 pre: function preLink(scope, $elem, attrs) {
+                    // The menu object is used to render the nav.
                     scope.menu = {sections: []};
                     var $sections = $($elem.context).children('menu-section');
                     angular.forEach($sections, function(_s) {
@@ -89,21 +131,18 @@ openApp.directive('materialMenu', ['$compile', '$location', function($compile, $
                         });
                         scope.menu.sections.push(section);
                     });
+                    // The url map is used to find route matches when the location changes.
+                    scope.urlMap = [];
+                    angular.forEach(scope.menu.sections, function(section){
+                        scope.urlMap.push({isSection: true, url: section.url, re: new RegExp('^' + section.url), ref: section});
+                        angular.forEach(section.items, function(item) {
+                            scope.urlMap.push({isSection: false, url: item.url, re: new RegExp('^' + item.url),
+                                               ref: item, secRef: section});
+                        });
+                    });
+                    scope.urlMap.sort(function(a,b) {return b.url.length - a.url.length});
                 }
             }
         }
     }
-}]);
-
-openApp.controller('TopNavCtrl', ['$scope', '$route', function($scope, $route) {
-
-    $scope.currActiveLink;
-
-    $scope.$on('$routeChangeSuccess', function(event, r) {
-        if ($scope.currActiveLink != r.$$route.originalPath) {
-            $("nav a").parent().removeClass("active");
-            $("nav a[href='" + r.$$route.originalPath + "']").parent().addClass("active");
-            $scope.currActiveLink = r.$$route.originalPath;
-        }
-    });
 }]);
