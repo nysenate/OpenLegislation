@@ -82,6 +82,9 @@ public class Environment
     @Value("${notifications.enabled}")
     private boolean notificationsEnabled;
 
+    @Value("${slack.notification.line.limit}")
+    private int slackLineLimit;
+
     /** --- Domain Url --- */
 
     /** The domain and the context path of the application */
@@ -217,5 +220,17 @@ public class Environment
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public int getSlackLineLimit() {
+        return slackLineLimit;
+    }
+
+    public void setSlackLineLimit(int slackLineLimit) {
+        this.slackLineLimit = slackLineLimit;
+    }
+
+    public void setNotificationsEnabled(boolean notificationsEnabled) {
+        this.notificationsEnabled = notificationsEnabled;
     }
 }

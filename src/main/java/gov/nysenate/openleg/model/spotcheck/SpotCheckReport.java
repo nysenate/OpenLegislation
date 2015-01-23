@@ -32,6 +32,12 @@ public class SpotCheckReport<ContentKey>
 
     /** --- Methods --- */
 
+    public int getTotalMismatchCount() {
+        return observations.values().stream()
+                .map(obs -> obs.getMismatches().size())
+                .reduce(0, (a, b) -> a + b);
+    }
+
     /**
      * Get the number of mismatches across all observations grouped by the mismatch status.
      *
@@ -72,6 +78,11 @@ public class SpotCheckReport<ContentKey>
         throw new IllegalStateException("The observations on this report have not yet been set.");
     }
 
+    /**
+     * Gets a count of mismatch statuses grouped by type across all observations.
+     *
+     * @return Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchType, Long>>
+     */
     public Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchType, Long>> getMismatchStatusTypeCounts() {
         if (observations != null) {
             Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchType, Long>> counts = new HashMap<>();
