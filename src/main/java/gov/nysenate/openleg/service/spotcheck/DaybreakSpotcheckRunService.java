@@ -111,16 +111,14 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService {
         StringBuilder messageBuilder = new StringBuilder();
 
         messageBuilder.append(summary)
-                .append("\n\n")
-                .append(env.getUrl())
+                .append("\n\n");
+
+        messageBuilder.append(env.getUrl())
                 .append("/admin/report/daybreak/")
                 .append(daybreakReport.getReportDateTime())
                 .append("\n\n");
 
-        messageBuilder.append(daybreakReport.getReportId())
-                .append("\n\n");
-
-        messageBuilder.append("Error Counts:\n");
+        messageBuilder.append("Total Errors: ").append(daybreakReport.getTotalMismatchCount()).append("\n");
 
         daybreakReport.getMismatchStatusTypeCounts().forEach((status, typeCounts) -> {
             long totalTypeCounts = typeCounts.values().stream().reduce(0L, (a, b) -> a + b);

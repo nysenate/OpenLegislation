@@ -29,7 +29,8 @@ public class SimpleEmailNotificationSender extends EmailNotificationSender {
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setSubject(registeredNotification.getSummary());
-        message.setText("{notification view page url goes here}");
+        message.setText(getDisplayUrl(registeredNotification
+        ));
 
         sendNotificationEmail(message, subscriptions);
     }

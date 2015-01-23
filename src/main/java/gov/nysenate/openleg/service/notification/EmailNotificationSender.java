@@ -8,7 +8,7 @@ import org.springframework.mail.SimpleMailMessage;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public abstract class EmailNotificationSender implements NotificationSender {
+public abstract class EmailNotificationSender extends BaseNotificationSender {
 
     @Autowired
     private SendMailService sendMailService;
