@@ -21,7 +21,7 @@ coreModule.filter('moment', ['$filter', function($filter) {
 
 /** --- Am Charts --- */
 
-commonModule.directive('amChart', function () {
+coreModule.directive('amChart', function () {
     return {
         restrict: 'E',
         replace:true,
@@ -37,8 +37,9 @@ commonModule.directive('amChart', function () {
 
             var initChart = function() {
                 if (chart) chart.destroy();
+                var chartId = scope.chartId || 'am-chart';
                 var config = scope.config || {};
-                chart = AmCharts.makeChart("chartdiv", config);
+                chart = AmCharts.makeChart(chartId, config);
             };
             initChart();
 
