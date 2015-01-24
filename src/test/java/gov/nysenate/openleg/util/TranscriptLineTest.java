@@ -56,24 +56,24 @@ public class TranscriptLineTest {
 
     @Test
     public void testDateHandling() {
-        TranscriptLine line = new TranscriptLine("    11          March 26, 2011");
+        TranscriptLine line = new TranscriptLine("             Mar 26, 2011");
         assertTrue(line.isDate());
-        assertEquals("March 26 2011", line.getDateString());
+        assertEquals("Mar 26 2011", line.getDateString());
 
         // e.g 031699.v1
-        line = new TranscriptLine("                March 16, 1999.");
+        line = new TranscriptLine("                Mar 16, 1999.");
         assertTrue(line.isDate());
-        assertEquals("March 16 1999", line.getDateString());
+        assertEquals("Mar 16 1999", line.getDateString());
 
         // e.g. 022894.v1
-        line = new TranscriptLine("                February 28 , 1994");
+        line = new TranscriptLine("                Feb 28 , 1994");
         assertTrue(line.isDate());
-        assertEquals("February 28 1994", line.getDateString());
+        assertEquals("Feb 28 1994", line.getDateString());
 
         // e.g. 033193.v1
-        line = new TranscriptLine("                March 31,1993");
+        line = new TranscriptLine("                Mar 31,1993");
         assertTrue(line.isDate());
-        assertEquals("March 31 1993", line.getDateString());
+        assertEquals("Mar 31 1993", line.getDateString());
     }
 
     @Test
