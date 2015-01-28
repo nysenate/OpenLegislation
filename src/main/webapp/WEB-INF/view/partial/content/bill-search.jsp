@@ -27,14 +27,14 @@
               <a ng-repeat="r in billSearch.results" ng-init="bill = r.result" class="result-link"
                  ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}">
                 <md-item>
-                  <md-item-content style="cursor: pointer;">
-                    <div class="md-tile-left margin-left-10" style="width:180px;">
+                  <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
+                    <div style="width:180px;padding:16px;">
                       <h3 class="no-margin">{{bill.basePrintNo}} - {{bill.session}}</h3>
                       <h5 class="no-margin">{{bill.sponsor.member.fullName}}</h5>
                     </div>
-                    <div class="md-tile-content">
+                    <div flex class="md-tile-content">
                       <h4>{{bill.title}}</h4>
-                      <h6 class="gray7 no-margin">{{getStatusDesc(bill.status)}}</h6>
+                      <h6 class="gray7 no-margin capitalize">{{getStatusDesc(bill.status) | lowercase}}</h6>
                     </div>
                   </md-item-content>
                   <md-divider ng-if="!$last"/>

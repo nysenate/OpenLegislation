@@ -1,53 +1,61 @@
 /** Routing Configuration --- */
 
 angular.module('open').config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+    $routeProvider
+        /** --- Home --- */
 
-    /** --- Home --- */
-    $routeProvider.when(ctxPath, {
-        templateUrl: ctxPath + '/partial/home/landing'
-    });
-    /** --- Bills --- */
-    $routeProvider.when(ctxPath + '/bills', {
-        templateUrl: ctxPath + '/partial/content/bill-search',
-        reloadOnSearch: false
-    });
-    $routeProvider.when(ctxPath + '/bills/:session/:printNo', {
-        templateUrl: ctxPath + '/partial/content/bill-view'
-    });
-    /** --- Agendas --- */
-    $routeProvider.when(ctxPath + '/agendas', {
-        templateUrl: ctxPath + '/partial/content/..'
-    });
-    /** --- Calendars --- */
-    $routeProvider.when(ctxPath + '/calendars', {
-        templateUrl: ctxPath + '/partial/content/calendar/calendar-view'
-    });
-    $routeProvider.when(ctxPath + '/calendars/:year/:calNo', {
-        templateUrl: ctxPath + '/partial/content/calendar/calendar-view'
-    });
-    /** --- Laws --- */
-    $routeProvider.when(ctxPath + '/laws', {
-        templateUrl: ctxPath + '/partial/content/law-search'
-    });
-    $routeProvider.when(ctxPath + '/laws/:lawId', {
-        templateUrl: ctxPath + '/partial/content/law-view'
-    });
-    /** --- Transcripts --- */
-    $routeProvider.when(ctxPath + '/transcripts', {
-        templateUrl: ctxPath + '/partial/content/..'
-    });
-    /** --- Admin Reports --- */
-    $routeProvider.when(ctxPath + '/admin/report', {
-        redirectTo: ctxPath + '/admin/report/daybreak'
-    });
-    $routeProvider.when(ctxPath + '/admin/report/daybreak', {
-        templateUrl: ctxPath + '/partial/report/daybreak-report-summary',
-        controller: 'DaybreakSummaryCtrl'
-    });
-    $routeProvider.when(ctxPath + '/admin/report/daybreak/:reportDateTime', {
-        templateUrl: ctxPath + '/partial/report/daybreak-report-error',
-        controller: 'DaybreakReportErrorCtrl'
-    });
+        .when(ctxPath, {
+            templateUrl: ctxPath + '/partial/home/landing'
+        })
+        .when(ctxPath + '/data', {
+            template: 'Data Home Page'
+        })
+
+        /** --- Bills --- */
+
+        .when(ctxPath + '/bills', { templateUrl: ctxPath + '/partial/content/bill-search', reloadOnSearch: false })
+        .when(ctxPath + '/bills/:session/:printNo', { templateUrl: ctxPath + '/partial/content/bill-view', reloadOnSearch: false })
+
+        /** --- Agendas --- */
+
+        .when(ctxPath + '/agendas/', { template: 'Agendas Page' })
+        .when(ctxPath + '/agendas/:year/', { template: 'Agendas Page' })
+        .when(ctxPath + '/agendas/:year/:agendaNo', { template: 'Agendas Page' })
+        .when(ctxPath + '/agendas/:year/:agendaNo/:committee', { template: 'Agendas Page' })
+
+        /** --- Calendars --- */
+
+        .when(ctxPath + '/calendars', {
+            templateUrl: ctxPath + '/partial/content/calendar/calendar-view'
+        })
+        .when(ctxPath + '/calendars/:year/:calNo', {
+            templateUrl: ctxPath + '/partial/content/calendar/calendar-view'
+        })
+
+        /** --- Laws --- */
+        .when(ctxPath + '/laws', {
+            templateUrl: ctxPath + '/partial/content/law-search'
+        })
+
+        .when(ctxPath + '/laws/:lawId', {
+            templateUrl: ctxPath + '/partial/content/law-view'
+        })
+
+        /** --- Transcripts --- */
+        .when(ctxPath + '/transcripts', {
+            templateUrl: ctxPath + '/partial/content/..'
+        })
+
+        /** --- Reports --- */
+
+        .when(ctxPath + '/reports', {
+            templateUrl: ctxPath + '/partial/report/daybreak-report-summary'
+        })
+
+        /** --- Manage --- */
+        .when(ctxPath + '/manage', {
+            template: 'Manage Page'
+        });
 
     $locationProvider.html5Mode(true);
     $locationProvider.hashPrefix('!');

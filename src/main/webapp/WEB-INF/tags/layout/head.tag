@@ -21,9 +21,9 @@
     <script type="application/javascript" src="<%= request.getContextPath()%>/static/js/dest/vendor.min.js"></script>
 
     <!-- Application Scripts -->
+    <script type="application/javascript" src="${ctxPath}/static/js/src/core.js"></script>
     <script type="application/javascript" src="${ctxPath}/static/js/src/app.js"></script>
     <script type="application/javascript" src="${ctxPath}/static/js/src/routes.js"></script>
-    <!--<script type="application/javascript" src="${ctxPath}/static/js/src/common.js"></script> -->
 
     <script>
         window.ctxPath = "<%= request.getContextPath() %>";

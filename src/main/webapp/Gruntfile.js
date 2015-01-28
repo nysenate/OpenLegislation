@@ -66,15 +66,11 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/angular-aria/angular-aria.min.js',
                         '<%= bowerRoot %>/hammerjs/hammer.min.js',
                         '<%= bowerRoot %>/angular-material/angular-material.min.js',
-                        '<%= bowerRoot %>/ng-table/ng-table.js',
+                        '<%= bowerRoot %>/angular-smart-table/dist/smart-table.min.js',
                         '<%= bowerRoot %>/moment/min/moment.min.js',
-                        '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js',
-                        '<%= bowerRoot %>/amcharts/dist/amcharts/amcharts.js',
-                        '<%= bowerRoot %>/amcharts/dist/amcharts/serial.js'
-                        //     '<%= bowerRoot %>/fullcalendar/fullcalendar.min.js'
-                        //     '<%= bowerRoot %>/foundation/js/foundation.min.js',
-                        //     '<%= bowerRoot %>/angular-foundation/mm-foundation-tpls.min.js',
-                        //     '<%= bowerRoot %>/pace/pace.min.js',
+                        '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js'
+                        //'<%= bowerRoot %>/amcharts/dist/amcharts/amcharts.js',
+                        //'<%= bowerRoot %>/amcharts/dist/amcharts/serial.js'
                     ]//'<%= jsDest %>/main.min.js': ['<%= jsSource %>/**/*.js']
                 }
             }

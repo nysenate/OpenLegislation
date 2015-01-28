@@ -2,7 +2,7 @@
 
 var openApp = angular.module('open',
     // External modules
-    ['ngRoute', 'ngResource', 'ngMaterial',
+    ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table',
     // Internal modules
      'open.bill']);
 
@@ -53,21 +53,21 @@ openApp.controller('LandingCtrl', ['$scope', function($scope) {
  *     </menu-section>
  * </material-menu>
  */
-openApp.directive('materialMenu', ['$compile', '$rootScope', '$log', '$location',
-                  function($compile, $rootScope, $log, $location) {
+openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log', '$location',
+                  function($compile, $rootScope, $mdSidenav, $log, $location) {
     return {
         scope: {},    // Isolated scope
         template:
         '<nav>' +
         '  <div ng-repeat="section in menu.sections">' +
         '    <a ng-class="{active: isSectionSelected(section)}" ng-href="{{section.url}}"' +
-        '       class="menu-item menu-title md-menu-item" md-ink-ripple="#bbb" ' +
+        '       class="menu-item menu-title md-menu-item" md-ink-ripple="#bbb" tab-index="-1"' +
         '       >{{section.title}}' +
         '    </a>' +
         '    <div ng-if="section.items" ng-repeat="item in section.items">' +
         '      <a ng-class="{active: isItemSelected(item)}"' +
         '         class="menu-item menu-sub-item md-menu-item" md-ink-ripple="#bbb" ' +
-        '         ng-show="isSectionSelected(section)" ' +
+        '         ng-show="isSectionSelected(section)" tab-index="-1"' +
         '         ng-href="{{item.url}}">' +
         '         <span ng-bind="item.title"></span>' +
         '      </a>' +

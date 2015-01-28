@@ -10,9 +10,6 @@
 
 html, body {
   height: 100%;
-}
-
-body {
   font-family: 'Open Sans', sans-serif;
   background: #f5f5f5;
 }
@@ -32,14 +29,34 @@ pre {
   font-family: 'Inconsolata', monospace;
 }
 
+/** --- Angular Material --- */
+
 md-toolbar {
   min-height: 70px;
+  &.auto-height {
+    min-height: 0;
+    height: auto;
+    max-height: none;
+  }
+  &.md-info-tools {
+    min-height: 0;
+    width: auto;
+    padding: 10px;
+  }
 }
 
 .md-whiteframe-z0 {
   @include box-shadow(0 2px 5px 0 rgba(0,0,0,.10));
 }
 
+md-card {
+  &.content-card {
+    @extend .md-whiteframe-z0;
+    @extend .white-bg;
+    @extend .padding-10;
+  }
+
+}
 
 /** --- Hacks --- */
 
@@ -64,22 +81,6 @@ md-toolbar {
   }
 }
 
-.view-animate.ng-enter, .view-animate.ng-leave {
-  -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-  opacity: 0;
-}
-
-.view-animate.ng-enter {
-  opacity: 0;
-}
-.view-animate.ng-enter.ng-enter-active {
-  opacity: 1;
-}
-.view-animate.ng-leave.ng-leave-active {
-  opacity: 0;
-}
-
 /** --- Common --- */
 
 .text-xsmall {
@@ -99,7 +100,7 @@ md-toolbar {
 }
 
 .bold {
-  font-weight: 600;
+  font-weight: 600 !important;
 }
 
 .vertical-align {
@@ -133,16 +134,20 @@ md-toolbar {
   margin: 20px;
 }
 
+.margin-left-10 {
+  margin-left: 10px;
+}
+
 .margin-left-20 {
-  margin-left: 20px !important;
+  margin-left: 20px;
 }
 
 .margin-right-10 {
-  margin-right: 10px !important;
+  margin-right: 10px;
 }
 
 .margin-right-20 {
-  margin-right: 20px !important;
+  margin-right: 20px;
 }
 
 .padding-10 {
@@ -160,6 +165,10 @@ md-toolbar {
 .bold-span-1 {
   font-size: .9em;
   font-weight: 600;
+}
+
+.no-margin {
+  margin: 0;
 }
 
 .no-padding {
@@ -225,13 +234,36 @@ a.white-2-blue {
   background: #fafafa;
 }
 
+a.result-link {
+  text-decoration: none;
+  color: #555;
+  &:hover {
+    color: $blue5;
+    background: $gray3;
+    md-item-content {
+      @extend .md-whiteframe-z0;
+    }
+  }
+}
+
+label.block-label {
+  font-size: .8rem;
+  margin-bottom: 10px;
+  cursor: none;
+}
+
 /** --- Left Nav --- */
 
 #left-nav {
-  overflow:hidden;
-  min-height:100vh;
-  width:300px;
-  @include box-shadow(-4px 0 16px #ccc);
+  min-height: 100vh;
+  width: 300px;
+  position: fixed;
+  background: #384047;
+  @include box-shadow(-4px 0 16px #333);
+}
+
+#left-nav-spacer {
+  width: 300px;
 }
 
 #logo-wrapper {
@@ -258,7 +290,6 @@ a.white-2-blue {
 
 .left-nav-menu {
   width:100%;
-  background:#fdfdfd;
   padding-top:20px;
 }
 
@@ -269,8 +300,8 @@ a.white-2-blue {
   border-width: 0;
   cursor: pointer;
   display: block;
-  color: #666;
-  font-size: 13px;
+  color: #eee;
+  font-size: 0.8rem;
   line-height: 40px;
   max-height: 40px;
   opacity: 1;
@@ -293,16 +324,12 @@ a.white-2-blue {
   max-height: 0;
   opacity: 0;
 }
-.menu-item:hover {
-  color: #1976d2;
-}
 .menu-item:focus {
   font-weight: bold;
 }
 .menu-item.menu-title {
-  color: #888;
+  color: white;
   font-weight: bold;
-  border-bottom:1px solid $gray2;
   font-size: 14px;
   padding-left: 20px;
   text-align: left;
@@ -311,84 +338,65 @@ a.white-2-blue {
 }
 .menu-item.menu-title:hover,
 .menu-item.menu-title:focus,
-.menu-item.menu-title.active {
-  color: #1976d2;
-  background: #eee;
+.menu-item.active, {
+  color: white;
+  background: #596671;
+  font-weight: bold;
 }
 
-.menu-icon {
-  background: none;
-  border: 1px solid #ddd;
-  padding: 5px;
-  margin-right: 16px;
-  cursor: pointer;
+.menu-item:hover {
+  background: #596671;
 }
 
 .top-bar-heading {
   color: #ffffff;
   font-family: 'Roboto Slab', sans-serif;
-  font-size: 1.4rem;
-  padding-left: 25px;
   font-weight: bold;
-}
-
-/** --- Result Listings --- */
-
-.content-row {
-  background: #fafafa;
-  padding: 10px;
-}
-
-
-/** --- Magellan Nav --- */
-
-[data-magellan-expedition], [data-magellan-expedition-clone] {
-  background: #fafafa;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 10px;
-  .def {
-    font-weight: bold;
-    text-transform: none;
-    a {
-      color: #333;
-    }
+  .menu-icon {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 5px;
+    margin-right: 25px;
+    cursor: pointer;
+    min-width: 35px;
+    font-size: 1.4rem;
+  }
+  @media only screen and (max-width: 600px) {
+    font-size: 1.0rem;
+  }
+  @media only screen and (min-width: 601px) and (max-width: 1200px) {
+    font-size: 1.2rem;
+  }
+  @media only screen and (min-width: 1201px) {
+    font-size: 1.4rem;
   }
 }
 
-.sub-nav dd.active a {
-  border-radius: 0;
-}
+/** --- Bill Specific Styles --- */
 
-/** --- Custom --- */
-
-.content-column {
-  padding-left: 35px;
-}
-
-.no-bottom-margin {
-  margin-bottom: 0 !important;
-}
-
-.minopacity {
-  opacity: .1;
-}
-
-fieldset {
-  &.no-margin {
-    margin: 0;
+.bill-full-text {
+  white-space: pre;
+  font-family: 'Inconsolata', monospace;
+  @media only screen and (max-width: 480px) {
+    font-size: 0.4rem;
   }
-  border: 1px solid #f1f1f1;
-  padding: .7rem;
+  @media only screen and (min-width: 481px) and (max-width: 600px) {
+    font-size: 0.6rem;
+  }
+  @media only screen and (min-width: 601px) and (max-width: 1200px) {
+    font-size: 0.9rem;
+  }
+  @media only screen and (min-width: 1201px) {
+    font-size: 1.1rem;
+  }
 }
 
-.text-block {
-  padding: 0 1rem 0 .1rem
-}
-
-label.block-label {
-  font-size: .8rem;
-  margin-bottom: 10px;
-  cursor: none;
+.bill-memo-heading {
+  font-weight: 400;
+  display: block;
+  margin: 20px 0;
+  color: rgba(0,0,0,0.54);
+  white-space: pre-line;
 }
 
 /** --- Styles for Report page --- */

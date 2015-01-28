@@ -1,117 +1,6 @@
 @import "compass";
 @import "colors";
 
-#billSearchForm {
-  height: 50px;
-  margin-top: 20px;
-}
-
-#searchBarIcon {
-  height: 42px;
-  width: 50px;
-  line-height: 50px;
-  text-align: center;
-  background: $blue3;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-
-  i {
-    font-size:1.5em;
-    color:white;
-  }
-}
-
-#billSearchBar, #billSearchBarSubmit {
-  height: 42px;
-}
-
-#billSearchBar {
-  width: 100%;
-  font-size: 1em;
-  margin-bottom: 0;
-  border-left: none;
-  @include box-shadow(none);
-}
-
-#billSearchBarSubmit {
-  background: #004D71;
-  text-align: center;
-  color: white;
-  line-height: 42px;
-  cursor: pointer;
-  &:hover {
-    background: #00618f;
-  }
-}
-
-#billSearchInfoBar {
-  color: white;
-  height: 35px;
-  line-height: 35px;
-}
-
-.bill-result-pagination {
-  margin-bottom: 10px;
-  border: 1px solid $gray4;
-  background: #fff;
-  padding: 5px;
-}
-
-.bill-result {
-  &:hover {
-    background: $gray3;
-    cursor: pointer;
-    border-left: 2px solid $blue4;
-    .bill-result-print-no {
-      color: $blue4;
-    }
-  }
-  background: #fff;
-  border-left: 2px solid white;
-  margin-bottom: 5px;
-  padding:10px 5px;
-  border-bottom:1px solid #ddd;
-}
-
-.bill-result-anim {
-  @include transition(all .1s ease);
-  opacity: 0;
-  &.show {
-    opacity: 1;
-  }
-}
-
-.bill-result-id {
-  color: #555;
-  font-size: 1.3rem;
-  display: block;
-}
-
-.bill-milestone-container {
-  height: 75px;
-  padding-right: 25px;
-  text-align: center;
-}
-
-.bill-milestone-small {
-  height: 10px;
-  overflow: hidden;
-  li {
-    padding: 0 2px;
-    .milestone {
-      background:#ddd;
-      height: 100%;
-      &.met {
-        background: #6CB0CA;
-        border-right: none;
-      }
-    }
-
-  }
-}
-
 .milestone-text {
   text-transform: capitalize;
   color: #444;
@@ -170,13 +59,7 @@ ul.bill-milestone-large {
   }
 }
 
-.bill-memo-heading {
-  font-weight: 600;
-  display: block;
-  margin: 20px 0 10px 0;
-  color: #444;
-  border-bottom: 1px solid $gray4;
-}
+
 
 .resolution-heading {
   background: white;

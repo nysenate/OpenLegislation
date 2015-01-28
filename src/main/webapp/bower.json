@@ -16,6 +16,7 @@
     "angular-ui-calendar": "0.8.1"
   },
   "devDependencies": {
-    "angular-material": "0.7.0-rc3"
+    "angular-material": "0.7.0",
+    "angular-smart-table": "~1.4.8"
   }
 }

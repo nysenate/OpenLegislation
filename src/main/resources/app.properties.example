@@ -164,7 +164,7 @@ scheduler.process.cron = 0 */5 * * * *
 # When to run spot-check reports. (Default: 0 */2 * * * FRI-SAT)
 scheduler.spotcheck.cron = 0 */2 * * * FRI-SAT
 
-# --- Mail Configuration -----------------------------------------------------------------------------------------------
+# --- Mail Configuration ------------------------------------------------------
 
 # Connection information for the mail account that receives daybreak emails
 checkmail.host = imap.gmail.com
@@ -186,17 +186,19 @@ mail.smtp.user = nysenatedev
 mail.smtp.password =
 mail.debug = false
 
-# --- Notification Configuration ---------------------------------------------------------------------------------------
+# --- Notification Configuration ----------------------------------------------
 
 # Set to true to enable notification sending. (Default false)
 notifications.enabled = false
 
-# --- Slack Configuration ----------------------------------------------------------------------------------------------
+# --- Slack Configuration -----------------------------------------------------
 
 # The webhook url used to send slack messages.  See https://nysstech.slack.com/services/3391217030
 slack.webhook.url =
 
-# --- Domain Configuration ---------------------------------------------------------------------------------------------
+slack.notification.line.limit = 5
+
+# --- Domain Configuration ----------------------------------------------------
 
 # The domain url and context path that openleg is hosted on (used for generating links)
 domain.url = http://localhost:8080/legislation

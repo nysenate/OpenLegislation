@@ -24,7 +24,8 @@ billModule.factory('BillGetApi', ['$resource', function($resource) {
 
 /** --- Parent Bill Controller --- */
 
-billModule.controller('BillCtrl', ['$scope', '$location', '$route', function($scope, $location, $route) {
+billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route',
+                       function($scope, $rootScope, $location, $route) {
 
     $scope.selectedView = parseInt($route.current.params.view, 10) || 0;
 
@@ -55,9 +56,9 @@ billModule.controller('BillCtrl', ['$scope', '$location', '$route', function($sc
         if (status) {
             switch (status.statusType) {
                 case "IN_SENATE_COMM":
-                    desc = "In Senate " + status.committeeName + " Committee"; break;
+                    desc = "In Senate " + status.committeeName.toLowerCase() + " Committee"; break;
                 case "IN_ASSEMBLY_COMM":
-                    desc = "In Assembly " + status.committeeName + " Committee"; break;
+                    desc = "In Assembly " + status.committeeName.toLowerCase() + " Committee"; break;
                 case "SENATE_FLOOR":
                     desc = "On Senate Floor as Calendar No: " + status.billCalNo; break;
                 case "ASSEMBLY_FLOOR":
@@ -74,7 +75,8 @@ billModule.controller('BillCtrl', ['$scope', '$location', '$route', function($sc
 
 billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location','BillListingApi', 'BillSearchApi',
                       function($scope, $filter, $routeParams, $location, BillListing, BillSearch) {
-    $scope.setHeaderText('Browse NYS Bills and Resolutions');
+    $scope.setHeaderText('NYS Bills and Resolutions');
+    $scope.selectedView = 0;
 
     $scope.billSearch = {
         searched: false,
@@ -167,35 +169,6 @@ billModule.filter('prettySponsorMemo', function($sce){
     }
 });
 
-billModule.filter('prettyFullText', function($sce) {
-    var lineNumberPattern = /^\s{1,5}[0-9]+/gm;
-    return function(text) {
-        if (text) {
-            if (text.length > 100000) {
-                text = text.substring(0, 100000) + "\n --- INTENTIONALLY TRUNCATED ---";
-            }
-            console.log("---- START BILL TEXT PARSE ----");
-            text = text.replace(lineNumberPattern, "   ");
-            var section = 1;
-            var sectionRegex = new RegExp("^\\s*(S(?:ection)?\\s+(\\d+)\\.)", "gm");
-            var match = null;
-            while ((match = sectionRegex.exec(text)) !== null) {
-                console.log("MATCH -> " + match);
-                if (match[2] == section) {
-                    console.log("Found section: " + match[2] + " at index " + match.index);
-                    text = text.slice(0, match.index) + "<span class='label'>"
-                          + "Section " + match[2] + "</span>" + text.slice(match.index + match[0].length, text.length);
-                    section++;
-                }
-            }
-        }
-        else {
-            text = "No full text available.";
-        }
-        return $sce.trustAsHtml(text);
-    }
-});
-
 billModule.filter('prettyResolutionText', function($sce) {
     var whereasPattern = /^ *WHEREAS[,; ]/gm;
     var resolvedPattern = /^ *RESOLVED[,; ]/gm;
@@ -231,7 +204,13 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
 
     $scope.response = null;
     $scope.bill = null;
-    $scope.amdVersion = "";
+    $scope.milestonePercentage = 0;
+    $scope.curr = { amdVersion: ''};
+    $scope.selectedView = 1;
+
+    $scope.$watch('selectedView', function() {
+        $location.search('view', $scope.selectedView);
+    });
 
     $scope.init = function() {
         $scope.session = $routeParams.session;
@@ -239,22 +218,19 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         $scope.response = BillGetApi.get({printNo: $scope.printNo, session: $scope.session}, function() {
             if ($scope.response.success) {
                 $scope.bill = $scope.response.result;
-                $scope.setHeaderText('NYS ' + $filter('resolutionOrBill')($scope.bill.billType.resolution) + ' ' +
-                                     $scope.bill.basePrintNo + '-' + $scope.bill.session);
-                $scope.amdVersion = $scope.bill.activeVersion;
+                $scope.setHeaderText('NYS ' + $scope.bill.billType.desc + ' ' +
+                    $filter('resolutionOrBill')($scope.bill.billType.resolution) + ' ' +
+                    $scope.bill.basePrintNo + '-' + $scope.bill.session);
+                $scope.curr.amdVersion = $scope.bill.activeVersion;
+                $scope.milestonePercentage = Math.ceil($scope.bill.milestones.size * 12.5);
+                if ($scope.milestonePercentage > 100) $scope.milestonePercentage = 100;
             }
         });
     }();
 
-    $scope.getCurrentVersion = function() {
-        if ($scope.bill) {
-            return $scope.bill.amendments.items[$scope.selectedVersion];
-        }
-        return null;
-    };
-
-    $scope.setSelectedVersion = function(version) {
-        $scope.selectedVersion = version;
+    $scope.backToSearch = function() {
+        $location.search('view', 0);
+        $location.path(ctxPath + '/bills');
     };
 
     /**
@@ -302,60 +278,5 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
             createMilestone("Sent to Governor"),
             createMilestone("Signed Into Law")]);
         return milestoneArr;
-    }
-}]);
-
-billModule.directive('votePie', [function() {
-    var convertVotesToSeries = function(votes) {
-        var colors = {
-            'AYE': '#43ac6a', 'AYEWR': '#348853', 'NAY': '#f04124', 'ABD': '#666', 'EXC': '#ccc', 'ABS': '#f1f1f1'
-        };
-        var series = [];
-        for (var code in votes) {
-            if (votes.hasOwnProperty(code)) {
-                series.push({name: code, y: votes[code].size, color: colors[code]});
-            }
-        }
-        return series;
-    };
-    return {
-        restrict: 'AE',
-        scope: {
-            votes: '=',
-            plotBg: '@',
-            height: '@',
-            width: '@'
-        },
-        replace: true,
-        link: function($scope, $element, $attrs) {
-            $element.highcharts({
-                credits: {
-                    enabled: false
-                },
-                chart: {
-                    plotBackgroundColor: $scope.plotBg,
-                    plotBorderWidth: 0,
-                    plotShadow: true,
-                    height: eval($scope.height),
-                    width: eval($scope.width),
-                    spacing: [0, 0, 0, 0]
-                },
-                title: {
-                    text: null
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: false,
-                        cursor: 'pointer',
-                        size: 90
-                    }
-                },
-                series: [{
-                    type: 'pie',
-                    name: 'Votes',
-                    data: convertVotesToSeries($scope.votes)
-                }]
-            });
-        }
     }
 }]);
