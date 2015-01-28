@@ -81,7 +81,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         // Get the actions
         bill.setActions(getBillActions(baseParams));
         // Get the prev bill version ids
-        bill.setPreviousVersions(getPrevVersions(baseParams));
+        bill.setPreviousVersions(getAllPreviousVersions(baseParams));
         // Get the associated bill committees
         bill.setPastCommittees(getBillCommittees(baseParams));
         // Get the associated veto memos
@@ -230,6 +230,14 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      */
     public Set<BillId> getPrevVersions(ImmutableParams baseParams) {
         return new HashSet<>(jdbcNamed.query(SqlBillQuery.SELECT_BILL_PREVIOUS_VERSIONS.getSql(schema()), baseParams,
+                             new BillPreviousVersionRowMapper()));
+    }
+
+    /**
+     * Get all previous session year bill ids recursively for the base bill id in the params.
+     */
+    public Set<BillId> getAllPreviousVersions(ImmutableParams baseParams) {
+        return new HashSet<>(jdbcNamed.query(SqlBillQuery.SELECT_ALL_BILL_PREVIOUS_VERSIONS.getSql(schema()), baseParams,
                              new BillPreviousVersionRowMapper()));
     }
 

@@ -29,7 +29,7 @@ public interface BillUpdatesDao
 
     /**
      * Retrieves update digests during a given date range with an optional filter.
-     * Same params as #getUpdates
+     * @see #getUpdates for param details.
      */
     public PaginatedList<UpdateDigest<BaseBillId>> getDetailedUpdates(
         Range<LocalDateTime> dateTimeRange, UpdateType type, BillUpdateField filter, SortOrder dateOrder, LimitOffset limOff);
@@ -38,12 +38,8 @@ public interface BillUpdatesDao
      * Returns a list of digests which contain all the information pertaining to a bill that have changed during the
      * specified date range.
      *
-     * @param billId BaseBillId
-     * @param dateTimeRange Range<LocalDateTime>
-     * @param type UpdateType - The type of updates (based on sobi published date or when data was processed)
-     * @param filter BillUpdateField - If not null, limit updates to those that affect the specified field.
-     * @param dateOrder SortOrder
-     * @param limOff LimitOffset - Restrict the result set
+     * @param billId BaseBillId - The bill id to get updates for.
+     * @see #getUpdates for other param details.
      * @return PaginatedList<UpdateDigest<BaseBillId>>
      */
     public PaginatedList<UpdateDigest<BaseBillId>> getDetailedUpdatesForBill(

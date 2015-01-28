@@ -258,6 +258,20 @@ public enum SqlBillQuery implements BasicSqlQuery
         "SELECT * FROM ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
+    SELECT_ALL_BILL_PREVIOUS_VERSIONS(
+        "WITH RECURSIVE prev_version(bill_id, amend_version, session_year) AS ( \n" +
+        "    SELECT prev_bill_print_no, prev_amend_version, prev_bill_session_year \n" +
+        "    FROM ${schema}.bill_previous_version \n" +
+        "    WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear \n" +
+        "" +
+        "    UNION \n" +
+        "    SELECT prev_bill_print_no, prev_amend_version, prev_bill_session_year \n" +
+        "    FROM prev_version, ${schema}.bill_previous_version \n" +
+        "    WHERE bill_print_no = bill_id AND bill_session_year = session_year) \n" +
+        "SELECT bill_id AS prev_bill_print_no, amend_version AS prev_amend_version, " +
+        "       session_year AS prev_bill_session_year \n" +
+        "FROM prev_version"
+    ),
     INSERT_BILL_PREVIOUS_VERSION(
         "INSERT INTO ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +
         "(bill_print_no, bill_session_year, prev_bill_print_no, prev_bill_session_year, prev_amend_version, " +
