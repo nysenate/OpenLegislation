@@ -10,7 +10,8 @@ public enum SearchIndex
     CALENDAR("calendars"),
     TRANSCRIPT("transcripts"),
     HEARING("hearings"),
-    LAW("laws")
+    LAW("laws"),
+    MEMBER("members")
     ;
 
     String indexName;
