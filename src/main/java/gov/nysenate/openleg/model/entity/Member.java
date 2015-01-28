@@ -41,6 +41,10 @@ public class Member extends Person implements Serializable
 
     public Member() {}
 
+    public Member(int memberId) {
+        this.memberId = memberId;
+    }
+
     public Member(Member other) {
         super(other);
         this.memberId = other.memberId;
