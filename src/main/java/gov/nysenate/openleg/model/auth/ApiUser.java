@@ -16,6 +16,12 @@ public class ApiUser implements Serializable, Comparable <ApiUser>
     /** The user's email address */
     private String email;
 
+    /** The user's name */
+    private String name;
+
+    /** If the user belongs to a certain organization then that will be stored here */
+    private String organizationName;
+
     /** Whether or not the user has confirmed their email address. */
     private boolean authenticated;
 
@@ -73,6 +79,12 @@ public class ApiUser implements Serializable, Comparable <ApiUser>
 
     public Long getNumRequests() { return this.apiRequests; }
     public void setNumRequests(long number) { this.apiRequests = number; }
+
+    public String getName() { return this.name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getOrganizationName() { return this.organizationName; }
+    public void setOrganizationName(String orgName) { this.organizationName = orgName; }
 
 
 }

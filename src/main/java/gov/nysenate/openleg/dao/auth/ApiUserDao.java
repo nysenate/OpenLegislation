@@ -7,6 +7,10 @@ import org.springframework.dao.DataAccessException;
 
 public interface ApiUserDao
 {
+        public void insertUser(ApiUser user) throws DataAccessException;
+
+        public void updateUser(ApiUser user) throws DataAccessException;
+
        public ApiUser getApiUserFromEmail (String email) throws DataAccessException;
 
        public ApiUser getApiUserFromKey (String apikey) throws DataAccessException;
@@ -17,7 +21,6 @@ public interface ApiUserDao
 
        public long getNumRequestFromEmail(String email) throws DataAccessException;
 
-       public void insertUser(ApiUser user) throws DataAccessException;
 
        public String getApiKeyFromEmail (String email) throws DataAccessException;
 

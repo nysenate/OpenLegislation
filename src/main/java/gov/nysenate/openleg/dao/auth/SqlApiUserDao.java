@@ -21,8 +21,17 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @throws org.springframework.dao.DataAccessException
      */
     public void insertUser (ApiUser user) throws DataAccessException {
-        if (jdbcNamed.update(ApiUserQuery.INSERT_API_USER.getSql(schema()), getUserParams(user)) == 0)
+        if (jdbcNamed.update(ApiUserQuery.UPDATE_API_USER.getSql(schema()), getUserParams(user)) == 0)
             jdbcNamed.update(ApiUserQuery.INSERT_API_USER.getSql(schema()), getUserParams(user));
+    }
+
+    /**
+     * Update a preexisting user
+     * @param user The APIUser to update
+     * @throws DataAccessException
+     */
+    public void updateUser(ApiUser user) throws DataAccessException {
+        jdbcNamed.update(ApiUserQuery.UPDATE_API_USER.getSql(schema()), getUserParams(user));
     }
 
     protected MapSqlParameterSource getUserParams(ApiUser user) {
@@ -30,7 +39,9 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
                 .addValue("apikey", user.getApikey())
                 .addValue("authenticated", user.getAuthStatus())
                 .addValue("apiRequests", user.getNumRequests())
-                .addValue("email", user.getEmail());
+                .addValue("email", user.getEmail())
+                .addValue("name", user.getName())
+                .addValue("organizationName", user.getOrganizationName());
     }
 
     /**
@@ -135,7 +146,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @param user The apiuser to be deleted
      */
     public void deleteApiUser(ApiUser user) throws DataAccessException {
-        if (jdbcNamed.update(ApiUserQuery.DELETE_USER.getSql(schema()), getUserParams(user)) == 0)
+        if (jdbcNamed.update(ApiUserQuery.UPDATE_API_USER.getSql(schema()), getUserParams(user)) == 0)
             jdbcNamed.update(ApiUserQuery.DELETE_USER.getSql(schema()), getUserParams(user));
     }
 
@@ -147,7 +158,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      */
     public void deleteApiUserByEmail(String email) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource().addValue("email", email));
-        if (jdbcNamed.update(ApiUserQuery.DELETE_USER.getSql(schema()), params) == 0)
+        if (jdbcNamed.update(ApiUserQuery.UPDATE_API_USER.getSql(schema()), params) == 0)
             jdbcNamed.update(ApiUserQuery.DELETE_USER.getSql(schema()), params);
     }
 }
