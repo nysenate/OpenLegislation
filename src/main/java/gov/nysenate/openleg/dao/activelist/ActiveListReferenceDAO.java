@@ -1,10 +1,13 @@
 package gov.nysenate.openleg.dao.activelist;
 
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.model.calendar.CalendarActiveList;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.spotcheck.ActiveListSpotcheckReference;
+import org.springframework.dao.DataAccessException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,7 +20,9 @@ public interface ActiveListReferenceDAO {
     public ActiveListSpotcheckReference getCalendarReference(CalendarActiveListId cal, LocalDateTime time);
     public ActiveListSpotcheckReference getMostRecentReference(CalendarActiveListId cal);
     public List<ActiveListSpotcheckReference> getMostRecentEachYear(int year);
+    public ActiveListSpotcheckReference getCurrentCalendar(CalendarActiveListId cal, Range<LocalDate> dateRange) throws DataAccessException;
 
+    //public ActiveListSpotcheckReference getRange
     //DELETE
 
 }
