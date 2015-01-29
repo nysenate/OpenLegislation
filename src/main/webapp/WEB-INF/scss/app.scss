@@ -54,6 +54,9 @@ md-card {
     @extend .md-whiteframe-z0;
     @extend .white-bg;
     @extend .padding-10;
+    md-content {
+      margin-left: 16px;
+    }
   }
 
 }
@@ -136,6 +139,10 @@ md-card {
 
 .margin-left-10 {
   margin-left: 10px;
+}
+
+.margin-left-16 {
+  margin-left: 16px;
 }
 
 .margin-left-20 {
@@ -254,16 +261,22 @@ label.block-label {
 
 /** --- Left Nav --- */
 
+$left-nav-width: 305px;
+
 #left-nav {
   min-height: 100vh;
-  width: 300px;
+  width: $left-nav-width;
+  min-width: $left-nav-width;
   position: fixed;
   background: #384047;
   @include box-shadow(-4px 0 16px #333);
+  @media print {
+    display: none;
+  }
 }
 
 #left-nav-spacer {
-  width: 300px;
+  width: $left-nav-width;
 }
 
 #logo-wrapper {
@@ -360,6 +373,9 @@ label.block-label {
     cursor: pointer;
     min-width: 35px;
     font-size: 1.4rem;
+    @media print {
+      display: none;
+    }
   }
   @media only screen and (max-width: 600px) {
     font-size: 1.0rem;
