@@ -11,7 +11,7 @@
         <section layout="row" layout-sm="column"
                  layout-align="start center" layout-align-sm="start start">
           <div class="margin-bottom-10 margin-top-10" layout="row" layout-align="start center" style="margin-right:60px;">
-            <img class="margin-right-10" src="http://lorempixel.com/50/50/food/5"
+            <img class="margin-right-10" src="http://lorempixel.com/50/50/animals/8"
                  style="height: 60px;min-width:60px;"/>
             <div layout="column" ng-if="!bill.sponsor.budget">
               <div ng-if="!bill.sponsor.rules" class="text-medium">Sponsored By</div>
@@ -43,6 +43,8 @@
             <span ng-if="$first">Initial</span>
             <span ng-if="!$first">Revision {{version}}</span>
             <span ng-if="$last"> (Latest)</span>
+            <br/>
+            <small>{{amd.publishDate | moment:'MMM D, YYYY'}}</small>
           </md-radio-button>
         </md-radio-group>
       </md-toolbar>
@@ -188,6 +190,26 @@
               </md-list>
             </md-content>
           </md-card>
+          <%-- Veto Messages --%>
+          <md-card class="content-card" ng-if="bill.vetoMessages.size > 0">
+            <md-subheader>Veto Message From Governor</md-subheader>
+            <md-content ng-repeat="veto in bill.vetoMessages.items">
+              <span class="text-medium">Veto #{{veto.vetoNumber}} for Year {{veto.year}}</span>
+              <md-divider></md-divider>
+              <pre class="bill-full-text">{{veto.memoText}}</pre>
+            </md-content>
+          </md-card>
+          <%-- Approval Message --%>
+          <md-card class="content-card" ng-if="bill.approvalMessage">
+            <md-subheader>Approval Message From Governor</md-subheader>
+            <md-content>
+              <span class="text-medium">
+                Approval #{{bill.approvalMessage.approvalNumber}} for Year {{bill.approvalMessage.year}} - Chapter {{bill.approvalMessage.chapter}}
+              </span>
+              <md-divider></md-divider>
+              <pre class="bill-full-text">{{bill.approvalMessage.text}}</pre>
+            </md-content>
+          </md-card>
         </md-tab>
         <%-- Sponsor Memo --%>
         <md-tab label="Memo" ng-disabled="bill.billType.resolution">
@@ -210,11 +232,11 @@
             <md-content>
               <md-list>
                 <md-item hide-sm>
-                  <md-item-content>
-                    <div style="width:140px" class="md-tile-left margin-10"><span class="text-medium">Date</span></div>
-                    <div style="width:100px" class="md-tile-left margin-10"><span class="text-medium">Chamber</span></div>
-                    <div style="width:60px" class="md-tile-left margin-10"><span class="text-medium">Bill</span></div>
-                    <div class="md-tile-content"><span class="text-medium">Action Text</span></div>
+                  <md-item-content class="text-medium bold">
+                    <div style="width:140px" class="md-tile-left margin-10"><span>Date</span></div>
+                    <div style="width:60px" class="md-tile-left margin-10"><span>Bill</span></div>
+                    <div style="width:100px" class="md-tile-left margin-10"><span>Chamber</span></div>
+                    <div class="md-tile-content"><span>Action Text</span></div>
                   </md-item-content>
                   <md-divider/>
                 </md-item>
@@ -223,15 +245,14 @@
                     <div style="width:140px" hide-sm class="margin-10">
                       <span class="text-medium">{{action.date | moment:'MMMM D, YYYY'}}</span>
                     </div>
-                    <div style="width:100px" hide-sm class="margin-10">
-                      <span class="text-medium capitalize">{{action.chamber | lowercase}}</span>
-                    </div>
                     <div style="width:60px" hide-sm class="margin-10">
                       <span class="text-medium">{{action.billId.printNo}}</span>
                     </div>
+                    <div style="width:100px" hide-sm class="margin-10">
+                      <span class="text-medium capitalize">{{action.chamber | lowercase}}</span>
+                    </div>
                     <div class="md-tile-content">
-                      <h4 ng-class="{'bold': action.chamber == 'SENATE'}"
-                          class="text-medium margin-10 capitalize">{{action.text | lowercase}}</h4>
+                      <h4 class="text-medium margin-10 capitalize">{{action.text | lowercase}}</h4>
                       <h4 hide-gt-sm>{{action.date | moment:'MMMM D, YYYY'}}</h4>
                       <p hide-gt-sm>{{action.billId.printNo}} - {{action.chamber}}</p>
                     </div>
