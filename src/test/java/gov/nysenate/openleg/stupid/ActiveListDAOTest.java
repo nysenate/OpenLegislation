@@ -46,7 +46,7 @@ public class ActiveListDAOTest extends BaseTests {
         System.out.println("CalendarId  YEAR:   " + a.getCalendarId().getYear());
         System.out.println("CaeldnarId CALNO:   " + a.getCalendarId().getCalNo());
         System.out.println("CalDate:   " + a.getCalDate());
-        System.out.println("ReportDate:   " + a.getReportDate());
+        System.out.println("ReportDate:   " + a.getReferenceDate());
         System.out.println("ReleaseDateTime:   " + a.getReleaseDateTime());
         */
 
@@ -62,7 +62,7 @@ public class ActiveListDAOTest extends BaseTests {
             System.out.println("CalendarId  YEAR:   " + a.getCalendarId().getYear());
             System.out.println("CaeldnarId CALNO:   " + a.getCalendarId().getCalNo());
             System.out.println("CalDate:   " + a.getCalDate());
-            System.out.println("ReportDate:   " + a.getReportDate());
+            System.out.println("ReportDate:   " + a.getReferenceDate());
             System.out.println("ReleaseDateTime:   " + a.getReleaseDateTime());
         }*/
 

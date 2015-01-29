@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.model.spotcheck;
 
-import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 
@@ -13,6 +12,7 @@ import java.util.List;
  */
 public class ActiveListSpotcheckReference {
 
+    private SpotCheckReferenceId referenceId;
     /** A sequence number that identifies this active list. */
     private Integer sequenceNo;
     /** Reference to the parent Calendar's id. */
@@ -27,19 +27,16 @@ public class ActiveListSpotcheckReference {
     /** The date time this active list was released. */
     private LocalDateTime releaseDateTime;
 
-    /** The date time that the reference is generated (current time) */
-    private LocalDateTime referenceDate;                //////////////////////////// not sure if needed
-
     /** Active list entries. */
     private List<CalendarActiveListEntry> entries;
 
-    /** Date when the calendar is relseased*/
-    private LocalDateTime reportDate;
+    /** The date time that the reference is generated (current time) */
+    private LocalDateTime referenceDate;
 
     public ActiveListSpotcheckReference(){}
 
-    public ActiveListSpotcheckReference(Integer sequenceNo, CalendarId calendarId, /*String notes,*/
-                                        LocalDate calDate, LocalDateTime releasedDateTime, LocalDateTime reportDate,
+    public ActiveListSpotcheckReference(Integer sequenceNo, CalendarId calendarId, LocalDate calDate,
+                                        LocalDateTime releasedDateTime, LocalDateTime referenceDate,
                                         List<CalendarActiveListEntry> entries){
         this.sequenceNo = sequenceNo;
         this.calendarId = calendarId;
@@ -47,8 +44,13 @@ public class ActiveListSpotcheckReference {
         this.calDate = calDate;
         this.releaseDateTime = releasedDateTime;
         this.entries = entries;
-        this.reportDate = reportDate;
+        this.referenceDate = referenceDate;
     }
+
+    public SpotCheckReferenceId getReferenceId() {
+        return new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, this.referenceDate);
+    }
+
 
     public Integer getSequenceNo() {
         return sequenceNo;
@@ -82,12 +84,12 @@ public class ActiveListSpotcheckReference {
         this.releaseDateTime = releaseDateTime;
     }
 
-    public LocalDateTime getReportDate() {
-        return reportDate;
+    public LocalDateTime getReferenceDate() {
+        return referenceDate;
     }
 
-    public void setReportDate(LocalDateTime reportDate) {
-        this.reportDate = reportDate;
+    public void setReferenceDate(LocalDateTime referenceDate) {
+        this.referenceDate = referenceDate;
     }
 
     public List<CalendarActiveListEntry> getEntries() {

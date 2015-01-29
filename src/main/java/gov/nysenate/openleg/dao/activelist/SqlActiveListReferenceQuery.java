@@ -47,6 +47,11 @@ public enum SqlActiveListReferenceQuery implements BasicSqlQuery {
                     "WHERE refEntry.active_list_reference_id = ref.id AND calendar_year = :calendar_year" +
                     "AND calendar_no = :calendar_no AND sequence_no = :sequence_no AND reference_date = :reference_date"
     ),
+    SELECT_RANGE_ACTIVE_LIST(
+            "SELECT * FROM ${schema}."+SqlTable.ACTIVE_LIST_REFERENCE+"\n" +
+                    "WHERE releasedatetime > begin AND releasedatetime < end"
+    )
+    ,
     DELETE_REFERENCE_ENTRIES(
             "DELETE FROM ${schema}."+SqlTable.ACTIVE_LIST_REFERENCE_ENTRY+"\n" +
                     "WHERE active_list_reference_id = :active_list_reference_id"

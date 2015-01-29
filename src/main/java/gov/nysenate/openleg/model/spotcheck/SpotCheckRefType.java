@@ -10,6 +10,7 @@ public enum SpotCheckRefType
                                // that are active in the current session.
     LBDC_FLOOR_CALENDAR,
 
+    LBDC_ACTIVE_LIST,
 
 
 }
