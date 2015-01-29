@@ -99,6 +99,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         var term = $scope.billSearch.term;
         if (term) {
             $location.search("search", $scope.billSearch.term);
+            $scope.billSearch.searched = false;
             $scope.billSearch.response = BillSearch.get({
                 term: term, sort: $scope.billSearch.sort, limit: $scope.billSearch.limit, offset: $scope.billSearch.offset},
                 function() {
@@ -225,6 +226,9 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
                 $scope.milestonePercentage = Math.ceil($scope.bill.milestones.size * 12.5);
                 if ($scope.milestonePercentage > 100) $scope.milestonePercentage = 100;
             }
+        }, function(response) {
+            $scope.setHeaderText(response.data.message);
+            $scope.response = response.data;
         });
     }();
 
