@@ -2,6 +2,7 @@ package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.bill.BillStatus;
+import org.apache.commons.lang3.text.WordUtils;
 
 public class BillStatusView implements ViewObject
 {
@@ -18,7 +19,8 @@ public class BillStatusView implements ViewObject
                 this.statusDesc = billStatus.getStatusType().getDesc();
                 this.actionDate = billStatus.getActionDate().toString();
             }
-            this.committeeName = billStatus.getCommitteeId() != null ? billStatus.getCommitteeId().getName() : null;
+            this.committeeName = billStatus.getCommitteeId() != null ?
+                WordUtils.capitalizeFully(billStatus.getCommitteeId().getName()) : null;
             this.billCalNo = billStatus.getCalendarNo();
         }
     }

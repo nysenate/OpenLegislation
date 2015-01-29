@@ -2,6 +2,7 @@ package gov.nysenate.openleg.client.view.committee;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.entity.CommitteeId;
+import org.apache.commons.lang3.text.WordUtils;
 
 public class CommitteeIdView implements ViewObject {
 
@@ -11,7 +12,7 @@ public class CommitteeIdView implements ViewObject {
     public CommitteeIdView(CommitteeId committeeId) {
         if (committeeId != null) {
             this.chamber = committeeId.getChamber().name();
-            this.name = committeeId.getName();
+            this.name = WordUtils.capitalizeFully(committeeId.getName());
         }
     }
 
