@@ -27,7 +27,10 @@
           </div>
           <div class="margin-bottom-10 margin-top-10" layout="column" style="margin-right:60px;">
             <div class="text-medium">Status as of {{bill.status.actionDate | moment:'MMMM D, YYYY'}}</div>
-            <div class="bold"><span>{{getStatusDesc(bill.status)}}</span></div>
+            <div class="bold">
+              <i ng-if="bill.signed === true" class="prefix-icon icon-checkmark"></i>
+              <span>{{getStatusDesc(bill.status)}}</span>
+            </div>
           </div>
           <div class="margin-bottom-10 margin-top-10" layout="column" ng-if="bill.programInfo">
             <div class="text-medium">Bill #{{bill.programInfo.sequenceNo + 1}} on the program for </div>
@@ -36,7 +39,7 @@
         </section>
       </md-toolbar>
       <md-toolbar ng-if="bill.amendments.size > 1" class="md-toolbar-tools auto-height">
-        <label style="margin-right:20px;">Version </label>
+        <label class="margin-right-20">Version </label>
         <md-radio-group layout="row" layout-sm="column" ng-model="curr.amdVersion">
           <md-radio-button ng-repeat="(version, amd) in bill.amendments.items" class="md-accent md-hue-1"
                            value="{{version}}">
@@ -53,27 +56,6 @@
           <md-tab-label><span><i class="icon-search prefix-icon2"></i>Back to Search</span></md-tab-label>
         </md-tab>
         <md-tab label="Details">
-          <%-- Status --%>
-          <md-card class="content-card" hide>
-            <md-subheader>Status - {{bill.milestones.size}} of 8 milestones met</md-subheader>
-            <md-content style="margin-left:16px;">
-              <p class="text-medium capitalize">
-                {{bill.status.actionDate | moment:'MMMM D, YYYY'}} - {{getStatusDesc(bill.status) | lowercase}}
-              </p>
-              <section layout="row">
-                <md-button ng-if="bill.committeeAgendas.size > 0" class="text-medium md-primary md-hue-2 margin-right-20"
-                           ng-init="lastAgenda = bill.committeeAgendas.items[bill.committeeAgendas.size - 1]"
-                           ng-href="${ctxPath}/agendas/{{lastAgenda.agendaId.year}}/{{lastAgenda.agendaId.number}}/{{lastAgenda.committeeId.name}}">
-                  {{lastAgenda.committeeId.name}} Committee Agenda #{{lastAgenda.agendaId.number}} ({{lastAgenda.agendaId.year}})
-                </md-button>
-                <md-button ng-if="bill.calendars.size > 0" class="text-medium md-primary md-hue-2 "
-                           ng-href="${ctxPath}/calendars/{{lastCalendar.year}}/{{lastCalendar.calendarNumber}}"
-                           ng-init="lastCalendar = bill.calendars.items[bill.calendars.size -1]">
-                  Senate Floor Calendar {{lastCalendar.calendarNumber}} ({{lastCalendar.year}})
-                </md-button>
-              </section>
-            </md-content>
-          </md-card>
           <%-- Enacting Clause --%>
           <md-card class="content-card" ng-if="!bill.billType.resolution">
             <md-subheader>Enacting Clause</md-subheader>
@@ -86,6 +68,14 @@
             <md-subheader>Summary of Bill</md-subheader>
             <md-content style="margin-left:16px;">
               <p class="text-medium">{{bill.summary | default:'Not Available'}}</p>
+            </md-content>
+          </md-card>
+          <%-- Law Section --%>
+          <md-card class="content-card">
+            <md-subheader>Affected Law</md-subheader>
+            <md-content>
+              <span class="text-medium">Primary Law Section - {{bill.amendments.items[curr.amdVersion].lawSection}}</span>
+              <p class="text-medium">Law Code - {{bill.amendments.items[curr.amdVersion].lawCode | default:'N/A'}}</p>
             </md-content>
           </md-card>
           <%-- Co/Multi --%>
@@ -133,12 +123,26 @@
               </md-content>
             </section>
           </md-card>
-          <%-- Law Section --%>
-          <md-card class="content-card">
-            <md-subheader>Affected Law</md-subheader>
-            <md-content>
-              <span class="text-medium">Primary Law Section - {{bill.amendments.items[curr.amdVersion].lawSection}}</span>
-              <p class="text-medium">Law Code - {{bill.amendments.items[curr.amdVersion].lawCode | default:'N/A'}}</p>
+          <%-- Agenda/Cal Refs --%>
+          <md-card class="content-card" ng-if="bill.calendars.size > 0 || bill.committeeAgendas.size > 0">
+            <md-subheader>Agenda/Calendar References</md-subheader>
+            <md-content style="margin-left:16px;">
+              <md-list>
+                <md-item>
+                  <md-item-content ng-repeat="agenda in bill.committeeAgendas.items">
+                    <md-button ng-if="bill.committeeAgendas.size > 0" class="text-medium md-primary margin-right-20"
+                               ng-href="${ctxPath}/agendas/{{agenda.agendaId.year}}/{{agenda.agendaId.number}}/{{agenda.committeeId.name}}">
+                      Committee Agenda #{{agenda.agendaId.number}} ({{agenda.agendaId.year}}) - {{agenda.committeeId.name}}
+                    </md-button>
+                  </md-item-content>
+                  <md-item-content ng-repeat="calendar in bill.calendars.items">
+                    <md-button class="text-medium md-primary"
+                               ng-href="${ctxPath}/calendars/{{lastCalendar.year}}/{{lastCalendar.calendarNumber}}">
+                      Senate Floor Calendar {{calendar.calendarNumber}} ({{calendar.year}})
+                    </md-button>
+                  </md-item-content>
+                </md-item>
+              </md-list>
             </md-content>
           </md-card>
           <%-- Identical Legislation --%>
@@ -161,7 +165,7 @@
                           Sponsored By: {{sameAsBill.sponsor.member.fullName}}
                         </p>
                         <p class="no-margin">
-                          Last Status as of {{sameAsBill.status.actionDate | moment:'MMMM D, YYYY'}} - {{getStatusDesc(sameAsBill.status) | lowercase}}
+                          Last Status as of {{sameAsBill.status.actionDate | moment:'MMMM D, YYYY'}} - {{getStatusDesc(sameAsBill.status)}}
                         </p>
                       </div>
                     </md-item-content>
@@ -181,7 +185,7 @@
                           Sponsored By: {{prevBill.sponsor.member.fullName}}
                         </p>
                         <p class="no-margin">
-                          Last Status as of {{prevBill.status.actionDate | moment:'MMMM D, YYYY'}} - {{getStatusDesc(prevBill.status) | lowercase}}
+                          Last Status as of {{prevBill.status.actionDate | moment:'MMMM D, YYYY'}} - {{getStatusDesc(prevBill.status)}}
                         </p>
                       </div>
                     </md-item-content>
@@ -265,12 +269,24 @@
         </md-tab>
         <%-- Bill Text --%>
         <md-tab label="Full Text">
+          <md-card class="content-card" ng-if="bill.amendments.size > 1">
+            <md-content layout="row">
+              Compare with revision:
+              <select ng-model="curr.compareVersion" ng-change="diffBills()" class="margin-left-20 white-bg">
+                <option value="None">---</option>
+                <option ng-repeat="(version, amd) in bill.amendments.items" ng-if="version !== curr.amdVersion">
+                  {{version | prettyAmendVersion}}
+                </option>
+              </select>
+            </md-content>
+          </md-card>
           <md-content class="margin-10 padding-20">
           <span ng-if="!bill.amendments.items[curr.amdVersion].fullText">Bill Text is not available yet. New bills or revisions
           may not have full text available right away.</span>
-          <pre  ng-if="bill.amendments.items[curr.amdVersion].fullText" class="bill-full-text">
-             {{bill.amendments.items[curr.amdVersion].fullText}}
-          </pre>
+          <div ng-if="bill.amendments.items[curr.amdVersion].fullText">
+             <pre ng-if="!diffHtml" class="margin-left-20 bill-full-text">{{bill.amendments.items[curr.amdVersion].fullText}}</pre>
+             <pre ng-if="diffHtml" class="margin-left-20 bill-full-text" ng-bind-html="diffHtml"></pre>
+          </div>
           </md-content>
         </md-tab>
         <%-- Updates --%>

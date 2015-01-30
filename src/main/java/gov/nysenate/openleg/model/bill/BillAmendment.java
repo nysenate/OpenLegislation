@@ -119,6 +119,10 @@ public class BillAmendment implements Serializable, Cloneable
         return BillId.isBaseVersion(this.version);
     }
 
+    public boolean isResolution() {
+        return this.getBillType().isResolution();
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public BaseBillId getBaseBillId() {

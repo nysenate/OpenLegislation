@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillInfo;
 
 import java.time.LocalDateTime;

@@ -86,6 +86,24 @@ public class BillTextUtils
         return 1;
     }
 
+    /** WIP */
+    public static String formatBillText(boolean isResolution, String fullText) {
+        if (!isResolution && fullText != null && !fullText.isEmpty()) {
+            List<String> lines = Splitter.on("\n").splitToList(fullText);
+            StringBuilder formattedFullText = new StringBuilder();
+            lines.forEach(line -> {
+                if (line.length() > 7) {
+                    formattedFullText.append(line.substring(7)).append("\n");
+                }
+                else {
+                    formattedFullText.append(line).append("\n");
+                }
+            });
+            return formattedFullText.toString();
+        }
+        return fullText;
+    }
+
     /**
      * Checks if the given line matches the new page pattern.
      */

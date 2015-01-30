@@ -38,7 +38,7 @@ public enum Version
      */
     public static Version of(String version) {
         String cleanVersion = (version != null) ? version.trim().toUpperCase() : "";
-        if (cleanVersion.isEmpty()) {
+        if (cleanVersion.isEmpty() || cleanVersion.equals("DEFAULT") || cleanVersion.equals("ORIGINAL")) {
             return DEFAULT;
         }
         return valueOf(cleanVersion);

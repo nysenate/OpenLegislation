@@ -6,6 +6,7 @@ import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.util.BillTextUtils;
 
 import java.time.LocalDate;
 import java.util.stream.Collectors;
@@ -35,7 +36,7 @@ public class BillAmendmentView extends BillIdView
             this.lawSection = billAmendment.getLawSection();
             this.lawCode = billAmendment.getLaw();
             this.actClause = billAmendment.getActClause();
-            this.fullText = billAmendment.getFullText();
+            this.fullText = BillTextUtils.formatBillText(billAmendment.isResolution(), billAmendment.getFullText());
             this.coSponsors = ListView.of(billAmendment.getCoSponsors().stream()
                 .map(MemberView::new)
                 .collect(Collectors.toList()));

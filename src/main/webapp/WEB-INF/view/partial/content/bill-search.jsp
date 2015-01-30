@@ -25,7 +25,7 @@
             </md-subheader>
             <md-list>
               <a ng-repeat="r in billSearch.results" ng-init="bill = r.result" class="result-link"
-                 ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}">
+                 ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&view=1">
                 <md-item>
                   <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
                     <div style="width:180px;padding:16px;">

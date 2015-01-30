@@ -102,10 +102,6 @@ public class BillView extends BillInfoView implements ViewObject
         return approvalMessage;
     }
 
-    public String getActiveVersion() {
-        return activeVersion;
-    }
-
     public ListView<MemberView> getAdditionalSponsors() {
         return additionalSponsors;
     }

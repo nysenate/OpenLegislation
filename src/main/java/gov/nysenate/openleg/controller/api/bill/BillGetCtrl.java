@@ -5,18 +5,24 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
+import gov.nysenate.openleg.client.view.base.ModelView;
 import gov.nysenate.openleg.client.view.bill.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.search.BillSearchService;
+import gov.nysenate.openleg.util.BillTextUtils;
+import gov.nysenate.openleg.util.OutputUtils;
+import gov.nysenate.openleg.util.StringDiffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
@@ -116,6 +123,34 @@ public class BillGetCtrl extends BaseCtrl
         new BillPdfView(bill, billId.getVersion(), response.getOutputStream());
         response.setContentType("application/pdf");
     }
+
+    /**
+     * Bill Diff API
+     * -------------
+     *
+     *
+     */
+    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/diff/{version1}/{version2}")
+    public BaseResponse getBillDiff(@PathVariable int sessionYear, @PathVariable String printNo, @PathVariable String version1,
+                            @PathVariable String version2) {
+        StringDiffer stringDiffer = new StringDiffer();
+        BaseBillId baseBillId = new BaseBillId(printNo, sessionYear);
+        Bill bill = billData.getBill(baseBillId);
+        BillAmendment amend1 = bill.getAmendment(Version.of(version1));
+        BillAmendment amend2 = bill.getAmendment(Version.of(version2));
+        String fullText1 = BillTextUtils.formatBillText(bill.isResolution(), amend1.getFullText());
+        String fullText2 = BillTextUtils.formatBillText(bill.isResolution(), amend2.getFullText());
+        LinkedList<StringDiffer.Diff> diffs = stringDiffer.diff_main(fullText1, fullText2);
+        stringDiffer.diff_cleanupEfficiency(diffs);
+        stringDiffer.diff_cleanupSemantic(diffs);
+        stringDiffer.diff_cleanupMerge(diffs);
+        String prettyHtml = stringDiffer.diff_prettyHtml(diffs).replace("&para;", " ");
+        return new ViewObjectResponse<>(
+            new BillDiffView(
+                new BaseBillIdView(baseBillId), amend1.getVersion().toString(), amend2.getVersion().toString(),
+                    prettyHtml));
+    }
+
 
     /** --- Exception Handlers --- */
 
