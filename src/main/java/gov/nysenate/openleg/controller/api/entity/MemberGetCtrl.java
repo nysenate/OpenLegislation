@@ -34,7 +34,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping(value = BASE_API_PATH + "/members", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class MemberGetCtrl extends BaseCtrl
 {
-
     @Autowired private MemberService memberData;
     @Autowired private MemberSearchService memberSearch;
 
@@ -80,7 +79,8 @@ public class MemberGetCtrl extends BaseCtrl
             Member member = memberData.getMemberById(result.getResult().getMemberId(), result.getResult().getSessionYear());
             viewtypes.add((full) ? new MemberView(member) : new SimpleMemberView(member));
         }
-        return ListViewResponse.of(viewtypes, results.getTotalResults(), limOff);    }
+        return ListViewResponse.of(viewtypes, results.getTotalResults(), limOff);
+    }
 
     /**
      * Member Listing API

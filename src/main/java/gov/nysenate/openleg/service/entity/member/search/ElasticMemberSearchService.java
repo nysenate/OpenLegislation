@@ -58,13 +58,13 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     /** {@inheritDoc} */
     @Override
     public SearchResults<Member> searchMembers(String query, String sort, LimitOffset limOff) throws SearchException {
-        return null;
+        return search(QueryBuilders.queryString(query), null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<Member> searchMembers(String query, SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
-        return null;
+        return search(QueryBuilders.filteredQuery(QueryBuilders.queryString(query), FilterBuilders.termFilter("sessionYear", sessionYear.getYear())), null, sort, limOff);
     }
 
     private SearchResults<Member> search(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff)
