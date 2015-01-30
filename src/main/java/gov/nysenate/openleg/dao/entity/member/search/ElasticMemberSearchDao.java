@@ -5,6 +5,7 @@ import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
@@ -76,6 +77,6 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
     }
 
     private Member getMemberFromHit(SearchHit hit) {
-        return new Member(Integer.valueOf(hit.getId()));
+        return new Member(Integer.valueOf(hit.getId()), SessionYear.of(Integer.valueOf(hit.getType())));
     }
 }

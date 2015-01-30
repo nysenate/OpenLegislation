@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.service.entity.member;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.entity.member.MemberDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -18,8 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 
 @Service
 public class CachedMemberService implements MemberService
@@ -101,6 +102,11 @@ public class CachedMemberService implements MemberService
                 return null;
             }
         }
+    }
+
+    @Override
+    public List<Member> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
+            return memberDao.getAllMembers(sortOrder, limOff);
     }
 
     private void putMemberInCache(Member member) {

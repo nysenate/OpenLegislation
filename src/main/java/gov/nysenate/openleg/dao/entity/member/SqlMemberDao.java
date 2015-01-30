@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.dao.entity.member;
 
-import gov.nysenate.openleg.dao.base.ImmutableParams;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
@@ -105,6 +103,14 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         int sessionMemberId = jdbcNamed.queryForObject(
             INSERT_UNVERIFIED_SESSION_MEMBER_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
         member.setSessionMemberId(sessionMemberId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<Member> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
+        OrderBy orderBy = new OrderBy("last_name", sortOrder);
+        return jdbcNamed.query(SELECT_MEMBER_FRAGMENT.getSql(schema(), orderBy, limOff),
+                new MapSqlParameterSource(), new MemberRowMapper());
     }
 
     /** --- Helper classes --- */

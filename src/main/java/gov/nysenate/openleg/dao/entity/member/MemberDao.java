@@ -1,9 +1,12 @@
 package gov.nysenate.openleg.dao.entity.member;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 
+import java.util.List;
 import java.util.Map;
 
 public interface MemberDao
@@ -56,4 +59,10 @@ public interface MemberDao
     public Member getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber);
 
     public void insertUnverifiedSessionMember(Member member);
+
+    /**
+     * Retrieve members from all years and both chambers.
+     * @return
+     */
+    public List<Member> getAllMembers(SortOrder sortOrder, LimitOffset limOff);
 }

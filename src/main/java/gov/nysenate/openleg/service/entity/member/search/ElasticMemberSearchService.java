@@ -5,9 +5,11 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.entity.member.search.ElasticMemberSearchDao;
+import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.entity.MemberId;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -16,18 +18,21 @@ import gov.nysenate.openleg.service.entity.member.MemberService;
 import gov.nysenate.openleg.service.entity.member.event.BulkMemberUpdateEvent;
 import gov.nysenate.openleg.service.entity.member.event.MemberUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Service
 public class ElasticMemberSearchService implements MemberSearchService, IndexedSearchService<Member>
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticMemberSearchService.class);
@@ -39,29 +44,30 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<MemberId> searchMembers(String sort, LimitOffset limOff) throws SearchException {
+    public SearchResults<Member> searchMembers(SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
+        return search(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(),
+                FilterBuilders.termFilter("sessionYear", sessionYear.getYear())), null, sort, limOff);
+    }
+
+    @Override
+    public SearchResults<Member> searchMembers(SessionYear sessionYear, Chamber chamber, String sort, LimitOffset limOff) throws SearchException {
+        return search(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(),
+                FilterBuilders.termFilter("sessionYear", sessionYear.getYear())), null, sort, limOff);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SearchResults<Member> searchMembers(String query, String sort, LimitOffset limOff) throws SearchException {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<MemberId> searchMembers(int year, String sort, LimitOffset limOff) throws SearchException {
+    public SearchResults<Member> searchMembers(String query, SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
         return null;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<MemberId> searchMembers(String query, String sort, LimitOffset limOff) throws SearchException {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<MemberId> searchMembers(String query, int year, String sort, LimitOffset limOff) throws SearchException {
-        return null;
-    }
-
-    private SearchResults<Member> search(QueryBuilder query, org.elasticsearch.index.query.FilterBuilder postFilter, String sort, LimitOffset limOff)
+    private SearchResults<Member> search(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff)
             throws SearchException {
         if (limOff == null) limOff = LimitOffset.TWENTY_FIVE;
         try {
@@ -104,8 +110,18 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
-        throw new NotImplementedException();
-        // TODO: needs data service methods to query all members. possibly by session year?
+        clearIndex();
+        LimitOffset limOff = LimitOffset.HUNDRED;
+        SortOrder sortOrder = SortOrder.ASC;
+        List<Member> members;
+        do {
+            members = memberDataService.getAllMembers(sortOrder, limOff);
+            logger.info("Indexing {} members", members.size());
+            updateIndex(members);
+            limOff = limOff.next();
+            members = memberDataService.getAllMembers(sortOrder, limOff);
+        }
+        while(!members.isEmpty());
     }
 
     /** {@inheritDoc} */
