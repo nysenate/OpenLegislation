@@ -35,10 +35,11 @@ billModule.factory('BillGetApi', ['$resource', function($resource) {
 }]);
 
 billModule.factory('BillUpdatesApi', ['$resource', function($resource) {
-    return $resource(apiPath + '/bills/:session/:printNo/updates?order=:order&limit=:limit&offset=:offset', {
+    return $resource(apiPath + '/bills/:session/:printNo/updates?order=:order&filter=:filter&limit=:limit&offset=:offset', {
         session: '@session',
         printNo: '@printNo',
         order: '@order',
+        filter: '@filter',
         limit: '@limit',
         offset: '@offset'
     });
@@ -176,47 +177,6 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
 
 /** --- Bill View Controller --- */
 
-billModule.filter('prettySponsorMemo', function($sce){
-    var headingPattern = /(([A-Z][A-Za-z ]+)+:)/g;
-    return function(memo) {
-        if (memo) {
-            var htmlMemo = memo.replace(headingPattern, "<div class='bill-memo-heading'>$1</div>");
-            return $sce.trustAsHtml(htmlMemo);
-        }
-        return memo;
-    }
-});
-
-billModule.filter('prettyResolutionText', function($sce) {
-    var whereasPattern = /^ *WHEREAS[,; ]/gm;
-    var resolvedPattern = /^ *RESOLVED[,; ]/gm;
-    return function(text) {
-        if (text)  {
-            text = text.replace(/-\s+/gm, "")
-                .replace(whereasPattern, "<div class='resolution-heading whereas'>WHEREAS</div>")
-                .replace(resolvedPattern, "<div class='resolution-heading resolved'>RESOLVED</div>");
-        }
-        else {
-            text = "";
-        }
-        return $sce.trustAsHtml(text);
-    }
-});
-
-billModule.filter('voteTypeFilter', function() {
-    return function(voteType) {
-        switch (voteType) {
-            case 'AYE': return 'Aye';
-            case 'NAY': return 'Nay';
-            case 'AYEWR': return 'Aye with reservations';
-            case 'ABS': return 'Absent';
-            case 'ABD': return 'Abstained';
-            case 'EXC': return 'Excused';
-            default: return 'Unknown';
-        }
-    }
-});
-
 billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$routeParams', '$sce',
                                        'BillGetApi', 'BillDiffApi', 'BillUpdatesApi',
     function($scope, $filter, $location, $routeParams, $sce, BillGetApi, BillDiffApi, BillUpdatesApi) {
@@ -226,7 +186,10 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
     $scope.curr = {
         amdVersion: '',
         compareVersion: 'None',
-        selectedView: (parseInt($routeParams.view, 10) || 1)};
+        selectedView: (parseInt($routeParams.view, 10) || 1),
+        updateTypeFilter: '',
+        updateOrder: 'desc'
+    };
     $scope.diffHtml = null;
     $scope.updateHistory = null;
 
@@ -265,15 +228,20 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         }
     };
 
-    $scope.getUpdates = function() {
+    $scope.initialGetUpdates = function() {
         if ($scope.updateHistory === null) {
-            $scope.updateHistoryResponse = BillUpdatesApi.get(
-                {printNo: $scope.printNo, session: $scope.session, order: 'DESC', offset: 1, limit: 200}, function() {
-                if ($scope.updateHistoryResponse.success === true) {
-                    $scope.updateHistory = $scope.updateHistoryResponse.result;
-                }
-            });
+          $scope.getUpdates();
         }
+    };
+
+    $scope.getUpdates = function() {
+        $scope.updateHistoryResponse = BillUpdatesApi.get(
+            {printNo: $scope.printNo, session: $scope.session, order: $scope.curr.updateOrder,
+             filter: $scope.curr.updateTypeFilter, offset: 1, limit: 200}, function() {
+            if ($scope.updateHistoryResponse.success === true) {
+                $scope.updateHistory = $scope.updateHistoryResponse.result;
+            }
+        });
     };
 
     $scope.backToSearch = function() {
@@ -328,3 +296,30 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         return milestoneArr;
     }
 }]);
+
+/** --- Filters --- */
+
+billModule.filter('prettySponsorMemo', function($sce){
+    var headingPattern = /(([A-Z][A-Za-z ]+)+:)/g;
+    return function(memo) {
+        if (memo) {
+            var htmlMemo = memo.replace(headingPattern, "<div class='bill-memo-heading'>$1</div>");
+            return $sce.trustAsHtml(htmlMemo);
+        }
+        return memo;
+    }
+});
+
+billModule.filter('voteTypeFilter', function() {
+    return function(voteType) {
+        switch (voteType) {
+            case 'AYE': return 'Aye';
+            case 'NAY': return 'Nay';
+            case 'AYEWR': return 'Aye with reservations';
+            case 'ABS': return 'Absent';
+            case 'ABD': return 'Abstained';
+            case 'EXC': return 'Excused';
+            default: return 'Unknown';
+        }
+    }
+});

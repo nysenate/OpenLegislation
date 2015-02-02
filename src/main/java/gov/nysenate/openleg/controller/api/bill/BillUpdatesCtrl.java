@@ -172,7 +172,7 @@ public class BillUpdatesCtrl extends BaseCtrl
 
     private BillUpdateField getUpdateFieldFromParam(String filter) {
         BillUpdateField fieldFilter = null;
-        if (filter != null) {
+        if (filter != null && !filter.isEmpty()) {
             try {
                 fieldFilter = BillUpdateField.valueOf(filter.toUpperCase());
             }

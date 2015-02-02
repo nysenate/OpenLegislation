@@ -43,7 +43,7 @@
         <md-radio-group layout="row" layout-sm="column" ng-model="curr.amdVersion">
           <md-radio-button ng-repeat="(version, amd) in bill.amendments.items" class="md-accent md-hue-1"
                            value="{{version}}">
-            <span ng-if="$first">Initial</span>
+            <span ng-if="$first">Original</span>
             <span ng-if="!$first">Revision {{version}}</span>
             <span ng-if="$last"> (Latest)</span>
             <br/>
@@ -356,7 +356,39 @@
           </md-content>
         </md-tab>
         <%-- Updates --%>
-        <md-tab label="Update History" md-on-select="getUpdates()">
+        <md-tab label="Update History" md-on-select="initialGetUpdates()">
+          <md-card>
+            <md-content layout="row" class="content-card padding-10">
+              <div flex>
+                <label>Filter by update type: </label>
+                <select ng-model="curr.updateTypeFilter" ng-change="getUpdates()" class="margin-left-10">
+                  <option value="">All</option>
+                  <option value="act_clause">Enacting Clause</option>
+                  <option value="action">Action</option>
+                  <option value="active_version">Active Version</option>
+                  <option value="approval">Approval Memo</option>
+                  <option value="cosponsor">Co Sponsor</option>
+                  <option value="fulltext">Full Text</option>
+                  <option value="law">Law</option>
+                  <option value="memo">Memo</option>
+                  <option value="multisponsor">Multi Sponsor</option>
+                  <option value="sponsor">Sponsor</option>
+                  <option value="status">Status</option>
+                  <option value="summary">Summary</option>
+                  <option value="title">Title</option>
+                  <option value="veto">Veto</option>
+                  <option value="vote">Vote</option>
+                </select>
+              </div>
+              <div flex>
+                <label class="margin-left-10">Order</label>
+                <select ng-model="curr.updateOrder" ng-change="getUpdates()" class="margin-left-10">
+                  <option value="asc">Oldest First</option>
+                  <option value="desc">Newest First</option>
+                </select>
+              </div>
+            </md-content>
+          </md-card>
           <md-list ng-repeat="update in updateHistory.items">
             <md-item>
               <md-item-content>
@@ -379,7 +411,7 @@
                         <tbody>
                         <tr ng-repeat="(field, value) in update.fields">
                           <td>{{field}}</td>
-                          <td><pre>{{value}}</pre></td>
+                          <td><pre style="max-height:300px;">{{value}}</pre></td>
                         </tr>
                         </tbody>
                       </table>
@@ -389,6 +421,11 @@
               </md-item-content>
             </md-item>
           </md-list>
+          <md-card ng-if="updateHistory.size == 0">
+            <md-content class="red1 content-card padding-20">
+              No updates found.
+            </md-content>
+          </md-card>
         </md-tab>
     </section>
     <section ng-if="response.success === false">
