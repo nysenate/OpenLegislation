@@ -74,12 +74,7 @@ public class MemberGetCtrl extends BaseCtrl
                                          WebRequest request) throws SearchException, MemberNotFoundEx {
         LimitOffset limOff = getLimitOffset(request, 50);
         SearchResults<Member> results = memberSearch.searchMembers(SessionYear.of(sessionYear), sort, limOff);
-        List<ViewObject> viewtypes = new ArrayList<>();
-        for (SearchResult<Member> result : results.getResults()) {
-            Member member = memberData.getMemberById(result.getResult().getMemberId(), result.getResult().getSessionYear());
-            viewtypes.add((full) ? new MemberView(member) : new SimpleMemberView(member));
-        }
-        return ListViewResponse.of(viewtypes, results.getTotalResults(), limOff);
+        return getMemberResponse(full, limOff, results);
     }
 
     /**
@@ -100,14 +95,14 @@ public class MemberGetCtrl extends BaseCtrl
                                          WebRequest request) throws SearchException, MemberNotFoundEx {
         LimitOffset limOff = getLimitOffset(request, 50);
         SearchResults<Member> results = memberSearch.searchMembers(SessionYear.of(sessionYear), Chamber.getValue(chamber), sort, limOff);
+        return getMemberResponse(full, limOff, results);
+    }
 
-        // Filter by chamber -- TODO: couldn't get search query to work with session year and chamber.
+    private BaseResponse getMemberResponse(boolean full, LimitOffset limOff, SearchResults<Member> results) throws MemberNotFoundEx {
         List<ViewObject> viewtypes = new ArrayList<>();
         for (SearchResult<Member> result : results.getResults()) {
             Member member = memberData.getMemberById(result.getResult().getMemberId(), result.getResult().getSessionYear());
-            if (member.getChamber() == Chamber.getValue(chamber)) {
-                viewtypes.add((full) ? new MemberView(member) : new SimpleMemberView(member));
-            }
+            viewtypes.add((full) ? new MemberView(member) : new SimpleMemberView(member));
         }
         return ListViewResponse.of(viewtypes, results.getTotalResults(), limOff);
     }
