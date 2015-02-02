@@ -171,7 +171,7 @@ checkmail.host = imap.gmail.com
 checkmail.user = nysenatedev
 checkmail.pass =
 mail.store.protocol = imaps
-mail.imaps.ssl.protocols = SSLv3
+mail.imaps.ssl.protocols = TLSv1.2
 
 # Mail directory paths where daybreak emails are stored
 checkmail.receiving = OpenLegislationTest/LRSAutomated
